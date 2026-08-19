@@ -30,6 +30,20 @@ export function captureReferenceLigand(molecule, ligandAtomIndices, coreAtomIndi
   const core = [...new Set(Array.from(coreAtomIndices || indices, Number))]
     .filter((index) => selected.has(index) && molecule.atoms[index].element !== 'H');
   if (core.length < 3) throw new Error('The reference core needs at least three ligand heavy atoms');
+  let maximumTriangleDoubleArea = 0;
+  for (let first = 0; first < core.length; first++) for (let second = first + 1; second < core.length; second++)
+    for (let third = second + 1; third < core.length; third++) {
+      const a = molecule.atoms[core[first]], b = molecule.atoms[core[second]], c = molecule.atoms[core[third]];
+      const ab = [b.x - a.x, b.y - a.y, b.z - a.z];
+      const ac = [c.x - a.x, c.y - a.y, c.z - a.z];
+      maximumTriangleDoubleArea = Math.max(maximumTriangleDoubleArea, Math.hypot(
+        ab[1] * ac[2] - ab[2] * ac[1],
+        ab[2] * ac[0] - ab[0] * ac[2],
+        ab[0] * ac[1] - ab[1] * ac[0],
+      ));
+    }
+  if (maximumTriangleDoubleArea < 1e-3)
+    throw new Error('The reference core is collinear; select three or more atoms that define a plane');
   return {
     schema:'molarium.docking.reference/v1',
     label:molecule.name || 'reference ligand',
@@ -40,6 +54,7 @@ export function captureReferenceLigand(molecule, ligandAtomIndices, coreAtomIndi
       return [atom.x, atom.y, atom.z];
     })),
     coreAtomIds:core.map((index) => molecule.atoms[index].designAtomId),
+    coreMaximumTriangleDoubleAreaAngstrom2:maximumTriangleDoubleArea,
     sourceGlobalAtomIndices:indices,
   };
 }

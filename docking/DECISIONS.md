@@ -104,9 +104,9 @@ not prove that a browser calculation was honest, but it makes post-export modifi
 
 ### Decision D-007 — incomplete stages remain machine-readable
 
-The protocol manifest labels constraint geometry, ranking, and labbooks as implemented. Browser pose
-generation and pocket refinement remain `not-yet-integrated` until end-to-end and redocking gates
-pass.
+The protocol manifest labels constraint geometry, ranking, labbooks, and browser pose generation
+independently. Version 0.2 marks deterministic ETKDGv3 pose generation as implemented and pocket
+refinement as explicitly absent.
 
 Reason: documentation prose is easy to overread. Machine-readable status prevents the current
 foundation from being presented as a complete docking product.
@@ -129,20 +129,20 @@ valid floating-point output contained `-0` while the reference contained `0`.
 Resolution: compare coordinate errors against `1e-7 Å`. This tests the scientific property and does
 not conflate IEEE-754 signed zero with a geometric discrepancy.
 
-### Remaining implementation gates
+### Initial implementation gates (status at v0.2)
 
-1. Capture a reference ligand and stable atom identities before Build edits.
-2. Obtain a chemically valid core correspondence, preferably from RDKit MCS/substructure matching,
-   and enumerate symmetry-equivalent mappings.
-3. Generate and core-align deterministic ligand conformers.
-4. Add bounded rigid-body and rotatable-bond sampling around the reference pose.
-5. Select receptor donor/acceptor constraints interactively and preserve the exact atom identities.
-6. Score receptor–ligand contacts without silently applying an invalid whole-protein small-molecule
-   parameterization.
-7. Refine ligand and optional pocket atoms with every restraint active and logged.
-8. Validate cognate redocking, cross-docking failure modes, constraint satisfaction, reproducibility,
-   and sensitivity to seeds and thresholds.
-9. Expose JSON and Markdown labbook downloads from the result card.
+1. **Complete:** capture a reference ligand and stable atom identities before Build edits.
+2. **Partial by design:** exact edit-lineage mapping is implemented; unrelated-ligand MCS and
+   symmetry enumeration remain future work.
+3. **Complete:** generate, score, and core-align deterministic ligand conformers.
+4. **Deferred:** bounded pose perturbation beyond ETKDG conformational diversity.
+5. **Complete:** capture visible explicit receptor/ligand H-bonds and preserve atom identities.
+6. **Complete with an experimental boundary:** captured receptor numeric nonbonded terms and newly
+   assigned ligand terms are scored transparently; no whole complex is silently retyped after edits.
+7. **Deferred:** active-restraint ligand/pocket refinement.
+8. **Partial:** synthetic execution and deterministic replay pass; prospective cognate redocking,
+   cross-docking, seed sensitivity, and accuracy benchmarks remain release-science gates.
+9. **Complete:** verified JSON and readable Markdown labbooks download from Build mode.
 
 The force-field boundary in gate 6 is the main scientific risk. A quick geometric search is possible
 now, but a credible physical rank requires a properly prepared receptor–ligand numeric System or a
@@ -178,3 +178,61 @@ constraint cannot be numerically overwhelmed by a favorable physical score.
 
 Appending an event after finalization throws. An in-progress workflow record verifies its protocol
 hash and two-event chain; modifying a prior event causes verification to fail.
+
+## 2026-08-19 — browser integration v0.2
+
+### Decision D-010 — explicit mixed-System scoring boundary
+
+The receptor site is captured before ligand edits from the prepared complex's numeric nonbonded
+System. The current edited ligand is separately parameterized through Molarium's OpenFF/OpenMM path.
+Only cross receptor–ligand Lennard-Jones and Coulomb terms are evaluated, with Lorentz–Berthelot
+combining rules, an 8 Å cutoff, and relative dielectric 4. Relative RDKit conformer strain is added.
+
+Reason: deleting the complex System after a chemical edit is correct because its ligand parameters
+are stale. Re-parameterizing the entire protein through the generic small-molecule path would hide a
+scientifically invalid boundary. Capturing receptor terms and assigning only the edited ligand keeps
+that boundary explicit and auditable.
+
+Limit: mixed force-field provenance, dielectric screening, and omitted desolvation mean the result is
+a pose-ranking heuristic, not a binding free energy. The exact receptor and ligand force-field labels
+are recorded for every run.
+
+### Decision D-011 — rigid receptor for the first executable protocol
+
+Version 0.2 performs no pocket minimization. It applies no unlogged relaxation after the constraint
+audit and does not imply induced fit.
+
+Reason: a refinement stage is only credible if restraint forces, fixed atoms, convergence, and
+same-coordinate backend parity are all tested. Rigid docking is narrower but reproducible. Pocket
+refinement remains an explicit future protocol version rather than an invisible UI convenience.
+
+### Decision D-012 — reject underdetermined reference cores
+
+Three or four selected heavy atoms must include a non-collinear triple. Capture records the maximum
+triangle double-area and rejects a value below `1e-3 Å²`.
+
+Reason: a collinear core cannot uniquely determine a 3D rigid orientation. Accepting it would produce
+arbitrary rotations around the core axis despite a deceptively small RMSD.
+
+### Observed failure F-002 — edited atom counts were initially coupled to the reference
+
+The first workflow validator required each candidate coordinate array to have the same length as the
+reference ligand. That contradicted the edit-derived design: adding or deleting a non-core atom must
+remain valid.
+
+Resolution: reference and candidate coordinate arrays are validated independently. Core atom pairs
+map between their different index spaces. A regression docks a five-atom edited ligand against a
+four-atom reference and separately rejects inconsistent candidate-stack shapes.
+
+### Validation V-003 — real browser execution and deterministic replay
+
+The Chrome regression uses a parameterized synthetic protein–ligand complex with one explicit
+receptor-donor interaction. It selects a three-atom ligand core, captures the required H-bond,
+adds a non-core fluorine atom, confirms that the stale complex System was removed, freshly
+parameterizes the edited ligand with OpenFF/OpenMM WASM, and executes RDKit WASM conformer
+generation. It then checks a feasible selected pose, verifies the hash chain, confirms no coordinate
+payload entered the labbook, repeats the same seed with identical selected-coordinate SHA-256 and
+score, applies the pose, and confirms the receptor coordinates did not move.
+
+This is an execution/reproducibility gate, not an accuracy benchmark. Cognate redocking and
+cross-docking datasets remain required before reporting docking accuracy.

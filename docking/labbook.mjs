@@ -100,32 +100,72 @@ export async function verifyLabbook(labbook) {
 
 function markdownCell(value) { return String(value ?? '—').replaceAll('|', '\\|').replaceAll('\n', ' '); }
 
+function markdownNumber(value, digits = 4) {
+  return Number.isFinite(Number(value)) ? Number(value).toFixed(digits) : '—';
+}
+
 export function renderLabbookMarkdown(labbook) {
   const constraintCount = labbook.selections?.hydrogenBonds?.length || 0;
+  const outcome = labbook.outcome || {};
+  const execution = labbook.environment || {};
+  const physical = outcome.selectedPhysicalComponents || {};
   const lines = [
     `# ${labbook.protocol.name} labbook`, '',
-    `**Run:** \`${labbook.runId}\`  `,
-    `**Started:** ${labbook.startedAt}  `,
-    `**Completed:** ${labbook.completedAt || 'in progress'}  `,
-    `**Protocol:** \`${labbook.protocol.id}@${labbook.protocol.version}\`  `,
-    `**Protocol SHA-256:** \`${labbook.protocolSha256}\`  `,
-    `**Labbook SHA-256:** ${labbook.labbookSha256 ? `\`${labbook.labbookSha256}\`` : 'pending'}`, '',
+    '> Experimental rigid-receptor pose ranking. This is not a binding free-energy calculation.', '',
+    '| Record | Value |', '| --- | --- |',
+    `| Run | \`${markdownCell(labbook.runId)}\` |`,
+    `| Started | ${markdownCell(labbook.startedAt)} |`,
+    `| Completed | ${markdownCell(labbook.completedAt || 'in progress')} |`,
+    `| Protocol | \`${labbook.protocol.id}@${labbook.protocol.version}\` |`,
+    `| Protocol SHA-256 | \`${labbook.protocolSha256}\` |`,
+    `| Labbook SHA-256 | ${labbook.labbookSha256 ? `\`${labbook.labbookSha256}\`` : 'pending'} |`, '',
+    '## Result', '',
+    `- Generated/scored poses: **${outcome.generatedConformers ?? '—'} / ${outcome.scoredConformers ?? '—'}**`,
+    `- Constraint-feasible poses: **${outcome.feasiblePoses ?? '—'}**`,
+    `- Selected score: **${markdownNumber(outcome.selectedScoreKcalMol)} kcal/mol**`,
+    `- Physical / restraint: **${markdownNumber(outcome.selectedPhysicalKcalMol)} / ${markdownNumber(outcome.selectedConstraintPenaltyKcalMol)} kcal/mol**`,
+    `- Core RMSD: **${markdownNumber(outcome.selectedCoreRmsdAngstrom, 3)} Å**`, '',
+    '| Selected physical component | kcal/mol |', '| --- | ---: |',
+    `| Lennard-Jones cross term | ${markdownNumber(physical.lennardJonesKcalMol)} |`,
+    `| Coulomb cross term | ${markdownNumber(physical.coulombKcalMol)} |`,
+    `| Relative ligand strain | ${markdownNumber(physical.ligandStrainKcalMol)} |`, '',
     '## Inputs', '',
-    `- Receptor: ${markdownCell(labbook.inputs?.receptor?.label)} — \`${markdownCell(labbook.inputs?.receptor?.sha256)}\``,
-    `- Ligand: ${markdownCell(labbook.inputs?.ligand?.label)} — \`${markdownCell(labbook.inputs?.ligand?.sha256)}\``,
-    `- Core atom matches: ${labbook.selections?.coreAtomPairs?.length || 0}`,
-    `- Required H-bond constraints: ${constraintCount}`, '',
+    '| Input | Atoms | SHA-256 |', '| --- | ---: | --- |',
+    `| ${markdownCell(labbook.inputs?.receptor?.label)} | ${labbook.inputs?.receptor?.atoms ?? '—'} | \`${markdownCell(labbook.inputs?.receptor?.sha256)}\` |`,
+    `| ${markdownCell(labbook.inputs?.ligand?.label)} | ${labbook.inputs?.ligand?.atoms ?? '—'} | \`${markdownCell(labbook.inputs?.ligand?.sha256)}\` |`, '',
     'The audit stores input hashes and selections; it does not include proprietary coordinates.', '',
+    '## Selections', '',
+    `- Conserved core matches: **${labbook.selections?.coreAtomPairs?.length || 0}**`,
+    `- Required H-bond constraints: **${constraintCount}**`,
+    ...((labbook.selections?.hydrogenBonds || []).map((entry) =>
+      `  - ${markdownCell(entry.label || entry.id)} (${markdownCell(entry.receptorRole || 'receptor role unspecified')})`)), '',
+    '## Execution', '',
+    '| Setting | Value |', '| --- | --- |',
+    `| Location | ${markdownCell(execution.execution)} |`,
+    `| Network used | ${execution.networkUsed === false ? 'No' : markdownCell(execution.networkUsed)} |`,
+    `| Deterministic seed | \`${markdownCell(execution.deterministicSeed)}\` |`,
+    `| Receptor parameters | ${markdownCell(execution.receptorForcefield)} · ${markdownCell(execution.receptorChargeModel)} |`,
+    `| Edited-ligand parameters | ${markdownCell(execution.ligandForcefield)} · ${markdownCell(execution.ligandChargeModel)} |`,
+    `| Conformer engine | ${markdownCell(execution.conformerBackend)} · RDKit ${markdownCell(execution.rdkitVersion)} |`,
+    `| Conformer cleanup | ${markdownCell((execution.conformerPreparationForcefields || []).join(', '))} |`, '',
     '## Method lineage', '',
     ...labbook.protocol.lineage.map((source) =>
       `- [${source.method}](${source.url}) — ${source.citation}${source.doi ? ` DOI: \`${source.doi}\`.` : ''}`),
     '', 'This is an independent Molarium protocol. It does not reproduce GlideScore, ICM Score, or proprietary product code.', '',
-    '## Events', '',
-    '| # | Time | Stage | Status | Entry SHA-256 |',
-    '| ---: | --- | --- | --- | --- |',
-    ...labbook.events.map((event) => `| ${event.index + 1} | ${markdownCell(event.at)} | ${markdownCell(event.stage)} | ${markdownCell(event.status)} | \`${event.entrySha256}\` |`),
+    '## Hash-linked run events', '',
+    ...labbook.events.flatMap((event) => [
+      `### ${event.index + 1}. ${markdownCell(event.stage)} — ${markdownCell(event.status)}`,
+      '', `Time: ${markdownCell(event.at)}  `,
+      `Previous: ${event.previousEntrySha256 ? `\`${event.previousEntrySha256}\`` : 'chain origin'}  `,
+      `Entry: \`${event.entrySha256}\``, '',
+      '```json', JSON.stringify(event.details, null, 2), '```', '',
+    ]),
   ];
-  if (labbook.outcome) lines.push('', '## Outcome', '', '```json', JSON.stringify(labbook.outcome, null, 2), '```');
+  if (outcome.topPoses?.length) lines.push('## Top poses', '',
+    '| Rank | Feasible | Total | Physical | Penalty | Core RMSD |',
+    '| ---: | --- | ---: | ---: | ---: | ---: |',
+    ...outcome.topPoses.map((pose) => `| ${pose.rank} | ${pose.feasible ? 'yes' : 'no'} | ${markdownNumber(pose.totalScoreKcalMol)} | ${markdownNumber(pose.physicalEnergyKcalMol)} | ${markdownNumber(pose.constraintPenaltyKcalMol)} | ${markdownNumber(pose.coreRmsdAngstrom, 3)} Å |`), '');
+  lines.push('## Full outcome record', '', '```json', JSON.stringify(labbook.outcome, null, 2), '```');
   return `${lines.join('\n')}\n`;
 }
 

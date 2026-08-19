@@ -4,7 +4,8 @@ import { appendLabbookEvent } from './labbook.mjs';
 
 function conformerArray(value, expectedLength) {
   const positions = value instanceof Float64Array ? value : Float64Array.from(value || []);
-  if (positions.length !== expectedLength || positions.some((coordinate) => !Number.isFinite(coordinate)))
+  if (positions.length !== expectedLength || positions.length % 3
+    || positions.some((coordinate) => !Number.isFinite(coordinate)))
     throw new Error(`A docking conformer must contain ${expectedLength} finite coordinates`);
   return positions;
 }
@@ -38,9 +39,13 @@ export async function runConstrainedDocking({ referencePositions, candidateConfo
   hydrogenBondConstraints = [], protocol, physicalScore, refinePose = null, labbook = null,
   startedAt = new Date().toISOString(), completedAt = null }) {
   if (typeof physicalScore !== 'function') throw new TypeError('A physicalScore callback is required');
-  const expectedLength = referencePositions.length;
+  if (!Array.isArray(candidateConformers) || !candidateConformers.length)
+    throw new Error('At least one candidate conformer is required');
+  if (!referencePositions?.length || referencePositions.length % 3
+    || Array.from(referencePositions).some((coordinate) => !Number.isFinite(coordinate)))
+    throw new Error('Reference coordinates must contain complete finite atom positions');
+  const expectedLength = candidateConformers[0]?.length || 0;
   const conformers = candidateConformers.map((positions) => conformerArray(positions, expectedLength));
-  if (!conformers.length) throw new Error('At least one candidate conformer is required');
   if (labbook) await appendLabbookEvent(labbook, { at:startedAt, stage:'pose-generation', status:'received',
     details:{ conformers:conformers.length, coreAtomPairs:coreAtomPairs.length,
       requiredHydrogenBonds:hydrogenBondConstraints.filter((entry) => entry.required !== false).length } });

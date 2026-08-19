@@ -7,11 +7,12 @@ seeds, geometric constraints, run events, and result hashes travel together.
 
 ## Scientific lineage
 
-The protocol adopts the staged-search idea described for Glide by Friesner et al.: broad pose
-generation, torsional optimization, then refinement and ranking. Glide's public API distinguishes
-reference-ligand core constraints from receptor H-bond constraints. The protocol also adopts the
-ICM pattern of internal-coordinate sampling followed by local minimization, and the flat-bottom
-soft-restraint semantics documented for ICM interaction restraints and ligand tethers.
+The design is informed by the staged-search separation described for Glide and by ICM's use of
+internal-coordinate sampling and soft restraints. Glide's public API distinguishes reference-ligand
+core constraints from receptor H-bond constraints; ICM's public documentation describes
+flat-bottom interaction restraints and reference-ligand tethers. Version 0.2 implements those
+constraint concepts with an independent ETKDG and transparent-score workflow. It does not
+implement either product's grids, search, refinement, or scoring function.
 
 - Friesner RA et al. *Glide: a new approach for rapid, accurate docking and scoring. 1. Method and
   assessment of docking accuracy.* J Med Chem. 2004;47:1739-1749.
@@ -30,7 +31,7 @@ energy, and penalty definitions.
 
 ## Executable boundary
 
-Version `0.1.0` implements and tests:
+Version `0.2.0` implements and tests:
 
 - least-squares reference-core alignment;
 - positional core RMSD and a flat-bottom harmonic penalty;
@@ -39,13 +40,25 @@ Version `0.1.0` implements and tests:
 - deterministic feasible-first pose ranking;
 - stable atom identities for edit-derived reference cores;
 - an engine-independent constrained-docking orchestrator with physical-score and refinement hooks;
+- a transparent receptor-site score using cross OpenFF Lennard-Jones and Coulomb terms plus relative
+  RDKit ligand strain;
+- deterministic in-browser ETKDGv3 conformer generation and core alignment;
+- a compact Build-mode setup, top-five pose selector, and pose application that leaves the receptor fixed;
 - input and protocol SHA-256 hashes;
 - an append-only, hash-chained run labbook with JSON and Markdown representations.
 
-The orchestrator accepts conformer coordinates but browser conformer generation and pocket refinement
-are deliberately marked `not-yet-integrated` in the
-protocol manifest. They must not be presented as complete until the UI path, reference redocking
-fixtures, and prospective edited-ligand tests pass.
+The receptor is rigid. There is no receptor grid, induced-fit refinement, solvation/desolvation
+term, entropy model, or binding-free-energy estimate. The cross score uses the captured receptor's
+numeric nonbonded terms, fresh edited-ligand OpenFF terms, an explicit relative dielectric of 4,
+and relative MMFF94 ligand strain (UFF only when RDKit reports that fallback). The result is a
+pose-ranking score, not a binding affinity.
+
+The browser gate uses a synthetic protein–ligand fixture to execute capture, add a new ligand atom,
+discard stale complex parameters, freshly parameterize the edited ligand with OpenFF/OpenMM WASM,
+run RDKit WASM generation, rank the constrained poses, replay them deterministically, verify the
+hash chain, and apply a pose without moving the receptor. Accuracy claims still require prospective
+cognate-redocking and cross-docking benchmarks; version 0.2 must be presented as experimental until
+those are added.
 
 ## Labbook design
 
@@ -65,7 +78,8 @@ without disclosing those structures. It records:
 Run the local unit gate with:
 
 ```sh
-node docking/test.mjs
+npm run test:docking
+npm test
 ```
 
 The detailed evidence and decision history is maintained in [`DECISIONS.md`](./DECISIONS.md).

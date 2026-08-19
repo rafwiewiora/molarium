@@ -68,6 +68,12 @@ bytes, Git blob `fbd9f9a95f6013d8ecaef81e02b0033e5882a675`, SHA-256
 - Ropp, P. J. et al. *Dimorphite-DL: an open-source program for enumerating the ionization
   states of drug-like small molecules.* J. Cheminform. (2019).
   [DOI](https://doi.org/10.1186/s13321-019-0336-9)
+- Friesner, R. A. et al. *Glide: a new approach for rapid, accurate docking and scoring. 1. Method
+  and assessment of docking accuracy.* J. Med. Chem. (2004). Method inspiration only; Molarium
+  does not bundle or claim compatibility with Glide. [DOI](https://doi.org/10.1021/jm0306430)
+- Totrov, M.; Abagyan, R. *Flexible protein-ligand docking by global energy optimization in
+  internal coordinates.* Proteins (1997). Method inspiration only; Molarium does not bundle or
+  claim compatibility with ICM. [PubMed](https://pubmed.ncbi.nlm.nih.gov/9485515/)
 
 RDKit releases and citation metadata are maintained by the
 [RDKit project](https://www.rdkit.org/) and its archived releases.

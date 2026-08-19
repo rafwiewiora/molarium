@@ -70,6 +70,7 @@ class DevToolsClient {
 
 const browserSuite = String.raw`(async () => {
   const externalPreparationFixture = ${JSON.stringify(preparationFixture)};
+  const captureDockingUi = ${JSON.stringify(Boolean(Bun.env.MOLARIUM_TEST_SCREENSHOT_DOCKING))};
   const checks = [];
   let optimizationMetrics = null;
   let rdkitMetrics = null;
@@ -386,6 +387,85 @@ const browserSuite = String.raw`(async () => {
     && ligandOnlyView.hydrogenBonds.length === 0,
   'pocket toggle collapses cartoon atom detail back to the ligand only', JSON.stringify(ligandOnlyView));
   api.setPocketAtoms(true);
+  const dockingFixture = {
+    name:'Molarium CCD browser fixture', smiles:'protein + dimethyl ether', charge:0, multiplicity:1,
+    atoms:[
+      { element:'N', x:-2, y:0, z:0, record:'ATOM', atomName:'NZ', residueName:'LYS', chain:'A', residueIndex:1 },
+      { element:'H', x:-1, y:0, z:0, record:'ATOM', atomName:'HZ1', residueName:'LYS', chain:'A', residueIndex:1 },
+      { element:'O', x:0.8, y:0, z:0, record:'HETATM', atomName:'O1', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'C', x:1.8, y:1, z:0, record:'HETATM', atomName:'C1', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'C', x:1.8, y:-1, z:0, record:'HETATM', atomName:'C2', residueName:'DME', chain:'B', residueIndex:2 },
+    ],
+    bonds:[{ a:0, b:1, order:1 }, { a:2, b:3, order:1 }, { a:2, b:4, order:1 }],
+    parameterization:{ forcefield:'OpenFF Sage 2.1.0 browser-test fixture', chargeModel:'test charges',
+      sourceSha256:'browser-test', system:{
+        particles:[14, 1, 16, 12, 12].map((mass_amu, index) => ({ index, mass_amu })),
+        constraints:[], bonds:[], angles:[], torsions:[], exceptions:[],
+        nonbonded:[
+          { index:0, charge_e:0.3, sigma_nm:0.325, epsilon_kj:0.7 },
+          { index:1, charge_e:0.1, sigma_nm:0.1, epsilon_kj:0.05 },
+          { index:2, charge_e:-0.3, sigma_nm:0.296, epsilon_kj:0.8 },
+          { index:3, charge_e:-0.05, sigma_nm:0.34, epsilon_kj:0.4 },
+          { index:4, charge_e:-0.05, sigma_nm:0.34, epsilon_kj:0.4 },
+        ],
+      } },
+  };
+  api.loadObject(dockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  const dockingSelection = api.setDockingSelection([2, 3, 4]);
+  check(!document.querySelector('#docking-workbench').classList.contains('hidden')
+    && dockingSelection.captureDisabled === false
+    && dockingSelection.status.includes('3 core atoms')
+    && document.querySelector('#docking-workbench').previousElementSibling?.id === 'build-tool-tabs'
+    && document.querySelector('#build-right-panel > .generated-card-heading span')?.textContent === 'Design workspace',
+  'prepared protein-ligand complexes expose a compact core-constrained docking setup',
+  JSON.stringify(dockingSelection));
+  let dockingReference = null;
+  try { dockingReference = await api.captureDockingReference(); }
+  catch (error) { check(false, 'browser captures the ligand core and explicit cross H-bond', error.message); }
+  if (dockingReference) check(dockingReference.coreAtomIds.length === 3
+    && dockingReference.ligandAtomCount === 3
+    && dockingReference.receptorAtomCount === 2
+    && dockingReference.hydrogenBonds.length === 1
+    && dockingReference.hydrogenBonds[0].receptorRole === 'donor',
+  'browser captures the ligand core and explicit cross H-bond', JSON.stringify(dockingReference));
+  const editedDockingLigand = api.addElementCurrent('F', 3);
+  check(editedDockingLigand.atoms === 6 && !api.current().molecule.parameterization
+    && document.querySelector('#docking-status').textContent.includes('3-atom core'),
+  'an in-browser ligand edit invalidates stale complex parameters but preserves the docking reference',
+  JSON.stringify(editedDockingLigand));
+  let dockingRun = null;
+  try { dockingRun = await api.runConstrainedDocking({ conformerCount:4, seed:20260819 }); }
+  catch (error) { check(false, 'browser completes deterministic constrained docking with a verified labbook', error.message); }
+  if (dockingRun) {
+    const dockingLabbook = api.dockingLabbook();
+    check(dockingRun.candidates >= 1 && dockingRun.feasible >= 1
+      && dockingRun.selected.feasible && Number.isFinite(dockingRun.selected.scoreKcalMol)
+      && dockingRun.selected.coreRmsdAngstrom <= 0.5
+      && dockingRun.labbook.valid && dockingRun.coordinatePayloadIncluded === false
+      && !JSON.stringify(dockingLabbook).includes('"positions"')
+      && dockingLabbook.inputs.ligand.atoms === 4
+      && document.querySelectorAll('.docking-pose').length >= 1
+      && document.querySelector('#docking-score-note').textContent.includes('not') === false,
+    'browser completes deterministic constrained docking with a verified coordinate-free audit',
+    JSON.stringify(dockingRun));
+    const dockingReplay = await api.runConstrainedDocking({ conformerCount:4, seed:20260819 });
+    check(dockingReplay.selectedCoordinatesSha256 === dockingRun.selectedCoordinatesSha256
+      && Math.abs(dockingReplay.selected.scoreKcalMol - dockingRun.selected.scoreKcalMol) < 1e-12,
+    'same docking seed reproduces the selected coordinates and score bit for bit',
+    JSON.stringify({ first:dockingRun.selectedCoordinatesSha256,
+      replay:dockingReplay.selectedCoordinatesSha256,
+      scoreDifference:dockingReplay.selected.scoreKcalMol - dockingRun.selected.scoreKcalMol }));
+    const proteinBeforeDockingApply = api.current().molecule.atoms.slice(0, 2)
+      .map((atom) => [atom.x, atom.y, atom.z]);
+    const appliedDocking = await api.applyDockingPose(0);
+    const proteinAfterDockingApply = appliedDocking.molecule.atoms.slice(0, 2)
+      .map((atom) => [atom.x, atom.y, atom.z]);
+    check(JSON.stringify(proteinBeforeDockingApply) === JSON.stringify(proteinAfterDockingApply)
+      && appliedDocking.molecule.source.docking.protocol === 'molarium-ccd-1',
+    'applying a docking pose moves only the mapped ligand and records protocol provenance');
+  }
+  document.querySelector('.mode-bar button[data-mode="view"]').click();
   const bentHydroxylFixture = {
     name:'Tyr-ligand polar-H fixture', smiles:'protein-ligand fixture', charge:0, multiplicity:1,
     atoms:[
@@ -2121,6 +2201,13 @@ const browserSuite = String.raw`(async () => {
   check(Number.isFinite(uffEnergy.finalEnergy), 'UFF fallback energy is finite', String(uffEnergy.finalEnergy));
   check(uffEnergy.unit === 'kcal/mol', 'UFF fallback reports kcal/mol', uffEnergy.unit);
 
+  if (captureDockingUi) {
+    api.loadObject(dockingFixture);
+    document.querySelector('.mode-bar button[data-mode="build"]').click();
+    api.setDockingSelection([2, 3, 4]);
+    await api.captureDockingReference();
+    await api.runConstrainedDocking({ conformerCount:4, seed:20260819 });
+  }
   const failed = checks.filter((item) => !item.passed);
   return { passed: checks.length - failed.length, total: checks.length, failed, optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics, preparationMetrics };
 })()`;

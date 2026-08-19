@@ -66,6 +66,7 @@ manifests and model cards.
 - Add atoms and fragments without creating bonds from visual proximity.
 - Edit bond lengths, bond angles, and torsions with undo and redo.
 - Run energies, minimization, molecular dynamics, and conformer searches.
+- Dock edited ligands to a captured reference core with optional required H-bonds.
 - Play saved trajectories and follow a selected residue.
 - Export structures, trajectories, clustered conformers, and preparation reports.
 
@@ -196,6 +197,25 @@ the protein coordinates held exactly fixed.
 Protein cartoon mode can show a complete 5 Å ligand pocket or only residues involved in the
 current hydrogen bonds and aromatic stacking contacts. Clicking a protein atom can keep that
 residue centered during trajectory playback.
+
+## Constrained docking
+
+Molarium CCD-1 is an experimental, independent browser workflow for edit-derived ligand series.
+Start from a prepared and parameterized protein–ligand complex, select three or four non-collinear
+ligand heavy atoms as the conserved core, and optionally require the explicit cross-component
+H-bonds visible in the reference pose. Molarium then generates deterministic ETKDGv3 conformers,
+aligns the surviving stable atom identities to the reference core, audits D–H–A geometry, and ranks
+feasible poses before infeasible ones.
+
+The receptor stays rigid. Ranking combines captured receptor/edited-ligand numeric Lennard-Jones
+and Coulomb cross terms (8 Å site, relative dielectric 4), relative MMFF94 ligand strain, and
+explicit restraint penalties. It omits receptor relaxation, solvent displacement, entropy, and
+binding-free-energy estimation. Treat the result as an experimental pose rank, not an affinity.
+
+Every run can export readable Markdown notes and a coordinate-free JSON audit containing exact
+input hashes, the immutable protocol snapshot, selections, seed, ordered hash-linked events, scores,
+and a final SHA-256. Method lineage, exclusions, tests, and the engineering decision ledger live in
+[`docking/`](./docking/).
 
 ## Protein input and preparation
 

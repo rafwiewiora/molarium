@@ -6,6 +6,10 @@ import { appendLabbookEvent, completeLabbook, createLabbook, inputProvenance,
   renderLabbookMarkdown, verifyLabbook } from './labbook.mjs';
 import { captureReferenceLigand, ensureStableAtomIds, mapReferenceCore } from './reference-core.mjs';
 import { runConstrainedDocking } from './workflow.mjs';
+import { buildReceptorSite, pairInteractionKcalMol, receptorSiteIntegrity,
+  scoreReceptorLigand } from './receptor-score.mjs';
+import { applyLigandPositions, captureCrossHydrogenBonds, createLigandPlan, dockingInputText,
+  dockingTopologyText, mapCapturedHydrogenBonds, unpackConformerStack } from './browser-adapter.mjs';
 
 const reference = Float64Array.from([0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1]);
 const candidate = Float64Array.from([4, -2, 3, 4, -1, 3, 3, -2, 3, 4, -2, 4]);
@@ -69,11 +73,24 @@ const designMolecule = { name:'design ligand', atoms:[
 ], bonds:[{ a:0, b:1, order:1 }, { a:0, b:2, order:1 }, { a:1, b:3, order:1 }] };
 ensureStableAtomIds(designMolecule, 'test');
 const captured = captureReferenceLigand(designMolecule, [0, 1, 2, 3], [0, 1, 2], 'test');
+assert.ok(captured.coreMaximumTriangleDoubleAreaAngstrom2 > 0.99);
+const collinear = { name:'collinear', atoms:[
+  { element:'C', x:0, y:0, z:0 }, { element:'C', x:1, y:0, z:0 },
+  { element:'C', x:2, y:0, z:0 },
+], bonds:[{ a:0, b:1, order:1 }, { a:1, b:2, order:1 }] };
+assert.throws(() => captureReferenceLigand(collinear, [0, 1, 2], [0, 1, 2], 'test'), /collinear/);
 const editedAtoms = designMolecule.atoms.map((atom) => ({ ...atom }));
 editedAtoms.push({ element:'C', x:3.8, y:0, z:0 });
 const mappedCore = mapReferenceCore(captured, editedAtoms);
 assert.equal(mappedCore.complete, true);
 assert.deepEqual(mappedCore.atomPairs, [[0, 0], [1, 1], [2, 2]]);
+const reorderedCore = mapReferenceCore(captured, [editedAtoms[3], editedAtoms[2], editedAtoms[0], editedAtoms[1]]);
+assert.equal(reorderedCore.complete, true);
+assert.deepEqual(reorderedCore.atomPairs, [[0, 2], [1, 3], [2, 1]]);
+const deletedCore = mapReferenceCore(captured,
+  editedAtoms.filter((atom) => atom.designAtomId !== captured.coreAtomIds[1]));
+assert.equal(deletedCore.complete, false);
+assert.deepEqual(deletedCore.missingAtomIds, [captured.coreAtomIds[1]]);
 
 const translatedGood = Float64Array.from([4, -2, 3, 5, -2, 3, 4, -1, 3, 6.8, -2, 3]);
 const translatedBad = Float64Array.from([4, -2, 3, 5, -2, 3, 4, -1, 3, 4, -2, 5.8]);
@@ -105,5 +122,131 @@ assert.deepEqual(await verifyLabbook(workflowLabbook), { valid:true, reason:null
 await assert.rejects(() => appendLabbookEvent(labbook, {
   at:'2026-08-19T12:00:05.000Z', stage:'late-note', status:'invalid', details:{},
 }), /completed labbook is immutable/);
+
+const carbon = { charge_e:0, sigma_nm:0.34, epsilon_kj:0.4 };
+const ljMinimum = pairInteractionKcalMol(carbon, carbon, 3.4 * 2 ** (1 / 6));
+assert.ok(Math.abs(ljMinimum.lennardJonesKcalMol + 0.4 / 4.184) < 1e-12);
+const oppositeCharges = pairInteractionKcalMol({ ...carbon, charge_e:0.5 },
+  { ...carbon, charge_e:-0.5 }, 4);
+const likeCharges = pairInteractionKcalMol({ ...carbon, charge_e:0.5 },
+  { ...carbon, charge_e:0.5 }, 4);
+assert.ok(oppositeCharges.coulombKcalMol < 0 && likeCharges.coulombKcalMol > 0);
+
+const siteMolecule = {
+  atoms:[
+    { element:'C', record:'ATOM', x:0, y:0, z:0 },
+    { element:'O', record:'ATOM', x:3, y:0, z:0 },
+    { element:'C', record:'ATOM', x:30, y:0, z:0 },
+    { element:'N', record:'HETATM', x:5, y:0, z:0 },
+  ],
+  parameterization:{ forcefield:'test', chargeModel:'test', system:{ nonbonded:[
+    { index:0, ...carbon }, { index:1, ...carbon, charge_e:-0.5 },
+    { index:2, ...carbon }, { index:3, ...carbon, charge_e:0.5 },
+  ] } },
+};
+const receptorSite = buildReceptorSite(siteMolecule, [3], siteMolecule.parameterization.system,
+  { radiusAngstrom:8 });
+assert.deepEqual(receptorSite.atoms.map((atom) => atom.globalAtomIndex), [0, 1]);
+assert.equal(receptorSiteIntegrity(receptorSite, siteMolecule).valid, true);
+const movedReceptor = structuredClone(siteMolecule); movedReceptor.atoms[1].x += 0.01;
+const movedReceptorIntegrity = receptorSiteIntegrity(receptorSite, movedReceptor);
+assert.equal(movedReceptorIntegrity.valid, false);
+assert.equal(movedReceptorIntegrity.changedAtoms, 1);
+assert.ok(Math.abs(movedReceptorIntegrity.maximumDisplacementAngstrom - 0.01) < 1e-12);
+const receptorScore = scoreReceptorLigand(receptorSite, Float64Array.from([5, 0, 0]),
+  [{ ...carbon, charge_e:0.5 }], { ligandStrainKcalMol:2 });
+assert.equal(receptorScore.pairCount, 2);
+assert.equal(receptorScore.weightedLigandStrainKcalMol, 2);
+assert.equal(receptorScore.interpretation, 'pose-ranking score; not a binding free energy');
+
+const singularPair = pairInteractionKcalMol(carbon, carbon, 0);
+assert.equal(singularPair.stericClash, true);
+assert.equal(singularPair.totalKcalMol, 1e6);
+await assert.rejects(async () => scoreReceptorLigand(receptorSite, Float64Array.from([5, 0, 0]),
+  [carbon], { cutoffAngstrom:0 }), /cutoff must be positive/);
+const reversedSite = { ...receptorSite, atoms:[...receptorSite.atoms].reverse() };
+const reversedScore = scoreReceptorLigand(reversedSite, Float64Array.from([5, 0, 0]),
+  [{ ...carbon, charge_e:0.5 }], { ligandStrainKcalMol:2 });
+assert.ok(Math.abs(receptorScore.energyKcalMol - reversedScore.energyKcalMol) < 1e-12);
+
+const complex = {
+  name:'test complex',
+  atoms:[
+    { element:'N', record:'ATOM', atomName:'NZ', residueName:'LYS', chain:'A', residueIndex:1,
+      x:-2, y:0, z:0 },
+    { element:'H', record:'ATOM', atomName:'HZ1', residueName:'LYS', chain:'A', residueIndex:1,
+      x:-1, y:0, z:0 },
+    { element:'O', record:'ATOM', atomName:'OD1', residueName:'ASP', chain:'A', residueIndex:2,
+      x:4, y:0, z:0 },
+    { element:'O', record:'HETATM', residueName:'LIG', atomName:'O1', x:0.8, y:0, z:0 },
+    { element:'N', record:'HETATM', residueName:'LIG', atomName:'N1', x:2, y:0, z:0 },
+    { element:'H', record:'HETATM', residueName:'LIG', atomName:'H1', x:3, y:0, z:0 },
+    { element:'C', record:'HETATM', residueName:'LIG', atomName:'C1', x:2, y:1, z:0 },
+  ],
+  bonds:[{ a:0, b:1, order:1 }, { a:4, b:5, order:1 }, { a:4, b:6, order:1 }],
+};
+const ligandGlobals = [3, 4, 5, 6];
+const ligandPlan = createLigandPlan(complex, ligandGlobals, 'adapter-test');
+assert.deepEqual(ligandPlan.globalAtomIndices, ligandGlobals);
+assert.deepEqual(ligandPlan.molecule.bonds, [{ a:1, b:2, order:1 }, { a:1, b:3, order:1 }]);
+assert.equal(new Set(ligandPlan.molecule.atoms.map((atom) => atom.designAtomId)).size, 4);
+const capturedHbonds = captureCrossHydrogenBonds(complex, ligandGlobals, [
+  { donor:0, hydrogen:1, acceptor:3, distance:1.8, cosine:-1 },
+  { donor:4, hydrogen:5, acceptor:2, distance:1, cosine:-1 },
+  { donor:0, hydrogen:1, acceptor:2, distance:5, cosine:-1 },
+]);
+assert.equal(capturedHbonds.length, 2);
+assert.deepEqual(capturedHbonds.map((entry) => entry.receptorRole), ['donor', 'acceptor']);
+const mappedHbonds = mapCapturedHydrogenBonds(capturedHbonds, ligandPlan.molecule.atoms);
+assert.equal(mappedHbonds.complete, true);
+assert.equal(mappedHbonds.constraints[0].acceptor.atomIndex, 0);
+assert.equal(mappedHbonds.constraints[1].donor.atomIndex, 1);
+const noRequiredHbonds = mapCapturedHydrogenBonds(capturedHbonds, ligandPlan.molecule.atoms, []);
+assert.equal(noRequiredHbonds.complete, true);
+assert.deepEqual(noRequiredHbonds.constraints, []);
+const missingHbondAtom = mapCapturedHydrogenBonds(capturedHbonds,
+  ligandPlan.molecule.atoms.filter((atom) => atom.atomName !== 'H1'));
+assert.equal(missingHbondAtom.complete, false);
+assert.equal(missingHbondAtom.missing[0].constraintId, capturedHbonds[1].id);
+const stack = Float32Array.from([...Array(12).keys(), ...Array(12).keys()].map(Number));
+assert.deepEqual(unpackConformerStack(stack, 4).map((entry) => entry.length), [12, 12]);
+const moved = structuredClone(complex);
+applyLigandPositions(moved, ligandGlobals, Float64Array.from([
+  10, 0, 0, 11, 0, 0, 12, 0, 0, 13, 0, 0,
+]));
+assert.equal(moved.atoms[3].x, 10);
+assert.equal(moved.atoms[6].x, 13);
+assert.equal(moved.atoms[0].x, -2);
+assert.match(dockingInputText(complex, ligandGlobals), /adapter-test:HETATM/);
+const ligandTopology = dockingTopologyText(complex, ligandGlobals);
+assert.equal(dockingTopologyText(moved, ligandGlobals), ligandTopology);
+const changedTopology = structuredClone(complex); changedTopology.atoms[3].element = 'S';
+assert.notEqual(dockingTopologyText(changedTopology, ligandGlobals), ligandTopology);
+
+const editedFiveAtomConformer = Float64Array.from([
+  4, -2, 3, 5, -2, 3, 4, -1, 3, 6.8, -2, 3, 7.5, -2, 3,
+]);
+const editedAtomCountRun = await runConstrainedDocking({
+  referencePositions:captured.positions,
+  candidateConformers:[editedFiveAtomConformer],
+  coreAtomPairs:mappedCore.atomPairs,
+  protocol:MOLARIUM_CCD_PROTOCOL,
+  physicalScore:() => -1,
+});
+assert.equal(editedAtomCountRun.selected.positions.length, 15);
+await assert.rejects(() => runConstrainedDocking({
+  referencePositions:captured.positions,
+  candidateConformers:[editedFiveAtomConformer, Float64Array.from([0, 0, 0])],
+  coreAtomPairs:mappedCore.atomPairs,
+  protocol:MOLARIUM_CCD_PROTOCOL,
+  physicalScore:() => -1,
+}), /must contain 15 finite coordinates/);
+await assert.rejects(() => runConstrainedDocking({
+  referencePositions:captured.positions, candidateConformers:[],
+  coreAtomPairs:mappedCore.atomPairs, protocol:MOLARIUM_CCD_PROTOCOL, physicalScore:() => -1,
+}), /At least one candidate/);
+const incompleteSystem = structuredClone(siteMolecule.parameterization.system);
+incompleteSystem.nonbonded[1].index = 0;
+assert.throws(() => buildReceptorSite(siteMolecule, [3], incompleteSystem), /no nonbonded term for atom 1/);
 
 console.log('Molarium CCD-1 constraints and labbook: PASS');

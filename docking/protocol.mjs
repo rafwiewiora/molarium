@@ -1,10 +1,10 @@
 export const MOLARIUM_CCD_PROTOCOL = Object.freeze({
   schema: 'molarium.docking.protocol/v1',
   id: 'molarium-ccd-1',
-  version: '0.1.0',
+  version: '0.2.0',
   name: 'Molarium CCD-1',
   title: 'Reference-core and required H-bond constrained docking',
-  status: 'experimental-independent-implementation',
+  status: 'experimental-browser-implementation',
   summary: 'Deterministic ligand-pose evaluation with a reference-core restraint and explicit hydrogen-bond geometry.',
   lineage: Object.freeze([
     Object.freeze({
@@ -64,19 +64,23 @@ export const MOLARIUM_CCD_PROTOCOL = Object.freeze({
   }),
   sampling: Object.freeze({
     seed: 20260819,
-    requestedConformers: 64,
+    requestedConformers: 16,
     receptor: 'rigid',
     ligand: 'rigid-body and rotatable-bond degrees of freedom',
     stages: Object.freeze([
       'ETKDGv3 ligand conformers',
       'reference-core alignment',
-      'constraint-aware pose perturbation',
-      'local ligand and optional pocket refinement',
+      'explicit required H-bond audit',
+      'transparent rigid-receptor cross-term scoring with relative ligand strain',
       'constraint audit and transparent reranking',
     ]),
   }),
   scoring: Object.freeze({
     identity: 'Molarium transparent physical score plus explicit restraint penalties',
+    receptorSiteRadiusAngstrom: 8,
+    relativeDielectric: 4,
+    ligandStrain: 'relative RDKit MMFF94 with UFF fallback',
+    interpretation: 'pose-ranking score; not a binding free energy',
     feasiblePosesRankFirst: true,
     notEquivalentTo: Object.freeze(['GlideScore', 'ICM Score']),
   }),
@@ -84,8 +88,8 @@ export const MOLARIUM_CCD_PROTOCOL = Object.freeze({
     constraintGeometry: 'implemented',
     deterministicRanking: 'implemented',
     tamperEvidentLabbook: 'implemented',
-    browserPoseGeneration: 'not-yet-integrated',
-    browserPocketRefinement: 'not-yet-integrated',
+    browserPoseGeneration: 'implemented-rigid-receptor-etkdgv3',
+    browserPocketRefinement: 'not-included-in-v0.2',
   }),
 });
 

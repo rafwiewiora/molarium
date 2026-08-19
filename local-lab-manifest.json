@@ -86,6 +86,41 @@
       "sha256": "813445a8b8459f6c44e65e572d4d674d58010fe7acd225ff06e054a3105abb94"
     },
     {
+      "path": "docking/browser-adapter.mjs",
+      "bytes": 7580,
+      "sha256": "43b5313ff193bda66f138022ece594e218695196a7eee240f905c572791cfc2d"
+    },
+    {
+      "path": "docking/constraints.mjs",
+      "bytes": 8207,
+      "sha256": "6459df06d0dc9f26fa59fcb9ff75aab3709a3db782bded572745e0dada2d2da4"
+    },
+    {
+      "path": "docking/labbook.mjs",
+      "bytes": 9397,
+      "sha256": "dd2e8d32fd30364e4a4af9759e7ab10aa8c10b04da45db80850f8d002baa5a00"
+    },
+    {
+      "path": "docking/protocol.mjs",
+      "bytes": 4820,
+      "sha256": "28851a91493ccf68d871bdf504ca709e755ce4863366a7f98c2b5aaecd36d7a9"
+    },
+    {
+      "path": "docking/receptor-score.mjs",
+      "bytes": 7329,
+      "sha256": "3372525141d49a50d93e80bd3975dfb07b0bb00a78cf3834409c16e66166653a"
+    },
+    {
+      "path": "docking/reference-core.mjs",
+      "bytes": 3856,
+      "sha256": "e82b677e0276780a9313af46f71054d9c00d188d06c2d7d3189d3cc48dbd0f7a"
+    },
+    {
+      "path": "docking/workflow.mjs",
+      "bytes": 5089,
+      "sha256": "d3ab9494dbd1671a29af62d350f617fff8bf124ada97fdcce1e47420326b4cd9"
+    },
+    {
       "path": "openmm-worker.js",
       "bytes": 21106,
       "sha256": "77cc3deee1e05b1aaf11681d1de123a491313749ee2e09dffc38169e23c52348"
