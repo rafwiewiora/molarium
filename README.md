@@ -231,9 +231,11 @@ This path is for browser design and cleanup. It is not a replacement for a produ
 preparation workflow. Arbitrary proteins currently use experimental Sage/Gasteiger parameters.
 Use an officially prepared numeric System for quantitative simulation.
 
-The bundled Rosemary examples provide hydrogen-complete, preparameterized protein Systems.
-The Trp-cage fixture is available in the **Fold Protein** panel. Ubiquitin is available as a
-prepared benchmark fixture in [`openff/`](./openff/).
+The bundled Trp-cage and ubiquitin fixtures are hydrogen-complete protein Systems prepared outside
+the browser with the official OpenFF Rosemary/NAGL stack. They demonstrate that Molarium's browser
+engines can correctly execute a properly prepared protein System; they do not demonstrate
+browser-native Rosemary parameterization of an arbitrary protein. Trp-cage is available in the
+**Fold Protein** panel, and ubiquitin is available as a benchmark fixture in [`openff/`](./openff/).
 
 ## ANI-2x limits
 
@@ -251,8 +253,7 @@ service, then runs model inference locally with ONNX Runtime WebGPU or WASM.
 
 The predictor uses 64- and 128-residue model buckets. The large model files are downloaded as
 versioned, hash-checked runtime assets. It uses one checkpoint, three recycles, no templates, and
-no Amber relaxation. This is a narrow experimental predictor, not a general OpenFold 3
-implementation.
+no Amber relaxation.
 
 Model provenance is in
 [`openfold-export-results/trained/MODEL-CARD.md`](./openfold-export-results/trained/MODEL-CARD.md).
