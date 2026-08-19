@@ -27,13 +27,13 @@
     },
     {
       "path": "molarium-workspace.css",
-      "bytes": 8551,
-      "sha256": "646512fbf455fe67f2dba261ea2f4c3e18154d4dadd8b49d14fa5d6f4bc0e70e"
+      "bytes": 8696,
+      "sha256": "9c0a75fc2e5eee04ee71ef7fec6a352ee4678355ffcaad99d38f9c74ac0d7a4e"
     },
     {
       "path": "index.html",
-      "bytes": 47500,
-      "sha256": "4b300382eb0eb17fc64fd3e5b3d1a840b26fa06c41ef2373bdcb4670ff8517b3"
+      "bytes": 48417,
+      "sha256": "75010c8799ca53c6051ee88bd920fe8ee85a0e5889ed5d2cc96e3d68283eda3c"
     },
     {
       "path": "local-lab-test.js",
@@ -62,8 +62,8 @@
     },
     {
       "path": "styles.css",
-      "bytes": 49154,
-      "sha256": "c73dcc3f5f21ddef1f21398274c1a759b089513419c558b4582bf5e91dc980c5"
+      "bytes": 49619,
+      "sha256": "1357c624085ae030aa01ffe37548543f27f9e55c5a63a63f021ad6730ae4f1c8"
     },
     {
       "path": "rdkit-worker.js",

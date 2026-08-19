@@ -57,6 +57,12 @@ button { cursor: pointer; }
   border-radius: 6px; transition: .15s ease;
 }
 .app-header-links a:hover { background: #f1f5f9; color: var(--ink); }
+.app-header-links .github-link {
+  display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line-strong);
+  background: #f8fafc; color: var(--ink); font-weight: 700;
+}
+.app-header-links .github-link svg { width: 15px; height: 15px; fill: currentColor; flex: none; }
+.app-header-links .github-link:hover { border-color: var(--ink); background: var(--ink); color: white; }
 
 .network-policy-button {
   margin-left: auto; display: inline-flex; align-items: center; gap: 6px; min-height: 30px;
@@ -681,6 +687,7 @@ select {
     align-items: stretch; gap: 2px; padding: 8px; border: 1px solid var(--line); border-radius: 10px;
     background: rgba(255,255,255,.98); box-shadow: var(--shadow);
   }
+  .app-header-links.mobile-open .github-link { justify-content: center; }
   .menu-button { display: grid; }
   .network-policy-button { margin-left: auto; }
   .app-main { grid-template-columns: 1fr 1fr; grid-template-areas: "viewer viewer" "left right"; grid-template-rows: 66vh auto; }

@@ -103,6 +103,12 @@ const browserSuite = String.raw`(async () => {
     .map((link) => link.textContent.trim());
   check(headerDestinations.join('|') === 'Methods|Validation|Credits',
     'header exposes Molarium-specific methods, validation and credits destinations');
+  const githubLink = document.querySelector('.app-header-links .github-link');
+  check(githubLink?.href === 'https://github.com/rafwiewiora/molarium'
+    && githubLink.target === '_blank'
+    && githubLink.rel.split(/\s+/).includes('noopener')
+    && githubLink.querySelector('svg'),
+    'header exposes the public Molarium GitHub repository with an accessible icon link');
   check(document.querySelector('.app-brand-mark[data-molarium-mark]')?.tagName === 'svg'
     && document.querySelector('.app-brand-name')?.textContent === 'MOLARIUM'
     && document.querySelector('link[rel="icon"]')?.getAttribute('href') === './assets/molarium-mark.svg',

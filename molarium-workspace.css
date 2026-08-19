@@ -53,6 +53,8 @@ body.molarium-workspace {
   font-family: ui-sans-serif, system-ui, sans-serif;
   font-size: 12px;
 }
+.molarium-workspace .app-header-links .github-link { color: #16202b; }
+.molarium-workspace .app-header-links .github-link:hover { color: #fff; }
 
 .molarium-workspace .app-main {
   position: relative;
