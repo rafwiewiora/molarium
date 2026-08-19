@@ -1,0 +1,47 @@
+# Installed dependencies
+node_modules/
+**/node_modules/
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# JavaScript and application build output
+.next/
+.vinext/
+.wrangler/
+.vercel/
+coverage/
+dist/
+r2-assets-manifest.local.json
+!rdkit/dist/
+!rdkit/dist/RDKit_minimal.js
+!rdkit/dist/RDKit_minimal.wasm
+out/
+work/
+outputs/
+
+# Local/editor files
+.DS_Store
+*.swp
+*.swo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Paper build intermediates (source and checked-in PDFs remain tracked)
+paper/build/
+
+# Downloaded public model assets
+mlip/models/*.onnx
+openfold-export-results/trained/models/

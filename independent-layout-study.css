@@ -1,0 +1,168 @@
+/* A CSS-only study that makes Molarium read as an instrument workspace rather
+   than a conventional three-column website. It is loaded only by
+   redesign-server.js and does not affect the primary interface. */
+
+body.independent-layout-study {
+  --accent: #6d5bd0;
+  --accent-soft: #f0edff;
+  --study-panel: rgba(252, 252, 253, .94);
+  background: #eef0f3;
+}
+
+.independent-layout-study .app-shell {
+  position: relative;
+  display: block;
+  background: #eef0f3;
+}
+
+/* Turn the website header into a compact product plaque. */
+.independent-layout-study .app-header {
+  position: absolute;
+  z-index: 45;
+  top: 14px;
+  left: 14px;
+  width: 302px;
+  height: 48px;
+  border: 1px solid #d2d7de;
+  border-radius: 13px;
+  background: rgba(252, 252, 253, .94);
+  box-shadow: 0 7px 24px rgba(29, 34, 43, .11);
+}
+.independent-layout-study .app-header-bar { height: 46px; padding: 0 14px; }
+.independent-layout-study .app-brand { display: flex; align-items: center; gap: 9px; }
+.independent-layout-study .app-brand::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+.independent-layout-study .app-brand::after {
+  content: "computational workspace";
+  margin-left: auto;
+  color: #8b93a1;
+  font-size: 8px;
+  letter-spacing: .06em;
+}
+.independent-layout-study .app-header-links,
+.independent-layout-study .menu-button { display: none; }
+
+.independent-layout-study .app-main {
+  position: absolute;
+  inset: 0;
+  min-height: 100dvh;
+  background: #eef0f3;
+}
+.independent-layout-study .viewer-container {
+  background:
+    linear-gradient(rgba(80, 88, 101, .035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80, 88, 101, .035) 1px, transparent 1px),
+    radial-gradient(circle at 52% 45%, #fff 0 43%, #f8f9fa 74%, #eff1f4 100%);
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+/* Keep controls as independent tools around a canvas, with deliberate
+   asymmetry between workflow and inspection. */
+.independent-layout-study .panel {
+  top: 76px;
+  bottom: 14px;
+  width: 302px;
+}
+.independent-layout-study .panel-left { left: 14px; }
+.independent-layout-study .panel-right {
+  top: 14px;
+  right: 14px;
+  width: 354px;
+}
+.independent-layout-study .panel-right:has(#result-card:not(.hidden)) { width: 410px; }
+.independent-layout-study .card {
+  border-color: #d4d9df;
+  border-radius: 13px;
+  background: var(--study-panel);
+  box-shadow: 0 7px 24px rgba(29, 34, 43, .10);
+}
+
+/* The mode selector becomes a vertical tool rail instead of a centered tab. */
+.independent-layout-study .mode-bar {
+  top: 50%;
+  left: 330px;
+  flex-direction: column;
+  gap: 3px;
+  padding: 5px;
+  border-color: #cbd1d9;
+  border-radius: 13px;
+  transform: translateY(-50%);
+}
+.independent-layout-study .mode-bar button {
+  min-width: 62px;
+  padding: 10px 8px;
+  border-radius: 8px;
+}
+.independent-layout-study .mode-bar button.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.independent-layout-study .primary-button {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+.independent-layout-study .primary-button:hover { border-color: #5b49bd; background: #5b49bd; }
+.independent-layout-study input[type="checkbox"] { accent-color: var(--accent); }
+.independent-layout-study .tab.active { color: #5746b4; }
+.independent-layout-study .tab.active::after { background: var(--accent); }
+
+/* Actions live near the canvas edge, rather than forming a centered footer. */
+.independent-layout-study .viewer-toolbar {
+  right: 382px;
+  bottom: 16px;
+  left: auto;
+  max-width: calc(100% - 730px);
+  transform: none;
+}
+.independent-layout-study .canvas-help {
+  bottom: 18px;
+  left: 330px;
+  transform: none;
+}
+
+@media (max-width: 1100px) {
+  .independent-layout-study .app-header { width: 270px; }
+  .independent-layout-study .panel { width: 270px; }
+  .independent-layout-study .mode-bar { left: 286px; }
+  .independent-layout-study .panel-right { width: 320px; }
+  .independent-layout-study .viewer-toolbar { right: 340px; max-width: calc(100% - 650px); }
+  .independent-layout-study .canvas-help { display: none; }
+}
+
+@media (max-width: 900px) {
+  .independent-layout-study .app-shell { display: flex; }
+  .independent-layout-study .app-header {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: auto;
+    height: 54px;
+    border-width: 0 0 1px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .independent-layout-study .app-header-bar { height: 54px; }
+  .independent-layout-study .app-main { position: relative; inset: auto; min-height: 0; }
+  .independent-layout-study .panel,
+  .independent-layout-study .panel-right,
+  .independent-layout-study .panel-right:has(#result-card:not(.hidden)) { width: auto; }
+  .independent-layout-study .mode-bar {
+    top: 8px;
+    left: 50%;
+    flex-direction: row;
+    transform: translateX(-50%);
+  }
+  .independent-layout-study .viewer-toolbar {
+    right: auto;
+    left: 50%;
+    max-width: calc(100% - 20px);
+    transform: translateX(-50%);
+  }
+}

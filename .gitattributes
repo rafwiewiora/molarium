@@ -1,0 +1,4 @@
+* text=auto eol=lf
+*.wasm binary
+*.mol binary
+*.pdb binary

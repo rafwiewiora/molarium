@@ -1,0 +1,81 @@
+{
+  "date": "2026-08-17",
+  "command": "node stormm/openmm-reference-validation.mjs",
+  "openmmVersion": "8.2",
+  "openmmPlatform": "Reference (Molarium WebAssembly bridge)",
+  "webgpu": "Dawn WebGPU adapter on the laptop GPU",
+  "passed": true,
+  "tolerances": {
+    "energyRelative": 0.0003,
+    "energyAbsoluteKcalPerMol": 0.0002,
+    "forceRelativeRms": 0.0005
+  },
+  "cases": [
+    {
+      "name": "OPLS-like united-atom C16",
+      "atoms": 16,
+      "totalEnergyAbsoluteErrorKcalPerMol": 0.000002205604633376268,
+      "forceRelativeRms": 0.0000066553992292814406,
+      "maximumForceAbsoluteErrorKcalPerMolAngstrom": 0.00006267648969981998
+    },
+    {
+      "name": "flexible water 27",
+      "atoms": 81,
+      "totalEnergyAbsoluteErrorKcalPerMol": 0.00001679505211882315,
+      "forceRelativeRms": 0.0000036515620902240964,
+      "maximumForceAbsoluteErrorKcalPerMolAngstrom": 0.00009175169050656962
+    },
+    {
+      "name": "charged LJ dimer",
+      "atoms": 2,
+      "totalEnergyAbsoluteErrorKcalPerMol": 0.000005589410555728591,
+      "forceRelativeRms": 5.033427550310037e-7,
+      "maximumForceAbsoluteErrorKcalPerMolAngstrom": 0.000002179521465972556
+    },
+    {
+      "name": "general parameterized System",
+      "atoms": 4,
+      "totalEnergyAbsoluteErrorKcalPerMol": 0.000005629829544773202,
+      "forceRelativeRms": 9.363555692522876e-7,
+      "maximumForceAbsoluteErrorKcalPerMolAngstrom": 0.00005741324461894237
+    },
+    {
+      "name": "general parameterized System OBC2/ACE",
+      "atoms": 4,
+      "implicitEnergyAbsoluteErrorKcalPerMol": 0.000004406487416730442,
+      "totalEnergyAbsoluteErrorKcalPerMol": 0.0000214562969773624,
+      "forceRelativeRms": 6.174795484162598e-7,
+      "maximumForceAbsoluteErrorKcalPerMolAngstrom": 0.000044642552133211666
+    }
+  ],
+  "steadyStateBenchmark": {
+    "samplesPerCase": 3,
+    "method": "Median wall time after warm-up; equal aggregate replica-steps; integration only; no result readback or context construction",
+    "cases": [
+      {
+        "name": "C16 single system",
+        "webgpuReplicaStepsPerSecond": 8742.839750850924,
+        "openmmReferenceStepsPerSecond": 116297.37984329119,
+        "webgpuSpeedup": 0.07517658405229556
+      },
+      {
+        "name": "C16 stack of 1024 homogeneous replicas",
+        "webgpuReplicaStepsPerSecond": 1561582.6273932662,
+        "openmmReferenceStepsPerSecond": 151942.62887305266,
+        "webgpuSpeedup": 10.277449054129248
+      },
+      {
+        "name": "water27 single system",
+        "webgpuReplicaStepsPerSecond": 5444.478159072971,
+        "openmmReferenceStepsPerSecond": 19051.70155509531,
+        "webgpuSpeedup": 0.28577385297203883
+      },
+      {
+        "name": "water27 stack of 256 homogeneous replicas",
+        "webgpuReplicaStepsPerSecond": 544528.3136217555,
+        "openmmReferenceStepsPerSecond": 22629.414172201024,
+        "webgpuSpeedup": 24.062855073406105
+      }
+    ]
+  }
+}

@@ -1,0 +1,378 @@
+\documentclass[11pt]{article}
+
+% Keep the preprint close to standard LaTeX so that it remains easy to submit
+% to arXiv and straightforward to restyle for a journal later.
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[section]{placeins}
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{csquotes}
+\usepackage[numbers,sort&compress]{natbib}
+
+% Load hyperref late. arXiv's TeX Live documentation recommends letting it
+% choose its own driver.
+\usepackage[
+  colorlinks=true,
+  linkcolor=MidnightBlue,
+  citecolor=MidnightBlue,
+  urlcolor=MidnightBlue,
+  pdftitle={Molecular design tools are free now},
+  pdfauthor={Anonymous},
+  pdfsubject={Browser-native molecular design preprint},
+  pdfkeywords={molecular design, WebAssembly, WebGPU, molecular mechanics}
+]{hyperref}
+
+\graphicspath{{figures/}}
+
+\newcommand{\molarium}{\textsc{Molarium}}
+\newif\ifdraft
+\draftfalse % Change to \drafttrue to show authoring notes in the PDF.
+\newcommand{\draftnote}[1]{%
+  \ifdraft
+    \par\noindent
+    \colorbox{yellow!20}{%
+      \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+        \textbf{Draft note:} #1%
+      }%
+    }%
+    \par
+  \fi
+}
+
+\title{Molecular design tools are free now}
+\author{Anonymous}
+% Use a fixed date: arXiv may rebuild source, which makes \today unstable.
+\date{Preprint --- August 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Molecular design software no longer has to begin with procurement, a remote
+account, or a specialist workstation installation.
+Modern browsers can parse and render molecular structures, preserve chemical
+topology during interactive editing, and execute accelerated numerical kernels
+without sending a structure to a server.
+We describe \molarium, a browser-native molecular workspace that accepts XYZ and
+SMILES input, supports topology-aware fragment construction, and runs local
+molecular-mechanics calculations through JavaScript, WebGPU, and OpenMM 8.2
+compiled to WebAssembly.
+The system is a concrete case study for a broader claim: a useful baseline of
+molecular design is now free at the points of access, installation, and data
+custody.
+``Free'' does not mean that every relevant method is open, equally available on
+all hardware, or suitable for publication-quality prediction.
+The current generic force field and small-molecule GPU path are intended for
+interactive exploration.
+We therefore pair the access claim with an explicit validation program covering
+chemical invariants, cross-backend numerical agreement, performance, and browser
+portability.
+This framing separates what is already broadly available from the scientific and
+infrastructural work still required to make molecular computation genuinely
+universal.
+\end{abstract}
+
+\noindent\textbf{Keywords:}
+molecular design; scientific software; WebAssembly; WebGPU; molecular mechanics;
+browser computing
+
+\draftnote{Replace the author metadata and decide whether this is primarily a
+  software paper, a perspective, or an empirical access study. The present draft
+  treats \molarium{} as a case study inside a broader position paper.}
+
+\section{Introduction}
+\label{sec:introduction}
+
+For much of the history of computational chemistry, using a molecular design
+tool meant acquiring a license, installing a substantial native software stack,
+learning a remote computing environment, or some combination of the three.
+These requirements were not merely inconveniences.
+They influenced who could inspect a structure, test an idea, reproduce a
+calculation, and teach with the same tools used in research.
+
+That boundary has shifted.
+WebAssembly brings portable compiled code to the browser~\cite{haas2017webassembly},
+while WebGPU exposes local accelerators~\cite{w3c2025webgpu}.
+Established scientific engines can also be reused in new environments; OpenMM is
+one example~\cite{eastman2017openmm}.
+Browser molecular graphics are already well established~\cite{rose2015ngl}.
+The newer opportunity is to place editing and calculation beside visualization
+without adding a remote service boundary.
+
+This paper advances a deliberately provocative thesis: molecular design tools
+are free now.
+The useful version of that thesis is narrower than the title and more testable.
+A person with a contemporary browser can now access a meaningful baseline of
+molecular construction, visualization, and local computation without paying at
+the point of use, installing a native scientific stack, or surrendering molecular
+data to a hosted calculation service.
+
+We examine that claim through \molarium, a browser-native molecular workspace.
+The contribution is not a claim that browser software has displaced
+high-accuracy quantum chemistry, production molecular dynamics, or expert
+modeling workflows.
+Instead, it is threefold:
+
+\begin{enumerate}
+  \item a precise account of what ``free'' can mean for scientific software;
+  \item a reference architecture for local, browser-based molecular design; and
+  \item a validation framework that makes the limits of such a system visible.
+\end{enumerate}
+
+\section{What does \enquote{free} mean?}
+\label{sec:free}
+
+Price is only one barrier to molecular computation.
+We distinguish four freedoms that can be evaluated independently.
+
+\paragraph{Free to access.}
+The user does not pay a fee or need an institutional entitlement before the
+first useful interaction.
+
+\paragraph{Free from installation.}
+The application opens from a URL and does not require the user to configure a
+compiler, Python environment, GPU toolkit, or native molecular-simulation stack.
+Downloading web assets still constitutes installation in a technical sense, but
+the browser makes that process automatic and disposable.
+
+\paragraph{Free to keep data local.}
+Structures and trajectories need not cross a service boundary for supported
+operations.
+This property matters for unpublished compounds, classroom use, and settings in
+which connectivity is intermittent or policy constrains data transfer.
+
+\paragraph{Free to inspect and modify.}
+This is the traditional software-freedom question, and it depends on licensing,
+source availability, and the licenses of bundled components.
+It must not be inferred from zero price or browser delivery.
+
+The title is therefore a hypothesis about a practical access threshold, not a
+claim that all molecular design software is costless, open source, or free of
+operational constraints.
+The four-part definition also supplies a more useful evaluation target than a
+binary label.
+
+\section{A browser-native molecular workspace}
+\label{sec:system}
+
+\subsection{Interaction and molecular representation}
+
+\molarium{} presents a three-panel workspace for entering, constructing, viewing,
+and calculating on molecules.
+It accepts XYZ coordinates and SMILES strings, supports file upload, and provides
+a searchable fragment builder.
+Initial three-dimensional geometry is seeded from local chemical templates:
+aromatic groups are planar, saturated carbon centers are tetrahedral, neutral
+amines are pyramidal, and divalent oxygen and sulfur centers are bent.
+
+Build operations preserve explicit molecular topology.
+Adding an atom next to an existing atom replaces an available hydrogen and adds
+one bond; adding it in open space begins a separate saturated component.
+The editor does not regenerate bonds from visual proximity, and it rejects edits
+that violate its valence rules.
+This separation between topology and rendering is essential: a molecular editor
+must not silently change the object being studied merely because two projected
+atoms appear close together.
+
+The viewer uses an outlined ball-and-stick representation with element-specific
+colors and explicit bond-order lanes.
+Its virtual trackball uses quaternion rotation, and a rotation-invariant
+three-dimensional fit prevents apparent zoom changes during manipulation.
+
+\subsection{Local calculation backends}
+
+All supported calculations execute locally in workers outside the rendering
+thread.
+The lightweight JavaScript path provides immediate geometry cleanup.
+A browser-native WebGPU worker evaluates energy, relaxes geometry, and runs short
+single-precision dynamics.
+An OpenMM 8.2 WebAssembly worker provides a double-precision path on the
+Reference platform for energies, L-BFGS minimization, and short dynamics.
+
+Both workers receive the same browser-assigned OpenFF Sage 2.1.0 valence and
+van der Waals terms and explicitly labelled RDKit Gasteiger partial charges.
+The WebGPU worker is a direct Sage evaluator rather than an OpenMM Platform;
+OpenMM Reference serves as its double-precision compatibility oracle.
+The WebGPU path uses analytical, atom-centric forces with compact valence
+incidence and sparse nonbonded-exception data.
+It is intended for responsive cleanup and exploratory trajectories, not for
+publication-quality energetics.
+
+Calculation results retain a compact trajectory.
+An energy plot and frame slider allow the user to inspect saved geometries in the
+same viewer, making calculation history an interactive object rather than a log
+file hidden behind the interface.
+
+\subsection{Machine-learning feasibility boundary}
+
+The repository also contains an experimental browser export of OpenFold, whose
+reference implementation is a trainable reimplementation of
+AlphaFold2~\cite{ahdritz2024openfold}.
+The experiment dispatches an Evoformer block and StructureModule through ONNX
+Runtime Web and compares WebGPU output with an in-browser WebAssembly path.
+Its exported models use untrained random weights.
+It demonstrates an execution route, not a usable structure predictor, and is not
+part of the current molecular-design claim.
+
+\section{Evaluation plan}
+\label{sec:evaluation}
+
+A paper about access still needs conventional evidence of correctness and
+performance.
+Table~\ref{tab:evaluation} defines the minimum evaluation needed to turn this
+design report into an empirical result.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Planned evaluation. Numerical thresholds and the device/browser matrix
+    should be fixed before running the final benchmark.}
+  \label{tab:evaluation}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.05}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.20\linewidth}
+                       >{\raggedright\arraybackslash}p{0.34\linewidth}
+                       >{\raggedright\arraybackslash}p{0.35\linewidth}@{}}
+    \toprule
+    Dimension & Test & Report \\
+    \midrule
+    Chemical integrity &
+      Parse, edit, attach fragments, minimize, and replay trajectories for a
+      curated molecule set &
+      Valence violations, topology changes, stereochemical limitations, and
+      failing structures \\
+    Numerical agreement &
+      Compare energies and final coordinates across JavaScript, WebGPU, and
+      OpenMM paths where their models overlap &
+      Absolute and relative energy differences, coordinate RMSD, convergence,
+      and precision sensitivity \\
+    Performance &
+      Measure cold start, first result, minimization throughput, and trajectory
+      throughput over molecule size &
+      Median and tail latency, memory use, device class, and thermal conditions \\
+    Portability &
+      Run the same versioned test suite in supported browser/operating-system
+      combinations &
+      Feature availability, pass rate, fallbacks, and reproducible failure logs \\
+    Access &
+      Audit the steps and external dependencies between a new user and each
+      capability &
+      Fees, accounts, downloads, network requests, local-data guarantees, and
+      licenses \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The existing browser regression suite is a starting point rather than the final
+dataset.
+The benchmark should be versioned, machine-readable, and runnable independently
+of the prose manuscript.
+Figures and tables should be generated from committed result files so that the
+reported values can be traced back to a specific application revision, browser
+version, and hardware configuration.
+
+\draftnote{Add the molecule panel, acceptance thresholds, browser/device matrix,
+  and measured results. Do not promote a test from ``planned'' to ``validated''
+  without an archived machine-readable output.}
+
+\FloatBarrier
+
+\section{Limits and failure modes}
+\label{sec:limits}
+
+Browser delivery removes some barriers and introduces others.
+WebGPU availability and performance vary by browser, operating system, adapter,
+and driver.
+Mobile thermal limits and memory pressure can make a nominally supported
+calculation impractical.
+Initial application assets must still be transferred and cached, and a URL is
+only durable if its hosting and dependency supply chain are maintained.
+
+Scientific limits are more important.
+A compact generic force field cannot supply the accuracy, chemical perception,
+sampling depth, or uncertainty estimates required for many research conclusions.
+The present system covers a restricted element set and small molecules, and its
+interactive trajectories do not substitute for a validated simulation protocol.
+SMILES-to-three-dimensional initialization is useful for interaction but does not
+establish protonation state, tautomeric state, stereochemistry, or a physically
+representative conformational ensemble in every case.
+
+Finally, privacy is an architectural property that must be verified, not merely
+asserted.
+Local calculation can coexist with analytics, remote fonts, crash reporting, or
+other network requests.
+A release supporting the data-custody claim should include a network audit,
+content-security policy, dependency inventory, and an offline test.
+
+\section{Discussion}
+\label{sec:discussion}
+
+The browser is becoming a credible lowest common denominator for scientific
+interaction.
+Its importance is not that it wins every benchmark against a native application.
+It is that one executable document can combine explanation, direct manipulation,
+and computation on machines that people already possess.
+
+This changes the useful comparison.
+The question is no longer whether a browser can reproduce the largest or most
+accurate molecular workflow.
+It is which useful workflows can cross the zero-install, local-data threshold,
+how their limitations are communicated, and when a user should graduate to a
+specialized engine.
+A trustworthy tool should make that boundary obvious in the interface and in its
+exported results.
+
+The word ``free'' also creates an obligation.
+If an application is free only while a particular host, browser feature, or
+volunteer maintainer persists, access remains fragile.
+Reproducible builds, permissive component licenses, archival releases, offline
+operation, and export to standard molecular formats are therefore part of the
+scientific design, not administrative details.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+A useful subset of molecular design can now begin in an ordinary browser, run on
+local hardware, and preserve local custody of molecular structures.
+\molarium{} demonstrates this threshold for molecular construction, visualization,
+and exploratory mechanics while exposing clear limits in force-field fidelity,
+system size, and platform coverage.
+
+The strongest form of the paper's claim will not come from rhetoric.
+It will come from a public artifact, a cross-platform validation set, transparent
+failure reporting, and a durable licensing and archival story.
+Those are the next steps required to turn ``molecular design tools are free now''
+from a provocative title into a reproducible scientific statement.
+
+\section*{Code and data availability}
+
+The implementation and test suite accompany this manuscript in the \molarium{}
+repository.
+A versioned public archive, software license, and benchmark dataset are required
+before public release.
+
+\ifdraft
+\section*{Author contributions}
+
+\draftnote{Add a CRediT contribution statement.}
+
+\section*{Competing interests}
+
+\draftnote{Add the authors' competing-interest declaration.}
+
+\section*{Acknowledgements}
+
+\draftnote{Add funding, compute, software, and individual acknowledgements.}
+\fi
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}

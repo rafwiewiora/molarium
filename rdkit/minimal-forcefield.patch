@@ -1,0 +1,72 @@
+diff --git a/Code/MinimalLib/CMakeLists.txt b/Code/MinimalLib/CMakeLists.txt
+index 6ac61ba..ff43bbe 100644
+--- a/Code/MinimalLib/CMakeLists.txt
++++ b/Code/MinimalLib/CMakeLists.txt
+@@ -6,7 +6,9 @@ if(RDK_BUILD_MINIMAL_LIB)
+         "CIPLabeler;MolDraw2D;Depictor;"
+         "Descriptors;SubstructMatch;FileParsers;"
+         "SmilesParse;GraphMol;RDGeometryLib;"
+-        "RDGeneral;RGroupDecomposition;Fingerprints")
++        "RDGeneral;RGroupDecomposition;Fingerprints;"
++        "ForceFieldHelpers;ForceField;Trajectory;PartialCharges;"
++        "DistGeomHelpers;DistGeometry;MolAlign;Alignment")
+     if(RDK_BUILD_INCHI_SUPPORT)
+         add_definitions(-DRDK_BUILD_INCHI_SUPPORT)
+         set(MINIMAL_LIB_LIBRARIES "${MINIMAL_LIB_LIBRARIES};RDInchiLib")
+@@ -38,7 +40,8 @@ if(RDK_BUILD_MINIMAL_LIB)
+             set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${USE_FLAGS}")
+         endif()
+     endif()
+-    add_executable(RDKit_minimal jswrapper.cpp minilib.cpp JSONParsers.cpp)
++    add_executable(RDKit_minimal jswrapper.cpp minilib.cpp JSONParsers.cpp
++        molarium_forcefield.cpp)
+     target_link_libraries(RDKit_minimal ${MINIMAL_LIB_LIBRARIES})
+ 
+     set_target_properties(RDKit_minimal PROPERTIES LINK_FLAGS "--bind")
+diff --git a/Code/MinimalLib/jswrapper.cpp b/Code/MinimalLib/jswrapper.cpp
+index 5fbfe0d..d413b07 100644
+--- a/Code/MinimalLib/jswrapper.cpp
++++ b/Code/MinimalLib/jswrapper.cpp
+@@ -514,6 +514,13 @@ EMSCRIPTEN_BINDINGS(RDKit_minimal) {
+       .function("get_v3Kmolblock",
+                 select_overload<std::string(const std::string &) const>(
+                     &JSMolBase::get_v3Kmolblock))
++      .function("run_forcefield", &JSMolBase::run_forcefield)
++      .function("generate_conformers", &JSMolBase::generate_conformers)
++      .function("get_gasteiger_charges", &JSMolBase::get_gasteiger_charges)
++      .function("get_smirks_matches", &JSMolBase::get_smirks_matches)
++      .function("enumerate_protonation_states",
++                &JSMolBase::enumerate_protonation_states)
++      .function("use_mdl_aromaticity", &JSMolBase::use_mdl_aromaticity)
+       .function("get_as_uint8array", &get_as_uint8array)
+       .function("get_as_uint8array", &get_as_uint8array_no_details)
+ #ifdef RDK_BUILD_INCHI_SUPPORT
+diff --git a/Code/MinimalLib/minilib.h b/Code/MinimalLib/minilib.h
+index b9fc7a2..f734224 100644
+--- a/Code/MinimalLib/minilib.h
++++ b/Code/MinimalLib/minilib.h
+@@ -42,6 +42,24 @@ class JSMolBase {
+   std::string get_molblock() const { return get_molblock("{}"); }
+   std::string get_v3Kmolblock(const std::string &details) const;
+   std::string get_v3Kmolblock() const { return get_v3Kmolblock("{}"); }
++  std::string run_forcefield(const std::string &job,
++                             unsigned int maxIterations,
++                             unsigned int snapshotFrequency,
++                             unsigned int dynamicsSteps,
++                             double temperature,
++                             unsigned int dynamicsFrameCount,
++                             const std::string &fixedAtomData);
++  std::string generate_conformers(unsigned int requestedCount,
++                                  int randomSeed,
++                                  double pruneRmsThreshold,
++                                  unsigned int minimizeIterations);
++  std::string get_gasteiger_charges() const;
++  std::string get_smirks_matches(const JSMolBase &query) const;
++  std::string enumerate_protonation_states(const std::string &siteData,
++                                           double phMin, double phMax,
++                                           double precision,
++                                           unsigned int maxStates) const;
++  void use_mdl_aromaticity();
+   std::string get_pickle(const std::string &details) const;
+   std::string get_pickle() const { return get_pickle(""); };
+ #ifdef RDK_BUILD_INCHI_SUPPORT

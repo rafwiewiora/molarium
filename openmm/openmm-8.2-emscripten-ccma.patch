@@ -1,0 +1,37 @@
+diff --git a/platforms/reference/src/SimTKReference/ReferenceCCMAAlgorithm.cpp b/platforms/reference/src/SimTKReference/ReferenceCCMAAlgorithm.cpp
+--- a/platforms/reference/src/SimTKReference/ReferenceCCMAAlgorithm.cpp
++++ b/platforms/reference/src/SimTKReference/ReferenceCCMAAlgorithm.cpp
+@@ -165,6 +165,25 @@ ReferenceCCMAAlgorithm::ReferenceCCMAAlgorithm(int numberOfAtoms,
+         // Extract columns from the inverse matrix one at a time.  It is done in parallel,
+         // since this can be very slow.
+         
++#ifdef __EMSCRIPTEN__
++        // The browser build intentionally does not enable pthreads.  The
++        // default ThreadPool constructor otherwise waits forever for worker
++        // threads that cannot start.  Constraint setup is a one-time cost and
++        // the small browser Systems are better served by deterministic serial
++        // extraction than by shipping the pthread/SharedArrayBuffer runtime.
++        for (int i = 0; i < numberOfConstraints; i++) {
++            vector<double> rhs(numberOfConstraints);
++            for (int j = 0; j < numberOfConstraints; j++)
++                rhs[j] = (i == j ? 1.0 : 0.0);
++            QUERN_multiply_with_q_transpose(numberOfConstraints, qRowStart, qColIndex, qValue, &rhs[0]);
++            QUERN_solve_with_r(numberOfConstraints, rRowStart, rColIndex, rValue, &rhs[0], &rhs[0]);
++            for (int j = 0; j < numberOfConstraints; j++) {
++                double value = rhs[j]*distance[i]/distance[j];
++                if (fabs(value) > elementCutoff)
++                    transposedMatrix[i].push_back(pair<int, double>(j, value));
++            }
++        }
++#else
+         ThreadPool threads;
+         threads.execute([&] (ThreadPool& pool, int threadIndex) {
+             vector<double> rhs(numberOfConstraints);
+@@ -184,6 +202,7 @@ ReferenceCCMAAlgorithm::ReferenceCCMAAlgorithm(int numberOfAtoms,
+             }
+         });
+         threads.waitForThreads();
++#endif
+ 
+         // For purposes of thread safety we extracted the matrix in transposed form, so we need to transpose it again.
+ 

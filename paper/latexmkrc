@@ -1,0 +1,7 @@
+# A single build command, with generated files isolated in paper/build/.
+@default_files = ('main.tex');
+$pdf_mode = 1;
+$out_dir = 'build';
+$aux_dir = 'build';
+$pdflatex = 'pdflatex -file-line-error -halt-on-error -interaction=nonstopmode %O %S';
+$max_repeat = 5;

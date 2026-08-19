@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 306 64" role="img" aria-labelledby="title description">
+  <title id="title">Molarium</title>
+  <desc id="description">Molarium molecular studio logo.</desc>
+  <defs>
+    <linearGradient id="logo-chamber" x1="5" y1="4" x2="43" y2="45" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0d1720"/>
+      <stop offset="1" stop-color="#193241"/>
+    </linearGradient>
+    <linearGradient id="logo-bond" x1="9" y1="15" x2="39" y2="31" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#73cce8"/>
+      <stop offset=".48" stop-color="#f8fbfd"/>
+      <stop offset="1" stop-color="#8bd9b1"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(8 8)">
+    <rect x="1" y="1" width="46" height="46" rx="14" fill="url(#logo-chamber)"/>
+    <rect x="1.5" y="1.5" width="45" height="45" rx="13.5" fill="none" stroke="#ffffff" stroke-opacity=".12"/>
+    <path d="M10 34V14.5L24 28l14-13.5V34" fill="none" stroke="url(#logo-bond)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="10" cy="14.5" r="3.4" fill="#74d0ed" stroke="#10212c" stroke-width="1.4"/>
+    <circle cx="24" cy="28" r="3.4" fill="#f8fbfd" stroke="#10212c" stroke-width="1.4"/>
+    <circle cx="38" cy="14.5" r="3.4" fill="#91dfb8" stroke="#10212c" stroke-width="1.4"/>
+    <circle cx="10" cy="34" r="2.2" fill="#d8e7ee"/>
+    <circle cx="38" cy="34" r="2.2" fill="#d8e7ee"/>
+  </g>
+  <text x="70" y="34" fill="#101820" font-family="Geist Sans, Inter, ui-sans-serif, system-ui, sans-serif" font-size="26" font-weight="750" letter-spacing="1.7">MOLARIUM</text>
+  <text x="72" y="49" fill="#6b7785" font-family="Geist Sans, Inter, ui-sans-serif, system-ui, sans-serif" font-size="7.5" font-weight="650" letter-spacing="2.2">MOLECULAR STUDIO</text>
+</svg>

@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "model": "ANI-2x",
+  "torchaniVersion": "2.8.1",
+  "source": "https://huggingface.co/roitberg-group/ani2x",
+  "stateDictSha256": "ad5c45c9722d32d07fe19894d931bc1e4c64dacaeb4090129e4363614ba98bf9",
+  "symbols": [
+    "H",
+    "C",
+    "N",
+    "O",
+    "S",
+    "F",
+    "Cl"
+  ],
+  "atomicNumbers": [
+    1,
+    6,
+    7,
+    8,
+    16,
+    9,
+    17
+  ],
+  "ensembleSize": 8,
+  "aevLength": 1008,
+  "radial": {
+    "cutoff": 5.1,
+    "eta": 19.7,
+    "shifts": [
+      0.800000011920929,
+      1.068750023841858,
+      1.337499976158142,
+      1.6062500476837158,
+      1.875,
+      2.143749952316284,
+      2.4124999046325684,
+      2.6812500953674316,
+      2.950000047683716,
+      3.21875,
+      3.487499952316284,
+      3.7562499046325684,
+      4.025000095367432,
+      4.293749809265137,
+      4.5625,
+      4.831250190734863
+    ]
+  },
+  "angular": {
+    "cutoff": 3.5,
+    "eta": 12.5,
+    "zeta": 14.1,
+    "shifts": [
+      0.800000011920929,
+      1.1375000476837158,
+      1.475000023841858,
+      1.8125,
+      2.1500000953674316,
+      2.487499952316284,
+      2.825000047683716,
+      3.1624999046325684
+    ],
+    "sections": [
+      0.39269909262657166,
+      1.1780972480773926,
+      1.9634953737258911,
+      2.7488934993743896
+    ]
+  },
+  "selfEnergiesHartree": [
+    -0.5978583693504333,
+    -38.08934020996094,
+    -54.71196746826172,
+    -75.19107055664062,
+    -398.15771484375,
+    -99.80348205566406,
+    -460.1681823730469
+  ],
+  "artifacts": {
+    "H": {
+      "file": "ani2x-h.onnx",
+      "sha256": "21c8cd14b921a70ead01a128beb52beb7397f9302aff29827360d577fcb41700",
+      "bytes": 21680206
+    },
+    "C": {
+      "file": "ani2x-c.onnx",
+      "sha256": "2f8794bef53a38602b9590aa20b0f6bfbbf7148757401421f4660621f7656fa4",
+      "bytes": 19221582
+    },
+    "N": {
+      "file": "ani2x-n.onnx",
+      "sha256": "1fde8fc785e9a5ebed165e3971ac1045cb08edc98eb078801db0227e059104d6",
+      "bytes": 15710286
+    },
+    "O": {
+      "file": "ani2x-o.onnx",
+      "sha256": "d4327405d3f931335854fc9507c76eaaff5ea9cd8e40a0831910d8bab394df37",
+      "bytes": 15710286
+    },
+    "S": {
+      "file": "ani2x-s.onnx",
+      "sha256": "290ac84284a040c2edc338eb5eaa31809dd850923530fdb1ed07ac58e0b82014",
+      "bytes": 12461094
+    },
+    "F": {
+      "file": "ani2x-f.onnx",
+      "sha256": "eef107fb55504a908d71a00c4abc448e82070dc99b4efae9e8273fddad6d2dd8",
+      "bytes": 12461094
+    },
+    "Cl": {
+      "file": "ani2x-cl.onnx",
+      "sha256": "458b3124723e09aa8677093ffb892284df6475f49c3c58e777c17956198a407d",
+      "bytes": 12462143
+    }
+  },
+  "goldens": {
+    "file": "ani2x-goldens.json",
+    "sha256": "45cfe762fcf51136d173667f92ce5865b3930929ca242b8f6fabfbf6d7d684b7"
+  },
+  "units": {
+    "positions": "angstrom",
+    "energy": "hartree",
+    "forces": "hartree/angstrom"
+  },
+  "domain": "Neutral, closed-shell molecules containing only H, C, N, O, F, S, and Cl."
+}

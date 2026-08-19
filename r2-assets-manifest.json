@@ -1,0 +1,176 @@
+{
+  "schema": "molarium.r2-assets.v1",
+  "release": "v1.0.0",
+  "origin": "https://assets.molarium.org",
+  "bucket": "molarium-assets",
+  "files": [
+    {
+      "source": "mlip/models/ani2x-c.onnx",
+      "key": "v1.0.0/mlip/models/ani2x-c.onnx",
+      "bytes": 19221582,
+      "contentType": "application/octet-stream",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "2f8794bef53a38602b9590aa20b0f6bfbbf7148757401421f4660621f7656fa4"
+    },
+    {
+      "source": "mlip/models/ani2x-cl.onnx",
+      "key": "v1.0.0/mlip/models/ani2x-cl.onnx",
+      "bytes": 12462143,
+      "contentType": "application/octet-stream",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "458b3124723e09aa8677093ffb892284df6475f49c3c58e777c17956198a407d"
+    },
+    {
+      "source": "mlip/models/ani2x-f.onnx",
+      "key": "v1.0.0/mlip/models/ani2x-f.onnx",
+      "bytes": 12461094,
+      "contentType": "application/octet-stream",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "eef107fb55504a908d71a00c4abc448e82070dc99b4efae9e8273fddad6d2dd8"
+    },
+    {
+      "source": "mlip/models/ani2x-goldens.json",
+      "key": "v1.0.0/mlip/models/ani2x-goldens.json",
+      "bytes": 9666,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "45cfe762fcf51136d173667f92ce5865b3930929ca242b8f6fabfbf6d7d684b7"
+    },
+    {
+      "source": "mlip/models/ani2x-h.onnx",
+      "key": "v1.0.0/mlip/models/ani2x-h.onnx",
+      "bytes": 21680206,
+      "contentType": "application/octet-stream",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "21c8cd14b921a70ead01a128beb52beb7397f9302aff29827360d577fcb41700"
+    },
+    {
+      "source": "mlip/models/ani2x-manifest.json",
+      "key": "v1.0.0/mlip/models/ani2x-manifest.json",
+      "bytes": 2923,
+      "contentType": "application/json; charset=utf-8",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "3ed658a1b328e1352f1ab469d0fd5c778162c2e0a24892daa75323a55cca7543"
+    },
+    {
+      "source": "mlip/models/ani2x-n.onnx",
+      "key": "v1.0.0/mlip/models/ani2x-n.onnx",
+      "bytes": 15710286,
+      "contentType": "application/octet-stream",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "1fde8fc785e9a5ebed165e3971ac1045cb08edc98eb078801db0227e059104d6"
+    },
+    {
+      "source": "mlip/models/ani2x-o.onnx",
+      "key": "v1.0.0/mlip/models/ani2x-o.onnx",
+      "bytes": 15710286,
+      "contentType": "application/octet-stream",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "d4327405d3f931335854fc9507c76eaaff5ea9cd8e40a0831910d8bab394df37"
+    },
+    {
+      "source": "mlip/models/ani2x-s.onnx",
+      "key": "v1.0.0/mlip/models/ani2x-s.onnx",
+      "bytes": 12461094,
+      "contentType": "application/octet-stream",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "290ac84284a040c2edc338eb5eaa31809dd850923530fdb1ed07ac58e0b82014"
+    },
+    {
+      "source": "node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.asyncify.mjs",
+      "key": "v1.0.0/onnxruntime-web/1.27.0/ort-wasm-simd-threaded.asyncify.mjs",
+      "bytes": 47507,
+      "contentType": "text/javascript; charset=utf-8",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "7236653b8565da4046e459cd0e274123419a1d9f1f8f18fd36c28058346ca655"
+    },
+    {
+      "source": "node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.asyncify.wasm",
+      "key": "v1.0.0/onnxruntime-web/1.27.0/ort-wasm-simd-threaded.asyncify.wasm",
+      "bytes": 24254953,
+      "contentType": "application/wasm",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "7e83cd6cee77e478bc96a7e91b198144fb5e4126287daf1f9b54bb195ebcd55a"
+    },
+    {
+      "source": "node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.jsep.mjs",
+      "key": "v1.0.0/onnxruntime-web/1.27.0/ort-wasm-simd-threaded.jsep.mjs",
+      "bytes": 46614,
+      "contentType": "text/javascript; charset=utf-8",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "3ee381d20a80f51a788a1c4a5872f6f1d047538dd4342f4af00062de5f9ea4c6"
+    },
+    {
+      "source": "node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.jsep.wasm",
+      "key": "v1.0.0/onnxruntime-web/1.27.0/ort-wasm-simd-threaded.jsep.wasm",
+      "bytes": 26827543,
+      "contentType": "application/wasm",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "78feeeb3d08f6bcee94d938ed322f69073bb8076b5f9d34697a574ffba8deb48"
+    },
+    {
+      "source": "node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.jspi.mjs",
+      "key": "v1.0.0/onnxruntime-web/1.27.0/ort-wasm-simd-threaded.jspi.mjs",
+      "bytes": 44523,
+      "contentType": "text/javascript; charset=utf-8",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "47f5232865f07cc6a11e825cac8dfd9b75bdf5f4a0889bde077e753ae93d3913"
+    },
+    {
+      "source": "node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.jspi.wasm",
+      "key": "v1.0.0/onnxruntime-web/1.27.0/ort-wasm-simd-threaded.jspi.wasm",
+      "bytes": 15046878,
+      "contentType": "application/wasm",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "7c28cdb40958a998f5aa0981d5cb8e57ac1e7e9b4d2f18a7d74e00dd9629d7a3"
+    },
+    {
+      "source": "node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.mjs",
+      "key": "v1.0.0/onnxruntime-web/1.27.0/ort-wasm-simd-threaded.mjs",
+      "bytes": 24180,
+      "contentType": "text/javascript; charset=utf-8",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "0a1e718d99c41b22c21f2520ff4f9e883a6b5533856e398d21816ee8eb8185d3"
+    },
+    {
+      "source": "node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm",
+      "key": "v1.0.0/onnxruntime-web/1.27.0/ort-wasm-simd-threaded.wasm",
+      "bytes": 13479978,
+      "contentType": "application/wasm",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "d1ab1b94b16a65b29d710d0b587b29e7bed336827577623913479b8afe8113e6"
+    },
+    {
+      "source": "openfold-export-results/trained/models/iteration.onnx.data",
+      "key": "v1.0.0/openfold-export-results/trained/models/iteration.onnx.data",
+      "bytes": 371687424,
+      "contentType": "application/octet-stream",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "30866ea1675097848ebbeb64e309597dc35cf4bc4a0f6dbc52964f30bef62f5a"
+    },
+    {
+      "source": "openfold-export-results/trained/models/iteration_L128.onnx",
+      "key": "v1.0.0/openfold-export-results/trained/models/iteration_L128.onnx",
+      "bytes": 195474027,
+      "contentType": "application/octet-stream",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "676ee09d778e8bb301ca8848592702cb668dd7136334a549e77e986be640d6f4"
+    },
+    {
+      "source": "openfold-export-results/trained/models/iteration_L128.onnx.data",
+      "key": "v1.0.0/openfold-export-results/trained/models/iteration_L128.onnx.data",
+      "bytes": 371687424,
+      "contentType": "application/octet-stream",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "bd4ea1f9fe303f48a5c97a92b254e60e3aa976be946345d9ecbfeec54924140f"
+    },
+    {
+      "source": "openfold-export-results/trained/models/iteration_L64.onnx",
+      "key": "v1.0.0/openfold-export-results/trained/models/iteration_L64.onnx",
+      "bytes": 195320195,
+      "contentType": "application/octet-stream",
+      "cacheControl": "public, max-age=31536000, immutable",
+      "sha256": "d746775ccbe1a0e979308eb0d805a48f1a7cd1e98ec6d3943b4fd941f590037f"
+    }
+  ]
+}

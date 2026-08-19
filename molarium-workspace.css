@@ -1,0 +1,280 @@
+/* Molarium's primary browser workspace layout. */
+
+body.molarium-workspace {
+  --page: #f3f5f7;
+  --surface: rgba(255, 255, 255, .94);
+  --muted: #f4f7f9;
+  --ink: #101418;
+  --secondary: #485461;
+  --quiet: #687482;
+  --line: #dce1e7;
+  --line-strong: #cbd4dd;
+  --accent: #1687b8;
+  --accent-soft: #edf8fc;
+  --shadow: none;
+  --card-shadow: 0 4px 18px rgba(22, 32, 43, .10);
+  background: #fff;
+  color: var(--ink);
+  font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+.molarium-workspace .app-shell { height: 100dvh; overflow: hidden; background: #fff; }
+
+.molarium-workspace .app-header {
+  position: relative;
+  z-index: 40;
+  height: 54px;
+  flex-basis: 54px;
+  background: rgba(255, 255, 255, .94);
+  border-color: var(--line);
+  backdrop-filter: blur(14px);
+}
+
+.molarium-workspace .app-header-bar { height: 54px; padding: 0 20px; }
+.molarium-workspace .app-brand {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 750;
+  letter-spacing: .065em;
+  text-transform: uppercase;
+}
+.molarium-workspace .app-brand-mark { width: 30px; height: 30px; }
+.molarium-workspace .app-brand-tag {
+  margin-left: 1px;
+  color: #8a94a3;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+}
+.molarium-workspace .app-header-links { gap: 2px; }
+.molarium-workspace .app-header-links a {
+  color: #66717f;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 12px;
+}
+
+.molarium-workspace .app-main {
+  position: relative;
+  display: block;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #fff;
+}
+
+.molarium-workspace .viewer-stage {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  display: block;
+}
+.molarium-workspace .viewer-container {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background:
+    radial-gradient(circle at 50% 46%, #fff 0 48%, #fbfcfd 76%, #f4f7f9 100%);
+  box-shadow: none;
+}
+
+.molarium-workspace .panel {
+  position: absolute;
+  z-index: 12;
+  top: 14px;
+  bottom: 14px;
+  width: min(318px, calc(50vw - 180px));
+  min-width: 278px;
+  padding: 0 3px 0 0;
+  gap: 9px;
+  overflow-y: auto;
+  overflow-x: visible;
+  background: transparent;
+  scrollbar-color: #c5cdd5 transparent;
+  scrollbar-width: thin;
+}
+.molarium-workspace .panel-left { left: 14px; }
+.molarium-workspace .panel-right { right: 14px; padding: 0 0 0 3px; }
+.molarium-workspace .panel-right:has(#result-card:not(.hidden)) {
+  width: min(410px, calc(50vw - 130px));
+}
+
+.molarium-workspace .card {
+  border: 1px solid rgba(211, 219, 227, .96);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .93);
+  box-shadow: 0 5px 20px rgba(22, 32, 43, .09);
+  backdrop-filter: blur(12px);
+}
+.molarium-workspace .card:hover { border-color: #cbd5df; }
+.molarium-workspace .card-heading,
+.molarium-workspace .compact-label,
+.molarium-workspace .field-label,
+.molarium-workspace .result-card,
+.molarium-workspace .info-card,
+.molarium-workspace .scene-card,
+.molarium-workspace .structure-components,
+.molarium-workspace .preparation-inspector,
+.molarium-workspace .protein-result-card {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+.molarium-workspace .card-heading {
+  min-height: 42px;
+  padding: 11px 13px;
+  color: #596675;
+  font-size: 10px;
+  letter-spacing: .075em;
+}
+.molarium-workspace .compact-label { color: #596675; letter-spacing: .075em; }
+
+.molarium-workspace .primary-button {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+.molarium-workspace .primary-button:hover { border-color: #1178a4; background: #1178a4; }
+.molarium-workspace .soft-button { border-color: var(--line); background: rgba(255, 255, 255, .9); }
+.molarium-workspace .soft-button:hover { border-color: #bdc9d3; background: #f3f7f9; }
+.molarium-workspace input[type="checkbox"] { accent-color: var(--accent); }
+.molarium-workspace .tab.active::after { background: var(--accent); }
+.molarium-workspace .tab.active { color: #116d94; }
+.molarium-workspace select:focus,
+.molarium-workspace input:focus,
+.molarium-workspace textarea:focus { border-color: var(--accent); outline: none; }
+
+.molarium-workspace .mode-bar {
+  top: 14px;
+  padding: 4px;
+  border: 1px solid #c9d2da;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .94);
+  box-shadow: 0 5px 18px rgba(22, 32, 43, .12);
+  backdrop-filter: blur(12px);
+}
+.molarium-workspace .mode-bar button {
+  min-width: 72px;
+  padding: 8px 15px;
+  border-radius: 7px;
+  color: #5c6875;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 12px;
+}
+.molarium-workspace .mode-bar button:hover { background: #edf3f6; color: #27313b; }
+.molarium-workspace .mode-bar button.active { background: #16202b; color: #fff; }
+
+.molarium-workspace .viewer-toolbar {
+  right: auto;
+  bottom: 16px;
+  left: 50%;
+  max-width: min(720px, calc(100% - 680px));
+  transform: translateX(-50%);
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .93);
+  box-shadow: 0 5px 18px rgba(22, 32, 43, .11);
+  backdrop-filter: blur(12px);
+}
+.molarium-workspace .viewer-toolbar button {
+  border-color: transparent;
+  border-radius: 7px;
+  background: transparent;
+  box-shadow: none;
+  color: #586574;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 11px;
+}
+.molarium-workspace .viewer-toolbar button:hover {
+  border-color: #d3dbe3;
+  background: #edf3f6;
+  color: #202a34;
+  transform: none;
+}
+.molarium-workspace .canvas-help {
+  bottom: 70px;
+  left: 50%;
+  gap: 10px;
+  padding: 5px 9px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, .84);
+  color: #8b96a3;
+  transform: translateX(-50%);
+  backdrop-filter: blur(8px);
+}
+
+.molarium-workspace .run-overlay { background: rgba(244, 247, 249, .48); backdrop-filter: blur(2px); }
+.molarium-workspace .run-card { border-color: #cbd5df; box-shadow: 0 14px 44px rgba(22, 32, 43, .18); }
+.molarium-workspace .toast { bottom: 74px; background: #16202b; }
+
+.molarium-workspace .info-card dl div { padding-block: 1px; }
+.molarium-workspace .scene-body,
+.molarium-workspace .component-row,
+.molarium-workspace .result-ensemble,
+.molarium-workspace .result-frames,
+.molarium-workspace .result-performance div,
+.molarium-workspace .protein-confidence-grid div { background: rgba(244, 247, 249, .9); }
+
+/* Results are allowed more horizontal room, while the ordinary inspector stays compact. */
+.molarium-workspace .panel-right:has(#result-card:not(.hidden)) .conformer-plot-controls {
+  grid-template-columns: 1fr 1fr;
+}
+.molarium-workspace .panel-right:has(#result-card:not(.hidden)) #result-conformer-scatter {
+  min-height: 205px;
+}
+
+@media (max-width: 1180px) {
+  .molarium-workspace .panel { width: 276px; min-width: 0; }
+  .molarium-workspace .panel-right:has(#result-card:not(.hidden)) { width: 340px; }
+  .molarium-workspace .viewer-toolbar { max-width: calc(100% - 590px); }
+  .molarium-workspace .app-brand-tag { display: none; }
+}
+
+@media (max-width: 900px) {
+  body.molarium-workspace { overflow-y: auto; }
+  .molarium-workspace .app-shell { height: auto; min-height: 100dvh; overflow: visible; }
+  .molarium-workspace .app-main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "viewer viewer" "left right";
+    grid-template-rows: 68dvh auto;
+    gap: 8px;
+    padding: 8px;
+    overflow: visible;
+    background: var(--page);
+  }
+  .molarium-workspace .viewer-stage {
+    position: relative;
+    inset: auto;
+    grid-area: viewer;
+    min-height: 0;
+  }
+  .molarium-workspace .viewer-container { border: 1px solid var(--line); border-radius: 12px; }
+  .molarium-workspace .panel,
+  .molarium-workspace .panel-right:has(#result-card:not(.hidden)) {
+    position: static;
+    width: auto;
+    min-width: 0;
+    padding: 0;
+    overflow: visible;
+  }
+  .molarium-workspace .panel-left { grid-area: left; }
+  .molarium-workspace .panel-right { grid-area: right; }
+  .molarium-workspace .viewer-toolbar { max-width: calc(100% - 20px); }
+  .molarium-workspace .canvas-help { display: none; }
+}
+
+@media (max-width: 620px) {
+  .molarium-workspace .app-main {
+    grid-template-columns: 1fr;
+    grid-template-areas: "viewer" "left" "right";
+    grid-template-rows: 64dvh auto auto;
+  }
+  .molarium-workspace .app-header-bar { padding-inline: 14px; }
+  .molarium-workspace .app-brand { font-size: 16px; }
+  .molarium-workspace .viewer-toolbar { bottom: 8px; overflow-x: auto; justify-content: flex-start; }
+  .molarium-workspace .mode-bar { top: 8px; }
+}

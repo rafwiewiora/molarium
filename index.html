@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f3f4f6" />
+    <link rel="preload" href="./rdkit-worker.js" as="script" data-rdkit-worker />
+    <link rel="preload" href="./webgpu-worker.js" as="script" data-webgpu-worker />
+    <link rel="modulepreload" href="./stormm-worker.js" data-stormm-worker />
+    <link rel="modulepreload" href="./mlip-worker.js" data-ani2x-worker />
+    <link rel="preload" href="./rdkit/dist/RDKit_minimal.wasm" as="fetch" type="application/wasm" crossorigin />
+    <meta
+      name="description"
+      content="Molarium is an interactive molecular viewer, builder, and local simulation workbench."
+    />
+    <title>Molarium — 3D Molecular Viewer &amp; Builder</title>
+    <link rel="icon" href="./assets/molarium-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./molarium-workspace.css" />
+  </head>
+  <body class="molarium-workspace">
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="app-header-bar">
+          <a class="app-brand" href="#" aria-label="Molarium home">
+            <svg class="app-brand-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false" data-molarium-mark>
+              <rect x="2" y="2" width="44" height="44" rx="12" fill="#132632" />
+              <path d="M10 34V14.5L24 28" fill="none" stroke="#8edcf0" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M24 28L38 14.5V34" fill="none" stroke="#a5e7c4" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round" />
+              <circle cx="10" cy="14.5" r="3.2" fill="#e9fbff" />
+              <circle cx="24" cy="28" r="3.2" fill="#ffffff" />
+              <circle cx="38" cy="14.5" r="3.2" fill="#eafff4" />
+            </svg>
+            <span class="app-brand-name">MOLARIUM</span>
+            <span class="app-brand-tag">molecular studio</span>
+          </a>
+          <button class="network-policy-button" id="network-policy-button" type="button"
+            aria-label="Open data privacy and network policy">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.7-2.8 8.1-7 10-4.2-1.9-7-5.3-7-10V6l7-3Z" /><path d="m9 12 2 2 4-5" /></svg>
+            <span id="network-policy-label">Checking privacy…</span>
+          </button>
+          <nav class="app-header-links" aria-label="Primary navigation">
+            <a href="#methods" data-project-panel="methods">Methods</a>
+            <a href="#validation" data-project-panel="validation">Validation</a>
+            <a href="#credits" data-project-panel="credits">Credits</a>
+          </nav>
+          <button class="menu-button" id="menu-button" aria-label="Open navigation" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="app-main">
+        <aside class="panel panel-left">
+          <section class="card load-card">
+            <button class="card-heading disclosure" id="load-toggle" aria-expanded="true">
+              <span>Load Molecule</span>
+              <svg class="chevron open" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 4 4 4-4 4" /></svg>
+            </button>
+            <div id="load-body">
+              <div class="tabs" role="tablist">
+                <button class="tab active" data-tab="paste" role="tab">Paste</button>
+                <button class="tab" data-tab="upload" role="tab">Upload</button>
+                <button class="tab" data-tab="identifier" role="tab">Identifier</button>
+              </div>
+
+              <div class="tab-content" id="tab-paste">
+                <label class="compact-label" for="structure-input">Structure Input</label>
+                <textarea
+                  id="structure-input"
+                  class="mono-input"
+                  spellcheck="false"
+                  placeholder="Paste PDB or XYZ molecular data"
+                ></textarea>
+                <button class="primary-button" id="parse-button">Parse Input</button>
+              </div>
+
+              <div class="tab-content hidden" id="tab-upload">
+                <label class="upload-zone" id="upload-zone" for="file-input">
+                  <input type="file" id="file-input" accept=".pdb,.ent,.xyz,.txt,.mol" hidden />
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 15v4h14v-4" /></svg>
+                  <strong>Choose a molecular file</strong>
+                  <span>or drag it here</span>
+                </label>
+              </div>
+
+              <div class="tab-content hidden" id="tab-identifier">
+                <label class="compact-label" for="identifier-input">Identifier Input</label>
+                <textarea
+                  id="identifier-input"
+                  class="mono-input identifier-input"
+                  spellcheck="false"
+                  placeholder="SMILES, PDB ID (1UBQ), or a common name"
+                ></textarea>
+                <p class="input-help">Enter SMILES directly, a four-character PDB ID, or try LSD, caffeine, aspirin, benzene or water.</p>
+                <button class="primary-button" id="identifier-button">Load</button>
+              </div>
+              <div class="ligand-protonation hidden" id="ligand-protonation">
+                <div class="ligand-protonation-heading">
+                  <span class="compact-label">Protonation</span>
+                  <span id="ligand-protonation-badge">Input state</span>
+                </div>
+                <div class="ligand-protonation-controls">
+                  <label>pH
+                    <input id="ligand-protonation-ph" type="number" min="0" max="14" step="0.1" value="7.4" />
+                  </label>
+                  <button class="soft-button" id="ligand-protonation-run">Enumerate</button>
+                </div>
+                <div class="ligand-protonation-result hidden" id="ligand-protonation-result">
+                  <select id="ligand-protonation-state" aria-label="Protonation state"></select>
+                  <button class="primary-button" id="ligand-protonation-apply">Use state</button>
+                  <p id="ligand-protonation-meta"></p>
+                </div>
+              </div>
+              <div class="pdb-preparation hidden" id="pdb-preparation">
+                <div class="pdb-preparation-heading">
+                  <span class="compact-label">PDB preparation</span>
+                  <span id="pdb-preparation-badge">Loaded</span>
+                </div>
+                <p id="pdb-preparation-status">Coordinates loaded</p>
+                <details class="preparation-settings">
+                  <summary>Options</summary>
+                  <div class="preparation-setting-grid">
+                    <label>Target pH
+                      <input id="preparation-ph" type="number" min="0" max="14" step="0.1" value="7.4" />
+                    </label>
+                    <label>Histidines
+                      <select id="preparation-histidine">
+                        <option value="auto">Local H-bond choice</option>
+                        <option value="hid">HID · Nδ1-H</option>
+                        <option value="hie">HIE · Nε2-H</option>
+                        <option value="hip">HIP · +1</option>
+                      </select>
+                    </label>
+                    <label>Ligands
+                      <select id="preparation-ligands">
+                        <option value="ccd">Prepare from RCSB CCD</option>
+                        <option value="exclude">Exclude from simulation</option>
+                      </select>
+                    </label>
+                    <label>Crystal waters
+                      <select id="preparation-waters">
+                        <option value="crucial" selected>Keep bridging/structural</option>
+                        <option value="exclude">Exclude</option>
+                        <option value="retain">Retain + add H</option>
+                      </select>
+                    </label>
+                    <label class="preparation-wide">Missing residue blocks
+                      <select id="preparation-gaps">
+                        <option value="cap">Cap resolved segments</option>
+                        <option value="block">Block preparation—loop required</option>
+                      </select>
+                    </label>
+                  </div>
+                  <label class="preparation-check"><input id="preparation-repair-heavy" type="checkbox" checked />
+                    Repair missing heavy atoms</label>
+                </details>
+                <button class="primary-button full-width" id="prepare-pdb">Prepare structure</button>
+              </div>
+              <div class="prepared-example-section">
+                <span class="compact-label">Prepared simulation examples</span>
+                <div class="prepared-example-actions">
+                  <button class="soft-button" id="try-rosemary-protein">Trp-cage · 304 atoms</button>
+                  <button class="soft-button" id="try-ubiquitin-protein">Ubiquitin · 1,231 atoms</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card protein-fold-card">
+            <button class="card-heading disclosure" id="protein-fold-toggle" aria-expanded="true">
+              <span>Fold Protein</span>
+              <svg class="chevron open" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 4 4 4-4 4" /></svg>
+            </button>
+            <div id="protein-fold-body">
+              <label class="compact-label" for="protein-sequence">Amino-acid sequence <span id="protein-length">0/128</span></label>
+              <textarea id="protein-sequence" class="mono-input protein-sequence" spellcheck="false"
+                placeholder="Paste FASTA or a protein sequence (up to 128 residues)"></textarea>
+              <details class="fold-settings">
+                <summary>MSA service settings</summary>
+                <label class="field-label">ColabFold-compatible endpoint
+                  <input id="msa-endpoint" type="url" value="https://api.colabfold.com" />
+                </label>
+              </details>
+              <p class="input-help fold-privacy">The sequence is sent to the selected MSA service. Folding, confidence and coordinates run locally in this browser. First use downloads ~540 MB.</p>
+              <div class="fold-actions">
+                <button class="primary-button" id="fold-protein">Search MSA &amp; fold locally</button>
+                <button class="soft-button hidden" id="cancel-fold">Cancel</button>
+              </div>
+              <p class="fold-status" id="fold-status" role="status" aria-live="polite">Ready · OpenFold pTM · WebGPU with WASM fallback</p>
+            </div>
+          </section>
+
+          <div class="notice hidden" id="notice" role="status"></div>
+
+          <section class="card options-card" id="display-options">
+            <h2 class="compact-label">Display Options</h2>
+            <label class="select-row representation-row">
+              <span>Representation</span>
+              <select id="representation-select" disabled>
+                <option value="ball-stick">Ball &amp; stick</option>
+                <option value="cartoon">Cartoon</option>
+                <option value="both">Cartoon + atoms</option>
+              </select>
+            </label>
+            <div class="checkbox-list">
+              <label><input type="checkbox" id="vdw-toggle" /> <span>Show van der Waals spheres</span></label>
+              <label><input type="checkbox" id="hull-toggle" checked /> <span>Show convex hulls</span></label>
+              <label><input type="checkbox" id="hydrogen-toggle" checked /> <span id="hydrogen-toggle-text">Show hydrogen</span></label>
+              <div class="compact-checkbox-option hidden" id="pocket-toggle-label">
+                <label><input type="checkbox" id="pocket-toggle" checked /> <span id="pocket-toggle-text">Show pocket atoms</span></label>
+                <button type="button" id="pocket-mode-toggle" aria-pressed="false" title="Switch between the 5 Å pocket and residues making displayed ligand contacts">5 Å</button>
+              </div>
+              <label><input type="checkbox" id="interaction-toggle" checked /> <span id="interaction-toggle-text">Show H-bonds &amp; π-stacks</span></label>
+            </div>
+            <label class="select-row">
+              <span>Auto-rotate</span>
+              <select id="rotate-select">
+                <option value="none">None</option>
+                <option value="vertical">Vertical</option>
+                <option value="diagonal">Diagonal</option>
+              </select>
+            </label>
+            <button class="soft-button full-width" id="play-button">Play</button>
+            <div class="frame-control">
+              <span id="frame-counter">Frame 1/1</span>
+              <input type="range" min="1" max="1" value="1" disabled />
+            </div>
+          </section>
+
+          <section class="card mode-panel hidden" id="build-left-panel">
+            <div class="build-tool-tabs" id="build-tool-tabs">
+              <button class="selected" data-tool="add">⊕ Add</button>
+              <button data-tool="select">⌖ Select</button>
+              <button data-tool="manipulate">✣ Manipulate</button>
+            </div>
+            <h2 class="compact-label build-section-label">Element</h2>
+            <div class="element-grid" id="element-grid">
+              <button data-element="C" class="selected">C</button><button data-element="H">H</button>
+              <button data-element="N">N</button><button data-element="O">O</button>
+              <button data-element="F">F</button><button data-element="S">S</button>
+              <button data-element="Cl">Cl</button><button data-element="P">P</button>
+              <button data-element="Br">Br</button><button data-element="I">I</button>
+            </div>
+            <h2 class="compact-label build-section-label">Actions</h2>
+            <div class="optimizer-picker">
+              <select id="build-optimizer-select" aria-label="Build optimizer">
+                <option value="webgpu">OpenFF Sage 2.1 · WebGPU</option>
+                <option value="pocket-webgpu">Interactive pocket relax · WebGPU</option>
+                <option value="ligand-rdkit">Ligand only · MMFF94/UFF</option>
+                <option value="rdkit">MMFF94 · UFF fallback</option>
+                <option value="ani2x">ANI-2x · MLIP WebGPU</option>
+              </select>
+              <button class="primary-button optimize-button" id="optimize-button">⚡ Optimize</button>
+            </div>
+            <p class="optimizer-help" id="build-optimizer-help">OpenFF Sage 2.1 runs directly on this device's WebGPU adapter.</p>
+            <div class="history-buttons">
+              <button class="soft-button" id="undo-atom">↶ Undo</button>
+              <button class="soft-button" id="redo-atom">↪ Redo</button>
+            </div>
+            <h2 class="compact-label build-section-label">Adjust Geometry</h2>
+            <p class="panel-copy" id="geometry-selection-help">Choose Select, then pick 2 atoms for a bond, 3 for an angle, or 4 for a torsion.</p>
+            <div class="geometry-control">
+              <input id="geometry-slider" type="range" min="0" max="100" value="50" disabled />
+              <label class="geometry-value"><input id="geometry-value" type="number" aria-label="Geometry value" disabled /><span id="geometry-unit">—</span></label>
+            </div>
+            <label class="move-connected"><input type="checkbox" id="move-connected" checked> Move connected atoms</label>
+            <h2 class="compact-label build-section-label">Edit Chemistry</h2>
+            <p class="panel-copy chemistry-selection-help" id="chemistry-selection-help">Choose Select, then pick one atom or a pair of atoms.</p>
+            <div class="chemistry-atom-editor">
+              <label>Element
+                <select id="chemistry-element" disabled>
+                  <option>H</option><option>B</option><option selected>C</option><option>N</option>
+                  <option>O</option><option>F</option><option>Si</option><option>P</option>
+                  <option>S</option><option>Cl</option><option>Br</option><option>I</option>
+                </select>
+              </label>
+              <label>Formal charge
+                <input id="chemistry-formal-charge" type="number" min="-4" max="4" step="1" value="0" disabled />
+              </label>
+              <button class="soft-button" id="apply-atom-chemistry" disabled>Apply atom</button>
+            </div>
+            <div class="chemistry-bond-editor">
+              <select id="chemistry-bond-order" aria-label="Bond order" disabled>
+                <option value="1">Single</option><option value="2">Double</option>
+                <option value="3">Triple</option><option value="1.5">Aromatic ring</option>
+              </select>
+              <button class="soft-button" id="apply-bond-chemistry" disabled>Set bond</button>
+              <button class="soft-button danger-button" id="delete-bond-chemistry" disabled>Delete bond</button>
+            </div>
+            <div class="chemistry-atom-actions">
+              <button class="soft-button" id="add-explicit-hydrogen" disabled>+ H</button>
+              <button class="soft-button" id="remove-explicit-hydrogen" disabled>− H</button>
+              <button class="soft-button danger-button" id="delete-selected-atom" disabled>Delete atom</button>
+            </div>
+            <div class="chemistry-pending hidden" id="chemistry-pending">
+              <strong id="chemistry-pending-summary">1 pending change</strong>
+              <span>Finish the complete chemical state before hydrogens and coordinates are refined.</span>
+              <div class="chemistry-pending-actions">
+                <button class="primary-button" id="finish-chemistry-changes">Finish changes</button>
+                <button class="soft-button" id="discard-chemistry-changes">Discard</button>
+              </div>
+            </div>
+            <details class="chemistry-edit-options">
+              <summary>Options</summary>
+              <label><input type="checkbox" id="chemistry-immediate-refine" /> Finish and refine after every edit</label>
+            </details>
+            <p class="chemistry-validation" id="chemistry-validation">Formal charge is editable; force-field partial charges remain derived.</p>
+          </section>
+
+          <section class="card mode-panel hidden" id="run-left-panel">
+            <h2 class="compact-label">Calculation</h2>
+            <label class="field-label">Job type
+              <select id="job-select">
+                <option value="geometry">Geometry optimization</option>
+                <option value="energy">Single point energy</option>
+                <option value="dynamics">Molecular dynamics</option>
+                <option value="conformers">Conformer search</option>
+              </select>
+            </label>
+            <label class="field-label hidden" id="simulation-step-field">Simulation length
+              <select id="simulation-step-count">
+                <option value="250" selected>250 steps</option>
+                <option value="1000">1,000 steps</option>
+                <option value="5000">5,000 steps</option>
+                <option value="25000">25,000 steps</option>
+                <option value="100000">100,000 steps</option>
+              </select>
+            </label>
+            <div class="field-label" id="method-field">
+              <div class="field-label-heading"><label for="method-select">Method</label><span class="info-anchor"><button type="button" class="info-button" aria-label="About the selected method" aria-describedby="method-info">i</button><span class="info-popover" id="method-info" role="tooltip">Method details.</span></span></div>
+              <select id="method-select">
+                <option value="webgpu">OpenFF Sage 2.1 · WebGPU</option>
+                <option value="stormm">STORMM-style ensemble · WebGPU</option>
+                <option value="rdkit">MMFF94 · UFF fallback (RDKit WASM)</option>
+                <option value="ani2x">ANI-2x · MLIP WebGPU</option>
+              </select>
+            </div>
+            <details class="simulation-settings" id="simulation-settings">
+              <summary><strong>Calculation settings</strong><span id="simulation-settings-summary">Recommended · implicit water</span></summary>
+              <div class="simulation-settings-body">
+                <div class="field-label" id="solvent-field">
+                  <div class="field-label-heading"><label for="solvent-select">Environment</label><span class="info-anchor"><button type="button" class="info-button" aria-label="About the selected environment" aria-describedby="environment-info">i</button><span class="info-popover" id="environment-info" role="tooltip">Environment details.</span></span></div>
+                  <select id="solvent-select">
+                    <option value="obc2" selected>Implicit water · OBC2/ACE</option>
+                    <option value="vacuum">Vacuum</option>
+                  </select>
+                </div>
+                <div class="field-label" id="constraint-field">
+                  <div class="field-label-heading"><label for="constraint-select">Dynamics constraints</label><span class="info-anchor"><button type="button" class="info-button" aria-label="About dynamics constraints" aria-describedby="constraint-info">i</button><span class="info-popover" id="constraint-info" role="tooltip">Constraint details.</span></span></div>
+                  <select id="constraint-select">
+                    <option value="hbonds" selected>X–H constraints · 2 fs</option>
+                    <option value="none">Flexible bonds · 1 fs</option>
+                  </select>
+                </div>
+              </div>
+            </details>
+            <div class="stormm-fields hidden" id="stormm-fields">
+              <select id="stormm-system" class="hidden" aria-label="STORMM ensemble system">
+                <option value="current" selected>Current molecule</option>
+              </select>
+              <label class="field-label">Independent replicas
+                <select id="stormm-replica-count">
+                  <option value="1">1 trajectory</option>
+                  <option value="2">2 trajectories</option>
+                  <option value="4">4 trajectories</option>
+                  <option value="8">8 trajectories</option>
+                  <option value="16">16 trajectories</option>
+                  <option value="32">32 trajectories</option>
+                  <option value="64" selected>64 trajectories</option>
+                  <option value="128">128 trajectories</option>
+                  <option value="256">256 trajectories</option>
+                  <option value="512">512 trajectories</option>
+                  <option value="1024">1,024 trajectories</option>
+                </select>
+              </label>
+              <button class="soft-button full-width" type="button" id="stormm-autotune">Find best replica count</button>
+              <p class="field-help stormm-tuning-status" id="stormm-tuning-status">Run a short GPU sweep for this System before a long trajectory.</p>
+            </div>
+            <div class="conformer-fields hidden" id="conformer-fields">
+              <label class="field-label">Starting conformers
+                <select id="conformer-count">
+                  <option value="8">8 conformers</option>
+                  <option value="32">32 conformers</option>
+                  <option value="64" selected>64 conformers</option>
+                  <option value="128">128 conformers</option>
+                  <option value="256">256 conformers</option>
+                </select>
+              </label>
+              <label class="field-label">Search effort
+                <select id="conformer-effort">
+                  <option value="quick">Quick · 400 steps</option>
+                  <option value="balanced" selected>Balanced · 1,000 steps</option>
+                  <option value="thorough">Thorough · 2,500 steps</option>
+                </select>
+              </label>
+              <label class="field-label">Cluster cutoff
+                <select id="conformer-cluster-rms">
+                  <option value="0.35">Fine · 0.35 Å</option>
+                  <option value="0.50" selected>Balanced · 0.50 Å</option>
+                  <option value="0.75">Broad · 0.75 Å</option>
+                </select>
+              </label>
+              <label class="conformer-arena-toggle">
+                <input type="checkbox" id="conformer-arena" />
+                <span><strong>Compare methods</strong><small id="conformer-arena-methods">MMFF seeds · STORMM WebGPU · ANI-2x</small></span>
+              </label>
+            </div>
+            <label class="field-label hidden" id="trajectory-frame-field">Saved trajectory frames (including start)
+              <select id="trajectory-frame-count">
+                <option value="11">11 frames</option>
+                <option value="26" selected>26 frames</option>
+                <option value="51">51 frames</option>
+                <option value="126">126 frames</option>
+                <option value="251">251 frames</option>
+              </select>
+            </label>
+            <p class="field-help" id="method-help">Optimize the current molecular geometry.</p>
+            <button class="primary-button" id="run-calculation">Run Calculation</button>
+          </section>
+        </aside>
+
+        <section class="viewer-stage">
+          <div class="viewer-container" id="viewer-container">
+            <canvas id="molecule-canvas" aria-label="Interactive 3D molecule viewer"></canvas>
+
+            <div class="mode-bar" role="group" aria-label="Mode selection">
+              <button class="active" data-mode="view">View</button>
+              <button data-mode="build">Build</button>
+              <button data-mode="run">Run</button>
+            </div>
+
+            <div class="viewer-hint" id="viewer-hint">
+              <div class="hint-molecule" aria-hidden="true">
+                <i></i><i></i><i></i>
+              </div>
+              <strong>Load a molecular structure</strong>
+              <span>Paste PDB or XYZ data, upload a file, or search by identifier</span>
+            </div>
+
+            <div class="atom-tooltip hidden" id="atom-tooltip"></div>
+            <button class="residue-follow-chip hidden" id="residue-follow-chip" type="button" title="Stop following this residue"></button>
+
+            <div class="run-overlay hidden" id="run-overlay">
+              <div class="run-card">
+                <div class="calculation-loader" aria-hidden="true">
+                  <svg viewBox="0 0 48 48" focusable="false" data-molarium-mark>
+                    <rect x="2" y="2" width="44" height="44" rx="12" fill="#132632" />
+                    <path d="M10 34V14.5L24 28" fill="none" stroke="#8edcf0" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M24 28L38 14.5V34" fill="none" stroke="#a5e7c4" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round" />
+                    <circle cx="10" cy="14.5" r="3.2" fill="#e9fbff" />
+                    <circle cx="24" cy="28" r="3.2" fill="#ffffff" />
+                    <circle cx="38" cy="14.5" r="3.2" fill="#eafff4" />
+                  </svg>
+                </div>
+                <strong id="run-status">Preparing calculation…</strong>
+                <span>Model</span>
+                <div class="progress-track"><i id="progress-model"></i></div>
+                <span>Calculation</span>
+                <div class="progress-track"><i id="progress-calc"></i></div>
+              </div>
+            </div>
+
+            <div class="viewer-toolbar">
+              <button id="export-button">Export</button>
+              <button id="clear-button">Clear</button>
+              <button id="share-button">Share</button>
+              <button id="save-button">Save</button>
+              <button id="fullscreen-button">Fullscreen</button>
+            </div>
+
+          </div>
+        </section>
+
+        <aside class="panel panel-right">
+          <section class="card info-card" id="molecule-info">
+            <h2 class="compact-label">Molecule Info</h2>
+            <dl>
+              <div><dt>Atoms</dt><dd id="info-atoms">—</dd></div>
+              <div><dt>Formula</dt><dd id="info-formula">—</dd></div>
+              <div><dt>Charge</dt><dd id="info-charge">0</dd></div>
+              <div><dt>Multiplicity</dt><dd id="info-multiplicity">1</dd></div>
+              <div><dt>Point group</dt><dd id="info-point-group">C1</dd></div>
+              <div><dt>Symmetry no.</dt><dd id="info-symmetry">1</dd></div>
+            </dl>
+            <div class="smiles-block">
+              <span>SMILES</span>
+              <div><code id="info-smiles">—</code><button id="copy-smiles">Copy</button></div>
+            </div>
+          </section>
+
+          <section class="card scene-card">
+            <button class="card-heading disclosure" id="scene-toggle" aria-expanded="true">
+              <span>Scene</span>
+              <svg class="chevron open" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 4 4 4-4 4" /></svg>
+            </button>
+            <div class="scene-body" id="scene-body">
+              <div class="scene-preview"><canvas id="scene-canvas"></canvas></div>
+              <div><strong id="scene-name">Molecular system</strong><span id="scene-meta">38 atoms · ball &amp; stick</span></div>
+            </div>
+          </section>
+
+          <section class="card structure-components hidden" id="structure-components">
+            <button class="card-heading disclosure" id="components-toggle" aria-expanded="true">
+              <span>Components</span>
+              <svg class="chevron open" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 4 4 4-4 4" /></svg>
+            </button>
+            <div id="components-body" class="components-body">
+              <p id="component-summary">—</p>
+              <div id="component-list" class="component-list"></div>
+              <div class="component-actions">
+                <button type="button" id="components-show-all">Show all</button>
+                <button type="button" id="components-reset">Reset view</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="card preparation-inspector hidden" id="preparation-inspector">
+            <button class="card-heading disclosure" id="preparation-inspector-toggle" aria-expanded="false">
+              <span>Preparation details</span>
+              <span id="preparation-issue-badge">—</span>
+              <svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 4 4 4-4 4" /></svg>
+            </button>
+            <div id="preparation-inspector-body" class="preparation-inspector-body hidden">
+              <div class="preparation-stat-grid" id="preparation-stat-grid"></div>
+              <p id="preparation-guidance"></p>
+              <div class="preparation-preview hidden" id="preparation-preview"></div>
+              <div class="preparation-issues" id="preparation-issues"></div>
+              <button type="button" class="soft-button full-width hidden" id="download-preparation-report">Download preparation report</button>
+            </div>
+          </section>
+
+          <section class="card mode-panel hidden" id="build-right-panel">
+            <h2 class="compact-label">Fragment Library</h2>
+            <div class="fragment-stage-row">
+              <input id="custom-fragment-smiles" placeholder="Custom SMILES" />
+              <button class="primary-button" id="stage-custom-fragment">Stage</button>
+            </div>
+            <h3 class="compact-label fragment-template-label">Templates</h3>
+            <input class="fragment-search" id="fragment-search" placeholder="Search templates…" />
+            <div class="fragment-grid" id="fragment-grid"></div>
+          </section>
+
+          <section class="card mode-panel hidden" id="run-right-panel">
+            <h2 class="compact-label">Calculation Queue</h2>
+            <div class="queue-empty" id="queue-state"><span></span>No active calculation</div>
+          </section>
+
+          <section class="card result-card hidden" id="result-card">
+            <h2 class="compact-label" id="result-title">RDKit Result</h2>
+            <svg class="energy-chart" id="result-energy-chart" viewBox="0 0 260 110" role="img" aria-label="Energy convergence chart">
+              <path class="grid" d="M24 10v78h222M24 28h222M24 48h222M24 68h222" />
+              <path class="curve" id="energy-curve" d="M25 24 L245 82" />
+              <g class="energy-points" id="energy-points"></g>
+            </svg>
+            <div class="energy-value">
+              <span id="result-energy-label">Potential energy</span>
+              <strong id="result-energy">—</strong>
+            </div>
+            <div class="result-performance hidden" id="result-performance">
+              <div><span>Runtime</span><strong id="result-runtime">—</strong></div>
+              <div><span id="result-throughput-label">Trajectory rate</span><strong id="result-throughput">—</strong></div>
+              <div class="result-performance-wide hidden" id="result-aggregate-performance">
+                <span>Aggregate ensemble throughput</span><strong id="result-aggregate-throughput">—</strong>
+              </div>
+            </div>
+            <div class="result-ensemble hidden" id="result-ensemble">
+              <div class="result-ensemble-heading">
+                <span>Independent trajectories</span>
+                <strong id="result-replica-label">Replica 1/1</strong>
+              </div>
+              <canvas id="result-replica-mosaic" tabindex="0" aria-label="Select a STORMM replica; color shows final heavy-atom RMSD from its starting pose"></canvas>
+              <div class="replica-color-legend">
+                <span>Final heavy-atom RMSD</span>
+                <div><small id="replica-rmsd-low">—</small><i></i><small id="replica-rmsd-high">—</small></div>
+              </div>
+              <label>Selected trajectory
+                <select id="result-replica-select" aria-label="Selected STORMM trajectory"></select>
+              </label>
+              <p id="result-replica-summary">Each cell is one independent trajectory.</p>
+            </div>
+            <div class="result-arena hidden" id="result-arena">
+              <div class="result-arena-heading">
+                <span>Methods</span>
+                <strong id="result-arena-judge">Common Sage/OBC2 score</strong>
+              </div>
+              <div class="arena-method-grid" id="result-arena-methods"></div>
+              <details class="arena-details" id="result-arena-details">
+                <summary>Scoring &amp; validation</summary>
+                <p id="result-arena-summary">Each search is compared with the same Sage score.</p>
+                <p class="arena-parity" id="result-arena-parity">The STORMM lane and common WebGPU rescore are checked on identical coordinates.</p>
+              </details>
+            </div>
+            <div class="result-conformers hidden" id="result-conformers">
+              <div class="result-conformer-heading">
+                <span>Top conformers</span>
+                <strong id="result-conformer-label">Conformer 1/1</strong>
+              </div>
+              <table class="conformer-shortlist-table" aria-label="Five best conformers by common score">
+                <thead><tr><th>Rank</th><th>Source</th><th>ΔE</th><th>ANI</th></tr></thead>
+                <tbody id="result-conformer-shortlist"></tbody>
+              </table>
+              <details class="conformer-map-details" id="result-conformer-map-details">
+                <summary>Explore all conformers</summary>
+                <div class="conformer-plot-controls">
+                  <label>X axis
+                    <select id="result-conformer-cv" aria-label="Conformer landscape collective variable">
+                      <option value="rmsd">RMSD to Sage/OBC2 minimum</option>
+                    </select>
+                  </label>
+                  <label>Y axis
+                    <select id="result-conformer-y" aria-label="Conformer landscape vertical quantity">
+                      <option value="sage-delta">Common Sage/OBC2 judged ΔE</option>
+                    </select>
+                  </label>
+                  <label>Show
+                    <select id="result-conformer-filter" aria-label="Conformers shown in landscape">
+                      <option value="rank25">First 25 by sort</option>
+                      <option value="rank50">First 50 by sort</option>
+                      <option value="energy1">Sage ΔE ≤ 1 kcal/mol</option>
+                      <option value="energy3">Sage ΔE ≤ 3 kcal/mol</option>
+                      <option value="all">All conformers</option>
+                    </select>
+                  </label>
+                  <label>Sort
+                    <select id="result-conformer-sort" aria-label="Conformer sorting quantity">
+                      <option value="sage">Common Sage/OBC2 judged ΔE</option>
+                      <option value="x">Selected X axis</option>
+                      <option value="y">Selected Y axis</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="conformer-visible-count" id="result-conformer-visible">1 plotted</div>
+                <p class="conformer-axis-note" id="result-conformer-axis-note">Only candidates with both selected quantities are plotted.</p>
+                <svg id="result-conformer-scatter" viewBox="0 0 260 154" role="img" tabindex="0" aria-label="Conformer potential energy versus selected collective variable">
+                  <path class="conformer-grid" d="M34 12v102h214M34 38h214M34 64h214M34 90h214" />
+                  <g id="result-conformer-axis-labels"></g>
+                  <text id="result-conformer-x-label" x="141" y="150" text-anchor="middle">Symmetry-aware RMSD to minimum (Å)</text>
+                  <text id="result-conformer-y-label" x="8" y="64" text-anchor="middle" transform="rotate(-90 8 64)">Common Sage/OBC2 judged ΔE (kcal/mol)</text>
+                  <g id="result-conformer-points"></g>
+                </svg>
+                <div class="conformer-energy-legend" id="result-conformer-legend" aria-label="Conformer color legend">
+                  <span id="result-conformer-legend-label">Generator</span>
+                  <div id="result-conformer-legend-scale"><small>low</small><i></i><small>high</small></div>
+                </div>
+                <label class="conformer-jump">Selected
+                  <select id="result-conformer-select" aria-label="Selected conformer"></select>
+                </label>
+                <div class="conformer-rank-buttons">
+                  <button id="result-conformer-best">Best</button>
+                  <button id="result-conformer-previous" aria-label="Previous conformer in selected sort">←</button>
+                  <button id="result-conformer-next" aria-label="Next conformer in selected sort">→</button>
+                </div>
+              </details>
+              <details class="conformer-selection-details">
+                <summary>Selected conformer details</summary>
+                <p id="result-conformer-summary">Select a row or point to inspect its final geometry.</p>
+              </details>
+              <button id="export-conformer-sdf">Export SDF</button>
+            </div>
+            <div class="result-frames hidden" id="result-frames">
+              <div><span id="result-frame-heading">Saved geometry</span><strong id="result-frame-label">Frame 1/1</strong></div>
+              <input type="range" id="result-frame-slider" min="0" max="0" value="0" aria-label="Calculation frame" />
+              <div class="trajectory-buttons">
+                <button id="result-play-trajectory">▶ Play trajectory</button>
+                <button id="result-final-frame">Show final</button>
+              </div>
+            </div>
+            <p class="result-meta" id="result-meta">Local calculation results.</p>
+          </section>
+
+          <section class="card protein-result-card hidden" id="protein-result-card">
+            <h2 class="compact-label" id="protein-result-title">OpenFold Prediction</h2>
+            <div class="protein-confidence-grid">
+              <div><span>Mean pLDDT</span><strong id="protein-plddt">—</strong></div>
+              <div><span>pTM</span><strong id="protein-ptm">—</strong></div>
+              <div><span>MSA depth</span><strong id="protein-msa-depth">—</strong></div>
+              <div><span>Backend</span><strong id="protein-backend">—</strong></div>
+            </div>
+            <div class="confidence-track" aria-label="Mean pLDDT"><i id="protein-confidence-bar"></i></div>
+            <p class="result-meta" id="protein-result-meta">Coordinates predicted locally.</p>
+            <button class="soft-button full-width" id="download-protein-pdb">Download PDB</button>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <dialog class="project-info-dialog" id="project-info-dialog" aria-labelledby="project-info-title">
+      <div class="project-info-heading">
+        <div>
+          <span>Molarium</span>
+          <h2 id="project-info-title">Methods</h2>
+        </div>
+        <button type="button" id="close-project-info" aria-label="Close">×</button>
+      </div>
+      <section data-project-section="methods">
+        <p>Molarium is a local-first molecular workspace. Its molecular viewer is a custom HTML Canvas renderer implemented in this repository.</p>
+        <dl class="project-info-list">
+          <div><dt>Structure</dt><dd>RDKit WebAssembly · RCSB PDB and CCD</dd></div>
+          <div><dt>Simulation</dt><dd>Sage/Rosemary WebGPU · STORMM-style WebGPU ensembles</dd></div>
+          <div><dt>ML potentials</dt><dd>ANI-2x through ONNX Runtime Web</dd></div>
+          <div><dt>Folding</dt><dd>OpenFold 2 ONNX · configurable ColabFold-compatible MSA service</dd></div>
+        </dl>
+        <p class="project-info-note">Coordinates and calculations remain in the browser except for explicit PDB/CCD retrieval and MSA searches.</p>
+      </section>
+      <section class="hidden" data-project-section="validation">
+        <p>Reference checks compare browser calculations with the same numeric systems evaluated by OpenMM and with pinned native model outputs.</p>
+        <ul>
+          <li>OpenFF Sage energy and force parity against an internal OpenMM Reference oracle</li>
+          <li>SHAKE/RATTLE constraint residual and deterministic replay checks</li>
+          <li>RDKit, ANI-2x and OpenFold pinned-version regression fixtures</li>
+          <li>Browser behavior, preparation and trajectory regression suite</li>
+        </ul>
+        <p class="project-info-note">Experimental methods stay labelled in the interface; a passing implementation comparison is not a claim of scientific validation for every system.</p>
+      </section>
+      <section class="hidden" data-project-section="credits">
+        <p>Interface design inspired by <a href="https://atomiverse.com/" target="_blank" rel="noreferrer">Atomiverse</a>. Molarium’s interface and Canvas viewer were independently implemented; Atomiverse and its referenced <code>xyzrender</code> project are not bundled dependencies.</p>
+        <ul class="project-credit-list">
+          <li><a href="./LICENSE">Molarium original code</a> · MIT</li>
+          <li><a href="./openmm/OPENMM-LICENSE.txt">OpenMM 8.2</a> · MIT</li>
+          <li><a href="./rdkit/RDKIT-LICENSE.txt">RDKit 2025.03.4</a> · BSD-3-Clause</li>
+          <li><a href="./licenses/DIMORPHITE-DL-NOTICE.txt">Dimorphite-DL 2.0.2 site data</a> · Apache-2.0</li>
+          <li><a href="./openff/OPENFF-FORCEFIELDS-LICENSE.txt">OpenFF force fields</a> · CC BY 4.0</li>
+          <li><a href="./mlip/TORCHANI-LICENSE.txt">TorchANI / ANI-2x</a> · MIT</li>
+          <li><a href="./licenses/ONNXRUNTIME-LICENSE.txt">ONNX Runtime Web</a> · MIT · <a href="./licenses/ONNXRUNTIME-1.27.0-THIRD-PARTY-NOTICES.txt">third-party notices</a></li>
+          <li><a href="./licenses/OPENFOLD-LICENSE.txt">OpenFold source</a> / <a href="./openfold-export-results/trained/MODEL-CARD.md">model artifacts</a> · Apache-2.0 / CC BY 4.0</li>
+        </ul>
+        <p class="project-info-note">Development acknowledgment: Molarium was built with substantial software-engineering and scientific-reasoning assistance from OpenAI’s Sol.</p>
+        <p class="project-info-note">Full provenance, source links and notices are collected in <a href="./THIRD_PARTY_NOTICES.md">THIRD_PARTY_NOTICES.md</a>.</p>
+      </section>
+      <section class="hidden" data-project-section="privacy">
+        <p class="network-policy-summary" id="network-policy-summary">Checking the active browser network policy…</p>
+        <dl class="project-info-list network-policy-facts">
+          <div><dt>Mode</dt><dd id="network-policy-mode">Checking…</dd></div>
+          <div><dt>Connections</dt><dd id="network-policy-connections">Checking…</dd></div>
+          <div><dt>Enforcement</dt><dd id="network-policy-enforcement">Checking…</dd></div>
+          <div><dt>Policy</dt><dd id="network-policy-id">Checking…</dd></div>
+        </dl>
+        <div class="network-policy-actions">
+          <button class="soft-button" id="verify-local-build" type="button">Verify loaded build</button>
+          <a class="soft-link" href="./local-lab-manifest.json" download>Download SHA-256 manifest</a>
+          <a class="soft-link" href="./local-lab-test.js">Inspect egress test</a>
+        </div>
+        <p class="network-verification-result" id="network-verification-result" role="status" aria-live="polite"></p>
+        <p class="project-info-note"><strong>What this proves:</strong> Local Lab is served from this device with a Content Security Policy that permits network requests only to this page’s own localhost origin. PDB/CCD retrieval and MSA submission are disabled. The manifest lets you compare the delivered application files with the reviewed source build.</p>
+        <p class="project-info-note"><strong>Trust boundary:</strong> a hosted web page cannot prove that its server will always deliver the same code. For proprietary work, run the versioned Local Lab bundle, verify its manifest independently, and optionally disconnect the machine after the local assets are loaded.</p>
+      </section>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./runtime-config.js"></script>
+    <script src="./protein-residue-templates.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
