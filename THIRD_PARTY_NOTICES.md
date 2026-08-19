@@ -31,8 +31,9 @@ or a software dependency.
 | PDBFixer | preparation behavior reference | Reference for conservative protein-repair behavior; not a bundled Python runtime | MIT; [`licenses/PDBFIXER-LICENSE.txt`](./licenses/PDBFIXER-LICENSE.txt) |
 
 The `stormm/` code is a Molarium WebGPU ensemble engine inspired by fixed-point and stacked-system
-ideas. It is not an official STORMM port and does not bundle the native STORMM codebase. Its local
-license is [`stormm/LICENSE`](./stormm/LICENSE).
+ideas from the [official STORMM project](https://github.com/Psivant/stormm). It is not an official
+STORMM port and does not bundle the native STORMM codebase. Its local license is
+[`stormm/LICENSE`](./stormm/LICENSE).
 
 The vendored ONNX Runtime notice is the complete unmodified file from tag `v1.27.0`: 325,054
 bytes, Git blob `fbd9f9a95f6013d8ecaef81e02b0033e5882a675`, SHA-256
