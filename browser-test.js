@@ -421,15 +421,29 @@ const browserSuite = String.raw`(async () => {
   api.loadObject(dockingFixture);
   document.querySelector('.mode-bar button[data-mode="build"]').click();
   const dockingSelection = api.setDockingSelection([3, 4, 5]);
+  const buildToolLayout = [...document.querySelectorAll('#build-tool-tabs .build-tool-choice')].map((choice) => {
+    const button = choice.querySelector('[data-tool]');
+    const info = choice.querySelector('.build-tool-info');
+    const buttonRect = button.getBoundingClientRect();
+    const infoRect = info.getBoundingClientRect();
+    return {
+      label:button.textContent.trim(), height:buttonRect.height,
+      infoPosition:getComputedStyle(info).position,
+      infoInsideButton:infoRect.top >= buttonRect.top - 0.5 && infoRect.bottom <= buttonRect.bottom + 0.5,
+    };
+  });
   check(!document.querySelector('#docking-workbench').classList.contains('hidden')
     && dockingSelection.captureDisabled === false
     && dockingSelection.status.includes('3 core atoms')
     && document.querySelector('#docking-workbench').previousElementSibling?.id === 'build-tool-tabs'
     && document.querySelectorAll('#build-tool-tabs [data-tool]').length === 3
     && document.querySelectorAll('#build-tool-tabs .build-tool-info [aria-describedby]').length === 3
+    && buildToolLayout.every((entry) => entry.infoPosition === 'absolute' && entry.infoInsideButton)
+    && Math.max(...buildToolLayout.map((entry) => entry.height))
+      - Math.min(...buildToolLayout.map((entry) => entry.height)) < 0.5
     && document.querySelector('#build-right-panel > .generated-card-heading span')?.textContent === 'Design workspace',
   'prepared protein-ligand complexes expose a compact core-constrained docking setup',
-  JSON.stringify(dockingSelection));
+  JSON.stringify({ dockingSelection, buildToolLayout }));
   let dockingReference = null;
   try { dockingReference = await api.captureDockingReference(); }
   catch (error) { check(false, 'browser captures the ligand core and explicit cross H-bond', error.message); }

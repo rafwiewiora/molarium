@@ -32,8 +32,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 52158,
-      "sha256": "73d1b92323501c610efec508dfa6da8823b859f1c71a104f7e862d34279193f6"
+      "bytes": 52154,
+      "sha256": "cf8f6c36be6c16534a0a3e619c85336ecc99a314c279a0595ec957454e167328"
     },
     {
       "path": "local-lab-test.js",
@@ -62,8 +62,8 @@
     },
     {
       "path": "styles.css",
-      "bytes": 52494,
-      "sha256": "cad8484d147b80c4356285648b5da1b7de7af4862d6bcee34137a9fa35ed05ba"
+      "bytes": 52651,
+      "sha256": "1e50649138b4f7ca658577b21f3fdee360d4eb695101e59fb6b43c6035e5966b"
     },
     {
       "path": "rdkit-worker.js",

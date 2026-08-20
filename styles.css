@@ -453,14 +453,15 @@ select {
 .build-tool-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 12px; }
 .build-tool-choice { position: relative; min-width: 0; }
 .build-tool-tabs [data-tool] {
-  width: 100%; min-width: 0; padding: 8px 22px 8px 4px; border: 1px solid var(--line-strong); border-radius: 8px;
+  width: 100%; min-width: 0; min-height: 38px; padding: 8px 22px 8px 4px; border: 1px solid var(--line-strong); border-radius: 8px;
   background: white; color: var(--secondary); font-size: 10px; font-weight: 700;
 }
 .build-tool-tabs [data-tool]:hover { border-color: #94a3b8; background: var(--muted); }
 .build-tool-tabs [data-tool].selected { border-color: var(--ink); background: var(--ink); color: white; }
-.build-tool-info { position: absolute; z-index: 2; top: 50%; right: 5px; transform: translateY(-50%); }
+.info-anchor.build-tool-info { position: absolute; z-index: 2; top: 50%; right: 5px; transform: translateY(-50%); }
 .build-tool-info .info-button { width: 15px; height: 15px; font-size: 9px; line-height: 13px; }
-.build-tool-info .info-popover { top: 20px; right: -4px; }
+.build-tool-info .info-popover { top: 20px; right: -4px; width: min(170px, calc(100vw - 54px)); }
+.build-tool-choice:first-child .build-tool-info .info-popover { right: auto; left: 0; }
 .build-section-label { margin-top: 13px; }
 .element-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
 .element-grid button { aspect-ratio: 1.2; border: 1px solid var(--line); border-radius: 8px; background: #f8fafc; color: #334155; font-size: 12px; font-weight: 700; }
