@@ -417,6 +417,8 @@ const browserSuite = String.raw`(async () => {
     && dockingSelection.captureDisabled === false
     && dockingSelection.status.includes('3 core atoms')
     && document.querySelector('#docking-workbench').previousElementSibling?.id === 'build-tool-tabs'
+    && document.querySelectorAll('#build-tool-tabs [data-tool]').length === 3
+    && document.querySelectorAll('#build-tool-tabs .build-tool-info [aria-describedby]').length === 3
     && document.querySelector('#build-right-panel > .generated-card-heading span')?.textContent === 'Design workspace',
   'prepared protein-ligand complexes expose a compact core-constrained docking setup',
   JSON.stringify(dockingSelection));
@@ -1203,6 +1205,11 @@ const browserSuite = String.raw`(async () => {
     clientX: editCanvasRect.left + editTarget.sx,
     clientY: editCanvasRect.top + editTarget.sy,
   }));
+  document.querySelector('#molecule-canvas').dispatchEvent(new PointerEvent('pointerup', {
+    bubbles: true, pointerId: 40,
+    clientX: editCanvasRect.left + editTarget.sx,
+    clientY: editCanvasRect.top + editTarget.sy,
+  }));
   const interactivePolish = await new Promise((resolve, reject) => {
     const started = performance.now();
     const poll = () => {
@@ -1243,9 +1250,61 @@ const browserSuite = String.raw`(async () => {
     clientX: canvasRect.left + hydrogenScreen.sx,
     clientY: canvasRect.top + hydrogenScreen.sy,
   }));
+  document.querySelector('#molecule-canvas').dispatchEvent(new PointerEvent('pointerup', {
+    bubbles: true, pointerId: 41,
+    clientX: canvasRect.left + hydrogenScreen.sx,
+    clientY: canvasRect.top + hydrogenScreen.sy,
+  }));
   const clickAdded = api.current();
   check(clickAdded.formula === 'C7H8', 'element tool click adds methyl without fake bonds', clickAdded.formula);
   check(clickAdded.bonds === 15 && clickAdded.valenceViolations.length === 0, 'element tool click keeps explicit valid topology', clickAdded.bonds + ' bonds');
+
+  api.load('c1ccccc1');
+  document.querySelector('[data-mode="build"]').click();
+  document.querySelector('[data-tool="select"]').click();
+  const buildCanvas = document.querySelector('#molecule-canvas');
+  const buildRect = buildCanvas.getBoundingClientRect();
+  const buildAtom = api.viewerState().atoms.find((atom) => atom.index === 0);
+  const buildRotationBefore = api.viewerState().rotation;
+  buildCanvas.dispatchEvent(new PointerEvent('pointerdown', { bubbles:true, pointerId:42,
+    button:0, clientX:buildRect.left + buildAtom.sx, clientY:buildRect.top + buildAtom.sy }));
+  buildCanvas.dispatchEvent(new PointerEvent('pointermove', { bubbles:true, pointerId:42,
+    button:0, buttons:1, clientX:buildRect.left + buildAtom.sx + 70, clientY:buildRect.top + buildAtom.sy + 35 }));
+  buildCanvas.dispatchEvent(new PointerEvent('pointerup', { bubbles:true, pointerId:42,
+    button:0, clientX:buildRect.left + buildAtom.sx + 70, clientY:buildRect.top + buildAtom.sy + 35 }));
+  const buildRotationAfter = api.viewerState().rotation;
+  const buildRotationDelta = ['w', 'x', 'y', 'z'].reduce((sum, key) =>
+    sum + Math.abs(buildRotationAfter[key] - buildRotationBefore[key]), 0);
+  check(buildRotationDelta > 1e-3
+    && document.querySelector('#geometry-selection-help').textContent.includes('Choose Select'),
+  'left-drag rotates in Build Select without accidentally selecting the starting atom',
+  JSON.stringify({ buildRotationDelta }));
+
+  for (let index = 0; index < 6; index++) {
+    const projected = api.viewerState().atoms.find((atom) => atom.index === index);
+    buildCanvas.dispatchEvent(new PointerEvent('pointerdown', { bubbles:true, pointerId:50 + index,
+      button:0, clientX:buildRect.left + projected.sx, clientY:buildRect.top + projected.sy }));
+    buildCanvas.dispatchEvent(new PointerEvent('pointerup', { bubbles:true, pointerId:50 + index,
+      button:0, clientX:buildRect.left + projected.sx, clientY:buildRect.top + projected.sy }));
+  }
+  check(document.querySelector('#geometry-selection-help').textContent.includes('6 atoms selected for a docking core')
+    && document.querySelector('#build-status').textContent.includes('6 atoms selected'),
+  'Build Select accepts a connected docking core larger than four atoms');
+
+  const buildPanBefore = api.viewerState().pan;
+  const coordinatesBeforeBuildPan = api.current().molecule.atoms.map((atom) => [atom.x, atom.y, atom.z]);
+  buildCanvas.dispatchEvent(new PointerEvent('pointerdown', { bubbles:true, pointerId:60,
+    button:2, clientX:buildRect.left + 200, clientY:buildRect.top + 200 }));
+  buildCanvas.dispatchEvent(new PointerEvent('pointermove', { bubbles:true, pointerId:60,
+    button:2, buttons:2, clientX:buildRect.left + 230, clientY:buildRect.top + 182 }));
+  buildCanvas.dispatchEvent(new PointerEvent('pointerup', { bubbles:true, pointerId:60,
+    button:2, clientX:buildRect.left + 230, clientY:buildRect.top + 182 }));
+  const buildPanAfter = api.viewerState().pan;
+  check(buildPanAfter.x - buildPanBefore.x === 30 && buildPanAfter.y - buildPanBefore.y === -18
+    && JSON.stringify(api.current().molecule.atoms.map((atom) => [atom.x, atom.y, atom.z]))
+      === JSON.stringify(coordinatesBeforeBuildPan),
+  'right-drag pans the full scene in Build without changing molecular coordinates',
+  JSON.stringify({ before:buildPanBefore, after:buildPanAfter }));
 
   const cf3Seed = api.attach('c1ccccc1', 'trifluoromethyl', 0).molecule;
   const cf3Carbon = cf3Seed.atoms.findIndex((atom, index) => index > 5 && atom.element === 'C' && !atom.aromatic);

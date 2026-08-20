@@ -112,8 +112,8 @@
     },
     {
       "path": "docking/reference-core.mjs",
-      "bytes": 3856,
-      "sha256": "e82b677e0276780a9313af46f71054d9c00d188d06c2d7d3189d3cc48dbd0f7a"
+      "bytes": 4453,
+      "sha256": "8e348e2018065fb72a57ac01e0eb978f3b9bef072b7ca6c268a8c83c1bc06155"
     },
     {
       "path": "docking/workflow.mjs",

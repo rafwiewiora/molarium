@@ -74,6 +74,17 @@ const designMolecule = { name:'design ligand', atoms:[
 ensureStableAtomIds(designMolecule, 'test');
 const captured = captureReferenceLigand(designMolecule, [0, 1, 2, 3], [0, 1, 2], 'test');
 assert.ok(captured.coreMaximumTriangleDoubleAreaAngstrom2 > 0.99);
+const ringCoreMolecule = { name:'six-atom core', atoms:Array.from({ length:6 }, (_, index) => ({
+  element:'C', x:Math.cos(index * Math.PI / 3), y:Math.sin(index * Math.PI / 3), z:0,
+})), bonds:Array.from({ length:6 }, (_, index) => ({ a:index, b:(index + 1) % 6, order:1 })) };
+const ringCaptured = captureReferenceLigand(ringCoreMolecule, [0, 1, 2, 3, 4, 5],
+  [0, 1, 2, 3, 4, 5], 'large-core');
+assert.equal(ringCaptured.coreAtomIds.length, 6);
+assert.equal(mapReferenceCore(ringCaptured, ringCoreMolecule.atoms).atomPairs.length, 6);
+const disconnectedCoreMolecule = structuredClone(designMolecule);
+disconnectedCoreMolecule.atoms.push({ element:'C', x:0, y:0, z:2 });
+assert.throws(() => captureReferenceLigand(disconnectedCoreMolecule, [0, 1, 2, 3, 4],
+  [0, 1, 2, 4], 'disconnected'), /connected set/);
 const collinear = { name:'collinear', atoms:[
   { element:'C', x:0, y:0, z:0 }, { element:'C', x:1, y:0, z:0 },
   { element:'C', x:2, y:0, z:0 },

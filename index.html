@@ -237,16 +237,25 @@
 
           <section class="card mode-panel hidden" id="build-left-panel">
             <div class="build-tool-tabs" id="build-tool-tabs">
-              <button class="selected" data-tool="add">⊕ Add</button>
-              <button data-tool="select">⌖ Select</button>
-              <button data-tool="manipulate">✣ Manipulate</button>
+              <div class="build-tool-choice">
+                <button class="selected" data-tool="add">⊕ Add</button>
+                <span class="info-anchor build-tool-info"><button type="button" class="info-button" aria-label="About Add" aria-describedby="build-add-info">i</button><span class="info-popover" id="build-add-info" role="tooltip">Click to attach an element or fragment. Drag to rotate the view.</span></span>
+              </div>
+              <div class="build-tool-choice">
+                <button data-tool="select">⌖ Select</button>
+                <span class="info-anchor build-tool-info"><button type="button" class="info-button" aria-label="About Select" aria-describedby="build-select-info">i</button><span class="info-popover" id="build-select-info" role="tooltip">Click connected atoms to edit geometry or define a docking core. Drag to rotate.</span></span>
+              </div>
+              <div class="build-tool-choice">
+                <button data-tool="manipulate">✣ Manipulate</button>
+                <span class="info-anchor build-tool-info"><button type="button" class="info-button" aria-label="About Manipulate" aria-describedby="build-manipulate-info">i</button><span class="info-popover" id="build-manipulate-info" role="tooltip">Drag an atom to move it directly. Drag empty space to rotate; minimize afterward.</span></span>
+              </div>
             </div>
             <section class="docking-workbench hidden" id="docking-workbench">
               <div class="docking-heading">
                 <h2 class="compact-label">Constrained docking</h2>
                 <span class="info-anchor"><button type="button" class="info-button" aria-label="About constrained docking" aria-describedby="docking-info">i</button><span class="info-popover" id="docking-info" role="tooltip">Experimental rigid-receptor pose ranking. Scores are not binding free energies.</span></span>
               </div>
-              <p class="docking-status" id="docking-status">Select 3–4 connected ligand heavy atoms.</p>
+              <p class="docking-status" id="docking-status">Select at least 3 connected ligand heavy atoms.</p>
               <div class="docking-reference-actions">
                 <button class="soft-button" type="button" id="capture-docking-reference">Set core</button>
                 <button class="soft-button hidden" type="button" id="clear-docking-reference">Reset</button>

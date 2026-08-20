@@ -654,6 +654,7 @@ const state = {
   pointer: { x: 0, y: 0 },
   pointerStart: null,
   pointerDragged: false,
+  pendingBuildAction: null,
   hoverAtom: null,
   autoRotate: 'none',
   playing: false,
@@ -3247,11 +3248,11 @@ function updateDockingUi() {
     capture.classList.remove('hidden'); clear.classList.add('hidden');
     constraints.classList.add('hidden'); runRow.classList.add('hidden');
     capture.disabled = state.dockingRunning || !state.molecule.parameterization?.system
-      || core.length < 3 || core.length > 4 || state.selectedAtoms.length !== core.length;
+      || core.length < 3 || state.selectedAtoms.length !== core.length;
     if (!state.molecule.parameterization?.system) setDockingStatus('Prepare the complex first.');
-    else if (core.length >= 3 && core.length <= 4 && state.selectedAtoms.length === core.length)
+    else if (core.length >= 3 && state.selectedAtoms.length === core.length)
       setDockingStatus(`${core.length} core atoms selected.`);
-    else setDockingStatus('Select 3–4 connected ligand heavy atoms.');
+    else setDockingStatus('Select at least 3 connected ligand heavy atoms.');
   }
 }
 
@@ -3260,8 +3261,8 @@ async function captureCurrentDockingReference() {
     throw new Error('Prepare and parameterize the complex before setting a docking reference.');
   const component = dockingLigandComponent();
   const core = dockingSelectedCore(component);
-  if (!component || core.length < 3 || core.length > 4 || core.length !== state.selectedAtoms.length)
-    throw new Error('Select 3–4 connected heavy atoms from one ligand.');
+  if (!component || core.length < 3 || core.length !== state.selectedAtoms.length)
+    throw new Error('Select at least 3 connected heavy atoms from one ligand.');
   const [{ captureReferenceLigand }, { buildReceptorSite }, adapter] = await Promise.all([
     import('./docking/reference-core.mjs'), import('./docking/receptor-score.mjs'),
     import('./docking/browser-adapter.mjs'),
@@ -4284,6 +4285,9 @@ function torsionDegrees(molecule, first, second, third, last) {
 function geometrySelection() {
   const selected = state.selectedAtoms;
   if (!state.molecule || selected.length < 2) return null;
+  if (selected.length > 4) return {
+    error: `${selected.length} atoms selected for a docking core; geometry editing supports up to 4.`,
+  };
   const sequential = selected.slice(1).every((atom, index) => bondBetween(state.molecule, selected[index], atom));
   if (!sequential) return { error: 'Selections must follow directly bonded atoms.' };
   if (selected.length === 2) return {
@@ -4422,11 +4426,11 @@ function finishGeometryEdit() {
 function selectGeometryAtom(index) {
   const existing = state.selectedAtoms.indexOf(index);
   if (existing >= 0) state.selectedAtoms = state.selectedAtoms.slice(0, existing);
-  else if (state.selectedAtoms.length >= 4) state.selectedAtoms = [index];
   else {
-    const previous = state.selectedAtoms.at(-1);
-    if (previous != null && state.selectedAtoms.length > 1 && !bondBetween(state.molecule, previous, index)) {
-      showNotice('Pick atoms along a connected bond path.'); return;
+    const connected = !state.selectedAtoms.length
+      || state.selectedAtoms.some((selectedIndex) => bondBetween(state.molecule, selectedIndex, index));
+    if (!connected) {
+      showNotice('Each new atom must bond to the connected selection.'); return;
     }
     state.selectedAtoms.push(index);
   }
@@ -5020,9 +5024,14 @@ function updateBuildStatus(extra = '') {
     document.querySelector('#viewer-container').appendChild(status);
   }
   if (state.mode !== 'build') { status.classList.add('hidden'); return; }
-  if (!extra) { status.classList.add('hidden'); return; }
   status.classList.remove('hidden');
-  status.innerHTML = extra;
+  if (extra) { status.innerHTML = extra; return; }
+  if (state.buildTool === 'add' && state.stagedFragment) status.textContent = `⊕ ${state.stagedFragment.name}: click an atom to attach · click space to add`;
+  else if (state.buildTool === 'add') status.textContent = `⊕ Add ${state.selectedElement}: click near an atom to bond · click open space for a separate molecule`;
+  else if (state.buildTool === 'select') status.textContent = state.selectedAtoms.length
+    ? `⌖ Select: ${state.selectedAtoms.length} atom${state.selectedAtoms.length === 1 ? '' : 's'} selected · continue along bonds or click a selected atom to trim`
+    : '⌖ Select: pick one atom to edit it, or any pair to create or edit a bond';
+  else status.textContent = '✣ Manipulate: drag an atom to move it · drag empty space to rotate';
 }
 
 function stageFragment(fragment) {
@@ -5030,7 +5039,7 @@ function stageFragment(fragment) {
     fragment.preview ??= parseSMILES(fragment.smiles, fragment.name);
     state.stagedFragment = fragment;
     state.buildTool = 'add';
-    document.querySelectorAll('#build-tool-tabs button').forEach((button) => button.classList.toggle('selected', button.dataset.tool === 'add'));
+    document.querySelectorAll('#build-tool-tabs [data-tool]').forEach((button) => button.classList.toggle('selected', button.dataset.tool === 'add'));
     document.querySelectorAll('.fragment-card').forEach((card) => card.classList.toggle('selected', card.dataset.fragment === fragment.id));
     canvas.classList.add('build-cursor'); updateBuildStatus(); showToast(`${fragment.name} staged`);
   } catch (error) { showNotice(error.message); }
@@ -9384,9 +9393,9 @@ document.querySelectorAll('#element-grid button').forEach((button) => button.add
   state.stagedFragment = null; document.querySelectorAll('.fragment-card').forEach((card) => card.classList.remove('selected')); updateBuildStatus();
 }));
 
-document.querySelectorAll('#build-tool-tabs button').forEach((button) => button.addEventListener('click', () => {
+document.querySelectorAll('#build-tool-tabs [data-tool]').forEach((button) => button.addEventListener('click', () => {
   state.buildTool = button.dataset.tool;
-  document.querySelectorAll('#build-tool-tabs button').forEach((item) => item.classList.toggle('selected', item === button));
+  document.querySelectorAll('#build-tool-tabs [data-tool]').forEach((item) => item.classList.toggle('selected', item === button));
   canvas.classList.toggle('build-cursor', state.buildTool === 'add'); updateBuildStatus(); draw();
 }));
 
@@ -9520,22 +9529,24 @@ document.querySelector('#stage-custom-fragment').addEventListener('click', () =>
 canvas.addEventListener('pointerdown', (event) => {
   if (state.mode === 'build') {
     if (state.minimizing) return;
-    if (state.buildTool === 'add') {
-      if (state.stagedFragment) addFragmentAtScreen(state.stagedFragment, event.clientX, event.clientY);
-      else addAtomAtScreen(event.clientX, event.clientY);
-      return;
-    }
+    const panInput = event.button === 2 || (event.button === 0 && (event.ctrlKey || event.metaKey));
+    if (event.button !== 0 && !panInput) return;
     const hit = hitTest(event.clientX, event.clientY);
-    if (state.buildTool === 'select') {
-      if (hit) selectGeometryAtom(hit.index);
-      else { state.selectedAtoms = []; state.selectedAtom = null; updateGeometryControl(); updateBuildStatus(); draw(); }
-      return;
+    if (state.buildTool === 'manipulate' && hit && !panInput) {
+      state.selectedAtom = hit.index; draw(); pushBuildHistory(); state.dragAtom = hit.index;
+      state.dragStartPoint = screenToMolecule(event.clientX, event.clientY);
+    } else {
+      state.pendingBuildAction = !panInput ? { tool:state.buildTool } : null;
+      state.panningView = panInput;
+      state.arcballStart = panInput ? null : arcballVector(event.clientX, event.clientY);
+      state.rotationStart = panInput ? null : { ...state.rotation };
     }
-    state.selectedAtom = hit?.index ?? null; draw();
-    if (!hit) return;
-    pushBuildHistory(); state.dragAtom = hit.index; state.dragging = true;
-    state.dragStartPoint = screenToMolecule(event.clientX, event.clientY);
-    state.pointer = { x: event.clientX, y: event.clientY }; canvas.classList.add('dragging'); canvas.setPointerCapture(event.pointerId);
+    state.dragging = true;
+    state.pointerStart = { x:event.clientX, y:event.clientY };
+    state.pointerDragged = false;
+    state.pointer = { x:event.clientX, y:event.clientY };
+    canvas.classList.add(panInput ? 'panning' : 'dragging');
+    try { canvas.setPointerCapture(event.pointerId); } catch {}
     return;
   }
   const panInput = event.button === 2 || (event.button === 0 && (event.ctrlKey || event.metaKey));
@@ -9546,13 +9557,17 @@ canvas.addEventListener('pointerdown', (event) => {
   state.panningView = panInput;
   state.arcballStart = panInput ? null : arcballVector(event.clientX, event.clientY);
   state.rotationStart = panInput ? null : { ...state.rotation };
-  canvas.classList.add(panInput ? 'panning' : 'dragging'); canvas.setPointerCapture(event.pointerId);
+  canvas.classList.add(panInput ? 'panning' : 'dragging');
+  try { canvas.setPointerCapture(event.pointerId); } catch {}
 });
 canvas.addEventListener('pointermove', (event) => {
   const rect = canvas.getBoundingClientRect();
   if (state.dragging) {
     if (state.pointerStart && Math.hypot(event.clientX - state.pointerStart.x,
       event.clientY - state.pointerStart.y) > 5) state.pointerDragged = true;
+    if (state.mode === 'build' && state.pendingBuildAction && !state.pointerDragged) {
+      state.pointer = { x:event.clientX, y:event.clientY }; return;
+    }
     if (state.panningView) {
       state.viewPan.x += event.clientX - state.pointer.x;
       state.viewPan.y += event.clientY - state.pointer.y;
@@ -9587,23 +9602,35 @@ canvas.addEventListener('pointermove', (event) => {
   draw();
 });
 canvas.addEventListener('pointerup', (event) => {
+  const pendingBuildAction = state.pendingBuildAction;
+  const pointerDragged = state.pointerDragged;
   if (state.dragAtom != null) { updateStoredBondDistances(); updateInfo(); updateGeometryControl(); }
   state.dragging = false; state.dragAtom = null; state.panningView = false;
   state.arcballStart = null; state.rotationStart = null; canvas.classList.remove('dragging', 'panning');
-  if (state.mode !== 'build' && event.button === 0 && !event.ctrlKey && !event.metaKey && !state.pointerDragged) {
+  if (state.mode === 'build' && pendingBuildAction && event.button === 0
+    && !event.ctrlKey && !event.metaKey && !pointerDragged) {
+    const hit = hitTest(event.clientX, event.clientY);
+    if (pendingBuildAction.tool === 'add') {
+      if (state.stagedFragment) addFragmentAtScreen(state.stagedFragment, event.clientX, event.clientY);
+      else addAtomAtScreen(event.clientX, event.clientY);
+    } else if (pendingBuildAction.tool === 'select') {
+      if (hit) selectGeometryAtom(hit.index);
+      else { state.selectedAtoms = []; state.selectedAtom = null; updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw(); }
+    }
+  } else if (state.mode !== 'build' && event.button === 0 && !event.ctrlKey && !event.metaKey && !pointerDragged) {
     const hit = hitTest(event.clientX, event.clientY);
     if (hit && residueKey(state.molecule?.atoms?.[hit.index])) setFocusedResidue(hit.index);
     else if (!hit && state.focusedResidueKey) setFocusedResidue(null);
   }
-  state.pointerStart = null;
+  state.pendingBuildAction = null; state.pointerStart = null; state.pointerDragged = false;
 });
 canvas.addEventListener('pointercancel', () => {
   state.dragging = false; state.dragAtom = null; state.panningView = false;
   state.arcballStart = null; state.rotationStart = null;
-  state.pointerStart = null; state.pointerDragged = false; canvas.classList.remove('dragging', 'panning');
+  state.pendingBuildAction = null; state.pointerStart = null; state.pointerDragged = false; canvas.classList.remove('dragging', 'panning');
 });
 canvas.addEventListener('pointerleave', () => { if (!state.dragging) { state.hoverAtom = null; document.querySelector('#atom-tooltip').classList.add('hidden'); draw(); } });
-canvas.addEventListener('contextmenu', (event) => { if (state.mode !== 'build') event.preventDefault(); });
+canvas.addEventListener('contextmenu', (event) => { event.preventDefault(); });
 canvas.addEventListener('wheel', (event) => { event.preventDefault(); state.zoom = Math.max(.45, Math.min(2.6, state.zoom * Math.exp(-event.deltaY * .001))); draw(); }, { passive: false });
 
 document.querySelector('#export-button').addEventListener('click', exportXYZ);

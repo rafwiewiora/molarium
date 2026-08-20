@@ -30,6 +30,20 @@ export function captureReferenceLigand(molecule, ligandAtomIndices, coreAtomIndi
   const core = [...new Set(Array.from(coreAtomIndices || indices, Number))]
     .filter((index) => selected.has(index) && molecule.atoms[index].element !== 'H');
   if (core.length < 3) throw new Error('The reference core needs at least three ligand heavy atoms');
+  const coreSet = new Set(core);
+  const connectedCore = new Set([core[0]]);
+  const queue = [core[0]];
+  while (queue.length) {
+    const atomIndex = queue.shift();
+    molecule.bonds.forEach((bond) => {
+      const neighbor = bond.a === atomIndex ? bond.b : bond.b === atomIndex ? bond.a : null;
+      if (neighbor != null && coreSet.has(neighbor) && !connectedCore.has(neighbor)) {
+        connectedCore.add(neighbor); queue.push(neighbor);
+      }
+    });
+  }
+  if (connectedCore.size !== core.length)
+    throw new Error('The reference core must be one connected set of ligand heavy atoms');
   let maximumTriangleDoubleArea = 0;
   for (let first = 0; first < core.length; first++) for (let second = first + 1; second < core.length; second++)
     for (let third = second + 1; third < core.length; third++) {

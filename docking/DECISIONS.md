@@ -208,11 +208,25 @@ refinement remains an explicit future protocol version rather than an invisible 
 
 ### Decision D-012 — reject underdetermined reference cores
 
-Three or four selected heavy atoms must include a non-collinear triple. Capture records the maximum
-triangle double-area and rejects a value below `1e-3 Å²`.
+Any connected set of at least three selected heavy atoms may define the core and must include a
+non-collinear triple. Capture records the maximum triangle double-area and rejects a value below
+`1e-3 Å²`. There is no upper atom-count limit: larger selections deliberately preserve more of the
+reference scaffold, while smaller selections leave more conformational freedom.
 
 Reason: a collinear core cannot uniquely determine a 3D rigid orientation. Accepting it would produce
 arbitrary rotations around the core axis despite a deceptively small RMSD.
+
+### Decision D-013 — camera gestures remain available while building
+
+Build actions are committed on click release. Crossing a five-pixel movement threshold turns the
+same left-button gesture into arcball rotation instead, while right-button or Ctrl/Command drag pans
+the entire scene. Manipulate retains direct atom dragging, but only when its gesture begins on an
+atom; empty-space drag rotates.
+
+Reason: selecting a buried ligand core requires repeated camera changes. Immediate pointer-down
+editing made rotation impossible and could accidentally alter chemistry when the user intended to
+inspect another side of the complex. Compact `i` controls document the three tool semantics without
+adding permanent instructional copy.
 
 ### Observed failure F-002 — edited atom counts were initially coupled to the reference
 
@@ -236,3 +250,11 @@ score, applies the pose, and confirms the receptor coordinates did not move.
 
 This is an execution/reproducibility gate, not an accuracy benchmark. Cognate redocking and
 cross-docking datasets remain required before reporting docking accuracy.
+
+### Validation V-004 — Build gesture disambiguation and large cores
+
+The Chrome regression begins a left drag on an atom in Select mode and verifies that the camera
+rotates without selecting the atom. It then clicks all six connected atoms of a ring, verifies that
+the selection remains intact beyond the four-atom geometry-editor limit, and right-drags to pan while
+asserting that every molecular coordinate is unchanged. Unit tests capture and map the six-atom core
+and reject a non-collinear but disconnected selection.

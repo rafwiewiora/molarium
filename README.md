@@ -201,8 +201,9 @@ residue centered during trajectory playback.
 ## Constrained docking
 
 Molarium CCD-1 is an experimental, independent browser workflow for edit-derived ligand series.
-Start from a prepared and parameterized protein–ligand complex, select three or four non-collinear
-ligand heavy atoms as the conserved core, and optionally require the explicit cross-component
+Start from a prepared and parameterized protein–ligand complex, select any connected set of at
+least three ligand heavy atoms containing a non-collinear triple as the conserved core, and
+optionally require the explicit cross-component
 H-bonds visible in the reference pose. Molarium then generates deterministic ETKDGv3 conformers,
 aligns the surviving stable atom identities to the reference core, audits D–H–A geometry, and ranks
 feasible poses before infeasible ones.
