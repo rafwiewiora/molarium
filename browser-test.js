@@ -1420,11 +1420,25 @@ const browserSuite = String.raw`(async () => {
     'STORMM retained frames pass positional X–H, size, COM, and fitted-RMSD diagnostics',
     JSON.stringify(constrainedStormmTrajectory));
   check(constrainedStormmFrames.alignment?.mode === 'fixed-identity heavy-atom rigid fit'
-      && constrainedStormmFrames.alignment.referenceFrame === 0
+      && constrainedStormmFrames.alignment.referenceFrame === null
+      && constrainedStormmFrames.alignment.referenceGeometry === 'input coordinates'
+      && constrainedStormmFrames.alignment.sharedAcrossReplicas
       && constrainedStormmFrames.alignment.heavyAtomCount === 3
       && constrainedStormmFrames.alignment.displayOnly,
-    'STORMM MD replicas are display-aligned to their own first frame without changing raw diagnostics',
+    'STORMM MD replicas share the unrandomized input display reference without changing raw diagnostics',
     JSON.stringify(constrainedStormmFrames.alignment));
+  api.selectCalculationFrame(0);
+  const alignedStormmReplica0 = Float64Array.from(
+    api.current().molecule.atoms.flatMap((atom) => [atom.x, atom.y, atom.z]));
+  api.selectCalculationReplica(1);
+  const alignedStormmReplica1 = Float64Array.from(
+    api.current().molecule.atoms.flatMap((atom) => [atom.x, atom.y, atom.z]));
+  const directCoordinateRmsd = (first, second) => Math.sqrt(first.reduce((sum, value, index) =>
+    sum + (value - second[index]) ** 2, 0) / (first.length / 3));
+  const replicaPairRmsd = directCoordinateRmsd(alignedStormmReplica0, alignedStormmReplica1);
+  check(replicaPairRmsd < 0.15,
+    'switching STORMM replicas preserves one display orientation despite randomized starts',
+    replicaPairRmsd.toExponential(3) + ' Å direct coordinate RMSD');
   api.load('CCCC');
   const conformerSearch = await api.calculateCurrent('conformers', 'stormm', {
     conformerCount: 32, conformerSearchSteps: 50, conformerClusterRms: 0.5,

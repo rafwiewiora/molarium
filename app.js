@@ -5256,6 +5256,8 @@ window.molariumTest = Object.freeze({
       } : state.trajectoryDisplayAlignment ? {
         mode:'fixed-identity heavy-atom rigid fit',
         referenceFrame:state.trajectoryDisplayAlignment.referenceFrame,
+        referenceGeometry:state.trajectoryDisplayAlignment.referenceGeometry,
+        sharedAcrossReplicas:state.trajectoryDisplayAlignment.sharedAcrossReplicas,
         heavyAtomCount:state.trajectoryDisplayAlignment.atomIndices.length,
         displayOnly:true,
       } : null,
@@ -7243,15 +7245,28 @@ function alignConformerDisplayFrames(frames, alignment) {
   }));
 }
 
-function createTrajectoryDisplayAlignment(frames, molecule) {
+function moleculeCoordinateArray(molecule) {
+  if (!molecule?.atoms?.length) return null;
+  const positions = Float64Array.from(
+    molecule.atoms.flatMap((atom) => [atom.x, atom.y, atom.z]));
+  return positions.every(Number.isFinite) ? positions : null;
+}
+
+function createTrajectoryDisplayAlignment(frames, molecule, sharedReference = null) {
   if (!frames.length || !molecule?.atoms?.length) return null;
   const heavyAtoms = molecule.atoms.map((atom, index) => atom.element === 'H' ? -1 : index)
     .filter((index) => index >= 0);
   const atomIndices = heavyAtoms.length
     ? heavyAtoms : molecule.atoms.map((_, index) => index);
+  const sharedAcrossReplicas = sharedReference instanceof Float64Array
+    && sharedReference.length === molecule.atoms.length * 3
+    && sharedReference.every(Number.isFinite);
   return {
-    referenceFrame:0,
-    referencePositions:frames[0].positions.slice(),
+    referenceFrame:sharedAcrossReplicas ? null : 0,
+    referenceGeometry:sharedAcrossReplicas ? 'input coordinates' : 'first trajectory frame',
+    sharedAcrossReplicas,
+    referencePositions:sharedAcrossReplicas
+      ? sharedReference.slice() : frames[0].positions.slice(),
     atomIndices,
   };
 }
@@ -7884,7 +7899,8 @@ function setCalculationFrames(result) {
     else {
       if (result.job === 'dynamics') {
         state.calculationRawFrames = frames;
-        state.trajectoryDisplayAlignment = createTrajectoryDisplayAlignment(frames, state.molecule);
+        state.trajectoryDisplayAlignment = createTrajectoryDisplayAlignment(
+          frames, result.molecule, moleculeCoordinateArray(result.molecule));
         frames = alignTrajectoryDisplayFrames(frames, state.trajectoryDisplayAlignment);
       }
       configureResultEnsemble(result);
@@ -8051,7 +8067,10 @@ function selectCalculationReplica(replica) {
     frames = alignConformerDisplayFrames(frames, state.conformerDisplayAlignment);
   } else if (state.calculationJob === 'dynamics') {
     state.calculationRawFrames = frames;
-    state.trajectoryDisplayAlignment = createTrajectoryDisplayAlignment(frames, state.molecule);
+    if (!state.trajectoryDisplayAlignment) {
+      state.trajectoryDisplayAlignment = createTrajectoryDisplayAlignment(
+        frames, ensemble.molecule, moleculeCoordinateArray(ensemble.molecule));
+    }
     frames = alignTrajectoryDisplayFrames(frames, state.trajectoryDisplayAlignment);
   }
   if (!frames.length) return;
