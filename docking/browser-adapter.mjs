@@ -95,6 +95,17 @@ export function mapCapturedHydrogenBonds(definitions, candidateAtoms, selectedId
   return { constraints:mapped, missing, complete:missing.length === 0 };
 }
 
+export function capturedHydrogenBondAvailability(definitions, candidateAtoms) {
+  const candidateIds = new Set(Array.from(candidateAtoms || [], (atom) => atom?.designAtomId).filter(Boolean));
+  return Array.from(definitions || []).map((definition) => {
+    const requiredAtomIds = [definition.donor, definition.hydrogen, definition.acceptor]
+      .filter((descriptor) => descriptor?.scope === 'ligand')
+      .map((descriptor) => descriptor.designAtomId);
+    const missingAtomIds = requiredAtomIds.filter((id) => !candidateIds.has(id));
+    return { id:definition.id, available:missingAtomIds.length === 0, missingAtomIds };
+  });
+}
+
 export function unpackConformerStack(stack, atomCount) {
   if (!ArrayBuffer.isView(stack) || !Number.isInteger(atomCount) || atomCount < 1)
     throw new Error('A typed conformer stack and atom count are required');

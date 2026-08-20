@@ -205,12 +205,15 @@ Start from a prepared and parameterized protein–ligand complex, select any con
 least three ligand heavy atoms containing a non-collinear triple as the conserved core, and
 optionally require the explicit cross-component
 H-bonds visible in the reference pose. Molarium then generates deterministic ETKDGv3 conformers,
-aligns the surviving stable atom identities to the reference core, audits D–H–A geometry, and ranks
-feasible poses before infeasible ones.
+aligns and snaps the surviving stable atom identities exactly to the reference core, then performs
+deterministic receptor-aware torsion Monte Carlo on branches outside that core. Required D–H–A
+contacts remain hard feasible states during search, and feasible poses rank before infeasible ones.
 
 The receptor stays rigid. Ranking combines captured receptor/edited-ligand numeric Lennard-Jones
-and Coulomb cross terms (8 Å site, relative dielectric 4), relative MMFF94 ligand strain, and
-explicit restraint penalties. It omits receptor relaxation, solvent displacement, entropy, and
+and Coulomb cross terms (8 Å site, relative dielectric 4), relative vacuum OpenFF Sage 2.1 intramolecular
+ligand energy, and explicit restraint penalties. The strain reference is
+relative to the lowest fixed-core starting seed; MMFF94/UFF prepares the initial conformers. It omits
+receptor relaxation, solvent displacement, ring-pucker search, entropy, and
 binding-free-energy estimation. Treat the result as an experimental pose rank, not an affinity.
 
 Every run can export readable Markdown notes and a coordinate-free JSON audit containing exact

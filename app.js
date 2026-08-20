@@ -3197,6 +3197,13 @@ function dockingSelectedCore(component = dockingLigandComponent()) {
 
 function setDockingStatus(message) { setText('#docking-status', message); }
 
+function dockingContactAvailable(definition) {
+  const liveIds = new Set(state.molecule?.atoms?.map((atom) => atom.designAtomId).filter(Boolean) || []);
+  return [definition?.donor, definition?.hydrogen, definition?.acceptor]
+    .filter((descriptor) => descriptor?.scope === 'ligand')
+    .every((descriptor) => liveIds.has(descriptor.designAtomId));
+}
+
 function renderDockingConstraints() {
   const container = document.querySelector('#docking-hbond-list');
   if (!container) return;
@@ -3209,13 +3216,18 @@ function renderDockingConstraints() {
   definitions.forEach((definition) => {
     const label = document.createElement('label');
     const checkbox = document.createElement('input'); checkbox.type = 'checkbox';
-    checkbox.checked = state.dockingSelectedHbondIds.has(definition.id);
+    const available = dockingContactAvailable(definition);
+    if (!available) state.dockingSelectedHbondIds.delete(definition.id);
+    checkbox.checked = available && state.dockingSelectedHbondIds.has(definition.id);
+    checkbox.disabled = !available;
     checkbox.dataset.constraintId = definition.id;
     checkbox.addEventListener('change', () => {
       if (checkbox.checked) state.dockingSelectedHbondIds.add(definition.id);
       else state.dockingSelectedHbondIds.delete(definition.id);
     });
-    const text = document.createElement('span'); text.textContent = definition.label;
+    const text = document.createElement('span');
+    text.textContent = `${definition.label}${available ? '' : ' · atom removed'}`;
+    if (!available) label.classList.add('unavailable');
     label.append(checkbox, text); container.append(label);
   });
 }
@@ -3325,10 +3337,13 @@ async function runBrowserConstrainedDocking(options = {}) {
   state.dockingRunning = true; state.dockingResult = null;
   updateDockingUi(); setDockingStatus('Preparing edited ligand');
   try {
-    const [adapter, referenceCore, receptorScore, workflow, protocolModule, labbookModule] = await Promise.all([
+    const [adapter, referenceCore, receptorScore, workflow, protocolModule, labbookModule,
+      torsionSearch, constraints, stormmCore] = await Promise.all([
       import('./docking/browser-adapter.mjs'), import('./docking/reference-core.mjs'),
       import('./docking/receptor-score.mjs'), import('./docking/workflow.mjs'),
       import('./docking/protocol.mjs'), import('./docking/labbook.mjs'),
+      import('./docking/torsion-search.mjs'), import('./docking/constraints.mjs'),
+      import('./stormm/core.mjs'),
     ]);
     referenceCore.ensureStableAtomIds(state.molecule,
       `design-${state.molecule.source?.pdbId || 'complex'}`);
@@ -3343,11 +3358,23 @@ async function runBrowserConstrainedDocking(options = {}) {
     const currentLigandTopologyText = adapter.dockingTopologyText(state.molecule, plan.globalAtomIndices);
     const coreMap = referenceCore.mapReferenceCore(reference.ligand, plan.molecule.atoms);
     if (!coreMap.complete) throw new Error(`The conserved core is incomplete (${coreMap.missingAtomIds.length} atom${coreMap.missingAtomIds.length === 1 ? '' : 's'} missing).`);
+    const contactAvailability = adapter.capturedHydrogenBondAvailability(reference.hydrogenBonds,
+      plan.molecule.atoms);
+    const availableContactIds = new Set(contactAvailability.filter((entry) => entry.available)
+      .map((entry) => entry.id));
+    for (const id of [...state.dockingSelectedHbondIds]) if (!availableContactIds.has(id))
+      state.dockingSelectedHbondIds.delete(id);
     const selectedHbondIds = [...state.dockingSelectedHbondIds];
     const mappedHydrogenBonds = adapter.mapCapturedHydrogenBonds(reference.hydrogenBonds,
       plan.molecule.atoms, selectedHbondIds);
-    if (!mappedHydrogenBonds.complete)
-      throw new Error(`A required H-bond atom was removed (${mappedHydrogenBonds.missing.length} missing).`);
+    if (!mappedHydrogenBonds.complete) throw new Error('The selected H-bond mapping is inconsistent.');
+    const omittedHydrogenBonds = reference.hydrogenBonds.flatMap((definition) => {
+      const availability = contactAvailability.find((entry) => entry.id === definition.id);
+      if (selectedHbondIds.includes(definition.id)) return [];
+      return [{ id:definition.id, label:definition.label,
+        reason:availability?.available ? 'user-disabled' : 'ligand-atom-removed',
+        missingAtomIds:availability?.missingAtomIds || [] }];
+    });
 
     const requestedConformers = Math.max(1, Math.min(64, Math.round(Number(options.conformerCount
       ?? document.querySelector('#docking-conformer-count').value))));
@@ -3367,11 +3394,41 @@ async function runBrowserConstrainedDocking(options = {}) {
         forcefield:conformerResult.conformerForcefields?.[index] || conformerResult.preparationForcefield }] : [];
     });
     if (!valid.length) throw new Error('RDKit could not score any generated ligand conformer.');
-    const minimumLigandEnergy = Math.min(...valid.map((entry) => entry.energy));
+    const minimumRdkitEnergy = Math.min(...valid.map((entry) => entry.energy));
 
     setDockingStatus('Assigning edited-ligand OpenFF terms');
     const ligandParameters = await runOpenMMJob('parameters', plan.molecule, dockingProgress);
     const ligandNonbonded = indexedNonbonded(ligandParameters.system, plan.molecule.atoms.length);
+    const ligandTopology = stormmCore.buildParameterizedSystem(plan.molecule, ligandParameters);
+    const ligandInternalEnergy = (positions) => stormmCore.cpuEnergies(ligandTopology,
+      torsionSearch.packPositions4(positions)).total;
+    const fixedCoreStarts = valid.map((entry) => constraints.snapCorePositions(
+      reference.ligand.positions,
+      constraints.applyCoreTransform(entry.positions, constraints.fittedCoreTransform(
+        reference.ligand.positions, entry.positions, coreMap.atomPairs)), coreMap.atomPairs));
+    const fixedCoreStartEnergies = fixedCoreStarts.map(ligandInternalEnergy);
+    if (fixedCoreStartEnergies.some((energy) => !Number.isFinite(energy)))
+      throw new Error('OpenFF Sage returned a non-finite fixed-core ligand energy.');
+    const minimumSageStartEnergy = Math.min(...fixedCoreStartEnergies);
+    const scorePositions = (positions) => {
+      const sageInternalEnergyKcalMol = ligandInternalEnergy(positions);
+      const physical = receptorScore.scoreReceptorLigand(reference.receptorSite, positions,
+        ligandNonbonded, { relativeDielectric:4, cutoffAngstrom:8,
+          ligandStrainKcalMol:sageInternalEnergyKcalMol - minimumSageStartEnergy,
+          ligandStrainIdentity:'relative vacuum OpenFF Sage 2.1 intramolecular energy' });
+      const core = constraints.evaluateCoreConstraint(reference.ligand.positions, positions,
+        coreMap.atomPairs, protocolModule.MOLARIUM_CCD_PROTOCOL.coreConstraint);
+      const hydrogenBonds = workflow.evaluatePoseHydrogenBonds(mappedHydrogenBonds.constraints,
+        positions, protocolModule.MOLARIUM_CCD_PROTOCOL.hydrogenBondConstraint);
+      const combined = constraints.scoreConstrainedPose({
+        physicalEnergyKcalMol:physical.energyKcalMol, core, hydrogenBonds,
+      });
+      return { objectiveKcalMol:combined.totalScoreKcalMol, feasible:combined.feasible,
+        physical, core, hydrogenBonds, sageInternalEnergyKcalMol };
+    };
+    const torsionSteps = Math.max(0, Math.min(512, Math.round(Number(options.torsionSteps
+      ?? protocolModule.MOLARIUM_CCD_PROTOCOL.sampling.torsionMonteCarloSteps ?? 96))));
+    const coreAtomIndices = coreMap.atomPairs.map((pair) => pair[1]);
     const startedAt = new Date().toISOString();
     const inputs = await labbookModule.inputProvenance({
       receptorText:reference.receptorInputText,
@@ -3391,6 +3448,7 @@ async function runBrowserConstrainedDocking(options = {}) {
         hydrogenBonds:mappedHydrogenBonds.constraints.map((entry) => ({
           id:entry.id, label:entry.label, required:entry.required, receptorRole:entry.receptorRole,
         })),
+        omittedHydrogenBonds,
       },
       environment:{ execution:'browser-local', networkUsed:false, webgpuAvailable:Boolean(navigator.gpu),
         userAgent:navigator.userAgent, deterministicSeed:seed,
@@ -3408,9 +3466,35 @@ async function runBrowserConstrainedDocking(options = {}) {
         receptorModel:'rigid', receptorSiteRadiusAngstrom:8,
         relativeDielectric:4, combiningRules:'Lorentz-Berthelot',
         crossTerms:['Lennard-Jones', 'Coulomb'],
-        ligandStrain:'relative RDKit MMFF94; UFF only when reported by RDKit',
+        ligandStrain:'relative vacuum OpenFF Sage 2.1 intramolecular energy from lowest fixed-core starting seed',
+        hardCore:'matched core atoms snapped exactly to reference coordinates',
+        torsionSearch:{ method:torsionSearch.TORSION_SEARCH_DEFAULTS.method, steps:torsionSteps,
+          temperatureStartKelvin:torsionSearch.TORSION_SEARCH_DEFAULTS.temperatureStartKelvin,
+          temperatureEndKelvin:torsionSearch.TORSION_SEARCH_DEFAULTS.temperatureEndKelvin,
+          proposalAnglesDegrees:[...torsionSearch.TORSION_SEARCH_DEFAULTS.proposalAnglesDegrees] },
         feasibilityRule:'all required constraints rank before energy',
-        omitted:['receptor relaxation', 'receptor grid', 'desolvation', 'entropy', 'binding free energy'],
+        omitted:['receptor relaxation', 'receptor grid', 'desolvation', 'entropy',
+          'ring-pucker moves', 'binding free energy'],
+      } });
+    await labbookModule.appendLabbookEvent(labbook, { at:new Date().toISOString(),
+      stage:'method-decision', status:'recorded', details:{
+        selected:'independent fixed-core torsion Monte Carlo under the active receptor and restraint score',
+        rationale:[
+          'Rigid core alignment alone does not optimize ligand torsions against the receptor.',
+          'Edit-lineage atom identity gives an exact, auditable analogue core mapping.',
+          'Only graph branches containing no core atom are eligible to rotate, preserving the medicinal-chemistry hypothesis.',
+          'Required contacts are explicit feasible states and cannot be traded away for a lower energy.',
+        ],
+        relatedMethods:[
+          { method:'Rowan openconf analogue mode', use:'method inspiration only',
+            adopted:'free terminal rotors outside a fixed core plus exact post-search core snap',
+            notAdopted:'openconf code, CrystalFF library, MMFF minimization, ring and macrocycle moves' },
+          { method:'AutoPose', use:'related congeneric pose-construction alternative',
+            notAdopted:'R-group decomposition, Free-Wilson model and TMD RBFE workflow' },
+          { method:'Glide and ICM', use:'published staged/internal-coordinate docking lineage',
+            notAdopted:'commercial grids, scores, defaults or code' },
+        ],
+        omittedReferenceContacts:omittedHydrogenBonds,
       } });
     await labbookModule.appendLabbookEvent(labbook, { at:new Date().toISOString(),
       stage:'ligand-preparation', status:'completed', details:{
@@ -3418,25 +3502,57 @@ async function runBrowserConstrainedDocking(options = {}) {
         finiteScoredConformers:valid.length, seed,
         conformerBackend:conformerResult.backend, rdkitVersion:conformerResult.rdkitVersion,
         conformerForcefields:[...new Set(valid.map((entry) => entry.forcefield).filter(Boolean))],
-        minimumConformerEnergyKcalMol:minimumLigandEnergy,
+        minimumConformerEnergyKcalMol:minimumRdkitEnergy,
+        minimumFixedCoreSageEnergyKcalMol:minimumSageStartEnergy,
         ligandForcefield:ligandParameters.forcefield,
         ligandChargeModel:ligandParameters.chargeModel,
         ligandParameterSourceSha256:ligandParameters.sourceSha256,
-      } });
-    setDockingStatus(`Auditing ${valid.length} poses`);
-    const completedAt = new Date().toISOString();
+    } });
+    setDockingStatus(`Optimizing ${valid.length} poses in pocket`);
+    let refinementAudit = [];
     const run = await workflow.runConstrainedDocking({
       referencePositions:reference.ligand.positions,
       candidateConformers:valid.map((entry) => entry.positions),
       coreAtomPairs:coreMap.atomPairs,
       hydrogenBondConstraints:mappedHydrogenBonds.constraints,
       protocol:protocolModule.MOLARIUM_CCD_PROTOCOL,
-      physicalScore:({ positions, conformerIndex }) => receptorScore.scoreReceptorLigand(
-        reference.receptorSite, positions, ligandNonbonded, {
-          relativeDielectric:4, cutoffAngstrom:8,
-          ligandStrainKcalMol:valid[conformerIndex].energy - minimumLigandEnergy,
-        }),
-      labbook, startedAt, completedAt,
+      refinePose:({ positions, conformerIndex }) => {
+        setDockingStatus(`Optimizing pose ${conformerIndex + 1}/${valid.length}`);
+        const conformerSeed = (seed ^ Math.imul(conformerIndex + 1, 0x9e3779b9)) >>> 0;
+        return torsionSearch.refinePoseByTorsionMonteCarlo({ molecule:plan.molecule,
+          initialPositions:positions, coreAtomIndices, scorePose:scorePositions,
+          random:stormmCore.mulberry32(conformerSeed), seed:conformerSeed, steps:torsionSteps });
+      },
+      physicalScore:({ positions }) => scorePositions(positions).physical,
+      afterRefinement:async (candidates) => {
+        refinementAudit = candidates.map((pose) => ({
+          conformerIndex:pose.conformerIndex,
+          method:pose.refinement?.method || null,
+          seed:pose.refinement?.seed ?? null,
+          rotatableBondCount:pose.refinement?.rotatableBondCount || 0,
+          proposals:pose.refinement?.proposals || 0,
+          accepted:pose.refinement?.accepted || 0,
+          uphillAccepted:pose.refinement?.uphillAccepted || 0,
+          improved:pose.refinement?.improved || 0,
+          acceptanceRate:pose.refinement?.acceptanceRate || 0,
+          startObjectiveKcalMol:pose.refinement?.startObjectiveKcalMol ?? null,
+          bestObjectiveKcalMol:pose.refinement?.bestObjectiveKcalMol ?? null,
+          selectedFeasible:Boolean(pose.refinement?.selectedFeasible),
+          rotors:pose.refinement?.rotors || [],
+        }));
+        await labbookModule.appendLabbookEvent(labbook, { at:new Date().toISOString(),
+          stage:'in-pocket-torsion-search', status:'completed', details:{
+            method:torsionSearch.TORSION_SEARCH_DEFAULTS.method,
+            conformers:refinementAudit.length,
+            conformersWithFreeRotors:refinementAudit.filter((entry) => entry.rotatableBondCount > 0).length,
+            totalProposals:refinementAudit.reduce((sum, entry) => sum + entry.proposals, 0),
+            totalAccepted:refinementAudit.reduce((sum, entry) => sum + entry.accepted, 0),
+            totalImprovements:refinementAudit.reduce((sum, entry) => sum + entry.improved, 0),
+            exactCoreMaximumRmsdAngstrom:Math.max(...candidates.map((pose) => pose.core.rmsdAngstrom)),
+            perConformer:refinementAudit,
+          } });
+      },
+      labbook, startedAt,
     });
     await labbookModule.completeLabbook(labbook, { completedAt:new Date().toISOString(), outcome:{
       generatedConformers:allConformers.length,
@@ -3447,6 +3563,7 @@ async function runBrowserConstrainedDocking(options = {}) {
       selectedPhysicalKcalMol:run.selected.physicalEnergyKcalMol,
       selectedConstraintPenaltyKcalMol:run.selected.constraintPenaltyKcalMol,
       selectedCoreRmsdAngstrom:run.selected.core.rmsdAngstrom,
+      selectedRefinement:refinementAudit.find((entry) => entry.conformerIndex === run.selected.conformerIndex),
       selectedPhysicalComponents:run.selected.physicalDetails ? {
         lennardJonesKcalMol:run.selected.physicalDetails.lennardJonesKcalMol,
         coulombKcalMol:run.selected.physicalDetails.coulombKcalMol,
@@ -3462,6 +3579,7 @@ async function runBrowserConstrainedDocking(options = {}) {
         dhaAngleDegrees:entry.dhaAngleDegrees, penaltyKcalMol:entry.penaltyKcalMol,
       })),
       requiredHydrogenBonds: mappedHydrogenBonds.constraints.length,
+      omittedHydrogenBonds,
       scoreInterpretation:'pose-ranking score; not a binding free energy',
       topPoses:run.candidates.slice(0, 5).map((pose) => ({ rank:pose.rank,
         feasible:pose.feasible, totalScoreKcalMol:pose.totalScoreKcalMol,
@@ -3478,7 +3596,8 @@ async function runBrowserConstrainedDocking(options = {}) {
     state.dockingResult = { run, labbook, plan, seed, requestedConformers,
       ligandTopologyText:currentLigandTopologyText,
       ligandForcefield:ligandParameters.forcefield, ligandChargeModel:ligandParameters.chargeModel,
-      conformerForcefields:[...new Set(valid.map((entry) => entry.forcefield).filter(Boolean))] };
+      conformerForcefields:[...new Set(valid.map((entry) => entry.forcefield).filter(Boolean))],
+      ligandStrainModel:'vacuum OpenFF Sage 2.1 intramolecular energy', torsionSteps };
     state.dockingPoseIndex = 0;
     renderDockingResults();
     showToast(`Docking complete · ${run.feasibleCount}/${run.candidates.length} feasible`);
@@ -3508,7 +3627,7 @@ function renderDockingResults() {
     button.addEventListener('click', () => { state.dockingPoseIndex = index; renderDockingResults(); });
     list.append(button);
   });
-  setText('#docking-score-note', `Rigid 8 Å site · ${result.ligandForcefield} cross terms · relative ${result.conformerForcefields.join('/') || 'MMFF'} strain`);
+  setText('#docking-score-note', `Fixed core · torsion MC · rigid 8 Å site · relative Sage strain`);
 }
 
 async function applySelectedDockingPose() {
@@ -5628,7 +5747,12 @@ window.molariumTest = Object.freeze({
       selected:{ rank:result.run.selected.rank, feasible:result.run.selected.feasible,
         scoreKcalMol:result.run.selected.totalScoreKcalMol,
         physicalKcalMol:result.run.selected.physicalEnergyKcalMol,
-        coreRmsdAngstrom:result.run.selected.core.rmsdAngstrom },
+        coreRmsdAngstrom:result.run.selected.core.rmsdAngstrom,
+        refinement:{ method:result.run.selected.refinement?.method || null,
+          rotatableBondCount:result.run.selected.refinement?.rotatableBondCount || 0,
+          proposals:result.run.selected.refinement?.proposals || 0,
+          accepted:result.run.selected.refinement?.accepted || 0,
+          improved:result.run.selected.refinement?.improved || 0 } },
       labbook:await verifyLabbook(result.labbook),
       selectedCoordinatesSha256:await sha256Object(Array.from(result.run.selected.positions)),
       coordinatePayloadIncluded:result.labbook.inputs.coordinatePayloadIncluded,

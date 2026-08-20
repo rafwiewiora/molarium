@@ -126,6 +126,21 @@ export function applyCoreTransform(candidatePositions, transform) {
   return transformed;
 }
 
+export function snapCorePositions(referencePositions, candidatePositions, atomPairs) {
+  if (!Array.isArray(atomPairs) || atomPairs.length < 3)
+    throw new Error('A hard core constraint requires at least three matched atoms');
+  const snapped = new Float64Array(candidatePositions);
+  const seen = new Set();
+  for (const [referenceAtom, candidateAtom] of atomPairs) {
+    if (seen.has(candidateAtom)) throw new Error(`Candidate core atom ${candidateAtom} is mapped more than once`);
+    seen.add(candidateAtom);
+    const reference = coordinates(referencePositions, referenceAtom);
+    coordinates(candidatePositions, candidateAtom);
+    for (let axis = 0; axis < 3; axis++) snapped[candidateAtom * 3 + axis] = reference[axis];
+  }
+  return snapped;
+}
+
 export function evaluateCoreConstraint(referencePositions, candidatePositions, atomPairs, settings) {
   let sumSquared = 0;
   for (const [referenceAtom, candidateAtom] of atomPairs) {

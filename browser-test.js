@@ -388,18 +388,23 @@ const browserSuite = String.raw`(async () => {
   'pocket toggle collapses cartoon atom detail back to the ligand only', JSON.stringify(ligandOnlyView));
   api.setPocketAtoms(true);
   const dockingFixture = {
-    name:'Molarium CCD browser fixture', smiles:'protein + dimethyl ether', charge:0, multiplicity:1,
+    name:'Molarium CCD browser fixture', smiles:'protein + flexible analogue', charge:0, multiplicity:1,
     atoms:[
       { element:'N', x:-2, y:0, z:0, record:'ATOM', atomName:'NZ', residueName:'LYS', chain:'A', residueIndex:1 },
       { element:'H', x:-1, y:0, z:0, record:'ATOM', atomName:'HZ1', residueName:'LYS', chain:'A', residueIndex:1 },
       { element:'O', x:0.8, y:0, z:0, record:'HETATM', atomName:'O1', residueName:'DME', chain:'B', residueIndex:2 },
-      { element:'C', x:1.8, y:1, z:0, record:'HETATM', atomName:'C1', residueName:'DME', chain:'B', residueIndex:2 },
-      { element:'C', x:1.8, y:-1, z:0, record:'HETATM', atomName:'C2', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'C', x:1.8, y:0, z:0, record:'HETATM', atomName:'C1', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'C', x:2.8, y:0.8, z:0, record:'HETATM', atomName:'C2', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'C', x:2.8, y:-0.8, z:0, record:'HETATM', atomName:'C3', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'C', x:3.8, y:0.8, z:0, record:'HETATM', atomName:'C4', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'F', x:4.8, y:0.8, z:0, record:'HETATM', atomName:'F1', residueName:'DME', chain:'B', residueIndex:2 },
     ],
-    bonds:[{ a:0, b:1, order:1 }, { a:2, b:3, order:1 }, { a:2, b:4, order:1 }],
+    bonds:[{ a:0, b:1, order:1 }, { a:2, b:3, order:1 },
+      { a:3, b:4, order:1 }, { a:4, b:5, order:1 }, { a:5, b:3, order:1 },
+      { a:4, b:6, order:1 }, { a:6, b:7, order:1 }],
     parameterization:{ forcefield:'OpenFF Sage 2.1.0 browser-test fixture', chargeModel:'test charges',
       sourceSha256:'browser-test', system:{
-        particles:[14, 1, 16, 12, 12].map((mass_amu, index) => ({ index, mass_amu })),
+        particles:[14, 1, 16, 12, 12, 12, 12, 19].map((mass_amu, index) => ({ index, mass_amu })),
         constraints:[], bonds:[], angles:[], torsions:[], exceptions:[],
         nonbonded:[
           { index:0, charge_e:0.3, sigma_nm:0.325, epsilon_kj:0.7 },
@@ -407,12 +412,15 @@ const browserSuite = String.raw`(async () => {
           { index:2, charge_e:-0.3, sigma_nm:0.296, epsilon_kj:0.8 },
           { index:3, charge_e:-0.05, sigma_nm:0.34, epsilon_kj:0.4 },
           { index:4, charge_e:-0.05, sigma_nm:0.34, epsilon_kj:0.4 },
+          { index:5, charge_e:-0.05, sigma_nm:0.34, epsilon_kj:0.4 },
+          { index:6, charge_e:0.1, sigma_nm:0.34, epsilon_kj:0.4 },
+          { index:7, charge_e:-0.1, sigma_nm:0.30, epsilon_kj:0.2 },
         ],
       } },
   };
   api.loadObject(dockingFixture);
   document.querySelector('.mode-bar button[data-mode="build"]').click();
-  const dockingSelection = api.setDockingSelection([2, 3, 4]);
+  const dockingSelection = api.setDockingSelection([3, 4, 5]);
   check(!document.querySelector('#docking-workbench').classList.contains('hidden')
     && dockingSelection.captureDisabled === false
     && dockingSelection.status.includes('3 core atoms')
@@ -426,32 +434,38 @@ const browserSuite = String.raw`(async () => {
   try { dockingReference = await api.captureDockingReference(); }
   catch (error) { check(false, 'browser captures the ligand core and explicit cross H-bond', error.message); }
   if (dockingReference) check(dockingReference.coreAtomIds.length === 3
-    && dockingReference.ligandAtomCount === 3
+    && dockingReference.ligandAtomCount === 6
     && dockingReference.receptorAtomCount === 2
     && dockingReference.hydrogenBonds.length === 1
     && dockingReference.hydrogenBonds[0].receptorRole === 'donor',
   'browser captures the ligand core and explicit cross H-bond', JSON.stringify(dockingReference));
-  const editedDockingLigand = api.addElementCurrent('F', 3);
-  check(editedDockingLigand.atoms === 6 && !api.current().molecule.parameterization
+  const editedDockingLigand = api.addElementCurrent('F', 6);
+  check(editedDockingLigand.atoms === 9 && !api.current().molecule.parameterization
     && document.querySelector('#docking-status').textContent.includes('3-atom core'),
   'an in-browser ligand edit invalidates stale complex parameters but preserves the docking reference',
   JSON.stringify(editedDockingLigand));
   let dockingRun = null;
-  try { dockingRun = await api.runConstrainedDocking({ conformerCount:4, seed:20260819 }); }
+  try { dockingRun = await api.runConstrainedDocking({ conformerCount:4, seed:20260819, torsionSteps:32 }); }
   catch (error) { check(false, 'browser completes deterministic constrained docking with a verified labbook', error.message); }
   if (dockingRun) {
     const dockingLabbook = api.dockingLabbook();
     check(dockingRun.candidates >= 1 && dockingRun.feasible >= 1
       && dockingRun.selected.feasible && Number.isFinite(dockingRun.selected.scoreKcalMol)
-      && dockingRun.selected.coreRmsdAngstrom <= 0.5
+      && dockingRun.selected.coreRmsdAngstrom < 1e-12
+      && dockingRun.selected.refinement.rotatableBondCount >= 1
+      && dockingRun.selected.refinement.proposals === 32
       && dockingRun.labbook.valid && dockingRun.coordinatePayloadIncluded === false
       && !JSON.stringify(dockingLabbook).includes('"positions"')
-      && dockingLabbook.inputs.ligand.atoms === 4
+      && dockingLabbook.inputs.ligand.atoms === 7
+      && dockingLabbook.events.some((event) => event.stage === 'method-decision')
+      && dockingLabbook.events.some((event) => event.stage === 'in-pocket-torsion-search')
+      && dockingLabbook.events.findIndex((event) => event.stage === 'in-pocket-torsion-search')
+        < dockingLabbook.events.findIndex((event) => event.stage === 'constraint-audit-and-ranking')
       && document.querySelectorAll('.docking-pose').length >= 1
       && document.querySelector('#docking-score-note').textContent.includes('not') === false,
     'browser completes deterministic constrained docking with a verified coordinate-free audit',
     JSON.stringify(dockingRun));
-    const dockingReplay = await api.runConstrainedDocking({ conformerCount:4, seed:20260819 });
+    const dockingReplay = await api.runConstrainedDocking({ conformerCount:4, seed:20260819, torsionSteps:32 });
     check(dockingReplay.selectedCoordinatesSha256 === dockingRun.selectedCoordinatesSha256
       && Math.abs(dockingReplay.selected.scoreKcalMol - dockingRun.selected.scoreKcalMol) < 1e-12,
     'same docking seed reproduces the selected coordinates and score bit for bit',
@@ -466,6 +480,28 @@ const browserSuite = String.raw`(async () => {
     check(JSON.stringify(proteinBeforeDockingApply) === JSON.stringify(proteinAfterDockingApply)
       && appliedDocking.molecule.source.docking.protocol === 'molarium-ccd-1',
     'applying a docking pose moves only the mapped ligand and records protocol provenance');
+  }
+  api.loadObject(dockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingSelection([3, 4, 5]);
+  await api.captureDockingReference();
+  await api.deleteAtomCurrent(2);
+  const unavailableContact = document.querySelector('#docking-hbond-list label.unavailable');
+  check(unavailableContact?.textContent.includes('atom removed')
+    && unavailableContact.querySelector('input')?.disabled
+    && !unavailableContact.querySelector('input')?.checked,
+  'a captured contact whose ligand atom was deleted is disabled without unsafe remapping',
+  unavailableContact?.textContent || 'missing unavailable contact');
+  let omittedContactRun = null;
+  try { omittedContactRun = await api.runConstrainedDocking({ conformerCount:2, seed:91, torsionSteps:8 }); }
+  catch (error) { check(false, 'docking continues after an unavailable contact is explicitly omitted', error.message); }
+  if (omittedContactRun) {
+    const omittedLabbook = api.dockingLabbook();
+    check(omittedContactRun.candidates >= 1
+      && omittedLabbook.selections.omittedHydrogenBonds?.[0]?.reason === 'ligand-atom-removed'
+      && omittedLabbook.outcome.omittedHydrogenBonds?.[0]?.reason === 'ligand-atom-removed',
+    'unavailable reference contacts are recorded in the coordinate-free labbook',
+    JSON.stringify(omittedLabbook.selections.omittedHydrogenBonds));
   }
   document.querySelector('.mode-bar button[data-mode="view"]').click();
   const bentHydroxylFixture = {
@@ -2263,9 +2299,9 @@ const browserSuite = String.raw`(async () => {
   if (captureDockingUi) {
     api.loadObject(dockingFixture);
     document.querySelector('.mode-bar button[data-mode="build"]').click();
-    api.setDockingSelection([2, 3, 4]);
+    api.setDockingSelection([3, 4, 5]);
     await api.captureDockingReference();
-    await api.runConstrainedDocking({ conformerCount:4, seed:20260819 });
+    await api.runConstrainedDocking({ conformerCount:4, seed:20260819, torsionSteps:32 });
   }
   const failed = checks.filter((item) => !item.passed);
   return { passed: checks.length - failed.length, total: checks.length, failed, optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics, preparationMetrics };

@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { MOLARIUM_CCD_PROTOCOL } from './protocol.mjs';
 import { applyCoreTransform, evaluateCoreConstraint, evaluateHydrogenBondConstraint,
-  fittedCoreTransform, hydrogenBondGeometry, rankConstrainedPoses, scoreConstrainedPose } from './constraints.mjs';
+  fittedCoreTransform, hydrogenBondGeometry, rankConstrainedPoses, scoreConstrainedPose,
+  snapCorePositions } from './constraints.mjs';
 import { appendLabbookEvent, completeLabbook, createLabbook, inputProvenance,
   renderLabbookMarkdown, verifyLabbook } from './labbook.mjs';
 import { captureReferenceLigand, ensureStableAtomIds, mapReferenceCore } from './reference-core.mjs';
@@ -9,7 +10,11 @@ import { runConstrainedDocking } from './workflow.mjs';
 import { buildReceptorSite, pairInteractionKcalMol, receptorSiteIntegrity,
   scoreReceptorLigand } from './receptor-score.mjs';
 import { applyLigandPositions, captureCrossHydrogenBonds, createLigandPlan, dockingInputText,
-  dockingTopologyText, mapCapturedHydrogenBonds, unpackConformerStack } from './browser-adapter.mjs';
+  capturedHydrogenBondAvailability, dockingTopologyText, mapCapturedHydrogenBonds,
+  unpackConformerStack } from './browser-adapter.mjs';
+import { identifyFreeRotors, packPositions4, refinePoseByTorsionMonteCarlo,
+  rotateAroundBond } from './torsion-search.mjs';
+import { buildParameterizedSystem, cpuEnergies, mulberry32 } from '../stormm/core.mjs';
 
 const reference = Float64Array.from([0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1]);
 const candidate = Float64Array.from([4, -2, 3, 4, -1, 3, 3, -2, 3, 4, -2, 4]);
@@ -18,6 +23,9 @@ const transform = fittedCoreTransform(reference, candidate, pairs);
 const aligned = applyCoreTransform(candidate, transform);
 assert.ok(transform.fittedRmsdAngstrom < 1e-7);
 assert.ok(Array.from(aligned).every((value, index) => Math.abs(value - reference[index]) < 1e-7));
+const driftedAligned = Float64Array.from(aligned, (value, index) => value + (index % 3 + 1) * 0.01);
+const snappedAligned = snapCorePositions(reference, driftedAligned, pairs);
+assert.deepEqual(Array.from(snappedAligned), Array.from(reference));
 
 const core = evaluateCoreConstraint(reference, aligned, pairs, MOLARIUM_CCD_PROTOCOL.coreConstraint);
 assert.equal(core.satisfied, true);
@@ -219,6 +227,73 @@ const missingHbondAtom = mapCapturedHydrogenBonds(capturedHbonds,
   ligandPlan.molecule.atoms.filter((atom) => atom.atomName !== 'H1'));
 assert.equal(missingHbondAtom.complete, false);
 assert.equal(missingHbondAtom.missing[0].constraintId, capturedHbonds[1].id);
+const hbondAvailability = capturedHydrogenBondAvailability(capturedHbonds,
+  ligandPlan.molecule.atoms.filter((atom) => atom.atomName !== 'H1'));
+assert.equal(hbondAvailability[0].available, true);
+assert.equal(hbondAvailability[1].available, false);
+assert.deepEqual(hbondAvailability[1].missingAtomIds,
+  [capturedHbonds[1].hydrogen.designAtomId]);
+
+const torsionMolecule = { name:'fixed-core rotor test', atoms:[
+  { element:'C' }, { element:'C' }, { element:'C' },
+  { element:'C' }, { element:'C' }, { element:'F' },
+], bonds:[
+  { a:0, b:1, order:1 }, { a:1, b:2, order:1 }, { a:2, b:0, order:1 },
+  { a:1, b:3, order:1 }, { a:3, b:4, order:1 }, { a:4, b:5, order:1 },
+] };
+const torsionStart = Float64Array.from([
+  0,0,0, 1,0,0, 0,1,0, 2,0,0, 2,1,0, 2,2,0,
+]);
+const freeRotors = identifyFreeRotors(torsionMolecule, [0, 1, 2]);
+assert.deepEqual(freeRotors.map((entry) => entry.bondAtomIndices), [[1, 3], [3, 4]]);
+assert.ok(freeRotors.every((entry) => entry.movingAtomIndices.every((atom) => ![0, 1, 2].includes(atom))));
+const quarterTurn = rotateAroundBond(torsionStart, freeRotors[0], Math.PI / 2);
+assert.ok(Math.abs(quarterTurn[4 * 3 + 2] - 1) < 1e-12);
+const torsionScore = (positions) => ({ objectiveKcalMol:(positions[4 * 3 + 2] - 1) ** 2,
+  feasible:positions[4 * 3 + 2] > 0.8 });
+const torsionSearchOptions = { molecule:torsionMolecule, initialPositions:torsionStart,
+  coreAtomIndices:[0, 1, 2], scorePose:torsionScore, steps:32,
+  temperatureStartKelvin:600, temperatureEndKelvin:100,
+  proposalAnglesDegrees:[90], seed:77 };
+const torsionRun = await refinePoseByTorsionMonteCarlo({ ...torsionSearchOptions, random:mulberry32(77) });
+const torsionReplay = await refinePoseByTorsionMonteCarlo({ ...torsionSearchOptions, random:mulberry32(77) });
+assert.deepEqual(torsionRun.positions, torsionReplay.positions);
+assert.equal(torsionRun.selectedFeasible, true);
+assert.ok(torsionRun.bestObjectiveKcalMol < torsionRun.startObjectiveKcalMol);
+for (const atom of [0, 1, 2]) for (let axis = 0; axis < 3; axis++)
+  assert.equal(torsionRun.positions[atom * 3 + axis], torsionStart[atom * 3 + axis]);
+const retainedFeasible = await refinePoseByTorsionMonteCarlo({ ...torsionSearchOptions,
+  initialPositions:quarterTurn, random:() => 0, steps:1, proposalAnglesDegrees:[90] });
+assert.equal(retainedFeasible.accepted, 0);
+assert.equal(retainedFeasible.selectedFeasible, true);
+assert.deepEqual(retainedFeasible.positions, quarterTurn);
+const ringOnly = identifyFreeRotors({ atoms:torsionMolecule.atoms.slice(0, 3),
+  bonds:torsionMolecule.bonds.slice(0, 3) }, [0, 1, 2]);
+assert.deepEqual(ringOnly, []);
+const amide = { atoms:[{ element:'C' }, { element:'N' }, { element:'O' }, { element:'C' }],
+  bonds:[{ a:0, b:1, order:1 }, { a:0, b:2, order:2 }, { a:1, b:3, order:1 }] };
+assert.ok(identifyFreeRotors(amide, [2]).every((entry) => !entry.bondAtomIndices.includes(0)
+  || !entry.bondAtomIndices.includes(1)));
+const rigidRun = await refinePoseByTorsionMonteCarlo({ molecule:{ atoms:[{ element:'C' },
+  { element:'C' }], bonds:[{ a:0, b:1, order:1 }] }, initialPositions:[0,0,0, 1,0,0],
+  coreAtomIndices:[0], scorePose:() => 0, steps:10, random:mulberry32(1), seed:1 });
+assert.equal(rigidRun.proposals, 0);
+assert.deepEqual(Array.from(rigidRun.positions), [0,0,0, 1,0,0]);
+
+const energyMolecule = { atoms:[{ element:'C', x:0, y:0, z:0 },
+  { element:'C', x:1.6, y:0, z:0 }], bonds:[{ a:0, b:1, order:1 }] };
+const energyParameters = { forcefield:'OpenFF Sage test', chargeModel:'test', sourceSha256:'test', system:{
+  particles:[{ index:0, mass_amu:12 }, { index:1, mass_amu:12 }], constraints:[],
+  bonds:[{ i:0, j:1, k_kj_nm2:1000, r0_nm:0.15 }], angles:[], torsions:[],
+  nonbonded:[{ index:0, sigma_nm:0.34, epsilon_kj:0.4, charge_e:0 },
+    { index:1, sigma_nm:0.34, epsilon_kj:0.4, charge_e:0 }],
+  exceptions:[{ i:0, j:1, sigma_nm:0.1, epsilon_kj:0, chargeprod_e2:0 }],
+} };
+const energyTopology = buildParameterizedSystem(energyMolecule, energyParameters);
+const energyPositions4 = packPositions4(Float64Array.from([0,0,0, 1.6,0,0]));
+const energyComponents = cpuEnergies(energyTopology, energyPositions4);
+assert.ok(Math.abs(energyComponents.total - energyComponents.bond) < 1e-12);
+assert.ok(energyComponents.bond > 0);
 const stack = Float32Array.from([...Array(12).keys(), ...Array(12).keys()].map(Number));
 assert.deepEqual(unpackConformerStack(stack, 4).map((entry) => entry.length), [12, 12]);
 const moved = structuredClone(complex);

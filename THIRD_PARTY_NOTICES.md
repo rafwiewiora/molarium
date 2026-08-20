@@ -74,6 +74,12 @@ bytes, Git blob `fbd9f9a95f6013d8ecaef81e02b0033e5882a675`, SHA-256
 - Totrov, M.; Abagyan, R. *Flexible protein-ligand docking by global energy optimization in
   internal coordinates.* Proteins (1997). Method inspiration only; Molarium does not bundle or
   claim compatibility with ICM. [PubMed](https://pubmed.ncbi.nlm.nih.gov/9485515/)
+- Rowan Scientific. *openconf: Modular conformer generation for docking and ensemble workflows*
+  (2026). MIT-licensed method inspiration only; Molarium does not bundle or copy `openconf` code,
+  its CrystalFF torsion library, or its MMFF search. [Repository](https://github.com/rowansci/openconf)
+- Ponzoni, L.; York, F.; Kelley, B. *AutoPose: R-Group Decomposition Based Posing for RBFE.*
+  ChemRxiv (2026). Related congeneric-pose method considered but not reproduced.
+  [DOI](https://doi.org/10.26434/chemrxiv.15004703/v1)
 
 RDKit releases and citation metadata are maintained by the
 [RDKit project](https://www.rdkit.org/) and its archived releases.

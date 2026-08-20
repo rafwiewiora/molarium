@@ -87,28 +87,28 @@
     },
     {
       "path": "docking/browser-adapter.mjs",
-      "bytes": 7580,
-      "sha256": "43b5313ff193bda66f138022ece594e218695196a7eee240f905c572791cfc2d"
+      "bytes": 8216,
+      "sha256": "33cbd2764f94570a6de420b3aaec89b9ec3a12255792e82a086f7254ae31635d"
     },
     {
       "path": "docking/constraints.mjs",
-      "bytes": 8207,
-      "sha256": "6459df06d0dc9f26fa59fcb9ff75aab3709a3db782bded572745e0dada2d2da4"
+      "bytes": 8963,
+      "sha256": "32ebb904eb4ec8f5fe83b398bc635c1923c86352b4f41692d9153835436e79b3"
     },
     {
       "path": "docking/labbook.mjs",
-      "bytes": 9397,
-      "sha256": "dd2e8d32fd30364e4a4af9759e7ab10aa8c10b04da45db80850f8d002baa5a00"
+      "bytes": 10250,
+      "sha256": "713ab5756a7226e9d56608194c6247a18271b40b6fe40fbfaef2afc495a8c99c"
     },
     {
       "path": "docking/protocol.mjs",
-      "bytes": 4820,
-      "sha256": "28851a91493ccf68d871bdf504ca709e755ce4863366a7f98c2b5aaecd36d7a9"
+      "bytes": 6376,
+      "sha256": "4a58ddfe6a31263bec26d90d1432e30a641ef5a6cf088449c978834c4bc6d4f5"
     },
     {
       "path": "docking/receptor-score.mjs",
-      "bytes": 7329,
-      "sha256": "3372525141d49a50d93e80bd3975dfb07b0bb00a78cf3834409c16e66166653a"
+      "bytes": 7428,
+      "sha256": "be6de7ef72fe573255403129a24dac65ad34a69e012352c7e16c39ab6859ca95"
     },
     {
       "path": "docking/reference-core.mjs",
@@ -116,9 +116,14 @@
       "sha256": "8e348e2018065fb72a57ac01e0eb978f3b9bef072b7ca6c268a8c83c1bc06155"
     },
     {
+      "path": "docking/torsion-search.mjs",
+      "bytes": 11055,
+      "sha256": "e300f68d4551945546c2e257d5102402f959db31be3a2d7f94924ef09e2a329d"
+    },
+    {
       "path": "docking/workflow.mjs",
-      "bytes": 5089,
-      "sha256": "d3ab9494dbd1671a29af62d350f617fff8bf124ada97fdcce1e47420326b4cd9"
+      "bytes": 5269,
+      "sha256": "86e473372159db01ef0faf240d1b0d9c3bf7999d826c2007901a90e25fb0bd76"
     },
     {
       "path": "openmm-worker.js",

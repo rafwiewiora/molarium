@@ -104,7 +104,7 @@ export function receptorSiteIntegrity(site, molecule, toleranceAngstrom = 1e-6) 
 
 export function scoreReceptorLigand(site, ligandPositions, ligandNonbonded,
   { relativeDielectric = 4, cutoffAngstrom = 8, ligandStrainKcalMol = 0,
-    ligandStrainWeight = 1 } = {}) {
+    ligandStrainWeight = 1, ligandStrainIdentity = 'relative ligand strain' } = {}) {
   if (ligandPositions.length !== ligandNonbonded.length * 3)
     throw new Error('Ligand coordinates and nonbonded parameters have different atom counts');
   let lennardJonesKcalMol = 0, coulombKcalMol = 0, pairCount = 0, stericClashes = 0;
@@ -141,7 +141,8 @@ export function scoreReceptorLigand(site, ligandPositions, ligandNonbonded,
     stericClashes,
     relativeDielectric:Number(relativeDielectric),
     cutoffAngstrom:cutoff,
-    scoreIdentity:`${site.sourceForcefield || 'parameterized receptor'} numeric cross LJ + Coulomb / explicit dielectric + relative RDKit ligand strain`,
+    ligandStrainIdentity:String(ligandStrainIdentity),
+    scoreIdentity:`${site.sourceForcefield || 'parameterized receptor'} numeric cross LJ + Coulomb / explicit dielectric + ${ligandStrainIdentity}`,
     interpretation:'pose-ranking score; not a binding free energy',
   };
 }

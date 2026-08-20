@@ -24,6 +24,7 @@ const reviewedFiles = [
   'docking/protocol.mjs',
   'docking/receptor-score.mjs',
   'docking/reference-core.mjs',
+  'docking/torsion-search.mjs',
   'docking/workflow.mjs',
   'openmm-worker.js',
   'openmm/molarium-openmm.js',

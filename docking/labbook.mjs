@@ -109,9 +109,10 @@ export function renderLabbookMarkdown(labbook) {
   const outcome = labbook.outcome || {};
   const execution = labbook.environment || {};
   const physical = outcome.selectedPhysicalComponents || {};
+  const refinement = outcome.selectedRefinement || {};
   const lines = [
     `# ${labbook.protocol.name} labbook`, '',
-    '> Experimental rigid-receptor pose ranking. This is not a binding free-energy calculation.', '',
+    '> Experimental fixed-core, rigid-receptor pose ranking. This is not a binding free-energy calculation.', '',
     '| Record | Value |', '| --- | --- |',
     `| Run | \`${markdownCell(labbook.runId)}\` |`,
     `| Started | ${markdownCell(labbook.startedAt)} |`,
@@ -125,6 +126,11 @@ export function renderLabbookMarkdown(labbook) {
     `- Selected score: **${markdownNumber(outcome.selectedScoreKcalMol)} kcal/mol**`,
     `- Physical / restraint: **${markdownNumber(outcome.selectedPhysicalKcalMol)} / ${markdownNumber(outcome.selectedConstraintPenaltyKcalMol)} kcal/mol**`,
     `- Core RMSD: **${markdownNumber(outcome.selectedCoreRmsdAngstrom, 3)} Å**`, '',
+    '### Selected torsion search', '',
+    `- Method: **${markdownCell(refinement.method)}**`,
+    `- Free rotors / proposals: **${refinement.rotatableBondCount ?? '—'} / ${refinement.proposals ?? '—'}**`,
+    `- Accepted / improved: **${refinement.accepted ?? '—'} / ${refinement.improved ?? '—'}**`,
+    `- Objective: **${markdownNumber(refinement.startObjectiveKcalMol)} → ${markdownNumber(refinement.bestObjectiveKcalMol)} kcal/mol**`, '',
     '| Selected physical component | kcal/mol |', '| --- | ---: |',
     `| Lennard-Jones cross term | ${markdownNumber(physical.lennardJonesKcalMol)} |`,
     `| Coulomb cross term | ${markdownNumber(physical.coulombKcalMol)} |`,
@@ -139,6 +145,11 @@ export function renderLabbookMarkdown(labbook) {
     `- Required H-bond constraints: **${constraintCount}**`,
     ...((labbook.selections?.hydrogenBonds || []).map((entry) =>
       `  - ${markdownCell(entry.label || entry.id)} (${markdownCell(entry.receptorRole || 'receptor role unspecified')})`)), '',
+    ...((labbook.selections?.omittedHydrogenBonds || []).length ? [
+      `- Omitted reference contacts: **${labbook.selections.omittedHydrogenBonds.length}**`,
+      ...labbook.selections.omittedHydrogenBonds.map((entry) =>
+        `  - ${markdownCell(entry.label || entry.id)} — ${markdownCell(entry.reason)}`), ''
+    ] : []),
     '## Execution', '',
     '| Setting | Value |', '| --- | --- |',
     `| Location | ${markdownCell(execution.execution)} |`,

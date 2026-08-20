@@ -1,5 +1,5 @@
 import { applyCoreTransform, evaluateCoreConstraint, evaluateHydrogenBondConstraint,
-  fittedCoreTransform, rankConstrainedPoses, scoreConstrainedPose } from './constraints.mjs';
+  fittedCoreTransform, rankConstrainedPoses, scoreConstrainedPose, snapCorePositions } from './constraints.mjs';
 import { appendLabbookEvent } from './labbook.mjs';
 
 function conformerArray(value, expectedLength) {
@@ -22,7 +22,7 @@ function restraintPoint(descriptor, positions) {
   throw new Error('Each H-bond participant must identify a ligand atom or fixed receptor point');
 }
 
-function evaluatePoseHydrogenBonds(definitions, positions, settings) {
+export function evaluatePoseHydrogenBonds(definitions, positions, settings) {
   return definitions.map((definition, index) => ({
     id:definition.id || `hbond-${index + 1}`,
     required:definition.required !== false,
@@ -37,7 +37,7 @@ function evaluatePoseHydrogenBonds(definitions, positions, settings) {
 
 export async function runConstrainedDocking({ referencePositions, candidateConformers, coreAtomPairs,
   hydrogenBondConstraints = [], protocol, physicalScore, refinePose = null, labbook = null,
-  startedAt = new Date().toISOString(), completedAt = null }) {
+  afterRefinement = null, startedAt = new Date().toISOString(), completedAt = null }) {
   if (typeof physicalScore !== 'function') throw new TypeError('A physicalScore callback is required');
   if (!Array.isArray(candidateConformers) || !candidateConformers.length)
     throw new Error('At least one candidate conformer is required');
@@ -53,13 +53,14 @@ export async function runConstrainedDocking({ referencePositions, candidateConfo
   const candidates = [];
   for (let index = 0; index < conformers.length; index++) {
     const transform = fittedCoreTransform(referencePositions, conformers[index], coreAtomPairs);
-    let positions = applyCoreTransform(conformers[index], transform);
+    let positions = snapCorePositions(referencePositions,
+      applyCoreTransform(conformers[index], transform), coreAtomPairs);
     let refinement = null;
     if (refinePose) {
       refinement = await refinePose({ positions, conformerIndex:index, protocol });
       positions = conformerArray(refinement?.positions || positions, expectedLength);
     }
-    const physical = await physicalScore({ positions, conformerIndex:index, protocol });
+    const physical = await physicalScore({ positions, conformerIndex:index, protocol, refinement });
     const physicalEnergyKcalMol = Number(typeof physical === 'number' ? physical : physical?.energyKcalMol);
     if (!Number.isFinite(physicalEnergyKcalMol))
       throw new Error(`Physical scoring returned no finite energy for conformer ${index + 1}`);
@@ -71,6 +72,7 @@ export async function runConstrainedDocking({ referencePositions, candidateConfo
       positions, core, hydrogenBonds, refinement, physicalDetails:typeof physical === 'object' ? physical : null,
       ...score });
   }
+  if (afterRefinement) await afterRefinement(candidates);
   const ranked = rankConstrainedPoses(candidates);
   const feasibleCount = ranked.filter((pose) => pose.feasible).length;
   if (labbook) await appendLabbookEvent(labbook, {

@@ -258,3 +258,86 @@ rotates without selecting the atom. It then clicks all six connected atoms of a 
 the selection remains intact beyond the four-atom geometry-editor limit, and right-drags to pan while
 asserting that every molecular coordinate is unchanged. Unit tests capture and map the six-atom core
 and reject a non-collinear but disconnected selection.
+
+## 2026-08-19 — receptor-aware torsion refinement v0.3
+
+### Additional public evidence consulted
+
+1. Rowan Scientific's MIT-licensed `openconf` documentation describes analogue/FEP-style
+   generation from a supplied pose: explore only free terminal rotors whose moving fragments lie
+   outside the constrained core, use position restraints during minimization, and snap constrained
+   atoms back to their exact input coordinates. Its full generator also includes a CrystalFF torsion
+   library, correlated moves, ring flips, macrocycle moves, MMFF94s minimization, deduplication, and
+   selection. Molarium adopts only the free-terminal-rotor/exact-snap boundary and does not copy or
+   execute the implementation.
+2. Ponzoni, York, and Kelley, *AutoPose: R-Group Decomposition Based Posing for RBFE*, ChemRxiv
+   2026, DOI `10.26434/chemrxiv.15004703/v1`, describes RDKit R-group decomposition and Free-Wilson
+   modeling to reconstruct congeneric ligand poses for a TMD RBFE workflow. This is a related
+   pose-construction strategy, not evidence for Molarium's torsion search.
+3. Glide's public method description separates initial placement from torsional optimization, and
+   ICM describes internal-coordinate global optimization. These remain lineage rather than code or
+   parameter sources.
+
+### Decision D-014 — exact core, flexible external graph branches
+
+Version 0.3 rigidly aligns each candidate and then copies every mapped core coordinate from the
+reference pose exactly. Candidate rotors are single, non-aromatic, non-ring, non-amide heavy-atom
+bonds whose moving connected component contains no core atom. A proposal rotates only that component.
+
+Reason: edit-derived atom lineage makes the analogue core mapping exact. Allowing a core atom into a
+moving branch would silently weaken the user's structural hypothesis. Snapping after alignment also
+makes “hard core” literal rather than an RMSD penalty that may drift.
+
+Limit: independently snapping a core generated with a different internal geometry can create strain
+at its attachment. The OpenFF Sage intramolecular term exposes that strain, but future constrained
+embedding should start directly from the reference geometry. Ring-pucker and macrocycle moves are
+not implemented.
+
+### Decision D-015 — independent receptor-aware Metropolis search
+
+For each fixed-core ETKDG seed, Molarium makes 96 deterministic single-torsion proposals from an
+explicit angle set under a geometric temperature schedule from 900 K to 150 K. The objective is the
+rigid 8 Å receptor cross energy, relative vacuum OpenFF Sage intramolecular energy, and explicit restraint
+penalties. The implementation is original Molarium JavaScript and does not use `openconf` source,
+torsion rules, MMFF minimization, or selection logic.
+
+Reason: ETKDG diversity plus rigid alignment did not optimize the edited ligand against the receptor.
+The new score is evaluated after every proposal, so torsions are selected in the actual pocket under
+the same objective that ranks the final pose.
+
+### Decision D-016 — contact feasibility is a search state, not merely a final annotation
+
+A move that first reaches all required contacts is accepted. Once a chain is feasible, a proposal
+that loses required-contact feasibility is rejected. Within the same feasibility class, ordinary
+Metropolis acceptance applies. The best state is also chosen feasible-first.
+
+Reason: a contact labelled “required” must not disappear in exchange for a favorable energy. The
+continuous flat-bottom penalty guides infeasible states toward the allowed geometry; the state rule
+gives the label hard operational meaning.
+
+### Decision D-017 — unavailable edit-derived contacts are omitted, never guessed
+
+If an edited ligand no longer contains a stable atom identifier used by a captured contact, the UI
+unchecks and disables that contact with an `atom removed` label. Docking can continue with remaining
+valid contacts. The omitted contact, missing stable atom identifier, and reason are written into the
+hashed labbook.
+
+Reason: throwing stopped a legitimate analogue workflow, while remapping to a chemically similar
+atom would silently change the hypothesis. Explicit omission is both usable and auditable.
+
+### Validation V-005 — torsion search invariants
+
+Unit tests prove that ring and amide bonds are excluded, moving components contain no core atoms,
+same-seed runs are bitwise deterministic, a synthetic receptor-like objective improves, feasible
+states are found, exact core coordinates never move, and a rotor-free molecule is unchanged.
+
+The Chrome gate executes a flexible edited ligand through RDKit WASM, fresh OpenFF parameterization,
+fixed-core torsion search, rigid-site scoring, hash verification, deterministic replay, and pose
+application. The selected core RMSD is below `1e-12 Å`, at least one external rotor receives the full
+proposal budget, and the labbook contains both method-decision and per-conformer search events. A
+second browser case deletes the ligand atom used by a reference H-bond and verifies disabled UI,
+continued docking, and an explicit `ligand-atom-removed` audit record.
+
+These are correctness and reproducibility gates, not pose-accuracy validation. Cognate redocking,
+cross-docking, analogue-series recovery, seed sensitivity, and comparison against published/native
+methods remain required before an accuracy claim.

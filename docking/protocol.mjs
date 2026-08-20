@@ -1,11 +1,11 @@
 export const MOLARIUM_CCD_PROTOCOL = Object.freeze({
   schema: 'molarium.docking.protocol/v1',
   id: 'molarium-ccd-1',
-  version: '0.2.0',
+  version: '0.3.0',
   name: 'Molarium CCD-1',
   title: 'Reference-core and required H-bond constrained docking',
   status: 'experimental-browser-implementation',
-  summary: 'Deterministic ligand-pose evaluation with a reference-core restraint and explicit hydrogen-bond geometry.',
+  summary: 'Deterministic fixed-core ligand torsion search with explicit hydrogen-bond geometry and transparent rigid-receptor scoring.',
   lineage: Object.freeze([
     Object.freeze({
       role: 'published-method inspiration',
@@ -30,6 +30,29 @@ export const MOLARIUM_CCD_PROTOCOL = Object.freeze({
         'soft flat-bottom positional and interaction restraints',
       ]),
       excluded: Object.freeze(['ICM receptor grids', 'ICM scoring function', 'Biased Probability Monte Carlo implementation']),
+    }),
+    Object.freeze({
+      role: 'open-source method inspiration',
+      method: 'Rowan openconf analogue pose generation',
+      citation: 'Rowan Scientific. openconf: Modular conformer generation for docking and ensemble workflows. 2026.',
+      url: 'https://github.com/rowansci/openconf',
+      adopted: Object.freeze([
+        'only sample free terminal rotors outside a constrained analogue core',
+        'snap constrained atoms back to exact reference coordinates after search',
+      ]),
+      excluded: Object.freeze([
+        'openconf source code', 'CrystalFF torsion library', 'MMFF94s minimizer',
+        'ring flips', 'macrocycle moves', 'openconf clustering and selection',
+      ]),
+    }),
+    Object.freeze({
+      role: 'related congeneric-pose method considered, not reproduced',
+      method: 'AutoPose R-group decomposition posing for RBFE',
+      citation: 'Ponzoni L, York F, Kelley B. ChemRxiv. 2026.',
+      doi: '10.26434/chemrxiv.15004703/v1',
+      url: 'https://doi.org/10.26434/chemrxiv.15004703/v1',
+      adopted: Object.freeze(['edit-lineage core identity serves the same congeneric-design use case']),
+      excluded: Object.freeze(['RDKit R-group decomposition', 'Free-Wilson modeling', 'TMD RBFE workflow']),
     }),
     Object.freeze({
       role: 'constraint definition reference',
@@ -65,13 +88,15 @@ export const MOLARIUM_CCD_PROTOCOL = Object.freeze({
   sampling: Object.freeze({
     seed: 20260819,
     requestedConformers: 16,
+    torsionMonteCarloSteps: 96,
     receptor: 'rigid',
     ligand: 'rigid-body and rotatable-bond degrees of freedom',
     stages: Object.freeze([
       'ETKDGv3 ligand conformers',
-      'reference-core alignment',
-      'explicit required H-bond audit',
-      'transparent rigid-receptor cross-term scoring with relative ligand strain',
+      'reference-core alignment and exact coordinate snap',
+      'fixed-core receptor-aware torsion Monte Carlo',
+      'explicit required H-bond search and audit',
+      'transparent rigid-receptor cross-term scoring with relative OpenFF Sage ligand strain',
       'constraint audit and transparent reranking',
     ]),
   }),
@@ -79,7 +104,7 @@ export const MOLARIUM_CCD_PROTOCOL = Object.freeze({
     identity: 'Molarium transparent physical score plus explicit restraint penalties',
     receptorSiteRadiusAngstrom: 8,
     relativeDielectric: 4,
-    ligandStrain: 'relative RDKit MMFF94 with UFF fallback',
+    ligandStrain: 'relative vacuum OpenFF Sage 2.1 intramolecular energy from the lowest fixed-core starting seed',
     interpretation: 'pose-ranking score; not a binding free energy',
     feasiblePosesRankFirst: true,
     notEquivalentTo: Object.freeze(['GlideScore', 'ICM Score']),
@@ -88,8 +113,9 @@ export const MOLARIUM_CCD_PROTOCOL = Object.freeze({
     constraintGeometry: 'implemented',
     deterministicRanking: 'implemented',
     tamperEvidentLabbook: 'implemented',
-    browserPoseGeneration: 'implemented-rigid-receptor-etkdgv3',
-    browserPocketRefinement: 'not-included-in-v0.2',
+    browserPoseGeneration: 'implemented-etkdgv3-plus-fixed-core-torsion-mc',
+    browserLigandRefinement: 'implemented-rigid-receptor-fixed-core-torsion-mc',
+    browserPocketRefinement: 'not-included-in-v0.3',
   }),
 });
 
