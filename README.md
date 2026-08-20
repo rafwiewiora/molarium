@@ -63,6 +63,7 @@ manifests and model cards.
 - Load SMILES, PDB, XYZ, and prepared molecular fixtures.
 - Fetch a PDB entry by its four-character RCSB identifier.
 - View proteins, ligands, waters, ions, hydrogen bonds, and aromatic stacking contacts.
+- Keep an RDKit 2D depiction beside the 3D scene and select the same atoms in either view.
 - Add atoms and fragments without creating bonds from visual proximity.
 - Edit bond lengths, bond angles, and torsions with undo and redo.
 - Run energies, minimization, molecular dynamics, and conformer searches.
@@ -163,6 +164,11 @@ demo systems remain test fixtures only. Simulation requests support up to 100,00
 
 The viewer uses a quaternion trackball, so rotation does not change the camera fit. Right-drag,
 or Ctrl/Cmd plus left-drag, pans the scene. The mouse wheel zooms.
+
+For small molecules, a collapsible RDKit diagram sits at the lower-left of the molecular canvas.
+In a protein–ligand scene it follows the active ligand rather than attempting to flatten the
+protein. Selected atoms are highlighted in both representations, and clicking the 2D diagram maps
+back to the original 3D atom index.
 
 MD playback uses a fixed atom-identity heavy-atom fit to each trajectory's first saved frame. This
 removes whole-molecule translation and rotation from the display without changing raw coordinates,

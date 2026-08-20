@@ -196,6 +196,10 @@ body.molarium-workspace {
   color: #202a34;
   transform: none;
 }
+.molarium-workspace .structure-2d-panel {
+  left: calc(min(318px, calc(50vw - 180px)) + 28px);
+  bottom: 16px;
+}
 .molarium-workspace .canvas-help {
   bottom: 70px;
   left: 50%;
@@ -232,6 +236,7 @@ body.molarium-workspace {
   .molarium-workspace .panel { width: 276px; min-width: 0; }
   .molarium-workspace .panel-right:has(#result-card:not(.hidden)) { width: 340px; }
   .molarium-workspace .viewer-toolbar { max-width: calc(100% - 590px); }
+  .molarium-workspace .structure-2d-panel { left: 290px; width: 206px; }
   .molarium-workspace .app-brand-tag { display: none; }
 }
 
@@ -266,6 +271,7 @@ body.molarium-workspace {
   .molarium-workspace .panel-left { grid-area: left; }
   .molarium-workspace .panel-right { grid-area: right; }
   .molarium-workspace .viewer-toolbar { max-width: calc(100% - 20px); }
+  .molarium-workspace .structure-2d-panel { left: 12px; bottom: 12px; width: 206px; }
   .molarium-workspace .canvas-help { display: none; }
 }
 
@@ -279,4 +285,6 @@ body.molarium-workspace {
   .molarium-workspace .app-brand { font-size: 16px; }
   .molarium-workspace .viewer-toolbar { bottom: 8px; overflow-x: auto; justify-content: flex-start; }
   .molarium-workspace .mode-bar { top: 8px; }
+  .molarium-workspace .structure-2d-panel { left: 8px; bottom: 54px; width: 174px; }
+  .molarium-workspace .structure-2d-drawing { height: 126px; }
 }

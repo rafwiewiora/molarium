@@ -16,6 +16,7 @@
     "manifest:local": "bun scripts/generate-local-lab-manifest.mjs",
     "test:local-lab": "bun local-lab-test.js",
     "test": "bun browser-test.js",
+    "test:2d": "bun rdkit-depiction-browser-test.js",
     "test:ani-webgpu": "bun mlip-browser-test.js",
     "benchmark:rosemary": "bun rosemary-browser-benchmark.js",
     "arena:conformers": "bun conformer-browser-benchmark.js",
