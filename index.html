@@ -482,6 +482,19 @@
             <div class="atom-tooltip hidden" id="atom-tooltip"></div>
             <button class="residue-follow-chip hidden" id="residue-follow-chip" type="button" title="Stop following this residue"></button>
 
+            <section class="structure-2d-panel hidden" id="structure-2d-panel" aria-label="2D structure viewer">
+              <button class="structure-2d-heading" id="structure-2d-toggle" type="button" aria-expanded="true">
+                <span><strong>2D</strong><small id="structure-2d-label">Structure</small></span>
+                <svg class="chevron open" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 4 4 4-4 4" /></svg>
+              </button>
+              <div class="structure-2d-body" id="structure-2d-body">
+                <div class="structure-2d-drawing" id="structure-2d-drawing" role="img" aria-label="RDKit 2D molecular depiction">
+                  <span>Drawing…</span>
+                </div>
+                <p>Click an atom to select it in 3D.</p>
+              </div>
+            </section>
+
             <div class="run-overlay hidden" id="run-overlay">
               <div class="run-card">
                 <div class="calculation-loader" aria-hidden="true">

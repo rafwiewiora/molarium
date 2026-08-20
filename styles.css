@@ -362,6 +362,28 @@ select {
 .residue-follow-chip { position: absolute; z-index: 7; left: 14px; top: 14px; border: 1px solid #91a4bd; border-radius: 999px; background: rgba(255,255,255,.94); color: var(--ink); padding: 6px 10px; box-shadow: 0 3px 12px rgba(15,23,42,.1); font: 700 11px/1.1 Inter, sans-serif; }
 .residue-follow-chip:hover { background: #edf4fb; }
 
+.structure-2d-panel {
+  position: absolute; z-index: 6; left: 12px; bottom: 12px; width: 228px;
+  overflow: hidden; border: 1px solid var(--line); border-radius: 11px;
+  background: rgba(255,255,255,.95); box-shadow: 0 6px 22px rgba(15,23,42,.13);
+  backdrop-filter: blur(10px); user-select: none;
+}
+.structure-2d-heading {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 8px 10px; border: 0; background: transparent; color: var(--ink); text-align: left;
+}
+.structure-2d-heading > span { min-width: 0; display: flex; align-items: baseline; gap: 7px; }
+.structure-2d-heading strong { font-size: 11px; letter-spacing: .08em; }
+.structure-2d-heading small { overflow: hidden; color: var(--quiet); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.structure-2d-heading .chevron { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; }
+.structure-2d-body { padding: 0 8px 7px; border-top: 1px solid rgba(226,232,240,.8); }
+.structure-2d-drawing { position: relative; height: 162px; display: grid; place-items: center; color: var(--quiet); font-size: 9px; }
+.structure-2d-drawing svg { display: block; width: 100%; height: 100%; cursor: crosshair; }
+.structure-2d-drawing svg [class*="atom-"] { pointer-events: stroke; }
+.structure-2d-body p { margin: -1px 2px 1px; color: var(--quiet); font-size: 8px; text-align: center; }
+.structure-2d-panel.collapsed .structure-2d-body { display: none; }
+.structure-2d-panel.collapsed { width: 164px; }
+
 .run-overlay { position: absolute; z-index: 12; inset: 0; background: rgba(248,250,252,.78); backdrop-filter: blur(4px); display: grid; place-items: center; }
 .run-card { width: min(320px, 75%); padding: 22px; border: 1px solid var(--line); border-radius: 15px; background: rgba(255,255,255,.94); box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 7px; }
 .run-card strong { text-align: center; margin: 2px 0 8px; font-size: 13px; }

@@ -716,6 +716,10 @@ const state = {
   focusedComponentRadius: null,
   focusedResidueKey: null,
   focusedResidueRadius: null,
+  depictionSequence: 0,
+  depictionTimer: 0,
+  depictionGlobalAtomIndices: [],
+  depictionKey: null,
   stormmReplicaTuning: new Map(),
   tuningStormmReplicas: false,
   foldAbortController: null,
@@ -727,6 +731,141 @@ const canvas = document.querySelector('#molecule-canvas');
 const ctx = canvas.getContext('2d');
 const sceneCanvas = document.querySelector('#scene-canvas');
 const sceneCtx = sceneCanvas.getContext('2d');
+
+const MAX_DEPICTION_ATOMS = 256;
+
+function depictionTarget(molecule = state.molecule) {
+  if (!molecule?.atoms?.length) return null;
+  const eligible = (component) => {
+    if (!component || !['ligand', 'molecule'].includes(component.kind)) return false;
+    const heavy = component.atomIndices.filter((index) => molecule.atoms[index]?.element !== 'H');
+    return heavy.length > 0 && heavy.length <= MAX_DEPICTION_ATOMS;
+  };
+  const selectedComponentId = state.selectedAtom == null ? null : state.atomComponentIds[state.selectedAtom];
+  const selectedComponent = state.structureComponents.find((component) =>
+    component.id === selectedComponentId && eligible(component));
+  const focusedComponent = state.structureComponents.find((component) =>
+    component.id === state.focusedComponentId && eligible(component));
+  const ligand = state.structureComponents.find((component) => component.kind === 'ligand'
+    && state.componentVisibility.get(component.id) !== false && eligible(component));
+  const main = state.structureComponents.find((component) => component.kind === 'molecule' && eligible(component));
+  const component = selectedComponent || focusedComponent || ligand || main;
+  if (!component) return null;
+  const globalAtomIndices = component.atomIndices.filter((index) => molecule.atoms[index].element !== 'H');
+  const mapped = mappedMoleculeSubset(molecule, globalAtomIndices, component.label || '2D structure');
+  return mapped ? { ...mapped, label:component.label || molecule.name || 'Structure', componentId:component.id } : null;
+}
+
+function depictionSignature(target) {
+  const molecule = target?.molecule;
+  if (!molecule) return '';
+  const selected = state.selectedAtoms.flatMap((globalIndex) => {
+    const localIndex = target.globalToLocal.get(globalIndex);
+    return localIndex == null ? [] : [localIndex];
+  });
+  return JSON.stringify({
+    component:target.componentId,
+    atoms:molecule.atoms.map((atom) => [atom.element, atomFormalCharge(atom)]),
+    bonds:molecule.bonds.map((bond) => [bond.a, bond.b, Number(bond.order || 1)]),
+    selected,
+  });
+}
+
+function sanitizedDepictionSvg(svgText) {
+  const parsed = new DOMParser().parseFromString(svgText, 'image/svg+xml');
+  const svg = parsed.documentElement;
+  if (svg.localName !== 'svg' || parsed.querySelector('parsererror')) throw new Error('Invalid 2D SVG');
+  svg.querySelectorAll('script, foreignObject').forEach((node) => node.remove());
+  svg.querySelectorAll('*').forEach((node) => [...node.attributes].forEach((attribute) => {
+    if (/^on/i.test(attribute.name) || /^(?:href|xlink:href)$/i.test(attribute.name)) node.removeAttribute(attribute.name);
+  }));
+  svg.removeAttribute('width'); svg.removeAttribute('height');
+  svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+  svg.setAttribute('aria-hidden', 'true');
+  return document.importNode(svg, true);
+}
+
+async function update2DDepiction() {
+  const panel = document.querySelector('#structure-2d-panel');
+  const drawing = document.querySelector('#structure-2d-drawing');
+  const target = depictionTarget();
+  const sequence = ++state.depictionSequence;
+  if (!target) {
+    panel.classList.add('hidden'); state.depictionGlobalAtomIndices = []; state.depictionKey = null;
+    return;
+  }
+  const key = depictionSignature(target);
+  if (key === state.depictionKey && drawing.querySelector('svg')) return;
+  state.depictionKey = key;
+  panel.classList.remove('hidden');
+  setText('#structure-2d-label', target.label);
+  drawing.replaceChildren(Object.assign(document.createElement('span'), { textContent:'Drawing…' }));
+  const selectedAtomIndices = state.selectedAtoms.flatMap((globalIndex) => {
+    const localIndex = target.globalToLocal.get(globalIndex);
+    return localIndex == null ? [] : [localIndex];
+  });
+  try {
+    const result = await runRDKitJob('depict', target.molecule, () => {}, { selectedAtomIndices });
+    if (sequence !== state.depictionSequence || key !== state.depictionKey) return;
+    drawing.replaceChildren(sanitizedDepictionSvg(result.svg));
+    state.depictionGlobalAtomIndices = target.globalAtomIndices.slice();
+    panel.dataset.rdkitVersion = result.rdkitVersion || '';
+    delete panel.dataset.error; delete panel.dataset.pending;
+  } catch (error) {
+    if (sequence !== state.depictionSequence) return;
+    drawing.replaceChildren(Object.assign(document.createElement('span'), { textContent:'2D depiction unavailable' }));
+    panel.dataset.error = error.message; delete panel.dataset.pending;
+  }
+}
+
+function schedule2DDepiction(delay = 50) {
+  clearTimeout(state.depictionTimer);
+  const panel = document.querySelector('#structure-2d-panel');
+  const drawing = document.querySelector('#structure-2d-drawing');
+  const target = depictionTarget();
+  if (!target) {
+    state.depictionSequence += 1; state.depictionKey = null; state.depictionGlobalAtomIndices = [];
+    panel.classList.add('hidden'); delete panel.dataset.pending;
+    return;
+  }
+  const key = depictionSignature(target);
+  if (key !== state.depictionKey) {
+    panel.classList.remove('hidden'); panel.dataset.pending = 'true';
+    setText('#structure-2d-label', target.label);
+    drawing.replaceChildren(Object.assign(document.createElement('span'), { textContent:'Drawing…' }));
+  }
+  state.depictionTimer = setTimeout(update2DDepiction, delay);
+}
+
+function depictionAtomPoint(svg, atomIndex) {
+  const points = [];
+  svg.querySelectorAll(`[class*="atom-${atomIndex}"]`).forEach((node) => {
+    const atomClasses = [...node.classList].flatMap((name) => {
+      const match = /^atom-(\d+)$/.exec(name); return match ? [Number(match[1])] : [];
+    });
+    if (node instanceof SVGGeometryElement && atomClasses.length >= 2) {
+      const length = node.getTotalLength();
+      const endpoint = atomClasses.indexOf(atomIndex) === 0
+        ? node.getPointAtLength(0) : node.getPointAtLength(length);
+      points.push(endpoint);
+    } else if (node instanceof SVGGraphicsElement) {
+      const box = node.getBBox(); points.push({ x:box.x + box.width / 2, y:box.y + box.height / 2 });
+    }
+  });
+  if (!points.length) return null;
+  return points.reduce((sum, point) => ({ x:sum.x + point.x / points.length,
+    y:sum.y + point.y / points.length }), { x:0, y:0 });
+}
+
+function selectDepictionAtom(localIndex) {
+  const globalIndex = state.depictionGlobalAtomIndices[localIndex];
+  if (!Number.isInteger(globalIndex) || !state.molecule?.atoms?.[globalIndex]) return;
+  if (state.mode === 'build') selectGeometryAtom(globalIndex);
+  else {
+    state.selectedAtoms = [globalIndex]; state.selectedAtom = globalIndex;
+    updateGeometryControl(); draw(); schedule2DDepiction(0);
+  }
+}
 
 function parseXYZ(text, meta = {}) {
   const lines = text.trim().split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
@@ -2536,6 +2675,7 @@ function updateInfo() {
   updateChemistryDisplayControls();
   updateOptimizerControls();
   updateDockingUi();
+  schedule2DDepiction();
 }
 
 function updatePdbPreparationUi() {
@@ -4554,7 +4694,7 @@ function selectGeometryAtom(index) {
     state.selectedAtoms.push(index);
   }
   state.selectedAtom = state.selectedAtoms.at(-1) ?? null;
-  updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw();
+  updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw(); schedule2DDepiction(0);
 }
 
 let chemistryValidationSequence = 0;
@@ -5462,6 +5602,26 @@ window.molariumTest = Object.freeze({
       residueCount: component.residueCount, visible: state.componentVisibility.get(component.id) !== false,
     })) };
   },
+  async waitFor2DDepiction(timeoutMs = 10000) {
+    const started = performance.now();
+    while (performance.now() - started < timeoutMs) {
+      const panel = document.querySelector('#structure-2d-panel');
+      const svg = document.querySelector('#structure-2d-drawing svg');
+      if (!panel.classList.contains('hidden') && !panel.dataset.pending && svg) return this.twoDDepiction();
+      if (panel.dataset.error) throw new Error(panel.dataset.error);
+      await new Promise((resolve) => setTimeout(resolve, 25));
+    }
+    throw new Error('Timed out waiting for the 2D depiction');
+  },
+  twoDDepiction() {
+    const panel = document.querySelector('#structure-2d-panel');
+    const svg = document.querySelector('#structure-2d-drawing svg');
+    return { visible:!panel.classList.contains('hidden'), label:document.querySelector('#structure-2d-label').textContent,
+      atomIndices:state.depictionGlobalAtomIndices.slice(), selectedAtoms:state.selectedAtoms.slice(),
+      hasSvg:Boolean(svg), atomClasses:svg?.querySelectorAll('[class*="atom-"]').length || 0,
+      rdkitVersion:panel.dataset.rdkitVersion || null };
+  },
+  select2DAtom(localIndex) { selectDepictionAtom(Number(localIndex)); return this.twoDDepiction(); },
   currentPreparationReport() { return structuredClone(proteinPreparationReport(state.molecule)); },
   async prepareCurrentPdb() { return prepareCurrentPdb(); },
   parse(smiles) {
@@ -9377,6 +9537,34 @@ document.querySelector('#scene-toggle').addEventListener('click', (event) => {
   event.currentTarget.setAttribute('aria-expanded', String(open)); event.currentTarget.querySelector('.chevron').classList.toggle('open', open);
 });
 
+document.querySelector('#structure-2d-toggle').addEventListener('click', (event) => {
+  const panel = document.querySelector('#structure-2d-panel');
+  const collapsed = panel.classList.toggle('collapsed');
+  event.currentTarget.setAttribute('aria-expanded', String(!collapsed));
+  event.currentTarget.querySelector('.chevron').classList.toggle('open', !collapsed);
+});
+document.querySelector('#structure-2d-drawing').addEventListener('click', (event) => {
+  const svg = event.currentTarget.querySelector('svg');
+  const target = event.target instanceof SVGElement ? event.target.closest('[class*="atom-"]') : null;
+  if (!svg || !target) return;
+  const candidates = [...target.classList].flatMap((name) => {
+    const match = /^atom-(\d+)$/.exec(name); return match ? [Number(match[1])] : [];
+  });
+  if (!candidates.length) return;
+  let localIndex = candidates[0];
+  if (candidates.length > 1) {
+    const matrix = svg.getScreenCTM();
+    const localPoint = matrix ? new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse()) : null;
+    if (localPoint) localIndex = candidates.reduce((nearest, candidate) => {
+      const point = depictionAtomPoint(svg, candidate); const nearestPoint = depictionAtomPoint(svg, nearest);
+      if (!point) return nearest; if (!nearestPoint) return candidate;
+      return Math.hypot(point.x - localPoint.x, point.y - localPoint.y)
+        < Math.hypot(nearestPoint.x - localPoint.x, nearestPoint.y - localPoint.y) ? candidate : nearest;
+    }, candidates[0]);
+  }
+  selectDepictionAtom(localIndex);
+});
+
 document.querySelector('#components-toggle').addEventListener('click', (event) => {
   const body = document.querySelector('#components-body'); const open = !body.classList.toggle('hidden');
   event.currentTarget.setAttribute('aria-expanded', String(open)); event.currentTarget.querySelector('.chevron').classList.toggle('open', open);
@@ -9739,7 +9927,7 @@ canvas.addEventListener('pointerup', (event) => {
       else addAtomAtScreen(event.clientX, event.clientY);
     } else if (pendingBuildAction.tool === 'select') {
       if (hit) selectGeometryAtom(hit.index);
-      else { state.selectedAtoms = []; state.selectedAtom = null; updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw(); }
+      else { state.selectedAtoms = []; state.selectedAtom = null; updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw(); schedule2DDepiction(0); }
     }
   } else if (state.mode !== 'build' && event.button === 0 && !event.ctrlKey && !event.metaKey && !pointerDragged) {
     const hit = hitTest(event.clientX, event.clientY);
@@ -9771,6 +9959,8 @@ document.querySelector('#clear-button').addEventListener('click', () => {
   document.querySelector('#display-options').classList.add('hidden'); document.querySelector('#molecule-info').classList.add('hidden'); document.querySelector('.scene-card').classList.add('hidden');
   document.querySelector('#structure-components').classList.add('hidden'); document.querySelector('#preparation-inspector').classList.add('hidden');
   document.querySelector('#ligand-protonation').classList.add('hidden');
+  state.depictionSequence += 1; state.depictionKey = null; state.depictionGlobalAtomIndices = [];
+  document.querySelector('#structure-2d-panel').classList.add('hidden');
   showToast('Scene cleared'); draw();
 });
 document.querySelector('#share-button').addEventListener('click', async () => {
