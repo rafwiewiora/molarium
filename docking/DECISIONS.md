@@ -1,4 +1,4 @@
-# Molarium CCD-1 decision ledger
+# Molarium ConstraintDock-1 decision ledger
 
 This ledger records the evidence, assumptions, implementation choices, rejected alternatives,
 observed failures, and open questions behind the constrained-docking protocol. It is deliberately
@@ -42,7 +42,7 @@ published-method feature while avoiding unsupported claims about Glide or ICM?
 
 ### Decision D-001 — independent protocol identity
 
-Use the name **Molarium CCD-1**, not “Glide in the browser,” “ICM docking,” or a compatible-product
+Use the name **Molarium ConstraintDock-1**, not “Glide in the browser,” “ICM docking,” or a compatible-product
 label. Cite published lineage explicitly and enumerate both adopted ideas and excluded proprietary
 components.
 

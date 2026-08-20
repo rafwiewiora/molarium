@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { MOLARIUM_CCD_PROTOCOL } from './protocol.mjs';
+import { MOLARIUM_CONSTRAINT_DOCK_PROTOCOL } from './protocol.mjs';
 import { applyCoreTransform, evaluateCoreConstraint, evaluateHydrogenBondConstraint,
   fittedCoreTransform, hydrogenBondGeometry, rankConstrainedPoses, scoreConstrainedPose,
   snapCorePositions } from './constraints.mjs';
@@ -27,11 +27,11 @@ const driftedAligned = Float64Array.from(aligned, (value, index) => value + (ind
 const snappedAligned = snapCorePositions(reference, driftedAligned, pairs);
 assert.deepEqual(Array.from(snappedAligned), Array.from(reference));
 
-const core = evaluateCoreConstraint(reference, aligned, pairs, MOLARIUM_CCD_PROTOCOL.coreConstraint);
+const core = evaluateCoreConstraint(reference, aligned, pairs, MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.coreConstraint);
 assert.equal(core.satisfied, true);
 assert.equal(core.penaltyKcalMol, 0);
 aligned[0] += 2;
-const displacedCore = evaluateCoreConstraint(reference, aligned, pairs, MOLARIUM_CCD_PROTOCOL.coreConstraint);
+const displacedCore = evaluateCoreConstraint(reference, aligned, pairs, MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.coreConstraint);
 assert.equal(displacedCore.satisfied, false);
 assert.ok(displacedCore.penaltyKcalMol > 0);
 
@@ -39,11 +39,11 @@ const hbondGeometry = hydrogenBondGeometry({
   donor:{ x:0, y:0, z:0 }, hydrogen:{ x:1, y:0, z:0 }, acceptor:{ x:2.8, y:0, z:0 },
 });
 assert.equal(hbondGeometry.dhaAngleDegrees, 180);
-const goodHbond = evaluateHydrogenBondConstraint(hbondGeometry, MOLARIUM_CCD_PROTOCOL.hydrogenBondConstraint);
+const goodHbond = evaluateHydrogenBondConstraint(hbondGeometry, MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.hydrogenBondConstraint);
 assert.equal(goodHbond.satisfied, true);
 assert.equal(goodHbond.penaltyKcalMol, 0);
 const badHbond = evaluateHydrogenBondConstraint({ ...hbondGeometry, dhaAngleDegrees:90 },
-  MOLARIUM_CCD_PROTOCOL.hydrogenBondConstraint);
+  MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.hydrogenBondConstraint);
 assert.equal(badHbond.satisfied, false);
 assert.ok(badHbond.penaltyKcalMol > 0);
 
@@ -58,7 +58,7 @@ assert.equal(ranked[0].inputIndex, 1);
 const inputs = await inputProvenance({ receptorText:'ATOM receptor', ligandText:'ligand molblock',
   receptorLabel:'test receptor', ligandLabel:'test ligand', receptorAtoms:10, ligandAtoms:4 });
 const labbook = await createLabbook({
-  runId:'ccd-test-1', startedAt:'2026-08-19T12:00:00.000Z', inputs,
+  runId:'constraint-dock-test-1', startedAt:'2026-08-19T12:00:00.000Z', inputs,
   selections:{ coreAtomPairs:pairs, hydrogenBonds:[{ receptorAtom:7, ligandAtom:2, required:true }] },
   environment:{ execution:'browser', network:'disabled' }, application:{ version:'test' },
 });
@@ -68,7 +68,7 @@ await completeLabbook(labbook, { completedAt:'2026-08-19T12:00:02.000Z',
   outcome:{ candidates:2, feasible:1, selectedRank:1 } });
 assert.deepEqual(await verifyLabbook(labbook), { valid:true, reason:null, events:2 });
 const markdown = renderLabbookMarkdown(labbook);
-assert.match(markdown, /Molarium CCD-1 labbook/);
+assert.match(markdown, /Molarium ConstraintDock-1 labbook/);
 assert.match(markdown, /10\.1021\/jm0306430/);
 assert.match(markdown, /does not include proprietary coordinates/);
 const tampered = structuredClone(labbook);
@@ -114,7 +114,7 @@ assert.deepEqual(deletedCore.missingAtomIds, [captured.coreAtomIds[1]]);
 const translatedGood = Float64Array.from([4, -2, 3, 5, -2, 3, 4, -1, 3, 6.8, -2, 3]);
 const translatedBad = Float64Array.from([4, -2, 3, 5, -2, 3, 4, -1, 3, 4, -2, 5.8]);
 const workflowLabbook = await createLabbook({
-  runId:'ccd-workflow-1', startedAt:'2026-08-19T12:00:03.000Z', inputs,
+  runId:'constraint-dock-workflow-1', startedAt:'2026-08-19T12:00:03.000Z', inputs,
   selections:{ coreAtomPairs:mappedCore.atomPairs,
     hydrogenBonds:[{ id:'receptor-donor-to-ligand-acceptor', required:true }] },
   environment:{ execution:'unit-test' }, application:{ version:'test' },
@@ -129,7 +129,7 @@ const dockingRun = await runConstrainedDocking({
     hydrogen:{ scope:'receptor', point:{ x:1, y:0, z:0 } },
     acceptor:{ scope:'ligand', atomIndex:3 },
   }],
-  protocol:MOLARIUM_CCD_PROTOCOL,
+  protocol:MOLARIUM_CONSTRAINT_DOCK_PROTOCOL,
   physicalScore:({ conformerIndex }) => conformerIndex === 0 ? -100 : -10,
   labbook:workflowLabbook,
   startedAt:'2026-08-19T12:00:03.000Z', completedAt:'2026-08-19T12:00:04.000Z',
@@ -316,7 +316,7 @@ const editedAtomCountRun = await runConstrainedDocking({
   referencePositions:captured.positions,
   candidateConformers:[editedFiveAtomConformer],
   coreAtomPairs:mappedCore.atomPairs,
-  protocol:MOLARIUM_CCD_PROTOCOL,
+  protocol:MOLARIUM_CONSTRAINT_DOCK_PROTOCOL,
   physicalScore:() => -1,
 });
 assert.equal(editedAtomCountRun.selected.positions.length, 15);
@@ -324,15 +324,15 @@ await assert.rejects(() => runConstrainedDocking({
   referencePositions:captured.positions,
   candidateConformers:[editedFiveAtomConformer, Float64Array.from([0, 0, 0])],
   coreAtomPairs:mappedCore.atomPairs,
-  protocol:MOLARIUM_CCD_PROTOCOL,
+  protocol:MOLARIUM_CONSTRAINT_DOCK_PROTOCOL,
   physicalScore:() => -1,
 }), /must contain 15 finite coordinates/);
 await assert.rejects(() => runConstrainedDocking({
   referencePositions:captured.positions, candidateConformers:[],
-  coreAtomPairs:mappedCore.atomPairs, protocol:MOLARIUM_CCD_PROTOCOL, physicalScore:() => -1,
+  coreAtomPairs:mappedCore.atomPairs, protocol:MOLARIUM_CONSTRAINT_DOCK_PROTOCOL, physicalScore:() => -1,
 }), /At least one candidate/);
 const incompleteSystem = structuredClone(siteMolecule.parameterization.system);
 incompleteSystem.nonbonded[1].index = 0;
 assert.throws(() => buildReceptorSite(siteMolecule, [3], incompleteSystem), /no nonbonded term for atom 1/);
 
-console.log('Molarium CCD-1 constraints and labbook: PASS');
+console.log('Molarium ConstraintDock-1 constraints and labbook: PASS');

@@ -1,6 +1,6 @@
-# Molarium CCD-1
+# Molarium ConstraintDock-1
 
-Molarium CCD-1 is an independent, browser-oriented protocol for reference-core and required
+Molarium ConstraintDock-1 is an independent, browser-oriented protocol for reference-core and required
 hydrogen-bond constrained ligand docking. It is the first Molarium feature organized explicitly as
 a reproducible-method implementation: the executable protocol, scientific lineage, exclusions,
 seeds, geometric constraints, run events, and result hashes travel together.

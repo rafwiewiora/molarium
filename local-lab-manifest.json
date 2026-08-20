@@ -12,13 +12,13 @@
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "bytes": 5794,
-      "sha256": "80fbb97b2915a1e7e1f6e651d99b93d2feed1aa058cfa0933a35af4f996e27d7"
+      "bytes": 6879,
+      "sha256": "971371011546e8db1c47c95766bad6c3400b39788789d7f66505fcfb5113f0f2"
     },
     {
       "path": "app.js",
-      "bytes": 486976,
-      "sha256": "d3922f3db79fa2d15bb46707f76efc3fe90e2c6ca4e91374130a320813181e33"
+      "bytes": 523130,
+      "sha256": "21a17c57d988f8f5463f16f6593669059b4a7459a5e2d2eda9b98e209b62f905"
     },
     {
       "path": "bun.lock",
@@ -32,8 +32,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 48417,
-      "sha256": "75010c8799ca53c6051ee88bd920fe8ee85a0e5889ed5d2cc96e3d68283eda3c"
+      "bytes": 52158,
+      "sha256": "73d1b92323501c610efec508dfa6da8823b859f1c71a104f7e862d34279193f6"
     },
     {
       "path": "local-lab-test.js",
@@ -42,8 +42,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 1446,
-      "sha256": "109f9e5cbfe1342bb33a0f9f7880d182a32e8f76aadb6ec7a7a6bcc378f9d7a6"
+      "bytes": 1491,
+      "sha256": "bd59fedde98d3b341d4b782d27d64af82e1077a2947c96ed55b954df02b5dc82"
     },
     {
       "path": "protein-residue-templates.js",
@@ -57,18 +57,18 @@
     },
     {
       "path": "scripts/generate-local-lab-manifest.mjs",
-      "bytes": 2174,
-      "sha256": "08598dc073ea2143b818d2f1de66b9c17c973d6693d296e917aded9581cebda5"
+      "bytes": 2409,
+      "sha256": "d083c5637d89edbdcff85b10b3b0f77b839368baf7659ea8e47fd27d140ba29c"
     },
     {
       "path": "styles.css",
-      "bytes": 49619,
-      "sha256": "1357c624085ae030aa01ffe37548543f27f9e55c5a63a63f021ad6730ae4f1c8"
+      "bytes": 52494,
+      "sha256": "cad8484d147b80c4356285648b5da1b7de7af4862d6bcee34137a9fa35ed05ba"
     },
     {
       "path": "rdkit-worker.js",
-      "bytes": 18421,
-      "sha256": "19df5fab374d52f41ac98afca7afb25ad617bbdb0b7c3e0243cc57f244a4e7ee"
+      "bytes": 19677,
+      "sha256": "2dc1747d5313c1fadc9831d6a97d41e8f36f01832da59cd43a7ee9654d9aebfa"
     },
     {
       "path": "rdkit/dimorphite-sites.js",
@@ -97,13 +97,13 @@
     },
     {
       "path": "docking/labbook.mjs",
-      "bytes": 10250,
-      "sha256": "713ab5756a7226e9d56608194c6247a18271b40b6fe40fbfaef2afc495a8c99c"
+      "bytes": 10274,
+      "sha256": "8b0f6d5c8d10ad96b3a998dbed6585e0c76a5972647b346093a75802924cfe94"
     },
     {
       "path": "docking/protocol.mjs",
-      "bytes": 6376,
-      "sha256": "4a58ddfe6a31263bec26d90d1432e30a641ef5a6cf088449c978834c4bc6d4f5"
+      "bytes": 6471,
+      "sha256": "b34fd73fe1c1b8486a779113fecd8ba418402f9f1d3cd054a4f49859773bac1d"
     },
     {
       "path": "docking/receptor-score.mjs",

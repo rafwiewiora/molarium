@@ -388,7 +388,7 @@ const browserSuite = String.raw`(async () => {
   'pocket toggle collapses cartoon atom detail back to the ligand only', JSON.stringify(ligandOnlyView));
   api.setPocketAtoms(true);
   const dockingFixture = {
-    name:'Molarium CCD browser fixture', smiles:'protein + flexible analogue', charge:0, multiplicity:1,
+    name:'Molarium ConstraintDock browser fixture', smiles:'protein + flexible analogue', charge:0, multiplicity:1,
     atoms:[
       { element:'N', x:-2, y:0, z:0, record:'ATOM', atomName:'NZ', residueName:'LYS', chain:'A', residueIndex:1 },
       { element:'H', x:-1, y:0, z:0, record:'ATOM', atomName:'HZ1', residueName:'LYS', chain:'A', residueIndex:1 },
@@ -478,7 +478,7 @@ const browserSuite = String.raw`(async () => {
     const proteinAfterDockingApply = appliedDocking.molecule.atoms.slice(0, 2)
       .map((atom) => [atom.x, atom.y, atom.z]);
     check(JSON.stringify(proteinBeforeDockingApply) === JSON.stringify(proteinAfterDockingApply)
-      && appliedDocking.molecule.source.docking.protocol === 'molarium-ccd-1',
+      && appliedDocking.molecule.source.docking.protocol === 'molarium-constraint-dock-1',
     'applying a docking pose moves only the mapped ligand and records protocol provenance');
   }
   api.loadObject(dockingFixture);

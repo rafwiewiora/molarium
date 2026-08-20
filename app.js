@@ -3378,7 +3378,7 @@ async function runBrowserConstrainedDocking(options = {}) {
 
     const requestedConformers = Math.max(1, Math.min(64, Math.round(Number(options.conformerCount
       ?? document.querySelector('#docking-conformer-count').value))));
-    const seed = Number(options.seed ?? protocolModule.MOLARIUM_CCD_PROTOCOL.sampling.seed);
+    const seed = Number(options.seed ?? protocolModule.MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.sampling.seed);
     setDockingStatus(`Generating ${requestedConformers} conformers`);
     const conformerResult = await runWorkerJob('rdkit', 'conformers', plan.molecule,
       dockingProgress, { conformerCount:requestedConformers, conformerSeed:seed,
@@ -3417,9 +3417,9 @@ async function runBrowserConstrainedDocking(options = {}) {
           ligandStrainKcalMol:sageInternalEnergyKcalMol - minimumSageStartEnergy,
           ligandStrainIdentity:'relative vacuum OpenFF Sage 2.1 intramolecular energy' });
       const core = constraints.evaluateCoreConstraint(reference.ligand.positions, positions,
-        coreMap.atomPairs, protocolModule.MOLARIUM_CCD_PROTOCOL.coreConstraint);
+        coreMap.atomPairs, protocolModule.MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.coreConstraint);
       const hydrogenBonds = workflow.evaluatePoseHydrogenBonds(mappedHydrogenBonds.constraints,
-        positions, protocolModule.MOLARIUM_CCD_PROTOCOL.hydrogenBondConstraint);
+        positions, protocolModule.MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.hydrogenBondConstraint);
       const combined = constraints.scoreConstrainedPose({
         physicalEnergyKcalMol:physical.energyKcalMol, core, hydrogenBonds,
       });
@@ -3427,7 +3427,7 @@ async function runBrowserConstrainedDocking(options = {}) {
         physical, core, hydrogenBonds, sageInternalEnergyKcalMol };
     };
     const torsionSteps = Math.max(0, Math.min(512, Math.round(Number(options.torsionSteps
-      ?? protocolModule.MOLARIUM_CCD_PROTOCOL.sampling.torsionMonteCarloSteps ?? 96))));
+      ?? protocolModule.MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.sampling.torsionMonteCarloSteps ?? 96))));
     const coreAtomIndices = coreMap.atomPairs.map((pair) => pair[1]);
     const startedAt = new Date().toISOString();
     const inputs = await labbookModule.inputProvenance({
@@ -3439,7 +3439,7 @@ async function runBrowserConstrainedDocking(options = {}) {
       ligandAtoms:plan.molecule.atoms.length,
     });
     const referenceLigandSha256 = await labbookModule.sha256Text(reference.referenceLigandInputText);
-    const runId=`ccd-${Date.now().toString(36)}-${seed}`;
+    const runId=`constraint-dock-${Date.now().toString(36)}-${seed}`;
     const labbook = await labbookModule.createLabbook({ runId, startedAt, inputs,
       selections:{
         referenceLigandSha256,
@@ -3459,7 +3459,7 @@ async function runBrowserConstrainedDocking(options = {}) {
         conformerBackend:conformerResult.backend, rdkitVersion:conformerResult.rdkitVersion,
         conformerPreparationForcefields:[...new Set(valid.map((entry) => entry.forcefield).filter(Boolean))],
       },
-      application:{ version:'1.0.0', feature:'Molarium CCD-1' },
+      application:{ version:'1.0.0', feature:'Molarium ConstraintDock-1' },
     });
     await labbookModule.appendLabbookEvent(labbook, { at:startedAt,
       stage:'method-configuration', status:'locked', details:{
@@ -3515,7 +3515,7 @@ async function runBrowserConstrainedDocking(options = {}) {
       candidateConformers:valid.map((entry) => entry.positions),
       coreAtomPairs:coreMap.atomPairs,
       hydrogenBondConstraints:mappedHydrogenBonds.constraints,
-      protocol:protocolModule.MOLARIUM_CCD_PROTOCOL,
+      protocol:protocolModule.MOLARIUM_CONSTRAINT_DOCK_PROTOCOL,
       refinePose:({ positions, conformerIndex }) => {
         setDockingStatus(`Optimizing pose ${conformerIndex + 1}/${valid.length}`);
         const conformerSeed = (seed ^ Math.imul(conformerIndex + 1, 0x9e3779b9)) >>> 0;
@@ -3644,7 +3644,7 @@ async function applySelectedDockingPose() {
   pushBuildHistory();
   adapter.applyLigandPositions(state.molecule, liveIndices, pose.positions);
   state.molecule.source = { ...(state.molecule.source || {}), docking:{
-    protocol:'molarium-ccd-1', runId:result.labbook.runId, rank:pose.rank,
+    protocol:'molarium-constraint-dock-1', runId:result.labbook.runId, rank:pose.rank,
     feasible:pose.feasible, scoreKcalMol:pose.totalScoreKcalMol,
   } };
   clearCalculationResult(); updateStoredBondDistances(); updateInfo(); updateHistoryButtons(); draw();

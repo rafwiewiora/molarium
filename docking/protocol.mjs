@@ -1,8 +1,8 @@
-export const MOLARIUM_CCD_PROTOCOL = Object.freeze({
+export const MOLARIUM_CONSTRAINT_DOCK_PROTOCOL = Object.freeze({
   schema: 'molarium.docking.protocol/v1',
-  id: 'molarium-ccd-1',
+  id: 'molarium-constraint-dock-1',
   version: '0.3.0',
-  name: 'Molarium CCD-1',
+  name: 'Molarium ConstraintDock-1',
   title: 'Reference-core and required H-bond constrained docking',
   status: 'experimental-browser-implementation',
   summary: 'Deterministic fixed-core ligand torsion search with explicit hydrogen-bond geometry and transparent rigid-receptor scoring.',
@@ -121,19 +121,19 @@ export const MOLARIUM_CCD_PROTOCOL = Object.freeze({
 
 export function protocolSnapshot(overrides = {}) {
   return {
-    ...structuredClone(MOLARIUM_CCD_PROTOCOL),
+    ...structuredClone(MOLARIUM_CONSTRAINT_DOCK_PROTOCOL),
     coreConstraint: {
-      ...MOLARIUM_CCD_PROTOCOL.coreConstraint,
+      ...MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.coreConstraint,
       ...(overrides.coreConstraint || {}),
     },
     hydrogenBondConstraint: {
-      ...MOLARIUM_CCD_PROTOCOL.hydrogenBondConstraint,
+      ...MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.hydrogenBondConstraint,
       ...(overrides.hydrogenBondConstraint || {}),
     },
     sampling: {
-      ...MOLARIUM_CCD_PROTOCOL.sampling,
+      ...MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.sampling,
       ...(overrides.sampling || {}),
-      stages: [...(overrides.sampling?.stages || MOLARIUM_CCD_PROTOCOL.sampling.stages)],
+      stages: [...(overrides.sampling?.stages || MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.sampling.stages)],
     },
   };
 }

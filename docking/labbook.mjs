@@ -1,4 +1,4 @@
-import { MOLARIUM_CCD_PROTOCOL, protocolSnapshot } from './protocol.mjs';
+import { MOLARIUM_CONSTRAINT_DOCK_PROTOCOL, protocolSnapshot } from './protocol.mjs';
 
 function canonicalValue(value) {
   if (ArrayBuffer.isView(value)) return Array.from(value, canonicalValue);
@@ -180,4 +180,4 @@ export function renderLabbookMarkdown(labbook) {
   return `${lines.join('\n')}\n`;
 }
 
-export { MOLARIUM_CCD_PROTOCOL };
+export { MOLARIUM_CONSTRAINT_DOCK_PROTOCOL };
