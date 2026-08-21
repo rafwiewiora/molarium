@@ -116,27 +116,18 @@ async function runCalculation(message) {
   if (job === 'depict') {
     if (!molecule?.atoms?.length || molecule.atoms.length > 256)
       throw new Error('2D depiction supports molecular components with 1–256 atoms');
-    let rdMol, templateMol;
+    let rdMol;
     try {
       rdMol = module.get_mol(moleculeToMolBlock(molecule), JSON.stringify({
         sanitize:false, removeHs:false, strictParsing:false,
       }));
       if (!rdMol) throw new Error('RDKit could not read this molecular component');
-      let alignedToTemplate = false;
-      if (options.alignmentTemplateMolBlock) {
-        try {
-          templateMol = module.get_mol(String(options.alignmentTemplateMolBlock), JSON.stringify({
-            sanitize:false, removeHs:false, strictParsing:false,
-          }));
-          if (templateMol) {
-            rdMol.generate_aligned_coords(templateMol, JSON.stringify({
-              useCoordGen:true, allowRGroups:true, acceptFailure:false,
-            }));
-            alignedToTemplate = true;
-          }
-        } catch { alignedToTemplate = false; }
-      }
-      if (!alignedToTemplate && !rdMol.set_new_coords())
+      // The molecular input carries the live 3D conformer. Always replace it
+      // with a genuine 2D layout before drawing. Constraining a redraw to the
+      // previous complete MolBlock can over-constrain a rewritten substituent
+      // and make the inset look like a flattened 3D projection. The UI keeps
+      // continuity with a screen-space rotation/scale/translation instead.
+      if (!rdMol.set_new_coords())
         throw new Error('RDKit could not generate 2D coordinates');
       const selected = Array.from(options.selectedAtomIndices || [], Number)
         .filter((index) => Number.isInteger(index) && index >= 0 && index < molecule.atoms.length);
@@ -154,13 +145,11 @@ async function runCalculation(message) {
         throw new Error('RDKit returned an invalid 2D depiction');
       self.postMessage({
         type:'result', id, job, svg, atomCount:molecule.atoms.length,
-        alignmentTemplateMolBlock:rdMol.get_molblock(JSON.stringify({ kekulize:false })),
-        alignedToTemplate,
         rdkitVersion:module.version?.() || null, elapsedMs:performance.now() - started,
         platform:'WebAssembly', backend:'RDKit MolDraw2D',
       });
       return;
-    } finally { templateMol?.delete(); rdMol?.delete(); }
+    } finally { rdMol?.delete(); }
   }
   if (job === 'protonation') {
     const smiles = String(options.smiles || '').trim();

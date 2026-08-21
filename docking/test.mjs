@@ -439,6 +439,108 @@ assert.equal(appliedRemap.acceptor.designAtomId, 'new:oxygen');
 assert.equal(appliedRemap.donor.designAtomId, 'protein:N');
 assert.equal(capturedHydrogenBondAvailability([appliedRemap], remapAfter)[0].available, true);
 
+// Replacing a group can span two completed chemistry transactions (delete,
+// then add). The deletion transaction is the last graph that can recover the
+// captured atom's originating boundary; the addition transaction must combine
+// that boundary with its newly eligible, exactly typed features.
+const pyridoneBefore = { name:'pyridone attached to a common core', atoms:[
+  { element:'C', designAtomId:'pyridone:core', x:-1.4,y:0,z:0 },
+  { element:'C', designAtomId:'pyridone:C1', x:0,y:0,z:0 },
+  { element:'N', designAtomId:'pyridone:N2', x:.7,y:1.2,z:0 },
+  { element:'C', designAtomId:'pyridone:C3', x:2.1,y:1.2,z:0 },
+  { element:'C', designAtomId:'pyridone:C4', x:2.8,y:0,z:0 },
+  { element:'C', designAtomId:'pyridone:C5', x:2.1,y:-1.2,z:0 },
+  { element:'C', designAtomId:'pyridone:C6', x:.7,y:-1.2,z:0 },
+  { element:'O', designAtomId:'pyridone:O', x:0,y:-1.25,z:0 },
+], bonds:[
+  { a:0,b:4,order:1 }, { a:1,b:2,order:1 }, { a:2,b:3,order:1 },
+  { a:3,b:4,order:2 }, { a:4,b:5,order:1 }, { a:5,b:6,order:2 },
+  { a:6,b:1,order:1 }, { a:1,b:7,order:2 },
+] };
+const pyridoneSignature = hydrogenBondFeatureSignature(pyridoneBefore, 7, 'acceptor');
+const pyridoneDefinition = { ...structuredClone(remapDefinition), id:'pyridone-carbonyl',
+  acceptor:{ ...structuredClone(remapDefinition.acceptor), designAtomId:'pyridone:O',
+    featureSignature:pyridoneSignature } };
+const deletedPyridone = { name:'common core after pyridone deletion',
+  atoms:[structuredClone(pyridoneBefore.atoms[0])], bonds:[] };
+const deletionProposal = proposeLigandHydrogenBondFeatureRemaps([pyridoneDefinition],
+  deletedPyridone, [0], { eligibleAtomIndices:[], beforeMolecule:pyridoneBefore })[0];
+assert.equal(deletionProposal.status, 'unavailable');
+assert.deepEqual(deletionProposal.boundaryAnchorIds, ['pyridone:core']);
+const cyclohexanoneAfter = { name:'cyclohexanone replacement on the common core', atoms:[
+  structuredClone(deletedPyridone.atoms[0]),
+  { element:'C', designAtomId:'cyclohexanone:C1', x:0,y:0,z:0 },
+  { element:'C', designAtomId:'cyclohexanone:C2', x:.7,y:1.2,z:0 },
+  { element:'C', designAtomId:'cyclohexanone:C3', x:2.1,y:1.2,z:0 },
+  { element:'C', designAtomId:'cyclohexanone:C4', x:2.8,y:0,z:0 },
+  { element:'C', designAtomId:'cyclohexanone:C5', x:2.1,y:-1.2,z:0 },
+  { element:'C', designAtomId:'cyclohexanone:C6', x:.7,y:-1.2,z:0 },
+  { element:'O', designAtomId:'cyclohexanone:O', x:0,y:-1.25,z:0 },
+], bonds:[
+  { a:0,b:4,order:1 }, { a:1,b:2,order:1 }, { a:2,b:3,order:1 },
+  { a:3,b:4,order:1 }, { a:4,b:5,order:1 }, { a:5,b:6,order:1 },
+  { a:6,b:1,order:1 }, { a:1,b:7,order:2 },
+] };
+const additionProposal = proposeLigandHydrogenBondFeatureRemaps([pyridoneDefinition],
+  cyclohexanoneAfter, cyclohexanoneAfter.atoms.map((_, index) => index),
+  { eligibleAtomIndices:[1,2,3,4,5,6,7], beforeMolecule:deletedPyridone })[0];
+assert.equal(additionProposal.status, 'unavailable');
+assert.deepEqual(additionProposal.editEligibleFeatures.map((entry) => entry.atomIds),
+  [['cyclohexanone:O']]);
+const sequentialReplacementProposal = retainOriginatingHydrogenBondRemapCandidates(
+  { ...deletionProposal, committedEditId:'delete-pyridone' }, additionProposal,
+  cyclohexanoneAfter, cyclohexanoneAfter.atoms.map((_, index) => index));
+assert.equal(sequentialReplacementProposal.status, 'unique');
+assert.deepEqual(sequentialReplacementProposal.boundaryAnchorIds, ['pyridone:core']);
+assert.deepEqual(sequentialReplacementProposal.candidates[0].atomIds, ['cyclohexanone:O']);
+assert.equal(sequentialReplacementProposal.originatingCommittedEditId, 'delete-pyridone');
+const appliedSequentialReplacement = applyLigandHydrogenBondFeatureRemap(pyridoneDefinition,
+  sequentialReplacementProposal.candidates[0]);
+assert.equal(appliedSequentialReplacement.acceptor.designAtomId, 'cyclohexanone:O');
+assert.equal(appliedSequentialReplacement.donor.designAtomId, 'protein:N');
+assert.equal(capturedHydrogenBondAvailability([appliedSequentialReplacement],
+  cyclohexanoneAfter)[0].available, true);
+const twoCorePyridoneBefore = structuredClone(pyridoneBefore);
+twoCorePyridoneBefore.atoms.push(
+  { element:'C', designAtomId:'unrelated:core', x:8,y:0,z:0 });
+const twoCoreDeletedPyridone = { atoms:[
+  structuredClone(twoCorePyridoneBefore.atoms[0]),
+  structuredClone(twoCorePyridoneBefore.atoms[8]),
+], bonds:[] };
+const twoCoreDeletionProposal = proposeLigandHydrogenBondFeatureRemaps(
+  [pyridoneDefinition], twoCoreDeletedPyridone, [0,1],
+  { eligibleAtomIndices:[], beforeMolecule:twoCorePyridoneBefore })[0];
+const wrongBoundaryCarbonyl = { atoms:[
+  ...structuredClone(twoCoreDeletedPyridone.atoms),
+  { element:'C', designAtomId:'unrelated:carbonyl', x:6.6,y:0,z:0 },
+  { element:'O', designAtomId:'unrelated:oxygen', x:5.4,y:0,z:0 },
+], bonds:[{ a:1,b:2,order:1 }, { a:2,b:3,order:2 }] };
+const wrongBoundaryAddition = proposeLigandHydrogenBondFeatureRemaps(
+  [pyridoneDefinition], wrongBoundaryCarbonyl, [0,1,2,3],
+  { eligibleAtomIndices:[2,3], beforeMolecule:twoCoreDeletedPyridone })[0];
+const rejectedSequentialReplacement = retainOriginatingHydrogenBondRemapCandidates(
+  twoCoreDeletionProposal, wrongBoundaryAddition, wrongBoundaryCarbonyl, [0,1,2,3]);
+assert.deepEqual(twoCoreDeletionProposal.boundaryAnchorIds, ['pyridone:core']);
+assert.deepEqual(wrongBoundaryAddition.editEligibleFeatures[0].boundaryAnchorIds,
+  ['unrelated:core']);
+assert.equal(rejectedSequentialReplacement.status, 'unavailable');
+const twoCyclohexanonesAfter = structuredClone(cyclohexanoneAfter);
+twoCyclohexanonesAfter.atoms.push(
+  { element:'C', designAtomId:'cyclohexanone-2:C1', x:-.2,y:2.8,z:0 },
+  { element:'O', designAtomId:'cyclohexanone-2:O', x:.8,y:3.5,z:0 });
+twoCyclohexanonesAfter.bonds.push({ a:0,b:8,order:1 }, { a:8,b:9,order:2 });
+const ambiguousSequentialAddition = proposeLigandHydrogenBondFeatureRemaps(
+  [pyridoneDefinition], twoCyclohexanonesAfter,
+  twoCyclohexanonesAfter.atoms.map((_, index) => index),
+  { eligibleAtomIndices:[1,2,3,4,5,6,7,8,9], beforeMolecule:deletedPyridone })[0];
+const ambiguousSequentialReplacement = retainOriginatingHydrogenBondRemapCandidates(
+  { ...deletionProposal, committedEditId:'delete-pyridone' }, ambiguousSequentialAddition,
+  twoCyclohexanonesAfter, twoCyclohexanonesAfter.atoms.map((_, index) => index));
+assert.equal(ambiguousSequentialReplacement.status, 'ambiguous');
+assert.deepEqual(ambiguousSequentialReplacement.candidates.map((entry) => entry.atomIds), [
+  ['cyclohexanone-2:O'], ['cyclohexanone:O'],
+]);
+
 const ambiguousRemapMolecule = structuredClone(remapAfter);
 ambiguousRemapMolecule.atoms.push(
   { element:'C', designAtomId:'new:carbonyl-2', x:2.8, y:-1.4, z:0 },

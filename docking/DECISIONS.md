@@ -522,3 +522,25 @@ chained-remap provenance, atomic Undo/Redo contact state, and monotonically orde
 The focused browser gate exercises automatic transfer, distinct replacement identity, Undo/Redo,
 run participation, and immediate-mode feature-role invalidation without depending on unrelated ML
 backends.
+
+### Decision D-026 — carry an unresolved feature boundary across completed edit batches
+
+An unresolved contact-feature proposal persists after a valid deletion batch. A later valid batch
+may resolve it only from features newly added or chemically changed in that later batch whose exact
+feature signature and surviving attachment boundary match the originating deletion. The audit stores
+distinct `originatingCommittedEditId` and `committedEditId` values. Pre-existing features elsewhere
+in the ligand are never admitted merely because they have the same pharmacophore type.
+
+Reason: replacing an R group is often naturally performed as delete/finish followed by build/finish.
+The deletion graph is the last graph that can identify where the old feature was attached, whereas
+the addition graph is the first graph containing the replacement. Requiring both facts to occur in
+one UI transaction made the protocol depend on editing style rather than chemistry.
+
+### Validation V-010 — sequential carbonyl replacement and graph-faithful 2D depiction
+
+The unit gate deletes a pyridone acceptor, completes that graph, then adds a cyclohexanone carbonyl
+in a later graph and requires one exact candidate at the recorded boundary. Wrong-boundary and
+two-candidate controls remain rejected or ambiguous. The browser gate repeats the two completed
+batches, requires automatic contact transfer, verifies both edit IDs in the audit, and checks that
+the RDKit panel's current bond graph contains the replacement C=O. RDKit always generates fresh 2D
+coordinates; previous display state may contribute only rotation, uniform scale, and translation.

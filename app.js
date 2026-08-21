@@ -881,10 +881,6 @@ function activeDepictionOrientationAnchor() {
   return state.chemistryTransaction?.depictionOrientationAnchor || state.depictionOrientationAnchor;
 }
 
-function activeDepictionTemplateMolBlock() {
-  return state.chemistryTransaction?.depictionTemplateMolBlock || state.depictionTemplateMolBlock;
-}
-
 function depictionSimilarityTransform(source, target) {
   const sourceCenter = source.reduce((sum, point) => ({ x:sum.x + point.x / source.length,
     y:sum.y + point.y / source.length }), { x:0, y:0 });
@@ -997,13 +993,7 @@ async function update2DDepiction() {
   drawing.replaceChildren(Object.assign(document.createElement('span'), { textContent:'Drawing…' }));
   try {
     const anchor = activeDepictionOrientationAnchor();
-    const reusableTemplate = anchor?.componentId === target.componentId
-      && target.globalAtomIndices.filter((index) =>
-        anchor.points.has(state.molecule?.atoms?.[index])).length >= 2
-      ? activeDepictionTemplateMolBlock() : null;
-    const result = await runRDKitJob('depict', target.molecule, () => {}, {
-      alignmentTemplateMolBlock:reusableTemplate,
-    });
+    const result = await runRDKitJob('depict', target.molecule, () => {});
     if (sequence !== state.depictionSequence || key !== state.depictionKey) return;
     const svg = sanitizedDepictionSvg(result.svg);
     drawing.replaceChildren(svg);
@@ -1013,18 +1003,14 @@ async function update2DDepiction() {
     ]);
     state.depictionAtomObjects = target.globalAtomIndices.map((index) => state.molecule?.atoms?.[index] || null);
     state.depictionComponentId = target.componentId;
-    state.depictionTemplateMolBlock = result.alignmentTemplateMolBlock || null;
+    state.depictionTemplateMolBlock = null;
     // Settle tool/help layout before converting the prior screen positions into
     // this SVG's coordinate system. Build-mode help can change the panel height.
     update2DEditorUi();
     const alignment = alignDepictionToPrevious(svg, target);
-    panel.dataset.alignedAtoms = String(alignment?.commonAtoms || (result.alignedToTemplate
-      ? target.globalAtomIndices.filter((index) =>
-        anchor?.points.has(state.molecule?.atoms?.[index])).length : 0));
-    panel.dataset.alignmentBackend = result.alignedToTemplate && alignment
-      ? 'RDKit constrained depiction + viewport alignment'
-      : result.alignedToTemplate ? 'RDKit constrained depiction'
-        : alignment ? 'SVG similarity fallback' : 'fresh layout';
+    panel.dataset.alignedAtoms = String(alignment?.commonAtoms || 0);
+    panel.dataset.alignmentBackend = alignment
+      ? 'RDKit 2D layout + viewport alignment' : 'fresh RDKit 2D layout';
     panel.dataset.rdkitVersion = result.rdkitVersion || '';
     delete panel.dataset.error; delete panel.dataset.pending;
   } catch (error) {
@@ -3751,6 +3737,8 @@ async function chooseDockingContactRemap(contactId, candidateId, method = 'user-
     beforeTopologySha256:proposal.beforeTopologySha256,
     afterTopologySha256:proposal.afterTopologySha256,
     committedEditId:proposal.committedEditId || null,
+    originatingCommittedEditId:proposal.originatingCommittedEditId
+      || proposal.committedEditId || null,
     previousRemap:priorChain.length ? {
       contactId, sourceLigandAtomIds:contactParticipantIds(priorDefinition, 'ligand'),
       priorDecisionCount:priorChain.length,
@@ -5399,10 +5387,19 @@ function geometrySelection() {
 }
 
 function selectionDescription() {
-  return state.selectedAtoms.map((index) => `${state.molecule.atoms[index].element}${index + 1}`).join('–');
+  return state.selectedAtoms.flatMap((index) => {
+    const atom = state.molecule?.atoms?.[index];
+    return atom ? [`${atom.element}${index + 1}`] : [];
+  }).join('–');
 }
 
 function updateGeometryControl() {
+  // Atom deletion and hydrogen reconciliation can shift array indices. Never
+  // let a transient stale selection break the editor while the graph is being
+  // committed.
+  state.selectedAtoms = state.selectedAtoms.filter((index) =>
+    Number.isInteger(index) && Boolean(state.molecule?.atoms?.[index]));
+  state.selectedAtom = state.selectedAtoms.at(-1) ?? null;
   const slider = document.querySelector('#geometry-slider');
   const input = document.querySelector('#geometry-value');
   const unit = document.querySelector('#geometry-unit');
@@ -5812,6 +5809,8 @@ async function finishChemistryTransaction() {
   transaction.validationError = null;
   updateChemistryEditor();
   try {
+    const selectedAtomObjects = state.selectedAtoms
+      .map((index) => molecule.atoms[index]).filter(Boolean);
     const affected = [...transaction.changedAtoms].filter((atom) => molecule.atoms.includes(atom));
     const reconciled = reconcileAtomHydrogens(molecule, affected);
     reconciled.forEach((atom) => {
@@ -5819,6 +5818,9 @@ async function finishChemistryTransaction() {
     });
     invalidateEditedChemistry(molecule);
     refreshStructureComponents();
+    state.selectedAtoms = selectedAtomObjects.map((atom) => molecule.atoms.indexOf(atom))
+      .filter((index) => index >= 0);
+    state.selectedAtom = state.selectedAtoms.at(-1) ?? null;
     updateStoredBondDistances(); updateInfo(); draw();
     const changedAtoms = [...transaction.changedAtoms].filter((atom) => molecule.atoms.includes(atom));
     const validation = await validateEditedChemistry(molecule, changedAtoms, { schedulePolish:false });
@@ -6073,6 +6075,9 @@ function translateMolecule(molecule, displacement) {
 function mergeFragmentIntoMolecule(baseMolecule, fragment, targetIndex = null, targetPoint = null) {
   let incoming = parseSMILES(fragment.smiles, fragment.name);
   let connection = fragment.attach ?? 0;
+  const attachmentComponent = targetIndex != null
+    && baseMolecule?.atoms?.[targetIndex]?.record === 'HETATM'
+    ? baseMolecule.atoms[targetIndex] : null;
 
   if (!baseMolecule || !baseMolecule.atoms.length) {
     const anchor = incoming.atoms[connection];
@@ -6112,6 +6117,19 @@ function mergeFragmentIntoMolecule(baseMolecule, fragment, targetIndex = null, t
     const point = targetPoint || { x: 0, y: 0, z: 0 };
     translateMolecule(incoming, { x: point.x - anchor.x, y: point.y - anchor.y, z: point.z - anchor.z });
   }
+
+  // Atoms covalently attached to a PDB ligand remain part of that ligand.
+  // Without this metadata they form a synthetic `molecule:main` display
+  // component even though the bond graph is connected, so the 2D inset can
+  // accidentally depict only the newly added atom or fragment.
+  if (attachmentComponent) incoming.atoms.forEach((atom) => {
+    atom.record = 'HETATM';
+    atom.residueName = attachmentComponent.residueName;
+    atom.chain = attachmentComponent.chain;
+    atom.residueIndex = attachmentComponent.residueIndex;
+    atom.insertionCode = attachmentComponent.insertionCode || '';
+    atom.occupancy = 0;
+  });
 
   const offset = baseMolecule.atoms.length;
   baseMolecule.atoms.push(...incoming.atoms);

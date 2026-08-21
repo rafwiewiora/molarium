@@ -656,6 +656,56 @@ const browserSuite = String.raw`(async () => {
     && document.querySelector('#run-constrained-docking').disabled,
   'immediate chemistry edits revalidate feature role and block a stale carbonyl restraint',
   JSON.stringify(immediateContactState));
+
+  // A realistic R-group replacement can cross two completed edit batches:
+  // remove the old group first, then build and finish the replacement. The
+  // first batch is the only one that knows the deleted feature's attachment
+  // boundary, so that provenance must survive long enough to type the new
+  // carbonyl in the second batch.
+  api.loadObject(valenceCompleteDockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('propagate');
+  await api.captureDockingReference();
+  const sequentialReference = api.current().molecule;
+  const sequentialOldOxygenId = sequentialReference.atoms[2].designAtomId;
+  const sequentialCarbonId = sequentialReference.atoms[3].designAtomId;
+  await api.stageDeleteAtomCurrent(2);
+  const deletionFinish = await api.finishChemistryCurrent();
+  const deletedFeatureState = api.dockingContactResolutions();
+  const sequentialCarbon = api.current().molecule.atoms.findIndex((atom) =>
+    atom.designAtomId === sequentialCarbonId);
+  await api.stageAddElementCurrent('O', sequentialCarbon);
+  const sequentialReplacementOxygen = api.current().molecule.atoms.findIndex((atom) =>
+    atom.element === 'O' && atom.designAtomId !== sequentialOldOxygenId);
+  await api.stageBondCurrent(sequentialCarbon, sequentialReplacementOxygen, 2);
+  const additionFinish = await api.finishChemistryCurrent();
+  const sequentialContactState = api.dockingContactResolutions();
+  const sequentialDepiction = await api.waitFor2DDepiction();
+  const committedSequentialMolecule = api.current().molecule;
+  const committedSequentialCarbon = committedSequentialMolecule.atoms.findIndex((atom) =>
+    atom.designAtomId === sequentialCarbonId);
+  const committedReplacementOxygen = committedSequentialMolecule.atoms.findIndex((atom) =>
+    sequentialContactState.remaps[0]?.replacementLigandAtomIds.includes(atom.designAtomId));
+  const depictionShowsReplacementCarbonyl = sequentialDepiction.bondPairs.some((pair) =>
+    (pair[0] === committedSequentialCarbon && pair[1] === committedReplacementOxygen)
+      || (pair[1] === committedSequentialCarbon && pair[0] === committedReplacementOxygen));
+  check(deletionFinish.validation.valid
+    && deletedFeatureState.proposals.length === 1
+    && deletedFeatureState.proposals[0].status === 'unavailable'
+    && additionFinish.validation.valid
+    && sequentialContactState.proposals.length === 0
+    && sequentialContactState.remaps.length === 1
+    && sequentialContactState.remaps[0].method === 'automatic-unique-exact'
+    && sequentialContactState.remaps[0].replacementLigandAtomIds.length === 1
+    && !sequentialContactState.remaps[0].replacementLigandAtomIds.includes(
+      sequentialOldOxygenId)
+    && sequentialContactState.remaps[0].originatingCommittedEditId
+      !== sequentialContactState.remaps[0].committedEditId
+    && sequentialDepiction.alignmentBackend.includes('RDKit 2D layout')
+    && depictionShowsReplacementCarbonyl,
+  'a replacement carbonyl created in the next completed edit batch inherits the deleted acceptor restraint',
+  JSON.stringify({ deletionFinish, deletedFeatureState, additionFinish,
+    sequentialContactState, sequentialDepiction, depictionShowsReplacementCarbonyl }));
   if (testScope === 'docking-contact-remap') {
     const failed = checks.filter((item) => !item.passed);
     return { passed:checks.length - failed.length, total:checks.length, failed,

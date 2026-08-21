@@ -83,3 +83,36 @@ Unresolved proposals keep their originating edit and candidate identities across
 - monotonic labbook event timestamps;
 - pending-transaction action guards and central Finish/Discard toolbar;
 - browser-local end-to-end feature transfer, immediate-edit revalidation, and labbook inclusion.
+
+## Live follow-up: the replacement crossed two completed edits
+
+The first implementation passed a one-batch replacement test but failed the user's actual
+pyridone-to-cyclohexanone workflow. The old group had been deleted and finished before the new ring
+was constructed. Only the deletion batch still knew the removed acceptor's attachment boundary;
+only the later addition batch contained the new carbonyl oxygen. The later batch typed that oxygen
+correctly, but discarded it because its own comparison graph no longer contained the deleted atom.
+
+Molarium now retains the unresolved deletion proposal and its topology hashes, exact feature
+signature, attachment-boundary IDs, and originating edit ID. A later completed batch may resolve it
+only with an exact feature created or changed in that batch at the same boundary. The applied audit
+records both the originating deletion edit and the later resolving edit. A synthetic browser case
+now performs the two finishes separately and verifies automatic transfer to the replacement C=O.
+
+The same live test exposed two independent presentation defects. Newly attached atoms lacked the
+PDB ligand's `HETATM` residue metadata, so the component model classified a covalently bonded new
+oxygen as a separate one-atom molecule and the 2D panel could depict the wrong component. Attached
+fragment atoms now inherit their anchor ligand's residue identity. Separately, constraining a new
+RDKit depiction to the previous complete 2D MolBlock could over-constrain a large graph rewrite and
+produce a flattened pseudo-3D-looking diagram. Each redraw now computes fresh RDKit 2D coordinates;
+only a screen-space similarity transform preserves the panel's overall orientation and location.
+
+A final transient failure came from array-index selections surviving atom deletion and hydrogen
+reconciliation. Commit now tracks selected atom objects through reconciliation and remaps them to
+live indices; UI descriptions also reject stale indices defensively.
+
+Focused validation after these fixes:
+
+- contact/remap unit protocol: pass;
+- docking browser integration: 64/64 pass, including two completed replacement batches;
+- RDKit 2D browser integration: 18/18 pass;
+- production web build: pass.

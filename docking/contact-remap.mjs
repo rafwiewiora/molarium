@@ -335,7 +335,7 @@ export function proposeLigandHydrogenBondFeatureRemaps(definitions, molecule,
       : [definition.donor?.designAtomId, definition.hydrogen?.designAtomId];
     const oldBoundary = regions ? regionBoundary(beforeMolecule, oldRegion, originalIds,
       new Set(regions.after.keys())) : [];
-    const pool = (ligandRole === 'acceptor' ? features.acceptors : features.donors)
+    const editEligibleFeatures = (ligandRole === 'acceptor' ? features.acceptors : features.donors)
       .filter((feature) => feature.atomIds.some((id) => {
         const index = molecule.atoms.findIndex((atom) => atom.designAtomId === id);
         return eligible.has(index);
@@ -357,13 +357,14 @@ export function proposeLigandHydrogenBondFeatureRemaps(definitions, molecule,
           boundaryAnchorIds,
           geometry, geometryScore:geometry ? geometryScore(geometry) : Number.POSITIVE_INFINITY };
       })
-      .filter((feature) => !regions || oldBoundary.length > 0
-        && sameIds(feature.boundaryAnchorIds, oldBoundary))
       // Geometry is evidence for later refinement, never a candidate selector.
       .sort((first, second) => first.id.localeCompare(second.id));
+    const pool = editEligibleFeatures.filter((feature) => !regions || oldBoundary.length > 0
+      && sameIds(feature.boundaryAnchorIds, oldBoundary));
     return { id:definition.id, status:pool.length === 1 ? 'unique'
         : pool.length ? 'ambiguous' : 'unavailable', ligandRole,
-      originalFeatureSignature:originalSignature, boundaryAnchorIds:oldBoundary, candidates:pool };
+      originalFeatureSignature:originalSignature, boundaryAnchorIds:oldBoundary, candidates:pool,
+      editEligibleFeatures };
   });
 }
 
@@ -380,19 +381,30 @@ export function retainOriginatingHydrogenBondRemapCandidates(priorProposal, curr
       geometry:null, geometryScore:Number.POSITIVE_INFINITY,
       geometryEvidenceStatus:'not-used; candidate retained from the originating edit' }];
   });
-  const combined = new Map([...retained, ...(currentProposal?.candidates || [])]
+  // A group replacement can be committed as a deletion followed by an
+  // addition. Only the deletion graph can recover the removed feature's
+  // boundary, while only the addition graph contains the replacement. Reuse
+  // the audited originating boundary for exact, edit-eligible features from
+  // this transaction; never broaden the match to pre-existing ligand features.
+  const originatingSignature = priorProposal.originalFeatureSignature
+    || currentProposal?.originalFeatureSignature;
+  const originatingBoundary = priorProposal.boundaryAnchorIds
+    || currentProposal?.boundaryAnchorIds || [];
+  const rediscovered = originatingBoundary.length ? (currentProposal?.editEligibleFeatures || [])
+    .filter((candidate) => candidate.role === priorProposal.ligandRole
+      && candidate.signature === originatingSignature
+      && sameIds(candidate.boundaryAnchorIds || [], originatingBoundary)) : [];
+  const combined = new Map([...retained, ...rediscovered, ...(currentProposal?.candidates || [])]
     .map((candidate) => [candidate.id, candidate]));
   const candidates = [...combined.values()].sort((first, second) =>
     first.id.localeCompare(second.id));
   if (!candidates.length) return { ...currentProposal,
-    originalFeatureSignature:priorProposal.originalFeatureSignature
-      || currentProposal?.originalFeatureSignature,
-    boundaryAnchorIds:priorProposal.boundaryAnchorIds || currentProposal?.boundaryAnchorIds };
+    originalFeatureSignature:originatingSignature,
+    boundaryAnchorIds:originatingBoundary };
   return { ...currentProposal,
     status:candidates.length === 1 ? 'unique' : 'ambiguous', candidates,
-    originalFeatureSignature:priorProposal.originalFeatureSignature
-      || currentProposal?.originalFeatureSignature,
-    boundaryAnchorIds:priorProposal.boundaryAnchorIds || currentProposal?.boundaryAnchorIds,
+    originalFeatureSignature:originatingSignature,
+    boundaryAnchorIds:originatingBoundary,
     originatingCommittedEditId:priorProposal.originatingCommittedEditId
       || priorProposal.committedEditId,
   };
