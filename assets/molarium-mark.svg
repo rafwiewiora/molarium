@@ -1,23 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="title description">
   <title id="title">Molarium mark</title>
-  <desc id="description">A molecular bond drawn as the letter M inside a rounded chamber.</desc>
-  <defs>
-    <linearGradient id="chamber" x1="5" y1="4" x2="43" y2="45" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0d1720"/>
-      <stop offset="1" stop-color="#193241"/>
-    </linearGradient>
-    <linearGradient id="bond" x1="9" y1="15" x2="39" y2="31" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#73cce8"/>
-      <stop offset=".48" stop-color="#f8fbfd"/>
-      <stop offset="1" stop-color="#8bd9b1"/>
-    </linearGradient>
-  </defs>
-  <rect x="1" y="1" width="46" height="46" rx="14" fill="url(#chamber)"/>
-  <rect x="1.5" y="1.5" width="45" height="45" rx="13.5" fill="none" stroke="#ffffff" stroke-opacity=".12"/>
-  <path d="M10 34V14.5L24 28l14-13.5V34" fill="none" stroke="url(#bond)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="10" cy="14.5" r="3.4" fill="#74d0ed" stroke="#10212c" stroke-width="1.4"/>
-  <circle cx="24" cy="28" r="3.4" fill="#f8fbfd" stroke="#10212c" stroke-width="1.4"/>
-  <circle cx="38" cy="14.5" r="3.4" fill="#91dfb8" stroke="#10212c" stroke-width="1.4"/>
-  <circle cx="10" cy="34" r="2.2" fill="#d8e7ee"/>
-  <circle cx="38" cy="34" r="2.2" fill="#d8e7ee"/>
+  <desc id="description">Five atom nodes and four bonds form a molecular letter M.</desc>
+  <rect x="1" y="1" width="46" height="46" rx="15" fill="#132632"/>
+  <rect x="1.5" y="1.5" width="45" height="45" rx="14.5" fill="none" stroke="#ffffff" stroke-opacity=".12"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9.5 35 12.5 13 24 28 35.5 13 38.5 35" stroke="#0a1b24" stroke-width="6"/>
+    <path d="M9.5 35 12.5 13 24 28 35.5 13 38.5 35" stroke="#9bdacb" stroke-width="3" data-molarium-bonds="true"/>
+  </g>
+  <g stroke="#10242f" stroke-width="1.8" data-molarium-atoms="true">
+    <circle cx="9.5" cy="35" r="3.7" fill="#c7d8dd"/>
+    <circle cx="12.5" cy="13" r="4.2" fill="#72cde5"/>
+    <circle cx="24" cy="28" r="4.3" fill="#f5fbfb"/>
+    <circle cx="35.5" cy="13" r="4.2" fill="#8eddb4"/>
+    <circle cx="38.5" cy="35" r="3.7" fill="#c7d8dd"/>
+  </g>
 </svg>

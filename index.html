@@ -24,12 +24,18 @@
         <div class="app-header-bar">
           <a class="app-brand" href="#" aria-label="Molarium home">
             <svg class="app-brand-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false" data-molarium-mark>
-              <rect x="2" y="2" width="44" height="44" rx="12" fill="#132632" />
-              <path d="M10 34V14.5L24 28" fill="none" stroke="#8edcf0" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M24 28L38 14.5V34" fill="none" stroke="#a5e7c4" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round" />
-              <circle cx="10" cy="14.5" r="3.2" fill="#e9fbff" />
-              <circle cx="24" cy="28" r="3.2" fill="#ffffff" />
-              <circle cx="38" cy="14.5" r="3.2" fill="#eafff4" />
+              <rect x="2" y="2" width="44" height="44" rx="14" fill="#132632" />
+              <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.5 35 12.5 13 24 28 35.5 13 38.5 35" stroke="#0a1b24" stroke-width="6" />
+                <path d="M9.5 35 12.5 13 24 28 35.5 13 38.5 35" stroke="#9bdacb" stroke-width="3" data-molarium-bonds />
+              </g>
+              <g stroke="#10242f" stroke-width="1.8" data-molarium-atoms>
+                <circle cx="9.5" cy="35" r="3.7" fill="#c7d8dd" />
+                <circle cx="12.5" cy="13" r="4.2" fill="#72cde5" />
+                <circle cx="24" cy="28" r="4.3" fill="#f5fbfb" />
+                <circle cx="35.5" cy="13" r="4.2" fill="#8eddb4" />
+                <circle cx="38.5" cy="35" r="3.7" fill="#c7d8dd" />
+              </g>
             </svg>
             <span class="app-brand-name">MOLARIUM</span>
             <span class="app-brand-tag">molecular studio</span>
@@ -534,12 +540,18 @@
               <div class="run-card">
                 <div class="calculation-loader" aria-hidden="true">
                   <svg viewBox="0 0 48 48" focusable="false" data-molarium-mark>
-                    <rect x="2" y="2" width="44" height="44" rx="12" fill="#132632" />
-                    <path d="M10 34V14.5L24 28" fill="none" stroke="#8edcf0" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M24 28L38 14.5V34" fill="none" stroke="#a5e7c4" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round" />
-                    <circle cx="10" cy="14.5" r="3.2" fill="#e9fbff" />
-                    <circle cx="24" cy="28" r="3.2" fill="#ffffff" />
-                    <circle cx="38" cy="14.5" r="3.2" fill="#eafff4" />
+                    <rect x="2" y="2" width="44" height="44" rx="14" fill="#132632" />
+                    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M9.5 35 12.5 13 24 28 35.5 13 38.5 35" stroke="#0a1b24" stroke-width="6" />
+                      <path d="M9.5 35 12.5 13 24 28 35.5 13 38.5 35" stroke="#9bdacb" stroke-width="3" data-molarium-bonds />
+                    </g>
+                    <g stroke="#10242f" stroke-width="1.8" data-molarium-atoms>
+                      <circle cx="9.5" cy="35" r="3.7" fill="#c7d8dd" />
+                      <circle cx="12.5" cy="13" r="4.2" fill="#72cde5" />
+                      <circle cx="24" cy="28" r="4.3" fill="#f5fbfb" />
+                      <circle cx="35.5" cy="13" r="4.2" fill="#8eddb4" />
+                      <circle cx="38.5" cy="35" r="3.7" fill="#c7d8dd" />
+                    </g>
                   </svg>
                 </div>
                 <strong id="run-status">Preparing calculation…</strong>
