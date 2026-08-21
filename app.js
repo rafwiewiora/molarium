@@ -3762,8 +3762,13 @@ async function chooseDockingContactRemap(contactId, candidateId, method = 'user-
 function canonicalDockingTopology(molecule, atomIndices) {
   const included = new Set(atomIndices);
   const atoms = atomIndices.map((index) => molecule.atoms[index]).filter(Boolean)
-    .map((atom) => ({ id:atom.designAtomId, element:atom.element,
-      charge:Number(atom.formalCharge ?? atom.charge ?? 0), aromatic:Boolean(atom.aromatic) }))
+    .map((atom) => {
+      if (!atom.designAtomId)
+        throw new Error('A staged ligand atom is missing its stable design identity.');
+      return { id:atom.designAtomId, element:atom.element,
+        charge:Number(atom.formalCharge ?? atom.charge ?? 0),
+        aromatic:Boolean(atom.aromatic) };
+    })
     .sort((first, second) => first.id.localeCompare(second.id));
   const bonds = (molecule.bonds || []).flatMap((bond) => included.has(bond.a) && included.has(bond.b)
     ? [{ ids:[molecule.atoms[bond.a].designAtomId, molecule.atoms[bond.b].designAtomId].sort(),
@@ -5712,6 +5717,15 @@ async function validateEditedChemistry(molecule, changedAtoms, { schedulePolish 
 async function applyChemistryMutation(mutator) {
   if (!state.molecule?.atoms.length) throw new Error('Load or build a molecule first.');
   if (selectedProteinChemistryLocked()) throw new Error('Canonical protein chemistry is protected; use Protein Preparation.');
+  // A docking edit uses stable graph identities for contact lineage and
+  // topology hashes. Assign them before taking the transaction snapshot, and
+  // again immediately after mutation so staged consumers never see an
+  // anonymous newly created atom.
+  const referenceCore = state.dockingReference
+    ? await import('./docking/reference-core.mjs') : null;
+  const identityNamespace = `design-${state.molecule.source?.pdbId || 'complex'}`;
+  if (referenceCore) referenceCore.ensureStableAtomIds(state.molecule,
+    identityNamespace, state.dockingReference?.ligand?.atomIds || []);
   const staged = !chemistryImmediateRefinementEnabled();
   const transaction = staged ? beginChemistryTransaction() : null;
   const snapshot = structuredClone(state.molecule);
@@ -5719,6 +5733,11 @@ async function applyChemistryMutation(mutator) {
   if (!staged) pushBuildSnapshot(snapshot);
   try {
     const outcome = mutator(state.molecule, { staged }) || {};
+    if (referenceCore) referenceCore.ensureStableAtomIds(state.molecule,
+      identityNamespace, [
+        ...(state.dockingReference?.ligand?.atomIds || []),
+        ...snapshot.atoms.map((atom) => atom.designAtomId),
+      ].filter(Boolean));
     invalidateEditedChemistry(state.molecule);
     refreshStructureComponents();
     clearCalculationResult(); updateStoredBondDistances();

@@ -116,3 +116,25 @@ Focused validation after these fixes:
 - docking browser integration: 64/64 pass, including two completed replacement batches;
 - RDKit 2D browser integration: 18/18 pass;
 - production web build: pass.
+
+## Live follow-up: Finish chemistry encountered an anonymous atom
+
+A subsequent live edit reached **Finish changes** with one pending change and raised
+`Cannot read properties of undefined (reading 'localeCompare')`. The chemistry was not the source
+of the exception. A canvas or fragment addition can create an atom before a staged chemistry
+transaction starts; the topology hash then attempted to sort that atom by a stable ID which had
+not yet been assigned.
+
+Stable identity is now a transaction invariant rather than a commit-time repair. When a docking
+reference is active, Molarium assigns append-only IDs before taking the transaction snapshot and
+again immediately after every mutation. Canonical topology serialization rejects an anonymous atom
+with a descriptive error instead of leaking a generic JavaScript exception. This order matters:
+the pre-edit snapshot and the staged graph must both be independently hashable.
+
+The focused browser suite now includes (1) an atom added outside a transaction and deleted in a
+one-change staged batch, and (2) a replacement carbonyl whose new oxygen is verified to have its
+final stable ID before Finish. Docking browser integration passes 65/65; the 2D browser suite
+passes 18/18; the docking unit protocol and production web build pass. The unrelated full browser
+suite currently stops later when ONNX Runtime's WASM backend fails to initialize; none of the
+changed files touch that runtime path, so this is recorded as a separate test-environment failure
+rather than counted as validation of this edit.

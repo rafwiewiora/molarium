@@ -657,6 +657,23 @@ const browserSuite = String.raw`(async () => {
   'immediate chemistry edits revalidate feature role and block a stale carbonyl restraint',
   JSON.stringify(immediateContactState));
 
+  // Canvas/fragment additions can predate a staged chemistry transaction. A
+  // new atom must receive an identity before the transaction snapshot is
+  // taken, otherwise Finish chemistry cannot canonically hash the old graph.
+  api.loadObject(valenceCompleteDockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('propagate');
+  await api.captureDockingReference();
+  api.addElementCurrent('F', 6);
+  const anonymousAddedIndex = api.current().molecule.atoms.findIndex((atom) => !atom.designAtomId);
+  const anonymousBeforeStaging = anonymousAddedIndex >= 0;
+  await api.stageDeleteAtomCurrent(anonymousAddedIndex);
+  const stagedIdentityTransaction = await api.finishChemistryCurrent();
+  check(anonymousBeforeStaging && stagedIdentityTransaction.validation.valid
+    && !stagedIdentityTransaction.pending && !api.chemistryTransaction(),
+  'Finish chemistry assigns stable identities before snapshotting a graph with a newly added atom',
+  JSON.stringify(stagedIdentityTransaction));
+
   // A realistic R-group replacement can cross two completed edit batches:
   // remove the old group first, then build and finish the replacement. The
   // first batch is the only one that knows the deleted feature's attachment
@@ -677,6 +694,8 @@ const browserSuite = String.raw`(async () => {
   await api.stageAddElementCurrent('O', sequentialCarbon);
   const sequentialReplacementOxygen = api.current().molecule.atoms.findIndex((atom) =>
     atom.element === 'O' && atom.designAtomId !== sequentialOldOxygenId);
+  const stagedReplacementOxygenId = api.current().molecule
+    .atoms[sequentialReplacementOxygen]?.designAtomId;
   await api.stageBondCurrent(sequentialCarbon, sequentialReplacementOxygen, 2);
   const additionFinish = await api.finishChemistryCurrent();
   const sequentialContactState = api.dockingContactResolutions();
@@ -697,6 +716,9 @@ const browserSuite = String.raw`(async () => {
     && sequentialContactState.remaps.length === 1
     && sequentialContactState.remaps[0].method === 'automatic-unique-exact'
     && sequentialContactState.remaps[0].replacementLigandAtomIds.length === 1
+    && Boolean(stagedReplacementOxygenId)
+    && sequentialContactState.remaps[0].replacementLigandAtomIds.includes(
+      stagedReplacementOxygenId)
     && !sequentialContactState.remaps[0].replacementLigandAtomIds.includes(
       sequentialOldOxygenId)
     && sequentialContactState.remaps[0].originatingCommittedEditId
