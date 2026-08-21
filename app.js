@@ -3609,7 +3609,9 @@ async function runBrowserConstrainedDocking(options = {}) {
     const scorePositions = (positions) => {
       const sageInternalEnergyKcalMol = ligandInternalEnergy(positions);
       const physical = receptorScore.scoreReceptorLigand(reference.receptorSite, positions,
-        ligandNonbonded, { relativeDielectric:4, cutoffAngstrom:8,
+        ligandNonbonded, {
+          relativeDielectric:Number(activeProtocol.scoring.relativeDielectric ?? 4),
+          cutoffAngstrom:Number(activeProtocol.scoring.pairCutoffAngstrom ?? 8),
           ligandStrainKcalMol:sageInternalEnergyKcalMol - minimumSageStartEnergy,
           ligandStrainIdentity:'relative vacuum OpenFF Sage 2.1 intramolecular energy' });
       const core = constraints.evaluateCoreConstraint(reference.ligand.positions, positions,
@@ -3622,10 +3624,13 @@ async function runBrowserConstrainedDocking(options = {}) {
       return { objectiveKcalMol:combined.totalScoreKcalMol, feasible:combined.feasible,
         physical, core, hydrogenBonds, sageInternalEnergyKcalMol };
     };
+    const torsionProtocol = activeProtocol.torsionMonteCarlo || torsionSearch.TORSION_SEARCH_DEFAULTS;
     const torsionSteps = Math.max(0, Math.min(512, Math.round(Number(options.torsionSteps
-      ?? activeProtocol.sampling.torsionMonteCarloSteps ?? 96))));
+      ?? torsionProtocol.stepsDefault ?? activeProtocol.sampling.torsionMonteCarloSteps ?? 96))));
+    const fixedRelaxProtocol = activeProtocol.fixedScaffoldRelaxation || {};
     const fixedRelaxIterations = posePropagation ? Math.max(0, Math.min(250,
-      Math.round(Number(options.fixedRelaxIterations ?? 60)))) : 0;
+      Math.round(Number(options.fixedRelaxIterations
+        ?? fixedRelaxProtocol.iterationsDefault ?? 60)))) : 0;
     const coreAtomIndices = coreMap.atomPairs.map((pair) => pair[1]);
     const startedAt = new Date().toISOString();
     const inputs = await labbookModule.inputProvenance({
@@ -3670,19 +3675,24 @@ async function runBrowserConstrainedDocking(options = {}) {
     await labbookModule.appendLabbookEvent(labbook, { at:startedAt,
       stage:'method-configuration', status:'locked', details:{
         receptorModel:'rigid', receptorSiteRadiusAngstrom:8,
-        relativeDielectric:4, combiningRules:'Lorentz-Berthelot',
+        relativeDielectric:Number(activeProtocol.scoring.relativeDielectric ?? 4),
+        combiningRules:'Lorentz-Berthelot',
         crossTerms:['Lennard-Jones', 'Coulomb'],
         ligandStrain:'relative vacuum OpenFF Sage 2.1 intramolecular energy from lowest fixed-core starting seed',
         hardCore:posePropagation
           ? 'every surviving reference heavy atom fixed exactly by stable edit lineage'
           : 'user-selected matched core atoms snapped exactly to reference coordinates',
         torsionSearch:{ method:torsionSearch.TORSION_SEARCH_DEFAULTS.method, steps:torsionSteps,
-          temperatureStartKelvin:torsionSearch.TORSION_SEARCH_DEFAULTS.temperatureStartKelvin,
-          temperatureEndKelvin:torsionSearch.TORSION_SEARCH_DEFAULTS.temperatureEndKelvin,
-          proposalAnglesDegrees:[...torsionSearch.TORSION_SEARCH_DEFAULTS.proposalAnglesDegrees] },
+          temperatureStartKelvin:Number(torsionProtocol.temperatureStartKelvin),
+          temperatureEndKelvin:Number(torsionProtocol.temperatureEndKelvin),
+          proposalAnglesDegrees:[...torsionProtocol.proposalAnglesDegrees] },
         fixedScaffoldRelaxation:posePropagation ? {
           engine:'OpenMM WebAssembly', forcefield:'OpenFF Sage 2.1',
           iterations:fixedRelaxIterations, fixedHeavyAtoms:coreAtomIndices.length,
+          stepScale:Number(fixedRelaxProtocol.stepScale ?? 1e-4),
+          maximumDisplacementAngstromPerIteration:Number(
+            fixedRelaxProtocol.maximumDisplacementAngstromPerIteration ?? 0.01),
+          environment:'vacuum', constraintMode:'none', receptorIncluded:false,
           acceptance:'retain only if constraint feasibility is not lost and the complete ranking objective improves',
         } : null,
         feasibilityRule:'all required constraints rank before energy',
@@ -3742,10 +3752,15 @@ async function runBrowserConstrainedDocking(options = {}) {
     let refinementAudit = [];
     const runTorsionRefinement = (positions, conformerIndex) => {
       setDockingStatus(`Optimizing pose ${conformerIndex + 1}/${valid.length}`);
-      const conformerSeed = (seed ^ Math.imul(conformerIndex + 1, 0x9e3779b9)) >>> 0;
+      const seedMultiplier = Number(activeProtocol.candidateInitialization
+        ?.candidateSeedXorMultiplierUint32 ?? 0x9e3779b9) >>> 0;
+      const conformerSeed = (seed ^ Math.imul(conformerIndex + 1, seedMultiplier)) >>> 0;
       return torsionSearch.refinePoseByTorsionMonteCarlo({ molecule:plan.molecule,
         initialPositions:positions, coreAtomIndices, scorePose:scorePositions,
-        random:stormmCore.mulberry32(conformerSeed), seed:conformerSeed, steps:torsionSteps });
+        random:stormmCore.mulberry32(conformerSeed), seed:conformerSeed, steps:torsionSteps,
+        temperatureStartKelvin:Number(torsionProtocol.temperatureStartKelvin),
+        temperatureEndKelvin:Number(torsionProtocol.temperatureEndKelvin),
+        proposalAnglesDegrees:[...torsionProtocol.proposalAnglesDegrees] });
     };
     const refinePropagatedBatch = async ({ positions }) => {
       const torsionRuns = [];
@@ -3764,6 +3779,9 @@ async function runBrowserConstrainedDocking(options = {}) {
       const relaxed = await runOpenMMJob('fixed-conformers', parameterizedLigand,
         dockingProgress, { initialConformers:coordinateStack,
           fixedAtomIndices:coreAtomIndices, fixedRelaxIterations,
+          fixedRelaxStepScale:Number(fixedRelaxProtocol.stepScale ?? 1e-4),
+          fixedRelaxMaximumDisplacementAngstrom:Number(
+            fixedRelaxProtocol.maximumDisplacementAngstromPerIteration ?? 0.01),
           constraintMode:'none', implicitSolvent:'vacuum' });
       return torsionRuns.map((entry, index) => {
         const relaxedPositions = relaxed.conformers.slice(index * stride, (index + 1) * stride);
@@ -3776,6 +3794,8 @@ async function runBrowserConstrainedDocking(options = {}) {
             engine:relaxed.backend, forcefield:relaxed.forcefield,
             iterations:relaxed.iterations, fixedAtomCount:relaxed.fixedAtomCount,
             movableAtomCount:relaxed.movableAtomCount, accepted,
+            stepScale:relaxed.stepScale,
+            maximumDisplacementAngstromPerIteration:relaxed.maximumDisplacementAngstrom,
             initialInternalEnergyKcalMol:relaxed.initialEnergies[index],
             finalInternalEnergyKcalMol:relaxed.finalEnergies[index],
             objectiveBeforeKcalMol:before.objectiveKcalMol,

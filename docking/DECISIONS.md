@@ -409,3 +409,37 @@ captures a reference without atom selection, edits the ligand, verifies every su
 is automatically inherited, performs deterministic torsion search plus fixed-scaffold Sage
 relaxation, checks sub-picometer core RMSD, verifies the hash-linked lineage/relaxation events, and
 applies a pose carrying the distinct `molarium-pose-propagation-1` protocol identity.
+
+## 2026-08-20 — Pose Propagation-1 reproducibility lock v0.2
+
+### Decision D-021 — separate a protocol claim from a novelty claim
+
+Pose Propagation-1 is described as an independent experimental protocol composition. Reference/MCS
+placement, fixed-core posing, torsional Monte Carlo, H-bond restraints, and force-field relaxation
+all have prior art. Molarium's distinctive implementation is the combination of exact edit-lineage
+identity, fixation of every surviving heavy atom, changed-graph-only search, lexicographic contact
+feasibility, guarded ligand-only relaxation, and a hash-linked browser-local audit. We do not claim
+that this combination is methodologically or legally novel without a broader literature and patent
+review.
+
+Reason: scientific provenance must distinguish reproduction, adaptation, and original engineering.
+The current evidence supports the latter two, not a categorical novelty claim.
+
+### Decision D-022 — freeze every algorithmically significant default
+
+Protocol version `0.2.0` adds a machine-readable lock for mapping, candidate initialization, seed
+derivation, PRNG identity, rotor eligibility, proposal angles, temperature schedule, Metropolis
+logic, score constants, force-field source hash, fixed-relaxation steps, acceptance logic, exclusions,
+and failure conditions. The normative prose specification is
+[`POSE-PROPAGATION-PROTOCOL.md`](./POSE-PROPAGATION-PROTOCOL.md).
+
+Runs embed the full protocol object and its SHA-256. Actual run overrides such as candidate count,
+seed, torsion proposals, or relaxation iterations remain recorded in hash-linked events. A behavior
+change requires a version change; documentation alone cannot redefine an existing labbook.
+
+### Validation V-007 — reproducibility vectors
+
+The unit gate locks the `mulberry32(20260819)` output vector, the first four candidate seeds, all
+critical v0.2 constants, and parity between executable torsion defaults and the protocol snapshot.
+The browser gate records actual fixed-relaxation step scale and displacement cap in addition to the
+engine, force field, iterations, fixed atoms, score, and acceptance decision.

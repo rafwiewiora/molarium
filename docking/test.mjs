@@ -122,6 +122,28 @@ assert.deepEqual(propagationMap.removedAtomIds, [automaticReference.atomIds[3]])
 assert.deepEqual(propagationMap.addedAtomIds, ['test:new:F']);
 assert.ok(propagationMap.maximumTriangleDoubleAreaAngstrom2 > 0.99);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.id, 'molarium-pose-propagation-1');
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.version, '0.2.0');
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping.minimumSurvivingHeavyAtoms, 3);
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping
+  .minimumMaximumTriangleDoubleAreaAngstrom2, 1e-3);
+assert.deepEqual(MOLARIUM_POSE_PROPAGATION_PROTOCOL.torsionMonteCarlo.proposalAnglesDegrees,
+  [-180, -120, -90, -60, -30, -15, 15, 30, 60, 90, 120, 180]);
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.torsionMonteCarlo.metropolisBoltzmannKcalMolKelvin,
+  0.00198720425864083);
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.fixedScaffoldRelaxation.stepScale, 1e-4);
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.fixedScaffoldRelaxation
+  .maximumDisplacementAngstromPerIteration, 0.01);
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.scoring.coulombConstantKcalAngstromPerMolE2,
+  332.063713299);
+const protocolRandom = mulberry32(20260819);
+assert.deepEqual(Array.from({ length:6 }, () => protocolRandom()), [
+  0.27264824602752924, 0.39473715308122337, 0.958696351153776,
+  0.34869390120729804, 0.6816380517557263, 0.09626693837344646,
+]);
+assert.deepEqual(Array.from({ length:4 }, (_, index) => (20260819 ^ Math.imul(index + 1,
+  MOLARIUM_POSE_PROPAGATION_PROTOCOL.candidateInitialization
+    .candidateSeedXorMultiplierUint32)) >>> 0),
+[2667732586, 1029428385, 3683863288, 2045296951]);
 const underdeterminedPropagation = mapSurvivingReferenceAtoms(automaticReference,
   replacedGroupAtoms.filter((atom) => ![automaticReference.atomIds[2], 'test:new:F']
     .includes(atom.designAtomId)));

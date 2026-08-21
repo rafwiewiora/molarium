@@ -541,7 +541,11 @@ const browserSuite = String.raw`(async () => {
     check(propagationRun.mode === 'pose-propagation'
       && propagationRun.selected.coreRmsdAngstrom < 1e-12
       && propagationRun.selected.refinement?.relaxation?.method.includes('fixed-scaffold')
+      && propagationRun.selected.refinement.relaxation.stepScale === 1e-4
+      && propagationRun.selected.refinement.relaxation
+        .maximumDisplacementAngstromPerIteration === 0.01
       && propagationLabbook.protocol.id === 'molarium-pose-propagation-1'
+      && propagationLabbook.protocol.version === '0.2.0'
       && propagationLabbook.selections.atomLineage.inheritedAtomIds.length === 6
       && propagationLabbook.selections.atomLineage.addedAtomIds.length === 1
       && propagationLabbook.events.some((event) => event.stage === 'fixed-scaffold-relaxation'),

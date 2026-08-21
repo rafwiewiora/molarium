@@ -52,7 +52,7 @@ energy, and penalty definitions.
 
 ## Executable boundary
 
-ConstraintDock version `0.3.0` and Pose Propagation version `0.1.0` implement and test:
+ConstraintDock version `0.3.0` and Pose Propagation version `0.2.0` implement and test:
 
 - least-squares reference-core alignment;
 - exact reference-coordinate snapping for every mapped core atom plus an independent RMSD audit;
@@ -111,6 +111,8 @@ npm run test:docking
 npm test
 ```
 
-The detailed evidence and decision history is maintained in [`DECISIONS.md`](./DECISIONS.md).
+The normative, implementation-independent Pose Propagation procedure is
+[`POSE-PROPAGATION-PROTOCOL.md`](./POSE-PROPAGATION-PROTOCOL.md). The detailed evidence and
+decision history is maintained in [`DECISIONS.md`](./DECISIONS.md).
 Run-specific scientific rationale can be appended as ordinary `decision` or `note` labbook events;
 those entries receive the same hashes as calculation-stage events.

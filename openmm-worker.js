@@ -316,6 +316,7 @@ async function runCalculation(message) {
     self.postMessage({
       type:'result', id, job, conformers:relaxedConformers,
       initialEnergies, finalEnergies, conformerCount, iterations,
+      stepScale, maximumDisplacementAngstrom,
       fixedAtomCount:fixedAtomIndices.length,
       movableAtomCount:molecule.atoms.length - fixedSet.size,
       elapsedMs:performance.now() - started,

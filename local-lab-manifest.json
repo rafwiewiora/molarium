@@ -17,8 +17,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 543116,
-      "sha256": "1e4367cec9a043c051999dc99e25df5b44ac15e7e2f245d05b743b47571270ea"
+      "bytes": 544512,
+      "sha256": "c22b672db2f6847327130b35f0797ccf2445acf3ad0718799524b5e94d2b05e1"
     },
     {
       "path": "bun.lock",
@@ -102,8 +102,8 @@
     },
     {
       "path": "docking/protocol.mjs",
-      "bytes": 10023,
-      "sha256": "71ecbbfa3093e9844b3fd38fc0f1f43ebd70e23cd56314ed774484f2e8c98c0a"
+      "bytes": 15890,
+      "sha256": "2ae786d00ec27a1bfc27e475f8bae1537bd56b1cf465c2dd5b25e02fb2d1e816"
     },
     {
       "path": "docking/receptor-score.mjs",
@@ -127,8 +127,8 @@
     },
     {
       "path": "openmm-worker.js",
-      "bytes": 25119,
-      "sha256": "92229f23da1fae7a5796dd022e0467720e2f223e553e61fc4d44824e6362e600"
+      "bytes": 25165,
+      "sha256": "26aefa60a5cfc09e1fd10eb054d494f76a9db129a7a8a294743fd4459193c951"
     },
     {
       "path": "openmm/molarium-openmm.js",

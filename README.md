@@ -237,7 +237,9 @@ binding-free-energy estimation. Treat the result as an experimental pose rank, n
 Every run can export readable Markdown notes and a coordinate-free JSON audit containing exact
 input hashes, the immutable protocol snapshot, selections, seed, ordered hash-linked events, scores,
 and a final SHA-256. Method lineage, exclusions, tests, and the engineering decision ledger live in
-[`docking/`](./docking/).
+[`docking/`](./docking/). The exact implementation-independent procedure, equations, random-number
+vector, failure rules, and validation contract are frozen in
+[`docking/POSE-PROPAGATION-PROTOCOL.md`](./docking/POSE-PROPAGATION-PROTOCOL.md).
 
 ## Protein input and preparation
 
