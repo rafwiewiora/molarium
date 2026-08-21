@@ -3,7 +3,7 @@
 ## Normative protocol
 
 Protocol ID: `molarium-pose-propagation-1`  
-Protocol version: `0.2.0`  
+Protocol version: `0.3.0`
 Status: experimental pose-preparation and pose-ranking method  
 Canonical machine-readable definition: `MOLARIUM_POSE_PROPAGATION_PROTOCOL` in
 [`protocol.mjs`](./protocol.mjs)
@@ -130,6 +130,20 @@ A required contact outside any allowed range makes the pose infeasible regardles
 If an edit deletes a ligand participant, the contact is disabled and recorded as
 `ligand-atom-removed`; it is never silently mapped to a new donor or acceptor.
 
+## Interactive edit cleanup
+
+Reference capture changes the Build cleanup default to `Preserve reference`. Automatic edit cleanup
+and the explicit ligand MMFF94/UFF action then fix every surviving same-element reference heavy atom
+and move only hydrogens and non-inherited atoms. This preprocessing is upstream of the pose protocol:
+its output coordinates are hashed as the live edited-ligand input, and every cleanup is copied into
+the run labbook from `source.interactivePolishHistory`.
+
+The user may explicitly select `Free local cleanup`. That older isolated-molecule rule moves the
+edited two-bond neighborhood, expands any touched fused ring into one movable unit, and includes
+attached hydrogens. It is retained for intentional local re-equilibration, but is not the analogue
+default. Regardless of preprocessing choice, the protocol boundary below realigns and exactly snaps
+every inherited heavy atom to the captured reference before sampling.
+
 ## Candidate initialization
 
 The default is 16 candidates. Each begins as a `Float64Array` copy of the live edited-ligand
@@ -140,6 +154,13 @@ Before search, a Horn-quaternion least-squares rigid transform aligns inherited 
 their reference coordinates. The quaternion eigenvector uses 64 shifted power iterations. After
 transforming the complete ligand, every inherited coordinate is overwritten with the corresponding
 reference coordinate. This hard snap is repeated at the workflow boundary.
+
+For each selected required contact in which the ligand is the donor, a surviving explicit ligand
+donor hydrogen is restored to its exact captured reference coordinate. No heavy atom moves and no
+new D-H-A direction is invented. Restoration is skipped and audited when the captured hydrogen
+coordinate is unavailable or an earlier selected contact already restored the same hydrogen. This
+is only deterministic recovery of trusted input geometry; the ordinary H-bond feasibility audit
+still decides whether the contact is met.
 
 The default base seed is `20260819`. Candidate `i`, with `i=0` for the first candidate, uses:
 
@@ -233,7 +254,7 @@ Epsilon is converted from kJ/mol to kcal/mol. An individual LJ repulsion is capp
 For candidate `p`, ligand strain is:
 
 ```text
-strain(p) = SageVacuumEnergy(p) - min(SageVacuumEnergy(each hard-snapped starting candidate))
+strain(p) = SageVacuumEnergy(p) - min(SageVacuumEnergy(each hard-snapped and H-restored starting candidate))
 ```
 
 with weight 1. The physical score is cross LJ + cross Coulomb + relative strain. The complete
@@ -326,4 +347,3 @@ The protocol is not release-valid unless tests establish:
 These are implementation and reproducibility gates. Accuracy claims additionally require cognate
 redocking, analogue-pose recovery, seed sensitivity, and comparison against native published
 baselines on held-out series.
-

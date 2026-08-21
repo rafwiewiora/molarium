@@ -17,8 +17,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 544512,
-      "sha256": "c22b672db2f6847327130b35f0797ccf2445acf3ad0718799524b5e94d2b05e1"
+      "bytes": 550780,
+      "sha256": "013b1821d3110cf165874fb96421dff1bf54f46b74ad8251a6bdd8e0bce3adb2"
     },
     {
       "path": "bun.lock",
@@ -32,8 +32,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 53281,
-      "sha256": "aa2106250c03d70289bb6435732ae0c0dfc3c960545e3d61f91e225d846e8558"
+      "bytes": 53701,
+      "sha256": "189f059d31f9018d5a217e6eb9000c9875fd660df16ea7fccedde078424e44d7"
     },
     {
       "path": "local-lab-test.js",
@@ -62,8 +62,8 @@
     },
     {
       "path": "styles.css",
-      "bytes": 54400,
-      "sha256": "cfc6f9d77dc3a2d966ad53979c93f4a8ed55338145a7824af25b104de0d6255a"
+      "bytes": 54761,
+      "sha256": "a7c256aa43d9fe6e28afd808edc5a281bbd3f790ebb96bd74b8bf5b2d38b6c57"
     },
     {
       "path": "rdkit-worker.js",
@@ -87,13 +87,13 @@
     },
     {
       "path": "docking/browser-adapter.mjs",
-      "bytes": 8216,
-      "sha256": "33cbd2764f94570a6de420b3aaec89b9ec3a12255792e82a086f7254ae31635d"
+      "bytes": 10124,
+      "sha256": "c87f2d3963b84b948d73c93d72e8825e6b68355d1777a8d550c2be6c5e24f224"
     },
     {
       "path": "docking/constraints.mjs",
-      "bytes": 8963,
-      "sha256": "32ebb904eb4ec8f5fe83b398bc635c1923c86352b4f41692d9153835436e79b3"
+      "bytes": 10870,
+      "sha256": "ef5e3392aecc1709bb0183957d1ad7252a98a9704222b4feb30d6d2269b70470"
     },
     {
       "path": "docking/labbook.mjs",
@@ -102,8 +102,8 @@
     },
     {
       "path": "docking/protocol.mjs",
-      "bytes": 15890,
-      "sha256": "2ae786d00ec27a1bfc27e475f8bae1537bd56b1cf465c2dd5b25e02fb2d1e816"
+      "bytes": 16315,
+      "sha256": "49ab3d77ee040991f06e47004cc8b0a8bae0ff70a8a699c0b2e0f3b01ece13c1"
     },
     {
       "path": "docking/receptor-score.mjs",
@@ -122,8 +122,8 @@
     },
     {
       "path": "docking/workflow.mjs",
-      "bytes": 5979,
-      "sha256": "6f11753e064a7b20ce98bbc3720c699a8f347cade6096362125600b6e069928d"
+      "bytes": 7001,
+      "sha256": "73983dbd485d2c3c9a460609a2b258a274ae059de450b583a16a7cff65e6fb70"
     },
     {
       "path": "openmm-worker.js",

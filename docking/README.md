@@ -52,7 +52,7 @@ energy, and penalty definitions.
 
 ## Executable boundary
 
-ConstraintDock version `0.3.0` and Pose Propagation version `0.2.0` implement and test:
+ConstraintDock version `0.3.0` and Pose Propagation version `0.3.0` implement and test:
 
 - least-squares reference-core alignment;
 - exact reference-coordinate snapping for every mapped core atom plus an independent RMSD audit;
@@ -61,6 +61,8 @@ ConstraintDock version `0.3.0` and Pose Propagation version `0.2.0` implement an
 - deterministic feasible-first pose ranking;
 - stable atom identities for edit-derived reference cores;
 - automatic inheritance of every surviving reference heavy atom for recorded graph edits;
+- reference-preserving edit cleanup by default, with the older free local ring cleanup available explicitly;
+- exact restoration of surviving ligand-donor hydrogens used by selected captured contacts;
 - a deterministic Metropolis torsion search that rotates only graph branches containing no core atom;
 - hard feasible-state retention for required contacts during search;
 - a transparent receptor-site score using cross OpenFF Lennard-Jones and Coulomb terms plus relative
@@ -113,6 +115,8 @@ npm test
 
 The normative, implementation-independent Pose Propagation procedure is
 [`POSE-PROPAGATION-PROTOCOL.md`](./POSE-PROPAGATION-PROTOCOL.md). The detailed evidence and
-decision history is maintained in [`DECISIONS.md`](./DECISIONS.md).
+decision history is maintained in [`DECISIONS.md`](./DECISIONS.md). Human–agent observations,
+hypotheses, changes, and test outcomes are curated in
+[`HUMAN-AGENT-DEVELOPMENT-LOG.md`](./HUMAN-AGENT-DEVELOPMENT-LOG.md).
 Run-specific scientific rationale can be appended as ordinary `decision` or `note` labbook events;
 those entries receive the same hashes as calculation-stage events.

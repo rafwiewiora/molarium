@@ -1,5 +1,6 @@
 import { applyCoreTransform, evaluateCoreConstraint, evaluateHydrogenBondConstraint,
-  fittedCoreTransform, rankConstrainedPoses, scoreConstrainedPose, snapCorePositions } from './constraints.mjs';
+  fittedCoreTransform, restoreCapturedLigandDonorHydrogens, rankConstrainedPoses,
+  scoreConstrainedPose, snapCorePositions } from './constraints.mjs';
 import { appendLabbookEvent } from './labbook.mjs';
 
 function conformerArray(value, expectedLength) {
@@ -37,7 +38,8 @@ export function evaluatePoseHydrogenBonds(definitions, positions, settings) {
 
 export async function runConstrainedDocking({ referencePositions, candidateConformers, coreAtomPairs,
   hydrogenBondConstraints = [], protocol, physicalScore, refinePose = null, labbook = null,
-  refineBatch = null, afterRefinement = null, startedAt = new Date().toISOString(), completedAt = null }) {
+  refineBatch = null, afterRefinement = null, capturedLigandHydrogenRestoration = false,
+  startedAt = new Date().toISOString(), completedAt = null }) {
   if (typeof physicalScore !== 'function') throw new TypeError('A physicalScore callback is required');
   if (!Array.isArray(candidateConformers) || !candidateConformers.length)
     throw new Error('At least one candidate conformer is required');
@@ -52,9 +54,21 @@ export async function runConstrainedDocking({ referencePositions, candidateConfo
 
   const prepared = conformers.map((positions) => {
     const transform = fittedCoreTransform(referencePositions, positions, coreAtomPairs);
-    return { transform, positions:snapCorePositions(referencePositions,
-      applyCoreTransform(positions, transform), coreAtomPairs) };
+    const snapped = snapCorePositions(referencePositions,
+      applyCoreTransform(positions, transform), coreAtomPairs);
+    const hydrogenRestoration = capturedLigandHydrogenRestoration
+      ? restoreCapturedLigandDonorHydrogens(snapped, hydrogenBondConstraints)
+      : { positions:new Float64Array(snapped), restored:[], skipped:[], enabled:false };
+    return { transform, positions:hydrogenRestoration.positions, hydrogenRestoration };
   });
+  if (labbook && capturedLigandHydrogenRestoration) await appendLabbookEvent(labbook, { at:new Date().toISOString(),
+    stage:'captured-ligand-hydrogen-restoration', status:'completed', details:{
+      candidates:prepared.length,
+      restoredPerCandidate:prepared[0]?.hydrogenRestoration.restored.length || 0,
+      restored:prepared[0]?.hydrogenRestoration.restored || [],
+      skipped:prepared[0]?.hydrogenRestoration.skipped || [],
+      invariant:'only surviving ligand donor hydrogens are restored to captured coordinates; no heavy atom moves',
+    } });
   let batchRefinements = null;
   if (refineBatch) {
     batchRefinements = await refineBatch({
@@ -84,7 +98,9 @@ export async function runConstrainedDocking({ referencePositions, candidateConfo
       protocol.hydrogenBondConstraint);
     const score = scoreConstrainedPose({ physicalEnergyKcalMol, core, hydrogenBonds });
     candidates.push({ conformerIndex:index, fittedCoreRmsdAngstrom:transform.fittedRmsdAngstrom,
-      positions, core, hydrogenBonds, refinement, physicalDetails:typeof physical === 'object' ? physical : null,
+      positions, core, hydrogenBonds, refinement,
+      hydrogenRestoration:prepared[index].hydrogenRestoration,
+      physicalDetails:typeof physical === 'object' ? physical : null,
       ...score });
   }
   if (afterRefinement) await afterRefinement(candidates);

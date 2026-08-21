@@ -50,6 +50,40 @@ export function evaluateHydrogenBondConstraint(geometryOrAtoms, settings) {
   };
 }
 
+// Hydrogen atoms are not part of the hard heavy-atom scaffold. If an explicit
+// ligand donor H survives an edit, restore its captured coordinate instead of
+// inventing a new D-H-A direction that could violate the donor's local geometry.
+export function restoreCapturedLigandDonorHydrogens(positions, definitions = []) {
+  if (!ArrayBuffer.isView(positions) && !Array.isArray(positions))
+    throw new TypeError('Ligand coordinates are required');
+  if (!positions.length || positions.length % 3)
+    throw new Error('Ligand coordinates must contain complete atoms');
+  const restoredPositions = new Float64Array(positions);
+  const restored = [], skipped = [], usedHydrogens = new Set();
+  Array.from(definitions || []).forEach((definition, ordinal) => {
+    const id = definition.id || `hbond-${ordinal + 1}`;
+    const donor = definition.donor, hydrogen = definition.hydrogen;
+    if (definition.required === false || donor?.scope !== 'ligand'
+      || hydrogen?.scope !== 'ligand') return;
+    const hydrogenIndex = Number(hydrogen.atomIndex);
+    if (usedHydrogens.has(hydrogenIndex)) {
+      skipped.push({ id, hydrogenAtomIndex:hydrogenIndex, reason:'hydrogen-already-restored' });
+      return;
+    }
+    if (!hydrogen.referencePoint) {
+      skipped.push({ id, hydrogenAtomIndex:hydrogenIndex, reason:'captured-coordinate-unavailable' });
+      return;
+    }
+    const referencePoint = finitePoint(hydrogen.referencePoint, 'captured ligand hydrogen');
+    const before = coordinates(restoredPositions, hydrogenIndex);
+    for (let axis = 0; axis < 3; axis++) restoredPositions[hydrogenIndex * 3 + axis] = referencePoint[axis];
+    usedHydrogens.add(hydrogenIndex);
+    restored.push({ id, donorAtomIndex:Number(donor.atomIndex), hydrogenAtomIndex:hydrogenIndex,
+      displacementAngstrom:distance(before, referencePoint) });
+  });
+  return { positions:restoredPositions, restored, skipped };
+}
+
 function coordinates(positions, index) {
   if (!Number.isInteger(index) || index < 0 || index * 3 + 2 >= positions.length)
     throw new RangeError(`Atom index ${index} is outside the coordinate array`);

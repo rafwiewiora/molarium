@@ -2608,6 +2608,7 @@ function loadMolecule(molecule, resetView = true) {
   state.dockingRunning = false;
   state.dockingSelectedHbondIds = new Set();
   state.dockingPoseIndex = 0;
+  document.querySelector('#docking-edit-cleanup').value = 'preserve-reference';
   state.pdbPreparationPreview = null;
   state.focusedResidueKey = null;
   state.focusedResidueRadius = null;
@@ -3340,6 +3341,11 @@ function selectedDockingMode() {
     ? 'selected-core' : 'pose-propagation';
 }
 
+function selectedDockingEditCleanup() {
+  return document.querySelector('#docking-edit-cleanup')?.value === 'free-local'
+    ? 'free-local' : 'preserve-reference';
+}
+
 function survivingReferenceHeavyAtoms(reference, component = dockingLigandComponent()) {
   if (!reference?.ligand || !component) return 0;
   const liveIds = new Set(component.atomIndices.map((index) =>
@@ -3398,6 +3404,7 @@ function updateDockingUi() {
   const capture = document.querySelector('#capture-docking-reference');
   const clear = document.querySelector('#clear-docking-reference');
   const modeSelect = document.querySelector('#docking-mode');
+  const cleanupField = document.querySelector('#docking-cleanup-field');
   const constraints = document.querySelector('#docking-constraints');
   const runRow = document.querySelector('#docking-run-row');
   const run = document.querySelector('#run-constrained-docking');
@@ -3406,6 +3413,7 @@ function updateDockingUi() {
     const contactCount = state.dockingReference.hydrogenBonds.length;
     modeSelect.value = referenceMode === 'pose-propagation' ? 'propagate' : 'selected-core';
     modeSelect.disabled = true;
+    cleanupField.classList.toggle('hidden', referenceMode !== 'pose-propagation');
     capture.classList.add('hidden'); clear.classList.remove('hidden');
     constraints.classList.remove('hidden'); runRow.classList.remove('hidden');
     clear.disabled = state.dockingRunning; run.disabled = state.dockingRunning;
@@ -3422,6 +3430,7 @@ function updateDockingUi() {
     const mode = selectedDockingMode();
     const core = dockingSelectedCore(ligand);
     modeSelect.disabled = state.dockingRunning;
+    cleanupField.classList.add('hidden');
     capture.classList.remove('hidden'); clear.classList.add('hidden');
     constraints.classList.add('hidden'); runRow.classList.add('hidden');
     capture.textContent = mode === 'pose-propagation' ? 'Capture pose' : 'Set selected core';
@@ -3460,6 +3469,12 @@ async function captureCurrentDockingReference() {
   const interactions = nonCovalentInteractions(state.molecule);
   const hydrogenBonds = adapter.captureCrossHydrogenBonds(state.molecule,
     component.atomIndices, interactions.hydrogenBonds);
+  const receptorProvenanceAtomIndices = [...new Set([
+    ...receptorSite.atoms.map((atom) => atom.globalAtomIndex),
+    ...hydrogenBonds.flatMap((definition) => [definition.donor, definition.hydrogen,
+      definition.acceptor].filter((descriptor) => descriptor.scope === 'receptor')
+      .map((descriptor) => descriptor.sourceGlobalAtomIndex)),
+  ])].sort((first, second) => first - second);
   state.dockingReference = {
     schema:'molarium.docking.browser-reference/v1',
     mode,
@@ -3469,16 +3484,18 @@ async function captureCurrentDockingReference() {
     ligand,
     receptorSite,
     hydrogenBonds,
-    receptorInputText:adapter.dockingInputText(state.molecule,
-      receptorSite.atoms.map((atom) => atom.globalAtomIndex)),
+    receptorProvenanceAtomCount:receptorProvenanceAtomIndices.length,
+    receptorInputText:adapter.dockingInputText(state.molecule, receptorProvenanceAtomIndices),
     referenceLigandInputText:adapter.dockingInputText(state.molecule, plan.globalAtomIndices),
     forcefield:state.molecule.parameterization.forcefield || null,
     chargeModel:state.molecule.parameterization.chargeModel || null,
     sourceSha256:state.molecule.parameterization.sourceSha256 || null,
   };
+  if (mode === 'pose-propagation')
+    document.querySelector('#docking-edit-cleanup').value = 'preserve-reference';
   state.dockingSelectedHbondIds = new Set(hydrogenBonds.map((entry) => entry.id));
   state.dockingResult = null; state.dockingPoseIndex = 0;
-  updateDockingUi();
+  updateDockingUi(); updateOptimizerControls();
   showToast(mode === 'pose-propagation'
     ? `Reference pose captured · ${ligand.coreAtomIds.length} heavy atoms`
     : `Docking reference set · ${core.length}-atom core`);
@@ -3488,7 +3505,8 @@ async function captureCurrentDockingReference() {
 function clearDockingReference() {
   state.dockingReference = null; state.dockingResult = null;
   state.dockingSelectedHbondIds = new Set(); state.dockingPoseIndex = 0;
-  updateDockingUi();
+  document.querySelector('#docking-edit-cleanup').value = 'preserve-reference';
+  updateDockingUi(); updateOptimizerControls();
 }
 
 function dockingProgress(message) {
@@ -3533,6 +3551,10 @@ async function runBrowserConstrainedDocking(options = {}) {
     const receptorIntegrity = receptorScore.receptorSiteIntegrity(reference.receptorSite, state.molecule);
     if (!receptorIntegrity.valid)
       throw new Error('The captured receptor site changed; reset the docking reference.');
+    const contactParticipantIntegrity = adapter.capturedReceptorContactIntegrity(
+      reference.hydrogenBonds, state.molecule);
+    if (!contactParticipantIntegrity.valid)
+      throw new Error('A fixed receptor or water contact participant changed; reset the docking reference.');
     const currentLigandInputText = adapter.dockingInputText(state.molecule, plan.globalAtomIndices);
     const currentLigandTopologyText = adapter.dockingTopologyText(state.molecule, plan.globalAtomIndices);
     const coreMap = posePropagation
@@ -3598,10 +3620,15 @@ async function runBrowserConstrainedDocking(options = {}) {
     const ligandTopology = stormmCore.buildParameterizedSystem(plan.molecule, ligandParameters);
     const ligandInternalEnergy = (positions) => stormmCore.cpuEnergies(ligandTopology,
       torsionSearch.packPositions4(positions)).total;
-    const fixedCoreStarts = valid.map((entry) => constraints.snapCorePositions(
-      reference.ligand.positions,
-      constraints.applyCoreTransform(entry.positions, constraints.fittedCoreTransform(
-        reference.ligand.positions, entry.positions, coreMap.atomPairs)), coreMap.atomPairs));
+    const fixedCoreStarts = valid.map((entry) => {
+      const snapped = constraints.snapCorePositions(reference.ligand.positions,
+        constraints.applyCoreTransform(entry.positions, constraints.fittedCoreTransform(
+          reference.ligand.positions, entry.positions, coreMap.atomPairs)), coreMap.atomPairs);
+      return posePropagation
+        ? constraints.restoreCapturedLigandDonorHydrogens(snapped,
+          mappedHydrogenBonds.constraints).positions
+        : snapped;
+    });
     const fixedCoreStartEnergies = fixedCoreStarts.map(ligandInternalEnergy);
     if (fixedCoreStartEnergies.some((energy) => !Number.isFinite(energy)))
       throw new Error('OpenFF Sage returned a non-finite fixed-core ligand energy.');
@@ -3636,9 +3663,9 @@ async function runBrowserConstrainedDocking(options = {}) {
     const inputs = await labbookModule.inputProvenance({
       receptorText:reference.receptorInputText,
       ligandText:currentLigandInputText,
-      receptorLabel:`${reference.moleculeName} · rigid 8 Å site`,
+      receptorLabel:`${reference.moleculeName} · rigid 8 Å site and fixed contact participants`,
       ligandLabel:plan.molecule.name,
-      receptorAtoms:reference.receptorSite.atoms.length,
+      receptorAtoms:reference.receptorProvenanceAtomCount || reference.receptorSite.atoms.length,
       ligandAtoms:plan.molecule.atoms.length,
     });
     const referenceLigandSha256 = await labbookModule.sha256Text(reference.referenceLigandInputText);
@@ -3656,9 +3683,18 @@ async function runBrowserConstrainedDocking(options = {}) {
           removedAtomIds:[...coreMap.removedAtomIds],
           changedElementAtomIds:[...coreMap.changedElementAtomIds],
         } : null,
+        editPreparation:posePropagation ? {
+          selectedCleanupMode:selectedDockingEditCleanup(),
+          interactivePolishHistory:structuredClone(
+            state.molecule.source?.interactivePolishHistory || []),
+        } : null,
         hydrogenBonds:mappedHydrogenBonds.constraints.map((entry) => ({
           id:entry.id, label:entry.label, required:entry.required, receptorRole:entry.receptorRole,
         })),
+        fixedReceptorContactParticipantIds:[...new Set(reference.hydrogenBonds.flatMap((definition) =>
+          [definition.donor, definition.hydrogen, definition.acceptor]
+            .filter((descriptor) => descriptor.scope === 'receptor')
+            .map((descriptor) => descriptor.designAtomId)))],
         omittedHydrogenBonds,
       },
       environment:{ execution:'browser-local', networkUsed:false, webgpuAvailable:Boolean(navigator.gpu),
@@ -3682,6 +3718,11 @@ async function runBrowserConstrainedDocking(options = {}) {
         hardCore:posePropagation
           ? 'every surviving reference heavy atom fixed exactly by stable edit lineage'
           : 'user-selected matched core atoms snapped exactly to reference coordinates',
+        editCleanup:posePropagation ? {
+          selected:selectedDockingEditCleanup(),
+          preserveReference:'fix every inherited heavy atom; move only new atoms and hydrogens',
+          freeLocal:'move the edited two-bond neighborhood and each touched fused ring as a unit',
+        } : null,
         torsionSearch:{ method:torsionSearch.TORSION_SEARCH_DEFAULTS.method, steps:torsionSteps,
           temperatureStartKelvin:Number(torsionProtocol.temperatureStartKelvin),
           temperatureEndKelvin:Number(torsionProtocol.temperatureEndKelvin),
@@ -3811,6 +3852,7 @@ async function runBrowserConstrainedDocking(options = {}) {
       candidateConformers:valid.map((entry) => entry.positions),
       coreAtomPairs:coreMap.atomPairs,
       hydrogenBondConstraints:mappedHydrogenBonds.constraints,
+      capturedLigandHydrogenRestoration:posePropagation,
       protocol:activeProtocol,
       ...(posePropagation
         ? { refineBatch:refinePropagatedBatch }
@@ -5095,12 +5137,14 @@ async function polishCommittedChemistry(molecule, changedAtomIndices) {
     });
     if (token !== smallMoleculePolishSequence || state.molecule !== molecule) return null;
     applyMappedCalculationPositions(molecule, result.positions, plan.globalAtomIndices);
-    molecule.source = { ...(molecule.source || {}), lastInteractivePolish: {
+    recordInteractivePolish(molecule, {
       engine:result.forcefield, fallback:Boolean(result.fallback), elapsedMs:result.elapsedMs,
       movableAtomCount:result.movableAtomCount, fixedAtomCount:result.fixedAtomCount,
       proteinFixedAtomCount:molecule.atoms.length - plan.globalAtomIndices.length,
       scope:plan.scope, bondRadius:1, stagedChemistry:true,
-    } };
+      cleanupMode:plan.cleanupMode,
+      fixedInheritedHeavyAtomCount:plan.fixedInheritedHeavyAtomCount,
+    });
     return result;
   } catch (error) {
     molecule.source = { ...(molecule.source || {}),
@@ -5945,10 +5989,15 @@ window.molariumTest = Object.freeze({
     } : null;
   },
   localPolishSelection(changedAtomIndices, bondRadius = 2) {
-    const movableAtomIndices = localPolishMovableAtomIndices(state.molecule, changedAtomIndices, bondRadius);
+    const plan = localEditPolishPlan(state.molecule, changedAtomIndices, bondRadius);
+    const movableAtomIndices = plan?.movableGlobalAtomIndices
+      || localPolishMovableAtomIndices(state.molecule, changedAtomIndices, bondRadius);
     const movable = new Set(movableAtomIndices);
     return { movableAtomIndices,
-      fixedAtomIndices:state.molecule.atoms.flatMap((_, index) => movable.has(index) ? [] : [index]) };
+      fixedAtomIndices:state.molecule.atoms.flatMap((_, index) => movable.has(index) ? [] : [index]),
+      cleanupMode:plan?.cleanupMode || 'free-local',
+      fixedInheritedHeavyAtomCount:plan?.fixedInheritedHeavyAtomCount || 0,
+      scope:plan?.scope || 'molecule' };
   },
   async calculateCurrent(job = 'energy', method = 'webgpu', options = {}) {
     document.querySelector('#job-select').value = job;
@@ -6075,6 +6124,13 @@ window.molariumTest = Object.freeze({
     updateDockingUi();
     return { mode:selectedDockingMode(), status:document.querySelector('#docking-status').textContent,
       captureDisabled:document.querySelector('#capture-docking-reference').disabled };
+  },
+  setDockingEditCleanup(mode) {
+    document.querySelector('#docking-edit-cleanup').value = mode === 'free-local'
+      ? 'free-local' : 'preserve-reference';
+    updateDockingUi(); updateOptimizerControls();
+    return { mode:selectedDockingEditCleanup(),
+      visible:!document.querySelector('#docking-cleanup-field').classList.contains('hidden') };
   },
   async captureDockingReference() {
     const reference = await captureCurrentDockingReference();
@@ -6882,21 +6938,43 @@ function editableLigandComponentPlan(molecule = state.molecule, preferredAtomInd
   return mapped && smallMoleculePolishEligible(mapped.molecule) ? mapped : null;
 }
 
+function referencePreservingPolishSelection(molecule, globalAtomIndices) {
+  const reference = molecule === state.molecule ? state.dockingReference : null;
+  if (reference?.mode !== 'pose-propagation'
+    || selectedDockingEditCleanup() !== 'preserve-reference') return null;
+  const referenceElementById = new Map(reference.ligand.atomIds.map((id, index) =>
+    [id, reference.ligand.elements[index]]));
+  const fixed = globalAtomIndices.filter((globalIndex) => {
+    const atom = molecule.atoms[globalIndex];
+    return atom.element !== 'H' && referenceElementById.get(atom.designAtomId) === atom.element;
+  });
+  const fixedSet = new Set(fixed);
+  return {
+    cleanupMode:'preserve-reference',
+    fixedInheritedHeavyAtomCount:fixed.length,
+    movableGlobalAtomIndices:globalAtomIndices.filter((index) => !fixedSet.has(index)),
+  };
+}
+
 function localEditPolishPlan(molecule, changedAtomIndices, bondRadius = 2) {
   const changed = Array.from(changedAtomIndices || [], Number);
-  if (smallMoleculePolishEligible(molecule)) {
+  const mapped = editableLigandComponentPlan(molecule, changed);
+  const useMappedLigand = Boolean(mapped && (state.dockingReference
+    || molecule.atoms.some((atom) => isProteinAtom(atom) || isWaterAtom(atom))));
+  if (!useMappedLigand && smallMoleculePolishEligible(molecule)) {
     const globalAtomIndices = molecule.atoms.map((_, index) => index);
     return { molecule, globalAtomIndices,
       movableGlobalAtomIndices:localPolishMovableAtomIndices(molecule, changed, bondRadius),
-      scope:'molecule' };
+      scope:'molecule', cleanupMode:'free-local', fixedInheritedHeavyAtomCount:0 };
   }
-  const mapped = editableLigandComponentPlan(molecule, changed);
   if (!mapped || !changed.some((index) => mapped.globalToLocal.has(index))) return null;
+  const preserving = referencePreservingPolishSelection(molecule, mapped.globalAtomIndices);
+  if (preserving) return { ...mapped, ...preserving, scope:'ligand component' };
   const component = new Set(mapped.globalAtomIndices);
   return { ...mapped,
     movableGlobalAtomIndices:localPolishMovableAtomIndices(molecule, changed, bondRadius)
       .filter((index) => component.has(index)),
-    scope:'ligand component' };
+    scope:'ligand component', cleanupMode:'free-local', fixedInheritedHeavyAtomCount:0 };
 }
 
 function applyMappedCalculationPositions(molecule, positions, globalAtomIndices) {
@@ -7108,6 +7186,15 @@ function localPolishMovableAtomIndices(molecule, changedAtomIndices, bondRadius 
   return [...movable].sort((first, second) => first - second);
 }
 
+function recordInteractivePolish(molecule, entry) {
+  const record = { at:new Date().toISOString(), ...entry };
+  const previous = Array.isArray(molecule.source?.interactivePolishHistory)
+    ? molecule.source.interactivePolishHistory : [];
+  molecule.source = { ...(molecule.source || {}), lastInteractivePolish:record,
+    interactivePolishHistory:[...previous, record].slice(-64) };
+  return record;
+}
+
 function scheduleSmallMoleculePolish(changedAtomIndices, delay = 160) {
   const molecule = state.molecule;
   const plan = localEditPolishPlan(molecule, changedAtomIndices);
@@ -7126,12 +7213,14 @@ function scheduleSmallMoleculePolish(changedAtomIndices, delay = 160) {
       });
       if (token !== smallMoleculePolishSequence || state.molecule !== molecule) return;
       applyMappedCalculationPositions(molecule, result.positions, plan.globalAtomIndices);
-      molecule.source = { ...(molecule.source || {}), lastInteractivePolish: {
+      recordInteractivePolish(molecule, {
         engine:result.forcefield, fallback:Boolean(result.fallback), elapsedMs:result.elapsedMs,
         movableAtomCount:result.movableAtomCount, fixedAtomCount:result.fixedAtomCount,
         proteinFixedAtomCount:molecule.atoms.length - plan.globalAtomIndices.length,
         scope:plan.scope, bondRadius:2,
-      } };
+        cleanupMode:plan.cleanupMode,
+        fixedInheritedHeavyAtomCount:plan.fixedInheritedHeavyAtomCount,
+      });
     } catch (error) {
       // Retain the deterministic chemically seeded geometry, but keep the
       // failure visible to diagnostics instead of silently losing provenance.
@@ -7200,12 +7289,19 @@ async function optimizeEditableLigand() {
   const molecule = state.molecule;
   const plan = editableLigandComponentPlan(molecule, preferred);
   if (!plan) throw new Error('Select an editable ligand atom in a protein–ligand complex first.');
-  updateBuildStatus('MMFF94/UFF ligand-only optimization…');
+  const preserving = referencePreservingPolishSelection(molecule, plan.globalAtomIndices);
+  const movable = new Set(preserving?.movableGlobalAtomIndices || plan.globalAtomIndices);
+  const fixedAtomIndices = plan.globalAtomIndices.flatMap((globalIndex, localIndex) =>
+    movable.has(globalIndex) ? [] : [localIndex]);
+  updateBuildStatus(preserving
+    ? 'MMFF94/UFF reference-preserving cleanup…'
+    : 'MMFF94/UFF ligand-only optimization…');
   const result = await runRDKitJob('geometry', plan.molecule, ({ phase }) => {
     if (phase) updateBuildStatus(phase.replace('Optimizing', 'Optimizing ligand'));
   }, {
     maxIterations:300,
     snapshotFrequency:Math.max(1, Math.floor(300 / (BUILD_OPTIMIZATION_FRAME_COUNT - 1))),
+    fixedAtomIndices,
   });
   if (state.molecule !== molecule) return null;
   const expandedResult = expandSubsetCalculationTrajectory(result, molecule, plan.globalAtomIndices);
@@ -7215,13 +7311,17 @@ async function optimizeEditableLigand() {
     engine:result.forcefield, fallback:Boolean(result.fallback), elapsedMs:result.elapsedMs,
     atomCount:plan.globalAtomIndices.length,
     proteinFixedAtomCount:molecule.atoms.length - plan.globalAtomIndices.length,
+    cleanupMode:preserving?.cleanupMode || 'free-local',
+    fixedInheritedHeavyAtomCount:preserving?.fixedInheritedHeavyAtomCount || 0,
     initialEnergy:result.initialEnergy, finalEnergy:result.finalEnergy,
-    environment:'isolated ligand; protein coordinates fixed; no protein–ligand nonbonded terms',
+    environment:preserving
+      ? 'isolated ligand; inherited reference heavy atoms and protein fixed; no protein–ligand nonbonded terms'
+      : 'isolated ligand; protein coordinates fixed; no protein–ligand nonbonded terms',
   } };
   showBuildOptimizationTrajectory(expandedResult, {
-    method:'ligand-rdkit', title:'Ligand Optimization',
+    method:'ligand-rdkit', title:preserving ? 'Reference-preserving cleanup' : 'Ligand Optimization',
     energyLabel:'Final isolated-ligand potential energy',
-    meta:`${result.forcefield}${result.fallback ? ' fallback' : ''} · isolated ligand · protein fixed · RDKit ${result.rdkitVersion} · ${(result.elapsedMs / 1000).toFixed(2)} s`,
+    meta:`${result.forcefield}${result.fallback ? ' fallback' : ''} · ${preserving ? `${preserving.fixedInheritedHeavyAtomCount} inherited heavy atoms fixed` : 'isolated ligand'} · protein fixed · RDKit ${result.rdkitVersion} · ${(result.elapsedMs / 1000).toFixed(2)} s`,
   });
   updateBuildStatus(); updateHistoryButtons();
   return expandedResult;
@@ -9448,7 +9548,10 @@ function updateOptimizerControls() {
       : buildMethod === 'pocket-webgpu'
         ? `Pocket-aware 5 Å relaxation moves the ligand and pocket side chains on WebGPU; ${state.molecule.atoms.length - pocketMovableCount} outer protein atoms remain fixed. A chemically edited complex is reparameterized first.`
       : buildMethod === 'ligand-rdkit'
-        ? `Fast ligand-only MMFF94/UFF optimization. The complete protein stays fixed and is omitted from the energy, so use Pocket relax when protein–ligand contacts must respond.`
+        ? state.dockingReference?.mode === 'pose-propagation'
+          && selectedDockingEditCleanup() === 'preserve-reference'
+          ? 'Cleans new atoms and hydrogens while inherited reference heavy atoms stay fixed.'
+          : `Fast ligand-only MMFF94/UFF optimization. The complete protein stays fixed and is omitted from the energy, so use Pocket relax when protein–ligand contacts must respond.`
       : buildMethod === 'rdkit'
         ? 'RDKit runs established MMFF94 locally, with genuine UFF fallback when parameters are unavailable.'
         : buildMethod === 'ani2x'
@@ -9935,6 +10038,9 @@ document.querySelector('#finish-chemistry-changes').addEventListener('click', ()
 document.querySelector('#discard-chemistry-changes').addEventListener('click', discardChemistryTransaction);
 document.querySelector('#chemistry-immediate-refine').addEventListener('change', updateChemistryEditor);
 document.querySelector('#docking-mode').addEventListener('change', updateDockingUi);
+document.querySelector('#docking-edit-cleanup').addEventListener('change', () => {
+  updateDockingUi(); updateOptimizerControls();
+});
 document.querySelector('#capture-docking-reference').addEventListener('click', () => {
   captureCurrentDockingReference().catch((error) => showNotice(error.message));
 });

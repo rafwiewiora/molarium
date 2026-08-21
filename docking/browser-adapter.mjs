@@ -54,9 +54,11 @@ export function captureCrossHydrogenBonds(molecule, ligandAtomIndices, hydrogenB
     const donor = molecule.atoms[bond.donor];
     const hydrogen = molecule.atoms[bond.hydrogen];
     const acceptor = molecule.atoms[bond.acceptor];
-    const ligandDescriptor = (index) => ({ scope:'ligand', designAtomId:molecule.atoms[index].designAtomId });
+    const ligandDescriptor = (index) => ({ scope:'ligand', designAtomId:molecule.atoms[index].designAtomId,
+      referencePoint:copiedPoint(molecule.atoms[index]) });
     const receptorDescriptor = (index) => ({ scope:'receptor', point:copiedPoint(molecule.atoms[index]),
-      sourceGlobalAtomIndex:index });
+      sourceGlobalAtomIndex:index, designAtomId:molecule.atoms[index].designAtomId,
+      element:molecule.atoms[index].element });
     return [{
       id:`reference-hbond-${ordinal + 1}`,
       label:`${atomLabel(donor, bond.donor)} → ${atomLabel(acceptor, bond.acceptor)}`,
@@ -77,13 +79,15 @@ export function mapCapturedHydrogenBonds(definitions, candidateAtoms, selectedId
   const mapped = Array.from(definitions || []).flatMap((definition) => {
     if (selected && !selected.has(definition.id)) return [];
     const participant = (descriptor) => {
-      if (descriptor.scope === 'receptor') return { scope:'receptor', point:{ ...descriptor.point } };
+      if (descriptor.scope === 'receptor') return { scope:'receptor', point:{ ...descriptor.point },
+        designAtomId:descriptor.designAtomId, element:descriptor.element };
       const atomIndex = candidateById.get(descriptor.designAtomId);
       if (!Number.isInteger(atomIndex)) {
         missing.push({ constraintId:definition.id, designAtomId:descriptor.designAtomId });
         return null;
       }
-      return { scope:'ligand', atomIndex };
+      return { scope:'ligand', atomIndex, designAtomId:descriptor.designAtomId,
+        referencePoint:descriptor.referencePoint ? { ...descriptor.referencePoint } : null };
     };
     const donor = participant(definition.donor);
     const hydrogen = participant(definition.hydrogen);
@@ -93,6 +97,35 @@ export function mapCapturedHydrogenBonds(definitions, candidateAtoms, selectedId
       receptorRole:definition.receptorRole, donor, hydrogen, acceptor }];
   });
   return { constraints:mapped, missing, complete:missing.length === 0 };
+}
+
+export function capturedReceptorContactIntegrity(definitions, molecule, toleranceAngstrom = 1e-6) {
+  const atomsById = new Map(Array.from(molecule?.atoms || [], (atom, index) =>
+    [atom.designAtomId, { atom, index }]));
+  const checked = [], issues = [], seen = new Set();
+  Array.from(definitions || []).forEach((definition) => {
+    [definition.donor, definition.hydrogen, definition.acceptor]
+      .filter((descriptor) => descriptor?.scope === 'receptor')
+      .forEach((descriptor) => {
+        if (!descriptor.designAtomId || seen.has(descriptor.designAtomId)) return;
+        seen.add(descriptor.designAtomId);
+        const current = atomsById.get(descriptor.designAtomId);
+        if (!current) {
+          issues.push({ designAtomId:descriptor.designAtomId, reason:'missing' }); return;
+        }
+        if (current.atom.element !== descriptor.element) {
+          issues.push({ designAtomId:descriptor.designAtomId, reason:'element-changed' }); return;
+        }
+        const displacementAngstrom = Math.hypot(current.atom.x - descriptor.point.x,
+          current.atom.y - descriptor.point.y, current.atom.z - descriptor.point.z);
+        checked.push({ designAtomId:descriptor.designAtomId, globalAtomIndex:current.index,
+          displacementAngstrom });
+        if (displacementAngstrom > toleranceAngstrom)
+          issues.push({ designAtomId:descriptor.designAtomId, reason:'coordinate-changed',
+            displacementAngstrom });
+      });
+  });
+  return { valid:issues.length === 0, toleranceAngstrom, checked, issues };
 }
 
 export function capturedHydrogenBondAvailability(definitions, candidateAtoms) {

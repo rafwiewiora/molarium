@@ -526,9 +526,11 @@ const browserSuite = String.raw`(async () => {
     && propagationSetup.status.includes('Capture this ligand pose'),
   'reference-pose propagation requires no manual core selection', JSON.stringify(propagationSetup));
   const propagationReference = await api.captureDockingReference();
+  const cleanupDefault = api.setDockingEditCleanup('preserve-reference');
   api.addElementCurrent('F', 6);
   check(propagationReference.mode === 'pose-propagation'
     && propagationReference.coreAtomIds.length === 6
+    && cleanupDefault.visible && cleanupDefault.mode === 'preserve-reference'
     && document.querySelector('#docking-status').textContent.includes('6 unchanged atoms fixed'),
   'recorded edits automatically inherit every surviving reference heavy atom',
   JSON.stringify(propagationReference));
@@ -545,9 +547,13 @@ const browserSuite = String.raw`(async () => {
       && propagationRun.selected.refinement.relaxation
         .maximumDisplacementAngstromPerIteration === 0.01
       && propagationLabbook.protocol.id === 'molarium-pose-propagation-1'
-      && propagationLabbook.protocol.version === '0.2.0'
+      && propagationLabbook.protocol.version === '0.3.0'
       && propagationLabbook.selections.atomLineage.inheritedAtomIds.length === 6
       && propagationLabbook.selections.atomLineage.addedAtomIds.length === 1
+      && propagationLabbook.selections.editPreparation.selectedCleanupMode === 'preserve-reference'
+      && Array.isArray(propagationLabbook.selections.editPreparation.interactivePolishHistory)
+      && Array.isArray(propagationLabbook.selections.fixedReceptorContactParticipantIds)
+      && propagationLabbook.events.some((event) => event.stage === 'captured-ligand-hydrogen-restoration')
       && propagationLabbook.events.some((event) => event.stage === 'fixed-scaffold-relaxation'),
     'pose propagation records automatic atom lineage and fixed-scaffold Sage relaxation',
     JSON.stringify({ run:propagationRun, protocol:propagationLabbook.protocol.id,
@@ -557,6 +563,85 @@ const browserSuite = String.raw`(async () => {
     check(propagated.molecule.source.docking.protocol === 'molarium-pose-propagation-1',
       'applied propagated poses retain their distinct protocol identity');
   }
+
+  await api.loadSmilesWithRdkit('c1ccccc1', 'Reference phenyl edit');
+  const arylEditFixture = structuredClone(api.current().molecule);
+  arylEditFixture.atoms.forEach((atom, index) => Object.assign(atom, {
+    record:'HETATM', atomName:'L' + (index + 1), residueName:'BEN', residueIndex:1, chain:'L',
+  }));
+  const arylLigandAtomCount = arylEditFixture.atoms.length;
+  arylEditFixture.atoms.push(
+    { element:'N', x:-5, y:0, z:0, record:'ATOM', atomName:'N', residueName:'ALA', residueIndex:1, chain:'A' },
+    { element:'H', x:-4, y:0, z:0, record:'ATOM', atomName:'H', residueName:'ALA', residueIndex:1, chain:'A' });
+  arylEditFixture.bonds.push({ a:arylLigandAtomCount, b:arylLigandAtomCount + 1, order:1 });
+  const regressionMasses = { H:1.008, C:12.011, N:14.007 };
+  arylEditFixture.parameterization = {
+    forcefield:'browser regression fixture', chargeModel:'zero charges', sourceSha256:'browser-regression',
+    system:{ particles:arylEditFixture.atoms.map((atom, index) => ({ index,
+      mass_amu:regressionMasses[atom.element] || 12 })), constraints:[], bonds:[], angles:[], torsions:[],
+      exceptions:[], nonbonded:arylEditFixture.atoms.map((atom, index) => ({ index, charge_e:0,
+        sigma_nm:atom.element === 'H' ? 0.1 : 0.34, epsilon_kj:atom.element === 'H' ? 0.02 : 0.4 })) },
+  };
+  arylEditFixture.source = { format:'pdb', pdbId:'ARYL-EDIT-REGRESSION' };
+  arylEditFixture.prediction = { kind:'pdb-import' };
+  api.loadObject(arylEditFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('propagate');
+  const arylReference = await api.captureDockingReference();
+  const arylReferenceHeavyIndices = api.current().molecule.atoms.flatMap((atom, index) =>
+    atom.record === 'HETATM' && atom.element !== 'H' ? [index] : []);
+  const arylReferenceHeavyPositions = arylReferenceHeavyIndices.map((index) => {
+    const atom = api.current().molecule.atoms[index]; return [atom.x, atom.y, atom.z];
+  });
+  const arylCleanupDefault = api.setDockingEditCleanup('preserve-reference');
+  document.querySelector('[data-tool="add"]').click();
+  document.querySelector('[data-element="C"]').click();
+  const arylTarget = api.viewerState().atoms.find((atom) => atom.index === 0);
+  const arylCanvas = document.querySelector('#molecule-canvas');
+  const arylCanvasRect = arylCanvas.getBoundingClientRect();
+  for (const type of ['pointerdown', 'pointerup']) arylCanvas.dispatchEvent(new PointerEvent(type, {
+    bubbles:true, pointerId:83,
+    clientX:arylCanvasRect.left + arylTarget.sx,
+    clientY:arylCanvasRect.top + arylTarget.sy,
+  }));
+  const referenceEditPolish = await new Promise((resolve, reject) => {
+    const started = performance.now();
+    const poll = () => {
+      const source = api.current().molecule.source || {};
+      if (source.lastInteractivePolish) return resolve(source.lastInteractivePolish);
+      if (source.lastInteractivePolishError) return reject(new Error(source.lastInteractivePolishError));
+      if (performance.now() - started > 10000)
+        return reject(new Error('Timed out waiting for reference-preserving edit cleanup'));
+      setTimeout(poll, 50);
+    };
+    poll();
+  });
+  const arylEdited = api.current().molecule;
+  const inheritedMaximumDisplacement = Math.max(...arylReferenceHeavyIndices.map((atomIndex, ordinal) => {
+    const atom = arylEdited.atoms[atomIndex], before = arylReferenceHeavyPositions[ordinal];
+    return Math.hypot(atom.x - before[0], atom.y - before[1], atom.z - before[2]);
+  }));
+  const addedMethylCarbon = arylEdited.atoms.findIndex((atom) =>
+    atom.element === 'C' && !atom.designAtomId);
+  const methylBondLength = Math.hypot(arylEdited.atoms[0].x - arylEdited.atoms[addedMethylCarbon].x,
+    arylEdited.atoms[0].y - arylEdited.atoms[addedMethylCarbon].y,
+    arylEdited.atoms[0].z - arylEdited.atoms[addedMethylCarbon].z);
+  const preservedSelection = api.localPolishSelection([0, addedMethylCarbon], 2);
+  const freeCleanup = api.setDockingEditCleanup('free-local');
+  const freeSelection = api.localPolishSelection([0, addedMethylCarbon], 2);
+  check(arylReference.mode === 'pose-propagation' && arylReference.coreAtomIds.length === 6
+    && arylCleanupDefault.visible && arylCleanupDefault.mode === 'preserve-reference'
+    && referenceEditPolish.cleanupMode === 'preserve-reference'
+    && referenceEditPolish.fixedInheritedHeavyAtomCount === 6
+    && inheritedMaximumDisplacement < 1e-12
+    && methylBondLength > 1.35 && methylBondLength < 1.65
+    && arylReferenceHeavyIndices.every((index) => !preservedSelection.movableAtomIndices.includes(index))
+    && freeCleanup.mode === 'free-local'
+    && arylReferenceHeavyIndices.every((index) => freeSelection.movableAtomIndices.includes(index))
+    && arylEdited.source.interactivePolishHistory.length >= 1,
+  'the real canvas add-methyl path preserves a captured aromatic scaffold by default and exposes free ring cleanup explicitly',
+  JSON.stringify({ arylCleanupDefault, referenceEditPolish, inheritedMaximumDisplacement,
+    methylBondLength, preservedSelection, freeSelection }));
   document.querySelector('.mode-bar button[data-mode="view"]').click();
   const bentHydroxylFixture = {
     name:'Tyr-ligand polar-H fixture', smiles:'protein-ligand fixture', charge:0, multiplicity:1,

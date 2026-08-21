@@ -122,7 +122,7 @@ export const MOLARIUM_CONSTRAINT_DOCK_PROTOCOL = Object.freeze({
 export const MOLARIUM_POSE_PROPAGATION_PROTOCOL = Object.freeze({
   ...structuredClone(MOLARIUM_CONSTRAINT_DOCK_PROTOCOL),
   id:'molarium-pose-propagation-1',
-  version:'0.2.0',
+  version:'0.3.0',
   name:'Molarium Pose Propagation-1',
   title:'Edit-lineage reference-pose propagation and constrained refinement',
   summary:'All surviving reference heavy atoms remain exact while new graph branches undergo receptor-aware torsion search and fixed-scaffold OpenFF Sage relaxation.',
@@ -186,6 +186,7 @@ export const MOLARIUM_POSE_PROPAGATION_PROTOCOL = Object.freeze({
     stages:Object.freeze([
       'stable edit-lineage mapping of every surviving heavy atom',
       'exact reference-coordinate propagation',
+      'exact restoration of surviving ligand-donor hydrogens used by required captured contacts',
       'receptor-aware torsion Monte Carlo on new graph branches',
       'fixed-scaffold OpenFF Sage local relaxation',
       'explicit required H-bond audit',
@@ -211,6 +212,8 @@ export const MOLARIUM_POSE_PROPAGATION_PROTOCOL = Object.freeze({
     candidateSeedXorMultiplierUint32:2654435769,
     candidateSeedFormula:'uint32(baseSeed XOR imul(candidateOrdinalOneBased, 0x9e3779b9))',
     prng:'mulberry32 uint32 implementation in stormm/core.mjs',
+    ligandDonorHydrogenRestoration:'for each required ligand-donor contact, restore the surviving explicit H to its captured reference coordinate before torsion search',
+    duplicateHydrogenRule:'first selected contact in captured order restores a ligand hydrogen; later contacts using that hydrogen are audited and skipped',
   }),
   torsionMonteCarlo:Object.freeze({
     method:'molarium-fixed-core-torsion-mc/v1',

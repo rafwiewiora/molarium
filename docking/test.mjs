@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { MOLARIUM_CONSTRAINT_DOCK_PROTOCOL, MOLARIUM_POSE_PROPAGATION_PROTOCOL } from './protocol.mjs';
 import { applyCoreTransform, evaluateCoreConstraint, evaluateHydrogenBondConstraint,
-  fittedCoreTransform, hydrogenBondGeometry, rankConstrainedPoses, scoreConstrainedPose,
-  snapCorePositions } from './constraints.mjs';
+  fittedCoreTransform, hydrogenBondGeometry, restoreCapturedLigandDonorHydrogens,
+  rankConstrainedPoses, scoreConstrainedPose, snapCorePositions } from './constraints.mjs';
 import { appendLabbookEvent, completeLabbook, createLabbook, inputProvenance,
   renderLabbookMarkdown, verifyLabbook } from './labbook.mjs';
 import { captureReferenceLigand, ensureStableAtomIds, mapReferenceCore,
@@ -11,7 +11,8 @@ import { runConstrainedDocking } from './workflow.mjs';
 import { buildReceptorSite, pairInteractionKcalMol, receptorSiteIntegrity,
   scoreReceptorLigand } from './receptor-score.mjs';
 import { applyLigandPositions, captureCrossHydrogenBonds, createLigandPlan, dockingInputText,
-  capturedHydrogenBondAvailability, dockingTopologyText, mapCapturedHydrogenBonds,
+  capturedHydrogenBondAvailability, capturedReceptorContactIntegrity, dockingTopologyText,
+  mapCapturedHydrogenBonds,
   unpackConformerStack } from './browser-adapter.mjs';
 import { identifyFreeRotors, packPositions4, refinePoseByTorsionMonteCarlo,
   rotateAroundBond } from './torsion-search.mjs';
@@ -47,6 +48,36 @@ const badHbond = evaluateHydrogenBondConstraint({ ...hbondGeometry, dhaAngleDegr
   MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.hydrogenBondConstraint);
 assert.equal(badHbond.satisfied, false);
 assert.ok(badHbond.penaltyKcalMol > 0);
+
+const donorHydrogenStart = Float64Array.from([0,0,0, 0,1,0]);
+const donorHydrogenRestored = restoreCapturedLigandDonorHydrogens(donorHydrogenStart, [{
+  id:'ligand-donor', required:true,
+  donor:{ scope:'ligand', atomIndex:0 },
+  hydrogen:{ scope:'ligand', atomIndex:1, referencePoint:{ x:0.95,y:0.1,z:0 } },
+  acceptor:{ scope:'receptor', point:{ x:2.8, y:0, z:0 } },
+}]);
+assert.deepEqual(Array.from(donorHydrogenRestored.positions), [0,0,0, 0.95,0.1,0]);
+assert.equal(donorHydrogenRestored.restored.length, 1);
+assert.deepEqual(Array.from(donorHydrogenStart), [0,0,0, 0,1,0]);
+const duplicateHydrogenRestoration = restoreCapturedLigandDonorHydrogens(donorHydrogenStart, [{
+  id:'first', donor:{ scope:'ligand', atomIndex:0 },
+  hydrogen:{ scope:'ligand', atomIndex:1, referencePoint:{ x:1,y:0,z:0 } },
+  acceptor:{ scope:'receptor', point:{ x:2.8,y:0,z:0 } },
+}, {
+  id:'second', donor:{ scope:'ligand', atomIndex:0 },
+  hydrogen:{ scope:'ligand', atomIndex:1, referencePoint:{ x:0,y:0,z:1 } },
+  acceptor:{ scope:'receptor', point:{ x:0,y:0,z:2.8 } },
+}]);
+assert.equal(duplicateHydrogenRestoration.restored.length, 1);
+assert.deepEqual(duplicateHydrogenRestoration.skipped,
+  [{ id:'second', hydrogenAtomIndex:1, reason:'hydrogen-already-restored' }]);
+const receptorDonorUnchanged = restoreCapturedLigandDonorHydrogens(donorHydrogenStart, [{
+  donor:{ scope:'receptor', point:{ x:0,y:0,z:0 } },
+  hydrogen:{ scope:'receptor', point:{ x:1,y:0,z:0 } },
+  acceptor:{ scope:'ligand', atomIndex:0 },
+}]);
+assert.deepEqual(Array.from(receptorDonorUnchanged.positions), Array.from(donorHydrogenStart));
+assert.equal(receptorDonorUnchanged.restored.length, 0);
 
 const feasible = scoreConstrainedPose({ physicalEnergyKcalMol:-10, core,
   hydrogenBonds:[{ ...goodHbond, required:true }] });
@@ -122,10 +153,12 @@ assert.deepEqual(propagationMap.removedAtomIds, [automaticReference.atomIds[3]])
 assert.deepEqual(propagationMap.addedAtomIds, ['test:new:F']);
 assert.ok(propagationMap.maximumTriangleDoubleAreaAngstrom2 > 0.99);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.id, 'molarium-pose-propagation-1');
-assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.version, '0.2.0');
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.version, '0.3.0');
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping.minimumSurvivingHeavyAtoms, 3);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping
   .minimumMaximumTriangleDoubleAreaAngstrom2, 1e-3);
+assert.match(MOLARIUM_POSE_PROPAGATION_PROTOCOL.candidateInitialization
+  .ligandDonorHydrogenRestoration, /captured reference coordinate/);
 assert.deepEqual(MOLARIUM_POSE_PROPAGATION_PROTOCOL.torsionMonteCarlo.proposalAnglesDegrees,
   [-180, -120, -90, -60, -30, -15, 15, 30, 60, 90, 120, 180]);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.torsionMonteCarlo.metropolisBoltzmannKcalMolKelvin,
@@ -272,6 +305,19 @@ assert.equal(hbondAvailability[0].available, true);
 assert.equal(hbondAvailability[1].available, false);
 assert.deepEqual(hbondAvailability[1].missingAtomIds,
   [capturedHbonds[1].hydrogen.designAtomId]);
+const waterContactComplex = structuredClone(complex);
+waterContactComplex.atoms.push({ element:'O', record:'HETATM', residueName:'HOH', atomName:'O',
+  chain:'W', residueIndex:9, x:4.8, y:0, z:0 });
+const waterContact = captureCrossHydrogenBonds(waterContactComplex, ligandGlobals,
+  [{ donor:4, hydrogen:5, acceptor:7, distance:1.8, cosine:-1 }]);
+assert.equal(waterContact[0].acceptor.element, 'O');
+assert.ok(waterContact[0].acceptor.designAtomId);
+assert.equal(capturedReceptorContactIntegrity(waterContact, waterContactComplex).valid, true);
+const movedWaterContact = structuredClone(waterContactComplex);
+movedWaterContact.atoms[7].x += 0.01;
+const movedWaterIntegrity = capturedReceptorContactIntegrity(waterContact, movedWaterContact);
+assert.equal(movedWaterIntegrity.valid, false);
+assert.equal(movedWaterIntegrity.issues[0].reason, 'coordinate-changed');
 
 const torsionMolecule = { name:'fixed-core rotor test', atoms:[
   { element:'C' }, { element:'C' }, { element:'C' },

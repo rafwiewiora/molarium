@@ -443,3 +443,41 @@ The unit gate locks the `mulberry32(20260819)` output vector, the first four can
 critical v0.2 constants, and parity between executable torsion defaults and the protocol snapshot.
 The browser gate records actual fixed-relaxation step scale and displacement cap in addition to the
 engine, force field, iterations, fixed atoms, score, and acceptance decision.
+
+## 2026-08-20 — reference-preserving edit cleanup and captured donor-H restoration v0.3
+
+### Decision D-023 — captured analogue scaffolds override generic ring cleanup
+
+The generic local editor expands a touched fused ring into one movable unit. That remains appropriate
+for unconstrained isolated-molecule cleanup, but it conflicts with a captured analogue pose. After
+Pose Propagation reference capture, `Preserve reference` is therefore the default: every surviving
+same-element reference heavy atom is fixed during automatic and explicit MMFF94/UFF cleanup, while
+new atoms and hydrogens remain movable. `Free local cleanup` exposes the older behavior explicitly.
+
+Reason: a reference-bound ring is experimental or otherwise trusted pose evidence, not merely the
+boundary of a local optimizer. An automatic builder polish must not silently change that hypothesis.
+The selected mode and the append-only cleanup history are copied into the run labbook.
+
+### Decision D-024 — restore, rather than invent, ligand donor-H geometry
+
+For a selected required ligand-donor contact, Pose Propagation restores the surviving explicit
+ligand donor hydrogen to its captured reference coordinate before torsion search. No heavy atom
+moves. Receptor-donor contacts are unchanged, a missing captured H coordinate is reported rather
+than guessed, and a second contact reusing the same hydrogen is skipped in stable captured order.
+
+Reason: heavy-atom fixation cannot determine a donor hydrogen's direction. This restoration repairs
+that one remaining directional degree of freedom without manufacturing a linear D-H-A arrangement
+that could violate an sp2 donor's local valence geometry. It does not assert that the contact exists;
+the same distance and D-H-A feasibility gate still accepts or rejects it. Because this is an
+algorithmic change, Pose Propagation advances to version `0.3.0`; ConstraintDock remains unchanged.
+
+### Validation V-008 — reproduce the reported methyl-edit path
+
+The browser gate now uses the real canvas add-element operation on a prepared phenyl reference rather
+than a direct test helper. It requires all six inherited aromatic carbons to remain bit-for-bit fixed,
+an aryl-methyl bond between `1.35` and `1.65 Å`, an append-only cleanup record naming
+`preserve-reference`, and explicit selection of the entire ring only after choosing `free-local`.
+The complete browser gate passes 434/434 checks. The unit gate separately verifies exact captured-H
+coordinate restoration, stable duplicate-contact handling, and no mutation of the input array. The
+RDKit 2D gate passes 5/5, the Local Lab privacy gate passes 14/14 with zero outbound requests reaching
+its pre-network interceptor, and the production web build succeeds.
