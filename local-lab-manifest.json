@@ -17,8 +17,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 569719,
-      "sha256": "9073f9c760957e4a8d9edffc546124ff74839f8d44d760015f8a2adfc5fec1b5"
+      "bytes": 570344,
+      "sha256": "6a34a005deb90ec8e8c23fd73c36e0e2c2796ac93aae7cde5a5ec2c2d9ea170c"
     },
     {
       "path": "bun.lock",

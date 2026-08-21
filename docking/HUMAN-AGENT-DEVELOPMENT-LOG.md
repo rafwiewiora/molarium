@@ -106,7 +106,7 @@ All local release gates passed on 2026-08-20:
 
 - `npm run test:docking`: PASS;
 - `npm test`: 435/435 browser checks after integration with `dev`;
-- `npm run test:2d`: 16/16 RDKit 2D browser checks after integration with `dev`;
+- `npm run test:2d`: 17/17 RDKit 2D browser checks with 0.0000 px repeated-click drift after integration with `dev`;
 - `npm run test:development-log`: PASS;
 - `npm run build:web`: PASS, 60 files / 10.32 MiB;
 - `npm run test:local-lab`: 14/14 privacy checks, with zero requests reaching the

@@ -83,7 +83,7 @@ npm run test:local-lab
 
 On 2026-08-20, the source feature branch passed 434/434 browser checks and 5/5 focused 2D checks.
 After integration with `dev`, the docking unit gate passed, the main browser gate passed 435/435
-checks, the expanded RDKit 2D gate passed 16/16 checks, the production build produced 60 files
+checks, the expanded RDKit 2D gate passed 17/17 checks with 0.0000 px repeated-click drift, the production build produced 60 files
 (10.32 MiB), the transcript-export regression passed, and the Local Lab privacy gate passed 14/14
 checks with no external request reaching its pre-network interceptor. The first integrated focused
 2D run timed out while starting Chrome inside the restricted process sandbox; it passed without a
