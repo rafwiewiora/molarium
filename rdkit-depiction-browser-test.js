@@ -155,6 +155,45 @@ try {
     api.discardChemistryCurrent();
     await api.waitFor2DDepiction();
 
+    api.load('CC(O)c1ccccc1');
+    await api.waitFor2DDepiction();
+    document.querySelector('[data-2d-tool="bond"]').click();
+    const stableSvg = document.querySelector('#structure-2d-drawing svg');
+    const stablePanel = document.querySelector('#structure-2d-panel');
+    const repeatedCore = [3, 4, 5, 6, 7, 8];
+    const coreRelativeToPanel = (svg) => {
+      const panelBox = stablePanel.getBoundingClientRect();
+      const points = repeatedCore.map((index) => atomScreenPoint(svg, index));
+      return points.reduce((sum, point) => ({
+        x:sum.x + (point.x - panelBox.x) / points.length,
+        y:sum.y + (point.y - panelBox.y) / points.length,
+      }), { x:0, y:0 });
+    };
+    const repeatedClickMeasurements = [{ click:0, selected:false,
+      sameSvg:true, ...coreRelativeToPanel(stableSvg) }];
+    for (let click = 1; click <= 8; click++) {
+      const currentSvg = document.querySelector('#structure-2d-drawing svg');
+      const atom = atomScreenPoint(currentSvg, 3);
+      drawing.dispatchEvent(new MouseEvent('click', { bubbles:true,
+        clientX:atom.x, clientY:atom.y }));
+      await new Promise((resolve) => setTimeout(resolve, 80));
+      await api.waitFor2DDepiction();
+      const afterClickSvg = document.querySelector('#structure-2d-drawing svg');
+      repeatedClickMeasurements.push({ click, selected:click % 2 === 1,
+        sameSvg:afterClickSvg === stableSvg,
+        overlays:afterClickSvg.querySelectorAll('[data-molarium-selection]').length,
+        ...coreRelativeToPanel(afterClickSvg) });
+    }
+    const repeatOrigin = repeatedClickMeasurements[0];
+    const repeatedClickMaximumDrift = Math.max(...repeatedClickMeasurements.map((point) =>
+      Math.hypot(point.x - repeatOrigin.x, point.y - repeatOrigin.y)));
+    check(repeatedClickMeasurements.slice(1).every((point) => point.sameSvg)
+      && repeatedClickMeasurements.slice(1).every((point) =>
+        point.overlays === (point.selected ? 1 : 0))
+      && repeatedClickMaximumDrift < 0.5,
+    'repeated bond-tool select/cancel clicks reuse one SVG without cumulative panel-relative drift',
+    JSON.stringify({ repeatedClickMaximumDrift, repeatedClickMeasurements }));
+
     api.load('CC');
     const editable = await api.waitFor2DDepiction();
     const beforeDraw = api.current().molecule;
@@ -251,7 +290,8 @@ try {
     check(!api.twoDDepiction().visible, 'pure proteins do not open an unreadable whole-protein depiction');
 
     const failed = checks.filter((entry) => !entry.passed);
-    return { passed:checks.length - failed.length, total:checks.length, failed };
+    return { passed:checks.length - failed.length, total:checks.length, failed,
+      repeatedClickMaximumDrift, repeatedClickMeasurements };
   })()`;
   const evaluation = await client.call('Runtime.evaluate', {
     expression, awaitPromise:true, returnByValue:true,
@@ -270,6 +310,8 @@ try {
     await Bun.write(Bun.env.MOLARIUM_2D_SCREENSHOT, Buffer.from(capture.data, 'base64'));
   }
   console.log(`${result.passed}/${result.total} RDKit 2D browser checks passed`);
+  console.log(`Repeated-click maximum panel-relative drift: ${result.repeatedClickMaximumDrift.toFixed(4)} px`);
+  console.log(`Repeated-click measurements: ${JSON.stringify(result.repeatedClickMeasurements)}`);
 } finally {
   client?.close(); chrome?.kill(); server?.kill(); await rm(profile, { recursive:true, force:true });
 }

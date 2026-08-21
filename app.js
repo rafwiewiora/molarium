@@ -762,15 +762,29 @@ function depictionTarget(molecule = state.molecule) {
 function depictionSignature(target) {
   const molecule = target?.molecule;
   if (!molecule) return '';
-  const selected = state.selectedAtoms.flatMap((globalIndex) => {
-    const localIndex = target.globalToLocal.get(globalIndex);
-    return localIndex == null ? [] : [localIndex];
-  });
   return JSON.stringify({
     component:target.componentId,
     atoms:molecule.atoms.map((atom) => [atom.element, atomFormalCharge(atom)]),
     bonds:molecule.bonds.map((bond) => [bond.a, bond.b, Number(bond.order || 1)]),
-    selected,
+  });
+}
+
+function update2DSelectionOverlay() {
+  const svg = document.querySelector('#structure-2d-drawing svg');
+  if (!svg) return;
+  svg.querySelectorAll('[data-molarium-selection]').forEach((node) => node.remove());
+  const selected = new Set(state.selectedAtoms);
+  state.depictionGlobalAtomIndices.forEach((globalIndex, localIndex) => {
+    if (!selected.has(globalIndex)) return;
+    const point = depictionAtomPoint(svg, localIndex);
+    if (!point) return;
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', String(point.x)); circle.setAttribute('cy', String(point.y));
+    circle.setAttribute('r', '7.5'); circle.setAttribute('data-molarium-selection', 'true');
+    circle.setAttribute('fill', 'rgba(248,113,113,.28)');
+    circle.setAttribute('stroke', 'rgba(239,68,68,.72)'); circle.setAttribute('stroke-width', '1.4');
+    circle.setAttribute('pointer-events', 'none');
+    svg.appendChild(circle);
   });
 }
 
@@ -805,6 +819,7 @@ function update2DEditorUi() {
     : 'Pick the second atom. Both views keep the same atom identities.';
   else if (state.depictionTool === 'erase') help.textContent = 'Click an atom or bond to stage its deletion.';
   else help.textContent = 'Select an atom or bond here; use the Build panel for element and charge changes.';
+  update2DSelectionOverlay();
 }
 
 function sanitizedDepictionSvg(svgText) {
@@ -949,17 +964,13 @@ async function update2DDepiction() {
   panel.classList.remove('hidden');
   setText('#structure-2d-label', target.label);
   drawing.replaceChildren(Object.assign(document.createElement('span'), { textContent:'Drawing…' }));
-  const selectedAtomIndices = state.selectedAtoms.flatMap((globalIndex) => {
-    const localIndex = target.globalToLocal.get(globalIndex);
-    return localIndex == null ? [] : [localIndex];
-  });
   try {
     const reusableTemplate = state.depictionOrientationAnchor?.componentId === target.componentId
       && target.globalAtomIndices.filter((index) =>
         state.depictionOrientationAnchor.points.has(state.molecule?.atoms?.[index])).length >= 2
       ? state.depictionTemplateMolBlock : null;
     const result = await runRDKitJob('depict', target.molecule, () => {}, {
-      selectedAtomIndices, alignmentTemplateMolBlock:reusableTemplate,
+      alignmentTemplateMolBlock:reusableTemplate,
     });
     if (sequence !== state.depictionSequence || key !== state.depictionKey) return;
     const svg = sanitizedDepictionSvg(result.svg);
@@ -1011,6 +1022,7 @@ function schedule2DDepiction(delay = 50) {
     setText('#structure-2d-label', target.label);
     drawing.replaceChildren(Object.assign(document.createElement('span'), { textContent:'Drawing…' }));
   }
+  else update2DSelectionOverlay();
   state.depictionTimer = setTimeout(update2DDepiction, delay);
 }
 
