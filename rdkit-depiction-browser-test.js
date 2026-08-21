@@ -72,6 +72,30 @@ try {
       drawing.dispatchEvent(new MouseEvent('click', { bubbles:true,
         clientX:point.x + direction * distance, clientY:point.y }));
     };
+    const atomScreenPoint = (svg, atomIndex) => {
+      const bondEndpoints = [], labelPoints = [];
+      svg.querySelectorAll('[class*="atom-' + atomIndex + '"]').forEach((node) => {
+        const classes = [...node.classList].flatMap((name) => {
+          const match = /^atom-(\d+)$/.exec(name); return match ? [Number(match[1])] : [];
+        });
+        let point = null;
+        if (node instanceof SVGGeometryElement && classes.length >= 2) {
+          const length = node.getTotalLength();
+          point = classes.indexOf(atomIndex) === 0
+            ? node.getPointAtLength(0) : node.getPointAtLength(length);
+        } else if (node instanceof SVGGraphicsElement) {
+          const box = node.getBBox(); point = { x:box.x + box.width / 2, y:box.y + box.height / 2 };
+        }
+        const matrix = node.getScreenCTM();
+        if (point && matrix) {
+          const screen = new DOMPoint(point.x, point.y).matrixTransform(matrix);
+          if (classes.length >= 2) bondEndpoints.push(screen); else labelPoints.push(screen);
+        }
+      });
+      const points = bondEndpoints.length ? bondEndpoints : labelPoints;
+      return points.reduce((sum, point) => ({ x:sum.x + point.x / points.length,
+        y:sum.y + point.y / points.length }), { x:0, y:0 });
+    };
     api.load('CC(O)c1ccccc1');
     const initial = await api.waitFor2DDepiction();
     check(initial.visible && initial.hasSvg && initial.atomIndices.length === 9 && initial.atomClasses > 0,
@@ -97,6 +121,39 @@ try {
     const selected = await api.waitFor2DDepiction();
     check(selected.selectedAtoms.length === 1 && selected.selectedAtoms[0] === initial.atomIndices[2],
       'clicking empty space near a 2D atom selects the same atom in 3D', JSON.stringify(selected));
+
+    const orientationSvg = document.querySelector('#structure-2d-drawing svg');
+    const orientationBefore = initial.atomIndices.map((_, index) => atomScreenPoint(orientationSvg, index));
+    await api.draw2DAtom(0, 'F');
+    const orientationEdited = await api.waitFor2DDepiction();
+    const orientationAfterSvg = document.querySelector('#structure-2d-drawing svg');
+    const orientationAfter = initial.atomIndices.map((_, index) => atomScreenPoint(orientationAfterSvg, index));
+    const orientationDisplacements = orientationBefore.map((point, index) =>
+      Math.hypot(point.x - orientationAfter[index].x, point.y - orientationAfter[index].y));
+    // Compare the unedited phenyl core after removing a common translation.
+    // The floating panel itself can move when Build controls open, but the
+    // molecule must not rotate or rescale under the user's pointer.
+    const core = [3, 4, 5, 6, 7, 8];
+    const centered = (points) => {
+      const center = core.reduce((sum, index) => ({
+        x:sum.x + points[index].x / core.length,
+        y:sum.y + points[index].y / core.length,
+      }), { x:0, y:0 });
+      return core.map((index) => ({ x:points[index].x - center.x, y:points[index].y - center.y }));
+    };
+    const beforeCore = centered(orientationBefore), afterCore = centered(orientationAfter);
+    const orientationRmsd = Math.sqrt(beforeCore.reduce((sum, point, index) => {
+      const dx = point.x - afterCore[index].x, dy = point.y - afterCore[index].y;
+      return sum + dx * dx + dy * dy;
+    }, 0) / core.length);
+    check(orientationEdited.alignedAtoms === initial.atomIndices.length && orientationRmsd < 8,
+      'a chemistry edit preserves the screen orientation of retained 2D atoms',
+      JSON.stringify({ orientationRmsd, depiction:orientationEdited,
+        transform:orientationAfterSvg.querySelector(':scope > g')?.getAttribute('transform'),
+        displacements:orientationDisplacements.sort((left, right) => left - right),
+        before:orientationBefore, after:orientationAfter }));
+    api.discardChemistryCurrent();
+    await api.waitFor2DDepiction();
 
     api.load('CC');
     const editable = await api.waitFor2DDepiction();

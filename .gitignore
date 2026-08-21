@@ -42,6 +42,10 @@ pnpm-debug.log*
 # Paper build intermediates (source and checked-in PDFs remain tracked)
 paper/build/
 
+# Private Codex transcript exports. Curated, redacted debugging episodes belong
+# in paper/development-log/episodes/; raw and machine exports never do.
+paper/development-log/private/
+
 # Downloaded public model assets
 mlip/models/*.onnx
 openfold-export-results/trained/models/

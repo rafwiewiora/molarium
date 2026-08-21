@@ -714,6 +714,10 @@ const state = {
   depictionTimer: 0,
   depictionGlobalAtomIndices: [],
   depictionGlobalBondPairs: [],
+  depictionAtomObjects: [],
+  depictionComponentId: null,
+  depictionOrientationAnchor: null,
+  depictionTemplateMolBlock: null,
   depictionKey: null,
   depictionTool: 'select',
   depictionBondStart: null,
@@ -817,6 +821,116 @@ function sanitizedDepictionSvg(svgText) {
   return document.importNode(svg, true);
 }
 
+function depictionGraphicsPointInRoot(svg, node, point) {
+  const nodeMatrix = node.getScreenCTM();
+  const rootMatrix = svg.getScreenCTM();
+  if (!nodeMatrix || !rootMatrix) return null;
+  const screen = new DOMPoint(point.x, point.y).matrixTransform(nodeMatrix);
+  return screen.matrixTransform(rootMatrix.inverse());
+}
+
+function captureDepictionOrientation(svg) {
+  if (!svg || !state.depictionAtomObjects.length) return;
+  const points = new Map();
+  state.depictionAtomObjects.forEach((atom, localIndex) => {
+    const point = depictionScreenPoint(svg, depictionAtomPoint(svg, localIndex));
+    if (atom && point) points.set(atom, point);
+  });
+  if (points.size >= 2) state.depictionOrientationAnchor = {
+    componentId:state.depictionComponentId, points,
+  };
+}
+
+function depictionSimilarityTransform(source, target) {
+  const sourceCenter = source.reduce((sum, point) => ({ x:sum.x + point.x / source.length,
+    y:sum.y + point.y / source.length }), { x:0, y:0 });
+  const targetCenter = target.reduce((sum, point) => ({ x:sum.x + point.x / target.length,
+    y:sum.y + point.y / target.length }), { x:0, y:0 });
+  let dot = 0, cross = 0, denominator = 0;
+  source.forEach((point, index) => {
+    const px = point.x - sourceCenter.x, py = point.y - sourceCenter.y;
+    const qx = target[index].x - targetCenter.x, qy = target[index].y - targetCenter.y;
+    dot += px * qx + py * qy;
+    cross += px * qy - py * qx;
+    denominator += px * px + py * py;
+  });
+  const magnitude = Math.hypot(dot, cross);
+  if (denominator < 1e-6 || magnitude < 1e-6) return null;
+  const scale = Math.max(0.72, Math.min(1.38, magnitude / denominator));
+  const cosine = dot / magnitude, sine = cross / magnitude;
+  const a = scale * cosine, b = scale * sine, c = -scale * sine, d = scale * cosine;
+  const e = targetCenter.x - a * sourceCenter.x - c * sourceCenter.y;
+  const f = targetCenter.y - b * sourceCenter.x - d * sourceCenter.y;
+  return { a, b, c, d, e, f };
+}
+
+function depictionRobustSimilarityTransform(source, target) {
+  if (source.length < 3) return depictionSimilarityTransform(source, target);
+  let best = null;
+  for (let first = 0; first < source.length - 1; first++) {
+    for (let second = first + 1; second < source.length; second++) {
+      const sx = source[second].x - source[first].x;
+      const sy = source[second].y - source[first].y;
+      const tx = target[second].x - target[first].x;
+      const ty = target[second].y - target[first].y;
+      const sourceLength = Math.hypot(sx, sy);
+      const targetLength = Math.hypot(tx, ty);
+      if (sourceLength < 12 || targetLength < 12) continue;
+      const scale = Math.max(0.72, Math.min(1.38, targetLength / sourceLength));
+      const cosine = (sx * tx + sy * ty) / (sourceLength * targetLength);
+      const sine = (sx * ty - sy * tx) / (sourceLength * targetLength);
+      const a = scale * cosine, b = scale * sine, c = -scale * sine, d = scale * cosine;
+      const e = target[first].x - a * source[first].x - c * source[first].y;
+      const f = target[first].y - b * source[first].x - d * source[first].y;
+      const residuals = source.map((point, index) => Math.hypot(
+        a * point.x + c * point.y + e - target[index].x,
+        b * point.x + d * point.y + f - target[index].y,
+      )).sort((left, right) => left - right);
+      const median = residuals[Math.floor(residuals.length / 2)];
+      if (!best || median < best.median) best = { a, b, c, d, e, f, median };
+    }
+  }
+  if (!best) return depictionSimilarityTransform(source, target);
+  const cutoff = Math.max(4, best.median * 2.5);
+  const inlierSource = [], inlierTarget = [];
+  source.forEach((point, index) => {
+    const residual = Math.hypot(
+      best.a * point.x + best.c * point.y + best.e - target[index].x,
+      best.b * point.x + best.d * point.y + best.f - target[index].y,
+    );
+    if (residual <= cutoff) { inlierSource.push(point); inlierTarget.push(target[index]); }
+  });
+  return inlierSource.length >= 2
+    ? depictionSimilarityTransform(inlierSource, inlierTarget) : best;
+}
+
+function alignDepictionToPrevious(svg, target) {
+  const anchor = state.depictionOrientationAnchor;
+  if (!anchor || anchor.componentId !== target.componentId) return null;
+  const inverseRoot = svg.getScreenCTM()?.inverse();
+  if (!inverseRoot) return null;
+  const source = [], destination = [];
+  target.globalAtomIndices.forEach((globalIndex, localIndex) => {
+    const atom = state.molecule?.atoms?.[globalIndex];
+    const previous = anchor.points.get(atom);
+    const current = depictionAtomPoint(svg, localIndex);
+    const priorInCurrentSvg = previous
+      ? new DOMPoint(previous.x, previous.y).matrixTransform(inverseRoot) : null;
+    if (priorInCurrentSvg && current) { source.push(current); destination.push(priorInCurrentSvg); }
+  });
+  if (source.length < 2) return null;
+  // RDKit renders wedge bonds as several short SVG paths. Their averaged
+  // endpoints are useful hit targets but can be poor geometric anchors, so fit
+  // the viewport transform robustly to the stable majority of common atoms.
+  const transform = depictionRobustSimilarityTransform(source, destination);
+  if (!transform) return null;
+  const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  while (svg.firstChild) group.appendChild(svg.firstChild);
+  group.setAttribute('transform', `matrix(${transform.a} ${transform.b} ${transform.c} ${transform.d} ${transform.e} ${transform.f})`);
+  svg.appendChild(group);
+  return { commonAtoms:source.length, ...transform };
+}
+
 async function update2DDepiction() {
   const panel = document.querySelector('#structure-2d-panel');
   const drawing = document.querySelector('#structure-2d-drawing');
@@ -824,7 +938,9 @@ async function update2DDepiction() {
   const sequence = ++state.depictionSequence;
   if (!target) {
     panel.classList.add('hidden'); state.depictionGlobalAtomIndices = [];
-    state.depictionGlobalBondPairs = []; state.depictionKey = null;
+    state.depictionGlobalBondPairs = []; state.depictionAtomObjects = [];
+    state.depictionComponentId = null; state.depictionOrientationAnchor = null;
+    state.depictionTemplateMolBlock = null; state.depictionKey = null;
     return;
   }
   const key = depictionSignature(target);
@@ -838,16 +954,36 @@ async function update2DDepiction() {
     return localIndex == null ? [] : [localIndex];
   });
   try {
-    const result = await runRDKitJob('depict', target.molecule, () => {}, { selectedAtomIndices });
+    const reusableTemplate = state.depictionOrientationAnchor?.componentId === target.componentId
+      && target.globalAtomIndices.filter((index) =>
+        state.depictionOrientationAnchor.points.has(state.molecule?.atoms?.[index])).length >= 2
+      ? state.depictionTemplateMolBlock : null;
+    const result = await runRDKitJob('depict', target.molecule, () => {}, {
+      selectedAtomIndices, alignmentTemplateMolBlock:reusableTemplate,
+    });
     if (sequence !== state.depictionSequence || key !== state.depictionKey) return;
-    drawing.replaceChildren(sanitizedDepictionSvg(result.svg));
+    const svg = sanitizedDepictionSvg(result.svg);
+    drawing.replaceChildren(svg);
     state.depictionGlobalAtomIndices = target.globalAtomIndices.slice();
     state.depictionGlobalBondPairs = target.molecule.bonds.map((bond) => [
       target.globalAtomIndices[bond.a], target.globalAtomIndices[bond.b],
     ]);
+    state.depictionAtomObjects = target.globalAtomIndices.map((index) => state.molecule?.atoms?.[index] || null);
+    state.depictionComponentId = target.componentId;
+    state.depictionTemplateMolBlock = result.alignmentTemplateMolBlock || null;
+    // Settle tool/help layout before converting the prior screen positions into
+    // this SVG's coordinate system. Build-mode help can change the panel height.
+    update2DEditorUi();
+    const alignment = alignDepictionToPrevious(svg, target);
+    panel.dataset.alignedAtoms = String(alignment?.commonAtoms || (result.alignedToTemplate
+      ? target.globalAtomIndices.filter((index) =>
+        state.depictionOrientationAnchor?.points.has(state.molecule?.atoms?.[index])).length : 0));
+    panel.dataset.alignmentBackend = result.alignedToTemplate && alignment
+      ? 'RDKit constrained depiction + viewport alignment'
+      : result.alignedToTemplate ? 'RDKit constrained depiction'
+        : alignment ? 'SVG similarity fallback' : 'fresh layout';
     panel.dataset.rdkitVersion = result.rdkitVersion || '';
     delete panel.dataset.error; delete panel.dataset.pending;
-    update2DEditorUi();
   } catch (error) {
     if (sequence !== state.depictionSequence) return;
     drawing.replaceChildren(Object.assign(document.createElement('span'), { textContent:'2D depiction unavailable' }));
@@ -862,12 +998,15 @@ function schedule2DDepiction(delay = 50) {
   const target = depictionTarget();
   if (!target) {
     state.depictionSequence += 1; state.depictionKey = null; state.depictionGlobalAtomIndices = [];
-    state.depictionGlobalBondPairs = [];
+    state.depictionGlobalBondPairs = []; state.depictionAtomObjects = [];
+    state.depictionComponentId = null; state.depictionOrientationAnchor = null;
+    state.depictionTemplateMolBlock = null;
     panel.classList.add('hidden'); delete panel.dataset.pending;
     return;
   }
   const key = depictionSignature(target);
   if (key !== state.depictionKey) {
+    captureDepictionOrientation(drawing.querySelector('svg'));
     panel.classList.remove('hidden'); panel.dataset.pending = 'true';
     setText('#structure-2d-label', target.label);
     drawing.replaceChildren(Object.assign(document.createElement('span'), { textContent:'Drawing…' }));
@@ -876,7 +1015,7 @@ function schedule2DDepiction(delay = 50) {
 }
 
 function depictionAtomPoint(svg, atomIndex) {
-  const points = [];
+  const bondEndpoints = [], labelPoints = [];
   svg.querySelectorAll(`[class*="atom-${atomIndex}"]`).forEach((node) => {
     const atomClasses = [...node.classList].flatMap((name) => {
       const match = /^atom-(\d+)$/.exec(name); return match ? [Number(match[1])] : [];
@@ -885,11 +1024,16 @@ function depictionAtomPoint(svg, atomIndex) {
       const length = node.getTotalLength();
       const endpoint = atomClasses.indexOf(atomIndex) === 0
         ? node.getPointAtLength(0) : node.getPointAtLength(length);
-      points.push(endpoint);
+      const point = depictionGraphicsPointInRoot(svg, node, endpoint);
+      if (point) bondEndpoints.push(point);
     } else if (node instanceof SVGGraphicsElement) {
-      const box = node.getBBox(); points.push({ x:box.x + box.width / 2, y:box.y + box.height / 2 });
+      const box = node.getBBox();
+      const point = depictionGraphicsPointInRoot(svg, node,
+        { x:box.x + box.width / 2, y:box.y + box.height / 2 });
+      if (point) labelPoints.push(point);
     }
   });
+  const points = bondEndpoints.length ? bondEndpoints : labelPoints;
   if (!points.length) return null;
   return points.reduce((sum, point) => ({ x:sum.x + point.x / points.length,
     y:sum.y + point.y / points.length }), { x:0, y:0 });
@@ -927,7 +1071,7 @@ function pointSegmentDistance(point, first, second) {
 }
 
 function depictionProximityHit(event, svg) {
-  const atomSnapRadius = 42;
+  const atomSnapRadius = 56;
   const bondSnapRadius = 18;
   const pointer = { x:event.clientX, y:event.clientY };
   let atom = null;
@@ -5225,7 +5369,9 @@ window.molariumTest = Object.freeze({
       selectedAtoms:state.selectedAtoms.slice(), tool:state.depictionTool, mode:state.mode,
       pendingChanges:state.chemistryTransaction?.editCount || 0,
       hasSvg:Boolean(svg), atomClasses:svg?.querySelectorAll('[class*="atom-"]').length || 0,
-      rdkitVersion:panel.dataset.rdkitVersion || null };
+      rdkitVersion:panel.dataset.rdkitVersion || null,
+      alignedAtoms:Number(panel.dataset.alignedAtoms || 0),
+      alignmentBackend:panel.dataset.alignmentBackend || null };
   },
   select2DAtom(localIndex) { selectDepictionAtom(Number(localIndex)); return this.twoDDepiction(); },
   set2DTool(tool) {
@@ -9572,7 +9718,9 @@ document.querySelector('#clear-button').addEventListener('click', () => {
   document.querySelector('#structure-components').classList.add('hidden'); document.querySelector('#preparation-inspector').classList.add('hidden');
   document.querySelector('#ligand-protonation').classList.add('hidden');
   state.depictionSequence += 1; state.depictionKey = null; state.depictionGlobalAtomIndices = [];
-  state.depictionGlobalBondPairs = []; state.depictionBondStart = null;
+  state.depictionGlobalBondPairs = []; state.depictionAtomObjects = []; state.depictionComponentId = null;
+  state.depictionOrientationAnchor = null; state.depictionTemplateMolBlock = null;
+  state.depictionBondStart = null;
   document.querySelector('#structure-2d-panel').classList.add('hidden');
   showToast('Scene cleared'); draw();
 });

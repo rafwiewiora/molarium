@@ -116,13 +116,28 @@ async function runCalculation(message) {
   if (job === 'depict') {
     if (!molecule?.atoms?.length || molecule.atoms.length > 256)
       throw new Error('2D depiction supports molecular components with 1–256 atoms');
-    let rdMol;
+    let rdMol, templateMol;
     try {
       rdMol = module.get_mol(moleculeToMolBlock(molecule), JSON.stringify({
         sanitize:false, removeHs:false, strictParsing:false,
       }));
       if (!rdMol) throw new Error('RDKit could not read this molecular component');
-      if (!rdMol.set_new_coords()) throw new Error('RDKit could not generate 2D coordinates');
+      let alignedToTemplate = false;
+      if (options.alignmentTemplateMolBlock) {
+        try {
+          templateMol = module.get_mol(String(options.alignmentTemplateMolBlock), JSON.stringify({
+            sanitize:false, removeHs:false, strictParsing:false,
+          }));
+          if (templateMol) {
+            rdMol.generate_aligned_coords(templateMol, JSON.stringify({
+              useCoordGen:true, allowRGroups:true, acceptFailure:false,
+            }));
+            alignedToTemplate = true;
+          }
+        } catch { alignedToTemplate = false; }
+      }
+      if (!alignedToTemplate && !rdMol.set_new_coords())
+        throw new Error('RDKit could not generate 2D coordinates');
       const selected = Array.from(options.selectedAtomIndices || [], Number)
         .filter((index) => Number.isInteger(index) && index >= 0 && index < molecule.atoms.length);
       const selectedSet = new Set(selected);
@@ -139,11 +154,13 @@ async function runCalculation(message) {
         throw new Error('RDKit returned an invalid 2D depiction');
       self.postMessage({
         type:'result', id, job, svg, atomCount:molecule.atoms.length,
+        alignmentTemplateMolBlock:rdMol.get_molblock(JSON.stringify({ kekulize:false })),
+        alignedToTemplate,
         rdkitVersion:module.version?.() || null, elapsedMs:performance.now() - started,
         platform:'WebAssembly', backend:'RDKit MolDraw2D',
       });
       return;
-    } finally { rdMol?.delete(); }
+    } finally { templateMol?.delete(); rdMol?.delete(); }
   }
   if (job === 'protonation') {
     const smiles = String(options.smiles || '').trim();
