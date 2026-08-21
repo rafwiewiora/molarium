@@ -284,6 +284,85 @@ try {
     api.discardChemistryCurrent();
     await api.waitFor2DDepiction();
 
+    await api.loadSmilesWithRdkit(lsdSmiles, 'LSD indolic NH hit target');
+    const nhBefore = await api.waitFor2DDepiction();
+    const nhBeforeMolecule = api.current().molecule;
+    const hydrogenBearingNitrogens = nhBefore.atomIndices.filter((globalIndex) =>
+      nhBeforeMolecule.atoms[globalIndex]?.element === 'N'
+      && nhBeforeMolecule.bonds.some((bond) => {
+        if (bond.a !== globalIndex && bond.b !== globalIndex) return false;
+        const other = bond.a === globalIndex ? bond.b : bond.a;
+        return nhBeforeMolecule.atoms[other]?.element === 'H';
+      }));
+    const indolicNitrogenGlobalIndex = hydrogenBearingNitrogens[0];
+    const indolicNitrogenLocalIndex = nhBefore.atomIndices.indexOf(indolicNitrogenGlobalIndex);
+    const nhSvg = document.querySelector('#structure-2d-drawing svg');
+    const nhLabelNodes = [...nhSvg.querySelectorAll('.atom-' + indolicNitrogenLocalIndex)]
+      .filter((node) => [...node.classList].filter((name) => /^atom-\d+$/.test(name)).length === 1);
+    const nhLabelBoxes = nhLabelNodes.map((node) => node.getBoundingClientRect())
+      .filter((box) => box.width > 0 || box.height > 0);
+    const nhLabelBounds = {
+      left:Math.min(...nhLabelBoxes.map((box) => box.left)),
+      right:Math.max(...nhLabelBoxes.map((box) => box.right)),
+      top:Math.min(...nhLabelBoxes.map((box) => box.top)),
+      bottom:Math.max(...nhLabelBoxes.map((box) => box.bottom)),
+    };
+    const nhLabelCenter = { x:(nhLabelBounds.left + nhLabelBounds.right) / 2,
+      y:(nhLabelBounds.top + nhLabelBounds.bottom) / 2 };
+    const nhHitCandidates = nhBefore.atomIndices.map((globalIndex, localIndex) => {
+      const point = atomScreenPoint(nhSvg, localIndex);
+      return { globalIndex, localIndex, element:nhBeforeMolecule.atoms[globalIndex]?.element,
+        x:point.x, y:point.y,
+        distance:Math.hypot(point.x - nhLabelCenter.x, point.y - nhLabelCenter.y) };
+    }).sort((left, right) => left.distance - right.distance);
+    const indolicCarbonNeighbors = nhBeforeMolecule.bonds.flatMap((bond) => {
+      if (bond.a !== indolicNitrogenGlobalIndex && bond.b !== indolicNitrogenGlobalIndex) return [];
+      const other = bond.a === indolicNitrogenGlobalIndex ? bond.b : bond.a;
+      return nhBeforeMolecule.atoms[other]?.element === 'C' ? [other] : [];
+    });
+    const elementPickerForNh = document.querySelector('#structure-2d-element');
+    elementPickerForNh.value = 'C';
+    elementPickerForNh.dispatchEvent(new Event('change', { bubbles:true }));
+    const nhBeforeHeavy = new Set(nhBefore.atomIndices);
+    nhLabelNodes[0].dispatchEvent(new MouseEvent('click', { bubbles:true,
+      clientX:nhLabelCenter.x, clientY:nhLabelCenter.y }));
+    const nhEditStarted = performance.now();
+    let nhAfter;
+    while (performance.now() - nhEditStarted < 12000) {
+      nhAfter = await api.waitFor2DDepiction();
+      if (nhAfter.pendingChanges === 1 && nhAfter.atomIndices.length === nhBefore.atomIndices.length + 1) break;
+      await new Promise((resolve) => setTimeout(resolve, 25));
+    }
+    const addedCarbonGlobalIndex = nhAfter.atomIndices.find((globalIndex) => !nhBeforeHeavy.has(globalIndex));
+    const nhAfterMolecule = api.current().molecule;
+    const actualHeavyAnchorGlobalIndex = nhAfterMolecule.bonds.flatMap((bond) => {
+      if (bond.a !== addedCarbonGlobalIndex && bond.b !== addedCarbonGlobalIndex) return [];
+      const other = bond.a === addedCarbonGlobalIndex ? bond.b : bond.a;
+      return nhBeforeHeavy.has(other) ? [other] : [];
+    })[0];
+    const globalBondToIndolicNitrogen = nhAfterMolecule.bonds.some((bond) =>
+      (bond.a === addedCarbonGlobalIndex && bond.b === indolicNitrogenGlobalIndex)
+      || (bond.b === addedCarbonGlobalIndex && bond.a === indolicNitrogenGlobalIndex));
+    const twoDBondToIndolicNitrogen = nhAfter.bondPairs.some((pair) =>
+      pair.includes(addedCarbonGlobalIndex) && pair.includes(indolicNitrogenGlobalIndex));
+    const bondedToNeighboringCarbon = indolicCarbonNeighbors.some((neighbor) =>
+      nhAfterMolecule.bonds.some((bond) =>
+        (bond.a === addedCarbonGlobalIndex && bond.b === neighbor)
+        || (bond.b === addedCarbonGlobalIndex && bond.a === neighbor)));
+    const nhLabelHit = { indolicNitrogenGlobalIndex, indolicNitrogenLocalIndex,
+      indolicCarbonNeighbors, labelNodeCount:nhLabelNodes.length,
+      labelBounds:nhLabelBounds, labelCenter:nhLabelCenter,
+      inferredHit:nhHitCandidates[0], nearestCandidates:nhHitCandidates.slice(0, 4),
+      addedCarbonGlobalIndex, actualHeavyAnchorGlobalIndex,
+      globalBondToIndolicNitrogen, twoDBondToIndolicNitrogen, bondedToNeighboringCarbon };
+    check(hydrogenBearingNitrogens.length === 1 && nhLabelNodes.length > 0
+      && nhHitCandidates[0].globalIndex === indolicNitrogenGlobalIndex
+      && globalBondToIndolicNitrogen && twoDBondToIndolicNitrogen && !bondedToNeighboringCarbon,
+    'clicking the visible LSD indolic NH label attaches C to N in both 2D and global topology',
+    JSON.stringify(nhLabelHit));
+    api.discardChemistryCurrent();
+    await api.waitFor2DDepiction();
+
     api.load('CC');
     const editable = await api.waitFor2DDepiction();
     const beforeDraw = api.current().molecule;
@@ -383,7 +462,7 @@ try {
     return { passed:checks.length - failed.length, total:checks.length, failed,
       repeatedClickMaximumDrift, repeatedClickMeasurements,
       structuralMaximumCentroidDrift, structuralCentroidDrifts, structuralCoreRmsds,
-      structuralRedrawMeasurements };
+      structuralRedrawMeasurements, nhLabelHit };
   })()`;
   const evaluation = await client.call('Runtime.evaluate', {
     expression, awaitPromise:true, returnByValue:true,
@@ -407,6 +486,7 @@ try {
   console.log(`Atom-edit maximum panel-relative centroid drift: ${result.structuralMaximumCentroidDrift.toFixed(4)} px`);
   console.log(`Atom-edit centroid drifts: ${JSON.stringify(result.structuralCentroidDrifts)}`);
   console.log(`Atom-edit core RMSDs: ${JSON.stringify(result.structuralCoreRmsds)}`);
+  console.log(`LSD indolic NH label hit: ${JSON.stringify(result.nhLabelHit)}`);
 } finally {
   client?.close(); chrome?.kill(); server?.kill(); await rm(profile, { recursive:true, force:true });
 }

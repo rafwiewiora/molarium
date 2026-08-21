@@ -1063,7 +1063,14 @@ function depictionAtomPoint(svg, atomIndex) {
       if (point) labelPoints.push(point);
     }
   });
-  const points = bondEndpoints.length ? bondEndpoints : labelPoints;
+  // RDKit shortens bonds around a visible heteroatom label. Those shortened
+  // endpoints describe the edge of the glyph, not the place the user sees as
+  // the atom. Prefer label geometry for heteroatoms; carbon stereolabels and
+  // ordinary unlabeled carbons retain their more stable bond-based centers.
+  const globalIndex = state.depictionGlobalAtomIndices[atomIndex];
+  const element = state.molecule?.atoms?.[globalIndex]?.element;
+  const points = labelPoints.length && element && element !== 'C'
+    ? labelPoints : bondEndpoints.length ? bondEndpoints : labelPoints;
   if (!points.length) return null;
   return points.reduce((sum, point) => ({ x:sum.x + point.x / points.length,
     y:sum.y + point.y / points.length }), { x:0, y:0 });
@@ -1111,6 +1118,20 @@ function depictionProximityHit(event, svg) {
     const distance = Math.hypot(pointer.x - screen.x, pointer.y - screen.y);
     if (!atom || distance < atom.distance) atom = { localIndex, distance, screen };
   }
+  const directTarget = event.target instanceof SVGElement ? event.target : null;
+  const directAtomClasses = directTarget ? [...directTarget.classList].flatMap((name) => {
+    const match = /^atom-(\d+)$/.exec(name); return match ? [Number(match[1])] : [];
+  }) : [];
+  const directBond = directTarget && [...directTarget.classList]
+    .some((name) => /^bond-\d+$/.test(name));
+  // A label path carries exactly one atom class. Honor that explicit RDKit
+  // identity before applying the forgiving nearest-center fallback. Bond
+  // paths carry two atom classes and remain available to the bond picker.
+  if (!directBond && directAtomClasses.length === 1) {
+    const localIndex = directAtomClasses[0];
+    const screen = depictionScreenPoint(svg, depictionAtomPoint(svg, localIndex));
+    if (screen) atom = { localIndex, distance:0, screen, directLabel:true };
+  }
   let bond = null;
   state.depictionGlobalBondPairs.forEach((pair, localIndex) => {
     const localAtoms = pair.map((globalIndex) => state.depictionGlobalAtomIndices.indexOf(globalIndex));
@@ -1122,7 +1143,8 @@ function depictionProximityHit(event, svg) {
   });
   if (atom?.distance > atomSnapRadius) atom = null;
   if (bond?.distance > bondSnapRadius) bond = null;
-  const preferBond = Boolean(bond && (!atom || atom.distance > 24) && bond.endpointDistance > 18);
+  const preferBond = Boolean(!atom?.directLabel && bond
+    && (!atom || atom.distance > 24) && bond.endpointDistance > 18);
   return { atom, bond, preferBond };
 }
 
