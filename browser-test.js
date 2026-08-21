@@ -612,7 +612,7 @@ const browserSuite = String.raw`(async () => {
     && contactResolutions.remaps[0].method === 'automatic-unique-exact'
     && contactResolutions.remaps[0].originalLigandAtomIds.includes(replacedCarbonylOxygenId)
     && !contactResolutions.remaps[0].replacementLigandAtomIds.includes(replacedCarbonylOxygenId)
-    && mappedContact?.textContent.includes('feature mapped')
+    && mappedContact?.textContent.includes('carbonyl acceptor mapped')
     && mappedContact.querySelector('input')?.checked
     && !mappedContact.querySelector('input')?.disabled,
   'Finish chemistry automatically transfers a required contact to one exact replacement feature',
@@ -642,7 +642,11 @@ const browserSuite = String.raw`(async () => {
       && remappedLabbook.events.some((event) => event.stage === 'captured-contact-feature-mapping')
       && remappedLabbook.outcome.ligandFeatureRemaps.length === 1
       && monotonicEventTimes,
-    'the automatic feature transfer is hash-linked into the docking labbook');
+    'the automatic feature transfer is hash-linked into the docking labbook',
+    JSON.stringify({ selectionRemaps:remappedLabbook.selections.ligandFeatureRemaps,
+      eventStages:remappedLabbook.events.map((event) => event.stage),
+      outcomeRemaps:remappedLabbook.outcome.ligandFeatureRemaps,
+      eventTimes:remappedLabbook.events.map((event) => event.at), monotonicEventTimes }));
   }
   api.loadObject(valenceCompleteDockingFixture);
   document.querySelector('.mode-bar button[data-mode="build"]').click();
@@ -650,12 +654,20 @@ const browserSuite = String.raw`(async () => {
   await api.captureDockingReference();
   const immediateRoleChange = await api.editBondCurrent(2, 3, 1);
   const immediateContactState = api.dockingContactResolutions();
+  const unavailableRemapContact = document.querySelector('#docking-hbond-list label');
+  const unavailableStatus = document.querySelector('#docking-status').textContent;
   check(immediateRoleChange.validation.valid && immediateContactState.remaps.length === 0
     && immediateContactState.proposals.length === 1
     && immediateContactState.proposals[0].status === 'unavailable'
+    && unavailableRemapContact?.textContent.includes('carbonyl acceptor removed')
+    && unavailableStatus.includes('Uncheck the carbonyl acceptor contact')
     && document.querySelector('#run-constrained-docking').disabled,
   'immediate chemistry edits revalidate feature role and block a stale carbonyl restraint',
   JSON.stringify(immediateContactState));
+  unavailableRemapContact.querySelector('input').click();
+  check(!api.dockingContactResolutions().selectedIds.length
+    && !document.querySelector('#run-constrained-docking').disabled,
+  'an explicitly omitted unavailable contact stops blocking reference-guided refinement');
 
   // Canvas/fragment additions can predate a staged chemistry transaction. A
   // new atom must receive an identity before the transaction snapshot is

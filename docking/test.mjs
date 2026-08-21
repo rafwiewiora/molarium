@@ -99,6 +99,9 @@ const labbook = await createLabbook({
 });
 await appendLabbookEvent(labbook, { at:'2026-08-19T12:00:01.000Z', stage:'core-alignment',
   status:'passed', details:{ fittedRmsdAngstrom:transform.fittedRmsdAngstrom } });
+await assert.rejects(() => appendLabbookEvent(labbook, {
+  at:'2026-08-19T12:00:00.500Z', stage:'out-of-order', status:'invalid', details:{},
+}), /chronological order/);
 await completeLabbook(labbook, { completedAt:'2026-08-19T12:00:02.000Z',
   outcome:{ candidates:2, feasible:1, selectedRank:1 } });
 assert.deepEqual(await verifyLabbook(labbook), { valid:true, reason:null, events:2 });
@@ -500,6 +503,33 @@ assert.equal(appliedSequentialReplacement.acceptor.designAtomId, 'cyclohexanone:
 assert.equal(appliedSequentialReplacement.donor.designAtomId, 'protein:N');
 assert.equal(capturedHydrogenBondAvailability([appliedSequentialReplacement],
   cyclohexanoneAfter)[0].available, true);
+// The real pyridone-to-cyclohexanone edit preserves the carbonyl acceptor but
+// necessarily removes the pyridone N-H donor. Do not silently reinterpret the
+// new carbonyl oxygen as a donor for the captured water contact.
+const pyridoneDonorBefore = structuredClone(pyridoneBefore);
+pyridoneDonorBefore.atoms.push(
+  { element:'H', designAtomId:'pyridone:N-H', x:.35,y:2.05,z:0 });
+pyridoneDonorBefore.bonds.push({ a:2,b:pyridoneDonorBefore.atoms.length - 1,order:1 });
+const pyridoneDonorSignature = hydrogenBondFeatureSignature(pyridoneDonorBefore, 2, 'donor');
+assert.match(pyridoneDonorSignature, /nitrogen donor/);
+const pyridoneWaterDefinition = {
+  id:'pyridone-donor-to-water', label:'pyridone N-H → water O', required:true,
+  receptorRole:'acceptor',
+  donor:{ scope:'ligand', designAtomId:'pyridone:N2', element:'N',
+    featureSignature:pyridoneDonorSignature, referencePoint:{ x:.7,y:1.2,z:0 } },
+  hydrogen:{ scope:'ligand', designAtomId:'pyridone:N-H', element:'H',
+    referencePoint:{ x:.35,y:2.05,z:0 } },
+  acceptor:{ scope:'receptor', designAtomId:'water:O', element:'O', point:{ x:0,y:3.8,z:0 } },
+};
+const lostPyridoneDonor = proposeLigandHydrogenBondFeatureRemaps(
+  [pyridoneWaterDefinition], cyclohexanoneAfter,
+  cyclohexanoneAfter.atoms.map((_, index) => index),
+  { eligibleAtomIndices:[1,2,3,4,5,6,7], beforeMolecule:pyridoneDonorBefore })[0];
+assert.equal(lostPyridoneDonor.ligandRole, 'donor');
+assert.equal(lostPyridoneDonor.status, 'unavailable');
+assert.deepEqual(lostPyridoneDonor.candidates, []);
+assert.equal(capturedHydrogenBondAvailability([pyridoneWaterDefinition],
+  cyclohexanoneAfter)[0].available, false);
 const twoCorePyridoneBefore = structuredClone(pyridoneBefore);
 twoCorePyridoneBefore.atoms.push(
   { element:'C', designAtomId:'unrelated:core', x:8,y:0,z:0 });

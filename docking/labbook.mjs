@@ -54,6 +54,9 @@ export async function createLabbook({ runId, startedAt, protocol = null, protoco
 
 export async function appendLabbookEvent(labbook, event) {
   if (labbook.labbookSha256) throw new Error('A completed labbook is immutable');
+  const previousAt = labbook.events.at(-1)?.at;
+  if (previousAt && Date.parse(event.at) < Date.parse(previousAt))
+    throw new Error('Labbook events must be appended in chronological order');
   const previousEntrySha256 = labbook.events.at(-1)?.entrySha256 || null;
   const body = canonicalValue({
     index:labbook.events.length,

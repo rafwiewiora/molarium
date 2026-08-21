@@ -138,3 +138,23 @@ passes 18/18; the docking unit protocol and production web build pass. The unrel
 suite currently stops later when ONNX Runtime's WASM backend fails to initialize; none of the
 changed files touch that runtime path, so this is recorded as a separate test-environment failure
 rather than counted as validation of this edit.
+
+## Live follow-up: one replacement preserves one contact and deletes another
+
+The complete 7KPA pyridone-to-cyclohexanone example made the earlier carbonyl-only test look like a
+failure. It is a paired chemical outcome. The receptor `SER A60 N → D84 O2` contact targets the
+carbonyl acceptor and remains valid after the replacement. The separate `D84 N3-H → HOH O`
+contact requires the pyridone N-H donor; cyclohexanone has no nitrogen donor, so that hypothesis
+cannot transfer. A carbonyl oxygen must never be silently substituted for the lost donor merely
+because it is nearby.
+
+The exact unit fixture now carries both hypotheses through the same pyridone-to-cyclohexanone
+replacement and requires the acceptor transfer plus donor rejection. The interface names the
+chemical feature (`carbonyl acceptor`, `aromatic N acceptor`, or `N–H donor`) and tells the user to
+uncheck that specific contact when omission is scientifically intended. Unavailable contacts remain
+selected and blocking by default so a lost interaction cannot disappear silently.
+
+This browser extension exposed a separate labbook timing race: pose generation reused the run's
+earlier start time after several method events had already been appended. Labbook append now rejects
+non-chronological events, and pose generation records its actual start time. Focused docking browser
+validation passes 66/66 after both changes.

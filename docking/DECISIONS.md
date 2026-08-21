@@ -544,3 +544,9 @@ two-candidate controls remain rejected or ambiguous. The browser gate repeats th
 batches, requires automatic contact transfer, verifies both edit IDs in the audit, and checks that
 the RDKit panel's current bond graph contains the replacement C=O. RDKit always generates fresh 2D
 coordinates; previous display state may contribute only rotation, uniform scale, and translation.
+
+The paired 7KPA chemistry control also records what must *not* transfer: cyclohexanone preserves the
+pyridone carbonyl-acceptor hypothesis, but has no N-H donor that can replace the pyridone-to-water
+contact. That donor constraint remains explicitly unavailable until the user omits it or constructs
+a chemically compatible donor. The interface names the missing ligand role and never converts an
+acceptor into a donor merely because both features contain oxygen or are spatially nearby.

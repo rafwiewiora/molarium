@@ -553,7 +553,7 @@ select {
 #docking-hbond-list label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; color: #334155; font-size: 8px; }
 #docking-hbond-list label span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #docking-hbond-list input { flex: none; margin: 0; accent-color: #25634a; }
-#docking-hbond-list label.unavailable { color: #94a3b8; text-decoration: line-through; }
+#docking-hbond-list label.unavailable { color: #9a5a16; }
 #docking-hbond-list label.pending-contact { color: #64748b; }
 #docking-hbond-list label.requires-remap { color: #9a5a16; }
 .docking-contact-remap-select {

@@ -3695,6 +3695,23 @@ function unresolvedSelectedDockingContacts() {
     state.dockingContactRemapProposals.has(id));
 }
 
+function dockingContactFeatureLabel(definition, proposal = null) {
+  const ligandRole = proposal?.ligandRole
+    || (definition?.receptorRole === 'donor' ? 'acceptor' : 'donor');
+  const descriptor = ligandRole === 'acceptor' ? definition?.acceptor : definition?.donor;
+  const signature = proposal?.originalFeatureSignature || descriptor?.featureSignature;
+  let type = '';
+  try { type = JSON.parse(signature || '{}').type || ''; } catch {}
+  return ({
+    'carbonyl oxygen acceptor':'carbonyl acceptor',
+    'aromatic nitrogen acceptor':'aromatic N acceptor',
+    'neutral nitrogen acceptor':'N acceptor',
+    'nitrogen donor':'N–H donor',
+    'oxygen donor':'O–H donor',
+    'sulfur donor':'S–H donor',
+  })[type] || type || `ligand ${ligandRole}`;
+}
+
 function contactParticipantIds(definition, scope) {
   return [definition?.donor, definition?.hydrogen, definition?.acceptor]
     .filter((descriptor) => descriptor?.scope === scope)
@@ -3862,6 +3879,7 @@ function renderDockingConstraints() {
     checkbox.checked = state.dockingSelectedHbondIds.has(definition.id);
     checkbox.disabled = pending || selectedCoreUnavailable;
     checkbox.dataset.constraintId = definition.id;
+    checkbox.setAttribute('aria-label', `Require ${definition.label}`);
     checkbox.addEventListener('change', () => {
       if (checkbox.checked) state.dockingSelectedHbondIds.add(definition.id);
       else state.dockingSelectedHbondIds.delete(definition.id);
@@ -3869,10 +3887,12 @@ function renderDockingConstraints() {
     });
     const text = document.createElement('span');
     const mapped = state.dockingContactRemaps.get(definition.id);
+    const featureLabel = dockingContactFeatureLabel(definition, proposal);
     const suffix = pending ? ' · finish chemistry'
-      : proposal?.status === 'ambiguous' ? ' · choose replacement'
-      : proposal?.status === 'unavailable' ? ' · no compatible replacement'
-      : mapped ? ' · feature mapped' : available ? '' : ' · atom removed or changed';
+      : proposal?.status === 'ambiguous' ? ` · choose ${featureLabel}`
+      : proposal?.status === 'unavailable' ? ` · ${featureLabel} removed`
+      : mapped ? ` · ${featureLabel} mapped` : available ? ` · ${featureLabel}`
+        : ' · atom removed or changed';
     text.textContent = `${definition.label}${suffix}`;
     if (!available) label.classList.add(pending ? 'pending-contact'
       : proposal?.status === 'ambiguous' ? 'requires-remap' : 'unavailable');
@@ -3928,8 +3948,20 @@ function updateDockingUi() {
         ? survivingReferenceHeavyAtoms(state.dockingReference, ligand)
         : state.dockingReference.ligand.coreAtomIds.length;
       if (pendingChemistry) setDockingStatus('Finish chemistry before refining the pose.');
-      else if (unresolvedSelected.length)
-        setDockingStatus('Choose a compatible replacement feature, or omit that contact.');
+      else if (unresolvedSelected.length) {
+        const unresolved = unresolvedSelected.map((id) =>
+          state.dockingContactRemapProposals.get(id)).filter(Boolean);
+        const onlyUnavailable = unresolved.every((proposal) => proposal.status === 'unavailable');
+        if (onlyUnavailable && unresolved.length === 1) {
+          const definition = state.dockingReference.hydrogenBonds.find((entry) =>
+            entry.id === unresolved[0].id);
+          setDockingStatus(`Uncheck the ${dockingContactFeatureLabel(
+            definition, unresolved[0])} contact to omit it and continue.`);
+        }
+        else if (onlyUnavailable)
+          setDockingStatus('Uncheck unavailable contacts to omit them and continue.');
+        else setDockingStatus('Choose a compatible replacement feature, or uncheck that contact.');
+      }
       else setDockingStatus(`${fixedAtoms} ${referenceMode === 'pose-propagation' ? 'unchanged atoms fixed' : 'core atoms'} · ${contactCount} contact${contactCount === 1 ? '' : 's'}`);
     }
     renderDockingConstraints();
@@ -4445,7 +4477,9 @@ async function runBrowserConstrainedDocking(options = {}) {
           },
         });
       },
-      labbook, startedAt,
+      // The labbook origin predates provenance hashing and method events. The
+      // workflow event begins here, after those records have been appended.
+      labbook, startedAt:new Date().toISOString(),
     });
     const distinctPoseEntries = distinctDockingPoseEntries(run.candidates, plan.molecule.atoms);
     const distinctFeasibleCount = distinctPoseEntries
