@@ -193,6 +193,97 @@ try {
     'repeated bond-tool select/cancel clicks reuse one SVG without cumulative panel-relative drift',
     JSON.stringify({ repeatedClickMaximumDrift, repeatedClickMeasurements }));
 
+    const lsdSmiles = 'CCN(CC)C(=O)[C@H]1CN([C@@H]2CC3=CNC4=CC=CC(=C34)C2=C1)C';
+    await api.loadSmilesWithRdkit(lsdSmiles, 'LSD repeated Atom edits');
+    const lsdDepiction = await api.waitFor2DDepiction();
+    document.querySelector('[data-2d-tool="atom"]').click();
+    const originalHeavy = new Set(lsdDepiction.atomIndices);
+    const originalMolecule = api.current().molecule;
+    const coreNeighbors = new Map(lsdDepiction.atomIndices.map((index) => [index, new Set()]));
+    originalMolecule.bonds.forEach((bond) => {
+      if (!originalHeavy.has(bond.a) || !originalHeavy.has(bond.b)) return;
+      coreNeighbors.get(bond.a).add(bond.b); coreNeighbors.get(bond.b).add(bond.a);
+    });
+    // The graph 2-core isolates LSD's retained fused-ring system without
+    // depending on atom-number details from a particular RDKit build.
+    const retainedCore = new Set(lsdDepiction.atomIndices);
+    let peeled = true;
+    while (peeled) {
+      peeled = false;
+      for (const index of [...retainedCore]) {
+        const degree = [...coreNeighbors.get(index)].filter((neighbor) => retainedCore.has(neighbor)).length;
+        if (degree < 2) { retainedCore.delete(index); peeled = true; }
+      }
+    }
+    const retainedCoreIndices = [...retainedCore];
+    const measureRetainedCore = (depiction) => {
+      const panelBox = stablePanel.getBoundingClientRect();
+      const svg = document.querySelector('#structure-2d-drawing svg');
+      const positions = retainedCoreIndices.map((globalIndex) => {
+        const localIndex = depiction.atomIndices.indexOf(globalIndex);
+        const point = atomScreenPoint(svg, localIndex);
+        return { globalIndex, x:point.x - panelBox.x, y:point.y - panelBox.y };
+      });
+      const centroid = positions.reduce((sum, point) => ({
+        x:sum.x + point.x / positions.length, y:sum.y + point.y / positions.length,
+      }), { x:0, y:0 });
+      return { ...centroid, positions,
+        transform:svg.querySelector(':scope > g')?.getAttribute('transform') || null };
+    };
+    const structuralRedrawMeasurements = [{ edit:0, pendingChanges:0,
+      atomCount:lsdDepiction.atomIndices.length, ...measureRetainedCore(lsdDepiction) }];
+    const attachmentTargets = lsdDepiction.atomIndices.filter((globalIndex) =>
+      originalMolecule.atoms[globalIndex]?.element === 'C'
+      && originalMolecule.bonds.some((bond) => {
+        if (bond.a !== globalIndex && bond.b !== globalIndex) return false;
+        const other = bond.a === globalIndex ? bond.b : bond.a;
+        return originalMolecule.atoms[other]?.element === 'H';
+      })).slice(0, 4);
+    for (let edit = 1; edit <= 4; edit++) {
+      const before = api.twoDDepiction();
+      const beforeHeavy = new Set(before.atomIndices);
+      const beforeSvg = document.querySelector('#structure-2d-drawing svg');
+      const targetLocalIndex = before.atomIndices.indexOf(attachmentTargets[edit - 1]);
+      const target = atomScreenPoint(beforeSvg, targetLocalIndex);
+      drawing.dispatchEvent(new MouseEvent('click', { bubbles:true,
+        clientX:target.x, clientY:target.y }));
+      const started = performance.now();
+      let after;
+      while (performance.now() - started < 12000) {
+        after = await api.waitFor2DDepiction();
+        if (after.pendingChanges === edit && after.atomIndices.length === before.atomIndices.length + 1) break;
+        await new Promise((resolve) => setTimeout(resolve, 25));
+      }
+      if (after.pendingChanges !== edit || after.atomIndices.length !== before.atomIndices.length + 1)
+        throw new Error('Atom edit ' + edit + ' did not complete: ' + JSON.stringify(after));
+      const added = after.atomIndices.filter((globalIndex) => !beforeHeavy.has(globalIndex));
+      structuralRedrawMeasurements.push({ edit, pendingChanges:after.pendingChanges,
+        atomCount:after.atomIndices.length, added, ...measureRetainedCore(after) });
+      await new Promise((resolve) => setTimeout(resolve, 80));
+    }
+    const structuralOrigin = structuralRedrawMeasurements[0];
+    const structuralCentroidDrifts = structuralRedrawMeasurements.map((point) => ({
+      edit:point.edit, dx:point.x - structuralOrigin.x, dy:point.y - structuralOrigin.y,
+      distance:Math.hypot(point.x - structuralOrigin.x, point.y - structuralOrigin.y),
+    }));
+    const structuralCoreRmsds = structuralRedrawMeasurements.map((point) => ({
+      edit:point.edit,
+      rmsd:Math.sqrt(point.positions.reduce((sum, position, index) => {
+        const origin = structuralOrigin.positions[index];
+        return sum + (position.x - origin.x) ** 2 + (position.y - origin.y) ** 2;
+      }, 0) / point.positions.length),
+    }));
+    const structuralMaximumCentroidDrift = Math.max(...structuralCentroidDrifts.map((entry) => entry.distance));
+    check(retainedCoreIndices.length >= 10 && attachmentTargets.length === 4
+      && structuralRedrawMeasurements.slice(1).every((entry, index) =>
+        entry.pendingChanges === index + 1 && entry.added.length === 1)
+      && structuralMaximumCentroidDrift < 1,
+    'four sequential Atom-tool chemistry redraws keep the retained LSD ring core fixed relative to the panel',
+    JSON.stringify({ retainedCoreIndices, structuralMaximumCentroidDrift,
+      structuralCentroidDrifts, structuralCoreRmsds, structuralRedrawMeasurements }));
+    api.discardChemistryCurrent();
+    await api.waitFor2DDepiction();
+
     api.load('CC');
     const editable = await api.waitFor2DDepiction();
     const beforeDraw = api.current().molecule;
@@ -290,7 +381,9 @@ try {
 
     const failed = checks.filter((entry) => !entry.passed);
     return { passed:checks.length - failed.length, total:checks.length, failed,
-      repeatedClickMaximumDrift, repeatedClickMeasurements };
+      repeatedClickMaximumDrift, repeatedClickMeasurements,
+      structuralMaximumCentroidDrift, structuralCentroidDrifts, structuralCoreRmsds,
+      structuralRedrawMeasurements };
   })()`;
   const evaluation = await client.call('Runtime.evaluate', {
     expression, awaitPromise:true, returnByValue:true,
@@ -311,6 +404,9 @@ try {
   console.log(`${result.passed}/${result.total} RDKit 2D browser checks passed`);
   console.log(`Repeated-click maximum panel-relative drift: ${result.repeatedClickMaximumDrift.toFixed(4)} px`);
   console.log(`Repeated-click measurements: ${JSON.stringify(result.repeatedClickMeasurements)}`);
+  console.log(`Atom-edit maximum panel-relative centroid drift: ${result.structuralMaximumCentroidDrift.toFixed(4)} px`);
+  console.log(`Atom-edit centroid drifts: ${JSON.stringify(result.structuralCentroidDrifts)}`);
+  console.log(`Atom-edit core RMSDs: ${JSON.stringify(result.structuralCoreRmsds)}`);
 } finally {
   client?.close(); chrome?.kill(); server?.kill(); await rm(profile, { recursive:true, force:true });
 }

@@ -862,13 +862,17 @@ function captureDepictionOrientation(svg) {
   if (!svg || !state.depictionAtomObjects.length) return;
   const transaction = state.chemistryTransaction;
   if (transaction?.depictionOrientationAnchor?.componentId === state.depictionComponentId) return;
+  const drawingRect = document.querySelector('#structure-2d-drawing')?.getBoundingClientRect();
+  if (!drawingRect) return;
   const points = new Map();
   state.depictionAtomObjects.forEach((atom, localIndex) => {
     const point = depictionScreenPoint(svg, depictionAtomPoint(svg, localIndex));
-    if (atom && point) points.set(atom, point);
+    if (atom && point) points.set(atom, {
+      x:point.x - drawingRect.x, y:point.y - drawingRect.y,
+    });
   });
   if (points.size < 2) return;
-  const anchor = { componentId:state.depictionComponentId, points };
+  const anchor = { componentId:state.depictionComponentId, coordinateSpace:'drawing', points };
   if (transaction) transaction.depictionOrientationAnchor = anchor;
   else state.depictionOrientationAnchor = anchor;
 }
@@ -949,13 +953,16 @@ function alignDepictionToPrevious(svg, target) {
   if (!anchor || anchor.componentId !== target.componentId) return null;
   const inverseRoot = svg.getScreenCTM()?.inverse();
   if (!inverseRoot) return null;
+  const drawingRect = document.querySelector('#structure-2d-drawing')?.getBoundingClientRect();
   const source = [], destination = [];
   target.globalAtomIndices.forEach((globalIndex, localIndex) => {
     const atom = state.molecule?.atoms?.[globalIndex];
     const previous = anchor.points.get(atom);
     const current = depictionAtomPoint(svg, localIndex);
-    const priorInCurrentSvg = previous
-      ? new DOMPoint(previous.x, previous.y).matrixTransform(inverseRoot) : null;
+    const priorScreen = previous && anchor.coordinateSpace === 'drawing' && drawingRect
+      ? new DOMPoint(drawingRect.x + previous.x, drawingRect.y + previous.y)
+      : previous ? new DOMPoint(previous.x, previous.y) : null;
+    const priorInCurrentSvg = priorScreen?.matrixTransform(inverseRoot) || null;
     if (priorInCurrentSvg && current) { source.push(current); destination.push(priorInCurrentSvg); }
   });
   if (source.length < 2) return null;
