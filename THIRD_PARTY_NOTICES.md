@@ -45,7 +45,10 @@ bytes, Git blob `fbd9f9a95f6013d8ecaef81e02b0033e5882a675`, SHA-256
   PubChem 3D conformer for lysergic acid diethylamide, CID 5761, retrieved 2026-08-18. The
   application records the CID and stereospecific SMILES alongside the coordinates.
 - PDB coordinates and Chemical Component Dictionary records are retrieved from the
-  [RCSB Protein Data Bank](https://www.rcsb.org/) only when requested by the user.
+  [RCSB Protein Data Bank](https://www.rcsb.org/) only when requested by the user. Verbatim
+  7KPA coordinate and D84 CCD records are also bundled under `test/fixtures/` solely as a
+  reproducible browser-preparation/contact-capture regression; their source identifiers and
+  SHA-256 digests are recorded beside the fixtures.
 - Protein MSA searches use the user-configurable
   [ColabFold](https://github.com/sokrypton/ColabFold)-compatible endpoint shown in the interface.
   Protein sequences are sent to that endpoint; folding inference remains local.

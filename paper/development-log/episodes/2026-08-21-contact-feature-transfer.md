@@ -142,11 +142,14 @@ rather than counted as validation of this edit.
 ## Live follow-up: one replacement preserves one contact and deletes another
 
 The complete 7KPA pyridone-to-cyclohexanone example made the earlier carbonyl-only test look like a
-failure. It is a paired chemical outcome. The receptor `SER A60 N → D84 O2` contact targets the
-carbonyl acceptor and remains valid after the replacement. The separate `D84 N3-H → HOH O`
-contact requires the pyridone N-H donor; cyclohexanone has no nitrogen donor, so that hypothesis
-cannot transfer. A carbonyl oxygen must never be silently substituted for the lost donor merely
-because it is nearby.
+failure. It is a paired chemical outcome. An initial live interpretation incorrectly assigned
+`SER A60 N → D84 O2` to the edited pyridone. Inspection of the official D84 CCD corrected that
+assignment: D84 contains two different lactam carbonyls. O2 belongs to the 2-oxopyrrolidone group
+and contacts Ser A60; O3 belongs to the edited pyridone and accepts from Lys A11. The actual
+transfer target is therefore `LYS A11 NZ-H → D84 O3`. The separate
+`D84 N3-H → HOH C307 O` contact requires the pyridone N-H donor; cyclohexanone has no nitrogen
+donor, so that hypothesis cannot transfer. A carbonyl oxygen must never be silently substituted for
+the lost donor merely because it is nearby.
 
 The exact unit fixture now carries both hypotheses through the same pyridone-to-cyclohexanone
 replacement and requires the acceptor transfer plus donor rejection. The interface names the
@@ -158,3 +161,18 @@ This browser extension exposed a separate labbook timing race: pose generation r
 earlier start time after several method events had already been appended. Labbook append now rejects
 non-chronological events, and pose generation records its actual start time. Focused docking browser
 validation passes 66/66 after both changes.
+
+## Live follow-up: the missing Lys contact was a capture truncation
+
+The user noticed that the Required contacts panel showed the pyridone N3-H-to-water contact,
+the pyrrolidone O2-to-Ser contact, and the benzimidazole N2-to-Tyr contact, but not the expected
+Lys A11-to-pyridone O3 contact. A clean 7KPA preparation proved that the geometry and feature
+perception were already valid: `LYS A11 NZ-H → D84 O3` was detected at 2.268 Å H···O with cosine
+-0.899. The loss occurred later. Reference capture reused the viewer helper, which sorted every
+H-bond in the fully hydrated complex and sliced the list to the closest 96 drawing primitives.
+The 1.70 Å N3-H-to-water contact survived; the longer Lys-to-O3 contact did not.
+
+Reference capture now asks for the uncapped interaction set, while ordinary rendering keeps its
+bounded list. The new checked-in real-structure gate prepares 7KPA with all waters and requires four
+captured ligand contacts, including both pyridone hypotheses. This is a protocol correction, not a
+display enhancement: a graphics budget is no longer able to modify the scientific constraint set.

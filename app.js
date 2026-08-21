@@ -3549,7 +3549,8 @@ function ringGeometry(molecule, cycle) {
   return { centroid, normal };
 }
 
-function nonCovalentInteractions(molecule, cycles = findRingCycles(molecule), allowedIndices = null) {
+function nonCovalentInteractions(molecule, cycles = findRingCycles(molecule), allowedIndices = null,
+  limits = {}) {
   if (!molecule?.atoms?.length) return { hydrogenBonds:[], piStacks:[] };
   const allowed = allowedIndices instanceof Set ? allowedIndices
     : allowedIndices ? new Set(allowedIndices) : null;
@@ -3630,7 +3631,12 @@ function nonCovalentInteractions(molecule, cycles = findRingCycles(molecule), al
       piStacks.push({ first, second, distance, alignment, lateral });
     }
   }
-  return { hydrogenBonds:hydrogenBonds.slice(0, 96), piStacks:piStacks.slice(0, 48) };
+  const hydrogenBondLimit = limits.hydrogenBonds === Infinity ? hydrogenBonds.length
+    : Math.max(0, Number.isFinite(limits.hydrogenBonds) ? Math.floor(limits.hydrogenBonds) : 96);
+  const piStackLimit = limits.piStacks === Infinity ? piStacks.length
+    : Math.max(0, Number.isFinite(limits.piStacks) ? Math.floor(limits.piStacks) : 48);
+  return { hydrogenBonds:hydrogenBonds.slice(0, hydrogenBondLimit),
+    piStacks:piStacks.slice(0, piStackLimit) };
 }
 
 function dockingLigandComponent() {
@@ -4027,7 +4033,11 @@ async function captureCurrentDockingReference() {
     `reference-${state.molecule.source?.pdbId || 'complex'}`);
   const receptorSite = buildReceptorSite(state.molecule, component.atomIndices,
     state.molecule.parameterization.system, { radiusAngstrom:8 });
-  const interactions = nonCovalentInteractions(state.molecule);
+  // Reference constraints are scientific inputs, not drawing primitives.  Do
+  // not let the viewer's display cap silently remove a valid ligand contact in
+  // a hydrated protein with many shorter, unrelated hydrogen bonds.
+  const interactions = nonCovalentInteractions(state.molecule, undefined, undefined,
+    { hydrogenBonds:Infinity });
   const hydrogenBonds = adapter.captureCrossHydrogenBonds(state.molecule,
     component.atomIndices, interactions.hydrogenBonds);
   const receptorProvenanceAtomIndices = [...new Set([

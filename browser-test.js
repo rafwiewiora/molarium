@@ -17,6 +17,7 @@ const preparationFixture = Bun.env.MOLARIUM_PREPARATION_PDB
   ? { pdb: await Bun.file(Bun.env.MOLARIUM_PREPARATION_PDB).text(),
     ccd: Bun.env.MOLARIUM_PREPARATION_CCD ? await Bun.file(Bun.env.MOLARIUM_PREPARATION_CCD).text() : null,
     ccdId: Bun.env.MOLARIUM_PREPARATION_CCD_ID || 'LIG',
+    waterPolicy: Bun.env.MOLARIUM_PREPARATION_WATER_POLICY || 'exclude',
     parameterize: Bun.env.MOLARIUM_PREPARATION_PARAMETERIZE === '1' }
   : null;
 
@@ -1042,7 +1043,7 @@ const browserSuite = String.raw`(async () => {
     const ccd = externalPreparationFixture.ccd
       ? api.parseCcd(externalPreparationFixture.ccd, externalPreparationFixture.ccdId) : null;
     const preview = await api.previewPdbPreparation({ pH: 7.4, histidine: 'auto', repairMissingHeavy: true,
-      ligandPolicy: 'ccd', waterPolicy: 'exclude', gapPolicy: 'cap' },
+      ligandPolicy: 'ccd', waterPolicy:externalPreparationFixture.waterPolicy, gapPolicy: 'cap' },
     ccd ? { [externalPreparationFixture.ccdId]: ccd } : null);
     const heavyRepair = preview.audit.actions.find((action) => action.action === 'repair-heavy-atoms');
     const ligandRepair = preview.audit.actions.find((action) => action.action === 'prepare-ligands-from-ccd');
@@ -1126,6 +1127,38 @@ const browserSuite = String.raw`(async () => {
         && contact.distance < 2.0 && contact.cosine < -0.95),
     '7KPA preparation recovers the observed Tyr C151 O-H to D84 imidazole N2 contact',
     JSON.stringify(preparationMetrics.ligandContacts));
+    check(preparationMetrics.ligandContacts.some((contact) =>
+      contact.donor === 'NZ:LYS:A11' && contact.acceptor === 'O3:D84:C201'
+        && contact.distance < 2.6 && contact.cosine < -0.85),
+    '7KPA preparation recovers the Lys A11 N-H to D84 pyridone O3 contact',
+    JSON.stringify(preparationMetrics.ligandContacts));
+    if (externalPreparationFixture.waterPolicy === 'retain') {
+      const captureMolecule = structuredClone(preview.molecule);
+      captureMolecule.parameterization = {
+        forcefield:'7KPA contact-capture fixture', chargeModel:'test-only neutral terms',
+        sourceSha256:'7kpa-contact-capture', system:{
+          nonbonded:captureMolecule.atoms.map((_, index) => ({ index,
+            charge_e:0, sigma_nm:0.30, epsilon_kj:0.10 })),
+        },
+      };
+      api.loadObject(captureMolecule);
+      api.setDockingMode('propagate');
+      const hydratedReference = await api.captureDockingReference();
+      preparationMetrics.hydratedReferenceContacts = hydratedReference.hydrogenBonds;
+      const capturedLabels = hydratedReference.hydrogenBonds.map((entry) => entry.label);
+      const expectedHydratedLabels = [
+        'D84 C201 N3 → HOH C307 O',
+        'SER A60 N → D84 C201 O2',
+        'TYR C151 OH → D84 C201 N2',
+        'LYS A11 NZ → D84 C201 O3',
+      ];
+      check(capturedLabels.length === expectedHydratedLabels.length
+        && expectedHydratedLabels.every((label) => capturedLabels.includes(label)),
+      'hydrated 7KPA reference capture retains both pyridone contacts beyond the viewer display cap',
+      JSON.stringify(capturedLabels));
+      api.loadObject(preview.molecule);
+      api.setRepresentation('cartoon');
+    }
     const contactOnly7kpa = api.setPocketAtomMode('contacts');
     preparationMetrics.contactOnlyPocket = contactOnly7kpa;
     check(contactOnly7kpa.residueKeys.length === 3 && contactOnly7kpa.radiusResidueCount === 36
@@ -1202,6 +1235,16 @@ const browserSuite = String.raw`(async () => {
         check(Number.isFinite(minimization.finalEnergy) && minimization.finalEnergy < energy.finalEnergy,
           '7KPA prepared complex begins stable local OpenMM Reference WASM minimization', JSON.stringify(preparationMetrics));
       }
+    }
+    if (testScope === '7kpa-contact-capture') {
+      const scopedChecks = checks.filter((item) =>
+        item.label.includes('Lys A11 N-H to D84 pyridone O3')
+        || item.label.includes('hydrated 7KPA reference capture'));
+      const failed = scopedChecks.filter((item) => !item.passed);
+      return { passed:scopedChecks.length - failed.length, total:scopedChecks.length, failed,
+        optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,
+        preparationMetrics:{ ligandContacts:preparationMetrics.ligandContacts,
+          hydratedReferenceContacts:preparationMetrics.hydratedReferenceContacts } };
     }
   }
   const smilesCases = [

@@ -19,6 +19,7 @@
     "test:logo": "bun scripts/molarium-logo-test.mjs",
     "test:docking": "node docking/test.mjs",
     "test:docking-browser": "MOLARIUM_TEST_SCOPE=docking-contact-remap bun browser-test.js",
+    "test:7kpa-contacts": "MOLARIUM_TEST_SCOPE=7kpa-contact-capture MOLARIUM_PREPARATION_PDB=test/fixtures/7kpa.pdb MOLARIUM_PREPARATION_CCD=test/fixtures/D84.cif MOLARIUM_PREPARATION_CCD_ID=D84 MOLARIUM_PREPARATION_WATER_POLICY=retain bun browser-test.js",
     "test": "bun browser-test.js",
     "test:2d": "bun rdkit-depiction-browser-test.js",
     "test:ani-webgpu": "bun mlip-browser-test.js",

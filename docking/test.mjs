@@ -503,9 +503,10 @@ assert.equal(appliedSequentialReplacement.acceptor.designAtomId, 'cyclohexanone:
 assert.equal(appliedSequentialReplacement.donor.designAtomId, 'protein:N');
 assert.equal(capturedHydrogenBondAvailability([appliedSequentialReplacement],
   cyclohexanoneAfter)[0].available, true);
-// The real pyridone-to-cyclohexanone edit preserves the carbonyl acceptor but
-// necessarily removes the pyridone N-H donor. Do not silently reinterpret the
-// new carbonyl oxygen as a donor for the captured water contact.
+// In real 7KPA, replacing the D84 pyridone preserves the O3 carbonyl-acceptor
+// role used by Lys A11, but necessarily removes the N3-H donor used by water
+// C307. Do not confuse this with the separate pyrrolidone O2 contact to Ser A60,
+// and never reinterpret the new carbonyl oxygen as a donor.
 const pyridoneDonorBefore = structuredClone(pyridoneBefore);
 pyridoneDonorBefore.atoms.push(
   { element:'H', designAtomId:'pyridone:N-H', x:.35,y:2.05,z:0 });

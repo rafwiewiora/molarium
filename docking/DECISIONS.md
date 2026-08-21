@@ -550,3 +550,17 @@ pyridone carbonyl-acceptor hypothesis, but has no N-H donor that can replace the
 contact. That donor constraint remains explicitly unavailable until the user omits it or constructs
 a chemically compatible donor. The interface names the missing ligand role and never converts an
 acceptor into a donor merely because both features contain oxygen or are spatially nearby.
+
+The atom-level assignment is explicit: `LYS A11 NZ → D84 O3` targets the pyridone carbonyl and is
+the acceptor hypothesis eligible for transfer; `D84 N3-H → HOH C307 O` is the pyridone donor
+hypothesis that cyclohexanone removes. `SER A60 N → D84 O2` targets the molecule's other carbonyl,
+the 2-oxopyrrolidone group, and is unchanged by this edit.
+
+### Validation V-011 — hydrated 7KPA capture is not display-limited
+
+The checked-in 7KPA PDB and D84 CCD fixtures are prepared with all crystallographic waters. The
+viewer deliberately caps rendered interaction primitives, but reference-guided pose capture scans
+the complete interaction set. The browser gate requires both `D84 N3-H → HOH C307 O` and the
+longer `LYS A11 NZ-H → D84 O3` contact. Before this split, the full hydrated complex sorted all
+H-bonds by distance and retained only 96; the water contact survived while the valid Lys–pyridone
+contact was silently dropped. A rendering-performance limit must never alter scientific inputs.
