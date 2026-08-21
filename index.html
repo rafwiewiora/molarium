@@ -454,10 +454,34 @@
                 <svg class="chevron open" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 4 4 4-4 4" /></svg>
               </button>
               <div class="structure-2d-body" id="structure-2d-body">
+                <div class="structure-2d-tools" role="toolbar" aria-label="2D drawing tools">
+                  <button class="selected" type="button" data-2d-tool="select" title="Select atoms in both views">Select</button>
+                  <button type="button" data-2d-tool="atom" title="Attach an atom">Atom</button>
+                  <button type="button" data-2d-tool="bond" title="Create or change a bond">Bond</button>
+                  <button type="button" data-2d-tool="erase" title="Delete an atom or bond">Erase</button>
+                </div>
+                <div class="structure-2d-options">
+                  <label>Element
+                    <select id="structure-2d-element" aria-label="2D drawing element">
+                      <option selected>C</option><option>N</option><option>O</option><option>F</option>
+                      <option>P</option><option>S</option><option>Cl</option><option>Br</option><option>I</option>
+                    </select>
+                  </label>
+                  <label>Bond
+                    <select id="structure-2d-bond-order" aria-label="2D drawing bond order">
+                      <option value="1" selected>Single</option><option value="2">Double</option>
+                      <option value="3">Triple</option><option value="1.5">Aromatic</option>
+                    </select>
+                  </label>
+                </div>
                 <div class="structure-2d-drawing" id="structure-2d-drawing" role="img" aria-label="RDKit 2D molecular depiction">
                   <span>Drawing…</span>
                 </div>
-                <p>Click an atom to select it in 3D.</p>
+                <p id="structure-2d-help">Select an atom here to select the same atom in 3D.</p>
+                <div class="structure-2d-pending hidden" id="structure-2d-pending">
+                  <button class="primary-button" id="structure-2d-finish" type="button">Finish changes</button>
+                  <button class="soft-button" id="structure-2d-discard" type="button">Discard</button>
+                </div>
               </div>
             </section>
 

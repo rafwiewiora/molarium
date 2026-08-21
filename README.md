@@ -63,7 +63,7 @@ manifests and model cards.
 - Load SMILES, PDB, XYZ, and prepared molecular fixtures.
 - Fetch a PDB entry by its four-character RCSB identifier.
 - View proteins, ligands, waters, ions, hydrogen bonds, and aromatic stacking contacts.
-- Keep an RDKit 2D depiction beside the 3D scene and select the same atoms in either view.
+- Draw and edit a small molecule in 2D while the same atoms and bonds remain visible in 3D.
 - Add atoms and fragments without creating bonds from visual proximity.
 - Edit bond lengths, bond angles, and torsions with undo and redo.
 - Run energies, minimization, molecular dynamics, and conformer searches.
@@ -165,10 +165,19 @@ demo systems remain test fixtures only. Simulation requests support up to 100,00
 The viewer uses a quaternion trackball, so rotation does not change the camera fit. Right-drag,
 or Ctrl/Cmd plus left-drag, pans the scene. The mouse wheel zooms.
 
-For small molecules, a collapsible RDKit diagram sits at the lower-left of the molecular canvas.
+For small molecules, a collapsible RDKit diagram and editor sits at the lower-left of the molecular canvas.
 In a protein–ligand scene it follows the active ligand rather than attempting to flatten the
 protein. Selected atoms are highlighted in both representations, and clicking the 2D diagram maps
 back to the original 3D atom index.
+
+The 2D editor is another view of the same molecular graph, not a second sketch that later needs to
+be merged. Its Select, Atom, Bond, and Erase tools use the same atom identities, staged chemistry
+transaction, valence checks, Undo history, and Finish/Discard controls as the 3D builder. Existing
+3D coordinates do not jump when topology changes. A newly drawn atom starts along an available 3D
+valence direction. Bond-order changes move no coordinates until **Finish changes**, when hydrogens
+are reconciled and one local 3D cleanup moves only the edited neighborhood. RDKit independently
+lays out the 2D diagram again after each graph edit; those display coordinates never overwrite the
+3D conformation.
 
 MD playback uses a fixed atom-identity heavy-atom fit to each trajectory's first saved frame. This
 removes whole-molecule translation and rotation from the display without changing raw coordinates,

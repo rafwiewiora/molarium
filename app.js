@@ -713,7 +713,12 @@ const state = {
   depictionSequence: 0,
   depictionTimer: 0,
   depictionGlobalAtomIndices: [],
+  depictionGlobalBondPairs: [],
   depictionKey: null,
+  depictionTool: 'select',
+  depictionBondStart: null,
+  depictionBondOrder: 1,
+  depictionEditing: false,
   stormmReplicaTuning: new Map(),
   tuningStormmReplicas: false,
   foldAbortController: null,
@@ -765,6 +770,39 @@ function depictionSignature(target) {
   });
 }
 
+function update2DEditorUi() {
+  const panel = document.querySelector('#structure-2d-panel');
+  if (!panel) return;
+  panel.dataset.mode = state.mode;
+  document.querySelectorAll('[data-2d-tool]').forEach((button) => {
+    const selected = button.dataset.twoDTool === state.depictionTool;
+    button.classList.toggle('selected', selected);
+    button.setAttribute('aria-pressed', String(selected));
+  });
+  const element = document.querySelector('#structure-2d-element');
+  const bondOrder = document.querySelector('#structure-2d-bond-order');
+  if (element && [...element.options].some((option) => option.value === state.selectedElement))
+    element.value = state.selectedElement;
+  if (bondOrder) bondOrder.value = String(state.depictionBondOrder);
+  const pending = document.querySelector('#structure-2d-pending');
+  pending?.classList.toggle('hidden', !state.chemistryTransaction);
+  if (pending) pending.querySelectorAll('button').forEach((button) => {
+    button.disabled = state.chemistryEditFinishing || state.depictionEditing;
+  });
+  const help = document.querySelector('#structure-2d-help');
+  if (!help) return;
+  if (state.depictionEditing) help.textContent = 'Updating the shared molecular graph…';
+  else if (state.mode !== 'build') help.textContent = state.depictionTool === 'select'
+    ? 'Select an atom here to select the same atom in 3D.'
+    : 'This drawing tool opens Build and edits the shared 2D/3D structure.';
+  else if (state.depictionTool === 'atom') help.textContent = `Click an atom to attach ${state.selectedElement}; use Select to change an existing atom.`;
+  else if (state.depictionTool === 'bond') help.textContent = state.depictionBondStart == null
+    ? 'Pick two atoms, or click a bond directly, to set its order.'
+    : 'Pick the second atom. Both views keep the same atom identities.';
+  else if (state.depictionTool === 'erase') help.textContent = 'Click an atom or bond to stage its deletion.';
+  else help.textContent = 'Select an atom or bond here; use the Build panel for element and charge changes.';
+}
+
 function sanitizedDepictionSvg(svgText) {
   const parsed = new DOMParser().parseFromString(svgText, 'image/svg+xml');
   const svg = parsed.documentElement;
@@ -785,7 +823,8 @@ async function update2DDepiction() {
   const target = depictionTarget();
   const sequence = ++state.depictionSequence;
   if (!target) {
-    panel.classList.add('hidden'); state.depictionGlobalAtomIndices = []; state.depictionKey = null;
+    panel.classList.add('hidden'); state.depictionGlobalAtomIndices = [];
+    state.depictionGlobalBondPairs = []; state.depictionKey = null;
     return;
   }
   const key = depictionSignature(target);
@@ -803,8 +842,12 @@ async function update2DDepiction() {
     if (sequence !== state.depictionSequence || key !== state.depictionKey) return;
     drawing.replaceChildren(sanitizedDepictionSvg(result.svg));
     state.depictionGlobalAtomIndices = target.globalAtomIndices.slice();
+    state.depictionGlobalBondPairs = target.molecule.bonds.map((bond) => [
+      target.globalAtomIndices[bond.a], target.globalAtomIndices[bond.b],
+    ]);
     panel.dataset.rdkitVersion = result.rdkitVersion || '';
     delete panel.dataset.error; delete panel.dataset.pending;
+    update2DEditorUi();
   } catch (error) {
     if (sequence !== state.depictionSequence) return;
     drawing.replaceChildren(Object.assign(document.createElement('span'), { textContent:'2D depiction unavailable' }));
@@ -819,6 +862,7 @@ function schedule2DDepiction(delay = 50) {
   const target = depictionTarget();
   if (!target) {
     state.depictionSequence += 1; state.depictionKey = null; state.depictionGlobalAtomIndices = [];
+    state.depictionGlobalBondPairs = [];
     panel.classList.add('hidden'); delete panel.dataset.pending;
     return;
   }
@@ -859,6 +903,89 @@ function selectDepictionAtom(localIndex) {
     state.selectedAtoms = [globalIndex]; state.selectedAtom = globalIndex;
     updateGeometryControl(); draw(); schedule2DDepiction(0);
   }
+}
+
+function setDepictionSelection(indices) {
+  const selected = indices.map(Number).filter((index) => Number.isInteger(index)
+    && state.molecule?.atoms?.[index]);
+  state.selectedAtoms = selected;
+  state.selectedAtom = selected.at(-1) ?? null;
+  updateGeometryControl(); updateBuildStatus(); draw(); schedule2DDepiction(0);
+}
+
+function depictionLocalAtomFromEvent(event, svg) {
+  const target = event.target instanceof SVGElement ? event.target.closest('[class*="atom-"]') : null;
+  if (!target) return null;
+  const candidates = [...target.classList].flatMap((name) => {
+    const match = /^atom-(\d+)$/.exec(name); return match ? [Number(match[1])] : [];
+  });
+  if (!candidates.length) return null;
+  if (candidates.length === 1) return candidates[0];
+  const matrix = svg.getScreenCTM();
+  const localPoint = matrix ? new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse()) : null;
+  if (!localPoint) return candidates[0];
+  return candidates.reduce((nearest, candidate) => {
+    const point = depictionAtomPoint(svg, candidate); const nearestPoint = depictionAtomPoint(svg, nearest);
+    if (!point) return nearest; if (!nearestPoint) return candidate;
+    return Math.hypot(point.x - localPoint.x, point.y - localPoint.y)
+      < Math.hypot(nearestPoint.x - localPoint.x, nearestPoint.y - localPoint.y) ? candidate : nearest;
+  }, candidates[0]);
+}
+
+function depictionLocalBondFromEvent(event) {
+  const target = event.target instanceof SVGElement ? event.target.closest('[class*="bond-"]') : null;
+  if (!target) return null;
+  return [...target.classList].flatMap((name) => {
+    const match = /^bond-(\d+)$/.exec(name); return match ? [Number(match[1])] : [];
+  })[0] ?? null;
+}
+
+async function addDepictionAtom(globalIndex, element = state.selectedElement) {
+  if (!ELEMENTS[element]) throw new Error(`Unsupported drawing element ${element}.`);
+  if (!state.molecule?.atoms?.[globalIndex]) throw new Error('Choose an atom in the 2D structure first.');
+  setDepictionSelection([globalIndex]);
+  return applyChemistryMutation((molecule) => {
+    const anchor = molecule.atoms[globalIndex];
+    const before = new Set(molecule.atoms);
+    const direction = attachmentDirection(molecule, globalIndex);
+    const distance = ELEMENTS[anchor.element].covalent + ELEMENTS[element].covalent;
+    const targetPoint = { x:anchor.x + direction.x * distance, y:anchor.y + direction.y * distance,
+      z:anchor.z + direction.z * distance };
+    addElementToMolecule(molecule, element, globalIndex, targetPoint);
+    const added = molecule.atoms.filter((atom) => !before.has(atom));
+    const addedHeavy = added.find((atom) => atom.element !== 'H') || added[0];
+    return { selection:addedHeavy ? [addedHeavy] : [anchor], changedAtoms:[anchor, ...added] };
+  });
+}
+
+async function applyDepictionBond(firstIndex, secondIndex, order = state.depictionBondOrder) {
+  setDepictionSelection([firstIndex, secondIndex]);
+  return applySelectedBondChemistry(order);
+}
+
+async function runDepictionEdit(edit) {
+  if (state.depictionEditing) return null;
+  state.depictionEditing = true; update2DEditorUi();
+  try { return await edit(); }
+  catch (error) { showNotice(error.message || String(error)); return null; }
+  finally {
+    state.depictionEditing = false; state.depictionBondStart = null;
+    update2DEditorUi(); schedule2DDepiction(0);
+  }
+}
+
+function depictionBondCenterHit(event, svg, localBondIndex) {
+  const pair = state.depictionGlobalBondPairs[localBondIndex];
+  if (!pair) return false;
+  const localAtoms = pair.map((globalIndex) => state.depictionGlobalAtomIndices.indexOf(globalIndex));
+  const points = localAtoms.map((localIndex) => depictionAtomPoint(svg, localIndex));
+  const matrix = svg.getScreenCTM();
+  const localPoint = matrix ? new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse()) : null;
+  if (!localPoint || points.some((point) => !point)) return false;
+  const length = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+  const endpointDistance = Math.min(...points.map((point) =>
+    Math.hypot(point.x - localPoint.x, point.y - localPoint.y)));
+  return endpointDistance > Math.max(5, length * 0.24);
 }
 
 function parseXYZ(text, meta = {}) {
@@ -3620,6 +3747,7 @@ function setMode(mode) {
   canvas.classList.toggle('build-cursor', mode === 'build' && state.buildTool === 'add');
   updateChemistryEditor();
   updateBuildStatus();
+  update2DEditorUi();
   if (mode === 'build') requestAnimationFrame(drawFragmentPreviews);
   draw();
   return true;
@@ -3763,7 +3891,7 @@ function restoreMolecule(snapshot) {
   refreshStructureComponents();
   state.selectedAtom = null;
   state.selectedAtoms = [];
-  updateGeometryControl(); updateInfo(); updateHistoryButtons(); draw();
+  updateGeometryControl(); updateInfo(); updateHistoryButtons(); draw(); schedule2DDepiction(0);
 }
 
 function updateHistoryButtons() {
@@ -4221,6 +4349,7 @@ function updateChemistryTransactionUi() {
     document.querySelector('#chemistry-pending-summary').textContent = state.chemistryEditFinishing
       ? 'Finishing chemistry…' : `${count} pending change${count === 1 ? '' : 's'}`;
   }
+  update2DEditorUi();
 }
 
 function updateChemistryEditor() {
@@ -4354,7 +4483,7 @@ async function applyChemistryMutation(mutator) {
     const selection = outcome.selection || [];
     state.selectedAtoms = selection.map((atom) => state.molecule.atoms.indexOf(atom)).filter((index) => index >= 0);
     state.selectedAtom = state.selectedAtoms.at(-1) ?? null;
-    updateInfo(); updateGeometryControl(); updateHistoryButtons(); draw();
+    updateInfo(); updateGeometryControl(); updateHistoryButtons(); draw(); schedule2DDepiction(0);
     if (staged) {
       transaction.validationError = null;
       (outcome.changedAtoms || selection).forEach((atom) => {
@@ -4448,7 +4577,7 @@ async function finishChemistryTransaction() {
     pushBuildSnapshot(transaction.snapshot);
     state.chemistryTransaction = null;
     state.chemistryEditFinishing = false;
-    updateInfo(); updateGeometryControl(); updateChemistryEditor(); updateHistoryButtons(); draw();
+    updateInfo(); updateGeometryControl(); updateChemistryEditor(); updateHistoryButtons(); draw(); schedule2DDepiction(0);
     showToast(`Chemistry finished · ${transaction.editCount} change${transaction.editCount === 1 ? '' : 's'}`);
     return { ...moleculeDiagnostics(molecule), validation, polish,
       pending:false, molecule:structuredClone(molecule) };
@@ -5094,11 +5223,32 @@ window.molariumTest = Object.freeze({
     const panel = document.querySelector('#structure-2d-panel');
     const svg = document.querySelector('#structure-2d-drawing svg');
     return { visible:!panel.classList.contains('hidden'), label:document.querySelector('#structure-2d-label').textContent,
-      atomIndices:state.depictionGlobalAtomIndices.slice(), selectedAtoms:state.selectedAtoms.slice(),
+      atomIndices:state.depictionGlobalAtomIndices.slice(), bondPairs:structuredClone(state.depictionGlobalBondPairs),
+      selectedAtoms:state.selectedAtoms.slice(), tool:state.depictionTool, mode:state.mode,
+      pendingChanges:state.chemistryTransaction?.editCount || 0,
       hasSvg:Boolean(svg), atomClasses:svg?.querySelectorAll('[class*="atom-"]').length || 0,
       rdkitVersion:panel.dataset.rdkitVersion || null };
   },
   select2DAtom(localIndex) { selectDepictionAtom(Number(localIndex)); return this.twoDDepiction(); },
+  set2DTool(tool) {
+    if (!['select', 'atom', 'bond', 'erase'].includes(tool)) throw new Error(`Unknown 2D tool ${tool}`);
+    if (tool !== 'select') setMode('build');
+    state.depictionTool = tool; state.depictionBondStart = null; update2DEditorUi();
+    return this.twoDDepiction();
+  },
+  async draw2DAtom(localIndex, element = 'C') {
+    setMode('build'); state.depictionTool = 'atom'; state.selectedElement = element;
+    const globalIndex = state.depictionGlobalAtomIndices[Number(localIndex)];
+    const result = await runDepictionEdit(() => addDepictionAtom(globalIndex, element));
+    return { result, depiction:this.twoDDepiction(), current:this.current() };
+  },
+  async set2DBond(firstLocalIndex, secondLocalIndex, order = 1) {
+    setMode('build'); state.depictionTool = 'bond'; state.depictionBondOrder = Number(order);
+    const first = state.depictionGlobalAtomIndices[Number(firstLocalIndex)];
+    const second = state.depictionGlobalAtomIndices[Number(secondLocalIndex)];
+    const result = await runDepictionEdit(() => applyDepictionBond(first, second, Number(order)));
+    return { result, depiction:this.twoDDepiction(), current:this.current() };
+  },
   currentPreparationReport() { return structuredClone(proteinPreparationReport(state.molecule)); },
   async prepareCurrentPdb() { return prepareCurrentPdb(); },
   parse(smiles) {
@@ -8997,26 +9147,71 @@ document.querySelector('#structure-2d-toggle').addEventListener('click', (event)
   event.currentTarget.setAttribute('aria-expanded', String(!collapsed));
   event.currentTarget.querySelector('.chevron').classList.toggle('open', !collapsed);
 });
+document.querySelectorAll('[data-2d-tool]').forEach((button) => button.addEventListener('click', () => {
+  const tool = button.dataset.twoDTool;
+  if (tool !== 'select' && state.mode !== 'build' && !setMode('build')) return;
+  state.depictionTool = tool; state.depictionBondStart = null; update2DEditorUi();
+}));
+document.querySelector('#structure-2d-element').addEventListener('change', (event) => {
+  state.selectedElement = event.target.value;
+  document.querySelectorAll('#element-grid button').forEach((button) =>
+    button.classList.toggle('selected', button.dataset.element === state.selectedElement));
+  state.depictionTool = 'atom'; state.depictionBondStart = null;
+  if (state.mode !== 'build') setMode('build');
+  updateBuildStatus(); update2DEditorUi();
+});
+document.querySelector('#structure-2d-bond-order').addEventListener('change', (event) => {
+  state.depictionBondOrder = Number(event.target.value);
+  state.depictionTool = 'bond'; state.depictionBondStart = null;
+  if (state.mode !== 'build') setMode('build');
+  update2DEditorUi();
+});
+document.querySelector('#structure-2d-finish').addEventListener('click', () => {
+  runDepictionEdit(() => finishChemistryTransaction());
+});
+document.querySelector('#structure-2d-discard').addEventListener('click', () => {
+  discardChemistryTransaction(); state.depictionBondStart = null; update2DEditorUi();
+});
 document.querySelector('#structure-2d-drawing').addEventListener('click', (event) => {
   const svg = event.currentTarget.querySelector('svg');
-  const target = event.target instanceof SVGElement ? event.target.closest('[class*="atom-"]') : null;
-  if (!svg || !target) return;
-  const candidates = [...target.classList].flatMap((name) => {
-    const match = /^atom-(\d+)$/.exec(name); return match ? [Number(match[1])] : [];
-  });
-  if (!candidates.length) return;
-  let localIndex = candidates[0];
-  if (candidates.length > 1) {
-    const matrix = svg.getScreenCTM();
-    const localPoint = matrix ? new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse()) : null;
-    if (localPoint) localIndex = candidates.reduce((nearest, candidate) => {
-      const point = depictionAtomPoint(svg, candidate); const nearestPoint = depictionAtomPoint(svg, nearest);
-      if (!point) return nearest; if (!nearestPoint) return candidate;
-      return Math.hypot(point.x - localPoint.x, point.y - localPoint.y)
-        < Math.hypot(nearestPoint.x - localPoint.x, nearestPoint.y - localPoint.y) ? candidate : nearest;
-    }, candidates[0]);
+  if (!svg || state.depictionEditing) return;
+  const localAtom = depictionLocalAtomFromEvent(event, svg);
+  const localBond = depictionLocalBondFromEvent(event);
+  const centerBond = localBond != null && depictionBondCenterHit(event, svg, localBond);
+  const globalAtom = localAtom == null ? null : state.depictionGlobalAtomIndices[localAtom];
+  const globalBond = centerBond ? state.depictionGlobalBondPairs[localBond] : null;
+  if (state.depictionTool === 'select') {
+    if (globalBond) setDepictionSelection(globalBond);
+    else if (globalAtom != null) selectDepictionAtom(localAtom);
+    return;
   }
-  selectDepictionAtom(localIndex);
+  if (state.mode !== 'build' && !setMode('build')) return;
+  if (state.depictionTool === 'atom') {
+    if (globalAtom != null) runDepictionEdit(() => addDepictionAtom(globalAtom));
+    return;
+  }
+  if (state.depictionTool === 'erase') {
+    if (globalBond) {
+      setDepictionSelection(globalBond); runDepictionEdit(() => deleteSelectedBondChemistry());
+    } else if (globalAtom != null) {
+      setDepictionSelection([globalAtom]); runDepictionEdit(() => deleteSelectedAtomChemistry());
+    }
+    return;
+  }
+  if (state.depictionTool === 'bond') {
+    if (globalBond) {
+      runDepictionEdit(() => applyDepictionBond(globalBond[0], globalBond[1])); return;
+    }
+    if (globalAtom == null) return;
+    if (state.depictionBondStart == null) {
+      state.depictionBondStart = globalAtom; setDepictionSelection([globalAtom]); update2DEditorUi(); return;
+    }
+    if (state.depictionBondStart === globalAtom) {
+      state.depictionBondStart = null; setDepictionSelection([]); update2DEditorUi(); return;
+    }
+    const first = state.depictionBondStart;
+    runDepictionEdit(() => applyDepictionBond(first, globalAtom));
+  }
 });
 
 document.querySelector('#components-toggle').addEventListener('click', (event) => {
@@ -9156,7 +9351,8 @@ document.querySelector('#play-button').addEventListener('click', (event) => { st
 document.querySelectorAll('.mode-bar button').forEach((button) => button.addEventListener('click', () => setMode(button.dataset.mode)));
 document.querySelectorAll('#element-grid button').forEach((button) => button.addEventListener('click', () => {
   state.selectedElement = button.dataset.element; document.querySelectorAll('#element-grid button').forEach((item) => item.classList.toggle('selected', item === button));
-  state.stagedFragment = null; document.querySelectorAll('.fragment-card').forEach((card) => card.classList.remove('selected')); updateBuildStatus();
+  state.stagedFragment = null; document.querySelectorAll('.fragment-card').forEach((card) => card.classList.remove('selected'));
+  updateBuildStatus(); update2DEditorUi();
 }));
 
 document.querySelectorAll('#build-tool-tabs button').forEach((button) => button.addEventListener('click', () => {
@@ -9378,6 +9574,7 @@ document.querySelector('#clear-button').addEventListener('click', () => {
   document.querySelector('#structure-components').classList.add('hidden'); document.querySelector('#preparation-inspector').classList.add('hidden');
   document.querySelector('#ligand-protonation').classList.add('hidden');
   state.depictionSequence += 1; state.depictionKey = null; state.depictionGlobalAtomIndices = [];
+  state.depictionGlobalBondPairs = []; state.depictionBondStart = null;
   document.querySelector('#structure-2d-panel').classList.add('hidden');
   showToast('Scene cleared'); draw();
 });

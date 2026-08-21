@@ -82,6 +82,60 @@ try {
     check(selected.selectedAtoms.length === 1 && selected.selectedAtoms[0] === initial.atomIndices[2],
       'clicking a 2D atom selects the same atom in 3D', JSON.stringify(selected));
 
+    api.load('CC');
+    const editable = await api.waitFor2DDepiction();
+    const beforeDraw = api.current().molecule;
+    const drawn = await api.draw2DAtom(1, 'O');
+    const afterDraw = await api.waitFor2DDepiction();
+    const oxygenCount = drawn.current.molecule.atoms.filter((atom) => atom.element === 'O').length;
+    check(oxygenCount === 1 && afterDraw.atomIndices.length === 3 && afterDraw.pendingChanges === 1
+      && afterDraw.mode === 'build',
+    'the 2D atom tool edits the shared 3D graph and stages one chemistry change', JSON.stringify(afterDraw));
+    api.discardChemistryCurrent();
+    const restoredDraw = await api.waitFor2DDepiction();
+    check(restoredDraw.atomIndices.length === 2 && api.current().molecule.atoms.length === beforeDraw.atoms.length,
+      'discard restores both 2D and 3D representations', JSON.stringify(restoredDraw));
+
+    const doubled = await api.set2DBond(0, 1, 2);
+    const afterBond = await api.waitFor2DDepiction();
+    const globalPair = afterBond.atomIndices.slice(0, 2);
+    const editedBond = doubled.current.molecule.bonds.find((bond) =>
+      (bond.a === globalPair[0] && bond.b === globalPair[1])
+      || (bond.a === globalPair[1] && bond.b === globalPair[0]));
+    check(Number(editedBond?.order) === 2 && afterBond.pendingChanges === 1,
+      'the 2D bond tool changes the shared bond order without creating a parallel graph', JSON.stringify(afterBond));
+    api.discardChemistryCurrent();
+    await api.waitFor2DDepiction();
+
+    await api.set2DBond(0, 1, 2);
+    const finishedBond = await api.finishChemistryCurrent();
+    const afterFinish = await api.waitFor2DDepiction();
+    check(finishedBond.validation.valid && finishedBond.valenceViolations.length === 0
+      && finishedBond.formula === 'C2H4' && afterFinish.pendingChanges === 0,
+    'Finish reconciles hydrogens and locally refines the resulting 3D structure', JSON.stringify({
+      formula:finishedBond.formula, validation:finishedBond.validation, depiction:afterFinish,
+    }));
+
+    api.load('CCO');
+    await api.waitFor2DDepiction();
+    const elementPicker = document.querySelector('#structure-2d-element');
+    elementPicker.value = 'C';
+    elementPicker.dispatchEvent(new Event('change', { bubbles:true }));
+    const editableSvg = document.querySelector('#structure-2d-drawing svg');
+    const editableOxygen = [...editableSvg.querySelectorAll('.atom-2')].find((node) =>
+      [...node.classList].filter((name) => name.startsWith('atom-')).length === 1);
+    const editableBox = editableOxygen.getBoundingClientRect();
+    editableOxygen.dispatchEvent(new MouseEvent('click', { bubbles:true,
+      clientX:editableBox.x + editableBox.width / 2, clientY:editableBox.y + editableBox.height / 2 }));
+    const pointerEdited = await api.waitFor2DDepiction();
+    check(pointerEdited.mode === 'build' && pointerEdited.tool === 'atom'
+      && pointerEdited.atomIndices.length === 4 && pointerEdited.pendingChanges === 1,
+    'the visible 2D controls enter Build and edit through an actual SVG click', JSON.stringify(pointerEdited));
+    document.querySelector('#structure-2d-discard').click();
+    const pointerRestored = await api.waitFor2DDepiction();
+    check(pointerRestored.atomIndices.length === 3 && pointerRestored.pendingChanges === 0,
+      'the inset Discard control restores the synchronized structure', JSON.stringify(pointerRestored));
+
     const complex = api.parse('CC(O)c1ccccc1').molecule;
     complex.atoms.forEach((atom, index) => Object.assign(atom, {
       record:'HETATM', residueName:'LIG', residueIndex:1, chain:'L', atomName:'L' + (index + 1),
