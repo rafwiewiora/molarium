@@ -65,6 +65,13 @@ try {
     const api = window.molariumTest;
     const checks = [];
     const check = (condition, label, details = '') => checks.push({ passed:Boolean(condition), label, details });
+    const drawing = document.querySelector('#structure-2d-drawing');
+    const clickDrawingNear = (point, distance = 18) => {
+      const bounds = drawing.getBoundingClientRect();
+      const direction = point.x < bounds.x + bounds.width / 2 ? -1 : 1;
+      drawing.dispatchEvent(new MouseEvent('click', { bubbles:true,
+        clientX:point.x + direction * distance, clientY:point.y }));
+    };
     api.load('CC(O)c1ccccc1');
     const initial = await api.waitFor2DDepiction();
     check(initial.visible && initial.hasSvg && initial.atomIndices.length === 9 && initial.atomClasses > 0,
@@ -85,12 +92,11 @@ try {
     const oxygen = [...svg.querySelectorAll('.atom-2')].find((node) =>
       [...node.classList].filter((name) => name.startsWith('atom-')).length === 1);
     const box = oxygen.getBoundingClientRect();
-    oxygen.dispatchEvent(new MouseEvent('click', { bubbles:true, clientX:box.x + box.width / 2,
-      clientY:box.y + box.height / 2 }));
+    clickDrawingNear({ x:box.x + box.width / 2, y:box.y + box.height / 2 });
     await new Promise((resolve) => setTimeout(resolve, 150));
     const selected = await api.waitFor2DDepiction();
     check(selected.selectedAtoms.length === 1 && selected.selectedAtoms[0] === initial.atomIndices[2],
-      'clicking a 2D atom selects the same atom in 3D', JSON.stringify(selected));
+      'clicking empty space near a 2D atom selects the same atom in 3D', JSON.stringify(selected));
 
     api.load('CC');
     const editable = await api.waitFor2DDepiction();
@@ -135,16 +141,38 @@ try {
     const editableOxygen = [...editableSvg.querySelectorAll('.atom-2')].find((node) =>
       [...node.classList].filter((name) => name.startsWith('atom-')).length === 1);
     const editableBox = editableOxygen.getBoundingClientRect();
-    editableOxygen.dispatchEvent(new MouseEvent('click', { bubbles:true,
-      clientX:editableBox.x + editableBox.width / 2, clientY:editableBox.y + editableBox.height / 2 }));
+    clickDrawingNear({ x:editableBox.x + editableBox.width / 2,
+      y:editableBox.y + editableBox.height / 2 });
     const pointerEdited = await api.waitFor2DDepiction();
     check(pointerEdited.mode === 'build' && pointerEdited.tool === 'atom'
       && pointerEdited.atomIndices.length === 4 && pointerEdited.pendingChanges === 1,
-    'the visible 2D controls enter Build and edit through an actual SVG click', JSON.stringify(pointerEdited));
+    'the atom tool snaps to a nearby atom without an exact SVG click', JSON.stringify(pointerEdited));
     document.querySelector('#structure-2d-discard').click();
     const pointerRestored = await api.waitFor2DDepiction();
     check(pointerRestored.atomIndices.length === 3 && pointerRestored.pendingChanges === 0,
       'the inset Discard control restores the synchronized structure', JSON.stringify(pointerRestored));
+
+    api.load('CC');
+    await api.waitFor2DDepiction();
+    const bondOrderPicker = document.querySelector('#structure-2d-bond-order');
+    bondOrderPicker.value = '2';
+    bondOrderPicker.dispatchEvent(new Event('change', { bubbles:true }));
+    const bondSvg = document.querySelector('#structure-2d-drawing svg');
+    const bondPath = bondSvg.querySelector('.bond-0');
+    const localMidpoint = bondPath.getPointAtLength(bondPath.getTotalLength() / 2);
+    const screenMidpoint = new DOMPoint(localMidpoint.x, localMidpoint.y)
+      .matrixTransform(bondSvg.getScreenCTM());
+    drawing.dispatchEvent(new MouseEvent('click', { bubbles:true,
+      clientX:screenMidpoint.x, clientY:screenMidpoint.y + 10 }));
+    const snappedBond = await api.waitFor2DDepiction();
+    const snappedPair = snappedBond.atomIndices.slice(0, 2);
+    const snappedOrder = api.current().molecule.bonds.find((bond) =>
+      (bond.a === snappedPair[0] && bond.b === snappedPair[1])
+      || (bond.a === snappedPair[1] && bond.b === snappedPair[0]))?.order;
+    check(Number(snappedOrder) === 2 && snappedBond.pendingChanges === 1,
+      'the bond tool snaps to a nearby bond without an exact SVG click', JSON.stringify(snappedBond));
+    document.querySelector('#structure-2d-discard').click();
+    await api.waitFor2DDepiction();
 
     const complex = api.parse('CC(O)c1ccccc1').molecule;
     complex.atoms.forEach((atom, index) => Object.assign(atom, {

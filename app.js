@@ -913,31 +913,43 @@ function setDepictionSelection(indices) {
   updateGeometryControl(); updateBuildStatus(); draw(); schedule2DDepiction(0);
 }
 
-function depictionLocalAtomFromEvent(event, svg) {
-  const target = event.target instanceof SVGElement ? event.target.closest('[class*="atom-"]') : null;
-  if (!target) return null;
-  const candidates = [...target.classList].flatMap((name) => {
-    const match = /^atom-(\d+)$/.exec(name); return match ? [Number(match[1])] : [];
-  });
-  if (!candidates.length) return null;
-  if (candidates.length === 1) return candidates[0];
+function depictionScreenPoint(svg, localPoint) {
   const matrix = svg.getScreenCTM();
-  const localPoint = matrix ? new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse()) : null;
-  if (!localPoint) return candidates[0];
-  return candidates.reduce((nearest, candidate) => {
-    const point = depictionAtomPoint(svg, candidate); const nearestPoint = depictionAtomPoint(svg, nearest);
-    if (!point) return nearest; if (!nearestPoint) return candidate;
-    return Math.hypot(point.x - localPoint.x, point.y - localPoint.y)
-      < Math.hypot(nearestPoint.x - localPoint.x, nearestPoint.y - localPoint.y) ? candidate : nearest;
-  }, candidates[0]);
+  return matrix && localPoint ? new DOMPoint(localPoint.x, localPoint.y).matrixTransform(matrix) : null;
 }
 
-function depictionLocalBondFromEvent(event) {
-  const target = event.target instanceof SVGElement ? event.target.closest('[class*="bond-"]') : null;
-  if (!target) return null;
-  return [...target.classList].flatMap((name) => {
-    const match = /^bond-(\d+)$/.exec(name); return match ? [Number(match[1])] : [];
-  })[0] ?? null;
+function pointSegmentDistance(point, first, second) {
+  const dx = second.x - first.x, dy = second.y - first.y;
+  const denominator = dx * dx + dy * dy;
+  const t = denominator > 1e-8
+    ? Math.max(0, Math.min(1, ((point.x - first.x) * dx + (point.y - first.y) * dy) / denominator)) : 0;
+  return Math.hypot(point.x - (first.x + t * dx), point.y - (first.y + t * dy));
+}
+
+function depictionProximityHit(event, svg) {
+  const atomSnapRadius = 42;
+  const bondSnapRadius = 18;
+  const pointer = { x:event.clientX, y:event.clientY };
+  let atom = null;
+  for (let localIndex = 0; localIndex < state.depictionGlobalAtomIndices.length; localIndex++) {
+    const screen = depictionScreenPoint(svg, depictionAtomPoint(svg, localIndex));
+    if (!screen) continue;
+    const distance = Math.hypot(pointer.x - screen.x, pointer.y - screen.y);
+    if (!atom || distance < atom.distance) atom = { localIndex, distance, screen };
+  }
+  let bond = null;
+  state.depictionGlobalBondPairs.forEach((pair, localIndex) => {
+    const localAtoms = pair.map((globalIndex) => state.depictionGlobalAtomIndices.indexOf(globalIndex));
+    const points = localAtoms.map((atomIndex) => depictionScreenPoint(svg, depictionAtomPoint(svg, atomIndex)));
+    if (points.some((point) => !point)) return;
+    const distance = pointSegmentDistance(pointer, points[0], points[1]);
+    const endpointDistance = Math.min(...points.map((point) => Math.hypot(pointer.x - point.x, pointer.y - point.y)));
+    if (!bond || distance < bond.distance) bond = { localIndex, distance, endpointDistance };
+  });
+  if (atom?.distance > atomSnapRadius) atom = null;
+  if (bond?.distance > bondSnapRadius) bond = null;
+  const preferBond = Boolean(bond && (!atom || atom.distance > 24) && bond.endpointDistance > 18);
+  return { atom, bond, preferBond };
 }
 
 async function addDepictionAtom(globalIndex, element = state.selectedElement) {
@@ -972,20 +984,6 @@ async function runDepictionEdit(edit) {
     state.depictionEditing = false; state.depictionBondStart = null;
     update2DEditorUi(); schedule2DDepiction(0);
   }
-}
-
-function depictionBondCenterHit(event, svg, localBondIndex) {
-  const pair = state.depictionGlobalBondPairs[localBondIndex];
-  if (!pair) return false;
-  const localAtoms = pair.map((globalIndex) => state.depictionGlobalAtomIndices.indexOf(globalIndex));
-  const points = localAtoms.map((localIndex) => depictionAtomPoint(svg, localIndex));
-  const matrix = svg.getScreenCTM();
-  const localPoint = matrix ? new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse()) : null;
-  if (!localPoint || points.some((point) => !point)) return false;
-  const length = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
-  const endpointDistance = Math.min(...points.map((point) =>
-    Math.hypot(point.x - localPoint.x, point.y - localPoint.y)));
-  return endpointDistance > Math.max(5, length * 0.24);
 }
 
 function parseXYZ(text, meta = {}) {
@@ -9175,11 +9173,11 @@ document.querySelector('#structure-2d-discard').addEventListener('click', () => 
 document.querySelector('#structure-2d-drawing').addEventListener('click', (event) => {
   const svg = event.currentTarget.querySelector('svg');
   if (!svg || state.depictionEditing) return;
-  const localAtom = depictionLocalAtomFromEvent(event, svg);
-  const localBond = depictionLocalBondFromEvent(event);
-  const centerBond = localBond != null && depictionBondCenterHit(event, svg, localBond);
+  const hit = depictionProximityHit(event, svg);
+  const localAtom = hit.atom?.localIndex ?? null;
+  const localBond = hit.bond?.localIndex ?? null;
   const globalAtom = localAtom == null ? null : state.depictionGlobalAtomIndices[localAtom];
-  const globalBond = centerBond ? state.depictionGlobalBondPairs[localBond] : null;
+  const globalBond = hit.preferBond ? state.depictionGlobalBondPairs[localBond] : null;
   if (state.depictionTool === 'select') {
     if (globalBond) setDepictionSelection(globalBond);
     else if (globalAtom != null) selectDepictionAtom(localAtom);
