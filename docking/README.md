@@ -1,4 +1,4 @@
-# Molarium analogue pose protocols
+# Molarium reference-guided pose protocols
 
 Molarium Pose Propagation-1 and ConstraintDock-1 are independent, browser-oriented protocols for
 reference-pose analogue refinement and required hydrogen-bond constrained ligand posing. They are
@@ -52,7 +52,7 @@ energy, and penalty definitions.
 
 ## Executable boundary
 
-ConstraintDock version `0.3.0` and Pose Propagation version `0.3.0` implement and test:
+ConstraintDock version `0.3.0` and Pose Propagation version `0.4.0` implement and test:
 
 - least-squares reference-core alignment;
 - exact reference-coordinate snapping for every mapped core atom plus an independent RMSD audit;
@@ -63,6 +63,8 @@ ConstraintDock version `0.3.0` and Pose Propagation version `0.3.0` implement an
 - automatic inheritance of every surviving reference heavy atom for recorded graph edits;
 - reference-preserving edit cleanup by default, with the older free local ring cleanup available explicitly;
 - exact restoration of surviving ligand-donor hydrogens used by selected captured contacts;
+- post-sanitization transfer of a deleted contact participant to one exact compatible feature at
+  the same recorded edit boundary, with ambiguity requiring an explicit choice;
 - a deterministic Metropolis torsion search that rotates only graph branches containing no core atom;
 - hard feasible-state retention for required contacts during search;
 - a transparent receptor-site score using cross OpenFF Lennard-Jones and Coulomb terms plus relative
@@ -85,8 +87,8 @@ The browser gate uses a synthetic protein–ligand fixture to execute capture, a
 discard stale complex parameters, freshly parameterize the edited ligand with OpenFF/OpenMM WASM,
 run RDKit WASM generation, rank the constrained poses, replay them deterministically, verify the
 hash chain, and apply a pose without moving the receptor. It also proves that a removed contact atom
-is disabled and explicitly logged rather than silently remapped. Accuracy claims still require prospective
-cognate-redocking and cross-docking benchmarks; version 0.3 must be presented as experimental until
+is either transferred by the exact-feature rule or explicitly omitted. Accuracy claims still require prospective
+cognate-redocking and cross-docking benchmarks; version 0.4 must be presented as experimental until
 those are added.
 
 ## Labbook design

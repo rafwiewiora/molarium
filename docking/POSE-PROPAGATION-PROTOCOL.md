@@ -3,7 +3,7 @@
 ## Normative protocol
 
 Protocol ID: `molarium-pose-propagation-1`
-Protocol version: `0.3.0`
+Protocol version: `0.4.0`
 Status: experimental pose-preparation and pose-ranking method
 Canonical machine-readable definition: `MOLARIUM_POSE_PROPAGATION_PROTOCOL` in
 [`protocol.mjs`](./protocol.mjs)
@@ -32,7 +32,9 @@ The independent Molarium contribution is the following precisely defined composi
    for losing one.
 5. Ligand-only force-field relaxation is accepted only after a receptor-aware feasibility and
    complete-score audit.
-6. Inputs, protocol, atom lineage, settings, decisions, and results are recorded in a hash-linked
+6. A contact affected by an R-group edit can transfer only to an exact compatible ligand feature
+   created at the same recorded edit boundary.
+7. Inputs, protocol, atom lineage, contact-feature decisions, settings, and results are recorded in a hash-linked
    browser-local labbook.
 
 This should be described as an **independent experimental protocol**. A stronger novelty claim
@@ -71,7 +73,9 @@ zero-based internally.
 At reference capture, every ligand atom receives a unique `designAtomId`. PDB-derived IDs encode
 namespace, record, chain, residue, atom name, and serial; design atoms without those fields receive a
 namespace-local ordinal. Graph editing must preserve this ID on an atom that survives an edit and
-must create a new ID for an added atom.
+must create a new ID for an added atom. Every allocated ID is retained in an append-only molecule
+ledger. Deleting an atom does not release its ID, so a replacement at the same array position can
+never masquerade as the deleted reference atom.
 
 An atom is inherited if and only if:
 
@@ -102,9 +106,11 @@ Before a run, every captured receptor atom must still exist with the same elemen
 
 ## Required hydrogen bonds
 
-Reference-contact detection uses explicit hydrogens. A donor is N, O, or S with a bonded H. An
-acceptor is nonpositive O/S/F, or nonpositive N with degree below four and no bonded H. Covalently
-near pairs within two bonds are excluded. A displayed reference H bond must have:
+Reference-contact detection uses explicit hydrogens and the same typed graph function used by
+display, capture, remapping, UI availability, and run-time validation. A donor is a typed N, O, or
+S with the specific explicit bonded H. Acceptor typing distinguishes charge, aromaticity, local
+bond order, amide-like N, acid versus alcohol O, and F. An untypable ligand feature is not captured.
+Covalently near pairs within two bonds are excluded. A displayed reference H bond must have:
 
 - H–A distance from `1.2` through `2.6 Å`; and
 - D–H–A angle at least `135°`.
@@ -127,8 +133,41 @@ boundary outside it. The contact penalty is
 ```
 
 A required contact outside any allowed range makes the pose infeasible regardless of its score.
-If an edit deletes a ligand participant, the contact is disabled and recorded as
-`ligand-atom-removed`; it is never silently mapped to a new donor or acceptor.
+
+### Contact-feature transfer after an R-group edit
+
+The receptor-side participant, identity, and captured coordinate are immutable. Ligand contact
+identity is evaluated only after the complete staged edit passes RDKit sanitization and local edit
+polish. A surviving ligand participant remains usable only if its element and captured chemical
+feature remain compatible.
+
+If the original ligand feature was removed or changed, `exact-feature-edit-boundary/v1` considers
+only features in the newly added or chemically changed region. A candidate must have the same:
+
+- donor or acceptor role;
+- element, integer formal charge, and aromatic state;
+- heavy-atom degree and element/bond-order neighbor signature;
+- captured feature class, such as carbonyl oxygen acceptor or aromatic nitrogen acceptor; and
+- nonempty set of surviving `designAtomId` boundary anchors connecting the removed and replacement
+  edit regions.
+
+Exactly one candidate is mapped automatically. Two or more candidates require an explicit user
+choice or omission. Zero candidates leave the contact unavailable. Current coordinates and apparent
+H-bond geometry are recorded as evidence but never establish eligibility or break a tie.
+
+The originating feature signature, surviving boundary IDs, committed-edit ID, and exact candidate
+identities persist with an unresolved proposal. A later edit revalidates that candidate set against
+the live graph, so removing one of two ambiguous features can deterministically resolve the
+proposal. A later edit never replaces the origin with a nearer or newly convenient heteroatom.
+
+A ligand-donor feature consists of the donor and one explicit bonded hydrogen as a tuple. A newly
+mapped hydrogen has no captured reference coordinate and therefore cannot use captured-hydrogen
+restoration; subsequent torsion search and constrained relaxation must establish its geometry.
+Every decision records original and replacement IDs and signatures, unchanged receptor IDs,
+boundary IDs, the complete candidate set, before/after topology SHA-256 values, the decision method,
+and time in the hash-linked labbook. If a mapped feature is replaced again, the complete mapping
+chain is retained. Undo and redo restore the graph, selected-contact set, applied mappings, and
+unresolved proposals as one history state.
 
 ## Interactive edit cleanup
 

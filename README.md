@@ -212,7 +212,7 @@ Protein cartoon mode can show a complete 5 Å ligand pocket or only residues inv
 current hydrogen bonds and aromatic stacking contacts. Clicking a protein atom can keep that
 residue centered during trajectory playback.
 
-## Analogue pose refinement and constrained docking
+## Reference-guided pose refinement and constrained docking
 
 For a ligand edited inside Molarium, **Pose Propagation-1** is the default. Capture the prepared
 reference pose, edit the ligand, and refine: every surviving heavy atom is identified from the
@@ -222,11 +222,22 @@ receives a fixed-scaffold OpenFF Sage relaxation; a relaxed result is kept only 
 required-contact feasibility and improves the complete pose-ranking objective. No manual core
 selection is needed.
 
+**Optimize** and **Refine edited group** are deliberately different. Optimize performs one local
+force-field descent from the coordinates currently on screen; ligand-only Optimize does not include
+the receptor in its energy. Refine launches the selected number of independently seeded torsion
+search chains, evaluates every proposal against the rigid receptor and required contacts, applies
+guarded fixed-scaffold relaxation, clusters duplicate heavy-atom geometries, and reports distinct
+poses. It therefore perceives the receptor; it is still a local analogue-pose method, not global
+docking.
+
 This follows established congeneric/RBFE pose-preparation practice: preserve a trusted reference
 common region, sample modified substituents, resolve local clashes, and audit alternate binding
 modes rather than beginning with unconstrained global docking. Required D–H–A contacts remain hard
-feasible states during search. Removed contact atoms are logged and never silently remapped to a
-new chemical feature.
+feasible states during search. When an R-group replacement removes a contact atom, Molarium maps it
+automatically only when the sanitized edit contains one exact compatible donor/acceptor feature at
+the same recorded edit boundary. Ambiguous replacements require an explicit choice; geometry is
+never used to manufacture the mapping. The immutable receptor participant and complete decision are
+recorded in the hash-linked labbook.
 
 **ConstraintDock-1** remains an expert selected-core search. It accepts any connected,
 non-collinear selection of at least three ligand heavy atoms, generates deterministic ETKDGv3

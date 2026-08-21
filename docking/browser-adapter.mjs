@@ -1,4 +1,8 @@
 import { ensureStableAtomIds } from './reference-core.mjs';
+import { perceiveHydrogenBondFeature,
+  validateCapturedLigandHydrogenBondFeature } from './contact-remap.mjs';
+
+const moleculeGraphByAtomArray = new WeakMap();
 
 function uniqueValidIndices(indices, atomCount, label) {
   const result = [...new Set(Array.from(indices || [], Number))];
@@ -28,15 +32,17 @@ export function createLigandPlan(molecule, ligandAtomIndices, namespace = 'molar
   const atoms = globalAtomIndices.map((index) => ({ ...molecule.atoms[index] }));
   const bonds = molecule.bonds.flatMap((bond) => selected.has(bond.a) && selected.has(bond.b)
     ? [{ ...bond, a:globalToLocal.get(bond.a), b:globalToLocal.get(bond.b) }] : []);
-  return {
-    molecule:{
+  const ligandMolecule = {
       atoms, bonds,
       name:`${molecule.name || 'structure'} ligand`,
       smiles:molecule.smiles || 'Ligand component',
       charge:atoms.reduce((sum, atom) => sum + Number(atom.formalCharge ?? atom.charge ?? 0), 0),
       multiplicity:1,
       source:{ format:'molarium-docking-ligand', parent:molecule.name || null },
-    },
+    };
+  moleculeGraphByAtomArray.set(atoms, ligandMolecule);
+  return {
+    molecule:ligandMolecule,
     globalAtomIndices,
     globalToLocal,
   };
@@ -54,7 +60,16 @@ export function captureCrossHydrogenBonds(molecule, ligandAtomIndices, hydrogenB
     const donor = molecule.atoms[bond.donor];
     const hydrogen = molecule.atoms[bond.hydrogen];
     const acceptor = molecule.atoms[bond.acceptor];
-    const ligandDescriptor = (index) => ({ scope:'ligand', designAtomId:molecule.atoms[index].designAtomId,
+    const ligandRole = donorIsLigand ? 'donor' : 'acceptor';
+    const ligandFeatureIndex = donorIsLigand ? bond.donor : bond.acceptor;
+    const ligandFeature = perceiveHydrogenBondFeature(molecule, ligandFeatureIndex, ligandRole);
+    if (!ligandFeature || donorIsLigand
+      && !ligandFeature.hydrogenIndices.includes(bond.hydrogen)) return [];
+    const ligandDescriptor = (index, role = null) => ({ scope:'ligand',
+      designAtomId:molecule.atoms[index].designAtomId,
+      element:molecule.atoms[index].element,
+      ...(role === 'acceptor' || role === 'donor'
+        ? { featureSignature:ligandFeature.signature } : {}),
       referencePoint:copiedPoint(molecule.atoms[index]) });
     const receptorDescriptor = (index) => ({ scope:'receptor', point:copiedPoint(molecule.atoms[index]),
       sourceGlobalAtomIndex:index, designAtomId:molecule.atoms[index].designAtomId,
@@ -64,9 +79,9 @@ export function captureCrossHydrogenBonds(molecule, ligandAtomIndices, hydrogenB
       label:`${atomLabel(donor, bond.donor)} → ${atomLabel(acceptor, bond.acceptor)}`,
       required:true,
       receptorRole:donorIsLigand ? 'acceptor' : 'donor',
-      donor:donorIsLigand ? ligandDescriptor(bond.donor) : receptorDescriptor(bond.donor),
-      hydrogen:hydrogenIsLigand ? ligandDescriptor(bond.hydrogen) : receptorDescriptor(bond.hydrogen),
-      acceptor:acceptorIsLigand ? ligandDescriptor(bond.acceptor) : receptorDescriptor(bond.acceptor),
+      donor:donorIsLigand ? ligandDescriptor(bond.donor, 'donor') : receptorDescriptor(bond.donor),
+      hydrogen:hydrogenIsLigand ? ligandDescriptor(bond.hydrogen, 'hydrogen') : receptorDescriptor(bond.hydrogen),
+      acceptor:acceptorIsLigand ? ligandDescriptor(bond.acceptor, 'acceptor') : receptorDescriptor(bond.acceptor),
       referenceGeometry:{ hydrogenAcceptorDistanceAngstrom:Number(bond.distance), cosine:Number(bond.cosine) },
     }];
   });
@@ -128,15 +143,14 @@ export function capturedReceptorContactIntegrity(definitions, molecule, toleranc
   return { valid:issues.length === 0, toleranceAngstrom, checked, issues };
 }
 
-export function capturedHydrogenBondAvailability(definitions, candidateAtoms) {
-  const candidateIds = new Set(Array.from(candidateAtoms || [], (atom) => atom?.designAtomId).filter(Boolean));
-  return Array.from(definitions || []).map((definition) => {
-    const requiredAtomIds = [definition.donor, definition.hydrogen, definition.acceptor]
-      .filter((descriptor) => descriptor?.scope === 'ligand')
-      .map((descriptor) => descriptor.designAtomId);
-    const missingAtomIds = requiredAtomIds.filter((id) => !candidateIds.has(id));
-    return { id:definition.id, available:missingAtomIds.length === 0, missingAtomIds };
-  });
+export function capturedHydrogenBondAvailability(definitions, candidate, candidateBonds = null) {
+  const molecule = Array.isArray(candidate)
+    ? moleculeGraphByAtomArray.get(candidate) || { atoms:candidate, bonds:candidateBonds || [] }
+    : candidate;
+  if (!molecule?.atoms || !Array.isArray(molecule.bonds))
+    throw new Error('Captured-contact availability requires a complete candidate graph');
+  return Array.from(definitions || []).map((definition) =>
+    validateCapturedLigandHydrogenBondFeature(definition, molecule));
 }
 
 export function unpackConformerStack(stack, atomCount) {

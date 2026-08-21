@@ -17,8 +17,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 570344,
-      "sha256": "6a34a005deb90ec8e8c23fd73c36e0e2c2796ac93aae7cde5a5ec2c2d9ea170c"
+      "bytes": 592627,
+      "sha256": "0ba3f6387d49251b2a61fe1e502d5dd761992bad626a1e134455921366cd1137"
     },
     {
       "path": "bun.lock",
@@ -32,8 +32,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 55461,
-      "sha256": "c205aeb2ae7e7cd010dd3f8b86e570121bd62cf1461e2835282a9a6cbac8e899"
+      "bytes": 55918,
+      "sha256": "14ba1bdf40db98d38af6a7ee6e1a82e5b7d19f1584d1b53163ca880fdc8e7841"
     },
     {
       "path": "local-lab-test.js",
@@ -42,8 +42,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 1618,
-      "sha256": "8246a90651b5fff767ab52c13215528f63fbf2ca788e37c978660be52ffbcdfa"
+      "bytes": 1711,
+      "sha256": "97c6cafe441fd6ad83bd0014c8812972884fc0b80ffff47702f80254ca51cd85"
     },
     {
       "path": "protein-residue-templates.js",
@@ -57,13 +57,13 @@
     },
     {
       "path": "scripts/generate-local-lab-manifest.mjs",
-      "bytes": 2409,
-      "sha256": "d083c5637d89edbdcff85b10b3b0f77b839368baf7659ea8e47fd27d140ba29c"
+      "bytes": 2440,
+      "sha256": "6668b1d6862184b567079712fcb136f4c3bb52af71859d8449930bb65b02751c"
     },
     {
       "path": "styles.css",
-      "bytes": 56061,
-      "sha256": "f4fc4b37619f095f3a9a32be4ce44462529807ef44538090095c4f5ef08daa92"
+      "bytes": 56871,
+      "sha256": "4f851906afe31eaec44970d5c77589b792d92c26652bdc338c144688e7933cd9"
     },
     {
       "path": "rdkit-worker.js",
@@ -87,8 +87,13 @@
     },
     {
       "path": "docking/browser-adapter.mjs",
-      "bytes": 10124,
-      "sha256": "c87f2d3963b84b948d73c93d72e8825e6b68355d1777a8d550c2be6c5e24f224"
+      "bytes": 10839,
+      "sha256": "ef975360ad31f0b861ae5fba12d8c97441eceea20b058e8ee698357eda79fcd2"
+    },
+    {
+      "path": "docking/contact-remap.mjs",
+      "bytes": 21381,
+      "sha256": "5cecd007a6c0310f4d2af690810d1ce04b7282a43f82cc528845ce0866d66a9f"
     },
     {
       "path": "docking/constraints.mjs",
@@ -102,8 +107,8 @@
     },
     {
       "path": "docking/protocol.mjs",
-      "bytes": 16315,
-      "sha256": "49ab3d77ee040991f06e47004cc8b0a8bae0ff70a8a699c0b2e0f3b01ece13c1"
+      "bytes": 18317,
+      "sha256": "1de2c4dc3b5e7e8e59bd72bd87989b610462964d6b0cadfd3c63adf8118b6778"
     },
     {
       "path": "docking/receptor-score.mjs",
@@ -112,8 +117,8 @@
     },
     {
       "path": "docking/reference-core.mjs",
-      "bytes": 7216,
-      "sha256": "f57f12122832341e4c47c59fdfff192619638b9f13fb7330e8e4d22544450066"
+      "bytes": 7469,
+      "sha256": "46aebcaeecdc635e310abaf48496a46ece67fce137156f234abf40fcb73f6d6a"
     },
     {
       "path": "docking/torsion-search.mjs",

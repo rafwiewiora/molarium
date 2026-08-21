@@ -19,6 +19,7 @@ const reviewedFiles = [
   'rdkit/dist/RDKit_minimal.js',
   'rdkit/dist/RDKit_minimal.wasm',
   'docking/browser-adapter.mjs',
+  'docking/contact-remap.mjs',
   'docking/constraints.mjs',
   'docking/labbook.mjs',
   'docking/protocol.mjs',

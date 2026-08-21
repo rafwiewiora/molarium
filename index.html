@@ -252,12 +252,12 @@
             </div>
             <section class="docking-workbench hidden" id="docking-workbench">
               <div class="docking-heading">
-                <h2 class="compact-label">Analogue pose</h2>
-                <span class="info-anchor"><button type="button" class="info-button" aria-label="About analogue posing" aria-describedby="docking-info">i</button><span class="info-popover" id="docking-info" role="tooltip">Propagate recorded ligand edits from a reference pose, or run an expert selected-core search. Scores are not binding free energies.</span></span>
+                <h2 class="compact-label">Reference-guided pose</h2>
+                <span class="info-anchor"><button type="button" class="info-button" aria-label="About reference-guided posing" aria-describedby="docking-info">i</button><span class="info-popover" id="docking-info" role="tooltip">Keeps unchanged ligand atoms fixed, searches edited-group torsions against the receptor, enforces selected contacts, and relaxes the resulting poses.</span></span>
               </div>
-              <select id="docking-mode" aria-label="Analogue pose method">
-                <option value="propagate" selected>Propagate edit</option>
-                <option value="selected-core">Selected core search</option>
+              <select id="docking-mode" aria-label="Reference-guided pose method">
+                <option value="propagate" selected>Propagate reference pose</option>
+                <option value="selected-core">Expert selected-core search</option>
               </select>
               <label class="docking-cleanup hidden" id="docking-cleanup-field">
                 <span>Edit cleanup</span>
@@ -276,13 +276,13 @@
                 <div id="docking-hbond-list"></div>
               </div>
               <div class="docking-run-row hidden" id="docking-run-row">
-                <select id="docking-conformer-count" aria-label="Docking conformer count">
-                  <option value="8">8 poses</option>
-                  <option value="16" selected>16 poses</option>
-                  <option value="32">32 poses</option>
-                  <option value="64">64 poses</option>
+                <select id="docking-conformer-count" aria-label="Torsion-search chain count">
+                  <option value="8">8 search chains</option>
+                  <option value="16" selected>16 search chains</option>
+                  <option value="32">32 search chains</option>
+                  <option value="64">64 search chains</option>
                 </select>
-                <button class="primary-button" type="button" id="run-constrained-docking">Refine</button>
+                <button class="primary-button" type="button" id="run-constrained-docking">Refine edited group</button>
               </div>
             </section>
             <h2 class="compact-label build-section-label">Element</h2>
@@ -551,10 +551,12 @@
             </div>
 
             <div class="viewer-toolbar">
-              <button id="export-button">Export</button>
-              <button id="clear-button">Clear</button>
-              <button id="share-button">Share</button>
-              <button id="save-button">Save</button>
+              <button class="viewer-standard-action" id="export-button">Export</button>
+              <button class="viewer-standard-action" id="clear-button">Clear</button>
+              <button class="viewer-standard-action" id="share-button">Share</button>
+              <button class="viewer-standard-action" id="save-button">Save</button>
+              <button class="viewer-chemistry-finish hidden" id="viewer-finish-chemistry">Finish chemistry</button>
+              <button class="viewer-chemistry-discard hidden" id="viewer-discard-chemistry">Discard</button>
               <button id="fullscreen-button">Fullscreen</button>
             </div>
 
@@ -622,7 +624,7 @@
           <section class="card mode-panel hidden" id="build-right-panel">
             <section class="docking-results hidden" id="docking-results">
               <div class="docking-heading">
-                <h2 class="compact-label">Refined poses</h2>
+                <h2 class="compact-label">Distinct poses</h2>
                 <strong id="docking-result-summary">—</strong>
               </div>
               <div class="docking-pose-list" id="docking-pose-list"></div>

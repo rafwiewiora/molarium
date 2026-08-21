@@ -25,9 +25,13 @@ function maximumTriangleDoubleArea(referencePositions, referenceAtomIndices) {
   return maximum;
 }
 
-export function ensureStableAtomIds(molecule, namespace = 'molarium') {
+export function ensureStableAtomIds(molecule, namespace = 'molarium', reservedIds = []) {
   if (!molecule?.atoms?.length) throw new Error('A molecule with atoms is required');
-  const used = new Set(molecule.atoms.map((atom) => atom.designAtomId).filter(Boolean));
+  const used = new Set([
+    ...Array.from(molecule.source?.designAtomIdLedger || []).filter(Boolean),
+    ...Array.from(reservedIds || []).filter(Boolean),
+    ...molecule.atoms.map((atom) => atom.designAtomId).filter(Boolean),
+  ]);
   molecule.atoms.forEach((atom, ordinal) => {
     if (atom.designAtomId) return;
     const base = atomIdentityBase(atom, ordinal, namespace);
@@ -36,6 +40,7 @@ export function ensureStableAtomIds(molecule, namespace = 'molarium') {
     atom.designAtomId = id;
     used.add(id);
   });
+  molecule.source = { ...(molecule.source || {}), designAtomIdLedger:[...used].sort() };
   return molecule.atoms.map((atom) => atom.designAtomId);
 }
 

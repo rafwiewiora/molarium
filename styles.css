@@ -343,6 +343,15 @@ select {
   backdrop-filter: blur(3px); font-size: 11px; font-weight: 650;
 }
 .viewer-toolbar button:hover { background: white; border-color: var(--line-strong); transform: translateY(-1px); }
+.viewer-toolbar.chemistry-pending {
+  right: auto; left: 50%; transform: translateX(-50%); justify-content: center;
+  min-width: max-content;
+}
+.viewer-toolbar .viewer-chemistry-finish {
+  padding-inline: 18px; border-color: #2f89bd; background: #3f94c4; color: white;
+}
+.viewer-toolbar .viewer-chemistry-finish:hover { border-color: #247aa9; background: #3388b9; }
+.viewer-toolbar .viewer-chemistry-discard { background: rgba(255,255,255,.98); }
 
 .viewer-hint {
   position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
@@ -541,10 +550,16 @@ select {
 .docking-constraints { margin-top: 8px; }
 .docking-constraints > span { color: #64748b; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
 #docking-hbond-list { display: grid; gap: 4px; margin-top: 5px; }
-#docking-hbond-list label { display: flex; align-items: center; gap: 6px; min-width: 0; color: #334155; font-size: 8px; }
+#docking-hbond-list label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; color: #334155; font-size: 8px; }
 #docking-hbond-list label span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #docking-hbond-list input { flex: none; margin: 0; accent-color: #25634a; }
 #docking-hbond-list label.unavailable { color: #94a3b8; text-decoration: line-through; }
+#docking-hbond-list label.pending-contact { color: #64748b; }
+#docking-hbond-list label.requires-remap { color: #9a5a16; }
+.docking-contact-remap-select {
+  flex: 1 0 calc(100% - 20px); margin-left: 18px; min-width: 0; padding: 5px 7px;
+  border: 1px solid var(--line); border-radius: 7px; background: white; color: var(--ink); font-size: 8px;
+}
 .docking-run-row { display: grid; grid-template-columns: minmax(0, 1fr) 82px; gap: 6px; margin-top: 8px; }
 .docking-run-row select { min-width: 0; font-size: 9px; }
 .docking-run-row .primary-button { padding: 6px; font-size: 10px; }

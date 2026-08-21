@@ -16,6 +16,9 @@ import { applyLigandPositions, captureCrossHydrogenBonds, createLigandPlan, dock
   unpackConformerStack } from './browser-adapter.mjs';
 import { identifyFreeRotors, packPositions4, refinePoseByTorsionMonteCarlo,
   rotateAroundBond } from './torsion-search.mjs';
+import { applyLigandHydrogenBondFeatureRemap, hydrogenBondFeatureSignature,
+  proposeLigandHydrogenBondFeatureRemaps,
+  retainOriginatingHydrogenBondRemapCandidates } from './contact-remap.mjs';
 import { buildParameterizedSystem, cpuEnergies, mulberry32 } from '../stormm/core.mjs';
 
 const reference = Float64Array.from([0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1]);
@@ -112,6 +115,18 @@ const designMolecule = { name:'design ligand', atoms:[
   { element:'N', x:0, y:1, z:0 }, { element:'O', x:2.8, y:0, z:0 },
 ], bonds:[{ a:0, b:1, order:1 }, { a:0, b:2, order:1 }, { a:1, b:3, order:1 }] };
 ensureStableAtomIds(designMolecule, 'test');
+const replacementIdentityMolecule = { atoms:[
+  { element:'C', designAtomId:'reuse:design:1' }, { element:'O' },
+], bonds:[{ a:0, b:1, order:1 }] };
+ensureStableAtomIds(replacementIdentityMolecule, 'reuse',
+  ['reuse:design:1', 'reuse:design:2']);
+assert.notEqual(replacementIdentityMolecule.atoms[1].designAtomId, 'reuse:design:2');
+assert.equal(replacementIdentityMolecule.atoms[1].designAtomId, 'reuse:design:2:2');
+const firstReplacementId = replacementIdentityMolecule.atoms[1].designAtomId;
+replacementIdentityMolecule.atoms.splice(1, 1, { element:'O' });
+ensureStableAtomIds(replacementIdentityMolecule, 'reuse');
+assert.notEqual(replacementIdentityMolecule.atoms[1].designAtomId, firstReplacementId);
+assert.ok(replacementIdentityMolecule.source.designAtomIdLedger.includes(firstReplacementId));
 const captured = captureReferenceLigand(designMolecule, [0, 1, 2, 3], [0, 1, 2], 'test');
 assert.ok(captured.coreMaximumTriangleDoubleAreaAngstrom2 > 0.99);
 const ringCoreMolecule = { name:'six-atom core', atoms:Array.from({ length:6 }, (_, index) => ({
@@ -153,7 +168,7 @@ assert.deepEqual(propagationMap.removedAtomIds, [automaticReference.atomIds[3]])
 assert.deepEqual(propagationMap.addedAtomIds, ['test:new:F']);
 assert.ok(propagationMap.maximumTriangleDoubleAreaAngstrom2 > 0.99);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.id, 'molarium-pose-propagation-1');
-assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.version, '0.3.0');
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.version, '0.4.0');
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping.minimumSurvivingHeavyAtoms, 3);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping
   .minimumMaximumTriangleDoubleAreaAngstrom2, 1e-3);
@@ -168,6 +183,10 @@ assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.fixedScaffoldRelaxation
   .maximumDisplacementAngstromPerIteration, 0.01);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.scoring.coulombConstantKcalAngstromPerMolE2,
   332.063713299);
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.contactFeatureMapping.uniqueCandidateAction,
+  'map automatically');
+assert.match(MOLARIUM_POSE_PROPAGATION_PROTOCOL.contactFeatureMapping.geometryRule,
+  /never use current coordinates/);
 const protocolRandom = mulberry32(20260819);
 assert.deepEqual(Array.from({ length:6 }, () => protocolRandom()), [
   0.27264824602752924, 0.39473715308122337, 0.958696351153776,
@@ -292,6 +311,21 @@ const mappedHbonds = mapCapturedHydrogenBonds(capturedHbonds, ligandPlan.molecul
 assert.equal(mappedHbonds.complete, true);
 assert.equal(mappedHbonds.constraints[0].acceptor.atomIndex, 0);
 assert.equal(mappedHbonds.constraints[1].donor.atomIndex, 1);
+const completeHbondAvailability = capturedHydrogenBondAvailability(capturedHbonds,
+  ligandPlan.molecule.atoms);
+assert.deepEqual(completeHbondAvailability.map((entry) => entry.available), [true, true]);
+const brokenDonorHydrogenPlan = structuredClone(ligandPlan.molecule);
+brokenDonorHydrogenPlan.bonds = brokenDonorHydrogenPlan.bonds.filter((bond) =>
+  !([bond.a, bond.b].includes(1) && [bond.a, bond.b].includes(2)));
+brokenDonorHydrogenPlan.atoms.push({ element:'H', designAtomId:'adapter-test:replacement:H' });
+brokenDonorHydrogenPlan.bonds.push({ a:1, b:brokenDonorHydrogenPlan.atoms.length - 1, order:1 });
+const brokenDonorAvailability = capturedHydrogenBondAvailability(capturedHbonds,
+  brokenDonorHydrogenPlan);
+assert.equal(brokenDonorAvailability[1].available, false);
+assert.deepEqual(brokenDonorAvailability[1].incompatibleAtomIds,
+  [capturedHbonds[1].hydrogen.designAtomId]);
+assert.deepEqual(brokenDonorAvailability[1].reasons,
+  ['ligand-donor-hydrogen-bond-missing']);
 const noRequiredHbonds = mapCapturedHydrogenBonds(capturedHbonds, ligandPlan.molecule.atoms, []);
 assert.equal(noRequiredHbonds.complete, true);
 assert.deepEqual(noRequiredHbonds.constraints, []);
@@ -305,6 +339,56 @@ assert.equal(hbondAvailability[0].available, true);
 assert.equal(hbondAvailability[1].available, false);
 assert.deepEqual(hbondAvailability[1].missingAtomIds,
   [capturedHbonds[1].hydrogen.designAtomId]);
+
+const polarAcceptorComplex = { atoms:[
+  { element:'N', designAtomId:'polar:receptor:N', x:-2,y:0,z:0 },
+  { element:'H', designAtomId:'polar:receptor:H', x:-1,y:0,z:0 },
+  { element:'O', designAtomId:'polar:ligand:OH', x:.8,y:0,z:0 },
+  { element:'H', designAtomId:'polar:ligand:HO', x:.8,y:1,z:0 },
+  { element:'C', designAtomId:'polar:ligand:C', x:2,y:0,z:0 },
+  { element:'F', designAtomId:'polar:ligand:F', x:3.2,y:0,z:0 },
+], bonds:[{ a:0,b:1,order:1 }, { a:2,b:3,order:1 }, { a:2,b:4,order:1 },
+  { a:4,b:5,order:1 }] };
+const polarLigandIndices = [2,3,4,5];
+const polarCaptured = captureCrossHydrogenBonds(polarAcceptorComplex, polarLigandIndices, [
+  { donor:0, hydrogen:1, acceptor:2, distance:1.8, cosine:-1 },
+  { donor:0, hydrogen:1, acceptor:5, distance:2.2, cosine:-1 },
+]);
+assert.equal(polarCaptured.length, 2);
+assert.match(polarCaptured[0].acceptor.featureSignature, /hydroxyl oxygen acceptor/);
+assert.match(polarCaptured[1].acceptor.featureSignature, /fluorine acceptor/);
+assert.deepEqual(capturedHydrogenBondAvailability(polarCaptured, polarAcceptorComplex)
+  .map((entry) => entry.available), [true, true]);
+const changedHydroxylComplex = structuredClone(polarAcceptorComplex);
+changedHydroxylComplex.bonds = changedHydroxylComplex.bonds
+  .filter((bond) => !(bond.a === 2 && bond.b === 3))
+  .map((bond) => bond.a === 2 && bond.b === 4 ? { ...bond, order:2 } : bond);
+const changedHydroxylAvailability = capturedHydrogenBondAvailability(polarCaptured,
+  changedHydroxylComplex);
+assert.equal(changedHydroxylAvailability[0].available, false);
+assert.deepEqual(changedHydroxylAvailability[0].incompatibleAtomIds,
+  [polarCaptured[0].acceptor.designAtomId]);
+assert.deepEqual(changedHydroxylAvailability[0].reasons,
+  ['ligand-acceptor-signature-changed']);
+assert.equal(changedHydroxylAvailability[1].available, true);
+
+const acidHydroxylComplex = { atoms:[
+  { element:'N', x:-2,y:0,z:0 }, { element:'H', x:-1,y:0,z:0 },
+  { element:'O', x:.8,y:0,z:0 }, { element:'H', x:.8,y:1,z:0 },
+  { element:'C', x:2,y:0,z:0 }, { element:'O', x:3.2,y:0,z:0 },
+], bonds:[{ a:0,b:1,order:1 }, { a:2,b:3,order:1 }, { a:2,b:4,order:1 },
+  { a:4,b:5,order:2 }] };
+assert.deepEqual(captureCrossHydrogenBonds(acidHydroxylComplex, [2,3,4,5],
+  [{ donor:0, hydrogen:1, acceptor:2, distance:1.8, cosine:-1 }]), []);
+
+const wrongDonorHydrogenComplex = { atoms:[
+  { element:'O', x:4,y:0,z:0 },
+  { element:'N', x:1,y:0,z:0 }, { element:'H', x:2,y:0,z:0 },
+  { element:'H', x:2,y:1,z:0 }, { element:'C', x:0,y:0,z:0 },
+], bonds:[{ a:1,b:2,order:1 }, { a:1,b:4,order:1 }] };
+assert.deepEqual(captureCrossHydrogenBonds(wrongDonorHydrogenComplex, [1,2,3,4],
+  [{ donor:1, hydrogen:3, acceptor:0, distance:2, cosine:-1 }]), []);
+
 const waterContactComplex = structuredClone(complex);
 waterContactComplex.atoms.push({ element:'O', record:'HETATM', residueName:'HOH', atomName:'O',
   chain:'W', residueIndex:9, x:4.8, y:0, z:0 });
@@ -318,6 +402,128 @@ movedWaterContact.atoms[7].x += 0.01;
 const movedWaterIntegrity = capturedReceptorContactIntegrity(waterContact, movedWaterContact);
 assert.equal(movedWaterIntegrity.valid, false);
 assert.equal(movedWaterIntegrity.issues[0].reason, 'coordinate-changed');
+
+const remapBefore = { name:'captured carbonyl contact', atoms:[
+  { element:'C', designAtomId:'core:1', x:0, y:0, z:0 },
+  { element:'C', designAtomId:'core:2', x:1.4, y:0, z:0 },
+  { element:'C', designAtomId:'core:3', x:0, y:1.4, z:0 },
+  { element:'C', designAtomId:'old:carbonyl', x:2.8, y:0, z:0 },
+  { element:'O', designAtomId:'old:oxygen', x:4.0, y:0, z:0 },
+], bonds:[
+  { a:0,b:1,order:1 }, { a:1,b:2,order:1 }, { a:2,b:0,order:1 },
+  { a:1,b:3,order:1 }, { a:3,b:4,order:2 },
+] };
+const carbonylSignature = hydrogenBondFeatureSignature(remapBefore, 4, 'acceptor');
+assert.match(carbonylSignature, /carbonyl oxygen acceptor/);
+const remapDefinition = { id:'captured-carbonyl', label:'SER N → ligand O', required:true,
+  receptorRole:'donor',
+  donor:{ scope:'receptor', designAtomId:'protein:N', element:'N', point:{ x:6.8,y:0,z:0 } },
+  hydrogen:{ scope:'receptor', designAtomId:'protein:H', element:'H', point:{ x:5.8,y:0,z:0 } },
+  acceptor:{ scope:'ligand', designAtomId:'old:oxygen', element:'O',
+    featureSignature:carbonylSignature, referencePoint:{ x:4,y:0,z:0 } } };
+const remapAfter = structuredClone(remapBefore);
+remapAfter.atoms.splice(3, 2,
+  { element:'C', designAtomId:'new:carbonyl', x:2.8, y:0.2, z:0 },
+  { element:'O', designAtomId:'new:oxygen', x:4.0, y:0.2, z:0 });
+remapAfter.bonds = remapAfter.bonds.slice(0, 3).concat([
+  { a:1,b:3,order:1 }, { a:3,b:4,order:2 },
+]);
+const uniqueRemap = proposeLigandHydrogenBondFeatureRemaps([remapDefinition], remapAfter,
+  [0,1,2,3,4], { eligibleAtomIndices:[3,4], beforeMolecule:remapBefore })[0];
+assert.equal(uniqueRemap.status, 'unique');
+assert.deepEqual(uniqueRemap.boundaryAnchorIds, ['core:2']);
+assert.deepEqual(uniqueRemap.candidates[0].atomIds, ['new:oxygen']);
+const appliedRemap = applyLigandHydrogenBondFeatureRemap(remapDefinition,
+  uniqueRemap.candidates[0]);
+assert.equal(appliedRemap.acceptor.designAtomId, 'new:oxygen');
+assert.equal(appliedRemap.donor.designAtomId, 'protein:N');
+assert.equal(capturedHydrogenBondAvailability([appliedRemap], remapAfter)[0].available, true);
+
+const ambiguousRemapMolecule = structuredClone(remapAfter);
+ambiguousRemapMolecule.atoms.push(
+  { element:'C', designAtomId:'new:carbonyl-2', x:2.8, y:-1.4, z:0 },
+  { element:'O', designAtomId:'new:oxygen-2', x:4.0, y:-1.4, z:0 });
+ambiguousRemapMolecule.bonds.push({ a:1,b:5,order:1 }, { a:5,b:6,order:2 });
+const ambiguousRemap = proposeLigandHydrogenBondFeatureRemaps([remapDefinition],
+  ambiguousRemapMolecule, [0,1,2,3,4,5,6],
+  { eligibleAtomIndices:[3,4,5,6], beforeMolecule:remapBefore })[0];
+assert.equal(ambiguousRemap.status, 'ambiguous');
+assert.equal(ambiguousRemap.candidates.length, 2);
+const laterRemovalProposal = proposeLigandHydrogenBondFeatureRemaps([remapDefinition],
+  remapAfter, [0,1,2,3,4],
+  { eligibleAtomIndices:[], beforeMolecule:ambiguousRemapMolecule })[0];
+assert.equal(laterRemovalProposal.status, 'unavailable');
+const resolvedOriginatingProposal = retainOriginatingHydrogenBondRemapCandidates(
+  { ...ambiguousRemap, committedEditId:'edit-ambiguous' }, laterRemovalProposal,
+  remapAfter, [0,1,2,3,4]);
+assert.equal(resolvedOriginatingProposal.status, 'unique');
+assert.deepEqual(resolvedOriginatingProposal.candidates[0].atomIds, ['new:oxygen']);
+assert.equal(resolvedOriginatingProposal.originatingCommittedEditId, 'edit-ambiguous');
+
+const incompatibleRemapMolecule = structuredClone(remapAfter);
+incompatibleRemapMolecule.bonds.find((bond) => bond.a === 3 && bond.b === 4).order = 1;
+const incompatibleRemap = proposeLigandHydrogenBondFeatureRemaps([remapDefinition],
+  incompatibleRemapMolecule, [0,1,2,3,4],
+  { eligibleAtomIndices:[3,4], beforeMolecule:remapBefore })[0];
+assert.equal(incompatibleRemap.status, 'unavailable');
+
+const donorBefore = { atoms:[
+  { element:'C', designAtomId:'donor:core', x:0,y:0,z:0 },
+  { element:'N', designAtomId:'donor:old:N', x:1.4,y:0,z:0 },
+  { element:'H', designAtomId:'donor:old:H', x:2.3,y:0,z:0 },
+], bonds:[{ a:0,b:1,order:1 }, { a:1,b:2,order:1 }] };
+const donorSignature = hydrogenBondFeatureSignature(donorBefore, 1, 'donor');
+const donorDefinition = { id:'captured-donor', receptorRole:'acceptor',
+  donor:{ scope:'ligand', designAtomId:'donor:old:N', element:'N',
+    featureSignature:donorSignature, referencePoint:{ x:1.4,y:0,z:0 } },
+  hydrogen:{ scope:'ligand', designAtomId:'donor:old:H', element:'H',
+    referencePoint:{ x:2.3,y:0,z:0 } },
+  acceptor:{ scope:'receptor', designAtomId:'protein:O', element:'O', point:{ x:4,y:0,z:0 } } };
+const donorAfter = { atoms:[
+  structuredClone(donorBefore.atoms[0]),
+  { element:'N', designAtomId:'donor:new:N', x:1.4,y:.2,z:0 },
+  { element:'H', designAtomId:'donor:new:H', x:2.3,y:.2,z:0 },
+], bonds:[{ a:0,b:1,order:1 }, { a:1,b:2,order:1 }] };
+const donorRemap = proposeLigandHydrogenBondFeatureRemaps([donorDefinition], donorAfter,
+  [0,1,2], { eligibleAtomIndices:[1,2], beforeMolecule:donorBefore })[0];
+assert.equal(donorRemap.status, 'unique');
+const appliedDonorRemap = applyLigandHydrogenBondFeatureRemap(donorDefinition,
+  donorRemap.candidates[0]);
+assert.equal(appliedDonorRemap.donor.designAtomId, 'donor:new:N');
+assert.equal(appliedDonorRemap.hydrogen.designAtomId, 'donor:new:H');
+assert.equal('referencePoint' in appliedDonorRemap.hydrogen, false);
+assert.equal(capturedHydrogenBondAvailability([appliedDonorRemap], donorAfter)[0].available, true);
+
+const survivingDonorAfter = { atoms:[
+  structuredClone(donorBefore.atoms[0]), structuredClone(donorBefore.atoms[1]),
+  { element:'H', designAtomId:'donor:replacement:H', x:2.25,y:.1,z:0 },
+], bonds:[{ a:0,b:1,order:1 }, { a:1,b:2,order:1 }] };
+const survivingDonorRemap = proposeLigandHydrogenBondFeatureRemaps([donorDefinition],
+  survivingDonorAfter, [0,1,2],
+  { eligibleAtomIndices:[2], beforeMolecule:donorBefore })[0];
+assert.equal(survivingDonorRemap.status, 'unique');
+assert.deepEqual(survivingDonorRemap.boundaryAnchorIds, ['donor:old:N']);
+assert.deepEqual(survivingDonorRemap.candidates[0].atomIds,
+  ['donor:old:N', 'donor:replacement:H']);
+const appliedSurvivingDonorRemap = applyLigandHydrogenBondFeatureRemap(donorDefinition,
+  survivingDonorRemap.candidates[0]);
+assert.equal(appliedSurvivingDonorRemap.donor.designAtomId, 'donor:old:N');
+assert.equal(appliedSurvivingDonorRemap.hydrogen.designAtomId, 'donor:replacement:H');
+assert.equal('referencePoint' in appliedSurvivingDonorRemap.hydrogen, false);
+
+const twoHydrogenDonorAfter = { atoms:[
+  structuredClone(donorBefore.atoms[0]), structuredClone(donorBefore.atoms[1]),
+  { element:'H', designAtomId:'donor:replacement:H1', x:2.25,y:.1,z:0 },
+  { element:'H', designAtomId:'donor:replacement:H2', x:1.4,y:1,z:0 },
+], bonds:[{ a:0,b:1,order:1 }, { a:1,b:2,order:1 }, { a:1,b:3,order:1 }] };
+const twoHydrogenDonorRemap = proposeLigandHydrogenBondFeatureRemaps([donorDefinition],
+  twoHydrogenDonorAfter, [0,1,2,3],
+  { eligibleAtomIndices:[2,3], beforeMolecule:donorBefore })[0];
+assert.equal(twoHydrogenDonorRemap.status, 'ambiguous');
+assert.deepEqual(twoHydrogenDonorRemap.candidates.map((entry) => entry.atomIds), [
+  ['donor:old:N', 'donor:replacement:H1'],
+  ['donor:old:N', 'donor:replacement:H2'],
+]);
 
 const torsionMolecule = { name:'fixed-core rotor test', atoms:[
   { element:'C' }, { element:'C' }, { element:'C' },

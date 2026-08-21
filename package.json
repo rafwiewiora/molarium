@@ -17,6 +17,7 @@
     "test:local-lab": "bun local-lab-test.js",
     "test:development-log": "bun scripts/export-codex-session-test.mjs",
     "test:docking": "node docking/test.mjs",
+    "test:docking-browser": "MOLARIUM_TEST_SCOPE=docking-contact-remap bun browser-test.js",
     "test": "bun browser-test.js",
     "test:2d": "bun rdkit-depiction-browser-test.js",
     "test:ani-webgpu": "bun mlip-browser-test.js",

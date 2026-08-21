@@ -481,3 +481,44 @@ The complete browser gate passes 434/434 checks. The unit gate separately verifi
 coordinate restoration, stable duplicate-contact handling, and no mutation of the input array. The
 RDKit 2D gate passes 5/5, the Local Lab privacy gate passes 14/14 with zero outbound requests reaching
 its pre-network interceptor, and the production web build succeeds.
+
+## 2026-08-21 — receptor-anchored contact features after R-group replacement v0.4
+
+### Decision D-025 — preserve the pharmacophore hypothesis, not a deleted atom ID
+
+A captured required contact represents an immutable receptor participant and a complementary
+ligand pharmacophore feature. After a valid staged graph edit, a removed ligand participant may be
+transferred only to a newly added or changed feature with the exact captured donor/acceptor
+signature and the same nonempty surviving edit-boundary atom IDs. One candidate maps automatically;
+multiple candidates require an explicit user choice; no candidate leaves the contact unavailable.
+Current 3D proximity is evidence only and never establishes eligibility or resolves ambiguity.
+
+For ligand donors, donor and explicit bonded hydrogen are one feature tuple. A replacement hydrogen
+has no captured reference coordinate, so the captured-H restoration rule cannot invent its
+direction. Receptor participants and their captured coordinates are never rewritten.
+
+Reason: medicinal-chemistry R-group scans commonly replace the atom carrying the intended
+interaction. Raw `designAtomId` continuity would incorrectly discard the hypothesis, while a loose
+nearest-heteroatom rule would silently change chemistry based on a transient distorted pose. The
+exact feature and edit-boundary rule retains the hypothesis only where the completed chemical graph
+supports it and exposes genuine ambiguity to the scientist.
+
+This supersedes Decisions D-017 and D-019's temporary omission-only rule for Pose Propagation.
+The pre-v0.4 behavior remains the fallback when exact transfer cannot be established. Selected-core
+ConstraintDock retains its explicit omission behavior. Pose Propagation advances to `0.4.0`;
+ConstraintDock remains `0.3.0`.
+
+### Validation V-009 — feature transfer, ambiguity, and pending-state boundary
+
+Unit tests cover unique carbonyl-acceptor replacement, two-candidate ambiguity, incompatible
+feature rejection, immutable receptor descriptors, and donor-plus-hydrogen tuple replacement. The
+browser gate keeps the original constraint selected while an edit is pending, blocks Optimize and
+Refine, exposes Finish chemistry in the central viewer toolbar, transfers a carbonyl contact after
+successful sanitization, and requires the hash-linked mapping event in the completed run labbook.
+
+The release audit additionally locks append-only atom IDs, one shared feature typer from display
+through run validation, donor-H tuple continuity, persistent ambiguity across later edits, complete
+chained-remap provenance, atomic Undo/Redo contact state, and monotonically ordered labbook events.
+The focused browser gate exercises automatic transfer, distinct replacement identity, Undo/Redo,
+run participation, and immediate-mode feature-role invalidation without depending on unrelated ML
+backends.
