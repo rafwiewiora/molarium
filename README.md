@@ -67,6 +67,7 @@ manifests and model cards.
 - Add atoms and fragments without creating bonds from visual proximity.
 - Edit bond lengths, bond angles, and torsions with undo and redo.
 - Run energies, minimization, molecular dynamics, and conformer searches.
+- Dock edited ligands to a captured reference core with optional required H-bonds.
 - Play saved trajectories and follow a selected residue.
 - Export structures, trajectories, clustered conformers, and preparation reports.
 
@@ -178,7 +179,6 @@ valence direction. Bond-order changes move no coordinates until **Finish changes
 are reconciled and one local 3D cleanup moves only the edited neighborhood. RDKit independently
 lays out the 2D diagram again after each graph edit; those display coordinates never overwrite the
 3D conformation.
-
 MD playback uses a fixed atom-identity heavy-atom fit to each trajectory's first saved frame. This
 removes whole-molecule translation and rotation from the display without changing raw coordinates,
 energies, diagnostics, or exported results. Each STORMM replica receives its own reference fit.
@@ -211,6 +211,43 @@ the protein coordinates held exactly fixed.
 Protein cartoon mode can show a complete 5 Å ligand pocket or only residues involved in the
 current hydrogen bonds and aromatic stacking contacts. Clicking a protein atom can keep that
 residue centered during trajectory playback.
+
+## Analogue pose refinement and constrained docking
+
+For a ligand edited inside Molarium, **Pose Propagation-1** is the default. Capture the prepared
+reference pose, edit the ligand, and refine: every surviving heavy atom is identified from the
+recorded graph-edit lineage and remains fixed at its exact reference coordinate. Only added or
+replaced graph branches undergo deterministic receptor-aware torsion search. The edited ligand then
+receives a fixed-scaffold OpenFF Sage relaxation; a relaxed result is kept only when it preserves
+required-contact feasibility and improves the complete pose-ranking objective. No manual core
+selection is needed.
+
+This follows established congeneric/RBFE pose-preparation practice: preserve a trusted reference
+common region, sample modified substituents, resolve local clashes, and audit alternate binding
+modes rather than beginning with unconstrained global docking. Required D–H–A contacts remain hard
+feasible states during search. Removed contact atoms are logged and never silently remapped to a
+new chemical feature.
+
+**ConstraintDock-1** remains an expert selected-core search. It accepts any connected,
+non-collinear selection of at least three ligand heavy atoms, generates deterministic ETKDGv3
+conformers, snaps the selected stable identities to the reference, and runs the same constrained
+torsion search. Independently imported analogues do not yet receive an automatic MCS; that future
+path needs symmetry-aware chemical mapping rather than a JavaScript graph guess.
+
+The receptor stays rigid. Ranking combines captured receptor/edited-ligand numeric Lennard-Jones
+and Coulomb cross terms (8 Å site, relative dielectric 4), relative vacuum OpenFF Sage 2.1 intramolecular
+ligand energy, and explicit restraint penalties. The strain reference is
+relative to the lowest fixed-core starting seed. Pose propagation begins from the recorded edit;
+only the expert selected-core search uses MMFF94/UFF-prepared ETKDG conformers. Both paths omit
+receptor relaxation, solvent displacement, ring-pucker search, entropy, and
+binding-free-energy estimation. Treat the result as an experimental pose rank, not an affinity.
+
+Every run can export readable Markdown notes and a coordinate-free JSON audit containing exact
+input hashes, the immutable protocol snapshot, selections, seed, ordered hash-linked events, scores,
+and a final SHA-256. Method lineage, exclusions, tests, and the engineering decision ledger live in
+[`docking/`](./docking/). The exact implementation-independent procedure, equations, random-number
+vector, failure rules, and validation contract are frozen in
+[`docking/POSE-PROPAGATION-PROTOCOL.md`](./docking/POSE-PROPAGATION-PROTOCOL.md).
 
 ## Protein input and preparation
 

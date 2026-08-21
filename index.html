@@ -237,10 +237,54 @@
 
           <section class="card mode-panel hidden" id="build-left-panel">
             <div class="build-tool-tabs" id="build-tool-tabs">
-              <button class="selected" data-tool="add">⊕ Add</button>
-              <button data-tool="select">⌖ Select</button>
-              <button data-tool="manipulate">✣ Manipulate</button>
+              <div class="build-tool-choice">
+                <button class="selected" data-tool="add">⊕ Add</button>
+                <span class="info-anchor build-tool-info"><button type="button" class="info-button" aria-label="About Add" aria-describedby="build-add-info">i</button><span class="info-popover" id="build-add-info" role="tooltip">Click to attach an element or fragment. Drag to rotate the view.</span></span>
+              </div>
+              <div class="build-tool-choice">
+                <button data-tool="select">⌖ Select</button>
+                <span class="info-anchor build-tool-info"><button type="button" class="info-button" aria-label="About Select" aria-describedby="build-select-info">i</button><span class="info-popover" id="build-select-info" role="tooltip">Click connected atoms to edit geometry or define a docking core. Drag to rotate.</span></span>
+              </div>
+              <div class="build-tool-choice">
+                <button data-tool="manipulate">✣ Move</button>
+                <span class="info-anchor build-tool-info"><button type="button" class="info-button" aria-label="About moving atoms" aria-describedby="build-manipulate-info">i</button><span class="info-popover" id="build-manipulate-info" role="tooltip">Drag an atom to move it directly. Drag empty space to rotate; minimize afterward.</span></span>
+              </div>
             </div>
+            <section class="docking-workbench hidden" id="docking-workbench">
+              <div class="docking-heading">
+                <h2 class="compact-label">Analogue pose</h2>
+                <span class="info-anchor"><button type="button" class="info-button" aria-label="About analogue posing" aria-describedby="docking-info">i</button><span class="info-popover" id="docking-info" role="tooltip">Propagate recorded ligand edits from a reference pose, or run an expert selected-core search. Scores are not binding free energies.</span></span>
+              </div>
+              <select id="docking-mode" aria-label="Analogue pose method">
+                <option value="propagate" selected>Propagate edit</option>
+                <option value="selected-core">Selected core search</option>
+              </select>
+              <label class="docking-cleanup hidden" id="docking-cleanup-field">
+                <span>Edit cleanup</span>
+                <select id="docking-edit-cleanup" aria-label="Analogue edit cleanup">
+                  <option value="preserve-reference" selected>Preserve reference</option>
+                  <option value="free-local">Free local cleanup</option>
+                </select>
+              </label>
+              <p class="docking-status" id="docking-status">Capture the prepared reference pose before editing.</p>
+              <div class="docking-reference-actions">
+                <button class="soft-button" type="button" id="capture-docking-reference">Capture pose</button>
+                <button class="soft-button hidden" type="button" id="clear-docking-reference">Reset</button>
+              </div>
+              <div class="docking-constraints hidden" id="docking-constraints">
+                <span>Required contacts</span>
+                <div id="docking-hbond-list"></div>
+              </div>
+              <div class="docking-run-row hidden" id="docking-run-row">
+                <select id="docking-conformer-count" aria-label="Docking conformer count">
+                  <option value="8">8 poses</option>
+                  <option value="16" selected>16 poses</option>
+                  <option value="32">32 poses</option>
+                  <option value="64">64 poses</option>
+                </select>
+                <button class="primary-button" type="button" id="run-constrained-docking">Refine</button>
+              </div>
+            </section>
             <h2 class="compact-label build-section-label">Element</h2>
             <div class="element-grid" id="element-grid">
               <button data-element="C" class="selected">C</button><button data-element="H">H</button>
@@ -313,6 +357,7 @@
               <label><input type="checkbox" id="chemistry-immediate-refine" /> Finish and refine after every edit</label>
             </details>
             <p class="chemistry-validation" id="chemistry-validation">Formal charge is editable; force-field partial charges remain derived.</p>
+
           </section>
 
           <section class="card mode-panel hidden" id="run-left-panel">
@@ -575,6 +620,19 @@
           </section>
 
           <section class="card mode-panel hidden" id="build-right-panel">
+            <section class="docking-results hidden" id="docking-results">
+              <div class="docking-heading">
+                <h2 class="compact-label">Refined poses</h2>
+                <strong id="docking-result-summary">—</strong>
+              </div>
+              <div class="docking-pose-list" id="docking-pose-list"></div>
+              <div class="docking-result-actions">
+                <button class="primary-button" type="button" id="apply-docking-pose">Apply pose</button>
+                <button class="soft-button" type="button" id="download-docking-labbook">Notes</button>
+                <button class="soft-button" type="button" id="download-docking-audit">JSON</button>
+              </div>
+              <p id="docking-score-note">Rigid 8 Å site · OpenFF cross terms · relative MMFF strain</p>
+            </section>
             <h2 class="compact-label">Fragment Library</h2>
             <div class="fragment-stage-row">
               <input id="custom-fragment-smiles" placeholder="Custom SMILES" />

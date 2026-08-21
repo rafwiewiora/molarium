@@ -70,6 +70,7 @@ class DevToolsClient {
 
 const browserSuite = String.raw`(async () => {
   const externalPreparationFixture = ${JSON.stringify(preparationFixture)};
+  const captureDockingUi = ${JSON.stringify(Boolean(Bun.env.MOLARIUM_TEST_SCREENSHOT_DOCKING))};
   const checks = [];
   let optimizationMetrics = null;
   let rdkitMetrics = null;
@@ -386,6 +387,262 @@ const browserSuite = String.raw`(async () => {
     && ligandOnlyView.hydrogenBonds.length === 0,
   'pocket toggle collapses cartoon atom detail back to the ligand only', JSON.stringify(ligandOnlyView));
   api.setPocketAtoms(true);
+  const dockingFixture = {
+    name:'Molarium ConstraintDock browser fixture', smiles:'protein + flexible analogue', charge:0, multiplicity:1,
+    atoms:[
+      { element:'N', x:-2, y:0, z:0, record:'ATOM', atomName:'NZ', residueName:'LYS', chain:'A', residueIndex:1 },
+      { element:'H', x:-1, y:0, z:0, record:'ATOM', atomName:'HZ1', residueName:'LYS', chain:'A', residueIndex:1 },
+      { element:'O', x:0.8, y:0, z:0, record:'HETATM', atomName:'O1', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'C', x:1.8, y:0, z:0, record:'HETATM', atomName:'C1', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'C', x:2.8, y:0.8, z:0, record:'HETATM', atomName:'C2', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'C', x:2.8, y:-0.8, z:0, record:'HETATM', atomName:'C3', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'C', x:3.8, y:0.8, z:0, record:'HETATM', atomName:'C4', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'F', x:4.8, y:0.8, z:0, record:'HETATM', atomName:'F1', residueName:'DME', chain:'B', residueIndex:2 },
+    ],
+    bonds:[{ a:0, b:1, order:1 }, { a:2, b:3, order:1 },
+      { a:3, b:4, order:1 }, { a:4, b:5, order:1 }, { a:5, b:3, order:1 },
+      { a:4, b:6, order:1 }, { a:6, b:7, order:1 }],
+    parameterization:{ forcefield:'OpenFF Sage 2.1.0 browser-test fixture', chargeModel:'test charges',
+      sourceSha256:'browser-test', system:{
+        particles:[14, 1, 16, 12, 12, 12, 12, 19].map((mass_amu, index) => ({ index, mass_amu })),
+        constraints:[], bonds:[], angles:[], torsions:[], exceptions:[],
+        nonbonded:[
+          { index:0, charge_e:0.3, sigma_nm:0.325, epsilon_kj:0.7 },
+          { index:1, charge_e:0.1, sigma_nm:0.1, epsilon_kj:0.05 },
+          { index:2, charge_e:-0.3, sigma_nm:0.296, epsilon_kj:0.8 },
+          { index:3, charge_e:-0.05, sigma_nm:0.34, epsilon_kj:0.4 },
+          { index:4, charge_e:-0.05, sigma_nm:0.34, epsilon_kj:0.4 },
+          { index:5, charge_e:-0.05, sigma_nm:0.34, epsilon_kj:0.4 },
+          { index:6, charge_e:0.1, sigma_nm:0.34, epsilon_kj:0.4 },
+          { index:7, charge_e:-0.1, sigma_nm:0.30, epsilon_kj:0.2 },
+        ],
+      } },
+  };
+  api.loadObject(dockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('selected-core');
+  const dockingSelection = api.setDockingSelection([3, 4, 5]);
+  const buildToolLayout = [...document.querySelectorAll('#build-tool-tabs .build-tool-choice')].map((choice) => {
+    const button = choice.querySelector('[data-tool]');
+    const info = choice.querySelector('.build-tool-info');
+    const buttonRect = button.getBoundingClientRect();
+    const infoRect = info.getBoundingClientRect();
+    return {
+      label:button.textContent.trim(), height:buttonRect.height,
+      infoPosition:getComputedStyle(info).position,
+      infoInsideButton:infoRect.top >= buttonRect.top - 0.5 && infoRect.bottom <= buttonRect.bottom + 0.5,
+    };
+  });
+  check(!document.querySelector('#docking-workbench').classList.contains('hidden')
+    && dockingSelection.captureDisabled === false
+    && dockingSelection.status.includes('3 core atoms')
+    && document.querySelector('#docking-workbench').previousElementSibling?.id === 'build-tool-tabs'
+    && document.querySelectorAll('#build-tool-tabs [data-tool]').length === 3
+    && document.querySelectorAll('#build-tool-tabs .build-tool-info [aria-describedby]').length === 3
+    && buildToolLayout.every((entry) => entry.infoPosition === 'absolute' && entry.infoInsideButton)
+    && Math.max(...buildToolLayout.map((entry) => entry.height))
+      - Math.min(...buildToolLayout.map((entry) => entry.height)) < 0.5
+    && document.querySelector('#build-right-panel > .generated-card-heading span')?.textContent === 'Design workspace',
+  'prepared protein-ligand complexes expose a compact core-constrained docking setup',
+  JSON.stringify({ dockingSelection, buildToolLayout }));
+  let dockingReference = null;
+  try { dockingReference = await api.captureDockingReference(); }
+  catch (error) { check(false, 'browser captures the ligand core and explicit cross H-bond', error.message); }
+  if (dockingReference) check(dockingReference.coreAtomIds.length === 3
+    && dockingReference.ligandAtomCount === 6
+    && dockingReference.receptorAtomCount === 2
+    && dockingReference.hydrogenBonds.length === 1
+    && dockingReference.hydrogenBonds[0].receptorRole === 'donor',
+  'browser captures the ligand core and explicit cross H-bond', JSON.stringify(dockingReference));
+  const editedDockingLigand = api.addElementCurrent('F', 6);
+  check(editedDockingLigand.atoms === 9 && !api.current().molecule.parameterization
+    && document.querySelector('#docking-status').textContent.includes('3 core atoms'),
+  'an in-browser ligand edit invalidates stale complex parameters but preserves the docking reference',
+  JSON.stringify(editedDockingLigand));
+  let dockingRun = null;
+  try { dockingRun = await api.runConstrainedDocking({ conformerCount:4, seed:20260819, torsionSteps:32 }); }
+  catch (error) { check(false, 'browser completes deterministic constrained docking with a verified labbook', error.message); }
+  if (dockingRun) {
+    const dockingLabbook = api.dockingLabbook();
+    check(dockingRun.candidates >= 1 && dockingRun.feasible >= 1
+      && dockingRun.selected.feasible && Number.isFinite(dockingRun.selected.scoreKcalMol)
+      && dockingRun.selected.coreRmsdAngstrom < 1e-12
+      && dockingRun.selected.refinement.rotatableBondCount >= 1
+      && dockingRun.selected.refinement.proposals === 32
+      && dockingRun.labbook.valid && dockingRun.coordinatePayloadIncluded === false
+      && !JSON.stringify(dockingLabbook).includes('"positions"')
+      && dockingLabbook.inputs.ligand.atoms === 7
+      && dockingLabbook.events.some((event) => event.stage === 'method-decision')
+      && dockingLabbook.events.some((event) => event.stage === 'in-pocket-torsion-search')
+      && dockingLabbook.events.findIndex((event) => event.stage === 'in-pocket-torsion-search')
+        < dockingLabbook.events.findIndex((event) => event.stage === 'constraint-audit-and-ranking')
+      && document.querySelectorAll('.docking-pose').length >= 1
+      && document.querySelector('#docking-score-note').textContent.includes('not') === false,
+    'browser completes deterministic constrained docking with a verified coordinate-free audit',
+    JSON.stringify(dockingRun));
+    const dockingReplay = await api.runConstrainedDocking({ conformerCount:4, seed:20260819, torsionSteps:32 });
+    check(dockingReplay.selectedCoordinatesSha256 === dockingRun.selectedCoordinatesSha256
+      && Math.abs(dockingReplay.selected.scoreKcalMol - dockingRun.selected.scoreKcalMol) < 1e-12,
+    'same docking seed reproduces the selected coordinates and score bit for bit',
+    JSON.stringify({ first:dockingRun.selectedCoordinatesSha256,
+      replay:dockingReplay.selectedCoordinatesSha256,
+      scoreDifference:dockingReplay.selected.scoreKcalMol - dockingRun.selected.scoreKcalMol }));
+    const proteinBeforeDockingApply = api.current().molecule.atoms.slice(0, 2)
+      .map((atom) => [atom.x, atom.y, atom.z]);
+    const appliedDocking = await api.applyDockingPose(0);
+    const proteinAfterDockingApply = appliedDocking.molecule.atoms.slice(0, 2)
+      .map((atom) => [atom.x, atom.y, atom.z]);
+    check(JSON.stringify(proteinBeforeDockingApply) === JSON.stringify(proteinAfterDockingApply)
+      && appliedDocking.molecule.source.docking.protocol === 'molarium-constraint-dock-1',
+    'applying a docking pose moves only the mapped ligand and records protocol provenance');
+  }
+  api.loadObject(dockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('selected-core');
+  api.setDockingSelection([3, 4, 5]);
+  await api.captureDockingReference();
+  await api.deleteAtomCurrent(2);
+  const unavailableContact = document.querySelector('#docking-hbond-list label.unavailable');
+  check(unavailableContact?.textContent.includes('atom removed')
+    && unavailableContact.querySelector('input')?.disabled
+    && !unavailableContact.querySelector('input')?.checked,
+  'a captured contact whose ligand atom was deleted is disabled without unsafe remapping',
+  unavailableContact?.textContent || 'missing unavailable contact');
+  let omittedContactRun = null;
+  try { omittedContactRun = await api.runConstrainedDocking({ conformerCount:2, seed:91, torsionSteps:8 }); }
+  catch (error) { check(false, 'docking continues after an unavailable contact is explicitly omitted', error.message); }
+  if (omittedContactRun) {
+    const omittedLabbook = api.dockingLabbook();
+    check(omittedContactRun.candidates >= 1
+      && omittedLabbook.selections.omittedHydrogenBonds?.[0]?.reason === 'ligand-atom-removed'
+      && omittedLabbook.outcome.omittedHydrogenBonds?.[0]?.reason === 'ligand-atom-removed',
+    'unavailable reference contacts are recorded in the coordinate-free labbook',
+    JSON.stringify(omittedLabbook.selections.omittedHydrogenBonds));
+  }
+  api.loadObject(dockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  const propagationSetup = api.setDockingMode('propagate');
+  check(propagationSetup.captureDisabled === false
+    && propagationSetup.status.includes('Capture this ligand pose'),
+  'reference-pose propagation requires no manual core selection', JSON.stringify(propagationSetup));
+  const propagationReference = await api.captureDockingReference();
+  const cleanupDefault = api.setDockingEditCleanup('preserve-reference');
+  api.addElementCurrent('F', 6);
+  check(propagationReference.mode === 'pose-propagation'
+    && propagationReference.coreAtomIds.length === 6
+    && cleanupDefault.visible && cleanupDefault.mode === 'preserve-reference'
+    && document.querySelector('#docking-status').textContent.includes('6 unchanged atoms fixed'),
+  'recorded edits automatically inherit every surviving reference heavy atom',
+  JSON.stringify(propagationReference));
+  let propagationRun = null;
+  try { propagationRun = await api.runConstrainedDocking({ conformerCount:2, seed:20260819,
+    torsionSteps:4, fixedRelaxIterations:4 }); }
+  catch (error) { check(false, 'browser propagates and relaxes an edit-derived pose', error.message); }
+  if (propagationRun) {
+    const propagationLabbook = api.dockingLabbook();
+    check(propagationRun.mode === 'pose-propagation'
+      && propagationRun.selected.coreRmsdAngstrom < 1e-12
+      && propagationRun.selected.refinement?.relaxation?.method.includes('fixed-scaffold')
+      && propagationRun.selected.refinement.relaxation.stepScale === 1e-4
+      && propagationRun.selected.refinement.relaxation
+        .maximumDisplacementAngstromPerIteration === 0.01
+      && propagationLabbook.protocol.id === 'molarium-pose-propagation-1'
+      && propagationLabbook.protocol.version === '0.3.0'
+      && propagationLabbook.selections.atomLineage.inheritedAtomIds.length === 6
+      && propagationLabbook.selections.atomLineage.addedAtomIds.length === 1
+      && propagationLabbook.selections.editPreparation.selectedCleanupMode === 'preserve-reference'
+      && Array.isArray(propagationLabbook.selections.editPreparation.interactivePolishHistory)
+      && Array.isArray(propagationLabbook.selections.fixedReceptorContactParticipantIds)
+      && propagationLabbook.events.some((event) => event.stage === 'captured-ligand-hydrogen-restoration')
+      && propagationLabbook.events.some((event) => event.stage === 'fixed-scaffold-relaxation'),
+    'pose propagation records automatic atom lineage and fixed-scaffold Sage relaxation',
+    JSON.stringify({ run:propagationRun, protocol:propagationLabbook.protocol.id,
+      lineage:propagationLabbook.selections.atomLineage,
+      events:propagationLabbook.events.map((event) => event.stage) }));
+    const propagated = await api.applyDockingPose(0);
+    check(propagated.molecule.source.docking.protocol === 'molarium-pose-propagation-1',
+      'applied propagated poses retain their distinct protocol identity');
+  }
+
+  await api.loadSmilesWithRdkit('c1ccccc1', 'Reference phenyl edit');
+  const arylEditFixture = structuredClone(api.current().molecule);
+  arylEditFixture.atoms.forEach((atom, index) => Object.assign(atom, {
+    record:'HETATM', atomName:'L' + (index + 1), residueName:'BEN', residueIndex:1, chain:'L',
+  }));
+  const arylLigandAtomCount = arylEditFixture.atoms.length;
+  arylEditFixture.atoms.push(
+    { element:'N', x:-5, y:0, z:0, record:'ATOM', atomName:'N', residueName:'ALA', residueIndex:1, chain:'A' },
+    { element:'H', x:-4, y:0, z:0, record:'ATOM', atomName:'H', residueName:'ALA', residueIndex:1, chain:'A' });
+  arylEditFixture.bonds.push({ a:arylLigandAtomCount, b:arylLigandAtomCount + 1, order:1 });
+  const regressionMasses = { H:1.008, C:12.011, N:14.007 };
+  arylEditFixture.parameterization = {
+    forcefield:'browser regression fixture', chargeModel:'zero charges', sourceSha256:'browser-regression',
+    system:{ particles:arylEditFixture.atoms.map((atom, index) => ({ index,
+      mass_amu:regressionMasses[atom.element] || 12 })), constraints:[], bonds:[], angles:[], torsions:[],
+      exceptions:[], nonbonded:arylEditFixture.atoms.map((atom, index) => ({ index, charge_e:0,
+        sigma_nm:atom.element === 'H' ? 0.1 : 0.34, epsilon_kj:atom.element === 'H' ? 0.02 : 0.4 })) },
+  };
+  arylEditFixture.source = { format:'pdb', pdbId:'ARYL-EDIT-REGRESSION' };
+  arylEditFixture.prediction = { kind:'pdb-import' };
+  api.loadObject(arylEditFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('propagate');
+  const arylReference = await api.captureDockingReference();
+  const arylReferenceHeavyIndices = api.current().molecule.atoms.flatMap((atom, index) =>
+    atom.record === 'HETATM' && atom.element !== 'H' ? [index] : []);
+  const arylReferenceHeavyPositions = arylReferenceHeavyIndices.map((index) => {
+    const atom = api.current().molecule.atoms[index]; return [atom.x, atom.y, atom.z];
+  });
+  const arylCleanupDefault = api.setDockingEditCleanup('preserve-reference');
+  document.querySelector('[data-tool="add"]').click();
+  document.querySelector('[data-element="C"]').click();
+  const arylTarget = api.viewerState().atoms.find((atom) => atom.index === 0);
+  const arylCanvas = document.querySelector('#molecule-canvas');
+  const arylCanvasRect = arylCanvas.getBoundingClientRect();
+  for (const type of ['pointerdown', 'pointerup']) arylCanvas.dispatchEvent(new PointerEvent(type, {
+    bubbles:true, pointerId:83,
+    clientX:arylCanvasRect.left + arylTarget.sx,
+    clientY:arylCanvasRect.top + arylTarget.sy,
+  }));
+  const referenceEditPolish = await new Promise((resolve, reject) => {
+    const started = performance.now();
+    const poll = () => {
+      const source = api.current().molecule.source || {};
+      if (source.lastInteractivePolish) return resolve(source.lastInteractivePolish);
+      if (source.lastInteractivePolishError) return reject(new Error(source.lastInteractivePolishError));
+      if (performance.now() - started > 10000)
+        return reject(new Error('Timed out waiting for reference-preserving edit cleanup'));
+      setTimeout(poll, 50);
+    };
+    poll();
+  });
+  const arylEdited = api.current().molecule;
+  const inheritedMaximumDisplacement = Math.max(...arylReferenceHeavyIndices.map((atomIndex, ordinal) => {
+    const atom = arylEdited.atoms[atomIndex], before = arylReferenceHeavyPositions[ordinal];
+    return Math.hypot(atom.x - before[0], atom.y - before[1], atom.z - before[2]);
+  }));
+  const addedMethylCarbon = arylEdited.atoms.findIndex((atom) =>
+    atom.element === 'C' && !atom.designAtomId);
+  const methylBondLength = Math.hypot(arylEdited.atoms[0].x - arylEdited.atoms[addedMethylCarbon].x,
+    arylEdited.atoms[0].y - arylEdited.atoms[addedMethylCarbon].y,
+    arylEdited.atoms[0].z - arylEdited.atoms[addedMethylCarbon].z);
+  const preservedSelection = api.localPolishSelection([0, addedMethylCarbon], 2);
+  const freeCleanup = api.setDockingEditCleanup('free-local');
+  const freeSelection = api.localPolishSelection([0, addedMethylCarbon], 2);
+  check(arylReference.mode === 'pose-propagation' && arylReference.coreAtomIds.length === 6
+    && arylCleanupDefault.visible && arylCleanupDefault.mode === 'preserve-reference'
+    && referenceEditPolish.cleanupMode === 'preserve-reference'
+    && referenceEditPolish.fixedInheritedHeavyAtomCount === 6
+    && inheritedMaximumDisplacement < 1e-12
+    && methylBondLength > 1.35 && methylBondLength < 1.65
+    && arylReferenceHeavyIndices.every((index) => !preservedSelection.movableAtomIndices.includes(index))
+    && freeCleanup.mode === 'free-local'
+    && arylReferenceHeavyIndices.every((index) => freeSelection.movableAtomIndices.includes(index))
+    && arylEdited.source.interactivePolishHistory.length >= 1,
+  'the real canvas add-methyl path preserves a captured aromatic scaffold by default and exposes free ring cleanup explicitly',
+  JSON.stringify({ arylCleanupDefault, referenceEditPolish, inheritedMaximumDisplacement,
+    methylBondLength, preservedSelection, freeSelection }));
+  document.querySelector('.mode-bar button[data-mode="view"]').click();
   const bentHydroxylFixture = {
     name:'Tyr-ligand polar-H fixture', smiles:'protein-ligand fixture', charge:0, multiplicity:1,
     atoms:[
@@ -1123,6 +1380,11 @@ const browserSuite = String.raw`(async () => {
     clientX: editCanvasRect.left + editTarget.sx,
     clientY: editCanvasRect.top + editTarget.sy,
   }));
+  document.querySelector('#molecule-canvas').dispatchEvent(new PointerEvent('pointerup', {
+    bubbles: true, pointerId: 40,
+    clientX: editCanvasRect.left + editTarget.sx,
+    clientY: editCanvasRect.top + editTarget.sy,
+  }));
   const interactivePolish = await new Promise((resolve, reject) => {
     const started = performance.now();
     const poll = () => {
@@ -1163,9 +1425,61 @@ const browserSuite = String.raw`(async () => {
     clientX: canvasRect.left + hydrogenScreen.sx,
     clientY: canvasRect.top + hydrogenScreen.sy,
   }));
+  document.querySelector('#molecule-canvas').dispatchEvent(new PointerEvent('pointerup', {
+    bubbles: true, pointerId: 41,
+    clientX: canvasRect.left + hydrogenScreen.sx,
+    clientY: canvasRect.top + hydrogenScreen.sy,
+  }));
   const clickAdded = api.current();
   check(clickAdded.formula === 'C7H8', 'element tool click adds methyl without fake bonds', clickAdded.formula);
   check(clickAdded.bonds === 15 && clickAdded.valenceViolations.length === 0, 'element tool click keeps explicit valid topology', clickAdded.bonds + ' bonds');
+
+  api.load('c1ccccc1');
+  document.querySelector('[data-mode="build"]').click();
+  document.querySelector('[data-tool="select"]').click();
+  const buildCanvas = document.querySelector('#molecule-canvas');
+  const buildRect = buildCanvas.getBoundingClientRect();
+  const buildAtom = api.viewerState().atoms.find((atom) => atom.index === 0);
+  const buildRotationBefore = api.viewerState().rotation;
+  buildCanvas.dispatchEvent(new PointerEvent('pointerdown', { bubbles:true, pointerId:42,
+    button:0, clientX:buildRect.left + buildAtom.sx, clientY:buildRect.top + buildAtom.sy }));
+  buildCanvas.dispatchEvent(new PointerEvent('pointermove', { bubbles:true, pointerId:42,
+    button:0, buttons:1, clientX:buildRect.left + buildAtom.sx + 70, clientY:buildRect.top + buildAtom.sy + 35 }));
+  buildCanvas.dispatchEvent(new PointerEvent('pointerup', { bubbles:true, pointerId:42,
+    button:0, clientX:buildRect.left + buildAtom.sx + 70, clientY:buildRect.top + buildAtom.sy + 35 }));
+  const buildRotationAfter = api.viewerState().rotation;
+  const buildRotationDelta = ['w', 'x', 'y', 'z'].reduce((sum, key) =>
+    sum + Math.abs(buildRotationAfter[key] - buildRotationBefore[key]), 0);
+  check(buildRotationDelta > 1e-3
+    && document.querySelector('#geometry-selection-help').textContent.includes('Choose Select'),
+  'left-drag rotates in Build Select without accidentally selecting the starting atom',
+  JSON.stringify({ buildRotationDelta }));
+
+  for (let index = 0; index < 6; index++) {
+    const projected = api.viewerState().atoms.find((atom) => atom.index === index);
+    buildCanvas.dispatchEvent(new PointerEvent('pointerdown', { bubbles:true, pointerId:50 + index,
+      button:0, clientX:buildRect.left + projected.sx, clientY:buildRect.top + projected.sy }));
+    buildCanvas.dispatchEvent(new PointerEvent('pointerup', { bubbles:true, pointerId:50 + index,
+      button:0, clientX:buildRect.left + projected.sx, clientY:buildRect.top + projected.sy }));
+  }
+  check(document.querySelector('#geometry-selection-help').textContent.includes('6 atoms selected for a docking core')
+    && document.querySelector('#build-status').textContent.includes('6 atoms selected'),
+  'Build Select accepts a connected docking core larger than four atoms');
+
+  const buildPanBefore = api.viewerState().pan;
+  const coordinatesBeforeBuildPan = api.current().molecule.atoms.map((atom) => [atom.x, atom.y, atom.z]);
+  buildCanvas.dispatchEvent(new PointerEvent('pointerdown', { bubbles:true, pointerId:60,
+    button:2, clientX:buildRect.left + 200, clientY:buildRect.top + 200 }));
+  buildCanvas.dispatchEvent(new PointerEvent('pointermove', { bubbles:true, pointerId:60,
+    button:2, buttons:2, clientX:buildRect.left + 230, clientY:buildRect.top + 182 }));
+  buildCanvas.dispatchEvent(new PointerEvent('pointerup', { bubbles:true, pointerId:60,
+    button:2, clientX:buildRect.left + 230, clientY:buildRect.top + 182 }));
+  const buildPanAfter = api.viewerState().pan;
+  check(buildPanAfter.x - buildPanBefore.x === 30 && buildPanAfter.y - buildPanBefore.y === -18
+    && JSON.stringify(api.current().molecule.atoms.map((atom) => [atom.x, atom.y, atom.z]))
+      === JSON.stringify(coordinatesBeforeBuildPan),
+  'right-drag pans the full scene in Build without changing molecular coordinates',
+  JSON.stringify({ before:buildPanBefore, after:buildPanAfter }));
 
   const cf3Seed = api.attach('c1ccccc1', 'trifluoromethyl', 0).molecule;
   const cf3Carbon = cf3Seed.atoms.findIndex((atom, index) => index > 5 && atom.element === 'C' && !atom.aromatic);
@@ -2135,6 +2449,14 @@ const browserSuite = String.raw`(async () => {
   check(Number.isFinite(uffEnergy.finalEnergy), 'UFF fallback energy is finite', String(uffEnergy.finalEnergy));
   check(uffEnergy.unit === 'kcal/mol', 'UFF fallback reports kcal/mol', uffEnergy.unit);
 
+  if (captureDockingUi) {
+    api.loadObject(dockingFixture);
+    document.querySelector('.mode-bar button[data-mode="build"]').click();
+    api.setDockingMode('selected-core');
+    api.setDockingSelection([3, 4, 5]);
+    await api.captureDockingReference();
+    await api.runConstrainedDocking({ conformerCount:4, seed:20260819, torsionSteps:32 });
+  }
   const failed = checks.filter((item) => !item.passed);
   return { passed: checks.length - failed.length, total: checks.length, failed, optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics, preparationMetrics };
 })()`;

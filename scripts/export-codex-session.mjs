@@ -1,12 +1,15 @@
 #!/usr/bin/env bun
 
 import { createHash } from "node:crypto";
-import { createReadStream } from "node:fs";
-import { mkdir, writeFile } from "node:fs/promises";
+import { once } from "node:events";
+import { createReadStream, createWriteStream } from "node:fs";
+import { mkdir, rename, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import readline from "node:readline";
 
 const PRIVATE_ROOT = path.resolve("paper/development-log/private");
+const EXPORT_VERSION = 2;
+const VISIBLE_ASSISTANT_PHASES = new Set(["commentary", "final"]);
 
 function usage(message = "") {
   if (message) console.error(`${message}\n`);
@@ -30,11 +33,20 @@ function parseArguments(argv) {
   ) {
     usage("Refusing to write outside the ignored private transcript directory.");
   }
-  return { source: path.resolve(source), output: resolvedOutput };
+  return { source:path.resolve(source), output:resolvedOutput };
 }
 
 function redact(text) {
-  return String(text)
+  const preservedEvidenceHashes = [];
+  let value = String(text).replace(
+    /\b((?:sha(?:-?256)?|sourceSha256|checksum|digest)\s*[:=]?\s*)([a-fA-F0-9]{64})\b/gi,
+    (_match, prefix, hash) => {
+      const marker = `MOLARIUM_EVIDENCE_HASH_${preservedEvidenceHashes.length}`;
+      preservedEvidenceHashes.push(hash);
+      return `${prefix}${marker}`;
+    },
+  );
+  value = value
     .replace(/\bcfat_[A-Za-z0-9_-]{12,}\b/g, "[REDACTED_CLOUDFLARE_TOKEN]")
     .replace(/\bsk-[A-Za-z0-9_-]{12,}\b/g, "[REDACTED_API_KEY]")
     .replace(/\bgh(?:p|o|u|s|r)_[A-Za-z0-9]{12,}\b/g, "[REDACTED_GITHUB_TOKEN]")
@@ -47,17 +59,25 @@ function redact(text) {
       /((?:api[_ -]?key|access[_ -]?key|secret|password|token)\s*[:=]\s*)[^\s,;]+/gi,
       "$1[REDACTED]",
     )
-    .replace(/\/Users\/[^/\s]+/g, "$HOME")
-    .replace(/\/private\/var\/folders\/[^\s"')]+/g, "$TMP")
-    .replace(/\/var\/folders\/[^\s"')]+/g, "$TMP");
+    .replace(/([?&](?:api[_-]?key|access[_-]?key|secret|password|token)=)[^&#\s]+/gi,
+      "$1[REDACTED]")
+    .replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi, "[REDACTED_EMAIL]")
+    .replace(/\/Users\/[^/\s"')`]+/g, "$HOME")
+    .replace(/\/(?:private\/)?var\/folders\/[^\s"')`]+/g, "$TMP")
+    .replace(/\/private\/tmp(?:\/[^\s"')`]+)*/g, "$TMP")
+    .replace(/\/tmp(?:\/[^\s"')`]+)*/g, "$TMP")
+    .replace(/\/Volumes(?:\/[^\s"')`]+)*/g, "$VOLUME")
+    .replace(/\/workspacenfs(?:\/[^\s"')`]+)*/g, "$REMOTE_PATH");
+  return value.replace(/MOLARIUM_EVIDENCE_HASH_(\d+)/g, (_match, index) =>
+    preservedEvidenceHashes[Number(index)] || "[REDACTED_UNRESOLVED_HASH]");
 }
 
 function visibleMessage(record) {
-  if (record?.type !== "response_item" || record?.payload?.type !== "message") {
-    return null;
-  }
+  if (record?.type !== "response_item" || record?.payload?.type !== "message") return null;
   const role = record.payload.role;
   if (role !== "user" && role !== "assistant") return null;
+  const phase = role === "assistant" ? record.payload.phase || null : null;
+  if (role === "assistant" && phase && !VISIBLE_ASSISTANT_PHASES.has(phase)) return null;
 
   const parts = [];
   let omittedAttachments = 0;
@@ -71,57 +91,95 @@ function visibleMessage(record) {
   if (!parts.length && !omittedAttachments) return null;
 
   return {
-    type: "visible_message",
-    timestamp: record.timestamp || null,
-    ordinal: Number.isFinite(record.ordinal) ? record.ordinal : null,
+    type:"visible_message",
+    timestamp:record.timestamp || null,
+    ordinal:Number.isFinite(record.ordinal) ? record.ordinal : null,
     role,
-    phase: role === "assistant" ? record.payload.phase || null : null,
-    text: parts.join("\n\n"),
+    phase,
+    text:parts.join("\n\n"),
     omittedAttachments,
   };
 }
 
-const { source, output } = parseArguments(process.argv.slice(2));
-const digest = createHash("sha256");
-const messages = [];
-let lineNumber = 0;
-const input = createReadStream(source);
-input.on("data", (chunk) => digest.update(chunk));
-const lines = readline.createInterface({ input, crlfDelay:Infinity });
-for await (const line of lines) {
-  lineNumber += 1;
-  if (!line.trim()) continue;
-  let record;
-  try {
-    record = JSON.parse(line);
-  } catch {
-    throw new Error(`Invalid JSON on rollout line ${lineNumber}.`);
-  }
-  const message = visibleMessage(record);
-  if (message) messages.push(message);
+async function writeRecord(stream, digest, record) {
+  const line = `${JSON.stringify(record)}\n`;
+  digest.update(line);
+  if (!stream.write(line)) await once(stream, "drain");
 }
 
-const metadata = {
-  type: "redacted_codex_export",
-  version: 1,
-  generatedAt: new Date().toISOString(),
-  sourceBasename: path.basename(source),
-  sourceSha256: digest.digest("hex"),
-  reviewStatus: "REQUIRES_MANUAL_REVIEW",
-  policy: [
-    "user and visible assistant messages only",
-    "system/developer messages, reasoning, tools, and event records omitted",
-    "attachments omitted",
-    "credential and local-path patterns redacted",
-  ],
-};
+const { source, output } = parseArguments(process.argv.slice(2));
+await mkdir(path.dirname(output), { recursive:true });
+const partialOutput = `${output}.partial-${process.pid}-${Date.now()}`;
+const sourceDigest = createHash("sha256");
+const outputDigest = createHash("sha256");
+const destination = createWriteStream(partialOutput, { mode:0o600 });
+let completed = false;
+let lineNumber = 0;
+let sourceSizeBytes = 0;
+let visibleMessages = 0;
+let omittedAttachments = 0;
 
-await mkdir(path.dirname(output), { recursive: true });
-await writeFile(
-  output,
-  `${[metadata, ...messages].map((item) => JSON.stringify(item)).join("\n")}\n`,
-  { mode: 0o600 },
-);
+try {
+  await writeRecord(destination, outputDigest, {
+    type:"redacted_codex_export_header",
+    version:EXPORT_VERSION,
+    generatedAt:new Date().toISOString(),
+    sourceBasename:path.basename(source),
+    reviewStatus:"REQUIRES_MANUAL_REVIEW",
+    policy:[
+      "user and visible assistant messages only",
+      "system/developer messages, hidden reasoning, tools, and event records omitted",
+      "attachments omitted and counted",
+      "credential, email, and local-path patterns redacted",
+      "labelled scientific SHA-256 evidence hashes retained",
+      "Codex rollout JSONL is treated as an observed internal format, not a stable public API",
+    ],
+  });
 
-console.log(`Wrote ${messages.length} visible messages to ${output}.`);
-console.log("This file is private and still requires manual review before quotation.");
+  const input = createReadStream(source);
+  input.on("data", (chunk) => {
+    sourceDigest.update(chunk);
+    sourceSizeBytes += chunk.length;
+  });
+  const lines = readline.createInterface({ input, crlfDelay:Infinity });
+  for await (const line of lines) {
+    lineNumber += 1;
+    if (!line.trim()) continue;
+    let record;
+    try {
+      record = JSON.parse(line);
+    } catch {
+      throw new Error(`Invalid JSON on rollout line ${lineNumber}.`);
+    }
+    const message = visibleMessage(record);
+    if (!message) continue;
+    visibleMessages += 1;
+    omittedAttachments += message.omittedAttachments;
+    await writeRecord(destination, outputDigest, message);
+  }
+
+  await writeRecord(destination, outputDigest, {
+    type:"redacted_codex_export_summary",
+    version:EXPORT_VERSION,
+    sourceSha256:sourceDigest.digest("hex"),
+    sourceSizeBytes,
+    sourceLineCount:lineNumber,
+    visibleMessageCount:visibleMessages,
+    omittedAttachmentCount:omittedAttachments,
+    reviewStatus:"REQUIRES_MANUAL_REVIEW",
+  });
+  destination.end();
+  await once(destination, "finish");
+  await rename(partialOutput, output);
+  const outputSha256 = outputDigest.digest("hex");
+  await writeFile(`${output}.sha256`, `${outputSha256}  ${path.basename(output)}\n`, { mode:0o600 });
+  completed = true;
+  console.log(`Wrote ${visibleMessages} visible messages to ${output}.`);
+  console.log(`SHA-256 ${outputSha256}`);
+  console.log("This file is private and still requires manual review before quotation.");
+} finally {
+  if (!completed) {
+    destination.destroy();
+    await rm(partialOutput, { force:true });
+  }
+}

@@ -7,15 +7,19 @@ private paths, hidden instructions, or unreviewed model output.
 
 ## Three layers of evidence
 
-1. **Private raw rollout.** Codex writes full session JSONL files under
+1. **Private raw rollout.** The current Codex implementation writes high-fidelity session JSONL files under
    `~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl`. They may contain credentials,
-   local file names, tool output, system instructions, and other private data.
-   Keep them immutable and private. Record a SHA-256 digest when archiving one;
-   never add a raw rollout to Git.
+   local file names, screenshots or attachment references, tool output, system instructions, and
+   other private data. This path and schema are observed implementation details, not a stable public
+   archival API. Keep selected evidence immutable, encrypted, and private in durable storage outside
+   `~/.codex`, Git, and temporary worktrees. Record a SHA-256 digest plus the Codex application
+   version and export-script commit when archiving one; never add a raw rollout to Git.
 2. **Private redacted transcript.** Run `scripts/export-codex-session.mjs` with an
    explicit rollout file. It retains timestamped user and visible assistant
    messages, omits system/developer messages, reasoning, and tool traffic, and
-   applies conservative secret and path redaction. The output is forced into the
+   applies conservative secret and path redaction. Export version 2 writes records incrementally to
+   an atomic temporary file, includes a source digest and byte/line counts, and emits a separate
+   output checksum. The output is forced into the
    ignored `paper/development-log/private/` directory. It still requires manual
    review before any quotation is published.
 3. **Curated debugging episode.** A reviewed Markdown file in `episodes/` states
@@ -34,10 +38,21 @@ bun scripts/export-codex-session.mjs \
   --output paper/development-log/private/2026-08-20-session.jsonl
 ```
 
-The exporter deliberately does not include tool calls or outputs. Debugging
+The exporter deliberately does not include tool calls or outputs, hidden reasoning, system or
+developer messages, or attachment payloads. Debugging
 commands, measurements, screenshots, and commits should be added to the curated
 episode after inspection. The exporter also does not prove that every secret was
 removed. Treat its output as private until a human has reviewed it line by line.
+
+Run the synthetic redaction and bounded-export regression with:
+
+```sh
+bun run test:development-log
+```
+
+For a paper figure, copy only the required screenshot into a private review directory, crop away
+unrelated UI, inspect it manually, and record both the raw and publication-image SHA-256 digests in
+the episode. Do not cite an attachment merely by its mutable temporary path.
 
 ## Episode format
 

@@ -284,6 +284,32 @@ async function runCalculation(message) {
           throw new Error(`RDKit ETKDGv3 conformer ${index + 1} is invalid`);
         conformers.set(positions, index * stride);
       });
+      let conformerEnergies = null;
+      let conformerForcefields = null;
+      if (job === 'conformers' && options.returnEnergies) {
+        progress(id, `Scoring ${conformerCount} conformers with MMFF94…`, 0.94, 0.78);
+        conformerEnergies = [];
+        conformerForcefields = [];
+        for (let conformer = 0; conformer < conformerCount; conformer++) {
+          const positions = parsed.conformers[conformer];
+          const candidate = {
+            ...molecule,
+            atoms:molecule.atoms.map((atom, atomIndex) => ({
+              ...atom,
+              x:positions[atomIndex * 3], y:positions[atomIndex * 3 + 1],
+              z:positions[atomIndex * 3 + 2],
+            })),
+          };
+          try {
+            const score = scoreMolBlock(module, moleculeToMolBlock(candidate));
+            conformerEnergies.push(score.energy);
+            conformerForcefields.push(score.forcefield);
+          } catch {
+            conformerEnergies.push(null);
+            conformerForcefields.push(null);
+          }
+        }
+      }
       if (job === 'embed') {
         progress(id, `Ranking ${conformerCount} embedded conformers…`, 0.96, 0.82);
         const energies = [];
@@ -335,8 +361,13 @@ async function runCalculation(message) {
         conformerSeed: parsed.randomSeed,
         pruneRmsThreshold: parsed.pruneRmsThreshold,
         elapsedMs: performance.now() - started,
+        rdkitVersion: module.version?.() || null,
         platform: 'WebAssembly', backend: 'RDKit ETKDGv3',
       };
+      if (conformerEnergies) {
+        result.conformerEnergies = conformerEnergies;
+        result.conformerForcefields = conformerForcefields;
+      }
       self.postMessage(result, [conformers.buffer]);
       return;
     }

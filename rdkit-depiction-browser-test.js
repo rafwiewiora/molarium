@@ -111,7 +111,6 @@ try {
     document.querySelector('[data-2d-tool="select"]').click();
     check(api.twoDDepiction().tool === 'select',
       'the visible Select tool can be restored after entering Build', JSON.stringify(api.twoDDepiction()));
-
     const svg = document.querySelector('#structure-2d-drawing svg');
     const oxygen = [...svg.querySelectorAll('.atom-2')].find((node) =>
       [...node.classList].filter((name) => name.startsWith('atom-')).length === 1);

@@ -12,13 +12,13 @@
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "bytes": 5794,
-      "sha256": "80fbb97b2915a1e7e1f6e651d99b93d2feed1aa058cfa0933a35af4f996e27d7"
+      "bytes": 6879,
+      "sha256": "971371011546e8db1c47c95766bad6c3400b39788789d7f66505fcfb5113f0f2"
     },
     {
       "path": "app.js",
-      "bytes": 486976,
-      "sha256": "d3922f3db79fa2d15bb46707f76efc3fe90e2c6ca4e91374130a320813181e33"
+      "bytes": 569719,
+      "sha256": "9073f9c760957e4a8d9edffc546124ff74839f8d44d760015f8a2adfc5fec1b5"
     },
     {
       "path": "bun.lock",
@@ -27,13 +27,13 @@
     },
     {
       "path": "molarium-workspace.css",
-      "bytes": 8696,
-      "sha256": "9c0a75fc2e5eee04ee71ef7fec6a352ee4678355ffcaad99d38f9c74ac0d7a4e"
+      "bytes": 9116,
+      "sha256": "1092c62b664b87e22d59817609f294398b1a2f5cd89d7f2b11732a612c7e364a"
     },
     {
       "path": "index.html",
-      "bytes": 48417,
-      "sha256": "75010c8799ca53c6051ee88bd920fe8ee85a0e5889ed5d2cc96e3d68283eda3c"
+      "bytes": 55461,
+      "sha256": "c205aeb2ae7e7cd010dd3f8b86e570121bd62cf1461e2835282a9a6cbac8e899"
     },
     {
       "path": "local-lab-test.js",
@@ -42,8 +42,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 1446,
-      "sha256": "109f9e5cbfe1342bb33a0f9f7880d182a32e8f76aadb6ec7a7a6bcc378f9d7a6"
+      "bytes": 1618,
+      "sha256": "8246a90651b5fff767ab52c13215528f63fbf2ca788e37c978660be52ffbcdfa"
     },
     {
       "path": "protein-residue-templates.js",
@@ -57,18 +57,18 @@
     },
     {
       "path": "scripts/generate-local-lab-manifest.mjs",
-      "bytes": 2174,
-      "sha256": "08598dc073ea2143b818d2f1de66b9c17c973d6693d296e917aded9581cebda5"
+      "bytes": 2409,
+      "sha256": "d083c5637d89edbdcff85b10b3b0f77b839368baf7659ea8e47fd27d140ba29c"
     },
     {
       "path": "styles.css",
-      "bytes": 49619,
-      "sha256": "1357c624085ae030aa01ffe37548543f27f9e55c5a63a63f021ad6730ae4f1c8"
+      "bytes": 56061,
+      "sha256": "f4fc4b37619f095f3a9a32be4ce44462529807ef44538090095c4f5ef08daa92"
     },
     {
       "path": "rdkit-worker.js",
-      "bytes": 18421,
-      "sha256": "19df5fab374d52f41ac98afca7afb25ad617bbdb0b7c3e0243cc57f244a4e7ee"
+      "bytes": 22176,
+      "sha256": "d4263c7d9ed4f5be75a8bf270dd38d9a9abe4890198235513d36353940efe0e2"
     },
     {
       "path": "rdkit/dimorphite-sites.js",
@@ -86,9 +86,49 @@
       "sha256": "813445a8b8459f6c44e65e572d4d674d58010fe7acd225ff06e054a3105abb94"
     },
     {
+      "path": "docking/browser-adapter.mjs",
+      "bytes": 10124,
+      "sha256": "c87f2d3963b84b948d73c93d72e8825e6b68355d1777a8d550c2be6c5e24f224"
+    },
+    {
+      "path": "docking/constraints.mjs",
+      "bytes": 10870,
+      "sha256": "ef5e3392aecc1709bb0183957d1ad7252a98a9704222b4feb30d6d2269b70470"
+    },
+    {
+      "path": "docking/labbook.mjs",
+      "bytes": 10791,
+      "sha256": "9b123b14dd6117a7478b0a8aa50005940ab70b7f7db4cdc1e45d4bedef7afa61"
+    },
+    {
+      "path": "docking/protocol.mjs",
+      "bytes": 16315,
+      "sha256": "49ab3d77ee040991f06e47004cc8b0a8bae0ff70a8a699c0b2e0f3b01ece13c1"
+    },
+    {
+      "path": "docking/receptor-score.mjs",
+      "bytes": 7428,
+      "sha256": "be6de7ef72fe573255403129a24dac65ad34a69e012352c7e16c39ab6859ca95"
+    },
+    {
+      "path": "docking/reference-core.mjs",
+      "bytes": 7216,
+      "sha256": "f57f12122832341e4c47c59fdfff192619638b9f13fb7330e8e4d22544450066"
+    },
+    {
+      "path": "docking/torsion-search.mjs",
+      "bytes": 11055,
+      "sha256": "e300f68d4551945546c2e257d5102402f959db31be3a2d7f94924ef09e2a329d"
+    },
+    {
+      "path": "docking/workflow.mjs",
+      "bytes": 7001,
+      "sha256": "73983dbd485d2c3c9a460609a2b258a274ae059de450b583a16a7cff65e6fb70"
+    },
+    {
       "path": "openmm-worker.js",
-      "bytes": 21106,
-      "sha256": "77cc3deee1e05b1aaf11681d1de123a491313749ee2e09dffc38169e23c52348"
+      "bytes": 25165,
+      "sha256": "26aefa60a5cfc09e1fd10eb054d494f76a9db129a7a8a294743fd4459193c951"
     },
     {
       "path": "openmm/molarium-openmm.js",
