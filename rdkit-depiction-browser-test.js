@@ -71,6 +71,16 @@ try {
       'small molecules receive an RDKit 2D depiction', JSON.stringify(initial));
     check(initial.rdkitVersion === '2025.03.4', 'the inset reports the bundled RDKit version', initial.rdkitVersion);
 
+    document.querySelector('[data-2d-tool="select"]').click();
+    check(api.twoDDepiction().tool === 'select' && api.twoDDepiction().mode === 'view',
+      'the visible Select tool activates without forcing the main canvas into Build', JSON.stringify(api.twoDDepiction()));
+    document.querySelector('[data-2d-tool="atom"]').click();
+    check(api.twoDDepiction().tool === 'atom' && api.twoDDepiction().mode === 'build',
+      'the visible Atom tool activates and opens Build', JSON.stringify(api.twoDDepiction()));
+    document.querySelector('[data-2d-tool="select"]').click();
+    check(api.twoDDepiction().tool === 'select',
+      'the visible Select tool can be restored after entering Build', JSON.stringify(api.twoDDepiction()));
+
     const svg = document.querySelector('#structure-2d-drawing svg');
     const oxygen = [...svg.querySelectorAll('.atom-2')].find((node) =>
       [...node.classList].filter((name) => name.startsWith('atom-')).length === 1);

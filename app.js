@@ -775,7 +775,7 @@ function update2DEditorUi() {
   if (!panel) return;
   panel.dataset.mode = state.mode;
   document.querySelectorAll('[data-2d-tool]').forEach((button) => {
-    const selected = button.dataset.twoDTool === state.depictionTool;
+    const selected = button.dataset['2dTool'] === state.depictionTool;
     button.classList.toggle('selected', selected);
     button.setAttribute('aria-pressed', String(selected));
   });
@@ -9148,7 +9148,7 @@ document.querySelector('#structure-2d-toggle').addEventListener('click', (event)
   event.currentTarget.querySelector('.chevron').classList.toggle('open', !collapsed);
 });
 document.querySelectorAll('[data-2d-tool]').forEach((button) => button.addEventListener('click', () => {
-  const tool = button.dataset.twoDTool;
+  const tool = button.dataset['2dTool'];
   if (tool !== 'select' && state.mode !== 'build' && !setMode('build')) return;
   state.depictionTool = tool; state.depictionBondStart = null; update2DEditorUi();
 }));
