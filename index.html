@@ -252,12 +252,16 @@
             </div>
             <section class="docking-workbench hidden" id="docking-workbench">
               <div class="docking-heading">
-                <h2 class="compact-label">Constrained docking</h2>
-                <span class="info-anchor"><button type="button" class="info-button" aria-label="About constrained docking" aria-describedby="docking-info">i</button><span class="info-popover" id="docking-info" role="tooltip">Experimental rigid-receptor pose ranking. Scores are not binding free energies.</span></span>
+                <h2 class="compact-label">Analogue pose</h2>
+                <span class="info-anchor"><button type="button" class="info-button" aria-label="About analogue posing" aria-describedby="docking-info">i</button><span class="info-popover" id="docking-info" role="tooltip">Propagate recorded ligand edits from a reference pose, or run an expert selected-core search. Scores are not binding free energies.</span></span>
               </div>
-              <p class="docking-status" id="docking-status">Select at least 3 connected ligand heavy atoms.</p>
+              <select id="docking-mode" aria-label="Analogue pose method">
+                <option value="propagate" selected>Propagate edit</option>
+                <option value="selected-core">Selected core search</option>
+              </select>
+              <p class="docking-status" id="docking-status">Capture the prepared reference pose before editing.</p>
               <div class="docking-reference-actions">
-                <button class="soft-button" type="button" id="capture-docking-reference">Set core</button>
+                <button class="soft-button" type="button" id="capture-docking-reference">Capture pose</button>
                 <button class="soft-button hidden" type="button" id="clear-docking-reference">Reset</button>
               </div>
               <div class="docking-constraints hidden" id="docking-constraints">
@@ -271,7 +275,7 @@
                   <option value="32">32 poses</option>
                   <option value="64">64 poses</option>
                 </select>
-                <button class="primary-button" type="button" id="run-constrained-docking">Dock</button>
+                <button class="primary-button" type="button" id="run-constrained-docking">Refine</button>
               </div>
             </section>
             <h2 class="compact-label build-section-label">Element</h2>
@@ -587,7 +591,7 @@
           <section class="card mode-panel hidden" id="build-right-panel">
             <section class="docking-results hidden" id="docking-results">
               <div class="docking-heading">
-                <h2 class="compact-label">Docking poses</h2>
+                <h2 class="compact-label">Refined poses</h2>
                 <strong id="docking-result-summary">—</strong>
               </div>
               <div class="docking-pose-list" id="docking-pose-list"></div>

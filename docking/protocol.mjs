@@ -119,6 +119,68 @@ export const MOLARIUM_CONSTRAINT_DOCK_PROTOCOL = Object.freeze({
   }),
 });
 
+export const MOLARIUM_POSE_PROPAGATION_PROTOCOL = Object.freeze({
+  ...structuredClone(MOLARIUM_CONSTRAINT_DOCK_PROTOCOL),
+  id:'molarium-pose-propagation-1',
+  version:'0.1.0',
+  name:'Molarium Pose Propagation-1',
+  title:'Edit-lineage reference-pose propagation and constrained refinement',
+  summary:'All surviving reference heavy atoms remain exact while new graph branches undergo receptor-aware torsion search and fixed-scaffold OpenFF Sage relaxation.',
+  lineage:Object.freeze([
+    Object.freeze({
+      role:'RBFE pose-preparation practice',
+      method:'MCS alignment with modified-substituent sampling',
+      citation:'Cournia Z et al. J Chem Inf Model. 2017;57:2911-2937.',
+      doi:'10.1021/acs.jcim.7b00564',
+      url:'https://doi.org/10.1021/acs.jcim.7b00564',
+      adopted:Object.freeze([
+        'inherit a reference pose for a congeneric common region',
+        'sample modified substituents and resolve clashes while maintaining the inherited pose',
+      ]),
+      excluded:Object.freeze(['binding free-energy estimation', 'unrestrained receptor equilibration']),
+    }),
+    Object.freeze({
+      role:'FEP input-pose evidence',
+      method:'Input Pose is Key to Performance of Free Energy Perturbation',
+      citation:'Ohadi D et al. J Chem Inf Model. 2024;64:8859-8869.',
+      doi:'10.1021/acs.jcim.4c01223',
+      url:'https://pubmed.ncbi.nlm.nih.gov/39560439/',
+      adopted:Object.freeze([
+        'preserve ligand-based reference information',
+        'treat explicit H-bond constraints as pose-generation evidence',
+      ]),
+      excluded:Object.freeze(['FEP+', 'study-specific water choices', 'reported affinity model']),
+    }),
+    Object.freeze({
+      role:'template-pose baseline',
+      method:'TEMPL constrained reference embedding',
+      citation:'Pinheiro JP et al. J Chem Inf Model. 2025.',
+      doi:'10.1021/acs.jcim.5c01985',
+      url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC12570141/',
+      adopted:Object.freeze(['hard reference coordinates for the mapped common substructure']),
+      excluded:Object.freeze(['TEMPL source code', 'reference-database search', 'shape-only ranking']),
+    }),
+    ...MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.lineage,
+  ]),
+  sampling:Object.freeze({
+    ...structuredClone(MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.sampling),
+    ligand:'recorded graph edits outside an exact surviving-heavy-atom scaffold',
+    stages:Object.freeze([
+      'stable edit-lineage mapping of every surviving heavy atom',
+      'exact reference-coordinate propagation',
+      'receptor-aware torsion Monte Carlo on new graph branches',
+      'fixed-scaffold OpenFF Sage local relaxation',
+      'explicit required H-bond audit',
+      'constraint-feasible transparent ranking',
+    ]),
+  }),
+  implementation:Object.freeze({
+    ...structuredClone(MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.implementation),
+    browserPoseGeneration:'implemented-recorded-edit-lineage-propagation',
+    browserLigandRefinement:'implemented-torsion-mc-plus-fixed-scaffold-sage-relaxation',
+  }),
+});
+
 export function protocolSnapshot(overrides = {}) {
   return {
     ...structuredClone(MOLARIUM_CONSTRAINT_DOCK_PROTOCOL),
@@ -134,6 +196,21 @@ export function protocolSnapshot(overrides = {}) {
       ...MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.sampling,
       ...(overrides.sampling || {}),
       stages: [...(overrides.sampling?.stages || MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.sampling.stages)],
+    },
+  };
+}
+
+export function posePropagationProtocolSnapshot(overrides = {}) {
+  const base = MOLARIUM_POSE_PROPAGATION_PROTOCOL;
+  return {
+    ...structuredClone(base),
+    coreConstraint:{ ...base.coreConstraint, ...(overrides.coreConstraint || {}) },
+    hydrogenBondConstraint:{
+      ...base.hydrogenBondConstraint, ...(overrides.hydrogenBondConstraint || {}),
+    },
+    sampling:{
+      ...base.sampling, ...(overrides.sampling || {}),
+      stages:[...(overrides.sampling?.stages || base.sampling.stages)],
     },
   };
 }

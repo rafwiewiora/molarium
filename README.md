@@ -204,21 +204,33 @@ Protein cartoon mode can show a complete 5 Å ligand pocket or only residues inv
 current hydrogen bonds and aromatic stacking contacts. Clicking a protein atom can keep that
 residue centered during trajectory playback.
 
-## Constrained docking
+## Analogue pose refinement and constrained docking
 
-Molarium ConstraintDock-1 is an experimental, independent browser workflow for edit-derived ligand series.
-Start from a prepared and parameterized protein–ligand complex, select any connected set of at
-least three ligand heavy atoms containing a non-collinear triple as the conserved core, and
-optionally require the explicit cross-component
-H-bonds visible in the reference pose. Molarium then generates deterministic ETKDGv3 conformers,
-aligns and snaps the surviving stable atom identities exactly to the reference core, then performs
-deterministic receptor-aware torsion Monte Carlo on branches outside that core. Required D–H–A
-contacts remain hard feasible states during search, and feasible poses rank before infeasible ones.
+For a ligand edited inside Molarium, **Pose Propagation-1** is the default. Capture the prepared
+reference pose, edit the ligand, and refine: every surviving heavy atom is identified from the
+recorded graph-edit lineage and remains fixed at its exact reference coordinate. Only added or
+replaced graph branches undergo deterministic receptor-aware torsion search. The edited ligand then
+receives a fixed-scaffold OpenFF Sage relaxation; a relaxed result is kept only when it preserves
+required-contact feasibility and improves the complete pose-ranking objective. No manual core
+selection is needed.
+
+This follows established congeneric/RBFE pose-preparation practice: preserve a trusted reference
+common region, sample modified substituents, resolve local clashes, and audit alternate binding
+modes rather than beginning with unconstrained global docking. Required D–H–A contacts remain hard
+feasible states during search. Removed contact atoms are logged and never silently remapped to a
+new chemical feature.
+
+**ConstraintDock-1** remains an expert selected-core search. It accepts any connected,
+non-collinear selection of at least three ligand heavy atoms, generates deterministic ETKDGv3
+conformers, snaps the selected stable identities to the reference, and runs the same constrained
+torsion search. Independently imported analogues do not yet receive an automatic MCS; that future
+path needs symmetry-aware chemical mapping rather than a JavaScript graph guess.
 
 The receptor stays rigid. Ranking combines captured receptor/edited-ligand numeric Lennard-Jones
 and Coulomb cross terms (8 Å site, relative dielectric 4), relative vacuum OpenFF Sage 2.1 intramolecular
 ligand energy, and explicit restraint penalties. The strain reference is
-relative to the lowest fixed-core starting seed; MMFF94/UFF prepares the initial conformers. It omits
+relative to the lowest fixed-core starting seed. Pose propagation begins from the recorded edit;
+only the expert selected-core search uses MMFF94/UFF-prepared ETKDG conformers. Both paths omit
 receptor relaxation, solvent displacement, ring-pucker search, entropy, and
 binding-free-energy estimation. Treat the result as an experimental pose rank, not an affinity.
 

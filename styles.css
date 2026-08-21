@@ -520,6 +520,7 @@ select {
 .docking-heading { display: flex; align-items: center; justify-content: space-between; gap: 7px; }
 .docking-heading .compact-label { margin: 0; }
 .docking-heading > strong { color: #25634a; font-size: 9px; }
+#docking-mode { width: 100%; min-width: 0; height: 30px; margin-top: 7px; padding: 4px 7px; border: 1px solid var(--line-strong); border-radius: 7px; background: white; color: #334155; font-size: 9px; }
 .docking-status, .docking-results p { margin: 6px 0 0; color: var(--quiet); font-size: 9px; line-height: 1.35; }
 .docking-reference-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
 .docking-result-actions { display: grid; grid-template-columns: 1.25fr .8fr .65fr; gap: 5px; margin-top: 8px; }

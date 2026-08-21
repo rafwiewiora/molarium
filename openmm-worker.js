@@ -244,6 +244,7 @@ async function runCalculation(message) {
   progress(id, `Creating OpenMM System · ${counts.particles} atoms · ${counts.torsions} torsions · ${counts.exceptions} exceptions…`, 0.9, 0.08);
   const conformerStride = molecule.atoms.length * 3;
   const initialConformers = job === 'conformers' ? options.initialConformers : null;
+  const fixedConformers = job === 'fixed-conformers' ? options.initialConformers : null;
   const scoreCoordinates = job === 'conformer-score' ? options.coordinateStack : null;
   if (job === 'conformers' && (!ArrayBuffer.isView(initialConformers)
       || !initialConformers.length || initialConformers.length % conformerStride))
@@ -252,12 +253,79 @@ async function runCalculation(message) {
       || !scoreCoordinates.length || scoreCoordinates.length % conformerStride
       || scoreCoordinates.length / conformerStride > 4096))
     throw new Error('OpenMM conformer judge received an invalid coordinate stack');
+  if (job === 'fixed-conformers' && (!ArrayBuffer.isView(fixedConformers)
+      || !fixedConformers.length || fixedConformers.length % conformerStride
+      || fixedConformers.length / conformerStride > 64))
+    throw new Error('OpenMM fixed-scaffold relaxation received an invalid coordinate stack');
   const initialPositions = job === 'conformers'
     ? initialConformers.subarray(0, conformerStride)
-    : job === 'conformer-score' ? scoreCoordinates.subarray(0, conformerStride) : null;
+    : job === 'conformer-score' ? scoreCoordinates.subarray(0, conformerStride)
+      : job === 'fixed-conformers' ? fixedConformers.subarray(0, conformerStride) : null;
   initializeSmirnoffSystem(module, molecule, configuredSystem, implicitSolvent,
     simulationConfig.timestepPs, simulationConfig.cutoffNm, initialPositions);
   progress(id, `${parameterized.forcefield} System ready`, 1, 0.14);
+
+  if (job === 'fixed-conformers') {
+    const fixedAtomIndices = Array.from(options.fixedAtomIndices || [], Number);
+    if (fixedAtomIndices.some((index) => !Number.isInteger(index)
+        || index < 0 || index >= molecule.atoms.length)
+        || new Set(fixedAtomIndices).size !== fixedAtomIndices.length)
+      throw new Error('Fixed scaffold indices must be unique valid atom indices');
+    const conformerCount = fixedConformers.length / conformerStride;
+    const iterations = Math.max(0, Math.min(250,
+      Math.round(Number(options.fixedRelaxIterations ?? 60))));
+    const stepScale = Math.max(1e-8, Math.min(1e-2,
+      Number(options.fixedRelaxStepScale ?? 1e-4)));
+    const maximumDisplacementAngstrom = Math.max(1e-5, Math.min(0.1,
+      Number(options.fixedRelaxMaximumDisplacementAngstrom ?? 0.01)));
+    const relaxedConformers = new Float64Array(fixedConformers.length);
+    const initialEnergies = new Float64Array(conformerCount);
+    const finalEnergies = new Float64Array(conformerCount);
+    const fixedSet = new Set(fixedAtomIndices);
+    for (let conformer = 0; conformer < conformerCount; conformer++) {
+      const target = fixedConformers.subarray(conformer * conformerStride,
+        (conformer + 1) * conformerStride);
+      setPositions(module, target);
+      const initialEnergyKj = module._molarium_get_potential_energy();
+      if (!Number.isFinite(initialEnergyKj)) throw new Error(lastError(module));
+      initialEnergies[conformer] = initialEnergyKj * KJ_TO_KCAL;
+      for (let iteration = 0; iteration < iterations; iteration++) {
+        requireSuccess(module, module._molarium_relax_fixed(1, stepScale,
+          maximumDisplacementAngstrom));
+        if (fixedAtomIndices.length) {
+          const positions = readPositions(module, molecule.atoms.length);
+          for (const atom of fixedAtomIndices) for (let axis = 0; axis < 3; axis++)
+            positions[atom * 3 + axis] = target[atom * 3 + axis];
+          setPositions(module, positions);
+        }
+      }
+      const positions = readPositions(module, molecule.atoms.length);
+      // Preserve the reference coordinates bit-for-bit at the worker boundary.
+      for (const atom of fixedAtomIndices) for (let axis = 0; axis < 3; axis++)
+        positions[atom * 3 + axis] = target[atom * 3 + axis];
+      setPositions(module, positions);
+      const finalEnergyKj = module._molarium_get_potential_energy();
+      if (!Number.isFinite(finalEnergyKj)) throw new Error(lastError(module));
+      finalEnergies[conformer] = finalEnergyKj * KJ_TO_KCAL;
+      relaxedConformers.set(positions, conformer * conformerStride);
+      progress(id, `Relaxing edited pose ${conformer + 1}/${conformerCount}…`, 1,
+        0.16 + 0.78 * (conformer + 1) / conformerCount);
+    }
+    const openmmVersion = module.UTF8ToString(module._molarium_openmm_version());
+    module._molarium_destroy();
+    self.postMessage({
+      type:'result', id, job, conformers:relaxedConformers,
+      initialEnergies, finalEnergies, conformerCount, iterations,
+      fixedAtomCount:fixedAtomIndices.length,
+      movableAtomCount:molecule.atoms.length - fixedSet.size,
+      elapsedMs:performance.now() - started,
+      openmmVersion,
+      forcefield:parameterized.forcefield, chargeModel:parameterized.chargeModel,
+      sourceSha256:parameterized.sourceSha256, platform:'Reference',
+      backend:'OpenMM WebAssembly fixed-scaffold Sage relaxation', unit:'kcal/mol',
+    }, [relaxedConformers.buffer, initialEnergies.buffer, finalEnergies.buffer]);
+    return;
+  }
 
   if (job === 'conformer-score') {
     const coordinateCount = scoreCoordinates.length / conformerStride;

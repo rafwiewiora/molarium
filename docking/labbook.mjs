@@ -32,18 +32,18 @@ export async function inputProvenance({ receptorText, ligandText, receptorLabel 
   };
 }
 
-export async function createLabbook({ runId, startedAt, protocolOverrides = {}, inputs,
+export async function createLabbook({ runId, startedAt, protocol = null, protocolOverrides = {}, inputs,
   selections, environment = {}, application = {} }) {
   if (!runId || !startedAt) throw new Error('A labbook requires a runId and ISO start time');
-  const protocol = protocolSnapshot(protocolOverrides);
+  const resolvedProtocol = protocol ? canonicalValue(protocol) : protocolSnapshot(protocolOverrides);
   return {
     schema:'molarium.docking.labbook/v1',
     runId:String(runId),
     startedAt:String(startedAt),
     completedAt:null,
     application:{ name:'Molarium', ...application },
-    protocol,
-    protocolSha256:await sha256Object(protocol),
+    protocol:resolvedProtocol,
+    protocolSha256:await sha256Object(resolvedProtocol),
     inputs:canonicalValue(inputs),
     selections:canonicalValue(selections),
     environment:canonicalValue(environment),
@@ -110,9 +110,10 @@ export function renderLabbookMarkdown(labbook) {
   const execution = labbook.environment || {};
   const physical = outcome.selectedPhysicalComponents || {};
   const refinement = outcome.selectedRefinement || {};
+  const propagation = labbook.protocol?.id === 'molarium-pose-propagation-1';
   const lines = [
     `# ${labbook.protocol.name} labbook`, '',
-    '> Experimental fixed-core, rigid-receptor pose ranking. This is not a binding free-energy calculation.', '',
+    `> Experimental ${propagation ? 'edit-lineage pose propagation' : 'fixed-core pose ranking'} with a rigid receptor. This is not a binding free-energy calculation.`, '',
     '| Record | Value |', '| --- | --- |',
     `| Run | \`${markdownCell(labbook.runId)}\` |`,
     `| Started | ${markdownCell(labbook.startedAt)} |`,
@@ -141,7 +142,11 @@ export function renderLabbookMarkdown(labbook) {
     `| ${markdownCell(labbook.inputs?.ligand?.label)} | ${labbook.inputs?.ligand?.atoms ?? '—'} | \`${markdownCell(labbook.inputs?.ligand?.sha256)}\` |`, '',
     'The audit stores input hashes and selections; it does not include proprietary coordinates.', '',
     '## Selections', '',
-    `- Conserved core matches: **${labbook.selections?.coreAtomPairs?.length || 0}**`,
+    `- ${propagation ? 'Automatically inherited heavy atoms' : 'Conserved core matches'}: **${labbook.selections?.coreAtomPairs?.length || 0}**`,
+    ...(propagation ? [
+      `- Added heavy atoms: **${labbook.selections?.atomLineage?.addedAtomIds?.length || 0}**`,
+      `- Removed heavy atoms: **${labbook.selections?.atomLineage?.removedAtomIds?.length || 0}**`,
+    ] : []),
     `- Required H-bond constraints: **${constraintCount}**`,
     ...((labbook.selections?.hydrogenBonds || []).map((entry) =>
       `  - ${markdownCell(entry.label || entry.id)} (${markdownCell(entry.receptorRole || 'receptor role unspecified')})`)), '',

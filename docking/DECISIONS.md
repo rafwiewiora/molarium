@@ -341,3 +341,71 @@ continued docking, and an explicit `ligand-atom-removed` audit record.
 These are correctness and reproducibility gates, not pose-accuracy validation. Cognate redocking,
 cross-docking, analogue-series recovery, seed sensitivity, and comparison against published/native
 methods remain required before an accuracy claim.
+
+## 2026-08-20 — edit-lineage pose propagation v0.1
+
+### Additional primary evidence consulted
+
+1. Cournia Z et al., *Relative Binding Free Energy Calculations in Drug Discovery: Recent Advances
+   and Practical Considerations*, J Chem Inf Model. 2017. DOI `10.1021/acs.jcim.7b00564`, states
+   that reasonable initial poses are critical and recommends common-substructure alignment combined
+   with sampling of modified substituents. It notes that minimization or short equilibration can
+   resolve new-group clashes while maintaining the inherited ligand and receptor pose.
+2. Ohadi D et al., *Input Pose is Key to Performance of Free Energy Perturbation*, J Chem Inf Model.
+   2024. DOI `10.1021/acs.jcim.4c01223`, found strong FEP dependence on the input pose. In its MAGL
+   series, simple MCS alignment outperformed the tested docking inputs, while H-bond constraints
+   improved every tested pose-generation route. This is one target/series, not a universal ranking.
+3. Pinheiro JP et al., *TEMPL: A Template-Based Protein-Ligand Pose Prediction Baseline*, J Chem
+   Inf Model. 2025. DOI `10.1021/acs.jcim.5c01985`, uses MCS followed by constrained embedding and
+   reference alignment. Its ablation warns that unconstrained force-field optimization can degrade
+   poses by releasing the inherited coordinates; it also documents poor extrapolation when no close
+   reference exists and a high clash-invalidity rate without receptor-aware cleanup.
+
+### Decision D-018 — propagation is the default for recorded analogue edits
+
+When a ligand is edited inside Molarium, every surviving atom retains a stable `designAtomId`.
+Pose Propagation-1 therefore fixes every surviving heavy atom to its exact reference coordinate.
+The user does not select an MCS or core. Added and removed atom identities are written to the labbook.
+
+Reason: edit lineage is exact and strictly more informative than inferring an MCS after the fact.
+For a congeneric series it preserves the medicinal-chemistry hypothesis and avoids unnecessary
+rigid-body search. Selected-core ConstraintDock remains an expert alternative; independently
+imported analogues still require a future symmetry-aware chemical MCS path.
+
+The propagation map is rejected when fewer than three non-collinear reference heavy atoms survive.
+This is not silently converted to global docking because the structural hypothesis has become
+underdetermined.
+
+### Decision D-019 — search only the changed graph
+
+All propagated candidates begin from the live edit-derived coordinates, not fresh whole-ligand
+ETKDG conformers. Independent deterministic torsion chains rotate only branches whose moving
+component contains no inherited atom. Required H-bond feasibility remains a hard search state.
+
+Reason: whole-ligand regeneration throws away the strongest available evidence. Multiple chains
+still explore alternative new-group torsions, while the unchanged binding mode is invariant.
+
+Current limit: a reference contact whose ligand atom was deleted is explicitly omitted. Molarium
+does not guess which new donor or acceptor should replace it. A future interaction-retargeting UI
+must make that medicinal-chemistry hypothesis explicit and auditable.
+
+### Decision D-020 — fixed-scaffold Sage relaxation with a receptor-aware safeguard
+
+After torsion search, the edited ligand is relaxed with its fresh OpenFF Sage 2.1 System in OpenMM
+WebAssembly. Each relaxation step restores inherited heavy atoms to their exact input coordinates.
+The receptor remains rigid. A relaxed candidate is retained only if it does not lose required-contact
+feasibility and improves the complete receptor-cross-energy, ligand-strain, and restraint objective;
+otherwise the pre-relaxation torsion-search pose is kept.
+
+Reason: local bond and angle geometry around a replacement should be repaired, but relaxation must
+not erase the reference-pose prior or a required interaction. The relaxation is ligand-internal;
+receptor forces enter through the acceptance safeguard rather than the OpenMM minimizer. This is a
+pose-preparation heuristic, not FEP equilibration or an induced-fit protocol.
+
+### Validation V-006 — automatic lineage and fixed-coordinate invariants
+
+Unit tests cover surviving, removed, added, and underdetermined lineage maps. The browser gate
+captures a reference without atom selection, edits the ligand, verifies every surviving heavy atom
+is automatically inherited, performs deterministic torsion search plus fixed-scaffold Sage
+relaxation, checks sub-picometer core RMSD, verifies the hash-linked lineage/relaxation events, and
+applies a pose carrying the distinct `molarium-pose-propagation-1` protocol identity.

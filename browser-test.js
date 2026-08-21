@@ -420,6 +420,7 @@ const browserSuite = String.raw`(async () => {
   };
   api.loadObject(dockingFixture);
   document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('selected-core');
   const dockingSelection = api.setDockingSelection([3, 4, 5]);
   const buildToolLayout = [...document.querySelectorAll('#build-tool-tabs .build-tool-choice')].map((choice) => {
     const button = choice.querySelector('[data-tool]');
@@ -455,7 +456,7 @@ const browserSuite = String.raw`(async () => {
   'browser captures the ligand core and explicit cross H-bond', JSON.stringify(dockingReference));
   const editedDockingLigand = api.addElementCurrent('F', 6);
   check(editedDockingLigand.atoms === 9 && !api.current().molecule.parameterization
-    && document.querySelector('#docking-status').textContent.includes('3-atom core'),
+    && document.querySelector('#docking-status').textContent.includes('3 core atoms'),
   'an in-browser ligand edit invalidates stale complex parameters but preserves the docking reference',
   JSON.stringify(editedDockingLigand));
   let dockingRun = null;
@@ -497,6 +498,7 @@ const browserSuite = String.raw`(async () => {
   }
   api.loadObject(dockingFixture);
   document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('selected-core');
   api.setDockingSelection([3, 4, 5]);
   await api.captureDockingReference();
   await api.deleteAtomCurrent(2);
@@ -516,6 +518,40 @@ const browserSuite = String.raw`(async () => {
       && omittedLabbook.outcome.omittedHydrogenBonds?.[0]?.reason === 'ligand-atom-removed',
     'unavailable reference contacts are recorded in the coordinate-free labbook',
     JSON.stringify(omittedLabbook.selections.omittedHydrogenBonds));
+  }
+  api.loadObject(dockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  const propagationSetup = api.setDockingMode('propagate');
+  check(propagationSetup.captureDisabled === false
+    && propagationSetup.status.includes('Capture this ligand pose'),
+  'reference-pose propagation requires no manual core selection', JSON.stringify(propagationSetup));
+  const propagationReference = await api.captureDockingReference();
+  api.addElementCurrent('F', 6);
+  check(propagationReference.mode === 'pose-propagation'
+    && propagationReference.coreAtomIds.length === 6
+    && document.querySelector('#docking-status').textContent.includes('6 unchanged atoms fixed'),
+  'recorded edits automatically inherit every surviving reference heavy atom',
+  JSON.stringify(propagationReference));
+  let propagationRun = null;
+  try { propagationRun = await api.runConstrainedDocking({ conformerCount:2, seed:20260819,
+    torsionSteps:4, fixedRelaxIterations:4 }); }
+  catch (error) { check(false, 'browser propagates and relaxes an edit-derived pose', error.message); }
+  if (propagationRun) {
+    const propagationLabbook = api.dockingLabbook();
+    check(propagationRun.mode === 'pose-propagation'
+      && propagationRun.selected.coreRmsdAngstrom < 1e-12
+      && propagationRun.selected.refinement?.relaxation?.method.includes('fixed-scaffold')
+      && propagationLabbook.protocol.id === 'molarium-pose-propagation-1'
+      && propagationLabbook.selections.atomLineage.inheritedAtomIds.length === 6
+      && propagationLabbook.selections.atomLineage.addedAtomIds.length === 1
+      && propagationLabbook.events.some((event) => event.stage === 'fixed-scaffold-relaxation'),
+    'pose propagation records automatic atom lineage and fixed-scaffold Sage relaxation',
+    JSON.stringify({ run:propagationRun, protocol:propagationLabbook.protocol.id,
+      lineage:propagationLabbook.selections.atomLineage,
+      events:propagationLabbook.events.map((event) => event.stage) }));
+    const propagated = await api.applyDockingPose(0);
+    check(propagated.molecule.source.docking.protocol === 'molarium-pose-propagation-1',
+      'applied propagated poses retain their distinct protocol identity');
   }
   document.querySelector('.mode-bar button[data-mode="view"]').click();
   const bentHydroxylFixture = {
@@ -2313,6 +2349,7 @@ const browserSuite = String.raw`(async () => {
   if (captureDockingUi) {
     api.loadObject(dockingFixture);
     document.querySelector('.mode-bar button[data-mode="build"]').click();
+    api.setDockingMode('selected-core');
     api.setDockingSelection([3, 4, 5]);
     await api.captureDockingReference();
     await api.runConstrainedDocking({ conformerCount:4, seed:20260819, torsionSteps:32 });

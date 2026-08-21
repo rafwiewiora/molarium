@@ -17,8 +17,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 523130,
-      "sha256": "21a17c57d988f8f5463f16f6593669059b4a7459a5e2d2eda9b98e209b62f905"
+      "bytes": 543116,
+      "sha256": "1e4367cec9a043c051999dc99e25df5b44ac15e7e2f245d05b743b47571270ea"
     },
     {
       "path": "bun.lock",
@@ -27,13 +27,13 @@
     },
     {
       "path": "molarium-workspace.css",
-      "bytes": 8696,
-      "sha256": "9c0a75fc2e5eee04ee71ef7fec6a352ee4678355ffcaad99d38f9c74ac0d7a4e"
+      "bytes": 9116,
+      "sha256": "1092c62b664b87e22d59817609f294398b1a2f5cd89d7f2b11732a612c7e364a"
     },
     {
       "path": "index.html",
-      "bytes": 52154,
-      "sha256": "cf8f6c36be6c16534a0a3e619c85336ecc99a314c279a0595ec957454e167328"
+      "bytes": 53281,
+      "sha256": "aa2106250c03d70289bb6435732ae0c0dfc3c960545e3d61f91e225d846e8558"
     },
     {
       "path": "local-lab-test.js",
@@ -42,8 +42,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 1491,
-      "sha256": "bd59fedde98d3b341d4b782d27d64af82e1077a2947c96ed55b954df02b5dc82"
+      "bytes": 1545,
+      "sha256": "35d2828d49fc2558e006653c43384a35e7ab0caab20a3f3d2e59fc8dba809995"
     },
     {
       "path": "protein-residue-templates.js",
@@ -62,13 +62,13 @@
     },
     {
       "path": "styles.css",
-      "bytes": 52651,
-      "sha256": "1e50649138b4f7ca658577b21f3fdee360d4eb695101e59fb6b43c6035e5966b"
+      "bytes": 54400,
+      "sha256": "cfc6f9d77dc3a2d966ad53979c93f4a8ed55338145a7824af25b104de0d6255a"
     },
     {
       "path": "rdkit-worker.js",
-      "bytes": 19677,
-      "sha256": "2dc1747d5313c1fadc9831d6a97d41e8f36f01832da59cd43a7ee9654d9aebfa"
+      "bytes": 21421,
+      "sha256": "c5bffa2a07fc443d4b5fdaf5175cf8147081d196ae9d7f7f3fc0b478df1808e1"
     },
     {
       "path": "rdkit/dimorphite-sites.js",
@@ -97,13 +97,13 @@
     },
     {
       "path": "docking/labbook.mjs",
-      "bytes": 10274,
-      "sha256": "8b0f6d5c8d10ad96b3a998dbed6585e0c76a5972647b346093a75802924cfe94"
+      "bytes": 10791,
+      "sha256": "9b123b14dd6117a7478b0a8aa50005940ab70b7f7db4cdc1e45d4bedef7afa61"
     },
     {
       "path": "docking/protocol.mjs",
-      "bytes": 6471,
-      "sha256": "b34fd73fe1c1b8486a779113fecd8ba418402f9f1d3cd054a4f49859773bac1d"
+      "bytes": 10023,
+      "sha256": "71ecbbfa3093e9844b3fd38fc0f1f43ebd70e23cd56314ed774484f2e8c98c0a"
     },
     {
       "path": "docking/receptor-score.mjs",
@@ -112,8 +112,8 @@
     },
     {
       "path": "docking/reference-core.mjs",
-      "bytes": 4453,
-      "sha256": "8e348e2018065fb72a57ac01e0eb978f3b9bef072b7ca6c268a8c83c1bc06155"
+      "bytes": 7216,
+      "sha256": "f57f12122832341e4c47c59fdfff192619638b9f13fb7330e8e4d22544450066"
     },
     {
       "path": "docking/torsion-search.mjs",
@@ -122,13 +122,13 @@
     },
     {
       "path": "docking/workflow.mjs",
-      "bytes": 5269,
-      "sha256": "86e473372159db01ef0faf240d1b0d9c3bf7999d826c2007901a90e25fb0bd76"
+      "bytes": 5979,
+      "sha256": "6f11753e064a7b20ce98bbc3720c699a8f347cade6096362125600b6e069928d"
     },
     {
       "path": "openmm-worker.js",
-      "bytes": 21106,
-      "sha256": "77cc3deee1e05b1aaf11681d1de123a491313749ee2e09dffc38169e23c52348"
+      "bytes": 25119,
+      "sha256": "92229f23da1fae7a5796dd022e0467720e2f223e553e61fc4d44824e6362e600"
     },
     {
       "path": "openmm/molarium-openmm.js",

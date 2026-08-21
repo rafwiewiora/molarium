@@ -3335,6 +3335,19 @@ function dockingSelectedCore(component = dockingLigandComponent()) {
     && state.molecule?.atoms[index]?.element !== 'H');
 }
 
+function selectedDockingMode() {
+  return document.querySelector('#docking-mode')?.value === 'selected-core'
+    ? 'selected-core' : 'pose-propagation';
+}
+
+function survivingReferenceHeavyAtoms(reference, component = dockingLigandComponent()) {
+  if (!reference?.ligand || !component) return 0;
+  const liveIds = new Set(component.atomIndices.map((index) =>
+    state.molecule?.atoms[index]?.designAtomId).filter(Boolean));
+  return reference.ligand.atomIds.reduce((count, id, referenceIndex) => count
+    + Number(reference.ligand.elements[referenceIndex] !== 'H' && liveIds.has(id)), 0);
+}
+
 function setDockingStatus(message) { setText('#docking-status', message); }
 
 function dockingContactAvailable(definition) {
@@ -3384,24 +3397,40 @@ function updateDockingUi() {
   if (!visible) return;
   const capture = document.querySelector('#capture-docking-reference');
   const clear = document.querySelector('#clear-docking-reference');
+  const modeSelect = document.querySelector('#docking-mode');
   const constraints = document.querySelector('#docking-constraints');
   const runRow = document.querySelector('#docking-run-row');
   const run = document.querySelector('#run-constrained-docking');
   if (state.dockingReference) {
+    const referenceMode = state.dockingReference.mode || 'selected-core';
     const contactCount = state.dockingReference.hydrogenBonds.length;
+    modeSelect.value = referenceMode === 'pose-propagation' ? 'propagate' : 'selected-core';
+    modeSelect.disabled = true;
     capture.classList.add('hidden'); clear.classList.remove('hidden');
     constraints.classList.remove('hidden'); runRow.classList.remove('hidden');
     clear.disabled = state.dockingRunning; run.disabled = state.dockingRunning;
-    run.textContent = state.dockingRunning ? 'Docking…' : 'Dock';
-    if (!state.dockingRunning) setDockingStatus(`${state.dockingReference.ligand.coreAtomIds.length}-atom core · ${contactCount} contact${contactCount === 1 ? '' : 's'}`);
+    run.textContent = state.dockingRunning ? 'Refining…'
+      : referenceMode === 'pose-propagation' ? 'Refine' : 'Dock';
+    if (!state.dockingRunning) {
+      const fixedAtoms = referenceMode === 'pose-propagation'
+        ? survivingReferenceHeavyAtoms(state.dockingReference, ligand)
+        : state.dockingReference.ligand.coreAtomIds.length;
+      setDockingStatus(`${fixedAtoms} ${referenceMode === 'pose-propagation' ? 'unchanged atoms fixed' : 'core atoms'} · ${contactCount} contact${contactCount === 1 ? '' : 's'}`);
+    }
     renderDockingConstraints();
   } else {
+    const mode = selectedDockingMode();
     const core = dockingSelectedCore(ligand);
+    modeSelect.disabled = state.dockingRunning;
     capture.classList.remove('hidden'); clear.classList.add('hidden');
     constraints.classList.add('hidden'); runRow.classList.add('hidden');
+    capture.textContent = mode === 'pose-propagation' ? 'Capture pose' : 'Set selected core';
     capture.disabled = state.dockingRunning || !state.molecule.parameterization?.system
-      || core.length < 3 || state.selectedAtoms.length !== core.length;
+      || !ligand || mode === 'selected-core'
+        && (core.length < 3 || state.selectedAtoms.length !== core.length);
     if (!state.molecule.parameterization?.system) setDockingStatus('Prepare the complex first.');
+    else if (mode === 'pose-propagation')
+      setDockingStatus('Capture this ligand pose, then edit its chemistry.');
     else if (core.length >= 3 && state.selectedAtoms.length === core.length)
       setDockingStatus(`${core.length} core atoms selected.`);
     else setDockingStatus('Select at least 3 connected ligand heavy atoms.');
@@ -3412,8 +3441,10 @@ async function captureCurrentDockingReference() {
   if (!state.molecule?.parameterization?.system)
     throw new Error('Prepare and parameterize the complex before setting a docking reference.');
   const component = dockingLigandComponent();
-  const core = dockingSelectedCore(component);
-  if (!component || core.length < 3 || core.length !== state.selectedAtoms.length)
+  const mode = selectedDockingMode();
+  const core = mode === 'selected-core' ? dockingSelectedCore(component) : [];
+  if (!component) throw new Error('Choose one ligand component first.');
+  if (mode === 'selected-core' && (core.length < 3 || core.length !== state.selectedAtoms.length))
     throw new Error('Select at least 3 connected heavy atoms from one ligand.');
   const [{ captureReferenceLigand }, { buildReceptorSite }, adapter] = await Promise.all([
     import('./docking/reference-core.mjs'), import('./docking/receptor-score.mjs'),
@@ -3421,7 +3452,8 @@ async function captureCurrentDockingReference() {
   ]);
   const plan = adapter.createLigandPlan(state.molecule, component.atomIndices,
     `reference-${state.molecule.source?.pdbId || 'complex'}`);
-  const ligand = captureReferenceLigand(state.molecule, component.atomIndices, core,
+  const ligand = captureReferenceLigand(state.molecule, component.atomIndices,
+    mode === 'selected-core' ? core : null,
     `reference-${state.molecule.source?.pdbId || 'complex'}`);
   const receptorSite = buildReceptorSite(state.molecule, component.atomIndices,
     state.molecule.parameterization.system, { radiusAngstrom:8 });
@@ -3430,6 +3462,7 @@ async function captureCurrentDockingReference() {
     component.atomIndices, interactions.hydrogenBonds);
   state.dockingReference = {
     schema:'molarium.docking.browser-reference/v1',
+    mode,
     capturedAt:new Date().toISOString(),
     moleculeName:state.molecule.name || 'complex',
     ligandComponentId:component.id,
@@ -3446,7 +3479,9 @@ async function captureCurrentDockingReference() {
   state.dockingSelectedHbondIds = new Set(hydrogenBonds.map((entry) => entry.id));
   state.dockingResult = null; state.dockingPoseIndex = 0;
   updateDockingUi();
-  showToast(`Docking reference set · ${core.length}-atom core`);
+  showToast(mode === 'pose-propagation'
+    ? `Reference pose captured · ${ligand.coreAtomIds.length} heavy atoms`
+    : `Docking reference set · ${core.length}-atom core`);
   return state.dockingReference;
 }
 
@@ -3487,6 +3522,10 @@ async function runBrowserConstrainedDocking(options = {}) {
     ]);
     referenceCore.ensureStableAtomIds(state.molecule,
       `design-${state.molecule.source?.pdbId || 'complex'}`);
+    const posePropagation = reference.mode === 'pose-propagation';
+    const activeProtocol = posePropagation
+      ? protocolModule.MOLARIUM_POSE_PROPAGATION_PROTOCOL
+      : protocolModule.MOLARIUM_CONSTRAINT_DOCK_PROTOCOL;
     const ligandAtomIndices = currentDockingLigandAtomIndices(reference);
     if (!ligandAtomIndices.length) throw new Error('The edited ligand is no longer a separate molecular component.');
     const plan = adapter.createLigandPlan(state.molecule, ligandAtomIndices,
@@ -3496,8 +3535,11 @@ async function runBrowserConstrainedDocking(options = {}) {
       throw new Error('The captured receptor site changed; reset the docking reference.');
     const currentLigandInputText = adapter.dockingInputText(state.molecule, plan.globalAtomIndices);
     const currentLigandTopologyText = adapter.dockingTopologyText(state.molecule, plan.globalAtomIndices);
-    const coreMap = referenceCore.mapReferenceCore(reference.ligand, plan.molecule.atoms);
-    if (!coreMap.complete) throw new Error(`The conserved core is incomplete (${coreMap.missingAtomIds.length} atom${coreMap.missingAtomIds.length === 1 ? '' : 's'} missing).`);
+    const coreMap = posePropagation
+      ? referenceCore.mapSurvivingReferenceAtoms(reference.ligand, plan.molecule.atoms)
+      : referenceCore.mapReferenceCore(reference.ligand, plan.molecule.atoms);
+    if (posePropagation && !coreMap.usable) throw new Error(coreMap.reason);
+    if (!posePropagation && !coreMap.complete) throw new Error(`The conserved core is incomplete (${coreMap.missingAtomIds.length} atom${coreMap.missingAtomIds.length === 1 ? '' : 's'} missing).`);
     const contactAvailability = adapter.capturedHydrogenBondAvailability(reference.hydrogenBonds,
       plan.molecule.atoms);
     const availableContactIds = new Set(contactAvailability.filter((entry) => entry.available)
@@ -3518,23 +3560,37 @@ async function runBrowserConstrainedDocking(options = {}) {
 
     const requestedConformers = Math.max(1, Math.min(64, Math.round(Number(options.conformerCount
       ?? document.querySelector('#docking-conformer-count').value))));
-    const seed = Number(options.seed ?? protocolModule.MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.sampling.seed);
-    setDockingStatus(`Generating ${requestedConformers} conformers`);
-    const conformerResult = await runWorkerJob('rdkit', 'conformers', plan.molecule,
-      dockingProgress, { conformerCount:requestedConformers, conformerSeed:seed,
-        conformerPruneRms:0.35, conformerMinimizeIterations:100, returnEnergies:true });
-    const allConformers = adapter.unpackConformerStack(conformerResult.conformers,
-      plan.molecule.atoms.length);
-    if (!Array.isArray(conformerResult.conformerEnergies)
-      || conformerResult.conformerEnergies.length !== allConformers.length)
-      throw new Error('RDKit returned no auditable conformer strain energies.');
-    const valid = allConformers.flatMap((positions, index) => {
-      const energy = Number(conformerResult.conformerEnergies[index]);
-      return Number.isFinite(energy) ? [{ positions, energy,
-        forcefield:conformerResult.conformerForcefields?.[index] || conformerResult.preparationForcefield }] : [];
-    });
-    if (!valid.length) throw new Error('RDKit could not score any generated ligand conformer.');
-    const minimumRdkitEnergy = Math.min(...valid.map((entry) => entry.energy));
+    const seed = Number(options.seed ?? activeProtocol.sampling.seed);
+    let conformerResult, allConformers, valid, minimumRdkitEnergy = null;
+    if (posePropagation) {
+      setDockingStatus(`Propagating ${coreMap.atomPairs.length} unchanged atoms`);
+      const editedPositions = Float64Array.from(plan.molecule.atoms.flatMap((atom) =>
+        [atom.x, atom.y, atom.z]));
+      allConformers = Array.from({ length:requestedConformers }, () =>
+        new Float64Array(editedPositions));
+      valid = allConformers.map((positions) => ({ positions, energy:null,
+        forcefield:'recorded graph-edit coordinates' }));
+      conformerResult = { backend:'Molarium stable edit lineage', rdkitVersion:null,
+        preparationForcefield:'recorded graph-edit coordinates' };
+    } else {
+      setDockingStatus(`Generating ${requestedConformers} conformers`);
+      conformerResult = await runWorkerJob('rdkit', 'conformers', plan.molecule,
+        dockingProgress, { conformerCount:requestedConformers, conformerSeed:seed,
+          conformerPruneRms:0.35, conformerMinimizeIterations:100, returnEnergies:true });
+      allConformers = adapter.unpackConformerStack(conformerResult.conformers,
+        plan.molecule.atoms.length);
+      if (!Array.isArray(conformerResult.conformerEnergies)
+        || conformerResult.conformerEnergies.length !== allConformers.length)
+        throw new Error('RDKit returned no auditable conformer strain energies.');
+      valid = allConformers.flatMap((positions, index) => {
+        const energy = Number(conformerResult.conformerEnergies[index]);
+        return Number.isFinite(energy) ? [{ positions, energy,
+          forcefield:conformerResult.conformerForcefields?.[index]
+            || conformerResult.preparationForcefield }] : [];
+      });
+      if (!valid.length) throw new Error('RDKit could not score any generated ligand conformer.');
+      minimumRdkitEnergy = Math.min(...valid.map((entry) => entry.energy));
+    }
 
     setDockingStatus('Assigning edited-ligand OpenFF terms');
     const ligandParameters = await runOpenMMJob('parameters', plan.molecule, dockingProgress);
@@ -3557,9 +3613,9 @@ async function runBrowserConstrainedDocking(options = {}) {
           ligandStrainKcalMol:sageInternalEnergyKcalMol - minimumSageStartEnergy,
           ligandStrainIdentity:'relative vacuum OpenFF Sage 2.1 intramolecular energy' });
       const core = constraints.evaluateCoreConstraint(reference.ligand.positions, positions,
-        coreMap.atomPairs, protocolModule.MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.coreConstraint);
+        coreMap.atomPairs, activeProtocol.coreConstraint);
       const hydrogenBonds = workflow.evaluatePoseHydrogenBonds(mappedHydrogenBonds.constraints,
-        positions, protocolModule.MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.hydrogenBondConstraint);
+        positions, activeProtocol.hydrogenBondConstraint);
       const combined = constraints.scoreConstrainedPose({
         physicalEnergyKcalMol:physical.energyKcalMol, core, hydrogenBonds,
       });
@@ -3567,7 +3623,9 @@ async function runBrowserConstrainedDocking(options = {}) {
         physical, core, hydrogenBonds, sageInternalEnergyKcalMol };
     };
     const torsionSteps = Math.max(0, Math.min(512, Math.round(Number(options.torsionSteps
-      ?? protocolModule.MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.sampling.torsionMonteCarloSteps ?? 96))));
+      ?? activeProtocol.sampling.torsionMonteCarloSteps ?? 96))));
+    const fixedRelaxIterations = posePropagation ? Math.max(0, Math.min(250,
+      Math.round(Number(options.fixedRelaxIterations ?? 60)))) : 0;
     const coreAtomIndices = coreMap.atomPairs.map((pair) => pair[1]);
     const startedAt = new Date().toISOString();
     const inputs = await labbookModule.inputProvenance({
@@ -3579,12 +3637,20 @@ async function runBrowserConstrainedDocking(options = {}) {
       ligandAtoms:plan.molecule.atoms.length,
     });
     const referenceLigandSha256 = await labbookModule.sha256Text(reference.referenceLigandInputText);
-    const runId=`constraint-dock-${Date.now().toString(36)}-${seed}`;
+    const runId=`${posePropagation ? 'pose-propagation' : 'constraint-dock'}-${Date.now().toString(36)}-${seed}`;
     const labbook = await labbookModule.createLabbook({ runId, startedAt, inputs,
+      protocol:activeProtocol,
       selections:{
         referenceLigandSha256,
         coreAtomPairs:coreMap.atomPairs,
-        coreAtomIds:[...reference.ligand.coreAtomIds],
+        coreAtomIds:posePropagation ? [...coreMap.mappedAtomIds] : [...reference.ligand.coreAtomIds],
+        atomLineage:posePropagation ? {
+          mapping:'stable designAtomId from recorded Molarium graph edits',
+          inheritedAtomIds:[...coreMap.mappedAtomIds],
+          addedAtomIds:[...coreMap.addedAtomIds],
+          removedAtomIds:[...coreMap.removedAtomIds],
+          changedElementAtomIds:[...coreMap.changedElementAtomIds],
+        } : null,
         hydrogenBonds:mappedHydrogenBonds.constraints.map((entry) => ({
           id:entry.id, label:entry.label, required:entry.required, receptorRole:entry.receptorRole,
         })),
@@ -3599,7 +3665,7 @@ async function runBrowserConstrainedDocking(options = {}) {
         conformerBackend:conformerResult.backend, rdkitVersion:conformerResult.rdkitVersion,
         conformerPreparationForcefields:[...new Set(valid.map((entry) => entry.forcefield).filter(Boolean))],
       },
-      application:{ version:'1.0.0', feature:'Molarium ConstraintDock-1' },
+      application:{ version:'1.0.0', feature:activeProtocol.name },
     });
     await labbookModule.appendLabbookEvent(labbook, { at:startedAt,
       stage:'method-configuration', status:'locked', details:{
@@ -3607,25 +3673,49 @@ async function runBrowserConstrainedDocking(options = {}) {
         relativeDielectric:4, combiningRules:'Lorentz-Berthelot',
         crossTerms:['Lennard-Jones', 'Coulomb'],
         ligandStrain:'relative vacuum OpenFF Sage 2.1 intramolecular energy from lowest fixed-core starting seed',
-        hardCore:'matched core atoms snapped exactly to reference coordinates',
+        hardCore:posePropagation
+          ? 'every surviving reference heavy atom fixed exactly by stable edit lineage'
+          : 'user-selected matched core atoms snapped exactly to reference coordinates',
         torsionSearch:{ method:torsionSearch.TORSION_SEARCH_DEFAULTS.method, steps:torsionSteps,
           temperatureStartKelvin:torsionSearch.TORSION_SEARCH_DEFAULTS.temperatureStartKelvin,
           temperatureEndKelvin:torsionSearch.TORSION_SEARCH_DEFAULTS.temperatureEndKelvin,
           proposalAnglesDegrees:[...torsionSearch.TORSION_SEARCH_DEFAULTS.proposalAnglesDegrees] },
+        fixedScaffoldRelaxation:posePropagation ? {
+          engine:'OpenMM WebAssembly', forcefield:'OpenFF Sage 2.1',
+          iterations:fixedRelaxIterations, fixedHeavyAtoms:coreAtomIndices.length,
+          acceptance:'retain only if constraint feasibility is not lost and the complete ranking objective improves',
+        } : null,
         feasibilityRule:'all required constraints rank before energy',
         omitted:['receptor relaxation', 'receptor grid', 'desolvation', 'entropy',
           'ring-pucker moves', 'binding free energy'],
       } });
     await labbookModule.appendLabbookEvent(labbook, { at:new Date().toISOString(),
       stage:'method-decision', status:'recorded', details:{
-        selected:'independent fixed-core torsion Monte Carlo under the active receptor and restraint score',
+        selected:posePropagation
+          ? 'reference-pose propagation through recorded graph edits, receptor-aware torsion search, and fixed-scaffold Sage relaxation'
+          : 'independent fixed-core torsion Monte Carlo under the active receptor and restraint score',
         rationale:[
-          'Rigid core alignment alone does not optimize ligand torsions against the receptor.',
-          'Edit-lineage atom identity gives an exact, auditable analogue core mapping.',
+          posePropagation
+            ? 'Recorded graph edits provide exact atom correspondence, so an inferred or manually selected core is unnecessary.'
+            : 'Rigid core alignment alone does not optimize ligand torsions against the receptor.',
+          'Edit-lineage atom identity gives an exact, auditable analogue mapping.',
           'Only graph branches containing no core atom are eligible to rotate, preserving the medicinal-chemistry hypothesis.',
           'Required contacts are explicit feasible states and cannot be traded away for a lower energy.',
+          ...(posePropagation ? [
+            'Fixed-scaffold OpenFF relaxation repairs local valence geometry without moving inherited heavy atoms.',
+            'A relaxed pose is rejected if it loses contact feasibility or worsens the complete receptor-aware objective.',
+          ] : []),
         ],
         relatedMethods:[
+          ...(posePropagation ? [
+            { method:'RBFE practical guidance', use:'published protocol basis',
+              adopted:'reference common-region placement plus sampling of modified substituents' },
+            { method:'Ohadi et al. FEP input-pose benchmark', use:'published empirical motivation',
+              adopted:'MCS/reference information and explicit H-bond constraints' },
+            { method:'TEMPL', use:'published template-pose baseline',
+              adopted:'hard reference coordinates for mapped atoms',
+              notAdopted:'template database search and shape-only ranking' },
+          ] : []),
           { method:'Rowan openconf analogue mode', use:'method inspiration only',
             adopted:'free terminal rotors outside a fixed core plus exact post-search core snap',
             notAdopted:'openconf code, CrystalFF library, MMFF minimization, ring and macrocycle moves' },
@@ -3650,19 +3740,62 @@ async function runBrowserConstrainedDocking(options = {}) {
     } });
     setDockingStatus(`Optimizing ${valid.length} poses in pocket`);
     let refinementAudit = [];
+    const runTorsionRefinement = (positions, conformerIndex) => {
+      setDockingStatus(`Optimizing pose ${conformerIndex + 1}/${valid.length}`);
+      const conformerSeed = (seed ^ Math.imul(conformerIndex + 1, 0x9e3779b9)) >>> 0;
+      return torsionSearch.refinePoseByTorsionMonteCarlo({ molecule:plan.molecule,
+        initialPositions:positions, coreAtomIndices, scorePose:scorePositions,
+        random:stormmCore.mulberry32(conformerSeed), seed:conformerSeed, steps:torsionSteps });
+    };
+    const refinePropagatedBatch = async ({ positions }) => {
+      const torsionRuns = [];
+      for (let index = 0; index < positions.length; index++)
+        torsionRuns.push(await runTorsionRefinement(positions[index], index));
+      if (!fixedRelaxIterations || coreAtomIndices.length >= plan.molecule.atoms.length)
+        return torsionRuns.map((entry) => ({ ...entry, relaxation:{
+          method:'OpenMM fixed-scaffold Sage relaxation', iterations:0,
+          accepted:false, reason:'no movable atoms or zero requested iterations',
+        } }));
+      setDockingStatus(`Relaxing ${torsionRuns.length} fixed-scaffold poses`);
+      const stride = plan.molecule.atoms.length * 3;
+      const coordinateStack = new Float64Array(torsionRuns.length * stride);
+      torsionRuns.forEach((entry, index) => coordinateStack.set(entry.positions, index * stride));
+      const parameterizedLigand = { ...plan.molecule, parameterization:ligandParameters };
+      const relaxed = await runOpenMMJob('fixed-conformers', parameterizedLigand,
+        dockingProgress, { initialConformers:coordinateStack,
+          fixedAtomIndices:coreAtomIndices, fixedRelaxIterations,
+          constraintMode:'none', implicitSolvent:'vacuum' });
+      return torsionRuns.map((entry, index) => {
+        const relaxedPositions = relaxed.conformers.slice(index * stride, (index + 1) * stride);
+        const before = scorePositions(entry.positions), after = scorePositions(relaxedPositions);
+        const accepted = Number(after.feasible) > Number(before.feasible)
+          || after.feasible === before.feasible
+            && after.objectiveKcalMol < before.objectiveKcalMol;
+        return { ...entry, positions:accepted ? relaxedPositions : entry.positions,
+          relaxation:{ method:'OpenMM fixed-scaffold Sage relaxation',
+            engine:relaxed.backend, forcefield:relaxed.forcefield,
+            iterations:relaxed.iterations, fixedAtomCount:relaxed.fixedAtomCount,
+            movableAtomCount:relaxed.movableAtomCount, accepted,
+            initialInternalEnergyKcalMol:relaxed.initialEnergies[index],
+            finalInternalEnergyKcalMol:relaxed.finalEnergies[index],
+            objectiveBeforeKcalMol:before.objectiveKcalMol,
+            objectiveAfterKcalMol:after.objectiveKcalMol,
+            feasibleBefore:before.feasible, feasibleAfter:after.feasible,
+            reason:accepted ? 'complete constrained objective improved'
+              : 'retained torsion-search pose to protect feasibility or ranking objective',
+          } };
+      });
+    };
     const run = await workflow.runConstrainedDocking({
       referencePositions:reference.ligand.positions,
       candidateConformers:valid.map((entry) => entry.positions),
       coreAtomPairs:coreMap.atomPairs,
       hydrogenBondConstraints:mappedHydrogenBonds.constraints,
-      protocol:protocolModule.MOLARIUM_CONSTRAINT_DOCK_PROTOCOL,
-      refinePose:({ positions, conformerIndex }) => {
-        setDockingStatus(`Optimizing pose ${conformerIndex + 1}/${valid.length}`);
-        const conformerSeed = (seed ^ Math.imul(conformerIndex + 1, 0x9e3779b9)) >>> 0;
-        return torsionSearch.refinePoseByTorsionMonteCarlo({ molecule:plan.molecule,
-          initialPositions:positions, coreAtomIndices, scorePose:scorePositions,
-          random:stormmCore.mulberry32(conformerSeed), seed:conformerSeed, steps:torsionSteps });
-      },
+      protocol:activeProtocol,
+      ...(posePropagation
+        ? { refineBatch:refinePropagatedBatch }
+        : { refinePose:({ positions, conformerIndex }) =>
+          runTorsionRefinement(positions, conformerIndex) }),
       physicalScore:({ positions }) => scorePositions(positions).physical,
       afterRefinement:async (candidates) => {
         refinementAudit = candidates.map((pose) => ({
@@ -3678,6 +3811,7 @@ async function runBrowserConstrainedDocking(options = {}) {
           startObjectiveKcalMol:pose.refinement?.startObjectiveKcalMol ?? null,
           bestObjectiveKcalMol:pose.refinement?.bestObjectiveKcalMol ?? null,
           selectedFeasible:Boolean(pose.refinement?.selectedFeasible),
+          relaxation:pose.refinement?.relaxation || null,
           rotors:pose.refinement?.rotors || [],
         }));
         await labbookModule.appendLabbookEvent(labbook, { at:new Date().toISOString(),
@@ -3688,13 +3822,34 @@ async function runBrowserConstrainedDocking(options = {}) {
             totalProposals:refinementAudit.reduce((sum, entry) => sum + entry.proposals, 0),
             totalAccepted:refinementAudit.reduce((sum, entry) => sum + entry.accepted, 0),
             totalImprovements:refinementAudit.reduce((sum, entry) => sum + entry.improved, 0),
+            fixedScaffoldRelaxations:refinementAudit.filter((entry) => entry.relaxation).length,
+            acceptedFixedScaffoldRelaxations:refinementAudit.filter((entry) =>
+              entry.relaxation?.accepted).length,
             exactCoreMaximumRmsdAngstrom:Math.max(...candidates.map((pose) => pose.core.rmsdAngstrom)),
             perConformer:refinementAudit,
           } });
+        if (posePropagation) await labbookModule.appendLabbookEvent(labbook, {
+          at:new Date().toISOString(), stage:'fixed-scaffold-relaxation', status:'completed',
+          details:{
+            engine:'OpenMM WebAssembly', forcefield:ligandParameters.forcefield,
+            fixedAtomCount:coreAtomIndices.length,
+            requestedIterations:fixedRelaxIterations,
+            attempted:refinementAudit.length,
+            accepted:refinementAudit.filter((entry) => entry.relaxation?.accepted).length,
+            invariant:'all inherited heavy-atom coordinates remain bit-for-bit equal to the reference',
+            safeguard:'a relaxed pose is retained only when feasibility is preserved and the complete objective improves',
+            perConformer:refinementAudit.map((entry) => ({ conformerIndex:entry.conformerIndex,
+              relaxation:entry.relaxation })),
+          },
+        });
       },
       labbook, startedAt,
     });
     await labbookModule.completeLabbook(labbook, { completedAt:new Date().toISOString(), outcome:{
+      workflowMode:posePropagation ? 'reference-pose propagation' : 'selected-core constrained search',
+      inheritedHeavyAtoms:coreMap.atomPairs.length,
+      addedHeavyAtoms:posePropagation ? coreMap.addedAtomIds.length : null,
+      removedHeavyAtoms:posePropagation ? coreMap.removedAtomIds.length : null,
       generatedConformers:allConformers.length,
       scoredConformers:run.candidates.length,
       feasiblePoses:run.feasibleCount,
@@ -3734,13 +3889,14 @@ async function runBrowserConstrainedDocking(options = {}) {
       || adapter.dockingInputText(state.molecule, liveIndices) !== currentLigandInputText)
       throw new Error('The complex changed during docking; the stale result was discarded.');
     state.dockingResult = { run, labbook, plan, seed, requestedConformers,
+      mode:posePropagation ? 'pose-propagation' : 'selected-core',
       ligandTopologyText:currentLigandTopologyText,
       ligandForcefield:ligandParameters.forcefield, ligandChargeModel:ligandParameters.chargeModel,
       conformerForcefields:[...new Set(valid.map((entry) => entry.forcefield).filter(Boolean))],
       ligandStrainModel:'vacuum OpenFF Sage 2.1 intramolecular energy', torsionSteps };
     state.dockingPoseIndex = 0;
     renderDockingResults();
-    showToast(`Docking complete · ${run.feasibleCount}/${run.candidates.length} feasible`);
+    showToast(`${posePropagation ? 'Pose refinement' : 'Docking'} complete · ${run.feasibleCount}/${run.candidates.length} feasible`);
     return state.dockingResult;
   } finally {
     state.dockingRunning = false;
@@ -3767,7 +3923,9 @@ function renderDockingResults() {
     button.addEventListener('click', () => { state.dockingPoseIndex = index; renderDockingResults(); });
     list.append(button);
   });
-  setText('#docking-score-note', `Fixed core · torsion MC · rigid 8 Å site · relative Sage strain`);
+  setText('#docking-score-note', result.mode === 'pose-propagation'
+    ? 'Inherited scaffold · torsion search · fixed Sage relax'
+    : 'Selected core · torsion search · rigid 8 Å site');
 }
 
 async function applySelectedDockingPose() {
@@ -3784,7 +3942,7 @@ async function applySelectedDockingPose() {
   pushBuildHistory();
   adapter.applyLigandPositions(state.molecule, liveIndices, pose.positions);
   state.molecule.source = { ...(state.molecule.source || {}), docking:{
-    protocol:'molarium-constraint-dock-1', runId:result.labbook.runId, rank:pose.rank,
+    protocol:result.labbook.protocol.id, runId:result.labbook.runId, rank:pose.rank,
     feasible:pose.feasible, scoreKcalMol:pose.totalScoreKcalMol,
   } };
   clearCalculationResult(); updateStoredBondDistances(); updateInfo(); updateHistoryButtons(); draw();
@@ -5891,9 +6049,16 @@ window.molariumTest = Object.freeze({
     return { selected:[...state.selectedAtoms], status:document.querySelector('#docking-status').textContent,
       captureDisabled:document.querySelector('#capture-docking-reference').disabled };
   },
+  setDockingMode(mode) {
+    document.querySelector('#docking-mode').value = mode === 'selected-core'
+      ? 'selected-core' : 'propagate';
+    updateDockingUi();
+    return { mode:selectedDockingMode(), status:document.querySelector('#docking-status').textContent,
+      captureDisabled:document.querySelector('#capture-docking-reference').disabled };
+  },
   async captureDockingReference() {
     const reference = await captureCurrentDockingReference();
-    return { coreAtomIds:[...reference.ligand.coreAtomIds],
+    return { mode:reference.mode, coreAtomIds:[...reference.ligand.coreAtomIds],
       ligandAtomCount:reference.ligand.atomIds.length,
       receptorAtomCount:reference.receptorSite.atoms.length,
       hydrogenBonds:reference.hydrogenBonds.map((entry) => ({
@@ -5903,7 +6068,7 @@ window.molariumTest = Object.freeze({
   async runConstrainedDocking(options = {}) {
     const result = await runBrowserConstrainedDocking(options);
     const { verifyLabbook, sha256Object } = await import('./docking/labbook.mjs');
-    return { candidates:result.run.candidates.length, feasible:result.run.feasibleCount,
+    return { mode:result.mode, candidates:result.run.candidates.length, feasible:result.run.feasibleCount,
       selected:{ rank:result.run.selected.rank, feasible:result.run.selected.feasible,
         scoreKcalMol:result.run.selected.totalScoreKcalMol,
         physicalKcalMol:result.run.selected.physicalEnergyKcalMol,
@@ -5912,7 +6077,8 @@ window.molariumTest = Object.freeze({
           rotatableBondCount:result.run.selected.refinement?.rotatableBondCount || 0,
           proposals:result.run.selected.refinement?.proposals || 0,
           accepted:result.run.selected.refinement?.accepted || 0,
-          improved:result.run.selected.refinement?.improved || 0 } },
+          improved:result.run.selected.refinement?.improved || 0,
+          relaxation:structuredClone(result.run.selected.refinement?.relaxation || null) } },
       labbook:await verifyLabbook(result.labbook),
       selectedCoordinatesSha256:await sha256Object(Array.from(result.run.selected.positions)),
       coordinatePayloadIncluded:result.labbook.inputs.coordinatePayloadIncluded,
@@ -9748,12 +9914,13 @@ document.querySelector('#finish-chemistry-changes').addEventListener('click', ()
 });
 document.querySelector('#discard-chemistry-changes').addEventListener('click', discardChemistryTransaction);
 document.querySelector('#chemistry-immediate-refine').addEventListener('change', updateChemistryEditor);
+document.querySelector('#docking-mode').addEventListener('change', updateDockingUi);
 document.querySelector('#capture-docking-reference').addEventListener('click', () => {
   captureCurrentDockingReference().catch((error) => showNotice(error.message));
 });
 document.querySelector('#clear-docking-reference').addEventListener('click', clearDockingReference);
 document.querySelector('#run-constrained-docking').addEventListener('click', () => {
-  runBrowserConstrainedDocking().catch((error) => { setDockingStatus(`Docking failed · ${error.message}`); showNotice(error.message); });
+  runBrowserConstrainedDocking().catch((error) => { setDockingStatus(`Pose refinement failed · ${error.message}`); showNotice(error.message); });
 });
 document.querySelector('#apply-docking-pose').addEventListener('click', () => {
   applySelectedDockingPose().catch((error) => showNotice(error.message));

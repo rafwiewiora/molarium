@@ -1,7 +1,8 @@
-# Molarium ConstraintDock-1
+# Molarium analogue pose protocols
 
-Molarium ConstraintDock-1 is an independent, browser-oriented protocol for reference-core and required
-hydrogen-bond constrained ligand docking. It is the first Molarium feature organized explicitly as
+Molarium Pose Propagation-1 and ConstraintDock-1 are independent, browser-oriented protocols for
+reference-pose analogue refinement and required hydrogen-bond constrained ligand posing. They are
+the first Molarium features organized explicitly as
 a reproducible-method implementation: the executable protocol, scientific lineage, exclusions,
 seeds, geometric constraints, run events, and result hashes travel together.
 
@@ -15,6 +16,20 @@ receptor-aware torsion Monte Carlo stage. Rowan's open-source `openconf` analogu
 free-terminal-rotor/exact-core boundary; the AutoPose preprint is recorded as a related R-group pose
 construction approach. Molarium does not execute or copy either method. It does not
 implement either product's grids, search, refinement, or scoring function.
+
+Pose Propagation-1 additionally follows the published congeneric/RBFE pattern of inheriting a
+trusted common region and sampling only modified substituents. Molarium edits preserve exact stable
+atom identities, so the default does not infer or ask the user to select an MCS: every surviving
+reference heavy atom is fixed automatically.
+
+- Cournia Z et al. *Relative Binding Free Energy Calculations in Drug Discovery: Recent Advances
+  and Practical Considerations.* J Chem Inf Model. 2017.
+  [doi:10.1021/acs.jcim.7b00564](https://doi.org/10.1021/acs.jcim.7b00564)
+- Ohadi D et al. *Input Pose is Key to Performance of Free Energy Perturbation: Benchmarking with
+  Monoacylglycerol Lipase.* J Chem Inf Model. 2024.
+  [doi:10.1021/acs.jcim.4c01223](https://doi.org/10.1021/acs.jcim.4c01223)
+- Pinheiro JP et al. *TEMPL: A Template-Based Protein-Ligand Pose Prediction Baseline.* J Chem Inf
+  Model. 2025. [doi:10.1021/acs.jcim.5c01985](https://doi.org/10.1021/acs.jcim.5c01985)
 
 - Friesner RA et al. *Glide: a new approach for rapid, accurate docking and scoring. 1. Method and
   assessment of docking accuracy.* J Med Chem. 2004;47:1739-1749.
@@ -37,7 +52,7 @@ energy, and penalty definitions.
 
 ## Executable boundary
 
-Version `0.3.0` implements and tests:
+ConstraintDock version `0.3.0` and Pose Propagation version `0.1.0` implement and test:
 
 - least-squares reference-core alignment;
 - exact reference-coordinate snapping for every mapped core atom plus an independent RMSD audit;
@@ -45,11 +60,14 @@ Version `0.3.0` implements and tests:
 - required-H-bond feasibility and transparent penalty scoring;
 - deterministic feasible-first pose ranking;
 - stable atom identities for edit-derived reference cores;
+- automatic inheritance of every surviving reference heavy atom for recorded graph edits;
 - a deterministic Metropolis torsion search that rotates only graph branches containing no core atom;
 - hard feasible-state retention for required contacts during search;
 - a transparent receptor-site score using cross OpenFF Lennard-Jones and Coulomb terms plus relative
   vacuum OpenFF Sage 2.1 intramolecular ligand energy;
 - deterministic in-browser ETKDGv3 conformer generation and core alignment;
+- fixed-scaffold OpenFF Sage relaxation in OpenMM WebAssembly with a receptor-aware
+  feasibility/objective safeguard;
 - a compact Build-mode setup, top-five pose selector, and pose application that leaves the receptor fixed;
 - input and protocol SHA-256 hashes;
 - an append-only, hash-chained run labbook with JSON and Markdown representations.

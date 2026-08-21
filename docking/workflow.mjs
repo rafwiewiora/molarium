@@ -37,7 +37,7 @@ export function evaluatePoseHydrogenBonds(definitions, positions, settings) {
 
 export async function runConstrainedDocking({ referencePositions, candidateConformers, coreAtomPairs,
   hydrogenBondConstraints = [], protocol, physicalScore, refinePose = null, labbook = null,
-  afterRefinement = null, startedAt = new Date().toISOString(), completedAt = null }) {
+  refineBatch = null, afterRefinement = null, startedAt = new Date().toISOString(), completedAt = null }) {
   if (typeof physicalScore !== 'function') throw new TypeError('A physicalScore callback is required');
   if (!Array.isArray(candidateConformers) || !candidateConformers.length)
     throw new Error('At least one candidate conformer is required');
@@ -50,13 +50,28 @@ export async function runConstrainedDocking({ referencePositions, candidateConfo
     details:{ conformers:conformers.length, coreAtomPairs:coreAtomPairs.length,
       requiredHydrogenBonds:hydrogenBondConstraints.filter((entry) => entry.required !== false).length } });
 
+  const prepared = conformers.map((positions) => {
+    const transform = fittedCoreTransform(referencePositions, positions, coreAtomPairs);
+    return { transform, positions:snapCorePositions(referencePositions,
+      applyCoreTransform(positions, transform), coreAtomPairs) };
+  });
+  let batchRefinements = null;
+  if (refineBatch) {
+    batchRefinements = await refineBatch({
+      positions:prepared.map((entry) => new Float64Array(entry.positions)), protocol,
+    });
+    if (!Array.isArray(batchRefinements) || batchRefinements.length !== prepared.length)
+      throw new Error('Batch refinement must return one result per candidate conformer');
+  }
   const candidates = [];
   for (let index = 0; index < conformers.length; index++) {
-    const transform = fittedCoreTransform(referencePositions, conformers[index], coreAtomPairs);
-    let positions = snapCorePositions(referencePositions,
-      applyCoreTransform(conformers[index], transform), coreAtomPairs);
+    const transform = prepared[index].transform;
+    let positions = prepared[index].positions;
     let refinement = null;
-    if (refinePose) {
+    if (batchRefinements) {
+      refinement = batchRefinements[index];
+      positions = conformerArray(refinement?.positions || positions, expectedLength);
+    } else if (refinePose) {
       refinement = await refinePose({ positions, conformerIndex:index, protocol });
       positions = conformerArray(refinement?.positions || positions, expectedLength);
     }

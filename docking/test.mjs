@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
-import { MOLARIUM_CONSTRAINT_DOCK_PROTOCOL } from './protocol.mjs';
+import { MOLARIUM_CONSTRAINT_DOCK_PROTOCOL, MOLARIUM_POSE_PROPAGATION_PROTOCOL } from './protocol.mjs';
 import { applyCoreTransform, evaluateCoreConstraint, evaluateHydrogenBondConstraint,
   fittedCoreTransform, hydrogenBondGeometry, rankConstrainedPoses, scoreConstrainedPose,
   snapCorePositions } from './constraints.mjs';
 import { appendLabbookEvent, completeLabbook, createLabbook, inputProvenance,
   renderLabbookMarkdown, verifyLabbook } from './labbook.mjs';
-import { captureReferenceLigand, ensureStableAtomIds, mapReferenceCore } from './reference-core.mjs';
+import { captureReferenceLigand, ensureStableAtomIds, mapReferenceCore,
+  mapSurvivingReferenceAtoms } from './reference-core.mjs';
 import { runConstrainedDocking } from './workflow.mjs';
 import { buildReceptorSite, pairInteractionKcalMol, receptorSiteIntegrity,
   scoreReceptorLigand } from './receptor-score.mjs';
@@ -110,6 +111,22 @@ const deletedCore = mapReferenceCore(captured,
   editedAtoms.filter((atom) => atom.designAtomId !== captured.coreAtomIds[1]));
 assert.equal(deletedCore.complete, false);
 assert.deepEqual(deletedCore.missingAtomIds, [captured.coreAtomIds[1]]);
+const automaticReference = captureReferenceLigand(designMolecule, [0, 1, 2, 3], null, 'test');
+const replacedGroupAtoms = designMolecule.atoms.map((atom) => ({ ...atom }))
+  .filter((atom) => atom.designAtomId !== automaticReference.atomIds[3]);
+replacedGroupAtoms.push({ element:'F', designAtomId:'test:new:F', x:3.2, y:0, z:0 });
+const propagationMap = mapSurvivingReferenceAtoms(automaticReference, replacedGroupAtoms);
+assert.equal(propagationMap.usable, true);
+assert.equal(propagationMap.atomPairs.length, 3);
+assert.deepEqual(propagationMap.removedAtomIds, [automaticReference.atomIds[3]]);
+assert.deepEqual(propagationMap.addedAtomIds, ['test:new:F']);
+assert.ok(propagationMap.maximumTriangleDoubleAreaAngstrom2 > 0.99);
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.id, 'molarium-pose-propagation-1');
+const underdeterminedPropagation = mapSurvivingReferenceAtoms(automaticReference,
+  replacedGroupAtoms.filter((atom) => ![automaticReference.atomIds[2], 'test:new:F']
+    .includes(atom.designAtomId)));
+assert.equal(underdeterminedPropagation.usable, false);
+assert.match(underdeterminedPropagation.reason, /at least three/);
 
 const translatedGood = Float64Array.from([4, -2, 3, 5, -2, 3, 4, -1, 3, 6.8, -2, 3]);
 const translatedBad = Float64Array.from([4, -2, 3, 5, -2, 3, 4, -1, 3, 4, -2, 5.8]);
