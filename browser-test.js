@@ -565,7 +565,7 @@ const browserSuite = String.raw`(async () => {
       && propagationRun.selected.refinement.relaxation
         .maximumDisplacementAngstromPerIteration === 0.01
       && propagationLabbook.protocol.id === 'molarium-pose-propagation-1'
-      && propagationLabbook.protocol.version === '0.4.1'
+      && propagationLabbook.protocol.version === '0.5.0'
       && propagationLabbook.selections.atomLineage.inheritedAtomIds.length === 6
       && propagationLabbook.selections.atomLineage.addedAtomIds.length === 1
       && propagationLabbook.selections.editPreparation.selectedCleanupMode === 'preserve-reference'
@@ -655,20 +655,19 @@ const browserSuite = String.raw`(async () => {
   await api.captureDockingReference();
   const immediateRoleChange = await api.editBondCurrent(2, 3, 1);
   const immediateContactState = api.dockingContactResolutions();
-  const unavailableRemapContact = document.querySelector('#docking-hbond-list label');
-  const unavailableStatus = document.querySelector('#docking-status').textContent;
-  check(immediateRoleChange.validation.valid && immediateContactState.remaps.length === 0
-    && immediateContactState.proposals.length === 1
-    && immediateContactState.proposals[0].status === 'unavailable'
-    && unavailableRemapContact?.textContent.includes('carbonyl acceptor removed')
-    && unavailableStatus.includes('Uncheck the carbonyl acceptor contact')
-    && document.querySelector('#run-constrained-docking').disabled,
-  'immediate chemistry edits revalidate feature role and block a stale carbonyl restraint',
+  const roleCompatibleRemapContact = document.querySelector('#docking-hbond-list label');
+  check(immediateRoleChange.validation.valid && immediateContactState.remaps.length === 1
+    && immediateContactState.remaps[0].method === 'automatic-unique-role-compatible'
+    && immediateContactState.remaps[0].matchKind === 'role-compatible-bioisostere'
+    && immediateContactState.proposals.length === 0
+    && roleCompatibleRemapContact?.textContent.includes('hydroxyl oxygen acceptor mapped')
+    && !document.querySelector('#run-constrained-docking').disabled,
+  'immediate chemistry edits transfer a contact to a role-compatible replacement',
   JSON.stringify(immediateContactState));
-  unavailableRemapContact.querySelector('input').click();
+  roleCompatibleRemapContact.querySelector('input').click();
   check(!api.dockingContactResolutions().selectedIds.length
     && !document.querySelector('#run-constrained-docking').disabled,
-  'an explicitly omitted unavailable contact stops blocking reference-guided refinement');
+  'a user may explicitly omit a viable role-compatible contact');
 
   // Canvas/fragment additions can predate a staged chemistry transaction. A
   // new atom must receive an identity before the transaction snapshot is
@@ -727,20 +726,90 @@ const browserSuite = String.raw`(async () => {
     && additionFinish.validation.valid
     && sequentialContactState.proposals.length === 0
     && sequentialContactState.remaps.length === 1
-    && sequentialContactState.remaps[0].method === 'automatic-unique-exact'
-    && sequentialContactState.remaps[0].replacementLigandAtomIds.length === 1
+    && sequentialContactState.remaps[0]?.method === 'automatic-unique-exact'
+    && sequentialContactState.remaps[0]?.replacementLigandAtomIds.length === 1
     && Boolean(stagedReplacementOxygenId)
-    && sequentialContactState.remaps[0].replacementLigandAtomIds.includes(
+    && sequentialContactState.remaps[0]?.replacementLigandAtomIds.includes(
       stagedReplacementOxygenId)
-    && !sequentialContactState.remaps[0].replacementLigandAtomIds.includes(
+    && !sequentialContactState.remaps[0]?.replacementLigandAtomIds.includes(
       sequentialOldOxygenId)
-    && sequentialContactState.remaps[0].originatingCommittedEditId
-      !== sequentialContactState.remaps[0].committedEditId
+    && sequentialContactState.remaps[0]?.originatingCommittedEditId
+      !== sequentialContactState.remaps[0]?.committedEditId
     && sequentialDepiction.alignmentBackend.includes('RDKit 2D layout')
     && depictionShowsReplacementCarbonyl,
   'a replacement carbonyl created in the next completed edit batch inherits the deleted acceptor restraint',
   JSON.stringify({ deletionFinish, deletedFeatureState, additionFinish,
     sequentialContactState, sequentialDepiction, depictionShowsReplacementCarbonyl }));
+
+  // Replace the captured carbonyl oxygen with a sulfonamide group. Both
+  // sulfonyl oxygens are acceptor hypotheses on the same recorded boundary;
+  // the browser must refine them as one any-of contact without requiring a
+  // pre-geometry user choice, and the labbook must retain both evaluations.
+  api.loadObject(valenceCompleteDockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('propagate');
+  await api.captureDockingReference();
+  const sulfoneReference = api.current().molecule;
+  const sulfoneOldOxygenId = sulfoneReference.atoms[2].designAtomId;
+  const sulfoneAnchorId = sulfoneReference.atoms[3].designAtomId;
+  await api.stageDeleteAtomCurrent(2);
+  const sulfoneDeletionFinish = await api.finishChemistryCurrent();
+  const addStagedAtom = async (element, anchorId) => {
+    const beforeIds = new Set(api.current().molecule.atoms.map((atom) => atom.designAtomId));
+    const anchorIndex = api.current().molecule.atoms.findIndex((atom) =>
+      atom.designAtomId === anchorId);
+    await api.stageAddElementCurrent(element, anchorIndex);
+    return api.current().molecule.atoms.find((atom) =>
+      atom.element === element && !beforeIds.has(atom.designAtomId))?.designAtomId;
+  };
+  const liveAtomIndex = (designAtomId) => api.current().molecule.atoms.findIndex((atom) =>
+    atom.designAtomId === designAtomId);
+  // Assemble the four-coordinate center as carbon so the interactive valence
+  // guard permits all three substituents, then transmute it to S before
+  // assigning the two S=O bonds in the same unfinished transaction.
+  const sulfurId = await addStagedAtom('C', sulfoneAnchorId);
+  const sulfoneOxygen1Id = await addStagedAtom('O', sulfurId);
+  const sulfoneOxygen2Id = await addStagedAtom('O', sulfurId);
+  await addStagedAtom('N', sulfurId);
+  await api.stageAtomCurrent(liveAtomIndex(sulfurId), 'S', 0);
+  await api.stageBondCurrent(liveAtomIndex(sulfurId), liveAtomIndex(sulfoneOxygen1Id), 2);
+  await api.stageBondCurrent(liveAtomIndex(sulfurId), liveAtomIndex(sulfoneOxygen2Id), 2);
+  const sulfoneFinish = await api.finishChemistryCurrent();
+  const sulfoneContactState = api.dockingContactResolutions();
+  const sulfoneProposal = sulfoneContactState.proposals[0];
+  const sulfoneContactLabel = document.querySelector('#docking-hbond-list label');
+  const sulfoneChoice = document.querySelector('.docking-contact-remap-select');
+  check(sulfoneDeletionFinish.validation.valid && sulfoneFinish.validation.valid
+    && sulfoneContactState.remaps.length === 0
+    && sulfoneContactState.proposals.length === 1
+    && sulfoneProposal?.status === 'ambiguous'
+    && sulfoneProposal?.candidates.length === 2
+    && sulfoneProposal?.candidates.every((candidate) => candidate.label.includes('sulfonyl'))
+    && sulfoneContactLabel?.textContent.includes('2 alternatives')
+    && sulfoneChoice?.value === ''
+    && !document.querySelector('#run-constrained-docking').disabled,
+  'two sulfonyl oxygens remain an uncollapsed role-compatible any-of hypothesis in the browser',
+  JSON.stringify({ sulfoneFinish, sulfoneContactState, sulfoneOldOxygenId }));
+  let sulfoneRun = null;
+  try { sulfoneRun = await api.runConstrainedDocking({ conformerCount:2,
+    seed:20260819, torsionSteps:4, fixedRelaxIterations:2 }); }
+  catch (error) { check(false, 'ambiguous any-of hypotheses execute in reference-guided refinement',
+    error.message); }
+  if (sulfoneRun) {
+    const sulfoneLabbook = api.dockingLabbook();
+    const selectedContact = sulfoneRun.selected.hydrogenBonds[0];
+    const outcomeContact = sulfoneLabbook.outcome.selectedHydrogenBonds[0];
+    check(sulfoneLabbook.selections.hydrogenBonds[0].alternativeIds.length === 2
+      && selectedContact.alternativeCount === 2
+      && selectedContact.alternatives.length === 2
+      && selectedContact.selectedAlternativeId
+      && outcomeContact.alternativeCount === 2
+      && outcomeContact.alternatives.length === 2
+      && outcomeContact.selectedAlternativeId === selectedContact.selectedAlternativeId,
+    'any-of refinement records the selected sulfonyl oxygen and every alternative evaluation',
+    JSON.stringify({ selection:sulfoneLabbook.selections.hydrogenBonds[0],
+      selectedContact, outcomeContact }));
+  }
   if (testScope === 'docking-contact-remap') {
     const failed = checks.filter((item) => !item.passed);
     return { passed:checks.length - failed.length, total:checks.length, failed,
@@ -1225,7 +1294,13 @@ const browserSuite = String.raw`(async () => {
       const carbonylFinish = await api.finishChemistryCurrent();
       const cumulativeContactState = api.dockingContactResolutions();
       const o3Remap = cumulativeContactState.remaps.find((entry) => entry.contactId === o3Contact?.id);
+      const o3RemapChain = cumulativeContactState.remapChains
+        .find((entry) => entry.contactId === o3Contact?.id)?.chain || [];
       const unresolvedN3 = cumulativeContactState.proposals.find((entry) => entry.id === n3Contact?.id);
+      const intermediateO3 = intermediateContactState.remaps
+        .find((entry) => entry.contactId === o3Contact?.id);
+      const intermediateN3 = intermediateContactState.remaps
+        .find((entry) => entry.contactId === n3Contact?.id);
       const finalMolecule = api.current().molecule;
       const finalOxygen = finalMolecule.atoms.findIndex((atom) => atom.designAtomId === stagedOxygenId);
       const finalComponent = new Set([finalOxygen]), componentQueue = [finalOxygen];
@@ -1246,27 +1321,34 @@ const browserSuite = String.raw`(async () => {
         && alcoholBond?.order === 1 && alcoholHasHydrogen
         && deletedRingState.proposals.some((entry) => entry.id === o3Contact?.id
           && entry.status === 'unavailable')
-        && intermediateContactState.proposals.some((entry) => entry.id === o3Contact?.id
-          && entry.status === 'unavailable'
-          && entry.cumulativeEditRegionAtomIds.length >= 7)
+        && intermediateContactState.proposals.length === 0
+        && intermediateO3?.method === 'automatic-unique-role-compatible'
+        && intermediateO3?.matchKind === 'role-compatible-bioisostere'
+        && intermediateO3?.cumulativeEditRegionAtomIds.length >= 7
+        && intermediateN3?.method === 'automatic-unique-role-compatible'
+        && intermediateN3?.matchKind === 'role-compatible-bioisostere'
         && cumulativeContactState.remaps.length === 1
-        && o3Remap?.method === 'automatic-unique-exact'
-        && o3Remap?.algorithm === 'exact-feature-edit-boundary/v2'
-        && JSON.stringify(o3Remap.boundaryAnchorIds) === JSON.stringify([originalC23Id])
-        && JSON.stringify(o3Remap.cumulativeEditRegionAtomIds) === JSON.stringify(expectedCumulativeIds)
-        && !o3Remap.cumulativeEditRegionAtomIds.includes(originalC23Id)
-        && !o3Remap.cumulativeEditRegionAtomIds.includes(originalO2Id)
+        && o3Remap?.method === 'automatic-unique-role-compatible'
+        && o3Remap?.matchKind === 'role-compatible-bioisostere'
+        && o3Remap?.algorithm === 'role-compatible-edit-boundary/v3'
         && o3Remap.candidateIds.length === 1
-        && o3Remap.editLineage.length === 3
-        && o3Remap.editLineage.every((entry) => entry.committedEditId
-          && entry.beforeTopologySha256 && entry.afterTopologySha256)
-        && o3Remap.originalLigandAtomIds.includes(originalO3Id)
+        && o3RemapChain.length === 2
+        && JSON.stringify(o3RemapChain[0].boundaryAnchorIds) === JSON.stringify([originalC23Id])
+        && o3RemapChain[0].cumulativeEditRegionAtomIds.includes(stagedOxygenId)
+        && !o3RemapChain[0].cumulativeEditRegionAtomIds.includes(originalC23Id)
+        && !o3RemapChain[0].cumulativeEditRegionAtomIds.includes(originalO2Id)
+        && o3RemapChain.flatMap((entry) => entry.editLineage).length === 3
+        && o3RemapChain.flatMap((entry) => entry.editLineage).every((entry) =>
+          entry.committedEditId && entry.beforeTopologySha256 && entry.afterTopologySha256)
+        && o3RemapChain[0].originalLigandAtomIds.includes(originalO3Id)
+        && o3RemapChain.every((entry) => entry.replacementLigandAtomIds.includes(stagedOxygenId))
         && o3Remap.replacementLigandAtomIds.includes(stagedOxygenId)
         && unresolvedN3?.status === 'unavailable',
-      '7KPA saturate-delete-build-C=O sequence transfers only the Lys carbonyl hypothesis',
+      '7KPA saturate-delete-build-C=O sequence tracks role-compatible OH hypotheses then retains only the carbonyl acceptor',
       JSON.stringify({ validation:[saturationFinish, ringDeletionFinish, cyclohexanolFinish,
         carbonylFinish].map((entry) => entry.validation), deletedRingState,
-        intermediateContactState, cumulativeContactState, originalO3Id, stagedOxygenId,
+        intermediateContactState, cumulativeContactState, o3RemapChain,
+        originalO3Id, stagedOxygenId,
         originalC23Id, originalO2Id, replacementOxygen, replacementCarbon,
         alcoholBond, alcoholHasHydrogen, expectedCumulativeIds }));
       api.loadObject(preview.molecule);

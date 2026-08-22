@@ -24,16 +24,35 @@ function restraintPoint(descriptor, positions) {
 }
 
 export function evaluatePoseHydrogenBonds(definitions, positions, settings) {
-  return definitions.map((definition, index) => ({
+  const evaluateOne = (definition, index) => ({
     id:definition.id || `hbond-${index + 1}`,
-    required:definition.required !== false,
-    receptorRole:definition.receptorRole || null,
+    matchKind:definition.matchKind || null,
     ...evaluateHydrogenBondConstraint({
       donor:restraintPoint(definition.donor, positions),
       hydrogen:restraintPoint(definition.hydrogen, positions),
       acceptor:restraintPoint(definition.acceptor, positions),
     }, { ...settings, ...(definition.settings || {}) }),
-  }));
+  });
+  return definitions.map((definition, index) => {
+    if (!definition.alternatives?.length) return {
+      id:definition.id || `hbond-${index + 1}`,
+      required:definition.required !== false,
+      receptorRole:definition.receptorRole || null,
+      ...evaluateOne(definition, index),
+    };
+    const alternatives = definition.alternatives.map((entry, alternativeIndex) =>
+      evaluateOne(entry, alternativeIndex)).sort((first, second) =>
+        first.penaltyKcalMol - second.penaltyKcalMol || first.id.localeCompare(second.id));
+    const selected = alternatives[0];
+    return { ...selected,
+      id:definition.id || `hbond-${index + 1}`,
+      required:definition.required !== false,
+      receptorRole:definition.receptorRole || null,
+      selectedAlternativeId:selected.id,
+      alternativeCount:alternatives.length,
+      alternatives,
+    };
+  });
 }
 
 export async function runConstrainedDocking({ referencePositions, candidateConformers, coreAtomPairs,

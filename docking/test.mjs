@@ -7,7 +7,7 @@ import { appendLabbookEvent, completeLabbook, createLabbook, inputProvenance,
   renderLabbookMarkdown, verifyLabbook } from './labbook.mjs';
 import { captureReferenceLigand, ensureStableAtomIds, mapReferenceCore,
   mapSurvivingReferenceAtoms } from './reference-core.mjs';
-import { runConstrainedDocking } from './workflow.mjs';
+import { evaluatePoseHydrogenBonds, runConstrainedDocking } from './workflow.mjs';
 import { buildReceptorSite, pairInteractionKcalMol, receptorSiteIntegrity,
   scoreReceptorLigand } from './receptor-score.mjs';
 import { applyLigandPositions, captureCrossHydrogenBonds, createLigandPlan, dockingInputText,
@@ -74,6 +74,15 @@ const duplicateHydrogenRestoration = restoreCapturedLigandDonorHydrogens(donorHy
 assert.equal(duplicateHydrogenRestoration.restored.length, 1);
 assert.deepEqual(duplicateHydrogenRestoration.skipped,
   [{ id:'second', hydrogenAtomIndex:1, reason:'hydrogen-already-restored' }]);
+const alternativeHydrogenRestoration = restoreCapturedLigandDonorHydrogens(donorHydrogenStart, [{
+  id:'donor-group', required:true, alternatives:[{
+    alternativeId:'donor-group:surviving-h',
+    donor:{ scope:'ligand', atomIndex:0 },
+    hydrogen:{ scope:'ligand', atomIndex:1, referencePoint:{ x:.95,y:.1,z:0 } },
+    acceptor:{ scope:'receptor', point:{ x:2.8,y:0,z:0 } },
+  }],
+}]);
+assert.equal(alternativeHydrogenRestoration.restored[0].id, 'donor-group:surviving-h');
 const receptorDonorUnchanged = restoreCapturedLigandDonorHydrogens(donorHydrogenStart, [{
   donor:{ scope:'receptor', point:{ x:0,y:0,z:0 } },
   hydrogen:{ scope:'receptor', point:{ x:1,y:0,z:0 } },
@@ -171,7 +180,7 @@ assert.deepEqual(propagationMap.removedAtomIds, [automaticReference.atomIds[3]])
 assert.deepEqual(propagationMap.addedAtomIds, ['test:new:F']);
 assert.ok(propagationMap.maximumTriangleDoubleAreaAngstrom2 > 0.99);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.id, 'molarium-pose-propagation-1');
-assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.version, '0.4.1');
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.version, '0.5.0');
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping.minimumSurvivingHeavyAtoms, 3);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping
   .minimumMaximumTriangleDoubleAreaAngstrom2, 1e-3);
@@ -189,7 +198,7 @@ assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.scoring.coulombConstantKcalAngst
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.contactFeatureMapping.uniqueCandidateAction,
   'map automatically');
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.contactFeatureMapping.algorithm,
-  'exact-feature-edit-boundary/v2');
+  'role-compatible-edit-boundary/v3');
 assert.match(MOLARIUM_POSE_PROPAGATION_PROTOCOL.contactFeatureMapping.geometryRule,
   /never use current coordinates/);
 const protocolRandom = mulberry32(20260819);
@@ -444,10 +453,209 @@ assert.equal(appliedRemap.acceptor.designAtomId, 'new:oxygen');
 assert.equal(appliedRemap.donor.designAtomId, 'protein:N');
 assert.equal(capturedHydrogenBondAvailability([appliedRemap], remapAfter)[0].available, true);
 
+// Interaction-role transfer deliberately spans medicinal-chemistry feature
+// classes. The recorded edit boundary establishes lineage; donor/acceptor
+// perception establishes eligibility; the complete pose score decides which
+// hypothesis is physically credible.
+function acceptorReplacement(atoms, bonds) {
+  const molecule = { atoms:[
+    ...structuredClone(remapBefore.atoms.slice(0, 3)), ...structuredClone(atoms),
+  ], bonds:[
+    ...structuredClone(remapBefore.bonds.slice(0, 3)), ...structuredClone(bonds),
+  ] };
+  return { molecule, proposal:proposeLigandHydrogenBondFeatureRemaps([remapDefinition], molecule,
+    molecule.atoms.map((_, index) => index), {
+      eligibleAtomIndices:molecule.atoms.map((_, index) => index).slice(3),
+      beforeMolecule:remapBefore,
+    })[0] };
+}
+
+const nitrileReplacement = acceptorReplacement([
+  { element:'C', designAtomId:'nitrile:C', x:2.8,y:0,z:0 },
+  { element:'N', designAtomId:'nitrile:N', x:4.0,y:0,z:0 },
+], [{ a:1,b:3,order:1 }, { a:3,b:4,order:3 }]);
+assert.equal(nitrileReplacement.proposal.status, 'unique');
+assert.deepEqual(nitrileReplacement.proposal.candidates[0].atomIds, ['nitrile:N']);
+assert.equal(nitrileReplacement.proposal.candidates[0].type, 'nitrile nitrogen acceptor');
+assert.equal(nitrileReplacement.proposal.candidates[0].matchKind,
+  'role-compatible-bioisostere');
+
+const sulfoneReplacement = acceptorReplacement([
+  { element:'S', designAtomId:'sulfone:S', x:2.8,y:0,z:0 },
+  { element:'O', designAtomId:'sulfone:O1', x:4.0,y:.8,z:0 },
+  { element:'O', designAtomId:'sulfone:O2', x:4.0,y:-.8,z:0 },
+], [{ a:1,b:3,order:1 }, { a:3,b:4,order:2 }, { a:3,b:5,order:2 }]);
+assert.equal(sulfoneReplacement.proposal.status, 'ambiguous');
+assert.deepEqual(sulfoneReplacement.proposal.candidates.map((entry) => entry.atomIds),
+  [['sulfone:O1'], ['sulfone:O2']]);
+assert.ok(sulfoneReplacement.proposal.candidates.every((entry) =>
+  entry.type === 'sulfonyl oxygen acceptor'));
+assert.ok(sulfoneReplacement.proposal.candidates.every((entry) =>
+  entry.matchKind === 'role-compatible-bioisostere'));
+
+const aromaticNitrogenReplacement = acceptorReplacement([
+  { element:'C', aromatic:true, designAtomId:'pyridine:C1', x:2.8,y:0,z:0 },
+  { element:'N', aromatic:true, designAtomId:'pyridine:N2', x:3.5,y:1.2,z:0 },
+  { element:'C', aromatic:true, designAtomId:'pyridine:C3', x:4.9,y:1.2,z:0 },
+  { element:'C', aromatic:true, designAtomId:'pyridine:C4', x:5.6,y:0,z:0 },
+  { element:'C', aromatic:true, designAtomId:'pyridine:C5', x:4.9,y:-1.2,z:0 },
+  { element:'C', aromatic:true, designAtomId:'pyridine:C6', x:3.5,y:-1.2,z:0 },
+], [
+  { a:1,b:3,order:1 }, { a:3,b:4,order:1.5 }, { a:4,b:5,order:1.5 },
+  { a:5,b:6,order:1.5 }, { a:6,b:7,order:1.5 }, { a:7,b:8,order:1.5 },
+  { a:8,b:3,order:1.5 },
+]);
+assert.equal(aromaticNitrogenReplacement.proposal.status, 'unique');
+assert.deepEqual(aromaticNitrogenReplacement.proposal.candidates[0].atomIds,
+  ['pyridine:N2']);
+assert.equal(aromaticNitrogenReplacement.proposal.candidates[0].matchKind,
+  'role-compatible-bioisostere');
+
+const protonatedAromaticReplacement = acceptorReplacement([
+  { element:'C', aromatic:true, designAtomId:'pyridinium:C1', x:2.8,y:0,z:0 },
+  { element:'N', aromatic:true, formalCharge:1, designAtomId:'pyridinium:N2', x:3.5,y:1.2,z:0 },
+  { element:'H', designAtomId:'pyridinium:H', x:3.1,y:2.0,z:0 },
+  { element:'C', aromatic:true, designAtomId:'pyridinium:C3', x:4.9,y:1.2,z:0 },
+  { element:'C', aromatic:true, designAtomId:'pyridinium:C4', x:5.6,y:0,z:0 },
+  { element:'C', aromatic:true, designAtomId:'pyridinium:C5', x:4.9,y:-1.2,z:0 },
+  { element:'C', aromatic:true, designAtomId:'pyridinium:C6', x:3.5,y:-1.2,z:0 },
+], [
+  { a:1,b:3,order:1 }, { a:3,b:4,order:1.5 }, { a:4,b:5,order:1 },
+  { a:4,b:6,order:1.5 }, { a:6,b:7,order:1.5 }, { a:7,b:8,order:1.5 },
+  { a:8,b:9,order:1.5 }, { a:9,b:3,order:1.5 },
+]);
+assert.equal(protonatedAromaticReplacement.proposal.status, 'unavailable');
+
+const roleDonorBefore = { atoms:[
+  { element:'C', designAtomId:'donor-role:core', x:0,y:0,z:0 },
+  { element:'N', designAtomId:'donor-role:N', x:1.4,y:0,z:0 },
+  { element:'H', designAtomId:'donor-role:H', x:2.3,y:0,z:0 },
+], bonds:[{ a:0,b:1,order:1 }, { a:1,b:2,order:1 }] };
+const roleDonorDefinition = { id:'captured-donor-role', required:true, receptorRole:'acceptor',
+  donor:{ scope:'ligand', designAtomId:'donor-role:N', element:'N',
+    featureSignature:hydrogenBondFeatureSignature(roleDonorBefore, 1, 'donor') },
+  hydrogen:{ scope:'ligand', designAtomId:'donor-role:H', element:'H' },
+  acceptor:{ scope:'receptor', designAtomId:'protein:O', element:'O', point:{ x:4,y:0,z:0 } },
+};
+for (const replacement of [
+  { label:'hydroxyl', element:'O' },
+  { label:'thiol', element:'S' },
+]) {
+  const molecule = { atoms:[structuredClone(roleDonorBefore.atoms[0]),
+    { element:replacement.element, designAtomId:`${replacement.label}:D`, x:1.4,y:0,z:0 },
+    { element:'H', designAtomId:`${replacement.label}:H`, x:2.3,y:0,z:0 },
+  ], bonds:[{ a:0,b:1,order:1 }, { a:1,b:2,order:1 }] };
+  const proposal = proposeLigandHydrogenBondFeatureRemaps([roleDonorDefinition], molecule,
+    [0,1,2], { eligibleAtomIndices:[1,2], beforeMolecule:roleDonorBefore })[0];
+  assert.equal(proposal.status, 'unique', replacement.label);
+  assert.equal(proposal.candidates[0].role, 'donor');
+  assert.equal(proposal.candidates[0].matchKind, 'role-compatible-bioisostere');
+}
+
+const sulfonamideDonor = { atoms:[structuredClone(roleDonorBefore.atoms[0]),
+  { element:'S', designAtomId:'sulfonamide:S', x:1.3,y:0,z:0 },
+  { element:'O', designAtomId:'sulfonamide:O1', x:1.5,y:1.3,z:0 },
+  { element:'O', designAtomId:'sulfonamide:O2', x:1.5,y:-1.3,z:0 },
+  { element:'N', designAtomId:'sulfonamide:N', x:2.7,y:0,z:0 },
+  { element:'H', designAtomId:'sulfonamide:H', x:3.6,y:0,z:0 },
+], bonds:[
+  { a:0,b:1,order:1 }, { a:1,b:2,order:2 }, { a:1,b:3,order:2 },
+  { a:1,b:4,order:1 }, { a:4,b:5,order:1 },
+] };
+const sulfonamideProposal = proposeLigandHydrogenBondFeatureRemaps([roleDonorDefinition],
+  sulfonamideDonor, sulfonamideDonor.atoms.map((_, index) => index),
+  { eligibleAtomIndices:[1,2,3,4,5], beforeMolecule:roleDonorBefore })[0];
+assert.equal(sulfonamideProposal.status, 'unique');
+assert.deepEqual(sulfonamideProposal.candidates[0].atomIds,
+  ['sulfonamide:N', 'sulfonamide:H']);
+assert.equal(sulfonamideProposal.candidates[0].matchKind,
+  'role-compatible-bioisostere');
+
+const groupedDefinition = { id:'acceptor-hypothesis', label:'protein N-H → edited group',
+  required:true, receptorRole:'donor', alternatives:[
+    { ...structuredClone(remapDefinition), alternativeId:'far-carbonyl',
+      donor:{ scope:'receptor', designAtomId:'protein:N', element:'N', point:{ x:0,y:0,z:0 } },
+      hydrogen:{ scope:'receptor', designAtomId:'protein:H', element:'H', point:{ x:1,y:0,z:0 } },
+      acceptor:{ scope:'ligand', designAtomId:'candidate:far', element:'O' } },
+    { ...structuredClone(remapDefinition), alternativeId:'near-nitrile',
+      donor:{ scope:'receptor', designAtomId:'protein:N', element:'N', point:{ x:0,y:0,z:0 } },
+      hydrogen:{ scope:'receptor', designAtomId:'protein:H', element:'H', point:{ x:1,y:0,z:0 } },
+      acceptor:{ scope:'ligand', designAtomId:'candidate:near', element:'N' } },
+  ] };
+const groupedAtoms = [
+  { element:'O', designAtomId:'candidate:far', x:6,y:0,z:0 },
+  { element:'N', designAtomId:'candidate:near', x:2.8,y:0,z:0 },
+];
+const groupedMapped = mapCapturedHydrogenBonds([groupedDefinition], groupedAtoms);
+assert.equal(groupedMapped.complete, true);
+assert.equal(groupedMapped.constraints.length, 1);
+assert.equal(groupedMapped.constraints[0].alternatives.length, 2);
+const groupedEvaluation = evaluatePoseHydrogenBonds(groupedMapped.constraints,
+  Float64Array.from(groupedAtoms.flatMap((atom) => [atom.x, atom.y, atom.z])),
+  MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.hydrogenBondConstraint)[0];
+assert.equal(groupedEvaluation.selectedAlternativeId, 'near-nitrile');
+assert.equal(groupedEvaluation.alternativeCount, 2);
+assert.equal(groupedEvaluation.satisfied, true);
+assert.ok(groupedEvaluation.alternatives.find((entry) => entry.id === 'far-carbonyl')
+  .penaltyKcalMol > groupedEvaluation.penaltyKcalMol);
+const groupedScore = scoreConstrainedPose({ physicalEnergyKcalMol:-5, core,
+  hydrogenBonds:[groupedEvaluation] });
+assert.equal(groupedScore.feasible, true);
+assert.equal(groupedScore.totalScoreKcalMol, -5);
+
+const switchedGroupedEvaluation = evaluatePoseHydrogenBonds(groupedMapped.constraints,
+  Float64Array.from([2.8,0,0, 6,0,0]),
+  MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.hydrogenBondConstraint)[0];
+assert.equal(switchedGroupedEvaluation.selectedAlternativeId, 'far-carbonyl');
+assert.equal(switchedGroupedEvaluation.satisfied, true);
+const tiedGroupedEvaluation = evaluatePoseHydrogenBonds(groupedMapped.constraints,
+  Float64Array.from([2.8,0,0, 2.8,0,0]),
+  MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.hydrogenBondConstraint)[0];
+assert.equal(tiedGroupedEvaluation.selectedAlternativeId, 'far-carbonyl');
+const failedGroupedEvaluation = evaluatePoseHydrogenBonds(groupedMapped.constraints,
+  Float64Array.from([6,0,0, 7,0,0]),
+  MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.hydrogenBondConstraint)[0];
+assert.equal(failedGroupedEvaluation.satisfied, false);
+assert.equal(scoreConstrainedPose({ physicalEnergyKcalMol:-100, core,
+  hydrogenBonds:[failedGroupedEvaluation] }).feasible, false);
+
+const workflowGroupedConstraint = structuredClone(groupedMapped.constraints[0]);
+workflowGroupedConstraint.alternatives[0].acceptor.atomIndex = 3;
+workflowGroupedConstraint.alternatives[1].acceptor.atomIndex = 4;
+const workflowGroupedReference = Float64Array.from([
+  10,10,10, 11,10,10, 10,11,10, 2.8,0,0, 6,0,0,
+]);
+const groupedWorkflowRun = await runConstrainedDocking({
+  referencePositions:workflowGroupedReference,
+  candidateConformers:[workflowGroupedReference, Float64Array.from([
+    10,10,10, 11,10,10, 10,11,10, 6,0,0, 2.8,0,0,
+  ])],
+  coreAtomPairs:[[0,0],[1,1],[2,2]],
+  hydrogenBondConstraints:[workflowGroupedConstraint],
+  protocol:MOLARIUM_CONSTRAINT_DOCK_PROTOCOL,
+  physicalScore:({ conformerIndex }) => conformerIndex ? -10 : -5,
+});
+assert.equal(groupedWorkflowRun.feasibleCount, 2);
+assert.equal(groupedWorkflowRun.selected.conformerIndex, 1);
+assert.equal(groupedWorkflowRun.selected.hydrogenBonds[0].selectedAlternativeId,
+  'near-nitrile');
+assert.equal(groupedWorkflowRun.selected.hydrogenBonds[0].alternatives.length, 2);
+
+const partiallyMissingGroup = structuredClone(groupedDefinition);
+partiallyMissingGroup.alternatives[0].acceptor.designAtomId = 'candidate:missing';
+const partiallyMapped = mapCapturedHydrogenBonds([partiallyMissingGroup], groupedAtoms);
+assert.equal(partiallyMapped.complete, true);
+assert.equal(partiallyMapped.missing.length, 0);
+assert.deepEqual(partiallyMapped.droppedAlternatives, [{
+  constraintId:'acceptor-hypothesis', alternativeId:'far-carbonyl',
+  designAtomId:'candidate:missing',
+}]);
+assert.equal(partiallyMapped.constraints[0].alternatives.length, 1);
+
 // Replacing a group can span two completed chemistry transactions (delete,
 // then add). The deletion transaction is the last graph that can recover the
 // captured atom's originating boundary; the addition transaction must combine
-// that boundary with its newly eligible, exactly typed features.
+// that boundary with its newly eligible role-compatible features.
 const pyridoneBefore = { name:'pyridone attached to a common core', atoms:[
   { element:'C', designAtomId:'pyridone:core', x:-1.4,y:0,z:0 },
   { element:'C', designAtomId:'pyridone:C1', x:0,y:0,z:0 },
@@ -518,7 +726,8 @@ const intermediateAddition = proposeLigandHydrogenBondFeatureRemaps([pyridoneDef
 const retainedIntermediate = retainOriginatingHydrogenBondRemapCandidates(
   { ...deletionProposal, committedEditId:'delete-pyridone' }, intermediateAddition,
   cyclohexanolIntermediate, cyclohexanolIntermediate.atoms.map((_, index) => index));
-assert.equal(retainedIntermediate.status, 'unavailable');
+assert.equal(retainedIntermediate.status, 'unique');
+assert.equal(retainedIntermediate.candidates[0].matchKind, 'role-compatible-bioisostere');
 assert.deepEqual(retainedIntermediate.boundaryAnchorIds, ['pyridone:core']);
 assert.deepEqual(retainedIntermediate.cumulativeEditRegionAtomIds,
   cyclohexanolIntermediate.atoms.slice(1).map((atom) => atom.designAtomId).sort());
@@ -538,6 +747,7 @@ assert.equal(multiCommitReplacement.status, 'unique');
 assert.deepEqual(multiCommitReplacement.boundaryAnchorIds, ['pyridone:core']);
 assert.deepEqual(multiCommitReplacement.candidates[0].atomIds, ['cyclohexanone:O']);
 assert.deepEqual(multiCommitReplacement.candidates[0].boundaryAnchorIds, ['pyridone:core']);
+assert.equal(multiCommitReplacement.candidates[0].matchKind, 'exact-feature');
 assert.equal(multiCommitReplacement.originatingCommittedEditId, 'delete-pyridone');
 // In real 7KPA, replacing the D84 pyridone preserves the O3 carbonyl-acceptor
 // role used by Lys A11, but necessarily removes the N3-H donor used by water
@@ -670,7 +880,8 @@ incompatibleRemapMolecule.bonds.find((bond) => bond.a === 3 && bond.b === 4).ord
 const incompatibleRemap = proposeLigandHydrogenBondFeatureRemaps([remapDefinition],
   incompatibleRemapMolecule, [0,1,2,3,4],
   { eligibleAtomIndices:[3,4], beforeMolecule:remapBefore })[0];
-assert.equal(incompatibleRemap.status, 'unavailable');
+assert.equal(incompatibleRemap.status, 'unique');
+assert.equal(incompatibleRemap.candidates[0].matchKind, 'role-compatible-bioisostere');
 
 const donorBefore = { atoms:[
   { element:'C', designAtomId:'donor:core', x:0,y:0,z:0 },
@@ -715,6 +926,34 @@ const appliedSurvivingDonorRemap = applyLigandHydrogenBondFeatureRemap(donorDefi
 assert.equal(appliedSurvivingDonorRemap.donor.designAtomId, 'donor:old:N');
 assert.equal(appliedSurvivingDonorRemap.hydrogen.designAtomId, 'donor:replacement:H');
 assert.equal('referencePoint' in appliedSurvivingDonorRemap.hydrogen, false);
+
+const changedStableDonorAfter = { atoms:[
+  structuredClone(donorBefore.atoms[0]),
+  { ...structuredClone(donorBefore.atoms[1]), element:'O' },
+  { element:'H', designAtomId:'donor:replacement:OH', x:2.25,y:.1,z:0 },
+], bonds:[{ a:0,b:1,order:1 }, { a:1,b:2,order:1 }] };
+const changedStableDonorRemap = proposeLigandHydrogenBondFeatureRemaps([donorDefinition],
+  changedStableDonorAfter, [0,1,2],
+  { eligibleAtomIndices:[1,2], beforeMolecule:donorBefore })[0];
+assert.equal(changedStableDonorRemap.status, 'unique');
+assert.deepEqual(changedStableDonorRemap.boundaryAnchorIds, ['donor:core']);
+assert.deepEqual(changedStableDonorRemap.candidates[0].boundaryAnchorIds, ['donor:core']);
+assert.deepEqual(changedStableDonorRemap.candidates[0].atomIds,
+  ['donor:old:N', 'donor:replacement:OH']);
+assert.equal(changedStableDonorRemap.candidates[0].matchKind,
+  'role-compatible-bioisostere');
+
+const detachedStableDonorAfter = { atoms:[
+  structuredClone(donorBefore.atoms[0]),
+  { element:'C', designAtomId:'donor:unrelated-core', x:5,y:0,z:0 },
+  { ...structuredClone(donorBefore.atoms[1]), element:'O', x:6.4 },
+  { element:'H', designAtomId:'donor:detached:OH', x:7.3,y:0,z:0 },
+], bonds:[{ a:1,b:2,order:1 }, { a:2,b:3,order:1 }] };
+const detachedStableDonorRemap = proposeLigandHydrogenBondFeatureRemaps([donorDefinition],
+  detachedStableDonorAfter, [0,1,2,3],
+  { eligibleAtomIndices:[1,2,3], beforeMolecule:donorBefore })[0];
+assert.equal(detachedStableDonorRemap.status, 'unavailable');
+assert.deepEqual(detachedStableDonorRemap.candidates, []);
 
 const twoHydrogenDonorAfter = { atoms:[
   structuredClone(donorBefore.atoms[0]), structuredClone(donorBefore.atoms[1]),

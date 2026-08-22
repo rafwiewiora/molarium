@@ -585,7 +585,8 @@ each commit. All originating boundary atoms must still exist. Only cumulative ed
 remain covalently connected to that boundary are retained, so a detached former candidate or a
 simultaneous edit elsewhere cannot inherit stale eligibility or contaminate provenance.
 
-This behavior is `exact-feature-edit-boundary/v2` and advances Pose Propagation to `0.4.1`.
+This historical behavior is `exact-feature-edit-boundary/v2` and advanced Pose Propagation to
+`0.4.1`; Decision D-028 below supersedes its exact-feature exclusion in `0.5.0`.
 
 ### Validation V-012 — real 7KPA saturate/delete/build/carbonyl regression
 
@@ -598,3 +599,46 @@ ring contains no compatible donor. The unit gate separately asserts that the fin
 boundary is wrong and that only cumulative-region traversal recovers the original scaffold anchor.
 Additional gates detach an ambiguous candidate, delete its originating anchor, and edit a
 wrong-boundary carbonyl; all must remain unavailable with unpolluted cumulative provenance.
+
+### Decision D-028 — interaction role and edit lineage define transfer eligibility
+
+Decision D-027's exact-feature exclusion is superseded by `role-compatible-edit-boundary/v3` in
+Pose Propagation `0.5.0`. A replacement hypothesis is eligible when the completed molecular graph
+perceives it as the same ligand interaction role (donor or acceptor) and its connected cumulative
+edit region reaches exactly the recorded originating boundary. Element, charge, aromaticity,
+heavy-neighbor signature, and named functional-group type are recorded but do not exclude a
+candidate. This admits carbonyl O→sulfone O, nitrile N, aromatic N, and other chemically perceived
+bioisosteres without admitting atoms that cannot perform the required interaction role.
+
+Multiple candidates no longer force a pre-refinement identity choice. They form one any-of
+restraint. Each pose evaluates every alternative against the unchanged receptor participants; the
+lowest H-bond penalty represents that single captured contact, and the complete receptor energy,
+relative ligand strain, and remaining constraint terms rank the pose. The selected alternative and
+all alternative audits are retained. A user may explicitly narrow or omit the set. Geometry is
+never used to establish graph correspondence.
+
+Reason: an interaction hypothesis is the transferable medicinal-chemistry intent, while a carbonyl
+label is only one realization. Requiring exact feature identity made the intended R-group scan fail
+for standard bioisosteric replacements and forced the user to pre-decide which atom should win
+before the physical calculation. The broader rule defers that decision to constrained sampling and
+transparent strain/interaction scoring while the recorded edit boundary prevents unrelated ligand
+heteroatoms from inheriting the contact.
+
+### Validation V-013 — cross-class role matrix and any-of scoring
+
+The executable unit matrix requires successful transfer for carbonyl O→nitrile N, aromatic N, and
+both sulfone oxygens; N–H donor→O–H and S–H donors; and the exact carbonyl control. Protonated
+aromatic N is not accepted as an acceptor. The two sulfone oxygens remain two alternatives rather
+than being selected by their starting coordinates. A grouped-restraint test proves that the viable
+alternative is selected per pose, the contact contributes only once, and loss of one alternative
+does not invalidate the group.
+
+The hydrated 7KPA gate requires the cyclohexanol intermediate to carry both its OH-acceptor and
+OH-donor hypotheses. After C–OH becomes C=O, the donor hypothesis must become unavailable and the
+acceptor mapping chain must persist through both chemical states with stable atom IDs, immutable
+receptor participants, topology hashes, and all three committed edit-lineage records.
+
+The focused browser gate replaces a captured carbonyl acceptor with a sulfonamide group, retains
+both sulfonyl oxygens as one unresolved any-of contact, executes reference-guided refinement without
+a pre-geometry user choice, and requires the hash-linked labbook to record both alternative
+evaluations and the alternative selected for the winning pose.

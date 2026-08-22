@@ -40,19 +40,34 @@ function acceptorType(molecule, entries, atomIndex) {
         && isCarbonylCenter(molecule, entries, index));
       return acidLike ? null : 'hydroxyl oxygen acceptor';
     }
-    if (neighbors.some(({ order }) => order >= 1.8)) return 'carbonyl oxygen acceptor';
+    const multipleBond = neighbors.find(({ order }) => order >= 1.8);
+    if (multipleBond) {
+      const center = molecule.atoms[multipleBond.index]?.element;
+      if (center === 'C') return 'carbonyl oxygen acceptor';
+      if (center === 'S') return 'sulfonyl oxygen acceptor';
+      if (center === 'P') return 'phosphoryl oxygen acceptor';
+      return 'multiple-bonded oxygen acceptor';
+    }
     return neighbors.length <= 2 ? 'neutral oxygen acceptor' : null;
   }
   if (atom.element === 'N') {
     if (neighbors.some(({ index }) => molecule.atoms[index]?.element === 'H')) return null;
     if (neighbors.length >= 4) return null;
+    if (neighbors.some(({ index, order }) => order >= 2.8
+      && molecule.atoms[index]?.element === 'C')) return 'nitrile nitrogen acceptor';
     const amideLike = neighbors.some(({ index, order }) => order < 1.2
       && isCarbonylCenter(molecule, entries, index));
     return amideLike ? null : atom.aromatic ? 'aromatic nitrogen acceptor' : 'neutral nitrogen acceptor';
   }
   if (atom.element === 'S') {
     if (charge < 0) return 'anionic sulfur acceptor';
-    return neighbors.length <= 4 ? 'neutral sulfur acceptor' : null;
+    // A sulfone/sulfoxide sulfur is electrophilic; its oxygens are the
+    // acceptors. Neutral divalent sulfur (for example a thioether) can be an
+    // acceptor, but do not manufacture a third hypothesis at the sulfur
+    // center of S(IV)/S(VI) groups.
+    if (neighbors.some(({ index, order }) => order >= 1.8
+      && ['O', 'N', 'S'].includes(molecule.atoms[index]?.element))) return null;
+    return neighbors.length <= 2 ? 'neutral sulfur acceptor' : null;
   }
   if (atom.element === 'F') return neighbors.length <= 1 ? 'fluorine acceptor' : null;
   if (atom.element === 'P' && charge < 0) return 'anionic phosphorus acceptor';
@@ -307,6 +322,11 @@ function sameIds(first, second) {
   return first.length === second.length && first.every((value, index) => value === second[index]);
 }
 
+function featureMatchKind(originalSignature, candidateSignature) {
+  return originalSignature && candidateSignature === originalSignature
+    ? 'exact-feature' : 'role-compatible-bioisostere';
+}
+
 export function proposeLigandHydrogenBondFeatureRemaps(definitions, molecule,
   ligandAtomIndices, { eligibleAtomIndices = [], beforeMolecule = null } = {}) {
   const eligible = new Set(Array.from(eligibleAtomIndices || [], Number));
@@ -332,6 +352,8 @@ export function proposeLigandHydrogenBondFeatureRemaps(definitions, molecule,
     // valence reconciliation, anchor the tuple to that same donor. Treat each
     // new H as a separate exact candidate; do not expand the edit region
     // through the surviving donor and accidentally move the boundary outward.
+    // A changed heavy-donor signature is not this special case: it must use
+    // the normal cumulative edit region and the original scaffold boundary.
     if (ligandRole === 'donor' && originalSignature) {
       const donorId = definition.donor?.designAtomId;
       const hydrogenId = definition.hydrogen?.designAtomId;
@@ -353,6 +375,7 @@ export function proposeLigandHydrogenBondFeatureRemaps(definitions, molecule,
             label:`${feature.type} · ${molecule.atoms[feature.atomIndex]?.element || '?'}${feature.atomIndex + 1}`
               + `–${molecule.atoms[hydrogenIndex]?.element || '?'}${hydrogenIndex + 1}`,
             originalFeatureSignature:originalSignature,
+            matchKind:featureMatchKind(originalSignature, feature.signature),
             boundaryAnchorIds:[donorId],
             geometry, geometryScore:geometry ? geometryScore(geometry) : Number.POSITIVE_INFINITY };
         })
@@ -378,7 +401,6 @@ export function proposeLigandHydrogenBondFeatureRemaps(definitions, molecule,
         const index = molecule.atoms.findIndex((atom) => atom.designAtomId === id);
         return eligible.has(index);
       }))
-      .filter((feature) => !originalSignature || feature.signature === originalSignature)
       .map((feature) => {
         const candidateRegion = new Set(newRegion);
         feature.atomIds.forEach((id) => candidateRegion.add(id));
@@ -392,6 +414,7 @@ export function proposeLigandHydrogenBondFeatureRemaps(definitions, molecule,
             return `${molecule.atoms[index]?.element || '?'}${index + 1}`;
           }).join('–')}`,
           originalFeatureSignature:originalSignature,
+          matchKind:featureMatchKind(originalSignature, feature.signature),
           boundaryAnchorIds,
           geometry, geometryScore:geometry ? geometryScore(geometry) : Number.POSITIVE_INFINITY };
       })
@@ -418,8 +441,9 @@ export function retainOriginatingHydrogenBondRemapCandidates(priorProposal, curr
     .map((feature) => [`${feature.role}:${feature.atomIds.join('+')}`, feature]));
   const retained = (priorProposal.candidates || []).flatMap((candidate) => {
     const live = liveFeatures.get(`${candidate.role}:${candidate.atomIds.join('+')}`);
-    if (!live || live.signature !== candidate.signature) return [];
+    if (!live) return [];
     return [{ ...candidate, ...live, boundaryAnchorIds:[...(candidate.boundaryAnchorIds || [])],
+      matchKind:featureMatchKind(priorProposal.originalFeatureSignature, live.signature),
       geometry:null, geometryScore:Number.POSITIVE_INFINITY,
       geometryEvidenceStatus:'not-used; candidate retained from the originating edit' }];
   });
@@ -455,11 +479,12 @@ export function retainOriginatingHydrogenBondRemapCandidates(priorProposal, curr
     .map((candidate) => [candidate.id, candidate]));
   const candidates = allBoundaryIdsLive ? [...combined.values()].flatMap((candidate) => {
     const live = liveFeatures.get(`${candidate.role}:${candidate.atomIds.join('+')}`);
-    if (!live || live.signature !== originatingSignature) return [];
+    if (!live || live.role !== priorProposal.ligandRole) return [];
     const boundaryAnchorIds = regionBoundary(molecule, cumulativeEditRegion,
       live.atomIds, outsideEditRegion);
     return sameIds(boundaryAnchorIds, originatingBoundary)
-      ? [{ ...candidate, ...live, boundaryAnchorIds }] : [];
+      ? [{ ...candidate, ...live, boundaryAnchorIds,
+        matchKind:featureMatchKind(originatingSignature, live.signature) }] : [];
   }).sort((first, second) => first.id.localeCompare(second.id)) : [];
   if (!candidates.length) return { ...currentProposal,
     status:'unavailable', candidates:[],

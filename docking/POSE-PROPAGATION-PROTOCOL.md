@@ -3,7 +3,7 @@
 ## Normative protocol
 
 Protocol ID: `molarium-pose-propagation-1`
-Protocol version: `0.4.1`
+Protocol version: `0.5.0`
 Status: experimental pose-preparation and pose-ranking method
 Canonical machine-readable definition: `MOLARIUM_POSE_PROPAGATION_PROTOCOL` in
 [`protocol.mjs`](./protocol.mjs)
@@ -32,8 +32,8 @@ The independent Molarium contribution is the following precisely defined composi
    for losing one.
 5. Ligand-only force-field relaxation is accepted only after a receptor-aware feasibility and
    complete-score audit.
-6. A contact affected by an R-group edit can transfer only to an exact compatible ligand feature
-   created at the same recorded edit boundary.
+6. A contact affected by an R-group edit can transfer to any complementary donor or acceptor
+   created at the same recorded edit boundary; physical refinement ranks the resulting hypotheses.
 7. Inputs, protocol, atom lineage, contact-feature decisions, settings, and results are recorded in a hash-linked
    browser-local labbook.
 
@@ -139,31 +139,37 @@ A required contact outside any allowed range makes the pose infeasible regardles
 
 The receptor-side participant, identity, and captured coordinate are immutable. Ligand contact
 identity is evaluated only after the complete staged edit passes RDKit sanitization and local edit
-polish. A surviving ligand participant remains usable only if its element and captured chemical
-feature remain compatible.
+polish. A surviving ligand participant remains usable whenever the live graph still perceives the
+required donor or acceptor role; a feature-class change is audited rather than rejected.
 
-If the original ligand feature was removed or changed, `exact-feature-edit-boundary/v2` considers
-only features in the newly added or chemically changed region. A candidate must have the same:
+If the original ligand feature was removed or changed, `role-compatible-edit-boundary/v3` considers
+every chemically perceived complementary donor or acceptor in the newly added or chemically changed
+region. Eligibility requires only:
 
-- donor or acceptor role;
-- element, integer formal charge, and aromatic state;
-- heavy-atom degree and element/bond-order neighbor signature;
-- captured feature class, such as carbonyl oxygen acceptor or aromatic nitrogen acceptor; and
-- nonempty set of surviving `designAtomId` boundary anchors connecting the removed and replacement
-  edit regions.
+- the same interaction role (ligand donor or ligand acceptor); and
+- the same nonempty set of surviving `designAtomId` boundary anchors connecting the removed and
+  replacement edit regions.
 
-Exactly one candidate is mapped automatically. Two or more candidates require an explicit user
-choice or omission. Zero candidates leave the contact unavailable. Current coordinates and apparent
-H-bond geometry are recorded as evidence but never establish eligibility or break a tie.
+Element, formal charge, aromaticity, heavy-neighbor signature, and perceived feature class remain
+in the audit record but are not exclusion criteria. Carbonyl O to sulfone O, nitrile N, aromatic N,
+or another acceptor bioisostere can therefore inherit an acceptor contact. Donor replacements work
+the same way, with donor heavy atom and explicit hydrogen treated as one feature tuple.
+
+Exactly one candidate is mapped automatically. If two or more candidates are plausible, every
+candidate is evaluated as an alternative within one any-of restraint and the candidate with the
+lowest H-bond penalty is used for that pose. The complete receptor interaction, ligand strain, and
+physical score still rank poses. A user may optionally narrow the alternatives, but ambiguity no
+longer blocks refinement. Zero candidates leave the contact unavailable. Current coordinates and
+apparent H-bond geometry are recorded as evidence but never establish eligibility.
 
 The originating feature signature, surviving boundary IDs, ordered committed-edit IDs and topology
 hashes, cumulative live edit region, and exact candidate identities persist with an unresolved
 proposal. A replacement ring may
 therefore be completed and sanitized before a later bond-order edit creates its final pharmacophore.
 Candidate boundary traversal uses the cumulative connected edit region but explicitly excludes the
-immutable originating scaffold anchors. A later edit also revalidates retained candidates against
-the live graph and recomputes their boundary. Every originating anchor must remain present, and only
-edit-region components still covalently connected to those anchors persist. Removing one of two
+immutable originating scaffold anchors. A later edit re-perceives retained candidates against the
+live graph and recomputes their role and boundary. Every originating anchor must remain present, and
+only edit-region components still covalently connected to those anchors persist. Removing one of two
 ambiguous features can therefore deterministically resolve the proposal, but detaching the survivor
 cannot. A later edit never replaces the origin with a nearer or newly convenient heteroatom.
 

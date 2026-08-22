@@ -60,8 +60,10 @@ export function restoreCapturedLigandDonorHydrogens(positions, definitions = [])
     throw new Error('Ligand coordinates must contain complete atoms');
   const restoredPositions = new Float64Array(positions);
   const restored = [], skipped = [], usedHydrogens = new Set();
-  Array.from(definitions || []).forEach((definition, ordinal) => {
-    const id = definition.id || `hbond-${ordinal + 1}`;
+  Array.from(definitions || []).flatMap((definition) =>
+    definition.alternatives?.length ? definition.alternatives : [definition])
+    .forEach((definition, ordinal) => {
+    const id = definition.alternativeId || definition.id || `hbond-${ordinal + 1}`;
     const donor = definition.donor, hydrogen = definition.hydrogen;
     if (definition.required === false || donor?.scope !== 'ligand'
       || hydrogen?.scope !== 'ligand') return;
@@ -80,7 +82,7 @@ export function restoreCapturedLigandDonorHydrogens(positions, definitions = [])
     usedHydrogens.add(hydrogenIndex);
     restored.push({ id, donorAtomIndex:Number(donor.atomIndex), hydrogenAtomIndex:hydrogenIndex,
       displacementAngstrom:distance(before, referencePoint) });
-  });
+    });
   return { positions:restoredPositions, restored, skipped };
 }
 

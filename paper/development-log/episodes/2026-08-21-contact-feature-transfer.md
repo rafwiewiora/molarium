@@ -2,7 +2,8 @@
 
 Date: 2026-08-21
 Branch: `dev`
-Protocol: `molarium-pose-propagation-1` version `0.4.1`
+Protocol: `molarium-pose-propagation-1` version `0.5.0` (this episode records the superseded
+`0.4.1` decision and the evidence that changed it)
 
 ## Observation
 
@@ -25,8 +26,8 @@ to a newly constructed atom.
    be equally close.
 3. **Match any donor or acceptor of the right element.** Rejected because formal charge,
    protonation, aromaticity, and local valence can change donor/acceptor behavior.
-4. **Exact chemical feature plus recorded edit boundary.** Adopted. It uses the completed graph,
-   preserves the receptor participant, and makes ambiguity visible.
+4. **Exact chemical feature plus recorded edit boundary.** Adopted in `0.4.1`, then superseded in
+   `0.5.0` after it rejected chemically plausible bioisosteres.
 
 ## Locked decision
 
@@ -73,7 +74,7 @@ Unresolved proposals keep their originating edit and candidate identities across
 
 - unique carbonyl-oxygen replacement;
 - ambiguity from two exact carbonyl candidates;
-- rejection of a chemically incompatible oxygen;
+- transfer to a chemically perceived role-compatible oxygen with a different feature signature;
 - ligand donor plus explicit-hydrogen tuple replacement;
 - surviving donor plus one or two reconciled replacement hydrogens;
 - deleted-ID non-reuse across repeated same-ordinal replacements;
@@ -210,7 +211,7 @@ unavailable. The accompanying unit gate explicitly demonstrates that the final t
 boundary is insufficient and the cumulative boundary is required. Validation after the fix:
 
 - contact/remap unit protocol: pass;
-- focused docking browser integration: 66/66 pass;
+- focused docking browser integration: 68/68 pass;
 - hydrated 7KPA capture and edit regression: 3/3 pass;
 - RDKit 2D browser regression: 19/19 pass;
 - web distribution build: pass (69 files, 10.46 MiB).
@@ -221,3 +222,44 @@ stopped because this checkout has the vendored ONNX Runtime JavaScript bundle bu
 WASM backend was available. The docking-focused suites do not invoke ANI-2x and pass in the same
 browser harness. This environmental asset gap is recorded rather than misreported as a passing
 full-suite result.
+
+## Protocol revision: bioisosteres are hypotheses, not type errors
+
+The user rejected the exact-feature restriction directly:
+
+> “anything that has a chance of being the replacement should be constrained and then we can worry
+> about strain etc”
+
+That objection is scientifically decisive for R-group scanning. A captured interaction says that
+the receptor requires a complementary donor or acceptor in a particular edited branch. It does not
+say that the analogue must retain the original atom element, charge, aromaticity, or named
+functional group. Carbonyl O→sulfone O, nitrile N, or aromatic N are precisely the bioisosteric
+changes the workflow must explore.
+
+Pose Propagation `0.5.0` therefore uses `role-compatible-edit-boundary/v3`. A candidate needs the
+same ligand interaction role and the same recorded connected edit boundary. Exact signatures remain
+in provenance and produce an `exact-feature` annotation; cross-class candidates are annotated
+`role-compatible-bioisostere`. Neither annotation excludes the candidate. If several candidates
+exist, they form one any-of restraint: every alternative is evaluated for every pose, the lowest
+H-bond penalty represents that contact for that pose, and full receptor plus ligand-strain scoring
+ranks the poses. Optional user selection can narrow alternatives, but ambiguity does not block the
+run. An atom that is not chemically perceived as the required donor or acceptor remains ineligible.
+
+The real 7KPA sequence changed meaning in a useful way. Cyclohexanol OH is both a possible acceptor
+for Lys and a possible donor for the old pyridone-NH→water hypothesis, so both are carried during
+the chemically complete alcohol intermediate. Converting C–OH to C=O removes the donor role; the
+donor hypothesis then becomes unavailable while the acceptor persists. Geometry at the intermediate
+is deliberately not used to erase either hypothesis. Refinement must determine whether the proposed
+contact is feasible and how much strain it costs.
+
+The focused validation matrix now covers carbonyl O→carbonyl O, sulfone O, nitrile N, aromatic N,
+and hydroxyl O; amine N–H→O–H and S–H donors; exclusion of protonated aromatic N as an acceptor;
+two symmetric sulfone oxygens as alternatives; partial alternative loss; grouped any-of scoring;
+wrong-boundary rejection; detached-candidate rejection; deleted-anchor rejection; the complete
+hydrated 7KPA edit sequence; and a browser sulfonamide edit that carries both sulfonyl oxygens
+through refinement and records the selected alternative plus both evaluations. Current focused
+results are:
+
+- contact/remap unit protocol: pass;
+- focused docking browser integration: 68/68 pass;
+- hydrated 7KPA capture and edit regression: 3/3 pass.

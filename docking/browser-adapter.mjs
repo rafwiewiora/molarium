@@ -90,15 +90,15 @@ export function captureCrossHydrogenBonds(molecule, ligandAtomIndices, hydrogenB
 export function mapCapturedHydrogenBonds(definitions, candidateAtoms, selectedIds = null) {
   const candidateById = new Map(candidateAtoms.map((atom, index) => [atom.designAtomId, index]));
   const selected = selectedIds ? new Set(selectedIds) : null;
-  const missing = [];
-  const mapped = Array.from(definitions || []).flatMap((definition) => {
-    if (selected && !selected.has(definition.id)) return [];
+  const missing = [], droppedAlternatives = [];
+  const mapOne = (definition, parent = definition, missingTarget = missing) => {
     const participant = (descriptor) => {
       if (descriptor.scope === 'receptor') return { scope:'receptor', point:{ ...descriptor.point },
         designAtomId:descriptor.designAtomId, element:descriptor.element };
       const atomIndex = candidateById.get(descriptor.designAtomId);
       if (!Number.isInteger(atomIndex)) {
-        missing.push({ constraintId:definition.id, designAtomId:descriptor.designAtomId });
+        missingTarget.push({ constraintId:parent.id, alternativeId:definition.alternativeId || null,
+          designAtomId:descriptor.designAtomId });
         return null;
       }
       return { scope:'ligand', atomIndex, designAtomId:descriptor.designAtomId,
@@ -107,11 +107,29 @@ export function mapCapturedHydrogenBonds(definitions, candidateAtoms, selectedId
     const donor = participant(definition.donor);
     const hydrogen = participant(definition.hydrogen);
     const acceptor = participant(definition.acceptor);
-    if (!donor || !hydrogen || !acceptor) return [];
-    return [{ id:definition.id, label:definition.label, required:definition.required !== false,
-      receptorRole:definition.receptorRole, donor, hydrogen, acceptor }];
+    if (!donor || !hydrogen || !acceptor) return null;
+    return { id:definition.alternativeId || definition.id, label:definition.label || parent.label,
+      required:parent.required !== false, receptorRole:definition.receptorRole,
+      matchKind:definition.matchKind || null, donor, hydrogen, acceptor };
+  };
+  const mapped = Array.from(definitions || []).flatMap((definition) => {
+    if (selected && !selected.has(definition.id)) return [];
+    if (definition.alternatives?.length) {
+      const alternativeMissing = [];
+      const alternatives = definition.alternatives
+        .map((entry) => mapOne(entry, definition, alternativeMissing))
+        .filter(Boolean);
+      if (!alternatives.length) missing.push(...alternativeMissing);
+      else droppedAlternatives.push(...alternativeMissing);
+      return alternatives.length ? [{ id:definition.id, label:definition.label,
+        required:definition.required !== false, receptorRole:definition.receptorRole,
+        alternatives }] : [];
+    }
+    const single = mapOne(definition);
+    return single ? [single] : [];
   });
-  return { constraints:mapped, missing, complete:missing.length === 0 };
+  return { constraints:mapped, missing, droppedAlternatives,
+    complete:missing.length === 0 };
 }
 
 export function capturedReceptorContactIntegrity(definitions, molecule, toleranceAngstrom = 1e-6) {
@@ -119,7 +137,8 @@ export function capturedReceptorContactIntegrity(definitions, molecule, toleranc
     [atom.designAtomId, { atom, index }]));
   const checked = [], issues = [], seen = new Set();
   Array.from(definitions || []).forEach((definition) => {
-    [definition.donor, definition.hydrogen, definition.acceptor]
+    const variants = definition.alternatives?.length ? definition.alternatives : [definition];
+    variants.flatMap((entry) => [entry.donor, entry.hydrogen, entry.acceptor])
       .filter((descriptor) => descriptor?.scope === 'receptor')
       .forEach((descriptor) => {
         if (!descriptor.designAtomId || seen.has(descriptor.designAtomId)) return;
@@ -149,8 +168,21 @@ export function capturedHydrogenBondAvailability(definitions, candidate, candida
     : candidate;
   if (!molecule?.atoms || !Array.isArray(molecule.bonds))
     throw new Error('Captured-contact availability requires a complete candidate graph');
-  return Array.from(definitions || []).map((definition) =>
-    validateCapturedLigandHydrogenBondFeature(definition, molecule));
+  return Array.from(definitions || []).map((definition) => {
+    if (!definition.alternatives?.length)
+      return validateCapturedLigandHydrogenBondFeature(definition, molecule);
+    const alternatives = definition.alternatives.map((entry) => ({
+      alternativeId:entry.alternativeId || entry.id,
+      ...validateCapturedLigandHydrogenBondFeature(entry, molecule),
+    }));
+    const available = alternatives.some((entry) => entry.available);
+    return { id:definition.id, ligandRole:alternatives[0]?.ligandRole || null, available,
+      alternatives,
+      missingAtomIds:available ? [] : [...new Set(alternatives.flatMap((entry) => entry.missingAtomIds))],
+      incompatibleAtomIds:available ? []
+        : [...new Set(alternatives.flatMap((entry) => entry.incompatibleAtomIds))],
+      reasons:available ? [] : [...new Set(alternatives.flatMap((entry) => entry.reasons))] };
+  });
 }
 
 export function unpackConformerStack(stack, atomCount) {
