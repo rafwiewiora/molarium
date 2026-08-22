@@ -1,0 +1,1043 @@
+{
+  "schemaVersion": 1,
+  "datasetId": "molarium-bioisostere-pose-propagation-25",
+  "curationSha256": "919b9d39e449cca2825958daff5bfdb76c0263d75d1892d0714c1e9b9a09fb20",
+  "source": "RCSB Protein Data Bank",
+  "sourcePolicy": "Public PDB coordinate and Chemical Component Dictionary files; byte hashes pin every input.",
+  "pdbAssets": [
+    {
+      "pdbId": "1H1Q",
+      "file": "pdb/1h1q.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/1H1Q.pdb",
+      "sha256": "21dc4df2252e8ffbd572e906d05603fb50a2ccd338c366123984d1c099e66586",
+      "bytes": 824418,
+      "requiredComponents": {
+        "2A6": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 1298,
+              "insertionCode": "",
+              "atomRecords": 24,
+              "uniqueAtomNames": 24,
+              "alternateLocations": []
+            },
+            {
+              "model": 1,
+              "chain": "C",
+              "residueNumber": 1298,
+              "insertionCode": "",
+              "atomRecords": 24,
+              "uniqueAtomNames": 24,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "1H1R",
+      "file": "pdb/1h1r.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/1H1R.pdb",
+      "sha256": "99d6c4880676790089f0075e0e71392907d2c3980881b49de5e470595b02bc72",
+      "bytes": 866781,
+      "requiredComponents": {
+        "6CP": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 1298,
+              "insertionCode": "",
+              "atomRecords": 50,
+              "uniqueAtomNames": 25,
+              "alternateLocations": [
+                "A",
+                "B"
+              ]
+            },
+            {
+              "model": 1,
+              "chain": "C",
+              "residueNumber": 1298,
+              "insertionCode": "",
+              "atomRecords": 50,
+              "uniqueAtomNames": 25,
+              "alternateLocations": [
+                "A",
+                "B"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "1HVR",
+      "file": "pdb/1hvr.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/1HVR.pdb",
+      "sha256": "c8d3f238d3269a66823454d4681b71467b4677a18751ce094047961620b338cb",
+      "bytes": 190431,
+      "requiredComponents": {
+        "XK2": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 263,
+              "insertionCode": "",
+              "atomRecords": 46,
+              "uniqueAtomNames": 46,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "1OIU",
+      "file": "pdb/1oiu.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/1OIU.pdb",
+      "sha256": "1c259025f26036d15ddeb4458e262cfe6e4fecf20a586e16de9117ea8e391b5f",
+      "bytes": 837945,
+      "requiredComponents": {
+        "N76": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 1298,
+              "insertionCode": "",
+              "atomRecords": 28,
+              "uniqueAtomNames": 28,
+              "alternateLocations": []
+            },
+            {
+              "model": 1,
+              "chain": "C",
+              "residueNumber": 1298,
+              "insertionCode": "",
+              "atomRecords": 28,
+              "uniqueAtomNames": 28,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "2QBS",
+      "file": "pdb/2qbs.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/2QBS.pdb",
+      "sha256": "bf8fb54bd814297c521fb2277d849e28242ff193ba768ed9f3dfc0d32b86e754",
+      "bytes": 249318,
+      "requiredComponents": {
+        "024": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 800,
+              "insertionCode": "",
+              "atomRecords": 27,
+              "uniqueAtomNames": 27,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "2VA5",
+      "file": "pdb/2va5.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/2VA5.pdb",
+      "sha256": "41e881e27b4a7dbc179612aac2d7149cdc5bae8c3228d3e3db985e7a2c7b1963",
+      "bytes": 302616,
+      "requiredComponents": {
+        "C8C": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 1389,
+              "insertionCode": "",
+              "atomRecords": 19,
+              "uniqueAtomNames": 19,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "2VA6",
+      "file": "pdb/2va6.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/2VA6.pdb",
+      "sha256": "700e7f45a72abf6a28330620979b3094d1efe1666129cbfa5db439a80dba1e33",
+      "bytes": 304803,
+      "requiredComponents": {
+        "H24": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 1504,
+              "insertionCode": "",
+              "atomRecords": 24,
+              "uniqueAtomNames": 24,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "2VA7",
+      "file": "pdb/2va7.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/2VA7.pdb",
+      "sha256": "c2aac80d1f48677ac2a36f4cf4b791795db2559d0e76d333e751384dfe90fa50",
+      "bytes": 315819,
+      "requiredComponents": {
+        "C27": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 1505,
+              "insertionCode": "",
+              "atomRecords": 26,
+              "uniqueAtomNames": 26,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "2ZFF",
+      "file": "pdb/2zff.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/2ZFF.pdb",
+      "sha256": "fc49baf404749bb02b1d739e603b517773d879b086b78f520fcaf83906f88dcd",
+      "bytes": 455868,
+      "requiredComponents": {
+        "53U": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "H",
+              "residueNumber": 2001,
+              "insertionCode": "",
+              "atomRecords": 26,
+              "uniqueAtomNames": 26,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "3FLY",
+      "file": "pdb/3fly.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/3FLY.pdb",
+      "sha256": "1e9ce0111d3d0111a0301bf178ec802528a2f9f4b7813b88b1f21cb7a250db6b",
+      "bytes": 285444,
+      "requiredComponents": {
+        "FLY": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 361,
+              "insertionCode": "",
+              "atomRecords": 25,
+              "uniqueAtomNames": 25,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "3PTB",
+      "file": "pdb/3ptb.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/3PTB.pdb",
+      "sha256": "288f7954d4d013fa8eab3808e1037e2958e2dcd12c9eca65a3f1014404a9f9a2",
+      "bytes": 183384,
+      "requiredComponents": {
+        "BEN": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 1,
+              "insertionCode": "",
+              "atomRecords": 9,
+              "uniqueAtomNames": 9,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "4DER",
+      "file": "pdb/4der.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/4DER.pdb",
+      "sha256": "8e499fa738cbabe27d88c87f021f4f2a57f23bb83c58af4be382706ece8b61e8",
+      "bytes": 204039,
+      "requiredComponents": {
+        "AGI": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 201,
+              "insertionCode": "",
+              "atomRecords": 20,
+              "uniqueAtomNames": 20,
+              "alternateLocations": []
+            },
+            {
+              "model": 1,
+              "chain": "B",
+              "residueNumber": 201,
+              "insertionCode": "",
+              "atomRecords": 20,
+              "uniqueAtomNames": 20,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "4DES",
+      "file": "pdb/4des.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/4DES.pdb",
+      "sha256": "96e90c5e05aa9e8f92962aee018136bf3289b4a2302ca861ce05615e5cba90e0",
+      "bytes": 205821,
+      "requiredComponents": {
+        "57D": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 201,
+              "insertionCode": "",
+              "atomRecords": 19,
+              "uniqueAtomNames": 19,
+              "alternateLocations": []
+            },
+            {
+              "model": 1,
+              "chain": "B",
+              "residueNumber": 201,
+              "insertionCode": "",
+              "atomRecords": 19,
+              "uniqueAtomNames": 19,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "4DET",
+      "file": "pdb/4det.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/4DET.pdb",
+      "sha256": "93de18456470a7ec2119297f47825d6b0e5354cf45bcd11dc2ef56881b9c4606",
+      "bytes": 192861,
+      "requiredComponents": {
+        "KMP": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 201,
+              "insertionCode": "",
+              "atomRecords": 21,
+              "uniqueAtomNames": 21,
+              "alternateLocations": []
+            },
+            {
+              "model": 1,
+              "chain": "B",
+              "residueNumber": 201,
+              "insertionCode": "",
+              "atomRecords": 21,
+              "uniqueAtomNames": 21,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "4DEU",
+      "file": "pdb/4deu.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/4DEU.pdb",
+      "sha256": "ae179edc5e5b11e0313c2cba7f2955315aa21e7731d58e6a5d59fda45f542c35",
+      "bytes": 393984,
+      "requiredComponents": {
+        "NAR": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 205,
+              "insertionCode": "",
+              "atomRecords": 20,
+              "uniqueAtomNames": 20,
+              "alternateLocations": []
+            },
+            {
+              "model": 1,
+              "chain": "B",
+              "residueNumber": 202,
+              "insertionCode": "",
+              "atomRecords": 20,
+              "uniqueAtomNames": 20,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "4R6E",
+      "file": "pdb/4r6e.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/4R6E.pdb",
+      "sha256": "6886197f16e32a842811ae57bb8102a5b296b260361da306ecefe04b76005fa8",
+      "bytes": 1879848,
+      "requiredComponents": {
+        "3JD": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 1101,
+              "insertionCode": "",
+              "atomRecords": 24,
+              "uniqueAtomNames": 24,
+              "alternateLocations": []
+            },
+            {
+              "model": 1,
+              "chain": "B",
+              "residueNumber": 1101,
+              "insertionCode": "",
+              "atomRecords": 24,
+              "uniqueAtomNames": 24,
+              "alternateLocations": []
+            },
+            {
+              "model": 1,
+              "chain": "C",
+              "residueNumber": 1101,
+              "insertionCode": "",
+              "atomRecords": 24,
+              "uniqueAtomNames": 24,
+              "alternateLocations": []
+            },
+            {
+              "model": 1,
+              "chain": "D",
+              "residueNumber": 1101,
+              "insertionCode": "",
+              "atomRecords": 24,
+              "uniqueAtomNames": 24,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "4ZZX",
+      "file": "pdb/4zzx.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/4ZZX.pdb",
+      "sha256": "17fc89da3b57167c12ee04f80375b8556c22bbf341f92c0eaf20ef4031b05191",
+      "bytes": 525933,
+      "requiredComponents": {
+        "FSU": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 1584,
+              "insertionCode": "",
+              "atomRecords": 18,
+              "uniqueAtomNames": 18,
+              "alternateLocations": []
+            },
+            {
+              "model": 1,
+              "chain": "B",
+              "residueNumber": 1584,
+              "insertionCode": "",
+              "atomRecords": 18,
+              "uniqueAtomNames": 18,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "4ZZY",
+      "file": "pdb/4zzy.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/4ZZY.pdb",
+      "sha256": "e35afaea0ffd2dfe970cc64ed8ff710249f0c42a954f561c1fe0ec0fffee5f14",
+      "bytes": 274752,
+      "requiredComponents": {
+        "D7N": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 1584,
+              "insertionCode": "",
+              "atomRecords": 28,
+              "uniqueAtomNames": 28,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "5IGM",
+      "file": "pdb/5igm.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/5IGM.pdb",
+      "sha256": "994efc92c3167ebec4eb04d146d9a46287b723373d5ebe16585a1ae31906e2ce",
+      "bytes": 348705,
+      "requiredComponents": {
+        "BMF": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 301,
+              "insertionCode": "",
+              "atomRecords": 28,
+              "uniqueAtomNames": 28,
+              "alternateLocations": []
+            },
+            {
+              "model": 1,
+              "chain": "B",
+              "residueNumber": 301,
+              "insertionCode": "",
+              "atomRecords": 16,
+              "uniqueAtomNames": 16,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "5Q0I",
+      "file": "pdb/5q0i.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/5Q0I.pdb",
+      "sha256": "1d1b6a2bbe598d8d1fe96a5517206bfefac31079f256d744509ea3ec5d45ed97",
+      "bytes": 373734,
+      "requiredComponents": {
+        "0X0": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 501,
+              "insertionCode": "",
+              "atomRecords": 32,
+              "uniqueAtomNames": 32,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "5Y2O",
+      "file": "pdb/5y2o.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/5Y2O.pdb",
+      "sha256": "71ad932f87acd1d8ca6590364dd2a56c1f512749a20124217cdd4fc5afb9c728",
+      "bytes": 404190,
+      "requiredComponents": {
+        "8N6": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 501,
+              "insertionCode": "",
+              "atomRecords": 25,
+              "uniqueAtomNames": 25,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "5Y2T",
+      "file": "pdb/5y2t.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/5Y2T.pdb",
+      "sha256": "6092a6b5d0e57c3e4d51931b70be535aad517e9243367de1126c34802dd405c6",
+      "bytes": 435213,
+      "requiredComponents": {
+        "8LX": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 501,
+              "insertionCode": "",
+              "atomRecords": 34,
+              "uniqueAtomNames": 34,
+              "alternateLocations": []
+            },
+            {
+              "model": 1,
+              "chain": "B",
+              "residueNumber": 501,
+              "insertionCode": "",
+              "atomRecords": 34,
+              "uniqueAtomNames": 34,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "6COX",
+      "file": "pdb/6cox.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/6COX.pdb",
+      "sha256": "4713d3df74ffe1c1e8f6564e19996f2511fd45b2853eee44cb88434775de7429",
+      "bytes": 823770,
+      "requiredComponents": {
+        "S58": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 701,
+              "insertionCode": "",
+              "atomRecords": 26,
+              "uniqueAtomNames": 26,
+              "alternateLocations": []
+            },
+            {
+              "model": 1,
+              "chain": "B",
+              "residueNumber": 701,
+              "insertionCode": "",
+              "atomRecords": 26,
+              "uniqueAtomNames": 26,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "7AWC",
+      "file": "pdb/7awc.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/7AWC.pdb",
+      "sha256": "f1678df596916a7da38842bd50002fbf61fc38a36e8adf43006940cb944f6b1f",
+      "bytes": 420714,
+      "requiredComponents": {
+        "BRL": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "A",
+              "residueNumber": 501,
+              "insertionCode": "",
+              "atomRecords": 25,
+              "uniqueAtomNames": 25,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "pdbId": "7KPA",
+      "file": "pdb/7kpa.pdb",
+      "sourceUrl": "https://files.rcsb.org/download/7KPA.pdb",
+      "sha256": "da4fa18e7c52750ec6b9de35fd363357452b99e3f2b3064f831def46f31175d6",
+      "bytes": 310311,
+      "requiredComponents": {
+        "D84": {
+          "instances": [
+            {
+              "model": 1,
+              "chain": "C",
+              "residueNumber": 201,
+              "insertionCode": "",
+              "atomRecords": 41,
+              "uniqueAtomNames": 41,
+              "alternateLocations": []
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "ccdAssets": [
+    {
+      "componentId": "024",
+      "file": "ccd/024.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/024.cif",
+      "sha256": "1e6eb4e68b3ef8417fe943c66ff7419115845bc96bef38b8eeb1da0a71c11265",
+      "bytes": 9735,
+      "atomCount": 47,
+      "heavyAtomCount": 27,
+      "bondCount": 49,
+      "smiles": "c1cc(cc(c1)NC2CCCCC2)c3c(c(c(s3)C(=O)O)OCC(=O)O)Br",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.5.0"
+    },
+    {
+      "componentId": "0X0",
+      "file": "ccd/0X0.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/0X0.cif",
+      "sha256": "fd42c1e603d4d4ac442e9e6113868c65c0b96e807f0775a3bf02adfec7d0379d",
+      "bytes": 11748,
+      "atomCount": 66,
+      "heavyAtomCount": 32,
+      "bondCount": 67,
+      "smiles": "Cc1ccc(cc1)S(=O)(=O)[N@@](CC(=O)NC(C(C)C)C(C)C)c2ccc(c(c2)OC)OC",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.7.6"
+    },
+    {
+      "componentId": "2A6",
+      "file": "ccd/2A6.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/2A6.cif",
+      "sha256": "d414c634517e2b34be5ca06d13a5c1bbc7b7876d4e06c93fa03d7c0c7288479d",
+      "bytes": 9293,
+      "atomCount": 45,
+      "heavyAtomCount": 24,
+      "bondCount": 48,
+      "smiles": "c1ccc(cc1)Nc2nc3c(c(n2)OCC4CCCCC4)[nH]cn3",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.5.0"
+    },
+    {
+      "componentId": "3JD",
+      "file": "ccd/3JD.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/3JD.cif",
+      "sha256": "3aee356d6630b8f0776ed32bd8ded9b27b608f9dad979aa92b945f3d96cc0680",
+      "bytes": 9817,
+      "atomCount": 44,
+      "heavyAtomCount": 24,
+      "bondCount": 47,
+      "smiles": "c1cc2cn(nc2c(c1)C(=O)N)c3ccc(cc3)[C@@H]4CCCNC4",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.7.6"
+    },
+    {
+      "componentId": "53U",
+      "file": "ccd/53U.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/53U.cif",
+      "sha256": "b7ec8e26550643d275f0ea8cc01e47ef2bc69b926307cd6ea2c218d3805b497e",
+      "bytes": 11137,
+      "atomCount": 51,
+      "heavyAtomCount": 26,
+      "bondCount": 53,
+      "smiles": "c1ccc(cc1)C[C@H](C(=O)N2CCC[C@H]2C(=O)NCc3ccccc3)N",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.7.0"
+    },
+    {
+      "componentId": "57D",
+      "file": "ccd/57D.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/57D.cif",
+      "sha256": "bdb1c98860c2cbbc21f7656d7ffa04fa58d9efb8e6444d84614ddce14a24e3bf",
+      "bytes": 7986,
+      "atomCount": 29,
+      "heavyAtomCount": 19,
+      "bondCount": 31,
+      "smiles": "c1ccc(cc1)C2=CC(=O)c3c(cc(cc3O2)O)O",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.5.0"
+    },
+    {
+      "componentId": "6CP",
+      "file": "ccd/6CP.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/6CP.cif",
+      "sha256": "314d7959bc95982600849f43a29dbb63c2268bbea948c26a681e56e4d3f6b3a9",
+      "bytes": 9369,
+      "atomCount": 45,
+      "heavyAtomCount": 25,
+      "bondCount": 48,
+      "smiles": "c1cc(cc(c1)Cl)Nc2nc3c(c(n2)OCC4CCCCC4)[nH]cn3",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.5.0"
+    },
+    {
+      "componentId": "8LX",
+      "file": "ccd/8LX.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/8LX.cif",
+      "sha256": "aba6f77f5d5b5b0a9b411b008ddcbda2a1f9200701600eccf2e97647f215455a",
+      "bytes": 11591,
+      "atomCount": 58,
+      "heavyAtomCount": 34,
+      "bondCount": 61,
+      "smiles": "CN(CCOc1ccc(cc1)C[C@H]2C(=O)NC(=O)S2)c3cc(ncn3)Oc4ccc(cc4)OC",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "2.0.6"
+    },
+    {
+      "componentId": "8N6",
+      "file": "ccd/8N6.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/8N6.cif",
+      "sha256": "009c75caaf20a6709b3ec69fb44422e4f56d4501a8eff16ab9566e243921b9a0",
+      "bytes": 9783,
+      "atomCount": 45,
+      "heavyAtomCount": 25,
+      "bondCount": 47,
+      "smiles": "CCc1ccc(nc1)CCOc2ccc(cc2)C[C@H]3C(=O)NC(=O)S3",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "2.0.6"
+    },
+    {
+      "componentId": "AGI",
+      "file": "ccd/AGI.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/AGI.cif",
+      "sha256": "5bf0d884284d2ccdd0b9743ba2da385dbe51d1ca646fef5bc844af2ec36e94d3",
+      "bytes": 8040,
+      "atomCount": 30,
+      "heavyAtomCount": 20,
+      "bondCount": 32,
+      "smiles": "c1cc(ccc1C2=CC(=O)c3c(cc(cc3O2)O)O)O",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.5.0"
+    },
+    {
+      "componentId": "BEN",
+      "file": "ccd/BEN.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/BEN.cif",
+      "sha256": "a7ce813cbbac599168d4772f635ae23d7c6edb4d83a9891ebabcbe9e8bb66849",
+      "bytes": 5434,
+      "atomCount": 17,
+      "heavyAtomCount": 9,
+      "bondCount": 17,
+      "smiles": "[H]/N=C(\\c1ccccc1)/N",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.5.0"
+    },
+    {
+      "componentId": "BMF",
+      "file": "ccd/BMF.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/BMF.cif",
+      "sha256": "c3461e514b1068dfc03a7afbed627fa0dd40d9dd21f7d8b44e666c8903acf2df",
+      "bytes": 10630,
+      "atomCount": 48,
+      "heavyAtomCount": 28,
+      "bondCount": 50,
+      "smiles": "CCOC(=O)Nc1cc(nn2c1nnc2C)c3ccc(c(c3)NS(=O)(=O)C)C",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.7.6"
+    },
+    {
+      "componentId": "BRL",
+      "file": "ccd/BRL.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/BRL.cif",
+      "sha256": "502b0b72dc559404a8dbfa354cd6da549e272c6c5e50156068a889aa0933da0d",
+      "bytes": 10081,
+      "atomCount": 44,
+      "heavyAtomCount": 25,
+      "bondCount": 46,
+      "smiles": "CN(CCOc1ccc(cc1)C[C@H]2C(=O)NC(=O)S2)c3ccccn3",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.5.0"
+    },
+    {
+      "componentId": "C27",
+      "file": "ccd/C27.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/C27.cif",
+      "sha256": "3699a3d62e4395bb44c54b87c775d6acfa70ed14a79b2fa704b8ad8e73ca2662",
+      "bytes": 10131,
+      "atomCount": 51,
+      "heavyAtomCount": 26,
+      "bondCount": 53,
+      "smiles": "C[C@]1(CC(=O)N(C(=N1)N)C)CCc2cccc(c2)c3cccc(c3)OC",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.5.0"
+    },
+    {
+      "componentId": "C8C",
+      "file": "ccd/C8C.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/C8C.cif",
+      "sha256": "310dde8bb9e5815a402e7a283c0c98c0054883c8ebb14c44d13a113e65a582fd",
+      "bytes": 7753,
+      "atomCount": 33,
+      "heavyAtomCount": 19,
+      "bondCount": 35,
+      "smiles": "c1cc(cc2c1cc[nH]2)CCC3=CC(=O)NC(=N3)N",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.5.0"
+    },
+    {
+      "componentId": "D7N",
+      "file": "ccd/D7N.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/D7N.cif",
+      "sha256": "5264b7c8abe0e39e9e9cc32c26400915b3361b8cff1ffeb25c59a3e36e2a5c07",
+      "bytes": 9844,
+      "atomCount": 52,
+      "heavyAtomCount": 28,
+      "bondCount": 55,
+      "smiles": "c1c(cc(c2c1CN(C2=O)C3CCN(CC3)C4CCC(CC4)(F)F)C(=O)N)F",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.7.6"
+    },
+    {
+      "componentId": "D84",
+      "file": "ccd/D84.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/D84.cif",
+      "sha256": "c6e43b72a44b36ae8a068b8e4b1b5644490c094c31f64b57003fc990f4634871",
+      "bytes": 12992,
+      "atomCount": 67,
+      "heavyAtomCount": 41,
+      "bondCount": 72,
+      "smiles": "c1ccc(c(c1)Cn2c3cc(ccc3nc2COc4cccc(c4)N5CCCC5=O)C6=CNC(=O)C=C6)OC(F)F",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "2.0.6"
+    },
+    {
+      "componentId": "FLY",
+      "file": "ccd/FLY.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/FLY.cif",
+      "sha256": "e989614e3215499968381a0537f5227d42027eb07fda8241b3f175cd75d97e6a",
+      "bytes": 8864,
+      "atomCount": 41,
+      "heavyAtomCount": 25,
+      "bondCount": 43,
+      "smiles": "CC(C)Nc1ncc2c(n1)N(C(=O)C(=C2)Oc3ccc(cc3F)F)C",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.5.0"
+    },
+    {
+      "componentId": "FSU",
+      "file": "ccd/FSU.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/FSU.cif",
+      "sha256": "e943d0b641753cc6a384d1bdd886f4a93ea097a38bcbf5d592271ecb50f98806",
+      "bytes": 7607,
+      "atomCount": 34,
+      "heavyAtomCount": 18,
+      "bondCount": 35,
+      "smiles": "COCCCN1Cc2cccc(c2C1=O)C(=O)N",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.7.6"
+    },
+    {
+      "componentId": "H24",
+      "file": "ccd/H24.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/H24.cif",
+      "sha256": "3221b04b9d0066d92f46f3b37fd7128ff459e8fc72cb74608a23e65b1b850e2b",
+      "bytes": 9344,
+      "atomCount": 45,
+      "heavyAtomCount": 24,
+      "bondCount": 47,
+      "smiles": "C[C@]1(CC(=O)N(C(=N1)N)C)c2cccc(c2)c3cccc(c3)OC",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.5.0"
+    },
+    {
+      "componentId": "KMP",
+      "file": "ccd/KMP.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/KMP.cif",
+      "sha256": "8dec4df4ae3a0bc3e62db515d50913f695e6b87af75e6ad96136fbac4f79b720",
+      "bytes": 8042,
+      "atomCount": 31,
+      "heavyAtomCount": 21,
+      "bondCount": 33,
+      "smiles": "c1cc(ccc1C2=C(C(=O)c3c(cc(cc3O2)O)O)O)O",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.5.0"
+    },
+    {
+      "componentId": "N76",
+      "file": "ccd/N76.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/N76.cif",
+      "sha256": "03414e7618a1329785883b6c617fff3a37136961d91fb220b9a8843cc3893b57",
+      "bytes": 10040,
+      "atomCount": 50,
+      "heavyAtomCount": 28,
+      "bondCount": 53,
+      "smiles": "c1cc(cc(c1)S(=O)(=O)N)Nc2nc3c(c(n2)OCC4CCCCC4)nc[nH]3",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.5.0"
+    },
+    {
+      "componentId": "NAR",
+      "file": "ccd/NAR.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/NAR.cif",
+      "sha256": "2fc638359f875ea70ec472e27c4d1ef3db343e936f0f16d00891802b084aaa83",
+      "bytes": 7610,
+      "atomCount": 32,
+      "heavyAtomCount": 20,
+      "bondCount": 34,
+      "smiles": "c1cc(ccc1[C@@H]2CC(=O)c3c(cc(cc3O2)O)O)O",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.5.0"
+    },
+    {
+      "componentId": "S58",
+      "file": "ccd/S58.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/S58.cif",
+      "sha256": "44b8c85fe5555f933e43f1ba7ff18f62181aebbcdbfece2986d447bdbff6ebec",
+      "bytes": 8421,
+      "atomCount": 37,
+      "heavyAtomCount": 26,
+      "bondCount": 39,
+      "smiles": "c1cc(ccc1c2cc(nn2c3ccc(cc3)S(=O)(=O)N)C(F)(F)F)Br",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.5.0"
+    },
+    {
+      "componentId": "XK2",
+      "file": "ccd/XK2.cif",
+      "sourceUrl": "https://files.rcsb.org/ligands/download/XK2.cif",
+      "sha256": "0cdc6c31a4a97321d29a691915eb590e9ecc7d7093b4fd227b5b4a777f3b40df",
+      "bytes": 13454,
+      "atomCount": 84,
+      "heavyAtomCount": 46,
+      "bondCount": 90,
+      "smiles": "c1ccc(cc1)C[C@@H]2[C@@H]([C@H]([C@H](N(C(=O)N2Cc3ccc4ccccc4c3)Cc5ccc6ccccc6c5)Cc7ccccc7)O)O",
+      "smilesType": "SMILES_CANONICAL",
+      "smilesProgram": "OpenEye OEToolkits",
+      "smilesProgramVersion": "1.5.0"
+    }
+  ]
+}

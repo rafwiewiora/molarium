@@ -328,13 +328,20 @@ function featureMatchKind(originalSignature, candidateSignature) {
 }
 
 export function proposeLigandHydrogenBondFeatureRemaps(definitions, molecule,
-  ligandAtomIndices, { eligibleAtomIndices = [], beforeMolecule = null } = {}) {
+  ligandAtomIndices, { eligibleAtomIndices = [], beforeMolecule = null,
+    editRegionsOverride = null } = {}) {
   const eligible = new Set(Array.from(eligibleAtomIndices || [], Number));
   const features = perceiveLigandHydrogenBondFeatures(molecule, ligandAtomIndices);
   const acceptorById = new Map(features.acceptors.map((feature) => [feature.atomIds[0], feature]));
   const donorById = new Map(features.donors.map((feature) => [feature.atomIds[0], feature]));
   const donorPairs = new Map(features.donors.map((feature) => [feature.atomIds.join('\u0000'), feature]));
-  const regions = beforeMolecule ? editRegionIds(beforeMolecule, molecule) : null;
+  const inferredRegions = beforeMolecule ? editRegionIds(beforeMolecule, molecule) : null;
+  const regions = beforeMolecule && editRegionsOverride ? {
+    before:inferredRegions.before, after:inferredRegions.after,
+    removed:new Set(editRegionsOverride.removedAtomIds || []),
+    added:new Set(editRegionsOverride.addedAtomIds || []),
+    changed:new Set(editRegionsOverride.changedAtomIds || []),
+  } : inferredRegions;
   return Array.from(definitions || []).map((definition) => {
     const ligandRole = definition.receptorRole === 'donor' ? 'acceptor' : 'donor';
     const originalDescriptor = ligandRole === 'acceptor' ? definition.acceptor : definition.donor;
@@ -513,5 +520,8 @@ export function applyLigandHydrogenBondFeatureRemap(definition, candidate) {
     role:candidate.role, featureType:candidate.type,
     replacementAtomIds:[...candidate.atomIds], geometry:structuredClone(candidate.geometry),
   };
+  const originalFeature = candidate.role === 'acceptor' ? definition.acceptor : definition.donor;
+  remapped.targetLigandFeatureReferencePoint = originalFeature?.referencePoint
+    ? { ...originalFeature.referencePoint } : null;
   return remapped;
 }

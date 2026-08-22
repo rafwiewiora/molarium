@@ -4135,12 +4135,13 @@ async function runBrowserConstrainedDocking(options = {}) {
   updateDockingUi(); setDockingStatus('Preparing edited ligand');
   try {
     const [adapter, referenceCore, receptorScore, workflow, protocolModule, labbookModule,
-      torsionSearch, constraints, stormmCore, remapModule] = await Promise.all([
+      torsionSearch, constraints, stormmCore, remapModule, featureSeeding] = await Promise.all([
       import('./docking/browser-adapter.mjs'), import('./docking/reference-core.mjs'),
       import('./docking/receptor-score.mjs'), import('./docking/workflow.mjs'),
       import('./docking/protocol.mjs'), import('./docking/labbook.mjs'),
       import('./docking/torsion-search.mjs'), import('./docking/constraints.mjs'),
       import('./stormm/core.mjs'), import('./docking/contact-remap.mjs'),
+      import('./docking/feature-seeding.mjs'),
     ]);
     referenceCore.ensureStableAtomIds(state.molecule,
       `design-${state.molecule.source?.pdbId || 'complex'}`);
@@ -4203,17 +4204,22 @@ async function runBrowserConstrainedDocking(options = {}) {
     const requestedConformers = Math.max(1, Math.min(64, Math.round(Number(options.conformerCount
       ?? document.querySelector('#docking-conformer-count').value))));
     const seed = Number(options.seed ?? activeProtocol.sampling.seed);
+    const coreAtomIndices = coreMap.atomPairs.map((pair) => pair[1]);
     let conformerResult, allConformers, valid, minimumRdkitEnergy = null;
+    let featureSeedResult = null;
     if (posePropagation) {
       setDockingStatus(`Propagating ${coreMap.atomPairs.length} unchanged atoms`);
       const editedPositions = Float64Array.from(plan.molecule.atoms.flatMap((atom) =>
         [atom.x, atom.y, atom.z]));
-      allConformers = Array.from({ length:requestedConformers }, () =>
-        new Float64Array(editedPositions));
-      valid = allConformers.map((positions) => ({ positions, energy:null,
-        forcefield:'recorded graph-edit coordinates' }));
-      conformerResult = { backend:'Molarium stable edit lineage', rdkitVersion:null,
-        preparationForcefield:'recorded graph-edit coordinates' };
+      featureSeedResult = featureSeeding.featureGuidedPoseSeeds({ molecule:plan.molecule,
+        initialPositions:editedPositions, coreAtomIndices,
+        hydrogenBondConstraints:mappedHydrogenBonds.constraints,
+        count:requestedConformers });
+      allConformers = featureSeedResult.seeds.map((entry) => entry.positions);
+      valid = featureSeedResult.seeds.map(({ positions, audit }) => ({ positions, energy:null,
+        forcefield:featureSeedResult.method, featureSeedAudit:audit }));
+      conformerResult = { backend:'Molarium stable edit lineage + captured-feature seeding',
+        rdkitVersion:null, preparationForcefield:featureSeedResult.method };
     } else {
       setDockingStatus(`Generating ${requestedConformers} conformers`);
       conformerResult = await runWorkerJob('rdkit', 'conformers', plan.molecule,
@@ -4250,6 +4256,9 @@ async function runBrowserConstrainedDocking(options = {}) {
         : snapped;
     });
     const fixedCoreStartEnergies = fixedCoreStarts.map(ligandInternalEnergy);
+    const fixedCoreStartHydrogenBonds = fixedCoreStarts.map((positions) =>
+      workflow.evaluatePoseHydrogenBonds(mappedHydrogenBonds.constraints, positions,
+        activeProtocol.hydrogenBondConstraint));
     if (fixedCoreStartEnergies.some((energy) => !Number.isFinite(energy)))
       throw new Error('OpenFF Sage returned a non-finite fixed-core ligand energy.');
     const minimumSageStartEnergy = Math.min(...fixedCoreStartEnergies);
@@ -4278,7 +4287,6 @@ async function runBrowserConstrainedDocking(options = {}) {
     const fixedRelaxIterations = posePropagation ? Math.max(0, Math.min(250,
       Math.round(Number(options.fixedRelaxIterations
         ?? fixedRelaxProtocol.iterationsDefault ?? 60)))) : 0;
-    const coreAtomIndices = coreMap.atomPairs.map((pair) => pair[1]);
     const startedAt = new Date().toISOString();
     const inputs = await labbookModule.inputProvenance({
       receptorText:reference.receptorInputText,
@@ -4379,6 +4387,13 @@ async function runBrowserConstrainedDocking(options = {}) {
           environment:'vacuum', constraintMode:'none', receptorIncluded:false,
           acceptance:'retain only if constraint feasibility is not lost and the complete ranking objective improves',
         } : null,
+        featureGuidedSeeding:posePropagation && featureSeedResult ? {
+          method:featureSeedResult.method,
+          requested:featureSeedResult.requestedCount,
+          uniqueSeeds:featureSeedResult.uniqueSeedCount,
+          targetVariants:featureSeedResult.targetVariantCount,
+          limitation:featureSeedResult.limitation,
+        } : null,
         feasibilityRule:'all required constraints rank before energy',
         omitted:['receptor relaxation', 'receptor grid', 'desolvation', 'entropy',
           'ring-pucker moves', 'binding free energy'],
@@ -4427,6 +4442,25 @@ async function runBrowserConstrainedDocking(options = {}) {
         finiteScoredConformers:valid.length, seed,
         conformerBackend:conformerResult.backend, rdkitVersion:conformerResult.rdkitVersion,
         conformerForcefields:[...new Set(valid.map((entry) => entry.forcefield).filter(Boolean))],
+        featureGuidedSeeding:featureSeedResult ? {
+          method:featureSeedResult.method,
+          requested:featureSeedResult.requestedCount,
+          uniqueSeeds:featureSeedResult.uniqueSeedCount,
+          targetVariants:featureSeedResult.targetVariantCount,
+          limitation:featureSeedResult.limitation,
+          seeds:valid.map((entry, index) => ({ conformerIndex:index,
+            ...structuredClone(entry.featureSeedAudit),
+            hydrogenBonds:fixedCoreStartHydrogenBonds[index].map((constraint) => ({
+              id:constraint.id,
+              selectedAlternativeId:constraint.selectedAlternativeId || null,
+              satisfied:constraint.satisfied,
+              donorAcceptorDistanceAngstrom:constraint.donorAcceptorDistanceAngstrom,
+              hydrogenAcceptorDistanceAngstrom:constraint.hydrogenAcceptorDistanceAngstrom,
+              dhaAngleDegrees:constraint.dhaAngleDegrees,
+              penaltyKcalMol:constraint.penaltyKcalMol,
+            })),
+          })),
+        } : null,
         minimumConformerEnergyKcalMol:minimumRdkitEnergy,
         minimumFixedCoreSageEnergyKcalMol:minimumSageStartEnergy,
         ligandForcefield:ligandParameters.forcefield,
@@ -6604,6 +6638,220 @@ window.molariumTest = Object.freeze({
   async previewPdbPreparation(options = {}, definitions = null) {
     return createPdbPreparationPreview(state.molecule, options, definitions);
   },
+  async parameterizePdbPreview(preview) {
+    if (!preview?.molecule?.atoms?.length) throw new Error('A prepared PDB preview is required');
+    if (preview.audit?.blockers?.length)
+      throw new Error(`Preparation stopped: ${preview.audit.blockers.join('; ')}`);
+    const prepared = structuredClone(preview.molecule);
+    const parameters = await runOpenMMJob('parameters', prepared, () => {});
+    prepared.parameterization = {
+      forcefield:parameters.forcefield, chargeModel:parameters.chargeModel,
+      sourceSha256:parameters.sourceSha256, system:parameters.system, labels:parameters.labels,
+    };
+    prepared.preparation = { ...(prepared.preparation || {}), status:'parameterized-experimental',
+      parameterized:true, audit:{ ...structuredClone(preview.audit), parameterization:{
+        forcefield:parameters.forcefield, chargeModel:parameters.chargeModel,
+        sourceSha256:parameters.sourceSha256, parameterCounts:parameters.parameterCounts,
+      } } };
+    state.buildHistory = []; state.redoHistory = [];
+    loadMolecule(prepared); updateHistoryButtons();
+    return { atoms:prepared.atoms.length, forcefield:parameters.forcefield,
+      chargeModel:parameters.chargeModel, sourceSha256:parameters.sourceSha256,
+      parameterCounts:structuredClone(parameters.parameterCounts) };
+  },
+  async stageBenchmarkPoseProduct({ caseId, productSmiles, posePropagationMap,
+    interactionHypotheses = [] } = {}) {
+    if (!state.dockingReference || state.dockingReference.mode !== 'pose-propagation')
+      throw new Error('Capture a pose-propagation reference before staging a benchmark product');
+    if (!productSmiles || !posePropagationMap?.commonAtoms?.length)
+      throw new Error('A product graph and exact pose-propagation map are required');
+    const [adapter, referenceCore, constraints, remap, featureSeeding] = await Promise.all([
+      import('./docking/browser-adapter.mjs'), import('./docking/reference-core.mjs'),
+      import('./docking/constraints.mjs'), import('./docking/contact-remap.mjs'),
+      import('./docking/feature-seeding.mjs'),
+    ]);
+    const reference = state.dockingReference;
+    const component = dockingLigandComponent();
+    if (!component) throw new Error('The captured reference ligand component is missing');
+    const beforePlan = adapter.createLigandPlan(state.molecule, component.atomIndices,
+      `benchmark-reference-${caseId || 'case'}`);
+    const beforeLigand = structuredClone(beforePlan.molecule);
+    const beforeByAtomName = new Map(beforePlan.molecule.atoms
+      .map((atom, localIndex) => [atom.atomName, { atom, localIndex }]).filter(([name]) => name));
+    const referenceIndexById = new Map(reference.ligand.atomIds.map((id, index) => [id, index]));
+    const embedded = await createRdkitSmilesMolecule(productSmiles,
+      `${caseId || 'benchmark'} product`);
+    const product = embedded.molecule;
+    const productHeavyIndices = product.atoms.flatMap((atom, index) =>
+      atom.element === 'H' ? [] : [index]);
+    const productHeavyOrdinal = new Map(productHeavyIndices.map((atomIndex, ordinal) =>
+      [atomIndex, ordinal]));
+    if (productHeavyIndices.length !== posePropagationMap.productHeavyAtoms)
+      throw new Error(`Product heavy-atom count changed (${productHeavyIndices.length} != ${posePropagationMap.productHeavyAtoms})`);
+    const template = state.molecule.atoms[component.atomIndices[0]];
+    const mappedPairs = [];
+    for (const mapping of posePropagationMap.commonAtoms) {
+      const before = beforeByAtomName.get(mapping.referenceAtomName);
+      const productIndex = productHeavyIndices[mapping.productAtomIndex];
+      if (!before || !Number.isInteger(productIndex))
+        throw new Error(`Atom-map identity is unavailable for ${mapping.referenceAtomName}`);
+      const productAtom = product.atoms[productIndex];
+      if (productAtom.element !== mapping.element || before.atom.element !== mapping.element)
+        throw new Error(`Atom-map element changed for ${mapping.referenceAtomName}`);
+      productAtom.designAtomId = before.atom.designAtomId;
+      productAtom.atomName = mapping.referenceAtomName;
+      mappedPairs.push([referenceIndexById.get(before.atom.designAtomId), productIndex]);
+    }
+    if (mappedPairs.some(([referenceIndex]) => !Number.isInteger(referenceIndex)))
+      throw new Error('A mapped reference atom is absent from the captured pose');
+    const initialPositions = Float64Array.from(product.atoms.flatMap((atom) =>
+      [atom.x, atom.y, atom.z]));
+    const globallyAlignedPositions = constraints.applyCoreTransform(initialPositions,
+      constraints.fittedCoreTransform(reference.ligand.positions, initialPositions, mappedPairs));
+    const attachedPlacement = featureSeeding.attachNonCoreRegionsToSnappedCore({
+      molecule:product, alignedPositions:globallyAlignedPositions,
+      referencePositions:reference.ligand.positions, coreAtomPairs:mappedPairs,
+    });
+    const alignedPositions = attachedPlacement.positions;
+    product.atoms.forEach((atom, index) => {
+      atom.x = alignedPositions[index * 3]; atom.y = alignedPositions[index * 3 + 1];
+      atom.z = alignedPositions[index * 3 + 2];
+      atom.record = 'HETATM'; atom.residueName = template.residueName;
+      atom.chain = template.chain; atom.residueIndex = template.residueIndex;
+      atom.insertionCode = template.insertionCode || '';
+      if (!atom.atomName) atom.atomName = atom.element === 'H'
+        ? `HNEW${index + 1}` : `${atom.element}NEW${index + 1}`;
+      atom.benchmarkProductAtomIndex = productHeavyOrdinal.get(index) ?? null;
+    });
+    product.bonds.forEach((bond) => {
+      bond.distance = bondDistance(product, bond.a, bond.b);
+    });
+    product.source = { ...(product.source || {}), format:'molarium-benchmark-product',
+      caseId:caseId || null, inputSmiles:productSmiles,
+      atomMapSource:posePropagationMap.source || 'atom-maps.v0.1.json' };
+    referenceCore.ensureStableAtomIds(product, `benchmark-product-${caseId || 'case'}`,
+      state.molecule.source?.designAtomIdLedger || reference.ligand.atomIds);
+
+    const removed = new Set(component.atomIndices);
+    const retainedIndices = state.molecule.atoms.flatMap((_, index) => removed.has(index) ? [] : [index]);
+    const retainedMap = new Map(retainedIndices.map((oldIndex, newIndex) => [oldIndex, newIndex]));
+    const atoms = retainedIndices.map((index) => ({ ...state.molecule.atoms[index] }));
+    const productOffset = atoms.length;
+    atoms.push(...product.atoms.map((atom) => ({ ...atom })));
+    const bonds = state.molecule.bonds.flatMap((bond) =>
+      retainedMap.has(bond.a) && retainedMap.has(bond.b) ? [{ ...bond,
+        a:retainedMap.get(bond.a), b:retainedMap.get(bond.b) }] : []);
+    bonds.push(...product.bonds.map((bond) => ({ ...bond,
+      a:bond.a + productOffset, b:bond.b + productOffset })));
+    const next = { ...state.molecule, atoms, bonds,
+      smiles:`${state.molecule.source?.pdbId || 'PDB'} + ${productSmiles}`,
+      source:{ ...(state.molecule.source || {}), dockingBenchmark:{ caseId:caseId || null,
+        productSmiles, atomMapSource:posePropagationMap.source || 'atom-maps.v0.1.json' } } };
+    delete next.parameterization;
+    state.molecule = next;
+    state.dockingResult = null; state.dockingPoseIndex = 0;
+    state.selectedAtom = null; state.selectedAtoms = [];
+    refreshStructureComponents();
+    const currentLigandIndices = currentDockingLigandAtomIndices(reference);
+    const currentPlan = adapter.createLigandPlan(state.molecule, currentLigandIndices,
+      `benchmark-product-${caseId || 'case'}`);
+    const referenceAtomIds = new Set(reference.ligand.atomIds);
+    const removedBenchmarkAtomIds = posePropagationMap.deletedReferenceAtoms.flatMap((entry) => {
+      const atom = beforeByAtomName.get(entry.referenceAtomName)?.atom;
+      return atom?.designAtomId ? [atom.designAtomId] : [];
+    });
+    const addedBenchmarkHeavyIds = posePropagationMap.addedProductAtoms.map((entry) => {
+      const productIndex = productHeavyIndices[entry.productAtomIndex];
+      return product.atoms[productIndex]?.designAtomId;
+    }).filter(Boolean);
+    const addedHeavyIdSet = new Set(addedBenchmarkHeavyIds);
+    const addedBenchmarkAtomIds = currentPlan.molecule.atoms.flatMap((atom, atomIndex) => {
+      if (addedHeavyIdSet.has(atom.designAtomId)) return [atom.designAtomId];
+      if (atom.element !== 'H' || referenceAtomIds.has(atom.designAtomId)) return [];
+      const attachedToAddedHeavy = currentPlan.molecule.bonds.some((bond) => {
+        const neighbor = bond.a === atomIndex ? bond.b : bond.b === atomIndex ? bond.a : null;
+        return neighbor != null && addedHeavyIdSet.has(
+          currentPlan.molecule.atoms[neighbor]?.designAtomId);
+      });
+      return attachedToAddedHeavy ? [atom.designAtomId] : [];
+    });
+    const addedBenchmarkIdSet = new Set(addedBenchmarkAtomIds);
+    const benchmarkEligibleAtomIndices = currentPlan.molecule.atoms.flatMap((atom, index) =>
+      addedBenchmarkIdSet.has(atom.designAtomId) ? [index] : []);
+    const proposals = remap.proposeLigandHydrogenBondFeatureRemaps(reference.hydrogenBonds,
+      currentPlan.molecule, currentPlan.molecule.atoms.map((_, index) => index), {
+        eligibleAtomIndices:benchmarkEligibleAtomIndices,
+        beforeMolecule:beforeLigand,
+        editRegionsOverride:{ removedAtomIds:removedBenchmarkAtomIds,
+          addedAtomIds:addedBenchmarkAtomIds, changedAtomIds:[] },
+      });
+    const hypotheses = new Map(interactionHypotheses
+      .filter((entry) => entry.kind === 'hydrogen-bond').map((entry) => [entry.capturedId, entry]));
+    for (const definition of reference.hydrogenBonds) {
+      const hypothesis = hypotheses.get(definition.id);
+      if (!hypothesis || hypothesis.label !== definition.label)
+        throw new Error(`Captured contact ${definition.id} differs from the pre-registered input`);
+    }
+    state.dockingContactRemaps = new Map();
+    state.dockingContactRemapProposals = new Map(proposals
+      .filter((proposal) => proposal.status !== 'available')
+      .map((proposal) => [proposal.id, { ...proposal,
+        priorEffectiveDefinition:structuredClone(reference.hydrogenBonds
+          .find((definition) => definition.id === proposal.id)),
+        editLineage:[{ method:'pre-registered-reference-product-MCS', caseId:caseId || null,
+          commonHeavyAtoms:posePropagationMap.commonHeavyAtoms,
+          referenceBoundary:structuredClone(posePropagationMap.referenceBoundary),
+          productBoundary:structuredClone(posePropagationMap.productBoundary) }],
+      }]));
+    const selected = new Set();
+    const unavailableTargets = [], remappedTargets = [];
+    for (const definition of reference.hydrogenBonds) {
+      const hypothesis = hypotheses.get(definition.id);
+      const proposal = proposals.find((entry) => entry.id === definition.id);
+      if (proposal?.status === 'available') selected.add(definition.id);
+      else if (hypothesis?.targetFeature && proposal?.candidates?.length) {
+        selected.add(definition.id); remappedTargets.push({ id:definition.id,
+          status:proposal.status, candidates:proposal.candidates.map((candidate) => ({
+            id:candidate.id, role:candidate.role, type:candidate.type,
+            matchKind:candidate.matchKind,
+          })) });
+      } else if (hypothesis?.targetFeature) unavailableTargets.push({ id:definition.id,
+        expectedTransfer:hypothesis.expectedTransfer, status:proposal?.status || 'unavailable' });
+    }
+    state.dockingSelectedHbondIds = selected;
+    updateInfo(); updateDockingUi(); updateOptimizerControls(); draw();
+    return { caseId:caseId || null, productAtoms:currentPlan.molecule.atoms.length,
+      productHeavyAtoms:productHeavyIndices.length, commonHeavyAtoms:mappedPairs.length,
+      selectedContactIds:[...selected], unavailableTargets, remappedTargets,
+      proposals:proposals.map((proposal) => ({ id:proposal.id, status:proposal.status,
+        ligandRole:proposal.ligandRole, candidateCount:proposal.candidates.length,
+        candidateTypes:proposal.candidates.map((candidate) => candidate.type) })),
+      registeredEditRegion:{ removedAtomIds:removedBenchmarkAtomIds,
+        addedAtomIds:addedBenchmarkAtomIds },
+      embedding:{ rdkitVersion:embedded.result.rdkitVersion,
+        forcefield:embedded.result.forcefield, conformerCount:embedded.result.conformerCount,
+        seed:embedded.result.conformerSeed,
+        attachedPlacement:{ method:attachedPlacement.method,
+          regions:structuredClone(attachedPlacement.regions) } },
+    };
+  },
+  benchmarkCurrentLigand() {
+    const indices = currentDockingLigandAtomIndices();
+    return {
+      atoms:indices.map((globalAtomIndex, productAtomIndex) => {
+        const atom = state.molecule.atoms[globalAtomIndex];
+        return { productAtomIndex, globalAtomIndex, designAtomId:atom.designAtomId,
+          benchmarkProductAtomIndex:Number.isInteger(atom.benchmarkProductAtomIndex)
+            ? atom.benchmarkProductAtomIndex : null,
+          atomName:atom.atomName || null, element:atom.element,
+          x:Number(atom.x), y:Number(atom.y), z:Number(atom.z) };
+      }),
+      bonds:state.molecule.bonds.flatMap((bond) => {
+        const first = indices.indexOf(bond.a), second = indices.indexOf(bond.b);
+        return first >= 0 && second >= 0 ? [{ a:first, b:second, order:Number(bond.order || 1) }] : [];
+      }),
+    };
+  },
   relaxPolarHydrogens(inputMolecule = null) {
     const molecule = structuredClone(inputMolecule || state.molecule);
     const heavyBefore = molecule.atoms.map((atom) => atom.element === 'H' ? null : [atom.x, atom.y, atom.z]);
@@ -7002,6 +7250,14 @@ window.molariumTest = Object.freeze({
       receptorAtomCount:reference.receptorSite.atoms.length,
       hydrogenBonds:reference.hydrogenBonds.map((entry) => ({
         id:entry.id, label:entry.label, receptorRole:entry.receptorRole,
+        referenceGeometry:structuredClone(entry.referenceGeometry || null),
+        participants:Object.fromEntries(['donor', 'hydrogen', 'acceptor'].map((role) => {
+          const participant = entry[role];
+          return [role, participant?.scope === 'receptor'
+            ? { scope:'receptor', point:structuredClone(participant.point) }
+            : { scope:'ligand', designAtomId:participant?.designAtomId,
+              referencePoint:structuredClone(participant?.referencePoint || null) }];
+        })),
       })) };
   },
   async runConstrainedDocking(options = {}) {
@@ -7010,6 +7266,17 @@ window.molariumTest = Object.freeze({
     return { mode:result.mode, candidates:result.run.candidates.length, feasible:result.run.feasibleCount,
       distinctPoses:result.distinctPoseEntries?.length || 0,
       distinctFeasible:result.distinctFeasibleCount || 0,
+      topPoses:result.run.candidates.slice(0, 5).map((pose) => ({
+        rank:pose.rank, feasible:pose.feasible,
+        atoms:result.plan.molecule.atoms.flatMap((atom, atomIndex) =>
+          Number.isInteger(atom.benchmarkProductAtomIndex) ? [{
+            productAtomIndex:atom.benchmarkProductAtomIndex,
+            element:atom.element,
+            x:Number(pose.positions[atomIndex * 3]),
+            y:Number(pose.positions[atomIndex * 3 + 1]),
+            z:Number(pose.positions[atomIndex * 3 + 2]),
+          }] : []),
+      })),
       selected:{ rank:result.run.selected.rank, feasible:result.run.selected.feasible,
         scoreKcalMol:result.run.selected.totalScoreKcalMol,
         physicalKcalMol:result.run.selected.physicalEnergyKcalMol,

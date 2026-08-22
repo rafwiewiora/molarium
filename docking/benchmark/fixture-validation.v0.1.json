@@ -1,0 +1,751 @@
+{
+  "schemaVersion": 1,
+  "datasetId": "molarium-bioisostere-pose-propagation-25",
+  "curationSha256": "919b9d39e449cca2825958daff5bfdb76c0263d75d1892d0714c1e9b9a09fb20",
+  "fixtureIndexSha256": "474bb988338252c117f862957da21b2dbb053a7da1222a18a4d38e2b21709ad4",
+  "rdkitVersion": "2025.03.4",
+  "pdbCount": 25,
+  "ccdCount": 25,
+  "cases": [
+    {
+      "caseId": "paired-parp2-4zzy-d7n-to-4zzx-fsu",
+      "reference": {
+        "pdbId": "4ZZY",
+        "componentId": "D7N",
+        "coordinateFile": "fixtures/pdb/4zzy.pdb",
+        "coordinateSha256": "e35afaea0ffd2dfe970cc64ed8ff710249f0c42a954f561c1fe0ec0fffee5f14",
+        "ccdFile": "fixtures/ccd/D7N.cif",
+        "ccdSha256": "5264b7c8abe0e39e9e9cc32c26400915b3361b8cff1ffeb25c59a3e36e2a5c07",
+        "canonicalSmiles": "NC(=O)c1cc(F)cc2c1C(=O)N(C1CCN(C3CCC(F)(F)CC3)CC1)C2",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 1584,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 28,
+          "ccdHeavyAtoms": 28
+        }
+      },
+      "analogue": {
+        "pdbId": "4ZZX",
+        "componentId": "FSU",
+        "coordinateFile": "fixtures/pdb/4zzx.pdb",
+        "coordinateSha256": "17fc89da3b57167c12ee04f80375b8556c22bbf341f92c0eaf20ef4031b05191",
+        "ccdFile": "fixtures/ccd/FSU.cif",
+        "ccdSha256": "e943d0b641753cc6a384d1bdd886f4a93ea097a38bcbf5d592271ecb50f98806",
+        "canonicalSmiles": "COCCCN1Cc2cccc(C(N)=O)c2C1=O",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 1584,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 18,
+          "ccdHeavyAtoms": 18
+        }
+      }
+    },
+    {
+      "caseId": "paired-pparg-5y2o-8n6-to-5y2t-8lx",
+      "reference": {
+        "pdbId": "5Y2O",
+        "componentId": "8N6",
+        "coordinateFile": "fixtures/pdb/5y2o.pdb",
+        "coordinateSha256": "71ad932f87acd1d8ca6590364dd2a56c1f512749a20124217cdd4fc5afb9c728",
+        "ccdFile": "fixtures/ccd/8N6.cif",
+        "ccdSha256": "009c75caaf20a6709b3ec69fb44422e4f56d4501a8eff16ab9566e243921b9a0",
+        "canonicalSmiles": "CCc1ccc(CCOc2ccc(C[C@@H]3SC(=O)NC3=O)cc2)nc1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 501,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 25,
+          "ccdHeavyAtoms": 25
+        }
+      },
+      "analogue": {
+        "pdbId": "5Y2T",
+        "componentId": "8LX",
+        "coordinateFile": "fixtures/pdb/5y2t.pdb",
+        "coordinateSha256": "6092a6b5d0e57c3e4d51931b70be535aad517e9243367de1126c34802dd405c6",
+        "ccdFile": "fixtures/ccd/8LX.cif",
+        "ccdSha256": "aba6f77f5d5b5b0a9b411b008ddcbda2a1f9200701600eccf2e97647f215455a",
+        "canonicalSmiles": "COc1ccc(Oc2cc(N(C)CCOc3ccc(C[C@@H]4SC(=O)NC4=O)cc3)ncn2)cc1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 501,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 34,
+          "ccdHeavyAtoms": 34
+        }
+      }
+    },
+    {
+      "caseId": "paired-pparg-5y2o-8n6-to-7awc-brl",
+      "reference": {
+        "pdbId": "5Y2O",
+        "componentId": "8N6",
+        "coordinateFile": "fixtures/pdb/5y2o.pdb",
+        "coordinateSha256": "71ad932f87acd1d8ca6590364dd2a56c1f512749a20124217cdd4fc5afb9c728",
+        "ccdFile": "fixtures/ccd/8N6.cif",
+        "ccdSha256": "009c75caaf20a6709b3ec69fb44422e4f56d4501a8eff16ab9566e243921b9a0",
+        "canonicalSmiles": "CCc1ccc(CCOc2ccc(C[C@@H]3SC(=O)NC3=O)cc2)nc1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 501,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 25,
+          "ccdHeavyAtoms": 25
+        }
+      },
+      "analogue": {
+        "pdbId": "7AWC",
+        "componentId": "BRL",
+        "coordinateFile": "fixtures/pdb/7awc.pdb",
+        "coordinateSha256": "f1678df596916a7da38842bd50002fbf61fc38a36e8adf43006940cb944f6b1f",
+        "ccdFile": "fixtures/ccd/BRL.cif",
+        "ccdSha256": "502b0b72dc559404a8dbfa354cd6da549e272c6c5e50156068a889aa0933da0d",
+        "canonicalSmiles": "CN(CCOc1ccc(C[C@@H]2SC(=O)NC2=O)cc1)c1ccccn1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 501,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 25,
+          "ccdHeavyAtoms": 25
+        }
+      }
+    },
+    {
+      "caseId": "paired-ttr-4des-57d-to-4der-agi",
+      "reference": {
+        "pdbId": "4DES",
+        "componentId": "57D",
+        "coordinateFile": "fixtures/pdb/4des.pdb",
+        "coordinateSha256": "96e90c5e05aa9e8f92962aee018136bf3289b4a2302ca861ce05615e5cba90e0",
+        "ccdFile": "fixtures/ccd/57D.cif",
+        "ccdSha256": "bdb1c98860c2cbbc21f7656d7ffa04fa58d9efb8e6444d84614ddce14a24e3bf",
+        "canonicalSmiles": "O=c1cc(-c2ccccc2)oc2cc(O)cc(O)c12",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 201,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 19,
+          "ccdHeavyAtoms": 19
+        }
+      },
+      "analogue": {
+        "pdbId": "4DER",
+        "componentId": "AGI",
+        "coordinateFile": "fixtures/pdb/4der.pdb",
+        "coordinateSha256": "8e499fa738cbabe27d88c87f021f4f2a57f23bb83c58af4be382706ece8b61e8",
+        "ccdFile": "fixtures/ccd/AGI.cif",
+        "ccdSha256": "5bf0d884284d2ccdd0b9743ba2da385dbe51d1ca646fef5bc844af2ec36e94d3",
+        "canonicalSmiles": "O=c1cc(-c2ccc(O)cc2)oc2cc(O)cc(O)c12",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 201,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 20,
+          "ccdHeavyAtoms": 20
+        }
+      }
+    },
+    {
+      "caseId": "paired-ttr-4des-57d-to-4det-kmp",
+      "reference": {
+        "pdbId": "4DES",
+        "componentId": "57D",
+        "coordinateFile": "fixtures/pdb/4des.pdb",
+        "coordinateSha256": "96e90c5e05aa9e8f92962aee018136bf3289b4a2302ca861ce05615e5cba90e0",
+        "ccdFile": "fixtures/ccd/57D.cif",
+        "ccdSha256": "bdb1c98860c2cbbc21f7656d7ffa04fa58d9efb8e6444d84614ddce14a24e3bf",
+        "canonicalSmiles": "O=c1cc(-c2ccccc2)oc2cc(O)cc(O)c12",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 201,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 19,
+          "ccdHeavyAtoms": 19
+        }
+      },
+      "analogue": {
+        "pdbId": "4DET",
+        "componentId": "KMP",
+        "coordinateFile": "fixtures/pdb/4det.pdb",
+        "coordinateSha256": "93de18456470a7ec2119297f47825d6b0e5354cf45bcd11dc2ef56881b9c4606",
+        "ccdFile": "fixtures/ccd/KMP.cif",
+        "ccdSha256": "8dec4df4ae3a0bc3e62db515d50913f695e6b87af75e6ad96136fbac4f79b720",
+        "canonicalSmiles": "O=c1c(O)c(-c2ccc(O)cc2)oc2cc(O)cc(O)c12",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 201,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 21,
+          "ccdHeavyAtoms": 21
+        }
+      }
+    },
+    {
+      "caseId": "paired-ttr-4der-agi-to-4deu-nar",
+      "reference": {
+        "pdbId": "4DER",
+        "componentId": "AGI",
+        "coordinateFile": "fixtures/pdb/4der.pdb",
+        "coordinateSha256": "8e499fa738cbabe27d88c87f021f4f2a57f23bb83c58af4be382706ece8b61e8",
+        "ccdFile": "fixtures/ccd/AGI.cif",
+        "ccdSha256": "5bf0d884284d2ccdd0b9743ba2da385dbe51d1ca646fef5bc844af2ec36e94d3",
+        "canonicalSmiles": "O=c1cc(-c2ccc(O)cc2)oc2cc(O)cc(O)c12",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 201,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 20,
+          "ccdHeavyAtoms": 20
+        }
+      },
+      "analogue": {
+        "pdbId": "4DEU",
+        "componentId": "NAR",
+        "coordinateFile": "fixtures/pdb/4deu.pdb",
+        "coordinateSha256": "ae179edc5e5b11e0313c2cba7f2955315aa21e7731d58e6a5d59fda45f542c35",
+        "ccdFile": "fixtures/ccd/NAR.cif",
+        "ccdSha256": "2fc638359f875ea70ec472e27c4d1ef3db343e936f0f16d00891802b084aaa83",
+        "canonicalSmiles": "O=C1C[C@@H](c2ccc(O)cc2)Oc2cc(O)cc(O)c21",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 205,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 20,
+          "ccdHeavyAtoms": 20
+        }
+      }
+    },
+    {
+      "caseId": "paired-bace1-2va5-c8c-to-2va7-c27",
+      "reference": {
+        "pdbId": "2VA5",
+        "componentId": "C8C",
+        "coordinateFile": "fixtures/pdb/2va5.pdb",
+        "coordinateSha256": "41e881e27b4a7dbc179612aac2d7149cdc5bae8c3228d3e3db985e7a2c7b1963",
+        "ccdFile": "fixtures/ccd/C8C.cif",
+        "ccdSha256": "310dde8bb9e5815a402e7a283c0c98c0054883c8ebb14c44d13a113e65a582fd",
+        "canonicalSmiles": "Nc1nc(CCc2ccc3cc[nH]c3c2)cc(=O)[nH]1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 1389,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 19,
+          "ccdHeavyAtoms": 19
+        }
+      },
+      "analogue": {
+        "pdbId": "2VA7",
+        "componentId": "C27",
+        "coordinateFile": "fixtures/pdb/2va7.pdb",
+        "coordinateSha256": "c2aac80d1f48677ac2a36f4cf4b791795db2559d0e76d333e751384dfe90fa50",
+        "ccdFile": "fixtures/ccd/C27.cif",
+        "ccdSha256": "3699a3d62e4395bb44c54b87c775d6acfa70ed14a79b2fa704b8ad8e73ca2662",
+        "canonicalSmiles": "COc1cccc(-c2cccc(CC[C@]3(C)CC(=O)N(C)C(N)=N3)c2)c1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 1505,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 26,
+          "ccdHeavyAtoms": 26
+        }
+      }
+    },
+    {
+      "caseId": "paired-bace1-2va6-h24-to-2va7-c27",
+      "reference": {
+        "pdbId": "2VA6",
+        "componentId": "H24",
+        "coordinateFile": "fixtures/pdb/2va6.pdb",
+        "coordinateSha256": "700e7f45a72abf6a28330620979b3094d1efe1666129cbfa5db439a80dba1e33",
+        "ccdFile": "fixtures/ccd/H24.cif",
+        "ccdSha256": "3221b04b9d0066d92f46f3b37fd7128ff459e8fc72cb74608a23e65b1b850e2b",
+        "canonicalSmiles": "COc1cccc(-c2cccc([C@]3(C)CC(=O)N(C)C(N)=N3)c2)c1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 1504,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 24,
+          "ccdHeavyAtoms": 24
+        }
+      },
+      "analogue": {
+        "pdbId": "2VA7",
+        "componentId": "C27",
+        "coordinateFile": "fixtures/pdb/2va7.pdb",
+        "coordinateSha256": "c2aac80d1f48677ac2a36f4cf4b791795db2559d0e76d333e751384dfe90fa50",
+        "ccdFile": "fixtures/ccd/C27.cif",
+        "ccdSha256": "3699a3d62e4395bb44c54b87c775d6acfa70ed14a79b2fa704b8ad8e73ca2662",
+        "canonicalSmiles": "COc1cccc(-c2cccc(CC[C@]3(C)CC(=O)N(C)C(N)=N3)c2)c1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 1505,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 26,
+          "ccdHeavyAtoms": 26
+        }
+      }
+    },
+    {
+      "caseId": "paired-cdk2-1h1q-2a6-to-1h1r-6cp",
+      "reference": {
+        "pdbId": "1H1Q",
+        "componentId": "2A6",
+        "coordinateFile": "fixtures/pdb/1h1q.pdb",
+        "coordinateSha256": "21dc4df2252e8ffbd572e906d05603fb50a2ccd338c366123984d1c099e66586",
+        "ccdFile": "fixtures/ccd/2A6.cif",
+        "ccdSha256": "d414c634517e2b34be5ca06d13a5c1bbc7b7876d4e06c93fa03d7c0c7288479d",
+        "canonicalSmiles": "c1ccc(Nc2nc(OCC3CCCCC3)c3[nH]cnc3n2)cc1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 1298,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 24,
+          "ccdHeavyAtoms": 24
+        }
+      },
+      "analogue": {
+        "pdbId": "1H1R",
+        "componentId": "6CP",
+        "coordinateFile": "fixtures/pdb/1h1r.pdb",
+        "coordinateSha256": "99d6c4880676790089f0075e0e71392907d2c3980881b49de5e470595b02bc72",
+        "ccdFile": "fixtures/ccd/6CP.cif",
+        "ccdSha256": "314d7959bc95982600849f43a29dbb63c2268bbea948c26a681e56e4d3f6b3a9",
+        "canonicalSmiles": "Clc1cccc(Nc2nc(OCC3CCCCC3)c3[nH]cnc3n2)c1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 1298,
+          "insertionCode": "",
+          "alternateLocation": "A",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 25,
+          "ccdHeavyAtoms": 25
+        }
+      }
+    },
+    {
+      "caseId": "paired-cdk2-1h1r-6cp-to-1oiu-n76",
+      "reference": {
+        "pdbId": "1H1R",
+        "componentId": "6CP",
+        "coordinateFile": "fixtures/pdb/1h1r.pdb",
+        "coordinateSha256": "99d6c4880676790089f0075e0e71392907d2c3980881b49de5e470595b02bc72",
+        "ccdFile": "fixtures/ccd/6CP.cif",
+        "ccdSha256": "314d7959bc95982600849f43a29dbb63c2268bbea948c26a681e56e4d3f6b3a9",
+        "canonicalSmiles": "Clc1cccc(Nc2nc(OCC3CCCCC3)c3[nH]cnc3n2)c1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 1298,
+          "insertionCode": "",
+          "alternateLocation": "A",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 25,
+          "ccdHeavyAtoms": 25
+        }
+      },
+      "analogue": {
+        "pdbId": "1OIU",
+        "componentId": "N76",
+        "coordinateFile": "fixtures/pdb/1oiu.pdb",
+        "coordinateSha256": "1c259025f26036d15ddeb4458e262cfe6e4fecf20a586e16de9117ea8e391b5f",
+        "ccdFile": "fixtures/ccd/N76.cif",
+        "ccdSha256": "03414e7618a1329785883b6c617fff3a37136961d91fb220b9a8843cc3893b57",
+        "canonicalSmiles": "NS(=O)(=O)c1cccc(Nc2nc(OCC3CCCCC3)c3nc[nH]c3n2)c1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 1298,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 28,
+          "ccdHeavyAtoms": 28
+        }
+      }
+    },
+    {
+      "caseId": "prospective-7kpa-d84-pyridone-to-cyclohexanone",
+      "reference": {
+        "pdbId": "7KPA",
+        "componentId": "D84",
+        "coordinateFile": "fixtures/pdb/7kpa.pdb",
+        "coordinateSha256": "da4fa18e7c52750ec6b9de35fd363357452b99e3f2b3064f831def46f31175d6",
+        "ccdFile": "fixtures/ccd/D84.cif",
+        "ccdSha256": "c6e43b72a44b36ae8a068b8e4b1b5644490c094c31f64b57003fc990f4634871",
+        "canonicalSmiles": "O=C1CCCN1c1cccc(OCc2nc3ccc(-c4ccc(=O)[nH]c4)cc3n2Cc2ccccc2OC(F)F)c1",
+        "selection": {
+          "model": 1,
+          "chain": "C",
+          "residueNumber": 201,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 41,
+          "ccdHeavyAtoms": 41
+        }
+      }
+    },
+    {
+      "caseId": "prospective-parp2-4zzy-d7n-amide-to-nitrile",
+      "reference": {
+        "pdbId": "4ZZY",
+        "componentId": "D7N",
+        "coordinateFile": "fixtures/pdb/4zzy.pdb",
+        "coordinateSha256": "e35afaea0ffd2dfe970cc64ed8ff710249f0c42a954f561c1fe0ec0fffee5f14",
+        "ccdFile": "fixtures/ccd/D7N.cif",
+        "ccdSha256": "5264b7c8abe0e39e9e9cc32c26400915b3361b8cff1ffeb25c59a3e36e2a5c07",
+        "canonicalSmiles": "NC(=O)c1cc(F)cc2c1C(=O)N(C1CCN(C3CCC(F)(F)CC3)CC1)C2",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 1584,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 28,
+          "ccdHeavyAtoms": 28
+        }
+      }
+    },
+    {
+      "caseId": "prospective-pparg-5y2o-8n6-carbonyl-to-thiocarbonyl",
+      "reference": {
+        "pdbId": "5Y2O",
+        "componentId": "8N6",
+        "coordinateFile": "fixtures/pdb/5y2o.pdb",
+        "coordinateSha256": "71ad932f87acd1d8ca6590364dd2a56c1f512749a20124217cdd4fc5afb9c728",
+        "ccdFile": "fixtures/ccd/8N6.cif",
+        "ccdSha256": "009c75caaf20a6709b3ec69fb44422e4f56d4501a8eff16ab9566e243921b9a0",
+        "canonicalSmiles": "CCc1ccc(CCOc2ccc(C[C@@H]3SC(=O)NC3=O)cc2)nc1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 501,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 25,
+          "ccdHeavyAtoms": 25
+        }
+      }
+    },
+    {
+      "caseId": "prospective-p38-3fly-fly-carbonyl-to-thiocarbonyl",
+      "reference": {
+        "pdbId": "3FLY",
+        "componentId": "FLY",
+        "coordinateFile": "fixtures/pdb/3fly.pdb",
+        "coordinateSha256": "1e9ce0111d3d0111a0301bf178ec802528a2f9f4b7813b88b1f21cb7a250db6b",
+        "ccdFile": "fixtures/ccd/FLY.cif",
+        "ccdSha256": "e989614e3215499968381a0537f5227d42027eb07fda8241b3f175cd75d97e6a",
+        "canonicalSmiles": "CC(C)Nc1ncc2cc(Oc3ccc(F)cc3F)c(=O)n(C)c2n1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 361,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 25,
+          "ccdHeavyAtoms": 25
+        }
+      }
+    },
+    {
+      "caseId": "prospective-ptp1b-2qbs-024-acid-to-tetrazole",
+      "reference": {
+        "pdbId": "2QBS",
+        "componentId": "024",
+        "coordinateFile": "fixtures/pdb/2qbs.pdb",
+        "coordinateSha256": "bf8fb54bd814297c521fb2277d849e28242ff193ba768ed9f3dfc0d32b86e754",
+        "ccdFile": "fixtures/ccd/024.cif",
+        "ccdSha256": "1e6eb4e68b3ef8417fe943c66ff7419115845bc96bef38b8eeb1da0a71c11265",
+        "canonicalSmiles": "O=C(O)COc1c(C(=O)O)sc(-c2cccc(NC3CCCCC3)c2)c1Br",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 800,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 27,
+          "ccdHeavyAtoms": 27
+        }
+      }
+    },
+    {
+      "caseId": "prospective-thrombin-2zff-53u-amide-to-sulfonamide",
+      "reference": {
+        "pdbId": "2ZFF",
+        "componentId": "53U",
+        "coordinateFile": "fixtures/pdb/2zff.pdb",
+        "coordinateSha256": "fc49baf404749bb02b1d739e603b517773d879b086b78f520fcaf83906f88dcd",
+        "ccdFile": "fixtures/ccd/53U.cif",
+        "ccdSha256": "b7ec8e26550643d275f0ea8cc01e47ef2bc69b926307cd6ea2c218d3805b497e",
+        "canonicalSmiles": "N[C@H](Cc1ccccc1)C(=O)N1CCC[C@H]1C(=O)NCc1ccccc1",
+        "selection": {
+          "model": 1,
+          "chain": "H",
+          "residueNumber": 2001,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 26,
+          "ccdHeavyAtoms": 26
+        }
+      }
+    },
+    {
+      "caseId": "prospective-ptp1b-2qbs-024-ring-acid-to-tetrazole",
+      "reference": {
+        "pdbId": "2QBS",
+        "componentId": "024",
+        "coordinateFile": "fixtures/pdb/2qbs.pdb",
+        "coordinateSha256": "bf8fb54bd814297c521fb2277d849e28242ff193ba768ed9f3dfc0d32b86e754",
+        "ccdFile": "fixtures/ccd/024.cif",
+        "ccdSha256": "1e6eb4e68b3ef8417fe943c66ff7419115845bc96bef38b8eeb1da0a71c11265",
+        "canonicalSmiles": "O=C(O)COc1c(C(=O)O)sc(-c2cccc(NC3CCCCC3)c2)c1Br",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 800,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 27,
+          "ccdHeavyAtoms": 27
+        }
+      }
+    },
+    {
+      "caseId": "prospective-brd9-5igm-bmf-carbamate-to-urea",
+      "reference": {
+        "pdbId": "5IGM",
+        "componentId": "BMF",
+        "coordinateFile": "fixtures/pdb/5igm.pdb",
+        "coordinateSha256": "994efc92c3167ebec4eb04d146d9a46287b723373d5ebe16585a1ae31906e2ce",
+        "ccdFile": "fixtures/ccd/BMF.cif",
+        "ccdSha256": "c3461e514b1068dfc03a7afbed627fa0dd40d9dd21f7d8b44e666c8903acf2df",
+        "canonicalSmiles": "CCOC(=O)Nc1cc(-c2ccc(C)c(NS(C)(=O)=O)c2)nn2c(C)nnc12",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 301,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 28,
+          "ccdHeavyAtoms": 28
+        }
+      }
+    },
+    {
+      "caseId": "prospective-parp1-4r6e-3jd-amide-to-nitrile",
+      "reference": {
+        "pdbId": "4R6E",
+        "componentId": "3JD",
+        "coordinateFile": "fixtures/pdb/4r6e.pdb",
+        "coordinateSha256": "6886197f16e32a842811ae57bb8102a5b296b260361da306ecefe04b76005fa8",
+        "ccdFile": "fixtures/ccd/3JD.cif",
+        "ccdSha256": "3aee356d6630b8f0776ed32bd8ded9b27b608f9dad979aa92b945f3d96cc0680",
+        "canonicalSmiles": "NC(=O)c1cccc2cn(-c3ccc([C@@H]4CCCNC4)cc3)nc12",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 1101,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 24,
+          "ccdHeavyAtoms": 24
+        }
+      }
+    },
+    {
+      "caseId": "prospective-fxr-5q0i-0x0-amide-to-thioamide",
+      "reference": {
+        "pdbId": "5Q0I",
+        "componentId": "0X0",
+        "coordinateFile": "fixtures/pdb/5q0i.pdb",
+        "coordinateSha256": "1d1b6a2bbe598d8d1fe96a5517206bfefac31079f256d744509ea3ec5d45ed97",
+        "ccdFile": "fixtures/ccd/0X0.cif",
+        "ccdSha256": "fd42c1e603d4d4ac442e9e6113868c65c0b96e807f0775a3bf02adfec7d0379d",
+        "canonicalSmiles": "COc1ccc(N(CC(=O)NC(C(C)C)C(C)C)S(=O)(=O)c2ccc(C)cc2)cc1OC",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 501,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 32,
+          "ccdHeavyAtoms": 32
+        }
+      }
+    },
+    {
+      "caseId": "negative-trypsin-3ptb-ben-amidine-to-ethyl",
+      "reference": {
+        "pdbId": "3PTB",
+        "componentId": "BEN",
+        "coordinateFile": "fixtures/pdb/3ptb.pdb",
+        "coordinateSha256": "288f7954d4d013fa8eab3808e1037e2958e2dcd12c9eca65a3f1014404a9f9a2",
+        "ccdFile": "fixtures/ccd/BEN.cif",
+        "ccdSha256": "a7ce813cbbac599168d4772f635ae23d7c6edb4d83a9891ebabcbe9e8bb66849",
+        "canonicalSmiles": "[H]/N=C(/N)c1ccccc1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 1,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 9,
+          "ccdHeavyAtoms": 9
+        }
+      }
+    },
+    {
+      "caseId": "negative-hivpr-1hvr-xk2-diol-to-difluoro",
+      "reference": {
+        "pdbId": "1HVR",
+        "componentId": "XK2",
+        "coordinateFile": "fixtures/pdb/1hvr.pdb",
+        "coordinateSha256": "c8d3f238d3269a66823454d4681b71467b4677a18751ce094047961620b338cb",
+        "ccdFile": "fixtures/ccd/XK2.cif",
+        "ccdSha256": "0cdc6c31a4a97321d29a691915eb590e9ecc7d7093b4fd227b5b4a777f3b40df",
+        "canonicalSmiles": "O=C1N(Cc2ccc3ccccc3c2)[C@H](Cc2ccccc2)[C@H](O)[C@@H](O)[C@@H](Cc2ccccc2)N1Cc1ccc2ccccc2c1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 263,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 46,
+          "ccdHeavyAtoms": 46
+        }
+      }
+    },
+    {
+      "caseId": "negative-cox2-6cox-s58-sulfonamide-to-tertbutyl",
+      "reference": {
+        "pdbId": "6COX",
+        "componentId": "S58",
+        "coordinateFile": "fixtures/pdb/6cox.pdb",
+        "coordinateSha256": "4713d3df74ffe1c1e8f6564e19996f2511fd45b2853eee44cb88434775de7429",
+        "ccdFile": "fixtures/ccd/S58.cif",
+        "ccdSha256": "44b8c85fe5555f933e43f1ba7ff18f62181aebbcdbfece2986d447bdbff6ebec",
+        "canonicalSmiles": "NS(=O)(=O)c1ccc(-n2nc(C(F)(F)F)cc2-c2ccc(Br)cc2)cc1",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 701,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 26,
+          "ccdHeavyAtoms": 26
+        }
+      }
+    },
+    {
+      "caseId": "negative-tnfa-7kpa-d84-pyridone-to-phenyl",
+      "reference": {
+        "pdbId": "7KPA",
+        "componentId": "D84",
+        "coordinateFile": "fixtures/pdb/7kpa.pdb",
+        "coordinateSha256": "da4fa18e7c52750ec6b9de35fd363357452b99e3f2b3064f831def46f31175d6",
+        "ccdFile": "fixtures/ccd/D84.cif",
+        "ccdSha256": "c6e43b72a44b36ae8a068b8e4b1b5644490c094c31f64b57003fc990f4634871",
+        "canonicalSmiles": "O=C1CCCN1c1cccc(OCc2nc3ccc(-c4ccc(=O)[nH]c4)cc3n2Cc2ccccc2OC(F)F)c1",
+        "selection": {
+          "model": 1,
+          "chain": "C",
+          "residueNumber": 201,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 41,
+          "ccdHeavyAtoms": 41
+        }
+      }
+    },
+    {
+      "caseId": "negative-parp1-4r6e-3jd-amide-to-methyl",
+      "reference": {
+        "pdbId": "4R6E",
+        "componentId": "3JD",
+        "coordinateFile": "fixtures/pdb/4r6e.pdb",
+        "coordinateSha256": "6886197f16e32a842811ae57bb8102a5b296b260361da306ecefe04b76005fa8",
+        "ccdFile": "fixtures/ccd/3JD.cif",
+        "ccdSha256": "3aee356d6630b8f0776ed32bd8ded9b27b608f9dad979aa92b945f3d96cc0680",
+        "canonicalSmiles": "NC(=O)c1cccc2cn(-c3ccc([C@@H]4CCCNC4)cc3)nc12",
+        "selection": {
+          "model": 1,
+          "chain": "A",
+          "residueNumber": 1101,
+          "insertionCode": "",
+          "alternateLocation": "",
+          "selectionRule": "complete-instance; lowest model, chain, residue and insertion code; altloc A when present",
+          "observedHeavyAtoms": 24,
+          "ccdHeavyAtoms": 24
+        }
+      }
+    }
+  ]
+}

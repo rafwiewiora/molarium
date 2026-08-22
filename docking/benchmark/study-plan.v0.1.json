@@ -1,7 +1,7 @@
 {
   "id": "molarium-bioisostere-pose-propagation-25",
-  "version": "0.1.0-draft",
-  "status": "draft",
+  "version": "0.1.0",
+  "status": "frozen",
   "targetCaseCount": 25,
   "tiers": {
     "paired-crystal": 10,

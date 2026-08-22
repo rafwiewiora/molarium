@@ -46,6 +46,11 @@ paper/build/
 # in paper/development-log/episodes/; raw and machine exports never do.
 paper/development-log/private/
 
+# Restartable per-case and smoke benchmark artifacts are local working evidence.
+# Frozen aggregate and scored reports remain tracked beside the benchmark.
+docking/benchmark/results/
+docking/benchmark/benchmark-results.v*-smoke*.json
+
 # Downloaded public model assets
 mlip/models/*.onnx
 openfold-export-results/trained/models/

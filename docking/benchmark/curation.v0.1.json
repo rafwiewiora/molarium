@@ -1,0 +1,214 @@
+{
+  "datasetId": "molarium-bioisostere-pose-propagation-25",
+  "version": "0.1.0",
+  "selectionFrozenBeforeDocking": true,
+  "cases": [
+    {
+      "id": "paired-parp2-4zzy-d7n-to-4zzx-fsu",
+      "tier": "paired-crystal",
+      "proteinTarget": "PARP2",
+      "reference": { "pdbId": "4ZZY", "componentId": "D7N" },
+      "analogue": { "pdbId": "4ZZX", "componentId": "FSU" },
+      "transformation": { "name": "piperidinyl tail to methoxypropyl tail", "class": "congeneric tail replacement" }
+    },
+    {
+      "id": "paired-pparg-5y2o-8n6-to-5y2t-8lx",
+      "tier": "paired-crystal",
+      "proteinTarget": "PPAR-gamma",
+      "reference": { "pdbId": "5Y2O", "componentId": "8N6" },
+      "analogue": { "pdbId": "5Y2T", "componentId": "8LX" },
+      "transformation": { "name": "ethylpyridyl tail to substituted pyrimidinyl tail", "class": "heteroaryl tail replacement" }
+    },
+    {
+      "id": "paired-pparg-5y2o-8n6-to-7awc-brl",
+      "tier": "paired-crystal",
+      "proteinTarget": "PPAR-gamma",
+      "reference": { "pdbId": "5Y2O", "componentId": "8N6" },
+      "analogue": { "pdbId": "7AWC", "componentId": "BRL" },
+      "transformation": { "name": "ethylpyridyl tail to methylaminopyridyl tail", "class": "linker and heteroaryl replacement" }
+    },
+    {
+      "id": "paired-ttr-4des-57d-to-4der-agi",
+      "tier": "paired-crystal",
+      "proteinTarget": "transthyretin",
+      "reference": { "pdbId": "4DES", "componentId": "57D" },
+      "analogue": { "pdbId": "4DER", "componentId": "AGI" },
+      "transformation": { "name": "phenyl hydrogen to para hydroxyl", "class": "donor-acceptor substituent addition" }
+    },
+    {
+      "id": "paired-ttr-4des-57d-to-4det-kmp",
+      "tier": "paired-crystal",
+      "proteinTarget": "transthyretin",
+      "reference": { "pdbId": "4DES", "componentId": "57D" },
+      "analogue": { "pdbId": "4DET", "componentId": "KMP" },
+      "transformation": { "name": "flavone to dihydroxylated flavonol", "class": "multi-hydroxyl substituent addition" }
+    },
+    {
+      "id": "paired-ttr-4der-agi-to-4deu-nar",
+      "tier": "paired-crystal",
+      "proteinTarget": "transthyretin",
+      "reference": { "pdbId": "4DER", "componentId": "AGI" },
+      "analogue": { "pdbId": "4DEU", "componentId": "NAR" },
+      "transformation": { "name": "flavone to flavanone", "class": "ring saturation and stereocenter formation" }
+    },
+    {
+      "id": "paired-bace1-2va5-c8c-to-2va7-c27",
+      "tier": "paired-crystal",
+      "proteinTarget": "BACE1",
+      "reference": { "pdbId": "2VA5", "componentId": "C8C" },
+      "analogue": { "pdbId": "2VA7", "componentId": "C27" },
+      "transformation": { "name": "indolylethyl to methoxybiphenylethyl substituent", "class": "large R-group replacement" }
+    },
+    {
+      "id": "paired-bace1-2va6-h24-to-2va7-c27",
+      "tier": "paired-crystal",
+      "proteinTarget": "BACE1",
+      "reference": { "pdbId": "2VA6", "componentId": "H24" },
+      "analogue": { "pdbId": "2VA7", "componentId": "C27" },
+      "transformation": { "name": "direct aryl attachment to ethyl-linked aryl", "class": "linker insertion" }
+    },
+    {
+      "id": "paired-cdk2-1h1q-2a6-to-1h1r-6cp",
+      "tier": "paired-crystal",
+      "proteinTarget": "CDK2",
+      "reference": { "pdbId": "1H1Q", "componentId": "2A6" },
+      "analogue": { "pdbId": "1H1R", "componentId": "6CP" },
+      "transformation": { "name": "aniline hydrogen to meta chlorine", "class": "halogen substituent addition" }
+    },
+    {
+      "id": "paired-cdk2-1h1r-6cp-to-1oiu-n76",
+      "tier": "paired-crystal",
+      "proteinTarget": "CDK2",
+      "reference": { "pdbId": "1H1R", "componentId": "6CP" },
+      "analogue": { "pdbId": "1OIU", "componentId": "N76" },
+      "transformation": { "name": "meta chlorine to meta sulfonamide", "class": "polar bioisostere replacement" }
+    },
+    {
+      "id": "prospective-7kpa-d84-pyridone-to-cyclohexanone",
+      "tier": "prospective",
+      "proteinTarget": "TNF-alpha",
+      "reference": { "pdbId": "7KPA", "componentId": "D84" },
+      "productSmiles": "c1ccc(c(c1)Cn2c3cc(ccc3nc2COc4cccc(c4)N5CCCC5=O)C6CCCCC6=O)OC(F)F",
+      "transformation": { "name": "pyridone to cyclohexanone", "class": "ring replacement", "intendedRole": "acceptor-to-acceptor", "referenceFeatureAtomNames": ["O3"] },
+      "mappingAudit": { "expectedCommonHeavyAtoms": 35, "rationale": "The unchanged 35-atom scaffold is unique; complete-ring FMCS spends its timeout proving no larger mapping after finding it." }
+    },
+    {
+      "id": "prospective-parp2-4zzy-d7n-amide-to-nitrile",
+      "tier": "prospective",
+      "proteinTarget": "PARP2",
+      "reference": { "pdbId": "4ZZY", "componentId": "D7N" },
+      "productSmiles": "N#Cc1cc(F)cc2c1C(=O)N(C1CCN(C3CCC(F)(F)CC3)CC1)C2",
+      "transformation": { "name": "primary carboxamide to nitrile", "class": "acceptor bioisostere", "intendedRole": "acceptor-to-acceptor", "referenceFeatureAtomNames": ["O28"] }
+    },
+    {
+      "id": "prospective-pparg-5y2o-8n6-carbonyl-to-thiocarbonyl",
+      "tier": "prospective",
+      "proteinTarget": "PPAR-gamma",
+      "reference": { "pdbId": "5Y2O", "componentId": "8N6" },
+      "productSmiles": "CCc1ccc(CCOc2ccc(C[C@@H]3SC(=O)NC3=S)cc2)nc1",
+      "transformation": { "name": "thiazolidinedione carbonyl to thiocarbonyl", "class": "chalcogen bioisostere", "intendedRole": "acceptor-to-acceptor", "referenceFeatureAtomNames": ["O4"] }
+    },
+    {
+      "id": "prospective-p38-3fly-fly-carbonyl-to-thiocarbonyl",
+      "tier": "prospective",
+      "proteinTarget": "p38-alpha",
+      "reference": { "pdbId": "3FLY", "componentId": "FLY" },
+      "productSmiles": "CC(C)Nc1ncc2c(n1)N(C(=S)C(=C2)Oc3ccc(cc3F)F)C",
+      "transformation": { "name": "lactam carbonyl to thiocarbonyl", "class": "chalcogen bioisostere", "intendedRole": "acceptor-to-acceptor", "referenceFeatureAtomNames": ["O15"] }
+    },
+    {
+      "id": "prospective-ptp1b-2qbs-024-acid-to-tetrazole",
+      "tier": "prospective",
+      "proteinTarget": "PTP1B",
+      "reference": { "pdbId": "2QBS", "componentId": "024" },
+      "productSmiles": "c1cc(cc(c1)NC2CCCCC2)c3c(c(c(s3)C(=O)O)OCc4nnn[nH]4)Br",
+      "transformation": { "name": "carboxymethoxy acid to methyltetrazole", "class": "anionic acid bioisostere", "intendedRole": "acceptor-to-acceptor", "referenceFeatureAtomNames": ["O25", "O26"] }
+    },
+    {
+      "id": "prospective-thrombin-2zff-53u-amide-to-sulfonamide",
+      "tier": "prospective",
+      "proteinTarget": "thrombin",
+      "reference": { "pdbId": "2ZFF", "componentId": "53U" },
+      "productSmiles": "c1ccc(cc1)CC(C(=O)N2CCCC2S(=O)(=O)NCc3ccccc3)N",
+      "transformation": { "name": "terminal carboxamide to sulfonamide", "class": "carbonyl-to-sulfonyl bioisostere", "intendedRole": "donor-to-donor", "referenceFeatureAtomNames": ["N3"] }
+    },
+    {
+      "id": "prospective-ptp1b-2qbs-024-ring-acid-to-tetrazole",
+      "tier": "prospective",
+      "proteinTarget": "PTP1B",
+      "reference": { "pdbId": "2QBS", "componentId": "024" },
+      "productSmiles": "c1cc(cc(c1)NC2CCCCC2)c3c(c(c(s3)-c4nnn[nH]4)OCC(=O)O)Br",
+      "transformation": { "name": "thiophene carboxylic acid to tetrazole", "class": "anionic acid bioisostere", "intendedRole": "donor-and-acceptor", "referenceFeatureAtomNames": ["O8"] }
+    },
+    {
+      "id": "prospective-brd9-5igm-bmf-carbamate-to-urea",
+      "tier": "prospective",
+      "proteinTarget": "BRD9",
+      "reference": { "pdbId": "5IGM", "componentId": "BMF" },
+      "productSmiles": "CNC(=O)Nc1cc(nn2c1nnc2C)c3ccc(c(c3)NS(=O)(=O)C)C",
+      "transformation": { "name": "ethyl carbamate to methyl urea", "class": "donor-acceptor linker bioisostere", "intendedRole": "donor-to-donor", "referenceFeatureAtomNames": ["N16"] }
+    },
+    {
+      "id": "prospective-parp1-4r6e-3jd-amide-to-nitrile",
+      "tier": "prospective",
+      "proteinTarget": "PARP1",
+      "reference": { "pdbId": "4R6E", "componentId": "3JD" },
+      "productSmiles": "c1cc2cn(nc2c(c1)C#N)c3ccc(cc3)[C@@H]4CCCNC4",
+      "transformation": { "name": "primary carboxamide to nitrile", "class": "acceptor bioisostere", "intendedRole": "acceptor-to-acceptor", "referenceFeatureAtomNames": ["OAB"] }
+    },
+    {
+      "id": "prospective-fxr-5q0i-0x0-amide-to-thioamide",
+      "tier": "prospective",
+      "proteinTarget": "FXR",
+      "reference": { "pdbId": "5Q0I", "componentId": "0X0" },
+      "productSmiles": "Cc1ccc(cc1)S(=O)(=O)N(CC(=S)NC(C(C)C)C(C)C)c2ccc(c(c2)OC)OC",
+      "transformation": { "name": "amide to thioamide", "class": "chalcogen bioisostere", "intendedRole": "acceptor-to-acceptor", "referenceFeatureAtomNames": ["O2"] }
+    },
+    {
+      "id": "negative-trypsin-3ptb-ben-amidine-to-ethyl",
+      "tier": "adversarial-negative",
+      "proteinTarget": "trypsin",
+      "reference": { "pdbId": "3PTB", "componentId": "BEN" },
+      "productSmiles": "CCc1ccccc1",
+      "transformation": { "name": "amidine to ethyl", "class": "interaction deletion", "intendedRole": "donor-acceptor-removal", "referenceFeatureAtomNames": ["N1", "N2"] },
+      "expectedOutcome": "reference-contact-unavailable"
+    },
+    {
+      "id": "negative-hivpr-1hvr-xk2-diol-to-difluoro",
+      "tier": "adversarial-negative",
+      "proteinTarget": "HIV-1 protease",
+      "reference": { "pdbId": "1HVR", "componentId": "XK2" },
+      "productSmiles": "c1ccc(cc1)C[C@@H]2[C@@H]([C@H]([C@H](N(C(=O)N2Cc3ccc4ccccc4c3)Cc5ccc6ccccc6c5)Cc7ccccc7)F)F",
+      "transformation": { "name": "vicinal diol to vicinal difluoro", "class": "interaction deletion", "intendedRole": "donor-acceptor-removal", "referenceFeatureAtomNames": ["O4", "O5"] },
+      "expectedOutcome": "reference-contact-unavailable"
+    },
+    {
+      "id": "negative-cox2-6cox-s58-sulfonamide-to-tertbutyl",
+      "tier": "adversarial-negative",
+      "proteinTarget": "COX-2",
+      "reference": { "pdbId": "6COX", "componentId": "S58" },
+      "productSmiles": "c1cc(ccc1c2cc(nn2c3ccc(cc3)C(C)(C)C)C(F)(F)F)Br",
+      "transformation": { "name": "sulfonamide to tert-butyl", "class": "interaction deletion", "intendedRole": "donor-acceptor-removal", "referenceFeatureAtomNames": ["N3"] },
+      "expectedOutcome": "reference-contact-unavailable"
+    },
+    {
+      "id": "negative-tnfa-7kpa-d84-pyridone-to-phenyl",
+      "tier": "adversarial-negative",
+      "proteinTarget": "TNF-alpha",
+      "reference": { "pdbId": "7KPA", "componentId": "D84" },
+      "productSmiles": "O=C1CCCN1c1cccc(OCc2nc3ccc(-c4ccccc4)cc3n2Cc2ccccc2OC(F)F)c1",
+      "transformation": { "name": "pyridone to phenyl", "class": "interaction deletion", "intendedRole": "donor-acceptor-removal", "referenceFeatureAtomNames": ["O3", "N3"] },
+      "mappingAudit": { "expectedCommonHeavyAtoms": 35, "rationale": "The unchanged 35-atom scaffold is unique; complete-ring FMCS spends its timeout proving no larger mapping after finding it." },
+      "expectedOutcome": "reference-contact-unavailable"
+    },
+    {
+      "id": "negative-parp1-4r6e-3jd-amide-to-methyl",
+      "tier": "adversarial-negative",
+      "proteinTarget": "PARP1",
+      "reference": { "pdbId": "4R6E", "componentId": "3JD" },
+      "productSmiles": "Cc1cccc2cn(-c3ccc([C@@H]4CCCNC4)cc3)nc12",
+      "transformation": { "name": "primary carboxamide to methyl", "class": "interaction deletion", "intendedRole": "donor-acceptor-removal", "referenceFeatureAtomNames": ["OAB"] },
+      "expectedOutcome": "reference-contact-unavailable"
+    }
+  ]
+}

@@ -110,7 +110,10 @@ export function mapCapturedHydrogenBonds(definitions, candidateAtoms, selectedId
     if (!donor || !hydrogen || !acceptor) return null;
     return { id:definition.alternativeId || definition.id, label:definition.label || parent.label,
       required:parent.required !== false, receptorRole:definition.receptorRole,
-      matchKind:definition.matchKind || null, donor, hydrogen, acceptor };
+      matchKind:definition.matchKind || null,
+      targetLigandFeatureReferencePoint:definition.targetLigandFeatureReferencePoint
+        ? { ...definition.targetLigandFeatureReferencePoint } : null,
+      donor, hydrogen, acceptor };
   };
   const mapped = Array.from(definitions || []).flatMap((definition) => {
     if (selected && !selected.has(definition.id)) return [];

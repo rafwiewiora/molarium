@@ -16,6 +16,7 @@ import { applyLigandPositions, captureCrossHydrogenBonds, createLigandPlan, dock
   unpackConformerStack } from './browser-adapter.mjs';
 import { identifyFreeRotors, packPositions4, refinePoseByTorsionMonteCarlo,
   rotateAroundBond } from './torsion-search.mjs';
+import { attachNonCoreRegionsToSnappedCore, featureGuidedPoseSeeds } from './feature-seeding.mjs';
 import { applyLigandHydrogenBondFeatureRemap, hydrogenBondFeatureSignature,
   proposeLigandHydrogenBondFeatureRemaps,
   retainOriginatingHydrogenBondRemapCandidates } from './contact-remap.mjs';
@@ -447,10 +448,27 @@ const uniqueRemap = proposeLigandHydrogenBondFeatureRemaps([remapDefinition], re
 assert.equal(uniqueRemap.status, 'unique');
 assert.deepEqual(uniqueRemap.boundaryAnchorIds, ['core:2']);
 assert.deepEqual(uniqueRemap.candidates[0].atomIds, ['new:oxygen']);
+const remapBeforeWithExisting = structuredClone(remapBefore);
+remapBeforeWithExisting.atoms.push({ element:'N', designAtomId:'existing:nitrogen',
+  x:2.2, y:1.3, z:0 });
+remapBeforeWithExisting.bonds.push({ a:1, b:5, order:1 });
+const remapAfterWithExisting = structuredClone(remapAfter);
+remapAfterWithExisting.atoms.push(structuredClone(remapBeforeWithExisting.atoms[5]));
+remapAfterWithExisting.bonds.push({ a:1, b:5, order:1 });
+const registeredRegionRemap = proposeLigandHydrogenBondFeatureRemaps([remapDefinition],
+  remapAfterWithExisting, [0,1,2,3,4,5], {
+    eligibleAtomIndices:[3,4], beforeMolecule:remapBeforeWithExisting,
+    editRegionsOverride:{ removedAtomIds:['old:carbonyl', 'old:oxygen'],
+      addedAtomIds:['new:carbonyl', 'new:oxygen'], changedAtomIds:[] },
+  })[0];
+assert.equal(registeredRegionRemap.status, 'unique');
+assert.deepEqual(registeredRegionRemap.candidates.map((entry) => entry.atomIds), [['new:oxygen']],
+  'a pre-existing role-compatible feature at the same anchor is not part of the registered edit');
 const appliedRemap = applyLigandHydrogenBondFeatureRemap(remapDefinition,
   uniqueRemap.candidates[0]);
 assert.equal(appliedRemap.acceptor.designAtomId, 'new:oxygen');
 assert.equal(appliedRemap.donor.designAtomId, 'protein:N');
+assert.deepEqual(appliedRemap.targetLigandFeatureReferencePoint, { x:4,y:0,z:0 });
 assert.equal(capturedHydrogenBondAvailability([appliedRemap], remapAfter)[0].available, true);
 
 // Interaction-role transfer deliberately spans medicinal-chemistry feature
@@ -979,6 +997,55 @@ const torsionMolecule = { name:'fixed-core rotor test', atoms:[
 const torsionStart = Float64Array.from([
   0,0,0, 1,0,0, 0,1,0, 2,0,0, 2,1,0, 2,2,0,
 ]);
+const featureSeedMolecule = { atoms:[{ element:'C' }, { element:'N' }, { element:'C' }],
+  bonds:[{ a:0, b:1, order:1 }, { a:1, b:2, order:1 }] };
+const featureSeedStart = Float64Array.from([0,0,0, 1,0,0, 1,1,0]);
+const featureSeeds = featureGuidedPoseSeeds({ molecule:featureSeedMolecule,
+  initialPositions:featureSeedStart, coreAtomIndices:[0], count:7,
+  hydrogenBondConstraints:[{ id:'replacement-acceptor', receptorRole:'donor',
+    donor:{ scope:'receptor', point:{ x:0,y:3,z:0 } },
+    hydrogen:{ scope:'receptor', point:{ x:0,y:2,z:0 } },
+    acceptor:{ scope:'ligand', atomIndex:1 },
+    targetLigandFeatureReferencePoint:{ x:0,y:1.2,z:0 } }] });
+assert.equal(featureSeeds.method, 'molarium-captured-feature-axis-seeding/v1');
+assert.equal(featureSeeds.requestedCount, 7);
+assert.equal(featureSeeds.uniqueSeedCount, 7);
+assert.deepEqual(Array.from(featureSeeds.seeds[0].positions), Array.from(featureSeedStart));
+assert.ok(Math.abs(featureSeeds.seeds[1].positions[3]) < 1e-12
+  && Math.abs(featureSeeds.seeds[1].positions[4] - 1) < 1e-12,
+'feature seed aligns the replacement direction while preserving its bond length');
+assert.deepEqual(Array.from(featureSeeds.seeds[1].positions.slice(0, 3)), [0,0,0]);
+assert.ok(Math.abs(Math.hypot(...Array.from(featureSeeds.seeds[1].positions.slice(3, 6))) - 1) < 1e-12);
+const multiAnchorSeeds = featureGuidedPoseSeeds({ molecule:{
+  atoms:[{ element:'C' }, { element:'N' }, { element:'C' }],
+  bonds:[{ a:0,b:1,order:1 }, { a:1,b:2,order:1 }] },
+initialPositions:featureSeedStart, coreAtomIndices:[0,2], count:3,
+hydrogenBondConstraints:[{ id:'ring-feature', receptorRole:'donor',
+  acceptor:{ scope:'ligand', atomIndex:1 },
+  targetLigandFeatureReferencePoint:{ x:0,y:1,z:0 } }] });
+assert.equal(multiAnchorSeeds.uniqueSeedCount, 1,
+  'multi-anchor edits are not distorted by the single-anchor feature seeder');
+const attachedSingle = attachNonCoreRegionsToSnappedCore({
+  molecule:{ atoms:[{ element:'C' }, { element:'N' }, { element:'H' }],
+    bonds:[{ a:0, b:1, order:3 }, { a:1, b:2, order:1 }] },
+  alignedPositions:new Float64Array([10, 0, 0, 11.2, 0, 0, 12.0, 0, 0]),
+  referencePositions:new Float64Array([1, 2, 3]), coreAtomPairs:[[0, 0]],
+});
+assert.ok(Array.from(attachedSingle.positions).every((value, index) =>
+  Math.abs(value - [1, 2, 3, 2.2, 2, 3, 3, 2, 3][index]) < 1e-12));
+assert.equal(attachedSingle.regions[0].method, 'single-anchor-translation');
+assert.ok(Math.abs(Math.hypot(...[0, 1, 2].map((axis) =>
+  attachedSingle.positions[3 + axis] - attachedSingle.positions[axis])) - 1.2) < 1e-12);
+const attachedDouble = attachNonCoreRegionsToSnappedCore({
+  molecule:{ atoms:[{ element:'C' }, { element:'C' }, { element:'N' }, { element:'O' }],
+    bonds:[{ a:0, b:2, order:1 }, { a:2, b:3, order:1 }, { a:3, b:1, order:1 }] },
+  alignedPositions:new Float64Array([10, 0, 0, 12, 0, 0, 10, 1, 0, 12, 1, 0]),
+  referencePositions:new Float64Array([0, 0, 0, 0, 2, 0]),
+  coreAtomPairs:[[0, 0], [1, 1]],
+});
+assert.equal(attachedDouble.regions[0].method, 'two-anchor-rigid-axis-fit');
+assert.ok(Math.abs(Math.hypot(...[0, 1, 2].map((axis) =>
+  attachedDouble.positions[6 + axis] - attachedDouble.positions[axis])) - 1) < 1e-12);
 const freeRotors = identifyFreeRotors(torsionMolecule, [0, 1, 2]);
 assert.deepEqual(freeRotors.map((entry) => entry.bondAtomIndices), [[1, 3], [3, 4]]);
 assert.ok(freeRotors.every((entry) => entry.movingAtomIndices.every((atom) => ![0, 1, 2].includes(atom))));

@@ -1,0 +1,2534 @@
+{
+  "schemaVersion": 1,
+  "datasetId": "molarium-bioisostere-pose-propagation-25",
+  "fixtureValidationSha256": "9e685d015f9933bf32d1d0223a6ccb6419f1b5b674aa00005f590dc711467bee",
+  "preparationProtocol": {
+    "pH": 7.4,
+    "histidine": "auto",
+    "ligandPolicy": "RCSB CCD",
+    "waterPolicy": "retain",
+    "gapPolicy": "cap",
+    "repairMissingHeavy": true,
+    "polarHydrogens": "fixed-heavy 24-state local scan"
+  },
+  "scans": [
+    {
+      "key": "4ZZY:D7N:1:A:1584::",
+      "caseIds": [
+        "paired-parp2-4zzy-d7n-to-4zzx-fsu",
+        "prospective-parp2-4zzy-d7n-amide-to-nitrile"
+      ],
+      "parsedAtoms": 2904,
+      "preparedAtoms": 5901,
+      "preparationBlockers": [],
+      "preparationWarnings": [
+        "2 internal missing residues remain omitted; resolved segments were explicitly capped as separate chains",
+        "10 unmodeled terminal residues remain omitted"
+      ],
+      "ligandHydrogenBonds": [
+        {
+          "donor": {
+            "index": 1935,
+            "element": "O",
+            "atomName": "OG",
+            "residueName": "SER",
+            "chain": "A",
+            "residueNumber": 470,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogen": {
+            "index": 5032,
+            "element": "H",
+            "atomName": "HOG1",
+            "residueName": "SER",
+            "chain": "A",
+            "residueNumber": 470,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "acceptor": {
+            "index": 2822,
+            "element": "O",
+            "atomName": "O28",
+            "residueName": "D7N",
+            "chain": "A",
+            "residueNumber": 1584,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogenAcceptorDistance": 1.7767799726511893,
+          "donorHydrogenAcceptorCosine": -0.9484222834039131
+        },
+        {
+          "donor": {
+            "index": 1619,
+            "element": "N",
+            "atomName": "N",
+            "residueName": "GLY",
+            "chain": "A",
+            "residueNumber": 429,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogen": {
+            "index": 4719,
+            "element": "H",
+            "atomName": "HN1",
+            "residueName": "GLY",
+            "chain": "A",
+            "residueNumber": 429,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "acceptor": {
+            "index": 2822,
+            "element": "O",
+            "atomName": "O28",
+            "residueName": "D7N",
+            "chain": "A",
+            "residueNumber": 1584,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogenAcceptorDistance": 1.787180906876435,
+          "donorHydrogenAcceptorCosine": -0.9485014968948641
+        },
+        {
+          "donor": {
+            "index": 783,
+            "element": "O",
+            "atomName": "OG",
+            "residueName": "SER",
+            "chain": "A",
+            "residueNumber": 328,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogen": {
+            "index": 3907,
+            "element": "H",
+            "atomName": "HOG1",
+            "residueName": "SER",
+            "chain": "A",
+            "residueNumber": 328,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "acceptor": {
+            "index": 2800,
+            "element": "F",
+            "atomName": "F27",
+            "residueName": "D7N",
+            "chain": "A",
+            "residueNumber": 1584,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogenAcceptorDistance": 2.292145731265979,
+          "donorHydrogenAcceptorCosine": -0.7422928293404314
+        }
+      ],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [
+        {
+          "id": "reference-hbond-32",
+          "label": "SER A470 OG → D7N A1584 O28",
+          "receptorRole": "donor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.7767799726511893,
+            "cosine": -0.9484222834039131
+          },
+          "participants": {
+            "donor": {
+              "scope": "receptor",
+              "point": {
+                "x": 7.644864669421477,
+                "y": 1.371026859504095,
+                "z": 1.162992079889813
+              }
+            },
+            "hydrogen": {
+              "scope": "receptor",
+              "point": {
+                "x": 6.732847783835516,
+                "y": 1.2065579003080298,
+                "z": 1.4817006644416701
+              }
+            },
+            "acceptor": {
+              "scope": "ligand",
+              "designAtomId": "reference-4ZZY:HETATM:A:D7N:1584::O28:2824",
+              "referencePoint": {
+                "x": 5.109864669421476,
+                "y": 0.5050268595040954,
+                "z": 1.656992079889813
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-35",
+          "label": "GLY A429 N → D7N A1584 O28",
+          "receptorRole": "donor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.787180906876435,
+            "cosine": -0.9485014968948641
+          },
+          "participants": {
+            "donor": {
+              "scope": "receptor",
+              "point": {
+                "x": 4.433864669421478,
+                "y": 1.3320268595040972,
+                "z": -0.8920079201101869
+              }
+            },
+            "hydrogen": {
+              "scope": "receptor",
+              "point": {
+                "x": 4.560203431368703,
+                "y": 0.8662974953619014,
+                "z": -0.004745458036337857
+              }
+            },
+            "acceptor": {
+              "scope": "ligand",
+              "designAtomId": "reference-4ZZY:HETATM:A:D7N:1584::O28:2824",
+              "referencePoint": {
+                "x": 5.109864669421476,
+                "y": 0.5050268595040954,
+                "z": 1.656992079889813
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-266",
+          "label": "SER A328 OG → D7N A1584 F27",
+          "receptorRole": "donor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 2.292145731265979,
+            "cosine": -0.7422928293404314
+          },
+          "participants": {
+            "donor": {
+              "scope": "receptor",
+              "point": {
+                "x": -1.909135330578522,
+                "y": -10.693973140495903,
+                "z": 5.404992079889813
+              }
+            },
+            "hydrogen": {
+              "scope": "receptor",
+              "point": {
+                "x": -2.3034855702642467,
+                "y": -9.824960062039567,
+                "z": 5.627936373227081
+              }
+            },
+            "acceptor": {
+              "scope": "ligand",
+              "designAtomId": "reference-4ZZY:HETATM:A:D7N:1584::F27:2802",
+              "referencePoint": {
+                "x": -3.665135330578522,
+                "y": -8.938973140495904,
+                "z": 7.244992079889813
+              }
+            }
+          }
+        }
+      ],
+      "receptorAtomCount": 531,
+      "ligandAtomCount": 52
+    },
+    {
+      "key": "5Y2O:8N6:1:A:501::",
+      "caseIds": [
+        "paired-pparg-5y2o-8n6-to-5y2t-8lx",
+        "paired-pparg-5y2o-8n6-to-7awc-brl",
+        "prospective-pparg-5y2o-8n6-carbonyl-to-thiocarbonyl"
+      ],
+      "parsedAtoms": 4437,
+      "preparedAtoms": 9278,
+      "preparationBlockers": [],
+      "preparationWarnings": [
+        "24 internal missing residues remain omitted; resolved segments were explicitly capped as separate chains",
+        "45 unmodeled terminal residues remain omitted"
+      ],
+      "ligandHydrogenBonds": [
+        {
+          "donor": {
+            "index": 587,
+            "element": "O",
+            "atomName": "OG",
+            "residueName": "SER",
+            "chain": "A",
+            "residueNumber": 289,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogen": {
+            "index": 5594,
+            "element": "H",
+            "atomName": "HOG1",
+            "residueName": "SER",
+            "chain": "A",
+            "residueNumber": 289,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "acceptor": {
+            "index": 4153,
+            "element": "O",
+            "atomName": "O4",
+            "residueName": "8N6",
+            "chain": "A",
+            "residueNumber": 501,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogenAcceptorDistance": 1.6352470794084069,
+          "donorHydrogenAcceptorCosine": -0.8992537298290921
+        },
+        {
+          "donor": {
+            "index": 1863,
+            "element": "N",
+            "atomName": "NE2",
+            "residueName": "HIS",
+            "chain": "A",
+            "residueNumber": 449,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogen": {
+            "index": 6898,
+            "element": "H",
+            "atomName": "HNE2",
+            "residueName": "HIS",
+            "chain": "A",
+            "residueNumber": 449,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "acceptor": {
+            "index": 4159,
+            "element": "O",
+            "atomName": "O2",
+            "residueName": "8N6",
+            "chain": "A",
+            "residueNumber": 501,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogenAcceptorDistance": 1.9382717589115643,
+          "donorHydrogenAcceptorCosine": -0.9475991890146525
+        },
+        {
+          "donor": {
+            "index": 855,
+            "element": "N",
+            "atomName": "NE2",
+            "residueName": "HIS",
+            "chain": "A",
+            "residueNumber": 323,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogen": {
+            "index": 5861,
+            "element": "H",
+            "atomName": "HNE2",
+            "residueName": "HIS",
+            "chain": "A",
+            "residueNumber": 323,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "acceptor": {
+            "index": 4153,
+            "element": "O",
+            "atomName": "O4",
+            "residueName": "8N6",
+            "chain": "A",
+            "residueNumber": 501,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogenAcceptorDistance": 2.1511058615154353,
+          "donorHydrogenAcceptorCosine": -0.7469148248092604
+        }
+      ],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [
+        {
+          "id": "reference-hbond-20",
+          "label": "SER A289 OG → 8N6 A501 O4",
+          "receptorRole": "donor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.6352470794084069,
+            "cosine": -0.8992537298290921
+          },
+          "participants": {
+            "donor": {
+              "scope": "receptor",
+              "point": {
+                "x": -14.40915708812257,
+                "y": 6.591474194275423,
+                "z": -12.794737209826451
+              }
+            },
+            "hydrogen": {
+              "scope": "receptor",
+              "point": {
+                "x": -13.705482968003652,
+                "y": 7.130492829678838,
+                "z": -12.376763953071059
+              }
+            },
+            "acceptor": {
+              "scope": "ligand",
+              "designAtomId": "reference-5Y2O:HETATM:A:8N6:501::O4:4156",
+              "referencePoint": {
+                "x": -13.084157088122566,
+                "y": 8.507474194275423,
+                "z": -11.750737209826454
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-183",
+          "label": "HIS A449 NE2 → 8N6 A501 O2",
+          "receptorRole": "donor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.9382717589115643,
+            "cosine": -0.9475991890146525
+          },
+          "participants": {
+            "donor": {
+              "scope": "receptor",
+              "point": {
+                "x": -7.8171570881225705,
+                "y": 9.651474194275423,
+                "z": -12.728737209826448
+              }
+            },
+            "hydrogen": {
+              "scope": "receptor",
+              "point": {
+                "x": -8.639686192807773,
+                "y": 10.18482250347387,
+                "z": -12.971812204469904
+              }
+            },
+            "acceptor": {
+              "scope": "ligand",
+              "designAtomId": "reference-5Y2O:HETATM:A:8N6:501::O2:4162",
+              "referencePoint": {
+                "x": -10.083157088122569,
+                "y": 10.967474194275423,
+                "z": -14.001737209826459
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-449",
+          "label": "HIS A323 NE2 → 8N6 A501 O4",
+          "receptorRole": "donor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 2.1511058615154353,
+            "cosine": -0.7469148248092604
+          },
+          "participants": {
+            "donor": {
+              "scope": "receptor",
+              "point": {
+                "x": -12.158157088122572,
+                "y": 8.569474194275422,
+                "z": -8.91673720982645
+              }
+            },
+            "hydrogen": {
+              "scope": "receptor",
+              "point": {
+                "x": -12.399129012497148,
+                "y": 9.033778838750875,
+                "z": -9.780712746969566
+              }
+            },
+            "acceptor": {
+              "scope": "ligand",
+              "designAtomId": "reference-5Y2O:HETATM:A:8N6:501::O4:4156",
+              "referencePoint": {
+                "x": -13.084157088122566,
+                "y": 8.507474194275423,
+                "z": -11.750737209826454
+              }
+            }
+          }
+        }
+      ],
+      "receptorAtomCount": 564,
+      "ligandAtomCount": 45
+    },
+    {
+      "key": "4DES:57D:1:A:201::",
+      "caseIds": [
+        "paired-ttr-4des-57d-to-4der-agi",
+        "paired-ttr-4des-57d-to-4det-kmp"
+      ],
+      "parsedAtoms": 1951,
+      "preparedAtoms": 4039,
+      "preparationBlockers": [
+        "A generated atom has a severe 0.476 Å nonbonded clash"
+      ],
+      "preparationWarnings": [
+        "1 unmodeled terminal residues remain omitted"
+      ],
+      "ligandHydrogenBonds": [],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [
+        {
+          "id": "reference-hbond-41",
+          "label": "57D A201 O5 → HOH A336 O",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.6963964114811292,
+            "cosine": -0.9876485624230452
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-4DES:HETATM:A:57D:201::O5:1899",
+              "referencePoint": {
+                "x": 2.0911870835468562,
+                "y": 10.466896463352132,
+                "z": 11.924902614044099
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-4DES:HETATM:A:57D:201::HO5:",
+              "referencePoint": {
+                "x": 2.639740931308558,
+                "y": 10.75560717905099,
+                "z": 12.683938053761167
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": 3.470187083546854,
+                "y": 11.491896463352132,
+                "z": 13.966902614044098
+              }
+            }
+          }
+        }
+      ],
+      "receptorAtomCount": 202,
+      "ligandAtomCount": 29
+    },
+    {
+      "key": "4DER:AGI:1:A:201::",
+      "caseIds": [
+        "paired-ttr-4der-agi-to-4deu-nar"
+      ],
+      "parsedAtoms": 1922,
+      "preparedAtoms": 3926,
+      "preparationBlockers": [],
+      "preparationWarnings": [
+        "1 unmodeled terminal residues remain omitted"
+      ],
+      "ligandHydrogenBonds": [],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [
+        {
+          "id": "reference-hbond-260",
+          "label": "AGI A201 OAB → HOH A312 O",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 2.515557428276027,
+            "cosine": -0.7624521849976716
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-4DER:HETATM:A:AGI:201::OAB:1897",
+              "referencePoint": {
+                "x": 0.8154521331946079,
+                "y": 12.886396462018723,
+                "z": -4.292996357960504
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-4DER:HETATM:A:AGI:201::HOAB:",
+              "referencePoint": {
+                "x": 0.5532397967347082,
+                "y": 11.99598565814824,
+                "z": -3.978650543674774
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": 0.22245213319460788,
+                "y": 9.667396462018722,
+                "z": -4.870996357960507
+              }
+            }
+          }
+        }
+      ],
+      "receptorAtomCount": 200,
+      "ligandAtomCount": 30
+    },
+    {
+      "key": "2VA5:C8C:1:A:1389::",
+      "caseIds": [
+        "paired-bace1-2va5-c8c-to-2va7-c27"
+      ],
+      "parsedAtoms": 3053,
+      "preparedAtoms": 3203,
+      "preparationBlockers": [
+        "7 missing backbone or unsupported heavy atoms cannot be template-repaired",
+        "7 missing modeled-residue heavy atoms remain"
+      ],
+      "preparationWarnings": [
+        "10 internal missing residues remain omitted; resolved segments were explicitly capped as separate chains",
+        "67 unmodeled terminal residues remain omitted"
+      ],
+      "ligandHydrogenBonds": [],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [],
+      "receptorAtomCount": 172,
+      "ligandAtomCount": 33
+    },
+    {
+      "key": "2VA6:H24:1:A:1504::",
+      "caseIds": [
+        "paired-bace1-2va6-h24-to-2va7-c27"
+      ],
+      "parsedAtoms": 3073,
+      "preparedAtoms": 3270,
+      "preparationBlockers": [
+        "7 missing backbone or unsupported heavy atoms cannot be template-repaired",
+        "7 missing modeled-residue heavy atoms remain"
+      ],
+      "preparationWarnings": [
+        "11 internal missing residues remain omitted; resolved segments were explicitly capped as separate chains",
+        "67 unmodeled terminal residues remain omitted"
+      ],
+      "ligandHydrogenBonds": [],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [],
+      "receptorAtomCount": 218,
+      "ligandAtomCount": 45
+    },
+    {
+      "key": "1H1Q:2A6:1:A:1298::",
+      "caseIds": [
+        "paired-cdk2-1h1q-2a6-to-1h1r-6cp"
+      ],
+      "parsedAtoms": 9279,
+      "preparedAtoms": 19048,
+      "preparationBlockers": [],
+      "preparationWarnings": [
+        "12 unmodeled terminal residues remain omitted"
+      ],
+      "ligandHydrogenBonds": [],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [
+        {
+          "id": "reference-hbond-496",
+          "label": "2A6 A1298 N7 → HOH A2117 O",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 2.003437463872295,
+            "cosine": -0.8160008124410022
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-1H1Q:HETATM:A:2A6:1298::N7:8964",
+              "referencePoint": {
+                "x": -20.044057657075054,
+                "y": -12.398817437223855,
+                "z": -3.2963399073177087
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-1H1Q:HETATM:A:2A6:1298::H7:",
+              "referencePoint": {
+                "x": -20.3196286824973,
+                "y": -11.699385031913486,
+                "z": -2.62183644524395
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": -20.345057657075053,
+                "y": -11.225817437223853,
+                "z": -0.6753399073177064
+              }
+            }
+          }
+        }
+      ],
+      "receptorAtomCount": 475,
+      "ligandAtomCount": 45
+    },
+    {
+      "key": "1H1R:6CP:1:A:1298::A",
+      "caseIds": [
+        "paired-cdk2-1h1r-6cp-to-1oiu-n76"
+      ],
+      "parsedAtoms": 9668,
+      "preparedAtoms": 20212,
+      "preparationBlockers": [
+        "A generated atom has a severe 0.505 Å nonbonded clash"
+      ],
+      "preparationWarnings": [
+        "12 unmodeled terminal residues remain omitted"
+      ],
+      "ligandHydrogenBonds": [],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [
+        {
+          "id": "reference-hbond-794",
+          "label": "6CP A1298 N7 → HOH A2266 O",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 2.076306543894976,
+            "cosine": -0.795238775320934
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-1H1R:HETATM:A:6CP:1298::N7:8981",
+              "referencePoint": {
+                "x": -1.5431149151840824,
+                "y": 18.457988311957088,
+                "z": -36.43490287546559
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-1H1R:HETATM:A:6CP:1298::H7:",
+              "referencePoint": {
+                "x": -1.8988319742364013,
+                "y": 19.13084591913131,
+                "z": -35.770954071440045
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": -2.518114915184084,
+                "y": 19.336988311957086,
+                "z": -33.799902875465584
+              }
+            }
+          }
+        }
+      ],
+      "receptorAtomCount": 472,
+      "ligandAtomCount": 45
+    },
+    {
+      "key": "7KPA:D84:1:C:201::",
+      "caseIds": [
+        "prospective-7kpa-d84-pyridone-to-cyclohexanone",
+        "negative-tnfa-7kpa-d84-pyridone-to-phenyl"
+      ],
+      "parsedAtoms": 3273,
+      "preparedAtoms": 6969,
+      "preparationBlockers": [],
+      "preparationWarnings": [
+        "26 internal missing residues remain omitted; resolved segments were explicitly capped as separate chains",
+        "22 unmodeled terminal residues remain omitted"
+      ],
+      "ligandHydrogenBonds": [
+        {
+          "donor": {
+            "index": 417,
+            "element": "N",
+            "atomName": "N",
+            "residueName": "SER",
+            "chain": "A",
+            "residueNumber": 60,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogen": {
+            "index": 4028,
+            "element": "H",
+            "atomName": "HN1",
+            "residueName": "SER",
+            "chain": "A",
+            "residueNumber": 60,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "acceptor": {
+            "index": 3208,
+            "element": "O",
+            "atomName": "O2",
+            "residueName": "D84",
+            "chain": "C",
+            "residueNumber": 201,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogenAcceptorDistance": 1.8205263985119702,
+          "donorHydrogenAcceptorCosine": -0.9766062404787464
+        },
+        {
+          "donor": {
+            "index": 3123,
+            "element": "O",
+            "atomName": "OH",
+            "residueName": "TYR",
+            "chain": "C",
+            "residueNumber": 151,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogen": {
+            "index": 6918,
+            "element": "H",
+            "atomName": "HOH1",
+            "residueName": "TYR",
+            "chain": "C",
+            "residueNumber": 151,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "acceptor": {
+            "index": 3204,
+            "element": "N",
+            "atomName": "N2",
+            "residueName": "D84",
+            "chain": "C",
+            "residueNumber": 201,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogenAcceptorDistance": 1.852479328093005,
+          "donorHydrogenAcceptorCosine": -0.9835595003462213
+        },
+        {
+          "donor": {
+            "index": 41,
+            "element": "N",
+            "atomName": "NZ",
+            "residueName": "LYS",
+            "chain": "A",
+            "residueNumber": 11,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogen": {
+            "index": 3651,
+            "element": "H",
+            "atomName": "HNZ3",
+            "residueName": "LYS",
+            "chain": "A",
+            "residueNumber": 11,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "acceptor": {
+            "index": 3181,
+            "element": "O",
+            "atomName": "O3",
+            "residueName": "D84",
+            "chain": "C",
+            "residueNumber": 201,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogenAcceptorDistance": 2.2677469905923333,
+          "donorHydrogenAcceptorCosine": -0.8994755465026527
+        }
+      ],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [
+        {
+          "id": "reference-hbond-51",
+          "label": "D84 C201 N3 → HOH C307 O",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.8105215884060062,
+            "cosine": -0.956867899372833
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-7KPA:HETATM:C:D84:201::N3:3189",
+              "referencePoint": {
+                "x": -12.004786739993886,
+                "y": -0.27525695080966006,
+                "z": 3.899317140238317
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-7KPA:HETATM:C:D84:201::H27:",
+              "referencePoint": {
+                "x": -12.973036664348394,
+                "y": 0.01176915380112864,
+                "z": 3.913742786131851
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": -14.514786739993884,
+                "y": 0.9207430491903399,
+                "z": 3.6403171402383165
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-56",
+          "label": "SER A60 N → D84 C201 O2",
+          "receptorRole": "donor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.8205263985119702,
+            "cosine": -0.9766062404787464
+          },
+          "participants": {
+            "donor": {
+              "scope": "receptor",
+              "point": {
+                "x": -1.2757867399938858,
+                "y": -5.76725695080966,
+                "z": -4.3966828597616825
+              }
+            },
+            "hydrogen": {
+              "scope": "receptor",
+              "point": {
+                "x": -1.0141890873042627,
+                "y": -4.791829478809328,
+                "z": -4.411102116827165
+              }
+            },
+            "acceptor": {
+              "scope": "ligand",
+              "designAtomId": "reference-7KPA:HETATM:C:D84:201::O2:3214",
+              "referencePoint": {
+                "x": -0.8397867399938859,
+                "y": -2.99425695080966,
+                "z": -4.181682859761683
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-74",
+          "label": "TYR C151 OH → D84 C201 N2",
+          "receptorRole": "donor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.852479328093005,
+            "cosine": -0.9835595003462213
+          },
+          "participants": {
+            "donor": {
+              "scope": "receptor",
+              "point": {
+                "x": -6.858786739993886,
+                "y": 2.44874304919034,
+                "z": -3.586682859761682
+              }
+            },
+            "hydrogen": {
+              "scope": "receptor",
+              "point": {
+                "x": -6.713439067309615,
+                "y": 2.504354443847059,
+                "z": -2.61911817105627
+              }
+            },
+            "acceptor": {
+              "scope": "ligand",
+              "designAtomId": "reference-7KPA:HETATM:C:D84:201::N2:3210",
+              "referencePoint": {
+                "x": -6.465786739993887,
+                "y": 2.2747430491903398,
+                "z": -0.7976828597616823
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-297",
+          "label": "LYS A11 NZ → D84 C201 O3",
+          "receptorRole": "donor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 2.2677469905923333,
+            "cosine": -0.8994755465026527
+          },
+          "participants": {
+            "donor": {
+              "scope": "receptor",
+              "point": {
+                "x": -14.199786739993886,
+                "y": -4.3112569508096605,
+                "z": 5.594317140238317
+              }
+            },
+            "hydrogen": {
+              "scope": "receptor",
+              "point": {
+                "x": -13.905700362831588,
+                "y": -3.3486489076209027,
+                "z": 5.677976915255141
+              }
+            },
+            "acceptor": {
+              "scope": "ligand",
+              "designAtomId": "reference-7KPA:HETATM:C:D84:201::O3:3187",
+              "referencePoint": {
+                "x": -12.386786739993884,
+                "y": -1.66625695080966,
+                "z": 5.606317140238318
+              }
+            }
+          }
+        }
+      ],
+      "receptorAtomCount": 752,
+      "ligandAtomCount": 67
+    },
+    {
+      "key": "3FLY:FLY:1:A:361::",
+      "caseIds": [
+        "prospective-p38-3fly-fly-carbonyl-to-thiocarbonyl"
+      ],
+      "parsedAtoms": 3113,
+      "preparedAtoms": 6498,
+      "preparationBlockers": [],
+      "preparationWarnings": [
+        "2 internal missing residues remain omitted; resolved segments were explicitly capped as separate chains",
+        "23 unmodeled terminal residues remain omitted"
+      ],
+      "ligandHydrogenBonds": [
+        {
+          "donor": {
+            "index": 2825,
+            "element": "N",
+            "atomName": "N12",
+            "residueName": "FLY",
+            "chain": "A",
+            "residueNumber": 361,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogen": {
+            "index": 3128,
+            "element": "H",
+            "atomName": "HN12",
+            "residueName": "FLY",
+            "chain": "A",
+            "residueNumber": 361,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "acceptor": {
+            "index": 864,
+            "element": "O",
+            "atomName": "O",
+            "residueName": "MET",
+            "chain": "A",
+            "residueNumber": 109,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogenAcceptorDistance": 1.9647883190198623,
+          "donorHydrogenAcceptorCosine": -0.881468463825368
+        }
+      ],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [
+        {
+          "id": "reference-hbond-183",
+          "label": "FLY A361 N12 → MET A109 O",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.9647883190198623,
+            "cosine": -0.881468463825368
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-3FLY:HETATM:A:FLY:361::N12:2827",
+              "referencePoint": {
+                "x": 3.8510864118214094,
+                "y": -9.248425634436256,
+                "z": 9.39864567940895
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-3FLY:HETATM:A:FLY:361::HN12:",
+              "referencePoint": {
+                "x": 3.8987553848610257,
+                "y": -10.238683570904568,
+                "z": 9.205728888354187
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": 4.579086411821407,
+                "y": -12.044425634436255,
+                "z": 9.57564567940895
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-190",
+          "label": "HOH A1065 O → FLY A361 O15",
+          "receptorRole": "donor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.966961947845976,
+            "cosine": -0.7760768918436022
+          },
+          "participants": {
+            "donor": {
+              "scope": "receptor",
+              "point": {
+                "x": 1.7130864118214078,
+                "y": -1.5384256344362566,
+                "z": 8.46264567940895
+              }
+            },
+            "hydrogen": {
+              "scope": "receptor",
+              "point": {
+                "x": 1.058118690576972,
+                "y": -2.231432716139333,
+                "z": 8.546253746228224
+              }
+            },
+            "acceptor": {
+              "scope": "ligand",
+              "designAtomId": "reference-3FLY:HETATM:A:FLY:361::O15:2823",
+              "referencePoint": {
+                "x": 0.11708641182140767,
+                "y": -3.2854256344362565,
+                "z": 9.914645679408949
+              }
+            }
+          }
+        }
+      ],
+      "receptorAtomCount": 474,
+      "ligandAtomCount": 41
+    },
+    {
+      "key": "2QBS:024:1:A:800::",
+      "caseIds": [
+        "prospective-ptp1b-2qbs-024-acid-to-tetrazole",
+        "prospective-ptp1b-2qbs-024-ring-acid-to-tetrazole"
+      ],
+      "parsedAtoms": 2676,
+      "preparedAtoms": 5527,
+      "preparationBlockers": [],
+      "preparationWarnings": [
+        "2 unmodeled terminal residues remain omitted"
+      ],
+      "ligandHydrogenBonds": [
+        {
+          "donor": {
+            "index": 1516,
+            "element": "N",
+            "atomName": "N",
+            "residueName": "PHE",
+            "chain": "A",
+            "residueNumber": 182,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogen": {
+            "index": 4613,
+            "element": "H",
+            "atomName": "HN1",
+            "residueName": "PHE",
+            "chain": "A",
+            "residueNumber": 182,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "acceptor": {
+            "index": 2445,
+            "element": "O",
+            "atomName": "O26",
+            "residueName": "024",
+            "chain": "A",
+            "residueNumber": 800,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogenAcceptorDistance": 1.8542101633789025,
+          "donorHydrogenAcceptorCosine": -0.8233960592757513
+        }
+      ],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [
+        {
+          "id": "reference-hbond-53",
+          "label": "024 A800 O8 → HOH A832 O",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.8016109634221458,
+            "cosine": -0.9009292128746245
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-2QBS:HETATM:A:024:800::O8:2435",
+              "referencePoint": {
+                "x": -0.18014686098657506,
+                "y": 0.5878736920777357,
+                "z": -13.130060164424517
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-2QBS:HETATM:A:024:800::HO8:",
+              "referencePoint": {
+                "x": -0.20342393921153085,
+                "y": 0.22753308808630174,
+                "z": -12.21900976694675
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": -0.2101468609865762,
+                "y": 0.35687369207773756,
+                "z": -10.422060164424517
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-90",
+          "label": "PHE A182 N → 024 A800 O26",
+          "receptorRole": "donor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.8542101633789025,
+            "cosine": -0.8233960592757513
+          },
+          "participants": {
+            "donor": {
+              "scope": "receptor",
+              "point": {
+                "x": 4.891853139013421,
+                "y": 2.8408736920777358,
+                "z": -12.541060164424517
+              }
+            },
+            "hydrogen": {
+              "scope": "receptor",
+              "point": {
+                "x": 4.401867994578738,
+                "y": 2.342133664848392,
+                "z": -11.81217543864643
+              }
+            },
+            "acceptor": {
+              "scope": "ligand",
+              "designAtomId": "reference-2QBS:HETATM:A:024:800::O26:2447",
+              "referencePoint": {
+                "x": 4.570853139013423,
+                "y": 1.1728736920777365,
+                "z": -10.383060164424517
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-254",
+          "label": "024 A800 O25 → HOH A802 O",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 2.0763627277965595,
+            "cosine": -0.9794135385966608
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-2QBS:HETATM:A:024:800::O25:2446",
+              "referencePoint": {
+                "x": 2.7158531390134257,
+                "y": 0.5318736920777347,
+                "z": -9.469060164424516
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-2QBS:HETATM:A:024:800::HO25:",
+              "referencePoint": {
+                "x": 2.3362851714742043,
+                "y": -0.37102627163360136,
+                "z": -9.435896727506545
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": 1.4518531390134228,
+                "y": -2.1891263079222636,
+                "z": -8.963060164424515
+              }
+            }
+          }
+        }
+      ],
+      "receptorAtomCount": 452,
+      "ligandAtomCount": 47
+    },
+    {
+      "key": "2ZFF:53U:1:H:2001::",
+      "caseIds": [
+        "prospective-thrombin-2zff-53u-amide-to-sulfonamide"
+      ],
+      "parsedAtoms": 2509,
+      "preparedAtoms": 5167,
+      "preparationBlockers": [],
+      "preparationWarnings": [
+        "7 internal missing residues remain omitted; resolved segments were explicitly capped as separate chains",
+        "10 unmodeled terminal residues remain omitted"
+      ],
+      "ligandHydrogenBonds": [
+        {
+          "donor": {
+            "index": 2342,
+            "element": "N",
+            "atomName": "N3",
+            "residueName": "53U",
+            "chain": "H",
+            "residueNumber": 2001,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogen": {
+            "index": 2536,
+            "element": "H",
+            "atomName": "HN3",
+            "residueName": "53U",
+            "chain": "H",
+            "residueNumber": 2001,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "acceptor": {
+            "index": 1972,
+            "element": "O",
+            "atomName": "O",
+            "residueName": "SER",
+            "chain": "H",
+            "residueNumber": 214,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogenAcceptorDistance": 1.8141349539056324,
+          "donorHydrogenAcceptorCosine": -0.9971038107485161
+        },
+        {
+          "donor": {
+            "index": 1989,
+            "element": "N",
+            "atomName": "N",
+            "residueName": "GLY",
+            "chain": "H",
+            "residueNumber": 216,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogen": {
+            "index": 4856,
+            "element": "H",
+            "atomName": "HN1",
+            "residueName": "GLY",
+            "chain": "H",
+            "residueNumber": 216,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "acceptor": {
+            "index": 2327,
+            "element": "O",
+            "atomName": "O1",
+            "residueName": "53U",
+            "chain": "H",
+            "residueNumber": 2001,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogenAcceptorDistance": 1.9712172759946243,
+          "donorHydrogenAcceptorCosine": -0.9688330375628246
+        }
+      ],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [
+        {
+          "id": "reference-hbond-54",
+          "label": "53U H2001 N3 → SER H214 O",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.8141349539056324,
+            "cosine": -0.9971038107485161
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-2ZFF:HETATM:H:53U:2001::N3:2397",
+              "referencePoint": {
+                "x": 3.691809485850939,
+                "y": -10.90108330011957,
+                "z": 1.073526106018349
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-2ZFF:HETATM:H:53U:2001::HN3:",
+              "referencePoint": {
+                "x": 4.089133499507519,
+                "y": -10.173915756061273,
+                "z": 1.6509869194421274
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": 4.8578094858509395,
+                "y": -8.81408330011957,
+                "z": 2.573526106018349
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-167",
+          "label": "53U H2001 N1 → HOH H3160 O",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.9488784841522853,
+            "cosine": -0.8040772430712074
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-2ZFF:HETATM:H:53U:2001::N1:2379",
+              "referencePoint": {
+                "x": 4.11080948585094,
+                "y": -16.10808330011957,
+                "z": 3.4795261060183478
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-2ZFF:HETATM:H:53U:2001::HN1:",
+              "referencePoint": {
+                "x": 3.8761947401717576,
+                "y": -16.387302580607326,
+                "z": 2.537670217618327
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": 3.422809485850939,
+                "y": -15.707083300119569,
+                "z": 0.7685261060183493
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-181",
+          "label": "GLY H216 N → 53U H2001 O1",
+          "receptorRole": "donor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.9712172759946243,
+            "cosine": -0.9688330375628246
+          },
+          "participants": {
+            "donor": {
+              "scope": "receptor",
+              "point": {
+                "x": 2.3658094858509386,
+                "y": -12.04308330011957,
+                "z": 5.299526106018348
+              }
+            },
+            "hydrogen": {
+              "scope": "receptor",
+              "point": {
+                "x": 2.878713597653161,
+                "y": -12.573112216742452,
+                "z": 4.6095270338161125
+              }
+            },
+            "acceptor": {
+              "scope": "ligand",
+              "designAtomId": "reference-2ZFF:HETATM:H:53U:2001::O1:2382",
+              "referencePoint": {
+                "x": 4.226809485850939,
+                "y": -13.27008330011957,
+                "z": 3.3515261060183477
+              }
+            }
+          }
+        }
+      ],
+      "receptorAtomCount": 425,
+      "ligandAtomCount": 51
+    },
+    {
+      "key": "5IGM:BMF:1:A:301::",
+      "caseIds": [
+        "prospective-brd9-5igm-bmf-carbamate-to-urea"
+      ],
+      "parsedAtoms": 1981,
+      "preparedAtoms": 4123,
+      "preparationBlockers": [],
+      "preparationWarnings": [
+        "21 unmodeled terminal residues remain omitted"
+      ],
+      "ligandHydrogenBonds": [
+        {
+          "donor": {
+            "index": 1853,
+            "element": "N",
+            "atomName": "N16",
+            "residueName": "BMF",
+            "chain": "A",
+            "residueNumber": 301,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogen": {
+            "index": 1997,
+            "element": "H",
+            "atomName": "H17",
+            "residueName": "BMF",
+            "chain": "A",
+            "residueNumber": 301,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "acceptor": {
+            "index": 638,
+            "element": "O",
+            "atomName": "OD1",
+            "residueName": "ASN",
+            "chain": "A",
+            "residueNumber": 216,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogenAcceptorDistance": 2.2880885604478247,
+          "donorHydrogenAcceptorCosine": -0.7211020780134497
+        },
+        {
+          "donor": {
+            "index": 1844,
+            "element": "N",
+            "atomName": "N04",
+            "residueName": "BMF",
+            "chain": "A",
+            "residueNumber": 301,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogen": {
+            "index": 1992,
+            "element": "H",
+            "atomName": "H12",
+            "residueName": "BMF",
+            "chain": "A",
+            "residueNumber": 301,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "acceptor": {
+            "index": 185,
+            "element": "O",
+            "atomName": "O",
+            "residueName": "GLY",
+            "chain": "A",
+            "residueNumber": 159,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogenAcceptorDistance": 2.380128390361366,
+          "donorHydrogenAcceptorCosine": -0.7900902605558268
+        }
+      ],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [
+        {
+          "id": "reference-hbond-227",
+          "label": "BMF A301 N16 → ASN A216 OD1",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 2.2880885604478247,
+            "cosine": -0.7211020780134497
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-5IGM:HETATM:A:BMF:301::N16:1856",
+              "referencePoint": {
+                "x": -0.28730136294806385,
+                "y": -32.05205552751136,
+                "z": 2.6782549217566967
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-5IGM:HETATM:A:BMF:301::H17:",
+              "referencePoint": {
+                "x": -1.2946884265981162,
+                "y": -32.03109125889528,
+                "z": 2.6087437468859007
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": -3.054301362948067,
+                "y": -32.425055527511354,
+                "z": 4.017254921756695
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-238",
+          "label": "BMF A301 N04 → GLY A159 O",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 2.380128390361366,
+            "cosine": -0.7900902605558268
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-5IGM:HETATM:A:BMF:301::N04:1847",
+              "referencePoint": {
+                "x": 5.874698637051928,
+                "y": -26.592055527511356,
+                "z": 1.317254921756696
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-5IGM:HETATM:A:BMF:301::H12:",
+              "referencePoint": {
+                "x": 6.145259267258035,
+                "y": -25.79398491996836,
+                "z": 1.8740136224147366
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": 5.561698637051933,
+                "y": -23.531055527511356,
+                "z": 2.325254921756695
+              }
+            }
+          }
+        }
+      ],
+      "receptorAtomCount": 357,
+      "ligandAtomCount": 48
+    },
+    {
+      "key": "4R6E:3JD:1:A:1101::",
+      "caseIds": [
+        "prospective-parp1-4r6e-3jd-amide-to-nitrile",
+        "negative-parp1-4r6e-3jd-amide-to-methyl"
+      ],
+      "parsedAtoms": 11168,
+      "preparedAtoms": 22660,
+      "preparationBlockers": [],
+      "preparationWarnings": [
+        "34 unmodeled terminal residues remain omitted"
+      ],
+      "ligandHydrogenBonds": [
+        {
+          "donor": {
+            "index": 1946,
+            "element": "O",
+            "atomName": "OG",
+            "residueName": "SER",
+            "chain": "A",
+            "residueNumber": 904,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogen": {
+            "index": 13473,
+            "element": "H",
+            "atomName": "HOG1",
+            "residueName": "SER",
+            "chain": "A",
+            "residueNumber": 904,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "acceptor": {
+            "index": 11012,
+            "element": "O",
+            "atomName": "OAB",
+            "residueName": "3JD",
+            "chain": "A",
+            "residueNumber": 1101,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogenAcceptorDistance": 1.822324740006318,
+          "donorHydrogenAcceptorCosine": -0.9442767307945759
+        },
+        {
+          "donor": {
+            "index": 1636,
+            "element": "N",
+            "atomName": "N",
+            "residueName": "GLY",
+            "chain": "A",
+            "residueNumber": 863,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogen": {
+            "index": 13162,
+            "element": "H",
+            "atomName": "HN1",
+            "residueName": "GLY",
+            "chain": "A",
+            "residueNumber": 863,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "acceptor": {
+            "index": 11012,
+            "element": "O",
+            "atomName": "OAB",
+            "residueName": "3JD",
+            "chain": "A",
+            "residueNumber": 1101,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogenAcceptorDistance": 1.857589622961143,
+          "donorHydrogenAcceptorCosine": -0.9816838533137373
+        }
+      ],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [
+        {
+          "id": "reference-hbond-155",
+          "label": "SER A904 OG → 3JD A1101 OAB",
+          "receptorRole": "donor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.822324740006318,
+            "cosine": -0.9442767307945759
+          },
+          "participants": {
+            "donor": {
+              "scope": "receptor",
+              "point": {
+                "x": 6.975949229942586,
+                "y": -9.534756267908339,
+                "z": -22.525492836676303
+              }
+            },
+            "hydrogen": {
+              "scope": "receptor",
+              "point": {
+                "x": 7.205084852881597,
+                "y": -8.70435412494254,
+                "z": -22.058235790439266
+              }
+            },
+            "acceptor": {
+              "scope": "ligand",
+              "designAtomId": "reference-4R6E:HETATM:A:3JD:1101::OAB:11024",
+              "referencePoint": {
+                "x": 7.6189492299425865,
+                "y": -7.542756267908338,
+                "z": -20.716492836676302
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-227",
+          "label": "GLY A863 N → 3JD A1101 OAB",
+          "receptorRole": "donor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.857589622961143,
+            "cosine": -0.9816838533137373
+          },
+          "participants": {
+            "donor": {
+              "scope": "receptor",
+              "point": {
+                "x": 5.501949229942582,
+                "y": -8.569756267908339,
+                "z": -19.098492836676304
+              }
+            },
+            "hydrogen": {
+              "scope": "receptor",
+              "point": {
+                "x": 6.276101153819914,
+                "y": -8.325901927157483,
+                "z": -19.69959504034386
+              }
+            },
+            "acceptor": {
+              "scope": "ligand",
+              "designAtomId": "reference-4R6E:HETATM:A:3JD:1101::OAB:11024",
+              "referencePoint": {
+                "x": 7.6189492299425865,
+                "y": -7.542756267908338,
+                "z": -20.716492836676302
+              }
+            }
+          }
+        }
+      ],
+      "receptorAtomCount": 466,
+      "ligandAtomCount": 44
+    },
+    {
+      "key": "5Q0I:0X0:1:A:501::",
+      "caseIds": [
+        "prospective-fxr-5q0i-0x0-amide-to-thioamide"
+      ],
+      "parsedAtoms": 2139,
+      "preparedAtoms": 4487,
+      "preparationBlockers": [],
+      "preparationWarnings": [
+        "2 internal missing residues remain omitted; resolved segments were explicitly capped as separate chains",
+        "4 unmodeled terminal residues remain omitted"
+      ],
+      "ligandHydrogenBonds": [
+        {
+          "donor": {
+            "index": 1026,
+            "element": "O",
+            "atomName": "OH",
+            "residueName": "TYR",
+            "chain": "A",
+            "residueNumber": 373,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogen": {
+            "index": 3529,
+            "element": "H",
+            "atomName": "HOH1",
+            "residueName": "TYR",
+            "chain": "A",
+            "residueNumber": 373,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "acceptor": {
+            "index": 1963,
+            "element": "O",
+            "atomName": "O2",
+            "residueName": "0X0",
+            "chain": "A",
+            "residueNumber": 501,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogenAcceptorDistance": 1.729066974292438,
+          "donorHydrogenAcceptorCosine": -0.9320198216881649
+        }
+      ],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [
+        {
+          "id": "reference-hbond-6",
+          "label": "TYR A373 OH → 0X0 A501 O2",
+          "receptorRole": "donor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.729066974292438,
+            "cosine": -0.9320198216881649
+          },
+          "participants": {
+            "donor": {
+              "scope": "receptor",
+              "point": {
+                "x": -0.6847905563347183,
+                "y": 5.683697989714872,
+                "z": -6.960300607760544
+              }
+            },
+            "hydrogen": {
+              "scope": "receptor",
+              "point": {
+                "x": -0.5089229543057475,
+                "y": 5.30070748376864,
+                "z": -7.845054166053264
+              }
+            },
+            "acceptor": {
+              "scope": "ligand",
+              "designAtomId": "reference-5Q0I:HETATM:A:0X0:501::O2:2076",
+              "referencePoint": {
+                "x": 0.3562094436652785,
+                "y": 4.917697989714874,
+                "z": -9.292300607760545
+              }
+            }
+          }
+        }
+      ],
+      "receptorAtomCount": 693,
+      "ligandAtomCount": 66
+    },
+    {
+      "key": "3PTB:BEN:1:A:1::",
+      "caseIds": [
+        "negative-trypsin-3ptb-ben-amidine-to-ethyl"
+      ],
+      "parsedAtoms": 1700,
+      "preparedAtoms": 3423,
+      "preparationBlockers": [],
+      "preparationWarnings": [],
+      "ligandHydrogenBonds": [
+        {
+          "donor": {
+            "index": 1636,
+            "element": "N",
+            "atomName": "N1",
+            "residueName": "BEN",
+            "chain": "A",
+            "residueNumber": 1,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogen": {
+            "index": 1705,
+            "element": "H",
+            "atomName": "HN1",
+            "residueName": "BEN",
+            "chain": "A",
+            "residueNumber": 1,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "acceptor": {
+            "index": 1251,
+            "element": "O",
+            "atomName": "OD1",
+            "residueName": "ASP",
+            "chain": "A",
+            "residueNumber": 189,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogenAcceptorDistance": 1.9424925782195903,
+          "donorHydrogenAcceptorCosine": -0.9496547576442891
+        },
+        {
+          "donor": {
+            "index": 1637,
+            "element": "N",
+            "atomName": "N2",
+            "residueName": "BEN",
+            "chain": "A",
+            "residueNumber": 1,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogen": {
+            "index": 1707,
+            "element": "H",
+            "atomName": "HN22",
+            "residueName": "BEN",
+            "chain": "A",
+            "residueNumber": 1,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "acceptor": {
+            "index": 1258,
+            "element": "O",
+            "atomName": "OG",
+            "residueName": "SER",
+            "chain": "A",
+            "residueNumber": 190,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogenAcceptorDistance": 2.1235517335353276,
+          "donorHydrogenAcceptorCosine": -0.8677993664611615
+        }
+      ],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [
+        {
+          "id": "reference-hbond-102",
+          "label": "BEN A1 N1 → ASP A189 OD1",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.9424925782195903,
+            "cosine": -0.9496547576442891
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-3PTB:HETATM:A:BEN:1::N1:1639",
+              "referencePoint": {
+                "x": -5.263473529411765,
+                "y": 6.5946735294117635,
+                "z": -9.213754117647017
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-3PTB:HETATM:A:BEN:1::HN1:",
+              "referencePoint": {
+                "x": -5.624046270130202,
+                "y": 6.054710870821293,
+                "z": -9.987399789759714
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": -6.568473529411766,
+                "y": 4.699673529411764,
+                "z": -11.009754117647017
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-179",
+          "label": "BEN A1 N2 → SER A190 OG",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 2.1235517335353276,
+            "cosine": -0.8677993664611615
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-3PTB:HETATM:A:BEN:1::N2:1640",
+              "referencePoint": {
+                "x": -4.228473529411765,
+                "y": 4.750673529411764,
+                "z": -8.395754117647018
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-3PTB:HETATM:A:BEN:1::HN22:",
+              "referencePoint": {
+                "x": -4.5596623340022555,
+                "y": 4.161471099087642,
+                "z": -7.645251304984687
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": -4.438473529411766,
+                "y": 2.361673529411765,
+                "z": -6.524754117647017
+              }
+            }
+          }
+        }
+      ],
+      "receptorAtomCount": 280,
+      "ligandAtomCount": 17
+    },
+    {
+      "key": "1HVR:XK2:1:A:263::",
+      "caseIds": [
+        "negative-hivpr-1hvr-xk2-diol-to-difluoro"
+      ],
+      "parsedAtoms": 1872,
+      "preparedAtoms": 3188,
+      "preparationBlockers": [],
+      "preparationWarnings": [],
+      "ligandHydrogenBonds": [
+        {
+          "donor": {
+            "index": 1506,
+            "element": "O",
+            "atomName": "O4",
+            "residueName": "XK2",
+            "chain": "A",
+            "residueNumber": 263,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogen": {
+            "index": 1550,
+            "element": "H",
+            "atomName": "HO4",
+            "residueName": "XK2",
+            "chain": "A",
+            "residueNumber": 263,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "acceptor": {
+            "index": 946,
+            "element": "O",
+            "atomName": "OD1",
+            "residueName": "ASP",
+            "chain": "B",
+            "residueNumber": 25,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogenAcceptorDistance": 1.9386161310518075,
+          "donorHydrogenAcceptorCosine": -0.9918219275979614
+        },
+        {
+          "donor": {
+            "index": 1508,
+            "element": "O",
+            "atomName": "O5",
+            "residueName": "XK2",
+            "chain": "A",
+            "residueNumber": 263,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogen": {
+            "index": 1552,
+            "element": "H",
+            "atomName": "HO5",
+            "residueName": "XK2",
+            "chain": "A",
+            "residueNumber": 263,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "acceptor": {
+            "index": 947,
+            "element": "O",
+            "atomName": "OD2",
+            "residueName": "ASP",
+            "chain": "B",
+            "residueNumber": 25,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogenAcceptorDistance": 2.142299022029079,
+          "donorHydrogenAcceptorCosine": -0.8575973905776586
+        },
+        {
+          "donor": {
+            "index": 377,
+            "element": "N",
+            "atomName": "N",
+            "residueName": "ILE",
+            "chain": "A",
+            "residueNumber": 50,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogen": {
+            "index": 1984,
+            "element": "H",
+            "atomName": "HN1",
+            "residueName": "ILE",
+            "chain": "A",
+            "residueNumber": 50,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "acceptor": {
+            "index": 1501,
+            "element": "O",
+            "atomName": "O1",
+            "residueName": "XK2",
+            "chain": "A",
+            "residueNumber": 263,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogenAcceptorDistance": 2.1961059212426486,
+          "donorHydrogenAcceptorCosine": -0.9425535431362646
+        },
+        {
+          "donor": {
+            "index": 1508,
+            "element": "O",
+            "atomName": "O5",
+            "residueName": "XK2",
+            "chain": "A",
+            "residueNumber": 263,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogen": {
+            "index": 1552,
+            "element": "H",
+            "atomName": "HO5",
+            "residueName": "XK2",
+            "chain": "A",
+            "residueNumber": 263,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "acceptor": {
+            "index": 946,
+            "element": "O",
+            "atomName": "OD1",
+            "residueName": "ASP",
+            "chain": "B",
+            "residueNumber": 25,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogenAcceptorDistance": 2.227154915296425,
+          "donorHydrogenAcceptorCosine": -0.885432295652188
+        }
+      ],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [
+        {
+          "id": "reference-hbond-59",
+          "label": "XK2 A263 O4 → ASP B25 OD1",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 1.9386161310518075,
+            "cosine": -0.9918219275979614
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-1HVR:HETATM:A:XK2:263::O4:1853",
+              "referencePoint": {
+                "x": 1.7218322649572588,
+                "y": -0.8212895299145515,
+                "z": -1.0202927350427125
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-1HVR:HETATM:A:XK2:263::HO4:",
+              "referencePoint": {
+                "x": 0.8210930539343326,
+                "y": -0.43521372816240533,
+                "z": -1.016504724056152
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": -1.0131677350427406,
+                "y": 0.16771047008544926,
+                "z": -1.1902927350427142
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-98",
+          "label": "XK2 A263 O5 → ASP B25 OD2",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 2.142299022029079,
+            "cosine": -0.8575973905776586
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-1HVR:HETATM:A:XK2:263::O5:1855",
+              "referencePoint": {
+                "x": -0.04116773504274107,
+                "y": -1.841289529914551,
+                "z": 1.001707264957286
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-1HVR:HETATM:A:XK2:263::HO5:",
+              "referencePoint": {
+                "x": -0.4194865001321875,
+                "y": -1.4958731863062489,
+                "z": 0.1662657879228575
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": -1.525167735042741,
+                "y": -1.8492895299145538,
+                "z": -1.6342927350427132
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-103",
+          "label": "ILE A50 N → XK2 A263 O1",
+          "receptorRole": "donor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 2.1961059212426486,
+            "cosine": -0.9425535431362646
+          },
+          "participants": {
+            "donor": {
+              "scope": "receptor",
+              "point": {
+                "x": 3.0348322649572594,
+                "y": -9.145289529914553,
+                "z": -0.2322927350427122
+              }
+            },
+            "hydrogen": {
+              "scope": "receptor",
+              "point": {
+                "x": 3.4735102991519433,
+                "y": -8.23650984239258,
+                "z": -0.19009010642132704
+              }
+            },
+            "acceptor": {
+              "scope": "ligand",
+              "designAtomId": "reference-1HVR:HETATM:A:XK2:263::O1:1848",
+              "referencePoint": {
+                "x": 3.711832264957259,
+                "y": -6.056289529914553,
+                "z": -0.07729273504271461
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-111",
+          "label": "XK2 A263 O5 → ASP B25 OD1",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 2.227154915296425,
+            "cosine": -0.885432295652188
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-1HVR:HETATM:A:XK2:263::O5:1855",
+              "referencePoint": {
+                "x": -0.04116773504274107,
+                "y": -1.841289529914551,
+                "z": 1.001707264957286
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-1HVR:HETATM:A:XK2:263::HO5:",
+              "referencePoint": {
+                "x": -0.4194865001321875,
+                "y": -1.4958731863062489,
+                "z": 0.1662657879228575
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": -1.0131677350427406,
+                "y": 0.16771047008544926,
+                "z": -1.1902927350427142
+              }
+            }
+          }
+        }
+      ],
+      "receptorAtomCount": 624,
+      "ligandAtomCount": 84
+    },
+    {
+      "key": "6COX:S58:1:A:701::",
+      "caseIds": [
+        "negative-cox2-6cox-s58-sulfonamide-to-tertbutyl"
+      ],
+      "parsedAtoms": 8972,
+      "preparedAtoms": 17747,
+      "preparationBlockers": [],
+      "preparationWarnings": [
+        "70 unmodeled terminal residues remain omitted"
+      ],
+      "ligandHydrogenBonds": [
+        {
+          "donor": {
+            "index": 8964,
+            "element": "N",
+            "atomName": "N3",
+            "residueName": "S58",
+            "chain": "A",
+            "residueNumber": 701,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogen": {
+            "index": 8981,
+            "element": "H",
+            "atomName": "HN31",
+            "residueName": "S58",
+            "chain": "A",
+            "residueNumber": 701,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "acceptor": {
+            "index": 1293,
+            "element": "O",
+            "atomName": "OE1",
+            "residueName": "GLN",
+            "chain": "A",
+            "residueNumber": 192,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogenAcceptorDistance": 2.1518221887911757,
+          "donorHydrogenAcceptorCosine": -0.789088366224746
+        },
+        {
+          "donor": {
+            "index": 8964,
+            "element": "N",
+            "atomName": "N3",
+            "residueName": "S58",
+            "chain": "A",
+            "residueNumber": 701,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "hydrogen": {
+            "index": 8982,
+            "element": "H",
+            "atomName": "HN32",
+            "residueName": "S58",
+            "chain": "A",
+            "residueNumber": 701,
+            "insertionCode": "",
+            "record": "HETATM"
+          },
+          "acceptor": {
+            "index": 2612,
+            "element": "O",
+            "atomName": "O",
+            "residueName": "SER",
+            "chain": "A",
+            "residueNumber": 353,
+            "insertionCode": "",
+            "record": "ATOM"
+          },
+          "hydrogenAcceptorDistance": 2.2200080602834715,
+          "donorHydrogenAcceptorCosine": -0.9972502397811968
+        }
+      ],
+      "ligandPiStacks": [],
+      "capturedHydrogenBonds": [
+        {
+          "id": "reference-hbond-570",
+          "label": "S58 A701 N3 → GLN A192 OE1",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 2.1518221887911757,
+            "cosine": -0.789088366224746
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-6COX:HETATM:A:S58:701::N3:9052",
+              "referencePoint": {
+                "x": -29.19922893446281,
+                "y": -1.802032322781944,
+                "z": 12.548393334819302
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-6COX:HETATM:A:S58:701::HN31:",
+              "referencePoint": {
+                "x": -30.010286504228638,
+                "y": -1.3027925170960142,
+                "z": 12.212171332350366
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": -30.70722893446281,
+                "y": 0.6749676772180564,
+                "z": 11.729393334819306
+              }
+            }
+          }
+        },
+        {
+          "id": "reference-hbond-612",
+          "label": "S58 A701 N3 → SER A353 O",
+          "receptorRole": "acceptor",
+          "referenceGeometry": {
+            "hydrogenAcceptorDistanceAngstrom": 2.2200080602834715,
+            "cosine": -0.9972502397811968
+          },
+          "participants": {
+            "donor": {
+              "scope": "ligand",
+              "designAtomId": "reference-6COX:HETATM:A:S58:701::N3:9052",
+              "referencePoint": {
+                "x": -29.19922893446281,
+                "y": -1.802032322781944,
+                "z": 12.548393334819302
+              }
+            },
+            "hydrogen": {
+              "scope": "ligand",
+              "designAtomId": "reference-6COX:HETATM:A:S58:701::HN32:",
+              "referencePoint": {
+                "x": -28.63274329383799,
+                "y": -1.9127893302235437,
+                "z": 13.377203870628584
+              }
+            },
+            "acceptor": {
+              "scope": "receptor",
+              "point": {
+                "x": -27.51922893446281,
+                "y": -2.1120323227819426,
+                "z": 15.287393334819306
+              }
+            }
+          }
+        }
+      ],
+      "receptorAtomCount": 609,
+      "ligandAtomCount": 37
+    }
+  ]
+}

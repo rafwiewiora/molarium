@@ -1,0 +1,1546 @@
+{
+  "schemaVersion": 1,
+  "datasetId": "molarium-bioisostere-pose-propagation-25",
+  "version": "0.1.0",
+  "sourceResultFile": "benchmark-results.v0.1.json",
+  "sourceResultSha256": "285536d0557a7e1d1d8a677bf36e6aa165125eae520348a8fb9ccd22a36ea061",
+  "generatedAt": "2026-08-22T20:56:14.972Z",
+  "accuracyDefinition": "Only paired-crystal cases receive pose-accuracy metrics. Prospective feasibility is not accuracy.",
+  "cases": [
+    {
+      "caseId": "paired-parp2-4zzy-d7n-to-4zzx-fsu",
+      "tier": "paired-crystal",
+      "terminalOutcome": "success-feasible",
+      "pairedCrystal": {
+        "scoringMethod": "protein-CA-aligned frozen product-index/CCD-atom-name mapping",
+        "symmetryCorrection": false,
+        "receptorAlignmentScope": "ligand-assigned protein chain",
+        "referenceProteinChain": "A",
+        "analogueProteinChain": "A",
+        "receptorAlignmentAtoms": 351,
+        "receptorAlignmentRmsdAngstrom": 1.387476104901077,
+        "repeats": [
+          {
+            "seed": 20260819,
+            "top1": {
+              "rank": 1,
+              "feasible": true,
+              "labelMappedHeavyAtomRmsdAngstrom": 1.393491720610785,
+              "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+              "editedRegionRmsdAngstrom": 2.4353404407464616,
+              "referenceCenteringOffsetAngstrom": [
+                -22.081135330578526,
+                21.459026859504096,
+                0.3859920798898129
+              ],
+              "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+            },
+            "top5MinimumHeavyAtomRmsdAngstrom": 1.3528464686673616,
+            "poses": [
+              {
+                "rank": 1,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.393491720610785,
+                "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+                "editedRegionRmsdAngstrom": 2.4353404407464616,
+                "referenceCenteringOffsetAngstrom": [
+                  -22.081135330578526,
+                  21.459026859504096,
+                  0.3859920798898129
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+              },
+              {
+                "rank": 2,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.3528464686673616,
+                "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+                "editedRegionRmsdAngstrom": 2.351389137272895,
+                "referenceCenteringOffsetAngstrom": [
+                  -22.081135330578526,
+                  21.459026859504096,
+                  0.3859920798898129
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+              },
+              {
+                "rank": 3,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.5131259193646782,
+                "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+                "editedRegionRmsdAngstrom": 2.6800586193454414,
+                "referenceCenteringOffsetAngstrom": [
+                  -22.081135330578526,
+                  21.459026859504096,
+                  0.3859920798898129
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+              },
+              {
+                "rank": 4,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.5131259193646778,
+                "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+                "editedRegionRmsdAngstrom": 2.6800586193454405,
+                "referenceCenteringOffsetAngstrom": [
+                  -22.081135330578526,
+                  21.459026859504096,
+                  0.3859920798898129
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+              },
+              {
+                "rank": 5,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.5223918580790026,
+                "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+                "editedRegionRmsdAngstrom": 2.698883310041233,
+                "referenceCenteringOffsetAngstrom": [
+                  -22.081135330578526,
+                  21.459026859504096,
+                  0.3859920798898129
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+              }
+            ]
+          },
+          {
+            "seed": 20260820,
+            "top1": {
+              "rank": 1,
+              "feasible": true,
+              "labelMappedHeavyAtomRmsdAngstrom": 1.51342901192757,
+              "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+              "editedRegionRmsdAngstrom": 2.6806746497430236,
+              "referenceCenteringOffsetAngstrom": [
+                -22.081135330578526,
+                21.459026859504096,
+                0.3859920798898129
+              ],
+              "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+            },
+            "top5MinimumHeavyAtomRmsdAngstrom": 1.391989940294355,
+            "poses": [
+              {
+                "rank": 1,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.51342901192757,
+                "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+                "editedRegionRmsdAngstrom": 2.6806746497430236,
+                "referenceCenteringOffsetAngstrom": [
+                  -22.081135330578526,
+                  21.459026859504096,
+                  0.3859920798898129
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+              },
+              {
+                "rank": 2,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.391989940294355,
+                "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+                "editedRegionRmsdAngstrom": 2.432246617600017,
+                "referenceCenteringOffsetAngstrom": [
+                  -22.081135330578526,
+                  21.459026859504096,
+                  0.3859920798898129
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+              },
+              {
+                "rank": 3,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.5131259193646778,
+                "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+                "editedRegionRmsdAngstrom": 2.6800586193454405,
+                "referenceCenteringOffsetAngstrom": [
+                  -22.081135330578526,
+                  21.459026859504096,
+                  0.3859920798898129
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+              },
+              {
+                "rank": 4,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.3934442390931998,
+                "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+                "editedRegionRmsdAngstrom": 2.435242633028496,
+                "referenceCenteringOffsetAngstrom": [
+                  -22.081135330578526,
+                  21.459026859504096,
+                  0.3859920798898129
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+              },
+              {
+                "rank": 5,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.4855968181277357,
+                "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+                "editedRegionRmsdAngstrom": 2.6240286760187614,
+                "referenceCenteringOffsetAngstrom": [
+                  -22.081135330578526,
+                  21.459026859504096,
+                  0.3859920798898129
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+              }
+            ]
+          },
+          {
+            "seed": 20260821,
+            "top1": {
+              "rank": 1,
+              "feasible": true,
+              "labelMappedHeavyAtomRmsdAngstrom": 1.4842648453194769,
+              "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+              "editedRegionRmsdAngstrom": 2.621313736018786,
+              "referenceCenteringOffsetAngstrom": [
+                -22.081135330578526,
+                21.459026859504096,
+                0.3859920798898129
+              ],
+              "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+            },
+            "top5MinimumHeavyAtomRmsdAngstrom": 1.0913586941693296,
+            "poses": [
+              {
+                "rank": 1,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.4842648453194769,
+                "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+                "editedRegionRmsdAngstrom": 2.621313736018786,
+                "referenceCenteringOffsetAngstrom": [
+                  -22.081135330578526,
+                  21.459026859504096,
+                  0.3859920798898129
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+              },
+              {
+                "rank": 2,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.4855968181277357,
+                "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+                "editedRegionRmsdAngstrom": 2.6240286760187614,
+                "referenceCenteringOffsetAngstrom": [
+                  -22.081135330578526,
+                  21.459026859504096,
+                  0.3859920798898129
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+              },
+              {
+                "rank": 3,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.0913586941693296,
+                "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+                "editedRegionRmsdAngstrom": 1.7967091329641005,
+                "referenceCenteringOffsetAngstrom": [
+                  -22.081135330578526,
+                  21.459026859504096,
+                  0.3859920798898129
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+              },
+              {
+                "rank": 4,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.4141577961054834,
+                "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+                "editedRegionRmsdAngstrom": 2.477855163460038,
+                "referenceCenteringOffsetAngstrom": [
+                  -22.081135330578526,
+                  21.459026859504096,
+                  0.3859920798898129
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+              },
+              {
+                "rank": 5,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.5126012257504096,
+                "inheritedRegionRmsdAngstrom": 0.6384072636538932,
+                "editedRegionRmsdAngstrom": 2.678992145596208,
+                "referenceCenteringOffsetAngstrom": [
+                  -22.081135330578526,
+                  21.459026859504096,
+                  0.3859920798898129
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 3.5596458096434965e-15
+              }
+            ]
+          }
+        ],
+        "top1MedianHeavyAtomRmsdAngstrom": 1.4842648453194769,
+        "top5MedianMinimumHeavyAtomRmsdAngstrom": 1.3528464686673616,
+        "top5BestObservedHeavyAtomRmsdAngstrom": 1.0913586941693296
+      }
+    },
+    {
+      "caseId": "paired-pparg-5y2o-8n6-to-5y2t-8lx",
+      "tier": "paired-crystal",
+      "terminalOutcome": "success-feasible",
+      "pairedCrystal": {
+        "scoringMethod": "protein-CA-aligned frozen product-index/CCD-atom-name mapping",
+        "symmetryCorrection": false,
+        "receptorAlignmentScope": "ligand-assigned protein chain",
+        "referenceProteinChain": "A",
+        "analogueProteinChain": "A",
+        "receptorAlignmentAtoms": 261,
+        "receptorAlignmentRmsdAngstrom": 0.5850957944597313,
+        "repeats": [
+          {
+            "seed": 20260819,
+            "top1": {
+              "rank": 1,
+              "feasible": true,
+              "labelMappedHeavyAtomRmsdAngstrom": 4.720246648877259,
+              "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+              "editedRegionRmsdAngstrom": 6.664442130812496,
+              "referenceCenteringOffsetAngstrom": [
+                36.05384291187743,
+                7.74247419427542,
+                -95.49773720982647
+              ],
+              "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+            },
+            "top5MinimumHeavyAtomRmsdAngstrom": 4.720246648877259,
+            "poses": [
+              {
+                "rank": 1,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 4.720246648877259,
+                "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+                "editedRegionRmsdAngstrom": 6.664442130812496,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 2,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 4.720306009930966,
+                "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+                "editedRegionRmsdAngstrom": 6.664526218513618,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 3,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 6.758224450326765,
+                "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+                "editedRegionRmsdAngstrom": 9.549896727424002,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 4,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 6.750881347366757,
+                "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+                "editedRegionRmsdAngstrom": 9.539503655585204,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 5,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 6.585306498430673,
+                "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+                "editedRegionRmsdAngstrom": 9.305152090053184,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              }
+            ]
+          },
+          {
+            "seed": 20260820,
+            "top1": {
+              "rank": 1,
+              "feasible": true,
+              "labelMappedHeavyAtomRmsdAngstrom": 4.77163693909501,
+              "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+              "editedRegionRmsdAngstrom": 6.737237580755678,
+              "referenceCenteringOffsetAngstrom": [
+                36.05384291187743,
+                7.74247419427542,
+                -95.49773720982647
+              ],
+              "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+            },
+            "top5MinimumHeavyAtomRmsdAngstrom": 4.720387788398516,
+            "poses": [
+              {
+                "rank": 1,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 4.77163693909501,
+                "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+                "editedRegionRmsdAngstrom": 6.737237580755678,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 2,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 4.720387788398516,
+                "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+                "editedRegionRmsdAngstrom": 6.664642061521256,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 3,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 7.402835740959571,
+                "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+                "editedRegionRmsdAngstrom": 10.462183619002847,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 4,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 6.383689128264878,
+                "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+                "editedRegionRmsdAngstrom": 9.019773047872604,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 5,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 6.595254468986666,
+                "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+                "editedRegionRmsdAngstrom": 9.31923253727751,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              }
+            ]
+          },
+          {
+            "seed": 20260821,
+            "top1": {
+              "rank": 1,
+              "feasible": true,
+              "labelMappedHeavyAtomRmsdAngstrom": 4.6577239184326205,
+              "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+              "editedRegionRmsdAngstrom": 6.5758738022526915,
+              "referenceCenteringOffsetAngstrom": [
+                36.05384291187743,
+                7.74247419427542,
+                -95.49773720982647
+              ],
+              "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+            },
+            "top5MinimumHeavyAtomRmsdAngstrom": 3.3419955549988853,
+            "poses": [
+              {
+                "rank": 1,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 4.6577239184326205,
+                "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+                "editedRegionRmsdAngstrom": 6.5758738022526915,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 2,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.3419955549988853,
+                "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+                "editedRegionRmsdAngstrom": 4.710753723316391,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 3,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 4.828125388648423,
+                "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+                "editedRegionRmsdAngstrom": 6.817251762953865,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 4,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 4.973409423070185,
+                "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+                "editedRegionRmsdAngstrom": 7.0230288794395,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 5,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 4.9920554095069045,
+                "inheritedRegionRmsdAngstrom": 0.3829725023097284,
+                "editedRegionRmsdAngstrom": 7.049437316952958,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              }
+            ]
+          }
+        ],
+        "top1MedianHeavyAtomRmsdAngstrom": 4.720246648877259,
+        "top5MedianMinimumHeavyAtomRmsdAngstrom": 4.720246648877259,
+        "top5BestObservedHeavyAtomRmsdAngstrom": 3.3419955549988853
+      }
+    },
+    {
+      "caseId": "paired-pparg-5y2o-8n6-to-7awc-brl",
+      "tier": "paired-crystal",
+      "terminalOutcome": "success-feasible",
+      "pairedCrystal": {
+        "scoringMethod": "protein-CA-aligned frozen product-index/CCD-atom-name mapping",
+        "symmetryCorrection": false,
+        "receptorAlignmentScope": "ligand-assigned protein chain",
+        "referenceProteinChain": "A",
+        "analogueProteinChain": "A",
+        "receptorAlignmentAtoms": 262,
+        "receptorAlignmentRmsdAngstrom": 0.931684189602567,
+        "repeats": [
+          {
+            "seed": 20260819,
+            "top1": {
+              "rank": 1,
+              "feasible": true,
+              "labelMappedHeavyAtomRmsdAngstrom": 3.5000208309363754,
+              "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+              "editedRegionRmsdAngstrom": 5.915585075098595,
+              "referenceCenteringOffsetAngstrom": [
+                36.05384291187743,
+                7.74247419427542,
+                -95.49773720982647
+              ],
+              "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+            },
+            "top5MinimumHeavyAtomRmsdAngstrom": 3.5000208309363754,
+            "poses": [
+              {
+                "rank": 1,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.5000208309363754,
+                "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+                "editedRegionRmsdAngstrom": 5.915585075098595,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 2,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.5000208309363794,
+                "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+                "editedRegionRmsdAngstrom": 5.915585075098603,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 3,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.500020830936381,
+                "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+                "editedRegionRmsdAngstrom": 5.915585075098606,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 4,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.500020830936381,
+                "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+                "editedRegionRmsdAngstrom": 5.915585075098605,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 5,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.500020830936377,
+                "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+                "editedRegionRmsdAngstrom": 5.915585075098598,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              }
+            ]
+          },
+          {
+            "seed": 20260820,
+            "top1": {
+              "rank": 1,
+              "feasible": true,
+              "labelMappedHeavyAtomRmsdAngstrom": 3.500020830936379,
+              "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+              "editedRegionRmsdAngstrom": 5.915585075098601,
+              "referenceCenteringOffsetAngstrom": [
+                36.05384291187743,
+                7.74247419427542,
+                -95.49773720982647
+              ],
+              "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+            },
+            "top5MinimumHeavyAtomRmsdAngstrom": 3.500020830936379,
+            "poses": [
+              {
+                "rank": 1,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.500020830936379,
+                "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+                "editedRegionRmsdAngstrom": 5.915585075098601,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 2,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.5000208309363816,
+                "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+                "editedRegionRmsdAngstrom": 5.915585075098606,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 3,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.5000208309363807,
+                "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+                "editedRegionRmsdAngstrom": 5.915585075098605,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 4,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.500020830936379,
+                "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+                "editedRegionRmsdAngstrom": 5.915585075098601,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 5,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.5000208309363807,
+                "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+                "editedRegionRmsdAngstrom": 5.915585075098605,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              }
+            ]
+          },
+          {
+            "seed": 20260821,
+            "top1": {
+              "rank": 1,
+              "feasible": true,
+              "labelMappedHeavyAtomRmsdAngstrom": 3.5000208309363816,
+              "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+              "editedRegionRmsdAngstrom": 5.9155850750986065,
+              "referenceCenteringOffsetAngstrom": [
+                36.05384291187743,
+                7.74247419427542,
+                -95.49773720982647
+              ],
+              "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+            },
+            "top5MinimumHeavyAtomRmsdAngstrom": 1.9050662014656423,
+            "poses": [
+              {
+                "rank": 1,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.5000208309363816,
+                "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+                "editedRegionRmsdAngstrom": 5.9155850750986065,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 2,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.5004475336461747,
+                "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+                "editedRegionRmsdAngstrom": 5.916374018522237,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 3,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.9057481769185671,
+                "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+                "editedRegionRmsdAngstrom": 2.839375628259476,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 4,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.9052450432074532,
+                "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+                "editedRegionRmsdAngstrom": 2.838320271035854,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              },
+              {
+                "rank": 5,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.9050662014656423,
+                "inheritedRegionRmsdAngstrom": 1.2438193357293141,
+                "editedRegionRmsdAngstrom": 2.83794511090966,
+                "referenceCenteringOffsetAngstrom": [
+                  36.05384291187743,
+                  7.74247419427542,
+                  -95.49773720982647
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 1.464821375527116e-14
+              }
+            ]
+          }
+        ],
+        "top1MedianHeavyAtomRmsdAngstrom": 3.500020830936379,
+        "top5MedianMinimumHeavyAtomRmsdAngstrom": 3.5000208309363754,
+        "top5BestObservedHeavyAtomRmsdAngstrom": 1.9050662014656423
+      }
+    },
+    {
+      "caseId": "paired-ttr-4des-57d-to-4der-agi",
+      "tier": "paired-crystal",
+      "terminalOutcome": "preparation-blocked",
+      "pairedCrystal": {
+        "scoringMethod": "protein-CA-aligned frozen product-index/CCD-atom-name mapping",
+        "symmetryCorrection": false,
+        "receptorAlignmentScope": "ligand-assigned protein chain",
+        "referenceProteinChain": "A",
+        "analogueProteinChain": "A",
+        "receptorAlignmentAtoms": 116,
+        "receptorAlignmentRmsdAngstrom": 0.36409942720158045,
+        "repeats": [],
+        "top1MedianHeavyAtomRmsdAngstrom": null,
+        "top5MedianMinimumHeavyAtomRmsdAngstrom": null,
+        "top5BestObservedHeavyAtomRmsdAngstrom": null
+      }
+    },
+    {
+      "caseId": "paired-ttr-4des-57d-to-4det-kmp",
+      "tier": "paired-crystal",
+      "terminalOutcome": "preparation-blocked",
+      "pairedCrystal": {
+        "scoringMethod": "protein-CA-aligned frozen product-index/CCD-atom-name mapping",
+        "symmetryCorrection": false,
+        "receptorAlignmentScope": "ligand-assigned protein chain",
+        "referenceProteinChain": "A",
+        "analogueProteinChain": "A",
+        "receptorAlignmentAtoms": 116,
+        "receptorAlignmentRmsdAngstrom": 0.384026058452211,
+        "repeats": [],
+        "top1MedianHeavyAtomRmsdAngstrom": null,
+        "top5MedianMinimumHeavyAtomRmsdAngstrom": null,
+        "top5BestObservedHeavyAtomRmsdAngstrom": null
+      }
+    },
+    {
+      "caseId": "paired-ttr-4der-agi-to-4deu-nar",
+      "tier": "paired-crystal",
+      "terminalOutcome": "success-feasible",
+      "pairedCrystal": {
+        "scoringMethod": "protein-CA-aligned frozen product-index/CCD-atom-name mapping",
+        "symmetryCorrection": false,
+        "receptorAlignmentScope": "ligand-assigned protein chain",
+        "referenceProteinChain": "A",
+        "analogueProteinChain": "A",
+        "receptorAlignmentAtoms": 116,
+        "receptorAlignmentRmsdAngstrom": 0.23216938051745364,
+        "repeats": [
+          {
+            "seed": 20260819,
+            "top1": {
+              "rank": 1,
+              "feasible": true,
+              "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+              "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+              "editedRegionRmsdAngstrom": null,
+              "referenceCenteringOffsetAngstrom": [
+                -20.76754786680539,
+                -29.67760353798128,
+                -47.9149963579605
+              ],
+              "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+            },
+            "top5MinimumHeavyAtomRmsdAngstrom": 3.1626137564931347,
+            "poses": [
+              {
+                "rank": 1,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+                "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+                "editedRegionRmsdAngstrom": null,
+                "referenceCenteringOffsetAngstrom": [
+                  -20.76754786680539,
+                  -29.67760353798128,
+                  -47.9149963579605
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+              },
+              {
+                "rank": 2,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+                "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+                "editedRegionRmsdAngstrom": null,
+                "referenceCenteringOffsetAngstrom": [
+                  -20.76754786680539,
+                  -29.67760353798128,
+                  -47.9149963579605
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+              },
+              {
+                "rank": 3,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+                "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+                "editedRegionRmsdAngstrom": null,
+                "referenceCenteringOffsetAngstrom": [
+                  -20.76754786680539,
+                  -29.67760353798128,
+                  -47.9149963579605
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+              },
+              {
+                "rank": 4,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+                "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+                "editedRegionRmsdAngstrom": null,
+                "referenceCenteringOffsetAngstrom": [
+                  -20.76754786680539,
+                  -29.67760353798128,
+                  -47.9149963579605
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+              },
+              {
+                "rank": 5,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+                "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+                "editedRegionRmsdAngstrom": null,
+                "referenceCenteringOffsetAngstrom": [
+                  -20.76754786680539,
+                  -29.67760353798128,
+                  -47.9149963579605
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+              }
+            ]
+          },
+          {
+            "seed": 20260820,
+            "top1": {
+              "rank": 1,
+              "feasible": true,
+              "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+              "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+              "editedRegionRmsdAngstrom": null,
+              "referenceCenteringOffsetAngstrom": [
+                -20.76754786680539,
+                -29.67760353798128,
+                -47.9149963579605
+              ],
+              "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+            },
+            "top5MinimumHeavyAtomRmsdAngstrom": 3.1626137564931347,
+            "poses": [
+              {
+                "rank": 1,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+                "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+                "editedRegionRmsdAngstrom": null,
+                "referenceCenteringOffsetAngstrom": [
+                  -20.76754786680539,
+                  -29.67760353798128,
+                  -47.9149963579605
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+              },
+              {
+                "rank": 2,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+                "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+                "editedRegionRmsdAngstrom": null,
+                "referenceCenteringOffsetAngstrom": [
+                  -20.76754786680539,
+                  -29.67760353798128,
+                  -47.9149963579605
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+              },
+              {
+                "rank": 3,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+                "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+                "editedRegionRmsdAngstrom": null,
+                "referenceCenteringOffsetAngstrom": [
+                  -20.76754786680539,
+                  -29.67760353798128,
+                  -47.9149963579605
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+              },
+              {
+                "rank": 4,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+                "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+                "editedRegionRmsdAngstrom": null,
+                "referenceCenteringOffsetAngstrom": [
+                  -20.76754786680539,
+                  -29.67760353798128,
+                  -47.9149963579605
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+              },
+              {
+                "rank": 5,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+                "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+                "editedRegionRmsdAngstrom": null,
+                "referenceCenteringOffsetAngstrom": [
+                  -20.76754786680539,
+                  -29.67760353798128,
+                  -47.9149963579605
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+              }
+            ]
+          },
+          {
+            "seed": 20260821,
+            "top1": {
+              "rank": 1,
+              "feasible": true,
+              "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+              "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+              "editedRegionRmsdAngstrom": null,
+              "referenceCenteringOffsetAngstrom": [
+                -20.76754786680539,
+                -29.67760353798128,
+                -47.9149963579605
+              ],
+              "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+            },
+            "top5MinimumHeavyAtomRmsdAngstrom": 3.1626137564931347,
+            "poses": [
+              {
+                "rank": 1,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+                "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+                "editedRegionRmsdAngstrom": null,
+                "referenceCenteringOffsetAngstrom": [
+                  -20.76754786680539,
+                  -29.67760353798128,
+                  -47.9149963579605
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+              },
+              {
+                "rank": 2,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+                "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+                "editedRegionRmsdAngstrom": null,
+                "referenceCenteringOffsetAngstrom": [
+                  -20.76754786680539,
+                  -29.67760353798128,
+                  -47.9149963579605
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+              },
+              {
+                "rank": 3,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+                "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+                "editedRegionRmsdAngstrom": null,
+                "referenceCenteringOffsetAngstrom": [
+                  -20.76754786680539,
+                  -29.67760353798128,
+                  -47.9149963579605
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+              },
+              {
+                "rank": 4,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+                "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+                "editedRegionRmsdAngstrom": null,
+                "referenceCenteringOffsetAngstrom": [
+                  -20.76754786680539,
+                  -29.67760353798128,
+                  -47.9149963579605
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+              },
+              {
+                "rank": 5,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 3.1626137564931347,
+                "inheritedRegionRmsdAngstrom": 3.1626137564931347,
+                "editedRegionRmsdAngstrom": null,
+                "referenceCenteringOffsetAngstrom": [
+                  -20.76754786680539,
+                  -29.67760353798128,
+                  -47.9149963579605
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 7.944109290391274e-15
+              }
+            ]
+          }
+        ],
+        "top1MedianHeavyAtomRmsdAngstrom": 3.1626137564931347,
+        "top5MedianMinimumHeavyAtomRmsdAngstrom": 3.1626137564931347,
+        "top5BestObservedHeavyAtomRmsdAngstrom": 3.1626137564931347
+      }
+    },
+    {
+      "caseId": "paired-bace1-2va5-c8c-to-2va7-c27",
+      "tier": "paired-crystal",
+      "terminalOutcome": "preparation-blocked",
+      "pairedCrystal": {
+        "scoringMethod": "protein-CA-aligned frozen product-index/CCD-atom-name mapping",
+        "symmetryCorrection": false,
+        "receptorAlignmentScope": "ligand-assigned protein chain",
+        "referenceProteinChain": "A",
+        "analogueProteinChain": "A",
+        "receptorAlignmentAtoms": 374,
+        "receptorAlignmentRmsdAngstrom": 0.5533480368427917,
+        "repeats": [],
+        "top1MedianHeavyAtomRmsdAngstrom": null,
+        "top5MedianMinimumHeavyAtomRmsdAngstrom": null,
+        "top5BestObservedHeavyAtomRmsdAngstrom": null
+      }
+    },
+    {
+      "caseId": "paired-bace1-2va6-h24-to-2va7-c27",
+      "tier": "paired-crystal",
+      "terminalOutcome": "preparation-blocked",
+      "pairedCrystal": {
+        "scoringMethod": "protein-CA-aligned frozen product-index/CCD-atom-name mapping",
+        "symmetryCorrection": false,
+        "receptorAlignmentScope": "ligand-assigned protein chain",
+        "referenceProteinChain": "A",
+        "analogueProteinChain": "A",
+        "receptorAlignmentAtoms": 374,
+        "receptorAlignmentRmsdAngstrom": 0.341461610815527,
+        "repeats": [],
+        "top1MedianHeavyAtomRmsdAngstrom": null,
+        "top5MedianMinimumHeavyAtomRmsdAngstrom": null,
+        "top5BestObservedHeavyAtomRmsdAngstrom": null
+      }
+    },
+    {
+      "caseId": "paired-cdk2-1h1q-2a6-to-1h1r-6cp",
+      "tier": "paired-crystal",
+      "terminalOutcome": "success-feasible",
+      "pairedCrystal": {
+        "scoringMethod": "protein-CA-aligned frozen product-index/CCD-atom-name mapping",
+        "symmetryCorrection": false,
+        "receptorAlignmentScope": "ligand-assigned protein chain",
+        "referenceProteinChain": "A",
+        "analogueProteinChain": "A",
+        "receptorAlignmentAtoms": 296,
+        "receptorAlignmentRmsdAngstrom": 0.3433524325435319,
+        "repeats": [
+          {
+            "seed": 20260819,
+            "top1": {
+              "rank": 1,
+              "feasible": true,
+              "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+              "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+              "editedRegionRmsdAngstrom": 0.5262978924463069,
+              "referenceCenteringOffsetAngstrom": [
+                -29.59305765707506,
+                -58.850817437223874,
+                -55.25933990731772
+              ],
+              "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+            },
+            "top5MinimumHeavyAtomRmsdAngstrom": 1.0571242757085266,
+            "poses": [
+              {
+                "rank": 1,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+                "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+                "editedRegionRmsdAngstrom": 0.5262978924463069,
+                "referenceCenteringOffsetAngstrom": [
+                  -29.59305765707506,
+                  -58.850817437223874,
+                  -55.25933990731772
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+              },
+              {
+                "rank": 2,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+                "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+                "editedRegionRmsdAngstrom": 0.5262978924463069,
+                "referenceCenteringOffsetAngstrom": [
+                  -29.59305765707506,
+                  -58.850817437223874,
+                  -55.25933990731772
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+              },
+              {
+                "rank": 3,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+                "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+                "editedRegionRmsdAngstrom": 0.5262978924463069,
+                "referenceCenteringOffsetAngstrom": [
+                  -29.59305765707506,
+                  -58.850817437223874,
+                  -55.25933990731772
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+              },
+              {
+                "rank": 4,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+                "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+                "editedRegionRmsdAngstrom": 0.5262978924463069,
+                "referenceCenteringOffsetAngstrom": [
+                  -29.59305765707506,
+                  -58.850817437223874,
+                  -55.25933990731772
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+              },
+              {
+                "rank": 5,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+                "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+                "editedRegionRmsdAngstrom": 0.5262978924463069,
+                "referenceCenteringOffsetAngstrom": [
+                  -29.59305765707506,
+                  -58.850817437223874,
+                  -55.25933990731772
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+              }
+            ]
+          },
+          {
+            "seed": 20260820,
+            "top1": {
+              "rank": 1,
+              "feasible": true,
+              "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+              "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+              "editedRegionRmsdAngstrom": 0.5262978924463069,
+              "referenceCenteringOffsetAngstrom": [
+                -29.59305765707506,
+                -58.850817437223874,
+                -55.25933990731772
+              ],
+              "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+            },
+            "top5MinimumHeavyAtomRmsdAngstrom": 1.0571242757085266,
+            "poses": [
+              {
+                "rank": 1,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+                "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+                "editedRegionRmsdAngstrom": 0.5262978924463069,
+                "referenceCenteringOffsetAngstrom": [
+                  -29.59305765707506,
+                  -58.850817437223874,
+                  -55.25933990731772
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+              },
+              {
+                "rank": 2,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+                "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+                "editedRegionRmsdAngstrom": 0.5262978924463069,
+                "referenceCenteringOffsetAngstrom": [
+                  -29.59305765707506,
+                  -58.850817437223874,
+                  -55.25933990731772
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+              },
+              {
+                "rank": 3,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+                "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+                "editedRegionRmsdAngstrom": 0.5262978924463069,
+                "referenceCenteringOffsetAngstrom": [
+                  -29.59305765707506,
+                  -58.850817437223874,
+                  -55.25933990731772
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+              },
+              {
+                "rank": 4,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+                "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+                "editedRegionRmsdAngstrom": 0.5262978924463069,
+                "referenceCenteringOffsetAngstrom": [
+                  -29.59305765707506,
+                  -58.850817437223874,
+                  -55.25933990731772
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+              },
+              {
+                "rank": 5,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+                "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+                "editedRegionRmsdAngstrom": 0.5262978924463069,
+                "referenceCenteringOffsetAngstrom": [
+                  -29.59305765707506,
+                  -58.850817437223874,
+                  -55.25933990731772
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+              }
+            ]
+          },
+          {
+            "seed": 20260821,
+            "top1": {
+              "rank": 1,
+              "feasible": true,
+              "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+              "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+              "editedRegionRmsdAngstrom": 0.5262978924463069,
+              "referenceCenteringOffsetAngstrom": [
+                -29.59305765707506,
+                -58.850817437223874,
+                -55.25933990731772
+              ],
+              "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+            },
+            "top5MinimumHeavyAtomRmsdAngstrom": 1.0571242757085266,
+            "poses": [
+              {
+                "rank": 1,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+                "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+                "editedRegionRmsdAngstrom": 0.5262978924463069,
+                "referenceCenteringOffsetAngstrom": [
+                  -29.59305765707506,
+                  -58.850817437223874,
+                  -55.25933990731772
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+              },
+              {
+                "rank": 2,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+                "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+                "editedRegionRmsdAngstrom": 0.5262978924463069,
+                "referenceCenteringOffsetAngstrom": [
+                  -29.59305765707506,
+                  -58.850817437223874,
+                  -55.25933990731772
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+              },
+              {
+                "rank": 3,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+                "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+                "editedRegionRmsdAngstrom": 0.5262978924463069,
+                "referenceCenteringOffsetAngstrom": [
+                  -29.59305765707506,
+                  -58.850817437223874,
+                  -55.25933990731772
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+              },
+              {
+                "rank": 4,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+                "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+                "editedRegionRmsdAngstrom": 0.5262978924463069,
+                "referenceCenteringOffsetAngstrom": [
+                  -29.59305765707506,
+                  -58.850817437223874,
+                  -55.25933990731772
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+              },
+              {
+                "rank": 5,
+                "feasible": true,
+                "labelMappedHeavyAtomRmsdAngstrom": 1.0571242757085266,
+                "inheritedRegionRmsdAngstrom": 1.0735611278534924,
+                "editedRegionRmsdAngstrom": 0.5262978924463069,
+                "referenceCenteringOffsetAngstrom": [
+                  -29.59305765707506,
+                  -58.850817437223874,
+                  -55.25933990731772
+                ],
+                "maximumInheritedCoordinateResidualAngstrom": 2.4868995751603507e-14
+              }
+            ]
+          }
+        ],
+        "top1MedianHeavyAtomRmsdAngstrom": 1.0571242757085266,
+        "top5MedianMinimumHeavyAtomRmsdAngstrom": 1.0571242757085266,
+        "top5BestObservedHeavyAtomRmsdAngstrom": 1.0571242757085266
+      }
+    },
+    {
+      "caseId": "paired-cdk2-1h1r-6cp-to-1oiu-n76",
+      "tier": "paired-crystal",
+      "terminalOutcome": "preparation-blocked",
+      "pairedCrystal": {
+        "scoringMethod": "protein-CA-aligned frozen product-index/CCD-atom-name mapping",
+        "symmetryCorrection": false,
+        "receptorAlignmentScope": "ligand-assigned protein chain",
+        "referenceProteinChain": "A",
+        "analogueProteinChain": "A",
+        "receptorAlignmentAtoms": 293,
+        "receptorAlignmentRmsdAngstrom": 0.4858190188696552,
+        "repeats": [],
+        "top1MedianHeavyAtomRmsdAngstrom": null,
+        "top5MedianMinimumHeavyAtomRmsdAngstrom": null,
+        "top5BestObservedHeavyAtomRmsdAngstrom": null
+      }
+    },
+    {
+      "caseId": "prospective-7kpa-d84-pyridone-to-cyclohexanone",
+      "tier": "prospective",
+      "terminalOutcome": "no-feasible-pose",
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-parp2-4zzy-d7n-amide-to-nitrile",
+      "tier": "prospective",
+      "terminalOutcome": "success-feasible",
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-pparg-5y2o-8n6-carbonyl-to-thiocarbonyl",
+      "tier": "prospective",
+      "terminalOutcome": "success-feasible",
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-p38-3fly-fly-carbonyl-to-thiocarbonyl",
+      "tier": "prospective",
+      "terminalOutcome": "success-feasible",
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-ptp1b-2qbs-024-acid-to-tetrazole",
+      "tier": "prospective",
+      "terminalOutcome": "success-feasible",
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-thrombin-2zff-53u-amide-to-sulfonamide",
+      "tier": "prospective",
+      "terminalOutcome": "success-feasible",
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-ptp1b-2qbs-024-ring-acid-to-tetrazole",
+      "tier": "prospective",
+      "terminalOutcome": "success-feasible",
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-brd9-5igm-bmf-carbamate-to-urea",
+      "tier": "prospective",
+      "terminalOutcome": "reference-contact-unavailable",
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-parp1-4r6e-3jd-amide-to-nitrile",
+      "tier": "prospective",
+      "terminalOutcome": "parameterization-unsupported",
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-fxr-5q0i-0x0-amide-to-thioamide",
+      "tier": "prospective",
+      "terminalOutcome": "success-feasible",
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "negative-trypsin-3ptb-ben-amidine-to-ethyl",
+      "tier": "adversarial-negative",
+      "terminalOutcome": "success-infeasible-negative-control",
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "negative-hivpr-1hvr-xk2-diol-to-difluoro",
+      "tier": "adversarial-negative",
+      "terminalOutcome": "success-infeasible-negative-control",
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "negative-cox2-6cox-s58-sulfonamide-to-tertbutyl",
+      "tier": "adversarial-negative",
+      "terminalOutcome": "success-infeasible-negative-control",
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "negative-tnfa-7kpa-d84-pyridone-to-phenyl",
+      "tier": "adversarial-negative",
+      "terminalOutcome": "success-infeasible-negative-control",
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "negative-parp1-4r6e-3jd-amide-to-methyl",
+      "tier": "adversarial-negative",
+      "terminalOutcome": "parameterization-unsupported",
+      "pairedCrystal": null
+    }
+  ]
+}
