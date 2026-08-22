@@ -1,0 +1,45 @@
+{
+  "id": "molarium-bioisostere-pose-propagation-25",
+  "version": "0.1.0-draft",
+  "status": "draft",
+  "targetCaseCount": 25,
+  "tiers": {
+    "paired-crystal": 10,
+    "prospective": 10,
+    "adversarial-negative": 5
+  },
+  "diversity": {
+    "minimumProteinTargets": 8,
+    "maximumCasesPerProteinTarget": 3,
+    "minimumAcceptorTransferCases": 8,
+    "minimumDonorTransferCases": 5,
+    "minimumAmbiguousFeatureCases": 3,
+    "minimumChargedFeatureCases": 3,
+    "minimumWaterMediatedCases": 3,
+    "minimumRingReplacementCases": 5
+  },
+  "protocol": {
+    "id": "molarium-pose-propagation-1",
+    "version": "0.5.0",
+    "defaultSearchChains": 16,
+    "repeatSeeds": [20260819, 20260820, 20260821]
+  },
+  "selectionPolicy": [
+    "Register the case and transformation before running Molarium.",
+    "Prefer public paired crystal structures with unambiguous ligand identity and resolvable electron density.",
+    "Do not choose cases based on a successful Molarium result.",
+    "Retain every registered failure in the frozen release.",
+    "Do not use prospective cases to claim pose accuracy."
+  ],
+  "terminalOutcomes": [
+    "success-feasible",
+    "success-infeasible-negative-control",
+    "chemistry-invalid",
+    "parameterization-unsupported",
+    "reference-contact-unavailable",
+    "no-feasible-pose",
+    "excessive-strain-warning",
+    "ambiguous-unresolved",
+    "runtime-failure"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "datasetId": "molarium-bioisostere-pose-propagation-25",
+  "version": "0.1.0-draft",
+  "status": "draft",
+  "studyPlan": "study-plan.v0.1.json",
+  "cases": [
+    {
+      "id": "prospective-7kpa-d84-pyridone-to-cyclohexanone",
+      "tier": "prospective",
+      "proteinTarget": "7KPA target",
+      "reference": {
+        "pdbId": "7KPA",
+        "ligandComponentId": "D84",
+        "ligandChain": "C",
+        "ligandResidueNumber": 201,
+        "coordinateFile": "../../test/fixtures/7kpa.pdb",
+        "coordinateSha256": "da4fa18e7c52750ec6b9de35fd363357452b99e3f2b3064f831def46f31175d6",
+        "ccdFile": "../../test/fixtures/D84.cif",
+        "ccdSha256": "c6e43b72a44b36ae8a068b8e4b1b5644490c094c31f64b57003fc990f4634871",
+        "waterPolicy": "retain"
+      },
+      "transformation": {
+        "name": "pyridone to cyclohexanone",
+        "class": "ring replacement",
+        "recordedEditRequired": true,
+        "description": "Replace the pyridone ring while retaining a carbonyl acceptor on the same scaffold boundary."
+      },
+      "interactionHypotheses": [
+        {
+          "reference": "LYS A11 NZ-H to D84 O3",
+          "ligandRole": "acceptor",
+          "expectedTransfer": "role-compatible"
+        },
+        {
+          "reference": "D84 N3-H to HOH C307 O",
+          "ligandRole": "donor",
+          "expectedTransfer": "unavailable-after-carbonyl-formation"
+        }
+      ],
+      "groundTruth": {
+        "analogueCrystalAvailable": false,
+        "accuracyMetricsAllowed": false
+      },
+      "protocol": {
+        "id": "molarium-pose-propagation-1",
+        "version": "0.5.0",
+        "searchChains": 16,
+        "seeds": [20260819, 20260820, 20260821]
+      },
+      "status": "fixture-validated"
+    }
+  ]
+}
