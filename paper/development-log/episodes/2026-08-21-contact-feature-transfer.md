@@ -2,7 +2,7 @@
 
 Date: 2026-08-21
 Branch: `dev`
-Protocol: `molarium-pose-propagation-1` version `0.4.0`
+Protocol: `molarium-pose-propagation-1` version `0.4.1`
 
 ## Observation
 
@@ -176,3 +176,48 @@ Reference capture now asks for the uncapped interaction set, while ordinary rend
 bounded list. The new checked-in real-structure gate prepares 7KPA with all waters and requires four
 captured ligand contacts, including both pyridone hypotheses. This is a protocol correction, not a
 display enhancement: a graphics budget is no longer able to modify the scientific constraint set.
+
+## Live follow-up: a completed alcohol preceded the replacement carbonyl
+
+The next live attempt was more realistic than the two-batch synthetic gate. The user first changed
+the two pyridone C=C bonds to single, then deleted the ring, rebuilt a saturated six-membered ring,
+and finally selected the new C–O pair to assign C=O. The replacement oxygen was visibly and exactly
+typed as a carbonyl acceptor, but the Required contacts panel still reported the original O3 feature
+as removed.
+
+The defect was not chemical perception. The final transaction knew only that C–O had changed to
+C=O, so its immediate edited subgraph ended at the neighboring ring carbons instead of the original
+C23 scaffold attachment. The earlier test had created the complete replacement carbonyl in one
+addition commit and therefore never exercised this loss of lineage.
+
+The unresolved proposal now carries the cumulative live edit region across completed commits.
+Bond-order changes contribute both surviving endpoints; the immutable original boundary is removed
+from the accumulated region; and candidate traversal must reach exactly that original boundary.
+No coordinate or distance criterion participates. This allows an interaction hypothesis to survive
+an intermediate chemically complete alcohol without admitting unrelated carbonyls elsewhere.
+
+An independent code review then found a provenance edge case before commit: candidates retained
+from an earlier ambiguous proposal still carried their cached boundary. A candidate detached in a
+later edit could therefore outlive its competitor and become spuriously unique. The final rule
+re-perceives every retained feature, recomputes its boundary on the live graph, requires every
+originating anchor to remain present, and drops cumulative edit components no longer connected to
+that anchor. New unit gates cover detachment, anchor deletion, and disconnected edit pollution.
+
+The new real-structure browser gate performs the exact 7KPA sequence: saturate pyridone, delete and
+finish, build and finish cyclohexanol, then assign C=O. It proves that the Lys-to-O3 acceptor
+hypothesis maps to the new stable oxygen ID while the deleted N3-H-to-water donor hypothesis stays
+unavailable. The accompanying unit gate explicitly demonstrates that the final transaction's local
+boundary is insufficient and the cumulative boundary is required. Validation after the fix:
+
+- contact/remap unit protocol: pass;
+- focused docking browser integration: 66/66 pass;
+- hydrated 7KPA capture and edit regression: 3/3 pass;
+- RDKit 2D browser regression: 19/19 pass;
+- web distribution build: pass (69 files, 10.46 MiB).
+
+The unscoped browser suite was also attempted twice. It reached the unrelated ANI-2x test and
+stopped because this checkout has the vendored ONNX Runtime JavaScript bundle but no local
+`node_modules/onnxruntime-web/dist` WebAssembly payload; ONNX Runtime therefore reported that no
+WASM backend was available. The docking-focused suites do not invoke ANI-2x and pass in the same
+browser harness. This environmental asset gap is recorded rather than misreported as a passing
+full-suite result.

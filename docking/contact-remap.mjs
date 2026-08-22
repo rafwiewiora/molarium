@@ -235,6 +235,24 @@ function editRegionIds(beforeMolecule, molecule) {
   const added = new Set([...afterIds].filter((id) => !beforeIds.has(id)));
   const changed = new Set([...beforeIds].filter((id) => afterIds.has(id)
     && atomIdentity(before.get(id).atom) !== atomIdentity(after.get(id).atom)));
+  // Bond-order changes can create or destroy a pharmacophore without changing
+  // either endpoint's atom identity. Include both surviving endpoints in the
+  // edit region, while keeping a stable attachment atom outside the region
+  // when its bond to a newly added or removed atom is merely created/broken.
+  const bondOrders = (candidate) => new Map((candidate.bonds || []).flatMap((bond) => {
+    const first = candidate.atoms[bond.a]?.designAtomId;
+    const second = candidate.atoms[bond.b]?.designAtomId;
+    if (!first || !second) return [];
+    const ids = [first, second].sort();
+    return [[ids.join('\u0000'), roundedBondOrder(bond.order)]];
+  }));
+  const beforeBonds = bondOrders(beforeMolecule), afterBonds = bondOrders(molecule);
+  new Set([...beforeBonds.keys(), ...afterBonds.keys()]).forEach((key) => {
+    if (beforeBonds.get(key) === afterBonds.get(key)) return;
+    const ids = key.split('\u0000');
+    if (ids.every((id) => beforeIds.has(id) && afterIds.has(id)))
+      ids.forEach((id) => changed.add(id));
+  });
   return { before, after, removed, added, changed };
 }
 
@@ -263,6 +281,26 @@ function regionBoundary(molecule, regionIds, seedIds, counterpartIds) {
     });
   });
   return [...boundary].sort();
+}
+
+function regionConnectedToBoundary(molecule, regionIds, boundaryIds) {
+  const byId = atomsById(molecule);
+  const entries = adjacency(molecule);
+  const region = new Set([...regionIds].filter((id) => byId.has(id)));
+  const boundary = new Set(boundaryIds);
+  const queue = [...region].filter((id) => entries[byId.get(id).index].some(({ index }) =>
+    boundary.has(molecule.atoms[index].designAtomId)));
+  const connected = new Set(queue);
+  while (queue.length) {
+    const id = queue.shift();
+    entries[byId.get(id).index].forEach(({ index }) => {
+      const neighborId = molecule.atoms[index].designAtomId;
+      if (region.has(neighborId) && !connected.has(neighborId)) {
+        connected.add(neighborId); queue.push(neighborId);
+      }
+    });
+  }
+  return connected;
 }
 
 function sameIds(first, second) {
@@ -364,7 +402,11 @@ export function proposeLigandHydrogenBondFeatureRemaps(definitions, molecule,
     return { id:definition.id, status:pool.length === 1 ? 'unique'
         : pool.length ? 'ambiguous' : 'unavailable', ligandRole,
       originalFeatureSignature:originalSignature, boundaryAnchorIds:oldBoundary, candidates:pool,
-      editEligibleFeatures };
+      editEligibleFeatures,
+      // Persist the live side of this transaction's edit region. A replacement
+      // ring is often built and sanitized in several commits before its final
+      // donor/acceptor feature exists.
+      editRegionAtomIds:[...newRegion].sort() };
   });
 }
 
@@ -390,21 +432,45 @@ export function retainOriginatingHydrogenBondRemapCandidates(priorProposal, curr
     || currentProposal?.originalFeatureSignature;
   const originatingBoundary = priorProposal.boundaryAnchorIds
     || currentProposal?.boundaryAnchorIds || [];
-  const rediscovered = originatingBoundary.length ? (currentProposal?.editEligibleFeatures || [])
-    .filter((candidate) => candidate.role === priorProposal.ligandRole
-      && candidate.signature === originatingSignature
-      && sameIds(candidate.boundaryAnchorIds || [], originatingBoundary)) : [];
-  const combined = new Map([...retained, ...rediscovered, ...(currentProposal?.candidates || [])]
+  const liveIds = new Set(molecule.atoms.map((atom) => atom.designAtomId));
+  const allBoundaryIdsLive = originatingBoundary.length > 0
+    && originatingBoundary.every((id) => liveIds.has(id));
+  const rawCumulativeEditRegion = new Set([
+    ...(priorProposal.cumulativeEditRegionAtomIds || priorProposal.editRegionAtomIds || []),
+    ...(currentProposal?.editRegionAtomIds || []),
+  ].filter((id) => liveIds.has(id)));
+  // The captured boundary is the immutable scaffold side of the replacement,
+  // even if a later bond-order edit happens to touch it.
+  originatingBoundary.forEach((id) => rawCumulativeEditRegion.delete(id));
+  // Keep only connected replacement components that still touch the complete,
+  // live originating scaffold boundary. This prevents an unrelated edit from
+  // polluting provenance and prevents a detached formerly valid candidate from
+  // surviving on a stale cached boundary.
+  const cumulativeEditRegion = allBoundaryIdsLive
+    ? regionConnectedToBoundary(molecule, rawCumulativeEditRegion, originatingBoundary)
+    : new Set();
+  const outsideEditRegion = new Set([...liveIds].filter((id) => !cumulativeEditRegion.has(id)));
+  const combined = new Map([...retained, ...(currentProposal?.editEligibleFeatures || []),
+    ...(currentProposal?.candidates || [])]
     .map((candidate) => [candidate.id, candidate]));
-  const candidates = [...combined.values()].sort((first, second) =>
-    first.id.localeCompare(second.id));
+  const candidates = allBoundaryIdsLive ? [...combined.values()].flatMap((candidate) => {
+    const live = liveFeatures.get(`${candidate.role}:${candidate.atomIds.join('+')}`);
+    if (!live || live.signature !== originatingSignature) return [];
+    const boundaryAnchorIds = regionBoundary(molecule, cumulativeEditRegion,
+      live.atomIds, outsideEditRegion);
+    return sameIds(boundaryAnchorIds, originatingBoundary)
+      ? [{ ...candidate, ...live, boundaryAnchorIds }] : [];
+  }).sort((first, second) => first.id.localeCompare(second.id)) : [];
   if (!candidates.length) return { ...currentProposal,
+    status:'unavailable', candidates:[],
     originalFeatureSignature:originatingSignature,
-    boundaryAnchorIds:originatingBoundary };
+    boundaryAnchorIds:originatingBoundary,
+    cumulativeEditRegionAtomIds:[...cumulativeEditRegion].sort() };
   return { ...currentProposal,
     status:candidates.length === 1 ? 'unique' : 'ambiguous', candidates,
     originalFeatureSignature:originatingSignature,
     boundaryAnchorIds:originatingBoundary,
+    cumulativeEditRegionAtomIds:[...cumulativeEditRegion].sort(),
     originatingCommittedEditId:priorProposal.originatingCommittedEditId
       || priorProposal.committedEditId,
   };

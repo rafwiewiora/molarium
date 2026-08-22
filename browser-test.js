@@ -565,7 +565,7 @@ const browserSuite = String.raw`(async () => {
       && propagationRun.selected.refinement.relaxation
         .maximumDisplacementAngstromPerIteration === 0.01
       && propagationLabbook.protocol.id === 'molarium-pose-propagation-1'
-      && propagationLabbook.protocol.version === '0.4.0'
+      && propagationLabbook.protocol.version === '0.4.1'
       && propagationLabbook.selections.atomLineage.inheritedAtomIds.length === 6
       && propagationLabbook.selections.atomLineage.addedAtomIds.length === 1
       && propagationLabbook.selections.editPreparation.selectedCleanupMode === 'preserve-reference'
@@ -1156,6 +1156,119 @@ const browserSuite = String.raw`(async () => {
         && expectedHydratedLabels.every((label) => capturedLabels.includes(label)),
       'hydrated 7KPA reference capture retains both pyridone contacts beyond the viewer display cap',
       JSON.stringify(capturedLabels));
+      // Exact user regression: first saturate the two pyridone C=C bonds,
+      // delete that ring, build a valid cyclohexanol in a later commit, and
+      // only then assign C=O in a third commit. The Lys->O3 hypothesis must
+      // follow the exact replacement carbonyl across the cumulative edit
+      // region; the deleted N3-H->water hypothesis must remain unavailable.
+      const capturedHydratedMolecule = api.current().molecule;
+      const referenceLigandIds = new Set(capturedHydratedMolecule.atoms
+        .filter((atom) => atom.record === 'HETATM' && atom.residueName === 'D84')
+        .map((atom) => atom.designAtomId));
+      const originalO3Id = capturedHydratedMolecule.atoms.find((atom) =>
+        atom.record === 'HETATM' && atom.residueName === 'D84' && atom.atomName === 'O3')?.designAtomId;
+      const originalO2Id = capturedHydratedMolecule.atoms.find((atom) =>
+        atom.record === 'HETATM' && atom.residueName === 'D84' && atom.atomName === 'O2')?.designAtomId;
+      const originalC23Id = capturedHydratedMolecule.atoms.find((atom) =>
+        atom.record === 'HETATM' && atom.residueName === 'D84' && atom.atomName === 'C23')?.designAtomId;
+      const d84Index = (name) => api.current().molecule.atoms.findIndex((atom) =>
+        atom.record === 'HETATM' && atom.residueName === 'D84' && atom.atomName === name);
+      const o3Contact = hydratedReference.hydrogenBonds.find((entry) =>
+        entry.label === 'LYS A11 NZ → D84 C201 O3');
+      const n3Contact = hydratedReference.hydrogenBonds.find((entry) =>
+        entry.label === 'D84 C201 N3 → HOH C307 O');
+      const saturationIndices = ['C26', 'C27', 'C30', 'C29'].map((name) => [name, d84Index(name)]);
+      if (saturationIndices.some(([, index]) => index < 0))
+        throw new Error('7KPA regression cannot find pyridone atoms: ' + JSON.stringify(saturationIndices));
+      await api.stageBondCurrent(saturationIndices[0][1], saturationIndices[1][1], 1);
+      await api.stageBondCurrent(d84Index('C30'), d84Index('C29'), 1);
+      const saturationFinish = await api.finishChemistryCurrent();
+      for (const name of ['O3', 'C28', 'N3', 'C27', 'C29', 'C30', 'C26'])
+        await api.stageDeleteAtomCurrent(d84Index(name));
+      const ringDeletionFinish = await api.finishChemistryCurrent();
+      const deletedRingState = api.dockingContactResolutions();
+      const scaffoldAnchor = d84Index('C23');
+      const addPendingCarbon = async (target) => {
+        const beforeIds = new Set(api.current().molecule.atoms.map((atom) => atom.designAtomId));
+        await api.stageAddElementCurrent('C', target);
+        return api.current().molecule.atoms.findIndex((atom) => atom.element === 'C'
+          && !beforeIds.has(atom.designAtomId));
+      };
+      const ringC4 = await addPendingCarbon(scaffoldAnchor);
+      const ringC3 = await addPendingCarbon(ringC4);
+      const ringC2 = await addPendingCarbon(ringC3);
+      const ringC1 = await addPendingCarbon(ringC2);
+      const ringC6 = await addPendingCarbon(ringC1);
+      const ringC5 = await addPendingCarbon(ringC6);
+      await api.stageBondCurrent(ringC5, ringC4, 1);
+      const beforeOxygenIds = new Set(api.current().molecule.atoms.map((atom) => atom.designAtomId));
+      await api.stageAddElementCurrent('O', ringC1);
+      const stagedOxygen = api.current().molecule.atoms.findIndex((atom) => atom.element === 'O'
+        && !beforeOxygenIds.has(atom.designAtomId));
+      const stagedOxygenId = api.current().molecule.atoms[stagedOxygen]?.designAtomId;
+      const cyclohexanolFinish = await api.finishChemistryCurrent();
+      const intermediateContactState = api.dockingContactResolutions();
+      const liveAfterAlcohol = api.current().molecule;
+      const replacementOxygen = liveAfterAlcohol.atoms.findIndex((atom) => atom.element === 'O'
+        && atom.record === 'HETATM' && !referenceLigandIds.has(atom.designAtomId)
+        && atom.designAtomId === stagedOxygenId);
+      const replacementCarbon = liveAfterAlcohol.bonds.flatMap((bond) => bond.a === replacementOxygen
+        ? [bond.b] : bond.b === replacementOxygen ? [bond.a] : [])
+        .find((index) => liveAfterAlcohol.atoms[index]?.element === 'C');
+      const alcoholBond = liveAfterAlcohol.bonds.find((bond) =>
+        bond.a === replacementOxygen && bond.b === replacementCarbon
+        || bond.b === replacementOxygen && bond.a === replacementCarbon);
+      const alcoholHasHydrogen = liveAfterAlcohol.bonds.some((bond) =>
+        (bond.a === replacementOxygen && liveAfterAlcohol.atoms[bond.b]?.element === 'H')
+        || (bond.b === replacementOxygen && liveAfterAlcohol.atoms[bond.a]?.element === 'H'));
+      await api.stageBondCurrent(replacementCarbon, replacementOxygen, 2);
+      const carbonylFinish = await api.finishChemistryCurrent();
+      const cumulativeContactState = api.dockingContactResolutions();
+      const o3Remap = cumulativeContactState.remaps.find((entry) => entry.contactId === o3Contact?.id);
+      const unresolvedN3 = cumulativeContactState.proposals.find((entry) => entry.id === n3Contact?.id);
+      const finalMolecule = api.current().molecule;
+      const finalOxygen = finalMolecule.atoms.findIndex((atom) => atom.designAtomId === stagedOxygenId);
+      const finalComponent = new Set([finalOxygen]), componentQueue = [finalOxygen];
+      while (componentQueue.length) {
+        const index = componentQueue.shift();
+        finalMolecule.bonds.forEach((bond) => {
+          const neighbor = bond.a === index ? bond.b : bond.b === index ? bond.a : -1;
+          if (neighbor >= 0 && !finalComponent.has(neighbor)) {
+            finalComponent.add(neighbor); componentQueue.push(neighbor);
+          }
+        });
+      }
+      const expectedCumulativeIds = [...finalComponent]
+        .map((index) => finalMolecule.atoms[index]?.designAtomId)
+        .filter((id) => id && !referenceLigandIds.has(id)).sort();
+      check(saturationFinish.validation.valid && ringDeletionFinish.validation.valid
+        && cyclohexanolFinish.validation.valid && carbonylFinish.validation.valid
+        && alcoholBond?.order === 1 && alcoholHasHydrogen
+        && deletedRingState.proposals.some((entry) => entry.id === o3Contact?.id
+          && entry.status === 'unavailable')
+        && intermediateContactState.proposals.some((entry) => entry.id === o3Contact?.id
+          && entry.status === 'unavailable'
+          && entry.cumulativeEditRegionAtomIds.length >= 7)
+        && cumulativeContactState.remaps.length === 1
+        && o3Remap?.method === 'automatic-unique-exact'
+        && o3Remap?.algorithm === 'exact-feature-edit-boundary/v2'
+        && JSON.stringify(o3Remap.boundaryAnchorIds) === JSON.stringify([originalC23Id])
+        && JSON.stringify(o3Remap.cumulativeEditRegionAtomIds) === JSON.stringify(expectedCumulativeIds)
+        && !o3Remap.cumulativeEditRegionAtomIds.includes(originalC23Id)
+        && !o3Remap.cumulativeEditRegionAtomIds.includes(originalO2Id)
+        && o3Remap.candidateIds.length === 1
+        && o3Remap.editLineage.length === 3
+        && o3Remap.editLineage.every((entry) => entry.committedEditId
+          && entry.beforeTopologySha256 && entry.afterTopologySha256)
+        && o3Remap.originalLigandAtomIds.includes(originalO3Id)
+        && o3Remap.replacementLigandAtomIds.includes(stagedOxygenId)
+        && unresolvedN3?.status === 'unavailable',
+      '7KPA saturate-delete-build-C=O sequence transfers only the Lys carbonyl hypothesis',
+      JSON.stringify({ validation:[saturationFinish, ringDeletionFinish, cyclohexanolFinish,
+        carbonylFinish].map((entry) => entry.validation), deletedRingState,
+        intermediateContactState, cumulativeContactState, originalO3Id, stagedOxygenId,
+        originalC23Id, originalO2Id, replacementOxygen, replacementCarbon,
+        alcoholBond, alcoholHasHydrogen, expectedCumulativeIds }));
       api.loadObject(preview.molecule);
       api.setRepresentation('cartoon');
     }
@@ -1239,7 +1352,8 @@ const browserSuite = String.raw`(async () => {
     if (testScope === '7kpa-contact-capture') {
       const scopedChecks = checks.filter((item) =>
         item.label.includes('Lys A11 N-H to D84 pyridone O3')
-        || item.label.includes('hydrated 7KPA reference capture'));
+        || item.label.includes('hydrated 7KPA reference capture')
+        || item.label.includes('7KPA saturate-delete-build-C=O sequence'));
       const failed = scopedChecks.filter((item) => !item.passed);
       return { passed:scopedChecks.length - failed.length, total:scopedChecks.length, failed,
         optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,

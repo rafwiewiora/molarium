@@ -3,7 +3,7 @@
 ## Normative protocol
 
 Protocol ID: `molarium-pose-propagation-1`
-Protocol version: `0.4.0`
+Protocol version: `0.4.1`
 Status: experimental pose-preparation and pose-ranking method
 Canonical machine-readable definition: `MOLARIUM_POSE_PROPAGATION_PROTOCOL` in
 [`protocol.mjs`](./protocol.mjs)
@@ -115,8 +115,9 @@ Covalently near pairs within two bonds are excluded. A displayed reference H bon
 - H–A distance from `1.2` through `2.6 Å`; and
 - D–H–A angle at least `135°`.
 
-Contacts are ordered by H–A distance, limited to 96, and only receptor-ligand cross contacts are
-captured for this protocol. Captured contacts are selected as required by default. The user may
+Contacts are ordered by H–A distance, and every receptor-ligand cross contact is captured for this
+protocol. The viewer may render only a bounded subset, but that graphics limit is never applied to
+reference capture. Captured contacts are selected as required by default. The user may
 explicitly disable one before the run.
 
 During sampling and ranking, a required contact is satisfied only when all are true:
@@ -141,7 +142,7 @@ identity is evaluated only after the complete staged edit passes RDKit sanitizat
 polish. A surviving ligand participant remains usable only if its element and captured chemical
 feature remain compatible.
 
-If the original ligand feature was removed or changed, `exact-feature-edit-boundary/v1` considers
+If the original ligand feature was removed or changed, `exact-feature-edit-boundary/v2` considers
 only features in the newly added or chemically changed region. A candidate must have the same:
 
 - donor or acceptor role;
@@ -155,10 +156,16 @@ Exactly one candidate is mapped automatically. Two or more candidates require an
 choice or omission. Zero candidates leave the contact unavailable. Current coordinates and apparent
 H-bond geometry are recorded as evidence but never establish eligibility or break a tie.
 
-The originating feature signature, surviving boundary IDs, committed-edit ID, and exact candidate
-identities persist with an unresolved proposal. A later edit revalidates that candidate set against
-the live graph, so removing one of two ambiguous features can deterministically resolve the
-proposal. A later edit never replaces the origin with a nearer or newly convenient heteroatom.
+The originating feature signature, surviving boundary IDs, ordered committed-edit IDs and topology
+hashes, cumulative live edit region, and exact candidate identities persist with an unresolved
+proposal. A replacement ring may
+therefore be completed and sanitized before a later bond-order edit creates its final pharmacophore.
+Candidate boundary traversal uses the cumulative connected edit region but explicitly excludes the
+immutable originating scaffold anchors. A later edit also revalidates retained candidates against
+the live graph and recomputes their boundary. Every originating anchor must remain present, and only
+edit-region components still covalently connected to those anchors persist. Removing one of two
+ambiguous features can therefore deterministically resolve the proposal, but detaching the survivor
+cannot. A later edit never replaces the origin with a nearer or newly convenient heteroatom.
 
 A ligand-donor feature consists of the donor and one explicit bonded hydrogen as a tuple. A newly
 mapped hydrogen has no captured reference coordinate and therefore cannot use captured-hydrogen

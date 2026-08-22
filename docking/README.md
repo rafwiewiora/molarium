@@ -52,7 +52,7 @@ energy, and penalty definitions.
 
 ## Executable boundary
 
-ConstraintDock version `0.3.0` and Pose Propagation version `0.4.0` implement and test:
+ConstraintDock version `0.3.0` and Pose Propagation version `0.4.1` implement and test:
 
 - least-squares reference-core alignment;
 - exact reference-coordinate snapping for every mapped core atom plus an independent RMSD audit;

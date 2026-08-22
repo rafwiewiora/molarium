@@ -3770,13 +3770,15 @@ async function chooseDockingContactRemap(contactId, candidateId, method = 'user-
     || (proposal.priorRemapAudit ? [proposal.priorRemapAudit]
       : priorRemap?.audit ? [priorRemap.audit] : []);
   const audit = {
-    schema:'molarium.docking.contact-feature-remap/v1', algorithm:'exact-feature-edit-boundary/v1',
+    schema:'molarium.docking.contact-feature-remap/v1', algorithm:'exact-feature-edit-boundary/v2',
     contactId, method, at:new Date().toISOString(), ligandRole:proposal.ligandRole,
     originalLigandAtomIds:contactParticipantIds(priorDefinition, 'ligand'),
     replacementLigandAtomIds:[...candidate.atomIds],
     originalFeatureSignature:proposal.originalFeatureSignature,
     replacementFeatureSignature:candidate.signature,
     boundaryAnchorIds:[...(candidate.boundaryAnchorIds || [])],
+    cumulativeEditRegionAtomIds:[...(proposal.cumulativeEditRegionAtomIds || [])],
+    editLineage:structuredClone(proposal.editLineage || []),
     candidateIds:proposal.candidates.map((entry) => entry.id),
     receptorParticipantIds:contactParticipantIds(rawDefinition, 'receptor'),
     beforeTopologySha256:proposal.beforeTopologySha256,
@@ -3864,12 +3866,20 @@ async function reconcileDockingContactFeaturesAfterChemistry(transaction, change
     }
     const priorRemap = state.dockingContactRemaps.get(proposal.id);
     const priorProposal = state.dockingContactRemapProposals.get(proposal.id);
+    const editLineage = [...structuredClone(priorProposal?.editLineage || []), {
+      committedEditId:transaction.editId || null,
+      beforeTopologySha256,
+      afterTopologySha256,
+      editRegionAtomIds:[...(proposal.editRegionAtomIds || [])],
+      cumulativeEditRegionAtomIds:[...(proposal.cumulativeEditRegionAtomIds || [])],
+    }];
     const recordedProposal = { ...proposal,
       beforeTopologySha256:priorProposal?.beforeTopologySha256 || beforeTopologySha256,
       afterTopologySha256,
       committedEditId:transaction.editId || null,
       originatingCommittedEditId:priorProposal?.originatingCommittedEditId
         || priorProposal?.committedEditId || transaction.editId || null,
+      editLineage,
       priorEffectiveDefinition:structuredClone(priorRemap?.effectiveDefinition
         || priorProposal?.priorEffectiveDefinition
         || state.dockingReference.hydrogenBonds.find((entry) => entry.id === proposal.id)),
@@ -4300,7 +4310,7 @@ async function runBrowserConstrainedDocking(options = {}) {
     if (state.dockingContactRemaps.size || state.dockingContactRemapProposals.size)
       await labbookModule.appendLabbookEvent(labbook, { at:new Date().toISOString(),
         stage:'captured-contact-feature-mapping', status:'recorded', details:{
-          algorithm:'exact-feature-edit-boundary/v1',
+          algorithm:'exact-feature-edit-boundary/v2',
           policy:'one exact candidate maps automatically; ambiguity requires an explicit user choice; geometry is evidence only',
           applied:[...state.dockingContactRemaps.values()]
             .flatMap((entry) => structuredClone(entry.chain || [entry.audit])),
@@ -4308,6 +4318,8 @@ async function runBrowserConstrainedDocking(options = {}) {
             contactId:entry.id, status:entry.status, ligandRole:entry.ligandRole,
             originalFeatureSignature:entry.originalFeatureSignature,
             boundaryAnchorIds:[...(entry.boundaryAnchorIds || [])],
+            cumulativeEditRegionAtomIds:[...(entry.cumulativeEditRegionAtomIds || [])],
+            editLineage:structuredClone(entry.editLineage || []),
             candidateIds:entry.candidates.map((candidate) => candidate.id),
           })),
         } });
@@ -6788,8 +6800,12 @@ window.molariumTest = Object.freeze({
       remaps:[...state.dockingContactRemaps.values()].map((entry) => structuredClone(entry.audit)),
       proposals:[...state.dockingContactRemapProposals.values()].map((entry) => ({
         id:entry.id, status:entry.status, ligandRole:entry.ligandRole,
+        boundaryAnchorIds:[...(entry.boundaryAnchorIds || [])],
+        cumulativeEditRegionAtomIds:[...(entry.cumulativeEditRegionAtomIds || [])],
+        editLineage:structuredClone(entry.editLineage || []),
         candidates:entry.candidates.map((candidate) => ({ id:candidate.id, label:candidate.label,
-          atomIds:[...candidate.atomIds] })),
+          atomIds:[...candidate.atomIds],
+          boundaryAnchorIds:[...(candidate.boundaryAnchorIds || [])] })),
       })),
       selectedIds:[...state.dockingSelectedHbondIds],
     };

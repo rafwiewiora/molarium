@@ -564,3 +564,37 @@ the complete interaction set. The browser gate requires both `D84 N3-H → HOH C
 longer `LYS A11 NZ-H → D84 O3` contact. Before this split, the full hydrated complex sorted all
 H-bonds by distance and retained only 96; the water contact survived while the valid Lys–pyridone
 contact was silently dropped. A rendering-performance limit must never alter scientific inputs.
+
+### Decision D-027 — replacement boundaries accumulate across chemically complete commits
+
+An unresolved contact proposal retains the live atom IDs of every connected replacement region
+created or chemically changed after the originating deletion. Exact candidates are evaluated by
+traversing that cumulative region back to the original scaffold boundary; the boundary IDs
+themselves are always excluded from the movable region. Bond-order changes mark both surviving
+endpoints as edited because a C–O to C=O transition creates a pharmacophore without changing atom
+identity.
+
+Reason: a valid medicinal-chemistry workflow may first saturate a pyridone, delete it, construct and
+sanitize cyclohexanol, and only then assign the carbonyl bond. Looking only at the final C–O bond
+edit sees the adjacent carbon/ring neighbors as its boundary and loses the true scaffold lineage.
+Accumulating the exact graph-edit region preserves the original attachment evidence without using
+coordinates, proximity, or pre-existing heteroatoms elsewhere in the ligand.
+
+Every retained candidate is re-perceived and its boundary is recomputed from the live graph at
+each commit. All originating boundary atoms must still exist. Only cumulative edit components that
+remain covalently connected to that boundary are retained, so a detached former candidate or a
+simultaneous edit elsewhere cannot inherit stale eligibility or contaminate provenance.
+
+This behavior is `exact-feature-edit-boundary/v2` and advances Pose Propagation to `0.4.1`.
+
+### Validation V-012 — real 7KPA saturate/delete/build/carbonyl regression
+
+The checked-in hydrated 7KPA browser fixture now captures all four D84 contacts, changes the two
+pyridone C=C bonds to single, finishes that valid graph, deletes the complete pyridone ring and
+finishes again, builds and sanitizes cyclohexanol, then assigns C=O in a final commit. The gate
+requires automatic exact transfer of `LYS A11 NZ-H → D84 O3` to the newly identified carbonyl
+oxygen. It simultaneously requires `D84 N3-H → HOH C307 O` to remain unavailable because the new
+ring contains no compatible donor. The unit gate separately asserts that the final immediate
+boundary is wrong and that only cumulative-region traversal recovers the original scaffold anchor.
+Additional gates detach an ambiguous candidate, delete its originating anchor, and edit a
+wrong-boundary carbonyl; all must remain unavailable with unpolluted cumulative provenance.

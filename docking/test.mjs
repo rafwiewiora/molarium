@@ -171,7 +171,7 @@ assert.deepEqual(propagationMap.removedAtomIds, [automaticReference.atomIds[3]])
 assert.deepEqual(propagationMap.addedAtomIds, ['test:new:F']);
 assert.ok(propagationMap.maximumTriangleDoubleAreaAngstrom2 > 0.99);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.id, 'molarium-pose-propagation-1');
-assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.version, '0.4.0');
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.version, '0.4.1');
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping.minimumSurvivingHeavyAtoms, 3);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping
   .minimumMaximumTriangleDoubleAreaAngstrom2, 1e-3);
@@ -188,6 +188,8 @@ assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.scoring.coulombConstantKcalAngst
   332.063713299);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.contactFeatureMapping.uniqueCandidateAction,
   'map automatically');
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.contactFeatureMapping.algorithm,
+  'exact-feature-edit-boundary/v2');
 assert.match(MOLARIUM_POSE_PROPAGATION_PROTOCOL.contactFeatureMapping.geometryRule,
   /never use current coordinates/);
 const protocolRandom = mulberry32(20260819);
@@ -503,6 +505,40 @@ assert.equal(appliedSequentialReplacement.acceptor.designAtomId, 'cyclohexanone:
 assert.equal(appliedSequentialReplacement.donor.designAtomId, 'protein:N');
 assert.equal(capturedHydrogenBondAvailability([appliedSequentialReplacement],
   cyclohexanoneAfter)[0].available, true);
+
+// The medicinal-chemistry UI can legitimately complete the replacement ring
+// before assigning its final carbonyl bond order. Preserve the entire new ring
+// as the cumulative edit region: the last C-O -> C=O edit must still resolve
+// against the original scaffold anchor, not the immediately adjacent carbon.
+const cyclohexanolIntermediate = structuredClone(cyclohexanoneAfter);
+cyclohexanolIntermediate.bonds.at(-1).order = 1;
+const intermediateAddition = proposeLigandHydrogenBondFeatureRemaps([pyridoneDefinition],
+  cyclohexanolIntermediate, cyclohexanolIntermediate.atoms.map((_, index) => index),
+  { eligibleAtomIndices:[1,2,3,4,5,6,7], beforeMolecule:deletedPyridone })[0];
+const retainedIntermediate = retainOriginatingHydrogenBondRemapCandidates(
+  { ...deletionProposal, committedEditId:'delete-pyridone' }, intermediateAddition,
+  cyclohexanolIntermediate, cyclohexanolIntermediate.atoms.map((_, index) => index));
+assert.equal(retainedIntermediate.status, 'unavailable');
+assert.deepEqual(retainedIntermediate.boundaryAnchorIds, ['pyridone:core']);
+assert.deepEqual(retainedIntermediate.cumulativeEditRegionAtomIds,
+  cyclohexanolIntermediate.atoms.slice(1).map((atom) => atom.designAtomId).sort());
+const finalCarbonylEdit = proposeLigandHydrogenBondFeatureRemaps([pyridoneDefinition],
+  cyclohexanoneAfter, cyclohexanoneAfter.atoms.map((_, index) => index),
+  { eligibleAtomIndices:[1,7], beforeMolecule:cyclohexanolIntermediate })[0];
+assert.equal(finalCarbonylEdit.status, 'unavailable');
+assert.deepEqual(finalCarbonylEdit.editEligibleFeatures.map((entry) => entry.atomIds),
+  [['cyclohexanone:O']]);
+assert.deepEqual(finalCarbonylEdit.editEligibleFeatures[0].boundaryAnchorIds,
+  ['cyclohexanone:C2', 'cyclohexanone:C6']);
+const multiCommitReplacement = retainOriginatingHydrogenBondRemapCandidates(
+  { ...retainedIntermediate, committedEditId:'build-cyclohexanol',
+    originatingCommittedEditId:'delete-pyridone' }, finalCarbonylEdit,
+  cyclohexanoneAfter, cyclohexanoneAfter.atoms.map((_, index) => index));
+assert.equal(multiCommitReplacement.status, 'unique');
+assert.deepEqual(multiCommitReplacement.boundaryAnchorIds, ['pyridone:core']);
+assert.deepEqual(multiCommitReplacement.candidates[0].atomIds, ['cyclohexanone:O']);
+assert.deepEqual(multiCommitReplacement.candidates[0].boundaryAnchorIds, ['pyridone:core']);
+assert.equal(multiCommitReplacement.originatingCommittedEditId, 'delete-pyridone');
 // In real 7KPA, replacing the D84 pyridone preserves the O3 carbonyl-acceptor
 // role used by Lys A11, but necessarily removes the N3-H donor used by water
 // C307. Do not confuse this with the separate pyrrolidone O2 contact to Ser A60,
@@ -555,6 +591,7 @@ assert.deepEqual(twoCoreDeletionProposal.boundaryAnchorIds, ['pyridone:core']);
 assert.deepEqual(wrongBoundaryAddition.editEligibleFeatures[0].boundaryAnchorIds,
   ['unrelated:core']);
 assert.equal(rejectedSequentialReplacement.status, 'unavailable');
+assert.deepEqual(rejectedSequentialReplacement.cumulativeEditRegionAtomIds, []);
 const twoCyclohexanonesAfter = structuredClone(cyclohexanoneAfter);
 twoCyclohexanonesAfter.atoms.push(
   { element:'C', designAtomId:'cyclohexanone-2:C1', x:-.2,y:2.8,z:0 },
@@ -571,6 +608,41 @@ assert.equal(ambiguousSequentialReplacement.status, 'ambiguous');
 assert.deepEqual(ambiguousSequentialReplacement.candidates.map((entry) => entry.atomIds), [
   ['cyclohexanone-2:O'], ['cyclohexanone:O'],
 ]);
+
+// Retained ambiguity is not a permanent entitlement. If one candidate is
+// deleted and the other is detached from the originating scaffold, neither can
+// become a unique match by carrying its old cached boundary forward.
+const detachedOnlyCandidate = structuredClone(cyclohexanoneAfter);
+detachedOnlyCandidate.atoms.push(
+  { element:'C', designAtomId:'detached:core', x:8,y:0,z:0 });
+detachedOnlyCandidate.bonds = detachedOnlyCandidate.bonds.map((bond) =>
+  bond.a === 0 && bond.b === 4 ? { ...bond, a:8 } : bond);
+const detachedFollowup = proposeLigandHydrogenBondFeatureRemaps([pyridoneDefinition],
+  detachedOnlyCandidate, detachedOnlyCandidate.atoms.map((_, index) => index),
+  { eligibleAtomIndices:detachedOnlyCandidate.atoms.map((_, index) => index),
+    beforeMolecule:twoCyclohexanonesAfter })[0];
+const rejectedDetachedCandidate = retainOriginatingHydrogenBondRemapCandidates(
+  ambiguousSequentialReplacement, detachedFollowup, detachedOnlyCandidate,
+  detachedOnlyCandidate.atoms.map((_, index) => index));
+assert.equal(rejectedDetachedCandidate.status, 'unavailable');
+assert.deepEqual(rejectedDetachedCandidate.candidates, []);
+assert.deepEqual(rejectedDetachedCandidate.cumulativeEditRegionAtomIds, []);
+
+// Deleting the originating anchor invalidates the lineage even when an exact
+// candidate feature and all of its atom IDs remain live.
+const missingOriginBoundary = { atoms:structuredClone(cyclohexanoneAfter.atoms.slice(1)),
+  bonds:cyclohexanoneAfter.bonds.flatMap((bond) => bond.a === 0 || bond.b === 0
+    ? [] : [{ ...bond, a:bond.a - 1, b:bond.b - 1 }]) };
+const missingBoundaryFollowup = proposeLigandHydrogenBondFeatureRemaps([pyridoneDefinition],
+  missingOriginBoundary, missingOriginBoundary.atoms.map((_, index) => index),
+  { eligibleAtomIndices:missingOriginBoundary.atoms.map((_, index) => index),
+    beforeMolecule:twoCyclohexanonesAfter })[0];
+const rejectedMissingBoundary = retainOriginatingHydrogenBondRemapCandidates(
+  ambiguousSequentialReplacement, missingBoundaryFollowup, missingOriginBoundary,
+  missingOriginBoundary.atoms.map((_, index) => index));
+assert.equal(rejectedMissingBoundary.status, 'unavailable');
+assert.deepEqual(rejectedMissingBoundary.candidates, []);
+assert.deepEqual(rejectedMissingBoundary.cumulativeEditRegionAtomIds, []);
 
 const ambiguousRemapMolecule = structuredClone(remapAfter);
 ambiguousRemapMolecule.atoms.push(
