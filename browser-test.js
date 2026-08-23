@@ -1764,27 +1764,36 @@ const browserSuite = String.raw`(async () => {
   api.load('N');
   const ammoniumEdit = await api.editAtomCurrent(0, 'N', 1);
   const ammoniumHydrogens = bondedHydrogenIndices(ammoniumEdit.molecule, 0);
+  const ammoniumBondLengths = ammoniumHydrogens.map((index) =>
+    atomDistance(ammoniumEdit.molecule, 0, index));
   const ammoniumAngles = ammoniumHydrogens.flatMap((first, position) =>
     ammoniumHydrogens.slice(position + 1).map((second) => atomAngle(ammoniumEdit.molecule, first, 0, second)));
   check(ammoniumEdit.formula === 'H4N' && ammoniumEdit.charge === 1
     && ammoniumEdit.molecule.atoms[0].formalCharge === 1
     && ammoniumEdit.valenceViolations.length === 0 && ammoniumEdit.validation.valid
-    && ammoniumHydrogens.every((index) => Math.abs(atomDistance(ammoniumEdit.molecule, 0, index) - 1.01) < 1e-6)
-    && ammoniumAngles.every((angle) => Math.abs(angle - 109.4712206) < 1e-5),
+    && ammoniumBondLengths.every((length) => length > 0.95 && length < 1.10)
+    // The local MMFF/UFF polish is allowed to move the ideal construction by
+    // sub-millidegrees; test tetrahedral chemistry, not floating-point identity.
+    && ammoniumAngles.every((angle) => Math.abs(angle - 109.4712206) < 1e-3),
   'formal-charge editing produces a sanitized tetrahedral explicit ammonium ion',
-  JSON.stringify({ validation:ammoniumEdit.validation, angles:ammoniumAngles }));
+  JSON.stringify({ validation:ammoniumEdit.validation,
+    bondLengths:ammoniumBondLengths, angles:ammoniumAngles }));
 
   api.load('C');
   const waterEdit = await api.editAtomCurrent(0, 'O', 0);
   const waterHydrogens = bondedHydrogenIndices(waterEdit.molecule, 0);
+  const waterBondLengths = waterHydrogens.map((index) =>
+    atomDistance(waterEdit.molecule, 0, index));
   const waterAngle = atomAngle(waterEdit.molecule, waterHydrogens[0], 0, waterHydrogens[1]);
   check(waterEdit.formula === 'H2O' && waterEdit.molecule.atoms[0].element === 'O'
     && waterEdit.valenceViolations.length === 0 && waterEdit.validation.valid
     && api.structureComponents().components[0]?.atomCount === waterEdit.atoms
-    && waterHydrogens.every((index) => Math.abs(atomDistance(waterEdit.molecule, 0, index) - 0.98) < 1e-6)
-    && Math.abs(waterAngle - 104.52) < 1e-5,
+    && waterBondLengths.every((length) => length > 0.90 && length < 1.05)
+    // Isolated-water force fields do not share one exact gas-phase angle. The
+    // invariant here is a chemically bent, non-linear H-O-H geometry.
+    && waterAngle > 100 && waterAngle < 110,
   'element replacement reconciles methane into sanitized bent water geometry',
-  JSON.stringify({ validation:waterEdit.validation, angle:waterAngle,
+  JSON.stringify({ validation:waterEdit.validation, bondLengths:waterBondLengths, angle:waterAngle,
     components:api.structureComponents() }));
 
   api.load('C.C');

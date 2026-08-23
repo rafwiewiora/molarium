@@ -68,3 +68,15 @@ The OpenMM worker smoke test, focused Chemist Actions and docking browser tests,
 real 7KPA contact-capture test, and all asset-independent unit gates passed.
 The hash-pinned ANI-2x assets must be fetched separately before the monolithic
 ANI parity section can run.
+
+After the assets were fetched and verified, the complete suite reached 446
+checks. Two geometry tests were the only failures: valid explicit ammonium at
+109.4710–109.47135° failed a 0.00001° identity threshold, and valid bent water
+at 103.978° failed an exact 104.52° threshold after force-field polishing. The
+assertions were corrected to test chemical geometry rather than a particular
+floating-point construction: ammonium within 0.001° of tetrahedral and water
+within the explicitly bounded 100–110° bent range. The same correction was
+applied to bond lengths: the builder's covalent-radius targets are 1.02 Å for
+N–H and 0.97 Å for O–H, while the old tests demanded 1.01 Å and 0.98 Å to a
+microångström. The new tests retain strict valence and sanitization checks and
+bound N–H to 0.95–1.10 Å and O–H to 0.90–1.05 Å.

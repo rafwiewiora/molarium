@@ -11,7 +11,8 @@ The original vector identity is available as a reusable [logo](./assets/molarium
 ## Quick start
 
 Large ONNX models are served as versioned, hash-checked release assets rather than stored in the
-public Git repository.
+public Git repository. The deployed website fetches them from Molarium's asset host when a model
+is first used; a local checkout downloads them to ignored files before running offline.
 
 ```sh
 bun install
@@ -331,6 +332,8 @@ H, C, N, O, F, S, and Cl. The current browser limit is 96 atoms. ANI-2x is not a
 field or a solvent model. The UI disables it for unsupported structures.
 
 Model export code, hashes, reference values, and the TorchANI license are in [`mlip/`](./mlip/).
+To restore only the ANI-2x bundle for local validation, run
+`bun scripts/fetch-assets.mjs --prefix=mlip/models/`.
 
 ## OpenFold 2
 
