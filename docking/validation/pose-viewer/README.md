@@ -18,14 +18,24 @@ node docking/validation/pose-viewer/build_pose_review.mjs \
 Serve the generated directory over a local HTTP server. The artifact shows one candidate at a
 time over the prepared 7KPA reference ligand, receptor cartoon, and the immediate 3.5 Å residue
 contact shell. It
-reports the browser score and the independent OpenMM Reference/RDKit checks, but it does not
+reports the browser reference-subtracted Δ pose score and the independent OpenMM Reference/RDKit checks, but it does not
 rescore, refine, modify, or approve a pose. Absolute energies must not be compared across
 different analogue graphs.
+
+The Δ pose score is the browser's within-run ranking objective: relative receptor interaction,
+relative ligand strain, and restraint penalties, all referenced to the inherited start. The OpenMM
+value is the independent absolute isolated-ligand Sage potential energy at the displayed
+coordinates. Their magnitudes and signs are not expected to agree, and neither is a binding free
+energy.
 
 Use the small buttons above the analogue selector to move between analogues. When focus is not
 inside a form control, the left and right keyboard arrows cycle through the distinct poses of the
 current analogue. Both routes preserve the current Mol* camera (rotation, pan, and zoom); **Reset
 camera** deliberately returns to a candidate-centered frame.
+
+The single bottom **H-bonds** switch draws only required contacts that the recorded candidate marked
+as satisfied. Participant identities and coordinates come from the public Chemist Actions pose
+inspection; the review builder does not infer new contacts from viewer geometry.
 
 The vendored Mol* files have SHA-256 digests
 `7fad5561c74bc900930fb57d6ab028d1aafdda82223a901bf932b1098e84f1f3` (JavaScript) and

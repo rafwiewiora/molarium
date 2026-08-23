@@ -14,6 +14,12 @@ const ACTIONS = Object.freeze({
     arguments:Object.freeze({ element:'supported element symbol', formalCharge:'integer −4…4' }) }),
   'chemistry.setBond': Object.freeze({ description:'Create or change the selected atom-pair bond.',
     arguments:Object.freeze({ order:'1 | 1.5 | 2 | 3' }) }),
+  'chemistry.addAtom': Object.freeze({
+    description:'Add one heavy atom to an editable atom through the same 2D Add operation.',
+    arguments:Object.freeze({ attachedToAtomId:'persistent atom ID', element:'supported element symbol' }) }),
+  'chemistry.createBond': Object.freeze({
+    description:'Create a bond between two editable atoms through the same 2D Bond operation.',
+    arguments:Object.freeze({ atomIds:'exactly two persistent atom IDs', order:'1 | 1.5 | 2 | 3' }) }),
   'chemistry.deleteAtom': Object.freeze({ description:'Delete the selected editable atom.', arguments:Object.freeze({}) }),
   'chemistry.deleteBond': Object.freeze({ description:'Delete the selected editable bond.', arguments:Object.freeze({}) }),
   'chemistry.addHydrogen': Object.freeze({ description:'Add one explicit hydrogen to the selected atom.', arguments:Object.freeze({}) }),

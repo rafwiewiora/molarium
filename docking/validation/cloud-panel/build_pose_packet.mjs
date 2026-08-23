@@ -30,6 +30,37 @@ function topologyOf(molecule) {
   };
 }
 
+function hydrogenBondsOf(inspection, entryId, publicAtomIds) {
+  const ligandIds = new Set(publicAtomIds);
+  return (inspection.contacts || []).flatMap((contact) => {
+    if (!contact.required || !contact.hydrogenBond) return [];
+    const bond = contact.hydrogenBond;
+    const participants = {};
+    for (const role of ['donor', 'hydrogen', 'acceptor']) {
+      const participant = bond.participants?.[role];
+      if (!participant || !['ligand','receptor'].includes(participant.scope))
+        throw new Error(`${entryId}: contact ${contact.contactId} has an invalid ${role}`);
+      if (participant.scope === 'ligand' && !ligandIds.has(participant.atomId))
+        throw new Error(`${entryId}: contact ${contact.contactId} references an unknown ligand atom`);
+      if (!Array.isArray(participant.coordinatesAngstrom)
+        || participant.coordinatesAngstrom.length !== 3
+        || participant.coordinatesAngstrom.some((value) => !Number.isFinite(value)))
+        throw new Error(`${entryId}: contact ${contact.contactId} is missing ${role} coordinates`);
+      participants[role] = { scope:participant.scope, atomId:participant.atomId || null,
+        element:participant.element || null,
+        coordinatesAngstrom:participant.coordinatesAngstrom.map(Number) };
+    }
+    return [{ id:contact.contactId, label:contact.label || contact.contactId,
+      required:true, available:Boolean(contact.available), remapStatus:contact.remapStatus || null,
+      receptorRole:bond.receptorRole || null,
+      selectedAlternativeId:bond.selectedAlternativeId || null,
+      satisfied:bond.satisfied ?? null,
+      donorAcceptorDistanceAngstrom:bond.donorAcceptorDistanceAngstrom ?? null,
+      hydrogenAcceptorDistanceAngstrom:bond.hydrogenAcceptorDistanceAngstrom ?? null,
+      dhaAngleDegrees:bond.dhaAngleDegrees ?? null, participants }];
+  });
+}
+
 function convert(entry) {
   const envelope = entry.inspection;
   if (envelope?.schema !== 'molarium.chemist-actions/v1' || envelope.action !== 'session.inspect'
@@ -74,9 +105,10 @@ function convert(entry) {
     ...(numeric ? { parameterization:{ forcefield:numeric.forcefield,
       chargeModel:numeric.chargeModel || null, sourceSha256:numeric.sourceSha256,
       system:numeric.system } } : {}) };
+  const hydrogenBonds = hydrogenBondsOf(inspection, entry.id, publicAtomIds);
   return { id:entry.id, caseId:entry.caseId || entry.id,
     endpoint:entry.endpoint || null, analogue:entry.analogue || null,
-    requiredContacts:entry.requiredContacts || [], molecule,
+    requiredContacts:entry.requiredContacts || [], hydrogenBonds, molecule,
     integrity:{ publicInspectionAtomOrderSha256:digest(publicAtomIds),
       atomOrderSha256:digest(atomIds), topologySha256:digest(topologyOf(molecule)),
       coordinatesSha256:digest(atoms.map(({ x, y, z }) => [x, y, z])),

@@ -28,7 +28,7 @@
     .view-actions{display:flex;justify-content:flex-end;margin-top:12px}.reset-view{border-radius:8px;padding:6px 9px;font-size:11px;font-weight:700}
     details{border-top:1px solid var(--line);margin-top:18px;padding-top:12px}summary{cursor:pointer;color:var(--muted);font-weight:650;font-size:12px}.hash{overflow-wrap:anywhere;font:10px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#788397}
     #stage{position:relative;min-width:0;overflow:hidden}#viewer{position:absolute;inset:0}.msp-plugin{background:#fff!important}
-    #legend{position:absolute;left:22px;bottom:20px;display:flex;gap:8px;z-index:4;pointer-events:none}.key{background:#fffffff0;border:1px solid var(--line);box-shadow:0 4px 18px #24344914;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:650}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+    #legend{position:absolute;left:22px;bottom:20px;display:flex;gap:8px;z-index:4}.key{background:#fffffff0;border:1px solid var(--line);box-shadow:0 4px 18px #24344914;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:650}.key.toggle{display:flex;align-items:center;gap:5px;cursor:pointer}.key.toggle input{width:14px;height:14px;margin:0}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
     #boot,#error{position:absolute;inset:0;z-index:6;display:grid;place-items:center;background:#f7f9fb;color:var(--muted)}#error{display:none;color:#9d351f;padding:40px;text-align:center}
     @media(max-width:760px){main{grid-template-columns:1fr;grid-template-rows:auto minmax(460px,1fr)}aside{border-right:0;border-bottom:1px solid var(--line);padding:15px;max-height:46vh}h2{margin-top:14px}}
   </style>
@@ -54,20 +54,20 @@
     </div>
     <h2>Pose checks</h2>
     <dl>
-      <dt>Browser score</dt><dd id="score">—</dd>
-      <dt>OpenMM Reference</dt><dd id="openmm">—</dd>
+      <dt title="Reference-subtracted pose-ranking objective; not an absolute energy or binding free energy.">Browser Δ pose score</dt><dd id="score">—</dd>
+      <dt title="Absolute isolated-ligand OpenFF Sage potential energy at these coordinates.">Ligand Sage energy</dt><dd id="openmm">—</dd>
       <dt>Max force</dt><dd id="force">—</dd>
       <dt>MMFF relaxation</dt><dd id="mmff">—</dd>
       <dt>Heavy-atom RMS</dt><dd id="rms">—</dd>
       <dt>Required contacts</dt><dd id="contacts">—</dd>
     </dl>
-    <div class="note">Absolute energies are not comparable between different analogue graphs.</div>
+    <div class="note">Δ pose score ranks poses against their inherited start. OpenMM Reference independently reports an absolute isolated-ligand Sage energy. Their values and signs are not expected to match; neither is a binding free energy.</div>
     <div class="view-actions"><button class="reset-view" id="reset-view" type="button">Reset camera</button></div>
     <details><summary>Provenance</summary><div class="hash" id="provenance"></div></details>
   </aside>
   <section id="stage">
     <div id="viewer"></div><div id="boot">Starting Mol*…</div><div id="error"></div>
-    <div id="legend"><span class="key"><i class="dot" style="background:#e08a46"></i>candidate</span><span class="key"><i class="dot" style="background:#866fb2"></i>reference</span></div>
+    <div id="legend"><span class="key"><i class="dot" style="background:#e08a46"></i>candidate</span><span class="key"><i class="dot" style="background:#866fb2"></i>reference</span><label class="key toggle"><input id="hbonds" type="checkbox" checked>H-bonds</label></div>
   </section>
 </main>
 <script type="module">
@@ -126,6 +126,10 @@ async function addCandidate(){
   await removeRef('candidate');const pose=current();if(!pose)return;
   await addRaw(pose.molBlock,'mol','candidate',{type:'ball-and-stick',typeParams:{alpha:1,sizeFactor:.24,aromaticBonds:false},color:'element-symbol',colorParams:CARBON(0xe08a46)});
 }
+async function addHydrogenBonds(){
+  await removeRef('hbonds');const pose=current();if(!$('hbonds').checked||!pose?.hydrogenBondMolBlock)return;
+  await addRaw(pose.hydrogenBondMolBlock,'mol','hbonds',{type:'line',typeParams:{alpha:.95,sizeFactor:1.5,aromaticBonds:false},color:'uniform',colorParams:{value:0x35a9c8}});
+}
 async function rebuild(){
   if(busy)return;const camera=snapshotCamera();busy=true;setNavigationBusy(true);try{
     await clearScene();
@@ -133,6 +137,7 @@ async function rebuild(){
     if($('pocket').checked)await addRaw(DATA.receptor.pocketPdb,'pdb','pocket',{type:'ball-and-stick',typeParams:{alpha:.75,sizeFactor:.17,aromaticBonds:false},color:'element-symbol',colorParams:CARBON(0x667b94)});
     if($('reference').checked)await addRaw(DATA.reference.molBlock,'mol','reference',{type:'ball-and-stick',typeParams:{alpha:.42,sizeFactor:.19,aromaticBonds:false},color:'element-symbol',colorParams:CARBON(0x866fb2)});
     await addCandidate();
+    await addHydrogenBonds();
     if(camera)applyCamera(camera);else focusCandidate();sceneReady=true;
   }finally{busy=false;setNavigationBusy(false)}
 }
@@ -163,7 +168,7 @@ function setNavigationBusy(value){
 async function choosePose(id){
   if(busy||id===currentPose)return;const group=DATA.cases.find(entry=>entry.id===currentCase);
   if(!group?.poses.some(entry=>entry.id===id))return;const camera=snapshotCamera();busy=true;setNavigationBusy(true);
-  try{currentPose=id;$('pose').value=id;paint();await addCandidate();applyCamera(camera)}
+  try{currentPose=id;$('pose').value=id;paint();await addCandidate();await addHydrogenBonds();applyCamera(camera)}
   finally{busy=false;setNavigationBusy(false)}
 }
 async function stepPose(delta){
@@ -189,6 +194,8 @@ async function init(){
     tagName:event.target?.tagName,contentEditable:event.target?.isContentEditable});
     if(delta!==null){event.preventDefault();stepPose(delta)}});
   for(const id of ['reference','pocket','protein'])$(id).addEventListener('change',rebuild);
+  $('hbonds').addEventListener('change',async()=>{if(busy)return;const camera=snapshotCamera();busy=true;
+    try{await addHydrogenBonds();applyCamera(camera)}finally{busy=false}});
   await rebuild();$('boot').style.display='none';document.body.dataset.ready='1';
 }
 init().catch(error=>{$('boot').style.display='none';$('error').style.display='grid';$('error').textContent=error?.stack||String(error);document.body.dataset.ready='error'});

@@ -3,13 +3,19 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { deterministicHash, graphContractFromInspection, panelRoot, readPanelManifest,
   stableReplayPayload, validatePanelManifest } from './7kpa-two-terminus-panel.mjs';
+import { editDifficulty } from '../../enumerations/edit-difficulty.mjs';
+import { assessEnumeratedPose } from '../../enumerations/pose-assessment.mjs';
 
-const { manifest } = await readPanelManifest();
-await validatePanelManifest(manifest);
 const args = process.argv.slice(2);
 const valueAfter = (flag) => {
   const index = args.indexOf(flag); return index >= 0 ? args[index + 1] : null;
 };
+const enumerationPanel = args.includes('--enumerations');
+const manifest = enumerationPanel
+  ? await (await import('../../enumerations/high-disruption-panel.mjs'))
+    .buildHighDisruptionPanelManifest()
+  : (await readPanelManifest()).manifest;
+await validatePanelManifest(manifest);
 const onlyCase = valueAfter('--case');
 const onlyLocus = valueAfter('--locus');
 const replayOverride = valueAfter('--replays');
@@ -25,10 +31,12 @@ if (!Number.isInteger(replays) || replays < 1 || replays > 10)
   throw new Error('--replays must be an integer from 1 to 10');
 const searchChains = searchOverride == null ? manifest.protocol.searchChains : Number(searchOverride);
 if (![8,16,32,64].includes(searchChains)) throw new Error('--search-chains must be 8, 16, 32, or 64');
-if (onlyLocus && !['pyridone','pyrrolidone','dual'].includes(onlyLocus))
-  throw new Error('--locus must be pyridone, pyrrolidone, or dual');
+if (onlyLocus && !['pyridone','pyrrolidone','dual','linker-pyrrolidone'].includes(onlyLocus))
+  throw new Error('--locus must be pyridone, pyrrolidone, dual, or linker-pyrrolidone');
 const outputPath = outputArgument ? path.resolve(outputArgument)
-  : path.join(panelRoot, 'results/7kpa-two-terminus-panel.development.json');
+  : path.join(panelRoot, enumerationPanel
+    ? 'results/7kpa-high-disruption-enumerations.development.json'
+    : 'results/7kpa-two-terminus-panel.development.json');
 const candidateExportPath = candidateExportArgument ? path.resolve(candidateExportArgument) : null;
 
 const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
@@ -138,9 +146,18 @@ function replayExpression(entry, replayOrdinal) {
     const selectNames = async (names) => {
       const current = await inspect(false);
       const byName = new Map(current.atoms.map((atom) => [atom.atomName, atom.atomId]));
-      const missing = names.filter((name) => !byName.has(name));
+      const missing = names.filter((name) => !byName.has(name) && !aliases.has(name));
       if (missing.length) throw new Error('Cannot resolve D84 atom names: ' + missing.join(', '));
-      return execute('selection.replace', { atomIds:names.map((name) => byName.get(name)) });
+      return execute('selection.replace', {
+        atomIds:names.map((name) => aliases.get(name) || byName.get(name)) });
+    };
+    const aliases = new Map();
+    const atomIds = async (names) => {
+      const current = await inspect(false);
+      const byName = new Map(current.atoms.map((atom) => [atom.atomName, atom.atomId]));
+      const resolved = names.map((name) => aliases.get(name) || byName.get(name));
+      if (resolved.some((id) => !id)) throw new Error('Cannot resolve atom references: ' + names.join(', '));
+      return resolved;
     };
     let chemistry = null, contactMapping = null, refinement = null, appliedPose = null;
     const candidateValidationExports = [];
@@ -177,12 +194,27 @@ function replayExpression(entry, replayOrdinal) {
           await selectNames([operation.atom]); await execute('chemistry.addHydrogen');
         } else if (operation.op === 'removeHydrogen') {
           await selectNames([operation.atom]); await execute('chemistry.removeHydrogen');
+        } else if (operation.op === 'deleteBond') {
+          await selectNames(operation.atoms); await execute('chemistry.deleteBond');
+        } else if (operation.op === 'addAtom') {
+          const result = await execute('chemistry.addAtom', {
+            attachedToAtomId:(await atomIds([operation.attachedTo]))[0],
+            element:operation.element,
+          });
+          if (!result.addedAtomId) throw new Error('Added atom has no persistent identity');
+          aliases.set(operation.as, result.addedAtomId);
+        } else if (operation.op === 'createBond') {
+          await execute('chemistry.createBond', {
+            atomIds:await atomIds(operation.atoms), order:operation.order,
+          });
         }
       }
       const edited = await inspect(true);
+      const aliasById = new Map([...aliases].map(([alias, id]) => [id, alias]));
       chemistry = { commits:chemistryCommits,
         moleculeValidation:edited.molecule?.chemistryValidation || null,
-        atoms:edited.atoms.map((atom) => ({ atomId:atom.atomId, atomName:atom.atomName,
+        atoms:edited.atoms.map((atom) => ({ atomId:atom.atomId,
+          atomName:aliasById.get(atom.atomId) || atom.atomName,
           element:atom.element, formalCharge:atom.formalCharge, aromatic:atom.aromatic })),
         bonds:edited.bonds, transformedRingRegions:edited.transformedRingRegions };
       const policy = new Map([
@@ -319,6 +351,13 @@ try {
       record.expectedProductGraphSha256 = entry.expectedProductGraphSha256;
       record.productGraphMatchesExpected = record.productGraphSha256
         === entry.expectedProductGraphSha256;
+      const remapCount = record.chemistry?.commits?.reduce((sum, commit) =>
+        sum + (commit.contactFeatureRemaps?.length || 0), 0) || 0;
+      record.editDifficulty = record.chemistry && record.referenceGraph
+        ? editDifficulty(record.referenceGraph, record.chemistry, { contactRemapCount:remapCount })
+        : null;
+      record.enumerationPoseScreen = enumerationPanel && record.refinement
+        ? assessEnumeratedPose(record.refinement) : null;
       if (!record.productGraphMatchesExpected
         && !['chemistry-invalid','runtime-failure'].includes(record.terminalOutcome))
         record.terminalOutcome = 'product-identity-mismatch';
@@ -331,6 +370,8 @@ try {
           .map((atom) => atom.coordinatesAngstrom)),
         numericSystemSha256:deterministicHash(exported.numericSystem.system),
       }));
+      for (const exported of record.candidateValidationExports || [])
+        exported.analogue.editDifficulty = record.editDifficulty;
       validationExports.push(...(record.candidateValidationExports || []));
       delete record.candidateValidationExports;
       record.deterministicSha256 = deterministicHash(stableReplayPayload(record));
@@ -362,7 +403,7 @@ try {
     await writeFile(candidateExportPath, `${JSON.stringify(exportBatch, null, 2)}\n`);
     console.log(`7KPA validation exports: ${validationExports.length} poses -> ${candidateExportPath}`);
   }
-  console.log(`7KPA two-terminus panel: COMPLETE (${caseResults.length} cases) -> ${outputPath}`);
+  console.log(`7KPA ${enumerationPanel ? 'high-disruption enumeration' : 'two-terminus'} panel: COMPLETE (${caseResults.length} cases) -> ${outputPath}`);
 } finally {
   client?.close(); chrome?.kill(); server?.kill();
   await rm(profile, { recursive:true, force:true });

@@ -9,11 +9,17 @@ const valueAfter = (flag) => {
 };
 const input = valueAfter('--input')
   || 'docking/benchmark/results/7kpa-two-terminus-panel.development.json';
-const { manifest } = await readPanelManifest();
+const enumerationPanel = args.includes('--enumerations');
+const manifest = enumerationPanel
+  ? await (await import('../../enumerations/high-disruption-panel.mjs'))
+    .buildHighDisruptionPanelManifest()
+  : (await readPanelManifest()).manifest;
 await validatePanelManifest(manifest);
 const results = JSON.parse(await readFile(path.resolve(input), 'utf8'));
 const validated = validatePanelResults(results, manifest, {
   requireComplete:args.includes('--require-complete'),
 });
-console.log(`7KPA two-terminus results: PASS (${validated.cases} cases; `
-  + `${validated.agreeing} deterministic replay agreements)`);
+const replayMessage = validated.repeatedCases
+  ? `${validated.repeatedAgreeing}/${validated.repeatedCases} repeated replay agreements`
+  : 'single-replay identity/schema checks only';
+console.log(`7KPA ${enumerationPanel ? 'high-disruption enumeration' : 'two-terminus'} results: PASS (${validated.cases} cases; ${replayMessage})`);

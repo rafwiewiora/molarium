@@ -51,7 +51,9 @@ node docking/validation/cloud-panel/build_pose_packet.mjs raw-exports.json panel
 The converter resolves stable atom-ID bonds and reorders the public coordinates exactly once into
 the numeric System's declared atom order. It requires an identical, unique atom-ID set and records
 both the public-inspection and numeric-System order hashes plus topology, coordinate and System
-hashes. The Python oracle recomputes every hash before calculation. Unknown System force classes or
+hashes. Required H-bond participant identities, pose-specific coordinates, satisfaction, and
+geometry are copied from the same public inspection for read-only review; no validation tool
+rediscovers them heuristically. The Python oracle recomputes every hash before calculation. Unknown System force classes or
 term fields fail closed rather than being silently omitted.
 
 Atom coordinates are Å.  The optional numeric System has the exact field names written by

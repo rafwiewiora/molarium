@@ -57,7 +57,8 @@ const caseResult = { caseId:entry.id, caseInputSha256:replay.caseInputSha256,
 const result = { schemaVersion:1, panelId:manifest.panelId, panelVersion:manifest.version,
   manifestSha256:deterministicHash(manifest), cases:[caseResult],
   resultsSha256:deterministicHash([caseResult]) };
-assert.deepEqual(validatePanelResults(result, manifest), { cases:1, agreeing:1 });
+assert.deepEqual(validatePanelResults(result, manifest), { cases:1, agreeing:1,
+  repeatedCases:0, repeatedAgreeing:0 });
 const tampered = structuredClone(result);
 tampered.cases[0].replays[0].productGraphMatchesExpected = false;
 assert.throws(() => validatePanelResults(tampered, manifest), /replay hash/);

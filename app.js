@@ -6060,10 +6060,12 @@ async function applyChemistryMutation(mutator) {
   // topology hashes. Assign them before taking the transaction snapshot, and
   // again immediately after mutation so staged consumers never see an
   // anonymous newly created atom.
-  const referenceCore = state.dockingReference
-    ? await import('./docking/reference-core.mjs') : null;
+  // Chemist Actions promise persistent graph identities even when no docking
+  // reference has been captured yet. Assign identities for every chemistry
+  // mutation; a docking reference merely contributes additional reserved IDs.
+  const referenceCore = await import('./docking/reference-core.mjs');
   const identityNamespace = `design-${state.molecule.source?.pdbId || 'complex'}`;
-  if (referenceCore) referenceCore.ensureStableAtomIds(state.molecule,
+  referenceCore.ensureStableAtomIds(state.molecule,
     identityNamespace, state.dockingReference?.ligand?.atomIds || []);
   const staged = !chemistryImmediateRefinementEnabled();
   const transaction = staged ? beginChemistryTransaction() : null;
@@ -6072,7 +6074,7 @@ async function applyChemistryMutation(mutator) {
   if (!staged) pushBuildSnapshot(snapshot);
   try {
     const outcome = mutator(state.molecule, { staged }) || {};
-    if (referenceCore) referenceCore.ensureStableAtomIds(state.molecule,
+    referenceCore.ensureStableAtomIds(state.molecule,
       identityNamespace, [
         ...(state.dockingReference?.ligand?.atomIds || []),
         ...snapshot.atoms.map((atom) => atom.designAtomId),
@@ -6893,13 +6895,55 @@ async function inspectChemistActionState({ scope = 'ligand', includeCoordinates 
     ? [{ atomIds:[state.molecule.atoms[bond.a].designAtomId,
       state.molecule.atoms[bond.b].designAtomId], order:Number(bond.order || 1),
       aromatic:Boolean(bond.aromatic || Number(bond.order) === 1.5) }] : []);
+  const currentPoseHydrogenBonds = new Map((state.dockingResult?.run?.candidates
+    ?.[state.dockingPoseIndex]?.hydrogenBonds || []).map((entry) => [entry.id, entry]));
+  const participant = (descriptor) => {
+    if (!descriptor) return null;
+    if (descriptor.scope === 'receptor') return {
+      scope:'receptor', atomId:descriptor.designAtomId || null,
+      element:descriptor.element || null,
+      ...(includeCoordinates && descriptor.point ? { coordinatesAngstrom:[
+        Number(descriptor.point.x), Number(descriptor.point.y), Number(descriptor.point.z),
+      ] } : {}),
+    };
+    const atom = state.molecule.atoms.find((entry) =>
+      entry.designAtomId === descriptor.designAtomId);
+    return {
+      scope:'ligand', atomId:descriptor.designAtomId || null,
+      element:atom?.element || descriptor.element || null,
+      ...(includeCoordinates && atom ? { coordinatesAngstrom:[
+        Number(atom.x), Number(atom.y), Number(atom.z),
+      ] } : {}),
+    };
+  };
   const contacts = (state.dockingReference?.hydrogenBonds || []).map((definition) => {
-    const effective = effectiveDockingHydrogenBondDefinition(definition);
+    let effective = effectiveDockingHydrogenBondDefinition(definition);
     const proposal = state.dockingContactRemapProposals.get(definition.id);
+    const poseContact = currentPoseHydrogenBonds.get(definition.id);
+    const selectedAlternative = poseContact?.selectedAlternativeId && proposal?.candidates
+      ?.find((candidate) => candidate.id === poseContact.selectedAlternativeId);
+    if (selectedAlternative?.replacement) {
+      effective = structuredClone(proposal.priorEffectiveDefinition || definition);
+      if (selectedAlternative.role === 'acceptor')
+        effective.acceptor = structuredClone(selectedAlternative.replacement.acceptor);
+      else {
+        effective.donor = structuredClone(selectedAlternative.replacement.donor);
+        effective.hydrogen = structuredClone(selectedAlternative.replacement.hydrogen);
+      }
+    }
     return { contactId:definition.id, label:definition.label,
       required:state.dockingSelectedHbondIds.has(definition.id),
-      available:!proposal && dockingContactAvailable(effective),
-      remapStatus:proposal?.status || (state.dockingContactRemaps.has(definition.id) ? 'mapped' : 'original') };
+      available:(!proposal || Boolean(selectedAlternative)) && dockingContactAvailable(effective),
+      remapStatus:proposal?.status || (state.dockingContactRemaps.has(definition.id) ? 'mapped' : 'original'),
+      hydrogenBond:{ receptorRole:effective.receptorRole,
+        selectedAlternativeId:poseContact?.selectedAlternativeId || null,
+        satisfied:poseContact?.satisfied ?? null,
+        donorAcceptorDistanceAngstrom:poseContact?.donorAcceptorDistanceAngstrom ?? null,
+        hydrogenAcceptorDistanceAngstrom:poseContact?.hydrogenAcceptorDistanceAngstrom ?? null,
+        dhaAngleDegrees:poseContact?.dhaAngleDegrees ?? null,
+        participants:{ donor:participant(effective.donor),
+          hydrogen:participant(effective.hydrogen),
+          acceptor:participant(effective.acceptor) } } };
   });
   return chemistActionSummary({ scope, truncated:totalAtomCount > atoms.length,
     totalAtomCount, atoms, bonds, contacts,
@@ -6970,6 +7014,37 @@ function installChemistActionsApi(module) {
       return summarizeMutation(() => applySelectedAtomChemistry(args.element,
         args.formalCharge ?? 0)); },
     'chemistry.setBond':async (args) => { chemistActionKeys(args, ['order']);
+      return summarizeMutation(() => applySelectedBondChemistry(args.order)); },
+    'chemistry.addAtom':async (args) => { chemistActionKeys(args,
+      ['attachedToAtomId','element']);
+      if (state.mode !== 'build') throw new Error('Enter Build mode before adding an atom.');
+      if (typeof args.attachedToAtomId !== 'string' || !args.attachedToAtomId)
+        throw new Error('attachedToAtomId must be a persistent atom ID');
+      if (!ELEMENTS[args.element] || args.element === 'H')
+        throw new Error('element must be a supported heavy-atom symbol');
+      const byId = await ensureChemistActionAtomIds();
+      if (!byId.has(args.attachedToAtomId))
+        throw new Error(`Unknown persistent atom ID: ${args.attachedToAtomId}`);
+      const before = new Set(state.molecule.atoms.map((atom) => atom.designAtomId));
+      const result = await addDepictionAtom(byId.get(args.attachedToAtomId), args.element);
+      const addedAtomIds = state.molecule.atoms.map((atom) => atom.designAtomId)
+        .filter((id) => id && !before.has(id));
+      const addedHeavyAtomId = addedAtomIds.find((id) =>
+        state.molecule.atoms.find((atom) => atom.designAtomId === id)?.element !== 'H') || null;
+      return chemistActionSummary({ addedAtomId:addedHeavyAtomId, addedAtomIds,
+        validation:structuredClone(result?.validation || null) }); },
+    'chemistry.createBond':async (args) => { chemistActionKeys(args, ['atomIds','order']);
+      if (state.mode !== 'build') throw new Error('Enter Build mode before creating a bond.');
+      if (!Array.isArray(args.atomIds) || args.atomIds.length !== 2
+        || args.atomIds.some((id) => typeof id !== 'string' || !id)
+        || args.atomIds[0] === args.atomIds[1])
+        throw new Error('atomIds must contain two different persistent atom IDs');
+      const byId = await ensureChemistActionAtomIds();
+      const indices = args.atomIds.map((id) => {
+        if (!byId.has(id)) throw new Error(`Unknown persistent atom ID: ${id}`);
+        return byId.get(id);
+      });
+      setDepictionSelection(indices);
       return summarizeMutation(() => applySelectedBondChemistry(args.order)); },
     'chemistry.deleteAtom':async (args) => { empty(args);
       return summarizeMutation(() => deleteSelectedAtomChemistry()); },
@@ -8495,7 +8570,8 @@ async function getCalculationWorker(method) {
     }
     pendingCalculations.delete(message.id);
     if (message.type === 'result') pending.resolve(message);
-    else pending.reject(new Error(message.message || `${calculationEngineName(method)} calculation failed`));
+    else pending.reject(new Error(`${method}/${pending.job || 'calculation'}: `
+      + (message.message || `${calculationEngineName(method)} calculation failed`)));
   });
   worker.addEventListener('error', (event) => {
     const details = [event.message, event.filename && `${event.filename}:${event.lineno || 0}`].filter(Boolean).join(' · ');
@@ -9405,7 +9481,7 @@ async function runWorkerJob(method, job, molecule, onProgress, options = {}) {
   const worker = await getCalculationWorker(method);
   const id = ++calculationSequence;
   return new Promise((resolve, reject) => {
-    pendingCalculations.set(id, { resolve, reject, onProgress, method });
+    pendingCalculations.set(id, { resolve, reject, onProgress, method, job });
     worker.postMessage({
       type: 'run', id, job, molecule: structuredClone(molecule),
       options: {

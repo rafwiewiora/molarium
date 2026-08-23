@@ -829,3 +829,37 @@ gate active, the selected result stays at the least-repulsive inherited start: �
 restraint 1.3215 kcal/mol, seven inherited/zero added clashes, and no LJ excess. The Lys→lactam O
 contact remains honestly infeasible by 0.268 Å D-A and 0.127 Å H-A rather than being recovered
 through a catastrophic overlap.
+
+### Decision D-034 — enumeration is a bounded proposal layer, not another docking engine
+
+The first `enumerations/` package stores versioned transformation data and compiles every operation
+into the public Chemist Actions boundary. Enumeration may propose graph edits, but it may not inject
+a product molecule, replace coordinates, call an internal score, or bypass sanitization. Exact
+product-graph hashes deduplicate and identify products. Persistent atom lineage supplies a
+transparent disruption metric with separate whole-graph and affected-region normalizations.
+
+Chemical validity, contact-driven pose generation, contact feasibility, and absolute physical
+screening remain separate downstream stages. In particular, a contact-feasible enumerated pose is
+not a hit. The registered development screen flags more than two absolute receptor–ligand clashes
+or raw Lennard-Jones energy above +100 kcal/mol for review. These thresholds are conservative
+engineering screens, not affinity or binding-free-energy models.
+
+Reason: a future combinatorial library module needs deterministic expansion, graph identity,
+bounded action provenance, deduplication, and failure accounting. Folding proposal generation into
+pose scoring would hide whether a failure came from invalid chemistry, contact mapping, conformer
+generation, or physical plausibility, and would let application-only shortcuts masquerade as a
+chemist-reproducible route.
+
+### Validation V-020 — high-disruption enumeration stress cases
+
+The local browser executed three preregistered 7KPA transformations through public Chemist Actions:
+pyrrolidone→pyrazole, pyrrolidone→tetrahydropyran, and phenyl–pyrrolidone→spiro[4.5] ketone. Every
+finished product matched its preregistered graph hash and carried a verified hash-linked labbook.
+The pyrazole and tetrahydropyran winners satisfied all four selected contacts and passed the small
+absolute screen. The spiro winner also satisfied all contacts but retained 11 clashes and raw
+receptor–ligand LJ +1870.38 kcal/mol, so it is explicitly `contact-feasible-review-required`.
+
+The raw two-replay result SHA-256 is
+`80047f9ac6c12a09f37103b7b0e44e6a79cb7033a032044ae95a26f68fdc0f75`. All three cases have exact
+stable-payload replay agreement. Exact commands, scores, caveats, and transformation-level results
+are frozen in `enumerations/RESULTS.v0.1.md`.

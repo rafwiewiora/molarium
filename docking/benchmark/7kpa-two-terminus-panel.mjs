@@ -7,12 +7,14 @@ import { fileURLToPath } from 'node:url';
 export const panelRoot = path.dirname(fileURLToPath(import.meta.url));
 export const panelManifestName = '7kpa-two-terminus-panel.v0.1.json';
 export const allowedPanelOperations = new Set([
-  'setBond', 'setAtom', 'addHydrogen', 'removeHydrogen', 'deleteAtom', 'finish',
+  'setBond', 'setAtom', 'addHydrogen', 'removeHydrogen', 'deleteAtom', 'deleteBond',
+  'addAtom', 'createBond', 'finish',
 ]);
 export const operationActions = Object.freeze({
   setBond:'chemistry.setBond', setAtom:'chemistry.setAtom',
   addHydrogen:'chemistry.addHydrogen', removeHydrogen:'chemistry.removeHydrogen',
-  deleteAtom:'chemistry.deleteAtom', finish:'chemistry.finish',
+  deleteAtom:'chemistry.deleteAtom', deleteBond:'chemistry.deleteBond',
+  addAtom:'chemistry.addAtom', createBond:'chemistry.createBond', finish:'chemistry.finish',
 });
 
 export function sha256(value) {
@@ -42,8 +44,8 @@ function stableContactRemap(value) {
     .map(([key, entry]) => [key, stableContactRemap(entry)]));
 }
 
-export async function readPanelManifest() {
-  const bytes = await readFile(path.join(panelRoot, panelManifestName));
+export async function readPanelManifest(name = panelManifestName) {
+  const bytes = await readFile(path.isAbsolute(name) ? name : path.join(panelRoot, name));
   return { bytes, manifest:JSON.parse(bytes) };
 }
 
@@ -72,6 +74,8 @@ function simulateOperations(entry, referenceGraph) {
   const bonds = new Map(referenceGraph.bonds);
   let mutationsSinceFinish = 0;
   let syntheticHydrogen = 0;
+  const aliases = new Map();
+  const resolvedName = (name) => aliases.get(name) || name;
   const attachedHydrogens = (atomName) => [...atoms].filter(([name, atom]) => atom.element === 'H'
     && bonds.has([name, atomName].sort().join('|'))).map(([name]) => name);
   const addHydrogen = (atomName) => {
@@ -126,31 +130,63 @@ function simulateOperations(entry, referenceGraph) {
     if (operation.op === 'setBond') {
       assert.ok(Array.isArray(operation.atoms) && operation.atoms.length === 2,
         `${entry.id}: setBond requires two atom names`);
-      operation.atoms.forEach((name) => assert.ok(atoms.has(name), `${entry.id}: unknown atom ${name}`));
-      const key = [...operation.atoms].sort().join('|');
+      const names = operation.atoms.map(resolvedName);
+      names.forEach((name) => assert.ok(atoms.has(name), `${entry.id}: unknown atom ${name}`));
+      const key = [...names].sort().join('|');
       assert.ok(bonds.has(key), `${entry.id}: ${operation.atoms.join('-')} is not an existing bond`);
       assert.ok([1,1.5,2,3].includes(operation.order), `${entry.id}: invalid bond order`);
       bonds.set(key, operation.order);
       continue;
     }
+    if (operation.op === 'deleteBond' || operation.op === 'createBond') {
+      assert.ok(Array.isArray(operation.atoms) && operation.atoms.length === 2,
+        `${entry.id}: ${operation.op} requires two atom names`);
+      const names = operation.atoms.map(resolvedName);
+      names.forEach((name) => assert.ok(atoms.has(name), `${entry.id}: unknown atom ${name}`));
+      const key = [...names].sort().join('|');
+      if (operation.op === 'deleteBond') {
+        assert.ok(bonds.has(key), `${entry.id}: ${operation.atoms.join('-')} is not an existing bond`);
+        bonds.delete(key);
+      } else {
+        assert.ok(!bonds.has(key), `${entry.id}: ${operation.atoms.join('-')} is already bonded`);
+        assert.ok([1,1.5,2,3].includes(operation.order), `${entry.id}: invalid bond order`);
+        bonds.set(key, operation.order);
+      }
+      continue;
+    }
+    if (operation.op === 'addAtom') {
+      assert.match(operation.as, /^[A-Za-z][A-Za-z0-9_-]*$/,
+        `${entry.id}: addAtom requires a stable alias`);
+      assert.ok(!aliases.has(operation.as) && !atoms.has(operation.as),
+        `${entry.id}: duplicate atom alias ${operation.as}`);
+      const attachedTo = resolvedName(operation.attachedTo);
+      assert.ok(atoms.has(attachedTo), `${entry.id}: unknown attachment atom ${operation.attachedTo}`);
+      assert.match(operation.element, /^(?:C|N|O|S|P|F|Cl|Br|I)$/,
+        `${entry.id}: unsupported added element`);
+      aliases.set(operation.as, operation.as);
+      atoms.set(operation.as, { element:operation.element, formalCharge:0, aromatic:false });
+      bonds.set([operation.as, attachedTo].sort().join('|'), 1);
+      continue;
+    }
     assert.equal(typeof operation.atom, 'string', `${entry.id}: ${operation.op} requires atom`);
-    assert.ok(atoms.has(operation.atom), `${entry.id}: unknown atom ${operation.atom}`);
+    const operationAtom = resolvedName(operation.atom);
+    assert.ok(atoms.has(operationAtom), `${entry.id}: unknown atom ${operation.atom}`);
     if (operation.op === 'setAtom') {
       assert.match(operation.element, /^(?:C|N|O|S)$/,
         `${entry.id}: panel atom replacements are limited to C/N/O/S`);
       assert.ok(Number.isInteger(operation.formalCharge) && Math.abs(operation.formalCharge) <= 2,
         `${entry.id}: invalid formal charge`);
-      atoms.get(operation.atom).element = operation.element;
-      atoms.get(operation.atom).formalCharge = operation.formalCharge;
-      atoms.get(operation.atom).aromatic = false;
+      atoms.get(operationAtom).element = operation.element;
+      atoms.get(operationAtom).formalCharge = operation.formalCharge;
+      atoms.get(operationAtom).aromatic = false;
     } else if (operation.op === 'deleteAtom') {
-      deleteAtom(operation.atom);
+      deleteAtom(operationAtom);
     } else if (operation.op === 'removeHydrogen') {
-      const hydrogen = attachedHydrogens(operation.atom)[0];
+      const hydrogen = attachedHydrogens(operationAtom)[0];
       assert.ok(hydrogen, `${entry.id}: ${operation.atom} has no explicit hydrogen to remove`);
       deleteAtom(hydrogen);
     } else if (operation.op === 'addHydrogen') {
-      addHydrogen(operation.atom);
+      addHydrogen(operationAtom);
     }
   }
   assert.equal(mutationsSinceFinish, 0, `${entry.id}: final mutation batch is not finished`);
@@ -177,12 +213,13 @@ function graphContractFromMaps(atoms, bonds) {
 
 export function graphContractFromInspection(atoms, bonds) {
   const byId = new Map(atoms.map((atom) => [atom.atomId, atom]));
-  const atomMap = new Map(atoms.map((atom) => [atom.atomName, {
+  const graphLabel = (atom) => atom?.atomName || (atom?.atomId ? `@${atom.atomId}` : null);
+  const atomMap = new Map(atoms.map((atom) => [graphLabel(atom), {
     element:atom.element, formalCharge:atom.formalCharge || 0, aromatic:Boolean(atom.aromatic),
-  }]));
+  }]).filter(([label]) => label));
   const bondMap = new Map();
   for (const bond of bonds) {
-    const names = bond.atomIds.map((id) => byId.get(id)?.atomName);
+    const names = bond.atomIds.map((id) => graphLabel(byId.get(id)));
     if (names.some((name) => !name)) continue;
     bondMap.set(names.sort().join('|'), Number(bond.order));
   }
@@ -198,7 +235,10 @@ export async function expectedProductGraph(entry, manifest) {
 
 export async function validatePanelManifest(manifest, { verifyAssets = true } = {}) {
   assert.equal(manifest.schemaVersion, 1);
-  assert.equal(manifest.panelId, 'molarium-7kpa-d84-two-terminus-analogues');
+  const highDisruption = manifest.profile === 'high-disruption-enumerations';
+  assert.equal(manifest.panelId, highDisruption
+    ? 'molarium-7kpa-d84-high-disruption-enumerations'
+    : 'molarium-7kpa-d84-two-terminus-analogues');
   assert.equal(manifest.status, 'preregistered-development');
   assert.equal(manifest.reference.pdbId, '7KPA');
   assert.equal(manifest.reference.componentId, 'D84');
@@ -208,11 +248,12 @@ export async function validatePanelManifest(manifest, { verifyAssets = true } = 
   assert.ok([8,16,32,64].includes(manifest.protocol.searchChains));
   assert.ok(Number.isInteger(manifest.protocol.replays) && manifest.protocol.replays >= 2);
   assert.ok(manifest.protocol.requiredMeasurements.includes('replay-hash'));
-  assert.ok(Array.isArray(manifest.cases) && manifest.cases.length >= 16);
+  assert.ok(Array.isArray(manifest.cases)
+    && manifest.cases.length >= (highDisruption ? 3 : 16));
   assert.equal(new Set(manifest.cases.map((entry) => entry.id)).size, manifest.cases.length,
     'panel case IDs must be unique');
   const contactKeys = new Set(Object.keys(manifest.referenceContacts));
-  const locus = new Set(['pyridone','pyrrolidone','dual']);
+  const locus = new Set(['pyridone','pyrrolidone','dual','linker-pyrrolidone']);
   let referenceGraph = { atoms:new Map(), bonds:new Map() };
   if (verifyAssets) {
     const pdbBytes = await readFile(path.join(panelRoot, manifest.reference.coordinateFile));
@@ -258,16 +299,19 @@ export async function validatePanelManifest(manifest, { verifyAssets = true } = 
         `${entry.id}: preregistered product graph contract does not match its operation script`);
     }
   }
-  for (const site of ['pyridone','pyrrolidone']) {
+  if (!highDisruption) for (const site of ['pyridone','pyrrolidone']) {
     const cases = manifest.cases.filter((entry) => entry.locus === site);
     assert.ok(cases.some((entry) => entry.intendedRoles.includes('acceptor')
       && !entry.intendedRoles.includes('donor')), `${site}: acceptor-only case is required`);
     assert.ok(cases.some((entry) => entry.intendedRoles.includes('acceptor')
       && entry.intendedRoles.includes('donor')), `${site}: donor-acceptor case is required`);
   }
-  assert.ok(manifest.cases.filter((entry) => entry.locus === 'dual').length >= 2,
+  if (!highDisruption) assert.ok(manifest.cases.filter((entry) => entry.locus === 'dual').length >= 2,
     'at least two dual-end stress cases are required');
-  return { cases:manifest.cases.length, loci:Object.fromEntries(['pyridone','pyrrolidone','dual']
+  const locusNames = highDisruption
+    ? [...new Set(manifest.cases.map((entry) => entry.locus))].sort()
+    : ['pyridone','pyrrolidone','dual'];
+  return { cases:manifest.cases.length, loci:Object.fromEntries(locusNames
     .map((name) => [name, manifest.cases.filter((entry) => entry.locus === name).length])) };
 }
 
@@ -302,6 +346,8 @@ export function stableReplayPayload(record) {
     productGraphSha256:record.productGraphSha256 || null,
     expectedProductGraphSha256:record.expectedProductGraphSha256 || null,
     productGraphMatchesExpected:Boolean(record.productGraphMatchesExpected),
+    editDifficulty:record.editDifficulty || null,
+    enumerationPoseScreen:record.enumerationPoseScreen || null,
     labbookAudit:record.labbookAudit ? { protocolSha256:record.labbookAudit.protocolSha256,
       eventCount:record.labbookAudit.eventCount, valid:record.labbookAudit.valid,
       reason:record.labbookAudit.reason || null } : null,
@@ -356,12 +402,24 @@ export function validatePanelResults(results, manifest, { requireComplete = fals
         assert.ok(Number.isInteger(replay.refinement.selectedPhysicalComponents?.stericClashes));
         assert.ok(Array.isArray(replay.refinement.selectedHydrogenBonds));
       }
+      if (manifest.profile === 'high-disruption-enumerations' && replay.refinement) {
+        assert.equal(replay.editDifficulty?.schema, 'molarium.edit-difficulty/v1');
+        assert.ok(Number.isFinite(replay.editDifficulty.score)
+          && replay.editDifficulty.score >= 0 && replay.editDifficulty.score <= 100);
+        assert.equal(replay.enumerationPoseScreen?.schema,
+          'molarium.enumeration-pose-screen/v1');
+        assert.ok(['contact-infeasible','contact-feasible-review-required',
+          'development-screen-pass'].includes(replay.enumerationPoseScreen.verdict));
+      }
     }
     const hashes = new Set(record.replays.map((replay) => replay.deterministicSha256));
     assert.equal(record.replayAgreement, hashes.size === 1,
       `${entry.id}: replay-agreement flag is inconsistent`);
   }
   assert.equal(results.resultsSha256, deterministicHash(results.cases));
+  const repeated = results.cases.filter((entry) => entry.replays.length >= 2);
   return { cases:results.cases.length,
-    agreeing:results.cases.filter((entry) => entry.replayAgreement).length };
+    agreeing:results.cases.filter((entry) => entry.replayAgreement).length,
+    repeatedCases:repeated.length,
+    repeatedAgreeing:repeated.filter((entry) => entry.replayAgreement).length };
 }

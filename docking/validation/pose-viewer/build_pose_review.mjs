@@ -110,6 +110,33 @@ export function moleculeToMolBlock(molecule, title = 'Molarium pose') {
   return `${lines.join('\n')}\n`;
 }
 
+export function hydrogenBondsToMolBlock(hydrogenBonds, title = 'Required hydrogen bonds') {
+  const atoms = [], bonds = [];
+  for (const contact of hydrogenBonds || []) {
+    if (contact.satisfied !== true) continue;
+    const first = contact.participants?.hydrogen?.coordinatesAngstrom;
+    const second = contact.participants?.acceptor?.coordinatesAngstrom;
+    if (![first, second].every((point) => Array.isArray(point) && point.length === 3
+      && point.every(Number.isFinite))) continue;
+    const dashCount = 6;
+    for (let index = 0; index < dashCount; index++) {
+      const startFraction = (index + 0.16) / dashCount;
+      const endFraction = (index + 0.68) / dashCount;
+      const interpolate = (fraction) => first.map((value, axis) =>
+        value + (second[axis] - value) * fraction);
+      const atomIndex = atoms.length;
+      atoms.push({ element:'C', formalCharge:0,
+        ...Object.fromEntries(['x','y','z'].map((key, axis) =>
+          [key, interpolate(startFraction)[axis]])) });
+      atoms.push({ element:'C', formalCharge:0,
+        ...Object.fromEntries(['x','y','z'].map((key, axis) =>
+          [key, interpolate(endFraction)[axis]])) });
+      bonds.push({ a:atomIndex, b:atomIndex + 1, order:1 });
+    }
+  }
+  return atoms.length ? moleculeToMolBlock({ atoms, bonds }, title) : null;
+}
+
 function engine(result, name) {
   return result?.engines?.find((entry) => entry.engine === name) || null;
 }
@@ -135,6 +162,8 @@ export function buildReviewData({ panel, validation, pdbText, panelSha256, valid
       id:pose.id, caseId:pose.caseId, endpoint:pose.endpoint, analogue:pose.analogue,
       requiredContacts:pose.requiredContacts, integrity:pose.integrity,
       molBlock:moleculeToMolBlock(pose.molecule, pose.id),
+      hydrogenBonds:pose.hydrogenBonds || [],
+      hydrogenBondMolBlock:hydrogenBondsToMolBlock(pose.hydrogenBonds),
       independent:{ openmm, mmff, inputSha256:result.inputSha256 }
     };
     if (!groups.has(pose.caseId)) groups.set(pose.caseId, []);
@@ -152,6 +181,8 @@ export function buildReviewData({ panel, validation, pdbText, panelSha256, valid
     protocol:{
       purpose:'read-only visual review of preregistered browser poses and independent local checks',
       energyWarning:'Do not compare absolute energies across different analogue graphs.',
+      browserScore:'Reference-subtracted pose-ranking objective (relative receptor interaction plus relative ligand strain and restraint penalties); not an absolute energy or binding free energy.',
+      openmmEnergy:'Absolute isolated-ligand OpenFF Sage potential energy at the candidate coordinates, evaluated independently on OpenMM Reference.',
       viewer:'Mol* 5.11.0 using a pinned local raw-data initialization path',
       shortlist:panel.protocol?.shortlist || null
     },

@@ -122,6 +122,20 @@ const browserSuite = String.raw`(async () => {
   }
   const api = window.molariumTest;
   check(Boolean(api), 'test API is available');
+  if (testScope === 'openmm-worker-smoke') {
+    api.load('CC');
+    let energy = null;
+    try { energy = await api.calculateCurrent('energy', 'openmm'); }
+    catch (error) { check(false, 'a fresh browser worker initializes OpenMM WebAssembly', error.stack || error.message); }
+    if (energy) check(Number.isFinite(energy.finalEnergy)
+      && energy.forcefield === 'OpenFF Sage 2.1.0'
+      && energy.platform === 'Reference',
+    'a fresh browser worker initializes OpenMM WebAssembly', JSON.stringify(energy));
+    const failed = checks.filter((item) => !item.passed);
+    return { passed:checks.length - failed.length, total:checks.length, failed,
+      optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,
+      preparationMetrics:null };
+  }
   if (testScope === 'chemist-actions') {
     const chemist = await window.MolariumChemistActionsReady;
     check(chemist === window.MolariumChemistActions
@@ -160,6 +174,34 @@ const browserSuite = String.raw`(async () => {
       && undone.bonds.some((bond) => carbonIds.every((id) => bond.atomIds.includes(id))
         && bond.order === 1),
     'the public Undo route restores the committed chemical graph');
+    const added = await chemist.execute({ action:'chemistry.addAtom',
+      args:{ attachedToAtomId:carbonIds[0], element:'O' } });
+    check(typeof added.result.addedAtomId === 'string'
+      && added.result.addedAtomIds.includes(added.result.addedAtomId),
+    'the public Add-atom route returns the new persistent identity');
+    await chemist.execute({ action:'chemistry.finish' });
+    const ethanol = (await chemist.inspect({ scope:'ligand', maximumAtoms:20 })).result;
+    check(ethanol.atoms.some((atom) => atom.atomId === added.result.addedAtomId
+      && atom.element === 'O')
+      && ethanol.bonds.some((bond) => bond.atomIds.includes(carbonIds[0])
+        && bond.atomIds.includes(added.result.addedAtomId)),
+    'the public Add-atom route uses the same validated graph edit as the visible 2D Add tool');
+    api.load('CCC');
+    await chemist.execute({ action:'view.setMode', args:{ mode:'build' } });
+    const propane = (await chemist.inspect({ scope:'ligand', maximumAtoms:20 })).result;
+    const propaneCarbons = propane.atoms.filter((atom) => atom.element === 'C');
+    const degrees = new Map(propaneCarbons.map((atom) => [atom.atomId,
+      propane.bonds.filter((bond) => bond.atomIds.includes(atom.atomId)
+        && bond.atomIds.some((id) => id !== atom.atomId
+          && propaneCarbons.some((carbon) => carbon.atomId === id))).length]));
+    const endpoints = [...degrees].filter(([, degree]) => degree === 1).map(([id]) => id);
+    await chemist.execute({ action:'chemistry.createBond',
+      args:{ atomIds:endpoints, order:1 } });
+    await chemist.execute({ action:'chemistry.finish' });
+    const cyclopropane = (await chemist.inspect({ scope:'ligand', maximumAtoms:20 })).result;
+    check(endpoints.length === 2 && cyclopropane.bonds.some((bond) =>
+      endpoints.every((id) => bond.atomIds.includes(id))),
+    'the public Create-bond route closes a ring through the same validated 2D Bond operation');
     let rejected = '';
     try { await chemist.execute({ action:'internal.scorePose', args:{} }); }
     catch (error) { rejected = error.message; }

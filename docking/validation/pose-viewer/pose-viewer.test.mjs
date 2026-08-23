@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import { buildReviewData, moleculeToMolBlock } from './build_pose_review.mjs';
+import { buildReviewData, hydrogenBondsToMolBlock, moleculeToMolBlock } from './build_pose_review.mjs';
 import { copyCameraSnapshot, poseArrowDelta, wrappedId } from './navigation.mjs';
 
 const navigationEntries = [{ id:'first' }, { id:'second' }, { id:'third' }];
@@ -31,6 +31,13 @@ const block = moleculeToMolBlock(molecule, 'charged fixture');
 assert.match(block, /  3  2  0  0  0  0            999 V2000/);
 assert.match(block, /M  CHG  1   2   1/);
 assert.match(block, /M  END\n$/);
+const hydrogenBondBlock = hydrogenBondsToMolBlock([{ satisfied:true, participants:{
+  hydrogen:{ coordinatesAngstrom:[0,0,0] }, acceptor:{ coordinatesAngstrom:[0,0,2] },
+} }]);
+assert.match(hydrogenBondBlock, / 12  6  0  0  0  0            999 V2000/);
+assert.equal(hydrogenBondsToMolBlock([{ satisfied:false, participants:{
+  hydrogen:{ coordinatesAngstrom:[0,0,0] }, acceptor:{ coordinatesAngstrom:[0,0,2] },
+} }]), null);
 
 const pdb = [
   'HEADER    POSE REVIEW FIXTURE',
@@ -43,6 +50,11 @@ const reference = { ...molecule, atoms:molecule.atoms.map((atom, index) => ({ ..
   atomId:`reference:${index + 1}`, x:11 + index, y:2, z:3 })) };
 const pose = (id, rank, coordinates) => ({ id, caseId:'pyridone-parent-control', endpoint:'pyridone',
   analogue:{ name:'Fixture', rank, feasible:true, scoreKcalMol:-rank }, requiredContacts:['acceptor'],
+  hydrogenBonds:[{ id:'fixture-hbond', satisfied:true, participants:{
+    donor:{ scope:'receptor', coordinatesAngstrom:[11,2,5] },
+    hydrogen:{ scope:'receptor', coordinatesAngstrom:[11,2,4] },
+    acceptor:{ scope:'ligand', atomId:'reference:1', coordinatesAngstrom:coordinates[0] },
+  } }],
   molecule:{ ...reference, atoms:reference.atoms.map((atom, index) => ({ ...atom, x:coordinates[index][0],
     y:coordinates[index][1], z:coordinates[index][2] })) },
   integrity:{ coordinatesSha256:`coordinates-${rank}`, numericSystemSha256:`system-${rank}` } });
@@ -61,6 +73,7 @@ assert.equal(data.receptor.pocket.residueCount, 1);
 assert.equal(data.cases.length, 1);
 assert.equal(data.cases[0].poses.length, 2);
 assert.equal(data.cases[0].poses[0].independent.openmm.potentialEnergyKcalMol, 4);
+assert.match(data.cases[0].poses[0].hydrogenBondMolBlock, /V2000/);
 assert.match(data.receptor.proteinPdb, /      11\.000   2\.000   3\.000/);
 
 const directory = import.meta.dirname;
@@ -83,5 +96,9 @@ assert.match(html, /for\(const id of \['case','pose'\]\)\$\(id\)\.disabled=value
 assert.match(html, /const camera=snapshotCamera\(\)/);
 assert.match(html, /applyCamera\(camera\)/);
 assert.match(html, /id="reset-view"/);
+assert.match(html, /id="hbonds"/);
+assert.match(html, /Browser Δ pose score/);
+assert.match(html, /Ligand Sage energy/);
+assert.match(html, /await addHydrogenBonds\(\);applyCamera\(camera\)/);
 assert.match(html, /from '\.\/navigation\.mjs'/);
 console.log('Mol* pose review: PASS');
