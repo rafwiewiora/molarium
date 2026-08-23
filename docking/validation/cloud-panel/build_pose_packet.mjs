@@ -8,6 +8,12 @@ function stable(value) {
   if (Array.isArray(value)) return `[${value.map(stable).join(',')}]`;
   if (value && typeof value === 'object') return `{${Object.keys(value).sort()
     .map((key) => `${JSON.stringify(key)}:${stable(value[key])}`).join(',')}}`;
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value)) throw new Error('Integrity hashes require finite numbers');
+    const bytes = Buffer.allocUnsafe(8);
+    bytes.writeDoubleBE(value);
+    return JSON.stringify(`~f64:${bytes.toString('hex')}`);
+  }
   return JSON.stringify(value);
 }
 
@@ -32,12 +38,20 @@ function convert(entry) {
   if (inspection.scope !== 'ligand' || inspection.truncated
     || inspection.totalAtomCount !== inspection.atoms?.length)
     throw new Error(`${entry.id}: public ligand inspection is truncated or incomplete`);
-  const atomIds = inspection.atoms.map((atom) => atom.atomId);
-  if (atomIds.some((id) => typeof id !== 'string' || !id)
-    || new Set(atomIds).size !== atomIds.length)
+  const publicAtomIds = inspection.atoms.map((atom) => atom.atomId);
+  if (publicAtomIds.some((id) => typeof id !== 'string' || !id)
+    || new Set(publicAtomIds).size !== publicAtomIds.length)
     throw new Error(`${entry.id}: inspection atom IDs are missing or non-unique`);
+  const numeric = entry.numericSystem || null;
+  const atomIds = numeric?.atomIds || publicAtomIds;
+  if (!Array.isArray(atomIds) || atomIds.length !== publicAtomIds.length
+    || new Set(atomIds).size !== atomIds.length
+    || atomIds.some((id) => !publicAtomIds.includes(id)))
+    throw new Error(`${entry.id}: numeric System atom IDs differ from public inspection`);
+  const publicAtomById = new Map(inspection.atoms.map((atom) => [atom.atomId, atom]));
   const indexById = new Map(atomIds.map((id, index) => [id, index]));
-  const atoms = inspection.atoms.map((atom) => {
+  const atoms = atomIds.map((atomId) => {
+    const atom = publicAtomById.get(atomId);
     if (!Array.isArray(atom.coordinatesAngstrom) || atom.coordinatesAngstrom.length !== 3
       || atom.coordinatesAngstrom.some((value) => !Number.isFinite(value)))
       throw new Error(`${entry.id}: inspection must include finite coordinates`);
@@ -52,10 +66,7 @@ function convert(entry) {
     return { a:indexById.get(first), b:indexById.get(second), order:Number(bond.order),
       aromatic:Boolean(bond.aromatic) };
   });
-  const numeric = entry.numericSystem || null;
   if (numeric) {
-    if (stable(numeric.atomIds) !== stable(atomIds))
-      throw new Error(`${entry.id}: numeric System atom order differs from public inspection`);
     if (!numeric.system || !numeric.forcefield || !numeric.sourceSha256)
       throw new Error(`${entry.id}: numeric System provenance is incomplete`);
   }
@@ -66,7 +77,8 @@ function convert(entry) {
   return { id:entry.id, caseId:entry.caseId || entry.id,
     endpoint:entry.endpoint || null, analogue:entry.analogue || null,
     requiredContacts:entry.requiredContacts || [], molecule,
-    integrity:{ atomOrderSha256:digest(atomIds), topologySha256:digest(topologyOf(molecule)),
+    integrity:{ publicInspectionAtomOrderSha256:digest(publicAtomIds),
+      atomOrderSha256:digest(atomIds), topologySha256:digest(topologyOf(molecule)),
       coordinatesSha256:digest(atoms.map(({ x, y, z }) => [x, y, z])),
       numericSystemSha256:numeric ? digest(numeric.system) : null,
       atomCount:atoms.length, bondCount:bonds.length } };

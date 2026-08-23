@@ -4820,6 +4820,13 @@ async function runBrowserConstrainedDocking(options = {}) {
       mode:posePropagation ? 'pose-propagation' : 'selected-core',
       ligandTopologyText:currentLigandTopologyText,
       ligandForcefield:ligandParameters.forcefield, ligandChargeModel:ligandParameters.chargeModel,
+      validationNumericSystem:{
+        atomIds:plan.molecule.atoms.map((atom) => atom.designAtomId),
+        forcefield:ligandParameters.forcefield,
+        chargeModel:ligandParameters.chargeModel,
+        sourceSha256:ligandParameters.sourceSha256,
+        system:structuredClone(ligandParameters.system),
+      },
       conformerForcefields:[...new Set(valid.map((entry) => entry.forcefield).filter(Boolean))],
       ligandStrainModel:'vacuum OpenFF Sage 2.1 intramolecular energy', torsionSteps };
     state.dockingPoseIndex = 0;
@@ -7796,6 +7803,10 @@ const molariumTestApi = Object.freeze({
       scoreKcalMol:pose.totalScoreKcalMol, molecule:structuredClone(state.molecule) };
   },
   dockingLabbook() { return state.dockingResult ? structuredClone(state.dockingResult.labbook) : null; },
+  dockingValidationNumericSystem() {
+    return state.dockingResult?.validationNumericSystem
+      ? structuredClone(state.dockingResult.validationNumericSystem) : null;
+  },
   async tuneStormmReplicas(options = {}) {
     const result = await tuneStormmReplicas(options);
     return result ? structuredClone(result) : null;

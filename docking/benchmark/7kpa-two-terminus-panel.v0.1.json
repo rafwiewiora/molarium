@@ -1,0 +1,315 @@
+{
+  "schemaVersion": 1,
+  "panelId": "molarium-7kpa-d84-two-terminus-analogues",
+  "version": "0.1.0",
+  "status": "preregistered-development",
+  "purpose": "Exercise chemist-visible graph edits, contact remapping, and reference-guided pose refinement at both polar termini of D84 in 7KPA. This is a method stress test, not an affinity study.",
+  "reference": {
+    "pdbId": "7KPA",
+    "componentId": "D84",
+    "chain": "C",
+    "residueNumber": 201,
+    "waterPolicy": "retain",
+    "coordinateFile": "fixtures/pdb/7kpa.pdb",
+    "coordinateSha256": "da4fa18e7c52750ec6b9de35fd363357452b99e3f2b3064f831def46f31175d6",
+    "ccdFile": "fixtures/ccd/D84.cif",
+    "ccdSha256": "c6e43b72a44b36ae8a068b8e4b1b5644490c094c31f64b57003fc990f4634871"
+  },
+  "protocol": {
+    "id": "7kpa-two-terminus-public-chemist-actions",
+    "version": "0.1.0",
+    "searchChains": 8,
+    "replays": 2,
+    "determinism": "Each replay starts from the same prepared reference and invokes only public Molarium Chemist Actions after test-fixture loading.",
+    "requiredMeasurements": [
+      "chemistry-validity",
+      "contact-mapping",
+      "pose-feasibility",
+      "hydrogen-bond-geometry",
+      "ligand-strain",
+      "lennard-jones-and-clashes",
+      "runtime",
+      "replay-hash"
+    ]
+  },
+  "referenceContacts": {
+    "pyridoneDonor": "D84 C201 N3 → HOH C307 O",
+    "pyrrolidoneAcceptor": "SER A60 N → D84 C201 O2",
+    "benzimidazoleAcceptor": "TYR C151 OH → D84 C201 N2",
+    "pyridoneAcceptor": "LYS A11 NZ → D84 C201 O3"
+  },
+  "cases": [
+    {
+      "id": "pyridone-parent-control",
+      "locus": "pyridone",
+      "name": "Parent 2-pyridone",
+      "expectedProductGraphSha256": "3132f29caf07242906a1e9c3d495cacb84f0ff70c1cb841f0a6655d27c9c8a4f",
+      "intendedRoles": ["acceptor", "donor"],
+      "operations": [],
+      "requiredContacts": ["pyridoneDonor", "pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": [],
+      "risks": []
+    },
+    {
+      "id": "pyridone-c26-c27-single",
+      "locus": "pyridone",
+      "name": "One-edge dihydropyridone A",
+      "expectedProductGraphSha256": "e01c2feb7e9ddf3d00af849d06b07218850cbf9012e9e79d9c50bf3b73265934",
+      "intendedRoles": ["acceptor", "donor"],
+      "operations": [{ "op": "setBond", "atoms": ["C26", "C27"], "order": 1 }, { "op": "finish" }],
+      "requiredContacts": ["pyridoneDonor", "pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": [],
+      "risks": ["partial-ring-saturation", "tautomer-assignment"]
+    },
+    {
+      "id": "pyridone-c29-c30-single",
+      "locus": "pyridone",
+      "name": "One-edge dihydropyridone B",
+      "expectedProductGraphSha256": "5d5c48f07cfe0e8b54781fc4051fa758f6418fc342690ba858c205b1338daf2c",
+      "intendedRoles": ["acceptor", "donor"],
+      "operations": [{ "op": "setBond", "atoms": ["C29", "C30"], "order": 1 }, { "op": "finish" }],
+      "requiredContacts": ["pyridoneDonor", "pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": [],
+      "risks": ["partial-ring-saturation", "tautomer-assignment"]
+    },
+    {
+      "id": "pyridone-to-lactam",
+      "locus": "pyridone",
+      "name": "Saturated six-membered lactam",
+      "expectedProductGraphSha256": "cce4c4bc768cabd4be65a94f44250ebb813add9b1637e23a816e6bd439bbeaba",
+      "intendedRoles": ["acceptor", "donor"],
+      "operations": [
+        { "op": "setBond", "atoms": ["C26", "C27"], "order": 1 },
+        { "op": "setBond", "atoms": ["C29", "C30"], "order": 1 },
+        { "op": "finish" }
+      ],
+      "requiredContacts": ["pyridoneDonor", "pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": [],
+      "risks": ["closed-ring-puckering"]
+    },
+    {
+      "id": "pyridone-to-cyclohexanone",
+      "locus": "pyridone",
+      "name": "Cyclohexanone",
+      "expectedProductGraphSha256": "d145c63f748399dbff366f67c554e766b00badecdbaf8acb3c4c31a7faef877c",
+      "intendedRoles": ["acceptor"],
+      "operations": [
+        { "op": "setBond", "atoms": ["C26", "C27"], "order": 1 },
+        { "op": "setBond", "atoms": ["C29", "C30"], "order": 1 },
+        { "op": "finish" },
+        { "op": "setAtom", "atom": "N3", "element": "C", "formalCharge": 0 },
+        { "op": "finish" }
+      ],
+      "requiredContacts": ["pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": ["pyridoneDonor"],
+      "risks": ["closed-ring-puckering", "donor-deletion"]
+    },
+    {
+      "id": "pyridone-to-valerolactone",
+      "locus": "pyridone",
+      "name": "Delta-valerolactone",
+      "expectedProductGraphSha256": "9fcdab3ac3d1e9fd0a8b145de4d9fa52d00dae3d6d13eb9c41aaf7bc0534c3f6",
+      "intendedRoles": ["acceptor"],
+      "operations": [
+        { "op": "setBond", "atoms": ["C26", "C27"], "order": 1 },
+        { "op": "setBond", "atoms": ["C29", "C30"], "order": 1 },
+        { "op": "finish" },
+        { "op": "removeHydrogen", "atom": "N3" },
+        { "op": "setAtom", "atom": "N3", "element": "O", "formalCharge": 0 },
+        { "op": "finish" }
+      ],
+      "requiredContacts": ["pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": ["pyridoneDonor"],
+      "risks": ["closed-ring-puckering", "heteroatom-substitution", "donor-deletion"]
+    },
+    {
+      "id": "pyridone-to-thiopyridone",
+      "locus": "pyridone",
+      "name": "2-thiopyridone",
+      "expectedProductGraphSha256": "a9e2108b27f1e707da69bdcf8f0b70e0511ecbffa679d6d24072e18904b4c2ba",
+      "intendedRoles": ["acceptor", "donor"],
+      "operations": [{ "op": "setAtom", "atom": "O3", "element": "S", "formalCharge": 0 }, { "op": "finish" }],
+      "requiredContacts": ["pyridoneDonor", "pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": [],
+      "risks": ["soft-acceptor-remap", "sage-parameter-coverage"]
+    },
+    {
+      "id": "pyridone-lactim-role-swap",
+      "locus": "pyridone",
+      "name": "2-hydroxypyridine lactim tautomer",
+      "expectedProductGraphSha256": "f514008ebbcfbd761dfd3d483d7fe853c839b1f8fa84894170170f398eed5379",
+      "intendedRoles": ["acceptor", "donor"],
+      "operations": [
+        { "op": "setBond", "atoms": ["N3", "C28"], "order": 2 },
+        { "op": "setBond", "atoms": ["C28", "O3"], "order": 1 },
+        { "op": "removeHydrogen", "atom": "N3" },
+        { "op": "addHydrogen", "atom": "O3" },
+        { "op": "finish" }
+      ],
+      "requiredContacts": ["pyrrolidoneAcceptor", "benzimidazoleAcceptor"],
+      "omittedContacts": ["pyridoneDonor", "pyridoneAcceptor"],
+      "risks": ["tautomer-role-swap", "captured-contact-direction-changes"]
+    },
+    {
+      "id": "pyridone-to-phenyl-negative",
+      "locus": "pyridone",
+      "name": "Phenyl negative control",
+      "expectedProductGraphSha256": "40ed6bf9e8901db3e61de51110ce85b5452b1e8fe392d99eaed4117c9e5f24a1",
+      "intendedRoles": [],
+      "operations": [
+        { "op": "setAtom", "atom": "N3", "element": "C", "formalCharge": 0 },
+        { "op": "deleteAtom", "atom": "O3" },
+        { "op": "setBond", "atoms": ["N3", "C28"], "order": 2 },
+        { "op": "finish" }
+      ],
+      "requiredContacts": ["pyrrolidoneAcceptor", "benzimidazoleAcceptor"],
+      "omittedContacts": ["pyridoneDonor", "pyridoneAcceptor"],
+      "expectedOutcome": "polar-contact-deletion-negative-control",
+      "risks": ["intentional-pharmacophore-deletion"]
+    },
+    {
+      "id": "pyrrolidone-parent-control",
+      "locus": "pyrrolidone",
+      "name": "Parent 2-pyrrolidone",
+      "expectedProductGraphSha256": "3132f29caf07242906a1e9c3d495cacb84f0ff70c1cb841f0a6655d27c9c8a4f",
+      "intendedRoles": ["acceptor"],
+      "operations": [],
+      "requiredContacts": ["pyridoneDonor", "pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": [],
+      "risks": []
+    },
+    {
+      "id": "pyrrolidone-to-thio",
+      "locus": "pyrrolidone",
+      "name": "2-thiopyrrolidone",
+      "expectedProductGraphSha256": "743deb588f4ef0ff677259c8dea9176af3f24d8304e93216c402639b12b81585",
+      "intendedRoles": ["acceptor"],
+      "operations": [{ "op": "setAtom", "atom": "O2", "element": "S", "formalCharge": 0 }, { "op": "finish" }],
+      "requiredContacts": ["pyridoneDonor", "pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": [],
+      "risks": ["soft-acceptor-remap", "sage-parameter-coverage"]
+    },
+    {
+      "id": "pyrrolidone-to-imidazolidinone",
+      "locus": "pyrrolidone",
+      "name": "Cyclic urea donor-acceptor",
+      "expectedProductGraphSha256": "baa3f89d2315423960d78c2fb744c0bd9eaf678d0f17339dd9ad501f6fe2c633",
+      "intendedRoles": ["acceptor", "donor"],
+      "operations": [{ "op": "setAtom", "atom": "C18", "element": "N", "formalCharge": 0 }, { "op": "finish" }],
+      "requiredContacts": ["pyridoneDonor", "pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": [],
+      "risks": ["new-unconstrained-donor", "protonation-assignment"]
+    },
+    {
+      "id": "pyrrolidone-to-oxazolidinone",
+      "locus": "pyrrolidone",
+      "name": "Cyclic carbamate acceptor",
+      "expectedProductGraphSha256": "a6300b4526dc75da8287fd274d0c004e64381f7e94361aa19c94b8644ed1c7aa",
+      "intendedRoles": ["acceptor"],
+      "operations": [{ "op": "setAtom", "atom": "C18", "element": "O", "formalCharge": 0 }, { "op": "finish" }],
+      "requiredContacts": ["pyridoneDonor", "pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": [],
+      "risks": ["heteroatom-substitution", "sage-parameter-coverage"]
+    },
+    {
+      "id": "pyrrolidone-to-cyclic-amidine",
+      "locus": "pyrrolidone",
+      "name": "Cyclic amidine donor-acceptor",
+      "expectedProductGraphSha256": "7584674f083a092a984d392683e1da6724d582ab0fe859fa171cb44b207ac8cc",
+      "intendedRoles": ["acceptor", "donor"],
+      "operations": [
+        { "op": "setAtom", "atom": "O2", "element": "N", "formalCharge": 0 },
+        { "op": "addHydrogen", "atom": "O2" },
+        { "op": "finish" }
+      ],
+      "requiredContacts": ["pyridoneDonor", "pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": [],
+      "risks": ["tautomer-assignment", "protonation-assignment", "sage-parameter-coverage"]
+    },
+    {
+      "id": "pyrrolidone-to-pyrrolidine-negative",
+      "locus": "pyrrolidone",
+      "name": "Pyrrolidine negative control",
+      "expectedProductGraphSha256": "f9c80266355e400325a4850cbcb26b976c37fb4e00864241a97515b68426a9fe",
+      "intendedRoles": [],
+      "operations": [{ "op": "deleteAtom", "atom": "O2" }, { "op": "finish" }],
+      "requiredContacts": ["pyridoneDonor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": ["pyrrolidoneAcceptor"],
+      "expectedOutcome": "polar-contact-deletion-negative-control",
+      "risks": ["intentional-pharmacophore-deletion"]
+    },
+    {
+      "id": "pyrrolidone-c17-c18-unsaturated",
+      "locus": "pyrrolidone",
+      "name": "3-pyrrolin-2-one isomer A",
+      "expectedProductGraphSha256": "2ee39a5a6bbef3e55b380094b0b622d1c8d99f2dff9a6da40c2eb9234b019544",
+      "intendedRoles": ["acceptor"],
+      "operations": [{ "op": "setBond", "atoms": ["C17", "C18"], "order": 2 }, { "op": "finish" }],
+      "requiredContacts": ["pyridoneDonor", "pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": [],
+      "risks": ["partial-ring-unsaturation"]
+    },
+    {
+      "id": "pyrrolidone-c16-c17-unsaturated",
+      "locus": "pyrrolidone",
+      "name": "3-pyrrolin-2-one isomer B",
+      "expectedProductGraphSha256": "7d7f14a6a60c9029b9aea560788b02f89a0d901669fa0ce61e2b083a2e1f33ed",
+      "intendedRoles": ["acceptor"],
+      "operations": [{ "op": "setBond", "atoms": ["C16", "C17"], "order": 2 }, { "op": "finish" }],
+      "requiredContacts": ["pyridoneDonor", "pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": [],
+      "risks": ["partial-ring-unsaturation"]
+    },
+    {
+      "id": "dual-lactam-thiopyrrolidone",
+      "locus": "dual",
+      "name": "Saturated lactam plus thiopyrrolidone",
+      "expectedProductGraphSha256": "1494e30eb81686b000b707a52ee72f3c5e13f9b075b51949c25553c98f48c2b8",
+      "intendedRoles": ["acceptor", "donor"],
+      "operations": [
+        { "op": "setBond", "atoms": ["C26", "C27"], "order": 1 },
+        { "op": "setBond", "atoms": ["C29", "C30"], "order": 1 },
+        { "op": "finish" },
+        { "op": "setAtom", "atom": "O2", "element": "S", "formalCharge": 0 },
+        { "op": "finish" }
+      ],
+      "requiredContacts": ["pyridoneDonor", "pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": [],
+      "risks": ["two-site-edit", "closed-ring-puckering", "soft-acceptor-remap"]
+    },
+    {
+      "id": "dual-cyclohexanone-imidazolidinone",
+      "locus": "dual",
+      "name": "Cyclohexanone plus cyclic urea",
+      "expectedProductGraphSha256": "a044f8f182a099c212f320aa64545a18bc9257c91787fb6349069ee213b62560",
+      "intendedRoles": ["acceptor", "donor"],
+      "operations": [
+        { "op": "setBond", "atoms": ["C26", "C27"], "order": 1 },
+        { "op": "setBond", "atoms": ["C29", "C30"], "order": 1 },
+        { "op": "finish" },
+        { "op": "setAtom", "atom": "N3", "element": "C", "formalCharge": 0 },
+        { "op": "setAtom", "atom": "C18", "element": "N", "formalCharge": 0 },
+        { "op": "finish" }
+      ],
+      "requiredContacts": ["pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": ["pyridoneDonor"],
+      "risks": ["two-site-edit", "closed-ring-puckering", "new-unconstrained-donor"]
+    },
+    {
+      "id": "dual-thiopyridone-oxazolidinone",
+      "locus": "dual",
+      "name": "Thiopyridone plus cyclic carbamate",
+      "expectedProductGraphSha256": "acf114bf580b3ca815efe560fe93a4947b2c12302f74402aba347e89f690e8af",
+      "intendedRoles": ["acceptor", "donor"],
+      "operations": [
+        { "op": "setAtom", "atom": "O3", "element": "S", "formalCharge": 0 },
+        { "op": "finish" },
+        { "op": "setAtom", "atom": "C18", "element": "O", "formalCharge": 0 },
+        { "op": "finish" }
+      ],
+      "requiredContacts": ["pyridoneDonor", "pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor"],
+      "omittedContacts": [],
+      "risks": ["two-site-edit", "soft-acceptor-remap", "sage-parameter-coverage"]
+    }
+  ]
+}

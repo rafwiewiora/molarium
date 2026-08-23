@@ -2,20 +2,16 @@
 """CPU smoke test for the independent panel boundary."""
 
 import json
-import hashlib
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
 
+from run_independent_validation import canonical_sha256 as digest
+
 
 ROOT = Path(__file__).resolve().parent
-
-
-def digest(value):
-    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
-
 
 class IndependentPanelTest(unittest.TestCase):
     def test_rdkit_and_openmm_packet(self):

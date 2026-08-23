@@ -6,9 +6,10 @@ linked below.
 
 ## Interface and molecular viewer
 
-Molarium's interface and molecular viewer are implemented in this repository. The viewer is a
-custom HTML Canvas renderer in `app.js`; it does not bundle Atomiverse, `xyzrender`, Mol*, 3Dmol.js
-or Three.js.
+Molarium's product interface and molecular viewer are implemented in this repository. The product
+viewer is a custom HTML Canvas renderer in `app.js`; it does not use Atomiverse, `xyzrender`, Mol*,
+3Dmol.js or Three.js. The separate read-only 7KPA validation artifact under
+`docking/validation/pose-viewer/` does vendor Mol* as disclosed below.
 
 The Molarium logo, mark, and animated calculation indicator are original assets implemented in
 this repository and covered by Molarium's MIT License.
@@ -29,6 +30,7 @@ or a software dependency.
 | ONNX Runtime Web | 1.27.0 | Browser WebGPU/WASM execution of ONNX models | MIT; [`licenses/ONNXRUNTIME-LICENSE.txt`](./licenses/ONNXRUNTIME-LICENSE.txt); [complete vendored v1.27.0 third-party notices](./licenses/ONNXRUNTIME-1.27.0-THIRD-PARTY-NOTICES.txt) ([upstream](https://github.com/microsoft/onnxruntime/blob/v1.27.0/ThirdPartyNotices.txt)) |
 | OpenFold | source revision `be2ec184`; `finetuning_no_templ_ptm_1.pt` | Exported fixed-shape OpenFold 2 browser models | Source Apache-2.0; parameters CC BY 4.0; [`licenses/OPENFOLD-LICENSE.txt`](./licenses/OPENFOLD-LICENSE.txt) and [`MODEL-CARD.md`](./openfold-export-results/trained/MODEL-CARD.md) |
 | PDBFixer | preparation behavior reference | Reference for conservative protein-repair behavior; not a bundled Python runtime | MIT; [`licenses/PDBFIXER-LICENSE.txt`](./licenses/PDBFIXER-LICENSE.txt) |
+| Mol* | 5.11.0 | Read-only 7KPA pose-review validation artifact; not the Molarium product viewer | MIT; [`docking/validation/pose-viewer/MOLSTAR-LICENSE.txt`](./docking/validation/pose-viewer/MOLSTAR-LICENSE.txt) and [upstream](https://github.com/molstar/molstar) |
 
 The `stormm/` code is a Molarium WebGPU ensemble engine inspired by fixed-point and stacked-system
 ideas from the [official STORMM project](https://github.com/Psivant/stormm). It is not an official

@@ -48,10 +48,11 @@ mutate the molecule or call a hidden scoring route.  Convert that batch with:
 node docking/validation/cloud-panel/build_pose_packet.mjs raw-exports.json panel.json
 ```
 
-The converter resolves stable atom-ID bonds, requires the numeric System to use the identical atom
-order, and records atom-order, topology, coordinate and System hashes.  The Python oracle recomputes
-every hash before calculation.  Unknown System force classes or term fields fail closed rather than
-being silently omitted.
+The converter resolves stable atom-ID bonds and reorders the public coordinates exactly once into
+the numeric System's declared atom order. It requires an identical, unique atom-ID set and records
+both the public-inspection and numeric-System order hashes plus topology, coordinate and System
+hashes. The Python oracle recomputes every hash before calculation. Unknown System force classes or
+term fields fail closed rather than being silently omitted.
 
 Atom coordinates are Å.  The optional numeric System has the exact field names written by
 `openff/sage-parameterizer.js`; its lengths are nm and energies are kJ/mol.
@@ -84,6 +85,14 @@ ENV_PREFIX="$HOME/.conda/envs/molarium-panel-v1",SHARD_COUNT="$shards",PANEL_MOD
 ```
 
 Then run only the shortlisted poses through GPU ANI-2x and OpenMM CUDA:
+
+```sh
+node docking/validation/cloud-panel/build_shortlist.mjs panel.json shortlist.json
+```
+
+The deterministic shortlist removes exact coordinate duplicates across replays. It retains every
+unique browser-feasible pose; when a case has no feasible pose, it retains the lowest browser-score
+infeasible pose as a negative control.
 
 ```sh
 sbatch --partition=gpu --gres=gpu:1 --array="0-$((shards - 1))%1" \

@@ -556,6 +556,7 @@ const browserSuite = String.raw`(async () => {
   catch (error) { check(false, 'browser completes deterministic constrained docking with a verified labbook', error.message); }
   if (dockingRun) {
     const dockingLabbook = api.dockingLabbook();
+    const validationSystem = api.dockingValidationNumericSystem();
     check(dockingRun.candidates >= 1 && dockingRun.feasible >= 1
       && dockingRun.selected.feasible && Number.isFinite(dockingRun.selected.scoreKcalMol)
       && dockingRun.selected.coreRmsdAngstrom < 1e-12
@@ -568,6 +569,11 @@ const browserSuite = String.raw`(async () => {
       && dockingLabbook.events.some((event) => event.stage === 'in-pocket-torsion-search')
       && dockingLabbook.events.findIndex((event) => event.stage === 'in-pocket-torsion-search')
         < dockingLabbook.events.findIndex((event) => event.stage === 'constraint-audit-and-ranking')
+      && validationSystem.atomIds.length === 7
+      && validationSystem.system.particles.length === 7
+      && validationSystem.system.nonbonded.length === 7
+      && validationSystem.forcefield.includes('Sage')
+      && /^[a-f0-9]{64}$/.test(validationSystem.sourceSha256)
       && document.querySelectorAll('.docking-pose').length >= 1
       && document.querySelector('#docking-score-note').textContent.includes('not') === false,
     'browser completes deterministic constrained docking with a verified coordinate-free audit',

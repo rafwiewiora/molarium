@@ -11,6 +11,8 @@ import math
 import os
 import platform
 import socket
+import struct
+import sys
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -19,13 +21,39 @@ from typing import Any
 BOND_TYPES: dict[float, Any] = {}
 KJ_PER_KCAL = 4.184
 
+# The web application intentionally has a top-level `rdkit/` asset directory. When this script is
+# launched from the checkout root, Python can otherwise resolve that directory as a namespace
+# package and shadow the installed scientific RDKit distribution. Keep the script directory, but
+# remove only the checkout root/current-directory entry before any deferred scientific imports.
+REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
+sys.path[:] = [entry for entry in sys.path
+               if Path(entry or os.getcwd()).resolve() != REPOSITORY_ROOT]
+
 
 def sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def integrity_canonical(value: Any) -> str:
+    if isinstance(value, list):
+        return "[" + ",".join(integrity_canonical(entry) for entry in value) + "]"
+    if isinstance(value, dict):
+        return "{" + ",".join(
+            json.dumps(key, separators=(",", ":")) + ":" + integrity_canonical(value[key])
+            for key in sorted(value)
+        ) + "}"
+    if isinstance(value, bool) or value is None or isinstance(value, str):
+        return json.dumps(value, separators=(",", ":"))
+    if isinstance(value, (int, float)):
+        number = float(value)
+        if not math.isfinite(number):
+            raise ValueError("integrity hashes require finite numbers")
+        return json.dumps("~f64:" + struct.pack(">d", number).hex(), separators=(",", ":"))
+    raise TypeError(f"unsupported integrity value {type(value)!r}")
+
+
 def canonical_sha256(value: Any) -> str:
-    return sha256_bytes(json.dumps(value, sort_keys=True, separators=(",", ":")).encode())
+    return sha256_bytes(integrity_canonical(value).encode())
 
 
 def topology_of(record: dict[str, Any]) -> dict[str, Any]:
