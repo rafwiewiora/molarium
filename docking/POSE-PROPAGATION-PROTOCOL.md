@@ -3,7 +3,7 @@
 ## Normative protocol
 
 Protocol ID: `molarium-pose-propagation-1`
-Protocol version: `0.8.0`
+Protocol version: `0.9.0`
 Status: experimental pose-preparation and pose-ranking method
 Canonical machine-readable definition: `MOLARIUM_POSE_PROPAGATION_PROTOCOL` in
 [`protocol.mjs`](./protocol.mjs)
@@ -314,8 +314,10 @@ of the selected required-contact flat-bottom penalties defined above. Ordinary r
 Lennard-Jones/Coulomb and ligand-strain ranking cannot outweigh capture. Two registered sanity gates
 also participate: relative OpenFF Sage ligand strain may not exceed `100 kcal/mol` above the lowest
 exact-core starting seed, and the pose may introduce at most two steric-clash diagnostics beyond
-the least-clashing exact-core start. Squared gate excesses guide the search away from invalid
-geometry; a contact that meets D-H-A geometry but fails either gate is not feasible.
+the least-clashing exact-core start. Lennard-Jones repulsion may also rise by at most `100 kcal/mol`
+above the least-repulsive exact-core start; this severity gate prevents one catastrophic overlap
+from passing a count-only clash limit. Squared gate excesses guide the search away from invalid
+geometry; a contact that meets D-H-A geometry but fails any gate is not feasible.
 
 At each proposal:
 
@@ -392,8 +394,8 @@ Coulomb_ij = 332.063713299 * q_i*q_j / (4*r)
 
 Epsilon is converted from kJ/mol to kcal/mol. An individual LJ repulsion is capped at
 `1e6 kcal/mol`. `r < 0.72*sigma_ij` is reported as a steric clash. It is not a separate physical-
-stage energy term; only clash count beyond the registered capture-sanity allowance contributes a
-capture-stage excess penalty and feasibility failure.
+stage energy term. Both clash count and LJ increase beyond their registered capture-sanity
+allowances contribute capture-stage excess penalties and feasibility failure.
 
 For candidate `p`, ligand strain is:
 
@@ -401,8 +403,11 @@ For candidate `p`, ligand strain is:
 strain(p) = SageVacuumEnergy(p) - min(SageVacuumEnergy(each hard-snapped and H-restored starting candidate))
 ```
 
-with weight 1. The physical score is cross LJ + cross Coulomb + relative strain. The complete
-objective is the physical score plus the core and H-bond penalties. In pose propagation the hard
+with weight 1. The reported physical score is cross LJ + cross Coulomb minus the lowest inherited
+fixed-core starting interaction, plus relative strain. The subtracted interaction is one run-wide
+constant, so it cannot change proposal acceptance or pose ranking. Absolute LJ, Coulomb, interaction
+reference, relative interaction, and strain are all retained in the labbook. The complete objective
+is the physical score plus the core and H-bond penalties. In pose propagation the hard
 coordinate snap makes the inherited-core RMSD and its penalty exactly zero. The legacy core
 flat-bottom settings remain audited but are not a substitute for hard snapping.
 

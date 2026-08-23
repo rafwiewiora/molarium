@@ -256,8 +256,9 @@ path needs symmetry-aware chemical mapping rather than a JavaScript graph guess.
 
 The receptor stays rigid. Ranking combines captured receptor/edited-ligand numeric Lennard-Jones
 and Coulomb cross terms (8 Å site, relative dielectric 4), relative vacuum OpenFF Sage 2.1 intramolecular
-ligand energy, and explicit restraint penalties. The strain reference is
-relative to the lowest fixed-core starting seed. Pose propagation begins from the recorded edit;
+ligand energy, and explicit restraint penalties. Receptor interaction and ligand strain are reported
+relative to the lowest inherited fixed-core starting seed; this constant normalization leaves search
+decisions and rank order unchanged. Pose propagation begins from the recorded edit;
 only the expert selected-core search uses MMFF94/UFF-prepared ETKDG conformers. Both paths omit
 receptor relaxation, solvent displacement, macrocycle/fused-ring concerted search, entropy, and
 binding-free-energy estimation. Treat the result as an experimental pose rank, not an affinity.

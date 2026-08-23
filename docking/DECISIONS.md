@@ -794,3 +794,38 @@ heavy-atom RMS, and the direct-edit O3 remains 3.8565 Å from the captured Lys d
 (4.7691 Å donor–acceptor). Thus V-017 establishes valid chemistry, local cleanup, release lineage,
 and a retained contact hypothesis; it does not establish a restraint-feasible 7KPA pose. ANI-2x
 must use the same matched pair before it can be interpreted as independent strain evidence.
+
+### Decision D-033 — reference-subtracted scores and failure-first UI
+
+The absolute rigid receptor cross energy is now normalized by subtracting the lowest interaction
+energy among the inherited fixed-core starting seeds. Relative Sage ligand strain remains referenced
+to the lowest fixed-core starting ligand energy. This adds a constant to every candidate in one run,
+so generated coordinates, proposal acceptance, feasibility, and rank order are unchanged. Exact
+absolute Lennard-Jones, Coulomb, reference, relative-interaction, strain, and restraint terms remain
+in the hash-linked labbook and Chemist Actions result.
+
+Reason: the prepared 7KPA lactam diagnostic returned an 89,354.97 kcal/mol total objective even
+though ligand strain was only +1.43 kcal/mol and restraint penalty was only +0.38 kcal/mol. The
+89,353.17 kcal/mol Lennard-Jones term came from eight rigid receptor/ligand clash diagnostics, seven
+already present in the inherited start. Three of four required contacts passed; Lys→lactam O missed
+the donor–acceptor cutoff by only 0.158 Å. A raw absolute cross term is useful audit evidence but is
+misleading as the primary UI label for an infeasible fixed-scaffold pose. Infeasible pose rows now
+lead with missed contacts and added clashes; their compact note exposes reference-subtracted physical
+and restraint terms plus inherited-clash count. ConstraintDock advances to `0.3.1` and Pose
+Propagation initially advanced for the reporting normalization. The same diagnostic then exposed a
+separate safety defect: one newly introduced overlap contributed roughly +88,000 kcal/mol but passed
+the count-only `+2 clashes` gate. Capture now also permits at most +100 kcal/mol Lennard-Jones
+repulsion above the least-repulsive inherited start. This changes accepted search states, so the
+released versions are ConstraintDock `0.4.0` and Pose Propagation `0.9.0`.
+
+### Validation V-019 — exact 7KPA lactam score decomposition
+
+`npm run test:7kpa-lactam-diagnostic` reproduces the public Chemist Actions route: saturate the two
+pyridone C=C bonds, finish valid lactam chemistry, and run eight reference-guided search chains.
+The gate requires the large absolute LJ term to be separated from bounded ligand strain and
+restraint penalty, a recorded inherited-clash baseline, and an infeasible UI row that reports the
+missed contact rather than presenting the mixed objective as a molecular energy. With the repulsion
+gate active, the selected result stays at the least-repulsive inherited start: Δphysical 0.00,
+restraint 1.3215 kcal/mol, seven inherited/zero added clashes, and no LJ excess. The Lys→lactam O
+contact remains honestly infeasible by 0.268 Å D-A and 0.127 Å H-A rather than being recovered
+through a catastrophic overlap.

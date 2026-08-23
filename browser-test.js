@@ -74,6 +74,7 @@ const browserSuite = String.raw`(async () => {
   const externalPreparationFixture = ${JSON.stringify(preparationFixture)};
   const captureDockingUi = ${JSON.stringify(Boolean(Bun.env.MOLARIUM_TEST_SCREENSHOT_DOCKING))};
   const exportStrainFixture = ${JSON.stringify(Boolean(Bun.env.MOLARIUM_EXPORT_STRAIN_FIXTURE))};
+  const diagnoseLactamPose = ${JSON.stringify(Boolean(Bun.env.MOLARIUM_DIAGNOSE_7KPA_LACTAM))};
   const testScope = ${JSON.stringify(Bun.env.MOLARIUM_TEST_SCOPE || '')};
   const checks = [];
   let optimizationMetrics = null;
@@ -638,7 +639,7 @@ const browserSuite = String.raw`(async () => {
       && propagationRun.selected.refinement.relaxation
         .maximumDisplacementAngstromPerIteration === 0.01
       && propagationLabbook.protocol.id === 'molarium-pose-propagation-1'
-      && propagationLabbook.protocol.version === '0.8.0'
+      && propagationLabbook.protocol.version === '0.9.0'
       && propagationRun.selected.refinement.method
         === 'molarium-restraint-biased-internal-coordinate-search/v3'
       && propagationRun.selected.refinement.captureFeasible
@@ -649,6 +650,8 @@ const browserSuite = String.raw`(async () => {
         .maximumRelativeLigandStrainKcalMol === 100
       && propagationRun.selected.refinement.capture.bestEvaluation.chemicalValidity
         .maximumAdditionalStericClashes === 2
+      && propagationRun.selected.refinement.capture.bestEvaluation.chemicalValidity
+        .maximumAdditionalLennardJonesKcalMol === 100
       && propagationLabbook.selections.atomLineage.inheritedAtomIds.length === 6
       && propagationLabbook.selections.atomLineage.addedAtomIds.length === 1
       && propagationLabbook.selections.editPreparation.selectedCleanupMode === 'preserve-reference'
@@ -1357,6 +1360,25 @@ const browserSuite = String.raw`(async () => {
       const directLactamFinish = await chemist.execute({ action:'chemistry.finish' });
       const directLactam = (await chemist.inspect({ scope:'ligand', includeCoordinates:true,
         maximumAtoms:200 })).result;
+      if (diagnoseLactamPose) {
+        preparationMetrics.lactamRefinement =
+          (await chemist.execute({ action:'pose.refine', args:{ searchChains:8 } })).result.refinement;
+        const lactamPoseText = document.querySelector('.docking-pose')?.textContent || '';
+        const lactamScoreNote = document.querySelector('#docking-score-note')?.textContent || '';
+        const lactam = preparationMetrics.lactamRefinement;
+        check(lactam.selectedPhysicalComponents?.lennardJonesKcalMol > 100
+          && lactam.selectedPhysicalComponents.ligandStrainKcalMol < 10
+          && lactam.selectedPhysicalComponents.relativeInteractionKcalMol <= 100
+          && lactam.selectedConstraintPenaltyKcalMol < 5
+          && lactam.selectedChemicalValidity?.maximumAdditionalLennardJonesKcalMol === 100
+          && lactam.selectedChemicalValidity?.lennardJonesExcessKcalMol === 0
+          && lactam.selectedChemicalValidity?.minimumFixedCoreStartStericClashes >= 1
+          && lactamPoseText.includes('contact missed')
+          && !lactamPoseText.includes('kcal/mol')
+          && lactamScoreNote.includes('start'),
+        '7KPA lactam refinement separates inherited clash baseline from ligand strain and restraint failure',
+        JSON.stringify({ lactam, lactamPoseText, lactamScoreNote }));
+      }
       await directSelect('N3');
       await chemist.execute({ action:'chemistry.setAtom', args:{ element:'C', formalCharge:0 } });
       const directCyclohexanoneFinish = await chemist.execute({ action:'chemistry.finish' });
@@ -1613,6 +1635,7 @@ const browserSuite = String.raw`(async () => {
       const scopedChecks = checks.filter((item) =>
         item.label.includes('Lys A11 N-H to D84 pyridone O3')
         || item.label.includes('hydrated 7KPA reference capture')
+        || item.label.includes('7KPA lactam refinement separates')
         || item.label.includes('7KPA direct saturation and N-to-CH2 edit')
         || item.label.includes('7KPA saturate-delete-build-C=O sequence'));
       const failed = scopedChecks.filter((item) => !item.passed);
@@ -1620,6 +1643,7 @@ const browserSuite = String.raw`(async () => {
         optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,
         preparationMetrics:{ ligandContacts:preparationMetrics.ligandContacts,
           hydratedReferenceContacts:preparationMetrics.hydratedReferenceContacts,
+          lactamRefinement:preparationMetrics.lactamRefinement || null,
           cyclohexanoneStrainFixture:preparationMetrics.cyclohexanoneStrainFixture } };
     }
   }

@@ -233,8 +233,9 @@ recordTransformedRingRegion(releaseLedgerMolecule, cyclohexanoneRelease,
   { editId:'nitrogen-to-carbon', committedAt:'2026-08-22T00:01:00.000Z' });
 assert.deepEqual(cumulativeReleasedAtomIds(releaseLedgerMolecule),
   ['carbonyl-o','r1','r2','r3','r4','r5','r6']);
+assert.equal(MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.version, '0.4.0');
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.id, 'molarium-pose-propagation-1');
-assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.version, '0.8.0');
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.version, '0.9.0');
 assert.match(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping.transformedRingRule,
   /complete ring system/);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping.minimumSurvivingHeavyAtoms, 3);
@@ -258,6 +259,8 @@ assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.restraintBiasedGeneration
   .captureMaximumRelativeLigandStrainKcalMol, 100);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.restraintBiasedGeneration
   .captureMaximumAdditionalStericClashes, 2);
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.restraintBiasedGeneration
+  .captureMaximumAdditionalLennardJonesKcalMol, 100);
 assert.match(MOLARIUM_POSE_PROPAGATION_PROTOCOL.restraintBiasedGeneration
   .captureObjective, /cannot outweigh pharmacophore capture/);
 assert.match(MOLARIUM_POSE_PROPAGATION_PROTOCOL.restraintBiasedGeneration

@@ -143,3 +143,24 @@ The curated episode records decisions and observed evidence. The private lossles
 remains outside Git because it can contain credentials, internal context, and embedded images. A
 redacted transcript may be exported separately under the documented development-log workflow; it is
 not a substitute for the executable protocol snapshot and hash-linked per-run labbook.
+
+## 2026-08-23 — the 33,000 kcal/mol lactam was a presentation failure
+
+The chemist saturated the two pyridone double bonds and received one infeasible pose labeled around
+33,000 kcal/mol. We reproduced that exact public action route with eight chains. A deterministic
+rerun produced 89,354.97 kcal/mol because the displayed number was an unlabelled mixed objective,
+not a ligand energy or binding energy. Its decomposition was decisive: +1.43 kcal/mol relative Sage
+ligand strain, +0.38 kcal/mol restraint penalty, and 89,353.17 kcal/mol absolute Lennard-Jones
+repulsion. Eight clash diagnostics were present, seven inherited from the fixed-scaffold starting
+pose. Three contacts passed, while Lys→lactam O missed the D-A cutoff by 0.158 Å.
+
+The decision was not to tune away an embarrassing value. We retained every absolute term in the
+labbook, subtracted the inherited fixed-core interaction baseline as a run-wide constant, and changed
+infeasible pose rows to report failed contacts and added clashes first. Constant subtraction cannot
+alter search acceptance or ranking. A dedicated real-7KPA browser gate now protects the decomposition
+and UI semantics. The decomposition also invalidated a count-only safety assumption: one extra clash
+can be catastrophically worse than two mild contacts. A second gate now rejects capture states whose
+Lennard-Jones repulsion rises more than 100 kcal/mol over the least-repulsive inherited start. The
+corrected deterministic rerun selected the inherited baseline (Δphysical 0.00, restraint 1.3215
+kcal/mol, seven inherited and zero added clashes). It retained the honest Lys-contact miss instead
+of manufacturing a nominal capture through the receptor.

@@ -55,7 +55,7 @@ energy, and penalty definitions.
 
 ## Executable boundary
 
-ConstraintDock version `0.3.0` and Pose Propagation version `0.8.0` implement and test:
+ConstraintDock version `0.4.0` and Pose Propagation version `0.9.0` implement and test:
 
 - least-squares reference-core alignment;
 - exact reference-coordinate snapping for every mapped core atom plus an independent RMSD audit;
@@ -93,7 +93,9 @@ ConstraintDock version `0.3.0` and Pose Propagation version `0.8.0` implement an
 The receptor is rigid. There is no receptor grid, induced-fit refinement, solvation/desolvation
 term, entropy model, or binding-free-energy estimate. The cross score uses the captured receptor's
 numeric nonbonded terms, fresh edited-ligand OpenFF terms, an explicit relative dielectric of 4,
-and relative vacuum OpenFF Sage ligand energy measured from the lowest fixed-core starting seed. RDKit
+and relative vacuum OpenFF Sage ligand energy. Both the receptor interaction and ligand strain are
+reported relative to the lowest inherited fixed-core starting seed; subtracting the constant receptor
+baseline changes displayed scores but not proposal acceptance or pose ranking. RDKit
 MMFF94/UFF still prepares the initial ETKDG conformers but is not the final strain score. The result is a
 pose-ranking score, not a binding affinity.
 

@@ -4276,17 +4276,36 @@ async function runBrowserConstrainedDocking(options = {}) {
       generationProtocol.captureMaximumRelativeLigandStrainKcalMol ?? 100);
     const captureMaximumAdditionalStericClashes = Number(
       generationProtocol.captureMaximumAdditionalStericClashes ?? 2);
-    const receptorScoreFor = (positions, sageInternalEnergyKcalMol) =>
-      receptorScore.scoreReceptorLigand(reference.receptorSite, positions,
-        ligandNonbonded, {
+    const captureMaximumAdditionalLennardJonesKcalMol = Number(
+      generationProtocol.captureMaximumAdditionalLennardJonesKcalMol ?? 100);
+    const rawReceptorScoreFor = (positions, sageInternalEnergyKcalMol) =>
+      receptorScore.scoreReceptorLigand(reference.receptorSite, positions, ligandNonbonded, {
           relativeDielectric:Number(activeProtocol.scoring.relativeDielectric ?? 4),
           cutoffAngstrom:Number(activeProtocol.scoring.pairCutoffAngstrom ?? 8),
           ligandStrainKcalMol:sageInternalEnergyKcalMol - minimumSageStartEnergy,
           ligandStrainIdentity:'relative vacuum OpenFF Sage 2.1 intramolecular energy' });
     const fixedCoreStartPhysical = fixedCoreStarts.map((positions, index) =>
-      receptorScoreFor(positions, fixedCoreStartEnergies[index]));
+      rawReceptorScoreFor(positions, fixedCoreStartEnergies[index]));
+    const interactionReferenceKcalMol = Math.min(...fixedCoreStartPhysical
+      .map((entry) => Number(entry.interactionKcalMol)));
+    if (!Number.isFinite(interactionReferenceKcalMol))
+      throw new Error('The inherited fixed-scaffold interaction reference is non-finite.');
+    const receptorScoreFor = (positions, sageInternalEnergyKcalMol) => {
+      const raw = rawReceptorScoreFor(positions, sageInternalEnergyKcalMol);
+      const relativeInteractionKcalMol = raw.interactionKcalMol - interactionReferenceKcalMol;
+      return { ...raw,
+        absoluteEnergyKcalMol:raw.energyKcalMol,
+        absoluteInteractionKcalMol:raw.interactionKcalMol,
+        interactionReferenceKcalMol,
+        relativeInteractionKcalMol,
+        energyKcalMol:relativeInteractionKcalMol + raw.weightedLigandStrainKcalMol,
+        scoreIdentity:`reference-subtracted ${raw.scoreIdentity}`,
+        interpretation:'reference-subtracted pose-ranking score; not a binding free energy' };
+    };
     const minimumFixedCoreStartStericClashes = Math.min(...fixedCoreStartPhysical
       .map((entry) => Number(entry.stericClashes)));
+    const minimumFixedCoreStartLennardJonesKcalMol = Math.min(...fixedCoreStartPhysical
+      .map((entry) => Number(entry.lennardJonesKcalMol)));
     const chemicalValidityFor = (sageInternalEnergyKcalMol, physical) => {
       const relativeLigandStrainKcalMol = sageInternalEnergyKcalMol - minimumSageStartEnergy;
       const strainExcessKcalMol = Math.max(0,
@@ -4295,14 +4314,22 @@ async function runBrowserConstrainedDocking(options = {}) {
         Number(physical.stericClashes) - minimumFixedCoreStartStericClashes);
       const clashExcess = Math.max(0,
         additionalStericClashes - captureMaximumAdditionalStericClashes);
+      const additionalLennardJonesKcalMol = Number(physical.lennardJonesKcalMol)
+        - minimumFixedCoreStartLennardJonesKcalMol;
+      const lennardJonesExcessKcalMol = Math.max(0,
+        additionalLennardJonesKcalMol - captureMaximumAdditionalLennardJonesKcalMol);
       return { valid:Number.isFinite(relativeLigandStrainKcalMol)
-          && strainExcessKcalMol === 0 && clashExcess === 0,
+          && strainExcessKcalMol === 0 && clashExcess === 0
+          && lennardJonesExcessKcalMol === 0,
         relativeLigandStrainKcalMol, maximumRelativeLigandStrainKcalMol:
           captureMaximumRelativeLigandStrainKcalMol,
         stericClashes:Number(physical.stericClashes),
         minimumFixedCoreStartStericClashes, additionalStericClashes,
         maximumAdditionalStericClashes:captureMaximumAdditionalStericClashes,
-        strainExcessKcalMol, clashExcess };
+        minimumFixedCoreStartLennardJonesKcalMol,
+        additionalLennardJonesKcalMol,
+        maximumAdditionalLennardJonesKcalMol:captureMaximumAdditionalLennardJonesKcalMol,
+        strainExcessKcalMol, clashExcess, lennardJonesExcessKcalMol };
     };
     const scorePositions = (positions) => {
       const sageInternalEnergyKcalMol = ligandInternalEnergy(positions);
@@ -4338,7 +4365,8 @@ async function runBrowserConstrainedDocking(options = {}) {
       const hbondPenaltyKcalMol = hydrogenBonds.reduce((sum, entry) =>
         sum + Number(entry.penaltyKcalMol || 0), 0);
       const chemicalPenaltyKcalMol = chemicalValidity.strainExcessKcalMol ** 2
-        + chemicalValidity.clashExcess ** 2 * 1000;
+        + chemicalValidity.clashExcess ** 2 * 1000
+        + chemicalValidity.lennardJonesExcessKcalMol ** 2;
       return { objectiveKcalMol:hbondPenaltyKcalMol + chemicalPenaltyKcalMol,
         hbondPenaltyKcalMol, chemicalPenaltyKcalMol,
         feasible:chemicalValidity.valid
@@ -4448,7 +4476,9 @@ async function runBrowserConstrainedDocking(options = {}) {
           captureObjective:'selected required-contact flat-bottom penalties plus registered chemical-sanity gate excess penalties',
           captureMaximumRelativeLigandStrainKcalMol,
           captureMaximumAdditionalStericClashes,
+          captureMaximumAdditionalLennardJonesKcalMol,
           minimumFixedCoreStartStericClashes,
+          minimumFixedCoreStartLennardJonesKcalMol,
           physicalStageGate:'starts only after contact capture and chemical-sanity validation; feasible-to-infeasible moves are rejected',
         } : { method:torsionSearch.TORSION_SEARCH_DEFAULTS.method, steps:torsionSteps,
           temperatureStartKelvin:Number(torsionProtocol.temperatureStartKelvin),
@@ -4747,6 +4777,8 @@ async function runBrowserConstrainedDocking(options = {}) {
         coulombKcalMol:run.selected.physicalDetails.coulombKcalMol,
         ligandStrainKcalMol:run.selected.physicalDetails.ligandStrainKcalMol,
         interactionKcalMol:run.selected.physicalDetails.interactionKcalMol,
+        interactionReferenceKcalMol:run.selected.physicalDetails.interactionReferenceKcalMol,
+        relativeInteractionKcalMol:run.selected.physicalDetails.relativeInteractionKcalMol,
         receptorLigandPairs:run.selected.physicalDetails.pairCount,
         stericClashes:run.selected.physicalDetails.stericClashes,
       } : null,
@@ -4770,7 +4802,7 @@ async function runBrowserConstrainedDocking(options = {}) {
       omittedHydrogenBonds,
       ligandFeatureRemaps:[...state.dockingContactRemaps.values()]
         .map((entry) => structuredClone(entry.audit)),
-      scoreInterpretation:'pose-ranking score; not a binding free energy',
+      scoreInterpretation:'reference-subtracted pose-ranking score; not a binding free energy',
       topPoses:run.candidates.slice(0, 5).map((pose) => ({ rank:pose.rank,
         feasible:pose.feasible, totalScoreKcalMol:pose.totalScoreKcalMol,
         physicalEnergyKcalMol:pose.physicalEnergyKcalMol,
@@ -4839,15 +4871,30 @@ function renderDockingResults() {
     button.className = `docking-pose${candidateIndex === state.dockingPoseIndex ? ' active' : ''}`;
     const rank = document.createElement('b'); rank.textContent = `#${pose.rank}`;
     const score = document.createElement('span');
-    score.textContent = `${pose.totalScoreKcalMol.toFixed(2)} kcal/mol`;
-    const status = document.createElement('small'); status.textContent = pose.feasible ? 'feasible' : 'violates';
+    const missedContacts = pose.hydrogenBonds.filter((entry) =>
+      entry.required !== false && !entry.satisfied).length;
+    const validity = pose.physicalDetails?.chemicalValidity;
+    const addedClashes = Number(validity?.additionalStericClashes || 0);
+    score.textContent = pose.feasible
+      ? `Δ score ${pose.totalScoreKcalMol.toFixed(2)}`
+      : [missedContacts ? `${missedContacts} contact${missedContacts === 1 ? '' : 's'} missed` : '',
+        addedClashes ? `+${addedClashes} clash${addedClashes === 1 ? '' : 'es'}` : '']
+        .filter(Boolean).join(' · ') || 'physical gate failed';
+    const status = document.createElement('small'); status.textContent = pose.feasible ? 'feasible' : 'not feasible';
+    button.title = `Reference-subtracted physical ${pose.physicalEnergyKcalMol.toFixed(2)} kcal/mol; restraint ${pose.constraintPenaltyKcalMol.toFixed(2)} kcal/mol`;
     button.append(rank, score, status);
     button.addEventListener('click', () => { state.dockingPoseIndex = candidateIndex; renderDockingResults(); });
     list.append(button);
   });
-  setText('#docking-score-note', result.mode === 'pose-propagation'
+  const selected = result.run.candidates[state.dockingPoseIndex] || entries[0]?.pose;
+  const selectedValidity = selected?.physicalDetails?.chemicalValidity;
+  const scoreBreakdown = selected
+    ? `Δphysical ${selected.physicalEnergyKcalMol.toFixed(2)} · restraints ${selected.constraintPenaltyKcalMol.toFixed(2)} kcal/mol`
+      + (selectedValidity ? ` · ${selectedValidity.stericClashes} clashes (start ${selectedValidity.minimumFixedCoreStartStericClashes})` : '')
+    : '';
+  setText('#docking-score-note', scoreBreakdown || (result.mode === 'pose-propagation'
     ? 'Inherited scaffold · torsion search · fixed Sage relax'
-    : 'Selected core · torsion search · rigid 8 Å site');
+    : 'Selected core · torsion search · rigid 8 Å site'));
 }
 
 async function applySelectedDockingPose() {
@@ -6980,10 +7027,24 @@ function installChemistActionsApi(module) {
       const select = document.querySelector('#docking-conformer-count');
       select.value = String(searchChains); updateDockingUi();
       const result = await runBrowserConstrainedDocking();
+      const selected = result.run.selected;
       return chemistActionSummary({ refinement:{ candidates:result.run.candidates.length,
-        feasible:result.run.feasibleCount, selectedRank:result.run.selected.rank,
-        selectedFeasible:result.run.selected.feasible,
-        selectedScoreKcalMol:result.run.selected.totalScoreKcalMol } }); },
+        feasible:result.run.feasibleCount, selectedRank:selected.rank,
+        selectedFeasible:selected.feasible,
+        selectedScoreKcalMol:selected.totalScoreKcalMol,
+        selectedPhysicalKcalMol:selected.physicalEnergyKcalMol,
+        selectedConstraintPenaltyKcalMol:selected.constraintPenaltyKcalMol,
+        selectedPhysicalComponents:selected.physicalDetails ? {
+          lennardJonesKcalMol:selected.physicalDetails.lennardJonesKcalMol,
+          coulombKcalMol:selected.physicalDetails.coulombKcalMol,
+          ligandStrainKcalMol:selected.physicalDetails.ligandStrainKcalMol,
+          interactionKcalMol:selected.physicalDetails.interactionKcalMol,
+          interactionReferenceKcalMol:selected.physicalDetails.interactionReferenceKcalMol,
+          relativeInteractionKcalMol:selected.physicalDetails.relativeInteractionKcalMol,
+          stericClashes:selected.physicalDetails.stericClashes,
+        } : null,
+        selectedChemicalValidity:structuredClone(selected.physicalDetails?.chemicalValidity || null),
+        selectedHydrogenBonds:structuredClone(selected.hydrogenBonds) } }); },
     'pose.apply':async (args) => { chemistActionKeys(args, ['index']);
       const index = Number(args.index ?? 0);
       if (!Number.isInteger(index) || index < 0) throw new Error('index must be a non-negative integer');
@@ -7693,6 +7754,19 @@ const molariumTestApi = Object.freeze({
       selected:{ rank:result.run.selected.rank, feasible:result.run.selected.feasible,
         scoreKcalMol:result.run.selected.totalScoreKcalMol,
         physicalKcalMol:result.run.selected.physicalEnergyKcalMol,
+        constraintPenaltyKcalMol:result.run.selected.constraintPenaltyKcalMol,
+        physicalComponents:result.run.selected.physicalDetails ? {
+          lennardJonesKcalMol:result.run.selected.physicalDetails.lennardJonesKcalMol,
+          coulombKcalMol:result.run.selected.physicalDetails.coulombKcalMol,
+          ligandStrainKcalMol:result.run.selected.physicalDetails.ligandStrainKcalMol,
+          interactionKcalMol:result.run.selected.physicalDetails.interactionKcalMol,
+          interactionReferenceKcalMol:
+            result.run.selected.physicalDetails.interactionReferenceKcalMol,
+          relativeInteractionKcalMol:result.run.selected.physicalDetails.relativeInteractionKcalMol,
+          stericClashes:result.run.selected.physicalDetails.stericClashes,
+          chemicalValidity:structuredClone(
+            result.run.selected.physicalDetails.chemicalValidity || null),
+        } : null,
         coreRmsdAngstrom:result.run.selected.core.rmsdAngstrom,
         hydrogenBonds:structuredClone(result.run.selected.hydrogenBonds),
         refinement:{ method:result.run.selected.refinement?.method || null,
