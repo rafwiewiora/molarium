@@ -15,8 +15,8 @@ const assetRelease = String(process.env.MOLARIUM_ASSET_RELEASE || `v${packageJso
 const assetBase = `${assetOrigin}/${assetRelease}/`;
 
 const files = [
-  'LICENSE', 'README.md', 'THIRD_PARTY_NOTICES.md',
-  'index.html', 'app.js', 'styles.css', 'molarium-workspace.css', 'independent-layout-study.css',
+  'LICENSE', 'README.md', 'CHEMIST-ACTIONS-API.md', 'THIRD_PARTY_NOTICES.md',
+  'index.html', 'app.js', 'chemist-actions.mjs', 'styles.css', 'molarium-workspace.css', 'independent-layout-study.css',
   'protein-residue-templates.js', 'rdkit-worker.js', 'openmm-worker.js', 'webgpu-worker.js',
   'stormm-worker.js', 'mlip-worker.js', 'local-lab-test.js',
   'assets/lsd-launch.mol', 'assets/molarium-logo.svg', 'assets/molarium-mark.svg',
@@ -33,8 +33,10 @@ const files = [
   'rdkit/RDKIT-LICENSE.txt', 'rdkit/README.md', 'rdkit/dimorphite-sites.js',
   'rdkit/dist/RDKit_minimal.js', 'rdkit/dist/RDKit_minimal.wasm',
   'docking/browser-adapter.mjs', 'docking/constraints.mjs', 'docking/contact-remap.mjs',
+  'docking/feature-seeding.mjs', 'docking/restraint-biased-search.mjs',
   'docking/labbook.mjs', 'docking/protocol.mjs', 'docking/receptor-score.mjs',
-  'docking/reference-core.mjs', 'docking/torsion-search.mjs', 'docking/workflow.mjs',
+  'docking/reference-core.mjs', 'docking/torsion-search.mjs',
+  'docking/transformed-ring-region.mjs', 'docking/workflow.mjs',
   'stormm/LICENSE', 'stormm/README.md', 'stormm/core.mjs', 'stormm/engine.mjs',
   'webgpu/README.md', 'webgpu/molarium-webgpu.wgsl',
   'vendor/onnxruntime-web/ort.webgpu.bundle.min.mjs',

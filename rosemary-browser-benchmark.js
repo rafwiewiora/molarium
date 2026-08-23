@@ -282,7 +282,7 @@ const browserSuite = String.raw`(async (config) => {
 let output;
 try {
   if (!externalAppUrl) {
-    server = Bun.spawn(['bun', 'server.js', '--port', String(appPort)], {
+    server = Bun.spawn(['bun', 'server.js', '--test-api', '--port', String(appPort)], {
       cwd: import.meta.dir,
       stdout: 'ignore',
       stderr: 'ignore',

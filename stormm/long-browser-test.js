@@ -61,7 +61,7 @@ class DevToolsClient {
 }
 
 try {
-  if (!externalAppUrl) server = Bun.spawn(['bun', 'server.js', '--port', String(appPort)], {
+  if (!externalAppUrl) server = Bun.spawn(['bun', 'server.js', '--test-api', '--port', String(appPort)], {
     cwd:join(import.meta.dir, '..'), stdout:'ignore', stderr:'inherit',
   });
   await waitFor(async () => (await fetch(appUrl)).ok);

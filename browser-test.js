@@ -9,6 +9,7 @@ const appPort = Number(Bun.env.MOLARIUM_TEST_PORT) || 54000 + portSeed;
 const debugPort = Number(Bun.env.MOLARIUM_TEST_DEBUG_PORT) || 56000 + portSeed;
 const externalAppUrl = Bun.env.MOLARIUM_TEST_URL;
 const appUrl = externalAppUrl || `http://localhost:${appPort}/`;
+const productionApiBoundary = Bun.env.MOLARIUM_TEST_SCOPE === 'chemist-actions-production-boundary';
 const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const profile = await mkdtemp(join(tmpdir(), 'molarium-browser-test-'));
 let server;
@@ -100,8 +101,79 @@ const browserSuite = String.raw`(async () => {
     const rmsReference = Math.sqrt(squaredReference / reference.length);
     return { rmsError, rmsReference, relativeRms: rmsError / Math.max(1e-12, rmsReference), maximumError };
   };
+  if (testScope === 'chemist-actions-production-boundary') {
+    const chemist = await window.MolariumChemistActionsReady;
+    check(chemist === window.MolariumChemistActions
+      && chemist.schema === 'molarium.chemist-actions/v1'
+      && Object.isFrozen(chemist),
+    'production exposes the frozen Chemist Actions API');
+    check(!Object.hasOwn(window, 'molariumTest'),
+      'production does not install the privileged regression harness');
+    check(typeof window.captureCurrentDockingReference === 'undefined'
+      && typeof window.runBrowserConstrainedDocking === 'undefined'
+      && typeof window.applySelectedAtomChemistry === 'undefined',
+    'module scope keeps internal modeling functions off window');
+    return { passed:checks.filter((item) => item.passed).length,
+      total:checks.length, failed:checks.filter((item) => !item.passed),
+      optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics,
+      rosemaryMetrics, preparationMetrics:null };
+  }
   const api = window.molariumTest;
   check(Boolean(api), 'test API is available');
+  if (testScope === 'chemist-actions') {
+    const chemist = await window.MolariumChemistActionsReady;
+    check(chemist === window.MolariumChemistActions
+      && chemist.schema === 'molarium.chemist-actions/v1'
+      && Object.isFrozen(chemist),
+    'the browser exposes one frozen, versioned Chemist Actions API');
+    const described = chemist.describe();
+    check(described.guarantee.includes('no arbitrary code')
+      && described.actions['chemistry.finish']
+      && !described.actions['test.loadObject'],
+    'the public action manifest contains chemist routes and no fixture or internal-code route');
+    api.load('CC');
+    await chemist.execute({ requestId:'browser-mode', action:'view.setMode', args:{ mode:'build' } });
+    await chemist.execute({ requestId:'browser-tool', action:'build.setTool', args:{ tool:'select' } });
+    const initial = (await chemist.inspect({ scope:'ligand', maximumAtoms:20 })).result;
+    const carbonIds = initial.atoms.filter((atom) => atom.element === 'C').map((atom) => atom.atomId);
+    const carbonBond = initial.bonds.find((bond) => carbonIds.every((id) => bond.atomIds.includes(id)));
+    check(carbonIds.length === 2 && carbonBond?.order === 1
+      && initial.totalAtomCount === 8 && initial.atoms.every((atom) => atom.atomId),
+    'agents inspect persistent identities and the chemist-visible molecular graph');
+    await chemist.execute({ action:'selection.replace', args:{ atomIds:carbonIds } });
+    const staged = await chemist.execute({ requestId:'browser-double-bond',
+      action:'chemistry.setBond', args:{ order:2 } });
+    check(staged.result.pendingChemistry?.editCount === 1,
+      'a public bond edit enters the same pending-chemistry transaction as a UI edit');
+    const finished = await chemist.execute({ requestId:'browser-finish', action:'chemistry.finish' });
+    const ethene = (await chemist.inspect({ scope:'ligand', maximumAtoms:20 })).result;
+    check(finished.result.validation?.valid && !ethene.pendingChemistry
+      && ethene.totalAtomCount === 6
+      && ethene.bonds.some((bond) => carbonIds.every((id) => bond.atomIds.includes(id))
+        && bond.order === 2),
+    'Finish chemistry reconciles and validates ethene through the public route');
+    await chemist.execute({ action:'history.undo' });
+    const undone = (await chemist.inspect({ scope:'ligand', maximumAtoms:20 })).result;
+    check(undone.totalAtomCount === 8
+      && undone.bonds.some((bond) => carbonIds.every((id) => bond.atomIds.includes(id))
+        && bond.order === 1),
+    'the public Undo route restores the committed chemical graph');
+    let rejected = '';
+    try { await chemist.execute({ action:'internal.scorePose', args:{} }); }
+    catch (error) { rejected = error.message; }
+    check(rejected.includes('Unknown chemist action'),
+      'the public API rejects arbitrary internal-function access');
+    const history = chemist.history();
+    check(history.some((record) => record.requestId === 'browser-double-bond'
+      && record.action === 'chemistry.setBond' && record.status === 'completed')
+      && history.every((record, index) => record.sequence === index + 1
+        && record.startedAt && record.completedAt && Number.isFinite(record.durationMs)),
+    'every accepted browser action has an ordered, timestamped audit record');
+    const failed = checks.filter((item) => !item.passed);
+    return { passed:checks.length - failed.length, total:checks.length, failed,
+      optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,
+      preparationMetrics:null };
+  }
   const headerDestinations = [...document.querySelectorAll('[data-project-panel]')]
     .map((link) => link.textContent.trim());
   check(headerDestinations.join('|') === 'Methods|Validation|Credits',
@@ -565,7 +637,7 @@ const browserSuite = String.raw`(async () => {
       && propagationRun.selected.refinement.relaxation
         .maximumDisplacementAngstromPerIteration === 0.01
       && propagationLabbook.protocol.id === 'molarium-pose-propagation-1'
-      && propagationLabbook.protocol.version === '0.7.0'
+      && propagationLabbook.protocol.version === '0.8.0'
       && propagationRun.selected.refinement.method
         === 'molarium-restraint-biased-internal-coordinate-search/v3'
       && propagationRun.selected.refinement.captureFeasible
@@ -1259,6 +1331,78 @@ const browserSuite = String.raw`(async () => {
         entry.label === 'LYS A11 NZ → D84 C201 O3');
       const n3Contact = hydratedReference.hydrogenBonds.find((entry) =>
         entry.label === 'D84 C201 N3 → HOH C307 O');
+      // Preferred chemist route: keep graph identity, saturate the two C=C
+      // bonds, then change the lactam N-H into cyclohexanone CH2. Execute the
+      // complete edit through the public Chemist Actions surface so this is
+      // the same route available to an agent or a person, not a test-only
+      // direct call into pose code.
+      const chemist = await window.MolariumChemistActionsReady;
+      await chemist.execute({ action:'view.setMode', args:{ mode:'build' } });
+      await chemist.execute({ action:'build.setTool', args:{ tool:'select' } });
+      const directReference = (await chemist.inspect({ scope:'ligand', includeCoordinates:true,
+        maximumAtoms:200 })).result;
+      const directByName = new Map(directReference.atoms.map((atom) => [atom.atomName, atom]));
+      const directRequiredNames = ['C23','O3','C28','N3','C26','C27','C29','C30'];
+      if (directRequiredNames.some((name) => !directByName.has(name)))
+        throw new Error('7KPA direct-edit regression cannot find: '
+          + directRequiredNames.filter((name) => !directByName.has(name)).join(', '));
+      const directSelect = async (...names) => chemist.execute({ action:'selection.replace',
+        args:{ atomIds:names.map((name) => directByName.get(name).atomId) } });
+      await directSelect('C26','C27');
+      await chemist.execute({ action:'chemistry.setBond', args:{ order:1 } });
+      await directSelect('C30','C29');
+      await chemist.execute({ action:'chemistry.setBond', args:{ order:1 } });
+      const directLactamFinish = await chemist.execute({ action:'chemistry.finish' });
+      const directLactam = (await chemist.inspect({ scope:'ligand', includeCoordinates:true,
+        maximumAtoms:200 })).result;
+      await directSelect('N3');
+      await chemist.execute({ action:'chemistry.setAtom', args:{ element:'C', formalCharge:0 } });
+      const directCyclohexanoneFinish = await chemist.execute({ action:'chemistry.finish' });
+      const directCyclohexanone = (await chemist.inspect({ scope:'ligand', includeCoordinates:true,
+        maximumAtoms:200 })).result;
+      const liveDirectByName = new Map(directCyclohexanone.atoms.map((atom) => [atom.atomName, atom]));
+      const releasedIds = new Set(directCyclohexanone.transformedRingRegions
+        .flatMap((entry) => entry.releasedHeavyAtomIds || []));
+      const ringIds = ['O3','C28','N3','C26','C27','C29','C30']
+        .map((name) => directByName.get(name).atomId);
+      const c23Before = directByName.get('C23').coordinatesAngstrom;
+      const c23After = liveDirectByName.get('C23').coordinatesAngstrom;
+      const externalAnchorMotion = Math.hypot(...c23Before.map((value, axis) =>
+        value - c23After[axis]));
+      const releasedMotion = Math.max(...ringIds.map((id) => {
+        const before = directReference.atoms.find((atom) => atom.atomId === id)?.coordinatesAngstrom;
+        const after = directCyclohexanone.atoms.find((atom) => atom.atomId === id)?.coordinatesAngstrom;
+        return before && after ? Math.hypot(...before.map((value, axis) => value - after[axis])) : 0;
+      }));
+      const directO3Id = directByName.get('O3').atomId;
+      const directC28Id = directByName.get('C28').atomId;
+      const finalCarbonyl = directCyclohexanone.bonds.find((bond) =>
+        bond.atomIds.includes(directO3Id) && bond.atomIds.includes(directC28Id));
+      const directO3Contact = directCyclohexanone.contacts.find((entry) =>
+        entry.contactId === o3Contact?.id);
+      const directN3Contact = directCyclohexanone.contacts.find((entry) =>
+        entry.contactId === n3Contact?.id);
+      check(directLactamFinish.result.validation?.valid
+        && directCyclohexanoneFinish.result.validation?.valid
+        && directCyclohexanone.atoms.find((atom) => atom.atomId === directByName.get('N3').atomId)?.element === 'C'
+        && Number(finalCarbonyl?.order) === 2
+        && ringIds.every((id) => releasedIds.has(id))
+        && !releasedIds.has(directByName.get('C23').atomId)
+        && externalAnchorMotion < 1e-7 && releasedMotion > 1e-3
+        && directO3Contact?.available && directO3Contact.required
+        && directN3Contact && !directN3Contact.available,
+      '7KPA direct saturation and N-to-CH2 edit releases the transformed ring while preserving its scaffold and carbonyl hypothesis',
+      JSON.stringify({ directLactamFinish, directLactam,
+        directCyclohexanoneFinish,
+        transformedRingRegions:directCyclohexanone.transformedRingRegions,
+        externalAnchorMotion, releasedMotion, finalCarbonyl,
+        directO3Contact, directN3Contact }));
+      // Restore the exact prepared reference before independently testing the
+      // harder delete-and-rebuild feature-remapping route below.
+      api.loadObject(captureMolecule);
+      await chemist.execute({ action:'view.setMode', args:{ mode:'build' } });
+      await chemist.execute({ action:'build.setTool', args:{ tool:'select' } });
+      await chemist.execute({ action:'pose.captureReference', args:{ mode:'propagate' } });
       const saturationIndices = ['C26', 'C27', 'C30', 'C29'].map((name) => [name, d84Index(name)]);
       if (saturationIndices.some(([, index]) => index < 0))
         throw new Error('7KPA regression cannot find pyridone atoms: ' + JSON.stringify(saturationIndices));
@@ -1448,6 +1592,7 @@ const browserSuite = String.raw`(async () => {
       const scopedChecks = checks.filter((item) =>
         item.label.includes('Lys A11 N-H to D84 pyridone O3')
         || item.label.includes('hydrated 7KPA reference capture')
+        || item.label.includes('7KPA direct saturation and N-to-CH2 edit')
         || item.label.includes('7KPA saturate-delete-build-C=O sequence'));
       const failed = scopedChecks.filter((item) => !item.passed);
       return { passed:scopedChecks.length - failed.length, total:scopedChecks.length, failed,
@@ -2905,7 +3050,8 @@ const browserSuite = String.raw`(async () => {
 
 try {
   if (!externalAppUrl) {
-    server = Bun.spawn(['bun', 'server.js', '--port', String(appPort)], {
+    server = Bun.spawn(['bun', 'server.js',
+      ...(productionApiBoundary ? [] : ['--test-api']), '--port', String(appPort)], {
       cwd: import.meta.dir,
       stdout: 'ignore',
       stderr: 'pipe',
@@ -2931,7 +3077,10 @@ try {
   const client = new DevToolsClient(page.webSocketDebuggerUrl);
   await client.open();
   await waitFor(async () => {
-    const readiness = await client.call('Runtime.evaluate', { expression: 'Boolean(window.molariumTest)', returnByValue: true });
+    const readiness = await client.call('Runtime.evaluate', {
+      expression:productionApiBoundary
+        ? 'Boolean(window.MolariumChemistActionsReady)'
+        : 'Boolean(window.molariumTest)', returnByValue: true });
     return readiness.result.value;
   });
   const evaluation = await client.call('Runtime.evaluate', { expression: browserSuite, awaitPromise: true, returnByValue: true });

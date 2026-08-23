@@ -20,6 +20,8 @@ import { attachNonCoreRegionsToSnappedCore, featureGuidedPoseSeeds } from './fea
 import { applyLigandHydrogenBondFeatureRemap, hydrogenBondFeatureSignature,
   proposeLigandHydrogenBondFeatureRemaps,
   retainOriginatingHydrogenBondRemapCandidates } from './contact-remap.mjs';
+import { cumulativeReleasedAtomIds, recordTransformedRingRegion,
+  transformedRingRegion } from './transformed-ring-region.mjs';
 import { buildParameterizedSystem, cpuEnergies, mulberry32 } from '../stormm/core.mjs';
 
 const reference = Float64Array.from([0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1]);
@@ -180,8 +182,61 @@ assert.equal(propagationMap.atomPairs.length, 3);
 assert.deepEqual(propagationMap.removedAtomIds, [automaticReference.atomIds[3]]);
 assert.deepEqual(propagationMap.addedAtomIds, ['test:new:F']);
 assert.ok(propagationMap.maximumTriangleDoubleAreaAngstrom2 > 0.99);
+const releasedPropagationMap = mapSurvivingReferenceAtoms(automaticReference,
+  designMolecule.atoms, { releasedAtomIds:[automaticReference.atomIds[3]] });
+assert.equal(releasedPropagationMap.usable, true);
+assert.deepEqual(releasedPropagationMap.releasedReferenceAtomIds,
+  [automaticReference.atomIds[3]]);
+assert.equal(releasedPropagationMap.atomPairs.length, 3,
+  'registered transformed atoms are released without weakening the remaining hard scaffold');
+
+const transformedRingBefore = { name:'pyridone-like edit', atoms:[
+  { element:'C',designAtomId:'scaffold' },
+  { element:'C',designAtomId:'r1' }, { element:'N',designAtomId:'r2' },
+  { element:'C',designAtomId:'r3' }, { element:'C',designAtomId:'r4' },
+  { element:'C',designAtomId:'r5' }, { element:'C',designAtomId:'r6' },
+  { element:'O',designAtomId:'carbonyl-o' }, { element:'H',designAtomId:'ring-h' },
+], bonds:[
+  { a:0,b:1,order:1 }, { a:1,b:2,order:1 }, { a:2,b:3,order:2 },
+  { a:3,b:4,order:1 }, { a:4,b:5,order:2 }, { a:5,b:6,order:1 },
+  { a:6,b:1,order:1 }, { a:3,b:7,order:2 }, { a:5,b:8,order:1 },
+] };
+const saturatedLactam = structuredClone(transformedRingBefore);
+saturatedLactam.bonds.find((bond) => bond.a === 2 && bond.b === 3).order = 1;
+saturatedLactam.bonds.find((bond) => bond.a === 4 && bond.b === 5).order = 1;
+const lactamRelease = transformedRingRegion(transformedRingBefore, saturatedLactam);
+assert.equal(lactamRelease.touchedRingCount, 1);
+assert.deepEqual(lactamRelease.boundaryAtomIds, ['scaffold']);
+assert.deepEqual(lactamRelease.releasedHeavyAtomIds,
+  ['carbonyl-o','r1','r2','r3','r4','r5','r6']);
+assert.ok(lactamRelease.releasedAtomIds.includes('ring-h'),
+  'ring hydrogens move with a transformed ring');
+assert.ok(!lactamRelease.releasedAtomIds.includes('scaffold'),
+  'the external attachment remains a fixed boundary');
+const cyclohexanoneGraph = structuredClone(saturatedLactam);
+cyclohexanoneGraph.atoms[2].element = 'C';
+const cyclohexanoneRelease = transformedRingRegion(saturatedLactam, cyclohexanoneGraph);
+assert.equal(cyclohexanoneRelease.reason, 'existing-ring-chemistry-changed');
+assert.ok(cyclohexanoneRelease.releasedHeavyAtomIds.includes('carbonyl-o')
+  && cyclohexanoneRelease.releasedHeavyAtomIds.includes('r2'));
+const methylAddition = structuredClone(transformedRingBefore);
+methylAddition.atoms.push({ element:'C',designAtomId:'new-methyl' });
+methylAddition.bonds.push({ a:1,b:9,order:1 });
+const methylRelease = transformedRingRegion(transformedRingBefore, methylAddition);
+assert.equal(methylRelease.touchedRingCount, 0);
+assert.deepEqual(methylRelease.releasedHeavyAtomIds, [],
+  'attaching a new substituent does not release an otherwise unchanged reference ring');
+const releaseLedgerMolecule = structuredClone(cyclohexanoneGraph);
+recordTransformedRingRegion(releaseLedgerMolecule, lactamRelease,
+  { editId:'saturate-ring', committedAt:'2026-08-22T00:00:00.000Z' });
+recordTransformedRingRegion(releaseLedgerMolecule, cyclohexanoneRelease,
+  { editId:'nitrogen-to-carbon', committedAt:'2026-08-22T00:01:00.000Z' });
+assert.deepEqual(cumulativeReleasedAtomIds(releaseLedgerMolecule),
+  ['carbonyl-o','r1','r2','r3','r4','r5','r6']);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.id, 'molarium-pose-propagation-1');
-assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.version, '0.7.0');
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.version, '0.8.0');
+assert.match(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping.transformedRingRule,
+  /complete ring system/);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping.minimumSurvivingHeavyAtoms, 3);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping
   .minimumMaximumTriangleDoubleAreaAngstrom2, 1e-3);

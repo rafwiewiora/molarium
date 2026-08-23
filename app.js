@@ -680,6 +680,7 @@ const state = {
   selectedAtoms: [],
   chemistryTransaction: null,
   chemistryEditFinishing: false,
+  chemistActionAudit: [],
   geometryEditActive: false,
   dragAtom: null,
   panningView: false,
@@ -2917,6 +2918,7 @@ function loadMolecule(molecule, resetView = true) {
     state.protonatingLigand = false;
   }
   state.molecule = molecule;
+  state.chemistActionAudit = structuredClone(molecule.source?.chemistActionAudit || []);
   state.dockingReference = null;
   state.dockingResult = null;
   state.dockingRunning = false;
@@ -4135,7 +4137,8 @@ async function runBrowserConstrainedDocking(options = {}) {
   updateDockingUi(); setDockingStatus('Preparing edited ligand');
   try {
     const [adapter, referenceCore, receptorScore, workflow, protocolModule, labbookModule,
-      torsionSearch, biasedSearch, constraints, stormmCore, remapModule, featureSeeding] = await Promise.all([
+      torsionSearch, biasedSearch, constraints, stormmCore, remapModule, featureSeeding,
+      transformedRings] = await Promise.all([
       import('./docking/browser-adapter.mjs'), import('./docking/reference-core.mjs'),
       import('./docking/receptor-score.mjs'), import('./docking/workflow.mjs'),
       import('./docking/protocol.mjs'), import('./docking/labbook.mjs'),
@@ -4143,6 +4146,7 @@ async function runBrowserConstrainedDocking(options = {}) {
       import('./docking/constraints.mjs'),
       import('./stormm/core.mjs'), import('./docking/contact-remap.mjs'),
       import('./docking/feature-seeding.mjs'),
+      import('./docking/transformed-ring-region.mjs'),
     ]);
     referenceCore.ensureStableAtomIds(state.molecule,
       `design-${state.molecule.source?.pdbId || 'complex'}`);
@@ -4175,8 +4179,11 @@ async function runBrowserConstrainedDocking(options = {}) {
       throw new Error('A fixed receptor or water contact participant changed; reset the docking reference.');
     const currentLigandInputText = adapter.dockingInputText(state.molecule, plan.globalAtomIndices);
     const currentLigandTopologyText = adapter.dockingTopologyText(state.molecule, plan.globalAtomIndices);
+    const releasedReferenceAtomIds = posePropagation
+      ? transformedRings.cumulativeReleasedAtomIds(state.molecule) : [];
     const coreMap = posePropagation
-      ? referenceCore.mapSurvivingReferenceAtoms(reference.ligand, plan.molecule.atoms)
+      ? referenceCore.mapSurvivingReferenceAtoms(reference.ligand, plan.molecule.atoms,
+        { releasedAtomIds:releasedReferenceAtomIds })
       : referenceCore.mapReferenceCore(reference.ligand, plan.molecule.atoms);
     if (posePropagation && !coreMap.usable) throw new Error(coreMap.reason);
     if (!posePropagation && !coreMap.complete) throw new Error(`The conserved core is incomplete (${coreMap.missingAtomIds.length} atom${coreMap.missingAtomIds.length === 1 ? '' : 's'} missing).`);
@@ -4365,6 +4372,7 @@ async function runBrowserConstrainedDocking(options = {}) {
           addedAtomIds:[...coreMap.addedAtomIds],
           removedAtomIds:[...coreMap.removedAtomIds],
           changedElementAtomIds:[...coreMap.changedElementAtomIds],
+          releasedReferenceAtomIds:[...(coreMap.releasedReferenceAtomIds || [])],
         } : null,
         editPreparation:posePropagation ? {
           selectedCleanupMode:selectedDockingEditCleanup(),
@@ -4422,7 +4430,7 @@ async function runBrowserConstrainedDocking(options = {}) {
         crossTerms:['Lennard-Jones', 'Coulomb'],
         ligandStrain:'relative vacuum OpenFF Sage 2.1 intramolecular energy from lowest fixed-core starting seed',
         hardCore:posePropagation
-          ? 'every surviving reference heavy atom fixed exactly by stable edit lineage'
+          ? 'surviving reference heavy atoms outside registered transformed regions fixed exactly by stable edit lineage'
           : 'user-selected matched core atoms snapped exactly to reference coordinates',
         editCleanup:posePropagation ? {
           selected:selectedDockingEditCleanup(),
@@ -4476,7 +4484,8 @@ async function runBrowserConstrainedDocking(options = {}) {
             ? 'Recorded graph edits provide exact atom correspondence, so an inferred or manually selected core is unnecessary.'
             : 'Rigid core alignment alone does not optimize ligand torsions against the receptor.',
           'Edit-lineage atom identity gives an exact, auditable analogue mapping.',
-          'Only graph branches containing no core atom are eligible to rotate; ring moves touching a perceived stereocenter, ring multiple-bond atom, carbonyl, or lactam geometry are excluded.',
+          'Chemically transformed rings are released as complete units while their unchanged external scaffold boundary remains fixed.',
+          'Only graph branches containing no fixed scaffold atom are eligible to rotate; local ring moves touching a perceived stereocenter, ring multiple-bond atom, carbonyl, or lactam geometry are excluded.',
           'A pharmacophore-capture stage drives every torsion and safe ring proposal before ordinary physical energy is allowed to act; only registered chemical-sanity gates accompany the restraint objective.',
           'A captured contact is not called feasible when its ligand strain exceeds 100 kcal/mol above the best exact-core start or it introduces more than two additional steric-clash diagnostics.',
           'Required contacts are explicit feasible states and cannot be traded away for a lower energy.',
@@ -6040,12 +6049,14 @@ async function applyChemistryMutation(mutator) {
       { schedulePolish:false });
     const changedAtomIndices = changedAtoms.map((atom) => state.molecule.atoms.indexOf(atom))
       .filter((index) => index >= 0);
+    const immediateEditId = `chem-edit-immediate-${Date.now().toString(36)}`;
     const polish = validation.valid
-      ? await polishCommittedChemistry(state.molecule, changedAtomIndices) : null;
+      ? await polishCommittedChemistry(state.molecule, changedAtomIndices,
+        { beforeMolecule:snapshot, editId:immediateEditId }) : null;
     const contactFeatureRemaps = validation.valid
       ? await reconcileDockingContactFeaturesAfterChemistry(
         { snapshot, dockingContactState,
-          editId:`chem-edit-immediate-${Date.now().toString(36)}` }, changedAtomIndices) : [];
+          editId:immediateEditId }, changedAtomIndices) : [];
     updateInfo(); updateDockingUi(); updateOptimizerControls(); draw(); schedule2DDepiction(0);
     return { ...moleculeDiagnostics(state.molecule), validation, polish, contactFeatureRemaps,
       molecule:structuredClone(state.molecule) };
@@ -6063,8 +6074,17 @@ async function applyChemistryMutation(mutator) {
   }
 }
 
-async function polishCommittedChemistry(molecule, changedAtomIndices) {
-  const plan = localEditPolishPlan(molecule, changedAtomIndices, 1);
+async function polishCommittedChemistry(molecule, changedAtomIndices,
+  { beforeMolecule = null, editId = null } = {}) {
+  let transformedRegion = null;
+  if (beforeMolecule && state.dockingReference?.mode === 'pose-propagation') {
+    const module = await import('./docking/transformed-ring-region.mjs');
+    transformedRegion = module.transformedRingRegion(beforeMolecule, molecule);
+    module.recordTransformedRingRegion(molecule, transformedRegion, { editId });
+  }
+  const plan = localEditPolishPlan(molecule, changedAtomIndices, 1, {
+    releasedAtomIds:transformedRegion?.releasedHeavyAtomIds || [],
+  });
   if (!plan) return null;
   const movable = new Set(plan.movableGlobalAtomIndices);
   const fixedAtomIndices = plan.globalAtomIndices.flatMap((globalIndex, localIndex) =>
@@ -6084,6 +6104,7 @@ async function polishCommittedChemistry(molecule, changedAtomIndices) {
       scope:plan.scope, bondRadius:1, stagedChemistry:true,
       cleanupMode:plan.cleanupMode,
       fixedInheritedHeavyAtomCount:plan.fixedInheritedHeavyAtomCount,
+      transformedRegion:transformedRegion ? structuredClone(transformedRegion) : null,
     });
     return result;
   } catch (error) {
@@ -6111,6 +6132,17 @@ async function finishChemistryTransaction() {
     reconciled.forEach((atom) => {
       if (molecule.atoms.includes(atom)) transaction.changedAtoms.add(atom);
     });
+    // Hydrogen reconciliation is part of the committed graph. Assign stable
+    // identities after it, before provenance hashing and transformed-ring
+    // analysis, so an edit cannot sanitize successfully yet fail its audit
+    // merely because Finish created a new H atom.
+    if (state.dockingReference) {
+      const { ensureStableAtomIds } = await import('./docking/reference-core.mjs');
+      ensureStableAtomIds(molecule,
+        `design-${molecule.source?.pdbId || 'complex'}`,
+        [ ...(state.dockingReference.ligand?.atomIds || []),
+          ...transaction.snapshot.atoms.map((atom) => atom.designAtomId) ].filter(Boolean));
+    }
     invalidateEditedChemistry(molecule);
     refreshStructureComponents();
     state.selectedAtoms = selectedAtomObjects.map((atom) => molecule.atoms.indexOf(atom))
@@ -6128,7 +6160,8 @@ async function finishChemistryTransaction() {
     }
     const changedAtomIndices = changedAtoms.map((atom) => molecule.atoms.indexOf(atom))
       .filter((index) => index >= 0);
-    const polish = await polishCommittedChemistry(molecule, changedAtomIndices);
+    const polish = await polishCommittedChemistry(molecule, changedAtomIndices,
+      { beforeMolecule:transaction.snapshot, editId:transaction.editId });
     if (state.chemistryTransaction !== transaction || state.molecule !== molecule) return null;
     const contactFeatureRemaps = await reconcileDockingContactFeaturesAfterChemistry(
       transaction, changedAtomIndices);
@@ -6727,7 +6760,261 @@ async function runImmediateChemistryTestEdit(callback) {
   finally { control.checked = previous; updateChemistryEditor(); }
 }
 
-window.molariumTest = Object.freeze({
+function chemistActionKeys(args, allowed = []) {
+  const unexpected = Object.keys(args || {}).filter((key) => !allowed.includes(key));
+  if (unexpected.length) throw new Error(`Unexpected argument${unexpected.length === 1 ? '' : 's'}: ${unexpected.join(', ')}`);
+}
+
+function chemistActionEnum(value, allowed, label) {
+  if (!allowed.includes(value)) throw new Error(`${label} must be one of: ${allowed.join(', ')}`);
+  return value;
+}
+
+function chemistActionSummary(extra = {}) {
+  const molecule = state.molecule;
+  return { molecule:molecule ? { name:molecule.name || 'Molecule', atoms:molecule.atoms.length,
+    bonds:molecule.bonds.length, chemistryValidation:structuredClone(
+      molecule.source?.chemistryValidation || null) } : null,
+  mode:state.mode, selectedAtomIds:(state.selectedAtoms || [])
+    .map((index) => molecule?.atoms?.[index]?.designAtomId).filter(Boolean),
+  pendingChemistry:state.chemistryTransaction ? {
+    editCount:state.chemistryTransaction.editCount,
+    finishing:Boolean(state.chemistryEditFinishing),
+  } : null, ...extra };
+}
+
+function persistChemistActionAudit(record) {
+  if (!state.molecule) return;
+  const entry = { schema:'molarium.chemist-action-audit/v1', ...structuredClone(record),
+    outcomeState:{ moleculeName:state.molecule.name || 'Molecule',
+      atomCount:state.molecule.atoms.length, bondCount:state.molecule.bonds.length,
+      mode:state.mode, pendingChemistry:Boolean(state.chemistryTransaction),
+      selectedAtomIds:(state.selectedAtoms || []).map((index) =>
+        state.molecule.atoms[index]?.designAtomId).filter(Boolean) } };
+  state.chemistActionAudit = [...state.chemistActionAudit, entry].slice(-500);
+  state.molecule.source = { ...(state.molecule.source || {}),
+    chemistActionAudit:structuredClone(state.chemistActionAudit) };
+}
+
+async function ensureChemistActionAtomIds() {
+  if (!state.molecule?.atoms?.length) throw new Error('Load a molecule before using Chemist Actions.');
+  const { ensureStableAtomIds } = await import('./docking/reference-core.mjs');
+  ensureStableAtomIds(state.molecule, `chemist-${state.molecule.source?.pdbId || 'molecule'}`,
+    state.dockingReference?.ligand?.atomIds || []);
+  const byId = new Map();
+  state.molecule.atoms.forEach((atom, index) => {
+    if (!atom.designAtomId || byId.has(atom.designAtomId))
+      throw new Error('The current molecule does not have unique persistent atom identities.');
+    byId.set(atom.designAtomId, index);
+  });
+  return byId;
+}
+
+async function inspectChemistActionState({ scope = 'ligand', includeCoordinates = false,
+  maximumAtoms = 100 } = {}) {
+  chemistActionEnum(scope, ['ligand','selection','all'], 'scope');
+  if (typeof includeCoordinates !== 'boolean') throw new Error('includeCoordinates must be boolean');
+  const limit = Number(maximumAtoms);
+  if (!Number.isInteger(limit) || limit < 1 || limit > 500)
+    throw new Error('maximumAtoms must be an integer from 1 to 500');
+  await ensureChemistActionAtomIds();
+  let indices;
+  if (scope === 'selection') indices = [...state.selectedAtoms];
+  else if (scope === 'ligand') indices = dockingLigandComponent()?.atomIndices.slice()
+    || state.structureComponents.find((component) => component.kind === 'ligand')?.atomIndices.slice()
+    || state.molecule.atoms.map((_, index) => index);
+  else indices = state.molecule.atoms.map((_, index) => index);
+  const totalAtomCount = indices.length;
+  indices = indices.slice(0, limit);
+  const included = new Set(indices);
+  const atoms = indices.map((index) => {
+    const atom = state.molecule.atoms[index];
+    return { atomId:atom.designAtomId, element:atom.element,
+      formalCharge:atomFormalCharge(atom), aromatic:Boolean(atom.aromatic),
+      atomName:atom.atomName || null, residueName:atom.residueName || null,
+      chain:atom.chain || null, residueIndex:atom.residueIndex ?? null,
+      ...(includeCoordinates ? { coordinatesAngstrom:[Number(atom.x),Number(atom.y),Number(atom.z)] } : {}) };
+  });
+  const bonds = state.molecule.bonds.flatMap((bond) => included.has(bond.a) && included.has(bond.b)
+    ? [{ atomIds:[state.molecule.atoms[bond.a].designAtomId,
+      state.molecule.atoms[bond.b].designAtomId], order:Number(bond.order || 1),
+      aromatic:Boolean(bond.aromatic || Number(bond.order) === 1.5) }] : []);
+  const contacts = (state.dockingReference?.hydrogenBonds || []).map((definition) => {
+    const effective = effectiveDockingHydrogenBondDefinition(definition);
+    const proposal = state.dockingContactRemapProposals.get(definition.id);
+    return { contactId:definition.id, label:definition.label,
+      required:state.dockingSelectedHbondIds.has(definition.id),
+      available:!proposal && dockingContactAvailable(effective),
+      remapStatus:proposal?.status || (state.dockingContactRemaps.has(definition.id) ? 'mapped' : 'original') };
+  });
+  return chemistActionSummary({ scope, truncated:totalAtomCount > atoms.length,
+    totalAtomCount, atoms, bonds, contacts,
+    poseReference:state.dockingReference ? { mode:state.dockingReference.mode,
+      capturedAt:state.dockingReference.capturedAt,
+      resultPoseCount:state.dockingResult?.run?.candidates?.length || 0 } : null,
+    transformedRingRegions:structuredClone(
+      state.molecule.source?.posePropagationEditRegions || []),
+    chemistActionAuditCount:state.chemistActionAudit.length });
+}
+
+function installChemistActionsApi(module) {
+  const empty = (args) => chemistActionKeys(args);
+  const summarizeMutation = async (operation) => {
+    const result = await operation();
+    return chemistActionSummary({ validation:structuredClone(result?.validation || null),
+      polish:result?.polish ? { cleanupMode:result.polish.cleanupMode || null,
+        initialEnergy:result.polish.initialEnergy ?? null,
+        finalEnergy:result.polish.finalEnergy ?? null } : null,
+      contactFeatureRemaps:structuredClone(result?.contactFeatureRemaps || []) });
+  };
+  const routes = {
+    'session.inspect':async (args) => { chemistActionKeys(args,
+      ['scope','includeCoordinates','maximumAtoms']); return inspectChemistActionState(args); },
+    'view.setMode':async (args) => { chemistActionKeys(args, ['mode']);
+      const mode = chemistActionEnum(args.mode, ['view','build','run'], 'mode');
+      if (!setMode(mode)) throw new Error(`Molarium could not enter ${mode} mode`);
+      return chemistActionSummary(); },
+    'build.setTool':async (args) => { chemistActionKeys(args, ['tool']);
+      const tool = chemistActionEnum(args.tool, ['add','select','move'], 'tool');
+      if (state.mode !== 'build') throw new Error('Enter Build mode before choosing a build tool.');
+      const internalTool = tool === 'move' ? 'manipulate' : tool;
+      const button = document.querySelector(`#build-tool-tabs [data-tool="${internalTool}"]`);
+      if (!button) throw new Error(`The ${tool} tool is unavailable`);
+      button.click(); return chemistActionSummary({ buildTool:tool }); },
+    'selection.replace':async (args) => { chemistActionKeys(args, ['atomIds']);
+      if (state.mode !== 'build' || state.buildTool !== 'select')
+        throw new Error('Enter Build mode and choose Select before selecting atoms.');
+      if (!Array.isArray(args.atomIds) || !args.atomIds.length || args.atomIds.length > 256
+        || args.atomIds.some((id) => typeof id !== 'string' || !id))
+        throw new Error('atomIds must contain 1 to 256 persistent atom IDs');
+      if (new Set(args.atomIds).size !== args.atomIds.length)
+        throw new Error('atomIds must not contain duplicates');
+      const byId = await ensureChemistActionAtomIds();
+      const indices = args.atomIds.map((id) => {
+        if (!byId.has(id)) throw new Error(`Unknown persistent atom ID: ${id}`);
+        return byId.get(id);
+      });
+      const prior = [...state.selectedAtoms];
+      state.selectedAtoms = []; state.selectedAtom = null;
+      try {
+        indices.forEach((index, ordinal) => {
+          selectGeometryAtom(index);
+          if (state.selectedAtoms[ordinal] !== index)
+            throw new Error(`Atom ${args.atomIds[ordinal]} is not bonded to the connected selection path`);
+        });
+      } catch (error) {
+        state.selectedAtoms = prior.filter((index) => state.molecule.atoms[index]);
+        state.selectedAtom = state.selectedAtoms.at(-1) ?? null;
+        updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw();
+        throw error;
+      }
+      return chemistActionSummary(); },
+    'selection.clear':async (args) => { empty(args); state.selectedAtoms = [];
+      state.selectedAtom = null; updateGeometryControl(); updateBuildStatus(); updateDockingUi();
+      draw(); schedule2DDepiction(0); return chemistActionSummary(); },
+    'chemistry.setAtom':async (args) => { chemistActionKeys(args, ['element','formalCharge']);
+      return summarizeMutation(() => applySelectedAtomChemistry(args.element,
+        args.formalCharge ?? 0)); },
+    'chemistry.setBond':async (args) => { chemistActionKeys(args, ['order']);
+      return summarizeMutation(() => applySelectedBondChemistry(args.order)); },
+    'chemistry.deleteAtom':async (args) => { empty(args);
+      return summarizeMutation(() => deleteSelectedAtomChemistry()); },
+    'chemistry.deleteBond':async (args) => { empty(args);
+      return summarizeMutation(() => deleteSelectedBondChemistry()); },
+    'chemistry.addHydrogen':async (args) => { empty(args);
+      return summarizeMutation(() => addSelectedHydrogenChemistry()); },
+    'chemistry.removeHydrogen':async (args) => { empty(args);
+      return summarizeMutation(() => removeSelectedHydrogenChemistry()); },
+    'chemistry.finish':async (args) => { empty(args);
+      if (!state.chemistryTransaction) throw new Error('There are no pending chemistry changes to finish.');
+      const result = await finishChemistryTransaction();
+      if (!result?.validation?.valid || result.pending)
+        throw new Error(result?.validation?.error
+          || state.chemistryTransaction?.validationError
+          || 'The complete chemical state is not valid yet.');
+      return chemistActionSummary({ validation:structuredClone(result.validation),
+        polish:result.polish ? { cleanupMode:result.polish.cleanupMode || null,
+          initialEnergy:result.polish.initialEnergy ?? null,
+          finalEnergy:result.polish.finalEnergy ?? null } : null,
+        contactFeatureRemaps:structuredClone(result.contactFeatureRemaps || []) }); },
+    'chemistry.discard':async (args) => { empty(args);
+      if (!discardChemistryTransaction()) throw new Error('There are no pending chemistry changes to discard.');
+      return chemistActionSummary(); },
+    'history.undo':async (args) => { empty(args);
+      if (state.chemistryTransaction) throw new Error('Finish or discard pending chemistry before undo.');
+      if (!state.buildHistory.length) throw new Error('There is no committed action to undo.');
+      state.redoHistory.push(buildHistoryEntry(state.molecule));
+      restoreMolecule(state.buildHistory.pop()); return chemistActionSummary(); },
+    'history.redo':async (args) => { empty(args);
+      if (state.chemistryTransaction) throw new Error('Finish or discard pending chemistry before redo.');
+      if (!state.redoHistory.length) throw new Error('There is no committed action to redo.');
+      state.buildHistory.push(buildHistoryEntry(state.molecule));
+      restoreMolecule(state.redoHistory.pop()); return chemistActionSummary(); },
+    'pose.captureReference':async (args) => { chemistActionKeys(args, ['mode']);
+      if (state.mode !== 'build') throw new Error('Enter Build mode before capturing a reference pose.');
+      const mode = chemistActionEnum(args.mode, ['propagate','selected-core'], 'mode');
+      document.querySelector('#docking-mode').value = mode === 'selected-core'
+        ? 'selected-core' : 'propagate'; updateDockingUi();
+      const reference = await captureCurrentDockingReference();
+      return chemistActionSummary({ poseReference:{ mode:reference.mode,
+        coreAtomCount:reference.ligand.coreAtomIds.length,
+        contactCount:reference.hydrogenBonds.length } }); },
+    'pose.setContact':async (args) => { chemistActionKeys(args, ['contactId','required']);
+      if (typeof args.contactId !== 'string' || !args.contactId)
+        throw new Error('contactId must be a captured contact ID');
+      if (typeof args.required !== 'boolean') throw new Error('required must be boolean');
+      const definition = state.dockingReference?.hydrogenBonds?.find((entry) => entry.id === args.contactId);
+      if (!definition) throw new Error(`Unknown captured contact: ${args.contactId}`);
+      const proposal = state.dockingContactRemapProposals.get(definition.id);
+      if (args.required && (proposal || !dockingContactAvailable(
+        effectiveDockingHydrogenBondDefinition(definition))))
+        throw new Error(`Contact ${args.contactId} is not currently available; finish or reconcile the chemistry first.`);
+      if (args.required) state.dockingSelectedHbondIds.add(args.contactId);
+      else state.dockingSelectedHbondIds.delete(args.contactId);
+      updateDockingUi(); return chemistActionSummary({ contactId:args.contactId,
+        required:args.required }); },
+    'pose.refine':async (args) => { chemistActionKeys(args, ['searchChains']);
+      const searchChains = Number(args.searchChains ?? 16);
+      if (![8,16,32,64].includes(searchChains))
+        throw new Error('searchChains must be 8, 16, 32, or 64');
+      const select = document.querySelector('#docking-conformer-count');
+      select.value = String(searchChains); updateDockingUi();
+      const result = await runBrowserConstrainedDocking();
+      return chemistActionSummary({ refinement:{ candidates:result.run.candidates.length,
+        feasible:result.run.feasibleCount, selectedRank:result.run.selected.rank,
+        selectedFeasible:result.run.selected.feasible,
+        selectedScoreKcalMol:result.run.selected.totalScoreKcalMol } }); },
+    'pose.apply':async (args) => { chemistActionKeys(args, ['index']);
+      const index = Number(args.index ?? 0);
+      if (!Number.isInteger(index) || index < 0) throw new Error('index must be a non-negative integer');
+      if (!state.dockingResult?.run?.candidates?.[index]) throw new Error(`Refined pose ${index} does not exist`);
+      state.dockingPoseIndex = index;
+      const pose = await applySelectedDockingPose();
+      return chemistActionSummary({ appliedPose:{ index, rank:pose.rank,
+        feasible:pose.feasible, scoreKcalMol:pose.totalScoreKcalMol } }); },
+    'optimization.run':async (args) => { chemistActionKeys(args, ['method']);
+      const method = chemistActionEnum(args.method,
+        ['ligand-rdkit','pocket-webgpu','webgpu','rdkit','ani2x'], 'method');
+      if (state.mode !== 'build') throw new Error('Enter Build mode before optimizing.');
+      const option = document.querySelector(`#build-optimizer-select option[value="${method}"]`);
+      if (!option || option.disabled) throw new Error(`Optimization method ${method} is unavailable for this molecule`);
+      const select = document.querySelector('#build-optimizer-select');
+      select.value = method; select.dataset.userSelected = 'true'; updateOptimizerControls();
+      const result = await runSelectedBuildOptimization();
+      if (!result) throw new Error(`${method} optimization did not complete`);
+      return chemistActionSummary({ optimization:{ method,
+        initialEnergy:result.initialEnergy ?? null, finalEnergy:result.finalEnergy ?? null,
+        iterations:result.iterations ?? null, converged:result.converged ?? null,
+        elapsedMs:result.elapsedMs ?? null } }); },
+  };
+  const api = module.createChemistActionsApi({ routes,
+    recordAudit:persistChemistActionAudit });
+  Object.defineProperty(window, 'MolariumChemistActions', { value:api,
+    enumerable:true, configurable:false, writable:false });
+  return api;
+}
+
+const molariumTestApi = Object.freeze({
   parsePdb(text) {
     const molecule = parsePDB(text);
     return { ...moleculeDiagnostics(molecule), source: structuredClone(molecule.source),
@@ -7634,6 +7921,9 @@ window.molariumTest = Object.freeze({
   current() { return { ...moleculeDiagnostics(state.molecule), molecule: structuredClone(state.molecule) }; },
   fragmentIds() { return FRAGMENTS.map((fragment) => fragment.id); },
 });
+if (MOLARIUM_NETWORK_POLICY.testApi === true)
+  Object.defineProperty(window, 'molariumTest', { value:molariumTestApi,
+    enumerable:false, configurable:false, writable:false });
 
 function exportXYZ() {
   if (!state.molecule) return showToast('Load a molecule first');
@@ -8207,25 +8497,34 @@ function editableLigandComponentPlan(molecule = state.molecule, preferredAtomInd
   return mapped && smallMoleculePolishEligible(mapped.molecule) ? mapped : null;
 }
 
-function referencePreservingPolishSelection(molecule, globalAtomIndices) {
+function referencePreservingPolishSelection(molecule, globalAtomIndices,
+  releasedAtomIds = []) {
   const reference = molecule === state.molecule ? state.dockingReference : null;
   if (reference?.mode !== 'pose-propagation'
     || selectedDockingEditCleanup() !== 'preserve-reference') return null;
   const referenceElementById = new Map(reference.ligand.atomIds.map((id, index) =>
     [id, reference.ligand.elements[index]]));
+  const released = new Set([
+    ...Array.from(molecule.source?.posePropagationEditRegions || [])
+      .flatMap((entry) => entry.releasedHeavyAtomIds || []),
+    ...Array.from(releasedAtomIds || []),
+  ]);
   const fixed = globalAtomIndices.filter((globalIndex) => {
     const atom = molecule.atoms[globalIndex];
-    return atom.element !== 'H' && referenceElementById.get(atom.designAtomId) === atom.element;
+    return atom.element !== 'H' && !released.has(atom.designAtomId)
+      && referenceElementById.get(atom.designAtomId) === atom.element;
   });
   const fixedSet = new Set(fixed);
   return {
     cleanupMode:'preserve-reference',
     fixedInheritedHeavyAtomCount:fixed.length,
+    releasedInheritedHeavyAtomCount:released.size,
     movableGlobalAtomIndices:globalAtomIndices.filter((index) => !fixedSet.has(index)),
   };
 }
 
-function localEditPolishPlan(molecule, changedAtomIndices, bondRadius = 2) {
+function localEditPolishPlan(molecule, changedAtomIndices, bondRadius = 2,
+  { releasedAtomIds = [] } = {}) {
   const changed = Array.from(changedAtomIndices || [], Number);
   const mapped = editableLigandComponentPlan(molecule, changed);
   const useMappedLigand = Boolean(mapped && (state.dockingReference
@@ -8237,7 +8536,8 @@ function localEditPolishPlan(molecule, changedAtomIndices, bondRadius = 2) {
       scope:'molecule', cleanupMode:'free-local', fixedInheritedHeavyAtomCount:0 };
   }
   if (!mapped || !changed.some((index) => mapped.globalToLocal.has(index))) return null;
-  const preserving = referencePreservingPolishSelection(molecule, mapped.globalAtomIndices);
+  const preserving = referencePreservingPolishSelection(molecule, mapped.globalAtomIndices,
+    releasedAtomIds);
   if (preserving) return { ...mapped, ...preserving, scope:'ligand component' };
   const component = new Set(mapped.globalAtomIndices);
   return { ...mapped,
@@ -11677,6 +11977,8 @@ async function loadLaunchMolecule() {
 }
 
 initializeNetworkPolicyUi();
+window.MolariumChemistActionsReady = import('./chemist-actions.mjs')
+  .then((module) => installChemistActionsApi(module));
 loadLaunchMolecule();
 renderFragmentLibrary();
 updateHistoryButtons();

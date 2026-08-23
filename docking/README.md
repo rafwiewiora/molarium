@@ -11,7 +11,7 @@ seeds, geometric constraints, run events, and result hashes travel together.
 The design is informed by the staged-search separation described for Glide and by ICM's use of
 internal-coordinate sampling and soft restraints. Glide's public API distinguishes reference-ligand
 core constraints from receptor H-bond constraints; ICM's public documentation describes
-flat-bottom interaction restraints and reference-ligand tethers. Pose Propagation 0.7 adds an
+flat-bottom interaction restraints and reference-ligand tethers. Pose Propagation 0.8 adds an
 independent contact-capture stage, chemically protected ring moves, explicit capture-sanity gates,
 and guarded physical refinement.
 Rowan's open-source `openconf` analogue mode informed the
@@ -21,8 +21,9 @@ implement either product's grids, search, refinement, or scoring function.
 
 Pose Propagation-1 additionally follows the published congeneric/RBFE pattern of inheriting a
 trusted common region and sampling only modified substituents. Molarium edits preserve exact stable
-atom identities, so the default does not infer or ask the user to select an MCS: every surviving
-reference heavy atom is fixed automatically.
+atom identities, so the default does not infer or ask the user to select an MCS. Every surviving
+reference heavy atom is fixed automatically unless the recorded edit changes an existing ring;
+then the complete transformed ring is released behind its fixed external scaffold boundary.
 
 - Cournia Z et al. *Relative Binding Free Energy Calculations in Drug Discovery: Recent Advances
   and Practical Considerations.* J Chem Inf Model. 2017.
@@ -54,7 +55,7 @@ energy, and penalty definitions.
 
 ## Executable boundary
 
-ConstraintDock version `0.3.0` and Pose Propagation version `0.7.0` implement and test:
+ConstraintDock version `0.3.0` and Pose Propagation version `0.8.0` implement and test:
 
 - least-squares reference-core alignment;
 - exact reference-coordinate snapping for every mapped core atom plus an independent RMSD audit;
@@ -62,7 +63,8 @@ ConstraintDock version `0.3.0` and Pose Propagation version `0.7.0` implement an
 - required-H-bond feasibility and transparent penalty scoring;
 - deterministic feasible-first pose ranking;
 - stable atom identities for edit-derived reference cores;
-- automatic inheritance of every surviving reference heavy atom for recorded graph edits;
+- automatic inheritance of surviving reference heavy atoms, with an explicit audited whole-ring
+  release when a committed edit changes existing ring chemistry;
 - reference-preserving edit cleanup by default, with the older free local ring cleanup available explicitly;
 - exact restoration of surviving ligand-donor hydrogens used by selected captured contacts;
 - post-sanitization transfer of a deleted contact participant to every donor/acceptor-role-compatible
@@ -100,7 +102,7 @@ discard stale complex parameters, freshly parameterize the edited ligand with Op
 run RDKit WASM generation, rank the constrained poses, replay them deterministically, verify the
 hash chain, and apply a pose without moving the receptor. It also proves that a removed contact atom
 is either transferred by the role-compatible edit-boundary rule or explicitly omitted. Accuracy claims still require prospective
-cognate-redocking and cross-docking benchmarks; version 0.7 must be presented as experimental until
+cognate-redocking and cross-docking benchmarks; version 0.8 must be presented as experimental until
 those are added.
 
 ## Labbook design

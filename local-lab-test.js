@@ -64,7 +64,7 @@ class DevToolsClient {
 }
 
 try {
-  server = Bun.spawn(['bun', 'server.js', '--local-only', '--port', String(appPort)], {
+  server = Bun.spawn(['bun', 'server.js', '--local-only', '--test-api', '--port', String(appPort)], {
     cwd:import.meta.dir, stdout:'ignore', stderr:'pipe',
   });
   const documentResponse = await waitFor(async () => {

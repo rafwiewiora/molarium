@@ -89,7 +89,7 @@ const expression = `
 })()`;
 
 try {
-  server = Bun.spawn(['bun', 'server.js', '--port', String(appPort)], {
+  server = Bun.spawn(['bun', 'server.js', '--test-api', '--port', String(appPort)], {
     cwd: import.meta.dir, stdout: 'ignore', stderr: 'pipe',
   });
   await waitFor(async () => (await fetch(appUrl)).ok);

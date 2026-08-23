@@ -3,7 +3,7 @@
 ## Normative protocol
 
 Protocol ID: `molarium-pose-propagation-1`
-Protocol version: `0.7.0`
+Protocol version: `0.8.0`
 Status: experimental pose-preparation and pose-ranking method
 Canonical machine-readable definition: `MOLARIUM_POSE_PROPAGATION_PROTOCOL` in
 [`protocol.mjs`](./protocol.mjs)
@@ -26,7 +26,9 @@ claim that those ingredients are individually new or that the combined method is
 The independent Molarium contribution is the following precisely defined composition:
 
 1. For an in-app edit, recorded atom lineage replaces a chemically inferred MCS.
-2. Every surviving reference heavy atom is fixed, not merely a selected substructure.
+2. Every surviving reference heavy atom is fixed, not merely a selected substructure, except a
+   complete ring whose existing atom identity or bond order was changed by the committed edit.
+   Such a transformed ring is released as one unit behind an exact external scaffold boundary.
 3. Only graph branches containing no inherited atom are sampled by acyclic-torsion and safe
    saturated-ring crankshaft moves. Moves touching a perceived stereocenter, ring carbonyl/multiple
    bond, or lactam geometry are excluded.
@@ -87,6 +89,19 @@ An atom is inherited if and only if:
 - it exists in the edited ligand with the same `designAtomId`;
 - its element is unchanged; and
 - it is not hydrogen.
+
+There is one explicit edit-lineage exception. When a committed edit changes the element or formal
+charge of an existing ring atom, or changes the order/aromaticity of an existing ring bond, the
+complete touched ring system is excluded from the inherited set. Directly multiply bonded
+exocyclic atoms (for example a carbonyl oxygen) and ring-attached hydrogens move with it. Heavy
+atoms connected to that ring only through an external single bond remain inherited and exact.
+Attaching a new substituent to an otherwise unchanged reference ring does not release the ring.
+
+Each exception is an auditable graph fact, not a geometric guess. The molecule ledger records the
+changed atom IDs and bond keys, touched-ring IDs, released heavy/all-atom IDs, fixed boundary IDs,
+committed edit ID, and time. Releases accumulate across a multi-step chemical transformation. Thus
+pyridone C=C saturation releases its six-membered lactam ring, and a later N→C edit retains the
+same ring release while the external reference scaffold stays fixed.
 
 Deleted atoms are recorded as removed. Same-ID atoms with a changed element are recorded as changed
 and are not inherited. Heavy atoms with new IDs are recorded as added. Hydrogens are never fixed by
@@ -190,7 +205,8 @@ unresolved proposals as one history state.
 
 Reference capture changes the Build cleanup default to `Preserve reference`. Automatic edit cleanup
 and the explicit ligand MMFF94/UFF action then fix every surviving same-element reference heavy atom
-and move only hydrogens and non-inherited atoms. This preprocessing is upstream of the pose protocol:
+outside a registered transformed ring and move only hydrogens, non-inherited atoms, and the complete
+registered transformed ring. This preprocessing is upstream of the pose protocol:
 its output coordinates are hashed as the live edited-ligand input, and every cleanup is copied into
 the run labbook from `source.interactivePolishHistory`.
 

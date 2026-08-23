@@ -138,10 +138,10 @@ export const MOLARIUM_CONSTRAINT_DOCK_PROTOCOL = Object.freeze({
 export const MOLARIUM_POSE_PROPAGATION_PROTOCOL = Object.freeze({
   ...structuredClone(MOLARIUM_CONSTRAINT_DOCK_PROTOCOL),
   id:'molarium-pose-propagation-1',
-  version:'0.7.0',
+  version:'0.8.0',
   name:'Molarium Pose Propagation-1',
   title:'Edit-lineage reference-pose propagation and constrained refinement',
-  summary:'All surviving reference heavy atoms remain exact while H-bond restraints drive chemically gated torsion and protected-ring pose generation before fixed-scaffold OpenFF Sage relaxation.',
+  summary:'Surviving reference heavy atoms remain exact except complete rings whose chemistry changed; those rings relax behind a fixed external boundary while H-bond restraints drive chemically gated pose generation.',
   novelty:Object.freeze({
     claim:'independent protocol composition; methodological novelty not established',
     establishedElements:Object.freeze([
@@ -153,7 +153,7 @@ export const MOLARIUM_POSE_PROPAGATION_PROTOCOL = Object.freeze({
     ]),
     molariumChanges:Object.freeze([
       'recorded graph-edit lineage replaces an inferred MCS when the analogue is edited in Molarium',
-      'every surviving reference heavy atom is fixed, rather than a user-selected or inferred subset',
+      'every surviving reference heavy atom is fixed except a complete transformed ring registered from the committed graph edit; its external scaffold boundary remains exact',
       'acyclic non-amide torsions and saturated-ring crankshafts containing no inherited atom are sampled; moves touching a perceived stereocenter, ring multiple bond, carbonyl, or lactam geometry are excluded',
       'a pharmacophore-capture stage precedes physical refinement, so ordinary physical energy cannot suppress generation toward the selected restraints; explicit strain/clash sanity gates reject chemically broken captures',
       'required contacts are lexicographic feasibility states, not energy terms that can be outweighed',
@@ -220,6 +220,9 @@ export const MOLARIUM_POSE_PROPAGATION_PROTOCOL = Object.freeze({
     referenceSet:'all ligand heavy atoms present when the reference pose is captured',
     inheritedRule:'same designAtomId and same element in reference and edited ligand',
     changedElementRule:'exclude from inherited set and leave movable',
+    transformedRingRule:'when a committed edit changes an existing ring atom or existing ring bond, exclude the complete ring system, its directly multiply bonded exocyclic atoms, and attached hydrogens from the inherited set',
+    transformedRingBoundaryRule:'surviving heavy atoms connected to the transformed ring only by an external single bond remain inherited and exact',
+    transformedRingLedger:'every released atom ID, changed atom/bond, touched ring, fixed boundary, edit ID, and commit time is retained in source.posePropagationEditRegions',
     hydrogenRule:'hydrogens are never fixed by edit lineage',
     coordinateRule:'least-squares rigid alignment followed by exact reference-coordinate snap',
     minimumSurvivingHeavyAtoms:3,

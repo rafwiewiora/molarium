@@ -111,14 +111,17 @@ export function mapReferenceCore(reference, candidateAtoms) {
 // A recorded edit preserves designAtomId values.  That gives a stronger,
 // auditable correspondence than an inferred MCS: all surviving heavy atoms can
 // inherit their exact reference coordinates, while the new graph remains free.
-export function mapSurvivingReferenceAtoms(reference, candidateAtoms, { heavyOnly = true } = {}) {
+export function mapSurvivingReferenceAtoms(reference, candidateAtoms,
+  { heavyOnly = true, releasedAtomIds = [] } = {}) {
   if (!reference?.atomIds?.length || !reference?.positions?.length)
     throw new Error('A captured reference ligand is required');
   if (!Array.isArray(candidateAtoms) || !candidateAtoms.length)
     throw new Error('Candidate ligand atoms are required');
   const candidateById = new Map(candidateAtoms.map((atom, index) => [atom.designAtomId, index]));
   const referenceIds = new Set(reference.atomIds);
+  const released = new Set(Array.from(releasedAtomIds || [], String));
   const atomPairs = [], mappedAtomIds = [], removedAtomIds = [], changedElementAtomIds = [];
+  const releasedReferenceAtomIds = [];
   reference.atomIds.forEach((id, referenceIndex) => {
     if (heavyOnly && reference.elements[referenceIndex] === 'H') return;
     const candidateIndex = candidateById.get(id);
@@ -126,6 +129,7 @@ export function mapSurvivingReferenceAtoms(reference, candidateAtoms, { heavyOnl
     if (reference.elements[referenceIndex] !== candidateAtoms[candidateIndex].element) {
       changedElementAtomIds.push(id); return;
     }
+    if (released.has(id)) { releasedReferenceAtomIds.push(id); return; }
     atomPairs.push([referenceIndex, candidateIndex]);
     mappedAtomIds.push(id);
   });
@@ -142,6 +146,7 @@ export function mapSurvivingReferenceAtoms(reference, candidateAtoms, { heavyOnl
       : null;
   return {
     atomPairs, mappedAtomIds, removedAtomIds, changedElementAtomIds, addedAtomIds,
+    releasedReferenceAtomIds,
     maximumTriangleDoubleAreaAngstrom2, usable, reason,
   };
 }

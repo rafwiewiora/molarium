@@ -728,3 +728,52 @@ same unsupported parameterization boundary). No runtime failure or geometry-sani
 The private development report SHA-256 is
 `edc2e12d28912d5958fcc6830702584b7f57fec30e4ab9df16076ff6ccacba82`; it is not a release benchmark
 and must not be interpreted as an accuracy rate.
+
+### Decision D-031 — a changed ring is not an unchanged core
+
+Pose Propagation `0.8.0` keeps exact edit lineage but distinguishes survival from structural
+invariance. A committed element/formal-charge change on an existing ring atom or
+order/aromaticity change on an existing ring bond releases the complete touched ring system,
+directly multiply bonded exocyclic atoms, and attached hydrogens. External single-bond heavy-atom
+boundaries remain hard reference coordinates. The changed atoms/bonds, released and boundary IDs,
+edit ID, and commit time are appended to the molecule ledger and cumulative releases are excluded
+from later hard-core maps.
+
+Reason: saturating pyridone preserves all six heavy-atom identities but changes the appropriate
+geometry from planar to puckered. Treating identity as a hard coordinate constraint forced an
+unphysical planar lactam; changing N-H to CH2 then released only N and still could not make an
+ordinary cyclohexanone. The whole transformed ring is the smallest chemically coherent movable
+unit. Conversely, adding methyl to an unchanged ring is not a reason to discard trusted ring
+coordinates, so new attachments alone do not trigger release.
+
+### Decision D-032 — agent automation terminates at chemist actions
+
+The versioned `molarium.chemist-actions/v1` browser API is the supported agent boundary. It exposes
+only UI-equivalent inspection by persistent ID, connected selection, chemistry transactions,
+history, reference/contact setup, pose refinement/application, and visible Build optimization.
+Inputs are bounded plain JSON, commands are serialized, and recognized actions receive ordered
+timestamped audit entries. Test fixture injection, arbitrary callbacks, coordinate replacement,
+score access, module access, and network actions are absent.
+
+The production entry point is module-scoped and does not install the privileged regression harness.
+The harness is enabled only by an explicit `--test-api` local-server flag. This is defense in depth,
+not a claim that an in-page API can sandbox a caller already granted arbitrary page JavaScript;
+an agent host must expose only the JSON action dispatcher.
+
+Reason: an agent test that calls a convenient internal mutation or scoring function does not prove
+that a chemist can reproduce the workflow. Sharing one constrained route also prevents successful
+tests from concealing broken UI transaction, identity, validation, or provenance behavior.
+
+### Validation V-017 — public direct-edit route and future ring generator
+
+The real hydrated 7KPA browser regression now performs C26=C27→single and C30=C29→single in one
+pending batch, finishes the lactam, changes N3→C in a second batch, and finishes cyclohexanone using
+only Chemist Actions. It requires valid RDKit sanitization, retained C28=O3, exact external C23,
+measurable released-ring motion, complete registered ring/O3 release, retained Lys→O3 contact, and
+explicit loss of the removed N3-H donor contact. The first run exposed commit-added hydrogens without
+stable IDs; IDs are now assigned after Finish reconciliation and before provenance analysis.
+
+A separate backend-neutral closed-ring generator test accepts a valid cyclohexanone chair, rejects
+an out-of-plane carbonyl and a configured stereochemical inversion, keeps three external scaffold
+atoms bitwise exact, and chooses the restraint-feasible conformer. This generator is future-facing
+and is not yet wired into Pose Propagation's default search.

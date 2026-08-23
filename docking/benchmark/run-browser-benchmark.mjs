@@ -178,7 +178,7 @@ function caseExpression(entry) {
 let server, chrome, client;
 const results = [];
 try {
-  server = Bun.spawn(['bun', 'server.js', '--local-only', '--port', String(appPort)], {
+  server = Bun.spawn(['bun', 'server.js', '--local-only', '--test-api', '--port', String(appPort)], {
     cwd:repositoryRoot, stdout:'ignore', stderr:'pipe',
   });
   await waitFor(async () => (await fetch(appUrl)).ok);

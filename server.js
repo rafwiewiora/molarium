@@ -6,6 +6,7 @@ const inlinePort = Bun.argv.find((argument) => argument.startsWith('--port='));
 const requestedPort = portFlag >= 0 ? Bun.argv[portFlag + 1] : inlinePort?.slice('--port='.length);
 const port = Number(requestedPort || Bun.env.PORT || 3000);
 const localOnly = Bun.argv.includes('--local-only') || Bun.env.MOLARIUM_LOCAL_ONLY === '1';
+const testApi = Bun.argv.includes('--test-api') || Bun.env.MOLARIUM_TEST_API === '1';
 
 const LOCAL_LAB_POLICY = [
   "default-src 'self'",
@@ -73,6 +74,7 @@ const server = Bun.serve({
         allowedNetworkOrigins: localOnly ? [url.origin] : ['user-approved external services'],
         buildManifest: '/local-lab-manifest.json',
         assetBase: null,
+        testApi,
       };
       return new Response(`globalThis.MOLARIUM_RUNTIME_CONFIG = Object.freeze(${JSON.stringify(config)});\n`, {
         headers: responseHeaders('text/javascript; charset=utf-8', 'no-store'),

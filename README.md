@@ -216,8 +216,10 @@ residue centered during trajectory playback.
 
 For a ligand edited inside Molarium, **Pose Propagation-1** is the default. Capture the prepared
 reference pose, edit the ligand, and refine: every surviving heavy atom is identified from the
-recorded graph-edit lineage and remains fixed at its exact reference coordinate. Added or replaced
-graph branches undergo deterministic-seed acyclic-torsion and protected-ring search. Moves touching a
+recorded graph-edit lineage and remains fixed at its exact reference coordinate unless the edit
+changes existing ring chemistry. A changed ring is released as one audited unit, including a direct
+carbonyl, while the external reference scaffold remains fixed. Added or replaced graph branches
+undergo deterministic-seed acyclic-torsion and protected-ring search. Moves touching a
 perceived stereocenter, ring carbonyl/multiple bond, or lactam geometry are excluded. Required
 contacts drive a dedicated pharmacophore-capture stage before ordinary physical scoring is allowed
 to act; explicit relative-strain and steric-clash sanity gates prevent a geometrically satisfied but
@@ -266,6 +268,20 @@ and a final SHA-256. Method lineage, exclusions, tests, and the engineering deci
 [`docking/`](./docking/). The exact implementation-independent procedure, equations, random-number
 vector, failure rules, and validation contract are frozen in
 [`docking/POSE-PROPAGATION-PROTOCOL.md`](./docking/POSE-PROPAGATION-PROTOCOL.md).
+
+## Chemist Actions API
+
+Molarium exposes a versioned in-browser API for agent and scripted use, but only at the same action
+boundary available to a chemist in the interface. It can inspect persistent atom IDs, select bonded
+paths, edit atoms and bonds, finish or discard chemistry, undo/redo, capture a reference pose,
+choose required contacts, refine/apply a pose, and run a visible Build optimization method. It does
+not expose fixture injection, arbitrary JavaScript callbacks, internal scoring functions, direct
+coordinate replacement, or network actions. Commands execute serially and are appended to the
+current molecule's audit ledger. See [`CHEMIST-ACTIONS-API.md`](./CHEMIST-ACTIONS-API.md).
+
+Production loads `app.js` as a module and does not install the privileged regression harness.
+Automation hosts must grant agents only the frozen JSON action object, not an arbitrary JavaScript
+console; local test servers expose the synthetic harness only with the explicit `--test-api` flag.
 
 ## Protein input and preparation
 
