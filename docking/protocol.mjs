@@ -26,8 +26,8 @@ export const MOLARIUM_CONSTRAINT_DOCK_PROTOCOL = Object.freeze({
       doi: '10.1002/(SICI)1097-0134(1997)1+<215::AID-PROT29>3.3.CO;2-I',
       url: 'https://pubmed.ncbi.nlm.nih.gov/9485515/',
       adopted: Object.freeze([
-        'torsional sampling followed by local minimization',
-        'soft flat-bottom positional and interaction restraints',
+        'global internal-coordinate sampling interleaved with local minimization',
+        'biased-probability Monte Carlo as published method lineage',
       ]),
       excluded: Object.freeze(['ICM receptor grids', 'ICM scoring function', 'Biased Probability Monte Carlo implementation']),
     }),
@@ -66,9 +66,25 @@ export const MOLARIUM_CONSTRAINT_DOCK_PROTOCOL = Object.freeze({
       role: 'restraint definition reference',
       method: 'ICM interaction restraints and ligand tethers',
       citation: 'MolSoft ICM public user documentation.',
-      url: 'https://www.molsoft.com/gui/interaction-restraints.html',
-      adopted: Object.freeze(['flat-bottom harmonic penalty outside an allowed geometric range']),
+      url: 'https://molsoft.com/~eugene/icmpro/ligand-tether.html',
+      adopted: Object.freeze([
+        'a distance restraint exists before the search and acts as a force potential outside its allowed range',
+        'flat-bottom minimum/maximum distance restraints can be strongly weighted during redocking',
+      ]),
       excluded: Object.freeze(['MolSoft source code and proprietary parameter values']),
+    }),
+    Object.freeze({
+      role:'public product-behavior reference',
+      method:'ICM small-molecule docking workflow',
+      citation:'MolSoft ICM public small-molecule docking tutorial.',
+      url:'https://molsoft.com/~jack/icmpro/start-dock.html',
+      adopted:Object.freeze([
+        'interaction restraints contribute a harmonic force during flexible-ligand optimization rather than acting only as a final filter',
+      ]),
+      excluded:Object.freeze([
+        'ICM grid construction', 'ICM energy terms and weights',
+        'ICM conformational-stack implementation', 'ICM commercial defaults',
+      ]),
     }),
   ]),
   coreConstraint: Object.freeze({
@@ -122,10 +138,10 @@ export const MOLARIUM_CONSTRAINT_DOCK_PROTOCOL = Object.freeze({
 export const MOLARIUM_POSE_PROPAGATION_PROTOCOL = Object.freeze({
   ...structuredClone(MOLARIUM_CONSTRAINT_DOCK_PROTOCOL),
   id:'molarium-pose-propagation-1',
-  version:'0.5.0',
+  version:'0.7.0',
   name:'Molarium Pose Propagation-1',
   title:'Edit-lineage reference-pose propagation and constrained refinement',
-  summary:'All surviving reference heavy atoms remain exact while new graph branches undergo receptor-aware torsion search and fixed-scaffold OpenFF Sage relaxation.',
+  summary:'All surviving reference heavy atoms remain exact while H-bond restraints drive chemically gated torsion and protected-ring pose generation before fixed-scaffold OpenFF Sage relaxation.',
   novelty:Object.freeze({
     claim:'independent protocol composition; methodological novelty not established',
     establishedElements:Object.freeze([
@@ -138,7 +154,8 @@ export const MOLARIUM_POSE_PROPAGATION_PROTOCOL = Object.freeze({
     molariumChanges:Object.freeze([
       'recorded graph-edit lineage replaces an inferred MCS when the analogue is edited in Molarium',
       'every surviving reference heavy atom is fixed, rather than a user-selected or inferred subset',
-      'only acyclic non-amide single-bond branches containing no inherited atom are sampled',
+      'acyclic non-amide torsions and saturated-ring crankshafts containing no inherited atom are sampled; moves touching a perceived stereocenter, ring multiple bond, carbonyl, or lactam geometry are excluded',
+      'a pharmacophore-capture stage precedes physical refinement, so ordinary physical energy cannot suppress generation toward the selected restraints; explicit strain/clash sanity gates reject chemically broken captures',
       'required contacts are lexicographic feasibility states, not energy terms that can be outweighed',
       'a deleted ligand contact participant can transfer to any donor/acceptor-role-compatible feature created at the same recorded edit boundary',
       'ligand-only relaxation is accepted only after a complete receptor-aware feasibility and score audit',
@@ -184,12 +201,15 @@ export const MOLARIUM_POSE_PROPAGATION_PROTOCOL = Object.freeze({
   sampling:Object.freeze({
     ...structuredClone(MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.sampling),
     ligand:'recorded graph edits outside an exact surviving-heavy-atom scaffold',
+    pharmacophoreCaptureSteps:96,
+    exhaustiveCapturePolishSweeps:3,
+    physicalRefinementSteps:96,
     stages:Object.freeze([
       'stable edit-lineage mapping of every surviving heavy atom',
       'post-sanitization role-compatible hypothesis generation for captured contacts affected by the graph edit',
       'exact reference-coordinate propagation',
       'exact restoration of surviving ligand-donor hydrogens used by required captured contacts',
-      'receptor-aware torsion Monte Carlo on new graph branches',
+      'restraint-biased torsion and saturated-ring internal-coordinate generation',
       'fixed-scaffold OpenFF Sage local relaxation',
       'explicit required H-bond audit',
       'constraint-feasible transparent ranking',
@@ -227,13 +247,17 @@ export const MOLARIUM_POSE_PROPAGATION_PROTOCOL = Object.freeze({
   }),
   candidateInitialization:Object.freeze({
     countDefault:16,
-    coordinateSource:'bitwise copies of the live edited-ligand coordinates; no ETKDG',
-    independentVariable:'deterministic torsion-chain seed only',
+    coordinateSource:'live edited-ligand coordinates plus deterministic captured-feature axis seeds; no ETKDG',
+    featureGuidedSeeding:'for each selected contact with a captured ligand-feature reference point and a single-anchor noncore edit region, align the anchor-to-feature vector to the captured reference vector and enumerate axial rotations',
+    featureGuidedAxialAnglesDegrees:Object.freeze([0, 60, -60, 120, -120, 180]),
+    featureGuidedLimitation:'single-anchor noncore edit regions only; seeding changes no bond length, bond angle, or inherited coordinate',
+    candidateFill:'deduplicate at 1e-6 Å and repeat the ordered unique seed list until the requested count is reached',
+    independentVariable:'deterministic feature seed ordinal plus restraint-biased internal-coordinate chain seed',
     baseSeed:20260819,
     candidateSeedXorMultiplierUint32:2654435769,
     candidateSeedFormula:'uint32(baseSeed XOR imul(candidateOrdinalOneBased, 0x9e3779b9))',
     prng:'mulberry32 uint32 implementation in stormm/core.mjs',
-    ligandDonorHydrogenRestoration:'for each required ligand-donor contact, restore the surviving explicit H to its captured reference coordinate before torsion search',
+    ligandDonorHydrogenRestoration:'for each required ligand-donor contact, restore the surviving explicit H to its captured reference coordinate before restraint-biased generation',
     duplicateHydrogenRule:'first selected contact in captured order restores a ligand hydrogen; later contacts using that hydrogen are audited and skipped',
   }),
   torsionMonteCarlo:Object.freeze({
@@ -251,6 +275,33 @@ export const MOLARIUM_POSE_PROPAGATION_PROTOCOL = Object.freeze({
     feasibilityTransitions:'infeasible-to-feasible always accepted; feasible-to-infeasible always rejected',
     equalFeasibilityAcceptance:'accept downhill; otherwise accept with exp(-deltaE/(kB*T))',
     bestPoseOrder:'feasible before infeasible, then lower objective',
+  }),
+  restraintBiasedGeneration:Object.freeze({
+    method:'molarium-restraint-biased-internal-coordinate-search/v3',
+    captureStepsDefault:96,
+    capturePolishSweeps:3,
+    physicalRefinementStepsDefault:96,
+    temperatureStartKelvin:900,
+    temperatureEndKelvin:150,
+    temperatureSchedule:'geometric over step/(steps-1)',
+    torsionAnglesDegrees:Object.freeze([-180, -120, -90, -60, -30, -15, 15, 30, 60, 90, 120, 180]),
+    ringCrankshaftAnglesDegrees:Object.freeze([-60, -45, -30, -20, -15, 15, 20, 30, 45, 60]),
+    localLineFractions:Object.freeze([0.5, 0.75, 1, 1.25]),
+    moveSelection:'uniform over eligible acyclic torsions and saturated-ring crankshafts',
+    ringEligibility:'isolated non-aromatic 4-12 membered rings with a movable arc containing no inherited atom; rings sharing any atom with another perceived ring are excluded; moves touching perceived tetrahedral stereocenters, ring multiple-bond atoms, or lactam/conjugated ring geometry are excluded',
+    ringMove:'rotate one safe ring arc and its attached substituents about two fixed arc endpoints; ring closure and every bond length are preserved; this is not a general ring-conformer generator',
+    localLineSearch:'evaluate four deterministic fractions of each proposed internal-coordinate angle and retain the lowest current-stage objective',
+    capturePolish:'after stochastic capture proposals, perform up to three deterministic best-improvement sweeps over every eligible move, angle, and line fraction',
+    captureObjective:'sum of selected required-contact flat-bottom penalties plus penalties only for exceeding the registered ligand-strain and steric-clash sanity gates; ordinary physical energy cannot outweigh pharmacophore capture',
+    captureMaximumRelativeLigandStrainKcalMol:100,
+    captureMaximumAdditionalStericClashes:2,
+    captureSanityReference:'lowest-strain exact-core starting seed; steric clashes are counted relative to the least-clashing exact-core starting seed',
+    stageTransition:'physical refinement starts only when every selected required contact is geometrically satisfied and the chemical-sanity gate passes',
+    physicalRefinementObjective:'rigid-receptor cross energy + relative Sage ligand strain + core and flat-bottom H-bond penalties',
+    acceptance:'annealed stochastic line-search heuristic on the current-stage objective; entering feasibility is always accepted and leaving feasibility is rejected; not equilibrium Metropolis/Hastings or ICM BPMC',
+    captureFailure:'return the closest audited pharmacophore geometry as infeasible; do not run physical relaxation that could hide the miss',
+    finalAudit:'ordinary unamplified objective and hard required-contact feasibility',
+    relationToIcm:'independent implementation of the publicly documented restraint-during-search principle; not ICM BPMC, receptor grids, score, source code, or proprietary defaults',
   }),
   fixedScaffoldRelaxation:Object.freeze({
     engine:'OpenMM 8.2 Reference platform compiled to WebAssembly',
@@ -300,15 +351,15 @@ export const MOLARIUM_POSE_PROPAGATION_PROTOCOL = Object.freeze({
   exclusions:Object.freeze([
     'automatic MCS for independently imported analogues',
     'tautomer, protomer, stereoisomer, or symmetry enumeration',
-    'ring-pucker or macrocycle moves',
+    'macrocycle-specific, fused-ring concerted, or bond-angle/bond-length moves beyond saturated-ring crankshafts',
     'receptor or crystallographic-water relaxation',
     'desolvation, entropy, affinity, or binding-free-energy estimation',
     'replacement of a deleted reference contact without complementary donor/acceptor perception and edit-boundary evidence',
   ]),
   implementation:Object.freeze({
     ...structuredClone(MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.implementation),
-    browserPoseGeneration:'implemented-recorded-edit-lineage-propagation',
-    browserLigandRefinement:'implemented-torsion-mc-plus-fixed-scaffold-sage-relaxation',
+    browserPoseGeneration:'implemented-recorded-edit-lineage-plus-restraint-biased-torsion-and-ring-generation',
+    browserLigandRefinement:'implemented-restraint-biased-internal-coordinate-search-plus-fixed-scaffold-sage-relaxation',
   }),
 });
 
@@ -338,6 +389,9 @@ export function posePropagationProtocolSnapshot(overrides = {}) {
     coreConstraint:{ ...base.coreConstraint, ...(overrides.coreConstraint || {}) },
     hydrogenBondConstraint:{
       ...base.hydrogenBondConstraint, ...(overrides.hydrogenBondConstraint || {}),
+    },
+    restraintBiasedGeneration:{
+      ...base.restraintBiasedGeneration, ...(overrides.restraintBiasedGeneration || {}),
     },
     sampling:{
       ...base.sampling, ...(overrides.sampling || {}),

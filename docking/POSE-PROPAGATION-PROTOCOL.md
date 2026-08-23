@@ -3,7 +3,7 @@
 ## Normative protocol
 
 Protocol ID: `molarium-pose-propagation-1`
-Protocol version: `0.5.0`
+Protocol version: `0.7.0`
 Status: experimental pose-preparation and pose-ranking method
 Canonical machine-readable definition: `MOLARIUM_POSE_PROPAGATION_PROTOCOL` in
 [`protocol.mjs`](./protocol.mjs)
@@ -27,14 +27,18 @@ The independent Molarium contribution is the following precisely defined composi
 
 1. For an in-app edit, recorded atom lineage replaces a chemically inferred MCS.
 2. Every surviving reference heavy atom is fixed, not merely a selected substructure.
-3. Only graph branches containing no inherited atom are torsionally sampled.
-4. Required contacts are lexicographic feasibility states: a favorable energy cannot compensate
+3. Only graph branches containing no inherited atom are sampled by acyclic-torsion and safe
+   saturated-ring crankshaft moves. Moves touching a perceived stereocenter, ring carbonyl/multiple
+   bond, or lactam geometry are excluded.
+4. Required contacts actively generate the pose in a pharmacophore-capture stage; they are not
+   evaluated only after conformer generation.
+5. Required contacts are lexicographic feasibility states: a favorable energy cannot compensate
    for losing one.
-5. Ligand-only force-field relaxation is accepted only after a receptor-aware feasibility and
+6. Ligand-only force-field relaxation is accepted only after a receptor-aware feasibility and
    complete-score audit.
-6. A contact affected by an R-group edit can transfer to any complementary donor or acceptor
+7. A contact affected by an R-group edit can transfer to any complementary donor or acceptor
    created at the same recorded edit boundary; physical refinement ranks the resulting hypotheses.
-7. Inputs, protocol, atom lineage, contact-feature decisions, settings, and results are recorded in a hash-linked
+8. Inputs, protocol, atom lineage, contact-feature decisions, settings, and results are recorded in a hash-linked
    browser-local labbook.
 
 This should be described as an **independent experimental protocol**. A stronger novelty claim
@@ -61,7 +65,7 @@ requires a systematic literature and patent search plus comparative validation.
 - Scaffold hopping with little surviving structure.
 - Unknown or alternative binding modes requiring global search.
 - Independently imported analogues: automatic symmetry-aware MCS/MCES mapping is not implemented.
-- Tautomer, protomer, stereoisomer, ring-pucker, or macrocycle enumeration.
+- Tautomer, protomer, stereoisomer, macrocycle, or fused-ring concerted enumeration.
 - Receptor or crystallographic-water rearrangement.
 - Binding-affinity or free-energy estimation.
 
@@ -198,9 +202,18 @@ every inherited heavy atom to the captured reference before sampling.
 
 ## Candidate initialization
 
-The default is 16 candidates. Each begins as a `Float64Array` copy of the live edited-ligand
-coordinates. Pose propagation does not run ETKDG, MMFF, UFF, rigid-body randomization, or shape
-alignment. Candidate diversity comes only from independent deterministic torsion chains.
+The default is 16 candidates. The first seed is a `Float64Array` copy of the live edited-ligand
+coordinates. Additional deterministic feature-guided seeds are constructed for selected contacts
+that have a captured ligand-feature reference point and whose complete noncore edit region connects
+to exactly one inherited anchor. The anchor-to-feature vector is aligned to the captured reference
+vector and the complete edit region is rotated about that target axis by
+`[0,60,-60,120,-120,180]°`. Seeding is rigid within the edit region: it changes no bond length, bond
+angle, or inherited coordinate. Seeds are deduplicated after rounding coordinates to `1e-6 Å`; the
+ordered unique list repeats until 16 candidates exist.
+
+Pose propagation does not run ETKDG, MMFF, UFF, rigid-body randomization, or shape alignment. Regions
+with zero or multiple inherited anchors do not receive feature-axis seeds. Subsequent candidate
+diversity comes from the deterministic restraint-driven internal-coordinate chains.
 
 Before search, a Horn-quaternion least-squares rigid transform aligns inherited candidate atoms to
 their reference coordinates. The quaternion eigenvector uses 64 shifted power iterations. After
@@ -234,7 +247,9 @@ Random numbers come from the exact `mulberry32` implementation in `stormm/core.m
 
 The first four candidate seeds are `2667732586`, `1029428385`, `3683863288`, and `2045296951`.
 
-## Eligible torsions
+## Eligible internal-coordinate moves
+
+### Acyclic torsions
 
 A bond is eligible only if it is:
 
@@ -246,20 +261,56 @@ A bond is eligible only if it is:
 
 Removing the bond defines two graph components. A rotor is excluded when both components contain an
 inherited atom. Otherwise the component containing no inherited atom moves. If neither side contains
-an inherited atom, the smaller component moves; ties follow bond orientation. A moving component
+an inherited atom, the smaller component moves; ties use a canonical numeric atom-index order. The
+complete move list is canonically sorted, so permuting the bond-array serialization cannot change a
+same-seed run. A moving component
 containing an inherited atom or containing only the rotating bond atom is excluded.
 
-Ring flips, macrocycle moves, bond-angle moves, bond-length moves, and rigid-body moves are absent.
+### Saturated-ring crankshafts
 
-## Torsion Monte Carlo
+The molecular graph is searched for shortest-path cycles of 3–12 atoms. A cycle is flexible only
+when every cycle edge is a non-aromatic single bond and it shares no atom with another perceived
+cycle; fused, bridged, and spiro systems are excluded. For every pair of nonadjacent ring atoms, each
+of the two paths between the pair is a candidate moving arc. The axis is the line through the path
+endpoints. The path interior and every non-ring branch attached to that interior rotate together.
+A move is rejected if its moving set contains an inherited atom or if any moving/fixed bond crosses
+the boundary anywhere except an axis endpoint. A move is also rejected when its axis or ring arc
+touches a graph-perceived tetrahedral stereocenter, a ring atom with a multiple/aromatic bond, or a
+lactam C-N unit. A pendant carbonyl attached through a saturated ring substituent can move rigidly
+with that substituent; a carbonyl whose carbon is itself a ring atom cannot. Rotation preserves every
+bond length exactly but is not assumed to preserve unguarded valence angles or stereochemistry.
 
-Each candidate receives 96 proposals by default. At each step:
+The registered angles are
+`[-60,-45,-30,-20,-15,15,20,30,45,60]°`. This is a local saturated-ring move family, not complete
+ring-conformer enumeration. Fused-ring concerted moves, lactam/conjugated-ring moves, direct ring-
+carbonyl repositioning, macrocycle closure, bond-angle moves,
+bond-length moves, and rigid-body moves are absent.
 
-1. Draw one eligible rotor uniformly.
-2. Draw one angle uniformly from
+## Restraint-driven generation and physical refinement
+
+Pose generation is deliberately staged. A required contact is not a post-generation filter and a
+favorable physical score cannot prevent the generator from attempting to capture it.
+
+### Stage 1: pharmacophore capture
+
+Each candidate receives 96 capture proposals by default. The dominant capture objective is the sum
+of the selected required-contact flat-bottom penalties defined above. Ordinary receptor
+Lennard-Jones/Coulomb and ligand-strain ranking cannot outweigh capture. Two registered sanity gates
+also participate: relative OpenFF Sage ligand strain may not exceed `100 kcal/mol` above the lowest
+exact-core starting seed, and the pose may introduce at most two steric-clash diagnostics beyond
+the least-clashing exact-core start. Squared gate excesses guide the search away from invalid
+geometry; a contact that meets D-H-A geometry but fails either gate is not feasible.
+
+At each proposal:
+
+1. Draw one eligible acyclic-torsion or saturated-ring crankshaft move uniformly.
+2. Draw one angle uniformly from the registered list for that move kind. The torsion list is
    `[-180,-120,-90,-60,-30,-15,15,30,60,90,120,180]°`.
-3. Rotate the complete moving graph component about the selected bond.
-4. Evaluate feasibility and the complete objective below.
+3. Evaluate four rotations from the current state using angle fractions
+   `[0.5,0.75,1,1.25]`.
+4. Select a feasible fraction before an infeasible fraction, then the lower capture objective,
+   then the lower fraction for an exact tie.
+5. Apply the annealed acceptance heuristic below to the selected fraction.
 
 Temperature follows a geometric schedule:
 
@@ -279,8 +330,31 @@ Acceptance is lexicographic:
 - unchanged feasibility with `delta > 0`: accept when
   `random() < exp(-delta/(kB*T))`.
 
-The retained best state is feasible before infeasible, then lowest complete objective. Input order
-breaks an exact final score tie.
+The retained best state is feasible before infeasible, then lowest current-stage objective.
+
+Because each random proposal is replaced by the objective-best of four deterministic fractions,
+this kernel is an annealed stochastic line-search heuristic. It is **not** a symmetric proposal and
+therefore is not claimed to be equilibrium Metropolis/Hastings sampling or ICM Biased Probability
+Monte Carlo. Temperature only controls acceptance of uphill line-search results.
+
+After the stochastic proposals, up to three deterministic best-improvement sweeps are performed.
+One sweep evaluates every eligible move, every registered angle for that move, and all four line
+fractions from the current state. The single feasible-first, lowest-penalty candidate is accepted
+only if it improves the current state. Polishing stops immediately when a sweep finds no
+improvement. Every evaluated geometry and count is audited.
+
+If all required contacts remain infeasible after capture and polish, the closest audited capture
+geometry is returned as infeasible. Physical stochastic line search and OpenMM relaxation are skipped so they
+cannot hide the failed pharmacophore hypothesis behind a lower-energy nonbinding geometry.
+
+### Stage 2: physical refinement
+
+Physical refinement starts only from a contact- and sanity-feasible geometry and receives 96
+proposals by default. It uses the same move families, angle fractions, PRNG stream, temperature
+schedule, and annealed acceptance heuristic. Its objective is the complete physical-plus-restraint
+objective below. A move from
+feasible to infeasible is always rejected, including when an infeasible line fraction has lower
+energy than a feasible fraction. Input order breaks an exact final ranking tie.
 
 ## Parameterization and score
 
@@ -301,7 +375,9 @@ Coulomb_ij = 332.063713299 * q_i*q_j / (4*r)
 ```
 
 Epsilon is converted from kJ/mol to kcal/mol. An individual LJ repulsion is capped at
-`1e6 kcal/mol`. `r < 0.72*sigma_ij` is reported as a steric clash but is not a separate penalty.
+`1e6 kcal/mol`. `r < 0.72*sigma_ij` is reported as a steric clash. It is not a separate physical-
+stage energy term; only clash count beyond the registered capture-sanity allowance contributes a
+capture-stage excess penalty and feasibility failure.
 
 For candidate `p`, ligand strain is:
 
@@ -319,7 +395,8 @@ candidate index ascending. This is a pose-ranking score and has no binding-affin
 
 ## Fixed-scaffold relaxation
 
-After torsion search, every candidate receives 60 ligand-only iterations by default using OpenMM
+After successful contact capture and physical refinement, each captured candidate receives 60
+ligand-only iterations by default using OpenMM
 8.2 Reference compiled to WebAssembly, the fresh Sage/Gasteiger ligand System, vacuum, and no added
 dynamics constraints. The receptor is not present in this minimizer.
 
@@ -347,9 +424,10 @@ Every run records:
 - reference-ligand hash;
 - inherited, added, removed, and changed-element IDs;
 - selected and omitted reference contacts;
-- actual candidate count, base seed, per-candidate seed, torsion settings, and rotor definitions;
+- actual candidate count, base seed, per-candidate seed, capture/refinement settings, and complete
+  internal-coordinate move definitions;
 - parameter identities and source hashes;
-- per-candidate Monte Carlo and relaxation statistics;
+- per-candidate capture line-search, exhaustive-polish, physical-refinement, and relaxation statistics;
 - feasibility, geometry, score components, ranking, and selected pose;
 - ordered events carrying the previous event hash; and
 - a final SHA-256 over the complete coordinate-free labbook.
@@ -388,7 +466,11 @@ The protocol is not release-valid unless tests establish:
 - the published PRNG vector and candidate seeds above;
 - inherited/added/removed/changed-element mapping;
 - rejection of underdetermined maps;
-- exclusion of ring, amide, and inherited-core torsions;
+- exclusion of amide/inherited-core torsions and exact bond/core preservation by ring crankshafts;
+- a generation test in which a misleading physical score favors the missed contact but the
+  pharmacophore-capture stage still creates and retains the feasible geometry;
+- deterministic exhaustive capture-polish replay and honest termination when the registered move
+  family cannot reach the restraint;
 - bit-for-bit inherited coordinates after relaxation;
 - feasible-first ranking even when an infeasible pose has lower energy;
 - correct H-bond boundary behavior;

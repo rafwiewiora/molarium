@@ -116,10 +116,13 @@ export async function runConstrainedDocking({ referencePositions, candidateConfo
     const hydrogenBonds = evaluatePoseHydrogenBonds(hydrogenBondConstraints, positions,
       protocol.hydrogenBondConstraint);
     const score = scoreConstrainedPose({ physicalEnergyKcalMol, core, hydrogenBonds });
+    const physicalFeasible = typeof physical !== 'object' || physical?.feasible !== false;
+    if (!physicalFeasible) score.feasible = false;
     candidates.push({ conformerIndex:index, fittedCoreRmsdAngstrom:transform.fittedRmsdAngstrom,
       positions, core, hydrogenBonds, refinement,
       hydrogenRestoration:prepared[index].hydrogenRestoration,
       physicalDetails:typeof physical === 'object' ? physical : null,
+      physicalFeasible,
       ...score });
   }
   if (afterRefinement) await afterRefinement(candidates);

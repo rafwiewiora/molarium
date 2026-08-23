@@ -565,13 +565,26 @@ const browserSuite = String.raw`(async () => {
       && propagationRun.selected.refinement.relaxation
         .maximumDisplacementAngstromPerIteration === 0.01
       && propagationLabbook.protocol.id === 'molarium-pose-propagation-1'
-      && propagationLabbook.protocol.version === '0.5.0'
+      && propagationLabbook.protocol.version === '0.7.0'
+      && propagationRun.selected.refinement.method
+        === 'molarium-restraint-biased-internal-coordinate-search/v3'
+      && propagationRun.selected.refinement.captureFeasible
+      && propagationRun.selected.refinement.physicalRefinementAttempted
+      && propagationRun.selected.refinement.capture?.bestEvaluation?.feasible
+      && propagationRun.selected.refinement.capture.bestEvaluation.chemicalValidity?.valid
+      && propagationRun.selected.refinement.capture.bestEvaluation.chemicalValidity
+        .maximumRelativeLigandStrainKcalMol === 100
+      && propagationRun.selected.refinement.capture.bestEvaluation.chemicalValidity
+        .maximumAdditionalStericClashes === 2
       && propagationLabbook.selections.atomLineage.inheritedAtomIds.length === 6
       && propagationLabbook.selections.atomLineage.addedAtomIds.length === 1
       && propagationLabbook.selections.editPreparation.selectedCleanupMode === 'preserve-reference'
       && Array.isArray(propagationLabbook.selections.editPreparation.interactivePolishHistory)
       && Array.isArray(propagationLabbook.selections.fixedReceptorContactParticipantIds)
       && propagationLabbook.events.some((event) => event.stage === 'captured-ligand-hydrogen-restoration')
+      && propagationLabbook.events.some((event) => event.stage === 'in-pocket-restraint-biased-generation'
+        && event.details.restraintParticipation.includes('stage 1 generates')
+        && event.details.restraintParticipation.includes('sanity gates'))
       && propagationLabbook.events.some((event) => event.stage === 'fixed-scaffold-relaxation'),
     'pose propagation records automatic atom lineage and fixed-scaffold Sage relaxation',
     JSON.stringify({ run:propagationRun, protocol:propagationLabbook.protocol.id,

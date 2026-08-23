@@ -216,16 +216,22 @@ residue centered during trajectory playback.
 
 For a ligand edited inside Molarium, **Pose Propagation-1** is the default. Capture the prepared
 reference pose, edit the ligand, and refine: every surviving heavy atom is identified from the
-recorded graph-edit lineage and remains fixed at its exact reference coordinate. Only added or
-replaced graph branches undergo deterministic receptor-aware torsion search. The edited ligand then
+recorded graph-edit lineage and remains fixed at its exact reference coordinate. Added or replaced
+graph branches undergo deterministic-seed acyclic-torsion and protected-ring search. Moves touching a
+perceived stereocenter, ring carbonyl/multiple bond, or lactam geometry are excluded. Required
+contacts drive a dedicated pharmacophore-capture stage before ordinary physical scoring is allowed
+to act; explicit relative-strain and steric-clash sanity gates prevent a geometrically satisfied but
+chemically broken structure from being called captured.
+The edited ligand then
 receives a fixed-scaffold OpenFF Sage relaxation; a relaxed result is kept only when it preserves
 required-contact feasibility and improves the complete pose-ranking objective. No manual core
 selection is needed.
 
 **Optimize** and **Refine edited group** are deliberately different. Optimize performs one local
 force-field descent from the coordinates currently on screen; ligand-only Optimize does not include
-the receptor in its energy. Refine launches the selected number of independently seeded torsion
-search chains, evaluates every proposal against the rigid receptor and required contacts, applies
+the receptor in its energy. Refine launches the selected number of independently seeded
+internal-coordinate search chains, first generates against the selected contact potentials,
+physically refines only captured poses against the rigid receptor, applies
 guarded fixed-scaffold relaxation, clusters duplicate heavy-atom geometries, and reports distinct
 poses. It therefore perceives the receptor; it is still a local analogue-pose method, not global
 docking.
@@ -234,10 +240,11 @@ This follows established congeneric/RBFE pose-preparation practice: preserve a t
 common region, sample modified substituents, resolve local clashes, and audit alternate binding
 modes rather than beginning with unconstrained global docking. Required D–H–A contacts remain hard
 feasible states during search. When an R-group replacement removes a contact atom, Molarium maps it
-automatically only when the sanitized edit contains one exact compatible donor/acceptor feature at
-the same recorded edit boundary. Ambiguous replacements require an explicit choice; geometry is
-never used to manufacture the mapping. The immutable receptor participant and complete decision are
-recorded in the hash-linked labbook.
+automatically when the sanitized edit contains one donor/acceptor-role-compatible feature at the
+same recorded edit boundary. Carbonyl, sulfonyl, nitrile, and other bioisosteric feature classes may
+therefore transfer the same interaction intent. Multiple candidates remain an explicit any-of
+restraint and are evaluated during generation; geometry is never used to manufacture eligibility.
+The immutable receptor participant and complete decision are recorded in the hash-linked labbook.
 
 **ConstraintDock-1** remains an expert selected-core search. It accepts any connected,
 non-collinear selection of at least three ligand heavy atoms, generates deterministic ETKDGv3
@@ -250,7 +257,7 @@ and Coulomb cross terms (8 Å site, relative dielectric 4), relative vacuum Open
 ligand energy, and explicit restraint penalties. The strain reference is
 relative to the lowest fixed-core starting seed. Pose propagation begins from the recorded edit;
 only the expert selected-core search uses MMFF94/UFF-prepared ETKDG conformers. Both paths omit
-receptor relaxation, solvent displacement, ring-pucker search, entropy, and
+receptor relaxation, solvent displacement, macrocycle/fused-ring concerted search, entropy, and
 binding-free-energy estimation. Treat the result as an experimental pose rank, not an affinity.
 
 Every run can export readable Markdown notes and a coordinate-free JSON audit containing exact

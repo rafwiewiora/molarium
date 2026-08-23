@@ -14,8 +14,14 @@ const valueAfter = (flag) => {
   return index >= 0 ? args[index + 1] : null;
 };
 const onlyCase = valueAfter('--case');
-const limit = Math.max(1, Number(valueAfter('--limit') || Number.POSITIVE_INFINITY));
+const outputName = valueAfter('--output');
 const smoke = args.includes('--smoke');
+if (outputName && (!/^[A-Za-z0-9._-]+\.json$/.test(outputName)
+  || outputName.includes('..'))) throw new Error('Benchmark output must be a simple JSON filename');
+const outputTag = outputName ? outputName.replace(/\.json$/, '')
+  : smoke ? 'smoke' : 'registered';
+const runMode = smoke ? 'smoke' : outputName ? 'development' : 'registered';
+const limit = Math.max(1, Number(valueAfter('--limit') || Number.POSITIVE_INFINITY));
 const selectedCases = input.cases.filter((entry) => !onlyCase || entry.id === onlyCase).slice(0, limit);
 if (!selectedCases.length) throw new Error(`No benchmark case matches ${onlyCase || 'the selection'}`);
 
@@ -66,7 +72,8 @@ class DevToolsClient {
 function caseExpression(entry) {
   const runSeeds = smoke ? [entry.protocol.seeds[0]] : entry.protocol.seeds;
   const conformerCount = smoke ? 2 : entry.protocol.searchChains;
-  const options = smoke ? { torsionSteps:8, fixedRelaxIterations:4 } : {};
+  const options = smoke ? { captureSteps:8, capturePolishSweeps:1,
+    torsionSteps:8, fixedRelaxIterations:4 } : {};
   return `(async () => {
     const entry = ${JSON.stringify(entry)};
     const api = window.molariumTest;
@@ -199,23 +206,24 @@ try {
       if (response.exceptionDetails)
         throw new Error(response.exceptionDetails.exception?.description || response.exceptionDetails.text);
       record = { ...response.result.value, startedAt, completedAt:new Date().toISOString(),
-        inputCaseSha256:sha256(JSON.stringify(entry)), runMode:smoke ? 'smoke' : 'registered' };
+        inputCaseSha256:sha256(JSON.stringify(entry)), runMode };
     } catch (error) {
       record = { caseId:entry.id, terminalOutcome:/parameter|OpenFF|Sage/i.test(error.message)
           ? 'parameterization-unsupported' : 'runtime-failure',
         error:error.message, startedAt, completedAt:new Date().toISOString(),
-        inputCaseSha256:sha256(JSON.stringify(entry)), runMode:smoke ? 'smoke' : 'registered', repeats:[] };
+        inputCaseSha256:sha256(JSON.stringify(entry)), runMode, repeats:[] };
     }
     results.push(record);
-    await writeFile(path.join(resultsDirectory, `${entry.id}.${smoke ? 'smoke' : 'registered'}.json`),
+    await writeFile(path.join(resultsDirectory, `${entry.id}.${outputTag}.json`),
       `${JSON.stringify(record, null, 2)}\n`);
     console.log(`${entry.id}: ${record.terminalOutcome}`);
   }
 
   const report = { schemaVersion:1, datasetId:input.datasetId,
-    runInputSha256:sha256(inputBytes), mode:smoke ? 'smoke' : 'registered',
+    runInputSha256:sha256(inputBytes), mode:runMode,
     selectedCaseCount:selectedCases.length, generatedAt:new Date().toISOString(), results };
-  const reportName = smoke ? 'benchmark-results.v0.1-smoke.json' : 'benchmark-results.v0.1.json';
+  const reportName = outputName || (smoke ? 'benchmark-results.v0.1-smoke.json'
+    : 'benchmark-results.v0.1.json');
   await writeFile(path.join(root, reportName), `${JSON.stringify(report, null, 2)}\n`);
   console.log(`Bioisostere browser benchmark: COMPLETE (${results.length} cases; ${report.mode})`);
 } finally {

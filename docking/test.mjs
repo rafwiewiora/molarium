@@ -181,16 +181,36 @@ assert.deepEqual(propagationMap.removedAtomIds, [automaticReference.atomIds[3]])
 assert.deepEqual(propagationMap.addedAtomIds, ['test:new:F']);
 assert.ok(propagationMap.maximumTriangleDoubleAreaAngstrom2 > 0.99);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.id, 'molarium-pose-propagation-1');
-assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.version, '0.5.0');
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.version, '0.7.0');
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping.minimumSurvivingHeavyAtoms, 3);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.coordinateMapping
   .minimumMaximumTriangleDoubleAreaAngstrom2, 1e-3);
 assert.match(MOLARIUM_POSE_PROPAGATION_PROTOCOL.candidateInitialization
   .ligandDonorHydrogenRestoration, /captured reference coordinate/);
+assert.deepEqual(MOLARIUM_POSE_PROPAGATION_PROTOCOL.candidateInitialization
+  .featureGuidedAxialAnglesDegrees, [0, 60, -60, 120, -120, 180]);
 assert.deepEqual(MOLARIUM_POSE_PROPAGATION_PROTOCOL.torsionMonteCarlo.proposalAnglesDegrees,
   [-180, -120, -90, -60, -30, -15, 15, 30, 60, 90, 120, 180]);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.torsionMonteCarlo.metropolisBoltzmannKcalMolKelvin,
   0.00198720425864083);
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.restraintBiasedGeneration.method,
+  'molarium-restraint-biased-internal-coordinate-search/v3');
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.restraintBiasedGeneration
+  .captureStepsDefault, 96);
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.restraintBiasedGeneration
+  .capturePolishSweeps, 3);
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.restraintBiasedGeneration
+  .captureMaximumRelativeLigandStrainKcalMol, 100);
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.restraintBiasedGeneration
+  .captureMaximumAdditionalStericClashes, 2);
+assert.match(MOLARIUM_POSE_PROPAGATION_PROTOCOL.restraintBiasedGeneration
+  .captureObjective, /cannot outweigh pharmacophore capture/);
+assert.match(MOLARIUM_POSE_PROPAGATION_PROTOCOL.restraintBiasedGeneration
+  .acceptance, /not equilibrium Metropolis\/Hastings or ICM BPMC/);
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.sampling.pharmacophoreCaptureSteps, 96);
+assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.sampling.exhaustiveCapturePolishSweeps, 3);
+assert.ok(MOLARIUM_POSE_PROPAGATION_PROTOCOL.restraintBiasedGeneration
+  .ringCrankshaftAnglesDegrees.includes(60));
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.fixedScaffoldRelaxation.stepScale, 1e-4);
 assert.equal(MOLARIUM_POSE_PROPAGATION_PROTOCOL.fixedScaffoldRelaxation
   .maximumDisplacementAngstromPerIteration, 0.01);
@@ -243,6 +263,24 @@ const dockingRun = await runConstrainedDocking({
 assert.equal(dockingRun.feasibleCount, 1);
 assert.equal(dockingRun.selected.conformerIndex, 1);
 assert.equal(dockingRun.selected.feasible, true);
+const chemicallyGatedRun = await runConstrainedDocking({
+  referencePositions:captured.positions,
+  candidateConformers:[translatedGood, translatedGood],
+  coreAtomPairs:mappedCore.atomPairs,
+  hydrogenBondConstraints:[{
+    id:'receptor-donor-to-ligand-acceptor', required:true, receptorRole:'donor',
+    donor:{ scope:'receptor', point:{ x:0, y:0, z:0 } },
+    hydrogen:{ scope:'receptor', point:{ x:1, y:0, z:0 } },
+    acceptor:{ scope:'ligand', atomIndex:3 },
+  }], protocol:MOLARIUM_CONSTRAINT_DOCK_PROTOCOL,
+  physicalScore:({ conformerIndex }) => ({ energyKcalMol:conformerIndex ? -10 : -100,
+    feasible:Boolean(conformerIndex), chemicalValidity:{ valid:Boolean(conformerIndex) } }),
+});
+assert.equal(chemicallyGatedRun.feasibleCount, 1,
+  'a geometrically satisfied contact is not feasible when the physical validity gate fails');
+assert.equal(chemicallyGatedRun.selected.conformerIndex, 1);
+assert.equal(chemicallyGatedRun.candidates.find((entry) => entry.conformerIndex === 0)
+  .physicalFeasible, false);
 assert.deepEqual(await verifyLabbook(workflowLabbook), { valid:true, reason:null, events:2 });
 await assert.rejects(() => appendLabbookEvent(labbook, {
   at:'2026-08-19T12:00:05.000Z', stage:'late-note', status:'invalid', details:{},

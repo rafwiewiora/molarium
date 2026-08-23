@@ -642,3 +642,89 @@ The focused browser gate replaces a captured carbonyl acceptor with a sulfonamid
 both sulfonyl oxygens as one unresolved any-of contact, executes reference-guided refinement without
 a pre-geometry user choice, and requires the hash-linked labbook to record both alternative
 evaluations and the alternative selected for the winning pose.
+
+### Decision D-029 — required contacts generate poses before physical refinement
+
+Pose Propagation `0.7.0` replaces the single blended search objective with two explicit stages. The
+capture stage evaluates selected required-contact flat-bottom penalties during acyclic-torsion and
+safe saturated-ring crankshaft proposals. Only registered excess-strain and excess-clash sanity
+penalties accompany the contact objective. It is followed by an exhaustive best-improvement scan of
+every eligible move, registered angle, and line fraction. The complete rigid-pocket and relative
+Sage objective is allowed to act only after every required contact is feasible, and it may never
+accept a move that loses feasibility. If capture fails, fixed-scaffold physical relaxation is
+skipped and the closest audited contact geometry is returned as infeasible.
+
+Reason: including a finite multiple of the restraint in a mixed objective is not sufficient. A large
+physical term can suppress the very conformations that the interaction hypothesis is meant to
+generate. A final feasibility filter then reports failure without having searched the relevant
+region. The staged objective makes the medicinal-chemistry hypothesis an explicit generator and
+keeps strain/interaction ranking downstream.
+
+The design follows the public ICM principle that interaction restraints contribute a force during
+flexible-ligand optimization, but it is an independent implementation. Molarium does not reproduce
+ICM's proprietary grids, scoring function, BPMC implementation, source, or defaults.
+
+### Validation V-014 — superseded pre-audit 7KPA diagnosis
+
+The focused unit gate assigns a lower physical energy to a ring conformation that misses its
+required H bond and a much higher energy to the contact-satisfying ring. The two-stage generator must
+still create the feasible pose in capture, enter physical refinement, and reject loss of the
+contact. Feasible line fractions must beat lower-energy infeasible fractions. Ring moves must retain
+bitwise core coordinates and every molecular-graph bond length, and same-seed replay must be exact.
+
+Before the stereochemistry/conjugation audit, the hydrated 7KPA pyridone-to-cyclohexanone diagnostic
+ran 16 chains at each of three registered seeds and reached best D-A 4.195 Å, H-A 3.456 Å, and
+D-H-A 131.58°. That trajectory used a ring move capable of repositioning the direct ring carbonyl by
+distorting unguarded ring geometry. It is retained only as debugging provenance and is **withdrawn
+as validation evidence**. It must not be quoted as v0.7 performance.
+
+### Decision D-030 — reject chemically broken capture and misnamed Monte Carlo
+
+An independent adversarial review found that the first ring-crankshaft implementation preserved
+bond lengths and closure but could change tetrahedral handedness or distort a lactam/conjugated ring
+while satisfying a required H bond. It also found that calling the four-fraction, objective-best
+proposal kernel “Metropolis Monte Carlo” was mathematically inaccurate: selecting the best of four
+state-dependent trial fractions makes the effective proposal asymmetric, and no Hastings correction
+is applied.
+
+Pose Propagation `0.7.0` therefore excludes every ring move whose axis or moving arc touches a
+graph-perceived tetrahedral stereocenter, a ring multiple-bond atom, or a lactam C-N unit. Capture is
+feasible only when all required contacts pass **and** relative Sage strain is at most 100 kcal/mol
+above the best exact-core start **and** no more than two steric-clash diagnostics are added relative
+to the least-clashing exact-core start. These are conservative sanity gates, not a binding score.
+The search kernel is named an annealed stochastic line-search heuristic and explicitly not claimed
+to be equilibrium Metropolis/Hastings or ICM BPMC.
+
+Reason: restraint-driven generation must not manufacture success by violating covalent geometry or
+stereochemical identity. Exact ICM behavior cannot be reproduced without its proprietary receptor
+grids, score, BPMC implementation, and defaults; adopting the public restraint-during-search
+principle while specifying an independent kernel is the reproducible boundary.
+
+### Validation V-015 — stereochemistry, conjugation, chemical gate, and serialization invariance
+
+Executable tests require a substituted cyclohexane's signed tetrahedral volume to remain unchanged,
+exclude moves touching a direct ring carbonyl and a 2-piperidone lactam C-N-C=O unit, and retain a
+positive pendant-carbonyl ring move that transports the complete carbonyl rigidly. A deliberately
+contact-satisfying but chemically invalid score must remain capture-infeasible and may never enter
+physical refinement. The same molecular graph with reversed bond-array order and swapped bond
+endpoints must enumerate the same normalized torsions and replay identical coordinates from the
+same seed. Zero physical proposals must report `captured-no-physical-proposals`, and top-level start
+and best objective values must belong to the same named stage.
+
+The safe v0.7 7KPA smoke gate exposes three eligible ring moves, none touching the direct ring
+carbonyl. Eight stochastic proposals plus one 120-evaluation exhaustive polish sweep leave the
+required Lys→cyclohexanone contact at its 6.706 Å D-A / 5.905 Å H-A start and report
+`capture-infeasible`; physical refinement and OpenMM relaxation are skipped. The other selected
+reference contact remains feasible, and the ligand passes the registered strain/clash sanity gate.
+
+### Validation V-016 — 25-system end-to-end browser smoke
+
+The v0.7 development smoke executes the actual browser preparation, OpenFF parameterization,
+reference/contact mapping, restraint-driven generation, ranking, and hash-linked labbook path for
+all 25 registered cases at reduced search effort. Outcomes are: 10 feasible poses, 5 explicit
+preparation blockers, 3 no-feasible-pose results, 1 unavailable reference contact, 2 unsupported
+parameterizations, and 4/5 successful infeasible negative controls (the fifth negative stops at the
+same unsupported parameterization boundary). No runtime failure or geometry-sanity failure occurs.
+The private development report SHA-256 is
+`edc2e12d28912d5958fcc6830702584b7f57fec30e4ab9df16076ff6ccacba82`; it is not a release benchmark
+and must not be interpreted as an accuracy rate.

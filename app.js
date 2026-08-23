@@ -4135,11 +4135,12 @@ async function runBrowserConstrainedDocking(options = {}) {
   updateDockingUi(); setDockingStatus('Preparing edited ligand');
   try {
     const [adapter, referenceCore, receptorScore, workflow, protocolModule, labbookModule,
-      torsionSearch, constraints, stormmCore, remapModule, featureSeeding] = await Promise.all([
+      torsionSearch, biasedSearch, constraints, stormmCore, remapModule, featureSeeding] = await Promise.all([
       import('./docking/browser-adapter.mjs'), import('./docking/reference-core.mjs'),
       import('./docking/receptor-score.mjs'), import('./docking/workflow.mjs'),
       import('./docking/protocol.mjs'), import('./docking/labbook.mjs'),
-      import('./docking/torsion-search.mjs'), import('./docking/constraints.mjs'),
+      import('./docking/torsion-search.mjs'), import('./docking/restraint-biased-search.mjs'),
+      import('./docking/constraints.mjs'),
       import('./stormm/core.mjs'), import('./docking/contact-remap.mjs'),
       import('./docking/feature-seeding.mjs'),
     ]);
@@ -4262,14 +4263,44 @@ async function runBrowserConstrainedDocking(options = {}) {
     if (fixedCoreStartEnergies.some((energy) => !Number.isFinite(energy)))
       throw new Error('OpenFF Sage returned a non-finite fixed-core ligand energy.');
     const minimumSageStartEnergy = Math.min(...fixedCoreStartEnergies);
-    const scorePositions = (positions) => {
-      const sageInternalEnergyKcalMol = ligandInternalEnergy(positions);
-      const physical = receptorScore.scoreReceptorLigand(reference.receptorSite, positions,
+    const generationProtocol = activeProtocol.restraintBiasedGeneration
+      || biasedSearch.RESTRAINT_BIASED_SEARCH_DEFAULTS;
+    const captureMaximumRelativeLigandStrainKcalMol = Number(
+      generationProtocol.captureMaximumRelativeLigandStrainKcalMol ?? 100);
+    const captureMaximumAdditionalStericClashes = Number(
+      generationProtocol.captureMaximumAdditionalStericClashes ?? 2);
+    const receptorScoreFor = (positions, sageInternalEnergyKcalMol) =>
+      receptorScore.scoreReceptorLigand(reference.receptorSite, positions,
         ligandNonbonded, {
           relativeDielectric:Number(activeProtocol.scoring.relativeDielectric ?? 4),
           cutoffAngstrom:Number(activeProtocol.scoring.pairCutoffAngstrom ?? 8),
           ligandStrainKcalMol:sageInternalEnergyKcalMol - minimumSageStartEnergy,
           ligandStrainIdentity:'relative vacuum OpenFF Sage 2.1 intramolecular energy' });
+    const fixedCoreStartPhysical = fixedCoreStarts.map((positions, index) =>
+      receptorScoreFor(positions, fixedCoreStartEnergies[index]));
+    const minimumFixedCoreStartStericClashes = Math.min(...fixedCoreStartPhysical
+      .map((entry) => Number(entry.stericClashes)));
+    const chemicalValidityFor = (sageInternalEnergyKcalMol, physical) => {
+      const relativeLigandStrainKcalMol = sageInternalEnergyKcalMol - minimumSageStartEnergy;
+      const strainExcessKcalMol = Math.max(0,
+        relativeLigandStrainKcalMol - captureMaximumRelativeLigandStrainKcalMol);
+      const additionalStericClashes = Math.max(0,
+        Number(physical.stericClashes) - minimumFixedCoreStartStericClashes);
+      const clashExcess = Math.max(0,
+        additionalStericClashes - captureMaximumAdditionalStericClashes);
+      return { valid:Number.isFinite(relativeLigandStrainKcalMol)
+          && strainExcessKcalMol === 0 && clashExcess === 0,
+        relativeLigandStrainKcalMol, maximumRelativeLigandStrainKcalMol:
+          captureMaximumRelativeLigandStrainKcalMol,
+        stericClashes:Number(physical.stericClashes),
+        minimumFixedCoreStartStericClashes, additionalStericClashes,
+        maximumAdditionalStericClashes:captureMaximumAdditionalStericClashes,
+        strainExcessKcalMol, clashExcess };
+    };
+    const scorePositions = (positions) => {
+      const sageInternalEnergyKcalMol = ligandInternalEnergy(positions);
+      const physical = receptorScoreFor(positions, sageInternalEnergyKcalMol);
+      const chemicalValidity = chemicalValidityFor(sageInternalEnergyKcalMol, physical);
       const core = constraints.evaluateCoreConstraint(reference.ligand.positions, positions,
         coreMap.atomPairs, activeProtocol.coreConstraint);
       const hydrogenBonds = workflow.evaluatePoseHydrogenBonds(mappedHydrogenBonds.constraints,
@@ -4277,12 +4308,36 @@ async function runBrowserConstrainedDocking(options = {}) {
       const combined = constraints.scoreConstrainedPose({
         physicalEnergyKcalMol:physical.energyKcalMol, core, hydrogenBonds,
       });
-      return { objectiveKcalMol:combined.totalScoreKcalMol, feasible:combined.feasible,
-        physical, core, hydrogenBonds, sageInternalEnergyKcalMol };
+      return { objectiveKcalMol:combined.totalScoreKcalMol,
+        feasible:combined.feasible && chemicalValidity.valid,
+        physical, core, hydrogenBonds, sageInternalEnergyKcalMol, chemicalValidity };
     };
     const torsionProtocol = activeProtocol.torsionMonteCarlo || torsionSearch.TORSION_SEARCH_DEFAULTS;
     const torsionSteps = Math.max(0, Math.min(512, Math.round(Number(options.torsionSteps
-      ?? torsionProtocol.stepsDefault ?? activeProtocol.sampling.torsionMonteCarloSteps ?? 96))));
+      ?? generationProtocol.physicalRefinementStepsDefault
+      ?? generationProtocol.stepsDefault ?? torsionProtocol.stepsDefault
+      ?? activeProtocol.sampling.torsionMonteCarloSteps ?? 96))));
+    const captureSteps = Math.max(0, Math.min(512, Math.round(Number(options.captureSteps
+      ?? generationProtocol.captureStepsDefault ?? torsionSteps))));
+    const capturePolishSweeps = Math.max(0, Math.min(8,
+      Math.round(Number(options.capturePolishSweeps
+        ?? generationProtocol.capturePolishSweeps ?? 3))));
+    const scoreRestraintCapturePositions = (positions) => {
+      const sageInternalEnergyKcalMol = ligandInternalEnergy(positions);
+      const physical = receptorScoreFor(positions, sageInternalEnergyKcalMol);
+      const chemicalValidity = chemicalValidityFor(sageInternalEnergyKcalMol, physical);
+      const hydrogenBonds = workflow.evaluatePoseHydrogenBonds(mappedHydrogenBonds.constraints,
+        positions, activeProtocol.hydrogenBondConstraint);
+      const hbondPenaltyKcalMol = hydrogenBonds.reduce((sum, entry) =>
+        sum + Number(entry.penaltyKcalMol || 0), 0);
+      const chemicalPenaltyKcalMol = chemicalValidity.strainExcessKcalMol ** 2
+        + chemicalValidity.clashExcess ** 2 * 1000;
+      return { objectiveKcalMol:hbondPenaltyKcalMol + chemicalPenaltyKcalMol,
+        hbondPenaltyKcalMol, chemicalPenaltyKcalMol,
+        feasible:chemicalValidity.valid
+          && hydrogenBonds.every((entry) => !entry.required || entry.satisfied),
+        hydrogenBonds, sageInternalEnergyKcalMol, chemicalValidity };
+    };
     const fixedRelaxProtocol = activeProtocol.fixedScaffoldRelaxation || {};
     const fixedRelaxIterations = posePropagation ? Math.max(0, Math.min(250,
       Math.round(Number(options.fixedRelaxIterations
@@ -4374,7 +4429,20 @@ async function runBrowserConstrainedDocking(options = {}) {
           preserveReference:'fix every inherited heavy atom; move only new atoms and hydrogens',
           freeLocal:'move the edited two-bond neighborhood and each touched fused ring as a unit',
         } : null,
-        torsionSearch:{ method:torsionSearch.TORSION_SEARCH_DEFAULTS.method, steps:torsionSteps,
+        restraintBiasedGeneration:posePropagation ? {
+          method:biasedSearch.RESTRAINT_BIASED_SEARCH_DEFAULTS.method,
+          captureSteps, capturePolishSweeps, physicalRefinementSteps:torsionSteps,
+          temperatureStartKelvin:Number(generationProtocol.temperatureStartKelvin),
+          temperatureEndKelvin:Number(generationProtocol.temperatureEndKelvin),
+          torsionAnglesDegrees:[...generationProtocol.torsionAnglesDegrees],
+          ringCrankshaftAnglesDegrees:[...generationProtocol.ringCrankshaftAnglesDegrees],
+          localLineFractions:[...generationProtocol.localLineFractions],
+          captureObjective:'selected required-contact flat-bottom penalties plus registered chemical-sanity gate excess penalties',
+          captureMaximumRelativeLigandStrainKcalMol,
+          captureMaximumAdditionalStericClashes,
+          minimumFixedCoreStartStericClashes,
+          physicalStageGate:'starts only after contact capture and chemical-sanity validation; feasible-to-infeasible moves are rejected',
+        } : { method:torsionSearch.TORSION_SEARCH_DEFAULTS.method, steps:torsionSteps,
           temperatureStartKelvin:Number(torsionProtocol.temperatureStartKelvin),
           temperatureEndKelvin:Number(torsionProtocol.temperatureEndKelvin),
           proposalAnglesDegrees:[...torsionProtocol.proposalAnglesDegrees] },
@@ -4396,22 +4464,25 @@ async function runBrowserConstrainedDocking(options = {}) {
         } : null,
         feasibilityRule:'all required constraints rank before energy',
         omitted:['receptor relaxation', 'receptor grid', 'desolvation', 'entropy',
-          'ring-pucker moves', 'binding free energy'],
+          'macrocycle-specific moves', 'binding free energy'],
       } });
     await labbookModule.appendLabbookEvent(labbook, { at:new Date().toISOString(),
       stage:'method-decision', status:'recorded', details:{
         selected:posePropagation
-          ? 'reference-pose propagation through recorded graph edits, receptor-aware torsion search, and fixed-scaffold Sage relaxation'
+          ? 'reference-pose propagation through recorded graph edits, restraint-biased internal-coordinate generation, and fixed-scaffold Sage relaxation'
           : 'independent fixed-core torsion Monte Carlo under the active receptor and restraint score',
         rationale:[
           posePropagation
             ? 'Recorded graph edits provide exact atom correspondence, so an inferred or manually selected core is unnecessary.'
             : 'Rigid core alignment alone does not optimize ligand torsions against the receptor.',
           'Edit-lineage atom identity gives an exact, auditable analogue mapping.',
-          'Only graph branches containing no core atom are eligible to rotate, preserving the medicinal-chemistry hypothesis.',
+          'Only graph branches containing no core atom are eligible to rotate; ring moves touching a perceived stereocenter, ring multiple-bond atom, carbonyl, or lactam geometry are excluded.',
+          'A pharmacophore-capture stage drives every torsion and safe ring proposal before ordinary physical energy is allowed to act; only registered chemical-sanity gates accompany the restraint objective.',
+          'A captured contact is not called feasible when its ligand strain exceeds 100 kcal/mol above the best exact-core start or it introduces more than two additional steric-clash diagnostics.',
           'Required contacts are explicit feasible states and cannot be traded away for a lower energy.',
           'A deleted ligand contact atom can transfer to any complementary donor or acceptor created at the same recorded edit boundary; receptor participants remain immutable and physical refinement ranks the hypotheses.',
           ...(posePropagation ? [
+            'Only capture-feasible poses enter physical search and fixed-scaffold OpenFF relaxation; a failed capture remains an explicit negative result.',
             'Fixed-scaffold OpenFF relaxation repairs local valence geometry without moving inherited heavy atoms.',
             'A relaxed pose is rejected if it loses contact feasibility or worsens the complete receptor-aware objective.',
           ] : []),
@@ -4432,7 +4503,7 @@ async function runBrowserConstrainedDocking(options = {}) {
           { method:'AutoPose', use:'related congeneric pose-construction alternative',
             notAdopted:'R-group decomposition, Free-Wilson model and TMD RBFE workflow' },
           { method:'Glide and ICM', use:'published staged/internal-coordinate docking lineage',
-            notAdopted:'commercial grids, scores, defaults or code' },
+            notAdopted:'commercial grids, scores, defaults, code, or ICM Biased Probability Monte Carlo kernel' },
         ],
         omittedReferenceContacts:omittedHydrogenBonds,
       } });
@@ -4463,17 +4534,28 @@ async function runBrowserConstrainedDocking(options = {}) {
         } : null,
         minimumConformerEnergyKcalMol:minimumRdkitEnergy,
         minimumFixedCoreSageEnergyKcalMol:minimumSageStartEnergy,
+        minimumFixedCoreStartStericClashes,
         ligandForcefield:ligandParameters.forcefield,
         ligandChargeModel:ligandParameters.chargeModel,
         ligandParameterSourceSha256:ligandParameters.sourceSha256,
     } });
-    setDockingStatus(`Optimizing ${valid.length} poses in pocket`);
+    setDockingStatus(`${posePropagation ? 'Generating' : 'Optimizing'} ${valid.length} restrained poses`);
     let refinementAudit = [];
-    const runTorsionRefinement = (positions, conformerIndex) => {
-      setDockingStatus(`Optimizing pose ${conformerIndex + 1}/${valid.length}`);
+    const runPoseGeneration = (positions, conformerIndex) => {
+      setDockingStatus(`Generating restrained pose ${conformerIndex + 1}/${valid.length}`);
       const seedMultiplier = Number(activeProtocol.candidateInitialization
         ?.candidateSeedXorMultiplierUint32 ?? 0x9e3779b9) >>> 0;
       const conformerSeed = (seed ^ Math.imul(conformerIndex + 1, seedMultiplier)) >>> 0;
+      if (posePropagation) return biasedSearch.generatePoseByRestraintBiasedSearch({
+        molecule:plan.molecule, initialPositions:positions, coreAtomIndices,
+        restraintScorePose:scoreRestraintCapturePositions, physicalScorePose:scorePositions,
+        random:stormmCore.mulberry32(conformerSeed), seed:conformerSeed,
+        captureSteps, capturePolishSweeps, refinementSteps:torsionSteps,
+        temperatureStartKelvin:Number(generationProtocol.temperatureStartKelvin),
+        temperatureEndKelvin:Number(generationProtocol.temperatureEndKelvin),
+        torsionAnglesDegrees:[...generationProtocol.torsionAnglesDegrees],
+        ringCrankshaftAnglesDegrees:[...generationProtocol.ringCrankshaftAnglesDegrees],
+        localLineFractions:[...generationProtocol.localLineFractions] });
       return torsionSearch.refinePoseByTorsionMonteCarlo({ molecule:plan.molecule,
         initialPositions:positions, coreAtomIndices, scorePose:scorePositions,
         random:stormmCore.mulberry32(conformerSeed), seed:conformerSeed, steps:torsionSteps,
@@ -4484,16 +4566,23 @@ async function runBrowserConstrainedDocking(options = {}) {
     const refinePropagatedBatch = async ({ positions }) => {
       const torsionRuns = [];
       for (let index = 0; index < positions.length; index++)
-        torsionRuns.push(await runTorsionRefinement(positions[index], index));
+        torsionRuns.push(await runPoseGeneration(positions[index], index));
       if (!fixedRelaxIterations || coreAtomIndices.length >= plan.molecule.atoms.length)
         return torsionRuns.map((entry) => ({ ...entry, relaxation:{
           method:'OpenMM fixed-scaffold Sage relaxation', iterations:0,
           accepted:false, reason:'no movable atoms or zero requested iterations',
         } }));
-      setDockingStatus(`Relaxing ${torsionRuns.length} fixed-scaffold poses`);
+      const eligibleIndices = torsionRuns.flatMap((entry, index) =>
+        entry.captureFeasible ? [index] : []);
+      if (!eligibleIndices.length) return torsionRuns.map((entry) => ({ ...entry, relaxation:{
+        method:'OpenMM fixed-scaffold Sage relaxation', iterations:0,
+        accepted:false, reason:'skipped because pharmacophore capture was infeasible',
+      } }));
+      setDockingStatus(`Relaxing ${eligibleIndices.length} captured fixed-scaffold poses`);
       const stride = plan.molecule.atoms.length * 3;
-      const coordinateStack = new Float64Array(torsionRuns.length * stride);
-      torsionRuns.forEach((entry, index) => coordinateStack.set(entry.positions, index * stride));
+      const coordinateStack = new Float64Array(eligibleIndices.length * stride);
+      eligibleIndices.forEach((sourceIndex, index) =>
+        coordinateStack.set(torsionRuns[sourceIndex].positions, index * stride));
       const parameterizedLigand = { ...plan.molecule, parameterization:ligandParameters };
       const relaxed = await runOpenMMJob('fixed-conformers', parameterizedLigand,
         dockingProgress, { initialConformers:coordinateStack,
@@ -4503,7 +4592,13 @@ async function runBrowserConstrainedDocking(options = {}) {
             fixedRelaxProtocol.maximumDisplacementAngstromPerIteration ?? 0.01),
           constraintMode:'none', implicitSolvent:'vacuum' });
       return torsionRuns.map((entry, index) => {
-        const relaxedPositions = relaxed.conformers.slice(index * stride, (index + 1) * stride);
+        const relaxedIndex = eligibleIndices.indexOf(index);
+        if (relaxedIndex < 0) return { ...entry, relaxation:{
+          method:'OpenMM fixed-scaffold Sage relaxation', iterations:0,
+          accepted:false, reason:'skipped because pharmacophore capture was infeasible',
+        } };
+        const relaxedPositions = relaxed.conformers.slice(relaxedIndex * stride,
+          (relaxedIndex + 1) * stride);
         const before = scorePositions(entry.positions), after = scorePositions(relaxedPositions);
         const accepted = Number(after.feasible) > Number(before.feasible)
           || after.feasible === before.feasible
@@ -4515,8 +4610,8 @@ async function runBrowserConstrainedDocking(options = {}) {
             movableAtomCount:relaxed.movableAtomCount, accepted,
             stepScale:relaxed.stepScale,
             maximumDisplacementAngstromPerIteration:relaxed.maximumDisplacementAngstrom,
-            initialInternalEnergyKcalMol:relaxed.initialEnergies[index],
-            finalInternalEnergyKcalMol:relaxed.finalEnergies[index],
+            initialInternalEnergyKcalMol:relaxed.initialEnergies[relaxedIndex],
+            finalInternalEnergyKcalMol:relaxed.finalEnergies[relaxedIndex],
             objectiveBeforeKcalMol:before.objectiveKcalMol,
             objectiveAfterKcalMol:after.objectiveKcalMol,
             feasibleBefore:before.feasible, feasibleAfter:after.feasible,
@@ -4535,36 +4630,64 @@ async function runBrowserConstrainedDocking(options = {}) {
       ...(posePropagation
         ? { refineBatch:refinePropagatedBatch }
         : { refinePose:({ positions, conformerIndex }) =>
-          runTorsionRefinement(positions, conformerIndex) }),
-      physicalScore:({ positions }) => scorePositions(positions).physical,
+          runPoseGeneration(positions, conformerIndex) }),
+      physicalScore:({ positions }) => {
+        const scored = scorePositions(positions);
+        return { ...scored.physical, feasible:scored.chemicalValidity.valid,
+          chemicalValidity:scored.chemicalValidity };
+      },
       afterRefinement:async (candidates) => {
         refinementAudit = candidates.map((pose) => ({
           conformerIndex:pose.conformerIndex,
           method:pose.refinement?.method || null,
           seed:pose.refinement?.seed ?? null,
           rotatableBondCount:pose.refinement?.rotatableBondCount || 0,
+          ringCrankshaftMoveCount:pose.refinement?.ringCrankshaftMoveCount || 0,
+          internalCoordinateMoveCount:pose.refinement?.moveCount
+            ?? pose.refinement?.rotatableBondCount ?? 0,
           proposals:pose.refinement?.proposals || 0,
+          lineEvaluations:pose.refinement?.lineEvaluations || 0,
           accepted:pose.refinement?.accepted || 0,
           uphillAccepted:pose.refinement?.uphillAccepted || 0,
           improved:pose.refinement?.improved || 0,
           acceptanceRate:pose.refinement?.acceptanceRate || 0,
+          objectiveStage:pose.refinement?.objectiveStage || null,
           startObjectiveKcalMol:pose.refinement?.startObjectiveKcalMol ?? null,
           bestObjectiveKcalMol:pose.refinement?.bestObjectiveKcalMol ?? null,
           selectedFeasible:Boolean(pose.refinement?.selectedFeasible),
+          stageOutcome:pose.refinement?.stageOutcome || null,
+          captureFeasible:Boolean(pose.refinement?.captureFeasible),
+          physicalRefinementAttempted:Boolean(pose.refinement?.physicalRefinementAttempted),
+          capture:pose.refinement?.capture || null,
+          physicalRefinement:pose.refinement?.physicalRefinement || null,
           relaxation:pose.refinement?.relaxation || null,
-          rotors:pose.refinement?.rotors || [],
+          moves:pose.refinement?.moves || pose.refinement?.rotors || [],
         }));
         await labbookModule.appendLabbookEvent(labbook, { at:new Date().toISOString(),
-          stage:'in-pocket-torsion-search', status:'completed', details:{
-            method:torsionSearch.TORSION_SEARCH_DEFAULTS.method,
+          stage:posePropagation ? 'in-pocket-restraint-biased-generation'
+            : 'in-pocket-torsion-search', status:'completed', details:{
+            method:posePropagation ? biasedSearch.RESTRAINT_BIASED_SEARCH_DEFAULTS.method
+              : torsionSearch.TORSION_SEARCH_DEFAULTS.method,
             conformers:refinementAudit.length,
             conformersWithFreeRotors:refinementAudit.filter((entry) => entry.rotatableBondCount > 0).length,
+            conformersWithRingMoves:refinementAudit.filter((entry) =>
+              entry.ringCrankshaftMoveCount > 0).length,
+            totalRingCrankshaftMoves:refinementAudit.reduce((sum, entry) =>
+              sum + entry.ringCrankshaftMoveCount, 0),
             totalProposals:refinementAudit.reduce((sum, entry) => sum + entry.proposals, 0),
+            totalLineEvaluations:refinementAudit.reduce((sum, entry) =>
+              sum + entry.lineEvaluations, 0),
             totalAccepted:refinementAudit.reduce((sum, entry) => sum + entry.accepted, 0),
             totalImprovements:refinementAudit.reduce((sum, entry) => sum + entry.improved, 0),
-            fixedScaffoldRelaxations:refinementAudit.filter((entry) => entry.relaxation).length,
+            fixedScaffoldRelaxations:refinementAudit.filter((entry) =>
+              Number(entry.relaxation?.iterations || 0) > 0).length,
+            skippedRelaxationsAfterFailedCapture:refinementAudit.filter((entry) =>
+              entry.stageOutcome === 'capture-infeasible').length,
             acceptedFixedScaffoldRelaxations:refinementAudit.filter((entry) =>
               entry.relaxation?.accepted).length,
+            restraintParticipation:posePropagation
+              ? 'stage 1 generates against selected flat-bottom contact potentials under explicit strain/clash sanity gates; stage 2 starts only after valid capture and rejects every move that loses feasibility'
+              : 'required-contact feasibility and penalty were evaluated after each torsion proposal',
             exactCoreMaximumRmsdAngstrom:Math.max(...candidates.map((pose) => pose.core.rmsdAngstrom)),
             perConformer:refinementAudit,
           } });
@@ -4574,7 +4697,10 @@ async function runBrowserConstrainedDocking(options = {}) {
             engine:'OpenMM WebAssembly', forcefield:ligandParameters.forcefield,
             fixedAtomCount:coreAtomIndices.length,
             requestedIterations:fixedRelaxIterations,
-            attempted:refinementAudit.length,
+            attempted:refinementAudit.filter((entry) =>
+              Number(entry.relaxation?.iterations || 0) > 0).length,
+            skippedAfterFailedCapture:refinementAudit.filter((entry) =>
+              entry.stageOutcome === 'capture-infeasible').length,
             accepted:refinementAudit.filter((entry) => entry.relaxation?.accepted).length,
             invariant:'all inherited heavy-atom coordinates remain bit-for-bit equal to the reference',
             safeguard:'a relaxed pose is retained only when feasibility is preserved and the complete objective improves',
@@ -7284,9 +7410,17 @@ window.molariumTest = Object.freeze({
         hydrogenBonds:structuredClone(result.run.selected.hydrogenBonds),
         refinement:{ method:result.run.selected.refinement?.method || null,
           rotatableBondCount:result.run.selected.refinement?.rotatableBondCount || 0,
+          ringCrankshaftMoveCount:result.run.selected.refinement?.ringCrankshaftMoveCount || 0,
           proposals:result.run.selected.refinement?.proposals || 0,
           accepted:result.run.selected.refinement?.accepted || 0,
           improved:result.run.selected.refinement?.improved || 0,
+          stageOutcome:result.run.selected.refinement?.stageOutcome || null,
+          captureFeasible:Boolean(result.run.selected.refinement?.captureFeasible),
+          physicalRefinementAttempted:Boolean(
+            result.run.selected.refinement?.physicalRefinementAttempted),
+          capture:structuredClone(result.run.selected.refinement?.capture || null),
+          physicalRefinement:structuredClone(
+            result.run.selected.refinement?.physicalRefinement || null),
           relaxation:structuredClone(result.run.selected.refinement?.relaxation || null) } },
       labbook:await verifyLabbook(result.labbook),
       selectedCoordinatesSha256:await sha256Object(Array.from(result.run.selected.positions)),

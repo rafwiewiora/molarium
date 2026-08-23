@@ -11,8 +11,10 @@ seeds, geometric constraints, run events, and result hashes travel together.
 The design is informed by the staged-search separation described for Glide and by ICM's use of
 internal-coordinate sampling and soft restraints. Glide's public API distinguishes reference-ligand
 core constraints from receptor H-bond constraints; ICM's public documentation describes
-flat-bottom interaction restraints and reference-ligand tethers. Version 0.3 adds an independent,
-receptor-aware torsion Monte Carlo stage. Rowan's open-source `openconf` analogue mode informed the
+flat-bottom interaction restraints and reference-ligand tethers. Pose Propagation 0.7 adds an
+independent contact-capture stage, chemically protected ring moves, explicit capture-sanity gates,
+and guarded physical refinement.
+Rowan's open-source `openconf` analogue mode informed the
 free-terminal-rotor/exact-core boundary; the AutoPose preprint is recorded as a related R-group pose
 construction approach. Molarium does not execute or copy either method. It does not
 implement either product's grids, search, refinement, or scoring function.
@@ -38,8 +40,8 @@ reference heavy atom is fixed automatically.
   coordinates.* Proteins. 1997;Suppl 1:215-220.
   [PubMed 9485515](https://pubmed.ncbi.nlm.nih.gov/9485515/)
 - [Schrodinger public Glide constraint API](https://learn.schrodinger.com/public/python_api/2025-3/api/schrodinger.application.glide.constraints.html)
-- [MolSoft public interaction-restraint documentation](https://www.molsoft.com/gui/interaction-restraints.html)
-- [MolSoft public ligand-tether and template documentation](https://www.molsoft.com/gui/ligand-tether.html)
+- [MolSoft public ligand-tether and distance-restraint documentation](https://molsoft.com/~eugene/icmpro/ligand-tether.html)
+- [MolSoft public small-molecule docking tutorial](https://molsoft.com/~jack/icmpro/start-dock.html)
 - [Rowan Scientific `openconf`](https://github.com/rowansci/openconf) (MIT-licensed method
   inspiration; no source code is bundled or copied)
 - Ponzoni L, York F, Kelley B. *AutoPose: R-Group Decomposition Based Posing for RBFE.* ChemRxiv
@@ -52,7 +54,7 @@ energy, and penalty definitions.
 
 ## Executable boundary
 
-ConstraintDock version `0.3.0` and Pose Propagation version `0.5.0` implement and test:
+ConstraintDock version `0.3.0` and Pose Propagation version `0.7.0` implement and test:
 
 - least-squares reference-core alignment;
 - exact reference-coordinate snapping for every mapped core atom plus an independent RMSD audit;
@@ -65,7 +67,17 @@ ConstraintDock version `0.3.0` and Pose Propagation version `0.5.0` implement an
 - exact restoration of surviving ligand-donor hydrogens used by selected captured contacts;
 - post-sanitization transfer of a deleted contact participant to every donor/acceptor-role-compatible
   feature at the same recorded edit boundary, with multiple candidates evaluated as an any-of restraint;
-- a deterministic Metropolis torsion search that rotates only graph branches containing no core atom;
+- a dedicated pharmacophore-capture objective in which required contacts drive conformer generation
+  before physical energy is allowed to act;
+- deterministic annealed stochastic line search over acyclic torsions and isolated saturated-ring
+  crankshafts that moves only graph branches containing no inherited atom; this is not equilibrium
+  Metropolis/Hastings sampling and not ICM BPMC;
+- exclusion of ring moves touching perceived tetrahedral stereocenters, ring carbonyl/multiple-bond
+  atoms, or lactam/conjugated geometry;
+- a registered capture-sanity gate at 100 kcal/mol relative ligand strain and no more than two
+  additional steric-clash diagnostics versus the best exact-core start;
+- exhaustive best-improvement capture polish over every registered move, angle, and line fraction;
+- physical refinement and OpenMM fixed-scaffold relaxation only after contact capture;
 - hard feasible-state retention for required contacts during search;
 - a transparent receptor-site score using cross OpenFF Lennard-Jones and Coulomb terms plus relative
   vacuum OpenFF Sage 2.1 intramolecular ligand energy;
@@ -88,7 +100,7 @@ discard stale complex parameters, freshly parameterize the edited ligand with Op
 run RDKit WASM generation, rank the constrained poses, replay them deterministically, verify the
 hash chain, and apply a pose without moving the receptor. It also proves that a removed contact atom
 is either transferred by the role-compatible edit-boundary rule or explicitly omitted. Accuracy claims still require prospective
-cognate-redocking and cross-docking benchmarks; version 0.5 must be presented as experimental until
+cognate-redocking and cross-docking benchmarks; version 0.7 must be presented as experimental until
 those are added.
 
 ## Labbook design
