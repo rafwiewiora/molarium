@@ -187,6 +187,7 @@ async function main() {
   await mkdir(path.join(options.output, 'vendor'), { recursive:true });
   await Promise.all([
     copyFile(path.join(here, 'index.html'), path.join(options.output, 'index.html')),
+    copyFile(path.join(here, 'navigation.mjs'), path.join(options.output, 'navigation.mjs')),
     copyFile(path.join(here, 'vendor/molstar-5.11.0.js'), path.join(options.output, 'vendor/molstar-5.11.0.js')),
     copyFile(path.join(here, 'vendor/molstar-5.11.0.css'), path.join(options.output, 'vendor/molstar-5.11.0.css')),
     copyFile(path.join(here, 'MOLSTAR-LICENSE.txt'), path.join(options.output, 'MOLSTAR-LICENSE.txt')),

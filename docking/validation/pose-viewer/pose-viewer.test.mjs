@@ -3,6 +3,21 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { buildReviewData, moleculeToMolBlock } from './build_pose_review.mjs';
+import { copyCameraSnapshot, poseArrowDelta, wrappedId } from './navigation.mjs';
+
+const navigationEntries = [{ id:'first' }, { id:'second' }, { id:'third' }];
+assert.equal(wrappedId(navigationEntries, 'first', -1), 'third');
+assert.equal(wrappedId(navigationEntries, 'third', 1), 'first');
+assert.equal(wrappedId(navigationEntries, 'missing', 1), 'first');
+assert.equal(wrappedId([], 'missing', 1), null);
+assert.equal(poseArrowDelta({ key:'ArrowLeft', tagName:'CANVAS' }), -1);
+assert.equal(poseArrowDelta({ key:'ArrowRight', tagName:'BUTTON' }), 1);
+assert.equal(poseArrowDelta({ key:'ArrowRight', tagName:'SELECT' }), null);
+assert.equal(poseArrowDelta({ key:'ArrowRight', tagName:'CANVAS', shiftKey:true }), null);
+const originalCamera = { target:[1, 2, 3], position:[4, 5, 6], up:[0, 1, 0], radius:7 };
+const copiedCamera = copyCameraSnapshot(originalCamera);
+originalCamera.target[0] = 99;
+assert.deepEqual(copiedCamera, { target:[1, 2, 3], position:[4, 5, 6], up:[0, 1, 0], radius:7 });
 
 const molecule = {
   atoms:[
@@ -61,4 +76,12 @@ const html = await readFile(path.join(directory, 'index.html'), 'utf8');
 assert.doesNotMatch(html, /https?:\/\//);
 assert.match(html, /molstar\.Viewer\.create\('viewer',OPTS\)/);
 assert.match(html, /dataset\.ready/);
+assert.match(html, /id="previous-case"/);
+assert.match(html, /id="next-case"/);
+assert.match(html, /poseArrowDelta\(\{key:event\.key/);
+assert.match(html, /for\(const id of \['case','pose'\]\)\$\(id\)\.disabled=value/);
+assert.match(html, /const camera=snapshotCamera\(\)/);
+assert.match(html, /applyCamera\(camera\)/);
+assert.match(html, /id="reset-view"/);
+assert.match(html, /from '\.\/navigation\.mjs'/);
 console.log('Mol* pose review: PASS');

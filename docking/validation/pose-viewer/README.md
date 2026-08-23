@@ -22,6 +22,11 @@ reports the browser score and the independent OpenMM Reference/RDKit checks, but
 rescore, refine, modify, or approve a pose. Absolute energies must not be compared across
 different analogue graphs.
 
+Use the small buttons above the analogue selector to move between analogues. When focus is not
+inside a form control, the left and right keyboard arrows cycle through the distinct poses of the
+current analogue. Both routes preserve the current Mol* camera (rotation, pan, and zoom); **Reset
+camera** deliberately returns to a candidate-centered frame.
+
 The vendored Mol* files have SHA-256 digests
 `7fad5561c74bc900930fb57d6ab028d1aafdda82223a901bf932b1098e84f1f3` (JavaScript) and
 `5b68ceb6d3642549b4e9b2c071e58e41b98a5350ae269180587b39da86925d55` (CSS).

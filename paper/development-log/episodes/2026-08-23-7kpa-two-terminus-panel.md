@@ -94,6 +94,13 @@ shell showed 40 residues. A deterministic ligand-centered camera and a 3.5 Å im
 shell (16 residues) made the candidate/reference overlay judgeable. Both corrections are visual
 only and leave coordinates unchanged.
 
+Pose review then exposed a comparison-specific usability failure: loading each candidate caused
+Mol* to re-frame the scene, so a reviewer could not compare successive poses from a fixed visual
+reference. The review artifact now snapshots the camera before either a pose or analogue change
+and restores the same rotation, pan, and zoom after replacing the molecular content. Left/right
+keyboard arrows cycle poses, compact mouse buttons cycle analogues, and a separate reset-camera
+action is the only navigation control that deliberately returns to a candidate-centered frame.
+
 ## Artifact digests for this run
 
 - complete browser results: `d71dae031247ffa03b0f30dfca5c3f73ece05bd5cfc2b00e860cf4415e908fa2`

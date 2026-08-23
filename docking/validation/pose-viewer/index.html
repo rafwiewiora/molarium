@@ -14,14 +14,18 @@
     aside{z-index:2;background:rgba(255,255,255,.97);border-right:1px solid var(--line);padding:22px;overflow:auto;box-shadow:8px 0 24px #1d2a3d0b}
     h1{font-size:19px;letter-spacing:.025em;margin:0 0 4px}h2{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin:24px 0 9px}
     .lede,.note{color:var(--muted);font-size:12px}.note{padding:10px 0 0}.field{display:grid;gap:6px;margin:13px 0}
+    .field-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.case-nav{display:flex;gap:4px}
     label{font-size:11px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
     select{width:100%;border:1px solid #cbd5e1;border-radius:9px;background:#fff;color:var(--ink);padding:10px 34px 10px 11px;font:inherit}
+    button{font:inherit;color:inherit}.nav-button,.reset-view{border:1px solid #cbd5e1;background:#fff;cursor:pointer}.nav-button{display:grid;place-items:center;width:27px;height:24px;border-radius:7px;padding:0;font-size:18px;line-height:1}.nav-button:hover,.reset-view:hover{border-color:#8ba9bd;background:#f2f7fa}.nav-button:focus-visible,.reset-view:focus-visible{outline:2px solid var(--blue);outline-offset:2px}.nav-button:disabled{opacity:.45;cursor:wait}
+    .shortcut{font-size:10px;letter-spacing:0;text-transform:none;color:#95a0b1;font-weight:650}
     .checks{display:grid;gap:8px;margin-top:14px}.checks label{display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:0;text-transform:none;color:var(--ink)}
     input[type=checkbox]{accent-color:var(--blue);width:16px;height:16px}
     .status{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:10px 11px;margin:12px 0}
     .pill{border-radius:999px;padding:3px 8px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:#e8f6ef;color:var(--green)}
     .pill.bad{background:#fff1e5;color:var(--amber)}
     dl{display:grid;grid-template-columns:1fr auto;gap:8px 12px;margin:0}dt{color:var(--muted)}dd{font-variant-numeric:tabular-nums;font-weight:650;margin:0;text-align:right}
+    .view-actions{display:flex;justify-content:flex-end;margin-top:12px}.reset-view{border-radius:8px;padding:6px 9px;font-size:11px;font-weight:700}
     details{border-top:1px solid var(--line);margin-top:18px;padding-top:12px}summary{cursor:pointer;color:var(--muted);font-weight:650;font-size:12px}.hash{overflow-wrap:anywhere;font:10px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#788397}
     #stage{position:relative;min-width:0;overflow:hidden}#viewer{position:absolute;inset:0}.msp-plugin{background:#fff!important}
     #legend{position:absolute;left:22px;bottom:20px;display:flex;gap:8px;z-index:4;pointer-events:none}.key{background:#fffffff0;border:1px solid var(--line);box-shadow:0 4px 18px #24344914;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:650}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
@@ -34,8 +38,14 @@
   <aside>
     <h1>7KPA pose review</h1>
     <div class="lede">Read-only Mol* inspection of the preregistered analogue panel.</div>
-    <div class="field"><label for="case">Analogue</label><select id="case"></select></div>
-    <div class="field"><label for="pose">Distinct pose</label><select id="pose"></select></div>
+    <div class="field">
+      <div class="field-head"><label for="case">Analogue</label><div class="case-nav" role="group" aria-label="Browse analogues">
+        <button class="nav-button" id="previous-case" type="button" aria-label="Previous analogue" title="Previous analogue">&#8249;</button>
+        <button class="nav-button" id="next-case" type="button" aria-label="Next analogue" title="Next analogue">&#8250;</button>
+      </div></div>
+      <select id="case"></select>
+    </div>
+    <div class="field"><div class="field-head"><label for="pose">Distinct pose</label><span class="shortcut">keyboard &#8592; &#8594;</span></div><select id="pose"></select></div>
     <div class="status"><strong id="pose-rank">Pose</strong><span class="pill" id="feasible">Feasible</span></div>
     <div class="checks">
       <label><input id="reference" type="checkbox" checked> Prepared 7KPA reference</label>
@@ -52,6 +62,7 @@
       <dt>Required contacts</dt><dd id="contacts">—</dd>
     </dl>
     <div class="note">Absolute energies are not comparable between different analogue graphs.</div>
+    <div class="view-actions"><button class="reset-view" id="reset-view" type="button">Reset camera</button></div>
     <details><summary>Provenance</summary><div class="hash" id="provenance"></div></details>
   </aside>
   <section id="stage">
@@ -59,12 +70,13 @@
     <div id="legend"><span class="key"><i class="dot" style="background:#e08a46"></i>candidate</span><span class="key"><i class="dot" style="background:#866fb2"></i>reference</span></div>
   </section>
 </main>
-<script>
+<script type="module">
+import { copyCameraSnapshot, poseArrowDelta, wrappedId } from './navigation.mjs';
 const OPTS={layoutIsExpanded:false,layoutShowControls:false,layoutShowRemoteState:false,
   layoutShowSequence:false,layoutShowLog:false,layoutShowLeftPanel:false,
   viewportShowExpand:false,viewportShowSelectionMode:false,viewportShowAnimation:false};
 const CARBON=(value)=>({carbonColor:{name:'uniform',params:{value,saturation:0,lightness:0}}});
-let DATA,V,refs={},currentCase,currentPose,busy=false;
+let DATA,V,refs={},currentCase,currentPose,busy=false,sceneReady=false,cameraRestoreToken=0;
 const $=(id)=>document.getElementById(id);
 
 async function addRaw(text,fmt,ref,rep){
@@ -83,6 +95,16 @@ async function removeRef(ref){
 }
 async function clearScene(){for(const ref of Object.keys(refs))await removeRef(ref)}
 function current(){return DATA.cases.find(entry=>entry.id===currentCase)?.poses.find(entry=>entry.id===currentPose)}
+function snapshotCamera(){
+  if(!sceneReady)return null;try{
+    return copyCameraSnapshot(V.plugin.canvas3d.camera.getSnapshot());
+  }catch(_){return null}
+}
+function applyCamera(state){
+  if(!state)return;const token=++cameraRestoreToken,apply=()=>{if(token!==cameraRestoreToken)return;
+    try{V.plugin.canvas3d.camera.setState(state,0)}catch(error){console.warn('applyCamera',error)}};
+  apply();requestAnimationFrame(()=>requestAnimationFrame(apply));
+}
 function sphere(mol){
   const lines=mol.split('\n'),atoms=[];for(const line of lines){
     if(/^\s*-?\d+\.\d{4}/.test(line))atoms.push([+line.slice(0,10),+line.slice(10,20),+line.slice(20,30)]);
@@ -95,28 +117,29 @@ function focusCandidate(){
   const pose=current();if(!pose)return;const frame=sphere(pose.molBlock);
   try{
     const camera=V.plugin.canvas3d.camera,base=camera.getSnapshot();
-    camera.setState(Object.assign({},base,{target:frame.center,
+    applyCamera(Object.assign({},base,{target:frame.center,
       position:[frame.center[0],frame.center[1],frame.center[2]+2.8*frame.radius],
-      up:[0,1,0],radius:frame.radius,radiusMax:Math.max(base.radiusMax||100,100)}),0);
+      up:[0,1,0],radius:frame.radius,radiusMax:Math.max(base.radiusMax||100,100)}));
   }catch(error){console.warn('focusCandidate',error)}
 }
 async function addCandidate(){
   await removeRef('candidate');const pose=current();if(!pose)return;
   await addRaw(pose.molBlock,'mol','candidate',{type:'ball-and-stick',typeParams:{alpha:1,sizeFactor:.24,aromaticBonds:false},color:'element-symbol',colorParams:CARBON(0xe08a46)});
-  focusCandidate();setTimeout(focusCandidate,180);
 }
 async function rebuild(){
-  if(busy)return;busy=true;try{
+  if(busy)return;const camera=snapshotCamera();busy=true;setNavigationBusy(true);try{
     await clearScene();
     if($('protein').checked)await addRaw(DATA.receptor.proteinPdb,'pdb','protein',{type:'cartoon',typeParams:{alpha:.30},color:'chain-id'});
     if($('pocket').checked)await addRaw(DATA.receptor.pocketPdb,'pdb','pocket',{type:'ball-and-stick',typeParams:{alpha:.75,sizeFactor:.17,aromaticBonds:false},color:'element-symbol',colorParams:CARBON(0x667b94)});
     if($('reference').checked)await addRaw(DATA.reference.molBlock,'mol','reference',{type:'ball-and-stick',typeParams:{alpha:.42,sizeFactor:.19,aromaticBonds:false},color:'element-symbol',colorParams:CARBON(0x866fb2)});
     await addCandidate();
-  }finally{busy=false}
+    if(camera)applyCamera(camera);else focusCandidate();sceneReady=true;
+  }finally{busy=false;setNavigationBusy(false)}
 }
 function value(number,digits=2){return Number.isFinite(number)?Number(number).toFixed(digits):'—'}
 function paint(){
   const pose=current(),openmm=pose?.independent?.openmm,mmff=pose?.independent?.mmff;if(!pose)return;
+  document.body.dataset.currentCase=currentCase;document.body.dataset.currentPose=currentPose;
   $('pose-rank').textContent=`Pose ${pose.analogue.rank} · ${pose.analogue.name}`;
   $('feasible').textContent=pose.analogue.feasible?'Feasible':'Control';$('feasible').className=`pill${pose.analogue.feasible?'':' bad'}`;
   $('score').textContent=`${value(pose.analogue.scoreKcalMol)} kcal/mol`;
@@ -132,14 +155,39 @@ function fillPoses(){
   for(const pose of group.poses){const option=document.createElement('option');option.value=pose.id;option.textContent=`#${pose.analogue.rank} · ${pose.analogue.feasible?'feasible':'control'} · ${value(pose.analogue.scoreKcalMol)} kcal/mol`;$('pose').append(option)}
   currentPose=group.poses[0].id;$('pose').value=currentPose;paint();
 }
+function setNavigationBusy(value){
+  for(const id of ['previous-case','next-case'])$(id).disabled=value;
+  for(const id of ['case','pose'])$(id).disabled=value;
+  document.body.setAttribute('aria-busy',value?'true':'false');
+}
+async function choosePose(id){
+  if(busy||id===currentPose)return;const group=DATA.cases.find(entry=>entry.id===currentCase);
+  if(!group?.poses.some(entry=>entry.id===id))return;const camera=snapshotCamera();busy=true;setNavigationBusy(true);
+  try{currentPose=id;$('pose').value=id;paint();await addCandidate();applyCamera(camera)}
+  finally{busy=false;setNavigationBusy(false)}
+}
+async function stepPose(delta){
+  const group=DATA.cases.find(entry=>entry.id===currentCase);if(busy||!group?.poses.length)return;
+  await choosePose(wrappedId(group.poses,currentPose,delta));
+}
+async function stepCase(delta){
+  if(busy||!DATA.cases.length)return;currentCase=wrappedId(DATA.cases,currentCase,delta);$('case').value=currentCase;
+  fillPoses();await rebuild();
+}
 async function init(){
   DATA=await fetch('data.json').then(response=>{if(!response.ok)throw Error(`data.json: ${response.status}`);return response.json()});
   for(const entry of DATA.cases){const option=document.createElement('option');option.value=entry.id;option.textContent=`${entry.name} · ${entry.poses.length}`;$('case').append(option)}
   currentCase=DATA.cases.find(entry=>entry.id==='pyridone-to-cyclohexanone')?.id||DATA.cases[0].id;$('case').value=currentCase;fillPoses();
   V=await molstar.Viewer.create('viewer',OPTS);try{V.plugin.canvas3d.setProps({camera:{helper:{axes:{name:'off',params:{}}}},renderer:{backgroundColor:0xffffff}})}catch(_){}
   const nudge=()=>{try{V.plugin.canvas3d.handleResize()}catch(_){}};addEventListener('resize',nudge);try{new ResizeObserver(nudge).observe($('viewer'))}catch(_){}
-  $('case').addEventListener('change',async()=>{currentCase=$('case').value;fillPoses();await rebuild()});
-  $('pose').addEventListener('change',async()=>{currentPose=$('pose').value;paint();await addCandidate()});
+  $('case').addEventListener('change',async()=>{if(busy)return;currentCase=$('case').value;fillPoses();await rebuild()});
+  $('pose').addEventListener('change',()=>choosePose($('pose').value));
+  $('previous-case').addEventListener('click',()=>stepCase(-1));$('next-case').addEventListener('click',()=>stepCase(1));
+  $('reset-view').addEventListener('click',focusCandidate);
+  document.addEventListener('keydown',(event)=>{if(busy)return;const delta=poseArrowDelta({key:event.key,
+    altKey:event.altKey,ctrlKey:event.ctrlKey,metaKey:event.metaKey,shiftKey:event.shiftKey,
+    tagName:event.target?.tagName,contentEditable:event.target?.isContentEditable});
+    if(delta!==null){event.preventDefault();stepPose(delta)}});
   for(const id of ['reference','pocket','protein'])$(id).addEventListener('change',rebuild);
   await rebuild();$('boot').style.display='none';document.body.dataset.ready='1';
 }
