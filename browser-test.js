@@ -73,6 +73,7 @@ class DevToolsClient {
 const browserSuite = String.raw`(async () => {
   const externalPreparationFixture = ${JSON.stringify(preparationFixture)};
   const captureDockingUi = ${JSON.stringify(Boolean(Bun.env.MOLARIUM_TEST_SCREENSHOT_DOCKING))};
+  const exportStrainFixture = ${JSON.stringify(Boolean(Bun.env.MOLARIUM_EXPORT_STRAIN_FIXTURE))};
   const testScope = ${JSON.stringify(Bun.env.MOLARIUM_TEST_SCOPE || '')};
   const checks = [];
   let optimizationMetrics = null;
@@ -1337,6 +1338,7 @@ const browserSuite = String.raw`(async () => {
       // the same route available to an agent or a person, not a test-only
       // direct call into pose code.
       const chemist = await window.MolariumChemistActionsReady;
+      const directReferenceLigand = api.benchmarkCurrentLigand();
       await chemist.execute({ action:'view.setMode', args:{ mode:'build' } });
       await chemist.execute({ action:'build.setTool', args:{ tool:'select' } });
       const directReference = (await chemist.inspect({ scope:'ligand', includeCoordinates:true,
@@ -1397,6 +1399,25 @@ const browserSuite = String.raw`(async () => {
         transformedRingRegions:directCyclohexanone.transformedRingRegions,
         externalAnchorMotion, releasedMotion, finalCarbonyl,
         directO3Contact, directN3Contact }));
+      // An explicit validation-only export can compare the edited bound
+      // geometry against the crystallographic parent with the same isolated-
+      // ligand strain protocol. It deliberately omits the receptor, so this
+      // fixture is not an interaction or binding score.
+      const directLigand = api.benchmarkCurrentLigand();
+      const editedStrainMolecule = { name:'7KPA D84 cyclohexanone strain probe', charge:0,
+        multiplicity:1,
+        atoms:directLigand.atoms.map((atom) => ({ element:atom.element,
+          designAtomId:atom.designAtomId, atomName:atom.atomName,
+          x:atom.x, y:atom.y, z:atom.z, charge:0 })),
+        bonds:directLigand.bonds.map((bond) => ({ ...bond })) };
+      const referenceStrainMolecule = { name:'7KPA D84 crystallographic strain control',
+        charge:0, multiplicity:1,
+        atoms:directReferenceLigand.atoms.map((atom) => ({ element:atom.element,
+          designAtomId:atom.designAtomId, atomName:atom.atomName,
+          x:atom.x, y:atom.y, z:atom.z, charge:0 })),
+        bonds:directReferenceLigand.bonds.map((bond) => ({ ...bond })) };
+      preparationMetrics.cyclohexanoneStrainFixture = exportStrainFixture
+        ? { reference:referenceStrainMolecule, edited:editedStrainMolecule } : null;
       // Restore the exact prepared reference before independently testing the
       // harder delete-and-rebuild feature-remapping route below.
       api.loadObject(captureMolecule);
@@ -1598,7 +1619,8 @@ const browserSuite = String.raw`(async () => {
       return { passed:scopedChecks.length - failed.length, total:scopedChecks.length, failed,
         optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,
         preparationMetrics:{ ligandContacts:preparationMetrics.ligandContacts,
-          hydratedReferenceContacts:preparationMetrics.hydratedReferenceContacts } };
+          hydratedReferenceContacts:preparationMetrics.hydratedReferenceContacts,
+          cyclohexanoneStrainFixture:preparationMetrics.cyclohexanoneStrainFixture } };
     }
   }
   const smilesCases = [
@@ -3098,6 +3120,14 @@ try {
   }
   client.close();
   const report = evaluation.result.value;
+  if (Bun.env.MOLARIUM_EXPORT_STRAIN_FIXTURE
+      && report.preparationMetrics?.cyclohexanoneStrainFixture) {
+    await Bun.write(Bun.env.MOLARIUM_EXPORT_STRAIN_FIXTURE,
+      JSON.stringify(report.preparationMetrics.cyclohexanoneStrainFixture, null, 2));
+    report.preparationMetrics.cyclohexanoneStrainFixture = {
+      writtenTo:Bun.env.MOLARIUM_EXPORT_STRAIN_FIXTURE,
+    };
+  }
   for (const failure of report.failed) console.error(`FAIL ${failure.label}${failure.details ? ` — ${failure.details}` : ''}`);
   console.log(`${report.passed}/${report.total} browser checks passed`);
   if (report.optimizationMetrics) {

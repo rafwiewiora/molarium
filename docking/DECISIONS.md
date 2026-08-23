@@ -777,3 +777,20 @@ A separate backend-neutral closed-ring generator test accepts a valid cyclohexan
 an out-of-plane carbonyl and a configured stereochemical inversion, keeps three external scaffold
 atoms bitwise exact, and chooses the restraint-feasible conformer. This generator is future-facing
 and is not yet wired into Pose Propagation's default search.
+
+### Validation V-018 — matched parent/edit strain control
+
+The exact original D84 ligand and the direct-edit cyclohexanone produced through Chemist Actions can
+be exported as one hashable pair with `MOLARIUM_EXPORT_STRAIN_FIXTURE`. A local RDKit 2023.09.6
+MMFF94 validation (vacuum, explicit hydrogens, 2,000 iterations, force tolerance 1e-4 and energy
+tolerance 1e-8) converged both full-ligand relaxations. The crystallographic parent dropped 39.5465
+kcal/mol and the edited ligand dropped 23.6955 kcal/mol; the edit therefore added no MMFF whole-
+ligand strain relative to the matched bound-pose control (-15.8510 kcal/mol excess). With every atom
+outside O3/C28/N3/C26/C27/C29/C30 and their attached hydrogens fixed, the parent ring dropped
+13.7316 kcal/mol while the edited ring dropped 1.2240 kcal/mol.
+
+These are strain diagnostics, not docking success. The freely relaxed edited ligand moved 1.0465 Å
+heavy-atom RMS, and the direct-edit O3 remains 3.8565 Å from the captured Lys donor hydrogen
+(4.7691 Å donor–acceptor). Thus V-017 establishes valid chemistry, local cleanup, release lineage,
+and a retained contact hypothesis; it does not establish a restraint-feasible 7KPA pose. ANI-2x
+must use the same matched pair before it can be interpreted as independent strain evidence.

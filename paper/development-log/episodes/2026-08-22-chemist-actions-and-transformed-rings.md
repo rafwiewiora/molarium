@@ -108,3 +108,19 @@ not weakened or routed around the provenance gate.
 The result validates edit semantics, graph identity, release/fixation behavior, contact lineage,
 and local cleanup. It does not yet establish prospective pose accuracy or validate the standalone
 closed-ring generator as a released product path.
+
+## Matched strain check
+
+The first question after this gate was whether the resulting cyclohexanone was merely a valid graph
+but internally strained. Scoring only the edited bound geometry would be misleading because the
+crystallographic parent itself is not an isolated-vacuum minimum. The browser regression therefore
+gained an explicit validation-only export of both exact coordinate sets.
+
+Native RDKit 2023.09.6/MMFF94 converged both isolated-ligand controls. The parent released 39.5465
+kcal/mol and moved 0.9639 Å heavy-atom RMS; the edit released 23.6955 kcal/mol and moved 1.0465 Å.
+When the unchanged molecule was fixed and only the transformed ring plus attached hydrogens could
+move, the parent released 13.7316 kcal/mol and the cyclohexanone only 1.2240 kcal/mol. On this force
+field, the edit does not introduce excess local strain. It is nevertheless not a successful docked
+pose: the edited carbonyl is 3.8565 Å from the captured Lys donor hydrogen. This debugging step
+separated three claims that must remain separate in the paper and product: valid chemistry,
+low-strain internal geometry, and satisfaction of the receptor restraint.
