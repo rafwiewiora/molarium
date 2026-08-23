@@ -20,6 +20,7 @@ from typing import Any
 
 BOND_TYPES: dict[float, Any] = {}
 KJ_PER_KCAL = 4.184
+HARTREE_TO_KCAL_MOL = 627.5094740631
 
 # The web application intentionally has a top-level `rdkit/` asset directory. When this script is
 # launched from the checkout root, Python can otherwise resolve that directory as a namespace
@@ -95,6 +96,22 @@ def validate_integrity(pose: dict[str, Any]) -> None:
     for key, value in expected.items():
         if integrity.get(key) != value:
             raise ValueError(f"{pose['id']}: integrity mismatch for {key}")
+    browser = pose.get("browserSinglePoints")
+    if browser is not None:
+        if browser.get("atomIds") != atom_ids:
+            raise ValueError(f"{pose['id']}: browser single-point atom order mismatch")
+        for name, force_unit in (("sageReference", "kJ/mol/nm"),
+                                 ("sage", "kJ/mol/nm"),
+                                 ("ani2x", "kcal/mol/angstrom")):
+            record = browser.get(name, {})
+            forces = record.get("forces")
+            if (record.get("unit") != "kcal/mol" or not math.isfinite(float(
+                    record.get("finalEnergy", math.nan))) or record.get("forceUnit") != force_unit
+                    or not isinstance(forces, list)
+                    or len(forces) != len(atom_ids) * 3
+                    or any(not math.isfinite(float(value)) for value in forces)
+                    or record.get("forceSha256") != canonical_sha256(forces)):
+                raise ValueError(f"{pose['id']}: invalid browser {name} single point")
 
 
 def require_finite(value: float, label: str) -> float:
@@ -281,6 +298,7 @@ def score_openmm(record: dict[str, Any], platform_name: str) -> dict[str, Any]:
         "forceRmsKjMolNm": float(np.sqrt(np.mean(forces * forces))),
         "forceMaxAbsKjMolNm": float(np.max(np.abs(forces))),
         "forceSha256": sha256_bytes(forces.tobytes()),
+        "_forcesKjMolNm": forces.tolist(),
     }
     del context, integrator
     return result
@@ -319,13 +337,17 @@ def score_ani2x(record: dict[str, Any], device: str) -> dict[str, Any]:
     model = ani_model(device)
     species = torch.tensor([atomic_numbers], dtype=torch.long, device=device)
     start = torch.tensor([coordinates(record)], dtype=torch.float32, device=device)
+    initial_positions = start.clone().detach().requires_grad_(True)
+    initial_tensor = model((species, initial_positions)).energies.sum()
+    initial_gradient = torch.autograd.grad(initial_tensor, initial_positions)[0]
+    initial = float(initial_tensor.detach().item())
+    initial_forces = (-initial_gradient.detach().cpu().numpy()[0]
+                      * HARTREE_TO_KCAL_MOL).astype(np.float64)
     positions = start.clone().detach().requires_grad_(True)
 
     def energy():
         return model((species, positions)).energies.sum()
 
-    with torch.no_grad():
-        initial = float(model((species, start)).energies.item())
     optimizer = torch.optim.LBFGS([positions], lr=0.5, max_iter=500,
                                   tolerance_grad=1.0e-5, tolerance_change=1.0e-9,
                                   line_search_fn="strong_wolfe")
@@ -352,7 +374,6 @@ def score_ani2x(record: dict[str, Any], device: str) -> dict[str, Any]:
         rotation = u @ vh
     aligned = right @ rotation
     rms = float(np.sqrt(np.mean(np.sum((aligned - left) ** 2, axis=1))))
-    hartree_to_kcal = 627.5094740631
     return {
         "engine": "TorchANI ANI-2x",
         "torchaniVersion": getattr(torchani, "__version__", None),
@@ -361,13 +382,46 @@ def score_ani2x(record: dict[str, Any], device: str) -> dict[str, Any]:
         "deviceName": torch.cuda.get_device_name(0) if device.startswith("cuda") else platform.processor(),
         "initialEnergyHartree": initial,
         "relaxedEnergyHartree": final,
-        "relaxationDropKcalMol": (initial - final) * hartree_to_kcal,
+        "relaxationDropKcalMol": (initial - final) * HARTREE_TO_KCAL_MOL,
         "heavyAtomAlignedRmsAngstrom": rms,
+        "initialForceRmsKcalMolAngstrom": float(np.sqrt(np.mean(initial_forces * initial_forces))),
+        "initialForceMaxAbsKcalMolAngstrom": float(np.max(np.abs(initial_forces))),
+        "initialForceSha256": sha256_bytes(initial_forces.tobytes()),
+        "_initialForcesKcalMolAngstrom": initial_forces.tolist(),
     }
 
 
 def engine_error(engine: str, error: Exception) -> dict[str, Any]:
     return {"engine": engine, "status": "unavailable", "error": f"{type(error).__name__}: {error}"}
+
+
+def vector_parity(first: Any, second: Any) -> dict[str, float]:
+    import numpy as np
+
+    left = np.asarray(first, dtype=np.float64).reshape(-1)
+    right = np.asarray(second, dtype=np.float64).reshape(-1)
+    if left.shape != right.shape or not left.size:
+        raise ValueError(f"force array shapes differ: {left.shape} versus {right.shape}")
+    delta = left - right
+    reference_rms = float(np.sqrt(np.mean(left * left)))
+    return {
+        "forceRmsDelta": float(np.sqrt(np.mean(delta * delta))),
+        "forceMaxAbsDelta": float(np.max(np.abs(delta))),
+        "forceRelativeRms": float(np.sqrt(np.mean(delta * delta)) / max(reference_rms, 1.0e-30)),
+    }
+
+
+def parity_gate(absolute_energy_delta: float, force_relative_rms: float,
+                maximum_energy_delta: float, energy_unit: str,
+                maximum_force_relative_rms: float = 1.0e-3) -> dict[str, Any]:
+    """Record a fixed, machine-readable validation decision without hiding raw metrics."""
+    return {
+        "passed": bool(absolute_energy_delta <= maximum_energy_delta
+                       and force_relative_rms <= maximum_force_relative_rms),
+        "maximumAbsoluteEnergyDelta": maximum_energy_delta,
+        "energyUnit": energy_unit,
+        "maximumForceRelativeRms": maximum_force_relative_rms,
+    }
 
 
 def process_pose(pose: dict[str, Any], arguments: argparse.Namespace) -> dict[str, Any]:
@@ -399,12 +453,79 @@ def process_pose(pose: dict[str, Any], arguments: argparse.Namespace) -> dict[st
     openmm_results = {entry.get("platform"): entry for entry in engines
                       if entry.get("engine") == "OpenMM" and "potentialEnergyKjMol" in entry}
     if "Reference" in openmm_results and "CUDA" in openmm_results:
-        result["openmmParity"] = {
+        comparison = {
             "absoluteEnergyDeltaKjMol": abs(openmm_results["Reference"]["potentialEnergyKjMol"]
                                              - openmm_results["CUDA"]["potentialEnergyKjMol"]),
             "referenceForceSha256": openmm_results["Reference"]["forceSha256"],
             "cudaForceSha256": openmm_results["CUDA"]["forceSha256"],
+            **vector_parity(openmm_results["Reference"]["_forcesKjMolNm"],
+                            openmm_results["CUDA"]["_forcesKjMolNm"]),
+            "forceDeltaUnit": "kJ/mol/nm",
         }
+        comparison["gate"] = parity_gate(comparison["absoluteEnergyDeltaKjMol"],
+                                           comparison["forceRelativeRms"], 1.0e-3, "kJ/mol")
+        result["openmmParity"] = comparison
+    browser = pose.get("browserSinglePoints")
+    if browser:
+        browser_reference = browser["sageReference"]
+        browser_sage = browser["sage"]
+        comparison = {
+            "absoluteEnergyDeltaKcalMol": abs(float(browser_sage["finalEnergy"])
+                - float(browser_reference["finalEnergy"])),
+            **vector_parity(browser_reference["forces"], browser_sage["forces"]),
+            "forceDeltaUnit": "kJ/mol/nm",
+        }
+        comparison["gate"] = parity_gate(comparison["absoluteEnergyDeltaKcalMol"],
+                                           comparison["forceRelativeRms"], 1.0e-2, "kcal/mol")
+        result["browserSageWebgpuVsWasmReference"] = comparison
+        if "Reference" in openmm_results:
+            native_reference = openmm_results["Reference"]
+            comparison = {
+                "absoluteEnergyDeltaKcalMol": abs(float(browser_reference["finalEnergy"])
+                    - native_reference["potentialEnergyKcalMol"]),
+                **vector_parity(browser_reference["forces"],
+                                native_reference["_forcesKjMolNm"]),
+                "forceDeltaUnit": "kJ/mol/nm",
+                "browserSourceSha256": browser_reference.get("sourceSha256"),
+            }
+            comparison["gate"] = parity_gate(comparison["absoluteEnergyDeltaKcalMol"],
+                                               comparison["forceRelativeRms"], 1.0e-2,
+                                               "kcal/mol")
+            result["browserWasmVsNativeOpenmmReference"] = comparison
+        if "CUDA" in openmm_results:
+            cuda = openmm_results["CUDA"]
+            comparison = {
+                "absoluteEnergyDeltaKcalMol": abs(
+                    float(browser_sage["finalEnergy"]) - cuda["potentialEnergyKcalMol"]),
+                **vector_parity(browser_sage["forces"], cuda["_forcesKjMolNm"]),
+                "forceDeltaUnit": "kJ/mol/nm",
+                "browserPlatform": browser_sage.get("platform"),
+                "browserSourceSha256": browser_sage.get("sourceSha256"),
+            }
+            comparison["gate"] = parity_gate(comparison["absoluteEnergyDeltaKcalMol"],
+                                               comparison["forceRelativeRms"], 1.0e-2,
+                                               "kcal/mol")
+            result["browserSageVsOpenmmCuda"] = comparison
+        ani = next((entry for entry in engines if entry.get("engine") == "TorchANI ANI-2x"
+                    and "initialEnergyHartree" in entry), None)
+        if ani:
+            browser_ani = browser["ani2x"]
+            comparison = {
+                "absoluteEnergyDeltaKcalMol": abs(float(browser_ani["finalEnergy"])
+                    - ani["initialEnergyHartree"] * HARTREE_TO_KCAL_MOL),
+                **vector_parity(browser_ani["forces"],
+                                ani["_initialForcesKcalMolAngstrom"]),
+                "forceDeltaUnit": "kcal/mol/angstrom",
+                "browserPlatform": browser_ani.get("platform"),
+                "browserModelSourceSha256": browser_ani.get("modelSourceSha256"),
+            }
+            comparison["gate"] = parity_gate(comparison["absoluteEnergyDeltaKcalMol"],
+                                               comparison["forceRelativeRms"], 1.0e-1,
+                                               "kcal/mol")
+            result["browserAni2xVsTorchani"] = comparison
+    for entry in engines:
+        entry.pop("_forcesKjMolNm", None)
+        entry.pop("_initialForcesKcalMolAngstrom", None)
     return result
 
 

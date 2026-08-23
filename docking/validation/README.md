@@ -18,3 +18,8 @@ transformed-ring relaxation fixes every atom except the changed ring and its att
 Neither calculation includes the receptor or estimates binding affinity. An ANI-2x comparison must
 use the same exported pair; scoring only the edited ligand would confound edit-induced strain with
 the ordinary strain of the crystallographic parent pose.
+
+The independent hash-gated browser/native panel runner is documented in
+[`cloud-panel/README.md`](cloud-panel/README.md). Its first high-disruption 7KPA result, including an
+explicit failed cross-runtime Sage gate, is retained in
+[`cloud-panel/RESULTS-2026-08-23.md`](cloud-panel/RESULTS-2026-08-23.md).

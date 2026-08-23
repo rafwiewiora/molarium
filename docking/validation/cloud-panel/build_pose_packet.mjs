@@ -61,6 +61,29 @@ function hydrogenBondsOf(inspection, entryId, publicAtomIds) {
   });
 }
 
+function browserSinglePointsOf(entry, atomIds) {
+  const source = entry.browserSinglePoints;
+  if (source == null) return null;
+  if (!Array.isArray(source.atomIds) || source.atomIds.length !== atomIds.length
+    || source.atomIds.some((atomId, index) => atomId !== atomIds[index]))
+    throw new Error(`${entry.id}: browser single-point atom order differs from numeric System`);
+  const normalize = (record, name, forceUnit) => {
+    if (!record || record.job !== 'energy' || record.unit !== 'kcal/mol'
+      || record.forceUnit !== forceUnit || !Number.isFinite(record.finalEnergy))
+      throw new Error(`${entry.id}: ${name} browser single point is incomplete`);
+    if (!Array.isArray(record.forces) || record.forces.length !== atomIds.length * 3
+      || record.forces.some((value) => !Number.isFinite(value)))
+      throw new Error(`${entry.id}: ${name} browser force array is incomplete`);
+    const forces = record.forces.map(Number);
+    return { ...record, finalEnergy:Number(record.finalEnergy), forces,
+      forceSha256:digest(forces) };
+  };
+  return { atomIds:[...source.atomIds],
+    sageReference:normalize(source.sageReference, 'Sage OpenMM WASM Reference', 'kJ/mol/nm'),
+    sage:normalize(source.sage, 'Sage WebGPU', 'kJ/mol/nm'),
+    ani2x:normalize(source.ani2x, 'ANI-2x', 'kcal/mol/angstrom') };
+}
+
 function convert(entry) {
   const envelope = entry.inspection;
   if (envelope?.schema !== 'molarium.chemist-actions/v1' || envelope.action !== 'session.inspect'
@@ -106,9 +129,11 @@ function convert(entry) {
       chargeModel:numeric.chargeModel || null, sourceSha256:numeric.sourceSha256,
       system:numeric.system } } : {}) };
   const hydrogenBonds = hydrogenBondsOf(inspection, entry.id, publicAtomIds);
+  const browserSinglePoints = browserSinglePointsOf(entry, atomIds);
   return { id:entry.id, caseId:entry.caseId || entry.id,
     endpoint:entry.endpoint || null, analogue:entry.analogue || null,
     requiredContacts:entry.requiredContacts || [], hydrogenBonds, molecule,
+    ...(browserSinglePoints ? { browserSinglePoints } : {}),
     integrity:{ publicInspectionAtomOrderSha256:digest(publicAtomIds),
       atomOrderSha256:digest(atomIds), topologySha256:digest(topologyOf(molecule)),
       coordinatesSha256:digest(atoms.map(({ x, y, z }) => [x, y, z])),

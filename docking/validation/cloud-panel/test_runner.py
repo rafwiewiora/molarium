@@ -8,12 +8,23 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from run_independent_validation import canonical_sha256 as digest
+from run_independent_validation import canonical_sha256 as digest, parity_gate, vector_parity
 
 
 ROOT = Path(__file__).resolve().parent
 
 class IndependentPanelTest(unittest.TestCase):
+    def test_parity_gate_uses_both_energy_and_force_limits(self):
+        self.assertTrue(parity_gate(0.01, 1.0e-4, 0.02, "kcal/mol")["passed"])
+        self.assertFalse(parity_gate(0.03, 1.0e-4, 0.02, "kcal/mol")["passed"])
+        self.assertFalse(parity_gate(0.01, 2.0e-3, 0.02, "kcal/mol")["passed"])
+
+    def test_vector_parity_reports_component_units_without_shape_artifacts(self):
+        parity = vector_parity([1.0, 2.0, 3.0], [[1.0, 2.5, 2.0]])
+        self.assertAlmostEqual(parity["forceRmsDelta"], (1.25 / 3) ** 0.5)
+        self.assertEqual(parity["forceMaxAbsDelta"], 1.0)
+        self.assertGreater(parity["forceRelativeRms"], 0)
+
     def test_rdkit_and_openmm_packet(self):
         atoms = [
             {"element": "C", "x": 0.000, "y": 0.000, "z": 0.000},

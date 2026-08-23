@@ -7882,6 +7882,31 @@ const molariumTestApi = Object.freeze({
     return state.dockingResult?.validationNumericSystem
       ? structuredClone(state.dockingResult.validationNumericSystem) : null;
   },
+  async scoreDockingLigandForValidation() {
+    const prepared = dockingValidationLigandMolecule();
+    if (!prepared) throw new Error('The exact docking ligand validation System is unavailable.');
+    const summarize = (result, forceUnit) => ({
+      job:result.job, finalEnergy:Number(result.finalEnergy), unit:result.unit,
+      forces:Array.from(result.forces || [], Number), forceUnit,
+      forcefield:result.forcefield || null,
+      chargeModel:result.chargeModel || null, sourceSha256:result.sourceSha256 || null,
+      model:result.model || null, modelLevel:result.modelLevel || null,
+      modelSourceSha256:result.modelSourceSha256 || null,
+      platform:result.platform || null, backend:result.backend || null,
+      openmmVersion:result.openmmVersion || null,
+      descriptorBackend:result.descriptorBackend || null,
+      ensembleStdDevKcalMol:result.finalEnsembleStdDev ?? null,
+    });
+    const sageReference = await runOpenMMJob('energy', prepared.molecule, () => {});
+    const sage = await runWebGPUJob('energy', prepared.molecule, () => {});
+    const ani2x = await runAni2xJob('energy', prepared.unparameterizedMolecule, () => {});
+    return {
+      atomIds:[...prepared.atomIds],
+      sageReference:summarize(sageReference, 'kJ/mol/nm'),
+      sage:summarize(sage, 'kJ/mol/nm'),
+      ani2x:summarize(ani2x, 'kcal/mol/angstrom'),
+    };
+  },
   async tuneStormmReplicas(options = {}) {
     const result = await tuneStormmReplicas(options);
     return result ? structuredClone(result) : null;
@@ -8635,6 +8660,37 @@ function mappedMoleculeSubset(molecule, globalAtomIndices, label = 'component') 
     },
     globalAtomIndices:indices,
     globalToLocal:remap,
+  };
+}
+
+function dockingValidationLigandMolecule() {
+  const numeric = state.dockingResult?.validationNumericSystem;
+  if (!numeric?.atomIds?.length || !numeric.system || !state.molecule?.atoms?.length) return null;
+  const globalById = new Map(state.molecule.atoms.flatMap((atom, index) =>
+    atom.designAtomId ? [[atom.designAtomId, index]] : []));
+  const globalIndices = numeric.atomIds.map((atomId) => globalById.get(atomId));
+  if (globalIndices.some((index) => !Number.isInteger(index))
+    || new Set(globalIndices).size !== globalIndices.length) return null;
+  const localByGlobal = new Map(globalIndices.map((globalIndex, localIndex) =>
+    [globalIndex, localIndex]));
+  const atoms = globalIndices.map((globalIndex) => ({ ...state.molecule.atoms[globalIndex] }));
+  const bonds = state.molecule.bonds.flatMap((bond) => {
+    if (!localByGlobal.has(bond.a) || !localByGlobal.has(bond.b)) return [];
+    return [{ ...bond, a:localByGlobal.get(bond.a), b:localByGlobal.get(bond.b) }];
+  });
+  const base = {
+    name:`${state.molecule.name || 'Molecule'} · validation ligand`, atoms, bonds,
+    charge:atoms.reduce((sum, atom) => sum + atomFormalCharge(atom), 0),
+    multiplicity:state.molecule.multiplicity || 1,
+    source:{ format:'validation-ligand-subset' },
+  };
+  return {
+    atomIds:[...numeric.atomIds],
+    unparameterizedMolecule:base,
+    molecule:{ ...base, atoms:atoms.map((atom) => ({ ...atom })),
+      bonds:bonds.map((bond) => ({ ...bond })),
+      parameterization:{ forcefield:numeric.forcefield, chargeModel:numeric.chargeModel,
+        sourceSha256:numeric.sourceSha256, system:structuredClone(numeric.system) } },
   };
 }
 

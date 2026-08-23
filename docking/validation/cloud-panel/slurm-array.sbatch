@@ -11,6 +11,7 @@ set -euo pipefail
 : "${PANEL_MANIFEST:?Set PANEL_MANIFEST to an absolute panel JSON path}"
 : "${OUTPUT_DIR:?Set OUTPUT_DIR to an absolute output directory}"
 : "${ENV_PREFIX:?Set ENV_PREFIX to the prepared conda environment}"
+: "${VALIDATOR_SCRIPT:?Set VALIDATOR_SCRIPT to run_independent_validation.py}"
 : "${SHARD_COUNT:?Set SHARD_COUNT to the submitted array size}"
 : "${SLURM_ARRAY_TASK_ID:?Submit this script as a SLURM array}"
 
@@ -33,5 +34,4 @@ elif [[ "$mode" != "cpu" ]]; then
   exit 2
 fi
 
-conda run --no-capture-output -p "$ENV_PREFIX" \
-  python docking/validation/cloud-panel/run_independent_validation.py "${arguments[@]}"
+"$ENV_PREFIX/bin/python" "$VALIDATOR_SCRIPT" "${arguments[@]}"

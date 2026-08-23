@@ -10,8 +10,10 @@ scoring implementation with the method under test.
 For every pose the runner can report:
 
 - RDKit sanitization, MMFF94 bound-geometry energy, isolated relaxation energy and heavy-atom RMSD;
-- exact numeric-System energies and forces from native OpenMM Reference and CUDA; and
-- ANI-2x bound-geometry energy, isolated relaxation energy and heavy-atom RMSD.
+- exact numeric-System energies and forces from browser OpenMM/WASM, browser Sage WebGPU,
+  native OpenMM Reference, and native OpenMM CUDA; and
+- browser and native ANI-2x bound-geometry energies and forces, plus native isolated relaxation
+  energy and heavy-atom RMSD.
 
 Only energy differences for the **same molecular graph** are interpreted.  Total MMFF or ANI
 energies must not be compared across analogues with different compositions.  ANI-2x is a
@@ -41,8 +43,10 @@ The input schema is `molarium.analogue-pose-panel/v1`:
 
 Do not hand-build the integer atom map.  Capture `session.inspect` through the public Chemist
 Actions API with `scope: "ligand"`, `includeCoordinates: true`, and an untruncated atom limit.  A
-read-only test exporter may attach the exact ligand numeric System used by refinement, but it may not
-mutate the molecule or call a hidden scoring route.  Convert that batch with:
+read-only test exporter may attach the exact ligand numeric System used by refinement and invoke the
+same production single-point workers on an atom-ID-ordered ligand copy. It may not mutate the live
+molecule, parameterize a replacement System, or bypass the production worker boundary. Convert that
+batch with:
 
 ```sh
 node docking/validation/cloud-panel/build_pose_packet.mjs raw-exports.json panel.json
@@ -56,8 +60,9 @@ geometry are copied from the same public inspection for read-only review; no val
 rediscovers them heuristically. The Python oracle recomputes every hash before calculation. Unknown System force classes or
 term fields fail closed rather than being silently omitted.
 
-Atom coordinates are Å.  The optional numeric System has the exact field names written by
-`openff/sage-parameterizer.js`; its lengths are nm and energies are kJ/mol.
+Atom coordinates are Å. The optional numeric System has the exact field names written by
+`openff/sage-parameterizer.js`; its lengths are nm and energies are kJ/mol. Browser Sage and OpenMM
+force arrays are explicitly labelled kJ/mol/nm; ANI-2x force arrays are kcal/mol/Å.
 
 ## Local smoke test
 
@@ -65,9 +70,9 @@ Atom coordinates are Å.  The optional numeric System has the exact field names 
 python docking/validation/cloud-panel/test_runner.py
 ```
 
-## PsiBlue execution
+## GCP Slurm execution
 
-PsiBlue is an autoscaled GCP SLURM cluster.  An `idle~` node is powered down; submitting an array may
+The validation lane supports an autoscaled GCP Slurm cluster. An `idle~` node is powered down; submitting an array may
 start billable VMs.  Prepare the shared environment once, after approval:
 
 ```sh
@@ -82,7 +87,8 @@ pose_count=$(python -c 'import json,sys; print(len(json.load(open(sys.argv[1]))[
 shards=$(( pose_count < 25 ? pose_count : 25 ))
 sbatch --partition=compute --array="0-$((shards - 1))%8" \
   --export=ALL,PANEL_MANIFEST="$PWD/panel.json",OUTPUT_DIR="$PWD/results/cpu",\
-ENV_PREFIX="$HOME/.conda/envs/molarium-panel-v1",SHARD_COUNT="$shards",PANEL_MODE=cpu \
+ENV_PREFIX="$HOME/.conda/envs/molarium-panel-v1",SHARD_COUNT="$shards",PANEL_MODE=cpu,\
+VALIDATOR_SCRIPT="$PWD/docking/validation/cloud-panel/run_independent_validation.py" \
   docking/validation/cloud-panel/slurm-array.sbatch
 ```
 
@@ -97,9 +103,10 @@ unique browser-feasible pose; when a case has no feasible pose, it retains the l
 infeasible pose as a negative control.
 
 ```sh
-sbatch --partition=gpu --gres=gpu:1 --array="0-$((shards - 1))%1" \
+sbatch --partition=gpu --gres=gpu:1 --array="0-0%1" \
   --export=ALL,PANEL_MANIFEST="$PWD/shortlist.json",OUTPUT_DIR="$PWD/results/gpu",\
-ENV_PREFIX="$HOME/.conda/envs/molarium-panel-v1",SHARD_COUNT="$shards",PANEL_MODE=gpu \
+ENV_PREFIX="$HOME/.conda/envs/molarium-panel-v1",SHARD_COUNT=1,PANEL_MODE=gpu,\
+VALIDATOR_SCRIPT="$PWD/docking/validation/cloud-panel/run_independent_validation.py" \
   docking/validation/cloud-panel/slurm-array.sbatch
 ```
 

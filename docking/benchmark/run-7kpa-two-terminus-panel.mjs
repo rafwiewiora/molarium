@@ -255,6 +255,7 @@ function replayExpression(entry, replayOrdinal) {
           for (let poseIndex = 0; poseIndex < refinement.candidates; poseIndex++) {
             const applied = await execute('pose.apply', { index:poseIndex });
             const inspection = await inspectEnvelope(true);
+            const browserSinglePoints = await api.scoreDockingLigandForValidation();
             candidateValidationExports.push({
               id:entry.id + ':replay-' + ${replayOrdinal} + ':pose-' + poseIndex,
               caseId:entry.id, endpoint:entry.locus,
@@ -263,7 +264,7 @@ function replayExpression(entry, replayOrdinal) {
                 rank:applied.appliedPose.rank, feasible:applied.appliedPose.feasible,
                 scoreKcalMol:applied.appliedPose.scoreKcalMol },
               requiredContacts:entry.requiredContacts,
-              inspection, numericSystem,
+              inspection, numericSystem, browserSinglePoints,
             });
           }
         }

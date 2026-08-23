@@ -1,15 +1,12 @@
 name: molarium-panel-v1
 channels:
-  - pytorch
-  - nvidia
   - conda-forge
 dependencies:
   - python=3.11
   - numpy=2.1
   - rdkit=2025.03.4
   - openmm=8.2.0
-  - pytorch=2.7.1
-  - pytorch-cuda=12.6
   - pip
   - pip:
+      - torch==2.7.1
       - torchani==2.8.1

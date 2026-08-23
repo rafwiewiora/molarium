@@ -32,7 +32,16 @@ const inspection = { schema:'molarium.chemist-actions/v1', action:'session.inspe
 await writeFile(source, JSON.stringify({ schema:'molarium.chemist-pose-export-batch/v1',
   protocol:{ id:'test' }, exports:[{ id:'pose-1', inspection,
     numericSystem:{ atomIds:['persistent-C','persistent-O'], forcefield:'Sage test', chargeModel:'test',
-      sourceSha256:'a'.repeat(64), system } }] }));
+      sourceSha256:'a'.repeat(64), system },
+    browserSinglePoints:{ atomIds:['persistent-C','persistent-O'],
+      sageReference:{ job:'energy', finalEnergy:1.250001, unit:'kcal/mol',
+        forces:[1,2,3,4,5,6], forceUnit:'kJ/mol/nm', forcefield:'Sage test', sourceSha256:'a'.repeat(64),
+        platform:'Reference' },
+      sage:{ job:'energy', finalEnergy:1.25, unit:'kcal/mol', forces:[1,2,3,4,5,6], forceUnit:'kJ/mol/nm',
+        forcefield:'Sage test', sourceSha256:'a'.repeat(64), platform:'WebGPU' },
+      ani2x:{ job:'energy', finalEnergy:-123.5, unit:'kcal/mol', forces:[-1,-2,-3,-4,-5,-6], forceUnit:'kcal/mol/angstrom',
+        model:'ANI-2x ensemble (8 members)', modelSourceSha256:'b'.repeat(64),
+        platform:'WebGPU' } } }] }));
 const run = spawnSync(process.execPath, [path.join(import.meta.dirname, 'build_pose_packet.mjs'),
   source, output], { encoding:'utf8' });
 assert.equal(run.status, 0, run.stderr);
@@ -48,6 +57,8 @@ assert.equal(panel.poses[0].hydrogenBonds.length, 1);
 assert.equal(panel.poses[0].hydrogenBonds[0].participants.acceptor.atomId, 'persistent-O');
 assert.deepEqual(panel.poses[0].hydrogenBonds[0].participants.hydrogen.coordinatesAngstrom,
   [1,2,4]);
+assert.equal(panel.poses[0].browserSinglePoints.sage.finalEnergy, 1.25);
+assert.match(panel.poses[0].browserSinglePoints.ani2x.forceSha256, /^[a-f0-9]{64}$/);
 
 const invalid = JSON.parse(await readFile(source));
 invalid.exports[0].numericSystem.atomIds = ['different-ID'];
