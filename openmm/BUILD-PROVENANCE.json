@@ -23,6 +23,8 @@
     "reportSha256": "28b1aa6848994438832670b1af641c78f9633ec543e76f087ccf7ba9f1d3b950",
     "browserReport": "../docking/validation/cloud-panel/browser-sage-openmm-validation-2026-08-23.json",
     "browserReportSha256": "57749c23d3cdcac67f9f1d6a2fbbaa71b021ad09951f361a4c33749e8ec1d240",
+    "obc2DiagnosticReport": "../docking/validation/cloud-panel/browser-sage-openmm-obc2-diagnostic-2026-08-23.json",
+    "obc2DiagnosticReportSha256": "07eb6da633cabb806fe59e5307cf8b29864758cae278df92f78db2ba82c6f81d",
     "poseCount": 5,
     "passed": true
   }

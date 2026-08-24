@@ -27,6 +27,9 @@ const openmmPosePacketText = Bun.env.MOLARIUM_OPENMM_POSE_PACKET
 const openmmPosePacket = openmmPosePacketText ? JSON.parse(openmmPosePacketText) : null;
 const openmmPosePacketSha256 = openmmPosePacketText
   ? createHash('sha256').update(openmmPosePacketText).digest('hex') : null;
+const openmmPoseOptions = Bun.env.MOLARIUM_OPENMM_POSE_OPTIONS
+  ? JSON.parse(Bun.env.MOLARIUM_OPENMM_POSE_OPTIONS)
+  : { implicitSolvent:'vacuum', constraintMode:'none', nonbondedCutoffNm:0 };
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -80,6 +83,7 @@ const browserSuite = String.raw`(async () => {
   const externalPreparationFixture = ${JSON.stringify(preparationFixture)};
   const externalOpenmmPosePacket = ${JSON.stringify(openmmPosePacket)};
   const externalOpenmmPosePacketSha256 = ${JSON.stringify(openmmPosePacketSha256)};
+  const externalOpenmmPoseOptions = ${JSON.stringify(openmmPoseOptions)};
   const captureDockingUi = ${JSON.stringify(Boolean(Bun.env.MOLARIUM_TEST_SCREENSHOT_DOCKING))};
   const exportStrainFixture = ${JSON.stringify(Boolean(Bun.env.MOLARIUM_EXPORT_STRAIN_FIXTURE))};
   const diagnoseLactamPose = ${JSON.stringify(Boolean(Bun.env.MOLARIUM_DIAGNOSE_7KPA_LACTAM))};
@@ -151,9 +155,7 @@ const browserSuite = String.raw`(async () => {
     const poseMetrics = [];
     for (const pose of externalOpenmmPosePacket.poses || []) {
       api.loadObject(pose.molecule);
-      const validationOptions = {
-        implicitSolvent:'vacuum', constraintMode:'none', nonbondedCutoffNm:0,
-      };
+      const validationOptions = externalOpenmmPoseOptions;
       const reference = await api.calculateCurrent('energy', 'openmm', validationOptions);
       const sage = await api.calculateCurrent('energy', 'webgpu', validationOptions);
       const force = compareForces(sage.forces, reference.forces);
@@ -185,8 +187,7 @@ const browserSuite = String.raw`(async () => {
     return { passed:checks.length - failed.length, total:checks.length, failed,
       openmmPoseMetrics:{ schema:'molarium.browser-sage-openmm-validation/v1',
         source:{ packetSha256:externalOpenmmPosePacketSha256,
-          runtimeOptions:{ implicitSolvent:'vacuum', constraintMode:'none',
-            nonbondedCutoffNm:0 } },
+          runtimeOptions:externalOpenmmPoseOptions },
         gate:{ passed:poseMetrics.every((entry) => entry.gate.passed),
           poseCount:poseMetrics.length }, poses:poseMetrics },
       optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,

@@ -1,0 +1,162 @@
+{
+  "schema": "molarium.browser-sage-openmm-validation/v1",
+  "source": {
+    "packetSha256": "a1cfeb782166e9e74101502c874ad2a7f081d91ed52f9d4f4e12912a97ccc14a",
+    "runtimeOptions": {
+      "implicitSolvent": "obc2",
+      "constraintMode": "none",
+      "nonbondedCutoffNm": 0
+    }
+  },
+  "gate": {
+    "passed": true,
+    "poseCount": 5
+  },
+  "poses": [
+    {
+      "id": "phenyl-pyrrolidone-to-spiro-ketone:replay-1:pose-0",
+      "atomCount": 71,
+      "openmmVersion": "8.2",
+      "openmmPlatform": "Reference",
+      "openmmWasmSha256": "94e0ec3e81b6d26f52e7e42cfc823e4fcf970ebe428f497aa66db6e64d4bd307",
+      "numericSystemSha256": "233fdb46424942aed75d8c848d9584ac9d0ecf7a0cd51683bfc5cd89286c6ecf",
+      "parameterizedSystemSha256": "233fdb46424942aed75d8c848d9584ac9d0ecf7a0cd51683bfc5cd89286c6ecf",
+      "inputPositionsJsonSha256": "61dc49fa3e25253ed6f3d48d44e263801cf947de4c78ae6d4ecc23a2785dd478",
+      "implicitSolvent": "OBC2",
+      "constraintMode": "none",
+      "constraintCount": 0,
+      "cutoffNm": null,
+      "sagePlatform": "WebGPU",
+      "sageSourceSha256": "694df155d76d06baf7f4c9603e092798f11b6c758e08bbd86571de03350178ea",
+      "openmmPotentialEnergyKcalMol": 109.65710265906394,
+      "sagePotentialEnergyKcalMol": 109.65701043035969,
+      "absoluteEnergyDeltaKcalMol": 0.00009222870424707708,
+      "forceRmsDelta": 0.006454346433478985,
+      "forceMaxAbsDelta": 0.05167341557171312,
+      "forceRelativeRms": 0.0000116333855863668,
+      "forceDeltaUnit": "kJ/mol/nm",
+      "gate": {
+        "passed": true,
+        "maximumAbsoluteEnergyDelta": 0.01,
+        "energyUnit": "kcal/mol",
+        "maximumForceRelativeRms": 0.001
+      }
+    },
+    {
+      "id": "pyrrolidone-to-pyrazole:replay-1:pose-0",
+      "atomCount": 63,
+      "openmmVersion": "8.2",
+      "openmmPlatform": "Reference",
+      "openmmWasmSha256": "94e0ec3e81b6d26f52e7e42cfc823e4fcf970ebe428f497aa66db6e64d4bd307",
+      "numericSystemSha256": "013a5de5463877f380615240cf6f1bca90947cb0946fb1340fb25210b75c0833",
+      "parameterizedSystemSha256": "013a5de5463877f380615240cf6f1bca90947cb0946fb1340fb25210b75c0833",
+      "inputPositionsJsonSha256": "64b927c5f3dffd83eb3dbc5ca690a5253e268e91e6b209cdae69c5352b716ce9",
+      "implicitSolvent": "OBC2",
+      "constraintMode": "none",
+      "constraintCount": 0,
+      "cutoffNm": null,
+      "sagePlatform": "WebGPU",
+      "sageSourceSha256": "694df155d76d06baf7f4c9603e092798f11b6c758e08bbd86571de03350178ea",
+      "openmmPotentialEnergyKcalMol": 78.95079696393833,
+      "sagePotentialEnergyKcalMol": 78.95065949478295,
+      "absoluteEnergyDeltaKcalMol": 0.0001374691553763796,
+      "forceRmsDelta": 0.006667296111129374,
+      "forceMaxAbsDelta": 0.05260065938136904,
+      "forceRelativeRms": 0.000010632689676720421,
+      "forceDeltaUnit": "kJ/mol/nm",
+      "gate": {
+        "passed": true,
+        "maximumAbsoluteEnergyDelta": 0.01,
+        "energyUnit": "kcal/mol",
+        "maximumForceRelativeRms": 0.001
+      }
+    },
+    {
+      "id": "pyrrolidone-to-pyrazole:replay-1:pose-1",
+      "atomCount": 63,
+      "openmmVersion": "8.2",
+      "openmmPlatform": "Reference",
+      "openmmWasmSha256": "94e0ec3e81b6d26f52e7e42cfc823e4fcf970ebe428f497aa66db6e64d4bd307",
+      "numericSystemSha256": "013a5de5463877f380615240cf6f1bca90947cb0946fb1340fb25210b75c0833",
+      "parameterizedSystemSha256": "013a5de5463877f380615240cf6f1bca90947cb0946fb1340fb25210b75c0833",
+      "inputPositionsJsonSha256": "3e43ddb12961db0a326e19ea4c689b6bf83b891cc35198cbb1d4d3c105aefbe6",
+      "implicitSolvent": "OBC2",
+      "constraintMode": "none",
+      "constraintCount": 0,
+      "cutoffNm": null,
+      "sagePlatform": "WebGPU",
+      "sageSourceSha256": "694df155d76d06baf7f4c9603e092798f11b6c758e08bbd86571de03350178ea",
+      "openmmPotentialEnergyKcalMol": 78.95079696393833,
+      "sagePotentialEnergyKcalMol": 78.95065949478295,
+      "absoluteEnergyDeltaKcalMol": 0.0001374691553763796,
+      "forceRmsDelta": 0.006667296111201585,
+      "forceMaxAbsDelta": 0.05260065938136904,
+      "forceRelativeRms": 0.00001063268967683558,
+      "forceDeltaUnit": "kJ/mol/nm",
+      "gate": {
+        "passed": true,
+        "maximumAbsoluteEnergyDelta": 0.01,
+        "energyUnit": "kcal/mol",
+        "maximumForceRelativeRms": 0.001
+      }
+    },
+    {
+      "id": "pyrrolidone-to-tetrahydropyran:replay-1:pose-0",
+      "atomCount": 70,
+      "openmmVersion": "8.2",
+      "openmmPlatform": "Reference",
+      "openmmWasmSha256": "94e0ec3e81b6d26f52e7e42cfc823e4fcf970ebe428f497aa66db6e64d4bd307",
+      "numericSystemSha256": "b161abbc212eb4e5d27007b44b931283deffcefd7bf9c7c55b867fe7a0749aa9",
+      "parameterizedSystemSha256": "b161abbc212eb4e5d27007b44b931283deffcefd7bf9c7c55b867fe7a0749aa9",
+      "inputPositionsJsonSha256": "0b0e7f263c5df3428d3be613420ccf5b3bc846671f0ff0a33f316231b702aaf2",
+      "implicitSolvent": "OBC2",
+      "constraintMode": "none",
+      "constraintCount": 0,
+      "cutoffNm": null,
+      "sagePlatform": "WebGPU",
+      "sageSourceSha256": "694df155d76d06baf7f4c9603e092798f11b6c758e08bbd86571de03350178ea",
+      "openmmPotentialEnergyKcalMol": 81.09922141747809,
+      "sagePotentialEnergyKcalMol": 81.09926767148661,
+      "absoluteEnergyDeltaKcalMol": 0.000046254008523760604,
+      "forceRmsDelta": 0.006026062310076611,
+      "forceMaxAbsDelta": 0.051924927425716305,
+      "forceRelativeRms": 0.000010127123511657375,
+      "forceDeltaUnit": "kJ/mol/nm",
+      "gate": {
+        "passed": true,
+        "maximumAbsoluteEnergyDelta": 0.01,
+        "energyUnit": "kcal/mol",
+        "maximumForceRelativeRms": 0.001
+      }
+    },
+    {
+      "id": "pyrrolidone-to-tetrahydropyran:replay-1:pose-1",
+      "atomCount": 70,
+      "openmmVersion": "8.2",
+      "openmmPlatform": "Reference",
+      "openmmWasmSha256": "94e0ec3e81b6d26f52e7e42cfc823e4fcf970ebe428f497aa66db6e64d4bd307",
+      "numericSystemSha256": "b161abbc212eb4e5d27007b44b931283deffcefd7bf9c7c55b867fe7a0749aa9",
+      "parameterizedSystemSha256": "b161abbc212eb4e5d27007b44b931283deffcefd7bf9c7c55b867fe7a0749aa9",
+      "inputPositionsJsonSha256": "5d04783ce0d9d1f594cc5418dcc7a172a1bcfc37deef94bb1a8a79b38aa6b1c5",
+      "implicitSolvent": "OBC2",
+      "constraintMode": "none",
+      "constraintCount": 0,
+      "cutoffNm": null,
+      "sagePlatform": "WebGPU",
+      "sageSourceSha256": "694df155d76d06baf7f4c9603e092798f11b6c758e08bbd86571de03350178ea",
+      "openmmPotentialEnergyKcalMol": 84.04180042634076,
+      "sagePotentialEnergyKcalMol": 84.04207685481522,
+      "absoluteEnergyDeltaKcalMol": 0.0002764284744642964,
+      "forceRmsDelta": 0.006114657195060451,
+      "forceMaxAbsDelta": 0.05222406572966065,
+      "forceRelativeRms": 0.000010232512141333219,
+      "forceDeltaUnit": "kJ/mol/nm",
+      "gate": {
+        "passed": true,
+        "maximumAbsoluteEnergyDelta": 0.01,
+        "energyUnit": "kcal/mol",
+        "maximumForceRelativeRms": 0.001
+      }
+    }
+  ]
+}

@@ -75,7 +75,9 @@ in `openmm-wasm-native-validation-2026-08-23.json`; it contains hashes and
 metrics but no coordinates, host names, or proprietary inputs. A separate real-Chrome run is
 archived in `browser-sage-openmm-validation-2026-08-23.json`. It fixes the runtime configuration to
 vacuum, no constraints and no cutoff, and records the WASM, numeric-System, coordinate and packet
-hashes needed to bind the browser comparison to the native report.
+hashes needed to bind the browser comparison to the native report. The explicit OBC2 diagnostic in
+`browser-sage-openmm-obc2-diagnostic-2026-08-23.json` reproduces the earlier apparent disagreement
+and prevents a solvent-mode mismatch from being misclassified as an engine-parity failure.
 
 ## Local smoke test
 

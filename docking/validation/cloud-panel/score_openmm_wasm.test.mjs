@@ -104,6 +104,8 @@ assert.equal(fileDigest(browserReportBytes), provenance.validation.browserReport
 assert.equal(browserReport.schema, 'molarium.browser-sage-openmm-validation/v1');
 assert.deepEqual(browserReport.gate, { passed:true, poseCount:5 });
 assert.equal(browserReport.source.packetSha256, nativeReport.source.packetSha256);
+assert.deepEqual(browserReport.source.runtimeOptions,
+  { implicitSolvent:'vacuum', constraintMode:'none', nonbondedCutoffNm:0 });
 const nativeById = new Map(nativeReport.poses.map((entry) => [entry.id, entry]));
 for (const poseResult of browserReport.poses) {
   const native = nativeById.get(poseResult.id);
@@ -123,4 +125,30 @@ for (const poseResult of browserReport.poses) {
     - native.nativePotentialEnergyKcalMol) <= 1e-2);
 }
 
-console.log('OpenMM WASM scorer: analytic integrity, pinned build, native parity, and real-browser Sage parity passed');
+const obc2ReportBytes = await readFile(
+  'docking/validation/cloud-panel/browser-sage-openmm-obc2-diagnostic-2026-08-23.json');
+const obc2Report = JSON.parse(obc2ReportBytes);
+assert.equal(fileDigest(obc2ReportBytes), provenance.validation.obc2DiagnosticReportSha256);
+assert.deepEqual(obc2Report.source.runtimeOptions,
+  { implicitSolvent:'obc2', constraintMode:'none', nonbondedCutoffNm:0 });
+assert.deepEqual(obc2Report.gate, { passed:true, poseCount:5 });
+const vacuumById = new Map(browserReport.poses.map((entry) => [entry.id, entry]));
+const earlierBrowserEnergies = new Map([
+  ['phenyl-pyrrolidone-to-spiro-ketone:replay-1:pose-0', 109.65710265906394],
+  ['pyrrolidone-to-pyrazole:replay-1:pose-0', 78.95079696393833],
+  ['pyrrolidone-to-pyrazole:replay-1:pose-1', 78.95079696393833],
+  ['pyrrolidone-to-tetrahydropyran:replay-1:pose-0', 81.09922141747809],
+  ['pyrrolidone-to-tetrahydropyran:replay-1:pose-1', 84.04180042634076],
+]);
+for (const poseResult of obc2Report.poses) {
+  const vacuum = vacuumById.get(poseResult.id);
+  assert.ok(vacuum);
+  assert.ok(Math.abs(poseResult.openmmPotentialEnergyKcalMol
+    - earlierBrowserEnergies.get(poseResult.id)) <= 1e-12);
+  const solventShift = vacuum.openmmPotentialEnergyKcalMol
+    - poseResult.openmmPotentialEnergyKcalMol;
+  assert.ok(solventShift >= 3.8 && solventShift <= 4.8);
+  assert.equal(poseResult.gate.passed, true);
+}
+
+console.log('OpenMM WASM scorer: analytic integrity, pinned build, native parity, browser Sage parity, and solvent-mode diagnosis passed');
