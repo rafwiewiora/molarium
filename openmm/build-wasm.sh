@@ -5,7 +5,9 @@ openmm_source_path=${1:?Usage: build-wasm.sh /path/to/openmm-8.2.0 /path/to/emsc
 emscripten_prefix_path=${2:?Usage: build-wasm.sh /path/to/openmm-8.2.0 /path/to/emscripten-prefix}
 script_path=$(cd "$(dirname "$0")" && pwd)
 build_path="${openmm_source_path}/build-molarium-wasm"
+output_path=${MOLARIUM_OPENMM_OUTPUT_DIR:-$script_path}
 build_jobs=${MOLARIUM_BUILD_JOBS:-4}
+mkdir -p "$output_path"
 
 if ! grep -q '__EMSCRIPTEN__' "${openmm_source_path}/openmmapi/include/openmm/internal/hardware.h"; then
   patch -d "$openmm_source_path" -p1 < "${script_path}/openmm-8.2-emscripten.patch"
@@ -54,6 +56,6 @@ cmake --build "$build_path" --target OpenMM_static --parallel "$build_jobs"
   -sASSERTIONS=0 \
   '-sEXPORTED_FUNCTIONS=["_malloc","_free","_molarium_openmm_version","_molarium_forcefield_name","_molarium_last_error","_molarium_destroy","_molarium_initialize","_molarium_initialize_sage","_molarium_get_potential_energy","_molarium_minimize","_molarium_set_positions","_molarium_relax_fixed","_molarium_set_dynamics","_molarium_step","_molarium_get_positions","_molarium_get_forces"]' \
   '-sEXPORTED_RUNTIME_METHODS=["UTF8ToString","HEAP32","HEAPF64"]' \
-  -o "${script_path}/molarium-openmm.js"
+  -o "${output_path}/molarium-openmm.js"
 
-echo "Built ${script_path}/molarium-openmm.js and molarium-openmm.wasm"
+echo "Built ${output_path}/molarium-openmm.js and molarium-openmm.wasm"

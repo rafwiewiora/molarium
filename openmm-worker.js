@@ -16,6 +16,25 @@ function progress(id, phase, model, calculation) {
   self.postMessage({ type: 'progress', id, phase, model, calculation });
 }
 
+async function sha256Text(value) {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+function integrityCanonical(value) {
+  if (Array.isArray(value)) return `[${value.map(integrityCanonical).join(',')}]`;
+  if (value && typeof value === 'object') return `{${Object.keys(value).sort()
+    .map((key) => `${JSON.stringify(key)}:${integrityCanonical(value[key])}`).join(',')}}`;
+  if (typeof value === 'number') {
+    const buffer = new ArrayBuffer(8);
+    new DataView(buffer).setFloat64(0, value, false);
+    const hex = [...new Uint8Array(buffer)]
+      .map((byte) => byte.toString(16).padStart(2, '0')).join('');
+    return JSON.stringify(`~f64:${hex}`);
+  }
+  return JSON.stringify(value);
+}
+
 function getRDKit(id) {
   if (!rdkitPromise) {
     progress(id, 'Loading RDKit chemical perception…', 0.08, 0);
@@ -32,10 +51,28 @@ function getRDKit(id) {
 function getOpenMM(id) {
   if (!openmmPromise) {
     progress(id, 'Loading OpenMM WebAssembly…', 0.16, 0);
-    openmmPromise = import('./openmm/molarium-openmm.js')
-      .then((module) => module.default({
-        locateFile: (file) => new URL(`./openmm/${file}`, self.location.href).href,
-      }))
+    const scriptUrl = new URL('./openmm/molarium-openmm.js', self.location.href).href;
+    const wasmUrl = new URL('./openmm/molarium-openmm.wasm', self.location.href).href;
+    openmmPromise = Promise.all([
+      import(scriptUrl), fetch(wasmUrl, { cache:'no-store' }),
+    ]).then(async ([factory, response]) => {
+      if (!response.ok) throw new Error(`OpenMM WebAssembly could not be loaded (HTTP ${response.status})`);
+      const wasmBytes = new Uint8Array(await response.arrayBuffer());
+      if (!WebAssembly.validate(wasmBytes)) throw new Error('The OpenMM WebAssembly download is invalid');
+      const digest = await crypto.subtle.digest('SHA-256', wasmBytes);
+      const wasmSha256 = [...new Uint8Array(digest)]
+        .map((byte) => byte.toString(16).padStart(2, '0')).join('');
+      const compiledWasm = await WebAssembly.compile(wasmBytes);
+      const module = await factory.default({
+        instantiateWasm(imports, receiveInstance) {
+          const instance = new WebAssembly.Instance(compiledWasm, imports);
+          receiveInstance(instance);
+          return instance.exports;
+        },
+      });
+      module.molariumWasmSha256 = wasmSha256;
+      return module;
+    })
       .catch((error) => {
         openmmPromise = null;
         throw error;
@@ -239,6 +276,10 @@ async function runCalculation(message) {
 
   const simulationConfig = configureSimulationSystem(molecule, parameterized.system, options);
   const configuredSystem = simulationConfig.system;
+  const parameterizedSystemSha256 = await sha256Text(integrityCanonical(parameterized.system));
+  const numericSystemSha256 = await sha256Text(integrityCanonical(configuredSystem));
+  const inputPositionsJsonSha256 = await sha256Text(JSON.stringify(
+    molecule.atoms.flatMap((atom) => [atom.x, atom.y, atom.z])));
 
   const module = await getOpenMM(id);
   progress(id, `Creating OpenMM System · ${counts.particles} atoms · ${counts.torsions} torsions · ${counts.exceptions} exceptions…`, 0.9, 0.08);
@@ -502,6 +543,10 @@ async function runCalculation(message) {
     forcefield: parameterized.forcefield,
     chargeModel: parameterized.chargeModel,
     sourceSha256: parameterized.sourceSha256,
+    openmmWasmSha256: module.molariumWasmSha256,
+    numericSystemSha256,
+    parameterizedSystemSha256,
+    inputPositionsJsonSha256,
     platform: 'Reference',
     backend: 'OpenMM WebAssembly',
     unit: 'kcal/mol',

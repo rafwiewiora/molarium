@@ -1,0 +1,131 @@
+{
+  "gate": {
+    "passed": true,
+    "poseCount": 5
+  },
+  "poses": [
+    {
+      "atomCount": 71,
+      "comparison": {
+        "absoluteEnergyDeltaKcalMol": 1.4210854715202004e-14,
+        "forceDeltaUnit": "kJ/mol/nm",
+        "forceMaxAbsDelta": 7.389644451905042e-12,
+        "forceRelativeRms": 3.4458586839952166e-15,
+        "forceRmsDelta": 1.9150633144465277e-12,
+        "gate": {
+          "energyUnit": "kcal/mol",
+          "maximumAbsoluteEnergyDelta": 0.01,
+          "maximumForceRelativeRms": 0.001,
+          "passed": true
+        }
+      },
+      "id": "phenyl-pyrrolidone-to-spiro-ketone:replay-1:pose-0",
+      "nativeForceMaxAbsKjMolNm": 2751.9015890930873,
+      "nativeForceRmsKjMolNm": 555.7579373005957,
+      "nativeForceSha256": "983d461789755262d70d6537a072966403584e006cbc629444c1877b7cf61e12",
+      "nativePotentialEnergyKcalMol": 114.14576669778891,
+      "wasmPotentialEnergyKcalMol": 114.14576669778893
+    },
+    {
+      "atomCount": 63,
+      "comparison": {
+        "absoluteEnergyDeltaKcalMol": 0.0,
+        "forceDeltaUnit": "kJ/mol/nm",
+        "forceMaxAbsDelta": 7.275957614183426e-12,
+        "forceRelativeRms": 2.676322283312975e-15,
+        "forceRmsDelta": 1.675362860777503e-12,
+        "gate": {
+          "energyUnit": "kcal/mol",
+          "maximumAbsoluteEnergyDelta": 0.01,
+          "maximumForceRelativeRms": 0.001,
+          "passed": true
+        }
+      },
+      "id": "pyrrolidone-to-pyrazole:replay-1:pose-0",
+      "nativeForceMaxAbsKjMolNm": 2752.5786615369743,
+      "nativeForceRmsKjMolNm": 625.9944369269305,
+      "nativeForceSha256": "bb8f51fa8f273247168f2c828121c483cf004717017c8d72461c9a0e7caa7151",
+      "nativePotentialEnergyKcalMol": 83.7076892892023,
+      "wasmPotentialEnergyKcalMol": 83.7076892892023
+    },
+    {
+      "atomCount": 63,
+      "comparison": {
+        "absoluteEnergyDeltaKcalMol": 0.0,
+        "forceDeltaUnit": "kJ/mol/nm",
+        "forceMaxAbsDelta": 1.2420287021086551e-11,
+        "forceRelativeRms": 3.759617606058098e-15,
+        "forceRmsDelta": 2.353499706364914e-12,
+        "gate": {
+          "energyUnit": "kcal/mol",
+          "maximumAbsoluteEnergyDelta": 0.01,
+          "maximumForceRelativeRms": 0.001,
+          "passed": true
+        }
+      },
+      "id": "pyrrolidone-to-pyrazole:replay-1:pose-1",
+      "nativeForceMaxAbsKjMolNm": 2752.5786615369743,
+      "nativeForceRmsKjMolNm": 625.9944369269305,
+      "nativeForceSha256": "eac56ca6b2046e53c5213fa88492c71cf9ae733e797fdfbff789216703bb444c",
+      "nativePotentialEnergyKcalMol": 83.7076892892023,
+      "wasmPotentialEnergyKcalMol": 83.7076892892023
+    },
+    {
+      "atomCount": 70,
+      "comparison": {
+        "absoluteEnergyDeltaKcalMol": 1.4210854715202004e-14,
+        "forceDeltaUnit": "kJ/mol/nm",
+        "forceMaxAbsDelta": 8.242295734817162e-12,
+        "forceRelativeRms": 3.0228589415109007e-15,
+        "forceRmsDelta": 1.796282948545132e-12,
+        "gate": {
+          "energyUnit": "kcal/mol",
+          "maximumAbsoluteEnergyDelta": 0.01,
+          "maximumForceRelativeRms": 0.001,
+          "passed": true
+        }
+      },
+      "id": "pyrrolidone-to-tetrahydropyran:replay-1:pose-0",
+      "nativeForceMaxAbsKjMolNm": 2752.855467858165,
+      "nativeForceRmsKjMolNm": 594.2331360150416,
+      "nativeForceSha256": "2763125f9fd174b63deba841d3d7932805487d671fceb179342f62bed03f234c",
+      "nativePotentialEnergyKcalMol": 85.17473862604247,
+      "wasmPotentialEnergyKcalMol": 85.17473862604245
+    },
+    {
+      "atomCount": 70,
+      "comparison": {
+        "absoluteEnergyDeltaKcalMol": 2.842170943040401e-14,
+        "forceDeltaUnit": "kJ/mol/nm",
+        "forceMaxAbsDelta": 5.4569682106375694e-12,
+        "forceRelativeRms": 2.7862911692539454e-15,
+        "forceRmsDelta": 1.6622061163891995e-12,
+        "gate": {
+          "energyUnit": "kcal/mol",
+          "maximumAbsoluteEnergyDelta": 0.01,
+          "maximumForceRelativeRms": 0.001,
+          "passed": true
+        }
+      },
+      "id": "pyrrolidone-to-tetrahydropyran:replay-1:pose-1",
+      "nativeForceMaxAbsKjMolNm": 2752.977907508558,
+      "nativeForceRmsKjMolNm": 596.5658344437383,
+      "nativeForceSha256": "40a40d978a916baf1a2605b2e275d72c407e43dadef1778271bb4e66efd64ffe",
+      "nativePotentialEnergyKcalMol": 87.8909687745957,
+      "wasmPotentialEnergyKcalMol": 87.89096877459568
+    }
+  ],
+  "schema": "molarium.openmm-wasm-native-validation/v1",
+  "source": {
+    "nativeLibrarySha256": "cf64d1412880b9d8c8207ed39d1c7dfab3c7865172d0c939d7bf5074de060458",
+    "openmmVersion": "8.2",
+    "packetSha256": "a1cfeb782166e9e74101502c874ad2a7f081d91ed52f9d4f4e12912a97ccc14a",
+    "wasm": {
+      "moduleJsSha256": "a6eb81f1839ce85fe04e652bfad9bcf5fa5505eebb0ea7ccda47497b739f7e2e",
+      "moduleWasmSha256": "94e0ec3e81b6d26f52e7e42cfc823e4fcf970ebe428f497aa66db6e64d4bd307",
+      "openmmVersion": "8.2.0",
+      "packetSha256": "a1cfeb782166e9e74101502c874ad2a7f081d91ed52f9d4f4e12912a97ccc14a"
+    },
+    "wasmResultsSha256": "f43890e3a05c7caceb6fa0e8eaaecc42bb10740dd8fba99be542a4e3350f2978"
+  }
+}

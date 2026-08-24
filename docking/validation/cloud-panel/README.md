@@ -64,6 +64,19 @@ Atom coordinates are Å. The optional numeric System has the exact field names w
 `openff/sage-parameterizer.js`; its lengths are nm and energies are kJ/mol. Browser Sage and OpenMM
 force arrays are explicitly labelled kJ/mol/nm; ANI-2x force arrays are kcal/mol/Å.
 
+## OpenMM WASM rebuild gate
+
+`score_openmm_wasm.mjs` evaluates an integrity-checked pose packet with a
+selected OpenMM WebAssembly build. `validate_openmm_wasm.py` evaluates the same
+packet through the identical C bridge linked to a native OpenMM build and
+applies the fixed energy/force parity thresholds used elsewhere in this lane.
+The sanitized five-pose result for the pinned OpenMM 8.2.0 rebuild is archived
+in `openmm-wasm-native-validation-2026-08-23.json`; it contains hashes and
+metrics but no coordinates, host names, or proprietary inputs. A separate real-Chrome run is
+archived in `browser-sage-openmm-validation-2026-08-23.json`. It fixes the runtime configuration to
+vacuum, no constraints and no cutoff, and records the WASM, numeric-System, coordinate and packet
+hashes needed to bind the browser comparison to the native report.
+
 ## Local smoke test
 
 ```sh

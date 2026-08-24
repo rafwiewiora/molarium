@@ -12,13 +12,13 @@
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "bytes": 6879,
-      "sha256": "971371011546e8db1c47c95766bad6c3400b39788789d7f66505fcfb5113f0f2"
+      "bytes": 7527,
+      "sha256": "ff5bed30a41be3f91c3bda5d6f030b62aec4e788fa6a6a2f376b53c085171040"
     },
     {
       "path": "app.js",
-      "bytes": 592627,
-      "sha256": "0ba3f6387d49251b2a61fe1e502d5dd761992bad626a1e134455921366cd1137"
+      "bytes": 660849,
+      "sha256": "77b82e039219a608b57b03942cf1a0cd390f22c6fed0e6a41a6d5d7580fdb3d4"
     },
     {
       "path": "bun.lock",
@@ -32,18 +32,18 @@
     },
     {
       "path": "index.html",
-      "bytes": 55918,
-      "sha256": "14ba1bdf40db98d38af6a7ee6e1a82e5b7d19f1584d1b53163ca880fdc8e7841"
+      "bytes": 56512,
+      "sha256": "c10c1a8a382e8588f7088cf700d5c2bcec68344edb7e081f217317d059c86251"
     },
     {
       "path": "local-lab-test.js",
-      "bytes": 10542,
-      "sha256": "2805f6fd24ea975fdfedcf37f38492f282898669b3501ea22379e6eb9425c82e"
+      "bytes": 10556,
+      "sha256": "5d662d9ad75395e02aefe515ad0b9e281de05dd5b990682e3e5fef67b4fa04f8"
     },
     {
       "path": "package.json",
-      "bytes": 1711,
-      "sha256": "97c6cafe441fd6ad83bd0014c8812972884fc0b80ffff47702f80254ca51cd85"
+      "bytes": 5213,
+      "sha256": "c1c1b13f885e5c386d3ff2bc0aa5cf1bcc0ff42dd8a310d093a3e1a180b1bdee"
     },
     {
       "path": "protein-residue-templates.js",
@@ -52,8 +52,8 @@
     },
     {
       "path": "server.js",
-      "bytes": 4018,
-      "sha256": "48244e1438953f075da4248b67735e63752510c8f65a6f6d46e740fa44255f6e"
+      "bytes": 4121,
+      "sha256": "eb62c6571dc60487af07ad04ee551f149cff07b7584b5267fa70e3a42eb5e47d"
     },
     {
       "path": "scripts/generate-local-lab-manifest.mjs",
@@ -62,13 +62,13 @@
     },
     {
       "path": "styles.css",
-      "bytes": 56871,
-      "sha256": "4f851906afe31eaec44970d5c77589b792d92c26652bdc338c144688e7933cd9"
+      "bytes": 56840,
+      "sha256": "ba7ae65a5cdc3857710baad5ec7ade7b1af1a133db7a45c9649a1e9f06b18511"
     },
     {
       "path": "rdkit-worker.js",
-      "bytes": 22176,
-      "sha256": "d4263c7d9ed4f5be75a8bf270dd38d9a9abe4890198235513d36353940efe0e2"
+      "bytes": 21819,
+      "sha256": "8cc396b3a67a5e23229d4252a9c0bec7319f4c4f77de67cb8c998b90218d6f70"
     },
     {
       "path": "rdkit/dimorphite-sites.js",
@@ -87,28 +87,28 @@
     },
     {
       "path": "docking/browser-adapter.mjs",
-      "bytes": 10839,
-      "sha256": "ef975360ad31f0b861ae5fba12d8c97441eceea20b058e8ee698357eda79fcd2"
+      "bytes": 12787,
+      "sha256": "1bd4da6b6ef1a862950f54408600df36e08ec51e9ad7b7856918a06ba87d3773"
     },
     {
       "path": "docking/contact-remap.mjs",
-      "bytes": 21381,
-      "sha256": "5cecd007a6c0310f4d2af690810d1ce04b7282a43f82cc528845ce0866d66a9f"
+      "bytes": 27720,
+      "sha256": "b9b47b1998e2331ddc5375c45b933ec193843f0030eae0fbc91f61e56defc27b"
     },
     {
       "path": "docking/constraints.mjs",
-      "bytes": 10870,
-      "sha256": "ef5e3392aecc1709bb0183957d1ad7252a98a9704222b4feb30d6d2269b70470"
+      "bytes": 11007,
+      "sha256": "e953159b1262fba06af64e2dd9478f68f23778a92d62ff9211153ccdf579cc9a"
     },
     {
       "path": "docking/labbook.mjs",
-      "bytes": 10791,
-      "sha256": "9b123b14dd6117a7478b0a8aa50005940ab70b7f7db4cdc1e45d4bedef7afa61"
+      "bytes": 10985,
+      "sha256": "31618cc9610e2ace643fb7e23f2fcfb580e91c60006b71f2919aa7c033b31713"
     },
     {
       "path": "docking/protocol.mjs",
-      "bytes": 18317,
-      "sha256": "1de2c4dc3b5e7e8e59bd72bd87989b610462964d6b0cadfd3c63adf8118b6778"
+      "bytes": 25037,
+      "sha256": "1e595f6b6848358d1056f6d3161cbe0711919863e276aeb4f118a68a12cdb502"
     },
     {
       "path": "docking/receptor-score.mjs",
@@ -117,8 +117,8 @@
     },
     {
       "path": "docking/reference-core.mjs",
-      "bytes": 7469,
-      "sha256": "46aebcaeecdc635e310abaf48496a46ece67fce137156f234abf40fcb73f6d6a"
+      "bytes": 7706,
+      "sha256": "699fe700f9e6a7772a146f06714e55999cb67334fb66ad6a2aa01ec82b47db57"
     },
     {
       "path": "docking/torsion-search.mjs",
@@ -127,13 +127,13 @@
     },
     {
       "path": "docking/workflow.mjs",
-      "bytes": 7001,
-      "sha256": "73983dbd485d2c3c9a460609a2b258a274ae059de450b583a16a7cff65e6fb70"
+      "bytes": 7978,
+      "sha256": "2696a281152fb7fd0f47b48cde2146b167b6739c3ca0b45c42128260e0d49bec"
     },
     {
       "path": "openmm-worker.js",
-      "bytes": 25165,
-      "sha256": "26aefa60a5cfc09e1fd10eb054d494f76a9db129a7a8a294743fd4459193c951"
+      "bytes": 27458,
+      "sha256": "b8eb728e136fa6dcd201c22fc3a98d9ff4a443ef995f3b0401fbabce8549ee50"
     },
     {
       "path": "openmm/molarium-openmm.js",
@@ -142,8 +142,8 @@
     },
     {
       "path": "openmm/molarium-openmm.wasm",
-      "bytes": 905116,
-      "sha256": "1711ccdae3f89b1667223d6e47182c5bbed05c78f6efbdd472ae700a93200a97"
+      "bytes": 905839,
+      "sha256": "94e0ec3e81b6d26f52e7e42cfc823e4fcf970ebe428f497aa66db6e64d4bd307"
     },
     {
       "path": "webgpu-worker.js",
@@ -252,8 +252,8 @@
     },
     {
       "path": "assets/molarium-mark.svg",
-      "bytes": 1404,
-      "sha256": "4c0dc207ae8746986c55897d1c5943c857d06734566fc60b7a9f71eaf9a3d23f"
+      "bytes": 1047,
+      "sha256": "f930672c0d3c6f7f9c1cc17f34aa9a215d6cb3e442736920e0c8746eaa44bfe6"
     }
   ]
 }

@@ -1,4 +1,5 @@
 import { mkdtemp, rm } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -21,6 +22,11 @@ const preparationFixture = Bun.env.MOLARIUM_PREPARATION_PDB
     waterPolicy: Bun.env.MOLARIUM_PREPARATION_WATER_POLICY || 'exclude',
     parameterize: Bun.env.MOLARIUM_PREPARATION_PARAMETERIZE === '1' }
   : null;
+const openmmPosePacketText = Bun.env.MOLARIUM_OPENMM_POSE_PACKET
+  ? await Bun.file(Bun.env.MOLARIUM_OPENMM_POSE_PACKET).text() : null;
+const openmmPosePacket = openmmPosePacketText ? JSON.parse(openmmPosePacketText) : null;
+const openmmPosePacketSha256 = openmmPosePacketText
+  ? createHash('sha256').update(openmmPosePacketText).digest('hex') : null;
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -72,6 +78,8 @@ class DevToolsClient {
 
 const browserSuite = String.raw`(async () => {
   const externalPreparationFixture = ${JSON.stringify(preparationFixture)};
+  const externalOpenmmPosePacket = ${JSON.stringify(openmmPosePacket)};
+  const externalOpenmmPosePacketSha256 = ${JSON.stringify(openmmPosePacketSha256)};
   const captureDockingUi = ${JSON.stringify(Boolean(Bun.env.MOLARIUM_TEST_SCREENSHOT_DOCKING))};
   const exportStrainFixture = ${JSON.stringify(Boolean(Bun.env.MOLARIUM_EXPORT_STRAIN_FIXTURE))};
   const diagnoseLactamPose = ${JSON.stringify(Boolean(Bun.env.MOLARIUM_DIAGNOSE_7KPA_LACTAM))};
@@ -133,6 +141,54 @@ const browserSuite = String.raw`(async () => {
     'a fresh browser worker initializes OpenMM WebAssembly', JSON.stringify(energy));
     const failed = checks.filter((item) => !item.passed);
     return { passed:checks.length - failed.length, total:checks.length, failed,
+      optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,
+      preparationMetrics:null };
+  }
+  if (testScope === 'openmm-pose-packet') {
+    check(externalOpenmmPosePacket?.schema === 'molarium.analogue-pose-panel/v1'
+      && Array.isArray(externalOpenmmPosePacket.poses),
+    'the OpenMM pose validation packet has the expected schema');
+    const poseMetrics = [];
+    for (const pose of externalOpenmmPosePacket.poses || []) {
+      api.loadObject(pose.molecule);
+      const validationOptions = {
+        implicitSolvent:'vacuum', constraintMode:'none', nonbondedCutoffNm:0,
+      };
+      const reference = await api.calculateCurrent('energy', 'openmm', validationOptions);
+      const sage = await api.calculateCurrent('energy', 'webgpu', validationOptions);
+      const force = compareForces(sage.forces, reference.forces);
+      const absoluteEnergyDeltaKcalMol = Math.abs(sage.finalEnergy - reference.finalEnergy);
+      const gate = { passed:absoluteEnergyDeltaKcalMol <= 1e-2
+          && force?.relativeRms <= 1e-3,
+        maximumAbsoluteEnergyDelta:1e-2, energyUnit:'kcal/mol',
+        maximumForceRelativeRms:1e-3 };
+      check(gate.passed, pose.id + ': Sage WebGPU matches OpenMM WASM',
+        JSON.stringify({ absoluteEnergyDeltaKcalMol, force }));
+      poseMetrics.push({ id:pose.id, atomCount:pose.molecule.atoms.length,
+        openmmVersion:reference.openmmVersion, openmmPlatform:reference.platform,
+        openmmWasmSha256:reference.openmmWasmSha256,
+        numericSystemSha256:reference.numericSystemSha256,
+        parameterizedSystemSha256:reference.parameterizedSystemSha256,
+        inputPositionsJsonSha256:reference.inputPositionsJsonSha256,
+        implicitSolvent:reference.implicitSolvent,
+        constraintMode:reference.constraintMode,
+        constraintCount:reference.constraintCount,
+        cutoffNm:reference.cutoffNm,
+        sagePlatform:sage.platform, sageSourceSha256:sage.sourceSha256,
+        openmmPotentialEnergyKcalMol:reference.finalEnergy,
+        sagePotentialEnergyKcalMol:sage.finalEnergy, absoluteEnergyDeltaKcalMol,
+        forceRmsDelta:force?.rmsError ?? null,
+        forceMaxAbsDelta:force?.maximumError ?? null,
+        forceRelativeRms:force?.relativeRms ?? null, forceDeltaUnit:'kJ/mol/nm', gate });
+    }
+    const failed = checks.filter((item) => !item.passed);
+    return { passed:checks.length - failed.length, total:checks.length, failed,
+      openmmPoseMetrics:{ schema:'molarium.browser-sage-openmm-validation/v1',
+        source:{ packetSha256:externalOpenmmPosePacketSha256,
+          runtimeOptions:{ implicitSolvent:'vacuum', constraintMode:'none',
+            nonbondedCutoffNm:0 } },
+        gate:{ passed:poseMetrics.every((entry) => entry.gate.passed),
+          poseCount:poseMetrics.length }, poses:poseMetrics },
       optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,
       preparationMetrics:null };
   }
@@ -3201,6 +3257,9 @@ try {
   }
   client.close();
   const report = evaluation.result.value;
+  if (Bun.env.MOLARIUM_OPENMM_POSE_RESULT && report.openmmPoseMetrics)
+    await Bun.write(Bun.env.MOLARIUM_OPENMM_POSE_RESULT,
+      JSON.stringify(report.openmmPoseMetrics, null, 2) + '\n');
   if (Bun.env.MOLARIUM_EXPORT_STRAIN_FIXTURE
       && report.preparationMetrics?.cyclohexanoneStrainFixture) {
     await Bun.write(Bun.env.MOLARIUM_EXPORT_STRAIN_FIXTURE,
