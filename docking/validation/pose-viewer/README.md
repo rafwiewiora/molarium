@@ -35,7 +35,9 @@ camera** deliberately returns to a candidate-centered frame.
 
 The single bottom **H-bonds** switch draws only required contacts that the recorded candidate marked
 as satisfied. Participant identities and coordinates come from the public Chemist Actions pose
-inspection; the review builder does not infer new contacts from viewer geometry.
+inspection; the review builder does not infer new contacts from viewer geometry. The build fails
+closed when a pose export lacks the complete donor, hydrogen, and acceptor evidence, rather than
+silently presenting an empty interaction control.
 
 The vendored Mol* files have SHA-256 digests
 `7fad5561c74bc900930fb57d6ab028d1aafdda82223a901bf932b1098e84f1f3` (JavaScript) and

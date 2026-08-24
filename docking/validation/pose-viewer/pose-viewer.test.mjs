@@ -75,6 +75,13 @@ assert.equal(data.cases[0].poses.length, 2);
 assert.equal(data.cases[0].poses[0].independent.openmm.potentialEnergyKcalMol, 4);
 assert.match(data.cases[0].poses[0].hydrogenBondMolBlock, /V2000/);
 assert.match(data.receptor.proteinPdb, /      11\.000   2\.000   3\.000/);
+const stalePose = { ...poses[0] };
+delete stalePose.hydrogenBonds;
+assert.throws(() => buildReviewData({
+  panel:{ schema:'molarium.analogue-pose-panel/v1', poses:[stalePose] },
+  validation:{ ...validation, results:[validation.results[0]] }, pdbText:pdb,
+  panelSha256:'panel', validationSha256:'validation', pdbSha256:'pdb'
+}), /hydrogen-bond evidence is missing; regenerate the pose export/);
 
 const directory = import.meta.dirname;
 const files = [

@@ -141,6 +141,22 @@ function engine(result, name) {
   return result?.engines?.find((entry) => entry.engine === name) || null;
 }
 
+function requireHydrogenBondEvidence(pose) {
+  if (!Array.isArray(pose.requiredContacts))
+    throw new Error(`${pose.id}: required-contact evidence is missing`);
+  if (!Array.isArray(pose.hydrogenBonds))
+    throw new Error(`${pose.id}: hydrogen-bond evidence is missing; regenerate the pose export`);
+  if (pose.hydrogenBonds.length !== pose.requiredContacts.length)
+    throw new Error(`${pose.id}: hydrogen-bond evidence count does not match required contacts`);
+  for (const contact of pose.hydrogenBonds) {
+    for (const role of ['donor', 'hydrogen', 'acceptor']) {
+      const point = contact.participants?.[role]?.coordinatesAngstrom;
+      if (!Array.isArray(point) || point.length !== 3 || !point.every(Number.isFinite))
+        throw new Error(`${pose.id}: ${contact.id || 'hydrogen bond'} has no ${role} coordinates`);
+    }
+  }
+}
+
 export function buildReviewData({ panel, validation, pdbText, panelSha256, validationSha256, pdbSha256 }) {
   if (panel?.schema !== 'molarium.analogue-pose-panel/v1' || !Array.isArray(panel.poses))
     throw new Error('Unsupported pose-panel schema');
@@ -154,6 +170,7 @@ export function buildReviewData({ panel, validation, pdbText, panelSha256, valid
   const byId = new Map(validation.results.map((entry) => [entry.id, entry]));
   const groups = new Map();
   for (const pose of panel.poses) {
+    requireHydrogenBondEvidence(pose);
     const result = byId.get(pose.id);
     if (!result) throw new Error(`Missing independent validation for ${pose.id}`);
     const openmm = engine(result, 'OpenMM');
@@ -162,7 +179,7 @@ export function buildReviewData({ panel, validation, pdbText, panelSha256, valid
       id:pose.id, caseId:pose.caseId, endpoint:pose.endpoint, analogue:pose.analogue,
       requiredContacts:pose.requiredContacts, integrity:pose.integrity,
       molBlock:moleculeToMolBlock(pose.molecule, pose.id),
-      hydrogenBonds:pose.hydrogenBonds || [],
+      hydrogenBonds:pose.hydrogenBonds,
       hydrogenBondMolBlock:hydrogenBondsToMolBlock(pose.hydrogenBonds),
       independent:{ openmm, mmff, inputSha256:result.inputSha256 }
     };
