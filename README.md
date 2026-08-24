@@ -348,6 +348,24 @@ no Amber relaxation.
 Model provenance is in
 [`openfold-export-results/trained/MODEL-CARD.md`](./openfold-export-results/trained/MODEL-CARD.md).
 
+## Validation ledger
+
+The versioned [`validation/registry.v0.1.json`](./validation/registry.v0.1.json) preserves the
+case-level evidence used by Molarium's validation dashboard and papers. The first registered
+docking cohort contains **25 transformations across 18 distinct PDB/ligand starting complexes and
+15 protein targets**. All 25 have terminal workflow outcomes, 17 reached pose search, and five
+paired-crystal cases have blinded heavy-atom RMSD scoring. Failures and unsupported cases remain in
+the denominator.
+
+A separate cross-runtime gate contains five exact poses from three analogue chemistries, all from
+the same 7KPA/D84 protein–ligand system. Those five poses validate matched browser/native arithmetic;
+they do not count as five independent systems. The 20-case 7KPA chemistry stress panel is registered
+but is marked partial until a complete result artifact is committed.
+
+The top-bar **Validation** dashboard separates targets, reference complexes, registered cases,
+poses, and software assertions; every source artifact carries a SHA-256 digest. See
+[`validation/README.md`](./validation/README.md) for the append-only update procedure.
+
 ## Scientific status
 
 Molarium is experimental software.

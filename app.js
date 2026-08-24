@@ -12146,11 +12146,23 @@ document.querySelectorAll('.app-header-links a').forEach((link) => link.addEvent
 }));
 const projectInfoDialog = document.querySelector('#project-info-dialog');
 const projectInfoTitle = document.querySelector('#project-info-title');
+let validationDashboardPromise = null;
+function ensureValidationDashboard() {
+  const root = document.querySelector('#validation-dashboard');
+  if (!root || root.dataset.validationMounted === 'true') return;
+  validationDashboardPromise ||= import('./validation/dashboard.mjs')
+    .then(module => module.mountValidationDashboard(root))
+    .catch(error => {
+      root.innerHTML = `<p class="validation-dashboard-error">Validation ledger unavailable · ${String(error.message || error)}</p>`;
+    });
+}
 function openProjectInfoPanel(panel) {
   document.querySelectorAll('[data-project-section]').forEach((section) => {
     section.classList.toggle('hidden', section.dataset.projectSection !== panel);
   });
+  projectInfoDialog.classList.toggle('validation-open', panel === 'validation');
   projectInfoTitle.textContent = panel[0].toUpperCase() + panel.slice(1);
+  if (panel === 'validation') ensureValidationDashboard();
   if (!projectInfoDialog.open) projectInfoDialog.showModal();
 }
 document.querySelectorAll('[data-project-panel]').forEach((link) => link.addEventListener('click', (event) => {

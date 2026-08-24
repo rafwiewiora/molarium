@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "build:web": "bun scripts/build-web.mjs",
+    "build:web": "node validation/validate-registry.mjs && bun scripts/build-web.mjs",
     "assets:download": "bun scripts/fetch-assets.mjs",
     "manifest:r2": "bun scripts/r2-assets.mjs",
     "upload:r2": "bun scripts/upload-r2-assets.mjs",
@@ -14,6 +14,8 @@
     "start": "bun server.js",
     "start:local": "bun server.js --local-only",
     "manifest:local": "bun scripts/generate-local-lab-manifest.mjs",
+    "build:validation-registry": "node validation/build-registry.mjs",
+    "test:validation-registry": "node validation/validate-registry.mjs && node validation/dashboard.test.mjs",
     "test:local-lab": "bun local-lab-test.js",
     "test:development-log": "bun scripts/export-codex-session-test.mjs",
     "test:logo": "bun scripts/molarium-logo-test.mjs",

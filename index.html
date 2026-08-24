@@ -820,14 +820,9 @@
         <p class="project-info-note">Coordinates and calculations remain in the browser except for explicit PDB/CCD retrieval and MSA searches.</p>
       </section>
       <section class="hidden" data-project-section="validation">
-        <p>Reference checks compare browser calculations with the same numeric systems evaluated by OpenMM and with pinned native model outputs.</p>
-        <ul>
-          <li>OpenFF Sage energy and force parity against an internal OpenMM Reference oracle</li>
-          <li>SHAKE/RATTLE constraint residual and deterministic replay checks</li>
-          <li>RDKit, ANI-2x and OpenFold pinned-version regression fixtures</li>
-          <li>Browser behavior, preparation and trajectory regression suite</li>
-        </ul>
-        <p class="project-info-note">Experimental methods stay labelled in the interface; a passing implementation comparison is not a claim of scientific validation for every system.</p>
+        <div id="validation-dashboard" class="validation-dashboard" aria-live="polite">
+          <p class="validation-dashboard-loading">Loading the versioned evidence ledger…</p>
+        </div>
       </section>
       <section class="hidden" data-project-section="credits">
         <p>Interface design inspired by <a href="https://atomiverse.com/" target="_blank" rel="noreferrer">Atomiverse</a>. Molarium’s interface and Canvas viewer were independently implemented; Atomiverse and its referenced <code>xyzrender</code> project are not bundled dependencies.</p>

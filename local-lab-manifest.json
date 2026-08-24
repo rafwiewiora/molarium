@@ -17,8 +17,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 660849,
-      "sha256": "77b82e039219a608b57b03942cf1a0cd390f22c6fed0e6a41a6d5d7580fdb3d4"
+      "bytes": 661493,
+      "sha256": "f90d8dd3ac37ff7282600d16f1e1fe805320cc11ac08d7f9bab79e1ec2dab60b"
     },
     {
       "path": "bun.lock",
@@ -32,8 +32,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 56512,
-      "sha256": "c10c1a8a382e8588f7088cf700d5c2bcec68344edb7e081f217317d059c86251"
+      "bytes": 56001,
+      "sha256": "7a890ae816110f27937baf0a8c5170e805beaadf8656e290586d9ed4134006ee"
     },
     {
       "path": "local-lab-test.js",
@@ -42,8 +42,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 5213,
-      "sha256": "c1c1b13f885e5c386d3ff2bc0aa5cf1bcc0ff42dd8a310d093a3e1a180b1bdee"
+      "bytes": 5436,
+      "sha256": "558e9bc431b31b20b564e0ae5e3c3081df56c2f3be733527d7b77577b100fcf5"
     },
     {
       "path": "protein-residue-templates.js",
@@ -57,13 +57,28 @@
     },
     {
       "path": "scripts/generate-local-lab-manifest.mjs",
-      "bytes": 2440,
-      "sha256": "6668b1d6862184b567079712fcb136f4c3bb52af71859d8449930bb65b02751c"
+      "bytes": 3038,
+      "sha256": "07c4806b27776e6d869443f7c5602916d4dc280e1d315c3a01995167b9f651ad"
     },
     {
       "path": "styles.css",
-      "bytes": 56840,
-      "sha256": "ba7ae65a5cdc3857710baad5ec7ade7b1af1a133db7a45c9649a1e9f06b18511"
+      "bytes": 61715,
+      "sha256": "7d33b52487fdd787783fdf6fdaccd9a1f8370d45cc62c1bdb2546eb2ac650acb"
+    },
+    {
+      "path": "validation/README.md",
+      "bytes": 1022,
+      "sha256": "283047de584b5349f5fbeac609c9b62b6ef2c5cfbb4474c4bac826ef2de0a473"
+    },
+    {
+      "path": "validation/dashboard.mjs",
+      "bytes": 5600,
+      "sha256": "41f720360905e9c17bcb19a16e3a5e0f798f42c37021cfdd32613c7b49d9144f"
+    },
+    {
+      "path": "validation/registry.v0.1.json",
+      "bytes": 20618,
+      "sha256": "b2fbb11792a37d7d28e0043bbc7f35e3fba7bcad822c3b47a05649d09b212e34"
     },
     {
       "path": "rdkit-worker.js",
@@ -129,6 +144,46 @@
       "path": "docking/workflow.mjs",
       "bytes": 7978,
       "sha256": "2696a281152fb7fd0f47b48cde2146b167b6739c3ca0b45c42128260e0d49bec"
+    },
+    {
+      "path": "docking/benchmark/manifest.v0.1.json",
+      "bytes": 355005,
+      "sha256": "8d8a0840567321010ddd8600236b6e7ada1a177f16cbeeb22ad847bfce95e502"
+    },
+    {
+      "path": "docking/benchmark/benchmark-results.v0.1.scored.json",
+      "bytes": 63576,
+      "sha256": "a378fb2a7bf9ab95b3ca18697037f79d4decbe5ce490c33617f6e1228ebf2359"
+    },
+    {
+      "path": "docking/benchmark/RESULTS.v0.1.md",
+      "bytes": 4492,
+      "sha256": "f9c56903799f2fcdb9237c6c602e625a6d2504515721cc74e577e9c0b07b72f6"
+    },
+    {
+      "path": "docking/benchmark/7kpa-two-terminus-panel.v0.1.json",
+      "bytes": 14614,
+      "sha256": "de08bca3c70d2542630845c0e91cbe4492bed338bb446734c78015c64a62c174"
+    },
+    {
+      "path": "docking/validation/cloud-panel/browser-sage-openmm-validation-2026-08-23.json",
+      "bytes": 6962,
+      "sha256": "57749c23d3cdcac67f9f1d6a2fbbaa71b021ad09951f361a4c33749e8ec1d240"
+    },
+    {
+      "path": "docking/validation/cloud-panel/browser-sage-openmm-obc2-diagnostic-2026-08-23.json",
+      "bytes": 6968,
+      "sha256": "07eb6da633cabb806fe59e5307cf8b29864758cae278df92f78db2ba82c6f81d"
+    },
+    {
+      "path": "docking/validation/cloud-panel/openmm-wasm-native-validation-2026-08-23.json",
+      "bytes": 5081,
+      "sha256": "28b1aa6848994438832670b1af641c78f9633ec543e76f087ccf7ba9f1d3b950"
+    },
+    {
+      "path": "docking/validation/cloud-panel/RESULTS-2026-08-23.md",
+      "bytes": 5669,
+      "sha256": "08008ed7983a8c1904edfd01ea7ccc845dc6c7c76925b48e3b9997cf705108da"
     },
     {
       "path": "openmm-worker.js",

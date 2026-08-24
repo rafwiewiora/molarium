@@ -311,6 +311,29 @@ const browserSuite = String.raw`(async () => {
   check(document.querySelector('[data-project-section="credits"]').textContent.includes('OpenAI’s Sol')
     && document.querySelector('[data-project-section="credits"]').textContent.includes('scientific-reasoning assistance'),
     'credits acknowledge OpenAI Sol development assistance');
+  document.querySelector('[data-project-panel="validation"]').click();
+  const validationRoot = document.querySelector('#validation-dashboard');
+  for (let attempt = 0; attempt < 50 && validationRoot.dataset.validationMounted !== 'true'; attempt++)
+    await new Promise(resolve => setTimeout(resolve, 100));
+  check(document.querySelector('#project-info-dialog').classList.contains('validation-open')
+    && !document.querySelector('[data-project-section="validation"]').classList.contains('hidden'),
+    'Validation opens the evidence-ledger dashboard');
+  check(validationRoot.querySelector('[data-validation-count="reference-systems"]')?.textContent === '18'
+    && validationRoot.querySelector('[data-validation-count="cases"]')?.textContent === '25'
+    && validationRoot.querySelector('[data-validation-count="targets"]')?.textContent === '15'
+    && validationRoot.querySelector('[data-validation-count="crystal-scored"]')?.textContent === '5',
+    'validation dashboard separates reference systems, cases, targets and crystal-scored pairs');
+  check(validationRoot.querySelectorAll('[data-validation-tier]').length === 25,
+    'validation dashboard preserves all 25 registered case outcomes');
+  check(validationRoot.textContent.includes('Registered · partial')
+    && validationRoot.textContent.includes('do not add twenty independent protein systems'),
+    'validation dashboard labels the 20-case single-system chemistry panel as partial');
+  const registryResponse = await fetch('./validation/registry.v0.1.json');
+  const registry = await registryResponse.json();
+  check(registryResponse.ok && registry.schema === 'molarium.validation-registry/v1'
+    && registry.cases.length === 25
+    && Object.values(registry.artifacts).every(entry => /^[a-f0-9]{64}$/.test(entry.sha256)),
+    'machine-readable validation registry exposes case records and source hashes');
   const sideCards = [...document.querySelectorAll('.panel > .card')];
   const generatedDisclosures = [...document.querySelectorAll('[data-generated-card-disclosure]')];
   check(sideCards.length === 13
