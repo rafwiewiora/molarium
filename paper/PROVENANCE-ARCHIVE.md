@@ -58,6 +58,12 @@ paper/provenance/<release>/
 export source, and every included file with its SHA-256 digest. `timeline.csv` should label each interval
 as observed wall time, measured agent/tool execution, explicit human activity, or unknown.
 
+Manuscript drafting has its own public lineage record under
+[`provenance/manuscript-drafts-2026-08-26/`](provenance/manuscript-drafts-2026-08-26/README.md).
+It distinguishes human direction and acceptance from model-assisted critique and generated prose,
+while retaining only artifact hashes until the authors explicitly approve publication of the
+source drafts.
+
 ## Session procedure
 
 At the start of a session:

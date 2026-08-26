@@ -1,0 +1,122 @@
+{
+  "schema": "molarium.manuscript-lineage/v1",
+  "version": "0.1.0",
+  "recordedDate": "2026-08-26",
+  "basis": "Rafal Wiewiora's account plus local artifact hashes and embedded document metadata",
+  "claimBoundary": {
+    "records": [
+      "observable human direction and selection",
+      "declared model-assisted drafting or critique",
+      "artifact identity",
+      "accepted and rejected manuscript directions"
+    ],
+    "doesNotRecord": [
+      "private chat contents",
+      "model chain-of-thought",
+      "credentials or internal context",
+      "authorship inferred solely from application metadata"
+    ]
+  },
+  "artifacts": [
+    {
+      "id": "woody-feedback-2026-08-19",
+      "sourceBasename": "molarium-system-paper_feedback_woody_2026-08-19 (1).docx",
+      "mediaType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "bytes": 27463,
+      "sha256": "7a1a13cb64d77896ddf60170223d58165f8710d203f1c1ea50b93902ec2499dc",
+      "declaredProvenance": "Woody-supplied critique substantially informed by his longer-running ChatGPT conversations",
+      "humanActions": ["selected concerns", "supplied critique", "provided prior conversational context"],
+      "agentActions": ["helped formulate the critique"],
+      "repositoryDisposition": "hash and provenance only; binary not committed"
+    },
+    {
+      "id": "rafal-gpt-sol-draft-1",
+      "sourceBasename": "main (1).pdf",
+      "mediaType": "application/pdf",
+      "pages": 14,
+      "bytes": 409855,
+      "sha256": "5c8ed34c08bc053ecfe827e76e2ecfc2f59c0b9bb59e6117bca40e0c7a327b90",
+      "declaredProvenance": "Generated in one of two separate GPT Sol conversations using earlier inputs",
+      "humanActions": ["supplied inputs", "directed session", "evaluated draft"],
+      "agentActions": ["generated manuscript draft"],
+      "repositoryDisposition": "hash and provenance only; binary not committed"
+    },
+    {
+      "id": "rafal-gpt-sol-draft-2",
+      "sourceBasename": "main (2).pdf",
+      "mediaType": "application/pdf",
+      "pages": 6,
+      "bytes": 1348299,
+      "sha256": "1a19b55f4d729724172c72b9f56a9c5b071408d68b031779383ad5bb296e8051",
+      "declaredProvenance": "Generated in the other of two separate GPT Sol conversations using earlier inputs",
+      "humanActions": ["supplied inputs", "directed session", "evaluated draft"],
+      "agentActions": ["generated manuscript draft"],
+      "repositoryDisposition": "hash and provenance only; binary not committed"
+    },
+    {
+      "id": "woody-draft-2026-08-25",
+      "sourceBasename": "molarium_paper_woody_2026-08-25.pdf",
+      "mediaType": "application/pdf",
+      "pages": 11,
+      "bytes": 105361,
+      "sha256": "f687b03e6a253e131f76e507afaf955a985d2dd62d4c751a0a10afcd471b62ab",
+      "declaredProvenance": "Draft supplied by Woody; generation mechanism not specified",
+      "humanActions": ["supplied draft", "jointly evaluated emphasis with Rafal"],
+      "agentActions": [],
+      "decision": "rejected as too focused on opinions about the future of software and insufficiently focused on Molarium",
+      "repositoryDisposition": "hash and provenance only; binary not committed"
+    },
+    {
+      "id": "generated-infrastructure-polished",
+      "sourceBasename": "molarium_generated_infrastructure_polished.pdf",
+      "mediaType": "application/pdf",
+      "pages": 12,
+      "bytes": 1344101,
+      "sha256": "681c00cfd08ca6098b35c027b1808ccaa298c820f31c4db53059c104573757c1",
+      "declaredProvenance": "Generated in a separate GPT-5.6 session using prior conversation context and inputs",
+      "humanActions": ["directed session", "evaluated output", "selected as preferred generated working draft"],
+      "agentActions": ["generated and polished manuscript draft"],
+      "decision": "accepted as preferred generated input for subsequent human-led revision",
+      "repositoryDisposition": "hash and provenance only; binary not committed"
+    }
+  ],
+  "events": [
+    {
+      "order": 1,
+      "label": "initial joint draft circulated",
+      "artifact": null,
+      "attribution": "human-led; detailed model provenance not established in this record"
+    },
+    {
+      "order": 2,
+      "label": "Woody critique returned",
+      "artifact": "woody-feedback-2026-08-19",
+      "attribution": "human-directed, AI-assisted critique"
+    },
+    {
+      "order": 3,
+      "label": "two alternative drafts generated",
+      "artifacts": ["rafal-gpt-sol-draft-1", "rafal-gpt-sol-draft-2"],
+      "attribution": "human-directed, agent-generated drafts"
+    },
+    {
+      "order": 4,
+      "label": "Woody draft evaluated",
+      "artifact": "woody-draft-2026-08-25",
+      "attribution": "collaborator-supplied draft; generation mechanism unspecified"
+    },
+    {
+      "order": 5,
+      "label": "polished generated-infrastructure draft selected",
+      "artifact": "generated-infrastructure-polished",
+      "attribution": "human-directed, agent-generated, human-selected"
+    },
+    {
+      "order": 6,
+      "label": "human-led revision phase begins",
+      "artifact": null,
+      "attribution": "Rafal and Woody retain scientific judgment, substantive revision, approval, and authorship responsibility"
+    }
+  ]
+}
+

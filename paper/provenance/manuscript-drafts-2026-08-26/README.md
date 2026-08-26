@@ -1,0 +1,66 @@
+# Manuscript lineage: generated drafts to human-led revision
+
+Date recorded: 2026-08-26
+
+Status: provenance record only; supplied draft binaries remain outside Git
+
+## Why this record exists
+
+The authors want the repository to distinguish human decisions and writing from model-assisted
+critique and drafting. This record follows Rafal Wiewiora's account on 2026-08-26 and preserves the
+cryptographic identity of five supplied artifacts. It does not claim access to the separate model
+conversations that produced them, and it does not treat PDF or DOCX metadata as proof of
+intellectual authorship.
+
+The initial joint draft was sent to Woody Sherman but is not among the five supplied artifacts.
+Woody then returned a critique that drew substantially on his longer-running ChatGPT conversations.
+Rafal subsequently used the critique and earlier inputs in two separate GPT Sol conversations,
+producing two materially different drafts. Woody supplied another manuscript draft, which the
+authors judged to place too much emphasis on opinions about the future of software and too little on
+Molarium itself. A separate GPT-5.6 session then produced the polished generated-infrastructure
+draft. Rafal selected that document as the first generated draft he liked strongly.
+
+The polished generated draft is a selected working input, not an autonomous authorial endpoint.
+Manuscript development from this point is expected to be dominated by direct human revision,
+scientific judgment, and explicit author approval.
+
+## Action attribution
+
+| Stage | Human action | Agent action | Outcome |
+| --- | --- | --- | --- |
+| Initial draft | Rafal and Woody developed and circulated an initial version. | Any model contribution to that unprovided version is not established here. | Woody reviewed the first version. |
+| Woody critique | Woody selected the concerns, supplied the critique, and brought context from his prior discussions. | Woody's ChatGPT helped formulate a critique informed by those prior conversations. | The initial framing was rejected as inadequate. |
+| Two Rafal-directed alternatives | Rafal supplied prior inputs, ran two separate conversations, and evaluated the outputs. | GPT Sol generated `main (1).pdf` and `main (2).pdf`. | Two alternative structures were explored; neither is identified here as the accepted baseline. |
+| Woody draft | Woody supplied a new draft; Rafal and Woody evaluated its emphasis. | The generation method of this draft was not specified and is therefore not inferred. | The authors rejected its strong future-of-software emphasis as insufficiently centered on Molarium. |
+| Polished generated-infrastructure draft | Rafal directed another session and selected the resulting draft as strongly preferred. | GPT-5.6 generated the supplied polished PDF from the conversation context and earlier inputs. | This becomes the preferred generated working input. |
+| Next phase | Rafal and Woody will make and approve substantive revisions. | Models may assist when explicitly directed; their output remains proposed text. | Human-led manuscript revision and final responsibility. |
+
+This table attributes observable actions, selections, and supplied text. It does not preserve or
+claim private model chain-of-thought. A later public transcript, if any, should contain only
+consented, redacted conversation material and should link back to the machine-readable manifest in
+this directory.
+
+## Artifact record
+
+| Artifact | Stated role | Pages | Bytes | SHA-256 |
+| --- | --- | ---: | ---: | --- |
+| `molarium-system-paper_feedback_woody_2026-08-19 (1).docx` | Woody-supplied, ChatGPT-assisted critique | — | 27,463 | `7a1a13cb64d77896ddf60170223d58165f8710d203f1c1ea50b93902ec2499dc` |
+| `main (1).pdf` | First of two Rafal-directed GPT Sol drafts | 14 | 409,855 | `5c8ed34c08bc053ecfe827e76e2ecfc2f59c0b9bb59e6117bca40e0c7a327b90` |
+| `main (2).pdf` | Second of two Rafal-directed GPT Sol drafts | 6 | 1,348,299 | `1a19b55f4d729724172c72b9f56a9c5b071408d68b031779383ad5bb296e8051` |
+| `molarium_paper_woody_2026-08-25.pdf` | Woody-supplied draft rejected as too future-opinion-heavy | 11 | 105,361 | `f687b03e6a253e131f76e507afaf955a985d2dd62d4c751a0a10afcd471b62ab` |
+| `molarium_generated_infrastructure_polished.pdf` | Rafal-selected GPT-5.6 generated working draft | 12 | 1,344,101 | `681c00cfd08ca6098b35c027b1808ccaa298c820f31c4db53059c104573757c1` |
+
+The DOCX metadata names Woody Sherman as creator and last modifier. The two `main` PDFs name Rafal
+P. Wiewiora and Woody Sherman as document authors and OpenAI Prism as creator. The Woody PDF names
+Woody Sherman as author and LibreOffice Writer as creator. The polished PDF has no embedded author
+name. These are application metadata fields only; the action attribution above follows the human
+account rather than inferring provenance from those fields.
+
+## Publication boundary
+
+The public repository records artifact hashes, declared inputs, model/session identity when known,
+human direction at a summary level, acceptance or rejection decisions, and the transition to human
+revision. It does not publish collaborator drafts, private chat transcripts, credentials, hidden
+context, or model chain-of-thought by default. The five source binaries are intentionally not copied
+into Git pending an explicit publication decision by the authors.
+
