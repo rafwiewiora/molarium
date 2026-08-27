@@ -2,7 +2,7 @@
   "schema": "molarium.manuscript-lineage/v1",
   "version": "0.1.0",
   "recordedDate": "2026-08-26",
-  "basis": "Rafal Wiewiora's account plus local artifact hashes and embedded document metadata",
+  "basis": "Rafal Wiewiora's provenance statements on 2026-08-26 plus local artifact hashes and embedded document metadata",
   "claimBoundary": {
     "records": [
       "observable human direction and selection",
@@ -83,9 +83,18 @@
   "events": [
     {
       "order": 1,
-      "label": "initial joint draft circulated",
+      "label": "initial development-session draft generated and circulated",
       "artifact": null,
-      "attribution": "human-led; detailed model provenance not established in this record"
+      "artifactStatus": "initial draft not supplied for hashing in this record",
+      "humanActions": [
+        "directed the Molarium software-development session",
+        "supplied scientific and product judgment",
+        "evaluated and circulated the manuscript draft"
+      ],
+      "agentActions": [
+        "the OpenAI Codex/Sol development agent generated the first manuscript draft from the shared development context"
+      ],
+      "attribution": "human-directed, agent-generated draft from the Molarium development session"
     },
     {
       "order": 2,
@@ -119,4 +128,3 @@
     }
   ]
 }
-
