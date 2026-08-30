@@ -250,6 +250,23 @@ function editRegionIds(beforeMolecule, molecule) {
   const added = new Set([...afterIds].filter((id) => !beforeIds.has(id)));
   const changed = new Set([...beforeIds].filter((id) => afterIds.has(id)
     && atomIdentity(before.get(id).atom) !== atomIdentity(after.get(id).atom)));
+  // A stable atom can change pharmacophore identity solely because a
+  // neighbour changed element or bonding.  For example, the original oxygen
+  // in C=O -> S(=O)2 keeps its atom ID and S=O bond order, but changes from a
+  // carbonyl acceptor into a sulfonyl acceptor.  Treat that surviving feature
+  // atom as edited so it participates in the same boundary-constrained
+  // bioisostere hypothesis as newly added acceptors.
+  [...beforeIds].filter((id) => afterIds.has(id)).forEach((id) => {
+    const beforeIndex = before.get(id).index;
+    const afterIndex = after.get(id).index;
+    for (const role of ['acceptor', 'donor']) {
+      if (hydrogenBondFeatureSignature(beforeMolecule, beforeIndex, role)
+        !== hydrogenBondFeatureSignature(molecule, afterIndex, role)) {
+        changed.add(id);
+        break;
+      }
+    }
+  });
   // Bond-order changes can create or destroy a pharmacophore without changing
   // either endpoint's atom identity. Include both surviving endpoints in the
   // edit region, while keeping a stable attachment atom outside the region
@@ -406,7 +423,7 @@ export function proposeLigandHydrogenBondFeatureRemaps(definitions, molecule,
     const editEligibleFeatures = (ligandRole === 'acceptor' ? features.acceptors : features.donors)
       .filter((feature) => feature.atomIds.some((id) => {
         const index = molecule.atoms.findIndex((atom) => atom.designAtomId === id);
-        return eligible.has(index);
+        return eligible.has(index) || newRegion.has(id);
       }))
       .map((feature) => {
         const candidateRegion = new Set(newRegion);

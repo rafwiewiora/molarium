@@ -272,9 +272,9 @@
                   <option value="free-local">Free local cleanup</option>
                 </select>
               </label>
-              <p class="docking-status" id="docking-status">Capture the prepared reference pose before editing.</p>
+              <p class="docking-status" id="docking-status">Begin analogue design before editing the prepared ligand.</p>
               <div class="docking-reference-actions">
-                <button class="soft-button" type="button" id="capture-docking-reference">Capture pose</button>
+                <button class="soft-button" type="button" id="capture-docking-reference" title="Freeze the current prepared ligand pose as the analogue-design reference">Begin analogue design</button>
                 <button class="soft-button hidden" type="button" id="clear-docking-reference">Reset</button>
               </div>
               <div class="docking-constraints hidden" id="docking-constraints">
@@ -856,6 +856,15 @@
         <p class="project-info-note"><strong>What this proves:</strong> Local Lab is served from this device with a Content Security Policy that permits network requests only to this page’s own localhost origin. PDB/CCD retrieval and MSA submission are disabled. The manifest lets you compare the delivered application files with the reviewed source build.</p>
         <p class="project-info-note"><strong>Trust boundary:</strong> a hosted web page cannot prove that its server will always deliver the same code. For proprietary work, run the versioned Local Lab bundle, verify its manifest independently, and optionally disconnect the machine after the local assets are loaded.</p>
       </section>
+    </dialog>
+
+    <dialog class="analogue-design-dialog" id="analogue-design-dialog" aria-labelledby="analogue-design-dialog-title">
+      <h2 id="analogue-design-dialog-title">Begin analogue design?</h2>
+      <p>Freeze this prepared ligand pose as the reference before changing its chemistry. Preserve reference will keep inherited heavy atoms fixed during ligand cleanup.</p>
+      <div class="analogue-design-dialog-actions">
+        <button class="soft-button" type="button" id="cancel-analogue-design">Cancel</button>
+        <button class="primary-button" type="button" id="confirm-analogue-design">Begin analogue design</button>
+      </div>
     </dialog>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>

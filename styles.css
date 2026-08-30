@@ -107,6 +107,16 @@ button { cursor: pointer; }
 .project-info-dialog ul { margin: 0 0 13px; padding-left: 19px; }
 .project-info-dialog li + li { margin-top: 5px; }
 .project-info-dialog code { padding: 1px 4px; border-radius: 4px; background: #eef2f7; font-size: 11px; }
+.analogue-design-dialog {
+  width: min(430px, calc(100vw - 32px)); padding: 20px; border: 1px solid var(--line-strong);
+  border-radius: 14px; background: rgba(255,255,255,.99); color: var(--ink);
+  box-shadow: 0 24px 70px rgba(15,23,42,.24);
+}
+.analogue-design-dialog::backdrop { background: rgba(15,23,42,.34); backdrop-filter: blur(3px); }
+.analogue-design-dialog h2 { margin: 0 0 8px; font-size: 18px; }
+.analogue-design-dialog p { margin: 0; color: var(--secondary); font-size: 12px; line-height: 1.55; }
+.analogue-design-dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+.analogue-design-dialog-actions button { min-width: 128px; }
 .project-info-list { display: grid; gap: 0; margin: 0 0 14px; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; }
 .project-info-list div { display: grid; grid-template-columns: 105px 1fr; gap: 12px; padding: 8px 10px; background: var(--muted); }
 .project-info-list div + div { border-top: 1px solid var(--line); }

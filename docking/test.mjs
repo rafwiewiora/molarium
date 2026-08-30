@@ -607,6 +607,42 @@ assert.ok(sulfoneReplacement.proposal.candidates.every((entry) =>
 assert.ok(sulfoneReplacement.proposal.candidates.every((entry) =>
   entry.matchKind === 'role-compatible-bioisostere'));
 
+// The interactive medicinal-chemistry path often preserves the original
+// carbonyl oxygen while changing its centre C -> S and adding the second
+// oxygen.  The surviving oxygen was not an explicitly added atom, so its
+// feature-class transition must itself put it in the audited edit region.
+const inPlaceSulfone = structuredClone(remapBefore);
+inPlaceSulfone.atoms[3].element = 'S';
+inPlaceSulfone.atoms.push({ element:'O', designAtomId:'sulfone:added-O', x:2.8,y:1.4,z:0 });
+inPlaceSulfone.bonds.push({ a:3,b:5,order:2 });
+const inPlaceSulfoneProposal = proposeLigandHydrogenBondFeatureRemaps(
+  [remapDefinition], inPlaceSulfone, [0,1,2,3,4,5], {
+    // Deliberately omit the preserved oxygen: this mirrors the UI's changed
+    // atom list and proves feature-signature lineage is inferred from graphs.
+    eligibleAtomIndices:[3,5], beforeMolecule:remapBefore,
+  })[0];
+assert.equal(inPlaceSulfoneProposal.status, 'ambiguous');
+assert.deepEqual(inPlaceSulfoneProposal.boundaryAnchorIds, ['core:2']);
+assert.deepEqual(inPlaceSulfoneProposal.candidates.map((entry) => entry.atomIds),
+  [['old:oxygen'], ['sulfone:added-O']]);
+assert.ok(inPlaceSulfoneProposal.candidates.every((entry) =>
+  entry.type === 'sulfonyl oxygen acceptor'
+    && entry.matchKind === 'role-compatible-bioisostere'));
+
+const inPlacePhosphoryl = structuredClone(remapBefore);
+inPlacePhosphoryl.atoms[3].element = 'P';
+const inPlacePhosphorylProposal = proposeLigandHydrogenBondFeatureRemaps(
+  [remapDefinition], inPlacePhosphoryl, [0,1,2,3,4], {
+    eligibleAtomIndices:[3], beforeMolecule:remapBefore,
+  })[0];
+assert.equal(inPlacePhosphorylProposal.status, 'unique');
+assert.deepEqual(inPlacePhosphorylProposal.boundaryAnchorIds, ['core:2']);
+assert.deepEqual(inPlacePhosphorylProposal.candidates[0].atomIds, ['old:oxygen']);
+assert.equal(inPlacePhosphorylProposal.candidates[0].type,
+  'phosphoryl oxygen acceptor');
+assert.equal(inPlacePhosphorylProposal.candidates[0].matchKind,
+  'role-compatible-bioisostere');
+
 const aromaticNitrogenReplacement = acceptorReplacement([
   { element:'C', aromatic:true, designAtomId:'pyridine:C1', x:2.8,y:0,z:0 },
   { element:'N', aromatic:true, designAtomId:'pyridine:N2', x:3.5,y:1.2,z:0 },
