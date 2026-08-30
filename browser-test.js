@@ -332,7 +332,7 @@ const browserSuite = String.raw`(async () => {
   check(validationRoot.textContent.includes('Registered · partial')
     && validationRoot.textContent.includes('do not add twenty independent protein systems'),
     'validation dashboard labels the 20-case single-system chemistry panel as partial');
-  const registryResponse = await fetch('./validation/registry.v0.1.json');
+  const registryResponse = await fetch('./validation/registry.v0.2.json');
   const registry = await registryResponse.json();
   check(registryResponse.ok && registry.schema === 'molarium.validation-registry/v1'
     && registry.cases.length === 25

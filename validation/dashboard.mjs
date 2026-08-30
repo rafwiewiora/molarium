@@ -72,10 +72,10 @@ export function validationDashboardHtml(registry) {
       <summary>Counting rules</summary>
       <dl>${Object.entries(registry.countingRules).map(([key, value]) => `<div><dt>${escapeHtml(key)}</dt><dd>${escapeHtml(value)}</dd></div>`).join('')}</dl>
     </details>
-    <p class="validation-registry-footer">Registry ${escapeHtml(registry.version)} · frozen ${escapeHtml(registry.frozenAt)} · <a href="./validation/registry.v0.1.json" download>download machine-readable ledger</a></p>`;
+    <p class="validation-registry-footer">Registry ${escapeHtml(registry.version)} · frozen ${escapeHtml(registry.frozenAt)} · <a href="./validation/registry.v0.2.json" download>download machine-readable ledger</a></p>`;
 }
 
-export async function mountValidationDashboard(root, href = './validation/registry.v0.1.json') {
+export async function mountValidationDashboard(root, href = './validation/registry.v0.2.json') {
   if (!root || root.dataset.validationMounted === 'true') return;
   root.setAttribute('aria-busy', 'true');
   try {

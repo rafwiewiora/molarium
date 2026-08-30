@@ -17,8 +17,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 661493,
-      "sha256": "f90d8dd3ac37ff7282600d16f1e1fe805320cc11ac08d7f9bab79e1ec2dab60b"
+      "bytes": 682494,
+      "sha256": "4b7e9fbdc3a0586b34ae98b160b45086558d52b206eff21149b43b476780ea91"
     },
     {
       "path": "bun.lock",
@@ -32,18 +32,18 @@
     },
     {
       "path": "index.html",
-      "bytes": 56001,
-      "sha256": "7a890ae816110f27937baf0a8c5170e805beaadf8656e290586d9ed4134006ee"
+      "bytes": 57343,
+      "sha256": "b894a9f681630fa7913a5ab0f98a5a3dc1e0826e2b68efac1faa6ce45181c3a3"
     },
     {
       "path": "local-lab-test.js",
-      "bytes": 10556,
-      "sha256": "5d662d9ad75395e02aefe515ad0b9e281de05dd5b990682e3e5fef67b4fa04f8"
+      "bytes": 10644,
+      "sha256": "1bdec450158e22758d50a3d150c94c669f2e4c646e56b46eb85f694d38301113"
     },
     {
       "path": "package.json",
-      "bytes": 5436,
-      "sha256": "558e9bc431b31b20b564e0ae5e3c3081df56c2f3be733527d7b77577b100fcf5"
+      "bytes": 6581,
+      "sha256": "61e56373599d9915196a334b0df4cc5f9224384c1406741051d6406890f60054"
     },
     {
       "path": "protein-residue-templates.js",
@@ -57,28 +57,33 @@
     },
     {
       "path": "scripts/generate-local-lab-manifest.mjs",
-      "bytes": 3038,
-      "sha256": "07c4806b27776e6d869443f7c5602916d4dc280e1d315c3a01995167b9f651ad"
+      "bytes": 3313,
+      "sha256": "ea3060bb4626ad0551f40cc582a61d2343896aa485777ee3789ff59fa2a9e164"
     },
     {
       "path": "styles.css",
-      "bytes": 61715,
-      "sha256": "7d33b52487fdd787783fdf6fdaccd9a1f8370d45cc62c1bdb2546eb2ac650acb"
+      "bytes": 63806,
+      "sha256": "2d6fb14bff09f99d167ff4a764735b12fe83271a03c1f44c1d4593e2e05b3fc9"
     },
     {
       "path": "validation/README.md",
-      "bytes": 1022,
-      "sha256": "283047de584b5349f5fbeac609c9b62b6ef2c5cfbb4474c4bac826ef2de0a473"
+      "bytes": 1098,
+      "sha256": "0cf4e90ba5d4e47514d85e1443bf18b478d3cff8e2d0ca7482e4e25634630381"
     },
     {
       "path": "validation/dashboard.mjs",
-      "bytes": 5600,
-      "sha256": "41f720360905e9c17bcb19a16e3a5e0f798f42c37021cfdd32613c7b49d9144f"
+      "bytes": 5645,
+      "sha256": "ccb8e7f52194b588c1090809db24fb4c874ad36a775053b96cc0827c5884a28f"
     },
     {
       "path": "validation/registry.v0.1.json",
-      "bytes": 20618,
-      "sha256": "b2fbb11792a37d7d28e0043bbc7f35e3fba7bcad822c3b47a05649d09b212e34"
+      "bytes": 22923,
+      "sha256": "43295ca0ec2cfebee0a2cda3c5f8f0dae3ec3eedbc95dacf23be6ccdbf680a1b"
+    },
+    {
+      "path": "validation/registry.v0.2.json",
+      "bytes": 23509,
+      "sha256": "70d1ec75edbd42673244878bef0934d2dfc29ff0d1ed47d26b1eca1187a80a5f"
     },
     {
       "path": "rdkit-worker.js",
@@ -107,8 +112,8 @@
     },
     {
       "path": "docking/contact-remap.mjs",
-      "bytes": 27720,
-      "sha256": "b9b47b1998e2331ddc5375c45b933ec193843f0030eae0fbc91f61e56defc27b"
+      "bytes": 29079,
+      "sha256": "aec05b1ede90c75fa52c5c5207b21af4dea73e1db6a7169450b16b9dc45ab8b7"
     },
     {
       "path": "docking/constraints.mjs",
@@ -164,6 +169,26 @@
       "path": "docking/benchmark/7kpa-two-terminus-panel.v0.1.json",
       "bytes": 14614,
       "sha256": "de08bca3c70d2542630845c0e91cbe4492bed338bb446734c78015c64a62c174"
+    },
+    {
+      "path": "docking/benchmark/7kpa-manual-contact-panel.mjs",
+      "bytes": 10495,
+      "sha256": "56ff864f0cbfd1c78dcf9d04fd12d89c72298297f821f11c6587bd4f78f35c05"
+    },
+    {
+      "path": "docking/benchmark/7kpa-manual-contact-panel.README.md",
+      "bytes": 3260,
+      "sha256": "e28be4393bcc7826326885a145ddebad95f7828659146250e5fbaa5b7de80c2f"
+    },
+    {
+      "path": "docking/benchmark/7kpa-manual-contact-smoke.v0.1.json",
+      "bytes": 2917,
+      "sha256": "95f0bf7a23d90d8fa1a6a555ae0c1a85623543b8feac19bc24836e4bd10c1a08"
+    },
+    {
+      "path": "docking/benchmark/7kpa-manual-contact-results.psiblue.v0.1.json",
+      "bytes": 12189,
+      "sha256": "c28fa7e598654499f93fcdf64f68d767095a39838d36fa627986e43afef7813e"
     },
     {
       "path": "docking/validation/cloud-panel/browser-sage-openmm-validation-2026-08-23.json",

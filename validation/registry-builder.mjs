@@ -14,6 +14,7 @@ export const sourcePaths = Object.freeze({
   manualContactPanel:'docking/benchmark/7kpa-manual-contact-panel.mjs',
   manualContactProtocol:'docking/benchmark/7kpa-manual-contact-panel.README.md',
   manualContactSmoke:'docking/benchmark/7kpa-manual-contact-smoke.v0.1.json',
+  manualContactResults:'docking/benchmark/7kpa-manual-contact-results.psiblue.v0.1.json',
   browserVacuum:'docking/validation/cloud-panel/browser-sage-openmm-validation-2026-08-23.json',
   browserObc2:'docking/validation/cloud-panel/browser-sage-openmm-obc2-diagnostic-2026-08-23.json',
   openmmNative:'docking/validation/cloud-panel/openmm-wasm-native-validation-2026-08-23.json',
@@ -59,6 +60,7 @@ export async function buildValidationRegistry(root = repositoryRoot) {
   const analoguePanel = JSON.parse(bytes.analoguePanel);
   const manualContactPanel = await buildManualContactPanelManifest();
   const manualContactSmoke = JSON.parse(bytes.manualContactSmoke);
+  const manualContactResults = JSON.parse(bytes.manualContactResults);
   const browserVacuum = JSON.parse(bytes.browserVacuum);
   const browserObc2 = JSON.parse(bytes.browserObc2);
   const openmmNative = JSON.parse(bytes.openmmNative);
@@ -109,9 +111,9 @@ export async function buildValidationRegistry(root = repositoryRoot) {
   return {
     schema:'molarium.validation-registry/v1',
     registryId:'molarium-validation-registry',
-    version:'0.1.0',
-    frozenAt:'2026-08-24',
-    scope:'Docking workflow and high-disruption cross-runtime evidence migrated as of registry v0.1. Other historical engine tests are not counted until they receive case-level registry records.',
+    version:'0.2.0',
+    frozenAt:'2026-08-30',
+    scope:'Docking workflow and high-disruption cross-runtime evidence migrated in registry v0.1; the complete manual H-bond recapture panel and timing ledger were added in v0.2. Other historical engine tests are not counted until they receive case-level registry records.',
     countingRules:{
       proteinTarget:'One named biological target. Multiple crystal structures of the same target count once.',
       referenceSystem:'One unique PDB ID plus bound-ligand component ID used as a starting complex.',
@@ -210,31 +212,35 @@ export async function buildValidationRegistry(root = repositoryRoot) {
       {
         studyId:'7kpa-manual-contact-recapture-v0.1',
         title:'7KPA manual H-bond recapture panel',
-        status:'development-smoke',
-        evidenceLevel:'ten preregistered chemist-action scripts; one hash-checked end-to-end development replay',
-        executedAt:manualContactSmoke.executedAt,
+        status:'complete',
+        evidenceLevel:'ten preregistered chemist-action scripts; twenty hash-checked psiblue browser replays',
+        executedAt:manualContactResults.executedAt,
         counts:{
           registeredChemistryCases:manualContactPanel.cases.length,
-          executedDevelopmentCases:1,
+          executedCases:manualContactResults.summary.registeredCases,
+          replayCount:manualContactResults.summary.replays,
+          replayAgreements:manualContactResults.summary.replayAgreements,
+          feasibleCases:manualContactResults.summary.feasibleCases,
           proteinTargets:1,
           referenceSystems:1,
-          searchCandidates:manualContactSmoke.outcome.candidateCount,
-          feasibleCandidates:manualContactSmoke.outcome.feasibleCount,
+          outcomes:manualContactResults.summary.outcomes,
         },
         metrics:{
-          productGraphMatchesExpected:manualContactSmoke.chemistry.productGraphMatchesExpected,
-          allRequiredHydrogenBondsSatisfied:manualContactSmoke.outcome.allRequiredHydrogenBondsSatisfied,
-          manualDonorAcceptorDistanceAngstrom:manualContactSmoke.outcome.manualHydrogenBond.donorAcceptorDistanceAngstrom,
-          manualHydrogenAcceptorDistanceAngstrom:manualContactSmoke.outcome.manualHydrogenBond.hydrogenAcceptorDistanceAngstrom,
-          manualDhaAngleDegrees:manualContactSmoke.outcome.manualHydrogenBond.dhaAngleDegrees,
-          labbookValid:manualContactSmoke.audit.labbookValid,
+          preparationMs:manualContactResults.preparation.elapsedMs,
+          medianReplayMs:manualContactResults.timing.replayTotal.medianMs,
+          p90ReplayMs:manualContactResults.timing.replayTotal.p90Ms,
+          medianRefinementMs:manualContactResults.timing.refinement.medianMs,
+          schedulerElapsedSeconds:manualContactResults.execution.scheduler.elapsedSeconds,
+          schedulerTotalCpuSeconds:manualContactResults.execution.scheduler.totalCpuSeconds,
+          schedulerMaxRssBytes:manualContactResults.execution.scheduler.maxRssBytes,
         },
         claims:[
           'Ten explicit delete, forget, rebuild, reassert, and refine scripts are preregistered through the public Chemist Actions API.',
-          'The executed pyridone-carbonyl case reproduced its frozen product graph and all eight generated poses satisfied all four required H-bonds.',
-          'This is one development replay from one reference complex; the complete ten-case panel has not yet been executed or claimed.',
+          'All ten cases produced identical scientific replay hashes across two independent browser executions.',
+          'Nine cases produced feasible poses; the sultam produced a deterministic no-feasible-pose result after reaching full refinement.',
+          'This is one protein-ligand reference complex and a method stress panel, not ten independent systems or a binding-affinity benchmark.',
         ],
-        artifactIds:['manualContactPanel', 'manualContactProtocol', 'manualContactSmoke'],
+        artifactIds:['manualContactPanel', 'manualContactProtocol', 'manualContactSmoke', 'manualContactResults'],
       },
     ],
     proteinTargets,

@@ -1,0 +1,489 @@
+{
+  "schema": "molarium.7kpa.manual-contact-panel-evidence/v1",
+  "panelId": "molarium-7kpa-d84-manual-contact-recapture",
+  "panelVersion": "0.1.0",
+  "executedAt": "2026-08-30T20:24:20.174Z",
+  "execution": {
+    "infrastructure": "psiblue CPU via psicluster-controller",
+    "scheduler": {
+      "jobId": "3075",
+      "partition": "compute",
+      "state": "COMPLETED",
+      "exitCode": "0:0",
+      "elapsedSeconds": 1434,
+      "totalCpuSeconds": 1548.865,
+      "maxRssBytes": 2227576832,
+      "allocatedCpus": 4,
+      "nodeSet": "psicluster-computenodeset-0"
+    },
+    "source": {
+      "commit": "b6f18a8a6f07520cde18ff86e7256ba29fab72f6",
+      "archiveSha256": "83d7148c6a35dcbdf23e506f1fa977b3169cc97a622e9d25c48246a4918e5b1d",
+      "resultSha256": "97f25ad1132b414e78ee13a0755ec10b3c91ac944050ad1cd1b8f8843c6f541d",
+      "receiptSha256": "e919603072ccca7d9946e88ccf349e9955e77b1b68a204d1ba985dbaae5e2d74"
+    },
+    "runtime": {
+      "bunVersion": "1.3.14",
+      "bunArchiveSha256": "951ee2aee855f08595aeec6225226a298d3fea83a3dcd6465c09cbccdf7e848f",
+      "playwrightImageTag": "v1.55.0-noble",
+      "singularityImageSha256": "c5d8286a489c2a0b38d31e17322655422d24a7ed0c8dcb4eb785c205f6d20c74"
+    }
+  },
+  "protocol": {
+    "searchChains": 8,
+    "replaysPerCase": 2,
+    "publicActionInterface": "molarium.chemist-actions/v1"
+  },
+  "preparation": {
+    "elapsedMs": 6782.625,
+    "outputAtoms": 6969,
+    "forcefield": "OpenFF Sage 2.1.0",
+    "chargeModel": "Gasteiger (RDKit, 12 iterations)"
+  },
+  "summary": {
+    "registeredCases": 10,
+    "replays": 20,
+    "replayAgreements": 10,
+    "feasibleCases": 9,
+    "outcomes": {
+      "no-feasible-pose": 2,
+      "success-feasible": 18
+    }
+  },
+  "timing": {
+    "replayTotal": {
+      "minMs": 51858.19,
+      "medianMs": 63902.308,
+      "meanMs": 70663.049,
+      "p90Ms": 90818.655,
+      "maxMs": 118271.2
+    },
+    "actionTotal": {
+      "minMs": 50846.475,
+      "medianMs": 62740.1,
+      "meanMs": 69617.687,
+      "p90Ms": 89808.065,
+      "maxMs": 117251.085
+    },
+    "refinement": {
+      "minMs": 491.03,
+      "medianMs": 6540.105,
+      "meanMs": 10245.3,
+      "p90Ms": 24423.89,
+      "maxMs": 30223.94
+    },
+    "byCase": [
+      {
+        "caseId": "pyridone-carbonyl-manual-recapture",
+        "outcomes": [
+          "success-feasible",
+          "success-feasible"
+        ],
+        "replayAgreement": true,
+        "totalMs": [
+          53361.995,
+          59878.545
+        ],
+        "medianTotalMs": 56620.27,
+        "refinementMs": [
+          836.58,
+          711.51
+        ],
+        "medianRefinementMs": 774.045
+      },
+      {
+        "caseId": "pyridone-thione-manual-recapture",
+        "outcomes": [
+          "success-feasible",
+          "success-feasible"
+        ],
+        "replayAgreement": true,
+        "totalMs": [
+          55384.17,
+          53755.68
+        ],
+        "medianTotalMs": 54569.925,
+        "refinementMs": [
+          745.2,
+          653.91
+        ],
+        "medianRefinementMs": 699.555
+      },
+      {
+        "caseId": "pyridone-cyclohexanone-manual-recapture",
+        "outcomes": [
+          "success-feasible",
+          "success-feasible"
+        ],
+        "replayAgreement": true,
+        "totalMs": [
+          117025.73,
+          118271.2
+        ],
+        "medianTotalMs": 117648.465,
+        "refinementMs": [
+          24423.89,
+          24392.095
+        ],
+        "medianRefinementMs": 24407.992
+      },
+      {
+        "caseId": "pyridone-sultam-manual-recapture",
+        "outcomes": [
+          "no-feasible-pose",
+          "no-feasible-pose"
+        ],
+        "replayAgreement": true,
+        "totalMs": [
+          68260.43,
+          69206.88
+        ],
+        "medianTotalMs": 68733.655,
+        "refinementMs": [
+          12243.63,
+          12463.415
+        ],
+        "medianRefinementMs": 12353.523
+      },
+      {
+        "caseId": "pyrrolidone-carbonyl-manual-recapture",
+        "outcomes": [
+          "success-feasible",
+          "success-feasible"
+        ],
+        "replayAgreement": true,
+        "totalMs": [
+          51858.19,
+          51963.14
+        ],
+        "medianTotalMs": 51910.665,
+        "refinementMs": [
+          656.49,
+          650.87
+        ],
+        "medianRefinementMs": 653.68
+      },
+      {
+        "caseId": "pyrrolidone-thione-manual-recapture",
+        "outcomes": [
+          "success-feasible",
+          "success-feasible"
+        ],
+        "replayAgreement": true,
+        "totalMs": [
+          52611.645,
+          52050.395
+        ],
+        "medianTotalMs": 52331.02,
+        "refinementMs": [
+          491.03,
+          543.58
+        ],
+        "medianRefinementMs": 517.305
+      },
+      {
+        "caseId": "pyrrolidone-pyrazole-manual-recapture",
+        "outcomes": [
+          "success-feasible",
+          "success-feasible"
+        ],
+        "replayAgreement": true,
+        "totalMs": [
+          69154.245,
+          67926.07
+        ],
+        "medianTotalMs": 68540.158,
+        "refinementMs": [
+          15180.305,
+          14994.965
+        ],
+        "medianRefinementMs": 15087.635
+      },
+      {
+        "caseId": "pyrrolidone-thp-manual-recapture",
+        "outcomes": [
+          "success-feasible",
+          "success-feasible"
+        ],
+        "replayAgreement": true,
+        "totalMs": [
+          86807.395,
+          87272.255
+        ],
+        "medianTotalMs": 87039.825,
+        "refinementMs": [
+          30223.94,
+          30183.31
+        ],
+        "medianRefinementMs": 30203.625
+      },
+      {
+        "caseId": "pyrrolidone-imidazolidinone-manual-recapture",
+        "outcomes": [
+          "success-feasible",
+          "success-feasible"
+        ],
+        "replayAgreement": true,
+        "totalMs": [
+          90818.655,
+          89543.92
+        ],
+        "medianTotalMs": 90181.287,
+        "refinementMs": [
+          17165.88,
+          17140.845
+        ],
+        "medianRefinementMs": 17153.362
+      },
+      {
+        "caseId": "dual-carbonyl-manual-recapture",
+        "outcomes": [
+          "success-feasible",
+          "success-feasible"
+        ],
+        "replayAgreement": true,
+        "totalMs": [
+          59458.49,
+          58651.94
+        ],
+        "medianTotalMs": 59055.215,
+        "refinementMs": [
+          602.51,
+          602.055
+        ],
+        "medianRefinementMs": 602.282
+      }
+    ],
+    "byAction": [
+      {
+        "action": "build.setTool",
+        "count": 20,
+        "minMs": 556.395,
+        "medianMs": 576.162,
+        "meanMs": 593.723,
+        "p90Ms": 644.86,
+        "maxMs": 783.34
+      },
+      {
+        "action": "chemistry.addAtom",
+        "count": 22,
+        "minMs": 952.035,
+        "medianMs": 1330.313,
+        "meanMs": 1332.122,
+        "p90Ms": 1415.335,
+        "maxMs": 1471.47
+      },
+      {
+        "action": "chemistry.createBond",
+        "count": 2,
+        "minMs": 1342.3,
+        "medianMs": 1342.813,
+        "meanMs": 1342.813,
+        "p90Ms": 1343.325,
+        "maxMs": 1343.325
+      },
+      {
+        "action": "chemistry.deleteAtom",
+        "count": 22,
+        "minMs": 690.47,
+        "medianMs": 1024.66,
+        "meanMs": 995.764,
+        "p90Ms": 1106.845,
+        "maxMs": 1199.56
+      },
+      {
+        "action": "chemistry.deleteBond",
+        "count": 2,
+        "minMs": 723.305,
+        "medianMs": 728.388,
+        "meanMs": 728.388,
+        "p90Ms": 733.47,
+        "maxMs": 733.47
+      },
+      {
+        "action": "chemistry.finish",
+        "count": 46,
+        "minMs": 17527.14,
+        "medianMs": 18412.647,
+        "meanMs": 18495.223,
+        "p90Ms": 19170.125,
+        "maxMs": 20773.445
+      },
+      {
+        "action": "chemistry.setAtom",
+        "count": 12,
+        "minMs": 717.31,
+        "medianMs": 744.345,
+        "meanMs": 770.855,
+        "p90Ms": 836.91,
+        "maxMs": 877.755
+      },
+      {
+        "action": "chemistry.setBond",
+        "count": 28,
+        "minMs": 699,
+        "medianMs": 732.148,
+        "meanMs": 764.767,
+        "p90Ms": 934.865,
+        "maxMs": 1048.86
+      },
+      {
+        "action": "pose.addContact",
+        "count": 22,
+        "minMs": 577.04,
+        "medianMs": 603.565,
+        "meanMs": 616.27,
+        "p90Ms": 656.61,
+        "maxMs": 679.8
+      },
+      {
+        "action": "pose.apply",
+        "count": 20,
+        "minMs": 604.15,
+        "medianMs": 644.79,
+        "meanMs": 656.776,
+        "p90Ms": 686.275,
+        "maxMs": 800.23
+      },
+      {
+        "action": "pose.captureReference",
+        "count": 20,
+        "minMs": 5500.785,
+        "medianMs": 6071.462,
+        "meanMs": 6184.415,
+        "p90Ms": 7043.795,
+        "maxMs": 7225.01
+      },
+      {
+        "action": "pose.forgetContact",
+        "count": 22,
+        "minMs": 433.945,
+        "medianMs": 612.567,
+        "meanMs": 629.157,
+        "p90Ms": 714.93,
+        "maxMs": 776.695
+      },
+      {
+        "action": "pose.refine",
+        "count": 20,
+        "minMs": 491.015,
+        "medianMs": 6540.09,
+        "meanMs": 10245.287,
+        "p90Ms": 24423.885,
+        "maxMs": 30223.925
+      },
+      {
+        "action": "pose.setContact",
+        "count": 58,
+        "minMs": 3.63,
+        "medianMs": 4.685,
+        "meanMs": 4.957,
+        "p90Ms": 7.06,
+        "maxMs": 7.53
+      },
+      {
+        "action": "selection.replace",
+        "count": 64,
+        "minMs": 572.395,
+        "medianMs": 679.54,
+        "meanMs": 871.752,
+        "p90Ms": 1198.34,
+        "maxMs": 1274.91
+      },
+      {
+        "action": "session.inspect",
+        "count": 190,
+        "minMs": 7.54,
+        "medianMs": 40.722,
+        "meanMs": 32.435,
+        "p90Ms": 43.27,
+        "maxMs": 54.835
+      },
+      {
+        "action": "view.setMode",
+        "count": 20,
+        "minMs": 573.05,
+        "medianMs": 594.835,
+        "meanMs": 615.403,
+        "p90Ms": 657.645,
+        "maxMs": 832.285
+      }
+    ]
+  },
+  "verification": {
+    "measuredAt": "2026-08-30T20:35:06Z",
+    "context": "Focused post-run verification with a warm filesystem; these laptop timings are distinct from the psiblue scientific-panel timings above.",
+    "environment": {
+      "os": "Darwin 25.5.0 arm64",
+      "cpu": "Apple M1 Pro",
+      "nodeVersion": "v26.7.0",
+      "npmVersion": "11.19.0",
+      "bunVersion": "1.3.14"
+    },
+    "commands": [
+      {
+        "command": "npm run test:validation-registry",
+        "status": "PASS",
+        "realSeconds": 0.22,
+        "userSeconds": 0.17,
+        "systemSeconds": 0.05
+      },
+      {
+        "command": "npm run test:docking",
+        "status": "PASS",
+        "realSeconds": 0.38,
+        "userSeconds": 0.31,
+        "systemSeconds": 0.08
+      },
+      {
+        "command": "npm run test:7kpa-analogue-panel",
+        "status": "PASS",
+        "realSeconds": 0.32,
+        "userSeconds": 0.3,
+        "systemSeconds": 0.05
+      },
+      {
+        "command": "npm run test:7kpa-manual-contacts",
+        "status": "PASS",
+        "realSeconds": 0.22,
+        "userSeconds": 0.19,
+        "systemSeconds": 0.04
+      },
+      {
+        "command": "npm run build:web",
+        "status": "PASS",
+        "realSeconds": 0.31,
+        "userSeconds": 0.16,
+        "systemSeconds": 0.09
+      }
+    ]
+  },
+  "deterministicNegative": {
+    "caseId": "pyridone-sultam-manual-recapture",
+    "outcomes": [
+      "no-feasible-pose",
+      "no-feasible-pose"
+    ],
+    "feasibleCandidates": 0,
+    "candidates": 8,
+    "selectedScoreKcalMol": 64.830685,
+    "selectedPhysicalKcalMol": 39.922651,
+    "selectedConstraintPenaltyKcalMol": 24.908034,
+    "violatedRequiredContacts": [
+      {
+        "contactId": "reference-hbond-51",
+        "donorAcceptorDistanceAngstrom": 3.433871,
+        "hydrogenAcceptorDistanceAngstrom": 2.928893,
+        "dhaAngleDegrees": 111.548337,
+        "penaltyKcalMol": 1.976393
+      },
+      {
+        "contactId": "manual-hbond-1",
+        "donorAcceptorDistanceAngstrom": 4.464548,
+        "hydrogenAcceptorDistanceAngstrom": 3.473578,
+        "dhaAngleDegrees": 167.351346,
+        "penaltyKcalMol": 22.931641
+      }
+    ]
+  }
+}

@@ -40,6 +40,8 @@ assert(manifest.cases.some((entry) => entry.intendedRoles.includes('donor')
 
 const smoke = JSON.parse(await readFile(new URL('./7kpa-manual-contact-smoke.v0.1.json',
   import.meta.url)));
+const results = JSON.parse(await readFile(new URL(
+  './7kpa-manual-contact-results.psiblue.v0.1.json', import.meta.url)));
 assert.equal(smoke.schema, 'molarium.7kpa.manual-contact-smoke/v1');
 assert.equal(smoke.panelId, manifest.panelId);
 assert(manifest.cases.some((entry) => entry.id === smoke.caseId));
@@ -54,4 +56,31 @@ for (const action of ['chemistry.deleteAtom','chemistry.finish','pose.forgetCont
   'chemistry.addAtom','chemistry.setBond','pose.addContact','pose.refine'])
   assert(smoke.audit.orderedActions.includes(action), `smoke evidence omits ${action}`);
 
-console.log('7KPA manual contact-recapture panel: PASS (10 preregistered cases; 1 development smoke)');
+assert.equal(results.schema, 'molarium.7kpa.manual-contact-panel-evidence/v1');
+assert.equal(results.panelId, manifest.panelId);
+assert.equal(results.summary.registeredCases, manifest.cases.length);
+assert.equal(results.summary.replays, 20);
+assert.equal(results.summary.replayAgreements, manifest.cases.length);
+assert.equal(results.summary.feasibleCases, 9);
+assert.deepEqual(results.summary.outcomes, {
+  'no-feasible-pose':2,
+  'success-feasible':18,
+});
+assert.equal(results.timing.byCase.length, manifest.cases.length);
+assert(results.timing.byCase.every(entry => entry.replayAgreement));
+assert(results.timing.byCase.every(entry => entry.totalMs.length === 2));
+assert(results.timing.byAction.some(entry => entry.action === 'chemistry.finish'
+  && entry.count === 46));
+assert.equal(results.execution.scheduler.state, 'COMPLETED');
+assert.equal(results.execution.scheduler.elapsedSeconds, 1434);
+assert.match(results.execution.source.commit, /^[a-f0-9]{40}$/);
+assert.equal(results.verification.commands.length, 5);
+assert(results.verification.commands.every(entry => entry.status === 'PASS'));
+assert(results.verification.commands.every(entry => Number.isFinite(entry.realSeconds)));
+for (const field of ['archiveSha256','resultSha256','receiptSha256'])
+  assert.match(results.execution.source[field], /^[a-f0-9]{64}$/, `${field}: invalid SHA-256`);
+assert.equal(results.deterministicNegative.caseId, 'pyridone-sultam-manual-recapture');
+assert.deepEqual(results.deterministicNegative.outcomes,
+  ['no-feasible-pose','no-feasible-pose']);
+
+console.log('7KPA manual contact-recapture panel: PASS (10 cases; 20 deterministic replays)');

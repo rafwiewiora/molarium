@@ -45,6 +45,14 @@ npm run test:7kpa-manual-contact-results -- --input <result.json>
 
 The first real-system smoke run (`pyridone-carbonyl-manual-recapture`, one replay, eight search
 chains) matched its preregistered product graph, produced 8/8 feasible poses, satisfied all four
-required H-bonds in the selected pose, and passed labbook verification. The complete repeated panel
-remains a separate scheduled run; single-replay smoke evidence must not be reported as full replay
-validation.
+required H-bonds in the selected pose, and passed labbook verification.
+
+The complete panel was then executed twice per case from committed source `b6f18a8` on psiblue.
+All 10/10 repeated pairs produced identical scientific replay hashes. Nine cases yielded feasible
+poses; the sultam consistently reached refinement but returned `no-feasible-pose`, with two required
+contacts unsatisfied in its best candidate. The immutable 13 MB raw result remains on psiblue and is
+identified by SHA-256 in
+[`7kpa-manual-contact-results.psiblue.v0.1.json`](7kpa-manual-contact-results.psiblue.v0.1.json).
+That compact artifact also records preparation, replay, refinement, Chemist Action, scheduler CPU,
+wall-clock, and peak-memory timings. The 20 replays are variants of one reference complex, not 20
+independent systems, and feasibility is not a binding-affinity claim.
