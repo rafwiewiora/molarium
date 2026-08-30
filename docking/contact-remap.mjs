@@ -418,7 +418,14 @@ export function proposeLigandHydrogenBondFeatureRemaps(definitions, molecule,
     const originalIds = ligandRole === 'acceptor'
       ? [definition.acceptor?.designAtomId]
       : [definition.donor?.designAtomId, definition.hydrogen?.designAtomId];
-    const oldBoundary = regions ? regionBoundary(beforeMolecule, oldRegion, originalIds,
+    // A donor heavy atom and its explicit hydrogen are one pharmacophore
+    // tuple. Include both tuple members in the old and new candidate regions;
+    // otherwise an unchanged H is incorrectly counted as an old scaffold
+    // boundary but removed from the new boundary when evaluating the same
+    // surviving donor after a neighbouring atom changes feature class.
+    const oldCandidateRegion = new Set(oldRegion);
+    originalIds.forEach((id) => oldCandidateRegion.add(id));
+    const oldBoundary = regions ? regionBoundary(beforeMolecule, oldCandidateRegion, originalIds,
       new Set(regions.after.keys())) : [];
     const editEligibleFeatures = (ligandRole === 'acceptor' ? features.acceptors : features.donors)
       .filter((feature) => feature.atomIds.some((id) => {
