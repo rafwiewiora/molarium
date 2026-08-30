@@ -51,7 +51,8 @@ singularity exec "${PLAYWRIGHT_IMAGE}" "${CHROME}" --version
 (
   cd "${SOURCE}"
   singularity exec --bind "${ROOT}:${ROOT}" "${PLAYWRIGHT_IMAGE}" \
-    env MOLARIUM_CHROME_PATH="${CHROME}" "${BUN}" \
+    env PATH="${RUNTIME}/bun-linux-x64:${PATH}" \
+    MOLARIUM_CHROME_PATH="${CHROME}" "${BUN}" \
     docking/benchmark/run-7kpa-two-terminus-panel.mjs \
     --manual-recapture --replays 2 --search-chains 8 --output "${RESULT}"
   singularity exec --bind "${ROOT}:${ROOT}" "${PLAYWRIGHT_IMAGE}" "${BUN}" \
