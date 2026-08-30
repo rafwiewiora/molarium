@@ -42,11 +42,13 @@ fi
 # never install packages on the node or modify the shared system image.
 if [[ ! -f "${LIBRARY_ROOT}/.complete" ]]; then
   mkdir -p "${LIBRARY_ROOT}" "${RPM_ROOT}"
-  dnf download --resolve --alldeps --destdir "${RPM_ROOT}" \
-    at-spi2-atk mesa-libgbm alsa-lib
+  dnf download --arch=x86_64 --destdir "${RPM_ROOT}" \
+    at-spi2-atk at-spi2-core mesa-libgbm alsa-lib
   shopt -s nullglob
   for rpm in "${RPM_ROOT}"/*.rpm; do
-    (cd "${LIBRARY_ROOT}" && rpm2cpio "${rpm}" | cpio -idmu --quiet)
+    package_root=${LIBRARY_ROOT}/$(basename "${rpm}" .rpm)
+    mkdir -p "${package_root}"
+    (cd "${package_root}" && rpm2cpio "${rpm}" | cpio -idmu --quiet)
   done
   shopt -u nullglob
   find "${RPM_ROOT}" -maxdepth 1 -type f -name '*.rpm' -print0 \
@@ -60,7 +62,12 @@ readonly RESULT=${OUTPUT}/7kpa-manual-contact-recapture.v0.1.json
 readonly RECEIPT=${OUTPUT}/receipt.json
 
 "${BUN}" --version
-export LD_LIBRARY_PATH=${LIBRARY_ROOT}/usr/lib64:${LD_LIBRARY_PATH:-}
+mapfile -d '' LIBRARY_PATHS < <(find "${LIBRARY_ROOT}" -type d -path '*/usr/lib64' -print0 | sort -z)
+previous_ifs=${IFS}
+IFS=:
+library_path=${LIBRARY_PATHS[*]}
+IFS=${previous_ifs}
+export LD_LIBRARY_PATH=${library_path}${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 if ldd "${CHROME}" | grep -q 'not found'; then
   ldd "${CHROME}" >&2
   exit 127
