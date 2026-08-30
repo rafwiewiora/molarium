@@ -22,4 +22,6 @@ npm run test:ci:browser
 npm run test:ci:webgpu
 ```
 
-The browser suite uses `CHROME_PATH` when set and otherwise selects the conventional Chrome path for the current platform. `test:ci:webgpu` is the explicit hardware gate and requires a machine with a WebGPU adapter; GitHub's standard CPU runners do not provide one. The portable CI suite still validates the registered WebGPU reference evidence and all non-hardware scientific logic. CI dependencies and GitHub Actions are pinned so that validation changes are explicit in repository history.
+The CI browser suite uses bundled runtime assets only. The broader `npm test` regression additionally exercises large, separately distributed model assets and should be run in an asset-complete checkout. Browser tests use `CHROME_PATH` when set and otherwise select the conventional Chrome path for the current platform.
+
+`test:ci:webgpu` is the explicit hardware gate and requires a machine with a WebGPU adapter; GitHub's standard CPU runners do not provide one. The portable CI suite still validates the registered WebGPU reference evidence and all non-hardware scientific logic. CI dependencies and GitHub Actions are pinned so that validation changes are explicit in repository history.
