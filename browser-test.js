@@ -14,6 +14,8 @@ const productionApiBoundary = Bun.env.MOLARIUM_TEST_SCOPE === 'chemist-actions-p
 const chromePath = Bun.env.CHROME_PATH || (process.platform === 'darwin'
   ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
   : '/usr/bin/google-chrome');
+const chromePlatformArgs = process.platform === 'linux'
+  ? ['--no-sandbox', '--disable-dev-shm-usage'] : [];
 const profile = await mkdtemp(join(tmpdir(), 'molarium-browser-test-'));
 let server;
 let chrome;
@@ -3246,6 +3248,7 @@ try {
 
   chrome = Bun.spawn([
     chromePath,
+    ...chromePlatformArgs,
     '--headless',
     '--disable-extensions',
     '--no-first-run',
