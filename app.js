@@ -6403,16 +6403,22 @@ function removeAttachmentHydrogen(molecule, atomIndex, preferredDirection = null
 }
 
 function assertAvailableAttachmentValence(molecule, atomIndex) {
-  const targetValence = { H: 1, B: 3, C: 4, N: 3, O: 2, F: 1, Si: 4, P: 3, S: 2, Cl: 1, Br: 1, I: 1 }[molecule.atoms[atomIndex].element];
+  const atom = molecule.atoms[atomIndex];
   const bonds = molecule.bonds.filter((bond) => bond.a === atomIndex || bond.b === atomIndex);
   const hasHydrogen = bonds.some((bond) => {
     const other = bond.a === atomIndex ? bond.b : bond.a;
     return molecule.atoms[other].element === 'H';
   });
-  if (hasHydrogen || targetValence == null) return;
+  if (hasHydrogen) return;
   const usedValence = bonds.reduce((sum, bond) => sum + (bond.order || 1), 0);
+  // Evaluate the prospective bond rather than the atom's current valence.
+  // This preserves ordinary octet limits while allowing common expanded-
+  // valence P/S construction one chemically complete edit at a time (for
+  // example, adding the second oxygen to S(=O) before assigning S=O).
+  const targetValence = chemistryTargetValence(atom, usedValence + 1);
+  if (targetValence == null) return;
   if (usedValence + 1 > targetValence + 0.05)
-    throw new Error(`${molecule.atoms[atomIndex].element} atom ${atomIndex + 1} has no available valence for another bond.`);
+    throw new Error(`${atom.element} atom ${atomIndex + 1} has no available valence for another bond.`);
 }
 
 function rotateMoleculeToVector(molecule, anchorIndex, fromVector, toVector) {

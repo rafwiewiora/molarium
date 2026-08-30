@@ -981,14 +981,14 @@ const browserSuite = String.raw`(async () => {
   };
   const liveAtomIndex = (designAtomId) => api.current().molecule.atoms.findIndex((atom) =>
     atom.designAtomId === designAtomId);
-  // Assemble the four-coordinate center as carbon so the interactive valence
-  // guard permits all three substituents, then transmute it to S before
-  // assigning the two S=O bonds in the same unfinished transaction.
-  const sulfurId = await addStagedAtom('C', sulfoneAnchorId);
+  // Build the expanded-valence sulfur center directly. The interactive
+  // attachment gate must permit ordinary S(IV)/S(VI) chemistry without a
+  // temporary carbon workaround, while the unfinished transaction remains
+  // chemically incomplete until both S=O bonds are assigned.
+  const sulfurId = await addStagedAtom('S', sulfoneAnchorId);
   const sulfoneOxygen1Id = await addStagedAtom('O', sulfurId);
   const sulfoneOxygen2Id = await addStagedAtom('O', sulfurId);
   await addStagedAtom('N', sulfurId);
-  await api.stageAtomCurrent(liveAtomIndex(sulfurId), 'S', 0);
   await api.stageBondCurrent(liveAtomIndex(sulfurId), liveAtomIndex(sulfoneOxygen1Id), 2);
   await api.stageBondCurrent(liveAtomIndex(sulfurId), liveAtomIndex(sulfoneOxygen2Id), 2);
   const sulfoneFinish = await api.finishChemistryCurrent();
