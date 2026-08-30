@@ -10,6 +10,8 @@ assert.match(html, /15<\/strong><span>protein targets/);
 assert.match(html, /5<\/strong><span>crystal-scored/);
 assert.match(html, /25 preserved outcomes/);
 assert.match(html, /Registered · partial/);
+assert.match(html, /Development smoke/);
+assert.match(html, /all eight generated poses satisfied all four required H-bonds/);
 assert.match(html, /vacuum-versus-OBC2 protocol mismatch/);
 assert.equal((html.match(/data-validation-tier=/g) || []).length, 25);
 

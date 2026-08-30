@@ -128,6 +128,39 @@
       "artifactIds": [
         "analoguePanel"
       ]
+    },
+    {
+      "studyId": "7kpa-manual-contact-recapture-v0.1",
+      "title": "7KPA manual H-bond recapture panel",
+      "status": "development-smoke",
+      "evidenceLevel": "ten preregistered chemist-action scripts; one hash-checked end-to-end development replay",
+      "executedAt": "2026-08-30T18:26:36.261Z",
+      "counts": {
+        "registeredChemistryCases": 10,
+        "executedDevelopmentCases": 1,
+        "proteinTargets": 1,
+        "referenceSystems": 1,
+        "searchCandidates": 8,
+        "feasibleCandidates": 8
+      },
+      "metrics": {
+        "productGraphMatchesExpected": true,
+        "allRequiredHydrogenBondsSatisfied": true,
+        "manualDonorAcceptorDistanceAngstrom": 3.2232161295538693,
+        "manualHydrogenAcceptorDistanceAngstrom": 2.2870072250188205,
+        "manualDhaAngleDegrees": 153.61818250325143,
+        "labbookValid": true
+      },
+      "claims": [
+        "Ten explicit delete, forget, rebuild, reassert, and refine scripts are preregistered through the public Chemist Actions API.",
+        "The executed pyridone-carbonyl case reproduced its frozen product graph and all eight generated poses satisfied all four required H-bonds.",
+        "This is one development replay from one reference complex; the complete ten-case panel has not yet been executed or claimed."
+      ],
+      "artifactIds": [
+        "manualContactPanel",
+        "manualContactProtocol",
+        "manualContactSmoke"
+      ]
     }
   ],
   "proteinTargets": [
@@ -548,6 +581,24 @@
       "href": "./docking/benchmark/7kpa-two-terminus-panel.v0.1.json",
       "bytes": 14614,
       "sha256": "de08bca3c70d2542630845c0e91cbe4492bed338bb446734c78015c64a62c174"
+    },
+    "manualContactPanel": {
+      "path": "docking/benchmark/7kpa-manual-contact-panel.mjs",
+      "href": "./docking/benchmark/7kpa-manual-contact-panel.mjs",
+      "bytes": 10495,
+      "sha256": "56ff864f0cbfd1c78dcf9d04fd12d89c72298297f821f11c6587bd4f78f35c05"
+    },
+    "manualContactProtocol": {
+      "path": "docking/benchmark/7kpa-manual-contact-panel.README.md",
+      "href": "./docking/benchmark/7kpa-manual-contact-panel.README.md",
+      "bytes": 2612,
+      "sha256": "ee65b9727dc35973f595ccde8cae8f165e938fecfb2230abd1fe9b4530c1eab7"
+    },
+    "manualContactSmoke": {
+      "path": "docking/benchmark/7kpa-manual-contact-smoke.v0.1.json",
+      "href": "./docking/benchmark/7kpa-manual-contact-smoke.v0.1.json",
+      "bytes": 2917,
+      "sha256": "95f0bf7a23d90d8fa1a6a555ae0c1a85623543b8feac19bc24836e4bd10c1a08"
     },
     "browserVacuum": {
       "path": "docking/validation/cloud-panel/browser-sage-openmm-validation-2026-08-23.json",

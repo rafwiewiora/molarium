@@ -278,8 +278,16 @@
                 <button class="soft-button hidden" type="button" id="clear-docking-reference">Reset</button>
               </div>
               <div class="docking-constraints hidden" id="docking-constraints">
-                <span>Required contacts</span>
+                <div class="docking-constraints-heading">
+                  <span>Required contacts</span>
+                  <button type="button" id="add-docking-contact" aria-label="Add hydrogen-bond contact" title="Add an H-bond hypothesis">+</button>
+                </div>
                 <div id="docking-hbond-list"></div>
+                <div class="docking-contact-builder hidden" id="docking-contact-builder">
+                  <span id="docking-contact-builder-status">Pick a ligand donor or acceptor.</span>
+                  <div id="docking-contact-builder-options"></div>
+                  <button type="button" id="cancel-docking-contact">Cancel</button>
+                </div>
               </div>
               <div class="docking-run-row hidden" id="docking-run-row">
                 <select id="docking-conformer-count" aria-label="Torsion-search chain count">

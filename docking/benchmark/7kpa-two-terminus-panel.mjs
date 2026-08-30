@@ -8,13 +8,14 @@ export const panelRoot = path.dirname(fileURLToPath(import.meta.url));
 export const panelManifestName = '7kpa-two-terminus-panel.v0.1.json';
 export const allowedPanelOperations = new Set([
   'setBond', 'setAtom', 'addHydrogen', 'removeHydrogen', 'deleteAtom', 'deleteBond',
-  'addAtom', 'createBond', 'finish',
+  'addAtom', 'createBond', 'finish', 'forgetContact', 'addContact',
 ]);
 export const operationActions = Object.freeze({
   setBond:'chemistry.setBond', setAtom:'chemistry.setAtom',
   addHydrogen:'chemistry.addHydrogen', removeHydrogen:'chemistry.removeHydrogen',
   deleteAtom:'chemistry.deleteAtom', deleteBond:'chemistry.deleteBond',
   addAtom:'chemistry.addAtom', createBond:'chemistry.createBond', finish:'chemistry.finish',
+  forgetContact:'pose.forgetContact', addContact:'pose.addContact',
 });
 
 export function sha256(value) {
@@ -74,6 +75,7 @@ function simulateOperations(entry, referenceGraph) {
   const bonds = new Map(referenceGraph.bonds);
   let mutationsSinceFinish = 0;
   let syntheticHydrogen = 0;
+  const forgottenContacts = new Set();
   const aliases = new Map();
   const resolvedName = (name) => aliases.get(name) || name;
   const attachedHydrogens = (atomName) => [...atoms].filter(([name, atom]) => atom.element === 'H'
@@ -120,6 +122,26 @@ function simulateOperations(entry, referenceGraph) {
   };
   for (const [index, operation] of entry.operations.entries()) {
     assert.ok(allowedPanelOperations.has(operation.op), `${entry.id}: unknown operation ${operation.op}`);
+    if (operation.op === 'forgetContact' || operation.op === 'addContact') {
+      assert.equal(mutationsSinceFinish, 0,
+        `${entry.id}: ${operation.op} requires finished chemistry at operation ${index + 1}`);
+      assert.equal(typeof operation.contact, 'string',
+        `${entry.id}: ${operation.op} requires a registered contact key`);
+      if (operation.op === 'forgetContact') forgottenContacts.add(operation.contact);
+      else {
+        assert.ok(forgottenContacts.has(operation.contact),
+          `${entry.id}: a replacement contact must explicitly forget its predecessor first`);
+        assert.equal(typeof operation.ligandAtom, 'string',
+          `${entry.id}: addContact requires ligandAtom`);
+        assert.ok(atoms.has(resolvedName(operation.ligandAtom)),
+          `${entry.id}: addContact ligand atom ${operation.ligandAtom} does not exist`);
+        assert.ok(['acceptor','donor','auto'].includes(operation.ligandRole),
+          `${entry.id}: invalid addContact ligand role`);
+        assert.ok(['donor','acceptor'].includes(operation.receptorParticipant),
+          `${entry.id}: invalid receptor participant`);
+      }
+      continue;
+    }
     if (operation.op === 'finish') {
       assert.ok(mutationsSinceFinish > 0, `${entry.id}: empty or consecutive finish at operation ${index + 1}`);
       reconcileHydrogens();
@@ -236,9 +258,11 @@ export async function expectedProductGraph(entry, manifest) {
 export async function validatePanelManifest(manifest, { verifyAssets = true } = {}) {
   assert.equal(manifest.schemaVersion, 1);
   const highDisruption = manifest.profile === 'high-disruption-enumerations';
+  const manualRecapture = manifest.profile === 'manual-contact-recapture';
   assert.equal(manifest.panelId, highDisruption
     ? 'molarium-7kpa-d84-high-disruption-enumerations'
-    : 'molarium-7kpa-d84-two-terminus-analogues');
+    : manualRecapture ? 'molarium-7kpa-d84-manual-contact-recapture'
+      : 'molarium-7kpa-d84-two-terminus-analogues');
   assert.equal(manifest.status, 'preregistered-development');
   assert.equal(manifest.reference.pdbId, '7KPA');
   assert.equal(manifest.reference.componentId, 'D84');
@@ -249,7 +273,7 @@ export async function validatePanelManifest(manifest, { verifyAssets = true } = 
   assert.ok(Number.isInteger(manifest.protocol.replays) && manifest.protocol.replays >= 2);
   assert.ok(manifest.protocol.requiredMeasurements.includes('replay-hash'));
   assert.ok(Array.isArray(manifest.cases)
-    && manifest.cases.length >= (highDisruption ? 3 : 16));
+    && manifest.cases.length >= (manualRecapture ? 8 : highDisruption ? 3 : 16));
   assert.equal(new Set(manifest.cases.map((entry) => entry.id)).size, manifest.cases.length,
     'panel case IDs must be unique');
   const contactKeys = new Set(Object.keys(manifest.referenceContacts));
@@ -283,11 +307,14 @@ export async function validatePanelManifest(manifest, { verifyAssets = true } = 
       `${entry.id}: every captured reference contact must be required or omitted`);
     if (entry.operations.length) {
       assert.notEqual(entry.operations[0].op, 'finish', `${entry.id}: script cannot start with finish`);
-      assert.equal(entry.operations.at(-1).op, 'finish',
-        `${entry.id}: every final mutation batch must finish chemistry`);
+      assert.ok(['finish','addContact','forgetContact'].includes(entry.operations.at(-1).op),
+        `${entry.id}: every final mutation batch must finish chemistry before contact actions`);
       entry.operations.forEach((operation, index) => {
         if (operation.op === 'finish') assert.notEqual(entry.operations[index - 1]?.op, 'finish',
           `${entry.id}: script cannot contain consecutive finishes`);
+        if (['forgetContact','addContact'].includes(operation.op))
+          assert.ok(contactKeys.has(operation.contact),
+            `${entry.id}: ${operation.op} refers to unknown contact ${operation.contact}`);
       });
     }
     if (verifyAssets) {
@@ -299,16 +326,16 @@ export async function validatePanelManifest(manifest, { verifyAssets = true } = 
         `${entry.id}: preregistered product graph contract does not match its operation script`);
     }
   }
-  if (!highDisruption) for (const site of ['pyridone','pyrrolidone']) {
+  if (!highDisruption && !manualRecapture) for (const site of ['pyridone','pyrrolidone']) {
     const cases = manifest.cases.filter((entry) => entry.locus === site);
     assert.ok(cases.some((entry) => entry.intendedRoles.includes('acceptor')
       && !entry.intendedRoles.includes('donor')), `${site}: acceptor-only case is required`);
     assert.ok(cases.some((entry) => entry.intendedRoles.includes('acceptor')
       && entry.intendedRoles.includes('donor')), `${site}: donor-acceptor case is required`);
   }
-  if (!highDisruption) assert.ok(manifest.cases.filter((entry) => entry.locus === 'dual').length >= 2,
+  if (!highDisruption && !manualRecapture) assert.ok(manifest.cases.filter((entry) => entry.locus === 'dual').length >= 2,
     'at least two dual-end stress cases are required');
-  const locusNames = highDisruption
+  const locusNames = highDisruption || manualRecapture
     ? [...new Set(manifest.cases.map((entry) => entry.locus))].sort()
     : ['pyridone','pyrrolidone','dual'];
   return { cases:manifest.cases.length, loci:Object.fromEntries(locusNames

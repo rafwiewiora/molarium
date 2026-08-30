@@ -16,6 +16,9 @@ const api = createChemistActionsApi({ routes,
 assert.equal(api.schema, CHEMIST_ACTIONS_SCHEMA);
 assert(Object.isFrozen(api));
 assert(Object.hasOwn(api.describe().actions, 'chemistry.finish'));
+assert(Object.hasOwn(api.describe().actions, 'pose.addContact'));
+assert(Object.hasOwn(api.describe().actions, 'pose.forgetContact'));
+assert.match(api.describe().actions['session.inspect'].arguments.scope, /pocket/);
 assert(!Object.hasOwn(api.describe().actions, 'test.loadObject'));
 assert.match(api.describe().guarantee, /no arbitrary code/);
 

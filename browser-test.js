@@ -636,6 +636,60 @@ const browserSuite = String.raw`(async () => {
     valenceCompleteDockingFixture.parameterization.system.nonbonded.push({ index, charge_e:0,
       sigma_nm:0.1, epsilon_kj:0.05 });
   });
+  if (testScope === 'manual-hbond-api') {
+    api.loadObject(valenceCompleteDockingFixture);
+    const chemist = await window.MolariumChemistActionsReady;
+    await chemist.execute({ action:'view.setMode', args:{ mode:'build' } });
+    await chemist.execute({ action:'build.setTool', args:{ tool:'select' } });
+    await chemist.execute({ action:'pose.captureReference', args:{ mode:'propagate' } });
+    const captured = (await chemist.inspect({ scope:'pocket', includeCoordinates:true,
+      maximumAtoms:100 })).result;
+    const original = captured.contacts.find((contact) => contact.hydrogenBond.receptorRole === 'donor');
+    const oldOxygen = captured.atoms.find((atom) => atom.atomName === 'O1' && atom.residueName === 'DME');
+    const carbonylCarbon = captured.atoms.find((atom) => atom.atomName === 'C1' && atom.residueName === 'DME');
+    const receptorDonor = captured.atoms.find((atom) => atom.atomName === 'NZ' && atom.residueName === 'LYS');
+    check(Boolean(original && oldOxygen && carbonylCarbon && receptorDonor)
+      && captured.totalAtomCount < valenceCompleteDockingFixture.atoms.length + 1,
+    'pocket inspection exposes persistent contact participants without arbitrary private state');
+    await chemist.execute({ action:'selection.replace', args:{ atomIds:[oldOxygen.atomId] } });
+    await chemist.execute({ action:'chemistry.deleteAtom' });
+    await chemist.execute({ action:'chemistry.finish' });
+    const unavailable = (await chemist.inspect({ scope:'pocket', maximumAtoms:100 })).result
+      .contacts.find((contact) => contact.contactId === original.contactId);
+    check(unavailable && !unavailable.available,
+      'deleting the original ligand feature makes its captured H-bond unavailable');
+    await chemist.execute({ action:'pose.forgetContact',
+      args:{ contactId:original.contactId } });
+    const added = await chemist.execute({ action:'chemistry.addAtom',
+      args:{ attachedToAtomId:carbonylCarbon.atomId, element:'O' } });
+    await chemist.execute({ action:'chemistry.createBond', args:{
+      atomIds:[carbonylCarbon.atomId, added.result.addedAtomId], order:2 } });
+    await chemist.execute({ action:'chemistry.finish' });
+    const asserted = await chemist.execute({ action:'pose.addContact', args:{
+      ligandAtomId:added.result.addedAtomId, receptorAtomId:receptorDonor.atomId,
+      ligandRole:'acceptor' } });
+    const rebuilt = (await chemist.inspect({ scope:'pocket', includeCoordinates:true,
+      maximumAtoms:100 })).result;
+    const manual = rebuilt.contacts.find((contact) =>
+      contact.contactId === asserted.result.contact.contactId);
+    check(rebuilt.contacts.length === 1 && manual?.required && manual?.available
+      && manual.origin?.kind === 'user-added-hydrogen-bond-hypothesis'
+      && manual.hydrogenBond.participants.acceptor.atomId === added.result.addedAtomId,
+    'a designer can forget an obsolete H-bond and assert the rebuilt acceptor through public actions',
+    JSON.stringify(manual));
+    const refinement = await chemist.execute({ action:'pose.refine', args:{ searchChains:8 } });
+    const labbook = api.dockingLabbook();
+    check(refinement.result.refinement.candidates >= 1
+      && labbook.selections.contactAmendments?.map((entry) => entry.kind).join(',') === 'forgotten,added'
+      && labbook.events.some((event) => event.stage === 'contact-hypothesis-amendments')
+      && labbook.selections.hydrogenBonds.some((entry) => entry.origin?.kind
+        === 'user-added-hydrogen-bond-hypothesis'),
+    'manual contact refinement is feature-biased and records its full amendment provenance');
+    const failed = checks.filter((item) => !item.passed);
+    return { passed:checks.length - failed.length, total:checks.length, failed,
+      optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,
+      preparationMetrics:null };
+  }
   api.loadObject(dockingFixture);
   document.querySelector('.mode-bar button[data-mode="build"]').click();
   api.setDockingMode('selected-core');

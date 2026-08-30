@@ -9,11 +9,16 @@ const MOLARIUM_ASSET_BASE = MOLARIUM_NETWORK_POLICY.assetBase
   ? new URL(MOLARIUM_NETWORK_POLICY.assetBase, location.href).href : null;
 let hydrogenBondFeaturePerception = null;
 let hydrogenBondFeatureValidation = null;
+let manualHydrogenBondModule = null;
 import('./docking/contact-remap.mjs').then((module) => {
   hydrogenBondFeaturePerception = module.perceiveHydrogenBondFeature;
   hydrogenBondFeatureValidation = module.validateCapturedLigandHydrogenBondFeature;
   if (typeof state !== 'undefined' && state.molecule) draw();
 }).catch(() => { /* capture/refinement reports a precise error if the module is unavailable */ });
+import('./docking/manual-hbond.mjs').then((module) => {
+  manualHydrogenBondModule = module;
+  if (typeof state !== 'undefined' && state.molecule) draw();
+}).catch(() => { /* the add-contact action reports a precise error if unavailable */ });
 
 function molariumAssetUrl(path, localUrl) {
   return MOLARIUM_ASSET_BASE ? new URL(path, MOLARIUM_ASSET_BASE).href : localUrl;
@@ -718,6 +723,7 @@ const state = {
   dockingSelectedHbondIds: new Set(),
   dockingContactRemaps: new Map(),
   dockingContactRemapProposals: new Map(),
+  dockingContactDraft: null,
   dockingPoseIndex: 0,
   structureComponents: [],
   atomComponentIds: [],
@@ -2925,6 +2931,7 @@ function loadMolecule(molecule, resetView = true) {
   state.dockingSelectedHbondIds = new Set();
   state.dockingContactRemaps = new Map();
   state.dockingContactRemapProposals = new Map();
+  state.dockingContactDraft = null;
   state.dockingPoseIndex = 0;
   document.querySelector('#docking-edit-cleanup').value = 'preserve-reference';
   state.pdbPreparationPreview = null;
@@ -3945,6 +3952,184 @@ async function reconcileDockingContactFeaturesAfterChemistry(transaction, change
   return applied;
 }
 
+function recordManualDockingContactEvent(kind, definition, extra = {}) {
+  if (!state.molecule || !state.dockingReference) return;
+  const event = { schema:'molarium.docking.contact-amendment/v1', kind,
+    at:new Date().toISOString(), contactId:definition.id, label:definition.label,
+    origin:structuredClone(definition.origin || null), ...structuredClone(extra) };
+  state.molecule.source = { ...(state.molecule.source || {}),
+    dockingContactAmendments:[...(state.molecule.source?.dockingContactAmendments || []),
+      event].slice(-128) };
+  state.dockingReference.contactAmendments = [
+    ...(state.dockingReference.contactAmendments || []), structuredClone(event),
+  ].slice(-128);
+}
+
+async function refreshDockingReceptorProvenance() {
+  const reference = state.dockingReference;
+  if (!reference || !state.molecule) return;
+  const adapter = await import('./docking/browser-adapter.mjs');
+  const currentById = new Map(state.molecule.atoms.map((atom, index) =>
+    [atom.designAtomId, index]));
+  const receptorParticipantIds = reference.hydrogenBonds.flatMap((definition) =>
+    [definition.donor, definition.hydrogen, definition.acceptor]
+      .filter((descriptor) => descriptor?.scope === 'receptor')
+      .map((descriptor) => descriptor.designAtomId));
+  const receptorSiteIds = reference.receptorSite.atoms.map((atom) => atom.designAtomId);
+  const indices = [...new Set([...receptorSiteIds, ...receptorParticipantIds]
+    .map((id) => currentById.get(id)).filter(Number.isInteger))].sort((a, b) => a - b);
+  reference.receptorProvenanceAtomCount = indices.length;
+  reference.receptorInputText = adapter.dockingInputText(state.molecule, indices);
+}
+
+function nextManualDockingContactId() {
+  const used = new Set(state.dockingReference?.hydrogenBonds.map((entry) => entry.id) || []);
+  let ordinal = 1;
+  while (used.has(`manual-hbond-${ordinal}`)) ordinal += 1;
+  return `manual-hbond-${ordinal}`;
+}
+
+function cancelManualDockingContact() {
+  if (!state.dockingContactDraft) return false;
+  state.dockingContactDraft = null;
+  state.selectedAtoms = []; state.selectedAtom = null;
+  updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw();
+  return true;
+}
+
+async function addManualDockingContactByIndices(ligandAtomIndex, receptorAtomIndex,
+  ligandRole = 'auto', method = 'two-atom-selection') {
+  if (!state.dockingReference)
+    throw new Error('Begin analogue design before adding a required contact');
+  if (state.chemistryTransaction)
+    throw new Error('Finish chemistry before adding a required contact');
+  const ligandAtomIndices = currentDockingLigandAtomIndices();
+  if (!ligandAtomIndices.length) throw new Error('The editable ligand is unavailable');
+  const { ensureStableAtomIds } = await import('./docking/reference-core.mjs');
+  ensureStableAtomIds(state.molecule, `manual-contact-${state.molecule.source?.pdbId || 'complex'}`,
+    state.dockingReference.ligand?.atomIds || []);
+  const module = manualHydrogenBondModule || await import('./docking/manual-hbond.mjs');
+  const definition = module.createManualHydrogenBondDefinition({ molecule:state.molecule,
+    ligandAtomIndices, ligandAtomIndex, receptorAtomIndex, ligandRole,
+    id:nextManualDockingContactId(), method });
+  const key = module.manualHydrogenBondParticipantKey(definition);
+  const duplicate = state.dockingReference.hydrogenBonds.find((entry) =>
+    module.manualHydrogenBondParticipantKey(effectiveDockingHydrogenBondDefinition(entry)) === key);
+  if (duplicate) throw new Error(`That H-bond hypothesis already exists as ${duplicate.label}`);
+  state.dockingReference.hydrogenBonds.push(definition);
+  state.dockingSelectedHbondIds.add(definition.id);
+  state.dockingResult = null; state.dockingPoseIndex = 0;
+  recordManualDockingContactEvent('added', definition, {
+    activeContactIds:[...state.dockingSelectedHbondIds] });
+  await refreshDockingReceptorProvenance();
+  state.dockingContactDraft = null;
+  state.selectedAtoms = []; state.selectedAtom = null;
+  updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw();
+  showToast('Required H-bond added');
+  return definition;
+}
+
+async function forgetDockingContact(contactId, method = 'user-forgot-contact') {
+  const reference = state.dockingReference;
+  const definition = reference?.hydrogenBonds.find((entry) => entry.id === contactId);
+  if (!definition) throw new Error(`Unknown contact ${contactId}`);
+  const proposal = state.dockingContactRemapProposals.get(contactId);
+  if (!definition.origin && proposal?.status !== 'unavailable')
+    throw new Error('Only a manually added or currently unavailable contact can be forgotten');
+  reference.hydrogenBonds = reference.hydrogenBonds.filter((entry) => entry.id !== contactId);
+  state.dockingSelectedHbondIds.delete(contactId);
+  state.dockingContactRemaps.delete(contactId);
+  state.dockingContactRemapProposals.delete(contactId);
+  state.dockingResult = null; state.dockingPoseIndex = 0;
+  recordManualDockingContactEvent('forgotten', definition, { method,
+    activeContactIds:[...state.dockingSelectedHbondIds] });
+  await refreshDockingReceptorProvenance();
+  updateDockingUi(); draw(); showToast('Contact hypothesis forgotten');
+  return definition;
+}
+
+function renderManualDockingContactBuilder() {
+  const panel = document.querySelector('#docking-contact-builder');
+  const status = document.querySelector('#docking-contact-builder-status');
+  const choices = document.querySelector('#docking-contact-builder-options');
+  if (!panel || !status || !choices) return;
+  const draft = state.dockingContactDraft;
+  panel.classList.toggle('hidden', !draft);
+  choices.replaceChildren();
+  if (!draft) return;
+  if (!Number.isInteger(draft.ligandAtomIndex)) {
+    status.textContent = 'Pick a ligand donor or acceptor.'; return;
+  }
+  if (!draft.options?.length) {
+    const atom = state.molecule?.atoms[draft.ligandAtomIndex];
+    status.textContent = `${atom?.atomName || atom?.element || 'Ligand atom'} selected · pick a receptor donor or acceptor.`;
+    return;
+  }
+  status.textContent = 'Choose the direction of the H-bond:';
+  draft.options.forEach((option) => {
+    const button = document.createElement('button'); button.type = 'button';
+    button.textContent = option.ligandRole === 'acceptor' ? 'Ligand accepts' : 'Ligand donates';
+    button.addEventListener('click', () => addManualDockingContactByIndices(
+      draft.ligandAtomIndex, draft.receptorAtomIndex, option.ligandRole)
+      .catch((error) => showNotice(error.message)));
+    choices.append(button);
+  });
+}
+
+async function selectManualDockingContactAtom(atomIndex) {
+  const draft = state.dockingContactDraft;
+  if (!draft) return false;
+  if (state.chemistryTransaction) {
+    cancelManualDockingContact();
+    throw new Error('Finish chemistry before adding a required contact');
+  }
+  const ligandIndices = currentDockingLigandAtomIndices();
+  const ligand = new Set(ligandIndices);
+  if (!Number.isInteger(draft.ligandAtomIndex)) {
+    if (!ligand.has(atomIndex)) throw new Error('Pick a donor or acceptor on the ligand first');
+    if (!hydrogenBondFeaturePerception
+      || !hydrogenBondFeaturePerception(state.molecule, atomIndex, 'acceptor')
+        && !hydrogenBondFeaturePerception(state.molecule, atomIndex, 'donor'))
+      throw new Error('That ligand atom is not currently a hydrogen-bond donor or acceptor');
+    draft.ligandAtomIndex = atomIndex; draft.options = [];
+    state.selectedAtoms = [atomIndex]; state.selectedAtom = atomIndex;
+    updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw();
+    return true;
+  }
+  if (ligand.has(atomIndex)) {
+    draft.ligandAtomIndex = null; draft.receptorAtomIndex = null; draft.options = [];
+    return selectManualDockingContactAtom(atomIndex);
+  }
+  const module = manualHydrogenBondModule || await import('./docking/manual-hbond.mjs');
+  const options = module.manualHydrogenBondOptions({ molecule:state.molecule,
+    ligandAtomIndices:ligandIndices, ligandAtomIndex:draft.ligandAtomIndex,
+    receptorAtomIndex:atomIndex });
+  if (!options.length)
+    throw new Error('Those atoms do not have complementary donor/acceptor roles');
+  draft.receptorAtomIndex = atomIndex;
+  draft.options = options.map((entry) => ({ ligandRole:entry.ligandRole,
+    receptorRole:entry.receptorRole }));
+  state.selectedAtoms = [draft.ligandAtomIndex, atomIndex]; state.selectedAtom = atomIndex;
+  if (draft.options.length === 1) {
+    await addManualDockingContactByIndices(draft.ligandAtomIndex, atomIndex,
+      draft.options[0].ligandRole);
+  } else {
+    updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw();
+  }
+  return true;
+}
+
+function beginManualDockingContact() {
+  if (!state.dockingReference) return showNotice('Begin analogue design first');
+  if (state.chemistryTransaction) return showNotice('Finish chemistry before adding a contact');
+  state.dockingContactDraft = { startedAt:new Date().toISOString(),
+    ligandAtomIndex:null, receptorAtomIndex:null, options:[] };
+  state.selectedAtoms = []; state.selectedAtom = null;
+  const select = document.querySelector('#build-tool-tabs [data-tool="select"]');
+  if (select && !select.classList.contains('selected')) select.click();
+  updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw();
+}
+
 function renderDockingConstraints() {
   const container = document.querySelector('#docking-hbond-list');
   if (!container) return;
@@ -3952,7 +4137,8 @@ function renderDockingConstraints() {
   const definitions = state.dockingReference?.hydrogenBonds || [];
   if (!definitions.length) {
     const empty = document.createElement('span');
-    empty.textContent = 'None captured'; container.append(empty); return;
+    empty.textContent = 'None'; container.append(empty);
+    renderManualDockingContactBuilder(); return;
   }
   definitions.forEach((definition) => {
     const label = document.createElement('label');
@@ -3997,8 +4183,19 @@ function renderDockingConstraints() {
       });
       label.append(select);
     }
+    const forgettable = Boolean(definition.origin) || proposal?.status === 'unavailable';
+    if (forgettable && !pending) {
+      const forget = document.createElement('button'); forget.type = 'button';
+      forget.className = 'forget-docking-contact'; forget.textContent = '×';
+      forget.title = 'Forget this contact hypothesis';
+      forget.setAttribute('aria-label', `Forget ${definition.label}`);
+      forget.addEventListener('click', () => forgetDockingContact(definition.id)
+        .catch((error) => showNotice(error.message)));
+      label.append(forget);
+    }
     container.append(label);
   });
+  renderManualDockingContactBuilder();
 }
 
 function updateDockingUi() {
@@ -4029,6 +4226,9 @@ function updateDockingUi() {
     const pendingChemistry = Boolean(state.chemistryTransaction);
     const unresolvedSelected = unresolvedSelectedDockingContacts();
     clear.disabled = state.dockingRunning || state.chemistryEditFinishing;
+    const addContact = document.querySelector('#add-docking-contact');
+    addContact.disabled = state.dockingRunning || pendingChemistry
+      || state.chemistryEditFinishing;
     run.disabled = state.dockingRunning || pendingChemistry || unresolvedSelected.length > 0;
     run.textContent = state.dockingRunning ? 'Refining…'
       : referenceMode === 'pose-propagation' ? 'Refine edited group' : 'Dock';
@@ -4065,6 +4265,7 @@ function updateDockingUi() {
     cleanupField.classList.add('hidden');
     capture.classList.remove('hidden'); clear.classList.add('hidden');
     constraints.classList.add('hidden'); runRow.classList.add('hidden');
+    state.dockingContactDraft = null;
     capture.textContent = mode === 'pose-propagation' ? 'Begin analogue design' : 'Set selected core';
     capture.disabled = state.dockingRunning || !state.molecule.parameterization?.system
       || !ligand || mode === 'selected-core'
@@ -4120,6 +4321,7 @@ async function captureCurrentDockingReference() {
     ligand,
     receptorSite,
     hydrogenBonds,
+    contactAmendments:[],
     receptorProvenanceAtomCount:receptorProvenanceAtomIndices.length,
     receptorInputText:adapter.dockingInputText(state.molecule, receptorProvenanceAtomIndices),
     referenceLigandInputText:adapter.dockingInputText(state.molecule, plan.globalAtomIndices),
@@ -4132,6 +4334,7 @@ async function captureCurrentDockingReference() {
   state.dockingSelectedHbondIds = new Set(hydrogenBonds.map((entry) => entry.id));
   state.dockingContactRemaps = new Map();
   state.dockingContactRemapProposals = new Map();
+  state.dockingContactDraft = null;
   state.dockingResult = null; state.dockingPoseIndex = 0;
   updateDockingUi(); updateOptimizerControls();
   showToast(mode === 'pose-propagation'
@@ -4145,6 +4348,7 @@ function clearDockingReference() {
   state.dockingSelectedHbondIds = new Set(); state.dockingPoseIndex = 0;
   state.dockingContactRemaps = new Map();
   state.dockingContactRemapProposals = new Map();
+  state.dockingContactDraft = null;
   document.querySelector('#docking-edit-cleanup').value = 'preserve-reference';
   updateDockingUi(); updateOptimizerControls();
 }
@@ -4449,9 +4653,12 @@ async function runBrowserConstrainedDocking(options = {}) {
         hydrogenBonds:mappedHydrogenBonds.constraints.map((entry) => ({
           id:entry.id, label:entry.label, required:entry.required, receptorRole:entry.receptorRole,
           alternativeIds:(entry.alternatives || []).map((alternative) => alternative.id),
+          origin:structuredClone(reference.hydrogenBonds
+            .find((definition) => definition.id === entry.id)?.origin || null),
           ligandFeatureRemap:structuredClone(
             state.dockingContactRemaps.get(entry.id)?.audit || null),
         })),
+        contactAmendments:structuredClone(reference.contactAmendments || []),
         droppedHydrogenBondAlternatives:structuredClone(
           mappedHydrogenBonds.droppedAlternatives || []),
         ligandFeatureRemaps:[...state.dockingContactRemaps.values()]
@@ -4488,6 +4695,12 @@ async function runBrowserConstrainedDocking(options = {}) {
             editLineage:structuredClone(entry.editLineage || []),
             candidateIds:entry.candidates.map((candidate) => candidate.id),
           })),
+        } });
+    if (reference.contactAmendments?.length)
+      await labbookModule.appendLabbookEvent(labbook, { at:new Date().toISOString(),
+        stage:'contact-hypothesis-amendments', status:'recorded', details:{
+          policy:'manual contact hypotheses use two visible atom selections, inferred complementary roles, and deterministic feature-guided pose seeding',
+          amendments:structuredClone(reference.contactAmendments),
         } });
     await labbookModule.appendLabbookEvent(labbook, { at:new Date().toISOString(),
       stage:'method-configuration', status:'locked', details:{
@@ -5008,6 +5221,39 @@ function drawNonCovalentInteractions(context, projectedByIndex, interactions) {
   context.restore();
 }
 
+function drawManualDockingContactOverlays(context, projectedByIndex) {
+  if (!state.showInteractions || !state.dockingReference || !manualHydrogenBondModule) return;
+  const indexById = new Map(state.molecule.atoms.map((atom, index) =>
+    [atom.designAtomId, index]));
+  const definitions = state.dockingReference.hydrogenBonds.filter((definition) =>
+    definition.origin && state.dockingSelectedHbondIds.has(definition.id));
+  context.save(); context.lineCap = 'round'; context.setLineDash([4, 5]);
+  definitions.forEach((rawDefinition) => {
+    const definition = effectiveDockingHydrogenBondDefinition(rawDefinition);
+    const descriptorIndex = (descriptor) => indexById.get(descriptor?.designAtomId);
+    const firstIndex = descriptorIndex(definition.hydrogen) ?? descriptorIndex(definition.donor);
+    const secondIndex = descriptorIndex(definition.acceptor);
+    const first = projectedByIndex.get(firstIndex), second = projectedByIndex.get(secondIndex);
+    if (!first || !second) return;
+    const value = manualHydrogenBondModule.manualHydrogenBondGeometry(state.molecule, definition);
+    context.beginPath(); context.moveTo(first.sx, first.sy); context.lineTo(second.sx, second.sy);
+    context.strokeStyle = 'rgba(255,255,255,.95)'; context.lineWidth = 5.2; context.stroke();
+    context.beginPath(); context.moveTo(first.sx, first.sy); context.lineTo(second.sx, second.sy);
+    context.strokeStyle = value?.satisfied ? '#2f8f68' : '#d39a28';
+    context.lineWidth = 2.2; context.stroke();
+  });
+  const draft = state.dockingContactDraft;
+  if (Number.isInteger(draft?.ligandAtomIndex) && Number.isInteger(draft?.receptorAtomIndex)) {
+    const first = projectedByIndex.get(draft.ligandAtomIndex);
+    const second = projectedByIndex.get(draft.receptorAtomIndex);
+    if (first && second) {
+      context.beginPath(); context.moveTo(first.sx, first.sy); context.lineTo(second.sx, second.sy);
+      context.strokeStyle = '#d39a28'; context.lineWidth = 2.2; context.stroke();
+    }
+  }
+  context.restore();
+}
+
 function drawBondLane(context, a, b, offset, outerWidth, innerWidth, miniature) {
   const dx = b.sx - a.sx, dy = b.sy - a.sy;
   const length = Math.hypot(dx, dy) || 1;
@@ -5231,6 +5477,7 @@ function drawMolecule(context, projected, molecule, miniature) {
     drawNonCovalentInteractions(context, byIndex, interactions);
     updateChemistryDisplayControls(interactions);
   }
+  if (!miniature) drawManualDockingContactOverlays(context, byIndex);
 
   atomProjection.sort((a, b) => a.rz - b.rz);
   for (const atom of atomProjection) {
@@ -5905,6 +6152,10 @@ function finishGeometryEdit() {
 }
 
 function selectGeometryAtom(index) {
+  if (state.dockingContactDraft) {
+    selectManualDockingContactAtom(index).catch((error) => showNotice(error.message));
+    return;
+  }
   const existing = state.selectedAtoms.indexOf(index);
   if (existing >= 0) state.selectedAtoms = state.selectedAtoms.slice(0, existing);
   else {
@@ -6959,7 +7210,7 @@ async function ensureChemistActionAtomIds() {
 
 async function inspectChemistActionState({ scope = 'ligand', includeCoordinates = false,
   maximumAtoms = 100 } = {}) {
-  chemistActionEnum(scope, ['ligand','selection','all'], 'scope');
+  chemistActionEnum(scope, ['ligand','selection','pocket','all'], 'scope');
   if (typeof includeCoordinates !== 'boolean') throw new Error('includeCoordinates must be boolean');
   const limit = Number(maximumAtoms);
   if (!Number.isInteger(limit) || limit < 1 || limit > 500)
@@ -6970,6 +7221,17 @@ async function inspectChemistActionState({ scope = 'ligand', includeCoordinates 
   else if (scope === 'ligand') indices = dockingLigandComponent()?.atomIndices.slice()
     || state.structureComponents.find((component) => component.kind === 'ligand')?.atomIndices.slice()
     || state.molecule.atoms.map((_, index) => index);
+  else if (scope === 'pocket') {
+    if (!state.dockingReference) throw new Error('Capture a reference pose before inspecting the pocket');
+    const byId = new Map(state.molecule.atoms.map((atom, index) => [atom.designAtomId, index]));
+    const contactParticipants = state.dockingReference.hydrogenBonds.flatMap((definition) =>
+      [definition.donor, definition.hydrogen, definition.acceptor]
+        .map((descriptor) => byId.get(descriptor?.designAtomId)).filter(Number.isInteger));
+    const ligandIndices = currentDockingLigandAtomIndices();
+    const siteIndices = state.dockingReference.receptorSite.atoms
+      .map((atom) => byId.get(atom.designAtomId)).filter(Number.isInteger);
+    indices = [...new Set([...contactParticipants, ...ligandIndices, ...siteIndices])];
+  }
   else indices = state.molecule.atoms.map((_, index) => index);
   const totalAtomCount = indices.length;
   indices = indices.slice(0, limit);
@@ -7023,6 +7285,7 @@ async function inspectChemistActionState({ scope = 'ligand', includeCoordinates 
       }
     }
     return { contactId:definition.id, label:definition.label,
+      origin:structuredClone(definition.origin || null),
       required:state.dockingSelectedHbondIds.has(definition.id),
       available:(!proposal || Boolean(selectedAlternative)) && dockingContactAvailable(effective),
       remapStatus:proposal?.status || (state.dockingContactRemaps.has(definition.id) ? 'mapped' : 'original'),
@@ -7193,6 +7456,27 @@ function installChemistActionsApi(module) {
       else state.dockingSelectedHbondIds.delete(args.contactId);
       updateDockingUi(); return chemistActionSummary({ contactId:args.contactId,
         required:args.required }); },
+    'pose.addContact':async (args) => { chemistActionKeys(args,
+      ['ligandAtomId','receptorAtomId','ligandRole']);
+      if (typeof args.ligandAtomId !== 'string' || !args.ligandAtomId
+        || typeof args.receptorAtomId !== 'string' || !args.receptorAtomId)
+        throw new Error('ligandAtomId and receptorAtomId must be persistent atom IDs');
+      const ligandRole = chemistActionEnum(args.ligandRole ?? 'auto',
+        ['auto','acceptor','donor'], 'ligandRole');
+      const byId = await ensureChemistActionAtomIds();
+      if (!byId.has(args.ligandAtomId)) throw new Error(`Unknown persistent atom ID: ${args.ligandAtomId}`);
+      if (!byId.has(args.receptorAtomId)) throw new Error(`Unknown persistent atom ID: ${args.receptorAtomId}`);
+      const definition = await addManualDockingContactByIndices(byId.get(args.ligandAtomId),
+        byId.get(args.receptorAtomId), ligandRole, 'chemist-actions-two-atom-selection');
+      return chemistActionSummary({ contact:{ contactId:definition.id,
+        label:definition.label, required:true, origin:structuredClone(definition.origin) } }); },
+    'pose.forgetContact':async (args) => { chemistActionKeys(args, ['contactId']);
+      if (typeof args.contactId !== 'string' || !args.contactId)
+        throw new Error('contactId must be a contact ID');
+      const definition = await forgetDockingContact(args.contactId,
+        'chemist-actions-forget-contact');
+      return chemistActionSummary({ forgottenContact:{ contactId:definition.id,
+        label:definition.label } }); },
     'pose.refine':async (args) => { chemistActionKeys(args, ['searchChains']);
       const searchChains = Number(args.searchChains ?? 16);
       if (![8,16,32,64].includes(searchChains))
@@ -12011,6 +12295,8 @@ document.querySelector('#analogue-design-dialog').addEventListener('cancel', (ev
   event.preventDefault(); settleAnalogueDesignPrompt(false);
 });
 document.querySelector('#clear-docking-reference').addEventListener('click', clearDockingReference);
+document.querySelector('#add-docking-contact').addEventListener('click', beginManualDockingContact);
+document.querySelector('#cancel-docking-contact').addEventListener('click', cancelManualDockingContact);
 document.querySelector('#run-constrained-docking').addEventListener('click', () => {
   runBrowserConstrainedDocking().catch((error) => { setDockingStatus(`Pose refinement failed · ${error.message}`); showNotice(error.message); });
 });
@@ -12215,6 +12501,7 @@ document.querySelector('#clear-button').addEventListener('click', () => {
   state.dockingReference = null; state.dockingResult = null; state.dockingRunning = false;
   state.dockingSelectedHbondIds = new Set(); state.dockingPoseIndex = 0;
   state.dockingContactRemaps = new Map(); state.dockingContactRemapProposals = new Map();
+  state.dockingContactDraft = null;
   state.focusedResidueKey = null; state.focusedResidueRadius = null; updateResidueFollowChip();
   state.viewProjectionCenter = null; state.viewProjectionRadius = null; state.projection = null;
   updateGeometryControl(); ctx.clearRect(0,0,canvas.width,canvas.height); document.querySelector('#viewer-hint').classList.add('visible');

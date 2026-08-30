@@ -20,6 +20,14 @@ assert.equal(registry.cases.length, 25);
 assert.equal(new Set(registry.cases.map(entry => entry.caseId)).size, 25);
 assert.equal(registry.studies.find(entry => entry.studyId === '7kpa-two-terminus-chemistry-panel-v0.1')
   .status, 'registered-partial');
+const manualContactStudy = registry.studies.find(entry =>
+  entry.studyId === '7kpa-manual-contact-recapture-v0.1');
+assert.equal(manualContactStudy.status, 'development-smoke');
+assert.equal(manualContactStudy.counts.registeredChemistryCases, 10);
+assert.equal(manualContactStudy.counts.executedDevelopmentCases, 1);
+assert.equal(manualContactStudy.counts.feasibleCandidates, 8);
+assert.equal(manualContactStudy.metrics.allRequiredHydrogenBondsSatisfied, true);
+assert.equal(manualContactStudy.metrics.labbookValid, true);
 for (const entry of Object.values(registry.artifacts)) {
   assert.match(entry.sha256, /^[a-f0-9]{64}$/);
   assert.ok(entry.bytes > 0);

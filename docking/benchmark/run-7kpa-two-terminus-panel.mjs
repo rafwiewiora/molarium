@@ -11,9 +11,15 @@ const valueAfter = (flag) => {
   const index = args.indexOf(flag); return index >= 0 ? args[index + 1] : null;
 };
 const enumerationPanel = args.includes('--enumerations');
+const manualRecapturePanel = args.includes('--manual-recapture');
+if (enumerationPanel && manualRecapturePanel)
+  throw new Error('Choose either --enumerations or --manual-recapture');
 const manifest = enumerationPanel
   ? await (await import('../../enumerations/high-disruption-panel.mjs'))
     .buildHighDisruptionPanelManifest()
+  : manualRecapturePanel
+    ? await (await import('./7kpa-manual-contact-panel.mjs'))
+      .buildManualContactPanelManifest()
   : (await readPanelManifest()).manifest;
 await validatePanelManifest(manifest);
 const onlyCase = valueAfter('--case');
@@ -36,6 +42,8 @@ if (onlyLocus && !['pyridone','pyrrolidone','dual','linker-pyrrolidone'].include
 const outputPath = outputArgument ? path.resolve(outputArgument)
   : path.join(panelRoot, enumerationPanel
     ? 'results/7kpa-high-disruption-enumerations.development.json'
+    : manualRecapturePanel
+      ? 'results/7kpa-manual-contact-recapture.development.json'
     : 'results/7kpa-two-terminus-panel.development.json');
 const candidateExportPath = candidateExportArgument ? path.resolve(candidateExportArgument) : null;
 
@@ -163,6 +171,8 @@ function replayExpression(entry, replayOrdinal) {
       return resolved;
     };
     let chemistry = null, contactMapping = null, refinement = null, appliedPose = null;
+    const manualReplacementKeys = new Set();
+    const manualContactIdsByKey = new Map();
     const candidateValidationExports = [];
     let referenceGraph = null, labbookAudit = null;
     const chemistryCommits = [];
@@ -184,6 +194,24 @@ function replayExpression(entry, replayOrdinal) {
           chemistryCommits.push({ validation:result.validation || null,
             polish:result.polish || null,
             contactFeatureRemaps:result.contactFeatureRemaps || [] });
+        } else if (operation.op === 'forgetContact') {
+          const label = contactsByKey[operation.contact];
+          const original = captured.contacts.find((contact) => contact.label === label);
+          if (!original) throw new Error('Cannot resolve captured contact ' + operation.contact);
+          await execute('pose.forgetContact', { contactId:original.contactId });
+        } else if (operation.op === 'addContact') {
+          const label = contactsByKey[operation.contact];
+          const original = captured.contacts.find((contact) => contact.label === label);
+          if (!original) throw new Error('Cannot resolve receptor participants for ' + operation.contact);
+          const receptor = original.hydrogenBond?.participants?.[operation.receptorParticipant];
+          if (!receptor?.atomId) throw new Error('Captured receptor participant is unavailable for '
+            + operation.contact);
+          const result = await execute('pose.addContact', {
+            ligandAtomId:(await atomIds([operation.ligandAtom]))[0],
+            receptorAtomId:receptor.atomId, ligandRole:operation.ligandRole,
+          });
+          manualReplacementKeys.add(operation.contact);
+          manualContactIdsByKey.set(operation.contact, result.contact.contactId);
         } else if (operation.op === 'setBond') {
           await selectNames(operation.atoms);
           await execute('chemistry.setBond', { order:operation.order });
@@ -228,6 +256,9 @@ function replayExpression(entry, replayOrdinal) {
       for (const original of captured.contacts) {
         const live = edited.contacts.find((contact) => contact.contactId === original.contactId);
         const desired = policy.get(original.label);
+        const originalKey = Object.keys(contactsByKey)
+          .find((key) => contactsByKey[key] === original.label);
+        if (manualReplacementKeys.has(originalKey)) continue;
         if (desired === 'omitted') await execute('pose.setContact', {
           contactId:original.contactId, required:false });
         else if (desired === 'required' && live?.available) await execute('pose.setContact', {
@@ -236,7 +267,9 @@ function replayExpression(entry, replayOrdinal) {
       }
       const afterPolicy = await inspect(false);
       contactMapping = afterPolicy.contacts.map((contact) => ({ ...contact,
-        policy:policy.get(contact.label) || 'unregistered' }));
+        policy:[...manualContactIdsByKey].find(([, id]) => id === contact.contactId)?.[0]
+          ? 'manual-replacement'
+          : policy.get(contact.label) || 'unregistered' }));
       if (requiredUnavailable.length) {
         terminalOutcome = 'required-contact-unavailable';
         contactMapping = { contacts:contactMapping, requiredUnavailable };
@@ -407,7 +440,9 @@ try {
     await writeFile(candidateExportPath, `${JSON.stringify(exportBatch, null, 2)}\n`);
     console.log(`7KPA validation exports: ${validationExports.length} poses -> ${candidateExportPath}`);
   }
-  console.log(`7KPA ${enumerationPanel ? 'high-disruption enumeration' : 'two-terminus'} panel: COMPLETE (${caseResults.length} cases) -> ${outputPath}`);
+  const profileLabel = enumerationPanel ? 'high-disruption enumeration'
+    : manualRecapturePanel ? 'manual contact recapture' : 'two-terminus';
+  console.log(`7KPA ${profileLabel} panel: COMPLETE (${caseResults.length} cases) -> ${outputPath}`);
 } finally {
   client?.close(); chrome?.kill(); server?.kill();
   await rm(profile, { recursive:true, force:true });

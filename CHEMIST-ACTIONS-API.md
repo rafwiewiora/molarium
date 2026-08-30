@@ -63,7 +63,8 @@ feature transfer, Undo, and Redo therefore behave exactly as they do for an inte
 - `chemistry.addHydrogen`, `chemistry.removeHydrogen`
 - `chemistry.finish`, `chemistry.discard`
 - `history.undo`, `history.redo`
-- `pose.captureReference`, `pose.setContact`, `pose.refine`, `pose.apply`
+- `pose.captureReference`, `pose.setContact`, `pose.addContact`, `pose.forgetContact`,
+  `pose.refine`, `pose.apply`
 - `optimization.run`
 
 The exact argument contract is returned by `describe()`. Unknown actions and unexpected arguments
@@ -74,10 +75,19 @@ two agent calls cannot interleave one chemistry transaction.
 ## Inspection and privacy
 
 Inspection defaults to the current ligand, omits coordinates, and returns at most 100 atoms. A
-caller may explicitly request ligand, current-selection, or all-molecule scope, coordinates, and a
-limit no larger than 500 atoms. This is an in-page API: it performs no network request. Loading a
-PDB identifier or using another connected feature remains a separate user-visible action governed
-by Molarium's network policy.
+caller may explicitly request ligand, current-selection, captured-pocket, or all-molecule scope,
+coordinates, and a limit no larger than 500 atoms. Pocket inspection lists captured contact
+participants first, followed by the ligand and rigid receptor site, so an agent can choose the same
+visible atoms as a person without receiving private state or mutable array indices. This is an
+in-page API: it performs no network request. Loading a PDB identifier or using another connected
+feature remains a separate user-visible action governed by Molarium's network policy.
+
+`pose.addContact` is the agent equivalent of the compact `+` control under Required contacts: pass
+one persistent ligand atom ID and one persistent receptor atom ID. Molarium perceives complementary
+donor/acceptor roles, deterministically chooses an explicit donor hydrogen, and either creates one
+audited hypothesis or asks the caller to choose the ligand role when both interpretations are
+possible. `pose.forgetContact` removes a manually asserted or currently unavailable hypothesis from
+the active reference while retaining the amendment in the molecule ledger and run labbook.
 
 ## Audit
 

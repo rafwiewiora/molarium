@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { buildManualContactPanelManifest } from '../docking/benchmark/7kpa-manual-contact-panel.mjs';
 
 export const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -10,6 +11,9 @@ export const sourcePaths = Object.freeze({
   dockingResults:'docking/benchmark/benchmark-results.v0.1.scored.json',
   dockingReport:'docking/benchmark/RESULTS.v0.1.md',
   analoguePanel:'docking/benchmark/7kpa-two-terminus-panel.v0.1.json',
+  manualContactPanel:'docking/benchmark/7kpa-manual-contact-panel.mjs',
+  manualContactProtocol:'docking/benchmark/7kpa-manual-contact-panel.README.md',
+  manualContactSmoke:'docking/benchmark/7kpa-manual-contact-smoke.v0.1.json',
   browserVacuum:'docking/validation/cloud-panel/browser-sage-openmm-validation-2026-08-23.json',
   browserObc2:'docking/validation/cloud-panel/browser-sage-openmm-obc2-diagnostic-2026-08-23.json',
   openmmNative:'docking/validation/cloud-panel/openmm-wasm-native-validation-2026-08-23.json',
@@ -53,6 +57,8 @@ export async function buildValidationRegistry(root = repositoryRoot) {
   const dockingManifest = JSON.parse(bytes.dockingManifest);
   const dockingResults = JSON.parse(bytes.dockingResults);
   const analoguePanel = JSON.parse(bytes.analoguePanel);
+  const manualContactPanel = await buildManualContactPanelManifest();
+  const manualContactSmoke = JSON.parse(bytes.manualContactSmoke);
   const browserVacuum = JSON.parse(bytes.browserVacuum);
   const browserObc2 = JSON.parse(bytes.browserObc2);
   const openmmNative = JSON.parse(bytes.openmmNative);
@@ -200,6 +206,35 @@ export async function buildValidationRegistry(root = repositoryRoot) {
           'Until a complete result artifact is committed, this panel is not counted as a completed 20-case validation run.',
         ],
         artifactIds:['analoguePanel'],
+      },
+      {
+        studyId:'7kpa-manual-contact-recapture-v0.1',
+        title:'7KPA manual H-bond recapture panel',
+        status:'development-smoke',
+        evidenceLevel:'ten preregistered chemist-action scripts; one hash-checked end-to-end development replay',
+        executedAt:manualContactSmoke.executedAt,
+        counts:{
+          registeredChemistryCases:manualContactPanel.cases.length,
+          executedDevelopmentCases:1,
+          proteinTargets:1,
+          referenceSystems:1,
+          searchCandidates:manualContactSmoke.outcome.candidateCount,
+          feasibleCandidates:manualContactSmoke.outcome.feasibleCount,
+        },
+        metrics:{
+          productGraphMatchesExpected:manualContactSmoke.chemistry.productGraphMatchesExpected,
+          allRequiredHydrogenBondsSatisfied:manualContactSmoke.outcome.allRequiredHydrogenBondsSatisfied,
+          manualDonorAcceptorDistanceAngstrom:manualContactSmoke.outcome.manualHydrogenBond.donorAcceptorDistanceAngstrom,
+          manualHydrogenAcceptorDistanceAngstrom:manualContactSmoke.outcome.manualHydrogenBond.hydrogenAcceptorDistanceAngstrom,
+          manualDhaAngleDegrees:manualContactSmoke.outcome.manualHydrogenBond.dhaAngleDegrees,
+          labbookValid:manualContactSmoke.audit.labbookValid,
+        },
+        claims:[
+          'Ten explicit delete, forget, rebuild, reassert, and refine scripts are preregistered through the public Chemist Actions API.',
+          'The executed pyridone-carbonyl case reproduced its frozen product graph and all eight generated poses satisfied all four required H-bonds.',
+          'This is one development replay from one reference complex; the complete ten-case panel has not yet been executed or claimed.',
+        ],
+        artifactIds:['manualContactPanel', 'manualContactProtocol', 'manualContactSmoke'],
       },
     ],
     proteinTargets,

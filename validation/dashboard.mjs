@@ -20,7 +20,8 @@ function outcomeLabel(outcome) {
 }
 
 function statusLabel(status) {
-  return ({ complete:'Complete', 'registered-partial':'Registered · partial' })[status] || status;
+  return ({ complete:'Complete', 'registered-partial':'Registered · partial',
+    'development-smoke':'Development smoke' })[status] || status;
 }
 
 export function validationDashboardHtml(registry) {
