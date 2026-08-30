@@ -747,8 +747,24 @@ const browserSuite = String.raw`(async () => {
   document.querySelector('.mode-bar button[data-mode="build"]').click();
   const propagationSetup = api.setDockingMode('propagate');
   check(propagationSetup.captureDisabled === false
-    && propagationSetup.status.includes('Capture this ligand pose'),
+    && propagationSetup.status.includes('Begin analogue design')
+    && document.querySelector('#capture-docking-reference').textContent.includes('Begin analogue design'),
   'reference-pose propagation requires no manual core selection', JSON.stringify(propagationSetup));
+  const promptedEditPromise = api.stageBondCurrent(3, 4, 1);
+  await new Promise((resolve) => setTimeout(resolve, 50));
+  const analogueDesignDialog = document.querySelector('#analogue-design-dialog');
+  const promptOpenedBeforeMutation = analogueDesignDialog.open
+    && api.chemistryTransaction() === null;
+  document.querySelector('#confirm-analogue-design').click();
+  const promptedEdit = await promptedEditPromise;
+  check(promptOpenedBeforeMutation && !analogueDesignDialog.open
+    && promptedEdit && api.chemistryTransaction()?.editCount === 1
+    && document.querySelector('#capture-docking-reference').classList.contains('hidden')
+    && !document.querySelector('#clear-docking-reference').classList.contains('hidden')
+    && !document.querySelector('#docking-cleanup-field').classList.contains('hidden'),
+  'the first ligand edit explicitly confirms and records the analogue-design reference before mutation',
+  JSON.stringify({ promptOpenedBeforeMutation, transaction:api.chemistryTransaction() }));
+  api.discardChemistryCurrent();
   const propagationReference = await api.captureDockingReference();
   const cleanupDefault = api.setDockingEditCleanup('preserve-reference');
   api.addElementCurrent('F', 6);
@@ -1031,6 +1047,57 @@ const browserSuite = String.raw`(async () => {
     JSON.stringify({ selection:sulfoneLabbook.selections.hydrogenBonds[0],
       selectedContact, outcomeContact }));
   }
+
+  // Mirror the user-facing carbonyl C -> S edit without deleting the original
+  // oxygen.  The old O becomes sulfonyl, the new O is a second equivalent
+  // hypothesis, and their staged coordinates must not overlap.
+  api.loadObject(valenceCompleteDockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('propagate');
+  await api.captureDockingReference();
+  const inPlaceOriginalOxygenId = api.current().molecule.atoms[2].designAtomId;
+  const inPlaceCenterId = api.current().molecule.atoms[3].designAtomId;
+  await api.stageAtomCurrent(3, 'S', 0);
+  const inPlaceBeforeAddIds = new Set(api.current().molecule.atoms.map((atom) => atom.designAtomId));
+  await api.stageAddElementCurrent('O', 3);
+  const inPlaceAddedOxygenId = api.current().molecule.atoms.find((atom) =>
+    atom.element === 'O' && !inPlaceBeforeAddIds.has(atom.designAtomId))?.designAtomId;
+  const inPlaceAtomIndex = (designAtomId) => api.current().molecule.atoms.findIndex((atom) =>
+    atom.designAtomId === designAtomId);
+  const stagedCenter = api.current().molecule.atoms[inPlaceAtomIndex(inPlaceCenterId)];
+  const stagedOriginalO = api.current().molecule.atoms[inPlaceAtomIndex(inPlaceOriginalOxygenId)];
+  const stagedAddedO = api.current().molecule.atoms[inPlaceAtomIndex(inPlaceAddedOxygenId)];
+  const stagedOxygenSeparation = Math.hypot(stagedOriginalO.x - stagedAddedO.x,
+    stagedOriginalO.y - stagedAddedO.y, stagedOriginalO.z - stagedAddedO.z);
+  const stagedDirections = [stagedOriginalO, stagedAddedO].map((oxygen) => ({
+    x:oxygen.x - stagedCenter.x, y:oxygen.y - stagedCenter.y, z:oxygen.z - stagedCenter.z,
+  }));
+  const stagedOxygenAngle = Math.acos(Math.max(-1, Math.min(1,
+    (stagedDirections[0].x * stagedDirections[1].x
+      + stagedDirections[0].y * stagedDirections[1].y
+      + stagedDirections[0].z * stagedDirections[1].z)
+    / (Math.hypot(stagedDirections[0].x, stagedDirections[0].y, stagedDirections[0].z)
+      * Math.hypot(stagedDirections[1].x, stagedDirections[1].y, stagedDirections[1].z)))))
+    * 180 / Math.PI;
+  await api.stageBondCurrent(inPlaceAtomIndex(inPlaceCenterId),
+    inPlaceAtomIndex(inPlaceAddedOxygenId), 2);
+  const inPlaceFinish = await api.finishChemistryCurrent();
+  const inPlaceContactState = api.dockingContactResolutions();
+  const inPlaceProposal = inPlaceContactState.proposals[0];
+  check(stagedOxygenSeparation > 0.5 && stagedOxygenAngle > 45
+    && inPlaceFinish.validation.valid
+    && inPlaceContactState.remaps.length === 0
+    && inPlaceContactState.proposals.length === 1
+    && inPlaceProposal?.status === 'ambiguous'
+    && inPlaceProposal?.candidates.length === 2
+    && inPlaceProposal?.candidates.every((candidate) => candidate.label.includes('sulfonyl'))
+    && inPlaceProposal?.candidates.some((candidate) =>
+      candidate.atomIds.includes(inPlaceOriginalOxygenId))
+    && inPlaceProposal?.candidates.some((candidate) =>
+      candidate.atomIds.includes(inPlaceAddedOxygenId)),
+  'an in-place C=O to S(=O)2 edit separates staged oxygens and preserves both acceptor hypotheses',
+  JSON.stringify({ stagedOxygenSeparation, stagedOxygenAngle, inPlaceFinish,
+    inPlaceContactState }));
   if (testScope === 'docking-contact-remap') {
     const failed = checks.filter((item) => !item.passed);
     return { passed:checks.length - failed.length, total:checks.length, failed,

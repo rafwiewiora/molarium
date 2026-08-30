@@ -3697,6 +3697,45 @@ function survivingReferenceHeavyAtoms(reference, component = dockingLigandCompon
 
 function setDockingStatus(message) { setText('#docking-status', message); }
 
+let analogueDesignPromptPromise = null;
+let resolveAnalogueDesignPrompt = null;
+
+function analogueDesignCaptureNeeded(targetAtomIndices = state.selectedAtoms) {
+  if (state.mode !== 'build' || state.dockingReference || state.chemistryTransaction
+    || selectedDockingMode() !== 'pose-propagation'
+    || !state.molecule?.parameterization?.system) return false;
+  if (!state.structureComponents.some((component) => component.kind === 'protein')) return false;
+  const ligand = dockingLigandComponent();
+  if (!ligand) return false;
+  const ligandAtoms = new Set(ligand.atomIndices);
+  return Array.from(targetAtomIndices || [], Number).some((index) => ligandAtoms.has(index));
+}
+
+function settleAnalogueDesignPrompt(accepted) {
+  const dialog = document.querySelector('#analogue-design-dialog');
+  if (dialog?.open) dialog.close();
+  const resolve = resolveAnalogueDesignPrompt;
+  analogueDesignPromptPromise = null; resolveAnalogueDesignPrompt = null;
+  resolve?.(Boolean(accepted));
+}
+
+function requestAnalogueDesignCapture() {
+  if (analogueDesignPromptPromise) return analogueDesignPromptPromise;
+  const dialog = document.querySelector('#analogue-design-dialog');
+  if (!dialog?.showModal) return Promise.resolve(false);
+  analogueDesignPromptPromise = new Promise((resolve) => { resolveAnalogueDesignPrompt = resolve; });
+  dialog.showModal();
+  requestAnimationFrame(() => document.querySelector('#confirm-analogue-design')?.focus());
+  return analogueDesignPromptPromise;
+}
+
+async function ensureAnalogueDesignReferenceBeforeChemistry(targetAtomIndices = state.selectedAtoms) {
+  if (!analogueDesignCaptureNeeded(targetAtomIndices)) return true;
+  if (!await requestAnalogueDesignCapture()) return false;
+  await captureCurrentDockingReference();
+  return true;
+}
+
 function effectiveDockingHydrogenBondDefinition(definition) {
   return state.dockingContactRemaps.get(definition?.id)?.effectiveDefinition
     || state.dockingContactRemapProposals.get(definition?.id)?.priorEffectiveDefinition
@@ -4026,13 +4065,13 @@ function updateDockingUi() {
     cleanupField.classList.add('hidden');
     capture.classList.remove('hidden'); clear.classList.add('hidden');
     constraints.classList.add('hidden'); runRow.classList.add('hidden');
-    capture.textContent = mode === 'pose-propagation' ? 'Capture pose' : 'Set selected core';
+    capture.textContent = mode === 'pose-propagation' ? 'Begin analogue design' : 'Set selected core';
     capture.disabled = state.dockingRunning || !state.molecule.parameterization?.system
       || !ligand || mode === 'selected-core'
         && (core.length < 3 || state.selectedAtoms.length !== core.length);
     if (!state.molecule.parameterization?.system) setDockingStatus('Prepare the complex first.');
     else if (mode === 'pose-propagation')
-      setDockingStatus('Capture this ligand pose, then edit its chemistry.');
+      setDockingStatus('Begin analogue design to freeze this prepared ligand pose.');
     else if (core.length >= 3 && state.selectedAtoms.length === core.length)
       setDockingStatus(`${core.length} core atoms selected.`);
     else setDockingStatus('Select at least 3 connected ligand heavy atoms.');
@@ -5334,6 +5373,12 @@ function addAtomAtScreen(clientX, clientY) {
   clearCalculationResult();
   const point = screenToMolecule(clientX, clientY);
   const targetIndex = elementAttachmentTarget(clientX, clientY);
+  if (targetIndex != null && analogueDesignCaptureNeeded([targetIndex])) {
+    return ensureAnalogueDesignReferenceBeforeChemistry([targetIndex]).then((accepted) => {
+      if (accepted) return addAtomAtScreen(clientX, clientY);
+      return null;
+    });
+  }
   const existingAtoms = new Set(state.molecule?.atoms || []);
   const targetAtom = targetIndex == null ? null : state.molecule.atoms[targetIndex];
   pushBuildHistory();
@@ -5350,6 +5395,7 @@ function addAtomAtScreen(clientX, clientY) {
   const changedAtomIndices = state.molecule.atoms.flatMap((atom, index) =>
     !existingAtoms.has(atom) || atom === targetAtom ? [index] : []);
   scheduleSmallMoleculePolish(changedAtomIndices);
+  return Promise.resolve();
 }
 
 function pairKey(a, b) { return a < b ? `${a}:${b}` : `${b}:${a}`; }
@@ -6056,6 +6102,8 @@ async function validateEditedChemistry(molecule, changedAtoms, { schedulePolish 
 async function applyChemistryMutation(mutator) {
   if (!state.molecule?.atoms.length) throw new Error('Load or build a molecule first.');
   if (selectedProteinChemistryLocked()) throw new Error('Canonical protein chemistry is protected; use Protein Preparation.');
+  if (analogueDesignCaptureNeeded()
+    && !await ensureAnalogueDesignReferenceBeforeChemistry()) return null;
   // A docking edit uses stable graph identities for contact lineage and
   // topology hashes. Assign them before taking the transaction snapshot, and
   // again immediately after mutation so staged consumers never see an
@@ -6364,16 +6412,46 @@ function attachmentDirection(molecule, atomIndex) {
   const anchor = molecule.atoms[atomIndex];
   const neighbors = molecule.bonds.flatMap((bond) => bond.a === atomIndex ? [bond.b] : bond.b === atomIndex ? [bond.a] : []);
   if (!neighbors.length) return { x: 1, y: 0, z: 0 };
-  const center = neighbors.reduce((acc, index) => ({
-    x: acc.x + molecule.atoms[index].x,
-    y: acc.y + molecule.atoms[index].y,
-    z: acc.z + molecule.atoms[index].z,
-  }), { x: 0, y: 0, z: 0 });
-  return normaliseVector({
-    x: anchor.x - center.x / neighbors.length,
-    y: anchor.y - center.y / neighbors.length,
-    z: anchor.z - center.z / neighbors.length,
+  const directions = neighbors.map((index) => normaliseVector({
+    x:molecule.atoms[index].x - anchor.x,
+    y:molecule.atoms[index].y - anchor.y,
+    z:molecule.atoms[index].z - anchor.z,
+  }));
+  if (directions.length === 1) return {
+    x:-directions[0].x, y:-directions[0].y, z:-directions[0].z,
+  };
+  const cross = (first, second) => ({
+    x:first.y * second.z - first.z * second.y,
+    y:first.z * second.x - first.x * second.z,
+    z:first.x * second.y - first.y * second.x,
   });
+  const length = (vector) => Math.hypot(vector.x, vector.y, vector.z);
+  const candidates = [];
+  const sum = directions.reduce((total, direction) => ({
+    x:total.x + direction.x, y:total.y + direction.y, z:total.z + direction.z,
+  }), { x:0, y:0, z:0 });
+  if (length(sum) > 1e-6) candidates.push(normaliseVector({ x:-sum.x, y:-sum.y, z:-sum.z }));
+  for (let first = 0; first < directions.length; first += 1) {
+    candidates.push({ x:-directions[first].x, y:-directions[first].y, z:-directions[first].z });
+    for (let second = first + 1; second < directions.length; second += 1) {
+      const normal = cross(directions[first], directions[second]);
+      if (length(normal) <= 1e-6) continue;
+      const unit = normaliseVector(normal);
+      candidates.push(unit, { x:-unit.x, y:-unit.y, z:-unit.z });
+    }
+  }
+  // Deterministic tetrahedral-like fallbacks for collinear or symmetric
+  // neighbourhoods.  Select the direction with the greatest angular
+  // separation from every existing substituent; no force field is run until
+  // the complete chemistry transaction is finished.
+  candidates.push(
+    { x:1, y:0, z:0 }, { x:-1, y:0, z:0 },
+    { x:0, y:1, z:0 }, { x:0, y:-1, z:0 },
+    { x:0, y:0,z:1 }, { x:0, y:0,z:-1 });
+  const score = (candidate) => Math.max(...directions.map((direction) =>
+    candidate.x * direction.x + candidate.y * direction.y + candidate.z * direction.z));
+  return candidates.reduce((best, candidate) => score(candidate) < score(best) - 1e-12
+    ? candidate : best, candidates[0]);
 }
 
 function removeAttachmentHydrogen(molecule, atomIndex, preferredDirection = null) {
@@ -6535,12 +6613,18 @@ function addFragmentAtScreen(fragment, clientX, clientY) {
   clearCalculationResult();
   const targetHit = hitTest(clientX, clientY);
   const targetPoint = screenToMolecule(clientX, clientY);
-  pushBuildHistory();
   let targetIndex = targetHit?.index ?? null;
   if (targetIndex != null && state.molecule?.atoms[targetIndex]?.element === 'H') {
     const hydrogenBond = state.molecule.bonds.find((bond) => bond.a === targetIndex || bond.b === targetIndex);
     targetIndex = hydrogenBond ? (hydrogenBond.a === targetIndex ? hydrogenBond.b : hydrogenBond.a) : null;
   }
+  if (targetIndex != null && analogueDesignCaptureNeeded([targetIndex])) {
+    return ensureAnalogueDesignReferenceBeforeChemistry([targetIndex]).then((accepted) => {
+      if (accepted) return addFragmentAtScreen(fragment, clientX, clientY);
+      return null;
+    });
+  }
+  pushBuildHistory();
   const existingAtoms = new Set(state.molecule?.atoms || []);
   const targetAtom = targetIndex == null ? null : state.molecule.atoms[targetIndex];
   try {
@@ -6556,6 +6640,7 @@ function addFragmentAtScreen(fragment, clientX, clientY) {
   const changedAtomIndices = state.molecule.atoms.flatMap((atom, index) =>
     !existingAtoms.has(atom) || atom === targetAtom ? [index] : []);
   scheduleSmallMoleculePolish(changedAtomIndices);
+  return Promise.resolve();
 }
 
 function updateBuildStatus(extra = '') {
@@ -11916,6 +12001,15 @@ document.querySelector('#docking-edit-cleanup').addEventListener('change', () =>
 document.querySelector('#capture-docking-reference').addEventListener('click', () => {
   captureCurrentDockingReference().catch((error) => showNotice(error.message));
 });
+document.querySelector('#confirm-analogue-design').addEventListener('click', () => {
+  settleAnalogueDesignPrompt(true);
+});
+document.querySelector('#cancel-analogue-design').addEventListener('click', () => {
+  settleAnalogueDesignPrompt(false);
+});
+document.querySelector('#analogue-design-dialog').addEventListener('cancel', (event) => {
+  event.preventDefault(); settleAnalogueDesignPrompt(false);
+});
 document.querySelector('#clear-docking-reference').addEventListener('click', clearDockingReference);
 document.querySelector('#run-constrained-docking').addEventListener('click', () => {
   runBrowserConstrainedDocking().catch((error) => { setDockingStatus(`Pose refinement failed · ${error.message}`); showNotice(error.message); });
@@ -12088,8 +12182,10 @@ canvas.addEventListener('pointerup', (event) => {
     && !event.ctrlKey && !event.metaKey && !pointerDragged) {
     const hit = hitTest(event.clientX, event.clientY);
     if (pendingBuildAction.tool === 'add') {
-      if (state.stagedFragment) addFragmentAtScreen(state.stagedFragment, event.clientX, event.clientY);
-      else addAtomAtScreen(event.clientX, event.clientY);
+      const buildAction = state.stagedFragment
+        ? addFragmentAtScreen(state.stagedFragment, event.clientX, event.clientY)
+        : addAtomAtScreen(event.clientX, event.clientY);
+      buildAction.catch((error) => showNotice(error.message));
     } else if (pendingBuildAction.tool === 'select') {
       if (hit) selectGeometryAtom(hit.index);
       else { state.selectedAtoms = []; state.selectedAtom = null; updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw(); schedule2DDepiction(0); }
