@@ -21,6 +21,8 @@ readonly BUN_VERSION=1.3.14
 readonly BUN_URL=https://github.com/oven-sh/bun/releases/download/bun-v${BUN_VERSION}/bun-linux-x64.zip
 readonly CHROME_VERSION=152.0.7977.64
 readonly CHROME_URL=https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chrome-headless-shell-linux64.zip
+readonly LIBRARY_ROOT=${RUNTIME}/rocky8-browser-libraries
+readonly RPM_ROOT=${RUNTIME}/rocky8-browser-rpms
 
 mkdir -p "${SOURCE}" "${RUNTIME}" "${OUTPUT}"
 echo "${SOURCE_ARCHIVE_SHA256}  ${SOURCE_ARCHIVE}" | sha256sum --check
@@ -35,12 +37,34 @@ if [[ ! -x "${RUNTIME}/chrome-headless-shell-linux64/chrome-headless-shell" ]]; 
   unzip -q "${RUNTIME}/chrome-headless-shell.zip" -d "${RUNTIME}"
 fi
 
+# The minimal Rocky 8 compute image intentionally omits GUI libraries. Download
+# RPMs as an unprivileged user and extract them into this immutable attempt;
+# never install packages on the node or modify the shared system image.
+if [[ ! -f "${LIBRARY_ROOT}/.complete" ]]; then
+  mkdir -p "${LIBRARY_ROOT}" "${RPM_ROOT}"
+  dnf download --resolve --alldeps --destdir "${RPM_ROOT}" \
+    at-spi2-atk mesa-libgbm alsa-lib
+  shopt -s nullglob
+  for rpm in "${RPM_ROOT}"/*.rpm; do
+    (cd "${LIBRARY_ROOT}" && rpm2cpio "${rpm}" | cpio -idmu --quiet)
+  done
+  shopt -u nullglob
+  find "${RPM_ROOT}" -maxdepth 1 -type f -name '*.rpm' -print0 \
+    | sort -z | xargs -0 sha256sum > "${LIBRARY_ROOT}/rpm-manifest.sha256"
+  touch "${LIBRARY_ROOT}/.complete"
+fi
+
 readonly BUN=${RUNTIME}/bun-linux-x64/bun
 readonly CHROME=${RUNTIME}/chrome-headless-shell-linux64/chrome-headless-shell
 readonly RESULT=${OUTPUT}/7kpa-manual-contact-recapture.v0.1.json
 readonly RECEIPT=${OUTPUT}/receipt.json
 
 "${BUN}" --version
+export LD_LIBRARY_PATH=${LIBRARY_ROOT}/usr/lib64:${LD_LIBRARY_PATH:-}
+if ldd "${CHROME}" | grep -q 'not found'; then
+  ldd "${CHROME}" >&2
+  exit 127
+fi
 "${CHROME}" --version
 (
   cd "${SOURCE}"
@@ -60,9 +84,11 @@ jq -n \
   --arg bun_sha256 "$(sha256sum "${RUNTIME}/bun.zip" | awk '{print $1}')" \
   --arg chrome_version "${CHROME_VERSION}" \
   --arg chrome_sha256 "$(sha256sum "${RUNTIME}/chrome-headless-shell.zip" | awk '{print $1}')" \
+  --arg rpm_manifest_sha256 "$(sha256sum "${LIBRARY_ROOT}/rpm-manifest.sha256" | awk '{print $1}')" \
   '{schema:$schema,job_id:$job_id,source_archive_sha256:$source_archive_sha256,
     result_sha256:$result_sha256,bun:{version:$bun_version,archive_sha256:$bun_sha256},
-    chrome:{version:$chrome_version,archive_sha256:$chrome_sha256},
+    chrome:{version:$chrome_version,archive_sha256:$chrome_sha256,
+      rocky8_rpm_manifest_sha256:$rpm_manifest_sha256},
     panel:"molarium-7kpa-d84-manual-contact-recapture",replays:2,search_chains:8}' \
   > "${RECEIPT}"
 sha256sum "${RESULT}" "${RECEIPT}"
