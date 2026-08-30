@@ -30,7 +30,9 @@ const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, mil
 const seed = Math.floor(Math.random() * 1000);
 const appPort = 56000 + seed, debugPort = 57000 + seed;
 const appUrl = `http://localhost:${appPort}/`;
-const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const chromePath = process.env.CHROME_PATH || (process.platform === 'darwin'
+  ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+  : '/usr/bin/google-chrome');
 const profile = await mkdtemp(path.join(tmpdir(), 'molarium-bioisostere-benchmark-'));
 const resultsDirectory = path.join(root, 'results');
 await mkdir(resultsDirectory, { recursive:true });

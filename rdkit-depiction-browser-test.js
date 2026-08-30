@@ -6,7 +6,11 @@ const seed = Math.floor(Math.random() * 1000);
 const appPort = 57000 + seed;
 const debugPort = 59000 + seed;
 const appUrl = `http://localhost:${appPort}/`;
-const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const chromePath = Bun.env.CHROME_PATH || (process.platform === 'darwin'
+  ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+  : '/usr/bin/google-chrome');
+const chromePlatformArgs = process.platform === 'linux'
+  ? ['--no-sandbox', '--disable-dev-shm-usage'] : [];
 const profile = await mkdtemp(join(tmpdir(), 'molarium-depiction-test-'));
 const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
@@ -48,7 +52,7 @@ try {
   });
   await waitFor(async () => (await fetch(appUrl)).ok);
   chrome = Bun.spawn([
-    chromePath, '--headless', '--disable-extensions', '--no-first-run',
+    chromePath, ...chromePlatformArgs, '--headless', '--disable-extensions', '--no-first-run',
     `--remote-debugging-port=${debugPort}`, `--user-data-dir=${profile}`,
     '--window-size=1440,1000', appUrl,
   ], { stdout:'ignore', stderr:'ignore' });
