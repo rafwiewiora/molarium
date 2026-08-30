@@ -29,7 +29,9 @@ const suffix = process.pid % 5000;
 const appPort = 41000 + suffix;
 const debugPort = 47000 + suffix;
 const appUrl = `http://localhost:${appPort}/`;
-const chromePath = Bun.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const chromePath = Bun.env.CHROME_PATH || (process.platform === 'darwin'
+  ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+  : '/usr/bin/google-chrome');
 const profile = await mkdtemp(join(tmpdir(), 'molarium-conformer-benchmark-'));
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 let server;

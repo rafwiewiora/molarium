@@ -12,7 +12,9 @@ const appPort = 56000 + suffix;
 const debugPort = 58000 + suffix;
 const externalAppUrl = Bun.env.MOLARIUM_TEST_URL;
 const appUrl = externalAppUrl || `http://localhost:${appPort}/`;
-const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const chromePath = Bun.env.CHROME_PATH || (process.platform === 'darwin'
+  ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+  : '/usr/bin/google-chrome');
 const profile = await mkdtemp(join(tmpdir(), 'molarium-stormm-long-'));
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 let server;

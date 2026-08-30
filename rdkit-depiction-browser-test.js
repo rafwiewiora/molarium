@@ -6,7 +6,9 @@ const seed = Math.floor(Math.random() * 1000);
 const appPort = 57000 + seed;
 const debugPort = 59000 + seed;
 const appUrl = `http://localhost:${appPort}/`;
-const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const chromePath = Bun.env.CHROME_PATH || (process.platform === 'darwin'
+  ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+  : '/usr/bin/google-chrome');
 const profile = await mkdtemp(join(tmpdir(), 'molarium-depiction-test-'));
 const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
