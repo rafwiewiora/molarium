@@ -19,10 +19,8 @@ readonly RUNTIME=${ROOT}/runtime
 readonly OUTPUT=${ROOT}/output
 readonly BUN_VERSION=1.3.14
 readonly BUN_URL=https://github.com/oven-sh/bun/releases/download/bun-v${BUN_VERSION}/bun-linux-x64.zip
-readonly CHROME_VERSION=152.0.7977.64
-readonly CHROME_URL=https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chrome-headless-shell-linux64.zip
-readonly LIBRARY_ROOT=${RUNTIME}/rocky8-browser-libraries
-readonly RPM_ROOT=${RUNTIME}/rocky8-browser-rpms
+readonly PLAYWRIGHT_IMAGE_TAG=v1.55.0-noble
+readonly PLAYWRIGHT_IMAGE=${RUNTIME}/playwright-${PLAYWRIGHT_IMAGE_TAG}.sif
 
 mkdir -p "${SOURCE}" "${RUNTIME}" "${OUTPUT}"
 echo "${SOURCE_ARCHIVE_SHA256}  ${SOURCE_ARCHIVE}" | sha256sum --check
@@ -32,53 +30,32 @@ if [[ ! -x "${RUNTIME}/bun-linux-x64/bun" ]]; then
   curl -fsSL "${BUN_URL}" -o "${RUNTIME}/bun.zip"
   unzip -q "${RUNTIME}/bun.zip" -d "${RUNTIME}"
 fi
-if [[ ! -x "${RUNTIME}/chrome-headless-shell-linux64/chrome-headless-shell" ]]; then
-  curl -fsSL "${CHROME_URL}" -o "${RUNTIME}/chrome-headless-shell.zip"
-  unzip -q "${RUNTIME}/chrome-headless-shell.zip" -d "${RUNTIME}"
-fi
-
-# The minimal Rocky 8 compute image intentionally omits GUI libraries. Download
-# RPMs as an unprivileged user and extract them into this immutable attempt;
-# never install packages on the node or modify the shared system image.
-if [[ ! -f "${LIBRARY_ROOT}/.complete" ]]; then
-  mkdir -p "${LIBRARY_ROOT}" "${RPM_ROOT}"
-  dnf download --arch=x86_64 --destdir "${RPM_ROOT}" \
-    at-spi2-atk at-spi2-core mesa-libgbm alsa-lib libdrm wayland-libs
-  shopt -s nullglob
-  for rpm in "${RPM_ROOT}"/*.rpm; do
-    package_root=${LIBRARY_ROOT}/$(basename "${rpm}" .rpm)
-    mkdir -p "${package_root}"
-    (cd "${package_root}" && rpm2cpio "${rpm}" | cpio -idmu --quiet)
-  done
-  shopt -u nullglob
-  find "${RPM_ROOT}" -maxdepth 1 -type f -name '*.rpm' -print0 \
-    | sort -z | xargs -0 sha256sum > "${LIBRARY_ROOT}/rpm-manifest.sha256"
-  touch "${LIBRARY_ROOT}/.complete"
+if [[ ! -s "${PLAYWRIGHT_IMAGE}" ]]; then
+  mkdir -p "${RUNTIME}/singularity-cache"
+  SINGULARITY_CACHEDIR=${RUNTIME}/singularity-cache singularity pull \
+    "${PLAYWRIGHT_IMAGE}.partial" "docker://mcr.microsoft.com/playwright:${PLAYWRIGHT_IMAGE_TAG}"
+  mv "${PLAYWRIGHT_IMAGE}.partial" "${PLAYWRIGHT_IMAGE}"
 fi
 
 readonly BUN=${RUNTIME}/bun-linux-x64/bun
-readonly CHROME=${RUNTIME}/chrome-headless-shell-linux64/chrome-headless-shell
 readonly RESULT=${OUTPUT}/7kpa-manual-contact-recapture.v0.1.json
 readonly RECEIPT=${OUTPUT}/receipt.json
+CHROME=$(singularity exec "${PLAYWRIGHT_IMAGE}" sh -lc \
+  "find /ms-playwright -type f -name chrome -path '*chrome-linux*' | sort | head -1")
+readonly CHROME
+[[ -n "${CHROME}" ]] && singularity exec "${PLAYWRIGHT_IMAGE}" test -x "${CHROME}" \
+  || { echo "Playwright Chromium executable was not found" >&2; exit 127; }
 
 "${BUN}" --version
-mapfile -d '' LIBRARY_PATHS < <(find "${LIBRARY_ROOT}" -type d -path '*/usr/lib64' -print0 | sort -z)
-previous_ifs=${IFS}
-IFS=:
-library_path=${LIBRARY_PATHS[*]}
-IFS=${previous_ifs}
-export LD_LIBRARY_PATH=${library_path}${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-if ldd "${CHROME}" | grep -q 'not found'; then
-  ldd "${CHROME}" >&2
-  exit 127
-fi
-"${CHROME}" --version
+singularity exec "${PLAYWRIGHT_IMAGE}" "${CHROME}" --version
 (
   cd "${SOURCE}"
-  MOLARIUM_CHROME_PATH="${CHROME}" "${BUN}" \
+  singularity exec --bind "${ROOT}:${ROOT}" "${PLAYWRIGHT_IMAGE}" \
+    env MOLARIUM_CHROME_PATH="${CHROME}" "${BUN}" \
     docking/benchmark/run-7kpa-two-terminus-panel.mjs \
     --manual-recapture --replays 2 --search-chains 8 --output "${RESULT}"
-  "${BUN}" docking/benchmark/validate-7kpa-two-terminus-results.mjs \
+  singularity exec --bind "${ROOT}:${ROOT}" "${PLAYWRIGHT_IMAGE}" "${BUN}" \
+    docking/benchmark/validate-7kpa-two-terminus-results.mjs \
     --manual-recapture --input "${RESULT}"
 )
 
@@ -89,13 +66,12 @@ jq -n \
   --arg result_sha256 "$(sha256sum "${RESULT}" | awk '{print $1}')" \
   --arg bun_version "${BUN_VERSION}" \
   --arg bun_sha256 "$(sha256sum "${RUNTIME}/bun.zip" | awk '{print $1}')" \
-  --arg chrome_version "${CHROME_VERSION}" \
-  --arg chrome_sha256 "$(sha256sum "${RUNTIME}/chrome-headless-shell.zip" | awk '{print $1}')" \
-  --arg rpm_manifest_sha256 "$(sha256sum "${LIBRARY_ROOT}/rpm-manifest.sha256" | awk '{print $1}')" \
+  --arg playwright_image_tag "${PLAYWRIGHT_IMAGE_TAG}" \
+  --arg playwright_image_sha256 "$(sha256sum "${PLAYWRIGHT_IMAGE}" | awk '{print $1}')" \
   '{schema:$schema,job_id:$job_id,source_archive_sha256:$source_archive_sha256,
     result_sha256:$result_sha256,bun:{version:$bun_version,archive_sha256:$bun_sha256},
-    chrome:{version:$chrome_version,archive_sha256:$chrome_sha256,
-      rocky8_rpm_manifest_sha256:$rpm_manifest_sha256},
+    browser:{playwright_image_tag:$playwright_image_tag,
+      singularity_image_sha256:$playwright_image_sha256},
     panel:"molarium-7kpa-d84-manual-contact-recapture",replays:2,search_chains:8}' \
   > "${RECEIPT}"
 sha256sum "${RESULT}" "${RECEIPT}"
