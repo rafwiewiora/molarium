@@ -43,7 +43,7 @@ fi
 if [[ ! -f "${LIBRARY_ROOT}/.complete" ]]; then
   mkdir -p "${LIBRARY_ROOT}" "${RPM_ROOT}"
   dnf download --arch=x86_64 --destdir "${RPM_ROOT}" \
-    at-spi2-atk at-spi2-core mesa-libgbm alsa-lib
+    at-spi2-atk at-spi2-core mesa-libgbm alsa-lib libdrm wayland-libs
   shopt -s nullglob
   for rpm in "${RPM_ROOT}"/*.rpm; do
     package_root=${LIBRARY_ROOT}/$(basename "${rpm}" .rpm)
