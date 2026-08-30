@@ -44,7 +44,10 @@ const appPort = Number(valueAfter('--port')) || 58000 + (process.pid % 500);
 const debugPort = Number(valueAfter('--debug-port')) || appPort + 500;
 const appUrl = `http://127.0.0.1:${appPort}/`;
 const chromePath = process.env.MOLARIUM_CHROME_PATH
-  || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+  || process.env.CHROME_PATH
+  || (process.platform === 'darwin'
+    ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+    : '/usr/bin/google-chrome');
 const profile = await mkdtemp(path.join(tmpdir(), 'molarium-7kpa-panel-'));
 
 async function waitFor(check, timeout = 30000) {

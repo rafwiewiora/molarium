@@ -63,7 +63,10 @@
     "test:stormm-webgpu": "node stormm/test.mjs",
     "test:stormm-constraints": "node stormm/test.mjs --constraints-only",
     "test:stormm-openmm": "node stormm/openmm-reference-validation.mjs",
-    "benchmark:stormm": "node stormm/openmm-reference-validation.mjs --benchmark"
+    "benchmark:stormm": "node stormm/openmm-reference-validation.mjs --benchmark",
+    "test:ci:scientific": "npm run test:validation-registry && npm run test:docking && npm run test:enumerations && npm run test:7kpa-analogue-panel && npm run test:cloud-panel-packet && npm run test:cloud-panel-shortlist && npm run test:openmm-wasm && npm run test:pose-viewer && npm run test:openfold-features && npm run test:logo && npm run test:development-log",
+    "test:ci:browser": "npm run test:docking-browser && npm run test:2d && npm run test:chemist-actions-browser && npm run test:chemist-actions-production && npm run test:openmm-worker-browser",
+    "test:ci:webgpu": "npm run test:stormm-webgpu"
   },
   "dependencies": {
     "onnxruntime-web": "1.27.0"
