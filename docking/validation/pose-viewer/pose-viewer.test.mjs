@@ -75,6 +75,20 @@ assert.equal(data.cases[0].poses.length, 2);
 assert.equal(data.cases[0].poses[0].independent.openmm.potentialEnergyKcalMol, 4);
 assert.match(data.cases[0].poses[0].hydrogenBondMolBlock, /V2000/);
 assert.match(data.receptor.proteinPdb, /      11\.000   2\.000   3\.000/);
+const exoticPose = { ...poses[0], id:'exotic-pose', caseId:'high-disruption-case',
+  analogue:{ ...poses[0].analogue, name:'High disruption' } };
+const exoticValidation = { ...validation, results:[{
+  ...validation.results[0], id:exoticPose.id, inputSha256:'input-exotic-pose'
+}] };
+const externalReferenceData = buildReviewData({
+  panel:{ schema:'molarium.analogue-pose-panel/v1', poses:[exoticPose] },
+  referencePanel:{ schema:'molarium.analogue-pose-panel/v1', poses:[poses[0]] },
+  validation:exoticValidation, pdbText:pdb, panelSha256:'exotic-panel',
+  referencePanelSha256:'parent-panel', validationSha256:'validation', pdbSha256:'pdb'
+});
+assert.equal(externalReferenceData.reference.poseId, poses[0].id);
+assert.equal(externalReferenceData.sources.referencePanelSha256, 'parent-panel');
+assert.deepEqual(externalReferenceData.cases.map((entry) => entry.id), ['high-disruption-case']);
 const stalePose = { ...poses[0] };
 delete stalePose.hydrogenBonds;
 assert.throws(() => buildReviewData({

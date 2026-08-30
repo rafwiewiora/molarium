@@ -15,6 +15,10 @@ node docking/validation/pose-viewer/build_pose_review.mjs \
   --output /tmp/molarium-7kpa-pose-review
 ```
 
+For a panel that does not itself contain the parent control, pass a separate packet with
+`--reference-poses parent.shortlist.json`. The parent supplies only receptor alignment and the
+reference-ligand overlay; it is not added to the reviewed analogue list.
+
 Serve the generated directory over a local HTTP server. The artifact shows one candidate at a
 time over the prepared 7KPA reference ligand, receptor cartoon, and the immediate 3.5 Å residue
 contact shell. It

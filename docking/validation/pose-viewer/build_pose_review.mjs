@@ -157,13 +157,18 @@ function requireHydrogenBondEvidence(pose) {
   }
 }
 
-export function buildReviewData({ panel, validation, pdbText, panelSha256, validationSha256, pdbSha256 }) {
+export function buildReviewData({ panel, referencePanel = null, validation, pdbText, panelSha256,
+  referencePanelSha256 = null, validationSha256, pdbSha256 }) {
   if (panel?.schema !== 'molarium.analogue-pose-panel/v1' || !Array.isArray(panel.poses))
     throw new Error('Unsupported pose-panel schema');
+  if (referencePanel != null && (referencePanel?.schema !== 'molarium.analogue-pose-panel/v1'
+    || !Array.isArray(referencePanel.poses)))
+    throw new Error('Unsupported reference pose-panel schema');
   if (validation?.schema !== 'molarium.independent-panel-results/v1' || !Array.isArray(validation.results))
     throw new Error('Unsupported independent-validation schema');
-  const referencePose = panel.poses.find((pose) => pose.caseId === 'pyridone-parent-control'
-    && pose.analogue?.rank === 1) || panel.poses[0];
+  const referencePoses = referencePanel?.poses || panel.poses;
+  const referencePose = referencePoses.find((pose) => pose.caseId === 'pyridone-parent-control'
+    && pose.analogue?.rank === 1) || referencePoses[0];
   if (!referencePose) throw new Error('Pose panel is empty');
   const alignment = inferTranslation(referencePose.molecule, pdbText);
   const pocket = pocketPdb(pdbText, alignment.translation, referencePose.molecule);
@@ -194,7 +199,8 @@ export function buildReviewData({ panel, validation, pdbText, panelSha256, valid
   }));
   return {
     schema:'molarium.pose-review/v1',
-    sources:{ panelSha256, validationSha256, pdbSha256, pdbId:'7KPA' },
+    sources:{ panelSha256, ...(referencePanelSha256 ? { referencePanelSha256 } : {}),
+      validationSha256, pdbSha256, pdbId:'7KPA' },
     protocol:{
       purpose:'read-only visual review of preregistered browser poses and independent local checks',
       energyWarning:'Do not compare absolute energies across different analogue graphs.',
@@ -220,17 +226,21 @@ function args(argv) {
     values[argv[index].slice(2)] = argv[index + 1];
   }
   for (const key of ['poses', 'validation', 'pdb', 'output']) if (!values[key])
-    throw new Error('Usage: build_pose_review.mjs --poses SHORTLIST.json --validation RESULTS.json --pdb 7kpa.pdb --output DIRECTORY');
+    throw new Error('Usage: build_pose_review.mjs --poses SHORTLIST.json [--reference-poses PARENT.json] --validation RESULTS.json --pdb 7kpa.pdb --output DIRECTORY');
   return values;
 }
 
 async function main() {
   const options = args(process.argv.slice(2));
-  const [panelBytes, validationBytes, pdbBytes] = await Promise.all([
-    readFile(options.poses), readFile(options.validation), readFile(options.pdb)
+  const [panelBytes, referencePanelBytes, validationBytes, pdbBytes] = await Promise.all([
+    readFile(options.poses), options['reference-poses'] ? readFile(options['reference-poses']) : null,
+    readFile(options.validation), readFile(options.pdb)
   ]);
-  const data = buildReviewData({ panel:JSON.parse(panelBytes), validation:JSON.parse(validationBytes),
-    pdbText:pdbBytes.toString('utf8'), panelSha256:sha256(panelBytes),
+  const data = buildReviewData({ panel:JSON.parse(panelBytes),
+    referencePanel:referencePanelBytes ? JSON.parse(referencePanelBytes) : null,
+    validation:JSON.parse(validationBytes), pdbText:pdbBytes.toString('utf8'),
+    panelSha256:sha256(panelBytes),
+    referencePanelSha256:referencePanelBytes ? sha256(referencePanelBytes) : null,
     validationSha256:sha256(validationBytes), pdbSha256:sha256(pdbBytes) });
   await mkdir(path.join(options.output, 'vendor'), { recursive:true });
   await Promise.all([
