@@ -25,7 +25,10 @@
     "test:stormm-webgpu": "node stormm/test.mjs",
     "test:stormm-constraints": "node stormm/test.mjs --constraints-only",
     "test:stormm-openmm": "node stormm/openmm-reference-validation.mjs",
-    "benchmark:stormm": "node stormm/openmm-reference-validation.mjs --benchmark"
+    "benchmark:stormm": "node stormm/openmm-reference-validation.mjs --benchmark",
+    "test:ci:scientific": "npm run test:openfold-features",
+    "test:ci:browser": "bun scripts/ci-browser-smoke.js",
+    "test:ci:webgpu": "npm run test:stormm-webgpu"
   },
   "dependencies": {
     "onnxruntime-web": "1.27.0"
