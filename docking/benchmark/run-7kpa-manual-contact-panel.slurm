@@ -3,7 +3,7 @@
 #SBATCH --comment=project:molarium,experiment:7kpa-manual-contact-recapture-v0.1
 #SBATCH --partition=compute
 #SBATCH --cpus-per-task=2
-#SBATCH --mem=8G
+#SBATCH --mem=7G
 #SBATCH --nice=10000
 #SBATCH --time=02:00:00
 #SBATCH --output=slurm-%x-%j.out
