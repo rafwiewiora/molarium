@@ -5369,12 +5369,16 @@ function addElementToMolecule(baseMolecule, element, targetIndex = null, targetP
   return appendDisconnectedMolecule(baseMolecule, incoming, targetPoint || { x: 0, y: 0, z: 0 });
 }
 
-async function addAtomAtScreen(clientX, clientY) {
+function addAtomAtScreen(clientX, clientY) {
   clearCalculationResult();
   const point = screenToMolecule(clientX, clientY);
   const targetIndex = elementAttachmentTarget(clientX, clientY);
-  if (targetIndex != null
-    && !await ensureAnalogueDesignReferenceBeforeChemistry([targetIndex])) return;
+  if (targetIndex != null && analogueDesignCaptureNeeded([targetIndex])) {
+    return ensureAnalogueDesignReferenceBeforeChemistry([targetIndex]).then((accepted) => {
+      if (accepted) return addAtomAtScreen(clientX, clientY);
+      return null;
+    });
+  }
   const existingAtoms = new Set(state.molecule?.atoms || []);
   const targetAtom = targetIndex == null ? null : state.molecule.atoms[targetIndex];
   pushBuildHistory();
@@ -5391,6 +5395,7 @@ async function addAtomAtScreen(clientX, clientY) {
   const changedAtomIndices = state.molecule.atoms.flatMap((atom, index) =>
     !existingAtoms.has(atom) || atom === targetAtom ? [index] : []);
   scheduleSmallMoleculePolish(changedAtomIndices);
+  return Promise.resolve();
 }
 
 function pairKey(a, b) { return a < b ? `${a}:${b}` : `${b}:${a}`; }
@@ -6097,7 +6102,8 @@ async function validateEditedChemistry(molecule, changedAtoms, { schedulePolish 
 async function applyChemistryMutation(mutator) {
   if (!state.molecule?.atoms.length) throw new Error('Load or build a molecule first.');
   if (selectedProteinChemistryLocked()) throw new Error('Canonical protein chemistry is protected; use Protein Preparation.');
-  if (!await ensureAnalogueDesignReferenceBeforeChemistry()) return null;
+  if (analogueDesignCaptureNeeded()
+    && !await ensureAnalogueDesignReferenceBeforeChemistry()) return null;
   // A docking edit uses stable graph identities for contact lineage and
   // topology hashes. Assign them before taking the transaction snapshot, and
   // again immediately after mutation so staged consumers never see an
@@ -6603,18 +6609,22 @@ function mergeFragmentIntoMolecule(baseMolecule, fragment, targetIndex = null, t
   return baseMolecule;
 }
 
-async function addFragmentAtScreen(fragment, clientX, clientY) {
+function addFragmentAtScreen(fragment, clientX, clientY) {
   clearCalculationResult();
   const targetHit = hitTest(clientX, clientY);
   const targetPoint = screenToMolecule(clientX, clientY);
-  pushBuildHistory();
   let targetIndex = targetHit?.index ?? null;
   if (targetIndex != null && state.molecule?.atoms[targetIndex]?.element === 'H') {
     const hydrogenBond = state.molecule.bonds.find((bond) => bond.a === targetIndex || bond.b === targetIndex);
     targetIndex = hydrogenBond ? (hydrogenBond.a === targetIndex ? hydrogenBond.b : hydrogenBond.a) : null;
   }
-  if (targetIndex != null
-    && !await ensureAnalogueDesignReferenceBeforeChemistry([targetIndex])) return;
+  if (targetIndex != null && analogueDesignCaptureNeeded([targetIndex])) {
+    return ensureAnalogueDesignReferenceBeforeChemistry([targetIndex]).then((accepted) => {
+      if (accepted) return addFragmentAtScreen(fragment, clientX, clientY);
+      return null;
+    });
+  }
+  pushBuildHistory();
   const existingAtoms = new Set(state.molecule?.atoms || []);
   const targetAtom = targetIndex == null ? null : state.molecule.atoms[targetIndex];
   try {
@@ -6630,6 +6640,7 @@ async function addFragmentAtScreen(fragment, clientX, clientY) {
   const changedAtomIndices = state.molecule.atoms.flatMap((atom, index) =>
     !existingAtoms.has(atom) || atom === targetAtom ? [index] : []);
   scheduleSmallMoleculePolish(changedAtomIndices);
+  return Promise.resolve();
 }
 
 function updateBuildStatus(extra = '') {

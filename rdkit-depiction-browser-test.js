@@ -65,6 +65,16 @@ try {
     const api = window.molariumTest;
     const checks = [];
     const check = (condition, label, details = '') => checks.push({ passed:Boolean(condition), label, details });
+    const waitForDepiction = async (predicate, timeoutMs = 12000) => {
+      const started = performance.now();
+      let depiction = null;
+      while (performance.now() - started < timeoutMs) {
+        depiction = await api.waitFor2DDepiction();
+        if (predicate(depiction)) return depiction;
+        await new Promise((resolve) => setTimeout(resolve, 25));
+      }
+      throw new Error('Timed out waiting for a 2D edit: ' + JSON.stringify(depiction));
+    };
     const drawing = document.querySelector('#structure-2d-drawing');
     const clickDrawingNear = (point, distance = 18) => {
       const bounds = drawing.getBoundingClientRect();
@@ -408,7 +418,8 @@ try {
     const editableBox = editableOxygen.getBoundingClientRect();
     clickDrawingNear({ x:editableBox.x + editableBox.width / 2,
       y:editableBox.y + editableBox.height / 2 });
-    const pointerEdited = await api.waitFor2DDepiction();
+    const pointerEdited = await waitForDepiction((depiction) =>
+      depiction.pendingChanges === 1 && depiction.atomIndices.length === 4);
     check(pointerEdited.mode === 'build' && pointerEdited.tool === 'atom'
       && pointerEdited.atomIndices.length === 4 && pointerEdited.pendingChanges === 1,
     'the atom tool snaps to a nearby atom without an exact SVG click', JSON.stringify(pointerEdited));
@@ -429,7 +440,7 @@ try {
       .matrixTransform(bondSvg.getScreenCTM());
     drawing.dispatchEvent(new MouseEvent('click', { bubbles:true,
       clientX:screenMidpoint.x, clientY:screenMidpoint.y + 10 }));
-    const snappedBond = await api.waitFor2DDepiction();
+    const snappedBond = await waitForDepiction((depiction) => depiction.pendingChanges === 1);
     const snappedPair = snappedBond.atomIndices.slice(0, 2);
     const snappedOrder = api.current().molecule.bonds.find((bond) =>
       (bond.a === snappedPair[0] && bond.b === snappedPair[1])
