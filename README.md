@@ -350,7 +350,7 @@ Model provenance is in
 
 ## Validation ledger
 
-The versioned [`validation/registry.v0.1.json`](./validation/registry.v0.1.json) preserves the
+The versioned [`validation/registry.v0.2.json`](./validation/registry.v0.2.json) preserves the
 case-level evidence used by Molarium's validation dashboard and papers. The first registered
 docking cohort contains **25 transformations across 18 distinct PDB/ligand starting complexes and
 15 protein targets**. All 25 have terminal workflow outcomes, 17 reached pose search, and five
@@ -360,7 +360,10 @@ the denominator.
 A separate cross-runtime gate contains five exact poses from three analogue chemistries, all from
 the same 7KPA/D84 protein–ligand system. Those five poses validate matched browser/native arithmetic;
 they do not count as five independent systems. The 20-case 7KPA chemistry stress panel is registered
-but is marked partial until a complete result artifact is committed.
+but is marked partial until a complete result artifact is committed. The separate 10-case manual
+H-bond recapture panel is complete: two browser replays per case agreed exactly, nine cases produced
+feasible poses, and the sultam was a reproducible `no-feasible-pose` result. Its compact evidence
+also records per-action, refinement, scheduler, and memory timings.
 
 The top-bar **Validation** dashboard separates targets, reference complexes, registered cases,
 poses, and software assertions; every source artifact carries a SHA-256 digest. See

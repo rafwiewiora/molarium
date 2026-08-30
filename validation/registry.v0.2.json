@@ -1,9 +1,9 @@
 {
   "schema": "molarium.validation-registry/v1",
   "registryId": "molarium-validation-registry",
-  "version": "0.1.0",
-  "frozenAt": "2026-08-24",
-  "scope": "Docking workflow and high-disruption cross-runtime evidence migrated as of registry v0.1. Other historical engine tests are not counted until they receive case-level registry records.",
+  "version": "0.2.0",
+  "frozenAt": "2026-08-30",
+  "scope": "Docking workflow and high-disruption cross-runtime evidence migrated in registry v0.1; the complete manual H-bond recapture panel and timing ledger were added in v0.2. Other historical engine tests are not counted until they receive case-level registry records.",
   "countingRules": {
     "proteinTarget": "One named biological target. Multiple crystal structures of the same target count once.",
     "referenceSystem": "One unique PDB ID plus bound-ligand component ID used as a starting complex.",
@@ -132,34 +132,42 @@
     {
       "studyId": "7kpa-manual-contact-recapture-v0.1",
       "title": "7KPA manual H-bond recapture panel",
-      "status": "development-smoke",
-      "evidenceLevel": "ten preregistered chemist-action scripts; one hash-checked end-to-end development replay",
-      "executedAt": "2026-08-30T18:26:36.261Z",
+      "status": "complete",
+      "evidenceLevel": "ten preregistered chemist-action scripts; twenty hash-checked psiblue browser replays",
+      "executedAt": "2026-08-30T20:24:20.174Z",
       "counts": {
         "registeredChemistryCases": 10,
-        "executedDevelopmentCases": 1,
+        "executedCases": 10,
+        "replayCount": 20,
+        "replayAgreements": 10,
+        "feasibleCases": 9,
         "proteinTargets": 1,
         "referenceSystems": 1,
-        "searchCandidates": 8,
-        "feasibleCandidates": 8
+        "outcomes": {
+          "no-feasible-pose": 2,
+          "success-feasible": 18
+        }
       },
       "metrics": {
-        "productGraphMatchesExpected": true,
-        "allRequiredHydrogenBondsSatisfied": true,
-        "manualDonorAcceptorDistanceAngstrom": 3.2232161295538693,
-        "manualHydrogenAcceptorDistanceAngstrom": 2.2870072250188205,
-        "manualDhaAngleDegrees": 153.61818250325143,
-        "labbookValid": true
+        "preparationMs": 6782.625,
+        "medianReplayMs": 63902.308,
+        "p90ReplayMs": 90818.655,
+        "medianRefinementMs": 6540.105,
+        "schedulerElapsedSeconds": 1434,
+        "schedulerTotalCpuSeconds": 1548.865,
+        "schedulerMaxRssBytes": 2227576832
       },
       "claims": [
         "Ten explicit delete, forget, rebuild, reassert, and refine scripts are preregistered through the public Chemist Actions API.",
-        "The executed pyridone-carbonyl case reproduced its frozen product graph and all eight generated poses satisfied all four required H-bonds.",
-        "This is one development replay from one reference complex; the complete ten-case panel has not yet been executed or claimed."
+        "All ten cases produced identical scientific replay hashes across two independent browser executions.",
+        "Nine cases produced feasible poses; the sultam produced a deterministic no-feasible-pose result after reaching full refinement.",
+        "This is one protein-ligand reference complex and a method stress panel, not ten independent systems or a binding-affinity benchmark."
       ],
       "artifactIds": [
         "manualContactPanel",
         "manualContactProtocol",
-        "manualContactSmoke"
+        "manualContactSmoke",
+        "manualContactResults"
       ]
     }
   ],
@@ -591,14 +599,20 @@
     "manualContactProtocol": {
       "path": "docking/benchmark/7kpa-manual-contact-panel.README.md",
       "href": "./docking/benchmark/7kpa-manual-contact-panel.README.md",
-      "bytes": 2612,
-      "sha256": "ee65b9727dc35973f595ccde8cae8f165e938fecfb2230abd1fe9b4530c1eab7"
+      "bytes": 3260,
+      "sha256": "e28be4393bcc7826326885a145ddebad95f7828659146250e5fbaa5b7de80c2f"
     },
     "manualContactSmoke": {
       "path": "docking/benchmark/7kpa-manual-contact-smoke.v0.1.json",
       "href": "./docking/benchmark/7kpa-manual-contact-smoke.v0.1.json",
       "bytes": 2917,
       "sha256": "95f0bf7a23d90d8fa1a6a555ae0c1a85623543b8feac19bc24836e4bd10c1a08"
+    },
+    "manualContactResults": {
+      "path": "docking/benchmark/7kpa-manual-contact-results.psiblue.v0.1.json",
+      "href": "./docking/benchmark/7kpa-manual-contact-results.psiblue.v0.1.json",
+      "bytes": 12189,
+      "sha256": "c28fa7e598654499f93fcdf64f68d767095a39838d36fa627986e43afef7813e"
     },
     "browserVacuum": {
       "path": "docking/validation/cloud-panel/browser-sage-openmm-validation-2026-08-23.json",

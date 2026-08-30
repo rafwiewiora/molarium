@@ -1,0 +1,74 @@
+{
+  "schema": "molarium.7kpa.manual-contact-smoke/v1",
+  "panelId": "molarium-7kpa-d84-manual-contact-recapture",
+  "panelVersion": "0.1.0",
+  "caseId": "pyridone-carbonyl-manual-recapture",
+  "executedAt": "2026-08-30T18:26:36.261Z",
+  "runMode": "development-shard",
+  "protocol": {
+    "publicActionInterface": "molarium.chemist-actions/v1",
+    "searchChains": 8,
+    "replays": 1,
+    "referenceSystem": "7KPA/D84",
+    "forcefield": "OpenFF Sage 2.1.0",
+    "chargeModel": "Gasteiger (RDKit, 12 iterations)"
+  },
+  "chemistry": {
+    "operation": "delete captured pyridone carbonyl oxygen, forget obsolete Lys A11 contact, rebuild carbonyl oxygen, and assert a new Lys A11 donor contact",
+    "expectedProductGraphSha256": "bae89f37c54b7e81ab28c340d746c3150f4792ef64a4d78e900283350b5e1923",
+    "actualProductGraphSha256": "bae89f37c54b7e81ab28c340d746c3150f4792ef64a4d78e900283350b5e1923",
+    "productGraphMatchesExpected": true,
+    "editDifficultyScore": 60,
+    "editDifficultyLevel": "extreme"
+  },
+  "outcome": {
+    "terminalOutcome": "success-feasible",
+    "candidateCount": 8,
+    "feasibleCount": 8,
+    "selectedRank": 1,
+    "selectedScoreKcalMol": -2.0468065363462813,
+    "selectedConstraintPenaltyKcalMol": 0,
+    "selectedAdditionalStericClashes": 0,
+    "allRequiredHydrogenBondsSatisfied": true,
+    "manualHydrogenBond": {
+      "label": "LYS A11 NZ → rebuilt D84 carbonyl O",
+      "donorAcceptorDistanceAngstrom": 3.2232161295538693,
+      "hydrogenAcceptorDistanceAngstrom": 2.2870072250188205,
+      "dhaAngleDegrees": 153.61818250325143,
+      "satisfied": true
+    }
+  },
+  "audit": {
+    "route": "public Chemist Actions only after fixture preparation",
+    "orderedActions": [
+      "view.setMode",
+      "build.setTool",
+      "pose.captureReference",
+      "session.inspect",
+      "selection.replace",
+      "chemistry.deleteAtom",
+      "chemistry.finish",
+      "pose.forgetContact",
+      "chemistry.addAtom",
+      "selection.replace",
+      "chemistry.setBond",
+      "chemistry.finish",
+      "pose.addContact",
+      "pose.setContact",
+      "pose.refine",
+      "pose.apply",
+      "session.inspect"
+    ],
+    "labbookValid": true,
+    "labbookEventCount": 10,
+    "protocolSha256": "2a0a9574a800f1550348ab2472abf2e2d5ea3089d135cf2bd32bbde1048272b2",
+    "labbookSha256": "09016adcfd7a8824dbb8565576a41eff2b21e0dc0af9eed3e5dfaa8bb0a5da7f",
+    "manifestSha256": "02144f1a6b0431993d80fea93b78b2d2f07a756422e02fe8b4c7359466a563b8",
+    "rawResultSha256": "6d2934519846b1ce6dcce4b047769f10764b637085020b0ca6038511333b2072"
+  },
+  "limitations": [
+    "This is one development replay from one protein-ligand reference system, not the complete ten-case panel.",
+    "Feasibility under the registered pose constraints is not binding-affinity validation.",
+    "The full raw development result is hash-addressed but is not counted as a frozen complete-panel artifact."
+  ]
+}

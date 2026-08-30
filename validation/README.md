@@ -1,6 +1,7 @@
 # Validation registry
 
-`registry.v0.1.json` is Molarium's machine-readable evidence ledger. It deliberately separates:
+`registry.v0.2.json` is Molarium's current machine-readable evidence ledger. Version 0.1 remains
+available as the earlier frozen record. The ledger deliberately separates:
 
 - biological targets;
 - unique PDB/ligand starting complexes;

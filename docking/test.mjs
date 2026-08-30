@@ -687,6 +687,44 @@ const roleDonorDefinition = { id:'captured-donor-role', required:true, receptorR
   hydrogen:{ scope:'ligand', designAtomId:'donor-role:H', element:'H' },
   acceptor:{ scope:'receptor', designAtomId:'protein:O', element:'O', point:{ x:4,y:0,z:0 } },
 };
+// The explicit H remains part of the same N-H donor when an adjacent
+// carbonyl centre becomes a sulfonyl centre. It must not be mistaken for a
+// scaffold boundary merely because its own atom identity did not change.
+const survivingSultamDonorBefore = { atoms:[
+  { element:'C', designAtomId:'sultam:left', x:-1.4,y:0,z:0 },
+  { element:'C', designAtomId:'sultam:center', x:0,y:0,z:0 },
+  { element:'O', designAtomId:'sultam:old-O', x:0,y:1.3,z:0 },
+  { element:'N', designAtomId:'sultam:N', x:1.3,y:0,z:0 },
+  { element:'H', designAtomId:'sultam:H', x:1.3,y:-1,z:0 },
+  { element:'C', designAtomId:'sultam:right', x:2.6,y:0,z:0 },
+], bonds:[
+  { a:0,b:1,order:1 }, { a:1,b:2,order:2 }, { a:1,b:3,order:1 },
+  { a:3,b:4,order:1 }, { a:3,b:5,order:1 },
+] };
+const survivingSultamDonorDefinition = { id:'surviving-sultam-donor', required:true,
+  receptorRole:'acceptor',
+  donor:{ scope:'ligand', designAtomId:'sultam:N', element:'N',
+    featureSignature:hydrogenBondFeatureSignature(survivingSultamDonorBefore, 3, 'donor') },
+  hydrogen:{ scope:'ligand', designAtomId:'sultam:H', element:'H' },
+  acceptor:{ scope:'receptor', designAtomId:'protein:O', element:'O', point:{ x:4,y:0,z:0 } },
+};
+const survivingSultamDonorAfter = structuredClone(survivingSultamDonorBefore);
+survivingSultamDonorAfter.atoms[1].element = 'S';
+survivingSultamDonorAfter.atoms.push(
+  { element:'O', designAtomId:'sultam:added-O', x:0,y:-1.3,z:0 });
+survivingSultamDonorAfter.bonds.push({ a:1,b:6,order:2 });
+const survivingSultamDonorProposal = proposeLigandHydrogenBondFeatureRemaps(
+  [survivingSultamDonorDefinition], survivingSultamDonorAfter,
+  survivingSultamDonorAfter.atoms.map((_, index) => index), {
+    eligibleAtomIndices:[1,6], beforeMolecule:survivingSultamDonorBefore,
+  })[0];
+assert.equal(survivingSultamDonorProposal.status, 'unique');
+assert.deepEqual(survivingSultamDonorProposal.boundaryAnchorIds,
+  ['sultam:left', 'sultam:right']);
+assert.deepEqual(survivingSultamDonorProposal.candidates[0].atomIds,
+  ['sultam:N', 'sultam:H']);
+assert.equal(survivingSultamDonorProposal.candidates[0].matchKind,
+  'role-compatible-bioisostere');
 for (const replacement of [
   { label:'hydroxyl', element:'O' },
   { label:'thiol', element:'S' },

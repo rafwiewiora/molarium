@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { validationDashboardHtml } from './dashboard.mjs';
 
-const registry = JSON.parse(await readFile(new URL('./registry.v0.1.json', import.meta.url)));
+const registry = JSON.parse(await readFile(new URL('./registry.v0.2.json', import.meta.url)));
 const html = validationDashboardHtml(registry);
 assert.match(html, /18<\/strong><span>reference complexes/);
 assert.match(html, /25<\/strong><span>registered cases/);
@@ -10,6 +10,9 @@ assert.match(html, /15<\/strong><span>protein targets/);
 assert.match(html, /5<\/strong><span>crystal-scored/);
 assert.match(html, /25 preserved outcomes/);
 assert.match(html, /Registered · partial/);
+assert.match(html, /twenty hash-checked psiblue browser replays/);
+assert.match(html, /All ten cases produced identical scientific replay hashes/);
+assert.match(html, /sultam produced a deterministic no-feasible-pose result/);
 assert.match(html, /vacuum-versus-OBC2 protocol mismatch/);
 assert.equal((html.match(/data-validation-tier=/g) || []).length, 25);
 

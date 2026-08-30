@@ -2,7 +2,7 @@ export const CHEMIST_ACTIONS_SCHEMA = 'molarium.chemist-actions/v1';
 
 const ACTIONS = Object.freeze({
   'session.inspect': Object.freeze({ description:'Inspect the current chemist-visible molecular state.',
-    arguments:Object.freeze({ scope:'ligand | selection | all', includeCoordinates:'boolean', maximumAtoms:'integer 1–500' }) }),
+    arguments:Object.freeze({ scope:'ligand | selection | pocket | all', includeCoordinates:'boolean', maximumAtoms:'integer 1–500' }) }),
   'view.setMode': Object.freeze({ description:'Choose the View, Build, or Run workspace.',
     arguments:Object.freeze({ mode:'view | build | run' }) }),
   'build.setTool': Object.freeze({ description:'Choose the same Add, Select, or Move tool available in Build.',
@@ -32,6 +32,10 @@ const ACTIONS = Object.freeze({
     arguments:Object.freeze({ mode:'propagate | selected-core' }) }),
   'pose.setContact': Object.freeze({ description:'Require or omit one captured contact hypothesis.',
     arguments:Object.freeze({ contactId:'captured contact ID', required:'boolean' }) }),
+  'pose.addContact': Object.freeze({ description:'Add an H-bond hypothesis by selecting one ligand and one receptor atom.',
+    arguments:Object.freeze({ ligandAtomId:'persistent ligand atom ID', receptorAtomId:'persistent receptor atom ID', ligandRole:'auto | acceptor | donor' }) }),
+  'pose.forgetContact': Object.freeze({ description:'Forget a manual or unavailable contact hypothesis while retaining its audit record.',
+    arguments:Object.freeze({ contactId:'contact ID' }) }),
   'pose.refine': Object.freeze({ description:'Run reference-guided pose refinement with the visible search-chain setting.',
     arguments:Object.freeze({ searchChains:'8 | 16 | 32 | 64' }) }),
   'pose.apply': Object.freeze({ description:'Apply one returned refined pose by zero-based result index.',
