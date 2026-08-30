@@ -29,6 +29,19 @@ replayWithOtherRunIds.chemistry.commits[0].contactFeatureRemaps[0]
 assert.notEqual(deterministicHash(stableReplayPayload(remapReplay)),
   deterministicHash(stableReplayPayload(replayWithOtherRunIds)),
   'replay hashes must retain the scientific contact-remap identity');
+const manualContactReplayA = { contactMapping:[{ contactId:'manual-hbond:1',
+  origin:{ schema:'molarium.docking.manual-hydrogen-bond/v1',
+    kind:'user-added-hydrogen-bond-hypothesis', createdAt:'2026-08-30T19:22:34.850Z' },
+  hydrogenBond:{ donorAtomId:'receptor:NZ', acceptorAtomId:'ligand:O' } }] };
+const manualContactReplayB = structuredClone(manualContactReplayA);
+manualContactReplayB.contactMapping[0].origin.createdAt = '2026-08-30T19:23:32.917Z';
+assert.equal(deterministicHash(stableReplayPayload(manualContactReplayA)),
+  deterministicHash(stableReplayPayload(manualContactReplayB)),
+  'replay hashes must exclude manual-contact creation timestamps');
+manualContactReplayB.contactMapping[0].hydrogenBond.acceptorAtomId = 'ligand:S';
+assert.notEqual(deterministicHash(stableReplayPayload(manualContactReplayA)),
+  deterministicHash(stableReplayPayload(manualContactReplayB)),
+  'replay hashes must retain manual-contact scientific identity');
 const exportReplayA = { candidateExportIntegrity:[{ id:'case:replay-1:pose-0', poseIndex:0,
   rank:1, feasible:true, coordinateSha256:'c'.repeat(64), numericSystemSha256:'s'.repeat(64) }] };
 const exportReplayB = structuredClone(exportReplayA);

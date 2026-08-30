@@ -34,7 +34,7 @@ export function deterministicHash(value) {
 }
 
 const volatileRemapKeys = new Set([
-  'at', 'capturedAt', 'committedAt', 'committedEditId', 'originatingCommittedEditId',
+  'at', 'createdAt', 'capturedAt', 'committedAt', 'committedEditId', 'originatingCommittedEditId',
 ]);
 
 function stableContactRemap(value) {
@@ -364,7 +364,7 @@ export function stableReplayPayload(record) {
     actions:record.actions?.map((entry) => ({ action:entry.action, args:entry.args,
       status:entry.status, error:entry.error || null })) || [],
     chemistry,
-    contactMapping:record.contactMapping || null,
+    contactMapping:stableContactRemap(record.contactMapping || null),
     refinement,
     appliedPose:record.appliedPose || null,
     candidateExportIntegrity:record.candidateExportIntegrity
