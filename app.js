@@ -7526,6 +7526,7 @@ function installChemistActionsApi(module) {
         elapsedMs:result.elapsedMs ?? null } }); },
   };
   const api = module.createChemistActionsApi({ routes,
+    enabledActions:module.CHEMIST_ACTION_SCOPES.application,
     recordAudit:persistChemistActionAudit });
   Object.defineProperty(window, 'MolariumChemistActions', { value:api,
     enumerable:true, configurable:false, writable:false });

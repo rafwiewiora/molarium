@@ -50,9 +50,13 @@ const x38Entry = loaded.get('7GNR');
 const alignedX38 = alignModels(x1Entry.model, x38Entry.model, 'A', 'A');
 const x1 = buildComplex(x1Entry);
 const x38 = buildComplex(x38Entry, alignedX38.model, '7gnr-aligned');
-const bcl = buildComplex(loaded.get('3SPF'));
+const bclEntry = loaded.get('3SPF');
+const bclTemplateEntry = loaded.get('3SP7');
+const alignedBclTemplate = alignModels(bclEntry.model, bclTemplateEntry.model, 'A', 'A');
+const bcl = buildComplex(bclEntry);
+const bclTemplate = buildComplex(bclTemplateEntry, alignedBclTemplate.model, '3sp7-aligned');
 
-for (const complex of [x1, x38, bcl]) {
+for (const complex of [x1, x38, bcl, bclTemplate]) {
   await emit(`${complex.prefix}-protein.pdb`, complex.protein, { kind:'protein' });
   await emit(`${complex.prefix}-pocket.pdb`, complex.pocket, { kind:'pocket', cutoffAngstrom:5 });
   await emit(`${complex.prefix}-ligand.pdb`, complex.ligand, { kind:'ligand' });
@@ -91,6 +95,12 @@ const manifest = {
     rotation:alignedX38.rotation.map((row) => row.map((value) => Number(value.toFixed(12)))),
     translation:alignedX38.translation.map((value) => Number(value.toFixed(12))),
   },
+  bclxlAlignment:{
+    reference:'3SPF chain A', mobile:'3SP7 chain A', pairedAlphaCarbons:alignedBclTemplate.pairs,
+    rmsdAngstrom:Number(alignedBclTemplate.rmsd.toFixed(6)),
+    rotation:alignedBclTemplate.rotation.map((row) => row.map((value) => Number(value.toFixed(12)))),
+    translation:alignedBclTemplate.translation.map((value) => Number(value.toFixed(12))),
+  },
   complexes:{
     x1:{ pdbId:'7GN8', label:'(S)-x1', ligandResidue:'RPZ A 407',
       proteinSphere:coordinateSphere(x1.proteinAtoms), ligandSphere:coordinateSphere(x1.ligandAtoms),
@@ -101,8 +111,13 @@ const manifest = {
     bclxlCompound4:{ pdbId:'3SPF', label:'BCL-xL compound 4', ligandResidue:'B50 A 501',
       proteinSphere:coordinateSphere(bcl.proteinAtoms), ligandSphere:coordinateSphere(bcl.ligandAtoms),
       pocketResidues:bcl.pocketKeys.size },
+    bclxlTemplate:{ pdbId:'3SP7', label:'BCL-xL BM903 structural template',
+      ligandResidue:'03B A 210', alignedTo:'3SPF chain A',
+      proteinSphere:coordinateSphere(bclTemplate.proteinAtoms),
+      ligandSphere:coordinateSphere(bclTemplate.ligandAtoms),
+      pocketResidues:bclTemplate.pocketKeys.size },
   },
   derived,
 };
 await writeFile(join(output, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
-console.log(`Built ${Object.keys(derived).length} structure assets; 7GNR→7GN8 CA RMSD ${alignedX38.rmsd.toFixed(3)} Å`);
+console.log(`Built ${Object.keys(derived).length} structure assets; 7GNR→7GN8 CA RMSD ${alignedX38.rmsd.toFixed(3)} Å; 3SP7→3SPF CA RMSD ${alignedBclTemplate.rmsd.toFixed(3)} Å`);

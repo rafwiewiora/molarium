@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { CHEMIST_ACTIONS_SCHEMA, CHEMIST_ACTION_DEFINITIONS,
+import { CHEMIST_ACTIONS_SCHEMA, CHEMIST_ACTION_DEFINITIONS, CHEMIST_ACTION_SCOPES,
   createChemistActionsApi } from './chemist-actions.mjs';
 
 const calls = [];
@@ -18,6 +18,7 @@ assert(Object.isFrozen(api));
 assert(Object.hasOwn(api.describe().actions, 'chemistry.finish'));
 assert(Object.hasOwn(api.describe().actions, 'pose.addContact'));
 assert(Object.hasOwn(api.describe().actions, 'pose.forgetContact'));
+assert(Object.hasOwn(api.describe().actions, 'structureStory.selectFrame'));
 assert.match(api.describe().actions['session.inspect'].arguments.scope, /pocket/);
 assert(!Object.hasOwn(api.describe().actions, 'test.loadObject'));
 assert.match(api.describe().guarantee, /no arbitrary code/);
@@ -53,4 +54,17 @@ assert(persisted.every((record) => record.status === 'completed'),
   'accepted actions are offered to the durable audit adapter after completion');
 
 assert.throws(() => createChemistActionsApi({ routes:{} }), /route session.inspect is missing/);
+
+const storyCalls = [];
+const storyApi = createChemistActionsApi({
+  enabledActions:CHEMIST_ACTION_SCOPES.structureStory,
+  routes:Object.fromEntries(CHEMIST_ACTION_SCOPES.structureStory.map((action) =>
+    [action, async (args) => { storyCalls.push({ action, args }); return { observed:action }; }])),
+});
+assert.deepEqual(Object.keys(storyApi.describe().actions), CHEMIST_ACTION_SCOPES.structureStory);
+await storyApi.execute({ action:'structureStory.selectCue', args:{ cueId:'bound-start' } });
+assert.deepEqual(storyCalls, [{ action:'structureStory.selectCue', args:{ cueId:'bound-start' } }]);
+await assert.rejects(() => storyApi.execute({ action:'chemistry.finish' }), /Unknown chemist action/);
+assert.throws(() => createChemistActionsApi({ routes:{}, enabledActions:['private.eval'] }),
+  /Unknown enabled Chemist Actions route/);
 console.log('Molarium Chemist Actions API: PASS');

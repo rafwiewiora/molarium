@@ -23,7 +23,8 @@ molarium.describe();
 ```
 
 `window.MolariumChemistActions` is the same frozen object. `describe()` is the authoritative action
-manifest for the running build.
+manifest for the running build. Molarium exposes a scoped manifest: the molecular editor advertises
+editor actions, while the structure-story viewer advertises only its timeline actions.
 
 ## Example: a staged bond edit
 
@@ -67,6 +68,18 @@ feature transfer, Undo, and Redo therefore behave exactly as they do for an inte
   `pose.refine`, `pose.apply`
 - `optimization.run`
 
+The structure-story viewer exposes a separate scope of the same public API:
+
+- `structureStory.load`
+- `structureStory.selectCue`
+- `structureStory.selectFrame`
+- `structureStory.inspect`
+
+`structureStory.load` accepts only a registered story ID backed by locally bundled, provenance-pinned
+assets. It does not accept a URL, path, coordinates, or an arbitrary data object. Cue selection uses
+persistent IDs; frame selection is bounded by the loaded story's public timeline. The visible
+timeline controls call these same routes.
+
 The exact argument contract is returned by `describe()`. Unknown actions and unexpected arguments
 fail closed. Inputs must be finite, plain JSON values; prototype-bearing objects, functions,
 cycles, over-deep inputs, and payloads larger than 32 KiB are rejected. Commands are serialized, so
@@ -101,6 +114,11 @@ This v1 action ledger is an execution audit, not the calculation labbook. A refe
 run still produces its independent hash-linked protocol labbook with input and result hashes. The
 action ledger proves how the browser was operated; the run labbook proves which numerical protocol
 was executed.
+
+Structure-story rendering is also an API client. Every captured frame is selected with
+`structureStory.selectFrame`; render output includes `chemist-action-audit.json`, and the render
+manifest pins the audit hash and associates each frame with its API sequence number. Direct private
+viewer hooks are not part of this path.
 
 ## Explicit exclusions
 

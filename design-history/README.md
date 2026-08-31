@@ -14,7 +14,8 @@ The complementary molecular story viewer at
 [`/design-history/structure-viewer/`](./structure-viewer/index.html) uses the
 bundled Mol* renderer to show pinned experimental coordinates with deliberate
 overview, pocket-zoom, orbit, and crystal-overlay camera moves. It currently
-supports the 7GN8→7GNR DNDI-6510 story and the 3SPF BCL-xL starting complex.
+supports the 7GN8→7GNR DNDI-6510 story and a five-state BCL-xL trajectory from
+compound 4 through compounds 6, 7, 16, and 21.
 
 ## Record layers
 
@@ -44,7 +45,10 @@ decisions—the material another scientist can inspect and reproduce.
 The two literature stories are source-grounded reconstructions. Claims copied
 from a source are labelled `reported-in-source`; chronology or interpretation
 added by this project is labelled `molarium-reconstruction`. A reconstruction
-does not claim that the original authors used Molarium.
+does not claim that the original authors used Molarium. The five visible BCL-xL
+states also carry replay scripts made only from the public Chemist Actions API;
+those scripts reproduce Molarium's presentation of the curated record, not the
+historical authors' laboratory operations.
 
 The 7KPA story is an infrastructure rehearsal. Its graph transformations are
 represented as Chemist Actions scripts so the public replay boundary can be
@@ -79,7 +83,7 @@ Primary literature and structure locators live inside each campaign record.
 The current public sources include
 [DOI 10.1101/2025.06.16.660018](https://doi.org/10.1101/2025.06.16.660018),
 [DOI 10.1021/jm300178u](https://doi.org/10.1021/jm300178u), and the RCSB entries
-7GN8, 7GNR, 3SPF, and 7KPA.
+7GN8, 7GNR, 3SPF, 3SP7, and 7KPA.
 
 ## Render a review or movie
 
@@ -100,9 +104,10 @@ bun scripts/render-structure-story.mjs \
   --story design-history/structure-viewer/bclxl-fragment-linking.json
 ```
 
-Every distinct cue is captured once. The render manifest maps that PNG to the
-exact frame range in the movie schedule and records the campaign hash, movie
-hash, renderer hash, Chrome build, viewport, file digest, and optional MP4
+Every structure-story frame is selected through `structureStory.selectFrame`
+on the public Chemist Actions API. The render manifest associates each captured
+frame with its API sequence number and pins a complete `chemist-action-audit.json`
+alongside the renderer hash, Chrome build, viewport, file digests, and MP4
 digest. Story inputs and frame schedules are byte-deterministic. Raster output
 is provenance-pinned rather than claimed to be byte-identical across different
 browser, operating-system, font-rasterization, or codec builds.
@@ -116,10 +121,12 @@ Raw RCSB coordinate files and their SHA-256 digests are pinned under
 `structures/`. The reproducible asset builder extracts chain, 5 Å pocket, and
 ligand views. For the DNDI-6510 comparison it aligns 7GNR chain A onto 7GN8
 chain A using 305 matched Cα atoms (0.209 Å RMSD), allowing a direct overlay of
-the two experimental ligands. The renderer never promotes a literature design
-without curated coordinates into an invented 3D pose. Such branches remain
-visible in the decision record while the last supported experimental structure
-stays on screen.
+the two experimental ligands. For BCL-xL, compound 4 remains the exact 3SPF
+pose. Compounds 6, 7, 16, and 21 use exact literature graphs and deterministic
+scaffold-constrained reconstruction against the aligned 3SP7/03B receptor
+complex. Those states are always labeled as visualization hypotheses—not
+deposited structures or docking predictions—and pass pinned identity, scaffold,
+and receptor-contact gates.
 
 ## Trust and privacy boundary
 

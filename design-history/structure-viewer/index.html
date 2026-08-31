@@ -18,7 +18,7 @@
     .controls{display:grid;grid-template-columns:38px 1fr 38px;gap:8px;align-items:center;margin-top:24px}.controls button{width:38px;height:34px;border-radius:9px;border:1px solid #c8d3df;background:#fff;color:var(--ink);font-size:20px;cursor:pointer}.controls input{width:100%;accent-color:#247d95}.sources{margin-top:18px;font-size:11px;color:var(--muted)}.sources summary{cursor:pointer;font-weight:700}.sources a{display:block;color:#3f6f82;text-decoration:none;margin-top:5px}
     #stage{position:relative;min-width:0;background:#fff;overflow:hidden}#viewer{position:absolute;inset:0}.msp-plugin{background:#fff!important}
     #boot,#error{position:absolute;inset:0;z-index:10;display:grid;place-items:center;background:#f8fafb;color:var(--muted)}#error{display:none;color:#a33b28;padding:50px;text-align:center}
-    .topline{position:absolute;z-index:7;top:22px;left:24px;right:24px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}.badge{border:1px solid var(--line);border-radius:999px;background:#fffffff0;box-shadow:0 5px 18px #1d2b3a12;padding:7px 11px;font-size:11px;font-weight:750}.badge.experimental{color:var(--green)}
+    .topline{position:absolute;z-index:7;top:22px;left:24px;right:24px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}.badge{border:1px solid var(--line);border-radius:999px;background:#fffffff0;box-shadow:0 5px 18px #1d2b3a12;padding:7px 11px;font-size:11px;font-weight:750}.badge.experimental{color:var(--green)}.badge.reconstructed{color:#a45c1f}
     .legend{position:absolute;z-index:7;left:24px;bottom:22px;display:flex;gap:8px;pointer-events:none}.key{border:1px solid var(--line);border-radius:999px;background:#fffffff2;box-shadow:0 5px 18px #1d2b3a12;padding:7px 10px;font-size:11px;font-weight:700}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}.progress{height:3px;background:#dde5ec;position:absolute;z-index:8;left:0;right:0;bottom:0}.progress i{display:block;height:100%;background:linear-gradient(90deg,#2b7b91,var(--cyan));width:0}
     body.render aside{background:#ffffffee}body.render .controls,body.render .sources{display:none}
     @media(max-width:760px){main{grid-template-columns:1fr;grid-template-rows:250px minmax(0,1fr)}aside{padding:18px 20px;border-right:0;border-bottom:1px solid var(--line)}h1{font-size:22px;margin-top:10px}.subtitle{display:none}.cue-title{font-size:18px}.cue-body{font-size:13px}.cue-count{margin-top:12px}.sources{display:none}}
@@ -43,7 +43,7 @@
   </aside>
   <section id="stage">
     <div id="viewer"></div><div id="boot">Loading experimental structures…</div><div id="error"></div>
-    <div class="topline"><span class="badge experimental">Experimental coordinates</span><span class="badge" id="structure-label">7GN8</span></div>
+    <div class="topline"><span class="badge experimental" id="coordinate-class">Experimental coordinates</span><span class="badge" id="structure-label">7GN8</span></div>
     <div class="legend" id="legend"></div>
     <div class="progress"><i id="progress"></i></div>
   </section>

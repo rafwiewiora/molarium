@@ -15,6 +15,7 @@ const valueFor = (name) => {
   return args.find((entry) => entry.startsWith(`${name}=`))?.slice(name.length + 1);
 };
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
+const actionRequest = (action, args, requestId) => JSON.stringify({ action, args, requestId });
 const storyPath = resolve(root, valueFor('--story')
   || 'design-history/structure-viewer/moonshot-dndi-6510.json');
 const story = JSON.parse(await readFile(storyPath, 'utf8'));
@@ -36,16 +37,21 @@ const rendered = [];
 
 try {
   await waitFor(async () => browser.evaluate(`document.body.dataset.ready==='1'
-    && document.body.dataset.renderReady==='1'`), 90000, 'structure-story viewer');
+    && document.body.dataset.renderReady==='1'
+    && window.MolariumChemistActions?.schema==='molarium.chemist-actions/v1'`),
+  90000, 'public Chemist Actions structure-story API');
+  const apiDescription = await browser.evaluate(`window.MolariumChemistActions.describe()`);
   for (const [position, frameIndex] of selectedFrames.entries()) {
-    await browser.evaluate(`window.__molariumStructureStory.selectFrame(${frameIndex})`);
+    const envelope = await browser.evaluate(`window.MolariumChemistActions.execute(${actionRequest(
+      'structureStory.selectFrame', { frame:frameIndex }, `render-frame-${frameIndex}`)})`);
     await waitFor(async () => browser.evaluate(`document.body.dataset.frame==='${frameIndex}'
       && document.body.dataset.renderReady==='1'`), 90000, `structure frame ${frameIndex}`);
     const bytes = await browser.capturePng();
     const filename = `frame-${String(frameIndex).padStart(5, '0')}.png`;
     const destination = has('--smoke') ? join(output, filename) : join(temporaryFrames, filename);
     await writeFile(destination, bytes);
-    rendered.push({ frame:frameIndex, filename, sha256:digest(bytes), bytes:bytes.length,
+    rendered.push({ frame:frameIndex, actionSequence:envelope.sequence,
+      filename, sha256:digest(bytes), bytes:bytes.length,
       cueIndex:frames[frameIndex].cueIndex, cueProgress:frames[frameIndex].cueProgress });
     if ((position + 1) % 30 === 0 || position === selectedFrames.length - 1)
       console.log(`Rendered ${position + 1}/${selectedFrames.length} molecular frames`);
@@ -76,6 +82,11 @@ try {
     console.log(`Assembled ${video.filename} · ${video.frames} frames · ${video.sha256.slice(0, 12)}`);
   }
 
+  const actionAudit = await browser.evaluate(`window.MolariumChemistActions.history()`);
+  const auditBytes = Buffer.from(`${JSON.stringify({ schema:apiDescription.schema,
+    storyId:story.id, records:actionAudit }, null, 2)}\n`);
+  const auditPath = join(output, 'chemist-action-audit.json');
+  await writeFile(auditPath, auditBytes);
   const [rendererBytes, assetManifestBytes] = await Promise.all([
     readFile(fileURLToPath(import.meta.url)),
     readFile(join(root, 'design-history/structures/generated/manifest.json')),
@@ -85,6 +96,10 @@ try {
     assets:{ path:'design-history/structures/generated/manifest.json', sha256:digest(assetManifestBytes) },
     renderer:{ path:relative(root, fileURLToPath(import.meta.url)), sha256:digest(rendererBytes),
       browserProduct:browserVersion.product, userAgent:browserVersion.userAgent },
+    agentApi:{ schema:apiDescription.schema,
+      actions:Object.keys(apiDescription.actions), auditPath:relative(root, auditPath),
+      auditSha256:digest(auditBytes), auditRecords:actionAudit.length,
+      renderedFrameActions:rendered.length },
     viewport:{ width:story.width, height:story.height, deviceScaleFactor:1 }, fps:story.fps,
     complete:!has('--smoke'), expectedFrames:frames.length, renderedFrames:rendered, video };
   await writeFile(join(output, 'render-manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);

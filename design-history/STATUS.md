@@ -77,13 +77,15 @@ The deterministic outputs are under `design-history/stories/generated/`.
 
 ### BCL-xL fragment linking
 
-- 10 molecular commits, 32 events, 10 decisions.
+- 11 molecular commits, 35 events, 11 decisions, and 5 replayable trajectory scripts.
 - Preserves both the compound 7 route and linker branches that retained
   biochemical affinity but failed to translate to cellular activity.
 - Current campaign SHA-256:
-  `8668fe791923b32e3358ec13f11232f21da3e545aaedb8f3d53a015f6a89f0f2`
+  `3bab186b499d4716917b80177adbededd05f097cefa880c4b91999eb9b10b659`
 - Primary source: DOI `10.1021/jm300178u`, PMID `22448988`, PMCID `PMC3397176`.
-- Exact CCD structure B50 from PDB 3SPF is used for compound 4.
+- Exact CCD structure B50 from PDB 3SPF is used for compound 4. Exact literature
+  graphs for compounds 6, 7, 16, and 21 are reconstructed against the aligned
+  3SP7/03B complex and remain explicitly labeled as reconstructed.
 
 ### Executable 7KPA rehearsal
 
@@ -164,19 +166,21 @@ Reasonable next increments, not blockers for this release:
 ## Post-merge molecular movie increment
 
 Branch `feature/structure-story-movies` adds the first real-coordinate story
-renderer. Public RCSB PDB files 7GN8, 7GNR, and 3SPF are source-hashed; derived
+renderer. Public RCSB PDB files 7GN8, 7GNR, 3SPF, and 3SP7 are source-hashed; derived
 protein, 5 Å pocket, ligand, interaction, and aligned-overlay assets are
 reproducibly generated. A standalone Mol* viewer provides deterministic camera
 interpolation and frame selection for:
 
 - the experimental `(S)-x1` 7GN8 → `(S)-x38` 7GNR DNDI-6510 comparison; and
-- the experimental 3SPF BCL-xL compound-4 starting complex.
+- the experimental 3SPF BCL-xL compound-4 starting complex and the API-replayed
+  4→6→7→16→21 trajectory, with reconstructed states visibly separated from
+  experimental coordinates.
 
-The DNDI-6510 MP4 is rendered from every scheduled molecular frame rather than
-from repeated slide images. The render manifest records the story, structure
-asset manifest, renderer, browser, viewport, frame hashes, MP4 hash, and exact
-frame count. Literature branches without established coordinates remain prose
-and graph evidence; they are not drawn as guessed poses.
+Structure-story MP4s are rendered from every scheduled molecular frame rather
+than from repeated slide images. Every frame transition uses the public Chemist
+Actions API, and the render manifest pins the complete API audit beside the
+story, structure assets, renderer, browser, viewport, frame hashes, MP4 hash,
+and exact frame count.
 
 ## Development constraints
 

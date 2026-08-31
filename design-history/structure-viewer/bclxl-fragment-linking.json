@@ -1,68 +1,82 @@
 {
   "schema": "molarium.structure-story/v1",
   "id": "bclxl-fragment-linking",
-  "title": "A bound start for BCL-xL design",
-  "subtitle": "Fragment linking viewed from the 3SPF crystal structure",
+  "title": "Five molecular steps to a potent BCL-xL inhibitor",
+  "subtitle": "Compound 4 → 6 → 7 → 16 → 21, anchored to 3SPF and explicitly reconstructed where no deposited pose exists",
   "width": 1600,
   "height": 900,
   "fps": 18,
-  "assetManifest": "../structures/generated/manifest.json",
+  "assetManifest": "../structures/generated/bclxl-trajectory-manifest.json",
   "sources": [
     {
-      "label": "Discovery of potent BCL-xL inhibitors",
+      "label": "Design of Bcl-2 and Bcl-xL inhibitors with subnanomolar binding affinities",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3397176/"
     },
-    { "label": "3SPF", "url": "https://www.rcsb.org/structure/3SPF" }
+    { "label": "3SPF · experimental compound 4", "url": "https://www.rcsb.org/structure/3SPF" },
+    { "label": "3SP7 · structural constraint", "url": "https://www.rcsb.org/structure/3SP7" }
   ],
   "legend": [
-    { "label": "compound 4 · 3SPF", "color": "#247d95" },
+    { "label": "compound 4 · experimental", "color": "#247d95" },
+    { "label": "6/7/16/21 · reconstructed", "color": "#dc8747" },
     { "label": "5 Å contact shell", "color": "#5f7289" }
   ],
   "cameras": {
     "overview": { "target": [35.106, 14.91, -13.149], "radius": 27, "view": [1, 0.35, 0.7] },
     "pocket": { "target": [27.992, 10.239, -23.997], "radius": 9.4, "view": [1, 0.28, 0.78] },
-    "pocketOrbit": { "target": [27.992, 10.239, -23.997], "radius": 8.6, "view": [-0.15, 0.24, 1] },
-    "pocketReverse": { "target": [27.992, 10.239, -23.997], "radius": 8.9, "view": [-0.78, 0.18, 1] }
+    "linkedWide": { "target": [30.726, 20.024, -25.596], "radius": 19.5, "view": [0.9, 0.2, 1] },
+    "linkedOrbit": { "target": [30.65, 19.5, -24.5], "radius": 18, "view": [-0.15, 0.24, 1] },
+    "leadOrbit": { "target": [30.574, 19.2, -23.6], "radius": 17.5, "view": [-0.78, 0.18, 1] },
+    "optimized": { "target": [32.3, 19.2, -23.9], "radius": 17.5, "view": [0.72, 0.12, -1] },
+    "templatePocket": { "target": [34.165, 18.898, -24.066], "radius": 15.5, "view": [1, 0.28, 0.78] }
   },
   "scenes": {
-    "overview": { "label": "3SPF", "protein": "bclxl", "pocket": false, "bclxl": true },
-    "pocket": { "label": "3SPF", "protein": "bclxl", "pocket": "bclxl", "bclxl": true }
+    "compound4Overview": { "label": "Compound 4 · 138 µM", "coordinateClass": "experimental", "coordinateLabel": "Experimental coordinates · PDB 3SPF", "protein": "bclxl", "pocket": false, "bclxlState": "4" },
+    "compound4": { "label": "Compound 4 · 138 µM", "coordinateClass": "experimental", "coordinateLabel": "Experimental coordinates · PDB 3SPF", "protein": "bclxl", "pocket": "bclxl", "bclxlState": "4" },
+    "compound6": { "label": "Compound 6 · <1 nM", "coordinateClass": "reconstructed", "coordinateLabel": "Reconstructed pose · aligned 3SP7 constraint", "protein": "bclxlTemplate", "pocket": "bclxlTemplate", "bclxlState": "6" },
+    "compound7": { "label": "Compound 7 · <1 nM", "coordinateClass": "reconstructed", "coordinateLabel": "Reconstructed pose · aligned 3SP7 constraint", "protein": "bclxlTemplate", "pocket": "bclxlTemplate", "bclxlState": "7" },
+    "compound16": { "label": "Compound 16 · 0.43–0.65 µM cells", "coordinateClass": "reconstructed", "coordinateLabel": "Reconstructed pose · aligned 3SP7 constraint", "protein": "bclxlTemplate", "pocket": "bclxlTemplate", "bclxlState": "16" },
+    "compound21": { "label": "Compound 21 · 61–90 nM cells", "coordinateClass": "reconstructed", "coordinateLabel": "Reconstructed pose · aligned 3SP7 constraint", "protein": "bclxlTemplate", "pocket": "bclxlTemplate", "bclxlState": "21" }
   },
   "cues": [
     {
-      "title": "A crystallographic starting point",
-      "body": "Compound 4 occupies the BCL-xL binding groove in the published 3SPF structure.",
+      "id": "compound-4-crystal",
+      "title": "4 · a weak but useful crystal lead",
+      "body": "Compound 4 binds BCL-xL at 138 µM. Its tractable scaffold and exact 3SPF pose make it a structural starting point.",
       "detail": "Experimental structure · PDB 3SPF · ligand B50",
-      "scene": "overview", "durationMs": 1800,
-      "cameraStart": "overview", "cameraEnd": "overview"
-    },
-    {
-      "title": "Enter the groove",
-      "body": "The bound ligand and its local receptor environment become the design workspace.",
-      "detail": "Complete crystallographic ligand · 5 Å residue shell",
-      "scene": "pocket", "durationMs": 2600,
+      "scene": "compound4Overview", "durationMs": 1900,
       "cameraStart": "overview", "cameraEnd": "pocket"
     },
     {
-      "title": "Linking is a spatial hypothesis",
-      "body": "The medicinal-chemistry campaign tested whether linked recognition elements could preserve biochemical affinity and improve the series.",
-      "detail": "The later analogue graphs remain literature records; no uncurated pose is drawn",
-      "scene": "pocket", "durationMs": 2600,
-      "cameraStart": "pocket", "cameraEnd": "pocketOrbit"
+      "id": "compound-6-linked",
+      "title": "6 · link two weak recognition elements",
+      "body": "A 10.6 Å linker joins the Site 1 scaffold to a complementary Site 2 fragment, producing a greater than 10,000-fold affinity gain.",
+      "detail": "BCL-xL Ki <1 nM · cellular IC50 still >10 µM",
+      "scene": "compound6", "durationMs": 3000,
+      "cameraStart": "linkedWide", "cameraEnd": "linkedOrbit"
     },
     {
-      "title": "Potency was not the only gate",
-      "body": "Some potent biochemical designs were not progressed because their cellular translation was weak.",
-      "detail": "Rejected branches remain part of the campaign history",
-      "scene": "pocket", "durationMs": 2400,
-      "cameraStart": "pocketOrbit", "cameraEnd": "pocketReverse"
+      "id": "compound-7-linker",
+      "title": "7 · simplify and shorten the linker",
+      "body": "Removing the linker carbonyl shortens the connection to 9.9 Å while retaining subnanomolar binding and producing measurable cellular activity.",
+      "detail": "BCL-xL Ki <1 nM · cellular IC50 1.8–2.0 µM",
+      "scene": "compound7", "durationMs": 2800,
+      "cameraStart": "linkedOrbit", "cameraEnd": "leadOrbit"
     },
     {
-      "title": "Structure and decision remain distinct",
-      "body": "Molarium shows the exact 3SPF coordinates and links later decisions to their sources without inventing missing experimental poses.",
-      "detail": "Actual structure · explicit evidence boundary · retained negative decisions",
-      "scene": "overview", "durationMs": 2400,
-      "cameraStart": "pocketReverse", "cameraEnd": "overview"
+      "id": "compound-16-truncation",
+      "title": "16 · remove a non-interacting side chain",
+      "body": "The dihydroxybutyl group is truncated to methyl, reducing molecular burden while improving cellular potency.",
+      "detail": "BCL-xL Ki <1 nM · cellular IC50 0.43–0.65 µM",
+      "scene": "compound16", "durationMs": 2600,
+      "cameraStart": "leadOrbit", "cameraEnd": "optimized"
+    },
+    {
+      "id": "compound-21-pocket-fill",
+      "title": "21 · fill the remaining hydrophobic pocket",
+      "body": "An ethyl substituent fills a nearby hydrophobic pocket and the optimized inhibitor reaches 61–90 nM cellular activity.",
+      "detail": "BCL-2 and BCL-xL Ki <1 nM · reconstructed coordinates are a visualization hypothesis",
+      "scene": "compound21", "durationMs": 3200,
+      "cameraStart": "optimized", "cameraEnd": "templatePocket"
     }
   ]
 }

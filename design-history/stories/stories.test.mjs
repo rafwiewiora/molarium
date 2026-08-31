@@ -48,6 +48,15 @@ const bcl = records.get('bclxl-fragment-linking').campaign;
 assert.equal(bcl.events.filter((event) => event.kind === 'decision.recorded'
   && event.payload.disposition === 'not-progressed').length, 5);
 assert(bcl.events.some((event) => event.payload?.measuredGapAngstrom === 8.2));
+assert.equal(Object.keys(bcl.objects.actionScripts).length, 5);
+assert(Object.values(bcl.objects.actionScripts).every((script) =>
+  script.actions.map((step) => step.action).join(',') ===
+    'structureStory.load,structureStory.selectCue'));
+assert.deepEqual(new Set(Object.values(bcl.objects.actionScripts)
+  .map((script) => script.actions[1].args.cueId)), new Set([
+  'compound-4-crystal', 'compound-6-linked', 'compound-7-linker',
+  'compound-16-truncation', 'compound-21-pocket-fill',
+]));
 
 const rehearsal = records.get('molarium-7kpa-rehearsal').campaign;
 assert.equal(Object.keys(rehearsal.objects.actionScripts).length, 3);

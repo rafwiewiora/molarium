@@ -1,7 +1,7 @@
 {
   "schema": "molarium.structure-assets/v1",
   "curatedAt": "2026-08-30T00:00:00.000Z",
-  "sourceManifestSha256": "aeb9bf5fe01c19a2898f2842653a5d0f36ac722ced8dd1a512d503e38ed2d33b",
+  "sourceManifestSha256": "9a5e9d4c5b3791017ab9c269173c4bcbedeeeb8e66369641e30c4e6f59edf2f0",
   "alignment": {
     "reference": "7GN8 chain A",
     "mobile": "7GNR chain A",
@@ -28,6 +28,34 @@
       0.192787527581,
       -0.070726632863,
       0.078630565271
+    ]
+  },
+  "bclxlAlignment": {
+    "reference": "3SPF chain A",
+    "mobile": "3SP7 chain A",
+    "pairedAlphaCarbons": 142,
+    "rmsdAngstrom": 1.88802,
+    "rotation": [
+      [
+        0.053855297097,
+        -0.258815331284,
+        -0.964424300434
+      ],
+      [
+        -0.842083920788,
+        -0.53083633385,
+        0.095432997517
+      ],
+      [
+        -0.536650982786,
+        0.806986623778,
+        -0.246532577397
+      ]
+    ],
+    "translation": [
+      28.738765755912,
+      21.448568568699,
+      -29.648192439854
     ]
   },
   "complexes": {
@@ -97,6 +125,29 @@
         "radius": 8.207868641506812
       },
       "pocketResidues": 12
+    },
+    "bclxlTemplate": {
+      "pdbId": "3SP7",
+      "label": "BCL-xL BM903 structural template",
+      "ligandResidue": "03B A 210",
+      "alignedTo": "3SPF chain A",
+      "proteinSphere": {
+        "center": [
+          35.22679135494595,
+          15.145890274314233,
+          -12.830080631753948
+        ],
+        "radius": 24.992743382352447
+      },
+      "ligandSphere": {
+        "center": [
+          33.6352857142857,
+          17.917444444444445,
+          -24.323428571428575
+        ],
+        "radius": 12.44693954361953
+      },
+      "pocketResidues": 25
     }
   },
   "derived": {
@@ -146,6 +197,22 @@
     "3spf-ligand.pdb": {
       "sha256": "9243aa397ad93d98f52a3300b032cb114c3293a64d94756ff52813bf43856a57",
       "bytes": 6049,
+      "kind": "ligand"
+    },
+    "3sp7-aligned-protein.pdb": {
+      "sha256": "802448c99413a6bc5736ce723f41d0d827017127b0915480c4a72903248dee0c",
+      "bytes": 97498,
+      "kind": "protein"
+    },
+    "3sp7-aligned-pocket.pdb": {
+      "sha256": "664e93a269807af903d310c5bddbe9af5f4efa0ce682a5ab557881b5beabeb2a",
+      "bytes": 17389,
+      "kind": "pocket",
+      "cutoffAngstrom": 5
+    },
+    "3sp7-aligned-ligand.pdb": {
+      "sha256": "8b2c6d40bf257740094314f56e817ce1971f468930e424cb46ce01ebed6b06c2",
+      "bytes": 10261,
       "kind": "ligand"
     },
     "7gn8-interactions.mol": {
