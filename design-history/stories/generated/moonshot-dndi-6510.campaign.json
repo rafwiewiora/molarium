@@ -1069,18 +1069,74 @@
     {
       "actorId": "reported.moonshot-authors",
       "branch": "lead-optimization",
-      "eventId": "event:bfee19b32687a29708798df1441f717b9939d0f306a2cb3aa1c175563142b6a2",
+      "eventId": "event:1ea9a95059b92b24ada98c81579f683eea20d01e0c9a90cb696d9e226285de4b",
       "index": 23,
-      "kind": "measurement.recorded",
+      "kind": "decision.recorded",
       "occurredAt": "2025-06-17T00:00:23.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "superseded",
+        "evidenceIds": [],
+        "rationale": "Retained as a reported optimized lead, but x38 was selected for the candidate profile.",
+        "reasonCodes": [
+          "lower-priority"
+        ],
+        "targetCommitId": "commit:29ab4f3e54431bb1ea88239cb33ae8dac7635efc72d871c45fc8437201357624"
+      },
+      "previousEntrySha256": "5a09ee0482b0cec4dd3aa66246c3d3ca1b59eddfa8f9c2c77f8cb95295ee0801",
+      "recordedAt": "2026-08-30T18:00:23.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:29ab4f3e54431bb1ea88239cb33ae8dac7635efc72d871c45fc8437201357624"
+      ],
+      "entrySha256": "ae0da32414b836f71fc4faec3c4afa3ecec81a7a0b92d6cd91bbdd6c08d6c607"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "lead-optimization.x37",
+      "eventId": "event:8143865e1be4c4d4ede77efb20d0a2905d09a1a9238e4ca02a62b9938bc6b83a",
+      "index": 24,
+      "kind": "decision.recorded",
+      "occurredAt": "2025-06-17T00:00:24.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "superseded",
+        "evidenceIds": [],
+        "rationale": "Retained as a reported optimized lead, but x38 was selected for the candidate profile.",
+        "reasonCodes": [
+          "lower-priority"
+        ],
+        "targetCommitId": "commit:ffcae14481e0b553bf1f9fef66f7623be00538fbc4be2b46d39f1a5a04b63750"
+      },
+      "previousEntrySha256": "ae0da32414b836f71fc4faec3c4afa3ecec81a7a0b92d6cd91bbdd6c08d6c607",
+      "recordedAt": "2026-08-30T18:00:24.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:ffcae14481e0b553bf1f9fef66f7623be00538fbc4be2b46d39f1a5a04b63750"
+      ],
+      "entrySha256": "b50352bbb2523456f824e1d79fe799df6c519c83eb6b46597742215fe24dbb4d"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "lead-optimization",
+      "eventId": "event:e26af3a635835d576208e4e6615d6a278c5c66d7580c3914c5d96747e15c7a31",
+      "index": 25,
+      "kind": "measurement.recorded",
+      "occurredAt": "2025-06-17T00:00:25.000Z",
       "parentEventIds": [],
       "payload": {
         "claimStatus": "reported-in-source",
         "endpoint": "candidate profile",
         "result": "Key S1/S2 contacts preserved; rat microsomal clearance improved from 605 for x1 to 16 µL/min/mg for x38."
       },
-      "previousEntrySha256": "5a09ee0482b0cec4dd3aa66246c3d3ca1b59eddfa8f9c2c77f8cb95295ee0801",
-      "recordedAt": "2026-08-30T18:00:23.000Z",
+      "previousEntrySha256": "b50352bbb2523456f824e1d79fe799df6c519c83eb6b46597742215fe24dbb4d",
+      "recordedAt": "2026-08-30T18:00:25.000Z",
       "schema": "molarium.design-event/v1",
       "sourceIds": [
         "source.dndi-paper",
@@ -1089,20 +1145,20 @@
       "subjectIds": [
         "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c"
       ],
-      "entrySha256": "6747d79c7c002592e1c9f024a3dcbac2b728b83dfff792b04335713b585dc1d1"
+      "entrySha256": "7d846c8725bb2217773c1b4fa953942a550cfa7a089b175bb66c481295e82cd5"
     },
     {
       "actorId": "reported.moonshot-authors",
       "branch": "lead-optimization",
-      "eventId": "event:de8f53a96542ca3e15de6b840de300b30fc21f12bc6b9ba4b93a4cd47cccc8e2",
-      "index": 24,
+      "eventId": "event:8666202ebc355c11cff82b46b4c55ce5c7e9708ea79e7a0d9a8f0587c0d4c1a2",
+      "index": 26,
       "kind": "decision.recorded",
-      "occurredAt": "2025-06-17T00:00:24.000Z",
+      "occurredAt": "2025-06-17T00:00:26.000Z",
       "parentEventIds": [],
       "payload": {
         "disposition": "progressed",
         "evidenceIds": [
-          "event:bfee19b32687a29708798df1441f717b9939d0f306a2cb3aa1c175563142b6a2"
+          "event:e26af3a635835d576208e4e6615d6a278c5c66d7580c3914c5d96747e15c7a31"
         ],
         "rationale": "Advanced as DNDI-6510 after balancing potency, exposure, and Ames risk.",
         "reasonCodes": [
@@ -1112,8 +1168,8 @@
         ],
         "targetCommitId": "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c"
       },
-      "previousEntrySha256": "6747d79c7c002592e1c9f024a3dcbac2b728b83dfff792b04335713b585dc1d1",
-      "recordedAt": "2026-08-30T18:00:24.000Z",
+      "previousEntrySha256": "7d846c8725bb2217773c1b4fa953942a550cfa7a089b175bb66c481295e82cd5",
+      "recordedAt": "2026-08-30T18:00:26.000Z",
       "schema": "molarium.design-event/v1",
       "sourceIds": [
         "source.dndi-paper",
@@ -1122,23 +1178,23 @@
       "subjectIds": [
         "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c"
       ],
-      "entrySha256": "52614be73ce0d54e98d1e79618978b6af998bde33713b713a8169b9d29933b03"
+      "entrySha256": "a34cfebafe7ad69b6c47d5f052362934751d0b4d3385e41af11333b0bc7bb2a4"
     },
     {
       "actorId": "reported.moonshot-authors",
       "branch": "lead-optimization",
-      "eventId": "event:1bc2f3d3fb2b1a8f6735a6a5f3ea81eb86470197a5f625085802fd127ba05856",
-      "index": 25,
+      "eventId": "event:5da66b03d98f8628a21a6acbf393dfc1ab28a52670c5d5cb9a2aca04b40b9469",
+      "index": 27,
       "kind": "measurement.recorded",
-      "occurredAt": "2025-06-17T00:00:25.000Z",
+      "occurredAt": "2025-06-17T00:00:27.000Z",
       "parentEventIds": [],
       "payload": {
         "claimStatus": "reported-in-source",
         "endpoint": "repeat dosing and nuclear hormone receptor induction",
         "result": "Exposure fell on repeat dosing in rodents; cross-species assays indicated PXR-linked induction."
       },
-      "previousEntrySha256": "52614be73ce0d54e98d1e79618978b6af998bde33713b713a8169b9d29933b03",
-      "recordedAt": "2026-08-30T18:00:25.000Z",
+      "previousEntrySha256": "a34cfebafe7ad69b6c47d5f052362934751d0b4d3385e41af11333b0bc7bb2a4",
+      "recordedAt": "2026-08-30T18:00:27.000Z",
       "schema": "molarium.design-event/v1",
       "sourceIds": [
         "source.dndi-paper"
@@ -1146,20 +1202,20 @@
       "subjectIds": [
         "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c"
       ],
-      "entrySha256": "55a5e9c88e0e70df84634d598e41012bd07ae9f9f93d2100140f76a49d29e13e"
+      "entrySha256": "debba998d89811684866d637928e1f792109ffd8c52df1997fc3538320b6eed7"
     },
     {
       "actorId": "reported.moonshot-authors",
       "branch": "lead-optimization",
-      "eventId": "event:48834e264ca5334b62af781ccf70f08433b2cbfc830bece63a4fb831e208601b",
-      "index": 26,
+      "eventId": "event:91e292287191eb46947287d9b6717deb49b73eb45d929550e2dfb38545c9565c",
+      "index": 28,
       "kind": "decision.recorded",
-      "occurredAt": "2025-06-17T00:00:26.000Z",
+      "occurredAt": "2025-06-17T00:00:28.000Z",
       "parentEventIds": [],
       "payload": {
         "disposition": "archived",
         "evidenceIds": [
-          "event:1bc2f3d3fb2b1a8f6735a6a5f3ea81eb86470197a5f625085802fd127ba05856"
+          "event:5da66b03d98f8628a21a6acbf393dfc1ab28a52670c5d5cb9a2aca04b40b9469"
         ],
         "rationale": "Preclinical development was discontinued after repeat dosing could not exceed predicted efficacious human exposure in two rodent species.",
         "reasonCodes": [
@@ -1168,8 +1224,8 @@
         ],
         "targetCommitId": "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c"
       },
-      "previousEntrySha256": "55a5e9c88e0e70df84634d598e41012bd07ae9f9f93d2100140f76a49d29e13e",
-      "recordedAt": "2026-08-30T18:00:26.000Z",
+      "previousEntrySha256": "debba998d89811684866d637928e1f792109ffd8c52df1997fc3538320b6eed7",
+      "recordedAt": "2026-08-30T18:00:28.000Z",
       "schema": "molarium.design-event/v1",
       "sourceIds": [
         "source.dndi-paper"
@@ -1177,13 +1233,13 @@
       "subjectIds": [
         "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c"
       ],
-      "entrySha256": "faceabc206266b3d18a7ec0056f884a21394acd2586022ea8455a7d39f1e697e"
+      "entrySha256": "81b42824d3fac33a3338c2b39783d34bb24378f3ad85f05068d81eac44b0e933"
     },
     {
       "actorId": "curator.sol",
       "branch": "main",
       "eventId": "event:c445632e9ff4755a75fea526dd23a995cf6203c015f4bbf5a603a07d37cfbeee",
-      "index": 27,
+      "index": 29,
       "kind": "campaign.completed",
       "occurredAt": "2026-08-30T18:30:00.000Z",
       "parentEventIds": [],
@@ -1199,13 +1255,13 @@
           "main": "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c"
         }
       },
-      "previousEntrySha256": "faceabc206266b3d18a7ec0056f884a21394acd2586022ea8455a7d39f1e697e",
+      "previousEntrySha256": "81b42824d3fac33a3338c2b39783d34bb24378f3ad85f05068d81eac44b0e933",
       "recordedAt": "2026-08-30T18:30:00.000Z",
       "schema": "molarium.design-event/v1",
       "sourceIds": [],
       "subjectIds": [],
-      "entrySha256": "a5a3a99518221db2079b0815b63257930100227e1d27113df7d5b8a687e854c8"
+      "entrySha256": "0a8677485cb0fe6f1d45158163c75c7a266f343e0082ddd1a7069c1699651465"
     }
   ],
-  "campaignSha256": "cb1ed98c6ae0598ae218d05ee8da7d02337414f772c4ee7f2b9a1a91a5eda178"
+  "campaignSha256": "39ff4d2fd81b367b8527643646e6890c44f69822a4e5bb1837bfd5ccb07b1e95"
 }

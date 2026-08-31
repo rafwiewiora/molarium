@@ -18,6 +18,10 @@
     "test:validation-registry": "node validation/validate-registry.mjs && node validation/dashboard.test.mjs",
     "test:local-lab": "bun local-lab-test.js",
     "test:development-log": "bun scripts/export-codex-session-test.mjs",
+    "build:design-stories": "node design-history/stories/build-pilot-stories.mjs",
+    "test:design-history": "npm run build:design-stories && node design-history/design-history.test.mjs && node design-history/stories/stories.test.mjs && node design-history/viewer/model.test.mjs",
+    "test:design-history-browser": "bun design-history/viewer/browser.test.mjs",
+    "render:design-story": "bun scripts/render-design-story.mjs",
     "test:logo": "bun scripts/molarium-logo-test.mjs",
     "test:docking": "node docking/test.mjs && node docking/manual-hbond.test.mjs && node docking/restraint-biased-search.test.mjs && node docking/ring-conformer-generator.test.mjs && node chemist-actions.test.mjs",
     "test:chemist-actions": "node chemist-actions.test.mjs",
@@ -68,8 +72,8 @@
     "test:stormm-constraints": "node stormm/test.mjs --constraints-only",
     "test:stormm-openmm": "node stormm/openmm-reference-validation.mjs",
     "benchmark:stormm": "node stormm/openmm-reference-validation.mjs --benchmark",
-    "test:ci:scientific": "npm run test:validation-registry && npm run test:docking && npm run test:enumerations && npm run test:7kpa-analogue-panel && npm run test:7kpa-manual-contacts && npm run test:cloud-panel-packet && npm run test:cloud-panel-shortlist && npm run test:openmm-wasm && npm run test:pose-viewer && npm run test:openfold-features && npm run test:logo && npm run test:development-log",
-    "test:ci:browser": "npm run test:docking-browser && npm run test:2d && npm run test:chemist-actions-browser && npm run test:manual-hbond-browser && npm run test:chemist-actions-production && npm run test:openmm-worker-browser",
+    "test:ci:scientific": "npm run test:validation-registry && npm run test:docking && npm run test:enumerations && npm run test:7kpa-analogue-panel && npm run test:7kpa-manual-contacts && npm run test:cloud-panel-packet && npm run test:cloud-panel-shortlist && npm run test:openmm-wasm && npm run test:pose-viewer && npm run test:openfold-features && npm run test:logo && npm run test:development-log && npm run test:design-history",
+    "test:ci:browser": "npm run test:docking-browser && npm run test:2d && npm run test:chemist-actions-browser && npm run test:manual-hbond-browser && npm run test:chemist-actions-production && npm run test:openmm-worker-browser && npm run test:design-history-browser",
     "test:ci:webgpu": "npm run test:stormm-webgpu"
   },
   "dependencies": {

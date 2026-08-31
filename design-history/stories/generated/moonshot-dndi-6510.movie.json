@@ -1,6 +1,6 @@
 {
   "campaignId": "moonshot-dndi-6510",
-  "campaignSha256": "cb1ed98c6ae0598ae218d05ee8da7d02337414f772c4ee7f2b9a1a91a5eda178",
+  "campaignSha256": "39ff4d2fd81b367b8527643646e6890c44f69822a4e5bb1837bfd5ccb07b1e95",
   "createdAt": "2026-08-30T18:31:00.000Z",
   "cues": [
     {
@@ -47,7 +47,7 @@
     {
       "commitId": "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c",
       "durationMs": 3000,
-      "eventId": "event:de8f53a96542ca3e15de6b840de300b30fc21f12bc6b9ba4b93a4cd47cccc8e2",
+      "eventId": "event:8666202ebc355c11cff82b46b4c55ce5c7e9708ea79e7a0d9a8f0587c0d4c1a2",
       "narration": "Multi-parameter optimization produces the structurally confirmed preclinical candidate.",
       "snapshotId": "snapshot:bbce1e35106ce245b628d93953d21706568a466648c3a490c9ca02b185e371d1",
       "title": "DNDI-6510 selected"
@@ -55,7 +55,7 @@
     {
       "commitId": "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c",
       "durationMs": 3200,
-      "eventId": "event:48834e264ca5334b62af781ccf70f08433b2cbfc830bece63a4fb831e208601b",
+      "eventId": "event:91e292287191eb46947287d9b6717deb49b73eb45d929550e2dfb38545c9565c",
       "narration": "The durable record keeps the later PXR-linked repeat-dose exposure failure beside the successful lead selection.",
       "title": "The program still stops"
     }
@@ -65,5 +65,5 @@
   "schema": "molarium.design-movie/v1",
   "title": "A complete lead-optimization history",
   "width": 1440,
-  "movieSha256": "9cb0cc9a60705184a292a987df058358fd8d908654a13c11465f4280ba2d24ed"
+  "movieSha256": "e713ae38e6752bf256330f64a5e8babe37366a1e1733767fbeb982cacfda4adb"
 }

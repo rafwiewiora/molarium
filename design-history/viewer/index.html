@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Molarium · Design history</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="../../index.html" aria-label="Molarium molecular studio">
+      <img src="../../assets/molarium-mark.svg" alt="">
+      <span>MOLARIUM</span><small>DESIGN HISTORY</small>
+    </a>
+    <div class="header-status"><span class="integrity-dot"></span><span id="integrity-label">Verifying record…</span></div>
+  </header>
+  <main>
+    <aside class="left-rail">
+      <section class="rail-section story-picker">
+        <label for="story-select">Campaign</label>
+        <select id="story-select"></select>
+        <h1 id="campaign-title">Loading campaign…</h1>
+        <p id="campaign-description"></p>
+      </section>
+      <section class="metrics" aria-label="Campaign summary">
+        <div><strong id="metric-designs">—</strong><span>designs</span></div>
+        <div><strong id="metric-decisions">—</strong><span>decisions</span></div>
+        <div><strong id="metric-stopped">—</strong><span>not advanced</span></div>
+      </section>
+      <section class="rail-section">
+        <h2>People and records</h2>
+        <div id="actors" class="actor-list"></div>
+      </section>
+      <details class="rail-section sources-panel">
+        <summary>Sources and provenance</summary>
+        <div id="sources"></div>
+        <div class="hash-block"><span>Campaign SHA-256</span><code id="campaign-hash"></code></div>
+        <div class="hash-block"><span>Movie SHA-256</span><code id="movie-hash"></code></div>
+      </details>
+    </aside>
+
+    <section class="workspace">
+      <div class="playback-bar">
+        <button id="previous-cue" class="icon-button" type="button" aria-label="Previous chapter">‹</button>
+        <button id="play" class="play-button" type="button">▶ Play history</button>
+        <button id="next-cue" class="icon-button" type="button" aria-label="Next chapter">›</button>
+        <div class="scrubber-wrap">
+          <input id="scrubber" type="range" min="0" max="1" value="0" aria-label="Movie position">
+          <div><span id="chapter-count">Chapter —</span><span id="movie-time">0:00</span></div>
+        </div>
+      </div>
+
+      <section class="molecule-stage" id="molecule-stage">
+        <div class="record-badge" id="record-badge">Record</div>
+        <div class="molecule-copy">
+          <div class="eyebrow" id="event-kind">Campaign record</div>
+          <h2 id="snapshot-title">—</h2>
+          <p id="narrative">—</p>
+          <div class="event-meta" id="event-meta"></div>
+        </div>
+        <div class="depiction-shell">
+          <div id="depiction" class="depiction"><div class="depiction-placeholder">Molecule record</div></div>
+          <div id="snapshot-properties" class="snapshot-properties"></div>
+        </div>
+      </section>
+
+      <section class="graph-panel">
+        <div class="section-heading">
+          <div><span>Decision graph</span><small>Every branch remains in the record</small></div>
+          <div class="graph-legend"><i class="progressed"></i>progressed <i class="stopped"></i>not progressed <i class="superseded"></i>superseded / archived</div>
+        </div>
+        <div id="graph-scroll" class="graph-scroll"><svg id="campaign-graph" role="img" aria-label="Campaign decision graph"></svg></div>
+      </section>
+    </section>
+
+    <aside class="right-rail">
+      <div class="timeline-heading"><span>Labbook</span><small id="event-total">— events</small></div>
+      <div id="timeline" class="timeline"></div>
+    </aside>
+  </main>
+  <div id="fatal" class="fatal" hidden></div>
+  <script type="module" src="./viewer.mjs"></script>
+</body>
+</html>
+

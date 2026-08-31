@@ -113,6 +113,26 @@ async function runCalculation(message) {
   const { id, job, molecule, options = {} } = message;
   const started = performance.now();
   const module = await getRDKit(id);
+  if (job === 'smiles-depict') {
+    const smiles = String(options.smiles || '').trim();
+    if (!smiles) throw new Error('A SMILES string is required');
+    let rdMol;
+    try {
+      rdMol = module.get_mol(smiles, JSON.stringify({ sanitize:true, removeHs:true }));
+      if (!rdMol) throw new Error('RDKit could not parse this SMILES string');
+      if (!rdMol.set_new_coords()) throw new Error('RDKit could not generate 2D coordinates');
+      const width = Math.max(240, Math.min(1200, Math.round(Number(options.width ?? 720))));
+      const height = Math.max(180, Math.min(900, Math.round(Number(options.height ?? 420))));
+      const svg = rdMol.get_svg_with_highlights(JSON.stringify({ width, height,
+        atoms:[], bonds:[], atomColors:{}, bondColors:{} }));
+      if (typeof svg !== 'string' || !svg.includes('<svg'))
+        throw new Error('RDKit returned an invalid 2D depiction');
+      self.postMessage({ type:'result', id, job, svg, canonicalSmiles:rdMol.get_smiles(),
+        rdkitVersion:module.version?.() || null, elapsedMs:performance.now() - started,
+        platform:'WebAssembly', backend:'RDKit MolDraw2D' });
+      return;
+    } finally { rdMol?.delete(); }
+  }
   if (job === 'depict') {
     if (!molecule?.atoms?.length || molecule.atoms.length > 256)
       throw new Error('2D depiction supports molecular components with 1–256 atoms');

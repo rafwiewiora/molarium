@@ -12,19 +12,19 @@
         "campaignId": "moonshot-dndi-6510",
         "title": "From Moonshot lead (S)-x1 to DNDI-6510",
         "commits": 9,
-        "events": 28,
-        "decisions": 8,
+        "events": 30,
+        "decisions": 10,
         "byDisposition": {
           "progressed": 3,
           "not-progressed": 4,
           "deferred": 0,
           "failed": 0,
           "duplicate": 0,
-          "superseded": 0,
+          "superseded": 2,
           "archived": 1
         },
         "branches": 8,
-        "campaignSha256": "cb1ed98c6ae0598ae218d05ee8da7d02337414f772c4ee7f2b9a1a91a5eda178"
+        "campaignSha256": "39ff4d2fd81b367b8527643646e6890c44f69822a4e5bb1837bfd5ccb07b1e95"
       }
     },
     {
@@ -62,10 +62,10 @@
         "campaignId": "molarium-7kpa-rehearsal",
         "title": "7KPA chemist-action rehearsal",
         "commits": 4,
-        "events": 13,
-        "decisions": 3,
+        "events": 14,
+        "decisions": 4,
         "byDisposition": {
-          "progressed": 2,
+          "progressed": 3,
           "not-progressed": 1,
           "deferred": 0,
           "failed": 0,
@@ -74,7 +74,7 @@
           "archived": 0
         },
         "branches": 4,
-        "campaignSha256": "a7ec193b1972bc93dd13fa95db4b174d2f03c37393eddebf20dc01cf8cfbbc4f"
+        "campaignSha256": "ef4f091831004b55d3e377386852860abc93a5be93cdd4b7d315de4330d4e5ad"
       }
     }
   ]

@@ -180,6 +180,12 @@ async function moonshotStory() {
     parents:[x31.commitId,x37.commitId], branch:'lead-optimization',
     message:'Select the structurally confirmed optimized candidate.', actorId:'reported.moonshot-authors',
     sourceIds:['source.dndi-paper','source.7gnr'], tags:['candidate','crystal-structure'] });
+  await decide(campaign, next, { targetCommitId:x31.commitId, disposition:'superseded',
+    reasonCodes:['lower-priority'], rationale:'Retained as a reported optimized lead, but x38 was selected for the candidate profile.',
+    actorId:'reported.moonshot-authors', branch:'lead-optimization', sourceIds:['source.dndi-paper'] });
+  await decide(campaign, next, { targetCommitId:x37.commitId, disposition:'superseded',
+    reasonCodes:['lower-priority'], rationale:'Retained as a reported optimized lead, but x38 was selected for the candidate profile.',
+    actorId:'reported.moonshot-authors', branch:'lead-optimization.x37', sourceIds:['source.dndi-paper'] });
   const x38Result = await addObservation(campaign, next, { actorId:'reported.moonshot-authors',
     branch:'lead-optimization', subjectIds:[x38.commitId], sourceIds:['source.dndi-paper','source.7gnr'],
     kind:'measurement.recorded', payload:reported({ endpoint:'candidate profile',
@@ -433,6 +439,9 @@ async function rehearsalStory() {
     properties:{ claimStatus:'infrastructure-fixture', graphSha256:'3132f29caf07242906a1e9c3d495cacb84f0ff70c1cb841f0a6655d27c9c8a4f',
       requiredContacts:4 }, message:'Capture the prepared crystallographic starting pose.',
     actorId:'system.browser', sourceIds:['source.7kpa'], tags:['starting-point','browser-fixture'] });
+  await decide(campaign, next, { targetCommitId:reference.commitId, disposition:'progressed',
+    reasonCodes:['other'], rationale:'Registered as the immutable control and parent for every stress transformation.',
+    actorId:'human.project-lead', sourceIds:['source.7kpa'] });
   const hypothesis = await addObservation(campaign, next, { actorId:'human.project-lead',
     kind:'hypothesis.proposed', subjectIds:[reference.commitId], sourceIds:['source.enumeration-catalogue'],
     payload:reconstruction({ statement:'Stress the method with acceptor replacements and a dual-scaffold change that disrupt the inherited graph to different degrees.',

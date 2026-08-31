@@ -65,11 +65,11 @@ The deterministic outputs are under `design-history/stories/generated/`.
 
 ### Moonshot lead to DNDI-6510
 
-- 9 molecular commits, 28 events, 8 decisions.
+- 9 molecular commits, 30 events, 10 decisions.
 - Explicitly retains four not-progressed approaches and the eventual archived
   program decision, not only the successful `(S)-x1 → (S)-x38` line.
 - Current campaign SHA-256:
-  `cb1ed98c6ae0598ae218d05ee8da7d02337414f772c4ee7f2b9a1a91a5eda178`
+  `39ff4d2fd81b367b8527643646e6890c44f69822a4e5bb1837bfd5ccb07b1e95`
 - Primary source: DOI `10.1101/2025.06.16.660018`, PMCID `PMC12262575`.
 - Exact CCD structures are used for RPZ in PDB 7GN8 and RZU in PDB 7GNR.
 
@@ -85,12 +85,12 @@ The deterministic outputs are under `design-history/stories/generated/`.
 
 ### Executable 7KPA rehearsal
 
-- 4 molecular commits, 13 events, 3 decisions.
+- 4 molecular commits, 14 events, 4 decisions.
 - Converts the three high-disruption enumeration plans to scripts containing
   only public Chemist Actions. The tetrahydropyran script demonstrates safe
   capture and reuse of the persistent ID returned for a newly added atom.
 - Current campaign SHA-256:
-  `a7ec193b1972bc93dd13fa95db4b174d2f03c37393eddebf20dc01cf8cfbbc4f`
+  `ef4f091831004b55d3e377386852860abc93a5be93cdd4b7d315de4330d4e5ad`
 - The pyrazole and tetrahydropyran cases progress through the registered
   development screen. The spiro case remains explicitly not progressed because
   contact feasibility coexisted with 11 clashes and +1870.38 kcal/mol raw
@@ -101,44 +101,57 @@ Literature reconstructions label claims as `reported-in-source` or
 authors used Molarium. The 7KPA story is separately labeled as an executable
 infrastructure rehearsal, not a medicinal-chemistry or affinity claim.
 
+## Viewer and renderer implemented
+
+`design-history/viewer/` is a standalone, responsive campaign review. It shows
+the verified molecule or an explicit no-structure-asserted placeholder, the
+decision graph, chronological labbook, actor types, progressed and stopped
+states, source locators, and campaign/movie hashes. The bundled RDKit
+WebAssembly worker draws canonical SMILES locally. Cue and frame URLs are
+deterministic, and playback, keyboard stepping, graph selection, and timeline
+selection all use the same movie manifest.
+
+`scripts/render-design-story.mjs` captures each unique cue in headless Chrome,
+hashes the PNGs, maps them to exact movie frame ranges, and optionally assembles
+an MP4 with FFmpeg. FFprobe must report the exact scheduled frame count or the
+render fails. The completed 7KPA demonstration has 324 frames at 30 fps,
+1440 × 900, and four provenance-linked cue images. Local output is ignored
+under `outputs/`; the render manifest records the browser, renderer, input, PNG,
+and video hashes.
+
+Browser QA found and fixed two issues before release: RDKit jobs initially
+missed the worker's required `type: run` envelope, and the custom fatal overlay
+CSS overrode its HTML `hidden` state. The smoke test now checks actual local SVG
+depiction, non-occluded layout, logo loading, campaign integrity, graph nodes,
+timeline events, and cue navigation.
+
 ## Tests currently passing
 
 ```text
-node design-history/design-history.test.mjs
-node design-history/stories/build-pilot-stories.mjs
+npm run test:design-history
+npm run test:design-history-browser
+npm run build:web
 ```
 
-The first command currently reports:
+The focused suite currently reports:
 
 ```text
 design-history tests passed: 7 events, 15 movie frames
+design-history story tests passed: 3 campaigns, complete commit dispositions, deterministic rebuild
+design-history viewer model tests passed: 9 commits, 8 branches
+design-history browser test passed: 4 commits, 9 labbook events, local SVG depiction
 ```
 
 ## Remaining work
 
-1. Add generated-story validation tests (source/fact labels, decision counts,
-   executable action boundaries, deterministic rebuild).
-2. Implement `design-history/viewer/`:
-   - campaign and story selector;
-   - branch graph plus chronological event rail;
-   - human / agent / system / imported-source badges;
-   - prominent progressed / not-progressed / deferred states;
-   - local RDKit 2D depiction when canonical SMILES is present;
-   - play, pause, step, scrub, and deterministic `?cue=` / `?frame=` URLs.
-3. Implement `scripts/render-design-story.mjs` with headless Chrome frame capture,
-   optional FFmpeg assembly, frame digests, and a render manifest.
-4. Add module and threat-model documentation, including redaction/privacy and
-   the distinction between historical reconstruction and executable replay.
-5. Add package scripts and production-build file entries; run focused tests,
-   full scientific CI, production build, and browser visual checks.
-6. Create and render at least one deterministic demonstration movie.
-7. Commit/push incremental work, open a PR to `dev`, monitor all checks, and
-   merge only when green. The user has authorized opening and merging this PR.
+1. Run the complete scientific and browser CI lanes from the finished branch.
+2. Commit and push this viewer/renderer checkpoint.
+3. Open a PR to `dev`, monitor all checks, and merge only when green. The user
+   has authorized opening and merging this PR.
 
 ## Development constraints
 
-- Work in `/Users/bb/repos/molarium-dev`, never the Marco repository for this
-  public feature.
+- Work only in the Molarium development checkout for this public feature.
 - Public files must not contain private project or proprietary application
   names.
 - Larger features use a PR into `dev`; push progress promptly.
@@ -147,4 +160,3 @@ design-history tests passed: 7 events, 15 movie frames
 - Keep rejected designs and failed replay attempts; never rewrite them away.
 - Use local bundled RDKit assets. No new network dependency is required by the
   story viewer.
-

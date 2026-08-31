@@ -67,3 +67,37 @@ actions, evidence, and decisions.
   PMID `22448988`, PMCID `PMC3397176`.
 - RCSB PDB entries 7GN8, 7GNR, 3SPF, and 7KPA.
 
+## Review and movie implementation
+
+The campaign record now drives a standalone review rather than a custom story
+page. The central record, branch graph, and chronological labbook are three
+views of the same verified objects. Selecting a graph node or labbook event
+moves the same cue state; a movie is therefore a deterministic schedule over
+the public record, not a separately edited account.
+
+Local RDKit WebAssembly draws only snapshots with an asserted canonical
+SMILES. Literature designs without a curated exact graph receive an explicit
+placeholder. This avoided a visually appealing but scientifically false guess.
+
+The first visual browser run exposed three implementation failures and changed
+the tests:
+
+1. The new depiction request lacked the RDKit worker's required `type: run`
+   envelope, so the interface waited forever. The browser test now requires a
+   local SVG before passing.
+2. The local server did not label SVG files as `image/svg+xml`, so `nosniff`
+   correctly blocked the logo. SVG and PNG MIME types are now explicit.
+3. The fatal-error overlay used an author `display:grid` rule that overrode its
+   `hidden` attribute, leaving a verified page blank. The test now checks both
+   computed overlay visibility and a painted central workspace.
+
+The initial FFmpeg concat-file implementation also repeated the last cue's
+full duration: a 324-frame manifest produced a 420-frame movie. The renderer
+now creates one explicitly timed image stream per cue and refuses the result
+unless FFprobe reports the exact scheduled frame count.
+
+The resulting render manifest records campaign and movie hashes, source paths,
+renderer hash, Chrome build, viewport, each cue PNG digest and frame range, and
+the optional MP4 digest. Story records and schedules are byte-deterministic.
+Raster bytes are provenance-pinned rather than claimed identical across
+different browser, font-rasterization, operating-system, or codec builds.
