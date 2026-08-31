@@ -10,6 +10,12 @@ Open the standalone review at
 [`/design-history/viewer/`](./viewer/index.html) while the Molarium server is
 running.
 
+The complementary molecular story viewer at
+[`/design-history/structure-viewer/`](./structure-viewer/index.html) uses the
+bundled Mol* renderer to show pinned experimental coordinates with deliberate
+overview, pocket-zoom, orbit, and crystal-overlay camera moves. It currently
+supports the 7GN8→7GNR DNDI-6510 story and the 3SPF BCL-xL starting complex.
+
 ## Record layers
 
 Three records have deliberately different responsibilities:
@@ -85,6 +91,13 @@ bun scripts/render-design-story.mjs \
 # Complete cue set and MP4
 bun scripts/render-design-story.mjs \
   --story moonshot-dndi-6510 --video
+
+# Every frame contains the actual 3D structure and interpolated Mol* camera
+bun scripts/render-structure-story.mjs
+
+# A second real-structure discovery example
+bun scripts/render-structure-story.mjs \
+  --story design-history/structure-viewer/bclxl-fragment-linking.json
 ```
 
 Every distinct cue is captured once. The render manifest maps that PNG to the
@@ -96,6 +109,17 @@ browser, operating-system, font-rasterization, or codec builds.
 
 Output defaults to ignored `outputs/design-history/<story>/`. Use `--output`
 to select another directory.
+
+### Experimental structure boundary
+
+Raw RCSB coordinate files and their SHA-256 digests are pinned under
+`structures/`. The reproducible asset builder extracts chain, 5 Å pocket, and
+ligand views. For the DNDI-6510 comparison it aligns 7GNR chain A onto 7GN8
+chain A using 305 matched Cα atoms (0.209 Å RMSD), allowing a direct overlay of
+the two experimental ligands. The renderer never promotes a literature design
+without curated coordinates into an invented 3D pose. Such branches remain
+visible in the decision record while the last supported experimental structure
+stays on screen.
 
 ## Trust and privacy boundary
 
@@ -111,4 +135,3 @@ to select another directory.
 - Executable scripts are recursively validated and may call only registered
   Chemist Actions. Direct coordinate injection, arbitrary callbacks, module
   imports, and internal chemistry shortcuts are rejected.
-

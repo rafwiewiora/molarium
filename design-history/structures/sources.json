@@ -1,0 +1,33 @@
+{
+  "schema": "molarium.structure-sources/v1",
+  "curatedAt": "2026-08-30T00:00:00.000Z",
+  "sources": [
+    {
+      "pdbId": "7GN8",
+      "file": "7GN8.pdb",
+      "url": "https://files.rcsb.org/download/7GN8.pdb",
+      "sha256": "db2ede287713e6f1a6b6c6d42b77271277b435bb164ea34d2d786f2bb1a5a836",
+      "campaign": "moonshot-dndi-6510",
+      "role": "starting co-crystal",
+      "ligand": { "resName": "RPZ", "chain": "A", "resSeq": 407, "label": "(S)-x1" }
+    },
+    {
+      "pdbId": "7GNR",
+      "file": "7GNR.pdb",
+      "url": "https://files.rcsb.org/download/7GNR.pdb",
+      "sha256": "4ef61c8314b27d7cf2bdd33b0d60b2520772be6d31db16f1828650f3cf3921c7",
+      "campaign": "moonshot-dndi-6510",
+      "role": "optimized co-crystal",
+      "ligand": { "resName": "RZU", "chain": "A", "resSeq": 408, "label": "(S)-x38 / DNDI-6510" }
+    },
+    {
+      "pdbId": "3SPF",
+      "file": "3SPF.pdb",
+      "url": "https://files.rcsb.org/download/3SPF.pdb",
+      "sha256": "f79ba2e551431d9b43a8c5379b9697fbc0f7ec15b76ee9a91ab043260d6b3d6d",
+      "campaign": "bclxl-fragment-linking",
+      "role": "published bound complex",
+      "ligand": { "resName": "B50", "chain": "A", "resSeq": 501, "label": "compound 4" }
+    }
+  ]
+}

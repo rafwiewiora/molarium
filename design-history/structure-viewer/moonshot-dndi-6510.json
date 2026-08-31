@@ -1,0 +1,103 @@
+{
+  "schema": "molarium.structure-story/v1",
+  "id": "moonshot-dndi-6510",
+  "title": "From Moonshot x1 to DNDI-6510",
+  "subtitle": "A crystal-to-crystal molecular design history",
+  "width": 1600,
+  "height": 900,
+  "fps": 18,
+  "assetManifest": "../structures/generated/manifest.json",
+  "sources": [
+    {
+      "label": "Open-science discovery of DNDI-6510",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12262575/"
+    },
+    { "label": "7GN8", "url": "https://www.rcsb.org/structure/7GN8" },
+    { "label": "7GNR", "url": "https://www.rcsb.org/structure/7GNR" }
+  ],
+  "legend": [
+    { "label": "(S)-x1 · 7GN8", "color": "#826cae" },
+    { "label": "(S)-x38 · 7GNR", "color": "#dc8747" },
+    { "label": "reported polar contacts", "color": "#54b8c8" }
+  ],
+  "cameras": {
+    "x1Overview": { "target": [-7.701, -7.082, 27.307], "radius": 42, "view": [1, 0.38, 0.72] },
+    "x1Pocket": { "target": [-20.11, 5.341, 28.979], "radius": 7.8, "view": [1, 0.32, 0.68] },
+    "x1PocketOrbit": { "target": [-20.11, 5.341, 28.979], "radius": 7.2, "view": [0.32, -0.2, 1] },
+    "overlayPocket": { "target": [-20.1, 5.55, 28.97], "radius": 7.4, "view": [-0.18, 0.24, 1] },
+    "x38Pocket": { "target": [-20.089, 5.748, 28.953], "radius": 7.8, "view": [-0.72, 0.2, 1] },
+    "x38Overview": { "target": [-7.552, -7.11, 27.282], "radius": 42, "view": [-0.7, 0.32, 1] }
+  },
+  "scenes": {
+    "x1": { "label": "7GN8", "protein": "x1", "pocket": false, "x1": true, "x38": false, "interactions": null },
+    "x1Pocket": { "label": "7GN8", "protein": "x1", "pocket": "x1", "x1": true, "x38": false, "interactions": "x1" },
+    "overlay": { "label": "7GN8 + aligned 7GNR", "protein": "x1", "pocket": "x1", "x1": true, "x38": true, "interactions": null },
+    "x38Pocket": { "label": "7GNR · aligned", "protein": "x38", "pocket": "x38", "x1": false, "x38": true, "interactions": "x38" },
+    "x38": { "label": "7GNR · aligned", "protein": "x38", "pocket": false, "x1": false, "x38": true, "interactions": null }
+  },
+  "cues": [
+    {
+      "title": "The starting crystal",
+      "body": "Moonshot compound (S)-x1 bound to SARS-CoV-2 Mpro.",
+      "detail": "Experimental structure · PDB 7GN8",
+      "scene": "x1",
+      "durationMs": 1600,
+      "cameraStart": "x1Overview",
+      "cameraEnd": "x1Overview"
+    },
+    {
+      "title": "Enter the binding site",
+      "body": "The camera follows the experimental ligand into the S1/S2 pocket.",
+      "detail": "No computed pose is substituted",
+      "scene": "x1Pocket",
+      "durationMs": 2600,
+      "cameraStart": "x1Overview",
+      "cameraEnd": "x1Pocket"
+    },
+    {
+      "title": "Preserve the binding logic",
+      "body": "The isoquinoline nitrogen and amide carbonyl retain the key polar contacts reported for the series.",
+      "detail": "His163 · Glu166 · cyan distance guides",
+      "scene": "x1Pocket",
+      "durationMs": 2400,
+      "cameraStart": "x1Pocket",
+      "cameraEnd": "x1PocketOrbit"
+    },
+    {
+      "title": "Optimize without losing the pose",
+      "body": "The program explored potency, solubility, permeability and metabolic stability while maintaining the S1/S2 interaction pattern.",
+      "detail": "Published design branches remain decisions—not invented 3D intermediates",
+      "scene": "overlay",
+      "durationMs": 2400,
+      "cameraStart": "x1PocketOrbit",
+      "cameraEnd": "overlayPocket"
+    },
+    {
+      "title": "Crystal-to-crystal comparison",
+      "body": "Aligned experimental poses of (S)-x1 and optimized (S)-x38 show the inherited binding mode directly.",
+      "detail": "7GN8 in purple · 7GNR in orange · 305-Cα alignment",
+      "scene": "overlay",
+      "durationMs": 2800,
+      "cameraStart": "overlayPocket",
+      "cameraEnd": "x38Pocket"
+    },
+    {
+      "title": "DNDI-6510",
+      "body": "The optimized compound preserves the key pocket interactions in its own experimental structure.",
+      "detail": "(S)-x38 · PDB 7GNR",
+      "scene": "x38Pocket",
+      "durationMs": 2400,
+      "cameraStart": "x38Pocket",
+      "cameraEnd": "overlayPocket"
+    },
+    {
+      "title": "A complete decision record",
+      "body": "The chemistry advanced; the series was later discontinued after PXR-linked induction findings. The negative decision belongs in the molecular history too.",
+      "detail": "Real structures · recorded branches · recorded stop decision",
+      "scene": "x38",
+      "durationMs": 2600,
+      "cameraStart": "x38Pocket",
+      "cameraEnd": "x38Overview"
+    }
+  ]
+}

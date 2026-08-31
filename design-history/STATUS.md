@@ -161,6 +161,23 @@ Reasonable next increments, not blockers for this release:
 4. Add signed release attestations if identity/authorship verification becomes
    necessary; the current SHA-256 hashes detect mutation but are not signatures.
 
+## Post-merge molecular movie increment
+
+Branch `feature/structure-story-movies` adds the first real-coordinate story
+renderer. Public RCSB PDB files 7GN8, 7GNR, and 3SPF are source-hashed; derived
+protein, 5 Å pocket, ligand, interaction, and aligned-overlay assets are
+reproducibly generated. A standalone Mol* viewer provides deterministic camera
+interpolation and frame selection for:
+
+- the experimental `(S)-x1` 7GN8 → `(S)-x38` 7GNR DNDI-6510 comparison; and
+- the experimental 3SPF BCL-xL compound-4 starting complex.
+
+The DNDI-6510 MP4 is rendered from every scheduled molecular frame rather than
+from repeated slide images. The render manifest records the story, structure
+asset manifest, renderer, browser, viewport, frame hashes, MP4 hash, and exact
+frame count. Literature branches without established coordinates remain prose
+and graph evidence; they are not drawn as guessed poses.
+
 ## Development constraints
 
 - Work only in the Molarium development checkout for this public feature.
