@@ -18,10 +18,12 @@ try {
     || !initial.state?.refs.includes('bclxl') || initial.privateApi !== 'undefined')
     throw Error(`BCL-xL overview failed: ${JSON.stringify(initial)}`);
   const states = [
-    ['compound-6-linked','compound6'], ['compound-7-linker','compound7'],
-    ['compound-16-truncation','compound16'], ['compound-21-pocket-fill','compound21'],
+    ['compound-6-linked','compound6','new bond and linker'],
+    ['compound-7-linker','compound7','carbonyl removed'],
+    ['compound-16-truncation','compound16','truncation complete'],
+    ['compound-21-pocket-fill','compound21','new ethyl pocket fill'],
   ];
-  for (const [cueId, scene] of states) {
+  for (const [cueId, scene, focusLabel] of states) {
     const selected = await browser.evaluate(`window.MolariumChemistActions.execute(${JSON.stringify({
       action:'structureStory.selectCue',args:{ cueId },
     })})`);
@@ -30,6 +32,7 @@ try {
       && document.body.dataset.renderReady==='1'`), 90000, `BCL-xL ${cueId}`);
     if (selected.result.scene !== scene || !selected.result.refs.includes('pocket')
       || !selected.result.refs.includes('bclxl')
+      || selected.result.focusLabel !== focusLabel
       || selected.result.camera.radius >= initial.state.camera.radius)
       throw Error(`BCL-xL state ${cueId} failed: ${JSON.stringify(selected.result)}`);
   }

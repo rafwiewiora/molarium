@@ -20,6 +20,7 @@
     #boot,#error{position:absolute;inset:0;z-index:10;display:grid;place-items:center;background:#f8fafb;color:var(--muted)}#error{display:none;color:#a33b28;padding:50px;text-align:center}
     .topline{position:absolute;z-index:7;top:22px;left:24px;right:24px;display:flex;align-items:center;justify-content:space-between;pointer-events:none}.badge{border:1px solid var(--line);border-radius:999px;background:#fffffff0;box-shadow:0 5px 18px #1d2b3a12;padding:7px 11px;font-size:11px;font-weight:750}.badge.experimental{color:var(--green)}.badge.reconstructed{color:#a45c1f}
     .legend{position:absolute;z-index:7;left:24px;bottom:22px;display:flex;gap:8px;pointer-events:none}.key{border:1px solid var(--line);border-radius:999px;background:#fffffff2;box-shadow:0 5px 18px #1d2b3a12;padding:7px 10px;font-size:11px;font-weight:700}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}.progress{height:3px;background:#dde5ec;position:absolute;z-index:8;left:0;right:0;bottom:0}.progress i{display:block;height:100%;background:linear-gradient(90deg,#2b7b91,var(--cyan));width:0}
+    .focus-marker{position:absolute;z-index:7;left:50%;top:50%;width:46px;height:46px;transform:translate(-50%,-50%);border:2px solid #54b8c8cc;border-radius:50%;box-shadow:0 0 0 7px #54b8c81c;pointer-events:none}.focus-marker:before,.focus-marker:after{content:"";position:absolute;background:#54b8c8cc}.focus-marker:before{width:14px;height:2px;left:14px;top:20px}.focus-marker:after{width:2px;height:14px;left:20px;top:14px}.focus-marker span{position:absolute;left:50%;top:54px;transform:translateX(-50%);white-space:nowrap;border:1px solid #b9dfe5;border-radius:999px;background:#fffffff2;padding:5px 9px;color:#216676;font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}.focus-marker[hidden]{display:none}
     body.render aside{background:#ffffffee}body.render .controls,body.render .sources{display:none}
     @media(max-width:760px){main{grid-template-columns:1fr;grid-template-rows:250px minmax(0,1fr)}aside{padding:18px 20px;border-right:0;border-bottom:1px solid var(--line)}h1{font-size:22px;margin-top:10px}.subtitle{display:none}.cue-title{font-size:18px}.cue-body{font-size:13px}.cue-count{margin-top:12px}.sources{display:none}}
   </style>
@@ -44,6 +45,7 @@
   <section id="stage">
     <div id="viewer"></div><div id="boot">Loading experimental structures…</div><div id="error"></div>
     <div class="topline"><span class="badge experimental" id="coordinate-class">Experimental coordinates</span><span class="badge" id="structure-label">7GN8</span></div>
+    <div class="focus-marker" id="focus-marker" hidden><span id="focus-label"></span></div>
     <div class="legend" id="legend"></div>
     <div class="progress"><i id="progress"></i></div>
   </section>

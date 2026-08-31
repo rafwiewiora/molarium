@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import { cameraFromView, easeInOut, expandStructureTimeline, interpolateCamera } from './timeline.mjs';
 
 assert.equal(easeInOut(0), 0);
@@ -17,4 +18,24 @@ assert.equal(frames[0].cueProgress, 0);
 assert.equal(frames[9].cueProgress, 1);
 assert.equal(frames[10].scene, 'b');
 assert.equal(frames.at(-1).cueProgress, 1);
+
+const bcl = JSON.parse(await readFile(new URL('./bclxl-fragment-linking.json', import.meta.url)));
+assert.equal(bcl.cues.length, 15, 'the five-state story uses approach, before, and after shots');
+assert(bcl.cues.every((cue) => cue.durationMs >= 1400), 'no BCL-xL camera cue is rushed');
+const focusCameras = Object.entries(bcl.cameras)
+  .filter(([name]) => /Focus|Reveal|Wide/.test(name)).map(([, camera]) => camera);
+assert.equal(new Set(focusCameras.map((camera) => JSON.stringify(camera.view))).size, 1,
+  'change-site shots keep one viewing direction instead of orbiting');
+for (const [beforeId, afterId] of [
+  ['link-site-before','compound-6-linked'],
+  ['linker-carbonyl-before','compound-7-linker'],
+  ['sidechain-before','compound-16-truncation'],
+  ['ethyl-pocket-before','compound-21-pocket-fill'],
+]) {
+  const before = bcl.cues.find((cue) => cue.id === beforeId);
+  const after = bcl.cues.find((cue) => cue.id === afterId);
+  assert.equal(before.cameraStart, before.cameraEnd, `${beforeId} must hold still before the edit`);
+  assert.equal(after.cameraStart, before.cameraEnd, `${afterId} must begin at the same change site`);
+  assert(before.focusLabel && after.focusLabel, `${beforeId} and ${afterId} need visible focus labels`);
+}
 console.log('structure timeline tests passed');

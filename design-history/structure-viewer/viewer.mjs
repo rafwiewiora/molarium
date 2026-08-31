@@ -66,12 +66,14 @@ function setCamera(camera){const base=V.plugin.canvas3d.camera.getSnapshot();V.p
 const afterPaint=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
 function paint(frame){
   const cue=STORY.cues[frame.cueIndex];currentFrame=frame.frame;$('timeline').value=String(frame.frame);
-  $('cue-count').textContent=`Scene ${frame.cueIndex+1} of ${STORY.cues.length}`;$('cue-title').textContent=cue.title;
+  $('cue-count').textContent=`Shot ${frame.cueIndex+1} of ${STORY.cues.length}`;$('cue-title').textContent=cue.title;
   $('cue-body').textContent=cue.body;$('cue-detail').textContent=cue.detail;
   $('progress').style.width=`${((frame.frame+1)/FRAMES.length)*100}%`;
   const scene=STORY.scenes[cue.scene];$('structure-label').textContent=scene.label||'Experimental structure';
   const coordinateClass=$('coordinate-class');coordinateClass.textContent=scene.coordinateLabel||'Experimental coordinates';
   coordinateClass.className=`badge ${scene.coordinateClass==='reconstructed'?'reconstructed':'experimental'}`;
+  const focusMarker=$('focus-marker');focusMarker.hidden=!cue.focusLabel;
+  $('focus-label').textContent=cue.focusLabel||'';document.body.dataset.focus=cue.focusLabel||'';
   document.body.dataset.frame=String(frame.frame);document.body.dataset.cue=String(frame.cueIndex);
 }
 async function selectFrameNow(index){
@@ -88,7 +90,8 @@ function inspectStory(){
   return { storyId:STORY?.id||null,title:STORY?.title||null,frame:frame?.frame??null,
     totalFrames:FRAMES.length,cueId:cue?.id||null,cueIndex:frame?.cueIndex??null,
     cueStartFrame:cueFrames[0]?.frame??null,cueEndFrame:cueFrames.at(-1)?.frame??null,
-    scene:currentScene,refs:Object.keys(refs),camera:V?.plugin?.canvas3d?.camera?.getSnapshot?.()||null };
+    focusLabel:cue?.focusLabel||null,scene:currentScene,refs:Object.keys(refs),
+    camera:V?.plugin?.canvas3d?.camera?.getSnapshot?.()||null };
 }
 async function loadStory(storyId){
   const path=STORY_REGISTRY[storyId];if(!path)throw Error(`Unknown registered structure story ${storyId}`);

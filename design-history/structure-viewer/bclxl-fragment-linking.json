@@ -23,11 +23,16 @@
   "cameras": {
     "overview": { "target": [35.106, 14.91, -13.149], "radius": 27, "view": [1, 0.35, 0.7] },
     "pocket": { "target": [27.992, 10.239, -23.997], "radius": 9.4, "view": [1, 0.28, 0.78] },
-    "linkedWide": { "target": [30.726, 20.024, -25.596], "radius": 19.5, "view": [0.9, 0.2, 1] },
-    "linkedOrbit": { "target": [30.65, 19.5, -24.5], "radius": 18, "view": [-0.15, 0.24, 1] },
-    "leadOrbit": { "target": [30.574, 19.2, -23.6], "radius": 17.5, "view": [-0.78, 0.18, 1] },
-    "optimized": { "target": [32.3, 19.2, -23.9], "radius": 17.5, "view": [0.72, 0.12, -1] },
-    "templatePocket": { "target": [34.165, 18.898, -24.066], "radius": 15.5, "view": [1, 0.28, 0.78] }
+    "linkFocus": { "target": [31.01, 15.15, -24.46], "radius": 5.8, "view": [1, 0.28, 0.72] },
+    "linkReveal": { "target": [31.01, 15.15, -24.46], "radius": 7.2, "view": [1, 0.28, 0.72] },
+    "linkedWide": { "target": [30.726, 20.024, -25.596], "radius": 19.5, "view": [1, 0.28, 0.72] },
+    "carbonylFocus": { "target": [37.65, 18.4, -28.73], "radius": 5.2, "view": [1, 0.28, 0.72] },
+    "carbonylReveal": { "target": [37.65, 18.4, -28.73], "radius": 6.4, "view": [1, 0.28, 0.72] },
+    "sidechainFocus": { "target": [29.61, 9.84, -18.75], "radius": 5.4, "view": [1, 0.28, 0.72] },
+    "sidechainReveal": { "target": [29.61, 9.84, -18.75], "radius": 6.6, "view": [1, 0.28, 0.72] },
+    "ethylFocus": { "target": [29.76, 8.87, -21.66], "radius": 5.0, "view": [1, 0.28, 0.72] },
+    "ethylReveal": { "target": [29.76, 8.87, -21.66], "radius": 6.3, "view": [1, 0.28, 0.72] },
+    "trajectoryWide": { "target": [34.165, 18.898, -24.066], "radius": 17.5, "view": [1, 0.28, 0.72] }
   },
   "scenes": {
     "compound4Overview": { "label": "Compound 4 · 138 µM", "coordinateClass": "experimental", "coordinateLabel": "Experimental coordinates · PDB 3SPF", "protein": "bclxl", "pocket": false, "bclxlState": "4" },
@@ -43,40 +48,128 @@
       "title": "4 · a weak but useful crystal lead",
       "body": "Compound 4 binds BCL-xL at 138 µM. Its tractable scaffold and exact 3SPF pose make it a structural starting point.",
       "detail": "Experimental structure · PDB 3SPF · ligand B50",
-      "scene": "compound4Overview", "durationMs": 1900,
+      "scene": "compound4Overview", "durationMs": 3200,
       "cameraStart": "overview", "cameraEnd": "pocket"
     },
     {
+      "id": "approach-link-site",
+      "title": "First, find the exit vector",
+      "body": "The camera moves once, without orbiting, to the scaffold atom used to reach the complementary recognition element.",
+      "detail": "One restrained move · then hold on the chemistry",
+      "scene": "compound4", "durationMs": 2800,
+      "cameraStart": "pocket", "cameraEnd": "linkFocus"
+    },
+    {
+      "id": "link-site-before",
+      "title": "Before · the Site 1 scaffold ends here",
+      "body": "Hold this atom in the center of the frame. The next state grows from this exact exit vector.",
+      "detail": "Change site · matched compound-4 atom",
+      "focusLabel": "linking exit vector",
+      "scene": "compound4", "durationMs": 1400,
+      "cameraStart": "linkFocus", "cameraEnd": "linkFocus"
+    },
+    {
       "id": "compound-6-linked",
-      "title": "6 · link two weak recognition elements",
+      "title": "After · 6 links two weak recognition elements",
       "body": "A 10.6 Å linker joins the Site 1 scaffold to a complementary Site 2 fragment, producing a greater than 10,000-fold affinity gain.",
       "detail": "BCL-xL Ki <1 nM · cellular IC50 still >10 µM",
+      "focusLabel": "new bond and linker",
+      "scene": "compound6", "durationMs": 2600,
+      "cameraStart": "linkFocus", "cameraEnd": "linkReveal"
+    },
+    {
+      "id": "reveal-linked-span",
+      "title": "Reveal the full linked molecule",
+      "body": "Only after the new connection is clear does the camera pull back to show the full two-site span.",
+      "detail": "Slow pullback · fixed viewing direction",
+      "scene": "compound6", "durationMs": 3200,
+      "cameraStart": "linkReveal", "cameraEnd": "linkedWide"
+    },
+    {
+      "id": "approach-linker-carbonyl",
+      "title": "Next, isolate the linker carbonyl",
+      "body": "The rest of the molecule is context. The edit is the single carbonyl at the junction to the distal recognition element.",
+      "detail": "Pan to one local chemical decision",
       "scene": "compound6", "durationMs": 3000,
-      "cameraStart": "linkedWide", "cameraEnd": "linkedOrbit"
+      "cameraStart": "linkedWide", "cameraEnd": "carbonylFocus"
+    },
+    {
+      "id": "linker-carbonyl-before",
+      "title": "Before · compound 6 contains this carbonyl",
+      "body": "Hold the carbonyl at screen center before changing the graph.",
+      "detail": "Change site · linker carbonyl",
+      "focusLabel": "carbonyl to remove",
+      "scene": "compound6", "durationMs": 1400,
+      "cameraStart": "carbonylFocus", "cameraEnd": "carbonylFocus"
     },
     {
       "id": "compound-7-linker",
-      "title": "7 · simplify and shorten the linker",
+      "title": "After · 7 removes the linker carbonyl",
       "body": "Removing the linker carbonyl shortens the connection to 9.9 Å while retaining subnanomolar binding and producing measurable cellular activity.",
       "detail": "BCL-xL Ki <1 nM · cellular IC50 1.8–2.0 µM",
-      "scene": "compound7", "durationMs": 2800,
-      "cameraStart": "linkedOrbit", "cameraEnd": "leadOrbit"
+      "focusLabel": "carbonyl removed",
+      "scene": "compound7", "durationMs": 2600,
+      "cameraStart": "carbonylFocus", "cameraEnd": "carbonylReveal"
+    },
+    {
+      "id": "approach-sidechain",
+      "title": "Now follow the non-interacting side chain",
+      "body": "A slow pan moves to the solvent-facing dihydroxybutyl substituent; the viewing direction stays fixed.",
+      "detail": "No orbit · one continuous pan",
+      "scene": "compound7", "durationMs": 3000,
+      "cameraStart": "carbonylReveal", "cameraEnd": "sidechainFocus"
+    },
+    {
+      "id": "sidechain-before",
+      "title": "Before · this side chain adds burden, not binding",
+      "body": "Hold on the attachment point and the group selected for truncation.",
+      "detail": "Change site · dihydroxybutyl-to-methyl truncation",
+      "focusLabel": "side chain to truncate",
+      "scene": "compound7", "durationMs": 1400,
+      "cameraStart": "sidechainFocus", "cameraEnd": "sidechainFocus"
     },
     {
       "id": "compound-16-truncation",
-      "title": "16 · remove a non-interacting side chain",
+      "title": "After · 16 removes the non-interacting side chain",
       "body": "The dihydroxybutyl group is truncated to methyl, reducing molecular burden while improving cellular potency.",
       "detail": "BCL-xL Ki <1 nM · cellular IC50 0.43–0.65 µM",
+      "focusLabel": "truncation complete",
       "scene": "compound16", "durationMs": 2600,
-      "cameraStart": "leadOrbit", "cameraEnd": "optimized"
+      "cameraStart": "sidechainFocus", "cameraEnd": "sidechainReveal"
+    },
+    {
+      "id": "approach-ethyl-pocket",
+      "title": "Finally, move to the open hydrophobic pocket",
+      "body": "The camera tracks to the pyrrole position beside the remaining pocket volume.",
+      "detail": "Pan to the final local design hypothesis",
+      "scene": "compound16", "durationMs": 3000,
+      "cameraStart": "sidechainReveal", "cameraEnd": "ethylFocus"
+    },
+    {
+      "id": "ethyl-pocket-before",
+      "title": "Before · the pocket beside compound 16 is unfilled",
+      "body": "Hold the attachment point at screen center before adding the ethyl group.",
+      "detail": "Change site · pyrrole 5-position",
+      "focusLabel": "open pocket",
+      "scene": "compound16", "durationMs": 1400,
+      "cameraStart": "ethylFocus", "cameraEnd": "ethylFocus"
     },
     {
       "id": "compound-21-pocket-fill",
-      "title": "21 · fill the remaining hydrophobic pocket",
+      "title": "After · 21 fills the remaining hydrophobic pocket",
       "body": "An ethyl substituent fills a nearby hydrophobic pocket and the optimized inhibitor reaches 61–90 nM cellular activity.",
       "detail": "BCL-2 and BCL-xL Ki <1 nM · reconstructed coordinates are a visualization hypothesis",
+      "focusLabel": "new ethyl pocket fill",
+      "scene": "compound21", "durationMs": 2800,
+      "cameraStart": "ethylFocus", "cameraEnd": "ethylReveal"
+    },
+    {
+      "id": "trajectory-summary",
+      "title": "Five states, four local design decisions",
+      "body": "Link, simplify, truncate, and fill: the camera returns to context only after each chemical change has been shown at its own site.",
+      "detail": "4 → 6 → 7 → 16 → 21 · fixed-direction camera grammar",
       "scene": "compound21", "durationMs": 3200,
-      "cameraStart": "optimized", "cameraEnd": "templatePocket"
+      "cameraStart": "ethylReveal", "cameraEnd": "trajectoryWide"
     }
   ]
 }
