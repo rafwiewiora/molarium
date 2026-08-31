@@ -58,8 +58,9 @@ feature transfer, Undo, and Redo therefore behave exactly as they do for an inte
 - `session.inspect`
 - `view.setMode`
 - `build.setTool`
+- `protein.prepare`, `protein.parameterize`
 - `selection.replace`, `selection.clear`
-- `chemistry.setAtom`, `chemistry.setBond`
+- `chemistry.setAtom`, `chemistry.setBond`, `chemistry.addAtom`, `chemistry.createBond`
 - `chemistry.deleteAtom`, `chemistry.deleteBond`
 - `chemistry.addHydrogen`, `chemistry.removeHydrogen`
 - `chemistry.finish`, `chemistry.discard`
@@ -67,6 +68,23 @@ feature transfer, Undo, and Redo therefore behave exactly as they do for an inte
 - `pose.captureReference`, `pose.setContact`, `pose.addContact`, `pose.forgetContact`,
   `pose.refine`, `pose.apply`
 - `optimization.run`
+- `designCampaign.load`, `designCampaign.applyStep`, `designCampaign.inspect`
+
+Registered design campaigns enforce a prospective coordinate boundary. `designCampaign.load`
+loads only the hash-pinned hit complex. `designCampaign.applyStep` accepts a persistent registered
+step ID and supplies only its molecular graph plus a graph-derived reference/product atom map; later
+protein or ligand coordinates are not available to the route. Evaluation holdouts remain locked
+until prediction coordinates and their action audit have been frozen.
+
+`protein.parameterize` assigns a new numeric force-field System after a registered graph edit and
+reports a coordinate-displacement audit. It does not minimize or otherwise move the molecule. This
+lets a frozen predicted intermediate become the reference for the next registered design step
+without importing a later crystal or conflating parameter assignment with relaxation.
+
+`optimization.run` also exposes `induced-fit-webgpu` for registered hit-only replays. It releases
+the ligand and every atom of protein residues entering a 6 Å pocket shell, including local
+backbone atoms, while the outer complex remains fixed. This is an experimental local induced-fit
+minimization, not an ensemble or a binding-affinity calculation.
 
 The structure-story viewer exposes a separate scope of the same public API:
 

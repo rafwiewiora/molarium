@@ -686,6 +686,8 @@ const state = {
   chemistryTransaction: null,
   chemistryEditFinishing: false,
   chemistActionAudit: [],
+  designCampaign: null,
+  designCampaignStepId: null,
   geometryEditActive: false,
   dragAtom: null,
   panningView: false,
@@ -1488,6 +1490,8 @@ const PROTEIN_RESIDUE_BONDS = Object.freeze({
   PRO: [['CA', 'CB'], ['CB', 'CG'], ['CG', 'CD'], ['CD', 'N']],
   SER: [['CA', 'CB'], ['CB', 'OG']],
   THR: [['CA', 'CB'], ['CB', 'OG1'], ['CB', 'CG2']],
+  TPO: [['CA', 'CB'], ['CB', 'OG1'], ['CB', 'CG2'], ['OG1', 'P'],
+    ['P', 'O1P', 2], ['P', 'O2P'], ['P', 'O3P']],
   TRP: [['CA', 'CB'], ['CB', 'CG'], ['CG', 'CD1', 1.5], ['CD1', 'NE1', 1.5], ['NE1', 'CE2', 1.5],
     ['CE2', 'CD2', 1.5], ['CD2', 'CG', 1.5], ['CD2', 'CE3', 1.5], ['CE3', 'CZ3', 1.5],
     ['CZ3', 'CH2', 1.5], ['CH2', 'CZ2', 1.5], ['CZ2', 'CE2', 1.5]],
@@ -1557,6 +1561,7 @@ const PROTEIN_SIDECHAIN_HYDROGENS = Object.freeze({
   PRO: { CB: 2, CG: 2, CD: 2 },
   SER: { CB: 2, OG: 1 },
   THR: { CB: 1, OG1: 1, CG2: 3 },
+  TPO: { CB: 1, CG2: 3 },
   TRP: { CB: 2, CD1: 1, NE1: 1, CE3: 1, CZ3: 1, CH2: 1, CZ2: 1 },
   TYR: { CB: 2, CD1: 1, CE1: 1, CE2: 1, CD2: 1, OH: 1 },
   VAL: { CB: 1, CG1: 3, CG2: 3 },
@@ -1697,6 +1702,7 @@ function proteinHeavyAtomElement(atomName) {
   if (/^O/.test(atomName)) return 'O';
   if (/^N/.test(atomName)) return 'N';
   if (/^S/.test(atomName)) return 'S';
+  if (/^P/.test(atomName)) return 'P';
   return 'C';
 }
 
@@ -2707,6 +2713,9 @@ function addStandardProteinHydrogens(inputMolecule, options = {}) {
     if (residue.residueName === 'CYS' && settings.pH >= 8.3) setCharge(residue, 'SG', -1);
     if (residue.residueName === 'TYR' && settings.pH >= 10.1) setCharge(residue, 'OH', -1);
     if (residue.residueName === 'HIS' && variants[residue.key] === 'HIP') setCharge(residue, 'NE2', 1);
+    if (residue.residueName === 'TPO') {
+      setCharge(residue, 'O2P', -1); setCharge(residue, 'O3P', -1);
+    }
     if (lastResidues.has(residue.key) && settings.pH >= 3.1
       && atomByResidueAndName.has(`${residue.key}:OXT`)) setCharge(residue, 'OXT', -1);
   });
@@ -3290,6 +3299,17 @@ function interactivePocketMovableAtomIndices(molecule = state.molecule) {
     if (adjacency[index].some((neighbor) => movable.has(neighbor))) movable.add(index);
   });
   return [...movable].sort((first, second) => first - second);
+}
+
+function inducedFitPocketMovableAtomIndices(molecule = state.molecule) {
+  if (!molecule?.atoms?.length) return [];
+  const pocket = proteinLigandPocket(molecule, 6, true);
+  if (!pocket.ligandIndices.size) return [];
+  // Unlike the fast pocket lane, the induced-fit lane releases the backbone
+  // and side chain of every residue entering the 6 Å shell.  Atoms outside
+  // that shell remain fixed and provide the covalent/structural boundary.
+  return [...new Set([...pocket.ligandIndices, ...pocket.pocketAtomIndices])]
+    .sort((first, second) => first - second);
 }
 
 function updatePocketControl() {
@@ -7309,6 +7329,59 @@ async function inspectChemistActionState({ scope = 'ligand', includeCoordinates 
     chemistActionAuditCount:state.chemistActionAudit.length });
 }
 
+const REGISTERED_DESIGN_CAMPAIGNS = Object.freeze({
+  'bclxl-hit-only':'./design-history/structures/generated/bclxl-prospective-campaign.json',
+  'cdk2-hit-only':'./design-history/structures/generated/cdk2-prospective-campaign.json',
+});
+
+async function fetchPinnedText(path, expectedSha256) {
+  const response = await fetch(path);
+  if (!response.ok) throw new Error(`Registered campaign asset could not be loaded (${response.status})`);
+  const bytes = await response.arrayBuffer();
+  const actualSha256 = await sha256Hex(bytes);
+  if (actualSha256 !== expectedSha256)
+    throw new Error(`Registered campaign asset hash mismatch: ${path}`);
+  return new TextDecoder().decode(bytes);
+}
+
+async function loadRegisteredDesignCampaign(campaignId) {
+  const path = REGISTERED_DESIGN_CAMPAIGNS[campaignId];
+  if (!path) throw new Error(`Unknown registered design campaign: ${campaignId}`);
+  const response = await fetch(path);
+  if (!response.ok) throw new Error(`Registered design campaign could not be loaded (${response.status})`);
+  const campaign = await response.json();
+  if (campaign?.schema !== 'molarium.design-campaign/v1' || campaign.id !== campaignId)
+    throw new Error('Registered design campaign has an invalid identity');
+  if (campaign.evaluation?.status !== 'locked-until-predictions-frozen'
+    || campaign.evaluation?.holdouts?.length)
+    throw new Error('A hit-only campaign cannot expose evaluation holdouts before prediction freeze');
+  const coordinateFilesRead = campaign.generator?.coordinateFilesRead || [];
+  const hitCoordinateToken = String(campaign.hit?.pdbId || '').toLowerCase();
+  if (!hitCoordinateToken || !coordinateFilesRead.length
+    || coordinateFilesRead.some((entry) => !String(entry).toLowerCase().includes(hitCoordinateToken)))
+    throw new Error('Registered design campaign has a non-hit coordinate dependency');
+  const [protein, ligand] = await Promise.all([
+    fetchPinnedText(campaign.hit.proteinAsset, campaign.hit.proteinSha256),
+    fetchPinnedText(campaign.hit.ligandAsset, campaign.hit.ligandSha256),
+  ]);
+  const molecule = parsePDB(`${protein.replace(/\nEND\s*$/m, '')}\n${ligand}`, {
+    pdbId:campaign.hit.pdbId, name:`${campaign.hit.pdbId} · registered hit`,
+  });
+  state.buildHistory = []; state.redoHistory = [];
+  loadMolecule(molecule); updateHistoryButtons();
+  state.designCampaign = structuredClone(campaign);
+  state.designCampaignStepId = campaign.hit.stateId;
+  state.molecule.source = { ...(state.molecule.source || {}), designCampaign:{
+    campaignId:campaign.id, hitPdbId:campaign.hit.pdbId,
+    stateId:campaign.hit.stateId, coordinateInputClass:'registered-hit-only',
+  } };
+  return { campaignId:campaign.id, title:campaign.title,
+    hit:{ pdbId:campaign.hit.pdbId, ligand:campaign.hit.ligand,
+      stateId:campaign.hit.stateId },
+    coordinateInputs:structuredClone(campaign.protocolBoundary.coordinateInputs),
+    availableSteps:campaign.steps.map((step) => step.id) };
+}
+
 function installChemistActionsApi(module) {
   const empty = (args) => chemistActionKeys(args);
   const summarizeMutation = async (operation) => {
@@ -7333,6 +7406,46 @@ function installChemistActionsApi(module) {
       const button = document.querySelector(`#build-tool-tabs [data-tool="${internalTool}"]`);
       if (!button) throw new Error(`The ${tool} tool is unavailable`);
       button.click(); return chemistActionSummary({ buildTool:tool }); },
+    'protein.prepare':async (args) => { chemistActionKeys(args,
+      ['pH','histidine','repairMissingHeavy','ligandPolicy','waterPolicy','gapPolicy']);
+      const options = normalizePdbPreparationOptions(args);
+      document.querySelector('#preparation-ph').value = options.pH.toFixed(1);
+      document.querySelector('#preparation-histidine').value = options.histidine;
+      document.querySelector('#preparation-repair-heavy').checked = options.repairMissingHeavy;
+      document.querySelector('#preparation-ligands').value = options.ligandPolicy;
+      document.querySelector('#preparation-waters').value = options.waterPolicy;
+      document.querySelector('#preparation-gaps').value = options.gapPolicy;
+      state.pdbPreparationPreview = null;
+      const localLigandDefinitions = state.designCampaign?.hit?.ligandDefinition
+        ? { [state.designCampaign.hit.ligand]:structuredClone(
+          state.designCampaign.hit.ligandDefinition) } : null;
+      const result = await prepareCurrentPdb(options, localLigandDefinitions);
+      if (!result) throw new Error('Protein preparation did not complete');
+      return chemistActionSummary({ preparation:{ atoms:result.atoms, bonds:result.bonds,
+        hydrogensAdded:result.hydrogensAdded, heavyAtomsAdded:result.heavyAtomsAdded,
+        ligandsPrepared:result.ligandsPrepared, forcefield:result.forcefield,
+        chargeModel:result.chargeModel,
+        parameterCounts:structuredClone(result.parameterCounts) } }); },
+    'protein.parameterize':async (args) => { empty(args);
+      if (!state.molecule?.atoms?.length) throw new Error('Load a molecular complex first');
+      const before = state.molecule.atoms.map((atom) => [atom.x, atom.y, atom.z]);
+      const parameters = await runOpenMMJob('parameters', state.molecule, () => {});
+      state.molecule.parameterization = {
+        forcefield:parameters.forcefield, chargeModel:parameters.chargeModel,
+        sourceSha256:parameters.sourceSha256, system:parameters.system,
+        labels:parameters.labels,
+      };
+      state.molecule.preparation = { ...(state.molecule.preparation || {}),
+        status:'parameterized-experimental', parameterized:true };
+      const maximumCoordinateDisplacement = Math.max(...state.molecule.atoms.map((atom, index) =>
+        Math.hypot(atom.x - before[index][0], atom.y - before[index][1], atom.z - before[index][2])));
+      updateOptimizerControls(); updateDockingUi(); updateInfo();
+      return chemistActionSummary({ parameterization:{
+        forcefield:parameters.forcefield, chargeModel:parameters.chargeModel,
+        sourceSha256:parameters.sourceSha256,
+        parameterCounts:structuredClone(parameters.parameterCounts),
+        maximumCoordinateDisplacementAngstrom:maximumCoordinateDisplacement,
+      } }); },
     'selection.replace':async (args) => { chemistActionKeys(args, ['atomIds']);
       if (state.mode !== 'build' || state.buildTool !== 'select')
         throw new Error('Enter Build mode and choose Select before selecting atoms.');
@@ -7512,7 +7625,7 @@ function installChemistActionsApi(module) {
         feasible:pose.feasible, scoreKcalMol:pose.totalScoreKcalMol } }); },
     'optimization.run':async (args) => { chemistActionKeys(args, ['method']);
       const method = chemistActionEnum(args.method,
-        ['ligand-rdkit','pocket-webgpu','webgpu','rdkit','ani2x'], 'method');
+        ['ligand-rdkit','pocket-webgpu','induced-fit-webgpu','webgpu','rdkit','ani2x'], 'method');
       if (state.mode !== 'build') throw new Error('Enter Build mode before optimizing.');
       const option = document.querySelector(`#build-optimizer-select option[value="${method}"]`);
       if (!option || option.disabled) throw new Error(`Optimization method ${method} is unavailable for this molecule`);
@@ -7524,6 +7637,50 @@ function installChemistActionsApi(module) {
         initialEnergy:result.initialEnergy ?? null, finalEnergy:result.finalEnergy ?? null,
         iterations:result.iterations ?? null, converged:result.converged ?? null,
         elapsedMs:result.elapsedMs ?? null } }); },
+    'designCampaign.load':async (args) => { chemistActionKeys(args, ['campaignId']);
+      if (typeof args.campaignId !== 'string' || !args.campaignId)
+        throw new Error('campaignId must be a registered design-campaign ID');
+      return chemistActionSummary({ designCampaign:await loadRegisteredDesignCampaign(args.campaignId) }); },
+    'designCampaign.applyStep':async (args) => { chemistActionKeys(args, ['stepId']);
+      if (!state.designCampaign) throw new Error('Load a registered design campaign first');
+      if (typeof args.stepId !== 'string' || !args.stepId)
+        throw new Error('stepId must be a registered design-step ID');
+      if (!state.dockingReference || state.dockingReference.mode !== 'pose-propagation')
+        throw new Error('Capture the hit with pose.captureReference before applying a design step');
+      const step = state.designCampaign.steps.find((entry) => entry.id === args.stepId);
+      if (!step) throw new Error(`Unknown registered design step: ${args.stepId}`);
+      if (step.referenceStateId && step.referenceStateId !== state.designCampaignStepId)
+        throw new Error(`Design step ${step.id} requires state ${step.referenceStateId}; current state is ${state.designCampaignStepId}`);
+      const hitContacts = state.dockingReference.hydrogenBonds.map((definition) => ({
+        kind:'hydrogen-bond', capturedId:definition.id, label:definition.label,
+      }));
+      const staged = await molariumTestApi.stageBenchmarkPoseProduct({
+        caseId:`${state.designCampaign.id}:${step.id}`,
+        productSmiles:step.productSmiles,
+        posePropagationMap:step.posePropagationMap,
+        productAtomNames:step.productAtomNames || null,
+        interactionHypotheses:hitContacts,
+      });
+      delete state.molecule.source.dockingBenchmark;
+      state.molecule.source.designCampaign = {
+        campaignId:state.designCampaign.id, hitPdbId:state.designCampaign.hit.pdbId,
+        stateId:step.stateId, stepId:step.id, inputKind:step.inputKind,
+        coordinateInputClass:'registered-hit-only',
+      };
+      state.designCampaignStepId = step.stateId;
+      return chemistActionSummary({ designStep:{ id:step.id, stateId:step.stateId,
+        referenceStateId:step.referenceStateId || null,
+        inputKind:step.inputKind, productHeavyAtoms:staged.productHeavyAtoms,
+        commonHitHeavyAtoms:staged.commonHeavyAtoms,
+        embedding:structuredClone(staged.embedding) } }); },
+    'designCampaign.inspect':async (args) => { empty(args);
+      if (!state.designCampaign) throw new Error('No registered design campaign is loaded');
+      return chemistActionSummary({ designCampaign:{ id:state.designCampaign.id,
+        hit:structuredClone(state.designCampaign.hit),
+        protocolBoundary:structuredClone(state.designCampaign.protocolBoundary),
+        currentStateId:state.designCampaignStepId,
+        evaluationStatus:state.designCampaign.evaluation.status,
+        availableSteps:state.designCampaign.steps.map((step) => step.id) } }); },
   };
   const api = module.createChemistActionsApi({ routes,
     enabledActions:module.CHEMIST_ACTION_SCOPES.application,
@@ -7592,6 +7749,7 @@ const molariumTestApi = Object.freeze({
       parameterCounts:structuredClone(parameters.parameterCounts) };
   },
   async stageBenchmarkPoseProduct({ caseId, productSmiles, posePropagationMap,
+    productAtomNames = null,
     interactionHypotheses = [] } = {}) {
     if (!state.dockingReference || state.dockingReference.mode !== 'pose-propagation')
       throw new Error('Capture a pose-propagation reference before staging a benchmark product');
@@ -7620,6 +7778,14 @@ const molariumTestApi = Object.freeze({
       [atomIndex, ordinal]));
     if (productHeavyIndices.length !== posePropagationMap.productHeavyAtoms)
       throw new Error(`Product heavy-atom count changed (${productHeavyIndices.length} != ${posePropagationMap.productHeavyAtoms})`);
+    if (productAtomNames != null) {
+      if (!Array.isArray(productAtomNames)
+        || productAtomNames.length !== productHeavyIndices.length
+        || productAtomNames.some((name) => typeof name !== 'string'
+          || !/^[A-Za-z][A-Za-z0-9]{0,7}$/.test(name))
+        || new Set(productAtomNames).size !== productAtomNames.length)
+        throw new Error('Registered product atom names must uniquely cover every heavy atom');
+    }
     const template = state.molecule.atoms[component.atomIndices[0]];
     const mappedPairs = [];
     for (const mapping of posePropagationMap.commonAtoms) {
@@ -7645,6 +7811,9 @@ const molariumTestApi = Object.freeze({
       referencePositions:reference.ligand.positions, coreAtomPairs:mappedPairs,
     });
     const alignedPositions = attachedPlacement.positions;
+    if (productAtomNames) productHeavyIndices.forEach((atomIndex, productAtomIndex) => {
+      product.atoms[atomIndex].atomName = productAtomNames[productAtomIndex];
+    });
     product.atoms.forEach((atom, index) => {
       atom.x = alignedPositions[index * 3]; atom.y = alignedPositions[index * 3 + 1];
       atom.z = alignedPositions[index * 3 + 2];
@@ -8750,13 +8919,14 @@ function activatePreparedProteinFixture(payload, labels) {
   };
 }
 
-async function prepareCurrentPdb() {
+async function prepareCurrentPdb(optionsOverride = null, suppliedCcdDefinitions = null) {
   if (state.preparing) return null;
   if (state.molecule?.source?.format !== 'pdb') throw new Error('Load a PDB structure first');
   const button = document.querySelector('#prepare-pdb');
   const status = document.querySelector('#pdb-preparation-status');
   const original = state.molecule;
-  const options = pdbPreparationOptionsFromUi();
+  const options = optionsOverride
+    ? normalizePdbPreparationOptions(optionsOverride) : pdbPreparationOptionsFromUi();
   let preview = state.pdbPreparationPreview;
   state.preparing = true;
   button.disabled = true;
@@ -8764,7 +8934,7 @@ async function prepareCurrentPdb() {
     const fingerprint = pdbPreparationFingerprint(original, options);
     if (!preview || preview.fingerprint !== fingerprint) {
       status.textContent = 'Preparing…';
-      preview = await createPdbPreparationPreview(original, options);
+      preview = await createPdbPreparationPreview(original, options, suppliedCcdDefinitions);
       state.pdbPreparationPreview = preview;
       updatePreparationInspectorUi();
     }
@@ -11672,6 +11842,7 @@ function updateOptimizerControls() {
   const stormmRunOption = document.querySelector('#method-select option[value="stormm"]');
   const webgpuBuildOption = document.querySelector('#build-optimizer-select option[value="webgpu"]');
   const pocketWebgpuBuildOption = document.querySelector('#build-optimizer-select option[value="pocket-webgpu"]');
+  const inducedFitWebgpuBuildOption = document.querySelector('#build-optimizer-select option[value="induced-fit-webgpu"]');
   const ligandBuildOption = document.querySelector('#build-optimizer-select option[value="ligand-rdkit"]');
   const rdkitRunOption = document.querySelector('#method-select option[value="rdkit"]');
   const rdkitBuildOption = document.querySelector('#build-optimizer-select option[value="rdkit"]');
@@ -11696,6 +11867,12 @@ function updateOptimizerControls() {
     : 'Pocket relax · WebGPU';
   pocketWebgpuBuildOption.disabled = !pocketMovableCount;
   pocketWebgpuBuildOption.hidden = !proteinLigandComplex;
+  const inducedFitMovableCount = inducedFitPocketMovableAtomIndices().length;
+  inducedFitWebgpuBuildOption.textContent = inducedFitMovableCount
+    ? `Induced-fit pocket · WebGPU · ${inducedFitMovableCount} movable`
+    : 'Induced-fit pocket · WebGPU';
+  inducedFitWebgpuBuildOption.disabled = !inducedFitMovableCount;
+  inducedFitWebgpuBuildOption.hidden = !proteinLigandComplex;
   webgpuBuildOption.hidden = proteinLigandComplex;
   rdkitRunOption.disabled = Boolean(prepared);
   rdkitBuildOption.disabled = Boolean(prepared || proteinLigandComplex);
@@ -11715,6 +11892,8 @@ function updateOptimizerControls() {
     buildSelect.value = proteinLigandComplex ? 'ligand-rdkit' : 'webgpu';
   if (!pocketMovableCount && buildSelect.value === 'pocket-webgpu')
     buildSelect.value = proteinLigandComplex ? 'ligand-rdkit' : 'webgpu';
+  if (!inducedFitMovableCount && buildSelect.value === 'induced-fit-webgpu')
+    buildSelect.value = proteinLigandComplex ? 'ligand-rdkit' : 'webgpu';
   if (!ligandPlan && buildSelect.value === 'ligand-rdkit') buildSelect.value = prepared ? 'webgpu' : 'rdkit';
   if (proteinLigandComplex && !buildSelect.dataset.userSelected
     && ['rdkit', 'webgpu'].includes(buildSelect.value))
@@ -11730,6 +11909,8 @@ function updateOptimizerControls() {
       ? `The ${forcefield} numeric System runs directly on WebGPU. Independent OpenMM checks remain validation-only.`
       : buildMethod === 'pocket-webgpu'
         ? `Pocket-aware 5 Å relaxation moves the ligand and pocket side chains on WebGPU; ${state.molecule.atoms.length - pocketMovableCount} outer protein atoms remain fixed. A chemically edited complex is reparameterized first.`
+      : buildMethod === 'induced-fit-webgpu'
+        ? `Experimental hit-only induced-fit relaxation moves the ligand plus complete residues entering a 6 Å shell, including local backbone atoms; ${state.molecule.atoms.length - inducedFitMovableCount} outer atoms remain fixed.`
       : buildMethod === 'ligand-rdkit'
         ? state.dockingReference?.mode === 'pose-propagation'
           && selectedDockingEditCleanup() === 'preserve-reference'
@@ -11871,24 +12052,29 @@ async function runSelectedBuildOptimization() {
     finally { button.disabled = false; button.textContent = '⚡ Optimize'; updateBuildStatus(); }
   }
   const pocketRelaxation = method === 'pocket-webgpu';
-  const workerMethod = pocketRelaxation ? 'webgpu' : method;
-  const movableAtomIndices = pocketRelaxation ? interactivePocketMovableAtomIndices() : null;
-  if (pocketRelaxation && !movableAtomIndices.length) {
+  const inducedFitRelaxation = method === 'induced-fit-webgpu';
+  const flexiblePocketRelaxation = pocketRelaxation || inducedFitRelaxation;
+  const workerMethod = flexiblePocketRelaxation ? 'webgpu' : method;
+  const movableAtomIndices = pocketRelaxation ? interactivePocketMovableAtomIndices()
+    : inducedFitRelaxation ? inducedFitPocketMovableAtomIndices() : null;
+  if (flexiblePocketRelaxation && !movableAtomIndices.length) {
     showNotice('Pocket relaxation needs a prepared protein–ligand complex.'); return null;
   }
   const button = document.querySelector('#optimize-button');
   const forcefield = state.molecule?.parameterization?.forcefield;
   const label = forcefield?.includes('Rosemary') ? 'Rosemary' : 'Sage';
-  button.disabled = true; button.textContent = pocketRelaxation ? 'Pocket GPU…'
+  button.disabled = true; button.textContent = inducedFitRelaxation ? 'Induced fit…'
+      : pocketRelaxation ? 'Pocket GPU…'
       : method === 'webgpu' ? `${label} GPU…`
       : method === 'ani2x' ? 'ANI-2x…' : 'MMFF94…';
   try {
-    const result = await runCalculation({ method:workerMethod, job:'geometry', options:pocketRelaxation ? {
-      movableAtomIndices, maxIterations:120, nonbondedCutoffNm:1.0,
-      maximumNeighbors:1024, minimizeRate:0.00000035, maxDisplacement:0.001,
+    const result = await runCalculation({ method:workerMethod, job:'geometry', options:flexiblePocketRelaxation ? {
+      movableAtomIndices, maxIterations:inducedFitRelaxation ? 240 : 120, nonbondedCutoffNm:1.0,
+      maximumNeighbors:1024, minimizeRate:inducedFitRelaxation ? 0.0000002 : 0.00000035,
+      maxDisplacement:inducedFitRelaxation ? 0.00075 : 0.001,
       savedFrameCount:BUILD_OPTIMIZATION_FRAME_COUNT,
     } : undefined });
-    if (result && pocketRelaxation) setMode('view');
+    if (result && flexiblePocketRelaxation) setMode('view');
     return result;
   } catch { return null; }
   finally { button.disabled = false; button.textContent = '⚡ Optimize'; }

@@ -1,0 +1,2947 @@
+{
+  "schema": "molarium.design-campaign/v1",
+  "id": "bclxl-hit-only",
+  "title": "BCL-xL hit-only prospective replay",
+  "protocolBoundary": {
+    "coordinateInputs": [
+      "PDB 3SPF protein",
+      "PDB 3SPF ligand B50 / compound 4"
+    ],
+    "allowedLaterInputs": [
+      "reported compound molecular graphs"
+    ],
+    "forbiddenBeforeFreeze": [
+      "later protein coordinates",
+      "later ligand coordinates",
+      "later-structure scaffold constraints",
+      "holdout-guided candidate selection"
+    ]
+  },
+  "hit": {
+    "pdbId": "3SPF",
+    "stateId": "4",
+    "ligand": "B50",
+    "proteinAsset": "./design-history/structures/generated/3spf-protein.pdb",
+    "ligandAsset": "./design-history/structures/generated/3spf-ligand.pdb",
+    "proteinSha256": "12a6153ccb5f0d7dfc664b35e706eb2ed0860dc3d4c17c64a7f93b69cc53955d",
+    "ligandSha256": "9243aa397ad93d98f52a3300b032cb114c3293a64d94756ff52813bf43856a57",
+    "ligandDefinition": {
+      "id": "B50",
+      "source": "3SPF/B50 graph with RDKit-added explicit hydrogens",
+      "atoms": [
+        {
+          "id": "CAA",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "OAB",
+          "element": "O",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "OAC",
+          "element": "O",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "OAD",
+          "element": "O",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CLAE",
+          "element": "Cl",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAF",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAG",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAH",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAI",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAJ",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAK",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAL",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAM",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAN",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAO",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAP",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAQ",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAR",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAS",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAT",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAU",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAV",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAW",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAX",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CAY",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "NAZ",
+          "element": "N",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CBA",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CBB",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CBC",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CBD",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CBE",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CBF",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CBG",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "CBH",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "NBI",
+          "element": "N",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "NBJ",
+          "element": "N",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "NBK",
+          "element": "N",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H1",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H2",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H3",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H4",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H5",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H6",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H7",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H8",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H9",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H10",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H11",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H12",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H13",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H14",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H15",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H16",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H17",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H18",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H19",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H20",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H21",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H22",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H23",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H24",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H25",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H26",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H27",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H28",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H29",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H30",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H31",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H32",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H33",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H34",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H35",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H36",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H37",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      ],
+      "bonds": [
+        {
+          "a": "CAA",
+          "b": "NBI",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "OAB",
+          "b": "CBA",
+          "order": 2.0,
+          "aromatic": false
+        },
+        {
+          "a": "OAC",
+          "b": "CAP",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "OAD",
+          "b": "CBH",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CLAE",
+          "b": "CBB",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAF",
+          "b": "CAG",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CAF",
+          "b": "CAH",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CAG",
+          "b": "CAI",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CAH",
+          "b": "CAJ",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CAI",
+          "b": "CBD",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CAJ",
+          "b": "CBD",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CAK",
+          "b": "CAM",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CAK",
+          "b": "CBB",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CAL",
+          "b": "CAN",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CAL",
+          "b": "CBB",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CAM",
+          "b": "CBC",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CAN",
+          "b": "CBC",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CAO",
+          "b": "CBE",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CAO",
+          "b": "NBK",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CAP",
+          "b": "CBH",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAQ",
+          "b": "CAR",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAQ",
+          "b": "CAT",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAR",
+          "b": "NAZ",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAS",
+          "b": "CAY",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAS",
+          "b": "CBH",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAT",
+          "b": "NBJ",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAU",
+          "b": "CAW",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAU",
+          "b": "NBI",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAV",
+          "b": "CAX",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAV",
+          "b": "NBI",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAW",
+          "b": "NBJ",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAX",
+          "b": "NBJ",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAY",
+          "b": "NBK",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "NAZ",
+          "b": "CBA",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CBA",
+          "b": "CBG",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CBC",
+          "b": "CBE",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CBD",
+          "b": "CBF",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CBE",
+          "b": "CBF",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CBF",
+          "b": "CBG",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CBG",
+          "b": "NBK",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "CAA",
+          "b": "H1",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAA",
+          "b": "H2",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAA",
+          "b": "H3",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "OAC",
+          "b": "H4",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "OAD",
+          "b": "H5",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAF",
+          "b": "H6",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAG",
+          "b": "H7",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAH",
+          "b": "H8",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAI",
+          "b": "H9",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAJ",
+          "b": "H10",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAK",
+          "b": "H11",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAL",
+          "b": "H12",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAM",
+          "b": "H13",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAN",
+          "b": "H14",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAO",
+          "b": "H15",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAP",
+          "b": "H16",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAP",
+          "b": "H17",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAQ",
+          "b": "H18",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAQ",
+          "b": "H19",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAR",
+          "b": "H20",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAR",
+          "b": "H21",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAS",
+          "b": "H22",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAS",
+          "b": "H23",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAT",
+          "b": "H24",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAT",
+          "b": "H25",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAU",
+          "b": "H26",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAU",
+          "b": "H27",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAV",
+          "b": "H28",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAV",
+          "b": "H29",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAW",
+          "b": "H30",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAW",
+          "b": "H31",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAX",
+          "b": "H32",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAX",
+          "b": "H33",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAY",
+          "b": "H34",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CAY",
+          "b": "H35",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "NAZ",
+          "b": "H36",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "CBH",
+          "b": "H37",
+          "order": 1.0,
+          "aromatic": false
+        }
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "compound-6",
+      "stateId": "6",
+      "label": "Compound 6",
+      "inputKind": "molecular-graph-only",
+      "productSmiles": "CN(C)CC[C@@H](CSc1ccccc1)Nc1ccc(S(=O)(=O)NC(=O)c2ccc(N3CCN(c4cccc(-c5c(-c6ccc(Cl)cc6)cn(CC[C@H](O)CO)c5C(=O)NCCCN5CCN(C)CC5)c4)CC3)cc2)cc1[N+](=O)[O-]",
+      "standardInchiKey": "FKSAZZWWDLYDMN-DEROLZLCSA-N",
+      "posePropagationMap": {
+        "source": "hit-only graph MCS generated from PDB 3SPF/B50",
+        "referenceHeavyAtoms": 37,
+        "productHeavyAtoms": 79,
+        "commonHeavyAtoms": 37,
+        "commonReferenceFraction": 1.0,
+        "commonProductFraction": 0.468354,
+        "mcs": {
+          "smarts": "[#6&!R]-&!@[#7]1-&@[#6]-&@[#6]-&@[#7](-&@[#6]-&@[#6]-&@1)-&!@[#6&!R]-&!@[#6&!R]-&!@[#6&!R]-&!@[#7&!R]-&!@[#6&!R](=&!@[#8&!R])-&!@[#6]1:&@[#6](-&!@[#6]2:&@[#6]:&@[#6]:&@[#6]:&@[#6]:&@[#6]:&@2):&@[#6](:&@[#6]:&@[#7]:&@1-&!@[#6&!R]-&!@[#6&!R]-&!@[#6&!R](-&!@[#8&!R])-&!@[#6&!R]-&!@[#8&!R])-&!@[#6]1:&@[#6]:&@[#6]:&@[#6](:&@[#6]:&@[#6]:&@1)-&!@[#17&!R]",
+          "atoms": 37,
+          "bonds": 40
+        },
+        "commonAtoms": [
+          {
+            "referenceAtomIndex": 0,
+            "referenceAtomName": "CAA",
+            "productAtomIndex": 66,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 34,
+            "referenceAtomName": "NBI",
+            "productAtomIndex": 65,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 20,
+            "referenceAtomName": "CAU",
+            "productAtomIndex": 64,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 22,
+            "referenceAtomName": "CAW",
+            "productAtomIndex": 63,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 35,
+            "referenceAtomName": "NBJ",
+            "productAtomIndex": 62,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 23,
+            "referenceAtomName": "CAX",
+            "productAtomIndex": 68,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 21,
+            "referenceAtomName": "CAV",
+            "productAtomIndex": 67,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 19,
+            "referenceAtomName": "CAT",
+            "productAtomIndex": 61,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 16,
+            "referenceAtomName": "CAQ",
+            "productAtomIndex": 60,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 17,
+            "referenceAtomName": "CAR",
+            "productAtomIndex": 59,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 25,
+            "referenceAtomName": "NAZ",
+            "productAtomIndex": 58,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 26,
+            "referenceAtomName": "CBA",
+            "productAtomIndex": 56,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 1,
+            "referenceAtomName": "OAB",
+            "productAtomIndex": 57,
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 32,
+            "referenceAtomName": "CBG",
+            "productAtomIndex": 55,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 31,
+            "referenceAtomName": "CBF",
+            "productAtomIndex": 38,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 29,
+            "referenceAtomName": "CBD",
+            "productAtomIndex": 37,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 8,
+            "referenceAtomName": "CAI",
+            "productAtomIndex": 36,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 6,
+            "referenceAtomName": "CAG",
+            "productAtomIndex": 35,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 5,
+            "referenceAtomName": "CAF",
+            "productAtomIndex": 34,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 7,
+            "referenceAtomName": "CAH",
+            "productAtomIndex": 33,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 9,
+            "referenceAtomName": "CAJ",
+            "productAtomIndex": 69,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 30,
+            "referenceAtomName": "CBE",
+            "productAtomIndex": 39,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 14,
+            "referenceAtomName": "CAO",
+            "productAtomIndex": 47,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 36,
+            "referenceAtomName": "NBK",
+            "productAtomIndex": 48,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 24,
+            "referenceAtomName": "CAY",
+            "productAtomIndex": 49,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 18,
+            "referenceAtomName": "CAS",
+            "productAtomIndex": 50,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 33,
+            "referenceAtomName": "CBH",
+            "productAtomIndex": 51,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 3,
+            "referenceAtomName": "OAD",
+            "productAtomIndex": 52,
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 15,
+            "referenceAtomName": "CAP",
+            "productAtomIndex": 53,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 2,
+            "referenceAtomName": "OAC",
+            "productAtomIndex": 54,
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 28,
+            "referenceAtomName": "CBC",
+            "productAtomIndex": 40,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 12,
+            "referenceAtomName": "CAM",
+            "productAtomIndex": 41,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 10,
+            "referenceAtomName": "CAK",
+            "productAtomIndex": 42,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 27,
+            "referenceAtomName": "CBB",
+            "productAtomIndex": 43,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 11,
+            "referenceAtomName": "CAL",
+            "productAtomIndex": 45,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 13,
+            "referenceAtomName": "CAN",
+            "productAtomIndex": 46,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 4,
+            "referenceAtomName": "CLAE",
+            "productAtomIndex": 44,
+            "element": "Cl"
+          }
+        ],
+        "deletedReferenceAtoms": [],
+        "addedProductAtoms": [
+          {
+            "productAtomIndex": 0,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 1,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 2,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 3,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 4,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 5,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 6,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 7,
+            "element": "S"
+          },
+          {
+            "productAtomIndex": 8,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 9,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 10,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 11,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 12,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 13,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 14,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 15,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 16,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 17,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 18,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 19,
+            "element": "S"
+          },
+          {
+            "productAtomIndex": 20,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 21,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 22,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 23,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 24,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 25,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 26,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 27,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 28,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 29,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 30,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 31,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 32,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 70,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 71,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 72,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 73,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 74,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 75,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 76,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 77,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 78,
+            "element": "O"
+          }
+        ],
+        "referenceBoundary": [],
+        "productBoundary": [
+          {
+            "commonProductAtomIndex": 33,
+            "editedProductAtomIndex": 32,
+            "bondType": "SINGLE"
+          }
+        ]
+      }
+    },
+    {
+      "id": "compound-7",
+      "stateId": "7",
+      "label": "Compound 7",
+      "inputKind": "molecular-graph-only",
+      "productSmiles": "CN(C)CC[C@H](CSc1ccccc1)Nc1ccc(S(=O)(=O)Nc2ccc(N3CCN(c4cccc(-c5c(-c6ccc(Cl)cc6)cn(CC[C@H](O)CO)c5C(=O)NCCCN5CCN(C)CC5)c4)CC3)cc2)cc1[N+](=O)[O-]",
+      "standardInchiKey": "AZRPBJJCYWPDIM-HJYXLOCKSA-N",
+      "posePropagationMap": {
+        "source": "hit-only graph MCS generated from PDB 3SPF/B50",
+        "referenceHeavyAtoms": 37,
+        "productHeavyAtoms": 77,
+        "commonHeavyAtoms": 37,
+        "commonReferenceFraction": 1.0,
+        "commonProductFraction": 0.480519,
+        "mcs": {
+          "smarts": "[#6&!R]-&!@[#7]1-&@[#6]-&@[#6]-&@[#7](-&@[#6]-&@[#6]-&@1)-&!@[#6&!R]-&!@[#6&!R]-&!@[#6&!R]-&!@[#7&!R]-&!@[#6&!R](=&!@[#8&!R])-&!@[#6]1:&@[#6](-&!@[#6]2:&@[#6]:&@[#6]:&@[#6]:&@[#6]:&@[#6]:&@2):&@[#6](:&@[#6]:&@[#7]:&@1-&!@[#6&!R]-&!@[#6&!R]-&!@[#6&!R](-&!@[#8&!R])-&!@[#6&!R]-&!@[#8&!R])-&!@[#6]1:&@[#6]:&@[#6]:&@[#6](:&@[#6]:&@[#6]:&@1)-&!@[#17&!R]",
+          "atoms": 37,
+          "bonds": 40
+        },
+        "commonAtoms": [
+          {
+            "referenceAtomIndex": 0,
+            "referenceAtomName": "CAA",
+            "productAtomIndex": 64,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 34,
+            "referenceAtomName": "NBI",
+            "productAtomIndex": 63,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 20,
+            "referenceAtomName": "CAU",
+            "productAtomIndex": 62,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 22,
+            "referenceAtomName": "CAW",
+            "productAtomIndex": 61,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 35,
+            "referenceAtomName": "NBJ",
+            "productAtomIndex": 60,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 23,
+            "referenceAtomName": "CAX",
+            "productAtomIndex": 66,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 21,
+            "referenceAtomName": "CAV",
+            "productAtomIndex": 65,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 19,
+            "referenceAtomName": "CAT",
+            "productAtomIndex": 59,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 16,
+            "referenceAtomName": "CAQ",
+            "productAtomIndex": 58,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 17,
+            "referenceAtomName": "CAR",
+            "productAtomIndex": 57,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 25,
+            "referenceAtomName": "NAZ",
+            "productAtomIndex": 56,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 26,
+            "referenceAtomName": "CBA",
+            "productAtomIndex": 54,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 1,
+            "referenceAtomName": "OAB",
+            "productAtomIndex": 55,
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 32,
+            "referenceAtomName": "CBG",
+            "productAtomIndex": 53,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 31,
+            "referenceAtomName": "CBF",
+            "productAtomIndex": 36,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 29,
+            "referenceAtomName": "CBD",
+            "productAtomIndex": 35,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 8,
+            "referenceAtomName": "CAI",
+            "productAtomIndex": 34,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 6,
+            "referenceAtomName": "CAG",
+            "productAtomIndex": 33,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 5,
+            "referenceAtomName": "CAF",
+            "productAtomIndex": 32,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 7,
+            "referenceAtomName": "CAH",
+            "productAtomIndex": 31,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 9,
+            "referenceAtomName": "CAJ",
+            "productAtomIndex": 67,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 30,
+            "referenceAtomName": "CBE",
+            "productAtomIndex": 37,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 14,
+            "referenceAtomName": "CAO",
+            "productAtomIndex": 45,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 36,
+            "referenceAtomName": "NBK",
+            "productAtomIndex": 46,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 24,
+            "referenceAtomName": "CAY",
+            "productAtomIndex": 47,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 18,
+            "referenceAtomName": "CAS",
+            "productAtomIndex": 48,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 33,
+            "referenceAtomName": "CBH",
+            "productAtomIndex": 49,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 3,
+            "referenceAtomName": "OAD",
+            "productAtomIndex": 50,
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 15,
+            "referenceAtomName": "CAP",
+            "productAtomIndex": 51,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 2,
+            "referenceAtomName": "OAC",
+            "productAtomIndex": 52,
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 28,
+            "referenceAtomName": "CBC",
+            "productAtomIndex": 38,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 12,
+            "referenceAtomName": "CAM",
+            "productAtomIndex": 39,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 10,
+            "referenceAtomName": "CAK",
+            "productAtomIndex": 40,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 27,
+            "referenceAtomName": "CBB",
+            "productAtomIndex": 41,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 11,
+            "referenceAtomName": "CAL",
+            "productAtomIndex": 43,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 13,
+            "referenceAtomName": "CAN",
+            "productAtomIndex": 44,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 4,
+            "referenceAtomName": "CLAE",
+            "productAtomIndex": 42,
+            "element": "Cl"
+          }
+        ],
+        "deletedReferenceAtoms": [],
+        "addedProductAtoms": [
+          {
+            "productAtomIndex": 0,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 1,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 2,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 3,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 4,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 5,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 6,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 7,
+            "element": "S"
+          },
+          {
+            "productAtomIndex": 8,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 9,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 10,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 11,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 12,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 13,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 14,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 15,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 16,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 17,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 18,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 19,
+            "element": "S"
+          },
+          {
+            "productAtomIndex": 20,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 21,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 22,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 23,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 24,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 25,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 26,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 27,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 28,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 29,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 30,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 68,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 69,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 70,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 71,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 72,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 73,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 74,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 75,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 76,
+            "element": "O"
+          }
+        ],
+        "referenceBoundary": [],
+        "productBoundary": [
+          {
+            "commonProductAtomIndex": 31,
+            "editedProductAtomIndex": 30,
+            "bondType": "SINGLE"
+          }
+        ]
+      }
+    },
+    {
+      "id": "compound-16",
+      "stateId": "16",
+      "label": "Compound 16",
+      "inputKind": "molecular-graph-only",
+      "productSmiles": "CN(C)CC[C@H](CSc1ccccc1)Nc1ccc(S(=O)(=O)Nc2ccc(N3CCN(c4cccc(-c5c(-c6ccc(Cl)cc6)cn(C)c5C(=O)NCCCN5CCN(C)CC5)c4)CC3)cc2)cc1[N+](=O)[O-]",
+      "standardInchiKey": "QFNAQQXPLODJBZ-USYZEHPZSA-N",
+      "posePropagationMap": {
+        "source": "hit-only graph MCS generated from PDB 3SPF/B50",
+        "referenceHeavyAtoms": 37,
+        "productHeavyAtoms": 72,
+        "commonHeavyAtoms": 32,
+        "commonReferenceFraction": 0.864865,
+        "commonProductFraction": 0.444444,
+        "mcs": {
+          "smarts": "[#6&!R]-&!@[#7]1-&@[#6]-&@[#6]-&@[#7](-&@[#6]-&@[#6]-&@1)-&!@[#6&!R]-&!@[#6&!R]-&!@[#6&!R]-&!@[#7&!R]-&!@[#6&!R](=&!@[#8&!R])-&!@[#6]1:&@[#6](-&!@[#6]2:&@[#6]:&@[#6]:&@[#6]:&@[#6]:&@[#6]:&@2):&@[#6](:&@[#6]:&@[#7]:&@1-&!@[#6&!R])-&!@[#6]1:&@[#6]:&@[#6]:&@[#6](:&@[#6]:&@[#6]:&@1)-&!@[#17&!R]",
+          "atoms": 32,
+          "bonds": 35
+        },
+        "commonAtoms": [
+          {
+            "referenceAtomIndex": 0,
+            "referenceAtomName": "CAA",
+            "productAtomIndex": 59,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 34,
+            "referenceAtomName": "NBI",
+            "productAtomIndex": 58,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 20,
+            "referenceAtomName": "CAU",
+            "productAtomIndex": 57,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 22,
+            "referenceAtomName": "CAW",
+            "productAtomIndex": 56,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 35,
+            "referenceAtomName": "NBJ",
+            "productAtomIndex": 55,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 23,
+            "referenceAtomName": "CAX",
+            "productAtomIndex": 61,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 21,
+            "referenceAtomName": "CAV",
+            "productAtomIndex": 60,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 19,
+            "referenceAtomName": "CAT",
+            "productAtomIndex": 54,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 16,
+            "referenceAtomName": "CAQ",
+            "productAtomIndex": 53,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 17,
+            "referenceAtomName": "CAR",
+            "productAtomIndex": 52,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 25,
+            "referenceAtomName": "NAZ",
+            "productAtomIndex": 51,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 26,
+            "referenceAtomName": "CBA",
+            "productAtomIndex": 49,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 1,
+            "referenceAtomName": "OAB",
+            "productAtomIndex": 50,
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 32,
+            "referenceAtomName": "CBG",
+            "productAtomIndex": 48,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 31,
+            "referenceAtomName": "CBF",
+            "productAtomIndex": 36,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 29,
+            "referenceAtomName": "CBD",
+            "productAtomIndex": 35,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 8,
+            "referenceAtomName": "CAI",
+            "productAtomIndex": 34,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 6,
+            "referenceAtomName": "CAG",
+            "productAtomIndex": 33,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 5,
+            "referenceAtomName": "CAF",
+            "productAtomIndex": 32,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 7,
+            "referenceAtomName": "CAH",
+            "productAtomIndex": 31,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 9,
+            "referenceAtomName": "CAJ",
+            "productAtomIndex": 62,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 30,
+            "referenceAtomName": "CBE",
+            "productAtomIndex": 37,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 14,
+            "referenceAtomName": "CAO",
+            "productAtomIndex": 45,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 36,
+            "referenceAtomName": "NBK",
+            "productAtomIndex": 46,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 24,
+            "referenceAtomName": "CAY",
+            "productAtomIndex": 47,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 28,
+            "referenceAtomName": "CBC",
+            "productAtomIndex": 38,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 12,
+            "referenceAtomName": "CAM",
+            "productAtomIndex": 39,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 10,
+            "referenceAtomName": "CAK",
+            "productAtomIndex": 40,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 27,
+            "referenceAtomName": "CBB",
+            "productAtomIndex": 41,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 11,
+            "referenceAtomName": "CAL",
+            "productAtomIndex": 43,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 13,
+            "referenceAtomName": "CAN",
+            "productAtomIndex": 44,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 4,
+            "referenceAtomName": "CLAE",
+            "productAtomIndex": 42,
+            "element": "Cl"
+          }
+        ],
+        "deletedReferenceAtoms": [
+          {
+            "referenceAtomIndex": 2,
+            "referenceAtomName": "OAC",
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 3,
+            "referenceAtomName": "OAD",
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 15,
+            "referenceAtomName": "CAP",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 18,
+            "referenceAtomName": "CAS",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 33,
+            "referenceAtomName": "CBH",
+            "element": "C"
+          }
+        ],
+        "addedProductAtoms": [
+          {
+            "productAtomIndex": 0,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 1,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 2,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 3,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 4,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 5,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 6,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 7,
+            "element": "S"
+          },
+          {
+            "productAtomIndex": 8,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 9,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 10,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 11,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 12,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 13,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 14,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 15,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 16,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 17,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 18,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 19,
+            "element": "S"
+          },
+          {
+            "productAtomIndex": 20,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 21,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 22,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 23,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 24,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 25,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 26,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 27,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 28,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 29,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 30,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 63,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 64,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 65,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 66,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 67,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 68,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 69,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 70,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 71,
+            "element": "O"
+          }
+        ],
+        "referenceBoundary": [
+          {
+            "commonAtomName": "CAY",
+            "editedAtomName": "CAS",
+            "bondType": "SINGLE"
+          }
+        ],
+        "productBoundary": [
+          {
+            "commonProductAtomIndex": 31,
+            "editedProductAtomIndex": 30,
+            "bondType": "SINGLE"
+          }
+        ]
+      }
+    },
+    {
+      "id": "compound-21",
+      "stateId": "21",
+      "label": "Compound 21",
+      "inputKind": "molecular-graph-only",
+      "productSmiles": "CCc1c(-c2ccc(Cl)cc2)c(-c2cccc(N3CCN(c4ccc(NS(=O)(=O)c5ccc(N[C@H](CCN(C)C)CSc6ccccc6)c([N+](=O)[O-])c5)cc4)CC3)c2)c(C(=O)O)n1C",
+      "standardInchiKey": "JSQHULXAAXJOKC-DIPNUNPCSA-N",
+      "posePropagationMap": {
+        "source": "hit-only graph MCS generated from PDB 3SPF/B50",
+        "referenceHeavyAtoms": 37,
+        "productHeavyAtoms": 64,
+        "commonHeavyAtoms": 21,
+        "commonReferenceFraction": 0.567568,
+        "commonProductFraction": 0.328125,
+        "mcs": {
+          "smarts": "[#8&!R]=&!@[#6&!R]-&!@[#6]1:&@[#6](-&!@[#6]2:&@[#6]:&@[#6]:&@[#6]:&@[#6]:&@[#6]:&@2):&@[#6](:&@[#6]:&@[#7]:&@1-&!@[#6&!R])-&!@[#6]1:&@[#6]:&@[#6]:&@[#6](:&@[#6]:&@[#6]:&@1)-&!@[#17&!R]",
+          "atoms": 21,
+          "bonds": 23
+        },
+        "commonAtoms": [
+          {
+            "referenceAtomIndex": 1,
+            "referenceAtomName": "OAB",
+            "productAtomIndex": 60,
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 26,
+            "referenceAtomName": "CBA",
+            "productAtomIndex": 59,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 32,
+            "referenceAtomName": "CBG",
+            "productAtomIndex": 58,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 31,
+            "referenceAtomName": "CBF",
+            "productAtomIndex": 11,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 29,
+            "referenceAtomName": "CBD",
+            "productAtomIndex": 12,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 8,
+            "referenceAtomName": "CAI",
+            "productAtomIndex": 13,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 6,
+            "referenceAtomName": "CAG",
+            "productAtomIndex": 14,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 5,
+            "referenceAtomName": "CAF",
+            "productAtomIndex": 15,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 7,
+            "referenceAtomName": "CAH",
+            "productAtomIndex": 16,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 9,
+            "referenceAtomName": "CAJ",
+            "productAtomIndex": 57,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 30,
+            "referenceAtomName": "CBE",
+            "productAtomIndex": 3,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 14,
+            "referenceAtomName": "CAO",
+            "productAtomIndex": 2,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 36,
+            "referenceAtomName": "NBK",
+            "productAtomIndex": 62,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 24,
+            "referenceAtomName": "CAY",
+            "productAtomIndex": 63,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 28,
+            "referenceAtomName": "CBC",
+            "productAtomIndex": 4,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 12,
+            "referenceAtomName": "CAM",
+            "productAtomIndex": 5,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 10,
+            "referenceAtomName": "CAK",
+            "productAtomIndex": 6,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 27,
+            "referenceAtomName": "CBB",
+            "productAtomIndex": 7,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 11,
+            "referenceAtomName": "CAL",
+            "productAtomIndex": 9,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 13,
+            "referenceAtomName": "CAN",
+            "productAtomIndex": 10,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 4,
+            "referenceAtomName": "CLAE",
+            "productAtomIndex": 8,
+            "element": "Cl"
+          }
+        ],
+        "deletedReferenceAtoms": [
+          {
+            "referenceAtomIndex": 0,
+            "referenceAtomName": "CAA",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 2,
+            "referenceAtomName": "OAC",
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 3,
+            "referenceAtomName": "OAD",
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 15,
+            "referenceAtomName": "CAP",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 16,
+            "referenceAtomName": "CAQ",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 17,
+            "referenceAtomName": "CAR",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 18,
+            "referenceAtomName": "CAS",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 19,
+            "referenceAtomName": "CAT",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 20,
+            "referenceAtomName": "CAU",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 21,
+            "referenceAtomName": "CAV",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 22,
+            "referenceAtomName": "CAW",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 23,
+            "referenceAtomName": "CAX",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 25,
+            "referenceAtomName": "NAZ",
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 33,
+            "referenceAtomName": "CBH",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 34,
+            "referenceAtomName": "NBI",
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 35,
+            "referenceAtomName": "NBJ",
+            "element": "N"
+          }
+        ],
+        "addedProductAtoms": [
+          {
+            "productAtomIndex": 0,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 1,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 17,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 18,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 19,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 20,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 21,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 22,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 23,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 24,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 25,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 26,
+            "element": "S"
+          },
+          {
+            "productAtomIndex": 27,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 28,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 29,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 30,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 31,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 32,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 33,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 34,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 35,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 36,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 37,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 38,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 39,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 40,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 41,
+            "element": "S"
+          },
+          {
+            "productAtomIndex": 42,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 43,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 44,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 45,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 46,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 47,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 48,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 49,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 50,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 51,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 52,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 53,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 54,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 55,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 56,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 61,
+            "element": "O"
+          }
+        ],
+        "referenceBoundary": [
+          {
+            "commonAtomName": "CAY",
+            "editedAtomName": "CAS",
+            "bondType": "SINGLE"
+          },
+          {
+            "commonAtomName": "CBA",
+            "editedAtomName": "NAZ",
+            "bondType": "SINGLE"
+          }
+        ],
+        "productBoundary": [
+          {
+            "commonProductAtomIndex": 2,
+            "editedProductAtomIndex": 1,
+            "bondType": "SINGLE"
+          },
+          {
+            "commonProductAtomIndex": 16,
+            "editedProductAtomIndex": 17,
+            "bondType": "SINGLE"
+          },
+          {
+            "commonProductAtomIndex": 59,
+            "editedProductAtomIndex": 61,
+            "bondType": "SINGLE"
+          }
+        ]
+      }
+    }
+  ],
+  "generator": {
+    "path": "design-history/structures/build-bclxl-prospective-campaign.py",
+    "rdkitVersion": "2026.03.4",
+    "sourceManifest": "design-history/structures/bclxl-trajectory.json",
+    "sourceManifestSha256": "5b246e5ca72ca80bbc6760ca238366d569c5de13892b15194d5eb6ee66e225c9",
+    "coordinateFilesRead": [
+      "3SPF-B50-bound.sdf",
+      "generated/3spf-ligand.pdb"
+    ]
+  },
+  "evaluation": {
+    "status": "locked-until-predictions-frozen",
+    "holdouts": []
+  }
+}

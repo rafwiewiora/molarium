@@ -7,6 +7,14 @@ const ACTIONS = Object.freeze({
     arguments:Object.freeze({ mode:'view | build | run' }) }),
   'build.setTool': Object.freeze({ description:'Choose the same Add, Select, or Move tool available in Build.',
     arguments:Object.freeze({ tool:'add | select | move' }) }),
+  'protein.prepare': Object.freeze({
+    description:'Prepare and parameterize the loaded protein complex through the visible preparation workflow.',
+    arguments:Object.freeze({ pH:'number 0…14', histidine:'auto | hid | hie | hip',
+      repairMissingHeavy:'boolean', ligandPolicy:'ccd | exclude',
+      waterPolicy:'crucial | retain | exclude', gapPolicy:'cap | block' }) }),
+  'protein.parameterize': Object.freeze({
+    description:'Assign force-field parameters to the current edited complex without moving coordinates.',
+    arguments:Object.freeze({}) }),
   'selection.replace': Object.freeze({ description:'Select a connected atom path by persistent atom IDs, in click order.',
     arguments:Object.freeze({ atomIds:'array of 1–256 persistent atom IDs' }) }),
   'selection.clear': Object.freeze({ description:'Clear the atom selection.', arguments:Object.freeze({}) }),
@@ -41,7 +49,16 @@ const ACTIONS = Object.freeze({
   'pose.apply': Object.freeze({ description:'Apply one returned refined pose by zero-based result index.',
     arguments:Object.freeze({ index:'non-negative integer' }) }),
   'optimization.run': Object.freeze({ description:'Run one optimization method exposed in the Build method menu.',
-    arguments:Object.freeze({ method:'ligand-rdkit | pocket-webgpu | webgpu | rdkit | ani2x' }) }),
+    arguments:Object.freeze({ method:'ligand-rdkit | pocket-webgpu | induced-fit-webgpu | webgpu | rdkit | ani2x' }) }),
+  'designCampaign.load': Object.freeze({
+    description:'Load the coordinate-bearing hit of a registered design campaign.',
+    arguments:Object.freeze({ campaignId:'registered design-campaign ID' }) }),
+  'designCampaign.applyStep': Object.freeze({
+    description:'Stage one registered graph-only design step against the captured hit pose.',
+    arguments:Object.freeze({ stepId:'persistent design-step ID' }) }),
+  'designCampaign.inspect': Object.freeze({
+    description:'Inspect the active campaign boundary, hit, and current graph-only design step.',
+    arguments:Object.freeze({}) }),
   'structureStory.load': Object.freeze({
     description:'Load a registered, provenance-pinned molecular structure story.',
     arguments:Object.freeze({ storyId:'registered structure-story ID' }) }),
