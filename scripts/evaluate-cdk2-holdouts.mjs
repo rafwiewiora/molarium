@@ -4,6 +4,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { applyCoreTransform, fittedCoreTransform } from '../docking/constraints.mjs';
+import { verifyCdk2PredictionRun } from './verify-cdk2-prediction-run.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -13,29 +14,17 @@ const valueFor = (name, fallback) => {
 };
 const runDir = resolve(root, valueFor('--run',
   'outputs/design-history/cdk2-hit-only-prospective-smoke'));
+const auditReplay = valueFor('--audit-replay');
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
 // Verify every frozen prediction and the complete Agent API audit before an
 // evaluation registry or holdout coordinate path is read or resolved.
-const manifestBytes = await readFile(join(runDir, 'prediction-manifest.json'));
-const predictionManifest = JSON.parse(manifestBytes);
-assert.equal(predictionManifest.campaignId, 'cdk2-hit-only');
-assert.equal(predictionManifest.status, 'predictions-frozen-holdouts-unopened');
-assert.equal(predictionManifest.protocol.initialCoordinateInput, 'PDB 1H1Q/2A6 only');
-assert.equal(predictionManifest.protocol.sequentialPredictedReferences, true);
-const predictions = new Map();
-for (const frozen of predictionManifest.checkpoints) {
-  const bytes = await readFile(join(runDir, frozen.filename));
-  assert.equal(digest(bytes), frozen.sha256, `${frozen.stepId}: frozen prediction hash changed`);
-  const checkpoint = JSON.parse(bytes);
-  assert.equal(checkpoint.frozenBeforeHoldoutAccess, true);
-  assert.equal(checkpoint.parameterization.maximumCoordinateDisplacementAngstrom, 0);
-  predictions.set(frozen.stepId, { frozen, checkpoint });
-}
-const auditBytes = await readFile(join(runDir, 'chemist-action-audit.json'));
-assert.equal(digest(auditBytes), predictionManifest.agentApi.auditSha256,
-  'Agent API audit hash changed');
-const audit = JSON.parse(auditBytes).records;
+const verified = await verifyCdk2PredictionRun({ runDir,
+  replayDir:auditReplay ? resolve(root, auditReplay) : null });
+const manifestBytes = verified.manifestBytes;
+const predictionManifest = verified.manifest;
+const predictions = verified.predictions;
+const audit = verified.audit;
 const firstFreeze = predictionManifest.checkpoints.find((entry) => entry.stepId === 'add-meta-chloro');
 const recapture = audit.find((entry) =>
   entry.requestId === 'add-meta-chloro-capture-predicted-reference');

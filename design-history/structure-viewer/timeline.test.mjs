@@ -38,4 +38,24 @@ for (const [beforeId, afterId] of [
   assert.equal(after.cameraStart, before.cameraEnd, `${afterId} must begin at the same change site`);
   assert(before.focusLabel && after.focusLabel, `${beforeId} and ${afterId} need visible focus labels`);
 }
+
+const cdk2 = JSON.parse(await readFile(new URL('./cdk2-hit-only-prospective.json', import.meta.url)));
+assert.equal(cdk2.cues.length, 11, 'CDK2 tells the two-step prospective result without extra shots');
+assert(cdk2.cues.every((cue) => cue.durationMs >= 1800), 'CDK2 comparison cues must remain readable');
+assert.equal(new Set(Object.values(cdk2.cameras).map((camera) => JSON.stringify(camera.view))).size, 1,
+  'CDK2 holds one viewing direction for the entire prospective comparison');
+for (const cue of cdk2.cues.slice(1)) {
+  assert.equal(cue.cameraStart, cue.cameraEnd,
+    `${cue.id} must hold the active-site camera still after the initial approach`);
+}
+for (const id of ['freeze-6cp','freeze-n76']) {
+  const cue=cdk2.cues.find((entry)=>entry.id===id);
+  assert.match(cue.detail, /Agent API sequence \d+/,
+    `${id} must expose its Agent API freeze sequence`);
+}
+for (const id of ['reveal-1h1r','reveal-1oiu']) {
+  const cue=cdk2.cues.find((entry)=>entry.id===id);
+  assert.match(cue.detail, /opened after freeze/i,
+    `${id} must label the post-freeze holdout boundary`);
+}
 console.log('structure timeline tests passed');

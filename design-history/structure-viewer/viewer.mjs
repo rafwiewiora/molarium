@@ -9,6 +9,7 @@ const ASSET_ROOT='../structures/generated/';
 const STORY_REGISTRY=Object.freeze({
   'moonshot-dndi-6510':'./moonshot-dndi-6510.json',
   'bclxl-fragment-linking':'./bclxl-fragment-linking.json',
+  'cdk2-hit-only-prospective':'./cdk2-hit-only-prospective.json',
 });
 const PREFIX={x1:'7gn8',x38:'7gnr-aligned',bclxl:'3spf',bclxlTemplate:'3sp7-aligned'};
 const LIGAND_COLOR={x1:0x826cae,x38:0xdc8747,bclxl:0x247d95};
@@ -46,6 +47,17 @@ async function clearScene(){for(const ref of Object.keys(refs))await removeRef(r
 async function buildScene(sceneName){
   if(sceneName===currentScene)return;document.body.dataset.renderReady='pending';await clearScene();
   const scene=STORY.scenes[sceneName];if(!scene)throw Error(`Unknown scene ${sceneName}`);
+  for(const model of scene.models||[]){
+    if(!model?.path||!model?.ref)throw Error(`Scene ${sceneName} has an invalid model`);
+    const color=typeof model.color==='string'
+      ? Number.parseInt(model.color.replace(/^#/,''),16):model.color;
+    const representation=model.representation||'ball-and-stick';
+    const typeParams={alpha:model.alpha??1,...(representation==='ball-and-stick'
+      ?{sizeFactor:model.sizeFactor??.22,aromaticBonds:false}:{})};
+    const rep={type:representation,typeParams,color:model.colorScheme||'element-symbol'};
+    if(Number.isFinite(color))rep.colorParams=CARBON(color);
+    await addRaw(`${ASSET_ROOT}${model.path}`,model.format||'pdb',model.ref,rep);
+  }
   if(scene.protein){const prefix=PREFIX[scene.protein];if(!prefix)throw Error(`Unknown protein ${scene.protein}`);await addRaw(`${ASSET_ROOT}${prefix}-protein.pdb`,'pdb','protein',
     {type:'cartoon',typeParams:{alpha:.26},color:'chain-id'})}
   if(scene.pocket){const prefix=PREFIX[scene.pocket];if(!prefix)throw Error(`Unknown pocket ${scene.pocket}`);await addRaw(`${ASSET_ROOT}${prefix}-pocket.pdb`,'pdb','pocket',
@@ -71,7 +83,7 @@ function paint(frame){
   $('progress').style.width=`${((frame.frame+1)/FRAMES.length)*100}%`;
   const scene=STORY.scenes[cue.scene];$('structure-label').textContent=scene.label||'Experimental structure';
   const coordinateClass=$('coordinate-class');coordinateClass.textContent=scene.coordinateLabel||'Experimental coordinates';
-  coordinateClass.className=`badge ${scene.coordinateClass==='reconstructed'?'reconstructed':'experimental'}`;
+  coordinateClass.className=`badge ${scene.coordinateClass||'experimental'}`;
   const focusMarker=$('focus-marker');focusMarker.hidden=!cue.focusLabel;
   $('focus-label').textContent=cue.focusLabel||'';document.body.dataset.focus=cue.focusLabel||'';
   document.body.dataset.frame=String(frame.frame);document.body.dataset.cue=String(frame.cueIndex);

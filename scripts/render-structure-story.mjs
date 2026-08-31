@@ -87,13 +87,15 @@ try {
     storyId:story.id, records:actionAudit }, null, 2)}\n`);
   const auditPath = join(output, 'chemist-action-audit.json');
   await writeFile(auditPath, auditBytes);
+  const assetManifestPath = resolve(dirname(storyPath), story.assetManifest
+    || '../structures/generated/manifest.json');
   const [rendererBytes, assetManifestBytes] = await Promise.all([
     readFile(fileURLToPath(import.meta.url)),
-    readFile(join(root, 'design-history/structures/generated/manifest.json')),
+    readFile(assetManifestPath),
   ]);
   const manifest = { schema:'molarium.structure-story-render/v1', generatedAt:new Date().toISOString(),
     story:{ path:relative(root, storyPath), id:story.id, sha256:digest(await readFile(storyPath)) },
-    assets:{ path:'design-history/structures/generated/manifest.json', sha256:digest(assetManifestBytes) },
+    assets:{ path:relative(root, assetManifestPath), sha256:digest(assetManifestBytes) },
     renderer:{ path:relative(root, fileURLToPath(import.meta.url)), sha256:digest(rendererBytes),
       browserProduct:browserVersion.product, userAgent:browserVersion.userAgent },
     agentApi:{ schema:apiDescription.schema,
