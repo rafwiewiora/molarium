@@ -58,4 +58,16 @@ for (const id of ['reveal-1h1r','reveal-1oiu']) {
   assert.match(cue.detail, /opened after freeze/i,
     `${id} must label the post-freeze holdout boundary`);
 }
+
+const success = JSON.parse(await readFile(new URL('./cdk2-designer-hit-to-lead.json', import.meta.url)));
+assert.equal(success.cues.length, 9, 'designer-directed CDK2 keeps the success story concise');
+assert.equal(new Set(Object.values(success.cameras).map((camera) => JSON.stringify(camera.view))).size, 1,
+  'designer-directed CDK2 holds one viewing direction');
+for (const cue of success.cues.slice(1)) assert.equal(cue.cameraStart, cue.cameraEnd,
+  `${cue.id} must hold the edit-site camera still`);
+assert(success.cues.some((cue) => /attachmentAtomId/.test(cue.detail)),
+  'the movie must show that designer spatial intent enters through the public Agent API');
+assert(success.cues.some((cue) => /0\.53 Å/.test(cue.detail))
+  && success.cues.some((cue) => /0\.85 Å/.test(cue.detail)),
+  'the movie must report both successful structural validations');
 console.log('structure timeline tests passed');

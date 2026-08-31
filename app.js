@@ -7332,6 +7332,7 @@ async function inspectChemistActionState({ scope = 'ligand', includeCoordinates 
 const REGISTERED_DESIGN_CAMPAIGNS = Object.freeze({
   'bclxl-hit-only':'./design-history/structures/generated/bclxl-prospective-campaign.json',
   'cdk2-hit-only':'./design-history/structures/generated/cdk2-prospective-campaign.json',
+  'cdk2-designer-intent':'./design-history/structures/generated/cdk2-designer-campaign.json',
 });
 
 async function fetchPinnedText(path, expectedSha256) {
@@ -7641,7 +7642,8 @@ function installChemistActionsApi(module) {
       if (typeof args.campaignId !== 'string' || !args.campaignId)
         throw new Error('campaignId must be a registered design-campaign ID');
       return chemistActionSummary({ designCampaign:await loadRegisteredDesignCampaign(args.campaignId) }); },
-    'designCampaign.applyStep':async (args) => { chemistActionKeys(args, ['stepId']);
+    'designCampaign.applyStep':async (args) => { chemistActionKeys(args,
+      ['stepId','attachmentAtomId']);
       if (!state.designCampaign) throw new Error('Load a registered design campaign first');
       if (typeof args.stepId !== 'string' || !args.stepId)
         throw new Error('stepId must be a registered design-step ID');
@@ -7651,6 +7653,35 @@ function installChemistActionsApi(module) {
       if (!step) throw new Error(`Unknown registered design step: ${args.stepId}`);
       if (step.referenceStateId && step.referenceStateId !== state.designCampaignStepId)
         throw new Error(`Design step ${step.id} requires state ${step.referenceStateId}; current state is ${state.designCampaignStepId}`);
+      let spatialIntent = null;
+      if (step.spatialIntent) {
+        if (step.spatialIntent.method !== 'selected-exit-vector'
+          || typeof step.spatialIntent.attachmentReferenceAtomName !== 'string')
+          throw new Error(`Design step ${step.id} has an invalid spatial intent`);
+        if (typeof args.attachmentAtomId !== 'string' || !args.attachmentAtomId)
+          throw new Error(`Design step ${step.id} requires attachmentAtomId`);
+        const byId = await ensureChemistActionAtomIds();
+        const attachmentIndex = byId.get(args.attachmentAtomId);
+        const component = dockingLigandComponent();
+        if (!Number.isInteger(attachmentIndex)
+          || !component?.atomIndices?.includes(attachmentIndex))
+          throw new Error('attachmentAtomId must identify an atom in the current ligand');
+        const attachmentAtom = state.molecule.atoms[attachmentIndex];
+        if (attachmentAtom.atomName !== step.spatialIntent.attachmentReferenceAtomName)
+          throw new Error(`Design step ${step.id} grows from ${step.spatialIntent.attachmentReferenceAtomName}, not ${attachmentAtom.atomName || 'an unnamed atom'}`);
+        const productBoundaryIndices = new Set((step.posePropagationMap?.productBoundary || [])
+          .map((entry) => entry.commonProductAtomIndex));
+        const registeredAttachment = (step.posePropagationMap?.commonAtoms || []).find((entry) =>
+          entry.referenceAtomName === attachmentAtom.atomName
+          && productBoundaryIndices.has(entry.productAtomIndex));
+        if (!registeredAttachment)
+          throw new Error(`Design step ${step.id} atom map does not grow from selected ${attachmentAtom.atomName}`);
+        spatialIntent = { method:step.spatialIntent.method,
+          attachmentAtomId:args.attachmentAtomId,
+          attachmentReferenceAtomName:attachmentAtom.atomName };
+      } else if (args.attachmentAtomId != null) {
+        throw new Error(`Design step ${step.id} does not register a designer-directed attachment`);
+      }
       const hitContacts = state.dockingReference.hydrogenBonds.map((definition) => ({
         kind:'hydrogen-bond', capturedId:definition.id, label:definition.label,
       }));
@@ -7672,6 +7703,7 @@ function installChemistActionsApi(module) {
         referenceStateId:step.referenceStateId || null,
         inputKind:step.inputKind, productHeavyAtoms:staged.productHeavyAtoms,
         commonHitHeavyAtoms:staged.commonHeavyAtoms,
+        spatialIntent,
         embedding:structuredClone(staged.embedding) } }); },
     'designCampaign.inspect':async (args) => { empty(args);
       if (!state.designCampaign) throw new Error('No registered design campaign is loaded');

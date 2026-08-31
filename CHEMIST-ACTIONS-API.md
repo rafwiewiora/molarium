@@ -72,9 +72,11 @@ feature transfer, Undo, and Redo therefore behave exactly as they do for an inte
 
 Registered design campaigns enforce a prospective coordinate boundary. `designCampaign.load`
 loads only the hash-pinned hit complex. `designCampaign.applyStep` accepts a persistent registered
-step ID and supplies only its molecular graph plus a graph-derived reference/product atom map; later
-protein or ligand coordinates are not available to the route. Evaluation holdouts remain locked
-until prediction coordinates and their action audit have been frozen.
+step ID and supplies its molecular graph plus a reference/product atom map. Designer-directed steps
+also require `attachmentAtomId`, the same persistent ligand atom ID that an interactive chemist
+selects as the exit vector; the route rejects a symmetry-equivalent map attached anywhere else.
+Later protein or ligand coordinates are not available to the route. Evaluation holdouts remain
+locked until prediction coordinates and their action audit have been frozen.
 
 `protein.parameterize` assigns a new numeric force-field System after a registered graph edit and
 reports a coordinate-displacement audit. It does not minimize or otherwise move the molecule. This

@@ -8,6 +8,8 @@ const here = dirname(fileURLToPath(import.meta.url));
 const generated = join(here, 'generated');
 const campaign = JSON.parse(await readFile(
   join(generated, 'cdk2-prospective-campaign.json'), 'utf8'));
+const designerCampaign = JSON.parse(await readFile(
+  join(generated, 'cdk2-designer-campaign.json'), 'utf8'));
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
 assert.equal(campaign.schema, 'molarium.design-campaign/v1');
@@ -50,6 +52,26 @@ for (const step of campaign.steps) {
     map.referenceHeavyAtoms);
   assert.equal(map.commonAtoms.length + map.addedProductAtoms.length,
     map.productHeavyAtoms);
+}
+
+assert.equal(designerCampaign.schema, 'molarium.design-campaign/v1');
+assert.equal(designerCampaign.id, 'cdk2-designer-intent');
+assert.equal(designerCampaign.hit.proteinSha256, campaign.hit.proteinSha256);
+assert.equal(designerCampaign.hit.ligandSha256, campaign.hit.ligandSha256);
+assert(!/1h1r|1oiu/i.test(JSON.stringify(designerCampaign)),
+  'designer intent must not import either later crystal');
+for (const step of designerCampaign.steps) {
+  assert.equal(step.inputKind, 'designer-directed-graph-only');
+  assert.deepEqual(step.spatialIntent, {
+    method:'selected-exit-vector', attachmentReferenceAtomName:'C19',
+    declaredBeforePoseSearch:true,
+  });
+  const productAttachment = step.posePropagationMap.productBoundary[0].commonProductAtomIndex;
+  const attachmentMapping = step.posePropagationMap.commonAtoms.find(
+    (entry) => entry.productAtomIndex === productAttachment);
+  assert.equal(attachmentMapping.referenceAtomName, 'C19',
+    `${step.id} must grow from the designer-selected C19 exit vector`);
+  assert.equal(step.productAtomNames[productAttachment], 'C19');
 }
 
 console.log('CDK2 hit-only campaign passed coordinate-boundary and sequential-state gates');

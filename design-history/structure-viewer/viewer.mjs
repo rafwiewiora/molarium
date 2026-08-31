@@ -10,6 +10,7 @@ const STORY_REGISTRY=Object.freeze({
   'moonshot-dndi-6510':'./moonshot-dndi-6510.json',
   'bclxl-fragment-linking':'./bclxl-fragment-linking.json',
   'cdk2-hit-only-prospective':'./cdk2-hit-only-prospective.json',
+  'cdk2-designer-hit-to-lead':'./cdk2-designer-hit-to-lead.json',
 });
 const PREFIX={x1:'7gn8',x38:'7gnr-aligned',bclxl:'3spf',bclxlTemplate:'3sp7-aligned'};
 const LIGAND_COLOR={x1:0x826cae,x38:0xdc8747,bclxl:0x247d95};

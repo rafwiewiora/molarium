@@ -54,8 +54,9 @@ const ACTIONS = Object.freeze({
     description:'Load the coordinate-bearing hit of a registered design campaign.',
     arguments:Object.freeze({ campaignId:'registered design-campaign ID' }) }),
   'designCampaign.applyStep': Object.freeze({
-    description:'Stage one registered graph-only design step against the captured hit pose.',
-    arguments:Object.freeze({ stepId:'persistent design-step ID' }) }),
+    description:'Stage one registered graph design step, preserving any designer-selected exit vector.',
+    arguments:Object.freeze({ stepId:'persistent design-step ID',
+      attachmentAtomId:'persistent atom ID selected as the growth attachment point when required' }) }),
   'designCampaign.inspect': Object.freeze({
     description:'Inspect the active campaign boundary, hit, and current graph-only design step.',
     arguments:Object.freeze({}) }),

@@ -19,17 +19,47 @@ const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
 // Verify every frozen prediction and the complete Agent API audit before an
 // evaluation registry or holdout coordinate path is read or resolved.
-const verified = await verifyCdk2PredictionRun({ runDir,
-  replayDir:auditReplay ? resolve(root, auditReplay) : null });
-const manifestBytes = verified.manifestBytes;
-const predictionManifest = verified.manifest;
-const predictions = verified.predictions;
-const audit = verified.audit;
+const candidateManifestBytes = await readFile(join(runDir, 'prediction-manifest.json'));
+const candidateManifest = JSON.parse(candidateManifestBytes);
+let manifestBytes, predictionManifest, predictions, audit;
+if (candidateManifest.campaignId === 'cdk2-designer-intent') {
+  manifestBytes = candidateManifestBytes;
+  predictionManifest = candidateManifest;
+  assert.equal(predictionManifest.status, 'designer-directed-predictions-frozen');
+  assert.equal(predictionManifest.protocol.initialCoordinateInput, 'PDB 1H1Q/2A6');
+  assert.equal(predictionManifest.protocol.designerAttachmentAtomName, 'C19');
+  assert.equal(predictionManifest.protocol.sequentialPredictedReferences, true);
+  predictions = new Map();
+  for (const frozen of predictionManifest.checkpoints) {
+    const bytes = await readFile(join(runDir, frozen.filename));
+    assert.equal(digest(bytes), frozen.sha256, `${frozen.stepId}: frozen prediction hash changed`);
+    const checkpoint = JSON.parse(bytes);
+    assert.equal(checkpoint.designerIntentDeclaredBeforePoseSearch, true);
+    assert.equal(checkpoint.staging.spatialIntent.attachmentReferenceAtomName, 'C19');
+    assert.equal(checkpoint.parameterization.maximumCoordinateDisplacementAngstrom, 0);
+    predictions.set(frozen.stepId, { frozen, checkpoint });
+  }
+  const auditBytes = await readFile(join(runDir, 'chemist-action-audit.json'));
+  assert.equal(digest(auditBytes), predictionManifest.agentApi.auditSha256,
+    'designer-directed Agent API audit changed');
+  audit = JSON.parse(auditBytes).records;
+} else {
+  const verified = await verifyCdk2PredictionRun({ runDir,
+    replayDir:auditReplay ? resolve(root, auditReplay) : null });
+  manifestBytes = verified.manifestBytes;
+  predictionManifest = verified.manifest;
+  predictions = verified.predictions;
+  audit = verified.audit;
+}
 const firstFreeze = predictionManifest.checkpoints.find((entry) => entry.stepId === 'add-meta-chloro');
 const recapture = audit.find((entry) =>
-  entry.requestId === 'add-meta-chloro-capture-predicted-reference');
+  entry.requestId === (predictionManifest.campaignId === 'cdk2-designer-intent'
+    ? 'add-meta-chloro-designer-capture-predicted-reference'
+    : 'add-meta-chloro-capture-predicted-reference'));
 const secondStage = audit.find((entry) =>
-  entry.requestId === 'replace-chloro-with-sulfonamide-stage');
+  entry.requestId === (predictionManifest.campaignId === 'cdk2-designer-intent'
+    ? 'replace-chloro-with-sulfonamide-designer-stage'
+    : 'replace-chloro-with-sulfonamide-stage'));
 assert(recapture && secondStage
   && recapture.sequence > firstFreeze.freezeActionSequence
   && recapture.sequence < secondStage.sequence,
@@ -40,8 +70,7 @@ assert(recapture && secondStage
 const benchmarkPath = join(root, 'docking/benchmark/manifest.v0.1.json');
 const benchmarkBytes = await readFile(benchmarkPath);
 const benchmark = JSON.parse(benchmarkBytes);
-const campaignPath = join(root,
-  'design-history/structures/generated/cdk2-prospective-campaign.json');
+const campaignPath = join(root, predictionManifest.inputs.campaign.path);
 const campaignBytes = await readFile(campaignPath);
 assert.equal(digest(campaignBytes), predictionManifest.inputs.campaign.sha256,
   'registered pre-freeze campaign changed');

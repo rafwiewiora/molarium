@@ -1,0 +1,1253 @@
+{
+  "schema": "molarium.design-campaign/v1",
+  "id": "cdk2-designer-intent",
+  "title": "CDK2 designer-directed hit-to-lead replay",
+  "protocolBoundary": {
+    "coordinateInputs": [
+      "PDB 1H1Q protein",
+      "PDB 1H1Q ligand 2A6"
+    ],
+    "allowedLaterInputs": [
+      "reported compound molecular graphs",
+      "designer-selected attachment atom on the current predicted ligand"
+    ],
+    "forbiddenBeforeFreeze": [
+      "later protein coordinates",
+      "later ligand coordinates",
+      "later-structure scaffold constraints",
+      "holdout-guided candidate selection"
+    ],
+    "sequenceRule": "Each step grows from an explicit persistent atom ID on the hit or preceding prediction."
+  },
+  "hit": {
+    "pdbId": "1H1Q",
+    "stateId": "2A6",
+    "ligand": "2A6",
+    "canonicalSmiles": "c1ccc(Nc2nc(OCC3CCCCC3)c3[nH]cnc3n2)cc1",
+    "proteinAsset": "./design-history/structures/generated/cdk2-1h1q-protein.pdb",
+    "ligandAsset": "./design-history/structures/generated/cdk2-1h1q-ligand.pdb",
+    "proteinSha256": "8a843f464da254b7105b49b0b807776a99e580e04a12991a9543ada88c34d39f",
+    "ligandSha256": "29c14fe39eb50a70cc8c3f88ce4686c8c134ab7d9ad7cef3b61b4c54943f2b81",
+    "ligandDefinition": {
+      "id": "2A6",
+      "source": "registered 1H1Q/2A6 graph with RDKit-added hydrogens",
+      "atoms": [
+        {
+          "id": "C20",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C21",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C22",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C17",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "N2",
+          "element": "N",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C2",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "N1",
+          "element": "N",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C6",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "O6",
+          "element": "O",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C10",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C11",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C12",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C13",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C14",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C15",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C16",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C5",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "N7",
+          "element": "N",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C8",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "N9",
+          "element": "N",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C4",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "N3",
+          "element": "N",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C18",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C19",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H1",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H2",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H3",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H4",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H5",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H6",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H7",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H8",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H9",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H10",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H11",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H12",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H13",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H14",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H15",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H16",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H17",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H18",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H19",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H20",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H21",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      ],
+      "bonds": [
+        {
+          "a": "C20",
+          "b": "C21",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C21",
+          "b": "C22",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C22",
+          "b": "C17",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C17",
+          "b": "N2",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "N2",
+          "b": "C2",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C2",
+          "b": "N1",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "N1",
+          "b": "C6",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C6",
+          "b": "O6",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "O6",
+          "b": "C10",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C10",
+          "b": "C11",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C11",
+          "b": "C12",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C12",
+          "b": "C13",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C13",
+          "b": "C14",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C14",
+          "b": "C15",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C15",
+          "b": "C16",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C6",
+          "b": "C5",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C5",
+          "b": "N7",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "N7",
+          "b": "C8",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C8",
+          "b": "N9",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "N9",
+          "b": "C4",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C4",
+          "b": "N3",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C17",
+          "b": "C18",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C18",
+          "b": "C19",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C19",
+          "b": "C20",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "N3",
+          "b": "C2",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C16",
+          "b": "C11",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C4",
+          "b": "C5",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C20",
+          "b": "H1",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C21",
+          "b": "H2",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C22",
+          "b": "H3",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "N2",
+          "b": "H4",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C10",
+          "b": "H5",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C10",
+          "b": "H6",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C11",
+          "b": "H7",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C12",
+          "b": "H8",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C12",
+          "b": "H9",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C13",
+          "b": "H10",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C13",
+          "b": "H11",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C14",
+          "b": "H12",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C14",
+          "b": "H13",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C15",
+          "b": "H14",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C15",
+          "b": "H15",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C16",
+          "b": "H16",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C16",
+          "b": "H17",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "N7",
+          "b": "H18",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C8",
+          "b": "H19",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C18",
+          "b": "H20",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C19",
+          "b": "H21",
+          "order": 1.0,
+          "aromatic": false
+        }
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "add-meta-chloro",
+      "sequenceIndex": 1,
+      "referenceStateId": "2A6",
+      "stateId": "6CP",
+      "label": "grow chlorine from the designer-selected meta carbon",
+      "inputKind": "designer-directed-graph-only",
+      "productSmiles": "Clc1cccc(Nc2nc(OCC3CCCCC3)c3[nH]cnc3n2)c1",
+      "productAtomNames": [
+        "CLX1",
+        "C19",
+        "C20",
+        "C21",
+        "C22",
+        "C17",
+        "N2",
+        "C2",
+        "N1",
+        "C6",
+        "O6",
+        "C10",
+        "C11",
+        "C12",
+        "C13",
+        "C14",
+        "C15",
+        "C16",
+        "C5",
+        "N7",
+        "C8",
+        "N9",
+        "C4",
+        "N3",
+        "C18"
+      ],
+      "posePropagationMap": {
+        "source": "registered molecular graphs plus designer-selected hit exit vector; no later coordinates",
+        "referenceHeavyAtoms": 24,
+        "productHeavyAtoms": 25,
+        "commonHeavyAtoms": 24,
+        "commonReferenceFraction": 1.0,
+        "commonProductFraction": 0.96,
+        "mcs": {
+          "smarts": "[#6]1:&@[#6]:&@[#6]:&@[#6](:&@[#6]:&@[#6]:&@1)-&!@[#7&!R]-&!@[#6]1:&@[#7]:&@[#6](-&!@[#8&!R]-&!@[#6&!R]-&!@[#6]2-&@[#6]-&@[#6]-&@[#6]-&@[#6]-&@[#6]-&@2):&@[#6]2:&@[#6](:&@[#7]:&@1):&@[#7]:&@[#6]:&@[#7]:&@2",
+          "atoms": 24,
+          "bonds": 27
+        },
+        "commonAtoms": [
+          {
+            "referenceAtomIndex": 0,
+            "referenceAtomName": "C20",
+            "productAtomIndex": 2,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 1,
+            "referenceAtomName": "C21",
+            "productAtomIndex": 3,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 2,
+            "referenceAtomName": "C22",
+            "productAtomIndex": 4,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 3,
+            "referenceAtomName": "C17",
+            "productAtomIndex": 5,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 22,
+            "referenceAtomName": "C18",
+            "productAtomIndex": 24,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 23,
+            "referenceAtomName": "C19",
+            "productAtomIndex": 1,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 4,
+            "referenceAtomName": "N2",
+            "productAtomIndex": 6,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 5,
+            "referenceAtomName": "C2",
+            "productAtomIndex": 7,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 6,
+            "referenceAtomName": "N1",
+            "productAtomIndex": 8,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 7,
+            "referenceAtomName": "C6",
+            "productAtomIndex": 9,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 8,
+            "referenceAtomName": "O6",
+            "productAtomIndex": 10,
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 9,
+            "referenceAtomName": "C10",
+            "productAtomIndex": 11,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 10,
+            "referenceAtomName": "C11",
+            "productAtomIndex": 12,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 11,
+            "referenceAtomName": "C12",
+            "productAtomIndex": 13,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 12,
+            "referenceAtomName": "C13",
+            "productAtomIndex": 14,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 13,
+            "referenceAtomName": "C14",
+            "productAtomIndex": 15,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 14,
+            "referenceAtomName": "C15",
+            "productAtomIndex": 16,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 15,
+            "referenceAtomName": "C16",
+            "productAtomIndex": 17,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 16,
+            "referenceAtomName": "C5",
+            "productAtomIndex": 18,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 20,
+            "referenceAtomName": "C4",
+            "productAtomIndex": 22,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 21,
+            "referenceAtomName": "N3",
+            "productAtomIndex": 23,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 19,
+            "referenceAtomName": "N9",
+            "productAtomIndex": 21,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 18,
+            "referenceAtomName": "C8",
+            "productAtomIndex": 20,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 17,
+            "referenceAtomName": "N7",
+            "productAtomIndex": 19,
+            "element": "N"
+          }
+        ],
+        "deletedReferenceAtoms": [],
+        "addedProductAtoms": [
+          {
+            "productAtomIndex": 0,
+            "element": "Cl"
+          }
+        ],
+        "referenceBoundary": [],
+        "productBoundary": [
+          {
+            "commonProductAtomIndex": 1,
+            "editedProductAtomIndex": 0,
+            "bondType": "SINGLE"
+          }
+        ]
+      },
+      "spatialIntent": {
+        "method": "selected-exit-vector",
+        "attachmentReferenceAtomName": "C19",
+        "declaredBeforePoseSearch": true
+      }
+    },
+    {
+      "id": "replace-chloro-with-sulfonamide",
+      "sequenceIndex": 2,
+      "referenceStateId": "6CP",
+      "stateId": "N76",
+      "label": "grow sulfonamide from the same selected meta carbon",
+      "inputKind": "designer-directed-graph-only",
+      "productSmiles": "NS(=O)(=O)c1cccc(Nc2nc(OCC3CCCCC3)c3nc[nH]c3n2)c1",
+      "productAtomNames": [
+        "NX1",
+        "SX1",
+        "OX1",
+        "OX2",
+        "C19",
+        "C20",
+        "C21",
+        "C22",
+        "C17",
+        "N2",
+        "C2",
+        "N1",
+        "C6",
+        "O6",
+        "C10",
+        "C11",
+        "C12",
+        "C13",
+        "C14",
+        "C15",
+        "C16",
+        "C5",
+        "N7",
+        "C8",
+        "N9",
+        "C4",
+        "N3",
+        "C18"
+      ],
+      "posePropagationMap": {
+        "source": "registered molecular graphs plus designer-selected hit exit vector; no later coordinates",
+        "referenceHeavyAtoms": 25,
+        "productHeavyAtoms": 28,
+        "commonHeavyAtoms": 24,
+        "commonReferenceFraction": 0.96,
+        "commonProductFraction": 0.857143,
+        "mcs": {
+          "smarts": "[#6]1:&@[#6]:&@[#6]:&@[#6]:&@[#6](:&@[#6]:&@1)-&!@[#7&!R]-&!@[#6]1:&@[#7]:&@[#6](-&!@[#8&!R]-&!@[#6&!R]-&!@[#6]2-&@[#6]-&@[#6]-&@[#6]-&@[#6]-&@[#6]-&@2):&@[#6]2:&@[#6](:&@[#7]:&@1):&@[#7]:&@[#6]:&@[#7]:&@2",
+          "atoms": 24,
+          "bonds": 27
+        },
+        "commonAtoms": [
+          {
+            "referenceAtomIndex": 1,
+            "referenceAtomName": "C19",
+            "productAtomIndex": 4,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 2,
+            "referenceAtomName": "C20",
+            "productAtomIndex": 5,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 3,
+            "referenceAtomName": "C21",
+            "productAtomIndex": 6,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 4,
+            "referenceAtomName": "C22",
+            "productAtomIndex": 7,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 5,
+            "referenceAtomName": "C17",
+            "productAtomIndex": 8,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 24,
+            "referenceAtomName": "C18",
+            "productAtomIndex": 27,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 6,
+            "referenceAtomName": "N2",
+            "productAtomIndex": 9,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 7,
+            "referenceAtomName": "C2",
+            "productAtomIndex": 10,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 8,
+            "referenceAtomName": "N1",
+            "productAtomIndex": 11,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 9,
+            "referenceAtomName": "C6",
+            "productAtomIndex": 12,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 10,
+            "referenceAtomName": "O6",
+            "productAtomIndex": 13,
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 11,
+            "referenceAtomName": "C10",
+            "productAtomIndex": 14,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 12,
+            "referenceAtomName": "C11",
+            "productAtomIndex": 15,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 13,
+            "referenceAtomName": "C12",
+            "productAtomIndex": 16,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 14,
+            "referenceAtomName": "C13",
+            "productAtomIndex": 17,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 15,
+            "referenceAtomName": "C14",
+            "productAtomIndex": 18,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 16,
+            "referenceAtomName": "C15",
+            "productAtomIndex": 19,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 17,
+            "referenceAtomName": "C16",
+            "productAtomIndex": 20,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 18,
+            "referenceAtomName": "C5",
+            "productAtomIndex": 21,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 22,
+            "referenceAtomName": "C4",
+            "productAtomIndex": 25,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 23,
+            "referenceAtomName": "N3",
+            "productAtomIndex": 26,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 21,
+            "referenceAtomName": "N9",
+            "productAtomIndex": 24,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 20,
+            "referenceAtomName": "C8",
+            "productAtomIndex": 23,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 19,
+            "referenceAtomName": "N7",
+            "productAtomIndex": 22,
+            "element": "N"
+          }
+        ],
+        "deletedReferenceAtoms": [
+          {
+            "referenceAtomIndex": 0,
+            "referenceAtomName": "CLX1",
+            "element": "Cl"
+          }
+        ],
+        "addedProductAtoms": [
+          {
+            "productAtomIndex": 0,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 1,
+            "element": "S"
+          },
+          {
+            "productAtomIndex": 2,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 3,
+            "element": "O"
+          }
+        ],
+        "referenceBoundary": [
+          {
+            "commonAtomName": "C19",
+            "editedAtomName": "CLX1",
+            "bondType": "SINGLE"
+          }
+        ],
+        "productBoundary": [
+          {
+            "commonProductAtomIndex": 4,
+            "editedProductAtomIndex": 1,
+            "bondType": "SINGLE"
+          }
+        ]
+      },
+      "spatialIntent": {
+        "method": "selected-exit-vector",
+        "attachmentReferenceAtomName": "C19",
+        "declaredBeforePoseSearch": true
+      }
+    }
+  ],
+  "source": {
+    "article": "Structure-based design of a potent purine-based cyclin-dependent kinase inhibitor",
+    "doi": "10.1038/nsb842",
+    "graphRole": "reported compound identities only"
+  },
+  "generator": {
+    "path": "design-history/structures/build-cdk2-prospective-campaign.py",
+    "rdkitVersion": "2026.03.4",
+    "coordinateFilesRead": [
+      "docking/benchmark/fixtures/pdb/1h1q.pdb"
+    ]
+  },
+  "evaluation": {
+    "status": "locked-until-predictions-frozen",
+    "holdouts": []
+  }
+}

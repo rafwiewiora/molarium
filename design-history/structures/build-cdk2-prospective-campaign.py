@@ -25,6 +25,7 @@ GENERATED = HERE / "generated"
 PROTEIN_OUTPUT = GENERATED / "cdk2-1h1q-protein.pdb"
 LIGAND_OUTPUT = GENERATED / "cdk2-1h1q-ligand.pdb"
 CAMPAIGN_OUTPUT = GENERATED / "cdk2-prospective-campaign.json"
+DESIGNER_CAMPAIGN_OUTPUT = GENERATED / "cdk2-designer-campaign.json"
 
 HIT_SMILES = "c1ccc(Nc2nc(OCC3CCCCC3)c3[nH]cnc3n2)cc1"
 CHLORO_SMILES = "Clc1cccc(Nc2nc(OCC3CCCCC3)c3[nH]cnc3n2)c1"
@@ -66,12 +67,12 @@ def exact_mcs(reference: Chem.Mol, product: Chem.Mol) -> tuple:
         raise RuntimeError("CDK2 graph MCS timed out; a partial map is forbidden")
     query = Chem.MolFromSmarts(result.smartsString)
     reference_matches = reference.GetSubstructMatches(
-        query, uniquify=True, useChirality=False, maxMatches=4096)
+        query, uniquify=False, useChirality=False, maxMatches=4096)
     product_matches = product.GetSubstructMatches(
-        query, uniquify=True, useChirality=False, maxMatches=4096)
+        query, uniquify=False, useChirality=False, maxMatches=4096)
     if not reference_matches or not product_matches:
         raise RuntimeError("CDK2 graph MCS has no complete match")
-    return result, min(reference_matches), min(product_matches)
+    return result, reference_matches, product_matches
 
 
 def assigned_product_names(product: Chem.Mol, common: list[dict]) -> list[str]:
@@ -95,10 +96,34 @@ def assigned_product_names(product: Chem.Mol, common: list[dict]) -> list[str]:
 
 
 def pose_map(reference: Chem.Mol, reference_names: list[str],
-             product: Chem.Mol, step_id: str) -> tuple[dict, list[str]]:
+             product: Chem.Mol, step_id: str,
+             preferred_attachment_reference_name: str | None = None) -> tuple[dict, list[str]]:
     if len(reference_names) != reference.GetNumAtoms():
         raise RuntimeError(f"{step_id}: reference name count changed")
-    result, reference_match, product_match = exact_mcs(reference, product)
+    result, reference_matches, product_matches = exact_mcs(reference, product)
+    candidates = []
+    for reference_match in reference_matches:
+        for product_match in product_matches:
+            mapped_product = set(product_match)
+            added_product = set(range(product.GetNumAtoms())) - mapped_product
+            boundary_common = []
+            for bond in product.GetBonds():
+                first, second = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
+                if (first in mapped_product) == (second in mapped_product):
+                    continue
+                boundary_common.append(first if first in mapped_product else second)
+            attachment_names = []
+            for product_index in boundary_common:
+                query_index = product_match.index(product_index)
+                attachment_names.append(reference_names[reference_match[query_index]])
+            if preferred_attachment_reference_name is not None \
+                    and preferred_attachment_reference_name not in attachment_names:
+                continue
+            candidates.append((reference_match, product_match, tuple(sorted(added_product))))
+    if not candidates:
+        raise RuntimeError(
+            f"{step_id}: no exact map grows from {preferred_attachment_reference_name}")
+    reference_match, product_match, _ = min(candidates)
     mapped_reference = set(reference_match)
     mapped_product = set(product_match)
     common = []
@@ -148,7 +173,9 @@ def pose_map(reference: Chem.Mol, reference_names: list[str],
         })
     product_names = assigned_product_names(product, common)
     return ({
-        "source": "registered molecular graphs only; no later coordinates",
+        "source": "registered molecular graphs plus designer-selected hit exit vector; no later coordinates"
+        if preferred_attachment_reference_name else
+        "registered molecular graphs only; no later coordinates",
         "referenceHeavyAtoms": reference.GetNumAtoms(),
         "productHeavyAtoms": product.GetNumAtoms(),
         "commonHeavyAtoms": len(common),
@@ -279,6 +306,11 @@ def main() -> None:
     map_chloro, chloro_names = pose_map(hit, hit_names, chloro, "add-meta-chloro")
     map_sulfonamide, sulfonamide_names = pose_map(
         chloro, chloro_names, sulfonamide, "replace-chloro-with-sulfonamide")
+    designer_map_chloro, designer_chloro_names = pose_map(
+        hit, hit_names, chloro, "add-meta-chloro", "C19")
+    designer_map_sulfonamide, designer_sulfonamide_names = pose_map(
+        chloro, designer_chloro_names, sulfonamide,
+        "replace-chloro-with-sulfonamide", "C19")
     if map_chloro["commonHeavyAtoms"] != 24 or map_sulfonamide["commonHeavyAtoms"] != 24:
         raise RuntimeError("The registered CDK2 common scaffold changed")
     extract_hit_assets()
@@ -336,7 +368,53 @@ def main() -> None:
         "evaluation": {"status": "locked-until-predictions-frozen", "holdouts": []},
     }
     CAMPAIGN_OUTPUT.write_text(json.dumps(payload, indent=2) + "\n")
+    designer_steps = [
+        {
+            "id": "add-meta-chloro", "sequenceIndex": 1,
+            "referenceStateId": "2A6", "stateId": "6CP",
+            "label": "grow chlorine from the designer-selected meta carbon",
+            "inputKind": "designer-directed-graph-only",
+            "productSmiles": chloro_smiles,
+            "productAtomNames": designer_chloro_names,
+            "posePropagationMap": designer_map_chloro,
+            "spatialIntent": {
+                "method": "selected-exit-vector",
+                "attachmentReferenceAtomName": "C19",
+                "declaredBeforePoseSearch": True,
+            },
+        },
+        {
+            "id": "replace-chloro-with-sulfonamide", "sequenceIndex": 2,
+            "referenceStateId": "6CP", "stateId": "N76",
+            "label": "grow sulfonamide from the same selected meta carbon",
+            "inputKind": "designer-directed-graph-only",
+            "productSmiles": sulfonamide_smiles,
+            "productAtomNames": designer_sulfonamide_names,
+            "posePropagationMap": designer_map_sulfonamide,
+            "spatialIntent": {
+                "method": "selected-exit-vector",
+                "attachmentReferenceAtomName": "C19",
+                "declaredBeforePoseSearch": True,
+            },
+        },
+    ]
+    designer_payload = {
+        **payload,
+        "id": "cdk2-designer-intent",
+        "title": "CDK2 designer-directed hit-to-lead replay",
+        "protocolBoundary": {
+            **payload["protocolBoundary"],
+            "allowedLaterInputs": [
+                "reported compound molecular graphs",
+                "designer-selected attachment atom on the current predicted ligand",
+            ],
+            "sequenceRule": "Each step grows from an explicit persistent atom ID on the hit or preceding prediction.",
+        },
+        "steps": designer_steps,
+    }
+    DESIGNER_CAMPAIGN_OUTPUT.write_text(json.dumps(designer_payload, indent=2) + "\n")
     print(f"Wrote {CAMPAIGN_OUTPUT.relative_to(ROOT)} with {len(steps)} sequential graph-only steps")
+    print(f"Wrote {DESIGNER_CAMPAIGN_OUTPUT.relative_to(ROOT)} with explicit C19 designer intent")
 
 
 if __name__ == "__main__":
