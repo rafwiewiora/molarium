@@ -1,0 +1,1336 @@
+{
+  "schema": "molarium.design-campaign/v1",
+  "campaignId": "bclxl-fragment-linking",
+  "title": "BCL-xL fragment linking and linker optimization",
+  "description": "A reconstruction of a branching structure-based design story in which two weak site binders become subnanomolar linked inhibitors.",
+  "createdAt": "2026-08-30T19:00:00.000Z",
+  "finalizedAt": "2026-08-30T19:30:00.000Z",
+  "application": {
+    "name": "Molarium",
+    "reconstruction": "literature narrative v1",
+    "version": "1.0.0"
+  },
+  "actors": [
+    {
+      "displayName": "Reported study authors",
+      "id": "reported.bcl-authors",
+      "type": "import"
+    },
+    {
+      "displayName": "Sol · Molarium curator",
+      "id": "curator.sol",
+      "type": "agent"
+    }
+  ],
+  "sources": [
+    {
+      "id": "source.bcl-paper",
+      "locator": "doi:10.1021/jm300178u / PMID:22448988",
+      "title": "Design of Bcl-2 and Bcl-xL inhibitors with subnanomolar binding affinities based upon a new scaffold",
+      "type": "publication",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3397176/"
+    },
+    {
+      "id": "source.3spf",
+      "locator": "PDB:3SPF / CCD:B50",
+      "title": "BCL-xL complex with compound 4",
+      "type": "structure",
+      "url": "https://www.rcsb.org/structure/3SPF"
+    }
+  ],
+  "objects": {
+    "snapshots": {
+      "snapshot:06a2e2730a879c79332eed9aa899a95ce87efb8ddb96e71b54565360f12ffdc0": {
+        "canonicalSmiles": "CN1CCN(CC1)CCCNC(=O)c2c(c(cn2CC[C@@H](CO)O)c3ccc(cc3)Cl)c4ccccc4",
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "chain": "A",
+            "componentId": "B50",
+            "pdbId": "3SPF",
+            "residueNumber": 501,
+            "sourceId": "source.3spf"
+          }
+        ],
+        "graph": null,
+        "label": "Compound 4 · Site 1 scaffold",
+        "properties": {
+          "bcl2Ki": "78.0 µM",
+          "bclxlKi": "138 µM",
+          "claimStatus": "reported-in-source",
+          "role": "weak Site 1 binder"
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:ad57627fe4bd1c1f44acb1ae52a0d80f65d3988af4c6ea3b8c9f0c0de53aea91": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "compound": "5",
+            "locator": "Figure 5",
+            "sourceId": "source.bcl-paper"
+          }
+        ],
+        "graph": null,
+        "label": "Compound 5 · Site 2 fragment",
+        "properties": {
+          "bclxlKi": "75.0 µM",
+          "claimStatus": "reported-in-source",
+          "role": "weak Site 2 fragment derived from ABT-737"
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:08f858c9bbb562a7959ec637cd812904c15e1fd9ca65bafa3f332790f6eced3d": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "compound": "6",
+            "locator": "Figures 5C and 6",
+            "sourceId": "source.bcl-paper"
+          }
+        ],
+        "graph": null,
+        "label": "Compound 6 · first linked design",
+        "properties": {
+          "bcl2KiNanomolar": 2,
+          "bclxlKi": "<1 nM",
+          "claimStatus": "reported-in-source",
+          "linkerLengthAngstrom": 10.6
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:f7fc23758179eae8ef633f10abfe0f8e5411e324e4150784f4f0f29fb43a9f62": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "compound": "7",
+            "locator": "Figure 6 / Table 1",
+            "sourceId": "source.bcl-paper"
+          }
+        ],
+        "graph": null,
+        "label": "Compound 7 · linker variant",
+        "properties": {
+          "bcl2Ki": "<0.6 nM",
+          "bclxlKi": "<1 nM",
+          "cellularIC50": "~2 µM",
+          "claimStatus": "reported-in-source",
+          "linkerLengthAngstrom": 9.9
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:a3f4f503961d11b53841d386f3a5fc75c2f36cc08fcd69bf38a36c6abcbaf004": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "compound": "8",
+            "locator": "Figure 6 / Table 1",
+            "sourceId": "source.bcl-paper"
+          }
+        ],
+        "graph": null,
+        "label": "Compound 8 · linker variant",
+        "properties": {
+          "bcl2Ki": "<0.6 nM",
+          "bclxlKi": "<1 nM",
+          "cellularIC50": ">10 µM",
+          "claimStatus": "reported-in-source",
+          "linkerLengthAngstrom": 9
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:c6a066cd88e567b99adaf72a5e362121420ffa885cbfe97dd2fb13d7a80f4968": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "compound": "9",
+            "locator": "Figure 6 / Table 1",
+            "sourceId": "source.bcl-paper"
+          }
+        ],
+        "graph": null,
+        "label": "Compound 9 · linker variant",
+        "properties": {
+          "bcl2Ki": "~0.6 nM",
+          "bclxlKi": "<1 nM",
+          "cellularIC50": ">10 µM",
+          "claimStatus": "reported-in-source",
+          "linkerLengthAngstrom": 9.1
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:5780ce046b15e34eb619399e2bceb26b047b3a4e3512d78456165208e675d1b5": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "compound": "10",
+            "locator": "Figure 6 / Table 1",
+            "sourceId": "source.bcl-paper"
+          }
+        ],
+        "graph": null,
+        "label": "Compound 10 · linker variant",
+        "properties": {
+          "bcl2Ki": "1.5 nM",
+          "bclxlKi": "1.7 nM",
+          "cellularIC50": ">10 µM",
+          "claimStatus": "reported-in-source",
+          "linkerLengthAngstrom": 8.3
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:9203d9183a1db2dcd8f0fa429fa101dc1adeff68a2b3c502030c40b9b25f079c": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "compound": "11",
+            "locator": "Figure 6 / Table 1",
+            "sourceId": "source.bcl-paper"
+          }
+        ],
+        "graph": null,
+        "label": "Compound 11 · linker variant",
+        "properties": {
+          "bcl2Ki": "15.4 nM",
+          "bclxlKi": "11.3 nM",
+          "cellularIC50": ">10 µM",
+          "claimStatus": "reported-in-source",
+          "linkerLengthAngstrom": null
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:6f28acd41e1e443dbd9f458dd12d42ad8cbd7dcfce31cc5ae2044787bf87bb01": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "compound": "12",
+            "locator": "Figure 6 / Table 1",
+            "sourceId": "source.bcl-paper"
+          }
+        ],
+        "graph": null,
+        "label": "Compound 12 · linker variant",
+        "properties": {
+          "bcl2Ki": "8.5 nM",
+          "bclxlKi": "<1 nM",
+          "cellularIC50": "2.5–3.3 µM",
+          "claimStatus": "reported-in-source",
+          "linkerLengthAngstrom": null
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:c180ae3a6753a0821a3c8709d649fb4838401a87e7feaa873875cae3815c8ed5": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "compound": "21",
+            "locator": "Abstract / later optimization",
+            "sourceId": "source.bcl-paper"
+          }
+        ],
+        "graph": null,
+        "label": "Compound 21 · optimized inhibitor",
+        "properties": {
+          "bcl2Ki": "<1 nM",
+          "bclxlKi": "<1 nM",
+          "cellularIC50": "60–90 nM",
+          "claimStatus": "reported-in-source"
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      }
+    },
+    "commits": {
+      "commit:e779e7c4ee8e9356705d1cf9c13608f4423c1077a3ec260cb28334f08230d5fd": {
+        "actionScriptId": null,
+        "branch": "main",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Record the crystallographic weak Site 1 lead.",
+        "parents": [],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:06a2e2730a879c79332eed9aa899a95ce87efb8ddb96e71b54565360f12ffdc0",
+        "tags": [
+          "starting-point",
+          "crystal-structure"
+        ]
+      },
+      "commit:9bc9b46abba21efb618c398cb5944d9eb6a984f938bdba84c5c52848eb3a7608": {
+        "actionScriptId": null,
+        "branch": "main",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Record the complementary weak Site 2 fragment.",
+        "parents": [],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:ad57627fe4bd1c1f44acb1ae52a0d80f65d3988af4c6ea3b8c9f0c0de53aea91",
+        "tags": [
+          "fragment"
+        ]
+      },
+      "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8": {
+        "actionScriptId": null,
+        "branch": "linked-series",
+        "evidenceIds": [],
+        "hypothesisIds": [
+          "event:cc52099074b59b54a9de0c8d65060e2816dfd63a63c8a09853e33448310e039e"
+        ],
+        "message": "Link the two weak binders with the initial 10.6 Å design.",
+        "parents": [
+          "commit:e779e7c4ee8e9356705d1cf9c13608f4423c1077a3ec260cb28334f08230d5fd",
+          "commit:9bc9b46abba21efb618c398cb5944d9eb6a984f938bdba84c5c52848eb3a7608"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:08f858c9bbb562a7959ec637cd812904c15e1fd9ca65bafa3f332790f6eced3d",
+        "tags": []
+      },
+      "commit:3d80066db892c2c7e047d278b9674b5a49d72bf1b0fda2f53402beb7c136a5be": {
+        "actionScriptId": null,
+        "branch": "linked-series.compound-7",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Test linker variant 7.",
+        "parents": [
+          "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:f7fc23758179eae8ef633f10abfe0f8e5411e324e4150784f4f0f29fb43a9f62",
+        "tags": []
+      },
+      "commit:3fa9ba94a09197fcdf862a502146fc9e631bbecc527917a4955884f860f8dbfc": {
+        "actionScriptId": null,
+        "branch": "linked-series.compound-8",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Test linker variant 8.",
+        "parents": [
+          "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:a3f4f503961d11b53841d386f3a5fc75c2f36cc08fcd69bf38a36c6abcbaf004",
+        "tags": []
+      },
+      "commit:6ea8888ecd36cdd947778cabc41503b7bf9adb1cd339ec628dce98a37e78ba56": {
+        "actionScriptId": null,
+        "branch": "linked-series.compound-9",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Test linker variant 9.",
+        "parents": [
+          "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:c6a066cd88e567b99adaf72a5e362121420ffa885cbfe97dd2fb13d7a80f4968",
+        "tags": []
+      },
+      "commit:7239b7cbaf53d071cba90df89c98389a1b9bc819754bcdd5bf2412d6a2009e4b": {
+        "actionScriptId": null,
+        "branch": "linked-series.compound-10",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Test linker variant 10.",
+        "parents": [
+          "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:5780ce046b15e34eb619399e2bceb26b047b3a4e3512d78456165208e675d1b5",
+        "tags": []
+      },
+      "commit:e6b8eb3bb96e5c760392b4a7504ad15759eb3d12b37bedafca4df9f3effcd389": {
+        "actionScriptId": null,
+        "branch": "linked-series.compound-11",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Test linker variant 11.",
+        "parents": [
+          "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:9203d9183a1db2dcd8f0fa429fa101dc1adeff68a2b3c502030c40b9b25f079c",
+        "tags": []
+      },
+      "commit:db81cce9e2312ea59256928ac87595ce60f69cdd65546acb0e24e34417b23b53": {
+        "actionScriptId": null,
+        "branch": "linked-series.compound-12",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Test linker variant 12.",
+        "parents": [
+          "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:6f28acd41e1e443dbd9f458dd12d42ad8cbd7dcfce31cc5ae2044787bf87bb01",
+        "tags": []
+      },
+      "commit:2b66c0c31b73230b0c8ddd7200567e45c395aac8af8abaa23d467608298365df": {
+        "actionScriptId": null,
+        "branch": "lead-optimization",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Advance compound 7 into further structure-based optimization.",
+        "parents": [
+          "commit:3d80066db892c2c7e047d278b9674b5a49d72bf1b0fda2f53402beb7c136a5be"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:c180ae3a6753a0821a3c8709d649fb4838401a87e7feaa873875cae3815c8ed5",
+        "tags": []
+      }
+    },
+    "actionScripts": {}
+  },
+  "branches": {
+    "main": "commit:9bc9b46abba21efb618c398cb5944d9eb6a984f938bdba84c5c52848eb3a7608",
+    "linked-series": "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8",
+    "linked-series.compound-7": "commit:3d80066db892c2c7e047d278b9674b5a49d72bf1b0fda2f53402beb7c136a5be",
+    "linked-series.compound-8": "commit:3fa9ba94a09197fcdf862a502146fc9e631bbecc527917a4955884f860f8dbfc",
+    "linked-series.compound-9": "commit:6ea8888ecd36cdd947778cabc41503b7bf9adb1cd339ec628dce98a37e78ba56",
+    "linked-series.compound-10": "commit:7239b7cbaf53d071cba90df89c98389a1b9bc819754bcdd5bf2412d6a2009e4b",
+    "linked-series.compound-11": "commit:e6b8eb3bb96e5c760392b4a7504ad15759eb3d12b37bedafca4df9f3effcd389",
+    "linked-series.compound-12": "commit:db81cce9e2312ea59256928ac87595ce60f69cdd65546acb0e24e34417b23b53",
+    "lead-optimization": "commit:2b66c0c31b73230b0c8ddd7200567e45c395aac8af8abaa23d467608298365df"
+  },
+  "events": [
+    {
+      "actorId": "curator.sol",
+      "branch": "main",
+      "eventId": "event:9c7d8e2ce04fdbc60ab655894efe17a4212d50546be6b1c4602862d5e95f7e21",
+      "index": 0,
+      "kind": "campaign.started",
+      "occurredAt": "2012-05-10T00:00:00.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "caveat": "Narrative order follows the publication; exact experiment dates were not reported.",
+        "claimStatus": "molarium-reconstruction",
+        "objective": "Represent the weak-fragment, linking, linker-length, and cellular-activity branches reported in the study."
+      },
+      "previousEntrySha256": null,
+      "recordedAt": "2026-08-30T19:00:00.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [],
+      "entrySha256": "daa1a173407210dca22b2e129c5a3ce4cd4cb03128e72afee8a315ea3f7487a8"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "main",
+      "eventId": "event:6a17c0f9292058d0ac4d0665864c9639993f80a3e0b72486f69700b5c2d73006",
+      "index": 1,
+      "kind": "molecule.committed",
+      "occurredAt": "2012-05-10T00:00:01.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:e779e7c4ee8e9356705d1cf9c13608f4423c1077a3ec260cb28334f08230d5fd",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Record the crystallographic weak Site 1 lead.",
+        "parents": [],
+        "snapshotId": "snapshot:06a2e2730a879c79332eed9aa899a95ce87efb8ddb96e71b54565360f12ffdc0",
+        "tags": [
+          "starting-point",
+          "crystal-structure"
+        ]
+      },
+      "previousEntrySha256": "daa1a173407210dca22b2e129c5a3ce4cd4cb03128e72afee8a315ea3f7487a8",
+      "recordedAt": "2026-08-30T19:00:01.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper",
+        "source.3spf"
+      ],
+      "subjectIds": [
+        "commit:e779e7c4ee8e9356705d1cf9c13608f4423c1077a3ec260cb28334f08230d5fd",
+        "snapshot:06a2e2730a879c79332eed9aa899a95ce87efb8ddb96e71b54565360f12ffdc0"
+      ],
+      "entrySha256": "685cf6aa3b39c1ef5cb47b98e860caadaaac08be4d263405ac3d6d2506a84b06"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "main",
+      "eventId": "event:56398a0bbff14e2098ed42e5835d5df8e2f58d9d31c860c53a6beaaac221f54f",
+      "index": 2,
+      "kind": "measurement.recorded",
+      "occurredAt": "2012-05-10T00:00:02.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "bcl2KiMicromolar": 78,
+        "bclxlKiMicromolar": 138,
+        "claimStatus": "reported-in-source",
+        "endpoint": "fluorescence-polarization binding",
+        "interpretation": "Weak, but soluble and structurally confirmed in Site 1."
+      },
+      "previousEntrySha256": "685cf6aa3b39c1ef5cb47b98e860caadaaac08be4d263405ac3d6d2506a84b06",
+      "recordedAt": "2026-08-30T19:00:02.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:e779e7c4ee8e9356705d1cf9c13608f4423c1077a3ec260cb28334f08230d5fd"
+      ],
+      "entrySha256": "39bb0095751978f5e5ec3d1c9693d92fd9b9875fb35e78510bc93e399d028a7e"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "main",
+      "eventId": "event:99c274de3418282714c64971376321529b3e180443fcb920b6552fd4441ec78a",
+      "index": 3,
+      "kind": "decision.recorded",
+      "occurredAt": "2012-05-10T00:00:03.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "progressed",
+        "evidenceIds": [
+          "event:56398a0bbff14e2098ed42e5835d5df8e2f58d9d31c860c53a6beaaac221f54f"
+        ],
+        "rationale": "The weak compound was retained because its core was tractable, soluble, and crystallographically validated.",
+        "reasonCodes": [
+          "other"
+        ],
+        "targetCommitId": "commit:e779e7c4ee8e9356705d1cf9c13608f4423c1077a3ec260cb28334f08230d5fd"
+      },
+      "previousEntrySha256": "39bb0095751978f5e5ec3d1c9693d92fd9b9875fb35e78510bc93e399d028a7e",
+      "recordedAt": "2026-08-30T19:00:03.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper",
+        "source.3spf"
+      ],
+      "subjectIds": [
+        "commit:e779e7c4ee8e9356705d1cf9c13608f4423c1077a3ec260cb28334f08230d5fd"
+      ],
+      "entrySha256": "abfc72fc5157b47d6f8dd098141508470aa1fa32a8be3d0082a9110bca47cc03"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "main",
+      "eventId": "event:5805e3c84934225efcb060debb081e10787861122712b5bfc50777b7babc5e1e",
+      "index": 4,
+      "kind": "molecule.committed",
+      "occurredAt": "2012-05-10T00:00:04.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:9bc9b46abba21efb618c398cb5944d9eb6a984f938bdba84c5c52848eb3a7608",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Record the complementary weak Site 2 fragment.",
+        "parents": [],
+        "snapshotId": "snapshot:ad57627fe4bd1c1f44acb1ae52a0d80f65d3988af4c6ea3b8c9f0c0de53aea91",
+        "tags": [
+          "fragment"
+        ]
+      },
+      "previousEntrySha256": "abfc72fc5157b47d6f8dd098141508470aa1fa32a8be3d0082a9110bca47cc03",
+      "recordedAt": "2026-08-30T19:00:04.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:9bc9b46abba21efb618c398cb5944d9eb6a984f938bdba84c5c52848eb3a7608",
+        "snapshot:ad57627fe4bd1c1f44acb1ae52a0d80f65d3988af4c6ea3b8c9f0c0de53aea91"
+      ],
+      "entrySha256": "7c92fa79b884fe76e6f3aa819ed0d082352564ef2c56f5576c27246c9867ac3e"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "main",
+      "eventId": "event:228e49fbc42cba06212c8ce2fd5487501c7b5fcb8fd3e178d76c8b67063ed444",
+      "index": 5,
+      "kind": "decision.recorded",
+      "occurredAt": "2012-05-10T00:00:05.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "progressed",
+        "evidenceIds": [],
+        "rationale": "Retained as a complementary Site 2 anchor despite weak isolated affinity.",
+        "reasonCodes": [
+          "other"
+        ],
+        "targetCommitId": "commit:9bc9b46abba21efb618c398cb5944d9eb6a984f938bdba84c5c52848eb3a7608"
+      },
+      "previousEntrySha256": "7c92fa79b884fe76e6f3aa819ed0d082352564ef2c56f5576c27246c9867ac3e",
+      "recordedAt": "2026-08-30T19:00:05.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:9bc9b46abba21efb618c398cb5944d9eb6a984f938bdba84c5c52848eb3a7608"
+      ],
+      "entrySha256": "8dbfac45be221d3f8df70aaff6a466c88dc240e1e6c70fabf8f9350a12cad170"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "main",
+      "eventId": "event:cc52099074b59b54a9de0c8d65060e2816dfd63a63c8a09853e33448310e039e",
+      "index": 6,
+      "kind": "hypothesis.proposed",
+      "occurredAt": "2012-05-10T00:00:06.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "claimStatus": "reported-in-source",
+        "measuredGapAngstrom": 8.2,
+        "statement": "Link the meta position of compound 4 to the sulfonamido nitrogen of fragment 5."
+      },
+      "previousEntrySha256": "8dbfac45be221d3f8df70aaff6a466c88dc240e1e6c70fabf8f9350a12cad170",
+      "recordedAt": "2026-08-30T19:00:06.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:e779e7c4ee8e9356705d1cf9c13608f4423c1077a3ec260cb28334f08230d5fd",
+        "commit:9bc9b46abba21efb618c398cb5944d9eb6a984f938bdba84c5c52848eb3a7608"
+      ],
+      "entrySha256": "22ee43ba44e0fa52d014903dec64463ff5bacdcb31ebaf5b3af2abff83a51de8"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series",
+      "eventId": "event:f368a4802dcc500ee5459e80a9241d2203b7ab4b178ad5e2674f1040d68d3345",
+      "index": 7,
+      "kind": "molecule.committed",
+      "occurredAt": "2012-05-10T00:00:07.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8",
+        "evidenceIds": [],
+        "hypothesisIds": [
+          "event:cc52099074b59b54a9de0c8d65060e2816dfd63a63c8a09853e33448310e039e"
+        ],
+        "message": "Link the two weak binders with the initial 10.6 Å design.",
+        "parents": [
+          "commit:e779e7c4ee8e9356705d1cf9c13608f4423c1077a3ec260cb28334f08230d5fd",
+          "commit:9bc9b46abba21efb618c398cb5944d9eb6a984f938bdba84c5c52848eb3a7608"
+        ],
+        "snapshotId": "snapshot:08f858c9bbb562a7959ec637cd812904c15e1fd9ca65bafa3f332790f6eced3d",
+        "tags": []
+      },
+      "previousEntrySha256": "22ee43ba44e0fa52d014903dec64463ff5bacdcb31ebaf5b3af2abff83a51de8",
+      "recordedAt": "2026-08-30T19:00:07.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8",
+        "snapshot:08f858c9bbb562a7959ec637cd812904c15e1fd9ca65bafa3f332790f6eced3d"
+      ],
+      "entrySha256": "0c73b222e8fa4d720b8148151a23b122fe6f7c4e098e66d4eece1ef11e848ee7"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series",
+      "eventId": "event:99d9ed5fae94a15f36d1bbf2556917c42f81d71b60d4e078572d0aa18094209b",
+      "index": 8,
+      "kind": "measurement.recorded",
+      "occurredAt": "2012-05-10T00:00:08.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "claimStatus": "reported-in-source",
+        "endpoint": "binding affinity",
+        "result": ">10,000-fold improvement over either fragment; BCL-2 Ki 2.0 nM and BCL-xL Ki <1 nM."
+      },
+      "previousEntrySha256": "0c73b222e8fa4d720b8148151a23b122fe6f7c4e098e66d4eece1ef11e848ee7",
+      "recordedAt": "2026-08-30T19:00:08.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8"
+      ],
+      "entrySha256": "0e82bec74dc70a60524462ef2bf89056164deb4aa63253bb69eeea8378eddd01"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series",
+      "eventId": "event:0c2ae04e3964d0d2acb2b161659f25bf08a277b2fb474b57c985d4d232386124",
+      "index": 9,
+      "kind": "decision.recorded",
+      "occurredAt": "2012-05-10T00:00:09.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "progressed",
+        "evidenceIds": [
+          "event:99d9ed5fae94a15f36d1bbf2556917c42f81d71b60d4e078572d0aa18094209b"
+        ],
+        "rationale": "The linking hypothesis produced the intended affinity jump.",
+        "reasonCodes": [
+          "potency"
+        ],
+        "targetCommitId": "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8"
+      },
+      "previousEntrySha256": "0e82bec74dc70a60524462ef2bf89056164deb4aa63253bb69eeea8378eddd01",
+      "recordedAt": "2026-08-30T19:00:09.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8"
+      ],
+      "entrySha256": "0ae30f1a653fa2f9e36abe5eb3db229b2e64880d170064b0e7864b7dba879110"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-7",
+      "eventId": "event:6f498590b054bf537af164f0d54e0693aaa2f80cafef745531a910268fa81387",
+      "index": 10,
+      "kind": "molecule.committed",
+      "occurredAt": "2012-05-10T00:00:10.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:3d80066db892c2c7e047d278b9674b5a49d72bf1b0fda2f53402beb7c136a5be",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Test linker variant 7.",
+        "parents": [
+          "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8"
+        ],
+        "snapshotId": "snapshot:f7fc23758179eae8ef633f10abfe0f8e5411e324e4150784f4f0f29fb43a9f62",
+        "tags": []
+      },
+      "previousEntrySha256": "0ae30f1a653fa2f9e36abe5eb3db229b2e64880d170064b0e7864b7dba879110",
+      "recordedAt": "2026-08-30T19:00:10.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:3d80066db892c2c7e047d278b9674b5a49d72bf1b0fda2f53402beb7c136a5be",
+        "snapshot:f7fc23758179eae8ef633f10abfe0f8e5411e324e4150784f4f0f29fb43a9f62"
+      ],
+      "entrySha256": "939e8bb5570139a1310fd3982d5e6f14f14b8a249b533646f4a9fc300553b091"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-7",
+      "eventId": "event:14a31dcd7459951b9a597628ad7da39ae33ee2006c398f9b00fc54411c73717f",
+      "index": 11,
+      "kind": "measurement.recorded",
+      "occurredAt": "2012-05-10T00:00:11.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "bcl2Ki": "<0.6 nM",
+        "bclxlKi": "<1 nM",
+        "cellularIC50": "~2 µM",
+        "claimStatus": "reported-in-source",
+        "endpoint": "binding and cell growth"
+      },
+      "previousEntrySha256": "939e8bb5570139a1310fd3982d5e6f14f14b8a249b533646f4a9fc300553b091",
+      "recordedAt": "2026-08-30T19:00:11.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:3d80066db892c2c7e047d278b9674b5a49d72bf1b0fda2f53402beb7c136a5be"
+      ],
+      "entrySha256": "43cd0b3bb2451a3569772ab5427571849cce59af9b6a282fc2a284ce7460e5b4"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-7",
+      "eventId": "event:3bcc30a060725bae146c4280342d790591074f5feb7212eb77ebb7e61735ab9b",
+      "index": 12,
+      "kind": "decision.recorded",
+      "occurredAt": "2012-05-10T00:00:12.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "progressed",
+        "evidenceIds": [
+          "event:14a31dcd7459951b9a597628ad7da39ae33ee2006c398f9b00fc54411c73717f"
+        ],
+        "rationale": "Selected as the lead for subsequent optimization because it combined subnanomolar binding with measurable cellular activity.",
+        "reasonCodes": [
+          "potency",
+          "permeability"
+        ],
+        "targetCommitId": "commit:3d80066db892c2c7e047d278b9674b5a49d72bf1b0fda2f53402beb7c136a5be"
+      },
+      "previousEntrySha256": "43cd0b3bb2451a3569772ab5427571849cce59af9b6a282fc2a284ce7460e5b4",
+      "recordedAt": "2026-08-30T19:00:12.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:3d80066db892c2c7e047d278b9674b5a49d72bf1b0fda2f53402beb7c136a5be"
+      ],
+      "entrySha256": "638b9045ecbb7ee9a049d192c94d6dd85e85487b619448aff5b8c25aee3359ce"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-8",
+      "eventId": "event:a3ecaa1a321fee7d8e60b0015307e75eaa51b1608ea83c8893e43889b10352bd",
+      "index": 13,
+      "kind": "molecule.committed",
+      "occurredAt": "2012-05-10T00:00:13.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:3fa9ba94a09197fcdf862a502146fc9e631bbecc527917a4955884f860f8dbfc",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Test linker variant 8.",
+        "parents": [
+          "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8"
+        ],
+        "snapshotId": "snapshot:a3f4f503961d11b53841d386f3a5fc75c2f36cc08fcd69bf38a36c6abcbaf004",
+        "tags": []
+      },
+      "previousEntrySha256": "638b9045ecbb7ee9a049d192c94d6dd85e85487b619448aff5b8c25aee3359ce",
+      "recordedAt": "2026-08-30T19:00:13.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:3fa9ba94a09197fcdf862a502146fc9e631bbecc527917a4955884f860f8dbfc",
+        "snapshot:a3f4f503961d11b53841d386f3a5fc75c2f36cc08fcd69bf38a36c6abcbaf004"
+      ],
+      "entrySha256": "ff7a380d5b1fa02cac662c2103898d7f887d3df6fc2a491ed4ee78affe2c1f4a"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-8",
+      "eventId": "event:06bdbbf58ef46bb16acd3daf074e8078a60d3e0bc4f5520bf666a7a3c287cfb7",
+      "index": 14,
+      "kind": "measurement.recorded",
+      "occurredAt": "2012-05-10T00:00:14.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "bcl2Ki": "<0.6 nM",
+        "bclxlKi": "<1 nM",
+        "cellularIC50": ">10 µM",
+        "claimStatus": "reported-in-source",
+        "endpoint": "binding and cell growth"
+      },
+      "previousEntrySha256": "ff7a380d5b1fa02cac662c2103898d7f887d3df6fc2a491ed4ee78affe2c1f4a",
+      "recordedAt": "2026-08-30T19:00:14.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:3fa9ba94a09197fcdf862a502146fc9e631bbecc527917a4955884f860f8dbfc"
+      ],
+      "entrySha256": "2c57b1e84fb1b65dda4642d73a91e164b33740b8c70b9ad014596ea2818a4f20"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-8",
+      "eventId": "event:2c086528cfae4776ada29f24576c12fcad6b6c16c915e78b12f6a2419a6c17cf",
+      "index": 15,
+      "kind": "decision.recorded",
+      "occurredAt": "2012-05-10T00:00:15.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "not-progressed",
+        "evidenceIds": [
+          "event:06bdbbf58ef46bb16acd3daf074e8078a60d3e0bc4f5520bf666a7a3c287cfb7"
+        ],
+        "rationale": "Excellent biochemical affinity did not translate to cellular activity.",
+        "reasonCodes": [
+          "permeability"
+        ],
+        "targetCommitId": "commit:3fa9ba94a09197fcdf862a502146fc9e631bbecc527917a4955884f860f8dbfc"
+      },
+      "previousEntrySha256": "2c57b1e84fb1b65dda4642d73a91e164b33740b8c70b9ad014596ea2818a4f20",
+      "recordedAt": "2026-08-30T19:00:15.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:3fa9ba94a09197fcdf862a502146fc9e631bbecc527917a4955884f860f8dbfc"
+      ],
+      "entrySha256": "2de5d762ba3324aced7daa914bd4dd8ac006b86c6bf1f9f1db91e2aa58355b9d"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-9",
+      "eventId": "event:97be8b446f534be16f3d8f69526c933559d7968d79e25ae7c50a9e7df35a7748",
+      "index": 16,
+      "kind": "molecule.committed",
+      "occurredAt": "2012-05-10T00:00:16.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:6ea8888ecd36cdd947778cabc41503b7bf9adb1cd339ec628dce98a37e78ba56",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Test linker variant 9.",
+        "parents": [
+          "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8"
+        ],
+        "snapshotId": "snapshot:c6a066cd88e567b99adaf72a5e362121420ffa885cbfe97dd2fb13d7a80f4968",
+        "tags": []
+      },
+      "previousEntrySha256": "2de5d762ba3324aced7daa914bd4dd8ac006b86c6bf1f9f1db91e2aa58355b9d",
+      "recordedAt": "2026-08-30T19:00:16.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:6ea8888ecd36cdd947778cabc41503b7bf9adb1cd339ec628dce98a37e78ba56",
+        "snapshot:c6a066cd88e567b99adaf72a5e362121420ffa885cbfe97dd2fb13d7a80f4968"
+      ],
+      "entrySha256": "82e43e00be2fea5430139418f8eb4823c29949d8f51b9baed56ac857d6840448"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-9",
+      "eventId": "event:8a556f75bf49d65fc4cf1875caf15e857de28f51e1f0fd83ea928fd850440499",
+      "index": 17,
+      "kind": "measurement.recorded",
+      "occurredAt": "2012-05-10T00:00:17.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "bcl2Ki": "~0.6 nM",
+        "bclxlKi": "<1 nM",
+        "cellularIC50": ">10 µM",
+        "claimStatus": "reported-in-source",
+        "endpoint": "binding and cell growth"
+      },
+      "previousEntrySha256": "82e43e00be2fea5430139418f8eb4823c29949d8f51b9baed56ac857d6840448",
+      "recordedAt": "2026-08-30T19:00:17.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:6ea8888ecd36cdd947778cabc41503b7bf9adb1cd339ec628dce98a37e78ba56"
+      ],
+      "entrySha256": "aa8d194ce3f3f6df6c612a311559798c4110691c16c698f2ae642517841139d9"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-9",
+      "eventId": "event:67843809e524eb1c48e53fb82ff6c4e4c87c505eedaafe2507da6932e4d8b978",
+      "index": 18,
+      "kind": "decision.recorded",
+      "occurredAt": "2012-05-10T00:00:18.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "not-progressed",
+        "evidenceIds": [
+          "event:8a556f75bf49d65fc4cf1875caf15e857de28f51e1f0fd83ea928fd850440499"
+        ],
+        "rationale": "The rigid ethynyl linker retained binding but not useful cellular activity.",
+        "reasonCodes": [
+          "permeability"
+        ],
+        "targetCommitId": "commit:6ea8888ecd36cdd947778cabc41503b7bf9adb1cd339ec628dce98a37e78ba56"
+      },
+      "previousEntrySha256": "aa8d194ce3f3f6df6c612a311559798c4110691c16c698f2ae642517841139d9",
+      "recordedAt": "2026-08-30T19:00:18.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:6ea8888ecd36cdd947778cabc41503b7bf9adb1cd339ec628dce98a37e78ba56"
+      ],
+      "entrySha256": "db43ebec6ff5057593598acb69e0f9973fe106dbd0950c4df341d1b56871d43b"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-10",
+      "eventId": "event:3d5b06a5fbe61d9997a3849973095eb4be5c834b76f1d02c837bc87e67d1bbc1",
+      "index": 19,
+      "kind": "molecule.committed",
+      "occurredAt": "2012-05-10T00:00:19.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:7239b7cbaf53d071cba90df89c98389a1b9bc819754bcdd5bf2412d6a2009e4b",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Test linker variant 10.",
+        "parents": [
+          "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8"
+        ],
+        "snapshotId": "snapshot:5780ce046b15e34eb619399e2bceb26b047b3a4e3512d78456165208e675d1b5",
+        "tags": []
+      },
+      "previousEntrySha256": "db43ebec6ff5057593598acb69e0f9973fe106dbd0950c4df341d1b56871d43b",
+      "recordedAt": "2026-08-30T19:00:19.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:7239b7cbaf53d071cba90df89c98389a1b9bc819754bcdd5bf2412d6a2009e4b",
+        "snapshot:5780ce046b15e34eb619399e2bceb26b047b3a4e3512d78456165208e675d1b5"
+      ],
+      "entrySha256": "e18ddde6abbb50110dd8b64de3f950afc8e2d9a0ed7c484ef961d126e2284b6e"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-10",
+      "eventId": "event:da8b39543c05f773ff6bf6936c93f82bfeb8d1dab579fdf05d74d488df33de4b",
+      "index": 20,
+      "kind": "measurement.recorded",
+      "occurredAt": "2012-05-10T00:00:20.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "bcl2Ki": "1.5 nM",
+        "bclxlKi": "1.7 nM",
+        "cellularIC50": ">10 µM",
+        "claimStatus": "reported-in-source",
+        "endpoint": "binding and cell growth"
+      },
+      "previousEntrySha256": "e18ddde6abbb50110dd8b64de3f950afc8e2d9a0ed7c484ef961d126e2284b6e",
+      "recordedAt": "2026-08-30T19:00:20.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:7239b7cbaf53d071cba90df89c98389a1b9bc819754bcdd5bf2412d6a2009e4b"
+      ],
+      "entrySha256": "491a353af75f861b1b997c4e59a6e04a5b23cd54e97537a0d4c091cab5e77298"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-10",
+      "eventId": "event:a009877a81b14b13e23d7135f25be6d1fc0250ce72b71c2da6c01353901912ba",
+      "index": 21,
+      "kind": "decision.recorded",
+      "occurredAt": "2012-05-10T00:00:21.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "not-progressed",
+        "evidenceIds": [
+          "event:da8b39543c05f773ff6bf6936c93f82bfeb8d1dab579fdf05d74d488df33de4b"
+        ],
+        "rationale": "The shorter linker weakened affinity and retained poor cellular activity.",
+        "reasonCodes": [
+          "potency",
+          "permeability"
+        ],
+        "targetCommitId": "commit:7239b7cbaf53d071cba90df89c98389a1b9bc819754bcdd5bf2412d6a2009e4b"
+      },
+      "previousEntrySha256": "491a353af75f861b1b997c4e59a6e04a5b23cd54e97537a0d4c091cab5e77298",
+      "recordedAt": "2026-08-30T19:00:21.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:7239b7cbaf53d071cba90df89c98389a1b9bc819754bcdd5bf2412d6a2009e4b"
+      ],
+      "entrySha256": "c5970e3bc6b10949d14e6992489a29afdd8ac94252c96617f7c3b4ed73c541b9"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-11",
+      "eventId": "event:d448900ca6a678c05f44ca342f7395986cb18bb546cf1b742ce8c4b0df64cfbb",
+      "index": 22,
+      "kind": "molecule.committed",
+      "occurredAt": "2012-05-10T00:00:22.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:e6b8eb3bb96e5c760392b4a7504ad15759eb3d12b37bedafca4df9f3effcd389",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Test linker variant 11.",
+        "parents": [
+          "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8"
+        ],
+        "snapshotId": "snapshot:9203d9183a1db2dcd8f0fa429fa101dc1adeff68a2b3c502030c40b9b25f079c",
+        "tags": []
+      },
+      "previousEntrySha256": "c5970e3bc6b10949d14e6992489a29afdd8ac94252c96617f7c3b4ed73c541b9",
+      "recordedAt": "2026-08-30T19:00:22.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:e6b8eb3bb96e5c760392b4a7504ad15759eb3d12b37bedafca4df9f3effcd389",
+        "snapshot:9203d9183a1db2dcd8f0fa429fa101dc1adeff68a2b3c502030c40b9b25f079c"
+      ],
+      "entrySha256": "3fcc93210e69307a48fb710ee63aef6622b4955ee669052a5051915bffa26205"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-11",
+      "eventId": "event:45113891876e2f1dc8be1dd7aefa8e502ffe4483001cb2fec6108244130ede4f",
+      "index": 23,
+      "kind": "measurement.recorded",
+      "occurredAt": "2012-05-10T00:00:23.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "bcl2Ki": "15.4 nM",
+        "bclxlKi": "11.3 nM",
+        "cellularIC50": ">10 µM",
+        "claimStatus": "reported-in-source",
+        "endpoint": "binding and cell growth"
+      },
+      "previousEntrySha256": "3fcc93210e69307a48fb710ee63aef6622b4955ee669052a5051915bffa26205",
+      "recordedAt": "2026-08-30T19:00:23.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:e6b8eb3bb96e5c760392b4a7504ad15759eb3d12b37bedafca4df9f3effcd389"
+      ],
+      "entrySha256": "f2df62ee4eeb4efb16eccabd09ff39bf13255a27bffe8b0adeadc6d476285990"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-11",
+      "eventId": "event:f3714656d5e109432fbfacb4378334eaab76a0d945d1915bfe823ac8a0e77110",
+      "index": 24,
+      "kind": "decision.recorded",
+      "occurredAt": "2012-05-10T00:00:24.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "not-progressed",
+        "evidenceIds": [
+          "event:45113891876e2f1dc8be1dd7aefa8e502ffe4483001cb2fec6108244130ede4f"
+        ],
+        "rationale": "Added linker flexibility cost at least an order of magnitude in affinity.",
+        "reasonCodes": [
+          "potency"
+        ],
+        "targetCommitId": "commit:e6b8eb3bb96e5c760392b4a7504ad15759eb3d12b37bedafca4df9f3effcd389"
+      },
+      "previousEntrySha256": "f2df62ee4eeb4efb16eccabd09ff39bf13255a27bffe8b0adeadc6d476285990",
+      "recordedAt": "2026-08-30T19:00:24.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:e6b8eb3bb96e5c760392b4a7504ad15759eb3d12b37bedafca4df9f3effcd389"
+      ],
+      "entrySha256": "5f575d65eaf1bdb2777de04244daa2c38c9536da1adb5a12ae3d626dbbbc4b1c"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-12",
+      "eventId": "event:763f87e11c769ba3868e315f65d112238f576a67b19c624549724ff0ca7511b3",
+      "index": 25,
+      "kind": "molecule.committed",
+      "occurredAt": "2012-05-10T00:00:25.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:db81cce9e2312ea59256928ac87595ce60f69cdd65546acb0e24e34417b23b53",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Test linker variant 12.",
+        "parents": [
+          "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8"
+        ],
+        "snapshotId": "snapshot:6f28acd41e1e443dbd9f458dd12d42ad8cbd7dcfce31cc5ae2044787bf87bb01",
+        "tags": []
+      },
+      "previousEntrySha256": "5f575d65eaf1bdb2777de04244daa2c38c9536da1adb5a12ae3d626dbbbc4b1c",
+      "recordedAt": "2026-08-30T19:00:25.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:db81cce9e2312ea59256928ac87595ce60f69cdd65546acb0e24e34417b23b53",
+        "snapshot:6f28acd41e1e443dbd9f458dd12d42ad8cbd7dcfce31cc5ae2044787bf87bb01"
+      ],
+      "entrySha256": "55b626c4fdaa9ad419f59322ad853d274804323a2ca1f8ed626f25bd150b969b"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-12",
+      "eventId": "event:7f585aeca2e6892d7ff529e00a17c21c5bdd66a10ff2a80036e85dbeca061957",
+      "index": 26,
+      "kind": "measurement.recorded",
+      "occurredAt": "2012-05-10T00:00:26.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "bcl2Ki": "8.5 nM",
+        "bclxlKi": "<1 nM",
+        "cellularIC50": "2.5–3.3 µM",
+        "claimStatus": "reported-in-source",
+        "endpoint": "binding and cell growth"
+      },
+      "previousEntrySha256": "55b626c4fdaa9ad419f59322ad853d274804323a2ca1f8ed626f25bd150b969b",
+      "recordedAt": "2026-08-30T19:00:26.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:db81cce9e2312ea59256928ac87595ce60f69cdd65546acb0e24e34417b23b53"
+      ],
+      "entrySha256": "e70a6b71fcb867a11ca54b26a9d6ca304ba64ff2e71abb1eace30ae7445d40e9"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "linked-series.compound-12",
+      "eventId": "event:95e2a11d192da0e9430b8d0e9e93534e6ce039c05140f325cddc9269b1d1b8a2",
+      "index": 27,
+      "kind": "decision.recorded",
+      "occurredAt": "2012-05-10T00:00:27.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "not-progressed",
+        "evidenceIds": [
+          "event:7f585aeca2e6892d7ff529e00a17c21c5bdd66a10ff2a80036e85dbeca061957"
+        ],
+        "rationale": "Changing attachment geometry reduced BCL-2 affinity relative to compound 7.",
+        "reasonCodes": [
+          "selectivity",
+          "potency"
+        ],
+        "targetCommitId": "commit:db81cce9e2312ea59256928ac87595ce60f69cdd65546acb0e24e34417b23b53"
+      },
+      "previousEntrySha256": "e70a6b71fcb867a11ca54b26a9d6ca304ba64ff2e71abb1eace30ae7445d40e9",
+      "recordedAt": "2026-08-30T19:00:27.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:db81cce9e2312ea59256928ac87595ce60f69cdd65546acb0e24e34417b23b53"
+      ],
+      "entrySha256": "475c97d491730aaee682f0c39d6951d624bb35a5cee07e2ea4dde96c0ae0ff37"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "lead-optimization",
+      "eventId": "event:5b226465dd0e118dd48842b1ee376ec42a6cb192d04b22f1aad9fa43c42b2241",
+      "index": 28,
+      "kind": "molecule.committed",
+      "occurredAt": "2012-05-10T00:00:28.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:2b66c0c31b73230b0c8ddd7200567e45c395aac8af8abaa23d467608298365df",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Advance compound 7 into further structure-based optimization.",
+        "parents": [
+          "commit:3d80066db892c2c7e047d278b9674b5a49d72bf1b0fda2f53402beb7c136a5be"
+        ],
+        "snapshotId": "snapshot:c180ae3a6753a0821a3c8709d649fb4838401a87e7feaa873875cae3815c8ed5",
+        "tags": []
+      },
+      "previousEntrySha256": "475c97d491730aaee682f0c39d6951d624bb35a5cee07e2ea4dde96c0ae0ff37",
+      "recordedAt": "2026-08-30T19:00:28.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:2b66c0c31b73230b0c8ddd7200567e45c395aac8af8abaa23d467608298365df",
+        "snapshot:c180ae3a6753a0821a3c8709d649fb4838401a87e7feaa873875cae3815c8ed5"
+      ],
+      "entrySha256": "418673ca9fc47b89cf783e4ffa037f1f9cf2daa1ffe71fc20471f564ed589793"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "lead-optimization",
+      "eventId": "event:fc350d6078e5afe335bdfe0933b9b54ca036f553d2c1f8b2496048965cfe5d6c",
+      "index": 29,
+      "kind": "measurement.recorded",
+      "occurredAt": "2012-05-10T00:00:29.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "claimStatus": "reported-in-source",
+        "endpoint": "binding and cellular potency",
+        "result": "BCL-2 and BCL-xL Ki <1 nM; H146/H1417 cell growth IC50 60–90 nM."
+      },
+      "previousEntrySha256": "418673ca9fc47b89cf783e4ffa037f1f9cf2daa1ffe71fc20471f564ed589793",
+      "recordedAt": "2026-08-30T19:00:29.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:2b66c0c31b73230b0c8ddd7200567e45c395aac8af8abaa23d467608298365df"
+      ],
+      "entrySha256": "6417ecf54b64900022dd2365c0cc195a68ce819d7a10aee7b87beb7865755d05"
+    },
+    {
+      "actorId": "reported.bcl-authors",
+      "branch": "lead-optimization",
+      "eventId": "event:2b3e4ad576dabe19fba55b5200e056c8034291303aec1910294dda7d8b885f27",
+      "index": 30,
+      "kind": "decision.recorded",
+      "occurredAt": "2012-05-10T00:00:30.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "progressed",
+        "evidenceIds": [
+          "event:fc350d6078e5afe335bdfe0933b9b54ca036f553d2c1f8b2496048965cfe5d6c"
+        ],
+        "rationale": "Reported as the best compound after biochemical affinity translated to cellular activity.",
+        "reasonCodes": [
+          "potency",
+          "permeability"
+        ],
+        "targetCommitId": "commit:2b66c0c31b73230b0c8ddd7200567e45c395aac8af8abaa23d467608298365df"
+      },
+      "previousEntrySha256": "6417ecf54b64900022dd2365c0cc195a68ce819d7a10aee7b87beb7865755d05",
+      "recordedAt": "2026-08-30T19:00:30.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.bcl-paper"
+      ],
+      "subjectIds": [
+        "commit:2b66c0c31b73230b0c8ddd7200567e45c395aac8af8abaa23d467608298365df"
+      ],
+      "entrySha256": "4abeb58e200a9fea77d838cfb99bc71317da6f86c07c9917a4b7582c36ba4547"
+    },
+    {
+      "actorId": "curator.sol",
+      "branch": "main",
+      "eventId": "event:014db972726f7daa907df4a9c98b0cd85a4151ccbeeb8ce939cbeecc937cae40",
+      "index": 31,
+      "kind": "campaign.completed",
+      "occurredAt": "2026-08-30T19:30:00.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "branchHeads": {
+          "lead-optimization": "commit:2b66c0c31b73230b0c8ddd7200567e45c395aac8af8abaa23d467608298365df",
+          "linked-series": "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8",
+          "linked-series.compound-10": "commit:7239b7cbaf53d071cba90df89c98389a1b9bc819754bcdd5bf2412d6a2009e4b",
+          "linked-series.compound-11": "commit:e6b8eb3bb96e5c760392b4a7504ad15759eb3d12b37bedafca4df9f3effcd389",
+          "linked-series.compound-12": "commit:db81cce9e2312ea59256928ac87595ce60f69cdd65546acb0e24e34417b23b53",
+          "linked-series.compound-7": "commit:3d80066db892c2c7e047d278b9674b5a49d72bf1b0fda2f53402beb7c136a5be",
+          "linked-series.compound-8": "commit:3fa9ba94a09197fcdf862a502146fc9e631bbecc527917a4955884f860f8dbfc",
+          "linked-series.compound-9": "commit:6ea8888ecd36cdd947778cabc41503b7bf9adb1cd339ec628dce98a37e78ba56",
+          "main": "commit:9bc9b46abba21efb618c398cb5944d9eb6a984f938bdba84c5c52848eb3a7608"
+        }
+      },
+      "previousEntrySha256": "4abeb58e200a9fea77d838cfb99bc71317da6f86c07c9917a4b7582c36ba4547",
+      "recordedAt": "2026-08-30T19:30:00.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [],
+      "subjectIds": [],
+      "entrySha256": "e700a47ffad53b727918d8b6b3dafbec7b902e8bc31a57b40123850ed76845e4"
+    }
+  ],
+  "campaignSha256": "8668fe791923b32e3358ec13f11232f21da3e545aaedb8f3d53a015f6a89f0f2"
+}
