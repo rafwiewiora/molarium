@@ -1,0 +1,1267 @@
+{
+  "schema": "molarium.design-campaign/v1",
+  "campaignId": "moonshot-dndi-6510",
+  "title": "From Moonshot lead (S)-x1 to DNDI-6510",
+  "description": "A source-grounded reconstruction of the reported branches, stopped ideas, lead selection, and eventual program discontinuation.",
+  "createdAt": "2026-08-30T18:00:00.000Z",
+  "finalizedAt": "2026-08-30T18:30:00.000Z",
+  "application": {
+    "name": "Molarium",
+    "reconstruction": "literature narrative v1",
+    "version": "1.0.0"
+  },
+  "actors": [
+    {
+      "displayName": "Reported study authors",
+      "id": "reported.moonshot-authors",
+      "type": "import"
+    },
+    {
+      "displayName": "Sol · Molarium curator",
+      "id": "curator.sol",
+      "type": "agent"
+    }
+  ],
+  "sources": [
+    {
+      "id": "source.dndi-paper",
+      "license": "CC BY 4.0",
+      "locator": "doi:10.1101/2025.06.16.660018",
+      "title": "Open-science discovery of DNDI-6510",
+      "type": "publication",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12262575/"
+    },
+    {
+      "id": "source.7gn8",
+      "locator": "PDB:7GN8 / CCD:RPZ",
+      "title": "SARS-CoV-2 Mpro with Moonshot lead (S)-x1",
+      "type": "structure",
+      "url": "https://www.rcsb.org/structure/7GN8"
+    },
+    {
+      "id": "source.7gnr",
+      "locator": "PDB:7GNR / CCD:RZU",
+      "title": "SARS-CoV-2 Mpro with (S)-x38 DNDI-6510",
+      "type": "structure",
+      "url": "https://www.rcsb.org/structure/7GNR"
+    },
+    {
+      "id": "source.public-cdd",
+      "locator": "Public CDD Vault and ChEMBL, as cited by the study",
+      "title": "COVID Moonshot public compound data",
+      "type": "dataset"
+    }
+  ],
+  "objects": {
+    "snapshots": {
+      "snapshot:191d0c8023fe48227b7138835697c13bee0e8e28752c8d44f27d7ee396c80527": {
+        "canonicalSmiles": "CNC(=O)CN1Cc2ccc(cc2[C@]3(C1)CCN(C3=O)c4cncc5c4cccc5)Cl",
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "chain": "A",
+            "componentId": "RPZ",
+            "pdbId": "7GN8",
+            "residueNumber": 407,
+            "sourceId": "source.7gn8"
+          },
+          {
+            "compoundId": "MAT-POS-c7726e07-5",
+            "sourceId": "source.public-cdd"
+          }
+        ],
+        "graph": null,
+        "label": "(S)-x1 · Moonshot lead",
+        "properties": {
+          "claimStatus": "reported-in-source",
+          "liabilities": [
+            "positive Ames signal",
+            "rapid rodent clearance",
+            "racemization risk"
+          ],
+          "role": "starting lead"
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:abcbfe6c9d744f9e1c91850fc7d9f79dfb2e57ffdbec188e0e38b3558e37eb45": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "examples": [
+              "F",
+              "SO2Me",
+              "CN",
+              "CF3"
+            ],
+            "locator": "Figure 2C",
+            "sourceId": "source.dndi-paper"
+          }
+        ],
+        "graph": null,
+        "label": "6-position electron-withdrawing series",
+        "properties": {
+          "claimStatus": "reported-in-source",
+          "intendedOutcome": "reduce oxidative activation",
+          "series": true
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:7b0ef2c6872cb045897b341a49f81445e469c955d745629885c66b14fcd6769b": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "example": "x42 tetrahydroisoquinoline",
+            "locator": "Figure 2D",
+            "sourceId": "source.dndi-paper"
+          }
+        ],
+        "graph": null,
+        "label": "Amino-heterocycle replacement series",
+        "properties": {
+          "claimStatus": "reported-in-source",
+          "intendedOutcome": "retain His163 acceptor while lowering mutagenicity risk"
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:14bb5fb0d2351f4912abb35cc225126ec001417f51a2b3b40e01e90a39d5e46e": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "locator": "Figure 2E",
+            "sourceId": "source.dndi-paper"
+          }
+        ],
+        "graph": null,
+        "label": "Early spiro hydantoin matched pairs",
+        "properties": {
+          "claimStatus": "reported-in-source",
+          "intendedOutcome": "lock the amino isoquinoline against release"
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:ec8f6e76d6d8600d4738bd2aff067f80b278343e6a8a982edcf091a8d119c237": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "locator": "Figure 2E",
+            "sourceId": "source.dndi-paper"
+          }
+        ],
+        "graph": null,
+        "label": "Six-membered ring lactam",
+        "properties": {
+          "claimStatus": "reported-in-source",
+          "hypothesis": "extra lipophilicity or altered conformation might improve potency"
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:617c32ee016933f579e94199284031e8e1fcfdfff428713ee8bf222fde8157f5": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "compound": "(S)-x29",
+            "locator": "Figure 2 / Supplementary Table 1",
+            "sourceId": "source.dndi-paper"
+          }
+        ],
+        "graph": null,
+        "label": "(S)-x29 · spiro lactam",
+        "properties": {
+          "Ames": "negative in reported tests",
+          "claimStatus": "reported-in-source",
+          "series": "spiro lactam",
+          "stereocenter": "all-carbon"
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:cf5845d2767b4bf2436d344e3023220cf1f62c608d88f99540372c5adf4e3ae8": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "compound": "(S)-x31",
+            "locator": "Figure 4",
+            "sourceId": "source.dndi-paper"
+          }
+        ],
+        "graph": null,
+        "label": "(S)-x31 · optimized lead",
+        "properties": {
+          "Ames": "negative in reported tests",
+          "antiviralEC90nM": 142,
+          "claimStatus": "reported-in-source"
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:353b5fcc3f6a50b76c203387380e70ce7e2f8950b4aa57fdc2a6c324b2e15033": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "compound": "(S)-x37",
+            "locator": "Figure 4",
+            "sourceId": "source.dndi-paper"
+          }
+        ],
+        "graph": null,
+        "label": "(S)-x37 · optimized lead",
+        "properties": {
+          "Ames": "negative in reported tests",
+          "antiviralEC90nM": 64,
+          "claimStatus": "reported-in-source"
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:bbce1e35106ce245b628d93953d21706568a466648c3a490c9ca02b185e371d1": {
+        "canonicalSmiles": "CNC(=O)C1(CC1)N2C[C@]3(CCN(C3=O)c4cncc5c4cccc5)c6cc(ccc6C2=O)Cl",
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "chain": "A",
+            "componentId": "RZU",
+            "pdbId": "7GNR",
+            "residueNumber": 408,
+            "sourceId": "source.7gnr"
+          }
+        ],
+        "graph": null,
+        "label": "(S)-x38 · DNDI-6510",
+        "properties": {
+          "Ames": "negative in reported tests",
+          "antiviralEC90nM": 66,
+          "claimStatus": "reported-in-source",
+          "ratLiverMicrosomeClearance": "16 µL/min/mg",
+          "role": "preclinical candidate"
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      }
+    },
+    "commits": {
+      "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c": {
+        "actionScriptId": null,
+        "branch": "main",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Record the crystallographic Moonshot starting lead and its disclosed liabilities.",
+        "parents": [],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:191d0c8023fe48227b7138835697c13bee0e8e28752c8d44f27d7ee396c80527",
+        "tags": [
+          "starting-point",
+          "crystal-structure"
+        ]
+      },
+      "commit:a935fb866618bee4ea82a51c27ad7e2f4a368b7f73cb483d4e11f171a64238e0": {
+        "actionScriptId": null,
+        "branch": "ames.6-position-ewg",
+        "evidenceIds": [],
+        "hypothesisIds": [
+          "event:19092e383b64320e7abae6ff677041e117afc9f3d153fe8e573b972686278e2e"
+        ],
+        "message": "Explore electron-withdrawing 6-position substitutions.",
+        "parents": [
+          "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:abcbfe6c9d744f9e1c91850fc7d9f79dfb2e57ffdbec188e0e38b3558e37eb45",
+        "tags": []
+      },
+      "commit:bc5589ed1b05e88ea0de729e765d1720c5e284f6842822d063d07f67cfe0d0ed": {
+        "actionScriptId": null,
+        "branch": "ames.heterocycles",
+        "evidenceIds": [],
+        "hypothesisIds": [
+          "event:19092e383b64320e7abae6ff677041e117afc9f3d153fe8e573b972686278e2e"
+        ],
+        "message": "Replace the amino isoquinoline with alternative heterocycles.",
+        "parents": [
+          "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:7b0ef2c6872cb045897b341a49f81445e469c955d745629885c66b14fcd6769b",
+        "tags": []
+      },
+      "commit:190fd46334eaa8021c42d5e7f2135a57dcd3bcdd0ef56886641a88b4c6c3e273": {
+        "actionScriptId": null,
+        "branch": "ames.spiro",
+        "evidenceIds": [],
+        "hypothesisIds": [
+          "event:19092e383b64320e7abae6ff677041e117afc9f3d153fe8e573b972686278e2e"
+        ],
+        "message": "Test the first spirocyclised hydantoin designs.",
+        "parents": [
+          "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:14bb5fb0d2351f4912abb35cc225126ec001417f51a2b3b40e01e90a39d5e46e",
+        "tags": []
+      },
+      "commit:b73e9970d220778c70d3282cc542662e7fcdbcb8d0f5906bb1f7ab11d08ff7ff": {
+        "actionScriptId": null,
+        "branch": "ames.spiro.six-membered-lactam",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Expand the spiro lactam ring.",
+        "parents": [
+          "commit:190fd46334eaa8021c42d5e7f2135a57dcd3bcdd0ef56886641a88b4c6c3e273"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:ec8f6e76d6d8600d4738bd2aff067f80b278343e6a8a982edcf091a8d119c237",
+        "tags": []
+      },
+      "commit:c4183b5e54c6633a360847f4837b9076568b74cd23e8314877cfb69456d3b678": {
+        "actionScriptId": null,
+        "branch": "ames.spiro.lactam",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Advance the potency-retaining spiro lactam series.",
+        "parents": [
+          "commit:190fd46334eaa8021c42d5e7f2135a57dcd3bcdd0ef56886641a88b4c6c3e273"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:617c32ee016933f579e94199284031e8e1fcfdfff428713ee8bf222fde8157f5",
+        "tags": []
+      },
+      "commit:29ab4f3e54431bb1ea88239cb33ae8dac7635efc72d871c45fc8437201357624": {
+        "actionScriptId": null,
+        "branch": "lead-optimization",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Combine spiro locking with metabolism-focused changes.",
+        "parents": [
+          "commit:c4183b5e54c6633a360847f4837b9076568b74cd23e8314877cfb69456d3b678"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:cf5845d2767b4bf2436d344e3023220cf1f62c608d88f99540372c5adf4e3ae8",
+        "tags": []
+      },
+      "commit:ffcae14481e0b553bf1f9fef66f7623be00538fbc4be2b46d39f1a5a04b63750": {
+        "actionScriptId": null,
+        "branch": "lead-optimization.x37",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Retain a parallel optimized lead.",
+        "parents": [
+          "commit:c4183b5e54c6633a360847f4837b9076568b74cd23e8314877cfb69456d3b678"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:353b5fcc3f6a50b76c203387380e70ce7e2f8950b4aa57fdc2a6c324b2e15033",
+        "tags": []
+      },
+      "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c": {
+        "actionScriptId": null,
+        "branch": "lead-optimization",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Select the structurally confirmed optimized candidate.",
+        "parents": [
+          "commit:29ab4f3e54431bb1ea88239cb33ae8dac7635efc72d871c45fc8437201357624",
+          "commit:ffcae14481e0b553bf1f9fef66f7623be00538fbc4be2b46d39f1a5a04b63750"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:bbce1e35106ce245b628d93953d21706568a466648c3a490c9ca02b185e371d1",
+        "tags": [
+          "candidate",
+          "crystal-structure"
+        ]
+      }
+    },
+    "actionScripts": {}
+  },
+  "branches": {
+    "main": "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c",
+    "ames.6-position-ewg": "commit:a935fb866618bee4ea82a51c27ad7e2f4a368b7f73cb483d4e11f171a64238e0",
+    "ames.heterocycles": "commit:bc5589ed1b05e88ea0de729e765d1720c5e284f6842822d063d07f67cfe0d0ed",
+    "ames.spiro": "commit:190fd46334eaa8021c42d5e7f2135a57dcd3bcdd0ef56886641a88b4c6c3e273",
+    "ames.spiro.six-membered-lactam": "commit:b73e9970d220778c70d3282cc542662e7fcdbcb8d0f5906bb1f7ab11d08ff7ff",
+    "ames.spiro.lactam": "commit:c4183b5e54c6633a360847f4837b9076568b74cd23e8314877cfb69456d3b678",
+    "lead-optimization": "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c",
+    "lead-optimization.x37": "commit:ffcae14481e0b553bf1f9fef66f7623be00538fbc4be2b46d39f1a5a04b63750"
+  },
+  "events": [
+    {
+      "actorId": "curator.sol",
+      "branch": "main",
+      "eventId": "event:0d2e807d93240db1bddb344cfc5febabc30e70f044fe2c75269a7230e115341a",
+      "index": 0,
+      "kind": "campaign.started",
+      "occurredAt": "2025-06-17T00:00:00.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "caveat": "Narrative order follows the paper. Exact experiment dates were not established; occurredAt encodes publication-order sequence.",
+        "claimStatus": "molarium-reconstruction",
+        "objective": "Preserve the full reported decision history, including routes that were stopped."
+      },
+      "previousEntrySha256": null,
+      "recordedAt": "2026-08-30T18:00:00.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [],
+      "entrySha256": "a877c25f64e2c64b642f92856fa7a9db29c17e461d8d167be454afbb4e344ce5"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "main",
+      "eventId": "event:867cd20b5312b0e15825d620161f71ded26b0b1eb4e328c5020745b0170c5adb",
+      "index": 1,
+      "kind": "molecule.committed",
+      "occurredAt": "2025-06-17T00:00:01.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Record the crystallographic Moonshot starting lead and its disclosed liabilities.",
+        "parents": [],
+        "snapshotId": "snapshot:191d0c8023fe48227b7138835697c13bee0e8e28752c8d44f27d7ee396c80527",
+        "tags": [
+          "starting-point",
+          "crystal-structure"
+        ]
+      },
+      "previousEntrySha256": "a877c25f64e2c64b642f92856fa7a9db29c17e461d8d167be454afbb4e344ce5",
+      "recordedAt": "2026-08-30T18:00:01.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper",
+        "source.7gn8"
+      ],
+      "subjectIds": [
+        "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c",
+        "snapshot:191d0c8023fe48227b7138835697c13bee0e8e28752c8d44f27d7ee396c80527"
+      ],
+      "entrySha256": "5aee6d0f64985f84789302057070a048e5bc685dd53d76f33dd9c43155201003"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "main",
+      "eventId": "event:0c5b21e0071bd66318d5753a491d4f8b0cca820cd3a7b78d01fc78432ecd95e2",
+      "index": 2,
+      "kind": "observation.recorded",
+      "occurredAt": "2025-06-17T00:00:02.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "claimStatus": "reported-in-source",
+        "observation": "The lead series required simultaneous mitigation of Ames risk, metabolic clearance, and racemization while maintaining Mpro potency.",
+        "structuralRequirements": [
+          "isoquinoline N–His163 hydrogen bond",
+          "carbonyl–Glu166 backbone NH hydrogen bond",
+          "aromatic chlorine in S2"
+        ]
+      },
+      "previousEntrySha256": "5aee6d0f64985f84789302057070a048e5bc685dd53d76f33dd9c43155201003",
+      "recordedAt": "2026-08-30T18:00:02.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c"
+      ],
+      "entrySha256": "772400d1d3b386fd6eed77a34cb7b9246ce3b845fc3300ca9e7b7a115a029b06"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "main",
+      "eventId": "event:cb1e56ab43eeaedce15703291900ca1089e2c287872bc1ba8a13c9d8edbc364a",
+      "index": 3,
+      "kind": "decision.recorded",
+      "occurredAt": "2025-06-17T00:00:03.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "progressed",
+        "evidenceIds": [
+          "event:0c5b21e0071bd66318d5753a491d4f8b0cca820cd3a7b78d01fc78432ecd95e2"
+        ],
+        "rationale": "Retained as the structural and activity reference despite known liabilities.",
+        "reasonCodes": [
+          "potency"
+        ],
+        "targetCommitId": "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c"
+      },
+      "previousEntrySha256": "772400d1d3b386fd6eed77a34cb7b9246ce3b845fc3300ca9e7b7a115a029b06",
+      "recordedAt": "2026-08-30T18:00:03.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c"
+      ],
+      "entrySha256": "f743c83a8f4c701acb193e6fb01a8793b32401a91f9e162d1b5fd653d2973aa0"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "main",
+      "eventId": "event:19092e383b64320e7abae6ff677041e117afc9f3d153fe8e573b972686278e2e",
+      "index": 4,
+      "kind": "hypothesis.proposed",
+      "occurredAt": "2025-06-17T00:00:04.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "approaches": [
+          "6-position substitution",
+          "amino-heterocycle replacement",
+          "spirocyclisation to prevent metabolite release"
+        ],
+        "claimStatus": "reported-in-source",
+        "statement": "Test three Ames-mitigation strategies in parallel."
+      },
+      "previousEntrySha256": "f743c83a8f4c701acb193e6fb01a8793b32401a91f9e162d1b5fd653d2973aa0",
+      "recordedAt": "2026-08-30T18:00:04.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c"
+      ],
+      "entrySha256": "e4073b97a748ed2653e146df9fce9829914b2eeb9b9643611256d7f3d560a8ff"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "ames.6-position-ewg",
+      "eventId": "event:d5ec7edd21fd8d6e685b6f25b239487bef12c5cf3bb0db5d2fedc968898a9283",
+      "index": 5,
+      "kind": "molecule.committed",
+      "occurredAt": "2025-06-17T00:00:05.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:a935fb866618bee4ea82a51c27ad7e2f4a368b7f73cb483d4e11f171a64238e0",
+        "evidenceIds": [],
+        "hypothesisIds": [
+          "event:19092e383b64320e7abae6ff677041e117afc9f3d153fe8e573b972686278e2e"
+        ],
+        "message": "Explore electron-withdrawing 6-position substitutions.",
+        "parents": [
+          "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c"
+        ],
+        "snapshotId": "snapshot:abcbfe6c9d744f9e1c91850fc7d9f79dfb2e57ffdbec188e0e38b3558e37eb45",
+        "tags": []
+      },
+      "previousEntrySha256": "e4073b97a748ed2653e146df9fce9829914b2eeb9b9643611256d7f3d560a8ff",
+      "recordedAt": "2026-08-30T18:00:05.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:a935fb866618bee4ea82a51c27ad7e2f4a368b7f73cb483d4e11f171a64238e0",
+        "snapshot:abcbfe6c9d744f9e1c91850fc7d9f79dfb2e57ffdbec188e0e38b3558e37eb45"
+      ],
+      "entrySha256": "a2902a562300562678572e3a4b7e8f4434624ef780030a67a818eefd286d08ac"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "ames.6-position-ewg",
+      "eventId": "event:af1c8c20930082a656f173523714d1270f37804a5b4d0a44b0ce9ffceabd4723",
+      "index": 6,
+      "kind": "measurement.recorded",
+      "occurredAt": "2025-06-17T00:00:06.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "claimStatus": "reported-in-source",
+        "endpoint": "SARS-CoV-2 Mpro inhibition",
+        "result": "less active than electron-donating substitutions"
+      },
+      "previousEntrySha256": "a2902a562300562678572e3a4b7e8f4434624ef780030a67a818eefd286d08ac",
+      "recordedAt": "2026-08-30T18:00:06.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:a935fb866618bee4ea82a51c27ad7e2f4a368b7f73cb483d4e11f171a64238e0"
+      ],
+      "entrySha256": "28e37d8aa453d849921dbb030745d11e8de901959468dd3a935620d4e5560b0e"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "ames.6-position-ewg",
+      "eventId": "event:693968e2eb427f01b276d92fd160cdce5499f70d200c3782286894ea35441819",
+      "index": 7,
+      "kind": "decision.recorded",
+      "occurredAt": "2025-06-17T00:00:07.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "not-progressed",
+        "evidenceIds": [
+          "event:af1c8c20930082a656f173523714d1270f37804a5b4d0a44b0ce9ffceabd4723"
+        ],
+        "rationale": "Electron-withdrawing examples lost Mpro activity; the approach was discontinued.",
+        "reasonCodes": [
+          "potency"
+        ],
+        "targetCommitId": "commit:a935fb866618bee4ea82a51c27ad7e2f4a368b7f73cb483d4e11f171a64238e0"
+      },
+      "previousEntrySha256": "28e37d8aa453d849921dbb030745d11e8de901959468dd3a935620d4e5560b0e",
+      "recordedAt": "2026-08-30T18:00:07.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:a935fb866618bee4ea82a51c27ad7e2f4a368b7f73cb483d4e11f171a64238e0"
+      ],
+      "entrySha256": "801f3a41640babfe3a77afe783af9cdb86d60da170252a61d3967cf5473b74ef"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "ames.heterocycles",
+      "eventId": "event:ff1c288d19708f8cfafc1c5271ed666d6c0f0e1b2772260d4896956bac9474b4",
+      "index": 8,
+      "kind": "molecule.committed",
+      "occurredAt": "2025-06-17T00:00:08.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:bc5589ed1b05e88ea0de729e765d1720c5e284f6842822d063d07f67cfe0d0ed",
+        "evidenceIds": [],
+        "hypothesisIds": [
+          "event:19092e383b64320e7abae6ff677041e117afc9f3d153fe8e573b972686278e2e"
+        ],
+        "message": "Replace the amino isoquinoline with alternative heterocycles.",
+        "parents": [
+          "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c"
+        ],
+        "snapshotId": "snapshot:7b0ef2c6872cb045897b341a49f81445e469c955d745629885c66b14fcd6769b",
+        "tags": []
+      },
+      "previousEntrySha256": "801f3a41640babfe3a77afe783af9cdb86d60da170252a61d3967cf5473b74ef",
+      "recordedAt": "2026-08-30T18:00:08.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:bc5589ed1b05e88ea0de729e765d1720c5e284f6842822d063d07f67cfe0d0ed",
+        "snapshot:7b0ef2c6872cb045897b341a49f81445e469c955d745629885c66b14fcd6769b"
+      ],
+      "entrySha256": "216eab254a0ccc85f613caa2b90dc78877f617a1f6eaf207255339b89db88bf1"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "ames.heterocycles",
+      "eventId": "event:783174f47af1a4b696db139ca23e83c326c3dc6a7a7400c4295915bd331ba8db",
+      "index": 9,
+      "kind": "measurement.recorded",
+      "occurredAt": "2025-06-17T00:00:09.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "claimStatus": "reported-in-source",
+        "endpoint": "Mpro potency and metabolic-risk review",
+        "result": "Most replacements lost >3-fold potency; x42 retained potency but could oxidatively re-aromatize."
+      },
+      "previousEntrySha256": "216eab254a0ccc85f613caa2b90dc78877f617a1f6eaf207255339b89db88bf1",
+      "recordedAt": "2026-08-30T18:00:09.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:bc5589ed1b05e88ea0de729e765d1720c5e284f6842822d063d07f67cfe0d0ed"
+      ],
+      "entrySha256": "d5e26dd8769f7c73e4bb954f8b00987fec64a4551fc25eadfecdee1f4f9f733c"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "ames.heterocycles",
+      "eventId": "event:440c21cb7b5622c2e0d5a8e2b4bbe98e01ab3dbff29ffb14d230a0d788d65b21",
+      "index": 10,
+      "kind": "decision.recorded",
+      "occurredAt": "2025-06-17T00:00:10.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "not-progressed",
+        "evidenceIds": [
+          "event:783174f47af1a4b696db139ca23e83c326c3dc6a7a7400c4295915bd331ba8db"
+        ],
+        "rationale": "The only potency-retaining replacement retained an unacceptable route back to the risky isoquinoline.",
+        "reasonCodes": [
+          "potency",
+          "genotoxicity"
+        ],
+        "targetCommitId": "commit:bc5589ed1b05e88ea0de729e765d1720c5e284f6842822d063d07f67cfe0d0ed"
+      },
+      "previousEntrySha256": "d5e26dd8769f7c73e4bb954f8b00987fec64a4551fc25eadfecdee1f4f9f733c",
+      "recordedAt": "2026-08-30T18:00:10.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:bc5589ed1b05e88ea0de729e765d1720c5e284f6842822d063d07f67cfe0d0ed"
+      ],
+      "entrySha256": "cdec49f3c857dd9b2360706b7bdfffdf9870888c1eee529167451c861a65e47f"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "ames.spiro",
+      "eventId": "event:ae9a48ed84b92ce222ba1f80f488f021f3e5938ca89dafbe8dc795748277e7b6",
+      "index": 11,
+      "kind": "molecule.committed",
+      "occurredAt": "2025-06-17T00:00:11.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:190fd46334eaa8021c42d5e7f2135a57dcd3bcdd0ef56886641a88b4c6c3e273",
+        "evidenceIds": [],
+        "hypothesisIds": [
+          "event:19092e383b64320e7abae6ff677041e117afc9f3d153fe8e573b972686278e2e"
+        ],
+        "message": "Test the first spirocyclised hydantoin designs.",
+        "parents": [
+          "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c"
+        ],
+        "snapshotId": "snapshot:14bb5fb0d2351f4912abb35cc225126ec001417f51a2b3b40e01e90a39d5e46e",
+        "tags": []
+      },
+      "previousEntrySha256": "cdec49f3c857dd9b2360706b7bdfffdf9870888c1eee529167451c861a65e47f",
+      "recordedAt": "2026-08-30T18:00:11.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:190fd46334eaa8021c42d5e7f2135a57dcd3bcdd0ef56886641a88b4c6c3e273",
+        "snapshot:14bb5fb0d2351f4912abb35cc225126ec001417f51a2b3b40e01e90a39d5e46e"
+      ],
+      "entrySha256": "b4c03698fc88881bee2c4715b25011a4a97b1edc2ae6de9462e9ed0a9face2df"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "ames.spiro",
+      "eventId": "event:14f5e0a0e85add6096e6311a663c20333a0ffc02da4d0f429093056b1f966b4e",
+      "index": 12,
+      "kind": "measurement.recorded",
+      "occurredAt": "2025-06-17T00:00:12.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "claimStatus": "reported-in-source",
+        "endpoint": "Mpro potency",
+        "result": "Crystal structures aligned, but potency was not promising."
+      },
+      "previousEntrySha256": "b4c03698fc88881bee2c4715b25011a4a97b1edc2ae6de9462e9ed0a9face2df",
+      "recordedAt": "2026-08-30T18:00:12.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:190fd46334eaa8021c42d5e7f2135a57dcd3bcdd0ef56886641a88b4c6c3e273"
+      ],
+      "entrySha256": "20096b8355940283f7b57ceb2ce30751d689d037d77a77acf2f2b8bcdc84ca51"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "ames.spiro",
+      "eventId": "event:a044b4cccf189dec4cc9d256b02073420cfaf120c1eea38224e0fbc745215977",
+      "index": 13,
+      "kind": "decision.recorded",
+      "occurredAt": "2025-06-17T00:00:13.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "not-progressed",
+        "evidenceIds": [
+          "event:14f5e0a0e85add6096e6311a663c20333a0ffc02da4d0f429093056b1f966b4e"
+        ],
+        "rationale": "The first hydantoin variants did not justify further progression.",
+        "reasonCodes": [
+          "potency"
+        ],
+        "targetCommitId": "commit:190fd46334eaa8021c42d5e7f2135a57dcd3bcdd0ef56886641a88b4c6c3e273"
+      },
+      "previousEntrySha256": "20096b8355940283f7b57ceb2ce30751d689d037d77a77acf2f2b8bcdc84ca51",
+      "recordedAt": "2026-08-30T18:00:13.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:190fd46334eaa8021c42d5e7f2135a57dcd3bcdd0ef56886641a88b4c6c3e273"
+      ],
+      "entrySha256": "559903a6e119c15980c074dc787d4a6060e3312fa596561dc83377c8fa9e7a15"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "ames.spiro.six-membered-lactam",
+      "eventId": "event:d9f6a6cc5c5f78bf8e17f23e50b2afc56642783f057fe86fcba0512369216aeb",
+      "index": 14,
+      "kind": "molecule.committed",
+      "occurredAt": "2025-06-17T00:00:14.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:b73e9970d220778c70d3282cc542662e7fcdbcb8d0f5906bb1f7ab11d08ff7ff",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Expand the spiro lactam ring.",
+        "parents": [
+          "commit:190fd46334eaa8021c42d5e7f2135a57dcd3bcdd0ef56886641a88b4c6c3e273"
+        ],
+        "snapshotId": "snapshot:ec8f6e76d6d8600d4738bd2aff067f80b278343e6a8a982edcf091a8d119c237",
+        "tags": []
+      },
+      "previousEntrySha256": "559903a6e119c15980c074dc787d4a6060e3312fa596561dc83377c8fa9e7a15",
+      "recordedAt": "2026-08-30T18:00:14.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:b73e9970d220778c70d3282cc542662e7fcdbcb8d0f5906bb1f7ab11d08ff7ff",
+        "snapshot:ec8f6e76d6d8600d4738bd2aff067f80b278343e6a8a982edcf091a8d119c237"
+      ],
+      "entrySha256": "a0850ea8323490360cb70f64421de1ba7beb3c1b30e9265cd55e953a07f519f3"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "ames.spiro.six-membered-lactam",
+      "eventId": "event:c5dda95f73ed46044e4bfc646be06e86f73fbdb4fb5806d700287af34d5a9773",
+      "index": 15,
+      "kind": "measurement.recorded",
+      "occurredAt": "2025-06-17T00:00:15.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "claimStatus": "reported-in-source",
+        "endpoint": "Mpro potency and crystallographic pose",
+        "result": "Significantly less potent; crystal structure showed substantial ligand displacement."
+      },
+      "previousEntrySha256": "a0850ea8323490360cb70f64421de1ba7beb3c1b30e9265cd55e953a07f519f3",
+      "recordedAt": "2026-08-30T18:00:15.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:b73e9970d220778c70d3282cc542662e7fcdbcb8d0f5906bb1f7ab11d08ff7ff"
+      ],
+      "entrySha256": "ea78167299f3f2ac17398c90ad57cb393a35eec51e1b288486c7146f24228850"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "ames.spiro.six-membered-lactam",
+      "eventId": "event:6a5cdf0ea77bd67617c3bf6c0a92063f6f78b0580ec057fa4971e5bc7cf5cbec",
+      "index": 16,
+      "kind": "decision.recorded",
+      "occurredAt": "2025-06-17T00:00:16.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "not-progressed",
+        "evidenceIds": [
+          "event:c5dda95f73ed46044e4bfc646be06e86f73fbdb4fb5806d700287af34d5a9773"
+        ],
+        "rationale": "Ring expansion displaced the ligand and reduced potency.",
+        "reasonCodes": [
+          "potency",
+          "contact-loss"
+        ],
+        "targetCommitId": "commit:b73e9970d220778c70d3282cc542662e7fcdbcb8d0f5906bb1f7ab11d08ff7ff"
+      },
+      "previousEntrySha256": "ea78167299f3f2ac17398c90ad57cb393a35eec51e1b288486c7146f24228850",
+      "recordedAt": "2026-08-30T18:00:16.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:b73e9970d220778c70d3282cc542662e7fcdbcb8d0f5906bb1f7ab11d08ff7ff"
+      ],
+      "entrySha256": "feb75dcce0d69d4fcfb204e47df40c78778920c493117da83c7faebc6687b87e"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "ames.spiro.lactam",
+      "eventId": "event:087c71a625b1efbff7055c88d5d12fc7593824cc6316e28a05371b52b36eef79",
+      "index": 17,
+      "kind": "molecule.committed",
+      "occurredAt": "2025-06-17T00:00:17.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:c4183b5e54c6633a360847f4837b9076568b74cd23e8314877cfb69456d3b678",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Advance the potency-retaining spiro lactam series.",
+        "parents": [
+          "commit:190fd46334eaa8021c42d5e7f2135a57dcd3bcdd0ef56886641a88b4c6c3e273"
+        ],
+        "snapshotId": "snapshot:617c32ee016933f579e94199284031e8e1fcfdfff428713ee8bf222fde8157f5",
+        "tags": []
+      },
+      "previousEntrySha256": "feb75dcce0d69d4fcfb204e47df40c78778920c493117da83c7faebc6687b87e",
+      "recordedAt": "2026-08-30T18:00:17.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:c4183b5e54c6633a360847f4837b9076568b74cd23e8314877cfb69456d3b678",
+        "snapshot:617c32ee016933f579e94199284031e8e1fcfdfff428713ee8bf222fde8157f5"
+      ],
+      "entrySha256": "1937c2fdd8b53e86d086c6d36425efb3bf5c9a53dd07c24505b965302c64a191"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "ames.spiro.lactam",
+      "eventId": "event:0e1fdb89e2586178a106f3d53841b17cd7ec55a71cd11d5d99a8451923eee6fa",
+      "index": 18,
+      "kind": "measurement.recorded",
+      "occurredAt": "2025-06-17T00:00:18.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "claimStatus": "reported-in-source",
+        "endpoint": "Ames and Mpro",
+        "result": "High potency with no concerning Ames activity at tested concentrations."
+      },
+      "previousEntrySha256": "1937c2fdd8b53e86d086c6d36425efb3bf5c9a53dd07c24505b965302c64a191",
+      "recordedAt": "2026-08-30T18:00:18.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:c4183b5e54c6633a360847f4837b9076568b74cd23e8314877cfb69456d3b678"
+      ],
+      "entrySha256": "c194a5e0098ea75d6ebb39b2559394bd244dd0563e46055019b4df2d3b9d6f00"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "ames.spiro.lactam",
+      "eventId": "event:fe7c876e4c27632ada840a90c8a1d1c897df43286d2ae3e3bfefa82c91f1b279",
+      "index": 19,
+      "kind": "decision.recorded",
+      "occurredAt": "2025-06-17T00:00:19.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "progressed",
+        "evidenceIds": [
+          "event:0e1fdb89e2586178a106f3d53841b17cd7ec55a71cd11d5d99a8451923eee6fa"
+        ],
+        "rationale": "Selected as the tractable series for further metabolism optimization.",
+        "reasonCodes": [
+          "potency",
+          "genotoxicity"
+        ],
+        "targetCommitId": "commit:c4183b5e54c6633a360847f4837b9076568b74cd23e8314877cfb69456d3b678"
+      },
+      "previousEntrySha256": "c194a5e0098ea75d6ebb39b2559394bd244dd0563e46055019b4df2d3b9d6f00",
+      "recordedAt": "2026-08-30T18:00:19.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:c4183b5e54c6633a360847f4837b9076568b74cd23e8314877cfb69456d3b678"
+      ],
+      "entrySha256": "0315a3bb5698ffb24aa7bc5b66faf8c64db95579fd475ec246758f7c35336307"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "lead-optimization",
+      "eventId": "event:817c91e91740a97eb95d8fc3948ac822b261430745399331f44402428f0d088e",
+      "index": 20,
+      "kind": "molecule.committed",
+      "occurredAt": "2025-06-17T00:00:20.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:29ab4f3e54431bb1ea88239cb33ae8dac7635efc72d871c45fc8437201357624",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Combine spiro locking with metabolism-focused changes.",
+        "parents": [
+          "commit:c4183b5e54c6633a360847f4837b9076568b74cd23e8314877cfb69456d3b678"
+        ],
+        "snapshotId": "snapshot:cf5845d2767b4bf2436d344e3023220cf1f62c608d88f99540372c5adf4e3ae8",
+        "tags": []
+      },
+      "previousEntrySha256": "0315a3bb5698ffb24aa7bc5b66faf8c64db95579fd475ec246758f7c35336307",
+      "recordedAt": "2026-08-30T18:00:20.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:29ab4f3e54431bb1ea88239cb33ae8dac7635efc72d871c45fc8437201357624",
+        "snapshot:cf5845d2767b4bf2436d344e3023220cf1f62c608d88f99540372c5adf4e3ae8"
+      ],
+      "entrySha256": "cd36e27900e84960bbca7ad208ad137538f65ae99e8ae5c34abbd69399aec13d"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "lead-optimization.x37",
+      "eventId": "event:cbcbbc424cfb1fc596351a5ed6b3cb654562003ec9ab3c36800e19fd8169a3a9",
+      "index": 21,
+      "kind": "molecule.committed",
+      "occurredAt": "2025-06-17T00:00:21.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:ffcae14481e0b553bf1f9fef66f7623be00538fbc4be2b46d39f1a5a04b63750",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Retain a parallel optimized lead.",
+        "parents": [
+          "commit:c4183b5e54c6633a360847f4837b9076568b74cd23e8314877cfb69456d3b678"
+        ],
+        "snapshotId": "snapshot:353b5fcc3f6a50b76c203387380e70ce7e2f8950b4aa57fdc2a6c324b2e15033",
+        "tags": []
+      },
+      "previousEntrySha256": "cd36e27900e84960bbca7ad208ad137538f65ae99e8ae5c34abbd69399aec13d",
+      "recordedAt": "2026-08-30T18:00:21.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:ffcae14481e0b553bf1f9fef66f7623be00538fbc4be2b46d39f1a5a04b63750",
+        "snapshot:353b5fcc3f6a50b76c203387380e70ce7e2f8950b4aa57fdc2a6c324b2e15033"
+      ],
+      "entrySha256": "12c52f8d908a70c8f3ca1519d3310856a25772989ea7bdad0093785604bc81ed"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "lead-optimization",
+      "eventId": "event:69b21ec10e5eb633d43c719b9ebd1af9e6b8ac092ff3ad439a14aea941b0eb1f",
+      "index": 22,
+      "kind": "molecule.committed",
+      "occurredAt": "2025-06-17T00:00:22.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Select the structurally confirmed optimized candidate.",
+        "parents": [
+          "commit:29ab4f3e54431bb1ea88239cb33ae8dac7635efc72d871c45fc8437201357624",
+          "commit:ffcae14481e0b553bf1f9fef66f7623be00538fbc4be2b46d39f1a5a04b63750"
+        ],
+        "snapshotId": "snapshot:bbce1e35106ce245b628d93953d21706568a466648c3a490c9ca02b185e371d1",
+        "tags": [
+          "candidate",
+          "crystal-structure"
+        ]
+      },
+      "previousEntrySha256": "12c52f8d908a70c8f3ca1519d3310856a25772989ea7bdad0093785604bc81ed",
+      "recordedAt": "2026-08-30T18:00:22.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper",
+        "source.7gnr"
+      ],
+      "subjectIds": [
+        "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c",
+        "snapshot:bbce1e35106ce245b628d93953d21706568a466648c3a490c9ca02b185e371d1"
+      ],
+      "entrySha256": "5a09ee0482b0cec4dd3aa66246c3d3ca1b59eddfa8f9c2c77f8cb95295ee0801"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "lead-optimization",
+      "eventId": "event:1ea9a95059b92b24ada98c81579f683eea20d01e0c9a90cb696d9e226285de4b",
+      "index": 23,
+      "kind": "decision.recorded",
+      "occurredAt": "2025-06-17T00:00:23.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "superseded",
+        "evidenceIds": [],
+        "rationale": "Retained as a reported optimized lead, but x38 was selected for the candidate profile.",
+        "reasonCodes": [
+          "lower-priority"
+        ],
+        "targetCommitId": "commit:29ab4f3e54431bb1ea88239cb33ae8dac7635efc72d871c45fc8437201357624"
+      },
+      "previousEntrySha256": "5a09ee0482b0cec4dd3aa66246c3d3ca1b59eddfa8f9c2c77f8cb95295ee0801",
+      "recordedAt": "2026-08-30T18:00:23.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:29ab4f3e54431bb1ea88239cb33ae8dac7635efc72d871c45fc8437201357624"
+      ],
+      "entrySha256": "ae0da32414b836f71fc4faec3c4afa3ecec81a7a0b92d6cd91bbdd6c08d6c607"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "lead-optimization.x37",
+      "eventId": "event:8143865e1be4c4d4ede77efb20d0a2905d09a1a9238e4ca02a62b9938bc6b83a",
+      "index": 24,
+      "kind": "decision.recorded",
+      "occurredAt": "2025-06-17T00:00:24.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "superseded",
+        "evidenceIds": [],
+        "rationale": "Retained as a reported optimized lead, but x38 was selected for the candidate profile.",
+        "reasonCodes": [
+          "lower-priority"
+        ],
+        "targetCommitId": "commit:ffcae14481e0b553bf1f9fef66f7623be00538fbc4be2b46d39f1a5a04b63750"
+      },
+      "previousEntrySha256": "ae0da32414b836f71fc4faec3c4afa3ecec81a7a0b92d6cd91bbdd6c08d6c607",
+      "recordedAt": "2026-08-30T18:00:24.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:ffcae14481e0b553bf1f9fef66f7623be00538fbc4be2b46d39f1a5a04b63750"
+      ],
+      "entrySha256": "b50352bbb2523456f824e1d79fe799df6c519c83eb6b46597742215fe24dbb4d"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "lead-optimization",
+      "eventId": "event:e26af3a635835d576208e4e6615d6a278c5c66d7580c3914c5d96747e15c7a31",
+      "index": 25,
+      "kind": "measurement.recorded",
+      "occurredAt": "2025-06-17T00:00:25.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "claimStatus": "reported-in-source",
+        "endpoint": "candidate profile",
+        "result": "Key S1/S2 contacts preserved; rat microsomal clearance improved from 605 for x1 to 16 µL/min/mg for x38."
+      },
+      "previousEntrySha256": "b50352bbb2523456f824e1d79fe799df6c519c83eb6b46597742215fe24dbb4d",
+      "recordedAt": "2026-08-30T18:00:25.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper",
+        "source.7gnr"
+      ],
+      "subjectIds": [
+        "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c"
+      ],
+      "entrySha256": "7d846c8725bb2217773c1b4fa953942a550cfa7a089b175bb66c481295e82cd5"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "lead-optimization",
+      "eventId": "event:8666202ebc355c11cff82b46b4c55ce5c7e9708ea79e7a0d9a8f0587c0d4c1a2",
+      "index": 26,
+      "kind": "decision.recorded",
+      "occurredAt": "2025-06-17T00:00:26.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "progressed",
+        "evidenceIds": [
+          "event:e26af3a635835d576208e4e6615d6a278c5c66d7580c3914c5d96747e15c7a31"
+        ],
+        "rationale": "Advanced as DNDI-6510 after balancing potency, exposure, and Ames risk.",
+        "reasonCodes": [
+          "potency",
+          "clearance",
+          "genotoxicity"
+        ],
+        "targetCommitId": "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c"
+      },
+      "previousEntrySha256": "7d846c8725bb2217773c1b4fa953942a550cfa7a089b175bb66c481295e82cd5",
+      "recordedAt": "2026-08-30T18:00:26.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper",
+        "source.7gnr"
+      ],
+      "subjectIds": [
+        "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c"
+      ],
+      "entrySha256": "a34cfebafe7ad69b6c47d5f052362934751d0b4d3385e41af11333b0bc7bb2a4"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "lead-optimization",
+      "eventId": "event:5da66b03d98f8628a21a6acbf393dfc1ab28a52670c5d5cb9a2aca04b40b9469",
+      "index": 27,
+      "kind": "measurement.recorded",
+      "occurredAt": "2025-06-17T00:00:27.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "claimStatus": "reported-in-source",
+        "endpoint": "repeat dosing and nuclear hormone receptor induction",
+        "result": "Exposure fell on repeat dosing in rodents; cross-species assays indicated PXR-linked induction."
+      },
+      "previousEntrySha256": "a34cfebafe7ad69b6c47d5f052362934751d0b4d3385e41af11333b0bc7bb2a4",
+      "recordedAt": "2026-08-30T18:00:27.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c"
+      ],
+      "entrySha256": "debba998d89811684866d637928e1f792109ffd8c52df1997fc3538320b6eed7"
+    },
+    {
+      "actorId": "reported.moonshot-authors",
+      "branch": "lead-optimization",
+      "eventId": "event:91e292287191eb46947287d9b6717deb49b73eb45d929550e2dfb38545c9565c",
+      "index": 28,
+      "kind": "decision.recorded",
+      "occurredAt": "2025-06-17T00:00:28.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "archived",
+        "evidenceIds": [
+          "event:5da66b03d98f8628a21a6acbf393dfc1ab28a52670c5d5cb9a2aca04b40b9469"
+        ],
+        "rationale": "Preclinical development was discontinued after repeat dosing could not exceed predicted efficacious human exposure in two rodent species.",
+        "reasonCodes": [
+          "program-discontinued",
+          "clearance"
+        ],
+        "targetCommitId": "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c"
+      },
+      "previousEntrySha256": "debba998d89811684866d637928e1f792109ffd8c52df1997fc3538320b6eed7",
+      "recordedAt": "2026-08-30T18:00:28.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.dndi-paper"
+      ],
+      "subjectIds": [
+        "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c"
+      ],
+      "entrySha256": "81b42824d3fac33a3338c2b39783d34bb24378f3ad85f05068d81eac44b0e933"
+    },
+    {
+      "actorId": "curator.sol",
+      "branch": "main",
+      "eventId": "event:c445632e9ff4755a75fea526dd23a995cf6203c015f4bbf5a603a07d37cfbeee",
+      "index": 29,
+      "kind": "campaign.completed",
+      "occurredAt": "2026-08-30T18:30:00.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "branchHeads": {
+          "ames.6-position-ewg": "commit:a935fb866618bee4ea82a51c27ad7e2f4a368b7f73cb483d4e11f171a64238e0",
+          "ames.heterocycles": "commit:bc5589ed1b05e88ea0de729e765d1720c5e284f6842822d063d07f67cfe0d0ed",
+          "ames.spiro": "commit:190fd46334eaa8021c42d5e7f2135a57dcd3bcdd0ef56886641a88b4c6c3e273",
+          "ames.spiro.lactam": "commit:c4183b5e54c6633a360847f4837b9076568b74cd23e8314877cfb69456d3b678",
+          "ames.spiro.six-membered-lactam": "commit:b73e9970d220778c70d3282cc542662e7fcdbcb8d0f5906bb1f7ab11d08ff7ff",
+          "lead-optimization": "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c",
+          "lead-optimization.x37": "commit:ffcae14481e0b553bf1f9fef66f7623be00538fbc4be2b46d39f1a5a04b63750",
+          "main": "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c"
+        }
+      },
+      "previousEntrySha256": "81b42824d3fac33a3338c2b39783d34bb24378f3ad85f05068d81eac44b0e933",
+      "recordedAt": "2026-08-30T18:30:00.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [],
+      "subjectIds": [],
+      "entrySha256": "0a8677485cb0fe6f1d45158163c75c7a266f343e0082ddd1a7069c1699651465"
+    }
+  ],
+  "campaignSha256": "39ff4d2fd81b367b8527643646e6890c44f69822a4e5bb1837bfd5ccb07b1e95"
+}

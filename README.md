@@ -69,8 +69,19 @@ manifests and model cards.
 - Edit bond lengths, bond angles, and torsions with undo and redo.
 - Run energies, minimization, molecular dynamics, and conformer searches.
 - Dock edited ligands to a captured reference core with optional required H-bonds.
+- Preserve molecular branches, evidence, human/agent actions, and explicit stop decisions in a hash-linked design history.
 - Play saved trajectories and follow a selected residue.
 - Export structures, trajectories, clustered conformers, and preparation reports.
+
+## Design history
+
+The standalone [molecular design-history module](./design-history/README.md)
+implements an auditable “git for molecules” record. It keeps unsuccessful and
+superseded designs beside the molecules that progressed, identifies human,
+agent, system, and imported-source contributions, and derives an interactive
+labbook plus reproducible story movies from the verified record. The included
+pilot campaigns are clearly separated into source-grounded historical
+reconstructions and an executable Chemist Actions rehearsal.
 
 ## Calculation engines
 

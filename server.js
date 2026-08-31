@@ -52,6 +52,8 @@ const CONTENT_TYPES = Object.freeze({
   '.json': 'application/json; charset=utf-8',
   '.map': 'application/json; charset=utf-8',
   '.md': 'text/markdown; charset=utf-8',
+  '.png': 'image/png',
+  '.svg': 'image/svg+xml',
   '.txt': 'text/plain; charset=utf-8',
   '.wasm': 'application/wasm',
   '.wgsl': 'text/plain; charset=utf-8',

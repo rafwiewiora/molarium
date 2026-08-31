@@ -1,0 +1,69 @@
+{
+  "campaignId": "moonshot-dndi-6510",
+  "campaignSha256": "39ff4d2fd81b367b8527643646e6890c44f69822a4e5bb1837bfd5ccb07b1e95",
+  "createdAt": "2026-08-30T18:31:00.000Z",
+  "cues": [
+    {
+      "commitId": "commit:1666fb32280cbb99e8c8430609573438095918955b3ae048797d8fa59a0bcc9c",
+      "durationMs": 2600,
+      "eventId": "event:0c5b21e0071bd66318d5753a491d4f8b0cca820cd3a7b78d01fc78432ecd95e2",
+      "narration": "A potent structural lead arrives with mutagenicity, clearance, and stereochemical liabilities.",
+      "title": "Start with (S)-x1"
+    },
+    {
+      "durationMs": 2200,
+      "eventId": "event:19092e383b64320e7abae6ff677041e117afc9f3d153fe8e573b972686278e2e",
+      "narration": "The study reports three distinct strategies rather than one retrospective success path.",
+      "title": "Three parallel ideas"
+    },
+    {
+      "commitId": "commit:a935fb866618bee4ea82a51c27ad7e2f4a368b7f73cb483d4e11f171a64238e0",
+      "durationMs": 2200,
+      "eventId": "event:693968e2eb427f01b276d92fd160cdce5499f70d200c3782286894ea35441819",
+      "narration": "Electron-withdrawing substitutions reduce activity and this branch is not progressed.",
+      "title": "6-position substitutions stop"
+    },
+    {
+      "commitId": "commit:bc5589ed1b05e88ea0de729e765d1720c5e284f6842822d063d07f67cfe0d0ed",
+      "durationMs": 2200,
+      "eventId": "event:440c21cb7b5622c2e0d5a8e2b4bbe98e01ab3dbff29ffb14d230a0d788d65b21",
+      "narration": "Most heterocycles lose potency; the exception retains a re-aromatization risk.",
+      "title": "Heterocycle replacement stops"
+    },
+    {
+      "commitId": "commit:b73e9970d220778c70d3282cc542662e7fcdbcb8d0f5906bb1f7ab11d08ff7ff",
+      "durationMs": 2200,
+      "eventId": "event:6a5cdf0ea77bd67617c3bf6c0a92063f6f78b0580ec057fa4971e5bc7cf5cbec",
+      "narration": "A six-membered lactam displaces the ligand and is retained as a negative decision.",
+      "title": "Ring expansion stops"
+    },
+    {
+      "commitId": "commit:c4183b5e54c6633a360847f4837b9076568b74cd23e8314877cfb69456d3b678",
+      "durationMs": 2600,
+      "eventId": "event:fe7c876e4c27632ada840a90c8a1d1c897df43286d2ae3e3bfefa82c91f1b279",
+      "narration": "The spiro lactam preserves activity while addressing the Ames and racemization hypotheses.",
+      "title": "Spiro lactam progresses"
+    },
+    {
+      "commitId": "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c",
+      "durationMs": 3000,
+      "eventId": "event:8666202ebc355c11cff82b46b4c55ce5c7e9708ea79e7a0d9a8f0587c0d4c1a2",
+      "narration": "Multi-parameter optimization produces the structurally confirmed preclinical candidate.",
+      "snapshotId": "snapshot:bbce1e35106ce245b628d93953d21706568a466648c3a490c9ca02b185e371d1",
+      "title": "DNDI-6510 selected"
+    },
+    {
+      "commitId": "commit:e03e229798d0dd5161a2f0695dee27500692dfbee0506ca4b270e36eae98091c",
+      "durationMs": 3200,
+      "eventId": "event:91e292287191eb46947287d9b6717deb49b73eb45d929550e2dfb38545c9565c",
+      "narration": "The durable record keeps the later PXR-linked repeat-dose exposure failure beside the successful lead selection.",
+      "title": "The program still stops"
+    }
+  ],
+  "fps": 30,
+  "height": 900,
+  "schema": "molarium.design-movie/v1",
+  "title": "A complete lead-optimization history",
+  "width": 1440,
+  "movieSha256": "e713ae38e6752bf256330f64a5e8babe37366a1e1733767fbeb982cacfda4adb"
+}
