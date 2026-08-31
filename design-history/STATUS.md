@@ -1,10 +1,12 @@
-# Design history and reproducible story movies — branch handoff
+# Design history and reproducible story movies — durable handoff
 
 Last updated: 2026-08-30
 
-Branch: `feature/design-history-movies`
+Integrated branch: `dev`
 
-Target branch: `dev`
+Merged PR: [#5](https://github.com/rafwiewiora/molarium/pull/5)
+
+Merge commit: `de2a02d089dccf8fc22c102244e254ca0d8a8fbb`
 
 ## Objective
 
@@ -142,12 +144,22 @@ design-history viewer model tests passed: 9 commits, 8 branches
 design-history browser test passed: 4 commits, 9 labbook events, local SVG depiction
 ```
 
-## Remaining work
+## Completion state
 
-1. Run the complete scientific and browser CI lanes from the finished branch.
-2. Commit and push this viewer/renderer checkpoint.
-3. Open a PR to `dev`, monitor all checks, and merge only when green. The user
-   has authorized opening and merging this PR.
+The first design-history feature is complete and merged. Local and GitHub
+Scientific validation, Browser integration, Production build, and Cloudflare
+Pages checks all passed. The feature branch remains on the remote as a
+recoverable development record; new work should branch from current `dev`.
+
+Reasonable next increments, not blockers for this release:
+
+1. Capture a human-reviewed complete literature-story movie for the paper.
+2. Curate exact machine-readable structures for historical snapshots that
+   currently carry an explicit no-structure-asserted placeholder.
+3. Connect live in-app design sessions to campaign creation so user decisions
+   can be committed without a separate story-builder script.
+4. Add signed release attestations if identity/authorship verification becomes
+   necessary; the current SHA-256 hashes detect mutation but are not signatures.
 
 ## Development constraints
 
