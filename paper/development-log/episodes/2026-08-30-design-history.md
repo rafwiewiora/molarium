@@ -101,3 +101,12 @@ renderer hash, Chrome build, viewport, each cue PNG digest and frame range, and
 the optional MP4 digest. Story records and schedules are byte-deterministic.
 Raster bytes are provenance-pinned rather than claimed identical across
 different browser, font-rasterization, operating-system, or codec builds.
+
+## Integration result
+
+The feature was reviewed as public pull request
+[#5](https://github.com/rafwiewiora/molarium/pull/5). Scientific validation,
+browser integration, production build, and the Cloudflare preview all passed.
+It was merged into `dev` as commit
+`de2a02d089dccf8fc22c102244e254ca0d8a8fbb` on 2026-08-30 Pacific time
+(2026-08-31 UTC).
