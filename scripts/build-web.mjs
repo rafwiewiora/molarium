@@ -15,7 +15,7 @@ const assetRelease = String(process.env.MOLARIUM_ASSET_RELEASE || `v${packageJso
 const assetBase = `${assetOrigin}/${assetRelease}/`;
 
 const files = [
-  'LICENSE', 'README.md', 'CHEMIST-ACTIONS-API.md', 'THIRD_PARTY_NOTICES.md',
+  'LICENSE', 'README.md', 'CHEMIST-ACTIONS-API.md', 'DESIGNER-MOVES.md', 'THIRD_PARTY_NOTICES.md',
   'index.html', 'app.js', 'chemist-actions.mjs', 'styles.css', 'molarium-workspace.css', 'independent-layout-study.css',
   'protein-residue-templates.js', 'rdkit-worker.js', 'openmm-worker.js', 'webgpu-worker.js',
   'stormm-worker.js', 'mlip-worker.js', 'local-lab-test.js',
@@ -29,6 +29,10 @@ const files = [
   'docking/benchmark/7kpa-manual-contact-results.psiblue.v0.1.json',
   'design-history/README.md', 'design-history/integrity.mjs', 'design-history/ledger.mjs',
   'design-history/movie.mjs', 'design-history/replay.mjs',
+  'design-history/examples/sos1-growth-clash-v7-captions.json',
+  'design-history/examples/sos1-growth-clash-v7.provenance.json',
+  'design-history/examples/sos1-growth-clash-v7.full.action-script.json',
+  'design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
   'design-history/stories/generated/index.json',
   'design-history/stories/generated/bclxl-fragment-linking.campaign.json',
   'design-history/stories/generated/bclxl-fragment-linking.movie.json',
@@ -60,6 +64,9 @@ const files = [
   'design-history/structures/generated/cdk2-designer-6cp-prediction.pdb',
   'design-history/structures/generated/cdk2-designer-n76-prediction.pdb',
   'design-history/structures/generated/cdk2-designer-movie-assets.json',
+  'design-history/structures/generated/sos1-prospective-campaign.json',
+  'design-history/structures/generated/sos1-5ove-protein.pdb',
+  'design-history/structures/generated/sos1-5ove-ligand.pdb',
   'design-history/structures/generated/7gn8-protein.pdb',
   'design-history/structures/generated/7gn8-pocket.pdb',
   'design-history/structures/generated/7gn8-ligand.pdb',
@@ -100,7 +107,7 @@ const files = [
   'docking/browser-adapter.mjs', 'docking/constraints.mjs', 'docking/contact-remap.mjs',
   'docking/feature-seeding.mjs', 'docking/restraint-biased-search.mjs',
   'docking/labbook.mjs', 'docking/protocol.mjs', 'docking/receptor-score.mjs',
-  'docking/reference-core.mjs', 'docking/torsion-search.mjs',
+  'docking/reference-core.mjs', 'docking/sidechain-rotamers.mjs', 'docking/torsion-search.mjs',
   'docking/transformed-ring-region.mjs', 'docking/workflow.mjs',
   'stormm/LICENSE', 'stormm/README.md', 'stormm/core.mjs', 'stormm/engine.mjs',
   'webgpu/README.md', 'webgpu/molarium-webgpu.wgsl',

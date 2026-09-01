@@ -292,6 +292,12 @@ not expose fixture injection, arbitrary JavaScript callbacks, internal scoring f
 coordinate replacement, or network actions. Commands execute serially and are appended to the
 current molecule's audit ledger. See [`CHEMIST-ACTIONS-API.md`](./CHEMIST-ACTIONS-API.md).
 
+The Build interface also has a **Designer moves** panel for importing, replaying, and exporting
+these actions as ordinary versioned JSON. The action script records the intended procedure; every
+execution produces a separate replay log with outcomes. The schema, paper-facing terminology, and
+the complete SOS1/Phe890 example are documented in
+[`DESIGNER-MOVES.md`](./DESIGNER-MOVES.md).
+
 Production loads `app.js` as a module and does not install the privileged regression harness.
 Automation hosts must grant agents only the frozen JSON action object, not an arbitrary JavaScript
 console; local test servers expose the synthetic harness only with the explicit `--test-api` flag.

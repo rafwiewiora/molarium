@@ -1,0 +1,70 @@
+{
+  "schema": "molarium.designer-moves-example-provenance/v1",
+  "campaignId": "sos1-hit-only",
+  "scientificClaim": "Starting from the coordinate-bearing 5OVE/AXE hit, the public Molarium Chemist Actions workflow explored three Phe890 rotamer basins after compound-21 growth created a clash, selected rotamer index 5 by the registered coupled side-chain/pose criterion, and propagated that predicted receptor state to BAY-293.",
+  "scientificBoundary": {
+    "initialCoordinateInput": "PDB 5OVE/AXE only",
+    "holdoutStatusAtFreeze": "predictions-frozen-holdouts-unopened",
+    "phe890": "Predicted by public rotamer enumeration, receptor-reference update, pose refinement, parameterization, and induced-fit optimization actions.",
+    "tyr884": "Not predicted in this run; the Tyr884 difference is a historical comparison between deposited structures and is not part of either replay script."
+  },
+  "sourceRun": {
+    "directory": "outputs/design-history/sos1-hit-only-growth-clash-v7",
+    "audit": {
+      "path": "outputs/design-history/sos1-hit-only-growth-clash-v7/chemist-action-audit.json",
+      "sha256": "38d8fbd3e2675fd1203a13a7e235ff848eaf627a0d7c8450865a762f9fbe5e5b",
+      "records": 89,
+      "completedRecords": 89
+    },
+    "predictionManifest": {
+      "path": "outputs/design-history/sos1-hit-only-growth-clash-v7/prediction-manifest.json",
+      "sha256": "4415a64b4e1aae85faedd2987bf2f17c3212357c8a247a9a1ff8f470c28c9353"
+    },
+    "campaignDefinition": {
+      "path": "design-history/structures/generated/sos1-prospective-campaign.json",
+      "sha256": "e3706e4910dde647d68fe7ea1506177b18d47b662acc374630bbac8976d419bc"
+    },
+    "runner": {
+      "path": "scripts/run-sos1-prospective.mjs",
+      "sha256": "3f55cf0f0c11830f6aa3dbe652832df7c46e58d6e1633c91f8b57e51a1bfb829"
+    }
+  },
+  "scripts": {
+    "fullExploration": {
+      "path": "design-history/examples/sos1-growth-clash-v7.full.action-script.json",
+      "actions": 89,
+      "actionScriptSha256": "ab715bd46988431b3ad504978be9681be994f4246e7064b5fcbb2a9de8906749",
+      "fileSha256": "3f27052198fd411f8aa32d263f764ae13ab2d3c347e412daaebabf441da73097",
+      "meaning": "Complete execution trace, including inspections, all three explored Phe890 branches, undo operations, and final selected-branch replay."
+    },
+    "selectedRoute": {
+      "path": "design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json",
+      "actions": 33,
+      "actionScriptSha256": "598aa5407fac30adb3512ad9334181cae0da8cf21104d3b49296ce117878370e",
+      "fileSha256": "74cbf827a3928a1c8066a2f5f2b13f37dec7141fb8c8aa4af6919bf3540f4ab1",
+      "meaning": "Compact operational replay of the already-selected route. It omits discarded branches and read-only freeze inspections, so it is not the evidence that branch search occurred."
+    }
+  },
+  "frozenCheckpoints": [
+    {
+      "stepId": "scaffold-rewrite",
+      "stateId": "AWT",
+      "predictionSha256": "b81332cc95c39a69f7eff7cad7673bfb0fdc1645a4ae0bf3c84e202ed65c21d9"
+    },
+    {
+      "stepId": "fragment-merge",
+      "stateId": "AWZ",
+      "predictionSha256": "2fe7c75c0879baeb48c42cbe5a925a339574d58fafaa1d26d1060ca928f0a22b"
+    },
+    {
+      "stepId": "open-phe890-pocket",
+      "stateId": "AWW",
+      "predictionSha256": "096e025eb6106f15a6ca8f01ccbbd39dd9bf8261b6b616cb2a5329b99312f56a"
+    },
+    {
+      "stepId": "finish-bay-293",
+      "stateId": "AXH",
+      "predictionSha256": "19e82cebbddca9007c60ac6517222de71b380ba38e99b4bf466e113182117b81"
+    }
+  ]
+}

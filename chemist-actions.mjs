@@ -38,6 +38,9 @@ const ACTIONS = Object.freeze({
   'history.redo': Object.freeze({ description:'Redo the last undone chemist action.', arguments:Object.freeze({}) }),
   'pose.captureReference': Object.freeze({ description:'Capture the current ligand pose as the reference.',
     arguments:Object.freeze({ mode:'propagate | selected-core' }) }),
+  'pose.updateReceptorReference': Object.freeze({
+    description:'Update moved receptor-site coordinates while retaining the captured ligand-core lineage.',
+    arguments:Object.freeze({}) }),
   'pose.setContact': Object.freeze({ description:'Require or omit one captured contact hypothesis.',
     arguments:Object.freeze({ contactId:'captured contact ID', required:'boolean' }) }),
   'pose.addContact': Object.freeze({ description:'Add an H-bond hypothesis by selecting one ligand and one receptor atom.',
@@ -47,6 +50,12 @@ const ACTIONS = Object.freeze({
   'pose.refine': Object.freeze({ description:'Run reference-guided pose refinement with the visible search-chain setting.',
     arguments:Object.freeze({ searchChains:'8 | 16 | 32 | 64' }) }),
   'pose.apply': Object.freeze({ description:'Apply one returned refined pose by zero-based result index.',
+    arguments:Object.freeze({ index:'non-negative integer' }) }),
+  'pose.enumerateSidechainRotamers': Object.freeze({
+    description:'Enumerate bounded canonical rotamers for one receptor side chain and rank them against the current complex.',
+    arguments:Object.freeze({ receptorAtomId:'persistent receptor atom ID', maximumCandidates:'integer 1–64' }) }),
+  'pose.applySidechainRotamer': Object.freeze({
+    description:'Apply one returned side-chain rotamer branch by zero-based result index.',
     arguments:Object.freeze({ index:'non-negative integer' }) }),
   'optimization.run': Object.freeze({ description:'Run one optimization method exposed in the Build method menu.',
     arguments:Object.freeze({ method:'ligand-rdkit | pocket-webgpu | induced-fit-webgpu | webgpu | rdkit | ani2x' }) }),
