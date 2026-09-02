@@ -28,7 +28,7 @@ const sourceScriptBytes = await readFile(scriptPath);
 const sourceScript = validateActionScript(JSON.parse(sourceScriptBytes));
 const focusStep = { action:'view.focusComponent',
   args:{ kind:'ligand', ordinal:0, isolate:false }, caption:'Zoom to the active ligand pocket' };
-const displayStep = { action:'view.setDisplay', args:{ representation:'ball-stick',
+const displayStep = { action:'view.setDisplay', args:{ representation:'cartoon',
   showHydrogens:false, showInteractions:false, showPocketAtoms:true, showHulls:false },
 caption:'Use the chemist pocket view and hide prepared hydrogens' };
 const focusAfter = new Set([

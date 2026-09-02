@@ -16,8 +16,10 @@ assert.equal(source.actions.length, 33);
 assert.equal(story.actions.length, 48);
 assert.equal(story.actions.filter((step) => step.action === 'view.focusComponent').length, 14);
 assert.equal(story.actions.filter((step) => step.action === 'view.setDisplay').length, 1);
+assert.equal(story.actions.find((step) => step.action === 'view.setDisplay')
+  .args.representation, 'cartoon');
 assert.deepEqual(story.actions.filter((step) => !step.action.startsWith('view.')),
   source.actions.filter((step) => !step.action.startsWith('view.')));
 assert.equal(await actionScriptSha256(story),
-  '1f0ec66d15c99e6546d5e1e3112fa3cb29d81cc9d729676076df4b2926c31e5d');
+  '339d8391be36043e6a2e6e69b1e55699cc72a5eb4faab9181e5bd9883f81118d');
 console.log('Interface story test passed: 33 scientific actions + 15 presentation actions');

@@ -7953,24 +7953,41 @@ function installChemistActionsApi(module) {
       chemistActionKeys(args,
         ['representation','showHydrogens','showInteractions','showPocketAtoms','showHulls']);
       if (!Object.keys(args).length) throw new Error('At least one display option is required');
-      const setCheckbox = (selector, value, label) => {
-        if (value == null) return;
+      const booleanOption = (value, label, fallback) => {
+        if (value == null) return fallback;
         if (typeof value !== 'boolean') throw new Error(`${label} must be boolean`);
-        const input = document.querySelector(selector);
-        input.checked = value; input.dispatchEvent(new Event('change', { bubbles:true }));
+        return value;
       };
+      let representation = state.representation;
       if (args.representation != null) {
-        const representation = chemistActionEnum(args.representation,
+        representation = chemistActionEnum(args.representation,
           ['ball-stick','cartoon','both'], 'representation');
         const select = document.querySelector('#representation-select');
         if (select.disabled) throw new Error('Representation controls require a protein structure');
-        select.value = representation;
-        select.dispatchEvent(new Event('change', { bubbles:true }));
       }
-      setCheckbox('#hydrogen-toggle', args.showHydrogens, 'showHydrogens');
-      setCheckbox('#interaction-toggle', args.showInteractions, 'showInteractions');
-      setCheckbox('#pocket-toggle', args.showPocketAtoms, 'showPocketAtoms');
-      setCheckbox('#hull-toggle', args.showHulls, 'showHulls');
+      const showHydrogens = booleanOption(args.showHydrogens,
+        'showHydrogens', state.showHydrogens);
+      const showInteractions = booleanOption(args.showInteractions,
+        'showInteractions', state.showInteractions);
+      const showPocketAtoms = booleanOption(args.showPocketAtoms,
+        'showPocketAtoms', state.showPocketAtoms);
+      const showHulls = booleanOption(args.showHulls, 'showHulls', state.showHulls);
+
+      // This is one public chemist action, so apply it as one UI transaction.
+      // Dispatching a separate change event for every option forced several
+      // full redraws of prepared protein complexes and could stall replay.
+      state.representation = representation;
+      state.showHydrogens = showHydrogens;
+      state.showInteractions = showInteractions;
+      state.showPocketAtoms = showPocketAtoms;
+      state.showHulls = showHulls;
+      document.querySelector('#representation-select').value = representation;
+      document.querySelector('#hydrogen-toggle').checked = showHydrogens;
+      document.querySelector('#interaction-toggle').checked = showInteractions;
+      document.querySelector('#pocket-toggle').checked = showPocketAtoms;
+      document.querySelector('#hull-toggle').checked = showHulls;
+      updateInfo();
+      draw();
       return chemistActionSummary({ display:{ representation:state.representation,
         showHydrogens:state.showHydrogens, showInteractions:state.showInteractions,
         showPocketAtoms:state.showPocketAtoms, showHulls:state.showHulls } });

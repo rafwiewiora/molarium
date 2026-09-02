@@ -35,6 +35,27 @@ try {
   await waitFor(async () => browser.evaluate(
     `document.querySelector('#replay-designer-moves').textContent.includes('Pause')`),
   90000, 'story play control');
+  await waitFor(async () => browser.evaluate(
+    `Number(document.querySelector('#designer-move-progress-label').textContent.split('/')[0]) >= 5`),
+  90000, 'responsive prepared-pocket transition');
+  const preparedPocket = await browser.evaluate(`(() => {
+    const displayAction = window.MolariumChemistActions.history()
+      .find((entry) => entry.action === 'view.setDisplay');
+    return {
+      representation:document.querySelector('#representation-select').value,
+      hydrogens:document.querySelector('#hydrogen-toggle').checked,
+      pocketAtoms:document.querySelector('#pocket-toggle').checked,
+      displayDurationMs:displayAction?.durationMs ?? null,
+      ligandZoomed:[...document.querySelectorAll('#component-list button')]
+        .some((button) => button.textContent === 'Zoomed'),
+    };
+  })()`);
+  assert.equal(preparedPocket.representation, 'cartoon');
+  assert.equal(preparedPocket.hydrogens, false);
+  assert.equal(preparedPocket.pocketAtoms, true);
+  assert.equal(preparedPocket.ligandZoomed, true);
+  assert.ok(preparedPocket.displayDurationMs < 5000,
+    `prepared-pocket display action took ${preparedPocket.displayDurationMs} ms`);
   await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
   await waitFor(async () => browser.evaluate(
     `document.querySelector('#replay-designer-moves').textContent.includes('Continue')`),
@@ -45,7 +66,7 @@ try {
   })`);
   assert.match(paused.progress, /^\d+ \/ 48$/);
   assert.match(paused.caption, /Paused before move/);
-  console.log('Designer story link browser test passed: permalink, blank start, play, and pause');
+  console.log('Designer story link browser test passed: permalink, blank start, responsive pocket view, play, and pause');
 } finally {
   await browser.close();
 }

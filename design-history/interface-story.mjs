@@ -4,7 +4,7 @@ const FOCUS_STEP = Object.freeze({ action:'view.focusComponent',
   args:Object.freeze({ kind:'ligand', ordinal:0, isolate:false }),
   caption:'Zoom to the active ligand pocket' });
 const DISPLAY_STEP = Object.freeze({ action:'view.setDisplay', args:Object.freeze({
-  representation:'ball-stick', showHydrogens:false, showInteractions:false,
+  representation:'cartoon', showHydrogens:false, showInteractions:false,
   showPocketAtoms:true, showHulls:false,
 }), caption:'Use the chemist pocket view and hide prepared hydrogens' });
 const FOCUS_AFTER = new Set([
