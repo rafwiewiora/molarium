@@ -340,8 +340,14 @@
               <input class="hidden" id="designer-move-file" type="file" accept="application/json,.json" />
               <div class="designer-move-buttons">
                 <button class="soft-button" id="import-designer-moves" type="button">Import JSON</button>
-                <button class="primary-button" id="replay-designer-moves" type="button" disabled>Replay moves</button>
+                <button class="soft-button" id="restart-designer-moves" type="button" disabled title="Return to the blank canvas before the first story action">↺ Restart</button>
               </div>
+              <div class="designer-story-transport" aria-label="Designer story playback">
+                <button class="primary-button" id="replay-designer-moves" type="button" disabled>▶ Play story</button>
+                <span id="designer-move-progress-label">0 / 0</span>
+              </div>
+              <progress id="designer-move-progress" value="0" max="1" aria-label="Designer story progress"></progress>
+              <p class="designer-move-caption" id="designer-move-caption">Load a story to begin.</p>
               <div class="designer-move-buttons">
                 <button class="soft-button" id="export-designer-moves" type="button" disabled>Export API moves</button>
                 <button class="soft-button" id="export-designer-replay" type="button" disabled>Export replay log</button>

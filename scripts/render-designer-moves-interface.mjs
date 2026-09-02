@@ -58,7 +58,7 @@ await mkdir(qaDirectory, { recursive:true });
 await writeFile(presentationPath, `${JSON.stringify(presentationScript, null, 2)}\n`);
 
 const browser = await startMolariumBrowser({ root,
-  appPath:'index.html?designer-moves-movie=1', width, height, localOnly:true });
+  appPath:'index.html?blank=1&designer-moves-movie=1', width, height, localOnly:true });
 const browserVersion = await browser.client.call('Browser.getVersion');
 const captured = [];
 let frameIndex = 0;
@@ -146,7 +146,7 @@ try {
       console.log(`Captured interface action ${actionNumber}/${presentationScript.actions.length} · ${step.action}`);
     }
     if (status.notice) throw new Error(`Molarium replay notice: ${status.notice}`);
-    if (!status.exportReplayDisabled && status.replayLabel === 'Replay moves') break;
+    if (!status.exportReplayDisabled && status.replayLabel.includes('Replay story')) break;
     await delay(35);
   }
   if (lastActionNumber !== presentationScript.actions.length)

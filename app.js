@@ -731,6 +731,8 @@ const state = {
   designerMoveScript: null,
   designerMoveReplay: null,
   designerMoveReplaying: false,
+  designerMoveReplayPaused: false,
+  designerMoveReplayIndex: 0,
   structureComponents: [],
   atomComponentIds: [],
   componentVisibility: new Map(),
@@ -7503,18 +7505,66 @@ async function applyCurrentSidechainRotamer(index) {
   return structuredClone(application);
 }
 
+let designerMoveReplayResume = null;
+
+function designerMoveCaption(index = state.designerMoveReplayIndex) {
+  const actions = state.designerMoveScript?.actions || [];
+  if (!actions.length) return 'Load a story to begin.';
+  if (index >= actions.length) return 'Story complete.';
+  const step = actions[Math.max(0, index)];
+  return step.caption || step.action;
+}
+
+function resetDesignerMovePlayback() {
+  state.designerMoveReplay = null;
+  state.designerMoveReplayPaused = false;
+  state.designerMoveReplayIndex = 0;
+  designerMoveReplayResume?.();
+  designerMoveReplayResume = null;
+}
+
+function setDesignerMoveReplayPaused(paused) {
+  if (!state.designerMoveReplaying) return;
+  state.designerMoveReplayPaused = Boolean(paused);
+  if (!state.designerMoveReplayPaused) {
+    designerMoveReplayResume?.();
+    designerMoveReplayResume = null;
+  }
+  updateDesignerMoveControls();
+}
+
+async function waitForDesignerMoveReplay() {
+  while (state.designerMoveReplayPaused)
+    await new Promise((resolve) => { designerMoveReplayResume = resolve; });
+}
+
 function updateDesignerMoveControls(message = null) {
   const status = document.querySelector('#designer-move-status');
   if (!status) return;
   const script = state.designerMoveScript;
+  const actionCount = script?.actions.length || 0;
   const completedApiMoves = state.chemistActionAudit.filter((entry) =>
     entry?.status === 'completed').length;
-  document.querySelector('#replay-designer-moves').disabled =
+  const replayButton = document.querySelector('#replay-designer-moves');
+  replayButton.disabled = !script;
+  replayButton.textContent = state.designerMoveReplaying
+    ? (state.designerMoveReplayPaused ? '▶ Continue' : '❚❚ Pause')
+    : (state.designerMoveReplayIndex >= actionCount && actionCount ? '↻ Replay story' : '▶ Play story');
+  document.querySelector('#restart-designer-moves').disabled =
     !script || state.designerMoveReplaying;
   document.querySelector('#export-designer-moves').disabled =
     !completedApiMoves || state.designerMoveReplaying;
   document.querySelector('#export-designer-replay').disabled =
     !state.designerMoveReplay || state.designerMoveReplaying;
+  const progress = document.querySelector('#designer-move-progress');
+  progress.max = Math.max(1, actionCount); progress.value = Math.min(actionCount,
+    state.designerMoveReplayIndex);
+  document.querySelector('#designer-move-progress-label').textContent =
+    `${Math.min(actionCount, state.designerMoveReplayIndex)} / ${actionCount}`;
+  document.querySelector('#designer-move-caption').textContent =
+    state.designerMoveReplayPaused
+      ? `Paused before move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} · ${designerMoveCaption()}`
+      : designerMoveCaption();
   if (message) status.textContent = message;
   else if (script) status.textContent = `${script.label || 'Imported action script'} · ${script.actions.length} replayable move${script.actions.length === 1 ? '' : 's'} · ${script.schema}`;
   else status.textContent = completedApiMoves
@@ -7525,15 +7575,20 @@ function updateDesignerMoveControls(message = null) {
 async function importDesignerMoveScript(file) {
   if (!file) return;
   if (file.size > 2_000_000) throw new Error('Designer-move JSON must be smaller than 2 MB');
-  const module = await import('./design-history/replay.mjs');
   let parsed;
   try { parsed = JSON.parse(await file.text()); }
   catch { throw new Error('Designer-move file is not valid JSON'); }
-  module.validateActionScript(parsed);
-  state.designerMoveScript = structuredClone(parsed);
-  state.designerMoveReplay = null;
-  updateDesignerMoveControls();
+  await installDesignerMoveScript(parsed);
   showToast(`${parsed.actions.length} designer moves imported`);
+}
+
+async function installDesignerMoveScript(parsed) {
+  const module = await import('./design-history/replay.mjs');
+  module.validateActionScript(parsed);
+  clearScene();
+  state.designerMoveScript = structuredClone(parsed);
+  resetDesignerMovePlayback();
+  updateDesignerMoveControls();
 }
 
 let designerMoveCueElement = null;
@@ -7585,11 +7640,21 @@ function showDesignerMoveCue(step = null) {
 async function replayDesignerMoveScript() {
   const script = state.designerMoveScript;
   if (!script) throw new Error('Import a designer-move JSON script first');
+  if (state.designerMoveReplaying) {
+    setDesignerMoveReplayPaused(!state.designerMoveReplayPaused);
+    return null;
+  }
+  if (state.designerMoveReplayIndex >= script.actions.length) {
+    clearScene();
+    resetDesignerMovePlayback();
+  }
   const [api, module] = await Promise.all([
     window.MolariumChemistActionsReady,
     import('./design-history/replay.mjs'),
   ]);
   state.designerMoveReplaying = true;
+  state.designerMoveReplayPaused = false;
+  state.designerMoveReplayIndex = 0;
   const moviePacedReplay = new URLSearchParams(window.location.search)
     .has('designer-moves-movie');
   updateDesignerMoveControls(`Starting ${script.actions.length} recorded designer moves…`);
@@ -7597,11 +7662,16 @@ async function replayDesignerMoveScript() {
     const replay = await module.replayActionScript(api, script, {
       onStep:async ({ phase, step }) => {
         if (phase === 'before') {
+          await waitForDesignerMoveReplay();
+          state.designerMoveReplayIndex = step.index;
           showDesignerMoveCue(step);
           updateDesignerMoveControls(
             `Move ${step.index + 1} of ${script.actions.length} · ${step.caption || step.action}`);
           await new Promise((resolve) => setTimeout(resolve, 180));
         } else {
+          state.designerMoveReplayIndex = step.index + 1;
+          updateDesignerMoveControls(
+            `Completed move ${step.index + 1} of ${script.actions.length} · ${step.caption || step.action}`);
           await new Promise((resolve) => setTimeout(resolve, 80));
           showDesignerMoveCue();
           if (moviePacedReplay)
@@ -7618,6 +7688,8 @@ async function replayDesignerMoveScript() {
   } finally {
     showDesignerMoveCue();
     state.designerMoveReplaying = false;
+    state.designerMoveReplayPaused = false;
+    designerMoveReplayResume?.(); designerMoveReplayResume = null;
     updateDesignerMoveControls();
   }
 }
@@ -8175,6 +8247,8 @@ function installChemistActionsApi(module) {
       const result = await runSelectedBuildOptimization();
       if (!result) throw new Error(`${method} optimization did not complete`);
       return chemistActionSummary({ optimization:{ method,
+        accepted:result.valenceSafeguard?.accepted ?? true,
+        valenceSafeguard:structuredClone(result.valenceSafeguard || null),
         initialEnergy:result.initialEnergy ?? null, finalEnergy:result.finalEnergy ?? null,
         iterations:result.iterations ?? null, converged:result.converged ?? null,
         elapsedMs:result.elapsedMs ?? null } }); },
@@ -12661,6 +12735,8 @@ async function runSelectedBuildOptimization() {
       : pocketRelaxation ? 'Pocket GPU…'
       : method === 'webgpu' ? `${label} GPU…`
       : method === 'ani2x' ? 'ANI-2x…' : 'MMFF94…';
+  const valenceSnapshot = flexiblePocketRelaxation
+    ? captureLigandValenceGeometry() : null;
   try {
     const result = await runCalculation({ method:workerMethod, job:'geometry', options:flexiblePocketRelaxation ? {
       movableAtomIndices, maxIterations:inducedFitRelaxation ? 240 : 120, nonbondedCutoffNm:1.0,
@@ -12668,10 +12744,70 @@ async function runSelectedBuildOptimization() {
       maxDisplacement:inducedFitRelaxation ? 0.00075 : 0.001,
       savedFrameCount:BUILD_OPTIMIZATION_FRAME_COUNT,
     } : undefined });
+    if (result && valenceSnapshot) {
+      const valenceSafeguard = validateLigandValenceGeometry(valenceSnapshot);
+      if (!valenceSafeguard.accepted) {
+        restoreValenceGeometrySnapshot(valenceSnapshot);
+        clearCalculationResult(); state.lastCalculation = null;
+        updateStoredBondDistances(); updateInfo(); draw();
+        showToast(`Relaxation rejected · restored pre-relax pose · ${valenceSafeguard.violations.length} distorted ligand bonds`);
+        return { ...result, valenceSafeguard };
+      }
+      result.valenceSafeguard = valenceSafeguard;
+    }
     if (result && flexiblePocketRelaxation) setMode('view');
     return result;
   } catch { return null; }
   finally { button.disabled = false; button.textContent = '⚡ Optimize'; }
+}
+
+function captureLigandValenceGeometry() {
+  const molecule = state.molecule;
+  const ligand = dockingLigandComponent()
+    || state.structureComponents.find((component) => component.kind === 'ligand');
+  if (!molecule || !ligand) return null;
+  const ligandAtoms = new Set(ligand.atomIndices);
+  const distance = (a, b) => Math.hypot(
+    molecule.atoms[a].x - molecule.atoms[b].x,
+    molecule.atoms[a].y - molecule.atoms[b].y,
+    molecule.atoms[a].z - molecule.atoms[b].z);
+  return {
+    positions:molecule.atoms.map((atom) => [atom.x, atom.y, atom.z]),
+    bonds:molecule.bonds.filter((bond) => ligandAtoms.has(bond.a) && ligandAtoms.has(bond.b)
+      && molecule.atoms[bond.a].element !== 'H' && molecule.atoms[bond.b].element !== 'H')
+      .map((bond) => ({ a:bond.a, b:bond.b, before:distance(bond.a, bond.b),
+        target:equilibriumBondLength(molecule.atoms[bond.a], molecule.atoms[bond.b], bond.order || 1),
+        atomNames:[molecule.atoms[bond.a].atomName || molecule.atoms[bond.a].designAtomId,
+          molecule.atoms[bond.b].atomName || molecule.atoms[bond.b].designAtomId] })),
+  };
+}
+
+function validateLigandValenceGeometry(snapshot) {
+  if (!snapshot?.bonds?.length) return { accepted:true, checkedHeavyBonds:0, violations:[] };
+  const molecule = state.molecule;
+  const violations = snapshot.bonds.flatMap((bond) => {
+    const after = Math.hypot(
+      molecule.atoms[bond.a].x - molecule.atoms[bond.b].x,
+      molecule.atoms[bond.a].y - molecule.atoms[bond.b].y,
+      molecule.atoms[bond.a].z - molecule.atoms[bond.b].z);
+    const stretched = after > bond.before + 0.45 && after > bond.target * 1.25;
+    const compressed = after < bond.before - 0.35 && after < bond.target * 0.75;
+    return stretched || compressed ? [{ atomNames:bond.atomNames,
+      beforeAngstrom:Number(bond.before.toFixed(3)),
+      afterAngstrom:Number(after.toFixed(3)),
+      targetAngstrom:Number(bond.target.toFixed(3)),
+      failure:stretched ? 'stretched' : 'compressed' }] : [];
+  });
+  return { accepted:violations.length === 0,
+    checkedHeavyBonds:snapshot.bonds.length, violations };
+}
+
+function restoreValenceGeometrySnapshot(snapshot) {
+  snapshot.positions.forEach((position, index) => {
+    if (!state.molecule?.atoms[index]) return;
+    [state.molecule.atoms[index].x, state.molecule.atoms[index].y,
+      state.molecule.atoms[index].z] = position;
+  });
 }
 
 function setGeneratedCardOpen(card, body, toggle, open) {
@@ -13123,10 +13259,14 @@ document.querySelector('#designer-move-file').addEventListener('change', async (
 });
 document.querySelector('#replay-designer-moves').addEventListener('click', async (event) => {
   const button = event.currentTarget;
-  button.disabled = true; button.textContent = 'Replaying…';
   try { await replayDesignerMoveScript(); }
   catch (error) { showNotice(error.message); }
-  finally { button.textContent = 'Replay moves'; updateDesignerMoveControls(); }
+  finally { updateDesignerMoveControls(); }
+});
+document.querySelector('#restart-designer-moves').addEventListener('click', () => {
+  if (!state.designerMoveScript || state.designerMoveReplaying) return;
+  clearScene(); resetDesignerMovePlayback(); updateDesignerMoveControls();
+  showToast('Story returned to its blank starting canvas');
 });
 document.querySelector('#export-designer-moves').addEventListener('click', () => {
   exportRecordedDesignerMoves().catch((error) => showNotice(error.message));
@@ -13316,10 +13456,14 @@ canvas.addEventListener('contextmenu', (event) => { event.preventDefault(); });
 canvas.addEventListener('wheel', (event) => { event.preventDefault(); state.zoom = Math.max(.45, Math.min(2.6, state.zoom * Math.exp(-event.deltaY * .001))); draw(); }, { passive: false });
 
 document.querySelector('#export-button').addEventListener('click', exportXYZ);
-document.querySelector('#clear-button').addEventListener('click', () => {
+function clearScene({ announce = false } = {}) {
+  clearCalculationResult(); state.lastCalculation = null;
   state.molecule = null; state.selectedAtom = null; state.selectedAtoms = [];
   state.chemistryTransaction = null; state.chemistryEditFinishing = false;
   state.ligandProtonation = null; state.protonatingLigand = false; state.ligandProtonationSequence++;
+  state.designCampaign = null; state.designCampaignStepId = null;
+  state.chemistActionAudit = [];
+  state.buildHistory = []; state.redoHistory = [];
   state.focusedComponentId = null; state.focusedComponentRadius = null;
   state.dockingReference = null; state.dockingResult = null; state.dockingRunning = false;
   state.dockingSelectedHbondIds = new Set(); state.dockingPoseIndex = 0;
@@ -13327,6 +13471,8 @@ document.querySelector('#clear-button').addEventListener('click', () => {
   state.dockingContactDraft = null;
   state.focusedResidueKey = null; state.focusedResidueRadius = null; updateResidueFollowChip();
   state.viewProjectionCenter = null; state.viewProjectionRadius = null; state.projection = null;
+  state.structureComponents = []; state.atomComponentIds = [];
+  state.componentVisibility = new Map(); state.pdbPreparationPreview = null;
   updateGeometryControl(); ctx.clearRect(0,0,canvas.width,canvas.height); document.querySelector('#viewer-hint').classList.add('visible');
   document.querySelector('#display-options').classList.add('hidden'); document.querySelector('#molecule-info').classList.add('hidden'); document.querySelector('.scene-card').classList.add('hidden');
   document.querySelector('#structure-components').classList.add('hidden'); document.querySelector('#preparation-inspector').classList.add('hidden');
@@ -13336,10 +13482,17 @@ document.querySelector('#clear-button').addEventListener('click', () => {
   state.depictionOrientationAnchor = null; state.depictionTemplateMolBlock = null;
   state.depictionBondStart = null;
   document.querySelector('#structure-2d-panel').classList.add('hidden');
-  showToast('Scene cleared'); draw();
-});
+  if (announce) showToast('Scene cleared');
+  updateHistoryButtons(); updateOptimizerControls(); draw();
+}
+
+document.querySelector('#clear-button').addEventListener('click', () => clearScene({ announce:true }));
 document.querySelector('#share-button').addEventListener('click', async () => {
-  try { await navigator.clipboard.writeText(location.href); showToast('Share link copied'); } catch { showToast('Share link ready'); }
+  const storyId = new URLSearchParams(location.search).get('story');
+  const shareUrl = storyId && DESIGNER_STORY_LINKS[storyId]
+    ? `${location.origin}/${storyId}` : location.href;
+  try { await navigator.clipboard.writeText(shareUrl); showToast('Share link copied'); }
+  catch { showToast(`Share link ready · ${shareUrl}`); }
 });
 document.querySelector('#copy-smiles').addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(state.molecule?.smiles || ''); showToast('SMILES copied'); } catch { showToast('SMILES ready to copy'); }
@@ -13421,10 +13574,58 @@ async function loadLaunchMolecule() {
   }
 }
 
+const DESIGNER_STORY_LINKS = Object.freeze({
+  'sos1-hit-to-bay293':Object.freeze({
+    title:'SOS1 hit to BAY-293',
+    script:'./design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
+    sourcePath:'design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
+    sourceSha256:'74cbf827a3928a1c8066a2f5f2b13f37dec7141fb8c8aa4af6919bf3540f4ab1',
+    presentation:'chemist-pocket',
+  }),
+});
+
+async function initializeWorkspaceFromUrl() {
+  const parameters = new URLSearchParams(window.location.search);
+  const storyId = parameters.get('story');
+  if (!storyId && parameters.has('blank')) {
+    clearScene();
+    return;
+  }
+  if (!storyId) return loadLaunchMolecule();
+  clearScene();
+  const story = DESIGNER_STORY_LINKS[storyId];
+  if (!story) {
+    updateDesignerMoveControls(`Unknown Molarium story: ${storyId}`);
+    showNotice(`Unknown Molarium story: ${storyId}`);
+    return;
+  }
+  try {
+    const response = await fetch(story.script, { cache:'no-store' });
+    if (!response.ok) throw new Error(`Story JSON could not be loaded (${response.status})`);
+    const sourceBytes = await response.arrayBuffer();
+    if (await sha256Hex(sourceBytes) !== story.sourceSha256)
+      throw new Error('Story JSON integrity check failed');
+    const sourceScript = JSON.parse(new TextDecoder().decode(sourceBytes));
+    const installedScript = story.presentation === 'chemist-pocket'
+      ? (await import('./design-history/interface-story.mjs'))
+        .buildPocketInterfaceStory(sourceScript, {
+          sourcePath:story.sourcePath, sourceSha256:story.sourceSha256,
+        })
+      : sourceScript;
+    await installDesignerMoveScript(installedScript);
+    setMode('build');
+    document.title = `${story.title} · Molarium`;
+    updateDesignerMoveControls(`${story.title} is ready on a blank canvas. Press Play story to begin.`);
+  } catch (error) {
+    updateDesignerMoveControls(`Could not load ${story.title}`);
+    showNotice(error.message);
+  }
+}
+
 initializeNetworkPolicyUi();
 window.MolariumChemistActionsReady = import('./chemist-actions.mjs')
   .then((module) => installChemistActionsApi(module));
-loadLaunchMolecule();
+initializeWorkspaceFromUrl();
 renderFragmentLibrary();
 updateHistoryButtons();
 updateOptimizerControls();

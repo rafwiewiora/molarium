@@ -110,11 +110,17 @@ const replay = await replayActionScript(api, saved, {
 if (replay.status !== 'completed') throw new Error(replay.steps.at(-1).error);
 ```
 
-For a product-facing movie, `npm run render:designer-moves-interface` imports the same JSON through
-the visible Build panel, presses **Replay moves**, and records the real Molarium interface while the
-public actions run. Presentation-only `view.setDisplay` and `view.focusComponent` actions select a
-clean chemist pocket view and keep the active ligand in frame; they do not change molecular
-coordinates or replace any scientific action.
+For a product-facing movie, `npm run render:designer-moves-interface` starts from a blank canvas,
+imports the same JSON through the visible Build panel, presses **▶ Play story**, and records the
+real Molarium interface while the public actions run. The transport changes to **❚❚ Pause**
+during execution and pauses at the next action boundary, after the current scientific operation
+finishes. **↺ Restart** returns to the blank canvas. Presentation-only `view.setDisplay` and
+`view.focusComponent` actions select a clean chemist pocket view and keep the active ligand in
+frame; they do not change molecular coordinates or replace any scientific action.
+
+Importing a valid script clears the existing molecule before installing the story. This guarantees
+that the first molecular state is produced by the first recorded action, rather than inherited
+from the viewer's launch molecule or a previous session.
 
 Replay uses only `api.execute({ action, args })`; the script cannot invoke private application
 routes. Arguments should use persistent design atom IDs rather than array indices. Values returned
@@ -122,6 +128,13 @@ by one action can be captured and referenced by later actions with the existing 
 `{ "$binding": "name" }` fields supported by `molarium.chemist-action-script/v1`.
 
 ## SOS1 growth-clash-v7 example
+
+The paper-facing permalink is `https://molarium.org/sos1-hit-to-bay293`. It opens Molarium on a
+blank canvas with the selected route preloaded at move 0; the reader explicitly presses
+**▶ Play story** to begin. The registered presentation retains all 33 scientific actions and
+adds the same 15 view/focus actions used by the interface movie. The deployment redirects this
+stable path to the registered story ID, so the paper URL does not expose an asset path or require
+a manual JSON import.
 
 The example is pinned to the successful run whose audit SHA-256 is
 `38d8fbd3e2675fd1203a13a7e235ff848eaf627a0d7c8450865a762f9fbe5e5b`:
@@ -141,3 +154,9 @@ rotamer basins, jointly refined ligand poses for each tested branch, selected ro
 the registered criterion, and propagated the predicted receptor state to BAY-293. The smooth movie
 motion between endpoints is visualization, not molecular dynamics. Tyr884 was **not** predicted in
 this run: its structural difference is a historical comparison between deposited structures.
+
+Flexible complex relaxation is guarded at the ligand valence boundary. Molarium snapshots every
+ligand heavy-atom bond before the optimizer and rejects/restores an output if a bond is stretched
+or compressed beyond both an absolute and equilibrium-relative tolerance. This prevents a bad
+complex relaxation from being presented as a chemically plausible saturated-ring conformer while
+retaining the rejected result in the Chemist Actions replay outcome.
