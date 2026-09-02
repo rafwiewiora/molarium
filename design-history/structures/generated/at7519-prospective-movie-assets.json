@@ -1,0 +1,217 @@
+{
+  "schema": "molarium.at7519-prospective-movie-assets/v1",
+  "campaignId": "cdk2-at7519-hit-only",
+  "scientificStatus": "protocol-isolated prospective replay with post-freeze crystal evaluation",
+  "boundary": {
+    "coordinateInput": "2VTA only before prediction freeze",
+    "predictionsSequential": true,
+    "displayedReceptor": "fixed 2VTA",
+    "laterReceptorsDisplayed": false,
+    "sideChainMotion": false,
+    "ligandGrammar": "exactly one ligand model per scene"
+  },
+  "states": [
+    {
+      "sequenceIndex": 0,
+      "stateId": "compound-6",
+      "compound": "6",
+      "pdbId": "2VTA",
+      "coordinateClass": "allowed-input",
+      "ligandAsset": "at7519-2vta-ligand.pdb",
+      "biochemicalPotency": "CDK2 IC50 185 uM"
+    },
+    {
+      "sequenceIndex": 1,
+      "stepId": "scaffold-hop",
+      "stateId": "compound-15",
+      "predictionAsset": "at7519-01-compound-15-prediction-ligand.pdb",
+      "holdoutAsset": "at7519-01-compound-15-crystal-ligand.pdb",
+      "holdoutPdbId": "2VTL",
+      "receptorCaRmsdAngstrom": 0.360363,
+      "poseMetrics": {
+        "heavyAtomCount": 14,
+        "allHeavyAtomRmsdAngstrom": 1.422614,
+        "preservedAtomRmsdAngstrom": 0.874572,
+        "newAtomRmsdAngstrom": 1.650228,
+        "centroidOffsetAngstrom": 0.77014
+      }
+    },
+    {
+      "sequenceIndex": 2,
+      "stepId": "grow-acetamide",
+      "stateId": "compound-18",
+      "predictionAsset": "at7519-02-compound-18-prediction-ligand.pdb",
+      "holdoutAsset": "at7519-02-compound-18-crystal-ligand.pdb",
+      "holdoutPdbId": "2VTN",
+      "receptorCaRmsdAngstrom": 0.459304,
+      "poseMetrics": {
+        "heavyAtomCount": 19,
+        "allHeavyAtomRmsdAngstrom": 1.788343,
+        "preservedAtomRmsdAngstrom": 1.524079,
+        "newAtomRmsdAngstrom": 2.376796,
+        "centroidOffsetAngstrom": 1.24842
+      }
+    },
+    {
+      "sequenceIndex": 3,
+      "stepId": "grow-benzamide",
+      "stateId": "compound-22",
+      "predictionAsset": "at7519-03-compound-22-prediction-ligand.pdb",
+      "holdoutAsset": "at7519-03-compound-22-crystal-ligand.pdb",
+      "holdoutPdbId": "2VTO",
+      "receptorCaRmsdAngstrom": 0.307417,
+      "poseMetrics": {
+        "heavyAtomCount": 24,
+        "allHeavyAtomRmsdAngstrom": 2.019952,
+        "preservedAtomRmsdAngstrom": 1.524208,
+        "newAtomRmsdAngstrom": 3.057973,
+        "centroidOffsetAngstrom": 1.240407
+      }
+    },
+    {
+      "sequenceIndex": 4,
+      "stepId": "lock-difluoro-torsion",
+      "stateId": "compound-23",
+      "predictionAsset": "at7519-04-compound-23-prediction-ligand.pdb",
+      "holdoutAsset": "at7519-04-compound-23-crystal-ligand.pdb",
+      "holdoutPdbId": "2VTP",
+      "receptorCaRmsdAngstrom": 0.300326,
+      "poseMetrics": {
+        "heavyAtomCount": 26,
+        "allHeavyAtomRmsdAngstrom": 2.172813,
+        "preservedAtomRmsdAngstrom": 1.946737,
+        "newAtomRmsdAngstrom": 3.987115,
+        "centroidOffsetAngstrom": 1.347725
+      }
+    },
+    {
+      "sequenceIndex": 5,
+      "stepId": "finish-at7519",
+      "stateId": "compound-33",
+      "predictionAsset": "at7519-05-compound-33-prediction-ligand.pdb",
+      "holdoutAsset": "at7519-05-compound-33-crystal-ligand.pdb",
+      "holdoutPdbId": "2VU3",
+      "receptorCaRmsdAngstrom": 0.76104,
+      "poseMetrics": {
+        "heavyAtomCount": 25,
+        "allHeavyAtomRmsdAngstrom": 2.323123,
+        "preservedAtomRmsdAngstrom": 2.222659,
+        "newAtomRmsdAngstrom": 2.563443,
+        "centroidOffsetAngstrom": 1.352466
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "path": "design-history/structures/generated/at7519-prospective-campaign.json",
+      "sha256": "e82d13a117883c140d148bc45134a5d14c57d3fa661b8147899e594511f9e043",
+      "bytes": 33543
+    },
+    {
+      "path": "design-history/structures/generated/at7519-holdout-evaluation.json",
+      "sha256": "68eb5b9b0127adbd2d0e8a878beea4ed11a5451ada356894a6479fd929300234",
+      "bytes": 10533
+    },
+    {
+      "path": "outputs/design-history/at7519-preapproval/review/data.json",
+      "sha256": "858d4bdee63da42980501a4f87944cbc76736d2fd23236ff6badce00bb394d20",
+      "bytes": 250257
+    },
+    {
+      "path": "outputs/design-history/at7519-hit-only-prospective/prediction-manifest.json",
+      "sha256": "1cef049a93dbeda1ce3d799ca380f1314e38944b89422e74eccf157b809b07a0",
+      "bytes": 4274
+    },
+    {
+      "path": "outputs/design-history/at7519-hit-only-prospective/chemist-action-audit.json",
+      "sha256": "f2e9c87eb7825cfff4bae013351f95396fa94b658bc6558175dad20d0fed4b2d",
+      "bytes": 21819
+    }
+  ],
+  "assets": [
+    {
+      "path": "design-history/structures/generated/at7519-2vta-pocket.pdb",
+      "role": "fixed-2VTA-pocket",
+      "sha256": "fc86209869159bc4d69f0abc17acd52b27c233757cd81a410a461c2e56205140",
+      "bytes": 13177
+    },
+    {
+      "path": "design-history/structures/generated/at7519-2vta-protein.pdb",
+      "sha256": "b65c8022129ab7ee22261a86cc8ed0b06a92c12251c58c7b4a720184b4d4f595",
+      "bytes": 182201,
+      "role": "fixed-2VTA-protein"
+    },
+    {
+      "path": "design-history/structures/generated/at7519-2vta-ligand.pdb",
+      "sha256": "68f2d1c31ea2b01ec9c2428465f0b9ab86cbf40ee2e81ade563e6f1ddd183fb2",
+      "bytes": 791,
+      "role": "starting-hit-ligand"
+    },
+    {
+      "path": "design-history/structures/generated/at7519-01-compound-15-prediction-ligand.pdb",
+      "sha256": "061e5c28db7b9ab2c3900eb8233ec841edcfdcf7316685878dbdf5397e5e6d0d",
+      "bytes": 1507,
+      "role": "prediction-ligand"
+    },
+    {
+      "path": "design-history/structures/generated/at7519-01-compound-15-crystal-ligand.pdb",
+      "sha256": "9f5f63697bc29d5c934706c0e0b0c097276c6fd67941dcfe9b2d8057b40227bd",
+      "bytes": 1512,
+      "role": "holdout-ligand"
+    },
+    {
+      "path": "design-history/structures/generated/at7519-02-compound-18-prediction-ligand.pdb",
+      "sha256": "ef752dd8409071224d7dd13820f5cbc20909d8d5405a014ebf2395fa8ebc99a4",
+      "bytes": 2024,
+      "role": "prediction-ligand"
+    },
+    {
+      "path": "design-history/structures/generated/at7519-02-compound-18-crystal-ligand.pdb",
+      "sha256": "6bb9cb57fd622b6b8bd5072d3e463471b60ca65aa92394f04d40ec3ef32be9b6",
+      "bytes": 2027,
+      "role": "holdout-ligand"
+    },
+    {
+      "path": "design-history/structures/generated/at7519-03-compound-22-prediction-ligand.pdb",
+      "sha256": "d1610985e8c6232d92b01f8a04845b681ad86f32f8a35a9417ac0b2c2ebcc5a3",
+      "bytes": 2549,
+      "role": "prediction-ligand"
+    },
+    {
+      "path": "design-history/structures/generated/at7519-03-compound-22-crystal-ligand.pdb",
+      "sha256": "8d6ee45378c9418eb239d951dc8366ab8f1f9845cf9b68e436f310198ede263a",
+      "bytes": 2552,
+      "role": "holdout-ligand"
+    },
+    {
+      "path": "design-history/structures/generated/at7519-04-compound-23-prediction-ligand.pdb",
+      "sha256": "16eb6b948273d0cd357e3571fe8a99568a3dbd63f1ebc9c4024692b41bad7c78",
+      "bytes": 2762,
+      "role": "prediction-ligand"
+    },
+    {
+      "path": "design-history/structures/generated/at7519-04-compound-23-crystal-ligand.pdb",
+      "sha256": "f7a657f51718f0481534c235ba094f09bb1cbaf42572cbe586f5612b02f6a495",
+      "bytes": 2758,
+      "role": "holdout-ligand"
+    },
+    {
+      "path": "design-history/structures/generated/at7519-05-compound-33-prediction-ligand.pdb",
+      "sha256": "ec8e99b4dc8f231236569db56530e6ea61d0530b6c2bb47c558a99d7719685ae",
+      "bytes": 2651,
+      "role": "prediction-ligand"
+    },
+    {
+      "path": "design-history/structures/generated/at7519-05-compound-33-crystal-ligand.pdb",
+      "sha256": "dff9462a7c8fc985c045b1063f7d0904dac1e7f3893cd21819fe8e12ac838c1f",
+      "bytes": 2655,
+      "role": "holdout-ligand"
+    }
+  ],
+  "limitations": [
+    "This is a protocol-isolated replay, not a historically blinded prediction experiment.",
+    "RMSDs are receptor-aligned and corrected only for exact ligand graph symmetries; no ligand fitting is applied.",
+    "The receptor is intentionally fixed to 2VTA, so the experiment tests placement without receptor rearrangement.",
+    "Compound 23 is more biochemically potent against CDK2 than AT7519; the last decision is a cellular/PK/profile optimization, not a monotonic potency gain."
+  ]
+}

@@ -1,0 +1,52 @@
+REMARK 950 POST-FREEZE HOLDOUT 2VU3/LZE ALIGNED TO 2VTA
+HETATM    1   O8 XTL A   1      27.752   7.648  64.517  1.00 20.00           O  
+HETATM    2   C7 XTL A   1      28.339   6.687  65.045  1.00 20.00           C  
+HETATM    3   N6 XTL A   1      29.518   6.805  65.710  1.00 20.00           N  
+HETATM    4   C5 XTL A   1      30.271   8.055  65.761  1.00 20.00           C  
+HETATM    5  C25 XTL A   1      31.301   8.130  64.632  1.00 20.00           C  
+HETATM    6  C26 XTL A   1      32.061   9.458  64.700  1.00 20.00           C  
+HETATM    7  N24 XTL A   1      32.703   9.632  66.033  1.00 20.00           N  
+HETATM    8   C3 XTL A   1      31.719   9.562  67.153  1.00 20.00           C  
+HETATM    9   C4 XTL A   1      30.961   8.237  67.119  1.00 20.00           C  
+HETATM   10   C9 XTL A   1      27.767   5.337  64.968  1.00 20.00           C  
+HETATM   11  N10 XTL A   1      28.216   4.269  65.697  1.00 20.00           N  
+HETATM   12  N11 XTL A   1      27.434   3.230  65.308  1.00 20.00           N  
+HETATM   13  C12 XTL A   1      26.510   3.626  64.387  1.00 20.00           C  
+HETATM   14  C13 XTL A   1      26.713   4.969  64.154  1.00 20.00           C  
+HETATM   15  N14 XTL A   1      26.069   5.853  63.289  1.00 20.00           N  
+HETATM   16  C15 XTL A   1      25.213   5.495  62.312  1.00 20.00           C  
+HETATM   17  O16 XTL A   1      24.829   4.336  62.156  1.00 20.00           O  
+HETATM   18  C17 XTL A   1      24.697   6.613  61.463  1.00 20.00           C  
+HETATM   19  C18 XTL A   1      23.384   7.008  61.553  1.00 20.00           C  
+HETATM   20  CL7 XTL A   1      22.324   6.167  62.619  1.00 20.00          Cl  
+HETATM   21  C20 XTL A   1      22.894   8.072  60.794  1.00 20.00           C  
+HETATM   22  C21 XTL A   1      23.742   8.747  59.933  1.00 20.00           C  
+HETATM   23  C22 XTL A   1      25.071   8.375  59.850  1.00 20.00           C  
+HETATM   24  C23 XTL A   1      25.537   7.313  60.614  1.00 20.00           C  
+HETATM   25  CL1 XTL A   1      27.186   6.832  60.466  1.00 20.00          Cl  
+CONECT    1    2
+CONECT    2    1    3   10
+CONECT    3    2    4
+CONECT    4    3    5    9
+CONECT    5    4    6
+CONECT    6    5    7
+CONECT    7    6    8
+CONECT    8    7    9
+CONECT    9    4    8
+CONECT   10    2   11   14
+CONECT   11   10   12
+CONECT   12   11   13
+CONECT   13   12   14
+CONECT   14   10   13   15
+CONECT   15   14   16
+CONECT   16   15   17   18
+CONECT   17   16
+CONECT   18   16   19   24
+CONECT   19   18   20   21
+CONECT   20   19
+CONECT   21   19   22
+CONECT   22   21   23
+CONECT   23   22   24
+CONECT   24   18   23   25
+CONECT   25   24
+END

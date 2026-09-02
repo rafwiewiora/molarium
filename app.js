@@ -7796,6 +7796,7 @@ const REGISTERED_DESIGN_CAMPAIGNS = Object.freeze({
   'cdk2-hit-only':'./design-history/structures/generated/cdk2-prospective-campaign.json',
   'cdk2-designer-intent':'./design-history/structures/generated/cdk2-designer-campaign.json',
   'sos1-hit-only':'./design-history/structures/generated/sos1-prospective-campaign.json',
+  'cdk2-at7519-hit-only':'./design-history/structures/generated/at7519-prospective-campaign.json',
 });
 
 async function fetchPinnedText(path, expectedSha256) {

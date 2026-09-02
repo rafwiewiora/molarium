@@ -49,6 +49,7 @@ const files = [
   'design-history/structure-viewer/cdk2-hit-only-prospective.json',
   'design-history/structure-viewer/cdk2-designer-hit-to-lead.json',
   'design-history/structure-viewer/sos1-hit-only-success.json',
+  'design-history/structure-viewer/at7519-hit-only-success.json',
   'design-history/structure-review/index.html',
   'design-history/structures/generated/manifest.json',
   'design-history/structures/generated/bclxl-trajectory-manifest.json',
@@ -69,6 +70,8 @@ const files = [
   'design-history/structures/generated/sos1-prospective-campaign.json',
   'design-history/structures/generated/sos1-5ove-protein.pdb',
   'design-history/structures/generated/sos1-5ove-ligand.pdb',
+  'design-history/structures/generated/at7519-prospective-campaign.json',
+  'design-history/structures/generated/at7519-prospective-movie-assets.json',
   'design-history/structures/generated/7gn8-protein.pdb',
   'design-history/structures/generated/7gn8-pocket.pdb',
   'design-history/structures/generated/7gn8-ligand.pdb',
@@ -120,6 +123,9 @@ const generatedStructures = await readdir(join(root, 'design-history/structures/
 files.push(...generatedStructures
   .filter((name) => ((name.startsWith('sos1-v7-') || name.startsWith('sos1-full-'))
     && name.endsWith('.pdb')) || name === 'sos1-prospective-movie-assets.json')
+  .map((name) => `design-history/structures/generated/${name}`));
+files.push(...generatedStructures
+  .filter((name) => name.startsWith('at7519-') && name.endsWith('.pdb'))
   .map((name) => `design-history/structures/generated/${name}`));
 
 const headers = `/*

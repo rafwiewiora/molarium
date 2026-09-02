@@ -12,6 +12,7 @@ const STORY_REGISTRY=Object.freeze({
   'cdk2-hit-only-prospective':'./cdk2-hit-only-prospective.json',
   'cdk2-designer-hit-to-lead':'./cdk2-designer-hit-to-lead.json',
   'sos1-hit-only-success':'./sos1-hit-only-success.json',
+  'at7519-hit-only-success':'./at7519-hit-only-success.json',
 });
 const PREFIX={x1:'7gn8',x38:'7gnr-aligned',bclxl:'3spf',bclxlTemplate:'3sp7-aligned'};
 const LIGAND_COLOR={x1:0x826cae,x38:0xdc8747,bclxl:0x247d95};
