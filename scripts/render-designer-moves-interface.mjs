@@ -25,9 +25,12 @@ const width = Number(valueFor('--width') || 1600);
 const height = Number(valueFor('--height') || 1000);
 const fps = Number(valueFor('--fps') || 12);
 const smoke = has('--smoke');
+const sourceActionLimit = Number(valueFor('--source-actions') || 0);
 const sourceScriptBytes = await readFile(scriptPath);
 const sourceScript = validateActionScript(JSON.parse(sourceScriptBytes));
-const sourceActions = smoke ? sourceScript.actions.slice(0, 4) : sourceScript.actions;
+const sourceActions = smoke ? sourceScript.actions.slice(0, 4)
+  : sourceActionLimit > 0 ? sourceScript.actions.slice(0, sourceActionLimit)
+    : sourceScript.actions;
 const presentationScript = buildPocketInterfaceStory({
   schema:sourceScript.schema,
   label:sourceScript.label,
@@ -68,7 +71,8 @@ function holdFrames(step) {
   if (step.action === 'view.setDisplay') return Math.max(3, Math.round(fps * .3));
   if (['designRoute.load', 'designRoute.applyStep', 'pose.applySidechainRotamer',
     'pose.enumerateSidechainRotamers', 'pose.updateReceptorReference', 'optimization.run',
-    'view.focusComponent', 'view.focusAtoms'].includes(step.action)) return Math.round(fps * 1.25);
+    'view.focusComponent', 'view.focusAtoms', 'view.highlightAtoms'].includes(step.action))
+    return Math.round(fps * 1.25);
   return Math.max(4, Math.round(fps * .55));
 }
 

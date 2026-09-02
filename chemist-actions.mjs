@@ -11,7 +11,11 @@ const ACTIONS = Object.freeze({
   'view.focusAtoms': Object.freeze({
     description:'Focus and visibly emphasize a changed molecular region by persistent atom IDs.',
     arguments:Object.freeze({ atomIds:'array of 0–64 persistent atom IDs',
-      contextRadiusAngstrom:'number 2…8', highlight:'boolean' }) }),
+      contextRadiusAngstrom:'number 2…8', highlight:'boolean',
+      residueLabels:'array of 0–8 { chain, residueIndex, insertionCode, label } callouts' }) }),
+  'view.highlightAtoms': Object.freeze({
+    description:'Visibly emphasize atoms by persistent IDs without changing the camera, representation, or displayed molecular context.',
+    arguments:Object.freeze({ atomIds:'array of 0–64 persistent atom IDs' }) }),
   'view.setDisplay': Object.freeze({
     description:'Set the same representation and visibility options available in Display Options.',
     arguments:Object.freeze({ representation:'ball-stick | cartoon | both', showHydrogens:'boolean',
@@ -184,6 +188,7 @@ export function createChemistActionsApi({ routes, now = () => new Date().toISOSt
       const result = await routes[action](args);
       record.status = 'completed'; record.completedAt = now();
       record.durationMs = Math.max(0, monotonicNow() - started);
+      record.result = snapshot(result);
       recordAudit?.(snapshot(record));
       return { schema:CHEMIST_ACTIONS_SCHEMA, requestId, sequence:record.sequence,
         action, status:'completed', result:snapshot(result) };

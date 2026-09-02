@@ -18,6 +18,7 @@ assert(Object.isFrozen(api));
 assert(Object.hasOwn(api.describe().actions, 'chemistry.finish'));
 assert(Object.hasOwn(api.describe().actions, 'view.focusComponent'));
 assert(Object.hasOwn(api.describe().actions, 'view.focusAtoms'));
+assert(Object.hasOwn(api.describe().actions, 'view.highlightAtoms'));
 assert(Object.hasOwn(api.describe().actions, 'view.setDisplay'));
 assert(Object.hasOwn(api.describe().actions, 'pose.addContact'));
 assert(Object.hasOwn(api.describe().actions, 'pose.forgetContact'));
@@ -58,6 +59,8 @@ assert.notEqual(api.history()[0].action, 'tampered', 'history returns a defensiv
 assert.equal(persisted.length, 3);
 assert(persisted.every((record) => record.status === 'completed'),
   'accepted actions are offered to the durable audit adapter after completion');
+assert(persisted.every((record) => record.result?.observed === record.action),
+  'completed audit records preserve the public action result');
 
 assert.throws(() => createChemistActionsApi({ routes:{} }), /route session.inspect is missing/);
 

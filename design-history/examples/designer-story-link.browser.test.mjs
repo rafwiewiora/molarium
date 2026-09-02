@@ -23,6 +23,7 @@ try {
     buildActive:document.querySelector('.mode-bar button[data-mode="build"]').classList.contains('active'),
     transportVisible:document.querySelector('#designer-story-dock').getBoundingClientRect().height > 0,
     transportTop:document.querySelector('#designer-story-dock').getBoundingClientRect().top,
+    transportBottom:document.querySelector('#designer-story-dock').getBoundingClientRect().bottom,
     transportPosition:getComputedStyle(document.querySelector('#designer-story-dock')).position,
   })`);
   assert.match(initial.url, /\?story=sos1-hit-to-bay293$/);
@@ -32,7 +33,7 @@ try {
   assert.equal(initial.sceneHidden, true);
   assert.equal(initial.buildActive, true);
   assert.equal(initial.transportVisible, true);
-  assert.equal(initial.transportPosition, 'sticky');
+  assert.equal(initial.transportPosition, 'relative');
   const anchoredTransport = await browser.evaluate(`(async () => {
     const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
     const dock = document.querySelector('#designer-story-dock');
@@ -40,18 +41,22 @@ try {
     buildDisclosure.click(); await frame();
     const collapsedTop = dock.getBoundingClientRect().top;
     buildDisclosure.click(); await frame();
-    dock.parentElement.scrollTop = 300; await frame();
+    const toolStack = document.querySelector('#left-panel-scroll-stack');
+    toolStack.scrollTop = 300; await frame();
     const scrolledTop = dock.getBoundingClientRect().top;
-    dock.parentElement.scrollTop = 0; await frame();
+    const toolStackTop = toolStack.getBoundingClientRect().top;
+    toolStack.scrollTop = 0; await frame();
     document.querySelector('.mode-bar button[data-mode="view"]').click(); await frame();
     const viewTop = dock.getBoundingClientRect().top;
     const viewVisible = dock.getBoundingClientRect().height > 0;
     document.querySelector('.mode-bar button[data-mode="build"]').click(); await frame();
-    return { collapsedTop, scrolledTop, viewTop, viewVisible,
+    return { collapsedTop, scrolledTop, toolStackTop, viewTop, viewVisible,
       buildTop:dock.getBoundingClientRect().top };
   })()`);
   assert.ok(Math.abs(anchoredTransport.collapsedTop - initial.transportTop) < 1);
   assert.ok(Math.abs(anchoredTransport.scrolledTop - initial.transportTop) < 1);
+  assert.ok(anchoredTransport.toolStackTop >= initial.transportBottom - 1,
+    'the scrolling tool stack must begin below the fixed story dock');
   assert.ok(Math.abs(anchoredTransport.viewTop - initial.transportTop) < 1);
   assert.ok(Math.abs(anchoredTransport.buildTop - initial.transportTop) < 1);
   assert.equal(anchoredTransport.viewVisible, true);
@@ -184,7 +189,30 @@ try {
   assert.equal(restoredPoseCheckpoint.poseSummary, poseCheckpoint.poseSummary);
   assert.equal(restoredPoseCheckpoint.canvas, poseCheckpoint.canvas,
     'pose-result checkpoint navigation must restore the exact ranked molecular view');
-  console.log('Designer story link browser test passed: permalink, blank start, play/pause, and audited checkpoint navigation');
+
+  await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
+  await waitFor(async () => browser.evaluate(
+    `Number(document.querySelector('#designer-move-progress-label').textContent.split('/')[0]) >= 11`),
+  120000, 'fixed-camera pose comparison');
+  await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
+  await waitFor(async () => browser.evaluate(
+    `!document.querySelector('#previous-designer-move').disabled`),
+  120000, 'paused fixed-camera comparison');
+  const fixedComparison = await browser.evaluate(`(() => {
+    const record = window.MolariumChemistActions.history()
+      .filter((entry) => entry.action === 'view.highlightAtoms').at(-1);
+    return {
+      progress:document.querySelector('#designer-move-progress-label').textContent,
+      caption:document.querySelector('#designer-move-caption').textContent,
+      cameraPreserved:record?.result?.highlightedAtoms?.cameraPreserved,
+      displayContextPreserved:record?.result?.highlightedAtoms?.displayContextPreserved,
+    };
+  })()`);
+  assert.ok(Number(fixedComparison.progress.split('/')[0]) >= 11);
+  assert.match(fixedComparison.caption, /pyrazole.*Phe890.*Lys898/i);
+  assert.equal(fixedComparison.cameraPreserved, true);
+  assert.equal(fixedComparison.displayContextPreserved, true);
+  console.log('Designer story link browser test passed: permalink, blank start, fixed transport, play/pause, audited navigation, and fixed-camera pose comparison');
 } finally {
   await browser.close();
 }

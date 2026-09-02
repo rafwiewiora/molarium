@@ -219,6 +219,10 @@ button { cursor: pointer; }
   min-width: 0; min-height: 0; padding-right: 2px; overflow-x: hidden; overflow-y: auto;
   display: flex; flex-direction: column; gap: 10px; scrollbar-width: thin;
 }
+.panel-left { padding-right: 0; overflow: hidden; }
+.panel-scroll-stack { min-width: 0; min-height: 0; flex: 1 1 auto; padding-right: 2px;
+  overflow-x: hidden; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
+  scrollbar-width: thin; }
 
 .card {
   background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
@@ -600,7 +604,7 @@ select {
 .sidechain-rotamer-results { display: grid; grid-template-columns: minmax(0, 1fr) 78px; gap: 6px; margin-top: 7px; }
 .sidechain-rotamer-results select { min-width: 0; height: 31px; padding: 4px 6px; border: 1px solid var(--line-strong); border-radius: 7px; background: white; color: #334155; font-size: 8px; }
 .sidechain-rotamer-results .primary-button { min-width: 0; padding: 6px 4px; font-size: 9px; }
-.story-transport-card { position: sticky; z-index: 15; top: 0; padding: 11px 12px 12px;
+.story-transport-card { position: relative; z-index: 15; padding: 11px 12px 12px;
   border-color: #b8c8d8; box-shadow: 0 8px 22px rgba(15, 23, 42, .12); }
 .designer-move-tools { margin: 0; padding: 0; }
 .designer-move-tools .build-section-label { margin-top: 0; }
@@ -635,6 +639,7 @@ button.designer-move-press, select.designer-move-press, input.designer-move-pres
 .designer-move-change { outline: 2px solid #dc2626 !important; outline-offset: 2px;
   accent-color: #dc2626 !important; box-shadow: 0 0 0 5px rgb(220 38 38 / 14%) !important; }
 body.designer-move-demo-active .panel > .card,
+body.designer-move-demo-active .panel-scroll-stack > .card,
 body.designer-move-demo-active .structure-2d-panel { transition: opacity .16s ease, max-height .16s ease; }
 body.designer-move-demo-active .card.designer-move-demo-minimized > :not(.card-heading) {
   display: none !important;
@@ -923,7 +928,7 @@ body.designer-move-demo-active .designer-move-demo-reveal.hidden { display: bloc
   .app-main { grid-template-columns: 1fr 1fr; grid-template-areas: "viewer viewer" "left right"; grid-template-rows: 66vh auto; }
   .viewer-stage { grid-area: viewer; }.panel-left { grid-area: left; }.panel-right { grid-area: right; }
   .panel { overflow: visible; }
-  .story-transport-card { position: relative; top: auto; }
+  .panel-scroll-stack { overflow: visible; }
 }
 
 @media (max-width: 620px) {
