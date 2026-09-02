@@ -31,10 +31,16 @@ export function expandStructureTimeline(story) {
   let frame = 0, timeMs = 0;
   story.cues.forEach((cue, cueIndex) => {
     const count = Math.max(1, Math.round(cue.durationMs / frameDurationMs));
-    for (let cueFrame = 0; cueFrame < count; cueFrame++) frames.push({
-      frame:frame++, cueIndex, cueFrame, cueProgress:count === 1 ? 1 : cueFrame / (count - 1),
-      timeMs:Number(timeMs.toFixed(6)), scene:cue.scene,
-    }), timeMs += frameDurationMs;
+    for (let cueFrame = 0; cueFrame < count; cueFrame++) {
+      const cueProgress = count === 1 ? 1 : cueFrame / (count - 1);
+      const scenes = Array.isArray(cue.sceneSequence) && cue.sceneSequence.length
+        ? cue.sceneSequence : [cue.scene];
+      const sceneIndex = Math.min(scenes.length - 1,
+        Math.floor(cueProgress * scenes.length));
+      frames.push({ frame:frame++, cueIndex, cueFrame, cueProgress,
+        timeMs:Number(timeMs.toFixed(6)), scene:scenes[sceneIndex] });
+      timeMs += frameDurationMs;
+    }
   });
   return frames;
 }

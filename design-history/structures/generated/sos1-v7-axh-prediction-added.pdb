@@ -1,0 +1,19 @@
+HEADER    AXH prediction · atoms added by finish-b
+HETATM    1  CX5 AXH L   1       1.430 -21.792  24.525  1.00 20.00           C
+HETATM    2  NX1 AXH L   1       1.676 -22.676  23.207  1.00 20.00           N
+HETATM    3  CX6 AXH L   1       0.823 -22.440  22.262  1.00 20.00           C
+HETATM    4  CX7 AXH L   1       0.961 -23.134  20.976  1.00 20.00           C
+HETATM    5  CX8 AXH L   1      -0.043 -24.059  20.663  1.00 20.00           C
+HETATM    6  CX9 AXH L   1      -0.104 -24.612  19.395  1.00 20.00           C
+HETATM    7 CX10 AXH L   1       0.791 -24.203  18.438  1.00 20.00           C
+HETATM    8 CX11 AXH L   1       1.872 -23.359  18.772  1.00 20.00           C
+HETATM    9 CX12 AXH L   1       1.952 -22.783  20.042  1.00 20.00           C
+HETATM   23 CX13 AXH L   1       5.799 -15.484  24.880  1.00 20.00           C
+HETATM   24 CX14 AXH L   1       4.434 -15.179  25.011  1.00 20.00           C
+HETATM   25  OX1 AXH L   1       3.976 -14.506  26.143  1.00 20.00           O
+HETATM   26 CX15 AXH L   1       4.425 -15.075  27.394  1.00 20.00           C
+HETATM   27 CX16 AXH L   1       3.536 -15.580  23.986  1.00 20.00           C
+HETATM   28  OX2 AXH L   1       2.167 -15.373  24.086  1.00 20.00           O
+HETATM   29 CX17 AXH L   1       1.754 -14.081  23.629  1.00 20.00           C
+HETATM   30 CX18 AXH L   1       4.007 -16.305  22.879  1.00 20.00           C
+END

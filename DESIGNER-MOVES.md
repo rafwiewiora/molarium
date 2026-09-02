@@ -110,6 +110,12 @@ const replay = await replayActionScript(api, saved, {
 if (replay.status !== 'completed') throw new Error(replay.steps.at(-1).error);
 ```
 
+For a product-facing movie, `npm run render:designer-moves-interface` imports the same JSON through
+the visible Build panel, presses **Replay moves**, and records the real Molarium interface while the
+public actions run. Presentation-only `view.setDisplay` and `view.focusComponent` actions select a
+clean chemist pocket view and keep the active ligand in frame; they do not change molecular
+coordinates or replace any scientific action.
+
 Replay uses only `api.execute({ action, args })`; the script cannot invoke private application
 routes. Arguments should use persistent design atom IDs rather than array indices. Values returned
 by one action can be captured and referenced by later actions with the existing `capture` and

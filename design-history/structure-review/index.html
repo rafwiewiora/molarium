@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Molarium · structure overlay review</title>
+  <link rel="stylesheet" href="vendor/molstar-5.11.0.css">
+  <script src="vendor/molstar-5.11.0.js"></script>
+  <style>
+    :root{color-scheme:light;--ink:#152033;--muted:#657086;--line:#d9e0e8;--panel:#fff;
+      --canvas:#f5f7fa;--blue:#2f83b5;--green:#277858;--amber:#a35d18}
+    *{box-sizing:border-box}html,body{height:100%;margin:0}body{font:14px/1.42 Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--canvas)}
+    main{display:grid;grid-template-columns:minmax(290px,350px) minmax(0,1fr);height:100%}
+    aside{z-index:2;background:rgba(255,255,255,.97);border-right:1px solid var(--line);padding:22px;overflow:auto;box-shadow:8px 0 24px #1d2a3d0b}
+    h1{font-size:19px;letter-spacing:.025em;margin:0 0 4px}h2{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin:22px 0 9px}
+    .lede,.note{color:var(--muted);font-size:12px}.note{padding-top:9px}.boundary{border-left:3px solid #8aa7b8;padding:8px 10px;margin:14px 0;background:#f5f9fb;color:#4d6172;font-size:11px}
+    button{font:inherit;color:inherit}.small-button{border:1px solid #cbd5e1;background:#fff;cursor:pointer;border-radius:8px;padding:6px 9px;font-size:11px;font-weight:700}.small-button:hover{border-color:#8ba9bd;background:#f2f7fa}.small-button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+    .button-row{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.checks{display:grid;gap:8px}.checks label{display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer}.checks input{accent-color:var(--blue);width:16px;height:16px}.swatch{width:10px;height:10px;border-radius:50%;flex:0 0 auto}.start-tag{margin-left:auto;border-radius:999px;background:#eee9f5;color:#6a5687;padding:2px 6px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+    .status{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:10px 11px;margin:12px 0}.pill{border-radius:999px;padding:3px 8px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:#e8f6ef;color:var(--green)}
+    table{width:100%;border-collapse:collapse;font-size:11px}th,td{padding:6px 4px;border-bottom:1px solid #edf0f4;text-align:left;vertical-align:top}th{color:var(--muted);font-size:9px;letter-spacing:.07em;text-transform:uppercase}td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}a{color:#2e7096;text-decoration:none}a:hover{text-decoration:underline}
+    details{border-top:1px solid var(--line);margin-top:18px;padding-top:12px}summary{cursor:pointer;color:var(--muted);font-weight:650;font-size:12px}.hash{overflow-wrap:anywhere;white-space:pre-wrap;font:10px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#788397}
+    #stage{position:relative;min-width:0;overflow:hidden}#viewer{position:absolute;inset:0}.msp-plugin{background:#fff!important}
+    #legend{position:absolute;left:22px;right:22px;bottom:20px;display:flex;gap:7px;z-index:4;flex-wrap:wrap;pointer-events:none}.key{background:#fffffff0;border:1px solid var(--line);box-shadow:0 4px 18px #24344914;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:650}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+    #boot,#error{position:absolute;inset:0;z-index:6;display:grid;place-items:center;background:#f7f9fb;color:var(--muted)}#error{display:none;color:#9d351f;padding:40px;text-align:center;white-space:pre-wrap}
+    @media(max-width:760px){main{grid-template-columns:1fr;grid-template-rows:auto minmax(460px,1fr)}aside{border-right:0;border-bottom:1px solid var(--line);padding:15px;max-height:49vh}h2{margin-top:14px}}
+  </style>
+</head>
+<body>
+<main>
+  <aside>
+    <h1 id="title">Structure overlay review</h1>
+    <div class="lede" id="subtitle"></div>
+    <div class="boundary" id="boundary"></div>
+    <div class="button-row">
+      <button class="small-button" id="show-all" type="button">Show all</button>
+      <button class="small-button" id="start-only" type="button">Starting hit only</button>
+      <button class="small-button" id="focus-switch" type="button">Focus design region</button>
+      <button class="small-button" id="reset-view" type="button">Reset camera</button>
+    </div>
+    <h2 id="ligand-heading">Experimental ligands</h2>
+    <div class="checks" id="ligand-checks"></div>
+    <h2>Starting receptor</h2>
+    <div class="checks">
+      <label><input id="protein" type="checkbox" checked> <span id="protein-label">Starting receptor cartoon</span></label>
+      <label><input id="pocket" type="checkbox" checked> <span id="pocket-label">Union contact shell within 5 Å</span></label>
+      <label><input id="sidechains" type="checkbox"> <span id="focus-label">Color-matched local snapshots</span></label>
+    </div>
+    <div class="status"><strong id="visible-count">Structures loading</strong><span class="pill" id="status-pill">X-ray overlay</span></div>
+    <h2 id="alignment-heading">Alignment into starting structure</h2>
+    <table><thead><tr><th>State</th><th>Structural point</th><th class="num" id="metric-heading">Cα RMSD</th></tr></thead><tbody id="alignment"></tbody></table>
+    <div class="note" id="alignment-note">RMSD is the whole-chain rigid alignment used only to place each experimental ligand in the starting coordinate frame.</div>
+    <details><summary>Sources and provenance</summary><div class="hash" id="provenance"></div></details>
+  </aside>
+  <section id="stage">
+    <div id="viewer"></div><div id="boot">Starting Mol*…</div><div id="error"></div>
+    <div id="legend"></div>
+  </section>
+</main>
+<script>
+const OPTS={layoutIsExpanded:false,layoutShowControls:false,layoutShowRemoteState:false,
+  layoutShowSequence:false,layoutShowLog:false,layoutShowLeftPanel:false,
+  viewportShowExpand:false,viewportShowSelectionMode:false,viewportShowAnimation:false};
+const CARBON=(value)=>({carbonColor:{name:'uniform',params:{value,saturation:0,lightness:0}}});
+const $=(id)=>document.getElementById(id);let DATA,V,refs={},busy=false,sceneReady=false;
+const hex=(color)=>Number.parseInt(color.replace('#',''),16);
+
+async function addRaw(text,fmt,ref,rep){
+  const p=V.plugin,before=new Set();p.state.data.cells.forEach((_,id)=>before.add(id));
+  const data=await p.builders.data.rawData({data:text,label:ref},{state:{isGhost:true}});
+  const trajectory=await p.builders.structure.parseTrajectory(data,fmt);
+  const model=await p.builders.structure.createModel(trajectory);
+  const structure=await p.builders.structure.createStructure(model);
+  const component=await p.builders.structure.tryCreateComponentStatic(structure,'all')
+    ||await p.builders.structure.tryCreateComponentStatic(structure,'polymer');
+  if(component)await p.builders.structure.representation.addRepresentation(component,rep);
+  p.state.data.cells.forEach((cell,id)=>{if(!before.has(id)&&before.has(cell.transform.parent))refs[ref]=id});
+}
+async function removeRef(ref){if(!refs[ref])return;try{const update=V.plugin.state.data.build();update.delete(refs[ref]);await update.commit()}catch(_){}delete refs[ref]}
+async function clearScene(){for(const ref of Object.keys(refs))await removeRef(ref)}
+function snapshotCamera(){if(!sceneReady)return null;try{const s=V.plugin.canvas3d.camera.getSnapshot();return{target:[...s.target],position:[...s.position],up:[...s.up],radius:s.radius,radiusMax:s.radiusMax}}catch(_){return null}}
+function applyCamera(state){if(!state)return;const apply=()=>{try{V.plugin.canvas3d.camera.setState(state,0)}catch(_){}};apply();requestAnimationFrame(()=>requestAnimationFrame(apply))}
+function selectedLigands(){return DATA.ligands.filter((ligand)=>$(`ligand-${ligand.id}`).checked)}
+function focusSphere(sphere){const center=sphere.center,radius=Math.max(5.2,sphere.radius*1.35);try{const camera=V.plugin.canvas3d.camera,base=camera.getSnapshot();applyCamera({...base,target:center,position:[center[0]+radius*1.55,center[1]+radius*.75,center[2]+radius*2.2],up:[0,1,0],radius,radiusMax:Math.max(base.radiusMax||100,100)})}catch(error){console.warn('focusSphere',error)}}
+function resetCamera(){focusSphere(DATA.overlaySphere)}
+function paint(){const visible=selectedLigands();$('visible-count').textContent=`${visible.length} ligand${visible.length===1?'':'s'} visible`;document.body.dataset.visibleLigands=visible.map((entry)=>entry.id).join(',');document.body.dataset.renderReady='1'}
+async function rebuild(){if(busy)return;busy=true;document.body.dataset.renderReady='pending';const camera=snapshotCamera();try{
+  await clearScene();
+  if($('protein').checked)await addRaw(DATA.receptor.proteinPdb,'pdb','protein',{type:'cartoon',typeParams:{alpha:.23},color:'chain-id'});
+  if($('pocket').checked)await addRaw(DATA.receptor.pocketPdb,'pdb','pocket',{type:'ball-and-stick',typeParams:{alpha:.56,sizeFactor:.14,aromaticBonds:false},color:'element-symbol',colorParams:CARBON(0x687b91)});
+  for(const ligand of selectedLigands()){
+    await addRaw(ligand.ligandPdb,'pdb',ligand.id,{type:'ball-and-stick',typeParams:{alpha:.82,sizeFactor:.17,aromaticBonds:false},color:'element-symbol',colorParams:CARBON(hex(ligand.color))});
+    if($('sidechains').checked)await addRaw(ligand.focusPdb,'pdb',`${ligand.id}-sidechains`,{type:'ball-and-stick',typeParams:{alpha:.48,sizeFactor:.10,aromaticBonds:false},color:'element-symbol',colorParams:CARBON(hex(ligand.color))});
+  }
+  sceneReady=true;if(camera)applyCamera(camera);else resetCamera();paint();
+}finally{busy=false}}
+function setLigands(predicate){for(const [index,ligand] of DATA.ligands.entries())$(`ligand-${ligand.id}`).checked=predicate(ligand,index);rebuild()}
+function renderControls(){
+  $('title').textContent=DATA.title;$('subtitle').textContent=DATA.subtitle;$('boundary').textContent=DATA.boundary;
+  $('ligand-heading').textContent=DATA.labels?.ligandHeading||'Experimental ligands';
+  $('focus-switch').textContent=DATA.labels?.focusButton||'Focus design region';
+  $('protein-label').textContent=DATA.labels?.protein||`${DATA.receptor.pdbId} receptor cartoon`;
+  $('pocket-label').textContent=DATA.labels?.pocket||`Union contact shell within ${DATA.receptor.pocket.cutoffAngstrom} Å`;
+  $('focus-label').textContent=DATA.labels?.focusSnapshots||'Color-matched local snapshots';
+  $('alignment-heading').textContent=DATA.labels?.alignmentHeading||`Alignment into ${DATA.receptor.pdbId}`;
+  $('alignment-note').textContent=DATA.labels?.alignmentNote||`RMSD is the whole-chain rigid alignment used only to place each experimental ligand in the ${DATA.receptor.pdbId} coordinate frame.`;
+  $('metric-heading').textContent=DATA.labels?.metricHeading||'Cα RMSD';
+  $('status-pill').textContent=DATA.labels?.statusPill||'X-ray overlay';
+  for(const [index,ligand] of DATA.ligands.entries()){
+    const badge=ligand.badge?`<span class="start-tag">${ligand.badge}</span>`:(index===0?'<span class="start-tag">start</span>':'');
+    const checked=ligand.defaultVisible===false?'':' checked';
+    const label=document.createElement('label');label.innerHTML=`<input id="ligand-${ligand.id}" type="checkbox"${checked}><i class="swatch" style="background:${ligand.color}"></i><span>${ligand.label}</span>${badge}`;$('ligand-checks').append(label);
+    const sourceLabel=ligand.sourceLabel||`${ligand.pdbId} · ${ligand.compound}`;
+    const metric=ligand.metricDisplay||`${ligand.alignment.rmsdAngstrom.toFixed(3)} Å`;
+    const row=document.createElement('tr');row.innerHTML=`<td><a href="${ligand.source.url}" target="_blank" rel="noreferrer">${sourceLabel}</a></td><td>${ligand.designPoint}</td><td class="num">${metric}</td>`;$('alignment').append(row);
+  }
+  $('legend').innerHTML=DATA.ligands.map((ligand)=>`<span class="key"><i class="dot" style="background:${ligand.color}"></i>${ligand.compound}</span>`).join('');
+  $('provenance').textContent=`paper ${DATA.sources.primaryLiterature}\nviewer ${DATA.sources.viewer}\nstarting receptor ${DATA.receptor.pdbId}\nfocus residues ${DATA.receptor.focusResidues.join(', ')}\n\n${DATA.ligands.map((ligand)=>`${ligand.pdbId} ${ligand.source.sha256}`).join('\n')}`;
+  for(const ligand of DATA.ligands)$(`ligand-${ligand.id}`).addEventListener('change',rebuild);
+}
+async function init(){DATA=await fetch('data.json').then((response)=>{if(!response.ok)throw Error(`data.json: ${response.status}`);return response.json()});if(DATA.schema!=='molarium.structure-overlay-review/v1')throw Error('Unsupported review schema');renderControls();
+  V=await molstar.Viewer.create('viewer',OPTS);try{V.plugin.canvas3d.setProps({camera:{helper:{axes:{name:'off',params:{}}}},renderer:{backgroundColor:0xffffff}})}catch(_){}
+  const nudge=()=>{try{V.plugin.canvas3d.handleResize()}catch(_){}};addEventListener('resize',nudge);try{new ResizeObserver(nudge).observe($('viewer'))}catch(_){}
+  $('show-all').addEventListener('click',()=>setLigands(()=>true));$('start-only').addEventListener('click',()=>setLigands((_,index)=>index===0));$('focus-switch').addEventListener('click',()=>focusSphere(DATA.switchSphere));$('reset-view').addEventListener('click',resetCamera);
+  for(const id of ['protein','pocket','sidechains'])$(id).addEventListener('change',rebuild);
+  await rebuild();$('boot').style.display='none';document.body.dataset.ready='1';
+}
+init().catch((error)=>{$('boot').style.display='none';$('error').style.display='grid';$('error').textContent=error?.stack||String(error);document.body.dataset.ready='error'});
+</script>
+</body>
+</html>

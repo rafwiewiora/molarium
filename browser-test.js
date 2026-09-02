@@ -209,6 +209,18 @@ const browserSuite = String.raw`(async () => {
       && !described.actions['test.loadObject'],
     'the public action manifest contains chemist routes and no fixture or internal-code route');
     api.load('CC');
+    const focusedMolecule = await chemist.execute({ action:'view.focusComponent',
+      args:{ kind:'molecule', ordinal:0, isolate:false } });
+    check(focusedMolecule.result.focusedComponent?.kind === 'molecule'
+      && api.structureComponents().focusedComponentId
+        === focusedMolecule.result.focusedComponent.componentId,
+    'the public focus action uses the same visible Components zoom state');
+    const display = await chemist.execute({ action:'view.setDisplay',
+      args:{ showHydrogens:false, showInteractions:false, showHulls:false } });
+    check(display.result.display?.showHydrogens === false
+      && display.result.display?.showInteractions === false
+      && display.result.display?.showHulls === false,
+    'the public display action drives the same visible Display Options state');
     await chemist.execute({ requestId:'browser-mode', action:'view.setMode', args:{ mode:'build' } });
     await chemist.execute({ requestId:'browser-tool', action:'build.setTool', args:{ tool:'select' } });
     const initial = (await chemist.inspect({ scope:'ligand', maximumAtoms:20 })).result;

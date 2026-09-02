@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { cp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -48,6 +48,8 @@ const files = [
   'design-history/structure-viewer/bclxl-fragment-linking.json',
   'design-history/structure-viewer/cdk2-hit-only-prospective.json',
   'design-history/structure-viewer/cdk2-designer-hit-to-lead.json',
+  'design-history/structure-viewer/sos1-hit-only-success.json',
+  'design-history/structure-review/index.html',
   'design-history/structures/generated/manifest.json',
   'design-history/structures/generated/bclxl-trajectory-manifest.json',
   'design-history/structures/generated/bclxl-prospective-campaign.json',
@@ -113,6 +115,12 @@ const files = [
   'webgpu/README.md', 'webgpu/molarium-webgpu.wgsl',
   'vendor/onnxruntime-web/ort.webgpu.bundle.min.mjs',
 ];
+
+const generatedStructures = await readdir(join(root, 'design-history/structures/generated'));
+files.push(...generatedStructures
+  .filter((name) => ((name.startsWith('sos1-v7-') || name.startsWith('sos1-full-'))
+    && name.endsWith('.pdb')) || name === 'sos1-prospective-movie-assets.json')
+  .map((name) => `design-history/structures/generated/${name}`));
 
 const headers = `/*
   Cache-Control: no-cache

@@ -14,16 +14,20 @@ try {
     scene:document.body.dataset.scene,title:document.querySelector('#story-title')?.textContent,
     privateApi:typeof window.__molariumStructureStory,
     state:(await api.execute({action:'structureStory.inspect',args:{}})).result}})()`);
-  if (initial.ready !== '1' || initial.scene !== 'compound4Overview' || !initial.title?.includes('BCL-xL')
-    || !initial.state?.refs.includes('bclxl') || initial.privateApi !== 'undefined')
+  if (initial.ready !== '1' || initial.scene !== 'compound4' || !initial.title?.includes('BCL-xL')
+    || !initial.state?.refs.includes('bclxl') || !initial.state?.refs.includes('protein')
+    || !initial.state?.refs.includes('pocket') || initial.privateApi !== 'undefined')
     throw Error(`BCL-xL overview failed: ${JSON.stringify(initial)}`);
+  const cameraState = (camera) => JSON.stringify({ target:camera.target, position:camera.position,
+    up:camera.up, radius:camera.radius, radiusMax:camera.radiusMax });
+  const fixedCamera = cameraState(initial.state.camera);
   const states = [
-    ['compound-6-linked','compound6','new bond and linker'],
-    ['compound-7-linker','compound7','carbonyl removed'],
-    ['compound-16-truncation','compound16','truncation complete'],
-    ['compound-21-pocket-fill','compound21','new ethyl pocket fill'],
+    ['compound-6-linked','compound6'],
+    ['compound-7-linker','compound7'],
+    ['compound-16-truncation','compound16'],
+    ['compound-21-pocket-fill','compound21'],
   ];
-  for (const [cueId, scene, focusLabel] of states) {
+  for (const [cueId, scene] of states) {
     const selected = await browser.evaluate(`window.MolariumChemistActions.execute(${JSON.stringify({
       action:'structureStory.selectCue',args:{ cueId },
     })})`);
@@ -32,13 +36,13 @@ try {
       && document.body.dataset.renderReady==='1'`), 90000, `BCL-xL ${cueId}`);
     if (selected.result.scene !== scene || !selected.result.refs.includes('pocket')
       || !selected.result.refs.includes('bclxl')
-      || selected.result.focusLabel !== focusLabel
-      || selected.result.camera.radius >= initial.state.camera.radius)
+      || !selected.result.refs.includes('protein')
+      || cameraState(selected.result.camera) !== fixedCamera)
       throw Error(`BCL-xL state ${cueId} failed: ${JSON.stringify(selected.result)}`);
   }
   const audit = await browser.evaluate(`window.MolariumChemistActions.history()`);
   if (!states.every(([cueId]) => audit.some((entry) =>
     entry.action === 'structureStory.selectCue' && entry.args.cueId === cueId)))
     throw Error(`BCL-xL cue audit incomplete: ${JSON.stringify(audit)}`);
-  console.log('BCL-xL structure-story browser test passed: API-replayed compounds 4→6→7→16→21');
+  console.log('BCL-xL structure-story browser test passed: fixed camera/receptor history 4→6→7→16→21');
 } finally { await browser.close(); }

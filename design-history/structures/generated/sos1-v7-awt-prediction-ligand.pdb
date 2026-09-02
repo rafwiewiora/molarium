@@ -1,0 +1,60 @@
+HEADER    AWT frozen prospective prediction       
+HETATM    1  C18 AWT L   1       4.728 -12.986  26.147  1.00 20.00           C
+HETATM    2  O14 AWT L   1       4.001 -14.216  25.987  1.00 20.00           O
+HETATM    3  C10 AWT L   1       4.428 -15.007  24.921  1.00 20.00           C
+HETATM    4  C5  AWT L   1       5.779 -15.372  24.826  1.00 20.00           C
+HETATM    5  C2  AWT L   1       6.216 -16.167  23.771  1.00 20.00           C
+HETATM    6  N6  AWT L   1       7.517 -16.482  23.703  1.00 20.00           N
+HETATM    7  C11 AWT L   1       7.966 -17.248  22.696  1.00 20.00           C
+HETATM    8  CX1 AWT L   1       9.413 -17.568  22.625  1.00 20.00           C
+HETATM    9  N8  AWT L   1       7.144 -17.751  21.754  1.00 20.00           N
+HETATM   10  C3  AWT L   1       5.831 -17.454  21.765  1.00 20.00           C
+HETATM   11  N7  AWT L   1       5.063 -17.844  20.671  1.00 20.00           N
+HETATM   12  C12 AWT L   1       5.343 -19.046  19.864  1.00 20.00           C
+HETATM   13  C16 AWT L   1       4.944 -18.736  18.404  1.00 20.00           C
+HETATM   14  C15 AWT L   1       4.588 -20.259  20.402  1.00 20.00           C
+HETATM   15  C20 AWT L   1       3.186 -20.363  20.272  1.00 20.00           C
+HETATM   16  C23 AWT L   1       2.504 -21.491  20.748  1.00 20.00           C
+HETATM   17  C24 AWT L   1       3.206 -22.505  21.392  1.00 20.00           C
+HETATM   18  C21 AWT L   1       4.602 -22.414  21.536  1.00 20.00           C
+HETATM   19  CX2 AWT L   1       5.328 -23.469  22.234  1.00 20.00           C
+HETATM   20  CX3 AWT L   1       6.753 -23.596  22.501  1.00 20.00           C
+HETATM   21  NX1 AWT L   1       6.975 -24.600  23.314  1.00 20.00           N
+HETATM   22  NX2 AWT L   1       5.744 -25.203  23.493  1.00 20.00           N
+HETATM   23  CX4 AWT L   1       4.742 -24.510  22.878  1.00 20.00           C
+HETATM   24  C19 AWT L   1       5.291 -21.290  21.052  1.00 20.00           C
+HETATM   25  C1  AWT L   1       5.315 -16.631  22.792  1.00 20.00           C
+HETATM   26  C4  AWT L   1       3.954 -16.280  22.885  1.00 20.00           C
+HETATM   27  C9  AWT L   1       3.501 -15.450  23.939  1.00 20.00           C
+HETATM   28  O13 AWT L   1       2.177 -15.003  24.054  1.00 20.00           O
+HETATM   29  C17 AWT L   1       1.244 -15.366  23.026  1.00 20.00           C
+CONECT    1    2
+CONECT    2    1    3
+CONECT    3    2    4   27
+CONECT    4    3    5
+CONECT    5    4    6   25
+CONECT    6    5    7
+CONECT    7    6    8    9
+CONECT    8    7
+CONECT    9    7   10
+CONECT   10    9   11   25
+CONECT   11   10   12
+CONECT   12   11   13   14
+CONECT   13   12
+CONECT   14   12   15   24
+CONECT   15   14   16
+CONECT   16   15   17
+CONECT   17   16   18
+CONECT   18   17   19   24
+CONECT   19   18   20   23
+CONECT   20   19   21
+CONECT   21   20   22
+CONECT   22   21   23
+CONECT   23   19   22
+CONECT   24   14   18
+CONECT   25    5   10   26
+CONECT   26   25   27
+CONECT   27    3   26   28
+CONECT   28   27   29
+CONECT   29   28
+END

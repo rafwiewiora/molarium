@@ -5,6 +5,13 @@ const ACTIONS = Object.freeze({
     arguments:Object.freeze({ scope:'ligand | selection | pocket | all', includeCoordinates:'boolean', maximumAtoms:'integer 1–500' }) }),
   'view.setMode': Object.freeze({ description:'Choose the View, Build, or Run workspace.',
     arguments:Object.freeze({ mode:'view | build | run' }) }),
+  'view.focusComponent': Object.freeze({
+    description:'Use the visible Components control to zoom to one molecular component.',
+    arguments:Object.freeze({ kind:'ligand | protein | molecule', ordinal:'non-negative integer', isolate:'boolean' }) }),
+  'view.setDisplay': Object.freeze({
+    description:'Set the same representation and visibility options available in Display Options.',
+    arguments:Object.freeze({ representation:'ball-stick | cartoon | both', showHydrogens:'boolean',
+      showInteractions:'boolean', showPocketAtoms:'boolean', showHulls:'boolean' }) }),
   'build.setTool': Object.freeze({ description:'Choose the same Add, Select, or Move tool available in Build.',
     arguments:Object.freeze({ tool:'add | select | move' }) }),
   'protein.prepare': Object.freeze({

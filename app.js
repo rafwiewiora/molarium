@@ -2194,6 +2194,38 @@ function structureComponentSummary() {
     waters && `${waters} water${waters === 1 ? '' : 's'}`].filter(Boolean).join(' · ');
 }
 
+const COMPONENT_FOCUS_CONTEXT_ANGSTROM = 5;
+
+function focusedComponentContextIndices(molecule = state.molecule) {
+  if (!molecule || !state.focusedComponentId) return null;
+  const component = state.structureComponents.find((entry) => entry.id === state.focusedComponentId);
+  if (!component || component.kind !== 'ligand') return null;
+  const focused = new Set(component.atomIndices);
+  const anchors = component.atomIndices.map((index) => molecule.atoms[index])
+    .filter((atom) => atom && atom.element !== 'H');
+  if (!anchors.length) return focused;
+  const cutoffSquared = COMPONENT_FOCUS_CONTEXT_ANGSTROM ** 2;
+  const nearbyResidues = new Set();
+  const nearbyAtoms = new Set(component.atomIndices);
+  molecule.atoms.forEach((atom, index) => {
+    if (focused.has(index)) return;
+    const near = anchors.some((anchor) => {
+      const dx = atom.x - anchor.x, dy = atom.y - anchor.y, dz = atom.z - anchor.z;
+      return dx * dx + dy * dy + dz * dz <= cutoffSquared;
+    });
+    if (!near) return;
+    const atomComponent = state.structureComponents.find((entry) =>
+      entry.id === state.atomComponentIds[index]);
+    if (atomComponent?.kind === 'protein' || atomComponent?.kind === 'water')
+      nearbyResidues.add(residueKey(atom));
+    else nearbyAtoms.add(index);
+  });
+  molecule.atoms.forEach((atom, index) => {
+    if (nearbyResidues.has(residueKey(atom))) nearbyAtoms.add(index);
+  });
+  return nearbyAtoms;
+}
+
 function focusStructureComponent(componentId, isolate = false) {
   const component = state.structureComponents.find((entry) => entry.id === componentId);
   if (!component) return;
@@ -2211,7 +2243,10 @@ function focusStructureComponent(componentId, isolate = false) {
   const radius = Math.max(0, ...atoms.map((atom) =>
     Math.hypot(atom.x - center.x, atom.y - center.y, atom.z - center.z)));
   state.focusedComponentId = componentId;
-  state.focusedComponentRadius = Math.max(2.5, radius * 1.2);
+  // Leave a pocket-sized margin around a ligand. Fitting only its atomic
+  // sphere makes the surrounding residues clip across the viewport.
+  state.focusedComponentRadius = component.kind === 'ligand'
+    ? Math.max(6, radius * 1.15 + 2.5) : Math.max(2.5, radius * 1.2);
   state.focusedResidueKey = null;
   state.focusedResidueRadius = null;
   state.zoom = 1;
@@ -3422,8 +3457,10 @@ function setFocusedResidue(atomIndex = null) {
 
 function projectAtoms(width, height, molecule = state.molecule, miniature = false) {
   if (!molecule) return [];
-  const componentFiltered = molecule.atoms.map((atom, index) => ({ ...atom, index }))
+  let componentFiltered = molecule.atoms.map((atom, index) => ({ ...atom, index }))
     .filter((atom) => componentVisible(atom.index));
+  const contextIndices = miniature ? null : focusedComponentContextIndices(molecule);
+  if (contextIndices) componentFiltered = componentFiltered.filter((atom) => contextIndices.has(atom.index));
   if (!componentFiltered.length) return [];
   const visible = componentFiltered.filter((atom) => state.showHydrogens || atom.element !== 'H');
   const focused = !miniature && state.focusedResidueKey
@@ -7502,7 +7539,7 @@ async function importDesignerMoveScript(file) {
 let designerMoveCueElement = null;
 
 function showDesignerMoveCue(step = null) {
-  designerMoveCueElement?.classList.remove('designer-move-cue');
+  designerMoveCueElement?.classList.remove('designer-move-cue', 'designer-move-press');
   designerMoveCueElement = null;
   if (!step) return;
   const actionSelectors = {
@@ -7525,6 +7562,8 @@ function showDesignerMoveCue(step = null) {
   let selector = actionSelectors[step.action];
   if (step.action === 'view.setMode')
     selector = `.mode-bar button[data-mode="${CSS.escape(String(step.args?.mode || ''))}"]`;
+  else if (step.action === 'view.focusComponent') selector = '#structure-components';
+  else if (step.action === 'view.setDisplay') selector = '#display-options';
   else if (step.action === 'build.setTool') {
     const tool = step.args?.tool === 'move' ? 'manipulate' : step.args?.tool;
     selector = `#build-tool-tabs [data-tool="${CSS.escape(String(tool || ''))}"]`;
@@ -7534,7 +7573,13 @@ function showDesignerMoveCue(step = null) {
   const element = selector ? document.querySelector(selector) : null;
   if (!element) return;
   designerMoveCueElement = element;
-  element.classList.add('designer-move-cue');
+  element.classList.add('designer-move-cue', 'designer-move-press');
+  const panel = element.closest('.panel');
+  if (panel) {
+    const panelRect = panel.getBoundingClientRect(), elementRect = element.getBoundingClientRect();
+    panel.scrollTop += elementRect.top - panelRect.top
+      - Math.max(0, (panel.clientHeight - elementRect.height) / 2);
+  } else element.scrollIntoView?.({ block:'center', inline:'nearest', behavior:'auto' });
 }
 
 async function replayDesignerMoveScript() {
@@ -7545,6 +7590,8 @@ async function replayDesignerMoveScript() {
     import('./design-history/replay.mjs'),
   ]);
   state.designerMoveReplaying = true;
+  const moviePacedReplay = new URLSearchParams(window.location.search)
+    .has('designer-moves-movie');
   updateDesignerMoveControls(`Starting ${script.actions.length} recorded designer moves…`);
   try {
     const replay = await module.replayActionScript(api, script, {
@@ -7557,6 +7604,8 @@ async function replayDesignerMoveScript() {
         } else {
           await new Promise((resolve) => setTimeout(resolve, 80));
           showDesignerMoveCue();
+          if (moviePacedReplay)
+            await new Promise((resolve) => setTimeout(resolve, 320));
         }
       },
     });
@@ -7814,6 +7863,46 @@ function installChemistActionsApi(module) {
       const mode = chemistActionEnum(args.mode, ['view','build','run'], 'mode');
       if (!setMode(mode)) throw new Error(`Molarium could not enter ${mode} mode`);
       return chemistActionSummary(); },
+    'view.focusComponent':async (args) => { chemistActionKeys(args,
+      ['kind','ordinal','isolate']);
+      const kind = chemistActionEnum(args.kind, ['ligand','protein','molecule'], 'kind');
+      const ordinal = Number(args.ordinal ?? 0);
+      if (!Number.isInteger(ordinal) || ordinal < 0)
+        throw new Error('ordinal must be a non-negative integer');
+      if (args.isolate != null && typeof args.isolate !== 'boolean')
+        throw new Error('isolate must be boolean');
+      const component = state.structureComponents.filter((entry) => entry.kind === kind)[ordinal];
+      if (!component) throw new Error(`${kind} component ${ordinal} does not exist`);
+      focusStructureComponent(component.id, Boolean(args.isolate));
+      return chemistActionSummary({ focusedComponent:{ kind, ordinal,
+        componentId:component.id, label:component.label, isolate:Boolean(args.isolate),
+        atomCount:component.atomIndices.length } }); },
+    'view.setDisplay':async (args) => {
+      chemistActionKeys(args,
+        ['representation','showHydrogens','showInteractions','showPocketAtoms','showHulls']);
+      if (!Object.keys(args).length) throw new Error('At least one display option is required');
+      const setCheckbox = (selector, value, label) => {
+        if (value == null) return;
+        if (typeof value !== 'boolean') throw new Error(`${label} must be boolean`);
+        const input = document.querySelector(selector);
+        input.checked = value; input.dispatchEvent(new Event('change', { bubbles:true }));
+      };
+      if (args.representation != null) {
+        const representation = chemistActionEnum(args.representation,
+          ['ball-stick','cartoon','both'], 'representation');
+        const select = document.querySelector('#representation-select');
+        if (select.disabled) throw new Error('Representation controls require a protein structure');
+        select.value = representation;
+        select.dispatchEvent(new Event('change', { bubbles:true }));
+      }
+      setCheckbox('#hydrogen-toggle', args.showHydrogens, 'showHydrogens');
+      setCheckbox('#interaction-toggle', args.showInteractions, 'showInteractions');
+      setCheckbox('#pocket-toggle', args.showPocketAtoms, 'showPocketAtoms');
+      setCheckbox('#hull-toggle', args.showHulls, 'showHulls');
+      return chemistActionSummary({ display:{ representation:state.representation,
+        showHydrogens:state.showHydrogens, showInteractions:state.showInteractions,
+        showPocketAtoms:state.showPocketAtoms, showHulls:state.showHulls } });
+    },
     'build.setTool':async (args) => { chemistActionKeys(args, ['tool']);
       const tool = chemistActionEnum(args.tool, ['add','select','move'], 'tool');
       if (state.mode !== 'build') throw new Error('Enter Build mode before choosing a build tool.');

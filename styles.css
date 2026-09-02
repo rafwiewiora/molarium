@@ -605,6 +605,7 @@ select {
 .designer-move-buttons button:disabled { cursor: default; opacity: .48; }
 .designer-move-cue { position: relative; z-index: 2; outline: 2px solid #20a4b8 !important;
   outline-offset: 2px; box-shadow: 0 0 0 6px rgb(32 164 184 / 15%) !important; }
+.designer-move-press { transform: translateY(1px) scale(.985); filter: saturate(1.12); }
 .geometry-control { display: grid; grid-template-columns: 1fr 92px; align-items: center; gap: 8px; }
 .geometry-control > input:first-child { width: 100%; accent-color: var(--ink); }
 .geometry-control input:disabled { cursor: default; opacity: .48; }

@@ -1,0 +1,8 @@
+HEADER    AWT prediction · atoms added by scaffold
+HETATM    8  CX1 AWT L   1       9.413 -17.568  22.625  1.00 20.00           C
+HETATM   19  CX2 AWT L   1       5.328 -23.469  22.234  1.00 20.00           C
+HETATM   20  CX3 AWT L   1       6.753 -23.596  22.501  1.00 20.00           C
+HETATM   21  NX1 AWT L   1       6.975 -24.600  23.314  1.00 20.00           N
+HETATM   22  NX2 AWT L   1       5.744 -25.203  23.493  1.00 20.00           N
+HETATM   23  CX4 AWT L   1       4.742 -24.510  22.878  1.00 20.00           C
+END

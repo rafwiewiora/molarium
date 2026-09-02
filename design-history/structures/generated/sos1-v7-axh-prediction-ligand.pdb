@@ -1,0 +1,66 @@
+HEADER    AXH frozen prospective prediction       
+HETATM    1  CX5 AXH L   1       1.430 -21.792  24.525  1.00 20.00           C
+HETATM    2  NX1 AXH L   1       1.676 -22.676  23.207  1.00 20.00           N
+HETATM    3  CX6 AXH L   1       0.823 -22.440  22.262  1.00 20.00           C
+HETATM    4  CX7 AXH L   1       0.961 -23.134  20.976  1.00 20.00           C
+HETATM    5  CX8 AXH L   1      -0.043 -24.059  20.663  1.00 20.00           C
+HETATM    6  CX9 AXH L   1      -0.104 -24.612  19.395  1.00 20.00           C
+HETATM    7 CX10 AXH L   1       0.791 -24.203  18.438  1.00 20.00           C
+HETATM    8 CX11 AXH L   1       1.872 -23.359  18.772  1.00 20.00           C
+HETATM    9 CX12 AXH L   1       1.952 -22.783  20.042  1.00 20.00           C
+HETATM   10  CX3 AXH L   1       3.098 -21.901  20.394  1.00 20.00           C
+HETATM   11  CX4 AXH L   1       3.939 -22.205  21.446  1.00 20.00           C
+HETATM   12  SX1 AXH L   1       5.247 -21.062  21.673  1.00 20.00           S
+HETATM   13  C15 AXH L   1       4.692 -20.151  20.277  1.00 20.00           C
+HETATM   14  C12 AXH L   1       5.446 -18.950  19.745  1.00 20.00           C
+HETATM   15  C16 AXH L   1       5.053 -18.622  18.279  1.00 20.00           C
+HETATM   16  N7  AXH L   1       5.178 -17.773  20.600  1.00 20.00           N
+HETATM   17  C3  AXH L   1       5.911 -17.461  21.747  1.00 20.00           C
+HETATM   18  N8  AXH L   1       7.227 -17.783  21.768  1.00 20.00           N
+HETATM   19  C11 AXH L   1       8.047 -17.254  22.705  1.00 20.00           C
+HETATM   20  CX1 AXH L   1       9.539 -17.471  22.633  1.00 20.00           C
+HETATM   21  N6  AXH L   1       7.561 -16.535  23.734  1.00 20.00           N
+HETATM   22  C2  AXH L   1       6.255 -16.231  23.794  1.00 20.00           C
+HETATM   23 CX13 AXH L   1       5.799 -15.484  24.880  1.00 20.00           C
+HETATM   24 CX14 AXH L   1       4.434 -15.179  25.011  1.00 20.00           C
+HETATM   25  OX1 AXH L   1       3.976 -14.506  26.143  1.00 20.00           O
+HETATM   26 CX15 AXH L   1       4.425 -15.075  27.394  1.00 20.00           C
+HETATM   27 CX16 AXH L   1       3.536 -15.580  23.986  1.00 20.00           C
+HETATM   28  OX2 AXH L   1       2.167 -15.373  24.086  1.00 20.00           O
+HETATM   29 CX17 AXH L   1       1.754 -14.081  23.629  1.00 20.00           C
+HETATM   30 CX18 AXH L   1       4.007 -16.305  22.879  1.00 20.00           C
+HETATM   31  C1  AXH L   1       5.370 -16.659  22.784  1.00 20.00           C
+HETATM   32  CX2 AXH L   1       3.576 -20.703  19.687  1.00 20.00           C
+CONECT    1    2
+CONECT    2    1    3
+CONECT    3    2    4
+CONECT    4    3    5    9
+CONECT    5    4    6
+CONECT    6    5    7
+CONECT    7    6    8
+CONECT    8    7    9
+CONECT    9    4    8   10
+CONECT   10    9   11   32
+CONECT   11   10   12
+CONECT   12   11   13
+CONECT   13   12   14   32
+CONECT   14   13   15   16
+CONECT   15   14
+CONECT   16   14   17
+CONECT   17   16   18   31
+CONECT   18   17   19
+CONECT   19   18   20   21
+CONECT   20   19
+CONECT   21   19   22
+CONECT   22   21   23   31
+CONECT   23   22   24
+CONECT   24   23   25   27
+CONECT   25   24   26
+CONECT   26   25
+CONECT   27   24   28   30
+CONECT   28   27   29
+CONECT   29   28
+CONECT   30   27   31
+CONECT   31   17   22   30
+CONECT   32   10   13
+END

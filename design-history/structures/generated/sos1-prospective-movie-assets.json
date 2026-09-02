@@ -1,0 +1,1245 @@
+{
+  "schema": "molarium.sos1-prospective-movie-assets/v1",
+  "campaignId": "sos1-hit-only",
+  "scientificStatus": "historical-two-stream-origin-plus-prospective-hit-to-lead-success",
+  "claim": "The historical F1 fragment reveals the Phe890-out pocket; the independent 5OVE inhibitor hit seeds an Agent API trajectory that recovers the pocket switch and BAY-293 pose.",
+  "boundary": {
+    "initialCoordinateInput": "PDB 5OVE/AXE only",
+    "sequentialPredictedReferences": true,
+    "historicalPreludeCoordinateInput": "PDB 6EPM/F1",
+    "historicalPreludeIsNotAProspectiveCampaignInput": true,
+    "predictionManifestSha256": "4415a64b4e1aae85faedd2987bf2f17c3212357c8a247a9a1ff8f470c28c9353",
+    "agentApiAuditSha256": "38d8fbd3e2675fd1203a13a7e235ff848eaf627a0d7c8450865a762f9fbe5e5b",
+    "agentApiAuditRecords": 89,
+    "holdoutsOpenedOnlyAfterAllFreezeHashesAndAgentAuditVerified": true
+  },
+  "narrative": {
+    "approvedSixBeats": [
+      "f1-fragment",
+      "hts-inhibitor-hit",
+      "scaffold-rewrite",
+      "fragment-merge",
+      "phe890-pocket-opening",
+      "bay-293-finish"
+    ],
+    "cameraGrammar": {
+      "viewingDirection": "fixed",
+      "movingCues": [
+        "compare-tyr884-states",
+        "compare-phe890-branches"
+      ],
+      "slowMotionCues": [
+        "tyr884-shift-slow-motion",
+        "phe890-flip-slow-motion"
+      ]
+    }
+  },
+  "historicalPrelude": {
+    "pdbId": "6EPM",
+    "ligandId": "BQ5",
+    "paperLabel": "fragment F1",
+    "sourceSha256": "8513597c3d91e0f37217c9c4a60cd11e2e1900494931c1bda8dc882fecc24446",
+    "alignmentToProspectiveFrame": {
+      "pairedAlphaCarbons": 453,
+      "rmsdAngstrom": 2.4133
+    },
+    "functionalOutcome": "stabilizes the KRAS-SOS1 complex",
+    "conformationalState": {
+      "tyr884": "KRAS-compatible",
+      "phe890": "out"
+    },
+    "tyr884OhDisplacementTo5oveAngstrom": 1.383,
+    "tyr884Scenes": [
+      "tyrShift0",
+      "tyrShift1",
+      "tyrShift2",
+      "tyrShift3",
+      "tyrShift4",
+      "tyrShift5",
+      "tyrShift6",
+      "tyrShift7",
+      "tyrShift8"
+    ],
+    "tyr884Trajectory": [
+      {
+        "ordinal": 0,
+        "progress": 0,
+        "chiDegrees": [
+          -172.905,
+          81.757
+        ]
+      },
+      {
+        "ordinal": 1,
+        "progress": 0.125,
+        "chiDegrees": [
+          -172.325,
+          80.007
+        ]
+      },
+      {
+        "ordinal": 2,
+        "progress": 0.25,
+        "chiDegrees": [
+          -171.69,
+          78.141
+        ]
+      },
+      {
+        "ordinal": 3,
+        "progress": 0.375,
+        "chiDegrees": [
+          -171.078,
+          76.394
+        ]
+      },
+      {
+        "ordinal": 4,
+        "progress": 0.5,
+        "chiDegrees": [
+          -170.506,
+          74.626
+        ]
+      },
+      {
+        "ordinal": 5,
+        "progress": 0.625,
+        "chiDegrees": [
+          -169.874,
+          72.823
+        ]
+      },
+      {
+        "ordinal": 6,
+        "progress": 0.75,
+        "chiDegrees": [
+          -169.279,
+          71.037
+        ]
+      },
+      {
+        "ordinal": 7,
+        "progress": 0.875,
+        "chiDegrees": [
+          -168.691,
+          69.255
+        ]
+      },
+      {
+        "ordinal": 8,
+        "progress": 1,
+        "chiDegrees": [
+          -168.092,
+          67.45
+        ]
+      }
+    ]
+  },
+  "checkpoints": [
+    {
+      "stepId": "scaffold-rewrite",
+      "predictedStateId": "AWT",
+      "filename": "scaffold-rewrite-prediction.json",
+      "sha256": "b81332cc95c39a69f7eff7cad7673bfb0fdc1645a4ae0bf3c84e202ed65c21d9",
+      "bytes": 304219,
+      "ligandCoordinateSha256": "7512b919f342d7295653792e071e2b43427a811052b96f9bf393405ea21a5dd2",
+      "pocketCoordinateSha256": "edcfb4ad1249defdb567d930a1bfb08c40b635a8701e571131617d803ad12aa5",
+      "freezeActionSequence": 12
+    },
+    {
+      "stepId": "fragment-merge",
+      "predictedStateId": "AWZ",
+      "filename": "fragment-merge-prediction.json",
+      "sha256": "2fe7c75c0879baeb48c42cbe5a925a339574d58fafaa1d26d1060ca928f0a22b",
+      "bytes": 328290,
+      "ligandCoordinateSha256": "a6b341fa077d7b62d6858c16d8ee13aa61d66f1c738239dc7ea0556f361de8fe",
+      "pocketCoordinateSha256": "02a95ae4bccd736b1a0a07cc9ab958987af047740400318d9b54b2f63e76c3d5",
+      "freezeActionSequence": 22
+    },
+    {
+      "stepId": "open-phe890-pocket",
+      "predictedStateId": "AWW",
+      "filename": "open-phe890-pocket-prediction.json",
+      "sha256": "096e025eb6106f15a6ca8f01ccbbd39dd9bf8261b6b616cb2a5329b99312f56a",
+      "bytes": 362933,
+      "ligandCoordinateSha256": "aeca17ee4e2136a1b2b1c92db917b6a4c81b08a2141c19d6de625f7a509642b0",
+      "pocketCoordinateSha256": "014e3904350ac764c2d7fac034044d9763c67570947eb9afceb6f5605bb79699",
+      "freezeActionSequence": 78
+    },
+    {
+      "stepId": "finish-bay-293",
+      "predictedStateId": "AXH",
+      "filename": "finish-bay-293-prediction.json",
+      "sha256": "19e82cebbddca9007c60ac6517222de71b380ba38e99b4bf466e113182117b81",
+      "bytes": 368443,
+      "ligandCoordinateSha256": "b3819bfbca5cceff6641860529a6b30348f6de55b10a1029d41045e0b7ed4394",
+      "pocketCoordinateSha256": "ef5fa97d78831d109f142106ea64a9f0b66275161befb066c4edf7bda7b7fa56",
+      "freezeActionSequence": 88
+    }
+  ],
+  "evaluation": [
+    {
+      "stepId": "scaffold-rewrite",
+      "predictedStateId": "AWT",
+      "holdoutPdbId": "5OVF",
+      "receptorCaRmsdAngstrom": 0.1606299133699237,
+      "ligandRmsdAngstrom": 0.5160561073975877,
+      "editedRegionRmsdAngstrom": 0.706544239984117,
+      "selectedSeedAudit": {
+        "conformerIndex": 19,
+        "method": "untargeted-edit-region-torsion-scan",
+        "anchorAtomIndex": 39,
+        "axisAtomIndex": 43,
+        "boundaryAtomIndices": [
+          43
+        ],
+        "attachmentMode": "single-boundary-bond",
+        "movedAtomCount": 8,
+        "movedHeavyAtomCount": 5,
+        "axialAngleDegrees": 120
+      },
+      "predictedPhe890ChiDegrees": [
+        -77.58026601555609,
+        -71.71009534389957
+      ],
+      "holdoutPhe890ChiDegrees": [
+        -71.47112486248696,
+        -71.64836348723156
+      ]
+    },
+    {
+      "stepId": "fragment-merge",
+      "predictedStateId": "AWZ",
+      "holdoutPdbId": "5OVG",
+      "receptorCaRmsdAngstrom": 0.1864443287247089,
+      "ligandRmsdAngstrom": 1.527541182974492,
+      "editedRegionRmsdAngstrom": 2.327896735974231,
+      "selectedSeedAudit": {
+        "conformerIndex": 3,
+        "method": "untargeted-edit-region-torsion-scan",
+        "anchorAtomIndex": 30,
+        "axisAtomIndex": 27,
+        "boundaryAtomIndices": [
+          35,
+          36
+        ],
+        "attachmentMode": "conserved-junction-ring-axis",
+        "movedAtomCount": 21,
+        "movedHeavyAtomCount": 12,
+        "axialAngleDegrees": 60
+      },
+      "predictedPhe890ChiDegrees": [
+        -73.43989552943002,
+        -92.0430056425387
+      ],
+      "holdoutPhe890ChiDegrees": [
+        -75.64048301121971,
+        -87.85172823052947
+      ]
+    },
+    {
+      "stepId": "open-phe890-pocket",
+      "predictedStateId": "AWW",
+      "holdoutPdbId": "5OVH",
+      "receptorCaRmsdAngstrom": 0.35705004603897966,
+      "ligandRmsdAngstrom": 2.137410006851913,
+      "editedRegionRmsdAngstrom": 2.811026145039275,
+      "selectedSeedAudit": {
+        "conformerIndex": 22,
+        "method": "untargeted-edit-region-torsion-scan",
+        "anchorAtomIndex": 43,
+        "axisAtomIndex": 41,
+        "boundaryAtomIndices": [
+          44,
+          45
+        ],
+        "attachmentMode": "conserved-junction-ring-axis",
+        "movedAtomCount": 14,
+        "movedHeavyAtomCount": 7,
+        "axialAngleDegrees": -150
+      },
+      "predictedPhe890ChiDegrees": [
+        -172.15790389156115,
+        116.06980643736746
+      ],
+      "holdoutPhe890ChiDegrees": [
+        175.76431356192867,
+        76.32779194284271
+      ]
+    },
+    {
+      "stepId": "finish-bay-293",
+      "predictedStateId": "AXH",
+      "holdoutPdbId": "5OVI",
+      "receptorCaRmsdAngstrom": 0.3558640081801387,
+      "ligandRmsdAngstrom": 1.2151174010037247,
+      "editedRegionRmsdAngstrom": 1.5269332992656002,
+      "selectedSeedAudit": {
+        "conformerIndex": 63,
+        "method": "untargeted-edit-region-torsion-scan",
+        "anchorAtomIndex": 15,
+        "axisAtomIndex": 11,
+        "boundaryAtomIndices": [
+          11
+        ],
+        "attachmentMode": "single-boundary-bond",
+        "movedAtomCount": 19,
+        "movedHeavyAtomCount": 9,
+        "axialAngleDegrees": 60
+      },
+      "predictedPhe890ChiDegrees": [
+        -172.42674525520326,
+        108.6608287473102
+      ],
+      "holdoutPhe890ChiDegrees": [
+        -166.54967784272253,
+        71.73592240140253
+      ]
+    }
+  ],
+  "branchDecision": {
+    "criterion": "fewest growth-induced steric clashes among feasible receptor branches; receptor-aware ligand pose score and finite relaxed energy break ties",
+    "branches": [
+      {
+        "chiDegrees": [
+          -60,
+          90
+        ],
+        "feasible": false,
+        "additionalStericClashes": 4,
+        "poseScoreKcalMol": -103.75646882061399
+      },
+      {
+        "chiDegrees": [
+          -180,
+          90
+        ],
+        "feasible": true,
+        "additionalStericClashes": 0,
+        "poseScoreKcalMol": 39.936464323605605
+      },
+      {
+        "chiDegrees": [
+          60,
+          90
+        ],
+        "feasible": true,
+        "additionalStericClashes": 2,
+        "poseScoreKcalMol": -86.80504183766749
+      }
+    ],
+    "selectedChiDegrees": [
+      -180,
+      90
+    ]
+  },
+  "targets": {
+    "ligand": {
+      "center": [
+        4.4825,
+        -18.9081,
+        22.5872
+      ],
+      "radius": 7.985
+    },
+    "phe890": {
+      "center": [
+        3.224,
+        -26.9848,
+        21.9198
+      ],
+      "radius": 4.6425
+    }
+  },
+  "causalVisual": {
+    "growthAtomNames": [
+      "CX11",
+      "CX12",
+      "CX13",
+      "CX14",
+      "CX15",
+      "CX16",
+      "OX3"
+    ],
+    "collisionEvidence": [
+      {
+        "ligandAtom": "OX3",
+        "pheAtom": "CE2",
+        "distanceAngstrom": 0.679
+      },
+      {
+        "ligandAtom": "CX16",
+        "pheAtom": "CZ",
+        "distanceAngstrom": 1.79
+      },
+      {
+        "ligandAtom": "CX14",
+        "pheAtom": "CB",
+        "distanceAngstrom": 2.281
+      }
+    ],
+    "peptideContextCoordinateClass": "allowed-hit-only",
+    "provenanceSplits": [
+      {
+        "stepId": "scaffold-rewrite",
+        "stateId": "awt-prediction",
+        "inheritedAtomNames": [
+          "C18",
+          "O14",
+          "C10",
+          "C5",
+          "C2",
+          "N6",
+          "C11",
+          "N8",
+          "C3",
+          "N7",
+          "C12",
+          "C16",
+          "C15",
+          "C20",
+          "C23",
+          "C24",
+          "C21",
+          "C19",
+          "C1",
+          "C4",
+          "C9",
+          "O13",
+          "C17"
+        ],
+        "addedAtomNames": [
+          "CX1",
+          "CX2",
+          "CX3",
+          "NX1",
+          "NX2",
+          "CX4"
+        ]
+      },
+      {
+        "stepId": "fragment-merge",
+        "stateId": "awz-prediction",
+        "inheritedAtomNames": [
+          "C18",
+          "O14",
+          "C10",
+          "C5",
+          "C2",
+          "N6",
+          "C11",
+          "CX1",
+          "N8",
+          "C3",
+          "N7",
+          "C12",
+          "C16",
+          "C15",
+          "C1",
+          "C4",
+          "C9",
+          "O13",
+          "C17"
+        ],
+        "addedAtomNames": [
+          "CX2",
+          "CX3",
+          "CX4",
+          "CX5",
+          "CX6",
+          "NX1",
+          "CX7",
+          "NX2",
+          "CX8",
+          "CX9",
+          "CX10",
+          "SX1"
+        ]
+      },
+      {
+        "stepId": "open-phe890-pocket",
+        "stateId": "aww-prediction",
+        "inheritedAtomNames": [
+          "C1",
+          "C2",
+          "N6",
+          "C11",
+          "CX1",
+          "N8",
+          "C3",
+          "N7",
+          "C12",
+          "C16",
+          "C15",
+          "CX2",
+          "CX3",
+          "CX4",
+          "CX5",
+          "SX1"
+        ],
+        "addedAtomNames": [
+          "CX6",
+          "OX1",
+          "CX7",
+          "CX8",
+          "OX2",
+          "CX9",
+          "CX10",
+          "CX11",
+          "CX12",
+          "CX13",
+          "CX14",
+          "CX15",
+          "CX16",
+          "OX3",
+          "CX17"
+        ]
+      },
+      {
+        "stepId": "finish-bay-293",
+        "stateId": "axh-prediction",
+        "inheritedAtomNames": [
+          "CX3",
+          "CX4",
+          "SX1",
+          "C15",
+          "C12",
+          "C16",
+          "N7",
+          "C3",
+          "N8",
+          "C11",
+          "CX1",
+          "N6",
+          "C2",
+          "C1",
+          "CX2"
+        ],
+        "addedAtomNames": [
+          "CX5",
+          "NX1",
+          "CX6",
+          "CX7",
+          "CX8",
+          "CX9",
+          "CX10",
+          "CX11",
+          "CX12",
+          "CX13",
+          "CX14",
+          "OX1",
+          "CX15",
+          "CX16",
+          "OX2",
+          "CX17",
+          "CX18"
+        ]
+      }
+    ]
+  },
+  "flipScenes": [
+    "pheFlip0",
+    "pheFlip1",
+    "pheFlip2",
+    "pheFlip3",
+    "pheFlip4",
+    "pheFlip5",
+    "pheFlip6",
+    "pheFlip7",
+    "pheFlip8"
+  ],
+  "flipTrajectory": [
+    {
+      "ordinal": 0,
+      "progress": 0,
+      "chiDegrees": [
+        -73.459,
+        -92.052
+      ],
+      "maximumRingBondDeltaAngstrom": 0
+    },
+    {
+      "ordinal": 1,
+      "progress": 0.125,
+      "chiDegrees": [
+        -85.787,
+        -111.004
+      ],
+      "maximumRingBondDeltaAngstrom": 0.0007
+    },
+    {
+      "ordinal": 2,
+      "progress": 0.25,
+      "chiDegrees": [
+        -98.108,
+        -130.033
+      ],
+      "maximumRingBondDeltaAngstrom": 0.0005
+    },
+    {
+      "ordinal": 3,
+      "progress": 0.375,
+      "chiDegrees": [
+        -110.455,
+        -149.008
+      ],
+      "maximumRingBondDeltaAngstrom": 0.0007
+    },
+    {
+      "ordinal": 4,
+      "progress": 0.5,
+      "chiDegrees": [
+        -122.785,
+        -167.946
+      ],
+      "maximumRingBondDeltaAngstrom": 0.0009
+    },
+    {
+      "ordinal": 5,
+      "progress": 0.625,
+      "chiDegrees": [
+        -135.113,
+        173.101
+      ],
+      "maximumRingBondDeltaAngstrom": 0.0005
+    },
+    {
+      "ordinal": 6,
+      "progress": 0.75,
+      "chiDegrees": [
+        -147.448,
+        154.061
+      ],
+      "maximumRingBondDeltaAngstrom": 0.0007
+    },
+    {
+      "ordinal": 7,
+      "progress": 0.875,
+      "chiDegrees": [
+        -159.741,
+        135.086
+      ],
+      "maximumRingBondDeltaAngstrom": 0.0003
+    },
+    {
+      "ordinal": 8,
+      "progress": 1,
+      "chiDegrees": [
+        -172.132,
+        116.078
+      ],
+      "maximumRingBondDeltaAngstrom": 0.0611
+    }
+  ],
+  "inputs": [
+    {
+      "path": "outputs/design-history/sos1-hit-only-growth-clash-v7/prediction-manifest.json",
+      "sha256": "4415a64b4e1aae85faedd2987bf2f17c3212357c8a247a9a1ff8f470c28c9353"
+    },
+    {
+      "path": "outputs/design-history/sos1-hit-only-growth-clash-v7/chemist-action-audit.json",
+      "sha256": "38d8fbd3e2675fd1203a13a7e235ff848eaf627a0d7c8450865a762f9fbe5e5b"
+    },
+    {
+      "path": "outputs/design-history/sos1-hit-only-growth-clash-v7/holdout-evaluation-summary.json",
+      "sha256": "25ad066b4cce4196b383c470542762e8f7114289ee1343da81412bd610c0cf79"
+    },
+    {
+      "path": "design-history/structures/generated/sos1-prospective-campaign.json",
+      "sha256": "e3706e4910dde647d68fe7ea1506177b18d47b662acc374630bbac8976d419bc"
+    },
+    {
+      "path": "outputs/design-history/sos1-hit-only-growth-clash-v7/review/data.json",
+      "sha256": "06e5e5aa190881790362d977c520c75e27662d0e97b89b7ec444ecd651b07a1d",
+      "role": "verified-review-source"
+    }
+  ],
+  "assets": [
+    {
+      "path": "design-history/structures/generated/sos1-v7-5ove-protein.pdb",
+      "role": "allowed-hit-protein",
+      "sha256": "ef0a95fed9ab9a85fd4f97204ab0b0babf32e1dae2307cf20297e953dfbf389d",
+      "bytes": 316765
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-5ove-pocket.pdb",
+      "role": "hit-derived-pocket",
+      "sha256": "aaeb0d2602382d90986cc30d7b7a68698766fe83d61ed4f32ac5e03488e78871",
+      "bytes": 13011
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-f1-sos1-protein.pdb",
+      "role": "historical-f1-sos1",
+      "sha256": "4e92596cc7db2cbdcc047e66f6c99e5a0074509ced1fb780b37414d44325e0f9",
+      "bytes": 311014
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-f1-kras-protein.pdb",
+      "role": "historical-f1-kras",
+      "sha256": "327d8d18c457a9632b9a184c3abc9292cabc171afd23abc68287824051c81e12",
+      "bytes": 109729
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-f1-pocket.pdb",
+      "role": "historical-f1-pocket",
+      "sha256": "ded854bf11ed927d806593e4cb4520a6683cd09ff983957e6d6c999315a051af",
+      "bytes": 6211
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-5ove-pocket-without-switch.pdb",
+      "role": "historical-comparison-pocket",
+      "sha256": "faf9a2dcf37afe0966b5116eab77d549dd19b9fd8ba295cf5579caed59f50703",
+      "bytes": 11115
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-f1-ligand.pdb",
+      "role": "historical-f1-ligand",
+      "sha256": "efbae1aed81880a170351c07164aa4f1e1da4d31b02a6479de1a78d189f46404",
+      "bytes": 2647
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-f1-tyr884.pdb",
+      "role": "historical-f1-tyr884",
+      "sha256": "7533371996f3c4c34bf93bfad919bf981990d0889a30e5b9a757c894565d5120",
+      "bytes": 1027
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-f1-asp887.pdb",
+      "role": "historical-f1-asp887",
+      "sha256": "d6a792d2c0589b9e2028c4108083ca8d5bd9b15cee415b70a79d814f5ec8e878",
+      "bytes": 703
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-f1-phe890.pdb",
+      "role": "historical-f1-phe890",
+      "sha256": "8e59b6624631ebd5fc714f17d408839b7dea1ed6f938c6fc31c0ed2611453960",
+      "bytes": 946
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-f1-phe890-peptide-context.pdb",
+      "role": "historical-f1-phe890-peptide-context",
+      "sha256": "50c68d752041fb10466a477e05440792ac0fa678e1c81c8d3af54fc36dd9266b",
+      "bytes": 1756
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-f1-arg73.pdb",
+      "role": "historical-kras-arg73",
+      "sha256": "b85b298ad6c7b8269694aeaa24320e61a9a20031e95972d184d32a40061d9c5d",
+      "bytes": 946
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-f1-arg73-peptide-context.pdb",
+      "role": "historical-kras-arg73-peptide-context",
+      "sha256": "495ac1f65af130e33e2c4e395e038afc3f7d70962eaaf98eb8c2fe9c04ecbbd4",
+      "bytes": 1675
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-5ove-tyr884.pdb",
+      "role": "historical-hts-hit-tyr884",
+      "sha256": "fa350bbfe130035752b3ec5f474b99873d10d09ac544787809e238e71117eaf8",
+      "bytes": 1027
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-tyr884-peptide-context.pdb",
+      "role": "historical-hts-hit-peptide-context",
+      "sha256": "50e1c75aea04d909bd1a7c257e157d70464e9eb6f415bcfceaeb357c22a6bd27",
+      "bytes": 1918
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-tyr884-shift-00.pdb",
+      "role": "historical-tyr884-interface-shift",
+      "ordinal": 0,
+      "progress": 0,
+      "sha256": "7533371996f3c4c34bf93bfad919bf981990d0889a30e5b9a757c894565d5120",
+      "bytes": 1027
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-tyr884-shift-01.pdb",
+      "role": "historical-tyr884-interface-shift",
+      "ordinal": 1,
+      "progress": 0.125,
+      "sha256": "d923500cc86f7c9d3d2690133b0371631420688262450f94903f3eb1936a5d35",
+      "bytes": 1027
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-tyr884-shift-02.pdb",
+      "role": "historical-tyr884-interface-shift",
+      "ordinal": 2,
+      "progress": 0.25,
+      "sha256": "e25687b887b824f5f2a9bafb499e66151f5ba73e40fe4628b91bedebb21d4a36",
+      "bytes": 1027
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-tyr884-shift-03.pdb",
+      "role": "historical-tyr884-interface-shift",
+      "ordinal": 3,
+      "progress": 0.375,
+      "sha256": "2e1552732766c624561446f15043186453ee9bb8d0a75d19305db940678760aa",
+      "bytes": 1027
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-tyr884-shift-04.pdb",
+      "role": "historical-tyr884-interface-shift",
+      "ordinal": 4,
+      "progress": 0.5,
+      "sha256": "50174804e764d6cfe1cdb72f1ef40e90ab6d100f97bcbc78f79f8dc4d842a589",
+      "bytes": 1027
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-tyr884-shift-05.pdb",
+      "role": "historical-tyr884-interface-shift",
+      "ordinal": 5,
+      "progress": 0.625,
+      "sha256": "cf7fec2fe914a241a5bf977449b8ede2e0aa0555722d5ed0dad793ea28a3cdba",
+      "bytes": 1027
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-tyr884-shift-06.pdb",
+      "role": "historical-tyr884-interface-shift",
+      "ordinal": 6,
+      "progress": 0.75,
+      "sha256": "7903b42c456c06a78f5bf7e009f620c904c3c4cdb290a19a2db7ee33cf0a6925",
+      "bytes": 1027
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-tyr884-shift-07.pdb",
+      "role": "historical-tyr884-interface-shift",
+      "ordinal": 7,
+      "progress": 0.875,
+      "sha256": "989cf5f126a5aa5928e3e93265eb68a8bf3365757641c7122d311804e25e3ba6",
+      "bytes": 1027
+    },
+    {
+      "path": "design-history/structures/generated/sos1-full-tyr884-shift-08.pdb",
+      "role": "historical-tyr884-interface-shift",
+      "ordinal": 8,
+      "progress": 1,
+      "sha256": "fa350bbfe130035752b3ec5f474b99873d10d09ac544787809e238e71117eaf8",
+      "bytes": 1027
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-hit-ligand.pdb",
+      "role": "registered-hit-only-ligand",
+      "stateId": "hit",
+      "sha256": "d5af6b896d0918646d843f4f42ef0e04ea5d644f5ce8d9402d8685c2c36d9968",
+      "bytes": 4429
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-hit-phe890.pdb",
+      "role": "registered-hit-only-phe890",
+      "stateId": "hit",
+      "sha256": "58cee55c6a320b829471b9ef853192e95b061a89023edc7556ab45107801017e",
+      "bytes": 946
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-hit-phe890-peptide.pdb",
+      "role": "registered-hit-only-phe890-local-peptide",
+      "stateId": "hit",
+      "sha256": "6c63ea8df124c10f0c02997a7118d2ed6ee9474d616022ebddc1b0b753719dc3",
+      "bytes": 2242
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-awt-prediction-ligand.pdb",
+      "role": "prospective-prediction-ligand",
+      "stateId": "awt-prediction",
+      "sha256": "8c16a28060df660bd783b592e247a497e59e27d15ab44b83cab8a116da8d2e9e",
+      "bytes": 3014
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-awt-prediction-phe890.pdb",
+      "role": "prospective-prediction-phe890",
+      "stateId": "awt-prediction",
+      "sha256": "bdfcc03c5318dfe1720dd6ff50c5bf3893caf2c0e6b3a7636e83eeabcb62cf5e",
+      "bytes": 924
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-awt-prediction-phe890-peptide.pdb",
+      "role": "prospective-prediction-phe890-local-peptide",
+      "stateId": "awt-prediction",
+      "sha256": "6dabc7a1f4f24945713fbcc4e671e6578aa07c26f34a385552442b0e9b0b1f56",
+      "bytes": 2220
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-awt-crystal-ligand.pdb",
+      "role": "evaluation-only-holdout-ligand",
+      "stateId": "awt-crystal",
+      "sha256": "cb426b5031cdc8387da1f37cffb61327960f27925c66f5eee8fc04c2db95dbb2",
+      "bytes": 4753
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-awt-crystal-phe890.pdb",
+      "role": "evaluation-only-holdout-phe890",
+      "stateId": "awt-crystal",
+      "sha256": "25ca707128326120196413da84fe2bf17d835f4c9239724a45e7d10c4b11553b",
+      "bytes": 946
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-awt-crystal-phe890-peptide.pdb",
+      "role": "evaluation-only-holdout-phe890-local-peptide",
+      "stateId": "awt-crystal",
+      "sha256": "f36c325430a7df57b43a755098c85c956cd6be28943b03d15885f4438d82fde4",
+      "bytes": 2242
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-awz-prediction-ligand.pdb",
+      "role": "prospective-prediction-ligand",
+      "stateId": "awz-prediction",
+      "sha256": "03fd83dfb2d18983121ee05dc70fe125ea80e577395124cb2d6adb2c659cbb17",
+      "bytes": 3226
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-awz-prediction-phe890.pdb",
+      "role": "prospective-prediction-phe890",
+      "stateId": "awz-prediction",
+      "sha256": "c490e22674f0ad8d7fa83156b4a7a8f6b124daa76c3fa25f2c60bd3875f7be93",
+      "bytes": 924
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-awz-prediction-phe890-peptide.pdb",
+      "role": "prospective-prediction-phe890-local-peptide",
+      "stateId": "awz-prediction",
+      "sha256": "892832a441ab709351d95ecfee51ae17cce4e811d47288148bea3e6fdffdc99e",
+      "bytes": 2220
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-awz-crystal-ligand.pdb",
+      "role": "evaluation-only-holdout-ligand",
+      "stateId": "awz-crystal",
+      "sha256": "ecd0da5c51f1f8f98a497cf40b813e21967e01bb57bfd3bc952617710ad2f470",
+      "bytes": 5077
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-awz-crystal-phe890.pdb",
+      "role": "evaluation-only-holdout-phe890",
+      "stateId": "awz-crystal",
+      "sha256": "d7166cb4009267ed852fb27d6bde9152a5874c7640ec08ad40020a6f9d928b3a",
+      "bytes": 946
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-awz-crystal-phe890-peptide.pdb",
+      "role": "evaluation-only-holdout-phe890-local-peptide",
+      "stateId": "awz-crystal",
+      "sha256": "9d8a31119fc2e379611185d0cdd9b8f20c39b620571406bbf2a7c5ac40bf9500",
+      "bytes": 2242
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-aww-prediction-ligand.pdb",
+      "role": "prospective-prediction-ligand",
+      "stateId": "aww-prediction",
+      "sha256": "427e5c59f8852d2e3d7d48015bd9887a73e94427a5db8041bd389769d7268c10",
+      "bytes": 3216
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-aww-prediction-phe890.pdb",
+      "role": "prospective-prediction-phe890",
+      "stateId": "aww-prediction",
+      "sha256": "9957566c541c0487e2b07a5fa4fb0a5f73f3b4984e119d86fa41acae9565ba5d",
+      "bytes": 924
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-aww-prediction-phe890-peptide.pdb",
+      "role": "prospective-prediction-phe890-local-peptide",
+      "stateId": "aww-prediction",
+      "sha256": "c31c39b09540347aca45efc4ff0f9c97e17a87ec809d27b307c0efe2b07db37b",
+      "bytes": 2220
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-aww-crystal-ligand.pdb",
+      "role": "evaluation-only-holdout-ligand",
+      "stateId": "aww-crystal",
+      "sha256": "d19f5e6b7aa102a410fd2ff36257cf97c1e86b920916bee90064af10a575364e",
+      "bytes": 5077
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-aww-crystal-phe890.pdb",
+      "role": "evaluation-only-holdout-phe890",
+      "stateId": "aww-crystal",
+      "sha256": "e8bb5acd300ce1f0d576f97741a936bccdcc34b988dd43d3ec7f26466b1d5d38",
+      "bytes": 946
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-aww-crystal-phe890-peptide.pdb",
+      "role": "evaluation-only-holdout-phe890-local-peptide",
+      "stateId": "aww-crystal",
+      "sha256": "0d07b0a29a70099a4b6036589c65db8f9e4d99f7311e4ca83665e819cdba687a",
+      "bytes": 2242
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-axh-prediction-ligand.pdb",
+      "role": "prospective-prediction-ligand",
+      "stateId": "axh-prediction",
+      "sha256": "748c28aef2498f9be5f50d51d74106535bf514299f83117305d45cf1639239bc",
+      "bytes": 3317
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-axh-prediction-phe890.pdb",
+      "role": "prospective-prediction-phe890",
+      "stateId": "axh-prediction",
+      "sha256": "1e80bce54f4f63a25e1c73177efd5ce482c5a07bd3ff3ffc44896c1d77af4481",
+      "bytes": 924
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-axh-prediction-phe890-peptide.pdb",
+      "role": "prospective-prediction-phe890-local-peptide",
+      "stateId": "axh-prediction",
+      "sha256": "30f9f2a41e33caa3df0048935522f31d45549dbb3303b47c19cb4519f7d2dc9e",
+      "bytes": 2220
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-axh-crystal-ligand.pdb",
+      "role": "evaluation-only-holdout-ligand",
+      "stateId": "axh-crystal",
+      "sha256": "4479ac5c7f3e7e37d2a76ebc4c11c79ad4d3518228d08633ffa83e8a5251f046",
+      "bytes": 5239
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-axh-crystal-phe890.pdb",
+      "role": "evaluation-only-holdout-phe890",
+      "stateId": "axh-crystal",
+      "sha256": "7d76f544de22a6e415d00dffdbee5bad3b5f3e5f3742d88654a8854fc6f9ce61",
+      "bytes": 946
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-axh-crystal-phe890-peptide.pdb",
+      "role": "evaluation-only-holdout-phe890-local-peptide",
+      "stateId": "axh-crystal",
+      "sha256": "8a2321e63d8da6ea1cf77078188c18744f5d5d53b6ae8cd951307d90539c724f",
+      "bytes": 2242
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-awt-prediction-inherited.pdb",
+      "role": "frozen-prediction-inherited-atoms",
+      "stateId": "awt-prediction",
+      "stepId": "scaffold-rewrite",
+      "sha256": "991314e2d8bf1544b68d2d8eacf7c805fe56f6be7aad64212993ae33044b73ce",
+      "bytes": 1873
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-awt-prediction-added.pdb",
+      "role": "frozen-prediction-added-atoms",
+      "stateId": "awt-prediction",
+      "stepId": "scaffold-rewrite",
+      "sha256": "89af5ceeee4222c7f18f6d814232b7c35088e3e13685e40dce2735e04ad14afc",
+      "bytes": 530
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-awz-prediction-inherited.pdb",
+      "role": "frozen-prediction-inherited-atoms",
+      "stateId": "awz-prediction",
+      "stepId": "fragment-merge",
+      "sha256": "8bcd0aa52082725d2ddd4d9f4c4e64fecb52bfa51a1a8fb17e560b268a68a573",
+      "bytes": 1557
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-awz-prediction-added.pdb",
+      "role": "frozen-prediction-added-atoms",
+      "stateId": "awz-prediction",
+      "stepId": "fragment-merge",
+      "sha256": "98b186bf23fa32e6b69b9dac42b1ea0cd2c720fd24b7a783a183b97fe3b7ce47",
+      "bytes": 1004
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-aww-prediction-inherited.pdb",
+      "role": "frozen-prediction-inherited-atoms",
+      "stateId": "aww-prediction",
+      "stepId": "open-phe890-pocket",
+      "sha256": "a7ebeae1a199cd55594ad7e228be39232ce4ead1eb6b6358d0c8441460772bfb",
+      "bytes": 1320
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-aww-prediction-added.pdb",
+      "role": "frozen-prediction-added-atoms",
+      "stateId": "aww-prediction",
+      "stepId": "open-phe890-pocket",
+      "sha256": "701f147010c3089107bfb25b0f123b2caea50b7f809dc1965c8651c2de0ea057",
+      "bytes": 1241
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-axh-prediction-inherited.pdb",
+      "role": "frozen-prediction-inherited-atoms",
+      "stateId": "axh-prediction",
+      "stepId": "finish-bay-293",
+      "sha256": "905385dfb39162668265e876ffd9e7af3a810ba71ace3246259550767d29e16b",
+      "bytes": 1241
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-axh-prediction-added.pdb",
+      "role": "frozen-prediction-added-atoms",
+      "stateId": "axh-prediction",
+      "stepId": "finish-bay-293",
+      "sha256": "8eee87d2d41e18e48ffce3af88d87031d56cae2059cb7d1d5437b3a171ea3d77",
+      "bytes": 1399
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-aww-prediction-core.pdb",
+      "role": "frozen-prediction-ligand-core",
+      "stateId": "aww-prediction",
+      "sha256": "5c26ce3484d87028064a90cca8512af94e1540eadf061c88a2d1c5dce22817c6",
+      "bytes": 1952
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-aww-prediction-growth.pdb",
+      "role": "frozen-prediction-ligand-growth",
+      "stateId": "aww-prediction",
+      "sha256": "e350b96198af63cf20c91e50fe8b4c63c93429de9b27c90de4b2d5979f9e3502",
+      "bytes": 688
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-peptide-context.pdb",
+      "role": "allowed-hit-peptide-context",
+      "sha256": "e8640be6d10a05d6b1d9128d5006d2685ce62667c7392cb83145cfffb99d3b6b",
+      "bytes": 1351
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-aww-phe-in-clash-markers.pdb",
+      "role": "prospective-phe890-clash-markers",
+      "stateId": "aww-prediction",
+      "sha256": "e5d2cf9f89592d47c3526f9f29711fe69de62fa157e1270a0a95a408a39631d6",
+      "bytes": 292
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-00.pdb",
+      "role": "prospective-phe890-flip-intermediate",
+      "ordinal": 0,
+      "progress": 0,
+      "sha256": "c490e22674f0ad8d7fa83156b4a7a8f6b124daa76c3fa25f2c60bd3875f7be93",
+      "bytes": 924
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-peptide-00.pdb",
+      "role": "prospective-phe890-flip-local-peptide",
+      "ordinal": 0,
+      "progress": 0,
+      "sha256": "5750c0432f43ff24423b2a5be4e0e4508e89e502aa605270c3f6d8a489bb84ed",
+      "bytes": 2220
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-01.pdb",
+      "role": "prospective-phe890-flip-intermediate",
+      "ordinal": 1,
+      "progress": 0.125,
+      "sha256": "6a4a3f2ec402974a83a7f28b20bf7d329ff312ac5e4511975b968cd73db18128",
+      "bytes": 924
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-peptide-01.pdb",
+      "role": "prospective-phe890-flip-local-peptide",
+      "ordinal": 1,
+      "progress": 0.125,
+      "sha256": "d2465bb72cc891561177ccf68af0e62dec96a260ed1e99c7e529d3ccf5376c24",
+      "bytes": 2220
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-02.pdb",
+      "role": "prospective-phe890-flip-intermediate",
+      "ordinal": 2,
+      "progress": 0.25,
+      "sha256": "44dd040031226c435b6d1d22b8714082ea3a640cf47a67de9d269743b75dbf5d",
+      "bytes": 924
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-peptide-02.pdb",
+      "role": "prospective-phe890-flip-local-peptide",
+      "ordinal": 2,
+      "progress": 0.25,
+      "sha256": "249ae7780b386cc299cb0e8aec0372a0c66543295c58d1cf703fded390038e48",
+      "bytes": 2220
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-03.pdb",
+      "role": "prospective-phe890-flip-intermediate",
+      "ordinal": 3,
+      "progress": 0.375,
+      "sha256": "d82ca48083329dd6dd88be1892a76599cfaab719473611eab213f695e28fbb0a",
+      "bytes": 924
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-peptide-03.pdb",
+      "role": "prospective-phe890-flip-local-peptide",
+      "ordinal": 3,
+      "progress": 0.375,
+      "sha256": "2461672d762f387b0e6a6f5bd4e630a90dd7730a40ff4b8f769c6ec8fc5d7710",
+      "bytes": 2220
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-04.pdb",
+      "role": "prospective-phe890-flip-intermediate",
+      "ordinal": 4,
+      "progress": 0.5,
+      "sha256": "e8a366bf9faf89e6144c00aad99b24e246574b5ebd7330b9715e81eea1a39cb5",
+      "bytes": 924
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-peptide-04.pdb",
+      "role": "prospective-phe890-flip-local-peptide",
+      "ordinal": 4,
+      "progress": 0.5,
+      "sha256": "9840e09474222d490cbcd4dce4f36c2507d084679901c21d34e9c1dcd57e1317",
+      "bytes": 2220
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-05.pdb",
+      "role": "prospective-phe890-flip-intermediate",
+      "ordinal": 5,
+      "progress": 0.625,
+      "sha256": "e80d9919916365afed4803c6cedb62c5bab971efe93c359619d03ba064e62c61",
+      "bytes": 924
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-peptide-05.pdb",
+      "role": "prospective-phe890-flip-local-peptide",
+      "ordinal": 5,
+      "progress": 0.625,
+      "sha256": "3e0c466ec8b5bb8422113bb4e2abdaefcb51ae530acf52a39ead7b64482daa97",
+      "bytes": 2220
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-06.pdb",
+      "role": "prospective-phe890-flip-intermediate",
+      "ordinal": 6,
+      "progress": 0.75,
+      "sha256": "d8cb6cfecbe652e48fb447cf5e0f506de9b18874192c55c519cd89070826d256",
+      "bytes": 924
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-peptide-06.pdb",
+      "role": "prospective-phe890-flip-local-peptide",
+      "ordinal": 6,
+      "progress": 0.75,
+      "sha256": "e42406a39d64f949268192c2f3149054f18d130f39c67a7f6ef45f3e9e893a75",
+      "bytes": 2220
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-07.pdb",
+      "role": "prospective-phe890-flip-intermediate",
+      "ordinal": 7,
+      "progress": 0.875,
+      "sha256": "534a76a631997294d8222511d83f1cdde37ba6cfe15c7a86b72f5c1695566af4",
+      "bytes": 924
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-peptide-07.pdb",
+      "role": "prospective-phe890-flip-local-peptide",
+      "ordinal": 7,
+      "progress": 0.875,
+      "sha256": "9361ec4eebbb77914da4e22fa4676853529626be328490ffa5de2f1eb9474873",
+      "bytes": 2220
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-08.pdb",
+      "role": "prospective-phe890-flip-intermediate",
+      "ordinal": 8,
+      "progress": 1,
+      "sha256": "9957566c541c0487e2b07a5fa4fb0a5f73f3b4984e119d86fa41acae9565ba5d",
+      "bytes": 924
+    },
+    {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-peptide-08.pdb",
+      "role": "prospective-phe890-flip-local-peptide",
+      "ordinal": 8,
+      "progress": 1,
+      "sha256": "c629724e306d6d48032baa53747a3a7c213b91185f55d509a332ad7dd26e2cad",
+      "bytes": 2220
+    }
+  ]
+}

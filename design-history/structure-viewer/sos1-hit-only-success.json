@@ -1,0 +1,483 @@
+{
+  "schema": "molarium.structure-story/v1",
+  "id": "sos1-hit-only-success",
+  "title": "Predict the pocket that the lead requires",
+  "subtitle": "SOS1 · five structural beats · 5OVE/AXE is the only coordinate-bearing starting point",
+  "width": 1600,
+  "height": 900,
+  "fps": 18,
+  "assetManifest": "../structures/generated/sos1-prospective-movie-assets.json",
+  "sources": [
+    { "label": "Hillig et al. · discovery of BAY-293", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6377443/" },
+    { "label": "6EPM · fragment F1 bound to the KRAS–SOS1 complex", "url": "https://www.rcsb.org/structure/6EPM" },
+    { "label": "5OVE · independent HTS inhibitor hit", "url": "https://www.rcsb.org/structure/5OVE" },
+    { "label": "5OVF–5OVI · post-freeze structural evaluation", "url": "https://www.rcsb.org/structure/5OVI" }
+  ],
+  "legend": [
+    { "label": "starting hit · 5OVE/AXE", "color": "#247d95" },
+    { "label": "frozen Agent API prediction", "color": "#826cae" },
+    { "label": "Phe890 · protein", "color": "#c5912e" },
+    { "label": "post-freeze crystal", "color": "#dc8747" }
+  ],
+  "cameras": {
+    "f1Locked": { "target": [4.0, -24.7, 22.8], "radius": 9.5, "view": [1.55, 0.75, 2.2] },
+    "growthLocked": { "target": [4.5, -20.7, 22.5], "radius": 9.0, "view": [1.55, 0.75, 2.2] },
+    "masterLocked": { "target": [4.5, -20.7, 22.5], "radius": 10.2, "view": [1.55, 0.75, 2.2] },
+    "phe890Locked": { "target": [4.1, -21.8, 22.35], "radius": 9.2, "view": [1.55, 0.75, 2.2] },
+    "finalCompareLocked": { "target": [4.1, -21.8, 22.35], "radius": 9.2, "view": [1.55, 0.75, 2.2] },
+    "tyr884Locked": { "target": [0.8, -18.6, 25.6], "radius": 6.1, "view": [1.55, 0.75, 2.2] }
+  },
+  "scenes": {
+    "f1Hit": {
+      "label": "Fragment F1 · 6EPM/BQ5",
+      "coordinateClass": "historical-input",
+      "coordinateLabel": "START · fragment hit in the KRAS–SOS1 complex",
+      "models": [
+        { "ref": "peptide", "path": "sos1-full-f1-phe890-peptide-context.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.48, "sizeFactor": 0.13 },
+        { "ref": "f1", "path": "sos1-full-f1-ligand.pdb", "representation": "ball-and-stick", "color": "#1f8f86", "sizeFactor": 0.24 },
+        { "ref": "phe", "path": "sos1-full-f1-phe890.pdb", "representation": "ball-and-stick", "color": "#b06fa8", "sizeFactor": 0.18 }
+      ]
+    },
+    "f1Mechanism": {
+      "label": "F1 · hidden pocket open, but wrong functional direction",
+      "coordinateClass": "historical-input",
+      "coordinateLabel": "6EPM · F1 stabilizes the assembled complex",
+      "models": [
+        { "ref": "pocket", "path": "sos1-full-f1-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.24, "sizeFactor": 0.11 },
+        { "ref": "f1", "path": "sos1-full-f1-ligand.pdb", "representation": "ball-and-stick", "color": "#1f8f86", "sizeFactor": 0.24 },
+        { "ref": "tyr", "path": "sos1-full-f1-tyr884.pdb", "representation": "ball-and-stick", "color": "#e1ad32", "sizeFactor": 0.19 },
+        { "ref": "asp", "path": "sos1-full-f1-asp887.pdb", "representation": "ball-and-stick", "color": "#5f7289", "sizeFactor": 0.16 },
+        { "ref": "phe", "path": "sos1-full-f1-phe890.pdb", "representation": "ball-and-stick", "color": "#b06fa8", "sizeFactor": 0.19 },
+        { "ref": "arg73", "path": "sos1-full-f1-arg73.pdb", "representation": "ball-and-stick", "color": "#d99b52", "sizeFactor": 0.18 }
+      ]
+    },
+    "hit": {
+      "label": "Compound 1 · 5OVE/AXE",
+      "coordinateClass": "allowed-input",
+      "coordinateLabel": "START · sole experimental coordinate input",
+      "models": [
+        { "ref": "protein", "path": "sos1-v7-5ove-protein.pdb", "representation": "cartoon", "colorScheme": "chain-id", "alpha": 0.16 },
+        { "ref": "pocket", "path": "sos1-v7-5ove-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.31, "sizeFactor": 0.11 },
+        { "ref": "hit", "path": "sos1-v7-hit-ligand.pdb", "representation": "ball-and-stick", "color": "#247d95", "sizeFactor": 0.23 },
+        { "ref": "phe-peptide", "path": "sos1-v7-hit-phe890-peptide.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.60, "sizeFactor": 0.13 },
+        { "ref": "phe-highlight", "path": "sos1-v7-hit-phe890.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.18 }
+      ]
+    },
+    "tyrShiftBase": {
+      "label": "Compound 1 · Tyr884 interface switch",
+      "coordinateClass": "historical-comparison",
+      "coordinateLabel": "MECHANISM · 6EPM KRAS reference compared with 5OVE inhibitor",
+      "models": [
+        { "ref": "ligand", "path": "sos1-v7-hit-ligand.pdb", "representation": "ball-and-stick", "color": "#247d95", "alpha": 0.28, "sizeFactor": 0.16 },
+        { "ref": "peptide", "path": "sos1-full-tyr884-peptide-context.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.50, "sizeFactor": 0.13 },
+        { "ref": "arg-peptide", "path": "sos1-full-f1-arg73-peptide-context.pdb", "representation": "ball-and-stick", "color": "#7b6a55", "alpha": 0.36, "sizeFactor": 0.11 },
+        { "ref": "arg73", "path": "sos1-full-f1-arg73.pdb", "representation": "ball-and-stick", "color": "#d99b52", "alpha": 0.48, "sizeFactor": 0.15 },
+        { "ref": "tyr-origin", "path": "sos1-full-tyr884-shift-00.pdb", "representation": "ball-and-stick", "color": "#826cae", "alpha": 0.20, "sizeFactor": 0.16 }
+      ]
+    },
+    "tyrShift0": { "extends": "tyrShiftBase", "label": "Tyr884 shift · 0%", "coordinateClass": "historical-comparison", "coordinateLabel": "F1 STATE · KRAS-compatible Tyr884", "models": [ { "ref": "tyr", "path": "sos1-full-tyr884-shift-00.pdb", "representation": "ball-and-stick", "color": "#e1ad32", "sizeFactor": 0.21 } ] },
+    "tyrShift1": { "extends": "tyrShiftBase", "label": "Tyr884 shift · 12%", "coordinateClass": "historical-comparison", "coordinateLabel": "OBSERVED TRANSITION · Tyr884 moves away from KRAS", "models": [ { "ref": "tyr", "path": "sos1-full-tyr884-shift-01.pdb", "representation": "ball-and-stick", "color": "#e1ad32", "sizeFactor": 0.21 } ] },
+    "tyrShift2": { "extends": "tyrShiftBase", "label": "Tyr884 shift · 25%", "coordinateClass": "historical-comparison", "coordinateLabel": "OBSERVED TRANSITION · Tyr884 moves away from KRAS", "models": [ { "ref": "tyr", "path": "sos1-full-tyr884-shift-02.pdb", "representation": "ball-and-stick", "color": "#e1ad32", "sizeFactor": 0.21 } ] },
+    "tyrShift3": { "extends": "tyrShiftBase", "label": "Tyr884 shift · 38%", "coordinateClass": "historical-comparison", "coordinateLabel": "OBSERVED TRANSITION · Tyr884 moves away from KRAS", "models": [ { "ref": "tyr", "path": "sos1-full-tyr884-shift-03.pdb", "representation": "ball-and-stick", "color": "#e1ad32", "sizeFactor": 0.21 } ] },
+    "tyrShift4": { "extends": "tyrShiftBase", "label": "Tyr884 shift · 50%", "coordinateClass": "historical-comparison", "coordinateLabel": "OBSERVED TRANSITION · Tyr884 moves away from KRAS", "models": [ { "ref": "tyr", "path": "sos1-full-tyr884-shift-04.pdb", "representation": "ball-and-stick", "color": "#e1ad32", "sizeFactor": 0.21 } ] },
+    "tyrShift5": { "extends": "tyrShiftBase", "label": "Tyr884 shift · 62%", "coordinateClass": "historical-comparison", "coordinateLabel": "OBSERVED TRANSITION · Tyr884 moves away from KRAS", "models": [ { "ref": "tyr", "path": "sos1-full-tyr884-shift-05.pdb", "representation": "ball-and-stick", "color": "#e1ad32", "sizeFactor": 0.21 } ] },
+    "tyrShift6": { "extends": "tyrShiftBase", "label": "Tyr884 shift · 75%", "coordinateClass": "historical-comparison", "coordinateLabel": "OBSERVED TRANSITION · Tyr884 moves away from KRAS", "models": [ { "ref": "tyr", "path": "sos1-full-tyr884-shift-06.pdb", "representation": "ball-and-stick", "color": "#e1ad32", "sizeFactor": 0.21 } ] },
+    "tyrShift7": { "extends": "tyrShiftBase", "label": "Tyr884 shift · 88%", "coordinateClass": "historical-comparison", "coordinateLabel": "OBSERVED TRANSITION · Tyr884 moves away from KRAS", "models": [ { "ref": "tyr", "path": "sos1-full-tyr884-shift-07.pdb", "representation": "ball-and-stick", "color": "#e1ad32", "sizeFactor": 0.21 } ] },
+    "tyrShift8": { "extends": "tyrShiftBase", "label": "Tyr884 shift · 100%", "coordinateClass": "historical-comparison", "coordinateLabel": "5OVE STATE · inhibitor-displaced Tyr884", "models": [ { "ref": "tyr", "path": "sos1-full-tyr884-shift-08.pdb", "representation": "ball-and-stick", "color": "#e1ad32", "sizeFactor": 0.21 } ] },
+    "awtPrediction": {
+      "label": "Compound 17 · frozen AWT prediction",
+      "coordinateClass": "frozen-prediction",
+      "coordinateLabel": "PREDICTION · Agent API sequence 12",
+      "models": [
+        { "ref": "pocket", "path": "sos1-v7-5ove-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.28, "sizeFactor": 0.11 },
+        { "ref": "ligand", "path": "sos1-v7-awt-prediction-ligand.pdb", "representation": "ball-and-stick", "sizeFactor": 0.23, "provenance": { "id": "awt", "addedAtomNames": ["CX1", "CX2", "CX3", "NX1", "NX2", "CX4"] } },
+        { "ref": "phe-peptide", "path": "sos1-v7-awt-prediction-phe890-peptide.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.60, "sizeFactor": 0.13 },
+        { "ref": "phe-highlight", "path": "sos1-v7-awt-prediction-phe890.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.18 }
+      ]
+    },
+    "awtValidation": {
+      "label": "Compound 17 · 5OVF crystal",
+      "coordinateClass": "evaluation-holdout",
+      "coordinateLabel": "POST-FREEZE CRYSTAL · 0.52 Å from prediction",
+      "models": [
+        { "ref": "pocket", "path": "sos1-v7-5ove-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.24, "sizeFactor": 0.11 },
+        { "ref": "crystal", "path": "sos1-v7-awt-crystal-ligand.pdb", "representation": "ball-and-stick", "color": "#dc8747", "sizeFactor": 0.23 },
+        { "ref": "phe-peptide", "path": "sos1-v7-awt-crystal-phe890-peptide.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.60, "sizeFactor": 0.13 },
+        { "ref": "phe-highlight", "path": "sos1-v7-awt-crystal-phe890.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.18 }
+      ]
+    },
+    "awzPrediction": {
+      "label": "Compound 18 · frozen AWZ prediction",
+      "coordinateClass": "frozen-prediction",
+      "coordinateLabel": "PREDICTION · Agent API sequence 22",
+      "models": [
+        { "ref": "pocket", "path": "sos1-v7-5ove-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.28, "sizeFactor": 0.11 },
+        { "ref": "ligand", "path": "sos1-v7-awz-prediction-ligand.pdb", "representation": "ball-and-stick", "sizeFactor": 0.23, "provenance": { "id": "awz", "addedAtomNames": ["CX2", "CX3", "CX4", "CX5", "CX6", "NX1", "CX7", "NX2", "CX8", "CX9", "CX10", "SX1"] } },
+        { "ref": "phe-peptide", "path": "sos1-v7-awz-prediction-phe890-peptide.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.60, "sizeFactor": 0.13 },
+        { "ref": "phe-highlight", "path": "sos1-v7-awz-prediction-phe890.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.18 }
+      ]
+    },
+    "awzValidation": {
+      "label": "Compound 18 · 5OVG crystal",
+      "coordinateClass": "evaluation-holdout",
+      "coordinateLabel": "POST-FREEZE CRYSTAL · 1.53 Å from prediction",
+      "models": [
+        { "ref": "pocket", "path": "sos1-v7-5ove-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.24, "sizeFactor": 0.11 },
+        { "ref": "crystal", "path": "sos1-v7-awz-crystal-ligand.pdb", "representation": "ball-and-stick", "color": "#dc8747", "sizeFactor": 0.23 },
+        { "ref": "phe-peptide", "path": "sos1-v7-awz-crystal-phe890-peptide.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.60, "sizeFactor": 0.13 },
+        { "ref": "phe-highlight", "path": "sos1-v7-awz-crystal-phe890.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.18 }
+      ]
+    },
+    "awwBeforeFlip": {
+      "label": "Compound 21 growth · Phe890 still in",
+      "coordinateClass": "frozen-prediction",
+      "coordinateLabel": "PROSPECTIVE SEARCH · coupled ligand / side-chain state",
+      "models": [
+        { "ref": "pocket", "path": "sos1-v7-5ove-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.28, "sizeFactor": 0.11 },
+        { "ref": "ligand", "path": "sos1-v7-aww-prediction-ligand.pdb", "representation": "ball-and-stick", "sizeFactor": 0.23, "provenance": { "id": "aww", "addedAtomNames": ["CX6", "OX1", "CX7", "CX8", "OX2", "CX9", "CX10", "CX11", "CX12", "CX13", "CX14", "CX15", "CX16", "OX3", "CX17"] } },
+        { "ref": "phe-peptide", "path": "sos1-v7-awz-prediction-phe890-peptide.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.65, "sizeFactor": 0.13 },
+        { "ref": "phe-highlight", "path": "sos1-v7-awz-prediction-phe890.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.20 },
+        { "ref": "clashes", "path": "sos1-v7-aww-phe-in-clash-markers.pdb", "representation": "ball-and-stick", "color": "#df2f8b", "sizeFactor": 0.38 }
+      ]
+    },
+    "awwBranches": {
+      "label": "Compound 21 · Phe-in branch rejected",
+      "coordinateClass": "frozen-prediction",
+      "coordinateLabel": "BRANCH SEARCH · Phe-out adds zero clashes",
+      "extends": "awwBeforeFlip"
+    },
+    "awwFlipBase": {
+      "label": "Compound 21 · predicted protein motion",
+      "coordinateClass": "frozen-prediction",
+      "coordinateLabel": "PREDICTED MOTION · Phe-in to Phe-out",
+      "models": [
+        { "ref": "pocket", "path": "sos1-v7-5ove-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.25, "sizeFactor": 0.11 },
+        { "ref": "ligand", "path": "sos1-v7-aww-prediction-ligand.pdb", "representation": "ball-and-stick", "sizeFactor": 0.23, "provenance": { "id": "aww", "addedAtomNames": ["CX6", "OX1", "CX7", "CX8", "OX2", "CX9", "CX10", "CX11", "CX12", "CX13", "CX14", "CX15", "CX16", "OX3", "CX17"] } }
+      ]
+    },
+    "pheFlip0": { "extends": "awwFlipBase", "label": "Phe890 flip · 0%", "coordinateClass": "frozen-prediction", "coordinateLabel": "PREDICTED MOTION · Phe-in to Phe-out", "models": [ { "ref": "phe-peptide", "path": "sos1-v7-phe890-flip-peptide-00.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.68, "sizeFactor": 0.13 }, { "ref": "phe-highlight", "path": "sos1-v7-phe890-flip-00.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.21 } ] },
+    "pheFlip1": { "extends": "awwFlipBase", "label": "Phe890 flip · 12%", "coordinateClass": "frozen-prediction", "coordinateLabel": "PREDICTED MOTION · Phe-in to Phe-out", "models": [ { "ref": "phe-peptide", "path": "sos1-v7-phe890-flip-peptide-01.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.68, "sizeFactor": 0.13 }, { "ref": "phe-highlight", "path": "sos1-v7-phe890-flip-01.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.21 } ] },
+    "pheFlip2": { "extends": "awwFlipBase", "label": "Phe890 flip · 25%", "coordinateClass": "frozen-prediction", "coordinateLabel": "PREDICTED MOTION · Phe-in to Phe-out", "models": [ { "ref": "phe-peptide", "path": "sos1-v7-phe890-flip-peptide-02.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.68, "sizeFactor": 0.13 }, { "ref": "phe-highlight", "path": "sos1-v7-phe890-flip-02.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.21 } ] },
+    "pheFlip3": { "extends": "awwFlipBase", "label": "Phe890 flip · 38%", "coordinateClass": "frozen-prediction", "coordinateLabel": "PREDICTED MOTION · Phe-in to Phe-out", "models": [ { "ref": "phe-peptide", "path": "sos1-v7-phe890-flip-peptide-03.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.68, "sizeFactor": 0.13 }, { "ref": "phe-highlight", "path": "sos1-v7-phe890-flip-03.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.21 } ] },
+    "pheFlip4": { "extends": "awwFlipBase", "label": "Phe890 flip · 50%", "coordinateClass": "frozen-prediction", "coordinateLabel": "PREDICTED MOTION · Phe-in to Phe-out", "models": [ { "ref": "phe-peptide", "path": "sos1-v7-phe890-flip-peptide-04.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.68, "sizeFactor": 0.13 }, { "ref": "phe-highlight", "path": "sos1-v7-phe890-flip-04.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.21 } ] },
+    "pheFlip5": { "extends": "awwFlipBase", "label": "Phe890 flip · 62%", "coordinateClass": "frozen-prediction", "coordinateLabel": "PREDICTED MOTION · Phe-in to Phe-out", "models": [ { "ref": "phe-peptide", "path": "sos1-v7-phe890-flip-peptide-05.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.68, "sizeFactor": 0.13 }, { "ref": "phe-highlight", "path": "sos1-v7-phe890-flip-05.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.21 } ] },
+    "pheFlip6": { "extends": "awwFlipBase", "label": "Phe890 flip · 75%", "coordinateClass": "frozen-prediction", "coordinateLabel": "PREDICTED MOTION · Phe-in to Phe-out", "models": [ { "ref": "phe-peptide", "path": "sos1-v7-phe890-flip-peptide-06.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.68, "sizeFactor": 0.13 }, { "ref": "phe-highlight", "path": "sos1-v7-phe890-flip-06.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.21 } ] },
+    "pheFlip7": { "extends": "awwFlipBase", "label": "Phe890 flip · 88%", "coordinateClass": "frozen-prediction", "coordinateLabel": "PREDICTED MOTION · Phe-in to Phe-out", "models": [ { "ref": "phe-peptide", "path": "sos1-v7-phe890-flip-peptide-07.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.68, "sizeFactor": 0.13 }, { "ref": "phe-highlight", "path": "sos1-v7-phe890-flip-07.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.21 } ] },
+    "pheFlip8": { "extends": "awwFlipBase", "label": "Phe890 flip · 100%", "coordinateClass": "frozen-prediction", "coordinateLabel": "PREDICTED MOTION · Phe-in to Phe-out", "models": [ { "ref": "phe-peptide", "path": "sos1-v7-phe890-flip-peptide-08.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.68, "sizeFactor": 0.13 }, { "ref": "phe-highlight", "path": "sos1-v7-phe890-flip-08.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.21 } ] },
+    "awwFrozen": {
+      "label": "Compound 21 · frozen Phe-out prediction",
+      "coordinateClass": "frozen-prediction",
+      "coordinateLabel": "PREDICTION FROZEN · Agent API sequence 78",
+      "models": [
+        { "ref": "pocket", "path": "sos1-v7-5ove-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.25, "sizeFactor": 0.11 },
+        { "ref": "ligand", "path": "sos1-v7-aww-prediction-ligand.pdb", "representation": "ball-and-stick", "sizeFactor": 0.23, "provenance": { "id": "aww-frozen", "addedAtomNames": ["CX6", "OX1", "CX7", "CX8", "OX2", "CX9", "CX10", "CX11", "CX12", "CX13", "CX14", "CX15", "CX16", "OX3", "CX17"] } },
+        { "ref": "phe-peptide", "path": "sos1-v7-aww-prediction-phe890-peptide.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.68, "sizeFactor": 0.13 },
+        { "ref": "phe-highlight", "path": "sos1-v7-aww-prediction-phe890.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.21 }
+      ]
+    },
+    "awwValidation": {
+      "label": "Compound 21 · 5OVH crystal",
+      "coordinateClass": "evaluation-holdout",
+      "coordinateLabel": "POST-FREEZE CRYSTAL · Phe-out basin confirmed",
+      "models": [
+        { "ref": "pocket", "path": "sos1-v7-5ove-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.25, "sizeFactor": 0.11 },
+        { "ref": "crystal", "path": "sos1-v7-aww-crystal-ligand.pdb", "representation": "ball-and-stick", "color": "#dc8747", "sizeFactor": 0.23 },
+        { "ref": "phe-peptide", "path": "sos1-v7-aww-crystal-phe890-peptide.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.68, "sizeFactor": 0.13 },
+        { "ref": "phe-highlight", "path": "sos1-v7-aww-crystal-phe890.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.21 }
+      ]
+    },
+    "axhPrediction": {
+      "label": "BAY-293 · frozen AXH prediction",
+      "coordinateClass": "frozen-prediction",
+      "coordinateLabel": "PREDICTION · inherited Phe-out pocket",
+      "models": [
+        { "ref": "pocket", "path": "sos1-v7-5ove-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.25, "sizeFactor": 0.11 },
+        { "ref": "ligand", "path": "sos1-v7-axh-prediction-ligand.pdb", "representation": "ball-and-stick", "sizeFactor": 0.23, "provenance": { "id": "axh", "addedAtomNames": ["CX5", "NX1", "CX6", "CX7", "CX8", "CX9", "CX10", "CX11", "CX12", "CX13", "CX14", "OX1", "CX15", "CX16", "OX2", "CX17", "CX18"] } },
+        { "ref": "phe-peptide", "path": "sos1-v7-axh-prediction-phe890-peptide.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.68, "sizeFactor": 0.13 },
+        { "ref": "phe-highlight", "path": "sos1-v7-axh-prediction-phe890.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.21 }
+      ]
+    },
+    "axhValidation": {
+      "label": "BAY-293 · 5OVI crystal",
+      "coordinateClass": "evaluation-holdout",
+      "coordinateLabel": "POST-FREEZE CRYSTAL · 1.215 Å ligand RMSD",
+      "models": [
+        { "ref": "pocket", "path": "sos1-v7-5ove-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.25, "sizeFactor": 0.11 },
+        { "ref": "crystal", "path": "sos1-v7-axh-crystal-ligand.pdb", "representation": "ball-and-stick", "color": "#dc8747", "sizeFactor": 0.23 },
+        { "ref": "phe-peptide", "path": "sos1-v7-axh-crystal-phe890-peptide.pdb", "representation": "ball-and-stick", "color": "#596b7e", "alpha": 0.68, "sizeFactor": 0.13 },
+        { "ref": "phe-highlight", "path": "sos1-v7-axh-crystal-phe890.pdb", "representation": "ball-and-stick", "color": "#c5912e", "sizeFactor": 0.21 }
+      ]
+    }
+  },
+  "discardedCues": [
+    {
+      "id": "f1-fragment-start", "title": "1 · Start with fragment F1 in the assembled complex",
+      "body": "The fragment screen finds F1 bound only to the KRAS–SOS1 complex. This small ligand is the first structural clue: it reveals an adjacent pocket that the inhibitor series has not reached.",
+      "detail": "Historical input · PDB 6EPM/BQ5 · NMR fragment hit F1",
+      "focusLabel": "fragment F1", "focusPosition": [51, 53], "scene": "f1Hit", "durationMs": 4000,
+      "cameraStart": "masterLocked", "cameraEnd": "masterLocked",
+      "decisionCard": { "title": "Fragment screen", "rows": [
+        { "label": "Library", "value": "3,000 fragments" },
+        { "label": "Structural hit", "value": "F1 · 6EPM", "status": "select" },
+        { "label": "Pocket", "value": "Phe890-out" }
+      ], "note": "F1 supplies pocket information, not yet the desired inhibitory function." }
+    },
+    {
+      "id": "f1-wrong-direction", "title": "1 · The fragment opens the pocket—but stabilizes KRAS–SOS1",
+      "body": "F1 stacks with Phe890 and contacts Tyr884 and Asp887. The open pocket is valuable, but Tyr884 remains compatible with KRAS Arg73, so the fragment strengthens the complex instead of disrupting it.",
+      "detail": "Observed mechanism · Tyr884 remains KRAS-compatible · Phe890 is already out",
+      "focusLabel": "useful pocket · wrong function", "focusPosition": [49, 49], "scene": "f1Mechanism", "durationMs": 4200,
+      "cameraStart": "masterLocked", "cameraEnd": "masterLocked",
+      "callouts": [
+        { "label": "Tyr884 ↔ KRAS Arg73", "x": 42, "y": 39, "tone": "protein" },
+        { "label": "F1-induced Phe890-out pocket", "x": 58, "y": 57, "tone": "success" }
+      ],
+      "decisionCard": { "title": "Result · mechanistic clue", "rows": [
+        { "label": "Pocket", "value": "new subpocket", "status": "select" },
+        { "label": "Function", "value": "complex stabilizer", "status": "reject" },
+        { "label": "Direct F1 SAR", "value": "no major gain" }
+      ], "note": "Keep the structural lesson; do not pretend F1 itself is already an inhibitor." }
+    },
+    {
+      "id": "hit-only-start", "title": "2 · Bring in the independent inhibitor hit",
+      "body": "A parallel three-million-compound HTS finds compound 1. Unlike F1, 5OVE/AXE disrupts KRAS–SOS1; this becomes the sole coordinate input for the prospective Agent API optimization branch.",
+      "detail": "Parallel historical input · PDB 5OVE/AXE · prospective branch begins here",
+      "focusLabel": "correct inhibitory function", "scene": "hit", "durationMs": 4000,
+      "cameraStart": "masterLocked", "cameraEnd": "masterLocked",
+      "decisionCard": { "title": "HTS branch", "rows": [
+        { "label": "Library", "value": ">3 million compounds" },
+        { "label": "Selected hit", "value": "compound 1 · 5OVE", "status": "select" },
+        { "label": "Function", "value": "KRAS–SOS1 disruptor" }
+      ], "note": "This is a second experimental starting point, not a crystal revealed after prediction." }
+    },
+    {
+      "id": "compare-tyr884-states", "title": "2 · Focus on why the second hit inhibits",
+      "body": "Hold compound 1 and the KRAS Arg73 reference fixed, then move the camera only to the functional switch. The question is whether Tyr884 can still make its KRAS-compatible stacking contact.",
+      "detail": "Mechanism comparison · 6EPM KRAS reference aligned to 5OVE SOS1",
+      "focusLabel": "Tyr884 interface switch", "focusPosition": [47, 45], "scene": "tyrShift0", "durationMs": 3000,
+      "cameraStart": "masterLocked", "cameraEnd": "tyr884Locked",
+      "decisionCard": { "title": "Mechanistic comparison", "rows": [
+        { "label": "Fixed", "value": "compound 1 + KRAS Arg73" },
+        { "label": "Moving point", "value": "Tyr884", "status": "select" },
+        { "label": "Question", "value": "KRAS contact retained?" }
+      ], "note": "The zoom occurs at the causal residue and nowhere else in this beat." }
+    },
+    {
+      "id": "tyr884-shift-slow-motion", "title": "2 · Tyr884 moves away from KRAS",
+      "body": "The ligand, peptide frame, and KRAS Arg73 reference stay fixed while Tyr884 moves from the F1-compatible state to the inhibitor-bound 5OVE state. That displacement weakens the interface that F1 had stabilized.",
+      "detail": "Observed endpoints · Tyr884 OH displacement 1.38 Å after SOS1 alignment",
+      "focusLabel": "inhibitor-displaced Tyr884", "focusPosition": [48, 44], "scene": "tyrShift0",
+      "sceneSequence": ["tyrShift0", "tyrShift1", "tyrShift2", "tyrShift3", "tyrShift4", "tyrShift5", "tyrShift6", "tyrShift7", "tyrShift8"],
+      "durationMs": 3800, "cameraStart": "tyr884Locked", "cameraEnd": "tyr884Locked",
+      "callouts": [{ "label": "KRAS-compatible → inhibitor-displaced", "x": 51, "y": 43, "tone": "success" }]
+    },
+    {
+      "id": "awt-frozen-prediction", "title": "3 · Rewrite the inhibitor scaffold",
+      "body": "The first graph rewrite preserves the hit-derived binding frame. Pose search and induced-fit relaxation are executed through the public Agent API, then the AWT state is frozen.",
+      "detail": "Agent API · applyStep → pose.refine → pose.apply → optimization.run · freeze sequence 12",
+      "focusLabel": "frozen compound 17 prediction", "scene": "awtPrediction", "durationMs": 3200,
+      "cameraStart": "masterLocked", "cameraEnd": "masterLocked"
+    },
+    {
+      "id": "awt-post-freeze-reveal", "title": "3 · The first predicted pose lands",
+      "body": "Only after the prediction is frozen does 5OVF appear. The scaffold-rewrite pose is recovered without fitting the ligand to the crystal.",
+      "detail": "5OVF opened after freeze · ligand RMSD 0.52 Å · Phe890 remains in",
+      "focusLabel": "post-freeze 5OVF crystal", "scene": "awtValidation", "durationMs": 3600,
+      "cameraStart": "masterLocked", "cameraEnd": "masterLocked"
+    },
+    {
+      "id": "awz-frozen-prediction", "title": "4 · Merge the fragment lesson into the inhibitor",
+      "body": "Compound 18 makes the substantial thiophene-linked growth suggested by superimposing compound 17 with F1. It starts from the preceding prediction, not from the newly revealed 5OVF coordinates.",
+      "detail": "Agent API · predicted AWT becomes pose reference · AWZ freeze sequence 22",
+      "focusLabel": "large fragment merge", "scene": "awzPrediction", "durationMs": 3400,
+      "cameraStart": "masterLocked", "cameraEnd": "masterLocked"
+    },
+    {
+      "id": "awz-post-freeze-reveal", "title": "4 · The first hybrid still leaves Phe890 in",
+      "body": "The 5OVG evaluation confirms the retained Phe890 basin. Ligand placement is useful but not presented as atom-perfect.",
+      "detail": "5OVG opened after freeze · ligand RMSD 1.53 Å · predicted χ1 −73.4°, crystal −75.6°",
+      "focusLabel": "post-freeze 5OVG crystal", "scene": "awzValidation", "durationMs": 3800,
+      "cameraStart": "masterLocked", "cameraEnd": "masterLocked"
+    },
+    {
+      "id": "grow-into-phe890", "title": "5 · Growth reaches the movable wall F1 revealed",
+      "body": "Compound 21 adds the ring that reaches the Phe890 volume. Holding the original side chain fixed no longer gives a feasible continuation.",
+      "detail": "Conserved-junction ring-axis sampling · twelve 30° ligand orientations",
+      "focusLabel": "ring growth meets Phe890", "scene": "awwBeforeFlip", "durationMs": 3200,
+      "cameraStart": "masterLocked", "cameraEnd": "masterLocked"
+    },
+    {
+      "id": "compare-phe890-branches", "title": "5 · Test the conformational alternatives",
+      "body": "The coupled search evaluates three Phe890 basins against the same ligand growth. Phe-in is infeasible at +4 new clashes; Phe-out adds 0; the +60° basin adds 2.",
+      "detail": "Agent API · enumerateSidechainRotamers → applySidechainRotamer → updateReceptorReference → pose.refine",
+      "focusLabel": "Phe-out selected · motion follows", "scene": "awwBranches", "durationMs": 4400,
+      "cameraStart": "masterLocked", "cameraEnd": "phe890Locked"
+    },
+    {
+      "id": "phe890-flip-slow-motion", "title": "5 · Predict the Phe890-out pocket seen with F1",
+      "body": "The camera and ligand stay fixed while Phe890 moves from the inhibitor-series Phe-in basin into the selected Phe-out state. This prospective motion recovers the pocket state that the fragment screen had exposed.",
+      "detail": "Predicted χ1 moves from −73° to −172° · no future receptor coordinates used",
+      "focusLabel": "prospective Phe890 flip", "scene": "pheFlip0",
+      "sceneSequence": ["pheFlip0", "pheFlip1", "pheFlip2", "pheFlip3", "pheFlip4", "pheFlip5", "pheFlip6", "pheFlip7", "pheFlip8"],
+      "durationMs": 3400, "cameraStart": "phe890Locked", "cameraEnd": "phe890Locked"
+    },
+    {
+      "id": "freeze-aww", "title": "5 · Freeze the open-pocket prediction",
+      "body": "The selected Phe-out receptor and compound-21 ligand pose are serialized before 5OVH is accessible. The trajectory can now be evaluated without changing it.",
+      "detail": "Agent API freeze sequence 78 · checkpoint 096e025eb610 · holdout still unopened",
+      "focusLabel": "frozen Phe-out prediction", "scene": "awwFrozen", "durationMs": 2700,
+      "cameraStart": "phe890Locked", "cameraEnd": "phe890Locked"
+    },
+    {
+      "id": "reveal-5ovh", "title": "5 · The crystal confirms the predicted pocket switch",
+      "body": "5OVH places Phe890 in the same outward basin. The ligand is not perfect, but the conformational event required by the design was predicted from the hit-derived trajectory.",
+      "detail": "5OVH opened after freeze · χ1 predicted −172.2°, crystal 175.8° · ligand RMSD 2.14 Å",
+      "focusLabel": "post-freeze Phe-out crystal", "scene": "awwValidation", "durationMs": 4800,
+      "cameraStart": "phe890Locked", "cameraEnd": "phe890Locked"
+    },
+    {
+      "id": "grow-bay-293", "title": "6 · Finish inside the predicted open pocket",
+      "body": "BAY-293 is grown from the frozen compound-21 prediction. Its terminal aminomethyl group is placed without replacing the receptor by 5OVH.",
+      "detail": "Agent API · applyStep → 64-chain pose refinement · predicted Phe-out state inherited",
+      "focusLabel": "BAY-293 prospective pose", "scene": "axhPrediction", "durationMs": 3500,
+      "cameraStart": "phe890Locked", "cameraEnd": "phe890Locked"
+    },
+    {
+      "id": "freeze-axh", "title": "6 · Freeze the final lead prediction",
+      "body": "The complete BAY-293 ligand and pocket are hashed under the original 5OVE-only boundary before the final crystal is opened.",
+      "detail": "Agent API freeze sequence 88 · checkpoint 19e82cebbddc · 5OVI still unopened",
+      "focusLabel": "final prediction frozen", "scene": "axhPrediction", "durationMs": 2600,
+      "cameraStart": "phe890Locked", "cameraEnd": "phe890Locked"
+    },
+    {
+      "id": "reveal-5ovi", "title": "6 · The BAY-293 pose is recovered",
+      "body": "The post-freeze 5OVI crystal confirms the final ligand pose and the persistent Phe-out state. The hit-only trajectory ends in the reported chemical probe geometry.",
+      "detail": "5OVI opened after freeze · ligand RMSD 1.22 Å · χ1 predicted −172.4°, crystal −166.5°",
+      "focusLabel": "post-freeze BAY-293 crystal", "scene": "axhValidation", "durationMs": 4800,
+      "cameraStart": "phe890Locked", "cameraEnd": "phe890Locked"
+    },
+    {
+      "id": "success", "title": "Two starting discoveries converge on one successful inhibitor",
+      "body": "F1 contributes the hidden-pocket and Phe890-out lesson; compound 1 contributes the Tyr884-displacing inhibitory mechanism. Four sequential Agent API steps then carry the inhibitor branch through the merge to BAY-293.",
+      "detail": "F1 pocket clue + compound 1 inhibitor → 17 → 18 → 21 → BAY-293 · 21 nM",
+      "focusLabel": "prospective hit-to-lead success", "scene": "axhValidation", "durationMs": 4200,
+      "cameraStart": "phe890Locked", "cameraEnd": "phe890Locked"
+    }
+  ],
+  "cues": [
+    {
+      "id": "hit-only-start", "title": "1 · Start from the hit—and change its scaffold",
+      "body": "Compound 1 in 5OVE is the only coordinate-bearing starting point. Its inhibitory Tyr884 arrangement is already present at time zero; no Tyr884 motion is claimed as a prediction.",
+      "detail": "Allowed input · PDB 5OVE/AXE only · future crystals unopened",
+      "focusLabel": "starting inhibitor hit", "scene": "hit", "durationMs": 3800,
+      "cameraStart": "masterLocked", "cameraEnd": "masterLocked",
+      "decisionCard": { "title": "Prospective boundary", "rows": [
+        { "label": "Coordinate input", "value": "5OVE/AXE", "status": "select" },
+        { "label": "Tyr884", "value": "present at start" },
+        { "label": "5OVF–5OVI", "value": "still unopened" }
+      ], "note": "The success claim begins from this hit PDB." }
+    },
+    {
+      "id": "awt-frozen-prediction", "title": "2 · Rewrite the scaffold",
+      "body": "The Agent API applies the scaffold rewrite, refines the pose, and freezes compound 17 while retaining the hit-derived binding frame.",
+      "detail": "Agent API · applyStep → pose.refine → pose.apply · freeze sequence 12",
+      "focusLabel": "frozen compound 17 prediction", "scene": "awtPrediction", "durationMs": 3200,
+      "cameraStart": "masterLocked", "cameraEnd": "masterLocked"
+    },
+    {
+      "id": "awt-post-freeze-reveal", "title": "2 · The first pose lands",
+      "body": "Only after freezing the prediction is 5OVF opened. The scaffold-rewrite pose is recovered without fitting the ligand to the crystal.",
+      "detail": "Post-freeze 5OVF evaluation · ligand RMSD 0.52 Å · Phe890 remains in",
+      "focusLabel": "post-freeze 5OVF crystal", "scene": "awtValidation", "durationMs": 3600,
+      "cameraStart": "masterLocked", "cameraEnd": "masterLocked"
+    },
+    {
+      "id": "awz-frozen-prediction", "title": "3 · Merge a larger fragment",
+      "body": "A substantial thiophene-linked region is added to make compound 18. The frozen compound-17 prediction—not the newly revealed crystal—is the pose reference.",
+      "detail": "Agent API · predicted AWT reference · AWZ freeze sequence 22",
+      "focusLabel": "larger fragment growth", "scene": "awzPrediction", "durationMs": 3400,
+      "cameraStart": "masterLocked", "cameraEnd": "masterLocked"
+    },
+    {
+      "id": "awz-post-freeze-reveal", "title": "3 · The pocket is still Phe890-in",
+      "body": "The 5OVG evaluation confirms that this hybrid still occupies the original Phe890 basin. The ligand placement is useful, but not presented as atom-perfect.",
+      "detail": "Post-freeze 5OVG · 1.53 Å ligand RMSD · χ1 predicted −73.4°, crystal −75.6°",
+      "focusLabel": "Phe890-in retained", "scene": "awzValidation", "durationMs": 3800,
+      "cameraStart": "masterLocked", "cameraEnd": "masterLocked"
+    },
+    {
+      "id": "grow-into-phe890", "title": "4 · Growth reaches a movable wall",
+      "body": "Compound 21 reaches the Phe890 volume. Magenta collision markers show why continuing with the starting Phe890-in receptor is no longer feasible.",
+      "detail": "Coupled ligand/side-chain search · Phe-in adds four clashes",
+      "focusLabel": "growth collides with Phe890", "focusPosition": [54, 53], "scene": "awwBeforeFlip", "durationMs": 3200,
+      "cameraStart": "masterLocked", "cameraEnd": "phe890Locked"
+    },
+    {
+      "id": "compare-phe890-branches", "title": "4 · Test the conformational alternatives",
+      "body": "Production rotamer search evaluates the same ligand against three Phe890 basins. Phe-in adds four clashes; Phe-out adds none and is selected.",
+      "detail": "Agent API · enumerateSidechainRotamers → applySidechainRotamer → updateReceptorReference → pose.refine",
+      "focusLabel": "Phe890-out selected", "scene": "awwBranches", "durationMs": 4400,
+      "cameraStart": "phe890Locked", "cameraEnd": "phe890Locked",
+      "decisionCard": { "title": "Phe890 branch search", "rows": [
+        { "label": "Phe-in", "value": "+4 clashes", "status": "reject" },
+        { "label": "Phe-out", "value": "+0 clashes", "status": "select" },
+        { "label": "+60° basin", "value": "+2 clashes" }
+      ], "note": "This is the prospective conformational decision." }
+    },
+    {
+      "id": "phe890-flip-slow-motion", "title": "4 · Let the predicted pocket open",
+      "body": "The ligand and camera remain fixed while Phe890 alone rotates from the hit-derived in basin to the selected out basin. The gold side chain remains attached to its grey peptide context.",
+      "detail": "Predicted χ1: −73° → −172° · no future receptor coordinates used",
+      "focusLabel": "predicted Phe890 motion", "scene": "pheFlip0",
+      "sceneSequence": ["pheFlip0", "pheFlip1", "pheFlip2", "pheFlip3", "pheFlip4", "pheFlip5", "pheFlip6", "pheFlip7", "pheFlip8"],
+      "durationMs": 3400, "cameraStart": "phe890Locked", "cameraEnd": "phe890Locked"
+    },
+    {
+      "id": "freeze-aww", "title": "4 · Freeze the open-pocket prediction",
+      "body": "Compound 21 and the selected Phe890-out receptor are serialized before 5OVH becomes accessible.",
+      "detail": "Agent API freeze sequence 78 · checkpoint 096e025eb610 · 5OVH unopened",
+      "focusLabel": "frozen Phe890-out prediction", "scene": "awwFrozen", "durationMs": 2700,
+      "cameraStart": "phe890Locked", "cameraEnd": "phe890Locked"
+    },
+    {
+      "id": "reveal-5ovh", "title": "4 · The crystal confirms the predicted switch",
+      "body": "The same locked camera cuts to 5OVH. The crystal places Phe890 in the outward basin predicted from the hit-only trajectory.",
+      "detail": "Post-freeze 5OVH · χ1 predicted −172.2°, crystal 175.8° · ligand RMSD 2.14 Å",
+      "focusLabel": "post-freeze Phe890-out crystal", "scene": "awwValidation", "durationMs": 4800,
+      "cameraStart": "phe890Locked", "cameraEnd": "phe890Locked"
+    },
+    {
+      "id": "grow-bay-293", "title": "5 · Finish inside the predicted open pocket",
+      "body": "BAY-293 is grown from the frozen compound-21 prediction. The final aminomethyl group is placed without replacing the receptor by 5OVH.",
+      "detail": "Agent API · applyStep → 64-chain pose refinement · predicted Phe890-out inherited",
+      "focusLabel": "BAY-293 prospective pose", "scene": "axhPrediction", "durationMs": 3500,
+      "cameraStart": "finalCompareLocked", "cameraEnd": "finalCompareLocked"
+    },
+    {
+      "id": "freeze-axh", "title": "5 · Freeze the final lead prediction",
+      "body": "The complete BAY-293 ligand and its Phe890-out pocket are hashed under the original 5OVE-only boundary before the final crystal is opened.",
+      "detail": "Agent API freeze sequence 88 · checkpoint 19e82cebbddc · 5OVI unopened",
+      "focusLabel": "final prediction frozen", "scene": "axhPrediction", "durationMs": 2600,
+      "cameraStart": "finalCompareLocked", "cameraEnd": "finalCompareLocked"
+    },
+    {
+      "id": "reveal-5ovi", "title": "5 · The final pose is recovered",
+      "body": "Without moving the camera, the frozen purple prediction cuts to the orange 5OVI crystal. The overall pose and Phe890-out state are recovered; remaining coordinate differences stay visible.",
+      "detail": "Post-freeze 5OVI · ligand RMSD 1.215 Å · Phe890 χ1 predicted −172.43°, crystal −166.55°",
+      "focusLabel": "prediction → crystal", "scene": "axhValidation", "durationMs": 4800,
+      "cameraStart": "finalCompareLocked", "cameraEnd": "finalCompareLocked",
+      "decisionCard": { "title": "Prediction versus 5OVI", "rows": [
+        { "label": "Ligand RMSD", "value": "1.215 Å" },
+        { "label": "Phe890 χ1 predicted", "value": "−172.43°", "status": "select" },
+        { "label": "Phe890 χ1 crystal", "value": "−166.55°" }
+      ], "note": "Same camera, no post-reveal fitting." }
+    },
+    {
+      "id": "success", "title": "A hit-only trajectory predicts the enabling change",
+      "body": "Starting from 5OVE/AXE, sequential Agent API edits reach compound 21, predict the Phe890-out pocket, and finish BAY-293. Later crystals evaluate—but never seed—the trajectory.",
+      "detail": "5OVE hit → 17 → 18 → 21 + predicted Phe890-out → BAY-293 · 21 nM",
+      "focusLabel": "prospective conformational success", "scene": "axhValidation", "durationMs": 4200,
+      "cameraStart": "finalCompareLocked", "cameraEnd": "finalCompareLocked"
+    }
+  ]
+}

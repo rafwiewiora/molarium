@@ -56,7 +56,7 @@ feature transfer, Undo, and Redo therefore behave exactly as they do for an inte
 ## Available routes
 
 - `session.inspect`
-- `view.setMode`
+- `view.setMode`, `view.focusComponent`, `view.setDisplay`
 - `build.setTool`
 - `protein.prepare`, `protein.parameterize`
 - `selection.replace`, `selection.clear`
