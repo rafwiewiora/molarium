@@ -537,6 +537,8 @@ Frozen predictions made before the rename retain their original input hash. A
 migration record stores both hashes and is accepted only when replacing the
 schema identifier reconstructs the exact frozen bytes; any other field change
 still fails verification.
+Existing replay files retain the \texttt{designCampaign.*} action namespace for
+compatibility; that operation name does not identify the JSON ledger schema.
 
 The fingerprint seals one exact recorded representation. Two chemically
 equivalent SMILES, tautomers, protonation states, or atom orderings can still
