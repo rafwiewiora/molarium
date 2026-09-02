@@ -1,0 +1,52 @@
+REMARK 950 FROZEN HIT-ONLY PREDICTION finish-at7519
+HETATM    1  OX1 PRD A   1      29.742   6.423  66.902  1.00 20.00           O  
+HETATM    2  CX1 PRD A   1      29.378   6.380  65.733  1.00 20.00           C  
+HETATM    3  NX1 PRD A   1      29.846   7.201  64.720  1.00 20.00           N  
+HETATM    4  CX2 PRD A   1      30.781   8.232  64.780  1.00 20.00           C  
+HETATM    5  CX3 PRD A   1      32.168   7.875  64.182  1.00 20.00           C  
+HETATM    6  CX4 PRD A   1      33.076   9.164  64.165  1.00 20.00           C  
+HETATM    7  NX3 PRD A   1      33.623   9.474  65.440  1.00 20.00           N  
+HETATM    8  CX5 PRD A   1      32.625   9.472  66.525  1.00 20.00           C  
+HETATM    9  CX6 PRD A   1      31.185   8.980  66.156  1.00 20.00           C  
+HETATM   10   C9 PRD A   1      28.384   5.413  65.290  1.00 20.00           C  
+HETATM   11   N2 PRD A   1      28.364   4.137  65.698  1.00 20.00           N  
+HETATM   12    N PRD A   1      27.308   3.547  65.078  1.00 20.00           N  
+HETATM   13   C1 PRD A   1      26.647   4.430  64.263  1.00 20.00           C  
+HETATM   14   C2 PRD A   1      27.329   5.650  64.375  1.00 20.00           C  
+HETATM   15  NX2 PRD A   1      27.071   6.829  63.689  1.00 20.00           N  
+HETATM   16  CX9 PRD A   1      26.110   7.019  62.717  1.00 20.00           C  
+HETATM   17  OX2 PRD A   1      25.243   6.221  62.386  1.00 20.00           O  
+HETATM   18  CX8 PRD A   1      26.224   8.287  61.972  1.00 20.00           C  
+HETATM   19 CX10 PRD A   1      25.861   8.381  60.610  1.00 20.00           C  
+HETATM   20 CLX1 PRD A   1      25.190   7.068  59.698  1.00 20.00          Cl  
+HETATM   21 CX11 PRD A   1      26.028   9.596  59.925  1.00 20.00           C  
+HETATM   22 CX12 PRD A   1      26.550  10.715  60.594  1.00 20.00           C  
+HETATM   23 CX13 PRD A   1      26.901  10.627  61.949  1.00 20.00           C  
+HETATM   24 CX14 PRD A   1      26.742   9.417  62.632  1.00 20.00           C  
+HETATM   25 CLX2 PRD A   1      27.162   9.507  64.324  1.00 20.00          Cl  
+CONECT    1    2
+CONECT    2    1    3   10
+CONECT    3    2    4
+CONECT    4    3    5    9
+CONECT    5    4    6
+CONECT    6    5    7
+CONECT    7    6    8
+CONECT    8    7    9
+CONECT    9    4    8
+CONECT   10    2   11   14
+CONECT   11   10   12
+CONECT   12   11   13
+CONECT   13   12   14
+CONECT   14   10   13   15
+CONECT   15   14   16
+CONECT   16   15   17   18
+CONECT   17   16
+CONECT   18   16   19   24
+CONECT   19   18   20   21
+CONECT   20   19
+CONECT   21   19   22
+CONECT   22   21   23
+CONECT   23   22   24
+CONECT   24   18   23   25
+CONECT   25   24
+END

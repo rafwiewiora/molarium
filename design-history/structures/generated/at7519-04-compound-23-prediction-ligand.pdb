@@ -1,0 +1,54 @@
+REMARK 950 FROZEN HIT-ONLY PREDICTION lock-difluoro-torsion
+HETATM    1  OX1 PRD A   1      29.742   6.423  66.902  1.00 20.00           O  
+HETATM    2  CX1 PRD A   1      29.378   6.380  65.733  1.00 20.00           C  
+HETATM    3  NX1 PRD A   1      29.846   7.201  64.720  1.00 20.00           N  
+HETATM    4  CX2 PRD A   1      30.781   8.232  64.780  1.00 20.00           C  
+HETATM    5  CX3 PRD A   1      30.781   9.140  63.708  1.00 20.00           C  
+HETATM    6  CX4 PRD A   1      31.694  10.203  63.677  1.00 20.00           C  
+HETATM    7  CX5 PRD A   1      32.626  10.354  64.714  1.00 20.00           C  
+HETATM    8  FX1 PRD A   1      33.503  11.349  64.678  1.00 20.00           F  
+HETATM    9  CX6 PRD A   1      32.642   9.442  65.780  1.00 20.00           C  
+HETATM   10  CX7 PRD A   1      31.724   8.382  65.817  1.00 20.00           C  
+HETATM   11   C9 PRD A   1      28.384   5.413  65.290  1.00 20.00           C  
+HETATM   12   N2 PRD A   1      28.364   4.137  65.698  1.00 20.00           N  
+HETATM   13    N PRD A   1      27.308   3.547  65.078  1.00 20.00           N  
+HETATM   14   C1 PRD A   1      26.647   4.430  64.263  1.00 20.00           C  
+HETATM   15   C2 PRD A   1      27.329   5.650  64.375  1.00 20.00           C  
+HETATM   16  NX2 PRD A   1      27.071   6.829  63.689  1.00 20.00           N  
+HETATM   17  CX9 PRD A   1      26.110   7.019  62.717  1.00 20.00           C  
+HETATM   18  OX2 PRD A   1      25.243   6.221  62.386  1.00 20.00           O  
+HETATM   19  CX8 PRD A   1      26.224   8.287  61.972  1.00 20.00           C  
+HETATM   20 CX10 PRD A   1      25.861   8.381  60.610  1.00 20.00           C  
+HETATM   21  FX2 PRD A   1      25.382   7.323  59.917  1.00 20.00           F  
+HETATM   22 CX11 PRD A   1      26.028   9.596  59.925  1.00 20.00           C  
+HETATM   23 CX12 PRD A   1      26.550  10.715  60.594  1.00 20.00           C  
+HETATM   24 CX13 PRD A   1      26.901  10.627  61.949  1.00 20.00           C  
+HETATM   25 CX14 PRD A   1      26.742   9.417  62.632  1.00 20.00           C  
+HETATM   26  FX3 PRD A   1      27.084   9.424  63.943  1.00 20.00           F  
+CONECT    1    2
+CONECT    2    1    3   11
+CONECT    3    2    4
+CONECT    4    3    5   10
+CONECT    5    4    6
+CONECT    6    5    7
+CONECT    7    6    8    9
+CONECT    8    7
+CONECT    9    7   10
+CONECT   10    4    9
+CONECT   11    2   12   15
+CONECT   12   11   13
+CONECT   13   12   14
+CONECT   14   13   15
+CONECT   15   11   14   16
+CONECT   16   15   17
+CONECT   17   16   18   19
+CONECT   18   17
+CONECT   19   17   20   25
+CONECT   20   19   21   22
+CONECT   21   20
+CONECT   22   20   23
+CONECT   23   22   24
+CONECT   24   23   25
+CONECT   25   19   24   26
+CONECT   26   25
+END

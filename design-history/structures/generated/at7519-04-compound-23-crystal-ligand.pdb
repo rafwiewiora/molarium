@@ -1,0 +1,54 @@
+REMARK 950 POST-FREEZE HOLDOUT 2VTP/LZ9 ALIGNED TO 2VTA
+HETATM    1   O8 XTL A   1      28.081   7.290  64.639  1.00 20.00           O  
+HETATM    2   C7 XTL A   1      28.586   6.244  65.021  1.00 20.00           C  
+HETATM    3   N6 XTL A   1      29.844   6.184  65.513  1.00 20.00           N  
+HETATM    4   C5 XTL A   1      30.715   7.305  65.608  1.00 20.00           C  
+HETATM    5  C25 XTL A   1      31.098   8.004  64.452  1.00 20.00           C  
+HETATM    6  C26 XTL A   1      31.935   9.100  64.552  1.00 20.00           C  
+HETATM    7   C2 XTL A   1      32.374   9.499  65.803  1.00 20.00           C  
+HETATM    8   F1 XTL A   1      33.188  10.565  65.903  1.00 20.00           F  
+HETATM    9   C3 XTL A   1      31.998   8.837  66.958  1.00 20.00           C  
+HETATM   10   C4 XTL A   1      31.173   7.739  66.862  1.00 20.00           C  
+HETATM   11   C9 XTL A   1      27.858   4.972  64.882  1.00 20.00           C  
+HETATM   12  N10 XTL A   1      28.160   3.886  65.545  1.00 20.00           N  
+HETATM   13  N11 XTL A   1      27.277   2.950  65.115  1.00 20.00           N  
+HETATM   14  C12 XTL A   1      26.442   3.426  64.216  1.00 20.00           C  
+HETATM   15  C13 XTL A   1      26.781   4.728  64.024  1.00 20.00           C  
+HETATM   16  N14 XTL A   1      26.248   5.676  63.168  1.00 20.00           N  
+HETATM   17  C15 XTL A   1      25.283   5.456  62.262  1.00 20.00           C  
+HETATM   18  O16 XTL A   1      24.734   4.350  62.144  1.00 20.00           O  
+HETATM   19  C17 XTL A   1      24.865   6.653  61.442  1.00 20.00           C  
+HETATM   20  C23 XTL A   1      25.748   7.279  60.538  1.00 20.00           C  
+HETATM   21  F24 XTL A   1      26.981   6.770  60.384  1.00 20.00           F  
+HETATM   22  C22 XTL A   1      25.380   8.405  59.804  1.00 20.00           C  
+HETATM   23  C21 XTL A   1      24.111   8.955  59.976  1.00 20.00           C  
+HETATM   24  C20 XTL A   1      23.214   8.369  60.868  1.00 20.00           C  
+HETATM   25  C18 XTL A   1      23.596   7.233  61.592  1.00 20.00           C  
+HETATM   26  F19 XTL A   1      22.734   6.669  62.460  1.00 20.00           F  
+CONECT    1    2
+CONECT    2    1    3   11
+CONECT    3    2    4
+CONECT    4    3    5   10
+CONECT    5    4    6
+CONECT    6    5    7
+CONECT    7    6    8    9
+CONECT    8    7
+CONECT    9    7   10
+CONECT   10    4    9
+CONECT   11    2   12   15
+CONECT   12   11   13
+CONECT   13   12   14
+CONECT   14   13   15
+CONECT   15   11   14   16
+CONECT   16   15   17
+CONECT   17   16   18   19
+CONECT   18   17
+CONECT   19   17   20   25
+CONECT   20   19   21   22
+CONECT   21   20
+CONECT   22   20   23
+CONECT   23   22   24
+CONECT   24   23   25
+CONECT   25   19   24   26
+CONECT   26   25
+END

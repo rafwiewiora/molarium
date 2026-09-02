@@ -1,0 +1,249 @@
+{
+  "schema": "molarium.at7519-holdout-evaluation/v1",
+  "campaignId": "cdk2-at7519-hit-only",
+  "status": "post-freeze-evaluated",
+  "scientificStatus": "protocol-isolated prospective replay; deposited structures were known to the broader project but inaccessible to the prediction process",
+  "freezeProof": {
+    "predictionManifest": "outputs/design-history/at7519-hit-only-prospective/prediction-manifest.json",
+    "predictionManifestSha256": "1cef049a93dbeda1ce3d799ca380f1314e38944b89422e74eccf157b809b07a0",
+    "agentAuditSha256": "f2e9c87eb7825cfff4bae013351f95396fa94b658bc6558175dad20d0fed4b2d",
+    "checkpointSha256": [
+      "568bd8964cd4bd476c77e993529a2d0c63338b080f2e6d169c7dbafa07d3325c",
+      "01c8efbd6d6c40d7358180f05a05b79e396c6ec9b0a0eeca2e59bd0a6fe1e123",
+      "cf571a62e454babc45c68fb4b1825adb11d4d7b1ef38032da482c65b8466afc9",
+      "6eff981e0ffa74e2be80de2ec94b9dcc8f5aaa15cc929bb41e39f60b96f3a360",
+      "92706ffde7a5739456f425df43c59177f07038de31c5219122fc95fc451bc699"
+    ],
+    "holdoutCoordinateReadsBeforeFreeze": 0
+  },
+  "coordinateFrames": {
+    "predictionFrame": "Molarium centered 2VTA frame",
+    "evaluationFrame": "raw 2VTA frame",
+    "predictionToEvaluationTranslationAngstrom": [
+      -28.859545857333,
+      -5.143637571998,
+      -50.60330704475
+    ],
+    "translationFitResidualAngstrom": 0.0,
+    "holdoutAlignment": "whole-chain C-alpha least-squares alignment to 2VTA, from hash-pinned preapproval review"
+  },
+  "review": {
+    "path": "outputs/design-history/at7519-preapproval/review/data.json",
+    "sha256": "858d4bdee63da42980501a4f87944cbc76736d2fd23236ff6badce00bb394d20"
+  },
+  "results": [
+    {
+      "sequenceIndex": 1,
+      "stepId": "scaffold-hop",
+      "stateId": "compound-15",
+      "holdout": {
+        "pdbId": "2VTL",
+        "ligandId": "LZ5",
+        "sourcePath": "outputs/design-history/at7519-preapproval/source/2VTL.pdb",
+        "sourceSha256": "36529f0e0ef62e7405e9026d91eb44431c61bfda385aedce173ec62a8c957e9c",
+        "alignedProteinCaRmsdAngstrom": 0.360363
+      },
+      "predictionCheckpointSha256": "568bd8964cd4bd476c77e993529a2d0c63338b080f2e6d169c7dbafa07d3325c",
+      "matching": {
+        "method": "element-labelled full-graph isomorphism",
+        "symmetryMappingsEvaluated": 2,
+        "selection": "minimum all-heavy-atom RMSD after receptor-only alignment"
+      },
+      "metrics": {
+        "heavyAtomCount": 14,
+        "allHeavyAtomRmsdAngstrom": 1.422614,
+        "preservedAtomRmsdAngstrom": 0.874572,
+        "newAtomRmsdAngstrom": 1.650228,
+        "centroidOffsetAngstrom": 0.77014
+      },
+      "assets": {
+        "prediction": "design-history/structures/generated/at7519-01-compound-15-prediction-ligand.pdb",
+        "holdout": "design-history/structures/generated/at7519-01-compound-15-crystal-ligand.pdb"
+      }
+    },
+    {
+      "sequenceIndex": 2,
+      "stepId": "grow-acetamide",
+      "stateId": "compound-18",
+      "holdout": {
+        "pdbId": "2VTN",
+        "ligandId": "LZ7",
+        "sourcePath": "outputs/design-history/at7519-preapproval/source/2VTN.pdb",
+        "sourceSha256": "141c3141aa8147455f08e2793649c4b93687a7f57cb0b6c2177cf42c9dbb4feb",
+        "alignedProteinCaRmsdAngstrom": 0.459304
+      },
+      "predictionCheckpointSha256": "01c8efbd6d6c40d7358180f05a05b79e396c6ec9b0a0eeca2e59bd0a6fe1e123",
+      "matching": {
+        "method": "element-labelled full-graph isomorphism",
+        "symmetryMappingsEvaluated": 2,
+        "selection": "minimum all-heavy-atom RMSD after receptor-only alignment"
+      },
+      "metrics": {
+        "heavyAtomCount": 19,
+        "allHeavyAtomRmsdAngstrom": 1.788343,
+        "preservedAtomRmsdAngstrom": 1.524079,
+        "newAtomRmsdAngstrom": 2.376796,
+        "centroidOffsetAngstrom": 1.24842
+      },
+      "assets": {
+        "prediction": "design-history/structures/generated/at7519-02-compound-18-prediction-ligand.pdb",
+        "holdout": "design-history/structures/generated/at7519-02-compound-18-crystal-ligand.pdb"
+      }
+    },
+    {
+      "sequenceIndex": 3,
+      "stepId": "grow-benzamide",
+      "stateId": "compound-22",
+      "holdout": {
+        "pdbId": "2VTO",
+        "ligandId": "LZ8",
+        "sourcePath": "outputs/design-history/at7519-preapproval/source/2VTO.pdb",
+        "sourceSha256": "dd1f1ae45dd3b2b0e93140c9cec2afe2ebdb24f2bc8ea4aa5d6a8bfa1036ff03",
+        "alignedProteinCaRmsdAngstrom": 0.307417
+      },
+      "predictionCheckpointSha256": "cf571a62e454babc45c68fb4b1825adb11d4d7b1ef38032da482c65b8466afc9",
+      "matching": {
+        "method": "element-labelled full-graph isomorphism",
+        "symmetryMappingsEvaluated": 4,
+        "selection": "minimum all-heavy-atom RMSD after receptor-only alignment"
+      },
+      "metrics": {
+        "heavyAtomCount": 24,
+        "allHeavyAtomRmsdAngstrom": 2.019952,
+        "preservedAtomRmsdAngstrom": 1.524208,
+        "newAtomRmsdAngstrom": 3.057973,
+        "centroidOffsetAngstrom": 1.240407
+      },
+      "assets": {
+        "prediction": "design-history/structures/generated/at7519-03-compound-22-prediction-ligand.pdb",
+        "holdout": "design-history/structures/generated/at7519-03-compound-22-crystal-ligand.pdb"
+      }
+    },
+    {
+      "sequenceIndex": 4,
+      "stepId": "lock-difluoro-torsion",
+      "stateId": "compound-23",
+      "holdout": {
+        "pdbId": "2VTP",
+        "ligandId": "LZ9",
+        "sourcePath": "outputs/design-history/at7519-preapproval/source/2VTP.pdb",
+        "sourceSha256": "ad221b0f4a3ef7aedefd629b77f2f3d1400d755010a25ed0fa4d1931f772e4ed",
+        "alignedProteinCaRmsdAngstrom": 0.300326
+      },
+      "predictionCheckpointSha256": "6eff981e0ffa74e2be80de2ec94b9dcc8f5aaa15cc929bb41e39f60b96f3a360",
+      "matching": {
+        "method": "element-labelled full-graph isomorphism",
+        "symmetryMappingsEvaluated": 4,
+        "selection": "minimum all-heavy-atom RMSD after receptor-only alignment"
+      },
+      "metrics": {
+        "heavyAtomCount": 26,
+        "allHeavyAtomRmsdAngstrom": 2.172813,
+        "preservedAtomRmsdAngstrom": 1.946737,
+        "newAtomRmsdAngstrom": 3.987115,
+        "centroidOffsetAngstrom": 1.347725
+      },
+      "assets": {
+        "prediction": "design-history/structures/generated/at7519-04-compound-23-prediction-ligand.pdb",
+        "holdout": "design-history/structures/generated/at7519-04-compound-23-crystal-ligand.pdb"
+      }
+    },
+    {
+      "sequenceIndex": 5,
+      "stepId": "finish-at7519",
+      "stateId": "compound-33",
+      "holdout": {
+        "pdbId": "2VU3",
+        "ligandId": "LZE",
+        "sourcePath": "outputs/design-history/at7519-preapproval/source/2VU3.pdb",
+        "sourceSha256": "7186a1696d1cb29a70b6a9513076eda7db975aeab5c8a2a5a105353872b855d2",
+        "alignedProteinCaRmsdAngstrom": 0.76104
+      },
+      "predictionCheckpointSha256": "92706ffde7a5739456f425df43c59177f07038de31c5219122fc95fc451bc699",
+      "matching": {
+        "method": "element-labelled full-graph isomorphism",
+        "symmetryMappingsEvaluated": 4,
+        "selection": "minimum all-heavy-atom RMSD after receptor-only alignment"
+      },
+      "metrics": {
+        "heavyAtomCount": 25,
+        "allHeavyAtomRmsdAngstrom": 2.323123,
+        "preservedAtomRmsdAngstrom": 2.222659,
+        "newAtomRmsdAngstrom": 2.563443,
+        "centroidOffsetAngstrom": 1.352466
+      },
+      "assets": {
+        "prediction": "design-history/structures/generated/at7519-05-compound-33-prediction-ligand.pdb",
+        "holdout": "design-history/structures/generated/at7519-05-compound-33-crystal-ligand.pdb"
+      }
+    }
+  ],
+  "emittedAssets": [
+    {
+      "path": "design-history/structures/generated/at7519-01-compound-15-prediction-ligand.pdb",
+      "role": "prediction",
+      "sha256": "061e5c28db7b9ab2c3900eb8233ec841edcfdcf7316685878dbdf5397e5e6d0d",
+      "bytes": 1507
+    },
+    {
+      "path": "design-history/structures/generated/at7519-01-compound-15-crystal-ligand.pdb",
+      "role": "holdout",
+      "sha256": "9f5f63697bc29d5c934706c0e0b0c097276c6fd67941dcfe9b2d8057b40227bd",
+      "bytes": 1512
+    },
+    {
+      "path": "design-history/structures/generated/at7519-02-compound-18-prediction-ligand.pdb",
+      "role": "prediction",
+      "sha256": "ef752dd8409071224d7dd13820f5cbc20909d8d5405a014ebf2395fa8ebc99a4",
+      "bytes": 2024
+    },
+    {
+      "path": "design-history/structures/generated/at7519-02-compound-18-crystal-ligand.pdb",
+      "role": "holdout",
+      "sha256": "6bb9cb57fd622b6b8bd5072d3e463471b60ca65aa92394f04d40ec3ef32be9b6",
+      "bytes": 2027
+    },
+    {
+      "path": "design-history/structures/generated/at7519-03-compound-22-prediction-ligand.pdb",
+      "role": "prediction",
+      "sha256": "d1610985e8c6232d92b01f8a04845b681ad86f32f8a35a9417ac0b2c2ebcc5a3",
+      "bytes": 2549
+    },
+    {
+      "path": "design-history/structures/generated/at7519-03-compound-22-crystal-ligand.pdb",
+      "role": "holdout",
+      "sha256": "8d6ee45378c9418eb239d951dc8366ab8f1f9845cf9b68e436f310198ede263a",
+      "bytes": 2552
+    },
+    {
+      "path": "design-history/structures/generated/at7519-04-compound-23-prediction-ligand.pdb",
+      "role": "prediction",
+      "sha256": "16eb6b948273d0cd357e3571fe8a99568a3dbd63f1ebc9c4024692b41bad7c78",
+      "bytes": 2762
+    },
+    {
+      "path": "design-history/structures/generated/at7519-04-compound-23-crystal-ligand.pdb",
+      "role": "holdout",
+      "sha256": "f7a657f51718f0481534c235ba094f09bb1cbaf42572cbe586f5612b02f6a495",
+      "bytes": 2758
+    },
+    {
+      "path": "design-history/structures/generated/at7519-05-compound-33-prediction-ligand.pdb",
+      "role": "prediction",
+      "sha256": "ec8e99b4dc8f231236569db56530e6ea61d0530b6c2bb47c558a99d7719685ae",
+      "bytes": 2651
+    },
+    {
+      "path": "design-history/structures/generated/at7519-05-compound-33-crystal-ligand.pdb",
+      "role": "holdout",
+      "sha256": "dff9462a7c8fc985c045b1063f7d0904dac1e7f3893cd21819fe8e12ac838c1f",
+      "bytes": 2655
+    }
+  ],
+  "limitations": [
+    "This is a protocol-isolated replay, not a historically blinded prediction experiment.",
+    "RMSDs are receptor-aligned and corrected only for exact ligand graph symmetries; no ligand fitting is applied.",
+    "The receptor is intentionally fixed to 2VTA, so the experiment tests placement without receptor rearrangement.",
+    "Compound 23 is more biochemically potent against CDK2 than AT7519; the last decision is a cellular/PK/profile optimization, not a monotonic potency gain."
+  ]
+}

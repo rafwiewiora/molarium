@@ -1,0 +1,196 @@
+{
+  "schema": "molarium.structure-story/v1",
+  "id": "at7519-hit-only-success",
+  "title": "Fixed-pocket stress test: five decisions, one accumulating error",
+  "subtitle": "CDK2 → AT7519 · negative-control graph replay frozen before each crystal reveal",
+  "width": 1600,
+  "height": 900,
+  "fps": 18,
+  "assetManifest": "../structures/generated/at7519-prospective-movie-assets.json",
+  "sources": [
+    { "label": "Wyatt et al. · AT7519 fragment-to-candidate campaign", "url": "https://doi.org/10.1021/jm800382h" },
+    { "label": "2VTA · compound 6 hit", "url": "https://www.rcsb.org/structure/2VTA" },
+    { "label": "2VTL · compound 15 holdout", "url": "https://www.rcsb.org/structure/2VTL" },
+    { "label": "2VTN · compound 18 holdout", "url": "https://www.rcsb.org/structure/2VTN" },
+    { "label": "2VTO · compound 22 holdout", "url": "https://www.rcsb.org/structure/2VTO" },
+    { "label": "2VTP · compound 23 holdout", "url": "https://www.rcsb.org/structure/2VTP" },
+    { "label": "2VU3 · AT7519 holdout", "url": "https://www.rcsb.org/structure/2VU3" }
+  ],
+  "legend": [
+    { "label": "starting hit · 2VTA/compound 6", "color": "#247d95" },
+    { "label": "frozen Agent API prediction", "color": "#826cae" },
+    { "label": "post-freeze crystal holdout", "color": "#dc8747" }
+  ],
+  "cameras": {
+    "master": { "target": [28.2, 6.8, 64.0], "radius": 7.8, "view": [1, 0.18, 0.06] }
+  },
+  "scenes": {
+    "fixed2vta": {
+      "label": "Fixed 2VTA receptor",
+      "models": [
+        { "ref": "protein", "path": "at7519-2vta-protein.pdb", "representation": "cartoon", "colorScheme": "chain-id", "alpha": 0.16 },
+        { "ref": "pocket", "path": "at7519-2vta-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.36, "sizeFactor": 0.13 }
+      ]
+    },
+    "hit": {
+      "extends": "fixed2vta", "label": "Compound 6 · experimental hit in 2VTA",
+      "coordinateClass": "allowed-input", "coordinateLabel": "START · the only prospective coordinates",
+      "models": [
+        { "ref": "ligand", "path": "at7519-2vta-ligand.pdb", "representation": "ball-and-stick", "color": "#247d95", "sizeFactor": 0.25 }
+      ]
+    },
+    "predict15": {
+      "extends": "fixed2vta", "label": "Compound 15 · scaffold-hop prediction",
+      "coordinateClass": "frozen-prediction", "coordinateLabel": "PREDICTION · frozen before holdout access",
+      "models": [
+        { "ref": "ligand", "path": "at7519-01-compound-15-prediction-ligand.pdb", "representation": "ball-and-stick", "color": "#826cae", "sizeFactor": 0.25 }
+      ]
+    },
+    "validate15": {
+      "extends": "fixed2vta", "label": "Compound 15 · 2VTL holdout",
+      "coordinateClass": "evaluation-holdout", "coordinateLabel": "REVEAL · crystal opened after freeze",
+      "models": [
+        { "ref": "ligand", "path": "at7519-01-compound-15-crystal-ligand.pdb", "representation": "ball-and-stick", "color": "#dc8747", "sizeFactor": 0.25 }
+      ]
+    },
+    "predict18": {
+      "extends": "fixed2vta", "label": "Compound 18 · vector-growth prediction",
+      "coordinateClass": "frozen-prediction", "coordinateLabel": "PREDICTION · propagated from predicted 15",
+      "models": [
+        { "ref": "ligand", "path": "at7519-02-compound-18-prediction-ligand.pdb", "representation": "ball-and-stick", "color": "#826cae", "sizeFactor": 0.25 }
+      ]
+    },
+    "validate18": {
+      "extends": "fixed2vta", "label": "Compound 18 · 2VTN holdout",
+      "coordinateClass": "evaluation-holdout", "coordinateLabel": "REVEAL · crystal opened after freeze",
+      "models": [
+        { "ref": "ligand", "path": "at7519-02-compound-18-crystal-ligand.pdb", "representation": "ball-and-stick", "color": "#dc8747", "sizeFactor": 0.25 }
+      ]
+    },
+    "predict22": {
+      "extends": "fixed2vta", "label": "Compound 22 · benzamide-growth prediction",
+      "coordinateClass": "frozen-prediction", "coordinateLabel": "PREDICTION · propagated from predicted 18",
+      "models": [
+        { "ref": "ligand", "path": "at7519-03-compound-22-prediction-ligand.pdb", "representation": "ball-and-stick", "color": "#826cae", "sizeFactor": 0.25 }
+      ]
+    },
+    "validate22": {
+      "extends": "fixed2vta", "label": "Compound 22 · 2VTO holdout",
+      "coordinateClass": "evaluation-holdout", "coordinateLabel": "REVEAL · crystal opened after freeze",
+      "models": [
+        { "ref": "ligand", "path": "at7519-03-compound-22-crystal-ligand.pdb", "representation": "ball-and-stick", "color": "#dc8747", "sizeFactor": 0.25 }
+      ]
+    },
+    "predict23": {
+      "extends": "fixed2vta", "label": "Compound 23 · difluoro-lock prediction",
+      "coordinateClass": "frozen-prediction", "coordinateLabel": "PREDICTION · propagated from predicted 22",
+      "models": [
+        { "ref": "ligand", "path": "at7519-04-compound-23-prediction-ligand.pdb", "representation": "ball-and-stick", "color": "#826cae", "sizeFactor": 0.25 }
+      ]
+    },
+    "validate23": {
+      "extends": "fixed2vta", "label": "Compound 23 · 2VTP holdout",
+      "coordinateClass": "evaluation-holdout", "coordinateLabel": "REVEAL · crystal opened after freeze",
+      "models": [
+        { "ref": "ligand", "path": "at7519-04-compound-23-crystal-ligand.pdb", "representation": "ball-and-stick", "color": "#dc8747", "sizeFactor": 0.25 }
+      ]
+    },
+    "predict33": {
+      "extends": "fixed2vta", "label": "Compound 33 / AT7519 · candidate prediction",
+      "coordinateClass": "frozen-prediction", "coordinateLabel": "PREDICTION · propagated from predicted 23",
+      "models": [
+        { "ref": "ligand", "path": "at7519-05-compound-33-prediction-ligand.pdb", "representation": "ball-and-stick", "color": "#826cae", "sizeFactor": 0.25 }
+      ]
+    },
+    "validate33": {
+      "extends": "fixed2vta", "label": "AT7519 · 2VU3 holdout",
+      "coordinateClass": "evaluation-holdout", "coordinateLabel": "REVEAL · candidate crystal opened after freeze",
+      "models": [
+        { "ref": "ligand", "path": "at7519-05-compound-33-crystal-ligand.pdb", "representation": "ball-and-stick", "color": "#dc8747", "sizeFactor": 0.25 }
+      ]
+    }
+  },
+  "cues": [
+    {
+      "id": "hit-only-start", "title": "Start from one small indazole pose",
+      "body": "Compound 6 in 2VTA is the only coordinate-bearing input. Its two hinge nitrogens define the anchor; every later molecule enters only as a molecular graph.",
+      "detail": "2VTA/LZ1 only · compound 6 · CDK2 IC50 185 µM",
+      "scene": "hit", "durationMs": 3600,
+      "cameraStart": "master", "cameraEnd": "master",
+      "focusLabel": "hinge-anchored fragment", "focusPosition": [51, 49]
+    },
+    {
+      "id": "scaffold-hop-predict-reveal", "title": "1 · Replace the scaffold, preserve the hinge answer",
+      "body": "The hardest first decision deletes four indazole atoms and adds nine atoms for the pyrazole carboxamide/phenyl architecture. Purple is frozen first; the same view then cuts to orange 2VTL.",
+      "detail": "Agent API freeze 12 → post-freeze 2VTL · 1.42 Å all-heavy-atom RMSD",
+      "scene": "predict15", "sceneSequence": ["predict15", "validate15"], "durationMs": 5200,
+      "cameraStart": "master", "cameraEnd": "master",
+      "callouts": [{ "label": "new amide + phenyl architecture", "x": 56, "y": 48, "tone": "success" }],
+      "decisionCard": { "title": "Decision 1 · scaffold hop", "rows": [
+        { "label": "Graph edit", "value": "4 deleted · 9 added" },
+        { "label": "Prediction", "value": "frozen before 2VTL", "status": "select" },
+        { "label": "Holdout", "value": "1.42 Å RMSD" }
+      ], "note": "Five hinge-ring atoms carry the pose across a genuinely ambiguous scaffold rewrite." }
+    },
+    {
+      "id": "acetamide-predict-reveal", "title": "2 · Place two vectors from the predicted scaffold",
+      "body": "Compound 18 adds the acetamide direction and para-fluorophenyl reach to predicted 15. No 2VTL pose is reused: the purple prediction becomes the reference before orange 2VTN is opened.",
+      "detail": "Agent API freeze 22 → post-freeze 2VTN · 1.79 Å RMSD · CDK2 IC50 0.85 µM",
+      "scene": "predict18", "sceneSequence": ["predict18", "validate18"], "durationMs": 5200,
+      "cameraStart": "master", "cameraEnd": "master",
+      "callouts": [{ "label": "acetamide vector", "x": 52, "y": 51 }],
+      "decisionCard": { "title": "Decision 2 · dual-vector growth", "rows": [
+        { "label": "Graph edit", "value": "5 heavy atoms added" },
+        { "label": "Reference", "value": "predicted compound 15", "status": "select" },
+        { "label": "Holdout", "value": "1.79 Å RMSD" }
+      ], "note": "The potency jump follows a placement decision, not a retrospective crystal scaffold." }
+    },
+    {
+      "id": "benzamide-predict-reveal", "title": "3 · Replace acetyl with a complete pocket-filling ring",
+      "body": "This is not a one-atom R-group beat: compound 22 deletes the acetyl methyl and places a six-carbon benzamide ring. The movie holds on the changed pocket region, then hard-cuts to 2VTO.",
+      "detail": "Agent API freeze 32 → post-freeze 2VTO · 2.02 Å RMSD · CDK2 IC50 0.14 µM",
+      "scene": "predict22", "sceneSequence": ["predict22", "validate22"], "durationMs": 5400,
+      "cameraStart": "master", "cameraEnd": "master",
+      "callouts": [{ "label": "new benzamide ring", "x": 48, "y": 52, "tone": "success" }],
+      "decisionCard": { "title": "Decision 3 · larger fragment growth", "rows": [
+        { "label": "Graph edit", "value": "1 deleted · 6 added" },
+        { "label": "Reference", "value": "predicted compound 18", "status": "select" },
+        { "label": "Holdout", "value": "2.02 Å RMSD" }
+      ], "note": "The full aryl placement is predicted against the unchanged 2VTA pocket." }
+    },
+    {
+      "id": "torsion-lock-predict-reveal", "title": "4 · Turn two fluorines into a conformational design",
+      "body": "The 2,6-difluoro pattern is small by atom count but large in purpose: it biases the benzamide torsion. Purple compound 23 is frozen before the same view cuts to orange 2VTP.",
+      "detail": "Agent API freeze 42 → post-freeze 2VTP · 2.17 Å RMSD · CDK2 IC50 3 nM",
+      "scene": "predict23", "sceneSequence": ["predict23", "validate23"], "durationMs": 5000,
+      "cameraStart": "master", "cameraEnd": "master",
+      "callouts": [{ "label": "2,6-difluoro torsional lock", "x": 49, "y": 50 }],
+      "decisionCard": { "title": "Decision 4 · torsion lock", "rows": [
+        { "label": "Graph edit", "value": "2 fluorines added" },
+        { "label": "Reference", "value": "predicted compound 22", "status": "select" },
+        { "label": "Holdout", "value": "2.17 Å RMSD" }
+      ], "note": "The design question is benzamide orientation, not receptor movement." }
+    },
+    {
+      "id": "candidate-predict-reveal", "title": "5 · Make the multiparameter candidate, not the tightest enzyme inhibitor",
+      "body": "The final edit replaces an aromatic terminus with piperidine and exchanges two fluorines for chlorines—eight atoms out, seven in. Predicted AT7519 cuts to the 2VU3 candidate structure without moving any side chain.",
+      "detail": "Agent API freeze 52 → post-freeze 2VU3 · 2.32 Å RMSD · candidate selected for cellular/PK profile",
+      "scene": "predict33", "sceneSequence": ["predict33", "validate33"], "durationMs": 5600,
+      "cameraStart": "master", "cameraEnd": "master",
+      "callouts": [{ "label": "piperidine + dichloro redesign", "x": 55, "y": 48, "tone": "success" }],
+      "decisionCard": { "title": "Decision 5 · candidate finish", "rows": [
+        { "label": "Graph edit", "value": "8 deleted · 7 added" },
+        { "label": "Reference", "value": "predicted compound 23", "status": "select" },
+        { "label": "Holdout", "value": "2.32 Å RMSD" }
+      ], "note": "Compound 23 is tighter biochemically; AT7519 wins on the broader development profile." }
+    },
+    {
+      "id": "success", "title": "Five decisions expose the fixed-pocket limit",
+      "body": "The replay preserves freeze order and gross placement, but pose error accumulates through the predicted references. A targeted affected-rotor attempt still leaves the aryl–carbonyl torsion about 36° from the holdout. This is retained as a negative control, not the success story.",
+      "detail": "6 → 15 → 18 → 22 → 23 → AT7519 · final 2.32 Å RMSD · torsion mismatch persists",
+      "scene": "validate33", "durationMs": 4000,
+      "cameraStart": "master", "cameraEnd": "master",
+      "focusLabel": "AT7519 in the hit-only frame", "focusPosition": [52, 49]
+    }
+  ]
+}
