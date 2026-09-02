@@ -444,6 +444,12 @@ select {
 .atom-tooltip { position: absolute; z-index: 8; pointer-events: none; transform: translate(10px, 10px); padding: 5px 7px; border-radius: 6px; background: rgba(15,23,42,.9); color: white; font-size: 10px; }
 .residue-follow-chip { position: absolute; z-index: 7; left: 14px; top: 14px; border: 1px solid #91a4bd; border-radius: 999px; background: rgba(255,255,255,.94); color: var(--ink); padding: 6px 10px; box-shadow: 0 3px 12px rgba(15,23,42,.1); font: 700 11px/1.1 Inter, sans-serif; }
 .residue-follow-chip:hover { background: #edf4fb; }
+.changed-region-chip { position: absolute; z-index: 7; left: 14px; top: 14px; border: 1px solid #dc2626;
+  border-radius: 999px; background: rgba(255,255,255,.96); color: #991b1b; padding: 6px 10px;
+  box-shadow: 0 3px 12px rgba(220,38,38,.16); font: 700 11px/1.1 Inter, sans-serif; }
+.changed-region-chip:hover { background: #fff1f2; }
+.changed-region-chip { position: absolute; z-index: 7; left: 14px; top: 14px; border: 1px solid #dc2626; border-radius: 999px; background: rgba(255,255,255,.96); color: #991b1b; padding: 6px 10px; box-shadow: 0 3px 12px rgba(220,38,38,.16); font: 700 11px/1.1 Inter, sans-serif; }
+.changed-region-chip:hover { background: #fef2f2; }
 
 .structure-2d-panel {
   position: absolute; z-index: 6; left: 12px; bottom: 12px; width: 228px;

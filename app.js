@@ -740,6 +740,11 @@ const state = {
   focusedComponentRadius: null,
   focusedResidueKey: null,
   focusedResidueRadius: null,
+  focusedAtomIds: [],
+  focusedAtomRadius: null,
+  focusedAtomContextRadius: 4.5,
+  focusedAtomContextIds: [],
+  emphasizedAtomIds: [],
   depictionSequence: 0,
   depictionTimer: 0,
   depictionGlobalAtomIndices: [],
@@ -2198,6 +2203,112 @@ function structureComponentSummary() {
 
 const COMPONENT_FOCUS_CONTEXT_ANGSTROM = 5;
 
+function focusedAtomEntries(molecule = state.molecule) {
+  if (!molecule || !state.focusedAtomIds.length) return [];
+  const ids = new Set(state.focusedAtomIds);
+  return molecule.atoms.map((atom, index) => ({ atom, index }))
+    .filter(({ atom, index }) => ids.has(atom.designAtomId) && componentVisible(index));
+}
+
+function updateChangedRegionChip() {
+  const chip = document.querySelector('#changed-region-chip');
+  if (!chip) return;
+  const emphasized = new Set(state.emphasizedAtomIds);
+  const count = focusedAtomEntries().filter(({ atom }) =>
+    atom.element !== 'H' && emphasized.has(atom.designAtomId)).length;
+  chip.classList.toggle('hidden', !count);
+  chip.textContent = count ? `Changed region · ${count} atom${count === 1 ? '' : 's'} ×` : '';
+}
+
+function clearFocusedAtomRegion({ redraw = false } = {}) {
+  state.focusedAtomIds = [];
+  state.focusedAtomRadius = null;
+  state.focusedAtomContextIds = [];
+  state.emphasizedAtomIds = [];
+  updateChangedRegionChip();
+  if (redraw) draw();
+}
+
+function calculateFocusedAtomContextIndices(molecule, targets) {
+  if (!molecule || !targets.length) return null;
+  const context = new Set(targets.map(({ index }) => index));
+  const adjacency = molecule.atoms.map(() => []);
+  molecule.bonds.forEach((bond) => {
+    adjacency[bond.a]?.push(bond.b); adjacency[bond.b]?.push(bond.a);
+  });
+  // Retain two covalent shells so a changed substituent or side chain is
+  // legible as chemistry rather than a collection of disconnected atoms.
+  let frontier = [...context];
+  for (let shell = 0; shell < 2; shell++) {
+    const next = [];
+    frontier.forEach((index) => adjacency[index]?.forEach((neighbor) => {
+      if (context.has(neighbor)) return;
+      context.add(neighbor); next.push(neighbor);
+    }));
+    frontier = next;
+  }
+  const cutoffSquared = state.focusedAtomContextRadius ** 2;
+  const nearbyResidues = new Set();
+  const componentKindById = new Map(state.structureComponents.map((component) =>
+    [component.id, component.kind]));
+  molecule.atoms.forEach((atom, index) => {
+    if (context.has(index)) return;
+    const near = targets.some(({ atom: target }) => {
+      const dx = atom.x - target.x, dy = atom.y - target.y, dz = atom.z - target.z;
+      return dx * dx + dy * dy + dz * dz <= cutoffSquared;
+    });
+    if (!near) return;
+    const kind = componentKindById.get(state.atomComponentIds[index]);
+    if (kind === 'protein' || kind === 'water') nearbyResidues.add(residueKey(atom));
+    else context.add(index);
+  });
+  molecule.atoms.forEach((atom, index) => {
+    if (nearbyResidues.has(residueKey(atom))) context.add(index);
+  });
+  return context;
+}
+
+function focusedAtomContextIndices(molecule = state.molecule) {
+  if (!molecule || !state.focusedAtomContextIds.length) return null;
+  const ids = new Set(state.focusedAtomContextIds);
+  return new Set(molecule.atoms.flatMap((atom, index) =>
+    ids.has(atom.designAtomId) ? [index] : []));
+}
+
+function focusStructureAtoms(atomIds, contextRadiusAngstrom = 4.5, highlight = true) {
+  const ids = [...new Set(atomIds)];
+  if (!ids.length) {
+    state.emphasizedAtomIds = [];
+    updateChangedRegionChip(); draw();
+    return [];
+  }
+  state.focusedAtomIds = ids;
+  state.focusedAtomContextRadius = contextRadiusAngstrom;
+  state.emphasizedAtomIds = highlight ? ids.slice() : [];
+  state.focusedComponentId = null; state.focusedComponentRadius = null;
+  state.focusedResidueKey = null; state.focusedResidueRadius = null;
+  const targets = focusedAtomEntries();
+  if (targets.length) {
+    const context = calculateFocusedAtomContextIndices(state.molecule, targets);
+    state.focusedAtomContextIds = [...(context || [])].map((index) =>
+      state.molecule.atoms[index]?.designAtomId).filter(Boolean);
+    const center = targets.reduce((sum, { atom }) => ({
+      x:sum.x + atom.x, y:sum.y + atom.y, z:sum.z + atom.z,
+    }), { x:0, y:0, z:0 });
+    center.x /= targets.length; center.y /= targets.length; center.z /= targets.length;
+    const radius = Math.max(0, ...targets.map(({ atom }) =>
+      Math.hypot(atom.x - center.x, atom.y - center.y, atom.z - center.z)));
+    state.focusedAtomRadius = Math.max(4.2, radius * 1.2 + 2.8);
+    state.zoom = 1; state.viewPan = { x:0, y:0 };
+  } else {
+    state.focusedAtomRadius = null;
+    state.focusedAtomContextIds = [];
+  }
+  updateResidueFollowChip(); updateChangedRegionChip();
+  updateStructureComponentsUi(); updateInfo(); draw();
+  return targets;
+}
+
 function focusedComponentContextIndices(molecule = state.molecule) {
   if (!molecule || !state.focusedComponentId) return null;
   const component = state.structureComponents.find((entry) => entry.id === state.focusedComponentId);
@@ -2251,6 +2362,7 @@ function focusStructureComponent(componentId, isolate = false) {
     ? Math.max(6, radius * 1.15 + 2.5) : Math.max(2.5, radius * 1.2);
   state.focusedResidueKey = null;
   state.focusedResidueRadius = null;
+  clearFocusedAtomRegion();
   state.zoom = 1;
   state.viewPan = { x:0, y:0 };
   updateResidueFollowChip();
@@ -2988,6 +3100,7 @@ function loadMolecule(molecule, resetView = true) {
   state.pdbPreparationPreview = null;
   state.focusedResidueKey = null;
   state.focusedResidueRadius = null;
+  clearFocusedAtomRegion();
   state.selectedAtom = null;
   state.selectedAtoms = [];
   delete document.querySelector('#build-optimizer-select').dataset.userSelected;
@@ -3442,6 +3555,7 @@ function setFocusedResidue(atomIndex = null) {
   } else {
     state.focusedComponentId = null;
     state.focusedComponentRadius = null;
+    clearFocusedAtomRegion();
     state.focusedResidueKey = nextKey;
     const focused = focusedResidueAtoms();
     const center = focused.reduce((sum, entry) => ({
@@ -3461,20 +3575,24 @@ function projectAtoms(width, height, molecule = state.molecule, miniature = fals
   if (!molecule) return [];
   let componentFiltered = molecule.atoms.map((atom, index) => ({ ...atom, index }))
     .filter((atom) => componentVisible(atom.index));
-  const contextIndices = miniature ? null : focusedComponentContextIndices(molecule);
+  const atomContextIndices = miniature ? null : focusedAtomContextIndices(molecule);
+  const contextIndices = atomContextIndices || (miniature ? null : focusedComponentContextIndices(molecule));
   if (contextIndices) componentFiltered = componentFiltered.filter((atom) => contextIndices.has(atom.index));
   if (!componentFiltered.length) return [];
   const visible = componentFiltered.filter((atom) => state.showHydrogens || atom.element !== 'H');
-  const focused = !miniature && state.focusedResidueKey
+  const focusedAtoms = !miniature ? focusedAtomEntries(molecule)
+    .map(({ index }) => componentFiltered.find((atom) => atom.index === index)).filter(Boolean) : [];
+  const focused = !miniature && !focusedAtoms.length && state.focusedResidueKey
     ? componentFiltered.filter((atom) => residueKey(atom) === state.focusedResidueKey) : [];
-  const focusedComponent = !miniature && !focused.length && state.focusedComponentId
+  const focusedComponent = !miniature && !focusedAtoms.length && !focused.length && state.focusedComponentId
     ? componentFiltered.filter((atom) => state.atomComponentIds[atom.index] === state.focusedComponentId) : [];
-  const centerAtoms = focused.length ? focused : focusedComponent.length ? focusedComponent : componentFiltered;
+  const centerAtoms = focusedAtoms.length ? focusedAtoms
+    : focused.length ? focused : focusedComponent.length ? focusedComponent : componentFiltered;
   let center = centerAtoms.reduce((sum, atom) => ({ x: sum.x + atom.x, y: sum.y + atom.y, z: sum.z + atom.z }), { x: 0, y: 0, z: 0 });
   center.x /= centerAtoms.length; center.y /= centerAtoms.length; center.z /= centerAtoms.length;
   let radius = Math.max(0.1, ...componentFiltered.map((atom) =>
     Math.hypot(atom.x - center.x, atom.y - center.y, atom.z - center.z)));
-  const persistentView = !miniature && !focused.length && !focusedComponent.length
+  const persistentView = !miniature && !focusedAtoms.length && !focused.length && !focusedComponent.length
     && !Number.isFinite(state.calculationProjectionRadius);
   if (persistentView) {
     if (!state.viewProjectionCenter || !Number.isFinite(state.viewProjectionRadius)) {
@@ -3494,13 +3612,17 @@ function projectAtoms(width, height, molecule = state.molecule, miniature = fals
   // Keep a trajectory at one camera scale. Re-fitting to every frame's
   // instantaneous outermost atom makes ordinary fluctuations look like a
   // synchronized whole-molecule breathing mode.
-  const fitRadius = !miniature && focused.length && Number.isFinite(state.focusedResidueRadius)
+  const fitRadius = !miniature && focusedAtoms.length && Number.isFinite(state.focusedAtomRadius)
+    ? state.focusedAtomRadius
+    : !miniature && focused.length && Number.isFinite(state.focusedResidueRadius)
     ? state.focusedResidueRadius
     : !miniature && focusedComponent.length && Number.isFinite(state.focusedComponentRadius)
       ? state.focusedComponentRadius
     : !miniature && Number.isFinite(state.calculationProjectionRadius)
       ? state.calculationProjectionRadius : radius;
-  const fit = Math.min(Math.min(width, height) * (miniature ? 0.38 : 0.42) / fitRadius, miniature ? 11 : 72);
+  const maximumFit = miniature ? 11 : focusedAtoms.length ? 54 : 72;
+  const fit = Math.min(Math.min(width, height) * (miniature ? 0.38 : 0.42) / fitRadius,
+    maximumFit);
   const scale = fit * state.zoom;
   const pan = miniature ? { x:0, y:0 } : state.viewPan;
   if (!miniature) state.projection = { center, scale, rotation: { ...state.rotation }, pan:{ ...pan } };
@@ -5698,12 +5820,19 @@ function drawMolecule(context, projected, molecule, miniature) {
   }
   if (!miniature) drawManualDockingContactOverlays(context, byIndex);
 
+  const emphasizedIds = miniature ? new Set() : new Set(state.emphasizedAtomIds);
   atomProjection.sort((a, b) => a.rz - b.rz);
   for (const atom of atomProjection) {
     const base = ELEMENTS[atom.element].radius * (state.vdw ? 1.75 : 1);
     const radius = miniature ? Math.max(2.6, base * 5.8) : Math.max(7, base * atom.scale * .46 * atom.perspective);
     const selectedOrder = miniature ? -1 : state.selectedAtoms.indexOf(atom.index);
+    const emphasized = emphasizedIds.has(atom.designAtomId);
     atom.screenRadius = radius;
+    if (emphasized) {
+      context.beginPath(); context.arc(atom.sx, atom.sy, radius + 9, 0, Math.PI * 2);
+      context.fillStyle = 'rgba(220,38,38,.14)'; context.fill();
+      context.strokeStyle = '#dc2626'; context.lineWidth = 3.5; context.stroke();
+    }
     if (selectedOrder >= 0) {
       context.beginPath(); context.arc(atom.sx, atom.sy, radius + 5, 0, Math.PI * 2);
       context.strokeStyle = state.designerMoveReplaying ? '#dc2626' : '#2563eb';
@@ -7395,6 +7524,28 @@ function chemistActionCoordinateArray(molecule = state.molecule) {
   return result;
 }
 
+function chemistActionCoordinateSnapshot(molecule = state.molecule) {
+  return new Map((molecule?.atoms || []).flatMap((atom) =>
+    atom.designAtomId && atom.element !== 'H'
+      ? [[atom.designAtomId, [Number(atom.x), Number(atom.y), Number(atom.z)]]] : []));
+}
+
+function chemistActionCoordinateChanges(before, molecule = state.molecule,
+  { thresholdAngstrom = 0.08, maximumAtoms = 24 } = {}) {
+  const changes = (molecule?.atoms || []).flatMap((atom) => {
+    const prior = atom.designAtomId ? before.get(atom.designAtomId) : null;
+    if (!prior || atom.element === 'H') return [];
+    const displacementAngstrom = Math.hypot(
+      Number(atom.x) - prior[0], Number(atom.y) - prior[1], Number(atom.z) - prior[2]);
+    return displacementAngstrom >= thresholdAngstrom
+      ? [{ atomId:atom.designAtomId, displacementAngstrom }] : [];
+  }).sort((first, second) => second.displacementAngstrom - first.displacementAngstrom);
+  return { changedAtomIds:changes.slice(0, maximumAtoms).map((entry) => entry.atomId),
+    movedHeavyAtomCount:changes.length,
+    maximumDisplacementAngstrom:Number((changes[0]?.displacementAngstrom || 0).toFixed(4)),
+    detectionThresholdAngstrom:thresholdAngstrom };
+}
+
 async function moleculeCoordinateSha256(molecule = state.molecule) {
   return sha256Hex(chemistActionCoordinateArray(molecule).buffer);
 }
@@ -7564,16 +7715,19 @@ const DESIGNER_MOVE_RESULT_HOLDS_MS = Object.freeze({
   'designCampaign.load':1500,
   'protein.prepare':1400,
   'pose.captureReference':1400,
-  'designCampaign.applyStep':2600,
-  'pose.refine':1800,
-  'pose.apply':2400,
-  'pose.enumerateSidechainRotamers':1800,
+  'designCampaign.applyStep':2800,
+  'pose.refine':3200,
+  'pose.apply':2800,
+  'pose.enumerateSidechainRotamers':3200,
   'pose.applySidechainRotamer':3400,
-  'optimization.run':2400,
+  'optimization.run':2800,
   'view.setDisplay':1600,
   'view.focusComponent':1400,
+  'view.focusAtoms':3000,
   'view.setMode':900,
   'build.setTool':900,
+  'protein.parameterize':1800,
+  'pose.updateReceptorReference':1800,
 });
 
 function designerMoveHoldMs(step, phase, moviePaced = false) {
@@ -7596,7 +7750,7 @@ async function holdDesignerMoveReplay(milliseconds) {
   }
 }
 
-function updateDesignerMoveControls(message = null) {
+function updateDesignerMoveControls(message = null, captionOverride = null) {
   const status = document.querySelector('#designer-move-status');
   if (!status) return;
   const script = state.designerMoveScript;
@@ -7620,9 +7774,9 @@ function updateDesignerMoveControls(message = null) {
   document.querySelector('#designer-move-progress-label').textContent =
     `${Math.min(actionCount, state.designerMoveReplayIndex)} / ${actionCount}`;
   document.querySelector('#designer-move-caption').textContent =
-    state.designerMoveReplayPaused
+    captionOverride || (state.designerMoveReplayPaused
       ? `Paused before move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} · ${designerMoveCaption()}`
-      : designerMoveCaption();
+      : designerMoveCaption());
   if (message) status.textContent = message;
   else if (script) status.textContent = `${script.label || 'Imported action script'} · ${script.actions.length} replayable move${script.actions.length === 1 ? '' : 's'} · ${script.schema}`;
   else status.textContent = completedApiMoves
@@ -7713,6 +7867,7 @@ function showDesignerMoveCue(step = null, { preserveLayout = false } = {}) {
   if (step.action === 'view.setMode')
     selector = `.mode-bar button[data-mode="${CSS.escape(String(step.args?.mode || ''))}"]`;
   else if (step.action === 'view.focusComponent') selector = '#structure-components';
+  else if (step.action === 'view.focusAtoms') selector = '.viewer-stage';
   else if (step.action === 'view.setDisplay') selector = '#display-options';
   else if (step.action === 'build.setTool') {
     const tool = step.args?.tool === 'move' ? 'manipulate' : step.args?.tool;
@@ -7739,6 +7894,69 @@ function showDesignerMoveCue(step = null, { preserveLayout = false } = {}) {
     panel.scrollTop += elementRect.top - panelRect.top
       - Math.max(0, (panel.clientHeight - elementRect.height) / 2);
   } else element.scrollIntoView?.({ block:'center', inline:'nearest', behavior:'auto' });
+}
+
+function designerMoveResultCaption(step) {
+  if (step.status === 'failed') return `${step.action} failed; no result was applied.`;
+  if (step.action === 'pose.refine') {
+    const count = Number(step.result?.refinement?.candidates || 0);
+    return `${count} pose candidate${count === 1 ? '' : 's'} ready · coordinates intentionally remain unchanged until Apply pose.`;
+  }
+  if (step.action === 'pose.enumerateSidechainRotamers') {
+    const count = Number(step.result?.sidechainRotamers?.candidates?.length || 0);
+    return `${count} rotamer candidate${count === 1 ? '' : 's'} ready · the receptor remains unchanged until Apply branch.`;
+  }
+  if (step.action === 'protein.parameterize')
+    return 'Parameters assigned · this action intentionally does not move any atom.';
+  if (step.action === 'pose.captureReference')
+    return 'Reference pose captured · coordinates intentionally remain unchanged.';
+  if (step.action === 'pose.updateReceptorReference')
+    return 'The applied receptor branch is now the reference · no additional coordinates moved.';
+  if (step.action === 'view.focusAtoms') {
+    const count = Number(step.result?.focusedAtoms?.atomCount || 0);
+    return count
+      ? `${count} changed atom${count === 1 ? '' : 's'} centered in local pocket context and marked in red.`
+      : 'No heavy-atom movement crossed the display threshold; the previous camera is retained.';
+  }
+  if (step.action === 'designCampaign.applyStep') {
+    const count = Number(step.result?.designStep?.changedAtomIds?.length || 0);
+    return `Graph edit staged · ${count} changed heavy atom${count === 1 ? '' : 's'} reported for local inspection.`;
+  }
+  if (step.action === 'pose.apply' || step.action === 'pose.applySidechainRotamer'
+    || step.action === 'optimization.run') {
+    const result = step.action === 'pose.apply' ? step.result?.appliedPose
+      : step.action === 'pose.applySidechainRotamer' ? step.result?.sidechainRotamer
+        : step.result?.optimization;
+    const moved = Number(result?.movedHeavyAtomCount || 0);
+    return `${step.caption || step.action} · ${moved} heavy atom${moved === 1 ? '' : 's'} moved beyond the display threshold.`;
+  }
+  return `Completed · ${step.caption || step.action}`;
+}
+
+function showDesignerMoveResultCue(step) {
+  clearDesignerMoveCueElements();
+  const resultSelectors = {
+    'pose.refine':'#docking-results',
+    'pose.enumerateSidechainRotamers':'#sidechain-rotamer-results',
+    'designCampaign.applyStep':'.viewer-stage',
+    'pose.apply':'.viewer-stage',
+    'pose.applySidechainRotamer':'.viewer-stage',
+    'optimization.run':'.viewer-stage',
+    'view.focusComponent':'.viewer-stage',
+    'view.focusAtoms':'.viewer-stage',
+  };
+  const selector = resultSelectors[step.action];
+  const element = selector ? document.querySelector(selector) : null;
+  if (!element) return;
+  applyDesignerMoveDemoLayout(step, element);
+  designerMoveCueElements = [element];
+  element.classList.add('designer-move-cue', 'designer-move-change');
+  const panel = element.closest('.panel');
+  if (panel) {
+    const panelRect = panel.getBoundingClientRect(), elementRect = element.getBoundingClientRect();
+    panel.scrollTop += elementRect.top - panelRect.top
+      - Math.max(0, (panel.clientHeight - elementRect.height) / 2);
+  }
 }
 
 async function replayDesignerMoveScript() {
@@ -7774,8 +7992,10 @@ async function replayDesignerMoveScript() {
           await holdDesignerMoveReplay(designerMoveHoldMs(step, phase, moviePacedReplay));
         } else {
           state.designerMoveReplayIndex = step.index + 1;
+          showDesignerMoveResultCue(step);
           updateDesignerMoveControls(
-            `Completed move ${step.index + 1} of ${script.actions.length} · ${step.caption || step.action}`);
+            `Completed move ${step.index + 1} of ${script.actions.length} · ${step.caption || step.action}`,
+            designerMoveResultCaption(step));
           await holdDesignerMoveReplay(designerMoveHoldMs(step, phase, moviePacedReplay));
           showDesignerMoveCue(null, { preserveLayout:true });
         }
@@ -8051,6 +8271,26 @@ function installChemistActionsApi(module) {
       return chemistActionSummary({ focusedComponent:{ kind, ordinal,
         componentId:component.id, label:component.label, isolate:Boolean(args.isolate),
         atomCount:component.atomIndices.length } }); },
+    'view.focusAtoms':async (args) => { chemistActionKeys(args,
+      ['atomIds','contextRadiusAngstrom','highlight']);
+      if (!Array.isArray(args.atomIds) || args.atomIds.length > 64
+        || args.atomIds.some((id) => typeof id !== 'string' || !id))
+        throw new Error('atomIds must be an array of 0 to 64 persistent atom IDs');
+      const atomIds = [...new Set(args.atomIds)];
+      const contextRadiusAngstrom = Number(args.contextRadiusAngstrom ?? 4.5);
+      if (!Number.isFinite(contextRadiusAngstrom)
+        || contextRadiusAngstrom < 2 || contextRadiusAngstrom > 8)
+        throw new Error('contextRadiusAngstrom must be a number from 2 to 8');
+      if (args.highlight != null && typeof args.highlight !== 'boolean')
+        throw new Error('highlight must be boolean');
+      const byId = await ensureChemistActionAtomIds();
+      const missing = atomIds.filter((id) => !byId.has(id));
+      if (missing.length) throw new Error(`Unknown persistent atom ID: ${missing[0]}`);
+      const targets = focusStructureAtoms(atomIds, contextRadiusAngstrom,
+        args.highlight !== false);
+      return chemistActionSummary({ focusedAtoms:{ atomIds,
+        atomCount:targets.length, contextRadiusAngstrom,
+        highlighted:args.highlight !== false } }); },
     'view.setDisplay':async (args) => {
       chemistActionKeys(args,
         ['representation','showHydrogens','showInteractions','showPocketAtoms','showHulls']);
@@ -8331,10 +8571,14 @@ function installChemistActionsApi(module) {
       const index = Number(args.index ?? 0);
       if (!Number.isInteger(index) || index < 0) throw new Error('index must be a non-negative integer');
       if (!state.dockingResult?.run?.candidates?.[index]) throw new Error(`Refined pose ${index} does not exist`);
+      await ensureChemistActionAtomIds();
+      const before = chemistActionCoordinateSnapshot();
       state.dockingPoseIndex = index;
       const pose = await applySelectedDockingPose();
+      const coordinateChanges = chemistActionCoordinateChanges(before);
       return chemistActionSummary({ appliedPose:{ index, rank:pose.rank,
-        feasible:pose.feasible, scoreKcalMol:pose.totalScoreKcalMol } }); },
+        feasible:pose.feasible, scoreKcalMol:pose.totalScoreKcalMol,
+        ...coordinateChanges } }); },
     'pose.enumerateSidechainRotamers':async (args) => { chemistActionKeys(args,
       ['receptorAtomId','maximumCandidates']);
       if (typeof args.receptorAtomId !== 'string' || !args.receptorAtomId)
@@ -8353,7 +8597,10 @@ function installChemistActionsApi(module) {
       const index = Number(args.index ?? 0);
       if (!Number.isInteger(index) || index < 0)
         throw new Error('index must be a non-negative integer');
+      await ensureChemistActionAtomIds();
+      const before = chemistActionCoordinateSnapshot();
       const sidechainRotamer = await applyCurrentSidechainRotamer(index);
+      Object.assign(sidechainRotamer, chemistActionCoordinateChanges(before));
       return chemistActionSummary({ sidechainRotamer }); },
     'optimization.run':async (args) => { chemistActionKeys(args, ['method']);
       const method = chemistActionEnum(args.method,
@@ -8363,6 +8610,8 @@ function installChemistActionsApi(module) {
       if (!option || option.disabled) throw new Error(`Optimization method ${method} is unavailable for this molecule`);
       const select = document.querySelector('#build-optimizer-select');
       select.value = method; select.dataset.userSelected = 'true'; updateOptimizerControls();
+      await ensureChemistActionAtomIds();
+      const before = chemistActionCoordinateSnapshot();
       const result = await runSelectedBuildOptimization();
       if (!result) throw new Error(`${method} optimization did not complete`);
       return chemistActionSummary({ optimization:{ method,
@@ -8370,7 +8619,8 @@ function installChemistActionsApi(module) {
         valenceSafeguard:structuredClone(result.valenceSafeguard || null),
         initialEnergy:result.initialEnergy ?? null, finalEnergy:result.finalEnergy ?? null,
         iterations:result.iterations ?? null, converged:result.converged ?? null,
-        elapsedMs:result.elapsedMs ?? null } }); },
+        elapsedMs:result.elapsedMs ?? null,
+        ...chemistActionCoordinateChanges(before) } }); },
     'designCampaign.load':async (args) => { chemistActionKeys(args, ['campaignId']);
       if (typeof args.campaignId !== 'string' || !args.campaignId)
         throw new Error('campaignId must be a registered design-campaign ID');
@@ -8432,10 +8682,15 @@ function installChemistActionsApi(module) {
         coordinateInputClass:'registered-hit-only',
       };
       state.designCampaignStepId = step.stateId;
+      const changedAtomIds = [...new Set([
+        ...(staged.registeredEditRegion.addedHeavyAtomIds || []),
+        ...(staged.registeredEditRegion.affectedCoreAtomIds || []),
+      ])];
       return chemistActionSummary({ designStep:{ id:step.id, stateId:step.stateId,
         referenceStateId:step.referenceStateId || null,
         inputKind:step.inputKind, productHeavyAtoms:staged.productHeavyAtoms,
         commonHitHeavyAtoms:staged.commonHeavyAtoms,
+        changedAtomIds,
         spatialIntent,
         embedding:structuredClone(staged.embedding) } }); },
     'designCampaign.inspect':async (args) => { empty(args);
@@ -8714,6 +8969,7 @@ const molariumTestApi = Object.freeze({
         ligandRole:proposal.ligandRole, candidateCount:proposal.candidates.length,
         candidateTypes:proposal.candidates.map((candidate) => candidate.type) })),
       registeredEditRegion:{ removedAtomIds:removedBenchmarkAtomIds,
+        addedHeavyAtomIds:addedBenchmarkHeavyIds,
         addedAtomIds:addedBenchmarkAtomIds,
         affectedCoreAtomIds:[...new Set(affectedBenchmarkCoreIds)].sort() },
       embedding:{ rdkitVersion:embedded.result.rdkitVersion,
@@ -13133,12 +13389,14 @@ document.querySelector('#components-toggle').addEventListener('click', (event) =
 document.querySelector('#components-show-all').addEventListener('click', () => {
   state.structureComponents.forEach((component) => state.componentVisibility.set(component.id, true));
   state.focusedComponentId = null; state.focusedComponentRadius = null;
+  clearFocusedAtomRegion();
   state.zoom = 1; state.viewPan = { x:0, y:0 };
   updateStructureComponentsUi(); updateInfo(); draw();
 });
 document.querySelector('#components-reset').addEventListener('click', () => {
   state.structureComponents.forEach((component) => state.componentVisibility.set(component.id, component.kind !== 'water'));
   state.focusedComponentId = null; state.focusedComponentRadius = null;
+  clearFocusedAtomRegion();
   state.viewProjectionCenter = null; state.viewProjectionRadius = null;
   state.zoom = 1; state.viewPan = { x:0, y:0 };
   updateStructureComponentsUi(); updateInfo(); draw();
@@ -13252,6 +13510,8 @@ document.querySelector('#pocket-mode-toggle').addEventListener('click', () => {
 });
 document.querySelector('#interaction-toggle').addEventListener('change', (event) => { state.showInteractions = event.target.checked; draw(); });
 document.querySelector('#residue-follow-chip').addEventListener('click', () => setFocusedResidue(null));
+document.querySelector('#changed-region-chip').addEventListener('click', () =>
+  clearFocusedAtomRegion({ redraw:true }));
 document.querySelector('#representation-select').addEventListener('change', (event) => {
   state.representation = event.target.value;
   updateInfo();
@@ -13584,6 +13844,7 @@ function clearScene({ announce = false } = {}) {
   state.chemistActionAudit = [];
   state.buildHistory = []; state.redoHistory = [];
   state.focusedComponentId = null; state.focusedComponentRadius = null;
+  clearFocusedAtomRegion();
   state.dockingReference = null; state.dockingResult = null; state.dockingRunning = false;
   state.dockingSelectedHbondIds = new Set(); state.dockingPoseIndex = 0;
   state.dockingContactRemaps = new Map(); state.dockingContactRemapProposals = new Map();

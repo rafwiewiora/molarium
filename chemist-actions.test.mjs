@@ -17,6 +17,7 @@ assert.equal(api.schema, CHEMIST_ACTIONS_SCHEMA);
 assert(Object.isFrozen(api));
 assert(Object.hasOwn(api.describe().actions, 'chemistry.finish'));
 assert(Object.hasOwn(api.describe().actions, 'view.focusComponent'));
+assert(Object.hasOwn(api.describe().actions, 'view.focusAtoms'));
 assert(Object.hasOwn(api.describe().actions, 'view.setDisplay'));
 assert(Object.hasOwn(api.describe().actions, 'pose.addContact'));
 assert(Object.hasOwn(api.describe().actions, 'pose.forgetContact'));

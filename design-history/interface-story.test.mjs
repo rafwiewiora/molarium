@@ -14,12 +14,20 @@ const story = buildPocketInterfaceStory(source, {
 assert.deepEqual(source, sourceBefore);
 assert.equal(source.actions.length, 33);
 assert.equal(story.actions.length, 48);
-assert.equal(story.actions.filter((step) => step.action === 'view.focusComponent').length, 14);
+assert.equal(story.actions.filter((step) => step.action === 'view.focusComponent').length, 1);
+assert.equal(story.actions.filter((step) => step.action === 'view.focusAtoms').length, 13);
 assert.equal(story.actions.filter((step) => step.action === 'view.setDisplay').length, 1);
 assert.equal(story.actions.find((step) => step.action === 'view.setDisplay')
   .args.representation, 'cartoon');
-assert.deepEqual(story.actions.filter((step) => !step.action.startsWith('view.')),
-  source.actions.filter((step) => !step.action.startsWith('view.')));
+assert.deepEqual(story.actions.filter((step) => !step.action.startsWith('view.'))
+  .map(({ capture, ...step }) => step),
+source.actions.filter((step) => !step.action.startsWith('view.')));
+for (const focus of story.actions.filter((step) => step.action === 'view.focusAtoms')) {
+  assert.deepEqual(Object.keys(focus.args.atomIds), ['$binding']);
+  const focusIndex = story.actions.indexOf(focus);
+  assert(Object.hasOwn(story.actions[focusIndex - 1].capture,
+    focus.args.atomIds.$binding));
+}
 assert.equal(await actionScriptSha256(story),
-  '339d8391be36043e6a2e6e69b1e55699cc72a5eb4faab9181e5bd9883f81118d');
+  'fb7ca38969f71545df1c8207a01206bd3b76f985ea1e852581fe5afffab7d3b1');
 console.log('Interface story test passed: 33 scientific actions + 15 presentation actions');

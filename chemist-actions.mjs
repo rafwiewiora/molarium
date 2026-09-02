@@ -8,6 +8,10 @@ const ACTIONS = Object.freeze({
   'view.focusComponent': Object.freeze({
     description:'Use the visible Components control to zoom to one molecular component.',
     arguments:Object.freeze({ kind:'ligand | protein | molecule', ordinal:'non-negative integer', isolate:'boolean' }) }),
+  'view.focusAtoms': Object.freeze({
+    description:'Focus and visibly emphasize a changed molecular region by persistent atom IDs.',
+    arguments:Object.freeze({ atomIds:'array of 0–64 persistent atom IDs',
+      contextRadiusAngstrom:'number 2…8', highlight:'boolean' }) }),
   'view.setDisplay': Object.freeze({
     description:'Set the same representation and visibility options available in Display Options.',
     arguments:Object.freeze({ representation:'ball-stick | cartoon | both', showHydrogens:'boolean',

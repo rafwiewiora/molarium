@@ -56,7 +56,7 @@ feature transfer, Undo, and Redo therefore behave exactly as they do for an inte
 ## Available routes
 
 - `session.inspect`
-- `view.setMode`, `view.focusComponent`, `view.setDisplay`
+- `view.setMode`, `view.focusComponent`, `view.focusAtoms`, `view.setDisplay`
 - `build.setTool`
 - `protein.prepare`, `protein.parameterize`
 - `selection.replace`, `selection.clear`
@@ -103,6 +103,20 @@ ligand reference or its persistent atom lineage. It refreshes the receptor coord
 captured receptor contact descriptors, records before/after coordinate hashes, and leaves ligand
 placement to a subsequent `pose.refine`. This permits auditable joint side-chain/ligand branch
 search rather than forcing every ligand pose against only the starting receptor rotamer.
+
+Mutating pose, rotamer, graph-growth, and optimization responses report the persistent IDs of
+heavy atoms that changed. `view.focusAtoms` accepts those IDs, fits the camera to that local region
+with a bounded pocket context, marks the reported atoms in red, and exposes a visible
+“Changed region” chip that a chemist can clear. Saved stories use ordinary replay captures to pass
+one action's `changedAtomIds` result into the next `view.focusAtoms` request; they do not smuggle
+coordinates or private viewer state through the script. An empty list is valid when an
+optimization was restored by a safeguard or no heavy atom exceeded the 0.08 Å display threshold.
+
+Candidate generation is deliberately distinct from coordinate application. `pose.refine` fills
+the visible pose list but leaves the 3D molecule fixed until `pose.apply`;
+`pose.enumerateSidechainRotamers` likewise fills the branch list but leaves the receptor fixed until
+`pose.applySidechainRotamer`. Replay result cues state this explicitly and hold on the result card
+at human reading speed before the corresponding Apply action.
 
 For pose propagation, `pose.refine` now seeds a single-anchor grown region across deterministic
 attachment-bond torsions even when no explicit hydrogen-bond target was captured. Target-directed
