@@ -9,9 +9,9 @@ selected SOS1 route underlying the paper movie.
 \label{app:wasm-webgpu}
 
 WebAssembly and WebGPU give the browser two different kinds of calculator.
-WebAssembly converts established CPU programs, including C and C++, into a
-format that the browser can run safely. WebGPU lets the browser send many small
-arithmetic tasks to the laptop's graphics processor
+Emscripten can compile established C and C++ programs into WebAssembly's portable
+instruction format. WebGPU lets the browser submit parallel arithmetic to the
+laptop's graphics processor
 \cite{haas2017webassembly,w3c2025webgpu,w3c2026wgsl}. Neither knows chemistry by
 itself.
 
@@ -50,6 +50,15 @@ The information flow is deliberately narrow:
     viewer $+$ action audit $+$ numerical labbook $+$ design decisions
   \end{tabular}
 \end{center}
+
+The architectural claim concerns this composition, not novelty in each of its
+parts. Background workers, atomwise GPU decomposition, graph-coloured
+constraints, fixed-point accumulation, canonical JSON, and cryptographic hashes
+are established techniques. Molarium combines them behind one numerical and
+action contract, then tests the boundaries created by that combination in a
+browser. The implementation results below therefore distinguish three things:
+routine choices needed to reproduce the software, changes forced by observed
+failures, and measured workload-dependent behaviour.
 
 \begin{table}[htbp]
   \centering
@@ -109,26 +118,28 @@ use identical graphs and numbers, not two separately prepared approximations.
 
 \subsubsection{OpenMM WebAssembly reference}
 
+Cross-compiling C++ and exposing a C interface are established deployment
+techniques. The relevant results here are that the browser build preserved the
+native calculation and that constrained setup exposed one browser-specific
+threading failure.
+
 \begin{description}
-  \item[Build.] We converted OpenMM 8.2.0 into browser-readable WebAssembly with
-    Emscripten 6.0.6-git and CMake 3.31.0
-    \cite{eastman2017openmm,eastman2024openmm8}. A provenance file fingerprints
-    the shipped source, two browser patches, the adapter code, and both built
-    files. A rebuild can be audited against those exact inputs; byte-identical
-    recompilation is not asserted.
-  \item[Adapter.] A thin C interface copies the numerical recipe into OpenMM's
-    working memory and returns energies, forces, or coordinates. The compiled
-    engine contains no molecule or force field; the browser supplies both for
-    each calculation.
-  \item[Methods.] Nonperiodic OpenMM \texttt{System}; double-precision Reference
+  \item[Deployment.] We compiled OpenMM 8.2.0 with Emscripten 6.0.6-git and
+    CMake 3.31.0 \cite{eastman2017openmm,eastman2024openmm8}. A thin C interface
+    copies the numerical recipe into OpenMM and returns energies, forces, or
+    coordinates. The shipped source, two patches, interface, and built files
+    carry recorded fingerprints. A rebuild can be audited against those inputs;
+    byte-identical recompilation is not asserted.
+  \item[Reference configuration.] Nonperiodic OpenMM \texttt{System};
+    double-precision Reference
     platform; energy, forces, L-BFGS, short dynamics, optional X--H constraints,
-    2~fs \texttt{LangevinMiddleIntegrator}, cutoff, and OBC2/ACE with mbondi2
+    2~fs Langevin-middle integration, cutoff, and OBC2/ACE with mbondi2
     radii \cite{onufriev2004obc2}.
-  \item[Browser patch.] OpenMM normally creates helper CPU threads while setting
+  \item[Browser-specific failure.] OpenMM normally creates helper CPU threads while setting
     up constrained motion. This browser build has no such threads; without a
     small serial patch, setup waits indefinitely. The patch affects only this
     WebAssembly build, not native OpenMM.
-  \item[Answer-key result.] First, the same C adapter compiled natively and for
+  \item[Measured parity.] First, the same C interface compiled natively and for
     WebAssembly agreed to $2.84\times10^{-14}$~kcal/mol maximum energy difference
     and $3.76\times10^{-15}$ relative force RMS. This tests whether OpenMM
     survived conversion to the browser. We then sent five hash-selected
@@ -144,34 +155,40 @@ use identical graphs and numbers, not two separately prepared approximations.
 \subsubsection{Direct WebGPU mechanics}
 
 This path does not run OpenMM on the GPU. It evaluates the same force-field
-equations directly in WebGPU Shading Language (WGSL). Current browsers provide
-32-bit arithmetic for these kernels. The principal atomwise force kernels launch
-work in groups of 64 small calculations; constraint projection uses a different
-layout.
+equations directly in WebGPU Shading Language (WGSL), using 32-bit floating-point
+arithmetic. Its central trade-off is simple: repeat some arithmetic so that each
+force has exactly one writer. This favours deterministic browser execution over
+the more cooperative decompositions used by highly tuned GPU molecular-dynamics
+codes \cite{glaser2015strong}.
 
 \begin{itemize}
-  \item \textbf{One task per atom.} Each GPU task computes the force on one atom.
-    Before the calculation, the CPU gives it a short list of only the bonds,
-    angles, and torsions that involve that atom. Because no two tasks write the
-    same force, the calculation needs no contested shared-memory updates
-    (floating-point atomics).
-  \item \textbf{Store only exceptional pairs.} Ordinary Lennard--Jones pairs use
-    Lorentz--Berthelot mixing when needed. Only excluded or specially scaled
-    pairs are stored. This replaced a table for every possible atom pair, whose
-    memory cost grew as $32N^2$ bytes---approximately 32~MB at 1,000 atoms and
-    2~GB at 8,000 atoms.
-  \item \textbf{Implicit solvent in three passes.} The GPU first estimates how
-    buried each atom is (Born radii), then how those values change with position,
-    and finally computes OBC2/ACE energies and forces.
-  \item \textbf{Dynamics.} Seeded Langevin dynamics adds reproducible stochastic
-    kicks. Optional X--H constraints take target distances from the assigned
-    bonds. The code colours the bond graph so constraints that share no atom can
-    be corrected in parallel by SHAKE and RATTLE
-    \cite{ryckaert1977shake,andersen1983rattle}. Flexible runs use 1~fs;
-    constrained runs permit 2~fs.
-  \item \textbf{Local minimization.} A bounded steepest-descent procedure cleans
-    up geometry. Giving outer receptor atoms zero inverse mass keeps them fixed,
-    so only the ligand and selected pocket atoms relax.
+  \item \textbf{Single-writer force accumulation---implementation choice.}
+    One invocation owns one atom's output force. A compact incidence list gives
+    it only the bonds, angles, and torsions involving that atom. Pair and valence
+    contributions are recomputed where necessary, after which the invocation
+    writes its force once. The method therefore needs no floating-point atomic
+    update to the force buffer; WGSL defines atomic integer types but no atomic
+    floating-point type \cite{w3c2026wgsl}. One-invocation-per-atom is a
+    conventional GPU decomposition, not a new algorithm.
+  \item \textbf{Quadratic pair allocation removed---failure-driven change.}
+    The first representation stored data for every possible atom pair and cost
+    $32N^2$ bytes: approximately 32~MB at 1,000 atoms and 2~GB at 8,000 atoms.
+    The deployed representation stores only excluded or specially scaled pairs;
+    ordinary Lennard--Jones parameters are mixed on demand. This change removed
+    the direct engine's former 512-atom allocation ceiling.
+  \item \textbf{OBC2/ACE mapped to three passes---method implementation.}
+    The first pass estimates Born radii, the second propagates their coordinate
+    derivatives, and the third accumulates solvent and nonpolar energies and
+    forces. The pass structure is an implementation of the published model, not
+    a new solvent model.
+  \item \textbf{Graph-coloured constraints---implementation choice.}
+    Optional X--H constraints use target distances from the assigned bonds.
+    Constraints with no shared atom are grouped so SHAKE and RATTLE corrections
+    can run concurrently \cite{ryckaert1977shake,andersen1983rattle}. Seeded
+    Langevin dynamics then supports 1~fs flexible or 2~fs constrained steps.
+  \item \textbf{Bounded pocket relaxation---product behaviour.} A bounded
+    steepest-descent procedure cleans geometry. Zero inverse mass fixes outer
+    receptor atoms, leaving only the ligand and selected pocket atoms free.
 \end{itemize}
 
 \begin{table}[htbp]
@@ -197,57 +214,59 @@ layout.
   \end{tabular}
 \end{table}
 
-A validation-only cutoff uses a 0.2~nm Verlet skin and rebuilds every 20 steps.
-It is not exposed in the product: on an Apple M1 Pro it made 5,000 constrained
-OBC2 Trp-cage steps 46\% slower and 1,000 ubiquitin steps 17\% slower than the
-complete nonbonded range. The direct path currently excludes periodic
-boundaries, particle-mesh Ewald electrostatics, explicit solvent, barostats,
-virtual sites, and arbitrary OpenMM custom forces.
+Two measurements changed or bounded the design. First, a conventional
+neighbour-list cutoff did not help at these interactive system sizes. With a
+0.2~nm Verlet skin rebuilt every 20 steps, it made 5,000 constrained OBC2
+Trp-cage steps 46\% slower and 1,000 ubiquitin steps 17\% slower than the full
+nonbonded range on an Apple M1 Pro. Molarium therefore retains this route for
+validation but does not expose it in the product.
 
-The GPU is not faster for every task. On the same Apple M1 Pro, one Trp-cage
-energy/force evaluation took 25.5~ms in WebGPU and 5.7~ms in OpenMM Reference:
-starting the GPU cost more than the arithmetic saved. Over 1,000 dynamics steps,
-the balance reversed: 214.9 versus 102.8~ns/day for 304-atom Trp-cage, and 65.18
-versus 7.11~ns/day for 1,231-atom ubiquitin. These are warmed, nonperiodic,
-all-pairs measurements of engine throughput, not complete solvated-protein
-protocols.
+Second, GPU benefit depended on amortization. One Trp-cage energy/force call took
+25.5~ms in WebGPU and 5.7~ms in OpenMM Reference: dispatch cost exceeded the
+saved arithmetic. Across 1,000 dynamics steps, WebGPU reached 214.9 versus
+102.8~ns/day for 304-atom Trp-cage and 65.18 versus 7.11~ns/day for 1,231-atom
+ubiquitin. These warmed, nonperiodic, all-pairs measurements identify a workload
+crossover; they are not claims about complete solvated-protein protocols. The
+direct path currently excludes periodic boundaries, particle-mesh Ewald
+electrostatics, explicit solvent, barostats, virtual sites, and arbitrary OpenMM
+custom forces.
 
 \subsubsection{Replica-parallel WebGPU}
 
-The two GPU engines divide work differently. The direct engine divides one
-molecule among GPU tasks, with each atom owning its force. The ensemble engine
-gives each GPU workgroup an independent molecular replica. These layouts solve
-different throughput problems and cannot be exchanged by changing one option.
+The second engine targets ensembles of independent copies of one topology. It
+maps one replica to each GPU workgroup, whereas the direct engine distributes
+one molecule across atom-owning invocations. This mapping is not itself novel;
+it creates a different throughput regime and requires a different memory layout.
+The implementation draws on STORMM's fixed-point and stacked-system design but
+is independent browser code \cite{cerutti2024stormm}. Replicas share a topology
+and parameter layout but never interact.
 
-The second GPU engine targets ensembles: many independent copies of the same
-molecule. It is inspired by STORMM's fixed-point and stacked-system design, but
-is an independent browser implementation \cite{cerutti2024stormm}. The replicas share a calculation
-layout but never interact.
+Fixed-point accumulation is also established rather than a Molarium algorithm:
+it stores a scaled real number as an integer so concurrent additions can use
+exact integer operations. Its browser adaptation was consequential because WGSL
+exposes 32-bit integer atomics. Molarium represents each signed 64-bit
+accumulator as two 32-bit words and uses $2^{22}$ counts per kcal/mol for
+energies, $2^{18}$ counts per kcal/mol/\AA{} for forces, and $2^{32}$ counts per
+\AA{} for coordinates. This paired-word representation replaced 32-bit sums
+that silently overflowed in clashed systems. It produced bit-for-bit replay for
+identical seeds on the tested adapter.
 
-Here \emph{fixed point} means multiplying a floating-point value by a fixed scale and
-storing the result as an integer. Integer additions are exact, so thousands of
-GPU tasks can safely add force or energy contributions. Molarium uses
-$2^{22}$ counts per kcal/mol for energies, $2^{18}$ counts per kcal/mol/\AA{}
-for forces, and $2^{32}$ counts per \AA{} for coordinates. Each signed 64-bit
-integer is held as two 32-bit words because that is the atomic format WebGPU
-provides. A separate 32-bit floating-point copy of the coordinates is used for fast
-force calculation. This design prevents silent 32-bit overflow and produced
-bit-for-bit replay for identical seeds on the tested adapter.
+The integrator is deliberately conventional: velocity Verlet, seeded Langevin
+thermalization, and SHAKE/RATTLE. Constraint projection is serial within a
+replica while replicas remain parallel; the default relative tolerance is
+$10^{-5}$ with at most 32 iterations. Commands contain at most 50 steps. The
+important safety behaviour is fail-closed execution: persistent status words
+turn non-finite values, clamps, and failed constraints into terminal errors.
+Current limits are 512 atoms per replica, all-pairs nonbonded work, and the same
+atom count, topology, and parameters in every copy. Heterogeneous stacked
+systems remain proposed.
 
-The engine uses velocity Verlet and seeded Langevin thermalization. Each replica
-also applies SHAKE and RATTLE. Constraint projection is serial inside each replica, while the
-replicas remain parallel; the default relative tolerance is $10^{-5}$ with at
-most 32 iterations. Commands are submitted in chunks of at most 50 steps.
-Persistent status words turn non-finite values, clamps, and failed constraints
-into terminal errors. Current limits are 512 atoms per replica, all-pairs
-nonbonded work, and the same atom count, topology, and parameters in every copy.
-Heterogeneous stacked systems remain proposed.
-
-The 32-bit floating-point coordinate copy remains a precision boundary. Translating a
-test system 500~\AA{} from the origin changed its energies by approximately
-$3\times10^{-4}$ relative. A future implementation should recenter each work
-unit; enlarging the exact integer store does not correct arithmetic performed on
-the floating-point copy.
+Force evaluation still uses a separate 32-bit floating-point coordinate copy.
+That copy, not the exact store, sets the remaining spatial precision boundary:
+translating a test system 500~\AA{} from the origin changed its energies by
+approximately $3\times10^{-4}$ relative. A future implementation should recenter
+each work unit; widening the integer store cannot correct arithmetic already
+performed on the floating-point copy.
 
 The many-copy design pays off only when enough work is available. In warm tests,
 OpenMM Reference was 13.3-fold faster for one C16 molecule and 3.5-fold faster
@@ -258,8 +277,10 @@ replica throughput; the two engines do not use identical integrators.
 \subsection{How the numerical rewrite was accelerated}
 \label{app:agent-development}
 
-The coding agent did not invent molecular dynamics from a verbal prompt. It
-worked in a short loop with an established engine as the answer key:
+The speed-up came from a shared executable specification, not from asking an
+agent to invent molecular dynamics from prose. Every implementation received the
+same atom order, coordinates, parameters, units, and named energy terms as the
+OpenMM reference. The agent then used a conventional differential-testing loop:
 
 \begin{enumerate}
   \item start with exactly the same molecular graph, coordinates, and
@@ -275,11 +296,12 @@ worked in a short loop with an established engine as the answer key:
     than a simplified stand-in.
 \end{enumerate}
 
-The loop was fast because the chemical typing, OpenMM adapter, GPU equations,
-browser controls, and tests lived in one workspace. The agent could trace a
-disagreement from a visible result back to one force term without waiting for a
-handoff between separate teams. Speed came from reducing coordination and from
-reusing the same inputs, not from relaxing the numerical standard.
+Differential testing is not new. What shortened this implementation was making
+the complete path---chemical typing, OpenMM adapter, GPU equations, browser
+workers, controls, and regression tests---addressable in one workspace. A visible
+failure could be reduced to the first disagreeing term without translating files
+or atom identities between teams or tools. Reusing exact inputs reduced
+coordination; it did not relax the numerical standard.
 
 Responsibility remained divided. Published methods and OpenMM supplied the
 equations and reference values. The human team set the scientific boundary,
@@ -288,31 +310,6 @@ terms into browser code, isolated discrepancies, and retained regression tests.
 The public history shows an iterative implementation, but its first public
 commit was consolidated; it does not support a precise claim about elapsed
 development time.
-
-The validation ladder was deliberately incremental:
-
-\begin{itemize}
-  \item \textbf{One equation:} minimal bonds, angles, torsions, and exceptions
-    exposed formula, sign, unit, or periodicity errors.
-  \item \textbf{Numerical limits:} constraints, overflow, and coordinate-range
-    cases exposed projection, fixed-point, and buffer failures.
-  \item \textbf{Two calculators:} identical OpenMM and WebGPU inputs located the
-    first disagreeing energy component or force coordinate.
-  \item \textbf{Whole system:} realistic protein fixtures exercised memory
-    layout, special pairs, and worker result transfer.
-  \item \textbf{Real browser:} the local GPU and WebAssembly workers tested
-    browser support, isolation, and visible controls.
-  \item \textbf{Performance:} fixed hardware and protocols exposed correct but
-    slower paths, including the withheld cutoff implementation.
-\end{itemize}
-
-Fixed random seeds and stable atom IDs make failures repeatable. Both engines
-reject impossible inputs and invalid memory ranges before display. The ensemble
-engine also stops on fixed-point overflow warnings or unconverged constraints;
-the direct engine reports its final constraint error, which browser tests compare
-with an acceptance threshold. Curated debugging records connect each observed
-failure to its diagnosis, code change, protective test, and remaining
-uncertainty; private raw transcripts are not scientific evidence.
 
 Several failures changed the architecture rather than being hidden by wider
 tolerances (Table~\ref{tab:architecture-failures}):
@@ -342,6 +339,77 @@ tolerances (Table~\ref{tab:architecture-failures}):
     \bottomrule
   \end{tabular}
 \end{table}
+\FloatBarrier
+
+The retained tests expose the seams where implementation errors actually
+appeared:
+
+\begin{itemize}
+  \item \textbf{Equation seam:} minimal bonds, angles, torsions, and exceptions
+    catch formula, sign, unit, and periodicity errors.
+  \item \textbf{Representation seam:} clashes, constraints, overflow, and
+    translated coordinates exercise projection and numerical range.
+  \item \textbf{Engine seam:} identical OpenMM and WebGPU inputs identify the
+    first disagreeing energy component or force coordinate.
+  \item \textbf{System seam:} protein fixtures exercise memory layout, special
+    pairs, and transfer between workers and the molecular object.
+  \item \textbf{Browser seam:} the shipped GPU and WebAssembly workers exercise
+    adapter support, worker recovery, and the visible controls.
+  \item \textbf{Performance seam:} fixed hardware and protocols retain correct
+    but slower results, including the rejected cutoff design.
+\end{itemize}
+
+Fixed random seeds and stable atom IDs make failures repeatable. Both engines
+reject impossible inputs and invalid memory ranges before display. The ensemble
+engine also stops on fixed-point overflow warnings or unconverged constraints;
+the direct engine reports its final constraint error, which browser tests compare
+with an acceptance threshold. Curated debugging records connect each observed
+failure to its diagnosis, code change, protective test, and remaining
+uncertainty; private raw transcripts are not scientific evidence.
+
+\paragraph{Reproduction difficulty and portability boundary.}
+Reproducing the present fixed-topology, nonperiodic mechanics was tractable once
+the reference calculation became executable, but it was not automatic. The
+difficulty was uneven:
+
+\begin{itemize}
+  \item \textbf{Individual force-field terms were bounded problems.} Each bond,
+    angle, torsion, pair, or solvent contribution had a published equation, a
+    fixed input, and an OpenMM result against which to compare it. Analytical
+    derivatives and OBC2 coupling still required careful work, but discrepancies
+    could be localized.
+  \item \textbf{The difficult problems crossed layers.} Atom identities had to
+    survive chemical perception, parameterization, GPU packing, calculation,
+    and display. Force ownership had to avoid races. Numerical ranges had to
+    survive clashes and translations. Long calculations had to yield often
+    enough that the browser remained usable.
+  \item \textbf{Validation remained irreducible.} An agent could translate and
+    test each term quickly, but it could not infer that two runs represented the
+    same physical model. Atom order, solvent mode, cutoffs, constraints, units,
+    and charge provenance still had to be matched explicitly.
+\end{itemize}
+
+These results do not imply that any simulation algorithm can be copied into
+WebGPU. They support a narrower working hypothesis: WebGPU is a strong target
+when state fits regular arrays, work can be divided into local or pairwise
+operations, global dependencies can be separated into a small number of kernel
+passes, and repeated work amortizes dispatch. Fixed-topology mechanics, local
+minimization, independent replicas, and graph-colourable constraints meet those
+conditions.
+
+Other methods may be expressible but unattractive. Algorithms that depend on
+64-bit floating-point arithmetic, frequent device-wide synchronization, rapidly
+changing graphs, large adaptive sparse structures, or mature FFT and sparse
+linear-algebra libraries require substantial redesign under current WGSL
+\cite{w3c2026wgsl}. Particle-mesh Ewald electrostatics, heterogeneous reactive
+systems, and some long-timescale production protocols therefore remain outside
+the demonstrated boundary. For such methods, a WebAssembly reference, a hybrid
+CPU/GPU path, or a remote specialist engine may be the more faithful design.
+
+A successful rewrite should consequently mean agreement on the same accepted
+inputs within a declared tolerance, together with measured usefulness on the
+target workload. It does not mean identical source code, universal bitwise
+reproducibility, or automatic speed-up.
 
 \subsection{Workflows}
 \label{app:workflows}
@@ -400,7 +468,8 @@ The Git analogy is simple: a \emph{snapshot} is one molecular state; a
 an alternative design route. A merge records which route was chosen and why. It
 never averages two molecular structures. This is a custom content-addressed
 ledger inspired by Git, not a Git repository or a general three-way molecular
-merge algorithm. Three linked records keep the audit scientifically honest:
+merge algorithm. Three linked record types answer different provenance
+questions:
 
 \paragraph{Current product boundary.}
 The live application currently keeps at most 500 action records in memory.
@@ -432,6 +501,13 @@ a live session into ledger commits with one click.
     \bottomrule
   \end{tabular}
 \end{table}
+
+Canonical JSON, SHA-256 fingerprints, parent links, and hash-chained events are
+standard provenance mechanisms. Molarium's contribution is their molecular
+binding: an operational record states what was requested, a numerical record
+states what calculation ran, and a design record states why one molecular state
+advanced. Keeping these questions separate prevents a successful replay from
+being mistaken for evidence that a design decision was scientifically sound.
 
 The ledger implementation uses schema \texttt{molarium.design-campaign/v1} and
 stores plain JSON in a
