@@ -708,6 +708,59 @@
             </div>
           </section>
 
+          <section class="card mode-panel hidden design-history-card" id="design-history-panel">
+            <h2 class="compact-label">Design History</h2>
+            <p class="design-history-status" id="campaign-status" role="status" aria-live="polite">No active campaign · history stays on this device.</p>
+            <div class="design-history-create" id="campaign-create-controls">
+              <input id="campaign-title" maxlength="120" placeholder="Campaign title" aria-label="Campaign title" />
+              <div class="design-history-inline">
+                <input id="campaign-id" maxlength="80" placeholder="campaign-id" aria-label="Campaign ID" />
+                <button class="primary-button" id="campaign-create" type="button">Start &amp; commit</button>
+              </div>
+            </div>
+            <div class="design-history-active hidden" id="campaign-active-controls">
+              <div class="design-history-summary" id="campaign-summary"></div>
+              <label class="design-history-label" for="campaign-commit-message">Commit current molecule</label>
+              <div class="design-history-inline">
+                <input id="campaign-commit-message" maxlength="240" placeholder="What changed?" />
+                <button class="primary-button" id="campaign-commit" type="button">Commit</button>
+              </div>
+              <details class="design-history-details">
+                <summary>Branches and decisions</summary>
+                <label class="design-history-label" for="campaign-branch">Current branch</label>
+                <select id="campaign-branch" aria-label="Current design-history branch"></select>
+                <div class="design-history-inline">
+                  <input id="campaign-new-branch" maxlength="80" placeholder="new-branch" aria-label="New branch name" />
+                  <button class="soft-button" id="campaign-create-branch" type="button">Create</button>
+                </div>
+                <label class="design-history-label" for="campaign-merge-source">Merge branch into current</label>
+                <div class="design-history-inline">
+                  <select id="campaign-merge-source" aria-label="Branch to merge"></select>
+                  <button class="soft-button" id="campaign-merge" type="button">Merge</button>
+                </div>
+                <label class="design-history-label" for="campaign-decision-disposition">Decision on current commit</label>
+                <select id="campaign-decision-disposition">
+                  <option value="progressed">Progressed</option>
+                  <option value="not-progressed">Not progressed</option>
+                  <option value="deferred">Deferred</option>
+                  <option value="failed">Failed</option>
+                  <option value="duplicate">Duplicate</option>
+                  <option value="superseded">Superseded</option>
+                  <option value="archived">Archived</option>
+                </select>
+                <textarea id="campaign-decision-rationale" maxlength="1000" rows="2" placeholder="Decision rationale"></textarea>
+                <button class="soft-button full-width" id="campaign-record-decision" type="button">Record decision</button>
+              </details>
+            </div>
+            <input class="hidden" id="campaign-file" type="file" accept="application/json,.json" />
+            <div class="design-history-actions">
+              <button class="soft-button" id="campaign-import" type="button">Import</button>
+              <button class="soft-button" id="campaign-export" type="button" disabled>Export</button>
+              <button class="soft-button" id="campaign-verify" type="button" disabled>Verify</button>
+              <button class="soft-button" id="campaign-close" type="button" disabled>Close</button>
+            </div>
+          </section>
+
           <section class="card mode-panel hidden" id="build-right-panel">
             <section class="docking-results hidden" id="docking-results">
               <div class="docking-heading">

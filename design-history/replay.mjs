@@ -8,6 +8,10 @@ export const READ_ONLY_CHEMIST_ACTIONS = Object.freeze([
   'session.inspect', 'designRoute.inspect', 'structureStory.inspect',
 ]);
 
+// Campaign actions describe the history container itself. Replaying them inside
+// a molecule action script would recursively create or mutate another campaign.
+export const NON_REPLAYABLE_CAMPAIGN_ACTION_PREFIX = 'campaign.';
+
 const FORBIDDEN_BOUNDARY_KEYS = new Set([
   'directCoordinates', 'internalCallback', 'module', 'eval', 'sourceCode', 'privateRoute',
 ]);
@@ -130,6 +134,7 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
     if (seenSequences.has(sequence)) throw new Error(`Duplicate audit sequence ${sequence}`);
     seenSequences.add(sequence);
     if (record.status !== 'completed' || (requested && !requested.has(sequence))) continue;
+    if (String(record.action || '').startsWith(NON_REPLAYABLE_CAMPAIGN_ACTION_PREFIX)) continue;
     if (!includeReadOnly && readOnly.has(record.action)) continue;
     if (!Object.hasOwn(CHEMIST_ACTION_DEFINITIONS, record.action))
       throw new Error(`Audit sequence ${sequence} uses unavailable route ${record.action}`);
@@ -156,8 +161,11 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
       includedRecordCount:actions.length,
       includedSequences:records.filter((record) => record?.status === 'completed'
         && (!requested || requested.has(record.sequence))
+        && !String(record.action || '').startsWith(NON_REPLAYABLE_CAMPAIGN_ACTION_PREFIX)
         && (includeReadOnly || !readOnly.has(record.action))).map((record) => record.sequence),
       failedRecordsExcluded:records.filter((record) => record?.status !== 'completed').length,
+      campaignBookkeepingExcluded:records.filter((record) => record?.status === 'completed'
+        && String(record.action || '').startsWith(NON_REPLAYABLE_CAMPAIGN_ACTION_PREFIX)).length,
       readOnlyInspectionsIncluded:Boolean(includeReadOnly),
       ...(provenance == null ? {} : cloneRecord(provenance)) },
   };

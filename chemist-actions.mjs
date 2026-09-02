@@ -85,6 +85,41 @@ const ACTIONS = Object.freeze({
   'designRoute.inspect': Object.freeze({
     description:'Inspect the active route boundary, hit, and current graph-only design step.',
     arguments:Object.freeze({}) }),
+  'campaign.create': Object.freeze({
+    description:'Start a locally persisted design campaign and commit the current Molarium molecule in the same action.',
+    arguments:Object.freeze({ campaignId:'stable campaign ID', title:'campaign title',
+      description:'optional campaign description', actorId:'optional stable actor ID',
+      actorName:'optional actor display name',
+      initialCommitMessage:'optional message for the atomic first molecular commit' }) }),
+  'campaign.inspect': Object.freeze({
+    description:'Inspect the active campaign, branch heads, commits, decisions, and uncommitted public actions.',
+    arguments:Object.freeze({}) }),
+  'campaign.commitCurrent': Object.freeze({
+    description:'Commit the current molecular state and public Chemist Actions since the preceding commit.',
+    arguments:Object.freeze({ message:'commit message', label:'optional molecular snapshot label',
+      tags:'optional array of stable tags' }) }),
+  'campaign.createBranch': Object.freeze({
+    description:'Create and switch to a named design branch at a selected commit or the current branch head.',
+    arguments:Object.freeze({ branch:'stable branch name', fromCommitId:'optional commit ID' }) }),
+  'campaign.switchBranch': Object.freeze({
+    description:'Switch the active design branch and restore the exact molecule at its head commit.',
+    arguments:Object.freeze({ branch:'existing branch name' }) }),
+  'campaign.mergeBranch': Object.freeze({
+    description:'Merge a selected source branch into a target branch while retaining both parents.',
+    arguments:Object.freeze({ sourceBranch:'source branch name', targetBranch:'optional target branch name',
+      message:'optional merge message' }) }),
+  'campaign.recordDecision': Object.freeze({
+    description:'Record a design disposition and rationale against a committed molecular state.',
+    arguments:Object.freeze({ targetCommitId:'optional commit ID; defaults to current branch head',
+      disposition:'progressed | not-progressed | deferred | failed | duplicate | superseded | archived',
+      reasonCodes:'optional array of controlled reason codes', rationale:'decision rationale',
+      evidenceIds:'optional array of evidence event IDs' }) }),
+  'campaign.verify': Object.freeze({
+    description:'Verify the active campaign content hashes, event chain, commits, and branch heads.',
+    arguments:Object.freeze({}) }),
+  'campaign.close': Object.freeze({
+    description:'Close the active local campaign without deleting its persisted commits.',
+    arguments:Object.freeze({}) }),
   'structureStory.load': Object.freeze({
     description:'Load a registered, provenance-pinned molecular structure story.',
     arguments:Object.freeze({ storyId:'registered structure-story ID' }) }),

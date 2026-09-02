@@ -746,6 +746,37 @@ body.designer-move-demo-active .designer-move-demo-reveal.hidden { display: bloc
 }
 .fragment-stage-row input:focus, .fragment-search:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px rgba(15,23,42,.08); }
 .fragment-stage-row .primary-button { height: 35px; padding: 6px; border-radius: 8px; font-size: 11px; }
+.design-history-card { display: grid; gap: 8px; }
+.design-history-card.hidden { display: none; }
+.design-history-card .collapsible-card-body { display: grid; gap: 8px; }
+.design-history-status { margin: 0; color: var(--quiet); font-size: 9px; line-height: 1.4; }
+.design-history-status.success { color: #047857; }
+.design-history-status.failure { color: #b42318; }
+.design-history-create, .design-history-active { display: grid; gap: 7px; }
+.design-history-create.hidden, .design-history-active.hidden { display: none; }
+.design-history-card input, .design-history-card textarea, .design-history-card select {
+  width: 100%; min-width: 0; border: 1px solid var(--line-strong); border-radius: 7px;
+  background: white; color: #334155; font-size: 9px;
+}
+.design-history-card input { height: 31px; padding: 5px 7px; }
+.design-history-card textarea { padding: 6px 7px; resize: vertical; line-height: 1.35; }
+.design-history-inline { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
+.design-history-inline .primary-button, .design-history-inline .soft-button {
+  min-width: 58px; margin: 0; padding: 5px 8px; font-size: 9px;
+}
+.design-history-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+.design-history-summary span { min-width: 0; padding: 5px; border: 1px solid var(--line);
+  border-radius: 6px; background: #f8fafc; color: var(--quiet); font-size: 7px;
+  text-align: center; text-transform: uppercase; letter-spacing: .035em; }
+.design-history-summary strong { display: block; overflow: hidden; margin-top: 2px;
+  color: #1e293b; font-size: 9px; text-overflow: ellipsis; text-transform: none; white-space: nowrap; }
+.design-history-label { display: block; margin-top: 2px; color: var(--quiet); font-size: 8px; font-weight: 700; }
+.design-history-details { padding: 7px; border: 1px solid var(--line); border-radius: 7px; background: #f8fafc; }
+.design-history-details summary { cursor: pointer; color: #475569; font-size: 9px; font-weight: 700; }
+.design-history-details[open] { display: grid; gap: 6px; }
+.design-history-details .full-width { margin-top: 0; font-size: 9px; }
+.design-history-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+.design-history-actions .soft-button { min-width: 0; margin: 0; padding: 5px 4px; font-size: 8px; }
 .fragment-template-label { margin-top: 13px; margin-bottom: 6px; }
 .fragment-search { margin-bottom: 7px; font-family: inherit; }
 .fragment-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; max-height: calc(100vh - 312px); overflow-y: auto; padding-right: 1px; }

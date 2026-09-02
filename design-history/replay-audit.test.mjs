@@ -11,6 +11,8 @@ const audit = { schema:CHEMIST_ACTIONS_SCHEMA, routeId:'converter-test', records
     args:{ mode:'run' }, status:'failed', error:'ignored' },
   { sequence:4, requestId:'build', action:'view.setMode', args:{ mode:'build' },
     caption:'Enter the Build workspace', status:'completed', durationMs:4 },
+  { sequence:5, requestId:'commit-history', action:'campaign.commitCurrent',
+    args:{ message:'must not recursively replay' }, status:'completed' },
 ] };
 
 const complete = actionScriptFromAudit(audit, { label:'Complete protocol' });
@@ -23,6 +25,7 @@ assert.deepEqual(complete.actions[1].args, audit.records[1].args);
 assert.equal(complete.actions[2].caption, 'Enter the Build workspace');
 assert.equal(complete.sourceAudit.failedRecordsExcluded, 1);
 assert.deepEqual(complete.sourceAudit.includedSequences, [1, 2, 4]);
+assert.equal(complete.sourceAudit.campaignBookkeepingExcluded, 1);
 assert.equal(JSON.stringify(complete).includes('startedAt'), false);
 assert.equal(JSON.stringify(complete).includes('durationMs'), false);
 assert.equal(JSON.stringify(complete).includes('ignored'), false);

@@ -90,6 +90,8 @@ The converter also accepts `includeSequences` for a provenance-linked subset,
 `captionsBySequence` for edited narrative captions, and `includeAuditMetadata: true` when each
 step should carry its original audit sequence and request ID. Its default output keeps all
 completed calls—including read-only inspections—and emits steps as `{ action, args, caption? }`.
+Campaign bookkeeping calls are always omitted, because replaying them inside a
+molecule script would recursively create or mutate a history container.
 
 For an existing audit file:
 
@@ -103,6 +105,25 @@ node scripts/audit-to-action-script.mjs \
 
 Use `--sequences 1-12,20,24-30` to select an explicit source subsequence. The converter validates
 the result against the currently available public action manifest before writing it.
+
+## Committing a live molecular history
+
+The main Build workspace exposes a separate **Design History** card for
+`molarium.design-campaign/v1`. **Start & commit** records the exact current graph
+and coordinates as the first content-addressed molecular commit. Subsequent
+commits can be branched, checked out, merged with an explicit visible molecular
+result, assigned a design disposition, verified, exported, and restored from
+browser-local IndexedDB. Main-workbench import requires the selected branch head
+to contain a complete molecular graph and coordinates; reference-only campaign
+records remain readable in the standalone history viewers.
+
+The optional action script attached to a live commit is deliberately marked
+`coverage.kind: "public-actions-only"` and `coverage.complete: false`. It contains
+completed Chemist Actions observed since the prior commit, but it does not claim
+that direct canvas or form interactions were replayable API calls. Accordingly,
+live scripts do not assert `expectedStartSnapshotId` or
+`expectedEndSnapshotId`; the hashed molecular snapshot remains the authoritative
+record of what was committed.
 
 ## Replaying a saved route
 

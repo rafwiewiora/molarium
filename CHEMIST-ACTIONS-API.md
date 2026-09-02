@@ -70,6 +70,44 @@ feature transfer, Undo, and Redo therefore behave exactly as they do for an inte
   `pose.applySidechainRotamer`
 - `optimization.run`
 - `designRoute.load`, `designRoute.applyStep`, `designRoute.inspect`
+- `campaign.create`, `campaign.inspect`, `campaign.commitCurrent`
+- `campaign.createBranch`, `campaign.switchBranch`, `campaign.mergeBranch`
+- `campaign.recordDecision`, `campaign.verify`, `campaign.close`
+
+## Live design campaigns
+
+The Build workspace's **Design History** card is a public API client. A
+`campaign.create` request starts a campaign and atomically places the exact
+current graph and coordinates in its first commit; `initialCommitMessage`
+overrides the default commit message.
+`campaign.commitCurrent` makes later commits. Both operations assign persistent
+atom IDs before hashing the snapshot.
+
+`campaign.createBranch` creates a branch at an explicit commit or the current
+head. `campaign.switchBranch` refuses to discard uncommitted molecular changes,
+then reconstructs the graph and coordinates at the selected branch head.
+`campaign.mergeBranch` records the molecule currently visible on the target
+branch as the explicit merge result and retains the target and source commits as
+ordered parents; it does not attempt an automatic chemical graph merge.
+`campaign.recordDecision` attaches a controlled disposition and rationale to a
+commit. `campaign.verify` checks object hashes, commit-event agreement, the event
+hash chain, and branch heads derived from that chain.
+
+Campaign JSON and the selected branch are stored locally in IndexedDB. Reloading
+restores the active campaign and its head molecule. `campaign.close` removes the
+active-workspace pointer without deleting the stored campaign, allowing another
+campaign to be started. Import accepts a verified campaign whose selected branch
+head contains a complete graph and coordinate snapshot; repository campaigns
+that contain only external structure references remain inputs to the standalone
+history viewers. Export and Verify remain visible in the same card, and a
+finalized imported campaign is read-only.
+
+A live commit may attach the completed public Chemist Actions since the previous
+commit. That script is labelled `public-actions-only`, with `complete: false`
+and no asserted start/end snapshot IDs: direct manual UI changes are preserved
+in the committed molecule but are not silently claimed as replayable API steps.
+Campaign bookkeeping actions are excluded from molecule scripts so replay cannot
+recursively create or mutate a campaign.
 
 Registered design routes use schema `molarium.registered-design-route/v1` and enforce a
 prospective coordinate boundary. They are input protocols, not append-only campaign ledgers.
@@ -211,6 +249,8 @@ routes, embedded code, callbacks, and direct coordinate replacement. See
 [`DESIGNER-MOVES.md`](./DESIGNER-MOVES.md) for the schema, converter, and the provenance-pinned SOS1
 Phe890 examples. Paused back/forward controls inspect cached application checkpoints only; they do
 not issue Agent/API calls or rewrite the append-only execution audit.
+The audit converter excludes `campaign.*` bookkeeping actions from these
+molecule scripts.
 
 ## Explicit exclusions
 
@@ -226,4 +266,5 @@ Run the API gates with:
 npm run test:chemist-actions
 npm run test:chemist-actions-browser
 npm run test:chemist-actions-production
+npm run test:live-campaign-production
 ```

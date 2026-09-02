@@ -688,6 +688,9 @@ const state = {
   chemistryTransaction: null,
   chemistryEditFinishing: false,
   chemistActionAudit: [],
+  liveCampaign: null,
+  liveCampaignBranch: 'main',
+  liveCampaignCommittedThroughSequence: 0,
   designRoute: null,
   designRouteStepId: null,
   geometryEditActive: false,
@@ -6040,13 +6043,15 @@ function setMode(mode) {
   }
   state.mode = mode;
   document.querySelectorAll('.mode-bar button').forEach((button) => button.classList.toggle('active', button.dataset.mode === mode));
-  ['build-left-panel', 'build-right-panel', 'run-left-panel', 'run-right-panel'].forEach((id) => document.querySelector(`#${id}`).classList.add('hidden'));
+  ['build-left-panel', 'build-right-panel', 'design-history-panel',
+    'run-left-panel', 'run-right-panel'].forEach((id) => document.querySelector(`#${id}`).classList.add('hidden'));
   document.querySelector('#display-options').classList.toggle('hidden', mode !== 'view');
   document.querySelector('.protein-fold-card').classList.toggle('hidden', mode !== 'view');
   document.querySelector('#molecule-info').classList.toggle('hidden', !state.molecule);
   document.querySelector('.scene-card').classList.toggle('hidden', mode !== 'view');
   document.querySelector('#build-left-panel').classList.toggle('hidden', mode !== 'build');
   document.querySelector('#build-right-panel').classList.toggle('hidden', mode !== 'build');
+  document.querySelector('#design-history-panel').classList.toggle('hidden', mode !== 'build');
   document.querySelector('#run-left-panel').classList.toggle('hidden', mode !== 'run');
   document.querySelector('#run-right-panel').classList.toggle('hidden', mode !== 'run');
   canvas.classList.toggle('build-cursor', mode === 'build' && state.buildTool === 'add');
@@ -6055,7 +6060,11 @@ function setMode(mode) {
   update2DEditorUi();
   updateDockingUi();
   renderDockingResults();
-  if (mode === 'build') requestAnimationFrame(drawFragmentPreviews);
+  if (mode === 'build') {
+    requestAnimationFrame(drawFragmentPreviews);
+    ensureLiveCampaignPersistence();
+    updateLiveCampaignUi();
+  }
   draw();
   return true;
 }
@@ -8431,6 +8440,199 @@ function persistChemistActionAudit(record) {
   updateDesignerMoveControls();
 }
 
+let liveCampaignModulePromise = null;
+let liveCampaignStoreModulePromise = null;
+let liveCampaignStorePromise = null;
+let liveCampaignRestorePromise = null;
+let liveCampaignUiBusy = false;
+
+function getLiveCampaignModule() {
+  liveCampaignModulePromise ||= import('./design-history/live-campaign.mjs');
+  return liveCampaignModulePromise;
+}
+
+function getLiveCampaignStoreModule() {
+  liveCampaignStoreModulePromise ||= import('./design-history/live-campaign-store.mjs');
+  return liveCampaignStoreModulePromise;
+}
+
+function getLiveCampaignStore() {
+  liveCampaignStorePromise ||= getLiveCampaignStoreModule()
+    .then((module) => module.createLiveCampaignStore());
+  return liveCampaignStorePromise;
+}
+
+function liveCampaignActorId(campaign = state.liveCampaign) {
+  return campaign?.actors?.find((actor) => actor.type === 'human')?.id
+    || campaign?.actors?.[0]?.id || 'chemist.local';
+}
+
+function liveCampaignHead(campaign = state.liveCampaign,
+  branch = state.liveCampaignBranch) {
+  return campaign?.branches?.[branch] || null;
+}
+
+function updateLiveCampaignUi(message = '', status = '') {
+  const campaign = state.liveCampaign;
+  const createControls = document.querySelector('#campaign-create-controls');
+  const activeControls = document.querySelector('#campaign-active-controls');
+  const statusElement = document.querySelector('#campaign-status');
+  if (!createControls || !activeControls || !statusElement) return;
+  createControls.classList.toggle('hidden', Boolean(campaign));
+  activeControls.classList.toggle('hidden', !campaign);
+  document.querySelector('#campaign-export').disabled = !campaign || liveCampaignUiBusy;
+  document.querySelector('#campaign-verify').disabled = !campaign || liveCampaignUiBusy;
+  document.querySelector('#campaign-close').disabled = !campaign || liveCampaignUiBusy;
+  document.querySelector('#campaign-import').disabled = liveCampaignUiBusy;
+  document.querySelector('#campaign-create').disabled = liveCampaignUiBusy;
+  document.querySelectorAll('#campaign-active-controls button, #campaign-active-controls input, #campaign-active-controls textarea, #campaign-active-controls select')
+    .forEach((control) => { control.disabled = !campaign || liveCampaignUiBusy
+      || Boolean(campaign?.campaignSha256); });
+  statusElement.classList.toggle('success', status === 'success');
+  statusElement.classList.toggle('failure', status === 'failure');
+  statusElement.textContent = message || (campaign
+    ? `${campaign.title} · ${state.liveCampaignBranch}`
+    : 'No active campaign · history stays on this device.');
+  if (!campaign) return;
+
+  const commits = Object.keys(campaign.objects?.commits || {}).length;
+  const decisions = (campaign.events || []).filter((event) =>
+    event.kind === 'decision.recorded').length;
+  const summary = document.querySelector('#campaign-summary');
+  summary.replaceChildren();
+  for (const [label, value] of [['Branch', state.liveCampaignBranch],
+    ['Commits', commits], ['Decisions', decisions]]) {
+    const item = document.createElement('span');
+    const strong = document.createElement('strong');
+    item.append(document.createTextNode(label)); strong.textContent = String(value); item.append(strong);
+    summary.append(item);
+  }
+  const branches = Object.keys(campaign.branches || {}).sort();
+  const branchSelect = document.querySelector('#campaign-branch');
+  branchSelect.replaceChildren(...branches.map((branch) => {
+    const option = document.createElement('option'); option.value = branch; option.textContent = branch;
+    return option;
+  }));
+  branchSelect.value = state.liveCampaignBranch;
+  const mergeSelect = document.querySelector('#campaign-merge-source');
+  const mergeBranches = branches.filter((branch) => branch !== state.liveCampaignBranch
+    && campaign.branches[branch]);
+  mergeSelect.replaceChildren(...mergeBranches.map((branch) => {
+    const option = document.createElement('option'); option.value = branch; option.textContent = branch;
+    return option;
+  }));
+  mergeSelect.disabled = liveCampaignUiBusy || Boolean(campaign.campaignSha256)
+    || !mergeBranches.length;
+  document.querySelector('#campaign-merge').disabled = liveCampaignUiBusy
+    || Boolean(campaign.campaignSha256) || !mergeBranches.length || !liveCampaignHead();
+  document.querySelector('#campaign-record-decision').disabled = liveCampaignUiBusy
+    || Boolean(campaign.campaignSha256) || !liveCampaignHead();
+}
+
+async function saveLiveCampaign(campaign, activeBranch = state.liveCampaignBranch) {
+  const store = await getLiveCampaignStore();
+  await store.save(campaign, { activeBranch });
+}
+
+function currentChemistActionSequence() {
+  return Math.max(0, ...state.chemistActionAudit.map((record) =>
+    Number.isInteger(record?.sequence) ? record.sequence : 0));
+}
+
+async function loadLiveCampaignBranchMolecule(campaign, branch) {
+  const prepared = await prepareLiveCampaignBranchMolecule(campaign, branch);
+  if (!prepared.commitId) return null;
+  applyLiveCampaignBranchMolecule(prepared.molecule);
+  return prepared.commitId;
+}
+
+async function prepareLiveCampaignBranchMolecule(campaign, branch, { required = false } = {}) {
+  const commitId = campaign?.branches?.[branch];
+  if (!commitId) {
+    if (required) throw new Error(`Campaign branch ${branch} has no molecular commit to restore`);
+    return { commitId:null, molecule:null };
+  }
+  const live = await getLiveCampaignModule();
+  return { commitId, molecule:live.moleculeFromCampaignCommit(campaign, commitId) };
+}
+
+function applyLiveCampaignBranchMolecule(molecule) {
+  const audit = structuredClone(state.chemistActionAudit);
+  loadMolecule(molecule);
+  state.chemistActionAudit = audit;
+  state.molecule.source = { ...(state.molecule.source || {}),
+    chemistActionAudit:structuredClone(audit) };
+  updateDesignerMoveControls();
+}
+
+async function initializeLiveCampaignPersistence() {
+  try {
+    const [store, module] = await Promise.all([getLiveCampaignStore(), getLiveCampaignModule()]);
+    const workspace = await store.loadActive();
+    if (!workspace?.campaign) return updateLiveCampaignUi();
+    const { campaign } = workspace;
+    const verification = await module.verifyLiveCampaign(campaign);
+    if (!verification.valid) throw new Error(`Stored campaign is invalid: ${verification.reason}`);
+    const branch = Object.hasOwn(campaign.branches || {}, workspace.activeBranch)
+      ? workspace.activeBranch : 'main';
+    const checkout = await prepareLiveCampaignBranchMolecule(campaign, branch, { required:true });
+    state.liveCampaign = campaign;
+    state.liveCampaignBranch = branch;
+    // Chemist Actions sequence numbers are scoped to this page/API instance.
+    // A persisted campaign's historical sequence must not suppress new-session actions.
+    state.liveCampaignCommittedThroughSequence = 0;
+    applyLiveCampaignBranchMolecule(checkout.molecule);
+    updateLiveCampaignUi('Restored the most recent local campaign.', 'success');
+  } catch (error) {
+    updateLiveCampaignUi(`Local campaign storage unavailable: ${error.message}`, 'failure');
+  }
+}
+
+function ensureLiveCampaignPersistence() {
+  liveCampaignRestorePromise ||= initializeLiveCampaignPersistence();
+  return liveCampaignRestorePromise;
+}
+
+function liveCampaignInspection() {
+  const campaign = state.liveCampaign;
+  if (!campaign) return { active:false, campaign:null,
+    currentBranch:null, currentCommitId:null, uncommittedActionCount:0 };
+  const committedThrough = Number(state.liveCampaignCommittedThroughSequence || 0);
+  return { active:true, campaign:{ campaignId:campaign.campaignId, title:campaign.title,
+    description:campaign.description, createdAt:campaign.createdAt,
+    finalizedAt:campaign.finalizedAt || null,
+    actors:structuredClone(campaign.actors || []),
+    commits:Object.keys(campaign.objects?.commits || {}).length,
+    events:campaign.events?.length || 0,
+    decisions:(campaign.events || []).filter((event) => event.kind === 'decision.recorded').length,
+    branches:structuredClone(campaign.branches || {}),
+    campaignSha256:campaign.campaignSha256 || null },
+  currentBranch:state.liveCampaignBranch,
+  currentCommitId:liveCampaignHead(),
+  committedThroughSequence:committedThrough,
+  uncommittedActionCount:state.chemistActionAudit.filter((record) =>
+    record.status === 'completed' && Number(record.sequence || 0) > committedThrough
+      && !String(record.action || '').startsWith('campaign.')).length };
+}
+
+async function runCampaignUiAction(action, args, successMessage) {
+  if (liveCampaignUiBusy) return;
+  liveCampaignUiBusy = true; updateLiveCampaignUi('Updating design history…');
+  let finalMessage = '', finalStatus = '';
+  try {
+    const api = await window.MolariumChemistActionsReady;
+    const response = await api.execute({ action, args });
+    finalMessage = successMessage(response.result); finalStatus = 'success';
+    return response.result;
+  } catch (error) {
+    finalMessage = error.message; finalStatus = 'failure';
+    showNotice(error.message);
+    return null;
+  } finally {
+    liveCampaignUiBusy = false; updateLiveCampaignUi(finalMessage, finalStatus);
+  }
+}
+
 async function ensureChemistActionAtomIds() {
   if (!state.molecule?.atoms?.length) throw new Error('Load a molecule before using Chemist Actions.');
   const { ensureStableAtomIds } = await import('./docking/reference-core.mjs');
@@ -9043,6 +9245,226 @@ function installChemistActionsApi(module) {
         iterations:result.iterations ?? null, converged:result.converged ?? null,
         elapsedMs:result.elapsedMs ?? null,
         ...chemistActionCoordinateChanges(before) } }); },
+    'campaign.create':async (args) => { chemistActionKeys(args,
+      ['campaignId','title','description','actorId','actorName','initialCommitMessage']);
+      await ensureLiveCampaignPersistence();
+      if (state.liveCampaign) throw new Error('A design campaign is already active');
+      if (!state.molecule?.atoms?.length) throw new Error('Load a molecule before starting a campaign');
+      const campaignId = String(args.campaignId || '');
+      const title = String(args.title || '');
+      if (!/^[a-z0-9][a-z0-9._:-]*$/i.test(campaignId))
+        throw new Error('campaignId must be a stable identifier');
+      if (!title.trim()) throw new Error('title must not be empty');
+      const actorId = String(args.actorId || 'chemist.local');
+      const actorName = String(args.actorName || 'Local chemist');
+      if (!/^[a-z0-9][a-z0-9._:-]*$/i.test(actorId))
+        throw new Error('actorId must be a stable identifier');
+      if (!actorName.trim()) throw new Error('actorName must not be empty');
+      const initialCommitMessage = args.initialCommitMessage == null
+        ? 'Capture starting molecule' : String(args.initialCommitMessage).trim();
+      if (args.initialCommitMessage != null && !initialCommitMessage)
+        throw new Error('initialCommitMessage must be a non-empty string');
+      if (state.chemistryTransaction)
+        throw new Error('Finish pending chemistry before committing the initial state');
+      const live = await getLiveCampaignModule();
+      let campaign = await live.createLiveCampaign({ campaignId, title,
+        description:String(args.description || ''), actorId, actorDisplayName:actorName,
+        createdAt:new Date().toISOString(), application:{
+          name:'Molarium', chemistActionsSchema:module.CHEMIST_ACTIONS_SCHEMA,
+        } });
+      await ensureChemistActionAtomIds();
+      const result = await live.commitLiveMolecule(campaign, {
+        molecule:state.molecule, audit:state.chemistActionAudit, branch:'main',
+        message:initialCommitMessage, actorId, occurredAt:new Date().toISOString(),
+        lastAuditSequence:0,
+      });
+      campaign = result.campaign;
+      const committedThroughSequence = result.committedThroughSequence;
+      const campaignCommit = { commitId:result.commitId, snapshotId:result.snapshotId,
+        actionScriptId:result.actionScriptId, branch:'main', committedThroughSequence };
+      await saveLiveCampaign(campaign, 'main');
+      state.liveCampaign = campaign;
+      state.liveCampaignBranch = 'main';
+      state.liveCampaignCommittedThroughSequence = committedThroughSequence;
+      updateLiveCampaignUi();
+      return chemistActionSummary({ campaign:liveCampaignInspection(), campaignCommit }); },
+    'campaign.inspect':async (args) => { empty(args);
+      await ensureLiveCampaignPersistence();
+      return chemistActionSummary({ campaign:liveCampaignInspection() }); },
+    'campaign.commitCurrent':async (args) => { chemistActionKeys(args,
+      ['message','label','tags']);
+      await ensureLiveCampaignPersistence();
+      if (!state.liveCampaign) throw new Error('Start or import a design campaign first');
+      if (!state.molecule?.atoms?.length) throw new Error('Load a molecule before committing it');
+      if (state.chemistryTransaction) throw new Error('Finish pending chemistry before committing');
+      const message = String(args.message || '').trim();
+      if (!message) throw new Error('message must not be empty');
+      if (args.label != null && (typeof args.label !== 'string' || !args.label.trim()))
+        throw new Error('label must be a non-empty string');
+      const tags = args.tags ?? [];
+      if (!Array.isArray(tags) || tags.length > 32
+        || tags.some((tag) => typeof tag !== 'string' || !tag.trim() || tag.length > 80))
+        throw new Error('tags must contain up to 32 non-empty strings');
+      await ensureChemistActionAtomIds();
+      const live = await getLiveCampaignModule();
+      const result = await live.commitLiveMolecule(state.liveCampaign, {
+        molecule:state.molecule, audit:state.chemistActionAudit,
+        branch:state.liveCampaignBranch, message, label:args.label,
+        tags:structuredClone(tags), actorId:liveCampaignActorId(),
+        occurredAt:new Date().toISOString(),
+        lastAuditSequence:state.liveCampaignCommittedThroughSequence,
+      });
+      await saveLiveCampaign(result.campaign, state.liveCampaignBranch);
+      state.liveCampaign = result.campaign;
+      state.liveCampaignCommittedThroughSequence = result.committedThroughSequence;
+      updateLiveCampaignUi();
+      return chemistActionSummary({ campaignCommit:{ commitId:result.commitId,
+        snapshotId:result.snapshotId, actionScriptId:result.actionScriptId,
+        branch:state.liveCampaignBranch,
+        committedThroughSequence:result.committedThroughSequence } }); },
+    'campaign.createBranch':async (args) => { chemistActionKeys(args,
+      ['branch','fromCommitId']);
+      await ensureLiveCampaignPersistence();
+      if (!state.liveCampaign) throw new Error('Start or import a design campaign first');
+      const branch = String(args.branch || '');
+      if (!/^[a-z0-9][a-z0-9._:-]*$/i.test(branch))
+        throw new Error('branch must be a stable identifier');
+      if (args.fromCommitId != null && (typeof args.fromCommitId !== 'string'
+        || !args.fromCommitId)) throw new Error('fromCommitId must be a commit ID');
+      const live = await getLiveCampaignModule();
+      const currentHead = liveCampaignHead();
+      if (currentHead && state.molecule) {
+        await ensureChemistActionAtomIds();
+        const currentSnapshot = state.liveCampaign.objects.snapshots[
+          state.liveCampaign.objects.commits[currentHead].snapshotId];
+        if (!await live.moleculeMatchesSnapshot(state.molecule, currentSnapshot))
+          throw new Error('Commit the current molecular changes before creating a branch');
+      }
+      const result = await live.createLiveBranch(state.liveCampaign, { branch,
+        fromCommitId:args.fromCommitId ?? liveCampaignHead(),
+        actorId:liveCampaignActorId(), occurredAt:new Date().toISOString() });
+      const checkout = await prepareLiveCampaignBranchMolecule(result.campaign, result.branch);
+      await saveLiveCampaign(result.campaign, result.branch);
+      state.liveCampaign = result.campaign;
+      state.liveCampaignBranch = result.branch;
+      if (checkout.molecule) applyLiveCampaignBranchMolecule(checkout.molecule);
+      state.liveCampaignCommittedThroughSequence = currentChemistActionSequence();
+      updateLiveCampaignUi();
+      return chemistActionSummary({ campaignBranch:{ branch:result.branch,
+        head:result.head, eventId:result.event?.eventId || null } }); },
+    'campaign.switchBranch':async (args) => { chemistActionKeys(args, ['branch']);
+      await ensureLiveCampaignPersistence();
+      if (!state.liveCampaign) throw new Error('Start or import a design campaign first');
+      const branch = String(args.branch || '');
+      if (!Object.hasOwn(state.liveCampaign.branches || {}, branch))
+        throw new Error(`Unknown branch: ${branch}`);
+      if (branch === state.liveCampaignBranch)
+        return chemistActionSummary({ campaignBranch:{ branch,
+          head:liveCampaignHead(), restored:false } });
+      const live = await getLiveCampaignModule();
+      const currentHead = liveCampaignHead();
+      if (currentHead && state.molecule) {
+        await ensureChemistActionAtomIds();
+        const currentSnapshot = state.liveCampaign.objects.snapshots[
+          state.liveCampaign.objects.commits[currentHead].snapshotId];
+        if (!await live.moleculeMatchesSnapshot(state.molecule, currentSnapshot))
+          throw new Error('Commit the current molecular changes before switching branches');
+      }
+      const checkout = await prepareLiveCampaignBranchMolecule(state.liveCampaign, branch);
+      await saveLiveCampaign(state.liveCampaign, branch);
+      state.liveCampaignBranch = branch;
+      if (checkout.molecule) applyLiveCampaignBranchMolecule(checkout.molecule);
+      state.liveCampaignCommittedThroughSequence = currentChemistActionSequence();
+      updateLiveCampaignUi();
+      return chemistActionSummary({ campaignBranch:{ branch,
+        head:liveCampaignHead(), restored:Boolean(checkout.commitId) } }); },
+    'campaign.mergeBranch':async (args) => { chemistActionKeys(args,
+      ['sourceBranch','targetBranch','message']);
+      await ensureLiveCampaignPersistence();
+      if (!state.liveCampaign) throw new Error('Start or import a design campaign first');
+      if (!state.molecule?.atoms?.length) throw new Error('Load a molecule before merging');
+      if (state.chemistryTransaction) throw new Error('Finish pending chemistry before merging');
+      const sourceBranch = String(args.sourceBranch || '');
+      const targetBranch = String(args.targetBranch || state.liveCampaignBranch);
+      for (const [label, branch] of [['sourceBranch', sourceBranch], ['targetBranch', targetBranch]])
+        if (!/^[a-z0-9][a-z0-9._:-]*$/i.test(branch))
+          throw new Error(`${label} must be a stable branch name`);
+      if (!Object.hasOwn(state.liveCampaign.branches || {}, sourceBranch))
+        throw new Error(`Unknown source branch: ${sourceBranch}`);
+      if (!Object.hasOwn(state.liveCampaign.branches || {}, targetBranch))
+        throw new Error(`Unknown target branch: ${targetBranch}`);
+      if (sourceBranch === targetBranch) throw new Error('Source and target branches must differ');
+      if (targetBranch !== state.liveCampaignBranch)
+        throw new Error('Switch to the target branch before merging into it');
+      await ensureChemistActionAtomIds();
+      const live = await getLiveCampaignModule();
+      const result = await live.mergeCurrentMolecule(state.liveCampaign, {
+        sourceBranch, targetBranch, molecule:state.molecule,
+        audit:state.chemistActionAudit,
+        message:String(args.message || `Merge ${sourceBranch} into ${targetBranch}`),
+        actorId:liveCampaignActorId(), occurredAt:new Date().toISOString(),
+        lastAuditSequence:state.liveCampaignCommittedThroughSequence,
+      });
+      await saveLiveCampaign(result.campaign, targetBranch);
+      state.liveCampaign = result.campaign;
+      state.liveCampaignBranch = targetBranch;
+      state.liveCampaignCommittedThroughSequence = result.committedThroughSequence;
+      updateLiveCampaignUi();
+      return chemistActionSummary({ campaignMerge:{ commitId:result.commitId,
+        snapshotId:result.snapshotId, actionScriptId:result.actionScriptId,
+        sourceBranch, targetBranch,
+        committedThroughSequence:result.committedThroughSequence } }); },
+    'campaign.recordDecision':async (args) => { chemistActionKeys(args,
+      ['targetCommitId','disposition','reasonCodes','rationale','evidenceIds']);
+      await ensureLiveCampaignPersistence();
+      if (!state.liveCampaign) throw new Error('Start or import a design campaign first');
+      const targetCommitId = args.targetCommitId ?? liveCampaignHead();
+      if (typeof targetCommitId !== 'string' || !targetCommitId)
+        throw new Error('Commit the current branch before recording a decision');
+      const disposition = chemistActionEnum(args.disposition,
+        ['progressed','not-progressed','deferred','failed','duplicate','superseded','archived'],
+        'disposition');
+      const reasonCodes = args.reasonCodes ?? [];
+      const evidenceIds = args.evidenceIds ?? [];
+      for (const [label, values, maximum] of [['reasonCodes', reasonCodes, 32],
+        ['evidenceIds', evidenceIds, 128]])
+        if (!Array.isArray(values) || values.length > maximum
+          || values.some((value) => typeof value !== 'string' || !value))
+          throw new Error(`${label} must contain up to ${maximum} non-empty strings`);
+      const rationale = String(args.rationale || '');
+      const live = await getLiveCampaignModule();
+      const result = await live.recordLiveCampaignDecision(state.liveCampaign, {
+        targetCommitId, disposition, reasonCodes:structuredClone(reasonCodes),
+        rationale, evidenceIds:structuredClone(evidenceIds),
+        branch:state.liveCampaignBranch, actorId:liveCampaignActorId(),
+        occurredAt:new Date().toISOString(),
+      });
+      await saveLiveCampaign(result.campaign, state.liveCampaignBranch);
+      state.liveCampaign = result.campaign;
+      updateLiveCampaignUi();
+      return chemistActionSummary({ campaignDecision:{ eventId:result.event.eventId,
+        targetCommitId, disposition, reasonCodes:structuredClone(reasonCodes) } }); },
+    'campaign.verify':async (args) => { empty(args);
+      await ensureLiveCampaignPersistence();
+      if (!state.liveCampaign) throw new Error('Start or import a design campaign first');
+      const live = await getLiveCampaignModule();
+      return chemistActionSummary({ campaignVerification:
+        await live.verifyLiveCampaign(state.liveCampaign) }); },
+    'campaign.close':async (args) => { empty(args);
+      await ensureLiveCampaignPersistence();
+      if (!state.liveCampaign) throw new Error('No design campaign is active');
+      const closedCampaignId = state.liveCampaign.campaignId;
+      const store = await getLiveCampaignStore();
+      await store.closeActive();
+      state.liveCampaign = null;
+      state.liveCampaignBranch = 'main';
+      state.liveCampaignCommittedThroughSequence = 0;
+      state.chemistActionAudit = [];
+      if (state.molecule) state.molecule.source = { ...(state.molecule.source || {}),
+        chemistActionAudit:[] };
+      updateLiveCampaignUi('Campaign closed; its commits remain stored locally.', 'success');
+      return chemistActionSummary({ campaignClosed:{ campaignId:closedCampaignId,
+        persisted:true } }); },
     'designRoute.load':async (args) => { chemistActionKeys(args, ['routeId']);
       if (typeof args.routeId !== 'string' || !args.routeId)
         throw new Error('routeId must be a registered design-route ID');
@@ -14347,6 +14769,106 @@ document.querySelectorAll('[data-project-panel]').forEach((link) => link.addEven
 }));
 document.querySelector('#network-policy-button').addEventListener('click', () => openProjectInfoPanel('privacy'));
 document.querySelector('#verify-local-build').addEventListener('click', verifyLoadedBuild);
+document.querySelector('#campaign-create').addEventListener('click', async () => {
+  const titleInput = document.querySelector('#campaign-title');
+  const idInput = document.querySelector('#campaign-id');
+  const title = titleInput.value.trim() || `${state.molecule?.name || 'Molecule'} design campaign`;
+  const campaignId = idInput.value.trim() || `${slug(title)}-${Date.now().toString(36)}`;
+  const result = await runCampaignUiAction('campaign.create', { campaignId, title,
+    initialCommitMessage:`Start ${title}` },
+  () => 'Current molecule committed as the start of a local campaign.');
+  if (result) { titleInput.value = ''; idInput.value = ''; }
+});
+document.querySelector('#campaign-commit').addEventListener('click', async () => {
+  const input = document.querySelector('#campaign-commit-message');
+  const message = input.value.trim();
+  const result = await runCampaignUiAction('campaign.commitCurrent', { message },
+    (value) => `Committed ${String(value.campaignCommit?.commitId || '').slice(0, 15)}… on ${state.liveCampaignBranch}.`);
+  if (result) input.value = '';
+});
+document.querySelector('#campaign-create-branch').addEventListener('click', async () => {
+  const input = document.querySelector('#campaign-new-branch');
+  const branch = input.value.trim();
+  const result = await runCampaignUiAction('campaign.createBranch', { branch },
+    () => `Created and switched to ${branch}.`);
+  if (result) input.value = '';
+});
+document.querySelector('#campaign-branch').addEventListener('change', async (event) => {
+  const branch = event.currentTarget.value;
+  if (!state.liveCampaign || !Object.hasOwn(state.liveCampaign.branches || {}, branch)) return;
+  await runCampaignUiAction('campaign.switchBranch', { branch }, (value) =>
+    value.campaignBranch?.restored
+      ? `Switched to ${branch} and restored its committed molecule.`
+      : `Switched the working history to ${branch}.`);
+});
+document.querySelector('#campaign-merge').addEventListener('click', () => {
+  const sourceBranch = document.querySelector('#campaign-merge-source').value;
+  return runCampaignUiAction('campaign.mergeBranch', {
+    sourceBranch, targetBranch:state.liveCampaignBranch,
+    message:`Merge ${sourceBranch} into ${state.liveCampaignBranch}`,
+  }, () => `Merged ${sourceBranch} into ${state.liveCampaignBranch}.`);
+});
+document.querySelector('#campaign-record-decision').addEventListener('click', async () => {
+  const disposition = document.querySelector('#campaign-decision-disposition').value;
+  const rationaleInput = document.querySelector('#campaign-decision-rationale');
+  const rationale = rationaleInput.value.trim();
+  const result = await runCampaignUiAction('campaign.recordDecision', { disposition, rationale },
+    () => `Recorded a ${disposition.replace('-', ' ')} decision.`);
+  if (result) rationaleInput.value = '';
+});
+document.querySelector('#campaign-verify').addEventListener('click', () =>
+  runCampaignUiAction('campaign.verify', {}, (value) => {
+    const verification = value.campaignVerification;
+    return verification.valid
+      ? `Verified ${verification.commits} commits and ${verification.events} chained events.`
+      : `Verification failed: ${verification.reason}`;
+  }));
+document.querySelector('#campaign-close').addEventListener('click', () =>
+  runCampaignUiAction('campaign.close', {}, () =>
+    'Campaign closed; its commits remain stored locally.'));
+document.querySelector('#campaign-export').addEventListener('click', async () => {
+  if (!state.liveCampaign) return;
+  try {
+    const module = await getLiveCampaignStoreModule();
+    const serialized = await module.serializeCampaign(state.liveCampaign);
+    downloadBlob(serialized, `${slug(state.liveCampaign.campaignId)}.campaign.json`, 'application/json');
+    updateLiveCampaignUi('Canonical campaign JSON exported.', 'success');
+  } catch (error) { updateLiveCampaignUi(error.message, 'failure'); showNotice(error.message); }
+});
+document.querySelector('#campaign-import').addEventListener('click', () =>
+  document.querySelector('#campaign-file').click());
+document.querySelector('#campaign-file').addEventListener('change', async (event) => {
+  const file = event.target.files?.[0]; event.target.value = '';
+  if (!file) return;
+  liveCampaignUiBusy = true; updateLiveCampaignUi('Importing campaign…');
+  let finalMessage = '', finalStatus = '';
+  try {
+    await ensureLiveCampaignPersistence();
+    const [live, storeModule] = await Promise.all([
+      getLiveCampaignModule(), getLiveCampaignStoreModule(),
+    ]);
+    const campaign = await storeModule.deserializeCampaign(await file.text());
+    const verification = await live.verifyLiveCampaign(campaign);
+    if (!verification.valid) throw new Error(`Campaign is invalid: ${verification.reason}`);
+    const branch = Object.hasOwn(campaign.branches || {}, 'main') ? 'main'
+      : Object.keys(campaign.branches || {})[0];
+    if (!branch) throw new Error('Campaign has no branch to restore');
+    const checkout = await prepareLiveCampaignBranchMolecule(campaign, branch, { required:true });
+    await saveLiveCampaign(campaign, branch);
+    state.chemistActionAudit = [];
+    if (state.molecule) state.molecule.source = { ...(state.molecule.source || {}),
+      chemistActionAudit:[] };
+    state.liveCampaign = campaign;
+    state.liveCampaignBranch = branch;
+    state.liveCampaignCommittedThroughSequence = 0;
+    applyLiveCampaignBranchMolecule(checkout.molecule);
+    finalMessage = `Imported ${campaign.title} and saved it locally.`; finalStatus = 'success';
+  } catch (error) {
+    finalMessage = error.message; finalStatus = 'failure'; showNotice(error.message);
+  } finally {
+    liveCampaignUiBusy = false; updateLiveCampaignUi(finalMessage, finalStatus);
+  }
+});
 document.querySelector('#close-project-info').addEventListener('click', () => projectInfoDialog.close());
 projectInfoDialog.addEventListener('click', (event) => {
   if (event.target === projectInfoDialog) projectInfoDialog.close();
