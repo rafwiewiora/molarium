@@ -202,7 +202,7 @@ for (const [path, role] of [[hitProteinPath, 'allowed-hit-protein'],
 
 const movieManifest = {
   schema:'molarium.cdk2-prospective-movie-assets/v1',
-  campaignId:'cdk2-hit-only',
+  routeId:'cdk2-hit-only',
   scientificStatus:'honest-first-blind-result',
   claim:'The movie replays frozen predictions, then reveals evaluation-only holdouts.',
   boundary:{ initialCoordinateInput:'PDB 1H1Q/2A6 only', sequentialPredictedReferences:true,

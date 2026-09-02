@@ -1,6 +1,6 @@
 {
   "schema": "molarium.sos1-prospective-movie-assets/v1",
-  "campaignId": "sos1-hit-only",
+  "routeId": "sos1-hit-only",
   "scientificStatus": "historical-two-stream-origin-plus-prospective-hit-to-lead-success",
   "claim": "The historical F1 fragment reveals the Phe890-out pocket; the independent 5OVE inhibitor hit seeds an Agent API trajectory that recovers the pocket switch and BAY-293 pose.",
   "boundary": {

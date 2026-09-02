@@ -34,7 +34,7 @@ def read_json(path: Path) -> tuple[bytes, dict]:
 
 def verify_run(run_dir: Path) -> tuple[bytes, dict, dict[str, dict], list[dict], dict]:
     manifest_bytes, manifest = read_json(run_dir / "prediction-manifest.json")
-    if manifest.get("campaignId") != "sos1-hit-only":
+    if manifest.get("routeId") != "sos1-hit-only":
         raise RuntimeError("Not a SOS1 hit-only prediction run")
     if manifest.get("status") != "predictions-frozen-holdouts-unopened":
         raise RuntimeError("Predictions were not frozen before evaluation")
@@ -58,7 +58,7 @@ def verify_run(run_dir: Path) -> tuple[bytes, dict, dict[str, dict], list[dict],
     audit = audit_wrapper["records"]
     if len(audit) != manifest["agentApi"]["auditRecords"]:
         raise RuntimeError("Chemist Actions audit length changed")
-    required = {"designCampaign.load", "designCampaign.applyStep", "pose.refine",
+    required = {"designRoute.load", "designRoute.applyStep", "pose.refine",
                 "pose.apply", "pose.enumerateSidechainRotamers",
                 "pose.applySidechainRotamer", "optimization.run", "session.inspect"}
     completed = {entry["action"] for entry in audit if entry.get("status") == "completed"}
@@ -300,7 +300,7 @@ def main() -> None:
         seeding = refinement.get("featureGuidedSeeding") or {}
         result = {
             "schema": "molarium.design-prediction-holdout-evaluation/v1",
-            "campaignId": "sos1-hit-only", "stepId": step_id,
+            "routeId": "sos1-hit-only", "stepId": step_id,
             "predictedStateId": checkpoint["predictedStateId"],
             "boundary": {
                 "predictionManifestSha256": digest(manifest_bytes),
@@ -344,7 +344,7 @@ def main() -> None:
                         "holdoutPhe890ChiDegrees": result["phe890"]["holdoutChiDegrees"]})
     report = {
         "schema": "molarium.design-prediction-holdout-evaluation-summary/v1",
-        "campaignId": "sos1-hit-only",
+        "routeId": "sos1-hit-only",
         "predictionManifestSha256": digest(manifest_bytes),
         "holdoutsOpenedOnlyAfterAllFreezeHashesAndAgentAuditVerified": True,
         "results": results,

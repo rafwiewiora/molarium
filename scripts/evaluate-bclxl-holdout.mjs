@@ -65,7 +65,7 @@ for (const atomName of [...backbone, ...sidechain])
 
 const evaluation = {
   schema:'molarium.design-prediction-holdout-evaluation/v1',
-  campaignId:manifest.campaignId, stepId,
+  routeId:manifest.routeId, stepId,
   boundary:{ predictionManifestSha256:digest(manifestBytes),
     frozenPredictionSha256:frozen.sha256, freezeActionSequence:frozen.freezeActionSequence,
     holdoutOpenedOnlyAfterFreezeVerification:true },

@@ -180,7 +180,7 @@ function pheIntermediate(startText, targetText, progress, ordinal) {
 async function verifyPredictionRun() {
   const manifestBytes = await readFile(join(runDirectory, 'prediction-manifest.json'));
   const manifest = JSON.parse(manifestBytes);
-  assert.equal(manifest.campaignId, 'sos1-hit-only');
+  assert.equal(manifest.routeId, 'sos1-hit-only');
   assert.equal(manifest.status, 'predictions-frozen-holdouts-unopened');
   assert.equal(manifest.protocol.initialCoordinateInput, 'PDB 5OVE/AXE only');
   assert.equal(manifest.protocol.sequentialPredictedReferences, true);
@@ -460,7 +460,7 @@ const branchDecision = verified.checkpoints.get('open-phe890-pocket').checkpoint
 assert.deepEqual(branchDecision.selected.chiDegrees, [-180, 90]);
 assert.equal(branchDecision.selected.refinement.selectedChemicalValidity.additionalStericClashes, 0);
 const manifest = {
-  schema:'molarium.sos1-prospective-movie-assets/v1', campaignId:'sos1-hit-only',
+  schema:'molarium.sos1-prospective-movie-assets/v1', routeId:'sos1-hit-only',
   scientificStatus:'historical-two-stream-origin-plus-prospective-hit-to-lead-success',
   claim:'The historical F1 fragment reveals the Phe890-out pocket; the independent 5OVE inhibitor hit seeds an Agent API trajectory that recovers the pocket switch and BAY-293 pose.',
   boundary:{ initialCoordinateInput:'PDB 5OVE/AXE only', sequentialPredictedReferences:true,

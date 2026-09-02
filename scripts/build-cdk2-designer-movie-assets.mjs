@@ -12,7 +12,7 @@ const generated = join(root, 'design-history/structures/generated');
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const manifestBytes = await readFile(join(runDir, 'prediction-manifest.json'));
 const manifest = JSON.parse(manifestBytes);
-assert.equal(manifest.campaignId, 'cdk2-designer-intent');
+assert.equal(manifest.routeId, 'cdk2-designer-intent');
 assert.equal(manifest.status, 'designer-directed-predictions-frozen');
 assert.equal(manifest.protocol.designerAttachmentAtomName, 'C19');
 const campaignPath = join(root, manifest.inputs.campaign.path);
@@ -28,7 +28,7 @@ assert.equal(audit.length, manifest.agentApi.auditRecords);
 const evaluationSummaryPath = join(runDir, 'holdout-evaluation-summary.json');
 const evaluationSummaryBytes = await readFile(evaluationSummaryPath);
 const evaluationSummary = JSON.parse(evaluationSummaryBytes);
-assert.equal(evaluationSummary.campaignId, manifest.campaignId);
+assert.equal(evaluationSummary.routeId, manifest.routeId);
 assert.equal(evaluationSummary.predictionManifestSha256, digest(manifestBytes));
 
 const specs = [
@@ -108,7 +108,7 @@ for (const name of ['cdk2-1h1q-protein.pdb','cdk2-1h1q-pocket.pdb','cdk2-1h1q-li
 
 const movieManifest = {
   schema:'molarium.cdk2-designer-movie-assets/v1',
-  campaignId:manifest.campaignId,
+  routeId:manifest.routeId,
   scientificStatus:'designer-directed-hit-to-lead-success',
   claim:'A designer-selected C19 exit vector carries the 1H1Q hit pose through two Agent API design steps.',
   agentApi:{ auditSha256:digest(auditBytes), records:audit.length,

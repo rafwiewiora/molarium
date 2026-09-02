@@ -8,14 +8,14 @@ const DISPLAY_STEP = Object.freeze({ action:'view.setDisplay', args:Object.freez
   showPocketAtoms:true, showHulls:false,
 }), caption:'Use the chemist pocket view and hide prepared hydrogens' });
 const CHANGED_ATOM_RESULT_PATH = Object.freeze({
-  'designCampaign.applyStep':'designStep.changedAtomIds',
+  'designRoute.applyStep':'designStep.changedAtomIds',
   'pose.applySidechainRotamer':'sidechainRotamer.changedAtomIds',
   'pose.apply':'appliedPose.changedAtomIds',
   'optimization.run':'optimization.changedAtomIds',
 });
 
 function changedRegionCaption(action) {
-  if (action === 'designCampaign.applyStep') return 'Inspect the graph edit in its local pocket';
+  if (action === 'designRoute.applyStep') return 'Inspect the graph edit in its local pocket';
   if (action === 'pose.applySidechainRotamer') return 'Inspect the applied side-chain movement';
   if (action === 'pose.apply') return 'Inspect atoms moved by the applied pose';
   return 'Inspect atoms moved by the accepted relaxation';

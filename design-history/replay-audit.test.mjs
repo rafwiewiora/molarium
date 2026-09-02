@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import { CHEMIST_ACTIONS_SCHEMA } from '../chemist-actions.mjs';
 import { actionScriptFromAudit, replayActionScript, validateActionScript } from './replay.mjs';
 
-const audit = { schema:CHEMIST_ACTIONS_SCHEMA, campaignId:'converter-test', records:[
-  { sequence:1, requestId:'load', action:'designCampaign.load',
-    args:{ campaignId:'test' }, status:'completed', startedAt:'ignored', result:{ ignored:true } },
+const audit = { schema:CHEMIST_ACTIONS_SCHEMA, routeId:'converter-test', records:[
+  { sequence:1, requestId:'load', action:'designRoute.load',
+    args:{ routeId:'test' }, status:'completed', startedAt:'ignored', result:{ ignored:true } },
   { sequence:2, requestId:'inspect', action:'session.inspect',
     args:{ scope:'ligand', includeCoordinates:false, maximumAtoms:100 }, status:'completed' },
   { sequence:3, requestId:'failed-edit', action:'view.setMode',
@@ -17,7 +17,7 @@ const complete = actionScriptFromAudit(audit, { label:'Complete protocol' });
 assert.equal(validateActionScript(complete), complete);
 assert.equal(complete.actions.length, 3);
 assert.deepEqual(complete.actions[0], {
-  action:'designCampaign.load', args:{ campaignId:'test' },
+  action:'designRoute.load', args:{ routeId:'test' },
 });
 assert.deepEqual(complete.actions[1].args, audit.records[1].args);
 assert.equal(complete.actions[2].caption, 'Enter the Build workspace');
@@ -28,14 +28,14 @@ assert.equal(JSON.stringify(complete).includes('durationMs'), false);
 assert.equal(JSON.stringify(complete).includes('ignored'), false);
 assert.equal(JSON.stringify(complete).includes('requestId'), false);
 
-audit.records[0].args.campaignId = 'changed-after-conversion';
-assert.equal(complete.actions[0].args.campaignId, 'test', 'action arguments must be cloned');
+audit.records[0].args.routeId = 'changed-after-conversion';
+assert.equal(complete.actions[0].args.routeId, 'test', 'action arguments must be cloned');
 
 const concise = actionScriptFromAudit(audit, { label:'Selected route', includeReadOnly:false,
   includeSequences:[1, 2, 4], captionsBySequence:{ 1:'Load the hit' },
   includeAuditMetadata:true });
 assert.deepEqual(concise.actions.map((step) => step.action),
-  ['designCampaign.load', 'view.setMode']);
+  ['designRoute.load', 'view.setMode']);
 assert.equal(concise.actions[0].caption, 'Load the hit');
 assert.equal(concise.actions[0].auditSequence, 1);
 assert.equal(concise.actions[0].auditRequestId, 'load');

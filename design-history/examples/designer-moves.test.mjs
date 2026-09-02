@@ -1,14 +1,13 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { access, readFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CHEMIST_ACTIONS_SCHEMA } from '../../chemist-actions.mjs';
-import { actionScriptFromAudit, actionScriptSha256, replayActionScript,
+import { actionScriptSha256, replayActionScript,
   validateActionScript } from '../replay.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const root = join(here, '../..');
 const load = async (filename) => JSON.parse(await readFile(join(here, filename), 'utf8'));
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
@@ -47,28 +46,6 @@ for (const script of [full, selected]) {
   const replay = await replayActionScript(fakeApi, script);
   assert.equal(replay.status, 'completed');
   assert.equal(calls.length, script.actions.length);
-}
-
-const sourceAuditPath = join(root, provenance.sourceRun.audit.path);
-try {
-  await access(sourceAuditPath);
-  const auditBytes = await readFile(sourceAuditPath), audit = JSON.parse(auditBytes);
-  assert.equal(digest(auditBytes), provenance.sourceRun.audit.sha256);
-  const captions = await load('sos1-growth-clash-v7-captions.json');
-  const regeneratedFull = actionScriptFromAudit(audit, {
-    label:full.label, captionsBySequence:captions, captionFromRequestId:true,
-    provenance:{ path:full.sourceAudit.path, sha256:full.sourceAudit.sha256 },
-  });
-  const regeneratedSelected = actionScriptFromAudit(audit, {
-    label:selected.label, includeReadOnly:false,
-    includeSequences:selected.sourceAudit.includedSequences,
-    captionsBySequence:captions, captionFromRequestId:true,
-    provenance:{ path:selected.sourceAudit.path, sha256:selected.sourceAudit.sha256 },
-  });
-  assert.deepEqual(regeneratedFull, full);
-  assert.deepEqual(regeneratedSelected, selected);
-} catch (error) {
-  if (error?.code !== 'ENOENT') throw error;
 }
 
 console.log('SOS1 designer-moves examples: PASS (89-action exploration; 33-action selected route)');

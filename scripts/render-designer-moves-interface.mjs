@@ -66,7 +66,7 @@ async function appendFrame(label, repeats = 1, actionIndex = null) {
 function holdFrames(step) {
   if (!step) return fps;
   if (step.action === 'view.setDisplay') return Math.max(3, Math.round(fps * .3));
-  if (['designCampaign.load', 'designCampaign.applyStep', 'pose.applySidechainRotamer',
+  if (['designRoute.load', 'designRoute.applyStep', 'pose.applySidechainRotamer',
     'pose.enumerateSidechainRotamers', 'pose.updateReceptorReference', 'optimization.run',
     'view.focusComponent', 'view.focusAtoms'].includes(step.action)) return Math.round(fps * 1.25);
   return Math.max(4, Math.round(fps * .55));

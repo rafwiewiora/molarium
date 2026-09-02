@@ -70,15 +70,15 @@ const ACTIONS = Object.freeze({
     arguments:Object.freeze({ index:'non-negative integer' }) }),
   'optimization.run': Object.freeze({ description:'Run one optimization method exposed in the Build method menu.',
     arguments:Object.freeze({ method:'ligand-rdkit | pocket-webgpu | induced-fit-webgpu | webgpu | rdkit | ani2x' }) }),
-  'designCampaign.load': Object.freeze({
+  'designRoute.load': Object.freeze({
     description:'Load the coordinate-bearing hit of a registered design route.',
-    arguments:Object.freeze({ campaignId:'registered design-route ID (legacy argument name)' }) }),
-  'designCampaign.applyStep': Object.freeze({
+    arguments:Object.freeze({ routeId:'registered design-route ID' }) }),
+  'designRoute.applyStep': Object.freeze({
     description:'Stage one registered design-route graph step, preserving any designer-selected exit vector.',
     arguments:Object.freeze({ stepId:'persistent design-step ID',
       attachmentAtomId:'persistent atom ID selected as the growth attachment point when required' }) }),
-  'designCampaign.inspect': Object.freeze({
-    description:'Inspect the active campaign boundary, hit, and current graph-only design step.',
+  'designRoute.inspect': Object.freeze({
+    description:'Inspect the active route boundary, hit, and current graph-only design step.',
     arguments:Object.freeze({}) }),
   'structureStory.load': Object.freeze({
     description:'Load a registered, provenance-pinned molecular structure story.',

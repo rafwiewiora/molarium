@@ -3,9 +3,9 @@
   "label": "SOS1 growth-clash-v7 concise selected Phe890 route",
   "actions": [
     {
-      "action": "designCampaign.load",
+      "action": "designRoute.load",
       "args": {
-        "campaignId": "sos1-hit-only"
+        "routeId": "sos1-hit-only"
       },
       "caption": "Load the coordinate-bearing 5OVE/AXE hit only"
     },
@@ -14,7 +14,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "campaign-enter-build"
+      "caption": "route-enter-build"
     },
     {
       "action": "protein.prepare",
@@ -26,17 +26,17 @@
         "repairMissingHeavy": true,
         "waterPolicy": "retain"
       },
-      "caption": "campaign-prepare-hit"
+      "caption": "route-prepare-hit"
     },
     {
       "action": "pose.captureReference",
       "args": {
         "mode": "propagate"
       },
-      "caption": "campaign-capture-hit"
+      "caption": "route-capture-hit"
     },
     {
-      "action": "designCampaign.applyStep",
+      "action": "designRoute.applyStep",
       "args": {
         "stepId": "scaffold-rewrite"
       },
@@ -83,7 +83,7 @@
       "caption": "scaffold-rewrite-capture-predicted-reference"
     },
     {
-      "action": "designCampaign.applyStep",
+      "action": "designRoute.applyStep",
       "args": {
         "stepId": "fragment-merge"
       },
@@ -130,7 +130,7 @@
       "caption": "fragment-merge-capture-predicted-reference"
     },
     {
-      "action": "designCampaign.applyStep",
+      "action": "designRoute.applyStep",
       "args": {
         "stepId": "open-phe890-pocket"
       },
@@ -197,7 +197,7 @@
       "caption": "open-phe890-pocket-capture-predicted-reference"
     },
     {
-      "action": "designCampaign.applyStep",
+      "action": "designRoute.applyStep",
       "args": {
         "stepId": "finish-bay-293"
       },
@@ -232,7 +232,7 @@
   ],
   "sourceAudit": {
     "schema": "molarium.chemist-actions/v1",
-    "campaignId": "sos1-hit-only",
+    "routeId": "sos1-hit-only",
     "recordCount": 89,
     "includedRecordCount": 33,
     "includedSequences": [

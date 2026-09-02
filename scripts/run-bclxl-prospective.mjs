@@ -33,25 +33,25 @@ try {
     `window.MolariumChemistActions?.schema==='molarium.chemist-actions/v1'`),
   90000, 'public Chemist Actions API');
   const description = await browser.evaluate(`window.MolariumChemistActions.describe()`);
-  for (const action of ['designCampaign.load', 'designCampaign.applyStep',
-    'designCampaign.inspect', 'protein.prepare', 'pose.captureReference', 'pose.refine', 'pose.apply',
+  for (const action of ['designRoute.load', 'designRoute.applyStep',
+    'designRoute.inspect', 'protein.prepare', 'pose.captureReference', 'pose.refine', 'pose.apply',
     'optimization.run', 'session.inspect']) {
     if (!description.actions[action]) throw new Error(`Public action is missing: ${action}`);
   }
 
-  await execute('designCampaign.load', { campaignId:'bclxl-hit-only' }, 'campaign-load-hit');
-  await execute('view.setMode', { mode:'build' }, 'campaign-enter-build');
-  console.log('campaign: preparing the registered 3SPF hit complex');
+  await execute('designRoute.load', { routeId:'bclxl-hit-only' }, 'route-load-hit');
+  await execute('view.setMode', { mode:'build' }, 'route-enter-build');
+  console.log('route: preparing the registered 3SPF hit complex');
   await execute('protein.prepare', {
     pH:7.4, histidine:'auto', repairMissingHeavy:true,
     ligandPolicy:'ccd', waterPolicy:'exclude', gapPolicy:'cap',
-  }, 'campaign-prepare-hit');
-  await execute('pose.captureReference', { mode:'propagate' }, 'campaign-capture-hit');
-  const boundary = await execute('designCampaign.inspect', {}, 'campaign-inspect-boundary');
+  }, 'route-prepare-hit');
+  await execute('pose.captureReference', { mode:'propagate' }, 'route-capture-hit');
+  const boundary = await execute('designRoute.inspect', {}, 'route-inspect-boundary');
 
   for (const stepId of stepIds) {
     console.log(`${stepId}: staging graph against 3SPF hit`);
-    const staged = await execute('designCampaign.applyStep', { stepId }, `${stepId}-stage`);
+    const staged = await execute('designRoute.applyStep', { stepId }, `${stepId}-stage`);
     console.log(`${stepId}: rigid-hit pose search`);
     const refined = await execute('pose.refine', { searchChains:64 }, `${stepId}-pose-refine`);
     const selectedIndex = Math.max(0,
@@ -65,9 +65,9 @@ try {
     }, `${stepId}-freeze-pocket`);
     const checkpoint = {
       schema:'molarium.design-prediction-checkpoint/v1',
-      campaignId:'bclxl-hit-only', stepId,
+      routeId:'bclxl-hit-only', stepId,
       frozenBeforeHoldoutAccess:true,
-      boundary:boundary.result.designCampaign,
+      boundary:boundary.result.designRoute,
       staging:staged.result.designStep,
       refinement:refined.result.refinement,
       relaxation:relaxed.result.optimization,
@@ -83,7 +83,7 @@ try {
 
   const audit = await browser.evaluate(`window.MolariumChemistActions.history()`);
   const auditBytes = Buffer.from(`${JSON.stringify({
-    schema:description.schema, campaignId:'bclxl-hit-only', records:audit,
+    schema:description.schema, routeId:'bclxl-hit-only', records:audit,
   }, null, 2)}\n`);
   await writeFile(join(output, 'chemist-action-audit.json'), auditBytes);
   const campaignPath = join(root,
@@ -91,7 +91,7 @@ try {
   const runnerPath = fileURLToPath(import.meta.url);
   const manifest = {
     schema:'molarium.design-prediction-run/v1',
-    campaignId:'bclxl-hit-only',
+    routeId:'bclxl-hit-only',
     status:'predictions-frozen-holdouts-unopened',
     checkpoints,
     agentApi:{ schema:description.schema, actions:Object.keys(description.actions),

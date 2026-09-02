@@ -5,7 +5,7 @@ export const ACTION_SCRIPT_SCHEMA = 'molarium.chemist-action-script/v1';
 export const REPLAY_SCHEMA = 'molarium.chemist-action-replay/v1';
 
 export const READ_ONLY_CHEMIST_ACTIONS = Object.freeze([
-  'session.inspect', 'designCampaign.inspect', 'structureStory.inspect',
+  'session.inspect', 'designRoute.inspect', 'structureStory.inspect',
 ]);
 
 const FORBIDDEN_BOUNDARY_KEYS = new Set([
@@ -151,7 +151,7 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
   }
   const script = { schema:ACTION_SCRIPT_SCHEMA, label:String(label),
     actions, sourceAudit:{ schema:Array.isArray(audit) ? null : audit.schema || null,
-      campaignId:Array.isArray(audit) ? null : audit.campaignId || null,
+      routeId:Array.isArray(audit) ? null : audit.routeId || null,
       recordCount:records.length,
       includedRecordCount:actions.length,
       includedSequences:records.filter((record) => record?.status === 'completed'

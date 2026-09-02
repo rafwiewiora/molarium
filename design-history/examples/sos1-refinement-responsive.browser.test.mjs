@@ -20,14 +20,14 @@ const responsivenessProbe = async (timeoutMs = 2500) => Promise.race([
 try {
   await waitFor(async () => browser.evaluate(`Boolean(window.MolariumChemistActions)`),
     90000, 'Chemist Actions API');
-  await execute('designCampaign.load', { campaignId:'sos1-hit-only' }, 'responsive-load');
+  await execute('designRoute.load', { routeId:'sos1-hit-only' }, 'responsive-load');
   await execute('view.setMode', { mode:'build' }, 'responsive-build');
   await execute('protein.prepare', {
     gapPolicy:'cap', histidine:'auto', ligandPolicy:'ccd', pH:7.4,
     repairMissingHeavy:true, waterPolicy:'retain',
   }, 'responsive-prepare');
   await execute('pose.captureReference', { mode:'propagate' }, 'responsive-capture');
-  await execute('designCampaign.applyStep', { stepId:'scaffold-rewrite' }, 'responsive-rewrite');
+  await execute('designRoute.applyStep', { stepId:'scaffold-rewrite' }, 'responsive-rewrite');
 
   await browser.evaluate(`{
     window.__molariumResponsiveRefinement = window.MolariumChemistActions.execute({

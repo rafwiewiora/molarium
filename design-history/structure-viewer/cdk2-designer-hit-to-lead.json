@@ -97,7 +97,7 @@
     {
       "id": "grow-chlorine",
       "title": "Grow the first analogue",
-      "body": "designCampaign.applyStep preserves the selected attachment while the graph changes from H to Cl. Pose refinement keeps the inherited hinge-binding core in place.",
+      "body": "designRoute.applyStep preserves the selected attachment while the graph changes from H to Cl. Pose refinement keeps the inherited hinge-binding core in place.",
       "detail": "Agent API · applyStep({ stepId, attachmentAtomId }) → pose.refine → pose.apply",
       "focusLabel": "new chlorine",
       "scene": "prediction6cp", "durationMs": 3200,

@@ -688,8 +688,8 @@ const state = {
   chemistryTransaction: null,
   chemistryEditFinishing: false,
   chemistActionAudit: [],
-  designCampaign: null,
-  designCampaignStepId: null,
+  designRoute: null,
+  designRouteStepId: null,
   geometryEditActive: false,
   dragAtom: null,
   panningView: false,
@@ -4608,7 +4608,7 @@ async function updateCurrentDockingReceptorReference() {
     method:'retain-ligand-lineage-refresh-receptor-site',
     changedAtoms, maximumDisplacementAngstrom,
     inputCoordinateSha256, outputCoordinateSha256,
-    coordinateInputClass:state.molecule.source?.designCampaign?.coordinateInputClass
+    coordinateInputClass:state.molecule.source?.designRoute?.coordinateInputClass
       || 'current-visible-complex', updatedAt:new Date().toISOString() };
   reference.receptorUpdates = [...(reference.receptorUpdates || []), update].slice(-50);
   state.dockingResult = null; state.dockingPoseIndex = 0;
@@ -7667,7 +7667,7 @@ async function applyCurrentSidechainRotamer(index) {
     severeClashes:candidate.severeClashes,
     generatedCandidateCount:ensemble.generatedCandidateCount,
     retainedCandidateCount:ensemble.candidates.length,
-    coordinateInputClass:state.molecule.source?.designCampaign?.coordinateInputClass || 'current-visible-complex',
+    coordinateInputClass:state.molecule.source?.designRoute?.coordinateInputClass || 'current-visible-complex',
   };
   const previous = state.molecule.source?.sidechainRotamerApplications || [];
   state.molecule.source = { ...(state.molecule.source || {}),
@@ -7714,10 +7714,10 @@ async function waitForDesignerMoveReplay() {
 }
 
 const DESIGNER_MOVE_RESULT_HOLDS_MS = Object.freeze({
-  'designCampaign.load':1500,
+  'designRoute.load':1500,
   'protein.prepare':1400,
   'pose.captureReference':1400,
-  'designCampaign.applyStep':2800,
+  'designRoute.applyStep':2800,
   'pose.refine':3200,
   'pose.apply':2800,
   'pose.enumerateSidechainRotamers':3200,
@@ -7874,7 +7874,7 @@ function showDesignerMoveCue(step = null, { preserveLayout = false } = {}) {
   else if (step.action === 'build.setTool') {
     const tool = step.args?.tool === 'move' ? 'manipulate' : step.args?.tool;
     selector = `#build-tool-tabs [data-tool="${CSS.escape(String(tool || ''))}"]`;
-  } else if (step.action?.startsWith('designCampaign.')) selector = '#designer-move-tools';
+  } else if (step.action?.startsWith('designRoute.')) selector = '#designer-move-tools';
   else if (step.action?.startsWith('selection.') || step.action === 'session.inspect')
     selector = '.viewer-stage';
   const element = selector ? document.querySelector(selector) : null;
@@ -7920,7 +7920,7 @@ function designerMoveResultCaption(step) {
       ? `${count} changed atom${count === 1 ? '' : 's'} centered in local pocket context and marked in red.`
       : 'No heavy-atom movement crossed the display threshold; the previous camera is retained.';
   }
-  if (step.action === 'designCampaign.applyStep') {
+  if (step.action === 'designRoute.applyStep') {
     const count = Number(step.result?.designStep?.changedAtomIds?.length || 0);
     return `Graph edit staged · ${count} changed heavy atom${count === 1 ? '' : 's'} reported for local inspection.`;
   }
@@ -7940,7 +7940,7 @@ function showDesignerMoveResultCue(step) {
   const resultSelectors = {
     'pose.refine':'#docking-results',
     'pose.enumerateSidechainRotamers':'#sidechain-rotamer-results',
-    'designCampaign.applyStep':'.viewer-stage',
+    'designRoute.applyStep':'.viewer-stage',
     'pose.apply':'.viewer-stage',
     'pose.applySidechainRotamer':'.viewer-stage',
     'optimization.run':'.viewer-stage',
@@ -8204,41 +8204,41 @@ async function fetchPinnedText(path, expectedSha256) {
   return new TextDecoder().decode(bytes);
 }
 
-async function loadRegisteredDesignRoute(campaignId) {
-  const path = REGISTERED_DESIGN_ROUTES[campaignId];
-  if (!path) throw new Error(`Unknown registered design route: ${campaignId}`);
+async function loadRegisteredDesignRoute(routeId) {
+  const path = REGISTERED_DESIGN_ROUTES[routeId];
+  if (!path) throw new Error(`Unknown registered design route: ${routeId}`);
   const response = await fetch(path);
   if (!response.ok) throw new Error(`Registered design route could not be loaded (${response.status})`);
-  const campaign = await response.json();
-  validateRegisteredDesignRoute(campaign, { expectedId:campaignId });
-  if (campaign.evaluation?.status !== 'locked-until-predictions-frozen'
-    || campaign.evaluation?.holdouts?.length)
+  const route = await response.json();
+  validateRegisteredDesignRoute(route, { expectedId:routeId });
+  if (route.evaluation?.status !== 'locked-until-predictions-frozen'
+    || route.evaluation?.holdouts?.length)
     throw new Error('A hit-only route cannot expose evaluation holdouts before prediction freeze');
-  const coordinateFilesRead = campaign.generator?.coordinateFilesRead || [];
-  const hitCoordinateToken = String(campaign.hit?.pdbId || '').toLowerCase();
+  const coordinateFilesRead = route.generator?.coordinateFilesRead || [];
+  const hitCoordinateToken = String(route.hit?.pdbId || '').toLowerCase();
   if (!hitCoordinateToken || !coordinateFilesRead.length
     || coordinateFilesRead.some((entry) => !String(entry).toLowerCase().includes(hitCoordinateToken)))
     throw new Error('Registered design route has a non-hit coordinate dependency');
   const [protein, ligand] = await Promise.all([
-    fetchPinnedText(campaign.hit.proteinAsset, campaign.hit.proteinSha256),
-    fetchPinnedText(campaign.hit.ligandAsset, campaign.hit.ligandSha256),
+    fetchPinnedText(route.hit.proteinAsset, route.hit.proteinSha256),
+    fetchPinnedText(route.hit.ligandAsset, route.hit.ligandSha256),
   ]);
   const molecule = parsePDB(`${protein.replace(/\nEND\s*$/m, '')}\n${ligand}`, {
-    pdbId:campaign.hit.pdbId, name:`${campaign.hit.pdbId} · registered hit`,
+    pdbId:route.hit.pdbId, name:`${route.hit.pdbId} · registered hit`,
   });
   state.buildHistory = []; state.redoHistory = [];
   loadMolecule(molecule); updateHistoryButtons();
-  state.designCampaign = structuredClone(campaign);
-  state.designCampaignStepId = campaign.hit.stateId;
-  state.molecule.source = { ...(state.molecule.source || {}), designCampaign:{
-    campaignId:campaign.id, hitPdbId:campaign.hit.pdbId,
-    stateId:campaign.hit.stateId, coordinateInputClass:'registered-hit-only',
+  state.designRoute = structuredClone(route);
+  state.designRouteStepId = route.hit.stateId;
+  state.molecule.source = { ...(state.molecule.source || {}), designRoute:{
+    routeId:route.id, hitPdbId:route.hit.pdbId,
+    stateId:route.hit.stateId, coordinateInputClass:'registered-hit-only',
   } };
-  return { campaignId:campaign.id, title:campaign.title,
-    hit:{ pdbId:campaign.hit.pdbId, ligand:campaign.hit.ligand,
-      stateId:campaign.hit.stateId },
-    coordinateInputs:structuredClone(campaign.protocolBoundary.coordinateInputs),
-    availableSteps:campaign.steps.map((step) => step.id) };
+  return { routeId:route.id, title:route.title,
+    hit:{ pdbId:route.hit.pdbId, ligand:route.hit.ligand,
+      stateId:route.hit.stateId },
+    coordinateInputs:structuredClone(route.protocolBoundary.coordinateInputs),
+    availableSteps:route.steps.map((step) => step.id) };
 }
 
 function installChemistActionsApi(module) {
@@ -8352,9 +8352,9 @@ function installChemistActionsApi(module) {
       document.querySelector('#preparation-waters').value = options.waterPolicy;
       document.querySelector('#preparation-gaps').value = options.gapPolicy;
       state.pdbPreparationPreview = null;
-      const localLigandDefinitions = state.designCampaign?.hit?.ligandDefinition
-        ? { [state.designCampaign.hit.ligand]:structuredClone(
-          state.designCampaign.hit.ligandDefinition) } : null;
+      const localLigandDefinitions = state.designRoute?.hit?.ligandDefinition
+        ? { [state.designRoute.hit.ligand]:structuredClone(
+          state.designRoute.hit.ligandDefinition) } : null;
       const result = await prepareCurrentPdb(options, localLigandDefinitions);
       if (!result) throw new Error('Protein preparation did not complete');
       return chemistActionSummary({ preparation:{ atoms:result.atoms, bonds:result.bonds,
@@ -8622,21 +8622,21 @@ function installChemistActionsApi(module) {
         iterations:result.iterations ?? null, converged:result.converged ?? null,
         elapsedMs:result.elapsedMs ?? null,
         ...chemistActionCoordinateChanges(before) } }); },
-    'designCampaign.load':async (args) => { chemistActionKeys(args, ['campaignId']);
-      if (typeof args.campaignId !== 'string' || !args.campaignId)
-        throw new Error('campaignId must be a registered design-campaign ID');
-      return chemistActionSummary({ designCampaign:await loadRegisteredDesignRoute(args.campaignId) }); },
-    'designCampaign.applyStep':async (args) => { chemistActionKeys(args,
+    'designRoute.load':async (args) => { chemistActionKeys(args, ['routeId']);
+      if (typeof args.routeId !== 'string' || !args.routeId)
+        throw new Error('routeId must be a registered design-route ID');
+      return chemistActionSummary({ designRoute:await loadRegisteredDesignRoute(args.routeId) }); },
+    'designRoute.applyStep':async (args) => { chemistActionKeys(args,
       ['stepId','attachmentAtomId']);
-      if (!state.designCampaign) throw new Error('Load a registered design route first');
+      if (!state.designRoute) throw new Error('Load a registered design route first');
       if (typeof args.stepId !== 'string' || !args.stepId)
         throw new Error('stepId must be a registered design-step ID');
       if (!state.dockingReference || state.dockingReference.mode !== 'pose-propagation')
         throw new Error('Capture the hit with pose.captureReference before applying a design step');
-      const step = state.designCampaign.steps.find((entry) => entry.id === args.stepId);
+      const step = state.designRoute.steps.find((entry) => entry.id === args.stepId);
       if (!step) throw new Error(`Unknown registered design step: ${args.stepId}`);
-      if (step.referenceStateId && step.referenceStateId !== state.designCampaignStepId)
-        throw new Error(`Design step ${step.id} requires state ${step.referenceStateId}; current state is ${state.designCampaignStepId}`);
+      if (step.referenceStateId && step.referenceStateId !== state.designRouteStepId)
+        throw new Error(`Design step ${step.id} requires state ${step.referenceStateId}; current state is ${state.designRouteStepId}`);
       let spatialIntent = null;
       if (step.spatialIntent) {
         if (step.spatialIntent.method !== 'selected-exit-vector'
@@ -8670,19 +8670,19 @@ function installChemistActionsApi(module) {
         kind:'hydrogen-bond', capturedId:definition.id, label:definition.label,
       }));
       const staged = await molariumTestApi.stageBenchmarkPoseProduct({
-        caseId:`${state.designCampaign.id}:${step.id}`,
+        caseId:`${state.designRoute.id}:${step.id}`,
         productSmiles:step.productSmiles,
         posePropagationMap:step.posePropagationMap,
         productAtomNames:step.productAtomNames || null,
         interactionHypotheses:hitContacts,
       });
       delete state.molecule.source.dockingBenchmark;
-      state.molecule.source.designCampaign = {
-        campaignId:state.designCampaign.id, hitPdbId:state.designCampaign.hit.pdbId,
+      state.molecule.source.designRoute = {
+        routeId:state.designRoute.id, hitPdbId:state.designRoute.hit.pdbId,
         stateId:step.stateId, stepId:step.id, inputKind:step.inputKind,
         coordinateInputClass:'registered-hit-only',
       };
-      state.designCampaignStepId = step.stateId;
+      state.designRouteStepId = step.stateId;
       const changedAtomIds = [...new Set([
         ...(staged.registeredEditRegion.addedHeavyAtomIds || []),
         ...(staged.registeredEditRegion.affectedCoreAtomIds || []),
@@ -8694,14 +8694,14 @@ function installChemistActionsApi(module) {
         changedAtomIds,
         spatialIntent,
         embedding:structuredClone(staged.embedding) } }); },
-    'designCampaign.inspect':async (args) => { empty(args);
-      if (!state.designCampaign) throw new Error('No registered design route is loaded');
-      return chemistActionSummary({ designCampaign:{ id:state.designCampaign.id,
-        hit:structuredClone(state.designCampaign.hit),
-        protocolBoundary:structuredClone(state.designCampaign.protocolBoundary),
-        currentStateId:state.designCampaignStepId,
-        evaluationStatus:state.designCampaign.evaluation.status,
-        availableSteps:state.designCampaign.steps.map((step) => step.id) } }); },
+    'designRoute.inspect':async (args) => { empty(args);
+      if (!state.designRoute) throw new Error('No registered design route is loaded');
+      return chemistActionSummary({ designRoute:{ id:state.designRoute.id,
+        hit:structuredClone(state.designRoute.hit),
+        protocolBoundary:structuredClone(state.designRoute.protocolBoundary),
+        currentStateId:state.designRouteStepId,
+        evaluationStatus:state.designRoute.evaluation.status,
+        availableSteps:state.designRoute.steps.map((step) => step.id) } }); },
   };
   const api = module.createChemistActionsApi({ routes,
     enabledActions:module.CHEMIST_ACTION_SCOPES.application,
@@ -13841,7 +13841,7 @@ function clearScene({ announce = false } = {}) {
   state.molecule = null; state.selectedAtom = null; state.selectedAtoms = [];
   state.chemistryTransaction = null; state.chemistryEditFinishing = false;
   state.ligandProtonation = null; state.protonatingLigand = false; state.ligandProtonationSequence++;
-  state.designCampaign = null; state.designCampaignStepId = null;
+  state.designRoute = null; state.designRouteStepId = null;
   state.chemistActionAudit = [];
   state.buildHistory = []; state.redoHistory = [];
   state.focusedComponentId = null; state.focusedComponentRadius = null;
@@ -13960,7 +13960,7 @@ const DESIGNER_STORY_LINKS = Object.freeze({
     title:'SOS1 hit to BAY-293',
     script:'./design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
     sourcePath:'design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
-    sourceSha256:'74cbf827a3928a1c8066a2f5f2b13f37dec7141fb8c8aa4af6919bf3540f4ab1',
+    sourceSha256:'c3c5cfff681ab34c5c73540b13278c4cc0461bd0d19ff35f3a36a94f4dbf2021',
     presentation:'chemist-pocket',
   }),
 });

@@ -30,23 +30,23 @@ try {
     `window.MolariumChemistActions?.schema==='molarium.chemist-actions/v1'`),
   90000, 'public Chemist Actions API');
   const description = await browser.evaluate(`window.MolariumChemistActions.describe()`);
-  for (const action of ['designCampaign.load', 'designCampaign.applyStep',
-    'designCampaign.inspect', 'protein.prepare', 'pose.captureReference', 'pose.refine',
+  for (const action of ['designRoute.load', 'designRoute.applyStep',
+    'designRoute.inspect', 'protein.prepare', 'pose.captureReference', 'pose.refine',
     'pose.apply', 'protein.parameterize', 'session.inspect']) {
     if (!description.actions[action]) throw new Error(`Public action is missing: ${action}`);
   }
 
-  await execute('designCampaign.load', { campaignId:'cdk2-designer-intent' },
-    'designer-campaign-load-hit');
-  await execute('view.setMode', { mode:'build' }, 'designer-campaign-enter-build');
+  await execute('designRoute.load', { routeId:'cdk2-designer-intent' },
+    'designer-route-load-hit');
+  await execute('view.setMode', { mode:'build' }, 'designer-route-enter-build');
   await execute('protein.prepare', {
     pH:7.4, histidine:'auto', repairMissingHeavy:true,
     ligandPolicy:'ccd', waterPolicy:'retain', gapPolicy:'cap',
-  }, 'designer-campaign-prepare-hit');
+  }, 'designer-route-prepare-hit');
   await execute('pose.captureReference', { mode:'propagate' },
-    'designer-campaign-capture-hit');
-  const boundary = await execute('designCampaign.inspect', {},
-    'designer-campaign-inspect-boundary');
+    'designer-route-capture-hit');
+  const boundary = await execute('designRoute.inspect', {},
+    'designer-route-inspect-boundary');
 
   for (let stepIndex = 0; stepIndex < stepIds.length; stepIndex++) {
     const stepId = stepIds[stepIndex];
@@ -57,7 +57,7 @@ try {
       atom.element !== 'H' && atom.atomName === 'C19');
     if (!attachment) throw new Error(`${stepId}: designer exit-vector atom C19 is unavailable`);
     console.log(`${stepId}: growing from selected ${attachment.atomName}`);
-    const staged = await execute('designCampaign.applyStep', {
+    const staged = await execute('designRoute.applyStep', {
       stepId, attachmentAtomId:attachment.atomId,
     }, `${stepId}-designer-stage`);
     if (staged.result.designStep.spatialIntent?.attachmentAtomId !== attachment.atomId)
@@ -75,16 +75,16 @@ try {
     const pocket = await execute('session.inspect', {
       scope:'pocket', includeCoordinates:true, maximumAtoms:500,
     }, `${stepId}-designer-freeze-pocket`);
-    const current = await execute('designCampaign.inspect', {},
+    const current = await execute('designRoute.inspect', {},
       `${stepId}-designer-inspect-state`);
     const checkpoint = {
       schema:'molarium.design-prediction-checkpoint/v1',
-      campaignId:'cdk2-designer-intent', stepId,
+      routeId:'cdk2-designer-intent', stepId,
       referenceStateId:staged.result.designStep.referenceStateId,
       predictedStateId:staged.result.designStep.stateId,
       designerIntentDeclaredBeforePoseSearch:true,
-      boundary:boundary.result.designCampaign,
-      state:current.result.designCampaign,
+      boundary:boundary.result.designRoute,
+      state:current.result.designRoute,
       staging:staged.result.designStep,
       refinement:refined.result.refinement,
       parameterization:parameterized.result.parameterization,
@@ -108,14 +108,14 @@ try {
 
   const audit = await browser.evaluate(`window.MolariumChemistActions.history()`);
   const auditBytes = Buffer.from(`${JSON.stringify({
-    schema:description.schema, campaignId:'cdk2-designer-intent', records:audit,
+    schema:description.schema, routeId:'cdk2-designer-intent', records:audit,
   }, null, 2)}\n`);
   await writeFile(join(output, 'chemist-action-audit.json'), auditBytes);
   const campaignPath = join(root,
-    'design-history/structures/generated/cdk2-designer-campaign.json');
+    'design-history/structures/generated/cdk2-designer-route.json');
   const runnerPath = fileURLToPath(import.meta.url);
   const manifest = {
-    schema:'molarium.design-prediction-run/v1', campaignId:'cdk2-designer-intent',
+    schema:'molarium.design-prediction-run/v1', routeId:'cdk2-designer-intent',
     status:'designer-directed-predictions-frozen',
     protocol:{ initialCoordinateInput:'PDB 1H1Q/2A6',
       designerAttachmentAtomName:'C19', sequentialPredictedReferences:true },

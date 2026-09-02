@@ -12,8 +12,8 @@ Three related JSON records remain separate:
 - a replayable sequence uses `molarium.chemist-action-script/v1`;
 - an append-only molecular history uses `molarium.design-campaign/v1`.
 
-The public actions retain the `designCampaign.*` namespace so existing saved scripts continue to
-replay, but those actions load and apply a registered design route, not a campaign ledger.
+Registered routes use the `designRoute.*` action namespace and a `routeId`. Campaign ledgers are a
+different artifact and do not share these action names.
 
 ```json
 {
@@ -21,12 +21,12 @@ replay, but those actions load and apply a registered design route, not a campai
   "label": "SOS1 selected Phe890 route",
   "actions": [
     {
-      "action": "designCampaign.load",
-      "args": { "campaignId": "sos1-hit-only" },
+      "action": "designRoute.load",
+      "args": { "routeId": "sos1-hit-only" },
       "caption": "Load the coordinate-bearing 5OVE/AXE hit only"
     },
     {
-      "action": "designCampaign.applyStep",
+      "action": "designRoute.applyStep",
       "args": { "stepId": "open-phe890-pocket" },
       "caption": "Grow compound 21, creating the Phe890-in clash"
     },

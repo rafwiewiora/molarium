@@ -1,6 +1,6 @@
 {
   "schema": "molarium.cdk2-designer-movie-assets/v1",
-  "campaignId": "cdk2-designer-intent",
+  "routeId": "cdk2-designer-intent",
   "scientificStatus": "designer-directed-hit-to-lead-success",
   "claim": "A designer-selected C19 exit vector carries the 1H1Q hit pose through two Agent API design steps.",
   "agentApi": {

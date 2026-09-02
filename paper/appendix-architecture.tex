@@ -533,12 +533,13 @@ boundary, hash-pinned hit, and ordered graph edits. Append-only histories use
 branches, events, and decisions. The application validates a route before
 loading it, and cross-schema tests reject a route as a ledger or a ledger as a
 route.
-Frozen predictions made before the rename retain their original input hash. A
-migration record stores both hashes and is accepted only when replacing the
-schema identifier reconstructs the exact frozen bytes; any other field change
-still fails verification.
-Existing replay files retain the \texttt{designCampaign.*} action namespace for
-compatibility; that operation name does not identify the JSON ledger schema.
+Frozen predictions made before the schema split retain their original input
+hash. A migration record stores both hashes and is accepted only when replacing
+the schema identifier reconstructs the exact frozen bytes; any other field
+change still fails verification. Public route actions are
+\texttt{designRoute.load}, \texttt{designRoute.applyStep}, and
+\texttt{designRoute.inspect}; they take a \texttt{routeId}. No compatibility
+alias is exposed. Campaign-ledger operations remain a separate concern.
 
 The fingerprint seals one exact recorded representation. Two chemically
 equivalent SMILES, tautomers, protonation states, or atom orderings can still
@@ -588,8 +589,8 @@ list of allowed instructions, not a program:
   "label": "SOS1 selected Phe890 route",
   "actions": [
     {
-      "action": "designCampaign.load",
-      "args": {"campaignId": "sos1-hit-only"},
+      "action": "designRoute.load",
+      "args": {"routeId": "sos1-hit-only"},
       "caption": "Load the coordinate-bearing 5OVE/AXE hit only"
     },
     {
@@ -626,9 +627,9 @@ Replay rules:
 A stable URL such as \url{https://molarium.org/sos1-hit-to-bay293} identifies the
 story. The friendly URL may point to a newer release later; the release commit
 and selected-route file fingerprint
-\texttt{74cbf827a3928a1c...3540f4ab1} identify the exact bytes reviewed. Its
+\texttt{c3c5cfff681ab34c...a94f4dbf2021} identify the exact bytes reviewed. Its
 canonical action-script fingerprint
-\texttt{598aa5407fac30ad...878370e} identifies the normalized JSON content, so
+\texttt{24b6a50718c7cdd3...8fb896fc9} identifies the normalized JSON content, so
 harmless whitespace changes do not create a logically new route.
 
 The practical workflow is therefore: capture a trusted starting snapshot;

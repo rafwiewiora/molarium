@@ -1,6 +1,6 @@
 {
   "schema": "molarium.designer-moves-example-provenance/v1",
-  "campaignId": "sos1-hit-only",
+  "routeId": "sos1-hit-only",
   "scientificClaim": "Starting from the coordinate-bearing 5OVE/AXE hit, the public Molarium Chemist Actions workflow explored three Phe890 rotamer basins after compound-21 growth created a clash, selected rotamer index 5 by the registered coupled side-chain/pose criterion, and propagated that predicted receptor state to BAY-293.",
   "scientificBoundary": {
     "initialCoordinateInput": "PDB 5OVE/AXE only",
@@ -20,7 +20,7 @@
       "path": "outputs/design-history/sos1-hit-only-growth-clash-v7/prediction-manifest.json",
       "sha256": "4415a64b4e1aae85faedd2987bf2f17c3212357c8a247a9a1ff8f470c28c9353"
     },
-    "campaignDefinition": {
+    "designRouteDefinition": {
       "path": "design-history/structures/generated/sos1-prospective-campaign.json",
       "sha256": "870ff80176084bf32692c58d7b86e6d9e9b1ad32515977943be41a53a1451829",
       "schemaMigration": {
@@ -40,15 +40,15 @@
     "fullExploration": {
       "path": "design-history/examples/sos1-growth-clash-v7.full.action-script.json",
       "actions": 89,
-      "actionScriptSha256": "ab715bd46988431b3ad504978be9681be994f4246e7064b5fcbb2a9de8906749",
-      "fileSha256": "3f27052198fd411f8aa32d263f764ae13ab2d3c347e412daaebabf441da73097",
+      "actionScriptSha256": "2f278568d4b6dda32c6ccceddf405b6f62799bbbdb0a58d8e54612b7221bf22e",
+      "fileSha256": "5cb610fe4130aa03e7e63b9509821b5e06d48f04f9317dbacbf5d385f49ac61f",
       "meaning": "Complete execution trace, including inspections, all three explored Phe890 branches, undo operations, and final selected-branch replay."
     },
     "selectedRoute": {
       "path": "design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json",
       "actions": 33,
-      "actionScriptSha256": "598aa5407fac30adb3512ad9334181cae0da8cf21104d3b49296ce117878370e",
-      "fileSha256": "74cbf827a3928a1c8066a2f5f2b13f37dec7141fb8c8aa4af6919bf3540f4ab1",
+      "actionScriptSha256": "24b6a50718c7cdd3adc9dc9da91341178920768f9e0d3326ef6189c8fb896fc9",
+      "fileSha256": "c3c5cfff681ab34c5c73540b13278c4cc0461bd0d19ff35f3a36a94f4dbf2021",
       "meaning": "Compact operational replay of the already-selected route. It omits discarded branches and read-only freeze inspections, so it is not the evidence that branch search occurred."
     }
   },

@@ -32,7 +32,7 @@ function usage() {
     '',
     'Options:',
     '  --label TEXT                 script label',
-    '  --omit-read-only            omit session/designCampaign/structureStory inspections',
+    '  --omit-read-only            omit session/designRoute/structureStory inspections',
     '  --sequences 1-12,20,24-30   include only these source audit sequences',
     '  --captions FILE.json        object mapping source sequence numbers to captions',
     '  --caption-from-request-id   use an audit request ID when no explicit caption exists',
@@ -54,7 +54,7 @@ const captionsBySequence = captionsPath
   ? JSON.parse(await readFile(resolve(captionsPath), 'utf8')) : {};
 const sourceAuditSha256 = createHash('sha256').update(bytes).digest('hex');
 const script = actionScriptFromAudit(audit, {
-  label:valueFor('--label') || `Replay of ${audit.campaignId || 'Chemist Actions audit'}`,
+  label:valueFor('--label') || `Replay of ${audit.routeId || 'Chemist Actions audit'}`,
   includeReadOnly:!process.argv.includes('--omit-read-only'),
   includeSequences:parseSequences(valueFor('--sequences')),
   captionsBySequence,

@@ -22,7 +22,7 @@ const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const candidateManifestBytes = await readFile(join(runDir, 'prediction-manifest.json'));
 const candidateManifest = JSON.parse(candidateManifestBytes);
 let manifestBytes, predictionManifest, predictions, audit;
-if (candidateManifest.campaignId === 'cdk2-designer-intent') {
+if (candidateManifest.routeId === 'cdk2-designer-intent') {
   manifestBytes = candidateManifestBytes;
   predictionManifest = candidateManifest;
   assert.equal(predictionManifest.status, 'designer-directed-predictions-frozen');
@@ -53,11 +53,11 @@ if (candidateManifest.campaignId === 'cdk2-designer-intent') {
 }
 const firstFreeze = predictionManifest.checkpoints.find((entry) => entry.stepId === 'add-meta-chloro');
 const recapture = audit.find((entry) =>
-  entry.requestId === (predictionManifest.campaignId === 'cdk2-designer-intent'
+  entry.requestId === (predictionManifest.routeId === 'cdk2-designer-intent'
     ? 'add-meta-chloro-designer-capture-predicted-reference'
     : 'add-meta-chloro-capture-predicted-reference'));
 const secondStage = audit.find((entry) =>
-  entry.requestId === (predictionManifest.campaignId === 'cdk2-designer-intent'
+  entry.requestId === (predictionManifest.routeId === 'cdk2-designer-intent'
     ? 'replace-chloro-with-sulfonamide-designer-stage'
     : 'replace-chloro-with-sulfonamide-stage'));
 assert(recapture && secondStage
@@ -220,7 +220,7 @@ for (const spec of evaluations) {
   const editedIndices = allIndices.filter((index) => !commonIndices.has(index));
   const result = {
     schema:'molarium.design-prediction-holdout-evaluation/v1',
-    campaignId:predictionManifest.campaignId, stepId:spec.stepId,
+    routeId:predictionManifest.routeId, stepId:spec.stepId,
     predictedStateId:prediction.checkpoint.predictedStateId,
     boundary:{ predictionManifestSha256:digest(manifestBytes),
       frozenPredictionSha256:prediction.frozen.sha256,
@@ -253,7 +253,7 @@ for (const spec of evaluations) {
 
 const report = {
   schema:'molarium.design-prediction-holdout-evaluation-summary/v1',
-  campaignId:predictionManifest.campaignId,
+  routeId:predictionManifest.routeId,
   predictionManifestSha256:digest(manifestBytes),
   benchmarkManifestSha256:digest(benchmarkBytes),
   holdoutsOpenedOnlyAfterAllFreezeHashesAndAgentAuditVerified:true,
