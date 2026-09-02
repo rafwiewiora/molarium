@@ -1,5 +1,5 @@
 {
-  "schema": "molarium.design-campaign/v1",
+  "schema": "molarium.registered-design-route/v1",
   "id": "sos1-hit-only",
   "title": "SOS1 five-state hit-only conformational replay",
   "protocolBoundary": {

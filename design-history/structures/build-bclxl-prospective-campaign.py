@@ -22,6 +22,8 @@ SOURCE = HERE / "bclxl-trajectory.json"
 HIT_SDF = HERE / "3SPF-B50-bound.sdf"
 HIT_LIGAND_PDB = HERE / "generated" / "3spf-ligand.pdb"
 OUTPUT = HERE / "generated" / "bclxl-prospective-campaign.json"
+REGISTERED_DESIGN_ROUTE_SCHEMA = "molarium.registered-design-route/v1"
+EXPECTED_RDKIT_VERSION = "2026.03.4"
 
 
 def sha256(path: Path) -> str:
@@ -143,6 +145,10 @@ def pose_map(reference: Chem.Mol, names: list[str], product: Chem.Mol, step_id: 
 
 
 def main() -> None:
+    if rdBase.rdkitVersion != EXPECTED_RDKIT_VERSION:
+        raise RuntimeError(
+            f"This deterministic builder requires RDKit {EXPECTED_RDKIT_VERSION}; "
+            f"found {rdBase.rdkitVersion}")
     source = json.loads(SOURCE.read_text())
     reference = Chem.MolFromMolFile(str(HIT_SDF), removeHs=True)
     if reference is None or reference.GetNumConformers() != 1:
@@ -170,7 +176,7 @@ def main() -> None:
             "posePropagationMap": pose_map(reference, names, product, step_id),
         })
     payload = {
-        "schema": "molarium.design-campaign/v1",
+        "schema": REGISTERED_DESIGN_ROUTE_SCHEMA,
         "id": "bclxl-hit-only",
         "title": "BCL-xL hit-only prospective replay",
         "protocolBoundary": {

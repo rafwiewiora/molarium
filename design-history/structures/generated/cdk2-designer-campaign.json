@@ -1,5 +1,5 @@
 {
-  "schema": "molarium.design-campaign/v1",
+  "schema": "molarium.registered-design-route/v1",
   "id": "cdk2-designer-intent",
   "title": "CDK2 designer-directed hit-to-lead replay",
   "protocolBoundary": {

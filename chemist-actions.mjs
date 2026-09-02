@@ -71,10 +71,10 @@ const ACTIONS = Object.freeze({
   'optimization.run': Object.freeze({ description:'Run one optimization method exposed in the Build method menu.',
     arguments:Object.freeze({ method:'ligand-rdkit | pocket-webgpu | induced-fit-webgpu | webgpu | rdkit | ani2x' }) }),
   'designCampaign.load': Object.freeze({
-    description:'Load the coordinate-bearing hit of a registered design campaign.',
-    arguments:Object.freeze({ campaignId:'registered design-campaign ID' }) }),
+    description:'Load the coordinate-bearing hit of a registered design route.',
+    arguments:Object.freeze({ campaignId:'registered design-route ID (legacy argument name)' }) }),
   'designCampaign.applyStep': Object.freeze({
-    description:'Stage one registered graph design step, preserving any designer-selected exit vector.',
+    description:'Stage one registered design-route graph step, preserving any designer-selected exit vector.',
     arguments:Object.freeze({ stepId:'persistent design-step ID',
       attachmentAtomId:'persistent atom ID selected as the growth attachment point when required' }) }),
   'designCampaign.inspect': Object.freeze({

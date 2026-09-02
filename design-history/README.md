@@ -19,7 +19,7 @@ compound 4 through compounds 6, 7, 16, and 21.
 
 ## Record layers
 
-Three records have deliberately different responsibilities:
+Four record types have deliberately different responsibilities:
 
 1. **Chemist Actions** records operations available through Molarium's visible,
    versioned chemistry interface. Executable design scripts may replay only
@@ -28,6 +28,13 @@ Three records have deliberately different responsibilities:
    timings, and implementation provenance.
 3. **Design campaigns** record snapshots, molecular commits, branches,
    observations, hypotheses, measurements, and explicit progress decisions.
+4. **Registered design routes** use schema
+   `molarium.registered-design-route/v1` to define a hit, allowed coordinate
+   boundary, and ordered graph edits. They are input protocols, not history
+   ledgers.
+
+The append-only campaign ledger uses `molarium.design-campaign/v1`. A route
+cannot pass ledger verification, and a ledger cannot be loaded as a route.
 
 Snapshots, action scripts, commits, individual events, complete campaigns, and
 movie manifests are SHA-256 content addressed. Events also form a hash chain.

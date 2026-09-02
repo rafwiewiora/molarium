@@ -1,3 +1,5 @@
+import { validateRegisteredDesignRoute } from './design-history/structures/design-route.mjs';
+
 const MOLARIUM_NETWORK_POLICY = Object.freeze({
   mode:'connected', localOnly:false, policy:'connected-v1',
   allowedNetworkOrigins:['user-approved external services'],
@@ -8185,7 +8187,7 @@ async function inspectChemistActionState({ scope = 'ligand', includeCoordinates 
     chemistActionAuditCount:state.chemistActionAudit.length });
 }
 
-const REGISTERED_DESIGN_CAMPAIGNS = Object.freeze({
+const REGISTERED_DESIGN_ROUTES = Object.freeze({
   'bclxl-hit-only':'./design-history/structures/generated/bclxl-prospective-campaign.json',
   'cdk2-hit-only':'./design-history/structures/generated/cdk2-prospective-campaign.json',
   'cdk2-designer-intent':'./design-history/structures/generated/cdk2-designer-campaign.json',
@@ -8202,22 +8204,21 @@ async function fetchPinnedText(path, expectedSha256) {
   return new TextDecoder().decode(bytes);
 }
 
-async function loadRegisteredDesignCampaign(campaignId) {
-  const path = REGISTERED_DESIGN_CAMPAIGNS[campaignId];
-  if (!path) throw new Error(`Unknown registered design campaign: ${campaignId}`);
+async function loadRegisteredDesignRoute(campaignId) {
+  const path = REGISTERED_DESIGN_ROUTES[campaignId];
+  if (!path) throw new Error(`Unknown registered design route: ${campaignId}`);
   const response = await fetch(path);
-  if (!response.ok) throw new Error(`Registered design campaign could not be loaded (${response.status})`);
+  if (!response.ok) throw new Error(`Registered design route could not be loaded (${response.status})`);
   const campaign = await response.json();
-  if (campaign?.schema !== 'molarium.design-campaign/v1' || campaign.id !== campaignId)
-    throw new Error('Registered design campaign has an invalid identity');
+  validateRegisteredDesignRoute(campaign, { expectedId:campaignId });
   if (campaign.evaluation?.status !== 'locked-until-predictions-frozen'
     || campaign.evaluation?.holdouts?.length)
-    throw new Error('A hit-only campaign cannot expose evaluation holdouts before prediction freeze');
+    throw new Error('A hit-only route cannot expose evaluation holdouts before prediction freeze');
   const coordinateFilesRead = campaign.generator?.coordinateFilesRead || [];
   const hitCoordinateToken = String(campaign.hit?.pdbId || '').toLowerCase();
   if (!hitCoordinateToken || !coordinateFilesRead.length
     || coordinateFilesRead.some((entry) => !String(entry).toLowerCase().includes(hitCoordinateToken)))
-    throw new Error('Registered design campaign has a non-hit coordinate dependency');
+    throw new Error('Registered design route has a non-hit coordinate dependency');
   const [protein, ligand] = await Promise.all([
     fetchPinnedText(campaign.hit.proteinAsset, campaign.hit.proteinSha256),
     fetchPinnedText(campaign.hit.ligandAsset, campaign.hit.ligandSha256),
@@ -8624,10 +8625,10 @@ function installChemistActionsApi(module) {
     'designCampaign.load':async (args) => { chemistActionKeys(args, ['campaignId']);
       if (typeof args.campaignId !== 'string' || !args.campaignId)
         throw new Error('campaignId must be a registered design-campaign ID');
-      return chemistActionSummary({ designCampaign:await loadRegisteredDesignCampaign(args.campaignId) }); },
+      return chemistActionSummary({ designCampaign:await loadRegisteredDesignRoute(args.campaignId) }); },
     'designCampaign.applyStep':async (args) => { chemistActionKeys(args,
       ['stepId','attachmentAtomId']);
-      if (!state.designCampaign) throw new Error('Load a registered design campaign first');
+      if (!state.designCampaign) throw new Error('Load a registered design route first');
       if (typeof args.stepId !== 'string' || !args.stepId)
         throw new Error('stepId must be a registered design-step ID');
       if (!state.dockingReference || state.dockingReference.mode !== 'pose-propagation')
@@ -8694,7 +8695,7 @@ function installChemistActionsApi(module) {
         spatialIntent,
         embedding:structuredClone(staged.embedding) } }); },
     'designCampaign.inspect':async (args) => { empty(args);
-      if (!state.designCampaign) throw new Error('No registered design campaign is loaded');
+      if (!state.designCampaign) throw new Error('No registered design route is loaded');
       return chemistActionSummary({ designCampaign:{ id:state.designCampaign.id,
         hit:structuredClone(state.designCampaign.hit),
         protocolBoundary:structuredClone(state.designCampaign.protocolBoundary),

@@ -5,6 +5,8 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { applyCoreTransform, fittedCoreTransform } from '../docking/constraints.mjs';
 import { verifyCdk2PredictionRun } from './verify-cdk2-prediction-run.mjs';
+import { verifyFrozenDesignRouteInput } from
+  '../design-history/structures/design-route-provenance.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -31,8 +33,8 @@ const actionAudit = verified.audit;
 
 const campaignPath = join(generated, 'cdk2-prospective-campaign.json');
 const campaignBytes = await readFile(campaignPath);
-assert.equal(digest(campaignBytes), predictionManifest.inputs.campaign.sha256,
-  'registered hit-only campaign changed');
+const campaignInput = verifyFrozenDesignRouteInput(
+  campaignBytes, predictionManifest.inputs.campaign.sha256);
 const campaign = JSON.parse(campaignBytes);
 
 // The holdout registry and coordinate files are intentionally first resolved
@@ -213,7 +215,9 @@ const movieManifest = {
   evaluation:holdoutSummary.results,
   editTargets,
   inputs:[
-    { path:relative(root, campaignPath), sha256:digest(campaignBytes) },
+    { path:relative(root, campaignPath), sha256:digest(campaignBytes),
+      ...(campaignInput.schemaMigration
+        ? { schemaMigration:campaignInput.schemaMigration } : {}) },
     { path:relative(root, benchmarkPath), sha256:digest(benchmarkBytes) },
     { path:relative(root, join(runDir, 'prediction-manifest.json')), sha256:digest(predictionManifestBytes) },
     { path:verified.auditProvenance.mode === 'semantic-replay'

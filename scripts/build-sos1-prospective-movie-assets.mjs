@@ -13,6 +13,8 @@ import {
   rigidFit,
   subsetPdb,
 } from '../design-history/structures/pipeline.mjs';
+import { verifyFrozenDesignRouteInput } from
+  '../design-history/structures/design-route-provenance.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -194,7 +196,8 @@ async function verifyPredictionRun() {
   assert.equal(digest(auditBytes), manifest.agentApi.auditSha256, 'Agent API audit hash changed');
   assert.equal(JSON.parse(auditBytes).records.length, manifest.agentApi.auditRecords);
   const campaignBytes = await readFile(join(root, manifest.inputs.campaign.path));
-  assert.equal(digest(campaignBytes), manifest.inputs.campaign.sha256, 'campaign hash changed');
+  const campaignInput = verifyFrozenDesignRouteInput(
+    campaignBytes, manifest.inputs.campaign.sha256);
   const runnerBytes = await readFile(join(root, manifest.inputs.runner.path));
   assert.equal(digest(runnerBytes), manifest.inputs.runner.sha256, 'runner hash changed');
   const evaluationSummaryBytes = await readFile(join(runDirectory, 'holdout-evaluation-summary.json'));
@@ -213,7 +216,8 @@ async function verifyPredictionRun() {
       `${spec.holdout}: holdout hash changed`);
     evaluations.set(spec.id, { evaluation, bytes, holdoutBytes });
   }
-  return { manifest, manifestBytes, checkpoints, auditBytes, campaignBytes, runnerBytes,
+  return { manifest, manifestBytes, checkpoints, auditBytes, campaignBytes,
+    campaignSchemaMigration:campaignInput.schemaMigration, runnerBytes,
     evaluationSummary, evaluationSummaryBytes, evaluations };
 }
 
@@ -501,7 +505,9 @@ const manifest = {
     { path:relative(root, join(runDirectory, 'holdout-evaluation-summary.json')),
       sha256:digest(verified.evaluationSummaryBytes) },
     { path:relative(root, join(root, verified.manifest.inputs.campaign.path)),
-      sha256:digest(verified.campaignBytes) },
+      sha256:digest(verified.campaignBytes),
+      ...(verified.campaignSchemaMigration
+        ? { schemaMigration:verified.campaignSchemaMigration } : {}) },
     { path:relative(root, reviewPath), sha256:digest(reviewBytes), role:'verified-review-source' },
   ],
   assets,

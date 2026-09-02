@@ -25,6 +25,8 @@ GENERATED = HERE / "generated"
 PROTEIN_OUTPUT = GENERATED / "sos1-5ove-protein.pdb"
 LIGAND_OUTPUT = GENERATED / "sos1-5ove-ligand.pdb"
 CAMPAIGN_OUTPUT = GENERATED / "sos1-prospective-campaign.json"
+REGISTERED_DESIGN_ROUTE_SCHEMA = "molarium.registered-design-route/v1"
+EXPECTED_RDKIT_VERSION = "2026.03.4"
 DEFAULT_HIT_PDB = (ROOT / "outputs" / "design-history" / "sos1-preapproval"
                    / "source" / "5OVE.pdb")
 
@@ -300,6 +302,10 @@ def extract_hit_assets(hit_pdb: Path) -> None:
 
 
 def main() -> None:
+    if rdBase.rdkitVersion != EXPECTED_RDKIT_VERSION:
+        raise RuntimeError(
+            f"This deterministic builder requires RDKit {EXPECTED_RDKIT_VERSION}; "
+            f"found {rdBase.rdkitVersion}")
     parser = argparse.ArgumentParser()
     parser.add_argument("--hit-pdb", type=Path, default=DEFAULT_HIT_PDB)
     args = parser.parse_args()
@@ -339,7 +345,7 @@ def main() -> None:
     extract_hit_assets(hit_pdb)
     source_path = str(hit_pdb.relative_to(ROOT)) if hit_pdb.is_relative_to(ROOT) else str(hit_pdb)
     payload = {
-        "schema": "molarium.design-campaign/v1",
+        "schema": REGISTERED_DESIGN_ROUTE_SCHEMA,
         "id": "sos1-hit-only",
         "title": "SOS1 five-state hit-only conformational replay",
         "protocolBoundary": {

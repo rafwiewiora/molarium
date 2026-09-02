@@ -3,6 +3,8 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { REGISTERED_DESIGN_ROUTE_SCHEMA,
+  validateRegisteredDesignRoute } from './design-route.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const generated = join(here, 'generated');
@@ -12,11 +14,13 @@ const designerCampaign = JSON.parse(await readFile(
   join(generated, 'cdk2-designer-campaign.json'), 'utf8'));
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
-assert.equal(campaign.schema, 'molarium.design-campaign/v1');
+assert.equal(campaign.schema, REGISTERED_DESIGN_ROUTE_SCHEMA);
+assert.equal(validateRegisteredDesignRoute(campaign, { expectedId:'cdk2-hit-only' }), campaign);
 assert.equal(campaign.id, 'cdk2-hit-only');
 assert.equal(campaign.hit.pdbId, '1H1Q');
 assert.equal(campaign.hit.stateId, '2A6');
 assert.equal(campaign.hit.ligandDefinition.id, '2A6');
+assert.equal(campaign.generator.rdkitVersion, '2026.03.4');
 assert.deepEqual(campaign.evaluation,
   { status:'locked-until-predictions-frozen', holdouts:[] });
 assert.deepEqual(campaign.generator.coordinateFilesRead,
@@ -54,9 +58,12 @@ for (const step of campaign.steps) {
     map.productHeavyAtoms);
 }
 
-assert.equal(designerCampaign.schema, 'molarium.design-campaign/v1');
+assert.equal(designerCampaign.schema, REGISTERED_DESIGN_ROUTE_SCHEMA);
+assert.equal(validateRegisteredDesignRoute(designerCampaign,
+  { expectedId:'cdk2-designer-intent' }), designerCampaign);
 assert.equal(designerCampaign.id, 'cdk2-designer-intent');
 assert.equal(designerCampaign.hit.proteinSha256, campaign.hit.proteinSha256);
+assert.equal(designerCampaign.generator.rdkitVersion, '2026.03.4');
 assert.equal(designerCampaign.hit.ligandSha256, campaign.hit.ligandSha256);
 assert(!/1h1r|1oiu/i.test(JSON.stringify(designerCampaign)),
   'designer intent must not import either later crystal');

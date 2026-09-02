@@ -646,7 +646,14 @@
     },
     {
       "path": "design-history/structures/generated/sos1-prospective-campaign.json",
-      "sha256": "e3706e4910dde647d68fe7ea1506177b18d47b662acc374630bbac8976d419bc"
+      "sha256": "870ff80176084bf32692c58d7b86e6d9e9b1ad32515977943be41a53a1451829",
+      "schemaMigration": {
+        "kind": "schema-identifier-only",
+        "fromSchema": "molarium.design-campaign/v1",
+        "toSchema": "molarium.registered-design-route/v1",
+        "frozenInputSha256": "e3706e4910dde647d68fe7ea1506177b18d47b662acc374630bbac8976d419bc",
+        "currentSha256": "870ff80176084bf32692c58d7b86e6d9e9b1ad32515977943be41a53a1451829"
+      }
     },
     {
       "path": "outputs/design-history/sos1-hit-only-growth-clash-v7/review/data.json",

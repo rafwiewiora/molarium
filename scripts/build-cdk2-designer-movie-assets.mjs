@@ -3,6 +3,8 @@ import { createHash } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { verifyFrozenDesignRouteInput } from
+  '../design-history/structures/design-route-provenance.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const runDir = join(root, 'outputs/design-history/cdk2-designer-intent-success');
@@ -15,7 +17,8 @@ assert.equal(manifest.status, 'designer-directed-predictions-frozen');
 assert.equal(manifest.protocol.designerAttachmentAtomName, 'C19');
 const campaignPath = join(root, manifest.inputs.campaign.path);
 const campaignBytes = await readFile(campaignPath);
-assert.equal(digest(campaignBytes), manifest.inputs.campaign.sha256);
+const campaignInput = verifyFrozenDesignRouteInput(
+  campaignBytes, manifest.inputs.campaign.sha256);
 const campaign = JSON.parse(campaignBytes);
 const auditBytes = await readFile(join(runDir, 'chemist-action-audit.json'));
 assert.equal(digest(auditBytes), manifest.agentApi.auditSha256);
@@ -113,7 +116,9 @@ const movieManifest = {
   evaluation:evaluationSummary.results,
   editTargets,
   inputs:[
-    { path:relative(root, campaignPath), sha256:digest(campaignBytes) },
+    { path:relative(root, campaignPath), sha256:digest(campaignBytes),
+      ...(campaignInput.schemaMigration
+        ? { schemaMigration:campaignInput.schemaMigration } : {}) },
     { path:relative(root, join(runDir, 'prediction-manifest.json')), sha256:digest(manifestBytes) },
     { path:relative(root, join(runDir, 'chemist-action-audit.json')), sha256:digest(auditBytes) },
     { path:relative(root, evaluationSummaryPath), sha256:digest(evaluationSummaryBytes) },

@@ -6,6 +6,15 @@ visible interface. A saved route is ordinary JSON with schema
 human captions. It contains no executable code, private callbacks, force-field objects, or direct
 coordinate replacement.
 
+Three related JSON records remain separate:
+
+- a registered input protocol uses `molarium.registered-design-route/v1`;
+- a replayable sequence uses `molarium.chemist-action-script/v1`;
+- an append-only molecular history uses `molarium.design-campaign/v1`.
+
+The public actions retain the `designCampaign.*` namespace so existing saved scripts continue to
+replay, but those actions load and apply a registered design route, not a campaign ledger.
+
 ```json
 {
   "schema": "molarium.chemist-action-script/v1",

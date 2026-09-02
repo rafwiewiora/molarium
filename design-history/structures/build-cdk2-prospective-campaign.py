@@ -26,6 +26,8 @@ PROTEIN_OUTPUT = GENERATED / "cdk2-1h1q-protein.pdb"
 LIGAND_OUTPUT = GENERATED / "cdk2-1h1q-ligand.pdb"
 CAMPAIGN_OUTPUT = GENERATED / "cdk2-prospective-campaign.json"
 DESIGNER_CAMPAIGN_OUTPUT = GENERATED / "cdk2-designer-campaign.json"
+REGISTERED_DESIGN_ROUTE_SCHEMA = "molarium.registered-design-route/v1"
+EXPECTED_RDKIT_VERSION = "2026.03.4"
 
 HIT_SMILES = "c1ccc(Nc2nc(OCC3CCCCC3)c3[nH]cnc3n2)cc1"
 CHLORO_SMILES = "Clc1cccc(Nc2nc(OCC3CCCCC3)c3[nH]cnc3n2)c1"
@@ -297,6 +299,10 @@ def extract_hit_assets() -> None:
 
 
 def main() -> None:
+    if rdBase.rdkitVersion != EXPECTED_RDKIT_VERSION:
+        raise RuntimeError(
+            f"This deterministic builder requires RDKit {EXPECTED_RDKIT_VERSION}; "
+            f"found {rdBase.rdkitVersion}")
     hit_smiles, hit = canonical_molecule(HIT_SMILES)
     chloro_smiles, chloro = canonical_molecule(CHLORO_SMILES)
     sulfonamide_smiles, sulfonamide = canonical_molecule(SULFONAMIDE_SMILES)
@@ -333,7 +339,7 @@ def main() -> None:
         },
     ]
     payload = {
-        "schema": "molarium.design-campaign/v1",
+        "schema": REGISTERED_DESIGN_ROUTE_SCHEMA,
         "id": "cdk2-hit-only",
         "title": "CDK2 rigid-pocket hit-only prospective replay",
         "protocolBoundary": {

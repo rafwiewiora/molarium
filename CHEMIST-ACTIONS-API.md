@@ -71,8 +71,10 @@ feature transfer, Undo, and Redo therefore behave exactly as they do for an inte
 - `optimization.run`
 - `designCampaign.load`, `designCampaign.applyStep`, `designCampaign.inspect`
 
-Registered design campaigns enforce a prospective coordinate boundary. `designCampaign.load`
-loads only the hash-pinned hit complex. `designCampaign.applyStep` accepts a persistent registered
+Registered design routes use schema `molarium.registered-design-route/v1` and enforce a
+prospective coordinate boundary. They are input protocols, not append-only campaign ledgers.
+The legacy action namespace `designCampaign.*` is retained for saved-script compatibility.
+`designCampaign.load` loads only the hash-pinned hit complex. `designCampaign.applyStep` accepts a persistent registered
 step ID and supplies its molecular graph plus a reference/product atom map. Designer-directed steps
 also require `attachmentAtomId`, the same persistent ligand atom ID that an interactive chemist
 selects as the exit vector; the route rejects a symmetry-equivalent map attached anywhere else.

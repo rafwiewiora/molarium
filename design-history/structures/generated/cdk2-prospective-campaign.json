@@ -1,5 +1,5 @@
 {
-  "schema": "molarium.design-campaign/v1",
+  "schema": "molarium.registered-design-route/v1",
   "id": "cdk2-hit-only",
   "title": "CDK2 rigid-pocket hit-only prospective replay",
   "protocolBoundary": {
