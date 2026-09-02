@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { actionScriptSha256, validateActionScript } from '../design-history/replay.mjs';
+import { buildPocketInterfaceStory } from '../design-history/interface-story.mjs';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -26,27 +27,12 @@ const fps = Number(valueFor('--fps') || 12);
 const smoke = has('--smoke');
 const sourceScriptBytes = await readFile(scriptPath);
 const sourceScript = validateActionScript(JSON.parse(sourceScriptBytes));
-const focusStep = { action:'view.focusComponent',
-  args:{ kind:'ligand', ordinal:0, isolate:false }, caption:'Zoom to the active ligand pocket' };
-const displayStep = { action:'view.setDisplay', args:{ representation:'cartoon',
-  showHydrogens:false, showInteractions:false, showPocketAtoms:true, showHulls:false },
-caption:'Use the chemist pocket view and hide prepared hydrogens' };
-const focusAfter = new Set([
-  'designCampaign.applyStep', 'pose.applySidechainRotamer',
-  'pose.apply', 'optimization.run',
-]);
 const sourceActions = smoke ? sourceScript.actions.slice(0, 4) : sourceScript.actions;
-const presentationActions = sourceActions.flatMap((step) => [step,
-  ...(step.action === 'protein.prepare' ? [displayStep, focusStep] : []),
-  ...(focusAfter.has(step.action) ? [focusStep] : []),
-]);
-const presentationScript = validateActionScript({
+const presentationScript = buildPocketInterfaceStory({
   schema:sourceScript.schema,
-  label:`${sourceScript.label} · visible Molarium interface`,
-  actions:presentationActions,
-  sourceScript:{ path:relative(root, scriptPath), sha256:digest(sourceScriptBytes),
-    transformation:'Insert view.focusComponent after state-changing actions; no scientific action removed or altered.' },
-});
+  label:sourceScript.label,
+  actions:sourceActions,
+}, { sourcePath:relative(root, scriptPath), sourceSha256:digest(sourceScriptBytes) });
 
 await mkdir(output, { recursive:true });
 const temporary = await mkdtemp(join(tmpdir(), 'molarium-interface-movie-'));
@@ -82,7 +68,7 @@ function holdFrames(step) {
   if (step.action === 'view.setDisplay') return Math.max(3, Math.round(fps * .3));
   if (['designCampaign.load', 'designCampaign.applyStep', 'pose.applySidechainRotamer',
     'pose.enumerateSidechainRotamers', 'pose.updateReceptorReference', 'optimization.run',
-    'view.focusComponent'].includes(step.action)) return Math.round(fps * 1.25);
+    'view.focusComponent', 'view.focusAtoms'].includes(step.action)) return Math.round(fps * 1.25);
   return Math.max(4, Math.round(fps * .55));
 }
 
