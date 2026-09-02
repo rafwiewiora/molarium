@@ -4,16 +4,21 @@
   <g transform="translate(8 8)">
     <rect x="1" y="1" width="46" height="46" rx="15" fill="#132632"/>
     <rect x="1.5" y="1.5" width="45" height="45" rx="14.5" fill="none" stroke="#ffffff" stroke-opacity=".12"/>
-    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M9.5 35 12.5 13 24 28 35.5 13 38.5 35" stroke="#0a1b24" stroke-width="6"/>
-      <path d="M9.5 35 12.5 13 24 28 35.5 13 38.5 35" stroke="#9bdacb" stroke-width="3" data-molarium-bonds="true"/>
-    </g>
-    <g stroke="#10242f" stroke-width="1.8" data-molarium-atoms="true">
-      <circle cx="9.5" cy="35" r="3.7" fill="#c7d8dd"/>
-      <circle cx="12.5" cy="13" r="4.2" fill="#72cde5"/>
-      <circle cx="24" cy="28" r="4.3" fill="#f5fbfb"/>
-      <circle cx="35.5" cy="13" r="4.2" fill="#8eddb4"/>
-      <circle cx="38.5" cy="35" r="3.7" fill="#c7d8dd"/>
+    <path d="M8.5 36.5 14.5 12.5 24 29.5 33.5 12.5 39.5 36.5" fill="none"
+      stroke="#59c7bb" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+      opacity=".58" data-molarium-letter="true"/>
+    <g stroke-linecap="round" stroke-linejoin="round" data-molarium-flask="true">
+      <path d="M21 8v10L11.5 34.5A4.5 4.5 0 0 0 15.5 41h17a4.5 4.5 0 0 0 4-6.5L27 18V8Z"
+        fill="#173a45" fill-opacity=".78" stroke="#d9f8f1" stroke-width="2"/>
+      <path d="M18 7.5h12" fill="none" stroke="#d9f8f1" stroke-width="2.4"/>
+      <path d="M14.2 31.5c2.1-1.8 4.4 1.4 6.2-.3 1.9-1.8 4.7-1.7 6.4.2 1.8 2 4.2-1.2 7 .3l2.7 4.8A4.5 4.5 0 0 1 32.5 41h-17a4.5 4.5 0 0 1-4-6.5Z"
+        fill="#2fa39d" stroke="#8ae0d3" stroke-width=".8"/>
+      <g fill="#d9f8f1" stroke="#173a45" stroke-width=".7" data-molarium-foam="true">
+        <circle cx="17.7" cy="31" r="2.2"/><circle cx="22.1" cy="30.7" r="2.8"/>
+        <circle cx="27.1" cy="31" r="2.3"/><circle cx="31.2" cy="31.4" r="1.9"/>
+        <circle cx="25.5" cy="25.8" r="1.25"/><circle cx="29.3" cy="22.8" r=".85"/>
+      </g>
+      <path d="M18.2 37.5h11.6" fill="none" stroke="#ffffff" stroke-opacity=".32" stroke-width="1"/>
     </g>
   </g>
   <text x="70" y="34" fill="#101820" font-family="Geist Sans, Inter, ui-sans-serif, system-ui, sans-serif" font-size="26" font-weight="750" letter-spacing="1.7">MOLARIUM</text>

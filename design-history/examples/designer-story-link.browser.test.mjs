@@ -36,6 +36,23 @@ try {
     `document.querySelector('#replay-designer-moves').textContent.includes('Pause')`),
   90000, 'story play control');
   await waitFor(async () => browser.evaluate(
+    `document.querySelector('#designer-move-status').textContent.startsWith('Move 3 of 48')`),
+  90000, 'preparation demo cue');
+  const preparationCue = await browser.evaluate(`({
+    demoActive:document.body.classList.contains('designer-move-demo-active'),
+    prepareHighlighted:document.querySelector('#prepare-pdb').classList.contains('designer-move-cue'),
+    highlightColor:getComputedStyle(document.querySelector('#prepare-pdb')).outlineColor,
+    loadCardMinimized:document.querySelector('.load-card').classList.contains('designer-move-demo-minimized'),
+    transportOnly:document.querySelector('#build-left-panel').classList.contains('designer-move-demo-transport-only'),
+    infoMinimized:document.querySelector('#molecule-info').classList.contains('designer-move-demo-minimized'),
+  })`);
+  assert.equal(preparationCue.demoActive, true);
+  assert.equal(preparationCue.prepareHighlighted, true);
+  assert.equal(preparationCue.highlightColor, 'rgb(220, 38, 38)');
+  assert.equal(preparationCue.loadCardMinimized, false);
+  assert.equal(preparationCue.transportOnly, true);
+  assert.equal(preparationCue.infoMinimized, true);
+  await waitFor(async () => browser.evaluate(
     `Number(document.querySelector('#designer-move-progress-label').textContent.split('/')[0]) >= 5`),
   90000, 'responsive prepared-pocket transition');
   const preparedPocket = await browser.evaluate(`(() => {

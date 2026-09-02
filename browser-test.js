@@ -363,12 +363,18 @@ const browserSuite = String.raw`(async () => {
     && githubLink.querySelector('svg'),
     'header exposes the public Molarium GitHub repository with an accessible icon link');
   check(document.querySelector('.app-brand-mark[data-molarium-mark]')?.tagName === 'svg'
+    && document.querySelector('.app-brand-mark [data-molarium-flask]')
+    && document.querySelector('.app-brand-mark [data-molarium-foam]')
+    && document.querySelector('.app-brand-mark [data-molarium-letter]')
     && document.querySelector('.app-brand-name')?.textContent === 'MOLARIUM'
     && document.querySelector('link[rel="icon"]')?.getAttribute('href') === './assets/molarium-mark.svg',
-    'header inlines the original Molarium mark while the favicon uses the matching asset');
+    'header inlines the Molarium flask-and-M mark while the favicon uses the matching asset');
+  check(document.querySelector('.viewer-hint .viewer-hint-mark[data-molarium-mark]')
+    && !document.querySelector('.viewer-hint .hint-molecule'),
+    'blank viewer uses the branded Molarium mark');
   check(document.querySelector('.calculation-loader svg[data-molarium-mark]')
     && !document.querySelector('.calculation-glyph'),
-    'calculation overlay uses the branded Molarium loader instead of the legacy molecular glyph');
+    'calculation overlay uses the branded Molarium loader');
   const launchMol = await (await fetch('./assets/lsd-launch.mol')).text();
   check(launchMol.includes(' 49 52') && launchMol.includes('M  END'),
     'launch scene ships the authoritative 49-atom PubChem LSD conformer');

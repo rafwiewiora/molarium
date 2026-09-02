@@ -434,14 +434,12 @@ select {
   flex-direction: column; color: var(--secondary); pointer-events: none;
 }
 .viewer-hint.visible { display: flex; }
-.viewer-hint strong { margin-top: 18px; font-size: 14px; }
+.viewer-hint strong { margin-top: 14px; font-size: 14px; }
 .viewer-hint span { margin-top: 5px; color: #94a3b8; font-size: 12px; }
-.hint-molecule { position: relative; width: 80px; height: 58px; opacity: .72; }
-.hint-molecule::before, .hint-molecule::after { content: ""; position: absolute; height: 3px; background: #cbd5e1; transform-origin: left center; border-radius: 5px; }
-.hint-molecule::before { width: 51px; left: 18px; top: 17px; transform: rotate(31deg); }
-.hint-molecule::after { width: 46px; left: 20px; top: 43px; transform: rotate(-28deg); }
-.hint-molecule i { position: absolute; width: 19px; height: 19px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #64748b, #0f172a 70%); box-shadow: 0 4px 8px rgba(15,23,42,.15); }
-.hint-molecule i:nth-child(1){ left: 8px; top: 4px; }.hint-molecule i:nth-child(2){ right: 5px; top: 31px; }.hint-molecule i:nth-child(3){ left: 5px; bottom: 1px; width: 13px; height: 13px; background: radial-gradient(circle at 35% 30%, #cbd5e1, #64748b); }
+.viewer-hint-mark {
+  width: 82px; height: 82px; opacity: .9;
+  filter: drop-shadow(0 10px 18px rgba(15,23,42,.14));
+}
 
 .atom-tooltip { position: absolute; z-index: 8; pointer-events: none; transform: translate(10px, 10px); padding: 5px 7px; border-radius: 6px; background: rgba(15,23,42,.9); color: white; font-size: 10px; }
 .residue-follow-chip { position: absolute; z-index: 7; left: 14px; top: 14px; border: 1px solid #91a4bd; border-radius: 999px; background: rgba(255,255,255,.94); color: var(--ink); padding: 6px 10px; box-shadow: 0 3px 12px rgba(15,23,42,.1); font: 700 11px/1.1 Inter, sans-serif; }
@@ -608,9 +606,37 @@ select {
 .designer-story-transport span { min-width: 38px; color: var(--quiet); font: 700 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace; text-align: right; }
 #designer-move-progress { display: block; width: 100%; height: 5px; margin: 7px 0 5px; accent-color: #0e7490; }
 .designer-move-caption { min-height: 24px; margin: 0; color: var(--ink); font-size: 9px; line-height: 1.35; }
-.designer-move-cue { position: relative; z-index: 2; outline: 2px solid #20a4b8 !important;
-  outline-offset: 2px; box-shadow: 0 0 0 6px rgb(32 164 184 / 15%) !important; }
-.designer-move-press { transform: translateY(1px) scale(.985); filter: saturate(1.12); }
+.designer-move-cue { position: relative; z-index: 8; outline: 3px solid #dc2626 !important;
+  outline-offset: 2px; box-shadow: 0 0 0 7px rgb(220 38 38 / 16%) !important; }
+.designer-move-press { filter: saturate(1.14); }
+button.designer-move-press, select.designer-move-press, input.designer-move-press {
+  transform: translateY(1px) scale(.985);
+}
+.designer-move-change { outline: 2px solid #dc2626 !important; outline-offset: 2px;
+  accent-color: #dc2626 !important; box-shadow: 0 0 0 5px rgb(220 38 38 / 14%) !important; }
+body.designer-move-demo-active .panel > .card,
+body.designer-move-demo-active .structure-2d-panel { transition: opacity .16s ease, max-height .16s ease; }
+body.designer-move-demo-active .card.designer-move-demo-minimized > :not(.card-heading) {
+  display: none !important;
+}
+body.designer-move-demo-active .card.designer-move-demo-minimized {
+  opacity: .5; box-shadow: none;
+}
+body.designer-move-demo-active .generated-collapsible-card.designer-move-demo-minimized > .generated-card-heading {
+  margin-bottom: -12px; border-bottom-color: transparent;
+}
+body.designer-move-demo-active #build-left-panel.designer-move-demo-transport-only
+  > .collapsible-card-body > :not(#designer-move-tools) { display: none !important; }
+body.designer-move-demo-active #build-left-panel.designer-move-demo-transport-only #designer-move-tools {
+  margin: 0; padding: 0; border-top: 0;
+}
+body.designer-move-demo-active .structure-2d-panel.designer-move-demo-minimized {
+  width: 118px; max-height: 34px; opacity: .5; box-shadow: none;
+}
+body.designer-move-demo-active .structure-2d-panel.designer-move-demo-minimized #structure-2d-body {
+  display: none !important;
+}
+body.designer-move-demo-active .designer-move-demo-reveal.hidden { display: block !important; }
 .geometry-control { display: grid; grid-template-columns: 1fr 92px; align-items: center; gap: 8px; }
 .geometry-control > input:first-child { width: 100%; accent-color: var(--ink); }
 .geometry-control input:disabled { cursor: default; opacity: .48; }

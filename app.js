@@ -5685,7 +5685,8 @@ function drawMolecule(context, projected, molecule, miniature) {
     atom.screenRadius = radius;
     if (selectedOrder >= 0) {
       context.beginPath(); context.arc(atom.sx, atom.sy, radius + 5, 0, Math.PI * 2);
-      context.strokeStyle = '#2563eb'; context.lineWidth = 3; context.stroke();
+      context.strokeStyle = state.designerMoveReplaying ? '#dc2626' : '#2563eb';
+      context.lineWidth = 3; context.stroke();
     }
     const style = atomRenderStyle(atom);
     const gradient = context.createRadialGradient(atom.sx - radius * .35, atom.sy - radius * .40, radius * .08, atom.sx, atom.sy, radius);
@@ -7591,12 +7592,49 @@ async function installDesignerMoveScript(parsed) {
   updateDesignerMoveControls();
 }
 
-let designerMoveCueElement = null;
+let designerMoveCueElements = [];
 
-function showDesignerMoveCue(step = null) {
-  designerMoveCueElement?.classList.remove('designer-move-cue', 'designer-move-press');
-  designerMoveCueElement = null;
-  if (!step) return;
+function clearDesignerMoveCueElements() {
+  designerMoveCueElements.forEach((element) =>
+    element.classList.remove('designer-move-cue', 'designer-move-press', 'designer-move-change'));
+  designerMoveCueElements = [];
+}
+
+function clearDesignerMoveDemoLayout() {
+  document.body.classList.remove('designer-move-demo-active');
+  document.querySelectorAll('.designer-move-demo-minimized, .designer-move-demo-transport-only, .designer-move-demo-reveal')
+    .forEach((element) => element.classList.remove('designer-move-demo-minimized',
+      'designer-move-demo-transport-only', 'designer-move-demo-reveal'));
+}
+
+function applyDesignerMoveDemoLayout(step, activeElement) {
+  clearDesignerMoveDemoLayout();
+  document.body.classList.add('designer-move-demo-active');
+  const transport = document.querySelector('#designer-move-tools');
+  const transportCard = transport?.closest('.card');
+  const activeCard = activeElement?.closest('.card') || null;
+  document.querySelectorAll('.panel > .card').forEach((card) => {
+    if (card.classList.contains('hidden') && card !== activeCard) return;
+    const isActive = card === activeCard;
+    const isTransport = card === transportCard;
+    const transportOnly = isTransport && (!isActive
+      || activeElement === transport || transport?.contains(activeElement));
+    card.classList.toggle('designer-move-demo-transport-only', transportOnly);
+    card.classList.toggle('designer-move-demo-minimized', !isActive && !isTransport);
+  });
+  const depiction = document.querySelector('#structure-2d-panel');
+  depiction?.classList.toggle('designer-move-demo-minimized',
+    !depiction.classList.contains('hidden') && !depiction.contains(activeElement));
+  if (step.action === 'view.setDisplay' && activeElement?.classList.contains('hidden'))
+    activeElement.classList.add('designer-move-demo-reveal');
+}
+
+function showDesignerMoveCue(step = null, { preserveLayout = false } = {}) {
+  clearDesignerMoveCueElements();
+  if (!step) {
+    if (!preserveLayout) clearDesignerMoveDemoLayout();
+    return;
+  }
   const actionSelectors = {
     'protein.prepare':'#prepare-pdb',
     'history.undo':'#undo-atom', 'history.redo':'#redo-atom',
@@ -7626,9 +7664,18 @@ function showDesignerMoveCue(step = null) {
   else if (step.action?.startsWith('selection.') || step.action === 'session.inspect')
     selector = '.viewer-stage';
   const element = selector ? document.querySelector(selector) : null;
+  applyDesignerMoveDemoLayout(step, element);
   if (!element) return;
-  designerMoveCueElement = element;
+  const changedControls = step.action === 'view.setDisplay' ? [
+    step.args?.representation != null && '#representation-select',
+    step.args?.showHydrogens != null && '#hydrogen-toggle',
+    step.args?.showInteractions != null && '#interaction-toggle',
+    step.args?.showPocketAtoms != null && '#pocket-toggle',
+    step.args?.showHulls != null && '#hull-toggle',
+  ].filter(Boolean).map((controlSelector) => document.querySelector(controlSelector)).filter(Boolean) : [];
+  designerMoveCueElements = [element, ...changedControls];
   element.classList.add('designer-move-cue', 'designer-move-press');
+  changedControls.forEach((control) => control.classList.add('designer-move-change'));
   const panel = element.closest('.panel');
   if (panel) {
     const panelRect = panel.getBoundingClientRect(), elementRect = element.getBoundingClientRect();
@@ -7673,7 +7720,7 @@ async function replayDesignerMoveScript() {
           updateDesignerMoveControls(
             `Completed move ${step.index + 1} of ${script.actions.length} · ${step.caption || step.action}`);
           await new Promise((resolve) => setTimeout(resolve, 80));
-          showDesignerMoveCue();
+          showDesignerMoveCue(null, { preserveLayout:true });
           if (moviePacedReplay)
             await new Promise((resolve) => setTimeout(resolve, 320));
         }
