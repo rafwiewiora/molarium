@@ -3,9 +3,9 @@ import { resolve } from 'node:path';
 import { startMolariumBrowser, waitFor } from '../../scripts/headless-chrome.mjs';
 
 const root = resolve(import.meta.dirname, '../..');
+const remoteUrl = process.env.MOLARIUM_STORY_URL || null;
 const browser = await startMolariumBrowser({
-  root,
-  appPath:'sos1-hit-to-bay293',
+  ...(remoteUrl ? { url:remoteUrl } : { root, appPath:'sos1-hit-to-bay293' }),
   width:1600,
   height:1000,
 });
