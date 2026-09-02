@@ -13492,6 +13492,7 @@ function setGeneratedCardOpen(card, body, toggle, open) {
 function installSideCardDisclosures() {
   const explicitTitles = { 'build-left-panel':'Build tools', 'build-right-panel':'Design workspace' };
   document.querySelectorAll('.panel > .card').forEach((card, index) => {
+    if (card.classList.contains('story-transport-card')) return;
     if (card.querySelector(':scope > .card-heading.disclosure')) return;
     const sourceTitle = explicitTitles[card.id] ? null : card.querySelector(':scope > h2.compact-label');
     const title = explicitTitles[card.id] || sourceTitle?.textContent?.trim() || 'Panel';

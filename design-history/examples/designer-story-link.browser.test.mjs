@@ -21,7 +21,9 @@ try {
     moleculeHidden:document.querySelector('#molecule-info').classList.contains('hidden'),
     sceneHidden:document.querySelector('.scene-card').classList.contains('hidden'),
     buildActive:document.querySelector('.mode-bar button[data-mode="build"]').classList.contains('active'),
-    transportVisible:!document.querySelector('#build-left-panel').classList.contains('hidden'),
+    transportVisible:document.querySelector('#designer-story-dock').getBoundingClientRect().height > 0,
+    transportTop:document.querySelector('#designer-story-dock').getBoundingClientRect().top,
+    transportPosition:getComputedStyle(document.querySelector('#designer-story-dock')).position,
   })`);
   assert.match(initial.url, /\?story=sos1-hit-to-bay293$/);
   assert.match(initial.play, /Play story/);
@@ -30,6 +32,29 @@ try {
   assert.equal(initial.sceneHidden, true);
   assert.equal(initial.buildActive, true);
   assert.equal(initial.transportVisible, true);
+  assert.equal(initial.transportPosition, 'sticky');
+  const anchoredTransport = await browser.evaluate(`(async () => {
+    const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+    const dock = document.querySelector('#designer-story-dock');
+    const buildDisclosure = document.querySelector('#build-left-panel > .generated-card-heading');
+    buildDisclosure.click(); await frame();
+    const collapsedTop = dock.getBoundingClientRect().top;
+    buildDisclosure.click(); await frame();
+    dock.parentElement.scrollTop = 300; await frame();
+    const scrolledTop = dock.getBoundingClientRect().top;
+    dock.parentElement.scrollTop = 0; await frame();
+    document.querySelector('.mode-bar button[data-mode="view"]').click(); await frame();
+    const viewTop = dock.getBoundingClientRect().top;
+    const viewVisible = dock.getBoundingClientRect().height > 0;
+    document.querySelector('.mode-bar button[data-mode="build"]').click(); await frame();
+    return { collapsedTop, scrolledTop, viewTop, viewVisible,
+      buildTop:dock.getBoundingClientRect().top };
+  })()`);
+  assert.ok(Math.abs(anchoredTransport.collapsedTop - initial.transportTop) < 1);
+  assert.ok(Math.abs(anchoredTransport.scrolledTop - initial.transportTop) < 1);
+  assert.ok(Math.abs(anchoredTransport.viewTop - initial.transportTop) < 1);
+  assert.ok(Math.abs(anchoredTransport.buildTop - initial.transportTop) < 1);
+  assert.equal(anchoredTransport.viewVisible, true);
 
   await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
   await waitFor(async () => browser.evaluate(
@@ -43,7 +68,8 @@ try {
     prepareHighlighted:document.querySelector('#prepare-pdb').classList.contains('designer-move-cue'),
     highlightColor:getComputedStyle(document.querySelector('#prepare-pdb')).outlineColor,
     loadCardMinimized:document.querySelector('.load-card').classList.contains('designer-move-demo-minimized'),
-    transportOnly:document.querySelector('#build-left-panel').classList.contains('designer-move-demo-transport-only'),
+    transportOnly:document.querySelector('#designer-story-dock').classList.contains('designer-move-demo-transport-only'),
+    transportTop:document.querySelector('#designer-story-dock').getBoundingClientRect().top,
     infoMinimized:document.querySelector('#molecule-info').classList.contains('designer-move-demo-minimized'),
   })`);
   assert.equal(preparationCue.demoActive, true);
@@ -51,6 +77,7 @@ try {
   assert.equal(preparationCue.highlightColor, 'rgb(220, 38, 38)');
   assert.equal(preparationCue.loadCardMinimized, false);
   assert.equal(preparationCue.transportOnly, true);
+  assert.ok(Math.abs(preparationCue.transportTop - initial.transportTop) < 1);
   assert.equal(preparationCue.infoMinimized, true);
   await waitFor(async () => browser.evaluate(
     `Number(document.querySelector('#designer-move-progress-label').textContent.split('/')[0]) >= 5`),

@@ -70,6 +70,33 @@
 
       <main class="app-main">
         <aside class="panel panel-left">
+          <section class="card story-transport-card" id="designer-story-dock">
+            <section class="designer-move-tools" id="designer-move-tools">
+              <h2 class="compact-label build-section-label">Designer moves</h2>
+              <div class="designer-story-transport" aria-label="Designer story playback">
+                <button class="soft-button designer-story-step" id="previous-designer-move" type="button" disabled aria-label="Previous completed story move" title="Previous completed move">◀</button>
+                <button class="primary-button" id="replay-designer-moves" type="button" disabled>▶ Play story</button>
+                <button class="soft-button designer-story-step" id="next-designer-move" type="button" disabled aria-label="Next completed story move" title="Next completed move">▶</button>
+                <span id="designer-move-progress-label">0 / 0</span>
+              </div>
+              <progress id="designer-move-progress" value="0" max="1" aria-label="Designer story progress"></progress>
+              <div class="designer-move-caption-card" aria-live="polite">
+                <span class="designer-move-caption-label">Story</span>
+                <p class="designer-move-caption" id="designer-move-caption">Load a story to begin.</p>
+                <p class="designer-move-detail" id="designer-move-detail"></p>
+              </div>
+              <p class="panel-copy" id="designer-move-status">Import a Chemist Actions JSON script, or export the Agent/API moves recorded for this molecule.</p>
+              <input class="hidden" id="designer-move-file" type="file" accept="application/json,.json" />
+              <div class="designer-move-buttons">
+                <button class="soft-button" id="import-designer-moves" type="button">Import JSON</button>
+                <button class="soft-button" id="restart-designer-moves" type="button" disabled title="Return to the blank canvas before the first story action">↺ Restart</button>
+              </div>
+              <div class="designer-move-buttons">
+                <button class="soft-button" id="export-designer-moves" type="button" disabled>Export API moves</button>
+                <button class="soft-button" id="export-designer-replay" type="button" disabled>Export replay log</button>
+              </div>
+            </section>
+          </section>
           <section class="card load-card">
             <button class="card-heading disclosure" id="load-toggle" aria-expanded="true">
               <span>Load Molecule</span>
@@ -337,31 +364,6 @@
               <div class="sidechain-rotamer-results hidden" id="sidechain-rotamer-results">
                 <select id="sidechain-rotamer-select" aria-label="Side-chain rotamer candidate"></select>
                 <button class="primary-button" id="apply-sidechain-rotamer" type="button">Apply branch</button>
-              </div>
-            </section>
-            <section class="designer-move-tools" id="designer-move-tools">
-              <h2 class="compact-label build-section-label">Designer moves</h2>
-              <p class="panel-copy" id="designer-move-status">Import a Chemist Actions JSON script, or export the Agent/API moves recorded for this molecule.</p>
-              <input class="hidden" id="designer-move-file" type="file" accept="application/json,.json" />
-              <div class="designer-move-buttons">
-                <button class="soft-button" id="import-designer-moves" type="button">Import JSON</button>
-                <button class="soft-button" id="restart-designer-moves" type="button" disabled title="Return to the blank canvas before the first story action">↺ Restart</button>
-              </div>
-              <div class="designer-story-transport" aria-label="Designer story playback">
-                <button class="soft-button designer-story-step" id="previous-designer-move" type="button" disabled aria-label="Previous completed story move" title="Previous completed move">◀</button>
-                <button class="primary-button" id="replay-designer-moves" type="button" disabled>▶ Play story</button>
-                <button class="soft-button designer-story-step" id="next-designer-move" type="button" disabled aria-label="Next completed story move" title="Next completed move">▶</button>
-                <span id="designer-move-progress-label">0 / 0</span>
-              </div>
-              <progress id="designer-move-progress" value="0" max="1" aria-label="Designer story progress"></progress>
-              <div class="designer-move-caption-card" aria-live="polite">
-                <span class="designer-move-caption-label">Story</span>
-                <p class="designer-move-caption" id="designer-move-caption">Load a story to begin.</p>
-                <p class="designer-move-detail" id="designer-move-detail"></p>
-              </div>
-              <div class="designer-move-buttons">
-                <button class="soft-button" id="export-designer-moves" type="button" disabled>Export API moves</button>
-                <button class="soft-button" id="export-designer-replay" type="button" disabled>Export replay log</button>
               </div>
             </section>
             <h2 class="compact-label build-section-label">Adjust Geometry</h2>

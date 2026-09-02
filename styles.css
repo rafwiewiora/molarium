@@ -600,8 +600,13 @@ select {
 .sidechain-rotamer-results { display: grid; grid-template-columns: minmax(0, 1fr) 78px; gap: 6px; margin-top: 7px; }
 .sidechain-rotamer-results select { min-width: 0; height: 31px; padding: 4px 6px; border: 1px solid var(--line-strong); border-radius: 7px; background: white; color: #334155; font-size: 8px; }
 .sidechain-rotamer-results .primary-button { min-width: 0; padding: 6px 4px; font-size: 9px; }
-.designer-move-tools { margin-top: 12px; padding-top: 1px; border-top: 1px solid var(--line); }
+.story-transport-card { position: sticky; z-index: 15; top: 0; padding: 11px 12px 12px;
+  border-color: #b8c8d8; box-shadow: 0 8px 22px rgba(15, 23, 42, .12); }
+.designer-move-tools { margin: 0; padding: 0; }
+.designer-move-tools .build-section-label { margin-top: 0; }
 .designer-move-tools .panel-copy { margin-bottom: 7px; font-size: 9px; }
+.story-transport-card #designer-move-status { margin: 8px 0 0; padding-top: 7px;
+  border-top: 1px solid var(--line); }
 .designer-move-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
 .designer-move-buttons button { min-width: 0; margin: 0; padding-inline: 5px; font-size: 9px; }
 .designer-move-buttons button:disabled { cursor: default; opacity: .48; }
@@ -639,11 +644,6 @@ body.designer-move-demo-active .card.designer-move-demo-minimized {
 }
 body.designer-move-demo-active .generated-collapsible-card.designer-move-demo-minimized > .generated-card-heading {
   margin-bottom: -12px; border-bottom-color: transparent;
-}
-body.designer-move-demo-active #build-left-panel.designer-move-demo-transport-only
-  > .collapsible-card-body > :not(#designer-move-tools) { display: none !important; }
-body.designer-move-demo-active #build-left-panel.designer-move-demo-transport-only #designer-move-tools {
-  margin: 0; padding: 0; border-top: 0;
 }
 body.designer-move-demo-active .structure-2d-panel.designer-move-demo-minimized {
   width: 118px; max-height: 34px; opacity: .5; box-shadow: none;
@@ -923,6 +923,7 @@ body.designer-move-demo-active .designer-move-demo-reveal.hidden { display: bloc
   .app-main { grid-template-columns: 1fr 1fr; grid-template-areas: "viewer viewer" "left right"; grid-template-rows: 66vh auto; }
   .viewer-stage { grid-area: viewer; }.panel-left { grid-area: left; }.panel-right { grid-area: right; }
   .panel { overflow: visible; }
+  .story-transport-card { position: relative; top: auto; }
 }
 
 @media (max-width: 620px) {
