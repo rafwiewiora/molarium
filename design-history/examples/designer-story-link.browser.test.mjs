@@ -80,9 +80,13 @@ try {
   const paused = await browser.evaluate(`({
     progress:document.querySelector('#designer-move-progress-label').textContent,
     caption:document.querySelector('#designer-move-caption').textContent,
+    detail:document.querySelector('#designer-move-detail').textContent,
+    captionFontSize:parseFloat(getComputedStyle(document.querySelector('#designer-move-caption')).fontSize),
   })`);
   assert.match(paused.progress, /^\d+ \/ 48$/);
-  assert.match(paused.caption, /Paused before move|Pausing after move/);
+  assert.ok(paused.caption.length > 12, 'the central caption must explain the scientific story');
+  assert.match(paused.detail, /Paused before move|Pause requested/);
+  assert.ok(paused.captionFontSize >= 12, 'the central story caption must remain legible');
   await waitFor(async () => browser.evaluate(
     `!document.querySelector('#previous-designer-move').disabled`),
   90000, 'paused previous-step control');
@@ -98,10 +102,12 @@ try {
   30000, 'previous cached story checkpoint');
   const previous = await browser.evaluate(`({
     caption:document.querySelector('#designer-move-caption').textContent,
+    detail:document.querySelector('#designer-move-detail').textContent,
     nextEnabled:!document.querySelector('#next-designer-move').disabled,
     auditCount:window.MolariumChemistActions.history().length,
   })`);
-  assert.match(previous.caption, /Reviewing move|Blank canvas/);
+  assert.ok(previous.caption.length > 12);
+  assert.match(previous.detail, /Reviewing/);
   assert.equal(previous.nextEnabled, true);
   assert.equal(previous.auditCount, beforeNavigation.auditCount,
     'presentation rewind must not execute or delete an Agent/API action');

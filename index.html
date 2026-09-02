@@ -354,7 +354,11 @@
                 <span id="designer-move-progress-label">0 / 0</span>
               </div>
               <progress id="designer-move-progress" value="0" max="1" aria-label="Designer story progress"></progress>
-              <p class="designer-move-caption" id="designer-move-caption">Load a story to begin.</p>
+              <div class="designer-move-caption-card" aria-live="polite">
+                <span class="designer-move-caption-label">Story</span>
+                <p class="designer-move-caption" id="designer-move-caption">Load a story to begin.</p>
+                <p class="designer-move-detail" id="designer-move-detail"></p>
+              </div>
               <div class="designer-move-buttons">
                 <button class="soft-button" id="export-designer-moves" type="button" disabled>Export API moves</button>
                 <button class="soft-button" id="export-designer-replay" type="button" disabled>Export replay log</button>

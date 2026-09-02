@@ -7,14 +7,14 @@
       "args": {
         "routeId": "sos1-hit-only"
       },
-      "caption": "Load the coordinate-bearing 5OVE/AXE hit only"
+      "caption": "Begin with the only allowed coordinates: the 5OVE/AXE hit"
     },
     {
       "action": "view.setMode",
       "args": {
         "mode": "build"
       },
-      "caption": "route-enter-build"
+      "caption": "Enter Build to make the first prospective design decision"
     },
     {
       "action": "protein.prepare",
@@ -26,115 +26,115 @@
         "repairMissingHeavy": true,
         "waterPolicy": "retain"
       },
-      "caption": "route-prepare-hit"
+      "caption": "Prepare the hit complex locally with OpenFF Sage"
     },
     {
       "action": "pose.captureReference",
       "args": {
         "mode": "propagate"
       },
-      "caption": "route-capture-hit"
+      "caption": "Freeze the hit pose and its receptor contacts as the starting reference"
     },
     {
       "action": "designRoute.applyStep",
       "args": {
         "stepId": "scaffold-rewrite"
       },
-      "caption": "Stage the scaffold rewrite to compound 17 (AWT)"
+      "caption": "Rewrite the hit scaffold to make compound 17"
     },
     {
       "action": "pose.refine",
       "args": {
         "searchChains": 64
       },
-      "caption": "scaffold-rewrite-pose-refine"
+      "caption": "Search 64 restrained poses for the rewritten scaffold"
     },
     {
       "action": "pose.apply",
       "args": {
         "index": 0
       },
-      "caption": "scaffold-rewrite-pose-apply"
+      "caption": "Apply the highest-ranked compound 17 pose"
     },
     {
       "action": "protein.parameterize",
       "args": {},
-      "caption": "scaffold-rewrite-parameterize-without-motion"
+      "caption": "Parameterize compound 17 without moving the prediction"
     },
     {
       "action": "optimization.run",
       "args": {
         "method": "induced-fit-webgpu"
       },
-      "caption": "scaffold-rewrite-complex-relax"
+      "caption": "Relax compound 17 and its pocket together"
     },
     {
       "action": "view.setMode",
       "args": {
         "mode": "build"
       },
-      "caption": "scaffold-rewrite-advance-build"
+      "caption": "Return to Build with the compound 17 prediction"
     },
     {
       "action": "pose.captureReference",
       "args": {
         "mode": "propagate"
       },
-      "caption": "scaffold-rewrite-capture-predicted-reference"
+      "caption": "Freeze compound 17 as the reference for the next design"
     },
     {
       "action": "designRoute.applyStep",
       "args": {
         "stepId": "fragment-merge"
       },
-      "caption": "Merge the fragment-derived pocket idea to compound 18 (AWZ)"
+      "caption": "Merge the second fragment idea to make compound 18"
     },
     {
       "action": "pose.refine",
       "args": {
         "searchChains": 64
       },
-      "caption": "fragment-merge-pose-refine"
+      "caption": "Search 64 restrained poses for the merged ligand"
     },
     {
       "action": "pose.apply",
       "args": {
         "index": 0
       },
-      "caption": "fragment-merge-pose-apply"
+      "caption": "Apply the highest-ranked compound 18 pose"
     },
     {
       "action": "protein.parameterize",
       "args": {},
-      "caption": "fragment-merge-parameterize-without-motion"
+      "caption": "Parameterize compound 18 without moving the prediction"
     },
     {
       "action": "optimization.run",
       "args": {
         "method": "induced-fit-webgpu"
       },
-      "caption": "fragment-merge-complex-relax"
+      "caption": "Relax compound 18 and its pocket together"
     },
     {
       "action": "view.setMode",
       "args": {
         "mode": "build"
       },
-      "caption": "fragment-merge-advance-build"
+      "caption": "Return to Build with the compound 18 prediction"
     },
     {
       "action": "pose.captureReference",
       "args": {
         "mode": "propagate"
       },
-      "caption": "fragment-merge-capture-predicted-reference"
+      "caption": "Freeze compound 18 as the reference for ligand growth"
     },
     {
       "action": "designRoute.applyStep",
       "args": {
         "stepId": "open-phe890-pocket"
       },
-      "caption": "Grow compound 21 (AWW), creating the Phe890-in clash"
+      "caption": "Grow compound 21—and create a clash with Phe890-in"
     },
     {
       "action": "pose.enumerateSidechainRotamers",
@@ -142,85 +142,85 @@
         "maximumCandidates": 32,
         "receptorAtomId": "reference-5OVE:ATOM:A:PHE:890::CG:2679"
       },
-      "caption": "Re-enumerate the deterministic ensemble for the selected route"
+      "caption": "Enumerate discrete Phe890 side-chain alternatives"
     },
     {
       "action": "pose.applySidechainRotamer",
       "args": {
         "index": 5
       },
-      "caption": "Apply selected Phe890 rotamer index 5"
+      "caption": "Choose the predicted Phe890-out branch"
     },
     {
       "action": "pose.updateReceptorReference",
       "args": {},
-      "caption": "Accept the selected receptor branch as the pose reference"
+      "caption": "Make the selected receptor branch the new pose reference"
     },
     {
       "action": "pose.refine",
       "args": {
         "searchChains": 64
       },
-      "caption": "Refine compound 21 against the selected Phe890 branch"
+      "caption": "Test compound 21 in the opened Phe890 pocket"
     },
     {
       "action": "pose.apply",
       "args": {
         "index": 0
       },
-      "caption": "Apply the selected compound 21 pose"
+      "caption": "Apply the best compound 21 pose from that branch"
     },
     {
       "action": "protein.parameterize",
       "args": {},
-      "caption": "open-phe890-pocket-parameterize-selected-phe890-branch"
+      "caption": "Parameterize the coupled ligand–receptor prediction"
     },
     {
       "action": "optimization.run",
       "args": {
         "method": "induced-fit-webgpu"
       },
-      "caption": "Relax the selected coupled ligand and receptor branch"
+      "caption": "Relax compound 21 and the opened pocket together"
     },
     {
       "action": "view.setMode",
       "args": {
         "mode": "build"
       },
-      "caption": "open-phe890-pocket-advance-build"
+      "caption": "Return to Build with the predicted open pocket"
     },
     {
       "action": "pose.captureReference",
       "args": {
         "mode": "propagate"
       },
-      "caption": "open-phe890-pocket-capture-predicted-reference"
+      "caption": "Freeze the predicted open pocket before the final design"
     },
     {
       "action": "designRoute.applyStep",
       "args": {
         "stepId": "finish-bay-293"
       },
-      "caption": "Stage the final BAY-293 (AXH) graph"
+      "caption": "Build the final BAY-293 graph from compound 21"
     },
     {
       "action": "pose.refine",
       "args": {
         "searchChains": 64
       },
-      "caption": "Refine BAY-293 from the predicted compound 21 reference"
+      "caption": "Predict BAY-293 from the frozen compound 21 state"
     },
     {
       "action": "pose.apply",
       "args": {
         "index": 0
       },
-      "caption": "Apply the selected BAY-293 pose"
+      "caption": "Apply the highest-ranked BAY-293 pose"
     },
     {
       "action": "protein.parameterize",
       "args": {},
-      "caption": "finish-bay-293-parameterize-without-motion"
+      "caption": "Parameterize BAY-293 without moving the prediction"
     },
     {
       "action": "optimization.run",

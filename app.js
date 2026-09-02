@@ -7935,10 +7935,12 @@ function reviewDesignerMoveCheckpoint(offset) {
   if (target === state.designerMoveReplayIndex) return;
   const checkpoint = restoreDesignerMoveCheckpoint(target);
   const completed = checkpoint.step;
-  const caption = target === 0 ? 'Blank canvas before move 1'
-    : `Reviewing move ${target} · ${completed?.caption || completed?.action || 'completed state'}`;
+  const caption = target === 0 ? 'Blank canvas before the first story move'
+    : completed?.caption || completed?.action || 'Completed story state';
   updateDesignerMoveControls(`Paused · cached checkpoint ${target} of ${state.designerMoveReplayFrontier}`,
-    caption);
+    caption, target === 0
+      ? 'Reviewing the untouched starting canvas.'
+      : `Reviewing move ${target}; live replay is paused at move ${state.designerMoveReplayFrontier}.`);
 }
 
 function resumeDesignerMoveReplay() {
@@ -7995,7 +7997,8 @@ async function holdDesignerMoveReplay(milliseconds) {
   }
 }
 
-function updateDesignerMoveControls(message = null, captionOverride = null) {
+function updateDesignerMoveControls(message = null, captionOverride = null,
+  detailOverride = null) {
   const status = document.querySelector('#designer-move-status');
   if (!status) return;
   const script = state.designerMoveScript;
@@ -8026,14 +8029,22 @@ function updateDesignerMoveControls(message = null, captionOverride = null) {
     state.designerMoveReplayIndex);
   document.querySelector('#designer-move-progress-label').textContent =
     `${Math.min(actionCount, state.designerMoveReplayIndex)} / ${actionCount}`;
-  document.querySelector('#designer-move-caption').textContent =
-    captionOverride || (state.designerMoveReplayPaused
-      ? state.designerMoveReplayActionRunning
-        ? `Pausing after move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} finishes · ${designerMoveCaption()}`
-        : state.designerMoveReplayIndex < state.designerMoveReplayFrontier
-        ? `Reviewing completed move ${state.designerMoveReplayIndex} of ${state.designerMoveReplayFrontier}`
-        : `Paused before move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} · ${designerMoveCaption()}`
-      : designerMoveCaption());
+  const activeStepCaption = state.designerMoveReplayStep?.caption
+    || state.designerMoveReplayStep?.action;
+  const storyCaption = captionOverride
+    || (state.designerMoveReplaying && activeStepCaption
+      ? activeStepCaption : designerMoveCaption());
+  document.querySelector('#designer-move-caption').textContent = storyCaption;
+  const detail = document.querySelector('#designer-move-detail');
+  if (detail) detail.textContent = detailOverride ?? (state.designerMoveReplayPaused
+    ? state.designerMoveReplayActionRunning
+      ? `Pause requested; move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} will finish first.`
+      : state.designerMoveReplayIndex < state.designerMoveReplayFrontier
+        ? `Reviewing move ${state.designerMoveReplayIndex}; live replay is paused at move ${state.designerMoveReplayFrontier}.`
+        : `Paused before move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} of ${actionCount}.`
+    : state.designerMoveReplayActionRunning
+      ? `Running move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} of ${actionCount}…`
+      : '');
   if (message) status.textContent = message;
   else if (script) status.textContent = `${script.label || 'Imported action script'} · ${script.actions.length} replayable move${script.actions.length === 1 ? '' : 's'} · ${script.schema}`;
   else status.textContent = completedApiMoves
@@ -8189,9 +8200,9 @@ function designerMoveResultCaption(step) {
       : step.action === 'pose.applySidechainRotamer' ? step.result?.sidechainRotamer
         : step.result?.optimization;
     const moved = Number(result?.movedHeavyAtomCount || 0);
-    return `${step.caption || step.action} · ${moved} heavy atom${moved === 1 ? '' : 's'} moved beyond the display threshold.`;
+    return `${moved} heavy atom${moved === 1 ? '' : 's'} moved beyond the display threshold.`;
   }
-  return `Completed · ${step.caption || step.action}`;
+  return 'Move completed.';
 }
 
 function showDesignerMoveResultCue(step) {
@@ -8271,11 +8282,11 @@ async function replayDesignerMoveScript() {
           showDesignerMoveResultCue(step);
           updateDesignerMoveControls(
             `Completed move ${step.index + 1} of ${script.actions.length} · ${step.caption || step.action}`,
-            designerMoveResultCaption(step));
+            step.caption || step.action, designerMoveResultCaption(step));
           captureDesignerMoveCheckpoint(step.index + 1, step);
           updateDesignerMoveControls(
             `Completed move ${step.index + 1} of ${script.actions.length} · ${step.caption || step.action}`,
-            designerMoveResultCaption(step));
+            step.caption || step.action, designerMoveResultCaption(step));
           await holdDesignerMoveReplay(designerMoveHoldMs(step, phase, moviePacedReplay));
           showDesignerMoveCue(null, { preserveLayout:true });
         }
@@ -14253,7 +14264,7 @@ const DESIGNER_STORY_LINKS = Object.freeze({
     title:'SOS1 hit to BAY-293',
     script:'./design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
     sourcePath:'design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
-    sourceSha256:'c3c5cfff681ab34c5c73540b13278c4cc0461bd0d19ff35f3a36a94f4dbf2021',
+    sourceSha256:'9c3494c3deb11f7ec80559e8b7235981f4d9993c89b9e63bea978d7eb4a7267d',
     presentation:'chemist-pocket',
   }),
 });

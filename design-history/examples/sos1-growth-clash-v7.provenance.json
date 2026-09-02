@@ -47,8 +47,8 @@
     "selectedRoute": {
       "path": "design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json",
       "actions": 33,
-      "actionScriptSha256": "24b6a50718c7cdd3adc9dc9da91341178920768f9e0d3326ef6189c8fb896fc9",
-      "fileSha256": "c3c5cfff681ab34c5c73540b13278c4cc0461bd0d19ff35f3a36a94f4dbf2021",
+      "actionScriptSha256": "e405e3820ccb58764ffb9d5ef67b87d6ee73a80b02e9ec0493012de7957135a7",
+      "fileSha256": "9c3494c3deb11f7ec80559e8b7235981f4d9993c89b9e63bea978d7eb4a7267d",
       "meaning": "Compact operational replay of the already-selected route. It omits discarded branches and read-only freeze inspections, so it is not the evidence that branch search occurred."
     }
   },

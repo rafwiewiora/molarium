@@ -2,11 +2,11 @@ import { validateActionScript } from './replay.mjs';
 
 const INITIAL_FOCUS_STEP = Object.freeze({ action:'view.focusComponent',
   args:Object.freeze({ kind:'ligand', ordinal:0, isolate:false }),
-  caption:'Zoom to the active ligand pocket' });
+  caption:'Center the hit and the local pocket where every design decision will be made' });
 const DISPLAY_STEP = Object.freeze({ action:'view.setDisplay', args:Object.freeze({
   representation:'cartoon', showHydrogens:false, showInteractions:false,
   showPocketAtoms:true, showHulls:false,
-}), caption:'Use the chemist pocket view and hide prepared hydrogens' });
+}), caption:'Strip away visual noise so the hit and its binding pocket are easy to read' });
 const CHANGED_ATOM_RESULT_PATH = Object.freeze({
   'designRoute.applyStep':'designStep.changedAtomIds',
   'pose.applySidechainRotamer':'sidechainRotamer.changedAtomIds',
@@ -15,10 +15,10 @@ const CHANGED_ATOM_RESULT_PATH = Object.freeze({
 });
 
 function changedRegionCaption(action) {
-  if (action === 'designRoute.applyStep') return 'Inspect the graph edit in its local pocket';
-  if (action === 'pose.applySidechainRotamer') return 'Inspect the applied side-chain movement';
-  if (action === 'pose.apply') return 'Inspect atoms moved by the applied pose';
-  return 'Inspect atoms moved by the accepted relaxation';
+  if (action === 'designRoute.applyStep') return 'See exactly where the ligand graph changed';
+  if (action === 'pose.applySidechainRotamer') return 'See Phe890 move out of the ligand growth path';
+  if (action === 'pose.apply') return 'See which ligand atoms moved into the selected pose';
+  return 'See how the ligand and pocket responded during relaxation';
 }
 
 export function buildPocketInterfaceStory(sourceScript, { sourcePath = null,
