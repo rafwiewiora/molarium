@@ -359,10 +359,13 @@ export async function refinePoseByRestraintBiasedSearch({ molecule, initialPosit
   torsionAnglesDegrees = RESTRAINT_BIASED_SEARCH_DEFAULTS.torsionAnglesDegrees,
   ringCrankshaftAnglesDegrees = RESTRAINT_BIASED_SEARCH_DEFAULTS.ringCrankshaftAnglesDegrees,
   localLineFractions = RESTRAINT_BIASED_SEARCH_DEFAULTS.localLineFractions,
-  proposalMoves = null } = {}) {
+  proposalMoves = null, yieldControl = null,
+  progressStage = 'internal-coordinate search' } = {}) {
   validateMolecule(molecule);
   if (typeof scorePose !== 'function') throw new TypeError('A biased-search score callback is required');
   if (typeof random !== 'function') throw new TypeError('A deterministic random-number generator is required');
+  if (yieldControl != null && typeof yieldControl !== 'function')
+    throw new TypeError('yieldControl must be a function when provided');
   const requestedSteps = Number(steps);
   if (!Number.isFinite(requestedSteps) || requestedSteps < 0)
     throw new RangeError('Biased-search steps must be finite and nonnegative');
@@ -405,6 +408,8 @@ export async function refinePoseByRestraintBiasedSearch({ molecule, initialPosit
         angleDegrees * fraction * Math.PI / 180);
       const evaluation = normalizeEvaluation(await scorePose(positions));
       lineEvaluations++;
+      if (yieldControl) await yieldControl({ stage:progressStage, completed:lineEvaluations,
+        total:proposalCount * fractions.length, step:step + 1, steps:proposalCount });
       const candidate = { positions, evaluation, fraction };
       if (!proposal || preferable(candidate, proposal)
         || candidate.evaluation.feasible === proposal.evaluation.feasible
@@ -460,10 +465,13 @@ export async function polishPoseByInternalCoordinateDescent({ molecule, initialP
   torsionAnglesDegrees = RESTRAINT_BIASED_SEARCH_DEFAULTS.torsionAnglesDegrees,
   ringCrankshaftAnglesDegrees = RESTRAINT_BIASED_SEARCH_DEFAULTS.ringCrankshaftAnglesDegrees,
   localLineFractions = RESTRAINT_BIASED_SEARCH_DEFAULTS.localLineFractions,
-  proposalMoves = null } = {}) {
+  proposalMoves = null, yieldControl = null,
+  progressStage = 'internal-coordinate polish' } = {}) {
   validateMolecule(molecule);
   if (typeof scorePose !== 'function')
     throw new TypeError('An internal-coordinate polish score callback is required');
+  if (yieldControl != null && typeof yieldControl !== 'function')
+    throw new TypeError('yieldControl must be a function when provided');
   const requestedSweeps = Number(sweeps);
   if (!Number.isFinite(requestedSweeps) || requestedSweeps < 0)
     throw new RangeError('Internal-coordinate polish sweeps must be finite and nonnegative');
@@ -496,6 +504,10 @@ export async function polishPoseByInternalCoordinateDescent({ molecule, initialP
         const trial = { positions, evaluation:normalizeEvaluation(await scorePose(positions)),
           move, angleDegrees, fraction };
         evaluations++;
+        if (yieldControl) await yieldControl({ stage:progressStage, completed:evaluations,
+          total:maximumSweeps * moves.length * Math.max(...Object.values(angleSets)
+            .map((angles) => angles.length)) * fractions.length,
+          sweep:sweep + 1, sweeps:maximumSweeps });
         if (preferable(trial, best)) best = trial;
       }
     completedSweeps++;
@@ -537,10 +549,10 @@ export async function generatePoseByRestraintBiasedSearch({ molecule, initialPos
     throw new TypeError('A physical-refinement score callback is required');
   const shared = { molecule, coreAtomIndices, random, seed, ...searchOptions };
   const captureMc = await refinePoseByRestraintBiasedSearch({ ...shared, initialPositions,
-    scorePose:restraintScorePose, steps:captureSteps });
+    scorePose:restraintScorePose, steps:captureSteps, progressStage:'contact capture' });
   const capturePolish = await polishPoseByInternalCoordinateDescent({ ...shared,
     initialPositions:captureMc.positions, scorePose:restraintScorePose,
-    sweeps:capturePolishSweeps });
+    sweeps:capturePolishSweeps, progressStage:'contact polish' });
   const capture = {
     ...captureMc, positions:capturePolish.positions,
     bestObjectiveKcalMol:capturePolish.bestEvaluation.objectiveKcalMol,
@@ -554,7 +566,8 @@ export async function generatePoseByRestraintBiasedSearch({ molecule, initialPos
   const requestedRefinementSteps = Math.max(0, Math.round(Number(refinementSteps)));
   if (capture.selectedFeasible && requestedRefinementSteps > 0)
     physical = await refinePoseByRestraintBiasedSearch({ ...shared,
-    initialPositions:capture.positions, scorePose:physicalScorePose, steps:refinementSteps });
+    initialPositions:capture.positions, scorePose:physicalScorePose, steps:refinementSteps,
+    progressStage:'physical refinement' });
   const selected = physical || capture;
   const proposals = combineStageCounts(capture, physical, 'proposals');
   const accepted = combineStageCounts(capture, physical, 'accepted');

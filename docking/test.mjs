@@ -303,6 +303,7 @@ const workflowLabbook = await createLabbook({
     hydrogenBonds:[{ id:'receptor-donor-to-ligand-acceptor', required:true }] },
   environment:{ execution:'unit-test' }, application:{ version:'test' },
 });
+const workflowYieldEvents = [];
 const dockingRun = await runConstrainedDocking({
   referencePositions:captured.positions,
   candidateConformers:[translatedBad, translatedGood],
@@ -315,12 +316,15 @@ const dockingRun = await runConstrainedDocking({
   }],
   protocol:MOLARIUM_CONSTRAINT_DOCK_PROTOCOL,
   physicalScore:({ conformerIndex }) => conformerIndex === 0 ? -100 : -10,
+  yieldControl:(progress) => { workflowYieldEvents.push(progress); },
   labbook:workflowLabbook,
   startedAt:'2026-08-19T12:00:03.000Z', completedAt:'2026-08-19T12:00:04.000Z',
 });
 assert.equal(dockingRun.feasibleCount, 1);
 assert.equal(dockingRun.selected.conformerIndex, 1);
 assert.equal(dockingRun.selected.feasible, true);
+assert.deepEqual(workflowYieldEvents.map((entry) => entry.completed), [1, 2]);
+assert.ok(workflowYieldEvents.every((entry) => entry.stage === 'candidate ranking'));
 const chemicallyGatedRun = await runConstrainedDocking({
   referencePositions:captured.positions,
   candidateConformers:[translatedGood, translatedGood],

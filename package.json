@@ -39,6 +39,7 @@
     "test:chemist-actions": "node chemist-actions.test.mjs",
     "test:chemist-actions-browser": "MOLARIUM_TEST_SCOPE=chemist-actions bun browser-test.js",
     "test:designer-story-link-browser": "bun design-history/examples/designer-story-link.browser.test.mjs",
+    "test:sos1-refinement-responsive-browser": "bun design-history/examples/sos1-refinement-responsive.browser.test.mjs",
     "test:interface-story": "node design-history/interface-story.test.mjs",
     "test:sos1-valence-safeguard-browser": "bun design-history/examples/sos1-valence-safeguard.browser.test.mjs",
     "test:chemist-actions-production": "MOLARIUM_TEST_SCOPE=chemist-actions-production-boundary bun browser-test.js",
@@ -88,7 +89,7 @@
     "test:stormm-openmm": "node stormm/openmm-reference-validation.mjs",
     "benchmark:stormm": "node stormm/openmm-reference-validation.mjs --benchmark",
     "test:ci:scientific": "npm run test:validation-registry && npm run test:docking && npm run test:enumerations && npm run test:7kpa-analogue-panel && npm run test:7kpa-manual-contacts && npm run test:cloud-panel-packet && npm run test:cloud-panel-shortlist && npm run test:openmm-wasm && npm run test:pose-viewer && npm run test:openfold-features && npm run test:logo && npm run test:development-log && npm run test:design-history && npm run test:structure-story-core",
-    "test:ci:browser": "npm run test:docking-browser && npm run test:2d && npm run test:chemist-actions-browser && npm run test:manual-hbond-browser && npm run test:chemist-actions-production && npm run test:openmm-worker-browser && npm run test:design-history-browser && npm run test:structure-story-browser",
+    "test:ci:browser": "npm run test:docking-browser && npm run test:2d && npm run test:chemist-actions-browser && npm run test:manual-hbond-browser && npm run test:chemist-actions-production && npm run test:openmm-worker-browser && npm run test:design-history-browser && npm run test:structure-story-browser && npm run test:sos1-refinement-responsive-browser",
     "test:ci:webgpu": "npm run test:stormm-webgpu"
   },
   "dependencies": {

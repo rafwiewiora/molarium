@@ -144,10 +144,13 @@ export async function refinePoseByTorsionMonteCarlo({ molecule, initialPositions
   scorePose, random, seed = null, steps = TORSION_SEARCH_DEFAULTS.steps,
   temperatureStartKelvin = TORSION_SEARCH_DEFAULTS.temperatureStartKelvin,
   temperatureEndKelvin = TORSION_SEARCH_DEFAULTS.temperatureEndKelvin,
-  proposalAnglesDegrees = TORSION_SEARCH_DEFAULTS.proposalAnglesDegrees } = {}) {
+  proposalAnglesDegrees = TORSION_SEARCH_DEFAULTS.proposalAnglesDegrees,
+  yieldControl = null, progressStage = 'torsion search' } = {}) {
   validateMolecule(molecule);
   if (typeof scorePose !== 'function') throw new TypeError('A torsion score callback is required');
   if (typeof random !== 'function') throw new TypeError('A deterministic random-number generator is required');
+  if (yieldControl != null && typeof yieldControl !== 'function')
+    throw new TypeError('yieldControl must be a function when provided');
   const proposalCount = Math.max(0, Math.round(Number(steps)));
   const startTemperature = Number(temperatureStartKelvin), endTemperature = Number(temperatureEndKelvin);
   const angles = Array.from(proposalAnglesDegrees || [], Number);
@@ -166,6 +169,8 @@ export async function refinePoseByTorsionMonteCarlo({ molecule, initialPositions
     const angleDegrees = angles[Math.min(angles.length - 1, Math.floor(random() * angles.length))];
     const proposalPositions = rotateAroundBond(currentPositions, rotor, angleDegrees * Math.PI / 180);
     const proposalEvaluation = normalizeEvaluation(await scorePose(proposalPositions));
+    if (yieldControl) await yieldControl({ stage:progressStage, completed:step + 1,
+      total:proposalCount, step:step + 1, steps:proposalCount });
     const progress = proposalCount <= 1 ? 1 : step / (proposalCount - 1);
     const temperature = startTemperature * (endTemperature / startTemperature) ** progress;
     const delta = proposalEvaluation.objectiveKcalMol - currentEvaluation.objectiveKcalMol;

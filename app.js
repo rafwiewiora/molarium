@@ -4529,6 +4529,24 @@ async function runBrowserConstrainedDocking(options = {}) {
   state.dockingRunning = true; state.dockingResult = null;
   updateDockingUi(); setDockingStatus('Preparing edited ligand');
   try {
+    let lastBrowserYieldAt = performance.now();
+    let lastProgressUpdateAt = 0;
+    const yieldDuringDocking = async (progress = {}) => {
+      const now = performance.now();
+      if (now - lastBrowserYieldAt < 40) return;
+      if (now - lastProgressUpdateAt >= 250) {
+        const candidate = Number.isInteger(progress.conformerIndex)
+          ? `pose ${progress.conformerIndex + 1}/${progress.conformerCount}` : 'poses';
+        const stage = progress.stage || 'search';
+        const fraction = Number(progress.total) > 0
+          ? ` · ${Math.min(100, Math.round(Number(progress.completed || 0)
+            / Number(progress.total) * 100))}%` : '';
+        setDockingStatus(`Refining ${candidate} · ${stage}${fraction}`);
+        lastProgressUpdateAt = now;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      lastBrowserYieldAt = performance.now();
+    };
     const [adapter, referenceCore, receptorScore, workflow, protocolModule, labbookModule,
       torsionSearch, biasedSearch, constraints, stormmCore, remapModule, featureSeeding,
       transformedRings] = await Promise.all([
@@ -5019,6 +5037,8 @@ async function runBrowserConstrainedDocking(options = {}) {
     let refinementAudit = [];
     const runPoseGeneration = (positions, conformerIndex) => {
       setDockingStatus(`Generating restrained pose ${conformerIndex + 1}/${valid.length}`);
+      const yieldControl = (progress) => yieldDuringDocking({ ...progress,
+        conformerIndex, conformerCount:valid.length });
       const seedMultiplier = Number(activeProtocol.candidateInitialization
         ?.candidateSeedXorMultiplierUint32 ?? 0x9e3779b9) >>> 0;
       const conformerSeed = (seed ^ Math.imul(conformerIndex + 1, seedMultiplier)) >>> 0;
@@ -5031,13 +5051,13 @@ async function runBrowserConstrainedDocking(options = {}) {
         temperatureEndKelvin:Number(generationProtocol.temperatureEndKelvin),
         torsionAnglesDegrees:[...generationProtocol.torsionAnglesDegrees],
         ringCrankshaftAnglesDegrees:[...generationProtocol.ringCrankshaftAnglesDegrees],
-        localLineFractions:[...generationProtocol.localLineFractions] });
+        localLineFractions:[...generationProtocol.localLineFractions], yieldControl });
       return torsionSearch.refinePoseByTorsionMonteCarlo({ molecule:plan.molecule,
         initialPositions:positions, coreAtomIndices, scorePose:scorePositions,
         random:stormmCore.mulberry32(conformerSeed), seed:conformerSeed, steps:torsionSteps,
         temperatureStartKelvin:Number(torsionProtocol.temperatureStartKelvin),
         temperatureEndKelvin:Number(torsionProtocol.temperatureEndKelvin),
-        proposalAnglesDegrees:[...torsionProtocol.proposalAnglesDegrees] });
+        proposalAnglesDegrees:[...torsionProtocol.proposalAnglesDegrees], yieldControl });
     };
     const refinePropagatedBatch = async ({ positions }) => {
       const torsionRuns = [];
@@ -5112,6 +5132,7 @@ async function runBrowserConstrainedDocking(options = {}) {
         return { ...scored.physical, feasible:scored.chemicalValidity.valid,
           chemicalValidity:scored.chemicalValidity };
       },
+      yieldControl:yieldDuringDocking,
       afterRefinement:async (candidates) => {
         refinementAudit = candidates.map((pose) => ({
           conformerIndex:pose.conformerIndex,
@@ -7539,6 +7560,42 @@ async function waitForDesignerMoveReplay() {
     await new Promise((resolve) => { designerMoveReplayResume = resolve; });
 }
 
+const DESIGNER_MOVE_RESULT_HOLDS_MS = Object.freeze({
+  'designCampaign.load':1500,
+  'protein.prepare':1400,
+  'pose.captureReference':1400,
+  'designCampaign.applyStep':2600,
+  'pose.refine':1800,
+  'pose.apply':2400,
+  'pose.enumerateSidechainRotamers':1800,
+  'pose.applySidechainRotamer':3400,
+  'optimization.run':2400,
+  'view.setDisplay':1600,
+  'view.focusComponent':1400,
+  'view.setMode':900,
+  'build.setTool':900,
+});
+
+function designerMoveHoldMs(step, phase, moviePaced = false) {
+  if (phase === 'before') return moviePaced ? 900 : 700;
+  const base = DESIGNER_MOVE_RESULT_HOLDS_MS[step.action]
+    ?? (step.action?.startsWith('chemistry.') ? 1800
+      : step.action?.startsWith('selection.') ? 1100 : 900);
+  return moviePaced ? Math.max(base, 1200) : base;
+}
+
+async function holdDesignerMoveReplay(milliseconds) {
+  let remaining = Math.max(0, Number(milliseconds) || 0);
+  while (remaining > 0) {
+    await waitForDesignerMoveReplay();
+    const duration = Math.min(100, remaining);
+    const startedAt = performance.now();
+    await new Promise((resolve) => setTimeout(resolve, duration));
+    if (!state.designerMoveReplayPaused)
+      remaining -= Math.max(1, performance.now() - startedAt);
+  }
+}
+
 function updateDesignerMoveControls(message = null) {
   const status = document.querySelector('#designer-move-status');
   if (!status) return;
@@ -7714,15 +7771,13 @@ async function replayDesignerMoveScript() {
           showDesignerMoveCue(step);
           updateDesignerMoveControls(
             `Move ${step.index + 1} of ${script.actions.length} · ${step.caption || step.action}`);
-          await new Promise((resolve) => setTimeout(resolve, 180));
+          await holdDesignerMoveReplay(designerMoveHoldMs(step, phase, moviePacedReplay));
         } else {
           state.designerMoveReplayIndex = step.index + 1;
           updateDesignerMoveControls(
             `Completed move ${step.index + 1} of ${script.actions.length} · ${step.caption || step.action}`);
-          await new Promise((resolve) => setTimeout(resolve, 80));
+          await holdDesignerMoveReplay(designerMoveHoldMs(step, phase, moviePacedReplay));
           showDesignerMoveCue(null, { preserveLayout:true });
-          if (moviePacedReplay)
-            await new Promise((resolve) => setTimeout(resolve, 320));
         }
       },
     });
