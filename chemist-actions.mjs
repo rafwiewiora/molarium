@@ -59,7 +59,8 @@ const ACTIONS = Object.freeze({
   'pose.forgetContact': Object.freeze({ description:'Forget a manual or unavailable contact hypothesis while retaining its audit record.',
     arguments:Object.freeze({ contactId:'contact ID' }) }),
   'pose.refine': Object.freeze({ description:'Run reference-guided pose refinement with the visible search-chain setting.',
-    arguments:Object.freeze({ searchChains:'8 | 16 | 32 | 64' }) }),
+    arguments:Object.freeze({ searchChains:'8 | 16 | 32 | 64',
+      execution:'auto | serial (optional; auto uses a bounded deterministic worker ensemble)' }) }),
   'pose.apply': Object.freeze({ description:'Apply one returned refined pose by zero-based result index.',
     arguments:Object.freeze({ index:'non-negative integer' }) }),
   'pose.enumerateSidechainRotamers': Object.freeze({

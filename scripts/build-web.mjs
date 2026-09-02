@@ -110,6 +110,8 @@ const files = [
   'docking/browser-adapter.mjs', 'docking/constraints.mjs', 'docking/contact-remap.mjs',
   'docking/feature-seeding.mjs', 'docking/restraint-biased-search.mjs',
   'docking/labbook.mjs', 'docking/protocol.mjs', 'docking/receptor-score.mjs',
+  'docking/pose-propagation-scoring.mjs', 'docking/pose-search-ensemble.mjs',
+  'docking/pose-search-worker.mjs',
   'docking/reference-core.mjs', 'docking/sidechain-rotamers.mjs', 'docking/torsion-search.mjs',
   'docking/transformed-ring-region.mjs', 'docking/workflow.mjs',
   'stormm/LICENSE', 'stormm/README.md', 'stormm/core.mjs', 'stormm/engine.mjs',

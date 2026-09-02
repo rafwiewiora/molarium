@@ -72,6 +72,36 @@ function holdFrames(step) {
   return Math.max(4, Math.round(fps * .55));
 }
 
+async function waitForInterfaceAction(actionNumber, actionIndex, step, auditBaseline, timeoutMs) {
+  const deadline = Date.now() + timeoutMs;
+  let nextProgressCapture = Date.now() + 700;
+  let lastProgressStatus = '';
+  let progressCaptures = 0;
+  while (Date.now() < deadline) {
+    const state = await browser.evaluate(`(() => {
+      const records = window.MolariumChemistActions.history();
+      const record = records[${auditBaseline + actionNumber - 1}] || null;
+      return {
+        record:record && record.status !== 'running'
+          ? { status:record.status, error:record.error || null } : null,
+        dockingStatus:document.querySelector('#docking-status')?.textContent || '',
+      };
+    })()`);
+    if (state.record) return state.record;
+    if (step.action === 'pose.refine' && Date.now() >= nextProgressCapture
+      && progressCaptures < 10 && state.dockingStatus !== lastProgressStatus
+      && /worker ensemble|Pose ensemble/.test(state.dockingStatus)) {
+      lastProgressStatus = state.dockingStatus;
+      progressCaptures += 1;
+      await appendFrame(`${actionNumber}. Ensemble ${state.dockingStatus}`,
+        Math.max(2, Math.round(fps * .2)), actionIndex);
+      nextProgressCapture = Date.now() + 700;
+    }
+    await delay(60);
+  }
+  throw new Error(`Timed out waiting for completed interface action ${actionNumber}`);
+}
+
 try {
   await waitFor(async () => browser.evaluate(`Boolean(window.MolariumChemistActionsReady)
     && document.querySelector('#designer-move-file')`), 30000, 'Molarium Designer moves UI');
@@ -116,14 +146,8 @@ try {
       const step = presentationScript.actions[actionNumber - 1];
       await appendFrame(`${actionNumber}. Press ${step.caption || step.action}`,
         Math.max(2, Math.round(fps * .25)), actionNumber - 1);
-      const outcome = await waitFor(async () => browser.evaluate(`(() => {
-        const records = window.MolariumChemistActions.history();
-        if (records.length < ${replayAuditBaseline + actionNumber}) return false;
-        const record = records[${replayAuditBaseline + actionNumber - 1}];
-        if (record.status === 'running') return false;
-        return { status:record.status, error:record.error || null };
-      })()`), Math.max(1000, timeout - (Date.now() - started)),
-      `completed interface action ${actionNumber}`);
+      const outcome = await waitForInterfaceAction(actionNumber, actionNumber - 1, step,
+        replayAuditBaseline, Math.max(1000, timeout - (Date.now() - started)));
       if (outcome.status !== 'completed')
         throw new Error(`Molarium replay action ${actionNumber} failed: ${outcome.error || outcome.status}`);
       await delay(120);

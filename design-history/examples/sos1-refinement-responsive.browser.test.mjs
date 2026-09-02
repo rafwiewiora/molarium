@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { startMolariumBrowser, waitFor } from '../../scripts/headless-chrome.mjs';
 
 const root = resolve(import.meta.dirname, '../..');
-const browser = await startMolariumBrowser({ root, appPath:'?story=sos1-hit-to-bay293',
+const browser = await startMolariumBrowser({ root, appPath:'?responsive-pose-test=1',
   width:1600, height:1000 });
 const delay = (milliseconds) => new Promise((resolveDelay) => setTimeout(resolveDelay, milliseconds));
 const execute = (action, args, requestId) => browser.evaluate(
@@ -31,7 +31,7 @@ try {
 
   await browser.evaluate(`{
     window.__molariumResponsiveRefinement = window.MolariumChemistActions.execute({
-      action:'pose.refine', args:{ searchChains:64 }, requestId:'responsive-refine'
+      action:'pose.refine', args:{ searchChains:16 }, requestId:'responsive-refine'
     });
     true;
   }`, { awaitPromise:false });
@@ -44,8 +44,10 @@ try {
     if (/contact capture|contact polish|physical refinement/.test(active.status)) break;
     await delay(100);
   }
-  assert.ok(active && /Refining pose \d+\/64/.test(active.status),
+  assert.ok(active && /Refining pose \d+\/16/.test(active.status),
     `refinement progress did not become visible: ${active?.status || 'no status'}`);
+  assert.match(active.status, /\d+-worker ensemble/,
+    'pose propagation did not enter the parallel worker ensemble');
   assert.match(active.button, /Refining/);
   await delay(250);
   const followUp = await responsivenessProbe();

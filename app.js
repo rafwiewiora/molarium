@@ -4641,6 +4641,79 @@ function indexedNonbonded(system, atomCount) {
   });
 }
 
+function automaticPoseSearchWorkerCount(chainCount, requested = null) {
+  if (typeof Worker === 'undefined') return 1;
+  if (requested != null) {
+    const explicit = Math.round(Number(requested));
+    return Number.isInteger(explicit) ? Math.max(1, Math.min(8, chainCount, explicit)) : 1;
+  }
+  if (chainCount < 16) return 1;
+  const hardwareThreads = Math.max(1, Number(navigator.hardwareConcurrency || 4));
+  return Math.min(8, Math.max(1, hardwareThreads - 1), Math.ceil(chainCount / 8));
+}
+
+function runPoseSearchWorkerPartition(worker, payload, onProgress) {
+  const id = `pose-ensemble-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+  return new Promise((resolve, reject) => {
+    const cleanup = () => {
+      worker.removeEventListener('message', onMessage);
+      worker.removeEventListener('error', onError);
+    };
+    const onMessage = (event) => {
+      const message = event.data;
+      if (message?.id !== id) return;
+      if (message.type === 'progress') { onProgress(message.progress); return; }
+      cleanup();
+      if (message.type === 'result') resolve(message.result);
+      else reject(new Error(message.message || 'Pose-search worker failed'));
+    };
+    const onError = (event) => {
+      cleanup(); reject(new Error(event.message || 'Pose-search worker crashed'));
+    };
+    worker.addEventListener('message', onMessage);
+    worker.addEventListener('error', onError);
+    worker.postMessage({ type:'run', id, payload });
+  });
+}
+
+async function runPoseSearchEnsemble({ positions, scoring, search, seed, seedMultiplier,
+  requestedWorkers = null, onProgress = null } = {}) {
+  const workerCount = automaticPoseSearchWorkerCount(positions.length, requestedWorkers);
+  if (workerCount < 2) return null;
+  const candidates = positions.map((candidatePositions, conformerIndex) => ({
+    conformerIndex, positions:candidatePositions,
+    seed:(seed ^ Math.imul(conformerIndex + 1, seedMultiplier)) >>> 0,
+  }));
+  const partitions = Array.from({ length:workerCount }, () => []);
+  candidates.forEach((candidate, index) => partitions[index % workerCount].push(candidate));
+  const workers = partitions.map(() => new Worker(
+    new URL('./docking/pose-search-worker.mjs', import.meta.url), { type:'module' }));
+  const completed = new Set();
+  const started = performance.now();
+  try {
+    const partitionResults = await Promise.all(workers.map((worker, workerIndex) =>
+      runPoseSearchWorkerPartition(worker, { scoring, search,
+        candidates:partitions[workerIndex] }, (progress) => {
+        if (progress?.type === 'chain-complete') completed.add(progress.conformerIndex);
+        onProgress?.({ ...progress, workerIndex, workerCount,
+          completedChains:completed.size, totalChains:positions.length,
+          ensembleElapsedMs:performance.now() - started });
+      })));
+    const elapsedMs = performance.now() - started;
+    const results = partitionResults.flatMap((partition) => partition.results)
+      .sort((first, second) => first.conformerIndex - second.conformerIndex);
+    if (results.length !== positions.length
+      || results.some((entry, index) => entry.conformerIndex !== index))
+      throw new Error('Pose-search ensemble returned an incomplete candidate set');
+    return { results:results.map((entry) => entry.refinement), workerCount, elapsedMs,
+      chainsPerSecond:elapsedMs > 0 ? results.length * 1000 / elapsedMs : null,
+      backend:'deterministic Web Worker pose-chain ensemble',
+      layout:'worker-partitioned independent chains; results restored to conformer order' };
+  } finally {
+    workers.forEach((worker) => worker.terminate());
+  }
+}
+
 async function runBrowserConstrainedDocking(options = {}) {
   if (state.dockingRunning) return null;
   const reference = state.dockingReference;
@@ -4673,7 +4746,7 @@ async function runBrowserConstrainedDocking(options = {}) {
     };
     const [adapter, referenceCore, receptorScore, workflow, protocolModule, labbookModule,
       torsionSearch, biasedSearch, constraints, stormmCore, remapModule, featureSeeding,
-      transformedRings] = await Promise.all([
+      transformedRings, poseScoring] = await Promise.all([
       import('./docking/browser-adapter.mjs'), import('./docking/reference-core.mjs'),
       import('./docking/receptor-score.mjs'), import('./docking/workflow.mjs'),
       import('./docking/protocol.mjs'), import('./docking/labbook.mjs'),
@@ -4682,6 +4755,7 @@ async function runBrowserConstrainedDocking(options = {}) {
       import('./stormm/core.mjs'), import('./docking/contact-remap.mjs'),
       import('./docking/feature-seeding.mjs'),
       import('./docking/transformed-ring-region.mjs'),
+      import('./docking/pose-propagation-scoring.mjs'),
     ]);
     referenceCore.ensureStableAtomIds(state.molecule,
       `design-${state.molecule.source?.pdbId || 'complex'}`);
@@ -4851,62 +4925,29 @@ async function runBrowserConstrainedDocking(options = {}) {
       .map((entry) => Number(entry.interactionKcalMol)));
     if (!Number.isFinite(interactionReferenceKcalMol))
       throw new Error('The inherited fixed-scaffold interaction reference is non-finite.');
-    const receptorScoreFor = (positions, sageInternalEnergyKcalMol) => {
-      const raw = rawReceptorScoreFor(positions, sageInternalEnergyKcalMol);
-      const relativeInteractionKcalMol = raw.interactionKcalMol - interactionReferenceKcalMol;
-      return { ...raw,
-        absoluteEnergyKcalMol:raw.energyKcalMol,
-        absoluteInteractionKcalMol:raw.interactionKcalMol,
-        interactionReferenceKcalMol,
-        relativeInteractionKcalMol,
-        energyKcalMol:relativeInteractionKcalMol + raw.weightedLigandStrainKcalMol,
-        scoreIdentity:`reference-subtracted ${raw.scoreIdentity}`,
-        interpretation:'reference-subtracted pose-ranking score; not a binding free energy' };
-    };
     const minimumFixedCoreStartStericClashes = Math.min(...fixedCoreStartPhysical
       .map((entry) => Number(entry.stericClashes)));
     const minimumFixedCoreStartLennardJonesKcalMol = Math.min(...fixedCoreStartPhysical
       .map((entry) => Number(entry.lennardJonesKcalMol)));
-    const chemicalValidityFor = (sageInternalEnergyKcalMol, physical) => {
-      const relativeLigandStrainKcalMol = sageInternalEnergyKcalMol - minimumSageStartEnergy;
-      const strainExcessKcalMol = Math.max(0,
-        relativeLigandStrainKcalMol - captureMaximumRelativeLigandStrainKcalMol);
-      const additionalStericClashes = Math.max(0,
-        Number(physical.stericClashes) - minimumFixedCoreStartStericClashes);
-      const clashExcess = Math.max(0,
-        additionalStericClashes - captureMaximumAdditionalStericClashes);
-      const additionalLennardJonesKcalMol = Number(physical.lennardJonesKcalMol)
-        - minimumFixedCoreStartLennardJonesKcalMol;
-      const lennardJonesExcessKcalMol = Math.max(0,
-        additionalLennardJonesKcalMol - captureMaximumAdditionalLennardJonesKcalMol);
-      return { valid:Number.isFinite(relativeLigandStrainKcalMol)
-          && strainExcessKcalMol === 0 && clashExcess === 0
-          && lennardJonesExcessKcalMol === 0,
-        relativeLigandStrainKcalMol, maximumRelativeLigandStrainKcalMol:
-          captureMaximumRelativeLigandStrainKcalMol,
-        stericClashes:Number(physical.stericClashes),
-        minimumFixedCoreStartStericClashes, additionalStericClashes,
-        maximumAdditionalStericClashes:captureMaximumAdditionalStericClashes,
-        minimumFixedCoreStartLennardJonesKcalMol,
-        additionalLennardJonesKcalMol,
-        maximumAdditionalLennardJonesKcalMol:captureMaximumAdditionalLennardJonesKcalMol,
-        strainExcessKcalMol, clashExcess, lennardJonesExcessKcalMol };
+    const poseScoringContext = {
+      molecule:plan.molecule,
+      ligandParameters,
+      receptorSite:reference.receptorSite,
+      referenceLigandPositions:reference.ligand.positions,
+      coreAtomPairs:coreMap.atomPairs,
+      coreAtomIndices,
+      hydrogenBondConstraints:mappedHydrogenBonds.constraints,
+      protocol:activeProtocol,
+      minimumSageStartEnergy,
+      interactionReferenceKcalMol,
+      minimumFixedCoreStartStericClashes,
+      minimumFixedCoreStartLennardJonesKcalMol,
+      captureMaximumRelativeLigandStrainKcalMol,
+      captureMaximumAdditionalStericClashes,
+      captureMaximumAdditionalLennardJonesKcalMol,
     };
-    const scorePositions = (positions) => {
-      const sageInternalEnergyKcalMol = ligandInternalEnergy(positions);
-      const physical = receptorScoreFor(positions, sageInternalEnergyKcalMol);
-      const chemicalValidity = chemicalValidityFor(sageInternalEnergyKcalMol, physical);
-      const core = constraints.evaluateCoreConstraint(reference.ligand.positions, positions,
-        coreMap.atomPairs, activeProtocol.coreConstraint);
-      const hydrogenBonds = workflow.evaluatePoseHydrogenBonds(mappedHydrogenBonds.constraints,
-        positions, activeProtocol.hydrogenBondConstraint);
-      const combined = constraints.scoreConstrainedPose({
-        physicalEnergyKcalMol:physical.energyKcalMol, core, hydrogenBonds,
-      });
-      return { objectiveKcalMol:combined.totalScoreKcalMol,
-        feasible:combined.feasible && chemicalValidity.valid,
-        physical, core, hydrogenBonds, sageInternalEnergyKcalMol, chemicalValidity };
-    };
+    const sharedPoseScoring = poseScoring.createPosePropagationScoring(poseScoringContext);
+    const { scorePositions, scoreRestraintCapturePositions } = sharedPoseScoring;
     const torsionProtocol = activeProtocol.torsionMonteCarlo || torsionSearch.TORSION_SEARCH_DEFAULTS;
     const torsionSteps = Math.max(0, Math.min(512, Math.round(Number(options.torsionSteps
       ?? generationProtocol.physicalRefinementStepsDefault
@@ -4917,23 +4958,6 @@ async function runBrowserConstrainedDocking(options = {}) {
     const capturePolishSweeps = Math.max(0, Math.min(8,
       Math.round(Number(options.capturePolishSweeps
         ?? generationProtocol.capturePolishSweeps ?? 3))));
-    const scoreRestraintCapturePositions = (positions) => {
-      const sageInternalEnergyKcalMol = ligandInternalEnergy(positions);
-      const physical = receptorScoreFor(positions, sageInternalEnergyKcalMol);
-      const chemicalValidity = chemicalValidityFor(sageInternalEnergyKcalMol, physical);
-      const hydrogenBonds = workflow.evaluatePoseHydrogenBonds(mappedHydrogenBonds.constraints,
-        positions, activeProtocol.hydrogenBondConstraint);
-      const hbondPenaltyKcalMol = hydrogenBonds.reduce((sum, entry) =>
-        sum + Number(entry.penaltyKcalMol || 0), 0);
-      const chemicalPenaltyKcalMol = chemicalValidity.strainExcessKcalMol ** 2
-        + chemicalValidity.clashExcess ** 2 * 1000
-        + chemicalValidity.lennardJonesExcessKcalMol ** 2;
-      return { objectiveKcalMol:hbondPenaltyKcalMol + chemicalPenaltyKcalMol,
-        hbondPenaltyKcalMol, chemicalPenaltyKcalMol,
-        feasible:chemicalValidity.valid
-          && hydrogenBonds.every((entry) => !entry.required || entry.satisfied),
-        hydrogenBonds, sageInternalEnergyKcalMol, chemicalValidity };
-    };
     const fixedRelaxProtocol = activeProtocol.fixedScaffoldRelaxation || {};
     const fixedRelaxIterations = posePropagation ? Math.max(0, Math.min(250,
       Math.round(Number(options.fixedRelaxIterations
@@ -5159,12 +5183,17 @@ async function runBrowserConstrainedDocking(options = {}) {
     } });
     setDockingStatus(`${posePropagation ? 'Generating' : 'Optimizing'} ${valid.length} restrained poses`);
     let refinementAudit = [];
+    let poseSearchExecution = {
+      backend:'browser main-thread serial search', workerCount:1,
+      chainCount:valid.length, elapsedMs:null, chainsPerSecond:null,
+      deterministicOrdering:'conformer index', fallbackReason:null,
+    };
+    const seedMultiplier = Number(activeProtocol.candidateInitialization
+      ?.candidateSeedXorMultiplierUint32 ?? 0x9e3779b9) >>> 0;
     const runPoseGeneration = (positions, conformerIndex) => {
       setDockingStatus(`Generating restrained pose ${conformerIndex + 1}/${valid.length}`);
       const yieldControl = (progress) => yieldDuringDocking({ ...progress,
         conformerIndex, conformerCount:valid.length });
-      const seedMultiplier = Number(activeProtocol.candidateInitialization
-        ?.candidateSeedXorMultiplierUint32 ?? 0x9e3779b9) >>> 0;
       const conformerSeed = (seed ^ Math.imul(conformerIndex + 1, seedMultiplier)) >>> 0;
       if (posePropagation) return biasedSearch.generatePoseByRestraintBiasedSearch({
         molecule:plan.molecule, initialPositions:positions, coreAtomIndices,
@@ -5184,9 +5213,58 @@ async function runBrowserConstrainedDocking(options = {}) {
         proposalAnglesDegrees:[...torsionProtocol.proposalAnglesDegrees], yieldControl });
     };
     const refinePropagatedBatch = async ({ positions }) => {
-      const torsionRuns = [];
-      for (let index = 0; index < positions.length; index++)
-        torsionRuns.push(await runPoseGeneration(positions[index], index));
+      let torsionRuns = [];
+      try {
+        let lastEnsembleStatusAt = 0;
+        const ensemble = await runPoseSearchEnsemble({ positions,
+          scoring:poseScoringContext,
+          search:{ captureSteps, capturePolishSweeps, refinementSteps:torsionSteps,
+            temperatureStartKelvin:Number(generationProtocol.temperatureStartKelvin),
+            temperatureEndKelvin:Number(generationProtocol.temperatureEndKelvin),
+            torsionAnglesDegrees:[...generationProtocol.torsionAnglesDegrees],
+            ringCrankshaftAnglesDegrees:[...generationProtocol.ringCrankshaftAnglesDegrees],
+            localLineFractions:[...generationProtocol.localLineFractions] },
+          seed, seedMultiplier, requestedWorkers:options.poseSearchWorkers,
+          onProgress:(progress) => {
+            const now = performance.now();
+            if (progress.type === 'chain-progress' && now - lastEnsembleStatusAt >= 250) {
+              const stage = progress.stage || 'search';
+              const fraction = Number(progress.total) > 0
+                ? ` · ${Math.min(100, Math.round(Number(progress.completed || 0)
+                  / Number(progress.total) * 100))}%` : '';
+              setDockingStatus(`Refining pose ${progress.conformerIndex + 1}/${progress.totalChains} · ${stage}${fraction} · ${progress.workerCount}-worker ensemble`);
+              lastEnsembleStatusAt = now;
+              return;
+            }
+            if (progress.type !== 'chain-complete') return;
+            const elapsedSeconds = Math.max(0.001, progress.ensembleElapsedMs / 1000);
+            const rate = progress.completedChains / elapsedSeconds;
+            setDockingStatus(`Pose ensemble · ${progress.completedChains}/${progress.totalChains} chains · ${progress.workerCount} workers · ${rate.toFixed(1)} chains/s`);
+            lastEnsembleStatusAt = now;
+          } });
+        if (ensemble) {
+          torsionRuns = ensemble.results;
+          poseSearchExecution = { backend:ensemble.backend,
+            layout:ensemble.layout, workerCount:ensemble.workerCount,
+            chainCount:positions.length, elapsedMs:ensemble.elapsedMs,
+            chainsPerSecond:ensemble.chainsPerSecond,
+            deterministicOrdering:'independent per-chain seed; results restored to conformer index',
+            fallbackReason:null };
+          setDockingStatus(`Pose ensemble complete · ${positions.length} chains · ${ensemble.workerCount} workers · ${ensemble.chainsPerSecond.toFixed(1)} chains/s`);
+        }
+      } catch (error) {
+        poseSearchExecution.fallbackReason = error instanceof Error ? error.message : String(error);
+        setDockingStatus('Pose workers unavailable · continuing deterministic serial search');
+      }
+      if (!torsionRuns.length) {
+        const serialStarted = performance.now();
+        for (let index = 0; index < positions.length; index++)
+          torsionRuns.push(await runPoseGeneration(positions[index], index));
+        const serialElapsedMs = performance.now() - serialStarted;
+        poseSearchExecution = { ...poseSearchExecution,
+          elapsedMs:serialElapsedMs,
+          chainsPerSecond:positions.length * 1000 / Math.max(1, serialElapsedMs) };
+      }
       if (!fixedRelaxIterations || coreAtomIndices.length >= plan.molecule.atoms.length)
         return torsionRuns.map((entry) => ({ ...entry, relaxation:{
           method:'OpenMM fixed-scaffold Sage relaxation', iterations:0,
@@ -5309,6 +5387,7 @@ async function runBrowserConstrainedDocking(options = {}) {
             restraintParticipation:posePropagation
               ? 'stage 1 generates against selected flat-bottom contact potentials under explicit strain/clash sanity gates; stage 2 starts only after valid capture and rejects every move that loses feasibility'
               : 'required-contact feasibility and penalty were evaluated after each torsion proposal',
+            poseSearchExecution:structuredClone(poseSearchExecution),
             exactCoreMaximumRmsdAngstrom:Math.max(...candidates.map((pose) => pose.core.rmsdAngstrom)),
             perConformer:refinementAudit,
           } });
@@ -5346,6 +5425,7 @@ async function runBrowserConstrainedDocking(options = {}) {
       scoredConformers:run.candidates.length,
       feasiblePoses:run.feasibleCount,
       searchChains:run.candidates.length,
+      poseSearchExecution:structuredClone(poseSearchExecution),
       distinctPoses:distinctPoseEntries.length,
       distinctFeasiblePoses:distinctFeasibleCount,
       selectedRank:run.selected.rank,
@@ -5398,6 +5478,7 @@ async function runBrowserConstrainedDocking(options = {}) {
       || adapter.dockingInputText(state.molecule, liveIndices) !== currentLigandInputText)
       throw new Error('The complex changed during docking; the stale result was discarded.');
     state.dockingResult = { run, labbook, plan, seed, requestedConformers,
+      poseSearchExecution:structuredClone(poseSearchExecution),
       distinctPoseEntries, distinctFeasibleCount,
       featureGuidedSeeding:featureSeedResult ? {
         method:featureSeedResult.method,
@@ -5466,7 +5547,11 @@ function renderDockingResults() {
   const entries = result.distinctPoseEntries
     || distinctDockingPoseEntries(result.run.candidates, result.plan.molecule.atoms);
   const feasible = entries.filter((entry) => entry.pose.feasible).length;
-  setText('#docking-result-summary', `${entries.length} distinct · ${feasible} feasible`);
+  const execution = result.poseSearchExecution;
+  const ensembleSummary = Number(execution?.workerCount) > 1
+    ? ` · ${execution.workerCount} workers · ${(Number(execution.elapsedMs) / 1000).toFixed(1)} s`
+    : '';
+  setText('#docking-result-summary', `${entries.length} distinct · ${feasible} feasible${ensembleSummary}`);
   const list = document.querySelector('#docking-pose-list'); list.replaceChildren();
   entries.slice(0, 5).forEach(({ pose, candidateIndex }) => {
     const button = document.createElement('button'); button.type = 'button';
@@ -5494,9 +5579,12 @@ function renderDockingResults() {
     ? `Δphysical ${selected.physicalEnergyKcalMol.toFixed(2)} · restraints ${selected.constraintPenaltyKcalMol.toFixed(2)} kcal/mol`
       + (selectedValidity ? ` · ${selectedValidity.stericClashes} clashes (start ${selectedValidity.minimumFixedCoreStartStericClashes})` : '')
     : '';
-  setText('#docking-score-note', scoreBreakdown || (result.mode === 'pose-propagation'
+  const throughput = Number(execution?.workerCount) > 1
+    && Number.isFinite(Number(execution?.chainsPerSecond))
+    ? ` · ${Number(execution.chainsPerSecond).toFixed(1)} chains/s` : '';
+  setText('#docking-score-note', (scoreBreakdown || (result.mode === 'pose-propagation'
     ? 'Inherited scaffold · torsion search · fixed Sage relax'
-    : 'Selected core · torsion search · rigid 8 Å site'));
+    : 'Selected core · torsion search · rigid 8 Å site')) + throughput);
 }
 
 async function applySelectedDockingPose() {
@@ -7902,7 +7990,11 @@ function designerMoveResultCaption(step) {
   if (step.status === 'failed') return `${step.action} failed; no result was applied.`;
   if (step.action === 'pose.refine') {
     const count = Number(step.result?.refinement?.candidates || 0);
-    return `${count} pose candidate${count === 1 ? '' : 's'} ready · coordinates intentionally remain unchanged until Apply pose.`;
+    const execution = step.result?.refinement?.poseSearchExecution;
+    const ensemble = Number(execution?.workerCount) > 1
+      ? ` · ${execution.workerCount} workers · ${(Number(execution.elapsedMs) / 1000).toFixed(1)} s · ${Number(execution.chainsPerSecond).toFixed(1)} chains/s`
+      : '';
+    return `${count} pose candidate${count === 1 ? '' : 's'} ready${ensemble} · coordinates intentionally remain unchanged until Apply pose.`;
   }
   if (step.action === 'pose.enumerateSidechainRotamers') {
     const count = Number(step.result?.sidechainRotamers?.candidates?.length || 0);
@@ -8529,16 +8621,20 @@ function installChemistActionsApi(module) {
         'chemist-actions-forget-contact');
       return chemistActionSummary({ forgottenContact:{ contactId:definition.id,
         label:definition.label } }); },
-    'pose.refine':async (args) => { chemistActionKeys(args, ['searchChains']);
+    'pose.refine':async (args) => { chemistActionKeys(args, ['searchChains','execution']);
       const searchChains = Number(args.searchChains ?? 16);
       if (![8,16,32,64].includes(searchChains))
         throw new Error('searchChains must be 8, 16, 32, or 64');
+      const execution = chemistActionEnum(args.execution ?? 'auto', ['auto','serial'], 'execution');
       const select = document.querySelector('#docking-conformer-count');
       select.value = String(searchChains); updateDockingUi();
-      const result = await runBrowserConstrainedDocking();
+      const result = await runBrowserConstrainedDocking({
+        poseSearchWorkers:execution === 'serial' ? 1 : null,
+      });
       const selected = result.run.selected;
       return chemistActionSummary({ refinement:{ candidates:result.run.candidates.length,
         feasible:result.run.feasibleCount, selectedRank:selected.rank,
+        poseSearchExecution:structuredClone(result.poseSearchExecution || null),
         selectedFeasible:selected.feasible,
         selectedScoreKcalMol:selected.totalScoreKcalMol,
         selectedPhysicalKcalMol:selected.physicalEnergyKcalMol,

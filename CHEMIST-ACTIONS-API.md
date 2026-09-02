@@ -122,6 +122,22 @@ the visible pose list but leaves the 3D molecule fixed until `pose.apply`;
 `pose.applySidechainRotamer`. Replay result cues state this explicitly and hold on the result card
 at human reading speed before the corresponding Apply action.
 
+`pose.refine` accepts `execution: "auto"` (the default) or `execution: "serial"`. Auto execution
+partitions independent, deterministically seeded pose chains over a bounded browser Worker ensemble
+and restores results to conformer-index order before ranking. The response and hash-linked labbook
+record the worker count, elapsed search time, throughput, and any serial fallback. Serial mode is a
+reproducibility control: it uses the same seeds, restraint and physical objectives, and candidate
+ordering on the browser main thread.
+
+Pose propagation has three separate relaxation concepts. Restraint-biased internal-coordinate
+search first uses selected flat-bottom hydrogen-bond potentials to generate contact-feasible poses;
+required contacts then remain hard feasibility conditions while the rigid-receptor physical score is
+optimized. A ligand-only OpenMM/WASM pass repairs local Sage valence geometry with inherited heavy
+atoms fixed; it contains no receptor or explicit restraint force, so its output is accepted only if
+the complete receptor-aware restrained objective remains feasible and improves. The later
+`optimization.run({method:"induced-fit-webgpu"})` action is a distinct 6 Å complex minimization and
+does not currently include the docking interaction restraints as force terms.
+
 For pose propagation, `pose.refine` now seeds a single-anchor grown region across deterministic
 attachment-bond torsions even when no explicit hydrogen-bond target was captured. Target-directed
 regions keep their pharmacophore-axis seeds, multi-anchor regions remain rigid, and every surviving
