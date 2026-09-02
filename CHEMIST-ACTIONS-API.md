@@ -206,7 +206,8 @@ the portable action-and-arguments procedure; `molarium.chemist-action-replay/v1`
 result of executing it in a new session. Replay calls only this public API and rejects private
 routes, embedded code, callbacks, and direct coordinate replacement. See
 [`DESIGNER-MOVES.md`](./DESIGNER-MOVES.md) for the schema, converter, and the provenance-pinned SOS1
-Phe890 examples.
+Phe890 examples. Paused back/forward controls inspect cached application checkpoints only; they do
+not issue Agent/API calls or rewrite the append-only execution audit.
 
 ## Explicit exclusions
 

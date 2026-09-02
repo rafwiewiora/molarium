@@ -735,6 +735,11 @@ const state = {
   designerMoveReplaying: false,
   designerMoveReplayPaused: false,
   designerMoveReplayIndex: 0,
+  designerMoveReplayFrontier: 0,
+  designerMoveReplayPhase: null,
+  designerMoveReplayStep: null,
+  designerMoveReplayActionRunning: false,
+  designerMoveReplayCheckpoints: [],
   structureComponents: [],
   atomComponentIds: [],
   componentVisibility: new Map(),
@@ -7770,6 +7775,127 @@ async function applyCurrentSidechainRotamer(index) {
 
 let designerMoveReplayResume = null;
 
+const DESIGNER_MOVE_CHECKPOINT_STATE_KEYS = Object.freeze([
+  'rotation', 'viewProjectionCenter', 'viewProjectionRadius', 'viewPan', 'zoom',
+  'autoRotate', 'showHydrogens', 'showHulls', 'showInteractions', 'showPocketAtoms',
+  'pocketAtomMode', 'vdw', 'representation', 'mode', 'selectedElement', 'buildTool',
+  'stagedFragment', 'selectedAtom', 'selectedAtoms', 'chemistryTransaction',
+  'designRoute', 'designRouteStepId', 'geometryEditActive', 'lastCalculation',
+  'calculationFrames', 'calculationRawFrames', 'calculationProjectionRadius',
+  'calculationEnsemble', 'conformerAnalysis', 'conformerDisplayAlignment',
+  'trajectoryDisplayAlignment', 'calculationReplicaIndex', 'replicaMosaicLayout',
+  'calculationFrameIndex', 'calculationUnit', 'calculationJob', 'calculationTimestepFs',
+  'calculationConstraintMode', 'proteinPrediction', 'pdbPreparationPreview',
+  'ligandProtonation', 'dockingReference', 'dockingResult', 'dockingSelectedHbondIds',
+  'dockingContactRemaps', 'dockingContactRemapProposals', 'dockingContactDraft',
+  'dockingPoseIndex', 'sidechainRotamerEnsemble', 'structureComponents',
+  'atomComponentIds', 'componentVisibility', 'focusedComponentId',
+  'focusedComponentRadius', 'focusedResidueKey', 'focusedResidueRadius',
+  'focusedAtomIds', 'focusedAtomRadius', 'focusedAtomContextRadius',
+  'focusedAtomContextIds', 'emphasizedAtomIds', 'depictionOrientationAnchor',
+  'depictionTemplateMolBlock', 'depictionKey', 'depictionTool', 'depictionBondStart',
+  'depictionBondOrder',
+]);
+
+function cloneDesignerMoveCheckpointMolecule(molecule) {
+  if (!molecule) return null;
+  const source = { ...(molecule.source || {}) };
+  // The Agent/API ledger is append-only and belongs to the live execution
+  // frontier, not to a presentation checkpoint.
+  delete source.chemistActionAudit;
+  const parameterization = molecule.parameterization || null;
+  const clone = structuredClone({ ...molecule, source, parameterization:null });
+  // Parameter tables are immutable after assignment and can be shared across
+  // checkpoints without duplicating the largest prepared-system payload.
+  if (parameterization) clone.parameterization = parameterization;
+  else delete clone.parameterization;
+  return clone;
+}
+
+function captureDesignerMoveDomCheckpoint() {
+  return [...document.querySelectorAll('[id]')].map((element) => ({
+    id:element.id,
+    className:element.getAttribute('class'),
+    style:element.getAttribute('style'),
+    text:element.children.length === 0 && !['CANVAS','SVG'].includes(element.tagName)
+      ? element.textContent : null,
+    value:'value' in element && element.type !== 'file' ? element.value : null,
+    checked:'checked' in element ? Boolean(element.checked) : null,
+    disabled:'disabled' in element ? Boolean(element.disabled) : null,
+    ariaExpanded:element.getAttribute('aria-expanded'),
+  }));
+}
+
+function restoreDesignerMoveDomCheckpoint(records) {
+  for (const record of records || []) {
+    const element = document.getElementById(record.id);
+    if (!element) continue;
+    if (record.className == null) element.removeAttribute('class');
+    else element.setAttribute('class', record.className);
+    if (record.style == null) element.removeAttribute('style');
+    else element.setAttribute('style', record.style);
+    if (record.text != null && element.children.length === 0) element.textContent = record.text;
+    if (record.value != null && 'value' in element && element.type !== 'file')
+      element.value = record.value;
+    if (record.checked != null && 'checked' in element) element.checked = record.checked;
+    if (record.disabled != null && 'disabled' in element) element.disabled = record.disabled;
+    if (record.ariaExpanded == null) element.removeAttribute('aria-expanded');
+    else element.setAttribute('aria-expanded', record.ariaExpanded);
+  }
+}
+
+function captureDesignerMoveCheckpoint(index, step = null) {
+  const values = Object.fromEntries(DESIGNER_MOVE_CHECKPOINT_STATE_KEYS
+    .map((key) => [key, structuredClone(state[key])]));
+  state.designerMoveReplayCheckpoints[index] = {
+    index,
+    molecule:cloneDesignerMoveCheckpointMolecule(state.molecule),
+    values,
+    dom:captureDesignerMoveDomCheckpoint(),
+    step:step ? structuredClone(step) : null,
+  };
+  state.designerMoveReplayCheckpoints.length = index + 1;
+  state.designerMoveReplayFrontier = Math.max(state.designerMoveReplayFrontier, index);
+}
+
+function restoreDesignerMoveCheckpoint(index) {
+  const checkpoint = state.designerMoveReplayCheckpoints[index];
+  if (!checkpoint) throw new Error(`Story checkpoint ${index} is unavailable`);
+  const liveAudit = state.chemistActionAudit;
+  clearDesignerMoveCueElements();
+  clearScene();
+  Object.entries(checkpoint.values).forEach(([key, value]) => {
+    state[key] = structuredClone(value);
+  });
+  state.molecule = cloneDesignerMoveCheckpointMolecule(checkpoint.molecule);
+  state.chemistActionAudit = liveAudit;
+  if (state.molecule) state.molecule.source = { ...(state.molecule.source || {}),
+    chemistActionAudit:structuredClone(liveAudit) };
+  state.calculating = false; state.minimizing = false; state.preparing = false;
+  state.dockingRunning = false; state.calculationPlaying = false;
+  state.calculationPlaybackRaf = 0; state.calculationPlaybackTime = 0;
+  if (state.molecule) {
+    const representationSelect = document.querySelector('#representation-select');
+    representationSelect.disabled = !state.proteinPrediction;
+    representationSelect.value = state.representation;
+    updatePdbPreparationUi(); updateLigandProtonationUi();
+    updateStructureComponentsUi(); updatePreparationInspectorUi();
+    updateInfo(); updateGeometryControl(); updateOptimizerControls();
+    updateDockingUi(); renderDockingResults(); updateSidechainRotamerControls();
+    updateHistoryButtons(); setMode(state.mode);
+    if (state.calculationFrames.length) {
+      updateEnergyChart(state.calculationFrames);
+      updateCalculationFrameUI();
+    }
+    schedule2DDepiction(0);
+  } else setMode(state.mode);
+  restoreDesignerMoveDomCheckpoint(checkpoint.dom);
+  designerMoveCueElements = [...document.querySelectorAll('.designer-move-cue')];
+  state.designerMoveReplayIndex = index;
+  draw();
+  return checkpoint;
+}
+
 function designerMoveCaption(index = state.designerMoveReplayIndex) {
   const actions = state.designerMoveScript?.actions || [];
   if (!actions.length) return 'Load a story to begin.';
@@ -7782,6 +7908,11 @@ function resetDesignerMovePlayback() {
   state.designerMoveReplay = null;
   state.designerMoveReplayPaused = false;
   state.designerMoveReplayIndex = 0;
+  state.designerMoveReplayFrontier = 0;
+  state.designerMoveReplayPhase = null;
+  state.designerMoveReplayStep = null;
+  state.designerMoveReplayActionRunning = false;
+  state.designerMoveReplayCheckpoints = [];
   designerMoveReplayResume?.();
   designerMoveReplayResume = null;
 }
@@ -7794,6 +7925,30 @@ function setDesignerMoveReplayPaused(paused) {
     designerMoveReplayResume = null;
   }
   updateDesignerMoveControls();
+}
+
+function reviewDesignerMoveCheckpoint(offset) {
+  if (!state.designerMoveReplaying || !state.designerMoveReplayPaused
+    || state.designerMoveReplayActionRunning) return;
+  const target = Math.max(0, Math.min(state.designerMoveReplayFrontier,
+    state.designerMoveReplayIndex + offset));
+  if (target === state.designerMoveReplayIndex) return;
+  const checkpoint = restoreDesignerMoveCheckpoint(target);
+  const completed = checkpoint.step;
+  const caption = target === 0 ? 'Blank canvas before move 1'
+    : `Reviewing move ${target} · ${completed?.caption || completed?.action || 'completed state'}`;
+  updateDesignerMoveControls(`Paused · cached checkpoint ${target} of ${state.designerMoveReplayFrontier}`,
+    caption);
+}
+
+function resumeDesignerMoveReplay() {
+  if (!state.designerMoveReplaying || !state.designerMoveReplayPaused) return;
+  if (state.designerMoveReplayIndex !== state.designerMoveReplayFrontier)
+    restoreDesignerMoveCheckpoint(state.designerMoveReplayFrontier);
+  const step = state.designerMoveReplayStep;
+  if (step && state.designerMoveReplayPhase === 'before') showDesignerMoveCue(step);
+  else if (step && state.designerMoveReplayPhase === 'after') showDesignerMoveResultCue(step);
+  setDesignerMoveReplayPaused(false);
 }
 
 async function waitForDesignerMoveReplay() {
@@ -7850,8 +8005,16 @@ function updateDesignerMoveControls(message = null, captionOverride = null) {
   const replayButton = document.querySelector('#replay-designer-moves');
   replayButton.disabled = !script;
   replayButton.textContent = state.designerMoveReplaying
-    ? (state.designerMoveReplayPaused ? '▶ Continue' : '❚❚ Pause')
+    ? (state.designerMoveReplayPaused
+      ? (state.designerMoveReplayIndex < state.designerMoveReplayFrontier
+        ? '▶ Return & continue' : '▶ Continue') : '❚❚ Pause')
     : (state.designerMoveReplayIndex >= actionCount && actionCount ? '↻ Replay story' : '▶ Play story');
+  const checkpointNavigation = state.designerMoveReplaying
+    && state.designerMoveReplayPaused && !state.designerMoveReplayActionRunning;
+  document.querySelector('#previous-designer-move').disabled =
+    !checkpointNavigation || state.designerMoveReplayIndex <= 0;
+  document.querySelector('#next-designer-move').disabled =
+    !checkpointNavigation || state.designerMoveReplayIndex >= state.designerMoveReplayFrontier;
   document.querySelector('#restart-designer-moves').disabled =
     !script || state.designerMoveReplaying;
   document.querySelector('#export-designer-moves').disabled =
@@ -7865,7 +8028,11 @@ function updateDesignerMoveControls(message = null, captionOverride = null) {
     `${Math.min(actionCount, state.designerMoveReplayIndex)} / ${actionCount}`;
   document.querySelector('#designer-move-caption').textContent =
     captionOverride || (state.designerMoveReplayPaused
-      ? `Paused before move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} · ${designerMoveCaption()}`
+      ? state.designerMoveReplayActionRunning
+        ? `Pausing after move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} finishes · ${designerMoveCaption()}`
+        : state.designerMoveReplayIndex < state.designerMoveReplayFrontier
+        ? `Reviewing completed move ${state.designerMoveReplayIndex} of ${state.designerMoveReplayFrontier}`
+        : `Paused before move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} · ${designerMoveCaption()}`
       : designerMoveCaption());
   if (message) status.textContent = message;
   else if (script) status.textContent = `${script.label || 'Imported action script'} · ${script.actions.length} replayable move${script.actions.length === 1 ? '' : 's'} · ${script.schema}`;
@@ -8057,7 +8224,8 @@ async function replayDesignerMoveScript() {
   const script = state.designerMoveScript;
   if (!script) throw new Error('Import a designer-move JSON script first');
   if (state.designerMoveReplaying) {
-    setDesignerMoveReplayPaused(!state.designerMoveReplayPaused);
+    if (state.designerMoveReplayPaused) resumeDesignerMoveReplay();
+    else setDesignerMoveReplayPaused(true);
     return null;
   }
   if (state.designerMoveReplayIndex >= script.actions.length) {
@@ -8071,6 +8239,12 @@ async function replayDesignerMoveScript() {
   state.designerMoveReplaying = true;
   state.designerMoveReplayPaused = false;
   state.designerMoveReplayIndex = 0;
+  state.designerMoveReplayFrontier = 0;
+  state.designerMoveReplayPhase = null;
+  state.designerMoveReplayStep = null;
+  state.designerMoveReplayActionRunning = false;
+  state.designerMoveReplayCheckpoints = [];
+  captureDesignerMoveCheckpoint(0);
   const moviePacedReplay = new URLSearchParams(window.location.search)
     .has('designer-moves-movie');
   updateDesignerMoveControls(`Starting ${script.actions.length} recorded designer moves…`);
@@ -8078,15 +8252,27 @@ async function replayDesignerMoveScript() {
     const replay = await module.replayActionScript(api, script, {
       onStep:async ({ phase, step }) => {
         if (phase === 'before') {
+          state.designerMoveReplayPhase = 'before';
+          state.designerMoveReplayStep = structuredClone(step);
+          state.designerMoveReplayActionRunning = false;
           await waitForDesignerMoveReplay();
           state.designerMoveReplayIndex = step.index;
           showDesignerMoveCue(step);
           updateDesignerMoveControls(
             `Move ${step.index + 1} of ${script.actions.length} · ${step.caption || step.action}`);
           await holdDesignerMoveReplay(designerMoveHoldMs(step, phase, moviePacedReplay));
+          state.designerMoveReplayActionRunning = true;
+          updateDesignerMoveControls();
         } else {
+          state.designerMoveReplayActionRunning = false;
+          state.designerMoveReplayPhase = 'after';
+          state.designerMoveReplayStep = structuredClone(step);
           state.designerMoveReplayIndex = step.index + 1;
           showDesignerMoveResultCue(step);
+          updateDesignerMoveControls(
+            `Completed move ${step.index + 1} of ${script.actions.length} · ${step.caption || step.action}`,
+            designerMoveResultCaption(step));
+          captureDesignerMoveCheckpoint(step.index + 1, step);
           updateDesignerMoveControls(
             `Completed move ${step.index + 1} of ${script.actions.length} · ${step.caption || step.action}`,
             designerMoveResultCaption(step));
@@ -8105,6 +8291,9 @@ async function replayDesignerMoveScript() {
     showDesignerMoveCue();
     state.designerMoveReplaying = false;
     state.designerMoveReplayPaused = false;
+    state.designerMoveReplayActionRunning = false;
+    state.designerMoveReplayPhase = null;
+    state.designerMoveReplayStep = null;
     designerMoveReplayResume?.(); designerMoveReplayResume = null;
     updateDesignerMoveControls();
   }
@@ -13738,6 +13927,14 @@ document.querySelector('#replay-designer-moves').addEventListener('click', async
   try { await replayDesignerMoveScript(); }
   catch (error) { showNotice(error.message); }
   finally { updateDesignerMoveControls(); }
+});
+document.querySelector('#previous-designer-move').addEventListener('click', () => {
+  try { reviewDesignerMoveCheckpoint(-1); }
+  catch (error) { showNotice(error.message); }
+});
+document.querySelector('#next-designer-move').addEventListener('click', () => {
+  try { reviewDesignerMoveCheckpoint(1); }
+  catch (error) { showNotice(error.message); }
 });
 document.querySelector('#restart-designer-moves').addEventListener('click', () => {
   if (!state.designerMoveScript || state.designerMoveReplaying) return;

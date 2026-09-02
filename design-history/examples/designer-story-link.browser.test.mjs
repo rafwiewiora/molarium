@@ -82,8 +82,76 @@ try {
     caption:document.querySelector('#designer-move-caption').textContent,
   })`);
   assert.match(paused.progress, /^\d+ \/ 48$/);
-  assert.match(paused.caption, /Paused before move/);
-  console.log('Designer story link browser test passed: permalink, blank start, responsive pocket view, play, and pause');
+  assert.match(paused.caption, /Paused before move|Pausing after move/);
+  await waitFor(async () => browser.evaluate(
+    `!document.querySelector('#previous-designer-move').disabled`),
+  90000, 'paused previous-step control');
+  const beforeNavigation = await browser.evaluate(`({
+    progress:document.querySelector('#designer-move-progress-label').textContent,
+    auditCount:window.MolariumChemistActions.history().length,
+    canvas:document.querySelector('#molecule-canvas').toDataURL(),
+  })`);
+  const pausedIndex = Number(beforeNavigation.progress.split('/')[0]);
+  await browser.evaluate(`document.querySelector('#previous-designer-move').click()`);
+  await waitFor(async () => browser.evaluate(
+    `document.querySelector('#designer-move-progress-label').textContent.startsWith('${pausedIndex - 1} /')`),
+  30000, 'previous cached story checkpoint');
+  const previous = await browser.evaluate(`({
+    caption:document.querySelector('#designer-move-caption').textContent,
+    nextEnabled:!document.querySelector('#next-designer-move').disabled,
+    auditCount:window.MolariumChemistActions.history().length,
+  })`);
+  assert.match(previous.caption, /Reviewing move|Blank canvas/);
+  assert.equal(previous.nextEnabled, true);
+  assert.equal(previous.auditCount, beforeNavigation.auditCount,
+    'presentation rewind must not execute or delete an Agent/API action');
+  await browser.evaluate(`document.querySelector('#next-designer-move').click()`);
+  await waitFor(async () => browser.evaluate(
+    `document.querySelector('#designer-move-progress-label').textContent.startsWith('${pausedIndex} /')`),
+  30000, 'next cached story checkpoint');
+  const afterNavigation = await browser.evaluate(`({
+    auditCount:window.MolariumChemistActions.history().length,
+    canvas:document.querySelector('#molecule-canvas').toDataURL(),
+  })`);
+  assert.equal(afterNavigation.auditCount, beforeNavigation.auditCount);
+  assert.equal(afterNavigation.canvas, beforeNavigation.canvas,
+    'forward checkpoint restoration must recover the exact paused molecular view');
+
+  await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
+  await waitFor(async () => browser.evaluate(
+    `Number(document.querySelector('#designer-move-progress-label').textContent.split('/')[0]) >= 9`),
+  120000, 'first 64-chain pose result');
+  await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
+  await waitFor(async () => browser.evaluate(
+    `!document.querySelector('#previous-designer-move').disabled`),
+  120000, 'paused pose-result checkpoint');
+  const poseCheckpoint = await browser.evaluate(`({
+    progress:document.querySelector('#designer-move-progress-label').textContent,
+    auditCount:window.MolariumChemistActions.history().length,
+    poseSummary:document.querySelector('#docking-result-summary').textContent,
+    canvas:document.querySelector('#molecule-canvas').toDataURL(),
+  })`);
+  const poseIndex = Number(poseCheckpoint.progress.split('/')[0]);
+  assert.ok(poseIndex >= 9);
+  assert.match(poseCheckpoint.poseSummary, /distinct/);
+  await browser.evaluate(`document.querySelector('#previous-designer-move').click()`);
+  await waitFor(async () => browser.evaluate(
+    `document.querySelector('#designer-move-progress-label').textContent.startsWith('${poseIndex - 1} /')`),
+  30000, 'checkpoint before pose result');
+  await browser.evaluate(`document.querySelector('#next-designer-move').click()`);
+  await waitFor(async () => browser.evaluate(
+    `document.querySelector('#designer-move-progress-label').textContent.startsWith('${poseIndex} /')`),
+  30000, 'restored pose-result checkpoint');
+  const restoredPoseCheckpoint = await browser.evaluate(`({
+    auditCount:window.MolariumChemistActions.history().length,
+    poseSummary:document.querySelector('#docking-result-summary').textContent,
+    canvas:document.querySelector('#molecule-canvas').toDataURL(),
+  })`);
+  assert.equal(restoredPoseCheckpoint.auditCount, poseCheckpoint.auditCount);
+  assert.equal(restoredPoseCheckpoint.poseSummary, poseCheckpoint.poseSummary);
+  assert.equal(restoredPoseCheckpoint.canvas, poseCheckpoint.canvas,
+    'pose-result checkpoint navigation must restore the exact ranked molecular view');
+  console.log('Designer story link browser test passed: permalink, blank start, play/pause, and audited checkpoint navigation');
 } finally {
   await browser.close();
 }

@@ -123,7 +123,10 @@ For a product-facing movie, `npm run render:designer-moves-interface` starts fro
 imports the same JSON through the visible Build panel, presses **▶ Play story**, and records the
 real Molarium interface while the public actions run. The transport changes to **❚❚ Pause**
 during execution and pauses at the next action boundary, after the current scientific operation
-finishes. **↺ Restart** returns to the blank canvas. Presentation-only `view.setDisplay` and
+finishes. While paused, **◀** and **▶** move through already-computed application checkpoints;
+they restore the molecular coordinates, camera, active panels, pose results, and calculation
+display without executing or deleting an Agent/API action. **Continue** first returns to the live
+execution frontier and then resumes. **↺ Restart** returns to the blank canvas. Presentation-only `view.setDisplay` and
 `view.focusComponent` actions select a clean chemist pocket view and keep the active ligand in
 frame; they do not change molecular coordinates or replace any scientific action.
 
