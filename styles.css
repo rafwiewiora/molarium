@@ -448,8 +448,6 @@ select {
   border-radius: 999px; background: rgba(255,255,255,.96); color: #991b1b; padding: 6px 10px;
   box-shadow: 0 3px 12px rgba(220,38,38,.16); font: 700 11px/1.1 Inter, sans-serif; }
 .changed-region-chip:hover { background: #fff1f2; }
-.changed-region-chip { position: absolute; z-index: 7; left: 14px; top: 14px; border: 1px solid #dc2626; border-radius: 999px; background: rgba(255,255,255,.96); color: #991b1b; padding: 6px 10px; box-shadow: 0 3px 12px rgba(220,38,38,.16); font: 700 11px/1.1 Inter, sans-serif; }
-.changed-region-chip:hover { background: #fef2f2; }
 
 .structure-2d-panel {
   position: absolute; z-index: 6; left: 12px; bottom: 12px; width: 228px;
