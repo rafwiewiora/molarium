@@ -69,6 +69,8 @@ try {
     'human export buttons and agents must share the same serializer route');
   assert.match(app, /designerMoveReplayScheduled/,
     'scheduled playback must use an explicit single-flight guard');
+  assert.match(app, /if \(!ownsDesignerMoveStatus\) updateDesignerMoveControls\(\)/,
+    'the generic audit callback must not overwrite public replay presentation checkpoints');
 
   const paperBuilder = await readFile(new URL('../paper/scripts/build-sos1-paper-figure.py',
     import.meta.url), 'utf8');

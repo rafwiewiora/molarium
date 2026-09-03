@@ -8773,7 +8773,12 @@ function persistChemistActionAudit(record) {
   state.chemistActionAudit = [...state.chemistActionAudit, entry].slice(-500);
   state.molecule.source = { ...(state.molecule.source || {}),
     chemistActionAudit:structuredClone(state.chemistActionAudit) };
-  updateDesignerMoveControls();
+  // Presentation and replay-controller routes update this card inside their
+  // own handler.  Re-rendering it here would immediately replace a visible
+  // "Move"/"Completed move" checkpoint with the generic script summary.
+  const ownsDesignerMoveStatus = entry.action === 'interface.presentDesignerStep'
+    || entry.action.startsWith('designerScript.');
+  if (!ownsDesignerMoveStatus) updateDesignerMoveControls();
 }
 
 let liveCampaignModulePromise = null;
