@@ -118,3 +118,33 @@ the final relaxed BAY-293 state. The validated movie, render manifest, and
 five-panel paper figure are checked into their public repository destinations;
 the temporary CI artifact and local staging directory are not publication
 sources.
+
+## Registered graph-edit and final-render correction
+
+Review of the final AWW-to-AXH transition showed that the earlier route treated
+the edit too coarsely. The chemistry is an attachment rewire: the
+quinazoline--thiophene core survives, while the distal arm is rebuilt from the
+other thiophene position. The general pose-transfer layer now derives this from
+exact element, bond-order, ring, and edit-boundary correspondence. It hard-fixes
+only the conserved graph, releases complete changed attachment or ring regions,
+and transfers compatible donor/acceptor features only as soft restraints. It
+does not admit element-agnostic hard atom matching. The same rules cover future
+registered routes and live graph edits; there is no SOS1-specific coordinate
+exception.
+
+In the corrected final step, 15 proximal heavy atoms have exact hard
+correspondence and zero displacement during staging. Sixteen AWW distal heavy
+atoms are deleted, 17 AXH distal heavy atoms are introduced, and the attachment
+boundary changes from CX4 to CX3. The 64-candidate search applies a feasible
+pose that moves nine released distal-arm heavy atoms above 0.08~\AA{} (maximum
+5.90~\AA{}), after which coupled relaxation moves 49 ligand/pocket heavy atoms
+above that threshold (maximum 1.19~\AA{}). The fixed camera makes these two
+events visually distinct.
+
+GitHub Actions run `33801885032`, at commit
+`448e09c1f7c43ba7aa29158673f04b57afb0db98`, completed the full public-API replay
+on Chrome 152 software WebGPU. The preserved execution contains 51 replay
+actions, 208 completed API audit records, and 10 exact result expectations; all
+four 64-candidate pose searches used three workers. The final 1600-by-1000,
+12-frame-per-second movie contains 1,213 frames (101.083333 s) and has SHA-256
+`e8eb6d649105aadd0ff725090482f6764ac5534261b0920f1e5c16c481d38972`.

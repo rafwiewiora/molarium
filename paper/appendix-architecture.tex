@@ -670,7 +670,7 @@ was:
   \item the complete exploration audit contains 89 completed API calls,
     including three Phe890/pose branches, nine undo calls, and deterministic
     reselection; these are operational records, not formal ledger decisions;
-  \item the interface presentation adds 16 display-only actions, for 49 replay
+  \item the interface presentation adds 18 display-only actions, for 51 replay
     steps in the film;
   \item later crystals: opened only after four prediction checkpoints and the
     audit were hashed;
@@ -681,6 +681,15 @@ These are substantial graph rewrites rather than a sequence of single-atom
 substitutions. Table~\ref{tab:sos1-graph-edits} counts the atom lineage retained
 across each change. The first transition also had four possible graph mappings;
 the later transitions each had one.
+
+Pose transfer is determined by chemical graph correspondence, not proximity or
+atom-list order. Element- and bond-order-exact atoms in a conserved bond graph
+can remain hard coordinate anchors. A changed attachment or ring system is
+released in full for sampling while the unchanged external scaffold remains
+fixed. Compatible donor and acceptor roles can cross a bioisosteric edit as soft
+pharmacophore restraints, including across elements, but never establish atom
+identity. This is the registered-route rule for arbitrary edits, not an SOS1
+exception.
 
 \begin{table}[htbp]
   \centering
@@ -702,8 +711,8 @@ the later transitions each had one.
 ``64 search chains'' means 64 independently seeded local pose searches, not 64
 protein chains. ``Parameterize without motion'' means assign coefficients while
 leaving coordinates unchanged; only the following relaxation may move atoms.
-The experimental SOS1 route used whole-system Sage 2.1.0/Gasteiger preparation,
-not the prepared Rosemary fixtures. AWT, AWZ, AWW, and AXH contained 7,929,
+The experimental SOS1 route used whole-system Sage 2.1.0/Gasteiger preparation.
+AWT, AWZ, AWW, and AXH contained 7,929,
 7,933, 7,935, and 7,937 particles, respectively. This charge-model boundary is
 part of the method, not a standard Sage AM1-BCC or NAGL preparation.
 
@@ -796,8 +805,8 @@ Apply changes the molecular state.
 
 The film shows discrete before/after molecular states. It does not interpolate
 coordinates or present the transition as molecular dynamics. Result frames are
-held long enough to inspect new information. The current 69.25-s interface cut
-condenses approximately 420.7~s of durations in its 48-action render audit;
+held long enough to inspect new information. The current 101.08-s interface cut
+condenses approximately 1,189.9~s of durations in its 51-action render audit;
 full operation durations remain in the audit and render manifest. The film is
 therefore an explanatory replay, not a runtime benchmark.
 
