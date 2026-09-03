@@ -437,41 +437,170 @@ function targetVariants(definitions) {
     || String(first.alternativeId).localeCompare(String(second.alternativeId)));
 }
 
+function spatialFeatureMapVariants(definitions) {
+  const variants = [];
+  Array.from(definitions || []).forEach((definition, featureIndex) => {
+    const maps = Array.from(definition.atomPairVariants || definition.mappingVariants || []);
+    maps.forEach((variant, mappingVariantIndex) => {
+      const atomPairs = Array.from(variant.atomPairs || variant || []).map((pair) =>
+        Array.from(pair || [], Number));
+      if (atomPairs.length < 3 || atomPairs.some((pair) => pair.length !== 2
+        || !pair.every(Number.isInteger)))
+        throw new Error(`Spatial feature ${definition.id || featureIndex} has an incomplete atom map`);
+      variants.push({ featureId:String(definition.id || `spatial-feature-${featureIndex + 1}`),
+        featureIndex, mappingVariantIndex, atomPairs });
+    });
+  });
+  return variants.sort((first, second) => first.featureId.localeCompare(second.featureId)
+    || first.mappingVariantIndex - second.mappingVariantIndex
+    || first.featureIndex - second.featureIndex);
+}
+
+function priorityStratifiedSeeds({ candidates, initialCandidate, strata, requested }) {
+  const required = strata.filter((stratum) => stratum.required);
+  const selected = [], selectedSet = new Set();
+  const select = (candidate) => {
+    if (!candidate || selectedSet.has(candidate)) return false;
+    selectedSet.add(candidate); selected.push(candidate); return true;
+  };
+  select(initialCandidate);
+  const uncovered = new Set(required.map((stratum) => stratum.id));
+  const markCovered = (candidate) => {
+    candidate.coverageStratumIds.forEach((id) => uncovered.delete(id));
+  };
+  selected.forEach(markCovered);
+  while (uncovered.size) {
+    const next = candidates.map((candidate, candidateIndex) => ({ candidate, candidateIndex,
+      gain:candidate.coverageStratumIds.reduce((count, id) =>
+        count + Number(uncovered.has(id)), 0) }))
+      .filter((entry) => entry.gain && !selectedSet.has(entry.candidate))
+      .sort((first, second) => second.gain - first.gain
+        || first.candidateIndex - second.candidateIndex)[0];
+    if (!next) break;
+    select(next.candidate); markCovered(next.candidate);
+  }
+  if (uncovered.size)
+    throw new Error(`Feature-guided seeding could not cover required strata: ${[...uncovered].join(', ')}`);
+  if (selected.length > requested)
+    throw new Error(`Feature-guided seeding requires at least ${selected.length} search chains to cover every spatial-feature map and affected rotor; requested ${requested}`);
+
+  // After one candidate from every required stratum, add further angles by
+  // breadth-first round robin. This prevents a long angle list for the first
+  // rotor from consuming a small 8/16-chain budget.
+  const fillRoundRobin = (eligible) => {
+    for (let round = 0; selected.length < requested; round++) {
+      let available = false;
+      for (const stratum of eligible) {
+        const candidate = stratum.candidates[round];
+        if (!candidate) continue;
+        available = true; select(candidate);
+        if (selected.length >= requested) break;
+      }
+      if (!available) break;
+    }
+  };
+  fillRoundRobin([...required, ...strata.filter((stratum) => !stratum.required)]);
+  candidates.forEach((candidate) => {
+    if (selected.length < requested) select(candidate);
+  });
+  const expanded = Array.from({ length:requested }, (_, index) => selected[index % selected.length]);
+  const selectedOrdinal = new Map(selected.map((candidate, index) => [candidate, index]));
+  const evidence = strata.map((stratum) => ({
+    id:stratum.id, kind:stratum.kind, required:stratum.required,
+    candidateCount:stratum.candidates.length,
+    ...(stratum.bestRmsdAngstrom == null ? {}
+      : { bestRmsdAngstrom:stratum.bestRmsdAngstrom }),
+    selectedSeedOrdinals:[...new Set(stratum.candidates
+      .filter((candidate) => selectedOrdinal.has(candidate))
+      .map((candidate) => selectedOrdinal.get(candidate)))],
+  }));
+  evidence.forEach((entry) => {
+    entry.firstSelectedSeedOrdinal = entry.selectedSeedOrdinals.length
+      ? Math.min(...entry.selectedSeedOrdinals) : null;
+  });
+  return {
+    seeds:expanded.map((candidate, ordinal) => ({ positions:candidate.positions,
+      audit:{ ...candidate.audit,
+        coverageStratumIds:[...candidate.coverageStratumIds],
+        selectionOrdinal:ordinal,
+        uniqueSelectionOrdinal:selectedOrdinal.get(candidate) } })),
+    coverage:{ policy:'required-strata-then-round-robin/v1',
+      requestedCount:requested, generatedUniqueCandidateCount:candidates.length,
+      selectedUniqueCandidateCount:selected.length,
+      requiredStrataCount:required.length,
+      coveredRequiredStrataCount:evidence.filter((entry) => entry.required
+        && entry.selectedSeedOrdinals.length).length,
+      allRequiredStrataCovered:evidence.filter((entry) => entry.required)
+        .every((entry) => entry.selectedSeedOrdinals.length),
+      strata:evidence },
+  };
+}
+
 export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomIndices,
   hydrogenBondConstraints = [], count = 16,
+  spatialFeatureConstraints = [], referencePositions = null,
   editedAtomIndices = [], affectedAtomIndices = [], environmentBondRadius = 2,
-  featureSeedingProtocol = 'v4',
+  featureSeedingProtocol = 'v5',
   axialAnglesDegrees = AXIAL_ANGLES_DEGREES,
   editRegionAnglesDegrees = EDIT_REGION_ANGLES_DEGREES } = {}) {
   if (!molecule?.atoms?.length || !Array.isArray(molecule.bonds))
     throw new Error('Feature-guided seeding requires a complete molecular graph');
-  if (!['v3', 'v4'].includes(featureSeedingProtocol))
-    throw new Error('featureSeedingProtocol must be v3 or v4');
+  if (!['v3', 'v4', 'v5'].includes(featureSeedingProtocol))
+    throw new Error('featureSeedingProtocol must be v3, v4, or v5');
   const requested = Math.max(1, Math.round(Number(count)));
   const positions = finitePositions(initialPositions, molecule.atoms.length);
   const core = new Set(Array.from(coreAtomIndices || [], Number));
   const entries = adjacency(molecule);
   const variants = targetVariants(hydrogenBondConstraints);
-  const unique = [], seen = new Set();
-  const add = (candidate, audit) => {
-    const key = Array.from(candidate, (value) => Math.round(value * 1e6)).join(',');
-    if (seen.has(key)) return;
-    seen.add(key); unique.push({ positions:candidate, audit });
+  const spatialVariants = featureSeedingProtocol === 'v5'
+    ? spatialFeatureMapVariants(spatialFeatureConstraints) : [];
+  if (spatialVariants.length && !referencePositions)
+    throw new Error('Spatial-feature seed coverage requires reference coordinates');
+  const unique = [], seen = new Map(), strata = [];
+  const stratum = (id, kind, required) => {
+    const entry = { id, kind, required, candidates:[] };
+    strata.push(entry); return entry;
   };
-  add(positions, { method:'unaltered-reference-propagation' });
-  const targetedRegions = new Set(variants.flatMap((variant) => {
-    const region = movableFeatureRegion(molecule, variant.featureAtomIndex, core, entries);
-    return region ? [region.atomIndices.join(',')] : [];
-  }));
-  const untargetedRotors = connectedNonCoreRegions(molecule, core, entries)
-    .filter((region) => !targetedRegions.has(region.atomIndices.join(',')))
-    .map((region) => singleAnchorEditRotor(molecule, region, core, entries, positions))
-    .filter(Boolean);
-  const affectedRotors = featureSeedingProtocol === 'v4'
+  const add = (candidate, audit, coverageStratum = null) => {
+    const key = Array.from(candidate, (value) => Math.round(value * 1e6)).join(',');
+    let entry = seen.get(key);
+    if (!entry) {
+      entry = { positions:candidate, audit, coverageStratumIds:[] };
+      seen.set(key, entry); unique.push(entry);
+    }
+    if (coverageStratum) cover(entry, coverageStratum);
+    return entry;
+  };
+  const cover = (entry, coverageStratum) => {
+    if (!entry.coverageStratumIds.includes(coverageStratum.id))
+      entry.coverageStratumIds.push(coverageStratum.id);
+    if (!coverageStratum.candidates.includes(entry)) coverageStratum.candidates.push(entry);
+  };
+  const initialCandidate = add(positions, { method:'unaltered-reference-propagation' });
+  const affectedRotors = ['v4', 'v5'].includes(featureSeedingProtocol)
     ? affectedEnvironmentRotors(molecule, core, entries, positions,
       editedAtomIndices, affectedAtomIndices, environmentBondRadius)
     : [];
-  untargetedRotors.forEach((rotor) => {
+  const releasedCoreAtomIndices = [...new Set(affectedRotors
+    .flatMap((rotor) => rotor.releasedCoreAtomIndices))].sort((a, b) => a - b);
+  const seedingCore = featureSeedingProtocol === 'v5'
+    ? new Set([...core].filter((atomIndex) => !releasedCoreAtomIndices.includes(atomIndex)))
+    : core;
+  const targetedRegions = new Set(variants.flatMap((variant) => {
+    const region = movableFeatureRegion(molecule, variant.featureAtomIndex, seedingCore, entries);
+    return region ? [region.atomIndices.join(',')] : [];
+  }).concat(spatialVariants.flatMap((variant) => variant.atomPairs.flatMap(([, productAtomIndex]) => {
+    const region = movableFeatureRegion(molecule, productAtomIndex, seedingCore, entries);
+    return region ? [region.atomIndices.join(',')] : [];
+  }))));
+  const untargetedRotors = connectedNonCoreRegions(molecule, seedingCore, entries)
+    .filter((region) => !targetedRegions.has(region.atomIndices.join(',')))
+    .map((region) => singleAnchorEditRotor(molecule, region, seedingCore, entries, positions))
+    .filter(Boolean);
+  const untargetedStrata = untargetedRotors.map((rotor, index) =>
+    stratum(`untargeted-rotor:${rotor.anchorAtomIndex}:${rotor.axisAtomIndex}:${index}`,
+      'untargeted-edit-rotor', false));
+  untargetedRotors.forEach((rotor, rotorIndex) => {
     editRegionAnglesDegrees.forEach((angleDegrees) => {
       const seeded = rotateRegion(positions, rotor.atomIndices, rotor.origin,
         rotor.axis, Number(angleDegrees) * Math.PI / 180);
@@ -482,14 +611,16 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
         attachmentMode:rotor.attachmentMode,
         movedAtomCount:rotor.atomIndices.length,
         movedHeavyAtomCount:rotor.heavyAtomCount,
-        axialAngleDegrees:Number(angleDegrees) });
+        axialAngleDegrees:Number(angleDegrees) }, untargetedStrata[rotorIndex]);
     });
   });
-  affectedRotors.forEach((rotor) => {
+  const affectedStrata = affectedRotors.map((rotor) =>
+    stratum(`affected-rotor:bond-${rotor.bondIndex}`, 'affected-existing-rotor', true));
+  affectedRotors.forEach((rotor, rotorIndex) => {
     editRegionAnglesDegrees.forEach((angleDegrees) => {
       const seeded = rotateRegion(positions, rotor.atomIndices, rotor.origin,
         rotor.axis, Number(angleDegrees) * Math.PI / 180);
-      add(seeded, { method:'affected-existing-rotor-torsion-scan',
+      const candidate = add(seeded, { method:'affected-existing-rotor-torsion-scan',
         bondIndex:rotor.bondIndex,
         fixedEndpointAtomIndex:rotor.fixedEndpointAtomIndex,
         movableEndpointAtomIndex:rotor.movableEndpointAtomIndex,
@@ -500,10 +631,16 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
         affectedAtomIndices:rotor.affectedAtomIndices,
         editedAtomIndices:rotor.editedAtomIndices,
         axialAngleDegrees:Number(angleDegrees) });
+      if (featureSeedingProtocol !== 'v5'
+        || Number(angleDegrees) !== 0 && candidate !== initialCandidate)
+        cover(candidate, affectedStrata[rotorIndex]);
     });
   });
-  variants.forEach((variant) => {
-    const region = movableFeatureRegion(molecule, variant.featureAtomIndex, core, entries);
+  const targetStrata = variants.map((variant, index) => stratum(
+    `captured-feature:${variant.constraintId}:${variant.alternativeId || 'primary'}:${index}`,
+    'captured-feature-map', featureSeedingProtocol === 'v5'));
+  variants.forEach((variant, variantIndex) => {
+    const region = movableFeatureRegion(molecule, variant.featureAtomIndex, seedingCore, entries);
     if (!region) return;
     const anchor = point(positions, region.anchorAtomIndex);
     const feature = point(positions, variant.featureAtomIndex);
@@ -520,14 +657,47 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
       add(seeded, { method:'captured-feature-axis-alignment',
         constraintId:variant.constraintId, alternativeId:variant.alternativeId,
         featureAtomIndex:variant.featureAtomIndex, anchorAtomIndex:region.anchorAtomIndex,
-        movedAtomCount:region.atomIndices.length, axialAngleDegrees:Number(angleDegrees) });
+        movedAtomCount:region.atomIndices.length, axialAngleDegrees:Number(angleDegrees) },
+      targetStrata[variantIndex]);
     });
   });
-  const seeds = Array.from({ length:requested }, (_, index) => unique[index % unique.length]);
-  const releasedCoreAtomIndices = [...new Set(affectedRotors
-    .flatMap((rotor) => rotor.releasedCoreAtomIndices))].sort((a, b) => a - b);
-  return { seeds, uniqueSeedCount:unique.length, requestedCount:requested,
-    targetVariantCount:variants.length, untargetedRotorCount:untargetedRotors.length,
+  const spatialStrata = spatialVariants.map((variant) => stratum(
+    `spatial-feature:${variant.featureId}:feature-${variant.featureIndex}:map-${variant.mappingVariantIndex}`,
+    'spatial-feature-map', true));
+  spatialVariants.forEach((variant, variantIndex) => {
+    if (variant.atomPairs.some(([referenceAtomIndex, productAtomIndex]) =>
+      referenceAtomIndex < 0 || referenceAtomIndex * 3 + 2 >= referencePositions.length
+      || productAtomIndex < 0 || productAtomIndex >= molecule.atoms.length))
+      throw new Error(`Spatial feature ${variant.featureId} atom map is outside the available coordinates`);
+    const placement = placeSeedOnlyFragments({ molecule, initialPositions:positions,
+      referencePositions,
+      hardCoreAtomPairs:[...seedingCore].sort((a, b) => a - b).map((index) => [index, index]),
+      features:[{ id:variant.featureId,
+        mappingVariants:[{ atomPairs:variant.atomPairs }] }],
+      anglesDegrees:editRegionAnglesDegrees });
+    add(placement.positions, { method:'spatial-feature-map-torsion-seed',
+      featureId:variant.featureId, mappingVariantIndex:variant.mappingVariantIndex,
+      placement:placement.features[0] });
+    const ranked = unique.map((candidate, candidateIndex) => ({ candidate, candidateIndex,
+      score:fragmentCartesianScore(referencePositions, candidate.positions,
+        [{ atomPairs:variant.atomPairs }]) }))
+      .sort((first, second) => first.score.sumSquared - second.score.sumSquared
+        || first.candidateIndex - second.candidateIndex);
+    spatialStrata[variantIndex].bestRmsdAngstrom = ranked[0].score.rmsdAngstrom;
+    cover(ranked[0].candidate, spatialStrata[variantIndex]);
+  });
+  const stratified = featureSeedingProtocol === 'v5'
+    ? priorityStratifiedSeeds({ candidates:unique, initialCandidate,
+      strata, requested })
+    : { seeds:Array.from({ length:requested }, (_, index) => unique[index % unique.length]),
+      coverage:{ policy:'legacy-generated-order', requestedCount:requested,
+        generatedUniqueCandidateCount:unique.length,
+        selectedUniqueCandidateCount:Math.min(requested, unique.length),
+        requiredStrataCount:0, coveredRequiredStrataCount:0,
+        allRequiredStrataCovered:true, strata:[] } };
+  return { seeds:stratified.seeds, uniqueSeedCount:unique.length, requestedCount:requested,
+    targetVariantCount:variants.length, spatialFeatureMapCount:spatialVariants.length,
+    untargetedRotorCount:untargetedRotors.length,
     affectedRotorCount:affectedRotors.length, releasedCoreAtomIndices,
     affectedRotors:affectedRotors.map((rotor) => ({
       bondIndex:rotor.bondIndex,
@@ -539,8 +709,9 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
       attachmentMode:rotor.attachmentMode,
     })),
     editRegionAnglesDegrees:Array.from(editRegionAnglesDegrees, Number),
+    coverage:stratified.coverage,
     method:`molarium-edit-region-axis-seeding/${featureSeedingProtocol}`,
-    limitation:featureSeedingProtocol === 'v4'
+    limitation:['v4', 'v5'].includes(featureSeedingProtocol)
       ? 'single-anchor edit regions and pre-existing non-ring single bonds within the declared edit environment are scanned; amide-like and genuinely rigid bonds remain fixed'
       : 'single-anchor edit regions are scanned; affected pre-existing rotors remain fixed' };
 }

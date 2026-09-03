@@ -227,9 +227,13 @@ try {
 
   console.log(`finish-bay-293: searching ${searchChains} poses for the rebuilt distal arm around the fixed proximal core`);
   const refined = await execute('pose.refine', {
-    searchChains, featureSeedingProtocol:'v4',
+    searchChains, featureSeedingProtocol:'v5',
   }, 'finish-bay-293-corrected-pose-refine');
   await saveJson('refinement.json', refined.result.refinement);
+  assert.equal(refined.result.refinement.coverageComplete, true,
+    'The corrected final step did not cover every required pose-seed stratum');
+  assert.equal(refined.result.refinement.coverage?.allRequiredStrataCovered, true,
+    'The corrected final step returned incomplete pose-seed coverage evidence');
   assert.equal(refined.result.refinement.selectedFeasible, true,
     'The corrected final step did not produce a feasible selected pose');
   const selectedIndex = Math.max(0,

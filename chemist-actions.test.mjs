@@ -48,7 +48,7 @@ assert.match(api.describe().actions['session.inspect'].arguments.scope, /pocket/
 assert.match(api.describe().actions['view.setMode'].description, /View, Design, or Simulate/);
 assert.equal(api.describe().actions['view.setMode'].arguments.mode, 'view | build | run');
 assert.match(api.describe().actions['pose.refine'].arguments.featureSeedingProtocol,
-  /v3 \| v4.*default v4/);
+  /v3 \| v4 \| v5.*default v5/);
 assert(!Object.hasOwn(api.describe().actions, 'test.loadObject'));
 assert.match(api.describe().guarantee, /no arbitrary code/);
 assert.match(api.describe().guarantee, /every saved replay and visible playback control executes only public routes/i);

@@ -5072,8 +5072,12 @@ async function runBrowserConstrainedDocking(options = {}) {
         initialPositions:editedPositions, coreAtomIndices,
         editedAtomIndices, affectedAtomIndices,
         hydrogenBondConstraints:mappedHydrogenBonds.constraints,
+        spatialFeatureConstraints,
+        referencePositions:reference.ligand.positions,
         count:requestedConformers,
-        featureSeedingProtocol:options.featureSeedingProtocol ?? 'v4' });
+        featureSeedingProtocol:options.featureSeedingProtocol ?? 'v5' });
+      if (!featureSeedResult.coverage?.allRequiredStrataCovered)
+        throw new Error('Feature-guided pose initialization did not cover every required seed stratum');
       if (featureSeedResult.releasedCoreAtomIndices.length) {
         const releasedProductIndices = new Set(featureSeedResult.releasedCoreAtomIndices);
         const releasedEnvironmentAtomIds = featureSeedResult.releasedCoreAtomIndices
@@ -5331,10 +5335,12 @@ async function runBrowserConstrainedDocking(options = {}) {
           requested:featureSeedResult.requestedCount,
           uniqueSeeds:featureSeedResult.uniqueSeedCount,
           targetVariants:featureSeedResult.targetVariantCount,
+          spatialFeatureMaps:featureSeedResult.spatialFeatureMapCount,
           untargetedEditRotors:featureSeedResult.untargetedRotorCount,
           affectedExistingRotors:featureSeedResult.affectedRotorCount,
           affectedRotorReleases:featureSeedResult.releasedCoreAtomIndices.length,
           editRegionAnglesDegrees:featureSeedResult.editRegionAnglesDegrees,
+          coverage:structuredClone(featureSeedResult.coverage),
           limitation:featureSeedResult.limitation,
         } : null,
         feasibilityRule:'all required constraints rank before energy',
@@ -5352,7 +5358,7 @@ async function runBrowserConstrainedDocking(options = {}) {
             : 'Rigid core alignment alone does not optimize ligand torsions against the receptor.',
           'Edit-lineage atom identity gives an exact, auditable analogue mapping.',
           'Chemically transformed rings are released as complete units while their unchanged external scaffold boundary remains fixed.',
-          ...(posePropagation && featureSeedResult ? [featureSeedResult.method.endsWith('/v4')
+          ...(posePropagation && featureSeedResult ? [!featureSeedResult.method.endsWith('/v3')
             ? 'A pre-existing non-ring single bond is resampled when added, deleted, or substituted atoms alter its local graph environment; conjugated amide-like and ring bonds remain fixed.'
             : 'Pinned feature-seeding protocol v3 samples untargeted edit-region torsions but leaves affected pre-existing rotors fixed.'] : []),
           'Only graph branches containing no fixed scaffold atom are eligible to rotate; local ring moves touching a perceived stereocenter, ring multiple-bond atom, carbonyl, or lactam geometry are excluded.',
@@ -5397,10 +5403,12 @@ async function runBrowserConstrainedDocking(options = {}) {
           requested:featureSeedResult.requestedCount,
           uniqueSeeds:featureSeedResult.uniqueSeedCount,
           targetVariants:featureSeedResult.targetVariantCount,
+          spatialFeatureMaps:featureSeedResult.spatialFeatureMapCount,
           untargetedEditRotors:featureSeedResult.untargetedRotorCount,
           affectedExistingRotors:featureSeedResult.affectedRotorCount,
           affectedRotorReleases:featureSeedResult.releasedCoreAtomIndices.length,
           editRegionAnglesDegrees:featureSeedResult.editRegionAnglesDegrees,
+          coverage:structuredClone(featureSeedResult.coverage),
           limitation:featureSeedResult.limitation,
           seeds:valid.map((entry, index) => ({ conformerIndex:index,
             ...structuredClone(entry.featureSeedAudit),
@@ -5726,11 +5734,13 @@ async function runBrowserConstrainedDocking(options = {}) {
         requestedCount:featureSeedResult.requestedCount,
         uniqueSeedCount:featureSeedResult.uniqueSeedCount,
         targetVariantCount:featureSeedResult.targetVariantCount,
+        spatialFeatureMapCount:featureSeedResult.spatialFeatureMapCount,
         untargetedRotorCount:featureSeedResult.untargetedRotorCount,
         affectedRotorCount:featureSeedResult.affectedRotorCount,
         releasedCoreAtomIndices:[...featureSeedResult.releasedCoreAtomIndices],
         affectedRotors:structuredClone(featureSeedResult.affectedRotors),
         editRegionAnglesDegrees:featureSeedResult.editRegionAnglesDegrees,
+        coverage:structuredClone(featureSeedResult.coverage),
         seedAudits:valid.map((entry, index) => ({ conformerIndex:index,
           ...structuredClone(entry.featureSeedAudit) })),
       } : null,
@@ -10125,8 +10135,8 @@ function installChemistActionsApi(module) {
       if (![8,16,32,64].includes(searchChains))
         throw new Error('searchChains must be 8, 16, 32, or 64');
       const execution = chemistActionEnum(args.execution ?? 'auto', ['auto','serial'], 'execution');
-      const featureSeedingProtocol = chemistActionEnum(args.featureSeedingProtocol ?? 'v4',
-        ['v3','v4'], 'featureSeedingProtocol');
+      const featureSeedingProtocol = chemistActionEnum(args.featureSeedingProtocol ?? 'v5',
+        ['v3','v4','v5'], 'featureSeedingProtocol');
       const select = document.querySelector('#docking-conformer-count');
       select.value = String(searchChains); updateDockingUi();
       const result = await runBrowserConstrainedDocking({
@@ -10136,6 +10146,10 @@ function installChemistActionsApi(module) {
       const selected = result.run.selected;
       return chemistActionSummary({ refinement:{ candidates:result.run.candidates.length,
         feasible:result.run.feasibleCount, selectedRank:selected.rank,
+        coverageComplete:result.featureGuidedSeeding?.coverage?.allRequiredStrataCovered ?? true,
+        coverage:structuredClone(result.featureGuidedSeeding?.coverage || {
+          policy:'not-applicable', allRequiredStrataCovered:true,
+          requiredStrataCount:0, coveredRequiredStrataCount:0 }),
         poseSearchExecution:structuredClone(result.poseSearchExecution || null),
         selectedFeasible:selected.feasible,
         selectedScoreKcalMol:selected.totalScoreKcalMol,
@@ -10157,12 +10171,14 @@ function installChemistActionsApi(module) {
           requestedCount:result.featureGuidedSeeding.requestedCount,
           uniqueSeedCount:result.featureGuidedSeeding.uniqueSeedCount,
           targetVariantCount:result.featureGuidedSeeding.targetVariantCount,
+          spatialFeatureMapCount:result.featureGuidedSeeding.spatialFeatureMapCount,
           untargetedRotorCount:result.featureGuidedSeeding.untargetedRotorCount,
           affectedRotorCount:result.featureGuidedSeeding.affectedRotorCount,
           releasedCoreAtomIndices:structuredClone(
             result.featureGuidedSeeding.releasedCoreAtomIndices),
           affectedRotors:structuredClone(result.featureGuidedSeeding.affectedRotors),
           editRegionAnglesDegrees:result.featureGuidedSeeding.editRegionAnglesDegrees,
+          coverage:structuredClone(result.featureGuidedSeeding.coverage),
           selectedSeedAudit:structuredClone(result.featureGuidedSeeding.seedAudits
             .find((entry) => entry.conformerIndex === selected.conformerIndex) || null),
         } : null } }); },

@@ -1232,7 +1232,7 @@ const featureSeeds = featureGuidedPoseSeeds({ molecule:featureSeedMolecule,
     hydrogen:{ scope:'receptor', point:{ x:0,y:2,z:0 } },
     acceptor:{ scope:'ligand', atomIndex:1 },
     targetLigandFeatureReferencePoint:{ x:0,y:1.2,z:0 } }] });
-assert.equal(featureSeeds.method, 'molarium-edit-region-axis-seeding/v4');
+assert.equal(featureSeeds.method, 'molarium-edit-region-axis-seeding/v5');
 assert.equal(featureSeeds.requestedCount, 7);
 assert.equal(featureSeeds.uniqueSeedCount, 7);
 assert.equal(featureSeeds.untargetedRotorCount, 0,
@@ -1247,6 +1247,7 @@ const multiAnchorSeeds = featureGuidedPoseSeeds({ molecule:{
   atoms:[{ element:'C' }, { element:'N' }, { element:'C' }],
   bonds:[{ a:0,b:1,order:1 }, { a:1,b:2,order:1 }] },
 initialPositions:featureSeedStart, coreAtomIndices:[0,2], count:3,
+featureSeedingProtocol:'v4',
 hydrogenBondConstraints:[{ id:'ring-feature', receptorRole:'donor',
   acceptor:{ scope:'ligand', atomIndex:1 },
   targetLigandFeatureReferencePoint:{ x:0,y:1,z:0 } }] });

@@ -49,6 +49,14 @@ const execute = (action, actionArgs = {}, requestId = action) => browser.evaluat
   })})`);
 const checkpoints = [];
 
+function requireCompleteSeedCoverage(response, label) {
+  const refinement = response?.result?.refinement;
+  if (!refinement?.coverageComplete
+    || refinement.coverage?.allRequiredStrataCovered !== true)
+    throw new Error(`${label} did not cover every required pose-seed stratum`);
+  return response;
+}
+
 async function inspectPhe890(stepId) {
   const pocket = await execute('session.inspect', {
     scope:'pocket', includeCoordinates:false, maximumAtoms:500,
@@ -85,9 +93,10 @@ async function choosePhe890Branch(stepId) {
     }, `${stepId}-apply-phe890-branch-${candidate.rank}`);
     const receptorReference = await execute('pose.updateReceptorReference', {},
       `${stepId}-accept-receptor-branch-${candidate.rank}`);
-    const refined = await execute('pose.refine', { searchChains:branchSearchChains,
-      execution:poseExecution, featureSeedingProtocol:'v4' },
-      `${stepId}-pose-branch-${candidate.rank}`);
+    const refined = requireCompleteSeedCoverage(await execute('pose.refine', {
+      searchChains:branchSearchChains,
+      execution:poseExecution, featureSeedingProtocol:'v5' },
+    `${stepId}-pose-branch-${candidate.rank}`), `${stepId} branch ${candidate.rank}`);
     const selectedPoseIndex = Math.max(0,
       Number(refined.result.refinement.selectedRank || 1) - 1);
     await execute('pose.apply', { index:selectedPoseIndex,
@@ -151,9 +160,10 @@ async function choosePhe890Branch(stepId) {
   }, `${stepId}-apply-selected-phe890-branch`);
   const receptorReference = await execute('pose.updateReceptorReference', {},
     `${stepId}-accept-selected-receptor-branch`);
-  const refinement = await execute('pose.refine', { searchChains:branchSearchChains,
-    execution:poseExecution, featureSeedingProtocol:'v4' },
-    `${stepId}-pose-selected-phe890-branch`);
+  const refinement = requireCompleteSeedCoverage(await execute('pose.refine', {
+    searchChains:branchSearchChains,
+    execution:poseExecution, featureSeedingProtocol:'v5' },
+  `${stepId}-pose-selected-phe890-branch`), `${stepId} selected branch`);
   const selectedPoseIndex = Math.max(0,
     Number(refinement.result.refinement.selectedRank || 1) - 1);
   await execute('pose.apply', { index:selectedPoseIndex },
@@ -247,8 +257,10 @@ try {
       relaxation = rotamerDecision.selected.optimization;
     } else {
       console.log(`${stepId}: fixed-receptor pose search`);
-      const refined = await execute('pose.refine', { searchChains:fixedSearchChains,
-        execution:poseExecution, featureSeedingProtocol:'v4' }, `${stepId}-pose-refine`);
+      const refined = requireCompleteSeedCoverage(await execute('pose.refine', {
+        searchChains:fixedSearchChains,
+        execution:poseExecution, featureSeedingProtocol:'v5' },
+      `${stepId}-pose-refine`), stepId);
       const selectedIndex = Math.max(0,
         Number(refined.result.refinement.selectedRank || 1) - 1);
       await execute('pose.apply', { index:selectedIndex }, `${stepId}-pose-apply`);
@@ -320,7 +332,7 @@ try {
         sampling:'every unique complete chi-angle vector in ranked order, subject only to the explicit branch cap',
         branchPoseSearchChains:branchSearchChains,
         finalPoseSearchChains:branchSearchChains,
-        featureSeedingProtocol:'v4',
+        featureSeedingProtocol:'v5',
         criterion:COUPLED_SIDECHAIN_POSE_SELECTION_CRITERION } },
     checkpoints,
     agentApi:{ schema:description.schema, actions:Object.keys(description.actions),

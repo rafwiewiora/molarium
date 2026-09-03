@@ -150,7 +150,7 @@ const ACTIONS = Object.freeze({
   'pose.refine': Object.freeze({ description:'Run reference-guided pose refinement with the visible search-chain setting.',
     arguments:Object.freeze({ searchChains:'8 | 16 | 32 | 64',
       execution:'auto | serial (optional; auto uses a bounded deterministic worker ensemble)',
-      featureSeedingProtocol:'v3 | v4 (optional; default v4; v3 omits affected-existing-rotor seeding)' }) }),
+      featureSeedingProtocol:'v3 | v4 | v5 (optional; default v5; v5 stratifies required spatial-feature maps and affected rotors before untargeted torsions)' }) }),
   'pose.apply': Object.freeze({
     description:'Apply one returned refined pose by zero-based result index; infeasible poses fail closed unless explicitly overridden.',
     arguments:Object.freeze({ index:'non-negative integer',

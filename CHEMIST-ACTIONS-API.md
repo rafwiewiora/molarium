@@ -221,11 +221,16 @@ record the worker count, elapsed search time, throughput, and any serial fallbac
 reproducibility control: it uses the same seeds, restraint and physical objectives, and candidate
 ordering on the browser main thread.
 
-The optional `featureSeedingProtocol` pins the pose-seed generator. `v3` reproduces the registered
-SOS1 trajectory: it scans the edited single-anchor region but leaves affected pre-existing rotors
-fixed. `v4` is the default for new work and additionally samples eligible pre-existing rotors in
-the declared edit environment. The returned `refinement.featureGuidedSeeding.method` records the
-effective version, allowing a replay `expect` guard to stop if implementation drift changes it.
+The optional `featureSeedingProtocol` pins the pose-seed generator. `v3` scans the edited
+single-anchor region but leaves affected pre-existing rotors fixed. `v4` additionally samples
+eligible pre-existing rotors in the declared edit environment. `v5` is the default for new work:
+it deterministically covers every registered spatial-feature map and affected-rotor stratum before
+allocating remaining chains round-robin across other torsions. A chain cap that cannot cover the
+required strata fails closed. The response exposes `refinement.coverageComplete` and the complete
+machine-readable `refinement.coverage` table; a prospective runner must require both rather than
+publishing a partially covered search. The returned `refinement.featureGuidedSeeding.method`
+records the effective version, allowing a replay `expect` guard to stop if implementation drift
+changes it.
 
 Pose propagation has three separate relaxation concepts. Restraint-biased internal-coordinate
 search first uses selected flat-bottom hydrogen-bond potentials to generate contact-feasible poses;

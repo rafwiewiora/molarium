@@ -72,7 +72,7 @@ assert.deepEqual(Array.from(difluoroSeeds.seeds[1].positions.slice(0, 12)),
 assert(Math.abs(difluoroSeeds.seeds[1].positions[14]) > 0.4,
   'the pre-existing aromatic ring must actually rotate out of plane');
 assert.throws(() => featureGuidedPoseSeeds({ ...difluoroSeedInput,
-  featureSeedingProtocol:'v2' }), /must be v3 or v4/);
+  featureSeedingProtocol:'v2' }), /must be v3, v4, or v5/);
 
 const rigidRing = {
   atoms:[
