@@ -3,7 +3,8 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { COUPLED_SIDECHAIN_POSE_SELECTION_CRITERION,
-  selectCoupledSidechainPoseBranch } from '../docking/sidechain-rotamers.mjs';
+  evaluatePostRelaxedLigandPocket, selectCoupledSidechainPoseBranch,
+  uniqueSidechainRotamerCandidates } from '../docking/sidechain-rotamers.mjs';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -15,15 +16,15 @@ const valueFor = (name) => {
 };
 const requestedStop = valueFor('--stop-after');
 const relaxMethod = valueFor('--relax') || 'induced-fit-webgpu';
-const branchCount = Number(valueFor('--rotamer-branches') || 4);
+const branchCount = Number(valueFor('--rotamer-branches') || 32);
 const branchSearchChains = Number(valueFor('--branch-search-chains') || 32);
 const allSteps = ['scaffold-rewrite', 'fragment-merge', 'open-phe890-pocket', 'finish-bay-293'];
 const stopIndex = requestedStop ? allSteps.indexOf(requestedStop) : allSteps.length - 1;
 if (stopIndex < 0) throw new Error(`Unknown --stop-after step: ${requestedStop}`);
 if (!['none', 'pocket-webgpu', 'induced-fit-webgpu'].includes(relaxMethod))
   throw new Error(`Unsupported --relax method: ${relaxMethod}`);
-if (!Number.isInteger(branchCount) || branchCount < 1 || branchCount > 8)
-  throw new Error('--rotamer-branches must be an integer from 1 to 8');
+if (!Number.isInteger(branchCount) || branchCount < 1 || branchCount > 32)
+  throw new Error('--rotamer-branches must be an integer from 1 to 32');
 if (![8,16,32,64].includes(branchSearchChains))
   throw new Error('--branch-search-chains must be 8, 16, 32, or 64');
 const stepIds = allSteps.slice(0, stopIndex + 1);
@@ -61,34 +62,10 @@ async function enumeratePhe890(stepId, ordinal = 'initial') {
   return response.result.sidechainRotamers;
 }
 
-function circularAngleDistance(first, second) {
-  const delta = Math.abs(Number(first) - Number(second)) % 360;
-  return Math.min(delta, 360 - delta);
-}
-
-function diversePhe890Candidates(candidates, maximum) {
-  if (maximum < 3) return candidates.slice(0, maximum);
-  const selected = [];
-  for (const target of [-60, 60, 180]) {
-    const best = candidates.reduce((current, candidate) => {
-      const distance = circularAngleDistance(candidate.chiDegrees[0], target);
-      if (!current || distance < current.distance
-        || distance === current.distance && candidate.rank < current.candidate.rank)
-        return { candidate, distance };
-      return current;
-    }, null)?.candidate;
-    if (best && !selected.includes(best)) selected.push(best);
-  }
-  for (const candidate of candidates) {
-    if (selected.length >= maximum) break;
-    if (!selected.includes(candidate)) selected.push(candidate);
-  }
-  return selected.sort((left, right) => left.rank - right.rank);
-}
-
 async function choosePhe890Branch(stepId) {
   let ensemble = await enumeratePhe890(stepId);
-  const candidates = diversePhe890Candidates(ensemble.candidates, branchCount);
+  const candidates = uniqueSidechainRotamerCandidates(ensemble.candidates,
+    { maximum:branchCount });
   if (!candidates.length) throw new Error('Phe890 enumeration returned no candidates');
   const branches = [];
   for (let ordinal = 0; ordinal < candidates.length; ordinal++) {
@@ -103,7 +80,7 @@ async function choosePhe890Branch(stepId) {
     const receptorReference = await execute('pose.updateReceptorReference', {},
       `${stepId}-accept-receptor-branch-${candidate.rank}`);
     const refined = await execute('pose.refine', { searchChains:branchSearchChains,
-      featureSeedingProtocol:'v3' },
+      featureSeedingProtocol:'v4' },
       `${stepId}-pose-branch-${candidate.rank}`);
     const selectedPoseIndex = Math.max(0,
       Number(refined.result.refinement.selectedRank || 1) - 1);
@@ -121,6 +98,10 @@ async function choosePhe890Branch(stepId) {
     const pocket = await execute('session.inspect', {
       scope:'pocket', includeCoordinates:true, maximumAtoms:500,
     }, `${stepId}-inspect-pocket-branch-${candidate.rank}`);
+    const receptorAware = evaluatePostRelaxedLigandPocket({
+      ligandAtoms:ligand.result.atoms,
+      pocketAtoms:pocket.result.atoms,
+    });
     branches.push({
       candidateIndex:candidate.index, candidateRank:candidate.rank,
       source:candidate.source, chiDegrees:candidate.chiDegrees,
@@ -133,6 +114,16 @@ async function choosePhe890Branch(stepId) {
       parameterization:parameterized.result.parameterization,
       relaxedLigandCoordinateSha256:coordinateDigest(ligand),
       relaxedPocketCoordinateSha256:coordinateDigest(pocket),
+      postRelaxation:{
+        receptorAware,
+        topPoseEvidence:{
+          schema:'molarium.coordinate-evidence/v1',
+          ligand:ligand.result,
+          pocket:pocket.result,
+          ligandCoordinateSha256:coordinateDigest(ligand),
+          pocketCoordinateSha256:coordinateDigest(pocket),
+        },
+      },
       optimization:relaxed.result.optimization,
     });
     await execute('history.undo', {}, `${stepId}-undo-branch-${candidate.rank}-relaxation`);
@@ -154,8 +145,8 @@ async function choosePhe890Branch(stepId) {
   }, `${stepId}-apply-selected-phe890-branch`);
   const receptorReference = await execute('pose.updateReceptorReference', {},
     `${stepId}-accept-selected-receptor-branch`);
-  const refinement = await execute('pose.refine', { searchChains:64,
-    featureSeedingProtocol:'v3' },
+  const refinement = await execute('pose.refine', { searchChains:branchSearchChains,
+    featureSeedingProtocol:'v4' },
     `${stepId}-pose-selected-phe890-branch`);
   const selectedPoseIndex = Math.max(0,
     Number(refinement.result.refinement.selectedRank || 1) - 1);
@@ -166,6 +157,30 @@ async function choosePhe890Branch(stepId) {
   const relaxation = await execute('optimization.run', {
     method:'induced-fit-webgpu',
   }, `${stepId}-relax-selected-phe890-branch`);
+  const ligand = await execute('session.inspect', {
+    scope:'ligand', includeCoordinates:true, maximumAtoms:256,
+  }, `${stepId}-inspect-selected-ligand`);
+  const pocket = await execute('session.inspect', {
+    scope:'pocket', includeCoordinates:true, maximumAtoms:500,
+  }, `${stepId}-inspect-selected-pocket`);
+  const ligandCoordinateSha256 = coordinateDigest(ligand);
+  const pocketCoordinateSha256 = coordinateDigest(pocket);
+  if (ligandCoordinateSha256 !== selected.relaxedLigandCoordinateSha256
+    || pocketCoordinateSha256 !== selected.relaxedPocketCoordinateSha256)
+    throw new Error('The selected post-relaxation branch changed during deterministic replay');
+  const postRelaxation = {
+    receptorAware:evaluatePostRelaxedLigandPocket({
+      ligandAtoms:ligand.result.atoms,
+      pocketAtoms:pocket.result.atoms,
+    }),
+    topPoseEvidence:{
+      schema:'molarium.coordinate-evidence/v1',
+      ligand:ligand.result,
+      pocket:pocket.result,
+      ligandCoordinateSha256,
+      pocketCoordinateSha256,
+    },
+  };
   return {
     schema:'molarium.sidechain-branch-decision/v1', residue:'PHE A890',
     coordinateInputClass:'registered-hit-only', branchCount:branches.length,
@@ -173,7 +188,7 @@ async function choosePhe890Branch(stepId) {
       inputChiDegrees:ensemble.inputChiDegrees,
       generatedCandidateCount:ensemble.generatedCandidateCount,
       retainedCandidateCount:ensemble.candidates.length,
-      branchSampling:'best-ranked representative of each canonical chi1 basin, then global rank' },
+      branchSampling:'every unique complete chi-angle vector in ranked order, subject only to the explicit branch cap' },
     branches, selected:{ candidateIndex:finalCandidate.index,
       candidateRank:finalCandidate.rank, source:finalCandidate.source,
       chiDegrees:finalCandidate.chiDegrees,
@@ -182,6 +197,7 @@ async function choosePhe890Branch(stepId) {
       receptorReference:receptorReference.result.receptorReference,
       refinement:refinement.result.refinement,
       parameterization:parameterization.result.parameterization,
+      postRelaxation,
       optimization:relaxation.result.optimization },
   };
 }
@@ -226,7 +242,7 @@ try {
     } else {
       console.log(`${stepId}: fixed-receptor pose search`);
       const refined = await execute('pose.refine', { searchChains:64,
-        featureSeedingProtocol:'v3' }, `${stepId}-pose-refine`);
+        featureSeedingProtocol:'v4' }, `${stepId}-pose-refine`);
       const selectedIndex = Math.max(0,
         Number(refined.result.refinement.selectedRank || 1) - 1);
       await execute('pose.apply', { index:selectedIndex }, `${stepId}-pose-apply`);
@@ -293,8 +309,10 @@ try {
     protocol:{ initialCoordinateInput:'PDB 5OVE/AXE only',
       sequentialPredictedReferences:true, relaxMethod,
       phe890Branching:{ stepId:'open-phe890-pocket', branchCount,
-        sampling:'best-ranked representative of each canonical chi1 basin, then global rank',
-        branchPoseSearchChains:branchSearchChains, finalPoseSearchChains:64,
+        sampling:'every unique complete chi-angle vector in ranked order, subject only to the explicit branch cap',
+        branchPoseSearchChains:branchSearchChains,
+        finalPoseSearchChains:branchSearchChains,
+        featureSeedingProtocol:'v4',
         criterion:COUPLED_SIDECHAIN_POSE_SELECTION_CRITERION } },
     checkpoints,
     agentApi:{ schema:description.schema, actions:Object.keys(description.actions),

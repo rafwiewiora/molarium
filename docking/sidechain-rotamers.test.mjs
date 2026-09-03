@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { applySidechainRotamer, assertSidechainRotamerCoordinateGuards,
-  enumerateSidechainRotamers, selectSidechainRotamerCandidate,
-  selectCoupledSidechainPoseBranch, SIDECHAIN_ROTAMER_SCHEMA } from './sidechain-rotamers.mjs';
+  enumerateSidechainRotamers, evaluatePostRelaxedLigandPocket,
+  selectSidechainRotamerCandidate, selectCoupledSidechainPoseBranch,
+  SIDECHAIN_ROTAMER_SCHEMA, uniqueSidechainRotamerCandidates } from './sidechain-rotamers.mjs';
 
 const atom = (atomName, x, y, z, extra = {}) => ({ record:'ATOM', residueName:'PHE',
   chain:'A', residueIndex:890, insertionCode:'', element:'C', atomName, x, y, z, ...extra });
@@ -28,6 +29,20 @@ assert(ensemble.candidates.length >= 8);
 assert(ensemble.candidates.some((entry) => Math.abs(Math.abs(entry.chiDegrees[0]) - 180) < 1));
 assert(ensemble.candidates.some((entry) => Math.abs(entry.chiDegrees[1] - 90) < 1));
 assert(ensemble.candidates[0].score <= ensemble.candidates.at(-1).score);
+const completeChiBranches = uniqueSidechainRotamerCandidates(ensemble.candidates);
+assert.equal(completeChiBranches.length, ensemble.candidates.length,
+  'the enumerator already returns unique complete chi-angle branches');
+assert(completeChiBranches.some((first, firstIndex) => completeChiBranches.some((second, secondIndex) =>
+  firstIndex !== secondIndex
+  && Math.abs(first.chiDegrees[0] - second.chiDegrees[0]) < 1
+  && Math.abs(first.chiDegrees[1] - second.chiDegrees[1]) > 1)),
+'distinct chi2 branches sharing chi1 are retained for coupled search');
+assert.deepEqual(uniqueSidechainRotamerCandidates([
+  { rank:1, chiDegrees:[180,90] },
+  { rank:2, chiDegrees:[-180,450] },
+  { rank:3, chiDegrees:[180,-90] },
+]), [{ rank:1, chiDegrees:[180,90] }, { rank:3, chiDegrees:[180,-90] }],
+'only complete circularly equivalent chi vectors are deduplicated');
 
 const originalBackbone = molecule.atoms.slice(0, 4).map(({ x,y,z }) => [x,y,z]);
 const originalLigand = [molecule.atoms[11].x, molecule.atoms[11].y, molecule.atoms[11].z];
@@ -98,39 +113,83 @@ assert.throws(() => assertSidechainRotamerCoordinateGuards({
   currentCoordinateSha256:stableSelectionEnsemble.inputCoordinateSha256 }), /coordinates changed/,
 'coordinate hashes from different numerical executions cannot be cross-paired');
 
+const separatedGeometry = evaluatePostRelaxedLigandPocket({
+  ligandAtoms:[{ atomId:'ligand-c', element:'C', coordinatesAngstrom:[0,0,0] }],
+  pocketAtoms:[
+    { atomId:'ligand-c', element:'C', coordinatesAngstrom:[0,0,0] },
+    { atomId:'receptor-c', element:'C', coordinatesAngstrom:[4,0,0] },
+  ],
+});
+assert.equal(separatedGeometry.feasible, true);
+assert.equal(separatedGeometry.severeClashes, 0);
+assert.equal(separatedGeometry.ligandHeavyAtomCount, 1);
+assert.equal(separatedGeometry.receptorHeavyAtomCount, 1,
+  'the ligand copy included in pocket inspection is excluded from receptor scoring');
+const clashingGeometry = evaluatePostRelaxedLigandPocket({
+  ligandAtoms:[{ atomId:'ligand-c', element:'C', coordinatesAngstrom:[0,0,0] }],
+  pocketAtoms:[{ atomId:'receptor-c', element:'C', coordinatesAngstrom:[1,0,0] }],
+});
+assert.equal(clashingGeometry.feasible, false);
+assert.equal(clashingGeometry.severeClashes, 1);
+assert(clashingGeometry.score > separatedGeometry.score);
+
+const postRelaxation = (score, feasible = true) => ({
+  receptorAware:{ feasible, score },
+  topPoseEvidence:{
+    schema:'molarium.coordinate-evidence/v1',
+    ligand:{ atoms:[{ atomId:'ligand-c', element:'C', coordinatesAngstrom:[0,0,0] }] },
+    pocket:{ atoms:[{ atomId:'receptor-c', element:'C', coordinatesAngstrom:[4,0,0] }] },
+    ligandCoordinateSha256:'a'.repeat(64),
+    pocketCoordinateSha256:'b'.repeat(64),
+  },
+});
 const coupled = [
   { candidateRank:1, refinement:{ selectedFeasible:true, selectedScoreKcalMol:-119,
     selectedChemicalValidity:{ additionalStericClashes:2 } },
-    optimization:{ finalEnergy:-4082 } },
+    postRelaxation:postRelaxation(24),
+    optimization:{ accepted:true, finalEnergy:-4082 } },
   { candidateRank:6, refinement:{ selectedFeasible:true, selectedScoreKcalMol:-683,
     selectedChemicalValidity:{ additionalStericClashes:0 } },
-    optimization:{ finalEnergy:-3987 } },
+    postRelaxation:postRelaxation(3),
+    optimization:{ accepted:true, finalEnergy:-3987 } },
   { candidateRank:7, refinement:{ selectedFeasible:true, selectedScoreKcalMol:-106,
     selectedChemicalValidity:{ additionalStericClashes:1 } },
-    optimization:{ finalEnergy:-3757 } },
+    postRelaxation:postRelaxation(12),
+    optimization:{ accepted:true, finalEnergy:-3757 } },
 ];
 assert.equal(selectCoupledSidechainPoseBranch(coupled).candidateRank, 6,
-  'growth-induced clashes outrank non-comparable receptor baselines and vacuum minima');
+  'absolute post-relaxation receptor geometry outranks baseline-relative pre-relax values');
 assert.equal(selectCoupledSidechainPoseBranch([
   { candidateRank:6, refinement:{ selectedFeasible:true, selectedScoreKcalMol:40,
     selectedChemicalValidity:{ additionalStericClashes:0 } },
-  optimization:{ finalEnergy:-3983 } },
+  postRelaxation:postRelaxation(30),
+  optimization:{ accepted:true, finalEnergy:-3983 } },
   { candidateRank:7, refinement:{ selectedFeasible:true, selectedScoreKcalMol:-87,
     selectedChemicalValidity:{ additionalStericClashes:2 } },
-  optimization:{ finalEnergy:-3754 } },
-]).candidateRank, 6, 'a separately normalized relative score cannot mask two new clashes');
+  postRelaxation:postRelaxation(2),
+  optimization:{ accepted:true, finalEnergy:-3754 } },
+]).candidateRank, 7,
+'selection reverses when the post-relax receptor-aware ranking reverses, regardless of pre-relax clashes');
 assert.equal(selectCoupledSidechainPoseBranch([
   { candidateRank:2, refinement:{ selectedFeasible:true, selectedScoreKcalMol:-10,
     selectedChemicalValidity:{ additionalStericClashes:0 } },
-    optimization:{ finalEnergy:-20 } },
+    postRelaxation:postRelaxation(0),
+    optimization:{ accepted:true, finalEnergy:-20 } },
   { candidateRank:1, refinement:{ selectedFeasible:true, selectedScoreKcalMol:-10,
     selectedChemicalValidity:{ additionalStericClashes:0 } },
-    optimization:{ finalEnergy:-30 } },
+    postRelaxation:postRelaxation(0),
+    optimization:{ accepted:true, finalEnergy:-30 } },
 ]).candidateRank, 1, 'final relaxed energy breaks exact pose-score ties');
 assert.throws(() => selectCoupledSidechainPoseBranch([
   { refinement:{ selectedFeasible:false, selectedScoreKcalMol:-100,
     selectedChemicalValidity:{ additionalStericClashes:0 } },
-    optimization:{ finalEnergy:-1000 } },
-]), /No side-chain branch/);
+    postRelaxation:postRelaxation(0, false),
+    optimization:{ accepted:true, finalEnergy:-1000 } },
+]), /post-relaxation receptor-aware evidence/);
+assert.throws(() => selectCoupledSidechainPoseBranch([
+  { candidateRank:1, refinement:{ selectedFeasible:true, selectedScoreKcalMol:-100 },
+    optimization:{ accepted:true, finalEnergy:-1000 } },
+]), /post-relaxation receptor-aware evidence/,
+'pre-relax scoring cannot silently stand in for missing current-state evidence');
 
 console.log('Side-chain rotamer enumeration: PASS');
