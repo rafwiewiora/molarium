@@ -38,12 +38,13 @@ const presentationScript = buildPocketInterfaceStory({
   actions:sourceActions,
 }, { sourcePath:relative(root, scriptPath), sourceSha256:digest(sourceScriptBytes) });
 const presentationScriptSha256 = await actionScriptSha256(presentationScript);
+const presentationBytes = Buffer.from(`${JSON.stringify(presentationScript, null, 2)}\n`);
 
 await mkdir(dirname(output), { recursive:true });
 const temporary = await mkdtemp(join(tmpdir(), 'molarium-interface-movie-'));
 const publicationStaging = await mkdtemp(join(dirname(output),
   `.${basename(output)}.pending-`));
-const presentationPath = join(temporary, 'presentation.action-script.json');
+const presentationPath = join(publicationStaging, 'presentation.action-script.json');
 const frameDirectory = join(temporary, 'frames');
 const qaDirectory = join(publicationStaging, 'qa');
 let browser = null;
@@ -138,7 +139,7 @@ async function waitForVisibleResult(actionNumber, timeoutMs = 5000) {
 try {
   await mkdir(frameDirectory);
   await mkdir(qaDirectory, { recursive:true });
-  await writeFile(presentationPath, `${JSON.stringify(presentationScript, null, 2)}\n`);
+  await writeFile(presentationPath, presentationBytes);
   browser = await startMolariumBrowser({ root,
     appPath:'index.html?blank=1&designer-moves-movie=1', width, height, localOnly:true });
   browserVersion = await browser.client.call('Browser.getVersion');
@@ -153,26 +154,14 @@ try {
   await delay(400);
   await appendFrame('Molarium Design interface before import', Math.round(fps * 1.5));
 
-  const documentNode = await browser.client.call('DOM.getDocument', { depth:1 });
-  const fileNode = await browser.client.call('DOM.querySelector', {
-    nodeId:documentNode.root.nodeId, selector:'#designer-move-file',
-  });
-  await browser.client.call('DOM.setFileInputFiles', {
-    nodeId:fileNode.nodeId, files:[presentationPath],
-  });
-  await browser.evaluate(`document.querySelector('#designer-move-file')
-    .dispatchEvent(new Event('change', {bubbles:true})); true`);
-  try {
-    await waitFor(async () => browser.evaluate(`document.querySelector('#designer-move-status')
-      .textContent.includes('replayable move')`), 30000, 'imported designer moves');
-  } catch (error) {
-    const diagnostic = await browser.evaluate(`(() => ({
-      status:document.querySelector('#designer-move-status')?.textContent || '',
-      notice:document.querySelector('#notice')?.classList.contains('hidden')
-        ? '' : document.querySelector('#notice')?.textContent || '',
-    }))()`);
-    throw new Error(`${error.message}; status=${JSON.stringify(diagnostic.status)}; notice=${JSON.stringify(diagnostic.notice)}`);
-  }
+  const importEnvelope = await browser.evaluate(`window.MolariumChemistActions.execute(${JSON.stringify({
+    requestId:`renderer-import-${presentationScriptSha256.slice(0, 12)}`,
+    action:'designerScript.load', args:{ script:presentationScript },
+  })})`);
+  if (importEnvelope?.status !== 'completed')
+    throw new Error(`Public designerScript.load failed: ${importEnvelope?.error || importEnvelope?.status || 'unknown status'}`);
+  await waitFor(async () => browser.evaluate(`document.querySelector('#designer-move-status')
+    .textContent.includes('replayable move')`), 10000, 'visible imported designer moves');
   await appendFrame('Imported JSON action script', Math.round(fps * 1.5));
 
   await browser.evaluate(`document.querySelector('#replay-designer-moves').click(); true`);
@@ -249,7 +238,8 @@ try {
     operationBoundary:'The renderer imports JSON and presses visible Molarium controls; all molecular operations execute through window.MolariumChemistActions.',
     sourceScript:{ path:relative(root, scriptPath), fileSha256:digest(sourceScriptBytes),
       actionScriptSha256:await actionScriptSha256(sourceScript), actions:sourceScript.actions.length },
-    presentationScript:{ actionScriptSha256:presentationScriptSha256,
+    presentationScript:{ path:'presentation.action-script.json',
+      fileSha256:digest(presentationBytes), actionScriptSha256:presentationScriptSha256,
       actions:presentationScript.actions.length, insertedViewActions:
         presentationScript.actions.length - sourceActions.length,
       timeline:presentationScript.actions.map((step, index) => ({

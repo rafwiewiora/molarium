@@ -42,14 +42,16 @@ try {
     'utf8');
   assert.match(renderer, /replayStatus !== 'completed'/);
   assert.match(renderer, /promoteCompletedRender\(\{ stagingDirectory:publicationStaging/);
-  assert.match(renderer, /30000, 'imported designer moves'/,
-    'cold browser import receives a bounded 30-second readiness window');
   assert.match(renderer, /await window\.MolariumChemistActionsReady/,
-    'the renderer must await API installation before injecting a file-change event');
+    'the renderer must await API installation before loading the replay');
   assert.match(renderer, /document\.readyState !== 'complete'/,
     'the renderer must not race the application module and its UI listeners');
-  assert.match(renderer, /status=\$\{JSON\.stringify\(diagnostic\.status\)\}/,
-    'import failures surface the visible replay status');
+  assert.match(renderer, /action:'designerScript\.load'/,
+    'the renderer imports the exact JSON through the public Agent API');
+  assert.doesNotMatch(renderer, /DOM\.setFileInputFiles/,
+    'the renderer must not depend on a synthetic operating-system file event');
+  assert.match(renderer, /path:'presentation\.action-script\.json'/,
+    'the exact public API replay JSON must be retained with the render artifact');
   assert.match(renderer, /entry\.requestId === 'story-/,
     'the renderer must identify constituent moves by public request ID, not audit-array position');
   assert.doesNotMatch(renderer, /records\[\$\{auditBaseline \+ actionNumber\}\]/,
