@@ -1,3 +1,50 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[margin=0.78in]{geometry}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{listings}
+
+\definecolor{molblue}{RGB}{20,96,126}
+\hypersetup{colorlinks=true,linkcolor=molblue,urlcolor=molblue,
+  pdftitle={Molarium Appendix B: Scientific workflows for humans and agents},
+  pdfauthor={Rafal P. Wiewiora, W. Patrick Walters, and Woody Sherman}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+\setlist{nosep}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible,keepspaces=true}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\color{gray}Molarium --- Appendix B}
+\fancyhead[R]{\footnotesize\color{gray}Wiewiora, Walters, and Sherman}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\newcommand{\appendixsection}[2]{%
+  \clearpage
+  \refstepcounter{section}%
+  \setcounter{subsection}{0}%
+  \begin{center}
+    {\Large\bfseries\color{molblue}APPENDIX \Alph{section}}\\[0.55em]
+    {\LARGE\bfseries\color{molblue}#1}
+  \end{center}
+  \vspace{0.8em}
+  \label{#2}%
+}
+
+\begin{document}
+\setcounter{section}{1}
+\appendixsection{Working with Molarium: scientific workflows for humans and agents}{app:manual}
 \begingroup
 \setlength{\parskip}{5.5pt}
 \setlength{\emergencystretch}{2em}
@@ -601,3 +648,4 @@ The current workbench does not provide missing-loop construction, membrane or ge
 {\footnotesize
 This task-centered appendix intentionally omits maintainer file paths, source-line numbers, worker lifecycle details, JSON nesting limits, deployment internals, and the complete repository test list. Those remain valuable implementation and audit documentation, but they are not required for a scientist or agent to understand how to perform and judge the workflows above.\par}
 \endgroup
+\end{document}

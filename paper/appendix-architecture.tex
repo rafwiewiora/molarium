@@ -627,18 +627,21 @@ Replay rules:
 A stable URL such as \url{https://molarium.org/sos1-hit-to-bay293} identifies the
 story. The friendly URL may point to a newer release later; the release commit
 and selected-route file fingerprint
-\texttt{c3c5cfff681ab34c...a94f4dbf2021} identify the exact bytes reviewed. Its
+\texttt{34d1db8acb8e6c5e...f1d6af713e7aa7} identify the exact bytes reviewed. Its
 canonical action-script fingerprint
-\texttt{24b6a50718c7cdd3...8fb896fc9} identifies the normalized JSON content, so
+\texttt{b042f0e6d4c6f569...49f4105b1d8f790} identifies the normalized JSON content, so
 harmless whitespace changes do not create a logically new route.
 
 The practical workflow is therefore: capture a trusted starting snapshot;
 explore poses or conformations while saving the action audit; apply and relax a
 selected state while saving its numerical record; record the decision and
-parentage in the ledger; and publish the replay script, result, release commit,
-and fingerprints together. The first three steps run in the live product. The
-one-click conversion of those exports into the final ledger remains to be wired
-into that interface.
+parentage in Design History; and publish the replay script, result, release
+commit, and fingerprints together. The live product exposes campaign creation,
+complete molecular-state commits, branches, explicit two-parent merges,
+decisions, verification, import, and export. A commit can attach the completed
+public actions since its parent, while the molecular snapshot remains
+authoritative because the action script does not capture every UI or calculation
+record.
 
 \subsection{SOS1 hit-to-BAY-293 interface movie}
 \label{app:sos1-movie}
