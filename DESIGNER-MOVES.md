@@ -6,6 +6,21 @@ visible interface. A saved route is ordinary JSON with schema
 human captions. It contains no executable code, private callbacks, force-field objects, or direct
 coordinate replacement.
 
+This is a hard boundary. The story builder validates the complete transformed script—including
+presentation steps—against the exported public action manifest. A deep link invokes
+`designerScript.loadRegistered`, which resolves the registry entry, verifies the pinned source
+hash, builds and hashes the interface presentation, installs it on a blank canvas, and enters
+Design mode as one audited action. The visible Play/Pause, Previous/Next, and Restart controls invoke
+`designerScript.play`, `designerScript.step`, and `designerScript.restart`. The replay runner then
+executes every constituent move with `api.execute({ action, args })`. There is no movie-only
+scientific operation or private coordinate setter. An agent operating the API can perform every
+operation shown in the replay and receives the same structured results used by later steps.
+Before and after each constituent move, playback calls public
+`interface.presentDesignerStep { index, phase }`; this route owns the visible control cue, compact
+layout, central caption, result treatment, and review checkpoint without changing the scientific
+request. `designerScript.export` is the single serializer used by agents and the human export
+buttons for recorded actions, the execution log, and the installed script.
+
 Three related JSON records remain separate:
 
 - a registered input protocol uses `molarium.registered-design-route/v1`;
@@ -39,12 +54,18 @@ different artifact and do not share these action names.
     },
     {
       "action": "pose.applySidechainRotamer",
-      "args": { "index": 5 },
+      "args": { "chiDegrees": [-180, 90] },
       "caption": "Apply the selected Phe890 branch"
     }
   ]
 }
 ```
+
+The chi-angle selector identifies the intended physical branch even if a later implementation ranks
+the same deterministic candidates in a different order. Exact byte-for-byte workflows can instead
+select the candidate's returned `coordinateSha256` and optionally require both the enumerated input
+and selected-coordinate hashes. `index` remains available for legacy scripts and immediate choices
+from the visible list, but it is not a stable branch identity.
 
 The example is shortened for readability. A real script must include preparation, reference
 capture, pose refinement, parameterization, and any requested optimization in their execution
@@ -144,19 +165,29 @@ For a product-facing movie, `npm run render:designer-moves-interface` starts fro
 imports the same JSON through the visible Design panel, presses **▶ Play story**, and records the
 real Molarium interface while the public actions run. The transport changes to **❚❚ Pause**
 during execution and pauses at the next action boundary, after the current scientific operation
-finishes. While paused, **◀** and **▶** move through already-computed application checkpoints;
-they restore the molecular coordinates, camera, active panels, pose results, and calculation
-display without executing or deleting an Agent/API action. **Continue** first returns to the live
+finishes. While paused, **◀** and **▶** invoke the public `designerScript.step` action to review
+already-computed application checkpoints. That action restores the molecular coordinates, camera,
+active panels, pose results, and calculation display without re-executing or deleting a scientific
+constituent action. **Continue** first returns to the live
 execution frontier and then resumes. **↺ Restart** returns to the blank canvas. Presentation-only `view.setDisplay` and
 `view.focusComponent` actions select a clean chemist pocket view and keep the active ligand in
 frame; they do not change molecular coordinates or replace any scientific action.
+
+The interface renderer writes its MP4, audit, manifest, and synchronized QA frames into a private
+staging directory. It publishes that directory only after every public action and every `expect`
+check has completed, FFmpeg and FFprobe have succeeded, and the manifest is marked complete. Any
+failure exits nonzero, deletes the staged artifacts, and leaves the previous movie and paper-frame
+sources unchanged. The paper figure builder accepts only a complete manifest with replay status
+`completed` and verifies each selected frame's SHA-256 before updating the figure.
 
 Importing a valid script clears the existing molecule before installing the story. This guarantees
 that the first molecular state is produced by the first recorded action, rather than inherited
 from the viewer's launch molecule or a previous session.
 
 Replay uses only `api.execute({ action, args })`; the script cannot invoke private application
-routes. Arguments should use persistent design atom IDs rather than array indices. Values returned
+routes. Optional `expect` entries compare named result fields with exact JSON values and stop the
+replay before the next move on any mismatch. Arguments should use persistent design atom IDs rather
+than array indices. Values returned
 by one action can be captured and referenced by later actions with the existing `capture` and
 `{ "$binding": "name" }` fields supported by `molarium.chemist-action-script/v1`.
 
@@ -165,7 +196,7 @@ by one action can be captured and referenced by later actions with the existing 
 The paper-facing permalink is `https://molarium.org/sos1-hit-to-bay293`. It opens Molarium on a
 blank canvas with the selected route preloaded at move 0; the reader explicitly presses
 **▶ Play story** to begin. The registered presentation retains all 33 scientific actions and
-adds the same 15 view/focus actions used by the interface movie. The deployment redirects this
+adds the same 18 view/focus actions used by the interface movie. The deployment redirects this
 stable path to the registered story ID, so the paper URL does not expose an asset path or require
 a manual JSON import.
 
@@ -183,8 +214,10 @@ The example is pinned to the successful run whose audit SHA-256 is
 
 The defensible methods statement is: starting from the coordinate-bearing 5OVE/AXE hit, Molarium
 grew the ligand until compound 21 clashed with Phe890-in; public actions enumerated three Phe890
-rotamer basins, jointly refined ligand poses for each tested branch, selected rotamer index 5 under
-the registered criterion, and propagated the predicted receptor state to BAY-293. The smooth movie
+rotamer basins, jointly refined ligand poses for each tested branch, selected the
+χ1/χ2 = −180°/90° branch under the registered criterion, and propagated the predicted receptor
+state to BAY-293. The selected-route replay pins the v3 pose-seeding protocol and exact rotamer
+input/output coordinate hashes, and refuses infeasible pose application. The smooth movie
 motion between endpoints is visualization, not molecular dynamics. Tyr884 was **not** predicted in
 this run: its structural difference is a historical comparison between deposited structures.
 

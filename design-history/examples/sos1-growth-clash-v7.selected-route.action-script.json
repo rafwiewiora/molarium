@@ -45,7 +45,12 @@
     {
       "action": "pose.refine",
       "args": {
-        "searchChains": 64
+        "searchChains": 64,
+        "featureSeedingProtocol": "v3"
+      },
+      "expect": {
+        "refinement.selectedFeasible": true,
+        "refinement.featureGuidedSeeding.method": "molarium-edit-region-axis-seeding/v3"
       },
       "caption": "Search 64 restrained poses for the rewritten scaffold"
     },
@@ -53,6 +58,9 @@
       "action": "pose.apply",
       "args": {
         "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true
       },
       "caption": "Apply the highest-ranked compound 17 pose"
     },
@@ -92,7 +100,12 @@
     {
       "action": "pose.refine",
       "args": {
-        "searchChains": 64
+        "searchChains": 64,
+        "featureSeedingProtocol": "v3"
+      },
+      "expect": {
+        "refinement.selectedFeasible": true,
+        "refinement.featureGuidedSeeding.method": "molarium-edit-region-axis-seeding/v3"
       },
       "caption": "Search 64 restrained poses for the merged ligand"
     },
@@ -100,6 +113,9 @@
       "action": "pose.apply",
       "args": {
         "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true
       },
       "caption": "Apply the highest-ranked compound 18 pose"
     },
@@ -142,12 +158,28 @@
         "maximumCandidates": 32,
         "receptorAtomId": "reference-5OVE:ATOM:A:PHE:890::CG:2679"
       },
+      "expect": {
+        "sidechainRotamers.inputCoordinateSha256": "e62cdf930726a2f8b15effd1fc267dfebb448eec79c934f18705eb9bb69f9895"
+      },
       "caption": "Enumerate discrete Phe890 side-chain alternatives"
     },
     {
       "action": "pose.applySidechainRotamer",
       "args": {
-        "index": 5
+        "chiDegrees": [
+          -180,
+          90
+        ],
+        "expectedInputCoordinateSha256": "e62cdf930726a2f8b15effd1fc267dfebb448eec79c934f18705eb9bb69f9895",
+        "expectedSelectedCoordinateSha256": "0fdc3367686a264f9c62d0af91251c686afcab6985222a11c1d81037d78ef333"
+      },
+      "expect": {
+        "sidechainRotamer.inputCoordinateSha256": "e62cdf930726a2f8b15effd1fc267dfebb448eec79c934f18705eb9bb69f9895",
+        "sidechainRotamer.selectedCoordinateSha256": "0fdc3367686a264f9c62d0af91251c686afcab6985222a11c1d81037d78ef333",
+        "sidechainRotamer.chiDegrees": [
+          -180,
+          90
+        ]
       },
       "caption": "Choose the predicted Phe890-out branch"
     },
@@ -159,7 +191,12 @@
     {
       "action": "pose.refine",
       "args": {
-        "searchChains": 64
+        "searchChains": 64,
+        "featureSeedingProtocol": "v3"
+      },
+      "expect": {
+        "refinement.selectedFeasible": true,
+        "refinement.featureGuidedSeeding.method": "molarium-edit-region-axis-seeding/v3"
       },
       "caption": "Test compound 21 in the opened Phe890 pocket"
     },
@@ -167,6 +204,9 @@
       "action": "pose.apply",
       "args": {
         "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true
       },
       "caption": "Apply the best compound 21 pose from that branch"
     },
@@ -206,7 +246,12 @@
     {
       "action": "pose.refine",
       "args": {
-        "searchChains": 64
+        "searchChains": 64,
+        "featureSeedingProtocol": "v3"
+      },
+      "expect": {
+        "refinement.selectedFeasible": true,
+        "refinement.featureGuidedSeeding.method": "molarium-edit-region-axis-seeding/v3"
       },
       "caption": "Predict BAY-293 from the frozen compound 21 state"
     },
@@ -214,6 +259,9 @@
       "action": "pose.apply",
       "args": {
         "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true
       },
       "caption": "Apply the highest-ranked BAY-293 pose"
     },

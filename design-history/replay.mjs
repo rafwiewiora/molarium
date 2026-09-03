@@ -1,5 +1,5 @@
 import { CHEMIST_ACTION_DEFINITIONS, CHEMIST_ACTIONS_SCHEMA } from '../chemist-actions.mjs';
-import { cloneRecord, sha256Object } from './integrity.mjs';
+import { canonicalJson, cloneRecord, sha256Object } from './integrity.mjs';
 
 export const ACTION_SCRIPT_SCHEMA = 'molarium.chemist-action-script/v1';
 export const REPLAY_SCHEMA = 'molarium.chemist-action-replay/v1';
@@ -8,9 +8,22 @@ export const READ_ONLY_CHEMIST_ACTIONS = Object.freeze([
   'session.inspect', 'designRoute.inspect', 'structureStory.inspect',
 ]);
 
-// Campaign actions describe the history container itself. Replaying them inside
-// a molecule action script would recursively create or mutate another campaign.
-export const NON_REPLAYABLE_CAMPAIGN_ACTION_PREFIX = 'campaign.';
+// These records control the container or the replay that is producing the
+// audit; embedding them in a molecular action script would recursively create,
+// pause, seek, or decorate that script while it is replaying.
+export const NON_REPLAYABLE_ACTION_PREFIXES = Object.freeze([
+  'campaign.',
+  'designerScript.',
+]);
+export const NON_REPLAYABLE_ACTION_NAMES = Object.freeze([
+  'interface.presentDesignerStep',
+]);
+
+function isNonReplayableAction(action) {
+  const name = String(action || '');
+  return NON_REPLAYABLE_ACTION_NAMES.includes(name)
+    || NON_REPLAYABLE_ACTION_PREFIXES.some((prefix) => name.startsWith(prefix));
+}
 
 const FORBIDDEN_BOUNDARY_KEYS = new Set([
   'directCoordinates', 'internalCallback', 'module', 'eval', 'sourceCode', 'privateRoute',
@@ -60,6 +73,26 @@ function resultAtPath(result, path) {
   return cloneRecord(value);
 }
 
+function validateExpectations(expect, stepNumber) {
+  if (expect == null) return;
+  if (!expect || typeof expect !== 'object' || Array.isArray(expect)
+    || Object.keys(expect).length === 0)
+    throw new Error(`Action step ${stepNumber} expect must be a non-empty object`);
+  for (const [path, expected] of Object.entries(expect)) {
+    if (!/^[a-z][a-z0-9_-]*(?:\.[a-z][a-z0-9_-]*)*$/i.test(path))
+      throw new Error(`Action step ${stepNumber} has an invalid expectation path ${path}`);
+    cloneRecord(expected);
+  }
+}
+
+function assertExpectations(result, expect) {
+  for (const [path, expected] of Object.entries(expect || {})) {
+    const actual = resultAtPath(result, path);
+    if (canonicalJson(actual) !== canonicalJson(expected))
+      throw new Error(`Replay expectation failed at ${path}: expected ${canonicalJson(expected)}, received ${canonicalJson(actual)}`);
+  }
+}
+
 export function validateActionScript(script) {
   if (script?.schema !== ACTION_SCRIPT_SCHEMA || !Array.isArray(script.actions) || !script.actions.length)
     throw new Error(`Expected ${ACTION_SCRIPT_SCHEMA} with at least one action`);
@@ -69,6 +102,7 @@ export function validateActionScript(script) {
     if (!Object.hasOwn(CHEMIST_ACTION_DEFINITIONS, step.action))
       throw new Error(`Action step ${index + 1} uses unavailable route ${step.action}`);
     cloneRecord(step.args || {});
+    validateExpectations(step.expect, index + 1);
     assertNoBoundaryShortcut(step, `Action step ${index + 1}`);
     for (const reference of bindingReferences(step.args || {}))
       if (!declaredBindings.has(reference))
@@ -134,7 +168,7 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
     if (seenSequences.has(sequence)) throw new Error(`Duplicate audit sequence ${sequence}`);
     seenSequences.add(sequence);
     if (record.status !== 'completed' || (requested && !requested.has(sequence))) continue;
-    if (String(record.action || '').startsWith(NON_REPLAYABLE_CAMPAIGN_ACTION_PREFIX)) continue;
+    if (isNonReplayableAction(record.action)) continue;
     if (!includeReadOnly && readOnly.has(record.action)) continue;
     if (!Object.hasOwn(CHEMIST_ACTION_DEFINITIONS, record.action))
       throw new Error(`Audit sequence ${sequence} uses unavailable route ${record.action}`);
@@ -161,11 +195,16 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
       includedRecordCount:actions.length,
       includedSequences:records.filter((record) => record?.status === 'completed'
         && (!requested || requested.has(record.sequence))
-        && !String(record.action || '').startsWith(NON_REPLAYABLE_CAMPAIGN_ACTION_PREFIX)
+        && !isNonReplayableAction(record.action)
         && (includeReadOnly || !readOnly.has(record.action))).map((record) => record.sequence),
       failedRecordsExcluded:records.filter((record) => record?.status !== 'completed').length,
+      nonReplayableActionsExcluded:records.filter((record) => record?.status === 'completed'
+        && isNonReplayableAction(record.action)).length,
       campaignBookkeepingExcluded:records.filter((record) => record?.status === 'completed'
-        && String(record.action || '').startsWith(NON_REPLAYABLE_CAMPAIGN_ACTION_PREFIX)).length,
+        && String(record.action || '').startsWith('campaign.')).length,
+      replayControllerActionsExcluded:records.filter((record) => record?.status === 'completed'
+        && (String(record.action || '').startsWith('designerScript.')
+          || record.action === 'interface.presentDesignerStep')).length,
       readOnlyInspectionsIncluded:Boolean(includeReadOnly),
       ...(provenance == null ? {} : cloneRecord(provenance)) },
   };
@@ -194,6 +233,7 @@ export async function replayActionScript(api, script, { onStep = null,
       const envelope = await api.execute({ requestId:`story-${replay.scriptSha256.slice(0, 12)}-${index + 1}`,
         action:step.action, args });
       record.status = 'completed'; record.result = cloneRecord(envelope.result);
+      assertExpectations(envelope.result, step.expect);
       if (step.capture) {
         record.captured = {};
         for (const [name, path] of Object.entries(step.capture)) {

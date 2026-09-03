@@ -12,7 +12,7 @@ const browser = await startMolariumBrowser({
 
 try {
   await waitFor(async () => browser.evaluate(`document.title === 'SOS1 hit to BAY-293 · Molarium'
-    && document.querySelector('#designer-move-progress-label')?.textContent === '0 / 49'
+    && document.querySelector('#designer-move-progress-label')?.textContent === '0 / 51'
     && !document.querySelector('#replay-designer-moves')?.disabled`), 90000, 'deep-linked story');
   const initial = await browser.evaluate(`({
     url:location.href,
@@ -27,6 +27,10 @@ try {
     transportPosition:getComputedStyle(document.querySelector('#designer-story-dock')).position,
     modeLabels:[...document.querySelectorAll('.mode-bar button')]
       .map((button) => button.textContent.trim()),
+    initialApiActions:window.MolariumChemistActions.history().map((entry) => entry.action),
+    registeredLoad:window.MolariumChemistActions.history()
+      .find((entry) => entry.action === 'designerScript.loadRegistered')?.result
+      ?.registeredDesignerScript || null,
   })`);
   assert.match(initial.url, /\?story=sos1-hit-to-bay293$/);
   assert.match(initial.play, /Play story/);
@@ -37,6 +41,11 @@ try {
   assert.equal(initial.transportVisible, true);
   assert.equal(initial.transportPosition, 'relative');
   assert.deepEqual(initial.modeLabels, ['View', 'Design', 'Simulate']);
+  assert.equal(initial.initialApiActions.at(-1), 'designerScript.loadRegistered',
+    'the deep link must resolve, verify, transform, install, and stage the story through one public API action');
+  assert.equal(initial.registeredLoad?.storyId, 'sos1-hit-to-bay293');
+  assert.match(initial.registeredLoad?.source?.fileSha256 || '', /^[a-f0-9]{64}$/);
+  assert.match(initial.registeredLoad?.installed?.actionScriptSha256 || '', /^[a-f0-9]{64}$/);
   const anchoredTransport = await browser.evaluate(`(async () => {
     const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
     const dock = document.querySelector('#designer-story-dock');
@@ -69,7 +78,7 @@ try {
     `document.querySelector('#replay-designer-moves').textContent.includes('Pause')`),
   90000, 'story play control');
   await waitFor(async () => browser.evaluate(
-    `document.querySelector('#designer-move-status').textContent.startsWith('Move 3 of 49')`),
+    `document.querySelector('#designer-move-status').textContent.startsWith('Move 3 of 51')`),
   90000, 'preparation demo cue');
   const preparationCue = await browser.evaluate(`({
     demoActive:document.body.classList.contains('designer-move-demo-active'),
@@ -118,7 +127,7 @@ try {
     detail:document.querySelector('#designer-move-detail').textContent,
     captionFontSize:parseFloat(getComputedStyle(document.querySelector('#designer-move-caption')).fontSize),
   })`);
-  assert.match(paused.progress, /^\d+ \/ 49$/);
+  assert.match(paused.progress, /^\d+ \/ 51$/);
   assert.ok(paused.caption.length > 12, 'the central caption must explain the scientific story');
   assert.match(paused.detail, /Paused before move|Pause requested/);
   assert.ok(paused.captionFontSize >= 12, 'the central story caption must remain legible');
@@ -144,8 +153,8 @@ try {
   assert.ok(previous.caption.length > 12);
   assert.match(previous.detail, /Reviewing/);
   assert.equal(previous.nextEnabled, true);
-  assert.equal(previous.auditCount, beforeNavigation.auditCount,
-    'presentation rewind must not execute or delete an Agent/API action');
+  assert.equal(previous.auditCount, beforeNavigation.auditCount + 1,
+    'the visible rewind control must execute the public designerScript.step action');
   await browser.evaluate(`document.querySelector('#next-designer-move').click()`);
   await waitFor(async () => browser.evaluate(
     `document.querySelector('#designer-move-progress-label').textContent.startsWith('${pausedIndex} /')`),
@@ -154,7 +163,8 @@ try {
     auditCount:window.MolariumChemistActions.history().length,
     canvas:document.querySelector('#molecule-canvas').toDataURL(),
   })`);
-  assert.equal(afterNavigation.auditCount, beforeNavigation.auditCount);
+  assert.equal(afterNavigation.auditCount, beforeNavigation.auditCount + 2,
+    'the visible forward control must execute the public designerScript.step action');
   assert.equal(afterNavigation.canvas, beforeNavigation.canvas,
     'forward checkpoint restoration must recover the exact paused molecular view');
 
@@ -190,7 +200,8 @@ try {
     poseSummary:document.querySelector('#docking-result-summary').textContent,
     canvas:document.querySelector('#molecule-canvas').toDataURL(),
   })`);
-  assert.equal(restoredPoseCheckpoint.auditCount, poseCheckpoint.auditCount);
+  assert.equal(restoredPoseCheckpoint.auditCount, poseCheckpoint.auditCount + 2,
+    'the visible pose-checkpoint arrows must each execute designerScript.step');
   assert.equal(restoredPoseCheckpoint.poseSummary, poseCheckpoint.poseSummary);
   assert.equal(restoredPoseCheckpoint.canvas, poseCheckpoint.canvas,
     'pose-result checkpoint navigation must restore the exact ranked molecular view');

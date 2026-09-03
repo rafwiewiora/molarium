@@ -1,4 +1,5 @@
 export const SIDECHAIN_ROTAMER_SCHEMA = 'molarium.sidechain-rotamers/v1';
+export const SIDECHAIN_ROTAMER_CHI_TOLERANCE_DEGREES = 0.001;
 
 // Standard heavy-atom chi definitions. Proline is deliberately absent because
 // moving its side chain independently would break the backbone-closing ring.
@@ -62,6 +63,74 @@ function normalizeDegrees(value) {
   if (result <= -180) result += 360;
   if (result > 180) result -= 360;
   return result;
+}
+
+function circularDegreeDistance(first, second) {
+  return Math.abs(normalizeDegrees(Number(first) - Number(second)));
+}
+
+/**
+ * Resolve a rotamer by an explicit, fail-closed public selector. Result indices are retained for
+ * the visible select control, while chi angles and coordinate hashes remain stable when ranking
+ * changes. Chi matching treats -180 and +180 as the same angle and requires one unique match.
+ */
+export function selectSidechainRotamerCandidate(ensemble, selector = {}) {
+  if (ensemble?.schema !== SIDECHAIN_ROTAMER_SCHEMA || !Array.isArray(ensemble.candidates))
+    throw new Error('No compatible side-chain rotamer ensemble is available');
+  if (!selector || typeof selector !== 'object' || Array.isArray(selector))
+    throw new Error('A side-chain rotamer selector must be an object');
+  const selectorKeys = ['index','chiDegrees','coordinateSha256']
+    .filter((key) => Object.hasOwn(selector, key));
+  if (selectorKeys.length !== 1)
+    throw new Error('Specify exactly one side-chain rotamer selector: index, chiDegrees, or coordinateSha256');
+  const selectorKey = selectorKeys[0];
+  if (selectorKey === 'index') {
+    if (!Number.isInteger(selector.index) || selector.index < 0)
+      throw new Error('index must be a non-negative integer');
+    const candidate = ensemble.candidates.find((entry) => entry.index === selector.index);
+    if (!candidate) throw new Error(`Side-chain rotamer ${selector.index} does not exist`);
+    return candidate;
+  }
+  if (selectorKey === 'coordinateSha256') {
+    if (typeof selector.coordinateSha256 !== 'string'
+      || !/^[a-f0-9]{64}$/.test(selector.coordinateSha256))
+      throw new Error('coordinateSha256 must be a lowercase SHA-256 hex digest');
+    const matches = ensemble.candidates.filter((candidate) =>
+      candidate.coordinateSha256 === selector.coordinateSha256);
+    if (!matches.length) throw new Error('No side-chain rotamer matches coordinateSha256');
+    if (matches.length > 1) throw new Error('coordinateSha256 matches multiple side-chain rotamers');
+    return matches[0];
+  }
+  if (!Array.isArray(selector.chiDegrees) || !selector.chiDegrees.length
+    || selector.chiDegrees.some((value) => !Number.isFinite(value)))
+    throw new Error('chiDegrees must be a non-empty array of finite angles');
+  const chiCount = ensemble.axes?.length || ensemble.candidates[0]?.chiDegrees?.length || 0;
+  if (selector.chiDegrees.length !== chiCount)
+    throw new Error(`chiDegrees must contain exactly ${chiCount} angle${chiCount === 1 ? '' : 's'}`);
+  const normalized = selector.chiDegrees.map(normalizeDegrees);
+  const matches = ensemble.candidates.filter((candidate) =>
+    Array.isArray(candidate.chiDegrees) && candidate.chiDegrees.length === normalized.length
+    && candidate.chiDegrees.every((value, index) => circularDegreeDistance(
+      value, normalized[index]) <= SIDECHAIN_ROTAMER_CHI_TOLERANCE_DEGREES));
+  if (!matches.length) throw new Error('No side-chain rotamer matches chiDegrees');
+  if (matches.length > 1) throw new Error('chiDegrees ambiguously match multiple side-chain rotamers');
+  return matches[0];
+}
+
+export function assertSidechainRotamerCoordinateGuards({ ensemble, candidate,
+  currentCoordinateSha256, expectedInputCoordinateSha256 = null,
+  expectedSelectedCoordinateSha256 = null } = {}) {
+  if (ensemble?.schema !== SIDECHAIN_ROTAMER_SCHEMA || !candidate)
+    throw new Error('No compatible selected side-chain rotamer is available');
+  if (expectedInputCoordinateSha256 != null
+    && expectedInputCoordinateSha256 !== ensemble.inputCoordinateSha256)
+    throw new Error('expectedInputCoordinateSha256 does not match the enumerated coordinate input');
+  if (currentCoordinateSha256 !== ensemble.inputCoordinateSha256)
+    throw new Error('The molecular coordinates changed after side-chain enumeration; enumerate again.');
+  if (expectedSelectedCoordinateSha256 != null
+    && expectedSelectedCoordinateSha256 !== candidate.coordinateSha256)
+    throw new Error('expectedSelectedCoordinateSha256 does not match the selected rotamer');
+  return true;
 }
 
 function torsionDegrees(first, second, third, fourth) {

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { CHEMIST_ACTIONS_SCHEMA } from '../chemist-actions.mjs';
-import { actionScriptFromAudit, replayActionScript, validateActionScript } from './replay.mjs';
+import { NON_REPLAYABLE_ACTION_NAMES, NON_REPLAYABLE_ACTION_PREFIXES,
+  actionScriptFromAudit, replayActionScript, validateActionScript } from './replay.mjs';
 
 const audit = { schema:CHEMIST_ACTIONS_SCHEMA, routeId:'converter-test', records:[
   { sequence:1, requestId:'load', action:'designRoute.load',
@@ -30,6 +31,31 @@ assert.equal(JSON.stringify(complete).includes('startedAt'), false);
 assert.equal(JSON.stringify(complete).includes('durationMs'), false);
 assert.equal(JSON.stringify(complete).includes('ignored'), false);
 assert.equal(JSON.stringify(complete).includes('requestId'), false);
+
+assert.deepEqual(NON_REPLAYABLE_ACTION_PREFIXES, ['campaign.', 'designerScript.']);
+assert.deepEqual(NON_REPLAYABLE_ACTION_NAMES, ['interface.presentDesignerStep']);
+const replayControlAudit = { schema:CHEMIST_ACTIONS_SCHEMA, records:[
+  { sequence:1, action:'designRoute.load', args:{ routeId:'test' }, status:'completed' },
+  { sequence:2, action:'designerScript.play', args:{ playing:false }, status:'completed' },
+  { sequence:3, action:'designerScript.step', args:{ direction:'previous' }, status:'completed' },
+  { sequence:4, action:'designerScript.restart', args:{}, status:'completed' },
+  { sequence:5, action:'designerScript.inspect', args:{}, status:'completed' },
+  { sequence:6, action:'interface.presentDesignerStep',
+    args:{ index:0, phase:'before' }, status:'completed' },
+  { sequence:7, action:'interface.setPanelOpen',
+    args:{ panelId:'load-toggle', open:false }, status:'completed' },
+  { sequence:8, action:'campaign.commitCurrent',
+    args:{ message:'container bookkeeping' }, status:'completed' },
+] };
+const replayControlSafe = actionScriptFromAudit(replayControlAudit,
+  { label:'Replay-controller exclusion' });
+assert.deepEqual(replayControlSafe.actions.map((step) => step.action),
+  ['designRoute.load', 'interface.setPanelOpen'],
+  'molecular scripts must retain ordinary interface actions but exclude their own replay controller');
+assert.deepEqual(replayControlSafe.sourceAudit.includedSequences, [1, 7]);
+assert.equal(replayControlSafe.sourceAudit.nonReplayableActionsExcluded, 6);
+assert.equal(replayControlSafe.sourceAudit.campaignBookkeepingExcluded, 1);
+assert.equal(replayControlSafe.sourceAudit.replayControllerActionsExcluded, 5);
 
 audit.records[0].args.routeId = 'changed-after-conversion';
 assert.equal(complete.actions[0].args.routeId, 'test', 'action arguments must be cloned');
@@ -61,5 +87,24 @@ const replay = await replayActionScript(api, concise);
 assert.equal(replay.status, 'completed');
 assert.deepEqual(calls.map(({ action, args }) => ({ action, args })), concise.actions
   .map(({ action, args }) => ({ action, args })));
+
+const guardedScript = { schema:'molarium.chemist-action-script/v1', label:'Guarded replay',
+  actions:[{ action:'session.inspect', args:{ scope:'ligand' },
+    expect:{ 'checkpoint.protocol':'v4', 'checkpoint.feasible':true } }] };
+const guardedApi = Object.freeze({ schema:CHEMIST_ACTIONS_SCHEMA, async execute() {
+  return { schema:CHEMIST_ACTIONS_SCHEMA, status:'completed',
+    result:{ checkpoint:{ protocol:'v4', feasible:true } } };
+} });
+assert.equal((await replayActionScript(guardedApi, guardedScript)).status, 'completed');
+const mismatchedApi = Object.freeze({ schema:CHEMIST_ACTIONS_SCHEMA, async execute() {
+  return { schema:CHEMIST_ACTIONS_SCHEMA, status:'completed',
+    result:{ checkpoint:{ protocol:'v4', feasible:false } } };
+} });
+const mismatched = await replayActionScript(mismatchedApi, guardedScript);
+assert.equal(mismatched.status, 'failed');
+assert.match(mismatched.steps[0].error, /expectation failed.*feasible/i);
+assert.throws(() => validateActionScript({ schema:'molarium.chemist-action-script/v1',
+  label:'Bad expectation', actions:[{ action:'session.inspect', args:{},
+    expect:{ 'bad path':true } }] }), /invalid expectation path/);
 
 console.log('Chemist action audit converter: PASS');

@@ -22,11 +22,35 @@ const benzamidePositions = Float64Array.from([
   3.9,0,0, 3.3,-1.05,0, 2.1,-1.05,0,
   1.5,2.05,0, 1.5,-2.05,0,
 ]);
-const difluoroSeeds = featureGuidedPoseSeeds({ molecule:benzamide,
+const difluoroSeedInput = { molecule:benzamide,
   initialPositions:benzamidePositions,
   coreAtomIndices:[0,1,2,3,4,5,6,7,8],
   editedAtomIndices:[9,10], affectedAtomIndices:[4,8],
-  count:64, hydrogenBondConstraints:[] });
+  count:64, hydrogenBondConstraints:[] };
+const difluoroSeedsV3 = featureGuidedPoseSeeds({ ...difluoroSeedInput,
+  featureSeedingProtocol:'v3' });
+assert.equal(difluoroSeedsV3.method, 'molarium-edit-region-axis-seeding/v3');
+assert.equal(difluoroSeedsV3.affectedRotorCount, 0,
+  'v3 reproducibly omits affected-existing-rotor seeding');
+assert.deepEqual(difluoroSeedsV3.affectedRotors, []);
+assert.deepEqual(difluoroSeedsV3.releasedCoreAtomIndices, []);
+assert.equal(difluoroSeedsV3.uniqueSeedCount, 1,
+  'v3 retains the unaltered seed when no untargeted edit-region rotor exists');
+
+const v3UntargetedSeeds = featureGuidedPoseSeeds({
+  molecule:{ atoms:[{ element:'C' }, { element:'C' }, { element:'C' }, { element:'O' }],
+    bonds:[{ a:0,b:1,order:1 }, { a:1,b:2,order:1 }, { a:2,b:3,order:1 }] },
+  initialPositions:Float64Array.from([0,0,0, 1,0,0, 1,1,0, 1,2,0]),
+  coreAtomIndices:[0], count:12, featureSeedingProtocol:'v3',
+});
+assert.equal(v3UntargetedSeeds.method, 'molarium-edit-region-axis-seeding/v3');
+assert.equal(v3UntargetedSeeds.untargetedRotorCount, 1,
+  'v3 retains current untargeted edit-region torsion seeding');
+assert.equal(v3UntargetedSeeds.affectedRotorCount, 0);
+assert.equal(v3UntargetedSeeds.uniqueSeedCount, 12);
+
+const difluoroSeeds = featureGuidedPoseSeeds({ ...difluoroSeedInput,
+  featureSeedingProtocol:'v4' });
 assert.equal(difluoroSeeds.method, 'molarium-edit-region-axis-seeding/v4');
 assert.equal(difluoroSeeds.affectedRotorCount, 1,
   '2,6-substitution must activate the pre-existing aryl-carbonyl rotor');
@@ -47,6 +71,8 @@ assert.deepEqual(Array.from(difluoroSeeds.seeds[1].positions.slice(0, 12)),
   'the amide and both aryl-carbonyl axis atoms remain exact');
 assert(Math.abs(difluoroSeeds.seeds[1].positions[14]) > 0.4,
   'the pre-existing aromatic ring must actually rotate out of plane');
+assert.throws(() => featureGuidedPoseSeeds({ ...difluoroSeedInput,
+  featureSeedingProtocol:'v2' }), /must be v3 or v4/);
 
 const rigidRing = {
   atoms:[

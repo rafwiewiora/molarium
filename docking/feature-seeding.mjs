@@ -327,10 +327,13 @@ function targetVariants(definitions) {
 export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomIndices,
   hydrogenBondConstraints = [], count = 16,
   editedAtomIndices = [], affectedAtomIndices = [], environmentBondRadius = 2,
+  featureSeedingProtocol = 'v4',
   axialAnglesDegrees = AXIAL_ANGLES_DEGREES,
   editRegionAnglesDegrees = EDIT_REGION_ANGLES_DEGREES } = {}) {
   if (!molecule?.atoms?.length || !Array.isArray(molecule.bonds))
     throw new Error('Feature-guided seeding requires a complete molecular graph');
+  if (!['v3', 'v4'].includes(featureSeedingProtocol))
+    throw new Error('featureSeedingProtocol must be v3 or v4');
   const requested = Math.max(1, Math.round(Number(count)));
   const positions = finitePositions(initialPositions, molecule.atoms.length);
   const core = new Set(Array.from(coreAtomIndices || [], Number));
@@ -351,8 +354,10 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
     .filter((region) => !targetedRegions.has(region.atomIndices.join(',')))
     .map((region) => singleAnchorEditRotor(molecule, region, core, entries, positions))
     .filter(Boolean);
-  const affectedRotors = affectedEnvironmentRotors(molecule, core, entries, positions,
-    editedAtomIndices, affectedAtomIndices, environmentBondRadius);
+  const affectedRotors = featureSeedingProtocol === 'v4'
+    ? affectedEnvironmentRotors(molecule, core, entries, positions,
+      editedAtomIndices, affectedAtomIndices, environmentBondRadius)
+    : [];
   untargetedRotors.forEach((rotor) => {
     editRegionAnglesDegrees.forEach((angleDegrees) => {
       const seeded = rotateRegion(positions, rotor.atomIndices, rotor.origin,
@@ -421,8 +426,10 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
       attachmentMode:rotor.attachmentMode,
     })),
     editRegionAnglesDegrees:Array.from(editRegionAnglesDegrees, Number),
-    method:'molarium-edit-region-axis-seeding/v4',
-    limitation:'single-anchor edit regions and pre-existing non-ring single bonds within the declared edit environment are scanned; amide-like and genuinely rigid bonds remain fixed' };
+    method:`molarium-edit-region-axis-seeding/${featureSeedingProtocol}`,
+    limitation:featureSeedingProtocol === 'v4'
+      ? 'single-anchor edit regions and pre-existing non-ring single bonds within the declared edit environment are scanned; amide-like and genuinely rigid bonds remain fixed'
+      : 'single-anchor edit regions are scanned; affected pre-existing rotors remain fixed' };
 }
 
 export const FEATURE_SEEDING_AXIAL_ANGLES_DEGREES = AXIAL_ANGLES_DEGREES;

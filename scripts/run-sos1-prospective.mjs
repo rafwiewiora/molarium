@@ -96,15 +96,19 @@ async function choosePhe890Branch(stepId) {
     console.log(`${stepId}: jointly posing against Phe890 rotamer rank ${candidate.rank} `
       + `(${candidate.chiDegrees.map((value) => value.toFixed(0)).join(', ')} deg)`);
     const applied = await execute('pose.applySidechainRotamer', {
-      index:candidate.index,
+      coordinateSha256:candidate.coordinateSha256,
+      expectedInputCoordinateSha256:ensemble.inputCoordinateSha256,
+      expectedSelectedCoordinateSha256:candidate.coordinateSha256,
     }, `${stepId}-apply-phe890-branch-${candidate.rank}`);
     const receptorReference = await execute('pose.updateReceptorReference', {},
       `${stepId}-accept-receptor-branch-${candidate.rank}`);
-    const refined = await execute('pose.refine', { searchChains:branchSearchChains },
+    const refined = await execute('pose.refine', { searchChains:branchSearchChains,
+      featureSeedingProtocol:'v3' },
       `${stepId}-pose-branch-${candidate.rank}`);
     const selectedPoseIndex = Math.max(0,
       Number(refined.result.refinement.selectedRank || 1) - 1);
-    await execute('pose.apply', { index:selectedPoseIndex },
+    await execute('pose.apply', { index:selectedPoseIndex,
+      ...(refined.result.refinement.selectedFeasible ? {} : { allowInfeasible:true }) },
       `${stepId}-apply-pose-branch-${candidate.rank}`);
     const parameterized = await execute('protein.parameterize', {},
       `${stepId}-parameterize-branch-${candidate.rank}`);
@@ -144,11 +148,14 @@ async function choosePhe890Branch(stepId) {
     && candidate.coordinateSha256 === selected.selectedCoordinateSha256);
   if (!finalCandidate) throw new Error('The selected Phe890 branch changed during deterministic replay');
   const applied = await execute('pose.applySidechainRotamer', {
-    index:finalCandidate.index,
+    coordinateSha256:finalCandidate.coordinateSha256,
+    expectedInputCoordinateSha256:ensemble.inputCoordinateSha256,
+    expectedSelectedCoordinateSha256:finalCandidate.coordinateSha256,
   }, `${stepId}-apply-selected-phe890-branch`);
   const receptorReference = await execute('pose.updateReceptorReference', {},
     `${stepId}-accept-selected-receptor-branch`);
-  const refinement = await execute('pose.refine', { searchChains:64 },
+  const refinement = await execute('pose.refine', { searchChains:64,
+    featureSeedingProtocol:'v3' },
     `${stepId}-pose-selected-phe890-branch`);
   const selectedPoseIndex = Math.max(0,
     Number(refinement.result.refinement.selectedRank || 1) - 1);
@@ -218,7 +225,8 @@ try {
       relaxation = rotamerDecision.selected.optimization;
     } else {
       console.log(`${stepId}: fixed-receptor pose search`);
-      const refined = await execute('pose.refine', { searchChains:64 }, `${stepId}-pose-refine`);
+      const refined = await execute('pose.refine', { searchChains:64,
+        featureSeedingProtocol:'v3' }, `${stepId}-pose-refine`);
       const selectedIndex = Math.max(0,
         Number(refined.result.refinement.selectedRank || 1) - 1);
       await execute('pose.apply', { index:selectedIndex }, `${stepId}-pose-apply`);

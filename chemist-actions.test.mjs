@@ -25,17 +25,33 @@ assert(Object.hasOwn(api.describe().actions, 'geometry.setInternalCoordinate'));
 assert(Object.hasOwn(api.describe().actions, 'calculation.run'));
 assert(Object.hasOwn(api.describe().actions, 'campaign.import'));
 assert(Object.hasOwn(api.describe().actions, 'designerScript.play'));
+assert(Object.hasOwn(api.describe().actions, 'designerScript.loadRegistered'));
+assert(Object.hasOwn(api.describe().actions, 'designerScript.export'));
+assert(Object.hasOwn(api.describe().actions, 'interface.presentDesignerStep'));
+assert.match(api.describe().actions['designerScript.export'].arguments.kind,
+  /installed-script/);
+assert.match(api.describe().actions['interface.presentDesignerStep'].arguments.phase,
+  /before \| after \| clear/);
 assert(Object.hasOwn(api.describe().actions, 'pose.addContact'));
 assert(Object.hasOwn(api.describe().actions, 'pose.forgetContact'));
 assert(Object.hasOwn(api.describe().actions, 'pose.updateReceptorReference'));
 assert(Object.hasOwn(api.describe().actions, 'pose.enumerateSidechainRotamers'));
 assert(Object.hasOwn(api.describe().actions, 'pose.applySidechainRotamer'));
+assert.match(api.describe().actions['pose.applySidechainRotamer'].arguments.chiDegrees,
+  /uniquely matched/);
+assert.match(api.describe().actions['pose.applySidechainRotamer'].arguments.coordinateSha256,
+  /SHA-256/);
+assert.match(api.describe().actions['pose.apply'].arguments.allowInfeasible,
+  /false by default/);
 assert(Object.hasOwn(api.describe().actions, 'structureStory.selectFrame'));
 assert.match(api.describe().actions['session.inspect'].arguments.scope, /pocket/);
 assert.match(api.describe().actions['view.setMode'].description, /View, Design, or Simulate/);
 assert.equal(api.describe().actions['view.setMode'].arguments.mode, 'view | build | run');
+assert.match(api.describe().actions['pose.refine'].arguments.featureSeedingProtocol,
+  /v3 \| v4.*default v4/);
 assert(!Object.hasOwn(api.describe().actions, 'test.loadObject'));
 assert.match(api.describe().guarantee, /no arbitrary code/);
+assert.match(api.describe().guarantee, /every saved replay and visible playback control executes only public routes/i);
 
 const first = await api.execute({ requestId:'chemist-1', action:'view.setMode', args:{ mode:'build' } });
 assert.equal(first.status, 'completed');

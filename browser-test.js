@@ -219,15 +219,16 @@ const browserSuite = String.raw`(async () => {
     const described = chemist.describe();
     const completeActionFamilies = [
       'session.loadStructure','session.loadIdentifier','session.loadFixture','session.clear','session.share',
-      'interface.setPanelOpen','interface.openProjectInfo','view.setComponentVisibility',
+      'interface.setPanelOpen','interface.openProjectInfo','interface.presentDesignerStep','view.setComponentVisibility',
       'view.showAllComponents','view.reset','view.focusResidue','view.clearFocus','view.setCamera',
       'protein.predict','protein.cancelPrediction','ligand.enumerateProtonation','ligand.applyProtonation',
       'geometry.setInternalCoordinate','geometry.translateAtoms','fragment.stage','fragment.attach',
       'pose.setEditCleanup','pose.clearReference','pose.remapContact','calculation.run',
       'calculation.tuneReplicas','calculation.selectFrame','calculation.selectReplica',
       'calculation.selectConformer','calculation.setPlayback','calculation.setConformerView',
-      'campaign.import','campaign.export','designerScript.load','designerScript.play',
-      'designerScript.step','designerScript.restart','designerScript.inspect',
+      'campaign.import','campaign.export','designerScript.load','designerScript.loadRegistered',
+      'designerScript.play','designerScript.step','designerScript.restart','designerScript.inspect',
+      'designerScript.export',
     ];
     check(described.guarantee.includes('no arbitrary code')
       && described.actions['chemistry.finish']
@@ -379,12 +380,15 @@ const browserSuite = String.raw`(async () => {
     'the public API enumerates hashed Phe chi branches through the visible Design control without returning coordinates',
     JSON.stringify(branches));
     const appliedRotamer = await chemist.execute({ action:'pose.applySidechainRotamer',
-      args:{ index:0 } });
+      args:{ coordinateSha256:branches.candidates[0].coordinateSha256,
+        expectedInputCoordinateSha256:branches.inputCoordinateSha256,
+        expectedSelectedCoordinateSha256:branches.candidates[0].coordinateSha256 } });
     const rotamerSource = api.current().molecule.source.sidechainRotamerApplications?.at(-1);
     check(appliedRotamer.result.sidechainRotamer.selectedCoordinateSha256
         === branches.candidates[0].coordinateSha256
       && rotamerSource?.selectedCoordinateSha256 === branches.candidates[0].coordinateSha256
       && rotamerSource?.inputCoordinateSha256 === branches.inputCoordinateSha256
+      && rotamerSource?.selectedBy === 'coordinateSha256'
       && document.querySelector('#sidechain-rotamer-results').classList.contains('hidden'),
     'applying a public rotamer branch records input and output hashes and clears the stale ensemble',
     JSON.stringify(appliedRotamer.result.sidechainRotamer));

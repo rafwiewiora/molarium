@@ -25,7 +25,20 @@ assert.deepEqual(selected.sourceAudit.includedSequences,
 assert.deepEqual(full.actions.filter((step) => step.action === 'pose.applySidechainRotamer')
   .map((step) => step.args.index), [0, 5, 6, 5]);
 assert.deepEqual(selected.actions.filter((step) => step.action === 'pose.applySidechainRotamer')
-  .map((step) => step.args.index), [5]);
+  .map((step) => step.args.chiDegrees), [[-180,90]]);
+assert(selected.actions.filter((step) => step.action === 'pose.refine')
+  .every((step) => step.args.featureSeedingProtocol === 'v3'
+    && step.expect['refinement.selectedFeasible'] === true
+    && step.expect['refinement.featureGuidedSeeding.method']
+      === 'molarium-edit-region-axis-seeding/v3'));
+assert(selected.actions.filter((step) => step.action === 'pose.apply')
+  .every((step) => step.expect['appliedPose.feasible'] === true));
+const selectedRotamer = selected.actions.find((step) =>
+  step.action === 'pose.applySidechainRotamer');
+assert.equal(selectedRotamer.args.expectedInputCoordinateSha256,
+  'e62cdf930726a2f8b15effd1fc267dfebb448eec79c934f18705eb9bb69f9895');
+assert.equal(selectedRotamer.args.expectedSelectedCoordinateSha256,
+  '0fdc3367686a264f9c62d0af91251c686afcab6985222a11c1d81037d78ef333');
 assert.equal(selected.actions.some((step) => step.action.endsWith('.inspect')), false);
 assert.equal(JSON.stringify(full).includes('Tyr884'), false);
 
@@ -40,8 +53,15 @@ for (const [key, script, filename] of [
 for (const script of [full, selected]) {
   const calls = [];
   const fakeApi = Object.freeze({ schema:CHEMIST_ACTIONS_SCHEMA, async execute(request) {
+    const step = script.actions[calls.length];
     calls.push(request);
-    return { schema:CHEMIST_ACTIONS_SCHEMA, status:'completed', result:{} };
+    const result = {};
+    for (const [path, value] of Object.entries(step.expect || {})) {
+      const keys = path.split('.'); let target = result;
+      keys.slice(0, -1).forEach((key) => { target = target[key] ||= {}; });
+      target[keys.at(-1)] = structuredClone(value);
+    }
+    return { schema:CHEMIST_ACTIONS_SCHEMA, status:'completed', result };
   } });
   const replay = await replayActionScript(fakeApi, script);
   assert.equal(replay.status, 'completed');

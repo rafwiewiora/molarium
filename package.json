@@ -26,6 +26,7 @@
     "render:design-story": "bun scripts/render-design-story.mjs",
     "render:structure-story": "bun scripts/render-structure-story.mjs",
     "render:designer-moves-interface": "bun scripts/render-designer-moves-interface.mjs",
+    "test:designer-moves-renderer": "node scripts/render-designer-moves-interface.test.mjs",
     "build:sos1-movie-assets": "node scripts/build-sos1-prospective-movie-assets.mjs",
     "build:sos1-prediction-review": "node scripts/build-sos1-prediction-review.mjs",
     "build:sos1-structure-review": "node scripts/build-sos1-structure-review.mjs",

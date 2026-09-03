@@ -23,6 +23,10 @@ const ACTIONS = Object.freeze({
   'interface.openProjectInfo': Object.freeze({
     description:'Open or close a Methods, Validation, Credits, or Privacy information panel.',
     arguments:Object.freeze({ panel:'methods | validation | credits | privacy | closed' }) }),
+  'interface.presentDesignerStep': Object.freeze({
+    description:'Present or clear one installed Designer Moves step using the same visible cue, layout, caption, result, and checkpoint treatment as playback.',
+    arguments:Object.freeze({ index:'zero-based installed-script action index',
+      phase:'before | after | clear' }) }),
   'view.setMode': Object.freeze({ description:'Choose the View, Design, or Simulate workspace. Serialized mode values remain view, build, and run.',
     arguments:Object.freeze({ mode:'view | build | run' }) }),
   'view.focusComponent': Object.freeze({
@@ -145,15 +149,22 @@ const ACTIONS = Object.freeze({
     arguments:Object.freeze({ contactId:'contact ID', candidateId:'candidate ID' }) }),
   'pose.refine': Object.freeze({ description:'Run reference-guided pose refinement with the visible search-chain setting.',
     arguments:Object.freeze({ searchChains:'8 | 16 | 32 | 64',
-      execution:'auto | serial (optional; auto uses a bounded deterministic worker ensemble)' }) }),
-  'pose.apply': Object.freeze({ description:'Apply one returned refined pose by zero-based result index.',
-    arguments:Object.freeze({ index:'non-negative integer' }) }),
+      execution:'auto | serial (optional; auto uses a bounded deterministic worker ensemble)',
+      featureSeedingProtocol:'v3 | v4 (optional; default v4; v3 omits affected-existing-rotor seeding)' }) }),
+  'pose.apply': Object.freeze({
+    description:'Apply one returned refined pose by zero-based result index; infeasible poses fail closed unless explicitly overridden.',
+    arguments:Object.freeze({ index:'non-negative integer',
+      allowInfeasible:'optional boolean; false by default and recorded when true' }) }),
   'pose.enumerateSidechainRotamers': Object.freeze({
     description:'Enumerate bounded canonical rotamers for one receptor side chain and rank them against the current complex.',
     arguments:Object.freeze({ receptorAtomId:'persistent receptor atom ID', maximumCandidates:'integer 1–64' }) }),
   'pose.applySidechainRotamer': Object.freeze({
-    description:'Apply one returned side-chain rotamer branch by zero-based result index.',
-    arguments:Object.freeze({ index:'non-negative integer' }) }),
+    description:'Apply exactly one returned side-chain rotamer selected by legacy result index, normalized chi angles, or coordinate hash, with optional fail-closed coordinate guards.',
+    arguments:Object.freeze({ index:'optional legacy non-negative result index; exactly one selector',
+      chiDegrees:'optional array of chi angles in degrees; circularly normalized and uniquely matched; exactly one selector',
+      coordinateSha256:'optional lowercase SHA-256 of an enumerated candidate; exactly one selector',
+      expectedInputCoordinateSha256:'optional lowercase SHA-256; abort unless it matches the enumerated and current input coordinates',
+      expectedSelectedCoordinateSha256:'optional lowercase SHA-256; abort unless it matches the selected and applied coordinates' }) }),
   'optimization.run': Object.freeze({ description:'Run one optimization method exposed in the Design method menu.',
     arguments:Object.freeze({ method:'ligand-rdkit | pocket-webgpu | induced-fit-webgpu | webgpu | rdkit | ani2x' }) }),
   'calculation.run': Object.freeze({
@@ -232,6 +243,9 @@ const ACTIONS = Object.freeze({
   'designerScript.load': Object.freeze({
     description:'Validate and install a Chemist Actions replay script on a blank canvas.',
     arguments:Object.freeze({ script:'chemist-action script object' }) }),
+  'designerScript.loadRegistered': Object.freeze({
+    description:'Resolve, integrity-check, transform, and install a registered Designer Moves story on a blank Design canvas.',
+    arguments:Object.freeze({ storyId:'registered Designer Moves story ID' }) }),
   'designerScript.play': Object.freeze({
     description:'Start, resume, or pause the visible Designer Moves replay.',
     arguments:Object.freeze({ playing:'boolean' }) }),
@@ -242,6 +256,9 @@ const ACTIONS = Object.freeze({
     arguments:Object.freeze({}) }),
   'designerScript.inspect': Object.freeze({ description:'Inspect the installed script and replay progress.',
     arguments:Object.freeze({}) }),
+  'designerScript.export': Object.freeze({
+    description:'Serialize the recorded public actions, execution log, or installed replay script for download or agent use.',
+    arguments:Object.freeze({ kind:'recorded-actions | execution-log | installed-script' }) }),
   'structureStory.load': Object.freeze({
     description:'Load a registered, provenance-pinned molecular structure story.',
     arguments:Object.freeze({ storyId:'registered structure-story ID' }) }),
@@ -366,7 +383,7 @@ export function createChemistActionsApi({ routes, now = () => new Date().toISOSt
   const api = {
     schema:CHEMIST_ACTIONS_SCHEMA,
     describe() { return { schema:CHEMIST_ACTIONS_SCHEMA,
-      guarantee:'Every mutating route is a chemist-visible Molarium action; no arbitrary code or internal callback route is exposed.',
+      guarantee:'Every mutating route is a chemist-visible Molarium action; every saved replay and visible playback control executes only public routes; no arbitrary code or internal callback route is exposed.',
       actions:snapshot(enabledDefinitions) }; },
     execute(request) {
       const operation = queue.then(() => run(request));

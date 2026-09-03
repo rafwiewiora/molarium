@@ -1,7 +1,7 @@
 {
   "schema": "molarium.designer-moves-example-provenance/v1",
   "routeId": "sos1-hit-only",
-  "scientificClaim": "Starting from the coordinate-bearing 5OVE/AXE hit, the public Molarium Chemist Actions workflow explored three Phe890 rotamer basins after compound-21 growth created a clash, selected rotamer index 5 by the registered coupled side-chain/pose criterion, and propagated that predicted receptor state to BAY-293.",
+  "scientificClaim": "Starting from the coordinate-bearing 5OVE/AXE hit, the public Molarium Chemist Actions workflow explored three Phe890 rotamer basins after compound-21 growth created a clash, selected the Phe890 chi1/chi2 = -180°/90° branch by the registered coupled side-chain/pose criterion, and propagated that predicted receptor state to BAY-293.",
   "scientificBoundary": {
     "initialCoordinateInput": "PDB 5OVE/AXE only",
     "holdoutStatusAtFreeze": "predictions-frozen-holdouts-unopened",
@@ -33,7 +33,7 @@
     },
     "runner": {
       "path": "scripts/run-sos1-prospective.mjs",
-      "sha256": "3f55cf0f0c11830f6aa3dbe652832df7c46e58d6e1633c91f8b57e51a1bfb829"
+      "sha256": "cf2c0816bcc29e750b370344bbca0e644f87f353201c375c6908f83685e254e1"
     }
   },
   "scripts": {
@@ -47,9 +47,9 @@
     "selectedRoute": {
       "path": "design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json",
       "actions": 33,
-      "actionScriptSha256": "b042f0e6d4c6f5691ffccb35eb3eb5c7b11a7ed41207b734449f4105b1d8f790",
-      "fileSha256": "34d1db8acb8e6c5ec48194d3d49b2099820a36fa1c81a2e3c0f1d6af713e7aa7",
-      "meaning": "Compact operational replay of the already-selected route. It omits discarded branches and read-only freeze inspections, so it is not the evidence that branch search occurred."
+      "actionScriptSha256": "deef61641cb39cca0d9fcf90bd78d87310cde0d9718a373f57253a308fd1d820",
+      "fileSha256": "fcafcf1e25fc66c4f906797c80351b1c43fb7ae2a33b5f08f59b60734b1301cd",
+      "meaning": "Fail-closed operational replay of the already-selected route. It pins the v3 pose-seeding protocol, selects Phe890 by chi angles with exact input/output coordinate guards, and rejects infeasible pose applications. It omits discarded branches and read-only freeze inspections, so it is not the evidence that branch search occurred."
     }
   },
   "frozenCheckpoints": [

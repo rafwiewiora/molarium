@@ -5,6 +5,7 @@ import { basename, dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { actionScriptSha256, validateActionScript } from '../design-history/replay.mjs';
 import { buildPocketInterfaceStory } from '../design-history/interface-story.mjs';
+import { promoteCompletedRender } from './atomic-render-output.mjs';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -36,19 +37,17 @@ const presentationScript = buildPocketInterfaceStory({
   label:sourceScript.label,
   actions:sourceActions,
 }, { sourcePath:relative(root, scriptPath), sourceSha256:digest(sourceScriptBytes) });
+const presentationScriptSha256 = await actionScriptSha256(presentationScript);
 
-await mkdir(output, { recursive:true });
+await mkdir(dirname(output), { recursive:true });
 const temporary = await mkdtemp(join(tmpdir(), 'molarium-interface-movie-'));
+const publicationStaging = await mkdtemp(join(dirname(output),
+  `.${basename(output)}.pending-`));
 const presentationPath = join(temporary, 'presentation.action-script.json');
 const frameDirectory = join(temporary, 'frames');
-const qaDirectory = join(output, 'qa');
-await mkdir(frameDirectory);
-await mkdir(qaDirectory, { recursive:true });
-await writeFile(presentationPath, `${JSON.stringify(presentationScript, null, 2)}\n`);
-
-const browser = await startMolariumBrowser({ root,
-  appPath:'index.html?blank=1&designer-moves-movie=1', width, height, localOnly:true });
-const browserVersion = await browser.client.call('Browser.getVersion');
+const qaDirectory = join(publicationStaging, 'qa');
+let browser = null;
+let browserVersion = null;
 const captured = [];
 let frameIndex = 0;
 
@@ -81,7 +80,7 @@ function holdFrames(step) {
   return Math.max(5, Math.round(fps * .75));
 }
 
-async function waitForInterfaceAction(actionNumber, actionIndex, step, auditBaseline, timeoutMs) {
+async function waitForInterfaceAction(actionNumber, actionIndex, step, timeoutMs) {
   const deadline = Date.now() + timeoutMs;
   let nextProgressCapture = Date.now() + 700;
   let lastProgressStatus = '';
@@ -91,9 +90,11 @@ async function waitForInterfaceAction(actionNumber, actionIndex, step, auditBase
   while (Date.now() < deadline) {
     const state = await browser.evaluate(`(() => {
       const records = window.MolariumChemistActions.history();
-      // The visible Play button is itself a designerScript.play API action at
-      // auditBaseline.  Story move 1 therefore begins at auditBaseline + 1.
-      const record = records[${auditBaseline + actionNumber}] || null;
+      // Runtime presentation and transport controls are also public API calls,
+      // so array offsets are intentionally not stable. Constituent replay
+      // actions have deterministic request IDs derived from the script hash.
+      const record = records.find((entry) =>
+        entry.requestId === 'story-${presentationScriptSha256.slice(0, 12)}-${actionNumber}') || null;
       return {
         record:record && record.status !== 'running'
           ? { status:record.status, error:record.error || null } : null,
@@ -135,6 +136,12 @@ async function waitForVisibleResult(actionNumber, timeoutMs = 5000) {
 }
 
 try {
+  await mkdir(frameDirectory);
+  await mkdir(qaDirectory, { recursive:true });
+  await writeFile(presentationPath, `${JSON.stringify(presentationScript, null, 2)}\n`);
+  browser = await startMolariumBrowser({ root,
+    appPath:'index.html?blank=1&designer-moves-movie=1', width, height, localOnly:true });
+  browserVersion = await browser.client.call('Browser.getVersion');
   await waitFor(async () => browser.evaluate(`Boolean(window.MolariumChemistActionsReady)
     && document.querySelector('#designer-move-file')`), 30000, 'Molarium Designer moves UI');
   await browser.evaluate(`document.querySelector('.mode-bar button[data-mode="build"]').click();
@@ -155,8 +162,6 @@ try {
     .textContent.includes('replayable move')`), 10000, 'imported designer moves');
   await appendFrame('Imported JSON action script', Math.round(fps * 1.5));
 
-  const replayAuditBaseline = await browser.evaluate(
-    `window.MolariumChemistActions.history().length`);
   await browser.evaluate(`document.querySelector('#replay-designer-moves').click(); true`);
   let lastActionNumber = 0;
   const started = Date.now();
@@ -167,6 +172,7 @@ try {
       replayDisabled:document.querySelector('#replay-designer-moves').disabled,
       replayLabel:document.querySelector('#replay-designer-moves').textContent,
       exportReplayDisabled:document.querySelector('#export-designer-replay').disabled,
+      replayStatus:document.querySelector('#designer-move-tools')?.dataset.replayStatus || 'unknown',
       notice:document.querySelector('#notice').classList.contains('hidden')
         ? '' : document.querySelector('#notice').textContent,
     }))()`);
@@ -180,7 +186,7 @@ try {
         Math.max(3, Math.round(fps * (['designRoute.applyStep',
           'pose.applySidechainRotamer'].includes(step.action) ? .7 : .35))), actionNumber - 1);
       const outcome = await waitForInterfaceAction(actionNumber, actionNumber - 1, step,
-        replayAuditBaseline, Math.max(1000, timeout - (Date.now() - started)));
+        Math.max(1000, timeout - (Date.now() - started)));
       if (outcome.status !== 'completed')
         throw new Error(`Molarium replay action ${actionNumber} failed: ${outcome.error || outcome.status}`);
       await waitForVisibleResult(actionNumber);
@@ -189,15 +195,22 @@ try {
       console.log(`Captured interface action ${actionNumber}/${presentationScript.actions.length} · ${step.action}`);
     }
     if (status.notice) throw new Error(`Molarium replay notice: ${status.notice}`);
-    if (!status.exportReplayDisabled && status.replayLabel.includes('Replay story')) break;
+    if (status.replayStatus === 'failed')
+      throw new Error('Molarium interface replay failed its action or result expectations');
+    if (status.replayStatus === 'completed' && !status.exportReplayDisabled
+      && status.replayLabel.includes('Replay story')) break;
     await delay(35);
   }
   if (lastActionNumber !== presentationScript.actions.length)
     throw new Error(`Interface replay stopped after action ${lastActionNumber}/${presentationScript.actions.length}`);
+  const replayStatus = await browser.evaluate(
+    `document.querySelector('#designer-move-tools')?.dataset.replayStatus || 'unknown'`);
+  if (replayStatus !== 'completed')
+    throw new Error(`Refusing to render an interface replay with status ${replayStatus}`);
   await delay(250);
   await appendFrame('Replay completed in Molarium', Math.round(fps * 2.5));
 
-  const videoPath = join(output, 'sos1-designer-moves-molarium-interface.mp4');
+  const videoPath = join(publicationStaging, 'sos1-designer-moves-molarium-interface.mp4');
   const ffmpeg = Bun.spawn(['ffmpeg', '-y', '-hide_banner', '-loglevel', 'error',
     '-framerate', String(fps), '-i', join(frameDirectory, 'frame-%05d.png'),
     '-r', String(fps), '-c:v', 'libx264', '-preset', 'slow', '-crf', '18',
@@ -215,7 +228,7 @@ try {
   const audit = await browser.evaluate(`window.MolariumChemistActions.history()`);
   const auditBytes = Buffer.from(`${JSON.stringify({ schema:'molarium.chemist-actions/v1',
     sourceScript:relative(root, scriptPath), records:audit }, null, 2)}\n`);
-  await writeFile(join(output, 'chemist-action-audit.json'), auditBytes);
+  await writeFile(join(publicationStaging, 'chemist-action-audit.json'), auditBytes);
   const rendererBytes = await readFile(fileURLToPath(import.meta.url));
   const manifest = {
     schema:'molarium.designer-moves-interface-render/v1',
@@ -223,7 +236,7 @@ try {
     operationBoundary:'The renderer imports JSON and presses visible Molarium controls; all molecular operations execute through window.MolariumChemistActions.',
     sourceScript:{ path:relative(root, scriptPath), fileSha256:digest(sourceScriptBytes),
       actionScriptSha256:await actionScriptSha256(sourceScript), actions:sourceScript.actions.length },
-    presentationScript:{ actionScriptSha256:await actionScriptSha256(presentationScript),
+    presentationScript:{ actionScriptSha256:presentationScriptSha256,
       actions:presentationScript.actions.length, insertedViewActions:
         presentationScript.actions.length - sourceActions.length,
       timeline:presentationScript.actions.map((step, index) => ({
@@ -232,6 +245,8 @@ try {
     renderer:{ path:relative(root, fileURLToPath(import.meta.url)), sha256:digest(rendererBytes),
       browserProduct:browserVersion.product, userAgent:browserVersion.userAgent },
     viewport:{ width, height, deviceScaleFactor:1 },
+    replay:{ status:replayStatus,
+      exactExpectationCount:presentationScript.actions.filter((step) => step.expect).length },
     audit:{ path:'chemist-action-audit.json', sha256:digest(auditBytes), records:audit.length },
     captures:captured,
     video:{ filename:basename(videoPath), sha256:digest(videoBytes), bytes:videoBytes.length,
@@ -239,9 +254,15 @@ try {
       frames:Number(stream.nb_read_frames), durationSeconds:Number(stream.duration) },
     complete:true,
   };
-  await writeFile(join(output, 'render-manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
-  console.log(`Wrote ${relative(root, videoPath)} · ${manifest.video.durationSeconds.toFixed(2)} s · ${manifest.video.sha256}`);
+  await writeFile(join(publicationStaging, 'render-manifest.json'),
+    `${JSON.stringify(manifest, null, 2)}\n`);
+  await promoteCompletedRender({ stagingDirectory:publicationStaging,
+    outputDirectory:output, complete:manifest.complete && replayStatus === 'completed' });
+  console.log(`Wrote ${relative(root, join(output, basename(videoPath)))} · ${manifest.video.durationSeconds.toFixed(2)} s · ${manifest.video.sha256}`);
 } finally {
-  await browser.close();
-  await rm(temporary, { recursive:true, force:true });
+  await browser?.close();
+  await Promise.all([
+    rm(temporary, { recursive:true, force:true }),
+    rm(publicationStaging, { recursive:true, force:true }),
+  ]);
 }

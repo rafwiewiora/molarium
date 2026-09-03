@@ -774,14 +774,17 @@ const state = {
   dockingPoseIndex: 0,
   sidechainRotamerEnsemble: null,
   designerMoveScript: null,
+  designerMoveRegisteredStory: null,
   designerMoveReplay: null,
   designerMoveReplaying: false,
+  designerMoveReplayScheduled: false,
   designerMoveReplayPaused: false,
   designerMoveReplayIndex: 0,
   designerMoveReplayFrontier: 0,
   designerMoveReplayPhase: null,
   designerMoveReplayStep: null,
   designerMoveReplayActionRunning: false,
+  designerMovePresentationStep: null,
   designerMoveReplayCheckpoints: [],
   structureComponents: [],
   atomComponentIds: [],
@@ -2423,7 +2426,22 @@ function focusedComponentContextIndices(molecule = state.molecule) {
   molecule.atoms.forEach((atom, index) => {
     if (nearbyResidues.has(residueKey(atom))) nearbyAtoms.add(index);
   });
+  labeledResiduePeptideContextIndices(molecule).forEach((index) => nearbyAtoms.add(index));
   return nearbyAtoms;
+}
+
+const PEPTIDE_CONTEXT_ATOM_NAMES = new Set(['N','CA','C','O','OXT']);
+
+function labeledResiduePeptideContextIndices(molecule = state.molecule) {
+  const indices = new Set();
+  if (!molecule || !state.focusedAtomResidueLabels.length) return indices;
+  for (const spec of state.focusedAtomResidueLabels) molecule.atoms.forEach((atom, index) => {
+    if (!isProteinAtom(atom) || String(atom.chain || 'A') !== String(spec.chain || 'A')) return;
+    const offset = Number(atom.residueIndex) - Number(spec.residueIndex);
+    if (offset === 0 || Math.abs(offset) === 1 && PEPTIDE_CONTEXT_ATOM_NAMES.has(atom.atomName))
+      indices.add(index);
+  });
+  return indices;
 }
 
 function focusStructureComponent(componentId, isolate = false) {
@@ -3536,6 +3554,9 @@ function cartoonAtomSelection(molecule = state.molecule) {
   molecule?.atoms?.forEach((atom, index) => {
     if (!componentVisible(index)) return;
     if (!isProteinAtom(atom) || pocket.pocketAtomIndices.has(index)) allowedIndices.add(index);
+  });
+  labeledResiduePeptideContextIndices(molecule).forEach((index) => {
+    if (componentVisible(index)) allowedIndices.add(index);
   });
   return { ...pocket, allowedIndices };
 }
@@ -4964,7 +4985,8 @@ async function runBrowserConstrainedDocking(options = {}) {
         initialPositions:editedPositions, coreAtomIndices,
         editedAtomIndices, affectedAtomIndices,
         hydrogenBondConstraints:mappedHydrogenBonds.constraints,
-        count:requestedConformers });
+        count:requestedConformers,
+        featureSeedingProtocol:options.featureSeedingProtocol ?? 'v4' });
       if (featureSeedResult.releasedCoreAtomIndices.length) {
         const releasedProductIndices = new Set(featureSeedResult.releasedCoreAtomIndices);
         const releasedEnvironmentAtomIds = featureSeedResult.releasedCoreAtomIndices
@@ -5236,7 +5258,9 @@ async function runBrowserConstrainedDocking(options = {}) {
             : 'Rigid core alignment alone does not optimize ligand torsions against the receptor.',
           'Edit-lineage atom identity gives an exact, auditable analogue mapping.',
           'Chemically transformed rings are released as complete units while their unchanged external scaffold boundary remains fixed.',
-          'A pre-existing non-ring single bond is resampled when added, deleted, or substituted atoms alter its local graph environment; conjugated amide-like and ring bonds remain fixed.',
+          ...(posePropagation && featureSeedResult ? [featureSeedResult.method.endsWith('/v4')
+            ? 'A pre-existing non-ring single bond is resampled when added, deleted, or substituted atoms alter its local graph environment; conjugated amide-like and ring bonds remain fixed.'
+            : 'Pinned feature-seeding protocol v3 samples untargeted edit-region torsions but leaves affected pre-existing rotors fixed.'] : []),
           'Only graph branches containing no fixed scaffold atom are eligible to rotate; local ring moves touching a perceived stereocenter, ring multiple-bond atom, carbonyl, or lactam geometry are excluded.',
           'A pharmacophore-capture stage drives every torsion and safe ring proposal before ordinary physical energy is allowed to act; only registered chemical-sanity gates accompany the restraint objective.',
           'A captured contact is not called feasible when its ligand strain exceeds 100 kcal/mol above the best exact-core start or it introduces more than two additional steric-clash diagnostics.',
@@ -5697,6 +5721,12 @@ function renderDockingResults() {
     list.append(button);
   });
   const selected = result.run.candidates[state.dockingPoseIndex] || entries[0]?.pose;
+  const applyButton = document.querySelector('#apply-docking-pose');
+  if (applyButton) {
+    applyButton.disabled = !selected?.feasible;
+    applyButton.title = selected && !selected.feasible
+      ? 'This pose failed the required-contact or physical-feasibility gate.' : '';
+  }
   const selectedValidity = selected?.physicalDetails?.chemicalValidity;
   const scoreBreakdown = selected
     ? `Δphysical ${selected.physicalEnergyKcalMol.toFixed(2)} · restraints ${selected.constraintPenaltyKcalMol.toFixed(2)} kcal/mol`
@@ -5710,10 +5740,12 @@ function renderDockingResults() {
     : 'Selected core · torsion search · rigid 8 Å site')) + throughput);
 }
 
-async function applySelectedDockingPose() {
+async function applySelectedDockingPose({ allowInfeasible = false } = {}) {
   const result = state.dockingResult;
   const pose = result?.run.candidates[state.dockingPoseIndex];
   if (!result || !pose) throw new Error('Select a docking pose first.');
+  if (!pose.feasible && !allowInfeasible)
+    throw new Error('The selected docking pose is infeasible; pass allowInfeasible:true to apply it explicitly.');
   const adapter = await import('./docking/browser-adapter.mjs');
   const liveIndices = currentIndicesForDockingPlan(result.plan);
   if (!liveIndices.length || adapter.dockingTopologyText(state.molecule, liveIndices) !== result.ligandTopologyText)
@@ -7993,24 +8025,27 @@ async function enumerateCurrentSidechainRotamers(residueAtomIndex, maximumCandid
   return sidechainRotamerPublicResult(result);
 }
 
-async function applyCurrentSidechainRotamer(index) {
+async function applyCurrentSidechainRotamer(selector, {
+  expectedInputCoordinateSha256 = null, expectedSelectedCoordinateSha256 = null,
+} = {}) {
   if (state.mode !== 'build') throw new Error('Enter Design mode before applying a side-chain rotamer.');
   if (state.chemistryTransaction)
     throw new Error('Finish or discard pending chemistry before applying a side-chain rotamer.');
   const ensemble = state.sidechainRotamerEnsemble;
   if (!ensemble) throw new Error('Enumerate a side-chain rotamer ensemble first');
-  if (!Number.isInteger(index) || index < 0 || !ensemble.candidates[index])
-    throw new Error(`Side-chain rotamer ${index} does not exist`);
   const currentCoordinateSha256 = await moleculeCoordinateSha256();
-  if (currentCoordinateSha256 !== ensemble.inputCoordinateSha256)
-    throw new Error('The molecular coordinates changed after side-chain enumeration; enumerate again.');
   const module = await import('./docking/sidechain-rotamers.mjs');
+  const candidate = module.selectSidechainRotamerCandidate(ensemble, selector);
+  const index = ensemble.candidates.indexOf(candidate);
+  if (index < 0) throw new Error('The selected side-chain rotamer is absent from the active ensemble');
+  module.assertSidechainRotamerCoordinateGuards({ ensemble, candidate, currentCoordinateSha256,
+    expectedInputCoordinateSha256, expectedSelectedCoordinateSha256 });
   pushBuildHistory();
-  const startingPositions = new Map(ensemble.candidates[index].positions.map((position) => {
+  const startingPositions = new Map(candidate.positions.map((position) => {
     const atom = state.molecule.atoms[position.atomIndex];
     return [position.atomIndex, { x:atom.x, y:atom.y, z:atom.z }];
   }));
-  const candidate = module.applySidechainRotamer(state.molecule, ensemble, index);
+  module.applySidechainRotamer(state.molecule, ensemble, index);
   if (state.designerMoveReplaying && candidate.positions.length) {
     // A rotamer choice is a scientific state change that is otherwise a hard
     // cut. Replay it at human speed so the chemist can see the causal motion.
@@ -8041,13 +8076,19 @@ async function applyCurrentSidechainRotamer(index) {
     restoreMolecule(state.buildHistory.pop());
     throw new Error('Applied side-chain coordinates did not match the enumerated branch hash');
   }
+  if (expectedSelectedCoordinateSha256 != null
+    && appliedCoordinateSha256 !== expectedSelectedCoordinateSha256) {
+    restoreMolecule(state.buildHistory.pop());
+    throw new Error('Applied side-chain coordinates did not match expectedSelectedCoordinateSha256');
+  }
   const application = {
     schema:'molarium.sidechain-rotamer-application/v1',
     method:'canonical-chi-grid-steric-prerank-v1',
     residue:structuredClone(ensemble.residue), receptorAtomId:ensemble.receptorAtomId,
     inputCoordinateSha256:ensemble.inputCoordinateSha256,
     selectedCoordinateSha256:candidate.coordinateSha256,
-    candidateIndex:index, candidateRank:candidate.rank, source:candidate.source,
+    selectedBy:Object.keys(selector)[0],
+    candidateIndex:candidate.index, candidateRank:candidate.rank, source:candidate.source,
     chiDegrees:structuredClone(candidate.chiDegrees), score:candidate.score,
     stericPenalty:candidate.stericPenalty,
     ligandStericPenalty:candidate.ligandStericPenalty,
@@ -8212,6 +8253,7 @@ function resetDesignerMovePlayback() {
   state.designerMoveReplayPhase = null;
   state.designerMoveReplayStep = null;
   state.designerMoveReplayActionRunning = false;
+  state.designerMovePresentationStep = null;
   state.designerMoveReplayCheckpoints = [];
   designerMoveReplayResume?.();
   designerMoveReplayResume = null;
@@ -8302,13 +8344,19 @@ function updateDesignerMoveControls(message = null, captionOverride = null,
   detailOverride = null) {
   const status = document.querySelector('#designer-move-status');
   if (!status) return;
+  const tools = document.querySelector('#designer-move-tools');
+  if (tools) tools.dataset.replayStatus = state.designerMoveReplaying
+    ? 'running' : state.designerMoveReplayScheduled
+      ? 'scheduled' : state.designerMoveReplay?.status || 'idle';
   const script = state.designerMoveScript;
   const actionCount = script?.actions.length || 0;
   const completedApiMoves = state.chemistActionAudit.filter((entry) =>
     entry?.status === 'completed').length;
   const replayButton = document.querySelector('#replay-designer-moves');
-  replayButton.disabled = !script;
-  replayButton.textContent = state.designerMoveReplaying
+  replayButton.disabled = !script
+    || state.designerMoveReplayScheduled && !state.designerMoveReplaying;
+  replayButton.textContent = state.designerMoveReplayScheduled && !state.designerMoveReplaying
+    ? 'Starting story…' : state.designerMoveReplaying
     ? (state.designerMoveReplayPaused
       ? (state.designerMoveReplayIndex < state.designerMoveReplayFrontier
         ? '▶ Return & continue' : '▶ Continue') : '❚❚ Pause')
@@ -8369,6 +8417,7 @@ async function installDesignerMoveScript(parsed) {
   clearScene();
   document.querySelector('#designer-story-dock')?.classList.remove('hidden');
   state.designerMoveScript = structuredClone(parsed);
+  state.designerMoveRegisteredStory = null;
   resetDesignerMovePlayback();
   updateDesignerMoveControls();
 }
@@ -8546,6 +8595,44 @@ function showDesignerMoveResultCue(step) {
   }
 }
 
+function presentDesignerMoveStep(index, phase) {
+  const script = state.designerMoveScript;
+  if (!script) throw new Error('Load a designer-move script first');
+  if (!Number.isInteger(index) || index < 0 || index >= script.actions.length)
+    throw new Error('index must identify an installed designer-move step');
+  if (!['before','after','clear'].includes(phase))
+    throw new Error('phase must be one of: before, after, clear');
+  const pending = state.designerMovePresentationStep;
+  const source = script.actions[index];
+  const step = pending?.index === index && pending?.action === source.action
+    ? structuredClone(pending) : { ...structuredClone(source), index,
+      status:phase === 'after' ? 'completed' : 'running' };
+  if (phase === 'clear') {
+    showDesignerMoveCue();
+    return { index, phase, action:source.action, cleared:true };
+  }
+  state.designerMoveReplayPhase = phase;
+  state.designerMoveReplayStep = structuredClone(step);
+  if (phase === 'before') {
+    state.designerMoveReplayIndex = index;
+    showDesignerMoveCue(step);
+    updateDesignerMoveControls(
+      `Move ${index + 1} of ${script.actions.length} · ${step.caption || step.action}`);
+  } else {
+    state.designerMoveReplayActionRunning = false;
+    state.designerMoveReplayIndex = index + 1;
+    showDesignerMoveResultCue(step);
+    const message = `Completed move ${index + 1} of ${script.actions.length} · ${step.caption || step.action}`;
+    updateDesignerMoveControls(message, step.caption || step.action,
+      designerMoveResultCaption(step));
+    captureDesignerMoveCheckpoint(index + 1, step);
+    updateDesignerMoveControls(message, step.caption || step.action,
+      designerMoveResultCaption(step));
+  }
+  return { index, phase, action:source.action,
+    checkpointIndex:phase === 'after' ? index + 1 : null };
+}
+
 async function replayDesignerMoveScript() {
   const script = state.designerMoveScript;
   if (!script) throw new Error('Import a designer-move JSON script first');
@@ -8563,6 +8650,7 @@ async function replayDesignerMoveScript() {
     import('./design-history/replay.mjs'),
   ]);
   state.designerMoveReplaying = true;
+  state.designerMoveReplay = null;
   state.designerMoveReplayPaused = false;
   state.designerMoveReplayIndex = 0;
   state.designerMoveReplayFrontier = 0;
@@ -8578,32 +8666,19 @@ async function replayDesignerMoveScript() {
     const replay = await module.replayActionScript(api, script, {
       onStep:async ({ phase, step }) => {
         if (phase === 'before') {
-          state.designerMoveReplayPhase = 'before';
-          state.designerMoveReplayStep = structuredClone(step);
-          state.designerMoveReplayActionRunning = false;
           await waitForDesignerMoveReplay();
-          state.designerMoveReplayIndex = step.index;
-          showDesignerMoveCue(step);
-          updateDesignerMoveControls(
-            `Move ${step.index + 1} of ${script.actions.length} · ${step.caption || step.action}`);
-          await holdDesignerMoveReplay(designerMoveHoldMs(step, phase, moviePacedReplay));
           state.designerMoveReplayActionRunning = true;
-          updateDesignerMoveControls();
-        } else {
-          state.designerMoveReplayActionRunning = false;
-          state.designerMoveReplayPhase = 'after';
-          state.designerMoveReplayStep = structuredClone(step);
-          state.designerMoveReplayIndex = step.index + 1;
-          showDesignerMoveResultCue(step);
-          updateDesignerMoveControls(
-            `Completed move ${step.index + 1} of ${script.actions.length} · ${step.caption || step.action}`,
-            step.caption || step.action, designerMoveResultCaption(step));
-          captureDesignerMoveCheckpoint(step.index + 1, step);
-          updateDesignerMoveControls(
-            `Completed move ${step.index + 1} of ${script.actions.length} · ${step.caption || step.action}`,
-            step.caption || step.action, designerMoveResultCaption(step));
+          state.designerMovePresentationStep = structuredClone(step);
+          await api.execute({ action:'interface.presentDesignerStep',
+            args:{ index:step.index, phase:'before' } });
           await holdDesignerMoveReplay(designerMoveHoldMs(step, phase, moviePacedReplay));
-          showDesignerMoveCue(null, { preserveLayout:true });
+        } else {
+          state.designerMovePresentationStep = structuredClone(step);
+          await api.execute({ action:'interface.presentDesignerStep',
+            args:{ index:step.index, phase:'after' } });
+          await holdDesignerMoveReplay(designerMoveHoldMs(step, phase, moviePacedReplay));
+          await api.execute({ action:'interface.presentDesignerStep',
+            args:{ index:step.index, phase:'clear' } });
         }
       },
     });
@@ -8614,32 +8689,54 @@ async function replayDesignerMoveScript() {
     }
     showToast(`${script.actions.length} designer moves replayed through the public Agent API`);
   } finally {
-    showDesignerMoveCue();
+    if (script.actions.length && (designerMoveCueElements.length
+      || document.body.classList.contains('designer-move-demo-active'))) {
+      try { await api.execute({ action:'interface.presentDesignerStep', args:{
+        index:Math.min(script.actions.length - 1,
+          Math.max(0, state.designerMoveReplayIndex - 1)), phase:'clear' } }); }
+      catch { showDesignerMoveCue(); }
+    } else showDesignerMoveCue();
     state.designerMoveReplaying = false;
     state.designerMoveReplayPaused = false;
     state.designerMoveReplayActionRunning = false;
     state.designerMoveReplayPhase = null;
     state.designerMoveReplayStep = null;
+    state.designerMovePresentationStep = null;
     designerMoveReplayResume?.(); designerMoveReplayResume = null;
     updateDesignerMoveControls();
   }
 }
 
-async function exportRecordedDesignerMoves() {
-  const module = await import('./design-history/replay.mjs');
-  const script = module.actionScriptFromAudit(state.chemistActionAudit, {
-    label:`${state.molecule?.name || 'Molarium'} designer moves`,
-  });
-  downloadBlob(`${JSON.stringify(script, null, 2)}\n`,
-    `${slug(state.molecule?.name || 'molarium')}-designer-moves.json`, 'application/json');
-  updateDesignerMoveControls(`${script.actions.length} recorded Agent/API moves exported as replayable JSON.`);
+async function createDesignerScriptExport(kind) {
+  let value, filename;
+  if (kind === 'recorded-actions') {
+    const module = await import('./design-history/replay.mjs');
+    value = module.actionScriptFromAudit(state.chemistActionAudit, {
+      label:`${state.molecule?.name || 'Molarium'} designer moves`,
+    });
+    filename = `${slug(state.molecule?.name || 'molarium')}-designer-moves.json`;
+  } else if (kind === 'execution-log') {
+    if (!state.designerMoveReplay) throw new Error('Replay a designer-move script first');
+    value = state.designerMoveReplay;
+    filename = `${slug(state.designerMoveScript?.label
+      || state.molecule?.name || 'molarium')}-replay-log.json`;
+  } else if (kind === 'installed-script') {
+    if (!state.designerMoveScript) throw new Error('Load a designer-move script first');
+    value = state.designerMoveScript;
+    filename = `${slug(state.designerMoveScript.label || 'molarium')}-action-script.json`;
+  } else throw new Error('kind must be one of: recorded-actions, execution-log, installed-script');
+  return { kind, filename, serialized:`${JSON.stringify(value, null, 2)}\n` };
 }
 
-function exportDesignerMoveReplay() {
-  if (!state.designerMoveReplay) throw new Error('Replay a designer-move script first');
-  downloadBlob(`${JSON.stringify(state.designerMoveReplay, null, 2)}\n`,
-    `${slug(state.designerMoveScript?.label || state.molecule?.name || 'molarium')}-replay-log.json`,
-    'application/json');
+async function downloadDesignerScriptExport(kind) {
+  const result = await runChemistUiAction('designerScript.export', { kind },
+    { reportError:false });
+  const exported = result.designerScriptExport;
+  downloadBlob(exported.serialized, exported.filename, 'application/json');
+  if (kind === 'recorded-actions') {
+    const actionCount = JSON.parse(exported.serialized).actions.length;
+    updateDesignerMoveControls(`${actionCount} recorded Agent/API moves exported as replayable JSON.`);
+  }
 }
 
 function chemistActionKeys(args, allowed = []) {
@@ -9154,6 +9251,14 @@ function installChemistActionsApi(module) {
       else openProjectInfoPanel(panel);
       return chemistActionSummary({ projectInfo:{ panel,
         open:panel !== 'closed' } }); },
+    'interface.presentDesignerStep':async (args) => { chemistActionKeys(args,
+      ['index','phase']);
+      const index = Number(args.index);
+      if (!Number.isInteger(index) || index < 0)
+        throw new Error('index must be a non-negative integer');
+      const phase = chemistActionEnum(args.phase, ['before','after','clear'], 'phase');
+      return chemistActionSummary({ designerPresentation:
+        presentDesignerMoveStep(index, phase) }); },
     'view.setMode':async (args) => { chemistActionKeys(args, ['mode']);
       const mode = chemistActionEnum(args.mode, ['view','build','run'], 'mode');
       if (!setMode(mode)) throw new Error(`Molarium could not enter ${mode} mode`);
@@ -9875,15 +9980,19 @@ function installChemistActionsApi(module) {
       const remap = await chooseDockingContactRemap(args.contactId,
         args.candidateId, 'chemist-actions-role-compatible');
       return chemistActionSummary({ contactRemap:structuredClone(remap) }); },
-    'pose.refine':async (args) => { chemistActionKeys(args, ['searchChains','execution']);
+    'pose.refine':async (args) => { chemistActionKeys(args,
+      ['searchChains','execution','featureSeedingProtocol']);
       const searchChains = Number(args.searchChains ?? 16);
       if (![8,16,32,64].includes(searchChains))
         throw new Error('searchChains must be 8, 16, 32, or 64');
       const execution = chemistActionEnum(args.execution ?? 'auto', ['auto','serial'], 'execution');
+      const featureSeedingProtocol = chemistActionEnum(args.featureSeedingProtocol ?? 'v4',
+        ['v3','v4'], 'featureSeedingProtocol');
       const select = document.querySelector('#docking-conformer-count');
       select.value = String(searchChains); updateDockingUi();
       const result = await runBrowserConstrainedDocking({
         poseSearchWorkers:execution === 'serial' ? 1 : null,
+        featureSeedingProtocol,
       });
       const selected = result.run.selected;
       return chemistActionSummary({ refinement:{ candidates:result.run.candidates.length,
@@ -9918,17 +10027,24 @@ function installChemistActionsApi(module) {
           selectedSeedAudit:structuredClone(result.featureGuidedSeeding.seedAudits
             .find((entry) => entry.conformerIndex === selected.conformerIndex) || null),
         } : null } }); },
-    'pose.apply':async (args) => { chemistActionKeys(args, ['index']);
+    'pose.apply':async (args) => { chemistActionKeys(args, ['index','allowInfeasible']);
       const index = Number(args.index ?? 0);
       if (!Number.isInteger(index) || index < 0) throw new Error('index must be a non-negative integer');
-      if (!state.dockingResult?.run?.candidates?.[index]) throw new Error(`Refined pose ${index} does not exist`);
+      if (args.allowInfeasible != null && typeof args.allowInfeasible !== 'boolean')
+        throw new Error('allowInfeasible must be a boolean');
+      const selectedPose = state.dockingResult?.run?.candidates?.[index];
+      if (!selectedPose) throw new Error(`Refined pose ${index} does not exist`);
+      const allowInfeasible = args.allowInfeasible === true;
+      if (!selectedPose.feasible && !allowInfeasible)
+        throw new Error('The selected docking pose is infeasible; pass allowInfeasible:true to apply it explicitly.');
       await ensureChemistActionAtomIds();
       const before = chemistActionCoordinateSnapshot();
       state.dockingPoseIndex = index;
-      const pose = await applySelectedDockingPose();
+      const pose = await applySelectedDockingPose({ allowInfeasible });
       const coordinateChanges = chemistActionCoordinateChanges(before);
       return chemistActionSummary({ appliedPose:{ index, rank:pose.rank,
-        feasible:pose.feasible, scoreKcalMol:pose.totalScoreKcalMol,
+        feasible:pose.feasible, infeasibleOverride:!pose.feasible && allowInfeasible,
+        scoreKcalMol:pose.totalScoreKcalMol,
         ...coordinateChanges } }); },
     'pose.enumerateSidechainRotamers':async (args) => { chemistActionKeys(args,
       ['receptorAtomId','maximumCandidates']);
@@ -9944,13 +10060,27 @@ function installChemistActionsApi(module) {
       const sidechainRotamers = await enumerateCurrentSidechainRotamers(
         residueAtomIndex, maximumCandidates);
       return chemistActionSummary({ sidechainRotamers }); },
-    'pose.applySidechainRotamer':async (args) => { chemistActionKeys(args, ['index']);
-      const index = Number(args.index ?? 0);
-      if (!Number.isInteger(index) || index < 0)
+    'pose.applySidechainRotamer':async (args) => { chemistActionKeys(args,
+      ['index','chiDegrees','coordinateSha256','expectedInputCoordinateSha256',
+        'expectedSelectedCoordinateSha256']);
+      const selectorKeys = ['index','chiDegrees','coordinateSha256']
+        .filter((key) => Object.hasOwn(args, key));
+      if (selectorKeys.length !== 1)
+        throw new Error('Specify exactly one side-chain rotamer selector: index, chiDegrees, or coordinateSha256');
+      const selectorKey = selectorKeys[0];
+      if (selectorKey === 'index' && (!Number.isInteger(args.index) || args.index < 0))
         throw new Error('index must be a non-negative integer');
+      const selector = { [selectorKey]:structuredClone(args[selectorKey]) };
+      const digestKeys = ['expectedInputCoordinateSha256','expectedSelectedCoordinateSha256'];
+      for (const key of digestKeys) if (Object.hasOwn(args, key)
+        && (typeof args[key] !== 'string' || !/^[a-f0-9]{64}$/.test(args[key])))
+          throw new Error(`${key} must be a lowercase SHA-256 hex digest`);
       await ensureChemistActionAtomIds();
       const before = chemistActionCoordinateSnapshot();
-      const sidechainRotamer = await applyCurrentSidechainRotamer(index);
+      const sidechainRotamer = await applyCurrentSidechainRotamer(selector, {
+        expectedInputCoordinateSha256:args.expectedInputCoordinateSha256 ?? null,
+        expectedSelectedCoordinateSha256:args.expectedSelectedCoordinateSha256 ?? null,
+      });
       Object.assign(sidechainRotamer, chemistActionCoordinateChanges(before));
       return chemistActionSummary({ sidechainRotamer }); },
     'optimization.run':async (args) => { chemistActionKeys(args, ['method']);
@@ -10320,23 +10450,44 @@ function installChemistActionsApi(module) {
         schema:state.designerMoveScript.schema,
         label:state.designerMoveScript.label || null,
         actionCount:state.designerMoveScript.actions.length } }); },
+    'designerScript.loadRegistered':async (args) => { chemistActionKeys(args, ['storyId']);
+      if (typeof args.storyId !== 'string' || !args.storyId)
+        throw new Error('storyId must be a registered Designer Moves story ID');
+      return chemistActionSummary({ registeredDesignerScript:
+        await loadRegisteredDesignerScript(args.storyId) }); },
     'designerScript.play':async (args) => { chemistActionKeys(args, ['playing']);
       if (typeof args.playing !== 'boolean') throw new Error('playing must be boolean');
       if (!state.designerMoveScript) throw new Error('Load a designer-move script first');
+      const alreadyScheduled = args.playing && state.designerMoveReplayScheduled
+        && !state.designerMoveReplaying;
+      let startAccepted = false;
       if (!args.playing) {
         if (state.designerMoveReplaying && !state.designerMoveReplayPaused)
           setDesignerMoveReplayPaused(true);
       } else if (state.designerMoveReplaying) {
         if (state.designerMoveReplayPaused) resumeDesignerMoveReplay();
-      } else {
+      } else if (!state.designerMoveReplayScheduled) {
         // replayDesignerMoveScript executes the constituent actions through this
         // same serialized API.  Start it only after the play route returns, or
         // the outer queued action would wait on its own queue.
-        setTimeout(() => replayDesignerMoveScript().catch((error) =>
-          showNotice(error.message)), 0);
+        state.designerMoveReplayScheduled = true;
+        startAccepted = true;
+        updateDesignerMoveControls();
+        setTimeout(async () => {
+          try { await replayDesignerMoveScript(); }
+          catch (error) {
+            if (!state.designerMoveReplay || state.designerMoveReplay.status === 'running')
+              state.designerMoveReplay = { status:'failed', error:String(error?.message || error) };
+            showNotice(error.message);
+          } finally {
+            state.designerMoveReplayScheduled = false;
+            updateDesignerMoveControls();
+          }
+        }, 0);
       }
       return chemistActionSummary({ designerPlayback:{
-        scheduled:args.playing && !state.designerMoveReplaying,
+        scheduled:state.designerMoveReplayScheduled,
+        startAccepted, alreadyScheduled,
         playing:args.playing, paused:!args.playing,
         index:state.designerMoveReplayIndex,
         actionCount:state.designerMoveScript.actions.length } }); },
@@ -10366,10 +10517,17 @@ function installChemistActionsApi(module) {
         index:state.designerMoveReplayIndex,
         frontier:state.designerMoveReplayFrontier,
         replaying:state.designerMoveReplaying,
+        scheduled:state.designerMoveReplayScheduled,
         paused:state.designerMoveReplayPaused,
         phase:state.designerMoveReplayPhase,
         activeAction:state.designerMoveReplayStep?.action || null,
+        registeredStory:structuredClone(state.designerMoveRegisteredStory),
       } : null }); },
+    'designerScript.export':async (args) => { chemistActionKeys(args, ['kind']);
+      const kind = chemistActionEnum(args.kind,
+        ['recorded-actions','execution-log','installed-script'], 'kind');
+      return chemistActionSummary({ designerScriptExport:
+        await createDesignerScriptExport(kind) }); },
     'designRoute.load':async (args) => { chemistActionKeys(args, ['routeId']);
       if (typeof args.routeId !== 'string' || !args.routeId)
         throw new Error('routeId must be a registered design-route ID');
@@ -15497,25 +15655,20 @@ document.querySelector('#replay-designer-moves').addEventListener('click', async
   finally { updateDesignerMoveControls(); }
 });
 document.querySelector('#previous-designer-move').addEventListener('click', () => {
-  // Checkpoint review is presentation-only: it must not add or remove a
-  // scientific action from the replay audit.  Agents can request the same
-  // operation through designerScript.step; the visible transport controls
-  // deliberately remain outside the recorded design history.
-  reviewDesignerMoveCheckpoint(-1);
+  runChemistUiAction('designerScript.step', { direction:'previous' }).catch(() => {});
 });
 document.querySelector('#next-designer-move').addEventListener('click', () => {
-  reviewDesignerMoveCheckpoint(1);
+  runChemistUiAction('designerScript.step', { direction:'next' }).catch(() => {});
 });
 document.querySelector('#restart-designer-moves').addEventListener('click', () => {
   runChemistUiAction('designerScript.restart').then(() =>
     showToast('Story returned to its blank starting canvas')).catch(() => {});
 });
 document.querySelector('#export-designer-moves').addEventListener('click', () => {
-  exportRecordedDesignerMoves().catch((error) => showNotice(error.message));
+  downloadDesignerScriptExport('recorded-actions').catch((error) => showNotice(error.message));
 });
 document.querySelector('#export-designer-replay').addEventListener('click', () => {
-  try { exportDesignerMoveReplay(); }
-  catch (error) { showNotice(error.message); }
+  downloadDesignerScriptExport('execution-log').catch((error) => showNotice(error.message));
 });
 document.querySelector('#optimize-button').addEventListener('click', () => {
   runChemistUiAction('optimization.run', {
@@ -16097,45 +16250,62 @@ const DESIGNER_STORY_LINKS = Object.freeze({
     title:'SOS1 hit to BAY-293',
     script:'./design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
     sourcePath:'design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
-    sourceSha256:'34d1db8acb8e6c5ec48194d3d49b2099820a36fa1c81a2e3c0f1d6af713e7aa7',
+    sourceSha256:'fcafcf1e25fc66c4f906797c80351b1c43fb7ae2a33b5f08f59b60734b1301cd',
     presentation:'chemist-pocket',
   }),
 });
+
+async function loadRegisteredDesignerScript(storyId) {
+  const story = DESIGNER_STORY_LINKS[storyId];
+  if (!story) throw new Error(`Unknown Molarium story: ${storyId}`);
+  const response = await fetch(story.script, { cache:'no-store' });
+  if (!response.ok) throw new Error(`Story JSON could not be loaded (${response.status})`);
+  const sourceBytes = await response.arrayBuffer();
+  const sourceFileSha256 = await sha256Hex(sourceBytes);
+  if (sourceFileSha256 !== story.sourceSha256)
+    throw new Error('Story JSON integrity check failed');
+  const sourceScript = JSON.parse(new TextDecoder().decode(sourceBytes));
+  const replayModule = await import('./design-history/replay.mjs');
+  replayModule.validateActionScript(sourceScript);
+  const sourceActionScriptSha256 = await replayModule.actionScriptSha256(sourceScript);
+  const installedScript = story.presentation === 'chemist-pocket'
+    ? (await import('./design-history/interface-story.mjs'))
+      .buildPocketInterfaceStory(sourceScript, {
+        sourcePath:story.sourcePath, sourceSha256:story.sourceSha256,
+      })
+    : sourceScript;
+  const installedActionScriptSha256 = await replayModule.actionScriptSha256(installedScript);
+  await installDesignerMoveScript(installedScript);
+  if (!setMode('build')) throw new Error('Molarium could not enter Design mode');
+  state.designerMoveRegisteredStory = { storyId, title:story.title,
+    sourcePath:story.sourcePath, sourceFileSha256, sourceActionScriptSha256,
+    installedActionScriptSha256, presentation:story.presentation || null };
+  document.title = `${story.title} · Molarium`;
+  updateDesignerMoveControls(`${story.title} is ready on a blank canvas. Press Play story to begin.`);
+  return { storyId, title:story.title,
+    source:{ path:story.sourcePath, fileSha256:sourceFileSha256,
+      actionScriptSha256:sourceActionScriptSha256,
+      actionCount:sourceScript.actions.length },
+    installed:{ actionScriptSha256:installedActionScriptSha256,
+      actionCount:installedScript.actions.length,
+      presentation:story.presentation || null } };
+}
 
 async function initializeWorkspaceFromUrl() {
   const parameters = new URLSearchParams(window.location.search);
   const storyId = parameters.get('story');
   if (!storyId && parameters.has('blank')) {
-    clearScene();
+    const api = await window.MolariumChemistActionsReady;
+    await api.execute({ requestId:'url-blank-session', action:'session.clear', args:{} });
     return;
   }
   if (!storyId) return loadLaunchMolecule();
-  clearScene();
-  const story = DESIGNER_STORY_LINKS[storyId];
-  if (!story) {
-    updateDesignerMoveControls(`Unknown Molarium story: ${storyId}`);
-    showNotice(`Unknown Molarium story: ${storyId}`);
-    return;
-  }
   try {
-    const response = await fetch(story.script, { cache:'no-store' });
-    if (!response.ok) throw new Error(`Story JSON could not be loaded (${response.status})`);
-    const sourceBytes = await response.arrayBuffer();
-    if (await sha256Hex(sourceBytes) !== story.sourceSha256)
-      throw new Error('Story JSON integrity check failed');
-    const sourceScript = JSON.parse(new TextDecoder().decode(sourceBytes));
-    const installedScript = story.presentation === 'chemist-pocket'
-      ? (await import('./design-history/interface-story.mjs'))
-        .buildPocketInterfaceStory(sourceScript, {
-          sourcePath:story.sourcePath, sourceSha256:story.sourceSha256,
-        })
-      : sourceScript;
-    await installDesignerMoveScript(installedScript);
-    setMode('build');
-    document.title = `${story.title} · Molarium`;
-    updateDesignerMoveControls(`${story.title} is ready on a blank canvas. Press Play story to begin.`);
+    const api = await window.MolariumChemistActionsReady;
+    await api.execute({ requestId:`story-link-${storyId}-load-registered`,
+      action:'designerScript.loadRegistered', args:{ storyId } });
   } catch (error) {
-    updateDesignerMoveControls(`Could not load ${story.title}`);
+    updateDesignerMoveControls(`Could not load ${DESIGNER_STORY_LINKS[storyId]?.title || storyId}`);
     showNotice(error.message);
   }
 }

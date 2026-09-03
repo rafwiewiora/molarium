@@ -2,6 +2,7 @@
 """Compose Figure 2 from synchronized result frames in the interface replay."""
 
 from argparse import ArgumentParser
+from hashlib import sha256
 import json
 from pathlib import Path
 import sys
@@ -16,17 +17,46 @@ from PIL import Image, ImageDraw, ImageFont
 
 DEFAULT_RENDER = (
     ROOT / "outputs" / "design-history" / "sos1-hit-only-growth-clash-v7"
-    / "molarium-interface-final"
+    / "interface-movie"
 )
 OUTPUT = ROOT / "paper" / "figures" / "fig2_sos1_hit_to_bay293.png"
 
-# These identify completed interface checkpoints, not video timestamps. The
-# renderer verifies that every result is visibly presented before capturing it.
-PANELS = [
-    ("A", 5, "view.focusComponent"),
-    ("B", 29, "view.highlightAtoms"),
-    ("C", 32, "view.highlightAtoms"),
-    ("D", 49, "view.highlightAtoms"),
+# Resolve publication states from replay semantics rather than from action
+# numbers, which change whenever the interface presentation gains or loses a
+# cue. Bounds distinguish captions reused for compound 21 and BAY-293.
+CHECKPOINTS = [
+    {
+        "label": "A",
+        "action": "view.focusComponent",
+        "caption": "Center the hit and the local pocket where every design decision will be made",
+    },
+    {
+        "label": "B",
+        "action": "view.highlightAtoms",
+        "caption": "See exactly where the ligand graph changed",
+        "after": ("designRoute.applyStep", "Grow compound 21—and create a clash with Phe890-in"),
+        "before": ("pose.enumerateSidechainRotamers", "Enumerate discrete Phe890 side-chain alternatives"),
+    },
+    {
+        "label": "C",
+        "action": "view.highlightAtoms",
+        "caption": "See Phe890 move out of the ligand growth path",
+        "after": ("pose.applySidechainRotamer", "Choose the predicted Phe890-out branch"),
+        "before": ("pose.updateReceptorReference", "Make the selected receptor branch the new pose reference"),
+    },
+    {
+        "label": "D",
+        "action": "view.highlightAtoms",
+        "caption": "Compare the relaxed ligand–pocket geometry in the same fixed view",
+        "after": ("optimization.run", "Relax compound 21 and the opened pocket together"),
+        "before": ("view.setMode", "Return to Design with the predicted open pocket"),
+    },
+    {
+        "label": "E",
+        "action": "view.highlightAtoms",
+        "caption": "Compare the relaxed ligand–pocket geometry in the same fixed view",
+        "after": ("optimization.run", "Relax the final predicted BAY-293 complex"),
+    },
 ]
 
 
@@ -43,13 +73,45 @@ def font(size: int):
     return ImageFont.load_default()
 
 
-def result_capture(manifest, render_dir: Path, action_number: int, action: str):
-    timeline = manifest["presentationScript"]["timeline"]
-    step = timeline[action_number - 1]
-    if step["actionNumber"] != action_number or step["action"] != action:
+def unique_step(timeline, action: str, caption: str):
+    matches = [
+        step for step in timeline
+        if step.get("action") == action and step.get("caption") == caption
+    ]
+    if len(matches) != 1:
         raise ValueError(
-            f"Action {action_number} is {step['action']!r}, expected {action!r}"
+            f"Expected one timeline step for {action!r} / {caption!r}; "
+            f"found {len(matches)}"
         )
+    return matches[0]
+
+
+def resolve_checkpoint(manifest, checkpoint):
+    timeline = manifest["presentationScript"]["timeline"]
+    lower = 0
+    upper = float("inf")
+    if checkpoint.get("after"):
+        lower = unique_step(timeline, *checkpoint["after"])["actionNumber"]
+    if checkpoint.get("before"):
+        upper = unique_step(timeline, *checkpoint["before"])["actionNumber"]
+    matches = [
+        step for step in timeline
+        if step.get("action") == checkpoint["action"]
+        and step.get("caption") == checkpoint["caption"]
+        and lower < step["actionNumber"] < upper
+    ]
+    if len(matches) != 1:
+        raise ValueError(
+            f"Expected one semantic checkpoint {checkpoint['label']} between "
+            f"actions {lower} and {upper}; found {len(matches)}"
+        )
+    return matches[0]
+
+
+def result_capture(manifest, render_dir: Path, checkpoint):
+    step = resolve_checkpoint(manifest, checkpoint)
+    action_number = step["actionNumber"]
+    action = step["action"]
     matches = [
         capture for capture in manifest["captures"]
         if capture.get("actionIndex") == action_number - 1
@@ -64,6 +126,9 @@ def result_capture(manifest, render_dir: Path, action_number: int, action: str):
     path = render_dir / matches[0]["qaFilename"]
     if not path.exists():
         raise FileNotFoundError(path)
+    expected_sha256 = matches[0].get("sha256")
+    if expected_sha256 and sha256(path.read_bytes()).hexdigest() != expected_sha256:
+        raise ValueError(f"Interface frame failed its render-manifest hash: {path}")
     return path
 
 
@@ -74,17 +139,19 @@ def main():
     args = parser.parse_args()
     manifest_path = args.render_dir / "render-manifest.json"
     manifest = json.loads(manifest_path.read_text())
+    if manifest.get("complete") is not True or manifest.get("replay", {}).get("status") != "completed":
+        raise ValueError("Paper frames require a complete, expectation-passing interface replay")
 
     images = []
-    for label, action_number, action in PANELS:
-        path = result_capture(manifest, args.render_dir, action_number, action)
-        images.append((label, Image.open(path).convert("RGB")))
+    for checkpoint in CHECKPOINTS:
+        path = result_capture(manifest, args.render_dir, checkpoint)
+        images.append((checkpoint["label"], Image.open(path).convert("RGB")))
 
     panel_w, panel_h = images[0][1].size
     if any(image.size != (panel_w, panel_h) for _, image in images):
         raise ValueError("All interface frames must use the same viewport")
     gutter = 18
-    canvas = Image.new("RGB", (panel_w * 2 + gutter, panel_h * 2 + gutter), "white")
+    canvas = Image.new("RGB", (panel_w * 2 + gutter, panel_h * 3 + gutter * 2), "white")
     draw = ImageDraw.Draw(canvas)
     label_font = font(48)
 
@@ -101,6 +168,42 @@ def main():
             width=3,
         )
         draw.text((badge_x + 17, badge_y + 7), label, font=label_font, fill="white")
+
+    # The sixth cell is an explanatory bridge, not another molecular state. It
+    # prevents the compound-21 to BAY-293 graph rewrite and subsequent pose
+    # selection from reading as an unexplained coordinate jump between C and E.
+    card_x = panel_w + gutter
+    card_y = panel_h * 2 + gutter * 2
+    pad = 96
+    draw.rounded_rectangle(
+        (card_x + pad, card_y + pad, card_x + panel_w - pad, card_y + panel_h - pad),
+        radius=34,
+        fill=(244, 250, 249),
+        outline=(58, 137, 145),
+        width=4,
+    )
+    heading_font = font(42)
+    body_font = font(31)
+    small_font = font(27)
+    center_x = card_x + panel_w // 2
+    draw.text((center_x, card_y + 150), "WHY THE LIGAND CHANGES", font=heading_font,
+              fill=(19, 35, 50), anchor="mm")
+    lines = [
+        ("compound 21", body_font, (113, 89, 163)),
+        ("↓", heading_font, (58, 137, 145)),
+        ("rewrite the molecular graph", body_font, (19, 35, 50)),
+        ("15 heavy atoms retained", small_font, (63, 78, 92)),
+        ("16 removed · 17 added", small_font, (63, 78, 92)),
+        ("↓", heading_font, (58, 137, 145)),
+        ("64-candidate pose search", body_font, (19, 35, 50)),
+        ("selected pose + coupled relaxation", small_font, (63, 78, 92)),
+        ("↓", heading_font, (58, 137, 145)),
+        ("BAY-293 prediction", body_font, (113, 89, 163)),
+    ]
+    line_y = card_y + 245
+    for text, text_font, color in lines:
+        draw.text((center_x, line_y), text, font=text_font, fill=color, anchor="mm")
+        line_y += 67 if text == "↓" else 62
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(args.output, optimize=True, dpi=(300, 300))

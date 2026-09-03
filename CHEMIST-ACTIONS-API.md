@@ -57,7 +57,7 @@ feature transfer, Undo, and Redo therefore behave exactly as they do for an inte
 
 - `session.inspect`, `session.loadStructure`, `session.loadIdentifier`, `session.loadFixture`,
   `session.clear`, `session.share`
-- `interface.setPanelOpen`, `interface.openProjectInfo`
+- `interface.setPanelOpen`, `interface.openProjectInfo`, `interface.presentDesignerStep`
 - `view.setMode`, `view.focusComponent`, `view.focusAtoms`, `view.highlightAtoms`,
   `view.setDisplay`, `view.setComponentVisibility`, `view.showAllComponents`, `view.reset`,
   `view.focusResidue`, `view.clearFocus`, `view.setCamera`
@@ -84,8 +84,9 @@ feature transfer, Undo, and Redo therefore behave exactly as they do for an inte
 - `campaign.createBranch`, `campaign.switchBranch`, `campaign.mergeBranch`
 - `campaign.recordDecision`, `campaign.verify`, `campaign.close`, `campaign.import`,
   `campaign.export`
-- `designerScript.load`, `designerScript.play`, `designerScript.step`,
-  `designerScript.restart`, `designerScript.inspect`
+- `designerScript.load`, `designerScript.loadRegistered`, `designerScript.play`,
+  `designerScript.step`, `designerScript.restart`, `designerScript.inspect`,
+  `designerScript.export`
 
 ## Live design campaigns
 
@@ -153,9 +154,17 @@ receptor side chain may need to cross a rotamer barrier. It accepts one persiste
 ID, generates a bounded canonical chi-angle ensemble from the current coordinates, and ranks the
 branches with a deterministic steric screen against the current complex. It does not read or
 accept a later protein structure. `pose.applySidechainRotamer` commits one returned branch through
-the same visible Design control, records the input and selected-coordinate hashes, and participates
-in ordinary Undo. The chosen branch should then be physically refined and compared with the other
-branches; the steric pre-rank is not an affinity score.
+the same visible Design control and participates in ordinary Undo. Exactly one selector is required:
+legacy `index`, `chiDegrees`, or `coordinateSha256`. Chi angles are compared circularly (so -180°
+and +180° are equivalent) at 0.001° precision, and the match must be unique. Hash selection must
+match exactly one enumerated branch. Optional `expectedInputCoordinateSha256` and
+`expectedSelectedCoordinateSha256` guards abort before mutation if the caller is applying a branch
+from the wrong input or a different selected result. The response records `selectedBy`, the actual
+candidate index and rank, its normalized chi values, and the selected-coordinate hash. Prefer a
+coordinate hash for exact replay or chi angles when the physical rotamer should survive harmless
+ranking changes; use an index only for legacy or immediate interactive selection. The chosen branch
+should then be physically refined and compared with the other branches; the steric pre-rank is not
+an affinity score.
 
 `pose.updateReceptorReference` accepts a moved receptor-site branch without replacing the captured
 ligand reference or its persistent atom lineage. It refreshes the receptor coordinates and any
@@ -190,12 +199,24 @@ the visible pose list but leaves the 3D molecule fixed until `pose.apply`;
 `pose.applySidechainRotamer`. Replay result cues state this explicitly and hold on the result card
 at human reading speed before the corresponding Apply action.
 
+`pose.apply` fails closed when the selected refined pose is marked infeasible. An agent may apply
+such a negative-control result only by sending `allowInfeasible:true`; that override remains in the
+action audit and the response reports `infeasibleOverride:true`. The visible Apply pose button is
+disabled for infeasible results, so an ordinary human click cannot silently bypass required-contact
+or physical-feasibility gates.
+
 `pose.refine` accepts `execution: "auto"` (the default) or `execution: "serial"`. Auto execution
 partitions independent, deterministically seeded pose chains over a bounded browser Worker ensemble
 and restores results to conformer-index order before ranking. The response and hash-linked labbook
 record the worker count, elapsed search time, throughput, and any serial fallback. Serial mode is a
 reproducibility control: it uses the same seeds, restraint and physical objectives, and candidate
 ordering on the browser main thread.
+
+The optional `featureSeedingProtocol` pins the pose-seed generator. `v3` reproduces the registered
+SOS1 trajectory: it scans the edited single-anchor region but leaves affected pre-existing rotors
+fixed. `v4` is the default for new work and additionally samples eligible pre-existing rotors in
+the declared edit environment. The returned `refinement.featureGuidedSeeding.method` records the
+effective version, allowing a replay `expect` guard to stop if implementation drift changes it.
 
 Pose propagation has three separate relaxation concepts. Restraint-biased internal-coordinate
 search first uses selected flat-bottom hydrogen-bond potentials to generate contact-feasible poses;
@@ -277,11 +298,16 @@ the portable action-and-arguments procedure; `molarium.chemist-action-replay/v1`
 result of executing it in a new session. Replay calls only this public API and rejects private
 routes, embedded code, callbacks, and direct coordinate replacement. See
 [`DESIGNER-MOVES.md`](./DESIGNER-MOVES.md) for the schema, converter, and the provenance-pinned SOS1
-Phe890 examples. The visible paused back/forward arrows are a presentation-only boundary: they
-inspect cached application checkpoints without issuing Chemist Actions or rewriting the append-only
-scientific execution audit. An agent may explicitly request the bounded `designerScript.step`
-inspection route, but ordinary cached story navigation is deliberately not promoted into campaign
-design history.
+Phe890 examples. Registered paper/demo links call `designerScript.loadRegistered` once. That route
+owns registry lookup, source-file SHA-256 verification, presentation transformation,
+installed-script hashing, blank-canvas installation, Design-mode selection, and the visible
+title/status update. It returns both source hashes and the installed action-script hash. During
+playback, `interface.presentDesignerStep` owns each visible before/after/clear cue, panel layout,
+caption, and checkpoint presentation. The paused back/forward arrows call the bounded
+`designerScript.step` route; checkpoint review is recorded in the API audit but does not re-execute
+the underlying scientific action. `designerScript.export` returns the filename and exact serialized
+JSON used by the human download buttons for `recorded-actions`, `execution-log`, or
+`installed-script`.
 The audit converter excludes `campaign.*` bookkeeping actions from these
 molecule scripts.
 
