@@ -193,6 +193,10 @@ const ACTIONS = Object.freeze({
   'designRoute.load': Object.freeze({
     description:'Load the coordinate-bearing hit of a registered design route.',
     arguments:Object.freeze({ routeId:'registered design-route ID' }) }),
+  'designRoute.resume': Object.freeze({
+    description:'Resume a registered graph-edit route from a provenance-labelled campaign snapshot.',
+    arguments:Object.freeze({ routeId:'registered design-route ID',
+      stateId:'registered hit or product state ID' }) }),
   'designRoute.applyStep': Object.freeze({
     description:'Stage one registered design-route graph step, preserving any designer-selected exit vector.',
     arguments:Object.freeze({ stepId:'persistent design-step ID',

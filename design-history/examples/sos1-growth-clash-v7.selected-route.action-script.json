@@ -259,14 +259,14 @@
       "args": {
         "mode": "propagate"
       },
-      "caption": "Freeze the predicted open pocket before the final design"
+      "caption": "Freeze the compound 21 proximal core and Phe890-out pocket"
     },
     {
       "action": "designRoute.applyStep",
       "args": {
         "stepId": "finish-bay-293"
       },
-      "caption": "Construct the final BAY-293 graph from compound 21"
+      "caption": "Keep the proximal core fixed; rebuild the distal arm at the other thiophene position"
     },
     {
       "action": "pose.refine",
@@ -278,7 +278,7 @@
         "refinement.selectedFeasible": true,
         "refinement.featureGuidedSeeding.method": "molarium-edit-region-axis-seeding/v3"
       },
-      "caption": "Predict BAY-293 from the frozen compound 21 state"
+      "caption": "Search 64 poses for the rebuilt BAY-293 arm around the fixed compound 21 core"
     },
     {
       "action": "pose.apply",
@@ -288,7 +288,7 @@
       "expect": {
         "appliedPose.feasible": true
       },
-      "caption": "Apply the highest-ranked BAY-293 pose"
+      "caption": "Apply the highest-ranked BAY-293 pose while retaining the proximal core"
     },
     {
       "action": "protein.parameterize",

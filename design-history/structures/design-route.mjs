@@ -71,10 +71,36 @@ export function validateRegisteredDesignRoute(route, { expectedId = null } = {})
     if (stepIds.has(step.id)) throw new Error(`Duplicate registered design step: ${step.id}`);
     stepIds.add(step.id);
     requireString(step.stateId, `steps[${index}].stateId`);
+    if (step.productComponentId != null) {
+      requireString(step.productComponentId, `steps[${index}].productComponentId`);
+      if (!/^[A-Za-z0-9]{1,3}$/.test(step.productComponentId))
+        throw new Error(`steps[${index}].productComponentId must be a one-to-three character component ID`);
+    }
     requireString(step.label, `steps[${index}].label`);
     requireString(step.inputKind, `steps[${index}].inputKind`);
     requireString(step.productSmiles, `steps[${index}].productSmiles`);
-    requireRecord(step.posePropagationMap, `steps[${index}].posePropagationMap`);
+    const poseMap = requireRecord(step.posePropagationMap,
+      `steps[${index}].posePropagationMap`);
+    if (!Array.isArray(poseMap.commonAtoms) || !poseMap.commonAtoms.length)
+      throw new Error(`steps[${index}].posePropagationMap.commonAtoms must be non-empty`);
+    const protectedAnchor = poseMap.protectedReferenceAnchor;
+    if (protectedAnchor != null) {
+      requireRecord(protectedAnchor,
+        `steps[${index}].posePropagationMap.protectedReferenceAnchor`);
+      requireString(protectedAnchor.method,
+        `steps[${index}].posePropagationMap.protectedReferenceAnchor.method`);
+      requireString(protectedAnchor.label,
+        `steps[${index}].posePropagationMap.protectedReferenceAnchor.label`);
+      const protectedNames = requireStringArray(protectedAnchor.referenceAtomNames,
+        `steps[${index}].posePropagationMap.protectedReferenceAnchor.referenceAtomNames`);
+      const commonNames = poseMap.commonAtoms.map((entry) => entry.referenceAtomName);
+      if (new Set(protectedNames).size !== protectedNames.length
+        || protectedNames.length !== commonNames.length
+        || protectedNames.some((name, atomIndex) => name !== commonNames[atomIndex]))
+        throw new Error(`steps[${index}] protected anchor must exactly identify the fixed common atoms`);
+      if (protectedAnchor.atoms !== protectedNames.length)
+        throw new Error(`steps[${index}] protected anchor atom count changed`);
+    }
   }
 
   const generator = requireRecord(route.generator, 'generator');

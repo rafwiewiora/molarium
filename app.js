@@ -9107,20 +9107,7 @@ async function fetchPinnedText(path, expectedSha256) {
 }
 
 async function loadRegisteredDesignRoute(routeId) {
-  const path = REGISTERED_DESIGN_ROUTES[routeId];
-  if (!path) throw new Error(`Unknown registered design route: ${routeId}`);
-  const response = await fetch(path);
-  if (!response.ok) throw new Error(`Registered design route could not be loaded (${response.status})`);
-  const route = await response.json();
-  validateRegisteredDesignRoute(route, { expectedId:routeId });
-  if (route.evaluation?.status !== 'locked-until-predictions-frozen'
-    || route.evaluation?.holdouts?.length)
-    throw new Error('A hit-only route cannot expose evaluation holdouts before prediction freeze');
-  const coordinateFilesRead = route.generator?.coordinateFilesRead || [];
-  const hitCoordinateToken = String(route.hit?.pdbId || '').toLowerCase();
-  if (!hitCoordinateToken || !coordinateFilesRead.length
-    || coordinateFilesRead.some((entry) => !String(entry).toLowerCase().includes(hitCoordinateToken)))
-    throw new Error('Registered design route has a non-hit coordinate dependency');
+  const route = await fetchRegisteredDesignRoute(routeId);
   const [protein, ligand] = await Promise.all([
     fetchPinnedText(route.hit.proteinAsset, route.hit.proteinSha256),
     fetchPinnedText(route.hit.ligandAsset, route.hit.ligandSha256),
@@ -9141,6 +9128,24 @@ async function loadRegisteredDesignRoute(routeId) {
       stateId:route.hit.stateId },
     coordinateInputs:structuredClone(route.protocolBoundary.coordinateInputs),
     availableSteps:route.steps.map((step) => step.id) };
+}
+
+async function fetchRegisteredDesignRoute(routeId) {
+  const path = REGISTERED_DESIGN_ROUTES[routeId];
+  if (!path) throw new Error(`Unknown registered design route: ${routeId}`);
+  const response = await fetch(path);
+  if (!response.ok) throw new Error(`Registered design route could not be loaded (${response.status})`);
+  const route = await response.json();
+  validateRegisteredDesignRoute(route, { expectedId:routeId });
+  if (route.evaluation?.status !== 'locked-until-predictions-frozen'
+    || route.evaluation?.holdouts?.length)
+    throw new Error('A hit-only route cannot expose evaluation holdouts before prediction freeze');
+  const coordinateFilesRead = route.generator?.coordinateFilesRead || [];
+  const hitCoordinateToken = String(route.hit?.pdbId || '').toLowerCase();
+  if (!hitCoordinateToken || !coordinateFilesRead.length
+    || coordinateFilesRead.some((entry) => !String(entry).toLowerCase().includes(hitCoordinateToken)))
+    throw new Error('Registered design route has a non-hit coordinate dependency');
+  return route;
 }
 
 function installChemistActionsApi(module) {
@@ -10537,6 +10542,47 @@ function installChemistActionsApi(module) {
       if (typeof args.routeId !== 'string' || !args.routeId)
         throw new Error('routeId must be a registered design-route ID');
       return chemistActionSummary({ designRoute:await loadRegisteredDesignRoute(args.routeId) }); },
+    'designRoute.resume':async (args) => { chemistActionKeys(args, ['routeId','stateId']);
+      if (typeof args.routeId !== 'string' || !args.routeId
+        || typeof args.stateId !== 'string' || !args.stateId)
+        throw new Error('routeId and stateId must be registered identifiers');
+      if (!state.molecule?.atoms?.length)
+        throw new Error('Restore a campaign snapshot before resuming its design route');
+      const route = await fetchRegisteredDesignRoute(args.routeId);
+      const registeredStep = route.steps.find((step) => step.stateId === args.stateId);
+      if (args.stateId !== route.hit.stateId && !registeredStep)
+        throw new Error(`State ${args.stateId} is not registered by route ${args.routeId}`);
+      const source = state.molecule.source || {};
+      const sourceRoute = source.designRoute || source;
+      if (sourceRoute.routeId !== args.routeId || sourceRoute.stateId !== args.stateId)
+        throw new Error('The restored snapshot provenance does not match the requested route state');
+      const component = dockingLigandComponent();
+      if (!component) throw new Error('The restored route snapshot has no ligand component');
+      const expectedNames = registeredStep
+        ? registeredStep.productAtomNames
+        : route.hit.ligandDefinition.atoms.filter((atom) => atom.element !== 'H')
+          .map((atom) => atom.id);
+      const actualNames = component.atomIndices.flatMap((atomIndex) => {
+        const atom = state.molecule.atoms[atomIndex];
+        return atom.element === 'H' ? [] : [atom.atomName];
+      });
+      if (actualNames.length !== expectedNames.length
+        || new Set(actualNames).size !== actualNames.length
+        || expectedNames.some((name) => !actualNames.includes(name)))
+        throw new Error('The restored ligand graph identities do not match the registered route state');
+      clearDockingReference();
+      state.designRoute = structuredClone(route);
+      state.designRouteStepId = args.stateId;
+      state.molecule.source = { ...source, designRoute:{
+        routeId:route.id, hitPdbId:route.hit.pdbId, stateId:args.stateId,
+        ...(registeredStep ? { stepId:registeredStep.id } : {}),
+        coordinateInputClass:'registered-hit-only', resumedFromCampaign:true,
+      } };
+      updateDockingUi();
+      return chemistActionSummary({ designRoute:{ routeId:route.id,
+        currentStateId:args.stateId, resumed:true,
+        nextSteps:route.steps.filter((step) => step.referenceStateId === args.stateId)
+          .map((step) => step.id) } }); },
     'designRoute.applyStep':async (args) => { chemistActionKeys(args,
       ['stepId','attachmentAtomId']);
       if (!state.designRoute) throw new Error('Load a registered design route first');
@@ -10585,8 +10631,12 @@ function installChemistActionsApi(module) {
         productSmiles:step.productSmiles,
         posePropagationMap:step.posePropagationMap,
         productAtomNames:step.productAtomNames || null,
+        productComponentId:step.productComponentId || null,
         interactionHypotheses:hitContacts,
       });
+      state.molecule.name = step.compound
+        ? `${state.designRoute.title} · compound ${step.compound} (${step.stateId})`
+        : `${state.designRoute.title} · ${step.stateId}`;
       delete state.molecule.source.dockingBenchmark;
       state.molecule.source.designRoute = {
         routeId:state.designRoute.id, hitPdbId:state.designRoute.hit.pdbId,
@@ -10680,8 +10730,32 @@ const molariumTestApi = Object.freeze({
       chargeModel:parameters.chargeModel, sourceSha256:parameters.sourceSha256,
       parameterCounts:structuredClone(parameters.parameterCounts) };
   },
+  async captureLigandReferenceForStagingTest() {
+    const [adapter, referenceCore] = await Promise.all([
+      import('./docking/browser-adapter.mjs'), import('./docking/reference-core.mjs'),
+    ]);
+    const component = dockingLigandComponent();
+    if (!component) throw new Error('A ligand component is required for the staging test');
+    const plan = adapter.createLigandPlan(state.molecule, component.atomIndices,
+      'isolated-staging-reference');
+    const ligand = referenceCore.captureReferenceLigand(state.molecule,
+      component.atomIndices, null, 'isolated-staging-reference');
+    state.dockingReference = {
+      schema:'molarium.docking.browser-reference/v1', mode:'pose-propagation',
+      capturedAt:new Date().toISOString(), moleculeName:state.molecule.name || 'ligand',
+      ligandComponentId:component.id, ligand,
+      receptorSite:{ schema:'molarium.docking.receptor-site/v1', radiusAngstrom:8,
+        sourceForcefield:null, sourceChargeModel:null, atoms:[] },
+      hydrogenBonds:[], contactAmendments:[], receptorProvenanceAtomCount:0,
+      receptorInputText:'', referenceLigandInputText:adapter.dockingInputText(
+        state.molecule, plan.globalAtomIndices),
+      forcefield:null, chargeModel:null, sourceSha256:null,
+    };
+    return { mode:'pose-propagation', coreAtomCount:ligand.coreAtomIds.length };
+  },
   async stageBenchmarkPoseProduct({ caseId, productSmiles, posePropagationMap,
     productAtomNames = null,
+    productComponentId = null,
     interactionHypotheses = [] } = {}) {
     if (!state.dockingReference || state.dockingReference.mode !== 'pose-propagation')
       throw new Error('Capture a pose-propagation reference before staging a benchmark product');
@@ -10718,6 +10792,10 @@ const molariumTestApi = Object.freeze({
         || new Set(productAtomNames).size !== productAtomNames.length)
         throw new Error('Registered product atom names must uniquely cover every heavy atom');
     }
+    if (productComponentId != null
+      && (typeof productComponentId !== 'string'
+        || !/^[A-Za-z0-9]{1,3}$/.test(productComponentId)))
+      throw new Error('Registered product component ID must contain one to three alphanumeric characters');
     const template = state.molecule.atoms[component.atomIndices[0]];
     const mappedPairs = [];
     for (const mapping of posePropagationMap.commonAtoms) {
@@ -10743,13 +10821,22 @@ const molariumTestApi = Object.freeze({
       referencePositions:reference.ligand.positions, coreAtomPairs:mappedPairs,
     });
     const alignedPositions = attachedPlacement.positions;
+    const protectedDisplacements = mappedPairs.map(([referenceIndex, productIndex]) => {
+      const dx = alignedPositions[productIndex * 3] - reference.ligand.positions[referenceIndex * 3];
+      const dy = alignedPositions[productIndex * 3 + 1] - reference.ligand.positions[referenceIndex * 3 + 1];
+      const dz = alignedPositions[productIndex * 3 + 2] - reference.ligand.positions[referenceIndex * 3 + 2];
+      return Math.hypot(dx, dy, dz);
+    });
+    const protectedReferenceMaxDisplacementAngstrom = Math.max(...protectedDisplacements, 0);
+    if (protectedReferenceMaxDisplacementAngstrom > 1e-9)
+      throw new Error(`Protected reference anchor moved by ${protectedReferenceMaxDisplacementAngstrom.toExponential(3)} Å during staging`);
     if (productAtomNames) productHeavyIndices.forEach((atomIndex, productAtomIndex) => {
       product.atoms[atomIndex].atomName = productAtomNames[productAtomIndex];
     });
     product.atoms.forEach((atom, index) => {
       atom.x = alignedPositions[index * 3]; atom.y = alignedPositions[index * 3 + 1];
       atom.z = alignedPositions[index * 3 + 2];
-      atom.record = 'HETATM'; atom.residueName = template.residueName;
+      atom.record = 'HETATM'; atom.residueName = productComponentId || template.residueName;
       atom.chain = template.chain; atom.residueIndex = template.residueIndex;
       atom.insertionCode = template.insertionCode || '';
       if (!atom.atomName) atom.atomName = atom.element === 'H'
@@ -10852,7 +10939,10 @@ const molariumTestApi = Object.freeze({
       .map((proposal) => [proposal.id, { ...proposal,
         priorEffectiveDefinition:structuredClone(reference.hydrogenBonds
           .find((definition) => definition.id === proposal.id)),
-        editLineage:[{ method:'pre-registered-reference-product-MCS', caseId:caseId || null,
+        editLineage:[{
+          method:posePropagationMap.protectedReferenceAnchor?.method
+            || 'pre-registered-reference-product-MCS',
+          caseId:caseId || null,
           commonHeavyAtoms:posePropagationMap.commonHeavyAtoms,
           referenceBoundary:structuredClone(posePropagationMap.referenceBoundary),
           productBoundary:structuredClone(posePropagationMap.productBoundary) }],
@@ -10887,6 +10977,13 @@ const molariumTestApi = Object.freeze({
       embedding:{ rdkitVersion:embedded.result.rdkitVersion,
         forcefield:embedded.result.forcefield, conformerCount:embedded.result.conformerCount,
         seed:embedded.result.conformerSeed,
+        protectedReference:{
+          method:posePropagationMap.protectedReferenceAnchor?.method || 'mapped-common-atoms',
+          label:posePropagationMap.protectedReferenceAnchor?.label || 'registered common atoms',
+          atomCount:mappedPairs.length,
+          atomNames:posePropagationMap.commonAtoms.map((entry) => entry.referenceAtomName),
+          maxDisplacementAngstrom:protectedReferenceMaxDisplacementAngstrom,
+        },
         attachedPlacement:{ method:attachedPlacement.method,
           regions:structuredClone(attachedPlacement.regions) } },
     };
@@ -16258,7 +16355,7 @@ const DESIGNER_STORY_LINKS = Object.freeze({
     title:'SOS1 hit to BAY-293',
     script:'./design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
     sourcePath:'design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
-    sourceSha256:'f7f1fcb6b3791a8a4bd445e450f188c8e08e2062bf6c270fe0e5db1d9d6e5a59',
+    sourceSha256:'8dc2fe984ce417ce836bd12cc8d46a749fa937b225c78869855ab803576ffef5',
     presentation:'chemist-pocket',
   }),
 });

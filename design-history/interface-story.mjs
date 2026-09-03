@@ -29,6 +29,8 @@ const CHANGED_ATOM_RESULT_PATH = Object.freeze({
 });
 
 function changedRegionCaption(action, stepId = null) {
+  if (action === 'designRoute.applyStep' && stepId === 'finish-bay-293')
+    return 'The distal arm moves because AWW and AXH attach it at different thiophene positions';
   if (action === 'designRoute.applyStep') return 'See exactly where the ligand graph changed';
   if (action === 'pose.applySidechainRotamer') return 'See Phe890 move out of the ligand growth path';
   if (action === 'pose.apply' && stepId === 'scaffold-rewrite')

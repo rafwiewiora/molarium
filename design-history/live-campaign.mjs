@@ -30,12 +30,19 @@ function text(value, fallback = '') {
 
 function plainSource(source = {}) {
   const allowed = ['source', 'format', 'pdbId', 'pubchemCid', 'routeId', 'registeredRouteId',
-    'componentId', 'chain', 'residueIndex', 'canonicalSmiles'];
-  return Object.fromEntries(allowed.flatMap((key) => {
+    'stateId', 'stepId', 'componentId', 'chain', 'residueIndex', 'canonicalSmiles'];
+  const flattened = Object.fromEntries(allowed.flatMap((key) => {
     const value = source?.[key];
     return value == null || !['string', 'number', 'boolean'].includes(typeof value)
       ? [] : [[key, value]];
   }));
+  const route = source?.designRoute;
+  if (route && typeof route === 'object' && !Array.isArray(route)) {
+    if (typeof route.routeId === 'string') flattened.routeId = route.routeId;
+    if (typeof route.stateId === 'string') flattened.stateId = route.stateId;
+    if (typeof route.stepId === 'string') flattened.stepId = route.stepId;
+  }
+  return flattened;
 }
 
 function atomRecord(atom, index) {

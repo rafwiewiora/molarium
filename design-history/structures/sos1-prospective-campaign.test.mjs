@@ -48,7 +48,26 @@ for (const step of campaign.steps) {
   assert.equal(step.productAtomNames.length, step.posePropagationMap.productHeavyAtoms);
   assert.equal(new Set(step.productAtomNames).size, step.productAtomNames.length);
   const map = step.posePropagationMap;
-  assert(map.commonHeavyAtoms >= 15, `${step.id} must retain a substantial 3D anchor`);
+  if (step.id === 'finish-bay-293') {
+    assert.equal(map.commonHeavyAtoms, 15);
+    assert.deepEqual(map.protectedReferenceAnchor, {
+      method:'maximum-common-substructure/v1',
+      label:'AWW proximal quinazoline-thiophene core',
+      referenceAtomNames:['C1', 'C2', 'N6', 'C11', 'N8', 'C3', 'N7', 'C12',
+        'C16', 'C15', 'CX2', 'CX3', 'CX4', 'SX1', 'CX1'],
+      atoms:15,
+      bonds:16,
+      releasedRegions:[
+        'regioisomeric distal phenyl/benzylic arm',
+        'hydroxymethyl-to-methylaminomethyl substituent',
+      ],
+    });
+    assert.equal(map.mcs.atoms, map.commonHeavyAtoms);
+    assert.match(map.transitionExplanation, /different thiophene positions/);
+  } else {
+    assert(map.commonHeavyAtoms >= 15, `${step.id} must retain a substantial 3D anchor`);
+    assert.equal(map.mcs.atoms, map.commonHeavyAtoms);
+  }
   assert.equal(map.commonAtoms.length, map.commonHeavyAtoms);
   assert.equal(map.commonAtoms.length + map.deletedReferenceAtoms.length,
     map.referenceHeavyAtoms);
@@ -56,5 +75,16 @@ for (const step of campaign.steps) {
     map.productHeavyAtoms);
   assert(map.ambiguity.candidateMaps >= 1);
 }
+
+const finalStep = campaign.steps.at(-1);
+assert.equal(finalStep.label,
+  'preserve the proximal quinazoline-thiophene core while rebuilding the regioisomeric distal arm');
+assert.deepEqual(finalStep.posePropagationMap.commonAtoms.map((entry) => [
+  entry.referenceAtomName, entry.productAtomIndex,
+]), [
+  ['C1', 30], ['C2', 21], ['N6', 20], ['C11', 18], ['N8', 17],
+  ['C3', 16], ['N7', 15], ['C12', 13], ['C16', 14], ['C15', 12],
+  ['CX2', 31], ['CX3', 9], ['CX4', 10], ['SX1', 11], ['CX1', 19],
+]);
 
 console.log('SOS1 hit-only campaign passed coordinate-boundary, graph-map, and sequence gates');

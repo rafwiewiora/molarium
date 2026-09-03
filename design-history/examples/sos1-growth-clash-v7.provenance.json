@@ -47,8 +47,8 @@
     "selectedRoute": {
       "path": "design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json",
       "actions": 33,
-      "actionScriptSha256": "7ada67fe9f982deca83e50d57f6acc59a9d06b1d7e054540d6fd7e835306bf6b",
-      "fileSha256": "f7f1fcb6b3791a8a4bd445e450f188c8e08e2062bf6c270fe0e5db1d9d6e5a59",
+      "actionScriptSha256": "7eae660d479d19294a41213cd9cbd79c2341cf5e4878d092255075ddd6d596c4",
+      "fileSha256": "8dc2fe984ce417ce836bd12cc8d46a749fa937b225c78869855ab803576ffef5",
       "meaning": "Fail-closed operational replay of the already-selected route. It pins the v3 pose-seeding protocol, persistent Phe890 identity, the unique normalized chi-angle branch, and feasible pose applications. Same-execution coordinate hashes still guard enumeration and application, but post-WebGPU coordinate bytes are not treated as a portable cross-adapter identity. It omits discarded branches and read-only freeze inspections, so it is not the evidence that branch search occurred."
     }
   },
@@ -84,7 +84,7 @@
     },
     "paperFigure": {
       "path": "paper/figures/fig2_sos1_hit_to_bay293.png",
-      "sha256": "fc9a9ca9bfa384bfb7a14773ac5ec387d08f9f2e96af42e4213ee2d8946ce888"
+      "sha256": "418fd2aeed5bcae4a9547778ca4c98100bfcecbadef322937ce797aca2baf9a8"
     }
   },
   "frozenCheckpoints": [
