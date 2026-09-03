@@ -134,6 +134,9 @@ try {
   console.log('SOS1 AWW→AXH staging preserved the topology-derived hard core and a valid seed-only distal fragment', {
     seedRmsdAngstrom:staged.embedding.seedOnlyPlacement.features[0].seededRmsdAngstrom,
     initialSeedRmsdAngstrom:staged.embedding.seedOnlyPlacement.features[0].initialRmsdAngstrom,
+    finalSeedMaximumDisplacementAngstrom:staged.embedding.spatialFeatures[0]
+      .seedMaxDisplacementAngstrom,
+    connectorRepair:staged.embedding.seedOnlyPlacement.connectorRepair,
     maximumHeavyBondAngstrom:Math.max(...heavyBondDistances),
   });
 } finally {

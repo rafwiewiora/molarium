@@ -10914,7 +10914,44 @@ const molariumTestApi = Object.freeze({
       referencePositions:reference.ligand.positions, hardCoreAtomPairs:mappedPairs,
       features:spatialFeatureMappings.filter((feature) => feature.treatment === 'seed-only'),
     });
-    const alignedPositions = seedOnlyPlacement.positions;
+    let alignedPositions = new Float64Array(seedOnlyPlacement.positions);
+    const seedOnlyFeatures = spatialFeatureMappings.filter((feature) =>
+      feature.treatment === 'seed-only');
+    const fixedSeedAtomIndices = new Set(mappedPairs.map(([, productIndex]) => productIndex));
+    seedOnlyFeatures.forEach((feature, featureIndex) => {
+      const selectedVariantIndex = seedOnlyPlacement.features[featureIndex]
+        ?.selectedVariantIndex ?? 0;
+      const selectedVariant = feature.mappingVariants[selectedVariantIndex];
+      if (!selectedVariant)
+        throw new Error(`Seed-only feature ${feature.id} has no selected mapping variant`);
+      selectedVariant.atomPairs.forEach(([referenceIndex, productIndex]) => {
+        fixedSeedAtomIndices.add(productIndex);
+        for (let axis = 0; axis < 3; axis++)
+          alignedPositions[productIndex * 3 + axis]
+            = reference.ligand.positions[referenceIndex * 3 + axis];
+      });
+    });
+    let seedConnectorRepair = null;
+    if (seedOnlyFeatures.length) {
+      product.atoms.forEach((atom, index) => {
+        atom.x = alignedPositions[index * 3]; atom.y = alignedPositions[index * 3 + 1];
+        atom.z = alignedPositions[index * 3 + 2];
+      });
+      const repaired = await runRDKitJob('geometry', product, () => {}, {
+        maxIterations:120, snapshotFrequency:120,
+        fixedAtomIndices:[...fixedSeedAtomIndices].sort((first, second) => first - second),
+      });
+      alignedPositions = new Float64Array(repaired.positions);
+      seedConnectorRepair = { method:'RDKit fixed-island connector repair/v1',
+        forcefield:repaired.forcefield, fallback:Boolean(repaired.fallback),
+        converged:Boolean(repaired.converged), elapsedMs:repaired.elapsedMs,
+        fixedAtomCount:repaired.fixedAtomCount,
+        movableAtomCount:repaired.movableAtomCount };
+      seedOnlyPlacement.features.forEach((entry) => {
+        entry.finalSeedRmsdAngstrom = 0;
+        entry.coordinatePolicy = 'predecessor seed fixed only during connector repair; released for pose search';
+      });
+    }
     const protectedDisplacements = mappedPairs.map(([referenceIndex, productIndex]) => {
       const dx = alignedPositions[productIndex * 3] - reference.ligand.positions[referenceIndex * 3];
       const dy = alignedPositions[productIndex * 3 + 1] - reference.ligand.positions[referenceIndex * 3 + 1];
@@ -11118,7 +11155,8 @@ const molariumTestApi = Object.freeze({
         attachedPlacement:{ method:attachedPlacement.method,
           regions:structuredClone(attachedPlacement.regions) },
         seedOnlyPlacement:{ method:seedOnlyPlacement.method,
-          features:structuredClone(seedOnlyPlacement.features) },
+          features:structuredClone(seedOnlyPlacement.features),
+          connectorRepair:structuredClone(seedConnectorRepair) },
         spatialFeatures:spatialFeatureMappings.map((feature) => ({
           id:feature.id, kind:feature.kind,
           treatment:feature.treatment,
