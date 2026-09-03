@@ -50,24 +50,36 @@ export class DevToolsClient {
   close() { this.socket.close(); }
 }
 
-export async function startMolariumBrowser({ root, appPath, width = 1440, height = 900,
+export async function startMolariumBrowser({ root, appPath, url = null, width = 1440, height = 900,
   localOnly = true } = {}) {
-  if (!root || !appPath) throw new Error('root and appPath are required');
+  if (!url && (!root || !appPath)) throw new Error('root and appPath are required for a local browser');
+  if (url && !/^https?:\/\//.test(url)) throw new Error('url must use http or https');
   const seed = Math.floor(Math.random() * 1000);
   const appPort = 50000 + seed, debugPort = 52000 + seed;
   const chromePath = process.env.CHROME_PATH || (process.platform === 'darwin'
     ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
     : '/usr/bin/google-chrome');
+  // GitHub's Linux runners have no physical GPU.  Opt in only for the
+  // explicitly requested trusted local Molarium render job; ordinary browser
+  // tests and user launches keep Chrome's normal adapter policy.
+  const softwareWebgpuArguments = process.platform === 'linux'
+    && process.env.MOLARIUM_HEADLESS_SOFTWARE_WEBGPU === '1'
+    ? ['--enable-unsafe-webgpu', '--enable-features=UseSkiaRenderer,Vulkan',
+      '--use-angle=swiftshader', '--use-vulkan=swiftshader',
+      '--use-webgpu-adapter=swiftshader', '--disable-vulkan-surface',
+      '--use-gpu-in-tests', '--enable-unsafe-swiftshader'] : [];
   const profile = await mkdtemp(join(tmpdir(), 'molarium-history-browser-'));
-  const server = Bun.spawn(['bun', 'server.js', ...(localOnly ? ['--local-only'] : []),
+  const server = url ? null : Bun.spawn(['bun', 'server.js', ...(localOnly ? ['--local-only'] : []),
     '--port', String(appPort)], { cwd:root, stdout:'ignore', stderr:'pipe' });
-  const appUrl = `http://127.0.0.1:${appPort}/${appPath.replace(/^\/+/, '')}`;
+  const appUrl = url || `http://127.0.0.1:${appPort}/${appPath.replace(/^\/+/, '')}`;
   let chrome = null, client = null;
   try {
-    await waitFor(async () => (await fetch(appUrl)).ok, 15000, 'Molarium server');
+    await waitFor(async () => (await fetch(appUrl)).ok, 15000,
+      url ? 'Molarium deployment' : 'Molarium server');
     chrome = Bun.spawn([chromePath,
       ...(process.platform === 'linux' ? ['--no-sandbox', '--disable-dev-shm-usage'] : []),
-      '--headless', '--disable-extensions', '--no-first-run', '--hide-scrollbars',
+      ...softwareWebgpuArguments,
+      '--headless=new', '--disable-extensions', '--no-first-run', '--hide-scrollbars',
       '--force-color-profile=srgb', `--remote-debugging-port=${debugPort}`,
       `--user-data-dir=${profile}`, `--window-size=${width},${height}`, appUrl,
     ], { stdout:'ignore', stderr:'ignore' });
@@ -106,8 +118,8 @@ export async function startMolariumBrowser({ root, appPath, width = 1440, height
       },
     };
   } catch (error) {
-    client?.close(); chrome?.kill(); server.kill();
-    await Promise.allSettled([chrome?.exited, server.exited]);
+    client?.close(); chrome?.kill(); server?.kill();
+    await Promise.allSettled([chrome?.exited, server?.exited]);
     await rm(profile, { recursive:true, force:true });
     throw error;
   }

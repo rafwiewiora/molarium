@@ -5,6 +5,8 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { applyCoreTransform, fittedCoreTransform } from '../docking/constraints.mjs';
 import { verifyCdk2PredictionRun } from './verify-cdk2-prediction-run.mjs';
+import { verifyFrozenDesignRouteInput } from
+  '../design-history/structures/design-route-provenance.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -31,8 +33,8 @@ const actionAudit = verified.audit;
 
 const campaignPath = join(generated, 'cdk2-prospective-campaign.json');
 const campaignBytes = await readFile(campaignPath);
-assert.equal(digest(campaignBytes), predictionManifest.inputs.campaign.sha256,
-  'registered hit-only campaign changed');
+const campaignInput = verifyFrozenDesignRouteInput(
+  campaignBytes, predictionManifest.inputs.campaign.sha256);
 const campaign = JSON.parse(campaignBytes);
 
 // The holdout registry and coordinate files are intentionally first resolved
@@ -200,7 +202,7 @@ for (const [path, role] of [[hitProteinPath, 'allowed-hit-protein'],
 
 const movieManifest = {
   schema:'molarium.cdk2-prospective-movie-assets/v1',
-  campaignId:'cdk2-hit-only',
+  routeId:'cdk2-hit-only',
   scientificStatus:'honest-first-blind-result',
   claim:'The movie replays frozen predictions, then reveals evaluation-only holdouts.',
   boundary:{ initialCoordinateInput:'PDB 1H1Q/2A6 only', sequentialPredictedReferences:true,
@@ -213,7 +215,9 @@ const movieManifest = {
   evaluation:holdoutSummary.results,
   editTargets,
   inputs:[
-    { path:relative(root, campaignPath), sha256:digest(campaignBytes) },
+    { path:relative(root, campaignPath), sha256:digest(campaignBytes),
+      ...(campaignInput.schemaMigration
+        ? { schemaMigration:campaignInput.schemaMigration } : {}) },
     { path:relative(root, benchmarkPath), sha256:digest(benchmarkBytes) },
     { path:relative(root, join(runDir, 'prediction-manifest.json')), sha256:digest(predictionManifestBytes) },
     { path:verified.auditProvenance.mode === 'semantic-replay'

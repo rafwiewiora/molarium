@@ -25,6 +25,8 @@ GENERATED = HERE / "generated"
 PROTEIN_OUTPUT = GENERATED / "sos1-5ove-protein.pdb"
 LIGAND_OUTPUT = GENERATED / "sos1-5ove-ligand.pdb"
 CAMPAIGN_OUTPUT = GENERATED / "sos1-prospective-campaign.json"
+REGISTERED_DESIGN_ROUTE_SCHEMA = "molarium.registered-design-route/v1"
+EXPECTED_RDKIT_VERSION = "2026.03.4"
 DEFAULT_HIT_PDB = (ROOT / "outputs" / "design-history" / "sos1-preapproval"
                    / "source" / "5OVE.pdb")
 
@@ -120,16 +122,19 @@ def match_quality(reference: Chem.Mol, product: Chem.Mol,
     return (-score, reference_match, product_match)
 
 
-def pose_map(reference: Chem.Mol, reference_names: list[str],
-             product: Chem.Mol, step_id: str) -> tuple[dict, list[str]]:
+def build_pose_map(reference: Chem.Mol, reference_names: list[str],
+                   product: Chem.Mol, step_id: str,
+                   reference_match: tuple[int, ...],
+                   product_match: tuple[int, ...], *, source: str,
+                   mapping_record: dict, ambiguity: dict) -> tuple[dict, list[str]]:
     if len(reference_names) != reference.GetNumAtoms():
         raise RuntimeError(f"{step_id}: reference name count changed")
-    result, reference_matches, product_matches = exact_mcs(reference, product)
-    candidates = [(reference_match, product_match)
-                  for reference_match in reference_matches
-                  for product_match in product_matches]
-    reference_match, product_match = min(
-        candidates, key=lambda pair: match_quality(reference, product, *pair))
+    if len(reference_match) != len(product_match) or not reference_match:
+        raise RuntimeError(f"{step_id}: protected reference map is incomplete")
+    if len(set(reference_match)) != len(reference_match):
+        raise RuntimeError(f"{step_id}: protected reference atoms are duplicated")
+    if len(set(product_match)) != len(product_match):
+        raise RuntimeError(f"{step_id}: protected product atoms are duplicated")
     mapped_reference = set(reference_match)
     mapped_product = set(product_match)
     common = []
@@ -179,24 +184,47 @@ def pose_map(reference: Chem.Mol, reference_names: list[str],
         })
     product_names = assigned_product_names(product, common)
     return ({
-        "source": "reported molecular graphs plus deterministic local-context map; no later coordinates",
+        "source": source,
         "referenceHeavyAtoms": reference.GetNumAtoms(),
         "productHeavyAtoms": product.GetNumAtoms(),
         "commonHeavyAtoms": len(common),
         "commonReferenceFraction": round(len(common) / reference.GetNumAtoms(), 6),
         "commonProductFraction": round(len(common) / product.GetNumAtoms(), 6),
-        "mcs": {"smarts": result.smartsString, "atoms": result.numAtoms,
-                "bonds": result.numBonds},
-        "ambiguity": {"referenceMatches": len(reference_matches),
-                      "productMatches": len(product_matches),
-                      "candidateMaps": len(candidates),
-                      "selection": "maximum local chemical-context preservation; deterministic tie break"},
+        **mapping_record,
+        "ambiguity": ambiguity,
         "commonAtoms": common,
         "deletedReferenceAtoms": deleted,
         "addedProductAtoms": added,
         "referenceBoundary": reference_boundary,
         "productBoundary": product_boundary,
     }, product_names)
+
+
+def pose_map(reference: Chem.Mol, reference_names: list[str],
+             product: Chem.Mol, step_id: str) -> tuple[dict, list[str]]:
+    result, reference_matches, product_matches = exact_mcs(reference, product)
+    candidates = [(reference_match, product_match)
+                  for reference_match in reference_matches
+                  for product_match in product_matches]
+    reference_match, product_match = min(
+        candidates, key=lambda pair: match_quality(reference, product, *pair))
+    return build_pose_map(
+        reference, reference_names, product, step_id,
+        reference_match, product_match,
+        source=("reported molecular graphs plus deterministic local-context map; "
+                "no later coordinates"),
+        mapping_record={
+            "mcs": {"smarts": result.smartsString, "atoms": result.numAtoms,
+                    "bonds": result.numBonds},
+        },
+        ambiguity={
+            "referenceMatches": len(reference_matches),
+            "productMatches": len(product_matches),
+            "candidateMaps": len(candidates),
+            "selection": ("maximum local chemical-context preservation; "
+                          "deterministic tie break"),
+        },
+    )
 
 
 def hit_graph_atom_names(hit_pdb: Path, reference: Chem.Mol) -> list[str]:
@@ -300,6 +328,10 @@ def extract_hit_assets(hit_pdb: Path) -> None:
 
 
 def main() -> None:
+    if rdBase.rdkitVersion != EXPECTED_RDKIT_VERSION:
+        raise RuntimeError(
+            f"This deterministic builder requires RDKit {EXPECTED_RDKIT_VERSION}; "
+            f"found {rdBase.rdkitVersion}")
     parser = argparse.ArgumentParser()
     parser.add_argument("--hit-pdb", type=Path, default=DEFAULT_HIT_PDB)
     args = parser.parse_args()
@@ -317,7 +349,7 @@ def main() -> None:
         ("scaffold-rewrite", "17", "replace the naphthyl region with the pyrazolyl-phenyl design"),
         ("fragment-merge", "18", "merge the bicyclic amine fragment through thiophene"),
         ("open-phe890-pocket", "21", "install the benzyl-alcohol arm that challenges Phe890"),
-        ("finish-bay-293", "23", "replace hydroxymethyl with methylaminomethyl and restore the aromatic core"),
+        ("finish-bay-293", "23", "preserve the proximal quinazoline-thiophene core while rebuilding the regioisomeric distal arm"),
     ]
     steps = []
     reference_names = hit_names
@@ -325,9 +357,27 @@ def main() -> None:
         step_id, compound, label = step_specs[index]
         mapping, product_names = pose_map(
             molecules[reference_id], reference_names, molecules[product_id], step_id)
+        if step_id == "finish-bay-293":
+            mapping["protectedReferenceAnchor"] = {
+                "method": "maximum-common-substructure/v1",
+                "label": "AWW proximal quinazoline-thiophene core",
+                "referenceAtomNames": [entry["referenceAtomName"]
+                                       for entry in mapping["commonAtoms"]],
+                "atoms": mapping["commonHeavyAtoms"],
+                "bonds": mapping["mcs"]["bonds"],
+                "releasedRegions": [
+                    "regioisomeric distal phenyl/benzylic arm",
+                    "hydroxymethyl-to-methylaminomethyl substituent",
+                ],
+            }
+            mapping["transitionExplanation"] = (
+                "AWW and AXH attach the distal phenyl arm at different thiophene "
+                "positions; that arm cannot remain spatially fixed while the "
+                "proximal core is retained.")
         steps.append({
             "id": step_id, "sequenceIndex": index + 1,
             "referenceStateId": reference_id, "stateId": product_id,
+            "productComponentId": product_id,
             "compound": compound, "label": label,
             "inputKind": "molecular-graph-only",
             "productSmiles": canonical[product_id],
@@ -339,7 +389,7 @@ def main() -> None:
     extract_hit_assets(hit_pdb)
     source_path = str(hit_pdb.relative_to(ROOT)) if hit_pdb.is_relative_to(ROOT) else str(hit_pdb)
     payload = {
-        "schema": "molarium.design-campaign/v1",
+        "schema": REGISTERED_DESIGN_ROUTE_SCHEMA,
         "id": "sos1-hit-only",
         "title": "SOS1 five-state hit-only conformational replay",
         "protocolBoundary": {

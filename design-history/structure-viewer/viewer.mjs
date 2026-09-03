@@ -11,6 +11,7 @@ const STORY_REGISTRY=Object.freeze({
   'bclxl-fragment-linking':'./bclxl-fragment-linking.json',
   'cdk2-hit-only-prospective':'./cdk2-hit-only-prospective.json',
   'cdk2-designer-hit-to-lead':'./cdk2-designer-hit-to-lead.json',
+  'sos1-hit-only-success':'./sos1-hit-only-success.json',
 });
 const PREFIX={x1:'7gn8',x38:'7gnr-aligned',bclxl:'3spf',bclxlTemplate:'3sp7-aligned'};
 const LIGAND_COLOR={x1:0x826cae,x38:0xdc8747,bclxl:0x247d95};
@@ -24,6 +25,46 @@ const BCLXL_STATES=Object.freeze({
 const $=(id)=>document.getElementById(id);
 let STORY,V,API,FRAMES=[],currentScene=null,currentFrame=0,refs={};
 const cache=new Map();
+const provenanceThemes=new Map();
+
+const ELEMENT_COLORS=Object.freeze({
+  H:0xffffff,N:0x3050f8,O:0xff0d0d,F:0x90e050,CL:0x1ff01f,BR:0xa62929,
+  I:0x940094,S:0xffff30,P:0xff8000,
+});
+
+function provenanceTheme(model){
+  const spec=model.provenance;
+  if(!spec?.id||!Array.isArray(spec.addedAtomNames)||!spec.addedAtomNames.length)
+    throw Error(`Model ${model.ref} has an invalid provenance color specification`);
+  const name=`molarium-provenance-${spec.id}`;
+  if(provenanceThemes.has(name))return name;
+  const added=new Set(spec.addedAtomNames.map((value)=>String(value).trim()));
+  const inheritedColor=Number.parseInt(String(spec.inheritedColor||'#826cae').replace(/^#/,''),16);
+  const addedColor=Number.parseInt(String(spec.addedColor||'#28a7a1').replace(/^#/,''),16);
+  const {Bond,StructureElement,StructureProperties}=molstar.lib.structure;
+  const atomColor=(location)=>{
+    const symbol=String(StructureProperties.atom.type_symbol(location)||'').toUpperCase();
+    if(symbol!=='C')return ELEMENT_COLORS[symbol]??0xb8b8b8;
+    const atomName=String(StructureProperties.atom.label_atom_id(location)
+      ||StructureProperties.atom.auth_atom_id(location)||'').trim();
+    return added.has(atomName)?addedColor:inheritedColor;
+  };
+  const factory=(ctx,props)=>{
+    const scratch=StructureElement.Location.create(ctx.structure);
+    return {factory,granularity:'group',props,color:(location)=>{
+      if(StructureElement.Location.is(location))return atomColor(location);
+      if(Bond.isLocation(location)){
+        scratch.unit=location.aUnit;scratch.element=location.aUnit.elements[location.aIndex];
+        return atomColor(scratch);
+      }
+      return inheritedColor;
+    },description:'Inherited and newly added ligand atoms in one bonded representation'};
+  };
+  const provider={name,label:`Molarium provenance · ${spec.id}`,category:'Miscellaneous',
+    factory,getParams:()=>({}),defaultValues:{},isApplicable:(ctx)=>!!ctx.structure};
+  V.plugin.representation.structure.themes.colorThemeRegistry.add(provider);
+  provenanceThemes.set(name,provider);return name;
+}
 
 function actionKeys(args, allowed) {
   const unexpected=Object.keys(args).filter((key)=>!allowed.includes(key));
@@ -45,17 +86,26 @@ async function addRaw(path,fmt,ref,rep){
 }
 async function removeRef(ref){if(!refs[ref])return;try{const update=V.plugin.state.data.build();update.delete(refs[ref]);await update.commit()}catch(_){}delete refs[ref]}
 async function clearScene(){for(const ref of Object.keys(refs))await removeRef(ref)}
+function sceneModels(sceneName,trail=[]){
+  if(trail.includes(sceneName))throw Error(`Scene inheritance cycle: ${[...trail,sceneName].join(' → ')}`);
+  const scene=STORY.scenes[sceneName];if(!scene)throw Error(`Unknown scene ${sceneName}`);
+  return [...(scene.extends?sceneModels(scene.extends,[...trail,sceneName]):[]),...(scene.models||[])];
+}
 async function buildScene(sceneName){
   if(sceneName===currentScene)return;document.body.dataset.renderReady='pending';await clearScene();
   const scene=STORY.scenes[sceneName];if(!scene)throw Error(`Unknown scene ${sceneName}`);
-  for(const model of scene.models||[]){
+  for(const model of sceneModels(sceneName)){
     if(!model?.path||!model?.ref)throw Error(`Scene ${sceneName} has an invalid model`);
     const color=typeof model.color==='string'
       ? Number.parseInt(model.color.replace(/^#/,''),16):model.color;
     const representation=model.representation||'ball-and-stick';
-    const typeParams={alpha:model.alpha??1,...(representation==='ball-and-stick'
-      ?{sizeFactor:model.sizeFactor??.22,aromaticBonds:false}:{})};
-    const rep={type:representation,typeParams,color:model.colorScheme||'element-symbol'};
+    const typeParams={alpha:model.alpha??1,
+      ...(Number.isFinite(model.sizeFactor)?{sizeFactor:model.sizeFactor}:{}),
+      ...(representation==='ball-and-stick'
+        ?{sizeFactor:model.sizeFactor??.22,aromaticBonds:false}:{}),
+      ...(model.typeParams||{})};
+    const rep={type:representation,typeParams,
+      color:model.provenance?provenanceTheme(model):(model.colorScheme||'element-symbol')};
     if(Number.isFinite(color))rep.colorParams=CARBON(color);
     await addRaw(`${ASSET_ROOT}${model.path}`,model.format||'pdb',model.ref,rep);
   }
@@ -77,23 +127,54 @@ async function buildScene(sceneName){
 }
 function setCamera(camera){const base=V.plugin.canvas3d.camera.getSnapshot();V.plugin.canvas3d.camera.setState({...base,...camera},0)}
 const afterPaint=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+function paintCallouts(cue){
+  const layer=$('story-callouts');layer.replaceChildren();
+  for(const callout of cue.callouts||[]){
+    if(!callout?.label||!Number.isFinite(callout.x)||!Number.isFinite(callout.y))continue;
+    const item=document.createElement('div');
+    const tone=['protein','danger','success'].includes(callout.tone)?callout.tone:'';
+    item.className=`story-callout ${tone}`.trim();
+    item.style.left=`${Math.max(0,Math.min(100,callout.x))}%`;
+    item.style.top=`${Math.max(0,Math.min(100,callout.y))}%`;
+    const dot=document.createElement('i'),label=document.createElement('span');
+    label.textContent=callout.label;item.append(dot,label);layer.append(item);
+  }
+  const card=$('decision-card'),decision=cue.decisionCard;
+  card.replaceChildren();card.hidden=!decision;
+  if(!decision)return;
+  const heading=document.createElement('h2');heading.textContent=decision.title||'Decision';card.append(heading);
+  for(const row of decision.rows||[]){
+    const item=document.createElement('div');
+    item.className=`decision-row ${['reject','select','backup'].includes(row.status)?row.status:''}`.trim();
+    const label=document.createElement('b'),value=document.createElement('span');
+    label.textContent=row.label||'';value.textContent=row.value||'';item.append(label,value);card.append(item);
+  }
+  if(decision.note){const note=document.createElement('div');note.className='decision-note';
+    note.textContent=decision.note;card.append(note)}
+}
 function paint(frame){
   const cue=STORY.cues[frame.cueIndex];currentFrame=frame.frame;$('timeline').value=String(frame.frame);
   $('cue-count').textContent=`Shot ${frame.cueIndex+1} of ${STORY.cues.length}`;$('cue-title').textContent=cue.title;
   $('cue-body').textContent=cue.body;$('cue-detail').textContent=cue.detail;
   $('progress').style.width=`${((frame.frame+1)/FRAMES.length)*100}%`;
-  const scene=STORY.scenes[cue.scene];$('structure-label').textContent=scene.label||'Experimental structure';
+  const scene=STORY.scenes[frame.scene];$('structure-label').textContent=scene.label||'Experimental structure';
   const coordinateClass=$('coordinate-class');coordinateClass.textContent=scene.coordinateLabel||'Experimental coordinates';
   coordinateClass.className=`badge ${scene.coordinateClass||'experimental'}`;
   const focusMarker=$('focus-marker');focusMarker.hidden=!cue.focusLabel;
+  focusMarker.style.left=`${cue.focusPosition?.[0]??50}%`;
+  focusMarker.style.top=`${cue.focusPosition?.[1]??50}%`;
   $('focus-label').textContent=cue.focusLabel||'';document.body.dataset.focus=cue.focusLabel||'';
+  paintCallouts(cue);
   document.body.dataset.frame=String(frame.frame);document.body.dataset.cue=String(frame.cueIndex);
 }
 async function selectFrameNow(index){
   const frame=FRAMES[index];if(!frame)throw Error(`Frame ${index} does not exist`);
+  const sceneChanged=frame.scene!==currentScene;
   await buildScene(frame.scene);const cue=STORY.cues[frame.cueIndex];
   const start=cameraFromView(STORY.cameras[cue.cameraStart]),end=cameraFromView(STORY.cameras[cue.cameraEnd]);
-  setCamera(interpolateCamera(start,end,frame.cueProgress));paint(frame);await afterPaint();document.body.dataset.renderReady='1';
+  const camera=interpolateCamera(start,end,frame.cueProgress);setCamera(camera);
+  if(sceneChanged){await afterPaint();setCamera(camera)}
+  paint(frame);await afterPaint();document.body.dataset.renderReady='1';
   return frame.frame;
 }
 function cueStart(index){return FRAMES.find((frame)=>frame.cueIndex===Math.max(0,Math.min(STORY.cues.length-1,index)))?.frame||0}

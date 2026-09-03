@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { applySidechainRotamer, enumerateSidechainRotamers,
+import { applySidechainRotamer, assertSidechainRotamerCoordinateGuards,
+  enumerateSidechainRotamers, selectSidechainRotamerCandidate,
   selectCoupledSidechainPoseBranch, SIDECHAIN_ROTAMER_SCHEMA } from './sidechain-rotamers.mjs';
 
 const atom = (atomName, x, y, z, extra = {}) => ({ record:'ATOM', residueName:'PHE',
@@ -36,6 +37,66 @@ assert.deepEqual(molecule.atoms.slice(0, 4).map(({ x,y,z }) => [x,y,z]), origina
 assert.deepEqual([molecule.atoms[11].x, molecule.atoms[11].y, molecule.atoms[11].z], originalLigand);
 assert.throws(() => enumerateSidechainRotamers({ molecule, residueAtomIndex:11 }), /not in a protein/);
 assert.throws(() => applySidechainRotamer(molecule, ensemble, 100), /does not exist/);
+
+const stableSelectionEnsemble = { schema:SIDECHAIN_ROTAMER_SCHEMA,
+  inputCoordinateSha256:'1'.repeat(64), axes:[{ chi:'chi1' }, { chi:'chi2' }], candidates:[
+    { index:2, rank:1, chiDegrees:[-180, 90], coordinateSha256:'2'.repeat(64) },
+    { index:7, rank:2, chiDegrees:[60, -90], coordinateSha256:'3'.repeat(64) },
+  ] };
+assert.equal(selectSidechainRotamerCandidate(stableSelectionEnsemble,
+  { index:7 }).coordinateSha256, '3'.repeat(64));
+assert.equal(selectSidechainRotamerCandidate(stableSelectionEnsemble,
+  { chiDegrees:[180, 450] }).index, 2,
+'chi selection is circularly normalized rather than tied to rank ordering');
+assert.equal(selectSidechainRotamerCandidate(stableSelectionEnsemble,
+  { coordinateSha256:'2'.repeat(64) }).index, 2);
+assert.throws(() => selectSidechainRotamerCandidate(stableSelectionEnsemble, {}),
+  /exactly one side-chain rotamer selector/);
+assert.throws(() => selectSidechainRotamerCandidate(stableSelectionEnsemble,
+  { index:2, chiDegrees:[-180,90] }), /exactly one side-chain rotamer selector/);
+assert.throws(() => selectSidechainRotamerCandidate(stableSelectionEnsemble,
+  { chiDegrees:[0,0] }), /No side-chain rotamer matches/);
+assert.throws(() => selectSidechainRotamerCandidate(stableSelectionEnsemble,
+  { coordinateSha256:null }), /lowercase SHA-256/);
+assert.throws(() => selectSidechainRotamerCandidate({ ...stableSelectionEnsemble,
+  candidates:[...stableSelectionEnsemble.candidates,
+    { index:8, rank:3, chiDegrees:[180,90], coordinateSha256:'4'.repeat(64) }] },
+{ chiDegrees:[-180,90] }), /ambiguously match/);
+const guardedCandidate = stableSelectionEnsemble.candidates[0];
+assert.equal(assertSidechainRotamerCoordinateGuards({ ensemble:stableSelectionEnsemble,
+  candidate:guardedCandidate, currentCoordinateSha256:'1'.repeat(64),
+  expectedInputCoordinateSha256:'1'.repeat(64),
+  expectedSelectedCoordinateSha256:'2'.repeat(64) }), true);
+assert.throws(() => assertSidechainRotamerCoordinateGuards({
+  ensemble:stableSelectionEnsemble, candidate:guardedCandidate,
+  currentCoordinateSha256:'5'.repeat(64) }), /coordinates changed/);
+assert.throws(() => assertSidechainRotamerCoordinateGuards({
+  ensemble:stableSelectionEnsemble, candidate:guardedCandidate,
+  currentCoordinateSha256:'1'.repeat(64), expectedInputCoordinateSha256:'5'.repeat(64) }),
+/expectedInputCoordinateSha256/);
+assert.throws(() => assertSidechainRotamerCoordinateGuards({
+  ensemble:stableSelectionEnsemble, candidate:guardedCandidate,
+  currentCoordinateSha256:'1'.repeat(64), expectedSelectedCoordinateSha256:'5'.repeat(64) }),
+/expectedSelectedCoordinateSha256/);
+
+const alternateAdapterEnsemble = { ...stableSelectionEnsemble,
+  inputCoordinateSha256:'6'.repeat(64), candidates:[
+    { ...stableSelectionEnsemble.candidates[0], chiDegrees:[180,90],
+      coordinateSha256:'7'.repeat(64) },
+    stableSelectionEnsemble.candidates[1],
+  ] };
+const alternateAdapterCandidate = selectSidechainRotamerCandidate(alternateAdapterEnsemble,
+  { chiDegrees:[-180,90] });
+assert.equal(alternateAdapterCandidate.coordinateSha256, '7'.repeat(64),
+'the same physical 180-degree branch survives backend-specific coordinate hashes and angle sign');
+assert.equal(assertSidechainRotamerCoordinateGuards({ ensemble:alternateAdapterEnsemble,
+  candidate:alternateAdapterCandidate,
+  currentCoordinateSha256:alternateAdapterEnsemble.inputCoordinateSha256 }), true,
+'same-execution coordinate integrity remains exact on the alternate backend');
+assert.throws(() => assertSidechainRotamerCoordinateGuards({
+  ensemble:alternateAdapterEnsemble, candidate:alternateAdapterCandidate,
+  currentCoordinateSha256:stableSelectionEnsemble.inputCoordinateSha256 }), /coordinates changed/,
+'coordinate hashes from different numerical executions cannot be cross-paired');
 
 const coupled = [
   { candidateRank:1, refinement:{ selectedFeasible:true, selectedScoreKcalMol:-119,

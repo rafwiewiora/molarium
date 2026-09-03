@@ -24,7 +24,7 @@ the need for a reusable separation between:
 
 `enumerations/` now owns only the first four responsibilities. A catalogue
 entry is a versioned plan compiled into the same public Chemist Actions a person
-uses in Build mode. Pose code remains downstream and cannot be called as an
+uses in Design mode. Pose code remains downstream and cannot be called as an
 enumeration shortcut.
 
 ## Debugging result that changed the design

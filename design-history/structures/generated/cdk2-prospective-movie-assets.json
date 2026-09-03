@@ -1,6 +1,6 @@
 {
   "schema": "molarium.cdk2-prospective-movie-assets/v1",
-  "campaignId": "cdk2-hit-only",
+  "routeId": "cdk2-hit-only",
   "scientificStatus": "honest-first-blind-result",
   "claim": "The movie replays frozen predictions, then reveals evaluation-only holdouts.",
   "boundary": {
@@ -97,7 +97,14 @@
   "inputs": [
     {
       "path": "design-history/structures/generated/cdk2-prospective-campaign.json",
-      "sha256": "86e09939090697919920685496c8f1605f41d4e093d90cd639e9fe169e09e8e6"
+      "sha256": "9f9687f711ac85d2a5826f218b850eee5f18a46484b43f64fe7101cfabf4b09a",
+      "schemaMigration": {
+        "kind": "schema-identifier-only",
+        "fromSchema": "molarium.design-campaign/v1",
+        "toSchema": "molarium.registered-design-route/v1",
+        "frozenInputSha256": "86e09939090697919920685496c8f1605f41d4e093d90cd639e9fe169e09e8e6",
+        "currentSha256": "9f9687f711ac85d2a5826f218b850eee5f18a46484b43f64fe7101cfabf4b09a"
+      }
     },
     {
       "path": "docking/benchmark/manifest.v0.1.json",

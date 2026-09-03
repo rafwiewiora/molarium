@@ -1,0 +1,5 @@
+HEADER    AWW growth / Phe890-in atomic overlap   
+HETATM    1  C1  CLH M   1       0.410 -25.115  20.816  1.00 20.00           C
+HETATM    2  C2  CLH M   1       1.286 -24.450  20.272  1.00 20.00           C
+HETATM    3  C3  CLH M   1       2.556 -26.401  22.768  1.00 20.00           C
+END

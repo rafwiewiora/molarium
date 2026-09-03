@@ -226,6 +226,28 @@ const methylRelease = transformedRingRegion(transformedRingBefore, methylAdditio
 assert.equal(methylRelease.touchedRingCount, 0);
 assert.deepEqual(methylRelease.releasedHeavyAtomIds, [],
   'attaching a new substituent does not release an otherwise unchanged reference ring');
+const ringHeteroatomReplacement = structuredClone(transformedRingBefore);
+ringHeteroatomReplacement.atoms.splice(2, 1, {
+  element:'C', designAtomId:'new-ring-carbon', x:0, y:0, z:0,
+});
+const pyridineReplacementRelease = transformedRingRegion(
+  transformedRingBefore, ringHeteroatomReplacement);
+assert.equal(pyridineReplacementRelease.touchedReferenceRingCount, 1);
+assert.equal(pyridineReplacementRelease.touchedRingCount, 1);
+assert.ok(pyridineReplacementRelease.removedReferenceAtomIds.includes('r2'));
+assert.ok(pyridineReplacementRelease.addedProductAtomIds.includes('new-ring-carbon'));
+assert.deepEqual(pyridineReplacementRelease.boundaryAtomIds, ['scaffold']);
+assert.deepEqual(pyridineReplacementRelease.releasedHeavyAtomIds,
+  ['carbonyl-o','new-ring-carbon','r1','r3','r4','r5','r6'],
+  'an element-changing ring replacement releases the complete product ring and its exocyclic carbonyl');
+const ringBondDeletion = structuredClone(transformedRingBefore);
+ringBondDeletion.bonds = ringBondDeletion.bonds.filter((bond) =>
+  !(bond.a === 2 && bond.b === 3));
+const ringBondDeletionRelease = transformedRingRegion(transformedRingBefore, ringBondDeletion);
+assert.ok(ringBondDeletionRelease.changedBondKeys.length > 0,
+  'deleting a bond between surviving ring atoms is recorded as a topology change');
+assert.ok(ringBondDeletionRelease.releasedHeavyAtomIds.includes('r2')
+  && ringBondDeletionRelease.releasedHeavyAtomIds.includes('r3'));
 const releaseLedgerMolecule = structuredClone(cyclohexanoneGraph);
 recordTransformedRingRegion(releaseLedgerMolecule, lactamRelease,
   { editId:'saturate-ring', committedAt:'2026-08-22T00:00:00.000Z' });
@@ -303,6 +325,7 @@ const workflowLabbook = await createLabbook({
     hydrogenBonds:[{ id:'receptor-donor-to-ligand-acceptor', required:true }] },
   environment:{ execution:'unit-test' }, application:{ version:'test' },
 });
+const workflowYieldEvents = [];
 const dockingRun = await runConstrainedDocking({
   referencePositions:captured.positions,
   candidateConformers:[translatedBad, translatedGood],
@@ -315,12 +338,15 @@ const dockingRun = await runConstrainedDocking({
   }],
   protocol:MOLARIUM_CONSTRAINT_DOCK_PROTOCOL,
   physicalScore:({ conformerIndex }) => conformerIndex === 0 ? -100 : -10,
+  yieldControl:(progress) => { workflowYieldEvents.push(progress); },
   labbook:workflowLabbook,
   startedAt:'2026-08-19T12:00:03.000Z', completedAt:'2026-08-19T12:00:04.000Z',
 });
 assert.equal(dockingRun.feasibleCount, 1);
 assert.equal(dockingRun.selected.conformerIndex, 1);
 assert.equal(dockingRun.selected.feasible, true);
+assert.deepEqual(workflowYieldEvents.map((entry) => entry.completed), [1, 2]);
+assert.ok(workflowYieldEvents.every((entry) => entry.stage === 'candidate ranking'));
 const chemicallyGatedRun = await runConstrainedDocking({
   referencePositions:captured.positions,
   candidateConformers:[translatedGood, translatedGood],

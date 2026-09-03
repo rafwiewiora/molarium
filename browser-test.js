@@ -105,6 +105,16 @@ const browserSuite = String.raw`(async () => {
   const check = (condition, label, details = '') => {
     checks.push({ label, passed: Boolean(condition), details });
   };
+  const waitForHistoryAction = async (action, afterSequence = 0) => {
+    const chemist = await window.MolariumChemistActionsReady;
+    for (let attempt = 0; attempt < 100; attempt++) {
+      const record = chemist.history().find((entry) =>
+        entry.sequence > afterSequence && entry.action === action && entry.status !== 'running');
+      if (record) return record;
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    }
+    return null;
+  };
   const compareForces = (candidate, reference) => {
     if (!Array.isArray(candidate) || !Array.isArray(reference) || candidate.length !== reference.length || !candidate.length)
       return null;
@@ -127,6 +137,9 @@ const browserSuite = String.raw`(async () => {
     'production exposes the frozen Chemist Actions API');
     check(!Object.hasOwn(window, 'molariumTest'),
       'production does not install the privileged regression harness');
+    check([...document.querySelectorAll('.mode-bar button')].map((button) => button.textContent.trim())
+      .join('|') === 'View|Design|Simulate',
+    'production exposes the View, Design and Simulate mode labels');
     check(typeof window.captureCurrentDockingReference === 'undefined'
       && typeof window.runBrowserConstrainedDocking === 'undefined'
       && typeof window.applySelectedAtomChemistry === 'undefined',
@@ -204,11 +217,79 @@ const browserSuite = String.raw`(async () => {
       && Object.isFrozen(chemist),
     'the browser exposes one frozen, versioned Chemist Actions API');
     const described = chemist.describe();
+    const completeActionFamilies = [
+      'session.loadStructure','session.loadIdentifier','session.loadFixture','session.clear','session.share',
+      'interface.setPanelOpen','interface.openProjectInfo','interface.presentDesignerStep','view.setComponentVisibility',
+      'view.showAllComponents','view.reset','view.focusResidue','view.clearFocus','view.setCamera',
+      'protein.predict','protein.cancelPrediction','ligand.enumerateProtonation','ligand.applyProtonation',
+      'geometry.setInternalCoordinate','geometry.translateAtoms','fragment.stage','fragment.attach',
+      'pose.setEditCleanup','pose.clearReference','pose.remapContact','calculation.run',
+      'calculation.tuneReplicas','calculation.selectFrame','calculation.selectReplica',
+      'calculation.selectConformer','calculation.setPlayback','calculation.setConformerView',
+      'campaign.import','campaign.export','designerScript.load','designerScript.loadRegistered',
+      'designerScript.play','designerScript.step','designerScript.restart','designerScript.inspect',
+      'designerScript.export',
+    ];
     check(described.guarantee.includes('no arbitrary code')
       && described.actions['chemistry.finish']
       && !described.actions['test.loadObject'],
     'the public action manifest contains chemist routes and no fixture or internal-code route');
-    api.load('CC');
+    check(completeActionFamilies.every((action) => described.actions[action]),
+    'the public manifest exposes load, view, design, simulation, campaign and replay action families');
+    check([...document.querySelectorAll('.mode-bar button')].map((button) => button.textContent.trim())
+      .join('|') === 'View|Design|Simulate',
+    'the mode bar presents View, Design and Simulate');
+    await chemist.execute({ action:'interface.setPanelOpen',
+      args:{ panelId:'load-toggle', open:false } });
+    check(document.querySelector('#load-body').classList.contains('hidden')
+      && document.querySelector('#load-toggle').getAttribute('aria-expanded') === 'false',
+    'the public panel action updates the same disclosure state as a human click');
+    await chemist.execute({ action:'interface.setPanelOpen',
+      args:{ panelId:'load-toggle', open:true } });
+    const loadedEthane = await chemist.execute({ action:'session.loadIdentifier',
+      args:{ value:'CC', kind:'smiles' } });
+    check(loadedEthane.result.load?.kind === 'smiles'
+      && loadedEthane.result.load?.protonationStateCount >= 1,
+    'the public identifier action uses the complete 3D and protonation workflow');
+    const campaignId = 'browser-human-clicks-' + Date.now().toString(36);
+    await chemist.execute({ action:'campaign.create', args:{ campaignId,
+      title:'Human click provenance', initialCommitMessage:'Starting ethane' } });
+    let sequence = chemist.history().at(-1)?.sequence || 0;
+    document.querySelector('.mode-bar [data-mode="build"]').click();
+    const humanMode = await waitForHistoryAction('view.setMode', sequence);
+    sequence = humanMode?.sequence || sequence;
+    document.querySelector('#build-tool-tabs [data-tool="select"]').click();
+    const humanTool = await waitForHistoryAction('build.setTool', sequence);
+    sequence = humanTool?.sequence || sequence;
+    document.querySelector('#hydrogen-toggle').click();
+    const humanDisplay = await waitForHistoryAction('view.setDisplay', sequence);
+    check(humanMode?.args.mode === 'build' && humanTool?.args.tool === 'select'
+      && typeof humanDisplay?.args.showHydrogens === 'boolean',
+    'representative human mode, tool and display clicks execute the same public actions');
+    const humanCommit = await chemist.execute({ action:'campaign.commitCurrent',
+      args:{ message:'Commit audited human controls' } });
+    const exportedHumanCampaign = await chemist.execute({ action:'campaign.export', args:{} });
+    const campaign = JSON.parse(exportedHumanCampaign.result.campaignExport.serialized);
+    const actionScriptId = humanCommit.result.campaignCommit.actionScriptId;
+    const committedActions = campaign.objects.actionScripts[actionScriptId]?.actions || [];
+    check(committedActions.some((entry) => entry.action === 'view.setMode')
+      && committedActions.some((entry) => entry.action === 'build.setTool')
+      && committedActions.some((entry) => entry.action === 'view.setDisplay'),
+    'human UI clicks are included in the action script of a campaign commit',
+    JSON.stringify(committedActions));
+    await chemist.execute({ action:'campaign.close', args:{} });
+    const focusedMolecule = await chemist.execute({ action:'view.focusComponent',
+      args:{ kind:'molecule', ordinal:0, isolate:false } });
+    check(focusedMolecule.result.focusedComponent?.kind === 'molecule'
+      && api.structureComponents().focusedComponentId
+        === focusedMolecule.result.focusedComponent.componentId,
+    'the public focus action uses the same visible Components zoom state');
+    const display = await chemist.execute({ action:'view.setDisplay',
+      args:{ showHydrogens:false, showInteractions:false, showHulls:false } });
+    check(display.result.display?.showHydrogens === false
+      && display.result.display?.showInteractions === false
+      && display.result.display?.showHulls === false,
+    'the public display action drives the same visible Display Options state');
     await chemist.execute({ requestId:'browser-mode', action:'view.setMode', args:{ mode:'build' } });
     await chemist.execute({ requestId:'browser-tool', action:'build.setTool', args:{ tool:'select' } });
     const initial = (await chemist.inspect({ scope:'ligand', maximumAtoms:20 })).result;
@@ -296,15 +377,18 @@ const browserSuite = String.raw`(async () => {
       && !branches.candidates.some((candidate) => candidate.positions)
       && !document.querySelector('#sidechain-rotamer-tools').classList.contains('hidden')
       && !document.querySelector('#sidechain-rotamer-results').classList.contains('hidden'),
-    'the public API enumerates hashed Phe chi branches through the visible Build control without returning coordinates',
+    'the public API enumerates hashed Phe chi branches through the visible Design control without returning coordinates',
     JSON.stringify(branches));
     const appliedRotamer = await chemist.execute({ action:'pose.applySidechainRotamer',
-      args:{ index:0 } });
+      args:{ coordinateSha256:branches.candidates[0].coordinateSha256,
+        expectedInputCoordinateSha256:branches.inputCoordinateSha256,
+        expectedSelectedCoordinateSha256:branches.candidates[0].coordinateSha256 } });
     const rotamerSource = api.current().molecule.source.sidechainRotamerApplications?.at(-1);
     check(appliedRotamer.result.sidechainRotamer.selectedCoordinateSha256
         === branches.candidates[0].coordinateSha256
       && rotamerSource?.selectedCoordinateSha256 === branches.candidates[0].coordinateSha256
       && rotamerSource?.inputCoordinateSha256 === branches.inputCoordinateSha256
+      && rotamerSource?.selectedBy === 'coordinateSha256'
       && document.querySelector('#sidechain-rotamer-results').classList.contains('hidden'),
     'applying a public rotamer branch records input and output hashes and clears the stale ensemble',
     JSON.stringify(appliedRotamer.result.sidechainRotamer));
@@ -320,7 +404,9 @@ const browserSuite = String.raw`(async () => {
     await new Promise((resolve) => setTimeout(resolve, 100));
     const replayButton = document.querySelector('#replay-designer-moves');
     replayButton.click();
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    for (let attempt = 0; attempt < 40
+      && document.querySelector('#export-designer-replay').disabled; attempt++)
+      await new Promise((resolve) => setTimeout(resolve, 100));
     check(document.querySelector('#designer-move-status').textContent.includes('1 replayable move')
       && !document.querySelector('#export-designer-replay').disabled,
     'the visible Designer moves panel imports JSON and replays it through the public Chemist Actions API');
@@ -351,16 +437,23 @@ const browserSuite = String.raw`(async () => {
     && githubLink.querySelector('svg'),
     'header exposes the public Molarium GitHub repository with an accessible icon link');
   check(document.querySelector('.app-brand-mark[data-molarium-mark]')?.tagName === 'svg'
+    && document.querySelector('.app-brand-mark [data-molarium-flask]')
+    && document.querySelector('.app-brand-mark [data-molarium-foam]')
+    && document.querySelector('.app-brand-mark [data-molarium-letter]')
     && document.querySelector('.app-brand-name')?.textContent === 'MOLARIUM'
     && document.querySelector('link[rel="icon"]')?.getAttribute('href') === './assets/molarium-mark.svg',
-    'header inlines the original Molarium mark while the favicon uses the matching asset');
+    'header inlines the Molarium flask-and-M mark while the favicon uses the matching asset');
+  check(document.querySelector('.viewer-hint .viewer-hint-mark[data-molarium-mark]')
+    && !document.querySelector('.viewer-hint .hint-molecule'),
+    'blank viewer uses the branded Molarium mark');
   check(document.querySelector('.calculation-loader svg[data-molarium-mark]')
     && !document.querySelector('.calculation-glyph'),
-    'calculation overlay uses the branded Molarium loader instead of the legacy molecular glyph');
+    'calculation overlay uses the branded Molarium loader');
   const launchMol = await (await fetch('./assets/lsd-launch.mol')).text();
   check(launchMol.includes(' 49 52') && launchMol.includes('M  END'),
     'launch scene ships the authoritative 49-atom PubChem LSD conformer');
   document.querySelector('[data-project-panel="credits"]').click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   check(document.querySelector('#project-info-dialog').open
     && !document.querySelector('[data-project-section="credits"]').classList.contains('hidden')
     && document.querySelector('[data-project-section="credits"]').textContent.includes('Interface design inspired by Atomiverse')
@@ -372,7 +465,7 @@ const browserSuite = String.raw`(async () => {
     'credits link the pinned Dimorphite-DL protonation-site notice');
   check(document.querySelector('[data-project-section="credits"] a[href="./LICENSE"]')
     && document.querySelector('[data-project-section="credits"]').textContent.includes('Molarium original code'),
-    'credits expose Molarium\'s MIT license');
+    'credits expose Molarium\'s Apache-2.0 license');
   check(document.querySelector('[data-project-section="credits"]').textContent.includes('OpenAI’s Sol')
     && document.querySelector('[data-project-section="credits"]').textContent.includes('scientific-reasoning assistance'),
     'credits acknowledge OpenAI Sol development assistance');
@@ -399,28 +492,41 @@ const browserSuite = String.raw`(async () => {
     && registry.cases.length === 25
     && Object.values(registry.artifacts).every(entry => /^[a-f0-9]{64}$/.test(entry.sha256)),
     'machine-readable validation registry exposes case records and source hashes');
-  const sideCards = [...document.querySelectorAll('.panel > .card')];
+  const sideCards = [...document.querySelectorAll('.panel > .card, .panel-scroll-stack > .card')];
+  const collapsibleSideCards = sideCards.filter((card) =>
+    !card.classList.contains('story-transport-card'));
   const generatedDisclosures = [...document.querySelectorAll('[data-generated-card-disclosure]')];
-  check(sideCards.length === 13
-    && sideCards.every((card) => card.querySelector(':scope > .card-heading.disclosure')),
-    'every sidebar card in View, Build and Run has a collapse control', String(sideCards.length));
-  check(generatedDisclosures.length === 8, 'all eight previously fixed-open sidebar cards are collapsible',
+  check([...document.querySelectorAll('.mode-bar button')].map((button) => button.textContent.trim())
+    .join('|') === 'View|Design|Simulate',
+    'the public mode bar uses View, Design and Simulate while retaining stable data-mode values');
+  check(sideCards.length === 15 && collapsibleSideCards.length === 14
+    && collapsibleSideCards.every((card) =>
+      card.querySelector(':scope > .card-heading.disclosure')),
+    'every non-transport sidebar card in View, Design and Simulate has a collapse control',
+    String(sideCards.length));
+  check(generatedDisclosures.length === 9,
+    'all nine previously fixed-open sidebar cards are collapsible',
     String(generatedDisclosures.length));
-  const generatedDisclosureRoundTrip = generatedDisclosures.every((toggle) => {
+  let generatedDisclosureRoundTrip = true;
+  for (const toggle of generatedDisclosures) {
     const body = document.getElementById(toggle.getAttribute('aria-controls'));
     toggle.click();
+    await new Promise(resolve => setTimeout(resolve, 0));
     const closed = toggle.getAttribute('aria-expanded') === 'false' && body.classList.contains('hidden');
     toggle.click();
-    return closed && toggle.getAttribute('aria-expanded') === 'true' && !body.classList.contains('hidden');
-  });
+    await new Promise(resolve => setTimeout(resolve, 0));
+    generatedDisclosureRoundTrip = generatedDisclosureRoundTrip && closed
+      && toggle.getAttribute('aria-expanded') === 'true' && !body.classList.contains('hidden');
+  }
   check(generatedDisclosureRoundTrip, 'generated sidebar arrows collapse and restore their own card bodies');
   const projectLicenseResponse = await fetch('./LICENSE');
   const projectLicenseText = await projectLicenseResponse.text();
   check(projectLicenseResponse.ok
     && projectLicenseResponse.headers.get('content-type')?.startsWith('text/plain')
-    && projectLicenseText.startsWith('MIT License')
-    && projectLicenseText.includes('Copyright (c) 2026 Molarium contributors'),
-    'server publishes the complete Molarium MIT license as plain text');
+    && projectLicenseText.startsWith('                                 Apache License')
+    && projectLicenseText.includes('Version 2.0, January 2004')
+    && projectLicenseText.includes('END OF TERMS AND CONDITIONS'),
+    'server publishes the complete Molarium Apache License 2.0 as plain text');
   document.querySelector('#project-info-dialog').close();
   const rmsdReference = [0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3];
   const rmsdRigidTransform = [4, -2, 7, 4, -1, 7, 2, -2, 7, 4, -2, 10];
@@ -474,6 +580,7 @@ const browserSuite = String.raw`(async () => {
   const proteinRow = componentRows.find((row) => row.querySelector('strong')?.textContent.includes('Protein'));
   const waterRow = componentRows.find((row) => row.querySelector('strong')?.textContent.includes('water'));
   waterRow?.querySelector('[data-component-action="zoom"]')?.click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   const waterZoom = api.structureComponents();
   const waterCamera = api.viewerState();
   const waterAtom = api.current().molecule.atoms.find((atom) => atom.residueName === 'HOH');
@@ -486,11 +593,13 @@ const browserSuite = String.raw`(async () => {
   'component Zoom frames the selection without hiding the rest of the structure',
   JSON.stringify({ components:waterZoom, camera:waterCamera.center, atom:waterAtom }));
   proteinRow?.querySelector('[data-component-action="only"]')?.click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   const proteinOnly = api.structureComponents();
   check(proteinOnly.components.find((component) => component.kind === 'protein')?.visible
     && !proteinOnly.components.find((component) => component.kind === 'water')?.visible,
   'component Only isolates the selection as a separate explicit action', JSON.stringify(proteinOnly));
   document.querySelector('#components-reset').click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   check(document.querySelector('#hydrogen-toggle').disabled
     && document.querySelector('#hydrogen-toggle-text').textContent.includes('none loaded')
     && document.querySelector('#interaction-toggle-text').textContent.includes('no H loaded'),
@@ -620,8 +729,10 @@ const browserSuite = String.raw`(async () => {
     'pocket protein carbons inherit their chain color while ligand carbons use the ligand accent',
     JSON.stringify({ protein:api.atomStyle(4), ligand:api.atomStyle(13) }));
   document.querySelector('#interaction-toggle').click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   check(!api.renderDiagnostics().showInteractions, 'H-bond and pi-stack display option switches overlays off');
   document.querySelector('#interaction-toggle').click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   check(api.renderDiagnostics().showInteractions && document.querySelector('#interaction-toggle').checked,
     'H-bond and pi-stack display option switches overlays back on');
   const contactOnlyPocket = api.setPocketAtomMode('contacts');
@@ -974,13 +1085,17 @@ const browserSuite = String.raw`(async () => {
   'Finish chemistry automatically transfers a required contact to one exact replacement feature',
   JSON.stringify({ remapFinish, contactResolutions }));
   const replacementCarbonylOxygenId = contactResolutions.remaps[0]?.replacementLigandAtomIds[0];
+  const undoSequence = (await window.MolariumChemistActionsReady).history().at(-1)?.sequence || 0;
   document.querySelector('#undo-atom').click();
+  await waitForHistoryAction('history.undo', undoSequence);
   const undoneContactState = api.dockingContactResolutions();
   check(api.current().molecule.atoms.some((atom) => atom.designAtomId === replacedCarbonylOxygenId)
     && !api.current().molecule.atoms.some((atom) => atom.designAtomId === replacementCarbonylOxygenId)
     && undoneContactState.remaps.length === 0 && undoneContactState.proposals.length === 0,
   'Undo restores both the reference feature and its matching restraint state');
+  const redoSequence = (await window.MolariumChemistActionsReady).history().at(-1)?.sequence || 0;
   document.querySelector('#redo-atom').click();
+  await waitForHistoryAction('history.redo', redoSequence);
   const redoneContactState = api.dockingContactResolutions();
   check(api.current().molecule.atoms.some((atom) => atom.designAtomId === replacementCarbonylOxygenId)
     && !api.current().molecule.atoms.some((atom) => atom.designAtomId === replacedCarbonylOxygenId)
@@ -1019,7 +1134,9 @@ const browserSuite = String.raw`(async () => {
     && !document.querySelector('#run-constrained-docking').disabled,
   'immediate chemistry edits transfer a contact to a role-compatible replacement',
   JSON.stringify(immediateContactState));
+  const contactSequence = (await window.MolariumChemistActionsReady).history().at(-1)?.sequence || 0;
   roleCompatibleRemapContact.querySelector('input').click();
+  await waitForHistoryAction('pose.setContact', contactSequence);
   check(!api.dockingContactResolutions().selectedIds.length
     && !document.querySelector('#run-constrained-docking').disabled,
   'a user may explicitly omit a viable role-compatible contact');
@@ -1572,7 +1689,7 @@ const browserSuite = String.raw`(async () => {
       && !document.querySelector('#build-optimizer-select option[value="pocket-webgpu"]').disabled
       && document.querySelector('#build-optimizer-select option[value="webgpu"]').hidden
       && document.querySelector('#build-optimizer-select').value === 'ligand-rdkit',
-    'prepared 7KPA exposes ligand and pocket relaxation without an accidental full-complex Build action',
+    'prepared 7KPA exposes ligand and pocket relaxation without an accidental full-complex Design action',
     String(preparationMetrics.interactivePocketMovableAtoms.length));
     const polarRelaxation = preview.audit.actions.find((action) => action.action === 'relax-polar-hydrogens');
     preparationMetrics.polarHydrogenRelaxation = polarRelaxation;
@@ -1987,7 +2104,7 @@ const browserSuite = String.raw`(async () => {
     'apply-atom-chemistry', 'apply-bond-chemistry', 'delete-bond-chemistry',
     'add-explicit-hydrogen', 'remove-explicit-hydrogen', 'delete-selected-atom']
     .every((id) => document.getElementById(id)),
-  'Build exposes atom identity, formal charge, bond-order, bond topology, and explicit-H controls');
+  'Design exposes atom identity, formal charge, bond-order, bond topology, and explicit-H controls');
   api.load('CC');
   const buildCameraBefore = api.viewerState();
   api.setInternalCoordinate([0, 1], 3, true);
@@ -1996,7 +2113,7 @@ const browserSuite = String.raw`(async () => {
     && Math.hypot(buildCameraAfter.center.x - buildCameraBefore.center.x,
       buildCameraAfter.center.y - buildCameraBefore.center.y,
       buildCameraAfter.center.z - buildCameraBefore.center.z) < 1e-9,
-  'Build modifications preserve the current camera frame instead of auto-zooming',
+  'Design modifications preserve the current camera frame instead of auto-zooming',
   JSON.stringify({ before:buildCameraBefore, after:buildCameraAfter }));
   const bondedHydrogenIndices = (molecule, atomIndex) => molecule.bonds.flatMap((bond) => bond.a === atomIndex
     ? [bond.b] : bond.b === atomIndex ? [bond.a] : [])
@@ -2199,7 +2316,7 @@ const browserSuite = String.raw`(async () => {
     protectedProteinAtom(api.current().molecule)[axis]);
   check(document.querySelector('#build-optimizer-select').value === 'ligand-rdkit'
     && !document.querySelector('#build-optimizer-select option[value="ligand-rdkit"]').disabled,
-  'a protein–ligand complex defaults Build optimization to the safe ligand-only path');
+  'a protein–ligand complex defaults Design optimization to the safe ligand-only path');
   await api.editBondCurrent(pyridoneCarbon, pyridoneOxygen, 1);
   await api.editBondCurrent(pyridoneCarbon, pyridoneNitrogen, 2);
   const pdbLigandPolish = await new Promise((resolve, reject) => {
@@ -2250,7 +2367,7 @@ const browserSuite = String.raw`(async () => {
     && !document.querySelector('#result-frames').classList.contains('hidden')
     && document.querySelector('#result-frame-heading').textContent.includes('Minimization path')
     && document.querySelector('#result-title').textContent === 'Ligand Optimization',
-  'ligand-only Build optimization opens its saved full-complex minimization path in View',
+  'ligand-only Design optimization opens its saved full-complex minimization path in View',
   JSON.stringify(explicitLigandFrames));
   api.selectCalculationFrame(0);
   const protectedAtLigandStart = ['x', 'y', 'z'].map((axis) =>
@@ -2411,7 +2528,7 @@ const browserSuite = String.raw`(async () => {
     sum + Math.abs(buildRotationAfter[key] - buildRotationBefore[key]), 0);
   check(buildRotationDelta > 1e-3
     && document.querySelector('#geometry-selection-help').textContent.includes('Choose Select'),
-  'left-drag rotates in Build Select without accidentally selecting the starting atom',
+  'left-drag rotates in Design Select without accidentally selecting the starting atom',
   JSON.stringify({ buildRotationDelta }));
 
   for (let index = 0; index < 6; index++) {
@@ -2423,7 +2540,7 @@ const browserSuite = String.raw`(async () => {
   }
   check(document.querySelector('#geometry-selection-help').textContent.includes('6 atoms selected for a docking core')
     && document.querySelector('#build-status').textContent.includes('6 atoms selected'),
-  'Build Select accepts a connected docking core larger than four atoms');
+  'Design Select accepts a connected docking core larger than four atoms');
 
   const buildPanBefore = api.viewerState().pan;
   const coordinatesBeforeBuildPan = api.current().molecule.atoms.map((atom) => [atom.x, atom.y, atom.z]);
@@ -2437,7 +2554,7 @@ const browserSuite = String.raw`(async () => {
   check(buildPanAfter.x - buildPanBefore.x === 30 && buildPanAfter.y - buildPanBefore.y === -18
     && JSON.stringify(api.current().molecule.atoms.map((atom) => [atom.x, atom.y, atom.z]))
       === JSON.stringify(coordinatesBeforeBuildPan),
-  'right-drag pans the full scene in Build without changing molecular coordinates',
+  'right-drag pans the full scene in Design without changing molecular coordinates',
   JSON.stringify({ before:buildPanBefore, after:buildPanAfter }));
 
   const cf3Seed = api.attach('c1ccccc1', 'trifluoromethyl', 0).molecule;
@@ -2515,7 +2632,7 @@ const browserSuite = String.raw`(async () => {
     'conformer search is directly selectable and chooses its WebGPU backend');
   check(![...document.querySelector('#build-optimizer-select').options].some((option) => option.value === 'browser' || option.value === 'openmm')
       && ![...document.querySelector('#method-select').options].some((option) => option.value === 'openmm'),
-    'Build and Run do not expose approximate cleanup or OpenMM Reference');
+    'Design and Simulate do not expose approximate cleanup or OpenMM Reference');
   check(document.querySelector('#solvent-select').value === 'obc2'
       && document.querySelector('#constraint-select').value === 'hbonds'
       && !document.querySelector('#cutoff-select')
@@ -2977,9 +3094,9 @@ const browserSuite = String.raw`(async () => {
   check(Math.abs(cameraAfter.scale - cameraBefore.scale) < 1e-9, 'viewer fit stays constant through rotation', cameraBefore.scale + ' → ' + cameraAfter.scale);
   check(Math.abs(quaternionNorm - 1) < 1e-9, 'trackball quaternion remains normalized', String(quaternionNorm));
   document.querySelector('[data-mode="run"]').click();
-  check(!document.querySelector('#run-left-panel').classList.contains('hidden'), 'Run mode shows calculation controls');
-  check(document.querySelector('#display-options').classList.contains('hidden'), 'Run mode hides View-only display controls');
-  check(document.querySelector('.protein-fold-card').classList.contains('hidden'), 'Run mode keeps protein folding controls out of the calculation workflow');
+  check(!document.querySelector('#run-left-panel').classList.contains('hidden'), 'Simulate mode shows calculation controls');
+  check(document.querySelector('#display-options').classList.contains('hidden'), 'Simulate mode hides View-only display controls');
+  check(document.querySelector('.protein-fold-card').classList.contains('hidden'), 'Simulate mode keeps protein folding controls out of the calculation workflow');
   const workerAsset = document.querySelector('link[data-rdkit-worker]').href;
   const workerResponse = await fetch(workerAsset);
   const workerSource = await workerResponse.text();
@@ -3191,12 +3308,12 @@ const browserSuite = String.raw`(async () => {
   }
   const solventSelect = document.querySelector('#solvent-select');
   check(solventSelect && [...solventSelect.options].some((option) => option.value === 'obc2'),
-    'Run controls expose OBC2 implicit water');
+    'Simulate controls expose OBC2 implicit water');
   solventSelect.value = 'obc2';
   solventSelect.dispatchEvent(new Event('change'));
   check(document.querySelector('#environment-info').textContent.includes('mbondi2')
       && document.querySelectorAll('.info-button[aria-describedby]').length >= 3,
-    'Run information buttons explain the selected OBC2 model');
+    'Simulate information buttons explain the selected OBC2 model');
   solventSelect.value = 'vacuum';
   solventSelect.dispatchEvent(new Event('change'));
   const obcReference = await api.calculateCurrent('energy', 'openmm', { implicitSolvent: 'obc2' });
@@ -3235,7 +3352,7 @@ const browserSuite = String.raw`(async () => {
       + cutoffForceComparison.rmsError.toExponential(4) + ' kJ/mol/nm RMS' : 'missing force vectors');
   check([...document.querySelector('#constraint-select').options].some((option) => option.value === 'hbonds')
       && !document.querySelector('#cutoff-select'),
-    'Run controls expose X–H SHAKE/RATTLE but keep the validation-only cutoff out of the UI');
+    'Simulate controls expose X–H SHAKE/RATTLE but keep the validation-only cutoff out of the UI');
   api.load('CCO');
   const constrainedReference = await api.calculateCurrent('dynamics', 'openmm', {
     constraintMode: 'hbonds', implicitSolvent: 'obc2', nonbondedCutoffNm: 1.0,
@@ -3348,7 +3465,7 @@ const browserSuite = String.raw`(async () => {
     'Rosemary fixture contains the complete exported OpenMM System', JSON.stringify(rosemary.parameterCounts));
   check(document.querySelector('#method-select option[value="webgpu"]').textContent.includes('Rosemary')
     && document.querySelector('#method-info').textContent.includes('NAGL'),
-    'Run controls identify Rosemary and NAGL for the prepared protein');
+    'Simulate controls identify Rosemary and NAGL for the prepared protein');
   check(document.querySelector('#protein-result-title').textContent.includes('Rosemary')
     && document.querySelector('#protein-plddt').textContent === 'PDB',
     'experimental PDB coordinates are not presented as an OpenFold confidence score');
@@ -3402,7 +3519,7 @@ const browserSuite = String.raw`(async () => {
   }
 
   api.load('B');
-  check(!document.querySelector('#run-left-panel').classList.contains('hidden') && document.querySelector('#display-options').classList.contains('hidden'), 'loading a molecule preserves the Run-mode panel state');
+  check(!document.querySelector('#run-left-panel').classList.contains('hidden') && document.querySelector('#display-options').classList.contains('hidden'), 'loading a molecule preserves the Simulate-mode panel state');
   const uffEnergy = await api.calculateCurrent('energy', 'rdkit');
   check(uffEnergy.forcefield === 'UFF' && uffEnergy.fallback, 'unsupported MMFF94 chemistry uses genuine UFF fallback', JSON.stringify(uffEnergy));
   check(Number.isFinite(uffEnergy.finalEnergy), 'UFF fallback energy is finite', String(uffEnergy.finalEnergy));

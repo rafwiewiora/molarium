@@ -16,15 +16,42 @@ const api = createChemistActionsApi({ routes,
 assert.equal(api.schema, CHEMIST_ACTIONS_SCHEMA);
 assert(Object.isFrozen(api));
 assert(Object.hasOwn(api.describe().actions, 'chemistry.finish'));
+assert(Object.hasOwn(api.describe().actions, 'view.focusComponent'));
+assert(Object.hasOwn(api.describe().actions, 'view.focusAtoms'));
+assert(Object.hasOwn(api.describe().actions, 'view.highlightAtoms'));
+assert(Object.hasOwn(api.describe().actions, 'view.setDisplay'));
+assert(Object.hasOwn(api.describe().actions, 'session.loadStructure'));
+assert(Object.hasOwn(api.describe().actions, 'geometry.setInternalCoordinate'));
+assert(Object.hasOwn(api.describe().actions, 'calculation.run'));
+assert(Object.hasOwn(api.describe().actions, 'campaign.import'));
+assert(Object.hasOwn(api.describe().actions, 'designerScript.play'));
+assert(Object.hasOwn(api.describe().actions, 'designerScript.loadRegistered'));
+assert(Object.hasOwn(api.describe().actions, 'designerScript.export'));
+assert(Object.hasOwn(api.describe().actions, 'interface.presentDesignerStep'));
+assert.match(api.describe().actions['designerScript.export'].arguments.kind,
+  /installed-script/);
+assert.match(api.describe().actions['interface.presentDesignerStep'].arguments.phase,
+  /before \| after \| clear/);
 assert(Object.hasOwn(api.describe().actions, 'pose.addContact'));
 assert(Object.hasOwn(api.describe().actions, 'pose.forgetContact'));
 assert(Object.hasOwn(api.describe().actions, 'pose.updateReceptorReference'));
 assert(Object.hasOwn(api.describe().actions, 'pose.enumerateSidechainRotamers'));
 assert(Object.hasOwn(api.describe().actions, 'pose.applySidechainRotamer'));
+assert.match(api.describe().actions['pose.applySidechainRotamer'].arguments.chiDegrees,
+  /uniquely matched/);
+assert.match(api.describe().actions['pose.applySidechainRotamer'].arguments.coordinateSha256,
+  /SHA-256/);
+assert.match(api.describe().actions['pose.apply'].arguments.allowInfeasible,
+  /false by default/);
 assert(Object.hasOwn(api.describe().actions, 'structureStory.selectFrame'));
 assert.match(api.describe().actions['session.inspect'].arguments.scope, /pocket/);
+assert.match(api.describe().actions['view.setMode'].description, /View, Design, or Simulate/);
+assert.equal(api.describe().actions['view.setMode'].arguments.mode, 'view | build | run');
+assert.match(api.describe().actions['pose.refine'].arguments.featureSeedingProtocol,
+  /v3 \| v4.*default v4/);
 assert(!Object.hasOwn(api.describe().actions, 'test.loadObject'));
 assert.match(api.describe().guarantee, /no arbitrary code/);
+assert.match(api.describe().guarantee, /every saved replay and visible playback control executes only public routes/i);
 
 const first = await api.execute({ requestId:'chemist-1', action:'view.setMode', args:{ mode:'build' } });
 assert.equal(first.status, 'completed');
@@ -34,6 +61,23 @@ await assert.rejects(() => api.execute({ action:'view.setMode', args:{ callback:
 await assert.rejects(() => api.execute({ action:'view.setMode', args:{ value:Infinity } }), /finite/);
 const polluted = Object.create(null); polluted.mode = 'build';
 await assert.rejects(() => api.execute({ action:'view.setMode', args:polluted }), /plain JSON/);
+const coordinateText = 'ATOM  '.repeat(20000);
+await api.execute({ action:'session.loadStructure', args:{ content:coordinateText, format:'pdb' } });
+assert.equal(calls.at(-1).args.content.length, coordinateText.length,
+  'coordinate-bearing structure payloads are accepted above the old 32 KiB control limit');
+const nestedReplay = { schema:'molarium.chemist-action-script/v1', label:'Nested replay fixture',
+  actions:[{ action:'session.inspect', args:{ scope:'pocket' },
+    expect:{ 'fixture.axes':[
+      { chi:'chi1', atomNames:['N','CA','CB','CG'] },
+      { chi:'chi2', atomNames:['CA','CB','CG','CD1'] },
+    ] } }] };
+await api.execute({ action:'designerScript.load', args:{ script:nestedReplay } });
+assert.deepEqual(calls.at(-1).args.script, nestedReplay,
+  'the public loader accepts the nested shape of an installed replay script');
+let excessiveDepth = { value:true };
+for (let depth = 0; depth < 13; depth++) excessiveDepth = { nested:excessiveDepth };
+await assert.rejects(() => api.execute({ action:'designerScript.load',
+  args:{ script:excessiveDepth } }), /input exceeds depth 12/);
 
 const order = [];
 routes['chemistry.finish'] = undefined;
@@ -52,9 +96,11 @@ assert.equal(api.history().length, 3, 'audit history is bounded');
 assert(api.history().every((record) => record.status === 'completed'));
 const copy = api.history(); copy[0].action = 'tampered';
 assert.notEqual(api.history()[0].action, 'tampered', 'history returns a defensive copy');
-assert.equal(persisted.length, 3);
+assert.equal(persisted.length, 5);
 assert(persisted.every((record) => record.status === 'completed'),
   'accepted actions are offered to the durable audit adapter after completion');
+assert(persisted.every((record) => record.result?.observed === record.action),
+  'completed audit records preserve the public action result');
 
 assert.throws(() => createChemistActionsApi({ routes:{} }), /route session.inspect is missing/);
 

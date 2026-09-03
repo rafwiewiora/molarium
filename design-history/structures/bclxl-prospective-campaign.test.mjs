@@ -3,6 +3,8 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { REGISTERED_DESIGN_ROUTE_SCHEMA,
+  validateRegisteredDesignRoute } from './design-route.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const generated = join(here, 'generated');
@@ -10,11 +12,13 @@ const campaign = JSON.parse(await readFile(
   join(generated, 'bclxl-prospective-campaign.json'), 'utf8'));
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
-assert.equal(campaign.schema, 'molarium.design-campaign/v1');
+assert.equal(campaign.schema, REGISTERED_DESIGN_ROUTE_SCHEMA);
+assert.equal(validateRegisteredDesignRoute(campaign, { expectedId:'bclxl-hit-only' }), campaign);
 assert.equal(campaign.id, 'bclxl-hit-only');
 assert.equal(campaign.hit.pdbId, '3SPF');
 assert.equal(campaign.hit.ligand, 'B50');
 assert.equal(campaign.hit.ligandDefinition.id, 'B50');
+assert.equal(campaign.generator.rdkitVersion, '2026.03.4');
 assert(campaign.hit.ligandDefinition.atoms.some((atom) => atom.element === 'H'));
 assert.deepEqual(campaign.evaluation,
   { status:'locked-until-predictions-frozen', holdouts:[] });

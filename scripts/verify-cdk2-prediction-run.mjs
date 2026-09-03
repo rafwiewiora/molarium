@@ -15,7 +15,7 @@ function normalizedCheckpoint(checkpoint) {
 export async function verifyCdk2PredictionRun({ runDir, replayDir = null }) {
   const manifestBytes = await readFile(join(runDir, 'prediction-manifest.json'));
   const manifest = JSON.parse(manifestBytes);
-  assert.equal(manifest.campaignId, 'cdk2-hit-only');
+  assert.equal(manifest.routeId, 'cdk2-hit-only');
   assert.equal(manifest.status, 'predictions-frozen-holdouts-unopened');
   assert.equal(manifest.protocol.initialCoordinateInput, 'PDB 1H1Q/2A6 only');
   assert.equal(manifest.protocol.sequentialPredictedReferences, true);

@@ -59,6 +59,10 @@ export function transformedRingRegion(beforeMolecule, afterMolecule,
   const beforeBonds = bondMap(beforeMolecule, beforeById, 'Before graph');
   const afterBonds = bondMap(afterMolecule, afterById, 'After graph');
   const changedAtomIds = new Set(), changedBondKeys = new Set();
+  const removedReferenceAtomIds = new Set([...beforeById.keys()]
+    .filter((id) => !afterById.has(id)));
+  const addedProductAtomIds = new Set([...afterById.keys()]
+    .filter((id) => !beforeById.has(id)));
 
   for (const [id, beforeIndex] of beforeById) {
     const afterIndex = afterById.get(id);
@@ -69,9 +73,27 @@ export function transformedRingRegion(beforeMolecule, afterMolecule,
   }
   for (const [key, before] of beforeBonds) {
     const after = afterBonds.get(key);
-    if (!after) continue;
+    if (!after) {
+      // Losing a bond between two surviving atoms is a real topology change.
+      // Bonds incident to a deleted atom are represented by the deleted atom
+      // and handled by the incomplete-ring test below.
+      if (afterById.has(before.firstId) && afterById.has(before.secondId)) {
+        changedBondKeys.add(key); changedAtomIds.add(before.firstId);
+        changedAtomIds.add(before.secondId);
+      }
+      continue;
+    }
     if (Math.abs(before.order - after.order) > 1e-6 || before.aromatic !== after.aromatic) {
       changedBondKeys.add(key); changedAtomIds.add(before.firstId); changedAtomIds.add(before.secondId);
+    }
+  }
+  for (const [key, after] of afterBonds) {
+    if (beforeBonds.has(key)) continue;
+    // Likewise, a new bond between two inherited atoms changes the inherited
+    // topology. A bond to a genuinely new atom is ordinary fragment growth.
+    if (beforeById.has(after.firstId) && beforeById.has(after.secondId)) {
+      changedBondKeys.add(key); changedAtomIds.add(after.firstId);
+      changedAtomIds.add(after.secondId);
     }
   }
 
@@ -79,9 +101,36 @@ export function transformedRingRegion(beforeMolecule, afterMolecule,
     const index = afterById.get(id);
     return Number.isInteger(index) && heavy(afterMolecule.atoms[index]) ? [index] : [];
   }));
+  const beforeRings = perceiveFlexibleRings(beforeMolecule, { maximumRingSize });
   const rings = perceiveFlexibleRings(afterMolecule, { maximumRingSize });
   const selectedRings = new Set(rings.flatMap((ring, index) =>
     ring.atomIndices.some((atom) => changedIndices.has(atom)) ? [index] : []));
+  const changedReferenceRingIds = new Set();
+  beforeRings.forEach((ring) => {
+    const ringIds = ring.atomIndices.map((index) => beforeMolecule.atoms[index].designAtomId);
+    const ringIdSet = new Set(ringIds);
+    const internalBondChanged = [...changedBondKeys].some((key) => {
+      const [firstId, secondId] = key.split('\u0000');
+      return ringIdSet.has(firstId) && ringIdSet.has(secondId);
+    });
+    if (ringIds.some((id) => removedReferenceAtomIds.has(id)
+      || changedAtomIds.has(id)) || internalBondChanged)
+      ringIds.forEach((id) => changedReferenceRingIds.add(id));
+  });
+  // An exact atom map can retain five atoms of a phenyl->pyridyl or other
+  // bioisosteric replacement. Those atoms survived as identities, but the
+  // ring did not survive as a coordinate-invariant object. Release the whole
+  // corresponding product ring instead of freezing an arbitrary partial ring.
+  rings.forEach((ring, index) => {
+    const ringIds = ring.atomIndices.map((atomIndex) =>
+      afterMolecule.atoms[atomIndex].designAtomId);
+    const inheritedIds = ringIds.filter((id) => beforeById.has(id));
+    const containsChangedReferenceRing = inheritedIds.some((id) =>
+      changedReferenceRingIds.has(id));
+    const productRingWasRewritten = ringIds.some((id) => addedProductAtomIds.has(id))
+      && inheritedIds.some((id) => changedReferenceRingIds.has(id));
+    if (containsChangedReferenceRing || productRingWasRewritten) selectedRings.add(index);
+  });
   // A touched fused system must move as one system. This does not claim that
   // the standalone generator can already sample fused rings; it prevents a
   // partial hard freeze from distorting them during ordinary relaxation.
@@ -117,6 +166,10 @@ export function transformedRingRegion(beforeMolecule, afterMolecule,
   return {
     schema:'molarium.docking.transformed-ring-region/v1',
     changedAtomIds:[...changedAtomIds].sort(), changedBondKeys:[...changedBondKeys].sort(),
+    removedReferenceAtomIds:[...removedReferenceAtomIds].sort(),
+    addedProductAtomIds:[...addedProductAtomIds].sort(),
+    touchedReferenceRingCount:beforeRings.filter((ring) => ring.atomIndices.some((index) =>
+      changedReferenceRingIds.has(beforeMolecule.atoms[index].designAtomId))).length,
     touchedRingCount:selectedRings.size,
     touchedRingAtomIds:ids(new Set([...selectedRings].flatMap((index) => rings[index].atomIndices))),
     releasedAtomIds:ids(released), releasedHeavyAtomIds:ids(releasedHeavy),

@@ -1,6 +1,6 @@
 {
   "schema": "molarium.cdk2-designer-movie-assets/v1",
-  "campaignId": "cdk2-designer-intent",
+  "routeId": "cdk2-designer-intent",
   "scientificStatus": "designer-directed-hit-to-lead-success",
   "claim": "A designer-selected C19 exit vector carries the 1H1Q hit pose through two Agent API design steps.",
   "agentApi": {
@@ -65,7 +65,14 @@
   "inputs": [
     {
       "path": "design-history/structures/generated/cdk2-designer-campaign.json",
-      "sha256": "9e3e247b6aa17619fc632e1075921c1f1108c21671d71f577070c6907add2c6e"
+      "sha256": "f1e22cd609cd97792f5d7c1217e0fb0e551cc2ea490e1f2b4925451faf7f78ec",
+      "schemaMigration": {
+        "kind": "schema-identifier-only",
+        "fromSchema": "molarium.design-campaign/v1",
+        "toSchema": "molarium.registered-design-route/v1",
+        "frozenInputSha256": "9e3e247b6aa17619fc632e1075921c1f1108c21671d71f577070c6907add2c6e",
+        "currentSha256": "f1e22cd609cd97792f5d7c1217e0fb0e551cc2ea490e1f2b4925451faf7f78ec"
+      }
     },
     {
       "path": "outputs/design-history/cdk2-designer-intent-success/prediction-manifest.json",

@@ -11,6 +11,9 @@ Molarium treats source history and validation evidence as part of the scientific
 
 Small emergency fixes should still use a pull request whenever practical. Do not commit generated credentials, proprietary structures, raw private session logs, or external-service secrets.
 
+Unless explicitly stated otherwise, contributions submitted for inclusion in Molarium are licensed
+under the [Apache License 2.0](./LICENSE), consistent with section 5 of that license.
+
 ## Local checks
 
 Before opening a pull request, run:

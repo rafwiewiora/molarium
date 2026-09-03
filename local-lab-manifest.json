@@ -7,18 +7,33 @@
   "files": [
     {
       "path": "LICENSE",
-      "bytes": 1078,
-      "sha256": "f39fae2208edb0cfa6719e510f33bb72aec9628e7c5984c906382d341e6f7f78"
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "bytes": 7527,
-      "sha256": "ff5bed30a41be3f91c3bda5d6f030b62aec4e788fa6a6a2f376b53c085171040"
+      "bytes": 7541,
+      "sha256": "41fa6202cd443f4105afa534397cfd40e2c28831222b0bf197e3c2986e0b16fb"
     },
     {
       "path": "app.js",
-      "bytes": 682494,
-      "sha256": "4b7e9fbdc3a0586b34ae98b160b45086558d52b206eff21149b43b476780ea91"
+      "bytes": 883073,
+      "sha256": "e6aa441b22714f01f7d0327dc5d95fccbbbf8cd0cbb289b7106b819e2e1d2556"
+    },
+    {
+      "path": "chemist-actions.mjs",
+      "bytes": 27874,
+      "sha256": "cd4906215552f2d8197087246cfcb5086b76ad2134696b789fc1697c036e088e"
+    },
+    {
+      "path": "CHEMIST-ACTIONS-API.md",
+      "bytes": 21965,
+      "sha256": "16ab168c0786c79d896827c9eade25fc051b5d50c65fc0136a77b50d9e938e3c"
+    },
+    {
+      "path": "DESIGNER-MOVES.md",
+      "bytes": 13007,
+      "sha256": "7449a4d94790fcb01bf4ded887d0a0117a9501d35efa0c61de02e4c380126bef"
     },
     {
       "path": "bun.lock",
@@ -32,8 +47,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 57343,
-      "sha256": "b894a9f681630fa7913a5ab0f98a5a3dc1e0826e2b68efac1faa6ce45181c3a3"
+      "bytes": 68716,
+      "sha256": "c8855b05a3d6223609aa8fb2c116fecbba548d213c450d1eac4a244f7c2726e7"
     },
     {
       "path": "local-lab-test.js",
@@ -42,8 +57,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 6581,
-      "sha256": "61e56373599d9915196a334b0df4cc5f9224384c1406741051d6406890f60054"
+      "bytes": 9901,
+      "sha256": "735874e3426f5829f11c2eee2ac356aea8ebcec6035ab4b0589f06454a3cc82a"
     },
     {
       "path": "protein-residue-templates.js",
@@ -52,18 +67,18 @@
     },
     {
       "path": "server.js",
-      "bytes": 4121,
-      "sha256": "eb62c6571dc60487af07ad04ee551f149cff07b7584b5267fa70e3a42eb5e47d"
+      "bytes": 4365,
+      "sha256": "aa4ce1b179763101fd01002ec7d995fbe759cb5e820a06577f9870bfc20407b8"
     },
     {
       "path": "scripts/generate-local-lab-manifest.mjs",
-      "bytes": 3313,
-      "sha256": "ea3060bb4626ad0551f40cc582a61d2343896aa485777ee3789ff59fa2a9e164"
+      "bytes": 4012,
+      "sha256": "fcc5f0fab0a27808f51a8d951bf6f6a8da32314363280ab608bde111f9e093a8"
     },
     {
       "path": "styles.css",
-      "bytes": 63806,
-      "sha256": "2d6fb14bff09f99d167ff4a764735b12fe83271a03c1f44c1d4593e2e05b3fc9"
+      "bytes": 70266,
+      "sha256": "f75bdbee7c4355d171b74015f5ce5a933cab57d6499c39744a4aafa8ac54aee8"
     },
     {
       "path": "validation/README.md",
@@ -87,8 +102,8 @@
     },
     {
       "path": "rdkit-worker.js",
-      "bytes": 21819,
-      "sha256": "8cc396b3a67a5e23229d4252a9c0bec7319f4c4f77de67cb8c998b90218d6f70"
+      "bytes": 23009,
+      "sha256": "40e194b7269b32861cef03e145375c1b786b9c38c126bee70f89c421343975cf"
     },
     {
       "path": "rdkit/dimorphite-sites.js",
@@ -121,6 +136,26 @@
       "sha256": "e953159b1262fba06af64e2dd9478f68f23778a92d62ff9211153ccdf579cc9a"
     },
     {
+      "path": "docking/pose-propagation-scoring.mjs",
+      "bytes": 7322,
+      "sha256": "58afd67f72fb4afcc0107d217b20e73c8b458a7b06328f124a1b386f910a240e"
+    },
+    {
+      "path": "docking/pose-search-ensemble.mjs",
+      "bytes": 2423,
+      "sha256": "3c0412276d5df654fe0a56420c43efa26c25b6c2249c2faea49bf05316d58bd6"
+    },
+    {
+      "path": "docking/pose-search-worker.mjs",
+      "bytes": 718,
+      "sha256": "62cffba37a3c6b6e6646e6fc44fc0aaec7525b55f692bc324f4f1450f9e6b37e"
+    },
+    {
+      "path": "docking/sidechain-rotamers.mjs",
+      "bytes": 19346,
+      "sha256": "287f212a3466e63e3aa627f9eb5cb16e1f0fd6d6dde7598f17fca7f4164155fa"
+    },
+    {
       "path": "docking/labbook.mjs",
       "bytes": 10985,
       "sha256": "31618cc9610e2ace643fb7e23f2fcfb580e91c60006b71f2919aa7c033b31713"
@@ -142,13 +177,13 @@
     },
     {
       "path": "docking/torsion-search.mjs",
-      "bytes": 11055,
-      "sha256": "e300f68d4551945546c2e257d5102402f959db31be3a2d7f94924ef09e2a329d"
+      "bytes": 11402,
+      "sha256": "b5f95084d92a1bffb80d77b91e17749e977e6df577915c8bccc8216daa51b670"
     },
     {
       "path": "docking/workflow.mjs",
-      "bytes": 7978,
-      "sha256": "2696a281152fb7fd0f47b48cde2146b167b6739c3ca0b45c42128260e0d49bec"
+      "bytes": 8264,
+      "sha256": "5a7447b10be5b30eac9d89107a357f30145c9fc8d39ba33a08193e8a6d9ae15b"
     },
     {
       "path": "docking/benchmark/manifest.v0.1.json",
@@ -331,9 +366,59 @@
       "sha256": "5f4f5e70f01164f9c82a811d53c34a78ac4c6e6070fcaec0ebcafd046d205735"
     },
     {
+      "path": "assets/media/sos1-designer-moves-molarium-interface.mp4",
+      "bytes": 3036951,
+      "sha256": "071b7622d2bda301e0c8e029da4d940d9608869013be33f7099c6992ce838591"
+    },
+    {
+      "path": "assets/media/sos1-designer-moves-molarium-interface.render-manifest.json",
+      "bytes": 84909,
+      "sha256": "c9fa86947e706a99475bad7675842b1f49e9a3501f90dbdbc4a5885377d3d5a9"
+    },
+    {
+      "path": "assets/molarium-logo.svg",
+      "bytes": 1997,
+      "sha256": "8070371aa4ed720e3c8339db1ed286632a127068211dc3525d94244f3757ba80"
+    },
+    {
       "path": "assets/molarium-mark.svg",
-      "bytes": 1047,
-      "sha256": "f930672c0d3c6f7f9c1cc17f34aa9a215d6cb3e442736920e0c8746eaa44bfe6"
+      "bytes": 1593,
+      "sha256": "52b492bfc572b09c55d339b31665c6563120a8b1aa3e842aa43c3d3f4e7aa8ad"
+    },
+    {
+      "path": "design-history/interface-story.mjs",
+      "bytes": 5213,
+      "sha256": "a95a9de9359c582fd6a01154fb40b7976f473c051534c9a90bee1efd619e3fd8"
+    },
+    {
+      "path": "design-history/integrity.mjs",
+      "bytes": 2048,
+      "sha256": "51db00571be74c77dd1d7bbb0ae00fee91eb952713357b4666a624bf00feacf2"
+    },
+    {
+      "path": "design-history/ledger.mjs",
+      "bytes": 22271,
+      "sha256": "5121689a0f35473b2f1112c9db13dda63fdfd4778b665f0ae53eaf493cbd373f"
+    },
+    {
+      "path": "design-history/live-campaign.mjs",
+      "bytes": 15174,
+      "sha256": "3d3a89711f806532a22fbdb5b67e110591a4223f86d3ac1a91ed6fd445a20c8d"
+    },
+    {
+      "path": "design-history/live-campaign-store.mjs",
+      "bytes": 6425,
+      "sha256": "66df49e9208d3c50ace6be263fce50eab596b6eebe6f4b01bae49f13912b17d6"
+    },
+    {
+      "path": "design-history/replay.mjs",
+      "bytes": 13047,
+      "sha256": "5d8783713f095825ada2ed995fd7c19c8d726170de35c187073b5ab11134a9c7"
+    },
+    {
+      "path": "design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json",
+      "bytes": 9078,
+      "sha256": "f7f1fcb6b3791a8a4bd445e450f188c8e08e2062bf6c270fe0e5db1d9d6e5a59"
     }
   ]
 }

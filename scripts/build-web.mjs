@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { cp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -28,7 +28,9 @@ const files = [
   'docking/benchmark/7kpa-manual-contact-smoke.v0.1.json',
   'docking/benchmark/7kpa-manual-contact-results.psiblue.v0.1.json',
   'design-history/README.md', 'design-history/integrity.mjs', 'design-history/ledger.mjs',
-  'design-history/movie.mjs', 'design-history/replay.mjs',
+  'design-history/movie.mjs', 'design-history/replay.mjs', 'design-history/interface-story.mjs',
+  'design-history/live-campaign.mjs', 'design-history/live-campaign-store.mjs',
+  'design-history/structures/design-route.mjs',
   'design-history/examples/sos1-growth-clash-v7-captions.json',
   'design-history/examples/sos1-growth-clash-v7.provenance.json',
   'design-history/examples/sos1-growth-clash-v7.full.action-script.json',
@@ -48,6 +50,8 @@ const files = [
   'design-history/structure-viewer/bclxl-fragment-linking.json',
   'design-history/structure-viewer/cdk2-hit-only-prospective.json',
   'design-history/structure-viewer/cdk2-designer-hit-to-lead.json',
+  'design-history/structure-viewer/sos1-hit-only-success.json',
+  'design-history/structure-review/index.html',
   'design-history/structures/generated/manifest.json',
   'design-history/structures/generated/bclxl-trajectory-manifest.json',
   'design-history/structures/generated/bclxl-prospective-campaign.json',
@@ -92,6 +96,8 @@ const files = [
   'docking/validation/cloud-panel/openmm-wasm-native-validation-2026-08-23.json',
   'docking/validation/cloud-panel/RESULTS-2026-08-23.md',
   'assets/lsd-launch.mol', 'assets/molarium-logo.svg', 'assets/molarium-mark.svg',
+  'assets/media/sos1-designer-moves-molarium-interface.mp4',
+  'assets/media/sos1-designer-moves-molarium-interface.render-manifest.json',
   'licenses/APACHE-2.0-LICENSE.txt', 'licenses/DIMORPHITE-DL-NOTICE.txt', 'licenses/ONNXRUNTIME-1.27.0-THIRD-PARTY-NOTICES.txt',
   'licenses/ONNXRUNTIME-LICENSE.txt', 'licenses/OPENFOLD-LICENSE.txt', 'licenses/PDBFIXER-LICENSE.txt',
   'mlip/README.md', 'mlip/TORCHANI-LICENSE.txt', 'mlip/ani2x.js', 'mlip/ani2x-webgpu.js',
@@ -107,12 +113,21 @@ const files = [
   'docking/browser-adapter.mjs', 'docking/constraints.mjs', 'docking/contact-remap.mjs',
   'docking/feature-seeding.mjs', 'docking/restraint-biased-search.mjs',
   'docking/labbook.mjs', 'docking/protocol.mjs', 'docking/receptor-score.mjs',
-  'docking/reference-core.mjs', 'docking/sidechain-rotamers.mjs', 'docking/torsion-search.mjs',
+  'docking/pose-propagation-scoring.mjs', 'docking/pose-search-ensemble.mjs',
+  'docking/pose-search-worker.mjs',
+  'docking/reference-core.mjs', 'docking/registered-graph-edit.mjs',
+  'docking/sidechain-rotamers.mjs', 'docking/torsion-search.mjs',
   'docking/transformed-ring-region.mjs', 'docking/workflow.mjs',
   'stormm/LICENSE', 'stormm/README.md', 'stormm/core.mjs', 'stormm/engine.mjs',
   'webgpu/README.md', 'webgpu/molarium-webgpu.wgsl',
   'vendor/onnxruntime-web/ort.webgpu.bundle.min.mjs',
 ];
+
+const generatedStructures = await readdir(join(root, 'design-history/structures/generated'));
+files.push(...generatedStructures
+  .filter((name) => ((name.startsWith('sos1-v7-') || name.startsWith('sos1-full-'))
+    && name.endsWith('.pdb')) || name === 'sos1-prospective-movie-assets.json')
+  .map((name) => `design-history/structures/generated/${name}`));
 
 const headers = `/*
   Cache-Control: no-cache
@@ -141,6 +156,11 @@ await writeFile(join(output, 'runtime-config.js'),
     buildManifest:'./local-lab-manifest.json', assetBase,
   })});\n`);
 await writeFile(join(output, '_headers'), headers);
+await writeFile(join(output, '_redirects'), [
+  '/sos1-hit-to-bay293 /?story=sos1-hit-to-bay293 302',
+  '/sos1-hit-to-bay293/ /?story=sos1-hit-to-bay293 302',
+  '',
+].join('\n'));
 
 const manifestFiles = [];
 // Cloudflare Pages consumes `_headers` as deployment configuration and does not

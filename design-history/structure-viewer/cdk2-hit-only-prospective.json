@@ -79,7 +79,7 @@
       "id": "hit-only-input",
       "title": "Start with the hit—and nothing else",
       "body": "The only coordinate-bearing input is 2A6 bound to CDK2 in 1H1Q. Later compound graphs are allowed; later protein and ligand coordinates are locked.",
-      "detail": "Agent API · designCampaign.load → protein.prepare → pose.captureReference",
+      "detail": "Agent API · designRoute.load → protein.prepare → pose.captureReference",
       "scene": "hitInput", "durationMs": 4200,
       "cameraStart": "pocketWide", "cameraEnd": "editLocked"
     },
@@ -95,7 +95,7 @@
     {
       "id": "predict-6cp",
       "title": "Agent API predicts 6CP",
-      "body": "designCampaign.applyStep builds the chloro analogue; pose.refine searches 64 candidates and pose.apply commits rank 1 while the inherited hit core remains fixed.",
+      "body": "designRoute.applyStep builds the chloro analogue; pose.refine searches 64 candidates and pose.apply commits rank 1 while the inherited hit core remains fixed.",
       "detail": "Agent API sequences 6–8 · purple is prediction",
       "focusLabel": "predicted chlorine",
       "scene": "prediction6cp", "durationMs": 3200,

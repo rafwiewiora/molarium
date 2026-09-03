@@ -37,26 +37,26 @@ try {
     `window.MolariumChemistActions?.schema==='molarium.chemist-actions/v1'`),
   90000, 'public Chemist Actions API');
   const description = await browser.evaluate(`window.MolariumChemistActions.describe()`);
-  for (const action of ['designCampaign.load', 'designCampaign.applyStep',
-    'designCampaign.inspect', 'protein.prepare', 'pose.captureReference', 'pose.refine',
+  for (const action of ['designRoute.load', 'designRoute.applyStep',
+    'designRoute.inspect', 'protein.prepare', 'pose.captureReference', 'pose.refine',
     'pose.apply', 'protein.parameterize', 'session.inspect']) {
     if (!description.actions[action]) throw new Error(`Public action is missing: ${action}`);
   }
 
-  await execute('designCampaign.load', { campaignId:'cdk2-hit-only' }, 'campaign-load-hit');
-  await execute('view.setMode', { mode:'build' }, 'campaign-enter-build');
-  console.log('campaign: preparing the registered 1H1Q/2A6 hit complex');
+  await execute('designRoute.load', { routeId:'cdk2-hit-only' }, 'route-load-hit');
+  await execute('view.setMode', { mode:'build' }, 'route-enter-build');
+  console.log('route: preparing the registered 1H1Q/2A6 hit complex');
   await execute('protein.prepare', {
     pH:7.4, histidine:'auto', repairMissingHeavy:true,
     ligandPolicy:'ccd', waterPolicy:'retain', gapPolicy:'cap',
-  }, 'campaign-prepare-hit');
-  await execute('pose.captureReference', { mode:'propagate' }, 'campaign-capture-hit');
-  const boundary = await execute('designCampaign.inspect', {}, 'campaign-inspect-boundary');
+  }, 'route-prepare-hit');
+  await execute('pose.captureReference', { mode:'propagate' }, 'route-capture-hit');
+  const boundary = await execute('designRoute.inspect', {}, 'route-inspect-boundary');
 
   for (let stepIndex = 0; stepIndex < stepIds.length; stepIndex++) {
     const stepId = stepIds[stepIndex];
     console.log(`${stepId}: staging registered graph against the preceding prediction`);
-    const staged = await execute('designCampaign.applyStep', { stepId }, `${stepId}-stage`);
+    const staged = await execute('designRoute.applyStep', { stepId }, `${stepId}-stage`);
     console.log(`${stepId}: fixed-receptor pose search`);
     const refined = await execute('pose.refine', { searchChains:64 }, `${stepId}-pose-refine`);
     const selectedIndex = Math.max(0,
@@ -78,15 +78,15 @@ try {
     const pocket = await execute('session.inspect', {
       scope:'pocket', includeCoordinates:true, maximumAtoms:500,
     }, `${stepId}-freeze-pocket`);
-    const current = await execute('designCampaign.inspect', {}, `${stepId}-inspect-state`);
+    const current = await execute('designRoute.inspect', {}, `${stepId}-inspect-state`);
     const checkpoint = {
       schema:'molarium.design-prediction-checkpoint/v1',
-      campaignId:'cdk2-hit-only', stepId,
+      routeId:'cdk2-hit-only', stepId,
       referenceStateId:staged.result.designStep.referenceStateId,
       predictedStateId:staged.result.designStep.stateId,
       frozenBeforeHoldoutAccess:true,
-      boundary:boundary.result.designCampaign,
-      state:current.result.designCampaign,
+      boundary:boundary.result.designRoute,
+      state:current.result.designRoute,
       staging:staged.result.designStep,
       refinement:refined.result.refinement,
       parameterization:parameterized.result.parameterization,
@@ -111,7 +111,7 @@ try {
 
   const audit = await browser.evaluate(`window.MolariumChemistActions.history()`);
   const auditBytes = Buffer.from(`${JSON.stringify({
-    schema:description.schema, campaignId:'cdk2-hit-only', records:audit,
+    schema:description.schema, routeId:'cdk2-hit-only', records:audit,
   }, null, 2)}\n`);
   await writeFile(join(output, 'chemist-action-audit.json'), auditBytes);
   const campaignPath = join(root,
@@ -119,7 +119,7 @@ try {
   const runnerPath = fileURLToPath(import.meta.url);
   const manifest = {
     schema:'molarium.design-prediction-run/v1',
-    campaignId:'cdk2-hit-only',
+    routeId:'cdk2-hit-only',
     status:'predictions-frozen-holdouts-unopened',
     protocol:{ initialCoordinateInput:'PDB 1H1Q/2A6 only',
       sequentialPredictedReferences:true, relaxMethod },

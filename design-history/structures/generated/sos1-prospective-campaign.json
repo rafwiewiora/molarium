@@ -1,5 +1,5 @@
 {
-  "schema": "molarium.design-campaign/v1",
+  "schema": "molarium.registered-design-route/v1",
   "id": "sos1-hit-only",
   "title": "SOS1 five-state hit-only conformational replay",
   "protocolBoundary": {
@@ -828,6 +828,7 @@
       "sequenceIndex": 1,
       "referenceStateId": "AXE",
       "stateId": "AWT",
+      "productComponentId": "AWT",
       "compound": "17",
       "label": "replace the naphthyl region with the pyrazolyl-phenyl design",
       "inputKind": "molecular-graph-only",
@@ -1100,6 +1101,7 @@
       "sequenceIndex": 2,
       "referenceStateId": "AWT",
       "stateId": "AWZ",
+      "productComponentId": "AWZ",
       "compound": "18",
       "label": "merge the bicyclic amine fragment through thiophene",
       "inputKind": "molecular-graph-only",
@@ -1404,6 +1406,7 @@
       "sequenceIndex": 3,
       "referenceStateId": "AWZ",
       "stateId": "AWW",
+      "productComponentId": "AWW",
       "compound": "21",
       "label": "install the benzyl-alcohol arm that challenges Phe890",
       "inputKind": "molecular-graph-only",
@@ -1747,8 +1750,9 @@
       "sequenceIndex": 4,
       "referenceStateId": "AWW",
       "stateId": "AXH",
+      "productComponentId": "AXH",
       "compound": "23",
-      "label": "replace hydroxymethyl with methylaminomethyl and restore the aromatic core",
+      "label": "preserve the proximal quinazoline-thiophene core while rebuilding the regioisomeric distal arm",
       "inputKind": "molecular-graph-only",
       "productSmiles": "CNCc1ccccc1-c1csc([C@@H](C)Nc2nc(C)nc3cc(OC)c(OC)cc23)c1",
       "productAtomNames": [
@@ -2080,7 +2084,35 @@
             "editedProductAtomIndex": 29,
             "bondType": "AROMATIC"
           }
-        ]
+        ],
+        "protectedReferenceAnchor": {
+          "method": "maximum-common-substructure/v1",
+          "label": "AWW proximal quinazoline-thiophene core",
+          "referenceAtomNames": [
+            "C1",
+            "C2",
+            "N6",
+            "C11",
+            "N8",
+            "C3",
+            "N7",
+            "C12",
+            "C16",
+            "C15",
+            "CX2",
+            "CX3",
+            "CX4",
+            "SX1",
+            "CX1"
+          ],
+          "atoms": 15,
+          "bonds": 16,
+          "releasedRegions": [
+            "regioisomeric distal phenyl/benzylic arm",
+            "hydroxymethyl-to-methylaminomethyl substituent"
+          ]
+        },
+        "transitionExplanation": "AWW and AXH attach the distal phenyl arm at different thiophene positions; that arm cannot remain spatially fixed while the proximal core is retained."
       }
     }
   ],

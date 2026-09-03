@@ -15,6 +15,7 @@ const valueFor = (name) => {
   return args.find((entry) => entry.startsWith(`${name}=`))?.slice(name.length + 1);
 };
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
+const delay = (milliseconds) => new Promise((resolveDelay) => setTimeout(resolveDelay, milliseconds));
 const actionRequest = (action, args, requestId) => JSON.stringify({ action, args, requestId });
 const storyPath = resolve(root, valueFor('--story')
   || 'design-history/structure-viewer/moonshot-dndi-6510.json');
@@ -30,8 +31,14 @@ const browser = await startMolariumBrowser({ root,
 const browserVersion = await browser.client.call('Browser.getVersion');
 const temporaryFrames = await mkdtemp(join(tmpdir(), 'molarium-structure-movie-'));
 const selectedFrames = has('--smoke')
-  ? [...new Set([0, ...story.cues.map((_, cueIndex) =>
-    frames.find((frame) => frame.cueIndex === cueIndex)?.frame).filter(Number.isInteger)])]
+  ? [...new Set([0,
+    ...story.cues.map((_, cueIndex) =>
+      frames.find((frame) => frame.cueIndex === cueIndex)?.frame).filter(Number.isInteger),
+    ...story.cues.map((_, cueIndex) =>
+      frames.findLast((frame) => frame.cueIndex === cueIndex)?.frame).filter(Number.isInteger),
+    ...frames.filter((frame, index) => index > 0 && frame.scene !== frames[index - 1].scene)
+      .map((frame) => frame.frame),
+  ])].sort((first, second) => first - second)
   : frames.map((frame) => frame.frame);
 const rendered = [];
 
@@ -46,6 +53,7 @@ try {
       'structureStory.selectFrame', { frame:frameIndex }, `render-frame-${frameIndex}`)})`);
     await waitFor(async () => browser.evaluate(`document.body.dataset.frame==='${frameIndex}'
       && document.body.dataset.renderReady==='1'`), 90000, `structure frame ${frameIndex}`);
+    if (position === 0) await delay(500);
     const bytes = await browser.capturePng();
     const filename = `frame-${String(frameIndex).padStart(5, '0')}.png`;
     const destination = has('--smoke') ? join(output, filename) : join(temporaryFrames, filename);

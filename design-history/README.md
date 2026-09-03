@@ -19,7 +19,7 @@ compound 4 through compounds 6, 7, 16, and 21.
 
 ## Record layers
 
-Three records have deliberately different responsibilities:
+Four record types have deliberately different responsibilities:
 
 1. **Chemist Actions** records operations available through Molarium's visible,
    versioned chemistry interface. Executable design scripts may replay only
@@ -28,13 +28,31 @@ Three records have deliberately different responsibilities:
    timings, and implementation provenance.
 3. **Design campaigns** record snapshots, molecular commits, branches,
    observations, hypotheses, measurements, and explicit progress decisions.
+4. **Registered design routes** use schema
+   `molarium.registered-design-route/v1` to define a hit, allowed coordinate
+   boundary, and ordered graph edits. They are input protocols, not history
+   ledgers.
+
+The append-only campaign ledger uses `molarium.design-campaign/v1`. A route
+cannot pass ledger verification, and a ledger cannot be loaded as a route.
+
+The main Design workspace exposes this ledger through **Design History**. One
+`campaign.create` action can capture the current molecule as the first commit;
+later actions commit snapshots, create or switch branches, merge an explicit
+current molecular state, record a disposition, and verify the record. Campaign
+JSON and the active branch are stored in IndexedDB. Closing a campaign clears
+the active workspace pointer without deleting its saved commits. Workbench
+import verifies the campaign before changing the session and requires a branch
+head with a complete graph and coordinates. Reference-only campaign records are
+consumed by the standalone viewers instead.
 
 Snapshots, action scripts, commits, individual events, complete campaigns, and
 movie manifests are SHA-256 content addressed. Events also form a hash chain.
-`verifyCampaign()` recomputes those identities, validates parent and branch
-references, and rejects a mutated record.
+`verifyCampaign()` recomputes those identities, matches commit events to commit
+bodies, derives branch heads from the chained events, validates references, and
+rejects a mutated record.
 
-Actors are typed as `human`, `agent`, `system`, or `imported-source`. That field
+Actors are typed as `human`, `agent`, `system`, or `import`. That field
 records who made an observable contribution. It does not infer authorship from
 prose and it does not expose private model chain-of-thought. Public records may
 contain requests, proposals, tool actions, results, concise rationales, and
@@ -67,6 +85,7 @@ not been curated.
 npm run build:design-stories
 npm run test:design-history
 npm run test:design-history-browser
+npm run test:live-campaign-production
 ```
 
 The deterministic builder writes three campaigns and their movie manifests to

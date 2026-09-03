@@ -118,13 +118,15 @@ try {
 
     document.querySelector('[data-2d-tool="select"]').click();
     check(api.twoDDepiction().tool === 'select' && api.twoDDepiction().mode === 'view',
-      'the visible Select tool activates without forcing the main canvas into Build', JSON.stringify(api.twoDDepiction()));
+      'the visible Select tool activates without forcing the main canvas into Design', JSON.stringify(api.twoDDepiction()));
     document.querySelector('[data-2d-tool="atom"]').click();
-    check(api.twoDDepiction().tool === 'atom' && api.twoDDepiction().mode === 'build',
-      'the visible Atom tool activates and opens Build', JSON.stringify(api.twoDDepiction()));
+    const atomToolActivated = await waitForDepiction((depiction) =>
+      depiction.tool === 'atom' && depiction.mode === 'build');
+    check(atomToolActivated.tool === 'atom' && atomToolActivated.mode === 'build',
+      'the visible Atom tool activates and opens Design', JSON.stringify(atomToolActivated));
     document.querySelector('[data-2d-tool="select"]').click();
     check(api.twoDDepiction().tool === 'select',
-      'the visible Select tool can be restored after entering Build', JSON.stringify(api.twoDDepiction()));
+      'the visible Select tool can be restored after entering Design', JSON.stringify(api.twoDDepiction()));
     const svg = document.querySelector('#structure-2d-drawing svg');
     const oxygen = [...svg.querySelectorAll('.atom-2')].find((node) =>
       [...node.classList].filter((name) => name.startsWith('atom-')).length === 1);
@@ -144,7 +146,7 @@ try {
     const orientationDisplacements = orientationBefore.map((point, index) =>
       Math.hypot(point.x - orientationAfter[index].x, point.y - orientationAfter[index].y));
     // Compare the unedited phenyl core after removing a common translation.
-    // The floating panel itself can move when Build controls open, but the
+    // The floating panel itself can move when Design controls open, but the
     // molecule must not rotate or rescale under the user's pointer.
     const core = [3, 4, 5, 6, 7, 8];
     const centered = (points) => {
@@ -428,7 +430,8 @@ try {
       && pointerEdited.atomIndices.length === 4 && pointerEdited.pendingChanges === 1,
     'the atom tool snaps to a nearby atom without an exact SVG click', JSON.stringify(pointerEdited));
     document.querySelector('#structure-2d-discard').click();
-    const pointerRestored = await api.waitFor2DDepiction();
+    const pointerRestored = await waitForDepiction((depiction) =>
+      depiction.atomIndices.length === 3 && depiction.pendingChanges === 0);
     check(pointerRestored.atomIndices.length === 3 && pointerRestored.pendingChanges === 0,
       'the inset Discard control restores the synchronized structure', JSON.stringify(pointerRestored));
 
@@ -452,7 +455,8 @@ try {
     check(Number(snappedOrder) === 2 && snappedBond.pendingChanges === 1,
       'the bond tool snaps to a nearby bond without an exact SVG click', JSON.stringify(snappedBond));
     document.querySelector('#structure-2d-discard').click();
-    await api.waitFor2DDepiction();
+    await waitForDepiction((depiction) =>
+      depiction.atomIndices.length === 2 && depiction.pendingChanges === 0);
 
     const complex = api.parse('CC(O)c1ccccc1').molecule;
     complex.atoms.forEach((atom, index) => Object.assign(atom, {

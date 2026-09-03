@@ -58,8 +58,10 @@ export function evaluatePoseHydrogenBonds(definitions, positions, settings) {
 export async function runConstrainedDocking({ referencePositions, candidateConformers, coreAtomPairs,
   hydrogenBondConstraints = [], protocol, physicalScore, refinePose = null, labbook = null,
   refineBatch = null, afterRefinement = null, capturedLigandHydrogenRestoration = false,
-  startedAt = new Date().toISOString(), completedAt = null }) {
+  yieldControl = null, startedAt = new Date().toISOString(), completedAt = null }) {
   if (typeof physicalScore !== 'function') throw new TypeError('A physicalScore callback is required');
+  if (yieldControl != null && typeof yieldControl !== 'function')
+    throw new TypeError('yieldControl must be a function when provided');
   if (!Array.isArray(candidateConformers) || !candidateConformers.length)
     throw new Error('At least one candidate conformer is required');
   if (!referencePositions?.length || referencePositions.length % 3
@@ -124,6 +126,8 @@ export async function runConstrainedDocking({ referencePositions, candidateConfo
       physicalDetails:typeof physical === 'object' ? physical : null,
       physicalFeasible,
       ...score });
+    if (yieldControl) await yieldControl({ stage:'candidate ranking', completed:index + 1,
+      total:conformers.length });
   }
   if (afterRefinement) await afterRefinement(candidates);
   const ranked = rankConstrainedPoses(candidates);

@@ -318,9 +318,22 @@ const stagedReplayFirst = await generatePoseByRestraintBiasedSearch({ ...stagedR
   random:mulberry32(8831) });
 const stagedReplaySecond = await generatePoseByRestraintBiasedSearch({ ...stagedReplayOptions,
   random:mulberry32(8831) });
+const cooperativeYieldEvents = [];
+const stagedReplayYielding = await generatePoseByRestraintBiasedSearch({ ...stagedReplayOptions,
+  random:mulberry32(8831), yieldControl:(progress) => {
+    cooperativeYieldEvents.push(progress);
+    return Promise.resolve();
+  } });
 assert.deepEqual(stagedReplayFirst.positions, stagedReplaySecond.positions);
 assert.deepEqual(stagedReplayFirst.capture, stagedReplaySecond.capture);
 assert.deepEqual(stagedReplayFirst.physicalRefinement, stagedReplaySecond.physicalRefinement);
+assert.deepEqual(stagedReplayYielding.positions, stagedReplayFirst.positions,
+  'cooperative browser yields do not alter deterministic coordinates');
+assert.deepEqual(stagedReplayYielding.capture, stagedReplayFirst.capture,
+  'cooperative browser yields do not alter capture scoring or decisions');
+assert.ok(cooperativeYieldEvents.length > 0);
+assert.ok(cooperativeYieldEvents.some((entry) => entry.stage === 'contact capture'));
+assert.ok(cooperativeYieldEvents.some((entry) => entry.stage === 'contact polish'));
 
 const impossibleTarget = [20,20,20];
 const impossible = await refinePoseByRestraintBiasedSearch({ molecule:ring,

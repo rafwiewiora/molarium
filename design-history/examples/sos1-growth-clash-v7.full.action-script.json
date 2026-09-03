@@ -3,9 +3,9 @@
   "label": "SOS1 growth-clash-v7 full explored branch-search log",
   "actions": [
     {
-      "action": "designCampaign.load",
+      "action": "designRoute.load",
       "args": {
-        "campaignId": "sos1-hit-only"
+        "routeId": "sos1-hit-only"
       },
       "caption": "Load the coordinate-bearing 5OVE/AXE hit only"
     },
@@ -14,7 +14,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "campaign-enter-build"
+      "caption": "route-enter-design"
     },
     {
       "action": "protein.prepare",
@@ -26,22 +26,22 @@
         "repairMissingHeavy": true,
         "waterPolicy": "retain"
       },
-      "caption": "campaign-prepare-hit"
+      "caption": "route-prepare-hit"
     },
     {
       "action": "pose.captureReference",
       "args": {
         "mode": "propagate"
       },
-      "caption": "campaign-capture-hit"
+      "caption": "route-capture-hit"
     },
     {
-      "action": "designCampaign.inspect",
+      "action": "designRoute.inspect",
       "args": {},
-      "caption": "campaign-inspect-boundary"
+      "caption": "route-inspect-boundary"
     },
     {
-      "action": "designCampaign.applyStep",
+      "action": "designRoute.applyStep",
       "args": {
         "stepId": "scaffold-rewrite"
       },
@@ -92,7 +92,7 @@
       "caption": "scaffold-rewrite-freeze-pocket"
     },
     {
-      "action": "designCampaign.inspect",
+      "action": "designRoute.inspect",
       "args": {},
       "caption": "scaffold-rewrite-inspect-state"
     },
@@ -101,7 +101,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "scaffold-rewrite-advance-build"
+      "caption": "scaffold-rewrite-advance-design"
     },
     {
       "action": "pose.captureReference",
@@ -111,7 +111,7 @@
       "caption": "scaffold-rewrite-capture-predicted-reference"
     },
     {
-      "action": "designCampaign.applyStep",
+      "action": "designRoute.applyStep",
       "args": {
         "stepId": "fragment-merge"
       },
@@ -162,7 +162,7 @@
       "caption": "fragment-merge-freeze-pocket"
     },
     {
-      "action": "designCampaign.inspect",
+      "action": "designRoute.inspect",
       "args": {},
       "caption": "fragment-merge-inspect-state"
     },
@@ -171,7 +171,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "fragment-merge-advance-build"
+      "caption": "fragment-merge-advance-design"
     },
     {
       "action": "pose.captureReference",
@@ -181,7 +181,7 @@
       "caption": "fragment-merge-capture-predicted-reference"
     },
     {
-      "action": "designCampaign.applyStep",
+      "action": "designRoute.applyStep",
       "args": {
         "stepId": "open-phe890-pocket"
       },
@@ -280,7 +280,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "open-phe890-pocket-return-build-1"
+      "caption": "open-phe890-pocket-return-design-1"
     },
     {
       "action": "session.inspect",
@@ -375,7 +375,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "open-phe890-pocket-return-build-6"
+      "caption": "open-phe890-pocket-return-design-6"
     },
     {
       "action": "session.inspect",
@@ -470,7 +470,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "open-phe890-pocket-return-build-7"
+      "caption": "open-phe890-pocket-return-design-7"
     },
     {
       "action": "session.inspect",
@@ -546,7 +546,7 @@
       "caption": "open-phe890-pocket-freeze-pocket"
     },
     {
-      "action": "designCampaign.inspect",
+      "action": "designRoute.inspect",
       "args": {},
       "caption": "open-phe890-pocket-inspect-state"
     },
@@ -555,7 +555,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "open-phe890-pocket-advance-build"
+      "caption": "open-phe890-pocket-advance-design"
     },
     {
       "action": "pose.captureReference",
@@ -565,7 +565,7 @@
       "caption": "open-phe890-pocket-capture-predicted-reference"
     },
     {
-      "action": "designCampaign.applyStep",
+      "action": "designRoute.applyStep",
       "args": {
         "stepId": "finish-bay-293"
       },
@@ -616,14 +616,14 @@
       "caption": "finish-bay-293-freeze-pocket"
     },
     {
-      "action": "designCampaign.inspect",
+      "action": "designRoute.inspect",
       "args": {},
       "caption": "finish-bay-293-inspect-state"
     }
   ],
   "sourceAudit": {
     "schema": "molarium.chemist-actions/v1",
-    "campaignId": "sos1-hit-only",
+    "routeId": "sos1-hit-only",
     "recordCount": 89,
     "includedRecordCount": 89,
     "includedSequences": [

@@ -96,15 +96,19 @@ async function choosePhe890Branch(stepId) {
     console.log(`${stepId}: jointly posing against Phe890 rotamer rank ${candidate.rank} `
       + `(${candidate.chiDegrees.map((value) => value.toFixed(0)).join(', ')} deg)`);
     const applied = await execute('pose.applySidechainRotamer', {
-      index:candidate.index,
+      coordinateSha256:candidate.coordinateSha256,
+      expectedInputCoordinateSha256:ensemble.inputCoordinateSha256,
+      expectedSelectedCoordinateSha256:candidate.coordinateSha256,
     }, `${stepId}-apply-phe890-branch-${candidate.rank}`);
     const receptorReference = await execute('pose.updateReceptorReference', {},
       `${stepId}-accept-receptor-branch-${candidate.rank}`);
-    const refined = await execute('pose.refine', { searchChains:branchSearchChains },
+    const refined = await execute('pose.refine', { searchChains:branchSearchChains,
+      featureSeedingProtocol:'v3' },
       `${stepId}-pose-branch-${candidate.rank}`);
     const selectedPoseIndex = Math.max(0,
       Number(refined.result.refinement.selectedRank || 1) - 1);
-    await execute('pose.apply', { index:selectedPoseIndex },
+    await execute('pose.apply', { index:selectedPoseIndex,
+      ...(refined.result.refinement.selectedFeasible ? {} : { allowInfeasible:true }) },
       `${stepId}-apply-pose-branch-${candidate.rank}`);
     const parameterized = await execute('protein.parameterize', {},
       `${stepId}-parameterize-branch-${candidate.rank}`);
@@ -144,11 +148,14 @@ async function choosePhe890Branch(stepId) {
     && candidate.coordinateSha256 === selected.selectedCoordinateSha256);
   if (!finalCandidate) throw new Error('The selected Phe890 branch changed during deterministic replay');
   const applied = await execute('pose.applySidechainRotamer', {
-    index:finalCandidate.index,
+    coordinateSha256:finalCandidate.coordinateSha256,
+    expectedInputCoordinateSha256:ensemble.inputCoordinateSha256,
+    expectedSelectedCoordinateSha256:finalCandidate.coordinateSha256,
   }, `${stepId}-apply-selected-phe890-branch`);
   const receptorReference = await execute('pose.updateReceptorReference', {},
     `${stepId}-accept-selected-receptor-branch`);
-  const refinement = await execute('pose.refine', { searchChains:64 },
+  const refinement = await execute('pose.refine', { searchChains:64,
+    featureSeedingProtocol:'v3' },
     `${stepId}-pose-selected-phe890-branch`);
   const selectedPoseIndex = Math.max(0,
     Number(refinement.result.refinement.selectedRank || 1) - 1);
@@ -184,28 +191,28 @@ try {
     `window.MolariumChemistActions?.schema==='molarium.chemist-actions/v1'`),
   90000, 'public Chemist Actions API');
   const description = await browser.evaluate(`window.MolariumChemistActions.describe()`);
-  for (const action of ['designCampaign.load', 'designCampaign.applyStep',
-    'designCampaign.inspect', 'protein.prepare', 'pose.captureReference',
+  for (const action of ['designRoute.load', 'designRoute.applyStep',
+    'designRoute.inspect', 'protein.prepare', 'pose.captureReference',
     'pose.updateReceptorReference', 'pose.refine',
     'pose.apply', 'pose.enumerateSidechainRotamers', 'pose.applySidechainRotamer',
     'protein.parameterize', 'optimization.run', 'history.undo', 'session.inspect']) {
     if (!description.actions[action]) throw new Error(`Public action is missing: ${action}`);
   }
 
-  await execute('designCampaign.load', { campaignId:'sos1-hit-only' }, 'campaign-load-hit');
-  await execute('view.setMode', { mode:'build' }, 'campaign-enter-build');
-  console.log('campaign: preparing the registered 5OVE/AXE hit complex');
+  await execute('designRoute.load', { routeId:'sos1-hit-only' }, 'route-load-hit');
+  await execute('view.setMode', { mode:'build' }, 'route-enter-build');
+  console.log('route: preparing the registered 5OVE/AXE hit complex');
   await execute('protein.prepare', {
     pH:7.4, histidine:'auto', repairMissingHeavy:true,
     ligandPolicy:'ccd', waterPolicy:'retain', gapPolicy:'cap',
-  }, 'campaign-prepare-hit');
-  await execute('pose.captureReference', { mode:'propagate' }, 'campaign-capture-hit');
-  const boundary = await execute('designCampaign.inspect', {}, 'campaign-inspect-boundary');
+  }, 'route-prepare-hit');
+  await execute('pose.captureReference', { mode:'propagate' }, 'route-capture-hit');
+  const boundary = await execute('designRoute.inspect', {}, 'route-inspect-boundary');
 
   for (let stepIndex = 0; stepIndex < stepIds.length; stepIndex++) {
     const stepId = stepIds[stepIndex];
     console.log(`${stepId}: staging the reported graph against the preceding prediction`);
-    const staged = await execute('designCampaign.applyStep', { stepId }, `${stepId}-stage`);
+    const staged = await execute('designRoute.applyStep', { stepId }, `${stepId}-stage`);
     let rotamerDecision = null;
     let refinement, parameterization;
     let relaxation = { method:'none',
@@ -218,7 +225,8 @@ try {
       relaxation = rotamerDecision.selected.optimization;
     } else {
       console.log(`${stepId}: fixed-receptor pose search`);
-      const refined = await execute('pose.refine', { searchChains:64 }, `${stepId}-pose-refine`);
+      const refined = await execute('pose.refine', { searchChains:64,
+        featureSeedingProtocol:'v3' }, `${stepId}-pose-refine`);
       const selectedIndex = Math.max(0,
         Number(refined.result.refinement.selectedRank || 1) - 1);
       await execute('pose.apply', { index:selectedIndex }, `${stepId}-pose-apply`);
@@ -239,15 +247,15 @@ try {
     const pocket = await execute('session.inspect', {
       scope:'pocket', includeCoordinates:true, maximumAtoms:500,
     }, `${stepId}-freeze-pocket`);
-    const current = await execute('designCampaign.inspect', {}, `${stepId}-inspect-state`);
+    const current = await execute('designRoute.inspect', {}, `${stepId}-inspect-state`);
     const checkpoint = {
       schema:'molarium.design-prediction-checkpoint/v1',
-      campaignId:'sos1-hit-only', stepId,
+      routeId:'sos1-hit-only', stepId,
       referenceStateId:staged.result.designStep.referenceStateId,
       predictedStateId:staged.result.designStep.stateId,
       frozenBeforeHoldoutAccess:true,
-      boundary:boundary.result.designCampaign,
-      state:current.result.designCampaign,
+      boundary:boundary.result.designRoute,
+      state:current.result.designRoute,
       staging:staged.result.designStep,
       refinement, parameterization,
       rotamerDecision, relaxation,
@@ -272,7 +280,7 @@ try {
 
   const audit = await browser.evaluate(`window.MolariumChemistActions.history()`);
   const auditBytes = Buffer.from(`${JSON.stringify({
-    schema:description.schema, campaignId:'sos1-hit-only', records:audit,
+    schema:description.schema, routeId:'sos1-hit-only', records:audit,
   }, null, 2)}\n`);
   await writeFile(join(output, 'chemist-action-audit.json'), auditBytes);
   const campaignPath = join(root,
@@ -280,7 +288,7 @@ try {
   const runnerPath = fileURLToPath(import.meta.url);
   const manifest = {
     schema:'molarium.design-prediction-run/v1',
-    campaignId:'sos1-hit-only',
+    routeId:'sos1-hit-only',
     status:'predictions-frozen-holdouts-unopened',
     protocol:{ initialCoordinateInput:'PDB 5OVE/AXE only',
       sequentialPredictedReferences:true, relaxMethod,

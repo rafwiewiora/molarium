@@ -1,5 +1,5 @@
 {
-  "schema": "molarium.design-campaign/v1",
+  "schema": "molarium.registered-design-route/v1",
   "id": "bclxl-hit-only",
   "title": "BCL-xL hit-only prospective replay",
   "protocolBoundary": {

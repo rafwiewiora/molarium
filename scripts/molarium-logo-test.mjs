@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 
-const expectedBondPath = 'M9.5 35 12.5 13 24 28 35.5 13 38.5 35';
+const expectedLetterPath = 'M8.5 36.5 14.5 12.5 24 29.5 33.5 12.5 39.5 36.5';
+const expectedFlaskPath = 'M21 8v10L11.5 34.5A4.5 4.5 0 0 0 15.5 41h17a4.5 4.5 0 0 0 4-6.5L27 18V8Z';
 const files = {
   mark:await readFile(new URL('../assets/molarium-mark.svg', import.meta.url), 'utf8'),
   logo:await readFile(new URL('../assets/molarium-logo.svg', import.meta.url), 'utf8'),
@@ -12,19 +13,22 @@ const assert = (condition, message) => {
 };
 
 for (const [name, source] of Object.entries({ mark:files.mark, logo:files.logo })) {
-  assert(source.includes(expectedBondPath), `${name} does not use the canonical molecular M geometry`);
-  assert((source.match(/<circle\b/g) || []).length === 5, `${name} must contain five atom nodes`);
-  assert((source.match(/data-molarium-bonds/g) || []).length === 1,
-    `${name} must contain one canonical bond network`);
-  assert((source.match(/data-molarium-atoms/g) || []).length === 1,
-    `${name} must label its atom-node group`);
+  assert(source.includes(expectedLetterPath), `${name} does not use the canonical letter M geometry`);
+  assert(source.includes(expectedFlaskPath), `${name} does not use the canonical flask geometry`);
+  assert((source.match(/data-molarium-letter/g) || []).length === 1,
+    `${name} must contain one blended letter M`);
+  assert((source.match(/data-molarium-flask/g) || []).length === 1,
+    `${name} must contain one chemistry flask`);
+  assert((source.match(/data-molarium-foam/g) || []).length === 1,
+    `${name} must contain one foam group`);
+  assert((source.match(/<circle\b/g) || []).length === 6, `${name} must contain six foam bubbles`);
 }
 
-assert((files.page.match(new RegExp(expectedBondPath, 'g')) || []).length === 4,
-  'the header and calculation-loader marks must each contain matching foreground and shadow bonds');
-assert((files.page.match(/data-molarium-atoms/g) || []).length === 2,
-  'the header and calculation-loader marks must both contain atom nodes');
-assert(!Object.values(files).some((source) => source.includes('M10 34V14.5L24 28')),
-  'the retired folded-ribbon mark is still present');
+assert((files.page.match(new RegExp(expectedLetterPath, 'g')) || []).length === 3,
+  'the header, blank canvas, and calculation loader must use the same letter M');
+assert((files.page.match(new RegExp(expectedFlaskPath, 'g')) || []).length === 3,
+  'the header, blank canvas, and calculation loader must use the same flask');
+assert((files.page.match(/data-molarium-foam/g) || []).length === 3,
+  'the header, blank canvas, and calculation loader must all contain foam');
 
-console.log('Molarium logo geometry: 3/3 sources consistent · 5 atoms · 4 bonds');
+console.log('Molarium logo geometry: 3/3 sources consistent · flask + foam + blended M');

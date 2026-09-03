@@ -1,7 +1,7 @@
 {
   "schema": "molarium.designer-moves-example-provenance/v1",
-  "campaignId": "sos1-hit-only",
-  "scientificClaim": "Starting from the coordinate-bearing 5OVE/AXE hit, the public Molarium Chemist Actions workflow explored three Phe890 rotamer basins after compound-21 growth created a clash, selected rotamer index 5 by the registered coupled side-chain/pose criterion, and propagated that predicted receptor state to BAY-293.",
+  "routeId": "sos1-hit-only",
+  "scientificClaim": "Starting from the coordinate-bearing 5OVE/AXE hit, the public Molarium Chemist Actions workflow explored three Phe890 rotamer basins after compound-21 growth created a clash, selected the Phe890 chi1/chi2 = -180°/90° branch by the registered coupled side-chain/pose criterion, and propagated that predicted receptor state to BAY-293.",
   "scientificBoundary": {
     "initialCoordinateInput": "PDB 5OVE/AXE only",
     "holdoutStatusAtFreeze": "predictions-frozen-holdouts-unopened",
@@ -20,29 +20,71 @@
       "path": "outputs/design-history/sos1-hit-only-growth-clash-v7/prediction-manifest.json",
       "sha256": "4415a64b4e1aae85faedd2987bf2f17c3212357c8a247a9a1ff8f470c28c9353"
     },
-    "campaignDefinition": {
+    "designRouteDefinition": {
       "path": "design-history/structures/generated/sos1-prospective-campaign.json",
-      "sha256": "e3706e4910dde647d68fe7ea1506177b18d47b662acc374630bbac8976d419bc"
+      "sha256": "870ff80176084bf32692c58d7b86e6d9e9b1ad32515977943be41a53a1451829",
+      "schemaMigration": {
+        "kind": "schema-identifier-only",
+        "fromSchema": "molarium.design-campaign/v1",
+        "toSchema": "molarium.registered-design-route/v1",
+        "frozenInputSha256": "e3706e4910dde647d68fe7ea1506177b18d47b662acc374630bbac8976d419bc",
+        "currentSha256": "870ff80176084bf32692c58d7b86e6d9e9b1ad32515977943be41a53a1451829"
+      }
     },
     "runner": {
       "path": "scripts/run-sos1-prospective.mjs",
-      "sha256": "3f55cf0f0c11830f6aa3dbe652832df7c46e58d6e1633c91f8b57e51a1bfb829"
+      "sha256": "cf2c0816bcc29e750b370344bbca0e644f87f353201c375c6908f83685e254e1"
     }
   },
   "scripts": {
     "fullExploration": {
       "path": "design-history/examples/sos1-growth-clash-v7.full.action-script.json",
       "actions": 89,
-      "actionScriptSha256": "ab715bd46988431b3ad504978be9681be994f4246e7064b5fcbb2a9de8906749",
-      "fileSha256": "3f27052198fd411f8aa32d263f764ae13ab2d3c347e412daaebabf441da73097",
+      "actionScriptSha256": "f49a06e8cad91f3dd7dc7a0e0f2675c105f0c061d8fe9aef8b267043c6910abb",
+      "fileSha256": "a04b68f16af10ca5ff2b95c4a366bc95a1429db6823624af7ff7f71305e72bcc",
       "meaning": "Complete execution trace, including inspections, all three explored Phe890 branches, undo operations, and final selected-branch replay."
     },
     "selectedRoute": {
       "path": "design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json",
       "actions": 33,
-      "actionScriptSha256": "598aa5407fac30adb3512ad9334181cae0da8cf21104d3b49296ce117878370e",
-      "fileSha256": "74cbf827a3928a1c8066a2f5f2b13f37dec7141fb8c8aa4af6919bf3540f4ab1",
-      "meaning": "Compact operational replay of the already-selected route. It omits discarded branches and read-only freeze inspections, so it is not the evidence that branch search occurred."
+      "actionScriptSha256": "7eae660d479d19294a41213cd9cbd79c2341cf5e4878d092255075ddd6d596c4",
+      "fileSha256": "8dc2fe984ce417ce836bd12cc8d46a749fa937b225c78869855ab803576ffef5",
+      "meaning": "Fail-closed operational replay of the already-selected route. It pins the v3 pose-seeding protocol, persistent Phe890 identity, the unique normalized chi-angle branch, and feasible pose applications. Same-execution coordinate hashes still guard enumeration and application, but post-WebGPU coordinate bytes are not treated as a portable cross-adapter identity. It omits discarded branches and read-only freeze inspections, so it is not the evidence that branch search occurred."
+    }
+  },
+  "publicationReplay": {
+    "githubActionsRun": 33726810931,
+    "sourceCommit": "903ca5e84923210f86c2fb563e3b0e4e74dc55fc",
+    "presentationScript": {
+      "path": "design-history/examples/sos1-growth-clash-v7.presentation.action-script.json",
+      "actions": 51,
+      "scientificActions": 33,
+      "presentationActions": 18,
+      "actionScriptSha256": "bb20da3478b8def5b3244ae6c60dbf49df95b13353c5c9cbb99434576705de57",
+      "fileSha256": "ca7241c2c81373ceee5ebb28fcf318b500f5355d0ff919cbf435cd6272fbe78f"
+    },
+    "chemistActionAudit": {
+      "path": "design-history/examples/sos1-growth-clash-v7.remote-replay-audit.json",
+      "records": 208,
+      "completedRecords": 208,
+      "sha256": "bb9512d1379dba9548eae504fb545a2dca278955f8f12eb5af1ee564a47b29b8"
+    },
+    "renderManifest": {
+      "path": "assets/media/sos1-designer-moves-molarium-interface.render-manifest.json",
+      "sha256": "c9fa86947e706a99475bad7675842b1f49e9a3501f90dbdbc4a5885377d3d5a9"
+    },
+    "movie": {
+      "path": "assets/media/sos1-designer-moves-molarium-interface.mp4",
+      "sha256": "071b7622d2bda301e0c8e029da4d940d9608869013be33f7099c6992ce838591",
+      "width": 1600,
+      "height": 1000,
+      "fps": 12,
+      "frames": 1207,
+      "durationSeconds": 100.583333
+    },
+    "paperFigure": {
+      "path": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "sha256": "418fd2aeed5bcae4a9547778ca4c98100bfcecbadef322937ce797aca2baf9a8"
     }
   },
   "frozenCheckpoints": [

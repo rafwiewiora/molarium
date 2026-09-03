@@ -114,12 +114,14 @@ export async function storeSnapshot(campaign, { label, canonicalSmiles = null, g
 }
 
 export async function storeActionScript(campaign, { label, actions,
-  expectedStartSnapshotId = null, expectedEndSnapshotId = null, compiler = null }) {
+  expectedStartSnapshotId = null, expectedEndSnapshotId = null, compiler = null,
+  coverage = null }) {
   assertMutable(campaign);
   if (!Array.isArray(actions) || !actions.length) throw new Error('An action script requires actions');
   const body = cloneRecord({ schema:'molarium.chemist-action-script/v1',
     label:String(label || 'chemist action script'), actions,
-    expectedStartSnapshotId, expectedEndSnapshotId, compiler });
+    expectedStartSnapshotId, expectedEndSnapshotId, compiler,
+    ...(coverage == null ? {} : { coverage }) });
   validateActionScript(body);
   const hash = await sha256Object(body), scriptId = `script:${hash}`;
   campaign.objects.actionScripts[scriptId] = body;
@@ -174,6 +176,48 @@ export async function commitMolecule(campaign, { snapshotId, parents = [], branc
   return commitId;
 }
 
+export async function createBranch(campaign, { branch, fromCommitId = null, actorId,
+  occurredAt, recordedAt = occurredAt, sourceIds = [] }) {
+  assertMutable(campaign);
+  assertId(branch, 'branch');
+  if (Object.hasOwn(campaign.branches, branch)) throw new Error(`Branch already exists: ${branch}`);
+  if (fromCommitId !== null && !campaign.objects.commits[fromCommitId])
+    throw new Error(`Unknown branch start commit: ${fromCommitId}`);
+  const event = await appendEvent(campaign, { occurredAt, recordedAt, kind:'branch.created',
+    actorId, branch, subjectIds:fromCommitId ? [fromCommitId] : [], sourceIds,
+    payload:{ branch, fromCommitId } });
+  campaign.branches[branch] = fromCommitId;
+  return event;
+}
+
+export async function mergeBranch(campaign, { sourceBranch, targetBranch, snapshotId,
+  actorId, occurredAt, recordedAt = occurredAt, actionScriptId = null, message,
+  hypothesisIds = [], evidenceIds = [], sourceIds = [], tags = [] }) {
+  assertMutable(campaign);
+  assertId(sourceBranch, 'sourceBranch'); assertId(targetBranch, 'targetBranch');
+  if (sourceBranch === targetBranch) throw new Error('Source and target branches must be distinct');
+  if (!Object.hasOwn(campaign.branches, sourceBranch))
+    throw new Error(`Unknown source branch: ${sourceBranch}`);
+  if (!Object.hasOwn(campaign.branches, targetBranch))
+    throw new Error(`Unknown target branch: ${targetBranch}`);
+  const sourceCommitId = campaign.branches[sourceBranch];
+  const targetCommitId = campaign.branches[targetBranch];
+  if (!sourceCommitId) throw new Error(`Source branch has no head: ${sourceBranch}`);
+  if (!targetCommitId) throw new Error(`Target branch has no head: ${targetBranch}`);
+  if (!snapshotId) throw new Error('A merge requires an explicit snapshotId');
+  if (!campaign.objects.snapshots[snapshotId]) throw new Error(`Unknown snapshot: ${snapshotId}`);
+  const mergeCommitId = await commitMolecule(campaign, { snapshotId,
+    parents:[targetCommitId, sourceCommitId], branch:targetBranch, message, actorId,
+    occurredAt, recordedAt, actionScriptId, hypothesisIds,
+    evidenceIds, sourceIds, tags });
+  await appendEvent(campaign, { occurredAt, recordedAt, kind:'branch.merged', actorId,
+    branch:targetBranch, subjectIds:[mergeCommitId, targetCommitId, sourceCommitId, snapshotId],
+    sourceIds, payload:{ sourceBranch, targetBranch, sourceCommitId, targetCommitId,
+      mergeCommitId, snapshotId, actionScriptId, message:String(message || ''),
+      hypothesisIds, evidenceIds, tags } });
+  return mergeCommitId;
+}
+
 export async function recordDecision(campaign, { targetCommitId, disposition, reasonCodes = [],
   rationale, actorId, occurredAt, recordedAt = occurredAt, sourceIds = [], evidenceIds = [],
   branch = 'main' }) {
@@ -219,6 +263,8 @@ export async function verifyCampaign(campaign) {
     }
     let previousEntrySha256 = null;
     const eventIds = new Set();
+    const committedIds = new Set();
+    const derivedBranches = { main:null };
     for (let index = 0; index < campaign.events.length; index++) {
       const event = campaign.events[index], { entrySha256, ...body } = event;
       if (event.index !== index || event.previousEntrySha256 !== previousEntrySha256)
@@ -242,11 +288,86 @@ export async function verifyCampaign(campaign) {
         && (!DECISION_DISPOSITIONS.includes(event.payload?.disposition)
           || event.payload?.reasonCodes?.some((code) => !DECISION_REASON_CODES.includes(code))))
         return { valid:false, reason:`decision vocabulary mismatch at ${index}` };
+      if (event.kind === 'molecule.committed') {
+        const commitId = event.payload?.commitId;
+        const commit = campaign.objects.commits[commitId];
+        if (!commit) return { valid:false, reason:`commit event target missing at ${index}` };
+        const eventCommit = { schema:COMMIT_SCHEMA, snapshotId:event.payload?.snapshotId,
+          parents:event.payload?.parents, branch:event.branch,
+          message:event.payload?.message, actionScriptId:event.payload?.actionScriptId,
+          hypothesisIds:event.payload?.hypothesisIds, evidenceIds:event.payload?.evidenceIds,
+          tags:event.payload?.tags };
+        if (await sha256Object(eventCommit) !== await sha256Object(commit))
+          return { valid:false, reason:`commit event payload mismatch at ${index}` };
+        if (await sha256Object(event.subjectIds)
+          !== await sha256Object([commitId, commit.snapshotId]))
+          return { valid:false, reason:`commit event subject mismatch at ${index}` };
+        if (committedIds.has(commitId))
+          return { valid:false, reason:`duplicate commit event at ${index}` };
+        if (!Object.hasOwn(derivedBranches, commit.branch))
+          derivedBranches[commit.branch] = commit.parents[0] || null;
+        derivedBranches[commit.branch] = commitId;
+        committedIds.add(commitId);
+      }
+      if (event.kind === 'branch.created') {
+        const branch = event.payload?.branch, fromCommitId = event.payload?.fromCommitId;
+        try { assertId(branch, 'branch'); }
+        catch { return { valid:false, reason:`branch creation payload mismatch at ${index}` }; }
+        if (event.branch !== branch || Object.hasOwn(derivedBranches, branch)
+          || !Object.hasOwn(campaign.branches || {}, branch))
+          return { valid:false, reason:`branch creation reference mismatch at ${index}` };
+        if (fromCommitId !== null && !campaign.objects.commits[fromCommitId])
+          return { valid:false, reason:`branch creation commit missing at ${index}` };
+        const creationSubjects = fromCommitId ? [fromCommitId] : [];
+        if (await sha256Object(event.subjectIds) !== await sha256Object(creationSubjects))
+          return { valid:false, reason:`branch creation subject mismatch at ${index}` };
+        derivedBranches[branch] = fromCommitId;
+      }
+      if (event.kind === 'branch.merged') {
+        const { sourceBranch, targetBranch, sourceCommitId, targetCommitId,
+          mergeCommitId, snapshotId } = event.payload || {};
+        try { assertId(sourceBranch, 'sourceBranch'); assertId(targetBranch, 'targetBranch'); }
+        catch { return { valid:false, reason:`branch merge payload mismatch at ${index}` }; }
+        if (sourceBranch === targetBranch || event.branch !== targetBranch
+          || !Object.hasOwn(campaign.branches || {}, sourceBranch)
+          || !Object.hasOwn(campaign.branches || {}, targetBranch))
+          return { valid:false, reason:`branch merge reference mismatch at ${index}` };
+        const mergeCommit = campaign.objects.commits[mergeCommitId];
+        if (!campaign.objects.commits[sourceCommitId]
+          || !campaign.objects.commits[targetCommitId] || !mergeCommit)
+          return { valid:false, reason:`branch merge commit missing at ${index}` };
+        if (derivedBranches[sourceBranch] !== sourceCommitId
+          || derivedBranches[targetBranch] !== mergeCommitId)
+          return { valid:false, reason:`branch merge head mismatch at ${index}` };
+        if (!campaign.objects.snapshots[snapshotId]
+          || mergeCommit.snapshotId !== snapshotId
+          || mergeCommit.branch !== targetBranch
+          || mergeCommit.parents.length !== 2
+          || mergeCommit.parents[0] !== targetCommitId
+          || mergeCommit.parents[1] !== sourceCommitId)
+          return { valid:false, reason:`branch merge commit mismatch at ${index}` };
+        const mergeMetadata = { actionScriptId:event.payload?.actionScriptId,
+          message:event.payload?.message, hypothesisIds:event.payload?.hypothesisIds,
+          evidenceIds:event.payload?.evidenceIds, tags:event.payload?.tags };
+        const commitMetadata = { actionScriptId:mergeCommit.actionScriptId,
+          message:mergeCommit.message, hypothesisIds:mergeCommit.hypothesisIds,
+          evidenceIds:mergeCommit.evidenceIds, tags:mergeCommit.tags };
+        if (await sha256Object(mergeMetadata) !== await sha256Object(commitMetadata))
+          return { valid:false, reason:`branch merge payload mismatch at ${index}` };
+        const committedEvent = campaign.events[index - 1];
+        if (committedEvent?.kind !== 'molecule.committed'
+          || committedEvent.payload?.commitId !== mergeCommitId)
+          return { valid:false, reason:`branch merge event order mismatch at ${index}` };
+        if (await sha256Object(event.subjectIds)
+          !== await sha256Object([mergeCommitId, targetCommitId, sourceCommitId, snapshotId]))
+          return { valid:false, reason:`branch merge subject mismatch at ${index}` };
+      }
       eventIds.add(event.eventId); previousEntrySha256 = entrySha256;
     }
-    for (const [branch, head] of Object.entries(campaign.branches || {}))
-      if (head && !campaign.objects.commits[head])
-        return { valid:false, reason:`branch head missing: ${branch}` };
+    if (committedIds.size !== Object.keys(campaign.objects.commits).length)
+      return { valid:false, reason:'one or more commits have no chained commit event' };
+    if (await sha256Object(derivedBranches) !== await sha256Object(campaign.branches || {}))
+      return { valid:false, reason:'branch heads do not match the event chain' };
     if (campaign.campaignSha256) {
       if (!campaign.finalizedAt) return { valid:false, reason:'finalizedAt is missing' };
       if (campaign.events.at(-1)?.kind !== 'campaign.completed')
