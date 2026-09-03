@@ -142,8 +142,12 @@ try {
   browser = await startMolariumBrowser({ root,
     appPath:'index.html?blank=1&designer-moves-movie=1', width, height, localOnly:true });
   browserVersion = await browser.client.call('Browser.getVersion');
-  await waitFor(async () => browser.evaluate(`Boolean(window.MolariumChemistActionsReady)
-    && document.querySelector('#designer-move-file')`), 30000, 'Molarium Designer moves UI');
+  await waitFor(async () => browser.evaluate(`(async () => {
+    if (document.readyState !== 'complete' || !window.MolariumChemistActionsReady
+      || !document.querySelector('#designer-move-file')) return false;
+    await window.MolariumChemistActionsReady;
+    return true;
+  })()`), 30000, 'ready Molarium Chemist Actions and Designer moves UI');
   await browser.evaluate(`document.querySelector('.mode-bar button[data-mode="build"]').click();
     document.querySelector('#designer-move-tools').scrollIntoView({block:'center'}); true`);
   await delay(400);

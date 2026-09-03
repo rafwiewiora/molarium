@@ -44,6 +44,10 @@ try {
   assert.match(renderer, /promoteCompletedRender\(\{ stagingDirectory:publicationStaging/);
   assert.match(renderer, /30000, 'imported designer moves'/,
     'cold browser import receives a bounded 30-second readiness window');
+  assert.match(renderer, /await window\.MolariumChemistActionsReady/,
+    'the renderer must await API installation before injecting a file-change event');
+  assert.match(renderer, /document\.readyState !== 'complete'/,
+    'the renderer must not race the application module and its UI listeners');
   assert.match(renderer, /status=\$\{JSON\.stringify\(diagnostic\.status\)\}/,
     'import failures surface the visible replay status');
   assert.match(renderer, /entry\.requestId === 'story-/,
