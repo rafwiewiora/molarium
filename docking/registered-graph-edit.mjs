@@ -35,6 +35,52 @@ function uniqueSorted(values) {
   return [...new Set(values)].sort((first, second) => String(first).localeCompare(String(second)));
 }
 
+function spatialFeatureCorrespondences(map, byProductIndex) {
+  return Array.from(map.spatialFeatureCorrespondences || []).map((feature, index) => {
+    if (!feature || feature.kind !== 'conserved-fragment-rmsd'
+      || !['seed-only', 'soft-restraint'].includes(feature.treatment))
+      throw new Error(`Registered spatial feature ${index + 1} has an unsupported kind or treatment`);
+    if (feature.treatment === 'seed-only'
+      && (feature.transferMode !== 'seed-only' || feature.required !== false
+        || feature.restraint != null))
+      throw new Error(`Registered spatial feature ${index + 1} seed-only transfer must be non-required`);
+    if (feature.treatment === 'soft-restraint'
+      && (feature.transferMode !== 'score-only' || feature.required === true
+        || feature.restraint?.required !== false))
+      throw new Error(`Registered spatial feature ${index + 1} automatic soft restraint cannot be required`);
+    const variants = Array.from(feature.mappingVariants || []);
+    if (!feature.id || variants.length < 1)
+      throw new Error(`Registered spatial feature ${index + 1} requires an id and mapping variants`);
+    const normalized = variants.map((variant, variantIndex) => {
+      const referenceAtomNames = Array.from(variant.referenceAtomNames || []);
+      const productAtomIndices = Array.from(variant.productAtomIndices || []);
+      if (referenceAtomNames.length < 3
+        || referenceAtomNames.length !== productAtomIndices.length
+        || new Set(referenceAtomNames).size !== referenceAtomNames.length
+        || new Set(productAtomIndices).size !== productAtomIndices.length
+        || referenceAtomNames.some((name) => typeof name !== 'string' || !name)
+        || productAtomIndices.some((atomIndex) => !Number.isInteger(atomIndex)))
+        throw new Error(`Registered spatial feature ${feature.id} variant ${variantIndex + 1} is invalid`);
+      if (referenceAtomNames.some((name) => [...byProductIndex.values()].includes(name))
+        || productAtomIndices.some((atomIndex) => byProductIndex.has(atomIndex)))
+        throw new Error(`Registered spatial feature ${feature.id} overlaps the hard atom map`);
+      return { referenceAtomNames, productAtomIndices };
+    });
+    const normalizedFeature = { id:feature.id, kind:feature.kind,
+      transferMode:feature.transferMode, treatment:feature.treatment,
+      required:false,
+      source:feature.source || 'registered graph correspondence',
+      mappingVariants:normalized };
+    if (feature.treatment === 'soft-restraint') normalizedFeature.restraint = {
+      metric:'graph-symmetry-minimized Cartesian RMSD',
+        toleranceAngstrom:Number(feature.restraint?.toleranceAngstrom ?? 1),
+        weightKcalMolPerAngstrom2:Number(
+          feature.restraint?.weightKcalMolPerAngstrom2 ?? 20),
+        required:false };
+    return normalizedFeature;
+  });
+}
+
 // A registered map is generated from molecular graphs, never later coordinates.
 // This classifier makes the coordinate consequence explicit. Exact common atoms
 // may be hard constrained; deleted/added graph regions are released. If the old
@@ -46,7 +92,7 @@ export function buildRegisteredPoseTransferPlan(poseMap, policy) {
   const common = Array.from(map.commonAtoms || []);
   if (common.length < 3) throw new Error('A registered pose map needs at least three exact common atoms');
   const byProductIndex = new Map();
-  const hardConstraintAtomNames = [];
+  const mappedAtomPairs = [];
   for (const entry of common) {
     if (!Number.isInteger(entry?.productAtomIndex)
       || typeof entry.referenceAtomName !== 'string' || !entry.referenceAtomName
@@ -55,10 +101,37 @@ export function buildRegisteredPoseTransferPlan(poseMap, policy) {
     if (byProductIndex.has(entry.productAtomIndex))
       throw new Error(`Registered pose map repeats product atom ${entry.productAtomIndex}`);
     byProductIndex.set(entry.productAtomIndex, entry.referenceAtomName);
-    hardConstraintAtomNames.push(entry.referenceAtomName);
+    mappedAtomPairs.push({
+      referenceAtomName:entry.referenceAtomName,
+      productAtomIndex:entry.productAtomIndex,
+      element:entry.element,
+      match:'exact-element-and-conserved-bond-graph',
+    });
   }
-  if (new Set(hardConstraintAtomNames).size !== hardConstraintAtomNames.length)
+  if (new Set(mappedAtomPairs.map((entry) => entry.referenceAtomName)).size
+    !== mappedAtomPairs.length)
     throw new Error('Registered pose map repeats a reference atom name');
+
+  const protectedNames = map.protectedReferenceAnchor?.referenceAtomNames == null
+    ? mappedAtomPairs.map((entry) => entry.referenceAtomName)
+    : Array.from(map.protectedReferenceAnchor.referenceAtomNames);
+  const protectedNameSet = new Set(protectedNames);
+  if (protectedNameSet.size !== protectedNames.length
+    || protectedNames.length < 3
+    || protectedNames.some((name) => !mappedAtomPairs.some((entry) =>
+      entry.referenceAtomName === name)))
+    throw new Error('Registered protected anchor must contain at least three unique mapped atoms');
+  const exactAtomPairs = mappedAtomPairs.filter((entry) =>
+    protectedNameSet.has(entry.referenceAtomName));
+  const releasedMappedAtomPairs = mappedAtomPairs.filter((entry) =>
+    !protectedNameSet.has(entry.referenceAtomName));
+  const declaredReleased = Array.from(map.releasedMappedAtoms || [])
+    .map((entry) => entry?.referenceAtomName);
+  if (declaredReleased.length !== releasedMappedAtomPairs.length
+    || releasedMappedAtomPairs.some((entry) =>
+      !declaredReleased.includes(entry.referenceAtomName)))
+    throw new Error('Registered released mapped atoms must complement the protected anchor');
+  const hardConstraintAtomNames = exactAtomPairs.map((entry) => entry.referenceAtomName);
 
   const referenceBoundaryAtomNames = uniqueSorted(Array.from(map.referenceBoundary || [])
     .map((entry) => entry?.commonAtomName).filter(Boolean));
@@ -81,36 +154,54 @@ export function buildRegisteredPoseTransferPlan(poseMap, policy) {
   const kind = hasDeleted && hasAdded && attachmentChanged ? 'attachment-rewire'
     : hasDeleted && hasAdded ? 'region-replacement'
       : hasAdded ? 'fragment-growth' : hasDeleted ? 'fragment-deletion' : 'identity';
-  const exactAtomPairs = common.map((entry) => ({
-    referenceAtomName:entry.referenceAtomName,
-    productAtomIndex:entry.productAtomIndex,
-    element:entry.element,
-    match:'exact-element-and-conserved-bond-graph',
-  }));
+  const releasedMappedAtomNames = uniqueSorted(releasedMappedAtomPairs
+    .map((entry) => entry.referenceAtomName));
+  const releasedMappedProductAtomIndices = uniqueSorted(releasedMappedAtomPairs
+    .map((entry) => entry.productAtomIndex));
+  const releasedReferenceAtomNames = uniqueSorted([
+    ...deletedAtomNames, ...releasedMappedAtomNames,
+  ]);
+  const releasedRegions = [];
+  if (hasDeleted || hasAdded) releasedRegions.push({
+    id:'registered-graph-edit', reason:kind,
+    referenceAtomNames:deletedAtomNames,
+    productAtomIndices:addedProductAtomIndices,
+  });
+  for (const migration of Array.from(map.mappedRingAttachmentMigrations || [])) {
+    releasedRegions.push({
+      id:migration.id,
+      reason:migration.reason,
+      referenceAtomNames:Array.from(migration.releasedReferenceAtomNames || []),
+      productAtomIndices:Array.from(migration.releasedProductAtomIndices || []),
+      retainedJunctionReferenceAtomNames:Array.from(
+        migration.retainedJunctionReferenceAtomNames || []),
+    });
+  }
   return {
     schema:'molarium.pose-transfer-plan/v2',
     algorithm:{ id:'molarium-registered-graph-correspondence', version:'2' },
     editKind:kind,
+    mappedAtomPairs,
     exactAtomPairs,
-    releasedRegions:hasDeleted || hasAdded ? [{
-      id:'registered-graph-edit', reason:kind,
-      referenceAtomNames:deletedAtomNames,
-      productAtomIndices:addedProductAtomIndices,
-    }] : [],
-    featureCorrespondences:[],
+    releasedMappedAtomPairs,
+    releasedRegions,
+    featureCorrespondences:spatialFeatureCorrespondences(map, byProductIndex),
     ambiguity:{
       policy:'enumerate-then-rank-by-registered-context',
       candidateMaps:Number(map.ambiguity?.candidateMaps || 1),
       selection:map.ambiguity?.selection || 'registered deterministic map',
     },
     hardConstraintAtomNames:uniqueSorted(hardConstraintAtomNames),
-    releasedReferenceAtomNames:deletedAtomNames,
+    deletedReferenceAtomNames:deletedAtomNames,
+    releasedMappedAtomNames,
+    releasedMappedProductAtomIndices,
+    releasedReferenceAtomNames,
     addedProductAtomIndices,
     referenceBoundaryAtomNames, productBoundaryAtomNames,
     releasedBoundaryAtomNames, introducedBoundaryAtomNames,
     elementAgnosticAtomMatching:false,
-    coordinateRule:'hard-fix exact common atoms; release changed graph regions',
-    featureRule:'transfer compatible interaction roles as restraints, not atom identity',
+    coordinateRule:'hard-fix protected common atoms; release attachment-migrated ring atoms and changed graph regions',
+    featureRule:'use separately conserved graph regions only as non-required pose-search seeds; transfer compatible interaction roles as soft restraints',
   };
 }
 

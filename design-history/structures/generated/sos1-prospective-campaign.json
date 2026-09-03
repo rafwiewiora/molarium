@@ -1093,7 +1093,14 @@
             "editedProductAtomIndex": 18,
             "bondType": "SINGLE"
           }
-        ]
+        ],
+        "spatialFeatureCorrespondences": [],
+        "seedMatchedHeavyAtoms": 0,
+        "totalReferencedHeavyAtoms": 23,
+        "mappedRingAttachmentMigrations": [],
+        "releasedMappedAtoms": [],
+        "hardCoordinateHeavyAtoms": 23,
+        "releasedMappedHeavyAtoms": 0
       }
     },
     {
@@ -1398,7 +1405,14 @@
             "editedProductAtomIndex": 25,
             "bondType": "AROMATIC"
           }
-        ]
+        ],
+        "spatialFeatureCorrespondences": [],
+        "seedMatchedHeavyAtoms": 0,
+        "totalReferencedHeavyAtoms": 19,
+        "mappedRingAttachmentMigrations": [],
+        "releasedMappedAtoms": [],
+        "hardCoordinateHeavyAtoms": 19,
+        "releasedMappedHeavyAtoms": 0
       }
     },
     {
@@ -1742,7 +1756,14 @@
             "editedProductAtomIndex": 26,
             "bondType": "AROMATIC"
           }
-        ]
+        ],
+        "spatialFeatureCorrespondences": [],
+        "seedMatchedHeavyAtoms": 0,
+        "totalReferencedHeavyAtoms": 16,
+        "mappedRingAttachmentMigrations": [],
+        "releasedMappedAtoms": [],
+        "hardCoordinateHeavyAtoms": 16,
+        "releasedMappedHeavyAtoms": 0
       }
     },
     {
@@ -2085,9 +2106,205 @@
             "bondType": "AROMATIC"
           }
         ],
+        "spatialFeatureCorrespondences": [
+          {
+            "id": "secondary-exact-fragment-1",
+            "kind": "conserved-fragment-rmsd",
+            "transferMode": "seed-only",
+            "treatment": "seed-only",
+            "required": false,
+            "source": "disjoint exact graph correspondence; no product coordinates",
+            "mcs": {
+              "smarts": "[#6]1:&@[#6]:&@[#6]:&@[#6]:&@[#6]:&@[#6]:&@1-&!@[#6&!R]",
+              "atoms": 7,
+              "bonds": 7
+            },
+            "referenceAtomNames": [
+              "CX5",
+              "CX11",
+              "CX12",
+              "CX13",
+              "CX14",
+              "CX15",
+              "CX16"
+            ],
+            "productAtomIndices": [
+              8,
+              7,
+              6,
+              5,
+              4,
+              3,
+              2
+            ],
+            "mappingVariants": [
+              {
+                "referenceAtomNames": [
+                  "CX5",
+                  "CX11",
+                  "CX12",
+                  "CX13",
+                  "CX14",
+                  "CX15",
+                  "CX16"
+                ],
+                "productAtomIndices": [
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2
+                ]
+              },
+              {
+                "referenceAtomNames": [
+                  "CX14",
+                  "CX13",
+                  "CX12",
+                  "CX11",
+                  "CX5",
+                  "CX15",
+                  "CX16"
+                ],
+                "productAtomIndices": [
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  3,
+                  2
+                ]
+              },
+              {
+                "referenceAtomNames": [
+                  "CX5",
+                  "CX11",
+                  "CX12",
+                  "CX13",
+                  "CX14",
+                  "CX15",
+                  "CX16"
+                ],
+                "productAtomIndices": [
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  3,
+                  2
+                ]
+              },
+              {
+                "referenceAtomNames": [
+                  "CX14",
+                  "CX13",
+                  "CX12",
+                  "CX11",
+                  "CX5",
+                  "CX15",
+                  "CX16"
+                ],
+                "productAtomIndices": [
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2
+                ]
+              }
+            ],
+            "ambiguity": {
+              "referenceMatches": 2,
+              "productMatches": 2,
+              "candidateMaps": 4,
+              "selection": "enumerate graph symmetry; use only as pose-search seeds"
+            }
+          }
+        ],
+        "seedMatchedHeavyAtoms": 7,
+        "totalReferencedHeavyAtoms": 22,
+        "mappedRingAttachmentMigrations": [
+          {
+            "id": "mapped-ring-attachment-migration-1",
+            "reason": "attachment-migration-within-mapped-biconnected-ring",
+            "referenceBlockAtomNames": [
+              "C15",
+              "CX2",
+              "CX3",
+              "CX4",
+              "SX1"
+            ],
+            "productBlockAtomIndices": [
+              12,
+              31,
+              9,
+              10,
+              11
+            ],
+            "referenceAttachmentAtomNames": [
+              "CX4"
+            ],
+            "productAttachmentReferenceAtomNames": [
+              "CX3"
+            ],
+            "retainedJunctionReferenceAtomNames": [
+              "C15"
+            ],
+            "releasedReferenceAtomNames": [
+              "CX2",
+              "CX3",
+              "CX4",
+              "SX1"
+            ],
+            "releasedProductAtomIndices": [
+              31,
+              9,
+              10,
+              11
+            ]
+          }
+        ],
+        "releasedMappedAtoms": [
+          {
+            "referenceAtomIndex": 18,
+            "referenceAtomName": "CX2",
+            "productAtomIndex": 31,
+            "element": "C",
+            "reason": "attachment-migration-within-mapped-biconnected-ring"
+          },
+          {
+            "referenceAtomIndex": 19,
+            "referenceAtomName": "CX3",
+            "productAtomIndex": 9,
+            "element": "C",
+            "reason": "attachment-migration-within-mapped-biconnected-ring"
+          },
+          {
+            "referenceAtomIndex": 20,
+            "referenceAtomName": "CX4",
+            "productAtomIndex": 10,
+            "element": "C",
+            "reason": "attachment-migration-within-mapped-biconnected-ring"
+          },
+          {
+            "referenceAtomIndex": 29,
+            "referenceAtomName": "SX1",
+            "productAtomIndex": 11,
+            "element": "S",
+            "reason": "attachment-migration-within-mapped-biconnected-ring"
+          }
+        ],
+        "hardCoordinateHeavyAtoms": 11,
+        "releasedMappedHeavyAtoms": 4,
         "protectedReferenceAnchor": {
-          "method": "maximum-common-substructure/v1",
-          "label": "AWW proximal quinazoline-thiophene core",
+          "method": "exact-common-subgraph-after-topology-release/v1",
+          "label": "exact mapped atoms outside attachment-migrated ring blocks",
           "referenceAtomNames": [
             "C1",
             "C2",
@@ -2099,20 +2316,16 @@
             "C12",
             "C16",
             "C15",
-            "CX2",
-            "CX3",
-            "CX4",
-            "SX1",
             "CX1"
           ],
-          "atoms": 15,
-          "bonds": 16,
+          "atoms": 11,
+          "bonds": 11,
           "releasedRegions": [
-            "regioisomeric distal phenyl/benzylic arm",
-            "hydroxymethyl-to-methylaminomethyl substituent"
+            "mapped biconnected ring atoms affected by attachment migration",
+            "unmapped deleted and added graph regions"
           ]
         },
-        "transitionExplanation": "AWW and AXH attach the distal phenyl arm at different thiophene positions; that arm cannot remain spatially fixed while the proximal core is retained."
+        "transitionExplanation": "An edited region changes its attachment atom within a mapped biconnected ring. Conserved scaffold junctions remain hard; the other ring atoms are released from hard coordinates, and any separately conserved fragment is used only to seed pose search."
       }
     }
   ],

@@ -14,6 +14,18 @@ const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
 assert.equal(campaign.schema, REGISTERED_DESIGN_ROUTE_SCHEMA);
 assert.equal(validateRegisteredDesignRoute(campaign, { expectedId:'sos1-hit-only' }), campaign);
+const automaticallyRequired = structuredClone(campaign);
+const automaticallyRequiredFeature = automaticallyRequired.steps.at(-1)
+  .posePropagationMap.spatialFeatureCorrespondences[0];
+automaticallyRequiredFeature.transferMode = 'score-only';
+automaticallyRequiredFeature.treatment = 'soft-restraint';
+automaticallyRequiredFeature.required = true;
+automaticallyRequiredFeature.restraint = {
+  metric:'graph-symmetry-minimized Cartesian RMSD', toleranceAngstrom:0.75,
+  weightKcalMolPerAngstrom2:20, required:true,
+};
+assert.throws(() => validateRegisteredDesignRoute(automaticallyRequired),
+  /automatically transferred soft restraints cannot be required/);
 assert.equal(campaign.id, 'sos1-hit-only');
 assert.equal(campaign.hit.pdbId, '5OVE');
 assert.equal(campaign.hit.stateId, 'AXE');
@@ -58,22 +70,58 @@ for (const step of campaign.steps) {
   if (step.id === 'finish-bay-293') {
     assert.equal(map.commonHeavyAtoms, 15);
     assert.deepEqual(map.protectedReferenceAnchor, {
-      method:'maximum-common-substructure/v1',
-      label:'AWW proximal quinazoline-thiophene core',
+      method:'exact-common-subgraph-after-topology-release/v1',
+      label:'exact mapped atoms outside attachment-migrated ring blocks',
       referenceAtomNames:['C1', 'C2', 'N6', 'C11', 'N8', 'C3', 'N7', 'C12',
-        'C16', 'C15', 'CX2', 'CX3', 'CX4', 'SX1', 'CX1'],
-      atoms:15,
-      bonds:16,
+        'C16', 'C15', 'CX1'],
+      atoms:11,
+      bonds:11,
       releasedRegions:[
-        'regioisomeric distal phenyl/benzylic arm',
-        'hydroxymethyl-to-methylaminomethyl substituent',
+        'mapped biconnected ring atoms affected by attachment migration',
+        'unmapped deleted and added graph regions',
       ],
     });
     assert.equal(map.mcs.atoms, map.commonHeavyAtoms);
-    assert.match(map.transitionExplanation, /different thiophene positions/);
+    assert.equal(map.hardCoordinateHeavyAtoms, 11);
+    assert.equal(map.releasedMappedHeavyAtoms, 4);
+    assert.deepEqual(map.releasedMappedAtoms.map((entry) => entry.referenceAtomName),
+      ['CX2', 'CX3', 'CX4', 'SX1']);
+    assert.equal(map.mappedRingAttachmentMigrations.length, 1);
+    assert.deepEqual(map.mappedRingAttachmentMigrations[0], {
+      id:'mapped-ring-attachment-migration-1',
+      reason:'attachment-migration-within-mapped-biconnected-ring',
+      referenceBlockAtomNames:['C15', 'CX2', 'CX3', 'CX4', 'SX1'],
+      productBlockAtomIndices:[12, 31, 9, 10, 11],
+      referenceAttachmentAtomNames:['CX4'],
+      productAttachmentReferenceAtomNames:['CX3'],
+      retainedJunctionReferenceAtomNames:['C15'],
+      releasedReferenceAtomNames:['CX2', 'CX3', 'CX4', 'SX1'],
+      releasedProductAtomIndices:[31, 9, 10, 11],
+    });
+    assert.equal(map.seedMatchedHeavyAtoms, 7);
+    assert.equal(map.totalReferencedHeavyAtoms, 22);
+    assert.equal(map.spatialFeatureCorrespondences.length, 1);
+    const feature = map.spatialFeatureCorrespondences[0];
+    assert.equal(feature.kind, 'conserved-fragment-rmsd');
+    assert.equal(feature.transferMode, 'seed-only');
+    assert.equal(feature.treatment, 'seed-only');
+    assert.equal(feature.required, false);
+    assert.equal(feature.restraint, undefined);
+    assert.equal(feature.mappingVariants.length, 4);
+    assert.deepEqual(feature.referenceAtomNames,
+      ['CX5','CX11','CX12','CX13','CX14','CX15','CX16']);
+    assert.match(map.transitionExplanation, /attachment atom within a mapped biconnected ring/);
+    assert.match(map.transitionExplanation, /only to seed pose search/);
   } else {
     assert(map.commonHeavyAtoms >= 15, `${step.id} must retain a substantial 3D anchor`);
     assert.equal(map.mcs.atoms, map.commonHeavyAtoms);
+    assert.equal(map.hardCoordinateHeavyAtoms, map.commonHeavyAtoms);
+    assert.equal(map.releasedMappedHeavyAtoms, 0);
+    assert.deepEqual(map.releasedMappedAtoms, []);
+    assert.deepEqual(map.mappedRingAttachmentMigrations, []);
+    assert.equal(map.seedMatchedHeavyAtoms, 0);
+    assert.equal(map.totalReferencedHeavyAtoms, map.commonHeavyAtoms);
+    assert.deepEqual(map.spatialFeatureCorrespondences, []);
   }
   assert.equal(map.commonAtoms.length, map.commonHeavyAtoms);
   assert.equal(map.commonAtoms.length + map.deletedReferenceAtoms.length,

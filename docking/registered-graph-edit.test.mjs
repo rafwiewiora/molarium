@@ -15,16 +15,42 @@ const semantics = buildRegisteredPoseTransferPlan(finalStep.posePropagationMap, 
 assert.equal(semantics.schema, 'molarium.pose-transfer-plan/v2');
 assert.equal(semantics.editKind, 'attachment-rewire');
 assert.equal(semantics.elementAgnosticAtomMatching, false);
-assert.equal(semantics.hardConstraintAtomNames.length, 15);
-assert.equal(semantics.exactAtomPairs.length, 15);
+assert.equal(semantics.mappedAtomPairs.length, 15);
+assert.equal(semantics.hardConstraintAtomNames.length, 11);
+assert.equal(semantics.exactAtomPairs.length, 11);
+assert.equal(semantics.releasedMappedAtomPairs.length, 4);
 assert.equal(semantics.exactAtomPairs.every((entry) =>
   entry.match === 'exact-element-and-conserved-bond-graph'), true);
 assert.equal(semantics.releasedRegions[0].reason, 'attachment-rewire');
+assert.equal(semantics.releasedRegions[1].reason,
+  'attachment-migration-within-mapped-biconnected-ring');
 assert.deepEqual(semantics.releasedBoundaryAtomNames, ['CX4']);
 assert.deepEqual(semantics.introducedBoundaryAtomNames, ['CX3']);
 assert.ok(semantics.releasedReferenceAtomNames.includes('CX5'));
+assert.deepEqual(semantics.releasedMappedAtomNames, ['CX2', 'CX3', 'CX4', 'SX1']);
 assert.ok(semantics.addedProductAtomIndices.includes(8));
-assert.match(semantics.featureRule, /restraints, not atom identity/);
+assert.match(semantics.featureRule, /pose-search seeds/);
+assert.equal(semantics.featureCorrespondences.length, 1);
+assert.deepEqual(semantics.featureCorrespondences[0].mappingVariants[0], {
+  referenceAtomNames:['CX5','CX11','CX12','CX13','CX14','CX15','CX16'],
+  productAtomIndices:[8,7,6,5,4,3,2],
+});
+assert.equal(semantics.featureCorrespondences[0].mappingVariants.length, 4,
+  'phenyl graph symmetry must remain explicit while seeds are enumerated');
+assert.equal(semantics.featureCorrespondences[0].transferMode, 'seed-only');
+assert.equal(semantics.featureCorrespondences[0].treatment, 'seed-only');
+assert.equal(semantics.featureCorrespondences[0].required, false);
+assert.equal(semantics.featureCorrespondences[0].restraint, undefined);
+
+const requiredFeature = structuredClone(finalStep.posePropagationMap);
+requiredFeature.spatialFeatureCorrespondences[0] = {
+  ...requiredFeature.spatialFeatureCorrespondences[0],
+  transferMode:'score-only', treatment:'soft-restraint', required:true,
+  restraint:{ metric:'graph-symmetry-minimized Cartesian RMSD',
+    toleranceAngstrom:0.75, weightKcalMolPerAngstrom2:20, required:true },
+};
+assert.throws(() => buildRegisteredPoseTransferPlan(requiredFeature, policy),
+  /automatic soft restraint cannot be required/);
 
 const growth = buildRegisteredPoseTransferPlan({
   commonAtoms:[
