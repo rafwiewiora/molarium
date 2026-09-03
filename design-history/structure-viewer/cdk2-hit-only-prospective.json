@@ -1,0 +1,177 @@
+{
+  "schema": "molarium.structure-story/v1",
+  "id": "cdk2-hit-only-prospective",
+  "title": "Can the hit structure predict the next pose?",
+  "subtitle": "CDK2 · 1H1Q/2A6 is the only starting structure · later crystals appear only after each prediction is frozen",
+  "width": 1600,
+  "height": 900,
+  "fps": 18,
+  "assetManifest": "../structures/generated/cdk2-prospective-movie-assets.json",
+  "sources": [
+    { "label": "Davies et al. · purine CDK2 inhibitor design", "url": "https://doi.org/10.1038/nsb842" },
+    { "label": "1H1Q · allowed hit structure", "url": "https://www.rcsb.org/structure/1H1Q" },
+    { "label": "1H1R · evaluation-only 6CP holdout", "url": "https://www.rcsb.org/structure/1H1R" },
+    { "label": "1OIU · evaluation-only N76 holdout", "url": "https://www.rcsb.org/structure/1OIU" }
+  ],
+  "legend": [
+    { "label": "allowed hit · 1H1Q/2A6", "color": "#247d95" },
+    { "label": "frozen Agent API prediction", "color": "#826cae" },
+    { "label": "post-freeze crystal holdout", "color": "#dc8747" }
+  ],
+  "cameras": {
+    "pocketWide": { "target": [5.1, 42.2, 49.6], "radius": 11.2, "view": [1, 0.18, 0.06] },
+    "editLocked": { "target": [4.083, 40.622, 48.474], "radius": 7.2, "view": [1, 0.18, 0.06] }
+  },
+  "scenes": {
+    "hitInput": {
+      "label": "Allowed input · 2A6 in 1H1Q",
+      "coordinateClass": "allowed-input",
+      "coordinateLabel": "INPUT · PDB 1H1Q/2A6 only",
+      "models": [
+        { "ref": "protein", "path": "cdk2-1h1q-protein.pdb", "representation": "cartoon", "colorScheme": "chain-id", "alpha": 0.20 },
+        { "ref": "pocket", "path": "cdk2-1h1q-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.54, "sizeFactor": 0.14 },
+        { "ref": "hit", "path": "cdk2-1h1q-ligand.pdb", "representation": "ball-and-stick", "color": "#247d95", "sizeFactor": 0.24 }
+      ]
+    },
+    "prediction6cp": {
+      "label": "Predicted 6CP · H → meta-Cl",
+      "coordinateClass": "frozen-prediction",
+      "coordinateLabel": "PREDICTION · no later coordinates",
+      "models": [
+        { "ref": "protein", "path": "cdk2-1h1q-protein.pdb", "representation": "cartoon", "colorScheme": "chain-id", "alpha": 0.16 },
+        { "ref": "pocket", "path": "cdk2-1h1q-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.44, "sizeFactor": 0.14 },
+        { "ref": "prediction", "path": "cdk2-6cp-frozen-prediction.pdb", "representation": "ball-and-stick", "color": "#826cae", "sizeFactor": 0.25 }
+      ]
+    },
+    "overlay6cp": {
+      "label": "Frozen 6CP prediction versus 1H1R holdout",
+      "coordinateClass": "evaluation-holdout",
+      "coordinateLabel": "HOLDOUT OPEN · after Agent API freeze",
+      "models": [
+        { "ref": "pocket", "path": "cdk2-1h1q-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.34, "sizeFactor": 0.13 },
+        { "ref": "prediction", "path": "cdk2-6cp-frozen-prediction.pdb", "representation": "ball-and-stick", "color": "#826cae", "alpha": 0.90, "sizeFactor": 0.23 },
+        { "ref": "holdout", "path": "cdk2-1h1r-6cp-aligned-holdout.pdb", "representation": "ball-and-stick", "color": "#dc8747", "alpha": 0.92, "sizeFactor": 0.23 }
+      ]
+    },
+    "predictionN76": {
+      "label": "Predicted N76 · Cl → sulfonamide",
+      "coordinateClass": "frozen-prediction",
+      "coordinateLabel": "PREDICTION · starts from frozen predicted 6CP",
+      "models": [
+        { "ref": "protein", "path": "cdk2-1h1q-protein.pdb", "representation": "cartoon", "colorScheme": "chain-id", "alpha": 0.16 },
+        { "ref": "pocket", "path": "cdk2-1h1q-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.44, "sizeFactor": 0.14 },
+        { "ref": "prediction", "path": "cdk2-n76-frozen-prediction.pdb", "representation": "ball-and-stick", "color": "#826cae", "sizeFactor": 0.25 }
+      ]
+    },
+    "overlayN76": {
+      "label": "Frozen N76 prediction versus 1OIU holdout",
+      "coordinateClass": "evaluation-holdout",
+      "coordinateLabel": "HOLDOUT OPEN · after Agent API freeze",
+      "models": [
+        { "ref": "pocket", "path": "cdk2-1h1q-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.34, "sizeFactor": 0.13 },
+        { "ref": "prediction", "path": "cdk2-n76-frozen-prediction.pdb", "representation": "ball-and-stick", "color": "#826cae", "alpha": 0.90, "sizeFactor": 0.23 },
+        { "ref": "holdout", "path": "cdk2-1oiu-n76-aligned-holdout.pdb", "representation": "ball-and-stick", "color": "#dc8747", "alpha": 0.92, "sizeFactor": 0.23 }
+      ]
+    }
+  },
+  "cues": [
+    {
+      "id": "hit-only-input",
+      "title": "Start with the hit—and nothing else",
+      "body": "The only coordinate-bearing input is 2A6 bound to CDK2 in 1H1Q. Later compound graphs are allowed; later protein and ligand coordinates are locked.",
+      "detail": "Agent API · designCampaign.load → protein.prepare → pose.captureReference",
+      "scene": "hitInput", "durationMs": 4200,
+      "cameraStart": "pocketWide", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "meta-site-before",
+      "title": "The first decision is local",
+      "body": "Add chlorine at the registered meta position. The camera is now locked on the edit site and will not orbit or chase the rest of the molecule.",
+      "detail": "Graph edit only · H → Cl · no 1H1R coordinates",
+      "focusLabel": "meta substitution site",
+      "scene": "hitInput", "durationMs": 2200,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "predict-6cp",
+      "title": "Agent API predicts 6CP",
+      "body": "designCampaign.applyStep builds the chloro analogue; pose.refine searches 64 candidates and pose.apply commits rank 1 while the inherited hit core remains fixed.",
+      "detail": "Agent API sequences 6–8 · purple is prediction",
+      "focusLabel": "predicted chlorine",
+      "scene": "prediction6cp", "durationMs": 3200,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "freeze-6cp",
+      "title": "Freeze before looking",
+      "body": "The complete predicted ligand and pocket are serialized and hashed. At this frame, the 1H1R holdout is still unopened.",
+      "detail": "Agent API sequence 11 · checkpoint cdab94986676…",
+      "focusLabel": "frozen prediction",
+      "scene": "prediction6cp", "durationMs": 2600,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "reveal-1h1r",
+      "title": "Now reveal 1H1R",
+      "body": "The graph was right, but a symmetry-equivalent atom map put chlorine on the opposite spatial side of the phenyl ring. That discrete choice could not be repaired with the inherited core frozen.",
+      "detail": "Holdout opened after freeze · ligand RMSD 1.83 Å · edited region 5.71 Å",
+      "focusLabel": "purple predicted · orange crystal",
+      "scene": "overlay6cp", "durationMs": 4400,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "return-to-frozen-6cp",
+      "title": "Do not promote the crystal to a reference",
+      "body": "The orange holdout disappears. The second design step starts from the frozen purple 6CP prediction—not from the newly seen 1H1R pose.",
+      "detail": "Agent API sequence 14 · pose.captureReference on predicted 6CP",
+      "focusLabel": "predicted 6CP becomes reference",
+      "scene": "prediction6cp", "durationMs": 3000,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "sulfonamide-site-before",
+      "title": "Second local edit: replace Cl",
+      "body": "The next graph replaces chlorine with sulfonamide. Because the starting prediction chose the wrong spatial meta side, this edit inherits that discrete mapping choice.",
+      "detail": "Graph edit only · Cl → SO₂NH₂ · no 1OIU coordinates",
+      "focusLabel": "chloro-to-sulfonamide site",
+      "scene": "prediction6cp", "durationMs": 2200,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "predict-n76",
+      "title": "Agent API predicts N76",
+      "body": "The same public action path builds, searches, and commits the sulfonamide from the frozen predicted 6CP reference.",
+      "detail": "Agent API sequences 15–17 · purple is prediction",
+      "focusLabel": "predicted sulfonamide",
+      "scene": "predictionN76", "durationMs": 3200,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "freeze-n76",
+      "title": "Freeze again before looking",
+      "body": "The second prediction is serialized and hashed under the same hit-only boundary. No later crystal has entered the trajectory as a coordinate reference.",
+      "detail": "Agent API sequence 20 · checkpoint 9295402f88d7…",
+      "focusLabel": "second frozen prediction",
+      "scene": "predictionN76", "durationMs": 2600,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "reveal-1oiu",
+      "title": "Now reveal 1OIU",
+      "body": "The sulfonamide crystal occupies the opposite spatial side. The inherited scaffold remains close, while the edited region records the propagated mapping failure.",
+      "detail": "Holdout opened after freeze · ligand RMSD 2.67 Å · edited region 6.51 Å",
+      "focusLabel": "purple predicted · orange crystal",
+      "scene": "overlayN76", "durationMs": 4400,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "prospective-result",
+      "title": "The useful result is the failure mode",
+      "body": "CDK2 itself barely rearranged. The missing capability is prospective enumeration and pocket scoring of symmetry-equivalent atom mappings—not hindsight from either later crystal.",
+      "detail": "Receptor Cα RMSD · 0.34 Å (1H1R) · 0.42 Å (1OIU)",
+      "focusLabel": "discrete mapping, not induced fit",
+      "scene": "overlayN76", "durationMs": 4600,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    }
+  ]
+}

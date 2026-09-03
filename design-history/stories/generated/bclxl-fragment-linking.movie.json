@@ -1,12 +1,12 @@
 {
   "campaignId": "bclxl-fragment-linking",
-  "campaignSha256": "8668fe791923b32e3358ec13f11232f21da3e545aaedb8f3d53a015f6a89f0f2",
+  "campaignSha256": "3bab186b499d4716917b80177adbededd05f097cefa880c4b91999eb9b10b659",
   "createdAt": "2026-08-30T19:31:00.000Z",
   "cues": [
     {
-      "commitId": "commit:e779e7c4ee8e9356705d1cf9c13608f4423c1077a3ec260cb28334f08230d5fd",
+      "commitId": "commit:a60d9b0abcf5d3d14f3fbfdc0ec27f48a7f05a2f023da6927098d51e4b5f75ca",
       "durationMs": 2500,
-      "eventId": "event:56398a0bbff14e2098ed42e5835d5df8e2f58d9d31c860c53a6beaaac221f54f",
+      "eventId": "event:11cbed300334a86a5406f4fc133bbae2698c6eb28f3256b5b8b318532b9df8ad",
       "narration": "Compound 4 is weak, but its tractable scaffold and crystal pose keep it alive.",
       "title": "A weak but useful crystal lead"
     },
@@ -18,63 +18,70 @@
     },
     {
       "durationMs": 2200,
-      "eventId": "event:cc52099074b59b54a9de0c8d65060e2816dfd63a63c8a09853e33448310e039e",
+      "eventId": "event:5dc8fe0fcc243f7ab519cecec40b3c880d9f63fee680e22d32453ab7a66c8723",
       "narration": "Structural superposition suggests an 8.2 Å connection between the two site binders.",
       "title": "The linking hypothesis"
     },
     {
-      "commitId": "commit:51371c2826bb20f673d01a28e992571f8f0e3d4adddb324996c922ae2a2341f8",
+      "commitId": "commit:490e4a14278672096f0b001b35171a199b38e98744d76f99b23dbbb1c47bc0c9",
       "durationMs": 2600,
-      "eventId": "event:99d9ed5fae94a15f36d1bbf2556917c42f81d71b60d4e078572d0aa18094209b",
+      "eventId": "event:789073b6ef8e609a41e8b217789f09a1fea1991f1580deba50d29303beb0d7b3",
       "narration": "The first linked molecule converts two weak binders into nanomolar affinity.",
       "title": "More than ten thousand-fold"
     },
     {
-      "commitId": "commit:3d80066db892c2c7e047d278b9674b5a49d72bf1b0fda2f53402beb7c136a5be",
+      "commitId": "commit:d6c03613441089240f24d4eb8d87418740018527acd56ee4ac8e2328adb48bb7",
       "durationMs": 2600,
-      "eventId": "event:3bcc30a060725bae146c4280342d790591074f5feb7212eb77ebb7e61735ab9b",
+      "eventId": "event:351dcae9d586fbb69778cf88bc96d52a7b3f2851adbf3fdf45460b0522fb1206",
       "narration": "Selected as the lead for subsequent optimization because it combined subnanomolar binding with measurable cellular activity.",
       "title": "Linker branch 7"
     },
     {
-      "commitId": "commit:3fa9ba94a09197fcdf862a502146fc9e631bbecc527917a4955884f860f8dbfc",
+      "commitId": "commit:f989712c282b482f264e2f87f9d00567bacca6e40c8d31bfe7f62821194d92a1",
       "durationMs": 1800,
-      "eventId": "event:2c086528cfae4776ada29f24576c12fcad6b6c16c915e78b12f6a2419a6c17cf",
+      "eventId": "event:832446ae37a18fbb1d66e0b52341a912c84d804384d88609995cc3d8ea308e98",
       "narration": "Excellent biochemical affinity did not translate to cellular activity.",
       "title": "Linker branch 8"
     },
     {
-      "commitId": "commit:6ea8888ecd36cdd947778cabc41503b7bf9adb1cd339ec628dce98a37e78ba56",
+      "commitId": "commit:f27f7b5e1f6b1efccfaaa467fb03b7bb14dfcecca2227cc4deafbf9a9a6871b0",
       "durationMs": 1800,
-      "eventId": "event:67843809e524eb1c48e53fb82ff6c4e4c87c505eedaafe2507da6932e4d8b978",
+      "eventId": "event:25ed69f199cb832dfc3d43604d3b320a2b0750dfeffb94a757bca832cee61af0",
       "narration": "The rigid ethynyl linker retained binding but not useful cellular activity.",
       "title": "Linker branch 9"
     },
     {
-      "commitId": "commit:7239b7cbaf53d071cba90df89c98389a1b9bc819754bcdd5bf2412d6a2009e4b",
+      "commitId": "commit:69907ed58f5696962c5dd6b253ab4b7ecea66b3196e96d10264cb4ef294ecf02",
       "durationMs": 1800,
-      "eventId": "event:a009877a81b14b13e23d7135f25be6d1fc0250ce72b71c2da6c01353901912ba",
+      "eventId": "event:ec01e0d70a3c0e53fdeca4bf3cd967b474c66ce2faf7a405ddac29c0b51269e8",
       "narration": "The shorter linker weakened affinity and retained poor cellular activity.",
       "title": "Linker branch 10"
     },
     {
-      "commitId": "commit:e6b8eb3bb96e5c760392b4a7504ad15759eb3d12b37bedafca4df9f3effcd389",
+      "commitId": "commit:bfe44edd36c05a727fcd047b6a993bf89b72e82000c380fd0e781b0cd24219a4",
       "durationMs": 1800,
-      "eventId": "event:f3714656d5e109432fbfacb4378334eaab76a0d945d1915bfe823ac8a0e77110",
+      "eventId": "event:22002f109435c39f94e25f776a4f6cc9541223e43523c3b44370b8576c593e8f",
       "narration": "Added linker flexibility cost at least an order of magnitude in affinity.",
       "title": "Linker branch 11"
     },
     {
-      "commitId": "commit:db81cce9e2312ea59256928ac87595ce60f69cdd65546acb0e24e34417b23b53",
+      "commitId": "commit:45e96738c0fd091d03a34399ebaa331a7730aff4e1fa8f5d88f148761890b32c",
       "durationMs": 1800,
-      "eventId": "event:95e2a11d192da0e9430b8d0e9e93534e6ce039c05140f325cddc9269b1d1b8a2",
+      "eventId": "event:0653219a44902f72e8db00981aabf7aa911dcbb938949d4b04d229f3b2340f40",
       "narration": "Changing attachment geometry reduced BCL-2 affinity relative to compound 7.",
       "title": "Linker branch 12"
     },
     {
-      "commitId": "commit:2b66c0c31b73230b0c8ddd7200567e45c395aac8af8abaa23d467608298365df",
+      "commitId": "commit:aade01e0806a5e4cd840eb0f4922054e6ef5bd1b6ffc856ef807a65972f61fb4",
+      "durationMs": 2600,
+      "eventId": "event:c5ff353f5572ab24d18fba433d50b8f22794401d0898a7f98df7564568be1b89",
+      "narration": "Compound 16 preserves subnanomolar binding while improving cellular activity through deliberate truncation.",
+      "title": "Remove the non-interacting side chain"
+    },
+    {
+      "commitId": "commit:2218e1cae8d31d58cb5ed3b2fa7997fe2556973c4cf1b5d6776accd563c1bd7b",
       "durationMs": 3000,
-      "eventId": "event:2b3e4ad576dabe19fba55b5200e056c8034291303aec1910294dda7d8b885f27",
+      "eventId": "event:730d8c86abc21e85208a8caf64551b1bbbc3793f6ead19cc367c5cc7e95326d8",
       "narration": "Compound 21 combines subnanomolar binding with 60–90 nM cellular activity.",
       "title": "Cellular activity catches up"
     }
@@ -84,5 +91,5 @@
   "schema": "molarium.design-movie/v1",
   "title": "Two weak binders, one branching linker campaign",
   "width": 1440,
-  "movieSha256": "4ca40f9fccef6765c12d7018591d997d9b9d2e7d5d87f48833f42177fcbf891f"
+  "movieSha256": "0027f78a20b61297a405834d59499c0b3a72f31c8fc4cc182d527bf1bd822e86"
 }

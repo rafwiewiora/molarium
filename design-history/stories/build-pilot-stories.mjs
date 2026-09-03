@@ -39,6 +39,16 @@ async function decide(campaign, next, options) {
 function reported(payload) { return { claimStatus:'reported-in-source', ...payload }; }
 function reconstruction(payload) { return { claimStatus:'molarium-reconstruction', ...payload }; }
 
+async function structureStoryCueScript(campaign, cueId, label) {
+  return storeActionScript(campaign, { label:`Replay ${label} in the structure story`, actions:[
+    { action:'structureStory.load', args:{ storyId:campaign.campaignId },
+      caption:'Load the registered, provenance-pinned structure story.' },
+    { action:'structureStory.selectCue', args:{ cueId },
+      caption:`Select the persistent ${label} trajectory cue.` },
+  ], compiler:{ name:'structure-story-cue/v1', boundary:'molarium.chemist-actions/v1',
+    storyId:campaign.campaignId, cueId } });
+}
+
 async function moonshotStory() {
   const next = clock('2025-06-17T00:00:00.000Z', '2026-08-30T18:00:00.000Z');
   const campaign = createCampaign({ campaignId:'moonshot-dndi-6510',
@@ -248,12 +258,14 @@ async function bclStory() {
     sourceIds:['source.bcl-paper'], payload:reconstruction({
       objective:'Represent the weak-fragment, linking, linker-length, and cellular-activity branches reported in the study.',
       caveat:'Narrative order follows the publication; exact experiment dates were not reported.' }) });
+  const c4Script = await structureStoryCueScript(campaign, 'compound-4-crystal', 'compound 4');
   const c4 = await addCommit(campaign, next, { label:'Compound 4 · Site 1 scaffold',
-    canonicalSmiles:'CN1CCN(CC1)CCCNC(=O)c2c(c(cn2CC[C@@H](CO)O)c3ccc(cc3)Cl)c4ccccc4',
+    canonicalSmiles:'ClC1=CC=C(C=C1)C=1C(=C(N(C1)CC[C@@H](CO)O)C(=O)NCCCN1CCN(CC1)C)C1=CC=CC=C1',
     externalRefs:[{ sourceId:'source.3spf', pdbId:'3SPF', componentId:'B50', chain:'A', residueNumber:501 }],
     properties:reported({ bcl2Ki:'78.0 µM', bclxlKi:'138 µM', role:'weak Site 1 binder' }),
     message:'Record the crystallographic weak Site 1 lead.', actorId:'reported.bcl-authors',
-    sourceIds:['source.bcl-paper','source.3spf'], tags:['starting-point','crystal-structure'] });
+    sourceIds:['source.bcl-paper','source.3spf'], actionScriptId:c4Script,
+    tags:['starting-point','crystal-structure','chemist-actions'] });
   const c4Data = await addObservation(campaign, next, { actorId:'reported.bcl-authors',
     subjectIds:[c4.commitId], sourceIds:['source.bcl-paper'], kind:'measurement.recorded',
     payload:reported({ endpoint:'fluorescence-polarization binding', bcl2KiMicromolar:78,
@@ -273,11 +285,14 @@ async function bclStory() {
     kind:'hypothesis.proposed', subjectIds:[c4.commitId,c5.commitId], sourceIds:['source.bcl-paper'],
     payload:reported({ statement:'Link the meta position of compound 4 to the sulfonamido nitrogen of fragment 5.',
       measuredGapAngstrom:8.2 }) });
+  const c6Script = await structureStoryCueScript(campaign, 'compound-6-linked', 'compound 6');
   const c6 = await addCommit(campaign, next, { label:'Compound 6 · first linked design',
+    canonicalSmiles:'ClC1=CC=C(C=C1)C=1C(=C(N(C1)CC[C@@H](CO)O)C(=O)NCCCN1CCN(CC1)C)C1=CC(=CC=C1)N1CCN(CC1)C1=CC=C(C=C1)C(NS(=O)(=O)C1=CC(=C(C=C1)N[C@H](CSC1=CC=CC=C1)CCN(C)C)[N+](=O)[O-])=O',
     externalRefs:[{ sourceId:'source.bcl-paper', compound:'6', locator:'Figures 5C and 6' }],
     properties:reported({ linkerLengthAngstrom:10.6, bcl2KiNanomolar:2, bclxlKi:'<1 nM' }),
     parents:[c4.commitId,c5.commitId], branch:'linked-series', message:'Link the two weak binders with the initial 10.6 Å design.',
-    actorId:'reported.bcl-authors', sourceIds:['source.bcl-paper'], hypothesisIds:[linkHypothesis.eventId] });
+    actorId:'reported.bcl-authors', sourceIds:['source.bcl-paper'], actionScriptId:c6Script,
+    hypothesisIds:[linkHypothesis.eventId], tags:['chemist-actions','reconstructed-pose'] });
   const c6Data = await addObservation(campaign, next, { actorId:'reported.bcl-authors', branch:'linked-series',
     subjectIds:[c6.commitId], sourceIds:['source.bcl-paper'], kind:'measurement.recorded',
     payload:reported({ endpoint:'binding affinity', result:'>10,000-fold improvement over either fragment; BCL-2 Ki 2.0 nM and BCL-xL Ki <1 nM.' }) });
@@ -287,6 +302,7 @@ async function bclStory() {
 
   const variants = [
     { id:'7', length:9.9, bcl2:'<0.6 nM', bclxl:'<1 nM', cellular:'~2 µM', disposition:'progressed',
+      canonicalSmiles:'ClC1=CC=C(C=C1)C=1C(=C(N(C1)CC[C@@H](CO)O)C(=O)NCCCN1CCN(CC1)C)C1=CC(=CC=C1)N1CCN(CC1)C1=CC=C(C=C1)NS(=O)(=O)C1=CC(=C(C=C1)N[C@@H](CSC1=CC=CC=C1)CCN(C)C)[N+](=O)[O-]',
       reasons:['potency','permeability'], rationale:'Selected as the lead for subsequent optimization because it combined subnanomolar binding with measurable cellular activity.' },
     { id:'8', length:9.0, bcl2:'<0.6 nM', bclxl:'<1 nM', cellular:'>10 µM', disposition:'not-progressed',
       reasons:['permeability'], rationale:'Excellent biochemical affinity did not translate to cellular activity.' },
@@ -301,12 +317,16 @@ async function bclStory() {
   ];
   const variantRecords = [];
   for (const variant of variants) {
+    const actionScriptId = variant.id === '7'
+      ? await structureStoryCueScript(campaign, 'compound-7-linker', 'compound 7') : null;
     const record = await addCommit(campaign, next, { label:`Compound ${variant.id} · linker variant`,
+      canonicalSmiles:variant.canonicalSmiles||null,
       externalRefs:[{ sourceId:'source.bcl-paper', compound:variant.id, locator:'Figure 6 / Table 1' }],
       properties:reported({ linkerLengthAngstrom:variant.length, bcl2Ki:variant.bcl2,
         bclxlKi:variant.bclxl, cellularIC50:variant.cellular }), parents:[c6.commitId],
       branch:`linked-series.compound-${variant.id}`, message:`Test linker variant ${variant.id}.`,
-      actorId:'reported.bcl-authors', sourceIds:['source.bcl-paper'] });
+      actorId:'reported.bcl-authors', sourceIds:['source.bcl-paper'], actionScriptId,
+      tags:actionScriptId?['chemist-actions','reconstructed-pose']:[] });
     const measurement = await addObservation(campaign, next, { actorId:'reported.bcl-authors',
       branch:`linked-series.compound-${variant.id}`, subjectIds:[record.commitId],
       sourceIds:['source.bcl-paper'], kind:'measurement.recorded', payload:reported({
@@ -319,12 +339,34 @@ async function bclStory() {
     variantRecords.push({ ...record, ...variant, decision });
   }
   const c7 = variantRecords.find((entry) => entry.id === '7');
+  const c16Script = await structureStoryCueScript(campaign, 'compound-16-truncation', 'compound 16');
+  const c16 = await addCommit(campaign, next, { label:'Compound 16 · side-chain truncation',
+    canonicalSmiles:'ClC1=CC=C(C=C1)C=1C(=C(N(C1)C)C(=O)NCCCN1CCN(CC1)C)C1=CC(=CC=C1)N1CCN(CC1)C1=CC=C(C=C1)NS(=O)(=O)C1=CC(=C(C=C1)N[C@@H](CSC1=CC=CC=C1)CCN(C)C)[N+](=O)[O-]',
+    externalRefs:[{ sourceId:'source.bcl-paper', compound:'16', locator:'Figure 7 / Table 2' }],
+    properties:reported({ bcl2Ki:'<1 nM', bclxlKi:'<1 nM', cellularIC50:'0.43–0.65 µM',
+      role:'non-interacting dihydroxybutyl side-chain truncated to methyl' }),
+    parents:[c7.commitId], branch:'lead-optimization.compound-16',
+    message:'Remove the non-interacting dihydroxybutyl side chain.', actorId:'reported.bcl-authors',
+    sourceIds:['source.bcl-paper'], actionScriptId:c16Script,
+    tags:['chemist-actions','reconstructed-pose'] });
+  const c16Result = await addObservation(campaign, next, { actorId:'reported.bcl-authors',
+    branch:'lead-optimization.compound-16', subjectIds:[c16.commitId], sourceIds:['source.bcl-paper'],
+    kind:'measurement.recorded', payload:reported({ endpoint:'binding and cellular potency',
+      result:'BCL-2 and BCL-xL Ki <1 nM; H146/H1417 cell growth IC50 0.43/0.65 µM.' }) });
+  const c16Decision = await decide(campaign, next, { targetCommitId:c16.commitId,
+    disposition:'progressed', reasonCodes:['permeability'],
+    rationale:'Truncating a non-interacting side chain preserved binding and improved cellular activity.',
+    actorId:'reported.bcl-authors', branch:'lead-optimization.compound-16',
+    sourceIds:['source.bcl-paper'], evidenceIds:[c16Result.eventId] });
+  const c21Script = await structureStoryCueScript(campaign, 'compound-21-pocket-fill', 'compound 21');
   const c21 = await addCommit(campaign, next, { label:'Compound 21 · optimized inhibitor',
+    canonicalSmiles:'ClC1=CC=C(C=C1)C=1C(=C(N(C1CC)C)C(=O)O)C1=CC(=CC=C1)N1CCN(CC1)C1=CC=C(C=C1)NS(=O)(=O)C1=CC(=C(C=C1)N[C@@H](CSC1=CC=CC=C1)CCN(C)C)[N+](=O)[O-]',
     externalRefs:[{ sourceId:'source.bcl-paper', compound:'21', locator:'Abstract / later optimization' }],
     properties:reported({ bcl2Ki:'<1 nM', bclxlKi:'<1 nM', cellularIC50:'60–90 nM' }),
-    parents:[c7.commitId], branch:'lead-optimization',
-    message:'Advance compound 7 into further structure-based optimization.', actorId:'reported.bcl-authors',
-    sourceIds:['source.bcl-paper'] });
+    parents:[c16.commitId], branch:'lead-optimization',
+    message:'Add the ethyl pocket-fill modification and advance the optimized inhibitor.', actorId:'reported.bcl-authors',
+    sourceIds:['source.bcl-paper'], actionScriptId:c21Script,
+    tags:['chemist-actions','reconstructed-pose'] });
   const c21Result = await addObservation(campaign, next, { actorId:'reported.bcl-authors',
     branch:'lead-optimization', subjectIds:[c21.commitId], sourceIds:['source.bcl-paper'],
     kind:'measurement.recorded', payload:reported({ endpoint:'binding and cellular potency',
@@ -349,6 +391,8 @@ async function bclStory() {
         durationMs:entry.disposition === 'progressed' ? 2600 : 1800,
         commitId:entry.commitId, eventId:entry.decision.eventId,
         narration:entry.rationale })),
+      { title:'Remove the non-interacting side chain', durationMs:2600, commitId:c16.commitId,
+        eventId:c16Decision.eventId, narration:'Compound 16 preserves subnanomolar binding while improving cellular activity through deliberate truncation.' },
       { title:'Cellular activity catches up', durationMs:3000, commitId:c21.commitId,
         eventId:c21Decision.eventId, narration:'Compound 21 combines subnanomolar binding with 60–90 nM cellular activity.' },
     ] });

@@ -7,6 +7,14 @@ const ACTIONS = Object.freeze({
     arguments:Object.freeze({ mode:'view | build | run' }) }),
   'build.setTool': Object.freeze({ description:'Choose the same Add, Select, or Move tool available in Build.',
     arguments:Object.freeze({ tool:'add | select | move' }) }),
+  'protein.prepare': Object.freeze({
+    description:'Prepare and parameterize the loaded protein complex through the visible preparation workflow.',
+    arguments:Object.freeze({ pH:'number 0…14', histidine:'auto | hid | hie | hip',
+      repairMissingHeavy:'boolean', ligandPolicy:'ccd | exclude',
+      waterPolicy:'crucial | retain | exclude', gapPolicy:'cap | block' }) }),
+  'protein.parameterize': Object.freeze({
+    description:'Assign force-field parameters to the current edited complex without moving coordinates.',
+    arguments:Object.freeze({}) }),
   'selection.replace': Object.freeze({ description:'Select a connected atom path by persistent atom IDs, in click order.',
     arguments:Object.freeze({ atomIds:'array of 1–256 persistent atom IDs' }) }),
   'selection.clear': Object.freeze({ description:'Clear the atom selection.', arguments:Object.freeze({}) }),
@@ -41,7 +49,39 @@ const ACTIONS = Object.freeze({
   'pose.apply': Object.freeze({ description:'Apply one returned refined pose by zero-based result index.',
     arguments:Object.freeze({ index:'non-negative integer' }) }),
   'optimization.run': Object.freeze({ description:'Run one optimization method exposed in the Build method menu.',
-    arguments:Object.freeze({ method:'ligand-rdkit | pocket-webgpu | webgpu | rdkit | ani2x' }) }),
+    arguments:Object.freeze({ method:'ligand-rdkit | pocket-webgpu | induced-fit-webgpu | webgpu | rdkit | ani2x' }) }),
+  'designCampaign.load': Object.freeze({
+    description:'Load the coordinate-bearing hit of a registered design campaign.',
+    arguments:Object.freeze({ campaignId:'registered design-campaign ID' }) }),
+  'designCampaign.applyStep': Object.freeze({
+    description:'Stage one registered graph design step, preserving any designer-selected exit vector.',
+    arguments:Object.freeze({ stepId:'persistent design-step ID',
+      attachmentAtomId:'persistent atom ID selected as the growth attachment point when required' }) }),
+  'designCampaign.inspect': Object.freeze({
+    description:'Inspect the active campaign boundary, hit, and current graph-only design step.',
+    arguments:Object.freeze({}) }),
+  'structureStory.load': Object.freeze({
+    description:'Load a registered, provenance-pinned molecular structure story.',
+    arguments:Object.freeze({ storyId:'registered structure-story ID' }) }),
+  'structureStory.selectCue': Object.freeze({
+    description:'Select a named cue through the same timeline shown in the structure-story interface.',
+    arguments:Object.freeze({ cueId:'persistent cue ID' }) }),
+  'structureStory.selectFrame': Object.freeze({
+    description:'Select a bounded movie frame through the same timeline shown in the structure-story interface.',
+    arguments:Object.freeze({ frame:'integer 0…story frame count − 1' }) }),
+  'structureStory.inspect': Object.freeze({
+    description:'Inspect the current public structure-story, cue, frame, visible references, and camera.',
+    arguments:Object.freeze({}) }),
+});
+
+const STRUCTURE_STORY_ACTION_NAMES = Object.freeze(Object.keys(ACTIONS)
+  .filter((name) => name.startsWith('structureStory.')));
+const APPLICATION_ACTION_NAMES = Object.freeze(Object.keys(ACTIONS)
+  .filter((name) => !name.startsWith('structureStory.')));
+
+export const CHEMIST_ACTION_SCOPES = Object.freeze({
+  application:APPLICATION_ACTION_NAMES,
+  structureStory:STRUCTURE_STORY_ACTION_NAMES,
 });
 
 const FORBIDDEN_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
@@ -87,14 +127,22 @@ function snapshot(value) {
 }
 
 export function createChemistActionsApi({ routes, now = () => new Date().toISOString(),
-  monotonicNow = () => performance.now(), historyLimit = 500, recordAudit = null } = {}) {
+  monotonicNow = () => performance.now(), historyLimit = 500, recordAudit = null,
+  enabledActions = Object.keys(ACTIONS) } = {}) {
   if (!routes || typeof routes !== 'object') throw new TypeError('Chemist Actions requires a route adapter');
   if (recordAudit != null && typeof recordAudit !== 'function')
     throw new TypeError('Chemist Actions recordAudit must be a function');
-  const routeNames = Object.keys(ACTIONS);
+  if (!Array.isArray(enabledActions) || !enabledActions.length)
+    throw new TypeError('Chemist Actions enabledActions must be a non-empty array');
+  const routeNames = [...new Set(enabledActions.map((name) => String(name)))];
+  routeNames.forEach((name) => {
+    if (!Object.hasOwn(ACTIONS, name)) throw new TypeError(`Unknown enabled Chemist Actions route ${name}`);
+  });
   routeNames.forEach((name) => {
     if (typeof routes[name] !== 'function') throw new TypeError(`Chemist Actions route ${name} is missing`);
   });
+  const enabledDefinitions = Object.freeze(Object.fromEntries(routeNames
+    .map((name) => [name, ACTIONS[name]])));
   const audit = [];
   let sequence = 0;
   let queue = Promise.resolve();
@@ -103,7 +151,8 @@ export function createChemistActionsApi({ routes, now = () => new Date().toISOSt
     const envelope = checkedInput(request);
     const action = String(envelope.action || '');
     const requestId = envelope.requestId == null ? null : String(envelope.requestId).slice(0, 160);
-    if (!Object.hasOwn(ACTIONS, action)) throw publicError(`Unknown chemist action: ${action || '(empty)'}`);
+    if (!Object.hasOwn(enabledDefinitions, action))
+      throw publicError(`Unknown chemist action: ${action || '(empty)'}`);
     const args = checkedInput(envelope.args || {});
     const startedAt = now(), started = monotonicNow();
     const record = { sequence:++sequence, schema:CHEMIST_ACTIONS_SCHEMA, requestId,
@@ -130,7 +179,7 @@ export function createChemistActionsApi({ routes, now = () => new Date().toISOSt
     schema:CHEMIST_ACTIONS_SCHEMA,
     describe() { return { schema:CHEMIST_ACTIONS_SCHEMA,
       guarantee:'Every mutating route is a chemist-visible Molarium action; no arbitrary code or internal callback route is exposed.',
-      actions:snapshot(ACTIONS) }; },
+      actions:snapshot(enabledDefinitions) }; },
     execute(request) {
       const operation = queue.then(() => run(request));
       queue = operation.catch(() => {});

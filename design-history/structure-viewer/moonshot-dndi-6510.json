@@ -37,6 +37,7 @@
   },
   "cues": [
     {
+      "id": "starting-crystal",
       "title": "The starting crystal",
       "body": "Moonshot compound (S)-x1 bound to SARS-CoV-2 Mpro.",
       "detail": "Experimental structure · PDB 7GN8",
@@ -46,6 +47,7 @@
       "cameraEnd": "x1Overview"
     },
     {
+      "id": "enter-binding-site",
       "title": "Enter the binding site",
       "body": "The camera follows the experimental ligand into the S1/S2 pocket.",
       "detail": "No computed pose is substituted",
@@ -55,6 +57,7 @@
       "cameraEnd": "x1Pocket"
     },
     {
+      "id": "preserve-binding-logic",
       "title": "Preserve the binding logic",
       "body": "The isoquinoline nitrogen and amide carbonyl retain the key polar contacts reported for the series.",
       "detail": "His163 · Glu166 · cyan distance guides",
@@ -64,6 +67,7 @@
       "cameraEnd": "x1PocketOrbit"
     },
     {
+      "id": "optimize-without-losing-pose",
       "title": "Optimize without losing the pose",
       "body": "The program explored potency, solubility, permeability and metabolic stability while maintaining the S1/S2 interaction pattern.",
       "detail": "Published design branches remain decisions—not invented 3D intermediates",
@@ -73,6 +77,7 @@
       "cameraEnd": "overlayPocket"
     },
     {
+      "id": "crystal-comparison",
       "title": "Crystal-to-crystal comparison",
       "body": "Aligned experimental poses of (S)-x1 and optimized (S)-x38 show the inherited binding mode directly.",
       "detail": "7GN8 in purple · 7GNR in orange · 305-Cα alignment",
@@ -82,6 +87,7 @@
       "cameraEnd": "x38Pocket"
     },
     {
+      "id": "dndi-6510",
       "title": "DNDI-6510",
       "body": "The optimized compound preserves the key pocket interactions in its own experimental structure.",
       "detail": "(S)-x38 · PDB 7GNR",
@@ -91,6 +97,7 @@
       "cameraEnd": "overlayPocket"
     },
     {
+      "id": "decision-record",
       "title": "A complete decision record",
       "body": "The chemistry advanced; the series was later discontinued after PXR-linked induction findings. The negative decision belongs in the molecular history too.",
       "detail": "Real structures · recorded branches · recorded stop decision",

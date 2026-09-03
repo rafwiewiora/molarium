@@ -28,6 +28,15 @@
       "campaign": "bclxl-fragment-linking",
       "role": "published bound complex",
       "ligand": { "resName": "B50", "chain": "A", "resSeq": 501, "label": "compound 4" }
+    },
+    {
+      "pdbId": "3SP7",
+      "file": "3SP7.pdb",
+      "url": "https://files.rcsb.org/download/3SP7.pdb",
+      "sha256": "751af8a7c1b5d0a763cb4ac7dfd0707e2c423a3b702aa0a88354a7ad3a561b05",
+      "campaign": "bclxl-fragment-linking",
+      "role": "experimental scaffold constraint for reconstructed trajectory poses",
+      "ligand": { "resName": "03B", "chain": "A", "resSeq": 210, "label": "BM903 structural template" }
     }
   ]
 }

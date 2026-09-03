@@ -36,11 +36,11 @@
       "summary": {
         "campaignId": "bclxl-fragment-linking",
         "title": "BCL-xL fragment linking and linker optimization",
-        "commits": 10,
-        "events": 32,
-        "decisions": 10,
+        "commits": 11,
+        "events": 35,
+        "decisions": 11,
         "byDisposition": {
-          "progressed": 5,
+          "progressed": 6,
           "not-progressed": 5,
           "deferred": 0,
           "failed": 0,
@@ -48,8 +48,8 @@
           "superseded": 0,
           "archived": 0
         },
-        "branches": 9,
-        "campaignSha256": "8668fe791923b32e3358ec13f11232f21da3e545aaedb8f3d53a015f6a89f0f2"
+        "branches": 10,
+        "campaignSha256": "3bab186b499d4716917b80177adbededd05f097cefa880c4b91999eb9b10b659"
       }
     },
     {

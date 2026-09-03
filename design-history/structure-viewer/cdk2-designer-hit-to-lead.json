@@ -1,0 +1,157 @@
+{
+  "schema": "molarium.structure-story/v1",
+  "id": "cdk2-designer-hit-to-lead",
+  "title": "From one hit pose to a lead-like bound pose",
+  "subtitle": "CDK2 · the designer selects the exit vector · Agent API actions carry the structure through two chemical steps",
+  "width": 1600,
+  "height": 900,
+  "fps": 18,
+  "assetManifest": "../structures/generated/cdk2-designer-movie-assets.json",
+  "sources": [
+    { "label": "Davies et al. · purine CDK2 inhibitor design", "url": "https://doi.org/10.1038/nsb842" },
+    { "label": "1H1Q · starting hit pose", "url": "https://www.rcsb.org/structure/1H1Q" },
+    { "label": "1H1R · 6CP structural validation", "url": "https://www.rcsb.org/structure/1H1R" },
+    { "label": "1OIU · sulfonamide structural validation", "url": "https://www.rcsb.org/structure/1OIU" }
+  ],
+  "legend": [
+    { "label": "starting hit · 1H1Q/2A6", "color": "#247d95" },
+    { "label": "Agent API prediction", "color": "#826cae" },
+    { "label": "crystal validation", "color": "#dc8747" }
+  ],
+  "cameras": {
+    "pocketWide": { "target": [5.1, 42.1, 48.0], "radius": 10.8, "view": [1, 0.18, 0.06] },
+    "editLocked": { "target": [3.9, 40.3, 45.8], "radius": 6.8, "view": [1, 0.18, 0.06] }
+  },
+  "scenes": {
+    "hit": {
+      "label": "Starting hit · 2A6 in 1H1Q",
+      "coordinateClass": "allowed-input",
+      "coordinateLabel": "START · experimental hit pose",
+      "models": [
+        { "ref": "protein", "path": "cdk2-1h1q-protein.pdb", "representation": "cartoon", "colorScheme": "chain-id", "alpha": 0.18 },
+        { "ref": "pocket", "path": "cdk2-1h1q-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.48, "sizeFactor": 0.14 },
+        { "ref": "hit", "path": "cdk2-1h1q-ligand.pdb", "representation": "ball-and-stick", "color": "#247d95", "sizeFactor": 0.24 }
+      ]
+    },
+    "prediction6cp": {
+      "label": "6CP · designer-directed prediction",
+      "coordinateClass": "frozen-prediction",
+      "coordinateLabel": "PREDICTION · grown from selected C19",
+      "models": [
+        { "ref": "pocket", "path": "cdk2-1h1q-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.42, "sizeFactor": 0.14 },
+        { "ref": "prediction", "path": "cdk2-designer-6cp-prediction.pdb", "representation": "ball-and-stick", "color": "#826cae", "sizeFactor": 0.25 }
+      ]
+    },
+    "validation6cp": {
+      "label": "6CP prediction validated by 1H1R",
+      "coordinateClass": "evaluation-holdout",
+      "coordinateLabel": "VALIDATION · prediction and crystal converge",
+      "models": [
+        { "ref": "pocket", "path": "cdk2-1h1q-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.32, "sizeFactor": 0.13 },
+        { "ref": "prediction", "path": "cdk2-designer-6cp-prediction.pdb", "representation": "ball-and-stick", "color": "#826cae", "alpha": 0.88, "sizeFactor": 0.23 },
+        { "ref": "crystal", "path": "cdk2-1h1r-6cp-aligned-holdout.pdb", "representation": "ball-and-stick", "color": "#dc8747", "alpha": 0.82, "sizeFactor": 0.22 }
+      ]
+    },
+    "predictionN76": {
+      "label": "Sulfonamide · designer-directed prediction",
+      "coordinateClass": "frozen-prediction",
+      "coordinateLabel": "PREDICTION · grown from predicted 6CP",
+      "models": [
+        { "ref": "pocket", "path": "cdk2-1h1q-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.42, "sizeFactor": 0.14 },
+        { "ref": "prediction", "path": "cdk2-designer-n76-prediction.pdb", "representation": "ball-and-stick", "color": "#826cae", "sizeFactor": 0.25 }
+      ]
+    },
+    "validationN76": {
+      "label": "Sulfonamide prediction validated by 1OIU",
+      "coordinateClass": "evaluation-holdout",
+      "coordinateLabel": "VALIDATION · 0.85 Å ligand RMSD",
+      "models": [
+        { "ref": "pocket", "path": "cdk2-1h1q-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.32, "sizeFactor": 0.13 },
+        { "ref": "prediction", "path": "cdk2-designer-n76-prediction.pdb", "representation": "ball-and-stick", "color": "#826cae", "alpha": 0.88, "sizeFactor": 0.23 },
+        { "ref": "crystal", "path": "cdk2-1oiu-n76-aligned-holdout.pdb", "representation": "ball-and-stick", "color": "#dc8747", "alpha": 0.82, "sizeFactor": 0.22 }
+      ]
+    }
+  },
+  "cues": [
+    {
+      "id": "hit-pose",
+      "title": "Begin with a useful bound hit",
+      "body": "2A6 anchors its purine core in the CDK2 hinge and presents a phenyl edge toward an open pocket. That experimental pose is the structural starting point.",
+      "detail": "PDB 1H1Q · one coordinate-bearing starting structure",
+      "scene": "hit", "durationMs": 3800,
+      "cameraStart": "pocketWide", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "select-c19",
+      "title": "The designer chooses where to grow",
+      "body": "Select carbon C19 as the meta exit vector. That persistent atom identity removes the ring symmetry ambiguity before any pose search begins.",
+      "detail": "Agent API · session.inspect → attachmentAtomId for C19",
+      "focusLabel": "selected exit vector · C19",
+      "scene": "hit", "durationMs": 2200,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "grow-chlorine",
+      "title": "Grow the first analogue",
+      "body": "designCampaign.applyStep preserves the selected attachment while the graph changes from H to Cl. Pose refinement keeps the inherited hinge-binding core in place.",
+      "detail": "Agent API · applyStep({ stepId, attachmentAtomId }) → pose.refine → pose.apply",
+      "focusLabel": "predicted meta chlorine",
+      "scene": "prediction6cp", "durationMs": 3200,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "validate-6cp",
+      "title": "The first growth vector lands",
+      "body": "The predicted chlorine and the 1H1R crystal occupy the same side of the ring. The local chemical decision is reproduced without moving the inherited scaffold.",
+      "detail": "Edited group RMSD 0.53 Å · whole ligand RMSD 1.06 Å",
+      "focusLabel": "prediction and crystal agree",
+      "scene": "validation6cp", "durationMs": 4200,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "carry-forward",
+      "title": "Carry the predicted pose forward",
+      "body": "The first Agent API prediction becomes the structural reference for the next design step. The trajectory is continuous from the original hit.",
+      "detail": "pose.captureReference · predicted 6CP becomes the next starting state",
+      "focusLabel": "predicted intermediate",
+      "scene": "prediction6cp", "durationMs": 2800,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "select-c19-again",
+      "title": "Use the same designer-controlled exit vector",
+      "body": "C19 remains a persistent atom in predicted 6CP. Selecting it again directs the chlorine-to-sulfonamide transformation into the intended pocket volume.",
+      "detail": "Agent API · C19 attachmentAtomId preserved across the predicted intermediate",
+      "focusLabel": "Cl → sulfonamide at C19",
+      "scene": "prediction6cp", "durationMs": 2400,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "grow-sulfonamide",
+      "title": "Grow the lead-like polar group",
+      "body": "The second graph edit replaces chlorine with sulfonamide. The predicted group expands into the selected pocket region while the hit-derived core remains anchored.",
+      "detail": "Agent API · second applyStep → 64-candidate refinement → frozen N76 prediction",
+      "focusLabel": "predicted sulfonamide",
+      "scene": "predictionN76", "durationMs": 3400,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "validate-n76",
+      "title": "The second bound pose is reproduced",
+      "body": "The 1OIU crystal confirms the predicted placement of the full sulfonamide analogue. Purple and orange remain closely superposed across the ligand.",
+      "detail": "Whole ligand RMSD 0.85 Å · edited group RMSD 1.83 Å",
+      "focusLabel": "predicted lead pose validated",
+      "scene": "validationN76", "durationMs": 4400,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    },
+    {
+      "id": "success",
+      "title": "One hit pose supports two design steps",
+      "body": "Explicit designer intent turns a graph edit into a spatial design action. The Agent API carries the 1H1Q pose through chlorine growth and onward to the sulfonamide bound pose.",
+      "detail": "2A6 → 6CP → N76 · designer-directed structural progression",
+      "focusLabel": "hit-to-lead structural success",
+      "scene": "validationN76", "durationMs": 4000,
+      "cameraStart": "editLocked", "cameraEnd": "editLocked"
+    }
+  ]
+}
