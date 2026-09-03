@@ -25,6 +25,8 @@ try {
     transportTop:document.querySelector('#designer-story-dock').getBoundingClientRect().top,
     transportBottom:document.querySelector('#designer-story-dock').getBoundingClientRect().bottom,
     transportPosition:getComputedStyle(document.querySelector('#designer-story-dock')).position,
+    modeLabels:[...document.querySelectorAll('.mode-bar button')]
+      .map((button) => button.textContent.trim()),
   })`);
   assert.match(initial.url, /\?story=sos1-hit-to-bay293$/);
   assert.match(initial.play, /Play story/);
@@ -34,6 +36,7 @@ try {
   assert.equal(initial.buildActive, true);
   assert.equal(initial.transportVisible, true);
   assert.equal(initial.transportPosition, 'relative');
+  assert.deepEqual(initial.modeLabels, ['View', 'Design', 'Simulate']);
   const anchoredTransport = await browser.evaluate(`(async () => {
     const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
     const dock = document.querySelector('#designer-story-dock');

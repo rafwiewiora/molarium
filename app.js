@@ -14912,7 +14912,7 @@ const DESIGNER_STORY_LINKS = Object.freeze({
     title:'SOS1 hit to BAY-293',
     script:'./design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
     sourcePath:'design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
-    sourceSha256:'9c3494c3deb11f7ec80559e8b7235981f4d9993c89b9e63bea978d7eb4a7267d',
+    sourceSha256:'34d1db8acb8e6c5ec48194d3d49b2099820a36fa1c81a2e3c0f1d6af713e7aa7',
     presentation:'chemist-pocket',
   }),
 });

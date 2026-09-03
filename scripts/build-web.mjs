@@ -96,6 +96,7 @@ const files = [
   'docking/validation/cloud-panel/openmm-wasm-native-validation-2026-08-23.json',
   'docking/validation/cloud-panel/RESULTS-2026-08-23.md',
   'assets/lsd-launch.mol', 'assets/molarium-logo.svg', 'assets/molarium-mark.svg',
+  'assets/media/sos1-designer-moves-molarium-interface.mp4',
   'licenses/APACHE-2.0-LICENSE.txt', 'licenses/DIMORPHITE-DL-NOTICE.txt', 'licenses/ONNXRUNTIME-1.27.0-THIRD-PARTY-NOTICES.txt',
   'licenses/ONNXRUNTIME-LICENSE.txt', 'licenses/OPENFOLD-LICENSE.txt', 'licenses/PDBFIXER-LICENSE.txt',
   'mlip/README.md', 'mlip/TORCHANI-LICENSE.txt', 'mlip/ani2x.js', 'mlip/ani2x-webgpu.js',

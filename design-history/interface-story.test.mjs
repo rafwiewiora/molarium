@@ -8,7 +8,7 @@ const source = JSON.parse(await readFile(new URL(
 const sourceBefore = structuredClone(source);
 const story = buildPocketInterfaceStory(source, {
   sourcePath:'design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
-  sourceSha256:'9c3494c3deb11f7ec80559e8b7235981f4d9993c89b9e63bea978d7eb4a7267d',
+  sourceSha256:'34d1db8acb8e6c5ec48194d3d49b2099820a36fa1c81a2e3c0f1d6af713e7aa7',
 });
 
 assert.deepEqual(source, sourceBefore);
@@ -39,5 +39,5 @@ assert(story.actions.filter((step) => step.action === 'view.highlightAtoms')
 assert.match(story.actions.find((step) => step.action === 'view.highlightAtoms')?.caption,
   /pyrazole.*Phe890.*Lys898.*no direct H-bond/i);
 assert.equal(await actionScriptSha256(story),
-  '1150d125fd10790d09be4dcb02ad0887673415357bc4bdd748f6c82df0d8a742');
+  'cde8d237563c2cbcb824ee398bcccf50b4d85de51cc55fac263092971d607a8a');
 console.log('Interface story test passed: 33 scientific actions + 15 presentation actions');
