@@ -915,7 +915,10 @@ const browserSuite = String.raw`(async () => {
         .maximumAdditionalStericClashes === 2
       && propagationRun.selected.refinement.capture.bestEvaluation.chemicalValidity
         .maximumAdditionalLennardJonesKcalMol === 100
-      && propagationLabbook.selections.atomLineage.inheritedAtomIds.length === 6
+      && propagationLabbook.selections.atomLineage.inheritedAtomIds.length === 5
+      && propagationLabbook.selections.atomLineage.releasedReferenceAtomIds.length === 1
+      && propagationLabbook.selections.atomLineage.releasedReferenceAtomIds
+        .some((id) => id.includes(':F1:'))
       && propagationLabbook.selections.atomLineage.addedAtomIds.length === 1
       && propagationLabbook.selections.editPreparation.selectedCleanupMode === 'preserve-reference'
       && Array.isArray(propagationLabbook.selections.editPreparation.interactivePolishHistory)
@@ -925,7 +928,7 @@ const browserSuite = String.raw`(async () => {
         && event.details.restraintParticipation.includes('stage 1 generates')
         && event.details.restraintParticipation.includes('sanity gates'))
       && propagationLabbook.events.some((event) => event.stage === 'fixed-scaffold-relaxation'),
-    'pose propagation records automatic atom lineage and fixed-scaffold Sage relaxation',
+    'pose propagation records automatic lineage, affected-rotor release, and fixed-scaffold Sage relaxation',
     JSON.stringify({ run:propagationRun, protocol:propagationLabbook.protocol.id,
       lineage:propagationLabbook.selections.atomLineage,
       events:propagationLabbook.events.map((event) => event.stage) }));
