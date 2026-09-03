@@ -2,12 +2,14 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { startMolariumBrowser, waitFor } from '../../scripts/headless-chrome.mjs';
+import { validateRegisteredDesignRoute } from './design-route.mjs';
 
 const root = resolve(import.meta.dirname, '../..');
 const checkpoint = JSON.parse(await readFile(resolve(root,
   'outputs/design-history/sos1-hit-only-growth-clash-v7/open-phe890-pocket-prediction.json')));
 const campaign = JSON.parse(await readFile(resolve(import.meta.dirname,
   'generated/sos1-prospective-campaign.json')));
+validateRegisteredDesignRoute(campaign);
 const finalStep = campaign.steps.find((step) => step.id === 'finish-bay-293');
 const protectedNames = finalStep.posePropagationMap.protectedReferenceAnchor.referenceAtomNames;
 
@@ -57,6 +59,7 @@ try {
       caseId:'sos1-hit-only:finish-bay-293-anchor-test',
       productSmiles:finalStep.productSmiles,
       posePropagationMap:finalStep.posePropagationMap,
+      posePropagationPolicy:campaign.posePropagationPolicy,
       productAtomNames:finalStep.productAtomNames,
       productComponentId:finalStep.productComponentId,
       interactionHypotheses:[],

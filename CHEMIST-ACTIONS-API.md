@@ -128,7 +128,14 @@ molecule scripts so replay cannot recursively create or mutate a campaign.
 Registered design routes use schema `molarium.registered-design-route/v1` and enforce a
 prospective coordinate boundary. They are input protocols, not append-only campaign ledgers.
 `designRoute.load` loads only the hash-pinned hit complex. `designRoute.applyStep` accepts a persistent registered
-step ID and supplies its molecular graph plus a reference/product atom map. Designer-directed steps
+step ID and supplies its molecular graph plus a reference/product atom map. The action derives and
+returns a `molarium.pose-transfer-plan/v2`: only element- and bond-order-exact common atoms inherit
+identity and hard coordinates; deleted, added, or chemically rewritten ring regions are released;
+compatible donor/acceptor roles may transfer as soft restraints but never as atom identity. The v1
+route policy requires complete-ring correspondence and explicitly rejects element-agnostic hard
+matching. Thus a bioisosteric ring replacement keeps the unchanged external scaffold fixed while the
+replacement ring is rebuilt and searched. Adding a substituent to an otherwise unchanged ring does
+not release that ring. Designer-directed steps
 also require `attachmentAtomId`, the same persistent ligand atom ID that an interactive chemist
 selects as the exit vector; the route rejects a symmetry-equivalent map attached anywhere else.
 Later protein or ligand coordinates are not available to the route. Evaluation holdouts remain

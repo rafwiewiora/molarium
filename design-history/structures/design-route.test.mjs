@@ -14,6 +14,15 @@ const route = JSON.parse(await readFile(
 
 assert.equal(route.schema, REGISTERED_DESIGN_ROUTE_SCHEMA);
 assert.equal(validateRegisteredDesignRoute(route, { expectedId:'sos1-hit-only' }), route);
+assert.equal(route.posePropagationPolicy.atomCorrespondence, 'exact-element');
+const legacyPolicyRoute = structuredClone(route);
+delete legacyPolicyRoute.posePropagationPolicy;
+assert.equal(validateRegisteredDesignRoute(legacyPolicyRoute), legacyPolicyRoute);
+assert.deepEqual(legacyPolicyRoute.posePropagationPolicy, route.posePropagationPolicy,
+  'the v1 exact transfer policy is derived in memory without changing frozen route bytes');
+assert.throws(() => validateRegisteredDesignRoute({ ...route,
+  posePropagationPolicy:{ ...route.posePropagationPolicy,
+    atomCorrespondence:'any-element' } }), /must be exact-element/);
 assert.throws(() => validateRegisteredDesignRoute(
   { ...route, schema:'molarium.design-campaign/v1' }), /registered-design-route\/v1/);
 assert.throws(() => validateRegisteredDesignRoute(
@@ -25,10 +34,18 @@ assert.throws(() => validateRegisteredDesignRoute(ledger), /registered-design-ro
 
 const protectedRoute = structuredClone(route);
 protectedRoute.steps[0].posePropagationMap = {
-  commonAtoms:[{ referenceAtomName:'C1' }],
+  referenceHeavyAtoms:3, productHeavyAtoms:3, commonHeavyAtoms:3,
+  commonAtoms:[
+    { referenceAtomIndex:0, referenceAtomName:'C1', productAtomIndex:0, element:'C' },
+    { referenceAtomIndex:1, referenceAtomName:'C2', productAtomIndex:1, element:'C' },
+    { referenceAtomIndex:2, referenceAtomName:'N1', productAtomIndex:2, element:'N' },
+  ],
+  deletedReferenceAtoms:[], addedProductAtoms:[],
+  referenceBoundary:[], productBoundary:[],
+  mcs:{ smarts:'[#6]-[#6]-[#7]', atoms:3, bonds:2 },
   protectedReferenceAnchor:{
     method:'designer-directed-substructure/v1', label:'fixed ring',
-    referenceAtomNames:['C1'], atoms:1,
+    referenceAtomNames:['C1','C2','N1'], atoms:3,
   },
 };
 assert.equal(validateRegisteredDesignRoute(protectedRoute), protectedRoute);

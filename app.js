@@ -10657,6 +10657,7 @@ function installChemistActionsApi(module) {
         caseId:`${state.designRoute.id}:${step.id}`,
         productSmiles:step.productSmiles,
         posePropagationMap:step.posePropagationMap,
+        posePropagationPolicy:state.designRoute.posePropagationPolicy,
         productAtomNames:step.productAtomNames || null,
         productComponentId:step.productComponentId || null,
         interactionHypotheses:hitContacts,
@@ -10680,6 +10681,7 @@ function installChemistActionsApi(module) {
         inputKind:step.inputKind, productHeavyAtoms:staged.productHeavyAtoms,
         commonHitHeavyAtoms:staged.commonHeavyAtoms,
         changedAtomIds,
+        poseTransferPlan:structuredClone(staged.poseTransferPlan),
         spatialIntent,
         embedding:structuredClone(staged.embedding) } }); },
     'designRoute.inspect':async (args) => { empty(args);
@@ -10687,6 +10689,7 @@ function installChemistActionsApi(module) {
       return chemistActionSummary({ designRoute:{ id:state.designRoute.id,
         hit:structuredClone(state.designRoute.hit),
         protocolBoundary:structuredClone(state.designRoute.protocolBoundary),
+        posePropagationPolicy:structuredClone(state.designRoute.posePropagationPolicy),
         currentStateId:state.designRouteStepId,
         evaluationStatus:state.designRoute.evaluation.status,
         availableSteps:state.designRoute.steps.map((step) => step.id) } }); },
@@ -10781,6 +10784,7 @@ const molariumTestApi = Object.freeze({
     return { mode:'pose-propagation', coreAtomCount:ligand.coreAtomIds.length };
   },
   async stageBenchmarkPoseProduct({ caseId, productSmiles, posePropagationMap,
+    posePropagationPolicy = null,
     productAtomNames = null,
     productComponentId = null,
     interactionHypotheses = [] } = {}) {
@@ -10788,11 +10792,16 @@ const molariumTestApi = Object.freeze({
       throw new Error('Capture a pose-propagation reference before staging a benchmark product');
     if (!productSmiles || !posePropagationMap?.commonAtoms?.length)
       throw new Error('A product graph and exact pose-propagation map are required');
-    const [adapter, referenceCore, constraints, remap, featureSeeding] = await Promise.all([
+    const [adapter, referenceCore, constraints, remap, featureSeeding,
+      registeredGraphEdit] = await Promise.all([
       import('./docking/browser-adapter.mjs'), import('./docking/reference-core.mjs'),
       import('./docking/constraints.mjs'), import('./docking/contact-remap.mjs'),
       import('./docking/feature-seeding.mjs'),
+      import('./docking/registered-graph-edit.mjs'),
     ]);
+    const poseTransferPlan = registeredGraphEdit.buildRegisteredPoseTransferPlan(
+      posePropagationMap, posePropagationPolicy
+        || registeredGraphEdit.EXACT_REGISTERED_POSE_PROPAGATION_POLICY);
     const reference = state.dockingReference;
     const component = dockingLigandComponent();
     if (!component) throw new Error('The captured reference ligand component is missing');
@@ -10825,7 +10834,7 @@ const molariumTestApi = Object.freeze({
       throw new Error('Registered product component ID must contain one to three alphanumeric characters');
     const template = state.molecule.atoms[component.atomIndices[0]];
     const mappedPairs = [];
-    for (const mapping of posePropagationMap.commonAtoms) {
+    for (const mapping of poseTransferPlan.exactAtomPairs) {
       const before = beforeByAtomName.get(mapping.referenceAtomName);
       const productIndex = productHeavyIndices[mapping.productAtomIndex];
       if (!before || !Number.isInteger(productIndex))
@@ -10990,10 +10999,18 @@ const molariumTestApi = Object.freeze({
         expectedTransfer:hypothesis.expectedTransfer, status:proposal?.status || 'unavailable' });
     }
     state.dockingSelectedHbondIds = selected;
+    poseTransferPlan.featureCorrespondences = remappedTargets.flatMap((target) =>
+      target.candidates.map((candidate) => ({
+        kind:'hydrogen-bond-role', capturedContactId:target.id,
+        productFeatureId:candidate.id, role:candidate.role, type:candidate.type,
+        matchKind:candidate.matchKind,
+        treatment:'soft-restraint',
+      })));
     updateInfo(); updateDockingUi(); updateOptimizerControls(); draw();
     return { caseId:caseId || null, productAtoms:currentPlan.molecule.atoms.length,
       productHeavyAtoms:productHeavyIndices.length, commonHeavyAtoms:mappedPairs.length,
       selectedContactIds:[...selected], unavailableTargets, remappedTargets,
+      poseTransferPlan:structuredClone(poseTransferPlan),
       proposals:proposals.map((proposal) => ({ id:proposal.id, status:proposal.status,
         ligandRole:proposal.ligandRole, candidateCount:proposal.candidates.length,
         candidateTypes:proposal.candidates.map((candidate) => candidate.type) })),

@@ -27,7 +27,13 @@ try {
     repairMissingHeavy:true, waterPolicy:'retain',
   }, 'responsive-prepare');
   await execute('pose.captureReference', { mode:'propagate' }, 'responsive-capture');
-  await execute('designRoute.applyStep', { stepId:'scaffold-rewrite' }, 'responsive-rewrite');
+  const rewrite = await execute('designRoute.applyStep', {
+    stepId:'scaffold-rewrite',
+  }, 'responsive-rewrite');
+  assert.equal(rewrite.result.designStep.poseTransferPlan.schema,
+    'molarium.pose-transfer-plan/v2');
+  assert.equal(rewrite.result.designStep.poseTransferPlan.elementAgnosticAtomMatching, false);
+  assert.ok(rewrite.result.designStep.poseTransferPlan.exactAtomPairs.length >= 3);
 
   await browser.evaluate(`{
     window.__molariumResponsiveRefinement = window.MolariumChemistActions.execute({

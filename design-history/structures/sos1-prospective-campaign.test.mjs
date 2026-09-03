@@ -19,6 +19,13 @@ assert.equal(campaign.hit.pdbId, '5OVE');
 assert.equal(campaign.hit.stateId, 'AXE');
 assert.equal(campaign.hit.ligandDefinition.id, 'AXE');
 assert.equal(campaign.generator.rdkitVersion, '2026.03.4');
+assert.deepEqual(campaign.posePropagationPolicy, {
+  schema:'molarium.registered-pose-propagation-policy/v1',
+  atomCorrespondence:'exact-element', bondCorrespondence:'exact-order',
+  ringCorrespondence:'complete-rings-only',
+  changedRingTreatment:'release-from-hard-core',
+  featureTransfer:'role-compatible-restraints',
+});
 assert(campaign.hit.ligandDefinition.atoms.some((atom) => atom.element === 'H'));
 assert.deepEqual(campaign.evaluation,
   { status:'locked-until-predictions-frozen', holdouts:[] });
