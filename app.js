@@ -2223,15 +2223,42 @@ function buildStructureComponents(molecule) {
 function resetStructureComponents(molecule, preserveDisplay = false) {
   const previousVisibility = state.componentVisibility;
   const previousFocus = state.focusedComponentId;
+  const previousComponents = state.structureComponents;
+  const previousFocusedComponent = previousComponents.find((component) =>
+    component.id === previousFocus) || null;
+  const semanticMatch = (component, previous) => {
+    if (!component || !previous || component.kind !== previous.kind) return false;
+    if (component.kind === 'ligand' || component.kind === 'ion') return (
+      component.chain === previous.chain
+      && component.residueIndex === previous.residueIndex
+      && (component.insertionCode || '') === (previous.insertionCode || '')
+    );
+    return false;
+  };
   state.structureComponents = buildStructureComponents(molecule);
   state.atomComponentIds = Array(molecule.atoms.length).fill(null);
   state.structureComponents.forEach((component) => component.atomIndices.forEach((index) => {
     state.atomComponentIds[index] = component.id;
   }));
-  state.componentVisibility = new Map(state.structureComponents.map((component) => [component.id,
-    preserveDisplay && previousVisibility.has(component.id)
-      ? previousVisibility.get(component.id) : component.kind !== 'water']));
-  if (!preserveDisplay || !state.structureComponents.some((component) => component.id === previousFocus)) {
+  state.componentVisibility = new Map(state.structureComponents.map((component) => {
+    const previousSemanticComponent = preserveDisplay && !previousVisibility.has(component.id)
+      ? previousComponents.find((entry) => semanticMatch(component, entry)) : null;
+    const previousId = previousVisibility.has(component.id)
+      ? component.id : previousSemanticComponent?.id;
+    return [component.id, preserveDisplay && previousId
+      ? previousVisibility.get(previousId) : component.kind !== 'water'];
+  }));
+  const restoredFocus = preserveDisplay && previousFocusedComponent
+    ? state.structureComponents.find((component) => component.id === previousFocus)
+      || state.structureComponents.find((component) =>
+        semanticMatch(component, previousFocusedComponent))
+    : null;
+  if (restoredFocus) {
+    // Registered graph edits replace the ligand component and therefore its
+    // residue-name-derived ID.  Keep the established pocket camera exactly;
+    // only retarget the semantic focus to the replacement ligand.
+    state.focusedComponentId = restoredFocus.id;
+  } else if (!preserveDisplay || previousFocus) {
     state.focusedComponentId = null;
     state.focusedComponentCenter = null;
     state.focusedComponentRadius = null;
@@ -11024,6 +11051,7 @@ const molariumTestApi = Object.freeze({
   polarHydrogenDiagnostics() { return structuredClone(polarHydrogenDiagnostics(state.molecule)); },
   structureComponents() {
     return { summary: structureComponentSummary(), focusedComponentId:state.focusedComponentId,
+      focusedComponentCenter:structuredClone(state.focusedComponentCenter),
       focusedComponentRadius:state.focusedComponentRadius,
       components: state.structureComponents.map((component) => ({
       id: component.id, kind: component.kind, label: component.label, atomCount: component.atomIndices.length,

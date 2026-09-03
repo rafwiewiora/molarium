@@ -15,7 +15,7 @@ function pdbAtomLine(atom, serial) {
   const [x, y, z] = atom.coordinatesAngstrom;
   const atomName = String(atom.atomName).slice(0, 4).padStart(4);
   const element = String(atom.element).slice(0, 2).padStart(2);
-  return `HETATM${String(serial).padStart(5)} ${atomName} AXE A1104    `
+  return `HETATM${String(serial).padStart(5)} ${atomName} AWW A1104    `
     + `${x.toFixed(3).padStart(8)}${y.toFixed(3).padStart(8)}${z.toFixed(3).padStart(8)}`
     + `  1.00 20.00          ${element}`;
 }
@@ -44,6 +44,10 @@ try {
     content:ligandPdb(checkpoint.ligand), format:'pdb', name:'AWW predicted reference',
   }, 'load-aww-reference');
   await execute('view.setMode', { mode:'build' }, 'enter-design');
+  await execute('view.focusComponent', {
+    kind:'ligand', ordinal:0, isolate:false,
+  }, 'focus-aww-reference');
+  const focusBefore = await browser.evaluate('window.molariumTest.structureComponents()');
   await browser.evaluate('window.molariumTest.captureLigandReferenceForStagingTest()');
   const before = await execute('session.inspect', {
     scope:'ligand', includeCoordinates:true, maximumAtoms:256,
@@ -57,6 +61,7 @@ try {
       productComponentId:finalStep.productComponentId,
       interactionHypotheses:[],
     })})`);
+  const focusAfter = await browser.evaluate('window.molariumTest.structureComponents()');
   const after = await execute('session.inspect', {
     scope:'ligand', includeCoordinates:true, maximumAtoms:256,
   }, 'inspect-axh-anchor');
@@ -72,6 +77,14 @@ try {
   const afterByName = new Map(after.result.atoms.map((atom) => [atom.atomName, atom]));
   assert(after.result.atoms.every((atom) => atom.residueName === 'AXH'),
     'the staged BAY-293 component must be identified as AXH, not inherited AWW');
+  assert.match(focusBefore.focusedComponentId || '', /AWW/,
+    'the AWW ligand must own the pocket focus before graph replacement');
+  assert.match(focusAfter.focusedComponentId || '', /AXH/,
+    'the replacement AXH ligand must inherit the pocket focus');
+  assert.deepEqual(focusAfter.focusedComponentCenter, focusBefore.focusedComponentCenter,
+    'registered graph replacement must preserve the established camera center');
+  assert.equal(focusAfter.focusedComponentRadius, focusBefore.focusedComponentRadius,
+    'registered graph replacement must preserve the established camera scale');
   for (const atomName of protectedNames) {
     assert.deepEqual(afterByName.get(atomName)?.coordinatesAngstrom,
       beforeByName.get(atomName)?.coordinatesAngstrom,
