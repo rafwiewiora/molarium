@@ -159,12 +159,14 @@ legacy `index`, `chiDegrees`, or `coordinateSha256`. Chi angles are compared cir
 and +180° are equivalent) at 0.001° precision, and the match must be unique. Hash selection must
 match exactly one enumerated branch. Optional `expectedInputCoordinateSha256` and
 `expectedSelectedCoordinateSha256` guards abort before mutation if the caller is applying a branch
-from the wrong input or a different selected result. The response records `selectedBy`, the actual
-candidate index and rank, its normalized chi values, and the selected-coordinate hash. Prefer a
-coordinate hash for exact replay or chi angles when the physical rotamer should survive harmless
-ranking changes; use an index only for legacy or immediate interactive selection. The chosen branch
-should then be physically refined and compared with the other branches; the steric pre-rank is not
-an affinity score.
+from the wrong input or a different selected result. These exact byte guards are intended for the
+same numerical execution. They are deliberately not used as cross-adapter checkpoints after WebGPU
+relaxation, where conforming devices can produce scientifically equivalent but byte-different
+floating-point coordinates. The response records `selectedBy`, the actual candidate index and rank,
+its normalized chi values, and the selected-coordinate hash. For a portable replay, pin the stable
+residue identity and unique chi angles; use an index only for an immediate interactive selection.
+The chosen branch should then be physically refined and compared with the other branches; the
+steric pre-rank is not an affinity score.
 
 `pose.updateReceptorReference` accepts a moved receptor-site branch without replacing the captured
 ligand reference or its persistent atom lineage. It refreshes the receptor coordinates and any

@@ -159,7 +159,31 @@
         "receptorAtomId": "reference-5OVE:ATOM:A:PHE:890::CG:2679"
       },
       "expect": {
-        "sidechainRotamers.inputCoordinateSha256": "e62cdf930726a2f8b15effd1fc267dfebb448eec79c934f18705eb9bb69f9895"
+        "sidechainRotamers.schema": "molarium.sidechain-rotamers/v1",
+        "sidechainRotamers.receptorAtomId": "reference-5OVE:ATOM:A:PHE:890::CG:2679",
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.axes": [
+          {
+            "chi": "chi1",
+            "atomNames": [
+              "N",
+              "CA",
+              "CB",
+              "CG"
+            ]
+          },
+          {
+            "chi": "chi2",
+            "atomNames": [
+              "CA",
+              "CB",
+              "CG",
+              "CD1"
+            ]
+          }
+        ]
       },
       "caption": "Enumerate discrete Phe890 side-chain alternatives"
     },
@@ -169,17 +193,18 @@
         "chiDegrees": [
           -180,
           90
-        ],
-        "expectedInputCoordinateSha256": "e62cdf930726a2f8b15effd1fc267dfebb448eec79c934f18705eb9bb69f9895",
-        "expectedSelectedCoordinateSha256": "0fdc3367686a264f9c62d0af91251c686afcab6985222a11c1d81037d78ef333"
+        ]
       },
       "expect": {
-        "sidechainRotamer.inputCoordinateSha256": "e62cdf930726a2f8b15effd1fc267dfebb448eec79c934f18705eb9bb69f9895",
-        "sidechainRotamer.selectedCoordinateSha256": "0fdc3367686a264f9c62d0af91251c686afcab6985222a11c1d81037d78ef333",
-        "sidechainRotamer.chiDegrees": [
-          -180,
-          90
-        ]
+        "sidechainRotamer.schema": "molarium.sidechain-rotamer-application/v1",
+        "sidechainRotamer.method": "canonical-chi-grid-steric-prerank-v1",
+        "sidechainRotamer.receptorAtomId": "reference-5OVE:ATOM:A:PHE:890::CG:2679",
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.selectedBy": "chiDegrees",
+        "sidechainRotamer.source": "canonical-library",
+        "sidechainRotamer.coordinateInputClass": "registered-hit-only"
       },
       "caption": "Choose the predicted Phe890-out branch"
     },

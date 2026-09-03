@@ -17,23 +17,23 @@
     },
     {
       "path": "app.js",
-      "bytes": 872706,
-      "sha256": "73f5b3757919304d3309dd778f0b8dd353271240e46242eeda60984b9748e5b8"
+      "bytes": 883073,
+      "sha256": "e6aa441b22714f01f7d0327dc5d95fccbbbf8cd0cbb289b7106b819e2e1d2556"
     },
     {
       "path": "chemist-actions.mjs",
-      "bytes": 25801,
-      "sha256": "4c51f506dae282ef06afad55552950c19266050fb3433d47934f5d913040e5ac"
+      "bytes": 27624,
+      "sha256": "7f30e71e50fb506275fd6c32509eda674e5f37e4b6940c069f8170db026454de"
     },
     {
       "path": "CHEMIST-ACTIONS-API.md",
-      "bytes": 19549,
-      "sha256": "a7fe393a51ceae3f1ef69086f6a466f95f95288d6a1a5b5c35954ab20474fd69"
+      "bytes": 21965,
+      "sha256": "16ab168c0786c79d896827c9eade25fc051b5d50c65fc0136a77b50d9e938e3c"
     },
     {
       "path": "DESIGNER-MOVES.md",
-      "bytes": 9920,
-      "sha256": "27f970358a0af5af9d071b1e1500fcde87c47db456e3c94991cdf0661e0ea65d"
+      "bytes": 13007,
+      "sha256": "7449a4d94790fcb01bf4ded887d0a0117a9501d35efa0c61de02e4c380126bef"
     },
     {
       "path": "bun.lock",
@@ -57,8 +57,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 9808,
-      "sha256": "ad602d9fa2886ed6183161f0f58145836d7a5c8ff5b709c6a20651f2e9d056de"
+      "bytes": 9901,
+      "sha256": "735874e3426f5829f11c2eee2ac356aea8ebcec6035ab4b0589f06454a3cc82a"
     },
     {
       "path": "protein-residue-templates.js",
@@ -152,8 +152,8 @@
     },
     {
       "path": "docking/sidechain-rotamers.mjs",
-      "bytes": 15207,
-      "sha256": "7581450db3a2db583e81fce89cdd8a8b5f962d727928be438f9d4ca3f37cc187"
+      "bytes": 19346,
+      "sha256": "287f212a3466e63e3aa627f9eb5cb16e1f0fd6d6dde7598f17fca7f4164155fa"
     },
     {
       "path": "docking/labbook.mjs",
@@ -387,8 +387,8 @@
     },
     {
       "path": "design-history/interface-story.mjs",
-      "bytes": 4321,
-      "sha256": "5e8185541862285c2e8e28d3b6013a3ad80795f7a9d071e250a9fd452c71131f"
+      "bytes": 5213,
+      "sha256": "a95a9de9359c582fd6a01154fb40b7976f473c051534c9a90bee1efd619e3fd8"
     },
     {
       "path": "design-history/integrity.mjs",
@@ -412,13 +412,13 @@
     },
     {
       "path": "design-history/replay.mjs",
-      "bytes": 11355,
-      "sha256": "88f73d895b4cc2e9324fc1b971abf2370be9d40675e2d7c4a1534a9aa4b7a901"
+      "bytes": 13047,
+      "sha256": "5d8783713f095825ada2ed995fd7c19c8d726170de35c187073b5ab11134a9c7"
     },
     {
       "path": "design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json",
-      "bytes": 6640,
-      "sha256": "34d1db8acb8e6c5ec48194d3d49b2099820a36fa1c81a2e3c0f1d6af713e7aa7"
+      "bytes": 9078,
+      "sha256": "f7f1fcb6b3791a8a4bd445e450f188c8e08e2062bf6c270fe0e5db1d9d6e5a59"
     }
   ]
 }

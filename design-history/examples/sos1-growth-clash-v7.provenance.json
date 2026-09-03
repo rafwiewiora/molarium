@@ -47,9 +47,9 @@
     "selectedRoute": {
       "path": "design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json",
       "actions": 33,
-      "actionScriptSha256": "deef61641cb39cca0d9fcf90bd78d87310cde0d9718a373f57253a308fd1d820",
-      "fileSha256": "fcafcf1e25fc66c4f906797c80351b1c43fb7ae2a33b5f08f59b60734b1301cd",
-      "meaning": "Fail-closed operational replay of the already-selected route. It pins the v3 pose-seeding protocol, selects Phe890 by chi angles with exact input/output coordinate guards, and rejects infeasible pose applications. It omits discarded branches and read-only freeze inspections, so it is not the evidence that branch search occurred."
+      "actionScriptSha256": "7ada67fe9f982deca83e50d57f6acc59a9d06b1d7e054540d6fd7e835306bf6b",
+      "fileSha256": "f7f1fcb6b3791a8a4bd445e450f188c8e08e2062bf6c270fe0e5db1d9d6e5a59",
+      "meaning": "Fail-closed operational replay of the already-selected route. It pins the v3 pose-seeding protocol, persistent Phe890 identity, the unique normalized chi-angle branch, and feasible pose applications. Same-execution coordinate hashes still guard enumeration and application, but post-WebGPU coordinate bytes are not treated as a portable cross-adapter identity. It omits discarded branches and read-only freeze inspections, so it is not the evidence that branch search occurred."
     }
   },
   "frozenCheckpoints": [

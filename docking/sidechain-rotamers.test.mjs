@@ -79,6 +79,25 @@ assert.throws(() => assertSidechainRotamerCoordinateGuards({
   currentCoordinateSha256:'1'.repeat(64), expectedSelectedCoordinateSha256:'5'.repeat(64) }),
 /expectedSelectedCoordinateSha256/);
 
+const alternateAdapterEnsemble = { ...stableSelectionEnsemble,
+  inputCoordinateSha256:'6'.repeat(64), candidates:[
+    { ...stableSelectionEnsemble.candidates[0], chiDegrees:[180,90],
+      coordinateSha256:'7'.repeat(64) },
+    stableSelectionEnsemble.candidates[1],
+  ] };
+const alternateAdapterCandidate = selectSidechainRotamerCandidate(alternateAdapterEnsemble,
+  { chiDegrees:[-180,90] });
+assert.equal(alternateAdapterCandidate.coordinateSha256, '7'.repeat(64),
+'the same physical 180-degree branch survives backend-specific coordinate hashes and angle sign');
+assert.equal(assertSidechainRotamerCoordinateGuards({ ensemble:alternateAdapterEnsemble,
+  candidate:alternateAdapterCandidate,
+  currentCoordinateSha256:alternateAdapterEnsemble.inputCoordinateSha256 }), true,
+'same-execution coordinate integrity remains exact on the alternate backend');
+assert.throws(() => assertSidechainRotamerCoordinateGuards({
+  ensemble:alternateAdapterEnsemble, candidate:alternateAdapterCandidate,
+  currentCoordinateSha256:stableSelectionEnsemble.inputCoordinateSha256 }), /coordinates changed/,
+'coordinate hashes from different numerical executions cannot be cross-paired');
+
 const coupled = [
   { candidateRank:1, refinement:{ selectedFeasible:true, selectedScoreKcalMol:-119,
     selectedChemicalValidity:{ additionalStericClashes:2 } },

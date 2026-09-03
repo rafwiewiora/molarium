@@ -62,10 +62,13 @@ different artifact and do not share these action names.
 ```
 
 The chi-angle selector identifies the intended physical branch even if a later implementation ranks
-the same deterministic candidates in a different order. Exact byte-for-byte workflows can instead
-select the candidate's returned `coordinateSha256` and optionally require both the enumerated input
-and selected-coordinate hashes. `index` remains available for legacy scripts and immediate choices
-from the visible list, but it is not a stable branch identity.
+the same deterministic candidates in a different order. A caller can use the returned
+`coordinateSha256` and optional input/selected-coordinate guards within one numerical execution to
+ensure that nothing changed between enumeration and application. Those byte-level coordinate hashes
+are not portable checkpoints after GPU relaxation: different conforming WebGPU adapters can end at
+scientifically equivalent but byte-different floating-point coordinates. Cross-adapter replays should
+pin the residue identity and select the unique normalized chi-angle branch. `index` remains available
+for immediate choices from the visible list, but it is not a stable branch identity.
 
 The example is shortened for readability. A real script must include preparation, reference
 capture, pose refinement, parameterization, and any requested optimization in their execution
@@ -216,8 +219,9 @@ The defensible methods statement is: starting from the coordinate-bearing 5OVE/A
 grew the ligand until compound 21 clashed with Phe890-in; public actions enumerated three Phe890
 rotamer basins, jointly refined ligand poses for each tested branch, selected the
 χ1/χ2 = −180°/90° branch under the registered criterion, and propagated the predicted receptor
-state to BAY-293. The selected-route replay pins the v3 pose-seeding protocol and exact rotamer
-input/output coordinate hashes, and refuses infeasible pose application. The smooth movie
+state to BAY-293. The selected-route replay pins the v3 pose-seeding protocol, the persistent Phe890
+identity, and the unique χ1/χ2 = −180°/90° branch; it retains same-execution coordinate
+guards and refuses infeasible pose application. The smooth movie
 motion between endpoints is visualization, not molecular dynamics. Tyr884 was **not** predicted in
 this run: its structural difference is a historical comparison between deposited structures.
 

@@ -35,10 +35,32 @@ assert(selected.actions.filter((step) => step.action === 'pose.apply')
   .every((step) => step.expect['appliedPose.feasible'] === true));
 const selectedRotamer = selected.actions.find((step) =>
   step.action === 'pose.applySidechainRotamer');
-assert.equal(selectedRotamer.args.expectedInputCoordinateSha256,
-  'e62cdf930726a2f8b15effd1fc267dfebb448eec79c934f18705eb9bb69f9895');
-assert.equal(selectedRotamer.args.expectedSelectedCoordinateSha256,
-  '0fdc3367686a264f9c62d0af91251c686afcab6985222a11c1d81037d78ef333');
+assert.deepEqual(selectedRotamer.args, { chiDegrees:[-180,90] });
+assert.equal(selectedRotamer.expect['sidechainRotamer.selectedBy'], 'chiDegrees');
+assert.equal(selectedRotamer.expect['sidechainRotamer.receptorAtomId'],
+  'reference-5OVE:ATOM:A:PHE:890::CG:2679');
+assert.equal(selectedRotamer.expect['sidechainRotamer.residue.residueName'], 'PHE');
+assert.equal(selectedRotamer.expect['sidechainRotamer.residue.residueIndex'], 890);
+assert.equal(selectedRotamer.expect['sidechainRotamer.method'],
+  'canonical-chi-grid-steric-prerank-v1');
+assert.equal(selectedRotamer.expect['sidechainRotamer.source'], 'canonical-library');
+assert.equal(selectedRotamer.expect['sidechainRotamer.coordinateInputClass'],
+  'registered-hit-only');
+assert.equal(Object.keys(selectedRotamer.expect).some((key) =>
+  /CoordinateSha256|chiDegrees/.test(key)), false,
+'portable replay expectations must not pin post-WebGPU coordinate bytes or a sign at 180 degrees');
+const enumeratedRotamers = selected.actions.find((step) =>
+  step.action === 'pose.enumerateSidechainRotamers');
+assert.equal(enumeratedRotamers.expect['sidechainRotamers.schema'],
+  'molarium.sidechain-rotamers/v1');
+assert.equal(enumeratedRotamers.expect['sidechainRotamers.receptorAtomId'],
+  selectedRotamer.expect['sidechainRotamer.receptorAtomId']);
+assert.deepEqual(enumeratedRotamers.expect['sidechainRotamers.axes'], [
+  { chi:'chi1', atomNames:['N','CA','CB','CG'] },
+  { chi:'chi2', atomNames:['CA','CB','CG','CD1'] },
+]);
+assert.equal(Object.keys(enumeratedRotamers.expect).some((key) =>
+  /CoordinateSha256/.test(key)), false);
 assert.equal(selected.actions.some((step) => step.action.endsWith('.inspect')), false);
 assert.equal(JSON.stringify(full).includes('Tyr884'), false);
 

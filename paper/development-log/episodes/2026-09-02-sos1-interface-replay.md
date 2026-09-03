@@ -59,7 +59,7 @@ camera refit.
 
 ## Validation and publication boundary
 
-Focused unit tests cover stable chi/hash rotamer selection, coordinate guards,
+Focused unit tests cover stable chi/hash rotamer selection, same-execution coordinate guards,
 the distinction between v3 and v4 feature seeding, and fail-closed infeasible
 pose application. Syntax checks and manifest-selection checks exercise the
 figure construction without running a simulation. The renderer publishes a
@@ -71,7 +71,17 @@ the final movie and five-panel raster remain pending artifacts.
 
 ## Remaining uncertainty
 
-The replay pins software-visible protocol identity and exact selected
-coordinates, but it does not by itself validate the physical model. The final
-post-freeze structural comparison remains a separate evaluation against the
-withheld crystal structure.
+The replay pins software-visible protocol identity, persistent Phe890 identity,
+the unique selected chi-angle branch, and feasible pose application. It does
+not treat byte-level coordinates after WebGPU relaxation as a portable
+cross-adapter identity, nor does it by itself validate the physical model. The
+final post-freeze structural comparison remains a separate evaluation against
+the withheld crystal structure.
+
+A GitHub-hosted software-WebGPU replay made that boundary concrete: it passed
+the adapter probe and the first 30 public actions, then rejected the Phe890
+enumeration because a raw whole-system Float64 digest differed from the digest
+recorded after native-WebGPU relaxation. The portable script was corrected to
+guard the persistent Phe890 identity, chi definitions, selection method, and
+unique physical branch. The implementation still requires an exact dynamic
+coordinate match between enumeration and application within either run.
