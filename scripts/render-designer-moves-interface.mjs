@@ -158,8 +158,17 @@ try {
   });
   await browser.evaluate(`document.querySelector('#designer-move-file')
     .dispatchEvent(new Event('change', {bubbles:true})); true`);
-  await waitFor(async () => browser.evaluate(`document.querySelector('#designer-move-status')
-    .textContent.includes('replayable move')`), 10000, 'imported designer moves');
+  try {
+    await waitFor(async () => browser.evaluate(`document.querySelector('#designer-move-status')
+      .textContent.includes('replayable move')`), 30000, 'imported designer moves');
+  } catch (error) {
+    const diagnostic = await browser.evaluate(`(() => ({
+      status:document.querySelector('#designer-move-status')?.textContent || '',
+      notice:document.querySelector('#notice')?.classList.contains('hidden')
+        ? '' : document.querySelector('#notice')?.textContent || '',
+    }))()`);
+    throw new Error(`${error.message}; status=${JSON.stringify(diagnostic.status)}; notice=${JSON.stringify(diagnostic.notice)}`);
+  }
   await appendFrame('Imported JSON action script', Math.round(fps * 1.5));
 
   await browser.evaluate(`document.querySelector('#replay-designer-moves').click(); true`);

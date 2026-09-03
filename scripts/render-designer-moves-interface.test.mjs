@@ -42,6 +42,10 @@ try {
     'utf8');
   assert.match(renderer, /replayStatus !== 'completed'/);
   assert.match(renderer, /promoteCompletedRender\(\{ stagingDirectory:publicationStaging/);
+  assert.match(renderer, /30000, 'imported designer moves'/,
+    'cold browser import receives a bounded 30-second readiness window');
+  assert.match(renderer, /status=\$\{JSON\.stringify\(diagnostic\.status\)\}/,
+    'import failures surface the visible replay status');
   assert.match(renderer, /entry\.requestId === 'story-/,
     'the renderer must identify constituent moves by public request ID, not audit-array position');
   assert.doesNotMatch(renderer, /records\[\$\{auditBaseline \+ actionNumber\}\]/,
