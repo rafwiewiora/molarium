@@ -284,7 +284,10 @@ export const CHEMIST_ACTION_SCOPES = Object.freeze({
 });
 
 const FORBIDDEN_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
-const MAX_INPUT_DEPTH = 8;
+// Saved action scripts legitimately contain request -> args -> script -> actions ->
+// step -> expect -> array/object values.  Twelve levels admit that public format
+// while the independent node and byte ceilings still bound traversal and memory.
+const MAX_INPUT_DEPTH = 12;
 const MAX_INPUT_NODES = 2048;
 // A complete coordinate-bearing PDB is intentionally accepted as one string by
 // session.loadStructure.  Keep the structural JSON guards below, but do not

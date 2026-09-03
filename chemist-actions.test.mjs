@@ -65,6 +65,19 @@ const coordinateText = 'ATOM  '.repeat(20000);
 await api.execute({ action:'session.loadStructure', args:{ content:coordinateText, format:'pdb' } });
 assert.equal(calls.at(-1).args.content.length, coordinateText.length,
   'coordinate-bearing structure payloads are accepted above the old 32 KiB control limit');
+const nestedReplay = { schema:'molarium.chemist-action-script/v1', label:'Nested replay fixture',
+  actions:[{ action:'session.inspect', args:{ scope:'pocket' },
+    expect:{ 'fixture.axes':[
+      { chi:'chi1', atomNames:['N','CA','CB','CG'] },
+      { chi:'chi2', atomNames:['CA','CB','CG','CD1'] },
+    ] } }] };
+await api.execute({ action:'designerScript.load', args:{ script:nestedReplay } });
+assert.deepEqual(calls.at(-1).args.script, nestedReplay,
+  'the public loader accepts the nested shape of an installed replay script');
+let excessiveDepth = { value:true };
+for (let depth = 0; depth < 13; depth++) excessiveDepth = { nested:excessiveDepth };
+await assert.rejects(() => api.execute({ action:'designerScript.load',
+  args:{ script:excessiveDepth } }), /input exceeds depth 12/);
 
 const order = [];
 routes['chemistry.finish'] = undefined;
@@ -83,7 +96,7 @@ assert.equal(api.history().length, 3, 'audit history is bounded');
 assert(api.history().every((record) => record.status === 'completed'));
 const copy = api.history(); copy[0].action = 'tampered';
 assert.notEqual(api.history()[0].action, 'tampered', 'history returns a defensive copy');
-assert.equal(persisted.length, 4);
+assert.equal(persisted.length, 5);
 assert(persisted.every((record) => record.status === 'completed'),
   'accepted actions are offered to the durable audit adapter after completion');
 assert(persisted.every((record) => record.result?.observed === record.action),
