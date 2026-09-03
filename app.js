@@ -15060,7 +15060,10 @@ async function runSelectedBuildOptimization() {
     }
     if (result && flexiblePocketRelaxation) setMode('view');
     return result;
-  } catch { return null; }
+  } catch (error) {
+    showNotice(error.message);
+    throw error;
+  }
   finally { button.disabled = false; button.textContent = '⚡ Optimize'; }
 }
 

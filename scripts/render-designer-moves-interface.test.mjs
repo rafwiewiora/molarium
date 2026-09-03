@@ -71,6 +71,8 @@ try {
     'scheduled playback must use an explicit single-flight guard');
   assert.match(app, /if \(!ownsDesignerMoveStatus\) updateDesignerMoveControls\(\)/,
     'the generic audit callback must not overwrite public replay presentation checkpoints');
+  assert.doesNotMatch(app, /catch \{ return null; \}\s*finally \{ button\.disabled = false/,
+    'build optimization must preserve the engine error in the public action audit');
 
   const paperBuilder = await readFile(new URL('../paper/scripts/build-sos1-paper-figure.py',
     import.meta.url), 'utf8');
