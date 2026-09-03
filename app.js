@@ -10683,7 +10683,7 @@ function installChemistActionsApi(module) {
       const hitContacts = state.dockingReference.hydrogenBonds.map((definition) => ({
         kind:'hydrogen-bond', capturedId:definition.id, label:definition.label,
       }));
-      const staged = await molariumTestApi.stageBenchmarkPoseProduct({
+      const staged = await stageRegisteredDesignRouteProduct({
         caseId:`${state.designRoute.id}:${step.id}`,
         productSmiles:step.productSmiles,
         posePropagationMap:step.posePropagationMap,
@@ -10732,7 +10732,7 @@ function installChemistActionsApi(module) {
   return api;
 }
 
-const molariumTestApi = Object.freeze({
+const molariumTestApiBase = {
   parsePdb(text) {
     const molecule = parsePDB(text);
     return { ...moleculeDiagnostics(molecule), source: structuredClone(molecule.source),
@@ -10813,7 +10813,9 @@ const molariumTestApi = Object.freeze({
     };
     return { mode:'pose-propagation', coreAtomCount:ligand.coreAtomIds.length };
   },
-  async stageBenchmarkPoseProduct({ caseId, productSmiles, posePropagationMap,
+};
+
+async function stageRegisteredDesignRouteProduct({ caseId, productSmiles, posePropagationMap,
     posePropagationPolicy = null,
     productAtomNames = null,
     productComponentId = null,
@@ -11173,7 +11175,13 @@ const molariumTestApi = Object.freeze({
                   - reference.ligand.positions[referenceIndex * 3 + 2]))),
         })) },
     };
-  },
+}
+
+const molariumTestApi = Object.freeze({
+  ...molariumTestApiBase,
+  // Benchmark harness compatibility: production route actions and benchmark
+  // tests share the same neutral staging implementation.
+  stageBenchmarkPoseProduct:stageRegisteredDesignRouteProduct,
   benchmarkCurrentLigand() {
     const indices = currentDockingLigandAtomIndices();
     return {

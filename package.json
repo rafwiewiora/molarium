@@ -35,7 +35,7 @@
     "run:sos1-prospective": "bun scripts/run-sos1-prospective.mjs",
     "run:sos1-final-resume": "MOLARIUM_TEST_API=1 bun scripts/resume-sos1-final-step.mjs",
     "test:sos1-campaign": "node design-history/structures/sos1-prospective-campaign.test.mjs",
-    "test:sos1-final-anchor-browser": "MOLARIUM_TEST_API=1 bun design-history/structures/sos1-final-anchor.browser.test.mjs",
+    "test:sos1-final-anchor-browser": "bun design-history/structures/sos1-final-anchor.browser.test.mjs",
     "test:structure-story-core": "node design-history/structures/pipeline.test.mjs && node design-history/structure-viewer/timeline.test.mjs && node design-history/structures/build-assets.mjs && node design-history/structures/bclxl-trajectory.test.mjs && node design-history/structures/design-route.test.mjs && node design-history/structures/bclxl-prospective-campaign.test.mjs && node design-history/structures/cdk2-prospective-campaign.test.mjs && node design-history/structures/sos1-prospective-campaign.test.mjs",
     "test:structure-story-browser": "bun design-history/structure-viewer/browser.test.mjs && bun design-history/structure-viewer/bclxl.browser.test.mjs && bun design-history/structure-viewer/cdk2-designer.browser.test.mjs && bun design-history/structure-viewer/sos1.browser.test.mjs",
     "test:structure-story": "npm run test:structure-story-core && npm run test:structure-story-browser",
