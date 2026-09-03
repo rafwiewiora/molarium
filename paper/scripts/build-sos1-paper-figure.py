@@ -158,8 +158,14 @@ def main():
     label_font = font(48)
 
     for index, (label, image) in enumerate(images):
-        x = (index % 2) * (panel_w + gutter)
-        y = (index // 2) * (panel_h + gutter)
+        # Five molecular states read more cleanly without a sixth explanatory
+        # card. Center the final state beneath the two paired rows.
+        if index == len(images) - 1:
+            x = (canvas.width - panel_w) // 2
+            y = panel_h * 2 + gutter * 2
+        else:
+            x = (index % 2) * (panel_w + gutter)
+            y = (index // 2) * (panel_h + gutter)
         canvas.paste(image, (x, y))
         badge_x, badge_y = x + 354, y + 18
         draw.rounded_rectangle(
@@ -170,42 +176,6 @@ def main():
             width=3,
         )
         draw.text((badge_x + 17, badge_y + 7), label, font=label_font, fill="white")
-
-    # The sixth cell is an explanatory bridge, not another molecular state. It
-    # prevents the compound-21 to BAY-293 graph rewrite and subsequent pose
-    # selection from reading as an unexplained coordinate jump between C and E.
-    card_x = panel_w + gutter
-    card_y = panel_h * 2 + gutter * 2
-    pad = 96
-    draw.rounded_rectangle(
-        (card_x + pad, card_y + pad, card_x + panel_w - pad, card_y + panel_h - pad),
-        radius=34,
-        fill=(244, 250, 249),
-        outline=(58, 137, 145),
-        width=4,
-    )
-    heading_font = font(42)
-    body_font = font(31)
-    small_font = font(27)
-    center_x = card_x + panel_w // 2
-    draw.text((center_x, card_y + 150), "WHY THE LIGAND CHANGES", font=heading_font,
-              fill=(19, 35, 50), anchor="mm")
-    lines = [
-        ("compound 21", body_font, (113, 89, 163)),
-        ("↓", heading_font, (58, 137, 145)),
-        ("rewrite the molecular graph", body_font, (19, 35, 50)),
-        ("15 heavy atoms retained", small_font, (63, 78, 92)),
-        ("16 removed · 17 added", small_font, (63, 78, 92)),
-        ("↓", heading_font, (58, 137, 145)),
-        ("64-candidate pose search", body_font, (19, 35, 50)),
-        ("selected pose + coupled relaxation", small_font, (63, 78, 92)),
-        ("↓", heading_font, (58, 137, 145)),
-        ("BAY-293 prediction", body_font, (113, 89, 163)),
-    ]
-    line_y = card_y + 245
-    for text, text_font, color in lines:
-        draw.text((center_x, line_y), text, font=text_font, fill=color, anchor="mm")
-        line_y += 67 if text == "↓" else 62
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     canvas.save(args.output, optimize=True, dpi=(300, 300))
