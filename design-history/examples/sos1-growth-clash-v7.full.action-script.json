@@ -1,0 +1,725 @@
+{
+  "schema": "molarium.chemist-action-script/v1",
+  "label": "SOS1 growth-clash-v7 full explored branch-search log",
+  "actions": [
+    {
+      "action": "designCampaign.load",
+      "args": {
+        "campaignId": "sos1-hit-only"
+      },
+      "caption": "Load the coordinate-bearing 5OVE/AXE hit only"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "campaign-enter-build"
+    },
+    {
+      "action": "protein.prepare",
+      "args": {
+        "gapPolicy": "cap",
+        "histidine": "auto",
+        "ligandPolicy": "ccd",
+        "pH": 7.4,
+        "repairMissingHeavy": true,
+        "waterPolicy": "retain"
+      },
+      "caption": "campaign-prepare-hit"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "caption": "campaign-capture-hit"
+    },
+    {
+      "action": "designCampaign.inspect",
+      "args": {},
+      "caption": "campaign-inspect-boundary"
+    },
+    {
+      "action": "designCampaign.applyStep",
+      "args": {
+        "stepId": "scaffold-rewrite"
+      },
+      "caption": "Stage the scaffold rewrite to compound 17 (AWT)"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 64
+      },
+      "caption": "scaffold-rewrite-pose-refine"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "caption": "scaffold-rewrite-pose-apply"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "scaffold-rewrite-parameterize-without-motion"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "scaffold-rewrite-complex-relax"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "caption": "scaffold-rewrite-freeze-ligand"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "caption": "scaffold-rewrite-freeze-pocket"
+    },
+    {
+      "action": "designCampaign.inspect",
+      "args": {},
+      "caption": "scaffold-rewrite-inspect-state"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "scaffold-rewrite-advance-build"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "caption": "scaffold-rewrite-capture-predicted-reference"
+    },
+    {
+      "action": "designCampaign.applyStep",
+      "args": {
+        "stepId": "fragment-merge"
+      },
+      "caption": "Merge the fragment-derived pocket idea to compound 18 (AWZ)"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 64
+      },
+      "caption": "fragment-merge-pose-refine"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "caption": "fragment-merge-pose-apply"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "fragment-merge-parameterize-without-motion"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "fragment-merge-complex-relax"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "caption": "fragment-merge-freeze-ligand"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "caption": "fragment-merge-freeze-pocket"
+    },
+    {
+      "action": "designCampaign.inspect",
+      "args": {},
+      "caption": "fragment-merge-inspect-state"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "fragment-merge-advance-build"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "caption": "fragment-merge-capture-predicted-reference"
+    },
+    {
+      "action": "designCampaign.applyStep",
+      "args": {
+        "stepId": "open-phe890-pocket"
+      },
+      "caption": "Grow compound 21 (AWW), creating the Phe890-in clash"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": false,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "caption": "open-phe890-pocket-locate-phe890"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 32,
+        "receptorAtomId": "reference-5OVE:ATOM:A:PHE:890::CG:2679"
+      },
+      "caption": "Enumerate Phe890 rotamers from the hit-derived receptor state"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "index": 0
+      },
+      "caption": "Test Phe890 branch 1"
+    },
+    {
+      "action": "pose.updateReceptorReference",
+      "args": {},
+      "caption": "open-phe890-pocket-accept-receptor-branch-1"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 32
+      },
+      "caption": "open-phe890-pocket-pose-branch-1"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "caption": "open-phe890-pocket-apply-pose-branch-1"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "open-phe890-pocket-parameterize-branch-1"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "open-phe890-pocket-relax-phe890-branch-1"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "caption": "open-phe890-pocket-inspect-ligand-branch-1"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "caption": "open-phe890-pocket-inspect-pocket-branch-1"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "caption": "open-phe890-pocket-undo-branch-1-relaxation"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "caption": "open-phe890-pocket-undo-branch-1-pose"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "caption": "open-phe890-pocket-undo-branch-1-rotamer"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "open-phe890-pocket-return-build-1"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": false,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "caption": "open-phe890-pocket-locate-phe890"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 32,
+        "receptorAtomId": "reference-5OVE:ATOM:A:PHE:890::CG:2679"
+      },
+      "caption": "Re-enumerate and test Phe890 branch 6"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "index": 5
+      },
+      "caption": "open-phe890-pocket-apply-phe890-branch-6"
+    },
+    {
+      "action": "pose.updateReceptorReference",
+      "args": {},
+      "caption": "open-phe890-pocket-accept-receptor-branch-6"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 32
+      },
+      "caption": "open-phe890-pocket-pose-branch-6"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "caption": "open-phe890-pocket-apply-pose-branch-6"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "open-phe890-pocket-parameterize-branch-6"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "open-phe890-pocket-relax-phe890-branch-6"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "caption": "open-phe890-pocket-inspect-ligand-branch-6"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "caption": "open-phe890-pocket-inspect-pocket-branch-6"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "caption": "open-phe890-pocket-undo-branch-6-relaxation"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "caption": "open-phe890-pocket-undo-branch-6-pose"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "caption": "open-phe890-pocket-undo-branch-6-rotamer"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "open-phe890-pocket-return-build-6"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": false,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "caption": "open-phe890-pocket-locate-phe890"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 32,
+        "receptorAtomId": "reference-5OVE:ATOM:A:PHE:890::CG:2679"
+      },
+      "caption": "Re-enumerate and test Phe890 branch 7"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "index": 6
+      },
+      "caption": "open-phe890-pocket-apply-phe890-branch-7"
+    },
+    {
+      "action": "pose.updateReceptorReference",
+      "args": {},
+      "caption": "open-phe890-pocket-accept-receptor-branch-7"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 32
+      },
+      "caption": "open-phe890-pocket-pose-branch-7"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "caption": "open-phe890-pocket-apply-pose-branch-7"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "open-phe890-pocket-parameterize-branch-7"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "open-phe890-pocket-relax-phe890-branch-7"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "caption": "open-phe890-pocket-inspect-ligand-branch-7"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "caption": "open-phe890-pocket-inspect-pocket-branch-7"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "caption": "open-phe890-pocket-undo-branch-7-relaxation"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "caption": "open-phe890-pocket-undo-branch-7-pose"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "caption": "open-phe890-pocket-undo-branch-7-rotamer"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "open-phe890-pocket-return-build-7"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": false,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "caption": "open-phe890-pocket-locate-phe890"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 32,
+        "receptorAtomId": "reference-5OVE:ATOM:A:PHE:890::CG:2679"
+      },
+      "caption": "Re-enumerate the deterministic ensemble for the selected route"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "index": 5
+      },
+      "caption": "Apply selected Phe890 rotamer index 5"
+    },
+    {
+      "action": "pose.updateReceptorReference",
+      "args": {},
+      "caption": "Accept the selected receptor branch as the pose reference"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 64
+      },
+      "caption": "Refine compound 21 against the selected Phe890 branch"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "caption": "Apply the selected compound 21 pose"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "open-phe890-pocket-parameterize-selected-phe890-branch"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "Relax the selected coupled ligand and receptor branch"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "caption": "open-phe890-pocket-freeze-ligand"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "caption": "open-phe890-pocket-freeze-pocket"
+    },
+    {
+      "action": "designCampaign.inspect",
+      "args": {},
+      "caption": "open-phe890-pocket-inspect-state"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "open-phe890-pocket-advance-build"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "caption": "open-phe890-pocket-capture-predicted-reference"
+    },
+    {
+      "action": "designCampaign.applyStep",
+      "args": {
+        "stepId": "finish-bay-293"
+      },
+      "caption": "Stage the final BAY-293 (AXH) graph"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 64
+      },
+      "caption": "Refine BAY-293 from the predicted compound 21 reference"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "caption": "Apply the selected BAY-293 pose"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "finish-bay-293-parameterize-without-motion"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "Relax the final predicted BAY-293 complex"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "caption": "finish-bay-293-freeze-ligand"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "caption": "finish-bay-293-freeze-pocket"
+    },
+    {
+      "action": "designCampaign.inspect",
+      "args": {},
+      "caption": "finish-bay-293-inspect-state"
+    }
+  ],
+  "sourceAudit": {
+    "schema": "molarium.chemist-actions/v1",
+    "campaignId": "sos1-hit-only",
+    "recordCount": 89,
+    "includedRecordCount": 89,
+    "includedSequences": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89
+    ],
+    "failedRecordsExcluded": 0,
+    "readOnlyInspectionsIncluded": true,
+    "path": "outputs/design-history/sos1-hit-only-growth-clash-v7/chemist-action-audit.json",
+    "sha256": "38d8fbd3e2675fd1203a13a7e235ff848eaf627a0d7c8450865a762f9fbe5e5b"
+  }
+}

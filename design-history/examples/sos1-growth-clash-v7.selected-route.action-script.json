@@ -1,0 +1,278 @@
+{
+  "schema": "molarium.chemist-action-script/v1",
+  "label": "SOS1 growth-clash-v7 concise selected Phe890 route",
+  "actions": [
+    {
+      "action": "designCampaign.load",
+      "args": {
+        "campaignId": "sos1-hit-only"
+      },
+      "caption": "Load the coordinate-bearing 5OVE/AXE hit only"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "campaign-enter-build"
+    },
+    {
+      "action": "protein.prepare",
+      "args": {
+        "gapPolicy": "cap",
+        "histidine": "auto",
+        "ligandPolicy": "ccd",
+        "pH": 7.4,
+        "repairMissingHeavy": true,
+        "waterPolicy": "retain"
+      },
+      "caption": "campaign-prepare-hit"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "caption": "campaign-capture-hit"
+    },
+    {
+      "action": "designCampaign.applyStep",
+      "args": {
+        "stepId": "scaffold-rewrite"
+      },
+      "caption": "Stage the scaffold rewrite to compound 17 (AWT)"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 64
+      },
+      "caption": "scaffold-rewrite-pose-refine"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "caption": "scaffold-rewrite-pose-apply"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "scaffold-rewrite-parameterize-without-motion"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "scaffold-rewrite-complex-relax"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "scaffold-rewrite-advance-build"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "caption": "scaffold-rewrite-capture-predicted-reference"
+    },
+    {
+      "action": "designCampaign.applyStep",
+      "args": {
+        "stepId": "fragment-merge"
+      },
+      "caption": "Merge the fragment-derived pocket idea to compound 18 (AWZ)"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 64
+      },
+      "caption": "fragment-merge-pose-refine"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "caption": "fragment-merge-pose-apply"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "fragment-merge-parameterize-without-motion"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "fragment-merge-complex-relax"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "fragment-merge-advance-build"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "caption": "fragment-merge-capture-predicted-reference"
+    },
+    {
+      "action": "designCampaign.applyStep",
+      "args": {
+        "stepId": "open-phe890-pocket"
+      },
+      "caption": "Grow compound 21 (AWW), creating the Phe890-in clash"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 32,
+        "receptorAtomId": "reference-5OVE:ATOM:A:PHE:890::CG:2679"
+      },
+      "caption": "Re-enumerate the deterministic ensemble for the selected route"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "index": 5
+      },
+      "caption": "Apply selected Phe890 rotamer index 5"
+    },
+    {
+      "action": "pose.updateReceptorReference",
+      "args": {},
+      "caption": "Accept the selected receptor branch as the pose reference"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 64
+      },
+      "caption": "Refine compound 21 against the selected Phe890 branch"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "caption": "Apply the selected compound 21 pose"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "open-phe890-pocket-parameterize-selected-phe890-branch"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "Relax the selected coupled ligand and receptor branch"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "open-phe890-pocket-advance-build"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "caption": "open-phe890-pocket-capture-predicted-reference"
+    },
+    {
+      "action": "designCampaign.applyStep",
+      "args": {
+        "stepId": "finish-bay-293"
+      },
+      "caption": "Stage the final BAY-293 (AXH) graph"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 64
+      },
+      "caption": "Refine BAY-293 from the predicted compound 21 reference"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "caption": "Apply the selected BAY-293 pose"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "finish-bay-293-parameterize-without-motion"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "Relax the final predicted BAY-293 complex"
+    }
+  ],
+  "sourceAudit": {
+    "schema": "molarium.chemist-actions/v1",
+    "campaignId": "sos1-hit-only",
+    "recordCount": 89,
+    "includedRecordCount": 33,
+    "includedSequences": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8,
+      9,
+      10,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      24,
+      25,
+      26,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86
+    ],
+    "failedRecordsExcluded": 0,
+    "readOnlyInspectionsIncluded": false,
+    "path": "outputs/design-history/sos1-hit-only-growth-clash-v7/chemist-action-audit.json",
+    "sha256": "38d8fbd3e2675fd1203a13a7e235ff848eaf627a0d7c8450865a762f9fbe5e5b"
+  }
+}

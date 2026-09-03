@@ -727,6 +727,10 @@ const state = {
   dockingContactRemapProposals: new Map(),
   dockingContactDraft: null,
   dockingPoseIndex: 0,
+  sidechainRotamerEnsemble: null,
+  designerMoveScript: null,
+  designerMoveReplay: null,
+  designerMoveReplaying: false,
   structureComponents: [],
   atomComponentIds: [],
   componentVisibility: new Map(),
@@ -2942,6 +2946,7 @@ function loadMolecule(molecule, resetView = true) {
   state.dockingContactRemapProposals = new Map();
   state.dockingContactDraft = null;
   state.dockingPoseIndex = 0;
+  state.sidechainRotamerEnsemble = null;
   document.querySelector('#docking-edit-cleanup').value = 'preserve-reference';
   state.pdbPreparationPreview = null;
   state.focusedResidueKey = null;
@@ -2981,6 +2986,7 @@ function loadMolecule(molecule, resetView = true) {
   updateGeometryControl();
   updateOptimizerControls();
   updateDockingUi();
+  updateDesignerMoveControls();
   updateResidueFollowChip();
   draw();
 }
@@ -4229,6 +4235,7 @@ function updateDockingUi() {
   results?.classList.toggle('hidden', !state.dockingResult || state.mode !== 'build');
   if (!visible) return;
   const capture = document.querySelector('#capture-docking-reference');
+  const updateReceptor = document.querySelector('#update-docking-receptor');
   const clear = document.querySelector('#clear-docking-reference');
   const modeSelect = document.querySelector('#docking-mode');
   const cleanupField = document.querySelector('#docking-cleanup-field');
@@ -4241,11 +4248,14 @@ function updateDockingUi() {
     modeSelect.value = referenceMode === 'pose-propagation' ? 'propagate' : 'selected-core';
     modeSelect.disabled = true;
     cleanupField.classList.toggle('hidden', referenceMode !== 'pose-propagation');
-    capture.classList.add('hidden'); clear.classList.remove('hidden');
+    capture.classList.add('hidden'); updateReceptor.classList.remove('hidden');
+    clear.classList.remove('hidden');
     constraints.classList.remove('hidden'); runRow.classList.remove('hidden');
     const pendingChemistry = Boolean(state.chemistryTransaction);
     const unresolvedSelected = unresolvedSelectedDockingContacts();
     clear.disabled = state.dockingRunning || state.chemistryEditFinishing;
+    updateReceptor.disabled = state.dockingRunning || pendingChemistry
+      || state.chemistryEditFinishing;
     const addContact = document.querySelector('#add-docking-contact');
     addContact.disabled = state.dockingRunning || pendingChemistry
       || state.chemistryEditFinishing;
@@ -4283,7 +4293,8 @@ function updateDockingUi() {
     const core = dockingSelectedCore(ligand);
     modeSelect.disabled = state.dockingRunning;
     cleanupField.classList.add('hidden');
-    capture.classList.remove('hidden'); clear.classList.add('hidden');
+    capture.classList.remove('hidden'); updateReceptor.classList.add('hidden');
+    clear.classList.add('hidden');
     constraints.classList.add('hidden'); runRow.classList.add('hidden');
     state.dockingContactDraft = null;
     capture.textContent = mode === 'pose-propagation' ? 'Begin analogue design' : 'Set selected core';
@@ -4361,6 +4372,86 @@ async function captureCurrentDockingReference() {
     ? `Reference pose captured · ${ligand.coreAtomIds.length} heavy atoms`
     : `Docking reference set · ${core.length}-atom core`);
   return state.dockingReference;
+}
+
+function refreshCapturedReceptorDescriptors(value, atomsById) {
+  if (Array.isArray(value)) return value.map((entry) =>
+    refreshCapturedReceptorDescriptors(entry, atomsById));
+  if (!value || typeof value !== 'object') return value;
+  const refreshed = Object.fromEntries(Object.entries(value).map(([key, entry]) =>
+    [key, refreshCapturedReceptorDescriptors(entry, atomsById)]));
+  if (value.scope !== 'receptor' || !value.designAtomId) return refreshed;
+  const current = atomsById.get(value.designAtomId);
+  if (!current || current.atom.element !== value.element)
+    throw new Error(`Captured receptor atom ${value.designAtomId} is unavailable`);
+  refreshed.sourceGlobalAtomIndex = current.index;
+  refreshed.point = { x:Number(current.atom.x), y:Number(current.atom.y), z:Number(current.atom.z) };
+  return refreshed;
+}
+
+function capturedReceptorDescriptorIndices(value, output = new Set()) {
+  if (Array.isArray(value)) value.forEach((entry) =>
+    capturedReceptorDescriptorIndices(entry, output));
+  else if (value && typeof value === 'object') {
+    if (value.scope === 'receptor' && Number.isInteger(value.sourceGlobalAtomIndex))
+      output.add(value.sourceGlobalAtomIndex);
+    Object.values(value).forEach((entry) => capturedReceptorDescriptorIndices(entry, output));
+  }
+  return output;
+}
+
+async function updateCurrentDockingReceptorReference() {
+  if (!state.dockingReference) throw new Error('Capture a ligand reference first.');
+  if (state.chemistryTransaction)
+    throw new Error('Finish or discard pending chemistry before updating the receptor reference.');
+  await ensureChemistActionAtomIds();
+  const reference = state.dockingReference;
+  const atomsById = new Map(state.molecule.atoms.map((atom, index) =>
+    [atom.designAtomId, { atom, index }]));
+  const inputCoordinates = Float64Array.from(reference.receptorSite.atoms.flatMap((atom) =>
+    [Number(atom.position.x), Number(atom.position.y), Number(atom.position.z)]));
+  let changedAtoms = 0, maximumDisplacementAngstrom = 0;
+  const siteAtoms = reference.receptorSite.atoms.map((captured) => {
+    const current = atomsById.get(captured.designAtomId);
+    if (!current || current.atom.element !== captured.element)
+      throw new Error(`Captured receptor-site atom ${captured.designAtomId || '(missing identity)'} is unavailable`);
+    const displacement = Math.hypot(current.atom.x - captured.position.x,
+      current.atom.y - captured.position.y, current.atom.z - captured.position.z);
+    if (displacement > 1e-6) changedAtoms += 1;
+    maximumDisplacementAngstrom = Math.max(maximumDisplacementAngstrom, displacement);
+    return { ...captured, globalAtomIndex:current.index,
+      position:{ x:Number(current.atom.x), y:Number(current.atom.y), z:Number(current.atom.z) } };
+  });
+  const outputCoordinates = Float64Array.from(siteAtoms.flatMap((atom) =>
+    [atom.position.x, atom.position.y, atom.position.z]));
+  const inputCoordinateSha256 = await sha256Hex(inputCoordinates.buffer);
+  const outputCoordinateSha256 = await sha256Hex(outputCoordinates.buffer);
+  reference.receptorSite = { ...reference.receptorSite, atoms:siteAtoms };
+  reference.hydrogenBonds = refreshCapturedReceptorDescriptors(
+    reference.hydrogenBonds, atomsById);
+  reference.contactAmendments = refreshCapturedReceptorDescriptors(
+    reference.contactAmendments || [], atomsById);
+  state.dockingContactRemaps = new Map([...state.dockingContactRemaps].map(([id, value]) =>
+    [id, refreshCapturedReceptorDescriptors(value, atomsById)]));
+  state.dockingContactRemapProposals = new Map([...state.dockingContactRemapProposals]
+    .map(([id, value]) => [id, refreshCapturedReceptorDescriptors(value, atomsById)]));
+  const receptorProvenanceAtomIndices = capturedReceptorDescriptorIndices(
+    reference.hydrogenBonds, new Set(siteAtoms.map((atom) => atom.globalAtomIndex)));
+  const adapter = await import('./docking/browser-adapter.mjs');
+  reference.receptorProvenanceAtomCount = receptorProvenanceAtomIndices.size;
+  reference.receptorInputText = adapter.dockingInputText(state.molecule,
+    [...receptorProvenanceAtomIndices].sort((first, second) => first - second));
+  const update = { schema:'molarium.docking-receptor-reference-update/v1',
+    method:'retain-ligand-lineage-refresh-receptor-site',
+    changedAtoms, maximumDisplacementAngstrom,
+    inputCoordinateSha256, outputCoordinateSha256,
+    coordinateInputClass:state.molecule.source?.designCampaign?.coordinateInputClass
+      || 'current-visible-complex', updatedAt:new Date().toISOString() };
+  reference.receptorUpdates = [...(reference.receptorUpdates || []), update].slice(-50);
+  state.dockingResult = null; state.dockingPoseIndex = 0;
+  updateDockingUi(); updateOptimizerControls();
+  showToast(`${changedAtoms} receptor-site atom${changedAtoms === 1 ? '' : 's'} accepted; ligand lineage retained`);
+  return structuredClone(update);
 }
 
 function clearDockingReference() {
@@ -4444,7 +4535,7 @@ async function runBrowserConstrainedDocking(options = {}) {
     const currentLigandTopologyText = adapter.dockingTopologyText(state.molecule, plan.globalAtomIndices);
     const releasedReferenceAtomIds = posePropagation
       ? transformedRings.cumulativeReleasedAtomIds(state.molecule) : [];
-    const coreMap = posePropagation
+    let coreMap = posePropagation
       ? referenceCore.mapSurvivingReferenceAtoms(reference.ligand, plan.molecule.atoms,
         { releasedAtomIds:releasedReferenceAtomIds })
       : referenceCore.mapReferenceCore(reference.ligand, plan.molecule.atoms);
@@ -4475,17 +4566,43 @@ async function runBrowserConstrainedDocking(options = {}) {
     const requestedConformers = Math.max(1, Math.min(64, Math.round(Number(options.conformerCount
       ?? document.querySelector('#docking-conformer-count').value))));
     const seed = Number(options.seed ?? activeProtocol.sampling.seed);
-    const coreAtomIndices = coreMap.atomPairs.map((pair) => pair[1]);
+    let coreAtomIndices = coreMap.atomPairs.map((pair) => pair[1]);
     let conformerResult, allConformers, valid, minimumRdkitEnergy = null;
     let featureSeedResult = null;
     if (posePropagation) {
       setDockingStatus(`Propagating ${coreMap.atomPairs.length} unchanged atoms`);
       const editedPositions = Float64Array.from(plan.molecule.atoms.flatMap((atom) =>
         [atom.x, atom.y, atom.z]));
+      const graphEdit = state.molecule.source?.posePropagationGraphEdit || {};
+      const localIndexById = new Map(plan.molecule.atoms.map((atom, index) =>
+        [atom.designAtomId, index]));
+      const editedAtomIndices = [...new Set([
+        ...coreMap.addedAtomIds,
+        ...Array.from(graphEdit.addedAtomIds || []),
+      ].map((id) => localIndexById.get(id)).filter(Number.isInteger))];
+      const affectedAtomIndices = [...new Set(Array.from(graphEdit.affectedCoreAtomIds || [])
+        .map((id) => localIndexById.get(id)).filter(Number.isInteger))];
       featureSeedResult = featureSeeding.featureGuidedPoseSeeds({ molecule:plan.molecule,
         initialPositions:editedPositions, coreAtomIndices,
+        editedAtomIndices, affectedAtomIndices,
         hydrogenBondConstraints:mappedHydrogenBonds.constraints,
         count:requestedConformers });
+      if (featureSeedResult.releasedCoreAtomIndices.length) {
+        const releasedProductIndices = new Set(featureSeedResult.releasedCoreAtomIndices);
+        const releasedEnvironmentAtomIds = featureSeedResult.releasedCoreAtomIndices
+          .map((index) => plan.molecule.atoms[index]?.designAtomId).filter(Boolean);
+        const releasedIdSet = new Set(releasedEnvironmentAtomIds);
+        coreMap = { ...coreMap,
+          atomPairs:coreMap.atomPairs.filter((pair) => !releasedProductIndices.has(pair[1])),
+          mappedAtomIds:coreMap.mappedAtomIds.filter((id) => !releasedIdSet.has(id)),
+          releasedReferenceAtomIds:[...new Set([
+            ...(coreMap.releasedReferenceAtomIds || []), ...releasedEnvironmentAtomIds,
+          ])],
+          environmentReleasedAtomIds:releasedEnvironmentAtomIds };
+        if (coreMap.atomPairs.length < 3)
+          throw new Error('Affected-rotor sampling released too much of the inherited pose');
+        coreAtomIndices = coreMap.atomPairs.map((pair) => pair[1]);
+      }
       allConformers = featureSeedResult.seeds.map((entry) => entry.positions);
       valid = featureSeedResult.seeds.map(({ positions, audit }) => ({ positions, energy:null,
         forcefield:featureSeedResult.method, featureSeedAudit:audit }));
@@ -4770,6 +4887,10 @@ async function runBrowserConstrainedDocking(options = {}) {
           requested:featureSeedResult.requestedCount,
           uniqueSeeds:featureSeedResult.uniqueSeedCount,
           targetVariants:featureSeedResult.targetVariantCount,
+          untargetedEditRotors:featureSeedResult.untargetedRotorCount,
+          affectedExistingRotors:featureSeedResult.affectedRotorCount,
+          affectedRotorReleases:featureSeedResult.releasedCoreAtomIndices.length,
+          editRegionAnglesDegrees:featureSeedResult.editRegionAnglesDegrees,
           limitation:featureSeedResult.limitation,
         } : null,
         feasibilityRule:'all required constraints rank before energy',
@@ -4787,6 +4908,7 @@ async function runBrowserConstrainedDocking(options = {}) {
             : 'Rigid core alignment alone does not optimize ligand torsions against the receptor.',
           'Edit-lineage atom identity gives an exact, auditable analogue mapping.',
           'Chemically transformed rings are released as complete units while their unchanged external scaffold boundary remains fixed.',
+          'A pre-existing non-ring single bond is resampled when added, deleted, or substituted atoms alter its local graph environment; conjugated amide-like and ring bonds remain fixed.',
           'Only graph branches containing no fixed scaffold atom are eligible to rotate; local ring moves touching a perceived stereocenter, ring multiple-bond atom, carbonyl, or lactam geometry are excluded.',
           'A pharmacophore-capture stage drives every torsion and safe ring proposal before ordinary physical energy is allowed to act; only registered chemical-sanity gates accompany the restraint objective.',
           'A captured contact is not called feasible when its ligand strain exceeds 100 kcal/mol above the best exact-core start or it introduces more than two additional steric-clash diagnostics.',
@@ -4829,6 +4951,10 @@ async function runBrowserConstrainedDocking(options = {}) {
           requested:featureSeedResult.requestedCount,
           uniqueSeeds:featureSeedResult.uniqueSeedCount,
           targetVariants:featureSeedResult.targetVariantCount,
+          untargetedEditRotors:featureSeedResult.untargetedRotorCount,
+          affectedExistingRotors:featureSeedResult.affectedRotorCount,
+          affectedRotorReleases:featureSeedResult.releasedCoreAtomIndices.length,
+          editRegionAnglesDegrees:featureSeedResult.editRegionAnglesDegrees,
           limitation:featureSeedResult.limitation,
           seeds:valid.map((entry, index) => ({ conformerIndex:index,
             ...structuredClone(entry.featureSeedAudit),
@@ -5089,6 +5215,19 @@ async function runBrowserConstrainedDocking(options = {}) {
       throw new Error('The complex changed during docking; the stale result was discarded.');
     state.dockingResult = { run, labbook, plan, seed, requestedConformers,
       distinctPoseEntries, distinctFeasibleCount,
+      featureGuidedSeeding:featureSeedResult ? {
+        method:featureSeedResult.method,
+        requestedCount:featureSeedResult.requestedCount,
+        uniqueSeedCount:featureSeedResult.uniqueSeedCount,
+        targetVariantCount:featureSeedResult.targetVariantCount,
+        untargetedRotorCount:featureSeedResult.untargetedRotorCount,
+        affectedRotorCount:featureSeedResult.affectedRotorCount,
+        releasedCoreAtomIndices:[...featureSeedResult.releasedCoreAtomIndices],
+        affectedRotors:structuredClone(featureSeedResult.affectedRotors),
+        editRegionAnglesDegrees:featureSeedResult.editRegionAnglesDegrees,
+        seedAudits:valid.map((entry, index) => ({ conformerIndex:index,
+          ...structuredClone(entry.featureSeedAudit) })),
+      } : null,
       mode:posePropagation ? 'pose-propagation' : 'selected-core',
       ligandTopologyText:currentLigandTopologyText,
       ligandForcefield:ligandParameters.forcefield, ligandChargeModel:ligandParameters.chargeModel,
@@ -5754,6 +5893,7 @@ function restoreMolecule(snapshot) {
   state.molecule = structuredClone(entry.molecule);
   restoreDockingContactState(entry.dockingContactState);
   state.dockingResult = null;
+  state.sidechainRotamerEnsemble = null;
   refreshStructureComponents();
   state.selectedAtom = null;
   state.selectedAtoms = [];
@@ -6057,6 +6197,7 @@ function updateGeometryControl() {
   state.selectedAtoms = state.selectedAtoms.filter((index) =>
     Number.isInteger(index) && Boolean(state.molecule?.atoms?.[index]));
   state.selectedAtom = state.selectedAtoms.at(-1) ?? null;
+  updateSidechainRotamerControls();
   const slider = document.querySelector('#geometry-slider');
   const input = document.querySelector('#geometry-value');
   const unit = document.querySelector('#geometry-unit');
@@ -7178,6 +7319,277 @@ async function runImmediateChemistryTestEdit(callback) {
   finally { control.checked = previous; updateChemistryEditor(); }
 }
 
+const SIDECHAIN_ROTAMER_RESIDUES = new Set([
+  'ARG','ASN','ASP','CYS','GLN','GLU','HIS','ILE','LEU','LYS','MET','PHE','SER',
+  'THR','TPO','TRP','TYR','VAL',
+]);
+
+function chemistActionCoordinateArray(molecule = state.molecule) {
+  const result = new Float64Array((molecule?.atoms?.length || 0) * 3);
+  molecule?.atoms?.forEach((atom, index) => {
+    result[index * 3] = Number(atom.x);
+    result[index * 3 + 1] = Number(atom.y);
+    result[index * 3 + 2] = Number(atom.z);
+  });
+  return result;
+}
+
+async function moleculeCoordinateSha256(molecule = state.molecule) {
+  return sha256Hex(chemistActionCoordinateArray(molecule).buffer);
+}
+
+function sidechainRotamerPublicResult(ensemble) {
+  return {
+    schema:ensemble.schema,
+    inputCoordinateSha256:ensemble.inputCoordinateSha256,
+    receptorAtomId:ensemble.receptorAtomId,
+    residue:structuredClone(ensemble.residue),
+    axes:structuredClone(ensemble.axes),
+    inputChiDegrees:structuredClone(ensemble.inputChiDegrees),
+    generatedCandidateCount:ensemble.generatedCandidateCount,
+    candidates:ensemble.candidates.map(({ positions, ...candidate }) => structuredClone(candidate)),
+  };
+}
+
+function sidechainRotamerResidueLabel(residue) {
+  return `${residue.residueName} ${residue.chain}${residue.residueIndex}${residue.insertionCode || ''}`;
+}
+
+function updateSidechainRotamerControls() {
+  const panel = document.querySelector('#sidechain-rotamer-tools');
+  if (!panel) return;
+  const hasProtein = Boolean(state.molecule?.atoms?.some((atom) => isProteinAtom(atom)));
+  panel.classList.toggle('hidden', !hasProtein);
+  if (!hasProtein) return;
+  const status = document.querySelector('#sidechain-rotamer-status');
+  const enumerateButton = document.querySelector('#enumerate-sidechain-rotamers');
+  const results = document.querySelector('#sidechain-rotamer-results');
+  const select = document.querySelector('#sidechain-rotamer-select');
+  const selectedIndex = state.selectedAtoms.length === 1 ? state.selectedAtoms[0] : null;
+  const selected = Number.isInteger(selectedIndex) ? state.molecule.atoms[selectedIndex] : null;
+  const eligible = Boolean(selected && isProteinAtom(selected)
+    && SIDECHAIN_ROTAMER_RESIDUES.has(selected.residueName));
+  enumerateButton.disabled = !eligible || Boolean(state.chemistryTransaction);
+  const ensemble = state.sidechainRotamerEnsemble;
+  results.classList.toggle('hidden', !ensemble);
+  if (ensemble) {
+    const selectedValue = select.value;
+    select.replaceChildren(...ensemble.candidates.map((candidate) => {
+      const option = document.createElement('option'); option.value = String(candidate.index);
+      const chis = candidate.chiDegrees.map((value, index) => `χ${index + 1} ${Math.round(value)}°`).join(' · ');
+      option.textContent = `#${candidate.rank} · ${chis} · ${candidate.severeClashes} hard clash${candidate.severeClashes === 1 ? '' : 'es'}`;
+      return option;
+    }));
+    if ([...select.options].some((option) => option.value === selectedValue)) select.value = selectedValue;
+    status.textContent = `${sidechainRotamerResidueLabel(ensemble.residue)} · ${ensemble.candidates.length} ranked branches. Apply one, then physically refine it.`;
+  } else if (eligible) {
+    status.textContent = `${selected.residueName} ${selected.chain || 'A'}${selected.residueIndex}${selected.insertionCode || ''} selected · enumerate discrete chi-angle branches before minimization.`;
+  } else if (selected && isProteinAtom(selected)) {
+    status.textContent = `${selected.residueName || 'Residue'} has no safe independent rotamer move.`;
+  } else {
+    status.textContent = 'Choose Select, then pick one atom in a protein side chain.';
+  }
+}
+
+async function enumerateCurrentSidechainRotamers(residueAtomIndex, maximumCandidates = 32) {
+  if (state.mode !== 'build') throw new Error('Enter Build mode before enumerating side-chain rotamers.');
+  if (state.chemistryTransaction)
+    throw new Error('Finish or discard pending chemistry before enumerating side-chain rotamers.');
+  if (!Number.isInteger(maximumCandidates) || maximumCandidates < 1 || maximumCandidates > 64)
+    throw new Error('maximumCandidates must be an integer from 1 to 64');
+  await ensureChemistActionAtomIds();
+  const selected = state.molecule?.atoms?.[residueAtomIndex];
+  if (!selected || !isProteinAtom(selected))
+    throw new Error('receptorAtomId must identify an atom in a protein residue');
+  const module = await import('./docking/sidechain-rotamers.mjs');
+  const result = module.enumerateSidechainRotamers({ molecule:state.molecule,
+    residueAtomIndex, ligandAtomIndices:currentDockingLigandAtomIndices(), maximumCandidates });
+  const inputCoordinates = chemistActionCoordinateArray();
+  result.inputCoordinateSha256 = await sha256Hex(inputCoordinates.buffer);
+  result.receptorAtomId = selected.designAtomId;
+  for (const candidate of result.candidates) {
+    const coordinates = inputCoordinates.slice();
+    candidate.positions.forEach((position) => {
+      coordinates[position.atomIndex * 3] = position.x;
+      coordinates[position.atomIndex * 3 + 1] = position.y;
+      coordinates[position.atomIndex * 3 + 2] = position.z;
+    });
+    candidate.coordinateSha256 = await sha256Hex(coordinates.buffer);
+  }
+  state.sidechainRotamerEnsemble = result;
+  updateSidechainRotamerControls();
+  return sidechainRotamerPublicResult(result);
+}
+
+async function applyCurrentSidechainRotamer(index) {
+  if (state.mode !== 'build') throw new Error('Enter Build mode before applying a side-chain rotamer.');
+  if (state.chemistryTransaction)
+    throw new Error('Finish or discard pending chemistry before applying a side-chain rotamer.');
+  const ensemble = state.sidechainRotamerEnsemble;
+  if (!ensemble) throw new Error('Enumerate a side-chain rotamer ensemble first');
+  if (!Number.isInteger(index) || index < 0 || !ensemble.candidates[index])
+    throw new Error(`Side-chain rotamer ${index} does not exist`);
+  const currentCoordinateSha256 = await moleculeCoordinateSha256();
+  if (currentCoordinateSha256 !== ensemble.inputCoordinateSha256)
+    throw new Error('The molecular coordinates changed after side-chain enumeration; enumerate again.');
+  const module = await import('./docking/sidechain-rotamers.mjs');
+  pushBuildHistory();
+  const candidate = module.applySidechainRotamer(state.molecule, ensemble, index);
+  const appliedCoordinateSha256 = await moleculeCoordinateSha256();
+  if (appliedCoordinateSha256 !== candidate.coordinateSha256) {
+    restoreMolecule(state.buildHistory.pop());
+    throw new Error('Applied side-chain coordinates did not match the enumerated branch hash');
+  }
+  const application = {
+    schema:'molarium.sidechain-rotamer-application/v1',
+    method:'canonical-chi-grid-steric-prerank-v1',
+    residue:structuredClone(ensemble.residue), receptorAtomId:ensemble.receptorAtomId,
+    inputCoordinateSha256:ensemble.inputCoordinateSha256,
+    selectedCoordinateSha256:candidate.coordinateSha256,
+    candidateIndex:index, candidateRank:candidate.rank, source:candidate.source,
+    chiDegrees:structuredClone(candidate.chiDegrees), score:candidate.score,
+    stericPenalty:candidate.stericPenalty,
+    ligandStericPenalty:candidate.ligandStericPenalty,
+    severeClashes:candidate.severeClashes,
+    generatedCandidateCount:ensemble.generatedCandidateCount,
+    retainedCandidateCount:ensemble.candidates.length,
+    coordinateInputClass:state.molecule.source?.designCampaign?.coordinateInputClass || 'current-visible-complex',
+  };
+  const previous = state.molecule.source?.sidechainRotamerApplications || [];
+  state.molecule.source = { ...(state.molecule.source || {}),
+    sidechainRotamerApplications:[...previous, application].slice(-50) };
+  state.sidechainRotamerEnsemble = null;
+  state.dockingResult = null; state.dockingPoseIndex = 0;
+  clearCalculationResult(); updateStoredBondDistances(); updateInfo(); updateHistoryButtons();
+  updateDockingUi(); updateSidechainRotamerControls(); draw();
+  showToast(`${sidechainRotamerResidueLabel(application.residue)} rotamer #${candidate.rank} applied`);
+  return structuredClone(application);
+}
+
+function updateDesignerMoveControls(message = null) {
+  const status = document.querySelector('#designer-move-status');
+  if (!status) return;
+  const script = state.designerMoveScript;
+  const completedApiMoves = state.chemistActionAudit.filter((entry) =>
+    entry?.status === 'completed').length;
+  document.querySelector('#replay-designer-moves').disabled =
+    !script || state.designerMoveReplaying;
+  document.querySelector('#export-designer-moves').disabled =
+    !completedApiMoves || state.designerMoveReplaying;
+  document.querySelector('#export-designer-replay').disabled =
+    !state.designerMoveReplay || state.designerMoveReplaying;
+  if (message) status.textContent = message;
+  else if (script) status.textContent = `${script.label || 'Imported action script'} · ${script.actions.length} replayable move${script.actions.length === 1 ? '' : 's'} · ${script.schema}`;
+  else status.textContent = completedApiMoves
+    ? `${completedApiMoves} Agent/API move${completedApiMoves === 1 ? '' : 's'} recorded for this molecule. Export them as replayable JSON.`
+    : 'Import a Chemist Actions JSON script, or export the Agent/API moves recorded for this molecule.';
+}
+
+async function importDesignerMoveScript(file) {
+  if (!file) return;
+  if (file.size > 2_000_000) throw new Error('Designer-move JSON must be smaller than 2 MB');
+  const module = await import('./design-history/replay.mjs');
+  let parsed;
+  try { parsed = JSON.parse(await file.text()); }
+  catch { throw new Error('Designer-move file is not valid JSON'); }
+  module.validateActionScript(parsed);
+  state.designerMoveScript = structuredClone(parsed);
+  state.designerMoveReplay = null;
+  updateDesignerMoveControls();
+  showToast(`${parsed.actions.length} designer moves imported`);
+}
+
+let designerMoveCueElement = null;
+
+function showDesignerMoveCue(step = null) {
+  designerMoveCueElement?.classList.remove('designer-move-cue');
+  designerMoveCueElement = null;
+  if (!step) return;
+  const actionSelectors = {
+    'protein.prepare':'#prepare-pdb',
+    'history.undo':'#undo-atom', 'history.redo':'#redo-atom',
+    'chemistry.setAtom':'#apply-atom-chemistry',
+    'chemistry.setBond':'#apply-bond-chemistry',
+    'chemistry.deleteAtom':'#delete-selected-atom',
+    'chemistry.deleteBond':'#delete-bond-chemistry',
+    'chemistry.addHydrogen':'#add-explicit-hydrogen',
+    'chemistry.finish':'#finish-chemistry-changes',
+    'chemistry.discard':'#discard-chemistry-changes',
+    'pose.captureReference':'#capture-docking-reference',
+    'pose.updateReceptorReference':'#update-docking-receptor',
+    'pose.refine':'#run-constrained-docking', 'pose.apply':'#apply-docking-pose',
+    'pose.enumerateSidechainRotamers':'#enumerate-sidechain-rotamers',
+    'pose.applySidechainRotamer':'#apply-sidechain-rotamer',
+    'optimization.run':'#optimize-button',
+  };
+  let selector = actionSelectors[step.action];
+  if (step.action === 'view.setMode')
+    selector = `.mode-bar button[data-mode="${CSS.escape(String(step.args?.mode || ''))}"]`;
+  else if (step.action === 'build.setTool') {
+    const tool = step.args?.tool === 'move' ? 'manipulate' : step.args?.tool;
+    selector = `#build-tool-tabs [data-tool="${CSS.escape(String(tool || ''))}"]`;
+  } else if (step.action?.startsWith('designCampaign.')) selector = '#designer-move-tools';
+  else if (step.action?.startsWith('selection.') || step.action === 'session.inspect')
+    selector = '.viewer-stage';
+  const element = selector ? document.querySelector(selector) : null;
+  if (!element) return;
+  designerMoveCueElement = element;
+  element.classList.add('designer-move-cue');
+}
+
+async function replayDesignerMoveScript() {
+  const script = state.designerMoveScript;
+  if (!script) throw new Error('Import a designer-move JSON script first');
+  const [api, module] = await Promise.all([
+    window.MolariumChemistActionsReady,
+    import('./design-history/replay.mjs'),
+  ]);
+  state.designerMoveReplaying = true;
+  updateDesignerMoveControls(`Starting ${script.actions.length} recorded designer moves…`);
+  try {
+    const replay = await module.replayActionScript(api, script, {
+      onStep:async ({ phase, step }) => {
+        if (phase === 'before') {
+          showDesignerMoveCue(step);
+          updateDesignerMoveControls(
+            `Move ${step.index + 1} of ${script.actions.length} · ${step.caption || step.action}`);
+          await new Promise((resolve) => setTimeout(resolve, 180));
+        } else {
+          await new Promise((resolve) => setTimeout(resolve, 80));
+          showDesignerMoveCue();
+        }
+      },
+    });
+    state.designerMoveReplay = replay;
+    if (replay.status !== 'completed') {
+      const failed = replay.steps.find((step) => step.status === 'failed');
+      throw new Error(`Replay stopped at move ${(failed?.index ?? 0) + 1}: ${failed?.error || 'unknown error'}`);
+    }
+    showToast(`${script.actions.length} designer moves replayed through the public Agent API`);
+  } finally {
+    showDesignerMoveCue();
+    state.designerMoveReplaying = false;
+    updateDesignerMoveControls();
+  }
+}
+
+async function exportRecordedDesignerMoves() {
+  const module = await import('./design-history/replay.mjs');
+  const script = module.actionScriptFromAudit(state.chemistActionAudit, {
+    label:`${state.molecule?.name || 'Molarium'} designer moves`,
+  });
+  downloadBlob(`${JSON.stringify(script, null, 2)}\n`,
+    `${slug(state.molecule?.name || 'molarium')}-designer-moves.json`, 'application/json');
+  updateDesignerMoveControls(`${script.actions.length} recorded Agent/API moves exported as replayable JSON.`);
+}
+
+function exportDesignerMoveReplay() {
+  if (!state.designerMoveReplay) throw new Error('Replay a designer-move script first');
+  downloadBlob(`${JSON.stringify(state.designerMoveReplay, null, 2)}\n`,
+    `${slug(state.designerMoveScript?.label || state.molecule?.name || 'molarium')}-replay-log.json`,
+    'application/json');
+}
+
 function chemistActionKeys(args, allowed = []) {
   const unexpected = Object.keys(args || {}).filter((key) => !allowed.includes(key));
   if (unexpected.length) throw new Error(`Unexpected argument${unexpected.length === 1 ? '' : 's'}: ${unexpected.join(', ')}`);
@@ -7212,6 +7624,7 @@ function persistChemistActionAudit(record) {
   state.chemistActionAudit = [...state.chemistActionAudit, entry].slice(-500);
   state.molecule.source = { ...(state.molecule.source || {}),
     chemistActionAudit:structuredClone(state.chemistActionAudit) };
+  updateDesignerMoveControls();
 }
 
 async function ensureChemistActionAtomIds() {
@@ -7333,6 +7746,7 @@ const REGISTERED_DESIGN_CAMPAIGNS = Object.freeze({
   'bclxl-hit-only':'./design-history/structures/generated/bclxl-prospective-campaign.json',
   'cdk2-hit-only':'./design-history/structures/generated/cdk2-prospective-campaign.json',
   'cdk2-designer-intent':'./design-history/structures/generated/cdk2-designer-campaign.json',
+  'sos1-hit-only':'./design-history/structures/generated/sos1-prospective-campaign.json',
 });
 
 async function fetchPinnedText(path, expectedSha256) {
@@ -7556,6 +7970,9 @@ function installChemistActionsApi(module) {
       return chemistActionSummary({ poseReference:{ mode:reference.mode,
         coreAtomCount:reference.ligand.coreAtomIds.length,
         contactCount:reference.hydrogenBonds.length } }); },
+    'pose.updateReceptorReference':async (args) => { empty(args);
+      return chemistActionSummary({ receptorReference:
+        await updateCurrentDockingReceptorReference() }); },
     'pose.setContact':async (args) => { chemistActionKeys(args, ['contactId','required']);
       if (typeof args.contactId !== 'string' || !args.contactId)
         throw new Error('contactId must be a captured contact ID');
@@ -7615,7 +8032,21 @@ function installChemistActionsApi(module) {
           stericClashes:selected.physicalDetails.stericClashes,
         } : null,
         selectedChemicalValidity:structuredClone(selected.physicalDetails?.chemicalValidity || null),
-        selectedHydrogenBonds:structuredClone(selected.hydrogenBonds) } }); },
+        selectedHydrogenBonds:structuredClone(selected.hydrogenBonds),
+        featureGuidedSeeding:result.featureGuidedSeeding ? {
+          method:result.featureGuidedSeeding.method,
+          requestedCount:result.featureGuidedSeeding.requestedCount,
+          uniqueSeedCount:result.featureGuidedSeeding.uniqueSeedCount,
+          targetVariantCount:result.featureGuidedSeeding.targetVariantCount,
+          untargetedRotorCount:result.featureGuidedSeeding.untargetedRotorCount,
+          affectedRotorCount:result.featureGuidedSeeding.affectedRotorCount,
+          releasedCoreAtomIndices:structuredClone(
+            result.featureGuidedSeeding.releasedCoreAtomIndices),
+          affectedRotors:structuredClone(result.featureGuidedSeeding.affectedRotors),
+          editRegionAnglesDegrees:result.featureGuidedSeeding.editRegionAnglesDegrees,
+          selectedSeedAudit:structuredClone(result.featureGuidedSeeding.seedAudits
+            .find((entry) => entry.conformerIndex === selected.conformerIndex) || null),
+        } : null } }); },
     'pose.apply':async (args) => { chemistActionKeys(args, ['index']);
       const index = Number(args.index ?? 0);
       if (!Number.isInteger(index) || index < 0) throw new Error('index must be a non-negative integer');
@@ -7624,6 +8055,26 @@ function installChemistActionsApi(module) {
       const pose = await applySelectedDockingPose();
       return chemistActionSummary({ appliedPose:{ index, rank:pose.rank,
         feasible:pose.feasible, scoreKcalMol:pose.totalScoreKcalMol } }); },
+    'pose.enumerateSidechainRotamers':async (args) => { chemistActionKeys(args,
+      ['receptorAtomId','maximumCandidates']);
+      if (typeof args.receptorAtomId !== 'string' || !args.receptorAtomId)
+        throw new Error('receptorAtomId must be a persistent receptor atom ID');
+      const maximumCandidates = Number(args.maximumCandidates ?? 32);
+      if (!Number.isInteger(maximumCandidates) || maximumCandidates < 1 || maximumCandidates > 64)
+        throw new Error('maximumCandidates must be an integer from 1 to 64');
+      const byId = await ensureChemistActionAtomIds();
+      const residueAtomIndex = byId.get(args.receptorAtomId);
+      if (!Number.isInteger(residueAtomIndex))
+        throw new Error(`Unknown persistent atom ID: ${args.receptorAtomId}`);
+      const sidechainRotamers = await enumerateCurrentSidechainRotamers(
+        residueAtomIndex, maximumCandidates);
+      return chemistActionSummary({ sidechainRotamers }); },
+    'pose.applySidechainRotamer':async (args) => { chemistActionKeys(args, ['index']);
+      const index = Number(args.index ?? 0);
+      if (!Number.isInteger(index) || index < 0)
+        throw new Error('index must be a non-negative integer');
+      const sidechainRotamer = await applyCurrentSidechainRotamer(index);
+      return chemistActionSummary({ sidechainRotamer }); },
     'optimization.run':async (args) => { chemistActionKeys(args, ['method']);
       const method = chemistActionEnum(args.method,
         ['ligand-rdkit','pocket-webgpu','induced-fit-webgpu','webgpu','rdkit','ani2x'], 'method');
@@ -7897,6 +8348,27 @@ const molariumTestApi = Object.freeze({
       const productIndex = productHeavyIndices[entry.productAtomIndex];
       return product.atoms[productIndex]?.designAtomId;
     }).filter(Boolean);
+    const commonProductOrdinalByReferenceName = new Map(
+      posePropagationMap.commonAtoms.map((entry) =>
+        [entry.referenceAtomName, entry.productAtomIndex]));
+    const affectedProductOrdinals = new Set([
+      ...Array.from(posePropagationMap.productBoundary || [])
+        .map((entry) => entry.commonProductAtomIndex),
+      ...Array.from(posePropagationMap.referenceBoundary || [])
+        .map((entry) => commonProductOrdinalByReferenceName.get(entry.commonAtomName)),
+    ].filter(Number.isInteger));
+    const affectedBenchmarkCoreIds = [...affectedProductOrdinals].map((ordinal) => {
+      const productIndex = productHeavyIndices[ordinal];
+      return product.atoms[productIndex]?.designAtomId;
+    }).filter(Boolean);
+    state.molecule.source = { ...(state.molecule.source || {}),
+      posePropagationGraphEdit:{
+        schema:'molarium.pose-propagation-graph-edit/v1', caseId:caseId || null,
+        addedAtomIds:[...addedBenchmarkHeavyIds],
+        removedAtomIds:[...removedBenchmarkAtomIds],
+        affectedCoreAtomIds:[...new Set(affectedBenchmarkCoreIds)].sort(),
+        source:'registered reference/product graph boundaries; no product coordinates',
+      } };
     const addedHeavyIdSet = new Set(addedBenchmarkHeavyIds);
     const addedBenchmarkAtomIds = currentPlan.molecule.atoms.flatMap((atom, atomIndex) => {
       if (addedHeavyIdSet.has(atom.designAtomId)) return [atom.designAtomId];
@@ -7960,7 +8432,8 @@ const molariumTestApi = Object.freeze({
         ligandRole:proposal.ligandRole, candidateCount:proposal.candidates.length,
         candidateTypes:proposal.candidates.map((candidate) => candidate.type) })),
       registeredEditRegion:{ removedAtomIds:removedBenchmarkAtomIds,
-        addedAtomIds:addedBenchmarkAtomIds },
+        addedAtomIds:addedBenchmarkAtomIds,
+        affectedCoreAtomIds:[...new Set(affectedBenchmarkCoreIds)].sort() },
       embedding:{ rdkitVersion:embedded.result.rdkitVersion,
         forcefield:embedded.result.forcefield, conformerCount:embedded.result.conformerCount,
         seed:embedded.result.conformerSeed,
@@ -12504,6 +12977,9 @@ document.querySelector('#docking-edit-cleanup').addEventListener('change', () =>
 document.querySelector('#capture-docking-reference').addEventListener('click', () => {
   captureCurrentDockingReference().catch((error) => showNotice(error.message));
 });
+document.querySelector('#update-docking-receptor').addEventListener('click', () => {
+  updateCurrentDockingReceptorReference().catch((error) => showNotice(error.message));
+});
 document.querySelector('#confirm-analogue-design').addEventListener('click', () => {
   settleAnalogueDesignPrompt(true);
 });
@@ -12530,6 +13006,45 @@ document.querySelector('#download-docking-audit').addEventListener('click', () =
 });
 document.querySelector('#chemistry-formal-charge').addEventListener('keydown', (event) => {
   if (event.key === 'Enter') document.querySelector('#apply-atom-chemistry').click();
+});
+document.querySelector('#enumerate-sidechain-rotamers').addEventListener('click', async (event) => {
+  const button = event.currentTarget;
+  const residueAtomIndex = state.selectedAtoms.length === 1 ? state.selectedAtoms[0] : null;
+  if (!Number.isInteger(residueAtomIndex)) return;
+  button.disabled = true; button.textContent = 'Enumerating…';
+  try { await enumerateCurrentSidechainRotamers(residueAtomIndex); }
+  catch (error) { showNotice(error.message); }
+  finally { button.textContent = 'Enumerate rotamers'; updateSidechainRotamerControls(); }
+});
+document.querySelector('#apply-sidechain-rotamer').addEventListener('click', async (event) => {
+  const button = event.currentTarget;
+  button.disabled = true; button.textContent = 'Applying…';
+  try { await applyCurrentSidechainRotamer(Number(
+    document.querySelector('#sidechain-rotamer-select').value)); }
+  catch (error) { showNotice(error.message); }
+  finally { button.disabled = false; button.textContent = 'Apply branch'; updateSidechainRotamerControls(); }
+});
+document.querySelector('#import-designer-moves').addEventListener('click', () => {
+  document.querySelector('#designer-move-file').click();
+});
+document.querySelector('#designer-move-file').addEventListener('change', async (event) => {
+  try { await importDesignerMoveScript(event.currentTarget.files?.[0]); }
+  catch (error) { showNotice(error.message); }
+  finally { event.currentTarget.value = ''; updateDesignerMoveControls(); }
+});
+document.querySelector('#replay-designer-moves').addEventListener('click', async (event) => {
+  const button = event.currentTarget;
+  button.disabled = true; button.textContent = 'Replaying…';
+  try { await replayDesignerMoveScript(); }
+  catch (error) { showNotice(error.message); }
+  finally { button.textContent = 'Replay moves'; updateDesignerMoveControls(); }
+});
+document.querySelector('#export-designer-moves').addEventListener('click', () => {
+  exportRecordedDesignerMoves().catch((error) => showNotice(error.message));
+});
+document.querySelector('#export-designer-replay').addEventListener('click', () => {
+  try { exportDesignerMoveReplay(); }
+  catch (error) { showNotice(error.message); }
 });
 document.querySelector('#optimize-button').addEventListener('click', runSelectedBuildOptimization);
 document.querySelector('#build-optimizer-select').addEventListener('change', (event) => {

@@ -275,6 +275,7 @@
               <p class="docking-status" id="docking-status">Begin analogue design before editing the prepared ligand.</p>
               <div class="docking-reference-actions">
                 <button class="soft-button" type="button" id="capture-docking-reference" title="Freeze the current prepared ligand pose as the analogue-design reference">Begin analogue design</button>
+                <button class="soft-button hidden" type="button" id="update-docking-receptor" title="Accept the current receptor coordinates while retaining the captured ligand reference">Update moved receptor</button>
                 <button class="soft-button hidden" type="button" id="clear-docking-reference">Reset</button>
               </div>
               <div class="docking-constraints hidden" id="docking-constraints">
@@ -324,6 +325,28 @@
               <button class="soft-button" id="undo-atom">↶ Undo</button>
               <button class="soft-button" id="redo-atom">↪ Redo</button>
             </div>
+            <section class="sidechain-rotamer-tools hidden" id="sidechain-rotamer-tools">
+              <h2 class="compact-label build-section-label">Side-chain conformations</h2>
+              <p class="panel-copy" id="sidechain-rotamer-status">Choose Select, then pick one atom in a protein side chain.</p>
+              <button class="soft-button full-width" id="enumerate-sidechain-rotamers" type="button" disabled>Enumerate rotamers</button>
+              <div class="sidechain-rotamer-results hidden" id="sidechain-rotamer-results">
+                <select id="sidechain-rotamer-select" aria-label="Side-chain rotamer candidate"></select>
+                <button class="primary-button" id="apply-sidechain-rotamer" type="button">Apply branch</button>
+              </div>
+            </section>
+            <section class="designer-move-tools" id="designer-move-tools">
+              <h2 class="compact-label build-section-label">Designer moves</h2>
+              <p class="panel-copy" id="designer-move-status">Import a Chemist Actions JSON script, or export the Agent/API moves recorded for this molecule.</p>
+              <input class="hidden" id="designer-move-file" type="file" accept="application/json,.json" />
+              <div class="designer-move-buttons">
+                <button class="soft-button" id="import-designer-moves" type="button">Import JSON</button>
+                <button class="primary-button" id="replay-designer-moves" type="button" disabled>Replay moves</button>
+              </div>
+              <div class="designer-move-buttons">
+                <button class="soft-button" id="export-designer-moves" type="button" disabled>Export API moves</button>
+                <button class="soft-button" id="export-designer-replay" type="button" disabled>Export replay log</button>
+              </div>
+            </section>
             <h2 class="compact-label build-section-label">Adjust Geometry</h2>
             <p class="panel-copy" id="geometry-selection-help">Choose Select, then pick 2 atoms for a bond, 3 for an angle, or 4 for a torsion.</p>
             <div class="geometry-control">

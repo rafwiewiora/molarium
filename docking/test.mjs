@@ -1177,9 +1177,11 @@ const featureSeeds = featureGuidedPoseSeeds({ molecule:featureSeedMolecule,
     hydrogen:{ scope:'receptor', point:{ x:0,y:2,z:0 } },
     acceptor:{ scope:'ligand', atomIndex:1 },
     targetLigandFeatureReferencePoint:{ x:0,y:1.2,z:0 } }] });
-assert.equal(featureSeeds.method, 'molarium-captured-feature-axis-seeding/v1');
+assert.equal(featureSeeds.method, 'molarium-edit-region-axis-seeding/v4');
 assert.equal(featureSeeds.requestedCount, 7);
 assert.equal(featureSeeds.uniqueSeedCount, 7);
+assert.equal(featureSeeds.untargetedRotorCount, 0,
+  'a region already covered by a captured feature is not redundantly scanned');
 assert.deepEqual(Array.from(featureSeeds.seeds[0].positions), Array.from(featureSeedStart));
 assert.ok(Math.abs(featureSeeds.seeds[1].positions[3]) < 1e-12
   && Math.abs(featureSeeds.seeds[1].positions[4] - 1) < 1e-12,
@@ -1195,6 +1197,37 @@ hydrogenBondConstraints:[{ id:'ring-feature', receptorRole:'donor',
   targetLigandFeatureReferencePoint:{ x:0,y:1,z:0 } }] });
 assert.equal(multiAnchorSeeds.uniqueSeedCount, 1,
   'multi-anchor edits are not distorted by the single-anchor feature seeder');
+const untargetedSeeds = featureGuidedPoseSeeds({ molecule:{
+  atoms:[{ element:'C' }, { element:'C' }, { element:'C' }, { element:'O' }],
+  bonds:[{ a:0,b:1,order:1 }, { a:1,b:2,order:1 }, { a:2,b:3,order:1 }] },
+initialPositions:Float64Array.from([0,0,0, 1,0,0, 1,1,0, 1,2,0]),
+coreAtomIndices:[0], count:6, hydrogenBondConstraints:[] });
+assert.equal(untargetedSeeds.uniqueSeedCount, 12);
+assert.equal(untargetedSeeds.untargetedRotorCount, 1);
+assert.equal(untargetedSeeds.seeds[1].audit.method, 'untargeted-edit-region-torsion-scan');
+assert.deepEqual(Array.from(untargetedSeeds.seeds[1].positions.slice(0, 6)),
+  [0,0,0, 1,0,0], 'the fixed core and attachment atom remain exact');
+assert.ok(Math.abs(untargetedSeeds.seeds[1].positions[7] - Math.sqrt(3) / 2) < 1e-12
+  && Math.abs(Math.abs(untargetedSeeds.seeds[1].positions[8]) - 0.5) < 1e-12,
+  'an untargeted grown region is seeded around its core-boundary bond');
+const conservedJunctionRingSeeds = featureGuidedPoseSeeds({ molecule:{
+  atoms:[{ element:'C' }, { element:'C' }, { element:'C' }, { element:'C' },
+    { element:'C' }],
+  bonds:[{ a:0,b:1,order:1 }, { a:1,b:2,order:1 }, { a:2,b:3,order:1 },
+    { a:3,b:4,order:1 }, { a:4,b:1,order:1 }] },
+initialPositions:Float64Array.from([-1,0,0, 0,0,0, 0,1,0, 1,1,0, 1,0,0]),
+coreAtomIndices:[0,1], count:6, hydrogenBondConstraints:[] });
+assert.equal(conservedJunctionRingSeeds.uniqueSeedCount, 12);
+assert.equal(conservedJunctionRingSeeds.untargetedRotorCount, 1);
+assert.equal(conservedJunctionRingSeeds.seeds[1].audit.attachmentMode,
+  'conserved-junction-ring-axis');
+assert.deepEqual(Array.from(conservedJunctionRingSeeds.seeds[1].positions.slice(0, 6)),
+  [-1,0,0, 0,0,0], 'the scaffold and conserved junction atom remain exact');
+assert.ok(Math.abs(conservedJunctionRingSeeds.seeds[1].positions[7]
+    - Math.sqrt(3) / 2) < 1e-12
+  && Math.abs(Math.abs(conservedJunctionRingSeeds.seeds[1].positions[8])
+    - 0.5) < 1e-12,
+  'a ring grown around a conserved junction scans the external scaffold bond');
 const attachedSingle = attachNonCoreRegionsToSnappedCore({
   molecule:{ atoms:[{ element:'C' }, { element:'N' }, { element:'H' }],
     bonds:[{ a:0, b:1, order:3 }, { a:1, b:2, order:1 }] },

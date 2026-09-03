@@ -592,6 +592,19 @@ select {
 .history-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 7px; }
 .history-buttons .soft-button { margin: 0; }
 .history-buttons button:disabled { cursor: default; opacity: .48; }
+.sidechain-rotamer-tools { margin-top: 12px; padding-top: 1px; }
+.sidechain-rotamer-tools .panel-copy { margin-bottom: 7px; font-size: 9px; }
+.sidechain-rotamer-tools > .soft-button { margin: 0; font-size: 9px; }
+.sidechain-rotamer-results { display: grid; grid-template-columns: minmax(0, 1fr) 78px; gap: 6px; margin-top: 7px; }
+.sidechain-rotamer-results select { min-width: 0; height: 31px; padding: 4px 6px; border: 1px solid var(--line-strong); border-radius: 7px; background: white; color: #334155; font-size: 8px; }
+.sidechain-rotamer-results .primary-button { min-width: 0; padding: 6px 4px; font-size: 9px; }
+.designer-move-tools { margin-top: 12px; padding-top: 1px; border-top: 1px solid var(--line); }
+.designer-move-tools .panel-copy { margin-bottom: 7px; font-size: 9px; }
+.designer-move-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
+.designer-move-buttons button { min-width: 0; margin: 0; padding-inline: 5px; font-size: 9px; }
+.designer-move-buttons button:disabled { cursor: default; opacity: .48; }
+.designer-move-cue { position: relative; z-index: 2; outline: 2px solid #20a4b8 !important;
+  outline-offset: 2px; box-shadow: 0 0 0 6px rgb(32 164 184 / 15%) !important; }
 .geometry-control { display: grid; grid-template-columns: 1fr 92px; align-items: center; gap: 8px; }
 .geometry-control > input:first-child { width: 100%; accent-color: var(--ink); }
 .geometry-control input:disabled { cursor: default; opacity: .48; }

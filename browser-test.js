@@ -37,7 +37,7 @@ const openmmPoseOptions = Bun.env.MOLARIUM_OPENMM_POSE_OPTIONS
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function waitFor(check, timeout = 10000) {
+async function waitFor(check, timeout = 10000, dependency = 'browser test dependency') {
   const started = Date.now();
   while (Date.now() - started < timeout) {
     try {
@@ -46,7 +46,7 @@ async function waitFor(check, timeout = 10000) {
     } catch { /* retry while processes start */ }
     await delay(100);
   }
-  throw new Error('Timed out waiting for browser test dependency');
+  throw new Error(`Timed out waiting for ${dependency}`);
 }
 
 class DevToolsClient {
@@ -263,6 +263,67 @@ const browserSuite = String.raw`(async () => {
     check(endpoints.length === 2 && cyclopropane.bonds.some((bond) =>
       endpoints.every((id) => bond.atomIds.includes(id))),
     'the public Create-bond route closes a ring through the same validated 2D Bond operation');
+    const pheAtom = (atomName, x, y, z, extra = {}) => ({ record:'ATOM',
+      residueName:'PHE', chain:'A', residueIndex:890, insertionCode:'', element:'C',
+      atomName, x, y, z, ...extra });
+    const rotamerFixture = { name:'Phe rotamer action fixture', smiles:'protein–ligand complex',
+      charge:0, multiplicity:1, source:{ format:'pdb', pdbId:'ROT1' }, atoms:[
+        pheAtom('N', -1.1, 0, 0, { element:'N' }), pheAtom('CA', 0, 0, 0),
+        pheAtom('C', 0, -1.4, 0), pheAtom('O', 0, -2.5, 0, { element:'O' }),
+        pheAtom('CB', 1.1, .7, 0), pheAtom('CG', 2.25, 0, .35),
+        pheAtom('CD1', 3.35, .68, .45), pheAtom('CE1', 4.48, .06, .78),
+        pheAtom('CZ', 4.52, -1.25, 1.02), pheAtom('CE2', 3.43, -1.94, .92),
+        pheAtom('CD2', 2.30, -1.32, .59),
+        { record:'HETATM', residueName:'LIG', chain:'L', residueIndex:1,
+          insertionCode:'', atomName:'C1', element:'C', x:3.30, y:.70, z:.47 },
+      ], bonds:[[0,1],[1,2],[2,3],[1,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,5]]
+        .map(([a,b]) => ({ a,b,order:1 })) };
+    api.loadObject(rotamerFixture);
+    await chemist.execute({ action:'view.setMode', args:{ mode:'build' } });
+    await chemist.execute({ action:'build.setTool', args:{ tool:'select' } });
+    const rotamerGraph = (await chemist.inspect({ scope:'all', includeCoordinates:true,
+      maximumAtoms:100 })).result;
+    const pheCg = rotamerGraph.atoms.find((atom) => atom.residueName === 'PHE'
+      && atom.residueIndex === 890 && atom.atomName === 'CG');
+    await chemist.execute({ action:'selection.replace', args:{ atomIds:[pheCg.atomId] } });
+    const enumerated = await chemist.execute({ action:'pose.enumerateSidechainRotamers', args:{
+      receptorAtomId:pheCg.atomId, maximumCandidates:32 } });
+    const branches = enumerated.result.sidechainRotamers;
+    check(branches.schema === 'molarium.sidechain-rotamers/v1'
+      && branches.residue.residueName === 'PHE' && branches.axes.length === 2
+      && branches.candidates.length >= 8
+      && branches.candidates.every((candidate) => /^[a-f0-9]{64}$/.test(candidate.coordinateSha256))
+      && !branches.candidates.some((candidate) => candidate.positions)
+      && !document.querySelector('#sidechain-rotamer-tools').classList.contains('hidden')
+      && !document.querySelector('#sidechain-rotamer-results').classList.contains('hidden'),
+    'the public API enumerates hashed Phe chi branches through the visible Build control without returning coordinates',
+    JSON.stringify(branches));
+    const appliedRotamer = await chemist.execute({ action:'pose.applySidechainRotamer',
+      args:{ index:0 } });
+    const rotamerSource = api.current().molecule.source.sidechainRotamerApplications?.at(-1);
+    check(appliedRotamer.result.sidechainRotamer.selectedCoordinateSha256
+        === branches.candidates[0].coordinateSha256
+      && rotamerSource?.selectedCoordinateSha256 === branches.candidates[0].coordinateSha256
+      && rotamerSource?.inputCoordinateSha256 === branches.inputCoordinateSha256
+      && document.querySelector('#sidechain-rotamer-results').classList.contains('hidden'),
+    'applying a public rotamer branch records input and output hashes and clears the stale ensemble',
+    JSON.stringify(appliedRotamer.result.sidechainRotamer));
+    await chemist.execute({ action:'history.undo' });
+    const moveFile = new File([JSON.stringify({
+      schema:'molarium.chemist-action-script/v1', label:'Browser designer-move smoke',
+      actions:[{ action:'session.inspect', args:{ scope:'ligand', maximumAtoms:20 } }],
+    })], 'designer-moves.json', { type:'application/json' });
+    const moveTransfer = new DataTransfer(); moveTransfer.items.add(moveFile);
+    const moveInput = document.querySelector('#designer-move-file');
+    Object.defineProperty(moveInput, 'files', { value:moveTransfer.files, configurable:true });
+    moveInput.dispatchEvent(new Event('change', { bubbles:true }));
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const replayButton = document.querySelector('#replay-designer-moves');
+    replayButton.click();
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    check(document.querySelector('#designer-move-status').textContent.includes('1 replayable move')
+      && !document.querySelector('#export-designer-replay').disabled,
+    'the visible Designer moves panel imports JSON and replays it through the public Chemist Actions API');
     let rejected = '';
     try { await chemist.execute({ action:'internal.scorePose', args:{} }); }
     catch (error) { rejected = error.message; }
@@ -854,7 +915,10 @@ const browserSuite = String.raw`(async () => {
         .maximumAdditionalStericClashes === 2
       && propagationRun.selected.refinement.capture.bestEvaluation.chemicalValidity
         .maximumAdditionalLennardJonesKcalMol === 100
-      && propagationLabbook.selections.atomLineage.inheritedAtomIds.length === 6
+      && propagationLabbook.selections.atomLineage.inheritedAtomIds.length === 5
+      && propagationLabbook.selections.atomLineage.releasedReferenceAtomIds.length === 1
+      && propagationLabbook.selections.atomLineage.releasedReferenceAtomIds
+        .some((id) => id.includes(':F1:'))
       && propagationLabbook.selections.atomLineage.addedAtomIds.length === 1
       && propagationLabbook.selections.editPreparation.selectedCleanupMode === 'preserve-reference'
       && Array.isArray(propagationLabbook.selections.editPreparation.interactivePolishHistory)
@@ -864,7 +928,7 @@ const browserSuite = String.raw`(async () => {
         && event.details.restraintParticipation.includes('stage 1 generates')
         && event.details.restraintParticipation.includes('sanity gates'))
       && propagationLabbook.events.some((event) => event.stage === 'fixed-scaffold-relaxation'),
-    'pose propagation records automatic atom lineage and fixed-scaffold Sage relaxation',
+    'pose propagation records automatic lineage, affected-rotor release, and fixed-scaffold Sage relaxation',
     JSON.stringify({ run:propagationRun, protocol:propagationLabbook.protocol.id,
       lineage:propagationLabbook.selections.atomLineage,
       events:propagationLabbook.events.map((event) => event.stage) }));
@@ -3365,7 +3429,7 @@ try {
       stderr: 'pipe',
     });
   }
-  await waitFor(async () => (await fetch(appUrl)).ok);
+  await waitFor(async () => (await fetch(appUrl)).ok, 10000, `Molarium server at ${appUrl}`);
 
   chrome = Bun.spawn([
     chromePath,
@@ -3382,7 +3446,7 @@ try {
   const page = await waitFor(async () => {
     const pages = await (await fetch(`http://127.0.0.1:${debugPort}/json`)).json();
     return pages.find((item) => item.type === 'page' && item.url === appUrl);
-  });
+  }, 10000, `Chrome page at ${appUrl} on debugging port ${debugPort}`);
   const client = new DevToolsClient(page.webSocketDebuggerUrl);
   await client.open();
   await waitFor(async () => {
@@ -3391,7 +3455,7 @@ try {
         ? 'Boolean(window.MolariumChemistActionsReady)'
         : 'Boolean(window.molariumTest)', returnByValue: true });
     return readiness.result.value;
-  });
+  }, 10000, productionApiBoundary ? 'Chemist Actions API readiness' : 'Molarium test API readiness');
   const evaluation = await client.call('Runtime.evaluate', { expression: browserSuite, awaitPromise: true, returnByValue: true });
   if (evaluation.exceptionDetails) throw new Error(evaluation.exceptionDetails.exception?.description || evaluation.exceptionDetails.text);
   if (Bun.env.MOLARIUM_TEST_SCREENSHOT) {

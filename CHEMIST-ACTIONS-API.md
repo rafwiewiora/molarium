@@ -65,8 +65,9 @@ feature transfer, Undo, and Redo therefore behave exactly as they do for an inte
 - `chemistry.addHydrogen`, `chemistry.removeHydrogen`
 - `chemistry.finish`, `chemistry.discard`
 - `history.undo`, `history.redo`
-- `pose.captureReference`, `pose.setContact`, `pose.addContact`, `pose.forgetContact`,
-  `pose.refine`, `pose.apply`
+- `pose.captureReference`, `pose.updateReceptorReference`, `pose.setContact`, `pose.addContact`, `pose.forgetContact`,
+  `pose.refine`, `pose.apply`, `pose.enumerateSidechainRotamers`,
+  `pose.applySidechainRotamer`
 - `optimization.run`
 - `designCampaign.load`, `designCampaign.applyStep`, `designCampaign.inspect`
 
@@ -87,6 +88,30 @@ without importing a later crystal or conflating parameter assignment with relaxa
 the ligand and every atom of protein residues entering a 6 Å pocket shell, including local
 backbone atoms, while the outer complex remains fixed. This is an experimental local induced-fit
 minimization, not an ensemble or a binding-affinity calculation.
+
+`pose.enumerateSidechainRotamers` is the discrete move that precedes that minimization when a
+receptor side chain may need to cross a rotamer barrier. It accepts one persistent receptor atom
+ID, generates a bounded canonical chi-angle ensemble from the current coordinates, and ranks the
+branches with a deterministic steric screen against the current complex. It does not read or
+accept a later protein structure. `pose.applySidechainRotamer` commits one returned branch through
+the same visible Build control, records the input and selected-coordinate hashes, and participates
+in ordinary Undo. The chosen branch should then be physically refined and compared with the other
+branches; the steric pre-rank is not an affinity score.
+
+`pose.updateReceptorReference` accepts a moved receptor-site branch without replacing the captured
+ligand reference or its persistent atom lineage. It refreshes the receptor coordinates and any
+captured receptor contact descriptors, records before/after coordinate hashes, and leaves ligand
+placement to a subsequent `pose.refine`. This permits auditable joint side-chain/ligand branch
+search rather than forcing every ligand pose against only the starting receptor rotamer.
+
+For pose propagation, `pose.refine` now seeds a single-anchor grown region across deterministic
+attachment-bond torsions even when no explicit hydrogen-bond target was captured. Target-directed
+regions keep their pharmacophore-axis seeds, multi-anchor regions remain rigid, and every surviving
+reference heavy atom stays exact. This includes a ring grown around a conserved junction atom: the
+new ring rotates about the junction's external scaffold bond while the junction itself remains
+fixed. Untargeted edit axes use a deterministic 30° scan; captured pharmacophore axes retain their
+coarser directional scan. The `pose.refine` response and labbook record the unique seed count,
+target variants, untargeted edit rotors, angle grid, and the audit record of the winning seed.
 
 The structure-story viewer exposes a separate scope of the same public API:
 
@@ -139,6 +164,15 @@ Structure-story rendering is also an API client. Every captured frame is selecte
 `structureStory.selectFrame`; render output includes `chemist-action-audit.json`, and the render
 manifest pins the audit hash and associates each frame with its API sequence number. Direct private
 viewer hooks are not part of this path.
+
+## Saved designer moves
+
+The Build panel can import, replay, and export `molarium.chemist-action-script/v1` JSON. A script is
+the portable action-and-arguments procedure; `molarium.chemist-action-replay/v1` is the separate
+result of executing it in a new session. Replay calls only this public API and rejects private
+routes, embedded code, callbacks, and direct coordinate replacement. See
+[`DESIGNER-MOVES.md`](./DESIGNER-MOVES.md) for the schema, converter, and the provenance-pinned SOS1
+Phe890 examples.
 
 ## Explicit exclusions
 

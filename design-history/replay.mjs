@@ -4,6 +4,10 @@ import { cloneRecord, sha256Object } from './integrity.mjs';
 export const ACTION_SCRIPT_SCHEMA = 'molarium.chemist-action-script/v1';
 export const REPLAY_SCHEMA = 'molarium.chemist-action-replay/v1';
 
+export const READ_ONLY_CHEMIST_ACTIONS = Object.freeze([
+  'session.inspect', 'designCampaign.inspect', 'structureStory.inspect',
+]);
+
 const FORBIDDEN_BOUNDARY_KEYS = new Set([
   'directCoordinates', 'internalCallback', 'module', 'eval', 'sourceCode', 'privateRoute',
 ]);
@@ -78,6 +82,86 @@ export function validateActionScript(script) {
     }
   });
   return script;
+}
+
+function auditRecords(audit) {
+  if (Array.isArray(audit)) return audit;
+  if (!audit || typeof audit !== 'object' || !Array.isArray(audit.records))
+    throw new Error('Expected a Chemist Actions audit record array or an object with records');
+  if (audit.schema != null && audit.schema !== CHEMIST_ACTIONS_SCHEMA
+    && audit.schema !== 'molarium.chemist-action-audit/v1')
+    throw new Error(`Unsupported Chemist Actions audit schema: ${audit.schema}`);
+  return audit.records;
+}
+
+function selectedSequences(value) {
+  if (value == null) return null;
+  if (!Array.isArray(value) && !(value instanceof Set))
+    throw new Error('includeSequences must be an array or Set of positive integers');
+  const result = new Set(value);
+  for (const sequence of result)
+    if (!Number.isInteger(sequence) || sequence < 1)
+      throw new Error('includeSequences must contain only positive integers');
+  return result;
+}
+
+/**
+ * Convert an execution audit into the public, replayable Chemist Actions script schema.
+ * Results, timestamps and durations deliberately remain in the audit; a script contains only
+ * the explicit action requests needed to repeat the operation. Failed/running records are never
+ * replayed. Read-only inspections can be retained for a complete protocol trace or omitted for a
+ * compact designer-move script.
+ */
+export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit replay',
+  includeReadOnly = true, includeSequences = null, captionsBySequence = {},
+  captionFromRequestId = false, includeAuditMetadata = false, provenance = null } = {}) {
+  const records = auditRecords(audit), requested = selectedSequences(includeSequences);
+  if (!captionsBySequence || typeof captionsBySequence !== 'object'
+    || Array.isArray(captionsBySequence))
+    throw new Error('captionsBySequence must be an object keyed by audit sequence');
+  const seenSequences = new Set(), readOnly = new Set(READ_ONLY_CHEMIST_ACTIONS);
+  const actions = [];
+  for (const [recordIndex, record] of records.entries()) {
+    if (!record || typeof record !== 'object')
+      throw new Error(`Audit record ${recordIndex + 1} must be an object`);
+    const sequence = record.sequence;
+    if (!Number.isInteger(sequence) || sequence < 1)
+      throw new Error(`Audit record ${recordIndex + 1} requires a positive integer sequence`);
+    if (seenSequences.has(sequence)) throw new Error(`Duplicate audit sequence ${sequence}`);
+    seenSequences.add(sequence);
+    if (record.status !== 'completed' || (requested && !requested.has(sequence))) continue;
+    if (!includeReadOnly && readOnly.has(record.action)) continue;
+    if (!Object.hasOwn(CHEMIST_ACTION_DEFINITIONS, record.action))
+      throw new Error(`Audit sequence ${sequence} uses unavailable route ${record.action}`);
+    const step = { action:record.action, args:cloneRecord(record.args || {}) };
+    if (includeAuditMetadata) step.auditSequence = sequence;
+    if (includeAuditMetadata && typeof record.requestId === 'string' && record.requestId)
+      step.auditRequestId = record.requestId;
+    const suppliedCaption = captionsBySequence[sequence];
+    if (suppliedCaption != null && typeof suppliedCaption !== 'string')
+      throw new Error(`Caption for audit sequence ${sequence} must be a string`);
+    const caption = suppliedCaption ?? (typeof record.caption === 'string' ? record.caption : null)
+      ?? (captionFromRequestId && typeof record.requestId === 'string' ? record.requestId : null);
+    if (caption != null && caption !== '') step.caption = caption;
+    actions.push(step);
+  }
+  if (requested) {
+    const missing = [...requested].filter((sequence) => !seenSequences.has(sequence));
+    if (missing.length) throw new Error(`Audit does not contain requested sequences: ${missing.join(', ')}`);
+  }
+  const script = { schema:ACTION_SCRIPT_SCHEMA, label:String(label),
+    actions, sourceAudit:{ schema:Array.isArray(audit) ? null : audit.schema || null,
+      campaignId:Array.isArray(audit) ? null : audit.campaignId || null,
+      recordCount:records.length,
+      includedRecordCount:actions.length,
+      includedSequences:records.filter((record) => record?.status === 'completed'
+        && (!requested || requested.has(record.sequence))
+        && (includeReadOnly || !readOnly.has(record.action))).map((record) => record.sequence),
+      failedRecordsExcluded:records.filter((record) => record?.status !== 'completed').length,
+      readOnlyInspectionsIncluded:Boolean(includeReadOnly),
+      ...(provenance == null ? {} : cloneRecord(provenance)) },
+  };
+  return validateActionScript(script);
 }
 
 export async function actionScriptSha256(script) {
