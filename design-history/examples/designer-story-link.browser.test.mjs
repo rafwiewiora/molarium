@@ -93,7 +93,8 @@ try {
   assert.equal(preparationCue.prepareHighlighted, true);
   assert.equal(preparationCue.highlightColor, 'rgb(220, 38, 38)');
   assert.equal(preparationCue.loadCardMinimized, false);
-  assert.equal(preparationCue.transportOnly, true);
+  assert.equal(preparationCue.transportOnly, false,
+    'the story controls and caption must not auto-collapse around an active control');
   assert.ok(Math.abs(preparationCue.transportTop - initial.transportTop) < 1);
   assert.equal(preparationCue.infoMinimized, true);
   await waitFor(async () => browser.evaluate(

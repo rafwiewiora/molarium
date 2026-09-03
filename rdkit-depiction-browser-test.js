@@ -188,11 +188,20 @@ try {
       sameSvg:true, ...coreRelativeToPanel(stableSvg) }];
     for (let click = 1; click <= 8; click++) {
       const currentSvg = document.querySelector('#structure-2d-drawing svg');
-      const atom = atomScreenPoint(currentSvg, 3);
-      drawing.dispatchEvent(new MouseEvent('click', { bubbles:true,
-        clientX:atom.x, clientY:atom.y }));
+      const atomLabel = [...currentSvg.querySelectorAll('.atom-2')].find((node) =>
+        [...node.classList].filter((name) => name.startsWith('atom-')).length === 1);
+      const atomBox = atomLabel.getBoundingClientRect();
+      atomLabel.dispatchEvent(new MouseEvent('click', { bubbles:true,
+        clientX:atomBox.x + atomBox.width / 2, clientY:atomBox.y + atomBox.height / 2 }));
       await new Promise((resolve) => setTimeout(resolve, 80));
-      await api.waitFor2DDepiction();
+      try { await api.waitFor2DDepiction(); }
+      catch (error) {
+        const current = api.current().molecule;
+        throw new Error(error.message + ' · repeated click ' + click + ' · '
+          + JSON.stringify({ name:current.name, smiles:current.smiles,
+            atoms:current.atoms.map((atom) => atom.element), bonds:current.bonds,
+            transaction:api.chemistryTransaction() }));
+      }
       const afterClickSvg = document.querySelector('#structure-2d-drawing svg');
       repeatedClickMeasurements.push({ click, selected:click % 2 === 1,
         sameSvg:afterClickSvg === stableSvg,

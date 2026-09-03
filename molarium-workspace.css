@@ -271,7 +271,7 @@ body.molarium-workspace {
   .molarium-workspace .panel-left { grid-area: left; }
   .molarium-workspace .panel-right { grid-area: right; }
   .molarium-workspace .viewer-toolbar { max-width: calc(100% - 20px); }
-  .molarium-workspace .structure-2d-panel { left: 12px; bottom: 12px; width: 206px; }
+  .molarium-workspace .structure-2d-panel { left: 12px; bottom: 58px; width: 206px; }
   .molarium-workspace .canvas-help { display: none; }
 }
 

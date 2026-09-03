@@ -1,4 +1,6 @@
 import { validateRegisteredDesignRoute } from './design-history/structures/design-route.mjs';
+import { applyRegisteredLigandDefinition, validateConnectedMolecularGraph } from
+  './design-history/structures/registered-ligand-graph.mjs';
 
 const MOLARIUM_NETWORK_POLICY = Object.freeze({
   mode:'connected', localOnly:false, policy:'connected-v1',
@@ -807,6 +809,7 @@ const state = {
   depictionGlobalBondPairs: [],
   depictionAtomObjects: [],
   depictionComponentId: null,
+  depictionPinnedLigand: null,
   depictionOrientationAnchor: null,
   depictionTemplateMolBlock: null,
   depictionKey: null,
@@ -836,6 +839,12 @@ function depictionTarget(molecule = state.molecule) {
     return heavy.length > 0 && heavy.length <= MAX_DEPICTION_ATOMS;
   };
   const selectedComponentId = state.selectedAtom == null ? null : state.atomComponentIds[state.selectedAtom];
+  const pinnedComponent = state.depictionPinnedLigand
+    ? state.structureComponents.find((component) => component.kind === 'ligand'
+      && component.chain === state.depictionPinnedLigand.chain
+      && component.residueIndex === state.depictionPinnedLigand.residueIndex
+      && (component.insertionCode || '') === (state.depictionPinnedLigand.insertionCode || '')
+      && eligible(component)) : null;
   const selectedComponent = state.structureComponents.find((component) =>
     component.id === selectedComponentId && eligible(component));
   const focusedComponent = state.structureComponents.find((component) =>
@@ -843,11 +852,13 @@ function depictionTarget(molecule = state.molecule) {
   const ligand = state.structureComponents.find((component) => component.kind === 'ligand'
     && state.componentVisibility.get(component.id) !== false && eligible(component));
   const main = state.structureComponents.find((component) => component.kind === 'molecule' && eligible(component));
-  const component = selectedComponent || focusedComponent || ligand || main;
+  const component = pinnedComponent || selectedComponent || focusedComponent || ligand || main;
   if (!component) return null;
   const globalAtomIndices = component.atomIndices.filter((index) => molecule.atoms[index].element !== 'H');
   const mapped = mappedMoleculeSubset(molecule, globalAtomIndices, component.label || '2D structure');
-  return mapped ? { ...mapped, label:component.label || molecule.name || 'Structure', componentId:component.id } : null;
+  if (!mapped) return null;
+  const graph = validateConnectedMolecularGraph(mapped.molecule, { maximumAtoms:MAX_DEPICTION_ATOMS });
+  return { ...mapped, graph, label:component.label || molecule.name || 'Structure', componentId:component.id };
 }
 
 function depictionSignature(target) {
@@ -1052,8 +1063,17 @@ function alignDepictionToPrevious(svg, target) {
 async function update2DDepiction() {
   const panel = document.querySelector('#structure-2d-panel');
   const drawing = document.querySelector('#structure-2d-drawing');
-  const target = depictionTarget();
   const sequence = ++state.depictionSequence;
+  let target;
+  try { target = depictionTarget(); }
+  catch (error) {
+    panel.classList.remove('hidden');
+    drawing.replaceChildren(Object.assign(document.createElement('span'), { textContent:'2D depiction unavailable' }));
+    state.depictionGlobalAtomIndices = []; state.depictionGlobalBondPairs = [];
+    state.depictionAtomObjects = []; state.depictionComponentId = null;
+    state.depictionKey = null; panel.dataset.error = error.message; delete panel.dataset.pending;
+    return;
+  }
   if (!target) {
     panel.classList.add('hidden'); state.depictionGlobalAtomIndices = [];
     state.depictionGlobalBondPairs = []; state.depictionAtomObjects = [];
@@ -1069,7 +1089,10 @@ async function update2DDepiction() {
   drawing.replaceChildren(Object.assign(document.createElement('span'), { textContent:'Drawing…' }));
   try {
     const anchor = activeDepictionOrientationAnchor();
-    const result = await runRDKitJob('depict', target.molecule, () => {});
+    const trustedSanitizedGraph = Boolean(state.molecule?.source?.initialGeometryPolish
+      || state.chemistryTransaction?.snapshot?.source?.initialGeometryPolish);
+    const result = await runRDKitJob('depict', target.molecule, () => {},
+      { trustedSanitizedGraph });
     if (sequence !== state.depictionSequence || key !== state.depictionKey) return;
     const svg = sanitizedDepictionSvg(result.svg);
     drawing.replaceChildren(svg);
@@ -1100,7 +1123,17 @@ function schedule2DDepiction(delay = 50) {
   clearTimeout(state.depictionTimer);
   const panel = document.querySelector('#structure-2d-panel');
   const drawing = document.querySelector('#structure-2d-drawing');
-  const target = depictionTarget();
+  let target;
+  try { target = depictionTarget(); }
+  catch (error) {
+    state.depictionSequence += 1; state.depictionKey = null;
+    state.depictionGlobalAtomIndices = []; state.depictionGlobalBondPairs = [];
+    state.depictionAtomObjects = []; state.depictionComponentId = null;
+    panel.classList.remove('hidden'); delete panel.dataset.pending;
+    drawing.replaceChildren(Object.assign(document.createElement('span'), { textContent:'2D depiction unavailable' }));
+    panel.dataset.error = error.message;
+    return;
+  }
   if (!target) {
     state.depictionSequence += 1; state.depictionKey = null; state.depictionGlobalAtomIndices = [];
     state.depictionGlobalBondPairs = []; state.depictionAtomObjects = [];
@@ -3233,6 +3266,8 @@ function loadMolecule(molecule, resetView = true) {
     state.protonatingLigand = false;
   }
   state.molecule = molecule;
+  state.depictionPinnedLigand = molecule.source?.registeredLigandGraph?.locator
+    ? structuredClone(molecule.source.registeredLigandGraph.locator) : null;
   state.chemistActionAudit = structuredClone(molecule.source?.chemistActionAudit || []);
   state.dockingReference = null;
   state.dockingResult = null;
@@ -8187,8 +8222,8 @@ const DESIGNER_MOVE_CHECKPOINT_STATE_KEYS = Object.freeze([
   'focusedComponentRadius', 'focusedResidueKey', 'focusedResidueRadius',
   'focusedAtomIds', 'focusedAtomCenter', 'focusedAtomRadius', 'focusedAtomContextRadius',
   'focusedAtomContextIds', 'focusedAtomResidueLabels', 'emphasizedAtomIds',
-  'depictionOrientationAnchor',
-  'depictionTemplateMolBlock', 'depictionKey', 'depictionTool', 'depictionBondStart',
+  'depictionPinnedLigand', 'depictionOrientationAnchor',
+  'depictionTemplateMolBlock', 'depictionTool', 'depictionBondStart',
   'depictionBondOrder',
 ]);
 
@@ -8264,6 +8299,11 @@ function restoreDesignerMoveCheckpoint(index) {
   });
   state.molecule = cloneDesignerMoveCheckpointMolecule(checkpoint.molecule);
   state.chemistActionAudit = liveAudit;
+  // A checkpoint restores molecular state, not a previously rendered SVG.
+  // Force the inset to rebuild its atom map against the restored molecule.
+  state.depictionKey = null; state.depictionGlobalAtomIndices = [];
+  state.depictionGlobalBondPairs = []; state.depictionAtomObjects = [];
+  state.depictionComponentId = null;
   if (state.molecule) state.molecule.source = { ...(state.molecule.source || {}),
     chemistActionAudit:structuredClone(liveAudit) };
   state.calculating = false; state.minimizing = false; state.preparing = false;
@@ -8504,9 +8544,10 @@ function applyDesignerMoveDemoLayout(step, activeElement) {
     if (card.classList.contains('hidden') && card !== activeCard) return;
     const isActive = card === activeCard;
     const isTransport = card === transportCard;
-    const transportOnly = isTransport && (!isActive
-      || activeElement === transport || transport?.contains(activeElement));
-    card.classList.toggle('designer-move-demo-transport-only', transportOnly);
+    // Playback controls and the scientific caption are the story's stable
+    // frame of reference. Never auto-collapse that card while other controls
+    // are being cued or while a checkpoint is under review.
+    if (isTransport) card.classList.remove('designer-move-demo-transport-only', 'collapsed');
     card.classList.toggle('designer-move-demo-minimized', !isActive && !isTransport);
   });
   const depiction = document.querySelector('#structure-2d-panel');
@@ -9169,9 +9210,13 @@ async function loadRegisteredDesignRoute(routeId) {
     fetchPinnedText(route.hit.proteinAsset, route.hit.proteinSha256),
     fetchPinnedText(route.hit.ligandAsset, route.hit.ligandSha256),
   ]);
-  const molecule = parsePDB(`${protein.replace(/\nEND\s*$/m, '')}\n${ligand}`, {
+  const coordinateMolecule = parsePDB(`${protein.replace(/\nEND\s*$/m, '')}\n${ligand}`, {
     pdbId:route.hit.pdbId, name:`${route.hit.pdbId} · registered hit`,
   });
+  const registeredGraph = applyRegisteredLigandDefinition(coordinateMolecule, {
+    residueName:route.hit.ligand, definition:route.hit.ligandDefinition,
+  });
+  const molecule = registeredGraph.molecule;
   state.buildHistory = []; state.redoHistory = [];
   loadMolecule(molecule); updateHistoryButtons();
   state.designRoute = structuredClone(route);
@@ -9182,7 +9227,9 @@ async function loadRegisteredDesignRoute(routeId) {
   } };
   return { routeId:route.id, title:route.title,
     hit:{ pdbId:route.hit.pdbId, ligand:route.hit.ligand,
-      stateId:route.hit.stateId },
+      stateId:route.hit.stateId, graph:{ heavyAtomCount:registeredGraph.heavyAtomCount,
+        bondCount:registeredGraph.bondCount, connected:registeredGraph.connected,
+        coordinateMaximumDisplacement:registeredGraph.coordinateMaximumDisplacement } },
     coordinateInputs:structuredClone(route.protocolBoundary.coordinateInputs),
     availableSteps:route.steps.map((step) => step.id) };
 }
@@ -11231,7 +11278,9 @@ const molariumTestApi = Object.freeze({
       const panel = document.querySelector('#structure-2d-panel');
       const svg = document.querySelector('#structure-2d-drawing svg');
       if (!panel.classList.contains('hidden') && !panel.dataset.pending && svg) return this.twoDDepiction();
-      if (panel.dataset.error) throw new Error(panel.dataset.error);
+      if (panel.dataset.error) throw new Error(`${panel.dataset.error} [${state.molecule?.name || 'no molecule'}; `
+        + `${state.molecule?.atoms?.length || 0} atoms; ${state.molecule?.bonds?.length || 0} bonds; `
+        + `${state.chemistryTransaction?.editCount || 0} pending edits]`);
       await new Promise((resolve) => setTimeout(resolve, 25));
     }
     throw new Error('Timed out waiting for the 2D depiction');
@@ -11241,6 +11290,11 @@ const molariumTestApi = Object.freeze({
     const svg = document.querySelector('#structure-2d-drawing svg');
     return { visible:!panel.classList.contains('hidden'), label:document.querySelector('#structure-2d-label').textContent,
       atomIndices:state.depictionGlobalAtomIndices.slice(), bondPairs:structuredClone(state.depictionGlobalBondPairs),
+      heavyAtomCount:state.depictionGlobalAtomIndices.length,
+      bondCount:state.depictionGlobalBondPairs.length,
+      componentId:state.depictionComponentId,
+      pinnedLigand:structuredClone(state.depictionPinnedLigand),
+      error:panel.dataset.error || null,
       selectedAtoms:state.selectedAtoms.slice(), tool:state.depictionTool, mode:state.mode,
       pendingChanges:state.chemistryTransaction?.editCount || 0,
       hasSvg:Boolean(svg), atomClasses:svg?.querySelectorAll('[class*="atom-"]').length || 0,
@@ -16334,9 +16388,13 @@ function clearScene({ announce = false } = {}) {
   document.querySelector('#ligand-protonation').classList.add('hidden');
   state.depictionSequence += 1; state.depictionKey = null; state.depictionGlobalAtomIndices = [];
   state.depictionGlobalBondPairs = []; state.depictionAtomObjects = []; state.depictionComponentId = null;
+  state.depictionPinnedLigand = null;
   state.depictionOrientationAnchor = null; state.depictionTemplateMolBlock = null;
   state.depictionBondStart = null;
-  document.querySelector('#structure-2d-panel').classList.add('hidden');
+  const depictionPanel = document.querySelector('#structure-2d-panel');
+  depictionPanel.classList.add('hidden'); delete depictionPanel.dataset.pending;
+  delete depictionPanel.dataset.error;
+  document.querySelector('#structure-2d-drawing').replaceChildren();
   if (announce) showToast('Scene cleared');
   updateHistoryButtons(); updateOptimizerControls(); draw();
 }
