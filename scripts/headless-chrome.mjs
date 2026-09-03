@@ -64,9 +64,10 @@ export async function startMolariumBrowser({ root, appPath, url = null, width = 
   // tests and user launches keep Chrome's normal adapter policy.
   const softwareWebgpuArguments = process.platform === 'linux'
     && process.env.MOLARIUM_HEADLESS_SOFTWARE_WEBGPU === '1'
-    ? ['--enable-unsafe-webgpu', '--use-webgpu-adapter=swiftshader',
-      '--use-gpu-in-tests', '--enable-unsafe-swiftshader',
-      '--use-gl=angle', '--use-angle=swiftshader'] : [];
+    ? ['--enable-unsafe-webgpu', '--enable-features=UseSkiaRenderer,Vulkan',
+      '--use-angle=swiftshader', '--use-vulkan=swiftshader',
+      '--use-webgpu-adapter=swiftshader', '--disable-vulkan-surface',
+      '--use-gpu-in-tests', '--enable-unsafe-swiftshader'] : [];
   const profile = await mkdtemp(join(tmpdir(), 'molarium-history-browser-'));
   const server = url ? null : Bun.spawn(['bun', 'server.js', ...(localOnly ? ['--local-only'] : []),
     '--port', String(appPort)], { cwd:root, stdout:'ignore', stderr:'pipe' });
@@ -78,7 +79,7 @@ export async function startMolariumBrowser({ root, appPath, url = null, width = 
     chrome = Bun.spawn([chromePath,
       ...(process.platform === 'linux' ? ['--no-sandbox', '--disable-dev-shm-usage'] : []),
       ...softwareWebgpuArguments,
-      '--headless', '--disable-extensions', '--no-first-run', '--hide-scrollbars',
+      '--headless=new', '--disable-extensions', '--no-first-run', '--hide-scrollbars',
       '--force-color-profile=srgb', `--remote-debugging-port=${debugPort}`,
       `--user-data-dir=${profile}`, `--window-size=${width},${height}`, appUrl,
     ], { stdout:'ignore', stderr:'ignore' });

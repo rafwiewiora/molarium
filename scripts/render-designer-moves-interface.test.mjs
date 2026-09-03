@@ -69,7 +69,12 @@ try {
   assert.match(browserHelper, /MOLARIUM_HEADLESS_SOFTWARE_WEBGPU/,
     'the remote render must explicitly opt in to the Linux software WebGPU adapter');
   assert.match(browserHelper, /--enable-unsafe-webgpu/);
+  assert.match(browserHelper, /--enable-features=UseSkiaRenderer,Vulkan/);
+  assert.match(browserHelper, /--use-angle=swiftshader/);
+  assert.match(browserHelper, /--use-vulkan=swiftshader/);
   assert.match(browserHelper, /--use-webgpu-adapter=swiftshader/);
+  assert.match(browserHelper, /--disable-vulkan-surface/);
+  assert.match(browserHelper, /--headless=new/);
   assert.match(app, /action:'designerScript\.loadRegistered', args:\{ storyId \}/,
     'story deep links must use the one public registered-story loader');
   assert.match(app, /action:'session\.clear', args:\{\}/,
