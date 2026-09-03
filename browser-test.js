@@ -425,15 +425,20 @@ const browserSuite = String.raw`(async () => {
     && registry.cases.length === 25
     && Object.values(registry.artifacts).every(entry => /^[a-f0-9]{64}$/.test(entry.sha256)),
     'machine-readable validation registry exposes case records and source hashes');
-  const sideCards = [...document.querySelectorAll('.panel > .card')];
+  const sideCards = [...document.querySelectorAll('.panel > .card, .panel-scroll-stack > .card')];
+  const collapsibleSideCards = sideCards.filter((card) =>
+    !card.classList.contains('story-transport-card'));
   const generatedDisclosures = [...document.querySelectorAll('[data-generated-card-disclosure]')];
   check([...document.querySelectorAll('.mode-bar button')].map((button) => button.textContent.trim())
     .join('|') === 'View|Design|Simulate',
     'the public mode bar uses View, Design and Simulate while retaining stable data-mode values');
-  check(sideCards.length === 13
-    && sideCards.every((card) => card.querySelector(':scope > .card-heading.disclosure')),
-    'every sidebar card in View, Design and Simulate has a collapse control', String(sideCards.length));
-  check(generatedDisclosures.length === 8, 'all eight previously fixed-open sidebar cards are collapsible',
+  check(sideCards.length === 15 && collapsibleSideCards.length === 14
+    && collapsibleSideCards.every((card) =>
+      card.querySelector(':scope > .card-heading.disclosure')),
+    'every non-transport sidebar card in View, Design and Simulate has a collapse control',
+    String(sideCards.length));
+  check(generatedDisclosures.length === 9,
+    'all nine previously fixed-open sidebar cards are collapsible',
     String(generatedDisclosures.length));
   const generatedDisclosureRoundTrip = generatedDisclosures.every((toggle) => {
     const body = document.getElementById(toggle.getAttribute('aria-controls'));
@@ -944,7 +949,10 @@ const browserSuite = String.raw`(async () => {
         .maximumAdditionalStericClashes === 2
       && propagationRun.selected.refinement.capture.bestEvaluation.chemicalValidity
         .maximumAdditionalLennardJonesKcalMol === 100
-      && propagationLabbook.selections.atomLineage.inheritedAtomIds.length === 6
+      && propagationLabbook.selections.atomLineage.inheritedAtomIds.length === 5
+      && propagationLabbook.selections.atomLineage.releasedReferenceAtomIds.length === 1
+      && propagationLabbook.selections.atomLineage.releasedReferenceAtomIds
+        .some((id) => id.includes(':F1:'))
       && propagationLabbook.selections.atomLineage.addedAtomIds.length === 1
       && propagationLabbook.selections.editPreparation.selectedCleanupMode === 'preserve-reference'
       && Array.isArray(propagationLabbook.selections.editPreparation.interactivePolishHistory)
@@ -954,7 +962,7 @@ const browserSuite = String.raw`(async () => {
         && event.details.restraintParticipation.includes('stage 1 generates')
         && event.details.restraintParticipation.includes('sanity gates'))
       && propagationLabbook.events.some((event) => event.stage === 'fixed-scaffold-relaxation'),
-    'pose propagation records automatic atom lineage and fixed-scaffold Sage relaxation',
+    'pose propagation records automatic lineage, affected-rotor release, and fixed-scaffold Sage relaxation',
     JSON.stringify({ run:propagationRun, protocol:propagationLabbook.protocol.id,
       lineage:propagationLabbook.selections.atomLineage,
       events:propagationLabbook.events.map((event) => event.stage) }));
