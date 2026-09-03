@@ -98,6 +98,8 @@ jobs:
         uses: browser-actions/setup-chrome@48ad923757ca74d66703209fe939badbdf80f2f4 # v2
       - name: Install dependencies
         run: bun install --frozen-lockfile
+      - name: Install media tools
+        run: sudo apt-get update && sudo apt-get install --yes ffmpeg
       - name: Verify media tools
         run: ffmpeg -version && ffprobe -version
       - name: Render fail-closed SOS1 interface story
