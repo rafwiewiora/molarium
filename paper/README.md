@@ -20,6 +20,14 @@ editing:
 make -C paper watch
 ```
 
+Figure 2 must be built from an explicitly selected, completed interface replay;
+the figure script intentionally has no historical-run default:
+
+```sh
+python3 paper/scripts/build-sos1-paper-figure.py \
+  --render-dir outputs/design-history/<accepted-run>/interface-movie
+```
+
 The same directory can be uploaded to Overleaf. Generated files in `build/`
 should not be uploaded.
 

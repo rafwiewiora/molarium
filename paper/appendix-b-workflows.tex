@@ -613,6 +613,7 @@ await api.execute({action:"campaign.recordDecision", args:{
 await api.execute({action:"campaign.verify", args:{}})
 \end{lstlisting}
 
+\clearpage
 \workflowsection{B.11}{How skill contracts, API actions, and Design History fit together}{Current conceptual and executable relationship}{How does a written agent contract become an authorized action and then a durable scientific decision?}
 
 The three layers serve different purposes and should not be collapsed:
@@ -647,7 +648,4 @@ The manifest is the executable authority: a narrative skill contract cannot add 
 \subhead{Capabilities deliberately outside these workflows}
 
 The current workbench does not provide missing-loop construction, membrane or general metal preparation, covalent-ligand parameterization, periodic explicit solvent, PME, production-scale trajectories, binding free energy, global docking, general remote CUDA execution, GFN/xTB, general combinatorial enumeration, or automatic campaign selection. Their absence is part of the operating contract rather than a prompt to approximate them silently.
-
-{\footnotesize
-This task-centered appendix intentionally omits maintainer file paths, source-line numbers, worker lifecycle details, JSON nesting limits, deployment internals, and the complete repository test list. Those remain valuable implementation and audit documentation, but they are not required for a scientist or agent to understand how to perform and judge the workflows above.\par}
 \endgroup

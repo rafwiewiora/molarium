@@ -17,10 +17,6 @@ except ImportError:
     from PIL import Image, ImageDraw, ImageFont
 
 
-DEFAULT_RENDER = (
-    ROOT / "outputs" / "design-history" / "sos1-hit-only-growth-clash-v7"
-    / "interface-movie"
-)
 OUTPUT = ROOT / "paper" / "figures" / "fig2_sos1_hit_to_bay293.png"
 
 # Resolve publication states from replay semantics rather than from action
@@ -136,7 +132,15 @@ def result_capture(manifest, render_dir: Path, checkpoint):
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument("--render-dir", type=Path, default=DEFAULT_RENDER)
+    parser.add_argument(
+        "--render-dir",
+        type=Path,
+        required=True,
+        help=(
+            "Directory containing the accepted interface replay's "
+            "render-manifest.json and synchronized QA frames"
+        ),
+    )
     parser.add_argument("--output", type=Path, default=OUTPUT)
     args = parser.parse_args()
     manifest_path = args.render_dir / "render-manifest.json"
