@@ -214,6 +214,119 @@ function componentWithoutBond(entries, root, first, second) {
   return visited;
 }
 
+function fragmentCartesianScore(referencePositions, candidatePositions, mappingVariants) {
+  const scored = Array.from(mappingVariants || []).map((variant, variantIndex) => {
+    const atomPairs = Array.from(variant.atomPairs || []);
+    if (atomPairs.length < 3) return null;
+    let sumSquared = 0;
+    for (const [referenceAtomIndex, productAtomIndex] of atomPairs) {
+      const reference = point(referencePositions, referenceAtomIndex);
+      const candidate = point(candidatePositions, productAtomIndex);
+      sumSquared += reference.reduce((sum, value, axis) =>
+        sum + (value - candidate[axis]) ** 2, 0);
+    }
+    return { variantIndex, atomPairs, sumSquared,
+      rmsdAngstrom:Math.sqrt(sumSquared / atomPairs.length) };
+  }).filter(Boolean).sort((first, second) => first.sumSquared - second.sumSquared
+    || first.variantIndex - second.variantIndex);
+  if (!scored.length) throw new Error('A seed-only fragment needs at least one three-atom map');
+  return scored[0];
+}
+
+function seedOnlyRotors(molecule, positions, hardCoreAtomIndices, featureAtomIndices) {
+  const entries = adjacency(molecule), hard = new Set(hardCoreAtomIndices);
+  const feature = new Set(featureAtomIndices);
+  return molecule.bonds.flatMap((bond, bondIndex) => {
+    const first = bond.a, second = bond.b;
+    if (Number(bond.order || 1) !== 1 || bond.aromatic
+      || molecule.atoms[first]?.element === 'H' || molecule.atoms[second]?.element === 'H'
+      || amideLikeBond(molecule, entries, first, second)) return [];
+    const firstSide = componentWithoutBond(entries, first, first, second);
+    if (firstSide.has(second)) return []; // A ring bond cannot be used as a torsion.
+    const secondSide = componentWithoutBond(entries, second, first, second);
+    const firstHasHard = [...firstSide].some((index) => hard.has(index));
+    const secondHasHard = [...secondSide].some((index) => hard.has(index));
+    let movable, fixedEndpointAtomIndex, movableEndpointAtomIndex;
+    if (firstHasHard !== secondHasHard) {
+      movable = firstHasHard ? secondSide : firstSide;
+      fixedEndpointAtomIndex = firstHasHard ? first : second;
+      movableEndpointAtomIndex = firstHasHard ? second : first;
+    } else if (!firstHasHard && !secondHasHard) {
+      const firstFeatureCount = [...firstSide].filter((index) => feature.has(index)).length;
+      const secondFeatureCount = [...secondSide].filter((index) => feature.has(index)).length;
+      if (firstFeatureCount === secondFeatureCount) return [];
+      movable = firstFeatureCount > secondFeatureCount ? firstSide : secondSide;
+      fixedEndpointAtomIndex = firstFeatureCount > secondFeatureCount ? second : first;
+      movableEndpointAtomIndex = firstFeatureCount > secondFeatureCount ? first : second;
+    } else return [];
+    if (![...movable].some((index) => feature.has(index))
+      || [...movable].some((index) => hard.has(index))) return [];
+    const origin = point(positions, fixedEndpointAtomIndex);
+    const axis = normalized(point(positions, movableEndpointAtomIndex)
+      .map((value, index) => value - origin[index]));
+    return axis ? [{ bondIndex, fixedEndpointAtomIndex, movableEndpointAtomIndex,
+      atomIndices:[...movable].sort((a, b) => a - b), origin, axis }] : [];
+  }).sort((first, second) => first.bondIndex - second.bondIndex);
+}
+
+/**
+ * Preserve a predecessor fragment as a chemically valid starting seed without
+ * making it a coordinate restraint. Only non-ring single-bond torsions on the
+ * non-hard side of the registered anchor may move. This keeps every bond
+ * length and the hard-core transform unchanged, while giving candidate zero a
+ * deterministic, predecessor-like frame that the later pose search may reject.
+ */
+export function placeSeedOnlyFragments({ molecule, initialPositions,
+  referencePositions, hardCoreAtomPairs = [], features = [],
+  anglesDegrees = EDIT_REGION_ANGLES_DEGREES, sweeps = 2 } = {}) {
+  if (!molecule?.atoms?.length || !Array.isArray(molecule.bonds))
+    throw new Error('Seed-only fragment placement requires a complete molecular graph');
+  let positions = finitePositions(initialPositions, molecule.atoms.length);
+  const hardCoreAtomIndices = Array.from(hardCoreAtomPairs || []).map((pair) => pair[1]);
+  const audit = [];
+  for (const feature of Array.from(features || [])) {
+    const mappingVariants = Array.from(feature.mappingVariants || []);
+    const featureAtomIndices = [...new Set(mappingVariants.flatMap((variant) =>
+      Array.from(variant.atomPairs || []).map((pair) => pair[1])))];
+    const before = fragmentCartesianScore(referencePositions, positions, mappingVariants);
+    const rotors = seedOnlyRotors(molecule, positions, hardCoreAtomIndices, featureAtomIndices);
+    let selected = before;
+    for (let sweep = 0; sweep < Math.max(0, Math.round(Number(sweeps))); sweep++) {
+      let improved = false;
+      for (const rotorDefinition of rotors) {
+        const origin = point(positions, rotorDefinition.fixedEndpointAtomIndex);
+        const axis = normalized(point(positions, rotorDefinition.movableEndpointAtomIndex)
+          .map((value, index) => value - origin[index]));
+        if (!axis) continue;
+        const candidates = Array.from(anglesDegrees || [], Number).map((angleDegrees) => {
+          const candidate = Number(angleDegrees) === 0 ? positions
+            : rotateRegion(positions, rotorDefinition.atomIndices, origin, axis,
+              Number(angleDegrees) * Math.PI / 180);
+          return { angleDegrees:Number(angleDegrees), candidate,
+            score:fragmentCartesianScore(referencePositions, candidate, mappingVariants) };
+        }).sort((first, second) => first.score.sumSquared - second.score.sumSquared
+          || Math.abs(first.angleDegrees) - Math.abs(second.angleDegrees)
+          || first.angleDegrees - second.angleDegrees);
+        if (candidates[0].score.sumSquared + 1e-12 < selected.sumSquared) {
+          positions = new Float64Array(candidates[0].candidate);
+          selected = candidates[0].score;
+          improved = true;
+        }
+      }
+      if (!improved) break;
+    }
+    audit.push({ id:String(feature.id || 'seed-only-fragment'),
+      treatment:'seed-only', candidateMaps:mappingVariants.length,
+      atomCount:selected.atomPairs.length, rotorCount:rotors.length,
+      initialRmsdAngstrom:before.rmsdAngstrom,
+      seededRmsdAngstrom:selected.rmsdAngstrom,
+      selectedVariantIndex:selected.variantIndex,
+      method:'hard-core-invariant torsion seed/v1' });
+  }
+  return { positions, features:audit,
+    method:'molarium-seed-only-fragment-placement/v1' };
+}
+
 function amideLikeBond(molecule, entries, first, second) {
   const carbonylAttachedTo = (carbonIndex, heteroIndex) => {
     if (molecule.atoms[carbonIndex]?.element !== 'C'

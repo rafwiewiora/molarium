@@ -4967,6 +4967,29 @@ async function runBrowserConstrainedDocking(options = {}) {
       : referenceCore.mapReferenceCore(reference.ligand, plan.molecule.atoms);
     if (posePropagation && !coreMap.usable) throw new Error(coreMap.reason);
     if (!posePropagation && !coreMap.complete) throw new Error(`The conserved core is incomplete (${coreMap.missingAtomIds.length} atom${coreMap.missingAtomIds.length === 1 ? '' : 's'} missing).`);
+    const spatialFeatureConstraints = posePropagation
+      ? Array.from(state.molecule.source?.posePropagationSpatialFeatures || [])
+        .filter((feature) => feature.treatment === 'soft-restraint')
+        .map((feature) => {
+        const referenceById = new Map(reference.ligand.atomIds.map((id, index) => [id, index]));
+        const productById = new Map(plan.molecule.atoms.map((atom, index) =>
+          [atom.designAtomId, index]));
+        const atomPairVariants = Array.from(feature.mappingVariants || []).map((variant) => {
+          const referenceIds = Array.from(variant.referenceAtomIds || []);
+          const productIds = Array.from(variant.productAtomIds || []);
+          if (referenceIds.length < 3 || referenceIds.length !== productIds.length)
+            throw new Error(`Spatial feature ${feature.id} has an incomplete atom map`);
+          const pairs = referenceIds.map((id, index) =>
+            [referenceById.get(id), productById.get(productIds[index])]);
+          if (pairs.some(([referenceIndex, productIndex]) =>
+            !Number.isInteger(referenceIndex) || !Number.isInteger(productIndex)))
+            throw new Error(`Spatial feature ${feature.id} atom identity is unavailable`);
+          return pairs;
+        });
+        return { id:feature.id, kind:feature.kind,
+          treatment:feature.treatment, restraint:structuredClone(feature.restraint),
+          atomPairVariants };
+      }) : [];
     const contactAvailability = adapter.capturedHydrogenBondAvailability(effectiveHydrogenBonds,
       plan.molecule.atoms);
     const availableContactIds = new Set(contactAvailability.filter((entry) => entry.available)
@@ -5109,6 +5132,7 @@ async function runBrowserConstrainedDocking(options = {}) {
       coreAtomPairs:coreMap.atomPairs,
       coreAtomIndices,
       hydrogenBondConstraints:mappedHydrogenBonds.constraints,
+      spatialFeatureConstraints,
       protocol:activeProtocol,
       minimumSageStartEnergy,
       interactionReferenceKcalMol,
@@ -5171,6 +5195,12 @@ async function runBrowserConstrainedDocking(options = {}) {
             .find((definition) => definition.id === entry.id)?.origin || null),
           ligandFeatureRemap:structuredClone(
             state.dockingContactRemaps.get(entry.id)?.audit || null),
+        })),
+        spatialFeatures:spatialFeatureConstraints.map((feature) => ({
+          id:feature.id, kind:feature.kind, treatment:feature.treatment,
+          restraint:structuredClone(feature.restraint),
+          candidateMaps:feature.atomPairVariants.length,
+          atomCount:feature.atomPairVariants[0]?.length || 0,
         })),
         contactAmendments:structuredClone(reference.contactAmendments || []),
         droppedHydrogenBondAlternatives:structuredClone(
@@ -10833,8 +10863,8 @@ const molariumTestApi = Object.freeze({
         || !/^[A-Za-z0-9]{1,3}$/.test(productComponentId)))
       throw new Error('Registered product component ID must contain one to three alphanumeric characters');
     const template = state.molecule.atoms[component.atomIndices[0]];
-    const mappedPairs = [];
-    for (const mapping of poseTransferPlan.exactAtomPairs) {
+    const identityPairByReferenceName = new Map();
+    for (const mapping of poseTransferPlan.mappedAtomPairs) {
       const before = beforeByAtomName.get(mapping.referenceAtomName);
       const productIndex = productHeavyIndices[mapping.productAtomIndex];
       if (!before || !Number.isInteger(productIndex))
@@ -10844,19 +10874,47 @@ const molariumTestApi = Object.freeze({
         throw new Error(`Atom-map element changed for ${mapping.referenceAtomName}`);
       productAtom.designAtomId = before.atom.designAtomId;
       productAtom.atomName = mapping.referenceAtomName;
-      mappedPairs.push([referenceIndexById.get(before.atom.designAtomId), productIndex]);
+      identityPairByReferenceName.set(mapping.referenceAtomName,
+        [referenceIndexById.get(before.atom.designAtomId), productIndex]);
     }
-    if (mappedPairs.some(([referenceIndex]) => !Number.isInteger(referenceIndex)))
+    const mappedPairs = poseTransferPlan.exactAtomPairs.map((mapping) =>
+      identityPairByReferenceName.get(mapping.referenceAtomName));
+    if (mappedPairs.some((pair) => !pair || !Number.isInteger(pair[0])))
       throw new Error('A mapped reference atom is absent from the captured pose');
+    const spatialFeatureMappings = poseTransferPlan.featureCorrespondences
+      .filter((feature) => feature.kind === 'conserved-fragment-rmsd')
+      .map((feature) => ({ ...feature,
+        mappingVariants:feature.mappingVariants.map((variant) => ({
+          atomPairs:variant.referenceAtomNames.map((referenceAtomName, pairIndex) => {
+            const before = beforeByAtomName.get(referenceAtomName);
+            const productIndex = productHeavyIndices[variant.productAtomIndices[pairIndex]];
+            if (!before || !Number.isInteger(productIndex))
+              throw new Error(`Spatial feature ${feature.id} atom map is unavailable`);
+            const referenceIndex = referenceIndexById.get(before.atom.designAtomId);
+            const productAtom = product.atoms[productIndex];
+            if (!Number.isInteger(referenceIndex)
+              || productAtom.element !== before.atom.element)
+              throw new Error(`Spatial feature ${feature.id} changed exact atom chemistry`);
+            return [referenceIndex, productIndex];
+          }),
+          referenceAtomNames:[...variant.referenceAtomNames],
+          productAtomIndices:[...variant.productAtomIndices],
+        })) }));
     const initialPositions = Float64Array.from(product.atoms.flatMap((atom) =>
       [atom.x, atom.y, atom.z]));
     const globallyAlignedPositions = constraints.applyCoreTransform(initialPositions,
-      constraints.fittedCoreTransform(reference.ligand.positions, initialPositions, mappedPairs));
+      constraints.fittedCoreTransform(reference.ligand.positions, initialPositions,
+        mappedPairs));
     const attachedPlacement = featureSeeding.attachNonCoreRegionsToSnappedCore({
       molecule:product, alignedPositions:globallyAlignedPositions,
       referencePositions:reference.ligand.positions, coreAtomPairs:mappedPairs,
     });
-    const alignedPositions = attachedPlacement.positions;
+    const seedOnlyPlacement = featureSeeding.placeSeedOnlyFragments({
+      molecule:product, initialPositions:attachedPlacement.positions,
+      referencePositions:reference.ligand.positions, hardCoreAtomPairs:mappedPairs,
+      features:spatialFeatureMappings.filter((feature) => feature.treatment === 'seed-only'),
+    });
+    const alignedPositions = seedOnlyPlacement.positions;
     const protectedDisplacements = mappedPairs.map(([referenceIndex, productIndex]) => {
       const dx = alignedPositions[productIndex * 3] - reference.ligand.positions[referenceIndex * 3];
       const dy = alignedPositions[productIndex * 3 + 1] - reference.ligand.positions[referenceIndex * 3 + 1];
@@ -10887,6 +10945,21 @@ const molariumTestApi = Object.freeze({
       atomMapSource:posePropagationMap.source || 'atom-maps.v0.1.json' };
     referenceCore.ensureStableAtomIds(product, `benchmark-product-${caseId || 'case'}`,
       state.molecule.source?.designAtomIdLedger || reference.ligand.atomIds);
+    const releasedMappedHeavyIds = poseTransferPlan.releasedMappedAtomPairs.map((mapping) => {
+      const productIndex = productHeavyIndices[mapping.productAtomIndex];
+      return product.atoms[productIndex]?.designAtomId;
+    }).filter(Boolean);
+    const spatialFeatureDefinitions = spatialFeatureMappings.map((feature) => ({
+      id:feature.id, kind:feature.kind, treatment:feature.treatment,
+      source:feature.source,
+      restraint:structuredClone(feature.restraint),
+      mappingVariants:feature.mappingVariants.map((variant) => ({
+        referenceAtomIds:variant.atomPairs.map(([referenceIndex]) =>
+          reference.ligand.atomIds[referenceIndex]),
+        productAtomIds:variant.atomPairs.map(([, productIndex]) =>
+          product.atoms[productIndex].designAtomId),
+      })),
+    }));
 
     const removed = new Set(component.atomIndices);
     const retainedIndices = state.molecule.atoms.flatMap((_, index) => removed.has(index) ? [] : [index]);
@@ -10899,10 +10972,20 @@ const molariumTestApi = Object.freeze({
         a:retainedMap.get(bond.a), b:retainedMap.get(bond.b) }] : []);
     bonds.push(...product.bonds.map((bond) => ({ ...bond,
       a:bond.a + productOffset, b:bond.b + productOffset })));
+    const priorEditRegions = Array.from(state.molecule.source?.posePropagationEditRegions || []);
+    const releasedMappedRegion = releasedMappedHeavyIds.length ? [{
+      schema:'molarium.docking.registered-coordinate-release/v1',
+      editId:caseId || null,
+      reason:'attachment-migration-within-mapped-biconnected-ring',
+      releasedHeavyAtomIds:[...releasedMappedHeavyIds].sort(),
+      source:'registered graph topology; no product or holdout coordinates',
+    }] : [];
     const next = { ...state.molecule, atoms, bonds,
       smiles:`${state.molecule.source?.pdbId || 'PDB'} + ${productSmiles}`,
       source:{ ...(state.molecule.source || {}), dockingBenchmark:{ caseId:caseId || null,
-        productSmiles, atomMapSource:posePropagationMap.source || 'atom-maps.v0.1.json' } } };
+        productSmiles, atomMapSource:posePropagationMap.source || 'atom-maps.v0.1.json' },
+        posePropagationSpatialFeatures:spatialFeatureDefinitions,
+        posePropagationEditRegions:[...priorEditRegions, ...releasedMappedRegion].slice(-64) } };
     delete next.parameterization;
     state.molecule = next;
     state.dockingResult = null; state.dockingPoseIndex = 0;
@@ -10999,16 +11082,19 @@ const molariumTestApi = Object.freeze({
         expectedTransfer:hypothesis.expectedTransfer, status:proposal?.status || 'unavailable' });
     }
     state.dockingSelectedHbondIds = selected;
-    poseTransferPlan.featureCorrespondences = remappedTargets.flatMap((target) =>
-      target.candidates.map((candidate) => ({
+    poseTransferPlan.featureCorrespondences = [
+      ...poseTransferPlan.featureCorrespondences,
+      ...remappedTargets.flatMap((target) => target.candidates.map((candidate) => ({
         kind:'hydrogen-bond-role', capturedContactId:target.id,
         productFeatureId:candidate.id, role:candidate.role, type:candidate.type,
         matchKind:candidate.matchKind,
         treatment:'soft-restraint',
-      })));
+      }))),
+    ];
     updateInfo(); updateDockingUi(); updateOptimizerControls(); draw();
     return { caseId:caseId || null, productAtoms:currentPlan.molecule.atoms.length,
-      productHeavyAtoms:productHeavyIndices.length, commonHeavyAtoms:mappedPairs.length,
+      productHeavyAtoms:productHeavyIndices.length,
+      commonHeavyAtoms:poseTransferPlan.mappedAtomPairs.length,
       selectedContactIds:[...selected], unavailableTargets, remappedTargets,
       poseTransferPlan:structuredClone(poseTransferPlan),
       proposals:proposals.map((proposal) => ({ id:proposal.id, status:proposal.status,
@@ -11017,6 +11103,7 @@ const molariumTestApi = Object.freeze({
       registeredEditRegion:{ removedAtomIds:removedBenchmarkAtomIds,
         addedHeavyAtomIds:addedBenchmarkHeavyIds,
         addedAtomIds:addedBenchmarkAtomIds,
+        releasedMappedAtomIds:releasedMappedHeavyIds,
         affectedCoreAtomIds:[...new Set(affectedBenchmarkCoreIds)].sort() },
       embedding:{ rdkitVersion:embedded.result.rdkitVersion,
         forcefield:embedded.result.forcefield, conformerCount:embedded.result.conformerCount,
@@ -11025,11 +11112,28 @@ const molariumTestApi = Object.freeze({
           method:posePropagationMap.protectedReferenceAnchor?.method || 'mapped-common-atoms',
           label:posePropagationMap.protectedReferenceAnchor?.label || 'registered common atoms',
           atomCount:mappedPairs.length,
-          atomNames:posePropagationMap.commonAtoms.map((entry) => entry.referenceAtomName),
+          atomNames:poseTransferPlan.exactAtomPairs.map((entry) => entry.referenceAtomName),
           maxDisplacementAngstrom:protectedReferenceMaxDisplacementAngstrom,
         },
         attachedPlacement:{ method:attachedPlacement.method,
-          regions:structuredClone(attachedPlacement.regions) } },
+          regions:structuredClone(attachedPlacement.regions) },
+        seedOnlyPlacement:{ method:seedOnlyPlacement.method,
+          features:structuredClone(seedOnlyPlacement.features) },
+        spatialFeatures:spatialFeatureMappings.map((feature) => ({
+          id:feature.id, kind:feature.kind,
+          treatment:feature.treatment,
+          atomCount:feature.mappingVariants[0]?.atomPairs.length || 0,
+          candidateMaps:feature.mappingVariants.length,
+          seedMaxDisplacementAngstrom:Math.max(0,
+            ...(feature.mappingVariants[0]?.atomPairs || []).map(
+              ([referenceIndex, productIndex]) => Math.hypot(
+                alignedPositions[productIndex * 3]
+                  - reference.ligand.positions[referenceIndex * 3],
+                alignedPositions[productIndex * 3 + 1]
+                  - reference.ligand.positions[referenceIndex * 3 + 1],
+                alignedPositions[productIndex * 3 + 2]
+                  - reference.ligand.positions[referenceIndex * 3 + 2]))),
+        })) },
     };
   },
   benchmarkCurrentLigand() {

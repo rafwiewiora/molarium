@@ -195,14 +195,66 @@ export function evaluateCoreConstraint(referencePositions, candidatePositions, a
   };
 }
 
-export function scoreConstrainedPose({ physicalEnergyKcalMol, core, hydrogenBonds = [] }) {
+export function evaluateSpatialFeatureConstraint(referencePositions, candidatePositions,
+  definition) {
+  const variants = Array.from(definition?.atomPairVariants || []);
+  if (!variants.length)
+    throw new Error('A spatial feature constraint requires at least one atom-map variant');
+  const scored = variants.map((atomPairs, variantIndex) => {
+    if (!Array.isArray(atomPairs) || atomPairs.length < 3)
+      throw new Error('A spatial feature atom-map variant requires at least three atoms');
+    let sumSquared = 0;
+    for (const [referenceAtom, candidateAtom] of atomPairs) {
+      const reference = coordinates(referencePositions, referenceAtom);
+      const candidate = coordinates(candidatePositions, candidateAtom);
+      sumSquared += reference.reduce((sum, value, axis) =>
+        sum + (value - candidate[axis]) ** 2, 0);
+    }
+    return { variantIndex, atomPairs, rmsdAngstrom:Math.sqrt(sumSquared / atomPairs.length) };
+  }).sort((first, second) => first.rmsdAngstrom - second.rmsdAngstrom
+    || first.variantIndex - second.variantIndex);
+  const selected = scored[0];
+  const toleranceAngstrom = Number(definition.restraint?.toleranceAngstrom ?? 1);
+  const weightKcalMolPerAngstrom2 = Number(
+    definition.restraint?.weightKcalMolPerAngstrom2 ?? 20);
+  if (!Number.isFinite(toleranceAngstrom) || toleranceAngstrom < 0
+    || !Number.isFinite(weightKcalMolPerAngstrom2) || weightKcalMolPerAngstrom2 < 0)
+    throw new Error('Spatial feature restraint settings must be finite and nonnegative');
+  const violationAngstrom = Math.max(0, selected.rmsdAngstrom - toleranceAngstrom);
+  return { id:String(definition.id || 'spatial-feature'),
+    kind:String(definition.kind || 'conserved-fragment-rmsd'),
+    required:Boolean(definition.restraint?.required),
+    selectedVariantIndex:selected.variantIndex,
+    candidateVariantCount:scored.length,
+    atomCount:selected.atomPairs.length,
+    rmsdAngstrom:selected.rmsdAngstrom,
+    toleranceAngstrom, violationAngstrom,
+    satisfied:violationAngstrom === 0,
+    penaltyKcalMol:weightKcalMolPerAngstrom2 * violationAngstrom ** 2,
+    weightKcalMolPerAngstrom2 };
+}
+
+export function evaluateSpatialFeatureConstraints(referencePositions, candidatePositions,
+  definitions = []) {
+  return Array.from(definitions || []).map((definition) =>
+    evaluateSpatialFeatureConstraint(referencePositions, candidatePositions, definition));
+}
+
+export function scoreConstrainedPose({ physicalEnergyKcalMol, core, hydrogenBonds = [],
+  spatialFeatures = [] }) {
   if (!Number.isFinite(Number(physicalEnergyKcalMol))) throw new TypeError('A finite physical energy is required');
   const constraintPenaltyKcalMol = Number(core?.penaltyKcalMol || 0)
-    + hydrogenBonds.reduce((sum, constraint) => sum + Number(constraint.penaltyKcalMol || 0), 0);
+    + hydrogenBonds.reduce((sum, constraint) => sum + Number(constraint.penaltyKcalMol || 0), 0)
+    + spatialFeatures.reduce((sum, constraint) =>
+      sum + Number(constraint.penaltyKcalMol || 0), 0);
   const requiredHydrogenBondsSatisfied = hydrogenBonds
     .filter((constraint) => constraint.required !== false)
     .every((constraint) => constraint.satisfied);
-  const feasible = (core?.satisfied ?? true) && requiredHydrogenBondsSatisfied;
+  const requiredSpatialFeaturesSatisfied = spatialFeatures
+    .filter((constraint) => constraint.required)
+    .every((constraint) => constraint.satisfied);
+  const feasible = (core?.satisfied ?? true) && requiredHydrogenBondsSatisfied
+    && requiredSpatialFeaturesSatisfied;
   return {
     physicalEnergyKcalMol:Number(physicalEnergyKcalMol),
     constraintPenaltyKcalMol,
@@ -210,6 +262,7 @@ export function scoreConstrainedPose({ physicalEnergyKcalMol, core, hydrogenBond
     feasible,
     coreSatisfied:core?.satisfied ?? true,
     requiredHydrogenBondsSatisfied,
+    requiredSpatialFeaturesSatisfied,
   };
 }
 

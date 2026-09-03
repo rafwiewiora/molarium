@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { MOLARIUM_CONSTRAINT_DOCK_PROTOCOL, MOLARIUM_POSE_PROPAGATION_PROTOCOL } from './protocol.mjs';
 import { applyCoreTransform, evaluateCoreConstraint, evaluateHydrogenBondConstraint,
+  evaluateSpatialFeatureConstraint,
   fittedCoreTransform, hydrogenBondGeometry, restoreCapturedLigandDonorHydrogens,
   rankConstrainedPoses, scoreConstrainedPose, snapCorePositions } from './constraints.mjs';
 import { appendLabbookEvent, completeLabbook, createLabbook, inputProvenance,
@@ -55,6 +56,31 @@ const badHbond = evaluateHydrogenBondConstraint({ ...hbondGeometry, dhaAngleDegr
 assert.equal(badHbond.satisfied, false);
 assert.ok(badHbond.penaltyKcalMol > 0);
 
+const spatialReference = Float64Array.from([
+  0,0,0, 1,0,0, 0,1,0,
+]);
+const spatialCandidate = Float64Array.from([
+  1,0,0, 0,0,0, 0,1,0,
+]);
+const spatialFeature = evaluateSpatialFeatureConstraint(
+  spatialReference, spatialCandidate, {
+    id:'symmetric-ring-fragment', kind:'conserved-fragment-rmsd',
+    atomPairVariants:[[[0,0],[1,1],[2,2]], [[0,1],[1,0],[2,2]]],
+    restraint:{ toleranceAngstrom:0.1, weightKcalMolPerAngstrom2:20, required:true },
+  });
+assert.equal(spatialFeature.selectedVariantIndex, 1,
+  'graph-symmetric fragment variants must be ranked by spatial fit');
+assert.equal(spatialFeature.satisfied, true);
+const displacedSpatialFeature = evaluateSpatialFeatureConstraint(
+  spatialReference, Float64Array.from(spatialCandidate, (value, index) =>
+    value + (index % 3 === 2 ? 2 : 0)), {
+    id:'symmetric-ring-fragment', kind:'conserved-fragment-rmsd',
+    atomPairVariants:[[[0,0],[1,1],[2,2]], [[0,1],[1,0],[2,2]]],
+    restraint:{ toleranceAngstrom:0.1, weightKcalMolPerAngstrom2:20, required:true },
+  });
+assert.equal(displacedSpatialFeature.satisfied, false);
+assert.ok(displacedSpatialFeature.penaltyKcalMol > 0);
+
 const donorHydrogenStart = Float64Array.from([0,0,0, 0,1,0]);
 const donorHydrogenRestored = restoreCapturedLigandDonorHydrogens(donorHydrogenStart, [{
   id:'ligand-donor', required:true,
@@ -98,6 +124,9 @@ const feasible = scoreConstrainedPose({ physicalEnergyKcalMol:-10, core,
   hydrogenBonds:[{ ...goodHbond, required:true }] });
 const infeasible = scoreConstrainedPose({ physicalEnergyKcalMol:-100, core,
   hydrogenBonds:[{ ...badHbond, required:true }] });
+const spatiallyInfeasible = scoreConstrainedPose({ physicalEnergyKcalMol:-100, core,
+  spatialFeatures:[displacedSpatialFeature] });
+assert.equal(spatiallyInfeasible.feasible, false);
 const ranked = rankConstrainedPoses([infeasible, feasible]);
 assert.equal(ranked[0].feasible, true);
 assert.equal(ranked[0].inputIndex, 1);

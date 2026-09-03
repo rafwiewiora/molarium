@@ -1,4 +1,5 @@
-import { evaluateCoreConstraint, scoreConstrainedPose } from './constraints.mjs';
+import { evaluateCoreConstraint, evaluateSpatialFeatureConstraints,
+  scoreConstrainedPose } from './constraints.mjs';
 import { scoreReceptorLigand } from './receptor-score.mjs';
 import { packPositions4 } from './torsion-search.mjs';
 import { evaluatePoseHydrogenBonds } from './workflow.mjs';
@@ -27,6 +28,7 @@ function finiteReference(value, label) {
  */
 export function createPosePropagationScoring({ molecule, ligandParameters, receptorSite,
   referenceLigandPositions, coreAtomPairs, hydrogenBondConstraints, protocol,
+  spatialFeatureConstraints = [],
   minimumSageStartEnergy, interactionReferenceKcalMol,
   minimumFixedCoreStartStericClashes, minimumFixedCoreStartLennardJonesKcalMol,
   captureMaximumRelativeLigandStrainKcalMol = 100,
@@ -101,12 +103,16 @@ export function createPosePropagationScoring({ molecule, ligandParameters, recep
       coreAtomPairs, protocol.coreConstraint);
     const hydrogenBonds = evaluatePoseHydrogenBonds(hydrogenBondConstraints, positions,
       protocol.hydrogenBondConstraint);
+    const spatialFeatures = evaluateSpatialFeatureConstraints(
+      referenceLigandPositions, positions, spatialFeatureConstraints);
     const combined = scoreConstrainedPose({
       physicalEnergyKcalMol:physical.energyKcalMol, core, hydrogenBonds,
+      spatialFeatures,
     });
     return { objectiveKcalMol:combined.totalScoreKcalMol,
       feasible:combined.feasible && chemicalValidity.valid,
-      physical, core, hydrogenBonds, sageInternalEnergyKcalMol, chemicalValidity };
+      physical, core, hydrogenBonds, spatialFeatures,
+      sageInternalEnergyKcalMol, chemicalValidity };
   };
   const scoreRestraintCapturePositions = (positions) => {
     const sageInternalEnergyKcalMol = ligandInternalEnergy(positions);
@@ -114,16 +120,22 @@ export function createPosePropagationScoring({ molecule, ligandParameters, recep
     const chemicalValidity = chemicalValidityFor(sageInternalEnergyKcalMol, physical);
     const hydrogenBonds = evaluatePoseHydrogenBonds(hydrogenBondConstraints, positions,
       protocol.hydrogenBondConstraint);
+    const spatialFeatures = evaluateSpatialFeatureConstraints(
+      referenceLigandPositions, positions, spatialFeatureConstraints);
     const hbondPenaltyKcalMol = hydrogenBonds.reduce((sum, entry) =>
+      sum + Number(entry.penaltyKcalMol || 0), 0);
+    const spatialFeaturePenaltyKcalMol = spatialFeatures.reduce((sum, entry) =>
       sum + Number(entry.penaltyKcalMol || 0), 0);
     const chemicalPenaltyKcalMol = chemicalValidity.strainExcessKcalMol ** 2
       + chemicalValidity.clashExcess ** 2 * 1000
       + chemicalValidity.lennardJonesExcessKcalMol ** 2;
-    return { objectiveKcalMol:hbondPenaltyKcalMol + chemicalPenaltyKcalMol,
-      hbondPenaltyKcalMol, chemicalPenaltyKcalMol,
+    return { objectiveKcalMol:hbondPenaltyKcalMol + spatialFeaturePenaltyKcalMol
+        + chemicalPenaltyKcalMol,
+      hbondPenaltyKcalMol, spatialFeaturePenaltyKcalMol, chemicalPenaltyKcalMol,
       feasible:chemicalValidity.valid
-        && hydrogenBonds.every((entry) => !entry.required || entry.satisfied),
-      hydrogenBonds, sageInternalEnergyKcalMol, chemicalValidity };
+        && hydrogenBonds.every((entry) => !entry.required || entry.satisfied)
+        && spatialFeatures.every((entry) => !entry.required || entry.satisfied),
+      hydrogenBonds, spatialFeatures, sageInternalEnergyKcalMol, chemicalValidity };
   };
   return { ligandInternalEnergy, rawReceptorScoreFor, receptorScoreFor,
     chemicalValidityFor, scorePositions, scoreRestraintCapturePositions };

@@ -39,9 +39,20 @@ const execute = (action, args = {}, requestId = action) => browser.evaluate(
   `window.MolariumChemistActions.execute(${JSON.stringify({ action, args, requestId })})`);
 
 try {
-  await waitFor(async () => browser.evaluate(
-    `Boolean(window.MolariumChemistActions && window.molariumTest)`),
-  90000, 'Molarium test and Chemist Actions APIs');
+  try {
+    await waitFor(async () => browser.evaluate(
+      `Boolean(window.MolariumChemistActions && window.molariumTest)`),
+    90000, 'Molarium test and Chemist Actions APIs');
+  } catch (error) {
+    const diagnostics = await browser.evaluate(`({
+      readyState:document.readyState,
+      title:document.title,
+      bodyText:document.body?.innerText?.slice(0, 1000) || '',
+      chemistActions:Boolean(window.MolariumChemistActions),
+      testApi:Boolean(window.molariumTest),
+    })`);
+    throw new Error(`${error.message}; browser diagnostics: ${JSON.stringify(diagnostics)}`);
+  }
   await execute('session.loadStructure', {
     content:ligandPdb(checkpoint.ligand), format:'pdb', name:'AWW predicted reference',
   }, 'load-aww-reference');
@@ -70,14 +81,15 @@ try {
   }, 'inspect-axh-anchor');
 
   assert.deepEqual(staged.embedding.protectedReference, {
-    method:'maximum-common-substructure/v1',
-    label:'AWW proximal quinazoline-thiophene core',
-    atomCount:15,
+    method:'exact-common-subgraph-after-topology-release/v1',
+    label:'exact mapped atoms outside attachment-migrated ring blocks',
+    atomCount:11,
     atomNames:protectedNames,
     maxDisplacementAngstrom:0,
   });
   const beforeByName = new Map(before.result.atoms.map((atom) => [atom.atomName, atom]));
   const afterByName = new Map(after.result.atoms.map((atom) => [atom.atomName, atom]));
+  const afterById = new Map(after.result.atoms.map((atom) => [atom.atomId, atom]));
   assert(after.result.atoms.every((atom) => atom.residueName === 'AXH'),
     'the staged BAY-293 component must be identified as AXH, not inherited AWW');
   assert.match(focusBefore.focusedComponentId || '', /AWW/,
@@ -96,7 +108,34 @@ try {
   assert(staged.embedding.attachedPlacement.regions
     .some((region) => region.atomIndices.length > 1),
   'the regioisomeric distal arm must be a released placement region');
-  console.log('SOS1 AWW→AXH staging preserved all 15 proximal-core anchor atoms');
+  assert.equal(staged.embedding.spatialFeatures.length, 1);
+  assert.equal(staged.embedding.spatialFeatures[0].id, 'secondary-exact-fragment-1');
+  assert.equal(staged.embedding.spatialFeatures[0].kind, 'conserved-fragment-rmsd');
+  assert.equal(staged.embedding.spatialFeatures[0].treatment, 'seed-only');
+  assert.equal(staged.embedding.spatialFeatures[0].atomCount, 7);
+  assert.equal(staged.embedding.spatialFeatures[0].candidateMaps, 4);
+  assert(Number.isFinite(staged.embedding.spatialFeatures[0].seedMaxDisplacementAngstrom));
+  assert.equal(staged.registeredEditRegion.releasedMappedAtomIds.length, 4);
+  assert.deepEqual(staged.poseTransferPlan.releasedMappedAtomNames,
+    ['CX2','CX3','CX4','SX1']);
+  assert.equal(staged.embedding.seedOnlyPlacement.features.length, 1);
+  assert(staged.embedding.seedOnlyPlacement.features[0].seededRmsdAngstrom
+    <= staged.embedding.seedOnlyPlacement.features[0].initialRmsdAngstrom,
+  'seed-only torsion placement must not move the inherited fragment farther away');
+  const heavyBondDistances = after.result.bonds.flatMap((bond) => {
+    const first = afterById.get(bond.atomIds[0]), second = afterById.get(bond.atomIds[1]);
+    if (!first || !second || first.element === 'H' || second.element === 'H') return [];
+    return [Math.hypot(...first.coordinatesAngstrom.map((value, axis) =>
+      value - second.coordinatesAngstrom[axis]))];
+  });
+  assert(Math.min(...heavyBondDistances) >= 0.9
+    && Math.max(...heavyBondDistances) <= 1.95,
+  `seeded graph replacement distorted a heavy-atom bond (${Math.min(...heavyBondDistances)}–${Math.max(...heavyBondDistances)} Å)`);
+  console.log('SOS1 AWW→AXH staging preserved the topology-derived hard core and a valid seed-only distal fragment', {
+    seedRmsdAngstrom:staged.embedding.seedOnlyPlacement.features[0].seededRmsdAngstrom,
+    initialSeedRmsdAngstrom:staged.embedding.seedOnlyPlacement.features[0].initialRmsdAngstrom,
+    maximumHeavyBondAngstrom:Math.max(...heavyBondDistances),
+  });
 } finally {
   await browser.close();
 }
