@@ -102,6 +102,11 @@ jobs:
         run: sudo apt-get update && sudo apt-get install --yes ffmpeg
       - name: Verify media tools
         run: ffmpeg -version && ffprobe -version
+      - name: Verify headless WebGPU adapter
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          MOLARIUM_HEADLESS_SOFTWARE_WEBGPU: '1'
+        run: bun scripts/probe-headless-webgpu.mjs
       - name: Render fail-closed SOS1 interface story
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}

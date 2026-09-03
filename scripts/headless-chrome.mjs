@@ -64,8 +64,9 @@ export async function startMolariumBrowser({ root, appPath, url = null, width = 
   // tests and user launches keep Chrome's normal adapter policy.
   const softwareWebgpuArguments = process.platform === 'linux'
     && process.env.MOLARIUM_HEADLESS_SOFTWARE_WEBGPU === '1'
-    ? ['--use-angle=vulkan', '--enable-features=Vulkan',
-      '--disable-vulkan-surface', '--enable-unsafe-webgpu'] : [];
+    ? ['--enable-unsafe-webgpu', '--use-webgpu-adapter=swiftshader',
+      '--use-gpu-in-tests', '--enable-unsafe-swiftshader',
+      '--use-gl=angle', '--use-angle=swiftshader'] : [];
   const profile = await mkdtemp(join(tmpdir(), 'molarium-history-browser-'));
   const server = url ? null : Bun.spawn(['bun', 'server.js', ...(localOnly ? ['--local-only'] : []),
     '--port', String(appPort)], { cwd:root, stdout:'ignore', stderr:'pipe' });
