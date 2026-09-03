@@ -62,18 +62,23 @@ async function appendFrame(label, repeats = 1, actionIndex = null) {
     const filename = `frame-${String(frameIndex++).padStart(5, '0')}.png`;
     await writeFile(join(frameDirectory, filename), bytes);
   }
-  captured.push({ label, actionIndex, repeats, sha256, bytes:bytes.length, qaFilename:`qa/${qaFilename}`,
+  const step = actionIndex == null ? null : presentationScript.actions[actionIndex] || null;
+  captured.push({ label, actionIndex, action:step?.action || null,
+    caption:step?.caption || null, repeats, sha256, bytes:bytes.length, qaFilename:`qa/${qaFilename}`,
     firstFrame:frameIndex - repeats, lastFrame:frameIndex - 1 });
 }
 
 function holdFrames(step) {
   if (!step) return fps;
-  if (step.action === 'view.setDisplay') return Math.max(3, Math.round(fps * .3));
-  if (['designRoute.load', 'designRoute.applyStep', 'pose.applySidechainRotamer',
-    'pose.enumerateSidechainRotamers', 'pose.updateReceptorReference', 'optimization.run',
-    'view.focusComponent', 'view.focusAtoms', 'view.highlightAtoms'].includes(step.action))
-    return Math.round(fps * 1.25);
-  return Math.max(4, Math.round(fps * .55));
+  if (step.action === 'view.setDisplay') return Math.round(fps * 1.1);
+  if (step.action === 'view.focusComponent') return Math.round(fps * 2.4);
+  if (step.action === 'designRoute.applyStep') return Math.round(fps * 1.8);
+  if (step.action === 'pose.applySidechainRotamer') return Math.round(fps * 2.2);
+  if (step.action === 'view.highlightAtoms') return Math.round(fps * 1.8);
+  if (['designRoute.load', 'pose.enumerateSidechainRotamers',
+    'pose.updateReceptorReference', 'pose.apply', 'optimization.run'].includes(step.action))
+    return Math.round(fps * 1.5);
+  return Math.max(5, Math.round(fps * .75));
 }
 
 async function waitForInterfaceAction(actionNumber, actionIndex, step, auditBaseline, timeoutMs) {
@@ -81,10 +86,14 @@ async function waitForInterfaceAction(actionNumber, actionIndex, step, auditBase
   let nextProgressCapture = Date.now() + 700;
   let lastProgressStatus = '';
   let progressCaptures = 0;
+  let nextRotamerCapture = Date.now();
+  let rotamerCaptures = 0;
   while (Date.now() < deadline) {
     const state = await browser.evaluate(`(() => {
       const records = window.MolariumChemistActions.history();
-      const record = records[${auditBaseline + actionNumber - 1}] || null;
+      // The visible Play button is itself a designerScript.play API action at
+      // auditBaseline.  Story move 1 therefore begins at auditBaseline + 1.
+      const record = records[${auditBaseline + actionNumber}] || null;
       return {
         record:record && record.status !== 'running'
           ? { status:record.status, error:record.error || null } : null,
@@ -92,6 +101,12 @@ async function waitForInterfaceAction(actionNumber, actionIndex, step, auditBase
       };
     })()`);
     if (state.record) return state.record;
+    if (step.action === 'pose.applySidechainRotamer'
+      && Date.now() >= nextRotamerCapture && rotamerCaptures < 30) {
+      rotamerCaptures += 1;
+      await appendFrame(`${actionNumber}. Phe890 motion ${rotamerCaptures}`, 1, actionIndex);
+      nextRotamerCapture = Date.now() + Math.round(1000 / fps);
+    }
     if (step.action === 'pose.refine' && Date.now() >= nextProgressCapture
       && progressCaptures < 10 && state.dockingStatus !== lastProgressStatus
       && /worker ensemble|Pose ensemble/.test(state.dockingStatus)) {
@@ -104,6 +119,19 @@ async function waitForInterfaceAction(actionNumber, actionIndex, step, auditBase
     await delay(60);
   }
   throw new Error(`Timed out waiting for completed interface action ${actionNumber}`);
+}
+
+async function waitForVisibleResult(actionNumber, timeoutMs = 5000) {
+  await waitFor(async () => browser.evaluate(`(() => {
+    const progress = document.querySelector('#designer-move-progress-label')?.textContent || '';
+    const completed = Number(progress.split('/')[0]?.trim());
+    const status = document.querySelector('#designer-move-status')?.textContent || '';
+    return completed === ${actionNumber}
+      && status.startsWith('Completed move ${actionNumber} of ');
+  })()`), timeoutMs, `visible result checkpoint ${actionNumber}`);
+  // Let the result caption, demo layout, and WebGL draw scheduled by the
+  // checkpoint settle before taking the evidence frame.
+  await delay(100);
 }
 
 try {
@@ -149,12 +177,13 @@ try {
       await delay(70);
       const step = presentationScript.actions[actionNumber - 1];
       await appendFrame(`${actionNumber}. Press ${step.caption || step.action}`,
-        Math.max(2, Math.round(fps * .25)), actionNumber - 1);
+        Math.max(3, Math.round(fps * (['designRoute.applyStep',
+          'pose.applySidechainRotamer'].includes(step.action) ? .7 : .35))), actionNumber - 1);
       const outcome = await waitForInterfaceAction(actionNumber, actionNumber - 1, step,
         replayAuditBaseline, Math.max(1000, timeout - (Date.now() - started)));
       if (outcome.status !== 'completed')
         throw new Error(`Molarium replay action ${actionNumber} failed: ${outcome.error || outcome.status}`);
-      await delay(120);
+      await waitForVisibleResult(actionNumber);
       await appendFrame(`${actionNumber}. Result ${step.caption || step.action}`,
         holdFrames(step), actionNumber - 1);
       console.log(`Captured interface action ${actionNumber}/${presentationScript.actions.length} · ${step.action}`);
@@ -196,7 +225,10 @@ try {
       actionScriptSha256:await actionScriptSha256(sourceScript), actions:sourceScript.actions.length },
     presentationScript:{ actionScriptSha256:await actionScriptSha256(presentationScript),
       actions:presentationScript.actions.length, insertedViewActions:
-        presentationScript.actions.length - sourceActions.length },
+        presentationScript.actions.length - sourceActions.length,
+      timeline:presentationScript.actions.map((step, index) => ({
+        actionNumber:index + 1, action:step.action, caption:step.caption || null,
+      })) },
     renderer:{ path:relative(root, fileURLToPath(import.meta.url)), sha256:digest(rendererBytes),
       browserProduct:browserVersion.product, userAgent:browserVersion.userAgent },
     viewport:{ width, height, deviceScaleFactor:1 },

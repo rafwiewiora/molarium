@@ -125,11 +125,41 @@ const ATOM_RENDER_STYLE = Object.freeze({
   Si: { highlight: '#f9e8d4', base: '#c7a47e', shade: '#806142' },
 });
 
+const DESIGN_DISPLAY_THEMES = Object.freeze({
+  'design-hit':Object.freeze({ ligand:'#16838a' }),
+  'design-prediction':Object.freeze({ ligand:'#7159a3' }),
+  'design-validation':Object.freeze({ ligand:'#d07836' }),
+});
+const RESIDUE_LABEL_TONES = Object.freeze({
+  gold:Object.freeze({ base:'#bf842d', line:'#9a681c', text:'#68420b' }),
+  blue:Object.freeze({ base:'#337fa2', line:'#24718f', text:'#16485d' }),
+  slate:Object.freeze({ base:'#7b8795', line:'#637080', text:'#364152' }),
+});
+const STORY_PROTEIN_CARBON = '#aeb9c5';
+const STORY_CARTOON_COLOR = '#cfe5df';
+const DISPLAY_VDW_RADII = Object.freeze({
+  H:1.20, B:1.92, C:1.70, N:1.55, O:1.52, F:1.47, Si:2.10, P:1.80,
+  S:1.80, Cl:1.75, Br:1.85, I:1.98,
+});
+
 function mixHexColors(first, second, amount) {
   const channel = (color, offset) => Number.parseInt(color.slice(offset, offset + 2), 16);
   const mixed = [1, 3, 5].map((offset) => Math.round(channel(first, offset) * (1 - amount)
     + channel(second, offset) * amount));
   return `#${mixed.map((value) => value.toString(16).padStart(2, '0')).join('')}`;
+}
+
+function colorRenderStyle(base, highlightAmount = .68, shadeAmount = .38) {
+  return { highlight:mixHexColors(base, '#ffffff', highlightAmount), base,
+    shade:mixHexColors(base, '#000000', shadeAmount) };
+}
+
+function residueLabelForAtom(atom) {
+  if (!isProteinAtom(atom)) return null;
+  return state.focusedAtomResidueLabels.find((spec) =>
+    String(atom.chain || 'A') === String(spec.chain || 'A')
+    && String(atom.residueIndex) === String(spec.residueIndex)
+    && String(atom.insertionCode || '') === String(spec.insertionCode || '')) || null;
 }
 
 function atomRenderStyle(atom) {
@@ -139,9 +169,15 @@ function atomRenderStyle(atom) {
   const componentId = state.atomComponentIds[atom.index];
   const component = state.structureComponents.find((entry) => entry.id === componentId);
   if (!component || !['protein', 'ligand'].includes(component.kind)) return fallback;
-  const base = component.color;
-  return { highlight:mixHexColors(base, '#ffffff', .68), base,
-    shade:mixHexColors(base, '#000000', .38) };
+  const labelTone = RESIDUE_LABEL_TONES[residueLabelForAtom(atom)?.tone];
+  if (labelTone) return colorRenderStyle(labelTone.base, .62, .34);
+  const storyTheme = DESIGN_DISPLAY_THEMES[state.displayColorTheme];
+  if (storyTheme) return colorRenderStyle(
+    component.kind === 'ligand' ? storyTheme.ligand : STORY_PROTEIN_CARBON,
+    component.kind === 'ligand' ? .48 : .72,
+    component.kind === 'ligand' ? .34 : .25,
+  );
+  return colorRenderStyle(component.color);
 }
 
 const DEFAULT_XYZ = `38
@@ -677,6 +713,10 @@ const state = {
   showInteractions: true,
   showPocketAtoms: true,
   pocketAtomMode: 'radius',
+  displayColorTheme: 'standard',
+  changeMarkerStyle: 'rings',
+  showStericClashes: false,
+  visibleStericClashCount: 0,
   vdw: false,
   representation: 'ball-stick',
   mode: 'view',
@@ -747,6 +787,7 @@ const state = {
   atomComponentIds: [],
   componentVisibility: new Map(),
   focusedComponentId: null,
+  focusedComponentCenter: null,
   focusedComponentRadius: null,
   focusedResidueKey: null,
   focusedResidueRadius: null,
@@ -2189,6 +2230,7 @@ function resetStructureComponents(molecule, preserveDisplay = false) {
       ? previousVisibility.get(component.id) : component.kind !== 'water']));
   if (!preserveDisplay || !state.structureComponents.some((component) => component.id === previousFocus)) {
     state.focusedComponentId = null;
+    state.focusedComponentCenter = null;
     state.focusedComponentRadius = null;
   }
 }
@@ -2246,6 +2288,13 @@ function clearFocusedAtomRegion({ redraw = false } = {}) {
 function calculateFocusedAtomContextIndices(molecule, targets) {
   if (!molecule || !targets.length) return null;
   const context = new Set(targets.map(({ index }) => index));
+  const activeLigand = connectedLigandAtomIndexSet(molecule);
+  activeLigand.forEach((index) => context.add(index));
+  const targetProteinResidues = new Set(targets
+    .filter(({ atom }) => isProteinAtom(atom)).map(({ atom }) => residueKey(atom)));
+  molecule.atoms.forEach((atom, index) => {
+    if (targetProteinResidues.has(residueKey(atom))) context.add(index);
+  });
   const adjacency = molecule.atoms.map(() => []);
   molecule.bonds.forEach((bond) => {
     adjacency[bond.a]?.push(bond.b); adjacency[bond.b]?.push(bond.a);
@@ -2265,9 +2314,11 @@ function calculateFocusedAtomContextIndices(molecule, targets) {
   const nearbyResidues = new Set();
   const componentKindById = new Map(state.structureComponents.map((component) =>
     [component.id, component.kind]));
+  const anchors = [...new Set([...targets.map(({ index }) => index), ...activeLigand])]
+    .map((index) => molecule.atoms[index]).filter((atom) => atom && atom.element !== 'H');
   molecule.atoms.forEach((atom, index) => {
     if (context.has(index)) return;
-    const near = targets.some(({ atom: target }) => {
+    const near = anchors.some((target) => {
       const dx = atom.x - target.x, dy = atom.y - target.y, dz = atom.z - target.z;
       return dx * dx + dy * dy + dz * dz <= cutoffSquared;
     });
@@ -2301,21 +2352,25 @@ function focusStructureAtoms(atomIds, contextRadiusAngstrom = 4.5, highlight = t
   state.focusedAtomContextRadius = contextRadiusAngstrom;
   state.focusedAtomResidueLabels = structuredClone(residueLabels);
   state.emphasizedAtomIds = highlight ? ids.slice() : [];
-  state.focusedComponentId = null; state.focusedComponentRadius = null;
+  state.focusedComponentId = null; state.focusedComponentCenter = null;
+  state.focusedComponentRadius = null;
   state.focusedResidueKey = null; state.focusedResidueRadius = null;
   const targets = focusedAtomEntries();
   if (targets.length) {
     const context = calculateFocusedAtomContextIndices(state.molecule, targets);
     state.focusedAtomContextIds = [...(context || [])].map((index) =>
       state.molecule.atoms[index]?.designAtomId).filter(Boolean);
-    const center = targets.reduce((sum, { atom }) => ({
+    const fitted = [...(context || [])].map((index) => state.molecule.atoms[index])
+      .filter((atom) => atom && (state.showHydrogens || atom.element !== 'H'));
+    const fitAtoms = fitted.length ? fitted : targets.map(({ atom }) => atom);
+    const center = fitAtoms.reduce((sum, atom) => ({
       x:sum.x + atom.x, y:sum.y + atom.y, z:sum.z + atom.z,
     }), { x:0, y:0, z:0 });
-    center.x /= targets.length; center.y /= targets.length; center.z /= targets.length;
+    center.x /= fitAtoms.length; center.y /= fitAtoms.length; center.z /= fitAtoms.length;
     state.focusedAtomCenter = { ...center };
-    const radius = Math.max(0, ...targets.map(({ atom }) =>
+    const radius = Math.max(0, ...fitAtoms.map((atom) =>
       Math.hypot(atom.x - center.x, atom.y - center.y, atom.z - center.z)));
-    state.focusedAtomRadius = Math.max(4.2, radius * 1.2 + 2.8);
+    state.focusedAtomRadius = Math.max(6, radius * 1.08 + 1.5);
     state.zoom = 1; state.viewPan = { x:0, y:0 };
   } else {
     state.focusedAtomCenter = null;
@@ -2334,6 +2389,11 @@ function highlightStructureAtoms(atomIds) {
     .filter(({ atom, index }) => ids.includes(atom.designAtomId) && componentVisible(index)) || [];
   updateChangedRegionChip(); draw();
   return targets;
+}
+
+function setHighlightedStructureAtoms(atomIds, residueLabels = null) {
+  if (residueLabels != null) state.focusedAtomResidueLabels = structuredClone(residueLabels);
+  return highlightStructureAtoms(atomIds);
 }
 
 function focusedComponentContextIndices(molecule = state.molecule) {
@@ -2383,6 +2443,7 @@ function focusStructureComponent(componentId, isolate = false) {
   const radius = Math.max(0, ...atoms.map((atom) =>
     Math.hypot(atom.x - center.x, atom.y - center.y, atom.z - center.z)));
   state.focusedComponentId = componentId;
+  state.focusedComponentCenter = { ...center };
   // Leave a pocket-sized margin around a ligand. Fitting only its atomic
   // sphere makes the surrounding residues clip across the viewport.
   state.focusedComponentRadius = component.kind === 'ligand'
@@ -2414,9 +2475,11 @@ function updateStructureComponentsUi() {
     checkbox.type = 'checkbox'; checkbox.checked = state.componentVisibility.get(component.id) !== false;
     checkbox.setAttribute('aria-label', `Show ${component.label}`);
     checkbox.addEventListener('change', () => {
-      state.componentVisibility.set(component.id, checkbox.checked);
-      state.focusedComponentId = null; state.focusedComponentRadius = null;
-      updateStructureComponentsUi(); updateInfo(); draw();
+      const ordinal = state.structureComponents.filter((entry) =>
+        entry.kind === component.kind).findIndex((entry) => entry.id === component.id);
+      runChemistUiAction('view.setComponentVisibility', {
+        kind:component.kind, ordinal, visible:checkbox.checked,
+      }).catch(() => { checkbox.checked = !checkbox.checked; });
     });
     const swatch = document.createElement('i'); swatch.style.background = component.color;
     const copy = document.createElement('div');
@@ -2429,11 +2492,23 @@ function updateStructureComponentsUi() {
     zoom.dataset.componentAction = 'zoom';
     zoom.textContent = state.focusedComponentId === component.id ? 'Zoomed' : 'Zoom';
     zoom.setAttribute('aria-label', `Zoom to ${component.label} without hiding other components`);
-    zoom.addEventListener('click', () => focusStructureComponent(component.id));
+    zoom.addEventListener('click', () => {
+      const ordinal = state.structureComponents.filter((entry) =>
+        entry.kind === component.kind).findIndex((entry) => entry.id === component.id);
+      runChemistUiAction('view.focusComponent', {
+        kind:component.kind, ordinal, isolate:false,
+      });
+    });
     const only = document.createElement('button'); only.type = 'button';
     only.dataset.componentAction = 'only'; only.textContent = 'Only';
     only.setAttribute('aria-label', `Show only ${component.label}`);
-    only.addEventListener('click', () => focusStructureComponent(component.id, true));
+    only.addEventListener('click', () => {
+      const ordinal = state.structureComponents.filter((entry) =>
+        entry.kind === component.kind).findIndex((entry) => entry.id === component.id);
+      runChemistUiAction('view.focusComponent', {
+        kind:component.kind, ordinal, isolate:true,
+      });
+    });
     actions.append(zoom, only);
     row.append(checkbox, swatch, copy, actions); list.append(row);
   });
@@ -3137,6 +3212,9 @@ function loadMolecule(molecule, resetView = true) {
   const representationSelect = document.querySelector('#representation-select');
   representationSelect.disabled = !state.proteinPrediction;
   representationSelect.value = state.representation;
+  document.querySelector('#display-theme-select').value = state.displayColorTheme;
+  document.querySelector('#change-marker-select').value = state.changeMarkerStyle;
+  document.querySelector('#steric-clash-toggle').checked = state.showStericClashes;
   document.querySelector('#protein-result-card').classList.toggle('hidden', !state.proteinPrediction);
   if (resetView) {
     state.rotation = defaultViewRotation(); state.zoom = 1; state.viewPan = { x:0, y:0 };
@@ -3581,6 +3659,7 @@ function setFocusedResidue(atomIndex = null) {
     state.focusedResidueRadius = null;
   } else {
     state.focusedComponentId = null;
+    state.focusedComponentCenter = null;
     state.focusedComponentRadius = null;
     clearFocusedAtomRegion();
     state.focusedResidueKey = nextKey;
@@ -3619,6 +3698,8 @@ function projectAtoms(width, height, molecule = state.molecule, miniature = fals
   center.x /= centerAtoms.length; center.y /= centerAtoms.length; center.z /= centerAtoms.length;
   if (!miniature && focusedAtoms.length && state.focusedAtomCenter)
     center = { ...state.focusedAtomCenter };
+  else if (!miniature && focusedComponent.length && state.focusedComponentCenter)
+    center = { ...state.focusedComponentCenter };
   let radius = Math.max(0.1, ...componentFiltered.map((atom) =>
     Math.hypot(atom.x - center.x, atom.y - center.y, atom.z - center.z)));
   const persistentView = !miniature && !focusedAtoms.length && !focused.length && !focusedComponent.length
@@ -3666,7 +3747,9 @@ function draw() {
   const size = resizeCanvas(canvas, ctx);
   ctx.clearRect(0, 0, size.width, size.height);
   ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, size.width, size.height);
-  if (!state.molecule) return;
+  if (!state.molecule) {
+    state.visibleStericClashCount = 0; updateStericClashDisplayLabel(0); return;
+  }
   const projected = projectAtoms(size.width, size.height);
   drawMolecule(ctx, projected, state.molecule, false);
   drawScenePreview();
@@ -4285,11 +4368,22 @@ function renderManualDockingContactBuilder() {
   draft.options.forEach((option) => {
     const button = document.createElement('button'); button.type = 'button';
     button.textContent = option.ligandRole === 'acceptor' ? 'Ligand accepts' : 'Ligand donates';
-    button.addEventListener('click', () => addManualDockingContactByIndices(
-      draft.ligandAtomIndex, draft.receptorAtomIndex, option.ligandRole)
-      .catch((error) => showNotice(error.message)));
+    button.addEventListener('click', () => addManualDockingContactThroughAction(
+      draft.ligandAtomIndex, draft.receptorAtomIndex, option.ligandRole));
     choices.append(button);
   });
+}
+
+async function addManualDockingContactThroughAction(ligandAtomIndex,
+  receptorAtomIndex, ligandRole = 'auto') {
+  try {
+    await ensureChemistActionAtomIds();
+    return await runChemistUiAction('pose.addContact', {
+      ligandAtomId:state.molecule.atoms[ligandAtomIndex].designAtomId,
+      receptorAtomId:state.molecule.atoms[receptorAtomIndex].designAtomId,
+      ligandRole,
+    }, { reportError:false });
+  } catch (error) { showNotice(error.message); return null; }
 }
 
 async function selectManualDockingContactAtom(atomIndex) {
@@ -4327,7 +4421,7 @@ async function selectManualDockingContactAtom(atomIndex) {
     receptorRole:entry.receptorRole }));
   state.selectedAtoms = [draft.ligandAtomIndex, atomIndex]; state.selectedAtom = atomIndex;
   if (draft.options.length === 1) {
-    await addManualDockingContactByIndices(draft.ligandAtomIndex, atomIndex,
+    await addManualDockingContactThroughAction(draft.ligandAtomIndex, atomIndex,
       draft.options[0].ligandRole);
   } else {
     updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw();
@@ -4371,9 +4465,9 @@ function renderDockingConstraints() {
     checkbox.dataset.constraintId = definition.id;
     checkbox.setAttribute('aria-label', `Require ${definition.label}`);
     checkbox.addEventListener('change', () => {
-      if (checkbox.checked) state.dockingSelectedHbondIds.add(definition.id);
-      else state.dockingSelectedHbondIds.delete(definition.id);
-      updateDockingUi();
+      runChemistUiAction('pose.setContact', {
+        contactId:definition.id, required:checkbox.checked,
+      }).catch(() => updateDockingUi());
     });
     const text = document.createElement('span');
     const mapped = state.dockingContactRemaps.get(definition.id);
@@ -4394,8 +4488,9 @@ function renderDockingConstraints() {
       select.append(new Option('Refine all alternatives', ''));
       proposal.candidates.forEach((candidate) => select.append(new Option(candidate.label, candidate.id)));
       select.addEventListener('change', () => {
-        if (select.value) chooseDockingContactRemap(definition.id, select.value)
-          .catch((error) => showNotice(error.message));
+        if (select.value) runChemistUiAction('pose.remapContact', {
+          contactId:definition.id, candidateId:select.value,
+        }).catch(() => updateDockingUi());
       });
       label.append(select);
     }
@@ -4405,8 +4500,9 @@ function renderDockingConstraints() {
       forget.className = 'forget-docking-contact'; forget.textContent = '×';
       forget.title = 'Forget this contact hypothesis';
       forget.setAttribute('aria-label', `Forget ${definition.label}`);
-      forget.addEventListener('click', () => forgetDockingContact(definition.id)
-        .catch((error) => showNotice(error.message)));
+      forget.addEventListener('click', () => runChemistUiAction('pose.forgetContact', {
+        contactId:definition.id,
+      }).catch(() => updateDockingUi()));
       label.append(forget);
     }
     container.append(label);
@@ -5847,12 +5943,15 @@ function traceCartoonPath(context, points) {
 
 function drawCartoonStroke(context, run, miniature, color) {
   const inner = miniature ? (run.secondary === 'helix' ? 4.8 : 2.6) : (run.secondary === 'helix' ? 14 : 5.5);
-  traceCartoonPath(context, run.points); context.strokeStyle = 'rgba(15,23,42,.70)';
+  const storyTheme = Boolean(DESIGN_DISPLAY_THEMES[state.displayColorTheme]);
+  traceCartoonPath(context, run.points); context.strokeStyle = storyTheme
+    ? 'rgba(71,100,104,.24)' : 'rgba(15,23,42,.70)';
   context.lineWidth = inner + (miniature ? 1.4 : 3); context.lineCap = 'round'; context.lineJoin = 'round'; context.stroke();
   traceCartoonPath(context, run.points); context.strokeStyle = color; context.lineWidth = inner;
   context.lineCap = 'round'; context.lineJoin = 'round'; context.stroke();
   if (!miniature && run.secondary === 'helix') {
-    traceCartoonPath(context, run.points); context.strokeStyle = 'rgba(255,255,255,.35)';
+    traceCartoonPath(context, run.points); context.strokeStyle = storyTheme
+      ? 'rgba(255,255,255,.48)' : 'rgba(255,255,255,.35)';
     context.lineWidth = 2.2; context.stroke();
   }
 }
@@ -5874,7 +5973,9 @@ function drawCartoonArrow(context, run, miniature, color) {
   left.slice(1).forEach((point) => context.lineTo(point.x, point.y));
   [...right].reverse().forEach((point) => context.lineTo(point.x, point.y));
   context.closePath(); context.fillStyle = color; context.fill();
-  context.strokeStyle = 'rgba(15,23,42,.72)'; context.lineWidth = miniature ? .8 : 1.6; context.lineJoin = 'round'; context.stroke();
+  const storyTheme = Boolean(DESIGN_DISPLAY_THEMES[state.displayColorTheme]);
+  context.strokeStyle = storyTheme ? 'rgba(71,100,104,.28)' : 'rgba(15,23,42,.72)';
+  context.lineWidth = miniature ? .8 : 1.6; context.lineJoin = 'round'; context.stroke();
   if (!miniature) {
     traceCartoonPath(context, points); context.strokeStyle = 'rgba(255,255,255,.32)'; context.lineWidth = 1.2; context.stroke();
   }
@@ -5885,10 +5986,85 @@ function drawProteinCartoon(context, projected, molecule, miniature) {
   for (const run of runs) {
     const predictedConfidence = state.proteinPrediction?.kind !== 'pdb-import'
       && state.proteinPrediction?.kind !== 'parameterized-reference';
-    const color = predictedConfidence ? confidenceColor(run.confidence)
-      : run.secondary === 'helix' ? '#d96262' : run.secondary === 'sheet' ? '#d5a936' : run.color;
+    const color = DESIGN_DISPLAY_THEMES[state.displayColorTheme] ? STORY_CARTOON_COLOR
+      : predictedConfidence ? confidenceColor(run.confidence)
+        : run.secondary === 'helix' ? '#d96262' : run.secondary === 'sheet' ? '#d5a936' : run.color;
     if (run.secondary === 'sheet') drawCartoonArrow(context, run, miniature, color);
     else drawCartoonStroke(context, run, miniature, color);
+  }
+}
+
+function ligandProteinSevereClashes(molecule, byIndex) {
+  if (!state.showStericClashes || !molecule) return [];
+  const componentKinds = new Map(state.structureComponents.map((component) =>
+    [component.id, component.kind]));
+  const ligand = [], protein = [];
+  for (const [index, projected] of byIndex) {
+    const atom = molecule.atoms[index];
+    if (!atom || atom.element === 'H') continue;
+    const kind = componentKinds.get(state.atomComponentIds[index]);
+    if (kind === 'ligand') ligand.push({ index, atom, projected });
+    else if (kind === 'protein') protein.push({ index, atom, projected });
+  }
+  const clashes = [];
+  for (const first of ligand) for (const second of protein) {
+    const distance = Math.hypot(first.atom.x - second.atom.x,
+      first.atom.y - second.atom.y, first.atom.z - second.atom.z);
+    const threshold = .62 * ((DISPLAY_VDW_RADII[first.atom.element] || 1.75)
+      + (DISPLAY_VDW_RADII[second.atom.element] || 1.75));
+    if (distance < threshold) clashes.push({ first, second, distance, threshold });
+  }
+  return clashes.sort((first, second) => first.distance / first.threshold
+    - second.distance / second.threshold);
+}
+
+function updateStericClashDisplayLabel(count = state.visibleStericClashCount) {
+  const label = document.querySelector('#steric-clash-toggle-text');
+  if (!label) return;
+  label.textContent = `Show severe clashes${state.showStericClashes ? ` · ${count}` : ''}`;
+}
+
+function drawStericClashMarkers(context, clashes) {
+  context.save();
+  for (const { first, second } of clashes) {
+    const x = (first.projected.sx + second.projected.sx) / 2;
+    const y = (first.projected.sy + second.projected.sy) / 2;
+    context.beginPath(); context.moveTo(first.projected.sx, first.projected.sy);
+    context.lineTo(second.projected.sx, second.projected.sy);
+    context.setLineDash([3, 4]); context.strokeStyle = 'rgba(192,38,132,.58)';
+    context.lineWidth = 1.5; context.stroke(); context.setLineDash([]);
+    context.beginPath(); context.arc(x, y, 4.2, 0, Math.PI * 2);
+    context.fillStyle = 'rgba(219,39,119,.88)'; context.fill();
+    context.strokeStyle = 'rgba(255,255,255,.94)'; context.lineWidth = 1.2; context.stroke();
+  }
+  context.restore();
+}
+
+function drawChangedAtomMarkers(context, atoms) {
+  if (!atoms.length || state.changeMarkerStyle === 'none') return;
+  if (atoms.length > 4) {
+    const padding = 15;
+    const left = Math.min(...atoms.map((atom) => atom.sx - atom.screenRadius)) - padding;
+    const right = Math.max(...atoms.map((atom) => atom.sx + atom.screenRadius)) + padding;
+    const top = Math.min(...atoms.map((atom) => atom.sy - atom.screenRadius)) - padding;
+    const bottom = Math.max(...atoms.map((atom) => atom.sy + atom.screenRadius)) + padding;
+    context.save(); context.beginPath();
+    context.roundRect(left, top, right - left, bottom - top, 18);
+    context.fillStyle = 'rgba(14,165,193,.055)'; context.fill();
+    context.strokeStyle = 'rgba(8,145,178,.55)'; context.lineWidth = 2;
+    context.shadowColor = 'rgba(34,211,238,.34)'; context.shadowBlur = 13; context.stroke();
+    context.restore();
+    return;
+  }
+  for (const atom of atoms) {
+    const halo = state.changeMarkerStyle === 'halo';
+    context.save(); context.beginPath();
+    context.arc(atom.sx, atom.sy, atom.screenRadius + (halo ? 7 : 9), 0, Math.PI * 2);
+    context.fillStyle = halo ? 'rgba(14,165,193,.06)' : 'rgba(220,38,38,.14)';
+    context.fill(); context.strokeStyle = halo ? 'rgba(8,145,178,.62)' : '#dc2626';
+    context.lineWidth = halo ? 2 : 3.5;
+    if (halo) { context.shadowColor = 'rgba(34,211,238,.40)'; context.shadowBlur = 10; }
+    context.stroke(); context.restore();
   }
 }
 
@@ -5905,6 +6081,9 @@ function drawMolecule(context, projected, molecule, miniature) {
     }
   }
   if (proteinCartoon && !atomProjection.length) {
+    if (!miniature) {
+      state.visibleStericClashCount = 0; updateStericClashDisplayLabel(0);
+    }
     const alphaCarbons = projected.filter((atom) => atom.atomName === 'CA');
     alphaCarbons.forEach((atom) => { atom.screenRadius = miniature ? 3 : 9; });
     state.projected = miniature ? state.projected : alphaCarbons;
@@ -5939,17 +6118,22 @@ function drawMolecule(context, projected, molecule, miniature) {
 
   const emphasizedIds = miniature ? new Set() : new Set(state.emphasizedAtomIds);
   atomProjection.sort((a, b) => a.rz - b.rz);
-  for (const atom of atomProjection) {
+  atomProjection.forEach((atom) => {
     const base = ELEMENTS[atom.element].radius * (state.vdw ? 1.75 : 1);
-    const radius = miniature ? Math.max(2.6, base * 5.8) : Math.max(7, base * atom.scale * .46 * atom.perspective);
+    atom.screenRadius = miniature ? Math.max(2.6, base * 5.8)
+      : Math.max(7, base * atom.scale * .46 * atom.perspective);
+  });
+  if (!miniature) {
+    const clashes = ligandProteinSevereClashes(molecule, byIndex);
+    state.visibleStericClashCount = clashes.length;
+    updateStericClashDisplayLabel(clashes.length);
+    drawStericClashMarkers(context, clashes);
+    drawChangedAtomMarkers(context, atomProjection.filter((atom) =>
+      emphasizedIds.has(atom.designAtomId)));
+  }
+  for (const atom of atomProjection) {
+    const radius = atom.screenRadius;
     const selectedOrder = miniature ? -1 : state.selectedAtoms.indexOf(atom.index);
-    const emphasized = emphasizedIds.has(atom.designAtomId);
-    atom.screenRadius = radius;
-    if (emphasized) {
-      context.beginPath(); context.arc(atom.sx, atom.sy, radius + 9, 0, Math.PI * 2);
-      context.fillStyle = 'rgba(220,38,38,.14)'; context.fill();
-      context.strokeStyle = '#dc2626'; context.lineWidth = 3.5; context.stroke();
-    }
     if (selectedOrder >= 0) {
       context.beginPath(); context.arc(atom.sx, atom.sy, radius + 5, 0, Math.PI * 2);
       context.strokeStyle = state.designerMoveReplaying ? '#dc2626' : '#2563eb';
@@ -5963,7 +6147,9 @@ function drawMolecule(context, projected, molecule, miniature) {
     context.beginPath(); context.arc(atom.sx, atom.sy, radius, 0, Math.PI * 2);
     context.fillStyle = gradient; context.fill();
     context.strokeStyle = '#070a0c'; context.lineWidth = miniature ? 0.8 : Math.max(1.5, radius * .105); context.stroke();
-    if (!miniature && (state.hoverAtom === atom.index || state.selectedAtom === atom.index || state.selectedAtoms.includes(atom.index) || state.mode === 'build') && atom.element !== 'H') {
+    if (!miniature && (state.hoverAtom === atom.index || state.selectedAtom === atom.index
+      || state.selectedAtoms.includes(atom.index)
+      || state.mode === 'build' && !state.designerMoveReplaying) && atom.element !== 'H') {
       context.fillStyle = atom.element === 'C' ? 'white' : 'rgba(255,255,255,.92)';
       context.font = `600 ${Math.max(8, radius * .62)}px Inter, sans-serif`;
       context.textAlign = 'center'; context.textBaseline = 'middle'; context.fillText(atom.element, atom.sx, atom.sy + .5);
@@ -6005,6 +6191,7 @@ function drawFocusedAtomResidueLabels(context, projected) {
       { x:0, y:0 });
     anchor.x /= atoms.length; anchor.y /= atoms.length;
     const text = String(spec.label || `${atoms[0].residueName || ''}${spec.residueIndex}`);
+    const tone = RESIDUE_LABEL_TONES[spec.tone] || RESIDUE_LABEL_TONES.blue;
     context.save();
     context.font = '700 13px Inter, sans-serif';
     const boxWidth = Math.ceil(context.measureText(text).width) + 20;
@@ -6016,11 +6203,11 @@ function drawFocusedAtomResidueLabels(context, projected) {
     const endX = direction < 0 ? boxX + boxWidth : boxX;
     const endY = boxY + boxHeight / 2;
     context.beginPath(); context.moveTo(anchor.x, anchor.y); context.lineTo(endX, endY);
-    context.strokeStyle = '#247d95'; context.lineWidth = 2; context.stroke();
+    context.strokeStyle = tone.line; context.lineWidth = 2; context.stroke();
     context.beginPath(); context.roundRect(boxX, boxY, boxWidth, boxHeight, 7);
     context.fillStyle = 'rgba(255,255,255,.94)'; context.fill();
-    context.strokeStyle = '#247d95'; context.lineWidth = 1.5; context.stroke();
-    context.fillStyle = '#153e4a'; context.textAlign = 'center'; context.textBaseline = 'middle';
+    context.strokeStyle = tone.line; context.lineWidth = 1.5; context.stroke();
+    context.fillStyle = tone.text; context.textAlign = 'center'; context.textBaseline = 'middle';
     context.fillText(text, boxX + boxWidth / 2, boxY + boxHeight / 2 + .5);
     context.restore();
   }
@@ -6034,6 +6221,17 @@ function showToast(message) {
 function showNotice(message) {
   const notice = document.querySelector('#notice'); notice.textContent = message; notice.classList.remove('hidden');
   setTimeout(() => notice.classList.add('hidden'), 4000);
+}
+
+async function runChemistUiAction(action, args = {}, { reportError = true } = {}) {
+  try {
+    const api = await window.MolariumChemistActionsReady;
+    const response = await api.execute({ action, args });
+    return response.result;
+  } catch (error) {
+    if (reportError) showNotice(error.message);
+    throw error;
+  }
 }
 
 function setMode(mode) {
@@ -7439,7 +7637,10 @@ function renderFragmentLibrary(query = '') {
     const button = document.createElement('button');
     button.className = 'fragment-card'; button.dataset.fragment = fragment.id;
     button.innerHTML = `<canvas aria-hidden="true"></canvas><strong>${fragment.label}</strong><span>${fragment.name}</span>`;
-    button.addEventListener('click', () => stageFragment(fragment)); grid.appendChild(button);
+    button.addEventListener('click', () => {
+      runChemistUiAction('fragment.stage', { fragmentId:fragment.id }).catch(() => {});
+    });
+    grid.appendChild(button);
   }
   requestAnimationFrame(drawFragmentPreviews);
 }
@@ -7805,7 +8006,36 @@ async function applyCurrentSidechainRotamer(index) {
     throw new Error('The molecular coordinates changed after side-chain enumeration; enumerate again.');
   const module = await import('./docking/sidechain-rotamers.mjs');
   pushBuildHistory();
+  const startingPositions = new Map(ensemble.candidates[index].positions.map((position) => {
+    const atom = state.molecule.atoms[position.atomIndex];
+    return [position.atomIndex, { x:atom.x, y:atom.y, z:atom.z }];
+  }));
   const candidate = module.applySidechainRotamer(state.molecule, ensemble, index);
+  if (state.designerMoveReplaying && candidate.positions.length) {
+    // A rotamer choice is a scientific state change that is otherwise a hard
+    // cut. Replay it at human speed so the chemist can see the causal motion.
+    // Only display coordinates are interpolated; the audited action still
+    // finishes at the exact hash-pinned candidate coordinates.
+    const frameCount = 24;
+    for (let frame = 0; frame <= frameCount; frame++) {
+      const linear = frame / frameCount;
+      const amount = linear * linear * (3 - 2 * linear);
+      candidate.positions.forEach((position) => {
+        const atom = state.molecule.atoms[position.atomIndex];
+        const start = startingPositions.get(position.atomIndex);
+        atom.x = frame === frameCount ? position.x
+          : start.x + (position.x - start.x) * amount;
+        atom.y = frame === frameCount ? position.y
+          : start.y + (position.y - start.y) * amount;
+        atom.z = frame === frameCount ? position.z
+          : start.z + (position.z - start.z) * amount;
+      });
+      draw();
+      if (frame < frameCount)
+        await new Promise((resolveFrame) => setTimeout(resolveFrame, 70));
+    }
+    updateStoredBondDistances();
+  }
   const appliedCoordinateSha256 = await moleculeCoordinateSha256();
   if (appliedCoordinateSha256 !== candidate.coordinateSha256) {
     restoreMolecule(state.buildHistory.pop());
@@ -7842,7 +8072,9 @@ let designerMoveReplayResume = null;
 const DESIGNER_MOVE_CHECKPOINT_STATE_KEYS = Object.freeze([
   'rotation', 'viewProjectionCenter', 'viewProjectionRadius', 'viewPan', 'zoom',
   'autoRotate', 'showHydrogens', 'showHulls', 'showInteractions', 'showPocketAtoms',
-  'pocketAtomMode', 'vdw', 'representation', 'mode', 'selectedElement', 'buildTool',
+  'pocketAtomMode', 'displayColorTheme', 'changeMarkerStyle', 'showStericClashes',
+  'vdw', 'representation',
+  'mode', 'selectedElement', 'buildTool',
   'stagedFragment', 'selectedAtom', 'selectedAtoms', 'chemistryTransaction',
   'designRoute', 'designRouteStepId', 'geometryEditActive', 'lastCalculation',
   'calculationFrames', 'calculationRawFrames', 'calculationProjectionRadius',
@@ -7853,7 +8085,7 @@ const DESIGNER_MOVE_CHECKPOINT_STATE_KEYS = Object.freeze([
   'ligandProtonation', 'dockingReference', 'dockingResult', 'dockingSelectedHbondIds',
   'dockingContactRemaps', 'dockingContactRemapProposals', 'dockingContactDraft',
   'dockingPoseIndex', 'sidechainRotamerEnsemble', 'structureComponents',
-  'atomComponentIds', 'componentVisibility', 'focusedComponentId',
+  'atomComponentIds', 'componentVisibility', 'focusedComponentId', 'focusedComponentCenter',
   'focusedComponentRadius', 'focusedResidueKey', 'focusedResidueRadius',
   'focusedAtomIds', 'focusedAtomCenter', 'focusedAtomRadius', 'focusedAtomContextRadius',
   'focusedAtomContextIds', 'focusedAtomResidueLabels', 'emphasizedAtomIds',
@@ -7943,6 +8175,9 @@ function restoreDesignerMoveCheckpoint(index) {
     const representationSelect = document.querySelector('#representation-select');
     representationSelect.disabled = !state.proteinPrediction;
     representationSelect.value = state.representation;
+    document.querySelector('#display-theme-select').value = state.displayColorTheme;
+    document.querySelector('#change-marker-select').value = state.changeMarkerStyle;
+    document.querySelector('#steric-clash-toggle').checked = state.showStericClashes;
     updatePdbPreparationUi(); updateLigandProtonationUi();
     updateStructureComponentsUi(); updatePreparationInspectorUi();
     updateInfo(); updateGeometryControl(); updateOptimizerControls();
@@ -8124,7 +8359,7 @@ async function importDesignerMoveScript(file) {
   let parsed;
   try { parsed = JSON.parse(await file.text()); }
   catch { throw new Error('Designer-move file is not valid JSON'); }
-  await installDesignerMoveScript(parsed);
+  await runChemistUiAction('designerScript.load', { script:parsed }, { reportError:false });
   showToast(`${parsed.actions.length} designer moves imported`);
 }
 
@@ -8132,6 +8367,7 @@ async function installDesignerMoveScript(parsed) {
   const module = await import('./design-history/replay.mjs');
   module.validateActionScript(parsed);
   clearScene();
+  document.querySelector('#designer-story-dock')?.classList.remove('hidden');
   state.designerMoveScript = structuredClone(parsed);
   resetDesignerMovePlayback();
   updateDesignerMoveControls();
@@ -8219,6 +8455,9 @@ function showDesignerMoveCue(step = null, { preserveLayout = false } = {}) {
     step.args?.showInteractions != null && '#interaction-toggle',
     step.args?.showPocketAtoms != null && '#pocket-toggle',
     step.args?.showHulls != null && '#hull-toggle',
+    step.args?.showStericClashes != null && '#steric-clash-toggle',
+    step.args?.colorTheme != null && '#display-theme-select',
+    step.args?.changeMarkers != null && '#change-marker-select',
   ].filter(Boolean).map((controlSelector) => document.querySelector(controlSelector)).filter(Boolean) : [];
   designerMoveCueElements = [element, ...changedControls];
   element.classList.add('designer-move-cue', 'designer-move-press');
@@ -8255,13 +8494,13 @@ function designerMoveResultCaption(step) {
   if (step.action === 'view.focusAtoms') {
     const count = Number(step.result?.focusedAtoms?.atomCount || 0);
     return count
-      ? `${count} changed atom${count === 1 ? '' : 's'} centered in local pocket context and marked in red.`
+      ? `${count} changed atom${count === 1 ? '' : 's'} centered in local pocket context and marked for review.`
       : 'No heavy-atom movement crossed the display threshold; the previous camera is retained.';
   }
   if (step.action === 'view.highlightAtoms') {
     const count = Number(step.result?.highlightedAtoms?.atomCount || 0);
     return count
-      ? `${count} changed atom${count === 1 ? '' : 's'} marked in red; camera and pocket context retained for direct comparison.`
+      ? `${count} changed atom${count === 1 ? '' : 's'} marked for review; camera and pocket context retained for direct comparison.`
       : 'No heavy-atom movement crossed the display threshold; camera and pocket context retained.';
   }
   if (step.action === 'designRoute.applyStep') {
@@ -8815,13 +9054,114 @@ function installChemistActionsApi(module) {
   const routes = {
     'session.inspect':async (args) => { chemistActionKeys(args,
       ['scope','includeCoordinates','maximumAtoms']); return inspectChemistActionState(args); },
+    'session.loadStructure':async (args) => { chemistActionKeys(args,
+      ['content','format','name','polish']);
+      if (typeof args.content !== 'string' || !args.content.trim())
+        throw new Error('content must be non-empty structure text');
+      const format = chemistActionEnum(args.format ?? 'auto',
+        ['auto','pdb','xyz','mol','smiles'], 'format');
+      if (args.name != null && (typeof args.name !== 'string' || !args.name.trim()
+        || args.name.length > 160)) throw new Error('name must be a non-empty string up to 160 characters');
+      if (args.polish != null && typeof args.polish !== 'boolean')
+        throw new Error('polish must be boolean');
+      const content = args.content.trim();
+      const detected = format !== 'auto' ? format
+        : /^(?:HEADER|TITLE |MODEL |ATOM  |HETATM)/m.test(content) ? 'pdb'
+          : /(?:V2000|V3000)/m.test(content) ? 'mol'
+            : /^\s*\d+\s*(?:\r?\n)/.test(content) ? 'xyz' : 'smiles';
+      let molecule, polish = null;
+      if (detected === 'smiles') {
+        const embedded = await createRdkitSmilesMolecule(content, args.name || 'SMILES structure');
+        molecule = embedded.molecule;
+        polish = embedded.result;
+      } else {
+        molecule = detected === 'pdb' ? parsePDB(content, { name:args.name })
+          : detected === 'mol' ? parseMolBlock(content, { name:args.name })
+            : parseXYZ(content, { name:args.name });
+        loadMolecule(molecule);
+        if (args.polish !== false && smallMoleculePolishEligible(molecule))
+          polish = await polishSmallMoleculeCoordinates(molecule);
+      }
+      if (state.molecule !== molecule) loadMolecule(molecule);
+      state.buildHistory = []; state.redoHistory = []; updateHistoryButtons();
+      return chemistActionSummary({ load:{ format:detected,
+        polished:Boolean(polish), name:molecule.name || args.name || null } }); },
+    'session.loadIdentifier':async (args) => { chemistActionKeys(args, ['value','kind']);
+      if (typeof args.value !== 'string' || !args.value.trim() || args.value.length > 4096)
+        throw new Error('value must be a non-empty identifier');
+      const requestedKind = chemistActionEnum(args.kind ?? 'auto',
+        ['auto','library','smiles','pdb'], 'kind');
+      const raw = args.value.trim(), lookup = raw.toLowerCase();
+      const libraryKey = Object.keys(LIBRARY).find((name) =>
+        lookup === name || lookup === LIBRARY[name].smiles.toLowerCase());
+      const pdbCandidate = /^(?:PDB\s*[:#-]?\s*)?[0-9][A-Za-z0-9]{3}$/i.test(raw);
+      const kind = requestedKind === 'auto' ? libraryKey ? 'library'
+        : pdbCandidate ? 'pdb' : 'smiles' : requestedKind;
+      if (kind === 'pdb') {
+        const molecule = await loadPdbIdentifier(raw);
+        return chemistActionSummary({ load:{ kind, pdbId:molecule.source?.pdbId || null } });
+      }
+      if (kind === 'library' && !libraryKey)
+        throw new Error(`Unknown built-in molecule: ${raw}`);
+      const smiles = kind === 'library' ? LIBRARY[libraryKey].smiles : raw;
+      const name = kind === 'library' ? LIBRARY[libraryKey].name : 'SMILES structure';
+      const embedded = await createRdkitSmilesMolecule(smiles, name);
+      loadMolecule(embedded.molecule);
+      const protonation = await enumerateLigandProtonation(smiles);
+      return chemistActionSummary({ load:{ kind, libraryId:libraryKey || null,
+        smiles, conformerCount:embedded.result?.conformerCount ?? null,
+        protonationStateCount:protonation?.states?.length ?? 0 } }); },
+    'session.loadFixture':async (args) => { chemistActionKeys(args, ['fixtureId']);
+      const fixtureId = chemistActionEnum(args.fixtureId, ['trp-cage','ubiquitin'], 'fixtureId');
+      const summary = fixtureId === 'trp-cage' ? await loadRosemaryProteinExample()
+        : await loadPreparedProteinFixture('./openff/rosemary-ubiquitin.json');
+      return chemistActionSummary({ fixture:{ fixtureId, ...structuredClone(summary) } }); },
+    'session.clear':async (args) => { empty(args); clearScene();
+      return chemistActionSummary({ cleared:true }); },
+    'session.share':async (args) => { empty(args);
+      const storyId = new URLSearchParams(location.search).get('story');
+      const url = storyId && DESIGNER_STORY_LINKS[storyId]
+        ? `${location.origin}/${storyId}` : location.href;
+      return chemistActionSummary({ share:{ url } }); },
+    'interface.setPanelOpen':async (args) => { chemistActionKeys(args, ['panelId','open']);
+      if (typeof args.panelId !== 'string' || !/^[a-z][a-z0-9-]{0,79}$/.test(args.panelId))
+        throw new Error('panelId must be a public panel ID');
+      if (typeof args.open !== 'boolean') throw new Error('open must be boolean');
+      const panel = document.querySelector(`#${CSS.escape(args.panelId)}`);
+      if (!panel) throw new Error(`Unknown interface panel: ${args.panelId}`);
+      let toggle = panel.matches('.disclosure') ? panel
+        : panel.querySelector(':scope > .card-heading.disclosure');
+      let body = toggle?.getAttribute('aria-controls')
+        ? document.getElementById(toggle.getAttribute('aria-controls')) : null;
+      if (toggle && !body && toggle.id.endsWith('-toggle'))
+        body = document.getElementById(toggle.id.replace(/-toggle$/, '-body'));
+      if (!toggle && args.panelId.endsWith('-body')) {
+        body = panel;
+        toggle = document.querySelector(`[aria-controls="${CSS.escape(args.panelId)}"]`)
+          || document.getElementById(args.panelId.replace(/-body$/, '-toggle'));
+      }
+      if (!toggle || !body) throw new Error(`${args.panelId} is not a collapsible public panel`);
+      const card = toggle.closest('.card') || panel;
+      body.classList.toggle('hidden', !args.open);
+      card.classList.toggle('side-card-collapsed', !args.open);
+      toggle.setAttribute('aria-expanded', String(args.open));
+      toggle.querySelector('.chevron')?.classList.toggle('open', args.open);
+      return chemistActionSummary({ panel:{ panelId:args.panelId, open:args.open } }); },
+    'interface.openProjectInfo':async (args) => { chemistActionKeys(args, ['panel']);
+      const panel = chemistActionEnum(args.panel,
+        ['methods','validation','credits','privacy','closed'], 'panel');
+      if (panel === 'closed') projectInfoDialog.close();
+      else openProjectInfoPanel(panel);
+      return chemistActionSummary({ projectInfo:{ panel,
+        open:panel !== 'closed' } }); },
     'view.setMode':async (args) => { chemistActionKeys(args, ['mode']);
       const mode = chemistActionEnum(args.mode, ['view','build','run'], 'mode');
       if (!setMode(mode)) throw new Error(`Molarium could not enter ${mode} mode`);
       return chemistActionSummary(); },
     'view.focusComponent':async (args) => { chemistActionKeys(args,
       ['kind','ordinal','isolate']);
-      const kind = chemistActionEnum(args.kind, ['ligand','protein','molecule'], 'kind');
+      const kind = chemistActionEnum(args.kind,
+        ['ligand','protein','water','ion','molecule'], 'kind');
       const ordinal = Number(args.ordinal ?? 0);
       if (!Number.isInteger(ordinal) || ordinal < 0)
         throw new Error('ordinal must be a non-negative integer');
@@ -8854,10 +9194,11 @@ function installChemistActionsApi(module) {
           || entry.insertionCode != null && (typeof entry.insertionCode !== 'string'
             || entry.insertionCode.length > 2)
           || entry.label != null && (typeof entry.label !== 'string' || !entry.label.length
-            || entry.label.length > 32)))
+            || entry.label.length > 32)
+          || entry.tone != null && !['gold','blue','slate'].includes(entry.tone)))
         throw new Error('residueLabels must contain 0 to 8 valid residue callouts');
       residueLabels.forEach((entry) => chemistActionKeys(entry,
-        ['chain','residueIndex','insertionCode','label']));
+        ['chain','residueIndex','insertionCode','label','tone']));
       const byId = await ensureChemistActionAtomIds();
       const missing = atomIds.filter((id) => !byId.has(id));
       if (missing.length) throw new Error(`Unknown persistent atom ID: ${missing[0]}`);
@@ -8867,11 +9208,25 @@ function installChemistActionsApi(module) {
         atomCount:targets.length, contextRadiusAngstrom,
         highlighted:args.highlight !== false,
         residueLabels:structuredClone(residueLabels) } }); },
-    'view.highlightAtoms':async (args) => { chemistActionKeys(args, ['atomIds']);
+    'view.highlightAtoms':async (args) => { chemistActionKeys(args, ['atomIds','residueLabels']);
       if (!Array.isArray(args.atomIds) || args.atomIds.length > 64
         || args.atomIds.some((id) => typeof id !== 'string' || !id))
         throw new Error('atomIds must be an array of 0 to 64 persistent atom IDs');
       const atomIds = [...new Set(args.atomIds)];
+      const residueLabels = args.residueLabels;
+      if (residueLabels != null && (!Array.isArray(residueLabels) || residueLabels.length > 8
+        || residueLabels.some((entry) => !entry || typeof entry !== 'object'
+          || Array.isArray(entry) || !Number.isInteger(Number(entry.residueIndex))
+          || entry.chain != null && (typeof entry.chain !== 'string' || !entry.chain.length
+            || entry.chain.length > 4)
+          || entry.insertionCode != null && (typeof entry.insertionCode !== 'string'
+            || entry.insertionCode.length > 2)
+          || entry.label != null && (typeof entry.label !== 'string' || !entry.label.length
+            || entry.label.length > 32)
+          || entry.tone != null && !['gold','blue','slate'].includes(entry.tone))))
+        throw new Error('residueLabels must contain 0 to 8 valid residue callouts');
+      residueLabels?.forEach((entry) => chemistActionKeys(entry,
+        ['chain','residueIndex','insertionCode','label','tone']));
       const byId = await ensureChemistActionAtomIds();
       const missing = atomIds.filter((id) => !byId.has(id));
       if (missing.length) throw new Error(`Unknown persistent atom ID: ${missing[0]}`);
@@ -8883,7 +9238,6 @@ function installChemistActionsApi(module) {
         focusedAtomCenter:state.focusedAtomCenter,
         focusedAtomRadius:state.focusedAtomRadius,
         focusedAtomContextIds:state.focusedAtomContextIds,
-        focusedAtomResidueLabels:state.focusedAtomResidueLabels,
         focusedAtomContextRadius:state.focusedAtomContextRadius,
         focusedComponentId:state.focusedComponentId,
         focusedResidueKey:state.focusedResidueKey,
@@ -8891,7 +9245,7 @@ function installChemistActionsApi(module) {
         showInteractions:state.showInteractions, showPocketAtoms:state.showPocketAtoms,
         showHulls:state.showHulls,
         componentVisibility:[...state.componentVisibility.entries()] });
-      const targets = highlightStructureAtoms(atomIds);
+      const targets = setHighlightedStructureAtoms(atomIds, residueLabels);
       const cameraAfter = JSON.stringify({ rotation:state.rotation,
         viewProjectionCenter:state.viewProjectionCenter,
         viewProjectionRadius:state.viewProjectionRadius, viewPan:state.viewPan,
@@ -8900,7 +9254,6 @@ function installChemistActionsApi(module) {
         focusedAtomCenter:state.focusedAtomCenter,
         focusedAtomRadius:state.focusedAtomRadius,
         focusedAtomContextIds:state.focusedAtomContextIds,
-        focusedAtomResidueLabels:state.focusedAtomResidueLabels,
         focusedAtomContextRadius:state.focusedAtomContextRadius,
         focusedComponentId:state.focusedComponentId,
         focusedResidueKey:state.focusedResidueKey,
@@ -8910,10 +9263,13 @@ function installChemistActionsApi(module) {
         componentVisibility:[...state.componentVisibility.entries()] });
       return chemistActionSummary({ highlightedAtoms:{ atomIds,
         atomCount:targets.length, cameraPreserved:cameraAfter === cameraBefore,
-        displayContextPreserved:displayAfter === displayBefore } }); },
+        displayContextPreserved:displayAfter === displayBefore,
+        residueLabels:structuredClone(state.focusedAtomResidueLabels) } }); },
     'view.setDisplay':async (args) => {
       chemistActionKeys(args,
-        ['representation','showHydrogens','showInteractions','showPocketAtoms','showHulls']);
+        ['representation','showHydrogens','showInteractions','showPocketAtoms','showHulls',
+          'showVdw','showStericClashes','pocketMode','colorTheme','changeMarkers',
+          'autoRotate','playing']);
       if (!Object.keys(args).length) throw new Error('At least one display option is required');
       const booleanOption = (value, label, fallback) => {
         if (value == null) return fallback;
@@ -8934,6 +9290,19 @@ function installChemistActionsApi(module) {
       const showPocketAtoms = booleanOption(args.showPocketAtoms,
         'showPocketAtoms', state.showPocketAtoms);
       const showHulls = booleanOption(args.showHulls, 'showHulls', state.showHulls);
+      const showVdw = booleanOption(args.showVdw, 'showVdw', state.vdw);
+      const showStericClashes = booleanOption(args.showStericClashes,
+        'showStericClashes', state.showStericClashes);
+      const playing = booleanOption(args.playing, 'playing', state.playing);
+      const pocketMode = args.pocketMode == null ? state.pocketAtomMode
+        : chemistActionEnum(args.pocketMode, ['radius','contacts'], 'pocketMode');
+      const autoRotate = args.autoRotate == null ? state.autoRotate
+        : chemistActionEnum(args.autoRotate, ['none','vertical','diagonal'], 'autoRotate');
+      const colorTheme = args.colorTheme == null ? state.displayColorTheme
+        : chemistActionEnum(args.colorTheme,
+          ['standard','design-hit','design-prediction','design-validation'], 'colorTheme');
+      const changeMarkers = args.changeMarkers == null ? state.changeMarkerStyle
+        : chemistActionEnum(args.changeMarkers, ['rings','halo','none'], 'changeMarkers');
 
       // This is one public chemist action, so apply it as one UI transaction.
       // Dispatching a separate change event for every option forced several
@@ -8943,24 +9312,151 @@ function installChemistActionsApi(module) {
       state.showInteractions = showInteractions;
       state.showPocketAtoms = showPocketAtoms;
       state.showHulls = showHulls;
+      state.vdw = showVdw;
+      state.showStericClashes = showStericClashes;
+      state.pocketAtomMode = pocketMode;
+      state.displayColorTheme = colorTheme;
+      state.changeMarkerStyle = changeMarkers;
+      state.autoRotate = autoRotate;
+      state.playing = playing;
       document.querySelector('#representation-select').value = representation;
       document.querySelector('#hydrogen-toggle').checked = showHydrogens;
       document.querySelector('#interaction-toggle').checked = showInteractions;
       document.querySelector('#pocket-toggle').checked = showPocketAtoms;
       document.querySelector('#hull-toggle').checked = showHulls;
+      document.querySelector('#vdw-toggle').checked = showVdw;
+      document.querySelector('#steric-clash-toggle').checked = showStericClashes;
+      document.querySelector('#display-theme-select').value = colorTheme;
+      document.querySelector('#change-marker-select').value = changeMarkers;
+      document.querySelector('#rotate-select').value = autoRotate;
+      document.querySelector('#play-button').textContent = playing ? 'Pause' : 'Play';
       updateInfo();
       draw();
       return chemistActionSummary({ display:{ representation:state.representation,
         showHydrogens:state.showHydrogens, showInteractions:state.showInteractions,
-        showPocketAtoms:state.showPocketAtoms, showHulls:state.showHulls } });
+        showPocketAtoms:state.showPocketAtoms, showHulls:state.showHulls,
+        showVdw:state.vdw, showStericClashes:state.showStericClashes,
+        visibleStericClashCount:state.visibleStericClashCount,
+        pocketMode:state.pocketAtomMode, colorTheme:state.displayColorTheme,
+        changeMarkers:state.changeMarkerStyle,
+        autoRotate:state.autoRotate, playing:state.playing } });
     },
+    'view.setComponentVisibility':async (args) => { chemistActionKeys(args,
+      ['kind','ordinal','visible']);
+      const kind = chemistActionEnum(args.kind,
+        ['ligand','protein','water','ion','molecule'], 'kind');
+      const ordinal = Number(args.ordinal ?? 0);
+      if (!Number.isInteger(ordinal) || ordinal < 0)
+        throw new Error('ordinal must be a non-negative integer');
+      if (typeof args.visible !== 'boolean') throw new Error('visible must be boolean');
+      const component = state.structureComponents.filter((entry) => entry.kind === kind)[ordinal];
+      if (!component) throw new Error(`${kind} component ${ordinal} does not exist`);
+      state.componentVisibility.set(component.id, args.visible);
+      if (!args.visible && state.focusedComponentId === component.id) {
+        state.focusedComponentId = null; state.focusedComponentCenter = null;
+        state.focusedComponentRadius = null;
+      }
+      updateStructureComponentsUi(); updateInfo(); draw();
+      return chemistActionSummary({ component:{ kind, ordinal,
+        componentId:component.id, visible:args.visible } }); },
+    'view.showAllComponents':async (args) => { empty(args);
+      state.structureComponents.forEach((component) =>
+        state.componentVisibility.set(component.id, true));
+      state.focusedComponentId = null; state.focusedComponentCenter = null;
+      state.focusedComponentRadius = null;
+      clearFocusedAtomRegion(); state.zoom = 1; state.viewPan = { x:0, y:0 };
+      updateStructureComponentsUi(); updateInfo(); draw();
+      return chemistActionSummary({ visibleComponents:state.structureComponents.length }); },
+    'view.reset':async (args) => { empty(args);
+      state.structureComponents.forEach((component) =>
+        state.componentVisibility.set(component.id, component.kind !== 'water'));
+      state.focusedComponentId = null; state.focusedComponentCenter = null;
+      state.focusedComponentRadius = null;
+      state.focusedResidueKey = null; state.focusedResidueRadius = null;
+      clearFocusedAtomRegion(); state.viewProjectionCenter = null;
+      state.viewProjectionRadius = null; state.rotation = defaultViewRotation();
+      state.zoom = 1; state.viewPan = { x:0, y:0 };
+      updateResidueFollowChip(); updateStructureComponentsUi(); updateInfo(); draw();
+      return chemistActionSummary({ viewReset:true }); },
+    'view.focusResidue':async (args) => { chemistActionKeys(args,
+      ['chain','residueIndex','insertionCode','clear']);
+      if (args.clear != null && typeof args.clear !== 'boolean')
+        throw new Error('clear must be boolean');
+      if (args.clear) {
+        state.focusedResidueKey = null; state.focusedResidueRadius = null;
+        updateResidueFollowChip(); draw();
+        return chemistActionSummary({ focusedResidue:null });
+      }
+      if (typeof args.chain !== 'string' || !args.chain.length || args.chain.length > 4)
+        throw new Error('chain must be a chain identifier');
+      const residueIndex = Number(args.residueIndex);
+      if (!Number.isInteger(residueIndex)) throw new Error('residueIndex must be an integer');
+      if (args.insertionCode != null && (typeof args.insertionCode !== 'string'
+        || args.insertionCode.length > 2)) throw new Error('insertionCode must be at most two characters');
+      const atomIndex = state.molecule?.atoms.findIndex((atom) =>
+        String(atom.chain || '') === args.chain && Number(atom.residueIndex) === residueIndex
+        && String(atom.insertionCode || '') === String(args.insertionCode || '')) ?? -1;
+      if (atomIndex < 0) throw new Error(`Residue ${args.chain}${residueIndex}${args.insertionCode || ''} does not exist`);
+      // setFocusedResidue toggles an already focused residue, so clear first to
+      // make this public setter idempotent.
+      state.focusedResidueKey = null; state.focusedResidueRadius = null;
+      setFocusedResidue(atomIndex);
+      return chemistActionSummary({ focusedResidue:{ chain:args.chain,
+        residueIndex, insertionCode:args.insertionCode || '' } }); },
+    'view.clearFocus':async (args) => { chemistActionKeys(args, ['kind']);
+      const kind = chemistActionEnum(args.kind,
+        ['atoms','residue','component','all'], 'kind');
+      if (kind === 'atoms' || kind === 'all') clearFocusedAtomRegion();
+      if (kind === 'residue' || kind === 'all') {
+        state.focusedResidueKey = null; state.focusedResidueRadius = null;
+      }
+      if (kind === 'component' || kind === 'all') {
+        state.focusedComponentId = null; state.focusedComponentCenter = null;
+        state.focusedComponentRadius = null;
+      }
+      updateResidueFollowChip(); updateChangedRegionChip();
+      updateStructureComponentsUi(); updateInfo(); draw();
+      return chemistActionSummary({ clearedFocus:kind }); },
+    'view.setCamera':async (args) => { chemistActionKeys(args, ['rotation','pan','zoom']);
+      if (!Object.keys(args).length) throw new Error('At least one camera property is required');
+      const finiteObject = (value, keys, label) => {
+        if (!value || typeof value !== 'object' || Array.isArray(value))
+          throw new Error(`${label} must be an object`);
+        chemistActionKeys(value, keys);
+        const result = Object.fromEntries(keys.map((key) => [key, Number(value[key])]));
+        if (Object.values(result).some((entry) => !Number.isFinite(entry)))
+          throw new Error(`${label} values must be finite numbers`);
+        return result;
+      };
+      if (args.rotation != null) state.rotation = normaliseQuaternion(
+        finiteObject(args.rotation, ['x','y','z','w'], 'rotation'));
+      if (args.pan != null) {
+        const pan = finiteObject(args.pan, ['x','y'], 'pan');
+        if (Math.abs(pan.x) > 5000 || Math.abs(pan.y) > 5000)
+          throw new Error('pan values must be between -5000 and 5000');
+        state.viewPan = pan;
+      }
+      if (args.zoom != null) {
+        const zoom = Number(args.zoom);
+        if (!Number.isFinite(zoom) || zoom < .45 || zoom > 2.6)
+          throw new Error('zoom must be between 0.45 and 2.6');
+        state.zoom = zoom;
+      }
+      draw();
+      return chemistActionSummary({ camera:{ rotation:structuredClone(state.rotation),
+        pan:structuredClone(state.viewPan), zoom:state.zoom } }); },
     'build.setTool':async (args) => { chemistActionKeys(args, ['tool']);
       const tool = chemistActionEnum(args.tool, ['add','select','move'], 'tool');
       if (state.mode !== 'build') throw new Error('Enter Design mode before choosing a design tool.');
       const internalTool = tool === 'move' ? 'manipulate' : tool;
       const button = document.querySelector(`#build-tool-tabs [data-tool="${internalTool}"]`);
       if (!button) throw new Error(`The ${tool} tool is unavailable`);
-      button.click(); return chemistActionSummary({ buildTool:tool }); },
+      state.buildTool = internalTool;
+      document.querySelectorAll('#build-tool-tabs [data-tool]').forEach((item) =>
+        item.classList.toggle('selected', item === button));
+      canvas.classList.toggle('build-cursor', state.buildTool === 'add');
+      updateBuildStatus(); draw();
+      return chemistActionSummary({ buildTool:tool }); },
     'protein.prepare':async (args) => { chemistActionKeys(args,
       ['pH','histidine','repairMissingHeavy','ligandPolicy','waterPolicy','gapPolicy']);
       const options = normalizePdbPreparationOptions(args);
@@ -9001,6 +9497,187 @@ function installChemistActionsApi(module) {
         parameterCounts:structuredClone(parameters.parameterCounts),
         maximumCoordinateDisplacementAngstrom:maximumCoordinateDisplacement,
       } }); },
+    'protein.predict':async (args) => { chemistActionKeys(args, ['sequence','msaEndpoint']);
+      if (typeof args.sequence !== 'string' || !args.sequence.trim())
+        throw new Error('sequence must be a non-empty amino-acid sequence or FASTA');
+      if (args.sequence.length > 20000) throw new Error('sequence input is too long');
+      if (typeof args.msaEndpoint !== 'string' || !args.msaEndpoint.trim())
+        throw new Error('msaEndpoint must be an HTTPS endpoint');
+      let endpoint;
+      try { endpoint = new URL(args.msaEndpoint); }
+      catch { throw new Error('msaEndpoint must be a valid HTTPS URL'); }
+      if (endpoint.protocol !== 'https:') throw new Error('msaEndpoint must use HTTPS');
+      document.querySelector('#protein-sequence').value = args.sequence;
+      document.querySelector('#msa-endpoint').value = endpoint.href.replace(/\/$/, '');
+      const result = await runProteinFold({ rethrow:true });
+      return chemistActionSummary({ prediction:result }); },
+    'protein.cancelPrediction':async (args) => { empty(args);
+      const active = Boolean(state.foldAbortController);
+      state.foldAbortController?.abort();
+      return chemistActionSummary({ predictionCancellation:{ requested:active } }); },
+    'ligand.enumerateProtonation':async (args) => { chemistActionKeys(args,
+      ['pH','smiles','pHSpread','precision','maximumStates']);
+      const pH = Number(args.pH ?? 7.4), pHSpread = Number(args.pHSpread ?? .5);
+      const precision = Number(args.precision ?? 1);
+      const maximumStates = Number(args.maximumStates ?? 16);
+      if (!Number.isFinite(pH) || pH < 0 || pH > 14)
+        throw new Error('pH must be between 0 and 14');
+      if (!Number.isFinite(pHSpread) || pHSpread < 0 || pHSpread > 7)
+        throw new Error('pHSpread must be between 0 and 7');
+      if (!Number.isFinite(precision) || precision <= 0 || precision > 10)
+        throw new Error('precision must be greater than 0 and at most 10');
+      if (!Number.isInteger(maximumStates) || maximumStates < 1 || maximumStates > 64)
+        throw new Error('maximumStates must be an integer from 1 to 64');
+      if (args.smiles != null && (typeof args.smiles !== 'string' || !args.smiles.trim()))
+        throw new Error('smiles must be a non-empty string');
+      const result = await enumerateLigandProtonation(args.smiles, {
+        ph:pH, pHSpread, precision, maxStates:maximumStates });
+      if (!result) throw new Error('Protonation enumeration was superseded');
+      return chemistActionSummary({ protonation:{ targetPh:result.targetPh,
+        stateCount:result.states.length, variantsTruncated:Boolean(result.variantsTruncated),
+        sitesTruncated:Boolean(result.sitesTruncated) } }); },
+    'ligand.applyProtonation':async (args) => { chemistActionKeys(args, ['index']);
+      const index = Number(args.index);
+      if (!Number.isInteger(index) || index < 0
+        || index >= (state.ligandProtonation?.states?.length || 0))
+        throw new Error('index must identify an enumerated protonation state');
+      const select = document.querySelector('#ligand-protonation-state');
+      select.value = String(index); updateLigandProtonationMeta();
+      const embedded = await applySelectedLigandProtonation();
+      return chemistActionSummary({ protonation:{ index,
+        selected:structuredClone(state.molecule.source?.protonation || null),
+        forcefield:embedded.result?.forcefield || null } }); },
+    'geometry.setInternalCoordinate':async (args) => { chemistActionKeys(args,
+      ['atomIds','value','moveConnected']);
+      if (state.mode !== 'build')
+        throw new Error('Enter Design mode before changing internal coordinates');
+      if (!Array.isArray(args.atomIds) || args.atomIds.length < 2 || args.atomIds.length > 4
+        || args.atomIds.some((id) => typeof id !== 'string' || !id)
+        || new Set(args.atomIds).size !== args.atomIds.length)
+        throw new Error('atomIds must contain 2 to 4 distinct persistent atom IDs');
+      const value = Number(args.value);
+      if (!Number.isFinite(value)) throw new Error('value must be a finite number');
+      if (args.moveConnected != null && typeof args.moveConnected !== 'boolean')
+        throw new Error('moveConnected must be boolean');
+      const byId = await ensureChemistActionAtomIds();
+      const indices = args.atomIds.map((id) => {
+        if (!byId.has(id)) throw new Error(`Unknown persistent atom ID: ${id}`);
+        return byId.get(id);
+      });
+      state.selectedAtoms = indices; state.selectedAtom = indices.at(-1);
+      document.querySelector('#move-connected').checked = args.moveConnected !== false;
+      updateGeometryControl();
+      const before = geometrySelection();
+      if (!before || before.error) throw new Error(before?.error || 'Invalid geometry selection');
+      beginGeometryEdit();
+      try {
+        if (!applyGeometryValue(value)) throw new Error('Internal-coordinate edit failed');
+      } finally { finishGeometryEdit(); }
+      const after = geometrySelection();
+      return chemistActionSummary({ internalCoordinate:{ kind:after.kind,
+        value:after.value, unit:after.unit, moveConnected:args.moveConnected !== false } }); },
+    'geometry.translateAtoms':async (args) => { chemistActionKeys(args,
+      ['atomIds','deltaAngstrom']);
+      if (state.mode !== 'build') throw new Error('Enter Design mode before moving atoms');
+      if (!Array.isArray(args.atomIds) || !args.atomIds.length || args.atomIds.length > 256
+        || args.atomIds.some((id) => typeof id !== 'string' || !id))
+        throw new Error('atomIds must contain 1 to 256 persistent atom IDs');
+      if (!args.deltaAngstrom || typeof args.deltaAngstrom !== 'object'
+        || Array.isArray(args.deltaAngstrom))
+        throw new Error('deltaAngstrom must be an {x,y,z} object');
+      chemistActionKeys(args.deltaAngstrom, ['x','y','z']);
+      const delta = Object.fromEntries(['x','y','z'].map((axis) =>
+        [axis, Number(args.deltaAngstrom[axis])]));
+      if (Object.values(delta).some((value) => !Number.isFinite(value)
+        || value < -20 || value > 20))
+        throw new Error('deltaAngstrom components must be between -20 and 20');
+      const byId = await ensureChemistActionAtomIds();
+      const indices = [...new Set(args.atomIds)].map((id) => {
+        if (!byId.has(id)) throw new Error(`Unknown persistent atom ID: ${id}`);
+        return byId.get(id);
+      });
+      pushBuildHistory(); clearCalculationResult();
+      indices.forEach((index) => {
+        const atom = state.molecule.atoms[index];
+        atom.x += delta.x; atom.y += delta.y; atom.z += delta.z;
+      });
+      updateStoredBondDistances(); updateInfo(); updateGeometryControl();
+      updateHistoryButtons(); draw();
+      return chemistActionSummary({ translation:{ atomCount:indices.length,
+        deltaAngstrom:delta } }); },
+    'fragment.stage':async (args) => { chemistActionKeys(args,
+      ['fragmentId','smiles','name','attachmentIndex']);
+      if (state.mode !== 'build') throw new Error('Enter Design mode before staging a fragment');
+      if ((args.fragmentId == null) === (args.smiles == null))
+        throw new Error('Provide exactly one of fragmentId or smiles');
+      let fragment;
+      if (args.fragmentId != null) {
+        if (typeof args.fragmentId !== 'string' || !args.fragmentId)
+          throw new Error('fragmentId must be a built-in fragment ID');
+        fragment = FRAGMENTS.find((entry) => entry.id === args.fragmentId);
+        if (!fragment) throw new Error(`Unknown fragment: ${args.fragmentId}`);
+      } else {
+        if (typeof args.smiles !== 'string' || !args.smiles.trim()
+          || args.smiles.length > 1000) throw new Error('smiles must be a non-empty string');
+        const attachmentIndex = Number(args.attachmentIndex ?? 0);
+        if (!Number.isInteger(attachmentIndex) || attachmentIndex < 0)
+          throw new Error('attachmentIndex must be a non-negative integer');
+        const preview = parseSMILES(args.smiles, args.name || 'Custom fragment');
+        if (attachmentIndex >= preview.atoms.length)
+          throw new Error('attachmentIndex does not exist in the custom fragment');
+        fragment = { id:`custom-api-${Date.now()}`, label:args.smiles,
+          name:String(args.name || 'Custom fragment').slice(0, 160),
+          smiles:args.smiles, attach:attachmentIndex, preview };
+      }
+      stageFragment(fragment);
+      return chemistActionSummary({ stagedFragment:{ id:fragment.id, name:fragment.name,
+        smiles:fragment.smiles, attachmentIndex:fragment.attach ?? 0 } }); },
+    'fragment.attach':async (args) => { chemistActionKeys(args,
+      ['attachedToAtomId','positionAngstrom']);
+      if (state.mode !== 'build') throw new Error('Enter Design mode before attaching a fragment');
+      if (!state.stagedFragment) throw new Error('Stage a fragment before attaching it');
+      if (args.attachedToAtomId == null && args.positionAngstrom == null)
+        throw new Error('Provide attachedToAtomId or positionAngstrom');
+      let targetIndex = null;
+      if (args.attachedToAtomId != null) {
+        if (typeof args.attachedToAtomId !== 'string' || !args.attachedToAtomId)
+          throw new Error('attachedToAtomId must be a persistent atom ID');
+        const byId = await ensureChemistActionAtomIds();
+        if (!byId.has(args.attachedToAtomId))
+          throw new Error(`Unknown persistent atom ID: ${args.attachedToAtomId}`);
+        targetIndex = byId.get(args.attachedToAtomId);
+      }
+      let point = null;
+      if (args.positionAngstrom != null) {
+        if (!args.positionAngstrom || typeof args.positionAngstrom !== 'object'
+          || Array.isArray(args.positionAngstrom))
+          throw new Error('positionAngstrom must be an {x,y,z} object');
+        chemistActionKeys(args.positionAngstrom, ['x','y','z']);
+        point = Object.fromEntries(['x','y','z'].map((axis) =>
+          [axis, Number(args.positionAngstrom[axis])]));
+        if (Object.values(point).some((value) => !Number.isFinite(value)
+          || Math.abs(value) > 100000))
+          throw new Error('positionAngstrom values must be finite and bounded');
+      }
+      pushBuildHistory(); clearCalculationResult();
+      const beforeIds = new Set(state.molecule?.atoms?.map((atom) => atom.designAtomId) || []);
+      try {
+        state.molecule = mergeFragmentIntoMolecule(state.molecule,
+          state.stagedFragment, targetIndex, point);
+      } catch (error) {
+        if (state.buildHistory.length) state.buildHistory.pop();
+        updateHistoryButtons(); throw error;
+      }
+      refreshStructureComponents(); state.selectedAtoms = []; state.selectedAtom = null;
+      await ensureChemistActionAtomIds();
+      const addedAtomIds = state.molecule.atoms.map((atom) => atom.designAtomId)
+        .filter((id) => id && !beforeIds.has(id));
+      updateGeometryControl(); updateInfo(); updateHistoryButtons(); draw();
+      const changedAtomIndices = state.molecule.atoms.flatMap((atom, index) =>
+        addedAtomIds.includes(atom.designAtomId) || index === targetIndex ? [index] : []);
+      scheduleSmallMoleculePolish(changedAtomIndices);
+      return chemistActionSummary({ attachedFragment:{ id:state.stagedFragment.id,
+        attachedToAtomId:args.attachedToAtomId || null, addedAtomIds } }); },
     'selection.replace':async (args) => { chemistActionKeys(args, ['atomIds']);
       if (state.mode !== 'build' || state.buildTool !== 'select')
         throw new Error('Enter Design mode and choose Select before selecting atoms.');
@@ -9038,12 +9715,41 @@ function installChemistActionsApi(module) {
     'chemistry.setBond':async (args) => { chemistActionKeys(args, ['order']);
       return summarizeMutation(() => applySelectedBondChemistry(args.order)); },
     'chemistry.addAtom':async (args) => { chemistActionKeys(args,
-      ['attachedToAtomId','element']);
+      ['attachedToAtomId','positionAngstrom','element']);
       if (state.mode !== 'build') throw new Error('Enter Design mode before adding an atom.');
+      if (!ELEMENTS[args.element])
+        throw new Error('element must be a supported element symbol');
+      if (args.attachedToAtomId == null) {
+        if (!args.positionAngstrom || typeof args.positionAngstrom !== 'object'
+          || Array.isArray(args.positionAngstrom))
+          throw new Error('positionAngstrom is required when attachedToAtomId is omitted');
+        chemistActionKeys(args.positionAngstrom, ['x','y','z']);
+        const position = Object.fromEntries(['x','y','z'].map((axis) =>
+          [axis, Number(args.positionAngstrom[axis])]));
+        if (Object.values(position).some((value) => !Number.isFinite(value)
+          || Math.abs(value) > 100000))
+          throw new Error('positionAngstrom values must be finite and bounded');
+        if (state.molecule?.atoms?.length) pushBuildHistory();
+        const priorIds = new Set(state.molecule?.atoms?.map((atom) => atom.designAtomId) || []);
+        state.molecule = addElementToMolecule(state.molecule, args.element, null, position);
+        refreshStructureComponents(); state.selectedAtoms = []; state.selectedAtom = null;
+        document.querySelector('#viewer-hint').classList.remove('visible');
+        await ensureChemistActionAtomIds();
+        const addedAtomIds = state.molecule.atoms.map((atom) => atom.designAtomId)
+          .filter((id) => id && !priorIds.has(id));
+        updateGeometryControl(); updateInfo(); updateHistoryButtons(); draw();
+        scheduleSmallMoleculePolish(state.molecule.atoms.flatMap((atom, index) =>
+          addedAtomIds.includes(atom.designAtomId) ? [index] : []));
+        return chemistActionSummary({ addedAtomId:addedAtomIds.find((id) =>
+          state.molecule.atoms.find((atom) => atom.designAtomId === id)?.element !== 'H') || null,
+        addedAtomIds, disconnected:true });
+      }
       if (typeof args.attachedToAtomId !== 'string' || !args.attachedToAtomId)
         throw new Error('attachedToAtomId must be a persistent atom ID');
-      if (!ELEMENTS[args.element] || args.element === 'H')
-        throw new Error('element must be a supported heavy-atom symbol');
+      if (args.element === 'H')
+        throw new Error('Use chemistry.addHydrogen to attach a hydrogen atom');
+      if (args.positionAngstrom != null)
+        throw new Error('positionAngstrom is only accepted for a disconnected atom');
       const byId = await ensureChemistActionAtomIds();
       if (!byId.has(args.attachedToAtomId))
         throw new Error(`Unknown persistent atom ID: ${args.attachedToAtomId}`);
@@ -9148,6 +9854,27 @@ function installChemistActionsApi(module) {
         'chemist-actions-forget-contact');
       return chemistActionSummary({ forgottenContact:{ contactId:definition.id,
         label:definition.label } }); },
+    'pose.setEditCleanup':async (args) => { chemistActionKeys(args, ['mode']);
+      const mode = chemistActionEnum(args.mode,
+        ['preserve-reference','free-local'], 'mode');
+      if (!state.dockingReference)
+        throw new Error('Capture a reference pose before setting edit cleanup');
+      document.querySelector('#docking-edit-cleanup').value = mode;
+      updateDockingUi(); updateOptimizerControls();
+      return chemistActionSummary({ poseEditCleanup:{ mode } }); },
+    'pose.clearReference':async (args) => { empty(args);
+      if (!state.dockingReference) throw new Error('There is no captured pose reference');
+      clearDockingReference();
+      return chemistActionSummary({ poseReferenceCleared:true }); },
+    'pose.remapContact':async (args) => { chemistActionKeys(args,
+      ['contactId','candidateId']);
+      if (typeof args.contactId !== 'string' || !args.contactId)
+        throw new Error('contactId must be a contact ID');
+      if (typeof args.candidateId !== 'string' || !args.candidateId)
+        throw new Error('candidateId must be a remapping candidate ID');
+      const remap = await chooseDockingContactRemap(args.contactId,
+        args.candidateId, 'chemist-actions-role-compatible');
+      return chemistActionSummary({ contactRemap:structuredClone(remap) }); },
     'pose.refine':async (args) => { chemistActionKeys(args, ['searchChains','execution']);
       const searchChains = Number(args.searchChains ?? 16);
       if (![8,16,32,64].includes(searchChains))
@@ -9245,6 +9972,92 @@ function installChemistActionsApi(module) {
         iterations:result.iterations ?? null, converged:result.converged ?? null,
         elapsedMs:result.elapsedMs ?? null,
         ...chemistActionCoordinateChanges(before) } }); },
+    'calculation.run':async (args) => { chemistActionKeys(args,
+      ['job','method','options']);
+      const job = chemistActionEnum(args.job,
+        ['geometry','energy','dynamics','conformers'], 'job');
+      const method = chemistActionEnum(args.method,
+        ['openmm','webgpu','stormm','rdkit','ani2x'], 'method');
+      if (args.options != null && (!args.options || typeof args.options !== 'object'
+        || Array.isArray(args.options))) throw new Error('options must be a plain object');
+      const options = structuredClone(args.options || {});
+      // Worker-specific modules perform their own scientific bounds checking;
+      // this public boundary additionally rejects pathologically large scalar
+      // settings before any model or GPU asset is loaded.
+      for (const [key, value] of Object.entries(options)) {
+        if (typeof value === 'number' && (!Number.isFinite(value) || Math.abs(value) > 10_000_000))
+          throw new Error(`options.${key} is outside the public calculation bound`);
+        if (typeof value === 'string' && value.length > 200)
+          throw new Error(`options.${key} is too long`);
+        if (Array.isArray(value) && value.length > 4096)
+          throw new Error(`options.${key} contains too many entries`);
+      }
+      const before = state.molecule?.atoms?.length
+        ? (await ensureChemistActionAtomIds(), chemistActionCoordinateSnapshot()) : null;
+      const result = await runCalculation({ job, method, options });
+      if (!result) throw new Error(`${method} ${job} calculation did not complete`);
+      return chemistActionSummary({ calculation:{ job, method,
+        initialEnergy:result.initialEnergy ?? null, finalEnergy:result.finalEnergy ?? null,
+        unit:result.unit || null, frameCount:state.calculationFrames.length,
+        replicaCount:result.replicaCount || 1, elapsedMs:result.elapsedMs ?? null,
+        ...(before ? chemistActionCoordinateChanges(before) : {}) } }); },
+    'calculation.tuneReplicas':async (args) => { empty(args);
+      const result = await tuneStormmReplicas();
+      if (!result) throw new Error('Replica tuning did not complete');
+      return chemistActionSummary({ replicaTuning:{
+        recommendedReplicaCount:result.recommendedReplicaCount,
+        peakAggregateReplicaStepsPerSecond:result.peakAggregateReplicaStepsPerSecond,
+        elapsedMs:result.elapsedMs, samples:structuredClone(result.samples || []) } }); },
+    'calculation.selectFrame':async (args) => { chemistActionKeys(args, ['index']);
+      const index = Number(args.index);
+      if (!Number.isInteger(index) || index < 0 || index >= state.calculationFrames.length)
+        throw new Error('index must identify a saved calculation frame');
+      selectCalculationFrame(index);
+      return chemistActionSummary({ calculationFrame:{ index,
+        step:state.calculationFrames[index].step,
+        energy:state.calculationFrames[index].energy } }); },
+    'calculation.selectReplica':async (args) => { chemistActionKeys(args, ['index']);
+      const index = Number(args.index), count = Number(state.calculationEnsemble?.replicaCount || 0);
+      if (!Number.isInteger(index) || index < 0 || index >= count)
+        throw new Error('index must identify an ensemble replica');
+      selectCalculationReplica(index);
+      return chemistActionSummary({ calculationReplica:{ index,
+        frameCount:state.calculationFrames.length } }); },
+    'calculation.selectConformer':async (args) => { chemistActionKeys(args, ['rank']);
+      const rank = Number(args.rank);
+      const order = state.conformerAnalysis
+        ? activeConformerPlotOrder(state.conformerAnalysis) : [];
+      if (!Number.isInteger(rank) || rank < 0 || rank >= order.length)
+        throw new Error('rank must identify a conformer in the active filtered order');
+      selectConformerRank(rank);
+      return chemistActionSummary({ conformer:{ rank,
+        replicaIndex:state.calculationReplicaIndex } }); },
+    'calculation.setPlayback':async (args) => { chemistActionKeys(args, ['playing']);
+      if (typeof args.playing !== 'boolean') throw new Error('playing must be boolean');
+      if (args.playing && state.calculationFrames.length < 2)
+        throw new Error('At least two saved frames are required for playback');
+      if (args.playing !== state.calculationPlaying) toggleCalculationPlayback();
+      return chemistActionSummary({ trajectoryPlayback:{
+        playing:state.calculationPlaying, frameIndex:state.calculationFrameIndex,
+        frameCount:state.calculationFrames.length } }); },
+    'calculation.setConformerView':async (args) => { chemistActionKeys(args,
+      ['x','y','filter','sort']);
+      if (!state.conformerAnalysis) throw new Error('Run a conformer search first');
+      if (!Object.keys(args).length) throw new Error('At least one conformer-view option is required');
+      const controls = { x:'#result-conformer-cv', y:'#result-conformer-y',
+        filter:'#result-conformer-filter', sort:'#result-conformer-sort' };
+      for (const [key, selector] of Object.entries(controls)) {
+        if (args[key] == null) continue;
+        if (typeof args[key] !== 'string') throw new Error(`${key} must be an option ID`);
+        const select = document.querySelector(selector);
+        if (![...select.options].some((option) => option.value === args[key] && !option.disabled))
+          throw new Error(`Unsupported ${key} option: ${args[key]}`);
+        select.value = args[key];
+      }
+      updateConformerPlotControls();
+      return chemistActionSummary({ conformerView:Object.fromEntries(
+        Object.entries(controls).map(([key, selector]) =>
+          [key, document.querySelector(selector).value])) }); },
     'campaign.create':async (args) => { chemistActionKeys(args,
       ['campaignId','title','description','actorId','actorName','initialCommitMessage']);
       await ensureLiveCampaignPersistence();
@@ -9465,6 +10278,98 @@ function installChemistActionsApi(module) {
       updateLiveCampaignUi('Campaign closed; its commits remain stored locally.', 'success');
       return chemistActionSummary({ campaignClosed:{ campaignId:closedCampaignId,
         persisted:true } }); },
+    'campaign.import':async (args) => { chemistActionKeys(args, ['serialized']);
+      if (typeof args.serialized !== 'string' || !args.serialized.trim())
+        throw new Error('serialized must be canonical campaign JSON');
+      await ensureLiveCampaignPersistence();
+      const [live, storeModule] = await Promise.all([
+        getLiveCampaignModule(), getLiveCampaignStoreModule(),
+      ]);
+      const campaign = storeModule.deserializeCampaign(args.serialized);
+      const canonical = storeModule.serializeCampaign(campaign);
+      if (`${args.serialized.trim()}\n` !== canonical)
+        throw new Error('Campaign JSON must use the canonical serialized representation');
+      const verification = await live.verifyLiveCampaign(campaign);
+      if (!verification.valid) throw new Error(`Campaign is invalid: ${verification.reason}`);
+      const branch = Object.hasOwn(campaign.branches || {}, 'main') ? 'main'
+        : Object.keys(campaign.branches || {})[0];
+      if (!branch) throw new Error('Campaign has no branch to restore');
+      const checkout = await prepareLiveCampaignBranchMolecule(campaign, branch,
+        { required:true });
+      await saveLiveCampaign(campaign, branch);
+      state.chemistActionAudit = [];
+      state.liveCampaign = campaign; state.liveCampaignBranch = branch;
+      state.liveCampaignCommittedThroughSequence = 0;
+      applyLiveCampaignBranchMolecule(checkout.molecule);
+      updateLiveCampaignUi();
+      return chemistActionSummary({ campaignImport:{ campaignId:campaign.campaignId,
+        title:campaign.title, branch, commitId:checkout.commitId,
+        verification:structuredClone(verification) } }); },
+    'campaign.export':async (args) => { empty(args);
+      await ensureLiveCampaignPersistence();
+      if (!state.liveCampaign) throw new Error('No design campaign is active');
+      const storeModule = await getLiveCampaignStoreModule();
+      const serialized = storeModule.serializeCampaign(state.liveCampaign);
+      return chemistActionSummary({ campaignExport:{ campaignId:state.liveCampaign.campaignId,
+        branch:state.liveCampaignBranch, serialized } }); },
+    'designerScript.load':async (args) => { chemistActionKeys(args, ['script']);
+      if (!args.script || typeof args.script !== 'object' || Array.isArray(args.script))
+        throw new Error('script must be a Chemist Actions script object');
+      await installDesignerMoveScript(args.script);
+      return chemistActionSummary({ designerScript:{
+        schema:state.designerMoveScript.schema,
+        label:state.designerMoveScript.label || null,
+        actionCount:state.designerMoveScript.actions.length } }); },
+    'designerScript.play':async (args) => { chemistActionKeys(args, ['playing']);
+      if (typeof args.playing !== 'boolean') throw new Error('playing must be boolean');
+      if (!state.designerMoveScript) throw new Error('Load a designer-move script first');
+      if (!args.playing) {
+        if (state.designerMoveReplaying && !state.designerMoveReplayPaused)
+          setDesignerMoveReplayPaused(true);
+      } else if (state.designerMoveReplaying) {
+        if (state.designerMoveReplayPaused) resumeDesignerMoveReplay();
+      } else {
+        // replayDesignerMoveScript executes the constituent actions through this
+        // same serialized API.  Start it only after the play route returns, or
+        // the outer queued action would wait on its own queue.
+        setTimeout(() => replayDesignerMoveScript().catch((error) =>
+          showNotice(error.message)), 0);
+      }
+      return chemistActionSummary({ designerPlayback:{
+        scheduled:args.playing && !state.designerMoveReplaying,
+        playing:args.playing, paused:!args.playing,
+        index:state.designerMoveReplayIndex,
+        actionCount:state.designerMoveScript.actions.length } }); },
+    'designerScript.step':async (args) => { chemistActionKeys(args, ['direction']);
+      const direction = chemistActionEnum(args.direction,
+        ['previous','next'], 'direction');
+      if (!state.designerMoveReplaying || !state.designerMoveReplayPaused)
+        throw new Error('Pause an active designer replay before reviewing checkpoints');
+      const before = state.designerMoveReplayIndex;
+      reviewDesignerMoveCheckpoint(direction === 'previous' ? -1 : 1);
+      if (state.designerMoveReplayIndex === before)
+        throw new Error(`No ${direction} completed replay checkpoint is available`);
+      return chemistActionSummary({ designerCheckpoint:{
+        index:state.designerMoveReplayIndex,
+        frontier:state.designerMoveReplayFrontier } }); },
+    'designerScript.restart':async (args) => { empty(args);
+      if (!state.designerMoveScript) throw new Error('Load a designer-move script first');
+      if (state.designerMoveReplaying)
+        throw new Error('Pause and finish the active replay before restarting');
+      clearScene(); resetDesignerMovePlayback(); updateDesignerMoveControls();
+      return chemistActionSummary({ designerRestarted:true }); },
+    'designerScript.inspect':async (args) => { empty(args);
+      const script = state.designerMoveScript;
+      return chemistActionSummary({ designerScript:script ? {
+        schema:script.schema, label:script.label || null,
+        actionCount:script.actions.length,
+        index:state.designerMoveReplayIndex,
+        frontier:state.designerMoveReplayFrontier,
+        replaying:state.designerMoveReplaying,
+        paused:state.designerMoveReplayPaused,
+        phase:state.designerMoveReplayPhase,
+        activeAction:state.designerMoveReplayStep?.action || null,
+      } : null }); },
     'designRoute.load':async (args) => { chemistActionKeys(args, ['routeId']);
       if (typeof args.routeId !== 'string' || !args.routeId)
         throw new Error('routeId must be a registered design-route ID');
@@ -10646,7 +11551,7 @@ function applyProteinPrediction(result) {
   draw();
 }
 
-async function runProteinFold() {
+async function runProteinFold({ rethrow = false } = {}) {
   requireExternalNetwork('MSA search');
   if (state.foldAbortController) return;
   const button = document.querySelector('#fold-protein');
@@ -10673,10 +11578,15 @@ async function runProteinFold() {
     applyProteinPrediction(result);
     setFoldStatus(`Complete · mean pLDDT ${result.meanPlddt.toFixed(1)} · pTM ${result.ptm.toFixed(3)}`);
     showToast('Protein folded locally');
+    return { residues:result.sequence.length, meanPlddt:result.meanPlddt,
+      ptm:result.ptm, msaDepth:result.msaDepth, provider:result.provider,
+      model:result.model, elapsedMs:result.elapsedMs };
   } catch (error) {
     const aborted = error?.name === 'AbortError' || controller.signal.aborted;
     setFoldStatus(aborted ? 'Fold cancelled.' : `Fold failed · ${error.message}`);
     if (!aborted) showNotice(error.message);
+    if (rethrow) throw error;
+    return null;
   } finally {
     if (state.foldAbortController === controller) state.foldAbortController = null;
     button.disabled = false;
@@ -12045,9 +12955,14 @@ function updateEnergyChart(frames) {
     const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
     title.textContent = `${frameName[0].toUpperCase()}${frameName.slice(1)} ${index + 1} · ${formatEnergy(frames[index].energy, state.calculationUnit)}`;
     circle.append(title);
-    circle.addEventListener('click', () => selectCalculationFrame(index));
+    circle.addEventListener('click', () => {
+      runChemistUiAction('calculation.selectFrame', { index }).catch(() => {});
+    });
     circle.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectCalculationFrame(index); }
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        runChemistUiAction('calculation.selectFrame', { index }).catch(() => {});
+      }
     });
     group.append(circle);
   });
@@ -12910,7 +13825,10 @@ function renderConformerShortlist(analysis) {
       cell.textContent = value;
       row.append(cell);
     });
-    const activate = () => selectCalculationReplica(replica);
+    const activate = () => {
+      const rank = activeConformerPlotOrder(analysis).indexOf(replica);
+      runChemistUiAction('calculation.selectConformer', { rank }).catch(() => {});
+    };
     row.addEventListener('click', activate);
     row.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') {
@@ -13012,7 +13930,10 @@ function drawConformerScatter() {
     const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
     title.textContent = `${arenaMethod ? `${arenaMethod.label} candidate · ` : ''}conformer ${replica + 1} · ${xMetric.shortLabel} ${formatConformerMetricValue(xMetric.values[replica], xMetric)} · ${yMetric.shortLabel} ${formatConformerMetricValue(yMetric.values[replica], yMetric)} · common Sage rank ${analysis.order.indexOf(replica) + 1} · cluster ${analysis.clusterIds[replica] + 1}`;
     circle.append(title);
-    const activate = () => selectCalculationReplica(replica);
+    const activate = () => {
+      const rank = activeConformerPlotOrder(analysis).indexOf(replica);
+      runChemistUiAction('calculation.selectConformer', { rank }).catch(() => {});
+    };
     circle.addEventListener('click', activate);
     circle.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); activate(); }
@@ -14074,8 +14995,11 @@ function installSideCardDisclosures() {
     card.append(toggle, body);
     toggle.addEventListener('click', () => {
       const open = toggle.getAttribute('aria-expanded') !== 'true';
-      setGeneratedCardOpen(card, body, toggle, open);
-      toggle.setAttribute('aria-label', `${open ? 'Collapse' : 'Expand'} ${label.textContent}`);
+      runChemistUiAction('interface.setPanelOpen', {
+        panelId:card.id || body.id, open,
+      }).then(() => {
+        toggle.setAttribute('aria-label', `${open ? 'Collapse' : 'Expand'} ${label.textContent}`);
+      }).catch(() => {});
     });
   });
 }
@@ -14089,13 +15013,13 @@ document.querySelectorAll('.tab').forEach((button) => button.addEventListener('c
 }));
 
 document.querySelector('#load-toggle').addEventListener('click', (event) => {
-  const body = document.querySelector('#load-body'); const open = !body.classList.toggle('hidden');
-  event.currentTarget.setAttribute('aria-expanded', String(open)); event.currentTarget.querySelector('.chevron').classList.toggle('open', open);
+  const open = event.currentTarget.getAttribute('aria-expanded') !== 'true';
+  runChemistUiAction('interface.setPanelOpen', { panelId:'load-toggle', open }).catch(() => {});
 });
 
 document.querySelector('#protein-fold-toggle').addEventListener('click', (event) => {
-  const body = document.querySelector('#protein-fold-body'); const open = !body.classList.toggle('hidden');
-  event.currentTarget.setAttribute('aria-expanded', String(open)); event.currentTarget.querySelector('.chevron').classList.toggle('open', open);
+  const open = event.currentTarget.getAttribute('aria-expanded') !== 'true';
+  runChemistUiAction('interface.setPanelOpen', { panelId:'protein-fold-toggle', open }).catch(() => {});
 });
 
 document.querySelector('#protein-sequence').addEventListener('input', (event) => {
@@ -14103,13 +15027,20 @@ document.querySelector('#protein-sequence').addEventListener('input', (event) =>
   setText('#protein-length', `${value.length}/128`);
 });
 
-document.querySelector('#fold-protein').addEventListener('click', runProteinFold);
+document.querySelector('#fold-protein').addEventListener('click', () => {
+  runChemistUiAction('protein.predict', {
+    sequence:document.querySelector('#protein-sequence').value,
+    msaEndpoint:document.querySelector('#msa-endpoint').value,
+  }).catch(() => {});
+});
 document.querySelector('#try-rosemary-protein').addEventListener('click', async (event) => {
   const button = event.currentTarget;
   button.disabled = true;
   button.textContent = 'Loading Rosemary α…';
   try {
-    const summary = await loadRosemaryProteinExample();
+    const summary = (await runChemistUiAction('session.loadFixture', {
+      fixtureId:'trp-cage',
+    }, { reportError:false })).fixture;
     showToast(`Rosemary alpha Trp-cage loaded · ${summary.atoms} atoms`);
   } catch (error) {
     setFoldStatus(`Rosemary reference failed · ${error.message}`);
@@ -14124,7 +15055,9 @@ document.querySelector('#try-ubiquitin-protein').addEventListener('click', async
   button.disabled = true;
   button.textContent = 'Loading 1UBQ…';
   try {
-    const summary = await loadPreparedProteinFixture('./openff/rosemary-ubiquitin.json');
+    const summary = (await runChemistUiAction('session.loadFixture', {
+      fixtureId:'ubiquitin',
+    }, { reportError:false })).fixture;
     setText('#protein-result-title', 'Ubiquitin · 1UBQ');
     setText('#protein-result-meta', 'OpenFF Rosemary 3.0.0-alpha0 · experimental 1UBQ coordinates · exact preparameterized System');
     setFoldStatus('Loaded ubiquitin 1UBQ · ready for OpenMM or experimental WebGPU');
@@ -14138,7 +15071,7 @@ document.querySelector('#try-ubiquitin-protein').addEventListener('click', async
   }
 });
 document.querySelector('#cancel-fold').addEventListener('click', () => {
-  state.foldAbortController?.abort(new DOMException('Fold cancelled', 'AbortError'));
+  runChemistUiAction('protein.cancelPrediction').catch(() => {});
 });
 document.querySelector('#download-protein-pdb').addEventListener('click', () => {
   if (!state.proteinPrediction) return showToast('Load or fold a protein first');
@@ -14150,8 +15083,8 @@ document.querySelector('#download-protein-pdb').addEventListener('click', () => 
 });
 
 document.querySelector('#scene-toggle').addEventListener('click', (event) => {
-  const body = document.querySelector('#scene-body'); const open = !body.classList.toggle('hidden');
-  event.currentTarget.setAttribute('aria-expanded', String(open)); event.currentTarget.querySelector('.chevron').classList.toggle('open', open);
+  const open = event.currentTarget.getAttribute('aria-expanded') !== 'true';
+  runChemistUiAction('interface.setPanelOpen', { panelId:'scene-toggle', open }).catch(() => {});
 });
 
 document.querySelector('#structure-2d-toggle').addEventListener('click', (event) => {
@@ -14160,32 +15093,37 @@ document.querySelector('#structure-2d-toggle').addEventListener('click', (event)
   event.currentTarget.setAttribute('aria-expanded', String(!collapsed));
   event.currentTarget.querySelector('.chevron').classList.toggle('open', !collapsed);
 });
-document.querySelectorAll('[data-2d-tool]').forEach((button) => button.addEventListener('click', () => {
+document.querySelectorAll('[data-2d-tool]').forEach((button) => button.addEventListener('click', async () => {
   const tool = button.dataset['2dTool'];
-  if (tool !== 'select' && state.mode !== 'build' && !setMode('build')) return;
+  if (tool !== 'select' && state.mode !== 'build') {
+    try { await runChemistUiAction('view.setMode', { mode:'build' }); }
+    catch { return; }
+  }
   state.depictionTool = tool; state.depictionBondStart = null; update2DEditorUi();
 }));
-document.querySelector('#structure-2d-element').addEventListener('change', (event) => {
+document.querySelector('#structure-2d-element').addEventListener('change', async (event) => {
   state.selectedElement = event.target.value;
   document.querySelectorAll('#element-grid button').forEach((button) =>
     button.classList.toggle('selected', button.dataset.element === state.selectedElement));
   state.depictionTool = 'atom'; state.depictionBondStart = null;
-  if (state.mode !== 'build') setMode('build');
+  if (state.mode !== 'build') await runChemistUiAction('view.setMode', { mode:'build' });
   updateBuildStatus(); update2DEditorUi();
 });
-document.querySelector('#structure-2d-bond-order').addEventListener('change', (event) => {
+document.querySelector('#structure-2d-bond-order').addEventListener('change', async (event) => {
   state.depictionBondOrder = Number(event.target.value);
   state.depictionTool = 'bond'; state.depictionBondStart = null;
-  if (state.mode !== 'build') setMode('build');
+  if (state.mode !== 'build') await runChemistUiAction('view.setMode', { mode:'build' });
   update2DEditorUi();
 });
 document.querySelector('#structure-2d-finish').addEventListener('click', () => {
-  runDepictionEdit(() => finishChemistryTransaction());
+  runChemistUiAction('chemistry.finish').catch(() => {});
 });
 document.querySelector('#structure-2d-discard').addEventListener('click', () => {
-  discardChemistryTransaction(); state.depictionBondStart = null; update2DEditorUi();
+  runChemistUiAction('chemistry.discard').then(() => {
+    state.depictionBondStart = null; update2DEditorUi();
+  }).catch(() => {});
 });
-document.querySelector('#structure-2d-drawing').addEventListener('click', (event) => {
+document.querySelector('#structure-2d-drawing').addEventListener('click', async (event) => {
   const svg = event.currentTarget.querySelector('svg');
   if (!svg || state.depictionEditing) return;
   const hit = depictionProximityHit(event, svg);
@@ -14198,22 +15136,35 @@ document.querySelector('#structure-2d-drawing').addEventListener('click', (event
     else if (globalAtom != null) selectDepictionAtom(localAtom);
     return;
   }
-  if (state.mode !== 'build' && !setMode('build')) return;
+  if (state.mode !== 'build') {
+    try { await runChemistUiAction('view.setMode', { mode:'build' }); }
+    catch { return; }
+  }
   if (state.depictionTool === 'atom') {
-    if (globalAtom != null) runDepictionEdit(() => addDepictionAtom(globalAtom));
+    if (globalAtom != null) {
+      await ensureChemistActionAtomIds();
+      runChemistUiAction('chemistry.addAtom', {
+        attachedToAtomId:state.molecule.atoms[globalAtom].designAtomId,
+        element:state.selectedElement,
+      }).catch(() => {});
+    }
     return;
   }
   if (state.depictionTool === 'erase') {
     if (globalBond) {
-      setDepictionSelection(globalBond); runDepictionEdit(() => deleteSelectedBondChemistry());
+      setDepictionSelection(globalBond);
+      runChemistUiAction('chemistry.deleteBond').catch(() => {});
     } else if (globalAtom != null) {
-      setDepictionSelection([globalAtom]); runDepictionEdit(() => deleteSelectedAtomChemistry());
+      setDepictionSelection([globalAtom]);
+      runChemistUiAction('chemistry.deleteAtom').catch(() => {});
     }
     return;
   }
   if (state.depictionTool === 'bond') {
     if (globalBond) {
-      runDepictionEdit(() => applyDepictionBond(globalBond[0], globalBond[1])); return;
+      setDepictionSelection(globalBond);
+      runChemistUiAction('chemistry.setBond', { order:state.depictionBondOrder })
+        .catch(() => {}); return;
     }
     if (globalAtom == null) return;
     if (state.depictionBondStart == null) {
@@ -14223,42 +15174,39 @@ document.querySelector('#structure-2d-drawing').addEventListener('click', (event
       state.depictionBondStart = null; setDepictionSelection([]); update2DEditorUi(); return;
     }
     const first = state.depictionBondStart;
-    runDepictionEdit(() => applyDepictionBond(first, globalAtom));
+    await ensureChemistActionAtomIds();
+    runChemistUiAction('chemistry.createBond', {
+      atomIds:[first, globalAtom].map((index) => state.molecule.atoms[index].designAtomId),
+      order:state.depictionBondOrder,
+    }).catch(() => {});
   }
 });
 
 document.querySelector('#components-toggle').addEventListener('click', (event) => {
-  const body = document.querySelector('#components-body'); const open = !body.classList.toggle('hidden');
-  event.currentTarget.setAttribute('aria-expanded', String(open)); event.currentTarget.querySelector('.chevron').classList.toggle('open', open);
+  const open = event.currentTarget.getAttribute('aria-expanded') !== 'true';
+  runChemistUiAction('interface.setPanelOpen', { panelId:'components-toggle', open }).catch(() => {});
 });
 document.querySelector('#components-show-all').addEventListener('click', () => {
-  state.structureComponents.forEach((component) => state.componentVisibility.set(component.id, true));
-  state.focusedComponentId = null; state.focusedComponentRadius = null;
-  clearFocusedAtomRegion();
-  state.zoom = 1; state.viewPan = { x:0, y:0 };
-  updateStructureComponentsUi(); updateInfo(); draw();
+  runChemistUiAction('view.showAllComponents').catch(() => {});
 });
 document.querySelector('#components-reset').addEventListener('click', () => {
-  state.structureComponents.forEach((component) => state.componentVisibility.set(component.id, component.kind !== 'water'));
-  state.focusedComponentId = null; state.focusedComponentRadius = null;
-  clearFocusedAtomRegion();
-  state.viewProjectionCenter = null; state.viewProjectionRadius = null;
-  state.zoom = 1; state.viewPan = { x:0, y:0 };
-  updateStructureComponentsUi(); updateInfo(); draw();
+  runChemistUiAction('view.reset').catch(() => {});
 });
 document.querySelector('#preparation-inspector-toggle').addEventListener('click', (event) => {
-  setPreparationInspectorOpen(event.currentTarget.getAttribute('aria-expanded') !== 'true');
+  const open = event.currentTarget.getAttribute('aria-expanded') !== 'true';
+  runChemistUiAction('interface.setPanelOpen', {
+    panelId:'preparation-inspector-toggle', open,
+  }).catch(() => {});
 });
 
 document.querySelector('#parse-button').addEventListener('click', async (event) => {
   const button = event.currentTarget;
   try {
-    const molecule = parseStructureInput(document.querySelector('#structure-input').value);
-    loadMolecule(molecule);
-    if (smallMoleculePolishEligible(molecule)) {
-      button.disabled = true; button.textContent = 'Polishing geometry…';
-      await polishSmallMoleculeCoordinates(molecule, { announce:true });
-    } else showToast(`PDB loaded · ${molecule.atoms.length} atoms`);
+    button.disabled = true; button.textContent = 'Loading structure…';
+    const result = await runChemistUiAction('session.loadStructure', {
+      content:document.querySelector('#structure-input').value, format:'auto', polish:true,
+    }, { reportError:false });
+    showToast(`${result.molecule?.name || 'Structure'} loaded · ${result.molecule?.atoms || 0} atoms`);
   }
   catch (error) { showNotice(error.message); }
   finally { button.disabled = false; button.textContent = 'Parse Input'; }
@@ -14278,25 +15226,13 @@ async function loadPdbIdentifier(identifier) {
 
 document.querySelector('#identifier-button').addEventListener('click', async (event) => {
   const raw = document.querySelector('#identifier-input').value.trim();
-  const lookup = raw.toLowerCase();
-  const key = Object.keys(LIBRARY).find((name) => lookup === name || lookup === LIBRARY[name].smiles.toLowerCase());
-  const pdbCandidate = /^(?:PDB\s*[:#-]?\s*)?[0-9][A-Za-z0-9]{3}$/i.test(raw);
   const button = event.currentTarget;
   try {
-    if (pdbCandidate) {
-      button.disabled = true; button.textContent = 'Loading PDB…';
-      const molecule = await loadPdbIdentifier(raw);
-      showToast(`${molecule.source.pdbId} loaded · ${molecule.atoms.length} atoms`);
-    } else {
-      const smiles = key ? LIBRARY[key].smiles : raw;
-      const name = key ? LIBRARY[key].name : 'SMILES structure';
-      button.disabled = true; button.textContent = 'Generating 3D…';
-      const { molecule, result } = await createRdkitSmilesMolecule(smiles, name);
-      loadMolecule(molecule);
-      button.textContent = 'Checking protonation…';
-      await enumerateLigandProtonation(smiles);
-      showToast(`ETKDGv3 · ${result.forcefield}${result.fallback ? ' fallback' : ''} · ${result.conformerCount} conformer${result.conformerCount === 1 ? '' : 's'}`);
-    }
+    button.disabled = true; button.textContent = 'Loading…';
+    const result = await runChemistUiAction('session.loadIdentifier', {
+      value:raw, kind:'auto',
+    }, { reportError:false });
+    showToast(`${result.molecule?.name || 'Molecule'} loaded · ${result.molecule?.atoms || 0} atoms`);
   } catch (error) {
     showNotice(error.message);
   } finally {
@@ -14305,21 +15241,25 @@ document.querySelector('#identifier-button').addEventListener('click', async (ev
 });
 
 document.querySelector('#ligand-protonation-run').addEventListener('click', () => {
-  enumerateLigandProtonation().catch((error) => showNotice(error.message));
+  runChemistUiAction('ligand.enumerateProtonation', {
+    pH:Number(document.querySelector('#ligand-protonation-ph').value),
+  }).catch(() => {});
 });
 document.querySelector('#ligand-protonation-state').addEventListener('change', updateLigandProtonationMeta);
 document.querySelector('#ligand-protonation-apply').addEventListener('click', () => {
-  applySelectedLigandProtonation().catch((error) => showNotice(error.message));
+  runChemistUiAction('ligand.applyProtonation', {
+    index:Number(document.querySelector('#ligand-protonation-state').value),
+  }).catch(() => {});
 });
 
 async function handleFile(file) {
   if (!file) return;
   try {
     const text = await file.text();
-    const molecule = parseStructureInput(text, { name: file.name.replace(/\.[^.]+$/, '') });
-    loadMolecule(molecule);
-    if (smallMoleculePolishEligible(molecule)) await polishSmallMoleculeCoordinates(molecule);
-    showToast(`${file.name} loaded · ${molecule.atoms.length} atoms`);
+    const result = await runChemistUiAction('session.loadStructure', {
+      content:text, format:'auto', name:file.name.replace(/\.[^.]+$/, ''), polish:true,
+    }, { reportError:false });
+    showToast(`${file.name} loaded · ${result.molecule?.atoms || 0} atoms`);
   }
   catch (error) { showNotice(error.message); }
 }
@@ -14328,7 +15268,14 @@ document.querySelector('#prepare-pdb').addEventListener('click', async () => {
   if (document.querySelector('#prepare-pdb').dataset.action === 'inspect') {
     openPreparationInspector(); return;
   }
-  try { await prepareCurrentPdb(); }
+  try { await runChemistUiAction('protein.prepare', {
+    pH:Number(document.querySelector('#preparation-ph').value),
+    histidine:document.querySelector('#preparation-histidine').value,
+    repairMissingHeavy:document.querySelector('#preparation-repair-heavy').checked,
+    ligandPolicy:document.querySelector('#preparation-ligands').value,
+    waterPolicy:document.querySelector('#preparation-waters').value,
+    gapPolicy:document.querySelector('#preparation-gaps').value,
+  }, { reportError:false }); }
   catch (error) { showNotice(error.message); updatePdbPreparationUi(); }
 });
 document.querySelector('#download-preparation-report').addEventListener('click', downloadCurrentPreparationAudit);
@@ -14343,29 +15290,55 @@ const dropZone = document.querySelector('#upload-zone');
 ['dragleave', 'drop'].forEach((type) => dropZone.addEventListener(type, (event) => { event.preventDefault(); dropZone.classList.remove('dragging'); }));
 dropZone.addEventListener('drop', (event) => handleFile(event.dataTransfer.files[0]));
 
-document.querySelector('#hydrogen-toggle').addEventListener('change', (event) => { state.showHydrogens = event.target.checked; draw(); });
-document.querySelector('#vdw-toggle').addEventListener('change', (event) => { state.vdw = event.target.checked; draw(); });
-document.querySelector('#hull-toggle').addEventListener('change', (event) => { state.showHulls = event.target.checked; draw(); });
+document.querySelector('#hydrogen-toggle').addEventListener('change', (event) => {
+  runChemistUiAction('view.setDisplay', { showHydrogens:event.target.checked }).catch(() => {});
+});
+document.querySelector('#vdw-toggle').addEventListener('change', (event) => {
+  runChemistUiAction('view.setDisplay', { showVdw:event.target.checked }).catch(() => {});
+});
+document.querySelector('#hull-toggle').addEventListener('change', (event) => {
+  runChemistUiAction('view.setDisplay', { showHulls:event.target.checked }).catch(() => {});
+});
 document.querySelector('#pocket-toggle').addEventListener('change', (event) => {
-  state.showPocketAtoms = event.target.checked; updateInfo(); draw();
+  runChemistUiAction('view.setDisplay', { showPocketAtoms:event.target.checked }).catch(() => {});
 });
 document.querySelector('#pocket-mode-toggle').addEventListener('click', () => {
-  state.pocketAtomMode = state.pocketAtomMode === 'contacts' ? 'radius' : 'contacts';
-  updateInfo(); draw();
+  runChemistUiAction('view.setDisplay', { pocketMode:
+    state.pocketAtomMode === 'contacts' ? 'radius' : 'contacts' }).catch(() => {});
 });
-document.querySelector('#interaction-toggle').addEventListener('change', (event) => { state.showInteractions = event.target.checked; draw(); });
-document.querySelector('#residue-follow-chip').addEventListener('click', () => setFocusedResidue(null));
+document.querySelector('#interaction-toggle').addEventListener('change', (event) => {
+  runChemistUiAction('view.setDisplay', { showInteractions:event.target.checked }).catch(() => {});
+});
+document.querySelector('#steric-clash-toggle').addEventListener('change', (event) => {
+  runChemistUiAction('view.setDisplay', { showStericClashes:event.target.checked }).catch(() => {});
+});
+document.querySelector('#residue-follow-chip').addEventListener('click', () => {
+  runChemistUiAction('view.clearFocus', { kind:'residue' }).catch(() => {});
+});
 document.querySelector('#changed-region-chip').addEventListener('click', () =>
-  clearFocusedAtomRegion({ redraw:true }));
+  runChemistUiAction('view.clearFocus', { kind:'atoms' }).catch(() => {}));
 document.querySelector('#representation-select').addEventListener('change', (event) => {
-  state.representation = event.target.value;
-  updateInfo();
-  draw();
+  runChemistUiAction('view.setDisplay', { representation:event.target.value }).catch(() => {});
 });
-document.querySelector('#rotate-select').addEventListener('change', (event) => { state.autoRotate = event.target.value; state.playing = event.target.value !== 'none'; document.querySelector('#play-button').textContent = state.playing ? 'Pause' : 'Play'; });
-document.querySelector('#play-button').addEventListener('click', (event) => { state.playing = !state.playing; if (state.playing && state.autoRotate === 'none') { state.autoRotate = 'vertical'; document.querySelector('#rotate-select').value = 'vertical'; } event.target.textContent = state.playing ? 'Pause' : 'Play'; });
+document.querySelector('#display-theme-select').addEventListener('change', (event) => {
+  runChemistUiAction('view.setDisplay', { colorTheme:event.target.value }).catch(() => {});
+});
+document.querySelector('#change-marker-select').addEventListener('change', (event) => {
+  runChemistUiAction('view.setDisplay', { changeMarkers:event.target.value }).catch(() => {});
+});
+document.querySelector('#rotate-select').addEventListener('change', (event) => {
+  runChemistUiAction('view.setDisplay', { autoRotate:event.target.value,
+    playing:event.target.value !== 'none' }).catch(() => {});
+});
+document.querySelector('#play-button').addEventListener('click', () => {
+  runChemistUiAction('view.setDisplay', { playing:!state.playing,
+    autoRotate:!state.playing && state.autoRotate === 'none' ? 'vertical' : state.autoRotate,
+  }).catch(() => {});
+});
 
-document.querySelectorAll('.mode-bar button').forEach((button) => button.addEventListener('click', () => setMode(button.dataset.mode)));
+document.querySelectorAll('.mode-bar button').forEach((button) => button.addEventListener('click', () => {
+  runChemistUiAction('view.setMode', { mode:button.dataset.mode }).catch(() => {});
+}));
 document.querySelectorAll('#element-grid button').forEach((button) => button.addEventListener('click', () => {
   state.selectedElement = button.dataset.element; document.querySelectorAll('#element-grid button').forEach((item) => item.classList.toggle('selected', item === button));
   state.stagedFragment = null; document.querySelectorAll('.fragment-card').forEach((card) => card.classList.remove('selected'));
@@ -14373,61 +15346,85 @@ document.querySelectorAll('#element-grid button').forEach((button) => button.add
 }));
 
 document.querySelectorAll('#build-tool-tabs [data-tool]').forEach((button) => button.addEventListener('click', () => {
-  state.buildTool = button.dataset.tool;
-  document.querySelectorAll('#build-tool-tabs [data-tool]').forEach((item) => item.classList.toggle('selected', item === button));
-  canvas.classList.toggle('build-cursor', state.buildTool === 'add'); updateBuildStatus(); draw();
+  runChemistUiAction('build.setTool', {
+    tool:button.dataset.tool === 'manipulate' ? 'move' : button.dataset.tool,
+  }).catch(() => {});
 }));
 
 const geometrySlider = document.querySelector('#geometry-slider');
 const geometryValue = document.querySelector('#geometry-value');
-geometrySlider.addEventListener('pointerdown', beginGeometryEdit);
 geometrySlider.addEventListener('input', (event) => {
-  beginGeometryEdit(); applyGeometryValue(event.target.value);
+  geometryValue.value = event.target.value;
 });
-geometrySlider.addEventListener('change', finishGeometryEdit);
+async function runCurrentGeometryAction(value) {
+  await ensureChemistActionAtomIds();
+  return runChemistUiAction('geometry.setInternalCoordinate', {
+    atomIds:state.selectedAtoms.map((index) => state.molecule.atoms[index]?.designAtomId),
+    value:Number(value), moveConnected:document.querySelector('#move-connected').checked,
+  });
+}
+geometrySlider.addEventListener('change', (event) => {
+  runCurrentGeometryAction(event.target.value).catch(() => updateGeometryControl());
+});
 geometryValue.addEventListener('change', (event) => {
-  beginGeometryEdit(); applyGeometryValue(event.target.value); finishGeometryEdit();
+  runCurrentGeometryAction(event.target.value).catch(() => updateGeometryControl());
 });
 
 document.querySelector('#undo-atom').addEventListener('click', () => {
-  if (!state.buildHistory.length || !state.molecule) return;
-  state.redoHistory.push(buildHistoryEntry(state.molecule));
-  restoreMolecule(state.buildHistory.pop());
+  runChemistUiAction('history.undo').catch(() => {});
 });
 document.querySelector('#redo-atom').addEventListener('click', () => {
-  if (!state.redoHistory.length || !state.molecule) return;
-  state.buildHistory.push(buildHistoryEntry(state.molecule));
-  restoreMolecule(state.redoHistory.pop());
+  runChemistUiAction('history.redo').catch(() => {});
 });
 document.querySelector('#apply-atom-chemistry').addEventListener('click', () => {
-  applySelectedAtomChemistry(document.querySelector('#chemistry-element').value,
-    Number(document.querySelector('#chemistry-formal-charge').value)).catch(() => {});
+  runChemistUiAction('chemistry.setAtom', {
+    element:document.querySelector('#chemistry-element').value,
+    formalCharge:Number(document.querySelector('#chemistry-formal-charge').value),
+  }).catch(() => {});
 });
 document.querySelector('#apply-bond-chemistry').addEventListener('click', () => {
-  applySelectedBondChemistry(Number(document.querySelector('#chemistry-bond-order').value)).catch(() => {});
+  runChemistUiAction('chemistry.setBond', {
+    order:Number(document.querySelector('#chemistry-bond-order').value),
+  }).catch(() => {});
 });
-document.querySelector('#delete-bond-chemistry').addEventListener('click', () => { deleteSelectedBondChemistry().catch(() => {}); });
-document.querySelector('#add-explicit-hydrogen').addEventListener('click', () => { addSelectedHydrogenChemistry().catch(() => {}); });
-document.querySelector('#remove-explicit-hydrogen').addEventListener('click', () => { removeSelectedHydrogenChemistry().catch(() => {}); });
-document.querySelector('#delete-selected-atom').addEventListener('click', () => { deleteSelectedAtomChemistry().catch(() => {}); });
+document.querySelector('#delete-bond-chemistry').addEventListener('click', () => {
+  runChemistUiAction('chemistry.deleteBond').catch(() => {});
+});
+document.querySelector('#add-explicit-hydrogen').addEventListener('click', () => {
+  runChemistUiAction('chemistry.addHydrogen').catch(() => {});
+});
+document.querySelector('#remove-explicit-hydrogen').addEventListener('click', () => {
+  runChemistUiAction('chemistry.removeHydrogen').catch(() => {});
+});
+document.querySelector('#delete-selected-atom').addEventListener('click', () => {
+  runChemistUiAction('chemistry.deleteAtom').catch(() => {});
+});
 document.querySelector('#finish-chemistry-changes').addEventListener('click', () => {
-  finishChemistryTransaction().catch((error) => showNotice(error.message));
+  runChemistUiAction('chemistry.finish').catch(() => {});
 });
-document.querySelector('#discard-chemistry-changes').addEventListener('click', discardChemistryTransaction);
+document.querySelector('#discard-chemistry-changes').addEventListener('click', () => {
+  runChemistUiAction('chemistry.discard').catch(() => {});
+});
 document.querySelector('#viewer-finish-chemistry').addEventListener('click', () => {
-  finishChemistryTransaction().catch((error) => showNotice(error.message));
+  runChemistUiAction('chemistry.finish').catch(() => {});
 });
-document.querySelector('#viewer-discard-chemistry').addEventListener('click', discardChemistryTransaction);
+document.querySelector('#viewer-discard-chemistry').addEventListener('click', () => {
+  runChemistUiAction('chemistry.discard').catch(() => {});
+});
 document.querySelector('#chemistry-immediate-refine').addEventListener('change', updateChemistryEditor);
 document.querySelector('#docking-mode').addEventListener('change', updateDockingUi);
 document.querySelector('#docking-edit-cleanup').addEventListener('change', () => {
-  updateDockingUi(); updateOptimizerControls();
+  runChemistUiAction('pose.setEditCleanup', {
+    mode:document.querySelector('#docking-edit-cleanup').value,
+  }).catch(() => {});
 });
 document.querySelector('#capture-docking-reference').addEventListener('click', () => {
-  captureCurrentDockingReference().catch((error) => showNotice(error.message));
+  runChemistUiAction('pose.captureReference', {
+    mode:document.querySelector('#docking-mode').value,
+  }).catch(() => {});
 });
 document.querySelector('#update-docking-receptor').addEventListener('click', () => {
-  updateCurrentDockingReceptorReference().catch((error) => showNotice(error.message));
+  runChemistUiAction('pose.updateReceptorReference').catch(() => {});
 });
 document.querySelector('#confirm-analogue-design').addEventListener('click', () => {
   settleAnalogueDesignPrompt(true);
@@ -14438,14 +15435,19 @@ document.querySelector('#cancel-analogue-design').addEventListener('click', () =
 document.querySelector('#analogue-design-dialog').addEventListener('cancel', (event) => {
   event.preventDefault(); settleAnalogueDesignPrompt(false);
 });
-document.querySelector('#clear-docking-reference').addEventListener('click', clearDockingReference);
+document.querySelector('#clear-docking-reference').addEventListener('click', () => {
+  runChemistUiAction('pose.clearReference').catch(() => {});
+});
 document.querySelector('#add-docking-contact').addEventListener('click', beginManualDockingContact);
 document.querySelector('#cancel-docking-contact').addEventListener('click', cancelManualDockingContact);
 document.querySelector('#run-constrained-docking').addEventListener('click', () => {
-  runBrowserConstrainedDocking().catch((error) => { setDockingStatus(`Pose refinement failed · ${error.message}`); showNotice(error.message); });
+  runChemistUiAction('pose.refine', {
+    searchChains:document.querySelector('#docking-conformer-count').value,
+    execution:'auto',
+  }).catch((error) => setDockingStatus(`Pose refinement failed · ${error.message}`));
 });
 document.querySelector('#apply-docking-pose').addEventListener('click', () => {
-  applySelectedDockingPose().catch((error) => showNotice(error.message));
+  runChemistUiAction('pose.apply', { index:state.dockingPoseIndex }).catch(() => {});
 });
 document.querySelector('#download-docking-labbook').addEventListener('click', () => {
   downloadDockingLabbook('markdown').catch((error) => showNotice(error.message));
@@ -14461,15 +15463,21 @@ document.querySelector('#enumerate-sidechain-rotamers').addEventListener('click'
   const residueAtomIndex = state.selectedAtoms.length === 1 ? state.selectedAtoms[0] : null;
   if (!Number.isInteger(residueAtomIndex)) return;
   button.disabled = true; button.textContent = 'Enumerating…';
-  try { await enumerateCurrentSidechainRotamers(residueAtomIndex); }
+  try {
+    await ensureChemistActionAtomIds();
+    await runChemistUiAction('pose.enumerateSidechainRotamers', {
+      receptorAtomId:state.molecule.atoms[residueAtomIndex].designAtomId,
+      maximumCandidates:32,
+    }, { reportError:false });
+  }
   catch (error) { showNotice(error.message); }
   finally { button.textContent = 'Enumerate rotamers'; updateSidechainRotamerControls(); }
 });
 document.querySelector('#apply-sidechain-rotamer').addEventListener('click', async (event) => {
   const button = event.currentTarget;
   button.disabled = true; button.textContent = 'Applying…';
-  try { await applyCurrentSidechainRotamer(Number(
-    document.querySelector('#sidechain-rotamer-select').value)); }
+  try { await runChemistUiAction('pose.applySidechainRotamer', { index:Number(
+    document.querySelector('#sidechain-rotamer-select').value) }, { reportError:false }); }
   catch (error) { showNotice(error.message); }
   finally { button.disabled = false; button.textContent = 'Apply branch'; updateSidechainRotamerControls(); }
 });
@@ -14482,23 +15490,25 @@ document.querySelector('#designer-move-file').addEventListener('change', async (
   finally { event.currentTarget.value = ''; updateDesignerMoveControls(); }
 });
 document.querySelector('#replay-designer-moves').addEventListener('click', async (event) => {
-  const button = event.currentTarget;
-  try { await replayDesignerMoveScript(); }
+  try { await runChemistUiAction('designerScript.play', {
+    playing:!state.designerMoveReplaying || state.designerMoveReplayPaused,
+  }, { reportError:false }); }
   catch (error) { showNotice(error.message); }
   finally { updateDesignerMoveControls(); }
 });
 document.querySelector('#previous-designer-move').addEventListener('click', () => {
-  try { reviewDesignerMoveCheckpoint(-1); }
-  catch (error) { showNotice(error.message); }
+  // Checkpoint review is presentation-only: it must not add or remove a
+  // scientific action from the replay audit.  Agents can request the same
+  // operation through designerScript.step; the visible transport controls
+  // deliberately remain outside the recorded design history.
+  reviewDesignerMoveCheckpoint(-1);
 });
 document.querySelector('#next-designer-move').addEventListener('click', () => {
-  try { reviewDesignerMoveCheckpoint(1); }
-  catch (error) { showNotice(error.message); }
+  reviewDesignerMoveCheckpoint(1);
 });
 document.querySelector('#restart-designer-moves').addEventListener('click', () => {
-  if (!state.designerMoveScript || state.designerMoveReplaying) return;
-  clearScene(); resetDesignerMovePlayback(); updateDesignerMoveControls();
-  showToast('Story returned to its blank starting canvas');
+  runChemistUiAction('designerScript.restart').then(() =>
+    showToast('Story returned to its blank starting canvas')).catch(() => {});
 });
 document.querySelector('#export-designer-moves').addEventListener('click', () => {
   exportRecordedDesignerMoves().catch((error) => showNotice(error.message));
@@ -14507,7 +15517,11 @@ document.querySelector('#export-designer-replay').addEventListener('click', () =
   try { exportDesignerMoveReplay(); }
   catch (error) { showNotice(error.message); }
 });
-document.querySelector('#optimize-button').addEventListener('click', runSelectedBuildOptimization);
+document.querySelector('#optimize-button').addEventListener('click', () => {
+  runChemistUiAction('optimization.run', {
+    method:document.querySelector('#build-optimizer-select').value,
+  }).catch(() => {});
+});
 document.querySelector('#build-optimizer-select').addEventListener('change', (event) => {
   event.currentTarget.dataset.userSelected = 'true'; updateOptimizerControls();
 });
@@ -14523,26 +15537,80 @@ document.querySelector('#simulation-step-count').addEventListener('change', upda
 document.querySelector('#solvent-select').addEventListener('change', updateOptimizerControls);
 document.querySelector('#constraint-select').addEventListener('change', updateOptimizerControls);
 document.querySelector('#stormm-system').addEventListener('change', updateOptimizerControls);
-document.querySelector('#stormm-autotune').addEventListener('click', () => { tuneStormmReplicas().catch(() => {}); });
+document.querySelector('#stormm-autotune').addEventListener('click', () => {
+  runChemistUiAction('calculation.tuneReplicas').catch(() => {});
+});
 document.querySelector('#conformer-arena').addEventListener('change', updateOptimizerControls);
-document.querySelector('#result-frame-slider').addEventListener('input', (event) => selectCalculationFrame(Number(event.target.value)));
-document.querySelector('#result-play-trajectory').addEventListener('click', toggleCalculationPlayback);
-document.querySelector('#result-final-frame').addEventListener('click', () => selectCalculationFrame(state.calculationFrames.length - 1));
-document.querySelector('#result-replica-select').addEventListener('change', (event) => selectCalculationReplica(Number(event.target.value)));
-document.querySelector('#result-conformer-select').addEventListener('change', (event) => selectCalculationReplica(Number(event.target.value)));
-document.querySelector('#result-conformer-cv').addEventListener('change', updateConformerPlotControls);
-document.querySelector('#result-conformer-y').addEventListener('change', updateConformerPlotControls);
-document.querySelector('#result-conformer-sort').addEventListener('change', updateConformerPlotControls);
-document.querySelector('#result-conformer-filter').addEventListener('change', updateConformerPlotControls);
-document.querySelector('#result-conformer-best').addEventListener('click', () => selectConformerRank(0));
-document.querySelector('#result-conformer-previous').addEventListener('click', () => moveConformerRank(-1));
-document.querySelector('#result-conformer-next').addEventListener('click', () => moveConformerRank(1));
+document.querySelector('#result-frame-slider').addEventListener('change', (event) => {
+  runChemistUiAction('calculation.selectFrame', { index:Number(event.target.value) }).catch(() => {});
+});
+document.querySelector('#result-play-trajectory').addEventListener('click', () => {
+  runChemistUiAction('calculation.setPlayback', { playing:!state.calculationPlaying }).catch(() => {});
+});
+document.querySelector('#result-final-frame').addEventListener('click', () => {
+  runChemistUiAction('calculation.selectFrame', {
+    index:state.calculationFrames.length - 1,
+  }).catch(() => {});
+});
+document.querySelector('#result-replica-select').addEventListener('change', (event) => {
+  runChemistUiAction('calculation.selectReplica', { index:Number(event.target.value) }).catch(() => {});
+});
+document.querySelector('#result-conformer-select').addEventListener('change', (event) => {
+  const replica = Number(event.target.value);
+  const rank = activeConformerPlotOrder(state.conformerAnalysis).indexOf(replica);
+  runChemistUiAction('calculation.selectConformer', { rank }).catch(() => {});
+});
+function runConformerViewUiAction() {
+  return runChemistUiAction('calculation.setConformerView', {
+    x:document.querySelector('#result-conformer-cv').value,
+    y:document.querySelector('#result-conformer-y').value,
+    sort:document.querySelector('#result-conformer-sort').value,
+    filter:document.querySelector('#result-conformer-filter').value,
+  });
+}
+document.querySelector('#result-conformer-cv').addEventListener('change', () => {
+  runConformerViewUiAction().catch(() => {});
+});
+document.querySelector('#result-conformer-y').addEventListener('change', () => {
+  runConformerViewUiAction().catch(() => {});
+});
+document.querySelector('#result-conformer-sort').addEventListener('change', () => {
+  runConformerViewUiAction().catch(() => {});
+});
+document.querySelector('#result-conformer-filter').addEventListener('change', () => {
+  runConformerViewUiAction().catch(() => {});
+});
+document.querySelector('#result-conformer-best').addEventListener('click', () => {
+  runChemistUiAction('calculation.selectConformer', { rank:0 }).catch(() => {});
+});
+document.querySelector('#result-conformer-previous').addEventListener('click', () => {
+  const current = activeConformerPlotOrder(state.conformerAnalysis)
+    .indexOf(state.calculationReplicaIndex);
+  runChemistUiAction('calculation.selectConformer', {
+    rank:Math.max(0, current - 1),
+  }).catch(() => {});
+});
+document.querySelector('#result-conformer-next').addEventListener('click', () => {
+  const order = activeConformerPlotOrder(state.conformerAnalysis);
+  const current = order.indexOf(state.calculationReplicaIndex);
+  runChemistUiAction('calculation.selectConformer', {
+    rank:Math.min(order.length - 1, current + 1),
+  }).catch(() => {});
+});
 document.querySelector('#result-conformer-scatter').addEventListener('keydown', (event) => {
   if (!state.conformerAnalysis) return;
-  if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') { event.preventDefault(); moveConformerRank(-1); }
-  else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') { event.preventDefault(); moveConformerRank(1); }
-  else if (event.key === 'Home') { event.preventDefault(); selectConformerRank(0); }
-  else if (event.key === 'End') { event.preventDefault(); selectConformerRank(activeConformerPlotOrder(state.conformerAnalysis).length - 1); }
+  const order = activeConformerPlotOrder(state.conformerAnalysis);
+  const current = order.indexOf(state.calculationReplicaIndex);
+  let rank = null;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') rank = Math.max(0, current - 1);
+  else if (event.key === 'ArrowRight' || event.key === 'ArrowDown')
+    rank = Math.min(order.length - 1, current + 1);
+  else if (event.key === 'Home') rank = 0;
+  else if (event.key === 'End') rank = order.length - 1;
+  if (rank != null) {
+    event.preventDefault();
+    runChemistUiAction('calculation.selectConformer', { rank }).catch(() => {});
+  }
 });
 document.querySelector('#export-conformer-sdf').addEventListener('click', exportClusteredConformers);
 document.querySelector('#result-replica-mosaic').addEventListener('click', (event) => {
@@ -14556,7 +15624,8 @@ document.querySelector('#result-replica-mosaic').addEventListener('click', (even
     || x - column * (layout.cell + layout.gap) > layout.cell
     || y - row * (layout.cell + layout.gap) > layout.cell) return;
   const replica = row * layout.columns + column;
-  if (replica < state.calculationEnsemble.replicaCount) selectCalculationReplica(replica);
+  if (replica < state.calculationEnsemble.replicaCount)
+    runChemistUiAction('calculation.selectReplica', { index:replica }).catch(() => {});
 });
 document.querySelector('#result-replica-mosaic').addEventListener('keydown', (event) => {
   const count = state.calculationEnsemble?.replicaCount;
@@ -14569,14 +15638,67 @@ document.querySelector('#result-replica-mosaic').addEventListener('keydown', (ev
   else if (event.key in moves) next += moves[event.key];
   else return;
   event.preventDefault();
-  selectCalculationReplica(Math.max(0, Math.min(count - 1, next)));
+  runChemistUiAction('calculation.selectReplica', {
+    index:Math.max(0, Math.min(count - 1, next)),
+  }).catch(() => {});
 });
 document.querySelector('#fragment-search').addEventListener('input', (event) => renderFragmentLibrary(event.target.value));
 document.querySelector('#stage-custom-fragment').addEventListener('click', () => {
   const smiles = document.querySelector('#custom-fragment-smiles').value.trim();
   if (!smiles) return showNotice('Enter a custom fragment SMILES first.');
-  stageFragment({ id: `custom-${Date.now()}`, label: smiles, name: 'Custom fragment', smiles, attach: 0 });
+  runChemistUiAction('fragment.stage', {
+    smiles, name:'Custom fragment', attachmentIndex:0,
+  }).catch(() => {});
 });
+
+async function attachStagedFragmentFromViewer(clientX, clientY) {
+  const targetHit = hitTest(clientX, clientY);
+  const positionAngstrom = screenToMolecule(clientX, clientY);
+  let targetIndex = targetHit?.index ?? null;
+  if (targetIndex != null && state.molecule?.atoms[targetIndex]?.element === 'H') {
+    const bond = state.molecule.bonds.find((entry) =>
+      entry.a === targetIndex || entry.b === targetIndex);
+    targetIndex = bond ? (bond.a === targetIndex ? bond.b : bond.a) : null;
+  }
+  let attachedToAtomId = null;
+  if (targetIndex != null) {
+    await ensureChemistActionAtomIds();
+    attachedToAtomId = state.molecule.atoms[targetIndex]?.designAtomId || null;
+  }
+  return runChemistUiAction('fragment.attach', {
+    ...(attachedToAtomId ? { attachedToAtomId } : {}), positionAngstrom,
+  });
+}
+
+async function addElementFromViewerThroughAction(clientX, clientY) {
+  const targetIndex = elementAttachmentTarget(clientX, clientY);
+  // A click on genuinely empty space has no persistent target identity yet, so
+  // the public action records its absolute molecular-space placement instead.
+  if (targetIndex == null) return runChemistUiAction('chemistry.addAtom', {
+    element:state.selectedElement, positionAngstrom:screenToMolecule(clientX, clientY),
+  });
+  await ensureChemistActionAtomIds();
+  if (state.selectedElement === 'H') {
+    setDepictionSelection([targetIndex]);
+    return runChemistUiAction('chemistry.addHydrogen');
+  }
+  return runChemistUiAction('chemistry.addAtom', {
+    attachedToAtomId:state.molecule.atoms[targetIndex].designAtomId,
+    element:state.selectedElement,
+  });
+}
+
+async function selectViewerAtomThroughChemistAction(index) {
+  if (state.dockingContactDraft) return selectGeometryAtom(index);
+  await ensureChemistActionAtomIds();
+  const existing = state.selectedAtoms.indexOf(index);
+  const next = existing >= 0 ? state.selectedAtoms.slice(0, existing)
+    : [...state.selectedAtoms, index];
+  if (!next.length) return runChemistUiAction('selection.clear');
+  return runChemistUiAction('selection.replace', {
+    atomIds:next.map((atomIndex) => state.molecule.atoms[atomIndex].designAtomId),
+  });
+}
 
 canvas.addEventListener('pointerdown', (event) => {
   if (state.mode === 'build') {
@@ -14585,7 +15707,10 @@ canvas.addEventListener('pointerdown', (event) => {
     if (event.button !== 0 && !panInput) return;
     const hit = hitTest(event.clientX, event.clientY);
     if (state.buildTool === 'manipulate' && hit && !panInput) {
-      state.selectedAtom = hit.index; draw(); pushBuildHistory(); state.dragAtom = hit.index;
+      state.selectedAtom = hit.index; draw(); state.dragAtom = hit.index;
+      state.dragAtomOrigin = { index:hit.index,
+        x:state.molecule.atoms[hit.index].x, y:state.molecule.atoms[hit.index].y,
+        z:state.molecule.atoms[hit.index].z };
       state.dragStartPoint = screenToMolecule(event.clientX, event.clientY);
     } else {
       state.pendingBuildAction = !panInput ? { tool:state.buildTool } : null;
@@ -14656,36 +15781,73 @@ canvas.addEventListener('pointermove', (event) => {
 canvas.addEventListener('pointerup', (event) => {
   const pendingBuildAction = state.pendingBuildAction;
   const pointerDragged = state.pointerDragged;
-  if (state.dragAtom != null) { updateStoredBondDistances(); updateInfo(); updateGeometryControl(); }
+  const dragOrigin = state.dragAtomOrigin;
+  const draggedAtom = state.dragAtom != null ? state.molecule?.atoms[state.dragAtom] : null;
+  const cameraGesture = pointerDragged && !draggedAtom
+    && (state.panningView || Boolean(state.arcballStart));
+  const finalCamera = cameraGesture ? { rotation:{ ...state.rotation },
+    pan:{ ...state.viewPan }, zoom:state.zoom } : null;
+  if (draggedAtom && dragOrigin) {
+    const deltaAngstrom = { x:draggedAtom.x - dragOrigin.x,
+      y:draggedAtom.y - dragOrigin.y, z:draggedAtom.z - dragOrigin.z };
+    draggedAtom.x = dragOrigin.x; draggedAtom.y = dragOrigin.y; draggedAtom.z = dragOrigin.z;
+    updateStoredBondDistances(); updateInfo(); updateGeometryControl(); draw();
+    ensureChemistActionAtomIds().then(() => runChemistUiAction('geometry.translateAtoms', {
+      atomIds:[state.molecule.atoms[dragOrigin.index].designAtomId], deltaAngstrom,
+    })).catch(() => {});
+  }
   state.dragging = false; state.dragAtom = null; state.panningView = false;
+  state.dragAtomOrigin = null;
   state.arcballStart = null; state.rotationStart = null; canvas.classList.remove('dragging', 'panning');
   if (state.mode === 'build' && pendingBuildAction && event.button === 0
     && !event.ctrlKey && !event.metaKey && !pointerDragged) {
     const hit = hitTest(event.clientX, event.clientY);
     if (pendingBuildAction.tool === 'add') {
       const buildAction = state.stagedFragment
-        ? addFragmentAtScreen(state.stagedFragment, event.clientX, event.clientY)
-        : addAtomAtScreen(event.clientX, event.clientY);
+        ? attachStagedFragmentFromViewer(event.clientX, event.clientY)
+        : addElementFromViewerThroughAction(event.clientX, event.clientY);
       buildAction.catch((error) => showNotice(error.message));
     } else if (pendingBuildAction.tool === 'select') {
-      if (hit) selectGeometryAtom(hit.index);
-      else { state.selectedAtoms = []; state.selectedAtom = null; updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw(); schedule2DDepiction(0); }
+      if (hit) selectViewerAtomThroughChemistAction(hit.index).catch(() => {});
+      else runChemistUiAction('selection.clear').catch(() => {});
     }
   } else if (state.mode !== 'build' && event.button === 0 && !event.ctrlKey && !event.metaKey && !pointerDragged) {
     const hit = hitTest(event.clientX, event.clientY);
-    if (hit && residueKey(state.molecule?.atoms?.[hit.index])) setFocusedResidue(hit.index);
-    else if (!hit && state.focusedResidueKey) setFocusedResidue(null);
+    const atom = hit ? state.molecule?.atoms?.[hit.index] : null;
+    if (atom && residueKey(atom)) runChemistUiAction('view.focusResidue',
+      residueKey(atom) === state.focusedResidueKey ? { clear:true } : {
+        chain:String(atom.chain || ''), residueIndex:Number(atom.residueIndex),
+        insertionCode:String(atom.insertionCode || ''),
+      }).catch(() => {});
+    else if (!hit && state.focusedResidueKey)
+      runChemistUiAction('view.focusResidue', { clear:true }).catch(() => {});
   }
+  if (finalCamera) runChemistUiAction('view.setCamera', finalCamera).catch(() => {});
   state.pendingBuildAction = null; state.pointerStart = null; state.pointerDragged = false;
 });
 canvas.addEventListener('pointercancel', () => {
+  if (state.dragAtomOrigin && state.molecule?.atoms[state.dragAtomOrigin.index]) {
+    Object.assign(state.molecule.atoms[state.dragAtomOrigin.index], {
+      x:state.dragAtomOrigin.x, y:state.dragAtomOrigin.y, z:state.dragAtomOrigin.z,
+    });
+    updateStoredBondDistances(); updateInfo(); updateGeometryControl(); draw();
+  }
   state.dragging = false; state.dragAtom = null; state.panningView = false;
+  state.dragAtomOrigin = null;
   state.arcballStart = null; state.rotationStart = null;
   state.pendingBuildAction = null; state.pointerStart = null; state.pointerDragged = false; canvas.classList.remove('dragging', 'panning');
 });
 canvas.addEventListener('pointerleave', () => { if (!state.dragging) { state.hoverAtom = null; document.querySelector('#atom-tooltip').classList.add('hidden'); draw(); } });
 canvas.addEventListener('contextmenu', (event) => { event.preventDefault(); });
-canvas.addEventListener('wheel', (event) => { event.preventDefault(); state.zoom = Math.max(.45, Math.min(2.6, state.zoom * Math.exp(-event.deltaY * .001))); draw(); }, { passive: false });
+let cameraWheelAuditTimer = null;
+canvas.addEventListener('wheel', (event) => {
+  event.preventDefault();
+  state.zoom = Math.max(.45, Math.min(2.6, state.zoom * Math.exp(-event.deltaY * .001)));
+  draw(); clearTimeout(cameraWheelAuditTimer);
+  cameraWheelAuditTimer = setTimeout(() => {
+    runChemistUiAction('view.setCamera', { zoom:state.zoom }).catch(() => {});
+  }, 160);
+}, { passive: false });
 
 document.querySelector('#export-button').addEventListener('click', exportXYZ);
 function clearScene({ announce = false } = {}) {
@@ -14696,13 +15858,20 @@ function clearScene({ announce = false } = {}) {
   state.designRoute = null; state.designRouteStepId = null;
   state.chemistActionAudit = [];
   state.buildHistory = []; state.redoHistory = [];
-  state.focusedComponentId = null; state.focusedComponentRadius = null;
+  state.focusedComponentId = null; state.focusedComponentCenter = null;
+  state.focusedComponentRadius = null;
   clearFocusedAtomRegion();
   state.dockingReference = null; state.dockingResult = null; state.dockingRunning = false;
   state.dockingSelectedHbondIds = new Set(); state.dockingPoseIndex = 0;
   state.dockingContactRemaps = new Map(); state.dockingContactRemapProposals = new Map();
   state.dockingContactDraft = null;
   state.focusedResidueKey = null; state.focusedResidueRadius = null; updateResidueFollowChip();
+  state.displayColorTheme = 'standard'; state.changeMarkerStyle = 'rings';
+  state.showStericClashes = false; state.visibleStericClashCount = 0;
+  document.querySelector('#display-theme-select').value = state.displayColorTheme;
+  document.querySelector('#change-marker-select').value = state.changeMarkerStyle;
+  document.querySelector('#steric-clash-toggle').checked = false;
+  updateStericClashDisplayLabel(0);
   state.viewProjectionCenter = null; state.viewProjectionRadius = null; state.projection = null;
   state.structureComponents = []; state.atomComponentIds = [];
   state.componentVisibility = new Map(); state.pdbPreparationPreview = null;
@@ -14719,20 +15888,42 @@ function clearScene({ announce = false } = {}) {
   updateHistoryButtons(); updateOptimizerControls(); draw();
 }
 
-document.querySelector('#clear-button').addEventListener('click', () => clearScene({ announce:true }));
+document.querySelector('#clear-button').addEventListener('click', () => {
+  runChemistUiAction('session.clear').then(() => showToast('Scene cleared')).catch(() => {});
+});
 document.querySelector('#share-button').addEventListener('click', async () => {
-  const storyId = new URLSearchParams(location.search).get('story');
-  const shareUrl = storyId && DESIGNER_STORY_LINKS[storyId]
-    ? `${location.origin}/${storyId}` : location.href;
-  try { await navigator.clipboard.writeText(shareUrl); showToast('Share link copied'); }
-  catch { showToast(`Share link ready · ${shareUrl}`); }
+  try {
+    const result = await runChemistUiAction('session.share', {}, { reportError:false });
+    try { await navigator.clipboard.writeText(result.share.url); showToast('Share link copied'); }
+    catch { showToast(`Share link ready · ${result.share.url}`); }
+  } catch (error) { showNotice(error.message); }
 });
 document.querySelector('#copy-smiles').addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(state.molecule?.smiles || ''); showToast('SMILES copied'); } catch { showToast('SMILES ready to copy'); }
 });
 document.querySelector('#save-button').addEventListener('click', () => { const link = document.createElement('a'); link.download = `${slug(state.molecule?.name || 'molecule')}.png`; link.href = canvas.toDataURL('image/png'); link.click(); showToast('Image saved'); });
 document.querySelector('#fullscreen-button').addEventListener('click', () => { const viewer = document.querySelector('#viewer-container'); if (!document.fullscreenElement) viewer.requestFullscreen?.(); else document.exitFullscreen?.(); });
-document.querySelector('#run-calculation').addEventListener('click', () => { runCalculation().catch(() => {}); });
+function currentCalculationUiOptions() {
+  return {
+    steps:Number(document.querySelector('#simulation-step-count').value),
+    savedFrameCount:Number(document.querySelector('#trajectory-frame-count').value),
+    implicitSolvent:document.querySelector('#solvent-select').value,
+    constraintMode:document.querySelector('#constraint-select').value,
+    stormmSystem:document.querySelector('#stormm-system').value,
+    replicaCount:Number(document.querySelector('#stormm-replica-count').value),
+    conformerCount:Number(document.querySelector('#conformer-count').value),
+    conformerEffort:document.querySelector('#conformer-effort').value,
+    conformerClusterRms:Number(document.querySelector('#conformer-cluster-rms').value),
+    conformerArena:document.querySelector('#conformer-arena').checked,
+  };
+}
+document.querySelector('#run-calculation').addEventListener('click', () => {
+  runChemistUiAction('calculation.run', {
+    job:document.querySelector('#job-select').value,
+    method:document.querySelector('#method-select').value,
+    options:currentCalculationUiOptions(),
+  }).catch(() => {});
+});
 document.querySelector('#menu-button').addEventListener('click', (event) => {
   const nav = document.querySelector('.app-header-links');
   const open = nav.classList.toggle('mobile-open');
@@ -14765,9 +15956,13 @@ function openProjectInfoPanel(panel) {
 }
 document.querySelectorAll('[data-project-panel]').forEach((link) => link.addEventListener('click', (event) => {
   event.preventDefault();
-  openProjectInfoPanel(event.currentTarget.dataset.projectPanel);
+  runChemistUiAction('interface.openProjectInfo', {
+    panel:event.currentTarget.dataset.projectPanel,
+  }).catch(() => {});
 }));
-document.querySelector('#network-policy-button').addEventListener('click', () => openProjectInfoPanel('privacy'));
+document.querySelector('#network-policy-button').addEventListener('click', () => {
+  runChemistUiAction('interface.openProjectInfo', { panel:'privacy' }).catch(() => {});
+});
 document.querySelector('#verify-local-build').addEventListener('click', verifyLoadedBuild);
 document.querySelector('#campaign-create').addEventListener('click', async () => {
   const titleInput = document.querySelector('#campaign-title');
@@ -14829,49 +16024,39 @@ document.querySelector('#campaign-close').addEventListener('click', () =>
 document.querySelector('#campaign-export').addEventListener('click', async () => {
   if (!state.liveCampaign) return;
   try {
-    const module = await getLiveCampaignStoreModule();
-    const serialized = await module.serializeCampaign(state.liveCampaign);
-    downloadBlob(serialized, `${slug(state.liveCampaign.campaignId)}.campaign.json`, 'application/json');
+    const result = await runChemistUiAction('campaign.export', {}, { reportError:false });
+    const exported = result.campaignExport;
+    downloadBlob(exported.serialized, `${slug(exported.campaignId)}.campaign.json`, 'application/json');
     updateLiveCampaignUi('Canonical campaign JSON exported.', 'success');
   } catch (error) { updateLiveCampaignUi(error.message, 'failure'); showNotice(error.message); }
 });
 document.querySelector('#campaign-import').addEventListener('click', () =>
   document.querySelector('#campaign-file').click());
+document.querySelector('#designer-story-import').addEventListener('click', () =>
+  document.querySelector('#designer-move-file').click());
 document.querySelector('#campaign-file').addEventListener('change', async (event) => {
   const file = event.target.files?.[0]; event.target.value = '';
   if (!file) return;
   liveCampaignUiBusy = true; updateLiveCampaignUi('Importing campaign…');
   let finalMessage = '', finalStatus = '';
   try {
-    await ensureLiveCampaignPersistence();
-    const [live, storeModule] = await Promise.all([
-      getLiveCampaignModule(), getLiveCampaignStoreModule(),
-    ]);
-    const campaign = await storeModule.deserializeCampaign(await file.text());
-    const verification = await live.verifyLiveCampaign(campaign);
-    if (!verification.valid) throw new Error(`Campaign is invalid: ${verification.reason}`);
-    const branch = Object.hasOwn(campaign.branches || {}, 'main') ? 'main'
-      : Object.keys(campaign.branches || {})[0];
-    if (!branch) throw new Error('Campaign has no branch to restore');
-    const checkout = await prepareLiveCampaignBranchMolecule(campaign, branch, { required:true });
-    await saveLiveCampaign(campaign, branch);
-    state.chemistActionAudit = [];
-    if (state.molecule) state.molecule.source = { ...(state.molecule.source || {}),
-      chemistActionAudit:[] };
-    state.liveCampaign = campaign;
-    state.liveCampaignBranch = branch;
-    state.liveCampaignCommittedThroughSequence = 0;
-    applyLiveCampaignBranchMolecule(checkout.molecule);
-    finalMessage = `Imported ${campaign.title} and saved it locally.`; finalStatus = 'success';
+    const result = await runChemistUiAction('campaign.import', {
+      serialized:await file.text(),
+    }, { reportError:false });
+    finalMessage = `Imported ${result.campaignImport.title} and saved it locally.`;
+    finalStatus = 'success';
   } catch (error) {
     finalMessage = error.message; finalStatus = 'failure'; showNotice(error.message);
   } finally {
     liveCampaignUiBusy = false; updateLiveCampaignUi(finalMessage, finalStatus);
   }
 });
-document.querySelector('#close-project-info').addEventListener('click', () => projectInfoDialog.close());
+document.querySelector('#close-project-info').addEventListener('click', () => {
+  runChemistUiAction('interface.openProjectInfo', { panel:'closed' }).catch(() => {});
+});
 projectInfoDialog.addEventListener('click', (event) => {
-  if (event.target === projectInfoDialog) projectInfoDialog.close();
+  if (event.target === projectInfoDialog)
+    runChemistUiAction('interface.openProjectInfo', { panel:'closed' }).catch(() => {});
 });
 window.addEventListener('resize', () => { draw(); drawReplicaMosaic(); drawConformerScatter(); });
 

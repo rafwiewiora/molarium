@@ -12,7 +12,7 @@ viewer is a custom HTML Canvas renderer in `app.js`; it does not use Atomiverse,
 `docking/validation/pose-viewer/` does vendor Mol* as disclosed below.
 
 The Molarium logo, mark, and animated calculation indicator are original assets implemented in
-this repository and covered by Molarium's MIT License.
+this repository and covered by Molarium's Apache License 2.0.
 
 Early interface direction was inspired by [Atomiverse](https://atomiverse.com/). This is an
 acknowledgement of visual inspiration, not a statement of affiliation, endorsement, shared code,
@@ -91,6 +91,6 @@ RDKit releases and citation metadata are maintained by the
 
 ## Molarium license
 
-Molarium's original code is licensed under the [MIT License](./LICENSE), copyright 2026 Molarium
+Molarium's original code is licensed under the [Apache License 2.0](./LICENSE), copyright 2026 Molarium
 contributors. That license does not replace or modify the separate terms governing the bundled
 software, model parameters, force fields, and scientific data listed above.

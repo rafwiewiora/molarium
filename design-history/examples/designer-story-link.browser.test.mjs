@@ -12,7 +12,7 @@ const browser = await startMolariumBrowser({
 
 try {
   await waitFor(async () => browser.evaluate(`document.title === 'SOS1 hit to BAY-293 · Molarium'
-    && document.querySelector('#designer-move-progress-label')?.textContent === '0 / 48'
+    && document.querySelector('#designer-move-progress-label')?.textContent === '0 / 49'
     && !document.querySelector('#replay-designer-moves')?.disabled`), 90000, 'deep-linked story');
   const initial = await browser.evaluate(`({
     url:location.href,
@@ -69,7 +69,7 @@ try {
     `document.querySelector('#replay-designer-moves').textContent.includes('Pause')`),
   90000, 'story play control');
   await waitFor(async () => browser.evaluate(
-    `document.querySelector('#designer-move-status').textContent.startsWith('Move 3 of 48')`),
+    `document.querySelector('#designer-move-status').textContent.startsWith('Move 3 of 49')`),
   90000, 'preparation demo cue');
   const preparationCue = await browser.evaluate(`({
     demoActive:document.body.classList.contains('designer-move-demo-active'),
@@ -118,7 +118,7 @@ try {
     detail:document.querySelector('#designer-move-detail').textContent,
     captionFontSize:parseFloat(getComputedStyle(document.querySelector('#designer-move-caption')).fontSize),
   })`);
-  assert.match(paused.progress, /^\d+ \/ 48$/);
+  assert.match(paused.progress, /^\d+ \/ 49$/);
   assert.ok(paused.caption.length > 12, 'the central caption must explain the scientific story');
   assert.match(paused.detail, /Paused before move|Pause requested/);
   assert.ok(paused.captionFontSize >= 12, 'the central story caption must remain legible');
@@ -160,7 +160,9 @@ try {
 
   await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
   await waitFor(async () => browser.evaluate(
-    `Number(document.querySelector('#designer-move-progress-label').textContent.split('/')[0]) >= 9`),
+    `Number(document.querySelector('#designer-move-progress-label').textContent.split('/')[0]) >= 10
+      && window.MolariumChemistActions.history().some((entry) =>
+        entry.action === 'pose.refine' && entry.status === 'completed')`),
   120000, 'first 64-chain pose result');
   await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
   await waitFor(async () => browser.evaluate(
@@ -173,7 +175,7 @@ try {
     canvas:document.querySelector('#molecule-canvas').toDataURL(),
   })`);
   const poseIndex = Number(poseCheckpoint.progress.split('/')[0]);
-  assert.ok(poseIndex >= 9);
+  assert.ok(poseIndex >= 10);
   assert.match(poseCheckpoint.poseSummary, /distinct/);
   await browser.evaluate(`document.querySelector('#previous-designer-move').click()`);
   await waitFor(async () => browser.evaluate(
@@ -195,7 +197,7 @@ try {
 
   await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
   await waitFor(async () => browser.evaluate(
-    `Number(document.querySelector('#designer-move-progress-label').textContent.split('/')[0]) >= 11`),
+    `Number(document.querySelector('#designer-move-progress-label').textContent.split('/')[0]) >= 12`),
   120000, 'fixed-camera pose comparison');
   await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
   await waitFor(async () => browser.evaluate(
@@ -211,7 +213,7 @@ try {
       displayContextPreserved:record?.result?.highlightedAtoms?.displayContextPreserved,
     };
   })()`);
-  assert.ok(Number(fixedComparison.progress.split('/')[0]) >= 11);
+  assert.ok(Number(fixedComparison.progress.split('/')[0]) >= 12);
   assert.match(fixedComparison.caption, /pyrazole.*Phe890.*Lys898/i);
   assert.equal(fixedComparison.cameraPreserved, true);
   assert.equal(fixedComparison.displayContextPreserved, true);

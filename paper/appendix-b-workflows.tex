@@ -55,11 +55,11 @@ Molarium is designed so that a scientist working through the graphical interface
 
 Each workflow begins with the question a scientist is trying to answer. The human procedure explains how to perform the task and what to inspect before accepting the result. The accompanying \textbf{agent skill contract} expresses the same procedure as preconditions, permitted actions, evidence, success criteria, and stopping conditions. The two views are intentionally paired: a procedure should be understandable by a scientist and sufficiently explicit that an agent cannot silently change its meaning.
 
-\lead{Implementation basis.}This appendix describes the inspected browser implementation on 2 September 2026, \code{feature/sos1-interface-story} through commit \code{f5a8900}. It distinguishes current browser behavior from executable but experimental behavior. Repository-only and proposed functionality is not presented as an operating instruction. User-facing workspace names are View, Design, and Simulate; the serialized values remain \code{view}, \code{build}, and \code{run} so existing action scripts remain replayable.
+\lead{Implementation basis.}This appendix describes the inspected browser implementation prepared on 2 September 2026 for the public Molarium release. It distinguishes current browser behavior from executable but experimental behavior. Repository-only and proposed functionality is not presented as an operating instruction. User-facing workspace names are View, Design, and Simulate; the serialized values remain \code{view}, \code{build}, and \code{run} so existing action scripts remain replayable.
 
 \workflowsection{B.1}{One molecular state, two interfaces}{Current browser surface}{What changes the molecule, and what merely changes how I am looking at it?}
 
-Molarium separates the authoritative molecular state from the interface used to manipulate it. A scientist can work in \textbf{View}, \textbf{Design}, and \textbf{Simulate}; an agent can invoke corresponding guarded operations through the versioned Chemist Actions API where a public action exists. Both routes act on the same graph, coordinates, selections, calculation records, and pending chemistry transaction.
+Molarium separates the authoritative molecular state from the interface used to manipulate it. A scientist can work in \textbf{View}, \textbf{Design}, and \textbf{Simulate}; an agent can invoke the same guarded scientific operations through the versioned Chemist Actions API. Both routes act on the same graph, coordinates, selections, calculation records, and pending chemistry transaction. Browser-native transport---choosing a local file, writing to the clipboard, downloading a file, or entering fullscreen---remains outside the molecular API; the state-changing operation before or after that boundary has a named action.
 
 Rotating the camera, changing a representation, focusing a component, or showing contacts changes only the presentation. Loading a structure, applying a protonation state, finishing a chemistry transaction, accepting a docking candidate, running a coordinate-producing Simulate job, or selecting or playing a saved calculation frame changes the current coordinates or graph. Refined-pose and side-chain alternatives remain candidates until explicitly applied.
 
@@ -87,9 +87,16 @@ Loading a new molecule resets incompatible calculation, docking, selection, and 
 \contractrow{Boundary}{No autosave or complete-session archive; an image or share link is not a reusable molecular state.}
 \end{skillcontract}
 
-Generic file loading is a graphical-interface operation rather than a Chemist Actions route. Once a molecule is loaded, the installed API can inspect it directly:
+Structure text, identifiers, and prepared examples have explicit loading actions. A local file picker only supplies bytes to \code{session.loadStructure}; it is not an alternate molecular loader:
 
 \begin{lstlisting}
+await api.execute({action:"session.loadStructure", args:{
+  format:"pdb", content:pdbText, name:"starting complex"}})
+// alternatives:
+await api.execute({action:"session.loadIdentifier",
+  args:{value:"5OVE", kind:"pdb"}})
+await api.execute({action:"session.loadFixture",
+  args:{fixtureId:"trp-cage"}})
 await api.execute({action:"session.inspect",
   args:{scope:"all", includeCoordinates:false, maximumAtoms:500}})
 await api.execute({action:"view.setDisplay",
@@ -97,7 +104,7 @@ await api.execute({action:"view.setDisplay",
         showPocketAtoms:true, showInteractions:true}})
 \end{lstlisting}
 
-Registered prospective routes and public structure stories have guarded loaders (\code{designRoute.load} and \code{structureStory.load}); neither is a general-purpose arbitrary-file loader.
+Registered prospective routes and public structure stories retain their narrower guarded loaders (\code{designRoute.load} and \code{structureStory.load}).
 
 \workflowsection{B.2}{Prepare a protein for local molecular design}{Experimental current surface}{I have an experimental protein structure. What must happen before I can safely edit a ligand or run a local calculation?}
 
@@ -183,7 +190,17 @@ For a PDB structure, set the pH and histidine policy during preparation. The imp
 \contractrow{Boundary}{Enumeration weights do not resolve coupled microscopic states or protein-induced pKa shifts.}
 \end{skillcontract}
 
-Ligand protonation enumeration is not yet a dedicated Chemist Actions route. An agent must therefore treat it as a human-reviewed interface step, while protein protonation is carried within \code{protein.prepare}. The absence of an API action is an execution boundary, not permission to invent one.
+Ligand-state enumeration and application use the same bounded worker and graph replacement as the visible pH controls:
+
+\begin{lstlisting}
+await api.execute({action:"ligand.enumerateProtonation",
+  args:{pH:7.4, maximumStates:16}})
+await api.execute({action:"ligand.applyProtonation", args:{index:0}})
+await api.execute({action:"session.inspect",
+  args:{scope:"ligand", includeCoordinates:false}})
+\end{lstlisting}
+
+Enumeration does not select a chemically correct state. The chosen index remains a reviewable scientific decision; protein protonation is carried separately within \code{protein.prepare}.
 
 \workflowsection{B.4}{Edit atoms, bonds, charges, and stereochemistry in 3D}{Current browser surface}{How do I change the chemistry without corrupting the molecular graph or losing the ability to undo the operation?}
 
@@ -210,7 +227,7 @@ The synchronized 2D and 3D views are two ways of selecting the same graph. Chemi
 
 A synchronous mutation error restores the transaction snapshot. If the chemistry is valid but optional coordinate polishing fails, the valid graph can remain committed and the cleanup error is recorded. Fused-aromatic edits that cannot preserve the aromatic graph are rejected rather than approximated.
 
-Distance, angle, dihedral, and general stereochemistry controls are currently graphical-interface operations. The public API exposes specific atom/bond chemistry actions; a representative sequence follows the contract.
+Distance, angle, dihedral, atom translation, and graph-chemistry controls all have named actions. A representative graph edit follows; coordinate-only edits use \code{geometry.setInternalCoordinate} or \code{geometry.translateAtoms} and remain separate from \code{chemistry.finish}.
 
 \begin{skillcontract}{edit\_molecular\_graph}
 \contractrow{Goal}{Apply an explicit, reviewable graph or local-geometry change while preserving atomic lineage and undoability.}
@@ -226,10 +243,13 @@ Distance, angle, dihedral, and general stereochemistry controls are currently gr
 
 \begin{lstlisting}
 await api.execute({action:"view.setMode", args:{mode:"build"}})
+await api.execute({action:"build.setTool", args:{tool:"select"}})
 await api.execute({action:"selection.replace", args:{atomIds:[anchorId]}})
 await api.execute({action:"chemistry.addAtom",
   args:{attachedToAtomId:anchorId, element:"Cl"}})
 await api.execute({action:"chemistry.finish", args:{}})
+await api.execute({action:"geometry.setInternalCoordinate",
+  args:{atomIds:[a,b,c,d], value:172.0, moveConnected:true}})
 await api.execute({action:"session.inspect",
   args:{scope:"ligand", includeCoordinates:true, maximumAtoms:200}})
 \end{lstlisting}
@@ -238,16 +258,16 @@ The serialized value \code{build} selects the user-facing Design workspace; it i
 
 \workflowsection{B.5}{Grow an analogue by adding and positioning fragments}{Current Design workspace; pose-aware extensions experimental}{How do I add the substituent I have in mind while preserving the useful context of the parent structure?}
 
-Fragment growth combines a graph edit with an initial 3D placement. Those are separate scientific problems: the new molecule must first be chemically correct, and its coordinates must then be a plausible starting point for relaxation or pose maintenance. Molarium's Design workspace stages fragment templates and commits the resulting chemistry through the same transaction system used for simpler edits.
+Fragment growth combines a graph edit with an initial 3D placement. Those are separate scientific problems: the new molecule must first be chemically correct, and its coordinates must then be a plausible starting point for relaxation or pose maintenance. Molarium's Design workspace stages a fragment template and applies its attachment as one undoable edit. Subsequent atom, bond, charge, hydrogen, or stereochemical changes use the pending chemistry transaction described above.
 
 \subhead{Human workflow}
 
 \begin{enumerate}
 \item If the parent is bound and its pose matters, capture the reference pose \textbf{before} beginning the topology change. Retain any explicit core or interaction choices needed for later pose maintenance.
 \item Select the ligand attachment atom and stage the desired fragment or template. Confirm which atoms are new, which parent atom remains the anchor, and which bond is to be formed.
-\item Create the attachment and perform any associated leaving-group, bond-order, formal-charge, hydrogen, or stereochemical edits within the same transaction.
+\item Apply the attachment as one undoable fragment edit. Perform any associated leaving-group, bond-order, formal-charge, hydrogen, or stereochemical changes as a subsequent pending chemistry transaction.
 \item Use distance, angle, and dihedral controls to give the new group a sensible initial orientation. These controls establish a starting geometry; they do not score the binding site.
-\item Finish the chemistry, then inspect the attachment, local valence, stereochemistry, ring geometry, clashes, and preserved parent coordinates. Relax the structure or invoke reference-guided pose maintenance as a separate step.
+\item Finish any subsequent pending chemistry, then inspect the attachment, local valence, stereochemistry, ring geometry, clashes, and preserved parent coordinates. Relax the structure or invoke reference-guided pose maintenance as a separate step.
 \end{enumerate}
 
 \subhead{How should I judge the result?}
@@ -260,15 +280,22 @@ A successful fragment operation means that the intended graph was built and sani
 \contractrow{Goal}{Construct one intended analogue and a reviewable starting geometry while retaining parent atom lineage and, when requested, reference-pose context.}
 \contractrow{Preconditions}{Editable ligand and attachment atom identified; fragment chemistry specified; reference captured first if pose continuity matters.}
 \contractrow{Inputs}{Parent and attachment atom identifiers; fragment/template; new bond; associated deletions, charge or stereochemical edits; optional geometry targets.}
-\contractrow{Procedure}{Capture reference if needed; stage fragment; perform one coherent transaction; set only the geometry needed for a starting pose; finish and inspect; relax or sample separately.}
-\contractrow{State mutation}{Finish commits the new graph, reconciles hydrogens, and invalidates prior parameterization. A later pose or optimization changes coordinates separately.}
+\contractrow{Procedure}{Capture reference if needed; stage and attach the fragment; perform and finish any associated atom/bond transaction; set only the geometry needed for a starting pose; inspect; relax or sample separately.}
+\contractrow{State mutation}{Attachment commits the fragment graph and an undo snapshot immediately. Finishing a later atom/bond transaction commits those additional changes. A later pose or optimization changes coordinates separately.}
 \contractrow{Evidence}{Parent and product inspection, atom mapping, edit actions, transaction outcome, initial placement rationale, and any preserved reference/contact record.}
-\contractrow{Success}{The analogue graph is correct and sanitized; the initial geometry has no obvious construction pathology and is suitable for the chosen next workflow.}
-\contractrow{On failure}{Correct or discard the pending transaction. Do not treat failed cleanup as permission to accept an invalid graph or arbitrary pose.}
+\contractrow{Success}{The attached analogue graph is correct on inspection; any subsequent chemistry transaction is sanitized; the initial geometry has no obvious construction pathology and is suitable for the chosen next workflow.}
+\contractrow{On failure}{A failed attachment leaves the prior molecule in place. Correct or discard any subsequent pending chemistry transaction. Do not treat failed cleanup as permission to accept an invalid graph or arbitrary pose.}
 \contractrow{Boundary}{Fragment growth is not combinatorial design, synthesis planning, global docking, or proof that the new group is energetically favored.}
 \end{skillcontract}
 
-Generic fragment-template staging and geometry controls are interface-only. The public API supports individual atom/bond edits and registered \code{designRoute.applyStep} operations. For a registered, hash-pinned prospective route, an agent can stage a predefined product graph. \code{attachmentAtomId} is required only when that route declares designer-directed \code{spatialIntent}; the SOS1 route does not:
+Generic fragment-template staging and attachment use \code{fragment.stage} and \code{fragment.attach}; individual atom/bond edits and registered \code{designRoute.applyStep} operations remain available. For a registered, hash-pinned prospective route, an agent can stage a predefined product graph. \code{attachmentAtomId} is required only when that route declares designer-directed \code{spatialIntent}; the SOS1 route does not:
+
+\begin{lstlisting}
+await api.execute({action:"fragment.stage",
+  args:{smiles:"c1ccncc1", name:"pyridyl", attachmentIndex:0}})
+await api.execute({action:"fragment.attach",
+  args:{attachedToAtomId:anchorId}})
+\end{lstlisting}
 
 \begin{lstlisting}
 await api.execute({action:"designRoute.load",
@@ -346,7 +373,15 @@ await api.execute({action:"session.inspect",
   args:{scope:"pocket", includeCoordinates:true, maximumAtoms:500}})
 \end{lstlisting}
 
-This is not the agent equivalent of a general Simulate calculation. The current API has no action for general Simulate jobs, dynamics, or trajectories; those remain human-operated until a dedicated action is added.
+General Simulate jobs use \code{calculation.run}; the action accepts only the installed engine/job combinations and the same bounded options as the interface. Selecting a returned frame is explicit because it writes those coordinates into the current molecule:
+
+\begin{lstlisting}
+await api.execute({action:"calculation.run", args:{
+  job:"dynamics", method:"stormm",
+  options:{stormmSystem:"current", steps:1000,
+           savedFrameCount:20, replicaCount:32}}})
+await api.execute({action:"calculation.selectFrame", args:{index:19}})
+\end{lstlisting}
 
 \workflowsection{B.7}{Explore conformations with Conformer Arena}{Experimental current surface}{What other conformations can this molecule adopt, and how sensitive is the answer to the generation and refinement method?}
 
@@ -379,7 +414,15 @@ The workflow shows which basins the declared finite search found and how the sup
 \contractrow{Boundary}{Not exhaustive conformational sampling, a Boltzmann ensemble, solution free energies, or proof of bioactive-conformation probability.}
 \end{skillcontract}
 
-Conformer Arena does not yet have a dedicated Chemist Actions route. An agent may operate it only through separately reviewed interface automation or a future public action; it must not imitate the result through direct state injection.
+Conformer search and Arena use \code{calculation.run}; result selection uses \code{calculation.selectConformer}. Arena axes, filtering, and sorting are presentation controls exposed through \code{calculation.setConformerView}; they do not create new conformers:
+
+\begin{lstlisting}
+await api.execute({action:"calculation.run", args:{
+  job:"conformers", method:"stormm",
+  options:{conformerCount:32, conformerEffort:"standard",
+           conformerClusterRms:0.75, conformerArena:true}}})
+await api.execute({action:"calculation.selectConformer", args:{rank:0}})
+\end{lstlisting}
 
 \workflowsection{B.8}{Predict a short single-chain protein structure}{Experimental current surface; connected mode only}{Can Molarium create a protein structure from sequence, and is this the co-folding workflow?}
 
@@ -392,7 +435,7 @@ The Fold Protein panel combines a configured remote MSA service with local OpenF
 \begin{enumerate}
 \item Enter one amino-acid sequence using the standard residue alphabet or X. The current maximum length is 128 residues, using 64- or 128-residue feature buckets.
 \item Inspect and accept the configured MSA endpoint and network boundary. First use may require approximately 540 MB of model assets.
-\item Choose recycle settings; the current default is three. Run and monitor MSA and inference progress. Cancel aborts the active MSA/prediction controller.
+\item Run and monitor MSA and inference progress. The current browser model executes three recycle passes; this count is not user-configurable. Cancel aborts the active MSA/prediction controller.
 \item On success, Molarium loads the prediction as the current molecule. Inspect chain completeness, residue mapping, gross geometry, and suitability for the downstream question before replacing other work.
 \item Export the predicted structure as PDB if it must persist. Preparation and local relaxation are separate decisions.
 \end{enumerate}
@@ -402,16 +445,23 @@ The current path does not use templates or perform Amber relaxation. It creates 
 \begin{skillcontract}{predict\_protein\_structure}
 \contractrow{Goal}{Predict coordinates for one short protein sequence using the declared MSA service and local OpenFold model.}
 \contractrow{Preconditions}{Connected mode; configured MSA endpoint; sequence length at most 128; network and model-asset use accepted.}
-\contractrow{Inputs}{One sequence; MSA endpoint; recycle settings.}
+\contractrow{Inputs}{One sequence and MSA endpoint; the current model uses three recycle passes.}
 \contractrow{Procedure}{Validate sequence; disclose external transmission; obtain and validate MSA; run the matching ONNX bucket; inspect result; export before replacing it.}
 \contractrow{State mutation}{A successful prediction replaces the current molecule. Failure does not load a partial structure.}
-\contractrow{Evidence}{Input sequence and endpoint, model/bucket and recycle settings, progress/failure record, prediction metadata, and exported PDB where required.}
+\contractrow{Evidence}{Input sequence and endpoint, model/bucket and executed recycle count, progress/failure record, prediction metadata, and exported PDB where required.}
 \contractrow{Success}{A complete finite prediction is returned for the declared input and passes basic structural inspection for the intended next step.}
 \contractrow{On failure}{Report MSA, archive, rate-limit, maintenance, timeout, feature, asset, or inference failure; do not fabricate a partial structure.}
 \contractrow{Boundary}{No ligand co-folding, multimer prediction, templates, Amber relaxation, experimental validation, or production preparation.}
 \end{skillcontract}
 
-This workflow has no dedicated Chemist Actions action in the current manifest. The contract documents how an agent must reason about a human-visible workflow; it does not imply an installed autonomous route.
+The workflow is exposed as \code{protein.predict}; \code{protein.cancelPrediction} aborts the active request. The MSA endpoint remains an explicit network boundary rather than a hidden service call:
+
+\begin{lstlisting}
+await api.execute({action:"protein.predict", args:{
+  sequence:fastaText, msaEndpoint:"https://msa.example/api"}})
+// while active:
+await api.execute({action:"protein.cancelPrediction", args:{}})
+\end{lstlisting}
 
 \workflowsection{B.9}{Maintain an experimental pose while changing ligand chemistry}{Experimental current surface}{I trust the experimental pose of my starting ligand. How can I search for a plausible pose of an edited analogue without discarding what I already know?}
 
@@ -496,7 +546,7 @@ Design History campaign & What content-addressed structures, decisions, commits,
 
 \subhead{Replay workflow}
 
-Designer Moves import begins from a blank canvas and performs script-level validation of schema, recognized action names, binding order, and forbidden shortcut keys. Individual action arguments and molecular preconditions are checked when each step executes. Conversion from an audit includes only completed public actions and excludes campaign administration. A resulting script does not embed an arbitrary loaded starting molecule and is therefore not necessarily a complete standalone reconstruction; replay requires a reproducible loader or a separately supplied starting state.
+Designer Moves import begins from a blank canvas and performs script-level validation of schema, recognized action names, binding order, and forbidden shortcut keys. Individual action arguments and molecular preconditions are checked when each step executes. Conversion from an audit includes only completed public actions and excludes campaign administration. A standalone script therefore begins with an explicit reproducible loader such as \code{session.loadStructure}, \code{session.loadIdentifier}, \code{session.loadFixture}, or \code{designRoute.load}; it cannot depend on an unrecorded starting scene.
 
 \begin{enumerate}
 \item Export any unsaved molecular or workflow records before importing a script; import intentionally clears the existing scene.
@@ -512,7 +562,7 @@ Replay provides play/pause, previous/next-step review, stable captions, and a se
 
 Design History is a live browser feature. \code{campaign.create} creates a locally persisted campaign and atomically commits the visible molecule. \code{campaign.commitCurrent} stores a complete graph-and-coordinate snapshot together with completed public actions since the prior commit. Branch switching restores the exact head molecule and refuses to proceed when the visible molecular state is dirty. Merge records the currently visible result with two parents; it is not an automatic structural merge. Decisions attach disposition, rationale, reason codes, and optional evidence to a commit. Verification recomputes content hashes, the append-only event chain, commit relationships, and branch heads derived from that chain.
 
-Campaign JSON and the active branch are stored in browser IndexedDB. Reload restores the graph and coordinates at the active branch head; it does not restore parameter tables, docking candidates, calculation frames, view state, or the complete workbench session. Import verifies the campaign and requires a restorable graph/coordinate snapshot before mutating live state. Closing a campaign clears the active pointer without deleting its commits. A live commit can attach an action script marked \code{coverage.kind:"public-actions-only"} and \code{coverage.complete:false}; the complete molecular snapshot is authoritative. Campaign-management actions are excluded from molecule replay scripts so replay cannot recursively administer its own history.
+Campaign JSON and the active branch are stored in browser IndexedDB. Reload restores the graph and coordinates at the active branch head; it does not restore parameter tables, docking candidates, calculation frames, view state, or the complete workbench session. \code{campaign.import} verifies the canonical JSON and requires a restorable graph/coordinate snapshot before mutating live state; \code{campaign.export} returns that canonical JSON. Closing a campaign clears the active pointer without deleting its commits. A live commit can attach a script of completed molecular Chemist Actions; the complete molecular snapshot remains authoritative. Campaign-management actions are excluded from molecule replay scripts so replay cannot recursively administer its own history.
 
 \subhead{Choose the export that matches the handoff}
 
@@ -547,7 +597,7 @@ PNG or share URL & A visual snapshot or current/registered URL & A reusable mole
 \contractrow{Evidence}{Exported files, schema and version identifiers, hashes where recorded, replay audit, and a statement of assumptions and unresolved failures.}
 \contractrow{Success}{The recipient can identify the starting state, reproduce guarded actions where supported, inspect the method and result, and distinguish accepted decisions from candidates.}
 \contractrow{On failure}{Stop on schema, action, binding, hash, or referenced-content mismatch. Do not describe a partial replay as equivalent to a completed audit.}
-\contractrow{Boundary}{No complete project bundle or automatic capture of every UI operation, calculation record, view state, or arbitrary loaded starting molecule. A partial action script is not a substitute for the authoritative snapshot.}
+\contractrow{Boundary}{No complete project bundle or automatic capture of browser-native transport, calculation binaries, or every transient view gesture. An action script is not a substitute for the authoritative snapshot.}
 \end{skillcontract}
 
 \begin{lstlisting}
@@ -578,8 +628,8 @@ The practical agent pattern is:
 \begin{lstlisting}
 const manifest = api.describe();          // discover installed authority
 await api.execute({action:"session.inspect", args:{scope:"all"}})
-// choose one explicit action allowed by the scientific contract
-await api.execute({action:"...", args:{...}})
+await api.execute({action:"geometry.setInternalCoordinate", args:{
+  atomIds:[a,b,c,d], value:172.0, moveConnected:true}})
 await api.execute({action:"session.inspect", args:{scope:"all"}})
 await api.execute({action:"campaign.commitCurrent",
   args:{message:"Accepted state after declared check"}})
@@ -588,7 +638,7 @@ await api.execute({action:"campaign.recordDecision",
 await api.execute({action:"campaign.verify", args:{}})
 \end{lstlisting}
 
-The ellipsis is not a wildcard action; it stands for one explicit name returned by the manifest. Workflows without a dedicated public action remain human-reviewed or unavailable to autonomous execution. This prevents a narrative skill contract from overstating what the installed software can do.
+The manifest is the executable authority: a narrative skill contract cannot add an action, relax argument validation, or bypass a molecular precondition. Scientific review remains necessary even when an operation is exposed to both interface and agent.
 
 \lead{Handoff rule.}Export the structure when the recipient needs coordinates; export the calculation record when the recipient must judge the method; export the Designer Moves script together with its required starting state when the recipient must replay operations; and commit to Design History when the recipient must recover branches, decisions, and accepted molecular states. Hashes detect alteration of the serialized record. They do not establish authorship, chemical equivalence, or scientific validity.
 

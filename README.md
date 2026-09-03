@@ -3,7 +3,7 @@
 Molarium is a local-first molecular viewer, builder, and simulation workbench.
 Most calculations run inside the browser with WebAssembly or WebGPU.
 
-Molarium's original code is available under the [MIT License](./LICENSE). Bundled software,
+Molarium's original code is available under the [Apache License 2.0](./LICENSE). Bundled software,
 model parameters, force fields, and scientific data remain under their respective licenses.
 The original vector identity is available as a reusable [logo](./assets/molarium-logo.svg) and
 [mark](./assets/molarium-mark.svg).

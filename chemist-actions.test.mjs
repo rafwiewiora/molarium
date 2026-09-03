@@ -20,6 +20,11 @@ assert(Object.hasOwn(api.describe().actions, 'view.focusComponent'));
 assert(Object.hasOwn(api.describe().actions, 'view.focusAtoms'));
 assert(Object.hasOwn(api.describe().actions, 'view.highlightAtoms'));
 assert(Object.hasOwn(api.describe().actions, 'view.setDisplay'));
+assert(Object.hasOwn(api.describe().actions, 'session.loadStructure'));
+assert(Object.hasOwn(api.describe().actions, 'geometry.setInternalCoordinate'));
+assert(Object.hasOwn(api.describe().actions, 'calculation.run'));
+assert(Object.hasOwn(api.describe().actions, 'campaign.import'));
+assert(Object.hasOwn(api.describe().actions, 'designerScript.play'));
 assert(Object.hasOwn(api.describe().actions, 'pose.addContact'));
 assert(Object.hasOwn(api.describe().actions, 'pose.forgetContact'));
 assert(Object.hasOwn(api.describe().actions, 'pose.updateReceptorReference'));
@@ -40,6 +45,10 @@ await assert.rejects(() => api.execute({ action:'view.setMode', args:{ callback:
 await assert.rejects(() => api.execute({ action:'view.setMode', args:{ value:Infinity } }), /finite/);
 const polluted = Object.create(null); polluted.mode = 'build';
 await assert.rejects(() => api.execute({ action:'view.setMode', args:polluted }), /plain JSON/);
+const coordinateText = 'ATOM  '.repeat(20000);
+await api.execute({ action:'session.loadStructure', args:{ content:coordinateText, format:'pdb' } });
+assert.equal(calls.at(-1).args.content.length, coordinateText.length,
+  'coordinate-bearing structure payloads are accepted above the old 32 KiB control limit');
 
 const order = [];
 routes['chemistry.finish'] = undefined;
@@ -58,7 +67,7 @@ assert.equal(api.history().length, 3, 'audit history is bounded');
 assert(api.history().every((record) => record.status === 'completed'));
 const copy = api.history(); copy[0].action = 'tampered';
 assert.notEqual(api.history()[0].action, 'tampered', 'history returns a defensive copy');
-assert.equal(persisted.length, 3);
+assert.equal(persisted.length, 4);
 assert(persisted.every((record) => record.status === 'completed'),
   'accepted actions are offered to the durable audit adapter after completion');
 assert(persisted.every((record) => record.result?.observed === record.action),

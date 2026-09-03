@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""Compose the four reviewed SOS1 structure-story frames used in the paper."""
+"""Compose Figure 2 from synchronized result frames in the interface replay."""
 
+from argparse import ArgumentParser
+import json
 from pathlib import Path
 import sys
 
@@ -12,13 +14,19 @@ if VENDOR.exists():
 from PIL import Image, ImageDraw, ImageFont
 
 
-SOURCE = ROOT / "outputs" / "design-history" / "sos1-hit-only-growth-clash-v7" / "recovered-clean-v4-final" / "qa"
+DEFAULT_RENDER = (
+    ROOT / "outputs" / "design-history" / "sos1-hit-only-growth-clash-v7"
+    / "molarium-interface-final"
+)
 OUTPUT = ROOT / "paper" / "figures" / "fig2_sos1_hit_to_bay293.png"
-FRAMES = [
-    ("A", SOURCE / "keyframe-01.png"),
-    ("B", SOURCE / "keyframe-02.png"),
-    ("C", SOURCE / "keyframe-03.png"),
-    ("D", SOURCE / "keyframe-05.png"),
+
+# These identify completed interface checkpoints, not video timestamps. The
+# renderer verifies that every result is visibly presented before capturing it.
+PANELS = [
+    ("A", 5, "view.focusComponent"),
+    ("B", 29, "view.highlightAtoms"),
+    ("C", 32, "view.highlightAtoms"),
+    ("D", 49, "view.highlightAtoms"),
 ]
 
 
@@ -35,14 +43,46 @@ def font(size: int):
     return ImageFont.load_default()
 
 
+def result_capture(manifest, render_dir: Path, action_number: int, action: str):
+    timeline = manifest["presentationScript"]["timeline"]
+    step = timeline[action_number - 1]
+    if step["actionNumber"] != action_number or step["action"] != action:
+        raise ValueError(
+            f"Action {action_number} is {step['action']!r}, expected {action!r}"
+        )
+    matches = [
+        capture for capture in manifest["captures"]
+        if capture.get("actionIndex") == action_number - 1
+        and capture.get("action") == action
+        and capture["label"].startswith(f"{action_number}. Result ")
+    ]
+    if len(matches) != 1:
+        raise ValueError(
+            f"Expected one synchronized result capture for action {action_number}; "
+            f"found {len(matches)}"
+        )
+    path = render_dir / matches[0]["qaFilename"]
+    if not path.exists():
+        raise FileNotFoundError(path)
+    return path
+
+
 def main():
+    parser = ArgumentParser()
+    parser.add_argument("--render-dir", type=Path, default=DEFAULT_RENDER)
+    parser.add_argument("--output", type=Path, default=OUTPUT)
+    args = parser.parse_args()
+    manifest_path = args.render_dir / "render-manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+
     images = []
-    for label, path in FRAMES:
-        if not path.exists():
-            raise FileNotFoundError(path)
+    for label, action_number, action in PANELS:
+        path = result_capture(manifest, args.render_dir, action_number, action)
         images.append((label, Image.open(path).convert("RGB")))
 
     panel_w, panel_h = images[0][1].size
+    if any(image.size != (panel_w, panel_h) for _, image in images):
+        raise ValueError("All interface frames must use the same viewport")
     gutter = 18
     canvas = Image.new("RGB", (panel_w * 2 + gutter, panel_h * 2 + gutter), "white")
     draw = ImageDraw.Draw(canvas)
@@ -52,8 +92,6 @@ def main():
         x = (index % 2) * (panel_w + gutter)
         y = (index // 2) * (panel_h + gutter)
         canvas.paste(image, (x, y))
-        # Put the panel identifier in the molecular viewport rather than over the
-        # story title, preserving the scientific labels already in each frame.
         badge_x, badge_y = x + 354, y + 18
         draw.rounded_rectangle(
             (badge_x, badge_y, badge_x + 66, badge_y + 66),
@@ -64,9 +102,9 @@ def main():
         )
         draw.text((badge_x + 17, badge_y + 7), label, font=label_font, fill="white")
 
-    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    canvas.save(OUTPUT, optimize=True, dpi=(300, 300))
-    print(OUTPUT)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    canvas.save(args.output, optimize=True, dpi=(300, 300))
+    print(args.output)
 
 
 if __name__ == "__main__":

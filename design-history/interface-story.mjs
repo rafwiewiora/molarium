@@ -5,8 +5,16 @@ const INITIAL_FOCUS_STEP = Object.freeze({ action:'view.focusComponent',
   caption:'Center the hit and the local pocket where every design decision will be made' });
 const DISPLAY_STEP = Object.freeze({ action:'view.setDisplay', args:Object.freeze({
   representation:'cartoon', showHydrogens:false, showInteractions:false,
-  showPocketAtoms:true, showHulls:false,
+  showPocketAtoms:true, showHulls:false, showStericClashes:true,
+  colorTheme:'design-hit', changeMarkers:'halo',
 }), caption:'Strip away visual noise so the hit and its binding pocket are easy to read' });
+const PREDICTION_DISPLAY_STEP = Object.freeze({ action:'view.setDisplay',
+  args:Object.freeze({ colorTheme:'design-prediction' }),
+  caption:'Mark the transition from experimental hit to prospective prediction' });
+const PHE890_LABEL = Object.freeze({ chain:'A', residueIndex:890,
+  label:'Phe890', tone:'gold' });
+const LYS898_LABEL = Object.freeze({ chain:'A', residueIndex:898,
+  label:'Lys898', tone:'blue' });
 const CHANGED_ATOM_RESULT_PATH = Object.freeze({
   'designRoute.applyStep':'designStep.changedAtomIds',
   'pose.applySidechainRotamer':'sidechainRotamer.changedAtomIds',
@@ -27,6 +35,7 @@ export function buildPocketInterfaceStory(sourceScript, { sourcePath = null,
   sourceSha256 = null } = {}) {
   validateActionScript(sourceScript);
   let activeStepId = null;
+  let predictionThemeApplied = false;
   const actions = sourceScript.actions.flatMap((step, index) => {
     if (step.action === 'designRoute.applyStep') activeStepId = step.args?.stepId || null;
     const capturedStep = structuredClone(step);
@@ -34,19 +43,22 @@ export function buildPocketInterfaceStory(sourceScript, { sourcePath = null,
     const binding = resultPath ? `changed-atoms-${index + 1}` : null;
     if (binding) capturedStep.capture = { ...(capturedStep.capture || {}),
       [binding]:resultPath };
-    const presentationAction = step.action === 'pose.apply'
-      || step.action === 'optimization.run' ? 'view.highlightAtoms' : 'view.focusAtoms';
+    const clearRelaxationMarkers = step.action === 'optimization.run';
+    const residueLabels = step.action === 'pose.applySidechainRotamer'
+      || activeStepId === 'open-phe890-pocket'
+      ? [PHE890_LABEL]
+      : step.action === 'pose.apply' && activeStepId === 'scaffold-rewrite'
+        ? [PHE890_LABEL, LYS898_LABEL] : [];
+    const switchToPrediction = step.action === 'designRoute.applyStep'
+      && !predictionThemeApplied;
+    if (switchToPrediction) predictionThemeApplied = true;
     return [capturedStep,
       ...(step.action === 'protein.prepare'
         ? [structuredClone(DISPLAY_STEP), structuredClone(INITIAL_FOCUS_STEP)] : []),
-      ...(binding ? [{ action:presentationAction, args:{
-        atomIds:{ $binding:binding },
-        ...(presentationAction === 'view.focusAtoms'
-          ? { contextRadiusAngstrom:3.8, highlight:true,
-            ...(activeStepId === 'scaffold-rewrite' ? { residueLabels:[
-              { chain:'A', residueIndex:890, label:'Phe890' },
-              { chain:'A', residueIndex:898, label:'Lys898' },
-            ] } : {}) } : {}),
+      ...(switchToPrediction ? [structuredClone(PREDICTION_DISPLAY_STEP)] : []),
+      ...(binding ? [{ action:'view.highlightAtoms', args:{
+        atomIds:clearRelaxationMarkers ? [] : { $binding:binding },
+        ...(residueLabels.length ? { residueLabels:structuredClone(residueLabels) } : {}),
       }, caption:changedRegionCaption(step.action, activeStepId) }] : []),
     ];
   });
@@ -58,7 +70,7 @@ export function buildPocketInterfaceStory(sourceScript, { sourcePath = null,
       ...(sourcePath ? { path:sourcePath } : { schema:sourceScript.schema,
         label:sourceScript.label, actionCount:sourceScript.actions.length }),
       ...(sourceSha256 ? { sha256:sourceSha256 } : {}),
-      transformation:'Capture each public mutation result; focus once on a newly edited region, then highlight pose and relaxation changes without changing the comparison camera or displayed context. No scientific action request removed or altered.',
+      transformation:'Capture each public mutation result; focus once on the starting ligand and retain that pocket camera for all later highlights. Relaxation markers are cleared because before/after geometry is compared in place. No scientific action request removed or altered.',
     },
   });
 }

@@ -2,7 +2,7 @@
   "name": "molarium-molecular-modeler",
   "version": "1.0.0",
   "private": true,
-  "license": "MIT",
+  "license": "Apache-2.0",
   "scripts": {
     "build:web": "node validation/validate-registry.mjs && bun scripts/build-web.mjs",
     "assets:download": "bun scripts/fetch-assets.mjs",

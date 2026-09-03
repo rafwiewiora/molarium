@@ -472,13 +472,16 @@ merge algorithm. Three linked record types answer different provenance
 questions:
 
 \paragraph{Current product boundary.}
-The live application currently keeps at most 500 action records in memory.
-Clearing the scene clears that audit. Durability therefore requires an explicit
-\emph{Export API moves} or \emph{Export replay log} download; there is no hidden
-server sync or automatic molecular version control. The append-only ledger,
-commit, branch, decision, and verification functions exist in the repository and
-drive standalone builders and reviews, but the main interface does not yet turn
-a live session into ledger commits with one click.
+The live application keeps at most 500 Chemist Actions records in memory, and
+clearing the scene clears that transient audit. The Design History panel and
+public \texttt{campaign.*} actions can create a locally persisted campaign,
+atomically commit the visible molecule, create or restore branches, merge branch
+histories, record decisions, verify the append-only record, and import or export
+canonical campaign JSON. There is no hidden server sync or automatic commit:
+the user or agent must explicitly save a state. Each campaign commit contains a
+complete molecular snapshot; its attached action script contains the completed
+public operations captured since the preceding commit and remains marked as
+partial coverage rather than a complete browser-session recording.
 
 \begin{table}[htbp]
   \centering
@@ -538,8 +541,11 @@ hash. A migration record stores both hashes and is accepted only when replacing
 the schema identifier reconstructs the exact frozen bytes; any other field
 change still fails verification. Public route actions are
 \texttt{designRoute.load}, \texttt{designRoute.applyStep}, and
-\texttt{designRoute.inspect}; they take a \texttt{routeId}. No compatibility
-alias is exposed. Campaign-ledger operations remain a separate concern.
+\texttt{designRoute.inspect}. The loader takes a \texttt{routeId}; applying a
+step takes a \texttt{stepId} and, only for routes with designer-directed spatial
+intent, an \texttt{attachmentAtomId}; inspection takes no arguments. No
+compatibility alias is exposed. Campaign-ledger operations remain a separate
+concern.
 
 The fingerprint seals one exact recorded representation. Two chemically
 equivalent SMILES, tautomers, protonation states, or atom orderings can still
@@ -609,8 +615,9 @@ Replay rules:
   \item schema \texttt{molarium.chemist-action-script/v1}; standardized JSON;
     unknown actions, executable code, direct coordinate replacement, and
     unreasonably large or deeply nested inputs are rejected;
-  \item imported files are capped at 2~MiB; one action's arguments are capped at
-    32~KiB, eight nested levels, and 2,048 values;
+  \item Designer Moves JSON files must be smaller than 2~MB; each serialized
+    API request and its argument object are capped at 8~MiB for ASCII JSON,
+    eight nested levels, and 2,048 JSON nodes;
   \item an action may give a name to a returned value, such as a stable atom ID;
     a later action may reuse that name without embedding new code;
   \item the runner executes one allowed action at a time through
@@ -663,7 +670,7 @@ was:
   \item the complete exploration audit contains 89 completed API calls,
     including three Phe890/pose branches, nine undo calls, and deterministic
     reselection; these are operational records, not formal ledger decisions;
-  \item the interface presentation adds 15 display-only actions, for 48 replay
+  \item the interface presentation adds 16 display-only actions, for 49 replay
     steps in the film;
   \item later crystals: opened only after four prediction checkpoints and the
     audit were hashed;
@@ -789,16 +796,15 @@ Apply changes the molecular state.
 
 The film shows discrete before/after molecular states. It does not interpolate
 coordinates or present the transition as molecular dynamics. Result frames are
-held for roughly 0.9--3.4~s so a reader can inspect new information. The current
-62.58-s interface cut condenses approximately 908.5~s of durations in its
-48-action audit; full operation durations remain in the audit and render
-manifest. The film is therefore an explanatory replay, not a runtime benchmark.
+held long enough to inspect new information. The current 69.25-s interface cut
+condenses approximately 420.7~s of durations in its 48-action render audit;
+full operation durations remain in the audit and render manifest. The film is
+therefore an explanatory replay, not a runtime benchmark.
 
-The current replay code can focus on heavy atoms displaced by at least
-0.08~\AA{}, highlight up to the 24 largest changes, and retain their local
-context. The existing complete MP4 predates that changed-region mode and uses
-component-level focus. It must be regenerated before submission if the paper
-claims that red changed-atom emphasis appears in the delivered cut.
+The current replay can focus on heavy atoms displaced by at least 0.08~\AA{},
+highlight up to the 24 largest changes, and retain their local context. The
+current complete MP4 uses this changed-region emphasis where the replay calls
+for it.
 
 Tyr884 is separate historical context. Comparing fragment-bound 6EPM with 5OVE
 shows that the inhibitory Tyr884 arrangement already exists in the starting

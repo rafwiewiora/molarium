@@ -70,7 +70,7 @@
 
       <main class="app-main">
         <aside class="panel panel-left">
-          <section class="card story-transport-card" id="designer-story-dock">
+          <section class="card story-transport-card hidden" id="designer-story-dock">
             <section class="designer-move-tools" id="designer-move-tools">
               <h2 class="compact-label build-section-label">Designer moves</h2>
               <div class="designer-story-transport" aria-label="Designer story playback">
@@ -249,6 +249,23 @@
                 <option value="both">Cartoon + atoms</option>
               </select>
             </label>
+            <label class="select-row">
+              <span>Coloring</span>
+              <select id="display-theme-select">
+                <option value="standard">Standard</option>
+                <option value="design-hit">Design story · hit</option>
+                <option value="design-prediction">Design story · prediction</option>
+                <option value="design-validation">Design story · validation</option>
+              </select>
+            </label>
+            <label class="select-row">
+              <span>Change marks</span>
+              <select id="change-marker-select">
+                <option value="rings">Atom rings</option>
+                <option value="halo">Subtle halo</option>
+                <option value="none">Hidden</option>
+              </select>
+            </label>
             <div class="checkbox-list">
               <label><input type="checkbox" id="vdw-toggle" /> <span>Show van der Waals spheres</span></label>
               <label><input type="checkbox" id="hull-toggle" checked /> <span>Show convex hulls</span></label>
@@ -258,6 +275,7 @@
                 <button type="button" id="pocket-mode-toggle" aria-pressed="false" title="Switch between the 5 Å pocket and residues making displayed ligand contacts">5 Å</button>
               </div>
               <label><input type="checkbox" id="interaction-toggle" checked /> <span id="interaction-toggle-text">Show H-bonds &amp; π-stacks</span></label>
+              <label><input type="checkbox" id="steric-clash-toggle" /> <span id="steric-clash-toggle-text">Show severe clashes</span></label>
             </div>
             <label class="select-row">
               <span>Auto-rotate</span>
@@ -754,6 +772,7 @@
             </div>
             <input class="hidden" id="campaign-file" type="file" accept="application/json,.json" />
             <div class="design-history-actions">
+              <button class="soft-button" id="designer-story-import" type="button">Import story</button>
               <button class="soft-button" id="campaign-import" type="button">Import</button>
               <button class="soft-button" id="campaign-export" type="button" disabled>Export</button>
               <button class="soft-button" id="campaign-verify" type="button" disabled>Verify</button>
@@ -955,7 +974,7 @@
       <section class="hidden" data-project-section="credits">
         <p>Interface design inspired by <a href="https://atomiverse.com/" target="_blank" rel="noreferrer">Atomiverse</a>. Molarium’s interface and Canvas viewer were independently implemented; Atomiverse and its referenced <code>xyzrender</code> project are not bundled dependencies.</p>
         <ul class="project-credit-list">
-          <li><a href="./LICENSE">Molarium original code</a> · MIT</li>
+          <li><a href="./LICENSE">Molarium original code</a> · Apache-2.0</li>
           <li><a href="./openmm/OPENMM-LICENSE.txt">OpenMM 8.2</a> · MIT</li>
           <li><a href="./rdkit/RDKIT-LICENSE.txt">RDKit 2025.03.4</a> · BSD-3-Clause</li>
           <li><a href="./licenses/DIMORPHITE-DL-NOTICE.txt">Dimorphite-DL 2.0.2 site data</a> · Apache-2.0</li>

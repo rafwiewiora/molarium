@@ -207,14 +207,75 @@ const browserSuite = String.raw`(async () => {
       && Object.isFrozen(chemist),
     'the browser exposes one frozen, versioned Chemist Actions API');
     const described = chemist.describe();
+    const completeActionFamilies = [
+      'session.loadStructure','session.loadIdentifier','session.loadFixture','session.clear','session.share',
+      'interface.setPanelOpen','interface.openProjectInfo','view.setComponentVisibility',
+      'view.showAllComponents','view.reset','view.focusResidue','view.clearFocus','view.setCamera',
+      'protein.predict','protein.cancelPrediction','ligand.enumerateProtonation','ligand.applyProtonation',
+      'geometry.setInternalCoordinate','geometry.translateAtoms','fragment.stage','fragment.attach',
+      'pose.setEditCleanup','pose.clearReference','pose.remapContact','calculation.run',
+      'calculation.tuneReplicas','calculation.selectFrame','calculation.selectReplica',
+      'calculation.selectConformer','calculation.setPlayback','calculation.setConformerView',
+      'campaign.import','campaign.export','designerScript.load','designerScript.play',
+      'designerScript.step','designerScript.restart','designerScript.inspect',
+    ];
     check(described.guarantee.includes('no arbitrary code')
       && described.actions['chemistry.finish']
       && !described.actions['test.loadObject'],
     'the public action manifest contains chemist routes and no fixture or internal-code route');
+    check(completeActionFamilies.every((action) => described.actions[action]),
+    'the public manifest exposes load, view, design, simulation, campaign and replay action families');
     check([...document.querySelectorAll('.mode-bar button')].map((button) => button.textContent.trim())
       .join('|') === 'View|Design|Simulate',
     'the mode bar presents View, Design and Simulate');
-    api.load('CC');
+    await chemist.execute({ action:'interface.setPanelOpen',
+      args:{ panelId:'load-toggle', open:false } });
+    check(document.querySelector('#load-body').classList.contains('hidden')
+      && document.querySelector('#load-toggle').getAttribute('aria-expanded') === 'false',
+    'the public panel action updates the same disclosure state as a human click');
+    await chemist.execute({ action:'interface.setPanelOpen',
+      args:{ panelId:'load-toggle', open:true } });
+    const loadedEthane = await chemist.execute({ action:'session.loadIdentifier',
+      args:{ value:'CC', kind:'smiles' } });
+    check(loadedEthane.result.load?.kind === 'smiles'
+      && loadedEthane.result.load?.protonationStateCount >= 1,
+    'the public identifier action uses the complete 3D and protonation workflow');
+    const waitForHistoryAction = async (action, afterSequence = 0) => {
+      for (let attempt = 0; attempt < 100; attempt++) {
+        const record = chemist.history().find((entry) =>
+          entry.sequence > afterSequence && entry.action === action);
+        if (record) return record;
+        await new Promise((resolve) => setTimeout(resolve, 20));
+      }
+      return null;
+    };
+    const campaignId = 'browser-human-clicks-' + Date.now().toString(36);
+    await chemist.execute({ action:'campaign.create', args:{ campaignId,
+      title:'Human click provenance', initialCommitMessage:'Starting ethane' } });
+    let sequence = chemist.history().at(-1)?.sequence || 0;
+    document.querySelector('.mode-bar [data-mode="build"]').click();
+    const humanMode = await waitForHistoryAction('view.setMode', sequence);
+    sequence = humanMode?.sequence || sequence;
+    document.querySelector('#build-tool-tabs [data-tool="select"]').click();
+    const humanTool = await waitForHistoryAction('build.setTool', sequence);
+    sequence = humanTool?.sequence || sequence;
+    document.querySelector('#hydrogen-toggle').click();
+    const humanDisplay = await waitForHistoryAction('view.setDisplay', sequence);
+    check(humanMode?.args.mode === 'build' && humanTool?.args.tool === 'select'
+      && typeof humanDisplay?.args.showHydrogens === 'boolean',
+    'representative human mode, tool and display clicks execute the same public actions');
+    const humanCommit = await chemist.execute({ action:'campaign.commitCurrent',
+      args:{ message:'Commit audited human controls' } });
+    const exportedHumanCampaign = await chemist.execute({ action:'campaign.export', args:{} });
+    const campaign = JSON.parse(exportedHumanCampaign.result.campaignExport.serialized);
+    const actionScriptId = humanCommit.result.campaignCommit.actionScriptId;
+    const committedActions = campaign.objects.actionScripts[actionScriptId]?.actions || [];
+    check(committedActions.some((entry) => entry.action === 'view.setMode')
+      && committedActions.some((entry) => entry.action === 'build.setTool')
+      && committedActions.some((entry) => entry.action === 'view.setDisplay'),
+    'human UI clicks are included in the action script of a campaign commit',
+    JSON.stringify(committedActions));
+    await chemist.execute({ action:'campaign.close', args:{} });
     const focusedMolecule = await chemist.execute({ action:'view.focusComponent',
       args:{ kind:'molecule', ordinal:0, isolate:false } });
     check(focusedMolecule.result.focusedComponent?.kind === 'molecule'
@@ -387,6 +448,7 @@ const browserSuite = String.raw`(async () => {
   check(launchMol.includes(' 49 52') && launchMol.includes('M  END'),
     'launch scene ships the authoritative 49-atom PubChem LSD conformer');
   document.querySelector('[data-project-panel="credits"]').click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   check(document.querySelector('#project-info-dialog').open
     && !document.querySelector('[data-project-section="credits"]').classList.contains('hidden')
     && document.querySelector('[data-project-section="credits"]').textContent.includes('Interface design inspired by Atomiverse')
@@ -398,7 +460,7 @@ const browserSuite = String.raw`(async () => {
     'credits link the pinned Dimorphite-DL protonation-site notice');
   check(document.querySelector('[data-project-section="credits"] a[href="./LICENSE"]')
     && document.querySelector('[data-project-section="credits"]').textContent.includes('Molarium original code'),
-    'credits expose Molarium\'s MIT license');
+    'credits expose Molarium\'s Apache-2.0 license');
   check(document.querySelector('[data-project-section="credits"]').textContent.includes('OpenAI’s Sol')
     && document.querySelector('[data-project-section="credits"]').textContent.includes('scientific-reasoning assistance'),
     'credits acknowledge OpenAI Sol development assistance');
@@ -440,21 +502,26 @@ const browserSuite = String.raw`(async () => {
   check(generatedDisclosures.length === 9,
     'all nine previously fixed-open sidebar cards are collapsible',
     String(generatedDisclosures.length));
-  const generatedDisclosureRoundTrip = generatedDisclosures.every((toggle) => {
+  let generatedDisclosureRoundTrip = true;
+  for (const toggle of generatedDisclosures) {
     const body = document.getElementById(toggle.getAttribute('aria-controls'));
     toggle.click();
+    await new Promise(resolve => setTimeout(resolve, 0));
     const closed = toggle.getAttribute('aria-expanded') === 'false' && body.classList.contains('hidden');
     toggle.click();
-    return closed && toggle.getAttribute('aria-expanded') === 'true' && !body.classList.contains('hidden');
-  });
+    await new Promise(resolve => setTimeout(resolve, 0));
+    generatedDisclosureRoundTrip = generatedDisclosureRoundTrip && closed
+      && toggle.getAttribute('aria-expanded') === 'true' && !body.classList.contains('hidden');
+  }
   check(generatedDisclosureRoundTrip, 'generated sidebar arrows collapse and restore their own card bodies');
   const projectLicenseResponse = await fetch('./LICENSE');
   const projectLicenseText = await projectLicenseResponse.text();
   check(projectLicenseResponse.ok
     && projectLicenseResponse.headers.get('content-type')?.startsWith('text/plain')
-    && projectLicenseText.startsWith('MIT License')
-    && projectLicenseText.includes('Copyright (c) 2026 Molarium contributors'),
-    'server publishes the complete Molarium MIT license as plain text');
+    && projectLicenseText.startsWith('                                 Apache License')
+    && projectLicenseText.includes('Version 2.0, January 2004')
+    && projectLicenseText.includes('END OF TERMS AND CONDITIONS'),
+    'server publishes the complete Molarium Apache License 2.0 as plain text');
   document.querySelector('#project-info-dialog').close();
   const rmsdReference = [0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3];
   const rmsdRigidTransform = [4, -2, 7, 4, -1, 7, 2, -2, 7, 4, -2, 10];
@@ -508,6 +575,7 @@ const browserSuite = String.raw`(async () => {
   const proteinRow = componentRows.find((row) => row.querySelector('strong')?.textContent.includes('Protein'));
   const waterRow = componentRows.find((row) => row.querySelector('strong')?.textContent.includes('water'));
   waterRow?.querySelector('[data-component-action="zoom"]')?.click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   const waterZoom = api.structureComponents();
   const waterCamera = api.viewerState();
   const waterAtom = api.current().molecule.atoms.find((atom) => atom.residueName === 'HOH');
@@ -520,11 +588,13 @@ const browserSuite = String.raw`(async () => {
   'component Zoom frames the selection without hiding the rest of the structure',
   JSON.stringify({ components:waterZoom, camera:waterCamera.center, atom:waterAtom }));
   proteinRow?.querySelector('[data-component-action="only"]')?.click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   const proteinOnly = api.structureComponents();
   check(proteinOnly.components.find((component) => component.kind === 'protein')?.visible
     && !proteinOnly.components.find((component) => component.kind === 'water')?.visible,
   'component Only isolates the selection as a separate explicit action', JSON.stringify(proteinOnly));
   document.querySelector('#components-reset').click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   check(document.querySelector('#hydrogen-toggle').disabled
     && document.querySelector('#hydrogen-toggle-text').textContent.includes('none loaded')
     && document.querySelector('#interaction-toggle-text').textContent.includes('no H loaded'),
@@ -654,8 +724,10 @@ const browserSuite = String.raw`(async () => {
     'pocket protein carbons inherit their chain color while ligand carbons use the ligand accent',
     JSON.stringify({ protein:api.atomStyle(4), ligand:api.atomStyle(13) }));
   document.querySelector('#interaction-toggle').click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   check(!api.renderDiagnostics().showInteractions, 'H-bond and pi-stack display option switches overlays off');
   document.querySelector('#interaction-toggle').click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   check(api.renderDiagnostics().showInteractions && document.querySelector('#interaction-toggle').checked,
     'H-bond and pi-stack display option switches overlays back on');
   const contactOnlyPocket = api.setPocketAtomMode('contacts');

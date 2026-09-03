@@ -55,24 +55,37 @@ feature transfer, Undo, and Redo therefore behave exactly as they do for an inte
 
 ## Available routes
 
-- `session.inspect`
-- `view.setMode`, `view.focusComponent`, `view.focusAtoms`, `view.highlightAtoms`, `view.setDisplay`
+- `session.inspect`, `session.loadStructure`, `session.loadIdentifier`, `session.loadFixture`,
+  `session.clear`, `session.share`
+- `interface.setPanelOpen`, `interface.openProjectInfo`
+- `view.setMode`, `view.focusComponent`, `view.focusAtoms`, `view.highlightAtoms`,
+  `view.setDisplay`, `view.setComponentVisibility`, `view.showAllComponents`, `view.reset`,
+  `view.focusResidue`, `view.clearFocus`, `view.setCamera`
 - `build.setTool`
-- `protein.prepare`, `protein.parameterize`
+- `protein.prepare`, `protein.parameterize`, `protein.predict`, `protein.cancelPrediction`
 - `selection.replace`, `selection.clear`
 - `chemistry.setAtom`, `chemistry.setBond`, `chemistry.addAtom`, `chemistry.createBond`
 - `chemistry.deleteAtom`, `chemistry.deleteBond`
 - `chemistry.addHydrogen`, `chemistry.removeHydrogen`
 - `chemistry.finish`, `chemistry.discard`
+- `ligand.enumerateProtonation`, `ligand.applyProtonation`
+- `geometry.setInternalCoordinate`, `geometry.translateAtoms`
+- `fragment.stage`, `fragment.attach`
 - `history.undo`, `history.redo`
 - `pose.captureReference`, `pose.updateReceptorReference`, `pose.setContact`, `pose.addContact`, `pose.forgetContact`,
-  `pose.refine`, `pose.apply`, `pose.enumerateSidechainRotamers`,
-  `pose.applySidechainRotamer`
+  `pose.setEditCleanup`, `pose.clearReference`, `pose.remapContact`, `pose.refine`, `pose.apply`,
+  `pose.enumerateSidechainRotamers`, `pose.applySidechainRotamer`
 - `optimization.run`
+- `calculation.run`, `calculation.tuneReplicas`, `calculation.selectFrame`,
+  `calculation.selectReplica`, `calculation.selectConformer`, `calculation.setPlayback`,
+  `calculation.setConformerView`
 - `designRoute.load`, `designRoute.applyStep`, `designRoute.inspect`
 - `campaign.create`, `campaign.inspect`, `campaign.commitCurrent`
 - `campaign.createBranch`, `campaign.switchBranch`, `campaign.mergeBranch`
-- `campaign.recordDecision`, `campaign.verify`, `campaign.close`
+- `campaign.recordDecision`, `campaign.verify`, `campaign.close`, `campaign.import`,
+  `campaign.export`
+- `designerScript.load`, `designerScript.play`, `designerScript.step`,
+  `designerScript.restart`, `designerScript.inspect`
 
 ## Live design campaigns
 
@@ -103,11 +116,13 @@ history viewers. Export and Verify remain visible in the same card, and a
 finalized imported campaign is read-only.
 
 A live commit may attach the completed public Chemist Actions since the previous
-commit. That script is labelled `public-actions-only`, with `complete: false`
-and no asserted start/end snapshot IDs: direct manual UI changes are preserved
-in the committed molecule but are not silently claimed as replayable API steps.
-Campaign bookkeeping actions are excluded from molecule scripts so replay cannot
-recursively create or mutate a campaign.
+commit. Ordinary scientific and session controls in the interface execute these
+same routes, so their successful clicks appear in the audit and in the next
+campaign action script. The script is labelled `public-actions-only`, with
+`complete: false` and no asserted start/end snapshot IDs: the campaign does not
+claim that browser-native transport or presentation-only interactions constitute
+a complete molecular replay. Campaign bookkeeping actions are excluded from
+molecule scripts so replay cannot recursively create or mutate a campaign.
 
 Registered design routes use schema `molarium.registered-design-route/v1` and enforce a
 prospective coordinate boundary. They are input protocols, not append-only campaign ledgers.
@@ -119,7 +134,9 @@ Later protein or ligand coordinates are not available to the route. Evaluation h
 locked until prediction coordinates and their action audit have been frozen.
 
 There is no alternate or compatibility alias for these actions. Saved scripts, interactive replay,
-and agent calls all use the same `designRoute.*` names and `routeId` argument.
+and agent calls all use the same `designRoute.*` names. Only `designRoute.load` accepts `routeId`.
+Once loaded, `designRoute.applyStep` accepts `stepId` and, when the registered step requires a
+designer-selected exit vector, `attachmentAtomId`; `designRoute.inspect` accepts no arguments.
 
 `protein.parameterize` assigns a new numeric force-field System after a registered graph edit and
 reports a coordinate-displacement audit. It does not minimize or otherwise move the molecule. This
@@ -148,14 +165,24 @@ search rather than forcing every ligand pose against only the starting receptor 
 
 Mutating pose, rotamer, graph-growth, and optimization responses report the persistent IDs of
 heavy atoms that changed. `view.focusAtoms` accepts those IDs, fits the camera to that local region
-with a bounded pocket context, marks the reported atoms in red, and exposes a visible
-“Changed region” chip that a chemist can clear. Optional residue callouts identify a small,
-chemist-chosen context without asserting an interaction. `view.highlightAtoms` changes only those
-red marks: it preserves camera, scale, representation, and the previously selected molecular
-context so adjacent prediction and relaxation frames remain directly comparable. Saved stories
+with a bounded pocket context, marks the reported atoms for review, and exposes a visible
+“Changed region” chip that a chemist can clear. `changeMarkers` selects red atom rings, a quieter
+cyan halo, or no marker; more than four changed atoms are summarized by one group halo instead of
+dozens of rings. Optional residue callouts identify a small, chemist-chosen context without
+asserting an interaction, and may use a `gold`, `blue`, or `slate` tone for both the label and its
+residue carbons. `view.highlightAtoms` changes only those marks and optional labels: it preserves
+camera, scale, representation, and the previously selected molecular context so adjacent prediction
+and relaxation frames remain directly comparable. Saved stories
 use ordinary replay captures to pass one action's `changedAtomIds` result into the next view
 request; they do not smuggle coordinates or private viewer state through the script. An empty list is valid when an
 optimization was restored by a safeguard or no heavy atom exceeded the 0.08 Å display threshold.
+
+`view.setDisplay` also exposes the human-visible story palettes: `design-hit`,
+`design-prediction`, and `design-validation` render ligand carbons in saturated teal, purple, and
+orange respectively, while reducing ordinary pocket carbon and receptor-cartoon contrast. The
+optional read-only `showStericClashes` layer reports and draws ligand–protein heavy-atom pairs below
+`0.62 × (r_vdw,ligand + r_vdw,protein)` as small magenta connectors; its visible clash count is
+returned by the same action. It never changes coordinates or contributes an energy term.
 
 Candidate generation is deliberately distinct from coordinate application. `pose.refine` fills
 the visible pose list but leaves the 3D molecule fixed until `pose.apply`;
@@ -202,8 +229,11 @@ timeline controls call these same routes.
 
 The exact argument contract is returned by `describe()`. Unknown actions and unexpected arguments
 fail closed. Inputs must be finite, plain JSON values; prototype-bearing objects, functions,
-cycles, over-deep inputs, and payloads larger than 32 KiB are rejected. Commands are serialized, so
-two agent calls cannot interleave one chemistry transaction.
+cycles, over-deep inputs, and action envelopes larger than 8 MiB are rejected. The larger cap permits
+`session.loadStructure` to carry coordinate-bearing structure text without making the endpoint
+unbounded. The browser file picker applies a separate, tighter rule to Designer Moves imports:
+the selected JSON file must be smaller than 2 MB (2,000,000 bytes). Commands are serialized, so two
+agent calls cannot interleave one chemistry transaction.
 
 ## Inspection and privacy
 
@@ -247,8 +277,11 @@ the portable action-and-arguments procedure; `molarium.chemist-action-replay/v1`
 result of executing it in a new session. Replay calls only this public API and rejects private
 routes, embedded code, callbacks, and direct coordinate replacement. See
 [`DESIGNER-MOVES.md`](./DESIGNER-MOVES.md) for the schema, converter, and the provenance-pinned SOS1
-Phe890 examples. Paused back/forward controls inspect cached application checkpoints only; they do
-not issue Agent/API calls or rewrite the append-only execution audit.
+Phe890 examples. The visible paused back/forward arrows are a presentation-only boundary: they
+inspect cached application checkpoints without issuing Chemist Actions or rewriting the append-only
+scientific execution audit. An agent may explicitly request the bounded `designerScript.step`
+inspection route, but ordinary cached story navigation is deliberately not promoted into campaign
+design history.
 The audit converter excludes `campaign.*` bookkeeping actions from these
 molecule scripts.
 
