@@ -254,8 +254,8 @@ const ACTIONS = Object.freeze({
     description:'Start, resume, or pause the visible Designer Moves replay.',
     arguments:Object.freeze({ playing:'boolean' }) }),
   'designerScript.step': Object.freeze({
-    description:'Review the previous or next completed replay checkpoint.',
-    arguments:Object.freeze({ direction:'previous | next' }) }),
+    description:'Review the previous, next, or final completed replay checkpoint without rerunning calculations.',
+    arguments:Object.freeze({ direction:'previous | next | final' }) }),
   'designerScript.restart': Object.freeze({ description:'Return the installed script to its blank starting canvas.',
     arguments:Object.freeze({}) }),
   'designerScript.inspect': Object.freeze({ description:'Inspect the installed script and replay progress.',

@@ -38,7 +38,9 @@
     "test:registered-ligand-depiction-browser": "MOLARIUM_TEST_API=1 bun design-history/structures/registered-ligand-depiction.browser.test.mjs",
     "test:registered-ligand-replay-browser": "MOLARIUM_TEST_API=1 bun design-history/examples/registered-ligand-replay.browser.test.mjs",
     "test:sos1-final-anchor-browser": "bun design-history/structures/sos1-final-anchor.browser.test.mjs",
-    "test:structure-story-core": "node design-history/structures/pipeline.test.mjs && node design-history/structure-viewer/timeline.test.mjs && node design-history/structures/build-assets.mjs && node design-history/structures/bclxl-trajectory.test.mjs && node design-history/structures/design-route.test.mjs && node design-history/structures/bclxl-prospective-campaign.test.mjs && node design-history/structures/cdk2-prospective-campaign.test.mjs && node design-history/structures/sos1-prospective-campaign.test.mjs",
+    "test:structure-story-core": "node design-history/structures/pipeline.test.mjs && node design-history/structure-viewer/timeline.test.mjs && node design-history/structure-viewer/checkpoint-review.test.mjs && node design-history/structures/build-assets.mjs && node design-history/structures/bclxl-trajectory.test.mjs && node design-history/structures/design-route.test.mjs && node design-history/structures/bclxl-prospective-campaign.test.mjs && node design-history/structures/cdk2-prospective-campaign.test.mjs && node design-history/structures/sos1-prospective-campaign.test.mjs",
+    "test:designer-replay-review": "node design-history/designer-replay-review.test.mjs && node design-history/structure-viewer/checkpoint-review.test.mjs",
+    "test:designer-replay-review-browser": "bun design-history/examples/designer-completed-review.browser.test.mjs",
     "test:structure-story-browser": "bun design-history/structure-viewer/browser.test.mjs && bun design-history/structure-viewer/bclxl.browser.test.mjs && bun design-history/structure-viewer/cdk2-designer.browser.test.mjs && bun design-history/structure-viewer/sos1.browser.test.mjs",
     "test:structure-story": "npm run test:structure-story-core && npm run test:structure-story-browser",
     "test:logo": "bun scripts/molarium-logo-test.mjs",
@@ -96,7 +98,7 @@
     "test:stormm-openmm": "node stormm/openmm-reference-validation.mjs",
     "benchmark:stormm": "node stormm/openmm-reference-validation.mjs --benchmark",
     "test:ci:scientific": "npm run test:validation-registry && npm run test:docking && npm run test:enumerations && npm run test:7kpa-analogue-panel && npm run test:7kpa-manual-contacts && npm run test:cloud-panel-packet && npm run test:cloud-panel-shortlist && npm run test:openmm-wasm && npm run test:pose-viewer && npm run test:openfold-features && npm run test:logo && npm run test:development-log && npm run test:design-history && npm run test:structure-story-core",
-    "test:ci:browser": "npm run test:docking-browser && npm run test:2d && npm run test:chemist-actions-browser && npm run test:manual-hbond-browser && npm run test:chemist-actions-production && npm run test:openmm-worker-browser && npm run test:design-history-browser && npm run test:live-campaign-production && npm run test:structure-story-browser && npm run test:sos1-refinement-responsive-browser",
+    "test:ci:browser": "npm run test:docking-browser && npm run test:2d && npm run test:chemist-actions-browser && npm run test:manual-hbond-browser && npm run test:chemist-actions-production && npm run test:openmm-worker-browser && npm run test:design-history-browser && npm run test:live-campaign-production && npm run test:structure-story-browser && npm run test:designer-replay-review-browser && npm run test:sos1-refinement-responsive-browser",
     "test:ci:webgpu": "npm run test:stormm-webgpu"
   },
   "dependencies": {

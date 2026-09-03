@@ -1,6 +1,8 @@
 import { validateRegisteredDesignRoute } from './design-history/structures/design-route.mjs';
 import { applyRegisteredLigandDefinition, validateConnectedMolecularGraph } from
   './design-history/structures/registered-ligand-graph.mjs';
+import { DESIGNER_REVIEW_DIRECTIONS, designerReplayReviewState,
+  designerReplayReviewTarget } from './design-history/designer-replay-review.mjs';
 
 const MOLARIUM_NETWORK_POLICY = Object.freeze({
   mode:'connected', localOnly:false, policy:'connected-v1',
@@ -8366,20 +8368,35 @@ function setDesignerMoveReplayPaused(paused) {
   updateDesignerMoveControls();
 }
 
-function reviewDesignerMoveCheckpoint(offset) {
-  if (!state.designerMoveReplaying || !state.designerMoveReplayPaused
-    || state.designerMoveReplayActionRunning) return;
-  const target = Math.max(0, Math.min(state.designerMoveReplayFrontier,
-    state.designerMoveReplayIndex + offset));
+function currentDesignerReplayReviewState() {
+  return designerReplayReviewState({
+    replaying:state.designerMoveReplaying,
+    paused:state.designerMoveReplayPaused,
+    actionRunning:state.designerMoveReplayActionRunning,
+    replayStatus:state.designerMoveReplay?.status || null,
+    index:state.designerMoveReplayIndex,
+    frontier:state.designerMoveReplayFrontier,
+    checkpointCount:state.designerMoveReplayCheckpoints.filter(Boolean).length,
+  });
+}
+
+function reviewDesignerMoveCheckpoint(direction) {
+  const review = currentDesignerReplayReviewState();
+  if (!review.available) return;
+  const target = designerReplayReviewTarget(review, direction);
   if (target === state.designerMoveReplayIndex) return;
   const checkpoint = restoreDesignerMoveCheckpoint(target);
   const completed = checkpoint.step;
+  const atFinal = target === state.designerMoveReplayFrontier;
   const caption = target === 0 ? 'Blank canvas before the first story move'
-    : completed?.caption || completed?.action || 'Completed story state';
-  updateDesignerMoveControls(`Paused · cached checkpoint ${target} of ${state.designerMoveReplayFrontier}`,
+    : atFinal && review.completed ? 'Story complete'
+      : completed?.caption || completed?.action || 'Completed story state';
+  updateDesignerMoveControls(`${review.completed ? 'Review' : 'Paused'} · cached checkpoint ${target} of ${state.designerMoveReplayFrontier}`,
     caption, target === 0
       ? 'Reviewing the untouched starting canvas.'
-      : `Reviewing move ${target}; live replay is paused at move ${state.designerMoveReplayFrontier}.`);
+      : atFinal && review.completed
+        ? 'Returned to the final computed story state. Replay story starts a new execution.'
+        : `Reviewing move ${target} of ${state.designerMoveReplayFrontier}; no calculation is rerun.`);
 }
 
 function resumeDesignerMoveReplay() {
@@ -8450,6 +8467,7 @@ function updateDesignerMoveControls(message = null, captionOverride = null,
   const completedApiMoves = state.chemistActionAudit.filter((entry) =>
     entry?.status === 'completed').length;
   const replayButton = document.querySelector('#replay-designer-moves');
+  const review = currentDesignerReplayReviewState();
   replayButton.disabled = !script
     || state.designerMoveReplayScheduled && !state.designerMoveReplaying;
   replayButton.textContent = state.designerMoveReplayScheduled && !state.designerMoveReplaying
@@ -8457,9 +8475,9 @@ function updateDesignerMoveControls(message = null, captionOverride = null,
     ? (state.designerMoveReplayPaused
       ? (state.designerMoveReplayIndex < state.designerMoveReplayFrontier
         ? '▶ Return & continue' : '▶ Continue') : '❚❚ Pause')
-    : (state.designerMoveReplayIndex >= actionCount && actionCount ? '↻ Replay story' : '▶ Play story');
-  const checkpointNavigation = state.designerMoveReplaying
-    && state.designerMoveReplayPaused && !state.designerMoveReplayActionRunning;
+    : (review.completed && review.reviewing ? '▶ Return to final'
+      : state.designerMoveReplayIndex >= actionCount && actionCount ? '↻ Replay story' : '▶ Play story');
+  const checkpointNavigation = review.available;
   document.querySelector('#previous-designer-move').disabled =
     !checkpointNavigation || state.designerMoveReplayIndex <= 0;
   document.querySelector('#next-designer-move').disabled =
@@ -8482,7 +8500,9 @@ function updateDesignerMoveControls(message = null, captionOverride = null,
       ? activeStepCaption : designerMoveCaption());
   document.querySelector('#designer-move-caption').textContent = storyCaption;
   const detail = document.querySelector('#designer-move-detail');
-  if (detail) detail.textContent = detailOverride ?? (state.designerMoveReplayPaused
+  if (detail) detail.textContent = detailOverride ?? (review.completed && review.reviewing
+    ? `Reviewing move ${state.designerMoveReplayIndex} of ${state.designerMoveReplayFrontier}; no calculation is rerun.`
+    : state.designerMoveReplayPaused
     ? state.designerMoveReplayActionRunning
       ? `Pause requested; move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} will finish first.`
       : state.designerMoveReplayIndex < state.designerMoveReplayFrontier
@@ -10580,6 +10600,8 @@ function installChemistActionsApi(module) {
           setDesignerMoveReplayPaused(true);
       } else if (state.designerMoveReplaying) {
         if (state.designerMoveReplayPaused) resumeDesignerMoveReplay();
+      } else if (currentDesignerReplayReviewState().reviewing) {
+        throw new Error('Return to the final completed checkpoint before replaying the story');
       } else if (!state.designerMoveReplayScheduled) {
         // replayDesignerMoveScript executes the constituent actions through this
         // same serialized API.  Start it only after the play route returns, or
@@ -10607,16 +10629,19 @@ function installChemistActionsApi(module) {
         actionCount:state.designerMoveScript.actions.length } }); },
     'designerScript.step':async (args) => { chemistActionKeys(args, ['direction']);
       const direction = chemistActionEnum(args.direction,
-        ['previous','next'], 'direction');
-      if (!state.designerMoveReplaying || !state.designerMoveReplayPaused)
-        throw new Error('Pause an active designer replay before reviewing checkpoints');
+        DESIGNER_REVIEW_DIRECTIONS, 'direction');
+      const review = currentDesignerReplayReviewState();
+      if (!review.available)
+        throw new Error('Pause an active replay or complete it before reviewing checkpoints');
       const before = state.designerMoveReplayIndex;
-      reviewDesignerMoveCheckpoint(direction === 'previous' ? -1 : 1);
+      reviewDesignerMoveCheckpoint(direction);
       if (state.designerMoveReplayIndex === before)
         throw new Error(`No ${direction} completed replay checkpoint is available`);
       return chemistActionSummary({ designerCheckpoint:{
         index:state.designerMoveReplayIndex,
-        frontier:state.designerMoveReplayFrontier } }); },
+        frontier:state.designerMoveReplayFrontier,
+        completedReplay:review.completed,
+        atFinal:state.designerMoveReplayIndex === state.designerMoveReplayFrontier } }); },
     'designerScript.restart':async (args) => { empty(args);
       if (!state.designerMoveScript) throw new Error('Load a designer-move script first');
       if (state.designerMoveReplaying)
@@ -10633,6 +10658,7 @@ function installChemistActionsApi(module) {
         replaying:state.designerMoveReplaying,
         scheduled:state.designerMoveReplayScheduled,
         paused:state.designerMoveReplayPaused,
+        review:currentDesignerReplayReviewState(),
         phase:state.designerMoveReplayPhase,
         activeAction:state.designerMoveReplayStep?.action || null,
         registeredStory:structuredClone(state.designerMoveRegisteredStory),
@@ -16002,9 +16028,14 @@ document.querySelector('#designer-move-file').addEventListener('change', async (
   finally { event.currentTarget.value = ''; updateDesignerMoveControls(); }
 });
 document.querySelector('#replay-designer-moves').addEventListener('click', async (event) => {
-  try { await runChemistUiAction('designerScript.play', {
-    playing:!state.designerMoveReplaying || state.designerMoveReplayPaused,
-  }, { reportError:false }); }
+  try {
+    const review = currentDesignerReplayReviewState();
+    if (review.completed && review.reviewing)
+      await runChemistUiAction('designerScript.step', { direction:'final' }, { reportError:false });
+    else await runChemistUiAction('designerScript.play', {
+      playing:!state.designerMoveReplaying || state.designerMoveReplayPaused,
+    }, { reportError:false });
+  }
   catch (error) { showNotice(error.message); }
   finally { updateDesignerMoveControls(); }
 });

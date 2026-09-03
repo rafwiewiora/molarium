@@ -1,4 +1,5 @@
 import { cameraFromView, expandStructureTimeline, interpolateCamera } from './timeline.mjs';
+import { validatePrecomputedCheckpointReview } from './checkpoint-review.mjs';
 import { CHEMIST_ACTION_SCOPES, createChemistActionsApi } from '../../chemist-actions.mjs';
 
 const OPTS={layoutIsExpanded:false,layoutShowControls:false,layoutShowRemoteState:false,
@@ -7,11 +8,15 @@ const OPTS={layoutIsExpanded:false,layoutShowControls:false,layoutShowRemoteStat
 const CARBON=(value)=>({carbonColor:{name:'uniform',params:{value,saturation:0,lightness:0}}});
 const ASSET_ROOT='../structures/generated/';
 const STORY_REGISTRY=Object.freeze({
-  'moonshot-dndi-6510':'./moonshot-dndi-6510.json',
-  'bclxl-fragment-linking':'./bclxl-fragment-linking.json',
-  'cdk2-hit-only-prospective':'./cdk2-hit-only-prospective.json',
-  'cdk2-designer-hit-to-lead':'./cdk2-designer-hit-to-lead.json',
-  'sos1-hit-only-success':'./sos1-hit-only-success.json',
+  'moonshot-dndi-6510':Object.freeze({path:'./moonshot-dndi-6510.json'}),
+  'bclxl-fragment-linking':Object.freeze({path:'./bclxl-fragment-linking.json'}),
+  'cdk2-hit-only-prospective':Object.freeze({path:'./cdk2-hit-only-prospective.json'}),
+  'cdk2-designer-hit-to-lead':Object.freeze({path:'./cdk2-designer-hit-to-lead.json'}),
+  'sos1-hit-only-success':Object.freeze({path:'./sos1-hit-only-success.json'}),
+  'sos1-chemist-actions-review':Object.freeze({
+    path:'./sos1-chemist-actions-review.json',
+    sha256:'dba92bc5fbdf993a65db5013af8a43e11e5863bc266a3ee4f213abff99402f43',
+  }),
 });
 const PREFIX={x1:'7gn8',x38:'7gnr-aligned',bclxl:'3spf',bclxlTemplate:'3sp7-aligned'};
 const LIGAND_COLOR={x1:0x826cae,x38:0xdc8747,bclxl:0x247d95};
@@ -71,10 +76,15 @@ function actionKeys(args, allowed) {
   if(unexpected.length)throw Error(`Unexpected argument${unexpected.length===1?'':'s'}: ${unexpected.join(', ')}`);
 }
 
-async function textAsset(path){if(!cache.has(path))cache.set(path,fetch(path).then(response=>{
-  if(!response.ok)throw Error(`${path}: ${response.status}`);return response.text()}));return cache.get(path)}
-async function addRaw(path,fmt,ref,rep){
-  const text=await textAsset(path),p=V.plugin,before=new Set();p.state.data.cells.forEach((_,id)=>before.add(id));
+async function sha256Hex(bytes){const digest=await crypto.subtle.digest('SHA-256',bytes);
+  return [...new Uint8Array(digest)].map(value=>value.toString(16).padStart(2,'0')).join('')}
+async function textAsset(path,expectedSha256=null){if(!cache.has(path))cache.set(path,fetch(path).then(async response=>{
+  if(!response.ok)throw Error(`${path}: ${response.status}`);const bytes=await response.arrayBuffer();
+  return {text:new TextDecoder().decode(bytes),sha256:await sha256Hex(bytes)}}));
+  const asset=await cache.get(path);if(expectedSha256&&asset.sha256!==expectedSha256)
+    throw Error(`${path}: SHA-256 mismatch`);return asset.text}
+async function addRaw(path,fmt,ref,rep,expectedSha256=null){
+  const text=await textAsset(path,expectedSha256),p=V.plugin,before=new Set();p.state.data.cells.forEach((_,id)=>before.add(id));
   const data=await p.builders.data.rawData({data:text,label:ref},{state:{isGhost:true}});
   const trajectory=await p.builders.structure.parseTrajectory(data,fmt);
   const model=await p.builders.structure.createModel(trajectory);
@@ -107,7 +117,7 @@ async function buildScene(sceneName){
     const rep={type:representation,typeParams,
       color:model.provenance?provenanceTheme(model):(model.colorScheme||'element-symbol')};
     if(Number.isFinite(color))rep.colorParams=CARBON(color);
-    await addRaw(`${ASSET_ROOT}${model.path}`,model.format||'pdb',model.ref,rep);
+    await addRaw(`${ASSET_ROOT}${model.path}`,model.format||'pdb',model.ref,rep,model.sha256||null);
   }
   if(scene.protein){const prefix=PREFIX[scene.protein];if(!prefix)throw Error(`Unknown protein ${scene.protein}`);await addRaw(`${ASSET_ROOT}${prefix}-protein.pdb`,'pdb','protein',
     {type:'cartoon',typeParams:{alpha:.26},color:'chain-id'})}
@@ -185,18 +195,30 @@ function inspectStory(){
     totalFrames:FRAMES.length,cueId:cue?.id||null,cueIndex:frame?.cueIndex??null,
     cueStartFrame:cueFrames[0]?.frame??null,cueEndFrame:cueFrames.at(-1)?.frame??null,
     focusLabel:cue?.focusLabel||null,scene:currentScene,refs:Object.keys(refs),
+    checkpoint:cue?.checkpoint?structuredClone(cue.checkpoint):null,
+    precomputedReview:STORY?.review?{schema:STORY.review.schema,
+      calculationPolicy:STORY.review.calculationPolicy,
+      sourceAuditSha256:STORY.review.sourceAuditSha256}:null,
     camera:V?.plugin?.canvas3d?.camera?.getSnapshot?.()||null };
 }
 async function loadStory(storyId){
-  const path=STORY_REGISTRY[storyId];if(!path)throw Error(`Unknown registered structure story ${storyId}`);
+  const registration=STORY_REGISTRY[storyId];if(!registration)throw Error(`Unknown registered structure story ${storyId}`);
   document.body.dataset.renderReady='pending';await clearScene();currentScene=null;
-  const story=await fetch(path).then(response=>{if(!response.ok)throw Error(`story: ${response.status}`);return response.json()});
+  const story=JSON.parse(await textAsset(registration.path,registration.sha256||null));
   if(story?.schema!=='molarium.structure-story/v1'||story.id!==storyId)
     throw Error(`Registered structure story ${storyId} has an invalid identity`);
   if(!Array.isArray(story.cues)||!story.cues.length||story.cues.some((cue)=>!cue.id))
     throw Error(`Registered structure story ${storyId} requires persistent cue IDs`);
   if(new Set(story.cues.map((cue)=>cue.id)).size!==story.cues.length)
     throw Error(`Registered structure story ${storyId} has duplicate cue IDs`);
+  if(story.review){
+    const [actionScript,provenance,assetManifest]=await Promise.all([
+      textAsset(story.review.actionScript.path,story.review.actionScript.sha256).then(JSON.parse),
+      textAsset(story.review.provenance.path,story.review.provenance.sha256).then(JSON.parse),
+      textAsset(story.review.assetManifest.path,story.review.assetManifest.sha256).then(JSON.parse),
+    ]);
+    validatePrecomputedCheckpointReview(story,{actionScript,provenance,assetManifest});
+  }
   STORY=story;FRAMES=expandStructureTimeline(STORY);currentFrame=0;
   $('story-title').textContent=STORY.title;$('story-subtitle').textContent=STORY.subtitle;
   $('timeline').max=String(FRAMES.length-1);$('timeline').value='0';

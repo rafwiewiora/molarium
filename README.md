@@ -299,6 +299,11 @@ execution produces a separate replay log with outcomes. The schema, paper-facing
 the complete SOS1/Phe890 example are documented in
 [`DESIGNER-MOVES.md`](./DESIGNER-MOVES.md).
 
+The live SOS1 route is registered at `/sos1-hit-to-bay293`. After a completed run its cached
+per-action checkpoints remain arrowable until **Replay story** or **Restart** is explicitly chosen.
+The companion `/sos1-hit-to-bay293/replay` path is an immediate, calculation-free review of five
+SHA-256-pinned execution endpoints.
+
 Production loads `app.js` as a module and does not install the privileged regression harness.
 Automation hosts must grant agents only the frozen JSON action object, not an arbitrary JavaScript
 console; local test servers expose the synthetic harness only with the explicit `--test-api` flag.

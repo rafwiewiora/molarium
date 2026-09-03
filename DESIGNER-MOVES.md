@@ -171,8 +171,12 @@ during execution and pauses at the next action boundary, after the current scien
 finishes. While paused, **◀** and **▶** invoke the public `designerScript.step` action to review
 already-computed application checkpoints. That action restores the molecular coordinates, camera,
 active panels, pose results, and calculation display without re-executing or deleting a scientific
-constituent action. **Continue** first returns to the live
-execution frontier and then resumes. **↺ Restart** returns to the blank canvas. Presentation-only `view.setDisplay` and
+constituent action. The same cached checkpoints remain available after the story completes. At that
+point the arrows review the completed route, **Return to final** invokes
+`designerScript.step { direction: "final" }`, and **Replay story** begins a new execution only from
+the terminal checkpoint. **Continue** first returns to the live execution frontier and then resumes
+an active paused run. **↺ Restart** explicitly discards the cached review and returns to the blank
+canvas. Presentation-only `view.setDisplay` and
 `view.focusComponent` actions select a clean chemist pocket view and keep the active ligand in
 frame; they do not change molecular coordinates or replace any scientific action.
 
@@ -202,6 +206,15 @@ blank canvas with the selected route preloaded at move 0; the reader explicitly 
 adds the same 18 view/focus actions used by the interface movie. The deployment redirects this
 stable path to the registered story ID, so the paper URL does not expose an asset path or require
 a manual JSON import.
+
+For readers who want instant arrow-by-arrow inspection without waiting for pose or WebGPU work,
+`https://molarium.org/sos1-hit-to-bay293/replay` opens a separate precomputed review. Its five
+items are the loaded 5OVE hit and the four frozen prediction endpoints from source-audit sequences
+12, 22, 78, and 88. The page runs no scientific calculation and exposes only the public
+`structureStory.*` presentation actions. Before displaying a checkpoint it verifies the registered
+story, source action script, provenance record, generated-asset manifest, and every displayed PDB
+against pinned SHA-256 digests. It deliberately contains neither interpolated side-chain frames nor
+post-freeze holdout coordinates; those are not execution checkpoints.
 
 The example is pinned to the successful run whose audit SHA-256 is
 `38d8fbd3e2675fd1203a13a7e235ff848eaf627a0d7c8450865a762f9fbe5e5b`:

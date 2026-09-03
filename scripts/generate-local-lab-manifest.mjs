@@ -78,6 +78,7 @@ const reviewedFiles = [
   'assets/media/sos1-designer-moves-molarium-interface.render-manifest.json',
   'assets/molarium-logo.svg',
   'assets/molarium-mark.svg',
+  'design-history/designer-replay-review.mjs',
   'design-history/interface-story.mjs',
   'design-history/integrity.mjs',
   'design-history/ledger.mjs',
