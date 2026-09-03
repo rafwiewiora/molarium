@@ -27,6 +27,8 @@ assert(Object.hasOwn(api.describe().actions, 'pose.enumerateSidechainRotamers'))
 assert(Object.hasOwn(api.describe().actions, 'pose.applySidechainRotamer'));
 assert(Object.hasOwn(api.describe().actions, 'structureStory.selectFrame'));
 assert.match(api.describe().actions['session.inspect'].arguments.scope, /pocket/);
+assert.match(api.describe().actions['view.setMode'].description, /View, Design, or Simulate/);
+assert.equal(api.describe().actions['view.setMode'].arguments.mode, 'view | build | run');
 assert(!Object.hasOwn(api.describe().actions, 'test.loadObject'));
 assert.match(api.describe().guarantee, /no arbitrary code/);
 

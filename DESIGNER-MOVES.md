@@ -108,7 +108,7 @@ the result against the currently available public action manifest before writing
 
 ## Committing a live molecular history
 
-The main Build workspace exposes a separate **Design History** card for
+The main Design workspace exposes a separate **Design History** card for
 `molarium.design-campaign/v1`. **Start & commit** records the exact current graph
 and coordinates as the first content-addressed molecular commit. Subsequent
 commits can be branched, checked out, merged with an explicit visible molecular
@@ -141,7 +141,7 @@ if (replay.status !== 'completed') throw new Error(replay.steps.at(-1).error);
 ```
 
 For a product-facing movie, `npm run render:designer-moves-interface` starts from a blank canvas,
-imports the same JSON through the visible Build panel, presses **▶ Play story**, and records the
+imports the same JSON through the visible Design panel, presses **▶ Play story**, and records the
 real Molarium interface while the public actions run. The transport changes to **❚❚ Pause**
 during execution and pauses at the next action boundary, after the current scientific operation
 finishes. While paused, **◀** and **▶** move through already-computed application checkpoints;

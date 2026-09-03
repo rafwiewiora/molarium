@@ -417,7 +417,7 @@ function atomIdsFrom7kpa(pdbText) {
 
 function compile7kpaScript(entry, ids) {
   const actions = [
-    { action:'view.setMode', args:{ mode:'build' }, caption:'Open Build.' },
+    { action:'view.setMode', args:{ mode:'build' }, caption:'Open Design.' },
     { action:'build.setTool', args:{ tool:'select' }, caption:'Use the same Select tool as the chemist.' },
     { action:'pose.captureReference', args:{ mode:'propagate' }, caption:'Capture the crystallographic reference pose.' },
   ];
@@ -446,7 +446,7 @@ function compile7kpaScript(entry, ids) {
     }
   }
   actions.push({ action:'pose.refine', args:{ searchChains:8 },
-    caption:'Run the visible reference-guided pose search.' });
+    caption:'Start the visible reference-guided pose search.' });
   return actions;
 }
 

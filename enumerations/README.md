@@ -5,7 +5,7 @@ layer. It is intentionally separate from docking and scoring:
 
 - a catalogue describes a proposed molecular graph transformation;
 - `action-plan.mjs` executes it only through the public, audited Chemist
-  Actions API used by the visible Build tools;
+  Actions API used by the visible Design tools;
 - `edit-difficulty.mjs` reports transparent graph-lineage disruption;
 - pose refinement, strain, contact feasibility, and independent energy checks
   remain downstream measurements.
@@ -29,7 +29,7 @@ protonated, or capable of satisfying the inherited contact.
 
 An enumeration entry is data, not executable application code. Its operations
 are validated by `action-plan.mjs` and compiled into the same bounded Chemist
-Actions used by the visible Build tools. The runner may inspect persistent atom
+Actions used by the visible Design tools. The runner may inspect persistent atom
 IDs, select atoms, stage ordinary graph edits, finish chemistry, capture a
 reference pose, choose registered contacts, refine, and apply a pose. It cannot
 replace coordinates, call an internal scorer, inject a product graph, or attach

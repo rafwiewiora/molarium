@@ -131,7 +131,7 @@ not conflate IEEE-754 signed zero with a geometric discrepancy.
 
 ### Initial implementation gates (status at v0.2)
 
-1. **Complete:** capture a reference ligand and stable atom identities before Build edits.
+1. **Complete:** capture a reference ligand and stable atom identities before Design edits.
 2. **Partial by design:** exact edit-lineage mapping is implemented; unrelated-ligand MCS and
    symmetry enumeration remain future work.
 3. **Complete:** generate, score, and core-align deterministic ligand conformers.
@@ -142,7 +142,7 @@ not conflate IEEE-754 signed zero with a geometric discrepancy.
 7. **Deferred:** active-restraint ligand/pocket refinement.
 8. **Partial:** synthetic execution and deterministic replay pass; prospective cognate redocking,
    cross-docking, seed sensitivity, and accuracy benchmarks remain release-science gates.
-9. **Complete:** verified JSON and readable Markdown labbooks download from Build mode.
+9. **Complete:** verified JSON and readable Markdown labbooks download from Design mode.
 
 The force-field boundary in gate 6 is the main scientific risk. A quick geometric search is possible
 now, but a credible physical rank requires a properly prepared receptor–ligand numeric System or a
@@ -150,7 +150,7 @@ new, explicitly validated receptor-grid score. Molarium must not conceal this di
 
 ### Decision D-008 — edit-derived stable core identity first
 
-The first browser integration will preserve stable atom identifiers across Molarium Build edits and
+The first browser integration will preserve stable atom identifiers across Molarium Design edits and
 define the conserved core as an explicit subset of those surviving atoms. Automatic MCS matching of
 an unrelated imported ligand is deferred.
 
@@ -218,7 +218,7 @@ arbitrary rotations around the core axis despite a deceptively small RMSD.
 
 ### Decision D-013 — camera gestures remain available while building
 
-Build actions are committed on click release. Crossing a five-pixel movement threshold turns the
+Design actions are committed on click release. Crossing a five-pixel movement threshold turns the
 same left-button gesture into arcball rotation instead, while right-button or Ctrl/Command drag pans
 the entire scene. Manipulate retains direct atom dragging, but only when its gesture begins on an
 atom; empty-space drag rotates.
@@ -251,7 +251,7 @@ score, applies the pose, and confirms the receptor coordinates did not move.
 This is an execution/reproducibility gate, not an accuracy benchmark. Cognate redocking and
 cross-docking datasets remain required before reporting docking accuracy.
 
-### Validation V-004 — Build gesture disambiguation and large cores
+### Validation V-004 — Design gesture disambiguation and large cores
 
 The Chrome regression begins a left drag on an atom in Select mode and verifies that the camera
 rotates without selecting the atom. It then clicks all six connected atoms of a ring, verifies that
@@ -750,7 +750,7 @@ coordinates, so new attachments alone do not trigger release.
 
 The versioned `molarium.chemist-actions/v1` browser API is the supported agent boundary. It exposes
 only UI-equivalent inspection by persistent ID, connected selection, chemistry transactions,
-history, reference/contact setup, pose refinement/application, and visible Build optimization.
+history, reference/contact setup, pose refinement/application, and visible Design optimization.
 Inputs are bounded plain JSON, commands are serialized, and recognized actions receive ordered
 timestamped audit entries. Test fixture injection, arbitrary callbacks, coordinate replacement,
 score access, module access, and network actions are absent.

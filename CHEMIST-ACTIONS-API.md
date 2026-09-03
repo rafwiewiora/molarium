@@ -76,7 +76,7 @@ feature transfer, Undo, and Redo therefore behave exactly as they do for an inte
 
 ## Live design campaigns
 
-The Build workspace's **Design History** card is a public API client. A
+The Design workspace's **Design History** card is a public API client. A
 `campaign.create` request starts a campaign and atomically places the exact
 current graph and coordinates in its first commit; `initialCommitMessage`
 overrides the default commit message.
@@ -136,7 +136,7 @@ receptor side chain may need to cross a rotamer barrier. It accepts one persiste
 ID, generates a bounded canonical chi-angle ensemble from the current coordinates, and ranks the
 branches with a deterministic steric screen against the current complex. It does not read or
 accept a later protein structure. `pose.applySidechainRotamer` commits one returned branch through
-the same visible Build control, records the input and selected-coordinate hashes, and participates
+the same visible Design control, records the input and selected-coordinate hashes, and participates
 in ordinary Undo. The chosen branch should then be physically refined and compared with the other
 branches; the steric pre-rank is not an affinity score.
 
@@ -242,7 +242,7 @@ viewer hooks are not part of this path.
 
 ## Saved designer moves
 
-The Build panel can import, replay, and export `molarium.chemist-action-script/v1` JSON. A script is
+The Design panel can import, replay, and export `molarium.chemist-action-script/v1` JSON. A script is
 the portable action-and-arguments procedure; `molarium.chemist-action-replay/v1` is the separate
 result of executing it in a new session. Replay calls only this public API and rejects private
 routes, embedded code, callbacks, and direct coordinate replacement. See
@@ -251,6 +251,10 @@ Phe890 examples. Paused back/forward controls inspect cached application checkpo
 not issue Agent/API calls or rewrite the append-only execution audit.
 The audit converter excludes `campaign.*` bookkeeping actions from these
 molecule scripts.
+
+The public workspace names are **View**, **Design**, and **Simulate**. Versioned scripts continue
+to serialize their modes as `view`, `build`, and `run`, and retain action names such as
+`build.setTool`; changing those identifiers would invalidate existing saved actions.
 
 ## Explicit exclusions
 

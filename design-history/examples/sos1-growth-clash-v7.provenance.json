@@ -40,15 +40,15 @@
     "fullExploration": {
       "path": "design-history/examples/sos1-growth-clash-v7.full.action-script.json",
       "actions": 89,
-      "actionScriptSha256": "2f278568d4b6dda32c6ccceddf405b6f62799bbbdb0a58d8e54612b7221bf22e",
-      "fileSha256": "5cb610fe4130aa03e7e63b9509821b5e06d48f04f9317dbacbf5d385f49ac61f",
+      "actionScriptSha256": "f49a06e8cad91f3dd7dc7a0e0f2675c105f0c061d8fe9aef8b267043c6910abb",
+      "fileSha256": "a04b68f16af10ca5ff2b95c4a366bc95a1429db6823624af7ff7f71305e72bcc",
       "meaning": "Complete execution trace, including inspections, all three explored Phe890 branches, undo operations, and final selected-branch replay."
     },
     "selectedRoute": {
       "path": "design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json",
       "actions": 33,
-      "actionScriptSha256": "e405e3820ccb58764ffb9d5ef67b87d6ee73a80b02e9ec0493012de7957135a7",
-      "fileSha256": "9c3494c3deb11f7ec80559e8b7235981f4d9993c89b9e63bea978d7eb4a7267d",
+      "actionScriptSha256": "b042f0e6d4c6f5691ffccb35eb3eb5c7b11a7ed41207b734449f4105b1d8f790",
+      "fileSha256": "34d1db8acb8e6c5ec48194d3d49b2099820a36fa1c81a2e3c0f1d6af713e7aa7",
       "meaning": "Compact operational replay of the already-selected route. It omits discarded branches and read-only freeze inspections, so it is not the evidence that branch search occurred."
     }
   },

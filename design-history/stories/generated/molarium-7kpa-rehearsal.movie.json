@@ -1,6 +1,6 @@
 {
   "campaignId": "molarium-7kpa-rehearsal",
-  "campaignSha256": "ef4f091831004b55d3e377386852860abc93a5be93cdd4b7d315de4330d4e5ad",
+  "campaignSha256": "5fbf34c9441dda3a4b73d1f59e6aced78b813bb73c82eae78dcc4b653fa5a129",
   "createdAt": "2026-08-30T20:31:00.000Z",
   "cues": [
     {
@@ -11,25 +11,25 @@
       "title": "A prepared reference with four contacts"
     },
     {
-      "commitId": "commit:16c57a7fecf9d9a430b4bc0935aff92bb5f14f508283801a0a5ec306a3a8a7cb",
+      "commitId": "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615",
       "durationMs": 2600,
-      "eventId": "event:1c7fd9f91f446721e665eb7d76ced261b9791185fad284f3090b4f34ef2ada99",
+      "eventId": "event:31096d35b5348646463e212351f37e714fd653742bdd735ec3459f7fb33e71a2",
       "narration": "Contact-feasible poses passed the registered absolute clash and interaction screen.",
       "snapshotId": "snapshot:b1fc430673672e3f5d82b80c37241d5e9f00657b03050860bd64a2c291258a94",
       "title": "Pyrrolidone to N-linked pyrazole"
     },
     {
-      "commitId": "commit:0a9cce6897b4af659cb39d1fc20086b1251fcd7a45b2d42b3a9499f63fb20c25",
+      "commitId": "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a",
       "durationMs": 2600,
-      "eventId": "event:6e9ba5d1a784ef74064055017de58818f7353f1d31a5149f9dc6b9057a3a1a85",
+      "eventId": "event:0d5a124643484a812a65e9a3c85b39d2f96e053b21101f015e6527e657f3ddbc",
       "narration": "The ring-expanded case met the preregistered development boundary, with visual review retained.",
       "snapshotId": "snapshot:3103fddda0f5b16b51f4edb21c5faf79b8d243889e0ba84245103bfcafe62108",
       "title": "Pyrrolidone to ring-expanded tetrahydropyran"
     },
     {
-      "commitId": "commit:5f57169a40f8d0be96768bb2de8dfc541f2fc3391733f936a51edda26592eb63",
+      "commitId": "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16",
       "durationMs": 3200,
-      "eventId": "event:55f39dcf66f54575ea9767f6c2bcfe1e6f0ef2867eaa0ecf6a8921152e179b72",
+      "eventId": "event:e88cb98a8978d9662efd5bcc531be4e444b1331f76b9bae8a9673fa4518f71b3",
       "narration": "Contact satisfaction did not rescue 11 clashes and a strongly positive absolute receptor–ligand interaction energy.",
       "snapshotId": "snapshot:0a4b06194df355adfdc872f6c2ea8d33a4aec3ec6fbb2241df2ede558bb5c62e",
       "title": "Phenyl–pyrrolidone to spiro[4.5] ketone"
@@ -40,5 +40,5 @@
   "schema": "molarium.design-movie/v1",
   "title": "Agent actions remain chemist actions",
   "width": 1440,
-  "movieSha256": "f54cef9125f4ce9540367d8211fd41cf18aab856cdc15ba329dd0db1a862b698"
+  "movieSha256": "9c2f10d1fd52d49755a1968adfd69048b99773c663110764ddace415ad10ca4d"
 }

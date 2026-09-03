@@ -118,13 +118,13 @@ try {
 
     document.querySelector('[data-2d-tool="select"]').click();
     check(api.twoDDepiction().tool === 'select' && api.twoDDepiction().mode === 'view',
-      'the visible Select tool activates without forcing the main canvas into Build', JSON.stringify(api.twoDDepiction()));
+      'the visible Select tool activates without forcing the main canvas into Design', JSON.stringify(api.twoDDepiction()));
     document.querySelector('[data-2d-tool="atom"]').click();
     check(api.twoDDepiction().tool === 'atom' && api.twoDDepiction().mode === 'build',
-      'the visible Atom tool activates and opens Build', JSON.stringify(api.twoDDepiction()));
+      'the visible Atom tool activates and opens Design', JSON.stringify(api.twoDDepiction()));
     document.querySelector('[data-2d-tool="select"]').click();
     check(api.twoDDepiction().tool === 'select',
-      'the visible Select tool can be restored after entering Build', JSON.stringify(api.twoDDepiction()));
+      'the visible Select tool can be restored after entering Design', JSON.stringify(api.twoDDepiction()));
     const svg = document.querySelector('#structure-2d-drawing svg');
     const oxygen = [...svg.querySelectorAll('.atom-2')].find((node) =>
       [...node.classList].filter((name) => name.startsWith('atom-')).length === 1);
@@ -144,7 +144,7 @@ try {
     const orientationDisplacements = orientationBefore.map((point, index) =>
       Math.hypot(point.x - orientationAfter[index].x, point.y - orientationAfter[index].y));
     // Compare the unedited phenyl core after removing a common translation.
-    // The floating panel itself can move when Build controls open, but the
+    // The floating panel itself can move when Design controls open, but the
     // molecule must not rotate or rescale under the user's pointer.
     const core = [3, 4, 5, 6, 7, 8];
     const centered = (points) => {

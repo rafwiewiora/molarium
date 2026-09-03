@@ -10,7 +10,7 @@ const audit = { schema:CHEMIST_ACTIONS_SCHEMA, routeId:'converter-test', records
   { sequence:3, requestId:'failed-edit', action:'view.setMode',
     args:{ mode:'run' }, status:'failed', error:'ignored' },
   { sequence:4, requestId:'build', action:'view.setMode', args:{ mode:'build' },
-    caption:'Enter the Build workspace', status:'completed', durationMs:4 },
+    caption:'Enter the Design workspace', status:'completed', durationMs:4 },
   { sequence:5, requestId:'commit-history', action:'campaign.commitCurrent',
     args:{ message:'must not recursively replay' }, status:'completed' },
 ] };
@@ -22,7 +22,7 @@ assert.deepEqual(complete.actions[0], {
   action:'designRoute.load', args:{ routeId:'test' },
 });
 assert.deepEqual(complete.actions[1].args, audit.records[1].args);
-assert.equal(complete.actions[2].caption, 'Enter the Build workspace');
+assert.equal(complete.actions[2].caption, 'Enter the Design workspace');
 assert.equal(complete.sourceAudit.failedRecordsExcluded, 1);
 assert.deepEqual(complete.sourceAudit.includedSequences, [1, 2, 4]);
 assert.equal(complete.sourceAudit.campaignBookkeepingExcluded, 1);

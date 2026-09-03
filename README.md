@@ -67,7 +67,7 @@ manifests and model cards.
 - Draw and edit a small molecule in 2D while the same atoms and bonds remain visible in 3D.
 - Add atoms and fragments without creating bonds from visual proximity.
 - Edit bond lengths, bond angles, and torsions with undo and redo.
-- Run energies, minimization, molecular dynamics, and conformer searches.
+- Simulate energies, minimization, molecular dynamics, and conformer searches.
 - Dock edited ligands to a captured reference core with optional required H-bonds.
 - Preserve molecular branches, evidence, human/agent actions, and explicit stop decisions in a hash-linked design history.
 - Play saved trajectories and follow a selected residue.
@@ -198,7 +198,7 @@ energies, diagnostics, or exported results. Each STORMM replica receives its own
 Bonds always come from explicit topology. Adding an atom can replace an available hydrogen or
 create a separate component. Molarium never creates a bond only because two atoms are close.
 
-Build mode can change an atom's element and formal charge, create or delete a bond, and set a
+Design mode can change an atom's element and formal charge, create or delete a bond, and set a
 single, double, triple, or aromatic ring bond. It can also add or remove an explicit hydrogen and
 delete an atom. Chemistry edits are staged by default: the topology drawing updates immediately, but
 automatic hydrogen reconciliation, validation, and coordinate refinement wait until **Finish changes**. This lets coupled edits such
@@ -213,7 +213,7 @@ After a finished chemistry batch, Molarium runs one local MMFF94/UFF cleanup. It
 atoms, their first bonded shell, attached hydrogens, and complete touched ring systems; atoms
 outside that neighborhood remain fixed. Fragment addition retains its existing two-shell cleanup.
 In a protein–ligand structure, cleanup is applied to the edited ligand component and every protein
-atom stays fixed. Build offers separate ligand-only and pocket-aware optimization actions. OpenMM
+atom stays fixed. Design offers separate ligand-only and pocket-aware optimization actions. OpenMM
 Reference remains an internal numerical validation oracle and is not exposed as a calculation method.
 An explicit protein–ligand optimization retains up to 26 real optimizer snapshots, opens View when
 complete, and exposes the same energy curve, slider, play, and final-frame controls as other
@@ -287,12 +287,12 @@ vector, failure rules, and validation contract are frozen in
 Molarium exposes a versioned in-browser API for agent and scripted use, but only at the same action
 boundary available to a chemist in the interface. It can inspect persistent atom IDs, select bonded
 paths, edit atoms and bonds, finish or discard chemistry, undo/redo, capture a reference pose,
-choose required contacts, refine/apply a pose, and run a visible Build optimization method. It does
+choose required contacts, refine/apply a pose, and run a visible Design optimization method. It does
 not expose fixture injection, arbitrary JavaScript callbacks, internal scoring functions, direct
 coordinate replacement, or network actions. Commands execute serially and are appended to the
 current molecule's audit ledger. See [`CHEMIST-ACTIONS-API.md`](./CHEMIST-ACTIONS-API.md).
 
-The Build interface also has a **Designer moves** panel for importing, replaying, and exporting
+The Design interface also has a **Designer moves** panel for importing, replaying, and exporting
 these actions as ordinary versioned JSON. The action script records the intended procedure; every
 execution produces a separate replay log with outcomes. The schema, paper-facing terminology, and
 the complete SOS1/Phe890 example are documented in
@@ -301,6 +301,10 @@ the complete SOS1/Phe890 example are documented in
 Production loads `app.js` as a module and does not install the privileged regression harness.
 Automation hosts must grant agents only the frozen JSON action object, not an arbitrary JavaScript
 console; local test servers expose the synthetic harness only with the explicit `--test-api` flag.
+
+Saved actions retain the original serialized mode values `view`, `build`, and `run`, and the
+versioned action names such as `build.setTool`. These are compatibility identifiers; the public
+workspace labels are **View**, **Design**, and **Simulate**.
 
 ## Protein input and preparation
 

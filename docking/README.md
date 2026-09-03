@@ -86,7 +86,7 @@ ConstraintDock version `0.4.0` and Pose Propagation version `0.9.0` implement an
 - deterministic in-browser ETKDGv3 conformer generation and core alignment;
 - fixed-scaffold OpenFF Sage relaxation in OpenMM WebAssembly with a receptor-aware
   feasibility/objective safeguard;
-- a compact Build-mode setup, top-five pose selector, and pose application that leaves the receptor fixed;
+- a compact Design-mode setup, top-five pose selector, and pose application that leaves the receptor fixed;
 - input and protocol SHA-256 hashes;
 - an append-only, hash-chained run labbook with JSON and Markdown representations.
 

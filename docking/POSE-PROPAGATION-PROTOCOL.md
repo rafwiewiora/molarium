@@ -203,7 +203,7 @@ unresolved proposals as one history state.
 
 ## Interactive edit cleanup
 
-Reference capture changes the Build cleanup default to `Preserve reference`. Automatic edit cleanup
+Reference capture changes the Design cleanup default to `Preserve reference`. Automatic edit cleanup
 and the explicit ligand MMFF94/UFF action then fix every surviving same-element reference heavy atom
 outside a registered transformed ring and move only hydrogens, non-inherited atoms, and the complete
 registered transformed ring. This preprocessing is upstream of the pose protocol:

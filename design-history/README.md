@@ -36,7 +36,7 @@ Four record types have deliberately different responsibilities:
 The append-only campaign ledger uses `molarium.design-campaign/v1`. A route
 cannot pass ledger verification, and a ledger cannot be loaded as a route.
 
-The main Build workspace exposes this ledger through **Design History**. One
+The main Design workspace exposes this ledger through **Design History**. One
 `campaign.create` action can capture the current molecule as the first commit;
 later actions commit snapshots, create or switch branches, merge an explicit
 current molecular state, record a disposition, and verify the record. Campaign

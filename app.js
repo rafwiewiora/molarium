@@ -859,13 +859,13 @@ function update2DEditorUi() {
   if (state.depictionEditing) help.textContent = 'Updating the shared molecular graph…';
   else if (state.mode !== 'build') help.textContent = state.depictionTool === 'select'
     ? 'Select an atom here to select the same atom in 3D.'
-    : 'This drawing tool opens Build and edits the shared 2D/3D structure.';
+    : 'This drawing tool opens Design and edits the shared 2D/3D structure.';
   else if (state.depictionTool === 'atom') help.textContent = `Click an atom to attach ${state.selectedElement}; use Select to change an existing atom.`;
   else if (state.depictionTool === 'bond') help.textContent = state.depictionBondStart == null
     ? 'Pick two atoms, or click a bond directly, to set its order.'
     : 'Pick the second atom. Both views keep the same atom identities.';
   else if (state.depictionTool === 'erase') help.textContent = 'Click an atom or bond to stage its deletion.';
-  else help.textContent = 'Select an atom or bond here; use the Build panel for element and charge changes.';
+  else help.textContent = 'Select an atom or bond here; use the Design panel for element and charge changes.';
   update2DSelectionOverlay();
 }
 function sanitizedDepictionSvg(svgText) {
@@ -1037,7 +1037,7 @@ async function update2DDepiction() {
     state.depictionComponentId = target.componentId;
     state.depictionTemplateMolBlock = null;
     // Settle tool/help layout before converting the prior screen positions into
-    // this SVG's coordinate system. Build-mode help can change the panel height.
+    // this SVG's coordinate system. Design-mode help can change the panel height.
     update2DEditorUi();
     const alignment = alignDepictionToPrevious(svg, target);
     panel.dataset.alignedAtoms = String(alignment?.commonAtoms || 0);
@@ -6038,7 +6038,7 @@ function showNotice(message) {
 
 function setMode(mode) {
   if (mode !== 'build' && state.chemistryTransaction) {
-    showNotice('Finish or discard the pending chemistry changes before leaving Build.');
+    showNotice('Finish or discard the pending chemistry changes before leaving Design.');
     return false;
   }
   state.mode = mode;
@@ -7763,7 +7763,7 @@ function updateSidechainRotamerControls() {
 }
 
 async function enumerateCurrentSidechainRotamers(residueAtomIndex, maximumCandidates = 32) {
-  if (state.mode !== 'build') throw new Error('Enter Build mode before enumerating side-chain rotamers.');
+  if (state.mode !== 'build') throw new Error('Enter Design mode before enumerating side-chain rotamers.');
   if (state.chemistryTransaction)
     throw new Error('Finish or discard pending chemistry before enumerating side-chain rotamers.');
   if (!Number.isInteger(maximumCandidates) || maximumCandidates < 1 || maximumCandidates > 64)
@@ -7793,7 +7793,7 @@ async function enumerateCurrentSidechainRotamers(residueAtomIndex, maximumCandid
 }
 
 async function applyCurrentSidechainRotamer(index) {
-  if (state.mode !== 'build') throw new Error('Enter Build mode before applying a side-chain rotamer.');
+  if (state.mode !== 'build') throw new Error('Enter Design mode before applying a side-chain rotamer.');
   if (state.chemistryTransaction)
     throw new Error('Finish or discard pending chemistry before applying a side-chain rotamer.');
   const ensemble = state.sidechainRotamerEnsemble;
@@ -8956,7 +8956,7 @@ function installChemistActionsApi(module) {
     },
     'build.setTool':async (args) => { chemistActionKeys(args, ['tool']);
       const tool = chemistActionEnum(args.tool, ['add','select','move'], 'tool');
-      if (state.mode !== 'build') throw new Error('Enter Build mode before choosing a build tool.');
+      if (state.mode !== 'build') throw new Error('Enter Design mode before choosing a design tool.');
       const internalTool = tool === 'move' ? 'manipulate' : tool;
       const button = document.querySelector(`#build-tool-tabs [data-tool="${internalTool}"]`);
       if (!button) throw new Error(`The ${tool} tool is unavailable`);
@@ -9003,7 +9003,7 @@ function installChemistActionsApi(module) {
       } }); },
     'selection.replace':async (args) => { chemistActionKeys(args, ['atomIds']);
       if (state.mode !== 'build' || state.buildTool !== 'select')
-        throw new Error('Enter Build mode and choose Select before selecting atoms.');
+        throw new Error('Enter Design mode and choose Select before selecting atoms.');
       if (!Array.isArray(args.atomIds) || !args.atomIds.length || args.atomIds.length > 256
         || args.atomIds.some((id) => typeof id !== 'string' || !id))
         throw new Error('atomIds must contain 1 to 256 persistent atom IDs');
@@ -9039,7 +9039,7 @@ function installChemistActionsApi(module) {
       return summarizeMutation(() => applySelectedBondChemistry(args.order)); },
     'chemistry.addAtom':async (args) => { chemistActionKeys(args,
       ['attachedToAtomId','element']);
-      if (state.mode !== 'build') throw new Error('Enter Build mode before adding an atom.');
+      if (state.mode !== 'build') throw new Error('Enter Design mode before adding an atom.');
       if (typeof args.attachedToAtomId !== 'string' || !args.attachedToAtomId)
         throw new Error('attachedToAtomId must be a persistent atom ID');
       if (!ELEMENTS[args.element] || args.element === 'H')
@@ -9056,7 +9056,7 @@ function installChemistActionsApi(module) {
       return chemistActionSummary({ addedAtomId:addedHeavyAtomId, addedAtomIds,
         validation:structuredClone(result?.validation || null) }); },
     'chemistry.createBond':async (args) => { chemistActionKeys(args, ['atomIds','order']);
-      if (state.mode !== 'build') throw new Error('Enter Build mode before creating a bond.');
+      if (state.mode !== 'build') throw new Error('Enter Design mode before creating a bond.');
       if (!Array.isArray(args.atomIds) || args.atomIds.length !== 2
         || args.atomIds.some((id) => typeof id !== 'string' || !id)
         || args.atomIds[0] === args.atomIds[1])
@@ -9102,7 +9102,7 @@ function installChemistActionsApi(module) {
       state.buildHistory.push(buildHistoryEntry(state.molecule));
       restoreMolecule(state.redoHistory.pop()); return chemistActionSummary(); },
     'pose.captureReference':async (args) => { chemistActionKeys(args, ['mode']);
-      if (state.mode !== 'build') throw new Error('Enter Build mode before capturing a reference pose.');
+      if (state.mode !== 'build') throw new Error('Enter Design mode before capturing a reference pose.');
       const mode = chemistActionEnum(args.mode, ['propagate','selected-core'], 'mode');
       document.querySelector('#docking-mode').value = mode === 'selected-core'
         ? 'selected-core' : 'propagate'; updateDockingUi();
@@ -9229,7 +9229,7 @@ function installChemistActionsApi(module) {
     'optimization.run':async (args) => { chemistActionKeys(args, ['method']);
       const method = chemistActionEnum(args.method,
         ['ligand-rdkit','pocket-webgpu','induced-fit-webgpu','webgpu','rdkit','ani2x'], 'method');
-      if (state.mode !== 'build') throw new Error('Enter Build mode before optimizing.');
+      if (state.mode !== 'build') throw new Error('Enter Design mode before optimizing.');
       const option = document.querySelector(`#build-optimizer-select option[value="${method}"]`);
       if (!option || option.disabled) throw new Error(`Optimization method ${method} is unavailable for this molecule`);
       const select = document.querySelector('#build-optimizer-select');
@@ -14037,7 +14037,7 @@ function setGeneratedCardOpen(card, body, toggle, open) {
 }
 
 function installSideCardDisclosures() {
-  const explicitTitles = { 'build-left-panel':'Build tools', 'build-right-panel':'Design workspace' };
+  const explicitTitles = { 'build-left-panel':'Design tools', 'build-right-panel':'Design workspace' };
   document.querySelectorAll('.panel > .card, .panel-scroll-stack > .card').forEach((card, index) => {
     if (card.classList.contains('story-transport-card')) return;
     if (card.querySelector(':scope > .card-heading.disclosure')) return;

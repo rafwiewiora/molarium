@@ -14,7 +14,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "Enter Build to make the first prospective design decision"
+      "caption": "Enter Design to make the first prospective design decision"
     },
     {
       "action": "protein.prepare",
@@ -73,7 +73,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "Return to Build with the compound 17 prediction"
+      "caption": "Return to Design with the compound 17 prediction"
     },
     {
       "action": "pose.captureReference",
@@ -120,7 +120,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "Return to Build with the compound 18 prediction"
+      "caption": "Return to Design with the compound 18 prediction"
     },
     {
       "action": "pose.captureReference",
@@ -187,7 +187,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "Return to Build with the predicted open pocket"
+      "caption": "Return to Design with the predicted open pocket"
     },
     {
       "action": "pose.captureReference",
@@ -201,7 +201,7 @@
       "args": {
         "stepId": "finish-bay-293"
       },
-      "caption": "Build the final BAY-293 graph from compound 21"
+      "caption": "Construct the final BAY-293 graph from compound 21"
     },
     {
       "action": "pose.refine",

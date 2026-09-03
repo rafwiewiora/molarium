@@ -112,7 +112,7 @@ try {
   await browser.evaluate(`document.querySelector('.mode-bar button[data-mode="build"]').click();
     document.querySelector('#designer-move-tools').scrollIntoView({block:'center'}); true`);
   await delay(400);
-  await appendFrame('Molarium Build interface before import', Math.round(fps * 1.5));
+  await appendFrame('Molarium Design interface before import', Math.round(fps * 1.5));
 
   const documentNode = await browser.client.call('DOM.getDocument', { depth:1 });
   const fileNode = await browser.client.call('DOM.querySelector', {

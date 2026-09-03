@@ -3,7 +3,7 @@ export const CHEMIST_ACTIONS_SCHEMA = 'molarium.chemist-actions/v1';
 const ACTIONS = Object.freeze({
   'session.inspect': Object.freeze({ description:'Inspect the current chemist-visible molecular state.',
     arguments:Object.freeze({ scope:'ligand | selection | pocket | all', includeCoordinates:'boolean', maximumAtoms:'integer 1–500' }) }),
-  'view.setMode': Object.freeze({ description:'Choose the View, Build, or Run workspace.',
+  'view.setMode': Object.freeze({ description:'Choose the View, Design, or Simulate workspace. Serialized mode values remain view, build, and run.',
     arguments:Object.freeze({ mode:'view | build | run' }) }),
   'view.focusComponent': Object.freeze({
     description:'Use the visible Components control to zoom to one molecular component.',
@@ -20,7 +20,7 @@ const ACTIONS = Object.freeze({
     description:'Set the same representation and visibility options available in Display Options.',
     arguments:Object.freeze({ representation:'ball-stick | cartoon | both', showHydrogens:'boolean',
       showInteractions:'boolean', showPocketAtoms:'boolean', showHulls:'boolean' }) }),
-  'build.setTool': Object.freeze({ description:'Choose the same Add, Select, or Move tool available in Build.',
+  'build.setTool': Object.freeze({ description:'Choose the same Add, Select, or Move tool available in Design.',
     arguments:Object.freeze({ tool:'add | select | move' }) }),
   'protein.prepare': Object.freeze({
     description:'Prepare and parameterize the loaded protein complex through the visible preparation workflow.',
@@ -73,7 +73,7 @@ const ACTIONS = Object.freeze({
   'pose.applySidechainRotamer': Object.freeze({
     description:'Apply one returned side-chain rotamer branch by zero-based result index.',
     arguments:Object.freeze({ index:'non-negative integer' }) }),
-  'optimization.run': Object.freeze({ description:'Run one optimization method exposed in the Build method menu.',
+  'optimization.run': Object.freeze({ description:'Run one optimization method exposed in the Design method menu.',
     arguments:Object.freeze({ method:'ligand-rdkit | pocket-webgpu | induced-fit-webgpu | webgpu | rdkit | ani2x' }) }),
   'designRoute.load': Object.freeze({
     description:'Load the coordinate-bearing hit of a registered design route.',

@@ -14,7 +14,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "route-enter-build"
+      "caption": "route-enter-design"
     },
     {
       "action": "protein.prepare",
@@ -101,7 +101,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "scaffold-rewrite-advance-build"
+      "caption": "scaffold-rewrite-advance-design"
     },
     {
       "action": "pose.captureReference",
@@ -171,7 +171,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "fragment-merge-advance-build"
+      "caption": "fragment-merge-advance-design"
     },
     {
       "action": "pose.captureReference",
@@ -280,7 +280,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "open-phe890-pocket-return-build-1"
+      "caption": "open-phe890-pocket-return-design-1"
     },
     {
       "action": "session.inspect",
@@ -375,7 +375,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "open-phe890-pocket-return-build-6"
+      "caption": "open-phe890-pocket-return-design-6"
     },
     {
       "action": "session.inspect",
@@ -470,7 +470,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "open-phe890-pocket-return-build-7"
+      "caption": "open-phe890-pocket-return-design-7"
     },
     {
       "action": "session.inspect",
@@ -555,7 +555,7 @@
       "args": {
         "mode": "build"
       },
-      "caption": "open-phe890-pocket-advance-build"
+      "caption": "open-phe890-pocket-advance-design"
     },
     {
       "action": "pose.captureReference",

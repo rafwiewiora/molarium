@@ -31,7 +31,7 @@ async function populatedCampaign() {
     kind:'hypothesis.proposed', actorId:AGENT.id, parentEventIds:[start.eventId],
     subjectIds:[reference], payload:{ statement:'Replacing the terminal group may reduce clearance.' } });
   const actionScriptId = await storeActionScript(value, { label:'Replace terminal oxygen', actions:[
-    { action:'view.setMode', args:{ mode:'build' }, caption:'Open Build.' },
+    { action:'view.setMode', args:{ mode:'build' }, caption:'Open Design.' },
     { action:'selection.replace', args:{ atomIds:['ligand:A2'] }, caption:'Select the oxygen.' },
     { action:'chemistry.setAtom', args:{ element:'N', formalCharge:0 }, caption:'Change O to N.' },
     { action:'chemistry.finish', args:{}, caption:'Finish the chemical state.' },
