@@ -1,384 +1,707 @@
 \documentclass[11pt]{article}
 
-% Keep the preprint close to standard LaTeX so that it remains easy to submit
-% to arXiv and straightforward to restyle for a journal later.
 \usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
 \usepackage{lmodern}
-\usepackage{microtype}
-\usepackage[margin=1in]{geometry}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{booktabs}
-\usepackage{array}
-\usepackage[section]{placeins}
+\usepackage[margin=0.78in]{geometry}
 \usepackage{graphicx}
-\usepackage[dvipsnames]{xcolor}
-\usepackage{csquotes}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{caption}
 \usepackage[numbers,sort&compress]{natbib}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{listings}
 
-% Load hyperref late. arXiv's TeX Live documentation recommends letting it
-% choose its own driver.
-\usepackage[
+\definecolor{molblue}{RGB}{20,96,126}
+\definecolor{molteal}{RGB}{0,126,133}
+\definecolor{callout}{RGB}{236,247,249}
+
+\hypersetup{
   colorlinks=true,
-  linkcolor=MidnightBlue,
-  citecolor=MidnightBlue,
-  urlcolor=MidnightBlue,
-  pdftitle={Molecular design tools are free now},
-  pdfauthor={Anonymous},
-  pdfsubject={Browser-native molecular design preprint},
-  pdfkeywords={molecular design, WebAssembly, WebGPU, molecular mechanics}
-]{hyperref}
-
-\graphicspath{{figures/}}
-
-\newcommand{\molarium}{\textsc{Molarium}}
-\newif\ifdraft
-\draftfalse % Change to \drafttrue to show authoring notes in the PDF.
-\newcommand{\draftnote}[1]{%
-  \ifdraft
-    \par\noindent
-    \colorbox{yellow!20}{%
-      \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
-        \textbf{Draft note:} #1%
-      }%
-    }%
-    \par
-  \fi
+  linkcolor=molblue,
+  citecolor=molblue,
+  urlcolor=molblue,
+  pdftitle={Molarium: Agent-Generated Adaptive Software for Molecular Design},
+  pdfauthor={Rafal P. Wiewiora, W. Patrick Walters, and Woody Sherman}
 }
 
-\title{Molecular design tools are free now}
-\author{Anonymous}
-% Use a fixed date: arXiv may rebuild source, which makes \today unstable.
-\date{Preprint --- September 2026}
+\captionsetup{font=small,labelfont=bf}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+\setlist{nosep}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\color{gray}Molarium: Agent-Generated Adaptive Software for Molecular Design}
+\fancyhead[R]{\footnotesize\color{gray}Wiewiora, Walters, and Sherman}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+  {-2.2ex \@plus -1ex \@minus -.2ex}%
+  {1.1ex \@plus .2ex}%
+  {\normalfont\Large\bfseries\color{molblue}}}
+\makeatother
+
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible,keepspaces=true}
+
+\newcommand{\safeincludegraphics}[2][]{%
+  \IfFileExists{#2}{\includegraphics[#1]{#2}}{%
+    \fbox{\parbox[c][1.8in][c]{0.92\linewidth}{\centering\small Figure file not included in this source package.}}}%
+}
+
+\newcommand{\callout}[1]{%
+  \begin{center}
+  \fcolorbox{molteal}{callout}{\parbox{0.90\linewidth}{\centering\bfseries #1}}
+  \end{center}
+}
+
+\newcommand{\appendixsection}[2]{%
+  \clearpage
+  \refstepcounter{section}%
+  \setcounter{subsection}{0}%
+  \fancyhead[L]{\footnotesize\color{gray}Molarium --- Appendix \Alph{section}}%
+  \begin{center}
+    {\Large\bfseries\color{molblue}APPENDIX \Alph{section}}\\[0.55em]
+    {\LARGE\bfseries\color{molblue}#1}
+  \end{center}
+  \vspace{0.8em}
+  \addcontentsline{toc}{section}{Appendix \Alph{section}: #1}%
+  \label{#2}%
+}
+
+\title{\textcolor{molblue}{\textbf{Molarium: Agent-Generated Adaptive Software for Molecular Design}}\\[0.5em]
+\large A perspective on persistent molecular state, scientific contracts, and decision provenance in drug discovery}
+\author{%
+\begin{tabular}{@{}ccc@{}}
+\textbf{Rafal P. Wiewiora} & \textbf{W. Patrick Walters} & \textbf{Woody Sherman}\\
+\normalsize PsiThera & \normalsize OpenADMET & \normalsize PsiThera\\
+\small\texttt{rafal.wiewiora@psithera.com} &
+\small\texttt{pat.walters@omsf.io} &
+\small\texttt{woody.sherman@psithera.com}
+\end{tabular}}
+\date{September 2, 2026}
 
 \begin{document}
-
 \maketitle
+\thispagestyle{fancy}
 
 \begin{abstract}
-Molecular design software no longer has to begin with procurement, a remote
-account, or a specialist workstation installation.
-Modern browsers can parse and render molecular structures, preserve chemical
-topology during interactive editing, and execute accelerated numerical kernels
-without sending a structure to a server.
-We describe \molarium, a browser-native molecular workspace that accepts XYZ and
-SMILES input, supports topology-aware fragment construction, and runs local
-molecular-mechanics calculations through JavaScript, WebGPU, and OpenMM 8.2
-compiled to WebAssembly.
-The system is a concrete case study for a broader claim: a useful baseline of
-molecular design is now free at the points of access, installation, and data
-custody.
-``Free'' does not mean that every relevant method is open, equally available on
-all hardware, or suitable for publication-quality prediction.
-The current generic force field and small-molecule GPU path are intended for
-interactive exploration.
-We therefore pair the access claim with an explicit validation program covering
-chemical invariants, cross-backend numerical agreement, performance, and browser
-portability.
-This framing separates what is already broadly available from the scientific and
-infrastructural work still required to make molecular computation genuinely
-universal.
+Commercial computational drug-discovery software has traditionally bundled three sources of value: the interface, the scientific models, and the specialized expertise required to operate those models and translate their outputs into design decisions. Large language models, coding agents, and tool-using scientific agents are beginning to unbundle this paradigm. Interfaces, analyses, workflow logic, and substantial portions of scientific software can increasingly be generated to meet the needs of a particular scientist, project, and question, while agents can automate sophisticated workflows that once required specialist users.
+
+This shift repositions where competitive advantage is created in computational drug discovery. Faster execution cannot fix an imprecise model, broaden an applicability domain, or enhance the utility of a weak prediction. As the underlying tooling becomes increasingly accessible and fluid, strategic differentiation should shift toward superior and more generalizable models, proprietary experimental data, accumulated discovery intelligence, and the human discernment needed to frame the right questions and evaluate the answers.
+
+Molarium, available at \url{https://molarium.org}, provides a case study of this transition. Created during an intensive weekend through collaboration between a drug-discovery scientist and an AI coding agent, this open-source molecular workbench operates primarily in a standard web browser. It integrates local molecular graphics, editing, conformer generation, molecular mechanics and dynamics, machine-learned potentials, and selected protein-structure prediction workflows. Beneath its rapidly adaptable interface, Molarium maintains a versioned molecular state together with user actions, method specifications, provenance, and validation evidence. Decoupling an adaptable interface from an enduring scientific core points toward a broader architecture for generated adaptive software in drug discovery.
 \end{abstract}
 
-\noindent\textbf{Keywords:}
-molecular design; scientific software; WebAssembly; WebGPU; molecular mechanics;
-browser computing
+\textbf{Keywords:} agentic software development; computational chemistry; molecular design; WebGPU; scientific validation; provenance; discovery intelligence
 
-\draftnote{Replace the author metadata and decide whether this is primarily a
-  software paper, a perspective, or an empirical access study. The present draft
-  treats \molarium{} as a case study inside a broader position paper.}
+\section{From fixed software products to generated adaptive software}
 
-\section{Introduction}
-\label{sec:introduction}
+In computational drug discovery, success depends on deploying the right methodology at the right time, supported by appropriate parameters, explicit assumptions, and sound scientific context. Historically, this work has been concentrated among computational specialists and has required substantial operational overhead. Docking depends on protein preparation, protocol selection, constraints, and critical pose evaluation. Molecular dynamics adds system setup, force-field assignment, compute infrastructure, trajectory analysis, and visualization. Free-energy calculations add perturbation design, sampling sufficiency, convergence assessment, and alignment with experimental conditions. Comparable layers of infrastructure surround cheminformatics, quantum chemistry, property prediction, generative molecular design, and structure prediction.
 
-For much of the history of computational chemistry, using a molecular design
-tool meant acquiring a license, installing a substantial native software stack,
-learning a remote computing environment, or some combination of the three.
-These requirements were not merely inconveniences.
-They influenced who could inspect a structure, test an idea, reproduce a
-calculation, and teach with the same tools used in research.
+Commercial scientific software has created considerable value by simplifying and integrating many of these activities. Graphical interfaces reduced technical barriers, workflow engines connected fragmented programs, and software packages encoded operational details needed to apply methods consistently. The same integration coupled scientific questions to relatively fixed software environments. Project-specific improvements competed with broader product roadmaps, new analyses often required engineering support, and scientific users frequently adapted their questions to the capabilities and conventions of the available applications.
 
-That boundary has shifted.
-WebAssembly brings portable compiled code to the browser~\cite{haas2017webassembly},
-while WebGPU exposes local accelerators~\cite{w3c2025webgpu}.
-Established scientific engines can also be reused in new environments; OpenMM is
-one example~\cite{eastman2017openmm}.
-Browser molecular graphics are already well established~\cite{rose2015ngl}.
-The newer opportunity is to place editing and calculation beside visualization
-without adding a remote service boundary.
+Large language models and coding agents are beginning to change this relationship. A scientist with deep drug-discovery expertise but limited programming experience can increasingly describe an application, analysis, visualization, or workflow in natural language and have software constructed around the scientific need. Tool-using agents can operate established methods, link calculations, handle routine failures, and assemble results into forms that support decisions. Earlier systems such as ChemCrow and ChemGraph established proof-of-concept for language models coordinating chemistry tools and computational workflows \citep{bran2024chemcrow,boiko2023coscientist,pham2026chemgraph,macknight2025rethinking}. Their practical scope was limited compared with current coding agents, but they helped establish the feasibility of coupling language models to executable scientific tools.
 
-This paper advances a deliberately provocative thesis: molecular design tools
-are free now.
-The useful version of that thesis is narrower than the title and more testable.
-A person with a contemporary browser can now access a meaningful baseline of
-molecular construction, visualization, and local computation without paying at
-the point of use, installing a native scientific stack, or surrendering molecular
-data to a hosted calculation service.
+The consequence is a shift in how drug hunters can interact with computational science. Scientists can increasingly shape software around the question, the stage of the project, the data available at that moment, and their preferred way of reasoning about the problem. A medicinal chemist optimizing a macrocycle may need a different interface and set of calculations than a structural biologist interrogating a cryptic pocket or a program team deciding which compound to advance. The interface can serve as a temporary, adaptive view over a more durable scientific substrate.
 
-We examine that claim through \molarium, a browser-native molecular workspace.
-The contribution is not a claim that browser software has displaced
-high-accuracy quantum chemistry, production molecular dynamics, or expert
-modeling workflows.
-Instead, it is threefold:
+Molarium's development directly reflects this paradigm. It began as a need for a more effective environment for viewing and altering molecular structures and expanded through active use. Scientific challenges drove software changes: an unrealistic geometry led to refined editing semantics; questionable energies triggered explicit numerical reference checks; ambiguity about the execution backend led to clearer identification of the active engine; and unsupported methods were converted into explicit boundaries rather than unstated assumptions. The tool evolved alongside the scientific investigation. Appendix~\ref{app:architecture} provides the corresponding execution architecture, numerical validation, and executable design-history example. Appendix~\ref{app:manual} provides task-centered workflows for scientists and agents, including the relationship among skill contracts, public API actions, replay, and persistent Design History.
 
-\begin{enumerate}
-  \item a precise account of what ``free'' can mean for scientific software;
-  \item a reference architecture for local, browser-based molecular design; and
-  \item a validation framework that makes the limits of such a system visible.
-\end{enumerate}
+\section{Molarium and the value of a persistent molecular state}
 
-\section{What does \enquote{free} mean?}
-\label{sec:free}
+Molarium is an MIT-licensed, local-first molecular viewer, builder, and simulation workbench. Most supported calculations execute on the user's device using WebAssembly or WebGPU, allowing molecular graphics, editing, cheminformatics, conformer exploration, molecular mechanics, molecular dynamics, machine-learned potentials, and selected protein-structure prediction workflows to coexist in a standard browser environment. The browser reduces installation and orchestration overhead and, for supported calculations, can avoid remote job submission, cloud-compute charges, and application licensing while keeping computation inside the interactive design loop. WebAssembly provides a route for mature compiled scientific libraries to run locally, while WebGPU exposes modern accelerators through a portable browser API \citep{haas2017wasm,webgpu2025}.
 
-Price is only one barrier to molecular computation.
-We distinguish four freedoms that can be evaluated independently.
+The architectural choice that matters most is the preservation of a common scientific state. Molarium maintains explicit topology, coordinates, protonation state, chemical edits, preparation history, trajectories, model identity, and provenance as properties of the molecular session rather than allowing each view or calculation to construct its own interpretation of the molecule. The interface can therefore change rapidly without redefining the scientific object beneath it.
 
-\paragraph{Free to access.}
-The user does not pay a fee or need an institutional entitlement before the
-first useful interaction.
+Three task-specific views illustrate this separation. View emphasizes the molecular system, including protein, ligand, waters, ions, contacts, and selected residues. Design exposes chemical and geometrical interventions. Simulate emphasizes preparation, trajectories, and analysis. The controls differ because the scientific questions differ; topology, coordinates, method identity, and history remain attached to the same evolving molecular state. Detailed implementation and replay examples are provided in Appendix~\ref{app:architecture}, while the state mutations, exports, and failure behaviour of the corresponding user-facing modules are specified in Appendix~\ref{app:manual}.
 
-\paragraph{Free from installation.}
-The application opens from a URL and does not require the user to configure a
-compiler, Python environment, GPU toolkit, or native molecular-simulation stack.
-Downloading web assets still constitutes installation in a technical sense, but
-the browser makes that process automatic and disposable.
-
-\paragraph{Free to keep data local.}
-Structures and trajectories need not cross a service boundary for supported
-operations.
-This property matters for unpublished compounds, classroom use, and settings in
-which connectivity is intermittent or policy constrains data transfer.
-
-\paragraph{Free to inspect and modify.}
-This is the traditional software-freedom question, and it depends on licensing,
-source availability, and the licenses of bundled components.
-It must not be inferred from zero price or browser delivery.
-
-The title is therefore a hypothesis about a practical access threshold, not a
-claim that all molecular design software is costless, open source, or free of
-operational constraints.
-The four-part definition also supplies a more useful evaluation target than a
-binary label.
-
-\section{A browser-native molecular workspace}
-\label{sec:system}
-
-\subsection{Interaction and molecular representation}
-
-\molarium{} presents a three-panel workspace for entering, constructing, viewing,
-and calculating on molecules.
-It accepts XYZ coordinates and SMILES strings, supports file upload, and provides
-a searchable fragment builder.
-Initial three-dimensional geometry is seeded from local chemical templates:
-aromatic groups are planar, saturated carbon centers are tetrahedral, neutral
-amines are pyramidal, and divalent oxygen and sulfur centers are bent.
-
-Build operations preserve explicit molecular topology.
-Adding an atom next to an existing atom replaces an available hydrogen and adds
-one bond; adding it in open space begins a separate saturated component.
-The editor does not regenerate bonds from visual proximity, and it rejects edits
-that violate its valence rules.
-This separation between topology and rendering is essential: a molecular editor
-must not silently change the object being studied merely because two projected
-atoms appear close together.
-
-The viewer uses an outlined ball-and-stick representation with element-specific
-colors and explicit bond-order lanes.
-Its virtual trackball uses quaternion rotation, and a rotation-invariant
-three-dimensional fit prevents apparent zoom changes during manipulation.
-
-\subsection{Local calculation backends}
-
-All supported calculations execute locally in workers outside the rendering
-thread.
-The lightweight JavaScript path provides immediate geometry cleanup.
-A browser-native WebGPU worker evaluates energy, relaxes geometry, and runs short
-single-precision dynamics.
-An OpenMM 8.2 WebAssembly worker provides a double-precision path on the
-Reference platform for energies, L-BFGS minimization, and short dynamics.
-
-Both workers receive the same browser-assigned OpenFF Sage 2.1.0 valence and
-van der Waals terms and explicitly labelled RDKit Gasteiger partial charges.
-The WebGPU worker is a direct Sage evaluator rather than an OpenMM Platform;
-OpenMM Reference serves as its double-precision compatibility oracle.
-The WebGPU path uses analytical, atom-centric forces with compact valence
-incidence and sparse nonbonded-exception data.
-It is intended for responsive cleanup and exploratory trajectories, not for
-publication-quality energetics.
-
-Calculation results retain a compact trajectory.
-An energy plot and frame slider allow the user to inspect saved geometries in the
-same viewer, making calculation history an interactive object rather than a log
-file hidden behind the interface.
-
-\subsection{Machine-learning feasibility boundary}
-
-The repository also contains an experimental browser export of OpenFold, whose
-reference implementation is a trainable reimplementation of
-AlphaFold2~\cite{ahdritz2024openfold}.
-The experiment dispatches an Evoformer block and StructureModule through ONNX
-Runtime Web and compares WebGPU output with an in-browser WebAssembly path.
-Its exported models use untrained random weights.
-It demonstrates an execution route, not a usable structure predictor, and is not
-part of the current molecular-design claim.
-
-\section{Evaluation plan}
-\label{sec:evaluation}
-
-A paper about access still needs conventional evidence of correctness and
-performance.
-Table~\ref{tab:evaluation} defines the minimum evaluation needed to turn this
-design report into an empirical result.
-
-\begin{table}[htbp]
+\begin{figure}[htbp]
   \centering
-  \caption{Planned evaluation. Numerical thresholds and the device/browser matrix
-    should be fixed before running the final benchmark.}
-  \label{tab:evaluation}
-  \footnotesize
-  \renewcommand{\arraystretch}{1.05}
-  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.20\linewidth}
-                       >{\raggedright\arraybackslash}p{0.34\linewidth}
-                       >{\raggedright\arraybackslash}p{0.35\linewidth}@{}}
-    \toprule
-    Dimension & Test & Report \\
-    \midrule
-    Chemical integrity &
-      Parse, edit, attach fragments, minimize, and replay trajectories for a
-      curated molecule set &
-      Valence violations, topology changes, stereochemical limitations, and
-      failing structures \\
-    Numerical agreement &
-      Compare energies and final coordinates across JavaScript, WebGPU, and
-      OpenMM paths where their models overlap &
-      Absolute and relative energy differences, coordinate RMSD, convergence,
-      and precision sensitivity \\
-    Performance &
-      Measure cold start, first result, minimization throughput, and trajectory
-      throughput over molecule size &
-      Median and tail latency, memory use, device class, and thermal conditions \\
-    Portability &
-      Run the same versioned test suite in supported browser/operating-system
-      combinations &
-      Feature availability, pass rate, fallbacks, and reproducible failure logs \\
-    Access &
-      Audit the steps and external dependencies between a new user and each
-      capability &
-      Fees, accounts, downloads, network requests, local-data guarantees, and
-      licenses \\
-    \bottomrule
-  \end{tabular}
-\end{table}
+  \safeincludegraphics[width=\linewidth]{figures/fig1_molarium_interface.png}
+  \caption{The Molarium molecular studio during prospective BAY-293 pose generation from the frozen compound-21 state. The central view retains the local protein--ligand context and marks changed atoms; the left rail explains the active Designer Move; and the right rail reports 44 distinct poses, nine feasible candidates, and the eight-worker execution of the 64-chain search. View, Design, and Simulate reorganize controls around different scientific questions without replacing the authoritative molecular graph, coordinates, preparation state, provenance, or history beneath them.}
+  \label{fig:views}
+\end{figure}
 
-The existing browser regression suite is a starting point rather than the final
-dataset.
-The benchmark should be versioned, machine-readable, and runnable independently
-of the prose manuscript.
-Figures and tables should be generated from committed result files so that the
-reported values can be traced back to a specific application revision, browser
-version, and hardware configuration.
+\begin{figure}[htbp]
+  \centering
+  \safeincludegraphics[width=\linewidth]{figures/fig2_sos1_hit_to_bay293.png}
+  \caption{Hit-only SOS1 design and post-freeze structural evaluation. (A) The prospective coordinate boundary was restricted to PDB 5OVE with its AXE ligand; structures 5OVF--5OVI remained unopened. (B) Sequential scaffold rewriting and growth to compound 21 reached the Phe890-in volume and introduced four steric clashes. (C) A three-basin side-chain search selected the Phe890-out branch, which introduced no additional clashes and moved $\chi_1$ from approximately $-73^{\circ}$ to $-172^{\circ}$. (D) The resulting open-pocket state was propagated to BAY-293 and frozen before 5OVI was opened. Post-freeze comparison with 5OVI gave a receptor-aligned, graph-symmetry-minimized ligand RMSD of 1.215~\AA{}; Phe890 $\chi_1$ was $-172.43^{\circ}$ in the prediction and $-166.55^{\circ}$ in the crystal. Later crystal structures evaluated the frozen trajectory but did not seed it.}
+  \label{fig:sos1story}
+\end{figure}
 
-\draftnote{Add the molecule panel, acceptance thresholds, browser/device matrix,
-  and measured results. Do not promote a test from ``planned'' to ``validated''
-  without an archived machine-readable output.}
+The executable replay is available at \url{https://molarium.org/sos1-hit-to-bay293}. A fixed 1600$\times$1000 interface rendering of the same 48-move public-API replay is available at \url{https://molarium.org/assets/media/sos1-designer-moves-molarium-interface.mp4}.
 
-\FloatBarrier
+This separation becomes important when interfaces are inexpensive to modify. If every generated view can redefine a molecule, select a different charge model, change protonation, alter preparation, or reinterpret a trajectory, flexibility becomes a source of scientific ambiguity. Generated adaptive software therefore requires a stronger boundary between presentation and scientific state than a conventional fixed interface typically provides.
 
-\section{Limits and failure modes}
-\label{sec:limits}
+Molarium extends this principle by preserving the sequence of molecular states and user actions that produced the current session. Edits, selections, manipulations, calculations, and other interactions form an event history rather than leaving only the final coordinates. The resulting architecture is closer to version control than to a traditional molecular project file. Each molecular state can be associated with the actions that produced it, the calculation applied to it, and the evidence available at that point in the design process.
 
-Browser delivery removes some barriers and introduces others.
-WebGPU availability and performance vary by browser, operating system, adapter,
-and driver.
-Mobile thermal limits and memory pressure can make a nominally supported
-calculation impractical.
-Initial application assets must still be transferred and cached, and a URL is
-only durable if its hosting and dependency supply chain are maintained.
+The ``Git for molecules'' analogy is useful, although a drug-design history is richer than source code. A design trajectory includes structural changes together with evolving hypotheses, model outputs, uncertainty, and experimental evidence. In a discovery setting, such a record could capture which analogs were considered, which structures or properties influenced a design, which alternatives were rejected, and what was learned when a compound was synthesized and tested. This creates a foundation for recording medicinal-chemistry design trajectories rather than storing only the compounds that survived them. Much of the information that explains how a program learned lies in alternatives that were considered and abandoned, yet conventional compound databases usually preserve endpoints.
 
-Scientific limits are more important.
-A compact generic force field cannot supply the accuracy, chemical perception,
-sampling depth, or uncertainty estimates required for many research conclusions.
-The present system covers a restricted element set and small molecules, and its
-interactive trajectories do not substitute for a validated simulation protocol.
-SMILES-to-three-dimensional initialization is useful for interaction but does not
-establish protonation state, tautomeric state, stereochemistry, or a physically
-representative conformational ensemble in every case.
+\begin{figure}[htbp]
+  \centering
+  \safeincludegraphics[width=0.94\linewidth,trim=0 15 0 0,clip]{figures/fig2_architecture.png}
+  \caption{Molarium's local-first architecture. Named computational engines act on an explicit molecular state while provenance and validation evidence remain attached. The same principle provides a foundation for versioned molecular histories in which scientific actions can be replayed and compared without allowing a new interface to redefine the underlying state.}
+  \label{fig:architecture}
+\end{figure}
 
-Finally, privacy is an architectural property that must be verified, not merely
-asserted.
-Local calculation can coexist with analytics, remote fonts, crash reporting, or
-other network requests.
-A release supporting the data-custody claim should include a network audit,
-content-security policy, dependency inventory, and an offline test.
+The browser also provides a useful trust boundary for proprietary work. Molarium's Local Lab mode can restrict network access and verify reviewed application assets while keeping supported calculations on the local device. Because privacy controls depend on deployment configuration, this architecture makes data movement explicit and auditable. Organizations can evaluate and enforce how molecular data are handled rather than treating transfer to remote infrastructure as an invisible property of the software stack. Appendix~\ref{app:manual} specifies the connected and Local Lab network policies and makes clear that local calculation and fully offline operation are distinct claims.
 
-\section{Discussion}
-\label{sec:discussion}
+\section{Scientific contracts: provenance, validation, and falsifiability}
 
-The browser is becoming a credible lowest common denominator for scientific
-interaction.
-Its importance is not that it wins every benchmark against a native application.
-It is that one executable document can combine explanation, direct manipulation,
-and computation on machines that people already possess.
+The emergence of cheap, adaptive software introduces a scientific vulnerability. Agentically generated workflows become especially risky when seamless execution obscures the boundaries of the underlying scientific contract. As the time required to build a custom analysis view drops to minutes, that view still needs to expose the molecule, model, parameters, assumptions, and evidence that produced the result. Reducing the friction of software development without those safeguards increases the rate at which scientific ambiguity can be created.
 
-This changes the useful comparison.
-The question is no longer whether a browser can reproduce the largest or most
-accurate molecular workflow.
-It is which useful workflows can cross the zero-install, local-data threshold,
-how their limitations are communicated, and when a user should graduate to a
-specialized engine.
-A trustworthy tool should make that boundary obvious in the interface and in its
-exported results.
+We use the term scientific contract for the collection of invariants and evidence that gives a computational output its meaning. A molecular-mechanics result cannot be defined by the generic label ``molecular mechanics.'' Its identity depends on the molecular state, charge assignment, parameterization, energy function, treatment of nonbonded interactions, boundary conditions, constraints, integrator, numerical implementation, and precision. A learned potential depends on its architecture, weights, preprocessing, supported chemistry, and training domain. A protein-structure prediction depends on checkpoint selection, sequence and template information, inference protocol, and other model-specific choices. The surrounding interface may adapt dynamically, but these scientific identities must remain explicit and protected from silent drift.
 
-The word ``free'' also creates an obligation.
-If an application is free only while a particular host, browser feature, or
-volunteer maintainer persists, access remains fragile.
-Reproducible builds, permissive component licenses, archival releases, offline
-operation, and export to standard molecular formats are therefore part of the
-scientific design, not administrative details.
+Molarium preserves distinctions among computational pathways even when they operate in the same workspace. RDKit supports chemical perception and conformer generation; OpenFF Sage defines a molecular-mechanics model; OpenMM Reference provides an independent numerical route for selected validation tests; STORMM-inspired WebGPU code advances homogeneous replicas; ANI-2x provides a machine-learned potential with a defined chemical domain; and OpenFold supports a separate protein-structure prediction pathway \citep{riniker2015etkdg,boothroyd2023sage,eastman2024openmm8,cerutti2024stormm,devereux2020ani2x,ahdritz2024openfold}. These methods can be compared or chained without implying that their energies, assumptions, or domains are interchangeable. Appendix~\ref{app:architecture} specifies the implemented numerical pathways and their validation boundaries; Appendix~\ref{app:manual} records how those pathways are exposed, invoked, and constrained in the current workbench.
+
+The same principle applies to workflow provenance. Reproducible computational science requires retention of the data, computational process, execution environment, and provenance that produced a result \citep{cohenboulakia2017workflows,wilkinson2016fair}. More recent work formalizes workflow invariants and testable reproducibility criteria rather than treating provenance as passive metadata \citep{pritchard2025reproducibility}. Generated adaptive software increases the importance of this requirement because the workflow itself may be created or modified during the scientific interaction rather than existing as a stable artifact defined in advance.
+
+This leads to a stronger requirement: generation of a scientific workflow should be accompanied by generation of the conditions under which its claims could be falsified. If an agent implements a conformer-search strategy, the output should include the benchmark that tests whether conformational coverage improves, the independent reference used for comparison, the quantitative tolerance that defines agreement, the applicability limits of the test, and explicit failure conditions. If an agent adds a numerical kernel, it should generate the corresponding independent comparison and acceptance criteria. These are better understood as scientific contract tests than as ordinary software unit tests because they define what scientific claim the implementation can support.
+
+\begin{figure}[htbp]
+  \centering
+  \safeincludegraphics[width=0.94\linewidth]{figures/fig3_build_loop_compact.png}
+  \caption{The scientist--agent build loop. Scientific needs and objections are translated into software changes, while each new capability is paired with claim-defining tests, reference evidence, applicability limits, and provenance. The ability to generate a workflow and the ability to specify how its claim could fail are treated as parts of the same scientific result.}
+  \label{fig:buildloop}
+\end{figure}
+
+Molarium's development repeatedly followed this pattern. A chemically implausible geometry exposed a problem in representation and editing semantics. A questionable energy prompted comparison with an independent implementation. A discrepancy between CPU and GPU execution revealed both a unit error and an incorrect assumption about which backend was running. Requesting constrained dynamics led to implementation of SHAKE/RATTLE and comparison against a reference pathway \citep{ryckaert1977shake,andersen1983rattle}. In each case, the useful scientific result consisted of the feature together with a test that established the boundary of the claim.
+
+Fluent agentic software makes this distinction more consequential. A unit error can produce a smooth trajectory. Separate implementations can agree if they inherit the same flawed inputs. A numerically correct implementation can apply an inappropriate physical model. Successful execution and an attractive visualization therefore occupy the bottom of an evidence hierarchy rather than establishing that a molecular prediction is correct.
+
+\begin{figure}[htbp]
+  \centering
+  \safeincludegraphics[width=0.94\linewidth]{figures/fig4_evidence_ladder_fixed.png}
+  \caption{An evidence ladder for generated scientific software. Successful execution establishes less than numerical agreement; numerical agreement establishes less than retrospective predictive performance; retrospective performance establishes less than prospective transfer; and prospective accuracy is distinct from measurable improvement in drug-discovery decisions.}
+  \label{fig:evidence}
+\end{figure}
+
+When software construction is difficult, the labor of building a computational method can obscure the separate obligation to validate it. As implementation becomes easier, the scientific responsibility becomes harder to ignore. The workflow, its provenance, and the conditions that could falsify its claims should therefore be treated as a single scientific object.
+
+\section{Local computation changes the interaction model}
+
+A web browser does not replace production molecular simulation software or high-performance computing. Large periodic systems, long trajectories, advanced sampling, specialized force fields, and large-scale parallel studies can require substantially more compute than a personal machine can provide. Molarium addresses a different part of the workflow: calculations that are sufficiently bounded to remain inside the scientist's interactive design session.
+
+The practical benefit is reduced decision latency. Consider a medicinal chemist examining a bound ligand and asking whether a proposed three-dimensional edit creates an avoidable steric problem or opens a plausible alternative conformation. In a fragmented workflow, the scientist may export coordinates, request or run a separate calculation, move results back into a viewer, and reconstruct the context in which the question arose. In Molarium, supported editing, local relaxation, conformational exploration, and trajectory inspection can occur in the same session. The value comes from keeping the molecular state, the calculation, and the design question connected while the decision is still active.
+
+Local execution also changes economics for these interactive calculations. The marginal cost of many small calculations approaches the cost of hardware already on the user's desk, without requiring a remote orchestration cycle or a separate software license for each supported operation. This advantage is most relevant in the rapid design loop, where a calculation may be useful because it answers a focused question in minutes rather than because it achieves the maximum possible throughput on a benchmark.
+
+The lower operational barrier increases the importance of choosing calculations deliberately. A medicinal chemist deciding between two substituent orientations may gain value from a constrained local refinement that changes which analog is synthesized next; running hundreds of additional simulations after the decision is already insensitive to the result adds computational activity without increasing scientific leverage. The operational gain matters when it helps the scientist focus on the right question, apply the appropriate method, and prioritize molecules that have a realistic chance to advance the program.
+
+Local execution also redistributes control. The scientist can determine which analysis should exist, how data should be juxtaposed, and which calculation should be available at the point of decision. Molarium illustrates this shift: a scientist did not need to wait for every useful workflow to appear on a conventional product roadmap. Missing interfaces and bounded implementations could be added while the underlying question was still active.
+
+\section{What becomes scarce when the tool layer becomes cheap}
+
+A concrete medicinal-chemistry example helps separate the layers of value. Suppose a project team is considering a substitution intended to improve a ligand's interaction with a newly identified pocket while preserving permeability. The tool layer provides the editor, visualization, coordinate handling, workflow logic, and connection to the relevant calculations. The model layer determines whether the predicted pose, conformational preference, interaction energy, or permeability estimate is credible. The discovery-intelligence layer supplies the project-specific context: prior SAR, assay conditions, structural interpretation, known liabilities, synthetic constraints, and the reason the team is considering that particular design at that point in the program. Coding agents can make the first layer easier to construct. The value of the second and third layers depends on scientific accuracy and accumulated knowledge rather than interface complexity.
+
+The tool layer includes graphical interfaces, visualization, format conversion, wrappers, workflow logic, reports, job control, data plumbing, and bounded numerical implementation. These capabilities remain important and require maintenance, but their marginal reproduction cost is falling quickly as coding agents improve. A scientist can increasingly generate a project-specific view or connect an existing computational method without waiting for the corresponding feature to appear in a commercial release.
+
+The model layer includes force fields, quantum-mechanical methods, docking and scoring functions, free-energy models, machine-learned potentials, protein-structure predictors, molecular representations, property models, parameters, weights, uncertainty calibration, and the evidence that establishes their useful domain. Easier invocation does not improve predictive quality. A docking model with an inadequate scoring function remains inadequate when an agent invokes it. A systematic force-field error can become more damaging when automated workflows propagate it across thousands of calculations. A machine-learned property model does not gain extrapolative validity because a language model describes its output fluently, and a protein-structure predictor does not become reliable for a particular conformational state because it is available through a better interface.
+
+Differences among models therefore become more consequential as the mechanics of invoking them become less scarce. Drug discovery frequently requires extrapolation into new chemistry, structural states, and biological contexts rather than interpolation within a well-sampled training distribution \citep{bender2021realistic1,bender2021realistic2,wigh2022representations}. Faster access can accelerate good models and weak models alike.
+
+The discovery-intelligence layer includes proprietary experimental data, negative results, project history, assay context, structural interpretation, design rationale, internal protocols, expert judgment, and program objectives. Molarium intentionally contains little of this layer because it is a public workbench built primarily from public scientific components. The same architecture could be connected to internal structures, assay data, pharmacokinetics, target biology, medicinal-chemistry reasoning, and program objectives. That project-specific context can determine which computation is relevant and how much weight its output should receive.
+
+\begin{figure}[htbp]
+  \centering
+  \safeincludegraphics[width=0.94\linewidth]{figures/fig5_value_layers_fixed.png}
+  \caption{Three interdependent layers of value in generated adaptive molecular design. Implementation and orchestration are becoming increasingly reproducible by coding agents. Scientific models remain differentiated by accuracy, representation, domain coverage, calibration, and validation. Proprietary discovery intelligence combines experimental data with the context and decision history that make those data useful.}
+  \label{fig:value}
+\end{figure}
+
+Versioned molecular history provides a bridge into discovery intelligence. Traditional compound databases record what was made and measured well, but they rarely preserve what was considered, why one design was preferred, which model or structure influenced the decision, or what evidence was visible at the time. A persistent action history can capture that decision trajectory.
+
+For example, a chemist might propose adding a substituent after inspecting a pocket in a protein--ligand structure. The project record could retain the parent structure, the molecular edit, the structural hypothesis, the conformational or energetic calculations viewed before synthesis, competing designs that were rejected, and the subsequent experimental measurements. If the design later fails because an assumed interaction was absent or a liability dominated the profile, that information remains associated with the decision that created the molecule. Future scientists and agents can then ask which assumptions repeatedly led to productive designs and which repeatedly failed. This is decision provenance: preserving the relationship among hypotheses, interventions, predictions, decisions, and outcomes rather than storing only final compounds and assay values.
+
+Agentic systems provide a mechanism to operationalize some of this accumulated knowledge through scientific skills. Here, a skill means a version-controlled, machine-executable procedure that combines a defined tool or model with an organization's accepted inputs, assumptions, validation criteria, applicability limits, failure handling, and escalation rules. A protein-preparation skill might encode how crystallographic waters, protonation states, alternate conformations, unusual residues, and ambiguous cases are handled. A free-energy skill might define accepted perturbations, convergence criteria, diagnostics, and failure modes. The durable asset is the scientific procedure and its validation, rather than the natural-language prompt used to invoke it.
+
+\section{The changing role of scientific expertise}
+
+As software becomes easier to construct and operate, scientific judgment becomes more valuable. Traditional computational expertise includes substantial operational knowledge: preparing inputs, locating settings, translating files between programs, recovering failed jobs, and reproducing standard analyses. An increasing fraction of this work can be encoded in software and agents. The broader automation literature has long recognized that reducing routine operation can increase the importance of human expertise when systems encounter ambiguous or abnormal conditions \citep{bainbridge1983ironies}.
+
+The highest-value expertise shifts toward selecting the right question, choosing an appropriate level of model fidelity, defining acceptable tradeoffs between cost and accuracy, recognizing implausible results, selecting meaningful controls, and determining which evidence would change a project decision. Scientists closest to the underlying discovery problem---whether medicinal chemists, structural biologists, mechanistic biologists, pharmacologists, or computational scientists---can increasingly interact directly with relevant data and calculations rather than routing every question through a software intermediary.
+
+This shift changes the leverage of computational specialists. Less specialist time needs to be spent constructing repetitive interfaces, transferring files, or manually operating routine workflows. More can be spent on model development, molecular physics, parameterization, sampling, uncertainty, validation, and difficult edge cases where established workflows fail. Once that expertise is made explicit, part of it can be encoded into validated scientific skills that broaden access without implying that the underlying science has become simple.
+
+Molarium's development illustrates this division of labor. The coding agent could inspect a repository, refactor software, implement numerical kernels, add tests, and repeat the loop rapidly. The scientist had to recognize chemically implausible results, decide whether a reference was genuinely independent, determine whether a discrepancy mattered, choose acceptable approximations, and identify what evidence would change a decision. The agent compressed the distance between recognizing a scientific need and changing the software; scientific judgment determined which changes mattered.
+
+The bottleneck therefore moves toward epistemology: deciding which approximation is acceptable, whether a faster method sacrifices information that matters to the decision, when an independent control is required, whether a reference is truly independent, whether a model is operating outside its validated domain, what uncertainty must remain visible, and which experiment would discriminate between competing hypotheses. Faster implementation increases the value of asking the right question.
+
+\section{Limitations and outlook}
+
+Molarium is a case study rather than a controlled experiment in software productivity or drug-discovery performance. Its development involved a small number of scientists, one evolving codebase, and a particular coding-agent workflow. The project did not include a randomized comparison with a conventional software-development team, and it cannot establish a universal productivity multiplier or determine what fraction of commercial scientific software can be regenerated reliably.
+
+The open-source repository can nevertheless support a useful community experiment. Contributors can identify computational capabilities described in papers or public specifications, attempt independent agent-assisted reconstructions, test them against appropriate references, and record which parts can and cannot be reproduced reliably. Over time, this could become a living benchmark for the regeneration of molecular-modeling software, with success defined by scientific contract tests rather than by code generation alone.
+
+Molarium's scientific scope is deliberately bounded. Current browser-native molecular mechanics does not reproduce the full capability of mature native simulation environments. General periodic simulation, particle-mesh Ewald electrostatics, barostats, membranes, unrestricted protein parameterization, arbitrary plugins, and other advanced capabilities remain outside the current browser-native scope. ANI-2x remains valid only within its declared chemical domain, and browser-based OpenFold support is narrower than general production protein-structure prediction workflows. Generated wrappers and easier access must preserve, expose, and enforce these applicability limits rather than implying broader scientific validity. Appendix~\ref{app:architecture} catalogues the demonstrated implementation and numerical boundaries, and Appendix~\ref{app:manual} provides the corresponding operational status, failure modes, and end-user limits.
+
+A second limitation concerns the distinction between implementation fidelity and predictive validity. If a browser implementation reproduces an OpenMM reference energy and force to a specified tolerance, that result establishes that the implementation is executing the declared calculation correctly for the tested case. It does not establish that the shared force field predicts the experimental behavior of a new molecule. Likewise, a conformer workflow can reproduce its intended algorithm and explore more structures without improving recovery of biologically relevant conformations. Implementation validation and model validation answer different questions and require different evidence.
+
+The future suggested by Molarium is one in which the interface between scientist and computation becomes more fluid while the scientific state, models, assumptions, evidence, and decision history become more explicit. Project teams can construct temporary views around specific questions; internal models can coexist with open-source methods and commercial services; and the user experience no longer needs to be owned by the provider of each underlying calculation.
+
+The durable infrastructure in such an environment is concrete. A user should be able to inspect the active molecular state and its history, the exact model and parameter versions used for each calculation, declared applicability limits, validation status, assumptions, provenance, and links between predictions and subsequent decisions. These quantities should remain available regardless of which generated view is open. An adaptive interface can change rapidly because the scientific contract underneath it remains stable and inspectable.
 
 \section{Conclusion}
-\label{sec:conclusion}
 
-A useful subset of molecular design can now begin in an ordinary browser, run on
-local hardware, and preserve local custody of molecular structures.
-\molarium{} demonstrates this threshold for molecular construction, visualization,
-and exploratory mechanics while exposing clear limits in force-field fidelity,
-system size, and platform coverage.
+Molarium began as a request for a better environment in which to inspect and manipulate molecules. It developed rapidly into a local-first molecular-design workbench incorporating topology-aware editing, protein preparation, conformer exploration, molecular mechanics, molecular dynamics, learned potentials, protein-structure prediction, browser-native GPU computation, provenance, and reference validation. The speed of that development is technically interesting, but the broader lesson concerns the architecture of scientific software and the location of durable value.
 
-The strongest form of the paper's claim will not come from rhetoric.
-It will come from a public artifact, a cross-platform validation set, transparent
-failure reporting, and a durable licensing and archival story.
-Those are the next steps required to turn ``molecular design tools are free now''
-from a provocative title into a reproducible scientific statement.
+Software can increasingly be generated around the scientific question and the user's specific preferences. The quality of the underlying models, validation, and decision history becomes more consequential as the interface becomes cheaper and more fluid. The scarce assets shift toward trustworthy models, proprietary discovery intelligence, and the human judgment required to know what to ask and what to believe.
+
+Molarium also suggests that molecular-design environments should preserve more than the latest structure. A versioned record of molecular states, user actions, calculations, assumptions, and results can capture the trajectory by which scientific decisions were made. Coupled to explicit scientific contracts and falsification tests, that history can make generated adaptive software more reproducible, extensible, and scientifically accountable.
+
+When software is difficult to construct, implementation effort can hide the distinction between building a method and validating it. When implementation becomes easy, the remaining scientific obligations become harder to ignore. The opportunity is to place adaptable computational capability directly in the hands of scientists who understand the problem while preserving the models, evidence, and decision history that determine whether the answer should be trusted.
+
+\callout{The tool layer is becoming cheap and adaptive. Scientific advantage moves toward better models, better discovery intelligence, and better decisions.}
+
+\section*{AI assistance and availability}
+
+GPT-5.6 Sol was used extensively as a coding agent during the development of Molarium under human scientific direction, inspection, testing, and revision. Language-model assistance was also used in restructuring and drafting this manuscript. The authors remain responsible for the scientific claims, validation, source attribution, and final text.
+
+Molarium is available at \url{https://molarium.org}. Its source code and technical documentation are publicly available at \url{https://github.com/rafwiewiora/molarium}. Quantitative benchmark results are scoped by the relevant implementation state, fixtures, model and asset hashes, browser and hardware environment, numerical precision, and timing protocol. Appendix~\ref{app:architecture} provides the architecture, numerical validation, and executable design-history evidence underlying these results; Appendix~\ref{app:manual} records the inspected operating surface, module boundaries, failure behaviour, and export/persistence contracts.
 
 \appendix
-\input{appendix-architecture}
 
-\section*{Code and data availability}
+\appendixsection{Molarium architecture, numerical validation, and executable design history}{app:architecture}
+\begin{small}
+\setlength{\emergencystretch}{2em}
 
-The implementation and test suite accompany this manuscript in the \molarium{}
-repository.
-A versioned public archive, software license, and benchmark dataset are required
-before public release.
+This appendix specifies the implementation and validation substrate underlying the architectural claims in the main text. It defines the molecular-state contract shared across chemistry perception, parameterization, numerical execution, visualization, and provenance; describes the OpenMM/WebAssembly and WebGPU execution paths; reports fixed-input numerical validation and workload-dependent performance measurements; and documents the content-addressed replay and decision-history mechanisms used by Molarium. The final section provides an executable SOS1 design-history example. Numerical agreement is treated as implementation validation of a declared calculation and is kept distinct from validation of the underlying physical or statistical model.
 
-\ifdraft
-\section*{Author contributions}
+\subsection{Execution architecture}
 
-\draftnote{Add a CRediT contribution statement.}
+Molarium maintains a single molecular state keyed by stable atom identifiers across ingestion, chemical perception, parameterization, calculation, visualization, and replay. RDKit provides graph interpretation, conformer generation, SMARTS matching, and ligand-level preparation. A JavaScript SMIRNOFF parameterizer applies OpenFF Sage 2.1.0 to generate an explicit numerical recipe containing particle properties, bonded terms, nonbonded terms, exceptions, and constraints. Preparation fails on missing required parameters rather than substituting inferred terms. The accepted recipe is consumed by the OpenMM/WebAssembly reference path and the direct or replica-parallel WebGPU paths, allowing backend comparisons on identical topology, coordinates, parameters, and atom ordering.
 
-\section*{Competing interests}
+The primary data path is:
 
-\draftnote{Add the authors' competing-interest declaration.}
+\begin{center}\small
+PDB or SMILES input\\
+$\downarrow$\\
+molecular graph, stable atom identities, and coordinates\\
+$\downarrow$\\
+RDKit interpretation $\rightarrow$ OpenFF Sage numerical recipe\\
+$\downarrow$\\
+OpenMM/WebAssembly reference $\;|\;$ direct WebGPU $\;|\;$ replica-parallel WebGPU\\
+$\downarrow$\\
+viewer, action audit, calculation record, and design history
+\end{center}
 
-\section*{Acknowledgements}
+The same molecular object remains authoritative as calculations return coordinates, forces, energies, or trajectories. Table~\ref{tab:appA_browser_impl} summarizes the current implementation.
 
-\draftnote{Add funding, compute, software, and individual acknowledgements.}
-\fi
+\begin{table}[htbp]
+\centering\small
+\caption{Current browser implementation.}
+\label{tab:appA_browser_impl}
+\begin{tabularx}{\linewidth}{@{}p{0.20\linewidth}p{0.24\linewidth}X@{}}
+\toprule
+\textbf{Task} & \textbf{Software used} & \textbf{Implementation role}\\
+\midrule
+Molecular interpretation & RDKit 2025.03.4, WebAssembly & SMILES/graph handling, ETKDGv3, SMARTS matching, MMFF94, explicit UFF fallback, and Gasteiger charges\\
+Force-field assignment & OpenFF Sage 2.1.0 & Generates particles, bonds, angles, torsions, nonbonded terms, exceptions, and constraints\\
+Numerical reference & OpenMM 8.2.0 Reference, WebAssembly & Double-precision energies and forces, L-BFGS minimization, and short dynamics used for fixed-input reference comparisons\\
+Direct local mechanics & WebGPU/WGSL, 32-bit floating point & Single-system force/energy evaluation, OBC2/ACE, minimization, and short dynamics\\
+Replica-parallel mechanics & STORMM-inspired WebGPU engine & Advances independent replicas sharing one topology and parameter layout; paired-word fixed-point accumulation; current limit 512 atoms per replica\\
+State and provenance & JavaScript modules, background workers, Canvas, Web Crypto & Preserves atom identity and records action, calculation, replay, and SHA-256-linked provenance\\
+\bottomrule
+\end{tabularx}
+\end{table}
 
-\begingroup
-\small
-\bibliographystyle{unsrtnat}
-\bibliography{references}
-\endgroup
+Internal units are nm, ps, daltons, kJ/mol, and kJ/mol/nm; the interface presents angstroms and kcal/mol where appropriate. Numerical engines execute in reusable Web Workers so rendering and user interaction remain responsive. Requests carry job identifiers, and failed workers are discarded and recreated. Results return as compact coordinate, force, energy, or trajectory arrays mapped to the originating atom identities.
+
+For ordinary small molecules, the browser parameterizer applies Sage 2.1.0 patterns and labelled Gasteiger charges \citep{boothroyd2023sage,gasteiger1980charges}. Prepared Rosemary validation fixtures retain their exported numerical recipes and NAGL charges. CPU/GPU comparisons therefore operate on the same prepared graph and numerical inputs rather than independently parameterized systems.
+
+\subsubsection{OpenMM WebAssembly reference}
+
+OpenMM 8.2.0 is cross-compiled with Emscripten 6.0.6-git and CMake 3.31.0 \citep{eastman2017openmm7,eastman2024openmm8}. A thin C interface constructs an OpenMM \texttt{System} from the serialized numerical recipe and returns energies, forces, minimized coordinates, or short trajectories. Source, patches, interface code, and built assets carry recorded fingerprints so the deployed reference path can be associated with a specific implementation state.
+
+The reference configuration is nonperiodic and uses the double-precision OpenMM Reference platform. Supported operations include energy and force evaluation, L-BFGS minimization, short dynamics, optional X--H constraints, 2 fs Langevin-middle integration, a cutoff configuration used for validation, and OBC2/ACE with mbondi2 radii \citep{onufriev2004gb}.
+
+The WebAssembly build exposed a threading-specific setup failure for constrained dynamics: native OpenMM creates helper CPU threads during constraint initialization, whereas the browser build is single-threaded. A serial patch removes the wait path for this build without modifying native OpenMM.
+
+Fixed-input parity was evaluated in two stages. The same C interface compiled natively and for WebAssembly agreed to a maximum energy difference of $2.84 \times 10^{-14}$ kcal/mol and relative force RMS of $3.76 \times 10^{-15}$. Five hash-selected protein--ligand poses were then prepared through browser Sage and evaluated with matched numerical inputs. Maximum energy differences were $1.24 \times 10^{-4}$ kcal/mol in vacuum and $2.76 \times 10^{-4}$ kcal/mol with OBC2; maximum relative force RMS error was $1.16 \times 10^{-5}$ in both modes. These tests establish implementation parity for the specified fixtures and protocols.
+
+\subsubsection{Direct WebGPU mechanics}
+
+The direct WebGPU path evaluates the prepared force-field equations in WGSL using 32-bit floating-point arithmetic. Force ownership is atomwise: one invocation owns the output force for one atom, and compact incidence lists identify the bonded terms that contribute to that atom. Pair and valence terms are recomputed where required so each invocation writes its force once, avoiding floating-point atomic updates, which WGSL does not provide \citep{webgpuWGSL2026}.
+
+The deployed nonbonded representation stores excluded and specially scaled pairs explicitly and mixes ordinary Lennard--Jones parameters on demand. An earlier all-pairs metadata representation required $32N^2$ bytes and imposed a practical allocation ceiling; the sparse exception representation removes that quadratic metadata cost. OBC2/ACE is evaluated in three kernel passes for Born radii, coordinate derivatives, and solvent/nonpolar energy and force accumulation. Optional X--H constraints are graph-coloured so non-overlapping SHAKE/RATTLE corrections can execute concurrently \citep{ryckaert1977shake,andersen1983rattle}. Seeded Langevin dynamics supports 1 fs flexible and 2 fs constrained integration.
+
+Pocket relaxation uses a bounded steepest-descent procedure with zero inverse mass on fixed receptor atoms; only the ligand and explicitly selected pocket atoms move. Current operating limits are listed in Table~\ref{tab:appA_webgpu_limits}.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Operating limits in the current direct WebGPU worker.}
+\label{tab:appA_webgpu_limits}
+\begin{tabularx}{0.95\linewidth}{@{}p{0.32\linewidth}X@{}}
+\toprule
+\textbf{Setting} & \textbf{Current value}\\
+\midrule
+Principal force workgroup & 64 atomwise calculations\\
+Time step & 1 fs flexible; 2 fs with X--H constraints\\
+Constraint solve & Four graph-coloured sweeps by default; at most 32\\
+Minimization & 750 iterations by default; at most 2,000; each displacement capped at 0.001 nm\\
+Direct dynamics request & At most 5,000 steps; longer requests use the ensemble route\\
+Validation cutoff & 1.0 nm cutoff; 0.2 nm skin; rebuild every 20 steps\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+At the interactive system sizes tested here, a conventional Verlet neighbour list did not improve performance. With a 0.2 nm skin rebuilt every 20 steps, 5,000 constrained OBC2 Trp-cage steps were 46\% slower and 1,000 ubiquitin steps were 17\% slower than full-range nonbonded evaluation on an Apple M1 Pro. The cutoff route is therefore retained for validation but is not exposed in the product controls.
+
+GPU benefit depends on amortizing dispatch and data movement. A single Trp-cage energy/force evaluation required 25.5 ms in WebGPU and 5.7 ms in OpenMM Reference. Across 1,000 dynamics steps, WebGPU reached 214.9 versus 102.8 ns/day for 304-atom Trp-cage and 65.18 versus 7.11 ns/day for 1,231-atom ubiquitin. These measurements use warmed, nonperiodic, all-pairs workloads. The direct path does not currently implement periodic boundaries, particle-mesh Ewald electrostatics, explicit solvent, barostats, virtual sites, or arbitrary OpenMM custom forces.
+
+\subsubsection{Replica-parallel WebGPU}
+
+The replica engine targets throughput across independent copies of a shared topology. One replica maps to one GPU workgroup, in contrast to the atomwise decomposition used by the direct engine. The memory layout and fixed-point accumulation strategy draw on STORMM's stacked-system design, while the browser implementation is independent WGSL code \citep{cerutti2024stormm}. Replicas share topology and parameters but do not interact.
+
+Concurrent accumulation uses paired 32-bit words to represent signed 64-bit fixed-point values because WGSL exposes 32-bit integer atomics. The implementation uses $2^{22}$ counts per kcal/mol for energies, $2^{18}$ counts per kcal/mol/\AA{} for forces, and $2^{32}$ counts per \AA{} for coordinates. This replaced 32-bit accumulators that overflowed silently in highly clashed configurations and produced bit-for-bit replay for identical seeds on the tested adapter.
+
+Integration uses velocity Verlet, seeded Langevin thermalization, and SHAKE/RATTLE. Constraint projection is serial within a replica while replicas execute in parallel; the default relative tolerance is $10^{-5}$ with at most 32 iterations. Commands contain at most 50 steps. Persistent status words convert non-finite values, accumulator overflow, coordinate clamps, and failed constraints into terminal errors. Current limits are 512 atoms per replica, all-pairs nonbonded evaluation, and identical atom count, topology, and parameters across replicas.
+
+Force evaluation uses a separate 32-bit floating-point coordinate working copy. Translating a test system 500 \AA{} from the origin changed energies by approximately $3 \times 10^{-4}$ relative, identifying the working coordinate representation rather than the fixed-point store as the remaining translation-sensitivity boundary. Eliminating this source of error requires recentering before force evaluation or a wider working representation.
+
+Replica throughput also crosses over with workload size. In warm tests, OpenMM Reference was 13.3-fold faster for one C16 molecule and 3.5-fold faster for one 27-water system. WebGPU was 10.3-fold faster for 1,024 C16 replicas and 24.1-fold faster for 256 water replicas. These measurements compare aggregate replica throughput; the two engines do not use identical integrators.
+
+\subsection{Reference-driven implementation and validation}
+
+The numerical implementation is developed against a shared executable specification. OpenMM and the browser kernels receive the same molecular graph, atom ordering, coordinates, parameters, units, exceptions, constraints, and named energy terms. This enables term-resolved differential testing rather than comparison of independently prepared end states. The implementation loop is:
+
+\begin{enumerate}[leftmargin=*]
+\item freeze the molecular graph, atom ordering, coordinates, force-field parameters, and units used by the reference calculation;
+\item implement one energy/force term and its memory representation at a time;
+\item evaluate the identical numerical input with OpenMM;
+\item compare named energy components and Cartesian force components;
+\item localize the first discrepancy, correct it, and retain the minimal reproducing case as a regression test; and
+\item execute the resulting WebGPU and WebAssembly paths in the browser to include worker, adapter, serialization, and UI integration boundaries.
+\end{enumerate}
+
+Coding agents operate inside this harness by modifying implementation code, tests, and adapters. The physical-model equivalence criteria---including atom order, solvent model, cutoffs, constraints, units, charge provenance, and acceptable numerical tolerances---are specified explicitly and remain prerequisites for interpreting any backend comparison.
+
+Several observed failures led directly to architectural changes (Table~\ref{tab:appA_failures}).
+
+\begin{table}[htbp]
+\centering\small
+\caption{Observed failures that changed the implementation.}
+\label{tab:appA_failures}
+\begin{tabularx}{\linewidth}{@{}p{0.26\linewidth}p{0.36\linewidth}X@{}}
+\toprule
+\textbf{Observation} & \textbf{Design change} & \textbf{Retained check}\\
+\midrule
+Pair metadata grew as $32N^2$ & Store only exceptional pairs; mix ordinary pairs on demand & Large-system allocation and parity tests\\
+32-bit force/energy sums overflowed & Paired-word 64-bit fixed-point accumulation and fault flags & Clashed system at approximately 2 million kcal/mol\\
+Coordinates wrapped beyond 128 \AA{} & 64-bit fixed-point coordinate store plus floating-point working copy & Whole-system translation to 500 \AA{}\\
+Standard cutoff reduced performance & Retain for validation; omit from product controls & Fixed Trp-cage/ubiquitin timing protocols\\
+Apparent engine mismatch & Verify atom order, input hashes, and solvent mode before numerical debugging & Native/WebAssembly parity and matched-solvent comparisons\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Regression coverage is organized around the interfaces where failures were observed: equation-level fixtures for bonded and nonbonded terms; representation tests for clashes, constraints, overflow, and translated coordinates; backend comparisons on identical prepared inputs; protein fixtures that exercise special pairs and worker transfer; browser tests for adapter support and worker recovery; and fixed performance protocols that retain slower but numerically valid designs. Fixed random seeds and stable atom identifiers make failing cases repeatable. The replica engine terminates on fixed-point overflow or unconverged constraints; the direct engine records final constraint error for comparison against an acceptance threshold.
+
+The demonstrated portability boundary is fixed-topology, nonperiodic molecular mechanics with regular array state and a small number of synchronization points. WebGPU is effective when work decomposes into local or pairwise operations and repeated evaluations amortize dispatch. Algorithms requiring 64-bit floating-point arithmetic, frequent device-wide synchronization, rapidly changing graphs, large adaptive sparse structures, or mature FFT/sparse-linear-algebra libraries require a different decomposition under current WGSL \citep{webgpuWGSL2026}. Particle-mesh Ewald electrostatics, heterogeneous reactive systems, and some long-timescale production protocols are therefore outside the demonstrated browser-native boundary. For those workloads, the architecture supports escalation to a WebAssembly reference, hybrid local path, or external specialist engine while preserving the originating molecular state and protocol provenance.
+
+\subsection{Workflow orchestration and local execution boundary}
+
+Molarium distinguishes local calculation from offline operation. In normal connected mode, supported numerical calculations execute on the user's device, while explicit PDB/CCD retrieval or sequence-alignment searches contact the services identified in the interface. Local Lab serves a reviewed, versioned checkout from localhost under a restrictive Content Security Policy. External structure and alignment controls are disabled, and an egress-canary test fails if a synthetic private-data marker reaches an external request. A hosted application can change the assets served on a subsequent visit; the stronger reproducibility and privacy boundary is a reviewed checkout with locally pinned assets.
+
+Current workflow surfaces include:
+
+\begin{itemize}[leftmargin=*]
+\item \textbf{Local small-molecule design.} Synchronized 2D/3D construction, graph validation, RDKit or direct-WebGPU calculations, aligned trajectory/energy inspection, and export. OpenMM/WebAssembly is used for internal validation and fixed-scaffold operations rather than as a selectable Simulate-panel method.
+\item \textbf{Protein--ligand pose propagation.} A trusted pose is captured with stable atom lineage; changed ligand branches are sampled while the receptor remains fixed; optional contact hypotheses constrain search; and a selected pose can be applied and relaxed. An experimental induced-fit action releases the ligand and all atoms of protein residues within a 6 \AA{} pocket shell while outer atoms remain fixed.
+\item \textbf{Agent-operated design.} Agents invoke the versioned Chemist Actions API rather than arbitrary page functions. The API exposes the same bounded state-changing verbs available to a chemist---including select, edit, search, apply, relax, and undo---plus read-only inspection. Requests execute serially and record sequence, timestamps, arguments, status, and duration.
+\end{itemize}
+
+Two extension paths are represented in the architecture but are not complete product workflows. A local-to-specialist path can export a fingerprinted checkpoint and explicit protocol for periodic solvent, long trajectories, free energy, or electronic-structure calculations, with returned results attached as evidence to the originating branch; transport, scheduling, signatures, and trust policy are not implemented. A collaborative review model can branch by chemotype, protonation state, pose, or author and record a selected branch with explicit parentage; coordinate averaging is not used as a merge operation.
+
+\subsection{Content-addressed molecular and decision provenance}
+
+Molarium separates operational, numerical, and decision provenance. A molecular snapshot records one explicit state. Content-addressed commits link that state to parent states, action scripts, hypotheses, and evidence. Branches preserve alternative design routes, and decisions record which route progressed, stopped, or was deferred. These semantics are implemented as a custom content-addressed ledger rather than a Git repository or a general structural merge algorithm.
+
+The current live application retains at most 500 Chemist Actions audit records in memory; clearing the scene clears that audit unless the relevant actions have been exported or attached to a campaign commit. The Design History interface and public \texttt{campaign.*} actions can create a local campaign, atomically commit the visible molecule, create and restore branches, record decisions, merge branch histories, and verify the append-only record. Campaign JSON and the active branch are persisted in browser IndexedDB. Each commit contains a complete molecular snapshot; an attached action script records the completed public operations observed since the previous commit but is explicitly marked as incomplete coverage.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Separation of operational, numerical, and decision provenance.}
+\label{tab:appA_provenance}
+\begin{tabularx}{\linewidth}{@{}p{0.24\linewidth}p{0.27\linewidth}X@{}}
+\toprule
+\textbf{Record} & \textbf{Question} & \textbf{Contents}\\
+\midrule
+Chemist Actions audit & What was requested? & Public action, arguments, timing, status, and compact after-state\\
+Calculation record & What numerical protocol ran? & Inputs, method, parameters, outputs, and hash-linked events\\
+Design campaign & Why did a state advance or stop? & Snapshots, branches, parents, hypotheses, evidence, and decisions\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Canonical JSON and SHA-256 fingerprints bind records to exact serialized representations. The \path{molarium.design-campaign/v1} schema stores snapshots, commits, branches, events, and decisions. Each commit identifies its selected snapshot, parent commit(s), optional action script, hypotheses, evidence, tags, and branch. Events are append-only and contain the previous event fingerprint, actor class (human, agent, system, or import), and source. Supported decision states are \texttt{progressed}, \texttt{not-progressed}, \texttt{deferred}, \texttt{failed}, \texttt{duplicate}, \texttt{superseded}, and \texttt{archived}. Finalization appends a completion event and hashes the campaign; subsequent record changes fail verification. Hashes provide alteration detection for the recorded representation, not authorship, chemical equivalence, or scientific validity.
+
+Registered design routes use a separate \path{molarium.registered-design-route/v1} schema that specifies the coordinate boundary, hash-pinned starting state, and ordered graph edits. The SOS1, BCL-xL, and CDK2 routes use this schema. Route actions are \texttt{designRoute.load}, \texttt{designRoute.applyStep}, and \texttt{designRoute.inspect}; campaign-ledger operations remain separate. Cross-schema validation rejects a route presented as a campaign ledger or a campaign ledger presented as a route. Frozen predictions made before the schema split retain their original input hash, with migration records storing both hashes and accepting only the schema-identifier substitution that reconstructs the frozen bytes.
+
+A decision-to-state linkage has the following form; full identifiers are SHA-256-derived values rather than the abbreviated labels shown here.
+
+\begin{lstlisting}
+{
+  "moleculeCommit": {
+    "snapshotId": "snapshot:<selected-child>",
+    "parents": ["commit:<parent>"],
+    "actionScriptId": "script:<designer-moves>",
+    "hypothesisIds": ["event:<pocket-must-open>"]
+  },
+  "decisionEvent": {
+    "kind": "decision.recorded",
+    "actorId": "chemist.01",
+    "payload": {
+      "targetCommitId": "commit:<selected-child>",
+      "disposition": "progressed",
+      "reasonCodes": ["contact-loss"],
+      "rationale": "Phe-out removes growth-induced clashes.",
+      "evidenceIds": ["event:<rotamer-search>"]
+    }
+  }
+}
+\end{lstlisting}
+
+Executable replays use \texttt{molarium.chemist-action-script/v1}. Scripts contain ordered calls to the allow-listed Chemist Actions API rather than arbitrary code or direct coordinate replacement. Imports are capped at 2 MiB; one action's arguments are capped at 32 KiB, eight nested levels, and 2,048 values. Actions can name returned stable identifiers for reuse by later steps. The runner executes one action at a time through \texttt{api.execute(\{action,args\})}, derives a repeatable request ID from the script fingerprint, and stops on the first failure. Replay results use \texttt{molarium.chemist-action-replay/v1} and record the source fingerprint and each step outcome. Presentation actions can alter focus or styling but cannot change molecular graph or coordinates except through the same allow-listed state-changing actions.
+
+The SOS1 replay is identified by a stable public route and by exact release and content fingerprints. A human-readable URL can resolve to a newer release, whereas the release commit, route-file fingerprint, and canonical action-script fingerprint identify the reviewed bytes and normalized JSON content. The live workflow can capture a starting state, record exploration actions, apply and relax selected states, and export action and numerical records. Formal campaign commits and decision events are represented by the ledger layer described above.
+
+\subsection{SOS1 hit-to-BAY-293 executable replay}
+
+The SOS1 example follows the analogue series reported by Hillig and colleagues \citep{hillig2019sos1}. The supplied design information consisted of the 5OVE/AXE coordinate-bearing starting complex and the published analogue graphs for AWT, AWZ, AWW, and AXH. The later analogue poses and receptor conformations were withheld during prediction. Each analogue was propagated from the preceding frozen prediction rather than from its corresponding later crystal structure.
+
+The selected route contains 33 recorded API actions: 29 molecular or protocol operations and four workspace switches. The full exploration audit contains 89 completed API calls, including three Phe890/pose branches, nine undo calls, and deterministic reselection. The rendered interface sequence adds 15 display-only actions for 48 replay steps. Later crystal structures were opened only after four prediction checkpoints and the exploration audit had been hashed. Display and focus actions are non-mutating.
+
+The analogue transitions involve substantial graph rewrites while preserving explicit atom lineage (Table~\ref{tab:appA_lineage}).
+
+\begin{table}[htbp]
+\centering\small
+\caption{Heavy-atom lineage across the supplied SOS1 analogue graphs.}
+\label{tab:appA_lineage}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Transition} & \textbf{Retained} & \textbf{Deleted} & \textbf{Added} & \textbf{Candidate mappings}\\
+\midrule
+AXE--AWT & 23 & 4 & 6 & 4\\
+AWT--AWZ & 19 & 10 & 12 & 1\\
+AWZ--AWW & 16 & 15 & 15 & 1\\
+AWW--AXH & 15 & 16 & 17 & 1\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Each ``64-chain'' search comprises 64 independently seeded local pose searches, distributed over eight browser workers in the recorded replay. Parameterization without motion assigns the numerical force-field representation while preserving coordinates; only the subsequent relaxation changes coordinates. The SOS1 route uses whole-system Sage 2.1.0 with deterministic Gasteiger charges. AWT, AWZ, AWW, and AXH contain 7,929, 7,933, 7,935, and 7,937 particles, respectively. This charge assignment is part of the recorded protocol and is distinct from standard Sage workflows using AM1-BCC or NAGL charges.
+
+Before flexible relaxation, Molarium stores ligand bond lengths and rejects a relaxed pose if any heavy-atom bond is both more than 0.45 \AA{} longer and 1.25-fold its assigned target, or both more than 0.35 \AA{} shorter and below 0.75-fold its target. Rejected relaxation restores the previous pose rather than accepting an improved score with a broken molecular geometry.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Sequence of molecular states in the SOS1 replay. Predictions, rather than future crystal structures, seed the next step.}
+\label{tab:appA_sos1_beats}
+\begin{tabularx}{\linewidth}{@{}p{0.07\linewidth}p{0.25\linewidth}X@{}}
+\toprule
+\textbf{Step} & \textbf{Operation} & \textbf{State/evidence}\\
+\midrule
+0 & Load and prepare & 5OVE/AXE only; capture the compound 1 reference and coordinate boundary\\
+1 & Rewrite to compound 17 (AWT) & Search independent reference-guided poses; apply the selected pose; parameterize; relax\\
+2 & Rewrite to compound 18 (AWZ) & Propagate from predicted AWT, not 5OVF; apply, parameterize, relax\\
+3 & Grow compound 21 (AWW) & New ring enters the Phe890-in volume; fixed-core representative gains four clashes\\
+4 & Resolve pocket state & Enumerate discrete Phe890 rotamers; select outward branch; retain the moved receptor as the next reference\\
+5 & Predict BAY-293 (AXH) & Grow from frozen AWW; 64-chain pose search; apply; parameterize without motion; relax; freeze\\
+6 & Evaluate holdouts & Compare AWT/AWZ/AWW/BAY-293 with 5OVF/5OVG/5OVH/5OVI\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The Phe890 conformational step is treated as a discrete state search because local minimization does not reliably cross the relevant side-chain torsional barrier. Separate rotamer basins are generated before local ligand--pocket relaxation. Feasible branches are ranked first by clashes introduced by ligand growth, then by pose score and finite relaxed energy. The nominal $-60^{\circ}$ branch adds four clashes above the fixed-core baseline and is rejected; the $-180^{\circ}$ branch adds none and is selected; the $+60^{\circ}$ branch adds two and remains feasible. The outward Phe890 $\chi_1$ basin is therefore selected before 5OVH or 5OVI is revealed.
+
+For post-freeze structural evaluation, predicted receptors are aligned to their holdouts using 23, 25, 25, and 27 pocket C$\alpha$ atoms for AWT through AXH. Ligand RMSD is then calculated over 29, 31, 31, and 32 heavy atoms, minimizing over 2, 1, 1, and 1 graph-symmetry mappings, respectively; the ligand itself is not fitted. Results are reported in Table~\ref{tab:appA_sos1_eval}.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Post-freeze structural evaluation. Torsions are predicted/crystal in degrees; ligand RMSD is receptor-aligned and graph-symmetry-minimized.}
+\label{tab:appA_sos1_eval}
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Prediction} & \textbf{Holdout} & \textbf{Ligand RMSD (\AA{})} & \textbf{Phe890 $\chi_1$} & \textbf{Phe890 $\chi_2$}\\
+\midrule
+AWT & 5OVF & 0.516 & -77.6 / -71.5 & -71.7 / -71.7\\
+AWZ & 5OVG & 1.528 & -73.4 / -75.6 & -92.0 / -87.9\\
+AWW & 5OVH & 2.137 & -172.2 / +175.8 & +116.1 / +76.3\\
+BAY-293 & 5OVI & 1.215 & -172.4 / -166.5 & +108.7 / +71.7\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The replay recovers the experimentally observed outward Phe890 $\chi_1$ basin before exposure to 5OVH or 5OVI. The terminal $\chi_2$ orientation is less accurate, differing by approximately $40^{\circ}$ for AWW and $37^{\circ}$ for BAY-293. The corresponding ligand RMSDs range from 0.516 to 2.137 \AA{} under receptor-aligned, symmetry-minimized evaluation.
+
+The interface replay executes from a blank canvas through the public Chemist Actions API. Pose and rotamer generation leave coordinates unchanged until an explicit Apply action. The replay therefore represents discrete state transitions rather than interpolated trajectories or molecular dynamics. Its 48-action rendered sequence lasts 69.25~s while the action audit records approximately 420.7~s of operation durations; timing remains attached to the audit and render manifest, and the rendered sequence is not used as a performance benchmark. Comparison of fragment-bound 6EPM with the 5OVE starting structure shows that the inhibitory Tyr884 arrangement is already present at the coordinate boundary; the hit-only route does not predict a Tyr884 transition.
+
+\end{small}
+
+
+\appendixsection{Working with Molarium: scientific workflows for humans and agents}{app:manual}
+\input{appendix-b-workflows.tex}
+
+\begin{thebibliography}{99}
+
+\bibitem{bran2024chemcrow}
+Bran, A. M.; Cox, S.; Schilter, O.; Baldassari, C.; White, A. D.; Schwaller, P.
+Augmenting Large Language Models with Chemistry Tools.
+\emph{Nature Machine Intelligence} \textbf{2024}, \emph{6}, 525--535.
+
+\bibitem{boiko2023coscientist}
+Boiko, D. A.; MacKnight, R.; Kline, B.; Gomes, G.
+Autonomous Chemical Research with Large Language Models.
+\emph{Nature} \textbf{2023}, \emph{624}, 570--578.
+
+\bibitem{pham2026chemgraph}
+Pham, T. D.; Tanikanti, A.; Ke{\c{c}}eli, M.
+ChemGraph as an Agentic Framework for Computational Chemistry Workflows.
+\emph{Communications Chemistry} \textbf{2026}, \emph{9}, 33.
+
+\bibitem{macknight2025rethinking}
+MacKnight, R.; Boiko, D. A.; Regio, J. E.; Gallegos, L. C.; Neukomm, T. A.; et al.
+Rethinking Chemical Research in the Age of Large Language Models.
+\emph{Nature Computational Science} \textbf{2025}, \emph{5}, 715--726.
+
+\bibitem{haas2017wasm}
+Haas, A.; Rossberg, A.; Schuff, D. L.; et al.
+Bringing the Web up to Speed with WebAssembly.
+\emph{Proc. PLDI} \textbf{2017}, 185--200.
+
+\bibitem{webgpu2025}
+W3C GPU for the Web Working Group.
+\emph{WebGPU Specification}, 2025.
+
+\bibitem{riniker2015etkdg}
+Riniker, S.; Landrum, G. A.
+Better Informed Distance Geometry: Using What We Know to Improve Conformation Generation.
+\emph{J. Chem. Inf. Model.} \textbf{2015}, \emph{55}, 2562--2574.
+
+\bibitem{boothroyd2023sage}
+Boothroyd, S.; Madin, O. C.; Mobley, D. L.; et al.
+Development and Benchmarking of Open Force Field 2.0.0: The Sage Small-Molecule Force Field.
+\emph{J. Chem. Theory Comput.} \textbf{2023}, \emph{19}, 3251--3275.
+
+\bibitem{eastman2024openmm8}
+Eastman, P.; Galvelis, R.; Pel{\'a}ez, R. P.; et al.
+OpenMM 8: Molecular Dynamics Simulation with Machine Learning Potentials.
+\emph{J. Phys. Chem. B} \textbf{2024}, \emph{128}, 109--116.
+
+\bibitem{cerutti2024stormm}
+Cerutti, D. S.; Wiewiora, R. P.; Boothroyd, S.; Sherman, W.
+STORMM: Structure and Topology Replica Molecular Mechanics for Chemical Simulations.
+\emph{J. Chem. Phys.} \textbf{2024}, \emph{161}, 032501.
+
+\bibitem{devereux2020ani2x}
+Devereux, C.; Smith, J. S.; Huddleston, K. K.; et al.
+Extending the Applicability of the ANI Deep Learning Molecular Potential to Sulfur and Halogens.
+\emph{J. Chem. Theory Comput.} \textbf{2020}, \emph{16}, 4192--4202.
+
+\bibitem{ahdritz2024openfold}
+Ahdritz, G.; Bouatta, N.; Floristean, C.; et al.
+OpenFold: Retraining AlphaFold2 Yields New Insights into Its Learning Mechanisms and Capacity for Generalization.
+\emph{Nature Methods} \textbf{2024}, \emph{21}, 1514--1524.
+
+\bibitem{ryckaert1977shake}
+Ryckaert, J.-P.; Ciccotti, G.; Berendsen, H. J. C.
+Numerical Integration of the Cartesian Equations of Motion of a System with Constraints: Molecular Dynamics of n-Alkanes.
+\emph{J. Comput. Phys.} \textbf{1977}, \emph{23}, 327--341.
+
+\bibitem{andersen1983rattle}
+Andersen, H. C.
+RATTLE: A ``Velocity'' Version of the SHAKE Algorithm for Molecular Dynamics Calculations.
+\emph{J. Comput. Phys.} \textbf{1983}, \emph{52}, 24--34.
+
+\bibitem{cohenboulakia2017workflows}
+Cohen-Boulakia, S.; Belhajjame, K.; Collin, O.; et al.
+Scientific Workflows for Computational Reproducibility in the Life Sciences: Status, Challenges and Opportunities.
+\emph{Future Gener. Comput. Syst.} \textbf{2017}, \emph{75}, 284--298.
+
+\bibitem{pritchard2025reproducibility}
+Pritchard, N. J.; Wicenec, A.
+Formal Definition and Implementation of Reproducibility Tenets for Computational Workflows.
+\emph{Future Gener. Comput. Syst.} \textbf{2025}, \emph{166}, 107684.
+
+\bibitem{wilkinson2016fair}
+Wilkinson, M. D.; Dumontier, M.; Aalbersberg, I. J.; et al.
+The FAIR Guiding Principles for Scientific Data Management and Stewardship.
+\emph{Sci. Data} \textbf{2016}, \emph{3}, 160018.
+
+\bibitem{bender2021realistic1}
+Bender, A.; Cort{\'e}s-Ciriano, I.
+Artificial Intelligence in Drug Discovery: What Is Realistic, What Are Illusions? Part 1.
+\emph{Drug Discov. Today} \textbf{2021}, \emph{26}, 511--524.
+
+\bibitem{bender2021realistic2}
+Bender, A.; Cort{\'e}s-Ciriano, I.
+Artificial Intelligence in Drug Discovery: What Is Realistic, What Are Illusions? Part 2.
+\emph{Drug Discov. Today} \textbf{2021}, \emph{26}, 1040--1052.
+
+\bibitem{wigh2022representations}
+Wigh, D. S.; Goodman, J. M.; Lapkin, A. A.
+A Review of Molecular Representation in the Age of Machine Learning.
+\emph{WIREs Comput. Mol. Sci.} \textbf{2022}, \emph{12}, e1603.
+
+\bibitem{bainbridge1983ironies}
+Bainbridge, L.
+Ironies of Automation.
+\emph{Automatica} \textbf{1983}, \emph{19}, 775--779.
+
+
+\bibitem{webgpuWGSL2026}
+W3C GPU for the Web Working Group.
+\emph{WebGPU Shading Language}, 2026. \url{https://www.w3.org/TR/WGSL/}.
+
+\bibitem{wang2020macrocycle}
+Wang, S.; Witek, J.; Landrum, G. A.; Riniker, S.
+Improving Conformer Generation for Small Rings and Macrocycles Based on Distance Geometry and Experimental Torsional-Angle Preferences.
+\emph{J. Chem. Inf. Model.} \textbf{2020}, \emph{60}, 2044--2058.
+
+\bibitem{halgren1996mmff94}
+Halgren, T. A.
+Merck Molecular Force Field. I. Basis, Form, Scope, Parameterization, and Performance of MMFF94.
+\emph{J. Comput. Chem.} \textbf{1996}, \emph{17}, 490--519.
+
+\bibitem{rappe1992uff}
+Rapp\'{e}, A. K.; Casewit, C. J.; Colwell, K. S.; Goddard, W. A.; Skiff, W. M.
+UFF, a Full Periodic Table Force Field for Molecular Mechanics and Molecular Dynamics Simulations.
+\emph{J. Am. Chem. Soc.} \textbf{1992}, \emph{114}, 10024--10035.
+
+\bibitem{gasteiger1980charges}
+Gasteiger, J.; Marsili, M.
+Iterative Partial Equalization of Orbital Electronegativity---A Rapid Access to Atomic Charges.
+\emph{Tetrahedron} \textbf{1980}, \emph{36}, 3219--3228.
+
+\bibitem{eastman2017openmm7}
+Eastman, P.; Swails, J.; Chodera, J. D.; et al.
+OpenMM 7: Rapid Development of High Performance Algorithms for Molecular Dynamics.
+\emph{PLoS Comput. Biol.} \textbf{2017}, \emph{13}, e1005659.
+
+\bibitem{onufriev2004gb}
+Onufriev, A.; Bashford, D.; Case, D. A.
+Exploring Protein Native States and Large-Scale Conformational Changes with a Modified Generalized Born Model.
+\emph{Proteins} \textbf{2004}, \emph{55}, 383--394.
+
+\bibitem{glaser2015gpu}
+Glaser, J.; Nguyen, T. D.; Anderson, J. A.; et al.
+Strong Scaling of General-Purpose Molecular Dynamics Simulations on GPUs.
+\emph{Comput. Phys. Commun.} \textbf{2015}, \emph{192}, 97--107.
+
+\bibitem{hillig2019sos1}
+Hillig, R. C.; Sautier, B.; Schroeder, J.; et al.
+Discovery of Potent SOS1 Inhibitors That Block RAS Activation via Disruption of the RAS--SOS1 Interaction.
+\emph{Proc. Natl. Acad. Sci. U.S.A.} \textbf{2019}, \emph{116}, 2551--2560.
+
+\end{thebibliography}
 
 \end{document}

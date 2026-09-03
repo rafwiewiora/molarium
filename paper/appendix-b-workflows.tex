@@ -1,0 +1,372 @@
+\begin{small}
+\setlength{\emergencystretch}{3em}
+
+Molarium is designed so that a scientist using the graphical interface and an agent using the Chemist Actions API act on the same authoritative molecular state and encounter the same scientific boundaries. This appendix is organized by scientific task. Each workflow states the question, the human procedure, the corresponding agent skill contract, the evidence that must be retained, and the point at which the workflow must stop.
+
+\textbf{Implementation basis.} The descriptions below refer to the inspected browser implementation on 2 September 2026, feature branch \texttt{feature/sos1-interface-story} through commit \texttt{f5a8900}. ``Current'' means reachable in the main browser application or installed public API. ``Experimental'' means executable but explicitly bounded by the implementation or its scientific validation. Repository-only and proposed facilities are identified rather than presented as operating instructions. User-facing workspace names are View, Design, and Simulate; serialized mode values remain \texttt{view}, \texttt{build}, and \texttt{run} so saved action scripts remain replayable.
+
+\subsection{One molecular state, two interfaces}\label{appB:state}
+
+\textbf{Status: current browser surface.}
+
+\textbf{Question.} What changes the molecule, and what merely changes how it is displayed?
+
+Molarium separates the authoritative molecular state from its presentation. Camera motion, representation, focus, labels, highlighting, and component visibility are view-only. Loading a structure, committing chemistry, applying a protonation state, applying a refined pose, or running a coordinate-producing Simulate job changes the state. Current Simulate calculations are state-mutating: non-energy jobs apply returned coordinates on completion, and selecting or playing a saved frame writes that frame's coordinates into the current molecule without a separate Apply control or undo snapshot. Refined-pose and side-chain candidates remain non-mutating until their explicit Apply actions.
+
+For a reproducible workflow, begin with \texttt{?blank}. A scientist can then paste XYZ or PDB text, upload supported XYZ or PDB data, enter a SMILES string or PDB identifier in connected mode, or choose a prepared example. After loading, inspect atom count, formal charge, connected components, bonding, and coordinates. PDB input loads the first model and resolves alternate locations using the implemented occupancy policy; XYZ bonding is inferred from proximity and must therefore be checked.
+
+The same operating rule applies to a human and an agent: \emph{inspect, act, verify}. A successful operation is not automatically a scientifically appropriate one.
+
+\paragraph{Agent skill contract: \texttt{operate\_molecular\_state}.}
+
+\begin{description}[leftmargin=2.2cm,style=nextline]
+\item[Goal] Establish the intended starting object without confusing a display change, candidate, or imported approximation with accepted molecular state.
+\item[Preconditions] A supported input or registered story/route is available; the network boundary is known.
+\item[Procedure] Start blank when reproducibility requires it; load by a supported route; inspect graph, components, charge, and coordinates; report ambiguities before mutation.
+\item[Evidence] Source identity or hash when available, atom/component summary, and warnings about inferred bonds, alternate locations, or retrieval.
+\item[Stop] Do not reinterpret unsupported input or silently substitute another structure.
+\end{description}
+
+Generic file loading is presently a graphical-interface operation rather than a Chemist Actions route. Once a molecule is loaded, the installed API can inspect it directly:
+
+\begin{lstlisting}
+await api.execute({action:"session.inspect",
+  args:{scope:"all", includeCoordinates:false, maximumAtoms:500}})
+await api.execute({action:"view.setDisplay",
+  args:{representation:"both", showHydrogens:false,
+        showPocketAtoms:true, showInteractions:true}})
+\end{lstlisting}
+
+Registered prospective routes and public structure stories have guarded loaders (\texttt{designRoute.load} and \texttt{structureStory.load}); neither is a general-purpose arbitrary-file loader.
+
+\subsection{Prepare a protein for local molecular design}\label{appB:prepare}
+
+\textbf{Status: experimental current surface.}
+
+\textbf{Question.} What must happen before an experimental protein structure can support a bounded local calculation?
+
+A deposited PDB entry may contain missing atoms, alternate locations, ambiguous protonation, crystallographic waters, unusual residues, or an incomplete ligand. Molarium's preparation procedure is conservative: it previews a bounded set of supported repairs and stops when the structure exceeds them.
+
+\begin{enumerate}[leftmargin=*]
+\item Load and inspect the protein, ligand, waters, other components, and intended binding site.
+\item In Protein Preparation choose pH, histidine policy, supported missing-heavy-atom repair, ligand treatment, water treatment, and gap policy, then run Prepare structure.
+\item Molarium constructs an internal preview. Unresolved blockers stop and expose it for review; a blocker-free preview is immediately parameterized and applied.
+\item Inspect the resulting graph, coordinates, warnings, and attached preparation audit. Export that audit when its decisions must persist beyond the live session.
+\end{enumerate}
+
+Inspect ligand identity and completeness, protonation around the active site, bridging waters, reconstructed geometry, gaps, clashes, and the chosen parameter model. A successful preview does not certify production simulation readiness; the implementation records \texttt{readyForProductionSimulation:false}. Missing-loop construction, membranes, general metal coordination, covalent ligands, and periodic explicit solvent remain outside this workflow.
+
+\paragraph{Agent skill contract: \texttt{prepare\_protein}.}
+
+\begin{description}[leftmargin=2.2cm,style=nextline]
+\item[Goal] Create an explicitly reviewed molecular state suitable for a supported local Molarium calculation.
+\item[Preconditions] A PDB-derived structure is loaded and the downstream use is known.
+\item[Inputs] pH, histidine, repair, ligand, water, and gap policies.
+\item[Evidence] Options, proposed repairs, warnings, blockers, report, and parameterization identity.
+\item[Stop] Do not manufacture missing loops, parameters, coordination, or unsupported chemistry.
+\end{description}
+
+Representative public actions are:
+
+\begin{lstlisting}
+await api.execute({action:"protein.prepare", args:{
+  pH:7.4, histidine:"auto", repairMissingHeavy:true,
+  ligandPolicy:"ccd", waterPolicy:"crucial", gapPolicy:"block"}})
+await api.execute({action:"session.inspect",
+  args:{scope:"pocket", includeCoordinates:false, maximumAtoms:500}})
+\end{lstlisting}
+
+The preparation action already parameterizes and applies a blocker-free result. \texttt{protein.parameterize} is a separate alternative for an already prepared or subsequently edited complex. The exact accepted argument vocabulary is returned by \texttt{api.describe()} and is the runtime authority; the sequence above illustrates the contract rather than replacing that manifest.
+
+\subsection{Choose the protonation state being designed}\label{appB:protonation}
+
+\textbf{Status: current ligand workflow; protein choices are part of experimental preparation.}
+
+\textbf{Question.} Which charged and protonated species does the graph represent?
+
+Protonation changes chemical identity, formal charge, hydrogen count, hydrogen bonding, and parameterization. For a ligand, choose pH, enumerate RDKit candidate states, inspect charge and changed sites, and apply one state explicitly. The reported weights are independent Henderson--Hasselbalch estimates from the implemented site table; they are not microscopic p$K_a$ predictions or protein-conditioned populations. For a protein, choose pH and histidine policy during preparation and inspect residues near ligands, metals, catalytic centers, and salt bridges.
+
+Applying a ligand state replaces the graph and coordinates and invalidates topology-dependent results. A failed sanitization or embedding must leave the previous accepted state intact.
+
+\paragraph{Agent skill contract: \texttt{select\_protonation\_state}.}
+
+\begin{description}[leftmargin=2.2cm,style=nextline]
+\item[Goal] Make protonation and formal charge explicit before editing or calculation.
+\item[Preconditions] A valid structure and relevant pH or stated assumption are available.
+\item[Evidence] pH, candidates, chosen total charge, changed sites, and rationale where several states remain plausible.
+\item[Stop] Do not choose a different state merely because it sanitizes or runs.
+\end{description}
+
+Ligand protonation enumeration is not yet a dedicated Chemist Actions route. An agent must therefore treat it as a human-reviewed interface step, while protein protonation is carried within \texttt{protein.prepare}. The absence of an API verb is an execution boundary, not permission to synthesize one.
+
+\subsection{Edit atoms, bonds, charges, and local geometry}\label{appB:edit}
+
+\textbf{Status: current browser surface.}
+
+\textbf{Question.} How can chemistry be changed without corrupting the graph or losing undoability?
+
+The synchronized 2D and 3D views select the same persistent atom identifiers. Chemistry-changing operations are grouped into a transaction. In Design, select the intended editable atom or bond, apply related element, bond-order, charge, hydrogen, deletion, or addition operations, then choose Finish chemistry once. RDKit sanitizes the graph, reconciles hydrogens, polishes eligible local coordinates, remaps reference contacts where possible, invalidates obsolete parameterization, and creates one undo snapshot. Discard restores the pre-transaction state.
+
+Coordinate-only distance, angle, and dihedral controls operate on selected connected paths. The moving side is determined from graph connectivity; ambiguous ring cuts are blocked. After any committed edit, inspect valence, charge, aromaticity, hydrogen count, stereochemistry, local geometry, close contacts, and agreement between 2D and 3D representations. Distance, angle, dihedral, and general stereochemistry controls are currently graphical-interface operations; the public API exposes the listed atom/bond chemistry actions but no general stereochemistry-edit action.
+
+\paragraph{Agent skill contract: \texttt{edit\_molecular\_graph}.}
+
+\begin{description}[leftmargin=2.2cm,style=nextline]
+\item[Goal] Commit an explicit graph or local-geometry change while preserving atomic lineage and undoability.
+\item[Preconditions] The editable component and persistent atom identifiers are unambiguous; no unrelated transaction is pending.
+\item[Evidence] Pre-edit identity, ordered actions, changed atoms/bonds, sanitization, cleanup, and final inspection.
+\item[Stop] Never bypass sanitization or inject coordinates as a substitute for a graph edit.
+\end{description}
+
+\begin{lstlisting}
+await api.execute({action:"view.setMode", args:{mode:"build"}})
+await api.execute({action:"selection.replace", args:{atomIds:[anchorId]}})
+await api.execute({action:"chemistry.addAtom",
+  args:{attachedToAtomId:anchorId, element:"Cl"}})
+await api.execute({action:"chemistry.finish", args:{}})
+await api.execute({action:"session.inspect",
+  args:{scope:"ligand", includeCoordinates:true, maximumAtoms:200}})
+\end{lstlisting}
+
+The serialized value \texttt{build} selects the user-facing Design workspace; its persistence is intentional action-script compatibility.
+
+\subsection{Grow an analogue and preserve its structural context}\label{appB:grow}
+
+\textbf{Status: current builder; pose-aware extension is experimental.}
+
+\textbf{Question.} How can a substituent be added while retaining what was learned from the parent structure?
+
+Fragment growth combines two separate tasks: constructing the correct graph and placing new atoms in a plausible initial geometry. If the parent is bound and its pose matters, first capture the reference pose and any explicit core or interaction hypotheses. Select the attachment atom, stage the fragment, and make associated bond, leaving-group, charge, hydrogen, and stereochemical changes in one transaction. Use geometry controls only to create a starting placement; they do not score the pocket. Finish chemistry, inspect graph and stereochemistry, then relax or search poses as a separate step. Generic fragment-template staging and the geometry controls are currently interface-only. The public API supports individual atom/bond edits and registered \texttt{designRoute.applyStep} operations.
+
+A successful build establishes graph validity, not the preferred rotamer, ring conformation, pocket pose, synthetic feasibility, or affinity. General combinatorial enumeration, automated campaign selection, and automatic MCS transfer of an independently imported analogue are not current workbench workflows.
+
+\paragraph{Agent skill contract: \texttt{grow\_fragment}.}
+
+\begin{description}[leftmargin=2.2cm,style=nextline]
+\item[Goal] Build one intended analogue with a reviewable starting geometry and preserved parent atom lineage.
+\item[Preconditions] Ligand, attachment atom, fragment chemistry, and need for reference continuity are explicit.
+\item[Evidence] Parent/product inspection, atom mapping, transaction actions, initial placement rationale, and captured contacts or reference.
+\item[Stop] Treat relaxation and pose selection as new scientific decisions; do not infer them from successful graph construction.
+\end{description}
+
+For a registered, hash-pinned prospective route, an agent can stage a predefined product graph. \texttt{attachmentAtomId} is required only when that route explicitly declares designer-directed \texttt{spatialIntent}; the SOS1 route does not:
+
+\begin{lstlisting}
+await api.execute({action:"designRoute.load",
+  args:{routeId:"sos1-hit-only"}})
+await api.execute({action:"view.setMode", args:{mode:"build"}})
+await api.execute({action:"protein.prepare", args:{
+  pH:7.4, histidine:"auto", repairMissingHeavy:true,
+  ligandPolicy:"ccd", waterPolicy:"retain", gapPolicy:"cap"}})
+await api.execute({action:"pose.captureReference",
+  args:{mode:"propagate"}})
+await api.execute({action:"designRoute.applyStep",
+  args:{stepId:"scaffold-rewrite"}})
+await api.execute({action:"designRoute.inspect", args:{}})
+\end{lstlisting}
+
+Registered routes constrain prospective inputs and permitted edits; they are not retrospective campaign ledgers.
+
+\subsection{Relax a structure, run bounded dynamics, and inspect motion}\label{appB:simulate}
+
+\textbf{Status: current and experimental methods with method-specific limits.}
+
+\textbf{Question.} Does a designed geometry survive a declared local model, and what moves during a bounded calculation?
+
+Choose the method from the question rather than treating all engines as interchangeable:
+
+\begin{center}
+\begin{tabularx}{\linewidth}{@{}p{0.23\linewidth}p{0.19\linewidth}X@{}}
+\toprule
+\textbf{Question} & \textbf{Method} & \textbf{Current boundary}\\
+\midrule
+Small-molecule cleanup & RDKit force field & Workbench optimization and short motion; not a production trajectory.\\
+Sage energy or local relaxation & Direct WebGPU & Experimental, 32-bit kernels, nonperiodic; no PME.\\
+Many replicas of one topology & WebGPU ensemble & Homogeneous replicas; limits on atoms, replicas, steps, and pair work.\\
+Eligible neutral-molecule electronic energy & ANI-2x & H/C/N/O/S/F/Cl, explicit H, neutral singlet, at most 96 atoms.\\
+Independent internal reference & OpenMM 8.2 Reference & Internal parameterization, checking, and bounded relaxation; not a general selectable method.\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Finish pending chemistry and establish complete parameterization. In Simulate, record job type, model, charge model, solvent, constraints, movable atoms, step count, saved frames, and ensemble settings. Inspect engine identity, finite energies, convergence or diagnostics, elapsed time, warnings, and motion in the region relevant to the question. Because coordinate-producing jobs and subsequent frame selection immediately update the current molecule, export the starting coordinates first when reversibility matters. Display alignment does not overwrite the raw coordinates retained in the calculation record.
+
+Automatic Sage parameterization uses deterministic Gasteiger charges. Unsupported chemistry or missing terms fail explicitly. The current local workflows do not provide periodic solvent, PME, a barostat, production protein dynamics, or binding free energies.
+
+\paragraph{Agent skill contract: \texttt{relax\_or\_simulate}.}
+
+\begin{description}[leftmargin=2.2cm,style=nextline]
+\item[Goal] Use a declared model to test local geometry or bounded motion while retaining interpretable metadata.
+\item[Preconditions] Chemistry is finished, method eligibility is established, and an acceptance observable is defined.
+\item[Inputs] Method, steps, solvent, constraints, fixed/movable atoms, saved frames, and ensemble settings.
+\item[Evidence] Model/version, force field, charge model, solvent, constraints, timestep, energies, diagnostics, timing, frames, and warnings.
+\item[Stop] A minimized pose or stable short trace is not an affinity estimate, equilibrium ensemble, free energy, or production trajectory.
+\end{description}
+
+\begin{lstlisting}
+await api.execute({action:"view.setMode", args:{mode:"build"}})
+await api.execute({action:"optimization.run",
+  args:{method:"induced-fit-webgpu"}})
+await api.execute({action:"session.inspect",
+  args:{scope:"pocket", includeCoordinates:true, maximumAtoms:500}})
+\end{lstlisting}
+
+This public action is a bounded Design optimizer, not the agent equivalent of a general Simulate calculation. The current API has no action for general Simulate jobs, dynamics, or trajectories; those remain human-operated until a dedicated action is added.
+
+\subsection{Explore conformations with Conformer Arena}\label{appB:conformers}
+
+\textbf{Status: experimental current surface.}
+
+\textbf{Question.} Which conformational basins can a finite search find, and how sensitive are they to the generation and refinement method?
+
+Begin with finished chemistry, explicit hydrogens, and a chosen protonation state. Generate deterministic RDKit seeds, refine them with the declared finite protocol, cluster by RMSD, and compare energies, distinct clusters, recurring torsions, ring states, diagnostics, and failures. The STORMM-inspired path uses homogeneous replicas through staged relaxation, heating, cooling, and final relaxation. Conformer Arena compares supported pathways on the same molecular graph and settings.
+
+The generated ensemble and raw energy records remain calculation evidence, but the current Conformer Arena workflow changes displayed/current coordinates as frames or conformers are selected. Cluster populations from this anneal/minimize search are not thermodynamic populations; failure to find a basin does not establish inaccessibility; energies from different force fields are not interchangeable.
+
+\paragraph{Agent skill contract: \texttt{explore\_conformers}.}
+
+\begin{description}[leftmargin=2.2cm,style=nextline]
+\item[Goal] Generate, refine, cluster, and compare a finite set of conformational alternatives for one topology.
+\item[Preconditions] Chemistry and protonation are final; method eligibility and intended diversity metric are stated.
+\item[Evidence] Seed, methods, requested/returned counts, energies, clusters, constraint diagnostics, timings, and exported ensemble where applicable.
+\item[Stop] Do not describe a finite heuristic search as exhaustive or Boltzmann weighted.
+\end{description}
+
+Conformer Arena does not yet have a dedicated Chemist Actions route. An agent may operate it only through a separately reviewed interface automation or future public action; it must not imitate the result through direct state injection.
+
+\subsection{Predict a short single-chain protein structure}\label{appB:fold}
+
+\textbf{Status: experimental current surface; connected mode only.}
+
+\textbf{Question.} Can Molarium predict one protein chain from sequence, and is this co-folding?
+
+The implemented path predicts one protein entity from one sequence; it is not ligand co-folding or multimer prediction. A configured external service produces the MSA, after which OpenFold ONNX inference runs locally in the browser, preferring WebGPU and falling back to WebAssembly. Local Lab disables the external MSA route.
+
+Enter one sequence of at most 128 residues, disclose and accept transmission to the selected MSA endpoint, choose recycle settings, run inference, and inspect residue mapping, chain completeness, geometry, and downstream suitability. First use can download approximately 540~MB of model assets. A successful prediction replaces the current molecule; export PDB before loading other work. The path does not use templates or perform Amber relaxation. It creates no server-side job ledger.
+
+\paragraph{Agent skill contract: \texttt{predict\_protein\_structure}.}
+
+\begin{description}[leftmargin=2.2cm,style=nextline]
+\item[Goal] Predict coordinates for one short protein sequence using the declared MSA endpoint and local model.
+\item[Preconditions] Connected mode, accepted endpoint, sequence length at most 128, and accepted model-asset download.
+\item[Evidence] Input sequence, endpoint, bucket/model identity, recycle settings, progress or failure record, and exported PDB when persistence matters.
+\item[Stop] Do not claim ligand co-folding, multimer prediction, experimental validation, or simulation readiness.
+\end{description}
+
+This workflow has no dedicated Chemist Actions verb in the current manifest. The contract therefore documents how an agent must reason about a human-visible workflow; it does not imply an installed autonomous route.
+
+\subsection{Maintain an experimental pose while changing ligand chemistry}\label{appB:pose}
+
+\textbf{Status: experimental current surface.}
+
+\textbf{Question.} How can an edited analogue inherit trusted information from an experimental ligand pose without pretending that the answer is known?
+
+Reference-guided pose maintenance is narrower than global docking. Capture the prepared reference complex before editing. The record includes ligand lineage, receptor atoms within 8~\AA{}, reference contacts, selected interaction hypotheses, settings, and provenance. Edit and finish the analogue, inspect remapped or unavailable contacts, then search only the degrees of freedom released by the edit. Molarium generates deterministic seeds, parameterizes the edited ligand, rejects infeasible candidates, relaxes feasible candidates in a rigid local receptor site, and ranks distinct results.
+
+Inspect more than rank 1: mapped-core displacement, preserved and replaced contacts, ligand strain, clashes, ring/side-chain choices, and rejection reasons. Only \texttt{pose.apply} changes authoritative coordinates. The score contains local Lennard--Jones and Coulomb cross terms and relative vacuum ligand strain; it omits general receptor relaxation, water displacement, entropy, binding free energy, and broad concerted macrocycle/fused-ring search.
+
+\paragraph{Agent skill contract: \texttt{maintain\_reference\_pose}.}
+
+\begin{description}[leftmargin=2.2cm,style=nextline]
+\item[Goal] Generate reviewable local poses for an edited analogue while retaining explicit relationships to a trusted reference.
+\item[Preconditions] Prepared complex, captured reference, finished chemistry, unchanged receptor, and available required contacts.
+\item[Evidence] Settings, hashes, atom mapping, contacts, constraints, rejected candidates, scores, selection, and chained labbook.
+\item[Stop] If no feasible candidate survives, apply nothing and retain the negative record.
+\end{description}
+
+\begin{lstlisting}
+await api.execute({action:"pose.captureReference",
+  args:{mode:"propagate"}})
+// perform and finish the intended molecular-graph edit
+await api.execute({action:"pose.refine",
+  args:{searchChains:16}})
+await api.execute({action:"pose.apply", args:{index:0}})
+await api.execute({action:"session.inspect",
+  args:{scope:"pocket", includeCoordinates:true, maximumAtoms:500}})
+\end{lstlisting}
+
+For an explicit receptor-side-chain alternative, call \path{pose.enumerateSidechainRotamers}, apply one with \path{pose.applySidechainRotamer}, and then call \path{pose.updateReceptorReference} before another \texttt{pose.refine}. Candidate enumeration itself remains non-mutating.
+
+\subsection{Record, replay, and hand off a design process}\label{appB:history}
+
+\textbf{Status: current action/replay and Design History surfaces.}
+
+\textbf{Question.} Which records allow another scientist or agent to reproduce the procedure, inspect the result, and understand the decision?
+
+Molarium retains distinct evidence objects because they answer different questions:
+
+\begin{center}
+\begin{tabularx}{\linewidth}{@{}p{0.23\linewidth}X@{}}
+\toprule
+\textbf{Record} & \textbf{Meaning}\\
+\midrule
+Chemist Actions audit & Serialized requests, outcomes, failures, and timings for recognized public operations.\\
+Calculation/preparation record & Model, protocol, result, warnings, and method-specific audit.\\
+Docking labbook & Mapping, constraints, feasibility, ranking, rejection, selection, and chained integrity records.\\
+Designer action script & JSON sequence of completed public actions replayed through the same guarded API. It is not necessarily a complete or standalone reconstruction.\\
+Registered design route & Prospective, hash-pinned coordinate boundary and permitted ordered graph edits. It is not retrospective history.\\
+Design History campaign & Content-addressed molecular snapshots, commits, branches, merge parents, decisions, events, and verification state.\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Designer Moves import begins from a blank canvas and performs script-level validation of schema, recognized names, binding order, and forbidden shortcut keys. Individual action arguments and molecular preconditions are checked when each step executes. Audit conversion includes only completed public actions and excludes campaign administration, but a resulting script does not contain an arbitrary loaded starting molecule. Standalone replay therefore requires a reproducible loader or a separately supplied starting state. Failed audit entries remain evidence but are not converted silently into successful replay steps. Replay has play/pause, previous/next-step controls, stable central captions, and a separate replay audit.
+
+Design History is a live browser feature rather than repository-only scaffolding. \texttt{campaign.create} creates a locally persisted campaign and atomically commits the visible molecule. \texttt{campaign.commitCurrent} stores a complete graph-and-coordinate snapshot together with completed public actions since the prior commit. Branch switching restores the exact head molecule and refuses to proceed when the visible molecular state is dirty. Merge records the currently visible target-branch molecule as an explicit result with both parents; it is not an automatic structural merge. Decisions attach a disposition, rationale, reason codes, and optional evidence to a commit. Verification recomputes content hashes, the append-only event chain, commit relationships, and derived branch heads.
+
+Campaign JSON and the active branch are stored in browser IndexedDB. Reload restores the committed graph and coordinates at the active branch head; it does not restore parameter tables, docking candidates, calculation frames, view state, or the complete workbench session. Import verifies the campaign and requires a restorable graph/coordinate snapshot before mutating the live state. Closing a campaign clears the active pointer without deleting its commits. A live commit may attach an action script marked \texttt{coverage.kind:"public-actions-only"} and \texttt{coverage.complete:false}; the complete molecular snapshot is authoritative. Campaign-management actions are intentionally excluded from molecule replay scripts to avoid recursively replaying history administration.
+
+\paragraph{Agent skill contract: \texttt{export\_and\_handoff}.}
+
+\begin{description}[leftmargin=2.2cm,style=nextline]
+\item[Goal] Preserve the smallest complete molecular, procedural, numerical, and decision record needed by the recipient.
+\item[Preconditions] The authoritative result and downstream purpose are explicit; unsaved work has not been cleared.
+\item[Procedure] Inventory records; export reusable molecular state and method evidence; create an action script when replay is required; commit decision history when project continuity is required; verify hashes and replay.
+\item[Evidence] Files, schemas, versions, hashes, replay audit, decision rationale, and unresolved failures.
+\item[Stop] Do not describe an image, share URL, partial action script, or failed replay as a complete scientific handoff.
+\end{description}
+
+\begin{lstlisting}
+await api.execute({action:"campaign.create", args:{
+  campaignId:"sos1-local-design", title:"SOS1 local design",
+  initialCommitMessage:"Register 5OVE/AXE starting state"}})
+// chemist or agent performs guarded molecular actions
+await api.execute({action:"campaign.commitCurrent", args:{
+  message:"Accept Phe890-out design state", tags:["prospective"]}})
+await api.execute({action:"campaign.recordDecision", args:{
+  disposition:"progressed", rationale:"No new clashes after pocket-state search"}})
+await api.execute({action:"campaign.verify", args:{}})
+\end{lstlisting}
+
+\subsection{How skill contracts, API actions, and Design History fit together}\label{appB:contractapi}
+
+The three layers serve different purposes and should not be collapsed:
+
+\begin{enumerate}[leftmargin=*]
+\item \textbf{The skill contract defines scientific intent.} It states preconditions, permissible operations, required evidence, success, failure, and escalation. In this appendix these names denote proposed narrative operating contracts stored with the manuscript. They are not installed runtime skills, Chemist Actions, schemas, or executable enforcement.
+\item \textbf{The Chemist Actions API defines executable authority.} \texttt{api.describe()} lists the installed action names and bounded arguments. Calls are validated, serialized through one queue, and audited with sequence, status, result or error, and duration. An agent cannot gain extra molecular authority by phrasing a request differently.
+\item \textbf{Design History defines durable meaning over time.} It commits complete molecular states and may link them to an explicitly partial public-action script, branches, decisions, evidence, actors, and append-only integrity records. The snapshot answers ``what state was accepted?''; the action script answers ``which guarded operations were captured and can be replayed?''; the decision answers ``why was it accepted?''
+\end{enumerate}
+
+The practical agent pattern is therefore:
+
+\begin{lstlisting}
+const manifest = api.describe();             // discover installed authority
+await api.execute({action:"session.inspect", args:{scope:"all"}});
+// choose only actions permitted by the relevant scientific contract
+await api.execute({action:"...", args:{...}});
+await api.execute({action:"session.inspect", args:{scope:"all"}});
+await api.execute({action:"campaign.commitCurrent",
+  args:{message:"Accepted state after declared check"}});
+await api.execute({action:"campaign.recordDecision",
+  args:{disposition:"progressed", rationale:"..."}});
+await api.execute({action:"campaign.verify", args:{}});
+\end{lstlisting}
+
+The ellipsis is not a wildcard action: it represents one explicit name returned by the manifest. Workflows without a dedicated public action remain human-reviewed or unavailable to autonomous execution. This distinction prevents an agent skill from overstating what the installed software can actually do.
+
+\textbf{Handoff rule.} Export the structure when the recipient needs coordinates; export the calculation record when the recipient must judge the method; export the Designer Moves script together with its required starting state when the recipient must replay operations; and commit to Design History when the recipient must recover branches, decisions, and accepted molecular states. Hashes detect alteration of the serialized record. They do not establish authorship, chemical equivalence, or scientific validity.
+
+\textbf{Deliberate boundaries.} The current workbench does not provide missing-loop construction, membrane or general-metal preparation, covalent-ligand parameterization, periodic explicit solvent, PME, production-scale trajectories, binding free energy, global docking, general remote CUDA execution, GFN/xTB, general combinatorial enumeration, or automatic campaign selection. Their absence is part of the operating contract rather than an invitation to approximate them silently.
+
+\end{small}
