@@ -3,7 +3,7 @@
 Molarium is a local-first molecular viewer, builder, and simulation workbench.
 Most calculations run inside the browser with WebAssembly or WebGPU.
 
-Molarium's original code is available under the [MIT License](./LICENSE). Bundled software,
+Molarium's original code is available under the [Apache License 2.0](./LICENSE). Bundled software,
 model parameters, force fields, and scientific data remain under their respective licenses.
 The original vector identity is available as a reusable [logo](./assets/molarium-logo.svg) and
 [mark](./assets/molarium-mark.svg).
@@ -11,7 +11,8 @@ The original vector identity is available as a reusable [logo](./assets/molarium
 ## Quick start
 
 Large ONNX models are served as versioned, hash-checked release assets rather than stored in the
-public Git repository.
+public Git repository. The deployed website fetches them from Molarium's asset host when a model
+is first used; a local checkout downloads them to ignored files before running offline.
 
 ```sh
 bun install
@@ -63,11 +64,24 @@ manifests and model cards.
 - Load SMILES, PDB, XYZ, and prepared molecular fixtures.
 - Fetch a PDB entry by its four-character RCSB identifier.
 - View proteins, ligands, waters, ions, hydrogen bonds, and aromatic stacking contacts.
+- Draw and edit a small molecule in 2D while the same atoms and bonds remain visible in 3D.
 - Add atoms and fragments without creating bonds from visual proximity.
 - Edit bond lengths, bond angles, and torsions with undo and redo.
-- Run energies, minimization, molecular dynamics, and conformer searches.
+- Simulate energies, minimization, molecular dynamics, and conformer searches.
+- Dock edited ligands to a captured reference core with optional required H-bonds.
+- Preserve molecular branches, evidence, human/agent actions, and explicit stop decisions in a hash-linked design history.
 - Play saved trajectories and follow a selected residue.
 - Export structures, trajectories, clustered conformers, and preparation reports.
+
+## Design history
+
+The standalone [molecular design-history module](./design-history/README.md)
+implements an auditable “git for molecules” record. It keeps unsuccessful and
+superseded designs beside the molecules that progressed, identifies human,
+agent, system, and imported-source contributions, and derives an interactive
+labbook plus reproducible story movies from the verified record. The included
+pilot campaigns are clearly separated into source-grounded historical
+reconstructions and an executable Chemist Actions rehearsal.
 
 ## Calculation engines
 
@@ -164,6 +178,19 @@ demo systems remain test fixtures only. Simulation requests support up to 100,00
 The viewer uses a quaternion trackball, so rotation does not change the camera fit. Right-drag,
 or Ctrl/Cmd plus left-drag, pans the scene. The mouse wheel zooms.
 
+For small molecules, a collapsible RDKit diagram and editor sits at the lower-left of the molecular canvas.
+In a protein–ligand scene it follows the active ligand rather than attempting to flatten the
+protein. Selected atoms are highlighted in both representations, and clicking the 2D diagram maps
+back to the original 3D atom index.
+
+The 2D editor is another view of the same molecular graph, not a second sketch that later needs to
+be merged. Its Select, Atom, Bond, and Erase tools use the same atom identities, staged chemistry
+transaction, valence checks, Undo history, and Finish/Discard controls as the 3D builder. Existing
+3D coordinates do not jump when topology changes. A newly drawn atom starts along an available 3D
+valence direction. Bond-order changes move no coordinates until **Finish changes**, when hydrogens
+are reconciled and one local 3D cleanup moves only the edited neighborhood. RDKit independently
+lays out the 2D diagram again after each graph edit; those display coordinates never overwrite the
+3D conformation.
 MD playback uses a fixed atom-identity heavy-atom fit to each trajectory's first saved frame. This
 removes whole-molecule translation and rotation from the display without changing raw coordinates,
 energies, diagnostics, or exported results. Each STORMM replica receives its own reference fit.
@@ -171,7 +198,7 @@ energies, diagnostics, or exported results. Each STORMM replica receives its own
 Bonds always come from explicit topology. Adding an atom can replace an available hydrogen or
 create a separate component. Molarium never creates a bond only because two atoms are close.
 
-Build mode can change an atom's element and formal charge, create or delete a bond, and set a
+Design mode can change an atom's element and formal charge, create or delete a bond, and set a
 single, double, triple, or aromatic ring bond. It can also add or remove an explicit hydrogen and
 delete an atom. Chemistry edits are staged by default: the topology drawing updates immediately, but
 automatic hydrogen reconciliation, validation, and coordinate refinement wait until **Finish changes**. This lets coupled edits such
@@ -186,7 +213,7 @@ After a finished chemistry batch, Molarium runs one local MMFF94/UFF cleanup. It
 atoms, their first bonded shell, attached hydrogens, and complete touched ring systems; atoms
 outside that neighborhood remain fixed. Fragment addition retains its existing two-shell cleanup.
 In a protein–ligand structure, cleanup is applied to the edited ligand component and every protein
-atom stays fixed. Build offers separate ligand-only and pocket-aware optimization actions. OpenMM
+atom stays fixed. Design offers separate ligand-only and pocket-aware optimization actions. OpenMM
 Reference remains an internal numerical validation oracle and is not exposed as a calculation method.
 An explicit protein–ligand optimization retains up to 26 real optimizer snapshots, opens View when
 complete, and exposes the same energy curve, slider, play, and final-frame controls as other
@@ -196,6 +223,88 @@ the protein coordinates held exactly fixed.
 Protein cartoon mode can show a complete 5 Å ligand pocket or only residues involved in the
 current hydrogen bonds and aromatic stacking contacts. Clicking a protein atom can keep that
 residue centered during trajectory playback.
+
+## Reference-guided pose refinement and constrained docking
+
+For a ligand edited inside Molarium, **Pose Propagation-1** is the default. Capture the prepared
+reference pose, edit the ligand, and refine: every surviving heavy atom is identified from the
+recorded graph-edit lineage and remains fixed at its exact reference coordinate unless the edit
+changes existing ring chemistry. A changed ring is released as one audited unit, including a direct
+carbonyl, while the external reference scaffold remains fixed. Added or replaced graph branches
+undergo deterministic-seed acyclic-torsion and protected-ring search. Moves touching a
+perceived stereocenter, ring carbonyl/multiple bond, or lactam geometry are excluded. Required
+contacts drive a dedicated pharmacophore-capture stage before ordinary physical scoring is allowed
+to act; explicit relative-strain and steric-clash sanity gates prevent a geometrically satisfied but
+chemically broken structure from being called captured.
+The edited ligand then
+receives a fixed-scaffold OpenFF Sage relaxation; a relaxed result is kept only when it preserves
+required-contact feasibility and improves the complete pose-ranking objective. No manual core
+selection is needed.
+
+**Optimize** and **Refine edited group** are deliberately different. Optimize performs one local
+force-field descent from the coordinates currently on screen; ligand-only Optimize does not include
+the receptor in its energy. Refine launches the selected number of independently seeded
+internal-coordinate search chains, first generates against the selected contact potentials,
+physically refines only captured poses against the rigid receptor, applies
+guarded fixed-scaffold relaxation, clusters duplicate heavy-atom geometries, and reports distinct
+poses. It therefore perceives the receptor; it is still a local analogue-pose method, not global
+docking.
+
+This follows established congeneric/RBFE pose-preparation practice: preserve a trusted reference
+common region, sample modified substituents, resolve local clashes, and audit alternate binding
+modes rather than beginning with unconstrained global docking. Required D–H–A contacts remain hard
+feasible states during search. When an R-group replacement removes a contact atom, Molarium maps it
+automatically when the sanitized edit contains one donor/acceptor-role-compatible feature at the
+same recorded edit boundary. Carbonyl, sulfonyl, nitrile, and other bioisosteric feature classes may
+therefore transfer the same interaction intent. Multiple candidates remain an explicit any-of
+restraint and are evaluated during generation; geometry is never used to manufacture eligibility.
+The immutable receptor participant and complete decision are recorded in the hash-linked labbook.
+
+**ConstraintDock-1** remains an expert selected-core search. It accepts any connected,
+non-collinear selection of at least three ligand heavy atoms, generates deterministic ETKDGv3
+conformers, snaps the selected stable identities to the reference, and runs the same constrained
+torsion search. Independently imported analogues do not yet receive an automatic MCS; that future
+path needs symmetry-aware chemical mapping rather than a JavaScript graph guess.
+
+The receptor stays rigid. Ranking combines captured receptor/edited-ligand numeric Lennard-Jones
+and Coulomb cross terms (8 Å site, relative dielectric 4), relative vacuum OpenFF Sage 2.1 intramolecular
+ligand energy, and explicit restraint penalties. Receptor interaction and ligand strain are reported
+relative to the lowest inherited fixed-core starting seed; this constant normalization leaves search
+decisions and rank order unchanged. Pose propagation begins from the recorded edit;
+only the expert selected-core search uses MMFF94/UFF-prepared ETKDG conformers. Both paths omit
+receptor relaxation, solvent displacement, macrocycle/fused-ring concerted search, entropy, and
+binding-free-energy estimation. Treat the result as an experimental pose rank, not an affinity.
+
+Every run can export readable Markdown notes and a coordinate-free JSON audit containing exact
+input hashes, the immutable protocol snapshot, selections, seed, ordered hash-linked events, scores,
+and a final SHA-256. Method lineage, exclusions, tests, and the engineering decision ledger live in
+[`docking/`](./docking/). The exact implementation-independent procedure, equations, random-number
+vector, failure rules, and validation contract are frozen in
+[`docking/POSE-PROPAGATION-PROTOCOL.md`](./docking/POSE-PROPAGATION-PROTOCOL.md).
+
+## Chemist Actions API
+
+Molarium exposes a versioned in-browser API for agent and scripted use, but only at the same action
+boundary available to a chemist in the interface. It can inspect persistent atom IDs, select bonded
+paths, edit atoms and bonds, finish or discard chemistry, undo/redo, capture a reference pose,
+choose required contacts, refine/apply a pose, and run a visible Design optimization method. It does
+not expose fixture injection, arbitrary JavaScript callbacks, internal scoring functions, direct
+coordinate replacement, or network actions. Commands execute serially and are appended to the
+current molecule's audit ledger. See [`CHEMIST-ACTIONS-API.md`](./CHEMIST-ACTIONS-API.md).
+
+The Design interface also has a **Designer moves** panel for importing, replaying, and exporting
+these actions as ordinary versioned JSON. The action script records the intended procedure; every
+execution produces a separate replay log with outcomes. The schema, paper-facing terminology, and
+the complete SOS1/Phe890 example are documented in
+[`DESIGNER-MOVES.md`](./DESIGNER-MOVES.md).
+
+Production loads `app.js` as a module and does not install the privileged regression harness.
+Automation hosts must grant agents only the frozen JSON action object, not an arbitrary JavaScript
+console; local test servers expose the synthetic harness only with the explicit `--test-api` flag.
+
+Saved actions retain the original serialized mode values `view`, `build`, and `run`, and the
+versioned action names such as `build.setTool`. These are compatibility identifiers; the public
+workspace labels are **View**, **Design**, and **Simulate**.
 
 ## Protein input and preparation
 
@@ -244,6 +353,8 @@ H, C, N, O, F, S, and Cl. The current browser limit is 96 atoms. ANI-2x is not a
 field or a solvent model. The UI disables it for unsupported structures.
 
 Model export code, hashes, reference values, and the TorchANI license are in [`mlip/`](./mlip/).
+To restore only the ANI-2x bundle for local validation, run
+`bun scripts/fetch-assets.mjs --prefix=mlip/models/`.
 
 ## OpenFold 2
 
@@ -257,6 +368,27 @@ no Amber relaxation.
 
 Model provenance is in
 [`openfold-export-results/trained/MODEL-CARD.md`](./openfold-export-results/trained/MODEL-CARD.md).
+
+## Validation ledger
+
+The versioned [`validation/registry.v0.2.json`](./validation/registry.v0.2.json) preserves the
+case-level evidence used by Molarium's validation dashboard and papers. The first registered
+docking cohort contains **25 transformations across 18 distinct PDB/ligand starting complexes and
+15 protein targets**. All 25 have terminal workflow outcomes, 17 reached pose search, and five
+paired-crystal cases have blinded heavy-atom RMSD scoring. Failures and unsupported cases remain in
+the denominator.
+
+A separate cross-runtime gate contains five exact poses from three analogue chemistries, all from
+the same 7KPA/D84 protein–ligand system. Those five poses validate matched browser/native arithmetic;
+they do not count as five independent systems. The 20-case 7KPA chemistry stress panel is registered
+but is marked partial until a complete result artifact is committed. The separate 10-case manual
+H-bond recapture panel is complete: two browser replays per case agreed exactly, nine cases produced
+feasible poses, and the sultam was a reproducible `no-feasible-pose` result. Its compact evidence
+also records per-action, refinement, scheduler, and memory timings.
+
+The top-bar **Validation** dashboard separates targets, reference complexes, registered cases,
+poses, and software assertions; every source artifact carries a SHA-256 digest. See
+[`validation/README.md`](./validation/README.md) for the append-only update procedure.
 
 ## Scientific status
 

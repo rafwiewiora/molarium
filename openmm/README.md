@@ -23,6 +23,14 @@ then run:
 bash openmm/build-wasm.sh /path/to/openmm-8.2.0 /path/to/emscripten-prefix
 ```
 
+The pinned source archive URL, SHA-256, toolchain version, patch hashes, bridge
+hash, output hashes, and five-pose native parity report are recorded in
+`BUILD-PROVENANCE.json`. Verify the downloaded archive against that record
+before extracting it. To stage a rebuild without replacing the checked-in
+runtime, set `MOLARIUM_OPENMM_OUTPUT_DIR` to an empty directory. If the
+Emscripten installation cache is read-only, set `EM_CACHE` to a writable
+scratch directory.
+
 The script applies `openmm-8.2-emscripten.patch` plus the browser-only serial
 CCMA setup patch in `openmm-8.2-emscripten-ccma.patch`, builds the static OpenMM core
 with WebAssembly exceptions, and replaces `molarium-openmm.js` and
@@ -34,6 +42,14 @@ The CCMA patch is required because this build intentionally omits pthreads;
 unpatched OpenMM tries to create a Reference-platform thread pool while
 constructing a constrained `Context` and deadlocks in browser WebAssembly.
 Native OpenMM builds are unaffected.
+
+`docking/validation/cloud-panel/score_openmm_wasm.mjs` scores an integrity-
+checked pose packet with any staged WASM build. The companion
+`validate_openmm_wasm.py` links the same C bridge to a native OpenMM build and
+records component-wise energy and force parity without retaining molecular
+coordinates or host metadata in the published report. The companion real-browser evidence is
+`docking/validation/cloud-panel/browser-sage-openmm-validation-2026-08-23.json`; both report hashes
+are pinned in `BUILD-PROVENANCE.json` and checked by `npm run test:openmm-wasm`.
 
 OpenMM is distributed under the MIT license reproduced in
 `OPENMM-LICENSE.txt`.

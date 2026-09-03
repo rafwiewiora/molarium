@@ -1,0 +1,81 @@
+{
+  "schema": "molarium.design-story-index/v1",
+  "generatedAt": "2026-08-30T21:00:00.000Z",
+  "stories": [
+    {
+      "id": "moonshot-dndi-6510",
+      "title": "From Moonshot lead (S)-x1 to DNDI-6510",
+      "description": "A source-grounded reconstruction of the reported branches, stopped ideas, lead selection, and eventual program discontinuation.",
+      "campaign": "./moonshot-dndi-6510.campaign.json",
+      "movie": "./moonshot-dndi-6510.movie.json",
+      "summary": {
+        "campaignId": "moonshot-dndi-6510",
+        "title": "From Moonshot lead (S)-x1 to DNDI-6510",
+        "commits": 9,
+        "events": 30,
+        "decisions": 10,
+        "byDisposition": {
+          "progressed": 3,
+          "not-progressed": 4,
+          "deferred": 0,
+          "failed": 0,
+          "duplicate": 0,
+          "superseded": 2,
+          "archived": 1
+        },
+        "branches": 8,
+        "campaignSha256": "39ff4d2fd81b367b8527643646e6890c44f69822a4e5bb1837bfd5ccb07b1e95"
+      }
+    },
+    {
+      "id": "bclxl-fragment-linking",
+      "title": "BCL-xL fragment linking and linker optimization",
+      "description": "A reconstruction of a branching structure-based design story in which two weak site binders become subnanomolar linked inhibitors.",
+      "campaign": "./bclxl-fragment-linking.campaign.json",
+      "movie": "./bclxl-fragment-linking.movie.json",
+      "summary": {
+        "campaignId": "bclxl-fragment-linking",
+        "title": "BCL-xL fragment linking and linker optimization",
+        "commits": 11,
+        "events": 35,
+        "decisions": 11,
+        "byDisposition": {
+          "progressed": 6,
+          "not-progressed": 5,
+          "deferred": 0,
+          "failed": 0,
+          "duplicate": 0,
+          "superseded": 0,
+          "archived": 0
+        },
+        "branches": 10,
+        "campaignSha256": "3bab186b499d4716917b80177adbededd05f097cefa880c4b91999eb9b10b659"
+      }
+    },
+    {
+      "id": "molarium-7kpa-rehearsal",
+      "title": "7KPA chemist-action rehearsal",
+      "description": "An executable infrastructure rehearsal that records high-disruption graph edits, restraint-guided pose generation, and negative physical screens.",
+      "campaign": "./molarium-7kpa-rehearsal.campaign.json",
+      "movie": "./molarium-7kpa-rehearsal.movie.json",
+      "summary": {
+        "campaignId": "molarium-7kpa-rehearsal",
+        "title": "7KPA chemist-action rehearsal",
+        "commits": 4,
+        "events": 14,
+        "decisions": 4,
+        "byDisposition": {
+          "progressed": 3,
+          "not-progressed": 1,
+          "deferred": 0,
+          "failed": 0,
+          "duplicate": 0,
+          "superseded": 0,
+          "archived": 0
+        },
+        "branches": 4,
+        "campaignSha256": "5fbf34c9441dda3a4b73d1f59e6aced78b813bb73c82eae78dcc4b653fa5a129"
+      }
+    }
+  ]
+}

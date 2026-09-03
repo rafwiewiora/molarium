@@ -1,0 +1,44 @@
+{
+  "campaignId": "molarium-7kpa-rehearsal",
+  "campaignSha256": "5fbf34c9441dda3a4b73d1f59e6aced78b813bb73c82eae78dcc4b653fa5a129",
+  "createdAt": "2026-08-30T20:31:00.000Z",
+  "cues": [
+    {
+      "commitId": "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8",
+      "durationMs": 2400,
+      "narration": "The rehearsal starts from one fixed, hash-identified 7KPA/D84 reference.",
+      "snapshotId": "snapshot:80698009de6c4b1ed2e4927851078265c7313ecf282b605fd7bc1db26ee84bd3",
+      "title": "A prepared reference with four contacts"
+    },
+    {
+      "commitId": "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615",
+      "durationMs": 2600,
+      "eventId": "event:31096d35b5348646463e212351f37e714fd653742bdd735ec3459f7fb33e71a2",
+      "narration": "Contact-feasible poses passed the registered absolute clash and interaction screen.",
+      "snapshotId": "snapshot:b1fc430673672e3f5d82b80c37241d5e9f00657b03050860bd64a2c291258a94",
+      "title": "Pyrrolidone to N-linked pyrazole"
+    },
+    {
+      "commitId": "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a",
+      "durationMs": 2600,
+      "eventId": "event:0d5a124643484a812a65e9a3c85b39d2f96e053b21101f015e6527e657f3ddbc",
+      "narration": "The ring-expanded case met the preregistered development boundary, with visual review retained.",
+      "snapshotId": "snapshot:3103fddda0f5b16b51f4edb21c5faf79b8d243889e0ba84245103bfcafe62108",
+      "title": "Pyrrolidone to ring-expanded tetrahydropyran"
+    },
+    {
+      "commitId": "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16",
+      "durationMs": 3200,
+      "eventId": "event:e88cb98a8978d9662efd5bcc531be4e444b1331f76b9bae8a9673fa4518f71b3",
+      "narration": "Contact satisfaction did not rescue 11 clashes and a strongly positive absolute receptor–ligand interaction energy.",
+      "snapshotId": "snapshot:0a4b06194df355adfdc872f6c2ea8d33a4aec3ec6fbb2241df2ede558bb5c62e",
+      "title": "Phenyl–pyrrolidone to spiro[4.5] ketone"
+    }
+  ],
+  "fps": 30,
+  "height": 900,
+  "schema": "molarium.design-movie/v1",
+  "title": "Agent actions remain chemist actions",
+  "width": 1440,
+  "movieSha256": "9c2f10d1fd52d49755a1968adfd69048b99773c663110764ddace415ad10ca4d"
+}

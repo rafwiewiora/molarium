@@ -38,6 +38,13 @@ should not be uploaded.
   `main.tex` to show these notes; clean builds hide them.
 - Stay on the generic preprint style until a target venue is chosen.
 
+## Development provenance
+
+The implementation conversation is part of the evidence for this paper. See
+[`development-log/README.md`](development-log/README.md) for the private raw
+rollout, redacted transcript, and curated debugging-episode workflow. Never add
+a raw Codex rollout or an unreviewed transcript export to Git.
+
 ## arXiv handoff
 
 This source targets pdfLaTeX and uses the widely portable BibTeX workflow. Upload `main.tex`,

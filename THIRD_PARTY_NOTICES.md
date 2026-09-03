@@ -6,12 +6,13 @@ linked below.
 
 ## Interface and molecular viewer
 
-Molarium's interface and molecular viewer are implemented in this repository. The viewer is a
-custom HTML Canvas renderer in `app.js`; it does not bundle Atomiverse, `xyzrender`, Mol*, 3Dmol.js
-or Three.js.
+Molarium's product interface and molecular viewer are implemented in this repository. The product
+viewer is a custom HTML Canvas renderer in `app.js`; it does not use Atomiverse, `xyzrender`, Mol*,
+3Dmol.js or Three.js. The separate read-only 7KPA validation artifact under
+`docking/validation/pose-viewer/` does vendor Mol* as disclosed below.
 
 The Molarium logo, mark, and animated calculation indicator are original assets implemented in
-this repository and covered by Molarium's MIT License.
+this repository and covered by Molarium's Apache License 2.0.
 
 Early interface direction was inspired by [Atomiverse](https://atomiverse.com/). This is an
 acknowledgement of visual inspiration, not a statement of affiliation, endorsement, shared code,
@@ -29,6 +30,7 @@ or a software dependency.
 | ONNX Runtime Web | 1.27.0 | Browser WebGPU/WASM execution of ONNX models | MIT; [`licenses/ONNXRUNTIME-LICENSE.txt`](./licenses/ONNXRUNTIME-LICENSE.txt); [complete vendored v1.27.0 third-party notices](./licenses/ONNXRUNTIME-1.27.0-THIRD-PARTY-NOTICES.txt) ([upstream](https://github.com/microsoft/onnxruntime/blob/v1.27.0/ThirdPartyNotices.txt)) |
 | OpenFold | source revision `be2ec184`; `finetuning_no_templ_ptm_1.pt` | Exported fixed-shape OpenFold 2 browser models | Source Apache-2.0; parameters CC BY 4.0; [`licenses/OPENFOLD-LICENSE.txt`](./licenses/OPENFOLD-LICENSE.txt) and [`MODEL-CARD.md`](./openfold-export-results/trained/MODEL-CARD.md) |
 | PDBFixer | preparation behavior reference | Reference for conservative protein-repair behavior; not a bundled Python runtime | MIT; [`licenses/PDBFIXER-LICENSE.txt`](./licenses/PDBFIXER-LICENSE.txt) |
+| Mol* | 5.11.0 | Read-only 7KPA pose-review validation artifact; not the Molarium product viewer | MIT; [`docking/validation/pose-viewer/MOLSTAR-LICENSE.txt`](./docking/validation/pose-viewer/MOLSTAR-LICENSE.txt) and [upstream](https://github.com/molstar/molstar) |
 
 The `stormm/` code is a Molarium WebGPU ensemble engine inspired by fixed-point and stacked-system
 ideas from the [official STORMM project](https://github.com/Psivant/stormm). It is not an official
@@ -45,7 +47,10 @@ bytes, Git blob `fbd9f9a95f6013d8ecaef81e02b0033e5882a675`, SHA-256
   PubChem 3D conformer for lysergic acid diethylamide, CID 5761, retrieved 2026-08-18. The
   application records the CID and stereospecific SMILES alongside the coordinates.
 - PDB coordinates and Chemical Component Dictionary records are retrieved from the
-  [RCSB Protein Data Bank](https://www.rcsb.org/) only when requested by the user.
+  [RCSB Protein Data Bank](https://www.rcsb.org/) only when requested by the user. Verbatim
+  7KPA coordinate and D84 CCD records are also bundled under `test/fixtures/` solely as a
+  reproducible browser-preparation/contact-capture regression; their source identifiers and
+  SHA-256 digests are recorded beside the fixtures.
 - Protein MSA searches use the user-configurable
   [ColabFold](https://github.com/sokrypton/ColabFold)-compatible endpoint shown in the interface.
   Protein sequences are sent to that endpoint; folding inference remains local.
@@ -68,12 +73,24 @@ bytes, Git blob `fbd9f9a95f6013d8ecaef81e02b0033e5882a675`, SHA-256
 - Ropp, P. J. et al. *Dimorphite-DL: an open-source program for enumerating the ionization
   states of drug-like small molecules.* J. Cheminform. (2019).
   [DOI](https://doi.org/10.1186/s13321-019-0336-9)
+- Friesner, R. A. et al. *Glide: a new approach for rapid, accurate docking and scoring. 1. Method
+  and assessment of docking accuracy.* J. Med. Chem. (2004). Method inspiration only; Molarium
+  does not bundle or claim compatibility with Glide. [DOI](https://doi.org/10.1021/jm0306430)
+- Totrov, M.; Abagyan, R. *Flexible protein-ligand docking by global energy optimization in
+  internal coordinates.* Proteins (1997). Method inspiration only; Molarium does not bundle or
+  claim compatibility with ICM. [PubMed](https://pubmed.ncbi.nlm.nih.gov/9485515/)
+- Rowan Scientific. *openconf: Modular conformer generation for docking and ensemble workflows*
+  (2026). MIT-licensed method inspiration only; Molarium does not bundle or copy `openconf` code,
+  its CrystalFF torsion library, or its MMFF search. [Repository](https://github.com/rowansci/openconf)
+- Ponzoni, L.; York, F.; Kelley, B. *AutoPose: R-Group Decomposition Based Posing for RBFE.*
+  ChemRxiv (2026). Related congeneric-pose method considered but not reproduced.
+  [DOI](https://doi.org/10.26434/chemrxiv.15004703/v1)
 
 RDKit releases and citation metadata are maintained by the
 [RDKit project](https://www.rdkit.org/) and its archived releases.
 
 ## Molarium license
 
-Molarium's original code is licensed under the [MIT License](./LICENSE), copyright 2026 Molarium
+Molarium's original code is licensed under the [Apache License 2.0](./LICENSE), copyright 2026 Molarium
 contributors. That license does not replace or modify the separate terms governing the bundled
 software, model parameters, force fields, and scientific data listed above.

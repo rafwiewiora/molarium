@@ -16,6 +16,25 @@ function progress(id, phase, model, calculation) {
   self.postMessage({ type: 'progress', id, phase, model, calculation });
 }
 
+async function sha256Text(value) {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+function integrityCanonical(value) {
+  if (Array.isArray(value)) return `[${value.map(integrityCanonical).join(',')}]`;
+  if (value && typeof value === 'object') return `{${Object.keys(value).sort()
+    .map((key) => `${JSON.stringify(key)}:${integrityCanonical(value[key])}`).join(',')}}`;
+  if (typeof value === 'number') {
+    const buffer = new ArrayBuffer(8);
+    new DataView(buffer).setFloat64(0, value, false);
+    const hex = [...new Uint8Array(buffer)]
+      .map((byte) => byte.toString(16).padStart(2, '0')).join('');
+    return JSON.stringify(`~f64:${hex}`);
+  }
+  return JSON.stringify(value);
+}
+
 function getRDKit(id) {
   if (!rdkitPromise) {
     progress(id, 'Loading RDKit chemical perception…', 0.08, 0);
@@ -32,10 +51,28 @@ function getRDKit(id) {
 function getOpenMM(id) {
   if (!openmmPromise) {
     progress(id, 'Loading OpenMM WebAssembly…', 0.16, 0);
-    openmmPromise = import('./openmm/molarium-openmm.js')
-      .then((module) => module.default({
-        locateFile: (file) => new URL(`./openmm/${file}`, self.location.href).href,
-      }))
+    const scriptUrl = new URL('./openmm/molarium-openmm.js', self.location.href).href;
+    const wasmUrl = new URL('./openmm/molarium-openmm.wasm', self.location.href).href;
+    openmmPromise = Promise.all([
+      import(scriptUrl), fetch(wasmUrl, { cache:'no-store' }),
+    ]).then(async ([factory, response]) => {
+      if (!response.ok) throw new Error(`OpenMM WebAssembly could not be loaded (HTTP ${response.status})`);
+      const wasmBytes = new Uint8Array(await response.arrayBuffer());
+      if (!WebAssembly.validate(wasmBytes)) throw new Error('The OpenMM WebAssembly download is invalid');
+      const digest = await crypto.subtle.digest('SHA-256', wasmBytes);
+      const wasmSha256 = [...new Uint8Array(digest)]
+        .map((byte) => byte.toString(16).padStart(2, '0')).join('');
+      const compiledWasm = await WebAssembly.compile(wasmBytes);
+      const module = await factory.default({
+        instantiateWasm(imports, receiveInstance) {
+          const instance = new WebAssembly.Instance(compiledWasm, imports);
+          receiveInstance(instance);
+          return instance.exports;
+        },
+      });
+      module.molariumWasmSha256 = wasmSha256;
+      return module;
+    })
       .catch((error) => {
         openmmPromise = null;
         throw error;
@@ -239,11 +276,16 @@ async function runCalculation(message) {
 
   const simulationConfig = configureSimulationSystem(molecule, parameterized.system, options);
   const configuredSystem = simulationConfig.system;
+  const parameterizedSystemSha256 = await sha256Text(integrityCanonical(parameterized.system));
+  const numericSystemSha256 = await sha256Text(integrityCanonical(configuredSystem));
+  const inputPositionsJsonSha256 = await sha256Text(JSON.stringify(
+    molecule.atoms.flatMap((atom) => [atom.x, atom.y, atom.z])));
 
   const module = await getOpenMM(id);
   progress(id, `Creating OpenMM System · ${counts.particles} atoms · ${counts.torsions} torsions · ${counts.exceptions} exceptions…`, 0.9, 0.08);
   const conformerStride = molecule.atoms.length * 3;
   const initialConformers = job === 'conformers' ? options.initialConformers : null;
+  const fixedConformers = job === 'fixed-conformers' ? options.initialConformers : null;
   const scoreCoordinates = job === 'conformer-score' ? options.coordinateStack : null;
   if (job === 'conformers' && (!ArrayBuffer.isView(initialConformers)
       || !initialConformers.length || initialConformers.length % conformerStride))
@@ -252,12 +294,80 @@ async function runCalculation(message) {
       || !scoreCoordinates.length || scoreCoordinates.length % conformerStride
       || scoreCoordinates.length / conformerStride > 4096))
     throw new Error('OpenMM conformer judge received an invalid coordinate stack');
+  if (job === 'fixed-conformers' && (!ArrayBuffer.isView(fixedConformers)
+      || !fixedConformers.length || fixedConformers.length % conformerStride
+      || fixedConformers.length / conformerStride > 64))
+    throw new Error('OpenMM fixed-scaffold relaxation received an invalid coordinate stack');
   const initialPositions = job === 'conformers'
     ? initialConformers.subarray(0, conformerStride)
-    : job === 'conformer-score' ? scoreCoordinates.subarray(0, conformerStride) : null;
+    : job === 'conformer-score' ? scoreCoordinates.subarray(0, conformerStride)
+      : job === 'fixed-conformers' ? fixedConformers.subarray(0, conformerStride) : null;
   initializeSmirnoffSystem(module, molecule, configuredSystem, implicitSolvent,
     simulationConfig.timestepPs, simulationConfig.cutoffNm, initialPositions);
   progress(id, `${parameterized.forcefield} System ready`, 1, 0.14);
+
+  if (job === 'fixed-conformers') {
+    const fixedAtomIndices = Array.from(options.fixedAtomIndices || [], Number);
+    if (fixedAtomIndices.some((index) => !Number.isInteger(index)
+        || index < 0 || index >= molecule.atoms.length)
+        || new Set(fixedAtomIndices).size !== fixedAtomIndices.length)
+      throw new Error('Fixed scaffold indices must be unique valid atom indices');
+    const conformerCount = fixedConformers.length / conformerStride;
+    const iterations = Math.max(0, Math.min(250,
+      Math.round(Number(options.fixedRelaxIterations ?? 60))));
+    const stepScale = Math.max(1e-8, Math.min(1e-2,
+      Number(options.fixedRelaxStepScale ?? 1e-4)));
+    const maximumDisplacementAngstrom = Math.max(1e-5, Math.min(0.1,
+      Number(options.fixedRelaxMaximumDisplacementAngstrom ?? 0.01)));
+    const relaxedConformers = new Float64Array(fixedConformers.length);
+    const initialEnergies = new Float64Array(conformerCount);
+    const finalEnergies = new Float64Array(conformerCount);
+    const fixedSet = new Set(fixedAtomIndices);
+    for (let conformer = 0; conformer < conformerCount; conformer++) {
+      const target = fixedConformers.subarray(conformer * conformerStride,
+        (conformer + 1) * conformerStride);
+      setPositions(module, target);
+      const initialEnergyKj = module._molarium_get_potential_energy();
+      if (!Number.isFinite(initialEnergyKj)) throw new Error(lastError(module));
+      initialEnergies[conformer] = initialEnergyKj * KJ_TO_KCAL;
+      for (let iteration = 0; iteration < iterations; iteration++) {
+        requireSuccess(module, module._molarium_relax_fixed(1, stepScale,
+          maximumDisplacementAngstrom));
+        if (fixedAtomIndices.length) {
+          const positions = readPositions(module, molecule.atoms.length);
+          for (const atom of fixedAtomIndices) for (let axis = 0; axis < 3; axis++)
+            positions[atom * 3 + axis] = target[atom * 3 + axis];
+          setPositions(module, positions);
+        }
+      }
+      const positions = readPositions(module, molecule.atoms.length);
+      // Preserve the reference coordinates bit-for-bit at the worker boundary.
+      for (const atom of fixedAtomIndices) for (let axis = 0; axis < 3; axis++)
+        positions[atom * 3 + axis] = target[atom * 3 + axis];
+      setPositions(module, positions);
+      const finalEnergyKj = module._molarium_get_potential_energy();
+      if (!Number.isFinite(finalEnergyKj)) throw new Error(lastError(module));
+      finalEnergies[conformer] = finalEnergyKj * KJ_TO_KCAL;
+      relaxedConformers.set(positions, conformer * conformerStride);
+      progress(id, `Relaxing edited pose ${conformer + 1}/${conformerCount}…`, 1,
+        0.16 + 0.78 * (conformer + 1) / conformerCount);
+    }
+    const openmmVersion = module.UTF8ToString(module._molarium_openmm_version());
+    module._molarium_destroy();
+    self.postMessage({
+      type:'result', id, job, conformers:relaxedConformers,
+      initialEnergies, finalEnergies, conformerCount, iterations,
+      stepScale, maximumDisplacementAngstrom,
+      fixedAtomCount:fixedAtomIndices.length,
+      movableAtomCount:molecule.atoms.length - fixedSet.size,
+      elapsedMs:performance.now() - started,
+      openmmVersion,
+      forcefield:parameterized.forcefield, chargeModel:parameterized.chargeModel,
+      sourceSha256:parameterized.sourceSha256, platform:'Reference',
+      backend:'OpenMM WebAssembly fixed-scaffold Sage relaxation', unit:'kcal/mol',
+    }, [relaxedConformers.buffer, initialEnergies.buffer, finalEnergies.buffer]);
+    return;
+  }
 
   if (job === 'conformer-score') {
     const coordinateCount = scoreCoordinates.length / conformerStride;
@@ -433,6 +543,10 @@ async function runCalculation(message) {
     forcefield: parameterized.forcefield,
     chargeModel: parameterized.chargeModel,
     sourceSha256: parameterized.sourceSha256,
+    openmmWasmSha256: module.molariumWasmSha256,
+    numericSystemSha256,
+    parameterizedSystemSha256,
+    inputPositionsJsonSha256,
     platform: 'Reference',
     backend: 'OpenMM WebAssembly',
     unit: 'kcal/mol',

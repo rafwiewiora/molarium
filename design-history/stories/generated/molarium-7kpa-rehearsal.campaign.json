@@ -1,0 +1,1081 @@
+{
+  "schema": "molarium.design-campaign/v1",
+  "campaignId": "molarium-7kpa-rehearsal",
+  "title": "7KPA chemist-action rehearsal",
+  "description": "An executable infrastructure rehearsal that records high-disruption graph edits, restraint-guided pose generation, and negative physical screens.",
+  "createdAt": "2026-08-30T20:00:00.000Z",
+  "finalizedAt": "2026-08-30T20:30:00.000Z",
+  "application": {
+    "name": "Molarium",
+    "api": "molarium.chemist-actions/v1",
+    "version": "1.0.0"
+  },
+  "actors": [
+    {
+      "displayName": "Molarium project lead",
+      "id": "human.project-lead",
+      "type": "human"
+    },
+    {
+      "displayName": "Sol · implementation agent",
+      "id": "agent.sol",
+      "type": "agent"
+    },
+    {
+      "displayName": "Molarium browser runtime",
+      "id": "system.browser",
+      "type": "system"
+    }
+  ],
+  "sources": [
+    {
+      "id": "source.7kpa",
+      "locator": "PDB:7KPA / CCD:D84",
+      "title": "7KPA prepared reference structure",
+      "type": "structure",
+      "url": "https://www.rcsb.org/structure/7KPA"
+    },
+    {
+      "id": "source.enumeration-catalogue",
+      "locator": "enumerations/catalogue.v0.1.json",
+      "title": "7KPA high-disruption enumeration catalogue v0.1",
+      "type": "repository"
+    },
+    {
+      "id": "source.enumeration-results",
+      "locator": "enumerations/RESULTS.v0.1.md",
+      "sha256": "80047f9ac6c12a09f37103b7b0e44e6a79cb7033a032044ae95a26f68fdc0f75",
+      "title": "7KPA high-disruption browser results v0.1",
+      "type": "notebook"
+    }
+  ],
+  "objects": {
+    "snapshots": {
+      "snapshot:80698009de6c4b1ed2e4927851078265c7313ecf282b605fd7bc1db26ee84bd3": {
+        "canonicalSmiles": "c1ccc(c(c1)Cn2c3cc(ccc3nc2COc4cccc(c4)N5CCCC5=O)C6=CNC(=O)C=C6)OC(F)F",
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "chain": "C",
+            "componentId": "D84",
+            "pdbId": "7KPA",
+            "residueNumber": 201,
+            "sourceId": "source.7kpa"
+          }
+        ],
+        "graph": null,
+        "label": "7KPA D84 reference ligand",
+        "properties": {
+          "claimStatus": "infrastructure-fixture",
+          "graphSha256": "3132f29caf07242906a1e9c3d495cacb84f0ff70c1cb841f0a6655d27c9c8a4f",
+          "requiredContacts": 4
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:b1fc430673672e3f5d82b80c37241d5e9f00657b03050860bd64a2c291258a94": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "sourceId": "source.enumeration-catalogue",
+            "transformationId": "pyrrolidone-to-pyrazole"
+          }
+        ],
+        "graph": null,
+        "label": "Pyrrolidone to N-linked pyrazole",
+        "properties": {
+          "claimStatus": "browser-stress-result",
+          "expectedProductGraphSha256": "5bbf0f9412c26c5b077e4ecf6309bdca2ac3d411c1f00ed17ed186befca803c0",
+          "family": "heterocycle-replacement",
+          "hypothesis": "The new ring nitrogen can replace the pyrrolidone carbonyl acceptor while the rest of the ligand pose is inherited.",
+          "risks": [
+            "tautomer-enumeration",
+            "acceptor-remap",
+            "aromaticity-assignment"
+          ]
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:3103fddda0f5b16b51f4edb21c5faf79b8d243889e0ba84245103bfcafe62108": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "sourceId": "source.enumeration-catalogue",
+            "transformationId": "pyrrolidone-to-tetrahydropyran"
+          }
+        ],
+        "graph": null,
+        "label": "Pyrrolidone to ring-expanded tetrahydropyran",
+        "properties": {
+          "claimStatus": "browser-stress-result",
+          "expectedProductGraphSha256": "9c04f1989866f3912847ba7ebe35b7211155503053434e4e8a7b27d77a3bafb0",
+          "family": "ring-expansion",
+          "hypothesis": "A ring oxygen near the former carbonyl region can be restraint-seeded toward the captured donor.",
+          "risks": [
+            "ring-expansion",
+            "acceptor-remap",
+            "new-ring-conformer-search"
+          ]
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      },
+      "snapshot:0a4b06194df355adfdc872f6c2ea8d33a4aec3ec6fbb2241df2ede558bb5c62e": {
+        "canonicalSmiles": null,
+        "coordinates": null,
+        "externalRefs": [
+          {
+            "sourceId": "source.enumeration-catalogue",
+            "transformationId": "phenyl-pyrrolidone-to-spiro-ketone"
+          }
+        ],
+        "graph": null,
+        "label": "Phenyl–pyrrolidone to spiro[4.5] ketone",
+        "properties": {
+          "claimStatus": "browser-stress-result",
+          "expectedProductGraphSha256": "7bed2605e581a5fa0c02d212388702522989e123676ad1941e02d30a7469f730",
+          "family": "dual-scaffold-replacement",
+          "hypothesis": "A spiro ketone can retain the original carbonyl acceptor while replacing both the phenyl linker and lactam nitrogen topology.",
+          "risks": [
+            "large-mcs-break",
+            "spiro-stereochemistry",
+            "multi-ring-conformer-search",
+            "high-strain-start"
+          ]
+        },
+        "schema": "molarium.molecule-snapshot/v1"
+      }
+    },
+    "commits": {
+      "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8": {
+        "actionScriptId": null,
+        "branch": "main",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Capture the prepared crystallographic starting pose.",
+        "parents": [],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:80698009de6c4b1ed2e4927851078265c7313ecf282b605fd7bc1db26ee84bd3",
+        "tags": [
+          "starting-point",
+          "browser-fixture"
+        ]
+      },
+      "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615": {
+        "actionScriptId": "script:999826d620fd26ea3ba5ee761a2fd6d035a6b62badaa40b2e395c743980f9a16",
+        "branch": "enumeration.pyrrolidone-to-pyrazole",
+        "evidenceIds": [],
+        "hypothesisIds": [
+          "event:a26bc416804d58b99cbe863a04d06fe5f04d06d9cfb683b7498c481f151a473c"
+        ],
+        "message": "Execute Pyrrolidone to N-linked pyrazole through chemist-visible edits.",
+        "parents": [
+          "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:b1fc430673672e3f5d82b80c37241d5e9f00657b03050860bd64a2c291258a94",
+        "tags": [
+          "chemist-actions",
+          "stress-test"
+        ]
+      },
+      "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a": {
+        "actionScriptId": "script:63b4193f17a4fa6b6dfd4bd01277d25620341df70f6b40c5ce2aa58f0a33825a",
+        "branch": "enumeration.pyrrolidone-to-tetrahydropyran",
+        "evidenceIds": [],
+        "hypothesisIds": [
+          "event:a26bc416804d58b99cbe863a04d06fe5f04d06d9cfb683b7498c481f151a473c"
+        ],
+        "message": "Execute Pyrrolidone to ring-expanded tetrahydropyran through chemist-visible edits.",
+        "parents": [
+          "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:3103fddda0f5b16b51f4edb21c5faf79b8d243889e0ba84245103bfcafe62108",
+        "tags": [
+          "chemist-actions",
+          "stress-test"
+        ]
+      },
+      "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16": {
+        "actionScriptId": "script:5575e1c3d09d0d59398f7f0f6aa7a88430930c4f4cf63e6cff6fe089acc1d59c",
+        "branch": "enumeration.phenyl-pyrrolidone-to-spiro-ketone",
+        "evidenceIds": [],
+        "hypothesisIds": [
+          "event:a26bc416804d58b99cbe863a04d06fe5f04d06d9cfb683b7498c481f151a473c"
+        ],
+        "message": "Execute Phenyl–pyrrolidone to spiro[4.5] ketone through chemist-visible edits.",
+        "parents": [
+          "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8"
+        ],
+        "schema": "molarium.molecule-commit/v1",
+        "snapshotId": "snapshot:0a4b06194df355adfdc872f6c2ea8d33a4aec3ec6fbb2241df2ede558bb5c62e",
+        "tags": [
+          "chemist-actions",
+          "stress-test"
+        ]
+      }
+    },
+    "actionScripts": {
+      "script:999826d620fd26ea3ba5ee761a2fd6d035a6b62badaa40b2e395c743980f9a16": {
+        "actions": [
+          {
+            "action": "view.setMode",
+            "args": {
+              "mode": "build"
+            },
+            "caption": "Open Design."
+          },
+          {
+            "action": "build.setTool",
+            "args": {
+              "tool": "select"
+            },
+            "caption": "Use the same Select tool as the chemist."
+          },
+          {
+            "action": "pose.captureReference",
+            "args": {
+              "mode": "propagate"
+            },
+            "caption": "Capture the crystallographic reference pose."
+          },
+          {
+            "action": "selection.replace",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::O2:3214"
+              ]
+            },
+            "caption": "Select O2."
+          },
+          {
+            "action": "chemistry.deleteAtom",
+            "args": {},
+            "caption": "Apply deleteAtom."
+          },
+          {
+            "action": "selection.replace",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C19:3213"
+              ]
+            },
+            "caption": "Select C19."
+          },
+          {
+            "action": "chemistry.setAtom",
+            "args": {
+              "element": "N",
+              "formalCharge": 0
+            },
+            "caption": "Apply setAtom."
+          },
+          {
+            "action": "selection.replace",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C19:3213",
+                "chemist-7KPA:HETATM:C:D84:201::C18:3215"
+              ]
+            },
+            "caption": "Select C19–C18."
+          },
+          {
+            "action": "chemistry.setBond",
+            "args": {
+              "order": 2
+            },
+            "caption": "Apply setBond."
+          },
+          {
+            "action": "selection.replace",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C17:3183",
+                "chemist-7KPA:HETATM:C:D84:201::C16:3182"
+              ]
+            },
+            "caption": "Select C17–C16."
+          },
+          {
+            "action": "chemistry.setBond",
+            "args": {
+              "order": 2
+            },
+            "caption": "Apply setBond."
+          },
+          {
+            "action": "chemistry.finish",
+            "args": {},
+            "caption": "Finish and validate the complete chemical state."
+          },
+          {
+            "action": "pose.refine",
+            "args": {
+              "searchChains": 8
+            },
+            "caption": "Start the visible reference-guided pose search."
+          }
+        ],
+        "compiler": {
+          "boundary": "molarium.chemist-actions/v1",
+          "catalogueId": "molarium-7kpa-high-disruption-enumerations",
+          "name": "enumerations/action-plan.mjs",
+          "transformationId": "pyrrolidone-to-pyrazole"
+        },
+        "expectedEndSnapshotId": "snapshot:b1fc430673672e3f5d82b80c37241d5e9f00657b03050860bd64a2c291258a94",
+        "expectedStartSnapshotId": "snapshot:80698009de6c4b1ed2e4927851078265c7313ecf282b605fd7bc1db26ee84bd3",
+        "label": "Replay Pyrrolidone to N-linked pyrazole",
+        "schema": "molarium.chemist-action-script/v1"
+      },
+      "script:63b4193f17a4fa6b6dfd4bd01277d25620341df70f6b40c5ce2aa58f0a33825a": {
+        "actions": [
+          {
+            "action": "view.setMode",
+            "args": {
+              "mode": "build"
+            },
+            "caption": "Open Design."
+          },
+          {
+            "action": "build.setTool",
+            "args": {
+              "tool": "select"
+            },
+            "caption": "Use the same Select tool as the chemist."
+          },
+          {
+            "action": "pose.captureReference",
+            "args": {
+              "mode": "propagate"
+            },
+            "caption": "Capture the crystallographic reference pose."
+          },
+          {
+            "action": "selection.replace",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::N1:3186"
+              ]
+            },
+            "caption": "Select N1."
+          },
+          {
+            "action": "chemistry.setAtom",
+            "args": {
+              "element": "C",
+              "formalCharge": 0
+            },
+            "caption": "Apply setAtom."
+          },
+          {
+            "action": "selection.replace",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C19:3213"
+              ]
+            },
+            "caption": "Select C19."
+          },
+          {
+            "action": "chemistry.setAtom",
+            "args": {
+              "element": "O",
+              "formalCharge": 0
+            },
+            "caption": "Apply setAtom."
+          },
+          {
+            "action": "selection.replace",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::O2:3214"
+              ]
+            },
+            "caption": "Select O2."
+          },
+          {
+            "action": "chemistry.deleteAtom",
+            "args": {},
+            "caption": "Apply deleteAtom."
+          },
+          {
+            "action": "selection.replace",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C18:3215",
+                "chemist-7KPA:HETATM:C:D84:201::C19:3213"
+              ]
+            },
+            "caption": "Select C18–C19."
+          },
+          {
+            "action": "chemistry.deleteBond",
+            "args": {},
+            "caption": "Apply deleteBond."
+          },
+          {
+            "action": "chemistry.addAtom",
+            "args": {
+              "attachedToAtomId": "chemist-7KPA:HETATM:C:D84:201::C18:3215",
+              "element": "C"
+            },
+            "caption": "Add C.",
+            "capture": {
+              "thpBridge": "addedAtomId"
+            }
+          },
+          {
+            "action": "chemistry.createBond",
+            "args": {
+              "atomIds": [
+                {
+                  "$binding": "thpBridge"
+                },
+                "chemist-7KPA:HETATM:C:D84:201::C19:3213"
+              ],
+              "order": 1
+            },
+            "caption": "Create the ring bond."
+          },
+          {
+            "action": "chemistry.finish",
+            "args": {},
+            "caption": "Finish and validate the complete chemical state."
+          },
+          {
+            "action": "pose.refine",
+            "args": {
+              "searchChains": 8
+            },
+            "caption": "Start the visible reference-guided pose search."
+          }
+        ],
+        "compiler": {
+          "boundary": "molarium.chemist-actions/v1",
+          "catalogueId": "molarium-7kpa-high-disruption-enumerations",
+          "name": "enumerations/action-plan.mjs",
+          "transformationId": "pyrrolidone-to-tetrahydropyran"
+        },
+        "expectedEndSnapshotId": "snapshot:3103fddda0f5b16b51f4edb21c5faf79b8d243889e0ba84245103bfcafe62108",
+        "expectedStartSnapshotId": "snapshot:80698009de6c4b1ed2e4927851078265c7313ecf282b605fd7bc1db26ee84bd3",
+        "label": "Replay Pyrrolidone to ring-expanded tetrahydropyran",
+        "schema": "molarium.chemist-action-script/v1"
+      },
+      "script:5575e1c3d09d0d59398f7f0f6aa7a88430930c4f4cf63e6cff6fe089acc1d59c": {
+        "actions": [
+          {
+            "action": "view.setMode",
+            "args": {
+              "mode": "build"
+            },
+            "caption": "Open Design."
+          },
+          {
+            "action": "build.setTool",
+            "args": {
+              "tool": "select"
+            },
+            "caption": "Use the same Select tool as the chemist."
+          },
+          {
+            "action": "pose.captureReference",
+            "args": {
+              "mode": "propagate"
+            },
+            "caption": "Capture the crystallographic reference pose."
+          },
+          {
+            "action": "selection.replace",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C10:3175",
+                "chemist-7KPA:HETATM:C:D84:201::C11:3176"
+              ]
+            },
+            "caption": "Select C10–C11."
+          },
+          {
+            "action": "chemistry.setBond",
+            "args": {
+              "order": 1
+            },
+            "caption": "Apply setBond."
+          },
+          {
+            "action": "selection.replace",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C11:3176",
+                "chemist-7KPA:HETATM:C:D84:201::C12:3177"
+              ]
+            },
+            "caption": "Select C11–C12."
+          },
+          {
+            "action": "chemistry.setBond",
+            "args": {
+              "order": 1
+            },
+            "caption": "Apply setBond."
+          },
+          {
+            "action": "selection.replace",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C12:3177",
+                "chemist-7KPA:HETATM:C:D84:201::C13:3178"
+              ]
+            },
+            "caption": "Select C12–C13."
+          },
+          {
+            "action": "chemistry.setBond",
+            "args": {
+              "order": 1
+            },
+            "caption": "Apply setBond."
+          },
+          {
+            "action": "selection.replace",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C13:3178",
+                "chemist-7KPA:HETATM:C:D84:201::C14:3179"
+              ]
+            },
+            "caption": "Select C13–C14."
+          },
+          {
+            "action": "chemistry.setBond",
+            "args": {
+              "order": 1
+            },
+            "caption": "Apply setBond."
+          },
+          {
+            "action": "selection.replace",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C14:3179",
+                "chemist-7KPA:HETATM:C:D84:201::C15:3181"
+              ]
+            },
+            "caption": "Select C14–C15."
+          },
+          {
+            "action": "chemistry.setBond",
+            "args": {
+              "order": 1
+            },
+            "caption": "Apply setBond."
+          },
+          {
+            "action": "selection.replace",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C15:3181",
+                "chemist-7KPA:HETATM:C:D84:201::C10:3175"
+              ]
+            },
+            "caption": "Select C15–C10."
+          },
+          {
+            "action": "chemistry.setBond",
+            "args": {
+              "order": 1
+            },
+            "caption": "Apply setBond."
+          },
+          {
+            "action": "selection.replace",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::N1:3186"
+              ]
+            },
+            "caption": "Select N1."
+          },
+          {
+            "action": "chemistry.deleteAtom",
+            "args": {},
+            "caption": "Apply deleteAtom."
+          },
+          {
+            "action": "chemistry.createBond",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C14:3179",
+                "chemist-7KPA:HETATM:C:D84:201::C16:3182"
+              ],
+              "order": 1
+            },
+            "caption": "Create the ring bond."
+          },
+          {
+            "action": "chemistry.createBond",
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C14:3179",
+                "chemist-7KPA:HETATM:C:D84:201::C19:3213"
+              ],
+              "order": 1
+            },
+            "caption": "Create the ring bond."
+          },
+          {
+            "action": "chemistry.finish",
+            "args": {},
+            "caption": "Finish and validate the complete chemical state."
+          },
+          {
+            "action": "pose.refine",
+            "args": {
+              "searchChains": 8
+            },
+            "caption": "Start the visible reference-guided pose search."
+          }
+        ],
+        "compiler": {
+          "boundary": "molarium.chemist-actions/v1",
+          "catalogueId": "molarium-7kpa-high-disruption-enumerations",
+          "name": "enumerations/action-plan.mjs",
+          "transformationId": "phenyl-pyrrolidone-to-spiro-ketone"
+        },
+        "expectedEndSnapshotId": "snapshot:0a4b06194df355adfdc872f6c2ea8d33a4aec3ec6fbb2241df2ede558bb5c62e",
+        "expectedStartSnapshotId": "snapshot:80698009de6c4b1ed2e4927851078265c7313ecf282b605fd7bc1db26ee84bd3",
+        "label": "Replay Phenyl–pyrrolidone to spiro[4.5] ketone",
+        "schema": "molarium.chemist-action-script/v1"
+      }
+    }
+  },
+  "branches": {
+    "main": "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8",
+    "enumeration.pyrrolidone-to-pyrazole": "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615",
+    "enumeration.pyrrolidone-to-tetrahydropyran": "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a",
+    "enumeration.phenyl-pyrrolidone-to-spiro-ketone": "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16"
+  },
+  "events": [
+    {
+      "actorId": "agent.sol",
+      "branch": "main",
+      "eventId": "event:b14dfff192d7f4b1df91df9c574a468d5b10d7f78243051c45eb65775e7e8e18",
+      "index": 0,
+      "kind": "campaign.started",
+      "occurredAt": "2026-08-23T00:00:00.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "caveat": "This is a pose-generation stress test, not an affinity or synthetic-feasibility study.",
+        "claimStatus": "molarium-reconstruction",
+        "objective": "Prove that an agent can enact difficult analogue edits only through operations available to a chemist."
+      },
+      "previousEntrySha256": null,
+      "recordedAt": "2026-08-30T20:00:00.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.7kpa",
+        "source.enumeration-catalogue"
+      ],
+      "subjectIds": [],
+      "entrySha256": "0d8d798586fa19c3eaf417706df26700f9c717e384f2fe3747578d5461f3ccb2"
+    },
+    {
+      "actorId": "system.browser",
+      "branch": "main",
+      "eventId": "event:0e05b293ff529b8b9517e29c83f79f044146ffdcf9f73e1a318d44cd7ee05a13",
+      "index": 1,
+      "kind": "molecule.committed",
+      "occurredAt": "2026-08-23T00:00:01.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": null,
+        "commitId": "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8",
+        "evidenceIds": [],
+        "hypothesisIds": [],
+        "message": "Capture the prepared crystallographic starting pose.",
+        "parents": [],
+        "snapshotId": "snapshot:80698009de6c4b1ed2e4927851078265c7313ecf282b605fd7bc1db26ee84bd3",
+        "tags": [
+          "starting-point",
+          "browser-fixture"
+        ]
+      },
+      "previousEntrySha256": "0d8d798586fa19c3eaf417706df26700f9c717e384f2fe3747578d5461f3ccb2",
+      "recordedAt": "2026-08-30T20:00:01.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.7kpa"
+      ],
+      "subjectIds": [
+        "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8",
+        "snapshot:80698009de6c4b1ed2e4927851078265c7313ecf282b605fd7bc1db26ee84bd3"
+      ],
+      "entrySha256": "197c742af49df7ab522a4633f579380f6d606d7bc53267c47397ef790acf8d87"
+    },
+    {
+      "actorId": "human.project-lead",
+      "branch": "main",
+      "eventId": "event:1187f29ca403822e9c7d9689b8b3666aefff7e20a8f1a6eb02a95a1fb6d3a11c",
+      "index": 2,
+      "kind": "decision.recorded",
+      "occurredAt": "2026-08-23T00:00:02.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "progressed",
+        "evidenceIds": [],
+        "rationale": "Registered as the immutable control and parent for every stress transformation.",
+        "reasonCodes": [
+          "other"
+        ],
+        "targetCommitId": "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8"
+      },
+      "previousEntrySha256": "197c742af49df7ab522a4633f579380f6d606d7bc53267c47397ef790acf8d87",
+      "recordedAt": "2026-08-30T20:00:02.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.7kpa"
+      ],
+      "subjectIds": [
+        "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8"
+      ],
+      "entrySha256": "1c269a07b96cc77c55c38b41c5d5db12f70634bc5e207808eface1478ed6876a"
+    },
+    {
+      "actorId": "human.project-lead",
+      "branch": "main",
+      "eventId": "event:a26bc416804d58b99cbe863a04d06fe5f04d06d9cfb683b7498c481f151a473c",
+      "index": 3,
+      "kind": "hypothesis.proposed",
+      "occurredAt": "2026-08-23T00:00:03.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "claimStatus": "molarium-reconstruction",
+        "constraint": "Every edit must compile to the public Chemist Actions API.",
+        "statement": "Stress the method with acceptor replacements and a dual-scaffold change that disrupt the inherited graph to different degrees."
+      },
+      "previousEntrySha256": "1c269a07b96cc77c55c38b41c5d5db12f70634bc5e207808eface1478ed6876a",
+      "recordedAt": "2026-08-30T20:00:03.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.enumeration-catalogue"
+      ],
+      "subjectIds": [
+        "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8"
+      ],
+      "entrySha256": "40fe2b2e858fec2dc590611095186618a95396028cbdb9576f158d1c0d94ca3f"
+    },
+    {
+      "actorId": "agent.sol",
+      "branch": "enumeration.pyrrolidone-to-pyrazole",
+      "eventId": "event:53bc9892c251193a120db3af298650ae12e939366305f924845e7c0c06a36743",
+      "index": 4,
+      "kind": "molecule.committed",
+      "occurredAt": "2026-08-23T00:00:04.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": "script:999826d620fd26ea3ba5ee761a2fd6d035a6b62badaa40b2e395c743980f9a16",
+        "commitId": "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615",
+        "evidenceIds": [],
+        "hypothesisIds": [
+          "event:a26bc416804d58b99cbe863a04d06fe5f04d06d9cfb683b7498c481f151a473c"
+        ],
+        "message": "Execute Pyrrolidone to N-linked pyrazole through chemist-visible edits.",
+        "parents": [
+          "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8"
+        ],
+        "snapshotId": "snapshot:b1fc430673672e3f5d82b80c37241d5e9f00657b03050860bd64a2c291258a94",
+        "tags": [
+          "chemist-actions",
+          "stress-test"
+        ]
+      },
+      "previousEntrySha256": "40fe2b2e858fec2dc590611095186618a95396028cbdb9576f158d1c0d94ca3f",
+      "recordedAt": "2026-08-30T20:00:04.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.enumeration-catalogue"
+      ],
+      "subjectIds": [
+        "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615",
+        "snapshot:b1fc430673672e3f5d82b80c37241d5e9f00657b03050860bd64a2c291258a94"
+      ],
+      "entrySha256": "304bafde8016a61a4a1fff421995464b162df4a499f01ffaa26408318071ab50"
+    },
+    {
+      "actorId": "system.browser",
+      "branch": "enumeration.pyrrolidone-to-pyrazole",
+      "eventId": "event:453bd40d35692ab593484d98e1d4f6e8397f56fa67bcc743218081bb3f0f5898",
+      "index": 5,
+      "kind": "calculation.completed",
+      "occurredAt": "2026-08-23T00:00:05.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "claimStatus": "recorded-browser-result",
+        "contactFeasibleChains": "2/8",
+        "lennardJonesKcalMol": -66.79,
+        "protocol": "7kpa-high-disruption-public-chemist-actions v0.1",
+        "relativeLigandStrainKcalMol": -2.38,
+        "replayCount": 2,
+        "searchChains": 8,
+        "stericClashes": 0
+      },
+      "previousEntrySha256": "304bafde8016a61a4a1fff421995464b162df4a499f01ffaa26408318071ab50",
+      "recordedAt": "2026-08-30T20:00:05.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.enumeration-results"
+      ],
+      "subjectIds": [
+        "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615"
+      ],
+      "entrySha256": "f660f45f2a34a0998a3d1a705b78a255dd7cecb0dfc2c0dbb90638e6e4bc3c55"
+    },
+    {
+      "actorId": "human.project-lead",
+      "branch": "enumeration.pyrrolidone-to-pyrazole",
+      "eventId": "event:31096d35b5348646463e212351f37e714fd653742bdd735ec3459f7fb33e71a2",
+      "index": 6,
+      "kind": "decision.recorded",
+      "occurredAt": "2026-08-23T00:00:06.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "progressed",
+        "evidenceIds": [
+          "event:453bd40d35692ab593484d98e1d4f6e8397f56fa67bcc743218081bb3f0f5898"
+        ],
+        "rationale": "Contact-feasible poses passed the registered absolute clash and interaction screen.",
+        "reasonCodes": [
+          "other"
+        ],
+        "targetCommitId": "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615"
+      },
+      "previousEntrySha256": "f660f45f2a34a0998a3d1a705b78a255dd7cecb0dfc2c0dbb90638e6e4bc3c55",
+      "recordedAt": "2026-08-30T20:00:06.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.enumeration-results"
+      ],
+      "subjectIds": [
+        "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615"
+      ],
+      "entrySha256": "cad08509388ba3ba9c45fb406c1a843995ff6d943c52d042a4f7cae81bc672f5"
+    },
+    {
+      "actorId": "agent.sol",
+      "branch": "enumeration.pyrrolidone-to-tetrahydropyran",
+      "eventId": "event:53dad19cee2cb0b0f83e808aad63036d7331ae5552ceef66b39dcd1e96d88132",
+      "index": 7,
+      "kind": "molecule.committed",
+      "occurredAt": "2026-08-23T00:00:07.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": "script:63b4193f17a4fa6b6dfd4bd01277d25620341df70f6b40c5ce2aa58f0a33825a",
+        "commitId": "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a",
+        "evidenceIds": [],
+        "hypothesisIds": [
+          "event:a26bc416804d58b99cbe863a04d06fe5f04d06d9cfb683b7498c481f151a473c"
+        ],
+        "message": "Execute Pyrrolidone to ring-expanded tetrahydropyran through chemist-visible edits.",
+        "parents": [
+          "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8"
+        ],
+        "snapshotId": "snapshot:3103fddda0f5b16b51f4edb21c5faf79b8d243889e0ba84245103bfcafe62108",
+        "tags": [
+          "chemist-actions",
+          "stress-test"
+        ]
+      },
+      "previousEntrySha256": "cad08509388ba3ba9c45fb406c1a843995ff6d943c52d042a4f7cae81bc672f5",
+      "recordedAt": "2026-08-30T20:00:07.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.enumeration-catalogue"
+      ],
+      "subjectIds": [
+        "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a",
+        "snapshot:3103fddda0f5b16b51f4edb21c5faf79b8d243889e0ba84245103bfcafe62108"
+      ],
+      "entrySha256": "fe3813f29c67749e97910aabcf180a2bc31507eaf5a03f7eb8cd61d7ce5a7abe"
+    },
+    {
+      "actorId": "system.browser",
+      "branch": "enumeration.pyrrolidone-to-tetrahydropyran",
+      "eventId": "event:5d6bf996568fec0ba17a674e47922c803f1942da43f4bf98a7b18d2eeb3e186e",
+      "index": 8,
+      "kind": "calculation.completed",
+      "occurredAt": "2026-08-23T00:00:08.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "claimStatus": "recorded-browser-result",
+        "contactFeasibleChains": "2/8",
+        "lennardJonesKcalMol": -37.35,
+        "protocol": "7kpa-high-disruption-public-chemist-actions v0.1",
+        "relativeLigandStrainKcalMol": 3.83,
+        "replayCount": 2,
+        "searchChains": 8,
+        "stericClashes": 2
+      },
+      "previousEntrySha256": "fe3813f29c67749e97910aabcf180a2bc31507eaf5a03f7eb8cd61d7ce5a7abe",
+      "recordedAt": "2026-08-30T20:00:08.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.enumeration-results"
+      ],
+      "subjectIds": [
+        "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a"
+      ],
+      "entrySha256": "470431fae428647de7f44cf8c3bab36a9cb53776810dc694ac91cd2e95089770"
+    },
+    {
+      "actorId": "human.project-lead",
+      "branch": "enumeration.pyrrolidone-to-tetrahydropyran",
+      "eventId": "event:0d5a124643484a812a65e9a3c85b39d2f96e053b21101f015e6527e657f3ddbc",
+      "index": 9,
+      "kind": "decision.recorded",
+      "occurredAt": "2026-08-23T00:00:09.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "progressed",
+        "evidenceIds": [
+          "event:5d6bf996568fec0ba17a674e47922c803f1942da43f4bf98a7b18d2eeb3e186e"
+        ],
+        "rationale": "The ring-expanded case met the preregistered development boundary, with visual review retained.",
+        "reasonCodes": [
+          "other"
+        ],
+        "targetCommitId": "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a"
+      },
+      "previousEntrySha256": "470431fae428647de7f44cf8c3bab36a9cb53776810dc694ac91cd2e95089770",
+      "recordedAt": "2026-08-30T20:00:09.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.enumeration-results"
+      ],
+      "subjectIds": [
+        "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a"
+      ],
+      "entrySha256": "d6a72a06949265533cec744e2485bf82d3153d1d4e7e000346f3431f6b1777ee"
+    },
+    {
+      "actorId": "agent.sol",
+      "branch": "enumeration.phenyl-pyrrolidone-to-spiro-ketone",
+      "eventId": "event:73409a05a88dae05c99c907e600631597fcda2fe6d5439a06f7728d02382cdf9",
+      "index": 10,
+      "kind": "molecule.committed",
+      "occurredAt": "2026-08-23T00:00:10.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "actionScriptId": "script:5575e1c3d09d0d59398f7f0f6aa7a88430930c4f4cf63e6cff6fe089acc1d59c",
+        "commitId": "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16",
+        "evidenceIds": [],
+        "hypothesisIds": [
+          "event:a26bc416804d58b99cbe863a04d06fe5f04d06d9cfb683b7498c481f151a473c"
+        ],
+        "message": "Execute Phenyl–pyrrolidone to spiro[4.5] ketone through chemist-visible edits.",
+        "parents": [
+          "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8"
+        ],
+        "snapshotId": "snapshot:0a4b06194df355adfdc872f6c2ea8d33a4aec3ec6fbb2241df2ede558bb5c62e",
+        "tags": [
+          "chemist-actions",
+          "stress-test"
+        ]
+      },
+      "previousEntrySha256": "d6a72a06949265533cec744e2485bf82d3153d1d4e7e000346f3431f6b1777ee",
+      "recordedAt": "2026-08-30T20:00:10.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.enumeration-catalogue"
+      ],
+      "subjectIds": [
+        "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16",
+        "snapshot:0a4b06194df355adfdc872f6c2ea8d33a4aec3ec6fbb2241df2ede558bb5c62e"
+      ],
+      "entrySha256": "7fc34c58adafc88d5119d9847fccf7732dd60c061219861f62808c4900968e13"
+    },
+    {
+      "actorId": "system.browser",
+      "branch": "enumeration.phenyl-pyrrolidone-to-spiro-ketone",
+      "eventId": "event:f834a5861cef1072d51269a483df69ae3178678e68f7905177375702d22a46e6",
+      "index": 11,
+      "kind": "calculation.completed",
+      "occurredAt": "2026-08-23T00:00:11.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "claimStatus": "recorded-browser-result",
+        "contactFeasibleChains": "8/8",
+        "lennardJonesKcalMol": 1870.38,
+        "protocol": "7kpa-high-disruption-public-chemist-actions v0.1",
+        "relativeLigandStrainKcalMol": null,
+        "replayCount": 2,
+        "searchChains": 8,
+        "stericClashes": 11
+      },
+      "previousEntrySha256": "7fc34c58adafc88d5119d9847fccf7732dd60c061219861f62808c4900968e13",
+      "recordedAt": "2026-08-30T20:00:11.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.enumeration-results"
+      ],
+      "subjectIds": [
+        "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16"
+      ],
+      "entrySha256": "fad71272ce222ec707fead462cabc0dde4261c3f1e68032826028072a9fa10f2"
+    },
+    {
+      "actorId": "human.project-lead",
+      "branch": "enumeration.phenyl-pyrrolidone-to-spiro-ketone",
+      "eventId": "event:e88cb98a8978d9662efd5bcc531be4e444b1331f76b9bae8a9673fa4518f71b3",
+      "index": 12,
+      "kind": "decision.recorded",
+      "occurredAt": "2026-08-23T00:00:12.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "disposition": "not-progressed",
+        "evidenceIds": [
+          "event:f834a5861cef1072d51269a483df69ae3178678e68f7905177375702d22a46e6"
+        ],
+        "rationale": "Contact satisfaction did not rescue 11 clashes and a strongly positive absolute receptor–ligand interaction energy.",
+        "reasonCodes": [
+          "strain"
+        ],
+        "targetCommitId": "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16"
+      },
+      "previousEntrySha256": "fad71272ce222ec707fead462cabc0dde4261c3f1e68032826028072a9fa10f2",
+      "recordedAt": "2026-08-30T20:00:12.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [
+        "source.enumeration-results"
+      ],
+      "subjectIds": [
+        "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16"
+      ],
+      "entrySha256": "6aca4c7f2e6e3b1254d66a965f9d52c2ba11df2885fb50a434fa6534731821a0"
+    },
+    {
+      "actorId": "agent.sol",
+      "branch": "main",
+      "eventId": "event:0e5a0087299286bd5ad2570ab229cff68cbcf4359c19d29e691cc0515efc742b",
+      "index": 13,
+      "kind": "campaign.completed",
+      "occurredAt": "2026-08-30T20:30:00.000Z",
+      "parentEventIds": [],
+      "payload": {
+        "branchHeads": {
+          "enumeration.phenyl-pyrrolidone-to-spiro-ketone": "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16",
+          "enumeration.pyrrolidone-to-pyrazole": "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615",
+          "enumeration.pyrrolidone-to-tetrahydropyran": "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a",
+          "main": "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8"
+        }
+      },
+      "previousEntrySha256": "6aca4c7f2e6e3b1254d66a965f9d52c2ba11df2885fb50a434fa6534731821a0",
+      "recordedAt": "2026-08-30T20:30:00.000Z",
+      "schema": "molarium.design-event/v1",
+      "sourceIds": [],
+      "subjectIds": [],
+      "entrySha256": "4b809effb165e5624bc45c829b3b98dfbe324338c93742ea92bf05231c0a963d"
+    }
+  ],
+  "campaignSha256": "5fbf34c9441dda3a4b73d1f59e6aced78b813bb73c82eae78dcc4b653fa5a129"
+}

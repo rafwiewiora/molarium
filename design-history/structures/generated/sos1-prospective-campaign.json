@@ -1,0 +1,2142 @@
+{
+  "schema": "molarium.registered-design-route/v1",
+  "id": "sos1-hit-only",
+  "title": "SOS1 five-state hit-only conformational replay",
+  "protocolBoundary": {
+    "coordinateInputs": [
+      "PDB 5OVE SOS1 protein",
+      "PDB 5OVE ligand AXE"
+    ],
+    "allowedLaterInputs": [
+      "reported compound molecular graphs"
+    ],
+    "forbiddenBeforeFreeze": [
+      "5OVF--5OVI protein coordinates",
+      "5OVF--5OVI ligand coordinates",
+      "later-structure scaffold constraints",
+      "holdout-guided rotamer selection"
+    ],
+    "sequenceRule": "Every step starts from the preceding frozen prediction; Phe890 branches are ranked from the current predicted complex."
+  },
+  "hit": {
+    "pdbId": "5OVE",
+    "stateId": "AXE",
+    "ligand": "AXE",
+    "canonicalSmiles": "COc1cc2ncnc(N[C@H](C)c3cccc4ccccc34)c2cc1OC",
+    "proteinAsset": "./design-history/structures/generated/sos1-5ove-protein.pdb",
+    "ligandAsset": "./design-history/structures/generated/sos1-5ove-ligand.pdb",
+    "proteinSha256": "f55fe755726646fa9d8ad345a9af4c373ebe64c4ecfead6bd8ffb79ff52843be",
+    "ligandSha256": "8bfba3468142b7324c720e3727355c95d580db8fc82a72e15e56bd5324075e33",
+    "ligandDefinition": {
+      "id": "AXE",
+      "source": "registered 5OVE/AXE graph with RDKit-added hydrogens",
+      "atoms": [
+        {
+          "id": "C18",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "O14",
+          "element": "O",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C10",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C5",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C2",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "N6",
+          "element": "N",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C11",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "N8",
+          "element": "N",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C3",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "N7",
+          "element": "N",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C12",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C16",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C15",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C20",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C23",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C24",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C21",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C25",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C27",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C26",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C22",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C19",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C1",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C4",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C9",
+          "element": "C",
+          "charge": 0,
+          "aromatic": true,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "O13",
+          "element": "O",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "C17",
+          "element": "C",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H1",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H2",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H3",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H4",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H5",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H6",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H7",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H8",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H9",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H10",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H11",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H12",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H13",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H14",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H15",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H16",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H17",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H18",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H19",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H20",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        {
+          "id": "H21",
+          "element": "H",
+          "charge": 0,
+          "aromatic": false,
+          "leaving": false,
+          "x": 0,
+          "y": 0,
+          "z": 0
+        }
+      ],
+      "bonds": [
+        {
+          "a": "C18",
+          "b": "O14",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "O14",
+          "b": "C10",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C10",
+          "b": "C5",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C5",
+          "b": "C2",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C2",
+          "b": "N6",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "N6",
+          "b": "C11",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C11",
+          "b": "N8",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "N8",
+          "b": "C3",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C3",
+          "b": "N7",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "N7",
+          "b": "C12",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C12",
+          "b": "C16",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C12",
+          "b": "C15",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C15",
+          "b": "C20",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C20",
+          "b": "C23",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C23",
+          "b": "C24",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C24",
+          "b": "C21",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C21",
+          "b": "C25",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C25",
+          "b": "C27",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C27",
+          "b": "C26",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C26",
+          "b": "C22",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C22",
+          "b": "C19",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C3",
+          "b": "C1",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C1",
+          "b": "C4",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C4",
+          "b": "C9",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C9",
+          "b": "O13",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "O13",
+          "b": "C17",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C9",
+          "b": "C10",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C1",
+          "b": "C2",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C19",
+          "b": "C15",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C19",
+          "b": "C21",
+          "order": 1.5,
+          "aromatic": true
+        },
+        {
+          "a": "C18",
+          "b": "H1",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C18",
+          "b": "H2",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C18",
+          "b": "H3",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C5",
+          "b": "H4",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C11",
+          "b": "H5",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "N7",
+          "b": "H6",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C12",
+          "b": "H7",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C16",
+          "b": "H8",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C16",
+          "b": "H9",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C16",
+          "b": "H10",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C20",
+          "b": "H11",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C23",
+          "b": "H12",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C24",
+          "b": "H13",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C25",
+          "b": "H14",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C27",
+          "b": "H15",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C26",
+          "b": "H16",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C22",
+          "b": "H17",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C4",
+          "b": "H18",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C17",
+          "b": "H19",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C17",
+          "b": "H20",
+          "order": 1.0,
+          "aromatic": false
+        },
+        {
+          "a": "C17",
+          "b": "H21",
+          "order": 1.0,
+          "aromatic": false
+        }
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "scaffold-rewrite",
+      "sequenceIndex": 1,
+      "referenceStateId": "AXE",
+      "stateId": "AWT",
+      "productComponentId": "AWT",
+      "compound": "17",
+      "label": "replace the naphthyl region with the pyrazolyl-phenyl design",
+      "inputKind": "molecular-graph-only",
+      "productSmiles": "COc1cc2nc(C)nc(N[C@H](C)c3cccc(-c4cn[nH]c4)c3)c2cc1OC",
+      "productAtomNames": [
+        "C18",
+        "O14",
+        "C10",
+        "C5",
+        "C2",
+        "N6",
+        "C11",
+        "CX1",
+        "N8",
+        "C3",
+        "N7",
+        "C12",
+        "C16",
+        "C15",
+        "C20",
+        "C23",
+        "C24",
+        "C21",
+        "CX2",
+        "CX3",
+        "NX1",
+        "NX2",
+        "CX4",
+        "C19",
+        "C1",
+        "C4",
+        "C9",
+        "O13",
+        "C17"
+      ],
+      "posePropagationMap": {
+        "source": "reported molecular graphs plus deterministic local-context map; no later coordinates",
+        "referenceHeavyAtoms": 27,
+        "productHeavyAtoms": 29,
+        "commonHeavyAtoms": 23,
+        "commonReferenceFraction": 0.851852,
+        "commonProductFraction": 0.793103,
+        "mcs": {
+          "smarts": "[#6&!R]-&!@[#8&!R]-&!@[#6]1:&@[#6]:&@[#6]2:&@[#7]:&@[#6]:&@[#7]:&@[#6](:&@[#6]:&@2:&@[#6]:&@[#6]:&@1-&!@[#8&!R]-&!@[#6&!R])-&!@[#7&!R]-&!@[#6&!R](-&!@[#6&!R])-&!@[#6]1:&@[#6]:&@[#6]:&@[#6]:&@[#6]:&@[#6]:&@1",
+          "atoms": 23,
+          "bonds": 25
+        },
+        "ambiguity": {
+          "referenceMatches": 2,
+          "productMatches": 2,
+          "candidateMaps": 4,
+          "selection": "maximum local chemical-context preservation; deterministic tie break"
+        },
+        "commonAtoms": [
+          {
+            "referenceAtomIndex": 0,
+            "referenceAtomName": "C18",
+            "productAtomIndex": 0,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 1,
+            "referenceAtomName": "O14",
+            "productAtomIndex": 1,
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 2,
+            "referenceAtomName": "C10",
+            "productAtomIndex": 2,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 3,
+            "referenceAtomName": "C5",
+            "productAtomIndex": 3,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 4,
+            "referenceAtomName": "C2",
+            "productAtomIndex": 4,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 5,
+            "referenceAtomName": "N6",
+            "productAtomIndex": 5,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 6,
+            "referenceAtomName": "C11",
+            "productAtomIndex": 6,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 7,
+            "referenceAtomName": "N8",
+            "productAtomIndex": 8,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 8,
+            "referenceAtomName": "C3",
+            "productAtomIndex": 9,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 22,
+            "referenceAtomName": "C1",
+            "productAtomIndex": 24,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 23,
+            "referenceAtomName": "C4",
+            "productAtomIndex": 25,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 24,
+            "referenceAtomName": "C9",
+            "productAtomIndex": 26,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 25,
+            "referenceAtomName": "O13",
+            "productAtomIndex": 27,
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 26,
+            "referenceAtomName": "C17",
+            "productAtomIndex": 28,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 9,
+            "referenceAtomName": "N7",
+            "productAtomIndex": 10,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 10,
+            "referenceAtomName": "C12",
+            "productAtomIndex": 11,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 11,
+            "referenceAtomName": "C16",
+            "productAtomIndex": 12,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 12,
+            "referenceAtomName": "C15",
+            "productAtomIndex": 13,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 13,
+            "referenceAtomName": "C20",
+            "productAtomIndex": 14,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 14,
+            "referenceAtomName": "C23",
+            "productAtomIndex": 15,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 15,
+            "referenceAtomName": "C24",
+            "productAtomIndex": 16,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 16,
+            "referenceAtomName": "C21",
+            "productAtomIndex": 17,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 21,
+            "referenceAtomName": "C19",
+            "productAtomIndex": 23,
+            "element": "C"
+          }
+        ],
+        "deletedReferenceAtoms": [
+          {
+            "referenceAtomIndex": 17,
+            "referenceAtomName": "C25",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 18,
+            "referenceAtomName": "C27",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 19,
+            "referenceAtomName": "C26",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 20,
+            "referenceAtomName": "C22",
+            "element": "C"
+          }
+        ],
+        "addedProductAtoms": [
+          {
+            "productAtomIndex": 7,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 18,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 19,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 20,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 21,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 22,
+            "element": "C"
+          }
+        ],
+        "referenceBoundary": [
+          {
+            "commonAtomName": "C21",
+            "editedAtomName": "C25",
+            "bondType": "AROMATIC"
+          },
+          {
+            "commonAtomName": "C19",
+            "editedAtomName": "C22",
+            "bondType": "AROMATIC"
+          }
+        ],
+        "productBoundary": [
+          {
+            "commonProductAtomIndex": 6,
+            "editedProductAtomIndex": 7,
+            "bondType": "SINGLE"
+          },
+          {
+            "commonProductAtomIndex": 17,
+            "editedProductAtomIndex": 18,
+            "bondType": "SINGLE"
+          }
+        ]
+      }
+    },
+    {
+      "id": "fragment-merge",
+      "sequenceIndex": 2,
+      "referenceStateId": "AWT",
+      "stateId": "AWZ",
+      "productComponentId": "AWZ",
+      "compound": "18",
+      "label": "merge the bicyclic amine fragment through thiophene",
+      "inputKind": "molecular-graph-only",
+      "productSmiles": "COc1cc2nc(C)nc(N[C@H](C)c3ccc(-c4cnc5n4CCC5)s3)c2cc1OC",
+      "productAtomNames": [
+        "C18",
+        "O14",
+        "C10",
+        "C5",
+        "C2",
+        "N6",
+        "C11",
+        "CX1",
+        "N8",
+        "C3",
+        "N7",
+        "C12",
+        "C16",
+        "C15",
+        "CX2",
+        "CX3",
+        "CX4",
+        "CX5",
+        "CX6",
+        "NX1",
+        "CX7",
+        "NX2",
+        "CX8",
+        "CX9",
+        "CX10",
+        "SX1",
+        "C1",
+        "C4",
+        "C9",
+        "O13",
+        "C17"
+      ],
+      "posePropagationMap": {
+        "source": "reported molecular graphs plus deterministic local-context map; no later coordinates",
+        "referenceHeavyAtoms": 29,
+        "productHeavyAtoms": 31,
+        "commonHeavyAtoms": 19,
+        "commonReferenceFraction": 0.655172,
+        "commonProductFraction": 0.612903,
+        "mcs": {
+          "smarts": "[#6&!R]-&!@[#8&!R]-&!@[#6]1:&@[#6]:&@[#6]2:&@[#7]:&@[#6](-&!@[#6&!R]):&@[#7]:&@[#6](:&@[#6]:&@2:&@[#6]:&@[#6]:&@1-&!@[#8&!R]-&!@[#6&!R])-&!@[#7&!R]-&!@[#6&!R](-&!@[#6&!R])-&!@[#6&R]",
+          "atoms": 19,
+          "bonds": 20
+        },
+        "ambiguity": {
+          "referenceMatches": 1,
+          "productMatches": 1,
+          "candidateMaps": 1,
+          "selection": "maximum local chemical-context preservation; deterministic tie break"
+        },
+        "commonAtoms": [
+          {
+            "referenceAtomIndex": 0,
+            "referenceAtomName": "C18",
+            "productAtomIndex": 0,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 1,
+            "referenceAtomName": "O14",
+            "productAtomIndex": 1,
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 2,
+            "referenceAtomName": "C10",
+            "productAtomIndex": 2,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 3,
+            "referenceAtomName": "C5",
+            "productAtomIndex": 3,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 4,
+            "referenceAtomName": "C2",
+            "productAtomIndex": 4,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 5,
+            "referenceAtomName": "N6",
+            "productAtomIndex": 5,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 6,
+            "referenceAtomName": "C11",
+            "productAtomIndex": 6,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 7,
+            "referenceAtomName": "CX1",
+            "productAtomIndex": 7,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 8,
+            "referenceAtomName": "N8",
+            "productAtomIndex": 8,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 9,
+            "referenceAtomName": "C3",
+            "productAtomIndex": 9,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 24,
+            "referenceAtomName": "C1",
+            "productAtomIndex": 26,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 25,
+            "referenceAtomName": "C4",
+            "productAtomIndex": 27,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 26,
+            "referenceAtomName": "C9",
+            "productAtomIndex": 28,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 27,
+            "referenceAtomName": "O13",
+            "productAtomIndex": 29,
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 28,
+            "referenceAtomName": "C17",
+            "productAtomIndex": 30,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 10,
+            "referenceAtomName": "N7",
+            "productAtomIndex": 10,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 11,
+            "referenceAtomName": "C12",
+            "productAtomIndex": 11,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 12,
+            "referenceAtomName": "C16",
+            "productAtomIndex": 12,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 13,
+            "referenceAtomName": "C15",
+            "productAtomIndex": 13,
+            "element": "C"
+          }
+        ],
+        "deletedReferenceAtoms": [
+          {
+            "referenceAtomIndex": 14,
+            "referenceAtomName": "C20",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 15,
+            "referenceAtomName": "C23",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 16,
+            "referenceAtomName": "C24",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 17,
+            "referenceAtomName": "C21",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 18,
+            "referenceAtomName": "CX2",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 19,
+            "referenceAtomName": "CX3",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 20,
+            "referenceAtomName": "NX1",
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 21,
+            "referenceAtomName": "NX2",
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 22,
+            "referenceAtomName": "CX4",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 23,
+            "referenceAtomName": "C19",
+            "element": "C"
+          }
+        ],
+        "addedProductAtoms": [
+          {
+            "productAtomIndex": 14,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 15,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 16,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 17,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 18,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 19,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 20,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 21,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 22,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 23,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 24,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 25,
+            "element": "S"
+          }
+        ],
+        "referenceBoundary": [
+          {
+            "commonAtomName": "C15",
+            "editedAtomName": "C20",
+            "bondType": "AROMATIC"
+          },
+          {
+            "commonAtomName": "C15",
+            "editedAtomName": "C19",
+            "bondType": "AROMATIC"
+          }
+        ],
+        "productBoundary": [
+          {
+            "commonProductAtomIndex": 13,
+            "editedProductAtomIndex": 14,
+            "bondType": "AROMATIC"
+          },
+          {
+            "commonProductAtomIndex": 13,
+            "editedProductAtomIndex": 25,
+            "bondType": "AROMATIC"
+          }
+        ]
+      }
+    },
+    {
+      "id": "open-phe890-pocket",
+      "sequenceIndex": 3,
+      "referenceStateId": "AWZ",
+      "stateId": "AWW",
+      "productComponentId": "AWW",
+      "compound": "21",
+      "label": "install the benzyl-alcohol arm that challenges Phe890",
+      "inputKind": "molecular-graph-only",
+      "productSmiles": "COC1=C(OC)Cc2c(nc(C)nc2N[C@H](C)c2ccc(-c3ccccc3CO)s2)C1",
+      "productAtomNames": [
+        "CX6",
+        "OX1",
+        "CX7",
+        "CX8",
+        "OX2",
+        "CX9",
+        "CX10",
+        "C1",
+        "C2",
+        "N6",
+        "C11",
+        "CX1",
+        "N8",
+        "C3",
+        "N7",
+        "C12",
+        "C16",
+        "C15",
+        "CX2",
+        "CX3",
+        "CX4",
+        "CX5",
+        "CX11",
+        "CX12",
+        "CX13",
+        "CX14",
+        "CX15",
+        "CX16",
+        "OX3",
+        "SX1",
+        "CX17"
+      ],
+      "posePropagationMap": {
+        "source": "reported molecular graphs plus deterministic local-context map; no later coordinates",
+        "referenceHeavyAtoms": 31,
+        "productHeavyAtoms": 31,
+        "commonHeavyAtoms": 16,
+        "commonReferenceFraction": 0.516129,
+        "commonProductFraction": 0.516129,
+        "mcs": {
+          "smarts": "[#6]1:&@[#6]:&@[#7]:&@[#6](:&@[#7]:&@[#6]:&@1-&!@[#7&!R]-&!@[#6&!R](-&!@[#6&!R])-&!@[#6]1:&@[#6]:&@[#6]:&@[#6](:&@[#16]:&@1)-&!@[#6&R])-&!@[#6&!R]",
+          "atoms": 16,
+          "bonds": 17
+        },
+        "ambiguity": {
+          "referenceMatches": 1,
+          "productMatches": 1,
+          "candidateMaps": 1,
+          "selection": "maximum local chemical-context preservation; deterministic tie break"
+        },
+        "commonAtoms": [
+          {
+            "referenceAtomIndex": 26,
+            "referenceAtomName": "C1",
+            "productAtomIndex": 7,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 4,
+            "referenceAtomName": "C2",
+            "productAtomIndex": 8,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 5,
+            "referenceAtomName": "N6",
+            "productAtomIndex": 9,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 6,
+            "referenceAtomName": "C11",
+            "productAtomIndex": 10,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 8,
+            "referenceAtomName": "N8",
+            "productAtomIndex": 12,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 9,
+            "referenceAtomName": "C3",
+            "productAtomIndex": 13,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 10,
+            "referenceAtomName": "N7",
+            "productAtomIndex": 14,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 11,
+            "referenceAtomName": "C12",
+            "productAtomIndex": 15,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 12,
+            "referenceAtomName": "C16",
+            "productAtomIndex": 16,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 13,
+            "referenceAtomName": "C15",
+            "productAtomIndex": 17,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 14,
+            "referenceAtomName": "CX2",
+            "productAtomIndex": 18,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 15,
+            "referenceAtomName": "CX3",
+            "productAtomIndex": 19,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 16,
+            "referenceAtomName": "CX4",
+            "productAtomIndex": 20,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 25,
+            "referenceAtomName": "SX1",
+            "productAtomIndex": 29,
+            "element": "S"
+          },
+          {
+            "referenceAtomIndex": 17,
+            "referenceAtomName": "CX5",
+            "productAtomIndex": 21,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 7,
+            "referenceAtomName": "CX1",
+            "productAtomIndex": 11,
+            "element": "C"
+          }
+        ],
+        "deletedReferenceAtoms": [
+          {
+            "referenceAtomIndex": 0,
+            "referenceAtomName": "C18",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 1,
+            "referenceAtomName": "O14",
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 2,
+            "referenceAtomName": "C10",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 3,
+            "referenceAtomName": "C5",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 18,
+            "referenceAtomName": "CX6",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 19,
+            "referenceAtomName": "NX1",
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 20,
+            "referenceAtomName": "CX7",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 21,
+            "referenceAtomName": "NX2",
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 22,
+            "referenceAtomName": "CX8",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 23,
+            "referenceAtomName": "CX9",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 24,
+            "referenceAtomName": "CX10",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 27,
+            "referenceAtomName": "C4",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 28,
+            "referenceAtomName": "C9",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 29,
+            "referenceAtomName": "O13",
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 30,
+            "referenceAtomName": "C17",
+            "element": "C"
+          }
+        ],
+        "addedProductAtoms": [
+          {
+            "productAtomIndex": 0,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 1,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 2,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 3,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 4,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 5,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 6,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 22,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 23,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 24,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 25,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 26,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 27,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 28,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 30,
+            "element": "C"
+          }
+        ],
+        "referenceBoundary": [
+          {
+            "commonAtomName": "C2",
+            "editedAtomName": "C5",
+            "bondType": "AROMATIC"
+          },
+          {
+            "commonAtomName": "CX5",
+            "editedAtomName": "CX6",
+            "bondType": "AROMATIC"
+          },
+          {
+            "commonAtomName": "C1",
+            "editedAtomName": "C4",
+            "bondType": "AROMATIC"
+          },
+          {
+            "commonAtomName": "CX5",
+            "editedAtomName": "NX2",
+            "bondType": "AROMATIC"
+          }
+        ],
+        "productBoundary": [
+          {
+            "commonProductAtomIndex": 7,
+            "editedProductAtomIndex": 6,
+            "bondType": "SINGLE"
+          },
+          {
+            "commonProductAtomIndex": 21,
+            "editedProductAtomIndex": 22,
+            "bondType": "AROMATIC"
+          },
+          {
+            "commonProductAtomIndex": 8,
+            "editedProductAtomIndex": 30,
+            "bondType": "SINGLE"
+          },
+          {
+            "commonProductAtomIndex": 21,
+            "editedProductAtomIndex": 26,
+            "bondType": "AROMATIC"
+          }
+        ]
+      }
+    },
+    {
+      "id": "finish-bay-293",
+      "sequenceIndex": 4,
+      "referenceStateId": "AWW",
+      "stateId": "AXH",
+      "productComponentId": "AXH",
+      "compound": "23",
+      "label": "preserve the proximal quinazoline-thiophene core while rebuilding the regioisomeric distal arm",
+      "inputKind": "molecular-graph-only",
+      "productSmiles": "CNCc1ccccc1-c1csc([C@@H](C)Nc2nc(C)nc3cc(OC)c(OC)cc23)c1",
+      "productAtomNames": [
+        "CX5",
+        "NX1",
+        "CX6",
+        "CX7",
+        "CX8",
+        "CX9",
+        "CX10",
+        "CX11",
+        "CX12",
+        "CX3",
+        "CX4",
+        "SX1",
+        "C15",
+        "C12",
+        "C16",
+        "N7",
+        "C3",
+        "N8",
+        "C11",
+        "CX1",
+        "N6",
+        "C2",
+        "CX13",
+        "CX14",
+        "OX1",
+        "CX15",
+        "CX16",
+        "OX2",
+        "CX17",
+        "CX18",
+        "C1",
+        "CX2"
+      ],
+      "posePropagationMap": {
+        "source": "reported molecular graphs plus deterministic local-context map; no later coordinates",
+        "referenceHeavyAtoms": 31,
+        "productHeavyAtoms": 32,
+        "commonHeavyAtoms": 15,
+        "commonReferenceFraction": 0.483871,
+        "commonProductFraction": 0.46875,
+        "mcs": {
+          "smarts": "[#6]1:&@[#6]:&@[#7]:&@[#6](:&@[#7]:&@[#6]:&@1-&!@[#7&!R]-&!@[#6&!R](-&!@[#6&!R])-&!@[#6]1:&@[#6]:&@[#6]:&@[#6]:&@[#16]:&@1)-&!@[#6&!R]",
+          "atoms": 15,
+          "bonds": 16
+        },
+        "ambiguity": {
+          "referenceMatches": 1,
+          "productMatches": 1,
+          "candidateMaps": 1,
+          "selection": "maximum local chemical-context preservation; deterministic tie break"
+        },
+        "commonAtoms": [
+          {
+            "referenceAtomIndex": 7,
+            "referenceAtomName": "C1",
+            "productAtomIndex": 30,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 8,
+            "referenceAtomName": "C2",
+            "productAtomIndex": 21,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 9,
+            "referenceAtomName": "N6",
+            "productAtomIndex": 20,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 10,
+            "referenceAtomName": "C11",
+            "productAtomIndex": 18,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 12,
+            "referenceAtomName": "N8",
+            "productAtomIndex": 17,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 13,
+            "referenceAtomName": "C3",
+            "productAtomIndex": 16,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 14,
+            "referenceAtomName": "N7",
+            "productAtomIndex": 15,
+            "element": "N"
+          },
+          {
+            "referenceAtomIndex": 15,
+            "referenceAtomName": "C12",
+            "productAtomIndex": 13,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 16,
+            "referenceAtomName": "C16",
+            "productAtomIndex": 14,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 17,
+            "referenceAtomName": "C15",
+            "productAtomIndex": 12,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 18,
+            "referenceAtomName": "CX2",
+            "productAtomIndex": 31,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 19,
+            "referenceAtomName": "CX3",
+            "productAtomIndex": 9,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 20,
+            "referenceAtomName": "CX4",
+            "productAtomIndex": 10,
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 29,
+            "referenceAtomName": "SX1",
+            "productAtomIndex": 11,
+            "element": "S"
+          },
+          {
+            "referenceAtomIndex": 11,
+            "referenceAtomName": "CX1",
+            "productAtomIndex": 19,
+            "element": "C"
+          }
+        ],
+        "deletedReferenceAtoms": [
+          {
+            "referenceAtomIndex": 0,
+            "referenceAtomName": "CX6",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 1,
+            "referenceAtomName": "OX1",
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 2,
+            "referenceAtomName": "CX7",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 3,
+            "referenceAtomName": "CX8",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 4,
+            "referenceAtomName": "OX2",
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 5,
+            "referenceAtomName": "CX9",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 6,
+            "referenceAtomName": "CX10",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 21,
+            "referenceAtomName": "CX5",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 22,
+            "referenceAtomName": "CX11",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 23,
+            "referenceAtomName": "CX12",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 24,
+            "referenceAtomName": "CX13",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 25,
+            "referenceAtomName": "CX14",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 26,
+            "referenceAtomName": "CX15",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 27,
+            "referenceAtomName": "CX16",
+            "element": "C"
+          },
+          {
+            "referenceAtomIndex": 28,
+            "referenceAtomName": "OX3",
+            "element": "O"
+          },
+          {
+            "referenceAtomIndex": 30,
+            "referenceAtomName": "CX17",
+            "element": "C"
+          }
+        ],
+        "addedProductAtoms": [
+          {
+            "productAtomIndex": 0,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 1,
+            "element": "N"
+          },
+          {
+            "productAtomIndex": 2,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 3,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 4,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 5,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 6,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 7,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 8,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 22,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 23,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 24,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 25,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 26,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 27,
+            "element": "O"
+          },
+          {
+            "productAtomIndex": 28,
+            "element": "C"
+          },
+          {
+            "productAtomIndex": 29,
+            "element": "C"
+          }
+        ],
+        "referenceBoundary": [
+          {
+            "commonAtomName": "C1",
+            "editedAtomName": "CX10",
+            "bondType": "SINGLE"
+          },
+          {
+            "commonAtomName": "CX4",
+            "editedAtomName": "CX5",
+            "bondType": "SINGLE"
+          },
+          {
+            "commonAtomName": "C2",
+            "editedAtomName": "CX17",
+            "bondType": "SINGLE"
+          }
+        ],
+        "productBoundary": [
+          {
+            "commonProductAtomIndex": 9,
+            "editedProductAtomIndex": 8,
+            "bondType": "SINGLE"
+          },
+          {
+            "commonProductAtomIndex": 21,
+            "editedProductAtomIndex": 22,
+            "bondType": "AROMATIC"
+          },
+          {
+            "commonProductAtomIndex": 30,
+            "editedProductAtomIndex": 29,
+            "bondType": "AROMATIC"
+          }
+        ],
+        "protectedReferenceAnchor": {
+          "method": "maximum-common-substructure/v1",
+          "label": "AWW proximal quinazoline-thiophene core",
+          "referenceAtomNames": [
+            "C1",
+            "C2",
+            "N6",
+            "C11",
+            "N8",
+            "C3",
+            "N7",
+            "C12",
+            "C16",
+            "C15",
+            "CX2",
+            "CX3",
+            "CX4",
+            "SX1",
+            "CX1"
+          ],
+          "atoms": 15,
+          "bonds": 16,
+          "releasedRegions": [
+            "regioisomeric distal phenyl/benzylic arm",
+            "hydroxymethyl-to-methylaminomethyl substituent"
+          ]
+        },
+        "transitionExplanation": "AWW and AXH attach the distal phenyl arm at different thiophene positions; that arm cannot remain spatially fixed while the proximal core is retained."
+      }
+    }
+  ],
+  "source": {
+    "article": "Discovery of potent SOS1 inhibitors that block RAS activation via disruption of the RAS-SOS1 interaction",
+    "doi": "10.1073/pnas.1812963116",
+    "graphRole": "reported compound identities only",
+    "chemicalComponents": {
+      "AXE": "https://www.rcsb.org/ligand/AXE",
+      "AWT": "https://www.rcsb.org/ligand/AWT",
+      "AWZ": "https://www.rcsb.org/ligand/AWZ",
+      "AWW": "https://www.rcsb.org/ligand/AWW",
+      "AXH": "https://www.rcsb.org/ligand/AXH"
+    }
+  },
+  "generator": {
+    "path": "design-history/structures/build-sos1-prospective-campaign.py",
+    "rdkitVersion": "2026.03.4",
+    "coordinateFilesRead": [
+      "outputs/design-history/sos1-preapproval/source/5OVE.pdb"
+    ]
+  },
+  "evaluation": {
+    "status": "locked-until-predictions-frozen",
+    "holdouts": []
+  }
+}

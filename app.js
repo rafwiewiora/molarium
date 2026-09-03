@@ -1,3 +1,5 @@
+import { validateRegisteredDesignRoute } from './design-history/structures/design-route.mjs';
+
 const MOLARIUM_NETWORK_POLICY = Object.freeze({
   mode:'connected', localOnly:false, policy:'connected-v1',
   allowedNetworkOrigins:['user-approved external services'],
@@ -7,6 +9,18 @@ const MOLARIUM_NETWORK_POLICY = Object.freeze({
 const MOLARIUM_LOCAL_ONLY = MOLARIUM_NETWORK_POLICY.localOnly === true;
 const MOLARIUM_ASSET_BASE = MOLARIUM_NETWORK_POLICY.assetBase
   ? new URL(MOLARIUM_NETWORK_POLICY.assetBase, location.href).href : null;
+let hydrogenBondFeaturePerception = null;
+let hydrogenBondFeatureValidation = null;
+let manualHydrogenBondModule = null;
+import('./docking/contact-remap.mjs').then((module) => {
+  hydrogenBondFeaturePerception = module.perceiveHydrogenBondFeature;
+  hydrogenBondFeatureValidation = module.validateCapturedLigandHydrogenBondFeature;
+  if (typeof state !== 'undefined' && state.molecule) draw();
+}).catch(() => { /* capture/refinement reports a precise error if the module is unavailable */ });
+import('./docking/manual-hbond.mjs').then((module) => {
+  manualHydrogenBondModule = module;
+  if (typeof state !== 'undefined' && state.molecule) draw();
+}).catch(() => { /* the add-contact action reports a precise error if unavailable */ });
 
 function molariumAssetUrl(path, localUrl) {
   return MOLARIUM_ASSET_BASE ? new URL(path, MOLARIUM_ASSET_BASE).href : localUrl;
@@ -111,11 +125,41 @@ const ATOM_RENDER_STYLE = Object.freeze({
   Si: { highlight: '#f9e8d4', base: '#c7a47e', shade: '#806142' },
 });
 
+const DESIGN_DISPLAY_THEMES = Object.freeze({
+  'design-hit':Object.freeze({ ligand:'#16838a' }),
+  'design-prediction':Object.freeze({ ligand:'#7159a3' }),
+  'design-validation':Object.freeze({ ligand:'#d07836' }),
+});
+const RESIDUE_LABEL_TONES = Object.freeze({
+  gold:Object.freeze({ base:'#bf842d', line:'#9a681c', text:'#68420b' }),
+  blue:Object.freeze({ base:'#337fa2', line:'#24718f', text:'#16485d' }),
+  slate:Object.freeze({ base:'#7b8795', line:'#637080', text:'#364152' }),
+});
+const STORY_PROTEIN_CARBON = '#aeb9c5';
+const STORY_CARTOON_COLOR = '#cfe5df';
+const DISPLAY_VDW_RADII = Object.freeze({
+  H:1.20, B:1.92, C:1.70, N:1.55, O:1.52, F:1.47, Si:2.10, P:1.80,
+  S:1.80, Cl:1.75, Br:1.85, I:1.98,
+});
+
 function mixHexColors(first, second, amount) {
   const channel = (color, offset) => Number.parseInt(color.slice(offset, offset + 2), 16);
   const mixed = [1, 3, 5].map((offset) => Math.round(channel(first, offset) * (1 - amount)
     + channel(second, offset) * amount));
   return `#${mixed.map((value) => value.toString(16).padStart(2, '0')).join('')}`;
+}
+
+function colorRenderStyle(base, highlightAmount = .68, shadeAmount = .38) {
+  return { highlight:mixHexColors(base, '#ffffff', highlightAmount), base,
+    shade:mixHexColors(base, '#000000', shadeAmount) };
+}
+
+function residueLabelForAtom(atom) {
+  if (!isProteinAtom(atom)) return null;
+  return state.focusedAtomResidueLabels.find((spec) =>
+    String(atom.chain || 'A') === String(spec.chain || 'A')
+    && String(atom.residueIndex) === String(spec.residueIndex)
+    && String(atom.insertionCode || '') === String(spec.insertionCode || '')) || null;
 }
 
 function atomRenderStyle(atom) {
@@ -125,9 +169,15 @@ function atomRenderStyle(atom) {
   const componentId = state.atomComponentIds[atom.index];
   const component = state.structureComponents.find((entry) => entry.id === componentId);
   if (!component || !['protein', 'ligand'].includes(component.kind)) return fallback;
-  const base = component.color;
-  return { highlight:mixHexColors(base, '#ffffff', .68), base,
-    shade:mixHexColors(base, '#000000', .38) };
+  const labelTone = RESIDUE_LABEL_TONES[residueLabelForAtom(atom)?.tone];
+  if (labelTone) return colorRenderStyle(labelTone.base, .62, .34);
+  const storyTheme = DESIGN_DISPLAY_THEMES[state.displayColorTheme];
+  if (storyTheme) return colorRenderStyle(
+    component.kind === 'ligand' ? storyTheme.ligand : STORY_PROTEIN_CARBON,
+    component.kind === 'ligand' ? .48 : .72,
+    component.kind === 'ligand' ? .34 : .25,
+  );
+  return colorRenderStyle(component.color);
 }
 
 const DEFAULT_XYZ = `38
@@ -654,6 +704,7 @@ const state = {
   pointer: { x: 0, y: 0 },
   pointerStart: null,
   pointerDragged: false,
+  pendingBuildAction: null,
   hoverAtom: null,
   autoRotate: 'none',
   playing: false,
@@ -662,6 +713,10 @@ const state = {
   showInteractions: true,
   showPocketAtoms: true,
   pocketAtomMode: 'radius',
+  displayColorTheme: 'standard',
+  changeMarkerStyle: 'rings',
+  showStericClashes: false,
+  visibleStericClashCount: 0,
   vdw: false,
   representation: 'ball-stick',
   mode: 'view',
@@ -672,6 +727,12 @@ const state = {
   selectedAtoms: [],
   chemistryTransaction: null,
   chemistryEditFinishing: false,
+  chemistActionAudit: [],
+  liveCampaign: null,
+  liveCampaignBranch: 'main',
+  liveCampaignCommittedThroughSequence: 0,
+  designRoute: null,
+  designRouteStepId: null,
   geometryEditActive: false,
   dragAtom: null,
   panningView: false,
@@ -703,13 +764,56 @@ const state = {
   ligandProtonation: null,
   protonatingLigand: false,
   ligandProtonationSequence: 0,
+  dockingReference: null,
+  dockingResult: null,
+  dockingRunning: false,
+  dockingSelectedHbondIds: new Set(),
+  dockingContactRemaps: new Map(),
+  dockingContactRemapProposals: new Map(),
+  dockingContactDraft: null,
+  dockingPoseIndex: 0,
+  sidechainRotamerEnsemble: null,
+  designerMoveScript: null,
+  designerMoveRegisteredStory: null,
+  designerMoveReplay: null,
+  designerMoveReplaying: false,
+  designerMoveReplayScheduled: false,
+  designerMoveReplayPaused: false,
+  designerMoveReplayIndex: 0,
+  designerMoveReplayFrontier: 0,
+  designerMoveReplayPhase: null,
+  designerMoveReplayStep: null,
+  designerMoveReplayActionRunning: false,
+  designerMovePresentationStep: null,
+  designerMoveReplayCheckpoints: [],
   structureComponents: [],
   atomComponentIds: [],
   componentVisibility: new Map(),
   focusedComponentId: null,
+  focusedComponentCenter: null,
   focusedComponentRadius: null,
   focusedResidueKey: null,
   focusedResidueRadius: null,
+  focusedAtomIds: [],
+  focusedAtomCenter: null,
+  focusedAtomRadius: null,
+  focusedAtomContextRadius: 4.5,
+  focusedAtomContextIds: [],
+  focusedAtomResidueLabels: [],
+  emphasizedAtomIds: [],
+  depictionSequence: 0,
+  depictionTimer: 0,
+  depictionGlobalAtomIndices: [],
+  depictionGlobalBondPairs: [],
+  depictionAtomObjects: [],
+  depictionComponentId: null,
+  depictionOrientationAnchor: null,
+  depictionTemplateMolBlock: null,
+  depictionKey: null,
+  depictionTool: 'select',
+  depictionBondStart: null,
+  depictionBondOrder: 1,
+  depictionEditing: false,
   stormmReplicaTuning: new Map(),
   tuningStormmReplicas: false,
   foldAbortController: null,
@@ -722,6 +826,437 @@ const ctx = canvas.getContext('2d');
 const sceneCanvas = document.querySelector('#scene-canvas');
 const sceneCtx = sceneCanvas.getContext('2d');
 
+const MAX_DEPICTION_ATOMS = 256;
+
+function depictionTarget(molecule = state.molecule) {
+  if (!molecule?.atoms?.length) return null;
+  const eligible = (component) => {
+    if (!component || !['ligand', 'molecule'].includes(component.kind)) return false;
+    const heavy = component.atomIndices.filter((index) => molecule.atoms[index]?.element !== 'H');
+    return heavy.length > 0 && heavy.length <= MAX_DEPICTION_ATOMS;
+  };
+  const selectedComponentId = state.selectedAtom == null ? null : state.atomComponentIds[state.selectedAtom];
+  const selectedComponent = state.structureComponents.find((component) =>
+    component.id === selectedComponentId && eligible(component));
+  const focusedComponent = state.structureComponents.find((component) =>
+    component.id === state.focusedComponentId && eligible(component));
+  const ligand = state.structureComponents.find((component) => component.kind === 'ligand'
+    && state.componentVisibility.get(component.id) !== false && eligible(component));
+  const main = state.structureComponents.find((component) => component.kind === 'molecule' && eligible(component));
+  const component = selectedComponent || focusedComponent || ligand || main;
+  if (!component) return null;
+  const globalAtomIndices = component.atomIndices.filter((index) => molecule.atoms[index].element !== 'H');
+  const mapped = mappedMoleculeSubset(molecule, globalAtomIndices, component.label || '2D structure');
+  return mapped ? { ...mapped, label:component.label || molecule.name || 'Structure', componentId:component.id } : null;
+}
+
+function depictionSignature(target) {
+  const molecule = target?.molecule;
+  if (!molecule) return '';
+  return JSON.stringify({
+    component:target.componentId,
+    atoms:molecule.atoms.map((atom) => [atom.element, atomFormalCharge(atom)]),
+    bonds:molecule.bonds.map((bond) => [bond.a, bond.b, Number(bond.order || 1)]),
+  });
+}
+
+function update2DSelectionOverlay() {
+  const svg = document.querySelector('#structure-2d-drawing svg');
+  if (!svg) return;
+  svg.querySelectorAll('[data-molarium-selection]').forEach((node) => node.remove());
+  const selected = new Set(state.selectedAtoms);
+  state.depictionGlobalAtomIndices.forEach((globalIndex, localIndex) => {
+    if (!selected.has(globalIndex)) return;
+    const point = depictionAtomPoint(svg, localIndex);
+    if (!point) return;
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', String(point.x)); circle.setAttribute('cy', String(point.y));
+    circle.setAttribute('r', '7.5'); circle.setAttribute('data-molarium-selection', 'true');
+    circle.setAttribute('fill', 'rgba(248,113,113,.28)');
+    circle.setAttribute('stroke', 'rgba(239,68,68,.72)'); circle.setAttribute('stroke-width', '1.4');
+    circle.setAttribute('pointer-events', 'none');
+    svg.appendChild(circle);
+  });
+}
+
+function update2DEditorUi() {
+  const panel = document.querySelector('#structure-2d-panel');
+  if (!panel) return;
+  panel.dataset.mode = state.mode;
+  document.querySelectorAll('[data-2d-tool]').forEach((button) => {
+    const selected = button.dataset['2dTool'] === state.depictionTool;
+    button.classList.toggle('selected', selected);
+    button.setAttribute('aria-pressed', String(selected));
+  });
+  const element = document.querySelector('#structure-2d-element');
+  const bondOrder = document.querySelector('#structure-2d-bond-order');
+  if (element && [...element.options].some((option) => option.value === state.selectedElement))
+    element.value = state.selectedElement;
+  if (bondOrder) bondOrder.value = String(state.depictionBondOrder);
+  const pending = document.querySelector('#structure-2d-pending');
+  pending?.classList.toggle('hidden', !state.chemistryTransaction);
+  if (pending) pending.querySelectorAll('button').forEach((button) => {
+    button.disabled = state.chemistryEditFinishing || state.depictionEditing;
+  });
+  const help = document.querySelector('#structure-2d-help');
+  if (!help) return;
+  if (state.depictionEditing) help.textContent = 'Updating the shared molecular graph…';
+  else if (state.mode !== 'build') help.textContent = state.depictionTool === 'select'
+    ? 'Select an atom here to select the same atom in 3D.'
+    : 'This drawing tool opens Design and edits the shared 2D/3D structure.';
+  else if (state.depictionTool === 'atom') help.textContent = `Click an atom to attach ${state.selectedElement}; use Select to change an existing atom.`;
+  else if (state.depictionTool === 'bond') help.textContent = state.depictionBondStart == null
+    ? 'Pick two atoms, or click a bond directly, to set its order.'
+    : 'Pick the second atom. Both views keep the same atom identities.';
+  else if (state.depictionTool === 'erase') help.textContent = 'Click an atom or bond to stage its deletion.';
+  else help.textContent = 'Select an atom or bond here; use the Design panel for element and charge changes.';
+  update2DSelectionOverlay();
+}
+function sanitizedDepictionSvg(svgText) {
+  const parsed = new DOMParser().parseFromString(svgText, 'image/svg+xml');
+  const svg = parsed.documentElement;
+  if (svg.localName !== 'svg' || parsed.querySelector('parsererror')) throw new Error('Invalid 2D SVG');
+  svg.querySelectorAll('script, foreignObject').forEach((node) => node.remove());
+  svg.querySelectorAll('*').forEach((node) => [...node.attributes].forEach((attribute) => {
+    if (/^on/i.test(attribute.name) || /^(?:href|xlink:href)$/i.test(attribute.name)) node.removeAttribute(attribute.name);
+  }));
+  svg.removeAttribute('width'); svg.removeAttribute('height');
+  svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+  svg.setAttribute('aria-hidden', 'true');
+  return document.importNode(svg, true);
+}
+
+function depictionGraphicsPointInRoot(svg, node, point) {
+  const nodeMatrix = node.getScreenCTM();
+  const rootMatrix = svg.getScreenCTM();
+  if (!nodeMatrix || !rootMatrix) return null;
+  const screen = new DOMPoint(point.x, point.y).matrixTransform(nodeMatrix);
+  return screen.matrixTransform(rootMatrix.inverse());
+}
+
+function captureDepictionOrientation(svg) {
+  if (!svg || !state.depictionAtomObjects.length) return;
+  const transaction = state.chemistryTransaction;
+  if (transaction?.depictionOrientationAnchor?.componentId === state.depictionComponentId) return;
+  const drawingRect = document.querySelector('#structure-2d-drawing')?.getBoundingClientRect();
+  if (!drawingRect) return;
+  const points = new Map();
+  state.depictionAtomObjects.forEach((atom, localIndex) => {
+    const point = depictionScreenPoint(svg, depictionAtomPoint(svg, localIndex));
+    if (atom && point) points.set(atom, {
+      x:point.x - drawingRect.x, y:point.y - drawingRect.y,
+    });
+  });
+  if (points.size < 2) return;
+  const anchor = { componentId:state.depictionComponentId, coordinateSpace:'drawing', points };
+  if (transaction) transaction.depictionOrientationAnchor = anchor;
+  else state.depictionOrientationAnchor = anchor;
+}
+
+function activeDepictionOrientationAnchor() {
+  return state.chemistryTransaction?.depictionOrientationAnchor || state.depictionOrientationAnchor;
+}
+
+function depictionSimilarityTransform(source, target) {
+  const sourceCenter = source.reduce((sum, point) => ({ x:sum.x + point.x / source.length,
+    y:sum.y + point.y / source.length }), { x:0, y:0 });
+  const targetCenter = target.reduce((sum, point) => ({ x:sum.x + point.x / target.length,
+    y:sum.y + point.y / target.length }), { x:0, y:0 });
+  let dot = 0, cross = 0, denominator = 0;
+  source.forEach((point, index) => {
+    const px = point.x - sourceCenter.x, py = point.y - sourceCenter.y;
+    const qx = target[index].x - targetCenter.x, qy = target[index].y - targetCenter.y;
+    dot += px * qx + py * qy;
+    cross += px * qy - py * qx;
+    denominator += px * px + py * py;
+  });
+  const magnitude = Math.hypot(dot, cross);
+  if (denominator < 1e-6 || magnitude < 1e-6) return null;
+  const scale = Math.max(0.72, Math.min(1.38, magnitude / denominator));
+  const cosine = dot / magnitude, sine = cross / magnitude;
+  const a = scale * cosine, b = scale * sine, c = -scale * sine, d = scale * cosine;
+  const e = targetCenter.x - a * sourceCenter.x - c * sourceCenter.y;
+  const f = targetCenter.y - b * sourceCenter.x - d * sourceCenter.y;
+  return { a, b, c, d, e, f };
+}
+
+function depictionRobustSimilarityTransform(source, target) {
+  if (source.length < 3) return depictionSimilarityTransform(source, target);
+  let best = null;
+  for (let first = 0; first < source.length - 1; first++) {
+    for (let second = first + 1; second < source.length; second++) {
+      const sx = source[second].x - source[first].x;
+      const sy = source[second].y - source[first].y;
+      const tx = target[second].x - target[first].x;
+      const ty = target[second].y - target[first].y;
+      const sourceLength = Math.hypot(sx, sy);
+      const targetLength = Math.hypot(tx, ty);
+      if (sourceLength < 12 || targetLength < 12) continue;
+      const scale = Math.max(0.72, Math.min(1.38, targetLength / sourceLength));
+      const cosine = (sx * tx + sy * ty) / (sourceLength * targetLength);
+      const sine = (sx * ty - sy * tx) / (sourceLength * targetLength);
+      const a = scale * cosine, b = scale * sine, c = -scale * sine, d = scale * cosine;
+      const e = target[first].x - a * source[first].x - c * source[first].y;
+      const f = target[first].y - b * source[first].x - d * source[first].y;
+      const residuals = source.map((point, index) => Math.hypot(
+        a * point.x + c * point.y + e - target[index].x,
+        b * point.x + d * point.y + f - target[index].y,
+      )).sort((left, right) => left - right);
+      const median = residuals[Math.floor(residuals.length / 2)];
+      if (!best || median < best.median) best = { a, b, c, d, e, f, median };
+    }
+  }
+  if (!best) return depictionSimilarityTransform(source, target);
+  const cutoff = Math.max(4, best.median * 2.5);
+  const inlierSource = [], inlierTarget = [];
+  source.forEach((point, index) => {
+    const residual = Math.hypot(
+      best.a * point.x + best.c * point.y + best.e - target[index].x,
+      best.b * point.x + best.d * point.y + best.f - target[index].y,
+    );
+    if (residual <= cutoff) { inlierSource.push(point); inlierTarget.push(target[index]); }
+  });
+  return inlierSource.length >= 2
+    ? depictionSimilarityTransform(inlierSource, inlierTarget) : best;
+}
+
+function alignDepictionToPrevious(svg, target) {
+  const anchor = activeDepictionOrientationAnchor();
+  if (!anchor || anchor.componentId !== target.componentId) return null;
+  const inverseRoot = svg.getScreenCTM()?.inverse();
+  if (!inverseRoot) return null;
+  const drawingRect = document.querySelector('#structure-2d-drawing')?.getBoundingClientRect();
+  const source = [], destination = [];
+  target.globalAtomIndices.forEach((globalIndex, localIndex) => {
+    const atom = state.molecule?.atoms?.[globalIndex];
+    const previous = anchor.points.get(atom);
+    const current = depictionAtomPoint(svg, localIndex);
+    const priorScreen = previous && anchor.coordinateSpace === 'drawing' && drawingRect
+      ? new DOMPoint(drawingRect.x + previous.x, drawingRect.y + previous.y)
+      : previous ? new DOMPoint(previous.x, previous.y) : null;
+    const priorInCurrentSvg = priorScreen?.matrixTransform(inverseRoot) || null;
+    if (priorInCurrentSvg && current) { source.push(current); destination.push(priorInCurrentSvg); }
+  });
+  if (source.length < 2) return null;
+  // RDKit renders wedge bonds as several short SVG paths. Their averaged
+  // endpoints are useful hit targets but can be poor geometric anchors, so fit
+  // the viewport transform robustly to the stable majority of common atoms.
+  const transform = depictionRobustSimilarityTransform(source, destination);
+  if (!transform) return null;
+  const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  while (svg.firstChild) group.appendChild(svg.firstChild);
+  group.setAttribute('transform', `matrix(${transform.a} ${transform.b} ${transform.c} ${transform.d} ${transform.e} ${transform.f})`);
+  svg.appendChild(group);
+  return { commonAtoms:source.length, ...transform };
+}
+async function update2DDepiction() {
+  const panel = document.querySelector('#structure-2d-panel');
+  const drawing = document.querySelector('#structure-2d-drawing');
+  const target = depictionTarget();
+  const sequence = ++state.depictionSequence;
+  if (!target) {
+    panel.classList.add('hidden'); state.depictionGlobalAtomIndices = [];
+    state.depictionGlobalBondPairs = []; state.depictionAtomObjects = [];
+    state.depictionComponentId = null; state.depictionOrientationAnchor = null;
+    state.depictionTemplateMolBlock = null; state.depictionKey = null;
+    return;
+  }
+  const key = depictionSignature(target);
+  if (key === state.depictionKey && drawing.querySelector('svg')) return;
+  state.depictionKey = key;
+  panel.classList.remove('hidden');
+  setText('#structure-2d-label', target.label);
+  drawing.replaceChildren(Object.assign(document.createElement('span'), { textContent:'Drawing…' }));
+  try {
+    const anchor = activeDepictionOrientationAnchor();
+    const result = await runRDKitJob('depict', target.molecule, () => {});
+    if (sequence !== state.depictionSequence || key !== state.depictionKey) return;
+    const svg = sanitizedDepictionSvg(result.svg);
+    drawing.replaceChildren(svg);
+    state.depictionGlobalAtomIndices = target.globalAtomIndices.slice();
+    state.depictionGlobalBondPairs = target.molecule.bonds.map((bond) => [
+      target.globalAtomIndices[bond.a], target.globalAtomIndices[bond.b],
+    ]);
+    state.depictionAtomObjects = target.globalAtomIndices.map((index) => state.molecule?.atoms?.[index] || null);
+    state.depictionComponentId = target.componentId;
+    state.depictionTemplateMolBlock = null;
+    // Settle tool/help layout before converting the prior screen positions into
+    // this SVG's coordinate system. Design-mode help can change the panel height.
+    update2DEditorUi();
+    const alignment = alignDepictionToPrevious(svg, target);
+    panel.dataset.alignedAtoms = String(alignment?.commonAtoms || 0);
+    panel.dataset.alignmentBackend = alignment
+      ? 'RDKit 2D layout + viewport alignment' : 'fresh RDKit 2D layout';
+    panel.dataset.rdkitVersion = result.rdkitVersion || '';
+    delete panel.dataset.error; delete panel.dataset.pending;
+  } catch (error) {
+    if (sequence !== state.depictionSequence) return;
+    drawing.replaceChildren(Object.assign(document.createElement('span'), { textContent:'2D depiction unavailable' }));
+    panel.dataset.error = error.message; delete panel.dataset.pending;
+  }
+}
+
+function schedule2DDepiction(delay = 50) {
+  clearTimeout(state.depictionTimer);
+  const panel = document.querySelector('#structure-2d-panel');
+  const drawing = document.querySelector('#structure-2d-drawing');
+  const target = depictionTarget();
+  if (!target) {
+    state.depictionSequence += 1; state.depictionKey = null; state.depictionGlobalAtomIndices = [];
+    state.depictionGlobalBondPairs = []; state.depictionAtomObjects = [];
+    state.depictionComponentId = null; state.depictionOrientationAnchor = null;
+    state.depictionTemplateMolBlock = null;
+    panel.classList.add('hidden'); delete panel.dataset.pending;
+    return;
+  }
+  const key = depictionSignature(target);
+  if (key !== state.depictionKey) {
+    captureDepictionOrientation(drawing.querySelector('svg'));
+    panel.classList.remove('hidden'); panel.dataset.pending = 'true';
+    setText('#structure-2d-label', target.label);
+    drawing.replaceChildren(Object.assign(document.createElement('span'), { textContent:'Drawing…' }));
+  }
+  else update2DSelectionOverlay();
+  state.depictionTimer = setTimeout(update2DDepiction, delay);
+}
+
+function depictionAtomPoint(svg, atomIndex) {
+  const bondEndpoints = [], labelPoints = [];
+  svg.querySelectorAll(`[class*="atom-${atomIndex}"]`).forEach((node) => {
+    const atomClasses = [...node.classList].flatMap((name) => {
+      const match = /^atom-(\d+)$/.exec(name); return match ? [Number(match[1])] : [];
+    });
+    if (node instanceof SVGGeometryElement && atomClasses.length >= 2) {
+      const length = node.getTotalLength();
+      const endpoint = atomClasses.indexOf(atomIndex) === 0
+        ? node.getPointAtLength(0) : node.getPointAtLength(length);
+      const point = depictionGraphicsPointInRoot(svg, node, endpoint);
+      if (point) bondEndpoints.push(point);
+    } else if (node instanceof SVGGraphicsElement) {
+      const box = node.getBBox();
+      const point = depictionGraphicsPointInRoot(svg, node,
+        { x:box.x + box.width / 2, y:box.y + box.height / 2 });
+      if (point) labelPoints.push(point);
+    }
+  });
+  // RDKit shortens bonds around a visible heteroatom label. Those shortened
+  // endpoints describe the edge of the glyph, not the place the user sees as
+  // the atom. Prefer label geometry for heteroatoms; carbon stereolabels and
+  // ordinary unlabeled carbons retain their more stable bond-based centers.
+  const globalIndex = state.depictionGlobalAtomIndices[atomIndex];
+  const element = state.molecule?.atoms?.[globalIndex]?.element;
+  const points = labelPoints.length && element && element !== 'C'
+    ? labelPoints : bondEndpoints.length ? bondEndpoints : labelPoints;
+  if (!points.length) return null;
+  return points.reduce((sum, point) => ({ x:sum.x + point.x / points.length,
+    y:sum.y + point.y / points.length }), { x:0, y:0 });
+}
+
+function selectDepictionAtom(localIndex) {
+  const globalIndex = state.depictionGlobalAtomIndices[localIndex];
+  if (!Number.isInteger(globalIndex) || !state.molecule?.atoms?.[globalIndex]) return;
+  if (state.mode === 'build') selectGeometryAtom(globalIndex);
+  else {
+    state.selectedAtoms = [globalIndex]; state.selectedAtom = globalIndex;
+    updateGeometryControl(); draw(); schedule2DDepiction(0);
+  }
+}
+
+function setDepictionSelection(indices) {
+  const selected = indices.map(Number).filter((index) => Number.isInteger(index)
+    && state.molecule?.atoms?.[index]);
+  state.selectedAtoms = selected;
+  state.selectedAtom = selected.at(-1) ?? null;
+  updateGeometryControl(); updateBuildStatus(); draw(); schedule2DDepiction(0);
+}
+
+function depictionScreenPoint(svg, localPoint) {
+  const matrix = svg.getScreenCTM();
+  return matrix && localPoint ? new DOMPoint(localPoint.x, localPoint.y).matrixTransform(matrix) : null;
+}
+
+function pointSegmentDistance(point, first, second) {
+  const dx = second.x - first.x, dy = second.y - first.y;
+  const denominator = dx * dx + dy * dy;
+  const t = denominator > 1e-8
+    ? Math.max(0, Math.min(1, ((point.x - first.x) * dx + (point.y - first.y) * dy) / denominator)) : 0;
+  return Math.hypot(point.x - (first.x + t * dx), point.y - (first.y + t * dy));
+}
+
+function depictionProximityHit(event, svg) {
+  const atomSnapRadius = 56;
+  const bondSnapRadius = 18;
+  const pointer = { x:event.clientX, y:event.clientY };
+  let atom = null;
+  for (let localIndex = 0; localIndex < state.depictionGlobalAtomIndices.length; localIndex++) {
+    const screen = depictionScreenPoint(svg, depictionAtomPoint(svg, localIndex));
+    if (!screen) continue;
+    const distance = Math.hypot(pointer.x - screen.x, pointer.y - screen.y);
+    if (!atom || distance < atom.distance) atom = { localIndex, distance, screen };
+  }
+  const directTarget = event.target instanceof SVGElement ? event.target : null;
+  const directAtomClasses = directTarget ? [...directTarget.classList].flatMap((name) => {
+    const match = /^atom-(\d+)$/.exec(name); return match ? [Number(match[1])] : [];
+  }) : [];
+  const directBond = directTarget && [...directTarget.classList]
+    .some((name) => /^bond-\d+$/.test(name));
+  // A label path carries exactly one atom class. Honor that explicit RDKit
+  // identity before applying the forgiving nearest-center fallback. Bond
+  // paths carry two atom classes and remain available to the bond picker.
+  if (!directBond && directAtomClasses.length === 1) {
+    const localIndex = directAtomClasses[0];
+    const screen = depictionScreenPoint(svg, depictionAtomPoint(svg, localIndex));
+    if (screen) atom = { localIndex, distance:0, screen, directLabel:true };
+  }
+  let bond = null;
+  state.depictionGlobalBondPairs.forEach((pair, localIndex) => {
+    const localAtoms = pair.map((globalIndex) => state.depictionGlobalAtomIndices.indexOf(globalIndex));
+    const points = localAtoms.map((atomIndex) => depictionScreenPoint(svg, depictionAtomPoint(svg, atomIndex)));
+    if (points.some((point) => !point)) return;
+    const distance = pointSegmentDistance(pointer, points[0], points[1]);
+    const endpointDistance = Math.min(...points.map((point) => Math.hypot(pointer.x - point.x, pointer.y - point.y)));
+    if (!bond || distance < bond.distance) bond = { localIndex, distance, endpointDistance };
+  });
+  if (atom?.distance > atomSnapRadius) atom = null;
+  if (bond?.distance > bondSnapRadius) bond = null;
+  const preferBond = Boolean(!atom?.directLabel && bond
+    && (!atom || atom.distance > 24) && bond.endpointDistance > 18);
+  return { atom, bond, preferBond };
+}
+
+async function addDepictionAtom(globalIndex, element = state.selectedElement) {
+  if (!ELEMENTS[element]) throw new Error(`Unsupported drawing element ${element}.`);
+  if (!state.molecule?.atoms?.[globalIndex]) throw new Error('Choose an atom in the 2D structure first.');
+  setDepictionSelection([globalIndex]);
+  return applyChemistryMutation((molecule) => {
+    const anchor = molecule.atoms[globalIndex];
+    const before = new Set(molecule.atoms);
+    const direction = attachmentDirection(molecule, globalIndex);
+    const distance = ELEMENTS[anchor.element].covalent + ELEMENTS[element].covalent;
+    const targetPoint = { x:anchor.x + direction.x * distance, y:anchor.y + direction.y * distance,
+      z:anchor.z + direction.z * distance };
+    addElementToMolecule(molecule, element, globalIndex, targetPoint);
+    const added = molecule.atoms.filter((atom) => !before.has(atom));
+    const addedHeavy = added.find((atom) => atom.element !== 'H') || added[0];
+    return { selection:addedHeavy ? [addedHeavy] : [anchor], changedAtoms:[anchor, ...added] };
+  });
+}
+
+async function applyDepictionBond(firstIndex, secondIndex, order = state.depictionBondOrder) {
+  setDepictionSelection([firstIndex, secondIndex]);
+  return applySelectedBondChemistry(order);
+}
+
+async function runDepictionEdit(edit) {
+  if (state.depictionEditing) return null;
+  state.depictionEditing = true; update2DEditorUi();
+  try { return await edit(); }
+  catch (error) { showNotice(error.message || String(error)); return null; }
+  finally {
+    state.depictionEditing = false; state.depictionBondStart = null;
+    update2DEditorUi(); schedule2DDepiction(0);
+  }
+}
 function parseXYZ(text, meta = {}) {
   const lines = text.trim().split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
   let start = /^\d+$/.test(lines[0]) ? 2 : 0;
@@ -1022,6 +1557,8 @@ const PROTEIN_RESIDUE_BONDS = Object.freeze({
   PRO: [['CA', 'CB'], ['CB', 'CG'], ['CG', 'CD'], ['CD', 'N']],
   SER: [['CA', 'CB'], ['CB', 'OG']],
   THR: [['CA', 'CB'], ['CB', 'OG1'], ['CB', 'CG2']],
+  TPO: [['CA', 'CB'], ['CB', 'OG1'], ['CB', 'CG2'], ['OG1', 'P'],
+    ['P', 'O1P', 2], ['P', 'O2P'], ['P', 'O3P']],
   TRP: [['CA', 'CB'], ['CB', 'CG'], ['CG', 'CD1', 1.5], ['CD1', 'NE1', 1.5], ['NE1', 'CE2', 1.5],
     ['CE2', 'CD2', 1.5], ['CD2', 'CG', 1.5], ['CD2', 'CE3', 1.5], ['CE3', 'CZ3', 1.5],
     ['CZ3', 'CH2', 1.5], ['CH2', 'CZ2', 1.5], ['CZ2', 'CE2', 1.5]],
@@ -1091,6 +1628,7 @@ const PROTEIN_SIDECHAIN_HYDROGENS = Object.freeze({
   PRO: { CB: 2, CG: 2, CD: 2 },
   SER: { CB: 2, OG: 1 },
   THR: { CB: 1, OG1: 1, CG2: 3 },
+  TPO: { CB: 1, CG2: 3 },
   TRP: { CB: 2, CD1: 1, NE1: 1, CE3: 1, CZ3: 1, CH2: 1, CZ2: 1 },
   TYR: { CB: 2, CD1: 1, CE1: 1, CE2: 1, CD2: 1, OH: 1 },
   VAL: { CB: 1, CG1: 3, CG2: 3 },
@@ -1231,6 +1769,7 @@ function proteinHeavyAtomElement(atomName) {
   if (/^O/.test(atomName)) return 'O';
   if (/^N/.test(atomName)) return 'N';
   if (/^S/.test(atomName)) return 'S';
+  if (/^P/.test(atomName)) return 'P';
   return 'C';
 }
 
@@ -1684,16 +2223,44 @@ function buildStructureComponents(molecule) {
 function resetStructureComponents(molecule, preserveDisplay = false) {
   const previousVisibility = state.componentVisibility;
   const previousFocus = state.focusedComponentId;
+  const previousComponents = state.structureComponents;
+  const previousFocusedComponent = previousComponents.find((component) =>
+    component.id === previousFocus) || null;
+  const semanticMatch = (component, previous) => {
+    if (!component || !previous || component.kind !== previous.kind) return false;
+    if (component.kind === 'ligand' || component.kind === 'ion') return (
+      component.chain === previous.chain
+      && component.residueIndex === previous.residueIndex
+      && (component.insertionCode || '') === (previous.insertionCode || '')
+    );
+    return false;
+  };
   state.structureComponents = buildStructureComponents(molecule);
   state.atomComponentIds = Array(molecule.atoms.length).fill(null);
   state.structureComponents.forEach((component) => component.atomIndices.forEach((index) => {
     state.atomComponentIds[index] = component.id;
   }));
-  state.componentVisibility = new Map(state.structureComponents.map((component) => [component.id,
-    preserveDisplay && previousVisibility.has(component.id)
-      ? previousVisibility.get(component.id) : component.kind !== 'water']));
-  if (!preserveDisplay || !state.structureComponents.some((component) => component.id === previousFocus)) {
+  state.componentVisibility = new Map(state.structureComponents.map((component) => {
+    const previousSemanticComponent = preserveDisplay && !previousVisibility.has(component.id)
+      ? previousComponents.find((entry) => semanticMatch(component, entry)) : null;
+    const previousId = previousVisibility.has(component.id)
+      ? component.id : previousSemanticComponent?.id;
+    return [component.id, preserveDisplay && previousId
+      ? previousVisibility.get(previousId) : component.kind !== 'water'];
+  }));
+  const restoredFocus = preserveDisplay && previousFocusedComponent
+    ? state.structureComponents.find((component) => component.id === previousFocus)
+      || state.structureComponents.find((component) =>
+        semanticMatch(component, previousFocusedComponent))
+    : null;
+  if (restoredFocus) {
+    // Registered graph edits replace the ligand component and therefore its
+    // residue-name-derived ID.  Keep the established pocket camera exactly;
+    // only retarget the semantic focus to the replacement ligand.
+    state.focusedComponentId = restoredFocus.id;
+  } else if (!preserveDisplay || previousFocus) {
     state.focusedComponentId = null;
+    state.focusedComponentCenter = null;
     state.focusedComponentRadius = null;
   }
 }
@@ -1718,6 +2285,192 @@ function structureComponentSummary() {
     waters && `${waters} water${waters === 1 ? '' : 's'}`].filter(Boolean).join(' · ');
 }
 
+const COMPONENT_FOCUS_CONTEXT_ANGSTROM = 5;
+
+function focusedAtomEntries(molecule = state.molecule) {
+  if (!molecule || !state.focusedAtomIds.length) return [];
+  const ids = new Set(state.focusedAtomIds);
+  return molecule.atoms.map((atom, index) => ({ atom, index }))
+    .filter(({ atom, index }) => ids.has(atom.designAtomId) && componentVisible(index));
+}
+
+function updateChangedRegionChip() {
+  const chip = document.querySelector('#changed-region-chip');
+  if (!chip) return;
+  const emphasized = new Set(state.emphasizedAtomIds);
+  const count = state.molecule?.atoms.filter((atom, index) => atom.element !== 'H'
+    && emphasized.has(atom.designAtomId) && componentVisible(index)).length || 0;
+  chip.classList.toggle('hidden', !count);
+  chip.textContent = count ? `Changed region · ${count} atom${count === 1 ? '' : 's'} ×` : '';
+}
+
+function clearFocusedAtomRegion({ redraw = false } = {}) {
+  state.focusedAtomIds = [];
+  state.focusedAtomCenter = null;
+  state.focusedAtomRadius = null;
+  state.focusedAtomContextIds = [];
+  state.focusedAtomResidueLabels = [];
+  state.emphasizedAtomIds = [];
+  updateChangedRegionChip();
+  if (redraw) draw();
+}
+
+function calculateFocusedAtomContextIndices(molecule, targets) {
+  if (!molecule || !targets.length) return null;
+  const context = new Set(targets.map(({ index }) => index));
+  const activeLigand = connectedLigandAtomIndexSet(molecule);
+  activeLigand.forEach((index) => context.add(index));
+  const targetProteinResidues = new Set(targets
+    .filter(({ atom }) => isProteinAtom(atom)).map(({ atom }) => residueKey(atom)));
+  molecule.atoms.forEach((atom, index) => {
+    if (targetProteinResidues.has(residueKey(atom))) context.add(index);
+  });
+  const adjacency = molecule.atoms.map(() => []);
+  molecule.bonds.forEach((bond) => {
+    adjacency[bond.a]?.push(bond.b); adjacency[bond.b]?.push(bond.a);
+  });
+  // Retain two covalent shells so a changed substituent or side chain is
+  // legible as chemistry rather than a collection of disconnected atoms.
+  let frontier = [...context];
+  for (let shell = 0; shell < 2; shell++) {
+    const next = [];
+    frontier.forEach((index) => adjacency[index]?.forEach((neighbor) => {
+      if (context.has(neighbor)) return;
+      context.add(neighbor); next.push(neighbor);
+    }));
+    frontier = next;
+  }
+  const cutoffSquared = state.focusedAtomContextRadius ** 2;
+  const nearbyResidues = new Set();
+  const componentKindById = new Map(state.structureComponents.map((component) =>
+    [component.id, component.kind]));
+  const anchors = [...new Set([...targets.map(({ index }) => index), ...activeLigand])]
+    .map((index) => molecule.atoms[index]).filter((atom) => atom && atom.element !== 'H');
+  molecule.atoms.forEach((atom, index) => {
+    if (context.has(index)) return;
+    const near = anchors.some((target) => {
+      const dx = atom.x - target.x, dy = atom.y - target.y, dz = atom.z - target.z;
+      return dx * dx + dy * dy + dz * dz <= cutoffSquared;
+    });
+    if (!near) return;
+    const kind = componentKindById.get(state.atomComponentIds[index]);
+    if (kind === 'protein' || kind === 'water') nearbyResidues.add(residueKey(atom));
+    else context.add(index);
+  });
+  molecule.atoms.forEach((atom, index) => {
+    if (nearbyResidues.has(residueKey(atom))) context.add(index);
+  });
+  return context;
+}
+
+function focusedAtomContextIndices(molecule = state.molecule) {
+  if (!molecule || !state.focusedAtomContextIds.length) return null;
+  const ids = new Set(state.focusedAtomContextIds);
+  return new Set(molecule.atoms.flatMap((atom, index) =>
+    ids.has(atom.designAtomId) ? [index] : []));
+}
+
+function focusStructureAtoms(atomIds, contextRadiusAngstrom = 4.5, highlight = true,
+  residueLabels = []) {
+  const ids = [...new Set(atomIds)];
+  if (!ids.length) {
+    state.emphasizedAtomIds = [];
+    updateChangedRegionChip(); draw();
+    return [];
+  }
+  state.focusedAtomIds = ids;
+  state.focusedAtomContextRadius = contextRadiusAngstrom;
+  state.focusedAtomResidueLabels = structuredClone(residueLabels);
+  state.emphasizedAtomIds = highlight ? ids.slice() : [];
+  state.focusedComponentId = null; state.focusedComponentCenter = null;
+  state.focusedComponentRadius = null;
+  state.focusedResidueKey = null; state.focusedResidueRadius = null;
+  const targets = focusedAtomEntries();
+  if (targets.length) {
+    const context = calculateFocusedAtomContextIndices(state.molecule, targets);
+    state.focusedAtomContextIds = [...(context || [])].map((index) =>
+      state.molecule.atoms[index]?.designAtomId).filter(Boolean);
+    const fitted = [...(context || [])].map((index) => state.molecule.atoms[index])
+      .filter((atom) => atom && (state.showHydrogens || atom.element !== 'H'));
+    const fitAtoms = fitted.length ? fitted : targets.map(({ atom }) => atom);
+    const center = fitAtoms.reduce((sum, atom) => ({
+      x:sum.x + atom.x, y:sum.y + atom.y, z:sum.z + atom.z,
+    }), { x:0, y:0, z:0 });
+    center.x /= fitAtoms.length; center.y /= fitAtoms.length; center.z /= fitAtoms.length;
+    state.focusedAtomCenter = { ...center };
+    const radius = Math.max(0, ...fitAtoms.map((atom) =>
+      Math.hypot(atom.x - center.x, atom.y - center.y, atom.z - center.z)));
+    state.focusedAtomRadius = Math.max(6, radius * 1.08 + 1.5);
+    state.zoom = 1; state.viewPan = { x:0, y:0 };
+  } else {
+    state.focusedAtomCenter = null;
+    state.focusedAtomRadius = null;
+    state.focusedAtomContextIds = [];
+  }
+  updateResidueFollowChip(); updateChangedRegionChip();
+  updateStructureComponentsUi(); updateInfo(); draw();
+  return targets;
+}
+
+function highlightStructureAtoms(atomIds) {
+  const ids = [...new Set(atomIds)];
+  state.emphasizedAtomIds = ids;
+  const targets = state.molecule?.atoms.map((atom, index) => ({ atom, index }))
+    .filter(({ atom, index }) => ids.includes(atom.designAtomId) && componentVisible(index)) || [];
+  updateChangedRegionChip(); draw();
+  return targets;
+}
+
+function setHighlightedStructureAtoms(atomIds, residueLabels = null) {
+  if (residueLabels != null) state.focusedAtomResidueLabels = structuredClone(residueLabels);
+  return highlightStructureAtoms(atomIds);
+}
+
+function focusedComponentContextIndices(molecule = state.molecule) {
+  if (!molecule || !state.focusedComponentId) return null;
+  const component = state.structureComponents.find((entry) => entry.id === state.focusedComponentId);
+  if (!component || component.kind !== 'ligand') return null;
+  const focused = new Set(component.atomIndices);
+  const anchors = component.atomIndices.map((index) => molecule.atoms[index])
+    .filter((atom) => atom && atom.element !== 'H');
+  if (!anchors.length) return focused;
+  const cutoffSquared = COMPONENT_FOCUS_CONTEXT_ANGSTROM ** 2;
+  const nearbyResidues = new Set();
+  const nearbyAtoms = new Set(component.atomIndices);
+  molecule.atoms.forEach((atom, index) => {
+    if (focused.has(index)) return;
+    const near = anchors.some((anchor) => {
+      const dx = atom.x - anchor.x, dy = atom.y - anchor.y, dz = atom.z - anchor.z;
+      return dx * dx + dy * dy + dz * dz <= cutoffSquared;
+    });
+    if (!near) return;
+    const atomComponent = state.structureComponents.find((entry) =>
+      entry.id === state.atomComponentIds[index]);
+    if (atomComponent?.kind === 'protein' || atomComponent?.kind === 'water')
+      nearbyResidues.add(residueKey(atom));
+    else nearbyAtoms.add(index);
+  });
+  molecule.atoms.forEach((atom, index) => {
+    if (nearbyResidues.has(residueKey(atom))) nearbyAtoms.add(index);
+  });
+  labeledResiduePeptideContextIndices(molecule).forEach((index) => nearbyAtoms.add(index));
+  return nearbyAtoms;
+}
+
+const PEPTIDE_CONTEXT_ATOM_NAMES = new Set(['N','CA','C','O','OXT']);
+
+function labeledResiduePeptideContextIndices(molecule = state.molecule) {
+  const indices = new Set();
+  if (!molecule || !state.focusedAtomResidueLabels.length) return indices;
+  for (const spec of state.focusedAtomResidueLabels) molecule.atoms.forEach((atom, index) => {
+    if (!isProteinAtom(atom) || String(atom.chain || 'A') !== String(spec.chain || 'A')) return;
+    const offset = Number(atom.residueIndex) - Number(spec.residueIndex);
+    if (offset === 0 || Math.abs(offset) === 1 && PEPTIDE_CONTEXT_ATOM_NAMES.has(atom.atomName))
+      indices.add(index);
+  });
+  return indices;
+}
+
 function focusStructureComponent(componentId, isolate = false) {
   const component = state.structureComponents.find((entry) => entry.id === componentId);
   if (!component) return;
@@ -1735,9 +2488,14 @@ function focusStructureComponent(componentId, isolate = false) {
   const radius = Math.max(0, ...atoms.map((atom) =>
     Math.hypot(atom.x - center.x, atom.y - center.y, atom.z - center.z)));
   state.focusedComponentId = componentId;
-  state.focusedComponentRadius = Math.max(2.5, radius * 1.2);
+  state.focusedComponentCenter = { ...center };
+  // Leave a pocket-sized margin around a ligand. Fitting only its atomic
+  // sphere makes the surrounding residues clip across the viewport.
+  state.focusedComponentRadius = component.kind === 'ligand'
+    ? Math.max(6, radius * 1.15 + 2.5) : Math.max(2.5, radius * 1.2);
   state.focusedResidueKey = null;
   state.focusedResidueRadius = null;
+  clearFocusedAtomRegion();
   state.zoom = 1;
   state.viewPan = { x:0, y:0 };
   updateResidueFollowChip();
@@ -1762,9 +2520,11 @@ function updateStructureComponentsUi() {
     checkbox.type = 'checkbox'; checkbox.checked = state.componentVisibility.get(component.id) !== false;
     checkbox.setAttribute('aria-label', `Show ${component.label}`);
     checkbox.addEventListener('change', () => {
-      state.componentVisibility.set(component.id, checkbox.checked);
-      state.focusedComponentId = null; state.focusedComponentRadius = null;
-      updateStructureComponentsUi(); updateInfo(); draw();
+      const ordinal = state.structureComponents.filter((entry) =>
+        entry.kind === component.kind).findIndex((entry) => entry.id === component.id);
+      runChemistUiAction('view.setComponentVisibility', {
+        kind:component.kind, ordinal, visible:checkbox.checked,
+      }).catch(() => { checkbox.checked = !checkbox.checked; });
     });
     const swatch = document.createElement('i'); swatch.style.background = component.color;
     const copy = document.createElement('div');
@@ -1777,11 +2537,23 @@ function updateStructureComponentsUi() {
     zoom.dataset.componentAction = 'zoom';
     zoom.textContent = state.focusedComponentId === component.id ? 'Zoomed' : 'Zoom';
     zoom.setAttribute('aria-label', `Zoom to ${component.label} without hiding other components`);
-    zoom.addEventListener('click', () => focusStructureComponent(component.id));
+    zoom.addEventListener('click', () => {
+      const ordinal = state.structureComponents.filter((entry) =>
+        entry.kind === component.kind).findIndex((entry) => entry.id === component.id);
+      runChemistUiAction('view.focusComponent', {
+        kind:component.kind, ordinal, isolate:false,
+      });
+    });
     const only = document.createElement('button'); only.type = 'button';
     only.dataset.componentAction = 'only'; only.textContent = 'Only';
     only.setAttribute('aria-label', `Show only ${component.label}`);
-    only.addEventListener('click', () => focusStructureComponent(component.id, true));
+    only.addEventListener('click', () => {
+      const ordinal = state.structureComponents.filter((entry) =>
+        entry.kind === component.kind).findIndex((entry) => entry.id === component.id);
+      runChemistUiAction('view.focusComponent', {
+        kind:component.kind, ordinal, isolate:true,
+      });
+    });
     actions.append(zoom, only);
     row.append(checkbox, swatch, copy, actions); list.append(row);
   });
@@ -2241,6 +3013,9 @@ function addStandardProteinHydrogens(inputMolecule, options = {}) {
     if (residue.residueName === 'CYS' && settings.pH >= 8.3) setCharge(residue, 'SG', -1);
     if (residue.residueName === 'TYR' && settings.pH >= 10.1) setCharge(residue, 'OH', -1);
     if (residue.residueName === 'HIS' && variants[residue.key] === 'HIP') setCharge(residue, 'NE2', 1);
+    if (residue.residueName === 'TPO') {
+      setCharge(residue, 'O2P', -1); setCharge(residue, 'O3P', -1);
+    }
     if (lastResidues.has(residue.key) && settings.pH >= 3.1
       && atomByResidueAndName.has(`${residue.key}:OXT`)) setCharge(residue, 'OXT', -1);
   });
@@ -2458,9 +3233,21 @@ function loadMolecule(molecule, resetView = true) {
     state.protonatingLigand = false;
   }
   state.molecule = molecule;
+  state.chemistActionAudit = structuredClone(molecule.source?.chemistActionAudit || []);
+  state.dockingReference = null;
+  state.dockingResult = null;
+  state.dockingRunning = false;
+  state.dockingSelectedHbondIds = new Set();
+  state.dockingContactRemaps = new Map();
+  state.dockingContactRemapProposals = new Map();
+  state.dockingContactDraft = null;
+  state.dockingPoseIndex = 0;
+  state.sidechainRotamerEnsemble = null;
+  document.querySelector('#docking-edit-cleanup').value = 'preserve-reference';
   state.pdbPreparationPreview = null;
   state.focusedResidueKey = null;
   state.focusedResidueRadius = null;
+  clearFocusedAtomRegion();
   state.selectedAtom = null;
   state.selectedAtoms = [];
   delete document.querySelector('#build-optimizer-select').dataset.userSelected;
@@ -2470,6 +3257,9 @@ function loadMolecule(molecule, resetView = true) {
   const representationSelect = document.querySelector('#representation-select');
   representationSelect.disabled = !state.proteinPrediction;
   representationSelect.value = state.representation;
+  document.querySelector('#display-theme-select').value = state.displayColorTheme;
+  document.querySelector('#change-marker-select').value = state.changeMarkerStyle;
+  document.querySelector('#steric-clash-toggle').checked = state.showStericClashes;
   document.querySelector('#protein-result-card').classList.toggle('hidden', !state.proteinPrediction);
   if (resetView) {
     state.rotation = defaultViewRotation(); state.zoom = 1; state.viewPan = { x:0, y:0 };
@@ -2495,6 +3285,8 @@ function loadMolecule(molecule, resetView = true) {
   updateInfo();
   updateGeometryControl();
   updateOptimizerControls();
+  updateDockingUi();
+  updateDesignerMoveControls();
   updateResidueFollowChip();
   draw();
 }
@@ -2523,6 +3315,8 @@ function updateInfo() {
   updatePocketControl();
   updateChemistryDisplayControls();
   updateOptimizerControls();
+  updateDockingUi();
+  schedule2DDepiction();
 }
 
 function updatePdbPreparationUi() {
@@ -2788,6 +3582,9 @@ function cartoonAtomSelection(molecule = state.molecule) {
     if (!componentVisible(index)) return;
     if (!isProteinAtom(atom) || pocket.pocketAtomIndices.has(index)) allowedIndices.add(index);
   });
+  labeledResiduePeptideContextIndices(molecule).forEach((index) => {
+    if (componentVisible(index)) allowedIndices.add(index);
+  });
   return { ...pocket, allowedIndices };
 }
 
@@ -2811,6 +3608,17 @@ function interactivePocketMovableAtomIndices(molecule = state.molecule) {
     if (adjacency[index].some((neighbor) => movable.has(neighbor))) movable.add(index);
   });
   return [...movable].sort((first, second) => first - second);
+}
+
+function inducedFitPocketMovableAtomIndices(molecule = state.molecule) {
+  if (!molecule?.atoms?.length) return [];
+  const pocket = proteinLigandPocket(molecule, 6, true);
+  if (!pocket.ligandIndices.size) return [];
+  // Unlike the fast pocket lane, the induced-fit lane releases the backbone
+  // and side chain of every residue entering the 6 Å shell.  Atoms outside
+  // that shell remain fixed and provide the covalent/structural boundary.
+  return [...new Set([...pocket.ligandIndices, ...pocket.pocketAtomIndices])]
+    .sort((first, second) => first - second);
 }
 
 function updatePocketControl() {
@@ -2899,7 +3707,9 @@ function setFocusedResidue(atomIndex = null) {
     state.focusedResidueRadius = null;
   } else {
     state.focusedComponentId = null;
+    state.focusedComponentCenter = null;
     state.focusedComponentRadius = null;
+    clearFocusedAtomRegion();
     state.focusedResidueKey = nextKey;
     const focused = focusedResidueAtoms();
     const center = focused.reduce((sum, entry) => ({
@@ -2917,20 +3727,30 @@ function setFocusedResidue(atomIndex = null) {
 
 function projectAtoms(width, height, molecule = state.molecule, miniature = false) {
   if (!molecule) return [];
-  const componentFiltered = molecule.atoms.map((atom, index) => ({ ...atom, index }))
+  let componentFiltered = molecule.atoms.map((atom, index) => ({ ...atom, index }))
     .filter((atom) => componentVisible(atom.index));
+  const atomContextIndices = miniature ? null : focusedAtomContextIndices(molecule);
+  const contextIndices = atomContextIndices || (miniature ? null : focusedComponentContextIndices(molecule));
+  if (contextIndices) componentFiltered = componentFiltered.filter((atom) => contextIndices.has(atom.index));
   if (!componentFiltered.length) return [];
   const visible = componentFiltered.filter((atom) => state.showHydrogens || atom.element !== 'H');
-  const focused = !miniature && state.focusedResidueKey
+  const focusedAtoms = !miniature ? focusedAtomEntries(molecule)
+    .map(({ index }) => componentFiltered.find((atom) => atom.index === index)).filter(Boolean) : [];
+  const focused = !miniature && !focusedAtoms.length && state.focusedResidueKey
     ? componentFiltered.filter((atom) => residueKey(atom) === state.focusedResidueKey) : [];
-  const focusedComponent = !miniature && !focused.length && state.focusedComponentId
+  const focusedComponent = !miniature && !focusedAtoms.length && !focused.length && state.focusedComponentId
     ? componentFiltered.filter((atom) => state.atomComponentIds[atom.index] === state.focusedComponentId) : [];
-  const centerAtoms = focused.length ? focused : focusedComponent.length ? focusedComponent : componentFiltered;
+  const centerAtoms = focusedAtoms.length ? focusedAtoms
+    : focused.length ? focused : focusedComponent.length ? focusedComponent : componentFiltered;
   let center = centerAtoms.reduce((sum, atom) => ({ x: sum.x + atom.x, y: sum.y + atom.y, z: sum.z + atom.z }), { x: 0, y: 0, z: 0 });
   center.x /= centerAtoms.length; center.y /= centerAtoms.length; center.z /= centerAtoms.length;
+  if (!miniature && focusedAtoms.length && state.focusedAtomCenter)
+    center = { ...state.focusedAtomCenter };
+  else if (!miniature && focusedComponent.length && state.focusedComponentCenter)
+    center = { ...state.focusedComponentCenter };
   let radius = Math.max(0.1, ...componentFiltered.map((atom) =>
     Math.hypot(atom.x - center.x, atom.y - center.y, atom.z - center.z)));
-  const persistentView = !miniature && !focused.length && !focusedComponent.length
+  const persistentView = !miniature && !focusedAtoms.length && !focused.length && !focusedComponent.length
     && !Number.isFinite(state.calculationProjectionRadius);
   if (persistentView) {
     if (!state.viewProjectionCenter || !Number.isFinite(state.viewProjectionRadius)) {
@@ -2950,13 +3770,17 @@ function projectAtoms(width, height, molecule = state.molecule, miniature = fals
   // Keep a trajectory at one camera scale. Re-fitting to every frame's
   // instantaneous outermost atom makes ordinary fluctuations look like a
   // synchronized whole-molecule breathing mode.
-  const fitRadius = !miniature && focused.length && Number.isFinite(state.focusedResidueRadius)
+  const fitRadius = !miniature && focusedAtoms.length && Number.isFinite(state.focusedAtomRadius)
+    ? state.focusedAtomRadius
+    : !miniature && focused.length && Number.isFinite(state.focusedResidueRadius)
     ? state.focusedResidueRadius
     : !miniature && focusedComponent.length && Number.isFinite(state.focusedComponentRadius)
       ? state.focusedComponentRadius
     : !miniature && Number.isFinite(state.calculationProjectionRadius)
       ? state.calculationProjectionRadius : radius;
-  const fit = Math.min(Math.min(width, height) * (miniature ? 0.38 : 0.42) / fitRadius, miniature ? 11 : 72);
+  const maximumFit = miniature ? 11 : focusedAtoms.length ? 54 : 72;
+  const fit = Math.min(Math.min(width, height) * (miniature ? 0.38 : 0.42) / fitRadius,
+    maximumFit);
   const scale = fit * state.zoom;
   const pan = miniature ? { x:0, y:0 } : state.viewPan;
   if (!miniature) state.projection = { center, scale, rotation: { ...state.rotation }, pan:{ ...pan } };
@@ -2971,7 +3795,9 @@ function draw() {
   const size = resizeCanvas(canvas, ctx);
   ctx.clearRect(0, 0, size.width, size.height);
   ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, size.width, size.height);
-  if (!state.molecule) return;
+  if (!state.molecule) {
+    state.visibleStericClashCount = 0; updateStericClashDisplayLabel(0); return;
+  }
   const projected = projectAtoms(size.width, size.height);
   drawMolecule(ctx, projected, state.molecule, false);
   drawScenePreview();
@@ -3079,7 +3905,8 @@ function ringGeometry(molecule, cycle) {
   return { centroid, normal };
 }
 
-function nonCovalentInteractions(molecule, cycles = findRingCycles(molecule), allowedIndices = null) {
+function nonCovalentInteractions(molecule, cycles = findRingCycles(molecule), allowedIndices = null,
+  limits = {}) {
   if (!molecule?.atoms?.length) return { hydrogenBonds:[], piStacks:[] };
   const allowed = allowedIndices instanceof Set ? allowedIndices
     : allowedIndices ? new Set(allowedIndices) : null;
@@ -3090,21 +3917,33 @@ function nonCovalentInteractions(molecule, cycles = findRingCycles(molecule), al
     adjacency[bond.a].push(bond.b);
     adjacency[bond.b].push(bond.a);
   });
-  const donors = [];
-  eligibleBonds.forEach((bond) => {
-    const first = molecule.atoms[bond.a], second = molecule.atoms[bond.b];
-    if (first.element === 'H' && ['N', 'O', 'S'].includes(second.element))
-      donors.push({ donor:bond.b, hydrogen:bond.a });
-    if (second.element === 'H' && ['N', 'O', 'S'].includes(first.element))
-      donors.push({ donor:bond.a, hydrogen:bond.b });
-  });
-  const acceptors = molecule.atoms.map((atom, index) => ({ atom, index }))
-    .filter(({ atom, index }) => {
-      if (allowed && !allowed.has(index)) return false;
-      if (['O', 'S', 'F'].includes(atom.element)) return Number(atom.formalCharge || 0) <= 0;
-      if (atom.element !== 'N' || Number(atom.formalCharge || 0) > 0 || adjacency[index].length >= 4) return false;
-      return !adjacency[index].some((neighbor) => molecule.atoms[neighbor].element === 'H');
-    }).map(({ index }) => index);
+  const donors = [], acceptors = [];
+  if (hydrogenBondFeaturePerception) {
+    molecule.atoms.forEach((_, index) => {
+      if (allowed && !allowed.has(index)) return;
+      const donor = hydrogenBondFeaturePerception(molecule, index, 'donor');
+      donor?.hydrogenIndices.filter((hydrogen) => !allowed || allowed.has(hydrogen))
+        .forEach((hydrogen) => donors.push({ donor:index, hydrogen }));
+      if (hydrogenBondFeaturePerception(molecule, index, 'acceptor')) acceptors.push(index);
+    });
+  } else {
+    eligibleBonds.forEach((bond) => {
+      const first = molecule.atoms[bond.a], second = molecule.atoms[bond.b];
+      if (first.element === 'H' && ['N', 'O', 'S'].includes(second.element))
+        donors.push({ donor:bond.b, hydrogen:bond.a });
+      if (second.element === 'H' && ['N', 'O', 'S'].includes(first.element))
+        donors.push({ donor:bond.a, hydrogen:bond.b });
+    });
+    molecule.atoms.forEach((atom, index) => {
+      if (allowed && !allowed.has(index)) return;
+      if (['O', 'S', 'F'].includes(atom.element) && Number(atom.formalCharge || 0) <= 0)
+        acceptors.push(index);
+      else if (atom.element === 'N' && Number(atom.formalCharge || 0) <= 0
+        && adjacency[index].length < 4
+        && !adjacency[index].some((neighbor) => molecule.atoms[neighbor].element === 'H'))
+        acceptors.push(index);
+    });
+  }
   const hydrogenBonds = [];
   donors.forEach(({ donor, hydrogen }) => {
     const near = new Set([donor, hydrogen, ...adjacency[donor]]);
@@ -3148,7 +3987,1820 @@ function nonCovalentInteractions(molecule, cycles = findRingCycles(molecule), al
       piStacks.push({ first, second, distance, alignment, lateral });
     }
   }
-  return { hydrogenBonds:hydrogenBonds.slice(0, 96), piStacks:piStacks.slice(0, 48) };
+  const hydrogenBondLimit = limits.hydrogenBonds === Infinity ? hydrogenBonds.length
+    : Math.max(0, Number.isFinite(limits.hydrogenBonds) ? Math.floor(limits.hydrogenBonds) : 96);
+  const piStackLimit = limits.piStacks === Infinity ? piStacks.length
+    : Math.max(0, Number.isFinite(limits.piStacks) ? Math.floor(limits.piStacks) : 48);
+  return { hydrogenBonds:hydrogenBonds.slice(0, hydrogenBondLimit),
+    piStacks:piStacks.slice(0, piStackLimit) };
+}
+
+function dockingLigandComponent() {
+  const ligands = state.structureComponents.filter((component) => component.kind === 'ligand');
+  if (!ligands.length) return null;
+  const selected = state.selectedAtoms || [];
+  return ligands.find((component) => selected.some((index) => component.atomIndices.includes(index)))
+    || ligands.find((component) => component.id === state.focusedComponentId)
+    || (ligands.length === 1 ? ligands[0] : null);
+}
+
+function dockingLigandAtomIndicesInMolecule(molecule, reference = state.dockingReference) {
+  if (!reference || !molecule?.atoms?.length) return [];
+  const referenceIds = new Set(reference.ligand.atomIds);
+  const seed = molecule.atoms.findIndex((atom) => referenceIds.has(atom.designAtomId));
+  if (seed < 0) return [];
+  const component = moleculeComponents(molecule).find((indices) => indices.includes(seed)) || [];
+  return component.some((index) => molecule.atoms[index]?.record === 'ATOM') ? [] : component;
+}
+
+function currentDockingLigandAtomIndices(reference = state.dockingReference) {
+  if (!reference || !state.molecule?.atoms?.length) return dockingLigandComponent()?.atomIndices.slice() || [];
+  return dockingLigandAtomIndicesInMolecule(state.molecule, reference);
+}
+
+function currentIndicesForDockingPlan(plan) {
+  const byId = new Map(state.molecule?.atoms?.map((atom, index) => [atom.designAtomId, index]) || []);
+  const indices = plan.molecule.atoms.map((atom) => byId.get(atom.designAtomId));
+  return indices.every(Number.isInteger) ? indices : [];
+}
+
+function dockingSelectedCore(component = dockingLigandComponent()) {
+  if (!component) return [];
+  const ligand = new Set(component.atomIndices);
+  return state.selectedAtoms.filter((index) => ligand.has(index)
+    && state.molecule?.atoms[index]?.element !== 'H');
+}
+
+function selectedDockingMode() {
+  return document.querySelector('#docking-mode')?.value === 'selected-core'
+    ? 'selected-core' : 'pose-propagation';
+}
+
+function selectedDockingEditCleanup() {
+  return document.querySelector('#docking-edit-cleanup')?.value === 'free-local'
+    ? 'free-local' : 'preserve-reference';
+}
+
+function survivingReferenceHeavyAtoms(reference, component = dockingLigandComponent()) {
+  if (!reference?.ligand || !component) return 0;
+  const liveIds = new Set(component.atomIndices.map((index) =>
+    state.molecule?.atoms[index]?.designAtomId).filter(Boolean));
+  return reference.ligand.atomIds.reduce((count, id, referenceIndex) => count
+    + Number(reference.ligand.elements[referenceIndex] !== 'H' && liveIds.has(id)), 0);
+}
+
+function setDockingStatus(message) { setText('#docking-status', message); }
+
+let analogueDesignPromptPromise = null;
+let resolveAnalogueDesignPrompt = null;
+
+function analogueDesignCaptureNeeded(targetAtomIndices = state.selectedAtoms) {
+  if (state.mode !== 'build' || state.dockingReference || state.chemistryTransaction
+    || selectedDockingMode() !== 'pose-propagation'
+    || !state.molecule?.parameterization?.system) return false;
+  if (!state.structureComponents.some((component) => component.kind === 'protein')) return false;
+  const ligand = dockingLigandComponent();
+  if (!ligand) return false;
+  const ligandAtoms = new Set(ligand.atomIndices);
+  return Array.from(targetAtomIndices || [], Number).some((index) => ligandAtoms.has(index));
+}
+
+function settleAnalogueDesignPrompt(accepted) {
+  const dialog = document.querySelector('#analogue-design-dialog');
+  if (dialog?.open) dialog.close();
+  const resolve = resolveAnalogueDesignPrompt;
+  analogueDesignPromptPromise = null; resolveAnalogueDesignPrompt = null;
+  resolve?.(Boolean(accepted));
+}
+
+function requestAnalogueDesignCapture() {
+  if (analogueDesignPromptPromise) return analogueDesignPromptPromise;
+  const dialog = document.querySelector('#analogue-design-dialog');
+  if (!dialog?.showModal) return Promise.resolve(false);
+  analogueDesignPromptPromise = new Promise((resolve) => { resolveAnalogueDesignPrompt = resolve; });
+  dialog.showModal();
+  requestAnimationFrame(() => document.querySelector('#confirm-analogue-design')?.focus());
+  return analogueDesignPromptPromise;
+}
+
+async function ensureAnalogueDesignReferenceBeforeChemistry(targetAtomIndices = state.selectedAtoms) {
+  if (!analogueDesignCaptureNeeded(targetAtomIndices)) return true;
+  if (!await requestAnalogueDesignCapture()) return false;
+  await captureCurrentDockingReference();
+  return true;
+}
+
+function effectiveDockingHydrogenBondDefinition(definition) {
+  return state.dockingContactRemaps.get(definition?.id)?.effectiveDefinition
+    || state.dockingContactRemapProposals.get(definition?.id)?.priorEffectiveDefinition
+    || definition;
+}
+
+function effectiveDockingHydrogenBondDefinitions() {
+  return (state.dockingReference?.hydrogenBonds || [])
+    .map((definition) => effectiveDockingHydrogenBondDefinition(definition));
+}
+
+function dockingContactAvailable(definition) {
+  if (hydrogenBondFeatureValidation && state.molecule)
+    return hydrogenBondFeatureValidation(definition, state.molecule).available;
+  const liveById = new Map(state.molecule?.atoms?.map((atom) => [atom.designAtomId, atom]) || []);
+  return [definition?.donor, definition?.hydrogen, definition?.acceptor]
+    .filter((descriptor) => descriptor?.scope === 'ligand')
+    .every((descriptor) => {
+      const atom = liveById.get(descriptor.designAtomId);
+      return Boolean(atom && (!descriptor.element || descriptor.element === atom.element));
+    });
+}
+
+function unresolvedSelectedDockingContacts() {
+  return [...state.dockingSelectedHbondIds].filter((id) =>
+    state.dockingContactRemapProposals.has(id)
+      && !state.dockingContactRemapProposals.get(id)?.candidates?.length);
+}
+
+function dockingContactFeatureLabel(definition, proposal = null) {
+  const ligandRole = proposal?.ligandRole
+    || (definition?.receptorRole === 'donor' ? 'acceptor' : 'donor');
+  const descriptor = ligandRole === 'acceptor' ? definition?.acceptor : definition?.donor;
+  const signature = proposal?.originalFeatureSignature || descriptor?.featureSignature;
+  let type = '';
+  try { type = JSON.parse(signature || '{}').type || ''; } catch {}
+  return ({
+    'carbonyl oxygen acceptor':'carbonyl acceptor',
+    'aromatic nitrogen acceptor':'aromatic N acceptor',
+    'neutral nitrogen acceptor':'N acceptor',
+    'nitrile nitrogen acceptor':'nitrile N acceptor',
+    'sulfonyl oxygen acceptor':'sulfonyl O acceptor',
+    'phosphoryl oxygen acceptor':'phosphoryl O acceptor',
+    'nitrogen donor':'N–H donor',
+    'oxygen donor':'O–H donor',
+    'sulfur donor':'S–H donor',
+  })[type] || type || `ligand ${ligandRole}`;
+}
+
+function contactParticipantIds(definition, scope) {
+  return [definition?.donor, definition?.hydrogen, definition?.acceptor]
+    .filter((descriptor) => descriptor?.scope === scope)
+    .map((descriptor) => descriptor.designAtomId);
+}
+
+function recordDockingContactRemap(audit) {
+  if (!state.molecule) return;
+  state.molecule.source = { ...(state.molecule.source || {}) };
+  const history = [...(state.molecule.source.dockingContactRemapHistory || [])];
+  history.push(structuredClone(audit));
+  state.molecule.source.dockingContactRemapHistory = history.slice(-64);
+}
+
+async function chooseDockingContactRemap(contactId, candidateId,
+  method = 'user-selected-role-compatible') {
+  const proposal = state.dockingContactRemapProposals.get(contactId);
+  const rawDefinition = state.dockingReference?.hydrogenBonds
+    .find((definition) => definition.id === contactId);
+  const candidate = proposal?.candidates?.find((entry) => entry.id === candidateId);
+  if (!proposal || !rawDefinition || !candidate)
+    throw new Error('The selected contact replacement is no longer available.');
+  const { applyLigandHydrogenBondFeatureRemap } = await import('./docking/contact-remap.mjs');
+  const priorRemap = state.dockingContactRemaps.get(contactId);
+  const priorDefinition = proposal.priorEffectiveDefinition
+    || priorRemap?.effectiveDefinition || rawDefinition;
+  const effectiveDefinition = applyLigandHydrogenBondFeatureRemap(priorDefinition, candidate);
+  const priorChain = proposal.priorRemapChain || priorRemap?.chain
+    || (proposal.priorRemapAudit ? [proposal.priorRemapAudit]
+      : priorRemap?.audit ? [priorRemap.audit] : []);
+  const audit = {
+    schema:'molarium.docking.contact-feature-remap/v1', algorithm:'role-compatible-edit-boundary/v3',
+    contactId, method, at:new Date().toISOString(), ligandRole:proposal.ligandRole,
+    originalLigandAtomIds:contactParticipantIds(priorDefinition, 'ligand'),
+    replacementLigandAtomIds:[...candidate.atomIds],
+    originalFeatureSignature:proposal.originalFeatureSignature,
+    replacementFeatureSignature:candidate.signature,
+    matchKind:candidate.matchKind || 'role-compatible-bioisostere',
+    boundaryAnchorIds:[...(candidate.boundaryAnchorIds || [])],
+    cumulativeEditRegionAtomIds:[...(proposal.cumulativeEditRegionAtomIds || [])],
+    editLineage:structuredClone(proposal.editLineage || []),
+    candidateIds:proposal.candidates.map((entry) => entry.id),
+    receptorParticipantIds:contactParticipantIds(rawDefinition, 'receptor'),
+    beforeTopologySha256:proposal.beforeTopologySha256,
+    afterTopologySha256:proposal.afterTopologySha256,
+    committedEditId:proposal.committedEditId || null,
+    originatingCommittedEditId:proposal.originatingCommittedEditId
+      || proposal.committedEditId || null,
+    previousRemap:priorChain.length ? {
+      contactId, sourceLigandAtomIds:contactParticipantIds(priorDefinition, 'ligand'),
+      priorDecisionCount:priorChain.length,
+      priorReplacementLigandAtomIds:priorChain.at(-1)?.replacementLigandAtomIds || [],
+    } : null,
+    geometryEvidence:structuredClone(candidate.geometry),
+    geometryUsedForSelection:false,
+  };
+  state.dockingContactRemaps.set(contactId,
+    { effectiveDefinition, audit, chain:[...structuredClone(priorChain), structuredClone(audit)] });
+  state.dockingContactRemapProposals.delete(contactId);
+  state.dockingResult = null;
+  recordDockingContactRemap(audit);
+  updateDockingUi();
+  showToast(method === 'automatic-unique-exact'
+    ? 'Required contact mapped to the unique exact replacement feature'
+    : method === 'automatic-unique-role-compatible'
+      ? 'Required contact mapped to the unique role-compatible replacement'
+      : 'Required contact mapped to the selected replacement feature');
+  return audit;
+}
+
+function canonicalDockingTopology(molecule, atomIndices) {
+  const included = new Set(atomIndices);
+  const atoms = atomIndices.map((index) => molecule.atoms[index]).filter(Boolean)
+    .map((atom) => {
+      if (!atom.designAtomId)
+        throw new Error('A staged ligand atom is missing its stable design identity.');
+      return { id:atom.designAtomId, element:atom.element,
+        charge:Number(atom.formalCharge ?? atom.charge ?? 0),
+        aromatic:Boolean(atom.aromatic) };
+    })
+    .sort((first, second) => first.id.localeCompare(second.id));
+  const bonds = (molecule.bonds || []).flatMap((bond) => included.has(bond.a) && included.has(bond.b)
+    ? [{ ids:[molecule.atoms[bond.a].designAtomId, molecule.atoms[bond.b].designAtomId].sort(),
+      order:Number(bond.order || 1) }] : [])
+    .sort((first, second) => `${first.ids.join(':')}:${first.order}`
+      .localeCompare(`${second.ids.join(':')}:${second.order}`));
+  return JSON.stringify({ atoms, bonds });
+}
+
+async function reconcileDockingContactFeaturesAfterChemistry(transaction, changedAtomIndices) {
+  const reference = state.dockingReference;
+  if (!reference || reference.mode !== 'pose-propagation' || !reference.hydrogenBonds.length)
+    return [];
+  const [referenceCore, remapModule] = await Promise.all([
+    import('./docking/reference-core.mjs'), import('./docking/contact-remap.mjs'),
+  ]);
+  const reservedAtomIds = new Set([
+    ...transaction.snapshot.atoms.map((atom) => atom.designAtomId),
+    ...(reference.ligand.atomIds || []),
+  ].filter(Boolean));
+  referenceCore.ensureStableAtomIds(state.molecule,
+    `design-${state.molecule.source?.pdbId || 'complex'}`, reservedAtomIds);
+  const beforeLigandIndices = dockingLigandAtomIndicesInMolecule(transaction.snapshot, reference);
+  const ligandAtomIndices = currentDockingLigandAtomIndices(reference);
+  if (!beforeLigandIndices.length || !ligandAtomIndices.length) return [];
+  const beforeIds = new Set(transaction.snapshot.atoms.map((atom) => atom.designAtomId));
+  const eligibleAtomIndices = [...new Set([
+    ...changedAtomIndices,
+    ...ligandAtomIndices.filter((index) => !beforeIds.has(state.molecule.atoms[index]?.designAtomId)),
+  ])];
+  let proposals = remapModule.proposeLigandHydrogenBondFeatureRemaps(
+    effectiveDockingHydrogenBondDefinitions(), state.molecule, ligandAtomIndices,
+    { eligibleAtomIndices, beforeMolecule:transaction.snapshot });
+  proposals = proposals.map((proposal) =>
+    remapModule.retainOriginatingHydrogenBondRemapCandidates(
+      state.dockingContactRemapProposals.get(proposal.id), proposal,
+      state.molecule, ligandAtomIndices));
+  const [beforeTopologySha256, afterTopologySha256] = await Promise.all([
+    sha256Hex(new TextEncoder().encode(canonicalDockingTopology(
+      transaction.snapshot, beforeLigandIndices))),
+    sha256Hex(new TextEncoder().encode(canonicalDockingTopology(state.molecule, ligandAtomIndices))),
+  ]);
+  const applied = [];
+  for (const proposal of proposals) {
+    if (proposal.status === 'available') {
+      state.dockingContactRemapProposals.delete(proposal.id);
+      continue;
+    }
+    const priorRemap = state.dockingContactRemaps.get(proposal.id);
+    const priorProposal = state.dockingContactRemapProposals.get(proposal.id);
+    const editLineage = [...structuredClone(priorProposal?.editLineage || []), {
+      committedEditId:transaction.editId || null,
+      beforeTopologySha256,
+      afterTopologySha256,
+      editRegionAtomIds:[...(proposal.editRegionAtomIds || [])],
+      cumulativeEditRegionAtomIds:[...(proposal.cumulativeEditRegionAtomIds || [])],
+    }];
+    const recordedProposal = { ...proposal,
+      beforeTopologySha256:priorProposal?.beforeTopologySha256 || beforeTopologySha256,
+      afterTopologySha256,
+      committedEditId:transaction.editId || null,
+      originatingCommittedEditId:priorProposal?.originatingCommittedEditId
+        || priorProposal?.committedEditId || transaction.editId || null,
+      editLineage,
+      priorEffectiveDefinition:structuredClone(priorRemap?.effectiveDefinition
+        || priorProposal?.priorEffectiveDefinition
+        || state.dockingReference.hydrogenBonds.find((entry) => entry.id === proposal.id)),
+      priorRemapAudit:structuredClone(priorRemap?.audit || priorProposal?.priorRemapAudit || null),
+      priorRemapChain:structuredClone(priorRemap?.chain || priorProposal?.priorRemapChain || []),
+    };
+    state.dockingContactRemapProposals.set(proposal.id, recordedProposal);
+    state.dockingContactRemaps.delete(proposal.id);
+    if (proposal.status === 'unique')
+      applied.push(await chooseDockingContactRemap(proposal.id, proposal.candidates[0].id,
+        proposal.candidates[0].matchKind === 'exact-feature'
+          ? 'automatic-unique-exact' : 'automatic-unique-role-compatible'));
+  }
+  return applied;
+}
+
+function recordManualDockingContactEvent(kind, definition, extra = {}) {
+  if (!state.molecule || !state.dockingReference) return;
+  const event = { schema:'molarium.docking.contact-amendment/v1', kind,
+    at:new Date().toISOString(), contactId:definition.id, label:definition.label,
+    origin:structuredClone(definition.origin || null), ...structuredClone(extra) };
+  state.molecule.source = { ...(state.molecule.source || {}),
+    dockingContactAmendments:[...(state.molecule.source?.dockingContactAmendments || []),
+      event].slice(-128) };
+  state.dockingReference.contactAmendments = [
+    ...(state.dockingReference.contactAmendments || []), structuredClone(event),
+  ].slice(-128);
+}
+
+async function refreshDockingReceptorProvenance() {
+  const reference = state.dockingReference;
+  if (!reference || !state.molecule) return;
+  const adapter = await import('./docking/browser-adapter.mjs');
+  const currentById = new Map(state.molecule.atoms.map((atom, index) =>
+    [atom.designAtomId, index]));
+  const receptorParticipantIds = reference.hydrogenBonds.flatMap((definition) =>
+    [definition.donor, definition.hydrogen, definition.acceptor]
+      .filter((descriptor) => descriptor?.scope === 'receptor')
+      .map((descriptor) => descriptor.designAtomId));
+  const receptorSiteIds = reference.receptorSite.atoms.map((atom) => atom.designAtomId);
+  const indices = [...new Set([...receptorSiteIds, ...receptorParticipantIds]
+    .map((id) => currentById.get(id)).filter(Number.isInteger))].sort((a, b) => a - b);
+  reference.receptorProvenanceAtomCount = indices.length;
+  reference.receptorInputText = adapter.dockingInputText(state.molecule, indices);
+}
+
+function nextManualDockingContactId() {
+  const used = new Set(state.dockingReference?.hydrogenBonds.map((entry) => entry.id) || []);
+  let ordinal = 1;
+  while (used.has(`manual-hbond-${ordinal}`)) ordinal += 1;
+  return `manual-hbond-${ordinal}`;
+}
+
+function cancelManualDockingContact() {
+  if (!state.dockingContactDraft) return false;
+  state.dockingContactDraft = null;
+  state.selectedAtoms = []; state.selectedAtom = null;
+  updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw();
+  return true;
+}
+
+async function addManualDockingContactByIndices(ligandAtomIndex, receptorAtomIndex,
+  ligandRole = 'auto', method = 'two-atom-selection') {
+  if (!state.dockingReference)
+    throw new Error('Begin analogue design before adding a required contact');
+  if (state.chemistryTransaction)
+    throw new Error('Finish chemistry before adding a required contact');
+  const ligandAtomIndices = currentDockingLigandAtomIndices();
+  if (!ligandAtomIndices.length) throw new Error('The editable ligand is unavailable');
+  const { ensureStableAtomIds } = await import('./docking/reference-core.mjs');
+  ensureStableAtomIds(state.molecule, `manual-contact-${state.molecule.source?.pdbId || 'complex'}`,
+    state.dockingReference.ligand?.atomIds || []);
+  const module = manualHydrogenBondModule || await import('./docking/manual-hbond.mjs');
+  const definition = module.createManualHydrogenBondDefinition({ molecule:state.molecule,
+    ligandAtomIndices, ligandAtomIndex, receptorAtomIndex, ligandRole,
+    id:nextManualDockingContactId(), method });
+  const key = module.manualHydrogenBondParticipantKey(definition);
+  const duplicate = state.dockingReference.hydrogenBonds.find((entry) =>
+    module.manualHydrogenBondParticipantKey(effectiveDockingHydrogenBondDefinition(entry)) === key);
+  if (duplicate) throw new Error(`That H-bond hypothesis already exists as ${duplicate.label}`);
+  state.dockingReference.hydrogenBonds.push(definition);
+  state.dockingSelectedHbondIds.add(definition.id);
+  state.dockingResult = null; state.dockingPoseIndex = 0;
+  recordManualDockingContactEvent('added', definition, {
+    activeContactIds:[...state.dockingSelectedHbondIds] });
+  await refreshDockingReceptorProvenance();
+  state.dockingContactDraft = null;
+  state.selectedAtoms = []; state.selectedAtom = null;
+  updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw();
+  showToast('Required H-bond added');
+  return definition;
+}
+
+async function forgetDockingContact(contactId, method = 'user-forgot-contact') {
+  const reference = state.dockingReference;
+  const definition = reference?.hydrogenBonds.find((entry) => entry.id === contactId);
+  if (!definition) throw new Error(`Unknown contact ${contactId}`);
+  const proposal = state.dockingContactRemapProposals.get(contactId);
+  if (!definition.origin && proposal?.status !== 'unavailable')
+    throw new Error('Only a manually added or currently unavailable contact can be forgotten');
+  reference.hydrogenBonds = reference.hydrogenBonds.filter((entry) => entry.id !== contactId);
+  state.dockingSelectedHbondIds.delete(contactId);
+  state.dockingContactRemaps.delete(contactId);
+  state.dockingContactRemapProposals.delete(contactId);
+  state.dockingResult = null; state.dockingPoseIndex = 0;
+  recordManualDockingContactEvent('forgotten', definition, { method,
+    activeContactIds:[...state.dockingSelectedHbondIds] });
+  await refreshDockingReceptorProvenance();
+  updateDockingUi(); draw(); showToast('Contact hypothesis forgotten');
+  return definition;
+}
+
+function renderManualDockingContactBuilder() {
+  const panel = document.querySelector('#docking-contact-builder');
+  const status = document.querySelector('#docking-contact-builder-status');
+  const choices = document.querySelector('#docking-contact-builder-options');
+  if (!panel || !status || !choices) return;
+  const draft = state.dockingContactDraft;
+  panel.classList.toggle('hidden', !draft);
+  choices.replaceChildren();
+  if (!draft) return;
+  if (!Number.isInteger(draft.ligandAtomIndex)) {
+    status.textContent = 'Pick a ligand donor or acceptor.'; return;
+  }
+  if (!draft.options?.length) {
+    const atom = state.molecule?.atoms[draft.ligandAtomIndex];
+    status.textContent = `${atom?.atomName || atom?.element || 'Ligand atom'} selected · pick a receptor donor or acceptor.`;
+    return;
+  }
+  status.textContent = 'Choose the direction of the H-bond:';
+  draft.options.forEach((option) => {
+    const button = document.createElement('button'); button.type = 'button';
+    button.textContent = option.ligandRole === 'acceptor' ? 'Ligand accepts' : 'Ligand donates';
+    button.addEventListener('click', () => addManualDockingContactThroughAction(
+      draft.ligandAtomIndex, draft.receptorAtomIndex, option.ligandRole));
+    choices.append(button);
+  });
+}
+
+async function addManualDockingContactThroughAction(ligandAtomIndex,
+  receptorAtomIndex, ligandRole = 'auto') {
+  try {
+    await ensureChemistActionAtomIds();
+    return await runChemistUiAction('pose.addContact', {
+      ligandAtomId:state.molecule.atoms[ligandAtomIndex].designAtomId,
+      receptorAtomId:state.molecule.atoms[receptorAtomIndex].designAtomId,
+      ligandRole,
+    }, { reportError:false });
+  } catch (error) { showNotice(error.message); return null; }
+}
+
+async function selectManualDockingContactAtom(atomIndex) {
+  const draft = state.dockingContactDraft;
+  if (!draft) return false;
+  if (state.chemistryTransaction) {
+    cancelManualDockingContact();
+    throw new Error('Finish chemistry before adding a required contact');
+  }
+  const ligandIndices = currentDockingLigandAtomIndices();
+  const ligand = new Set(ligandIndices);
+  if (!Number.isInteger(draft.ligandAtomIndex)) {
+    if (!ligand.has(atomIndex)) throw new Error('Pick a donor or acceptor on the ligand first');
+    if (!hydrogenBondFeaturePerception
+      || !hydrogenBondFeaturePerception(state.molecule, atomIndex, 'acceptor')
+        && !hydrogenBondFeaturePerception(state.molecule, atomIndex, 'donor'))
+      throw new Error('That ligand atom is not currently a hydrogen-bond donor or acceptor');
+    draft.ligandAtomIndex = atomIndex; draft.options = [];
+    state.selectedAtoms = [atomIndex]; state.selectedAtom = atomIndex;
+    updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw();
+    return true;
+  }
+  if (ligand.has(atomIndex)) {
+    draft.ligandAtomIndex = null; draft.receptorAtomIndex = null; draft.options = [];
+    return selectManualDockingContactAtom(atomIndex);
+  }
+  const module = manualHydrogenBondModule || await import('./docking/manual-hbond.mjs');
+  const options = module.manualHydrogenBondOptions({ molecule:state.molecule,
+    ligandAtomIndices:ligandIndices, ligandAtomIndex:draft.ligandAtomIndex,
+    receptorAtomIndex:atomIndex });
+  if (!options.length)
+    throw new Error('Those atoms do not have complementary donor/acceptor roles');
+  draft.receptorAtomIndex = atomIndex;
+  draft.options = options.map((entry) => ({ ligandRole:entry.ligandRole,
+    receptorRole:entry.receptorRole }));
+  state.selectedAtoms = [draft.ligandAtomIndex, atomIndex]; state.selectedAtom = atomIndex;
+  if (draft.options.length === 1) {
+    await addManualDockingContactThroughAction(draft.ligandAtomIndex, atomIndex,
+      draft.options[0].ligandRole);
+  } else {
+    updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw();
+  }
+  return true;
+}
+
+function beginManualDockingContact() {
+  if (!state.dockingReference) return showNotice('Begin analogue design first');
+  if (state.chemistryTransaction) return showNotice('Finish chemistry before adding a contact');
+  state.dockingContactDraft = { startedAt:new Date().toISOString(),
+    ligandAtomIndex:null, receptorAtomIndex:null, options:[] };
+  state.selectedAtoms = []; state.selectedAtom = null;
+  const select = document.querySelector('#build-tool-tabs [data-tool="select"]');
+  if (select && !select.classList.contains('selected')) select.click();
+  updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw();
+}
+
+function renderDockingConstraints() {
+  const container = document.querySelector('#docking-hbond-list');
+  if (!container) return;
+  container.replaceChildren();
+  const definitions = state.dockingReference?.hydrogenBonds || [];
+  if (!definitions.length) {
+    const empty = document.createElement('span');
+    empty.textContent = 'None'; container.append(empty);
+    renderManualDockingContactBuilder(); return;
+  }
+  definitions.forEach((definition) => {
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input'); checkbox.type = 'checkbox';
+    const proposal = state.dockingContactRemapProposals.get(definition.id);
+    const effective = effectiveDockingHydrogenBondDefinition(definition);
+    const pending = Boolean(state.chemistryTransaction);
+    const available = !pending && !proposal && dockingContactAvailable(effective);
+    const selectedCoreUnavailable = !pending && !available && !proposal
+      && state.dockingReference?.mode !== 'pose-propagation';
+    if (selectedCoreUnavailable) state.dockingSelectedHbondIds.delete(definition.id);
+    checkbox.checked = state.dockingSelectedHbondIds.has(definition.id);
+    checkbox.disabled = pending || selectedCoreUnavailable;
+    checkbox.dataset.constraintId = definition.id;
+    checkbox.setAttribute('aria-label', `Require ${definition.label}`);
+    checkbox.addEventListener('change', () => {
+      runChemistUiAction('pose.setContact', {
+        contactId:definition.id, required:checkbox.checked,
+      }).catch(() => updateDockingUi());
+    });
+    const text = document.createElement('span');
+    const mapped = state.dockingContactRemaps.get(definition.id);
+    const featureLabel = dockingContactFeatureLabel(mapped?.effectiveDefinition || definition,
+      proposal);
+    const suffix = pending ? ' · finish chemistry'
+      : proposal?.status === 'ambiguous' ? ` · ${proposal.candidates.length} alternatives`
+      : proposal?.status === 'unavailable' ? ` · ${featureLabel} removed`
+      : mapped ? ` · ${featureLabel} mapped` : available ? ` · ${featureLabel}`
+        : ' · atom removed or changed';
+    text.textContent = `${definition.label}${suffix}`;
+    if (!available) label.classList.add(pending ? 'pending-contact'
+      : proposal?.status === 'ambiguous' ? 'requires-remap' : 'unavailable');
+    label.append(checkbox, text);
+    if (proposal?.status === 'ambiguous') {
+      const select = document.createElement('select');
+      select.className = 'docking-contact-remap-select';
+      select.append(new Option('Refine all alternatives', ''));
+      proposal.candidates.forEach((candidate) => select.append(new Option(candidate.label, candidate.id)));
+      select.addEventListener('change', () => {
+        if (select.value) runChemistUiAction('pose.remapContact', {
+          contactId:definition.id, candidateId:select.value,
+        }).catch(() => updateDockingUi());
+      });
+      label.append(select);
+    }
+    const forgettable = Boolean(definition.origin) || proposal?.status === 'unavailable';
+    if (forgettable && !pending) {
+      const forget = document.createElement('button'); forget.type = 'button';
+      forget.className = 'forget-docking-contact'; forget.textContent = '×';
+      forget.title = 'Forget this contact hypothesis';
+      forget.setAttribute('aria-label', `Forget ${definition.label}`);
+      forget.addEventListener('click', () => runChemistUiAction('pose.forgetContact', {
+        contactId:definition.id,
+      }).catch(() => updateDockingUi()));
+      label.append(forget);
+    }
+    container.append(label);
+  });
+  renderManualDockingContactBuilder();
+}
+
+function updateDockingUi() {
+  const panel = document.querySelector('#docking-workbench');
+  if (!panel) return;
+  const protein = state.structureComponents.some((component) => component.kind === 'protein');
+  const ligand = dockingLigandComponent();
+  const visible = Boolean(state.molecule && protein && ligand);
+  panel.classList.toggle('hidden', !visible);
+  const results = document.querySelector('#docking-results');
+  results?.classList.toggle('hidden', !state.dockingResult || state.mode !== 'build');
+  if (!visible) return;
+  const capture = document.querySelector('#capture-docking-reference');
+  const updateReceptor = document.querySelector('#update-docking-receptor');
+  const clear = document.querySelector('#clear-docking-reference');
+  const modeSelect = document.querySelector('#docking-mode');
+  const cleanupField = document.querySelector('#docking-cleanup-field');
+  const constraints = document.querySelector('#docking-constraints');
+  const runRow = document.querySelector('#docking-run-row');
+  const run = document.querySelector('#run-constrained-docking');
+  if (state.dockingReference) {
+    const referenceMode = state.dockingReference.mode || 'selected-core';
+    const contactCount = state.dockingReference.hydrogenBonds.length;
+    modeSelect.value = referenceMode === 'pose-propagation' ? 'propagate' : 'selected-core';
+    modeSelect.disabled = true;
+    cleanupField.classList.toggle('hidden', referenceMode !== 'pose-propagation');
+    capture.classList.add('hidden'); updateReceptor.classList.remove('hidden');
+    clear.classList.remove('hidden');
+    constraints.classList.remove('hidden'); runRow.classList.remove('hidden');
+    const pendingChemistry = Boolean(state.chemistryTransaction);
+    const unresolvedSelected = unresolvedSelectedDockingContacts();
+    clear.disabled = state.dockingRunning || state.chemistryEditFinishing;
+    updateReceptor.disabled = state.dockingRunning || pendingChemistry
+      || state.chemistryEditFinishing;
+    const addContact = document.querySelector('#add-docking-contact');
+    addContact.disabled = state.dockingRunning || pendingChemistry
+      || state.chemistryEditFinishing;
+    run.disabled = state.dockingRunning || pendingChemistry || unresolvedSelected.length > 0;
+    run.textContent = state.dockingRunning ? 'Refining…'
+      : referenceMode === 'pose-propagation' ? 'Refine edited group' : 'Dock';
+    if (!state.dockingRunning) {
+      const fixedAtoms = referenceMode === 'pose-propagation'
+        ? survivingReferenceHeavyAtoms(state.dockingReference, ligand)
+        : state.dockingReference.ligand.coreAtomIds.length;
+      if (pendingChemistry) setDockingStatus('Finish chemistry before refining the pose.');
+      else if (unresolvedSelected.length) {
+        const unresolved = unresolvedSelected.map((id) =>
+          state.dockingContactRemapProposals.get(id)).filter(Boolean);
+        const onlyUnavailable = unresolved.every((proposal) => proposal.status === 'unavailable');
+        if (onlyUnavailable && unresolved.length === 1) {
+          const definition = state.dockingReference.hydrogenBonds.find((entry) =>
+            entry.id === unresolved[0].id);
+          setDockingStatus(`Uncheck the ${dockingContactFeatureLabel(
+            definition, unresolved[0])} contact to omit it and continue.`);
+        }
+        else if (onlyUnavailable)
+          setDockingStatus('Uncheck unavailable contacts to omit them and continue.');
+        else setDockingStatus('Choose a compatible replacement feature, or uncheck that contact.');
+      }
+      else {
+        const hypothesisCount = [...state.dockingSelectedHbondIds].reduce((sum, id) =>
+          sum + (state.dockingContactRemapProposals.get(id)?.candidates?.length || 0), 0);
+        setDockingStatus(`${fixedAtoms} ${referenceMode === 'pose-propagation' ? 'unchanged atoms fixed' : 'core atoms'} · ${contactCount} contact${contactCount === 1 ? '' : 's'}${hypothesisCount ? ` · ${hypothesisCount} replacement hypotheses` : ''}`);
+      }
+    }
+    renderDockingConstraints();
+  } else {
+    const mode = selectedDockingMode();
+    const core = dockingSelectedCore(ligand);
+    modeSelect.disabled = state.dockingRunning;
+    cleanupField.classList.add('hidden');
+    capture.classList.remove('hidden'); updateReceptor.classList.add('hidden');
+    clear.classList.add('hidden');
+    constraints.classList.add('hidden'); runRow.classList.add('hidden');
+    state.dockingContactDraft = null;
+    capture.textContent = mode === 'pose-propagation' ? 'Begin analogue design' : 'Set selected core';
+    capture.disabled = state.dockingRunning || !state.molecule.parameterization?.system
+      || !ligand || mode === 'selected-core'
+        && (core.length < 3 || state.selectedAtoms.length !== core.length);
+    if (!state.molecule.parameterization?.system) setDockingStatus('Prepare the complex first.');
+    else if (mode === 'pose-propagation')
+      setDockingStatus('Begin analogue design to freeze this prepared ligand pose.');
+    else if (core.length >= 3 && state.selectedAtoms.length === core.length)
+      setDockingStatus(`${core.length} core atoms selected.`);
+    else setDockingStatus('Select at least 3 connected ligand heavy atoms.');
+  }
+}
+
+async function captureCurrentDockingReference() {
+  if (!state.molecule?.parameterization?.system)
+    throw new Error('Prepare and parameterize the complex before setting a docking reference.');
+  const component = dockingLigandComponent();
+  const mode = selectedDockingMode();
+  const core = mode === 'selected-core' ? dockingSelectedCore(component) : [];
+  if (!component) throw new Error('Choose one ligand component first.');
+  if (mode === 'selected-core' && (core.length < 3 || core.length !== state.selectedAtoms.length))
+    throw new Error('Select at least 3 connected heavy atoms from one ligand.');
+  const [{ captureReferenceLigand }, { buildReceptorSite }, adapter] = await Promise.all([
+    import('./docking/reference-core.mjs'), import('./docking/receptor-score.mjs'),
+    import('./docking/browser-adapter.mjs'),
+  ]);
+  const plan = adapter.createLigandPlan(state.molecule, component.atomIndices,
+    `reference-${state.molecule.source?.pdbId || 'complex'}`);
+  const ligand = captureReferenceLigand(state.molecule, component.atomIndices,
+    mode === 'selected-core' ? core : null,
+    `reference-${state.molecule.source?.pdbId || 'complex'}`);
+  const receptorSite = buildReceptorSite(state.molecule, component.atomIndices,
+    state.molecule.parameterization.system, { radiusAngstrom:8 });
+  // Reference constraints are scientific inputs, not drawing primitives.  Do
+  // not let the viewer's display cap silently remove a valid ligand contact in
+  // a hydrated protein with many shorter, unrelated hydrogen bonds.
+  const interactions = nonCovalentInteractions(state.molecule, undefined, undefined,
+    { hydrogenBonds:Infinity });
+  const hydrogenBonds = adapter.captureCrossHydrogenBonds(state.molecule,
+    component.atomIndices, interactions.hydrogenBonds);
+  const receptorProvenanceAtomIndices = [...new Set([
+    ...receptorSite.atoms.map((atom) => atom.globalAtomIndex),
+    ...hydrogenBonds.flatMap((definition) => [definition.donor, definition.hydrogen,
+      definition.acceptor].filter((descriptor) => descriptor.scope === 'receptor')
+      .map((descriptor) => descriptor.sourceGlobalAtomIndex)),
+  ])].sort((first, second) => first - second);
+  state.dockingReference = {
+    schema:'molarium.docking.browser-reference/v1',
+    mode,
+    capturedAt:new Date().toISOString(),
+    moleculeName:state.molecule.name || 'complex',
+    ligandComponentId:component.id,
+    ligand,
+    receptorSite,
+    hydrogenBonds,
+    contactAmendments:[],
+    receptorProvenanceAtomCount:receptorProvenanceAtomIndices.length,
+    receptorInputText:adapter.dockingInputText(state.molecule, receptorProvenanceAtomIndices),
+    referenceLigandInputText:adapter.dockingInputText(state.molecule, plan.globalAtomIndices),
+    forcefield:state.molecule.parameterization.forcefield || null,
+    chargeModel:state.molecule.parameterization.chargeModel || null,
+    sourceSha256:state.molecule.parameterization.sourceSha256 || null,
+  };
+  if (mode === 'pose-propagation')
+    document.querySelector('#docking-edit-cleanup').value = 'preserve-reference';
+  state.dockingSelectedHbondIds = new Set(hydrogenBonds.map((entry) => entry.id));
+  state.dockingContactRemaps = new Map();
+  state.dockingContactRemapProposals = new Map();
+  state.dockingContactDraft = null;
+  state.dockingResult = null; state.dockingPoseIndex = 0;
+  updateDockingUi(); updateOptimizerControls();
+  showToast(mode === 'pose-propagation'
+    ? `Reference pose captured · ${ligand.coreAtomIds.length} heavy atoms`
+    : `Docking reference set · ${core.length}-atom core`);
+  return state.dockingReference;
+}
+
+function refreshCapturedReceptorDescriptors(value, atomsById) {
+  if (Array.isArray(value)) return value.map((entry) =>
+    refreshCapturedReceptorDescriptors(entry, atomsById));
+  if (!value || typeof value !== 'object') return value;
+  const refreshed = Object.fromEntries(Object.entries(value).map(([key, entry]) =>
+    [key, refreshCapturedReceptorDescriptors(entry, atomsById)]));
+  if (value.scope !== 'receptor' || !value.designAtomId) return refreshed;
+  const current = atomsById.get(value.designAtomId);
+  if (!current || current.atom.element !== value.element)
+    throw new Error(`Captured receptor atom ${value.designAtomId} is unavailable`);
+  refreshed.sourceGlobalAtomIndex = current.index;
+  refreshed.point = { x:Number(current.atom.x), y:Number(current.atom.y), z:Number(current.atom.z) };
+  return refreshed;
+}
+
+function capturedReceptorDescriptorIndices(value, output = new Set()) {
+  if (Array.isArray(value)) value.forEach((entry) =>
+    capturedReceptorDescriptorIndices(entry, output));
+  else if (value && typeof value === 'object') {
+    if (value.scope === 'receptor' && Number.isInteger(value.sourceGlobalAtomIndex))
+      output.add(value.sourceGlobalAtomIndex);
+    Object.values(value).forEach((entry) => capturedReceptorDescriptorIndices(entry, output));
+  }
+  return output;
+}
+
+async function updateCurrentDockingReceptorReference() {
+  if (!state.dockingReference) throw new Error('Capture a ligand reference first.');
+  if (state.chemistryTransaction)
+    throw new Error('Finish or discard pending chemistry before updating the receptor reference.');
+  await ensureChemistActionAtomIds();
+  const reference = state.dockingReference;
+  const atomsById = new Map(state.molecule.atoms.map((atom, index) =>
+    [atom.designAtomId, { atom, index }]));
+  const inputCoordinates = Float64Array.from(reference.receptorSite.atoms.flatMap((atom) =>
+    [Number(atom.position.x), Number(atom.position.y), Number(atom.position.z)]));
+  let changedAtoms = 0, maximumDisplacementAngstrom = 0;
+  const siteAtoms = reference.receptorSite.atoms.map((captured) => {
+    const current = atomsById.get(captured.designAtomId);
+    if (!current || current.atom.element !== captured.element)
+      throw new Error(`Captured receptor-site atom ${captured.designAtomId || '(missing identity)'} is unavailable`);
+    const displacement = Math.hypot(current.atom.x - captured.position.x,
+      current.atom.y - captured.position.y, current.atom.z - captured.position.z);
+    if (displacement > 1e-6) changedAtoms += 1;
+    maximumDisplacementAngstrom = Math.max(maximumDisplacementAngstrom, displacement);
+    return { ...captured, globalAtomIndex:current.index,
+      position:{ x:Number(current.atom.x), y:Number(current.atom.y), z:Number(current.atom.z) } };
+  });
+  const outputCoordinates = Float64Array.from(siteAtoms.flatMap((atom) =>
+    [atom.position.x, atom.position.y, atom.position.z]));
+  const inputCoordinateSha256 = await sha256Hex(inputCoordinates.buffer);
+  const outputCoordinateSha256 = await sha256Hex(outputCoordinates.buffer);
+  reference.receptorSite = { ...reference.receptorSite, atoms:siteAtoms };
+  reference.hydrogenBonds = refreshCapturedReceptorDescriptors(
+    reference.hydrogenBonds, atomsById);
+  reference.contactAmendments = refreshCapturedReceptorDescriptors(
+    reference.contactAmendments || [], atomsById);
+  state.dockingContactRemaps = new Map([...state.dockingContactRemaps].map(([id, value]) =>
+    [id, refreshCapturedReceptorDescriptors(value, atomsById)]));
+  state.dockingContactRemapProposals = new Map([...state.dockingContactRemapProposals]
+    .map(([id, value]) => [id, refreshCapturedReceptorDescriptors(value, atomsById)]));
+  const receptorProvenanceAtomIndices = capturedReceptorDescriptorIndices(
+    reference.hydrogenBonds, new Set(siteAtoms.map((atom) => atom.globalAtomIndex)));
+  const adapter = await import('./docking/browser-adapter.mjs');
+  reference.receptorProvenanceAtomCount = receptorProvenanceAtomIndices.size;
+  reference.receptorInputText = adapter.dockingInputText(state.molecule,
+    [...receptorProvenanceAtomIndices].sort((first, second) => first - second));
+  const update = { schema:'molarium.docking-receptor-reference-update/v1',
+    method:'retain-ligand-lineage-refresh-receptor-site',
+    changedAtoms, maximumDisplacementAngstrom,
+    inputCoordinateSha256, outputCoordinateSha256,
+    coordinateInputClass:state.molecule.source?.designRoute?.coordinateInputClass
+      || 'current-visible-complex', updatedAt:new Date().toISOString() };
+  reference.receptorUpdates = [...(reference.receptorUpdates || []), update].slice(-50);
+  state.dockingResult = null; state.dockingPoseIndex = 0;
+  updateDockingUi(); updateOptimizerControls();
+  showToast(`${changedAtoms} receptor-site atom${changedAtoms === 1 ? '' : 's'} accepted; ligand lineage retained`);
+  return structuredClone(update);
+}
+
+function clearDockingReference() {
+  state.dockingReference = null; state.dockingResult = null;
+  state.dockingSelectedHbondIds = new Set(); state.dockingPoseIndex = 0;
+  state.dockingContactRemaps = new Map();
+  state.dockingContactRemapProposals = new Map();
+  state.dockingContactDraft = null;
+  document.querySelector('#docking-edit-cleanup').value = 'preserve-reference';
+  updateDockingUi(); updateOptimizerControls();
+}
+
+function dockingProgress(message) {
+  if (message?.phase) setDockingStatus(message.phase.replace(/…$/, ''));
+}
+
+function indexedNonbonded(system, atomCount) {
+  const byIndex = new Map((system?.nonbonded || []).map((term, ordinal) =>
+    [Number.isInteger(term.index) ? term.index : ordinal, term]));
+  return Array.from({ length:atomCount }, (_, index) => {
+    const term = byIndex.get(index);
+    if (!term) throw new Error(`Ligand parameterization omitted atom ${index + 1}.`);
+    return term;
+  });
+}
+
+function automaticPoseSearchWorkerCount(chainCount, requested = null) {
+  if (typeof Worker === 'undefined') return 1;
+  if (requested != null) {
+    const explicit = Math.round(Number(requested));
+    return Number.isInteger(explicit) ? Math.max(1, Math.min(8, chainCount, explicit)) : 1;
+  }
+  if (chainCount < 16) return 1;
+  const hardwareThreads = Math.max(1, Number(navigator.hardwareConcurrency || 4));
+  return Math.min(8, Math.max(1, hardwareThreads - 1), Math.ceil(chainCount / 8));
+}
+
+function runPoseSearchWorkerPartition(worker, payload, onProgress) {
+  const id = `pose-ensemble-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+  return new Promise((resolve, reject) => {
+    const cleanup = () => {
+      worker.removeEventListener('message', onMessage);
+      worker.removeEventListener('error', onError);
+    };
+    const onMessage = (event) => {
+      const message = event.data;
+      if (message?.id !== id) return;
+      if (message.type === 'progress') { onProgress(message.progress); return; }
+      cleanup();
+      if (message.type === 'result') resolve(message.result);
+      else reject(new Error(message.message || 'Pose-search worker failed'));
+    };
+    const onError = (event) => {
+      cleanup(); reject(new Error(event.message || 'Pose-search worker crashed'));
+    };
+    worker.addEventListener('message', onMessage);
+    worker.addEventListener('error', onError);
+    worker.postMessage({ type:'run', id, payload });
+  });
+}
+
+async function runPoseSearchEnsemble({ positions, scoring, search, seed, seedMultiplier,
+  requestedWorkers = null, onProgress = null } = {}) {
+  const workerCount = automaticPoseSearchWorkerCount(positions.length, requestedWorkers);
+  if (workerCount < 2) return null;
+  const candidates = positions.map((candidatePositions, conformerIndex) => ({
+    conformerIndex, positions:candidatePositions,
+    seed:(seed ^ Math.imul(conformerIndex + 1, seedMultiplier)) >>> 0,
+  }));
+  const partitions = Array.from({ length:workerCount }, () => []);
+  candidates.forEach((candidate, index) => partitions[index % workerCount].push(candidate));
+  const workers = partitions.map(() => new Worker(
+    new URL('./docking/pose-search-worker.mjs', import.meta.url), { type:'module' }));
+  const completed = new Set();
+  const started = performance.now();
+  try {
+    const partitionResults = await Promise.all(workers.map((worker, workerIndex) =>
+      runPoseSearchWorkerPartition(worker, { scoring, search,
+        candidates:partitions[workerIndex] }, (progress) => {
+        if (progress?.type === 'chain-complete') completed.add(progress.conformerIndex);
+        onProgress?.({ ...progress, workerIndex, workerCount,
+          completedChains:completed.size, totalChains:positions.length,
+          ensembleElapsedMs:performance.now() - started });
+      })));
+    const elapsedMs = performance.now() - started;
+    const results = partitionResults.flatMap((partition) => partition.results)
+      .sort((first, second) => first.conformerIndex - second.conformerIndex);
+    if (results.length !== positions.length
+      || results.some((entry, index) => entry.conformerIndex !== index))
+      throw new Error('Pose-search ensemble returned an incomplete candidate set');
+    return { results:results.map((entry) => entry.refinement), workerCount, elapsedMs,
+      chainsPerSecond:elapsedMs > 0 ? results.length * 1000 / elapsedMs : null,
+      backend:'deterministic Web Worker pose-chain ensemble',
+      layout:'worker-partitioned independent chains; results restored to conformer order' };
+  } finally {
+    workers.forEach((worker) => worker.terminate());
+  }
+}
+
+async function runBrowserConstrainedDocking(options = {}) {
+  if (state.dockingRunning) return null;
+  const reference = state.dockingReference;
+  if (!reference) throw new Error('Set a docking core first.');
+  if (state.chemistryTransaction)
+    throw new Error('Finish or discard the pending chemistry changes before refining the pose.');
+  const unresolvedSelected = unresolvedSelectedDockingContacts();
+  if (unresolvedSelected.length)
+    throw new Error('A selected contact has no role-compatible replacement feature; omit it or continue editing.');
+  state.dockingRunning = true; state.dockingResult = null;
+  updateDockingUi(); setDockingStatus('Preparing edited ligand');
+  try {
+    let lastBrowserYieldAt = performance.now();
+    let lastProgressUpdateAt = 0;
+    const yieldDuringDocking = async (progress = {}) => {
+      const now = performance.now();
+      if (now - lastBrowserYieldAt < 40) return;
+      if (now - lastProgressUpdateAt >= 250) {
+        const candidate = Number.isInteger(progress.conformerIndex)
+          ? `pose ${progress.conformerIndex + 1}/${progress.conformerCount}` : 'poses';
+        const stage = progress.stage || 'search';
+        const fraction = Number(progress.total) > 0
+          ? ` · ${Math.min(100, Math.round(Number(progress.completed || 0)
+            / Number(progress.total) * 100))}%` : '';
+        setDockingStatus(`Refining ${candidate} · ${stage}${fraction}`);
+        lastProgressUpdateAt = now;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      lastBrowserYieldAt = performance.now();
+    };
+    const [adapter, referenceCore, receptorScore, workflow, protocolModule, labbookModule,
+      torsionSearch, biasedSearch, constraints, stormmCore, remapModule, featureSeeding,
+      transformedRings, poseScoring] = await Promise.all([
+      import('./docking/browser-adapter.mjs'), import('./docking/reference-core.mjs'),
+      import('./docking/receptor-score.mjs'), import('./docking/workflow.mjs'),
+      import('./docking/protocol.mjs'), import('./docking/labbook.mjs'),
+      import('./docking/torsion-search.mjs'), import('./docking/restraint-biased-search.mjs'),
+      import('./docking/constraints.mjs'),
+      import('./stormm/core.mjs'), import('./docking/contact-remap.mjs'),
+      import('./docking/feature-seeding.mjs'),
+      import('./docking/transformed-ring-region.mjs'),
+      import('./docking/pose-propagation-scoring.mjs'),
+    ]);
+    referenceCore.ensureStableAtomIds(state.molecule,
+      `design-${state.molecule.source?.pdbId || 'complex'}`);
+    const posePropagation = reference.mode === 'pose-propagation';
+    const effectiveHydrogenBonds = (reference.hydrogenBonds || []).map((definition) => {
+      const remap = state.dockingContactRemaps.get(definition.id);
+      if (remap) return remap.effectiveDefinition;
+      const proposal = state.dockingContactRemapProposals.get(definition.id);
+      const base = proposal?.priorEffectiveDefinition || definition;
+      if (!proposal?.candidates?.length) return base;
+      return { ...structuredClone(base), alternatives:proposal.candidates.map((candidate) => ({
+        ...remapModule.applyLigandHydrogenBondFeatureRemap(base, candidate),
+        alternativeId:candidate.id,
+        matchKind:candidate.matchKind || 'role-compatible-bioisostere',
+      })) };
+    });
+    const activeProtocol = posePropagation
+      ? protocolModule.MOLARIUM_POSE_PROPAGATION_PROTOCOL
+      : protocolModule.MOLARIUM_CONSTRAINT_DOCK_PROTOCOL;
+    const ligandAtomIndices = currentDockingLigandAtomIndices(reference);
+    if (!ligandAtomIndices.length) throw new Error('The edited ligand is no longer a separate molecular component.');
+    const plan = adapter.createLigandPlan(state.molecule, ligandAtomIndices,
+      `design-${state.molecule.source?.pdbId || 'complex'}`);
+    const receptorIntegrity = receptorScore.receptorSiteIntegrity(reference.receptorSite, state.molecule);
+    if (!receptorIntegrity.valid)
+      throw new Error('The captured receptor site changed; reset the docking reference.');
+    const contactParticipantIntegrity = adapter.capturedReceptorContactIntegrity(
+      effectiveHydrogenBonds, state.molecule);
+    if (!contactParticipantIntegrity.valid)
+      throw new Error('A fixed receptor or water contact participant changed; reset the docking reference.');
+    const currentLigandInputText = adapter.dockingInputText(state.molecule, plan.globalAtomIndices);
+    const currentLigandTopologyText = adapter.dockingTopologyText(state.molecule, plan.globalAtomIndices);
+    const releasedReferenceAtomIds = posePropagation
+      ? transformedRings.cumulativeReleasedAtomIds(state.molecule) : [];
+    let coreMap = posePropagation
+      ? referenceCore.mapSurvivingReferenceAtoms(reference.ligand, plan.molecule.atoms,
+        { releasedAtomIds:releasedReferenceAtomIds })
+      : referenceCore.mapReferenceCore(reference.ligand, plan.molecule.atoms);
+    if (posePropagation && !coreMap.usable) throw new Error(coreMap.reason);
+    if (!posePropagation && !coreMap.complete) throw new Error(`The conserved core is incomplete (${coreMap.missingAtomIds.length} atom${coreMap.missingAtomIds.length === 1 ? '' : 's'} missing).`);
+    const contactAvailability = adapter.capturedHydrogenBondAvailability(effectiveHydrogenBonds,
+      plan.molecule.atoms);
+    const availableContactIds = new Set(contactAvailability.filter((entry) => entry.available)
+      .map((entry) => entry.id));
+    const unavailableSelected = [...state.dockingSelectedHbondIds]
+      .filter((id) => !availableContactIds.has(id));
+    if (unavailableSelected.length)
+      throw new Error('A selected required contact no longer has a compatible ligand feature.');
+    const selectedHbondIds = [...state.dockingSelectedHbondIds];
+    const mappedHydrogenBonds = adapter.mapCapturedHydrogenBonds(effectiveHydrogenBonds,
+      plan.molecule.atoms, selectedHbondIds);
+    if (!mappedHydrogenBonds.complete) throw new Error('The selected H-bond mapping is inconsistent.');
+    const omittedHydrogenBonds = effectiveHydrogenBonds.flatMap((definition) => {
+      const availability = contactAvailability.find((entry) => entry.id === definition.id);
+      if (selectedHbondIds.includes(definition.id)) return [];
+      return [{ id:definition.id, label:definition.label,
+        reason:availability?.available ? 'user-disabled'
+          : posePropagation ? 'ligand-feature-unavailable' : 'ligand-atom-removed',
+        missingAtomIds:availability?.missingAtomIds || [],
+        incompatibleAtomIds:availability?.incompatibleAtomIds || [] }];
+    });
+
+    const requestedConformers = Math.max(1, Math.min(64, Math.round(Number(options.conformerCount
+      ?? document.querySelector('#docking-conformer-count').value))));
+    const seed = Number(options.seed ?? activeProtocol.sampling.seed);
+    let coreAtomIndices = coreMap.atomPairs.map((pair) => pair[1]);
+    let conformerResult, allConformers, valid, minimumRdkitEnergy = null;
+    let featureSeedResult = null;
+    if (posePropagation) {
+      setDockingStatus(`Propagating ${coreMap.atomPairs.length} unchanged atoms`);
+      const editedPositions = Float64Array.from(plan.molecule.atoms.flatMap((atom) =>
+        [atom.x, atom.y, atom.z]));
+      const graphEdit = state.molecule.source?.posePropagationGraphEdit || {};
+      const localIndexById = new Map(plan.molecule.atoms.map((atom, index) =>
+        [atom.designAtomId, index]));
+      const editedAtomIndices = [...new Set([
+        ...coreMap.addedAtomIds,
+        ...Array.from(graphEdit.addedAtomIds || []),
+      ].map((id) => localIndexById.get(id)).filter(Number.isInteger))];
+      const affectedAtomIndices = [...new Set(Array.from(graphEdit.affectedCoreAtomIds || [])
+        .map((id) => localIndexById.get(id)).filter(Number.isInteger))];
+      featureSeedResult = featureSeeding.featureGuidedPoseSeeds({ molecule:plan.molecule,
+        initialPositions:editedPositions, coreAtomIndices,
+        editedAtomIndices, affectedAtomIndices,
+        hydrogenBondConstraints:mappedHydrogenBonds.constraints,
+        count:requestedConformers,
+        featureSeedingProtocol:options.featureSeedingProtocol ?? 'v4' });
+      if (featureSeedResult.releasedCoreAtomIndices.length) {
+        const releasedProductIndices = new Set(featureSeedResult.releasedCoreAtomIndices);
+        const releasedEnvironmentAtomIds = featureSeedResult.releasedCoreAtomIndices
+          .map((index) => plan.molecule.atoms[index]?.designAtomId).filter(Boolean);
+        const releasedIdSet = new Set(releasedEnvironmentAtomIds);
+        coreMap = { ...coreMap,
+          atomPairs:coreMap.atomPairs.filter((pair) => !releasedProductIndices.has(pair[1])),
+          mappedAtomIds:coreMap.mappedAtomIds.filter((id) => !releasedIdSet.has(id)),
+          releasedReferenceAtomIds:[...new Set([
+            ...(coreMap.releasedReferenceAtomIds || []), ...releasedEnvironmentAtomIds,
+          ])],
+          environmentReleasedAtomIds:releasedEnvironmentAtomIds };
+        if (coreMap.atomPairs.length < 3)
+          throw new Error('Affected-rotor sampling released too much of the inherited pose');
+        coreAtomIndices = coreMap.atomPairs.map((pair) => pair[1]);
+      }
+      allConformers = featureSeedResult.seeds.map((entry) => entry.positions);
+      valid = featureSeedResult.seeds.map(({ positions, audit }) => ({ positions, energy:null,
+        forcefield:featureSeedResult.method, featureSeedAudit:audit }));
+      conformerResult = { backend:'Molarium stable edit lineage + captured-feature seeding',
+        rdkitVersion:null, preparationForcefield:featureSeedResult.method };
+    } else {
+      setDockingStatus(`Generating ${requestedConformers} conformers`);
+      conformerResult = await runWorkerJob('rdkit', 'conformers', plan.molecule,
+        dockingProgress, { conformerCount:requestedConformers, conformerSeed:seed,
+          conformerPruneRms:0.35, conformerMinimizeIterations:100, returnEnergies:true });
+      allConformers = adapter.unpackConformerStack(conformerResult.conformers,
+        plan.molecule.atoms.length);
+      if (!Array.isArray(conformerResult.conformerEnergies)
+        || conformerResult.conformerEnergies.length !== allConformers.length)
+        throw new Error('RDKit returned no auditable conformer strain energies.');
+      valid = allConformers.flatMap((positions, index) => {
+        const energy = Number(conformerResult.conformerEnergies[index]);
+        return Number.isFinite(energy) ? [{ positions, energy,
+          forcefield:conformerResult.conformerForcefields?.[index]
+            || conformerResult.preparationForcefield }] : [];
+      });
+      if (!valid.length) throw new Error('RDKit could not score any generated ligand conformer.');
+      minimumRdkitEnergy = Math.min(...valid.map((entry) => entry.energy));
+    }
+
+    setDockingStatus('Assigning edited-ligand OpenFF terms');
+    const ligandParameters = await runOpenMMJob('parameters', plan.molecule, dockingProgress);
+    const ligandNonbonded = indexedNonbonded(ligandParameters.system, plan.molecule.atoms.length);
+    const ligandTopology = stormmCore.buildParameterizedSystem(plan.molecule, ligandParameters);
+    const ligandInternalEnergy = (positions) => stormmCore.cpuEnergies(ligandTopology,
+      torsionSearch.packPositions4(positions)).total;
+    const fixedCoreStarts = valid.map((entry) => {
+      const snapped = constraints.snapCorePositions(reference.ligand.positions,
+        constraints.applyCoreTransform(entry.positions, constraints.fittedCoreTransform(
+          reference.ligand.positions, entry.positions, coreMap.atomPairs)), coreMap.atomPairs);
+      return posePropagation
+        ? constraints.restoreCapturedLigandDonorHydrogens(snapped,
+          mappedHydrogenBonds.constraints).positions
+        : snapped;
+    });
+    const fixedCoreStartEnergies = fixedCoreStarts.map(ligandInternalEnergy);
+    const fixedCoreStartHydrogenBonds = fixedCoreStarts.map((positions) =>
+      workflow.evaluatePoseHydrogenBonds(mappedHydrogenBonds.constraints, positions,
+        activeProtocol.hydrogenBondConstraint));
+    if (fixedCoreStartEnergies.some((energy) => !Number.isFinite(energy)))
+      throw new Error('OpenFF Sage returned a non-finite fixed-core ligand energy.');
+    const minimumSageStartEnergy = Math.min(...fixedCoreStartEnergies);
+    const generationProtocol = activeProtocol.restraintBiasedGeneration
+      || biasedSearch.RESTRAINT_BIASED_SEARCH_DEFAULTS;
+    const captureMaximumRelativeLigandStrainKcalMol = Number(
+      generationProtocol.captureMaximumRelativeLigandStrainKcalMol ?? 100);
+    const captureMaximumAdditionalStericClashes = Number(
+      generationProtocol.captureMaximumAdditionalStericClashes ?? 2);
+    const captureMaximumAdditionalLennardJonesKcalMol = Number(
+      generationProtocol.captureMaximumAdditionalLennardJonesKcalMol ?? 100);
+    const rawReceptorScoreFor = (positions, sageInternalEnergyKcalMol) =>
+      receptorScore.scoreReceptorLigand(reference.receptorSite, positions, ligandNonbonded, {
+          relativeDielectric:Number(activeProtocol.scoring.relativeDielectric ?? 4),
+          cutoffAngstrom:Number(activeProtocol.scoring.pairCutoffAngstrom ?? 8),
+          ligandStrainKcalMol:sageInternalEnergyKcalMol - minimumSageStartEnergy,
+          ligandStrainIdentity:'relative vacuum OpenFF Sage 2.1 intramolecular energy' });
+    const fixedCoreStartPhysical = fixedCoreStarts.map((positions, index) =>
+      rawReceptorScoreFor(positions, fixedCoreStartEnergies[index]));
+    const interactionReferenceKcalMol = Math.min(...fixedCoreStartPhysical
+      .map((entry) => Number(entry.interactionKcalMol)));
+    if (!Number.isFinite(interactionReferenceKcalMol))
+      throw new Error('The inherited fixed-scaffold interaction reference is non-finite.');
+    const minimumFixedCoreStartStericClashes = Math.min(...fixedCoreStartPhysical
+      .map((entry) => Number(entry.stericClashes)));
+    const minimumFixedCoreStartLennardJonesKcalMol = Math.min(...fixedCoreStartPhysical
+      .map((entry) => Number(entry.lennardJonesKcalMol)));
+    const poseScoringContext = {
+      molecule:plan.molecule,
+      ligandParameters,
+      receptorSite:reference.receptorSite,
+      referenceLigandPositions:reference.ligand.positions,
+      coreAtomPairs:coreMap.atomPairs,
+      coreAtomIndices,
+      hydrogenBondConstraints:mappedHydrogenBonds.constraints,
+      protocol:activeProtocol,
+      minimumSageStartEnergy,
+      interactionReferenceKcalMol,
+      minimumFixedCoreStartStericClashes,
+      minimumFixedCoreStartLennardJonesKcalMol,
+      captureMaximumRelativeLigandStrainKcalMol,
+      captureMaximumAdditionalStericClashes,
+      captureMaximumAdditionalLennardJonesKcalMol,
+    };
+    const sharedPoseScoring = poseScoring.createPosePropagationScoring(poseScoringContext);
+    const { scorePositions, scoreRestraintCapturePositions } = sharedPoseScoring;
+    const torsionProtocol = activeProtocol.torsionMonteCarlo || torsionSearch.TORSION_SEARCH_DEFAULTS;
+    const torsionSteps = Math.max(0, Math.min(512, Math.round(Number(options.torsionSteps
+      ?? generationProtocol.physicalRefinementStepsDefault
+      ?? generationProtocol.stepsDefault ?? torsionProtocol.stepsDefault
+      ?? activeProtocol.sampling.torsionMonteCarloSteps ?? 96))));
+    const captureSteps = Math.max(0, Math.min(512, Math.round(Number(options.captureSteps
+      ?? generationProtocol.captureStepsDefault ?? torsionSteps))));
+    const capturePolishSweeps = Math.max(0, Math.min(8,
+      Math.round(Number(options.capturePolishSweeps
+        ?? generationProtocol.capturePolishSweeps ?? 3))));
+    const fixedRelaxProtocol = activeProtocol.fixedScaffoldRelaxation || {};
+    const fixedRelaxIterations = posePropagation ? Math.max(0, Math.min(250,
+      Math.round(Number(options.fixedRelaxIterations
+        ?? fixedRelaxProtocol.iterationsDefault ?? 60)))) : 0;
+    const startedAt = new Date().toISOString();
+    const inputs = await labbookModule.inputProvenance({
+      receptorText:reference.receptorInputText,
+      ligandText:currentLigandInputText,
+      receptorLabel:`${reference.moleculeName} · rigid 8 Å site and fixed contact participants`,
+      ligandLabel:plan.molecule.name,
+      receptorAtoms:reference.receptorProvenanceAtomCount || reference.receptorSite.atoms.length,
+      ligandAtoms:plan.molecule.atoms.length,
+    });
+    const referenceLigandSha256 = await labbookModule.sha256Text(reference.referenceLigandInputText);
+    const runId=`${posePropagation ? 'pose-propagation' : 'constraint-dock'}-${Date.now().toString(36)}-${seed}`;
+    const labbook = await labbookModule.createLabbook({ runId, startedAt, inputs,
+      protocol:activeProtocol,
+      selections:{
+        referenceLigandSha256,
+        coreAtomPairs:coreMap.atomPairs,
+        coreAtomIds:posePropagation ? [...coreMap.mappedAtomIds] : [...reference.ligand.coreAtomIds],
+        atomLineage:posePropagation ? {
+          mapping:'stable designAtomId from recorded Molarium graph edits',
+          inheritedAtomIds:[...coreMap.mappedAtomIds],
+          addedAtomIds:[...coreMap.addedAtomIds],
+          removedAtomIds:[...coreMap.removedAtomIds],
+          changedElementAtomIds:[...coreMap.changedElementAtomIds],
+          releasedReferenceAtomIds:[...(coreMap.releasedReferenceAtomIds || [])],
+        } : null,
+        editPreparation:posePropagation ? {
+          selectedCleanupMode:selectedDockingEditCleanup(),
+          interactivePolishHistory:structuredClone(
+            state.molecule.source?.interactivePolishHistory || []),
+        } : null,
+        hydrogenBonds:mappedHydrogenBonds.constraints.map((entry) => ({
+          id:entry.id, label:entry.label, required:entry.required, receptorRole:entry.receptorRole,
+          alternativeIds:(entry.alternatives || []).map((alternative) => alternative.id),
+          origin:structuredClone(reference.hydrogenBonds
+            .find((definition) => definition.id === entry.id)?.origin || null),
+          ligandFeatureRemap:structuredClone(
+            state.dockingContactRemaps.get(entry.id)?.audit || null),
+        })),
+        contactAmendments:structuredClone(reference.contactAmendments || []),
+        droppedHydrogenBondAlternatives:structuredClone(
+          mappedHydrogenBonds.droppedAlternatives || []),
+        ligandFeatureRemaps:[...state.dockingContactRemaps.values()]
+          .flatMap((entry) => structuredClone(entry.chain || [entry.audit])),
+        fixedReceptorContactParticipantIds:[...new Set(reference.hydrogenBonds.flatMap((definition) =>
+          [definition.donor, definition.hydrogen, definition.acceptor]
+            .filter((descriptor) => descriptor.scope === 'receptor')
+            .map((descriptor) => descriptor.designAtomId)))],
+        omittedHydrogenBonds,
+      },
+      environment:{ execution:'browser-local', networkUsed:false, webgpuAvailable:Boolean(navigator.gpu),
+        userAgent:navigator.userAgent, deterministicSeed:seed,
+        receptorForcefield:reference.forcefield, receptorChargeModel:reference.chargeModel,
+        receptorSourceSha256:reference.sourceSha256,
+        ligandForcefield:ligandParameters.forcefield, ligandChargeModel:ligandParameters.chargeModel,
+        ligandSourceSha256:ligandParameters.sourceSha256,
+        conformerBackend:conformerResult.backend, rdkitVersion:conformerResult.rdkitVersion,
+        conformerPreparationForcefields:[...new Set(valid.map((entry) => entry.forcefield).filter(Boolean))],
+      },
+      application:{ version:'1.0.0', feature:activeProtocol.name },
+    });
+    if (state.dockingContactRemaps.size || state.dockingContactRemapProposals.size)
+      await labbookModule.appendLabbookEvent(labbook, { at:new Date().toISOString(),
+        stage:'captured-contact-feature-mapping', status:'recorded', details:{
+          algorithm:'role-compatible-edit-boundary/v3',
+          policy:'all donor/acceptor-role-compatible features on the connected edit boundary are hypotheses; multiple hypotheses use an any-of restraint and physical/strain ranking; geometry never establishes eligibility',
+          applied:[...state.dockingContactRemaps.values()]
+            .flatMap((entry) => structuredClone(entry.chain || [entry.audit])),
+          unresolved:[...state.dockingContactRemapProposals.values()].map((entry) => ({
+            contactId:entry.id, status:entry.status, ligandRole:entry.ligandRole,
+            originalFeatureSignature:entry.originalFeatureSignature,
+            boundaryAnchorIds:[...(entry.boundaryAnchorIds || [])],
+            cumulativeEditRegionAtomIds:[...(entry.cumulativeEditRegionAtomIds || [])],
+            editLineage:structuredClone(entry.editLineage || []),
+            candidateIds:entry.candidates.map((candidate) => candidate.id),
+          })),
+        } });
+    if (reference.contactAmendments?.length)
+      await labbookModule.appendLabbookEvent(labbook, { at:new Date().toISOString(),
+        stage:'contact-hypothesis-amendments', status:'recorded', details:{
+          policy:'manual contact hypotheses use two visible atom selections, inferred complementary roles, and deterministic feature-guided pose seeding',
+          amendments:structuredClone(reference.contactAmendments),
+        } });
+    await labbookModule.appendLabbookEvent(labbook, { at:new Date().toISOString(),
+      stage:'method-configuration', status:'locked', details:{
+        receptorModel:'rigid', receptorSiteRadiusAngstrom:8,
+        relativeDielectric:Number(activeProtocol.scoring.relativeDielectric ?? 4),
+        combiningRules:'Lorentz-Berthelot',
+        crossTerms:['Lennard-Jones', 'Coulomb'],
+        ligandStrain:'relative vacuum OpenFF Sage 2.1 intramolecular energy from lowest fixed-core starting seed',
+        hardCore:posePropagation
+          ? 'surviving reference heavy atoms outside registered transformed regions fixed exactly by stable edit lineage'
+          : 'user-selected matched core atoms snapped exactly to reference coordinates',
+        editCleanup:posePropagation ? {
+          selected:selectedDockingEditCleanup(),
+          preserveReference:'fix every inherited heavy atom; move only new atoms and hydrogens',
+          freeLocal:'move the edited two-bond neighborhood and each touched fused ring as a unit',
+        } : null,
+        restraintBiasedGeneration:posePropagation ? {
+          method:biasedSearch.RESTRAINT_BIASED_SEARCH_DEFAULTS.method,
+          captureSteps, capturePolishSweeps, physicalRefinementSteps:torsionSteps,
+          temperatureStartKelvin:Number(generationProtocol.temperatureStartKelvin),
+          temperatureEndKelvin:Number(generationProtocol.temperatureEndKelvin),
+          torsionAnglesDegrees:[...generationProtocol.torsionAnglesDegrees],
+          ringCrankshaftAnglesDegrees:[...generationProtocol.ringCrankshaftAnglesDegrees],
+          localLineFractions:[...generationProtocol.localLineFractions],
+          captureObjective:'selected required-contact flat-bottom penalties plus registered chemical-sanity gate excess penalties',
+          captureMaximumRelativeLigandStrainKcalMol,
+          captureMaximumAdditionalStericClashes,
+          captureMaximumAdditionalLennardJonesKcalMol,
+          minimumFixedCoreStartStericClashes,
+          minimumFixedCoreStartLennardJonesKcalMol,
+          physicalStageGate:'starts only after contact capture and chemical-sanity validation; feasible-to-infeasible moves are rejected',
+        } : { method:torsionSearch.TORSION_SEARCH_DEFAULTS.method, steps:torsionSteps,
+          temperatureStartKelvin:Number(torsionProtocol.temperatureStartKelvin),
+          temperatureEndKelvin:Number(torsionProtocol.temperatureEndKelvin),
+          proposalAnglesDegrees:[...torsionProtocol.proposalAnglesDegrees] },
+        fixedScaffoldRelaxation:posePropagation ? {
+          engine:'OpenMM WebAssembly', forcefield:'OpenFF Sage 2.1',
+          iterations:fixedRelaxIterations, fixedHeavyAtoms:coreAtomIndices.length,
+          stepScale:Number(fixedRelaxProtocol.stepScale ?? 1e-4),
+          maximumDisplacementAngstromPerIteration:Number(
+            fixedRelaxProtocol.maximumDisplacementAngstromPerIteration ?? 0.01),
+          environment:'vacuum', constraintMode:'none', receptorIncluded:false,
+          acceptance:'retain only if constraint feasibility is not lost and the complete ranking objective improves',
+        } : null,
+        featureGuidedSeeding:posePropagation && featureSeedResult ? {
+          method:featureSeedResult.method,
+          requested:featureSeedResult.requestedCount,
+          uniqueSeeds:featureSeedResult.uniqueSeedCount,
+          targetVariants:featureSeedResult.targetVariantCount,
+          untargetedEditRotors:featureSeedResult.untargetedRotorCount,
+          affectedExistingRotors:featureSeedResult.affectedRotorCount,
+          affectedRotorReleases:featureSeedResult.releasedCoreAtomIndices.length,
+          editRegionAnglesDegrees:featureSeedResult.editRegionAnglesDegrees,
+          limitation:featureSeedResult.limitation,
+        } : null,
+        feasibilityRule:'all required constraints rank before energy',
+        omitted:['receptor relaxation', 'receptor grid', 'desolvation', 'entropy',
+          'macrocycle-specific moves', 'binding free energy'],
+      } });
+    await labbookModule.appendLabbookEvent(labbook, { at:new Date().toISOString(),
+      stage:'method-decision', status:'recorded', details:{
+        selected:posePropagation
+          ? 'reference-pose propagation through recorded graph edits, restraint-biased internal-coordinate generation, and fixed-scaffold Sage relaxation'
+          : 'independent fixed-core torsion Monte Carlo under the active receptor and restraint score',
+        rationale:[
+          posePropagation
+            ? 'Recorded graph edits provide exact atom correspondence, so an inferred or manually selected core is unnecessary.'
+            : 'Rigid core alignment alone does not optimize ligand torsions against the receptor.',
+          'Edit-lineage atom identity gives an exact, auditable analogue mapping.',
+          'Chemically transformed rings are released as complete units while their unchanged external scaffold boundary remains fixed.',
+          ...(posePropagation && featureSeedResult ? [featureSeedResult.method.endsWith('/v4')
+            ? 'A pre-existing non-ring single bond is resampled when added, deleted, or substituted atoms alter its local graph environment; conjugated amide-like and ring bonds remain fixed.'
+            : 'Pinned feature-seeding protocol v3 samples untargeted edit-region torsions but leaves affected pre-existing rotors fixed.'] : []),
+          'Only graph branches containing no fixed scaffold atom are eligible to rotate; local ring moves touching a perceived stereocenter, ring multiple-bond atom, carbonyl, or lactam geometry are excluded.',
+          'A pharmacophore-capture stage drives every torsion and safe ring proposal before ordinary physical energy is allowed to act; only registered chemical-sanity gates accompany the restraint objective.',
+          'A captured contact is not called feasible when its ligand strain exceeds 100 kcal/mol above the best exact-core start or it introduces more than two additional steric-clash diagnostics.',
+          'Required contacts are explicit feasible states and cannot be traded away for a lower energy.',
+          'A deleted ligand contact atom can transfer to any complementary donor or acceptor created at the same recorded edit boundary; receptor participants remain immutable and physical refinement ranks the hypotheses.',
+          ...(posePropagation ? [
+            'Only capture-feasible poses enter physical search and fixed-scaffold OpenFF relaxation; a failed capture remains an explicit negative result.',
+            'Fixed-scaffold OpenFF relaxation repairs local valence geometry without moving inherited heavy atoms.',
+            'A relaxed pose is rejected if it loses contact feasibility or worsens the complete receptor-aware objective.',
+          ] : []),
+        ],
+        relatedMethods:[
+          ...(posePropagation ? [
+            { method:'RBFE practical guidance', use:'published protocol basis',
+              adopted:'reference common-region placement plus sampling of modified substituents' },
+            { method:'Ohadi et al. FEP input-pose benchmark', use:'published empirical motivation',
+              adopted:'MCS/reference information and explicit H-bond constraints' },
+            { method:'TEMPL', use:'published template-pose baseline',
+              adopted:'hard reference coordinates for mapped atoms',
+              notAdopted:'template database search and shape-only ranking' },
+          ] : []),
+          { method:'Rowan openconf analogue mode', use:'method inspiration only',
+            adopted:'free terminal rotors outside a fixed core plus exact post-search core snap',
+            notAdopted:'openconf code, CrystalFF library, MMFF minimization, ring and macrocycle moves' },
+          { method:'AutoPose', use:'related congeneric pose-construction alternative',
+            notAdopted:'R-group decomposition, Free-Wilson model and TMD RBFE workflow' },
+          { method:'Glide and ICM', use:'published staged/internal-coordinate docking lineage',
+            notAdopted:'commercial grids, scores, defaults, code, or ICM Biased Probability Monte Carlo kernel' },
+        ],
+        omittedReferenceContacts:omittedHydrogenBonds,
+      } });
+    await labbookModule.appendLabbookEvent(labbook, { at:new Date().toISOString(),
+      stage:'ligand-preparation', status:'completed', details:{
+        requestedConformers, generatedConformers:allConformers.length,
+        finiteScoredConformers:valid.length, seed,
+        conformerBackend:conformerResult.backend, rdkitVersion:conformerResult.rdkitVersion,
+        conformerForcefields:[...new Set(valid.map((entry) => entry.forcefield).filter(Boolean))],
+        featureGuidedSeeding:featureSeedResult ? {
+          method:featureSeedResult.method,
+          requested:featureSeedResult.requestedCount,
+          uniqueSeeds:featureSeedResult.uniqueSeedCount,
+          targetVariants:featureSeedResult.targetVariantCount,
+          untargetedEditRotors:featureSeedResult.untargetedRotorCount,
+          affectedExistingRotors:featureSeedResult.affectedRotorCount,
+          affectedRotorReleases:featureSeedResult.releasedCoreAtomIndices.length,
+          editRegionAnglesDegrees:featureSeedResult.editRegionAnglesDegrees,
+          limitation:featureSeedResult.limitation,
+          seeds:valid.map((entry, index) => ({ conformerIndex:index,
+            ...structuredClone(entry.featureSeedAudit),
+            hydrogenBonds:fixedCoreStartHydrogenBonds[index].map((constraint) => ({
+              id:constraint.id,
+              selectedAlternativeId:constraint.selectedAlternativeId || null,
+              satisfied:constraint.satisfied,
+              donorAcceptorDistanceAngstrom:constraint.donorAcceptorDistanceAngstrom,
+              hydrogenAcceptorDistanceAngstrom:constraint.hydrogenAcceptorDistanceAngstrom,
+              dhaAngleDegrees:constraint.dhaAngleDegrees,
+              penaltyKcalMol:constraint.penaltyKcalMol,
+            })),
+          })),
+        } : null,
+        minimumConformerEnergyKcalMol:minimumRdkitEnergy,
+        minimumFixedCoreSageEnergyKcalMol:minimumSageStartEnergy,
+        minimumFixedCoreStartStericClashes,
+        ligandForcefield:ligandParameters.forcefield,
+        ligandChargeModel:ligandParameters.chargeModel,
+        ligandParameterSourceSha256:ligandParameters.sourceSha256,
+    } });
+    setDockingStatus(`${posePropagation ? 'Generating' : 'Optimizing'} ${valid.length} restrained poses`);
+    let refinementAudit = [];
+    let poseSearchExecution = {
+      backend:'browser main-thread serial search', workerCount:1,
+      chainCount:valid.length, elapsedMs:null, chainsPerSecond:null,
+      deterministicOrdering:'conformer index', fallbackReason:null,
+    };
+    const seedMultiplier = Number(activeProtocol.candidateInitialization
+      ?.candidateSeedXorMultiplierUint32 ?? 0x9e3779b9) >>> 0;
+    const runPoseGeneration = (positions, conformerIndex) => {
+      setDockingStatus(`Generating restrained pose ${conformerIndex + 1}/${valid.length}`);
+      const yieldControl = (progress) => yieldDuringDocking({ ...progress,
+        conformerIndex, conformerCount:valid.length });
+      const conformerSeed = (seed ^ Math.imul(conformerIndex + 1, seedMultiplier)) >>> 0;
+      if (posePropagation) return biasedSearch.generatePoseByRestraintBiasedSearch({
+        molecule:plan.molecule, initialPositions:positions, coreAtomIndices,
+        restraintScorePose:scoreRestraintCapturePositions, physicalScorePose:scorePositions,
+        random:stormmCore.mulberry32(conformerSeed), seed:conformerSeed,
+        captureSteps, capturePolishSweeps, refinementSteps:torsionSteps,
+        temperatureStartKelvin:Number(generationProtocol.temperatureStartKelvin),
+        temperatureEndKelvin:Number(generationProtocol.temperatureEndKelvin),
+        torsionAnglesDegrees:[...generationProtocol.torsionAnglesDegrees],
+        ringCrankshaftAnglesDegrees:[...generationProtocol.ringCrankshaftAnglesDegrees],
+        localLineFractions:[...generationProtocol.localLineFractions], yieldControl });
+      return torsionSearch.refinePoseByTorsionMonteCarlo({ molecule:plan.molecule,
+        initialPositions:positions, coreAtomIndices, scorePose:scorePositions,
+        random:stormmCore.mulberry32(conformerSeed), seed:conformerSeed, steps:torsionSteps,
+        temperatureStartKelvin:Number(torsionProtocol.temperatureStartKelvin),
+        temperatureEndKelvin:Number(torsionProtocol.temperatureEndKelvin),
+        proposalAnglesDegrees:[...torsionProtocol.proposalAnglesDegrees], yieldControl });
+    };
+    const refinePropagatedBatch = async ({ positions }) => {
+      let torsionRuns = [];
+      try {
+        let lastEnsembleStatusAt = 0;
+        const ensemble = await runPoseSearchEnsemble({ positions,
+          scoring:poseScoringContext,
+          search:{ captureSteps, capturePolishSweeps, refinementSteps:torsionSteps,
+            temperatureStartKelvin:Number(generationProtocol.temperatureStartKelvin),
+            temperatureEndKelvin:Number(generationProtocol.temperatureEndKelvin),
+            torsionAnglesDegrees:[...generationProtocol.torsionAnglesDegrees],
+            ringCrankshaftAnglesDegrees:[...generationProtocol.ringCrankshaftAnglesDegrees],
+            localLineFractions:[...generationProtocol.localLineFractions] },
+          seed, seedMultiplier, requestedWorkers:options.poseSearchWorkers,
+          onProgress:(progress) => {
+            const now = performance.now();
+            if (progress.type === 'chain-progress' && now - lastEnsembleStatusAt >= 250) {
+              const stage = progress.stage || 'search';
+              const fraction = Number(progress.total) > 0
+                ? ` · ${Math.min(100, Math.round(Number(progress.completed || 0)
+                  / Number(progress.total) * 100))}%` : '';
+              setDockingStatus(`Refining pose ${progress.conformerIndex + 1}/${progress.totalChains} · ${stage}${fraction} · ${progress.workerCount}-worker ensemble`);
+              lastEnsembleStatusAt = now;
+              return;
+            }
+            if (progress.type !== 'chain-complete') return;
+            const elapsedSeconds = Math.max(0.001, progress.ensembleElapsedMs / 1000);
+            const rate = progress.completedChains / elapsedSeconds;
+            setDockingStatus(`Pose ensemble · ${progress.completedChains}/${progress.totalChains} chains · ${progress.workerCount} workers · ${rate.toFixed(1)} chains/s`);
+            lastEnsembleStatusAt = now;
+          } });
+        if (ensemble) {
+          torsionRuns = ensemble.results;
+          poseSearchExecution = { backend:ensemble.backend,
+            layout:ensemble.layout, workerCount:ensemble.workerCount,
+            chainCount:positions.length, elapsedMs:ensemble.elapsedMs,
+            chainsPerSecond:ensemble.chainsPerSecond,
+            deterministicOrdering:'independent per-chain seed; results restored to conformer index',
+            fallbackReason:null };
+          setDockingStatus(`Pose ensemble complete · ${positions.length} chains · ${ensemble.workerCount} workers · ${ensemble.chainsPerSecond.toFixed(1)} chains/s`);
+        }
+      } catch (error) {
+        poseSearchExecution.fallbackReason = error instanceof Error ? error.message : String(error);
+        setDockingStatus('Pose workers unavailable · continuing deterministic serial search');
+      }
+      if (!torsionRuns.length) {
+        const serialStarted = performance.now();
+        for (let index = 0; index < positions.length; index++)
+          torsionRuns.push(await runPoseGeneration(positions[index], index));
+        const serialElapsedMs = performance.now() - serialStarted;
+        poseSearchExecution = { ...poseSearchExecution,
+          elapsedMs:serialElapsedMs,
+          chainsPerSecond:positions.length * 1000 / Math.max(1, serialElapsedMs) };
+      }
+      if (!fixedRelaxIterations || coreAtomIndices.length >= plan.molecule.atoms.length)
+        return torsionRuns.map((entry) => ({ ...entry, relaxation:{
+          method:'OpenMM fixed-scaffold Sage relaxation', iterations:0,
+          accepted:false, reason:'no movable atoms or zero requested iterations',
+        } }));
+      const eligibleIndices = torsionRuns.flatMap((entry, index) =>
+        entry.captureFeasible ? [index] : []);
+      if (!eligibleIndices.length) return torsionRuns.map((entry) => ({ ...entry, relaxation:{
+        method:'OpenMM fixed-scaffold Sage relaxation', iterations:0,
+        accepted:false, reason:'skipped because pharmacophore capture was infeasible',
+      } }));
+      setDockingStatus(`Relaxing ${eligibleIndices.length} captured fixed-scaffold poses`);
+      const stride = plan.molecule.atoms.length * 3;
+      const coordinateStack = new Float64Array(eligibleIndices.length * stride);
+      eligibleIndices.forEach((sourceIndex, index) =>
+        coordinateStack.set(torsionRuns[sourceIndex].positions, index * stride));
+      const parameterizedLigand = { ...plan.molecule, parameterization:ligandParameters };
+      const relaxed = await runOpenMMJob('fixed-conformers', parameterizedLigand,
+        dockingProgress, { initialConformers:coordinateStack,
+          fixedAtomIndices:coreAtomIndices, fixedRelaxIterations,
+          fixedRelaxStepScale:Number(fixedRelaxProtocol.stepScale ?? 1e-4),
+          fixedRelaxMaximumDisplacementAngstrom:Number(
+            fixedRelaxProtocol.maximumDisplacementAngstromPerIteration ?? 0.01),
+          constraintMode:'none', implicitSolvent:'vacuum' });
+      return torsionRuns.map((entry, index) => {
+        const relaxedIndex = eligibleIndices.indexOf(index);
+        if (relaxedIndex < 0) return { ...entry, relaxation:{
+          method:'OpenMM fixed-scaffold Sage relaxation', iterations:0,
+          accepted:false, reason:'skipped because pharmacophore capture was infeasible',
+        } };
+        const relaxedPositions = relaxed.conformers.slice(relaxedIndex * stride,
+          (relaxedIndex + 1) * stride);
+        const before = scorePositions(entry.positions), after = scorePositions(relaxedPositions);
+        const accepted = Number(after.feasible) > Number(before.feasible)
+          || after.feasible === before.feasible
+            && after.objectiveKcalMol < before.objectiveKcalMol;
+        return { ...entry, positions:accepted ? relaxedPositions : entry.positions,
+          relaxation:{ method:'OpenMM fixed-scaffold Sage relaxation',
+            engine:relaxed.backend, forcefield:relaxed.forcefield,
+            iterations:relaxed.iterations, fixedAtomCount:relaxed.fixedAtomCount,
+            movableAtomCount:relaxed.movableAtomCount, accepted,
+            stepScale:relaxed.stepScale,
+            maximumDisplacementAngstromPerIteration:relaxed.maximumDisplacementAngstrom,
+            initialInternalEnergyKcalMol:relaxed.initialEnergies[relaxedIndex],
+            finalInternalEnergyKcalMol:relaxed.finalEnergies[relaxedIndex],
+            objectiveBeforeKcalMol:before.objectiveKcalMol,
+            objectiveAfterKcalMol:after.objectiveKcalMol,
+            feasibleBefore:before.feasible, feasibleAfter:after.feasible,
+            reason:accepted ? 'complete constrained objective improved'
+              : 'retained torsion-search pose to protect feasibility or ranking objective',
+          } };
+      });
+    };
+    const run = await workflow.runConstrainedDocking({
+      referencePositions:reference.ligand.positions,
+      candidateConformers:valid.map((entry) => entry.positions),
+      coreAtomPairs:coreMap.atomPairs,
+      hydrogenBondConstraints:mappedHydrogenBonds.constraints,
+      capturedLigandHydrogenRestoration:posePropagation,
+      protocol:activeProtocol,
+      ...(posePropagation
+        ? { refineBatch:refinePropagatedBatch }
+        : { refinePose:({ positions, conformerIndex }) =>
+          runPoseGeneration(positions, conformerIndex) }),
+      physicalScore:({ positions }) => {
+        const scored = scorePositions(positions);
+        return { ...scored.physical, feasible:scored.chemicalValidity.valid,
+          chemicalValidity:scored.chemicalValidity };
+      },
+      yieldControl:yieldDuringDocking,
+      afterRefinement:async (candidates) => {
+        refinementAudit = candidates.map((pose) => ({
+          conformerIndex:pose.conformerIndex,
+          method:pose.refinement?.method || null,
+          seed:pose.refinement?.seed ?? null,
+          rotatableBondCount:pose.refinement?.rotatableBondCount || 0,
+          ringCrankshaftMoveCount:pose.refinement?.ringCrankshaftMoveCount || 0,
+          internalCoordinateMoveCount:pose.refinement?.moveCount
+            ?? pose.refinement?.rotatableBondCount ?? 0,
+          proposals:pose.refinement?.proposals || 0,
+          lineEvaluations:pose.refinement?.lineEvaluations || 0,
+          accepted:pose.refinement?.accepted || 0,
+          uphillAccepted:pose.refinement?.uphillAccepted || 0,
+          improved:pose.refinement?.improved || 0,
+          acceptanceRate:pose.refinement?.acceptanceRate || 0,
+          objectiveStage:pose.refinement?.objectiveStage || null,
+          startObjectiveKcalMol:pose.refinement?.startObjectiveKcalMol ?? null,
+          bestObjectiveKcalMol:pose.refinement?.bestObjectiveKcalMol ?? null,
+          selectedFeasible:Boolean(pose.refinement?.selectedFeasible),
+          stageOutcome:pose.refinement?.stageOutcome || null,
+          captureFeasible:Boolean(pose.refinement?.captureFeasible),
+          physicalRefinementAttempted:Boolean(pose.refinement?.physicalRefinementAttempted),
+          capture:pose.refinement?.capture || null,
+          physicalRefinement:pose.refinement?.physicalRefinement || null,
+          relaxation:pose.refinement?.relaxation || null,
+          moves:pose.refinement?.moves || pose.refinement?.rotors || [],
+        }));
+        await labbookModule.appendLabbookEvent(labbook, { at:new Date().toISOString(),
+          stage:posePropagation ? 'in-pocket-restraint-biased-generation'
+            : 'in-pocket-torsion-search', status:'completed', details:{
+            method:posePropagation ? biasedSearch.RESTRAINT_BIASED_SEARCH_DEFAULTS.method
+              : torsionSearch.TORSION_SEARCH_DEFAULTS.method,
+            conformers:refinementAudit.length,
+            conformersWithFreeRotors:refinementAudit.filter((entry) => entry.rotatableBondCount > 0).length,
+            conformersWithRingMoves:refinementAudit.filter((entry) =>
+              entry.ringCrankshaftMoveCount > 0).length,
+            totalRingCrankshaftMoves:refinementAudit.reduce((sum, entry) =>
+              sum + entry.ringCrankshaftMoveCount, 0),
+            totalProposals:refinementAudit.reduce((sum, entry) => sum + entry.proposals, 0),
+            totalLineEvaluations:refinementAudit.reduce((sum, entry) =>
+              sum + entry.lineEvaluations, 0),
+            totalAccepted:refinementAudit.reduce((sum, entry) => sum + entry.accepted, 0),
+            totalImprovements:refinementAudit.reduce((sum, entry) => sum + entry.improved, 0),
+            fixedScaffoldRelaxations:refinementAudit.filter((entry) =>
+              Number(entry.relaxation?.iterations || 0) > 0).length,
+            skippedRelaxationsAfterFailedCapture:refinementAudit.filter((entry) =>
+              entry.stageOutcome === 'capture-infeasible').length,
+            acceptedFixedScaffoldRelaxations:refinementAudit.filter((entry) =>
+              entry.relaxation?.accepted).length,
+            restraintParticipation:posePropagation
+              ? 'stage 1 generates against selected flat-bottom contact potentials under explicit strain/clash sanity gates; stage 2 starts only after valid capture and rejects every move that loses feasibility'
+              : 'required-contact feasibility and penalty were evaluated after each torsion proposal',
+            poseSearchExecution:structuredClone(poseSearchExecution),
+            exactCoreMaximumRmsdAngstrom:Math.max(...candidates.map((pose) => pose.core.rmsdAngstrom)),
+            perConformer:refinementAudit,
+          } });
+        if (posePropagation) await labbookModule.appendLabbookEvent(labbook, {
+          at:new Date().toISOString(), stage:'fixed-scaffold-relaxation', status:'completed',
+          details:{
+            engine:'OpenMM WebAssembly', forcefield:ligandParameters.forcefield,
+            fixedAtomCount:coreAtomIndices.length,
+            requestedIterations:fixedRelaxIterations,
+            attempted:refinementAudit.filter((entry) =>
+              Number(entry.relaxation?.iterations || 0) > 0).length,
+            skippedAfterFailedCapture:refinementAudit.filter((entry) =>
+              entry.stageOutcome === 'capture-infeasible').length,
+            accepted:refinementAudit.filter((entry) => entry.relaxation?.accepted).length,
+            invariant:'all inherited heavy-atom coordinates remain bit-for-bit equal to the reference',
+            safeguard:'a relaxed pose is retained only when feasibility is preserved and the complete objective improves',
+            perConformer:refinementAudit.map((entry) => ({ conformerIndex:entry.conformerIndex,
+              relaxation:entry.relaxation })),
+          },
+        });
+      },
+      // The labbook origin predates provenance hashing and method events. The
+      // workflow event begins here, after those records have been appended.
+      labbook, startedAt:new Date().toISOString(),
+    });
+    const distinctPoseEntries = distinctDockingPoseEntries(run.candidates, plan.molecule.atoms);
+    const distinctFeasibleCount = distinctPoseEntries
+      .filter((entry) => entry.pose.feasible).length;
+    await labbookModule.completeLabbook(labbook, { completedAt:new Date().toISOString(), outcome:{
+      workflowMode:posePropagation ? 'reference-pose propagation' : 'selected-core constrained search',
+      inheritedHeavyAtoms:coreMap.atomPairs.length,
+      addedHeavyAtoms:posePropagation ? coreMap.addedAtomIds.length : null,
+      removedHeavyAtoms:posePropagation ? coreMap.removedAtomIds.length : null,
+      generatedConformers:allConformers.length,
+      scoredConformers:run.candidates.length,
+      feasiblePoses:run.feasibleCount,
+      searchChains:run.candidates.length,
+      poseSearchExecution:structuredClone(poseSearchExecution),
+      distinctPoses:distinctPoseEntries.length,
+      distinctFeasiblePoses:distinctFeasibleCount,
+      selectedRank:run.selected.rank,
+      selectedScoreKcalMol:run.selected.totalScoreKcalMol,
+      selectedPhysicalKcalMol:run.selected.physicalEnergyKcalMol,
+      selectedConstraintPenaltyKcalMol:run.selected.constraintPenaltyKcalMol,
+      selectedCoreRmsdAngstrom:run.selected.core.rmsdAngstrom,
+      selectedRefinement:refinementAudit.find((entry) => entry.conformerIndex === run.selected.conformerIndex),
+      selectedPhysicalComponents:run.selected.physicalDetails ? {
+        lennardJonesKcalMol:run.selected.physicalDetails.lennardJonesKcalMol,
+        coulombKcalMol:run.selected.physicalDetails.coulombKcalMol,
+        ligandStrainKcalMol:run.selected.physicalDetails.ligandStrainKcalMol,
+        interactionKcalMol:run.selected.physicalDetails.interactionKcalMol,
+        interactionReferenceKcalMol:run.selected.physicalDetails.interactionReferenceKcalMol,
+        relativeInteractionKcalMol:run.selected.physicalDetails.relativeInteractionKcalMol,
+        receptorLigandPairs:run.selected.physicalDetails.pairCount,
+        stericClashes:run.selected.physicalDetails.stericClashes,
+      } : null,
+      selectedHydrogenBonds:run.selected.hydrogenBonds.map((entry) => ({ id:entry.id,
+        required:entry.required, satisfied:entry.satisfied,
+        selectedAlternativeId:entry.selectedAlternativeId || null,
+        alternativeCount:entry.alternativeCount || 1,
+        alternatives:(entry.alternatives || []).map((alternative) => ({
+          id:alternative.id, matchKind:alternative.matchKind || null,
+          satisfied:alternative.satisfied,
+          donorAcceptorDistanceAngstrom:alternative.donorAcceptorDistanceAngstrom,
+          hydrogenAcceptorDistanceAngstrom:alternative.hydrogenAcceptorDistanceAngstrom,
+          dhaAngleDegrees:alternative.dhaAngleDegrees,
+          penaltyKcalMol:alternative.penaltyKcalMol,
+        })),
+        donorAcceptorDistanceAngstrom:entry.donorAcceptorDistanceAngstrom,
+        hydrogenAcceptorDistanceAngstrom:entry.hydrogenAcceptorDistanceAngstrom,
+        dhaAngleDegrees:entry.dhaAngleDegrees, penaltyKcalMol:entry.penaltyKcalMol,
+      })),
+      requiredHydrogenBonds: mappedHydrogenBonds.constraints.length,
+      omittedHydrogenBonds,
+      ligandFeatureRemaps:[...state.dockingContactRemaps.values()]
+        .map((entry) => structuredClone(entry.audit)),
+      scoreInterpretation:'reference-subtracted pose-ranking score; not a binding free energy',
+      topPoses:run.candidates.slice(0, 5).map((pose) => ({ rank:pose.rank,
+        feasible:pose.feasible, totalScoreKcalMol:pose.totalScoreKcalMol,
+        physicalEnergyKcalMol:pose.physicalEnergyKcalMol,
+        constraintPenaltyKcalMol:pose.constraintPenaltyKcalMol,
+        coreRmsdAngstrom:pose.core.rmsdAngstrom,
+        requiredHydrogenBondsSatisfied:pose.requiredHydrogenBondsSatisfied })),
+    } });
+    const liveIndices = currentIndicesForDockingPlan(plan);
+    const receptorAfter = receptorScore.receptorSiteIntegrity(reference.receptorSite, state.molecule);
+    if (!liveIndices.length || !receptorAfter.valid
+      || adapter.dockingInputText(state.molecule, liveIndices) !== currentLigandInputText)
+      throw new Error('The complex changed during docking; the stale result was discarded.');
+    state.dockingResult = { run, labbook, plan, seed, requestedConformers,
+      poseSearchExecution:structuredClone(poseSearchExecution),
+      distinctPoseEntries, distinctFeasibleCount,
+      featureGuidedSeeding:featureSeedResult ? {
+        method:featureSeedResult.method,
+        requestedCount:featureSeedResult.requestedCount,
+        uniqueSeedCount:featureSeedResult.uniqueSeedCount,
+        targetVariantCount:featureSeedResult.targetVariantCount,
+        untargetedRotorCount:featureSeedResult.untargetedRotorCount,
+        affectedRotorCount:featureSeedResult.affectedRotorCount,
+        releasedCoreAtomIndices:[...featureSeedResult.releasedCoreAtomIndices],
+        affectedRotors:structuredClone(featureSeedResult.affectedRotors),
+        editRegionAnglesDegrees:featureSeedResult.editRegionAnglesDegrees,
+        seedAudits:valid.map((entry, index) => ({ conformerIndex:index,
+          ...structuredClone(entry.featureSeedAudit) })),
+      } : null,
+      mode:posePropagation ? 'pose-propagation' : 'selected-core',
+      ligandTopologyText:currentLigandTopologyText,
+      ligandForcefield:ligandParameters.forcefield, ligandChargeModel:ligandParameters.chargeModel,
+      validationNumericSystem:{
+        atomIds:plan.molecule.atoms.map((atom) => atom.designAtomId),
+        forcefield:ligandParameters.forcefield,
+        chargeModel:ligandParameters.chargeModel,
+        sourceSha256:ligandParameters.sourceSha256,
+        system:structuredClone(ligandParameters.system),
+      },
+      conformerForcefields:[...new Set(valid.map((entry) => entry.forcefield).filter(Boolean))],
+      ligandStrainModel:'vacuum OpenFF Sage 2.1 intramolecular energy', torsionSteps };
+    state.dockingPoseIndex = 0;
+    renderDockingResults();
+    showToast(`${posePropagation ? 'Pose refinement' : 'Docking'} complete · ${distinctPoseEntries.length} distinct pose${distinctPoseEntries.length === 1 ? '' : 's'}`);
+    return state.dockingResult;
+  } finally {
+    state.dockingRunning = false;
+    updateDockingUi();
+  }
+}
+
+function distinctDockingPoseEntries(candidates, atoms, thresholdAngstrom = 0.35) {
+  const heavyAtomIndices = atoms.flatMap((atom, index) => atom.element === 'H' ? [] : [index]);
+  const atomIndices = heavyAtomIndices.length ? heavyAtomIndices : atoms.map((_, index) => index);
+  const rmsd = (first, second) => {
+    const sumSquared = atomIndices.reduce((sum, atomIndex) => {
+      const offset = atomIndex * 3;
+      const dx = first[offset] - second[offset];
+      const dy = first[offset + 1] - second[offset + 1];
+      const dz = first[offset + 2] - second[offset + 2];
+      return sum + dx * dx + dy * dy + dz * dz;
+    }, 0);
+    return Math.sqrt(sumSquared / atomIndices.length);
+  };
+  const distinct = [];
+  (candidates || []).forEach((pose, candidateIndex) => {
+    const nearest = distinct.reduce((minimum, entry) =>
+      Math.min(minimum, rmsd(pose.positions, entry.pose.positions)), Number.POSITIVE_INFINITY);
+    if (nearest > thresholdAngstrom)
+      distinct.push({ pose, candidateIndex, nearestPriorRmsdAngstrom:Number.isFinite(nearest) ? nearest : null });
+  });
+  return distinct;
+}
+
+function renderDockingResults() {
+  const result = state.dockingResult;
+  const card = document.querySelector('#docking-results');
+  if (!card) return;
+  card.classList.toggle('hidden', !result || state.mode !== 'build');
+  if (!result) return;
+  const entries = result.distinctPoseEntries
+    || distinctDockingPoseEntries(result.run.candidates, result.plan.molecule.atoms);
+  const feasible = entries.filter((entry) => entry.pose.feasible).length;
+  const execution = result.poseSearchExecution;
+  const ensembleSummary = Number(execution?.workerCount) > 1
+    ? ` · ${execution.workerCount} workers · ${(Number(execution.elapsedMs) / 1000).toFixed(1)} s`
+    : '';
+  setText('#docking-result-summary', `${entries.length} distinct · ${feasible} feasible${ensembleSummary}`);
+  const list = document.querySelector('#docking-pose-list'); list.replaceChildren();
+  entries.slice(0, 5).forEach(({ pose, candidateIndex }) => {
+    const button = document.createElement('button'); button.type = 'button';
+    button.className = `docking-pose${candidateIndex === state.dockingPoseIndex ? ' active' : ''}`;
+    const rank = document.createElement('b'); rank.textContent = `#${pose.rank}`;
+    const score = document.createElement('span');
+    const missedContacts = pose.hydrogenBonds.filter((entry) =>
+      entry.required !== false && !entry.satisfied).length;
+    const validity = pose.physicalDetails?.chemicalValidity;
+    const addedClashes = Number(validity?.additionalStericClashes || 0);
+    score.textContent = pose.feasible
+      ? `Δ score ${pose.totalScoreKcalMol.toFixed(2)}`
+      : [missedContacts ? `${missedContacts} contact${missedContacts === 1 ? '' : 's'} missed` : '',
+        addedClashes ? `+${addedClashes} clash${addedClashes === 1 ? '' : 'es'}` : '']
+        .filter(Boolean).join(' · ') || 'physical gate failed';
+    const status = document.createElement('small'); status.textContent = pose.feasible ? 'feasible' : 'not feasible';
+    button.title = `Reference-subtracted physical ${pose.physicalEnergyKcalMol.toFixed(2)} kcal/mol; restraint ${pose.constraintPenaltyKcalMol.toFixed(2)} kcal/mol`;
+    button.append(rank, score, status);
+    button.addEventListener('click', () => { state.dockingPoseIndex = candidateIndex; renderDockingResults(); });
+    list.append(button);
+  });
+  const selected = result.run.candidates[state.dockingPoseIndex] || entries[0]?.pose;
+  const applyButton = document.querySelector('#apply-docking-pose');
+  if (applyButton) {
+    applyButton.disabled = !selected?.feasible;
+    applyButton.title = selected && !selected.feasible
+      ? 'This pose failed the required-contact or physical-feasibility gate.' : '';
+  }
+  const selectedValidity = selected?.physicalDetails?.chemicalValidity;
+  const scoreBreakdown = selected
+    ? `Δphysical ${selected.physicalEnergyKcalMol.toFixed(2)} · restraints ${selected.constraintPenaltyKcalMol.toFixed(2)} kcal/mol`
+      + (selectedValidity ? ` · ${selectedValidity.stericClashes} clashes (start ${selectedValidity.minimumFixedCoreStartStericClashes})` : '')
+    : '';
+  const throughput = Number(execution?.workerCount) > 1
+    && Number.isFinite(Number(execution?.chainsPerSecond))
+    ? ` · ${Number(execution.chainsPerSecond).toFixed(1)} chains/s` : '';
+  setText('#docking-score-note', (scoreBreakdown || (result.mode === 'pose-propagation'
+    ? 'Inherited scaffold · torsion search · fixed Sage relax'
+    : 'Selected core · torsion search · rigid 8 Å site')) + throughput);
+}
+
+async function applySelectedDockingPose({ allowInfeasible = false } = {}) {
+  const result = state.dockingResult;
+  const pose = result?.run.candidates[state.dockingPoseIndex];
+  if (!result || !pose) throw new Error('Select a docking pose first.');
+  if (!pose.feasible && !allowInfeasible)
+    throw new Error('The selected docking pose is infeasible; pass allowInfeasible:true to apply it explicitly.');
+  const adapter = await import('./docking/browser-adapter.mjs');
+  const liveIndices = currentIndicesForDockingPlan(result.plan);
+  if (!liveIndices.length || adapter.dockingTopologyText(state.molecule, liveIndices) !== result.ligandTopologyText)
+    throw new Error('The ligand chemistry changed after docking; run docking again.');
+  const { receptorSiteIntegrity } = await import('./docking/receptor-score.mjs');
+  if (!receptorSiteIntegrity(state.dockingReference.receptorSite, state.molecule).valid)
+    throw new Error('The receptor changed after docking; reset the reference and run again.');
+  pushBuildHistory();
+  adapter.applyLigandPositions(state.molecule, liveIndices, pose.positions);
+  state.molecule.source = { ...(state.molecule.source || {}), docking:{
+    protocol:result.labbook.protocol.id, runId:result.labbook.runId, rank:pose.rank,
+    feasible:pose.feasible, scoreKcalMol:pose.totalScoreKcalMol,
+  } };
+  clearCalculationResult(); updateStoredBondDistances(); updateInfo(); updateHistoryButtons(); draw();
+  showToast(`Docking pose ${pose.rank} applied`);
+  return pose;
+}
+
+async function downloadDockingLabbook(format = 'json') {
+  const labbook = state.dockingResult?.labbook;
+  if (!labbook) throw new Error('Run constrained docking first.');
+  const module = await import('./docking/labbook.mjs');
+  const verification = await module.verifyLabbook(labbook);
+  if (!verification.valid) throw new Error(`Labbook verification failed: ${verification.reason}`);
+  const filename = `${slug(state.molecule?.name || 'complex')}-${labbook.runId}-labbook`;
+  if (format === 'markdown') downloadBlob(module.renderLabbookMarkdown(labbook), `${filename}.md`, 'text/markdown');
+  else downloadBlob(`${JSON.stringify(labbook, null, 2)}\n`, `${filename}.json`, 'application/json');
+  showToast('Verified docking labbook downloaded');
 }
 
 function drawNonCovalentInteractions(context, projectedByIndex, interactions) {
@@ -3179,6 +5831,39 @@ function drawNonCovalentInteractions(context, projectedByIndex, interactions) {
     if (!first || !second) return;
     dashedLine(first, second, '#8b5bd2', [7, 5], 2.4);
   });
+  context.restore();
+}
+
+function drawManualDockingContactOverlays(context, projectedByIndex) {
+  if (!state.showInteractions || !state.dockingReference || !manualHydrogenBondModule) return;
+  const indexById = new Map(state.molecule.atoms.map((atom, index) =>
+    [atom.designAtomId, index]));
+  const definitions = state.dockingReference.hydrogenBonds.filter((definition) =>
+    definition.origin && state.dockingSelectedHbondIds.has(definition.id));
+  context.save(); context.lineCap = 'round'; context.setLineDash([4, 5]);
+  definitions.forEach((rawDefinition) => {
+    const definition = effectiveDockingHydrogenBondDefinition(rawDefinition);
+    const descriptorIndex = (descriptor) => indexById.get(descriptor?.designAtomId);
+    const firstIndex = descriptorIndex(definition.hydrogen) ?? descriptorIndex(definition.donor);
+    const secondIndex = descriptorIndex(definition.acceptor);
+    const first = projectedByIndex.get(firstIndex), second = projectedByIndex.get(secondIndex);
+    if (!first || !second) return;
+    const value = manualHydrogenBondModule.manualHydrogenBondGeometry(state.molecule, definition);
+    context.beginPath(); context.moveTo(first.sx, first.sy); context.lineTo(second.sx, second.sy);
+    context.strokeStyle = 'rgba(255,255,255,.95)'; context.lineWidth = 5.2; context.stroke();
+    context.beginPath(); context.moveTo(first.sx, first.sy); context.lineTo(second.sx, second.sy);
+    context.strokeStyle = value?.satisfied ? '#2f8f68' : '#d39a28';
+    context.lineWidth = 2.2; context.stroke();
+  });
+  const draft = state.dockingContactDraft;
+  if (Number.isInteger(draft?.ligandAtomIndex) && Number.isInteger(draft?.receptorAtomIndex)) {
+    const first = projectedByIndex.get(draft.ligandAtomIndex);
+    const second = projectedByIndex.get(draft.receptorAtomIndex);
+    if (first && second) {
+      context.beginPath(); context.moveTo(first.sx, first.sy); context.lineTo(second.sx, second.sy);
+      context.strokeStyle = '#d39a28'; context.lineWidth = 2.2; context.stroke();
+    }
+  }
   context.restore();
 }
 
@@ -3317,12 +6002,15 @@ function traceCartoonPath(context, points) {
 
 function drawCartoonStroke(context, run, miniature, color) {
   const inner = miniature ? (run.secondary === 'helix' ? 4.8 : 2.6) : (run.secondary === 'helix' ? 14 : 5.5);
-  traceCartoonPath(context, run.points); context.strokeStyle = 'rgba(15,23,42,.70)';
+  const storyTheme = Boolean(DESIGN_DISPLAY_THEMES[state.displayColorTheme]);
+  traceCartoonPath(context, run.points); context.strokeStyle = storyTheme
+    ? 'rgba(71,100,104,.24)' : 'rgba(15,23,42,.70)';
   context.lineWidth = inner + (miniature ? 1.4 : 3); context.lineCap = 'round'; context.lineJoin = 'round'; context.stroke();
   traceCartoonPath(context, run.points); context.strokeStyle = color; context.lineWidth = inner;
   context.lineCap = 'round'; context.lineJoin = 'round'; context.stroke();
   if (!miniature && run.secondary === 'helix') {
-    traceCartoonPath(context, run.points); context.strokeStyle = 'rgba(255,255,255,.35)';
+    traceCartoonPath(context, run.points); context.strokeStyle = storyTheme
+      ? 'rgba(255,255,255,.48)' : 'rgba(255,255,255,.35)';
     context.lineWidth = 2.2; context.stroke();
   }
 }
@@ -3344,7 +6032,9 @@ function drawCartoonArrow(context, run, miniature, color) {
   left.slice(1).forEach((point) => context.lineTo(point.x, point.y));
   [...right].reverse().forEach((point) => context.lineTo(point.x, point.y));
   context.closePath(); context.fillStyle = color; context.fill();
-  context.strokeStyle = 'rgba(15,23,42,.72)'; context.lineWidth = miniature ? .8 : 1.6; context.lineJoin = 'round'; context.stroke();
+  const storyTheme = Boolean(DESIGN_DISPLAY_THEMES[state.displayColorTheme]);
+  context.strokeStyle = storyTheme ? 'rgba(71,100,104,.28)' : 'rgba(15,23,42,.72)';
+  context.lineWidth = miniature ? .8 : 1.6; context.lineJoin = 'round'; context.stroke();
   if (!miniature) {
     traceCartoonPath(context, points); context.strokeStyle = 'rgba(255,255,255,.32)'; context.lineWidth = 1.2; context.stroke();
   }
@@ -3355,10 +6045,85 @@ function drawProteinCartoon(context, projected, molecule, miniature) {
   for (const run of runs) {
     const predictedConfidence = state.proteinPrediction?.kind !== 'pdb-import'
       && state.proteinPrediction?.kind !== 'parameterized-reference';
-    const color = predictedConfidence ? confidenceColor(run.confidence)
-      : run.secondary === 'helix' ? '#d96262' : run.secondary === 'sheet' ? '#d5a936' : run.color;
+    const color = DESIGN_DISPLAY_THEMES[state.displayColorTheme] ? STORY_CARTOON_COLOR
+      : predictedConfidence ? confidenceColor(run.confidence)
+        : run.secondary === 'helix' ? '#d96262' : run.secondary === 'sheet' ? '#d5a936' : run.color;
     if (run.secondary === 'sheet') drawCartoonArrow(context, run, miniature, color);
     else drawCartoonStroke(context, run, miniature, color);
+  }
+}
+
+function ligandProteinSevereClashes(molecule, byIndex) {
+  if (!state.showStericClashes || !molecule) return [];
+  const componentKinds = new Map(state.structureComponents.map((component) =>
+    [component.id, component.kind]));
+  const ligand = [], protein = [];
+  for (const [index, projected] of byIndex) {
+    const atom = molecule.atoms[index];
+    if (!atom || atom.element === 'H') continue;
+    const kind = componentKinds.get(state.atomComponentIds[index]);
+    if (kind === 'ligand') ligand.push({ index, atom, projected });
+    else if (kind === 'protein') protein.push({ index, atom, projected });
+  }
+  const clashes = [];
+  for (const first of ligand) for (const second of protein) {
+    const distance = Math.hypot(first.atom.x - second.atom.x,
+      first.atom.y - second.atom.y, first.atom.z - second.atom.z);
+    const threshold = .62 * ((DISPLAY_VDW_RADII[first.atom.element] || 1.75)
+      + (DISPLAY_VDW_RADII[second.atom.element] || 1.75));
+    if (distance < threshold) clashes.push({ first, second, distance, threshold });
+  }
+  return clashes.sort((first, second) => first.distance / first.threshold
+    - second.distance / second.threshold);
+}
+
+function updateStericClashDisplayLabel(count = state.visibleStericClashCount) {
+  const label = document.querySelector('#steric-clash-toggle-text');
+  if (!label) return;
+  label.textContent = `Show severe clashes${state.showStericClashes ? ` · ${count}` : ''}`;
+}
+
+function drawStericClashMarkers(context, clashes) {
+  context.save();
+  for (const { first, second } of clashes) {
+    const x = (first.projected.sx + second.projected.sx) / 2;
+    const y = (first.projected.sy + second.projected.sy) / 2;
+    context.beginPath(); context.moveTo(first.projected.sx, first.projected.sy);
+    context.lineTo(second.projected.sx, second.projected.sy);
+    context.setLineDash([3, 4]); context.strokeStyle = 'rgba(192,38,132,.58)';
+    context.lineWidth = 1.5; context.stroke(); context.setLineDash([]);
+    context.beginPath(); context.arc(x, y, 4.2, 0, Math.PI * 2);
+    context.fillStyle = 'rgba(219,39,119,.88)'; context.fill();
+    context.strokeStyle = 'rgba(255,255,255,.94)'; context.lineWidth = 1.2; context.stroke();
+  }
+  context.restore();
+}
+
+function drawChangedAtomMarkers(context, atoms) {
+  if (!atoms.length || state.changeMarkerStyle === 'none') return;
+  if (atoms.length > 4) {
+    const padding = 15;
+    const left = Math.min(...atoms.map((atom) => atom.sx - atom.screenRadius)) - padding;
+    const right = Math.max(...atoms.map((atom) => atom.sx + atom.screenRadius)) + padding;
+    const top = Math.min(...atoms.map((atom) => atom.sy - atom.screenRadius)) - padding;
+    const bottom = Math.max(...atoms.map((atom) => atom.sy + atom.screenRadius)) + padding;
+    context.save(); context.beginPath();
+    context.roundRect(left, top, right - left, bottom - top, 18);
+    context.fillStyle = 'rgba(14,165,193,.055)'; context.fill();
+    context.strokeStyle = 'rgba(8,145,178,.55)'; context.lineWidth = 2;
+    context.shadowColor = 'rgba(34,211,238,.34)'; context.shadowBlur = 13; context.stroke();
+    context.restore();
+    return;
+  }
+  for (const atom of atoms) {
+    const halo = state.changeMarkerStyle === 'halo';
+    context.save(); context.beginPath();
+    context.arc(atom.sx, atom.sy, atom.screenRadius + (halo ? 7 : 9), 0, Math.PI * 2);
+    context.fillStyle = halo ? 'rgba(14,165,193,.06)' : 'rgba(220,38,38,.14)';
+    context.fill(); context.strokeStyle = halo ? 'rgba(8,145,178,.62)' : '#dc2626';
+    context.lineWidth = halo ? 2 : 3.5;
+    if (halo) { context.shadowColor = 'rgba(34,211,238,.40)'; context.shadowBlur = 10; }
+    context.stroke(); context.restore();
   }
 }
 
@@ -3375,6 +6140,9 @@ function drawMolecule(context, projected, molecule, miniature) {
     }
   }
   if (proteinCartoon && !atomProjection.length) {
+    if (!miniature) {
+      state.visibleStericClashCount = 0; updateStericClashDisplayLabel(0);
+    }
     const alphaCarbons = projected.filter((atom) => atom.atomName === 'CA');
     alphaCarbons.forEach((atom) => { atom.screenRadius = miniature ? 3 : 9; });
     state.projected = miniature ? state.projected : alphaCarbons;
@@ -3405,16 +6173,30 @@ function drawMolecule(context, projected, molecule, miniature) {
     drawNonCovalentInteractions(context, byIndex, interactions);
     updateChemistryDisplayControls(interactions);
   }
+  if (!miniature) drawManualDockingContactOverlays(context, byIndex);
 
+  const emphasizedIds = miniature ? new Set() : new Set(state.emphasizedAtomIds);
   atomProjection.sort((a, b) => a.rz - b.rz);
-  for (const atom of atomProjection) {
+  atomProjection.forEach((atom) => {
     const base = ELEMENTS[atom.element].radius * (state.vdw ? 1.75 : 1);
-    const radius = miniature ? Math.max(2.6, base * 5.8) : Math.max(7, base * atom.scale * .46 * atom.perspective);
+    atom.screenRadius = miniature ? Math.max(2.6, base * 5.8)
+      : Math.max(7, base * atom.scale * .46 * atom.perspective);
+  });
+  if (!miniature) {
+    const clashes = ligandProteinSevereClashes(molecule, byIndex);
+    state.visibleStericClashCount = clashes.length;
+    updateStericClashDisplayLabel(clashes.length);
+    drawStericClashMarkers(context, clashes);
+    drawChangedAtomMarkers(context, atomProjection.filter((atom) =>
+      emphasizedIds.has(atom.designAtomId)));
+  }
+  for (const atom of atomProjection) {
+    const radius = atom.screenRadius;
     const selectedOrder = miniature ? -1 : state.selectedAtoms.indexOf(atom.index);
-    atom.screenRadius = radius;
     if (selectedOrder >= 0) {
       context.beginPath(); context.arc(atom.sx, atom.sy, radius + 5, 0, Math.PI * 2);
-      context.strokeStyle = '#2563eb'; context.lineWidth = 3; context.stroke();
+      context.strokeStyle = state.designerMoveReplaying ? '#dc2626' : '#2563eb';
+      context.lineWidth = 3; context.stroke();
     }
     const style = atomRenderStyle(atom);
     const gradient = context.createRadialGradient(atom.sx - radius * .35, atom.sy - radius * .40, radius * .08, atom.sx, atom.sy, radius);
@@ -3424,7 +6206,9 @@ function drawMolecule(context, projected, molecule, miniature) {
     context.beginPath(); context.arc(atom.sx, atom.sy, radius, 0, Math.PI * 2);
     context.fillStyle = gradient; context.fill();
     context.strokeStyle = '#070a0c'; context.lineWidth = miniature ? 0.8 : Math.max(1.5, radius * .105); context.stroke();
-    if (!miniature && (state.hoverAtom === atom.index || state.selectedAtom === atom.index || state.selectedAtoms.includes(atom.index) || state.mode === 'build') && atom.element !== 'H') {
+    if (!miniature && (state.hoverAtom === atom.index || state.selectedAtom === atom.index
+      || state.selectedAtoms.includes(atom.index)
+      || state.mode === 'build' && !state.designerMoveReplaying) && atom.element !== 'H') {
       context.fillStyle = atom.element === 'C' ? 'white' : 'rgba(255,255,255,.92)';
       context.font = `600 ${Math.max(8, radius * .62)}px Inter, sans-serif`;
       context.textAlign = 'center'; context.textBaseline = 'middle'; context.fillText(atom.element, atom.sx, atom.sy + .5);
@@ -3447,8 +6231,45 @@ function drawMolecule(context, projected, molecule, miniature) {
       context.textAlign = 'center'; context.textBaseline = 'middle'; context.fillText(String(selectedOrder + 1), badgeX, badgeY + .5);
     }
   }
+  if (!miniature && state.focusedAtomResidueLabels.length)
+    drawFocusedAtomResidueLabels(context, atomProjection);
   state.projected = miniature ? state.projected : (proteinCartoon
     ? [...projected.filter((atom) => atom.atomName === 'CA'), ...atomProjection] : atomProjection);
+}
+
+function drawFocusedAtomResidueLabels(context, projected) {
+  const width = context.canvas.clientWidth || context.canvas.width;
+  const height = context.canvas.clientHeight || context.canvas.height;
+  for (const spec of state.focusedAtomResidueLabels) {
+    const atoms = projected.filter((atom) => isProteinAtom(atom)
+      && String(atom.chain || 'A') === String(spec.chain || 'A')
+      && String(atom.residueIndex) === String(spec.residueIndex)
+      && String(atom.insertionCode || '') === String(spec.insertionCode || ''));
+    if (!atoms.length) continue;
+    const anchor = atoms.reduce((sum, atom) => ({ x:sum.x + atom.sx, y:sum.y + atom.sy }),
+      { x:0, y:0 });
+    anchor.x /= atoms.length; anchor.y /= atoms.length;
+    const text = String(spec.label || `${atoms[0].residueName || ''}${spec.residueIndex}`);
+    const tone = RESIDUE_LABEL_TONES[spec.tone] || RESIDUE_LABEL_TONES.blue;
+    context.save();
+    context.font = '700 13px Inter, sans-serif';
+    const boxWidth = Math.ceil(context.measureText(text).width) + 20;
+    const boxHeight = 28;
+    const direction = anchor.x < width / 2 ? -1 : 1;
+    const boxX = Math.max(8, Math.min(width - boxWidth - 8,
+      anchor.x + direction * (boxWidth / 2 + 34) - boxWidth / 2));
+    const boxY = Math.max(8, Math.min(height - boxHeight - 8, anchor.y - 38));
+    const endX = direction < 0 ? boxX + boxWidth : boxX;
+    const endY = boxY + boxHeight / 2;
+    context.beginPath(); context.moveTo(anchor.x, anchor.y); context.lineTo(endX, endY);
+    context.strokeStyle = tone.line; context.lineWidth = 2; context.stroke();
+    context.beginPath(); context.roundRect(boxX, boxY, boxWidth, boxHeight, 7);
+    context.fillStyle = 'rgba(255,255,255,.94)'; context.fill();
+    context.strokeStyle = tone.line; context.lineWidth = 1.5; context.stroke();
+    context.fillStyle = tone.text; context.textAlign = 'center'; context.textBaseline = 'middle';
+    context.fillText(text, boxX + boxWidth / 2, boxY + boxHeight / 2 + .5);
+    context.restore();
+  }
 }
 
 function showToast(message) {
@@ -3461,26 +6282,46 @@ function showNotice(message) {
   setTimeout(() => notice.classList.add('hidden'), 4000);
 }
 
+async function runChemistUiAction(action, args = {}, { reportError = true } = {}) {
+  try {
+    const api = await window.MolariumChemistActionsReady;
+    const response = await api.execute({ action, args });
+    return response.result;
+  } catch (error) {
+    if (reportError) showNotice(error.message);
+    throw error;
+  }
+}
+
 function setMode(mode) {
   if (mode !== 'build' && state.chemistryTransaction) {
-    showNotice('Finish or discard the pending chemistry changes before leaving Build.');
+    showNotice('Finish or discard the pending chemistry changes before leaving Design.');
     return false;
   }
   state.mode = mode;
   document.querySelectorAll('.mode-bar button').forEach((button) => button.classList.toggle('active', button.dataset.mode === mode));
-  ['build-left-panel', 'build-right-panel', 'run-left-panel', 'run-right-panel'].forEach((id) => document.querySelector(`#${id}`).classList.add('hidden'));
+  ['build-left-panel', 'build-right-panel', 'design-history-panel',
+    'run-left-panel', 'run-right-panel'].forEach((id) => document.querySelector(`#${id}`).classList.add('hidden'));
   document.querySelector('#display-options').classList.toggle('hidden', mode !== 'view');
   document.querySelector('.protein-fold-card').classList.toggle('hidden', mode !== 'view');
   document.querySelector('#molecule-info').classList.toggle('hidden', !state.molecule);
   document.querySelector('.scene-card').classList.toggle('hidden', mode !== 'view');
   document.querySelector('#build-left-panel').classList.toggle('hidden', mode !== 'build');
   document.querySelector('#build-right-panel').classList.toggle('hidden', mode !== 'build');
+  document.querySelector('#design-history-panel').classList.toggle('hidden', mode !== 'build');
   document.querySelector('#run-left-panel').classList.toggle('hidden', mode !== 'run');
   document.querySelector('#run-right-panel').classList.toggle('hidden', mode !== 'run');
   canvas.classList.toggle('build-cursor', mode === 'build' && state.buildTool === 'add');
   updateChemistryEditor();
   updateBuildStatus();
-  if (mode === 'build') requestAnimationFrame(drawFragmentPreviews);
+  update2DEditorUi();
+  updateDockingUi();
+  renderDockingResults();
+  if (mode === 'build') {
+    requestAnimationFrame(drawFragmentPreviews);
+    ensureLiveCampaignPersistence();
+    updateLiveCampaignUi();
+  }
   draw();
   return true;
 }
@@ -3544,6 +6385,12 @@ function addAtomAtScreen(clientX, clientY) {
   clearCalculationResult();
   const point = screenToMolecule(clientX, clientY);
   const targetIndex = elementAttachmentTarget(clientX, clientY);
+  if (targetIndex != null && analogueDesignCaptureNeeded([targetIndex])) {
+    return ensureAnalogueDesignReferenceBeforeChemistry([targetIndex]).then((accepted) => {
+      if (accepted) return addAtomAtScreen(clientX, clientY);
+      return null;
+    });
+  }
   const existingAtoms = new Set(state.molecule?.atoms || []);
   const targetAtom = targetIndex == null ? null : state.molecule.atoms[targetIndex];
   pushBuildHistory();
@@ -3560,6 +6407,7 @@ function addAtomAtScreen(clientX, clientY) {
   const changedAtomIndices = state.molecule.atoms.flatMap((atom, index) =>
     !existingAtoms.has(atom) || atom === targetAtom ? [index] : []);
   scheduleSmallMoleculePolish(changedAtomIndices);
+  return Promise.resolve();
 }
 
 function pairKey(a, b) { return a < b ? `${a}:${b}` : `${b}:${a}`; }
@@ -3606,24 +6454,57 @@ function pushBuildHistory() {
   pushBuildSnapshot(state.molecule);
 }
 
-function pushBuildSnapshot(snapshot) {
+function captureDockingContactState() {
+  return {
+    remaps:[...state.dockingContactRemaps.entries()].map(([id, value]) =>
+      [id, structuredClone(value)]),
+    proposals:[...state.dockingContactRemapProposals.entries()].map(([id, value]) =>
+      [id, structuredClone(value)]),
+    selectedHbondIds:[...state.dockingSelectedHbondIds],
+  };
+}
+
+function restoreDockingContactState(snapshot = {}) {
+  state.dockingContactRemaps = new Map(structuredClone(snapshot.remaps || []));
+  state.dockingContactRemapProposals = new Map(structuredClone(snapshot.proposals || []));
+  state.dockingSelectedHbondIds = new Set(snapshot.selectedHbondIds || []);
+}
+
+function buildHistoryEntry(molecule, dockingContactState = captureDockingContactState()) {
+  return {
+    schema:'molarium.build-history/v2',
+    molecule:structuredClone(molecule),
+    dockingContactState:structuredClone(dockingContactState),
+  };
+}
+
+function pushBuildSnapshot(snapshot, dockingContactState = captureDockingContactState()) {
   if (!snapshot) return;
-  state.buildHistory.push(structuredClone(snapshot));
+  const entry = snapshot.schema === 'molarium.build-history/v2'
+    ? structuredClone(snapshot) : buildHistoryEntry(snapshot, dockingContactState);
+  state.buildHistory.push(entry);
   if (state.buildHistory.length > 30) state.buildHistory.shift();
   state.redoHistory = [];
   updateHistoryButtons();
 }
 
 function restoreMolecule(snapshot) {
+  const entry = snapshot?.schema === 'molarium.build-history/v2'
+    ? snapshot : buildHistoryEntry(snapshot, { remaps:[], proposals:[],
+      selectedHbondIds:[...state.dockingSelectedHbondIds] });
   chemistryValidationSequence += 1;
   smallMoleculePolishSequence += 1;
   state.chemistryTransaction = null;
   state.chemistryEditFinishing = false;
-  state.molecule = structuredClone(snapshot);
+  state.molecule = structuredClone(entry.molecule);
+  restoreDockingContactState(entry.dockingContactState);
+  state.dockingResult = null;
+  state.sidechainRotamerEnsemble = null;
   refreshStructureComponents();
   state.selectedAtom = null;
   state.selectedAtoms = [];
-  updateGeometryControl(); updateInfo(); updateHistoryButtons(); draw();
+  updateGeometryControl(); updateInfo(); updateDockingUi(); updateOptimizerControls();
+  updateHistoryButtons(); draw(); schedule2DDepiction(0);
 }
 
 function updateHistoryButtons() {
@@ -3889,6 +6770,9 @@ function torsionDegrees(molecule, first, second, third, last) {
 function geometrySelection() {
   const selected = state.selectedAtoms;
   if (!state.molecule || selected.length < 2) return null;
+  if (selected.length > 4) return {
+    error: `${selected.length} atoms selected for a docking core; geometry editing supports up to 4.`,
+  };
   const sequential = selected.slice(1).every((atom, index) => bondBetween(state.molecule, selected[index], atom));
   if (!sequential) return { error: 'Selections must follow directly bonded atoms.' };
   if (selected.length === 2) return {
@@ -3906,10 +6790,20 @@ function geometrySelection() {
 }
 
 function selectionDescription() {
-  return state.selectedAtoms.map((index) => `${state.molecule.atoms[index].element}${index + 1}`).join('–');
+  return state.selectedAtoms.flatMap((index) => {
+    const atom = state.molecule?.atoms?.[index];
+    return atom ? [`${atom.element}${index + 1}`] : [];
+  }).join('–');
 }
 
 function updateGeometryControl() {
+  // Atom deletion and hydrogen reconciliation can shift array indices. Never
+  // let a transient stale selection break the editor while the graph is being
+  // committed.
+  state.selectedAtoms = state.selectedAtoms.filter((index) =>
+    Number.isInteger(index) && Boolean(state.molecule?.atoms?.[index]));
+  state.selectedAtom = state.selectedAtoms.at(-1) ?? null;
+  updateSidechainRotamerControls();
   const slider = document.querySelector('#geometry-slider');
   const input = document.querySelector('#geometry-value');
   const unit = document.querySelector('#geometry-unit');
@@ -4025,18 +6919,22 @@ function finishGeometryEdit() {
 }
 
 function selectGeometryAtom(index) {
+  if (state.dockingContactDraft) {
+    selectManualDockingContactAtom(index).catch((error) => showNotice(error.message));
+    return;
+  }
   const existing = state.selectedAtoms.indexOf(index);
   if (existing >= 0) state.selectedAtoms = state.selectedAtoms.slice(0, existing);
-  else if (state.selectedAtoms.length >= 4) state.selectedAtoms = [index];
   else {
-    const previous = state.selectedAtoms.at(-1);
-    if (previous != null && state.selectedAtoms.length > 1 && !bondBetween(state.molecule, previous, index)) {
-      showNotice('Pick atoms along a connected bond path.'); return;
+    const connected = !state.selectedAtoms.length
+      || state.selectedAtoms.some((selectedIndex) => bondBetween(state.molecule, selectedIndex, index));
+    if (!connected) {
+      showNotice('Each new atom must bond to the connected selection.'); return;
     }
     state.selectedAtoms.push(index);
   }
   state.selectedAtom = state.selectedAtoms.at(-1) ?? null;
-  updateGeometryControl(); updateBuildStatus(); draw();
+  updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw(); schedule2DDepiction(0);
 }
 
 let chemistryValidationSequence = 0;
@@ -4060,7 +6958,11 @@ function beginChemistryTransaction() {
   if (!state.chemistryTransaction) {
     state.chemistryTransaction = {
       snapshot:structuredClone(state.molecule), changedAtoms:new Set(), editCount:0,
+      editId:`chem-edit-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
       startedAt:performance.now(),
+      dockingContactState:captureDockingContactState(),
+      depictionTemplateMolBlock:state.depictionTemplateMolBlock,
+      depictionOrientationAnchor:null,
     };
   }
   return state.chemistryTransaction;
@@ -4081,6 +6983,22 @@ function updateChemistryTransactionUi() {
     document.querySelector('#chemistry-pending-summary').textContent = state.chemistryEditFinishing
       ? 'Finishing chemistry…' : `${count} pending change${count === 1 ? '' : 's'}`;
   }
+  const viewerToolbar = document.querySelector('.viewer-toolbar');
+  viewerToolbar?.classList.toggle('chemistry-pending', pending);
+  document.querySelectorAll('.viewer-standard-action').forEach((button) =>
+    button.classList.toggle('hidden', pending));
+  const viewerFinish = document.querySelector('#viewer-finish-chemistry');
+  const viewerDiscard = document.querySelector('#viewer-discard-chemistry');
+  viewerFinish?.classList.toggle('hidden', !pending);
+  viewerDiscard?.classList.toggle('hidden', !pending);
+  if (viewerFinish) {
+    viewerFinish.disabled = !pending || state.chemistryEditFinishing;
+    viewerFinish.textContent = state.chemistryEditFinishing ? 'Finishing chemistry…' : 'Finish chemistry';
+  }
+  if (viewerDiscard) viewerDiscard.disabled = !pending || state.chemistryEditFinishing;
+  update2DEditorUi();
+  updateDockingUi();
+  updateOptimizerControls();
 }
 
 function updateChemistryEditor() {
@@ -4202,19 +7120,38 @@ async function validateEditedChemistry(molecule, changedAtoms, { schedulePolish 
 async function applyChemistryMutation(mutator) {
   if (!state.molecule?.atoms.length) throw new Error('Load or build a molecule first.');
   if (selectedProteinChemistryLocked()) throw new Error('Canonical protein chemistry is protected; use Protein Preparation.');
+  if (analogueDesignCaptureNeeded()
+    && !await ensureAnalogueDesignReferenceBeforeChemistry()) return null;
+  // A docking edit uses stable graph identities for contact lineage and
+  // topology hashes. Assign them before taking the transaction snapshot, and
+  // again immediately after mutation so staged consumers never see an
+  // anonymous newly created atom.
+  // Chemist Actions promise persistent graph identities even when no docking
+  // reference has been captured yet. Assign identities for every chemistry
+  // mutation; a docking reference merely contributes additional reserved IDs.
+  const referenceCore = await import('./docking/reference-core.mjs');
+  const identityNamespace = `design-${state.molecule.source?.pdbId || 'complex'}`;
+  referenceCore.ensureStableAtomIds(state.molecule,
+    identityNamespace, state.dockingReference?.ligand?.atomIds || []);
   const staged = !chemistryImmediateRefinementEnabled();
   const transaction = staged ? beginChemistryTransaction() : null;
   const snapshot = structuredClone(state.molecule);
+  const dockingContactState = captureDockingContactState();
   if (!staged) pushBuildSnapshot(snapshot);
   try {
     const outcome = mutator(state.molecule, { staged }) || {};
+    referenceCore.ensureStableAtomIds(state.molecule,
+      identityNamespace, [
+        ...(state.dockingReference?.ligand?.atomIds || []),
+        ...snapshot.atoms.map((atom) => atom.designAtomId),
+      ].filter(Boolean));
     invalidateEditedChemistry(state.molecule);
     refreshStructureComponents();
     clearCalculationResult(); updateStoredBondDistances();
     const selection = outcome.selection || [];
     state.selectedAtoms = selection.map((atom) => state.molecule.atoms.indexOf(atom)).filter((index) => index >= 0);
     state.selectedAtom = state.selectedAtoms.at(-1) ?? null;
-    updateInfo(); updateGeometryControl(); updateHistoryButtons(); draw();
+    updateInfo(); updateGeometryControl(); updateHistoryButtons(); draw(); schedule2DDepiction(0);
     if (staged) {
       transaction.validationError = null;
       (outcome.changedAtoms || selection).forEach((atom) => {
@@ -4228,8 +7165,22 @@ async function applyChemistryMutation(mutator) {
         validation:{ valid:false, pending:true, editCount:transaction.editCount },
         molecule:structuredClone(state.molecule) };
     }
-    const validation = await validateEditedChemistry(state.molecule, outcome.changedAtoms || selection);
-    return { ...moleculeDiagnostics(state.molecule), validation,
+    const changedAtoms = (outcome.changedAtoms || selection)
+      .filter((atom) => state.molecule.atoms.includes(atom));
+    const validation = await validateEditedChemistry(state.molecule, changedAtoms,
+      { schedulePolish:false });
+    const changedAtomIndices = changedAtoms.map((atom) => state.molecule.atoms.indexOf(atom))
+      .filter((index) => index >= 0);
+    const immediateEditId = `chem-edit-immediate-${Date.now().toString(36)}`;
+    const polish = validation.valid
+      ? await polishCommittedChemistry(state.molecule, changedAtomIndices,
+        { beforeMolecule:snapshot, editId:immediateEditId }) : null;
+    const contactFeatureRemaps = validation.valid
+      ? await reconcileDockingContactFeaturesAfterChemistry(
+        { snapshot, dockingContactState,
+          editId:immediateEditId }, changedAtomIndices) : [];
+    updateInfo(); updateDockingUi(); updateOptimizerControls(); draw(); schedule2DDepiction(0);
+    return { ...moleculeDiagnostics(state.molecule), validation, polish, contactFeatureRemaps,
       molecule:structuredClone(state.molecule) };
   } catch (error) {
     if (!staged) state.buildHistory.pop();
@@ -4245,8 +7196,17 @@ async function applyChemistryMutation(mutator) {
   }
 }
 
-async function polishCommittedChemistry(molecule, changedAtomIndices) {
-  const plan = localEditPolishPlan(molecule, changedAtomIndices, 1);
+async function polishCommittedChemistry(molecule, changedAtomIndices,
+  { beforeMolecule = null, editId = null } = {}) {
+  let transformedRegion = null;
+  if (beforeMolecule && state.dockingReference?.mode === 'pose-propagation') {
+    const module = await import('./docking/transformed-ring-region.mjs');
+    transformedRegion = module.transformedRingRegion(beforeMolecule, molecule);
+    module.recordTransformedRingRegion(molecule, transformedRegion, { editId });
+  }
+  const plan = localEditPolishPlan(molecule, changedAtomIndices, 1, {
+    releasedAtomIds:transformedRegion?.releasedHeavyAtomIds || [],
+  });
   if (!plan) return null;
   const movable = new Set(plan.movableGlobalAtomIndices);
   const fixedAtomIndices = plan.globalAtomIndices.flatMap((globalIndex, localIndex) =>
@@ -4259,12 +7219,15 @@ async function polishCommittedChemistry(molecule, changedAtomIndices) {
     });
     if (token !== smallMoleculePolishSequence || state.molecule !== molecule) return null;
     applyMappedCalculationPositions(molecule, result.positions, plan.globalAtomIndices);
-    molecule.source = { ...(molecule.source || {}), lastInteractivePolish: {
+    recordInteractivePolish(molecule, {
       engine:result.forcefield, fallback:Boolean(result.fallback), elapsedMs:result.elapsedMs,
       movableAtomCount:result.movableAtomCount, fixedAtomCount:result.fixedAtomCount,
       proteinFixedAtomCount:molecule.atoms.length - plan.globalAtomIndices.length,
       scope:plan.scope, bondRadius:1, stagedChemistry:true,
-    } };
+      cleanupMode:plan.cleanupMode,
+      fixedInheritedHeavyAtomCount:plan.fixedInheritedHeavyAtomCount,
+      transformedRegion:transformedRegion ? structuredClone(transformedRegion) : null,
+    });
     return result;
   } catch (error) {
     molecule.source = { ...(molecule.source || {}),
@@ -4284,13 +7247,29 @@ async function finishChemistryTransaction() {
   transaction.validationError = null;
   updateChemistryEditor();
   try {
+    const selectedAtomObjects = state.selectedAtoms
+      .map((index) => molecule.atoms[index]).filter(Boolean);
     const affected = [...transaction.changedAtoms].filter((atom) => molecule.atoms.includes(atom));
     const reconciled = reconcileAtomHydrogens(molecule, affected);
     reconciled.forEach((atom) => {
       if (molecule.atoms.includes(atom)) transaction.changedAtoms.add(atom);
     });
+    // Hydrogen reconciliation is part of the committed graph. Assign stable
+    // identities after it, before provenance hashing and transformed-ring
+    // analysis, so an edit cannot sanitize successfully yet fail its audit
+    // merely because Finish created a new H atom.
+    if (state.dockingReference) {
+      const { ensureStableAtomIds } = await import('./docking/reference-core.mjs');
+      ensureStableAtomIds(molecule,
+        `design-${molecule.source?.pdbId || 'complex'}`,
+        [ ...(state.dockingReference.ligand?.atomIds || []),
+          ...transaction.snapshot.atoms.map((atom) => atom.designAtomId) ].filter(Boolean));
+    }
     invalidateEditedChemistry(molecule);
     refreshStructureComponents();
+    state.selectedAtoms = selectedAtomObjects.map((atom) => molecule.atoms.indexOf(atom))
+      .filter((index) => index >= 0);
+    state.selectedAtom = state.selectedAtoms.at(-1) ?? null;
     updateStoredBondDistances(); updateInfo(); draw();
     const changedAtoms = [...transaction.changedAtoms].filter((atom) => molecule.atoms.includes(atom));
     const validation = await validateEditedChemistry(molecule, changedAtoms, { schedulePolish:false });
@@ -4303,16 +7282,21 @@ async function finishChemistryTransaction() {
     }
     const changedAtomIndices = changedAtoms.map((atom) => molecule.atoms.indexOf(atom))
       .filter((index) => index >= 0);
-    const polish = await polishCommittedChemistry(molecule, changedAtomIndices);
+    const polish = await polishCommittedChemistry(molecule, changedAtomIndices,
+      { beforeMolecule:transaction.snapshot, editId:transaction.editId });
     if (state.chemistryTransaction !== transaction || state.molecule !== molecule) return null;
-    pushBuildSnapshot(transaction.snapshot);
+    const contactFeatureRemaps = await reconcileDockingContactFeaturesAfterChemistry(
+      transaction, changedAtomIndices);
+    if (state.chemistryTransaction !== transaction || state.molecule !== molecule) return null;
+    pushBuildSnapshot(transaction.snapshot, transaction.dockingContactState);
     state.chemistryTransaction = null;
     state.chemistryEditFinishing = false;
-    updateInfo(); updateGeometryControl(); updateChemistryEditor(); updateHistoryButtons(); draw();
+    updateInfo(); updateGeometryControl(); updateChemistryEditor(); updateHistoryButtons(); draw(); schedule2DDepiction(0);
     showToast(`Chemistry finished · ${transaction.editCount} change${transaction.editCount === 1 ? '' : 's'}`);
-    return { ...moleculeDiagnostics(molecule), validation, polish,
+    return { ...moleculeDiagnostics(molecule), validation, polish, contactFeatureRemaps,
       pending:false, molecule:structuredClone(molecule) };
   } catch (error) {
+    restoreDockingContactState(transaction.dockingContactState);
     transaction.validationError = error.message || String(error);
     showNotice(transaction.validationError);
     return { ...moleculeDiagnostics(molecule),
@@ -4333,7 +7317,7 @@ function discardChemistryTransaction() {
   smallMoleculePolishSequence += 1;
   state.chemistryTransaction = null;
   state.chemistryEditFinishing = false;
-  restoreMolecule(transaction.snapshot);
+  restoreMolecule(buildHistoryEntry(transaction.snapshot, transaction.dockingContactState));
   showToast('Pending chemistry changes discarded');
   return true;
 }
@@ -4446,16 +7430,46 @@ function attachmentDirection(molecule, atomIndex) {
   const anchor = molecule.atoms[atomIndex];
   const neighbors = molecule.bonds.flatMap((bond) => bond.a === atomIndex ? [bond.b] : bond.b === atomIndex ? [bond.a] : []);
   if (!neighbors.length) return { x: 1, y: 0, z: 0 };
-  const center = neighbors.reduce((acc, index) => ({
-    x: acc.x + molecule.atoms[index].x,
-    y: acc.y + molecule.atoms[index].y,
-    z: acc.z + molecule.atoms[index].z,
-  }), { x: 0, y: 0, z: 0 });
-  return normaliseVector({
-    x: anchor.x - center.x / neighbors.length,
-    y: anchor.y - center.y / neighbors.length,
-    z: anchor.z - center.z / neighbors.length,
+  const directions = neighbors.map((index) => normaliseVector({
+    x:molecule.atoms[index].x - anchor.x,
+    y:molecule.atoms[index].y - anchor.y,
+    z:molecule.atoms[index].z - anchor.z,
+  }));
+  if (directions.length === 1) return {
+    x:-directions[0].x, y:-directions[0].y, z:-directions[0].z,
+  };
+  const cross = (first, second) => ({
+    x:first.y * second.z - first.z * second.y,
+    y:first.z * second.x - first.x * second.z,
+    z:first.x * second.y - first.y * second.x,
   });
+  const length = (vector) => Math.hypot(vector.x, vector.y, vector.z);
+  const candidates = [];
+  const sum = directions.reduce((total, direction) => ({
+    x:total.x + direction.x, y:total.y + direction.y, z:total.z + direction.z,
+  }), { x:0, y:0, z:0 });
+  if (length(sum) > 1e-6) candidates.push(normaliseVector({ x:-sum.x, y:-sum.y, z:-sum.z }));
+  for (let first = 0; first < directions.length; first += 1) {
+    candidates.push({ x:-directions[first].x, y:-directions[first].y, z:-directions[first].z });
+    for (let second = first + 1; second < directions.length; second += 1) {
+      const normal = cross(directions[first], directions[second]);
+      if (length(normal) <= 1e-6) continue;
+      const unit = normaliseVector(normal);
+      candidates.push(unit, { x:-unit.x, y:-unit.y, z:-unit.z });
+    }
+  }
+  // Deterministic tetrahedral-like fallbacks for collinear or symmetric
+  // neighbourhoods.  Select the direction with the greatest angular
+  // separation from every existing substituent; no force field is run until
+  // the complete chemistry transaction is finished.
+  candidates.push(
+    { x:1, y:0, z:0 }, { x:-1, y:0, z:0 },
+    { x:0, y:1, z:0 }, { x:0, y:-1, z:0 },
+    { x:0, y:0,z:1 }, { x:0, y:0,z:-1 });
+  const score = (candidate) => Math.max(...directions.map((direction) =>
+    candidate.x * direction.x + candidate.y * direction.y + candidate.z * direction.z));
+  return candidates.reduce((best, candidate) => score(candidate) < score(best) - 1e-12
+    ? candidate : best, candidates[0]);
 }
 
 function removeAttachmentHydrogen(molecule, atomIndex, preferredDirection = null) {
@@ -4485,16 +7499,22 @@ function removeAttachmentHydrogen(molecule, atomIndex, preferredDirection = null
 }
 
 function assertAvailableAttachmentValence(molecule, atomIndex) {
-  const targetValence = { H: 1, B: 3, C: 4, N: 3, O: 2, F: 1, Si: 4, P: 3, S: 2, Cl: 1, Br: 1, I: 1 }[molecule.atoms[atomIndex].element];
+  const atom = molecule.atoms[atomIndex];
   const bonds = molecule.bonds.filter((bond) => bond.a === atomIndex || bond.b === atomIndex);
   const hasHydrogen = bonds.some((bond) => {
     const other = bond.a === atomIndex ? bond.b : bond.a;
     return molecule.atoms[other].element === 'H';
   });
-  if (hasHydrogen || targetValence == null) return;
+  if (hasHydrogen) return;
   const usedValence = bonds.reduce((sum, bond) => sum + (bond.order || 1), 0);
+  // Evaluate the prospective bond rather than the atom's current valence.
+  // This preserves ordinary octet limits while allowing common expanded-
+  // valence P/S construction one chemically complete edit at a time (for
+  // example, adding the second oxygen to S(=O) before assigning S=O).
+  const targetValence = chemistryTargetValence(atom, usedValence + 1);
+  if (targetValence == null) return;
   if (usedValence + 1 > targetValence + 0.05)
-    throw new Error(`${molecule.atoms[atomIndex].element} atom ${atomIndex + 1} has no available valence for another bond.`);
+    throw new Error(`${atom.element} atom ${atomIndex + 1} has no available valence for another bond.`);
 }
 
 function rotateMoleculeToVector(molecule, anchorIndex, fromVector, toVector) {
@@ -4541,6 +7561,9 @@ function translateMolecule(molecule, displacement) {
 function mergeFragmentIntoMolecule(baseMolecule, fragment, targetIndex = null, targetPoint = null) {
   let incoming = parseSMILES(fragment.smiles, fragment.name);
   let connection = fragment.attach ?? 0;
+  const attachmentComponent = targetIndex != null
+    && baseMolecule?.atoms?.[targetIndex]?.record === 'HETATM'
+    ? baseMolecule.atoms[targetIndex] : null;
 
   if (!baseMolecule || !baseMolecule.atoms.length) {
     const anchor = incoming.atoms[connection];
@@ -4581,6 +7604,19 @@ function mergeFragmentIntoMolecule(baseMolecule, fragment, targetIndex = null, t
     translateMolecule(incoming, { x: point.x - anchor.x, y: point.y - anchor.y, z: point.z - anchor.z });
   }
 
+  // Atoms covalently attached to a PDB ligand remain part of that ligand.
+  // Without this metadata they form a synthetic `molecule:main` display
+  // component even though the bond graph is connected, so the 2D inset can
+  // accidentally depict only the newly added atom or fragment.
+  if (attachmentComponent) incoming.atoms.forEach((atom) => {
+    atom.record = 'HETATM';
+    atom.residueName = attachmentComponent.residueName;
+    atom.chain = attachmentComponent.chain;
+    atom.residueIndex = attachmentComponent.residueIndex;
+    atom.insertionCode = attachmentComponent.insertionCode || '';
+    atom.occupancy = 0;
+  });
+
   const offset = baseMolecule.atoms.length;
   baseMolecule.atoms.push(...incoming.atoms);
   baseMolecule.bonds.push(...incoming.bonds.map((bond) => ({ ...bond, a: bond.a + offset, b: bond.b + offset })));
@@ -4595,12 +7631,18 @@ function addFragmentAtScreen(fragment, clientX, clientY) {
   clearCalculationResult();
   const targetHit = hitTest(clientX, clientY);
   const targetPoint = screenToMolecule(clientX, clientY);
-  pushBuildHistory();
   let targetIndex = targetHit?.index ?? null;
   if (targetIndex != null && state.molecule?.atoms[targetIndex]?.element === 'H') {
     const hydrogenBond = state.molecule.bonds.find((bond) => bond.a === targetIndex || bond.b === targetIndex);
     targetIndex = hydrogenBond ? (hydrogenBond.a === targetIndex ? hydrogenBond.b : hydrogenBond.a) : null;
   }
+  if (targetIndex != null && analogueDesignCaptureNeeded([targetIndex])) {
+    return ensureAnalogueDesignReferenceBeforeChemistry([targetIndex]).then((accepted) => {
+      if (accepted) return addFragmentAtScreen(fragment, clientX, clientY);
+      return null;
+    });
+  }
+  pushBuildHistory();
   const existingAtoms = new Set(state.molecule?.atoms || []);
   const targetAtom = targetIndex == null ? null : state.molecule.atoms[targetIndex];
   try {
@@ -4616,6 +7658,7 @@ function addFragmentAtScreen(fragment, clientX, clientY) {
   const changedAtomIndices = state.molecule.atoms.flatMap((atom, index) =>
     !existingAtoms.has(atom) || atom === targetAtom ? [index] : []);
   scheduleSmallMoleculePolish(changedAtomIndices);
+  return Promise.resolve();
 }
 
 function updateBuildStatus(extra = '') {
@@ -4625,9 +7668,14 @@ function updateBuildStatus(extra = '') {
     document.querySelector('#viewer-container').appendChild(status);
   }
   if (state.mode !== 'build') { status.classList.add('hidden'); return; }
-  if (!extra) { status.classList.add('hidden'); return; }
   status.classList.remove('hidden');
-  status.innerHTML = extra;
+  if (extra) { status.innerHTML = extra; return; }
+  if (state.buildTool === 'add' && state.stagedFragment) status.textContent = `⊕ ${state.stagedFragment.name}: click an atom to attach · click space to add`;
+  else if (state.buildTool === 'add') status.textContent = `⊕ Add ${state.selectedElement}: click near an atom to bond · click open space for a separate molecule`;
+  else if (state.buildTool === 'select') status.textContent = state.selectedAtoms.length
+    ? `⌖ Select: ${state.selectedAtoms.length} atom${state.selectedAtoms.length === 1 ? '' : 's'} selected · continue along bonds or click a selected atom to trim`
+    : '⌖ Select: pick one atom to edit it, or any pair to create or edit a bond';
+  else status.textContent = '✣ Manipulate: drag an atom to move it · drag empty space to rotate';
 }
 
 function stageFragment(fragment) {
@@ -4635,7 +7683,7 @@ function stageFragment(fragment) {
     fragment.preview ??= parseSMILES(fragment.smiles, fragment.name);
     state.stagedFragment = fragment;
     state.buildTool = 'add';
-    document.querySelectorAll('#build-tool-tabs button').forEach((button) => button.classList.toggle('selected', button.dataset.tool === 'add'));
+    document.querySelectorAll('#build-tool-tabs [data-tool]').forEach((button) => button.classList.toggle('selected', button.dataset.tool === 'add'));
     document.querySelectorAll('.fragment-card').forEach((card) => card.classList.toggle('selected', card.dataset.fragment === fragment.id));
     canvas.classList.add('build-cursor'); updateBuildStatus(); showToast(`${fragment.name} staged`);
   } catch (error) { showNotice(error.message); }
@@ -4648,7 +7696,10 @@ function renderFragmentLibrary(query = '') {
     const button = document.createElement('button');
     button.className = 'fragment-card'; button.dataset.fragment = fragment.id;
     button.innerHTML = `<canvas aria-hidden="true"></canvas><strong>${fragment.label}</strong><span>${fragment.name}</span>`;
-    button.addEventListener('click', () => stageFragment(fragment)); grid.appendChild(button);
+    button.addEventListener('click', () => {
+      runChemistUiAction('fragment.stage', { fragmentId:fragment.id }).catch(() => {});
+    });
+    grid.appendChild(button);
   }
   requestAnimationFrame(drawFragmentPreviews);
 }
@@ -4877,7 +7928,2781 @@ async function runImmediateChemistryTestEdit(callback) {
   finally { control.checked = previous; updateChemistryEditor(); }
 }
 
-window.molariumTest = Object.freeze({
+const SIDECHAIN_ROTAMER_RESIDUES = new Set([
+  'ARG','ASN','ASP','CYS','GLN','GLU','HIS','ILE','LEU','LYS','MET','PHE','SER',
+  'THR','TPO','TRP','TYR','VAL',
+]);
+
+function chemistActionCoordinateArray(molecule = state.molecule) {
+  const result = new Float64Array((molecule?.atoms?.length || 0) * 3);
+  molecule?.atoms?.forEach((atom, index) => {
+    result[index * 3] = Number(atom.x);
+    result[index * 3 + 1] = Number(atom.y);
+    result[index * 3 + 2] = Number(atom.z);
+  });
+  return result;
+}
+
+function chemistActionCoordinateSnapshot(molecule = state.molecule) {
+  return new Map((molecule?.atoms || []).flatMap((atom) =>
+    atom.designAtomId && atom.element !== 'H'
+      ? [[atom.designAtomId, [Number(atom.x), Number(atom.y), Number(atom.z)]]] : []));
+}
+
+function chemistActionCoordinateChanges(before, molecule = state.molecule,
+  { thresholdAngstrom = 0.08, maximumAtoms = 24 } = {}) {
+  const changes = (molecule?.atoms || []).flatMap((atom) => {
+    const prior = atom.designAtomId ? before.get(atom.designAtomId) : null;
+    if (!prior || atom.element === 'H') return [];
+    const displacementAngstrom = Math.hypot(
+      Number(atom.x) - prior[0], Number(atom.y) - prior[1], Number(atom.z) - prior[2]);
+    return displacementAngstrom >= thresholdAngstrom
+      ? [{ atomId:atom.designAtomId, displacementAngstrom }] : [];
+  }).sort((first, second) => second.displacementAngstrom - first.displacementAngstrom);
+  return { changedAtomIds:changes.slice(0, maximumAtoms).map((entry) => entry.atomId),
+    movedHeavyAtomCount:changes.length,
+    maximumDisplacementAngstrom:Number((changes[0]?.displacementAngstrom || 0).toFixed(4)),
+    detectionThresholdAngstrom:thresholdAngstrom };
+}
+
+async function moleculeCoordinateSha256(molecule = state.molecule) {
+  return sha256Hex(chemistActionCoordinateArray(molecule).buffer);
+}
+
+function sidechainRotamerPublicResult(ensemble) {
+  return {
+    schema:ensemble.schema,
+    inputCoordinateSha256:ensemble.inputCoordinateSha256,
+    receptorAtomId:ensemble.receptorAtomId,
+    residue:structuredClone(ensemble.residue),
+    axes:structuredClone(ensemble.axes),
+    inputChiDegrees:structuredClone(ensemble.inputChiDegrees),
+    generatedCandidateCount:ensemble.generatedCandidateCount,
+    candidates:ensemble.candidates.map(({ positions, ...candidate }) => structuredClone(candidate)),
+  };
+}
+
+function sidechainRotamerResidueLabel(residue) {
+  return `${residue.residueName} ${residue.chain}${residue.residueIndex}${residue.insertionCode || ''}`;
+}
+
+function updateSidechainRotamerControls() {
+  const panel = document.querySelector('#sidechain-rotamer-tools');
+  if (!panel) return;
+  const hasProtein = Boolean(state.molecule?.atoms?.some((atom) => isProteinAtom(atom)));
+  panel.classList.toggle('hidden', !hasProtein);
+  if (!hasProtein) return;
+  const status = document.querySelector('#sidechain-rotamer-status');
+  const enumerateButton = document.querySelector('#enumerate-sidechain-rotamers');
+  const results = document.querySelector('#sidechain-rotamer-results');
+  const select = document.querySelector('#sidechain-rotamer-select');
+  const selectedIndex = state.selectedAtoms.length === 1 ? state.selectedAtoms[0] : null;
+  const selected = Number.isInteger(selectedIndex) ? state.molecule.atoms[selectedIndex] : null;
+  const eligible = Boolean(selected && isProteinAtom(selected)
+    && SIDECHAIN_ROTAMER_RESIDUES.has(selected.residueName));
+  enumerateButton.disabled = !eligible || Boolean(state.chemistryTransaction);
+  const ensemble = state.sidechainRotamerEnsemble;
+  results.classList.toggle('hidden', !ensemble);
+  if (ensemble) {
+    const selectedValue = select.value;
+    select.replaceChildren(...ensemble.candidates.map((candidate) => {
+      const option = document.createElement('option'); option.value = String(candidate.index);
+      const chis = candidate.chiDegrees.map((value, index) => `χ${index + 1} ${Math.round(value)}°`).join(' · ');
+      option.textContent = `#${candidate.rank} · ${chis} · ${candidate.severeClashes} hard clash${candidate.severeClashes === 1 ? '' : 'es'}`;
+      return option;
+    }));
+    if ([...select.options].some((option) => option.value === selectedValue)) select.value = selectedValue;
+    status.textContent = `${sidechainRotamerResidueLabel(ensemble.residue)} · ${ensemble.candidates.length} ranked branches. Apply one, then physically refine it.`;
+  } else if (eligible) {
+    status.textContent = `${selected.residueName} ${selected.chain || 'A'}${selected.residueIndex}${selected.insertionCode || ''} selected · enumerate discrete chi-angle branches before minimization.`;
+  } else if (selected && isProteinAtom(selected)) {
+    status.textContent = `${selected.residueName || 'Residue'} has no safe independent rotamer move.`;
+  } else {
+    status.textContent = 'Choose Select, then pick one atom in a protein side chain.';
+  }
+}
+
+async function enumerateCurrentSidechainRotamers(residueAtomIndex, maximumCandidates = 32) {
+  if (state.mode !== 'build') throw new Error('Enter Design mode before enumerating side-chain rotamers.');
+  if (state.chemistryTransaction)
+    throw new Error('Finish or discard pending chemistry before enumerating side-chain rotamers.');
+  if (!Number.isInteger(maximumCandidates) || maximumCandidates < 1 || maximumCandidates > 64)
+    throw new Error('maximumCandidates must be an integer from 1 to 64');
+  await ensureChemistActionAtomIds();
+  const selected = state.molecule?.atoms?.[residueAtomIndex];
+  if (!selected || !isProteinAtom(selected))
+    throw new Error('receptorAtomId must identify an atom in a protein residue');
+  const module = await import('./docking/sidechain-rotamers.mjs');
+  const result = module.enumerateSidechainRotamers({ molecule:state.molecule,
+    residueAtomIndex, ligandAtomIndices:currentDockingLigandAtomIndices(), maximumCandidates });
+  const inputCoordinates = chemistActionCoordinateArray();
+  result.inputCoordinateSha256 = await sha256Hex(inputCoordinates.buffer);
+  result.receptorAtomId = selected.designAtomId;
+  for (const candidate of result.candidates) {
+    const coordinates = inputCoordinates.slice();
+    candidate.positions.forEach((position) => {
+      coordinates[position.atomIndex * 3] = position.x;
+      coordinates[position.atomIndex * 3 + 1] = position.y;
+      coordinates[position.atomIndex * 3 + 2] = position.z;
+    });
+    candidate.coordinateSha256 = await sha256Hex(coordinates.buffer);
+  }
+  state.sidechainRotamerEnsemble = result;
+  updateSidechainRotamerControls();
+  return sidechainRotamerPublicResult(result);
+}
+
+async function applyCurrentSidechainRotamer(selector, {
+  expectedInputCoordinateSha256 = null, expectedSelectedCoordinateSha256 = null,
+} = {}) {
+  if (state.mode !== 'build') throw new Error('Enter Design mode before applying a side-chain rotamer.');
+  if (state.chemistryTransaction)
+    throw new Error('Finish or discard pending chemistry before applying a side-chain rotamer.');
+  const ensemble = state.sidechainRotamerEnsemble;
+  if (!ensemble) throw new Error('Enumerate a side-chain rotamer ensemble first');
+  const currentCoordinateSha256 = await moleculeCoordinateSha256();
+  const module = await import('./docking/sidechain-rotamers.mjs');
+  const candidate = module.selectSidechainRotamerCandidate(ensemble, selector);
+  const index = ensemble.candidates.indexOf(candidate);
+  if (index < 0) throw new Error('The selected side-chain rotamer is absent from the active ensemble');
+  module.assertSidechainRotamerCoordinateGuards({ ensemble, candidate, currentCoordinateSha256,
+    expectedInputCoordinateSha256, expectedSelectedCoordinateSha256 });
+  pushBuildHistory();
+  const startingPositions = new Map(candidate.positions.map((position) => {
+    const atom = state.molecule.atoms[position.atomIndex];
+    return [position.atomIndex, { x:atom.x, y:atom.y, z:atom.z }];
+  }));
+  module.applySidechainRotamer(state.molecule, ensemble, index);
+  if (state.designerMoveReplaying && candidate.positions.length) {
+    // A rotamer choice is a scientific state change that is otherwise a hard
+    // cut. Replay it at human speed so the chemist can see the causal motion.
+    // Only display coordinates are interpolated; the audited action still
+    // finishes at the exact hash-pinned candidate coordinates.
+    const frameCount = 24;
+    for (let frame = 0; frame <= frameCount; frame++) {
+      const linear = frame / frameCount;
+      const amount = linear * linear * (3 - 2 * linear);
+      candidate.positions.forEach((position) => {
+        const atom = state.molecule.atoms[position.atomIndex];
+        const start = startingPositions.get(position.atomIndex);
+        atom.x = frame === frameCount ? position.x
+          : start.x + (position.x - start.x) * amount;
+        atom.y = frame === frameCount ? position.y
+          : start.y + (position.y - start.y) * amount;
+        atom.z = frame === frameCount ? position.z
+          : start.z + (position.z - start.z) * amount;
+      });
+      draw();
+      if (frame < frameCount)
+        await new Promise((resolveFrame) => setTimeout(resolveFrame, 70));
+    }
+    updateStoredBondDistances();
+  }
+  const appliedCoordinateSha256 = await moleculeCoordinateSha256();
+  if (appliedCoordinateSha256 !== candidate.coordinateSha256) {
+    restoreMolecule(state.buildHistory.pop());
+    throw new Error('Applied side-chain coordinates did not match the enumerated branch hash');
+  }
+  if (expectedSelectedCoordinateSha256 != null
+    && appliedCoordinateSha256 !== expectedSelectedCoordinateSha256) {
+    restoreMolecule(state.buildHistory.pop());
+    throw new Error('Applied side-chain coordinates did not match expectedSelectedCoordinateSha256');
+  }
+  const application = {
+    schema:'molarium.sidechain-rotamer-application/v1',
+    method:'canonical-chi-grid-steric-prerank-v1',
+    residue:structuredClone(ensemble.residue), receptorAtomId:ensemble.receptorAtomId,
+    inputCoordinateSha256:ensemble.inputCoordinateSha256,
+    selectedCoordinateSha256:candidate.coordinateSha256,
+    selectedBy:Object.keys(selector)[0],
+    candidateIndex:candidate.index, candidateRank:candidate.rank, source:candidate.source,
+    chiDegrees:structuredClone(candidate.chiDegrees), score:candidate.score,
+    stericPenalty:candidate.stericPenalty,
+    ligandStericPenalty:candidate.ligandStericPenalty,
+    severeClashes:candidate.severeClashes,
+    generatedCandidateCount:ensemble.generatedCandidateCount,
+    retainedCandidateCount:ensemble.candidates.length,
+    coordinateInputClass:state.molecule.source?.designRoute?.coordinateInputClass || 'current-visible-complex',
+  };
+  const previous = state.molecule.source?.sidechainRotamerApplications || [];
+  state.molecule.source = { ...(state.molecule.source || {}),
+    sidechainRotamerApplications:[...previous, application].slice(-50) };
+  state.sidechainRotamerEnsemble = null;
+  state.dockingResult = null; state.dockingPoseIndex = 0;
+  clearCalculationResult(); updateStoredBondDistances(); updateInfo(); updateHistoryButtons();
+  updateDockingUi(); updateSidechainRotamerControls(); draw();
+  showToast(`${sidechainRotamerResidueLabel(application.residue)} rotamer #${candidate.rank} applied`);
+  return structuredClone(application);
+}
+
+let designerMoveReplayResume = null;
+
+const DESIGNER_MOVE_CHECKPOINT_STATE_KEYS = Object.freeze([
+  'rotation', 'viewProjectionCenter', 'viewProjectionRadius', 'viewPan', 'zoom',
+  'autoRotate', 'showHydrogens', 'showHulls', 'showInteractions', 'showPocketAtoms',
+  'pocketAtomMode', 'displayColorTheme', 'changeMarkerStyle', 'showStericClashes',
+  'vdw', 'representation',
+  'mode', 'selectedElement', 'buildTool',
+  'stagedFragment', 'selectedAtom', 'selectedAtoms', 'chemistryTransaction',
+  'designRoute', 'designRouteStepId', 'geometryEditActive', 'lastCalculation',
+  'calculationFrames', 'calculationRawFrames', 'calculationProjectionRadius',
+  'calculationEnsemble', 'conformerAnalysis', 'conformerDisplayAlignment',
+  'trajectoryDisplayAlignment', 'calculationReplicaIndex', 'replicaMosaicLayout',
+  'calculationFrameIndex', 'calculationUnit', 'calculationJob', 'calculationTimestepFs',
+  'calculationConstraintMode', 'proteinPrediction', 'pdbPreparationPreview',
+  'ligandProtonation', 'dockingReference', 'dockingResult', 'dockingSelectedHbondIds',
+  'dockingContactRemaps', 'dockingContactRemapProposals', 'dockingContactDraft',
+  'dockingPoseIndex', 'sidechainRotamerEnsemble', 'structureComponents',
+  'atomComponentIds', 'componentVisibility', 'focusedComponentId', 'focusedComponentCenter',
+  'focusedComponentRadius', 'focusedResidueKey', 'focusedResidueRadius',
+  'focusedAtomIds', 'focusedAtomCenter', 'focusedAtomRadius', 'focusedAtomContextRadius',
+  'focusedAtomContextIds', 'focusedAtomResidueLabels', 'emphasizedAtomIds',
+  'depictionOrientationAnchor',
+  'depictionTemplateMolBlock', 'depictionKey', 'depictionTool', 'depictionBondStart',
+  'depictionBondOrder',
+]);
+
+function cloneDesignerMoveCheckpointMolecule(molecule) {
+  if (!molecule) return null;
+  const source = { ...(molecule.source || {}) };
+  // The Agent/API ledger is append-only and belongs to the live execution
+  // frontier, not to a presentation checkpoint.
+  delete source.chemistActionAudit;
+  const parameterization = molecule.parameterization || null;
+  const clone = structuredClone({ ...molecule, source, parameterization:null });
+  // Parameter tables are immutable after assignment and can be shared across
+  // checkpoints without duplicating the largest prepared-system payload.
+  if (parameterization) clone.parameterization = parameterization;
+  else delete clone.parameterization;
+  return clone;
+}
+
+function captureDesignerMoveDomCheckpoint() {
+  return [...document.querySelectorAll('[id]')].map((element) => ({
+    id:element.id,
+    className:element.getAttribute('class'),
+    style:element.getAttribute('style'),
+    text:element.children.length === 0 && !['CANVAS','SVG'].includes(element.tagName)
+      ? element.textContent : null,
+    value:'value' in element && element.type !== 'file' ? element.value : null,
+    checked:'checked' in element ? Boolean(element.checked) : null,
+    disabled:'disabled' in element ? Boolean(element.disabled) : null,
+    ariaExpanded:element.getAttribute('aria-expanded'),
+  }));
+}
+
+function restoreDesignerMoveDomCheckpoint(records) {
+  for (const record of records || []) {
+    const element = document.getElementById(record.id);
+    if (!element) continue;
+    if (record.className == null) element.removeAttribute('class');
+    else element.setAttribute('class', record.className);
+    if (record.style == null) element.removeAttribute('style');
+    else element.setAttribute('style', record.style);
+    if (record.text != null && element.children.length === 0) element.textContent = record.text;
+    if (record.value != null && 'value' in element && element.type !== 'file')
+      element.value = record.value;
+    if (record.checked != null && 'checked' in element) element.checked = record.checked;
+    if (record.disabled != null && 'disabled' in element) element.disabled = record.disabled;
+    if (record.ariaExpanded == null) element.removeAttribute('aria-expanded');
+    else element.setAttribute('aria-expanded', record.ariaExpanded);
+  }
+}
+
+function captureDesignerMoveCheckpoint(index, step = null) {
+  const values = Object.fromEntries(DESIGNER_MOVE_CHECKPOINT_STATE_KEYS
+    .map((key) => [key, structuredClone(state[key])]));
+  state.designerMoveReplayCheckpoints[index] = {
+    index,
+    molecule:cloneDesignerMoveCheckpointMolecule(state.molecule),
+    values,
+    dom:captureDesignerMoveDomCheckpoint(),
+    step:step ? structuredClone(step) : null,
+  };
+  state.designerMoveReplayCheckpoints.length = index + 1;
+  state.designerMoveReplayFrontier = Math.max(state.designerMoveReplayFrontier, index);
+}
+
+function restoreDesignerMoveCheckpoint(index) {
+  const checkpoint = state.designerMoveReplayCheckpoints[index];
+  if (!checkpoint) throw new Error(`Story checkpoint ${index} is unavailable`);
+  const liveAudit = state.chemistActionAudit;
+  clearDesignerMoveCueElements();
+  clearScene();
+  Object.entries(checkpoint.values).forEach(([key, value]) => {
+    state[key] = structuredClone(value);
+  });
+  state.molecule = cloneDesignerMoveCheckpointMolecule(checkpoint.molecule);
+  state.chemistActionAudit = liveAudit;
+  if (state.molecule) state.molecule.source = { ...(state.molecule.source || {}),
+    chemistActionAudit:structuredClone(liveAudit) };
+  state.calculating = false; state.minimizing = false; state.preparing = false;
+  state.dockingRunning = false; state.calculationPlaying = false;
+  state.calculationPlaybackRaf = 0; state.calculationPlaybackTime = 0;
+  if (state.molecule) {
+    const representationSelect = document.querySelector('#representation-select');
+    representationSelect.disabled = !state.proteinPrediction;
+    representationSelect.value = state.representation;
+    document.querySelector('#display-theme-select').value = state.displayColorTheme;
+    document.querySelector('#change-marker-select').value = state.changeMarkerStyle;
+    document.querySelector('#steric-clash-toggle').checked = state.showStericClashes;
+    updatePdbPreparationUi(); updateLigandProtonationUi();
+    updateStructureComponentsUi(); updatePreparationInspectorUi();
+    updateInfo(); updateGeometryControl(); updateOptimizerControls();
+    updateDockingUi(); renderDockingResults(); updateSidechainRotamerControls();
+    updateHistoryButtons(); setMode(state.mode);
+    if (state.calculationFrames.length) {
+      updateEnergyChart(state.calculationFrames);
+      updateCalculationFrameUI();
+    }
+    schedule2DDepiction(0);
+  } else setMode(state.mode);
+  restoreDesignerMoveDomCheckpoint(checkpoint.dom);
+  designerMoveCueElements = [...document.querySelectorAll('.designer-move-cue')];
+  state.designerMoveReplayIndex = index;
+  draw();
+  return checkpoint;
+}
+
+function designerMoveCaption(index = state.designerMoveReplayIndex) {
+  const actions = state.designerMoveScript?.actions || [];
+  if (!actions.length) return 'Load a story to begin.';
+  if (index >= actions.length) return 'Story complete.';
+  const step = actions[Math.max(0, index)];
+  return step.caption || step.action;
+}
+
+function resetDesignerMovePlayback() {
+  state.designerMoveReplay = null;
+  state.designerMoveReplayPaused = false;
+  state.designerMoveReplayIndex = 0;
+  state.designerMoveReplayFrontier = 0;
+  state.designerMoveReplayPhase = null;
+  state.designerMoveReplayStep = null;
+  state.designerMoveReplayActionRunning = false;
+  state.designerMovePresentationStep = null;
+  state.designerMoveReplayCheckpoints = [];
+  designerMoveReplayResume?.();
+  designerMoveReplayResume = null;
+}
+
+function setDesignerMoveReplayPaused(paused) {
+  if (!state.designerMoveReplaying) return;
+  state.designerMoveReplayPaused = Boolean(paused);
+  if (!state.designerMoveReplayPaused) {
+    designerMoveReplayResume?.();
+    designerMoveReplayResume = null;
+  }
+  updateDesignerMoveControls();
+}
+
+function reviewDesignerMoveCheckpoint(offset) {
+  if (!state.designerMoveReplaying || !state.designerMoveReplayPaused
+    || state.designerMoveReplayActionRunning) return;
+  const target = Math.max(0, Math.min(state.designerMoveReplayFrontier,
+    state.designerMoveReplayIndex + offset));
+  if (target === state.designerMoveReplayIndex) return;
+  const checkpoint = restoreDesignerMoveCheckpoint(target);
+  const completed = checkpoint.step;
+  const caption = target === 0 ? 'Blank canvas before the first story move'
+    : completed?.caption || completed?.action || 'Completed story state';
+  updateDesignerMoveControls(`Paused · cached checkpoint ${target} of ${state.designerMoveReplayFrontier}`,
+    caption, target === 0
+      ? 'Reviewing the untouched starting canvas.'
+      : `Reviewing move ${target}; live replay is paused at move ${state.designerMoveReplayFrontier}.`);
+}
+
+function resumeDesignerMoveReplay() {
+  if (!state.designerMoveReplaying || !state.designerMoveReplayPaused) return;
+  if (state.designerMoveReplayIndex !== state.designerMoveReplayFrontier)
+    restoreDesignerMoveCheckpoint(state.designerMoveReplayFrontier);
+  const step = state.designerMoveReplayStep;
+  if (step && state.designerMoveReplayPhase === 'before') showDesignerMoveCue(step);
+  else if (step && state.designerMoveReplayPhase === 'after') showDesignerMoveResultCue(step);
+  setDesignerMoveReplayPaused(false);
+}
+
+async function waitForDesignerMoveReplay() {
+  while (state.designerMoveReplayPaused)
+    await new Promise((resolve) => { designerMoveReplayResume = resolve; });
+}
+
+const DESIGNER_MOVE_RESULT_HOLDS_MS = Object.freeze({
+  'designRoute.load':1500,
+  'protein.prepare':1400,
+  'pose.captureReference':1400,
+  'designRoute.applyStep':2800,
+  'pose.refine':3200,
+  'pose.apply':2800,
+  'pose.enumerateSidechainRotamers':3200,
+  'pose.applySidechainRotamer':3400,
+  'optimization.run':2800,
+  'view.setDisplay':1600,
+  'view.focusComponent':1400,
+  'view.focusAtoms':3000,
+  'view.highlightAtoms':2600,
+  'view.setMode':900,
+  'build.setTool':900,
+  'protein.parameterize':1800,
+  'pose.updateReceptorReference':1800,
+});
+
+function designerMoveHoldMs(step, phase, moviePaced = false) {
+  if (phase === 'before') return moviePaced ? 900 : 700;
+  const base = DESIGNER_MOVE_RESULT_HOLDS_MS[step.action]
+    ?? (step.action?.startsWith('chemistry.') ? 1800
+      : step.action?.startsWith('selection.') ? 1100 : 900);
+  return moviePaced ? Math.max(base, 1200) : base;
+}
+
+async function holdDesignerMoveReplay(milliseconds) {
+  let remaining = Math.max(0, Number(milliseconds) || 0);
+  while (remaining > 0) {
+    await waitForDesignerMoveReplay();
+    const duration = Math.min(100, remaining);
+    const startedAt = performance.now();
+    await new Promise((resolve) => setTimeout(resolve, duration));
+    if (!state.designerMoveReplayPaused)
+      remaining -= Math.max(1, performance.now() - startedAt);
+  }
+}
+
+function updateDesignerMoveControls(message = null, captionOverride = null,
+  detailOverride = null) {
+  const status = document.querySelector('#designer-move-status');
+  if (!status) return;
+  const tools = document.querySelector('#designer-move-tools');
+  if (tools) tools.dataset.replayStatus = state.designerMoveReplaying
+    ? 'running' : state.designerMoveReplayScheduled
+      ? 'scheduled' : state.designerMoveReplay?.status || 'idle';
+  const script = state.designerMoveScript;
+  const actionCount = script?.actions.length || 0;
+  const completedApiMoves = state.chemistActionAudit.filter((entry) =>
+    entry?.status === 'completed').length;
+  const replayButton = document.querySelector('#replay-designer-moves');
+  replayButton.disabled = !script
+    || state.designerMoveReplayScheduled && !state.designerMoveReplaying;
+  replayButton.textContent = state.designerMoveReplayScheduled && !state.designerMoveReplaying
+    ? 'Starting story…' : state.designerMoveReplaying
+    ? (state.designerMoveReplayPaused
+      ? (state.designerMoveReplayIndex < state.designerMoveReplayFrontier
+        ? '▶ Return & continue' : '▶ Continue') : '❚❚ Pause')
+    : (state.designerMoveReplayIndex >= actionCount && actionCount ? '↻ Replay story' : '▶ Play story');
+  const checkpointNavigation = state.designerMoveReplaying
+    && state.designerMoveReplayPaused && !state.designerMoveReplayActionRunning;
+  document.querySelector('#previous-designer-move').disabled =
+    !checkpointNavigation || state.designerMoveReplayIndex <= 0;
+  document.querySelector('#next-designer-move').disabled =
+    !checkpointNavigation || state.designerMoveReplayIndex >= state.designerMoveReplayFrontier;
+  document.querySelector('#restart-designer-moves').disabled =
+    !script || state.designerMoveReplaying;
+  document.querySelector('#export-designer-moves').disabled =
+    !completedApiMoves || state.designerMoveReplaying;
+  document.querySelector('#export-designer-replay').disabled =
+    !state.designerMoveReplay || state.designerMoveReplaying;
+  const progress = document.querySelector('#designer-move-progress');
+  progress.max = Math.max(1, actionCount); progress.value = Math.min(actionCount,
+    state.designerMoveReplayIndex);
+  document.querySelector('#designer-move-progress-label').textContent =
+    `${Math.min(actionCount, state.designerMoveReplayIndex)} / ${actionCount}`;
+  const activeStepCaption = state.designerMoveReplayStep?.caption
+    || state.designerMoveReplayStep?.action;
+  const storyCaption = captionOverride
+    || (state.designerMoveReplaying && activeStepCaption
+      ? activeStepCaption : designerMoveCaption());
+  document.querySelector('#designer-move-caption').textContent = storyCaption;
+  const detail = document.querySelector('#designer-move-detail');
+  if (detail) detail.textContent = detailOverride ?? (state.designerMoveReplayPaused
+    ? state.designerMoveReplayActionRunning
+      ? `Pause requested; move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} will finish first.`
+      : state.designerMoveReplayIndex < state.designerMoveReplayFrontier
+        ? `Reviewing move ${state.designerMoveReplayIndex}; live replay is paused at move ${state.designerMoveReplayFrontier}.`
+        : `Paused before move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} of ${actionCount}.`
+    : state.designerMoveReplayActionRunning
+      ? `Running move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} of ${actionCount}…`
+      : '');
+  if (message) status.textContent = message;
+  else if (script) status.textContent = `${script.label || 'Imported action script'} · ${script.actions.length} replayable move${script.actions.length === 1 ? '' : 's'} · ${script.schema}`;
+  else status.textContent = completedApiMoves
+    ? `${completedApiMoves} Agent/API move${completedApiMoves === 1 ? '' : 's'} recorded for this molecule. Export them as replayable JSON.`
+    : 'Import a Chemist Actions JSON script, or export the Agent/API moves recorded for this molecule.';
+}
+
+async function importDesignerMoveScript(file) {
+  if (!file) return;
+  if (file.size > 2_000_000) throw new Error('Designer-move JSON must be smaller than 2 MB');
+  let parsed;
+  try { parsed = JSON.parse(await file.text()); }
+  catch { throw new Error('Designer-move file is not valid JSON'); }
+  await runChemistUiAction('designerScript.load', { script:parsed }, { reportError:false });
+  showToast(`${parsed.actions.length} designer moves imported`);
+}
+
+async function installDesignerMoveScript(parsed) {
+  const module = await import('./design-history/replay.mjs');
+  module.validateActionScript(parsed);
+  clearScene();
+  document.querySelector('#designer-story-dock')?.classList.remove('hidden');
+  state.designerMoveScript = structuredClone(parsed);
+  state.designerMoveRegisteredStory = null;
+  resetDesignerMovePlayback();
+  updateDesignerMoveControls();
+}
+
+let designerMoveCueElements = [];
+
+function clearDesignerMoveCueElements() {
+  designerMoveCueElements.forEach((element) =>
+    element.classList.remove('designer-move-cue', 'designer-move-press', 'designer-move-change'));
+  designerMoveCueElements = [];
+}
+
+function clearDesignerMoveDemoLayout() {
+  document.body.classList.remove('designer-move-demo-active');
+  document.querySelectorAll('.designer-move-demo-minimized, .designer-move-demo-transport-only, .designer-move-demo-reveal')
+    .forEach((element) => element.classList.remove('designer-move-demo-minimized',
+      'designer-move-demo-transport-only', 'designer-move-demo-reveal'));
+}
+
+function applyDesignerMoveDemoLayout(step, activeElement) {
+  clearDesignerMoveDemoLayout();
+  document.body.classList.add('designer-move-demo-active');
+  const transport = document.querySelector('#designer-move-tools');
+  const transportCard = transport?.closest('.card');
+  const activeCard = activeElement?.closest('.card') || null;
+  document.querySelectorAll('.panel > .card, .panel-scroll-stack > .card').forEach((card) => {
+    if (card.classList.contains('hidden') && card !== activeCard) return;
+    const isActive = card === activeCard;
+    const isTransport = card === transportCard;
+    const transportOnly = isTransport && (!isActive
+      || activeElement === transport || transport?.contains(activeElement));
+    card.classList.toggle('designer-move-demo-transport-only', transportOnly);
+    card.classList.toggle('designer-move-demo-minimized', !isActive && !isTransport);
+  });
+  const depiction = document.querySelector('#structure-2d-panel');
+  depiction?.classList.toggle('designer-move-demo-minimized',
+    !depiction.classList.contains('hidden') && !depiction.contains(activeElement));
+  if (step.action === 'view.setDisplay' && activeElement?.classList.contains('hidden'))
+    activeElement.classList.add('designer-move-demo-reveal');
+}
+
+function showDesignerMoveCue(step = null, { preserveLayout = false } = {}) {
+  clearDesignerMoveCueElements();
+  if (!step) {
+    if (!preserveLayout) clearDesignerMoveDemoLayout();
+    return;
+  }
+  const actionSelectors = {
+    'protein.prepare':'#prepare-pdb',
+    'history.undo':'#undo-atom', 'history.redo':'#redo-atom',
+    'chemistry.setAtom':'#apply-atom-chemistry',
+    'chemistry.setBond':'#apply-bond-chemistry',
+    'chemistry.deleteAtom':'#delete-selected-atom',
+    'chemistry.deleteBond':'#delete-bond-chemistry',
+    'chemistry.addHydrogen':'#add-explicit-hydrogen',
+    'chemistry.finish':'#finish-chemistry-changes',
+    'chemistry.discard':'#discard-chemistry-changes',
+    'pose.captureReference':'#capture-docking-reference',
+    'pose.updateReceptorReference':'#update-docking-receptor',
+    'pose.refine':'#run-constrained-docking', 'pose.apply':'#apply-docking-pose',
+    'pose.enumerateSidechainRotamers':'#enumerate-sidechain-rotamers',
+    'pose.applySidechainRotamer':'#apply-sidechain-rotamer',
+    'optimization.run':'#optimize-button',
+  };
+  let selector = actionSelectors[step.action];
+  if (step.action === 'view.setMode')
+    selector = `.mode-bar button[data-mode="${CSS.escape(String(step.args?.mode || ''))}"]`;
+  else if (step.action === 'view.focusComponent') selector = '#structure-components';
+  else if (step.action === 'view.focusAtoms' || step.action === 'view.highlightAtoms')
+    selector = '.viewer-stage';
+  else if (step.action === 'view.setDisplay') selector = '#display-options';
+  else if (step.action === 'build.setTool') {
+    const tool = step.args?.tool === 'move' ? 'manipulate' : step.args?.tool;
+    selector = `#build-tool-tabs [data-tool="${CSS.escape(String(tool || ''))}"]`;
+  } else if (step.action?.startsWith('designRoute.')) selector = '#designer-move-tools';
+  else if (step.action?.startsWith('selection.') || step.action === 'session.inspect')
+    selector = '.viewer-stage';
+  const element = selector ? document.querySelector(selector) : null;
+  applyDesignerMoveDemoLayout(step, element);
+  if (!element) return;
+  const changedControls = step.action === 'view.setDisplay' ? [
+    step.args?.representation != null && '#representation-select',
+    step.args?.showHydrogens != null && '#hydrogen-toggle',
+    step.args?.showInteractions != null && '#interaction-toggle',
+    step.args?.showPocketAtoms != null && '#pocket-toggle',
+    step.args?.showHulls != null && '#hull-toggle',
+    step.args?.showStericClashes != null && '#steric-clash-toggle',
+    step.args?.colorTheme != null && '#display-theme-select',
+    step.args?.changeMarkers != null && '#change-marker-select',
+  ].filter(Boolean).map((controlSelector) => document.querySelector(controlSelector)).filter(Boolean) : [];
+  designerMoveCueElements = [element, ...changedControls];
+  element.classList.add('designer-move-cue', 'designer-move-press');
+  changedControls.forEach((control) => control.classList.add('designer-move-change'));
+  const scrollContainer = element.closest('.panel-scroll-stack') || element.closest('.panel');
+  if (scrollContainer) {
+    const panelRect = scrollContainer.getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
+    scrollContainer.scrollTop += elementRect.top - panelRect.top
+      - Math.max(0, (scrollContainer.clientHeight - elementRect.height) / 2);
+  } else element.scrollIntoView?.({ block:'center', inline:'nearest', behavior:'auto' });
+}
+
+function designerMoveResultCaption(step) {
+  if (step.status === 'failed') return `${step.action} failed; no result was applied.`;
+  if (step.action === 'pose.refine') {
+    const count = Number(step.result?.refinement?.candidates || 0);
+    const execution = step.result?.refinement?.poseSearchExecution;
+    const ensemble = Number(execution?.workerCount) > 1
+      ? ` · ${execution.workerCount} workers · ${(Number(execution.elapsedMs) / 1000).toFixed(1)} s · ${Number(execution.chainsPerSecond).toFixed(1)} chains/s`
+      : '';
+    return `${count} pose candidate${count === 1 ? '' : 's'} ready${ensemble} · coordinates intentionally remain unchanged until Apply pose.`;
+  }
+  if (step.action === 'pose.enumerateSidechainRotamers') {
+    const count = Number(step.result?.sidechainRotamers?.candidates?.length || 0);
+    return `${count} rotamer candidate${count === 1 ? '' : 's'} ready · the receptor remains unchanged until Apply branch.`;
+  }
+  if (step.action === 'protein.parameterize')
+    return 'Parameters assigned · this action intentionally does not move any atom.';
+  if (step.action === 'pose.captureReference')
+    return 'Reference pose captured · coordinates intentionally remain unchanged.';
+  if (step.action === 'pose.updateReceptorReference')
+    return 'The applied receptor branch is now the reference · no additional coordinates moved.';
+  if (step.action === 'view.focusAtoms') {
+    const count = Number(step.result?.focusedAtoms?.atomCount || 0);
+    return count
+      ? `${count} changed atom${count === 1 ? '' : 's'} centered in local pocket context and marked for review.`
+      : 'No heavy-atom movement crossed the display threshold; the previous camera is retained.';
+  }
+  if (step.action === 'view.highlightAtoms') {
+    const count = Number(step.result?.highlightedAtoms?.atomCount || 0);
+    return count
+      ? `${count} changed atom${count === 1 ? '' : 's'} marked for review; camera and pocket context retained for direct comparison.`
+      : 'No heavy-atom movement crossed the display threshold; camera and pocket context retained.';
+  }
+  if (step.action === 'designRoute.applyStep') {
+    const count = Number(step.result?.designStep?.changedAtomIds?.length || 0);
+    return `Graph edit staged · ${count} changed heavy atom${count === 1 ? '' : 's'} reported for local inspection.`;
+  }
+  if (step.action === 'pose.apply' || step.action === 'pose.applySidechainRotamer'
+    || step.action === 'optimization.run') {
+    const result = step.action === 'pose.apply' ? step.result?.appliedPose
+      : step.action === 'pose.applySidechainRotamer' ? step.result?.sidechainRotamer
+        : step.result?.optimization;
+    const moved = Number(result?.movedHeavyAtomCount || 0);
+    return `${moved} heavy atom${moved === 1 ? '' : 's'} moved beyond the display threshold.`;
+  }
+  return 'Move completed.';
+}
+
+function showDesignerMoveResultCue(step) {
+  clearDesignerMoveCueElements();
+  const resultSelectors = {
+    'pose.refine':'#docking-results',
+    'pose.enumerateSidechainRotamers':'#sidechain-rotamer-results',
+    'designRoute.applyStep':'.viewer-stage',
+    'pose.apply':'.viewer-stage',
+    'pose.applySidechainRotamer':'.viewer-stage',
+    'optimization.run':'.viewer-stage',
+    'view.focusComponent':'.viewer-stage',
+    'view.focusAtoms':'.viewer-stage',
+    'view.highlightAtoms':'.viewer-stage',
+  };
+  const selector = resultSelectors[step.action];
+  const element = selector ? document.querySelector(selector) : null;
+  if (!element) return;
+  applyDesignerMoveDemoLayout(step, element);
+  designerMoveCueElements = [element];
+  element.classList.add('designer-move-cue', 'designer-move-change');
+  const scrollContainer = element.closest('.panel-scroll-stack') || element.closest('.panel');
+  if (scrollContainer) {
+    const panelRect = scrollContainer.getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
+    scrollContainer.scrollTop += elementRect.top - panelRect.top
+      - Math.max(0, (scrollContainer.clientHeight - elementRect.height) / 2);
+  }
+}
+
+function presentDesignerMoveStep(index, phase) {
+  const script = state.designerMoveScript;
+  if (!script) throw new Error('Load a designer-move script first');
+  if (!Number.isInteger(index) || index < 0 || index >= script.actions.length)
+    throw new Error('index must identify an installed designer-move step');
+  if (!['before','after','clear'].includes(phase))
+    throw new Error('phase must be one of: before, after, clear');
+  const pending = state.designerMovePresentationStep;
+  const source = script.actions[index];
+  const step = pending?.index === index && pending?.action === source.action
+    ? structuredClone(pending) : { ...structuredClone(source), index,
+      status:phase === 'after' ? 'completed' : 'running' };
+  if (phase === 'clear') {
+    showDesignerMoveCue();
+    return { index, phase, action:source.action, cleared:true };
+  }
+  state.designerMoveReplayPhase = phase;
+  state.designerMoveReplayStep = structuredClone(step);
+  if (phase === 'before') {
+    state.designerMoveReplayIndex = index;
+    showDesignerMoveCue(step);
+    updateDesignerMoveControls(
+      `Move ${index + 1} of ${script.actions.length} · ${step.caption || step.action}`);
+  } else {
+    state.designerMoveReplayActionRunning = false;
+    state.designerMoveReplayIndex = index + 1;
+    showDesignerMoveResultCue(step);
+    const message = `Completed move ${index + 1} of ${script.actions.length} · ${step.caption || step.action}`;
+    updateDesignerMoveControls(message, step.caption || step.action,
+      designerMoveResultCaption(step));
+    captureDesignerMoveCheckpoint(index + 1, step);
+    updateDesignerMoveControls(message, step.caption || step.action,
+      designerMoveResultCaption(step));
+  }
+  return { index, phase, action:source.action,
+    checkpointIndex:phase === 'after' ? index + 1 : null };
+}
+
+async function replayDesignerMoveScript() {
+  const script = state.designerMoveScript;
+  if (!script) throw new Error('Import a designer-move JSON script first');
+  if (state.designerMoveReplaying) {
+    if (state.designerMoveReplayPaused) resumeDesignerMoveReplay();
+    else setDesignerMoveReplayPaused(true);
+    return null;
+  }
+  if (state.designerMoveReplayIndex >= script.actions.length) {
+    clearScene();
+    resetDesignerMovePlayback();
+  }
+  const [api, module] = await Promise.all([
+    window.MolariumChemistActionsReady,
+    import('./design-history/replay.mjs'),
+  ]);
+  state.designerMoveReplaying = true;
+  state.designerMoveReplay = null;
+  state.designerMoveReplayPaused = false;
+  state.designerMoveReplayIndex = 0;
+  state.designerMoveReplayFrontier = 0;
+  state.designerMoveReplayPhase = null;
+  state.designerMoveReplayStep = null;
+  state.designerMoveReplayActionRunning = false;
+  state.designerMoveReplayCheckpoints = [];
+  captureDesignerMoveCheckpoint(0);
+  const moviePacedReplay = new URLSearchParams(window.location.search)
+    .has('designer-moves-movie');
+  updateDesignerMoveControls(`Starting ${script.actions.length} recorded designer moves…`);
+  try {
+    const replay = await module.replayActionScript(api, script, {
+      onStep:async ({ phase, step }) => {
+        if (phase === 'before') {
+          await waitForDesignerMoveReplay();
+          state.designerMoveReplayActionRunning = true;
+          state.designerMovePresentationStep = structuredClone(step);
+          await api.execute({ action:'interface.presentDesignerStep',
+            args:{ index:step.index, phase:'before' } });
+          await holdDesignerMoveReplay(designerMoveHoldMs(step, phase, moviePacedReplay));
+        } else {
+          state.designerMovePresentationStep = structuredClone(step);
+          await api.execute({ action:'interface.presentDesignerStep',
+            args:{ index:step.index, phase:'after' } });
+          await holdDesignerMoveReplay(designerMoveHoldMs(step, phase, moviePacedReplay));
+          await api.execute({ action:'interface.presentDesignerStep',
+            args:{ index:step.index, phase:'clear' } });
+        }
+      },
+    });
+    state.designerMoveReplay = replay;
+    if (replay.status !== 'completed') {
+      const failed = replay.steps.find((step) => step.status === 'failed');
+      throw new Error(`Replay stopped at move ${(failed?.index ?? 0) + 1}: ${failed?.error || 'unknown error'}`);
+    }
+    showToast(`${script.actions.length} designer moves replayed through the public Agent API`);
+  } finally {
+    if (script.actions.length && (designerMoveCueElements.length
+      || document.body.classList.contains('designer-move-demo-active'))) {
+      try { await api.execute({ action:'interface.presentDesignerStep', args:{
+        index:Math.min(script.actions.length - 1,
+          Math.max(0, state.designerMoveReplayIndex - 1)), phase:'clear' } }); }
+      catch { showDesignerMoveCue(); }
+    } else showDesignerMoveCue();
+    state.designerMoveReplaying = false;
+    state.designerMoveReplayPaused = false;
+    state.designerMoveReplayActionRunning = false;
+    state.designerMoveReplayPhase = null;
+    state.designerMoveReplayStep = null;
+    state.designerMovePresentationStep = null;
+    designerMoveReplayResume?.(); designerMoveReplayResume = null;
+    updateDesignerMoveControls();
+  }
+}
+
+async function createDesignerScriptExport(kind) {
+  let value, filename;
+  if (kind === 'recorded-actions') {
+    const module = await import('./design-history/replay.mjs');
+    value = module.actionScriptFromAudit(state.chemistActionAudit, {
+      label:`${state.molecule?.name || 'Molarium'} designer moves`,
+    });
+    filename = `${slug(state.molecule?.name || 'molarium')}-designer-moves.json`;
+  } else if (kind === 'execution-log') {
+    if (!state.designerMoveReplay) throw new Error('Replay a designer-move script first');
+    value = state.designerMoveReplay;
+    filename = `${slug(state.designerMoveScript?.label
+      || state.molecule?.name || 'molarium')}-replay-log.json`;
+  } else if (kind === 'installed-script') {
+    if (!state.designerMoveScript) throw new Error('Load a designer-move script first');
+    value = state.designerMoveScript;
+    filename = `${slug(state.designerMoveScript.label || 'molarium')}-action-script.json`;
+  } else throw new Error('kind must be one of: recorded-actions, execution-log, installed-script');
+  return { kind, filename, serialized:`${JSON.stringify(value, null, 2)}\n` };
+}
+
+async function downloadDesignerScriptExport(kind) {
+  const result = await runChemistUiAction('designerScript.export', { kind },
+    { reportError:false });
+  const exported = result.designerScriptExport;
+  downloadBlob(exported.serialized, exported.filename, 'application/json');
+  if (kind === 'recorded-actions') {
+    const actionCount = JSON.parse(exported.serialized).actions.length;
+    updateDesignerMoveControls(`${actionCount} recorded Agent/API moves exported as replayable JSON.`);
+  }
+}
+
+function chemistActionKeys(args, allowed = []) {
+  const unexpected = Object.keys(args || {}).filter((key) => !allowed.includes(key));
+  if (unexpected.length) throw new Error(`Unexpected argument${unexpected.length === 1 ? '' : 's'}: ${unexpected.join(', ')}`);
+}
+
+function chemistActionEnum(value, allowed, label) {
+  if (!allowed.includes(value)) throw new Error(`${label} must be one of: ${allowed.join(', ')}`);
+  return value;
+}
+
+function chemistActionSummary(extra = {}) {
+  const molecule = state.molecule;
+  return { molecule:molecule ? { name:molecule.name || 'Molecule', atoms:molecule.atoms.length,
+    bonds:molecule.bonds.length, chemistryValidation:structuredClone(
+      molecule.source?.chemistryValidation || null) } : null,
+  mode:state.mode, selectedAtomIds:(state.selectedAtoms || [])
+    .map((index) => molecule?.atoms?.[index]?.designAtomId).filter(Boolean),
+  pendingChemistry:state.chemistryTransaction ? {
+    editCount:state.chemistryTransaction.editCount,
+    finishing:Boolean(state.chemistryEditFinishing),
+  } : null, ...extra };
+}
+
+function persistChemistActionAudit(record) {
+  if (!state.molecule) return;
+  const entry = { schema:'molarium.chemist-action-audit/v1', ...structuredClone(record),
+    outcomeState:{ moleculeName:state.molecule.name || 'Molecule',
+      atomCount:state.molecule.atoms.length, bondCount:state.molecule.bonds.length,
+      mode:state.mode, pendingChemistry:Boolean(state.chemistryTransaction),
+      selectedAtomIds:(state.selectedAtoms || []).map((index) =>
+        state.molecule.atoms[index]?.designAtomId).filter(Boolean) } };
+  state.chemistActionAudit = [...state.chemistActionAudit, entry].slice(-500);
+  state.molecule.source = { ...(state.molecule.source || {}),
+    chemistActionAudit:structuredClone(state.chemistActionAudit) };
+  // Presentation and replay-controller routes update this card inside their
+  // own handler.  Re-rendering it here would immediately replace a visible
+  // "Move"/"Completed move" checkpoint with the generic script summary.
+  const ownsDesignerMoveStatus = entry.action === 'interface.presentDesignerStep'
+    || entry.action.startsWith('designerScript.');
+  if (!ownsDesignerMoveStatus) updateDesignerMoveControls();
+}
+
+let liveCampaignModulePromise = null;
+let liveCampaignStoreModulePromise = null;
+let liveCampaignStorePromise = null;
+let liveCampaignRestorePromise = null;
+let liveCampaignUiBusy = false;
+
+function getLiveCampaignModule() {
+  liveCampaignModulePromise ||= import('./design-history/live-campaign.mjs');
+  return liveCampaignModulePromise;
+}
+
+function getLiveCampaignStoreModule() {
+  liveCampaignStoreModulePromise ||= import('./design-history/live-campaign-store.mjs');
+  return liveCampaignStoreModulePromise;
+}
+
+function getLiveCampaignStore() {
+  liveCampaignStorePromise ||= getLiveCampaignStoreModule()
+    .then((module) => module.createLiveCampaignStore());
+  return liveCampaignStorePromise;
+}
+
+function liveCampaignActorId(campaign = state.liveCampaign) {
+  return campaign?.actors?.find((actor) => actor.type === 'human')?.id
+    || campaign?.actors?.[0]?.id || 'chemist.local';
+}
+
+function liveCampaignHead(campaign = state.liveCampaign,
+  branch = state.liveCampaignBranch) {
+  return campaign?.branches?.[branch] || null;
+}
+
+function updateLiveCampaignUi(message = '', status = '') {
+  const campaign = state.liveCampaign;
+  const createControls = document.querySelector('#campaign-create-controls');
+  const activeControls = document.querySelector('#campaign-active-controls');
+  const statusElement = document.querySelector('#campaign-status');
+  if (!createControls || !activeControls || !statusElement) return;
+  createControls.classList.toggle('hidden', Boolean(campaign));
+  activeControls.classList.toggle('hidden', !campaign);
+  document.querySelector('#campaign-export').disabled = !campaign || liveCampaignUiBusy;
+  document.querySelector('#campaign-verify').disabled = !campaign || liveCampaignUiBusy;
+  document.querySelector('#campaign-close').disabled = !campaign || liveCampaignUiBusy;
+  document.querySelector('#campaign-import').disabled = liveCampaignUiBusy;
+  document.querySelector('#campaign-create').disabled = liveCampaignUiBusy;
+  document.querySelectorAll('#campaign-active-controls button, #campaign-active-controls input, #campaign-active-controls textarea, #campaign-active-controls select')
+    .forEach((control) => { control.disabled = !campaign || liveCampaignUiBusy
+      || Boolean(campaign?.campaignSha256); });
+  statusElement.classList.toggle('success', status === 'success');
+  statusElement.classList.toggle('failure', status === 'failure');
+  statusElement.textContent = message || (campaign
+    ? `${campaign.title} · ${state.liveCampaignBranch}`
+    : 'No active campaign · history stays on this device.');
+  if (!campaign) return;
+
+  const commits = Object.keys(campaign.objects?.commits || {}).length;
+  const decisions = (campaign.events || []).filter((event) =>
+    event.kind === 'decision.recorded').length;
+  const summary = document.querySelector('#campaign-summary');
+  summary.replaceChildren();
+  for (const [label, value] of [['Branch', state.liveCampaignBranch],
+    ['Commits', commits], ['Decisions', decisions]]) {
+    const item = document.createElement('span');
+    const strong = document.createElement('strong');
+    item.append(document.createTextNode(label)); strong.textContent = String(value); item.append(strong);
+    summary.append(item);
+  }
+  const branches = Object.keys(campaign.branches || {}).sort();
+  const branchSelect = document.querySelector('#campaign-branch');
+  branchSelect.replaceChildren(...branches.map((branch) => {
+    const option = document.createElement('option'); option.value = branch; option.textContent = branch;
+    return option;
+  }));
+  branchSelect.value = state.liveCampaignBranch;
+  const mergeSelect = document.querySelector('#campaign-merge-source');
+  const mergeBranches = branches.filter((branch) => branch !== state.liveCampaignBranch
+    && campaign.branches[branch]);
+  mergeSelect.replaceChildren(...mergeBranches.map((branch) => {
+    const option = document.createElement('option'); option.value = branch; option.textContent = branch;
+    return option;
+  }));
+  mergeSelect.disabled = liveCampaignUiBusy || Boolean(campaign.campaignSha256)
+    || !mergeBranches.length;
+  document.querySelector('#campaign-merge').disabled = liveCampaignUiBusy
+    || Boolean(campaign.campaignSha256) || !mergeBranches.length || !liveCampaignHead();
+  document.querySelector('#campaign-record-decision').disabled = liveCampaignUiBusy
+    || Boolean(campaign.campaignSha256) || !liveCampaignHead();
+}
+
+async function saveLiveCampaign(campaign, activeBranch = state.liveCampaignBranch) {
+  const store = await getLiveCampaignStore();
+  await store.save(campaign, { activeBranch });
+}
+
+function currentChemistActionSequence() {
+  return Math.max(0, ...state.chemistActionAudit.map((record) =>
+    Number.isInteger(record?.sequence) ? record.sequence : 0));
+}
+
+async function loadLiveCampaignBranchMolecule(campaign, branch) {
+  const prepared = await prepareLiveCampaignBranchMolecule(campaign, branch);
+  if (!prepared.commitId) return null;
+  applyLiveCampaignBranchMolecule(prepared.molecule);
+  return prepared.commitId;
+}
+
+async function prepareLiveCampaignBranchMolecule(campaign, branch, { required = false } = {}) {
+  const commitId = campaign?.branches?.[branch];
+  if (!commitId) {
+    if (required) throw new Error(`Campaign branch ${branch} has no molecular commit to restore`);
+    return { commitId:null, molecule:null };
+  }
+  const live = await getLiveCampaignModule();
+  return { commitId, molecule:live.moleculeFromCampaignCommit(campaign, commitId) };
+}
+
+function applyLiveCampaignBranchMolecule(molecule) {
+  const audit = structuredClone(state.chemistActionAudit);
+  loadMolecule(molecule);
+  state.chemistActionAudit = audit;
+  state.molecule.source = { ...(state.molecule.source || {}),
+    chemistActionAudit:structuredClone(audit) };
+  updateDesignerMoveControls();
+}
+
+async function initializeLiveCampaignPersistence() {
+  try {
+    const [store, module] = await Promise.all([getLiveCampaignStore(), getLiveCampaignModule()]);
+    const workspace = await store.loadActive();
+    if (!workspace?.campaign) return updateLiveCampaignUi();
+    const { campaign } = workspace;
+    const verification = await module.verifyLiveCampaign(campaign);
+    if (!verification.valid) throw new Error(`Stored campaign is invalid: ${verification.reason}`);
+    const branch = Object.hasOwn(campaign.branches || {}, workspace.activeBranch)
+      ? workspace.activeBranch : 'main';
+    const checkout = await prepareLiveCampaignBranchMolecule(campaign, branch, { required:true });
+    state.liveCampaign = campaign;
+    state.liveCampaignBranch = branch;
+    // Chemist Actions sequence numbers are scoped to this page/API instance.
+    // A persisted campaign's historical sequence must not suppress new-session actions.
+    state.liveCampaignCommittedThroughSequence = 0;
+    applyLiveCampaignBranchMolecule(checkout.molecule);
+    updateLiveCampaignUi('Restored the most recent local campaign.', 'success');
+  } catch (error) {
+    updateLiveCampaignUi(`Local campaign storage unavailable: ${error.message}`, 'failure');
+  }
+}
+
+function ensureLiveCampaignPersistence() {
+  liveCampaignRestorePromise ||= initializeLiveCampaignPersistence();
+  return liveCampaignRestorePromise;
+}
+
+function liveCampaignInspection() {
+  const campaign = state.liveCampaign;
+  if (!campaign) return { active:false, campaign:null,
+    currentBranch:null, currentCommitId:null, uncommittedActionCount:0 };
+  const committedThrough = Number(state.liveCampaignCommittedThroughSequence || 0);
+  return { active:true, campaign:{ campaignId:campaign.campaignId, title:campaign.title,
+    description:campaign.description, createdAt:campaign.createdAt,
+    finalizedAt:campaign.finalizedAt || null,
+    actors:structuredClone(campaign.actors || []),
+    commits:Object.keys(campaign.objects?.commits || {}).length,
+    events:campaign.events?.length || 0,
+    decisions:(campaign.events || []).filter((event) => event.kind === 'decision.recorded').length,
+    branches:structuredClone(campaign.branches || {}),
+    campaignSha256:campaign.campaignSha256 || null },
+  currentBranch:state.liveCampaignBranch,
+  currentCommitId:liveCampaignHead(),
+  committedThroughSequence:committedThrough,
+  uncommittedActionCount:state.chemistActionAudit.filter((record) =>
+    record.status === 'completed' && Number(record.sequence || 0) > committedThrough
+      && !String(record.action || '').startsWith('campaign.')).length };
+}
+
+async function runCampaignUiAction(action, args, successMessage) {
+  if (liveCampaignUiBusy) return;
+  liveCampaignUiBusy = true; updateLiveCampaignUi('Updating design history…');
+  let finalMessage = '', finalStatus = '';
+  try {
+    const api = await window.MolariumChemistActionsReady;
+    const response = await api.execute({ action, args });
+    finalMessage = successMessage(response.result); finalStatus = 'success';
+    return response.result;
+  } catch (error) {
+    finalMessage = error.message; finalStatus = 'failure';
+    showNotice(error.message);
+    return null;
+  } finally {
+    liveCampaignUiBusy = false; updateLiveCampaignUi(finalMessage, finalStatus);
+  }
+}
+
+async function ensureChemistActionAtomIds() {
+  if (!state.molecule?.atoms?.length) throw new Error('Load a molecule before using Chemist Actions.');
+  const { ensureStableAtomIds } = await import('./docking/reference-core.mjs');
+  ensureStableAtomIds(state.molecule, `chemist-${state.molecule.source?.pdbId || 'molecule'}`,
+    state.dockingReference?.ligand?.atomIds || []);
+  const byId = new Map();
+  state.molecule.atoms.forEach((atom, index) => {
+    if (!atom.designAtomId || byId.has(atom.designAtomId))
+      throw new Error('The current molecule does not have unique persistent atom identities.');
+    byId.set(atom.designAtomId, index);
+  });
+  return byId;
+}
+
+async function inspectChemistActionState({ scope = 'ligand', includeCoordinates = false,
+  maximumAtoms = 100 } = {}) {
+  chemistActionEnum(scope, ['ligand','selection','pocket','all'], 'scope');
+  if (typeof includeCoordinates !== 'boolean') throw new Error('includeCoordinates must be boolean');
+  const limit = Number(maximumAtoms);
+  if (!Number.isInteger(limit) || limit < 1 || limit > 500)
+    throw new Error('maximumAtoms must be an integer from 1 to 500');
+  await ensureChemistActionAtomIds();
+  let indices;
+  if (scope === 'selection') indices = [...state.selectedAtoms];
+  else if (scope === 'ligand') indices = dockingLigandComponent()?.atomIndices.slice()
+    || state.structureComponents.find((component) => component.kind === 'ligand')?.atomIndices.slice()
+    || state.molecule.atoms.map((_, index) => index);
+  else if (scope === 'pocket') {
+    if (!state.dockingReference) throw new Error('Capture a reference pose before inspecting the pocket');
+    const byId = new Map(state.molecule.atoms.map((atom, index) => [atom.designAtomId, index]));
+    const contactParticipants = state.dockingReference.hydrogenBonds.flatMap((definition) =>
+      [definition.donor, definition.hydrogen, definition.acceptor]
+        .map((descriptor) => byId.get(descriptor?.designAtomId)).filter(Number.isInteger));
+    const ligandIndices = currentDockingLigandAtomIndices();
+    const siteIndices = state.dockingReference.receptorSite.atoms
+      .map((atom) => byId.get(atom.designAtomId)).filter(Number.isInteger);
+    indices = [...new Set([...contactParticipants, ...ligandIndices, ...siteIndices])];
+  }
+  else indices = state.molecule.atoms.map((_, index) => index);
+  const totalAtomCount = indices.length;
+  indices = indices.slice(0, limit);
+  const included = new Set(indices);
+  const atoms = indices.map((index) => {
+    const atom = state.molecule.atoms[index];
+    return { atomId:atom.designAtomId, element:atom.element,
+      formalCharge:atomFormalCharge(atom), aromatic:Boolean(atom.aromatic),
+      atomName:atom.atomName || null, residueName:atom.residueName || null,
+      chain:atom.chain || null, residueIndex:atom.residueIndex ?? null,
+      ...(includeCoordinates ? { coordinatesAngstrom:[Number(atom.x),Number(atom.y),Number(atom.z)] } : {}) };
+  });
+  const bonds = state.molecule.bonds.flatMap((bond) => included.has(bond.a) && included.has(bond.b)
+    ? [{ atomIds:[state.molecule.atoms[bond.a].designAtomId,
+      state.molecule.atoms[bond.b].designAtomId], order:Number(bond.order || 1),
+      aromatic:Boolean(bond.aromatic || Number(bond.order) === 1.5) }] : []);
+  const currentPoseHydrogenBonds = new Map((state.dockingResult?.run?.candidates
+    ?.[state.dockingPoseIndex]?.hydrogenBonds || []).map((entry) => [entry.id, entry]));
+  const participant = (descriptor) => {
+    if (!descriptor) return null;
+    if (descriptor.scope === 'receptor') return {
+      scope:'receptor', atomId:descriptor.designAtomId || null,
+      element:descriptor.element || null,
+      ...(includeCoordinates && descriptor.point ? { coordinatesAngstrom:[
+        Number(descriptor.point.x), Number(descriptor.point.y), Number(descriptor.point.z),
+      ] } : {}),
+    };
+    const atom = state.molecule.atoms.find((entry) =>
+      entry.designAtomId === descriptor.designAtomId);
+    return {
+      scope:'ligand', atomId:descriptor.designAtomId || null,
+      element:atom?.element || descriptor.element || null,
+      ...(includeCoordinates && atom ? { coordinatesAngstrom:[
+        Number(atom.x), Number(atom.y), Number(atom.z),
+      ] } : {}),
+    };
+  };
+  const contacts = (state.dockingReference?.hydrogenBonds || []).map((definition) => {
+    let effective = effectiveDockingHydrogenBondDefinition(definition);
+    const proposal = state.dockingContactRemapProposals.get(definition.id);
+    const poseContact = currentPoseHydrogenBonds.get(definition.id);
+    const selectedAlternative = poseContact?.selectedAlternativeId && proposal?.candidates
+      ?.find((candidate) => candidate.id === poseContact.selectedAlternativeId);
+    if (selectedAlternative?.replacement) {
+      effective = structuredClone(proposal.priorEffectiveDefinition || definition);
+      if (selectedAlternative.role === 'acceptor')
+        effective.acceptor = structuredClone(selectedAlternative.replacement.acceptor);
+      else {
+        effective.donor = structuredClone(selectedAlternative.replacement.donor);
+        effective.hydrogen = structuredClone(selectedAlternative.replacement.hydrogen);
+      }
+    }
+    return { contactId:definition.id, label:definition.label,
+      origin:structuredClone(definition.origin || null),
+      required:state.dockingSelectedHbondIds.has(definition.id),
+      available:(!proposal || Boolean(selectedAlternative)) && dockingContactAvailable(effective),
+      remapStatus:proposal?.status || (state.dockingContactRemaps.has(definition.id) ? 'mapped' : 'original'),
+      hydrogenBond:{ receptorRole:effective.receptorRole,
+        selectedAlternativeId:poseContact?.selectedAlternativeId || null,
+        satisfied:poseContact?.satisfied ?? null,
+        donorAcceptorDistanceAngstrom:poseContact?.donorAcceptorDistanceAngstrom ?? null,
+        hydrogenAcceptorDistanceAngstrom:poseContact?.hydrogenAcceptorDistanceAngstrom ?? null,
+        dhaAngleDegrees:poseContact?.dhaAngleDegrees ?? null,
+        participants:{ donor:participant(effective.donor),
+          hydrogen:participant(effective.hydrogen),
+          acceptor:participant(effective.acceptor) } } };
+  });
+  return chemistActionSummary({ scope, truncated:totalAtomCount > atoms.length,
+    totalAtomCount, atoms, bonds, contacts,
+    poseReference:state.dockingReference ? { mode:state.dockingReference.mode,
+      capturedAt:state.dockingReference.capturedAt,
+      resultPoseCount:state.dockingResult?.run?.candidates?.length || 0 } : null,
+    transformedRingRegions:structuredClone(
+      state.molecule.source?.posePropagationEditRegions || []),
+    chemistActionAuditCount:state.chemistActionAudit.length });
+}
+
+const REGISTERED_DESIGN_ROUTES = Object.freeze({
+  'bclxl-hit-only':'./design-history/structures/generated/bclxl-prospective-campaign.json',
+  'cdk2-hit-only':'./design-history/structures/generated/cdk2-prospective-campaign.json',
+  'cdk2-designer-intent':'./design-history/structures/generated/cdk2-designer-campaign.json',
+  'sos1-hit-only':'./design-history/structures/generated/sos1-prospective-campaign.json',
+});
+
+async function fetchPinnedText(path, expectedSha256) {
+  const response = await fetch(path);
+  if (!response.ok) throw new Error(`Registered campaign asset could not be loaded (${response.status})`);
+  const bytes = await response.arrayBuffer();
+  const actualSha256 = await sha256Hex(bytes);
+  if (actualSha256 !== expectedSha256)
+    throw new Error(`Registered campaign asset hash mismatch: ${path}`);
+  return new TextDecoder().decode(bytes);
+}
+
+async function loadRegisteredDesignRoute(routeId) {
+  const route = await fetchRegisteredDesignRoute(routeId);
+  const [protein, ligand] = await Promise.all([
+    fetchPinnedText(route.hit.proteinAsset, route.hit.proteinSha256),
+    fetchPinnedText(route.hit.ligandAsset, route.hit.ligandSha256),
+  ]);
+  const molecule = parsePDB(`${protein.replace(/\nEND\s*$/m, '')}\n${ligand}`, {
+    pdbId:route.hit.pdbId, name:`${route.hit.pdbId} · registered hit`,
+  });
+  state.buildHistory = []; state.redoHistory = [];
+  loadMolecule(molecule); updateHistoryButtons();
+  state.designRoute = structuredClone(route);
+  state.designRouteStepId = route.hit.stateId;
+  state.molecule.source = { ...(state.molecule.source || {}), designRoute:{
+    routeId:route.id, hitPdbId:route.hit.pdbId,
+    stateId:route.hit.stateId, coordinateInputClass:'registered-hit-only',
+  } };
+  return { routeId:route.id, title:route.title,
+    hit:{ pdbId:route.hit.pdbId, ligand:route.hit.ligand,
+      stateId:route.hit.stateId },
+    coordinateInputs:structuredClone(route.protocolBoundary.coordinateInputs),
+    availableSteps:route.steps.map((step) => step.id) };
+}
+
+async function fetchRegisteredDesignRoute(routeId) {
+  const path = REGISTERED_DESIGN_ROUTES[routeId];
+  if (!path) throw new Error(`Unknown registered design route: ${routeId}`);
+  const response = await fetch(path);
+  if (!response.ok) throw new Error(`Registered design route could not be loaded (${response.status})`);
+  const route = await response.json();
+  validateRegisteredDesignRoute(route, { expectedId:routeId });
+  if (route.evaluation?.status !== 'locked-until-predictions-frozen'
+    || route.evaluation?.holdouts?.length)
+    throw new Error('A hit-only route cannot expose evaluation holdouts before prediction freeze');
+  const coordinateFilesRead = route.generator?.coordinateFilesRead || [];
+  const hitCoordinateToken = String(route.hit?.pdbId || '').toLowerCase();
+  if (!hitCoordinateToken || !coordinateFilesRead.length
+    || coordinateFilesRead.some((entry) => !String(entry).toLowerCase().includes(hitCoordinateToken)))
+    throw new Error('Registered design route has a non-hit coordinate dependency');
+  return route;
+}
+
+function installChemistActionsApi(module) {
+  const empty = (args) => chemistActionKeys(args);
+  const summarizeMutation = async (operation) => {
+    const result = await operation();
+    return chemistActionSummary({ validation:structuredClone(result?.validation || null),
+      polish:result?.polish ? { cleanupMode:result.polish.cleanupMode || null,
+        initialEnergy:result.polish.initialEnergy ?? null,
+        finalEnergy:result.polish.finalEnergy ?? null } : null,
+      contactFeatureRemaps:structuredClone(result?.contactFeatureRemaps || []) });
+  };
+  const routes = {
+    'session.inspect':async (args) => { chemistActionKeys(args,
+      ['scope','includeCoordinates','maximumAtoms']); return inspectChemistActionState(args); },
+    'session.loadStructure':async (args) => { chemistActionKeys(args,
+      ['content','format','name','polish']);
+      if (typeof args.content !== 'string' || !args.content.trim())
+        throw new Error('content must be non-empty structure text');
+      const format = chemistActionEnum(args.format ?? 'auto',
+        ['auto','pdb','xyz','mol','smiles'], 'format');
+      if (args.name != null && (typeof args.name !== 'string' || !args.name.trim()
+        || args.name.length > 160)) throw new Error('name must be a non-empty string up to 160 characters');
+      if (args.polish != null && typeof args.polish !== 'boolean')
+        throw new Error('polish must be boolean');
+      const content = args.content.trim();
+      const detected = format !== 'auto' ? format
+        : /^(?:HEADER|TITLE |MODEL |ATOM  |HETATM)/m.test(content) ? 'pdb'
+          : /(?:V2000|V3000)/m.test(content) ? 'mol'
+            : /^\s*\d+\s*(?:\r?\n)/.test(content) ? 'xyz' : 'smiles';
+      let molecule, polish = null;
+      if (detected === 'smiles') {
+        const embedded = await createRdkitSmilesMolecule(content, args.name || 'SMILES structure');
+        molecule = embedded.molecule;
+        polish = embedded.result;
+      } else {
+        molecule = detected === 'pdb' ? parsePDB(content, { name:args.name })
+          : detected === 'mol' ? parseMolBlock(content, { name:args.name })
+            : parseXYZ(content, { name:args.name });
+        loadMolecule(molecule);
+        if (args.polish !== false && smallMoleculePolishEligible(molecule))
+          polish = await polishSmallMoleculeCoordinates(molecule);
+      }
+      if (state.molecule !== molecule) loadMolecule(molecule);
+      state.buildHistory = []; state.redoHistory = []; updateHistoryButtons();
+      return chemistActionSummary({ load:{ format:detected,
+        polished:Boolean(polish), name:molecule.name || args.name || null } }); },
+    'session.loadIdentifier':async (args) => { chemistActionKeys(args, ['value','kind']);
+      if (typeof args.value !== 'string' || !args.value.trim() || args.value.length > 4096)
+        throw new Error('value must be a non-empty identifier');
+      const requestedKind = chemistActionEnum(args.kind ?? 'auto',
+        ['auto','library','smiles','pdb'], 'kind');
+      const raw = args.value.trim(), lookup = raw.toLowerCase();
+      const libraryKey = Object.keys(LIBRARY).find((name) =>
+        lookup === name || lookup === LIBRARY[name].smiles.toLowerCase());
+      const pdbCandidate = /^(?:PDB\s*[:#-]?\s*)?[0-9][A-Za-z0-9]{3}$/i.test(raw);
+      const kind = requestedKind === 'auto' ? libraryKey ? 'library'
+        : pdbCandidate ? 'pdb' : 'smiles' : requestedKind;
+      if (kind === 'pdb') {
+        const molecule = await loadPdbIdentifier(raw);
+        return chemistActionSummary({ load:{ kind, pdbId:molecule.source?.pdbId || null } });
+      }
+      if (kind === 'library' && !libraryKey)
+        throw new Error(`Unknown built-in molecule: ${raw}`);
+      const smiles = kind === 'library' ? LIBRARY[libraryKey].smiles : raw;
+      const name = kind === 'library' ? LIBRARY[libraryKey].name : 'SMILES structure';
+      const embedded = await createRdkitSmilesMolecule(smiles, name);
+      loadMolecule(embedded.molecule);
+      const protonation = await enumerateLigandProtonation(smiles);
+      return chemistActionSummary({ load:{ kind, libraryId:libraryKey || null,
+        smiles, conformerCount:embedded.result?.conformerCount ?? null,
+        protonationStateCount:protonation?.states?.length ?? 0 } }); },
+    'session.loadFixture':async (args) => { chemistActionKeys(args, ['fixtureId']);
+      const fixtureId = chemistActionEnum(args.fixtureId, ['trp-cage','ubiquitin'], 'fixtureId');
+      const summary = fixtureId === 'trp-cage' ? await loadRosemaryProteinExample()
+        : await loadPreparedProteinFixture('./openff/rosemary-ubiquitin.json');
+      return chemistActionSummary({ fixture:{ fixtureId, ...structuredClone(summary) } }); },
+    'session.clear':async (args) => { empty(args); clearScene();
+      return chemistActionSummary({ cleared:true }); },
+    'session.share':async (args) => { empty(args);
+      const storyId = new URLSearchParams(location.search).get('story');
+      const url = storyId && DESIGNER_STORY_LINKS[storyId]
+        ? `${location.origin}/${storyId}` : location.href;
+      return chemistActionSummary({ share:{ url } }); },
+    'interface.setPanelOpen':async (args) => { chemistActionKeys(args, ['panelId','open']);
+      if (typeof args.panelId !== 'string' || !/^[a-z][a-z0-9-]{0,79}$/.test(args.panelId))
+        throw new Error('panelId must be a public panel ID');
+      if (typeof args.open !== 'boolean') throw new Error('open must be boolean');
+      const panel = document.querySelector(`#${CSS.escape(args.panelId)}`);
+      if (!panel) throw new Error(`Unknown interface panel: ${args.panelId}`);
+      let toggle = panel.matches('.disclosure') ? panel
+        : panel.querySelector(':scope > .card-heading.disclosure');
+      let body = toggle?.getAttribute('aria-controls')
+        ? document.getElementById(toggle.getAttribute('aria-controls')) : null;
+      if (toggle && !body && toggle.id.endsWith('-toggle'))
+        body = document.getElementById(toggle.id.replace(/-toggle$/, '-body'));
+      if (!toggle && args.panelId.endsWith('-body')) {
+        body = panel;
+        toggle = document.querySelector(`[aria-controls="${CSS.escape(args.panelId)}"]`)
+          || document.getElementById(args.panelId.replace(/-body$/, '-toggle'));
+      }
+      if (!toggle || !body) throw new Error(`${args.panelId} is not a collapsible public panel`);
+      const card = toggle.closest('.card') || panel;
+      body.classList.toggle('hidden', !args.open);
+      card.classList.toggle('side-card-collapsed', !args.open);
+      toggle.setAttribute('aria-expanded', String(args.open));
+      toggle.querySelector('.chevron')?.classList.toggle('open', args.open);
+      return chemistActionSummary({ panel:{ panelId:args.panelId, open:args.open } }); },
+    'interface.openProjectInfo':async (args) => { chemistActionKeys(args, ['panel']);
+      const panel = chemistActionEnum(args.panel,
+        ['methods','validation','credits','privacy','closed'], 'panel');
+      if (panel === 'closed') projectInfoDialog.close();
+      else openProjectInfoPanel(panel);
+      return chemistActionSummary({ projectInfo:{ panel,
+        open:panel !== 'closed' } }); },
+    'interface.presentDesignerStep':async (args) => { chemistActionKeys(args,
+      ['index','phase']);
+      const index = Number(args.index);
+      if (!Number.isInteger(index) || index < 0)
+        throw new Error('index must be a non-negative integer');
+      const phase = chemistActionEnum(args.phase, ['before','after','clear'], 'phase');
+      return chemistActionSummary({ designerPresentation:
+        presentDesignerMoveStep(index, phase) }); },
+    'view.setMode':async (args) => { chemistActionKeys(args, ['mode']);
+      const mode = chemistActionEnum(args.mode, ['view','build','run'], 'mode');
+      if (!setMode(mode)) throw new Error(`Molarium could not enter ${mode} mode`);
+      return chemistActionSummary(); },
+    'view.focusComponent':async (args) => { chemistActionKeys(args,
+      ['kind','ordinal','isolate']);
+      const kind = chemistActionEnum(args.kind,
+        ['ligand','protein','water','ion','molecule'], 'kind');
+      const ordinal = Number(args.ordinal ?? 0);
+      if (!Number.isInteger(ordinal) || ordinal < 0)
+        throw new Error('ordinal must be a non-negative integer');
+      if (args.isolate != null && typeof args.isolate !== 'boolean')
+        throw new Error('isolate must be boolean');
+      const component = state.structureComponents.filter((entry) => entry.kind === kind)[ordinal];
+      if (!component) throw new Error(`${kind} component ${ordinal} does not exist`);
+      focusStructureComponent(component.id, Boolean(args.isolate));
+      return chemistActionSummary({ focusedComponent:{ kind, ordinal,
+        componentId:component.id, label:component.label, isolate:Boolean(args.isolate),
+        atomCount:component.atomIndices.length } }); },
+    'view.focusAtoms':async (args) => { chemistActionKeys(args,
+      ['atomIds','contextRadiusAngstrom','highlight','residueLabels']);
+      if (!Array.isArray(args.atomIds) || args.atomIds.length > 64
+        || args.atomIds.some((id) => typeof id !== 'string' || !id))
+        throw new Error('atomIds must be an array of 0 to 64 persistent atom IDs');
+      const atomIds = [...new Set(args.atomIds)];
+      const contextRadiusAngstrom = Number(args.contextRadiusAngstrom ?? 4.5);
+      if (!Number.isFinite(contextRadiusAngstrom)
+        || contextRadiusAngstrom < 2 || contextRadiusAngstrom > 8)
+        throw new Error('contextRadiusAngstrom must be a number from 2 to 8');
+      if (args.highlight != null && typeof args.highlight !== 'boolean')
+        throw new Error('highlight must be boolean');
+      const residueLabels = args.residueLabels ?? [];
+      if (!Array.isArray(residueLabels) || residueLabels.length > 8
+        || residueLabels.some((entry) => !entry || typeof entry !== 'object'
+          || Array.isArray(entry) || !Number.isInteger(Number(entry.residueIndex))
+          || entry.chain != null && (typeof entry.chain !== 'string' || !entry.chain.length
+            || entry.chain.length > 4)
+          || entry.insertionCode != null && (typeof entry.insertionCode !== 'string'
+            || entry.insertionCode.length > 2)
+          || entry.label != null && (typeof entry.label !== 'string' || !entry.label.length
+            || entry.label.length > 32)
+          || entry.tone != null && !['gold','blue','slate'].includes(entry.tone)))
+        throw new Error('residueLabels must contain 0 to 8 valid residue callouts');
+      residueLabels.forEach((entry) => chemistActionKeys(entry,
+        ['chain','residueIndex','insertionCode','label','tone']));
+      const byId = await ensureChemistActionAtomIds();
+      const missing = atomIds.filter((id) => !byId.has(id));
+      if (missing.length) throw new Error(`Unknown persistent atom ID: ${missing[0]}`);
+      const targets = focusStructureAtoms(atomIds, contextRadiusAngstrom,
+        args.highlight !== false, residueLabels);
+      return chemistActionSummary({ focusedAtoms:{ atomIds,
+        atomCount:targets.length, contextRadiusAngstrom,
+        highlighted:args.highlight !== false,
+        residueLabels:structuredClone(residueLabels) } }); },
+    'view.highlightAtoms':async (args) => { chemistActionKeys(args, ['atomIds','residueLabels']);
+      if (!Array.isArray(args.atomIds) || args.atomIds.length > 64
+        || args.atomIds.some((id) => typeof id !== 'string' || !id))
+        throw new Error('atomIds must be an array of 0 to 64 persistent atom IDs');
+      const atomIds = [...new Set(args.atomIds)];
+      const residueLabels = args.residueLabels;
+      if (residueLabels != null && (!Array.isArray(residueLabels) || residueLabels.length > 8
+        || residueLabels.some((entry) => !entry || typeof entry !== 'object'
+          || Array.isArray(entry) || !Number.isInteger(Number(entry.residueIndex))
+          || entry.chain != null && (typeof entry.chain !== 'string' || !entry.chain.length
+            || entry.chain.length > 4)
+          || entry.insertionCode != null && (typeof entry.insertionCode !== 'string'
+            || entry.insertionCode.length > 2)
+          || entry.label != null && (typeof entry.label !== 'string' || !entry.label.length
+            || entry.label.length > 32)
+          || entry.tone != null && !['gold','blue','slate'].includes(entry.tone))))
+        throw new Error('residueLabels must contain 0 to 8 valid residue callouts');
+      residueLabels?.forEach((entry) => chemistActionKeys(entry,
+        ['chain','residueIndex','insertionCode','label','tone']));
+      const byId = await ensureChemistActionAtomIds();
+      const missing = atomIds.filter((id) => !byId.has(id));
+      if (missing.length) throw new Error(`Unknown persistent atom ID: ${missing[0]}`);
+      const cameraBefore = JSON.stringify({ rotation:state.rotation,
+        viewProjectionCenter:state.viewProjectionCenter,
+        viewProjectionRadius:state.viewProjectionRadius, viewPan:state.viewPan,
+        zoom:state.zoom });
+      const displayBefore = JSON.stringify({ focusedAtomIds:state.focusedAtomIds,
+        focusedAtomCenter:state.focusedAtomCenter,
+        focusedAtomRadius:state.focusedAtomRadius,
+        focusedAtomContextIds:state.focusedAtomContextIds,
+        focusedAtomContextRadius:state.focusedAtomContextRadius,
+        focusedComponentId:state.focusedComponentId,
+        focusedResidueKey:state.focusedResidueKey,
+        representation:state.representation, showHydrogens:state.showHydrogens,
+        showInteractions:state.showInteractions, showPocketAtoms:state.showPocketAtoms,
+        showHulls:state.showHulls,
+        componentVisibility:[...state.componentVisibility.entries()] });
+      const targets = setHighlightedStructureAtoms(atomIds, residueLabels);
+      const cameraAfter = JSON.stringify({ rotation:state.rotation,
+        viewProjectionCenter:state.viewProjectionCenter,
+        viewProjectionRadius:state.viewProjectionRadius, viewPan:state.viewPan,
+        zoom:state.zoom });
+      const displayAfter = JSON.stringify({ focusedAtomIds:state.focusedAtomIds,
+        focusedAtomCenter:state.focusedAtomCenter,
+        focusedAtomRadius:state.focusedAtomRadius,
+        focusedAtomContextIds:state.focusedAtomContextIds,
+        focusedAtomContextRadius:state.focusedAtomContextRadius,
+        focusedComponentId:state.focusedComponentId,
+        focusedResidueKey:state.focusedResidueKey,
+        representation:state.representation, showHydrogens:state.showHydrogens,
+        showInteractions:state.showInteractions, showPocketAtoms:state.showPocketAtoms,
+        showHulls:state.showHulls,
+        componentVisibility:[...state.componentVisibility.entries()] });
+      return chemistActionSummary({ highlightedAtoms:{ atomIds,
+        atomCount:targets.length, cameraPreserved:cameraAfter === cameraBefore,
+        displayContextPreserved:displayAfter === displayBefore,
+        residueLabels:structuredClone(state.focusedAtomResidueLabels) } }); },
+    'view.setDisplay':async (args) => {
+      chemistActionKeys(args,
+        ['representation','showHydrogens','showInteractions','showPocketAtoms','showHulls',
+          'showVdw','showStericClashes','pocketMode','colorTheme','changeMarkers',
+          'autoRotate','playing']);
+      if (!Object.keys(args).length) throw new Error('At least one display option is required');
+      const booleanOption = (value, label, fallback) => {
+        if (value == null) return fallback;
+        if (typeof value !== 'boolean') throw new Error(`${label} must be boolean`);
+        return value;
+      };
+      let representation = state.representation;
+      if (args.representation != null) {
+        representation = chemistActionEnum(args.representation,
+          ['ball-stick','cartoon','both'], 'representation');
+        const select = document.querySelector('#representation-select');
+        if (select.disabled) throw new Error('Representation controls require a protein structure');
+      }
+      const showHydrogens = booleanOption(args.showHydrogens,
+        'showHydrogens', state.showHydrogens);
+      const showInteractions = booleanOption(args.showInteractions,
+        'showInteractions', state.showInteractions);
+      const showPocketAtoms = booleanOption(args.showPocketAtoms,
+        'showPocketAtoms', state.showPocketAtoms);
+      const showHulls = booleanOption(args.showHulls, 'showHulls', state.showHulls);
+      const showVdw = booleanOption(args.showVdw, 'showVdw', state.vdw);
+      const showStericClashes = booleanOption(args.showStericClashes,
+        'showStericClashes', state.showStericClashes);
+      const playing = booleanOption(args.playing, 'playing', state.playing);
+      const pocketMode = args.pocketMode == null ? state.pocketAtomMode
+        : chemistActionEnum(args.pocketMode, ['radius','contacts'], 'pocketMode');
+      const autoRotate = args.autoRotate == null ? state.autoRotate
+        : chemistActionEnum(args.autoRotate, ['none','vertical','diagonal'], 'autoRotate');
+      const colorTheme = args.colorTheme == null ? state.displayColorTheme
+        : chemistActionEnum(args.colorTheme,
+          ['standard','design-hit','design-prediction','design-validation'], 'colorTheme');
+      const changeMarkers = args.changeMarkers == null ? state.changeMarkerStyle
+        : chemistActionEnum(args.changeMarkers, ['rings','halo','none'], 'changeMarkers');
+
+      // This is one public chemist action, so apply it as one UI transaction.
+      // Dispatching a separate change event for every option forced several
+      // full redraws of prepared protein complexes and could stall replay.
+      state.representation = representation;
+      state.showHydrogens = showHydrogens;
+      state.showInteractions = showInteractions;
+      state.showPocketAtoms = showPocketAtoms;
+      state.showHulls = showHulls;
+      state.vdw = showVdw;
+      state.showStericClashes = showStericClashes;
+      state.pocketAtomMode = pocketMode;
+      state.displayColorTheme = colorTheme;
+      state.changeMarkerStyle = changeMarkers;
+      state.autoRotate = autoRotate;
+      state.playing = playing;
+      document.querySelector('#representation-select').value = representation;
+      document.querySelector('#hydrogen-toggle').checked = showHydrogens;
+      document.querySelector('#interaction-toggle').checked = showInteractions;
+      document.querySelector('#pocket-toggle').checked = showPocketAtoms;
+      document.querySelector('#hull-toggle').checked = showHulls;
+      document.querySelector('#vdw-toggle').checked = showVdw;
+      document.querySelector('#steric-clash-toggle').checked = showStericClashes;
+      document.querySelector('#display-theme-select').value = colorTheme;
+      document.querySelector('#change-marker-select').value = changeMarkers;
+      document.querySelector('#rotate-select').value = autoRotate;
+      document.querySelector('#play-button').textContent = playing ? 'Pause' : 'Play';
+      updateInfo();
+      draw();
+      return chemistActionSummary({ display:{ representation:state.representation,
+        showHydrogens:state.showHydrogens, showInteractions:state.showInteractions,
+        showPocketAtoms:state.showPocketAtoms, showHulls:state.showHulls,
+        showVdw:state.vdw, showStericClashes:state.showStericClashes,
+        visibleStericClashCount:state.visibleStericClashCount,
+        pocketMode:state.pocketAtomMode, colorTheme:state.displayColorTheme,
+        changeMarkers:state.changeMarkerStyle,
+        autoRotate:state.autoRotate, playing:state.playing } });
+    },
+    'view.setComponentVisibility':async (args) => { chemistActionKeys(args,
+      ['kind','ordinal','visible']);
+      const kind = chemistActionEnum(args.kind,
+        ['ligand','protein','water','ion','molecule'], 'kind');
+      const ordinal = Number(args.ordinal ?? 0);
+      if (!Number.isInteger(ordinal) || ordinal < 0)
+        throw new Error('ordinal must be a non-negative integer');
+      if (typeof args.visible !== 'boolean') throw new Error('visible must be boolean');
+      const component = state.structureComponents.filter((entry) => entry.kind === kind)[ordinal];
+      if (!component) throw new Error(`${kind} component ${ordinal} does not exist`);
+      state.componentVisibility.set(component.id, args.visible);
+      if (!args.visible && state.focusedComponentId === component.id) {
+        state.focusedComponentId = null; state.focusedComponentCenter = null;
+        state.focusedComponentRadius = null;
+      }
+      updateStructureComponentsUi(); updateInfo(); draw();
+      return chemistActionSummary({ component:{ kind, ordinal,
+        componentId:component.id, visible:args.visible } }); },
+    'view.showAllComponents':async (args) => { empty(args);
+      state.structureComponents.forEach((component) =>
+        state.componentVisibility.set(component.id, true));
+      state.focusedComponentId = null; state.focusedComponentCenter = null;
+      state.focusedComponentRadius = null;
+      clearFocusedAtomRegion(); state.zoom = 1; state.viewPan = { x:0, y:0 };
+      updateStructureComponentsUi(); updateInfo(); draw();
+      return chemistActionSummary({ visibleComponents:state.structureComponents.length }); },
+    'view.reset':async (args) => { empty(args);
+      state.structureComponents.forEach((component) =>
+        state.componentVisibility.set(component.id, component.kind !== 'water'));
+      state.focusedComponentId = null; state.focusedComponentCenter = null;
+      state.focusedComponentRadius = null;
+      state.focusedResidueKey = null; state.focusedResidueRadius = null;
+      clearFocusedAtomRegion(); state.viewProjectionCenter = null;
+      state.viewProjectionRadius = null; state.rotation = defaultViewRotation();
+      state.zoom = 1; state.viewPan = { x:0, y:0 };
+      updateResidueFollowChip(); updateStructureComponentsUi(); updateInfo(); draw();
+      return chemistActionSummary({ viewReset:true }); },
+    'view.focusResidue':async (args) => { chemistActionKeys(args,
+      ['chain','residueIndex','insertionCode','clear']);
+      if (args.clear != null && typeof args.clear !== 'boolean')
+        throw new Error('clear must be boolean');
+      if (args.clear) {
+        state.focusedResidueKey = null; state.focusedResidueRadius = null;
+        updateResidueFollowChip(); draw();
+        return chemistActionSummary({ focusedResidue:null });
+      }
+      if (typeof args.chain !== 'string' || !args.chain.length || args.chain.length > 4)
+        throw new Error('chain must be a chain identifier');
+      const residueIndex = Number(args.residueIndex);
+      if (!Number.isInteger(residueIndex)) throw new Error('residueIndex must be an integer');
+      if (args.insertionCode != null && (typeof args.insertionCode !== 'string'
+        || args.insertionCode.length > 2)) throw new Error('insertionCode must be at most two characters');
+      const atomIndex = state.molecule?.atoms.findIndex((atom) =>
+        String(atom.chain || '') === args.chain && Number(atom.residueIndex) === residueIndex
+        && String(atom.insertionCode || '') === String(args.insertionCode || '')) ?? -1;
+      if (atomIndex < 0) throw new Error(`Residue ${args.chain}${residueIndex}${args.insertionCode || ''} does not exist`);
+      // setFocusedResidue toggles an already focused residue, so clear first to
+      // make this public setter idempotent.
+      state.focusedResidueKey = null; state.focusedResidueRadius = null;
+      setFocusedResidue(atomIndex);
+      return chemistActionSummary({ focusedResidue:{ chain:args.chain,
+        residueIndex, insertionCode:args.insertionCode || '' } }); },
+    'view.clearFocus':async (args) => { chemistActionKeys(args, ['kind']);
+      const kind = chemistActionEnum(args.kind,
+        ['atoms','residue','component','all'], 'kind');
+      if (kind === 'atoms' || kind === 'all') clearFocusedAtomRegion();
+      if (kind === 'residue' || kind === 'all') {
+        state.focusedResidueKey = null; state.focusedResidueRadius = null;
+      }
+      if (kind === 'component' || kind === 'all') {
+        state.focusedComponentId = null; state.focusedComponentCenter = null;
+        state.focusedComponentRadius = null;
+      }
+      updateResidueFollowChip(); updateChangedRegionChip();
+      updateStructureComponentsUi(); updateInfo(); draw();
+      return chemistActionSummary({ clearedFocus:kind }); },
+    'view.setCamera':async (args) => { chemistActionKeys(args, ['rotation','pan','zoom']);
+      if (!Object.keys(args).length) throw new Error('At least one camera property is required');
+      const finiteObject = (value, keys, label) => {
+        if (!value || typeof value !== 'object' || Array.isArray(value))
+          throw new Error(`${label} must be an object`);
+        chemistActionKeys(value, keys);
+        const result = Object.fromEntries(keys.map((key) => [key, Number(value[key])]));
+        if (Object.values(result).some((entry) => !Number.isFinite(entry)))
+          throw new Error(`${label} values must be finite numbers`);
+        return result;
+      };
+      if (args.rotation != null) state.rotation = normaliseQuaternion(
+        finiteObject(args.rotation, ['x','y','z','w'], 'rotation'));
+      if (args.pan != null) {
+        const pan = finiteObject(args.pan, ['x','y'], 'pan');
+        if (Math.abs(pan.x) > 5000 || Math.abs(pan.y) > 5000)
+          throw new Error('pan values must be between -5000 and 5000');
+        state.viewPan = pan;
+      }
+      if (args.zoom != null) {
+        const zoom = Number(args.zoom);
+        if (!Number.isFinite(zoom) || zoom < .45 || zoom > 2.6)
+          throw new Error('zoom must be between 0.45 and 2.6');
+        state.zoom = zoom;
+      }
+      draw();
+      return chemistActionSummary({ camera:{ rotation:structuredClone(state.rotation),
+        pan:structuredClone(state.viewPan), zoom:state.zoom } }); },
+    'build.setTool':async (args) => { chemistActionKeys(args, ['tool']);
+      const tool = chemistActionEnum(args.tool, ['add','select','move'], 'tool');
+      if (state.mode !== 'build') throw new Error('Enter Design mode before choosing a design tool.');
+      const internalTool = tool === 'move' ? 'manipulate' : tool;
+      const button = document.querySelector(`#build-tool-tabs [data-tool="${internalTool}"]`);
+      if (!button) throw new Error(`The ${tool} tool is unavailable`);
+      state.buildTool = internalTool;
+      document.querySelectorAll('#build-tool-tabs [data-tool]').forEach((item) =>
+        item.classList.toggle('selected', item === button));
+      canvas.classList.toggle('build-cursor', state.buildTool === 'add');
+      updateBuildStatus(); draw();
+      return chemistActionSummary({ buildTool:tool }); },
+    'protein.prepare':async (args) => { chemistActionKeys(args,
+      ['pH','histidine','repairMissingHeavy','ligandPolicy','waterPolicy','gapPolicy']);
+      const options = normalizePdbPreparationOptions(args);
+      document.querySelector('#preparation-ph').value = options.pH.toFixed(1);
+      document.querySelector('#preparation-histidine').value = options.histidine;
+      document.querySelector('#preparation-repair-heavy').checked = options.repairMissingHeavy;
+      document.querySelector('#preparation-ligands').value = options.ligandPolicy;
+      document.querySelector('#preparation-waters').value = options.waterPolicy;
+      document.querySelector('#preparation-gaps').value = options.gapPolicy;
+      state.pdbPreparationPreview = null;
+      const localLigandDefinitions = state.designRoute?.hit?.ligandDefinition
+        ? { [state.designRoute.hit.ligand]:structuredClone(
+          state.designRoute.hit.ligandDefinition) } : null;
+      const result = await prepareCurrentPdb(options, localLigandDefinitions);
+      if (!result) throw new Error('Protein preparation did not complete');
+      return chemistActionSummary({ preparation:{ atoms:result.atoms, bonds:result.bonds,
+        hydrogensAdded:result.hydrogensAdded, heavyAtomsAdded:result.heavyAtomsAdded,
+        ligandsPrepared:result.ligandsPrepared, forcefield:result.forcefield,
+        chargeModel:result.chargeModel,
+        parameterCounts:structuredClone(result.parameterCounts) } }); },
+    'protein.parameterize':async (args) => { empty(args);
+      if (!state.molecule?.atoms?.length) throw new Error('Load a molecular complex first');
+      const before = state.molecule.atoms.map((atom) => [atom.x, atom.y, atom.z]);
+      const parameters = await runOpenMMJob('parameters', state.molecule, () => {});
+      state.molecule.parameterization = {
+        forcefield:parameters.forcefield, chargeModel:parameters.chargeModel,
+        sourceSha256:parameters.sourceSha256, system:parameters.system,
+        labels:parameters.labels,
+      };
+      state.molecule.preparation = { ...(state.molecule.preparation || {}),
+        status:'parameterized-experimental', parameterized:true };
+      const maximumCoordinateDisplacement = Math.max(...state.molecule.atoms.map((atom, index) =>
+        Math.hypot(atom.x - before[index][0], atom.y - before[index][1], atom.z - before[index][2])));
+      updateOptimizerControls(); updateDockingUi(); updateInfo();
+      return chemistActionSummary({ parameterization:{
+        forcefield:parameters.forcefield, chargeModel:parameters.chargeModel,
+        sourceSha256:parameters.sourceSha256,
+        parameterCounts:structuredClone(parameters.parameterCounts),
+        maximumCoordinateDisplacementAngstrom:maximumCoordinateDisplacement,
+      } }); },
+    'protein.predict':async (args) => { chemistActionKeys(args, ['sequence','msaEndpoint']);
+      if (typeof args.sequence !== 'string' || !args.sequence.trim())
+        throw new Error('sequence must be a non-empty amino-acid sequence or FASTA');
+      if (args.sequence.length > 20000) throw new Error('sequence input is too long');
+      if (typeof args.msaEndpoint !== 'string' || !args.msaEndpoint.trim())
+        throw new Error('msaEndpoint must be an HTTPS endpoint');
+      let endpoint;
+      try { endpoint = new URL(args.msaEndpoint); }
+      catch { throw new Error('msaEndpoint must be a valid HTTPS URL'); }
+      if (endpoint.protocol !== 'https:') throw new Error('msaEndpoint must use HTTPS');
+      document.querySelector('#protein-sequence').value = args.sequence;
+      document.querySelector('#msa-endpoint').value = endpoint.href.replace(/\/$/, '');
+      const result = await runProteinFold({ rethrow:true });
+      return chemistActionSummary({ prediction:result }); },
+    'protein.cancelPrediction':async (args) => { empty(args);
+      const active = Boolean(state.foldAbortController);
+      state.foldAbortController?.abort();
+      return chemistActionSummary({ predictionCancellation:{ requested:active } }); },
+    'ligand.enumerateProtonation':async (args) => { chemistActionKeys(args,
+      ['pH','smiles','pHSpread','precision','maximumStates']);
+      const pH = Number(args.pH ?? 7.4), pHSpread = Number(args.pHSpread ?? .5);
+      const precision = Number(args.precision ?? 1);
+      const maximumStates = Number(args.maximumStates ?? 16);
+      if (!Number.isFinite(pH) || pH < 0 || pH > 14)
+        throw new Error('pH must be between 0 and 14');
+      if (!Number.isFinite(pHSpread) || pHSpread < 0 || pHSpread > 7)
+        throw new Error('pHSpread must be between 0 and 7');
+      if (!Number.isFinite(precision) || precision <= 0 || precision > 10)
+        throw new Error('precision must be greater than 0 and at most 10');
+      if (!Number.isInteger(maximumStates) || maximumStates < 1 || maximumStates > 64)
+        throw new Error('maximumStates must be an integer from 1 to 64');
+      if (args.smiles != null && (typeof args.smiles !== 'string' || !args.smiles.trim()))
+        throw new Error('smiles must be a non-empty string');
+      const result = await enumerateLigandProtonation(args.smiles, {
+        ph:pH, pHSpread, precision, maxStates:maximumStates });
+      if (!result) throw new Error('Protonation enumeration was superseded');
+      return chemistActionSummary({ protonation:{ targetPh:result.targetPh,
+        stateCount:result.states.length, variantsTruncated:Boolean(result.variantsTruncated),
+        sitesTruncated:Boolean(result.sitesTruncated) } }); },
+    'ligand.applyProtonation':async (args) => { chemistActionKeys(args, ['index']);
+      const index = Number(args.index);
+      if (!Number.isInteger(index) || index < 0
+        || index >= (state.ligandProtonation?.states?.length || 0))
+        throw new Error('index must identify an enumerated protonation state');
+      const select = document.querySelector('#ligand-protonation-state');
+      select.value = String(index); updateLigandProtonationMeta();
+      const embedded = await applySelectedLigandProtonation();
+      return chemistActionSummary({ protonation:{ index,
+        selected:structuredClone(state.molecule.source?.protonation || null),
+        forcefield:embedded.result?.forcefield || null } }); },
+    'geometry.setInternalCoordinate':async (args) => { chemistActionKeys(args,
+      ['atomIds','value','moveConnected']);
+      if (state.mode !== 'build')
+        throw new Error('Enter Design mode before changing internal coordinates');
+      if (!Array.isArray(args.atomIds) || args.atomIds.length < 2 || args.atomIds.length > 4
+        || args.atomIds.some((id) => typeof id !== 'string' || !id)
+        || new Set(args.atomIds).size !== args.atomIds.length)
+        throw new Error('atomIds must contain 2 to 4 distinct persistent atom IDs');
+      const value = Number(args.value);
+      if (!Number.isFinite(value)) throw new Error('value must be a finite number');
+      if (args.moveConnected != null && typeof args.moveConnected !== 'boolean')
+        throw new Error('moveConnected must be boolean');
+      const byId = await ensureChemistActionAtomIds();
+      const indices = args.atomIds.map((id) => {
+        if (!byId.has(id)) throw new Error(`Unknown persistent atom ID: ${id}`);
+        return byId.get(id);
+      });
+      state.selectedAtoms = indices; state.selectedAtom = indices.at(-1);
+      document.querySelector('#move-connected').checked = args.moveConnected !== false;
+      updateGeometryControl();
+      const before = geometrySelection();
+      if (!before || before.error) throw new Error(before?.error || 'Invalid geometry selection');
+      beginGeometryEdit();
+      try {
+        if (!applyGeometryValue(value)) throw new Error('Internal-coordinate edit failed');
+      } finally { finishGeometryEdit(); }
+      const after = geometrySelection();
+      return chemistActionSummary({ internalCoordinate:{ kind:after.kind,
+        value:after.value, unit:after.unit, moveConnected:args.moveConnected !== false } }); },
+    'geometry.translateAtoms':async (args) => { chemistActionKeys(args,
+      ['atomIds','deltaAngstrom']);
+      if (state.mode !== 'build') throw new Error('Enter Design mode before moving atoms');
+      if (!Array.isArray(args.atomIds) || !args.atomIds.length || args.atomIds.length > 256
+        || args.atomIds.some((id) => typeof id !== 'string' || !id))
+        throw new Error('atomIds must contain 1 to 256 persistent atom IDs');
+      if (!args.deltaAngstrom || typeof args.deltaAngstrom !== 'object'
+        || Array.isArray(args.deltaAngstrom))
+        throw new Error('deltaAngstrom must be an {x,y,z} object');
+      chemistActionKeys(args.deltaAngstrom, ['x','y','z']);
+      const delta = Object.fromEntries(['x','y','z'].map((axis) =>
+        [axis, Number(args.deltaAngstrom[axis])]));
+      if (Object.values(delta).some((value) => !Number.isFinite(value)
+        || value < -20 || value > 20))
+        throw new Error('deltaAngstrom components must be between -20 and 20');
+      const byId = await ensureChemistActionAtomIds();
+      const indices = [...new Set(args.atomIds)].map((id) => {
+        if (!byId.has(id)) throw new Error(`Unknown persistent atom ID: ${id}`);
+        return byId.get(id);
+      });
+      pushBuildHistory(); clearCalculationResult();
+      indices.forEach((index) => {
+        const atom = state.molecule.atoms[index];
+        atom.x += delta.x; atom.y += delta.y; atom.z += delta.z;
+      });
+      updateStoredBondDistances(); updateInfo(); updateGeometryControl();
+      updateHistoryButtons(); draw();
+      return chemistActionSummary({ translation:{ atomCount:indices.length,
+        deltaAngstrom:delta } }); },
+    'fragment.stage':async (args) => { chemistActionKeys(args,
+      ['fragmentId','smiles','name','attachmentIndex']);
+      if (state.mode !== 'build') throw new Error('Enter Design mode before staging a fragment');
+      if ((args.fragmentId == null) === (args.smiles == null))
+        throw new Error('Provide exactly one of fragmentId or smiles');
+      let fragment;
+      if (args.fragmentId != null) {
+        if (typeof args.fragmentId !== 'string' || !args.fragmentId)
+          throw new Error('fragmentId must be a built-in fragment ID');
+        fragment = FRAGMENTS.find((entry) => entry.id === args.fragmentId);
+        if (!fragment) throw new Error(`Unknown fragment: ${args.fragmentId}`);
+      } else {
+        if (typeof args.smiles !== 'string' || !args.smiles.trim()
+          || args.smiles.length > 1000) throw new Error('smiles must be a non-empty string');
+        const attachmentIndex = Number(args.attachmentIndex ?? 0);
+        if (!Number.isInteger(attachmentIndex) || attachmentIndex < 0)
+          throw new Error('attachmentIndex must be a non-negative integer');
+        const preview = parseSMILES(args.smiles, args.name || 'Custom fragment');
+        if (attachmentIndex >= preview.atoms.length)
+          throw new Error('attachmentIndex does not exist in the custom fragment');
+        fragment = { id:`custom-api-${Date.now()}`, label:args.smiles,
+          name:String(args.name || 'Custom fragment').slice(0, 160),
+          smiles:args.smiles, attach:attachmentIndex, preview };
+      }
+      stageFragment(fragment);
+      return chemistActionSummary({ stagedFragment:{ id:fragment.id, name:fragment.name,
+        smiles:fragment.smiles, attachmentIndex:fragment.attach ?? 0 } }); },
+    'fragment.attach':async (args) => { chemistActionKeys(args,
+      ['attachedToAtomId','positionAngstrom']);
+      if (state.mode !== 'build') throw new Error('Enter Design mode before attaching a fragment');
+      if (!state.stagedFragment) throw new Error('Stage a fragment before attaching it');
+      if (args.attachedToAtomId == null && args.positionAngstrom == null)
+        throw new Error('Provide attachedToAtomId or positionAngstrom');
+      let targetIndex = null;
+      if (args.attachedToAtomId != null) {
+        if (typeof args.attachedToAtomId !== 'string' || !args.attachedToAtomId)
+          throw new Error('attachedToAtomId must be a persistent atom ID');
+        const byId = await ensureChemistActionAtomIds();
+        if (!byId.has(args.attachedToAtomId))
+          throw new Error(`Unknown persistent atom ID: ${args.attachedToAtomId}`);
+        targetIndex = byId.get(args.attachedToAtomId);
+      }
+      let point = null;
+      if (args.positionAngstrom != null) {
+        if (!args.positionAngstrom || typeof args.positionAngstrom !== 'object'
+          || Array.isArray(args.positionAngstrom))
+          throw new Error('positionAngstrom must be an {x,y,z} object');
+        chemistActionKeys(args.positionAngstrom, ['x','y','z']);
+        point = Object.fromEntries(['x','y','z'].map((axis) =>
+          [axis, Number(args.positionAngstrom[axis])]));
+        if (Object.values(point).some((value) => !Number.isFinite(value)
+          || Math.abs(value) > 100000))
+          throw new Error('positionAngstrom values must be finite and bounded');
+      }
+      pushBuildHistory(); clearCalculationResult();
+      const beforeIds = new Set(state.molecule?.atoms?.map((atom) => atom.designAtomId) || []);
+      try {
+        state.molecule = mergeFragmentIntoMolecule(state.molecule,
+          state.stagedFragment, targetIndex, point);
+      } catch (error) {
+        if (state.buildHistory.length) state.buildHistory.pop();
+        updateHistoryButtons(); throw error;
+      }
+      refreshStructureComponents(); state.selectedAtoms = []; state.selectedAtom = null;
+      await ensureChemistActionAtomIds();
+      const addedAtomIds = state.molecule.atoms.map((atom) => atom.designAtomId)
+        .filter((id) => id && !beforeIds.has(id));
+      updateGeometryControl(); updateInfo(); updateHistoryButtons(); draw();
+      const changedAtomIndices = state.molecule.atoms.flatMap((atom, index) =>
+        addedAtomIds.includes(atom.designAtomId) || index === targetIndex ? [index] : []);
+      scheduleSmallMoleculePolish(changedAtomIndices);
+      return chemistActionSummary({ attachedFragment:{ id:state.stagedFragment.id,
+        attachedToAtomId:args.attachedToAtomId || null, addedAtomIds } }); },
+    'selection.replace':async (args) => { chemistActionKeys(args, ['atomIds']);
+      if (state.mode !== 'build' || state.buildTool !== 'select')
+        throw new Error('Enter Design mode and choose Select before selecting atoms.');
+      if (!Array.isArray(args.atomIds) || !args.atomIds.length || args.atomIds.length > 256
+        || args.atomIds.some((id) => typeof id !== 'string' || !id))
+        throw new Error('atomIds must contain 1 to 256 persistent atom IDs');
+      if (new Set(args.atomIds).size !== args.atomIds.length)
+        throw new Error('atomIds must not contain duplicates');
+      const byId = await ensureChemistActionAtomIds();
+      const indices = args.atomIds.map((id) => {
+        if (!byId.has(id)) throw new Error(`Unknown persistent atom ID: ${id}`);
+        return byId.get(id);
+      });
+      const prior = [...state.selectedAtoms];
+      state.selectedAtoms = []; state.selectedAtom = null;
+      try {
+        indices.forEach((index, ordinal) => {
+          selectGeometryAtom(index);
+          if (state.selectedAtoms[ordinal] !== index)
+            throw new Error(`Atom ${args.atomIds[ordinal]} is not bonded to the connected selection path`);
+        });
+      } catch (error) {
+        state.selectedAtoms = prior.filter((index) => state.molecule.atoms[index]);
+        state.selectedAtom = state.selectedAtoms.at(-1) ?? null;
+        updateGeometryControl(); updateBuildStatus(); updateDockingUi(); draw();
+        throw error;
+      }
+      return chemistActionSummary(); },
+    'selection.clear':async (args) => { empty(args); state.selectedAtoms = [];
+      state.selectedAtom = null; updateGeometryControl(); updateBuildStatus(); updateDockingUi();
+      draw(); schedule2DDepiction(0); return chemistActionSummary(); },
+    'chemistry.setAtom':async (args) => { chemistActionKeys(args, ['element','formalCharge']);
+      return summarizeMutation(() => applySelectedAtomChemistry(args.element,
+        args.formalCharge ?? 0)); },
+    'chemistry.setBond':async (args) => { chemistActionKeys(args, ['order']);
+      return summarizeMutation(() => applySelectedBondChemistry(args.order)); },
+    'chemistry.addAtom':async (args) => { chemistActionKeys(args,
+      ['attachedToAtomId','positionAngstrom','element']);
+      if (state.mode !== 'build') throw new Error('Enter Design mode before adding an atom.');
+      if (!ELEMENTS[args.element])
+        throw new Error('element must be a supported element symbol');
+      if (args.attachedToAtomId == null) {
+        if (!args.positionAngstrom || typeof args.positionAngstrom !== 'object'
+          || Array.isArray(args.positionAngstrom))
+          throw new Error('positionAngstrom is required when attachedToAtomId is omitted');
+        chemistActionKeys(args.positionAngstrom, ['x','y','z']);
+        const position = Object.fromEntries(['x','y','z'].map((axis) =>
+          [axis, Number(args.positionAngstrom[axis])]));
+        if (Object.values(position).some((value) => !Number.isFinite(value)
+          || Math.abs(value) > 100000))
+          throw new Error('positionAngstrom values must be finite and bounded');
+        if (state.molecule?.atoms?.length) pushBuildHistory();
+        const priorIds = new Set(state.molecule?.atoms?.map((atom) => atom.designAtomId) || []);
+        state.molecule = addElementToMolecule(state.molecule, args.element, null, position);
+        refreshStructureComponents(); state.selectedAtoms = []; state.selectedAtom = null;
+        document.querySelector('#viewer-hint').classList.remove('visible');
+        await ensureChemistActionAtomIds();
+        const addedAtomIds = state.molecule.atoms.map((atom) => atom.designAtomId)
+          .filter((id) => id && !priorIds.has(id));
+        updateGeometryControl(); updateInfo(); updateHistoryButtons(); draw();
+        scheduleSmallMoleculePolish(state.molecule.atoms.flatMap((atom, index) =>
+          addedAtomIds.includes(atom.designAtomId) ? [index] : []));
+        return chemistActionSummary({ addedAtomId:addedAtomIds.find((id) =>
+          state.molecule.atoms.find((atom) => atom.designAtomId === id)?.element !== 'H') || null,
+        addedAtomIds, disconnected:true });
+      }
+      if (typeof args.attachedToAtomId !== 'string' || !args.attachedToAtomId)
+        throw new Error('attachedToAtomId must be a persistent atom ID');
+      if (args.element === 'H')
+        throw new Error('Use chemistry.addHydrogen to attach a hydrogen atom');
+      if (args.positionAngstrom != null)
+        throw new Error('positionAngstrom is only accepted for a disconnected atom');
+      const byId = await ensureChemistActionAtomIds();
+      if (!byId.has(args.attachedToAtomId))
+        throw new Error(`Unknown persistent atom ID: ${args.attachedToAtomId}`);
+      const before = new Set(state.molecule.atoms.map((atom) => atom.designAtomId));
+      const result = await addDepictionAtom(byId.get(args.attachedToAtomId), args.element);
+      const addedAtomIds = state.molecule.atoms.map((atom) => atom.designAtomId)
+        .filter((id) => id && !before.has(id));
+      const addedHeavyAtomId = addedAtomIds.find((id) =>
+        state.molecule.atoms.find((atom) => atom.designAtomId === id)?.element !== 'H') || null;
+      return chemistActionSummary({ addedAtomId:addedHeavyAtomId, addedAtomIds,
+        validation:structuredClone(result?.validation || null) }); },
+    'chemistry.createBond':async (args) => { chemistActionKeys(args, ['atomIds','order']);
+      if (state.mode !== 'build') throw new Error('Enter Design mode before creating a bond.');
+      if (!Array.isArray(args.atomIds) || args.atomIds.length !== 2
+        || args.atomIds.some((id) => typeof id !== 'string' || !id)
+        || args.atomIds[0] === args.atomIds[1])
+        throw new Error('atomIds must contain two different persistent atom IDs');
+      const byId = await ensureChemistActionAtomIds();
+      const indices = args.atomIds.map((id) => {
+        if (!byId.has(id)) throw new Error(`Unknown persistent atom ID: ${id}`);
+        return byId.get(id);
+      });
+      setDepictionSelection(indices);
+      return summarizeMutation(() => applySelectedBondChemistry(args.order)); },
+    'chemistry.deleteAtom':async (args) => { empty(args);
+      return summarizeMutation(() => deleteSelectedAtomChemistry()); },
+    'chemistry.deleteBond':async (args) => { empty(args);
+      return summarizeMutation(() => deleteSelectedBondChemistry()); },
+    'chemistry.addHydrogen':async (args) => { empty(args);
+      return summarizeMutation(() => addSelectedHydrogenChemistry()); },
+    'chemistry.removeHydrogen':async (args) => { empty(args);
+      return summarizeMutation(() => removeSelectedHydrogenChemistry()); },
+    'chemistry.finish':async (args) => { empty(args);
+      if (!state.chemistryTransaction) throw new Error('There are no pending chemistry changes to finish.');
+      const result = await finishChemistryTransaction();
+      if (!result?.validation?.valid || result.pending)
+        throw new Error(result?.validation?.error
+          || state.chemistryTransaction?.validationError
+          || 'The complete chemical state is not valid yet.');
+      return chemistActionSummary({ validation:structuredClone(result.validation),
+        polish:result.polish ? { cleanupMode:result.polish.cleanupMode || null,
+          initialEnergy:result.polish.initialEnergy ?? null,
+          finalEnergy:result.polish.finalEnergy ?? null } : null,
+        contactFeatureRemaps:structuredClone(result.contactFeatureRemaps || []) }); },
+    'chemistry.discard':async (args) => { empty(args);
+      if (!discardChemistryTransaction()) throw new Error('There are no pending chemistry changes to discard.');
+      return chemistActionSummary(); },
+    'history.undo':async (args) => { empty(args);
+      if (state.chemistryTransaction) throw new Error('Finish or discard pending chemistry before undo.');
+      if (!state.buildHistory.length) throw new Error('There is no committed action to undo.');
+      state.redoHistory.push(buildHistoryEntry(state.molecule));
+      restoreMolecule(state.buildHistory.pop()); return chemistActionSummary(); },
+    'history.redo':async (args) => { empty(args);
+      if (state.chemistryTransaction) throw new Error('Finish or discard pending chemistry before redo.');
+      if (!state.redoHistory.length) throw new Error('There is no committed action to redo.');
+      state.buildHistory.push(buildHistoryEntry(state.molecule));
+      restoreMolecule(state.redoHistory.pop()); return chemistActionSummary(); },
+    'pose.captureReference':async (args) => { chemistActionKeys(args, ['mode']);
+      if (state.mode !== 'build') throw new Error('Enter Design mode before capturing a reference pose.');
+      const mode = chemistActionEnum(args.mode, ['propagate','selected-core'], 'mode');
+      document.querySelector('#docking-mode').value = mode === 'selected-core'
+        ? 'selected-core' : 'propagate'; updateDockingUi();
+      const reference = await captureCurrentDockingReference();
+      return chemistActionSummary({ poseReference:{ mode:reference.mode,
+        coreAtomCount:reference.ligand.coreAtomIds.length,
+        contactCount:reference.hydrogenBonds.length } }); },
+    'pose.updateReceptorReference':async (args) => { empty(args);
+      return chemistActionSummary({ receptorReference:
+        await updateCurrentDockingReceptorReference() }); },
+    'pose.setContact':async (args) => { chemistActionKeys(args, ['contactId','required']);
+      if (typeof args.contactId !== 'string' || !args.contactId)
+        throw new Error('contactId must be a captured contact ID');
+      if (typeof args.required !== 'boolean') throw new Error('required must be boolean');
+      const definition = state.dockingReference?.hydrogenBonds?.find((entry) => entry.id === args.contactId);
+      if (!definition) throw new Error(`Unknown captured contact: ${args.contactId}`);
+      const proposal = state.dockingContactRemapProposals.get(definition.id);
+      if (args.required && (proposal || !dockingContactAvailable(
+        effectiveDockingHydrogenBondDefinition(definition))))
+        throw new Error(`Contact ${args.contactId} is not currently available; finish or reconcile the chemistry first.`);
+      if (args.required) state.dockingSelectedHbondIds.add(args.contactId);
+      else state.dockingSelectedHbondIds.delete(args.contactId);
+      updateDockingUi(); return chemistActionSummary({ contactId:args.contactId,
+        required:args.required }); },
+    'pose.addContact':async (args) => { chemistActionKeys(args,
+      ['ligandAtomId','receptorAtomId','ligandRole']);
+      if (typeof args.ligandAtomId !== 'string' || !args.ligandAtomId
+        || typeof args.receptorAtomId !== 'string' || !args.receptorAtomId)
+        throw new Error('ligandAtomId and receptorAtomId must be persistent atom IDs');
+      const ligandRole = chemistActionEnum(args.ligandRole ?? 'auto',
+        ['auto','acceptor','donor'], 'ligandRole');
+      const byId = await ensureChemistActionAtomIds();
+      if (!byId.has(args.ligandAtomId)) throw new Error(`Unknown persistent atom ID: ${args.ligandAtomId}`);
+      if (!byId.has(args.receptorAtomId)) throw new Error(`Unknown persistent atom ID: ${args.receptorAtomId}`);
+      const definition = await addManualDockingContactByIndices(byId.get(args.ligandAtomId),
+        byId.get(args.receptorAtomId), ligandRole, 'chemist-actions-two-atom-selection');
+      return chemistActionSummary({ contact:{ contactId:definition.id,
+        label:definition.label, required:true, origin:structuredClone(definition.origin) } }); },
+    'pose.forgetContact':async (args) => { chemistActionKeys(args, ['contactId']);
+      if (typeof args.contactId !== 'string' || !args.contactId)
+        throw new Error('contactId must be a contact ID');
+      const definition = await forgetDockingContact(args.contactId,
+        'chemist-actions-forget-contact');
+      return chemistActionSummary({ forgottenContact:{ contactId:definition.id,
+        label:definition.label } }); },
+    'pose.setEditCleanup':async (args) => { chemistActionKeys(args, ['mode']);
+      const mode = chemistActionEnum(args.mode,
+        ['preserve-reference','free-local'], 'mode');
+      if (!state.dockingReference)
+        throw new Error('Capture a reference pose before setting edit cleanup');
+      document.querySelector('#docking-edit-cleanup').value = mode;
+      updateDockingUi(); updateOptimizerControls();
+      return chemistActionSummary({ poseEditCleanup:{ mode } }); },
+    'pose.clearReference':async (args) => { empty(args);
+      if (!state.dockingReference) throw new Error('There is no captured pose reference');
+      clearDockingReference();
+      return chemistActionSummary({ poseReferenceCleared:true }); },
+    'pose.remapContact':async (args) => { chemistActionKeys(args,
+      ['contactId','candidateId']);
+      if (typeof args.contactId !== 'string' || !args.contactId)
+        throw new Error('contactId must be a contact ID');
+      if (typeof args.candidateId !== 'string' || !args.candidateId)
+        throw new Error('candidateId must be a remapping candidate ID');
+      const remap = await chooseDockingContactRemap(args.contactId,
+        args.candidateId, 'chemist-actions-role-compatible');
+      return chemistActionSummary({ contactRemap:structuredClone(remap) }); },
+    'pose.refine':async (args) => { chemistActionKeys(args,
+      ['searchChains','execution','featureSeedingProtocol']);
+      const searchChains = Number(args.searchChains ?? 16);
+      if (![8,16,32,64].includes(searchChains))
+        throw new Error('searchChains must be 8, 16, 32, or 64');
+      const execution = chemistActionEnum(args.execution ?? 'auto', ['auto','serial'], 'execution');
+      const featureSeedingProtocol = chemistActionEnum(args.featureSeedingProtocol ?? 'v4',
+        ['v3','v4'], 'featureSeedingProtocol');
+      const select = document.querySelector('#docking-conformer-count');
+      select.value = String(searchChains); updateDockingUi();
+      const result = await runBrowserConstrainedDocking({
+        poseSearchWorkers:execution === 'serial' ? 1 : null,
+        featureSeedingProtocol,
+      });
+      const selected = result.run.selected;
+      return chemistActionSummary({ refinement:{ candidates:result.run.candidates.length,
+        feasible:result.run.feasibleCount, selectedRank:selected.rank,
+        poseSearchExecution:structuredClone(result.poseSearchExecution || null),
+        selectedFeasible:selected.feasible,
+        selectedScoreKcalMol:selected.totalScoreKcalMol,
+        selectedPhysicalKcalMol:selected.physicalEnergyKcalMol,
+        selectedConstraintPenaltyKcalMol:selected.constraintPenaltyKcalMol,
+        selectedPhysicalComponents:selected.physicalDetails ? {
+          lennardJonesKcalMol:selected.physicalDetails.lennardJonesKcalMol,
+          coulombKcalMol:selected.physicalDetails.coulombKcalMol,
+          ligandStrainKcalMol:selected.physicalDetails.ligandStrainKcalMol,
+          interactionKcalMol:selected.physicalDetails.interactionKcalMol,
+          interactionReferenceKcalMol:selected.physicalDetails.interactionReferenceKcalMol,
+          relativeInteractionKcalMol:selected.physicalDetails.relativeInteractionKcalMol,
+          stericClashes:selected.physicalDetails.stericClashes,
+        } : null,
+        selectedChemicalValidity:structuredClone(selected.physicalDetails?.chemicalValidity || null),
+        selectedHydrogenBonds:structuredClone(selected.hydrogenBonds),
+        featureGuidedSeeding:result.featureGuidedSeeding ? {
+          method:result.featureGuidedSeeding.method,
+          requestedCount:result.featureGuidedSeeding.requestedCount,
+          uniqueSeedCount:result.featureGuidedSeeding.uniqueSeedCount,
+          targetVariantCount:result.featureGuidedSeeding.targetVariantCount,
+          untargetedRotorCount:result.featureGuidedSeeding.untargetedRotorCount,
+          affectedRotorCount:result.featureGuidedSeeding.affectedRotorCount,
+          releasedCoreAtomIndices:structuredClone(
+            result.featureGuidedSeeding.releasedCoreAtomIndices),
+          affectedRotors:structuredClone(result.featureGuidedSeeding.affectedRotors),
+          editRegionAnglesDegrees:result.featureGuidedSeeding.editRegionAnglesDegrees,
+          selectedSeedAudit:structuredClone(result.featureGuidedSeeding.seedAudits
+            .find((entry) => entry.conformerIndex === selected.conformerIndex) || null),
+        } : null } }); },
+    'pose.apply':async (args) => { chemistActionKeys(args, ['index','allowInfeasible']);
+      const index = Number(args.index ?? 0);
+      if (!Number.isInteger(index) || index < 0) throw new Error('index must be a non-negative integer');
+      if (args.allowInfeasible != null && typeof args.allowInfeasible !== 'boolean')
+        throw new Error('allowInfeasible must be a boolean');
+      const selectedPose = state.dockingResult?.run?.candidates?.[index];
+      if (!selectedPose) throw new Error(`Refined pose ${index} does not exist`);
+      const allowInfeasible = args.allowInfeasible === true;
+      if (!selectedPose.feasible && !allowInfeasible)
+        throw new Error('The selected docking pose is infeasible; pass allowInfeasible:true to apply it explicitly.');
+      await ensureChemistActionAtomIds();
+      const before = chemistActionCoordinateSnapshot();
+      state.dockingPoseIndex = index;
+      const pose = await applySelectedDockingPose({ allowInfeasible });
+      const coordinateChanges = chemistActionCoordinateChanges(before);
+      return chemistActionSummary({ appliedPose:{ index, rank:pose.rank,
+        feasible:pose.feasible, infeasibleOverride:!pose.feasible && allowInfeasible,
+        scoreKcalMol:pose.totalScoreKcalMol,
+        ...coordinateChanges } }); },
+    'pose.enumerateSidechainRotamers':async (args) => { chemistActionKeys(args,
+      ['receptorAtomId','maximumCandidates']);
+      if (typeof args.receptorAtomId !== 'string' || !args.receptorAtomId)
+        throw new Error('receptorAtomId must be a persistent receptor atom ID');
+      const maximumCandidates = Number(args.maximumCandidates ?? 32);
+      if (!Number.isInteger(maximumCandidates) || maximumCandidates < 1 || maximumCandidates > 64)
+        throw new Error('maximumCandidates must be an integer from 1 to 64');
+      const byId = await ensureChemistActionAtomIds();
+      const residueAtomIndex = byId.get(args.receptorAtomId);
+      if (!Number.isInteger(residueAtomIndex))
+        throw new Error(`Unknown persistent atom ID: ${args.receptorAtomId}`);
+      const sidechainRotamers = await enumerateCurrentSidechainRotamers(
+        residueAtomIndex, maximumCandidates);
+      return chemistActionSummary({ sidechainRotamers }); },
+    'pose.applySidechainRotamer':async (args) => { chemistActionKeys(args,
+      ['index','chiDegrees','coordinateSha256','expectedInputCoordinateSha256',
+        'expectedSelectedCoordinateSha256']);
+      const selectorKeys = ['index','chiDegrees','coordinateSha256']
+        .filter((key) => Object.hasOwn(args, key));
+      if (selectorKeys.length !== 1)
+        throw new Error('Specify exactly one side-chain rotamer selector: index, chiDegrees, or coordinateSha256');
+      const selectorKey = selectorKeys[0];
+      if (selectorKey === 'index' && (!Number.isInteger(args.index) || args.index < 0))
+        throw new Error('index must be a non-negative integer');
+      const selector = { [selectorKey]:structuredClone(args[selectorKey]) };
+      const digestKeys = ['expectedInputCoordinateSha256','expectedSelectedCoordinateSha256'];
+      for (const key of digestKeys) if (Object.hasOwn(args, key)
+        && (typeof args[key] !== 'string' || !/^[a-f0-9]{64}$/.test(args[key])))
+          throw new Error(`${key} must be a lowercase SHA-256 hex digest`);
+      await ensureChemistActionAtomIds();
+      const before = chemistActionCoordinateSnapshot();
+      const sidechainRotamer = await applyCurrentSidechainRotamer(selector, {
+        expectedInputCoordinateSha256:args.expectedInputCoordinateSha256 ?? null,
+        expectedSelectedCoordinateSha256:args.expectedSelectedCoordinateSha256 ?? null,
+      });
+      Object.assign(sidechainRotamer, chemistActionCoordinateChanges(before));
+      return chemistActionSummary({ sidechainRotamer }); },
+    'optimization.run':async (args) => { chemistActionKeys(args, ['method']);
+      const method = chemistActionEnum(args.method,
+        ['ligand-rdkit','pocket-webgpu','induced-fit-webgpu','webgpu','rdkit','ani2x'], 'method');
+      if (state.mode !== 'build') throw new Error('Enter Design mode before optimizing.');
+      const option = document.querySelector(`#build-optimizer-select option[value="${method}"]`);
+      if (!option || option.disabled) throw new Error(`Optimization method ${method} is unavailable for this molecule`);
+      const select = document.querySelector('#build-optimizer-select');
+      select.value = method; select.dataset.userSelected = 'true'; updateOptimizerControls();
+      await ensureChemistActionAtomIds();
+      const before = chemistActionCoordinateSnapshot();
+      const result = await runSelectedBuildOptimization();
+      if (!result) throw new Error(`${method} optimization did not complete`);
+      return chemistActionSummary({ optimization:{ method,
+        accepted:result.valenceSafeguard?.accepted ?? true,
+        valenceSafeguard:structuredClone(result.valenceSafeguard || null),
+        initialEnergy:result.initialEnergy ?? null, finalEnergy:result.finalEnergy ?? null,
+        iterations:result.iterations ?? null, converged:result.converged ?? null,
+        elapsedMs:result.elapsedMs ?? null,
+        ...chemistActionCoordinateChanges(before) } }); },
+    'calculation.run':async (args) => { chemistActionKeys(args,
+      ['job','method','options']);
+      const job = chemistActionEnum(args.job,
+        ['geometry','energy','dynamics','conformers'], 'job');
+      const method = chemistActionEnum(args.method,
+        ['openmm','webgpu','stormm','rdkit','ani2x'], 'method');
+      if (args.options != null && (!args.options || typeof args.options !== 'object'
+        || Array.isArray(args.options))) throw new Error('options must be a plain object');
+      const options = structuredClone(args.options || {});
+      // Worker-specific modules perform their own scientific bounds checking;
+      // this public boundary additionally rejects pathologically large scalar
+      // settings before any model or GPU asset is loaded.
+      for (const [key, value] of Object.entries(options)) {
+        if (typeof value === 'number' && (!Number.isFinite(value) || Math.abs(value) > 10_000_000))
+          throw new Error(`options.${key} is outside the public calculation bound`);
+        if (typeof value === 'string' && value.length > 200)
+          throw new Error(`options.${key} is too long`);
+        if (Array.isArray(value) && value.length > 4096)
+          throw new Error(`options.${key} contains too many entries`);
+      }
+      const before = state.molecule?.atoms?.length
+        ? (await ensureChemistActionAtomIds(), chemistActionCoordinateSnapshot()) : null;
+      const result = await runCalculation({ job, method, options });
+      if (!result) throw new Error(`${method} ${job} calculation did not complete`);
+      return chemistActionSummary({ calculation:{ job, method,
+        initialEnergy:result.initialEnergy ?? null, finalEnergy:result.finalEnergy ?? null,
+        unit:result.unit || null, frameCount:state.calculationFrames.length,
+        replicaCount:result.replicaCount || 1, elapsedMs:result.elapsedMs ?? null,
+        ...(before ? chemistActionCoordinateChanges(before) : {}) } }); },
+    'calculation.tuneReplicas':async (args) => { empty(args);
+      const result = await tuneStormmReplicas();
+      if (!result) throw new Error('Replica tuning did not complete');
+      return chemistActionSummary({ replicaTuning:{
+        recommendedReplicaCount:result.recommendedReplicaCount,
+        peakAggregateReplicaStepsPerSecond:result.peakAggregateReplicaStepsPerSecond,
+        elapsedMs:result.elapsedMs, samples:structuredClone(result.samples || []) } }); },
+    'calculation.selectFrame':async (args) => { chemistActionKeys(args, ['index']);
+      const index = Number(args.index);
+      if (!Number.isInteger(index) || index < 0 || index >= state.calculationFrames.length)
+        throw new Error('index must identify a saved calculation frame');
+      selectCalculationFrame(index);
+      return chemistActionSummary({ calculationFrame:{ index,
+        step:state.calculationFrames[index].step,
+        energy:state.calculationFrames[index].energy } }); },
+    'calculation.selectReplica':async (args) => { chemistActionKeys(args, ['index']);
+      const index = Number(args.index), count = Number(state.calculationEnsemble?.replicaCount || 0);
+      if (!Number.isInteger(index) || index < 0 || index >= count)
+        throw new Error('index must identify an ensemble replica');
+      selectCalculationReplica(index);
+      return chemistActionSummary({ calculationReplica:{ index,
+        frameCount:state.calculationFrames.length } }); },
+    'calculation.selectConformer':async (args) => { chemistActionKeys(args, ['rank']);
+      const rank = Number(args.rank);
+      const order = state.conformerAnalysis
+        ? activeConformerPlotOrder(state.conformerAnalysis) : [];
+      if (!Number.isInteger(rank) || rank < 0 || rank >= order.length)
+        throw new Error('rank must identify a conformer in the active filtered order');
+      selectConformerRank(rank);
+      return chemistActionSummary({ conformer:{ rank,
+        replicaIndex:state.calculationReplicaIndex } }); },
+    'calculation.setPlayback':async (args) => { chemistActionKeys(args, ['playing']);
+      if (typeof args.playing !== 'boolean') throw new Error('playing must be boolean');
+      if (args.playing && state.calculationFrames.length < 2)
+        throw new Error('At least two saved frames are required for playback');
+      if (args.playing !== state.calculationPlaying) toggleCalculationPlayback();
+      return chemistActionSummary({ trajectoryPlayback:{
+        playing:state.calculationPlaying, frameIndex:state.calculationFrameIndex,
+        frameCount:state.calculationFrames.length } }); },
+    'calculation.setConformerView':async (args) => { chemistActionKeys(args,
+      ['x','y','filter','sort']);
+      if (!state.conformerAnalysis) throw new Error('Run a conformer search first');
+      if (!Object.keys(args).length) throw new Error('At least one conformer-view option is required');
+      const controls = { x:'#result-conformer-cv', y:'#result-conformer-y',
+        filter:'#result-conformer-filter', sort:'#result-conformer-sort' };
+      for (const [key, selector] of Object.entries(controls)) {
+        if (args[key] == null) continue;
+        if (typeof args[key] !== 'string') throw new Error(`${key} must be an option ID`);
+        const select = document.querySelector(selector);
+        if (![...select.options].some((option) => option.value === args[key] && !option.disabled))
+          throw new Error(`Unsupported ${key} option: ${args[key]}`);
+        select.value = args[key];
+      }
+      updateConformerPlotControls();
+      return chemistActionSummary({ conformerView:Object.fromEntries(
+        Object.entries(controls).map(([key, selector]) =>
+          [key, document.querySelector(selector).value])) }); },
+    'campaign.create':async (args) => { chemistActionKeys(args,
+      ['campaignId','title','description','actorId','actorName','initialCommitMessage']);
+      await ensureLiveCampaignPersistence();
+      if (state.liveCampaign) throw new Error('A design campaign is already active');
+      if (!state.molecule?.atoms?.length) throw new Error('Load a molecule before starting a campaign');
+      const campaignId = String(args.campaignId || '');
+      const title = String(args.title || '');
+      if (!/^[a-z0-9][a-z0-9._:-]*$/i.test(campaignId))
+        throw new Error('campaignId must be a stable identifier');
+      if (!title.trim()) throw new Error('title must not be empty');
+      const actorId = String(args.actorId || 'chemist.local');
+      const actorName = String(args.actorName || 'Local chemist');
+      if (!/^[a-z0-9][a-z0-9._:-]*$/i.test(actorId))
+        throw new Error('actorId must be a stable identifier');
+      if (!actorName.trim()) throw new Error('actorName must not be empty');
+      const initialCommitMessage = args.initialCommitMessage == null
+        ? 'Capture starting molecule' : String(args.initialCommitMessage).trim();
+      if (args.initialCommitMessage != null && !initialCommitMessage)
+        throw new Error('initialCommitMessage must be a non-empty string');
+      if (state.chemistryTransaction)
+        throw new Error('Finish pending chemistry before committing the initial state');
+      const live = await getLiveCampaignModule();
+      let campaign = await live.createLiveCampaign({ campaignId, title,
+        description:String(args.description || ''), actorId, actorDisplayName:actorName,
+        createdAt:new Date().toISOString(), application:{
+          name:'Molarium', chemistActionsSchema:module.CHEMIST_ACTIONS_SCHEMA,
+        } });
+      await ensureChemistActionAtomIds();
+      const result = await live.commitLiveMolecule(campaign, {
+        molecule:state.molecule, audit:state.chemistActionAudit, branch:'main',
+        message:initialCommitMessage, actorId, occurredAt:new Date().toISOString(),
+        lastAuditSequence:0,
+      });
+      campaign = result.campaign;
+      const committedThroughSequence = result.committedThroughSequence;
+      const campaignCommit = { commitId:result.commitId, snapshotId:result.snapshotId,
+        actionScriptId:result.actionScriptId, branch:'main', committedThroughSequence };
+      await saveLiveCampaign(campaign, 'main');
+      state.liveCampaign = campaign;
+      state.liveCampaignBranch = 'main';
+      state.liveCampaignCommittedThroughSequence = committedThroughSequence;
+      updateLiveCampaignUi();
+      return chemistActionSummary({ campaign:liveCampaignInspection(), campaignCommit }); },
+    'campaign.inspect':async (args) => { empty(args);
+      await ensureLiveCampaignPersistence();
+      return chemistActionSummary({ campaign:liveCampaignInspection() }); },
+    'campaign.commitCurrent':async (args) => { chemistActionKeys(args,
+      ['message','label','tags']);
+      await ensureLiveCampaignPersistence();
+      if (!state.liveCampaign) throw new Error('Start or import a design campaign first');
+      if (!state.molecule?.atoms?.length) throw new Error('Load a molecule before committing it');
+      if (state.chemistryTransaction) throw new Error('Finish pending chemistry before committing');
+      const message = String(args.message || '').trim();
+      if (!message) throw new Error('message must not be empty');
+      if (args.label != null && (typeof args.label !== 'string' || !args.label.trim()))
+        throw new Error('label must be a non-empty string');
+      const tags = args.tags ?? [];
+      if (!Array.isArray(tags) || tags.length > 32
+        || tags.some((tag) => typeof tag !== 'string' || !tag.trim() || tag.length > 80))
+        throw new Error('tags must contain up to 32 non-empty strings');
+      await ensureChemistActionAtomIds();
+      const live = await getLiveCampaignModule();
+      const result = await live.commitLiveMolecule(state.liveCampaign, {
+        molecule:state.molecule, audit:state.chemistActionAudit,
+        branch:state.liveCampaignBranch, message, label:args.label,
+        tags:structuredClone(tags), actorId:liveCampaignActorId(),
+        occurredAt:new Date().toISOString(),
+        lastAuditSequence:state.liveCampaignCommittedThroughSequence,
+      });
+      await saveLiveCampaign(result.campaign, state.liveCampaignBranch);
+      state.liveCampaign = result.campaign;
+      state.liveCampaignCommittedThroughSequence = result.committedThroughSequence;
+      updateLiveCampaignUi();
+      return chemistActionSummary({ campaignCommit:{ commitId:result.commitId,
+        snapshotId:result.snapshotId, actionScriptId:result.actionScriptId,
+        branch:state.liveCampaignBranch,
+        committedThroughSequence:result.committedThroughSequence } }); },
+    'campaign.createBranch':async (args) => { chemistActionKeys(args,
+      ['branch','fromCommitId']);
+      await ensureLiveCampaignPersistence();
+      if (!state.liveCampaign) throw new Error('Start or import a design campaign first');
+      const branch = String(args.branch || '');
+      if (!/^[a-z0-9][a-z0-9._:-]*$/i.test(branch))
+        throw new Error('branch must be a stable identifier');
+      if (args.fromCommitId != null && (typeof args.fromCommitId !== 'string'
+        || !args.fromCommitId)) throw new Error('fromCommitId must be a commit ID');
+      const live = await getLiveCampaignModule();
+      const currentHead = liveCampaignHead();
+      if (currentHead && state.molecule) {
+        await ensureChemistActionAtomIds();
+        const currentSnapshot = state.liveCampaign.objects.snapshots[
+          state.liveCampaign.objects.commits[currentHead].snapshotId];
+        if (!await live.moleculeMatchesSnapshot(state.molecule, currentSnapshot))
+          throw new Error('Commit the current molecular changes before creating a branch');
+      }
+      const result = await live.createLiveBranch(state.liveCampaign, { branch,
+        fromCommitId:args.fromCommitId ?? liveCampaignHead(),
+        actorId:liveCampaignActorId(), occurredAt:new Date().toISOString() });
+      const checkout = await prepareLiveCampaignBranchMolecule(result.campaign, result.branch);
+      await saveLiveCampaign(result.campaign, result.branch);
+      state.liveCampaign = result.campaign;
+      state.liveCampaignBranch = result.branch;
+      if (checkout.molecule) applyLiveCampaignBranchMolecule(checkout.molecule);
+      state.liveCampaignCommittedThroughSequence = currentChemistActionSequence();
+      updateLiveCampaignUi();
+      return chemistActionSummary({ campaignBranch:{ branch:result.branch,
+        head:result.head, eventId:result.event?.eventId || null } }); },
+    'campaign.switchBranch':async (args) => { chemistActionKeys(args, ['branch']);
+      await ensureLiveCampaignPersistence();
+      if (!state.liveCampaign) throw new Error('Start or import a design campaign first');
+      const branch = String(args.branch || '');
+      if (!Object.hasOwn(state.liveCampaign.branches || {}, branch))
+        throw new Error(`Unknown branch: ${branch}`);
+      if (branch === state.liveCampaignBranch)
+        return chemistActionSummary({ campaignBranch:{ branch,
+          head:liveCampaignHead(), restored:false } });
+      const live = await getLiveCampaignModule();
+      const currentHead = liveCampaignHead();
+      if (currentHead && state.molecule) {
+        await ensureChemistActionAtomIds();
+        const currentSnapshot = state.liveCampaign.objects.snapshots[
+          state.liveCampaign.objects.commits[currentHead].snapshotId];
+        if (!await live.moleculeMatchesSnapshot(state.molecule, currentSnapshot))
+          throw new Error('Commit the current molecular changes before switching branches');
+      }
+      const checkout = await prepareLiveCampaignBranchMolecule(state.liveCampaign, branch);
+      await saveLiveCampaign(state.liveCampaign, branch);
+      state.liveCampaignBranch = branch;
+      if (checkout.molecule) applyLiveCampaignBranchMolecule(checkout.molecule);
+      state.liveCampaignCommittedThroughSequence = currentChemistActionSequence();
+      updateLiveCampaignUi();
+      return chemistActionSummary({ campaignBranch:{ branch,
+        head:liveCampaignHead(), restored:Boolean(checkout.commitId) } }); },
+    'campaign.mergeBranch':async (args) => { chemistActionKeys(args,
+      ['sourceBranch','targetBranch','message']);
+      await ensureLiveCampaignPersistence();
+      if (!state.liveCampaign) throw new Error('Start or import a design campaign first');
+      if (!state.molecule?.atoms?.length) throw new Error('Load a molecule before merging');
+      if (state.chemistryTransaction) throw new Error('Finish pending chemistry before merging');
+      const sourceBranch = String(args.sourceBranch || '');
+      const targetBranch = String(args.targetBranch || state.liveCampaignBranch);
+      for (const [label, branch] of [['sourceBranch', sourceBranch], ['targetBranch', targetBranch]])
+        if (!/^[a-z0-9][a-z0-9._:-]*$/i.test(branch))
+          throw new Error(`${label} must be a stable branch name`);
+      if (!Object.hasOwn(state.liveCampaign.branches || {}, sourceBranch))
+        throw new Error(`Unknown source branch: ${sourceBranch}`);
+      if (!Object.hasOwn(state.liveCampaign.branches || {}, targetBranch))
+        throw new Error(`Unknown target branch: ${targetBranch}`);
+      if (sourceBranch === targetBranch) throw new Error('Source and target branches must differ');
+      if (targetBranch !== state.liveCampaignBranch)
+        throw new Error('Switch to the target branch before merging into it');
+      await ensureChemistActionAtomIds();
+      const live = await getLiveCampaignModule();
+      const result = await live.mergeCurrentMolecule(state.liveCampaign, {
+        sourceBranch, targetBranch, molecule:state.molecule,
+        audit:state.chemistActionAudit,
+        message:String(args.message || `Merge ${sourceBranch} into ${targetBranch}`),
+        actorId:liveCampaignActorId(), occurredAt:new Date().toISOString(),
+        lastAuditSequence:state.liveCampaignCommittedThroughSequence,
+      });
+      await saveLiveCampaign(result.campaign, targetBranch);
+      state.liveCampaign = result.campaign;
+      state.liveCampaignBranch = targetBranch;
+      state.liveCampaignCommittedThroughSequence = result.committedThroughSequence;
+      updateLiveCampaignUi();
+      return chemistActionSummary({ campaignMerge:{ commitId:result.commitId,
+        snapshotId:result.snapshotId, actionScriptId:result.actionScriptId,
+        sourceBranch, targetBranch,
+        committedThroughSequence:result.committedThroughSequence } }); },
+    'campaign.recordDecision':async (args) => { chemistActionKeys(args,
+      ['targetCommitId','disposition','reasonCodes','rationale','evidenceIds']);
+      await ensureLiveCampaignPersistence();
+      if (!state.liveCampaign) throw new Error('Start or import a design campaign first');
+      const targetCommitId = args.targetCommitId ?? liveCampaignHead();
+      if (typeof targetCommitId !== 'string' || !targetCommitId)
+        throw new Error('Commit the current branch before recording a decision');
+      const disposition = chemistActionEnum(args.disposition,
+        ['progressed','not-progressed','deferred','failed','duplicate','superseded','archived'],
+        'disposition');
+      const reasonCodes = args.reasonCodes ?? [];
+      const evidenceIds = args.evidenceIds ?? [];
+      for (const [label, values, maximum] of [['reasonCodes', reasonCodes, 32],
+        ['evidenceIds', evidenceIds, 128]])
+        if (!Array.isArray(values) || values.length > maximum
+          || values.some((value) => typeof value !== 'string' || !value))
+          throw new Error(`${label} must contain up to ${maximum} non-empty strings`);
+      const rationale = String(args.rationale || '');
+      const live = await getLiveCampaignModule();
+      const result = await live.recordLiveCampaignDecision(state.liveCampaign, {
+        targetCommitId, disposition, reasonCodes:structuredClone(reasonCodes),
+        rationale, evidenceIds:structuredClone(evidenceIds),
+        branch:state.liveCampaignBranch, actorId:liveCampaignActorId(),
+        occurredAt:new Date().toISOString(),
+      });
+      await saveLiveCampaign(result.campaign, state.liveCampaignBranch);
+      state.liveCampaign = result.campaign;
+      updateLiveCampaignUi();
+      return chemistActionSummary({ campaignDecision:{ eventId:result.event.eventId,
+        targetCommitId, disposition, reasonCodes:structuredClone(reasonCodes) } }); },
+    'campaign.verify':async (args) => { empty(args);
+      await ensureLiveCampaignPersistence();
+      if (!state.liveCampaign) throw new Error('Start or import a design campaign first');
+      const live = await getLiveCampaignModule();
+      return chemistActionSummary({ campaignVerification:
+        await live.verifyLiveCampaign(state.liveCampaign) }); },
+    'campaign.close':async (args) => { empty(args);
+      await ensureLiveCampaignPersistence();
+      if (!state.liveCampaign) throw new Error('No design campaign is active');
+      const closedCampaignId = state.liveCampaign.campaignId;
+      const store = await getLiveCampaignStore();
+      await store.closeActive();
+      state.liveCampaign = null;
+      state.liveCampaignBranch = 'main';
+      state.liveCampaignCommittedThroughSequence = 0;
+      state.chemistActionAudit = [];
+      if (state.molecule) state.molecule.source = { ...(state.molecule.source || {}),
+        chemistActionAudit:[] };
+      updateLiveCampaignUi('Campaign closed; its commits remain stored locally.', 'success');
+      return chemistActionSummary({ campaignClosed:{ campaignId:closedCampaignId,
+        persisted:true } }); },
+    'campaign.import':async (args) => { chemistActionKeys(args, ['serialized']);
+      if (typeof args.serialized !== 'string' || !args.serialized.trim())
+        throw new Error('serialized must be canonical campaign JSON');
+      await ensureLiveCampaignPersistence();
+      const [live, storeModule] = await Promise.all([
+        getLiveCampaignModule(), getLiveCampaignStoreModule(),
+      ]);
+      const campaign = storeModule.deserializeCampaign(args.serialized);
+      const canonical = storeModule.serializeCampaign(campaign);
+      if (`${args.serialized.trim()}\n` !== canonical)
+        throw new Error('Campaign JSON must use the canonical serialized representation');
+      const verification = await live.verifyLiveCampaign(campaign);
+      if (!verification.valid) throw new Error(`Campaign is invalid: ${verification.reason}`);
+      const branch = Object.hasOwn(campaign.branches || {}, 'main') ? 'main'
+        : Object.keys(campaign.branches || {})[0];
+      if (!branch) throw new Error('Campaign has no branch to restore');
+      const checkout = await prepareLiveCampaignBranchMolecule(campaign, branch,
+        { required:true });
+      await saveLiveCampaign(campaign, branch);
+      state.chemistActionAudit = [];
+      state.liveCampaign = campaign; state.liveCampaignBranch = branch;
+      state.liveCampaignCommittedThroughSequence = 0;
+      applyLiveCampaignBranchMolecule(checkout.molecule);
+      updateLiveCampaignUi();
+      return chemistActionSummary({ campaignImport:{ campaignId:campaign.campaignId,
+        title:campaign.title, branch, commitId:checkout.commitId,
+        verification:structuredClone(verification) } }); },
+    'campaign.export':async (args) => { empty(args);
+      await ensureLiveCampaignPersistence();
+      if (!state.liveCampaign) throw new Error('No design campaign is active');
+      const storeModule = await getLiveCampaignStoreModule();
+      const serialized = storeModule.serializeCampaign(state.liveCampaign);
+      return chemistActionSummary({ campaignExport:{ campaignId:state.liveCampaign.campaignId,
+        branch:state.liveCampaignBranch, serialized } }); },
+    'designerScript.load':async (args) => { chemistActionKeys(args, ['script']);
+      if (!args.script || typeof args.script !== 'object' || Array.isArray(args.script))
+        throw new Error('script must be a Chemist Actions script object');
+      await installDesignerMoveScript(args.script);
+      return chemistActionSummary({ designerScript:{
+        schema:state.designerMoveScript.schema,
+        label:state.designerMoveScript.label || null,
+        actionCount:state.designerMoveScript.actions.length } }); },
+    'designerScript.loadRegistered':async (args) => { chemistActionKeys(args, ['storyId']);
+      if (typeof args.storyId !== 'string' || !args.storyId)
+        throw new Error('storyId must be a registered Designer Moves story ID');
+      return chemistActionSummary({ registeredDesignerScript:
+        await loadRegisteredDesignerScript(args.storyId) }); },
+    'designerScript.play':async (args) => { chemistActionKeys(args, ['playing']);
+      if (typeof args.playing !== 'boolean') throw new Error('playing must be boolean');
+      if (!state.designerMoveScript) throw new Error('Load a designer-move script first');
+      const alreadyScheduled = args.playing && state.designerMoveReplayScheduled
+        && !state.designerMoveReplaying;
+      let startAccepted = false;
+      if (!args.playing) {
+        if (state.designerMoveReplaying && !state.designerMoveReplayPaused)
+          setDesignerMoveReplayPaused(true);
+      } else if (state.designerMoveReplaying) {
+        if (state.designerMoveReplayPaused) resumeDesignerMoveReplay();
+      } else if (!state.designerMoveReplayScheduled) {
+        // replayDesignerMoveScript executes the constituent actions through this
+        // same serialized API.  Start it only after the play route returns, or
+        // the outer queued action would wait on its own queue.
+        state.designerMoveReplayScheduled = true;
+        startAccepted = true;
+        updateDesignerMoveControls();
+        setTimeout(async () => {
+          try { await replayDesignerMoveScript(); }
+          catch (error) {
+            if (!state.designerMoveReplay || state.designerMoveReplay.status === 'running')
+              state.designerMoveReplay = { status:'failed', error:String(error?.message || error) };
+            showNotice(error.message);
+          } finally {
+            state.designerMoveReplayScheduled = false;
+            updateDesignerMoveControls();
+          }
+        }, 0);
+      }
+      return chemistActionSummary({ designerPlayback:{
+        scheduled:state.designerMoveReplayScheduled,
+        startAccepted, alreadyScheduled,
+        playing:args.playing, paused:!args.playing,
+        index:state.designerMoveReplayIndex,
+        actionCount:state.designerMoveScript.actions.length } }); },
+    'designerScript.step':async (args) => { chemistActionKeys(args, ['direction']);
+      const direction = chemistActionEnum(args.direction,
+        ['previous','next'], 'direction');
+      if (!state.designerMoveReplaying || !state.designerMoveReplayPaused)
+        throw new Error('Pause an active designer replay before reviewing checkpoints');
+      const before = state.designerMoveReplayIndex;
+      reviewDesignerMoveCheckpoint(direction === 'previous' ? -1 : 1);
+      if (state.designerMoveReplayIndex === before)
+        throw new Error(`No ${direction} completed replay checkpoint is available`);
+      return chemistActionSummary({ designerCheckpoint:{
+        index:state.designerMoveReplayIndex,
+        frontier:state.designerMoveReplayFrontier } }); },
+    'designerScript.restart':async (args) => { empty(args);
+      if (!state.designerMoveScript) throw new Error('Load a designer-move script first');
+      if (state.designerMoveReplaying)
+        throw new Error('Pause and finish the active replay before restarting');
+      clearScene(); resetDesignerMovePlayback(); updateDesignerMoveControls();
+      return chemistActionSummary({ designerRestarted:true }); },
+    'designerScript.inspect':async (args) => { empty(args);
+      const script = state.designerMoveScript;
+      return chemistActionSummary({ designerScript:script ? {
+        schema:script.schema, label:script.label || null,
+        actionCount:script.actions.length,
+        index:state.designerMoveReplayIndex,
+        frontier:state.designerMoveReplayFrontier,
+        replaying:state.designerMoveReplaying,
+        scheduled:state.designerMoveReplayScheduled,
+        paused:state.designerMoveReplayPaused,
+        phase:state.designerMoveReplayPhase,
+        activeAction:state.designerMoveReplayStep?.action || null,
+        registeredStory:structuredClone(state.designerMoveRegisteredStory),
+      } : null }); },
+    'designerScript.export':async (args) => { chemistActionKeys(args, ['kind']);
+      const kind = chemistActionEnum(args.kind,
+        ['recorded-actions','execution-log','installed-script'], 'kind');
+      return chemistActionSummary({ designerScriptExport:
+        await createDesignerScriptExport(kind) }); },
+    'designRoute.load':async (args) => { chemistActionKeys(args, ['routeId']);
+      if (typeof args.routeId !== 'string' || !args.routeId)
+        throw new Error('routeId must be a registered design-route ID');
+      return chemistActionSummary({ designRoute:await loadRegisteredDesignRoute(args.routeId) }); },
+    'designRoute.resume':async (args) => { chemistActionKeys(args, ['routeId','stateId']);
+      if (typeof args.routeId !== 'string' || !args.routeId
+        || typeof args.stateId !== 'string' || !args.stateId)
+        throw new Error('routeId and stateId must be registered identifiers');
+      if (!state.molecule?.atoms?.length)
+        throw new Error('Restore a campaign snapshot before resuming its design route');
+      const route = await fetchRegisteredDesignRoute(args.routeId);
+      const registeredStep = route.steps.find((step) => step.stateId === args.stateId);
+      if (args.stateId !== route.hit.stateId && !registeredStep)
+        throw new Error(`State ${args.stateId} is not registered by route ${args.routeId}`);
+      const source = state.molecule.source || {};
+      const sourceRoute = source.designRoute || source;
+      if (sourceRoute.routeId !== args.routeId || sourceRoute.stateId !== args.stateId)
+        throw new Error('The restored snapshot provenance does not match the requested route state');
+      const component = dockingLigandComponent();
+      if (!component) throw new Error('The restored route snapshot has no ligand component');
+      const expectedNames = registeredStep
+        ? registeredStep.productAtomNames
+        : route.hit.ligandDefinition.atoms.filter((atom) => atom.element !== 'H')
+          .map((atom) => atom.id);
+      const actualNames = component.atomIndices.flatMap((atomIndex) => {
+        const atom = state.molecule.atoms[atomIndex];
+        return atom.element === 'H' ? [] : [atom.atomName];
+      });
+      if (actualNames.length !== expectedNames.length
+        || new Set(actualNames).size !== actualNames.length
+        || expectedNames.some((name) => !actualNames.includes(name)))
+        throw new Error('The restored ligand graph identities do not match the registered route state');
+      clearDockingReference();
+      state.designRoute = structuredClone(route);
+      state.designRouteStepId = args.stateId;
+      state.molecule.source = { ...source, designRoute:{
+        routeId:route.id, hitPdbId:route.hit.pdbId, stateId:args.stateId,
+        ...(registeredStep ? { stepId:registeredStep.id } : {}),
+        coordinateInputClass:'registered-hit-only', resumedFromCampaign:true,
+      } };
+      updateDockingUi();
+      return chemistActionSummary({ designRoute:{ routeId:route.id,
+        currentStateId:args.stateId, resumed:true,
+        nextSteps:route.steps.filter((step) => step.referenceStateId === args.stateId)
+          .map((step) => step.id) } }); },
+    'designRoute.applyStep':async (args) => { chemistActionKeys(args,
+      ['stepId','attachmentAtomId']);
+      if (!state.designRoute) throw new Error('Load a registered design route first');
+      if (typeof args.stepId !== 'string' || !args.stepId)
+        throw new Error('stepId must be a registered design-step ID');
+      if (!state.dockingReference || state.dockingReference.mode !== 'pose-propagation')
+        throw new Error('Capture the hit with pose.captureReference before applying a design step');
+      const step = state.designRoute.steps.find((entry) => entry.id === args.stepId);
+      if (!step) throw new Error(`Unknown registered design step: ${args.stepId}`);
+      if (step.referenceStateId && step.referenceStateId !== state.designRouteStepId)
+        throw new Error(`Design step ${step.id} requires state ${step.referenceStateId}; current state is ${state.designRouteStepId}`);
+      let spatialIntent = null;
+      if (step.spatialIntent) {
+        if (step.spatialIntent.method !== 'selected-exit-vector'
+          || typeof step.spatialIntent.attachmentReferenceAtomName !== 'string')
+          throw new Error(`Design step ${step.id} has an invalid spatial intent`);
+        if (typeof args.attachmentAtomId !== 'string' || !args.attachmentAtomId)
+          throw new Error(`Design step ${step.id} requires attachmentAtomId`);
+        const byId = await ensureChemistActionAtomIds();
+        const attachmentIndex = byId.get(args.attachmentAtomId);
+        const component = dockingLigandComponent();
+        if (!Number.isInteger(attachmentIndex)
+          || !component?.atomIndices?.includes(attachmentIndex))
+          throw new Error('attachmentAtomId must identify an atom in the current ligand');
+        const attachmentAtom = state.molecule.atoms[attachmentIndex];
+        if (attachmentAtom.atomName !== step.spatialIntent.attachmentReferenceAtomName)
+          throw new Error(`Design step ${step.id} grows from ${step.spatialIntent.attachmentReferenceAtomName}, not ${attachmentAtom.atomName || 'an unnamed atom'}`);
+        const productBoundaryIndices = new Set((step.posePropagationMap?.productBoundary || [])
+          .map((entry) => entry.commonProductAtomIndex));
+        const registeredAttachment = (step.posePropagationMap?.commonAtoms || []).find((entry) =>
+          entry.referenceAtomName === attachmentAtom.atomName
+          && productBoundaryIndices.has(entry.productAtomIndex));
+        if (!registeredAttachment)
+          throw new Error(`Design step ${step.id} atom map does not grow from selected ${attachmentAtom.atomName}`);
+        spatialIntent = { method:step.spatialIntent.method,
+          attachmentAtomId:args.attachmentAtomId,
+          attachmentReferenceAtomName:attachmentAtom.atomName };
+      } else if (args.attachmentAtomId != null) {
+        throw new Error(`Design step ${step.id} does not register a designer-directed attachment`);
+      }
+      const hitContacts = state.dockingReference.hydrogenBonds.map((definition) => ({
+        kind:'hydrogen-bond', capturedId:definition.id, label:definition.label,
+      }));
+      const staged = await molariumTestApi.stageBenchmarkPoseProduct({
+        caseId:`${state.designRoute.id}:${step.id}`,
+        productSmiles:step.productSmiles,
+        posePropagationMap:step.posePropagationMap,
+        posePropagationPolicy:state.designRoute.posePropagationPolicy,
+        productAtomNames:step.productAtomNames || null,
+        productComponentId:step.productComponentId || null,
+        interactionHypotheses:hitContacts,
+      });
+      state.molecule.name = step.compound
+        ? `${state.designRoute.title} · compound ${step.compound} (${step.stateId})`
+        : `${state.designRoute.title} · ${step.stateId}`;
+      delete state.molecule.source.dockingBenchmark;
+      state.molecule.source.designRoute = {
+        routeId:state.designRoute.id, hitPdbId:state.designRoute.hit.pdbId,
+        stateId:step.stateId, stepId:step.id, inputKind:step.inputKind,
+        coordinateInputClass:'registered-hit-only',
+      };
+      state.designRouteStepId = step.stateId;
+      const changedAtomIds = [...new Set([
+        ...(staged.registeredEditRegion.addedHeavyAtomIds || []),
+        ...(staged.registeredEditRegion.affectedCoreAtomIds || []),
+      ])];
+      return chemistActionSummary({ designStep:{ id:step.id, stateId:step.stateId,
+        referenceStateId:step.referenceStateId || null,
+        inputKind:step.inputKind, productHeavyAtoms:staged.productHeavyAtoms,
+        commonHitHeavyAtoms:staged.commonHeavyAtoms,
+        changedAtomIds,
+        poseTransferPlan:structuredClone(staged.poseTransferPlan),
+        spatialIntent,
+        embedding:structuredClone(staged.embedding) } }); },
+    'designRoute.inspect':async (args) => { empty(args);
+      if (!state.designRoute) throw new Error('No registered design route is loaded');
+      return chemistActionSummary({ designRoute:{ id:state.designRoute.id,
+        hit:structuredClone(state.designRoute.hit),
+        protocolBoundary:structuredClone(state.designRoute.protocolBoundary),
+        posePropagationPolicy:structuredClone(state.designRoute.posePropagationPolicy),
+        currentStateId:state.designRouteStepId,
+        evaluationStatus:state.designRoute.evaluation.status,
+        availableSteps:state.designRoute.steps.map((step) => step.id) } }); },
+  };
+  const api = module.createChemistActionsApi({ routes,
+    enabledActions:module.CHEMIST_ACTION_SCOPES.application,
+    recordAudit:persistChemistActionAudit });
+  Object.defineProperty(window, 'MolariumChemistActions', { value:api,
+    enumerable:true, configurable:false, writable:false });
+  return api;
+}
+
+const molariumTestApi = Object.freeze({
   parsePdb(text) {
     const molecule = parsePDB(text);
     return { ...moleculeDiagnostics(molecule), source: structuredClone(molecule.source),
@@ -4891,13 +10716,13 @@ window.molariumTest = Object.freeze({
   },
   addPdbHydrogens() {
     const result = addStandardProteinHydrogens(state.molecule);
-    state.buildHistory.push(structuredClone(state.molecule)); state.redoHistory = [];
+    pushBuildSnapshot(state.molecule);
     loadMolecule(result.molecule, false); updateHistoryButtons();
     return { ...moleculeDiagnostics(state.molecule), preparation: result.report };
   },
   repairPdbHeavyAtoms() {
     const result = repairCanonicalHeavyAtoms(state.molecule);
-    state.buildHistory.push(structuredClone(state.molecule)); state.redoHistory = [];
+    pushBuildSnapshot(state.molecule);
     loadMolecule(result.molecule, false); updateHistoryButtons();
     return { ...moleculeDiagnostics(state.molecule), repaired: result.repaired,
       unresolved: result.unresolved, preparation: proteinPreparationReport(state.molecule),
@@ -4906,13 +10731,323 @@ window.molariumTest = Object.freeze({
   parseCcd(text, id = '') { return parseCcdDefinition(text, id); },
   prepareLigandsWithCcd(definitions) {
     const result = prepareLigandsFromCcdDefinitions(state.molecule, definitions);
-    state.buildHistory.push(structuredClone(state.molecule)); state.redoHistory = [];
+    pushBuildSnapshot(state.molecule);
     loadMolecule(result.molecule, false); updateHistoryButtons();
     return { ...moleculeDiagnostics(state.molecule), prepared: result.prepared,
       preparation: proteinPreparationReport(state.molecule) };
   },
   async previewPdbPreparation(options = {}, definitions = null) {
     return createPdbPreparationPreview(state.molecule, options, definitions);
+  },
+  async parameterizePdbPreview(preview) {
+    if (!preview?.molecule?.atoms?.length) throw new Error('A prepared PDB preview is required');
+    if (preview.audit?.blockers?.length)
+      throw new Error(`Preparation stopped: ${preview.audit.blockers.join('; ')}`);
+    const prepared = structuredClone(preview.molecule);
+    const parameters = await runOpenMMJob('parameters', prepared, () => {});
+    prepared.parameterization = {
+      forcefield:parameters.forcefield, chargeModel:parameters.chargeModel,
+      sourceSha256:parameters.sourceSha256, system:parameters.system, labels:parameters.labels,
+    };
+    prepared.preparation = { ...(prepared.preparation || {}), status:'parameterized-experimental',
+      parameterized:true, audit:{ ...structuredClone(preview.audit), parameterization:{
+        forcefield:parameters.forcefield, chargeModel:parameters.chargeModel,
+        sourceSha256:parameters.sourceSha256, parameterCounts:parameters.parameterCounts,
+      } } };
+    state.buildHistory = []; state.redoHistory = [];
+    loadMolecule(prepared); updateHistoryButtons();
+    return { atoms:prepared.atoms.length, forcefield:parameters.forcefield,
+      chargeModel:parameters.chargeModel, sourceSha256:parameters.sourceSha256,
+      parameterCounts:structuredClone(parameters.parameterCounts) };
+  },
+  async captureLigandReferenceForStagingTest() {
+    const [adapter, referenceCore] = await Promise.all([
+      import('./docking/browser-adapter.mjs'), import('./docking/reference-core.mjs'),
+    ]);
+    const component = dockingLigandComponent();
+    if (!component) throw new Error('A ligand component is required for the staging test');
+    const plan = adapter.createLigandPlan(state.molecule, component.atomIndices,
+      'isolated-staging-reference');
+    const ligand = referenceCore.captureReferenceLigand(state.molecule,
+      component.atomIndices, null, 'isolated-staging-reference');
+    state.dockingReference = {
+      schema:'molarium.docking.browser-reference/v1', mode:'pose-propagation',
+      capturedAt:new Date().toISOString(), moleculeName:state.molecule.name || 'ligand',
+      ligandComponentId:component.id, ligand,
+      receptorSite:{ schema:'molarium.docking.receptor-site/v1', radiusAngstrom:8,
+        sourceForcefield:null, sourceChargeModel:null, atoms:[] },
+      hydrogenBonds:[], contactAmendments:[], receptorProvenanceAtomCount:0,
+      receptorInputText:'', referenceLigandInputText:adapter.dockingInputText(
+        state.molecule, plan.globalAtomIndices),
+      forcefield:null, chargeModel:null, sourceSha256:null,
+    };
+    return { mode:'pose-propagation', coreAtomCount:ligand.coreAtomIds.length };
+  },
+  async stageBenchmarkPoseProduct({ caseId, productSmiles, posePropagationMap,
+    posePropagationPolicy = null,
+    productAtomNames = null,
+    productComponentId = null,
+    interactionHypotheses = [] } = {}) {
+    if (!state.dockingReference || state.dockingReference.mode !== 'pose-propagation')
+      throw new Error('Capture a pose-propagation reference before staging a benchmark product');
+    if (!productSmiles || !posePropagationMap?.commonAtoms?.length)
+      throw new Error('A product graph and exact pose-propagation map are required');
+    const [adapter, referenceCore, constraints, remap, featureSeeding,
+      registeredGraphEdit] = await Promise.all([
+      import('./docking/browser-adapter.mjs'), import('./docking/reference-core.mjs'),
+      import('./docking/constraints.mjs'), import('./docking/contact-remap.mjs'),
+      import('./docking/feature-seeding.mjs'),
+      import('./docking/registered-graph-edit.mjs'),
+    ]);
+    const poseTransferPlan = registeredGraphEdit.buildRegisteredPoseTransferPlan(
+      posePropagationMap, posePropagationPolicy
+        || registeredGraphEdit.EXACT_REGISTERED_POSE_PROPAGATION_POLICY);
+    const reference = state.dockingReference;
+    const component = dockingLigandComponent();
+    if (!component) throw new Error('The captured reference ligand component is missing');
+    const beforePlan = adapter.createLigandPlan(state.molecule, component.atomIndices,
+      `benchmark-reference-${caseId || 'case'}`);
+    const beforeLigand = structuredClone(beforePlan.molecule);
+    const beforeByAtomName = new Map(beforePlan.molecule.atoms
+      .map((atom, localIndex) => [atom.atomName, { atom, localIndex }]).filter(([name]) => name));
+    const referenceIndexById = new Map(reference.ligand.atomIds.map((id, index) => [id, index]));
+    const embedded = await createRdkitSmilesMolecule(productSmiles,
+      `${caseId || 'benchmark'} product`);
+    const product = embedded.molecule;
+    const productHeavyIndices = product.atoms.flatMap((atom, index) =>
+      atom.element === 'H' ? [] : [index]);
+    const productHeavyOrdinal = new Map(productHeavyIndices.map((atomIndex, ordinal) =>
+      [atomIndex, ordinal]));
+    if (productHeavyIndices.length !== posePropagationMap.productHeavyAtoms)
+      throw new Error(`Product heavy-atom count changed (${productHeavyIndices.length} != ${posePropagationMap.productHeavyAtoms})`);
+    if (productAtomNames != null) {
+      if (!Array.isArray(productAtomNames)
+        || productAtomNames.length !== productHeavyIndices.length
+        || productAtomNames.some((name) => typeof name !== 'string'
+          || !/^[A-Za-z][A-Za-z0-9]{0,7}$/.test(name))
+        || new Set(productAtomNames).size !== productAtomNames.length)
+        throw new Error('Registered product atom names must uniquely cover every heavy atom');
+    }
+    if (productComponentId != null
+      && (typeof productComponentId !== 'string'
+        || !/^[A-Za-z0-9]{1,3}$/.test(productComponentId)))
+      throw new Error('Registered product component ID must contain one to three alphanumeric characters');
+    const template = state.molecule.atoms[component.atomIndices[0]];
+    const mappedPairs = [];
+    for (const mapping of poseTransferPlan.exactAtomPairs) {
+      const before = beforeByAtomName.get(mapping.referenceAtomName);
+      const productIndex = productHeavyIndices[mapping.productAtomIndex];
+      if (!before || !Number.isInteger(productIndex))
+        throw new Error(`Atom-map identity is unavailable for ${mapping.referenceAtomName}`);
+      const productAtom = product.atoms[productIndex];
+      if (productAtom.element !== mapping.element || before.atom.element !== mapping.element)
+        throw new Error(`Atom-map element changed for ${mapping.referenceAtomName}`);
+      productAtom.designAtomId = before.atom.designAtomId;
+      productAtom.atomName = mapping.referenceAtomName;
+      mappedPairs.push([referenceIndexById.get(before.atom.designAtomId), productIndex]);
+    }
+    if (mappedPairs.some(([referenceIndex]) => !Number.isInteger(referenceIndex)))
+      throw new Error('A mapped reference atom is absent from the captured pose');
+    const initialPositions = Float64Array.from(product.atoms.flatMap((atom) =>
+      [atom.x, atom.y, atom.z]));
+    const globallyAlignedPositions = constraints.applyCoreTransform(initialPositions,
+      constraints.fittedCoreTransform(reference.ligand.positions, initialPositions, mappedPairs));
+    const attachedPlacement = featureSeeding.attachNonCoreRegionsToSnappedCore({
+      molecule:product, alignedPositions:globallyAlignedPositions,
+      referencePositions:reference.ligand.positions, coreAtomPairs:mappedPairs,
+    });
+    const alignedPositions = attachedPlacement.positions;
+    const protectedDisplacements = mappedPairs.map(([referenceIndex, productIndex]) => {
+      const dx = alignedPositions[productIndex * 3] - reference.ligand.positions[referenceIndex * 3];
+      const dy = alignedPositions[productIndex * 3 + 1] - reference.ligand.positions[referenceIndex * 3 + 1];
+      const dz = alignedPositions[productIndex * 3 + 2] - reference.ligand.positions[referenceIndex * 3 + 2];
+      return Math.hypot(dx, dy, dz);
+    });
+    const protectedReferenceMaxDisplacementAngstrom = Math.max(...protectedDisplacements, 0);
+    if (protectedReferenceMaxDisplacementAngstrom > 1e-9)
+      throw new Error(`Protected reference anchor moved by ${protectedReferenceMaxDisplacementAngstrom.toExponential(3)} Å during staging`);
+    if (productAtomNames) productHeavyIndices.forEach((atomIndex, productAtomIndex) => {
+      product.atoms[atomIndex].atomName = productAtomNames[productAtomIndex];
+    });
+    product.atoms.forEach((atom, index) => {
+      atom.x = alignedPositions[index * 3]; atom.y = alignedPositions[index * 3 + 1];
+      atom.z = alignedPositions[index * 3 + 2];
+      atom.record = 'HETATM'; atom.residueName = productComponentId || template.residueName;
+      atom.chain = template.chain; atom.residueIndex = template.residueIndex;
+      atom.insertionCode = template.insertionCode || '';
+      if (!atom.atomName) atom.atomName = atom.element === 'H'
+        ? `HNEW${index + 1}` : `${atom.element}NEW${index + 1}`;
+      atom.benchmarkProductAtomIndex = productHeavyOrdinal.get(index) ?? null;
+    });
+    product.bonds.forEach((bond) => {
+      bond.distance = bondDistance(product, bond.a, bond.b);
+    });
+    product.source = { ...(product.source || {}), format:'molarium-benchmark-product',
+      caseId:caseId || null, inputSmiles:productSmiles,
+      atomMapSource:posePropagationMap.source || 'atom-maps.v0.1.json' };
+    referenceCore.ensureStableAtomIds(product, `benchmark-product-${caseId || 'case'}`,
+      state.molecule.source?.designAtomIdLedger || reference.ligand.atomIds);
+
+    const removed = new Set(component.atomIndices);
+    const retainedIndices = state.molecule.atoms.flatMap((_, index) => removed.has(index) ? [] : [index]);
+    const retainedMap = new Map(retainedIndices.map((oldIndex, newIndex) => [oldIndex, newIndex]));
+    const atoms = retainedIndices.map((index) => ({ ...state.molecule.atoms[index] }));
+    const productOffset = atoms.length;
+    atoms.push(...product.atoms.map((atom) => ({ ...atom })));
+    const bonds = state.molecule.bonds.flatMap((bond) =>
+      retainedMap.has(bond.a) && retainedMap.has(bond.b) ? [{ ...bond,
+        a:retainedMap.get(bond.a), b:retainedMap.get(bond.b) }] : []);
+    bonds.push(...product.bonds.map((bond) => ({ ...bond,
+      a:bond.a + productOffset, b:bond.b + productOffset })));
+    const next = { ...state.molecule, atoms, bonds,
+      smiles:`${state.molecule.source?.pdbId || 'PDB'} + ${productSmiles}`,
+      source:{ ...(state.molecule.source || {}), dockingBenchmark:{ caseId:caseId || null,
+        productSmiles, atomMapSource:posePropagationMap.source || 'atom-maps.v0.1.json' } } };
+    delete next.parameterization;
+    state.molecule = next;
+    state.dockingResult = null; state.dockingPoseIndex = 0;
+    state.selectedAtom = null; state.selectedAtoms = [];
+    refreshStructureComponents();
+    const currentLigandIndices = currentDockingLigandAtomIndices(reference);
+    const currentPlan = adapter.createLigandPlan(state.molecule, currentLigandIndices,
+      `benchmark-product-${caseId || 'case'}`);
+    const referenceAtomIds = new Set(reference.ligand.atomIds);
+    const removedBenchmarkAtomIds = posePropagationMap.deletedReferenceAtoms.flatMap((entry) => {
+      const atom = beforeByAtomName.get(entry.referenceAtomName)?.atom;
+      return atom?.designAtomId ? [atom.designAtomId] : [];
+    });
+    const addedBenchmarkHeavyIds = posePropagationMap.addedProductAtoms.map((entry) => {
+      const productIndex = productHeavyIndices[entry.productAtomIndex];
+      return product.atoms[productIndex]?.designAtomId;
+    }).filter(Boolean);
+    const commonProductOrdinalByReferenceName = new Map(
+      posePropagationMap.commonAtoms.map((entry) =>
+        [entry.referenceAtomName, entry.productAtomIndex]));
+    const affectedProductOrdinals = new Set([
+      ...Array.from(posePropagationMap.productBoundary || [])
+        .map((entry) => entry.commonProductAtomIndex),
+      ...Array.from(posePropagationMap.referenceBoundary || [])
+        .map((entry) => commonProductOrdinalByReferenceName.get(entry.commonAtomName)),
+    ].filter(Number.isInteger));
+    const affectedBenchmarkCoreIds = [...affectedProductOrdinals].map((ordinal) => {
+      const productIndex = productHeavyIndices[ordinal];
+      return product.atoms[productIndex]?.designAtomId;
+    }).filter(Boolean);
+    state.molecule.source = { ...(state.molecule.source || {}),
+      posePropagationGraphEdit:{
+        schema:'molarium.pose-propagation-graph-edit/v1', caseId:caseId || null,
+        addedAtomIds:[...addedBenchmarkHeavyIds],
+        removedAtomIds:[...removedBenchmarkAtomIds],
+        affectedCoreAtomIds:[...new Set(affectedBenchmarkCoreIds)].sort(),
+        source:'registered reference/product graph boundaries; no product coordinates',
+      } };
+    const addedHeavyIdSet = new Set(addedBenchmarkHeavyIds);
+    const addedBenchmarkAtomIds = currentPlan.molecule.atoms.flatMap((atom, atomIndex) => {
+      if (addedHeavyIdSet.has(atom.designAtomId)) return [atom.designAtomId];
+      if (atom.element !== 'H' || referenceAtomIds.has(atom.designAtomId)) return [];
+      const attachedToAddedHeavy = currentPlan.molecule.bonds.some((bond) => {
+        const neighbor = bond.a === atomIndex ? bond.b : bond.b === atomIndex ? bond.a : null;
+        return neighbor != null && addedHeavyIdSet.has(
+          currentPlan.molecule.atoms[neighbor]?.designAtomId);
+      });
+      return attachedToAddedHeavy ? [atom.designAtomId] : [];
+    });
+    const addedBenchmarkIdSet = new Set(addedBenchmarkAtomIds);
+    const benchmarkEligibleAtomIndices = currentPlan.molecule.atoms.flatMap((atom, index) =>
+      addedBenchmarkIdSet.has(atom.designAtomId) ? [index] : []);
+    const proposals = remap.proposeLigandHydrogenBondFeatureRemaps(reference.hydrogenBonds,
+      currentPlan.molecule, currentPlan.molecule.atoms.map((_, index) => index), {
+        eligibleAtomIndices:benchmarkEligibleAtomIndices,
+        beforeMolecule:beforeLigand,
+        editRegionsOverride:{ removedAtomIds:removedBenchmarkAtomIds,
+          addedAtomIds:addedBenchmarkAtomIds, changedAtomIds:[] },
+      });
+    const hypotheses = new Map(interactionHypotheses
+      .filter((entry) => entry.kind === 'hydrogen-bond').map((entry) => [entry.capturedId, entry]));
+    for (const definition of reference.hydrogenBonds) {
+      const hypothesis = hypotheses.get(definition.id);
+      if (!hypothesis || hypothesis.label !== definition.label)
+        throw new Error(`Captured contact ${definition.id} differs from the pre-registered input`);
+    }
+    state.dockingContactRemaps = new Map();
+    state.dockingContactRemapProposals = new Map(proposals
+      .filter((proposal) => proposal.status !== 'available')
+      .map((proposal) => [proposal.id, { ...proposal,
+        priorEffectiveDefinition:structuredClone(reference.hydrogenBonds
+          .find((definition) => definition.id === proposal.id)),
+        editLineage:[{
+          method:posePropagationMap.protectedReferenceAnchor?.method
+            || 'pre-registered-reference-product-MCS',
+          caseId:caseId || null,
+          commonHeavyAtoms:posePropagationMap.commonHeavyAtoms,
+          referenceBoundary:structuredClone(posePropagationMap.referenceBoundary),
+          productBoundary:structuredClone(posePropagationMap.productBoundary) }],
+      }]));
+    const selected = new Set();
+    const unavailableTargets = [], remappedTargets = [];
+    for (const definition of reference.hydrogenBonds) {
+      const hypothesis = hypotheses.get(definition.id);
+      const proposal = proposals.find((entry) => entry.id === definition.id);
+      if (proposal?.status === 'available') selected.add(definition.id);
+      else if (hypothesis?.targetFeature && proposal?.candidates?.length) {
+        selected.add(definition.id); remappedTargets.push({ id:definition.id,
+          status:proposal.status, candidates:proposal.candidates.map((candidate) => ({
+            id:candidate.id, role:candidate.role, type:candidate.type,
+            matchKind:candidate.matchKind,
+          })) });
+      } else if (hypothesis?.targetFeature) unavailableTargets.push({ id:definition.id,
+        expectedTransfer:hypothesis.expectedTransfer, status:proposal?.status || 'unavailable' });
+    }
+    state.dockingSelectedHbondIds = selected;
+    poseTransferPlan.featureCorrespondences = remappedTargets.flatMap((target) =>
+      target.candidates.map((candidate) => ({
+        kind:'hydrogen-bond-role', capturedContactId:target.id,
+        productFeatureId:candidate.id, role:candidate.role, type:candidate.type,
+        matchKind:candidate.matchKind,
+        treatment:'soft-restraint',
+      })));
+    updateInfo(); updateDockingUi(); updateOptimizerControls(); draw();
+    return { caseId:caseId || null, productAtoms:currentPlan.molecule.atoms.length,
+      productHeavyAtoms:productHeavyIndices.length, commonHeavyAtoms:mappedPairs.length,
+      selectedContactIds:[...selected], unavailableTargets, remappedTargets,
+      poseTransferPlan:structuredClone(poseTransferPlan),
+      proposals:proposals.map((proposal) => ({ id:proposal.id, status:proposal.status,
+        ligandRole:proposal.ligandRole, candidateCount:proposal.candidates.length,
+        candidateTypes:proposal.candidates.map((candidate) => candidate.type) })),
+      registeredEditRegion:{ removedAtomIds:removedBenchmarkAtomIds,
+        addedHeavyAtomIds:addedBenchmarkHeavyIds,
+        addedAtomIds:addedBenchmarkAtomIds,
+        affectedCoreAtomIds:[...new Set(affectedBenchmarkCoreIds)].sort() },
+      embedding:{ rdkitVersion:embedded.result.rdkitVersion,
+        forcefield:embedded.result.forcefield, conformerCount:embedded.result.conformerCount,
+        seed:embedded.result.conformerSeed,
+        protectedReference:{
+          method:posePropagationMap.protectedReferenceAnchor?.method || 'mapped-common-atoms',
+          label:posePropagationMap.protectedReferenceAnchor?.label || 'registered common atoms',
+          atomCount:mappedPairs.length,
+          atomNames:posePropagationMap.commonAtoms.map((entry) => entry.referenceAtomName),
+          maxDisplacementAngstrom:protectedReferenceMaxDisplacementAngstrom,
+        },
+        attachedPlacement:{ method:attachedPlacement.method,
+          regions:structuredClone(attachedPlacement.regions) } },
+    };
+  },
+  benchmarkCurrentLigand() {
+    const indices = currentDockingLigandAtomIndices();
+    return {
+      atoms:indices.map((globalAtomIndex, productAtomIndex) => {
+        const atom = state.molecule.atoms[globalAtomIndex];
+        return { productAtomIndex, globalAtomIndex, designAtomId:atom.designAtomId,
+          benchmarkProductAtomIndex:Number.isInteger(atom.benchmarkProductAtomIndex)
+            ? atom.benchmarkProductAtomIndex : null,
+          atomName:atom.atomName || null, element:atom.element,
+          x:Number(atom.x), y:Number(atom.y), z:Number(atom.z) };
+      }),
+      bonds:state.molecule.bonds.flatMap((bond) => {
+        const first = indices.indexOf(bond.a), second = indices.indexOf(bond.b);
+        return first >= 0 && second >= 0 ? [{ a:first, b:second, order:Number(bond.order || 1) }] : [];
+      }),
+    };
   },
   relaxPolarHydrogens(inputMolecule = null) {
     const molecule = structuredClone(inputMolecule || state.molecule);
@@ -4924,7 +11059,7 @@ window.molariumTest = Object.freeze({
       return Math.max(maximum, Math.hypot(atom.x - before[0], atom.y - before[1], atom.z - before[2]));
     }, 0);
     if (!inputMolecule) {
-      state.buildHistory.push(structuredClone(state.molecule)); state.redoHistory = [];
+      pushBuildSnapshot(state.molecule);
       loadMolecule(molecule, false); updateHistoryButtons();
     }
     return { ...relaxation, heavyAtomMaximumDisplacement,
@@ -4933,11 +11068,55 @@ window.molariumTest = Object.freeze({
   polarHydrogenDiagnostics() { return structuredClone(polarHydrogenDiagnostics(state.molecule)); },
   structureComponents() {
     return { summary: structureComponentSummary(), focusedComponentId:state.focusedComponentId,
+      focusedComponentCenter:structuredClone(state.focusedComponentCenter),
       focusedComponentRadius:state.focusedComponentRadius,
       components: state.structureComponents.map((component) => ({
       id: component.id, kind: component.kind, label: component.label, atomCount: component.atomIndices.length,
       residueCount: component.residueCount, visible: state.componentVisibility.get(component.id) !== false,
     })) };
+  },
+  async waitFor2DDepiction(timeoutMs = 10000) {
+    const started = performance.now();
+    while (performance.now() - started < timeoutMs) {
+      const panel = document.querySelector('#structure-2d-panel');
+      const svg = document.querySelector('#structure-2d-drawing svg');
+      if (!panel.classList.contains('hidden') && !panel.dataset.pending && svg) return this.twoDDepiction();
+      if (panel.dataset.error) throw new Error(panel.dataset.error);
+      await new Promise((resolve) => setTimeout(resolve, 25));
+    }
+    throw new Error('Timed out waiting for the 2D depiction');
+  },
+  twoDDepiction() {
+    const panel = document.querySelector('#structure-2d-panel');
+    const svg = document.querySelector('#structure-2d-drawing svg');
+    return { visible:!panel.classList.contains('hidden'), label:document.querySelector('#structure-2d-label').textContent,
+      atomIndices:state.depictionGlobalAtomIndices.slice(), bondPairs:structuredClone(state.depictionGlobalBondPairs),
+      selectedAtoms:state.selectedAtoms.slice(), tool:state.depictionTool, mode:state.mode,
+      pendingChanges:state.chemistryTransaction?.editCount || 0,
+      hasSvg:Boolean(svg), atomClasses:svg?.querySelectorAll('[class*="atom-"]').length || 0,
+      rdkitVersion:panel.dataset.rdkitVersion || null,
+      alignedAtoms:Number(panel.dataset.alignedAtoms || 0),
+      alignmentBackend:panel.dataset.alignmentBackend || null };
+  },
+  select2DAtom(localIndex) { selectDepictionAtom(Number(localIndex)); return this.twoDDepiction(); },
+  set2DTool(tool) {
+    if (!['select', 'atom', 'bond', 'erase'].includes(tool)) throw new Error(`Unknown 2D tool ${tool}`);
+    if (tool !== 'select') setMode('build');
+    state.depictionTool = tool; state.depictionBondStart = null; update2DEditorUi();
+    return this.twoDDepiction();
+  },
+  async draw2DAtom(localIndex, element = 'C') {
+    setMode('build'); state.depictionTool = 'atom'; state.selectedElement = element;
+    const globalIndex = state.depictionGlobalAtomIndices[Number(localIndex)];
+    const result = await runDepictionEdit(() => addDepictionAtom(globalIndex, element));
+    return { result, depiction:this.twoDDepiction(), current:this.current() };
+  },
+  async set2DBond(firstLocalIndex, secondLocalIndex, order = 1) {
+    setMode('build'); state.depictionTool = 'bond'; state.depictionBondOrder = Number(order);
+    const first = state.depictionGlobalAtomIndices[Number(firstLocalIndex)];
+    const second = state.depictionGlobalAtomIndices[Number(secondLocalIndex)];
+    const result = await runDepictionEdit(() => applyDepictionBond(first, second, Number(order)));
+    return { result, depiction:this.twoDDepiction(), current:this.current() };
   },
   currentPreparationReport() { return structuredClone(proteinPreparationReport(state.molecule)); },
   async prepareCurrentPdb() { return prepareCurrentPdb(); },
@@ -5073,6 +11252,23 @@ window.molariumTest = Object.freeze({
     state.selectedAtoms = [index]; state.selectedAtom = index; updateGeometryControl();
     return applySelectedAtomChemistry(element, formalCharge);
   },
+  async stageDeleteAtomCurrent(index) {
+    document.querySelector('#chemistry-immediate-refine').checked = false;
+    state.selectedAtoms = [index]; state.selectedAtom = index; updateGeometryControl();
+    return deleteSelectedAtomChemistry();
+  },
+  async stageAddElementCurrent(element, targetIndex) {
+    if (!ELEMENTS[element]) throw new Error(`Unknown element ${element}`);
+    document.querySelector('#chemistry-immediate-refine').checked = false;
+    state.selectedAtoms = [targetIndex]; state.selectedAtom = targetIndex; updateGeometryControl();
+    return applyChemistryMutation((molecule) => {
+      const existingAtoms = new Set(molecule.atoms);
+      const target = molecule.atoms[targetIndex];
+      addElementToMolecule(molecule, element, targetIndex);
+      const added = molecule.atoms.filter((atom) => !existingAtoms.has(atom));
+      return { selection:added.length ? [added[0]] : [target], changedAtoms:[target, ...added] };
+    });
+  },
   async finishChemistryCurrent() { return finishChemistryTransaction(); },
   discardChemistryCurrent() { return discardChemistryTransaction(); },
   chemistryTransaction() {
@@ -5083,11 +11279,34 @@ window.molariumTest = Object.freeze({
       finishing:state.chemistryEditFinishing,
     } : null;
   },
+  dockingContactResolutions() {
+    return {
+      remaps:[...state.dockingContactRemaps.values()].map((entry) => structuredClone(entry.audit)),
+      remapChains:[...state.dockingContactRemaps.entries()].map(([contactId, entry]) => ({
+        contactId, chain:structuredClone(entry.chain || [entry.audit]),
+      })),
+      proposals:[...state.dockingContactRemapProposals.values()].map((entry) => ({
+        id:entry.id, status:entry.status, ligandRole:entry.ligandRole,
+        boundaryAnchorIds:[...(entry.boundaryAnchorIds || [])],
+        cumulativeEditRegionAtomIds:[...(entry.cumulativeEditRegionAtomIds || [])],
+        editLineage:structuredClone(entry.editLineage || []),
+        candidates:entry.candidates.map((candidate) => ({ id:candidate.id, label:candidate.label,
+          atomIds:[...candidate.atomIds],
+          boundaryAnchorIds:[...(candidate.boundaryAnchorIds || [])] })),
+      })),
+      selectedIds:[...state.dockingSelectedHbondIds],
+    };
+  },
   localPolishSelection(changedAtomIndices, bondRadius = 2) {
-    const movableAtomIndices = localPolishMovableAtomIndices(state.molecule, changedAtomIndices, bondRadius);
+    const plan = localEditPolishPlan(state.molecule, changedAtomIndices, bondRadius);
+    const movableAtomIndices = plan?.movableGlobalAtomIndices
+      || localPolishMovableAtomIndices(state.molecule, changedAtomIndices, bondRadius);
     const movable = new Set(movableAtomIndices);
     return { movableAtomIndices,
-      fixedAtomIndices:state.molecule.atoms.flatMap((_, index) => movable.has(index) ? [] : [index]) };
+      fixedAtomIndices:state.molecule.atoms.flatMap((_, index) => movable.has(index) ? [] : [index]),
+      cleanupMode:plan?.cleanupMode || 'free-local',
+      fixedInheritedHeavyAtomCount:plan?.fixedInheritedHeavyAtomCount || 0,
+      scope:plan?.scope || 'molecule' };
   },
   async calculateCurrent(job = 'energy', method = 'webgpu', options = {}) {
     document.querySelector('#job-select').value = job;
@@ -5104,6 +11323,10 @@ window.molariumTest = Object.freeze({
       openmmVersion: result.openmmVersion,
       chargeModel: result.chargeModel,
       sourceSha256: result.sourceSha256,
+      openmmWasmSha256: result.openmmWasmSha256,
+      numericSystemSha256: result.numericSystemSha256,
+      parameterizedSystemSha256: result.parameterizedSystemSha256,
+      inputPositionsJsonSha256: result.inputPositionsJsonSha256,
       parameterCounts: result.parameterCounts,
       forcefield: result.forcefield,
       model: result.model,
@@ -5201,6 +11424,135 @@ window.molariumTest = Object.freeze({
   async parameterizeCurrent() {
     return runOpenMMJob('parameters', state.molecule, () => {});
   },
+  setDockingSelection(indices) {
+    state.selectedAtoms = Array.from(indices || [], Number);
+    state.selectedAtom = state.selectedAtoms.at(-1) ?? null;
+    updateGeometryControl(); updateDockingUi(); draw();
+    return { selected:[...state.selectedAtoms], status:document.querySelector('#docking-status').textContent,
+      captureDisabled:document.querySelector('#capture-docking-reference').disabled };
+  },
+  setDockingMode(mode) {
+    document.querySelector('#docking-mode').value = mode === 'selected-core'
+      ? 'selected-core' : 'propagate';
+    updateDockingUi();
+    return { mode:selectedDockingMode(), status:document.querySelector('#docking-status').textContent,
+      captureDisabled:document.querySelector('#capture-docking-reference').disabled };
+  },
+  setDockingEditCleanup(mode) {
+    document.querySelector('#docking-edit-cleanup').value = mode === 'free-local'
+      ? 'free-local' : 'preserve-reference';
+    updateDockingUi(); updateOptimizerControls();
+    return { mode:selectedDockingEditCleanup(),
+      visible:!document.querySelector('#docking-cleanup-field').classList.contains('hidden') };
+  },
+  async captureDockingReference() {
+    const reference = await captureCurrentDockingReference();
+    return { mode:reference.mode, coreAtomIds:[...reference.ligand.coreAtomIds],
+      ligandAtomCount:reference.ligand.atomIds.length,
+      receptorAtomCount:reference.receptorSite.atoms.length,
+      hydrogenBonds:reference.hydrogenBonds.map((entry) => ({
+        id:entry.id, label:entry.label, receptorRole:entry.receptorRole,
+        referenceGeometry:structuredClone(entry.referenceGeometry || null),
+        participants:Object.fromEntries(['donor', 'hydrogen', 'acceptor'].map((role) => {
+          const participant = entry[role];
+          return [role, participant?.scope === 'receptor'
+            ? { scope:'receptor', point:structuredClone(participant.point) }
+            : { scope:'ligand', designAtomId:participant?.designAtomId,
+              referencePoint:structuredClone(participant?.referencePoint || null) }];
+        })),
+      })) };
+  },
+  async runConstrainedDocking(options = {}) {
+    const result = await runBrowserConstrainedDocking(options);
+    const { verifyLabbook, sha256Object } = await import('./docking/labbook.mjs');
+    return { mode:result.mode, candidates:result.run.candidates.length, feasible:result.run.feasibleCount,
+      distinctPoses:result.distinctPoseEntries?.length || 0,
+      distinctFeasible:result.distinctFeasibleCount || 0,
+      topPoses:result.run.candidates.slice(0, 5).map((pose) => ({
+        rank:pose.rank, feasible:pose.feasible,
+        atoms:result.plan.molecule.atoms.flatMap((atom, atomIndex) =>
+          Number.isInteger(atom.benchmarkProductAtomIndex) ? [{
+            productAtomIndex:atom.benchmarkProductAtomIndex,
+            element:atom.element,
+            x:Number(pose.positions[atomIndex * 3]),
+            y:Number(pose.positions[atomIndex * 3 + 1]),
+            z:Number(pose.positions[atomIndex * 3 + 2]),
+          }] : []),
+      })),
+      selected:{ rank:result.run.selected.rank, feasible:result.run.selected.feasible,
+        scoreKcalMol:result.run.selected.totalScoreKcalMol,
+        physicalKcalMol:result.run.selected.physicalEnergyKcalMol,
+        constraintPenaltyKcalMol:result.run.selected.constraintPenaltyKcalMol,
+        physicalComponents:result.run.selected.physicalDetails ? {
+          lennardJonesKcalMol:result.run.selected.physicalDetails.lennardJonesKcalMol,
+          coulombKcalMol:result.run.selected.physicalDetails.coulombKcalMol,
+          ligandStrainKcalMol:result.run.selected.physicalDetails.ligandStrainKcalMol,
+          interactionKcalMol:result.run.selected.physicalDetails.interactionKcalMol,
+          interactionReferenceKcalMol:
+            result.run.selected.physicalDetails.interactionReferenceKcalMol,
+          relativeInteractionKcalMol:result.run.selected.physicalDetails.relativeInteractionKcalMol,
+          stericClashes:result.run.selected.physicalDetails.stericClashes,
+          chemicalValidity:structuredClone(
+            result.run.selected.physicalDetails.chemicalValidity || null),
+        } : null,
+        coreRmsdAngstrom:result.run.selected.core.rmsdAngstrom,
+        hydrogenBonds:structuredClone(result.run.selected.hydrogenBonds),
+        refinement:{ method:result.run.selected.refinement?.method || null,
+          rotatableBondCount:result.run.selected.refinement?.rotatableBondCount || 0,
+          ringCrankshaftMoveCount:result.run.selected.refinement?.ringCrankshaftMoveCount || 0,
+          proposals:result.run.selected.refinement?.proposals || 0,
+          accepted:result.run.selected.refinement?.accepted || 0,
+          improved:result.run.selected.refinement?.improved || 0,
+          stageOutcome:result.run.selected.refinement?.stageOutcome || null,
+          captureFeasible:Boolean(result.run.selected.refinement?.captureFeasible),
+          physicalRefinementAttempted:Boolean(
+            result.run.selected.refinement?.physicalRefinementAttempted),
+          capture:structuredClone(result.run.selected.refinement?.capture || null),
+          physicalRefinement:structuredClone(
+            result.run.selected.refinement?.physicalRefinement || null),
+          relaxation:structuredClone(result.run.selected.refinement?.relaxation || null) } },
+      labbook:await verifyLabbook(result.labbook),
+      selectedCoordinatesSha256:await sha256Object(Array.from(result.run.selected.positions)),
+      coordinatePayloadIncluded:result.labbook.inputs.coordinatePayloadIncluded,
+      ligandForcefield:result.ligandForcefield,
+      conformerForcefields:[...result.conformerForcefields],
+    };
+  },
+  async applyDockingPose(index = 0) {
+    state.dockingPoseIndex = Number(index); const pose = await applySelectedDockingPose();
+    return { rank:pose.rank, feasible:pose.feasible,
+      scoreKcalMol:pose.totalScoreKcalMol, molecule:structuredClone(state.molecule) };
+  },
+  dockingLabbook() { return state.dockingResult ? structuredClone(state.dockingResult.labbook) : null; },
+  dockingValidationNumericSystem() {
+    return state.dockingResult?.validationNumericSystem
+      ? structuredClone(state.dockingResult.validationNumericSystem) : null;
+  },
+  async scoreDockingLigandForValidation() {
+    const prepared = dockingValidationLigandMolecule();
+    if (!prepared) throw new Error('The exact docking ligand validation System is unavailable.');
+    const summarize = (result, forceUnit) => ({
+      job:result.job, finalEnergy:Number(result.finalEnergy), unit:result.unit,
+      forces:Array.from(result.forces || [], Number), forceUnit,
+      forcefield:result.forcefield || null,
+      chargeModel:result.chargeModel || null, sourceSha256:result.sourceSha256 || null,
+      model:result.model || null, modelLevel:result.modelLevel || null,
+      modelSourceSha256:result.modelSourceSha256 || null,
+      platform:result.platform || null, backend:result.backend || null,
+      openmmVersion:result.openmmVersion || null,
+      descriptorBackend:result.descriptorBackend || null,
+      ensembleStdDevKcalMol:result.finalEnsembleStdDev ?? null,
+    });
+    const sageReference = await runOpenMMJob('energy', prepared.molecule, () => {});
+    const sage = await runWebGPUJob('energy', prepared.molecule, () => {});
+    const ani2x = await runAni2xJob('energy', prepared.unparameterizedMolecule, () => {});
+    return {
+      atomIds:[...prepared.atomIds],
+      sageReference:summarize(sageReference, 'kJ/mol/nm'),
+      sage:summarize(sage, 'kJ/mol/nm'),
+      ani2x:summarize(ani2x, 'kcal/mol/angstrom'),
+    };
+  },
   async tuneStormmReplicas(options = {}) {
     const result = await tuneStormmReplicas(options);
     return result ? structuredClone(result) : null;
@@ -5256,6 +11608,8 @@ window.molariumTest = Object.freeze({
       } : state.trajectoryDisplayAlignment ? {
         mode:'fixed-identity heavy-atom rigid fit',
         referenceFrame:state.trajectoryDisplayAlignment.referenceFrame,
+        referenceGeometry:state.trajectoryDisplayAlignment.referenceGeometry,
+        sharedAcrossReplicas:state.trajectoryDisplayAlignment.sharedAcrossReplicas,
         heavyAtomCount:state.trajectoryDisplayAlignment.atomIndices.length,
         displayOnly:true,
       } : null,
@@ -5398,6 +11752,9 @@ window.molariumTest = Object.freeze({
   current() { return { ...moleculeDiagnostics(state.molecule), molecule: structuredClone(state.molecule) }; },
   fragmentIds() { return FRAGMENTS.map((fragment) => fragment.id); },
 });
+if (MOLARIUM_NETWORK_POLICY.testApi === true)
+  Object.defineProperty(window, 'molariumTest', { value:molariumTestApi,
+    enumerable:false, configurable:false, writable:false });
 
 function exportXYZ() {
   if (!state.molecule) return showToast('Load a molecule first');
@@ -5499,7 +11856,7 @@ function applyProteinPrediction(result) {
   draw();
 }
 
-async function runProteinFold() {
+async function runProteinFold({ rethrow = false } = {}) {
   requireExternalNetwork('MSA search');
   if (state.foldAbortController) return;
   const button = document.querySelector('#fold-protein');
@@ -5526,10 +11883,15 @@ async function runProteinFold() {
     applyProteinPrediction(result);
     setFoldStatus(`Complete · mean pLDDT ${result.meanPlddt.toFixed(1)} · pTM ${result.ptm.toFixed(3)}`);
     showToast('Protein folded locally');
+    return { residues:result.sequence.length, meanPlddt:result.meanPlddt,
+      ptm:result.ptm, msaDepth:result.msaDepth, provider:result.provider,
+      model:result.model, elapsedMs:result.elapsedMs };
   } catch (error) {
     const aborted = error?.name === 'AbortError' || controller.signal.aborted;
     setFoldStatus(aborted ? 'Fold cancelled.' : `Fold failed · ${error.message}`);
     if (!aborted) showNotice(error.message);
+    if (rethrow) throw error;
+    return null;
   } finally {
     if (state.foldAbortController === controller) state.foldAbortController = null;
     button.disabled = false;
@@ -5659,13 +12021,14 @@ function activatePreparedProteinFixture(payload, labels) {
   };
 }
 
-async function prepareCurrentPdb() {
+async function prepareCurrentPdb(optionsOverride = null, suppliedCcdDefinitions = null) {
   if (state.preparing) return null;
   if (state.molecule?.source?.format !== 'pdb') throw new Error('Load a PDB structure first');
   const button = document.querySelector('#prepare-pdb');
   const status = document.querySelector('#pdb-preparation-status');
   const original = state.molecule;
-  const options = pdbPreparationOptionsFromUi();
+  const options = optionsOverride
+    ? normalizePdbPreparationOptions(optionsOverride) : pdbPreparationOptionsFromUi();
   let preview = state.pdbPreparationPreview;
   state.preparing = true;
   button.disabled = true;
@@ -5673,7 +12036,7 @@ async function prepareCurrentPdb() {
     const fingerprint = pdbPreparationFingerprint(original, options);
     if (!preview || preview.fingerprint !== fingerprint) {
       status.textContent = 'Preparing…';
-      preview = await createPdbPreparationPreview(original, options);
+      preview = await createPdbPreparationPreview(original, options, suppliedCcdDefinitions);
       state.pdbPreparationPreview = preview;
       updatePreparationInspectorUi();
     }
@@ -5696,7 +12059,7 @@ async function prepareCurrentPdb() {
         chargeModel: parameters.chargeModel, sourceSha256: parameters.sourceSha256,
         parameterCounts: parameters.parameterCounts } } };
     prepared.prediction = prepared.prediction ? { ...prepared.prediction, pdb: proteinMoleculeToPdb(prepared) } : null;
-    state.buildHistory.push(structuredClone(original)); state.redoHistory = [];
+    pushBuildSnapshot(original);
     loadMolecule(prepared, false);
     setPreparationInspectorOpen(false);
     updateHistoryButtons();
@@ -5884,7 +12247,8 @@ async function getCalculationWorker(method) {
     }
     pendingCalculations.delete(message.id);
     if (message.type === 'result') pending.resolve(message);
-    else pending.reject(new Error(message.message || `${calculationEngineName(method)} calculation failed`));
+    else pending.reject(new Error(`${method}/${pending.job || 'calculation'}: `
+      + (message.message || `${calculationEngineName(method)} calculation failed`)));
   });
   worker.addEventListener('error', (event) => {
     const details = [event.message, event.filename && `${event.filename}:${event.lineno || 0}`].filter(Boolean).join(' · ');
@@ -5951,6 +12315,37 @@ function mappedMoleculeSubset(molecule, globalAtomIndices, label = 'component') 
   };
 }
 
+function dockingValidationLigandMolecule() {
+  const numeric = state.dockingResult?.validationNumericSystem;
+  if (!numeric?.atomIds?.length || !numeric.system || !state.molecule?.atoms?.length) return null;
+  const globalById = new Map(state.molecule.atoms.flatMap((atom, index) =>
+    atom.designAtomId ? [[atom.designAtomId, index]] : []));
+  const globalIndices = numeric.atomIds.map((atomId) => globalById.get(atomId));
+  if (globalIndices.some((index) => !Number.isInteger(index))
+    || new Set(globalIndices).size !== globalIndices.length) return null;
+  const localByGlobal = new Map(globalIndices.map((globalIndex, localIndex) =>
+    [globalIndex, localIndex]));
+  const atoms = globalIndices.map((globalIndex) => ({ ...state.molecule.atoms[globalIndex] }));
+  const bonds = state.molecule.bonds.flatMap((bond) => {
+    if (!localByGlobal.has(bond.a) || !localByGlobal.has(bond.b)) return [];
+    return [{ ...bond, a:localByGlobal.get(bond.a), b:localByGlobal.get(bond.b) }];
+  });
+  const base = {
+    name:`${state.molecule.name || 'Molecule'} · validation ligand`, atoms, bonds,
+    charge:atoms.reduce((sum, atom) => sum + atomFormalCharge(atom), 0),
+    multiplicity:state.molecule.multiplicity || 1,
+    source:{ format:'validation-ligand-subset' },
+  };
+  return {
+    atomIds:[...numeric.atomIds],
+    unparameterizedMolecule:base,
+    molecule:{ ...base, atoms:atoms.map((atom) => ({ ...atom })),
+      bonds:bonds.map((bond) => ({ ...bond })),
+      parameterization:{ forcefield:numeric.forcefield, chargeModel:numeric.chargeModel,
+        sourceSha256:numeric.sourceSha256, system:structuredClone(numeric.system) } },
+  };
+}
+
 function editableLigandComponentPlan(molecule = state.molecule, preferredAtomIndices = []) {
   if (!molecule?.atoms?.length) return null;
   const preferred = new Set(Array.from(preferredAtomIndices || [], Number)
@@ -5971,21 +12366,53 @@ function editableLigandComponentPlan(molecule = state.molecule, preferredAtomInd
   return mapped && smallMoleculePolishEligible(mapped.molecule) ? mapped : null;
 }
 
-function localEditPolishPlan(molecule, changedAtomIndices, bondRadius = 2) {
+function referencePreservingPolishSelection(molecule, globalAtomIndices,
+  releasedAtomIds = []) {
+  const reference = molecule === state.molecule ? state.dockingReference : null;
+  if (reference?.mode !== 'pose-propagation'
+    || selectedDockingEditCleanup() !== 'preserve-reference') return null;
+  const referenceElementById = new Map(reference.ligand.atomIds.map((id, index) =>
+    [id, reference.ligand.elements[index]]));
+  const released = new Set([
+    ...Array.from(molecule.source?.posePropagationEditRegions || [])
+      .flatMap((entry) => entry.releasedHeavyAtomIds || []),
+    ...Array.from(releasedAtomIds || []),
+  ]);
+  const fixed = globalAtomIndices.filter((globalIndex) => {
+    const atom = molecule.atoms[globalIndex];
+    return atom.element !== 'H' && !released.has(atom.designAtomId)
+      && referenceElementById.get(atom.designAtomId) === atom.element;
+  });
+  const fixedSet = new Set(fixed);
+  return {
+    cleanupMode:'preserve-reference',
+    fixedInheritedHeavyAtomCount:fixed.length,
+    releasedInheritedHeavyAtomCount:released.size,
+    movableGlobalAtomIndices:globalAtomIndices.filter((index) => !fixedSet.has(index)),
+  };
+}
+
+function localEditPolishPlan(molecule, changedAtomIndices, bondRadius = 2,
+  { releasedAtomIds = [] } = {}) {
   const changed = Array.from(changedAtomIndices || [], Number);
-  if (smallMoleculePolishEligible(molecule)) {
+  const mapped = editableLigandComponentPlan(molecule, changed);
+  const useMappedLigand = Boolean(mapped && (state.dockingReference
+    || molecule.atoms.some((atom) => isProteinAtom(atom) || isWaterAtom(atom))));
+  if (!useMappedLigand && smallMoleculePolishEligible(molecule)) {
     const globalAtomIndices = molecule.atoms.map((_, index) => index);
     return { molecule, globalAtomIndices,
       movableGlobalAtomIndices:localPolishMovableAtomIndices(molecule, changed, bondRadius),
-      scope:'molecule' };
+      scope:'molecule', cleanupMode:'free-local', fixedInheritedHeavyAtomCount:0 };
   }
-  const mapped = editableLigandComponentPlan(molecule, changed);
   if (!mapped || !changed.some((index) => mapped.globalToLocal.has(index))) return null;
+  const preserving = referencePreservingPolishSelection(molecule, mapped.globalAtomIndices,
+    releasedAtomIds);
+  if (preserving) return { ...mapped, ...preserving, scope:'ligand component' };
   const component = new Set(mapped.globalAtomIndices);
   return { ...mapped,
     movableGlobalAtomIndices:localPolishMovableAtomIndices(molecule, changed, bondRadius)
       .filter((index) => component.has(index)),
-    scope:'ligand component' };
+    scope:'ligand component', cleanupMode:'free-local', fixedInheritedHeavyAtomCount:0 };
 }
 
 function applyMappedCalculationPositions(molecule, positions, globalAtomIndices) {
@@ -6197,6 +12624,15 @@ function localPolishMovableAtomIndices(molecule, changedAtomIndices, bondRadius 
   return [...movable].sort((first, second) => first - second);
 }
 
+function recordInteractivePolish(molecule, entry) {
+  const record = { at:new Date().toISOString(), ...entry };
+  const previous = Array.isArray(molecule.source?.interactivePolishHistory)
+    ? molecule.source.interactivePolishHistory : [];
+  molecule.source = { ...(molecule.source || {}), lastInteractivePolish:record,
+    interactivePolishHistory:[...previous, record].slice(-64) };
+  return record;
+}
+
 function scheduleSmallMoleculePolish(changedAtomIndices, delay = 160) {
   const molecule = state.molecule;
   const plan = localEditPolishPlan(molecule, changedAtomIndices);
@@ -6215,12 +12651,14 @@ function scheduleSmallMoleculePolish(changedAtomIndices, delay = 160) {
       });
       if (token !== smallMoleculePolishSequence || state.molecule !== molecule) return;
       applyMappedCalculationPositions(molecule, result.positions, plan.globalAtomIndices);
-      molecule.source = { ...(molecule.source || {}), lastInteractivePolish: {
+      recordInteractivePolish(molecule, {
         engine:result.forcefield, fallback:Boolean(result.fallback), elapsedMs:result.elapsedMs,
         movableAtomCount:result.movableAtomCount, fixedAtomCount:result.fixedAtomCount,
         proteinFixedAtomCount:molecule.atoms.length - plan.globalAtomIndices.length,
         scope:plan.scope, bondRadius:2,
-      } };
+        cleanupMode:plan.cleanupMode,
+        fixedInheritedHeavyAtomCount:plan.fixedInheritedHeavyAtomCount,
+      });
     } catch (error) {
       // Retain the deterministic chemically seeded geometry, but keep the
       // failure visible to diagnostics instead of silently losing provenance.
@@ -6289,12 +12727,19 @@ async function optimizeEditableLigand() {
   const molecule = state.molecule;
   const plan = editableLigandComponentPlan(molecule, preferred);
   if (!plan) throw new Error('Select an editable ligand atom in a protein–ligand complex first.');
-  updateBuildStatus('MMFF94/UFF ligand-only optimization…');
+  const preserving = referencePreservingPolishSelection(molecule, plan.globalAtomIndices);
+  const movable = new Set(preserving?.movableGlobalAtomIndices || plan.globalAtomIndices);
+  const fixedAtomIndices = plan.globalAtomIndices.flatMap((globalIndex, localIndex) =>
+    movable.has(globalIndex) ? [] : [localIndex]);
+  updateBuildStatus(preserving
+    ? 'MMFF94/UFF reference-preserving cleanup…'
+    : 'MMFF94/UFF ligand-only optimization…');
   const result = await runRDKitJob('geometry', plan.molecule, ({ phase }) => {
     if (phase) updateBuildStatus(phase.replace('Optimizing', 'Optimizing ligand'));
   }, {
     maxIterations:300,
     snapshotFrequency:Math.max(1, Math.floor(300 / (BUILD_OPTIMIZATION_FRAME_COUNT - 1))),
+    fixedAtomIndices,
   });
   if (state.molecule !== molecule) return null;
   const expandedResult = expandSubsetCalculationTrajectory(result, molecule, plan.globalAtomIndices);
@@ -6304,13 +12749,17 @@ async function optimizeEditableLigand() {
     engine:result.forcefield, fallback:Boolean(result.fallback), elapsedMs:result.elapsedMs,
     atomCount:plan.globalAtomIndices.length,
     proteinFixedAtomCount:molecule.atoms.length - plan.globalAtomIndices.length,
+    cleanupMode:preserving?.cleanupMode || 'free-local',
+    fixedInheritedHeavyAtomCount:preserving?.fixedInheritedHeavyAtomCount || 0,
     initialEnergy:result.initialEnergy, finalEnergy:result.finalEnergy,
-    environment:'isolated ligand; protein coordinates fixed; no protein–ligand nonbonded terms',
+    environment:preserving
+      ? 'isolated ligand; inherited reference heavy atoms and protein fixed; no protein–ligand nonbonded terms'
+      : 'isolated ligand; protein coordinates fixed; no protein–ligand nonbonded terms',
   } };
   showBuildOptimizationTrajectory(expandedResult, {
-    method:'ligand-rdkit', title:'Ligand Optimization',
+    method:'ligand-rdkit', title:preserving ? 'Reference-preserving cleanup' : 'Ligand Optimization',
     energyLabel:'Final isolated-ligand potential energy',
-    meta:`${result.forcefield}${result.fallback ? ' fallback' : ''} · isolated ligand · protein fixed · RDKit ${result.rdkitVersion} · ${(result.elapsedMs / 1000).toFixed(2)} s`,
+    meta:`${result.forcefield}${result.fallback ? ' fallback' : ''} · ${preserving ? `${preserving.fixedInheritedHeavyAtomCount} inherited heavy atoms fixed` : 'isolated ligand'} · protein fixed · RDKit ${result.rdkitVersion} · ${(result.elapsedMs / 1000).toFixed(2)} s`,
   });
   updateBuildStatus(); updateHistoryButtons();
   return expandedResult;
@@ -6740,7 +13189,7 @@ async function runWorkerJob(method, job, molecule, onProgress, options = {}) {
   const worker = await getCalculationWorker(method);
   const id = ++calculationSequence;
   return new Promise((resolve, reject) => {
-    pendingCalculations.set(id, { resolve, reject, onProgress, method });
+    pendingCalculations.set(id, { resolve, reject, onProgress, method, job });
     worker.postMessage({
       type: 'run', id, job, molecule: structuredClone(molecule),
       options: {
@@ -6811,9 +13260,14 @@ function updateEnergyChart(frames) {
     const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
     title.textContent = `${frameName[0].toUpperCase()}${frameName.slice(1)} ${index + 1} · ${formatEnergy(frames[index].energy, state.calculationUnit)}`;
     circle.append(title);
-    circle.addEventListener('click', () => selectCalculationFrame(index));
+    circle.addEventListener('click', () => {
+      runChemistUiAction('calculation.selectFrame', { index }).catch(() => {});
+    });
     circle.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectCalculationFrame(index); }
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        runChemistUiAction('calculation.selectFrame', { index }).catch(() => {});
+      }
     });
     group.append(circle);
   });
@@ -7243,15 +13697,28 @@ function alignConformerDisplayFrames(frames, alignment) {
   }));
 }
 
-function createTrajectoryDisplayAlignment(frames, molecule) {
+function moleculeCoordinateArray(molecule) {
+  if (!molecule?.atoms?.length) return null;
+  const positions = Float64Array.from(
+    molecule.atoms.flatMap((atom) => [atom.x, atom.y, atom.z]));
+  return positions.every(Number.isFinite) ? positions : null;
+}
+
+function createTrajectoryDisplayAlignment(frames, molecule, sharedReference = null) {
   if (!frames.length || !molecule?.atoms?.length) return null;
   const heavyAtoms = molecule.atoms.map((atom, index) => atom.element === 'H' ? -1 : index)
     .filter((index) => index >= 0);
   const atomIndices = heavyAtoms.length
     ? heavyAtoms : molecule.atoms.map((_, index) => index);
+  const sharedAcrossReplicas = sharedReference instanceof Float64Array
+    && sharedReference.length === molecule.atoms.length * 3
+    && sharedReference.every(Number.isFinite);
   return {
-    referenceFrame:0,
-    referencePositions:frames[0].positions.slice(),
+    referenceFrame:sharedAcrossReplicas ? null : 0,
+    referenceGeometry:sharedAcrossReplicas ? 'input coordinates' : 'first trajectory frame',
+    sharedAcrossReplicas,
+    referencePositions:sharedAcrossReplicas
+      ? sharedReference.slice() : frames[0].positions.slice(),
     atomIndices,
   };
 }
@@ -7663,7 +14130,10 @@ function renderConformerShortlist(analysis) {
       cell.textContent = value;
       row.append(cell);
     });
-    const activate = () => selectCalculationReplica(replica);
+    const activate = () => {
+      const rank = activeConformerPlotOrder(analysis).indexOf(replica);
+      runChemistUiAction('calculation.selectConformer', { rank }).catch(() => {});
+    };
     row.addEventListener('click', activate);
     row.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') {
@@ -7765,7 +14235,10 @@ function drawConformerScatter() {
     const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
     title.textContent = `${arenaMethod ? `${arenaMethod.label} candidate · ` : ''}conformer ${replica + 1} · ${xMetric.shortLabel} ${formatConformerMetricValue(xMetric.values[replica], xMetric)} · ${yMetric.shortLabel} ${formatConformerMetricValue(yMetric.values[replica], yMetric)} · common Sage rank ${analysis.order.indexOf(replica) + 1} · cluster ${analysis.clusterIds[replica] + 1}`;
     circle.append(title);
-    const activate = () => selectCalculationReplica(replica);
+    const activate = () => {
+      const rank = activeConformerPlotOrder(analysis).indexOf(replica);
+      runChemistUiAction('calculation.selectConformer', { rank }).catch(() => {});
+    };
     circle.addEventListener('click', activate);
     circle.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); activate(); }
@@ -7884,7 +14357,8 @@ function setCalculationFrames(result) {
     else {
       if (result.job === 'dynamics') {
         state.calculationRawFrames = frames;
-        state.trajectoryDisplayAlignment = createTrajectoryDisplayAlignment(frames, state.molecule);
+        state.trajectoryDisplayAlignment = createTrajectoryDisplayAlignment(
+          frames, result.molecule, moleculeCoordinateArray(result.molecule));
         frames = alignTrajectoryDisplayFrames(frames, state.trajectoryDisplayAlignment);
       }
       configureResultEnsemble(result);
@@ -8051,7 +14525,10 @@ function selectCalculationReplica(replica) {
     frames = alignConformerDisplayFrames(frames, state.conformerDisplayAlignment);
   } else if (state.calculationJob === 'dynamics') {
     state.calculationRawFrames = frames;
-    state.trajectoryDisplayAlignment = createTrajectoryDisplayAlignment(frames, state.molecule);
+    if (!state.trajectoryDisplayAlignment) {
+      state.trajectoryDisplayAlignment = createTrajectoryDisplayAlignment(
+        frames, ensemble.molecule, moleculeCoordinateArray(ensemble.molecule));
+    }
     frames = alignTrajectoryDisplayFrames(frames, state.trajectoryDisplayAlignment);
   }
   if (!frames.length) return;
@@ -8478,6 +14955,7 @@ function updateOptimizerControls() {
   const stormmRunOption = document.querySelector('#method-select option[value="stormm"]');
   const webgpuBuildOption = document.querySelector('#build-optimizer-select option[value="webgpu"]');
   const pocketWebgpuBuildOption = document.querySelector('#build-optimizer-select option[value="pocket-webgpu"]');
+  const inducedFitWebgpuBuildOption = document.querySelector('#build-optimizer-select option[value="induced-fit-webgpu"]');
   const ligandBuildOption = document.querySelector('#build-optimizer-select option[value="ligand-rdkit"]');
   const rdkitRunOption = document.querySelector('#method-select option[value="rdkit"]');
   const rdkitBuildOption = document.querySelector('#build-optimizer-select option[value="rdkit"]');
@@ -8502,6 +14980,12 @@ function updateOptimizerControls() {
     : 'Pocket relax · WebGPU';
   pocketWebgpuBuildOption.disabled = !pocketMovableCount;
   pocketWebgpuBuildOption.hidden = !proteinLigandComplex;
+  const inducedFitMovableCount = inducedFitPocketMovableAtomIndices().length;
+  inducedFitWebgpuBuildOption.textContent = inducedFitMovableCount
+    ? `Induced-fit pocket · WebGPU · ${inducedFitMovableCount} movable`
+    : 'Induced-fit pocket · WebGPU';
+  inducedFitWebgpuBuildOption.disabled = !inducedFitMovableCount;
+  inducedFitWebgpuBuildOption.hidden = !proteinLigandComplex;
   webgpuBuildOption.hidden = proteinLigandComplex;
   rdkitRunOption.disabled = Boolean(prepared);
   rdkitBuildOption.disabled = Boolean(prepared || proteinLigandComplex);
@@ -8521,6 +15005,8 @@ function updateOptimizerControls() {
     buildSelect.value = proteinLigandComplex ? 'ligand-rdkit' : 'webgpu';
   if (!pocketMovableCount && buildSelect.value === 'pocket-webgpu')
     buildSelect.value = proteinLigandComplex ? 'ligand-rdkit' : 'webgpu';
+  if (!inducedFitMovableCount && buildSelect.value === 'induced-fit-webgpu')
+    buildSelect.value = proteinLigandComplex ? 'ligand-rdkit' : 'webgpu';
   if (!ligandPlan && buildSelect.value === 'ligand-rdkit') buildSelect.value = prepared ? 'webgpu' : 'rdkit';
   if (proteinLigandComplex && !buildSelect.dataset.userSelected
     && ['rdkit', 'webgpu'].includes(buildSelect.value))
@@ -8536,8 +15022,13 @@ function updateOptimizerControls() {
       ? `The ${forcefield} numeric System runs directly on WebGPU. Independent OpenMM checks remain validation-only.`
       : buildMethod === 'pocket-webgpu'
         ? `Pocket-aware 5 Å relaxation moves the ligand and pocket side chains on WebGPU; ${state.molecule.atoms.length - pocketMovableCount} outer protein atoms remain fixed. A chemically edited complex is reparameterized first.`
+      : buildMethod === 'induced-fit-webgpu'
+        ? `Experimental hit-only induced-fit relaxation moves the ligand plus complete residues entering a 6 Å shell, including local backbone atoms; ${state.molecule.atoms.length - inducedFitMovableCount} outer atoms remain fixed.`
       : buildMethod === 'ligand-rdkit'
-        ? `Fast ligand-only MMFF94/UFF optimization. The complete protein stays fixed and is omitted from the energy, so use Pocket relax when protein–ligand contacts must respond.`
+        ? state.dockingReference?.mode === 'pose-propagation'
+          && selectedDockingEditCleanup() === 'preserve-reference'
+          ? 'Cleans new atoms and hydrogens while inherited reference heavy atoms stay fixed.'
+          : `Fast ligand-only MMFF94/UFF optimization. The complete protein stays fixed and is omitted from the energy, so use Pocket relax when protein–ligand contacts must respond.`
       : buildMethod === 'rdkit'
         ? 'RDKit runs established MMFF94 locally, with genuine UFF fallback when parameters are unavailable.'
         : buildMethod === 'ani2x'
@@ -8649,6 +15140,15 @@ function updateOptimizerControls() {
         ? 'Optimize the current molecular geometry.'
         : 'Evaluate the current structure without moving its atoms.';
   setText('#method-help', conciseHelp);
+  const chemistryBlocked = Boolean(state.chemistryTransaction || state.chemistryEditFinishing);
+  const optimizeButton = document.querySelector('#optimize-button');
+  const calculationButton = document.querySelector('#run-calculation');
+  if (optimizeButton)
+    optimizeButton.disabled = chemistryBlocked || state.minimizing || state.preparing || state.calculating;
+  if (calculationButton)
+    calculationButton.disabled = chemistryBlocked || state.preparing || state.calculating;
+  if (chemistryBlocked)
+    setText('#build-optimizer-help', 'Finish or discard the pending chemistry before optimization.');
 }
 
 async function runSelectedBuildOptimization() {
@@ -8665,27 +15165,97 @@ async function runSelectedBuildOptimization() {
     finally { button.disabled = false; button.textContent = '⚡ Optimize'; updateBuildStatus(); }
   }
   const pocketRelaxation = method === 'pocket-webgpu';
-  const workerMethod = pocketRelaxation ? 'webgpu' : method;
-  const movableAtomIndices = pocketRelaxation ? interactivePocketMovableAtomIndices() : null;
-  if (pocketRelaxation && !movableAtomIndices.length) {
+  const inducedFitRelaxation = method === 'induced-fit-webgpu';
+  const flexiblePocketRelaxation = pocketRelaxation || inducedFitRelaxation;
+  const workerMethod = flexiblePocketRelaxation ? 'webgpu' : method;
+  const movableAtomIndices = pocketRelaxation ? interactivePocketMovableAtomIndices()
+    : inducedFitRelaxation ? inducedFitPocketMovableAtomIndices() : null;
+  if (flexiblePocketRelaxation && !movableAtomIndices.length) {
     showNotice('Pocket relaxation needs a prepared protein–ligand complex.'); return null;
   }
   const button = document.querySelector('#optimize-button');
   const forcefield = state.molecule?.parameterization?.forcefield;
   const label = forcefield?.includes('Rosemary') ? 'Rosemary' : 'Sage';
-  button.disabled = true; button.textContent = pocketRelaxation ? 'Pocket GPU…'
+  button.disabled = true; button.textContent = inducedFitRelaxation ? 'Induced fit…'
+      : pocketRelaxation ? 'Pocket GPU…'
       : method === 'webgpu' ? `${label} GPU…`
       : method === 'ani2x' ? 'ANI-2x…' : 'MMFF94…';
+  const valenceSnapshot = flexiblePocketRelaxation
+    ? captureLigandValenceGeometry() : null;
   try {
-    const result = await runCalculation({ method:workerMethod, job:'geometry', options:pocketRelaxation ? {
-      movableAtomIndices, maxIterations:120, nonbondedCutoffNm:1.0,
-      maximumNeighbors:1024, minimizeRate:0.00000035, maxDisplacement:0.001,
+    const result = await runCalculation({ method:workerMethod, job:'geometry', options:flexiblePocketRelaxation ? {
+      movableAtomIndices, maxIterations:inducedFitRelaxation ? 240 : 120, nonbondedCutoffNm:1.0,
+      maximumNeighbors:1024, minimizeRate:inducedFitRelaxation ? 0.0000002 : 0.00000035,
+      maxDisplacement:inducedFitRelaxation ? 0.00075 : 0.001,
       savedFrameCount:BUILD_OPTIMIZATION_FRAME_COUNT,
     } : undefined });
-    if (result && pocketRelaxation) setMode('view');
+    if (result && valenceSnapshot) {
+      const valenceSafeguard = validateLigandValenceGeometry(valenceSnapshot);
+      if (!valenceSafeguard.accepted) {
+        restoreValenceGeometrySnapshot(valenceSnapshot);
+        clearCalculationResult(); state.lastCalculation = null;
+        updateStoredBondDistances(); updateInfo(); draw();
+        showToast(`Relaxation rejected · restored pre-relax pose · ${valenceSafeguard.violations.length} distorted ligand bonds`);
+        return { ...result, valenceSafeguard };
+      }
+      result.valenceSafeguard = valenceSafeguard;
+    }
+    if (result && flexiblePocketRelaxation) setMode('view');
     return result;
-  } catch { return null; }
+  } catch (error) {
+    showNotice(error.message);
+    throw error;
+  }
   finally { button.disabled = false; button.textContent = '⚡ Optimize'; }
+}
+
+function captureLigandValenceGeometry() {
+  const molecule = state.molecule;
+  const ligand = dockingLigandComponent()
+    || state.structureComponents.find((component) => component.kind === 'ligand');
+  if (!molecule || !ligand) return null;
+  const ligandAtoms = new Set(ligand.atomIndices);
+  const distance = (a, b) => Math.hypot(
+    molecule.atoms[a].x - molecule.atoms[b].x,
+    molecule.atoms[a].y - molecule.atoms[b].y,
+    molecule.atoms[a].z - molecule.atoms[b].z);
+  return {
+    positions:molecule.atoms.map((atom) => [atom.x, atom.y, atom.z]),
+    bonds:molecule.bonds.filter((bond) => ligandAtoms.has(bond.a) && ligandAtoms.has(bond.b)
+      && molecule.atoms[bond.a].element !== 'H' && molecule.atoms[bond.b].element !== 'H')
+      .map((bond) => ({ a:bond.a, b:bond.b, before:distance(bond.a, bond.b),
+        target:equilibriumBondLength(molecule.atoms[bond.a], molecule.atoms[bond.b], bond.order || 1),
+        atomNames:[molecule.atoms[bond.a].atomName || molecule.atoms[bond.a].designAtomId,
+          molecule.atoms[bond.b].atomName || molecule.atoms[bond.b].designAtomId] })),
+  };
+}
+
+function validateLigandValenceGeometry(snapshot) {
+  if (!snapshot?.bonds?.length) return { accepted:true, checkedHeavyBonds:0, violations:[] };
+  const molecule = state.molecule;
+  const violations = snapshot.bonds.flatMap((bond) => {
+    const after = Math.hypot(
+      molecule.atoms[bond.a].x - molecule.atoms[bond.b].x,
+      molecule.atoms[bond.a].y - molecule.atoms[bond.b].y,
+      molecule.atoms[bond.a].z - molecule.atoms[bond.b].z);
+    const stretched = after > bond.before + 0.45 && after > bond.target * 1.25;
+    const compressed = after < bond.before - 0.35 && after < bond.target * 0.75;
+    return stretched || compressed ? [{ atomNames:bond.atomNames,
+      beforeAngstrom:Number(bond.before.toFixed(3)),
+      afterAngstrom:Number(after.toFixed(3)),
+      targetAngstrom:Number(bond.target.toFixed(3)),
+      failure:stretched ? 'stretched' : 'compressed' }] : [];
+  });
+  return { accepted:violations.length === 0,
+    checkedHeavyBonds:snapshot.bonds.length, violations };
+}
+
+function restoreValenceGeometrySnapshot(snapshot) {
+  snapshot.positions.forEach((position, index) => {
+    if (!state.molecule?.atoms[index]) return;
+    [state.molecule.atoms[index].x, state.molecule.atoms[index].y,
+      state.molecule.atoms[index].z] = position;
+  });
 }
 
 function setGeneratedCardOpen(card, body, toggle, open) {
@@ -8696,8 +15266,9 @@ function setGeneratedCardOpen(card, body, toggle, open) {
 }
 
 function installSideCardDisclosures() {
-  const explicitTitles = { 'build-left-panel':'Build tools' };
-  document.querySelectorAll('.panel > .card').forEach((card, index) => {
+  const explicitTitles = { 'build-left-panel':'Design tools', 'build-right-panel':'Design workspace' };
+  document.querySelectorAll('.panel > .card, .panel-scroll-stack > .card').forEach((card, index) => {
+    if (card.classList.contains('story-transport-card')) return;
     if (card.querySelector(':scope > .card-heading.disclosure')) return;
     const sourceTitle = explicitTitles[card.id] ? null : card.querySelector(':scope > h2.compact-label');
     const title = explicitTitles[card.id] || sourceTitle?.textContent?.trim() || 'Panel';
@@ -8732,8 +15303,11 @@ function installSideCardDisclosures() {
     card.append(toggle, body);
     toggle.addEventListener('click', () => {
       const open = toggle.getAttribute('aria-expanded') !== 'true';
-      setGeneratedCardOpen(card, body, toggle, open);
-      toggle.setAttribute('aria-label', `${open ? 'Collapse' : 'Expand'} ${label.textContent}`);
+      runChemistUiAction('interface.setPanelOpen', {
+        panelId:card.id || body.id, open,
+      }).then(() => {
+        toggle.setAttribute('aria-label', `${open ? 'Collapse' : 'Expand'} ${label.textContent}`);
+      }).catch(() => {});
     });
   });
 }
@@ -8747,13 +15321,13 @@ document.querySelectorAll('.tab').forEach((button) => button.addEventListener('c
 }));
 
 document.querySelector('#load-toggle').addEventListener('click', (event) => {
-  const body = document.querySelector('#load-body'); const open = !body.classList.toggle('hidden');
-  event.currentTarget.setAttribute('aria-expanded', String(open)); event.currentTarget.querySelector('.chevron').classList.toggle('open', open);
+  const open = event.currentTarget.getAttribute('aria-expanded') !== 'true';
+  runChemistUiAction('interface.setPanelOpen', { panelId:'load-toggle', open }).catch(() => {});
 });
 
 document.querySelector('#protein-fold-toggle').addEventListener('click', (event) => {
-  const body = document.querySelector('#protein-fold-body'); const open = !body.classList.toggle('hidden');
-  event.currentTarget.setAttribute('aria-expanded', String(open)); event.currentTarget.querySelector('.chevron').classList.toggle('open', open);
+  const open = event.currentTarget.getAttribute('aria-expanded') !== 'true';
+  runChemistUiAction('interface.setPanelOpen', { panelId:'protein-fold-toggle', open }).catch(() => {});
 });
 
 document.querySelector('#protein-sequence').addEventListener('input', (event) => {
@@ -8761,13 +15335,20 @@ document.querySelector('#protein-sequence').addEventListener('input', (event) =>
   setText('#protein-length', `${value.length}/128`);
 });
 
-document.querySelector('#fold-protein').addEventListener('click', runProteinFold);
+document.querySelector('#fold-protein').addEventListener('click', () => {
+  runChemistUiAction('protein.predict', {
+    sequence:document.querySelector('#protein-sequence').value,
+    msaEndpoint:document.querySelector('#msa-endpoint').value,
+  }).catch(() => {});
+});
 document.querySelector('#try-rosemary-protein').addEventListener('click', async (event) => {
   const button = event.currentTarget;
   button.disabled = true;
   button.textContent = 'Loading Rosemary α…';
   try {
-    const summary = await loadRosemaryProteinExample();
+    const summary = (await runChemistUiAction('session.loadFixture', {
+      fixtureId:'trp-cage',
+    }, { reportError:false })).fixture;
     showToast(`Rosemary alpha Trp-cage loaded · ${summary.atoms} atoms`);
   } catch (error) {
     setFoldStatus(`Rosemary reference failed · ${error.message}`);
@@ -8782,7 +15363,9 @@ document.querySelector('#try-ubiquitin-protein').addEventListener('click', async
   button.disabled = true;
   button.textContent = 'Loading 1UBQ…';
   try {
-    const summary = await loadPreparedProteinFixture('./openff/rosemary-ubiquitin.json');
+    const summary = (await runChemistUiAction('session.loadFixture', {
+      fixtureId:'ubiquitin',
+    }, { reportError:false })).fixture;
     setText('#protein-result-title', 'Ubiquitin · 1UBQ');
     setText('#protein-result-meta', 'OpenFF Rosemary 3.0.0-alpha0 · experimental 1UBQ coordinates · exact preparameterized System');
     setFoldStatus('Loaded ubiquitin 1UBQ · ready for OpenMM or experimental WebGPU');
@@ -8796,7 +15379,7 @@ document.querySelector('#try-ubiquitin-protein').addEventListener('click', async
   }
 });
 document.querySelector('#cancel-fold').addEventListener('click', () => {
-  state.foldAbortController?.abort(new DOMException('Fold cancelled', 'AbortError'));
+  runChemistUiAction('protein.cancelPrediction').catch(() => {});
 });
 document.querySelector('#download-protein-pdb').addEventListener('click', () => {
   if (!state.proteinPrediction) return showToast('Load or fold a protein first');
@@ -8808,40 +15391,130 @@ document.querySelector('#download-protein-pdb').addEventListener('click', () => 
 });
 
 document.querySelector('#scene-toggle').addEventListener('click', (event) => {
-  const body = document.querySelector('#scene-body'); const open = !body.classList.toggle('hidden');
-  event.currentTarget.setAttribute('aria-expanded', String(open)); event.currentTarget.querySelector('.chevron').classList.toggle('open', open);
+  const open = event.currentTarget.getAttribute('aria-expanded') !== 'true';
+  runChemistUiAction('interface.setPanelOpen', { panelId:'scene-toggle', open }).catch(() => {});
+});
+
+document.querySelector('#structure-2d-toggle').addEventListener('click', (event) => {
+  const panel = document.querySelector('#structure-2d-panel');
+  const collapsed = panel.classList.toggle('collapsed');
+  event.currentTarget.setAttribute('aria-expanded', String(!collapsed));
+  event.currentTarget.querySelector('.chevron').classList.toggle('open', !collapsed);
+});
+document.querySelectorAll('[data-2d-tool]').forEach((button) => button.addEventListener('click', async () => {
+  const tool = button.dataset['2dTool'];
+  if (tool !== 'select' && state.mode !== 'build') {
+    try { await runChemistUiAction('view.setMode', { mode:'build' }); }
+    catch { return; }
+  }
+  state.depictionTool = tool; state.depictionBondStart = null; update2DEditorUi();
+}));
+document.querySelector('#structure-2d-element').addEventListener('change', async (event) => {
+  state.selectedElement = event.target.value;
+  document.querySelectorAll('#element-grid button').forEach((button) =>
+    button.classList.toggle('selected', button.dataset.element === state.selectedElement));
+  state.depictionTool = 'atom'; state.depictionBondStart = null;
+  if (state.mode !== 'build') await runChemistUiAction('view.setMode', { mode:'build' });
+  updateBuildStatus(); update2DEditorUi();
+});
+document.querySelector('#structure-2d-bond-order').addEventListener('change', async (event) => {
+  state.depictionBondOrder = Number(event.target.value);
+  state.depictionTool = 'bond'; state.depictionBondStart = null;
+  if (state.mode !== 'build') await runChemistUiAction('view.setMode', { mode:'build' });
+  update2DEditorUi();
+});
+document.querySelector('#structure-2d-finish').addEventListener('click', () => {
+  runChemistUiAction('chemistry.finish').catch(() => {});
+});
+document.querySelector('#structure-2d-discard').addEventListener('click', () => {
+  runChemistUiAction('chemistry.discard').then(() => {
+    state.depictionBondStart = null; update2DEditorUi();
+  }).catch(() => {});
+});
+document.querySelector('#structure-2d-drawing').addEventListener('click', async (event) => {
+  const svg = event.currentTarget.querySelector('svg');
+  if (!svg || state.depictionEditing) return;
+  const hit = depictionProximityHit(event, svg);
+  const localAtom = hit.atom?.localIndex ?? null;
+  const localBond = hit.bond?.localIndex ?? null;
+  const globalAtom = localAtom == null ? null : state.depictionGlobalAtomIndices[localAtom];
+  const globalBond = hit.preferBond ? state.depictionGlobalBondPairs[localBond] : null;
+  if (state.depictionTool === 'select') {
+    if (globalBond) setDepictionSelection(globalBond);
+    else if (globalAtom != null) selectDepictionAtom(localAtom);
+    return;
+  }
+  if (state.mode !== 'build') {
+    try { await runChemistUiAction('view.setMode', { mode:'build' }); }
+    catch { return; }
+  }
+  if (state.depictionTool === 'atom') {
+    if (globalAtom != null) {
+      await ensureChemistActionAtomIds();
+      runChemistUiAction('chemistry.addAtom', {
+        attachedToAtomId:state.molecule.atoms[globalAtom].designAtomId,
+        element:state.selectedElement,
+      }).catch(() => {});
+    }
+    return;
+  }
+  if (state.depictionTool === 'erase') {
+    if (globalBond) {
+      setDepictionSelection(globalBond);
+      runChemistUiAction('chemistry.deleteBond').catch(() => {});
+    } else if (globalAtom != null) {
+      setDepictionSelection([globalAtom]);
+      runChemistUiAction('chemistry.deleteAtom').catch(() => {});
+    }
+    return;
+  }
+  if (state.depictionTool === 'bond') {
+    if (globalBond) {
+      setDepictionSelection(globalBond);
+      runChemistUiAction('chemistry.setBond', { order:state.depictionBondOrder })
+        .catch(() => {}); return;
+    }
+    if (globalAtom == null) return;
+    if (state.depictionBondStart == null) {
+      state.depictionBondStart = globalAtom; setDepictionSelection([globalAtom]); update2DEditorUi(); return;
+    }
+    if (state.depictionBondStart === globalAtom) {
+      state.depictionBondStart = null; setDepictionSelection([]); update2DEditorUi(); return;
+    }
+    const first = state.depictionBondStart;
+    await ensureChemistActionAtomIds();
+    runChemistUiAction('chemistry.createBond', {
+      atomIds:[first, globalAtom].map((index) => state.molecule.atoms[index].designAtomId),
+      order:state.depictionBondOrder,
+    }).catch(() => {});
+  }
 });
 
 document.querySelector('#components-toggle').addEventListener('click', (event) => {
-  const body = document.querySelector('#components-body'); const open = !body.classList.toggle('hidden');
-  event.currentTarget.setAttribute('aria-expanded', String(open)); event.currentTarget.querySelector('.chevron').classList.toggle('open', open);
+  const open = event.currentTarget.getAttribute('aria-expanded') !== 'true';
+  runChemistUiAction('interface.setPanelOpen', { panelId:'components-toggle', open }).catch(() => {});
 });
 document.querySelector('#components-show-all').addEventListener('click', () => {
-  state.structureComponents.forEach((component) => state.componentVisibility.set(component.id, true));
-  state.focusedComponentId = null; state.focusedComponentRadius = null;
-  state.zoom = 1; state.viewPan = { x:0, y:0 };
-  updateStructureComponentsUi(); updateInfo(); draw();
+  runChemistUiAction('view.showAllComponents').catch(() => {});
 });
 document.querySelector('#components-reset').addEventListener('click', () => {
-  state.structureComponents.forEach((component) => state.componentVisibility.set(component.id, component.kind !== 'water'));
-  state.focusedComponentId = null; state.focusedComponentRadius = null;
-  state.viewProjectionCenter = null; state.viewProjectionRadius = null;
-  state.zoom = 1; state.viewPan = { x:0, y:0 };
-  updateStructureComponentsUi(); updateInfo(); draw();
+  runChemistUiAction('view.reset').catch(() => {});
 });
 document.querySelector('#preparation-inspector-toggle').addEventListener('click', (event) => {
-  setPreparationInspectorOpen(event.currentTarget.getAttribute('aria-expanded') !== 'true');
+  const open = event.currentTarget.getAttribute('aria-expanded') !== 'true';
+  runChemistUiAction('interface.setPanelOpen', {
+    panelId:'preparation-inspector-toggle', open,
+  }).catch(() => {});
 });
 
 document.querySelector('#parse-button').addEventListener('click', async (event) => {
   const button = event.currentTarget;
   try {
-    const molecule = parseStructureInput(document.querySelector('#structure-input').value);
-    loadMolecule(molecule);
-    if (smallMoleculePolishEligible(molecule)) {
-      button.disabled = true; button.textContent = 'Polishing geometry…';
-      await polishSmallMoleculeCoordinates(molecule, { announce:true });
-    } else showToast(`PDB loaded · ${molecule.atoms.length} atoms`);
+    button.disabled = true; button.textContent = 'Loading structure…';
+    const result = await runChemistUiAction('session.loadStructure', {
+      content:document.querySelector('#structure-input').value, format:'auto', polish:true,
+    }, { reportError:false });
+    showToast(`${result.molecule?.name || 'Structure'} loaded · ${result.molecule?.atoms || 0} atoms`);
   }
   catch (error) { showNotice(error.message); }
   finally { button.disabled = false; button.textContent = 'Parse Input'; }
@@ -8861,25 +15534,13 @@ async function loadPdbIdentifier(identifier) {
 
 document.querySelector('#identifier-button').addEventListener('click', async (event) => {
   const raw = document.querySelector('#identifier-input').value.trim();
-  const lookup = raw.toLowerCase();
-  const key = Object.keys(LIBRARY).find((name) => lookup === name || lookup === LIBRARY[name].smiles.toLowerCase());
-  const pdbCandidate = /^(?:PDB\s*[:#-]?\s*)?[0-9][A-Za-z0-9]{3}$/i.test(raw);
   const button = event.currentTarget;
   try {
-    if (pdbCandidate) {
-      button.disabled = true; button.textContent = 'Loading PDB…';
-      const molecule = await loadPdbIdentifier(raw);
-      showToast(`${molecule.source.pdbId} loaded · ${molecule.atoms.length} atoms`);
-    } else {
-      const smiles = key ? LIBRARY[key].smiles : raw;
-      const name = key ? LIBRARY[key].name : 'SMILES structure';
-      button.disabled = true; button.textContent = 'Generating 3D…';
-      const { molecule, result } = await createRdkitSmilesMolecule(smiles, name);
-      loadMolecule(molecule);
-      button.textContent = 'Checking protonation…';
-      await enumerateLigandProtonation(smiles);
-      showToast(`ETKDGv3 · ${result.forcefield}${result.fallback ? ' fallback' : ''} · ${result.conformerCount} conformer${result.conformerCount === 1 ? '' : 's'}`);
-    }
+    button.disabled = true; button.textContent = 'Loading…';
+    const result = await runChemistUiAction('session.loadIdentifier', {
+      value:raw, kind:'auto',
+    }, { reportError:false });
+    showToast(`${result.molecule?.name || 'Molecule'} loaded · ${result.molecule?.atoms || 0} atoms`);
   } catch (error) {
     showNotice(error.message);
   } finally {
@@ -8888,21 +15549,25 @@ document.querySelector('#identifier-button').addEventListener('click', async (ev
 });
 
 document.querySelector('#ligand-protonation-run').addEventListener('click', () => {
-  enumerateLigandProtonation().catch((error) => showNotice(error.message));
+  runChemistUiAction('ligand.enumerateProtonation', {
+    pH:Number(document.querySelector('#ligand-protonation-ph').value),
+  }).catch(() => {});
 });
 document.querySelector('#ligand-protonation-state').addEventListener('change', updateLigandProtonationMeta);
 document.querySelector('#ligand-protonation-apply').addEventListener('click', () => {
-  applySelectedLigandProtonation().catch((error) => showNotice(error.message));
+  runChemistUiAction('ligand.applyProtonation', {
+    index:Number(document.querySelector('#ligand-protonation-state').value),
+  }).catch(() => {});
 });
 
 async function handleFile(file) {
   if (!file) return;
   try {
     const text = await file.text();
-    const molecule = parseStructureInput(text, { name: file.name.replace(/\.[^.]+$/, '') });
-    loadMolecule(molecule);
-    if (smallMoleculePolishEligible(molecule)) await polishSmallMoleculeCoordinates(molecule);
-    showToast(`${file.name} loaded · ${molecule.atoms.length} atoms`);
+    const result = await runChemistUiAction('session.loadStructure', {
+      content:text, format:'auto', name:file.name.replace(/\.[^.]+$/, ''), polish:true,
+    }, { reportError:false });
+    showToast(`${file.name} loaded · ${result.molecule?.atoms || 0} atoms`);
   }
   catch (error) { showNotice(error.message); }
 }
@@ -8911,7 +15576,14 @@ document.querySelector('#prepare-pdb').addEventListener('click', async () => {
   if (document.querySelector('#prepare-pdb').dataset.action === 'inspect') {
     openPreparationInspector(); return;
   }
-  try { await prepareCurrentPdb(); }
+  try { await runChemistUiAction('protein.prepare', {
+    pH:Number(document.querySelector('#preparation-ph').value),
+    histidine:document.querySelector('#preparation-histidine').value,
+    repairMissingHeavy:document.querySelector('#preparation-repair-heavy').checked,
+    ligandPolicy:document.querySelector('#preparation-ligands').value,
+    waterPolicy:document.querySelector('#preparation-waters').value,
+    gapPolicy:document.querySelector('#preparation-gaps').value,
+  }, { reportError:false }); }
   catch (error) { showNotice(error.message); updatePdbPreparationUi(); }
 });
 document.querySelector('#download-preparation-report').addEventListener('click', downloadCurrentPreparationAudit);
@@ -8926,79 +15598,233 @@ const dropZone = document.querySelector('#upload-zone');
 ['dragleave', 'drop'].forEach((type) => dropZone.addEventListener(type, (event) => { event.preventDefault(); dropZone.classList.remove('dragging'); }));
 dropZone.addEventListener('drop', (event) => handleFile(event.dataTransfer.files[0]));
 
-document.querySelector('#hydrogen-toggle').addEventListener('change', (event) => { state.showHydrogens = event.target.checked; draw(); });
-document.querySelector('#vdw-toggle').addEventListener('change', (event) => { state.vdw = event.target.checked; draw(); });
-document.querySelector('#hull-toggle').addEventListener('change', (event) => { state.showHulls = event.target.checked; draw(); });
+document.querySelector('#hydrogen-toggle').addEventListener('change', (event) => {
+  runChemistUiAction('view.setDisplay', { showHydrogens:event.target.checked }).catch(() => {});
+});
+document.querySelector('#vdw-toggle').addEventListener('change', (event) => {
+  runChemistUiAction('view.setDisplay', { showVdw:event.target.checked }).catch(() => {});
+});
+document.querySelector('#hull-toggle').addEventListener('change', (event) => {
+  runChemistUiAction('view.setDisplay', { showHulls:event.target.checked }).catch(() => {});
+});
 document.querySelector('#pocket-toggle').addEventListener('change', (event) => {
-  state.showPocketAtoms = event.target.checked; updateInfo(); draw();
+  runChemistUiAction('view.setDisplay', { showPocketAtoms:event.target.checked }).catch(() => {});
 });
 document.querySelector('#pocket-mode-toggle').addEventListener('click', () => {
-  state.pocketAtomMode = state.pocketAtomMode === 'contacts' ? 'radius' : 'contacts';
-  updateInfo(); draw();
+  runChemistUiAction('view.setDisplay', { pocketMode:
+    state.pocketAtomMode === 'contacts' ? 'radius' : 'contacts' }).catch(() => {});
 });
-document.querySelector('#interaction-toggle').addEventListener('change', (event) => { state.showInteractions = event.target.checked; draw(); });
-document.querySelector('#residue-follow-chip').addEventListener('click', () => setFocusedResidue(null));
+document.querySelector('#interaction-toggle').addEventListener('change', (event) => {
+  runChemistUiAction('view.setDisplay', { showInteractions:event.target.checked }).catch(() => {});
+});
+document.querySelector('#steric-clash-toggle').addEventListener('change', (event) => {
+  runChemistUiAction('view.setDisplay', { showStericClashes:event.target.checked }).catch(() => {});
+});
+document.querySelector('#residue-follow-chip').addEventListener('click', () => {
+  runChemistUiAction('view.clearFocus', { kind:'residue' }).catch(() => {});
+});
+document.querySelector('#changed-region-chip').addEventListener('click', () =>
+  runChemistUiAction('view.clearFocus', { kind:'atoms' }).catch(() => {}));
 document.querySelector('#representation-select').addEventListener('change', (event) => {
-  state.representation = event.target.value;
-  updateInfo();
-  draw();
+  runChemistUiAction('view.setDisplay', { representation:event.target.value }).catch(() => {});
 });
-document.querySelector('#rotate-select').addEventListener('change', (event) => { state.autoRotate = event.target.value; state.playing = event.target.value !== 'none'; document.querySelector('#play-button').textContent = state.playing ? 'Pause' : 'Play'; });
-document.querySelector('#play-button').addEventListener('click', (event) => { state.playing = !state.playing; if (state.playing && state.autoRotate === 'none') { state.autoRotate = 'vertical'; document.querySelector('#rotate-select').value = 'vertical'; } event.target.textContent = state.playing ? 'Pause' : 'Play'; });
+document.querySelector('#display-theme-select').addEventListener('change', (event) => {
+  runChemistUiAction('view.setDisplay', { colorTheme:event.target.value }).catch(() => {});
+});
+document.querySelector('#change-marker-select').addEventListener('change', (event) => {
+  runChemistUiAction('view.setDisplay', { changeMarkers:event.target.value }).catch(() => {});
+});
+document.querySelector('#rotate-select').addEventListener('change', (event) => {
+  runChemistUiAction('view.setDisplay', { autoRotate:event.target.value,
+    playing:event.target.value !== 'none' }).catch(() => {});
+});
+document.querySelector('#play-button').addEventListener('click', () => {
+  runChemistUiAction('view.setDisplay', { playing:!state.playing,
+    autoRotate:!state.playing && state.autoRotate === 'none' ? 'vertical' : state.autoRotate,
+  }).catch(() => {});
+});
 
-document.querySelectorAll('.mode-bar button').forEach((button) => button.addEventListener('click', () => setMode(button.dataset.mode)));
+document.querySelectorAll('.mode-bar button').forEach((button) => button.addEventListener('click', () => {
+  runChemistUiAction('view.setMode', { mode:button.dataset.mode }).catch(() => {});
+}));
 document.querySelectorAll('#element-grid button').forEach((button) => button.addEventListener('click', () => {
   state.selectedElement = button.dataset.element; document.querySelectorAll('#element-grid button').forEach((item) => item.classList.toggle('selected', item === button));
-  state.stagedFragment = null; document.querySelectorAll('.fragment-card').forEach((card) => card.classList.remove('selected')); updateBuildStatus();
+  state.stagedFragment = null; document.querySelectorAll('.fragment-card').forEach((card) => card.classList.remove('selected'));
+  updateBuildStatus(); update2DEditorUi();
 }));
 
-document.querySelectorAll('#build-tool-tabs button').forEach((button) => button.addEventListener('click', () => {
-  state.buildTool = button.dataset.tool;
-  document.querySelectorAll('#build-tool-tabs button').forEach((item) => item.classList.toggle('selected', item === button));
-  canvas.classList.toggle('build-cursor', state.buildTool === 'add'); updateBuildStatus(); draw();
+document.querySelectorAll('#build-tool-tabs [data-tool]').forEach((button) => button.addEventListener('click', () => {
+  runChemistUiAction('build.setTool', {
+    tool:button.dataset.tool === 'manipulate' ? 'move' : button.dataset.tool,
+  }).catch(() => {});
 }));
 
 const geometrySlider = document.querySelector('#geometry-slider');
 const geometryValue = document.querySelector('#geometry-value');
-geometrySlider.addEventListener('pointerdown', beginGeometryEdit);
 geometrySlider.addEventListener('input', (event) => {
-  beginGeometryEdit(); applyGeometryValue(event.target.value);
+  geometryValue.value = event.target.value;
 });
-geometrySlider.addEventListener('change', finishGeometryEdit);
+async function runCurrentGeometryAction(value) {
+  await ensureChemistActionAtomIds();
+  return runChemistUiAction('geometry.setInternalCoordinate', {
+    atomIds:state.selectedAtoms.map((index) => state.molecule.atoms[index]?.designAtomId),
+    value:Number(value), moveConnected:document.querySelector('#move-connected').checked,
+  });
+}
+geometrySlider.addEventListener('change', (event) => {
+  runCurrentGeometryAction(event.target.value).catch(() => updateGeometryControl());
+});
 geometryValue.addEventListener('change', (event) => {
-  beginGeometryEdit(); applyGeometryValue(event.target.value); finishGeometryEdit();
+  runCurrentGeometryAction(event.target.value).catch(() => updateGeometryControl());
 });
 
 document.querySelector('#undo-atom').addEventListener('click', () => {
-  if (!state.buildHistory.length || !state.molecule) return;
-  state.redoHistory.push(structuredClone(state.molecule));
-  restoreMolecule(state.buildHistory.pop());
+  runChemistUiAction('history.undo').catch(() => {});
 });
 document.querySelector('#redo-atom').addEventListener('click', () => {
-  if (!state.redoHistory.length || !state.molecule) return;
-  state.buildHistory.push(structuredClone(state.molecule));
-  restoreMolecule(state.redoHistory.pop());
+  runChemistUiAction('history.redo').catch(() => {});
 });
 document.querySelector('#apply-atom-chemistry').addEventListener('click', () => {
-  applySelectedAtomChemistry(document.querySelector('#chemistry-element').value,
-    Number(document.querySelector('#chemistry-formal-charge').value)).catch(() => {});
+  runChemistUiAction('chemistry.setAtom', {
+    element:document.querySelector('#chemistry-element').value,
+    formalCharge:Number(document.querySelector('#chemistry-formal-charge').value),
+  }).catch(() => {});
 });
 document.querySelector('#apply-bond-chemistry').addEventListener('click', () => {
-  applySelectedBondChemistry(Number(document.querySelector('#chemistry-bond-order').value)).catch(() => {});
+  runChemistUiAction('chemistry.setBond', {
+    order:Number(document.querySelector('#chemistry-bond-order').value),
+  }).catch(() => {});
 });
-document.querySelector('#delete-bond-chemistry').addEventListener('click', () => { deleteSelectedBondChemistry().catch(() => {}); });
-document.querySelector('#add-explicit-hydrogen').addEventListener('click', () => { addSelectedHydrogenChemistry().catch(() => {}); });
-document.querySelector('#remove-explicit-hydrogen').addEventListener('click', () => { removeSelectedHydrogenChemistry().catch(() => {}); });
-document.querySelector('#delete-selected-atom').addEventListener('click', () => { deleteSelectedAtomChemistry().catch(() => {}); });
+document.querySelector('#delete-bond-chemistry').addEventListener('click', () => {
+  runChemistUiAction('chemistry.deleteBond').catch(() => {});
+});
+document.querySelector('#add-explicit-hydrogen').addEventListener('click', () => {
+  runChemistUiAction('chemistry.addHydrogen').catch(() => {});
+});
+document.querySelector('#remove-explicit-hydrogen').addEventListener('click', () => {
+  runChemistUiAction('chemistry.removeHydrogen').catch(() => {});
+});
+document.querySelector('#delete-selected-atom').addEventListener('click', () => {
+  runChemistUiAction('chemistry.deleteAtom').catch(() => {});
+});
 document.querySelector('#finish-chemistry-changes').addEventListener('click', () => {
-  finishChemistryTransaction().catch((error) => showNotice(error.message));
+  runChemistUiAction('chemistry.finish').catch(() => {});
 });
-document.querySelector('#discard-chemistry-changes').addEventListener('click', discardChemistryTransaction);
+document.querySelector('#discard-chemistry-changes').addEventListener('click', () => {
+  runChemistUiAction('chemistry.discard').catch(() => {});
+});
+document.querySelector('#viewer-finish-chemistry').addEventListener('click', () => {
+  runChemistUiAction('chemistry.finish').catch(() => {});
+});
+document.querySelector('#viewer-discard-chemistry').addEventListener('click', () => {
+  runChemistUiAction('chemistry.discard').catch(() => {});
+});
 document.querySelector('#chemistry-immediate-refine').addEventListener('change', updateChemistryEditor);
+document.querySelector('#docking-mode').addEventListener('change', updateDockingUi);
+document.querySelector('#docking-edit-cleanup').addEventListener('change', () => {
+  runChemistUiAction('pose.setEditCleanup', {
+    mode:document.querySelector('#docking-edit-cleanup').value,
+  }).catch(() => {});
+});
+document.querySelector('#capture-docking-reference').addEventListener('click', () => {
+  runChemistUiAction('pose.captureReference', {
+    mode:document.querySelector('#docking-mode').value,
+  }).catch(() => {});
+});
+document.querySelector('#update-docking-receptor').addEventListener('click', () => {
+  runChemistUiAction('pose.updateReceptorReference').catch(() => {});
+});
+document.querySelector('#confirm-analogue-design').addEventListener('click', () => {
+  settleAnalogueDesignPrompt(true);
+});
+document.querySelector('#cancel-analogue-design').addEventListener('click', () => {
+  settleAnalogueDesignPrompt(false);
+});
+document.querySelector('#analogue-design-dialog').addEventListener('cancel', (event) => {
+  event.preventDefault(); settleAnalogueDesignPrompt(false);
+});
+document.querySelector('#clear-docking-reference').addEventListener('click', () => {
+  runChemistUiAction('pose.clearReference').catch(() => {});
+});
+document.querySelector('#add-docking-contact').addEventListener('click', beginManualDockingContact);
+document.querySelector('#cancel-docking-contact').addEventListener('click', cancelManualDockingContact);
+document.querySelector('#run-constrained-docking').addEventListener('click', () => {
+  runChemistUiAction('pose.refine', {
+    searchChains:document.querySelector('#docking-conformer-count').value,
+    execution:'auto',
+  }).catch((error) => setDockingStatus(`Pose refinement failed · ${error.message}`));
+});
+document.querySelector('#apply-docking-pose').addEventListener('click', () => {
+  runChemistUiAction('pose.apply', { index:state.dockingPoseIndex }).catch(() => {});
+});
+document.querySelector('#download-docking-labbook').addEventListener('click', () => {
+  downloadDockingLabbook('markdown').catch((error) => showNotice(error.message));
+});
+document.querySelector('#download-docking-audit').addEventListener('click', () => {
+  downloadDockingLabbook('json').catch((error) => showNotice(error.message));
+});
 document.querySelector('#chemistry-formal-charge').addEventListener('keydown', (event) => {
   if (event.key === 'Enter') document.querySelector('#apply-atom-chemistry').click();
 });
-document.querySelector('#optimize-button').addEventListener('click', runSelectedBuildOptimization);
+document.querySelector('#enumerate-sidechain-rotamers').addEventListener('click', async (event) => {
+  const button = event.currentTarget;
+  const residueAtomIndex = state.selectedAtoms.length === 1 ? state.selectedAtoms[0] : null;
+  if (!Number.isInteger(residueAtomIndex)) return;
+  button.disabled = true; button.textContent = 'Enumerating…';
+  try {
+    await ensureChemistActionAtomIds();
+    await runChemistUiAction('pose.enumerateSidechainRotamers', {
+      receptorAtomId:state.molecule.atoms[residueAtomIndex].designAtomId,
+      maximumCandidates:32,
+    }, { reportError:false });
+  }
+  catch (error) { showNotice(error.message); }
+  finally { button.textContent = 'Enumerate rotamers'; updateSidechainRotamerControls(); }
+});
+document.querySelector('#apply-sidechain-rotamer').addEventListener('click', async (event) => {
+  const button = event.currentTarget;
+  button.disabled = true; button.textContent = 'Applying…';
+  try { await runChemistUiAction('pose.applySidechainRotamer', { index:Number(
+    document.querySelector('#sidechain-rotamer-select').value) }, { reportError:false }); }
+  catch (error) { showNotice(error.message); }
+  finally { button.disabled = false; button.textContent = 'Apply branch'; updateSidechainRotamerControls(); }
+});
+document.querySelector('#import-designer-moves').addEventListener('click', () => {
+  document.querySelector('#designer-move-file').click();
+});
+document.querySelector('#designer-move-file').addEventListener('change', async (event) => {
+  try { await importDesignerMoveScript(event.currentTarget.files?.[0]); }
+  catch (error) { showNotice(error.message); }
+  finally { event.currentTarget.value = ''; updateDesignerMoveControls(); }
+});
+document.querySelector('#replay-designer-moves').addEventListener('click', async (event) => {
+  try { await runChemistUiAction('designerScript.play', {
+    playing:!state.designerMoveReplaying || state.designerMoveReplayPaused,
+  }, { reportError:false }); }
+  catch (error) { showNotice(error.message); }
+  finally { updateDesignerMoveControls(); }
+});
+document.querySelector('#previous-designer-move').addEventListener('click', () => {
+  runChemistUiAction('designerScript.step', { direction:'previous' }).catch(() => {});
+});
+document.querySelector('#next-designer-move').addEventListener('click', () => {
+  runChemistUiAction('designerScript.step', { direction:'next' }).catch(() => {});
+});
+document.querySelector('#restart-designer-moves').addEventListener('click', () => {
+  runChemistUiAction('designerScript.restart').then(() =>
+    showToast('Story returned to its blank starting canvas')).catch(() => {});
+});
+document.querySelector('#export-designer-moves').addEventListener('click', () => {
+  downloadDesignerScriptExport('recorded-actions').catch((error) => showNotice(error.message));
+});
+document.querySelector('#export-designer-replay').addEventListener('click', () => {
+  downloadDesignerScriptExport('execution-log').catch((error) => showNotice(error.message));
+});
+document.querySelector('#optimize-button').addEventListener('click', () => {
+  runChemistUiAction('optimization.run', {
+    method:document.querySelector('#build-optimizer-select').value,
+  }).catch(() => {});
+});
 document.querySelector('#build-optimizer-select').addEventListener('change', (event) => {
   event.currentTarget.dataset.userSelected = 'true'; updateOptimizerControls();
 });
@@ -9014,26 +15840,80 @@ document.querySelector('#simulation-step-count').addEventListener('change', upda
 document.querySelector('#solvent-select').addEventListener('change', updateOptimizerControls);
 document.querySelector('#constraint-select').addEventListener('change', updateOptimizerControls);
 document.querySelector('#stormm-system').addEventListener('change', updateOptimizerControls);
-document.querySelector('#stormm-autotune').addEventListener('click', () => { tuneStormmReplicas().catch(() => {}); });
+document.querySelector('#stormm-autotune').addEventListener('click', () => {
+  runChemistUiAction('calculation.tuneReplicas').catch(() => {});
+});
 document.querySelector('#conformer-arena').addEventListener('change', updateOptimizerControls);
-document.querySelector('#result-frame-slider').addEventListener('input', (event) => selectCalculationFrame(Number(event.target.value)));
-document.querySelector('#result-play-trajectory').addEventListener('click', toggleCalculationPlayback);
-document.querySelector('#result-final-frame').addEventListener('click', () => selectCalculationFrame(state.calculationFrames.length - 1));
-document.querySelector('#result-replica-select').addEventListener('change', (event) => selectCalculationReplica(Number(event.target.value)));
-document.querySelector('#result-conformer-select').addEventListener('change', (event) => selectCalculationReplica(Number(event.target.value)));
-document.querySelector('#result-conformer-cv').addEventListener('change', updateConformerPlotControls);
-document.querySelector('#result-conformer-y').addEventListener('change', updateConformerPlotControls);
-document.querySelector('#result-conformer-sort').addEventListener('change', updateConformerPlotControls);
-document.querySelector('#result-conformer-filter').addEventListener('change', updateConformerPlotControls);
-document.querySelector('#result-conformer-best').addEventListener('click', () => selectConformerRank(0));
-document.querySelector('#result-conformer-previous').addEventListener('click', () => moveConformerRank(-1));
-document.querySelector('#result-conformer-next').addEventListener('click', () => moveConformerRank(1));
+document.querySelector('#result-frame-slider').addEventListener('change', (event) => {
+  runChemistUiAction('calculation.selectFrame', { index:Number(event.target.value) }).catch(() => {});
+});
+document.querySelector('#result-play-trajectory').addEventListener('click', () => {
+  runChemistUiAction('calculation.setPlayback', { playing:!state.calculationPlaying }).catch(() => {});
+});
+document.querySelector('#result-final-frame').addEventListener('click', () => {
+  runChemistUiAction('calculation.selectFrame', {
+    index:state.calculationFrames.length - 1,
+  }).catch(() => {});
+});
+document.querySelector('#result-replica-select').addEventListener('change', (event) => {
+  runChemistUiAction('calculation.selectReplica', { index:Number(event.target.value) }).catch(() => {});
+});
+document.querySelector('#result-conformer-select').addEventListener('change', (event) => {
+  const replica = Number(event.target.value);
+  const rank = activeConformerPlotOrder(state.conformerAnalysis).indexOf(replica);
+  runChemistUiAction('calculation.selectConformer', { rank }).catch(() => {});
+});
+function runConformerViewUiAction() {
+  return runChemistUiAction('calculation.setConformerView', {
+    x:document.querySelector('#result-conformer-cv').value,
+    y:document.querySelector('#result-conformer-y').value,
+    sort:document.querySelector('#result-conformer-sort').value,
+    filter:document.querySelector('#result-conformer-filter').value,
+  });
+}
+document.querySelector('#result-conformer-cv').addEventListener('change', () => {
+  runConformerViewUiAction().catch(() => {});
+});
+document.querySelector('#result-conformer-y').addEventListener('change', () => {
+  runConformerViewUiAction().catch(() => {});
+});
+document.querySelector('#result-conformer-sort').addEventListener('change', () => {
+  runConformerViewUiAction().catch(() => {});
+});
+document.querySelector('#result-conformer-filter').addEventListener('change', () => {
+  runConformerViewUiAction().catch(() => {});
+});
+document.querySelector('#result-conformer-best').addEventListener('click', () => {
+  runChemistUiAction('calculation.selectConformer', { rank:0 }).catch(() => {});
+});
+document.querySelector('#result-conformer-previous').addEventListener('click', () => {
+  const current = activeConformerPlotOrder(state.conformerAnalysis)
+    .indexOf(state.calculationReplicaIndex);
+  runChemistUiAction('calculation.selectConformer', {
+    rank:Math.max(0, current - 1),
+  }).catch(() => {});
+});
+document.querySelector('#result-conformer-next').addEventListener('click', () => {
+  const order = activeConformerPlotOrder(state.conformerAnalysis);
+  const current = order.indexOf(state.calculationReplicaIndex);
+  runChemistUiAction('calculation.selectConformer', {
+    rank:Math.min(order.length - 1, current + 1),
+  }).catch(() => {});
+});
 document.querySelector('#result-conformer-scatter').addEventListener('keydown', (event) => {
   if (!state.conformerAnalysis) return;
-  if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') { event.preventDefault(); moveConformerRank(-1); }
-  else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') { event.preventDefault(); moveConformerRank(1); }
-  else if (event.key === 'Home') { event.preventDefault(); selectConformerRank(0); }
-  else if (event.key === 'End') { event.preventDefault(); selectConformerRank(activeConformerPlotOrder(state.conformerAnalysis).length - 1); }
+  const order = activeConformerPlotOrder(state.conformerAnalysis);
+  const current = order.indexOf(state.calculationReplicaIndex);
+  let rank = null;
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') rank = Math.max(0, current - 1);
+  else if (event.key === 'ArrowRight' || event.key === 'ArrowDown')
+    rank = Math.min(order.length - 1, current + 1);
+  else if (event.key === 'Home') rank = 0;
+  else if (event.key === 'End') rank = order.length - 1;
+  if (rank != null) {
+    event.preventDefault();
+    runChemistUiAction('calculation.selectConformer', { rank }).catch(() => {});
+  }
 });
 document.querySelector('#export-conformer-sdf').addEventListener('click', exportClusteredConformers);
 document.querySelector('#result-replica-mosaic').addEventListener('click', (event) => {
@@ -9047,7 +15927,8 @@ document.querySelector('#result-replica-mosaic').addEventListener('click', (even
     || x - column * (layout.cell + layout.gap) > layout.cell
     || y - row * (layout.cell + layout.gap) > layout.cell) return;
   const replica = row * layout.columns + column;
-  if (replica < state.calculationEnsemble.replicaCount) selectCalculationReplica(replica);
+  if (replica < state.calculationEnsemble.replicaCount)
+    runChemistUiAction('calculation.selectReplica', { index:replica }).catch(() => {});
 });
 document.querySelector('#result-replica-mosaic').addEventListener('keydown', (event) => {
   const count = state.calculationEnsemble?.replicaCount;
@@ -9060,34 +15941,92 @@ document.querySelector('#result-replica-mosaic').addEventListener('keydown', (ev
   else if (event.key in moves) next += moves[event.key];
   else return;
   event.preventDefault();
-  selectCalculationReplica(Math.max(0, Math.min(count - 1, next)));
+  runChemistUiAction('calculation.selectReplica', {
+    index:Math.max(0, Math.min(count - 1, next)),
+  }).catch(() => {});
 });
 document.querySelector('#fragment-search').addEventListener('input', (event) => renderFragmentLibrary(event.target.value));
 document.querySelector('#stage-custom-fragment').addEventListener('click', () => {
   const smiles = document.querySelector('#custom-fragment-smiles').value.trim();
   if (!smiles) return showNotice('Enter a custom fragment SMILES first.');
-  stageFragment({ id: `custom-${Date.now()}`, label: smiles, name: 'Custom fragment', smiles, attach: 0 });
+  runChemistUiAction('fragment.stage', {
+    smiles, name:'Custom fragment', attachmentIndex:0,
+  }).catch(() => {});
 });
+
+async function attachStagedFragmentFromViewer(clientX, clientY) {
+  const targetHit = hitTest(clientX, clientY);
+  const positionAngstrom = screenToMolecule(clientX, clientY);
+  let targetIndex = targetHit?.index ?? null;
+  if (targetIndex != null && state.molecule?.atoms[targetIndex]?.element === 'H') {
+    const bond = state.molecule.bonds.find((entry) =>
+      entry.a === targetIndex || entry.b === targetIndex);
+    targetIndex = bond ? (bond.a === targetIndex ? bond.b : bond.a) : null;
+  }
+  let attachedToAtomId = null;
+  if (targetIndex != null) {
+    await ensureChemistActionAtomIds();
+    attachedToAtomId = state.molecule.atoms[targetIndex]?.designAtomId || null;
+  }
+  return runChemistUiAction('fragment.attach', {
+    ...(attachedToAtomId ? { attachedToAtomId } : {}), positionAngstrom,
+  });
+}
+
+async function addElementFromViewerThroughAction(clientX, clientY) {
+  const targetIndex = elementAttachmentTarget(clientX, clientY);
+  // A click on genuinely empty space has no persistent target identity yet, so
+  // the public action records its absolute molecular-space placement instead.
+  if (targetIndex == null) return runChemistUiAction('chemistry.addAtom', {
+    element:state.selectedElement, positionAngstrom:screenToMolecule(clientX, clientY),
+  });
+  await ensureChemistActionAtomIds();
+  if (state.selectedElement === 'H') {
+    setDepictionSelection([targetIndex]);
+    return runChemistUiAction('chemistry.addHydrogen');
+  }
+  return runChemistUiAction('chemistry.addAtom', {
+    attachedToAtomId:state.molecule.atoms[targetIndex].designAtomId,
+    element:state.selectedElement,
+  });
+}
+
+async function selectViewerAtomThroughChemistAction(index) {
+  if (state.dockingContactDraft) return selectGeometryAtom(index);
+  await ensureChemistActionAtomIds();
+  const existing = state.selectedAtoms.indexOf(index);
+  const next = existing >= 0 ? state.selectedAtoms.slice(0, existing)
+    : [...state.selectedAtoms, index];
+  if (!next.length) return runChemistUiAction('selection.clear');
+  return runChemistUiAction('selection.replace', {
+    atomIds:next.map((atomIndex) => state.molecule.atoms[atomIndex].designAtomId),
+  });
+}
 
 canvas.addEventListener('pointerdown', (event) => {
   if (state.mode === 'build') {
     if (state.minimizing) return;
-    if (state.buildTool === 'add') {
-      if (state.stagedFragment) addFragmentAtScreen(state.stagedFragment, event.clientX, event.clientY);
-      else addAtomAtScreen(event.clientX, event.clientY);
-      return;
-    }
+    const panInput = event.button === 2 || (event.button === 0 && (event.ctrlKey || event.metaKey));
+    if (event.button !== 0 && !panInput) return;
     const hit = hitTest(event.clientX, event.clientY);
-    if (state.buildTool === 'select') {
-      if (hit) selectGeometryAtom(hit.index);
-      else { state.selectedAtoms = []; state.selectedAtom = null; updateGeometryControl(); updateBuildStatus(); draw(); }
-      return;
+    if (state.buildTool === 'manipulate' && hit && !panInput) {
+      state.selectedAtom = hit.index; draw(); state.dragAtom = hit.index;
+      state.dragAtomOrigin = { index:hit.index,
+        x:state.molecule.atoms[hit.index].x, y:state.molecule.atoms[hit.index].y,
+        z:state.molecule.atoms[hit.index].z };
+      state.dragStartPoint = screenToMolecule(event.clientX, event.clientY);
+    } else {
+      state.pendingBuildAction = !panInput ? { tool:state.buildTool } : null;
+      state.panningView = panInput;
+      state.arcballStart = panInput ? null : arcballVector(event.clientX, event.clientY);
+      state.rotationStart = panInput ? null : { ...state.rotation };
     }
-    state.selectedAtom = hit?.index ?? null; draw();
-    if (!hit) return;
-    pushBuildHistory(); state.dragAtom = hit.index; state.dragging = true;
-    state.dragStartPoint = screenToMolecule(event.clientX, event.clientY);
-    state.pointer = { x: event.clientX, y: event.clientY }; canvas.classList.add('dragging'); canvas.setPointerCapture(event.pointerId);
+    state.dragging = true;
+    state.pointerStart = { x:event.clientX, y:event.clientY };
+    state.pointerDragged = false;
+    state.pointer = { x:event.clientX, y:event.clientY };
+    canvas.classList.add(panInput ? 'panning' : 'dragging');
+    try { canvas.setPointerCapture(event.pointerId); } catch {}
     return;
   }
   const panInput = event.button === 2 || (event.button === 0 && (event.ctrlKey || event.metaKey));
@@ -9098,13 +16037,17 @@ canvas.addEventListener('pointerdown', (event) => {
   state.panningView = panInput;
   state.arcballStart = panInput ? null : arcballVector(event.clientX, event.clientY);
   state.rotationStart = panInput ? null : { ...state.rotation };
-  canvas.classList.add(panInput ? 'panning' : 'dragging'); canvas.setPointerCapture(event.pointerId);
+  canvas.classList.add(panInput ? 'panning' : 'dragging');
+  try { canvas.setPointerCapture(event.pointerId); } catch {}
 });
 canvas.addEventListener('pointermove', (event) => {
   const rect = canvas.getBoundingClientRect();
   if (state.dragging) {
     if (state.pointerStart && Math.hypot(event.clientX - state.pointerStart.x,
       event.clientY - state.pointerStart.y) > 5) state.pointerDragged = true;
+    if (state.mode === 'build' && state.pendingBuildAction && !state.pointerDragged) {
+      state.pointer = { x:event.clientX, y:event.clientY }; return;
+    }
     if (state.panningView) {
       state.viewPan.x += event.clientX - state.pointer.x;
       state.viewPan.y += event.clientY - state.pointer.y;
@@ -9139,48 +16082,151 @@ canvas.addEventListener('pointermove', (event) => {
   draw();
 });
 canvas.addEventListener('pointerup', (event) => {
-  if (state.dragAtom != null) { updateStoredBondDistances(); updateInfo(); updateGeometryControl(); }
-  state.dragging = false; state.dragAtom = null; state.panningView = false;
-  state.arcballStart = null; state.rotationStart = null; canvas.classList.remove('dragging', 'panning');
-  if (state.mode !== 'build' && event.button === 0 && !event.ctrlKey && !event.metaKey && !state.pointerDragged) {
-    const hit = hitTest(event.clientX, event.clientY);
-    if (hit && residueKey(state.molecule?.atoms?.[hit.index])) setFocusedResidue(hit.index);
-    else if (!hit && state.focusedResidueKey) setFocusedResidue(null);
+  const pendingBuildAction = state.pendingBuildAction;
+  const pointerDragged = state.pointerDragged;
+  const dragOrigin = state.dragAtomOrigin;
+  const draggedAtom = state.dragAtom != null ? state.molecule?.atoms[state.dragAtom] : null;
+  const cameraGesture = pointerDragged && !draggedAtom
+    && (state.panningView || Boolean(state.arcballStart));
+  const finalCamera = cameraGesture ? { rotation:{ ...state.rotation },
+    pan:{ ...state.viewPan }, zoom:state.zoom } : null;
+  if (draggedAtom && dragOrigin) {
+    const deltaAngstrom = { x:draggedAtom.x - dragOrigin.x,
+      y:draggedAtom.y - dragOrigin.y, z:draggedAtom.z - dragOrigin.z };
+    draggedAtom.x = dragOrigin.x; draggedAtom.y = dragOrigin.y; draggedAtom.z = dragOrigin.z;
+    updateStoredBondDistances(); updateInfo(); updateGeometryControl(); draw();
+    ensureChemistActionAtomIds().then(() => runChemistUiAction('geometry.translateAtoms', {
+      atomIds:[state.molecule.atoms[dragOrigin.index].designAtomId], deltaAngstrom,
+    })).catch(() => {});
   }
-  state.pointerStart = null;
+  state.dragging = false; state.dragAtom = null; state.panningView = false;
+  state.dragAtomOrigin = null;
+  state.arcballStart = null; state.rotationStart = null; canvas.classList.remove('dragging', 'panning');
+  if (state.mode === 'build' && pendingBuildAction && event.button === 0
+    && !event.ctrlKey && !event.metaKey && !pointerDragged) {
+    const hit = hitTest(event.clientX, event.clientY);
+    if (pendingBuildAction.tool === 'add') {
+      const buildAction = state.stagedFragment
+        ? attachStagedFragmentFromViewer(event.clientX, event.clientY)
+        : addElementFromViewerThroughAction(event.clientX, event.clientY);
+      buildAction.catch((error) => showNotice(error.message));
+    } else if (pendingBuildAction.tool === 'select') {
+      if (hit) selectViewerAtomThroughChemistAction(hit.index).catch(() => {});
+      else runChemistUiAction('selection.clear').catch(() => {});
+    }
+  } else if (state.mode !== 'build' && event.button === 0 && !event.ctrlKey && !event.metaKey && !pointerDragged) {
+    const hit = hitTest(event.clientX, event.clientY);
+    const atom = hit ? state.molecule?.atoms?.[hit.index] : null;
+    if (atom && residueKey(atom)) runChemistUiAction('view.focusResidue',
+      residueKey(atom) === state.focusedResidueKey ? { clear:true } : {
+        chain:String(atom.chain || ''), residueIndex:Number(atom.residueIndex),
+        insertionCode:String(atom.insertionCode || ''),
+      }).catch(() => {});
+    else if (!hit && state.focusedResidueKey)
+      runChemistUiAction('view.focusResidue', { clear:true }).catch(() => {});
+  }
+  if (finalCamera) runChemistUiAction('view.setCamera', finalCamera).catch(() => {});
+  state.pendingBuildAction = null; state.pointerStart = null; state.pointerDragged = false;
 });
 canvas.addEventListener('pointercancel', () => {
+  if (state.dragAtomOrigin && state.molecule?.atoms[state.dragAtomOrigin.index]) {
+    Object.assign(state.molecule.atoms[state.dragAtomOrigin.index], {
+      x:state.dragAtomOrigin.x, y:state.dragAtomOrigin.y, z:state.dragAtomOrigin.z,
+    });
+    updateStoredBondDistances(); updateInfo(); updateGeometryControl(); draw();
+  }
   state.dragging = false; state.dragAtom = null; state.panningView = false;
+  state.dragAtomOrigin = null;
   state.arcballStart = null; state.rotationStart = null;
-  state.pointerStart = null; state.pointerDragged = false; canvas.classList.remove('dragging', 'panning');
+  state.pendingBuildAction = null; state.pointerStart = null; state.pointerDragged = false; canvas.classList.remove('dragging', 'panning');
 });
 canvas.addEventListener('pointerleave', () => { if (!state.dragging) { state.hoverAtom = null; document.querySelector('#atom-tooltip').classList.add('hidden'); draw(); } });
-canvas.addEventListener('contextmenu', (event) => { if (state.mode !== 'build') event.preventDefault(); });
-canvas.addEventListener('wheel', (event) => { event.preventDefault(); state.zoom = Math.max(.45, Math.min(2.6, state.zoom * Math.exp(-event.deltaY * .001))); draw(); }, { passive: false });
+canvas.addEventListener('contextmenu', (event) => { event.preventDefault(); });
+let cameraWheelAuditTimer = null;
+canvas.addEventListener('wheel', (event) => {
+  event.preventDefault();
+  state.zoom = Math.max(.45, Math.min(2.6, state.zoom * Math.exp(-event.deltaY * .001)));
+  draw(); clearTimeout(cameraWheelAuditTimer);
+  cameraWheelAuditTimer = setTimeout(() => {
+    runChemistUiAction('view.setCamera', { zoom:state.zoom }).catch(() => {});
+  }, 160);
+}, { passive: false });
 
 document.querySelector('#export-button').addEventListener('click', exportXYZ);
-document.querySelector('#clear-button').addEventListener('click', () => {
+function clearScene({ announce = false } = {}) {
+  clearCalculationResult(); state.lastCalculation = null;
   state.molecule = null; state.selectedAtom = null; state.selectedAtoms = [];
   state.chemistryTransaction = null; state.chemistryEditFinishing = false;
   state.ligandProtonation = null; state.protonatingLigand = false; state.ligandProtonationSequence++;
-  state.focusedComponentId = null; state.focusedComponentRadius = null;
+  state.designRoute = null; state.designRouteStepId = null;
+  state.chemistActionAudit = [];
+  state.buildHistory = []; state.redoHistory = [];
+  state.focusedComponentId = null; state.focusedComponentCenter = null;
+  state.focusedComponentRadius = null;
+  clearFocusedAtomRegion();
+  state.dockingReference = null; state.dockingResult = null; state.dockingRunning = false;
+  state.dockingSelectedHbondIds = new Set(); state.dockingPoseIndex = 0;
+  state.dockingContactRemaps = new Map(); state.dockingContactRemapProposals = new Map();
+  state.dockingContactDraft = null;
   state.focusedResidueKey = null; state.focusedResidueRadius = null; updateResidueFollowChip();
+  state.displayColorTheme = 'standard'; state.changeMarkerStyle = 'rings';
+  state.showStericClashes = false; state.visibleStericClashCount = 0;
+  document.querySelector('#display-theme-select').value = state.displayColorTheme;
+  document.querySelector('#change-marker-select').value = state.changeMarkerStyle;
+  document.querySelector('#steric-clash-toggle').checked = false;
+  updateStericClashDisplayLabel(0);
   state.viewProjectionCenter = null; state.viewProjectionRadius = null; state.projection = null;
+  state.structureComponents = []; state.atomComponentIds = [];
+  state.componentVisibility = new Map(); state.pdbPreparationPreview = null;
   updateGeometryControl(); ctx.clearRect(0,0,canvas.width,canvas.height); document.querySelector('#viewer-hint').classList.add('visible');
   document.querySelector('#display-options').classList.add('hidden'); document.querySelector('#molecule-info').classList.add('hidden'); document.querySelector('.scene-card').classList.add('hidden');
   document.querySelector('#structure-components').classList.add('hidden'); document.querySelector('#preparation-inspector').classList.add('hidden');
   document.querySelector('#ligand-protonation').classList.add('hidden');
-  showToast('Scene cleared'); draw();
+  state.depictionSequence += 1; state.depictionKey = null; state.depictionGlobalAtomIndices = [];
+  state.depictionGlobalBondPairs = []; state.depictionAtomObjects = []; state.depictionComponentId = null;
+  state.depictionOrientationAnchor = null; state.depictionTemplateMolBlock = null;
+  state.depictionBondStart = null;
+  document.querySelector('#structure-2d-panel').classList.add('hidden');
+  if (announce) showToast('Scene cleared');
+  updateHistoryButtons(); updateOptimizerControls(); draw();
+}
+
+document.querySelector('#clear-button').addEventListener('click', () => {
+  runChemistUiAction('session.clear').then(() => showToast('Scene cleared')).catch(() => {});
 });
 document.querySelector('#share-button').addEventListener('click', async () => {
-  try { await navigator.clipboard.writeText(location.href); showToast('Share link copied'); } catch { showToast('Share link ready'); }
+  try {
+    const result = await runChemistUiAction('session.share', {}, { reportError:false });
+    try { await navigator.clipboard.writeText(result.share.url); showToast('Share link copied'); }
+    catch { showToast(`Share link ready · ${result.share.url}`); }
+  } catch (error) { showNotice(error.message); }
 });
 document.querySelector('#copy-smiles').addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(state.molecule?.smiles || ''); showToast('SMILES copied'); } catch { showToast('SMILES ready to copy'); }
 });
 document.querySelector('#save-button').addEventListener('click', () => { const link = document.createElement('a'); link.download = `${slug(state.molecule?.name || 'molecule')}.png`; link.href = canvas.toDataURL('image/png'); link.click(); showToast('Image saved'); });
 document.querySelector('#fullscreen-button').addEventListener('click', () => { const viewer = document.querySelector('#viewer-container'); if (!document.fullscreenElement) viewer.requestFullscreen?.(); else document.exitFullscreen?.(); });
-document.querySelector('#run-calculation').addEventListener('click', () => { runCalculation().catch(() => {}); });
+function currentCalculationUiOptions() {
+  return {
+    steps:Number(document.querySelector('#simulation-step-count').value),
+    savedFrameCount:Number(document.querySelector('#trajectory-frame-count').value),
+    implicitSolvent:document.querySelector('#solvent-select').value,
+    constraintMode:document.querySelector('#constraint-select').value,
+    stormmSystem:document.querySelector('#stormm-system').value,
+    replicaCount:Number(document.querySelector('#stormm-replica-count').value),
+    conformerCount:Number(document.querySelector('#conformer-count').value),
+    conformerEffort:document.querySelector('#conformer-effort').value,
+    conformerClusterRms:Number(document.querySelector('#conformer-cluster-rms').value),
+    conformerArena:document.querySelector('#conformer-arena').checked,
+  };
+}
+document.querySelector('#run-calculation').addEventListener('click', () => {
+  runChemistUiAction('calculation.run', {
+    job:document.querySelector('#job-select').value,
+    method:document.querySelector('#method-select').value,
+    options:currentCalculationUiOptions(),
+  }).catch(() => {});
+});
 document.querySelector('#menu-button').addEventListener('click', (event) => {
   const nav = document.querySelector('.app-header-links');
   const open = nav.classList.toggle('mobile-open');
@@ -9192,22 +16238,128 @@ document.querySelectorAll('.app-header-links a').forEach((link) => link.addEvent
 }));
 const projectInfoDialog = document.querySelector('#project-info-dialog');
 const projectInfoTitle = document.querySelector('#project-info-title');
+let validationDashboardPromise = null;
+function ensureValidationDashboard() {
+  const root = document.querySelector('#validation-dashboard');
+  if (!root || root.dataset.validationMounted === 'true') return;
+  validationDashboardPromise ||= import('./validation/dashboard.mjs')
+    .then(module => module.mountValidationDashboard(root))
+    .catch(error => {
+      root.innerHTML = `<p class="validation-dashboard-error">Validation ledger unavailable · ${String(error.message || error)}</p>`;
+    });
+}
 function openProjectInfoPanel(panel) {
   document.querySelectorAll('[data-project-section]').forEach((section) => {
     section.classList.toggle('hidden', section.dataset.projectSection !== panel);
   });
+  projectInfoDialog.classList.toggle('validation-open', panel === 'validation');
   projectInfoTitle.textContent = panel[0].toUpperCase() + panel.slice(1);
+  if (panel === 'validation') ensureValidationDashboard();
   if (!projectInfoDialog.open) projectInfoDialog.showModal();
 }
 document.querySelectorAll('[data-project-panel]').forEach((link) => link.addEventListener('click', (event) => {
   event.preventDefault();
-  openProjectInfoPanel(event.currentTarget.dataset.projectPanel);
+  runChemistUiAction('interface.openProjectInfo', {
+    panel:event.currentTarget.dataset.projectPanel,
+  }).catch(() => {});
 }));
-document.querySelector('#network-policy-button').addEventListener('click', () => openProjectInfoPanel('privacy'));
+document.querySelector('#network-policy-button').addEventListener('click', () => {
+  runChemistUiAction('interface.openProjectInfo', { panel:'privacy' }).catch(() => {});
+});
 document.querySelector('#verify-local-build').addEventListener('click', verifyLoadedBuild);
-document.querySelector('#close-project-info').addEventListener('click', () => projectInfoDialog.close());
+document.querySelector('#campaign-create').addEventListener('click', async () => {
+  const titleInput = document.querySelector('#campaign-title');
+  const idInput = document.querySelector('#campaign-id');
+  const title = titleInput.value.trim() || `${state.molecule?.name || 'Molecule'} design campaign`;
+  const campaignId = idInput.value.trim() || `${slug(title)}-${Date.now().toString(36)}`;
+  const result = await runCampaignUiAction('campaign.create', { campaignId, title,
+    initialCommitMessage:`Start ${title}` },
+  () => 'Current molecule committed as the start of a local campaign.');
+  if (result) { titleInput.value = ''; idInput.value = ''; }
+});
+document.querySelector('#campaign-commit').addEventListener('click', async () => {
+  const input = document.querySelector('#campaign-commit-message');
+  const message = input.value.trim();
+  const result = await runCampaignUiAction('campaign.commitCurrent', { message },
+    (value) => `Committed ${String(value.campaignCommit?.commitId || '').slice(0, 15)}… on ${state.liveCampaignBranch}.`);
+  if (result) input.value = '';
+});
+document.querySelector('#campaign-create-branch').addEventListener('click', async () => {
+  const input = document.querySelector('#campaign-new-branch');
+  const branch = input.value.trim();
+  const result = await runCampaignUiAction('campaign.createBranch', { branch },
+    () => `Created and switched to ${branch}.`);
+  if (result) input.value = '';
+});
+document.querySelector('#campaign-branch').addEventListener('change', async (event) => {
+  const branch = event.currentTarget.value;
+  if (!state.liveCampaign || !Object.hasOwn(state.liveCampaign.branches || {}, branch)) return;
+  await runCampaignUiAction('campaign.switchBranch', { branch }, (value) =>
+    value.campaignBranch?.restored
+      ? `Switched to ${branch} and restored its committed molecule.`
+      : `Switched the working history to ${branch}.`);
+});
+document.querySelector('#campaign-merge').addEventListener('click', () => {
+  const sourceBranch = document.querySelector('#campaign-merge-source').value;
+  return runCampaignUiAction('campaign.mergeBranch', {
+    sourceBranch, targetBranch:state.liveCampaignBranch,
+    message:`Merge ${sourceBranch} into ${state.liveCampaignBranch}`,
+  }, () => `Merged ${sourceBranch} into ${state.liveCampaignBranch}.`);
+});
+document.querySelector('#campaign-record-decision').addEventListener('click', async () => {
+  const disposition = document.querySelector('#campaign-decision-disposition').value;
+  const rationaleInput = document.querySelector('#campaign-decision-rationale');
+  const rationale = rationaleInput.value.trim();
+  const result = await runCampaignUiAction('campaign.recordDecision', { disposition, rationale },
+    () => `Recorded a ${disposition.replace('-', ' ')} decision.`);
+  if (result) rationaleInput.value = '';
+});
+document.querySelector('#campaign-verify').addEventListener('click', () =>
+  runCampaignUiAction('campaign.verify', {}, (value) => {
+    const verification = value.campaignVerification;
+    return verification.valid
+      ? `Verified ${verification.commits} commits and ${verification.events} chained events.`
+      : `Verification failed: ${verification.reason}`;
+  }));
+document.querySelector('#campaign-close').addEventListener('click', () =>
+  runCampaignUiAction('campaign.close', {}, () =>
+    'Campaign closed; its commits remain stored locally.'));
+document.querySelector('#campaign-export').addEventListener('click', async () => {
+  if (!state.liveCampaign) return;
+  try {
+    const result = await runChemistUiAction('campaign.export', {}, { reportError:false });
+    const exported = result.campaignExport;
+    downloadBlob(exported.serialized, `${slug(exported.campaignId)}.campaign.json`, 'application/json');
+    updateLiveCampaignUi('Canonical campaign JSON exported.', 'success');
+  } catch (error) { updateLiveCampaignUi(error.message, 'failure'); showNotice(error.message); }
+});
+document.querySelector('#campaign-import').addEventListener('click', () =>
+  document.querySelector('#campaign-file').click());
+document.querySelector('#designer-story-import').addEventListener('click', () =>
+  document.querySelector('#designer-move-file').click());
+document.querySelector('#campaign-file').addEventListener('change', async (event) => {
+  const file = event.target.files?.[0]; event.target.value = '';
+  if (!file) return;
+  liveCampaignUiBusy = true; updateLiveCampaignUi('Importing campaign…');
+  let finalMessage = '', finalStatus = '';
+  try {
+    const result = await runChemistUiAction('campaign.import', {
+      serialized:await file.text(),
+    }, { reportError:false });
+    finalMessage = `Imported ${result.campaignImport.title} and saved it locally.`;
+    finalStatus = 'success';
+  } catch (error) {
+    finalMessage = error.message; finalStatus = 'failure'; showNotice(error.message);
+  } finally {
+    liveCampaignUiBusy = false; updateLiveCampaignUi(finalMessage, finalStatus);
+  }
+});
+document.querySelector('#close-project-info').addEventListener('click', () => {
+  runChemistUiAction('interface.openProjectInfo', { panel:'closed' }).catch(() => {});
+});
 projectInfoDialog.addEventListener('click', (event) => {
-  if (event.target === projectInfoDialog) projectInfoDialog.close();
+  if (event.target === projectInfoDialog)
+    runChemistUiAction('interface.openProjectInfo', { panel:'closed' }).catch(() => {});
 });
 window.addEventListener('resize', () => { draw(); drawReplicaMosaic(); drawConformerScatter(); });
 
@@ -9243,8 +16395,75 @@ async function loadLaunchMolecule() {
   }
 }
 
+const DESIGNER_STORY_LINKS = Object.freeze({
+  'sos1-hit-to-bay293':Object.freeze({
+    title:'SOS1 hit to BAY-293',
+    script:'./design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
+    sourcePath:'design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
+    sourceSha256:'8dc2fe984ce417ce836bd12cc8d46a749fa937b225c78869855ab803576ffef5',
+    presentation:'chemist-pocket',
+  }),
+});
+
+async function loadRegisteredDesignerScript(storyId) {
+  const story = DESIGNER_STORY_LINKS[storyId];
+  if (!story) throw new Error(`Unknown Molarium story: ${storyId}`);
+  const response = await fetch(story.script, { cache:'no-store' });
+  if (!response.ok) throw new Error(`Story JSON could not be loaded (${response.status})`);
+  const sourceBytes = await response.arrayBuffer();
+  const sourceFileSha256 = await sha256Hex(sourceBytes);
+  if (sourceFileSha256 !== story.sourceSha256)
+    throw new Error('Story JSON integrity check failed');
+  const sourceScript = JSON.parse(new TextDecoder().decode(sourceBytes));
+  const replayModule = await import('./design-history/replay.mjs');
+  replayModule.validateActionScript(sourceScript);
+  const sourceActionScriptSha256 = await replayModule.actionScriptSha256(sourceScript);
+  const installedScript = story.presentation === 'chemist-pocket'
+    ? (await import('./design-history/interface-story.mjs'))
+      .buildPocketInterfaceStory(sourceScript, {
+        sourcePath:story.sourcePath, sourceSha256:story.sourceSha256,
+      })
+    : sourceScript;
+  const installedActionScriptSha256 = await replayModule.actionScriptSha256(installedScript);
+  await installDesignerMoveScript(installedScript);
+  if (!setMode('build')) throw new Error('Molarium could not enter Design mode');
+  state.designerMoveRegisteredStory = { storyId, title:story.title,
+    sourcePath:story.sourcePath, sourceFileSha256, sourceActionScriptSha256,
+    installedActionScriptSha256, presentation:story.presentation || null };
+  document.title = `${story.title} · Molarium`;
+  updateDesignerMoveControls(`${story.title} is ready on a blank canvas. Press Play story to begin.`);
+  return { storyId, title:story.title,
+    source:{ path:story.sourcePath, fileSha256:sourceFileSha256,
+      actionScriptSha256:sourceActionScriptSha256,
+      actionCount:sourceScript.actions.length },
+    installed:{ actionScriptSha256:installedActionScriptSha256,
+      actionCount:installedScript.actions.length,
+      presentation:story.presentation || null } };
+}
+
+async function initializeWorkspaceFromUrl() {
+  const parameters = new URLSearchParams(window.location.search);
+  const storyId = parameters.get('story');
+  if (!storyId && parameters.has('blank')) {
+    const api = await window.MolariumChemistActionsReady;
+    await api.execute({ requestId:'url-blank-session', action:'session.clear', args:{} });
+    return;
+  }
+  if (!storyId) return loadLaunchMolecule();
+  try {
+    const api = await window.MolariumChemistActionsReady;
+    await api.execute({ requestId:`story-link-${storyId}-load-registered`,
+      action:'designerScript.loadRegistered', args:{ storyId } });
+  } catch (error) {
+    updateDesignerMoveControls(`Could not load ${DESIGNER_STORY_LINKS[storyId]?.title || storyId}`);
+    showNotice(error.message);
+  }
+}
+
 initializeNetworkPolicyUi();
-loadLaunchMolecule();
+window.MolariumChemistActionsReady = import('./chemist-actions.mjs')
+  .then((module) => installChemistActionsApi(module));
+initializeWorkspaceFromUrl();
 renderFragmentLibrary();
 updateHistoryButtons();
 updateOptimizerControls();

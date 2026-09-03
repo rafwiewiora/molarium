@@ -1,0 +1,351 @@
+{
+  "schema": "molarium.chemist-action-script/v1",
+  "label": "SOS1 growth-clash-v7 concise selected Phe890 route",
+  "actions": [
+    {
+      "action": "designRoute.load",
+      "args": {
+        "routeId": "sos1-hit-only"
+      },
+      "caption": "Begin with the only allowed coordinates: the 5OVE/AXE hit"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "Enter Design to make the first prospective design decision"
+    },
+    {
+      "action": "protein.prepare",
+      "args": {
+        "gapPolicy": "cap",
+        "histidine": "auto",
+        "ligandPolicy": "ccd",
+        "pH": 7.4,
+        "repairMissingHeavy": true,
+        "waterPolicy": "retain"
+      },
+      "caption": "Prepare the hit complex locally with OpenFF Sage"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "caption": "Freeze the hit pose and its receptor contacts as the starting reference"
+    },
+    {
+      "action": "designRoute.applyStep",
+      "args": {
+        "stepId": "scaffold-rewrite"
+      },
+      "caption": "Rewrite the hit scaffold to make compound 17"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 64,
+        "featureSeedingProtocol": "v3"
+      },
+      "expect": {
+        "refinement.selectedFeasible": true,
+        "refinement.featureGuidedSeeding.method": "molarium-edit-region-axis-seeding/v3"
+      },
+      "caption": "Search 64 restrained poses for the rewritten scaffold"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true
+      },
+      "caption": "Apply the highest-ranked compound 17 pose"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "Parameterize compound 17 without moving the prediction"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "Relax compound 17 and its pocket together"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "Return to Design with the compound 17 prediction"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "caption": "Freeze compound 17 as the reference for the next design"
+    },
+    {
+      "action": "designRoute.applyStep",
+      "args": {
+        "stepId": "fragment-merge"
+      },
+      "caption": "Merge the second fragment idea to make compound 18"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 64,
+        "featureSeedingProtocol": "v3"
+      },
+      "expect": {
+        "refinement.selectedFeasible": true,
+        "refinement.featureGuidedSeeding.method": "molarium-edit-region-axis-seeding/v3"
+      },
+      "caption": "Search 64 restrained poses for the merged ligand"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true
+      },
+      "caption": "Apply the highest-ranked compound 18 pose"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "Parameterize compound 18 without moving the prediction"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "Relax compound 18 and its pocket together"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "Return to Design with the compound 18 prediction"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "caption": "Freeze compound 18 as the reference for ligand growth"
+    },
+    {
+      "action": "designRoute.applyStep",
+      "args": {
+        "stepId": "open-phe890-pocket"
+      },
+      "caption": "Grow compound 21—and create a clash with Phe890-in"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 32,
+        "receptorAtomId": "reference-5OVE:ATOM:A:PHE:890::CG:2679"
+      },
+      "expect": {
+        "sidechainRotamers.schema": "molarium.sidechain-rotamers/v1",
+        "sidechainRotamers.receptorAtomId": "reference-5OVE:ATOM:A:PHE:890::CG:2679",
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.axes": [
+          {
+            "chi": "chi1",
+            "atomNames": [
+              "N",
+              "CA",
+              "CB",
+              "CG"
+            ]
+          },
+          {
+            "chi": "chi2",
+            "atomNames": [
+              "CA",
+              "CB",
+              "CG",
+              "CD1"
+            ]
+          }
+        ]
+      },
+      "caption": "Enumerate discrete Phe890 side-chain alternatives"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "chiDegrees": [
+          -180,
+          90
+        ]
+      },
+      "expect": {
+        "sidechainRotamer.schema": "molarium.sidechain-rotamer-application/v1",
+        "sidechainRotamer.method": "canonical-chi-grid-steric-prerank-v1",
+        "sidechainRotamer.receptorAtomId": "reference-5OVE:ATOM:A:PHE:890::CG:2679",
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.selectedBy": "chiDegrees",
+        "sidechainRotamer.source": "canonical-library",
+        "sidechainRotamer.coordinateInputClass": "registered-hit-only"
+      },
+      "caption": "Choose the predicted Phe890-out branch"
+    },
+    {
+      "action": "pose.updateReceptorReference",
+      "args": {},
+      "caption": "Make the selected receptor branch the new pose reference"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 64,
+        "featureSeedingProtocol": "v3"
+      },
+      "expect": {
+        "refinement.selectedFeasible": true,
+        "refinement.featureGuidedSeeding.method": "molarium-edit-region-axis-seeding/v3"
+      },
+      "caption": "Test compound 21 in the opened Phe890 pocket"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true
+      },
+      "caption": "Apply the best compound 21 pose from that branch"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "Parameterize the coupled ligand–receptor prediction"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "Relax compound 21 and the opened pocket together"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "Return to Design with the predicted open pocket"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "caption": "Freeze the compound 21 proximal core and Phe890-out pocket"
+    },
+    {
+      "action": "designRoute.applyStep",
+      "args": {
+        "stepId": "finish-bay-293"
+      },
+      "caption": "Keep the proximal core fixed; rebuild the distal arm at the other thiophene position"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 64,
+        "featureSeedingProtocol": "v3"
+      },
+      "expect": {
+        "refinement.selectedFeasible": true,
+        "refinement.featureGuidedSeeding.method": "molarium-edit-region-axis-seeding/v3"
+      },
+      "caption": "Search 64 poses for the rebuilt BAY-293 arm around the fixed compound 21 core"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true
+      },
+      "caption": "Apply the highest-ranked BAY-293 pose while retaining the proximal core"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "Parameterize BAY-293 without moving the prediction"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "Relax the final predicted BAY-293 complex"
+    }
+  ],
+  "sourceAudit": {
+    "schema": "molarium.chemist-actions/v1",
+    "routeId": "sos1-hit-only",
+    "recordCount": 89,
+    "includedRecordCount": 33,
+    "includedSequences": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8,
+      9,
+      10,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      24,
+      25,
+      26,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86
+    ],
+    "failedRecordsExcluded": 0,
+    "readOnlyInspectionsIncluded": false,
+    "path": "outputs/design-history/sos1-hit-only-growth-clash-v7/chemist-action-audit.json",
+    "sha256": "38d8fbd3e2675fd1203a13a7e235ff848eaf627a0d7c8450865a762f9fbe5e5b"
+  }
+}

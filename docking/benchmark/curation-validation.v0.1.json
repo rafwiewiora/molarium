@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "datasetId": "molarium-bioisostere-pose-propagation-25",
+  "curationSha256": "919b9d39e449cca2825958daff5bfdb76c0263d75d1892d0714c1e9b9a09fb20",
+  "rdkitVersion": "2025.03.4",
+  "caseCount": 25,
+  "targetCount": 15,
+  "tierCounts": {
+    "paired-crystal": 10,
+    "prospective": 10,
+    "adversarial-negative": 5
+  },
+  "products": [
+    {
+      "caseId": "prospective-7kpa-d84-pyridone-to-cyclohexanone",
+      "inputSmilesSha256": "680e1f423f9f6cd15b96cb72deaf34c966add609d7f1030b255b6c626df1b784",
+      "canonicalSmiles": "O=C1CCCCC1c1ccc2nc(COc3cccc(N4CCCC4=O)c3)n(Cc3ccccc3OC(F)F)c2c1",
+      "heavyAtoms": 41,
+      "hBondAcceptors": 6,
+      "hBondDonors": 0,
+      "formalCharge": 0
+    },
+    {
+      "caseId": "prospective-parp2-4zzy-d7n-amide-to-nitrile",
+      "inputSmilesSha256": "ecec2b9ccc5029d398f57ada13287ed522f864e47d2de781374f07a9a1162b16",
+      "canonicalSmiles": "N#Cc1cc(F)cc2c1C(=O)N(C1CCN(C3CCC(F)(F)CC3)CC1)C2",
+      "heavyAtoms": 27,
+      "hBondAcceptors": 3,
+      "hBondDonors": 0,
+      "formalCharge": 0
+    },
+    {
+      "caseId": "prospective-pparg-5y2o-8n6-carbonyl-to-thiocarbonyl",
+      "inputSmilesSha256": "be6e2b98b214821cbfa3d27001ae59d1ef0fc62164793d10b5ad6a3518597d7e",
+      "canonicalSmiles": "CCc1ccc(CCOc2ccc(C[C@@H]3SC(=O)NC3=S)cc2)nc1",
+      "heavyAtoms": 25,
+      "hBondAcceptors": 5,
+      "hBondDonors": 1,
+      "formalCharge": 0
+    },
+    {
+      "caseId": "prospective-p38-3fly-fly-carbonyl-to-thiocarbonyl",
+      "inputSmilesSha256": "c72c158456e17f7b211865f92018fe4278f2353b358cd9622c9978409efb4751",
+      "canonicalSmiles": "CC(C)Nc1ncc2cc(Oc3ccc(F)cc3F)c(=S)n(C)c2n1",
+      "heavyAtoms": 25,
+      "hBondAcceptors": 6,
+      "hBondDonors": 1,
+      "formalCharge": 0
+    },
+    {
+      "caseId": "prospective-ptp1b-2qbs-024-acid-to-tetrazole",
+      "inputSmilesSha256": "f86174c856072d3b41a325c086ceb52fff9e15cea6f978a735209796551c162b",
+      "canonicalSmiles": "O=C(O)c1sc(-c2cccc(NC3CCCCC3)c2)c(Br)c1OCc1nnn[nH]1",
+      "heavyAtoms": 29,
+      "hBondAcceptors": 7,
+      "hBondDonors": 3,
+      "formalCharge": 0
+    },
+    {
+      "caseId": "prospective-thrombin-2zff-53u-amide-to-sulfonamide",
+      "inputSmilesSha256": "016e01f3502ae2a3bab7007df55dc35284b8be16120d21e379f6ed8827def00f",
+      "canonicalSmiles": "NC(Cc1ccccc1)C(=O)N1CCCC1S(=O)(=O)NCc1ccccc1",
+      "heavyAtoms": 27,
+      "hBondAcceptors": 4,
+      "hBondDonors": 2,
+      "formalCharge": 0
+    },
+    {
+      "caseId": "prospective-ptp1b-2qbs-024-ring-acid-to-tetrazole",
+      "inputSmilesSha256": "04b6991ad68a961273fcde43fd18235ab5d204291b438642027514180517f525",
+      "canonicalSmiles": "O=C(O)COc1c(-c2nnn[nH]2)sc(-c2cccc(NC3CCCCC3)c2)c1Br",
+      "heavyAtoms": 29,
+      "hBondAcceptors": 7,
+      "hBondDonors": 3,
+      "formalCharge": 0
+    },
+    {
+      "caseId": "prospective-brd9-5igm-bmf-carbamate-to-urea",
+      "inputSmilesSha256": "d999fa1c15a0d9146f2576b542bb310bca19cb8277195448d5f1abcdb1c2aa44",
+      "canonicalSmiles": "CNC(=O)Nc1cc(-c2ccc(C)c(NS(C)(=O)=O)c2)nn2c(C)nnc12",
+      "heavyAtoms": 27,
+      "hBondAcceptors": 7,
+      "hBondDonors": 3,
+      "formalCharge": 0
+    },
+    {
+      "caseId": "prospective-parp1-4r6e-3jd-amide-to-nitrile",
+      "inputSmilesSha256": "3ab8db35b4ea0cfc5f08bb86fe956905ca97027196ea1817869505d48e1bbab3",
+      "canonicalSmiles": "N#Cc1cccc2cn(-c3ccc([C@@H]4CCCNC4)cc3)nc12",
+      "heavyAtoms": 23,
+      "hBondAcceptors": 4,
+      "hBondDonors": 1,
+      "formalCharge": 0
+    },
+    {
+      "caseId": "prospective-fxr-5q0i-0x0-amide-to-thioamide",
+      "inputSmilesSha256": "cc6dc2574a19a23b3ead336356be86fb480a0d517c1bde13da306befc9a91709",
+      "canonicalSmiles": "COc1ccc(N(CC(=S)NC(C(C)C)C(C)C)S(=O)(=O)c2ccc(C)cc2)cc1OC",
+      "heavyAtoms": 32,
+      "hBondAcceptors": 5,
+      "hBondDonors": 1,
+      "formalCharge": 0
+    },
+    {
+      "caseId": "negative-trypsin-3ptb-ben-amidine-to-ethyl",
+      "inputSmilesSha256": "3ed8c64f28bc36d6a77c5a8d5e1daad9a343ef2c9d5a15b34c4e126f909f7d53",
+      "canonicalSmiles": "CCc1ccccc1",
+      "heavyAtoms": 8,
+      "hBondAcceptors": 0,
+      "hBondDonors": 0,
+      "formalCharge": 0
+    },
+    {
+      "caseId": "negative-hivpr-1hvr-xk2-diol-to-difluoro",
+      "inputSmilesSha256": "ec18ce7dabb828b9f6ce00309fbb046ac1d64a29bf443e1bb6f7ecccddc72eab",
+      "canonicalSmiles": "O=C1N(Cc2ccc3ccccc3c2)[C@H](Cc2ccccc2)[C@H](F)[C@@H](F)[C@@H](Cc2ccccc2)N1Cc1ccc2ccccc2c1",
+      "heavyAtoms": 46,
+      "hBondAcceptors": 1,
+      "hBondDonors": 0,
+      "formalCharge": 0
+    },
+    {
+      "caseId": "negative-cox2-6cox-s58-sulfonamide-to-tertbutyl",
+      "inputSmilesSha256": "152545d55475e4a8092cbf64ecfd4482b1a985ac2655e20b829ed1f69fe45b8d",
+      "canonicalSmiles": "CC(C)(C)c1ccc(-n2nc(C(F)(F)F)cc2-c2ccc(Br)cc2)cc1",
+      "heavyAtoms": 26,
+      "hBondAcceptors": 2,
+      "hBondDonors": 0,
+      "formalCharge": 0
+    },
+    {
+      "caseId": "negative-tnfa-7kpa-d84-pyridone-to-phenyl",
+      "inputSmilesSha256": "99cea82796d54a99792478599837a06d5255599d76f50510df9e3bfb1907734e",
+      "canonicalSmiles": "O=C1CCCN1c1cccc(OCc2nc3ccc(-c4ccccc4)cc3n2Cc2ccccc2OC(F)F)c1",
+      "heavyAtoms": 40,
+      "hBondAcceptors": 5,
+      "hBondDonors": 0,
+      "formalCharge": 0
+    },
+    {
+      "caseId": "negative-parp1-4r6e-3jd-amide-to-methyl",
+      "inputSmilesSha256": "e5cd8070496910b6227ecbf817f42bffcbc10f11390a25825b2778797a668a15",
+      "canonicalSmiles": "Cc1cccc2cn(-c3ccc([C@@H]4CCCNC4)cc3)nc12",
+      "heavyAtoms": 22,
+      "hBondAcceptors": 3,
+      "hBondDonors": 1,
+      "formalCharge": 0
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+HEADER    AWW prediction · new benzyl-alcohol arm 
+HETATM   22  CX5 AWW L   1       3.695 -23.481  22.309  1.00 20.00           C
+HETATM   23 CX11 AWW L   1       4.763 -23.806  23.242  1.00 20.00           C
+HETATM   24 CX12 AWW L   1       4.698 -24.995  24.087  1.00 20.00           C
+HETATM   25 CX13 AWW L   1       3.489 -25.782  24.031  1.00 20.00           C
+HETATM   26 CX14 AWW L   1       2.401 -25.346  23.174  1.00 20.00           C
+HETATM   27 CX15 AWW L   1       2.539 -24.331  22.223  1.00 20.00           C
+HETATM   28 CX16 AWW L   1       1.442 -24.243  21.129  1.00 20.00           C
+HETATM   29  OX3 AWW L   1       0.478 -25.297  21.094  1.00 20.00           O
+END

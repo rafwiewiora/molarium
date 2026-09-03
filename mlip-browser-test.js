@@ -6,7 +6,9 @@ const suffix = process.pid % 5000;
 const appPort = 43000 + suffix;
 const debugPort = 49000 + suffix;
 const appUrl = `http://localhost:${appPort}/`;
-const chromePath = Bun.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const chromePath = Bun.env.CHROME_PATH || (process.platform === 'darwin'
+  ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+  : '/usr/bin/google-chrome');
 const profile = await mkdtemp(join(tmpdir(), 'molarium-ani2x-test-'));
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 let server;
@@ -159,7 +161,7 @@ const suite = String.raw`
 })()`;
 
 try {
-  server = Bun.spawn(['bun', 'server.js', '--port', String(appPort)], {
+  server = Bun.spawn(['bun', 'server.js', '--test-api', '--port', String(appPort)], {
     cwd:import.meta.dir, stdout:'ignore', stderr:'pipe',
   });
   await waitFor(async () => (await fetch(appUrl)).ok);

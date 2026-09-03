@@ -24,12 +24,23 @@
         <div class="app-header-bar">
           <a class="app-brand" href="#" aria-label="Molarium home">
             <svg class="app-brand-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false" data-molarium-mark>
-              <rect x="2" y="2" width="44" height="44" rx="12" fill="#132632" />
-              <path d="M10 34V14.5L24 28" fill="none" stroke="#8edcf0" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M24 28L38 14.5V34" fill="none" stroke="#a5e7c4" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round" />
-              <circle cx="10" cy="14.5" r="3.2" fill="#e9fbff" />
-              <circle cx="24" cy="28" r="3.2" fill="#ffffff" />
-              <circle cx="38" cy="14.5" r="3.2" fill="#eafff4" />
+              <rect x="2" y="2" width="44" height="44" rx="14" fill="#132632" />
+              <path d="M8.5 36.5 14.5 12.5 24 29.5 33.5 12.5 39.5 36.5" fill="none"
+                stroke="#59c7bb" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+                opacity=".58" data-molarium-letter />
+              <g stroke-linecap="round" stroke-linejoin="round" data-molarium-flask>
+                <path d="M21 8v10L11.5 34.5A4.5 4.5 0 0 0 15.5 41h17a4.5 4.5 0 0 0 4-6.5L27 18V8Z"
+                  fill="#173a45" fill-opacity=".78" stroke="#d9f8f1" stroke-width="2" />
+                <path d="M18 7.5h12" fill="none" stroke="#d9f8f1" stroke-width="2.4" />
+                <path d="M14.2 31.5c2.1-1.8 4.4 1.4 6.2-.3 1.9-1.8 4.7-1.7 6.4.2 1.8 2 4.2-1.2 7 .3l2.7 4.8A4.5 4.5 0 0 1 32.5 41h-17a4.5 4.5 0 0 1-4-6.5Z"
+                  fill="#2fa39d" stroke="#8ae0d3" stroke-width=".8" />
+                <g fill="#d9f8f1" stroke="#173a45" stroke-width=".7" data-molarium-foam>
+                  <circle cx="17.7" cy="31" r="2.2"/><circle cx="22.1" cy="30.7" r="2.8"/>
+                  <circle cx="27.1" cy="31" r="2.3"/><circle cx="31.2" cy="31.4" r="1.9"/>
+                  <circle cx="25.5" cy="25.8" r="1.25"/><circle cx="29.3" cy="22.8" r=".85"/>
+                </g>
+                <path d="M18.2 37.5h11.6" fill="none" stroke="#ffffff" stroke-opacity=".32" stroke-width="1" />
+              </g>
             </svg>
             <span class="app-brand-name">MOLARIUM</span>
             <span class="app-brand-tag">molecular studio</span>
@@ -59,6 +70,34 @@
 
       <main class="app-main">
         <aside class="panel panel-left">
+          <section class="card story-transport-card hidden" id="designer-story-dock">
+            <section class="designer-move-tools" id="designer-move-tools">
+              <h2 class="compact-label build-section-label">Designer moves</h2>
+              <div class="designer-story-transport" aria-label="Designer story playback">
+                <button class="soft-button designer-story-step" id="previous-designer-move" type="button" disabled aria-label="Previous completed story move" title="Previous completed move">◀</button>
+                <button class="primary-button" id="replay-designer-moves" type="button" disabled>▶ Play story</button>
+                <button class="soft-button designer-story-step" id="next-designer-move" type="button" disabled aria-label="Next completed story move" title="Next completed move">▶</button>
+                <span id="designer-move-progress-label">0 / 0</span>
+              </div>
+              <progress id="designer-move-progress" value="0" max="1" aria-label="Designer story progress"></progress>
+              <div class="designer-move-caption-card" aria-live="polite">
+                <span class="designer-move-caption-label">Story</span>
+                <p class="designer-move-caption" id="designer-move-caption">Load a story to begin.</p>
+                <p class="designer-move-detail" id="designer-move-detail"></p>
+              </div>
+              <p class="panel-copy" id="designer-move-status">Import a Chemist Actions JSON script, or export the Agent/API moves recorded for this molecule.</p>
+              <input class="hidden" id="designer-move-file" type="file" accept="application/json,.json" />
+              <div class="designer-move-buttons">
+                <button class="soft-button" id="import-designer-moves" type="button">Import JSON</button>
+                <button class="soft-button" id="restart-designer-moves" type="button" disabled title="Return to the blank canvas before the first story action">↺ Restart</button>
+              </div>
+              <div class="designer-move-buttons">
+                <button class="soft-button" id="export-designer-moves" type="button" disabled>Export API moves</button>
+                <button class="soft-button" id="export-designer-replay" type="button" disabled>Export replay log</button>
+              </div>
+            </section>
+          </section>
+          <div class="panel-scroll-stack" id="left-panel-scroll-stack">
           <section class="card load-card">
             <button class="card-heading disclosure" id="load-toggle" aria-expanded="true">
               <span>Load Molecule</span>
@@ -210,6 +249,23 @@
                 <option value="both">Cartoon + atoms</option>
               </select>
             </label>
+            <label class="select-row">
+              <span>Coloring</span>
+              <select id="display-theme-select">
+                <option value="standard">Standard</option>
+                <option value="design-hit">Design story · hit</option>
+                <option value="design-prediction">Design story · prediction</option>
+                <option value="design-validation">Design story · validation</option>
+              </select>
+            </label>
+            <label class="select-row">
+              <span>Change marks</span>
+              <select id="change-marker-select">
+                <option value="rings">Atom rings</option>
+                <option value="halo">Subtle halo</option>
+                <option value="none">Hidden</option>
+              </select>
+            </label>
             <div class="checkbox-list">
               <label><input type="checkbox" id="vdw-toggle" /> <span>Show van der Waals spheres</span></label>
               <label><input type="checkbox" id="hull-toggle" checked /> <span>Show convex hulls</span></label>
@@ -219,6 +275,7 @@
                 <button type="button" id="pocket-mode-toggle" aria-pressed="false" title="Switch between the 5 Å pocket and residues making displayed ligand contacts">5 Å</button>
               </div>
               <label><input type="checkbox" id="interaction-toggle" checked /> <span id="interaction-toggle-text">Show H-bonds &amp; π-stacks</span></label>
+              <label><input type="checkbox" id="steric-clash-toggle" /> <span id="steric-clash-toggle-text">Show severe clashes</span></label>
             </div>
             <label class="select-row">
               <span>Auto-rotate</span>
@@ -237,10 +294,63 @@
 
           <section class="card mode-panel hidden" id="build-left-panel">
             <div class="build-tool-tabs" id="build-tool-tabs">
-              <button class="selected" data-tool="add">⊕ Add</button>
-              <button data-tool="select">⌖ Select</button>
-              <button data-tool="manipulate">✣ Manipulate</button>
+              <div class="build-tool-choice">
+                <button class="selected" data-tool="add">⊕ Add</button>
+                <span class="info-anchor build-tool-info"><button type="button" class="info-button" aria-label="About Add" aria-describedby="build-add-info">i</button><span class="info-popover" id="build-add-info" role="tooltip">Click to attach an element or fragment. Drag to rotate the view.</span></span>
+              </div>
+              <div class="build-tool-choice">
+                <button data-tool="select">⌖ Select</button>
+                <span class="info-anchor build-tool-info"><button type="button" class="info-button" aria-label="About Select" aria-describedby="build-select-info">i</button><span class="info-popover" id="build-select-info" role="tooltip">Click connected atoms to edit geometry or define a docking core. Drag to rotate.</span></span>
+              </div>
+              <div class="build-tool-choice">
+                <button data-tool="manipulate">✣ Move</button>
+                <span class="info-anchor build-tool-info"><button type="button" class="info-button" aria-label="About moving atoms" aria-describedby="build-manipulate-info">i</button><span class="info-popover" id="build-manipulate-info" role="tooltip">Drag an atom to move it directly. Drag empty space to rotate; minimize afterward.</span></span>
+              </div>
             </div>
+            <section class="docking-workbench hidden" id="docking-workbench">
+              <div class="docking-heading">
+                <h2 class="compact-label">Reference-guided pose</h2>
+                <span class="info-anchor"><button type="button" class="info-button" aria-label="About reference-guided posing" aria-describedby="docking-info">i</button><span class="info-popover" id="docking-info" role="tooltip">Keeps unchanged ligand atoms fixed, searches edited-group torsions against the receptor, enforces selected contacts, and relaxes the resulting poses.</span></span>
+              </div>
+              <select id="docking-mode" aria-label="Reference-guided pose method">
+                <option value="propagate" selected>Propagate reference pose</option>
+                <option value="selected-core">Expert selected-core search</option>
+              </select>
+              <label class="docking-cleanup hidden" id="docking-cleanup-field">
+                <span>Edit cleanup</span>
+                <select id="docking-edit-cleanup" aria-label="Analogue edit cleanup">
+                  <option value="preserve-reference" selected>Preserve reference</option>
+                  <option value="free-local">Free local cleanup</option>
+                </select>
+              </label>
+              <p class="docking-status" id="docking-status">Begin analogue design before editing the prepared ligand.</p>
+              <div class="docking-reference-actions">
+                <button class="soft-button" type="button" id="capture-docking-reference" title="Freeze the current prepared ligand pose as the analogue-design reference">Begin analogue design</button>
+                <button class="soft-button hidden" type="button" id="update-docking-receptor" title="Accept the current receptor coordinates while retaining the captured ligand reference">Update moved receptor</button>
+                <button class="soft-button hidden" type="button" id="clear-docking-reference">Reset</button>
+              </div>
+              <div class="docking-constraints hidden" id="docking-constraints">
+                <div class="docking-constraints-heading">
+                  <span>Required contacts</span>
+                  <button type="button" id="add-docking-contact" aria-label="Add hydrogen-bond contact" title="Add an H-bond hypothesis">+</button>
+                </div>
+                <div id="docking-hbond-list"></div>
+                <div class="docking-contact-builder hidden" id="docking-contact-builder">
+                  <span id="docking-contact-builder-status">Pick a ligand donor or acceptor.</span>
+                  <div id="docking-contact-builder-options"></div>
+                  <button type="button" id="cancel-docking-contact">Cancel</button>
+                </div>
+              </div>
+              <div class="docking-run-row hidden" id="docking-run-row">
+                <select id="docking-conformer-count" aria-label="Torsion-search chain count">
+                  <option value="8">8 search chains</option>
+                  <option value="16" selected>16 search chains</option>
+                  <option value="32">32 search chains</option>
+                  <option value="64">64 search chains</option>
+                </select>
+                <button class="primary-button" type="button" id="run-constrained-docking">Refine edited group</button>
+              </div>
+            </section>
             <h2 class="compact-label build-section-label">Element</h2>
             <div class="element-grid" id="element-grid">
               <button data-element="C" class="selected">C</button><button data-element="H">H</button>
@@ -251,9 +361,10 @@
             </div>
             <h2 class="compact-label build-section-label">Actions</h2>
             <div class="optimizer-picker">
-              <select id="build-optimizer-select" aria-label="Build optimizer">
+              <select id="build-optimizer-select" aria-label="Design optimizer">
                 <option value="webgpu">OpenFF Sage 2.1 · WebGPU</option>
                 <option value="pocket-webgpu">Interactive pocket relax · WebGPU</option>
+                <option value="induced-fit-webgpu">Induced-fit pocket · WebGPU</option>
                 <option value="ligand-rdkit">Ligand only · MMFF94/UFF</option>
                 <option value="rdkit">MMFF94 · UFF fallback</option>
                 <option value="ani2x">ANI-2x · MLIP WebGPU</option>
@@ -265,6 +376,15 @@
               <button class="soft-button" id="undo-atom">↶ Undo</button>
               <button class="soft-button" id="redo-atom">↪ Redo</button>
             </div>
+            <section class="sidechain-rotamer-tools hidden" id="sidechain-rotamer-tools">
+              <h2 class="compact-label build-section-label">Side-chain conformations</h2>
+              <p class="panel-copy" id="sidechain-rotamer-status">Choose Select, then pick one atom in a protein side chain.</p>
+              <button class="soft-button full-width" id="enumerate-sidechain-rotamers" type="button" disabled>Enumerate rotamers</button>
+              <div class="sidechain-rotamer-results hidden" id="sidechain-rotamer-results">
+                <select id="sidechain-rotamer-select" aria-label="Side-chain rotamer candidate"></select>
+                <button class="primary-button" id="apply-sidechain-rotamer" type="button">Apply branch</button>
+              </div>
+            </section>
             <h2 class="compact-label build-section-label">Adjust Geometry</h2>
             <p class="panel-copy" id="geometry-selection-help">Choose Select, then pick 2 atoms for a bond, 3 for an angle, or 4 for a torsion.</p>
             <div class="geometry-control">
@@ -313,6 +433,7 @@
               <label><input type="checkbox" id="chemistry-immediate-refine" /> Finish and refine after every edit</label>
             </details>
             <p class="chemistry-validation" id="chemistry-validation">Formal charge is editable; force-field partial charges remain derived.</p>
+
           </section>
 
           <section class="card mode-panel hidden" id="run-left-panel">
@@ -425,6 +546,7 @@
             <p class="field-help" id="method-help">Optimize the current molecular geometry.</p>
             <button class="primary-button" id="run-calculation">Run Calculation</button>
           </section>
+          </div>
         </aside>
 
         <section class="viewer-stage">
@@ -433,31 +555,96 @@
 
             <div class="mode-bar" role="group" aria-label="Mode selection">
               <button class="active" data-mode="view">View</button>
-              <button data-mode="build">Build</button>
-              <button data-mode="run">Run</button>
+              <button data-mode="build">Design</button>
+              <button data-mode="run">Simulate</button>
             </div>
 
             <div class="viewer-hint" id="viewer-hint">
-              <div class="hint-molecule" aria-hidden="true">
-                <i></i><i></i><i></i>
-              </div>
+              <svg class="viewer-hint-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false" data-molarium-mark>
+                <rect x="2" y="2" width="44" height="44" rx="14" fill="#132632" />
+                <path d="M8.5 36.5 14.5 12.5 24 29.5 33.5 12.5 39.5 36.5" fill="none"
+                  stroke="#59c7bb" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+                  opacity=".58" data-molarium-letter />
+                <g stroke-linecap="round" stroke-linejoin="round" data-molarium-flask>
+                  <path d="M21 8v10L11.5 34.5A4.5 4.5 0 0 0 15.5 41h17a4.5 4.5 0 0 0 4-6.5L27 18V8Z"
+                    fill="#173a45" fill-opacity=".78" stroke="#d9f8f1" stroke-width="2" />
+                  <path d="M18 7.5h12" fill="none" stroke="#d9f8f1" stroke-width="2.4" />
+                  <path d="M14.2 31.5c2.1-1.8 4.4 1.4 6.2-.3 1.9-1.8 4.7-1.7 6.4.2 1.8 2 4.2-1.2 7 .3l2.7 4.8A4.5 4.5 0 0 1 32.5 41h-17a4.5 4.5 0 0 1-4-6.5Z"
+                    fill="#2fa39d" stroke="#8ae0d3" stroke-width=".8" />
+                  <g fill="#d9f8f1" stroke="#173a45" stroke-width=".7" data-molarium-foam>
+                    <circle cx="17.7" cy="31" r="2.2"/><circle cx="22.1" cy="30.7" r="2.8"/>
+                    <circle cx="27.1" cy="31" r="2.3"/><circle cx="31.2" cy="31.4" r="1.9"/>
+                    <circle cx="25.5" cy="25.8" r="1.25"/><circle cx="29.3" cy="22.8" r=".85"/>
+                  </g>
+                  <path d="M18.2 37.5h11.6" fill="none" stroke="#ffffff" stroke-opacity=".32" stroke-width="1" />
+                </g>
+              </svg>
               <strong>Load a molecular structure</strong>
               <span>Paste PDB or XYZ data, upload a file, or search by identifier</span>
             </div>
 
             <div class="atom-tooltip hidden" id="atom-tooltip"></div>
             <button class="residue-follow-chip hidden" id="residue-follow-chip" type="button" title="Stop following this residue"></button>
+            <button class="changed-region-chip hidden" id="changed-region-chip" type="button" title="Clear changed-region focus"></button>
+
+            <section class="structure-2d-panel hidden" id="structure-2d-panel" aria-label="2D structure viewer">
+              <button class="structure-2d-heading" id="structure-2d-toggle" type="button" aria-expanded="true">
+                <span><strong>2D</strong><small id="structure-2d-label">Structure</small></span>
+                <svg class="chevron open" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 4 4 4-4 4" /></svg>
+              </button>
+              <div class="structure-2d-body" id="structure-2d-body">
+                <div class="structure-2d-tools" role="toolbar" aria-label="2D drawing tools">
+                  <button class="selected" type="button" data-2d-tool="select" title="Select atoms in both views">Select</button>
+                  <button type="button" data-2d-tool="atom" title="Attach an atom">Atom</button>
+                  <button type="button" data-2d-tool="bond" title="Create or change a bond">Bond</button>
+                  <button type="button" data-2d-tool="erase" title="Delete an atom or bond">Erase</button>
+                </div>
+                <div class="structure-2d-options">
+                  <label>Element
+                    <select id="structure-2d-element" aria-label="2D drawing element">
+                      <option selected>C</option><option>N</option><option>O</option><option>F</option>
+                      <option>P</option><option>S</option><option>Cl</option><option>Br</option><option>I</option>
+                    </select>
+                  </label>
+                  <label>Bond
+                    <select id="structure-2d-bond-order" aria-label="2D drawing bond order">
+                      <option value="1" selected>Single</option><option value="2">Double</option>
+                      <option value="3">Triple</option><option value="1.5">Aromatic</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="structure-2d-drawing" id="structure-2d-drawing" role="img" aria-label="RDKit 2D molecular depiction">
+                  <span>Drawing…</span>
+                </div>
+                <p id="structure-2d-help">Select an atom here to select the same atom in 3D.</p>
+                <div class="structure-2d-pending hidden" id="structure-2d-pending">
+                  <button class="primary-button" id="structure-2d-finish" type="button">Finish changes</button>
+                  <button class="soft-button" id="structure-2d-discard" type="button">Discard</button>
+                </div>
+              </div>
+            </section>
 
             <div class="run-overlay hidden" id="run-overlay">
               <div class="run-card">
                 <div class="calculation-loader" aria-hidden="true">
                   <svg viewBox="0 0 48 48" focusable="false" data-molarium-mark>
-                    <rect x="2" y="2" width="44" height="44" rx="12" fill="#132632" />
-                    <path d="M10 34V14.5L24 28" fill="none" stroke="#8edcf0" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M24 28L38 14.5V34" fill="none" stroke="#a5e7c4" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round" />
-                    <circle cx="10" cy="14.5" r="3.2" fill="#e9fbff" />
-                    <circle cx="24" cy="28" r="3.2" fill="#ffffff" />
-                    <circle cx="38" cy="14.5" r="3.2" fill="#eafff4" />
+                    <rect x="2" y="2" width="44" height="44" rx="14" fill="#132632" />
+                    <path d="M8.5 36.5 14.5 12.5 24 29.5 33.5 12.5 39.5 36.5" fill="none"
+                      stroke="#59c7bb" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
+                      opacity=".58" data-molarium-letter />
+                    <g stroke-linecap="round" stroke-linejoin="round" data-molarium-flask>
+                      <path d="M21 8v10L11.5 34.5A4.5 4.5 0 0 0 15.5 41h17a4.5 4.5 0 0 0 4-6.5L27 18V8Z"
+                        fill="#173a45" fill-opacity=".78" stroke="#d9f8f1" stroke-width="2" />
+                      <path d="M18 7.5h12" fill="none" stroke="#d9f8f1" stroke-width="2.4" />
+                      <path d="M14.2 31.5c2.1-1.8 4.4 1.4 6.2-.3 1.9-1.8 4.7-1.7 6.4.2 1.8 2 4.2-1.2 7 .3l2.7 4.8A4.5 4.5 0 0 1 32.5 41h-17a4.5 4.5 0 0 1-4-6.5Z"
+                        fill="#2fa39d" stroke="#8ae0d3" stroke-width=".8" />
+                      <g fill="#d9f8f1" stroke="#173a45" stroke-width=".7" data-molarium-foam>
+                        <circle cx="17.7" cy="31" r="2.2"/><circle cx="22.1" cy="30.7" r="2.8"/>
+                        <circle cx="27.1" cy="31" r="2.3"/><circle cx="31.2" cy="31.4" r="1.9"/>
+                        <circle cx="25.5" cy="25.8" r="1.25"/><circle cx="29.3" cy="22.8" r=".85"/>
+                      </g>
+                      <path d="M18.2 37.5h11.6" fill="none" stroke="#ffffff" stroke-opacity=".32" stroke-width="1" />
+                    </g>
                   </svg>
                 </div>
                 <strong id="run-status">Preparing calculation…</strong>
@@ -469,10 +656,12 @@
             </div>
 
             <div class="viewer-toolbar">
-              <button id="export-button">Export</button>
-              <button id="clear-button">Clear</button>
-              <button id="share-button">Share</button>
-              <button id="save-button">Save</button>
+              <button class="viewer-standard-action" id="export-button">Export</button>
+              <button class="viewer-standard-action" id="clear-button">Clear</button>
+              <button class="viewer-standard-action" id="share-button">Share</button>
+              <button class="viewer-standard-action" id="save-button">Save</button>
+              <button class="viewer-chemistry-finish hidden" id="viewer-finish-chemistry">Finish chemistry</button>
+              <button class="viewer-chemistry-discard hidden" id="viewer-discard-chemistry">Discard</button>
               <button id="fullscreen-button">Fullscreen</button>
             </div>
 
@@ -537,7 +726,74 @@
             </div>
           </section>
 
+          <section class="card mode-panel hidden design-history-card" id="design-history-panel">
+            <h2 class="compact-label">Design History</h2>
+            <p class="design-history-status" id="campaign-status" role="status" aria-live="polite">No active campaign · history stays on this device.</p>
+            <div class="design-history-create" id="campaign-create-controls">
+              <input id="campaign-title" maxlength="120" placeholder="Campaign title" aria-label="Campaign title" />
+              <div class="design-history-inline">
+                <input id="campaign-id" maxlength="80" placeholder="campaign-id" aria-label="Campaign ID" />
+                <button class="primary-button" id="campaign-create" type="button">Start &amp; commit</button>
+              </div>
+            </div>
+            <div class="design-history-active hidden" id="campaign-active-controls">
+              <div class="design-history-summary" id="campaign-summary"></div>
+              <label class="design-history-label" for="campaign-commit-message">Commit current molecule</label>
+              <div class="design-history-inline">
+                <input id="campaign-commit-message" maxlength="240" placeholder="What changed?" />
+                <button class="primary-button" id="campaign-commit" type="button">Commit</button>
+              </div>
+              <details class="design-history-details">
+                <summary>Branches and decisions</summary>
+                <label class="design-history-label" for="campaign-branch">Current branch</label>
+                <select id="campaign-branch" aria-label="Current design-history branch"></select>
+                <div class="design-history-inline">
+                  <input id="campaign-new-branch" maxlength="80" placeholder="new-branch" aria-label="New branch name" />
+                  <button class="soft-button" id="campaign-create-branch" type="button">Create</button>
+                </div>
+                <label class="design-history-label" for="campaign-merge-source">Merge branch into current</label>
+                <div class="design-history-inline">
+                  <select id="campaign-merge-source" aria-label="Branch to merge"></select>
+                  <button class="soft-button" id="campaign-merge" type="button">Merge</button>
+                </div>
+                <label class="design-history-label" for="campaign-decision-disposition">Decision on current commit</label>
+                <select id="campaign-decision-disposition">
+                  <option value="progressed">Progressed</option>
+                  <option value="not-progressed">Not progressed</option>
+                  <option value="deferred">Deferred</option>
+                  <option value="failed">Failed</option>
+                  <option value="duplicate">Duplicate</option>
+                  <option value="superseded">Superseded</option>
+                  <option value="archived">Archived</option>
+                </select>
+                <textarea id="campaign-decision-rationale" maxlength="1000" rows="2" placeholder="Decision rationale"></textarea>
+                <button class="soft-button full-width" id="campaign-record-decision" type="button">Record decision</button>
+              </details>
+            </div>
+            <input class="hidden" id="campaign-file" type="file" accept="application/json,.json" />
+            <div class="design-history-actions">
+              <button class="soft-button" id="designer-story-import" type="button">Import story</button>
+              <button class="soft-button" id="campaign-import" type="button">Import</button>
+              <button class="soft-button" id="campaign-export" type="button" disabled>Export</button>
+              <button class="soft-button" id="campaign-verify" type="button" disabled>Verify</button>
+              <button class="soft-button" id="campaign-close" type="button" disabled>Close</button>
+            </div>
+          </section>
+
           <section class="card mode-panel hidden" id="build-right-panel">
+            <section class="docking-results hidden" id="docking-results">
+              <div class="docking-heading">
+                <h2 class="compact-label">Distinct poses</h2>
+                <strong id="docking-result-summary">—</strong>
+              </div>
+              <div class="docking-pose-list" id="docking-pose-list"></div>
+              <div class="docking-result-actions">
+                <button class="primary-button" type="button" id="apply-docking-pose">Apply pose</button>
+                <button class="soft-button" type="button" id="download-docking-labbook">Notes</button>
+                <button class="soft-button" type="button" id="download-docking-audit">JSON</button>
+              </div>
+              <p id="docking-score-note">Rigid 8 Å site · OpenFF cross terms · relative MMFF strain</p>
+            </section>
             <h2 class="compact-label">Fragment Library</h2>
             <div class="fragment-stage-row">
               <input id="custom-fragment-smiles" placeholder="Custom SMILES" />
@@ -711,19 +967,14 @@
         <p class="project-info-note">Coordinates and calculations remain in the browser except for explicit PDB/CCD retrieval and MSA searches.</p>
       </section>
       <section class="hidden" data-project-section="validation">
-        <p>Reference checks compare browser calculations with the same numeric systems evaluated by OpenMM and with pinned native model outputs.</p>
-        <ul>
-          <li>OpenFF Sage energy and force parity against an internal OpenMM Reference oracle</li>
-          <li>SHAKE/RATTLE constraint residual and deterministic replay checks</li>
-          <li>RDKit, ANI-2x and OpenFold pinned-version regression fixtures</li>
-          <li>Browser behavior, preparation and trajectory regression suite</li>
-        </ul>
-        <p class="project-info-note">Experimental methods stay labelled in the interface; a passing implementation comparison is not a claim of scientific validation for every system.</p>
+        <div id="validation-dashboard" class="validation-dashboard" aria-live="polite">
+          <p class="validation-dashboard-loading">Loading the versioned evidence ledger…</p>
+        </div>
       </section>
       <section class="hidden" data-project-section="credits">
         <p>Interface design inspired by <a href="https://atomiverse.com/" target="_blank" rel="noreferrer">Atomiverse</a>. Molarium’s interface and Canvas viewer were independently implemented; Atomiverse and its referenced <code>xyzrender</code> project are not bundled dependencies.</p>
         <ul class="project-credit-list">
-          <li><a href="./LICENSE">Molarium original code</a> · MIT</li>
+          <li><a href="./LICENSE">Molarium original code</a> · Apache-2.0</li>
           <li><a href="./openmm/OPENMM-LICENSE.txt">OpenMM 8.2</a> · MIT</li>
           <li><a href="./rdkit/RDKIT-LICENSE.txt">RDKit 2025.03.4</a> · BSD-3-Clause</li>
           <li><a href="./licenses/DIMORPHITE-DL-NOTICE.txt">Dimorphite-DL 2.0.2 site data</a> · Apache-2.0</li>
@@ -754,9 +1005,18 @@
       </section>
     </dialog>
 
+    <dialog class="analogue-design-dialog" id="analogue-design-dialog" aria-labelledby="analogue-design-dialog-title">
+      <h2 id="analogue-design-dialog-title">Begin analogue design?</h2>
+      <p>Freeze this prepared ligand pose as the reference before changing its chemistry. Preserve reference will keep inherited heavy atoms fixed during ligand cleanup.</p>
+      <div class="analogue-design-dialog-actions">
+        <button class="soft-button" type="button" id="cancel-analogue-design">Cancel</button>
+        <button class="primary-button" type="button" id="confirm-analogue-design">Begin analogue design</button>
+      </div>
+    </dialog>
+
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="./runtime-config.js"></script>
     <script src="./protein-residue-templates.js"></script>
-    <script src="./app.js"></script>
+    <script type="module" src="./app.js"></script>
   </body>
 </html>

@@ -113,6 +113,64 @@ async function runCalculation(message) {
   const { id, job, molecule, options = {} } = message;
   const started = performance.now();
   const module = await getRDKit(id);
+  if (job === 'smiles-depict') {
+    const smiles = String(options.smiles || '').trim();
+    if (!smiles) throw new Error('A SMILES string is required');
+    let rdMol;
+    try {
+      rdMol = module.get_mol(smiles, JSON.stringify({ sanitize:true, removeHs:true }));
+      if (!rdMol) throw new Error('RDKit could not parse this SMILES string');
+      if (!rdMol.set_new_coords()) throw new Error('RDKit could not generate 2D coordinates');
+      const width = Math.max(240, Math.min(1200, Math.round(Number(options.width ?? 720))));
+      const height = Math.max(180, Math.min(900, Math.round(Number(options.height ?? 420))));
+      const svg = rdMol.get_svg_with_highlights(JSON.stringify({ width, height,
+        atoms:[], bonds:[], atomColors:{}, bondColors:{} }));
+      if (typeof svg !== 'string' || !svg.includes('<svg'))
+        throw new Error('RDKit returned an invalid 2D depiction');
+      self.postMessage({ type:'result', id, job, svg, canonicalSmiles:rdMol.get_smiles(),
+        rdkitVersion:module.version?.() || null, elapsedMs:performance.now() - started,
+        platform:'WebAssembly', backend:'RDKit MolDraw2D' });
+      return;
+    } finally { rdMol?.delete(); }
+  }
+  if (job === 'depict') {
+    if (!molecule?.atoms?.length || molecule.atoms.length > 256)
+      throw new Error('2D depiction supports molecular components with 1–256 atoms');
+    let rdMol;
+    try {
+      rdMol = module.get_mol(moleculeToMolBlock(molecule), JSON.stringify({
+        sanitize:false, removeHs:false, strictParsing:false,
+      }));
+      if (!rdMol) throw new Error('RDKit could not read this molecular component');
+      // The molecular input carries the live 3D conformer. Always replace it
+      // with a genuine 2D layout before drawing. Constraining a redraw to the
+      // previous complete MolBlock can over-constrain a rewritten substituent
+      // and make the inset look like a flattened 3D projection. The UI keeps
+      // continuity with a screen-space rotation/scale/translation instead.
+      if (!rdMol.set_new_coords())
+        throw new Error('RDKit could not generate 2D coordinates');
+      const selected = Array.from(options.selectedAtomIndices || [], Number)
+        .filter((index) => Number.isInteger(index) && index >= 0 && index < molecule.atoms.length);
+      const selectedSet = new Set(selected);
+      const selectedBonds = molecule.bonds.flatMap((bond, index) =>
+        selectedSet.has(bond.a) && selectedSet.has(bond.b) ? [index] : []);
+      const color = [0.09, 0.53, 0.72];
+      const atomColors = Object.fromEntries(selected.map((index) => [index, color]));
+      const bondColors = Object.fromEntries(selectedBonds.map((index) => [index, color]));
+      const svg = rdMol.get_svg_with_highlights(JSON.stringify({
+        width:260, height:184, atoms:selected, bonds:selectedBonds,
+        atomColors, bondColors, highlightRadius:0.27,
+      }));
+      if (typeof svg !== 'string' || !svg.includes('<svg'))
+        throw new Error('RDKit returned an invalid 2D depiction');
+      self.postMessage({
+        type:'result', id, job, svg, atomCount:molecule.atoms.length,
+        rdkitVersion:module.version?.() || null, elapsedMs:performance.now() - started,
+        platform:'WebAssembly', backend:'RDKit MolDraw2D',
+      });
+      return;
+    } finally { rdMol?.delete(); }
+  }
   if (job === 'protonation') {
     const smiles = String(options.smiles || '').trim();
     if (!smiles) throw new Error('A SMILES string is required');
@@ -235,6 +293,32 @@ async function runCalculation(message) {
           throw new Error(`RDKit ETKDGv3 conformer ${index + 1} is invalid`);
         conformers.set(positions, index * stride);
       });
+      let conformerEnergies = null;
+      let conformerForcefields = null;
+      if (job === 'conformers' && options.returnEnergies) {
+        progress(id, `Scoring ${conformerCount} conformers with MMFF94…`, 0.94, 0.78);
+        conformerEnergies = [];
+        conformerForcefields = [];
+        for (let conformer = 0; conformer < conformerCount; conformer++) {
+          const positions = parsed.conformers[conformer];
+          const candidate = {
+            ...molecule,
+            atoms:molecule.atoms.map((atom, atomIndex) => ({
+              ...atom,
+              x:positions[atomIndex * 3], y:positions[atomIndex * 3 + 1],
+              z:positions[atomIndex * 3 + 2],
+            })),
+          };
+          try {
+            const score = scoreMolBlock(module, moleculeToMolBlock(candidate));
+            conformerEnergies.push(score.energy);
+            conformerForcefields.push(score.forcefield);
+          } catch {
+            conformerEnergies.push(null);
+            conformerForcefields.push(null);
+          }
+        }
+      }
       if (job === 'embed') {
         progress(id, `Ranking ${conformerCount} embedded conformers…`, 0.96, 0.82);
         const energies = [];
@@ -286,8 +370,13 @@ async function runCalculation(message) {
         conformerSeed: parsed.randomSeed,
         pruneRmsThreshold: parsed.pruneRmsThreshold,
         elapsedMs: performance.now() - started,
+        rdkitVersion: module.version?.() || null,
         platform: 'WebAssembly', backend: 'RDKit ETKDGv3',
       };
+      if (conformerEnergies) {
+        result.conformerEnergies = conformerEnergies;
+        result.conformerForcefields = conformerForcefields;
+      }
       self.postMessage(result, [conformers.buffer]);
       return;
     }

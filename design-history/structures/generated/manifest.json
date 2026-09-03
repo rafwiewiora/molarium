@@ -1,0 +1,229 @@
+{
+  "schema": "molarium.structure-assets/v1",
+  "curatedAt": "2026-08-30T00:00:00.000Z",
+  "sourceManifestSha256": "9a5e9d4c5b3791017ab9c269173c4bcbedeeeb8e66369641e30c4e6f59edf2f0",
+  "alignment": {
+    "reference": "7GN8 chain A",
+    "mobile": "7GNR chain A",
+    "pairedAlphaCarbons": 305,
+    "rmsdAngstrom": 0.208724,
+    "rotation": [
+      [
+        0.999994049585,
+        0.00341603394,
+        -0.000481151524
+      ],
+      [
+        -0.003417671478,
+        0.999988226735,
+        -0.003444693579
+      ],
+      [
+        0.000469378669,
+        0.003446317499,
+        0.999993951271
+      ]
+    ],
+    "translation": [
+      0.192787527581,
+      -0.070726632863,
+      0.078630565271
+    ]
+  },
+  "bclxlAlignment": {
+    "reference": "3SPF chain A",
+    "mobile": "3SP7 chain A",
+    "pairedAlphaCarbons": 142,
+    "rmsdAngstrom": 1.88802,
+    "rotation": [
+      [
+        0.053855297097,
+        -0.258815331284,
+        -0.964424300434
+      ],
+      [
+        -0.842083920788,
+        -0.53083633385,
+        0.095432997517
+      ],
+      [
+        -0.536650982786,
+        0.806986623778,
+        -0.246532577397
+      ]
+    ],
+    "translation": [
+      28.738765755912,
+      21.448568568699,
+      -29.648192439854
+    ]
+  },
+  "complexes": {
+    "x1": {
+      "pdbId": "7GN8",
+      "label": "(S)-x1",
+      "ligandResidue": "RPZ A 407",
+      "proteinSphere": {
+        "center": [
+          -7.7006607294317355,
+          -7.08201102629346,
+          27.30687446988975
+        ],
+        "radius": 41.1196964400805
+      },
+      "ligandSphere": {
+        "center": [
+          -20.11,
+          5.341419354838709,
+          28.979193548387098
+        ],
+        "radius": 6.320766303616387
+      },
+      "pocketResidues": 18
+    },
+    "x38": {
+      "pdbId": "7GNR",
+      "label": "(S)-x38 / DNDI-6510",
+      "ligandResidue": "RZU A 408",
+      "alignedTo": "7GN8 chain A",
+      "proteinSphere": {
+        "center": [
+          -7.551642736486523,
+          -7.110026604729714,
+          27.282261402026947
+        ],
+        "radius": 41.32079788770721
+      },
+      "ligandSphere": {
+        "center": [
+          -20.089176470588235,
+          5.748411764705882,
+          28.953147058823532
+        ],
+        "radius": 6.549407466595341
+      },
+      "pocketResidues": 17
+    },
+    "bclxlCompound4": {
+      "pdbId": "3SPF",
+      "label": "BCL-xL compound 4",
+      "ligandResidue": "B50 A 501",
+      "proteinSphere": {
+        "center": [
+          35.106081364829414,
+          14.910203849518789,
+          -13.148762029746281
+        ],
+        "radius": 25.568667409332374
+      },
+      "ligandSphere": {
+        "center": [
+          27.99194594594594,
+          10.239135135135136,
+          -23.996513513513516
+        ],
+        "radius": 8.207868641506812
+      },
+      "pocketResidues": 12
+    },
+    "bclxlTemplate": {
+      "pdbId": "3SP7",
+      "label": "BCL-xL BM903 structural template",
+      "ligandResidue": "03B A 210",
+      "alignedTo": "3SPF chain A",
+      "proteinSphere": {
+        "center": [
+          35.22679135494595,
+          15.145890274314233,
+          -12.830080631753948
+        ],
+        "radius": 24.992743382352447
+      },
+      "ligandSphere": {
+        "center": [
+          33.6352857142857,
+          17.917444444444445,
+          -24.323428571428575
+        ],
+        "radius": 12.44693954361953
+      },
+      "pocketResidues": 25
+    }
+  },
+  "derived": {
+    "7gn8-protein.pdb": {
+      "sha256": "dca07eeec7b27ade550c8bf512b2649c9517bdf1f4cd2abfddc9215e9fbc90d9",
+      "bytes": 191053,
+      "kind": "protein"
+    },
+    "7gn8-pocket.pdb": {
+      "sha256": "6c74085d6667387c762c5d519b47ae39f02cd29a3927a0737f48991b294ffec9",
+      "bytes": 12205,
+      "kind": "pocket",
+      "cutoffAngstrom": 5
+    },
+    "7gn8-ligand.pdb": {
+      "sha256": "c76111e0e4cb907ccf493305dd8643dd69484ca66b75dd1cbefb96c58e764dec",
+      "bytes": 5077,
+      "kind": "ligand"
+    },
+    "7gnr-aligned-protein.pdb": {
+      "sha256": "80c0271346400ea0923f99262b756a9adc75d16c819685af46298c6c8502e8b2",
+      "bytes": 191863,
+      "kind": "protein"
+    },
+    "7gnr-aligned-pocket.pdb": {
+      "sha256": "a77a9c82fd9df52e0f065c3d2abb80689d5108e5100bb923bb8cee2b8662ab0d",
+      "bytes": 11314,
+      "kind": "pocket",
+      "cutoffAngstrom": 5
+    },
+    "7gnr-aligned-ligand.pdb": {
+      "sha256": "d39e9ff58842eed01c6c047843b2a0f22283c6e22f8893221af41499345e0fc3",
+      "bytes": 5563,
+      "kind": "ligand"
+    },
+    "3spf-protein.pdb": {
+      "sha256": "12a6153ccb5f0d7dfc664b35e706eb2ed0860dc3d4c17c64a7f93b69cc53955d",
+      "bytes": 92638,
+      "kind": "protein"
+    },
+    "3spf-pocket.pdb": {
+      "sha256": "ead8b54a212bf4b5218c51104cffb2f64fa9c367099a4604f0467e6e37e15ec9",
+      "bytes": 7993,
+      "kind": "pocket",
+      "cutoffAngstrom": 5
+    },
+    "3spf-ligand.pdb": {
+      "sha256": "9243aa397ad93d98f52a3300b032cb114c3293a64d94756ff52813bf43856a57",
+      "bytes": 6049,
+      "kind": "ligand"
+    },
+    "3sp7-aligned-protein.pdb": {
+      "sha256": "802448c99413a6bc5736ce723f41d0d827017127b0915480c4a72903248dee0c",
+      "bytes": 97498,
+      "kind": "protein"
+    },
+    "3sp7-aligned-pocket.pdb": {
+      "sha256": "664e93a269807af903d310c5bddbe9af5f4efa0ce682a5ab557881b5beabeb2a",
+      "bytes": 17389,
+      "kind": "pocket",
+      "cutoffAngstrom": 5
+    },
+    "3sp7-aligned-ligand.pdb": {
+      "sha256": "8b2c6d40bf257740094314f56e817ce1971f468930e424cb46ce01ebed6b06c2",
+      "bytes": 10261,
+      "kind": "ligand"
+    },
+    "7gn8-interactions.mol": {
+      "sha256": "0fe0eaa33838bff1904256279610874ff51d2d270b7943295ec4a6056386c72e",
+      "bytes": 426,
+      "kind": "interaction-lines"
+    },
+    "7gnr-aligned-interactions.mol": {
+      "sha256": "3bc273d19fc6517d685314517b5f4424cd9bb13e05d1903b1a4f4d9f1fbfbdd9",
+      "bytes": 427,
+      "kind": "interaction-lines"
+    }
+  }
+}

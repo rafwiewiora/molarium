@@ -1,0 +1,165 @@
+{
+  "schema": "molarium.structure-story/v1",
+  "id": "bclxl-fragment-linking",
+  "title": "One link transforms a weak BCL-xL binder",
+  "subtitle": "A five-state historical design series · one aligned receptor frame · reconstructed poses are labeled, not predictions",
+  "width": 1600,
+  "height": 900,
+  "fps": 18,
+  "assetManifest": "../structures/generated/bclxl-trajectory-manifest.json",
+  "sources": [
+    {
+      "label": "Design of Bcl-2 and Bcl-xL inhibitors with subnanomolar binding affinities",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3397176/"
+    },
+    { "label": "3SPF · experimental compound 4", "url": "https://www.rcsb.org/structure/3SPF" },
+    { "label": "3SP7 · common aligned structural frame", "url": "https://www.rcsb.org/structure/3SP7" }
+  ],
+  "legend": [
+    { "label": "compound 4 · experimental ligand", "color": "#247d95" },
+    { "label": "6/7/16/21 · explicitly reconstructed", "color": "#826cae" },
+    { "label": "fixed aligned 3SP7 receptor", "color": "#5f7289" }
+  ],
+  "cameras": {
+    "master": { "target": [34.165, 18.898, -24.066], "radius": 17.5, "view": [1, 0.28, 0.72] }
+  },
+  "scenes": {
+    "fixed3sp7": {
+      "label": "Fixed aligned 3SP7 display frame",
+      "models": [
+        { "ref": "protein", "path": "3sp7-aligned-protein.pdb", "representation": "cartoon", "colorScheme": "chain-id", "alpha": 0.12 },
+        { "ref": "pocket", "path": "3sp7-aligned-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.20, "sizeFactor": 0.10 }
+      ]
+    },
+    "compound4": {
+      "extends": "fixed3sp7",
+      "label": "Compound 4 · 138 µM",
+      "coordinateClass": "experimental",
+      "coordinateLabel": "3SPF ligand · aligned into the common 3SP7 display frame",
+      "bclxlState": "4"
+    },
+    "compound6": {
+      "extends": "fixed3sp7",
+      "label": "Compound 6 · <1 nM",
+      "coordinateClass": "reconstructed",
+      "coordinateLabel": "RECONSTRUCTION · constrained by aligned 3SP7",
+      "bclxlState": "6"
+    },
+    "compound7": {
+      "extends": "fixed3sp7",
+      "label": "Compound 7 · <1 nM",
+      "coordinateClass": "reconstructed",
+      "coordinateLabel": "RECONSTRUCTION · constrained by aligned 3SP7",
+      "bclxlState": "7"
+    },
+    "compound16": {
+      "extends": "fixed3sp7",
+      "label": "Compound 16 · 0.43–0.65 µM cells",
+      "coordinateClass": "reconstructed",
+      "coordinateLabel": "RECONSTRUCTION · constrained by aligned 3SP7",
+      "bclxlState": "16"
+    },
+    "compound21": {
+      "extends": "fixed3sp7",
+      "label": "Compound 21 · 61–90 nM cells",
+      "coordinateClass": "reconstructed",
+      "coordinateLabel": "RECONSTRUCTION · constrained by aligned 3SP7",
+      "bclxlState": "21"
+    }
+  },
+  "cues": [
+    {
+      "id": "compound-4-crystal",
+      "title": "1 · Start with one weak Site 1 binder",
+      "body": "Compound 4 binds BCL-xL at 138 µM. The teal ligand is experimental 3SPF; it is shown in the same aligned 3SP7 receptor frame used for every later state so the background never moves.",
+      "detail": "Experimental ligand coordinates · PDB 3SPF/B50 · common display frame disclosed",
+      "scene": "compound4", "durationMs": 4200,
+      "cameraStart": "master", "cameraEnd": "master",
+      "decisionCard": {
+        "title": "STATE 1 · STRUCTURAL START",
+        "rows": [
+          { "label": "Ligand", "value": "experimental 3SPF" },
+          { "label": "BCL-xL Ki", "value": "138 µM" },
+          { "label": "Role", "value": "Site 1 anchor", "status": "select" }
+        ],
+        "note": "The common receptor is a display convention, not a prospective prediction."
+      }
+    },
+    {
+      "id": "compound-6-linked",
+      "title": "2 · Link a second recognition element",
+      "body": "Compound 6 makes the decisive topology change: a 10.6 Å connection joins the Site 1 scaffold to a complementary Site 2 element. Affinity improves by more than four orders of magnitude.",
+      "detail": "BCL-xL Ki <1 nM · cellular IC50 still >10 µM · pose reconstructed from the 3SP7 constraint",
+      "scene": "compound6", "durationMs": 5600,
+      "cameraStart": "master", "cameraEnd": "master",
+      "decisionCard": {
+        "title": "STATE 2 · FRAGMENT LINKING",
+        "rows": [
+          { "label": "Design", "value": "10.6 Å two-site link" },
+          { "label": "Affinity", "value": ">10,000× gain", "status": "select" },
+          { "label": "Coordinates", "value": "reconstructed" }
+        ],
+        "note": "This is the hard structural leap; the movie does not disguise its reconstructed coordinates as a prediction."
+      }
+    },
+    {
+      "id": "compound-7-linker",
+      "title": "3 · Remove a linker carbonyl without losing affinity",
+      "body": "Compound 7 deletes the linker carbonyl and shortens the connection to 9.9 Å. Subnanomolar binding survives, while measurable cellular activity appears.",
+      "detail": "BCL-xL Ki <1 nM · cellular IC50 1.8–2.0 µM · reconstructed pose",
+      "scene": "compound7", "durationMs": 4800,
+      "cameraStart": "master", "cameraEnd": "master",
+      "decisionCard": {
+        "title": "STATE 3 · LINKER SIMPLIFICATION",
+        "rows": [
+          { "label": "Graph edit", "value": "carbonyl removed" },
+          { "label": "Link length", "value": "10.6 → 9.9 Å" },
+          { "label": "Cell activity", "value": "1.8–2.0 µM", "status": "select" }
+        ],
+        "note": "The chemical endpoint changes; the camera and receptor do not."
+      }
+    },
+    {
+      "id": "compound-16-truncation",
+      "title": "4 · Delete a non-interacting side chain",
+      "body": "Compound 16 truncates the solvent-facing dihydroxybutyl group to methyl. The smaller molecule keeps subnanomolar affinity and improves cellular potency roughly threefold.",
+      "detail": "BCL-xL Ki <1 nM · cellular IC50 0.43–0.65 µM · reconstructed pose",
+      "scene": "compound16", "durationMs": 4800,
+      "cameraStart": "master", "cameraEnd": "master",
+      "decisionCard": {
+        "title": "STATE 4 · BURDEN REMOVAL",
+        "rows": [
+          { "label": "Design", "value": "dihydroxybutyl → methyl" },
+          { "label": "Affinity", "value": "retained <1 nM" },
+          { "label": "Cell activity", "value": "0.43–0.65 µM", "status": "select" }
+        ],
+        "note": "This is deletion for efficiency, not another pocket-filling growth step."
+      }
+    },
+    {
+      "id": "compound-21-pocket-fill",
+      "title": "5 · Finish with a multiparameter redesign",
+      "body": "Compound 21 is not merely an ethyl addition: the shown endpoint also replaces the long carboxamide appendage with a carboxylic acid. The combined redesign reaches 61–90 nM cellular activity.",
+      "detail": "BCL-2/BCL-xL Ki <1 nM · cellular IC50 61–90 nM · reconstructed pose",
+      "scene": "compound21", "durationMs": 5400,
+      "cameraStart": "master", "cameraEnd": "master",
+      "decisionCard": {
+        "title": "STATE 5 · CELLULAR OPTIMIZATION",
+        "rows": [
+          { "label": "Design", "value": "ethyl + acid endpoint" },
+          { "label": "Affinity", "value": "retained <1 nM" },
+          { "label": "Cell activity", "value": "61–90 nM", "status": "select" }
+        ],
+        "note": "The literature series contains intermediate chemistry; this film compares the reported endpoints honestly."
+      }
+    },
+    {
+      "id": "trajectory-summary",
+      "title": "A real medicinal-chemistry success—shown with honest coordinates",
+      "body": "Link, simplify, truncate, and rebalance. The potency and cellular progression are experimental; the later 3D poses are clearly labeled reconstructions in one fixed structural frame.",
+      "detail": "4 → 6 → 7 → 16 → 21 · one camera · one receptor · one ligand per state",
+      "scene": "compound21", "durationMs": 4000,
+      "cameraStart": "master", "cameraEnd": "master"
+    }
+  ]
+}

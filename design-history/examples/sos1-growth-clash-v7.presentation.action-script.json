@@ -1,0 +1,573 @@
+{
+  "schema": "molarium.chemist-action-script/v1",
+  "label": "SOS1 growth-clash-v7 concise selected Phe890 route · visible Molarium interface",
+  "actions": [
+    {
+      "action": "designRoute.load",
+      "args": {
+        "routeId": "sos1-hit-only"
+      },
+      "caption": "Begin with the only allowed coordinates: the 5OVE/AXE hit"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "Enter Design to make the first prospective design decision"
+    },
+    {
+      "action": "protein.prepare",
+      "args": {
+        "gapPolicy": "cap",
+        "histidine": "auto",
+        "ligandPolicy": "ccd",
+        "pH": 7.4,
+        "repairMissingHeavy": true,
+        "waterPolicy": "retain"
+      },
+      "caption": "Prepare the hit complex locally with OpenFF Sage"
+    },
+    {
+      "action": "view.setDisplay",
+      "args": {
+        "representation": "cartoon",
+        "showHydrogens": false,
+        "showInteractions": false,
+        "showPocketAtoms": true,
+        "showHulls": false,
+        "showStericClashes": false,
+        "colorTheme": "design-hit",
+        "changeMarkers": "halo"
+      },
+      "caption": "Strip away visual noise so the hit and its binding pocket are easy to read"
+    },
+    {
+      "action": "view.focusComponent",
+      "args": {
+        "kind": "ligand",
+        "ordinal": 0,
+        "isolate": false
+      },
+      "caption": "Center the hit and the local pocket where every design decision will be made"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "caption": "Freeze the hit pose and its receptor contacts as the starting reference"
+    },
+    {
+      "action": "designRoute.applyStep",
+      "args": {
+        "stepId": "scaffold-rewrite"
+      },
+      "caption": "Rewrite the hit scaffold to make compound 17",
+      "capture": {
+        "changed-atoms-5": "designStep.changedAtomIds"
+      }
+    },
+    {
+      "action": "view.setDisplay",
+      "args": {
+        "colorTheme": "design-prediction"
+      },
+      "caption": "Mark the transition from experimental hit to prospective prediction"
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": {
+          "$binding": "changed-atoms-5"
+        }
+      },
+      "caption": "See exactly where the ligand graph changed"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 64,
+        "featureSeedingProtocol": "v3"
+      },
+      "expect": {
+        "refinement.selectedFeasible": true,
+        "refinement.featureGuidedSeeding.method": "molarium-edit-region-axis-seeding/v3"
+      },
+      "caption": "Search 64 restrained poses for the rewritten scaffold"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true
+      },
+      "caption": "Apply the highest-ranked compound 17 pose",
+      "capture": {
+        "changed-atoms-7": "appliedPose.changedAtomIds"
+      }
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": {
+          "$binding": "changed-atoms-7"
+        },
+        "residueLabels": [
+          {
+            "chain": "A",
+            "residueIndex": 890,
+            "label": "Phe890",
+            "tone": "gold"
+          },
+          {
+            "chain": "A",
+            "residueIndex": 898,
+            "label": "Lys898",
+            "tone": "blue"
+          }
+        ]
+      },
+      "caption": "Keep the same view: the predicted pyrazole packs between Phe890 and Lys898; no direct H-bond is detected"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "Parameterize compound 17 without moving the prediction"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "Relax compound 17 and its pocket together",
+      "capture": {
+        "changed-atoms-9": "optimization.changedAtomIds"
+      }
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": []
+      },
+      "caption": "Compare the relaxed ligand–pocket geometry in the same fixed view"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "Return to Design with the compound 17 prediction"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "caption": "Freeze compound 17 as the reference for the next design"
+    },
+    {
+      "action": "designRoute.applyStep",
+      "args": {
+        "stepId": "fragment-merge"
+      },
+      "caption": "Merge the second fragment idea to make compound 18",
+      "capture": {
+        "changed-atoms-12": "designStep.changedAtomIds"
+      }
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": {
+          "$binding": "changed-atoms-12"
+        }
+      },
+      "caption": "See exactly where the ligand graph changed"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 64,
+        "featureSeedingProtocol": "v3"
+      },
+      "expect": {
+        "refinement.selectedFeasible": true,
+        "refinement.featureGuidedSeeding.method": "molarium-edit-region-axis-seeding/v3"
+      },
+      "caption": "Search 64 restrained poses for the merged ligand"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true
+      },
+      "caption": "Apply the highest-ranked compound 18 pose",
+      "capture": {
+        "changed-atoms-14": "appliedPose.changedAtomIds"
+      }
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": {
+          "$binding": "changed-atoms-14"
+        }
+      },
+      "caption": "Compare the selected ligand pose without moving the camera"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "Parameterize compound 18 without moving the prediction"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "Relax compound 18 and its pocket together",
+      "capture": {
+        "changed-atoms-16": "optimization.changedAtomIds"
+      }
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": []
+      },
+      "caption": "Compare the relaxed ligand–pocket geometry in the same fixed view"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "Return to Design with the compound 18 prediction"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "caption": "Freeze compound 18 as the reference for ligand growth"
+    },
+    {
+      "action": "designRoute.applyStep",
+      "args": {
+        "stepId": "open-phe890-pocket"
+      },
+      "caption": "Grow compound 21—and create a clash with Phe890-in",
+      "capture": {
+        "changed-atoms-19": "designStep.changedAtomIds"
+      }
+    },
+    {
+      "action": "view.setDisplay",
+      "args": {
+        "showStericClashes": true
+      },
+      "caption": "Show the severe ligand–protein contacts created by compound 21 growth"
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": {
+          "$binding": "changed-atoms-19"
+        },
+        "residueLabels": [
+          {
+            "chain": "A",
+            "residueIndex": 890,
+            "label": "Phe890",
+            "tone": "gold"
+          }
+        ]
+      },
+      "caption": "See exactly where the ligand graph changed"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 32,
+        "receptorAtomId": "reference-5OVE:ATOM:A:PHE:890::CG:2679"
+      },
+      "expect": {
+        "sidechainRotamers.schema": "molarium.sidechain-rotamers/v1",
+        "sidechainRotamers.receptorAtomId": "reference-5OVE:ATOM:A:PHE:890::CG:2679",
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.axes": [
+          {
+            "chi": "chi1",
+            "atomNames": [
+              "N",
+              "CA",
+              "CB",
+              "CG"
+            ]
+          },
+          {
+            "chi": "chi2",
+            "atomNames": [
+              "CA",
+              "CB",
+              "CG",
+              "CD1"
+            ]
+          }
+        ]
+      },
+      "caption": "Enumerate discrete Phe890 side-chain alternatives"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "chiDegrees": [
+          -180,
+          90
+        ]
+      },
+      "expect": {
+        "sidechainRotamer.schema": "molarium.sidechain-rotamer-application/v1",
+        "sidechainRotamer.method": "canonical-chi-grid-steric-prerank-v1",
+        "sidechainRotamer.receptorAtomId": "reference-5OVE:ATOM:A:PHE:890::CG:2679",
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.selectedBy": "chiDegrees",
+        "sidechainRotamer.source": "canonical-library",
+        "sidechainRotamer.coordinateInputClass": "registered-hit-only"
+      },
+      "caption": "Choose the predicted Phe890-out branch",
+      "capture": {
+        "changed-atoms-21": "sidechainRotamer.changedAtomIds"
+      }
+    },
+    {
+      "action": "view.setDisplay",
+      "args": {
+        "showStericClashes": false
+      },
+      "caption": "The selected Phe890-out branch clears the severe contacts"
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": {
+          "$binding": "changed-atoms-21"
+        },
+        "residueLabels": [
+          {
+            "chain": "A",
+            "residueIndex": 890,
+            "label": "Phe890",
+            "tone": "gold"
+          }
+        ]
+      },
+      "caption": "See Phe890 move out of the ligand growth path"
+    },
+    {
+      "action": "pose.updateReceptorReference",
+      "args": {},
+      "caption": "Make the selected receptor branch the new pose reference"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 64,
+        "featureSeedingProtocol": "v3"
+      },
+      "expect": {
+        "refinement.selectedFeasible": true,
+        "refinement.featureGuidedSeeding.method": "molarium-edit-region-axis-seeding/v3"
+      },
+      "caption": "Test compound 21 in the opened Phe890 pocket"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true
+      },
+      "caption": "Apply the best compound 21 pose from that branch",
+      "capture": {
+        "changed-atoms-24": "appliedPose.changedAtomIds"
+      }
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": {
+          "$binding": "changed-atoms-24"
+        },
+        "residueLabels": [
+          {
+            "chain": "A",
+            "residueIndex": 890,
+            "label": "Phe890",
+            "tone": "gold"
+          }
+        ]
+      },
+      "caption": "Compare the selected ligand pose without moving the camera"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "Parameterize the coupled ligand–receptor prediction"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "Relax compound 21 and the opened pocket together",
+      "capture": {
+        "changed-atoms-26": "optimization.changedAtomIds"
+      }
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": [],
+        "residueLabels": [
+          {
+            "chain": "A",
+            "residueIndex": 890,
+            "label": "Phe890",
+            "tone": "gold"
+          }
+        ]
+      },
+      "caption": "Compare the relaxed ligand–pocket geometry in the same fixed view"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "caption": "Return to Design with the predicted open pocket"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "caption": "Freeze the predicted open pocket before the final design"
+    },
+    {
+      "action": "designRoute.applyStep",
+      "args": {
+        "stepId": "finish-bay-293"
+      },
+      "caption": "Construct the final BAY-293 graph from compound 21",
+      "capture": {
+        "changed-atoms-29": "designStep.changedAtomIds"
+      }
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": {
+          "$binding": "changed-atoms-29"
+        },
+        "residueLabels": [
+          {
+            "chain": "A",
+            "residueIndex": 890,
+            "label": "Phe890",
+            "tone": "gold"
+          }
+        ]
+      },
+      "caption": "See exactly where the ligand graph changed"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "searchChains": 64,
+        "featureSeedingProtocol": "v3"
+      },
+      "expect": {
+        "refinement.selectedFeasible": true,
+        "refinement.featureGuidedSeeding.method": "molarium-edit-region-axis-seeding/v3"
+      },
+      "caption": "Predict BAY-293 from the frozen compound 21 state"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true
+      },
+      "caption": "Apply the highest-ranked BAY-293 pose",
+      "capture": {
+        "changed-atoms-31": "appliedPose.changedAtomIds"
+      }
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": {
+          "$binding": "changed-atoms-31"
+        },
+        "residueLabels": [
+          {
+            "chain": "A",
+            "residueIndex": 890,
+            "label": "Phe890",
+            "tone": "gold"
+          }
+        ]
+      },
+      "caption": "Compare the selected ligand pose without moving the camera"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "caption": "Parameterize BAY-293 without moving the prediction"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "caption": "Relax the final predicted BAY-293 complex",
+      "capture": {
+        "changed-atoms-33": "optimization.changedAtomIds"
+      }
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": [],
+        "residueLabels": [
+          {
+            "chain": "A",
+            "residueIndex": 890,
+            "label": "Phe890",
+            "tone": "gold"
+          }
+        ]
+      },
+      "caption": "Compare the relaxed ligand–pocket geometry in the same fixed view"
+    }
+  ],
+  "sourceScript": {
+    "path": "design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json",
+    "sha256": "f7f1fcb6b3791a8a4bd445e450f188c8e08e2062bf6c270fe0e5db1d9d6e5a59",
+    "transformation": "Capture each public mutation result; focus once on the starting ligand and retain that pocket camera for all later highlights. Phe890 stays labeled with its flanking peptide context; severe clashes are shown only from compound-21 growth until the Phe890-out branch is selected. Relaxation markers are cleared because before/after geometry is compared in place. No scientific action request removed or altered."
+  }
+}

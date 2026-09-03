@@ -1,6 +1,10 @@
 #include "OpenMM.h"
 #include "openmm/LocalEnergyMinimizer.h"
+#ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
+#else
+#define EMSCRIPTEN_KEEPALIVE
+#endif
 
 #include <algorithm>
 #include <cmath>

@@ -6,6 +6,7 @@ const inlinePort = Bun.argv.find((argument) => argument.startsWith('--port='));
 const requestedPort = portFlag >= 0 ? Bun.argv[portFlag + 1] : inlinePort?.slice('--port='.length);
 const port = Number(requestedPort || Bun.env.PORT || 3000);
 const localOnly = Bun.argv.includes('--local-only') || Bun.env.MOLARIUM_LOCAL_ONLY === '1';
+const testApi = Bun.argv.includes('--test-api') || Bun.env.MOLARIUM_TEST_API === '1';
 
 const LOCAL_LAB_POLICY = [
   "default-src 'self'",
@@ -51,6 +52,9 @@ const CONTENT_TYPES = Object.freeze({
   '.json': 'application/json; charset=utf-8',
   '.map': 'application/json; charset=utf-8',
   '.md': 'text/markdown; charset=utf-8',
+  '.mp4': 'video/mp4',
+  '.png': 'image/png',
+  '.svg': 'image/svg+xml',
   '.txt': 'text/plain; charset=utf-8',
   '.wasm': 'application/wasm',
   '.wgsl': 'text/plain; charset=utf-8',
@@ -61,6 +65,8 @@ const server = Bun.serve({
   ...(localOnly ? { hostname:'127.0.0.1' } : {}),
   async fetch(request) {
     const url = new URL(request.url);
+    if (url.pathname === '/sos1-hit-to-bay293' || url.pathname === '/sos1-hit-to-bay293/')
+      return Response.redirect(`${url.origin}/?story=sos1-hit-to-bay293`, 302);
     let pathname;
     try { pathname = decodeURIComponent(url.pathname); }
     catch { return new Response('Bad request', { status:400,
@@ -73,6 +79,7 @@ const server = Bun.serve({
         allowedNetworkOrigins: localOnly ? [url.origin] : ['user-approved external services'],
         buildManifest: '/local-lab-manifest.json',
         assetBase: null,
+        testApi,
       };
       return new Response(`globalThis.MOLARIUM_RUNTIME_CONFIG = Object.freeze(${JSON.stringify(config)});\n`, {
         headers: responseHeaders('text/javascript; charset=utf-8', 'no-store'),

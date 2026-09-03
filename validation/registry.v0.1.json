@@ -1,0 +1,628 @@
+{
+  "schema": "molarium.validation-registry/v1",
+  "registryId": "molarium-validation-registry",
+  "version": "0.1.0",
+  "frozenAt": "2026-08-24",
+  "scope": "Docking workflow and high-disruption cross-runtime evidence migrated as of registry v0.1. Other historical engine tests are not counted until they receive case-level registry records.",
+  "countingRules": {
+    "proteinTarget": "One named biological target. Multiple crystal structures of the same target count once.",
+    "referenceSystem": "One unique PDB ID plus bound-ligand component ID used as a starting complex.",
+    "registeredCase": "One preregistered reference-to-product transformation, including preserved failures and negative controls.",
+    "poseInstance": "One exact atom graph and coordinate set. Multiple poses from one target are not independent systems.",
+    "softwareCheck": "One automated assertion. Check counts are never reported as molecular-system counts."
+  },
+  "headline": {
+    "registeredDockingCases": 25,
+    "distinctReferenceSystems": 18,
+    "uniqueProteinTargets": 15,
+    "casesReachingPoseSearch": 17,
+    "pairedCrystalScored": 5,
+    "nativeGpuPoseInstances": 5
+  },
+  "studies": [
+    {
+      "studyId": "bioisostere-pose-propagation-v0.1",
+      "title": "Registered bioisostere pose propagation",
+      "status": "complete",
+      "evidenceLevel": "registered workflow run with preserved failures; withheld-crystal scoring where available",
+      "executedAt": "2026-08-22T20:56:14.972Z",
+      "counts": {
+        "registeredCases": 25,
+        "distinctReferenceSystems": 18,
+        "proteinTargets": 15,
+        "reachedPoseSearch": 17,
+        "tiers": {
+          "paired-crystal": 10,
+          "prospective": 10,
+          "adversarial-negative": 5
+        },
+        "outcomes": {
+          "no-feasible-pose": 1,
+          "parameterization-unsupported": 2,
+          "preparation-blocked": 5,
+          "reference-contact-unavailable": 1,
+          "success-feasible": 12,
+          "success-infeasible-negative-control": 4
+        },
+        "pairedCrystalScored": 5
+      },
+      "metrics": {
+        "pairedCrystalTop1MedianAngstrom": 3.1626137564931347,
+        "pairedCrystalBestOfFiveMedianAngstrom": 3.1626137564931347,
+        "pairedCrystalAtOrBelow2Angstrom": 2
+      },
+      "claims": [
+        "Workflow outcomes are available for every registered case.",
+        "Five paired systems have blinded, label-mapped heavy-atom pose RMSD.",
+        "Prospective feasibility is not binding-affinity validation or a general docking-accuracy claim."
+      ],
+      "artifactIds": [
+        "dockingManifest",
+        "dockingResults",
+        "dockingReport"
+      ]
+    },
+    {
+      "studyId": "high-disruption-cross-runtime-2026-08-23",
+      "title": "High-disruption cross-runtime parity",
+      "status": "complete",
+      "evidenceLevel": "identical graphs and coordinates across browser WebGPU/WASM and pinned native CPU/GPU implementations",
+      "executedAt": "2026-08-23",
+      "counts": {
+        "proteinTargets": 1,
+        "referenceSystems": 1,
+        "analogueChemistries": 3,
+        "fullPanelPoses": 24,
+        "hashSelectedPoseInstances": 5
+      },
+      "metrics": {
+        "browserSageVsOpenmmWasmVacuumMaxEnergyDeltaKcalMol": 0.0001241858136609153,
+        "browserSageVsOpenmmWasmVacuumMaxForceRelativeRms": 0.000011620411611590664,
+        "browserSageVsOpenmmWasmObc2MaxEnergyDeltaKcalMol": 0.0002764284744642964,
+        "browserSageVsOpenmmWasmObc2MaxForceRelativeRms": 0.0000116333855863668,
+        "openmmWasmVsNativeReferenceMaxEnergyDeltaKcalMol": 2.842170943040401e-14,
+        "openmmWasmVsNativeReferenceMaxForceRelativeRms": 3.759617606058098e-15,
+        "browserAni2xVsNativeEnergyDeltaRangeKcalMol": [
+          0.00277,
+          0.06312
+        ],
+        "nativeOpenmmReferenceVsCudaEnergyDeltaRangeKjMol": [
+          0.0000429,
+          0.000111
+        ]
+      },
+      "claims": [
+        "All fixed energy and force parity gates passed for five exact 7KPA-derived poses.",
+        "The five poses represent three analogue chemistries from one protein target, not five independent systems.",
+        "The earlier disagreement was a vacuum-versus-OBC2 protocol mismatch; both solvent modes now reproduce their matched references."
+      ],
+      "artifactIds": [
+        "browserVacuum",
+        "browserObc2",
+        "openmmNative",
+        "nativeReport"
+      ]
+    },
+    {
+      "studyId": "7kpa-two-terminus-chemistry-panel-v0.1",
+      "title": "7KPA chemistry stress panel",
+      "status": "registered-partial",
+      "evidenceLevel": "frozen chemist-action scripts and validated harness; no committed complete 20-case result artifact yet",
+      "executedAt": null,
+      "counts": {
+        "registeredChemistryCases": 20,
+        "proteinTargets": 1,
+        "referenceSystems": 1,
+        "loci": {
+          "pyridone": 9,
+          "pyrrolidone": 8,
+          "dual": 3
+        }
+      },
+      "metrics": null,
+      "claims": [
+        "Twenty chemistry edit scripts are preregistered and graph-hash checked.",
+        "They are variants of one 7KPA/D84 complex and do not add twenty independent protein systems.",
+        "Until a complete result artifact is committed, this panel is not counted as a completed 20-case validation run."
+      ],
+      "artifactIds": [
+        "analoguePanel"
+      ]
+    },
+    {
+      "studyId": "7kpa-manual-contact-recapture-v0.1",
+      "title": "7KPA manual H-bond recapture panel",
+      "status": "development-smoke",
+      "evidenceLevel": "ten preregistered chemist-action scripts; one hash-checked end-to-end development replay",
+      "executedAt": "2026-08-30T18:26:36.261Z",
+      "counts": {
+        "registeredChemistryCases": 10,
+        "executedDevelopmentCases": 1,
+        "proteinTargets": 1,
+        "referenceSystems": 1,
+        "searchCandidates": 8,
+        "feasibleCandidates": 8
+      },
+      "metrics": {
+        "productGraphMatchesExpected": true,
+        "allRequiredHydrogenBondsSatisfied": true,
+        "manualDonorAcceptorDistanceAngstrom": 3.2232161295538693,
+        "manualHydrogenAcceptorDistanceAngstrom": 2.2870072250188205,
+        "manualDhaAngleDegrees": 153.61818250325143,
+        "labbookValid": true
+      },
+      "claims": [
+        "Ten explicit delete, forget, rebuild, reassert, and refine scripts are preregistered through the public Chemist Actions API.",
+        "The executed pyridone-carbonyl case reproduced its frozen product graph and all eight generated poses satisfied all four required H-bonds.",
+        "This is one development replay from one reference complex; the complete ten-case panel has not yet been executed or claimed."
+      ],
+      "artifactIds": [
+        "manualContactPanel",
+        "manualContactProtocol",
+        "manualContactSmoke"
+      ]
+    }
+  ],
+  "proteinTargets": [
+    "BACE1",
+    "BRD9",
+    "CDK2",
+    "COX-2",
+    "FXR",
+    "HIV-1 protease",
+    "PARP1",
+    "PARP2",
+    "PPAR-gamma",
+    "PTP1B",
+    "TNF-alpha",
+    "p38-alpha",
+    "thrombin",
+    "transthyretin",
+    "trypsin"
+  ],
+  "referenceSystems": [
+    "1H1Q/2A6",
+    "1H1R/6CP",
+    "1HVR/XK2",
+    "2QBS/024",
+    "2VA5/C8C",
+    "2VA6/H24",
+    "2ZFF/53U",
+    "3FLY/FLY",
+    "3PTB/BEN",
+    "4DER/AGI",
+    "4DES/57D",
+    "4R6E/3JD",
+    "4ZZY/D7N",
+    "5IGM/BMF",
+    "5Q0I/0X0",
+    "5Y2O/8N6",
+    "6COX/S58",
+    "7KPA/D84"
+  ],
+  "cases": [
+    {
+      "caseId": "paired-parp2-4zzy-d7n-to-4zzx-fsu",
+      "tier": "paired-crystal",
+      "proteinTarget": "PARP2",
+      "referenceSystem": "4ZZY/D7N",
+      "referencePdbId": "4ZZY",
+      "referenceLigandId": "D7N",
+      "productId": "FSU",
+      "transformation": "piperidinyl tail to methoxypropyl tail",
+      "terminalOutcome": "success-feasible",
+      "reachedPoseSearch": true,
+      "pairedCrystal": {
+        "analoguePdbId": "4ZZX",
+        "repeatCount": 3,
+        "top1MedianHeavyAtomRmsdAngstrom": 1.4842648453194769,
+        "top5MedianMinimumHeavyAtomRmsdAngstrom": 1.3528464686673616,
+        "top5BestObservedHeavyAtomRmsdAngstrom": 1.0913586941693296
+      }
+    },
+    {
+      "caseId": "paired-pparg-5y2o-8n6-to-5y2t-8lx",
+      "tier": "paired-crystal",
+      "proteinTarget": "PPAR-gamma",
+      "referenceSystem": "5Y2O/8N6",
+      "referencePdbId": "5Y2O",
+      "referenceLigandId": "8N6",
+      "productId": "8LX",
+      "transformation": "ethylpyridyl tail to substituted pyrimidinyl tail",
+      "terminalOutcome": "success-feasible",
+      "reachedPoseSearch": true,
+      "pairedCrystal": {
+        "analoguePdbId": "5Y2T",
+        "repeatCount": 3,
+        "top1MedianHeavyAtomRmsdAngstrom": 4.720246648877259,
+        "top5MedianMinimumHeavyAtomRmsdAngstrom": 4.720246648877259,
+        "top5BestObservedHeavyAtomRmsdAngstrom": 3.3419955549988853
+      }
+    },
+    {
+      "caseId": "paired-pparg-5y2o-8n6-to-7awc-brl",
+      "tier": "paired-crystal",
+      "proteinTarget": "PPAR-gamma",
+      "referenceSystem": "5Y2O/8N6",
+      "referencePdbId": "5Y2O",
+      "referenceLigandId": "8N6",
+      "productId": "BRL",
+      "transformation": "ethylpyridyl tail to methylaminopyridyl tail",
+      "terminalOutcome": "success-feasible",
+      "reachedPoseSearch": true,
+      "pairedCrystal": {
+        "analoguePdbId": "7AWC",
+        "repeatCount": 3,
+        "top1MedianHeavyAtomRmsdAngstrom": 3.500020830936379,
+        "top5MedianMinimumHeavyAtomRmsdAngstrom": 3.5000208309363754,
+        "top5BestObservedHeavyAtomRmsdAngstrom": 1.9050662014656423
+      }
+    },
+    {
+      "caseId": "paired-ttr-4des-57d-to-4der-agi",
+      "tier": "paired-crystal",
+      "proteinTarget": "transthyretin",
+      "referenceSystem": "4DES/57D",
+      "referencePdbId": "4DES",
+      "referenceLigandId": "57D",
+      "productId": "AGI",
+      "transformation": "phenyl hydrogen to para hydroxyl",
+      "terminalOutcome": "preparation-blocked",
+      "reachedPoseSearch": false,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "paired-ttr-4des-57d-to-4det-kmp",
+      "tier": "paired-crystal",
+      "proteinTarget": "transthyretin",
+      "referenceSystem": "4DES/57D",
+      "referencePdbId": "4DES",
+      "referenceLigandId": "57D",
+      "productId": "KMP",
+      "transformation": "flavone to dihydroxylated flavonol",
+      "terminalOutcome": "preparation-blocked",
+      "reachedPoseSearch": false,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "paired-ttr-4der-agi-to-4deu-nar",
+      "tier": "paired-crystal",
+      "proteinTarget": "transthyretin",
+      "referenceSystem": "4DER/AGI",
+      "referencePdbId": "4DER",
+      "referenceLigandId": "AGI",
+      "productId": "NAR",
+      "transformation": "flavone to flavanone",
+      "terminalOutcome": "success-feasible",
+      "reachedPoseSearch": true,
+      "pairedCrystal": {
+        "analoguePdbId": "4DEU",
+        "repeatCount": 3,
+        "top1MedianHeavyAtomRmsdAngstrom": 3.1626137564931347,
+        "top5MedianMinimumHeavyAtomRmsdAngstrom": 3.1626137564931347,
+        "top5BestObservedHeavyAtomRmsdAngstrom": 3.1626137564931347
+      }
+    },
+    {
+      "caseId": "paired-bace1-2va5-c8c-to-2va7-c27",
+      "tier": "paired-crystal",
+      "proteinTarget": "BACE1",
+      "referenceSystem": "2VA5/C8C",
+      "referencePdbId": "2VA5",
+      "referenceLigandId": "C8C",
+      "productId": "C27",
+      "transformation": "indolylethyl to methoxybiphenylethyl substituent",
+      "terminalOutcome": "preparation-blocked",
+      "reachedPoseSearch": false,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "paired-bace1-2va6-h24-to-2va7-c27",
+      "tier": "paired-crystal",
+      "proteinTarget": "BACE1",
+      "referenceSystem": "2VA6/H24",
+      "referencePdbId": "2VA6",
+      "referenceLigandId": "H24",
+      "productId": "C27",
+      "transformation": "direct aryl attachment to ethyl-linked aryl",
+      "terminalOutcome": "preparation-blocked",
+      "reachedPoseSearch": false,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "paired-cdk2-1h1q-2a6-to-1h1r-6cp",
+      "tier": "paired-crystal",
+      "proteinTarget": "CDK2",
+      "referenceSystem": "1H1Q/2A6",
+      "referencePdbId": "1H1Q",
+      "referenceLigandId": "2A6",
+      "productId": "6CP",
+      "transformation": "aniline hydrogen to meta chlorine",
+      "terminalOutcome": "success-feasible",
+      "reachedPoseSearch": true,
+      "pairedCrystal": {
+        "analoguePdbId": "1H1R",
+        "repeatCount": 3,
+        "top1MedianHeavyAtomRmsdAngstrom": 1.0571242757085266,
+        "top5MedianMinimumHeavyAtomRmsdAngstrom": 1.0571242757085266,
+        "top5BestObservedHeavyAtomRmsdAngstrom": 1.0571242757085266
+      }
+    },
+    {
+      "caseId": "paired-cdk2-1h1r-6cp-to-1oiu-n76",
+      "tier": "paired-crystal",
+      "proteinTarget": "CDK2",
+      "referenceSystem": "1H1R/6CP",
+      "referencePdbId": "1H1R",
+      "referenceLigandId": "6CP",
+      "productId": "N76",
+      "transformation": "meta chlorine to meta sulfonamide",
+      "terminalOutcome": "preparation-blocked",
+      "reachedPoseSearch": false,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-7kpa-d84-pyridone-to-cyclohexanone",
+      "tier": "prospective",
+      "proteinTarget": "TNF-alpha",
+      "referenceSystem": "7KPA/D84",
+      "referencePdbId": "7KPA",
+      "referenceLigandId": "D84",
+      "productId": null,
+      "transformation": "pyridone to cyclohexanone",
+      "terminalOutcome": "no-feasible-pose",
+      "reachedPoseSearch": true,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-parp2-4zzy-d7n-amide-to-nitrile",
+      "tier": "prospective",
+      "proteinTarget": "PARP2",
+      "referenceSystem": "4ZZY/D7N",
+      "referencePdbId": "4ZZY",
+      "referenceLigandId": "D7N",
+      "productId": null,
+      "transformation": "primary carboxamide to nitrile",
+      "terminalOutcome": "success-feasible",
+      "reachedPoseSearch": true,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-pparg-5y2o-8n6-carbonyl-to-thiocarbonyl",
+      "tier": "prospective",
+      "proteinTarget": "PPAR-gamma",
+      "referenceSystem": "5Y2O/8N6",
+      "referencePdbId": "5Y2O",
+      "referenceLigandId": "8N6",
+      "productId": null,
+      "transformation": "thiazolidinedione carbonyl to thiocarbonyl",
+      "terminalOutcome": "success-feasible",
+      "reachedPoseSearch": true,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-p38-3fly-fly-carbonyl-to-thiocarbonyl",
+      "tier": "prospective",
+      "proteinTarget": "p38-alpha",
+      "referenceSystem": "3FLY/FLY",
+      "referencePdbId": "3FLY",
+      "referenceLigandId": "FLY",
+      "productId": null,
+      "transformation": "lactam carbonyl to thiocarbonyl",
+      "terminalOutcome": "success-feasible",
+      "reachedPoseSearch": true,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-ptp1b-2qbs-024-acid-to-tetrazole",
+      "tier": "prospective",
+      "proteinTarget": "PTP1B",
+      "referenceSystem": "2QBS/024",
+      "referencePdbId": "2QBS",
+      "referenceLigandId": "024",
+      "productId": null,
+      "transformation": "carboxymethoxy acid to methyltetrazole",
+      "terminalOutcome": "success-feasible",
+      "reachedPoseSearch": true,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-thrombin-2zff-53u-amide-to-sulfonamide",
+      "tier": "prospective",
+      "proteinTarget": "thrombin",
+      "referenceSystem": "2ZFF/53U",
+      "referencePdbId": "2ZFF",
+      "referenceLigandId": "53U",
+      "productId": null,
+      "transformation": "terminal carboxamide to sulfonamide",
+      "terminalOutcome": "success-feasible",
+      "reachedPoseSearch": true,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-ptp1b-2qbs-024-ring-acid-to-tetrazole",
+      "tier": "prospective",
+      "proteinTarget": "PTP1B",
+      "referenceSystem": "2QBS/024",
+      "referencePdbId": "2QBS",
+      "referenceLigandId": "024",
+      "productId": null,
+      "transformation": "thiophene carboxylic acid to tetrazole",
+      "terminalOutcome": "success-feasible",
+      "reachedPoseSearch": true,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-brd9-5igm-bmf-carbamate-to-urea",
+      "tier": "prospective",
+      "proteinTarget": "BRD9",
+      "referenceSystem": "5IGM/BMF",
+      "referencePdbId": "5IGM",
+      "referenceLigandId": "BMF",
+      "productId": null,
+      "transformation": "ethyl carbamate to methyl urea",
+      "terminalOutcome": "reference-contact-unavailable",
+      "reachedPoseSearch": false,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-parp1-4r6e-3jd-amide-to-nitrile",
+      "tier": "prospective",
+      "proteinTarget": "PARP1",
+      "referenceSystem": "4R6E/3JD",
+      "referencePdbId": "4R6E",
+      "referenceLigandId": "3JD",
+      "productId": null,
+      "transformation": "primary carboxamide to nitrile",
+      "terminalOutcome": "parameterization-unsupported",
+      "reachedPoseSearch": false,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "prospective-fxr-5q0i-0x0-amide-to-thioamide",
+      "tier": "prospective",
+      "proteinTarget": "FXR",
+      "referenceSystem": "5Q0I/0X0",
+      "referencePdbId": "5Q0I",
+      "referenceLigandId": "0X0",
+      "productId": null,
+      "transformation": "amide to thioamide",
+      "terminalOutcome": "success-feasible",
+      "reachedPoseSearch": true,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "negative-trypsin-3ptb-ben-amidine-to-ethyl",
+      "tier": "adversarial-negative",
+      "proteinTarget": "trypsin",
+      "referenceSystem": "3PTB/BEN",
+      "referencePdbId": "3PTB",
+      "referenceLigandId": "BEN",
+      "productId": null,
+      "transformation": "amidine to ethyl",
+      "terminalOutcome": "success-infeasible-negative-control",
+      "reachedPoseSearch": true,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "negative-hivpr-1hvr-xk2-diol-to-difluoro",
+      "tier": "adversarial-negative",
+      "proteinTarget": "HIV-1 protease",
+      "referenceSystem": "1HVR/XK2",
+      "referencePdbId": "1HVR",
+      "referenceLigandId": "XK2",
+      "productId": null,
+      "transformation": "vicinal diol to vicinal difluoro",
+      "terminalOutcome": "success-infeasible-negative-control",
+      "reachedPoseSearch": true,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "negative-cox2-6cox-s58-sulfonamide-to-tertbutyl",
+      "tier": "adversarial-negative",
+      "proteinTarget": "COX-2",
+      "referenceSystem": "6COX/S58",
+      "referencePdbId": "6COX",
+      "referenceLigandId": "S58",
+      "productId": null,
+      "transformation": "sulfonamide to tert-butyl",
+      "terminalOutcome": "success-infeasible-negative-control",
+      "reachedPoseSearch": true,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "negative-tnfa-7kpa-d84-pyridone-to-phenyl",
+      "tier": "adversarial-negative",
+      "proteinTarget": "TNF-alpha",
+      "referenceSystem": "7KPA/D84",
+      "referencePdbId": "7KPA",
+      "referenceLigandId": "D84",
+      "productId": null,
+      "transformation": "pyridone to phenyl",
+      "terminalOutcome": "success-infeasible-negative-control",
+      "reachedPoseSearch": true,
+      "pairedCrystal": null
+    },
+    {
+      "caseId": "negative-parp1-4r6e-3jd-amide-to-methyl",
+      "tier": "adversarial-negative",
+      "proteinTarget": "PARP1",
+      "referenceSystem": "4R6E/3JD",
+      "referencePdbId": "4R6E",
+      "referenceLigandId": "3JD",
+      "productId": null,
+      "transformation": "primary carboxamide to methyl",
+      "terminalOutcome": "parameterization-unsupported",
+      "reachedPoseSearch": false,
+      "pairedCrystal": null
+    }
+  ],
+  "artifacts": {
+    "dockingManifest": {
+      "path": "docking/benchmark/manifest.v0.1.json",
+      "href": "./docking/benchmark/manifest.v0.1.json",
+      "bytes": 355005,
+      "sha256": "8d8a0840567321010ddd8600236b6e7ada1a177f16cbeeb22ad847bfce95e502"
+    },
+    "dockingResults": {
+      "path": "docking/benchmark/benchmark-results.v0.1.scored.json",
+      "href": "./docking/benchmark/benchmark-results.v0.1.scored.json",
+      "bytes": 63576,
+      "sha256": "a378fb2a7bf9ab95b3ca18697037f79d4decbe5ce490c33617f6e1228ebf2359"
+    },
+    "dockingReport": {
+      "path": "docking/benchmark/RESULTS.v0.1.md",
+      "href": "./docking/benchmark/RESULTS.v0.1.md",
+      "bytes": 4492,
+      "sha256": "f9c56903799f2fcdb9237c6c602e625a6d2504515721cc74e577e9c0b07b72f6"
+    },
+    "analoguePanel": {
+      "path": "docking/benchmark/7kpa-two-terminus-panel.v0.1.json",
+      "href": "./docking/benchmark/7kpa-two-terminus-panel.v0.1.json",
+      "bytes": 14614,
+      "sha256": "de08bca3c70d2542630845c0e91cbe4492bed338bb446734c78015c64a62c174"
+    },
+    "manualContactPanel": {
+      "path": "docking/benchmark/7kpa-manual-contact-panel.mjs",
+      "href": "./docking/benchmark/7kpa-manual-contact-panel.mjs",
+      "bytes": 10495,
+      "sha256": "56ff864f0cbfd1c78dcf9d04fd12d89c72298297f821f11c6587bd4f78f35c05"
+    },
+    "manualContactProtocol": {
+      "path": "docking/benchmark/7kpa-manual-contact-panel.README.md",
+      "href": "./docking/benchmark/7kpa-manual-contact-panel.README.md",
+      "bytes": 2612,
+      "sha256": "ee65b9727dc35973f595ccde8cae8f165e938fecfb2230abd1fe9b4530c1eab7"
+    },
+    "manualContactSmoke": {
+      "path": "docking/benchmark/7kpa-manual-contact-smoke.v0.1.json",
+      "href": "./docking/benchmark/7kpa-manual-contact-smoke.v0.1.json",
+      "bytes": 2917,
+      "sha256": "95f0bf7a23d90d8fa1a6a555ae0c1a85623543b8feac19bc24836e4bd10c1a08"
+    },
+    "browserVacuum": {
+      "path": "docking/validation/cloud-panel/browser-sage-openmm-validation-2026-08-23.json",
+      "href": "./docking/validation/cloud-panel/browser-sage-openmm-validation-2026-08-23.json",
+      "bytes": 6962,
+      "sha256": "57749c23d3cdcac67f9f1d6a2fbbaa71b021ad09951f361a4c33749e8ec1d240"
+    },
+    "browserObc2": {
+      "path": "docking/validation/cloud-panel/browser-sage-openmm-obc2-diagnostic-2026-08-23.json",
+      "href": "./docking/validation/cloud-panel/browser-sage-openmm-obc2-diagnostic-2026-08-23.json",
+      "bytes": 6968,
+      "sha256": "07eb6da633cabb806fe59e5307cf8b29864758cae278df92f78db2ba82c6f81d"
+    },
+    "openmmNative": {
+      "path": "docking/validation/cloud-panel/openmm-wasm-native-validation-2026-08-23.json",
+      "href": "./docking/validation/cloud-panel/openmm-wasm-native-validation-2026-08-23.json",
+      "bytes": 5081,
+      "sha256": "28b1aa6848994438832670b1af641c78f9633ec543e76f087ccf7ba9f1d3b950"
+    },
+    "nativeReport": {
+      "path": "docking/validation/cloud-panel/RESULTS-2026-08-23.md",
+      "href": "./docking/validation/cloud-panel/RESULTS-2026-08-23.md",
+      "bytes": 5669,
+      "sha256": "08008ed7983a8c1904edfd01ea7ccc845dc6c7c76925b48e3b9997cf705108da"
+    }
+  }
+}

@@ -117,7 +117,7 @@ const energies = await eng.readEnergies();   // [{bond,angle,dih,lj,coul,implici
 const positions = await eng.readAllPositions(); // packed vec4f positions for every replica
 ```
 
-Molarium's **Run → STORMM fixed-point · WebGPU ensemble** method wraps this API in a
+Molarium's **Simulate → STORMM fixed-point · WebGPU ensemble** method wraps this API in a
 module worker. The default Current molecule route first requests the complete numeric
 System from Molarium's existing OpenMM/Sage worker, then converts and replicates that
 topology. Current molecules can select OBC2/ACE implicit water; the engine computes

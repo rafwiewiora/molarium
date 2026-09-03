@@ -24,7 +24,9 @@ const appPort = 45000 + suffix;
 const debugPort = 50000 + suffix;
 const externalAppUrl = Bun.env.MOLARIUM_BENCH_URL;
 const appUrl = new URL(externalAppUrl || `http://localhost:${appPort}/`).href;
-const chromePath = Bun.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const chromePath = Bun.env.CHROME_PATH || (process.platform === 'darwin'
+  ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+  : '/usr/bin/google-chrome');
 const config = Object.freeze({
   fixtureUrl: argument('fixture') || Bun.env.ROSEMARY_BENCH_FIXTURE || './openff/rosemary-trp-cage.json',
   implicitSolvent: argument('implicit-solvent') || Bun.env.ROSEMARY_BENCH_IMPLICIT_SOLVENT || 'vacuum',
@@ -282,7 +284,7 @@ const browserSuite = String.raw`(async (config) => {
 let output;
 try {
   if (!externalAppUrl) {
-    server = Bun.spawn(['bun', 'server.js', '--port', String(appPort)], {
+    server = Bun.spawn(['bun', 'server.js', '--test-api', '--port', String(appPort)], {
       cwd: import.meta.dir,
       stdout: 'ignore',
       stderr: 'ignore',

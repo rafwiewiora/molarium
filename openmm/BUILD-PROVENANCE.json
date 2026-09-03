@@ -1,0 +1,31 @@
+{
+  "schema": "molarium.openmm-wasm-build-provenance/v1",
+  "openmm": {
+    "version": "8.2.0",
+    "sourceArchive": "https://github.com/openmm/openmm/archive/refs/tags/8.2.0.tar.gz",
+    "sourceArchiveSha256": "61bc7b9254c603de1eb3274f0007725331f10b74d0442facb80be3d468ad5977"
+  },
+  "toolchain": {
+    "emscripten": "6.0.6-git",
+    "cmake": "3.31.0"
+  },
+  "inputs": {
+    "bridgeSha256": "1479829772bcb3fab6f8230ece7189ed59a83ce8c83c0983692c6138cd0f4cd2",
+    "emscriptenPatchSha256": "a7e21fbd3d40dc0f56927db32508b1b882480b149b78c21e49d5db821428473c",
+    "serialCcmaPatchSha256": "0a995d06b19e02edf660c86514be624f4a409e19fe32861e9be0da0bcb606db7"
+  },
+  "outputs": {
+    "molarium-openmm.js": "a6eb81f1839ce85fe04e652bfad9bcf5fa5505eebb0ea7ccda47497b739f7e2e",
+    "molarium-openmm.wasm": "94e0ec3e81b6d26f52e7e42cfc823e4fcf970ebe428f497aa66db6e64d4bd307"
+  },
+  "validation": {
+    "report": "../docking/validation/cloud-panel/openmm-wasm-native-validation-2026-08-23.json",
+    "reportSha256": "28b1aa6848994438832670b1af641c78f9633ec543e76f087ccf7ba9f1d3b950",
+    "browserReport": "../docking/validation/cloud-panel/browser-sage-openmm-validation-2026-08-23.json",
+    "browserReportSha256": "57749c23d3cdcac67f9f1d6a2fbbaa71b021ad09951f361a4c33749e8ec1d240",
+    "obc2DiagnosticReport": "../docking/validation/cloud-panel/browser-sage-openmm-obc2-diagnostic-2026-08-23.json",
+    "obc2DiagnosticReportSha256": "07eb6da633cabb806fe59e5307cf8b29864758cae278df92f78db2ba82c6f81d",
+    "poseCount": 5,
+    "passed": true
+  }
+}

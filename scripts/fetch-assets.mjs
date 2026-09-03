@@ -13,6 +13,11 @@ if (manifest.schema !== 'molarium.r2-assets.v1' || !Array.isArray(manifest.files
 const origin = new URL(manifest.origin);
 if (origin.protocol !== 'https:') throw new Error('Asset origin must use HTTPS');
 const rootPrefix = `${root}/`;
+const prefixArgument = process.argv.find((argument) => argument.startsWith('--prefix='));
+const selectedPrefix = prefixArgument?.slice('--prefix='.length) || '';
+if (selectedPrefix && (selectedPrefix.startsWith('/') || selectedPrefix.includes('..')
+    || selectedPrefix.includes('\\') || !selectedPrefix.endsWith('/')))
+  throw new Error('Asset prefix must be a relative directory ending in /');
 
 async function sha256(path) {
   const hash = createHash('sha256');
@@ -28,6 +33,7 @@ for (const entry of manifest.files) {
       || !entry.key.startsWith(`${manifest.release}/`) || entry.key.includes('..')
       || /[\\?#]/.test(entry.key))
     throw new Error('Invalid R2 asset manifest entry');
+  if (selectedPrefix && !entry.source.startsWith(selectedPrefix)) continue;
   if (entry.source.startsWith('node_modules/')) continue;
   const destination = resolve(root, entry.source);
   if (!destination.startsWith(rootPrefix)) throw new Error(`Asset path escapes checkout: ${entry.source}`);

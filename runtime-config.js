@@ -7,4 +7,5 @@ globalThis.MOLARIUM_RUNTIME_CONFIG = Object.freeze({
   allowedNetworkOrigins: ['user-approved external services'],
   buildManifest: './local-lab-manifest.json',
   assetBase: null,
+  testApi: false,
 });

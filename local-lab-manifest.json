@@ -7,18 +7,33 @@
   "files": [
     {
       "path": "LICENSE",
-      "bytes": 1078,
-      "sha256": "f39fae2208edb0cfa6719e510f33bb72aec9628e7c5984c906382d341e6f7f78"
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "bytes": 5794,
-      "sha256": "80fbb97b2915a1e7e1f6e651d99b93d2feed1aa058cfa0933a35af4f996e27d7"
+      "bytes": 7541,
+      "sha256": "41fa6202cd443f4105afa534397cfd40e2c28831222b0bf197e3c2986e0b16fb"
     },
     {
       "path": "app.js",
-      "bytes": 486976,
-      "sha256": "d3922f3db79fa2d15bb46707f76efc3fe90e2c6ca4e91374130a320813181e33"
+      "bytes": 883073,
+      "sha256": "e6aa441b22714f01f7d0327dc5d95fccbbbf8cd0cbb289b7106b819e2e1d2556"
+    },
+    {
+      "path": "chemist-actions.mjs",
+      "bytes": 27874,
+      "sha256": "cd4906215552f2d8197087246cfcb5086b76ad2134696b789fc1697c036e088e"
+    },
+    {
+      "path": "CHEMIST-ACTIONS-API.md",
+      "bytes": 21965,
+      "sha256": "16ab168c0786c79d896827c9eade25fc051b5d50c65fc0136a77b50d9e938e3c"
+    },
+    {
+      "path": "DESIGNER-MOVES.md",
+      "bytes": 13007,
+      "sha256": "7449a4d94790fcb01bf4ded887d0a0117a9501d35efa0c61de02e4c380126bef"
     },
     {
       "path": "bun.lock",
@@ -27,23 +42,23 @@
     },
     {
       "path": "molarium-workspace.css",
-      "bytes": 8696,
-      "sha256": "9c0a75fc2e5eee04ee71ef7fec6a352ee4678355ffcaad99d38f9c74ac0d7a4e"
+      "bytes": 9116,
+      "sha256": "1092c62b664b87e22d59817609f294398b1a2f5cd89d7f2b11732a612c7e364a"
     },
     {
       "path": "index.html",
-      "bytes": 48417,
-      "sha256": "75010c8799ca53c6051ee88bd920fe8ee85a0e5889ed5d2cc96e3d68283eda3c"
+      "bytes": 68716,
+      "sha256": "c8855b05a3d6223609aa8fb2c116fecbba548d213c450d1eac4a244f7c2726e7"
     },
     {
       "path": "local-lab-test.js",
-      "bytes": 10542,
-      "sha256": "2805f6fd24ea975fdfedcf37f38492f282898669b3501ea22379e6eb9425c82e"
+      "bytes": 10644,
+      "sha256": "1bdec450158e22758d50a3d150c94c669f2e4c646e56b46eb85f694d38301113"
     },
     {
       "path": "package.json",
-      "bytes": 1446,
-      "sha256": "109f9e5cbfe1342bb33a0f9f7880d182a32e8f76aadb6ec7a7a6bcc378f9d7a6"
+      "bytes": 9901,
+      "sha256": "735874e3426f5829f11c2eee2ac356aea8ebcec6035ab4b0589f06454a3cc82a"
     },
     {
       "path": "protein-residue-templates.js",
@@ -52,23 +67,43 @@
     },
     {
       "path": "server.js",
-      "bytes": 4018,
-      "sha256": "48244e1438953f075da4248b67735e63752510c8f65a6f6d46e740fa44255f6e"
+      "bytes": 4365,
+      "sha256": "aa4ce1b179763101fd01002ec7d995fbe759cb5e820a06577f9870bfc20407b8"
     },
     {
       "path": "scripts/generate-local-lab-manifest.mjs",
-      "bytes": 2174,
-      "sha256": "08598dc073ea2143b818d2f1de66b9c17c973d6693d296e917aded9581cebda5"
+      "bytes": 4012,
+      "sha256": "fcc5f0fab0a27808f51a8d951bf6f6a8da32314363280ab608bde111f9e093a8"
     },
     {
       "path": "styles.css",
-      "bytes": 49619,
-      "sha256": "1357c624085ae030aa01ffe37548543f27f9e55c5a63a63f021ad6730ae4f1c8"
+      "bytes": 70266,
+      "sha256": "f75bdbee7c4355d171b74015f5ce5a933cab57d6499c39744a4aafa8ac54aee8"
+    },
+    {
+      "path": "validation/README.md",
+      "bytes": 1098,
+      "sha256": "0cf4e90ba5d4e47514d85e1443bf18b478d3cff8e2d0ca7482e4e25634630381"
+    },
+    {
+      "path": "validation/dashboard.mjs",
+      "bytes": 5645,
+      "sha256": "ccb8e7f52194b588c1090809db24fb4c874ad36a775053b96cc0827c5884a28f"
+    },
+    {
+      "path": "validation/registry.v0.1.json",
+      "bytes": 22923,
+      "sha256": "43295ca0ec2cfebee0a2cda3c5f8f0dae3ec3eedbc95dacf23be6ccdbf680a1b"
+    },
+    {
+      "path": "validation/registry.v0.2.json",
+      "bytes": 23509,
+      "sha256": "70d1ec75edbd42673244878bef0934d2dfc29ff0d1ed47d26b1eca1187a80a5f"
     },
     {
       "path": "rdkit-worker.js",
-      "bytes": 18421,
-      "sha256": "19df5fab374d52f41ac98afca7afb25ad617bbdb0b7c3e0243cc57f244a4e7ee"
+      "bytes": 23009,
+      "sha256": "40e194b7269b32861cef03e145375c1b786b9c38c126bee70f89c421343975cf"
     },
     {
       "path": "rdkit/dimorphite-sites.js",
@@ -86,9 +121,134 @@
       "sha256": "813445a8b8459f6c44e65e572d4d674d58010fe7acd225ff06e054a3105abb94"
     },
     {
+      "path": "docking/browser-adapter.mjs",
+      "bytes": 12787,
+      "sha256": "1bd4da6b6ef1a862950f54408600df36e08ec51e9ad7b7856918a06ba87d3773"
+    },
+    {
+      "path": "docking/contact-remap.mjs",
+      "bytes": 29079,
+      "sha256": "aec05b1ede90c75fa52c5c5207b21af4dea73e1db6a7169450b16b9dc45ab8b7"
+    },
+    {
+      "path": "docking/constraints.mjs",
+      "bytes": 11007,
+      "sha256": "e953159b1262fba06af64e2dd9478f68f23778a92d62ff9211153ccdf579cc9a"
+    },
+    {
+      "path": "docking/pose-propagation-scoring.mjs",
+      "bytes": 7322,
+      "sha256": "58afd67f72fb4afcc0107d217b20e73c8b458a7b06328f124a1b386f910a240e"
+    },
+    {
+      "path": "docking/pose-search-ensemble.mjs",
+      "bytes": 2423,
+      "sha256": "3c0412276d5df654fe0a56420c43efa26c25b6c2249c2faea49bf05316d58bd6"
+    },
+    {
+      "path": "docking/pose-search-worker.mjs",
+      "bytes": 718,
+      "sha256": "62cffba37a3c6b6e6646e6fc44fc0aaec7525b55f692bc324f4f1450f9e6b37e"
+    },
+    {
+      "path": "docking/sidechain-rotamers.mjs",
+      "bytes": 19346,
+      "sha256": "287f212a3466e63e3aa627f9eb5cb16e1f0fd6d6dde7598f17fca7f4164155fa"
+    },
+    {
+      "path": "docking/labbook.mjs",
+      "bytes": 10985,
+      "sha256": "31618cc9610e2ace643fb7e23f2fcfb580e91c60006b71f2919aa7c033b31713"
+    },
+    {
+      "path": "docking/protocol.mjs",
+      "bytes": 25037,
+      "sha256": "1e595f6b6848358d1056f6d3161cbe0711919863e276aeb4f118a68a12cdb502"
+    },
+    {
+      "path": "docking/receptor-score.mjs",
+      "bytes": 7428,
+      "sha256": "be6de7ef72fe573255403129a24dac65ad34a69e012352c7e16c39ab6859ca95"
+    },
+    {
+      "path": "docking/reference-core.mjs",
+      "bytes": 7706,
+      "sha256": "699fe700f9e6a7772a146f06714e55999cb67334fb66ad6a2aa01ec82b47db57"
+    },
+    {
+      "path": "docking/torsion-search.mjs",
+      "bytes": 11402,
+      "sha256": "b5f95084d92a1bffb80d77b91e17749e977e6df577915c8bccc8216daa51b670"
+    },
+    {
+      "path": "docking/workflow.mjs",
+      "bytes": 8264,
+      "sha256": "5a7447b10be5b30eac9d89107a357f30145c9fc8d39ba33a08193e8a6d9ae15b"
+    },
+    {
+      "path": "docking/benchmark/manifest.v0.1.json",
+      "bytes": 355005,
+      "sha256": "8d8a0840567321010ddd8600236b6e7ada1a177f16cbeeb22ad847bfce95e502"
+    },
+    {
+      "path": "docking/benchmark/benchmark-results.v0.1.scored.json",
+      "bytes": 63576,
+      "sha256": "a378fb2a7bf9ab95b3ca18697037f79d4decbe5ce490c33617f6e1228ebf2359"
+    },
+    {
+      "path": "docking/benchmark/RESULTS.v0.1.md",
+      "bytes": 4492,
+      "sha256": "f9c56903799f2fcdb9237c6c602e625a6d2504515721cc74e577e9c0b07b72f6"
+    },
+    {
+      "path": "docking/benchmark/7kpa-two-terminus-panel.v0.1.json",
+      "bytes": 14614,
+      "sha256": "de08bca3c70d2542630845c0e91cbe4492bed338bb446734c78015c64a62c174"
+    },
+    {
+      "path": "docking/benchmark/7kpa-manual-contact-panel.mjs",
+      "bytes": 10495,
+      "sha256": "56ff864f0cbfd1c78dcf9d04fd12d89c72298297f821f11c6587bd4f78f35c05"
+    },
+    {
+      "path": "docking/benchmark/7kpa-manual-contact-panel.README.md",
+      "bytes": 3260,
+      "sha256": "e28be4393bcc7826326885a145ddebad95f7828659146250e5fbaa5b7de80c2f"
+    },
+    {
+      "path": "docking/benchmark/7kpa-manual-contact-smoke.v0.1.json",
+      "bytes": 2917,
+      "sha256": "95f0bf7a23d90d8fa1a6a555ae0c1a85623543b8feac19bc24836e4bd10c1a08"
+    },
+    {
+      "path": "docking/benchmark/7kpa-manual-contact-results.psiblue.v0.1.json",
+      "bytes": 12189,
+      "sha256": "c28fa7e598654499f93fcdf64f68d767095a39838d36fa627986e43afef7813e"
+    },
+    {
+      "path": "docking/validation/cloud-panel/browser-sage-openmm-validation-2026-08-23.json",
+      "bytes": 6962,
+      "sha256": "57749c23d3cdcac67f9f1d6a2fbbaa71b021ad09951f361a4c33749e8ec1d240"
+    },
+    {
+      "path": "docking/validation/cloud-panel/browser-sage-openmm-obc2-diagnostic-2026-08-23.json",
+      "bytes": 6968,
+      "sha256": "07eb6da633cabb806fe59e5307cf8b29864758cae278df92f78db2ba82c6f81d"
+    },
+    {
+      "path": "docking/validation/cloud-panel/openmm-wasm-native-validation-2026-08-23.json",
+      "bytes": 5081,
+      "sha256": "28b1aa6848994438832670b1af641c78f9633ec543e76f087ccf7ba9f1d3b950"
+    },
+    {
+      "path": "docking/validation/cloud-panel/RESULTS-2026-08-23.md",
+      "bytes": 5669,
+      "sha256": "08008ed7983a8c1904edfd01ea7ccc845dc6c7c76925b48e3b9997cf705108da"
+    },
+    {
       "path": "openmm-worker.js",
-      "bytes": 21106,
-      "sha256": "77cc3deee1e05b1aaf11681d1de123a491313749ee2e09dffc38169e23c52348"
+      "bytes": 27458,
+      "sha256": "b8eb728e136fa6dcd201c22fc3a98d9ff4a443ef995f3b0401fbabce8549ee50"
     },
     {
       "path": "openmm/molarium-openmm.js",
@@ -97,8 +257,8 @@
     },
     {
       "path": "openmm/molarium-openmm.wasm",
-      "bytes": 905116,
-      "sha256": "1711ccdae3f89b1667223d6e47182c5bbed05c78f6efbdd472ae700a93200a97"
+      "bytes": 905839,
+      "sha256": "94e0ec3e81b6d26f52e7e42cfc823e4fcf970ebe428f497aa66db6e64d4bd307"
     },
     {
       "path": "webgpu-worker.js",
@@ -206,9 +366,59 @@
       "sha256": "5f4f5e70f01164f9c82a811d53c34a78ac4c6e6070fcaec0ebcafd046d205735"
     },
     {
+      "path": "assets/media/sos1-designer-moves-molarium-interface.mp4",
+      "bytes": 3036951,
+      "sha256": "071b7622d2bda301e0c8e029da4d940d9608869013be33f7099c6992ce838591"
+    },
+    {
+      "path": "assets/media/sos1-designer-moves-molarium-interface.render-manifest.json",
+      "bytes": 84909,
+      "sha256": "c9fa86947e706a99475bad7675842b1f49e9a3501f90dbdbc4a5885377d3d5a9"
+    },
+    {
+      "path": "assets/molarium-logo.svg",
+      "bytes": 1997,
+      "sha256": "8070371aa4ed720e3c8339db1ed286632a127068211dc3525d94244f3757ba80"
+    },
+    {
       "path": "assets/molarium-mark.svg",
-      "bytes": 1404,
-      "sha256": "4c0dc207ae8746986c55897d1c5943c857d06734566fc60b7a9f71eaf9a3d23f"
+      "bytes": 1593,
+      "sha256": "52b492bfc572b09c55d339b31665c6563120a8b1aa3e842aa43c3d3f4e7aa8ad"
+    },
+    {
+      "path": "design-history/interface-story.mjs",
+      "bytes": 5213,
+      "sha256": "a95a9de9359c582fd6a01154fb40b7976f473c051534c9a90bee1efd619e3fd8"
+    },
+    {
+      "path": "design-history/integrity.mjs",
+      "bytes": 2048,
+      "sha256": "51db00571be74c77dd1d7bbb0ae00fee91eb952713357b4666a624bf00feacf2"
+    },
+    {
+      "path": "design-history/ledger.mjs",
+      "bytes": 22271,
+      "sha256": "5121689a0f35473b2f1112c9db13dda63fdfd4778b665f0ae53eaf493cbd373f"
+    },
+    {
+      "path": "design-history/live-campaign.mjs",
+      "bytes": 15174,
+      "sha256": "3d3a89711f806532a22fbdb5b67e110591a4223f86d3ac1a91ed6fd445a20c8d"
+    },
+    {
+      "path": "design-history/live-campaign-store.mjs",
+      "bytes": 6425,
+      "sha256": "66df49e9208d3c50ace6be263fce50eab596b6eebe6f4b01bae49f13912b17d6"
+    },
+    {
+      "path": "design-history/replay.mjs",
+      "bytes": 13047,
+      "sha256": "5d8783713f095825ada2ed995fd7c19c8d726170de35c187073b5ab11134a9c7"
+    },
+    {
+      "path": "design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json",
+      "bytes": 9078,
+      "sha256": "f7f1fcb6b3791a8a4bd445e450f188c8e08e2062bf6c270fe0e5db1d9d6e5a59"
     }
   ]
 }

@@ -1,4 +1,5 @@
 import { mkdtemp, rm } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -9,7 +10,12 @@ const appPort = Number(Bun.env.MOLARIUM_TEST_PORT) || 54000 + portSeed;
 const debugPort = Number(Bun.env.MOLARIUM_TEST_DEBUG_PORT) || 56000 + portSeed;
 const externalAppUrl = Bun.env.MOLARIUM_TEST_URL;
 const appUrl = externalAppUrl || `http://localhost:${appPort}/`;
-const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const productionApiBoundary = Bun.env.MOLARIUM_TEST_SCOPE === 'chemist-actions-production-boundary';
+const chromePath = Bun.env.CHROME_PATH || (process.platform === 'darwin'
+  ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+  : '/usr/bin/google-chrome');
+const chromePlatformArgs = process.platform === 'linux'
+  ? ['--no-sandbox', '--disable-dev-shm-usage'] : [];
 const profile = await mkdtemp(join(tmpdir(), 'molarium-browser-test-'));
 let server;
 let chrome;
@@ -17,12 +23,21 @@ const preparationFixture = Bun.env.MOLARIUM_PREPARATION_PDB
   ? { pdb: await Bun.file(Bun.env.MOLARIUM_PREPARATION_PDB).text(),
     ccd: Bun.env.MOLARIUM_PREPARATION_CCD ? await Bun.file(Bun.env.MOLARIUM_PREPARATION_CCD).text() : null,
     ccdId: Bun.env.MOLARIUM_PREPARATION_CCD_ID || 'LIG',
+    waterPolicy: Bun.env.MOLARIUM_PREPARATION_WATER_POLICY || 'exclude',
     parameterize: Bun.env.MOLARIUM_PREPARATION_PARAMETERIZE === '1' }
   : null;
+const openmmPosePacketText = Bun.env.MOLARIUM_OPENMM_POSE_PACKET
+  ? await Bun.file(Bun.env.MOLARIUM_OPENMM_POSE_PACKET).text() : null;
+const openmmPosePacket = openmmPosePacketText ? JSON.parse(openmmPosePacketText) : null;
+const openmmPosePacketSha256 = openmmPosePacketText
+  ? createHash('sha256').update(openmmPosePacketText).digest('hex') : null;
+const openmmPoseOptions = Bun.env.MOLARIUM_OPENMM_POSE_OPTIONS
+  ? JSON.parse(Bun.env.MOLARIUM_OPENMM_POSE_OPTIONS)
+  : { implicitSolvent:'vacuum', constraintMode:'none', nonbondedCutoffNm:0 };
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function waitFor(check, timeout = 10000) {
+async function waitFor(check, timeout = 10000, dependency = 'browser test dependency') {
   const started = Date.now();
   while (Date.now() - started < timeout) {
     try {
@@ -31,7 +46,7 @@ async function waitFor(check, timeout = 10000) {
     } catch { /* retry while processes start */ }
     await delay(100);
   }
-  throw new Error('Timed out waiting for browser test dependency');
+  throw new Error(`Timed out waiting for ${dependency}`);
 }
 
 class DevToolsClient {
@@ -70,6 +85,13 @@ class DevToolsClient {
 
 const browserSuite = String.raw`(async () => {
   const externalPreparationFixture = ${JSON.stringify(preparationFixture)};
+  const externalOpenmmPosePacket = ${JSON.stringify(openmmPosePacket)};
+  const externalOpenmmPosePacketSha256 = ${JSON.stringify(openmmPosePacketSha256)};
+  const externalOpenmmPoseOptions = ${JSON.stringify(openmmPoseOptions)};
+  const captureDockingUi = ${JSON.stringify(Boolean(Bun.env.MOLARIUM_TEST_SCREENSHOT_DOCKING))};
+  const exportStrainFixture = ${JSON.stringify(Boolean(Bun.env.MOLARIUM_EXPORT_STRAIN_FIXTURE))};
+  const diagnoseLactamPose = ${JSON.stringify(Boolean(Bun.env.MOLARIUM_DIAGNOSE_7KPA_LACTAM))};
+  const testScope = ${JSON.stringify(Bun.env.MOLARIUM_TEST_SCOPE || '')};
   const checks = [];
   let optimizationMetrics = null;
   let rdkitMetrics = null;
@@ -82,6 +104,16 @@ const browserSuite = String.raw`(async () => {
   };
   const check = (condition, label, details = '') => {
     checks.push({ label, passed: Boolean(condition), details });
+  };
+  const waitForHistoryAction = async (action, afterSequence = 0) => {
+    const chemist = await window.MolariumChemistActionsReady;
+    for (let attempt = 0; attempt < 100; attempt++) {
+      const record = chemist.history().find((entry) =>
+        entry.sequence > afterSequence && entry.action === action && entry.status !== 'running');
+      if (record) return record;
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    }
+    return null;
   };
   const compareForces = (candidate, reference) => {
     if (!Array.isArray(candidate) || !Array.isArray(reference) || candidate.length !== reference.length || !candidate.length)
@@ -97,8 +129,303 @@ const browserSuite = String.raw`(async () => {
     const rmsReference = Math.sqrt(squaredReference / reference.length);
     return { rmsError, rmsReference, relativeRms: rmsError / Math.max(1e-12, rmsReference), maximumError };
   };
+  if (testScope === 'chemist-actions-production-boundary') {
+    const chemist = await window.MolariumChemistActionsReady;
+    check(chemist === window.MolariumChemistActions
+      && chemist.schema === 'molarium.chemist-actions/v1'
+      && Object.isFrozen(chemist),
+    'production exposes the frozen Chemist Actions API');
+    check(!Object.hasOwn(window, 'molariumTest'),
+      'production does not install the privileged regression harness');
+    check([...document.querySelectorAll('.mode-bar button')].map((button) => button.textContent.trim())
+      .join('|') === 'View|Design|Simulate',
+    'production exposes the View, Design and Simulate mode labels');
+    check(typeof window.captureCurrentDockingReference === 'undefined'
+      && typeof window.runBrowserConstrainedDocking === 'undefined'
+      && typeof window.applySelectedAtomChemistry === 'undefined',
+    'module scope keeps internal modeling functions off window');
+    return { passed:checks.filter((item) => item.passed).length,
+      total:checks.length, failed:checks.filter((item) => !item.passed),
+      optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics,
+      rosemaryMetrics, preparationMetrics:null };
+  }
   const api = window.molariumTest;
   check(Boolean(api), 'test API is available');
+  if (testScope === 'openmm-worker-smoke') {
+    api.load('CC');
+    let energy = null;
+    try { energy = await api.calculateCurrent('energy', 'openmm'); }
+    catch (error) { check(false, 'a fresh browser worker initializes OpenMM WebAssembly', error.stack || error.message); }
+    if (energy) check(Number.isFinite(energy.finalEnergy)
+      && energy.forcefield === 'OpenFF Sage 2.1.0'
+      && energy.platform === 'Reference',
+    'a fresh browser worker initializes OpenMM WebAssembly', JSON.stringify(energy));
+    const failed = checks.filter((item) => !item.passed);
+    return { passed:checks.length - failed.length, total:checks.length, failed,
+      optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,
+      preparationMetrics:null };
+  }
+  if (testScope === 'openmm-pose-packet') {
+    check(externalOpenmmPosePacket?.schema === 'molarium.analogue-pose-panel/v1'
+      && Array.isArray(externalOpenmmPosePacket.poses),
+    'the OpenMM pose validation packet has the expected schema');
+    const poseMetrics = [];
+    for (const pose of externalOpenmmPosePacket.poses || []) {
+      api.loadObject(pose.molecule);
+      const validationOptions = externalOpenmmPoseOptions;
+      const reference = await api.calculateCurrent('energy', 'openmm', validationOptions);
+      const sage = await api.calculateCurrent('energy', 'webgpu', validationOptions);
+      const force = compareForces(sage.forces, reference.forces);
+      const absoluteEnergyDeltaKcalMol = Math.abs(sage.finalEnergy - reference.finalEnergy);
+      const gate = { passed:absoluteEnergyDeltaKcalMol <= 1e-2
+          && force?.relativeRms <= 1e-3,
+        maximumAbsoluteEnergyDelta:1e-2, energyUnit:'kcal/mol',
+        maximumForceRelativeRms:1e-3 };
+      check(gate.passed, pose.id + ': Sage WebGPU matches OpenMM WASM',
+        JSON.stringify({ absoluteEnergyDeltaKcalMol, force }));
+      poseMetrics.push({ id:pose.id, atomCount:pose.molecule.atoms.length,
+        openmmVersion:reference.openmmVersion, openmmPlatform:reference.platform,
+        openmmWasmSha256:reference.openmmWasmSha256,
+        numericSystemSha256:reference.numericSystemSha256,
+        parameterizedSystemSha256:reference.parameterizedSystemSha256,
+        inputPositionsJsonSha256:reference.inputPositionsJsonSha256,
+        implicitSolvent:reference.implicitSolvent,
+        constraintMode:reference.constraintMode,
+        constraintCount:reference.constraintCount,
+        cutoffNm:reference.cutoffNm,
+        sagePlatform:sage.platform, sageSourceSha256:sage.sourceSha256,
+        openmmPotentialEnergyKcalMol:reference.finalEnergy,
+        sagePotentialEnergyKcalMol:sage.finalEnergy, absoluteEnergyDeltaKcalMol,
+        forceRmsDelta:force?.rmsError ?? null,
+        forceMaxAbsDelta:force?.maximumError ?? null,
+        forceRelativeRms:force?.relativeRms ?? null, forceDeltaUnit:'kJ/mol/nm', gate });
+    }
+    const failed = checks.filter((item) => !item.passed);
+    return { passed:checks.length - failed.length, total:checks.length, failed,
+      openmmPoseMetrics:{ schema:'molarium.browser-sage-openmm-validation/v1',
+        source:{ packetSha256:externalOpenmmPosePacketSha256,
+          runtimeOptions:externalOpenmmPoseOptions },
+        gate:{ passed:poseMetrics.every((entry) => entry.gate.passed),
+          poseCount:poseMetrics.length }, poses:poseMetrics },
+      optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,
+      preparationMetrics:null };
+  }
+  if (testScope === 'chemist-actions') {
+    const chemist = await window.MolariumChemistActionsReady;
+    check(chemist === window.MolariumChemistActions
+      && chemist.schema === 'molarium.chemist-actions/v1'
+      && Object.isFrozen(chemist),
+    'the browser exposes one frozen, versioned Chemist Actions API');
+    const described = chemist.describe();
+    const completeActionFamilies = [
+      'session.loadStructure','session.loadIdentifier','session.loadFixture','session.clear','session.share',
+      'interface.setPanelOpen','interface.openProjectInfo','interface.presentDesignerStep','view.setComponentVisibility',
+      'view.showAllComponents','view.reset','view.focusResidue','view.clearFocus','view.setCamera',
+      'protein.predict','protein.cancelPrediction','ligand.enumerateProtonation','ligand.applyProtonation',
+      'geometry.setInternalCoordinate','geometry.translateAtoms','fragment.stage','fragment.attach',
+      'pose.setEditCleanup','pose.clearReference','pose.remapContact','calculation.run',
+      'calculation.tuneReplicas','calculation.selectFrame','calculation.selectReplica',
+      'calculation.selectConformer','calculation.setPlayback','calculation.setConformerView',
+      'campaign.import','campaign.export','designerScript.load','designerScript.loadRegistered',
+      'designerScript.play','designerScript.step','designerScript.restart','designerScript.inspect',
+      'designerScript.export',
+    ];
+    check(described.guarantee.includes('no arbitrary code')
+      && described.actions['chemistry.finish']
+      && !described.actions['test.loadObject'],
+    'the public action manifest contains chemist routes and no fixture or internal-code route');
+    check(completeActionFamilies.every((action) => described.actions[action]),
+    'the public manifest exposes load, view, design, simulation, campaign and replay action families');
+    check([...document.querySelectorAll('.mode-bar button')].map((button) => button.textContent.trim())
+      .join('|') === 'View|Design|Simulate',
+    'the mode bar presents View, Design and Simulate');
+    await chemist.execute({ action:'interface.setPanelOpen',
+      args:{ panelId:'load-toggle', open:false } });
+    check(document.querySelector('#load-body').classList.contains('hidden')
+      && document.querySelector('#load-toggle').getAttribute('aria-expanded') === 'false',
+    'the public panel action updates the same disclosure state as a human click');
+    await chemist.execute({ action:'interface.setPanelOpen',
+      args:{ panelId:'load-toggle', open:true } });
+    const loadedEthane = await chemist.execute({ action:'session.loadIdentifier',
+      args:{ value:'CC', kind:'smiles' } });
+    check(loadedEthane.result.load?.kind === 'smiles'
+      && loadedEthane.result.load?.protonationStateCount >= 1,
+    'the public identifier action uses the complete 3D and protonation workflow');
+    const campaignId = 'browser-human-clicks-' + Date.now().toString(36);
+    await chemist.execute({ action:'campaign.create', args:{ campaignId,
+      title:'Human click provenance', initialCommitMessage:'Starting ethane' } });
+    let sequence = chemist.history().at(-1)?.sequence || 0;
+    document.querySelector('.mode-bar [data-mode="build"]').click();
+    const humanMode = await waitForHistoryAction('view.setMode', sequence);
+    sequence = humanMode?.sequence || sequence;
+    document.querySelector('#build-tool-tabs [data-tool="select"]').click();
+    const humanTool = await waitForHistoryAction('build.setTool', sequence);
+    sequence = humanTool?.sequence || sequence;
+    document.querySelector('#hydrogen-toggle').click();
+    const humanDisplay = await waitForHistoryAction('view.setDisplay', sequence);
+    check(humanMode?.args.mode === 'build' && humanTool?.args.tool === 'select'
+      && typeof humanDisplay?.args.showHydrogens === 'boolean',
+    'representative human mode, tool and display clicks execute the same public actions');
+    const humanCommit = await chemist.execute({ action:'campaign.commitCurrent',
+      args:{ message:'Commit audited human controls' } });
+    const exportedHumanCampaign = await chemist.execute({ action:'campaign.export', args:{} });
+    const campaign = JSON.parse(exportedHumanCampaign.result.campaignExport.serialized);
+    const actionScriptId = humanCommit.result.campaignCommit.actionScriptId;
+    const committedActions = campaign.objects.actionScripts[actionScriptId]?.actions || [];
+    check(committedActions.some((entry) => entry.action === 'view.setMode')
+      && committedActions.some((entry) => entry.action === 'build.setTool')
+      && committedActions.some((entry) => entry.action === 'view.setDisplay'),
+    'human UI clicks are included in the action script of a campaign commit',
+    JSON.stringify(committedActions));
+    await chemist.execute({ action:'campaign.close', args:{} });
+    const focusedMolecule = await chemist.execute({ action:'view.focusComponent',
+      args:{ kind:'molecule', ordinal:0, isolate:false } });
+    check(focusedMolecule.result.focusedComponent?.kind === 'molecule'
+      && api.structureComponents().focusedComponentId
+        === focusedMolecule.result.focusedComponent.componentId,
+    'the public focus action uses the same visible Components zoom state');
+    const display = await chemist.execute({ action:'view.setDisplay',
+      args:{ showHydrogens:false, showInteractions:false, showHulls:false } });
+    check(display.result.display?.showHydrogens === false
+      && display.result.display?.showInteractions === false
+      && display.result.display?.showHulls === false,
+    'the public display action drives the same visible Display Options state');
+    await chemist.execute({ requestId:'browser-mode', action:'view.setMode', args:{ mode:'build' } });
+    await chemist.execute({ requestId:'browser-tool', action:'build.setTool', args:{ tool:'select' } });
+    const initial = (await chemist.inspect({ scope:'ligand', maximumAtoms:20 })).result;
+    const carbonIds = initial.atoms.filter((atom) => atom.element === 'C').map((atom) => atom.atomId);
+    const carbonBond = initial.bonds.find((bond) => carbonIds.every((id) => bond.atomIds.includes(id)));
+    check(carbonIds.length === 2 && carbonBond?.order === 1
+      && initial.totalAtomCount === 8 && initial.atoms.every((atom) => atom.atomId),
+    'agents inspect persistent identities and the chemist-visible molecular graph');
+    await chemist.execute({ action:'selection.replace', args:{ atomIds:carbonIds } });
+    const staged = await chemist.execute({ requestId:'browser-double-bond',
+      action:'chemistry.setBond', args:{ order:2 } });
+    check(staged.result.pendingChemistry?.editCount === 1,
+      'a public bond edit enters the same pending-chemistry transaction as a UI edit');
+    const finished = await chemist.execute({ requestId:'browser-finish', action:'chemistry.finish' });
+    const ethene = (await chemist.inspect({ scope:'ligand', maximumAtoms:20 })).result;
+    check(finished.result.validation?.valid && !ethene.pendingChemistry
+      && ethene.totalAtomCount === 6
+      && ethene.bonds.some((bond) => carbonIds.every((id) => bond.atomIds.includes(id))
+        && bond.order === 2),
+    'Finish chemistry reconciles and validates ethene through the public route');
+    await chemist.execute({ action:'history.undo' });
+    const undone = (await chemist.inspect({ scope:'ligand', maximumAtoms:20 })).result;
+    check(undone.totalAtomCount === 8
+      && undone.bonds.some((bond) => carbonIds.every((id) => bond.atomIds.includes(id))
+        && bond.order === 1),
+    'the public Undo route restores the committed chemical graph');
+    const added = await chemist.execute({ action:'chemistry.addAtom',
+      args:{ attachedToAtomId:carbonIds[0], element:'O' } });
+    check(typeof added.result.addedAtomId === 'string'
+      && added.result.addedAtomIds.includes(added.result.addedAtomId),
+    'the public Add-atom route returns the new persistent identity');
+    await chemist.execute({ action:'chemistry.finish' });
+    const ethanol = (await chemist.inspect({ scope:'ligand', maximumAtoms:20 })).result;
+    check(ethanol.atoms.some((atom) => atom.atomId === added.result.addedAtomId
+      && atom.element === 'O')
+      && ethanol.bonds.some((bond) => bond.atomIds.includes(carbonIds[0])
+        && bond.atomIds.includes(added.result.addedAtomId)),
+    'the public Add-atom route uses the same validated graph edit as the visible 2D Add tool');
+    api.load('CCC');
+    await chemist.execute({ action:'view.setMode', args:{ mode:'build' } });
+    const propane = (await chemist.inspect({ scope:'ligand', maximumAtoms:20 })).result;
+    const propaneCarbons = propane.atoms.filter((atom) => atom.element === 'C');
+    const degrees = new Map(propaneCarbons.map((atom) => [atom.atomId,
+      propane.bonds.filter((bond) => bond.atomIds.includes(atom.atomId)
+        && bond.atomIds.some((id) => id !== atom.atomId
+          && propaneCarbons.some((carbon) => carbon.atomId === id))).length]));
+    const endpoints = [...degrees].filter(([, degree]) => degree === 1).map(([id]) => id);
+    await chemist.execute({ action:'chemistry.createBond',
+      args:{ atomIds:endpoints, order:1 } });
+    await chemist.execute({ action:'chemistry.finish' });
+    const cyclopropane = (await chemist.inspect({ scope:'ligand', maximumAtoms:20 })).result;
+    check(endpoints.length === 2 && cyclopropane.bonds.some((bond) =>
+      endpoints.every((id) => bond.atomIds.includes(id))),
+    'the public Create-bond route closes a ring through the same validated 2D Bond operation');
+    const pheAtom = (atomName, x, y, z, extra = {}) => ({ record:'ATOM',
+      residueName:'PHE', chain:'A', residueIndex:890, insertionCode:'', element:'C',
+      atomName, x, y, z, ...extra });
+    const rotamerFixture = { name:'Phe rotamer action fixture', smiles:'protein–ligand complex',
+      charge:0, multiplicity:1, source:{ format:'pdb', pdbId:'ROT1' }, atoms:[
+        pheAtom('N', -1.1, 0, 0, { element:'N' }), pheAtom('CA', 0, 0, 0),
+        pheAtom('C', 0, -1.4, 0), pheAtom('O', 0, -2.5, 0, { element:'O' }),
+        pheAtom('CB', 1.1, .7, 0), pheAtom('CG', 2.25, 0, .35),
+        pheAtom('CD1', 3.35, .68, .45), pheAtom('CE1', 4.48, .06, .78),
+        pheAtom('CZ', 4.52, -1.25, 1.02), pheAtom('CE2', 3.43, -1.94, .92),
+        pheAtom('CD2', 2.30, -1.32, .59),
+        { record:'HETATM', residueName:'LIG', chain:'L', residueIndex:1,
+          insertionCode:'', atomName:'C1', element:'C', x:3.30, y:.70, z:.47 },
+      ], bonds:[[0,1],[1,2],[2,3],[1,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,5]]
+        .map(([a,b]) => ({ a,b,order:1 })) };
+    api.loadObject(rotamerFixture);
+    await chemist.execute({ action:'view.setMode', args:{ mode:'build' } });
+    await chemist.execute({ action:'build.setTool', args:{ tool:'select' } });
+    const rotamerGraph = (await chemist.inspect({ scope:'all', includeCoordinates:true,
+      maximumAtoms:100 })).result;
+    const pheCg = rotamerGraph.atoms.find((atom) => atom.residueName === 'PHE'
+      && atom.residueIndex === 890 && atom.atomName === 'CG');
+    await chemist.execute({ action:'selection.replace', args:{ atomIds:[pheCg.atomId] } });
+    const enumerated = await chemist.execute({ action:'pose.enumerateSidechainRotamers', args:{
+      receptorAtomId:pheCg.atomId, maximumCandidates:32 } });
+    const branches = enumerated.result.sidechainRotamers;
+    check(branches.schema === 'molarium.sidechain-rotamers/v1'
+      && branches.residue.residueName === 'PHE' && branches.axes.length === 2
+      && branches.candidates.length >= 8
+      && branches.candidates.every((candidate) => /^[a-f0-9]{64}$/.test(candidate.coordinateSha256))
+      && !branches.candidates.some((candidate) => candidate.positions)
+      && !document.querySelector('#sidechain-rotamer-tools').classList.contains('hidden')
+      && !document.querySelector('#sidechain-rotamer-results').classList.contains('hidden'),
+    'the public API enumerates hashed Phe chi branches through the visible Design control without returning coordinates',
+    JSON.stringify(branches));
+    const appliedRotamer = await chemist.execute({ action:'pose.applySidechainRotamer',
+      args:{ coordinateSha256:branches.candidates[0].coordinateSha256,
+        expectedInputCoordinateSha256:branches.inputCoordinateSha256,
+        expectedSelectedCoordinateSha256:branches.candidates[0].coordinateSha256 } });
+    const rotamerSource = api.current().molecule.source.sidechainRotamerApplications?.at(-1);
+    check(appliedRotamer.result.sidechainRotamer.selectedCoordinateSha256
+        === branches.candidates[0].coordinateSha256
+      && rotamerSource?.selectedCoordinateSha256 === branches.candidates[0].coordinateSha256
+      && rotamerSource?.inputCoordinateSha256 === branches.inputCoordinateSha256
+      && rotamerSource?.selectedBy === 'coordinateSha256'
+      && document.querySelector('#sidechain-rotamer-results').classList.contains('hidden'),
+    'applying a public rotamer branch records input and output hashes and clears the stale ensemble',
+    JSON.stringify(appliedRotamer.result.sidechainRotamer));
+    await chemist.execute({ action:'history.undo' });
+    const moveFile = new File([JSON.stringify({
+      schema:'molarium.chemist-action-script/v1', label:'Browser designer-move smoke',
+      actions:[{ action:'session.inspect', args:{ scope:'ligand', maximumAtoms:20 } }],
+    })], 'designer-moves.json', { type:'application/json' });
+    const moveTransfer = new DataTransfer(); moveTransfer.items.add(moveFile);
+    const moveInput = document.querySelector('#designer-move-file');
+    Object.defineProperty(moveInput, 'files', { value:moveTransfer.files, configurable:true });
+    moveInput.dispatchEvent(new Event('change', { bubbles:true }));
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const replayButton = document.querySelector('#replay-designer-moves');
+    replayButton.click();
+    for (let attempt = 0; attempt < 40
+      && document.querySelector('#export-designer-replay').disabled; attempt++)
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    check(document.querySelector('#designer-move-status').textContent.includes('1 replayable move')
+      && !document.querySelector('#export-designer-replay').disabled,
+    'the visible Designer moves panel imports JSON and replays it through the public Chemist Actions API');
+    let rejected = '';
+    try { await chemist.execute({ action:'internal.scorePose', args:{} }); }
+    catch (error) { rejected = error.message; }
+    check(rejected.includes('Unknown chemist action'),
+      'the public API rejects arbitrary internal-function access');
+    const history = chemist.history();
+    check(history.some((record) => record.requestId === 'browser-double-bond'
+      && record.action === 'chemistry.setBond' && record.status === 'completed')
+      && history.every((record, index) => record.sequence === index + 1
+        && record.startedAt && record.completedAt && Number.isFinite(record.durationMs)),
+    'every accepted browser action has an ordered, timestamped audit record');
+    const failed = checks.filter((item) => !item.passed);
+    return { passed:checks.length - failed.length, total:checks.length, failed,
+      optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,
+      preparationMetrics:null };
+  }
   const headerDestinations = [...document.querySelectorAll('[data-project-panel]')]
     .map((link) => link.textContent.trim());
   check(headerDestinations.join('|') === 'Methods|Validation|Credits',
@@ -110,16 +437,23 @@ const browserSuite = String.raw`(async () => {
     && githubLink.querySelector('svg'),
     'header exposes the public Molarium GitHub repository with an accessible icon link');
   check(document.querySelector('.app-brand-mark[data-molarium-mark]')?.tagName === 'svg'
+    && document.querySelector('.app-brand-mark [data-molarium-flask]')
+    && document.querySelector('.app-brand-mark [data-molarium-foam]')
+    && document.querySelector('.app-brand-mark [data-molarium-letter]')
     && document.querySelector('.app-brand-name')?.textContent === 'MOLARIUM'
     && document.querySelector('link[rel="icon"]')?.getAttribute('href') === './assets/molarium-mark.svg',
-    'header inlines the original Molarium mark while the favicon uses the matching asset');
+    'header inlines the Molarium flask-and-M mark while the favicon uses the matching asset');
+  check(document.querySelector('.viewer-hint .viewer-hint-mark[data-molarium-mark]')
+    && !document.querySelector('.viewer-hint .hint-molecule'),
+    'blank viewer uses the branded Molarium mark');
   check(document.querySelector('.calculation-loader svg[data-molarium-mark]')
     && !document.querySelector('.calculation-glyph'),
-    'calculation overlay uses the branded Molarium loader instead of the legacy molecular glyph');
+    'calculation overlay uses the branded Molarium loader');
   const launchMol = await (await fetch('./assets/lsd-launch.mol')).text();
   check(launchMol.includes(' 49 52') && launchMol.includes('M  END'),
     'launch scene ships the authoritative 49-atom PubChem LSD conformer');
   document.querySelector('[data-project-panel="credits"]').click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   check(document.querySelector('#project-info-dialog').open
     && !document.querySelector('[data-project-section="credits"]').classList.contains('hidden')
     && document.querySelector('[data-project-section="credits"]').textContent.includes('Interface design inspired by Atomiverse')
@@ -131,32 +465,68 @@ const browserSuite = String.raw`(async () => {
     'credits link the pinned Dimorphite-DL protonation-site notice');
   check(document.querySelector('[data-project-section="credits"] a[href="./LICENSE"]')
     && document.querySelector('[data-project-section="credits"]').textContent.includes('Molarium original code'),
-    'credits expose Molarium\'s MIT license');
+    'credits expose Molarium\'s Apache-2.0 license');
   check(document.querySelector('[data-project-section="credits"]').textContent.includes('OpenAI’s Sol')
     && document.querySelector('[data-project-section="credits"]').textContent.includes('scientific-reasoning assistance'),
     'credits acknowledge OpenAI Sol development assistance');
-  const sideCards = [...document.querySelectorAll('.panel > .card')];
+  document.querySelector('[data-project-panel="validation"]').click();
+  const validationRoot = document.querySelector('#validation-dashboard');
+  for (let attempt = 0; attempt < 50 && validationRoot.dataset.validationMounted !== 'true'; attempt++)
+    await new Promise(resolve => setTimeout(resolve, 100));
+  check(document.querySelector('#project-info-dialog').classList.contains('validation-open')
+    && !document.querySelector('[data-project-section="validation"]').classList.contains('hidden'),
+    'Validation opens the evidence-ledger dashboard');
+  check(validationRoot.querySelector('[data-validation-count="reference-systems"]')?.textContent === '18'
+    && validationRoot.querySelector('[data-validation-count="cases"]')?.textContent === '25'
+    && validationRoot.querySelector('[data-validation-count="targets"]')?.textContent === '15'
+    && validationRoot.querySelector('[data-validation-count="crystal-scored"]')?.textContent === '5',
+    'validation dashboard separates reference systems, cases, targets and crystal-scored pairs');
+  check(validationRoot.querySelectorAll('[data-validation-tier]').length === 25,
+    'validation dashboard preserves all 25 registered case outcomes');
+  check(validationRoot.textContent.includes('Registered · partial')
+    && validationRoot.textContent.includes('do not add twenty independent protein systems'),
+    'validation dashboard labels the 20-case single-system chemistry panel as partial');
+  const registryResponse = await fetch('./validation/registry.v0.2.json');
+  const registry = await registryResponse.json();
+  check(registryResponse.ok && registry.schema === 'molarium.validation-registry/v1'
+    && registry.cases.length === 25
+    && Object.values(registry.artifacts).every(entry => /^[a-f0-9]{64}$/.test(entry.sha256)),
+    'machine-readable validation registry exposes case records and source hashes');
+  const sideCards = [...document.querySelectorAll('.panel > .card, .panel-scroll-stack > .card')];
+  const collapsibleSideCards = sideCards.filter((card) =>
+    !card.classList.contains('story-transport-card'));
   const generatedDisclosures = [...document.querySelectorAll('[data-generated-card-disclosure]')];
-  check(sideCards.length === 13
-    && sideCards.every((card) => card.querySelector(':scope > .card-heading.disclosure')),
-    'every sidebar card in View, Build and Run has a collapse control', String(sideCards.length));
-  check(generatedDisclosures.length === 8, 'all eight previously fixed-open sidebar cards are collapsible',
+  check([...document.querySelectorAll('.mode-bar button')].map((button) => button.textContent.trim())
+    .join('|') === 'View|Design|Simulate',
+    'the public mode bar uses View, Design and Simulate while retaining stable data-mode values');
+  check(sideCards.length === 15 && collapsibleSideCards.length === 14
+    && collapsibleSideCards.every((card) =>
+      card.querySelector(':scope > .card-heading.disclosure')),
+    'every non-transport sidebar card in View, Design and Simulate has a collapse control',
+    String(sideCards.length));
+  check(generatedDisclosures.length === 9,
+    'all nine previously fixed-open sidebar cards are collapsible',
     String(generatedDisclosures.length));
-  const generatedDisclosureRoundTrip = generatedDisclosures.every((toggle) => {
+  let generatedDisclosureRoundTrip = true;
+  for (const toggle of generatedDisclosures) {
     const body = document.getElementById(toggle.getAttribute('aria-controls'));
     toggle.click();
+    await new Promise(resolve => setTimeout(resolve, 0));
     const closed = toggle.getAttribute('aria-expanded') === 'false' && body.classList.contains('hidden');
     toggle.click();
-    return closed && toggle.getAttribute('aria-expanded') === 'true' && !body.classList.contains('hidden');
-  });
+    await new Promise(resolve => setTimeout(resolve, 0));
+    generatedDisclosureRoundTrip = generatedDisclosureRoundTrip && closed
+      && toggle.getAttribute('aria-expanded') === 'true' && !body.classList.contains('hidden');
+  }
   check(generatedDisclosureRoundTrip, 'generated sidebar arrows collapse and restore their own card bodies');
   const projectLicenseResponse = await fetch('./LICENSE');
   const projectLicenseText = await projectLicenseResponse.text();
   check(projectLicenseResponse.ok
     && projectLicenseResponse.headers.get('content-type')?.startsWith('text/plain')
-    && projectLicenseText.startsWith('MIT License')
-    && projectLicenseText.includes('Copyright (c) 2026 Molarium contributors'),
-    'server publishes the complete Molarium MIT license as plain text');
+    && projectLicenseText.startsWith('                                 Apache License')
+    && projectLicenseText.includes('Version 2.0, January 2004')
+    && projectLicenseText.includes('END OF TERMS AND CONDITIONS'),
+    'server publishes the complete Molarium Apache License 2.0 as plain text');
   document.querySelector('#project-info-dialog').close();
   const rmsdReference = [0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3];
   const rmsdRigidTransform = [4, -2, 7, 4, -1, 7, 2, -2, 7, 4, -2, 10];
@@ -210,6 +580,7 @@ const browserSuite = String.raw`(async () => {
   const proteinRow = componentRows.find((row) => row.querySelector('strong')?.textContent.includes('Protein'));
   const waterRow = componentRows.find((row) => row.querySelector('strong')?.textContent.includes('water'));
   waterRow?.querySelector('[data-component-action="zoom"]')?.click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   const waterZoom = api.structureComponents();
   const waterCamera = api.viewerState();
   const waterAtom = api.current().molecule.atoms.find((atom) => atom.residueName === 'HOH');
@@ -222,11 +593,13 @@ const browserSuite = String.raw`(async () => {
   'component Zoom frames the selection without hiding the rest of the structure',
   JSON.stringify({ components:waterZoom, camera:waterCamera.center, atom:waterAtom }));
   proteinRow?.querySelector('[data-component-action="only"]')?.click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   const proteinOnly = api.structureComponents();
   check(proteinOnly.components.find((component) => component.kind === 'protein')?.visible
     && !proteinOnly.components.find((component) => component.kind === 'water')?.visible,
   'component Only isolates the selection as a separate explicit action', JSON.stringify(proteinOnly));
   document.querySelector('#components-reset').click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   check(document.querySelector('#hydrogen-toggle').disabled
     && document.querySelector('#hydrogen-toggle-text').textContent.includes('none loaded')
     && document.querySelector('#interaction-toggle-text').textContent.includes('no H loaded'),
@@ -356,8 +729,10 @@ const browserSuite = String.raw`(async () => {
     'pocket protein carbons inherit their chain color while ligand carbons use the ligand accent',
     JSON.stringify({ protein:api.atomStyle(4), ligand:api.atomStyle(13) }));
   document.querySelector('#interaction-toggle').click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   check(!api.renderDiagnostics().showInteractions, 'H-bond and pi-stack display option switches overlays off');
   document.querySelector('#interaction-toggle').click();
+  await new Promise(resolve => setTimeout(resolve, 0));
   check(api.renderDiagnostics().showInteractions && document.querySelector('#interaction-toggle').checked,
     'H-bond and pi-stack display option switches overlays back on');
   const contactOnlyPocket = api.setPocketAtomMode('contacts');
@@ -386,6 +761,664 @@ const browserSuite = String.raw`(async () => {
     && ligandOnlyView.hydrogenBonds.length === 0,
   'pocket toggle collapses cartoon atom detail back to the ligand only', JSON.stringify(ligandOnlyView));
   api.setPocketAtoms(true);
+  const dockingFixture = {
+    name:'Molarium ConstraintDock browser fixture', smiles:'protein + flexible analogue', charge:0, multiplicity:1,
+    atoms:[
+      { element:'N', x:-2, y:0, z:0, record:'ATOM', atomName:'NZ', residueName:'LYS', chain:'A', residueIndex:1 },
+      { element:'H', x:-1, y:0, z:0, record:'ATOM', atomName:'HZ1', residueName:'LYS', chain:'A', residueIndex:1 },
+      { element:'O', x:0.8, y:0, z:0, record:'HETATM', atomName:'O1', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'C', x:1.8, y:0, z:0, record:'HETATM', atomName:'C1', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'C', x:2.8, y:0.8, z:0, record:'HETATM', atomName:'C2', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'C', x:2.8, y:-0.8, z:0, record:'HETATM', atomName:'C3', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'C', x:3.8, y:0.8, z:0, record:'HETATM', atomName:'C4', residueName:'DME', chain:'B', residueIndex:2 },
+      { element:'F', x:4.8, y:0.8, z:0, record:'HETATM', atomName:'F1', residueName:'DME', chain:'B', residueIndex:2 },
+    ],
+    bonds:[{ a:0, b:1, order:1 }, { a:2, b:3, order:2 },
+      { a:3, b:4, order:1 }, { a:4, b:5, order:1 }, { a:5, b:3, order:1 },
+      { a:4, b:6, order:1 }, { a:6, b:7, order:1 }],
+    parameterization:{ forcefield:'OpenFF Sage 2.1.0 browser-test fixture', chargeModel:'test charges',
+      sourceSha256:'browser-test', system:{
+        particles:[14, 1, 16, 12, 12, 12, 12, 19].map((mass_amu, index) => ({ index, mass_amu })),
+        constraints:[], bonds:[], angles:[], torsions:[], exceptions:[],
+        nonbonded:[
+          { index:0, charge_e:0.3, sigma_nm:0.325, epsilon_kj:0.7 },
+          { index:1, charge_e:0.1, sigma_nm:0.1, epsilon_kj:0.05 },
+          { index:2, charge_e:-0.3, sigma_nm:0.296, epsilon_kj:0.8 },
+          { index:3, charge_e:-0.05, sigma_nm:0.34, epsilon_kj:0.4 },
+          { index:4, charge_e:-0.05, sigma_nm:0.34, epsilon_kj:0.4 },
+          { index:5, charge_e:-0.05, sigma_nm:0.34, epsilon_kj:0.4 },
+          { index:6, charge_e:0.1, sigma_nm:0.34, epsilon_kj:0.4 },
+          { index:7, charge_e:-0.1, sigma_nm:0.30, epsilon_kj:0.2 },
+        ],
+      } },
+  };
+  const valenceCompleteDockingFixture = structuredClone(dockingFixture);
+  [
+    { parent:4, x:2.8, y:1.8, z:0 },
+    { parent:5, x:2.8, y:-1.8, z:.8 },
+    { parent:5, x:2.8, y:-1.8, z:-.8 },
+    { parent:6, x:3.8, y:1.6, z:.8 },
+    { parent:6, x:3.8, y:1.6, z:-.8 },
+  ].forEach((entry, ordinal) => {
+    const index = valenceCompleteDockingFixture.atoms.length;
+    valenceCompleteDockingFixture.atoms.push({ element:'H', x:entry.x, y:entry.y, z:entry.z,
+      record:'HETATM', atomName:'H' + (ordinal + 1), residueName:'DME', chain:'B', residueIndex:2 });
+    valenceCompleteDockingFixture.bonds.push({ a:entry.parent, b:index, order:1 });
+    valenceCompleteDockingFixture.parameterization.system.particles.push({ index, mass_amu:1 });
+    valenceCompleteDockingFixture.parameterization.system.nonbonded.push({ index, charge_e:0,
+      sigma_nm:0.1, epsilon_kj:0.05 });
+  });
+  if (testScope === 'manual-hbond-api') {
+    api.loadObject(valenceCompleteDockingFixture);
+    const chemist = await window.MolariumChemistActionsReady;
+    await chemist.execute({ action:'view.setMode', args:{ mode:'build' } });
+    await chemist.execute({ action:'build.setTool', args:{ tool:'select' } });
+    await chemist.execute({ action:'pose.captureReference', args:{ mode:'propagate' } });
+    const captured = (await chemist.inspect({ scope:'pocket', includeCoordinates:true,
+      maximumAtoms:100 })).result;
+    const original = captured.contacts.find((contact) => contact.hydrogenBond.receptorRole === 'donor');
+    const oldOxygen = captured.atoms.find((atom) => atom.atomName === 'O1' && atom.residueName === 'DME');
+    const carbonylCarbon = captured.atoms.find((atom) => atom.atomName === 'C1' && atom.residueName === 'DME');
+    const receptorDonor = captured.atoms.find((atom) => atom.atomName === 'NZ' && atom.residueName === 'LYS');
+    check(Boolean(original && oldOxygen && carbonylCarbon && receptorDonor)
+      && captured.totalAtomCount < valenceCompleteDockingFixture.atoms.length + 1,
+    'pocket inspection exposes persistent contact participants without arbitrary private state');
+    await chemist.execute({ action:'selection.replace', args:{ atomIds:[oldOxygen.atomId] } });
+    await chemist.execute({ action:'chemistry.deleteAtom' });
+    await chemist.execute({ action:'chemistry.finish' });
+    const unavailable = (await chemist.inspect({ scope:'pocket', maximumAtoms:100 })).result
+      .contacts.find((contact) => contact.contactId === original.contactId);
+    check(unavailable && !unavailable.available,
+      'deleting the original ligand feature makes its captured H-bond unavailable');
+    await chemist.execute({ action:'pose.forgetContact',
+      args:{ contactId:original.contactId } });
+    const added = await chemist.execute({ action:'chemistry.addAtom',
+      args:{ attachedToAtomId:carbonylCarbon.atomId, element:'O' } });
+    await chemist.execute({ action:'chemistry.createBond', args:{
+      atomIds:[carbonylCarbon.atomId, added.result.addedAtomId], order:2 } });
+    await chemist.execute({ action:'chemistry.finish' });
+    const asserted = await chemist.execute({ action:'pose.addContact', args:{
+      ligandAtomId:added.result.addedAtomId, receptorAtomId:receptorDonor.atomId,
+      ligandRole:'acceptor' } });
+    const rebuilt = (await chemist.inspect({ scope:'pocket', includeCoordinates:true,
+      maximumAtoms:100 })).result;
+    const manual = rebuilt.contacts.find((contact) =>
+      contact.contactId === asserted.result.contact.contactId);
+    check(rebuilt.contacts.length === 1 && manual?.required && manual?.available
+      && manual.origin?.kind === 'user-added-hydrogen-bond-hypothesis'
+      && manual.hydrogenBond.participants.acceptor.atomId === added.result.addedAtomId,
+    'a designer can forget an obsolete H-bond and assert the rebuilt acceptor through public actions',
+    JSON.stringify(manual));
+    const refinement = await chemist.execute({ action:'pose.refine', args:{ searchChains:8 } });
+    const labbook = api.dockingLabbook();
+    check(refinement.result.refinement.candidates >= 1
+      && labbook.selections.contactAmendments?.map((entry) => entry.kind).join(',') === 'forgotten,added'
+      && labbook.events.some((event) => event.stage === 'contact-hypothesis-amendments')
+      && labbook.selections.hydrogenBonds.some((entry) => entry.origin?.kind
+        === 'user-added-hydrogen-bond-hypothesis'),
+    'manual contact refinement is feature-biased and records its full amendment provenance');
+    const failed = checks.filter((item) => !item.passed);
+    return { passed:checks.length - failed.length, total:checks.length, failed,
+      optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,
+      preparationMetrics:null };
+  }
+  api.loadObject(dockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('selected-core');
+  const dockingSelection = api.setDockingSelection([3, 4, 5]);
+  const buildToolLayout = [...document.querySelectorAll('#build-tool-tabs .build-tool-choice')].map((choice) => {
+    const button = choice.querySelector('[data-tool]');
+    const info = choice.querySelector('.build-tool-info');
+    const buttonRect = button.getBoundingClientRect();
+    const infoRect = info.getBoundingClientRect();
+    return {
+      label:button.textContent.trim(), height:buttonRect.height,
+      infoPosition:getComputedStyle(info).position,
+      infoInsideButton:infoRect.top >= buttonRect.top - 0.5 && infoRect.bottom <= buttonRect.bottom + 0.5,
+    };
+  });
+  check(!document.querySelector('#docking-workbench').classList.contains('hidden')
+    && dockingSelection.captureDisabled === false
+    && dockingSelection.status.includes('3 core atoms')
+    && document.querySelector('#docking-workbench').previousElementSibling?.id === 'build-tool-tabs'
+    && document.querySelectorAll('#build-tool-tabs [data-tool]').length === 3
+    && document.querySelectorAll('#build-tool-tabs .build-tool-info [aria-describedby]').length === 3
+    && buildToolLayout.every((entry) => entry.infoPosition === 'absolute' && entry.infoInsideButton)
+    && Math.max(...buildToolLayout.map((entry) => entry.height))
+      - Math.min(...buildToolLayout.map((entry) => entry.height)) < 0.5
+    && document.querySelector('#build-right-panel > .generated-card-heading span')?.textContent === 'Design workspace',
+  'prepared protein-ligand complexes expose a compact core-constrained docking setup',
+  JSON.stringify({ dockingSelection, buildToolLayout }));
+  let dockingReference = null;
+  try { dockingReference = await api.captureDockingReference(); }
+  catch (error) { check(false, 'browser captures the ligand core and explicit cross H-bond', error.message); }
+  if (dockingReference) check(dockingReference.coreAtomIds.length === 3
+    && dockingReference.ligandAtomCount === 6
+    && dockingReference.receptorAtomCount === 2
+    && dockingReference.hydrogenBonds.length === 1
+    && dockingReference.hydrogenBonds[0].receptorRole === 'donor',
+  'browser captures the ligand core and explicit cross H-bond', JSON.stringify(dockingReference));
+  const editedDockingLigand = api.addElementCurrent('F', 6);
+  check(editedDockingLigand.atoms === 9 && !api.current().molecule.parameterization
+    && document.querySelector('#docking-status').textContent.includes('3 core atoms'),
+  'an in-browser ligand edit invalidates stale complex parameters but preserves the docking reference',
+  JSON.stringify(editedDockingLigand));
+  let dockingRun = null;
+  try { dockingRun = await api.runConstrainedDocking({ conformerCount:4, seed:20260819, torsionSteps:32 }); }
+  catch (error) { check(false, 'browser completes deterministic constrained docking with a verified labbook', error.message); }
+  if (dockingRun) {
+    const dockingLabbook = api.dockingLabbook();
+    const validationSystem = api.dockingValidationNumericSystem();
+    check(dockingRun.candidates >= 1 && dockingRun.feasible >= 1
+      && dockingRun.selected.feasible && Number.isFinite(dockingRun.selected.scoreKcalMol)
+      && dockingRun.selected.coreRmsdAngstrom < 1e-12
+      && dockingRun.selected.refinement.rotatableBondCount >= 1
+      && dockingRun.selected.refinement.proposals === 32
+      && dockingRun.labbook.valid && dockingRun.coordinatePayloadIncluded === false
+      && !JSON.stringify(dockingLabbook).includes('"positions"')
+      && dockingLabbook.inputs.ligand.atoms === 7
+      && dockingLabbook.events.some((event) => event.stage === 'method-decision')
+      && dockingLabbook.events.some((event) => event.stage === 'in-pocket-torsion-search')
+      && dockingLabbook.events.findIndex((event) => event.stage === 'in-pocket-torsion-search')
+        < dockingLabbook.events.findIndex((event) => event.stage === 'constraint-audit-and-ranking')
+      && validationSystem.atomIds.length === 7
+      && validationSystem.system.particles.length === 7
+      && validationSystem.system.nonbonded.length === 7
+      && validationSystem.forcefield.includes('Sage')
+      && /^[a-f0-9]{64}$/.test(validationSystem.sourceSha256)
+      && document.querySelectorAll('.docking-pose').length >= 1
+      && document.querySelector('#docking-score-note').textContent.includes('not') === false,
+    'browser completes deterministic constrained docking with a verified coordinate-free audit',
+    JSON.stringify(dockingRun));
+    const dockingReplay = await api.runConstrainedDocking({ conformerCount:4, seed:20260819, torsionSteps:32 });
+    check(dockingReplay.selectedCoordinatesSha256 === dockingRun.selectedCoordinatesSha256
+      && Math.abs(dockingReplay.selected.scoreKcalMol - dockingRun.selected.scoreKcalMol) < 1e-12,
+    'same docking seed reproduces the selected coordinates and score bit for bit',
+    JSON.stringify({ first:dockingRun.selectedCoordinatesSha256,
+      replay:dockingReplay.selectedCoordinatesSha256,
+      scoreDifference:dockingReplay.selected.scoreKcalMol - dockingRun.selected.scoreKcalMol }));
+    const proteinBeforeDockingApply = api.current().molecule.atoms.slice(0, 2)
+      .map((atom) => [atom.x, atom.y, atom.z]);
+    const appliedDocking = await api.applyDockingPose(0);
+    const proteinAfterDockingApply = appliedDocking.molecule.atoms.slice(0, 2)
+      .map((atom) => [atom.x, atom.y, atom.z]);
+    check(JSON.stringify(proteinBeforeDockingApply) === JSON.stringify(proteinAfterDockingApply)
+      && appliedDocking.molecule.source.docking.protocol === 'molarium-constraint-dock-1',
+    'applying a docking pose moves only the mapped ligand and records protocol provenance');
+  }
+  api.loadObject(dockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('selected-core');
+  api.setDockingSelection([3, 4, 5]);
+  await api.captureDockingReference();
+  await api.deleteAtomCurrent(2);
+  const unavailableContact = document.querySelector('#docking-hbond-list label.unavailable');
+  check(unavailableContact?.textContent.includes('atom removed')
+    && unavailableContact.querySelector('input')?.disabled
+    && !unavailableContact.querySelector('input')?.checked,
+  'a captured contact whose ligand atom was deleted is disabled without unsafe remapping',
+  unavailableContact?.textContent || 'missing unavailable contact');
+  let omittedContactRun = null;
+  try { omittedContactRun = await api.runConstrainedDocking({ conformerCount:2, seed:91, torsionSteps:8 }); }
+  catch (error) { check(false, 'docking continues after an unavailable contact is explicitly omitted', error.message); }
+  if (omittedContactRun) {
+    const omittedLabbook = api.dockingLabbook();
+    check(omittedContactRun.candidates >= 1
+      && omittedLabbook.selections.omittedHydrogenBonds?.[0]?.reason === 'ligand-atom-removed'
+      && omittedLabbook.outcome.omittedHydrogenBonds?.[0]?.reason === 'ligand-atom-removed',
+    'unavailable reference contacts are recorded in the coordinate-free labbook',
+    JSON.stringify(omittedLabbook.selections.omittedHydrogenBonds));
+  }
+  api.loadObject(dockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  const propagationSetup = api.setDockingMode('propagate');
+  check(propagationSetup.captureDisabled === false
+    && propagationSetup.status.includes('Begin analogue design')
+    && document.querySelector('#capture-docking-reference').textContent.includes('Begin analogue design'),
+  'reference-pose propagation requires no manual core selection', JSON.stringify(propagationSetup));
+  const promptedEditPromise = api.stageBondCurrent(3, 4, 1);
+  await new Promise((resolve) => setTimeout(resolve, 50));
+  const analogueDesignDialog = document.querySelector('#analogue-design-dialog');
+  const promptOpenedBeforeMutation = analogueDesignDialog.open
+    && api.chemistryTransaction() === null;
+  document.querySelector('#confirm-analogue-design').click();
+  const promptedEdit = await promptedEditPromise;
+  check(promptOpenedBeforeMutation && !analogueDesignDialog.open
+    && promptedEdit && api.chemistryTransaction()?.editCount === 1
+    && document.querySelector('#capture-docking-reference').classList.contains('hidden')
+    && !document.querySelector('#clear-docking-reference').classList.contains('hidden')
+    && !document.querySelector('#docking-cleanup-field').classList.contains('hidden'),
+  'the first ligand edit explicitly confirms and records the analogue-design reference before mutation',
+  JSON.stringify({ promptOpenedBeforeMutation, transaction:api.chemistryTransaction() }));
+  api.discardChemistryCurrent();
+  const propagationReference = await api.captureDockingReference();
+  const cleanupDefault = api.setDockingEditCleanup('preserve-reference');
+  api.addElementCurrent('F', 6);
+  check(propagationReference.mode === 'pose-propagation'
+    && propagationReference.coreAtomIds.length === 6
+    && cleanupDefault.visible && cleanupDefault.mode === 'preserve-reference'
+    && document.querySelector('#docking-status').textContent.includes('6 unchanged atoms fixed'),
+  'recorded edits automatically inherit every surviving reference heavy atom',
+  JSON.stringify(propagationReference));
+  let propagationRun = null;
+  try { propagationRun = await api.runConstrainedDocking({ conformerCount:2, seed:20260819,
+    torsionSteps:4, fixedRelaxIterations:4 }); }
+  catch (error) { check(false, 'browser propagates and relaxes an edit-derived pose', error.message); }
+  if (propagationRun) {
+    const propagationLabbook = api.dockingLabbook();
+    check(propagationRun.mode === 'pose-propagation'
+      && propagationRun.selected.coreRmsdAngstrom < 1e-12
+      && propagationRun.selected.refinement?.relaxation?.method.includes('fixed-scaffold')
+      && propagationRun.selected.refinement.relaxation.stepScale === 1e-4
+      && propagationRun.selected.refinement.relaxation
+        .maximumDisplacementAngstromPerIteration === 0.01
+      && propagationLabbook.protocol.id === 'molarium-pose-propagation-1'
+      && propagationLabbook.protocol.version === '0.9.0'
+      && propagationRun.selected.refinement.method
+        === 'molarium-restraint-biased-internal-coordinate-search/v3'
+      && propagationRun.selected.refinement.captureFeasible
+      && propagationRun.selected.refinement.physicalRefinementAttempted
+      && propagationRun.selected.refinement.capture?.bestEvaluation?.feasible
+      && propagationRun.selected.refinement.capture.bestEvaluation.chemicalValidity?.valid
+      && propagationRun.selected.refinement.capture.bestEvaluation.chemicalValidity
+        .maximumRelativeLigandStrainKcalMol === 100
+      && propagationRun.selected.refinement.capture.bestEvaluation.chemicalValidity
+        .maximumAdditionalStericClashes === 2
+      && propagationRun.selected.refinement.capture.bestEvaluation.chemicalValidity
+        .maximumAdditionalLennardJonesKcalMol === 100
+      && propagationLabbook.selections.atomLineage.inheritedAtomIds.length === 5
+      && propagationLabbook.selections.atomLineage.releasedReferenceAtomIds.length === 1
+      && propagationLabbook.selections.atomLineage.releasedReferenceAtomIds
+        .some((id) => id.includes(':F1:'))
+      && propagationLabbook.selections.atomLineage.addedAtomIds.length === 1
+      && propagationLabbook.selections.editPreparation.selectedCleanupMode === 'preserve-reference'
+      && Array.isArray(propagationLabbook.selections.editPreparation.interactivePolishHistory)
+      && Array.isArray(propagationLabbook.selections.fixedReceptorContactParticipantIds)
+      && propagationLabbook.events.some((event) => event.stage === 'captured-ligand-hydrogen-restoration')
+      && propagationLabbook.events.some((event) => event.stage === 'in-pocket-restraint-biased-generation'
+        && event.details.restraintParticipation.includes('stage 1 generates')
+        && event.details.restraintParticipation.includes('sanity gates'))
+      && propagationLabbook.events.some((event) => event.stage === 'fixed-scaffold-relaxation'),
+    'pose propagation records automatic lineage, affected-rotor release, and fixed-scaffold Sage relaxation',
+    JSON.stringify({ run:propagationRun, protocol:propagationLabbook.protocol.id,
+      lineage:propagationLabbook.selections.atomLineage,
+      events:propagationLabbook.events.map((event) => event.stage) }));
+    const propagated = await api.applyDockingPose(0);
+    check(propagated.molecule.source.docking.protocol === 'molarium-pose-propagation-1',
+      'applied propagated poses retain their distinct protocol identity');
+  }
+
+  api.loadObject(valenceCompleteDockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('propagate');
+  await api.captureDockingReference();
+  const capturedContactMolecule = api.current().molecule;
+  const replacedCarbonylOxygenId = capturedContactMolecule.atoms[2].designAtomId;
+  const carbonylCarbonId = capturedContactMolecule.atoms[3].designAtomId;
+  await api.stageDeleteAtomCurrent(2);
+  const pendingContact = document.querySelector('#docking-hbond-list label');
+  check(api.chemistryTransaction()?.editCount === 1
+    && pendingContact?.textContent.includes('finish chemistry')
+    && pendingContact.querySelector('input')?.checked
+    && pendingContact.querySelector('input')?.disabled
+    && document.querySelector('#run-constrained-docking').disabled
+    && !document.querySelector('#viewer-finish-chemistry').classList.contains('hidden'),
+  'a pending R-group replacement preserves the required-contact intent and blocks refinement');
+  const carbonylCarbonAfterDelete = api.current().molecule.atoms.findIndex((atom) =>
+    atom.designAtomId === carbonylCarbonId);
+  await api.stageAddElementCurrent('O', carbonylCarbonAfterDelete);
+  const replacementOxygen = api.current().molecule.atoms.findIndex((atom) =>
+    atom.element === 'O' && atom.designAtomId !== replacedCarbonylOxygenId);
+  await api.stageBondCurrent(carbonylCarbonAfterDelete, replacementOxygen, 2);
+  const remapFinish = await api.finishChemistryCurrent();
+  const contactResolutions = api.dockingContactResolutions();
+  const mappedContact = document.querySelector('#docking-hbond-list label');
+  check(remapFinish.validation.valid && !remapFinish.pending
+    && contactResolutions.remaps.length === 1
+    && contactResolutions.proposals.length === 0
+    && contactResolutions.remaps[0].method === 'automatic-unique-exact'
+    && contactResolutions.remaps[0].originalLigandAtomIds.includes(replacedCarbonylOxygenId)
+    && !contactResolutions.remaps[0].replacementLigandAtomIds.includes(replacedCarbonylOxygenId)
+    && mappedContact?.textContent.includes('carbonyl acceptor mapped')
+    && mappedContact.querySelector('input')?.checked
+    && !mappedContact.querySelector('input')?.disabled,
+  'Finish chemistry automatically transfers a required contact to one exact replacement feature',
+  JSON.stringify({ remapFinish, contactResolutions }));
+  const replacementCarbonylOxygenId = contactResolutions.remaps[0]?.replacementLigandAtomIds[0];
+  const undoSequence = (await window.MolariumChemistActionsReady).history().at(-1)?.sequence || 0;
+  document.querySelector('#undo-atom').click();
+  await waitForHistoryAction('history.undo', undoSequence);
+  const undoneContactState = api.dockingContactResolutions();
+  check(api.current().molecule.atoms.some((atom) => atom.designAtomId === replacedCarbonylOxygenId)
+    && !api.current().molecule.atoms.some((atom) => atom.designAtomId === replacementCarbonylOxygenId)
+    && undoneContactState.remaps.length === 0 && undoneContactState.proposals.length === 0,
+  'Undo restores both the reference feature and its matching restraint state');
+  const redoSequence = (await window.MolariumChemistActionsReady).history().at(-1)?.sequence || 0;
+  document.querySelector('#redo-atom').click();
+  await waitForHistoryAction('history.redo', redoSequence);
+  const redoneContactState = api.dockingContactResolutions();
+  check(api.current().molecule.atoms.some((atom) => atom.designAtomId === replacementCarbonylOxygenId)
+    && !api.current().molecule.atoms.some((atom) => atom.designAtomId === replacedCarbonylOxygenId)
+    && redoneContactState.remaps.length === 1 && redoneContactState.proposals.length === 0,
+  'Redo restores the replacement feature and its audited restraint mapping');
+  let remappedContactRun = null;
+  try { remappedContactRun = await api.runConstrainedDocking({ conformerCount:2,
+    seed:20260819, torsionSteps:4, fixedRelaxIterations:2 }); }
+  catch (error) { check(false, 'the remapped feature participates in reference-guided refinement', error.message); }
+  if (remappedContactRun) {
+    const remappedLabbook = api.dockingLabbook();
+    const monotonicEventTimes = remappedLabbook.events.every((event, index, events) => !index
+      || Date.parse(event.at) >= Date.parse(events[index - 1].at));
+    check(remappedLabbook.selections.ligandFeatureRemaps.length === 1
+      && remappedLabbook.events.some((event) => event.stage === 'captured-contact-feature-mapping')
+      && remappedLabbook.outcome.ligandFeatureRemaps.length === 1
+      && monotonicEventTimes,
+    'the automatic feature transfer is hash-linked into the docking labbook',
+    JSON.stringify({ selectionRemaps:remappedLabbook.selections.ligandFeatureRemaps,
+      eventStages:remappedLabbook.events.map((event) => event.stage),
+      outcomeRemaps:remappedLabbook.outcome.ligandFeatureRemaps,
+      eventTimes:remappedLabbook.events.map((event) => event.at), monotonicEventTimes }));
+  }
+  api.loadObject(valenceCompleteDockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('propagate');
+  await api.captureDockingReference();
+  const immediateRoleChange = await api.editBondCurrent(2, 3, 1);
+  const immediateContactState = api.dockingContactResolutions();
+  const roleCompatibleRemapContact = document.querySelector('#docking-hbond-list label');
+  check(immediateRoleChange.validation.valid && immediateContactState.remaps.length === 1
+    && immediateContactState.remaps[0].method === 'automatic-unique-role-compatible'
+    && immediateContactState.remaps[0].matchKind === 'role-compatible-bioisostere'
+    && immediateContactState.proposals.length === 0
+    && roleCompatibleRemapContact?.textContent.includes('hydroxyl oxygen acceptor mapped')
+    && !document.querySelector('#run-constrained-docking').disabled,
+  'immediate chemistry edits transfer a contact to a role-compatible replacement',
+  JSON.stringify(immediateContactState));
+  const contactSequence = (await window.MolariumChemistActionsReady).history().at(-1)?.sequence || 0;
+  roleCompatibleRemapContact.querySelector('input').click();
+  await waitForHistoryAction('pose.setContact', contactSequence);
+  check(!api.dockingContactResolutions().selectedIds.length
+    && !document.querySelector('#run-constrained-docking').disabled,
+  'a user may explicitly omit a viable role-compatible contact');
+
+  // Canvas/fragment additions can predate a staged chemistry transaction. A
+  // new atom must receive an identity before the transaction snapshot is
+  // taken, otherwise Finish chemistry cannot canonically hash the old graph.
+  api.loadObject(valenceCompleteDockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('propagate');
+  await api.captureDockingReference();
+  api.addElementCurrent('F', 6);
+  const anonymousAddedIndex = api.current().molecule.atoms.findIndex((atom) => !atom.designAtomId);
+  const anonymousBeforeStaging = anonymousAddedIndex >= 0;
+  await api.stageDeleteAtomCurrent(anonymousAddedIndex);
+  const stagedIdentityTransaction = await api.finishChemistryCurrent();
+  check(anonymousBeforeStaging && stagedIdentityTransaction.validation.valid
+    && !stagedIdentityTransaction.pending && !api.chemistryTransaction(),
+  'Finish chemistry assigns stable identities before snapshotting a graph with a newly added atom',
+  JSON.stringify(stagedIdentityTransaction));
+
+  // A realistic R-group replacement can cross two completed edit batches:
+  // remove the old group first, then build and finish the replacement. The
+  // first batch is the only one that knows the deleted feature's attachment
+  // boundary, so that provenance must survive long enough to type the new
+  // carbonyl in the second batch.
+  api.loadObject(valenceCompleteDockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('propagate');
+  await api.captureDockingReference();
+  const sequentialReference = api.current().molecule;
+  const sequentialOldOxygenId = sequentialReference.atoms[2].designAtomId;
+  const sequentialCarbonId = sequentialReference.atoms[3].designAtomId;
+  await api.stageDeleteAtomCurrent(2);
+  const deletionFinish = await api.finishChemistryCurrent();
+  const deletedFeatureState = api.dockingContactResolutions();
+  const sequentialCarbon = api.current().molecule.atoms.findIndex((atom) =>
+    atom.designAtomId === sequentialCarbonId);
+  await api.stageAddElementCurrent('O', sequentialCarbon);
+  const sequentialReplacementOxygen = api.current().molecule.atoms.findIndex((atom) =>
+    atom.element === 'O' && atom.designAtomId !== sequentialOldOxygenId);
+  const stagedReplacementOxygenId = api.current().molecule
+    .atoms[sequentialReplacementOxygen]?.designAtomId;
+  await api.stageBondCurrent(sequentialCarbon, sequentialReplacementOxygen, 2);
+  const additionFinish = await api.finishChemistryCurrent();
+  const sequentialContactState = api.dockingContactResolutions();
+  const sequentialDepiction = await api.waitFor2DDepiction();
+  const committedSequentialMolecule = api.current().molecule;
+  const committedSequentialCarbon = committedSequentialMolecule.atoms.findIndex((atom) =>
+    atom.designAtomId === sequentialCarbonId);
+  const committedReplacementOxygen = committedSequentialMolecule.atoms.findIndex((atom) =>
+    sequentialContactState.remaps[0]?.replacementLigandAtomIds.includes(atom.designAtomId));
+  const depictionShowsReplacementCarbonyl = sequentialDepiction.bondPairs.some((pair) =>
+    (pair[0] === committedSequentialCarbon && pair[1] === committedReplacementOxygen)
+      || (pair[1] === committedSequentialCarbon && pair[0] === committedReplacementOxygen));
+  check(deletionFinish.validation.valid
+    && deletedFeatureState.proposals.length === 1
+    && deletedFeatureState.proposals[0].status === 'unavailable'
+    && additionFinish.validation.valid
+    && sequentialContactState.proposals.length === 0
+    && sequentialContactState.remaps.length === 1
+    && sequentialContactState.remaps[0]?.method === 'automatic-unique-exact'
+    && sequentialContactState.remaps[0]?.replacementLigandAtomIds.length === 1
+    && Boolean(stagedReplacementOxygenId)
+    && sequentialContactState.remaps[0]?.replacementLigandAtomIds.includes(
+      stagedReplacementOxygenId)
+    && !sequentialContactState.remaps[0]?.replacementLigandAtomIds.includes(
+      sequentialOldOxygenId)
+    && sequentialContactState.remaps[0]?.originatingCommittedEditId
+      !== sequentialContactState.remaps[0]?.committedEditId
+    && sequentialDepiction.alignmentBackend.includes('RDKit 2D layout')
+    && depictionShowsReplacementCarbonyl,
+  'a replacement carbonyl created in the next completed edit batch inherits the deleted acceptor restraint',
+  JSON.stringify({ deletionFinish, deletedFeatureState, additionFinish,
+    sequentialContactState, sequentialDepiction, depictionShowsReplacementCarbonyl }));
+
+  // Replace the captured carbonyl oxygen with a sulfonamide group. Both
+  // sulfonyl oxygens are acceptor hypotheses on the same recorded boundary;
+  // the browser must refine them as one any-of contact without requiring a
+  // pre-geometry user choice, and the labbook must retain both evaluations.
+  api.loadObject(valenceCompleteDockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('propagate');
+  await api.captureDockingReference();
+  const sulfoneReference = api.current().molecule;
+  const sulfoneOldOxygenId = sulfoneReference.atoms[2].designAtomId;
+  const sulfoneAnchorId = sulfoneReference.atoms[3].designAtomId;
+  await api.stageDeleteAtomCurrent(2);
+  const sulfoneDeletionFinish = await api.finishChemistryCurrent();
+  const addStagedAtom = async (element, anchorId) => {
+    const beforeIds = new Set(api.current().molecule.atoms.map((atom) => atom.designAtomId));
+    const anchorIndex = api.current().molecule.atoms.findIndex((atom) =>
+      atom.designAtomId === anchorId);
+    await api.stageAddElementCurrent(element, anchorIndex);
+    return api.current().molecule.atoms.find((atom) =>
+      atom.element === element && !beforeIds.has(atom.designAtomId))?.designAtomId;
+  };
+  const liveAtomIndex = (designAtomId) => api.current().molecule.atoms.findIndex((atom) =>
+    atom.designAtomId === designAtomId);
+  // Build the expanded-valence sulfur center directly. The interactive
+  // attachment gate must permit ordinary S(IV)/S(VI) chemistry without a
+  // temporary carbon workaround, while the unfinished transaction remains
+  // chemically incomplete until both S=O bonds are assigned.
+  const sulfurId = await addStagedAtom('S', sulfoneAnchorId);
+  const sulfoneOxygen1Id = await addStagedAtom('O', sulfurId);
+  const sulfoneOxygen2Id = await addStagedAtom('O', sulfurId);
+  await addStagedAtom('N', sulfurId);
+  await api.stageBondCurrent(liveAtomIndex(sulfurId), liveAtomIndex(sulfoneOxygen1Id), 2);
+  await api.stageBondCurrent(liveAtomIndex(sulfurId), liveAtomIndex(sulfoneOxygen2Id), 2);
+  const sulfoneFinish = await api.finishChemistryCurrent();
+  const sulfoneContactState = api.dockingContactResolutions();
+  const sulfoneProposal = sulfoneContactState.proposals[0];
+  const sulfoneContactLabel = document.querySelector('#docking-hbond-list label');
+  const sulfoneChoice = document.querySelector('.docking-contact-remap-select');
+  check(sulfoneDeletionFinish.validation.valid && sulfoneFinish.validation.valid
+    && sulfoneContactState.remaps.length === 0
+    && sulfoneContactState.proposals.length === 1
+    && sulfoneProposal?.status === 'ambiguous'
+    && sulfoneProposal?.candidates.length === 2
+    && sulfoneProposal?.candidates.every((candidate) => candidate.label.includes('sulfonyl'))
+    && sulfoneContactLabel?.textContent.includes('2 alternatives')
+    && sulfoneChoice?.value === ''
+    && !document.querySelector('#run-constrained-docking').disabled,
+  'two sulfonyl oxygens remain an uncollapsed role-compatible any-of hypothesis in the browser',
+  JSON.stringify({ sulfoneFinish, sulfoneContactState, sulfoneOldOxygenId }));
+  let sulfoneRun = null;
+  try { sulfoneRun = await api.runConstrainedDocking({ conformerCount:2,
+    seed:20260819, torsionSteps:4, fixedRelaxIterations:2 }); }
+  catch (error) { check(false, 'ambiguous any-of hypotheses execute in reference-guided refinement',
+    error.message); }
+  if (sulfoneRun) {
+    const sulfoneLabbook = api.dockingLabbook();
+    const selectedContact = sulfoneRun.selected.hydrogenBonds[0];
+    const outcomeContact = sulfoneLabbook.outcome.selectedHydrogenBonds[0];
+    check(sulfoneLabbook.selections.hydrogenBonds[0].alternativeIds.length === 2
+      && selectedContact.alternativeCount === 2
+      && selectedContact.alternatives.length === 2
+      && selectedContact.selectedAlternativeId
+      && outcomeContact.alternativeCount === 2
+      && outcomeContact.alternatives.length === 2
+      && outcomeContact.selectedAlternativeId === selectedContact.selectedAlternativeId,
+    'any-of refinement records the selected sulfonyl oxygen and every alternative evaluation',
+    JSON.stringify({ selection:sulfoneLabbook.selections.hydrogenBonds[0],
+      selectedContact, outcomeContact }));
+  }
+
+  // Mirror the user-facing carbonyl C -> S edit without deleting the original
+  // oxygen.  The old O becomes sulfonyl, the new O is a second equivalent
+  // hypothesis, and their staged coordinates must not overlap.
+  api.loadObject(valenceCompleteDockingFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('propagate');
+  await api.captureDockingReference();
+  const inPlaceOriginalOxygenId = api.current().molecule.atoms[2].designAtomId;
+  const inPlaceCenterId = api.current().molecule.atoms[3].designAtomId;
+  await api.stageAtomCurrent(3, 'S', 0);
+  const inPlaceBeforeAddIds = new Set(api.current().molecule.atoms.map((atom) => atom.designAtomId));
+  await api.stageAddElementCurrent('O', 3);
+  const inPlaceAddedOxygenId = api.current().molecule.atoms.find((atom) =>
+    atom.element === 'O' && !inPlaceBeforeAddIds.has(atom.designAtomId))?.designAtomId;
+  const inPlaceAtomIndex = (designAtomId) => api.current().molecule.atoms.findIndex((atom) =>
+    atom.designAtomId === designAtomId);
+  const stagedCenter = api.current().molecule.atoms[inPlaceAtomIndex(inPlaceCenterId)];
+  const stagedOriginalO = api.current().molecule.atoms[inPlaceAtomIndex(inPlaceOriginalOxygenId)];
+  const stagedAddedO = api.current().molecule.atoms[inPlaceAtomIndex(inPlaceAddedOxygenId)];
+  const stagedOxygenSeparation = Math.hypot(stagedOriginalO.x - stagedAddedO.x,
+    stagedOriginalO.y - stagedAddedO.y, stagedOriginalO.z - stagedAddedO.z);
+  const stagedDirections = [stagedOriginalO, stagedAddedO].map((oxygen) => ({
+    x:oxygen.x - stagedCenter.x, y:oxygen.y - stagedCenter.y, z:oxygen.z - stagedCenter.z,
+  }));
+  const stagedOxygenAngle = Math.acos(Math.max(-1, Math.min(1,
+    (stagedDirections[0].x * stagedDirections[1].x
+      + stagedDirections[0].y * stagedDirections[1].y
+      + stagedDirections[0].z * stagedDirections[1].z)
+    / (Math.hypot(stagedDirections[0].x, stagedDirections[0].y, stagedDirections[0].z)
+      * Math.hypot(stagedDirections[1].x, stagedDirections[1].y, stagedDirections[1].z)))))
+    * 180 / Math.PI;
+  await api.stageBondCurrent(inPlaceAtomIndex(inPlaceCenterId),
+    inPlaceAtomIndex(inPlaceAddedOxygenId), 2);
+  const inPlaceFinish = await api.finishChemistryCurrent();
+  const inPlaceContactState = api.dockingContactResolutions();
+  const inPlaceProposal = inPlaceContactState.proposals[0];
+  check(stagedOxygenSeparation > 0.5 && stagedOxygenAngle > 45
+    && inPlaceFinish.validation.valid
+    && inPlaceContactState.remaps.length === 0
+    && inPlaceContactState.proposals.length === 1
+    && inPlaceProposal?.status === 'ambiguous'
+    && inPlaceProposal?.candidates.length === 2
+    && inPlaceProposal?.candidates.every((candidate) => candidate.label.includes('sulfonyl'))
+    && inPlaceProposal?.candidates.some((candidate) =>
+      candidate.atomIds.includes(inPlaceOriginalOxygenId))
+    && inPlaceProposal?.candidates.some((candidate) =>
+      candidate.atomIds.includes(inPlaceAddedOxygenId)),
+  'an in-place C=O to S(=O)2 edit separates staged oxygens and preserves both acceptor hypotheses',
+  JSON.stringify({ stagedOxygenSeparation, stagedOxygenAngle, inPlaceFinish,
+    inPlaceContactState }));
+  if (testScope === 'docking-contact-remap') {
+    const failed = checks.filter((item) => !item.passed);
+    return { passed:checks.length - failed.length, total:checks.length, failed,
+      optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,
+      preparationMetrics:null };
+  }
+
+  await api.loadSmilesWithRdkit('c1ccccc1', 'Reference phenyl edit');
+  const arylEditFixture = structuredClone(api.current().molecule);
+  arylEditFixture.atoms.forEach((atom, index) => Object.assign(atom, {
+    record:'HETATM', atomName:'L' + (index + 1), residueName:'BEN', residueIndex:1, chain:'L',
+  }));
+  const arylLigandAtomCount = arylEditFixture.atoms.length;
+  arylEditFixture.atoms.push(
+    { element:'N', x:-5, y:0, z:0, record:'ATOM', atomName:'N', residueName:'ALA', residueIndex:1, chain:'A' },
+    { element:'H', x:-4, y:0, z:0, record:'ATOM', atomName:'H', residueName:'ALA', residueIndex:1, chain:'A' });
+  arylEditFixture.bonds.push({ a:arylLigandAtomCount, b:arylLigandAtomCount + 1, order:1 });
+  const regressionMasses = { H:1.008, C:12.011, N:14.007 };
+  arylEditFixture.parameterization = {
+    forcefield:'browser regression fixture', chargeModel:'zero charges', sourceSha256:'browser-regression',
+    system:{ particles:arylEditFixture.atoms.map((atom, index) => ({ index,
+      mass_amu:regressionMasses[atom.element] || 12 })), constraints:[], bonds:[], angles:[], torsions:[],
+      exceptions:[], nonbonded:arylEditFixture.atoms.map((atom, index) => ({ index, charge_e:0,
+        sigma_nm:atom.element === 'H' ? 0.1 : 0.34, epsilon_kj:atom.element === 'H' ? 0.02 : 0.4 })) },
+  };
+  arylEditFixture.source = { format:'pdb', pdbId:'ARYL-EDIT-REGRESSION' };
+  arylEditFixture.prediction = { kind:'pdb-import' };
+  api.loadObject(arylEditFixture);
+  document.querySelector('.mode-bar button[data-mode="build"]').click();
+  api.setDockingMode('propagate');
+  const arylReference = await api.captureDockingReference();
+  const arylReferenceHeavyIndices = api.current().molecule.atoms.flatMap((atom, index) =>
+    atom.record === 'HETATM' && atom.element !== 'H' ? [index] : []);
+  const arylReferenceHeavyPositions = arylReferenceHeavyIndices.map((index) => {
+    const atom = api.current().molecule.atoms[index]; return [atom.x, atom.y, atom.z];
+  });
+  const arylCleanupDefault = api.setDockingEditCleanup('preserve-reference');
+  document.querySelector('[data-tool="add"]').click();
+  document.querySelector('[data-element="C"]').click();
+  const arylTarget = api.viewerState().atoms.find((atom) => atom.index === 0);
+  const arylCanvas = document.querySelector('#molecule-canvas');
+  const arylCanvasRect = arylCanvas.getBoundingClientRect();
+  for (const type of ['pointerdown', 'pointerup']) arylCanvas.dispatchEvent(new PointerEvent(type, {
+    bubbles:true, pointerId:83,
+    clientX:arylCanvasRect.left + arylTarget.sx,
+    clientY:arylCanvasRect.top + arylTarget.sy,
+  }));
+  const referenceEditPolish = await new Promise((resolve, reject) => {
+    const started = performance.now();
+    const poll = () => {
+      const source = api.current().molecule.source || {};
+      if (source.lastInteractivePolish) return resolve(source.lastInteractivePolish);
+      if (source.lastInteractivePolishError) return reject(new Error(source.lastInteractivePolishError));
+      if (performance.now() - started > 10000)
+        return reject(new Error('Timed out waiting for reference-preserving edit cleanup'));
+      setTimeout(poll, 50);
+    };
+    poll();
+  });
+  const arylEdited = api.current().molecule;
+  const inheritedMaximumDisplacement = Math.max(...arylReferenceHeavyIndices.map((atomIndex, ordinal) => {
+    const atom = arylEdited.atoms[atomIndex], before = arylReferenceHeavyPositions[ordinal];
+    return Math.hypot(atom.x - before[0], atom.y - before[1], atom.z - before[2]);
+  }));
+  const addedMethylCarbon = arylEdited.atoms.findIndex((atom) =>
+    atom.element === 'C' && !atom.designAtomId);
+  const methylBondLength = Math.hypot(arylEdited.atoms[0].x - arylEdited.atoms[addedMethylCarbon].x,
+    arylEdited.atoms[0].y - arylEdited.atoms[addedMethylCarbon].y,
+    arylEdited.atoms[0].z - arylEdited.atoms[addedMethylCarbon].z);
+  const preservedSelection = api.localPolishSelection([0, addedMethylCarbon], 2);
+  const freeCleanup = api.setDockingEditCleanup('free-local');
+  const freeSelection = api.localPolishSelection([0, addedMethylCarbon], 2);
+  check(arylReference.mode === 'pose-propagation' && arylReference.coreAtomIds.length === 6
+    && arylCleanupDefault.visible && arylCleanupDefault.mode === 'preserve-reference'
+    && referenceEditPolish.cleanupMode === 'preserve-reference'
+    && referenceEditPolish.fixedInheritedHeavyAtomCount === 6
+    && inheritedMaximumDisplacement < 1e-12
+    && methylBondLength > 1.35 && methylBondLength < 1.65
+    && arylReferenceHeavyIndices.every((index) => !preservedSelection.movableAtomIndices.includes(index))
+    && freeCleanup.mode === 'free-local'
+    && arylReferenceHeavyIndices.every((index) => freeSelection.movableAtomIndices.includes(index))
+    && arylEdited.source.interactivePolishHistory.length >= 1,
+  'the real canvas add-methyl path preserves a captured aromatic scaffold by default and exposes free ring cleanup explicitly',
+  JSON.stringify({ arylCleanupDefault, referenceEditPolish, inheritedMaximumDisplacement,
+    methylBondLength, preservedSelection, freeSelection }));
+  document.querySelector('.mode-bar button[data-mode="view"]').click();
   const bentHydroxylFixture = {
     name:'Tyr-ligand polar-H fixture', smiles:'protein-ligand fixture', charge:0, multiplicity:1,
     atoms:[
@@ -602,7 +1635,7 @@ const browserSuite = String.raw`(async () => {
     const ccd = externalPreparationFixture.ccd
       ? api.parseCcd(externalPreparationFixture.ccd, externalPreparationFixture.ccdId) : null;
     const preview = await api.previewPdbPreparation({ pH: 7.4, histidine: 'auto', repairMissingHeavy: true,
-      ligandPolicy: 'ccd', waterPolicy: 'exclude', gapPolicy: 'cap' },
+      ligandPolicy: 'ccd', waterPolicy:externalPreparationFixture.waterPolicy, gapPolicy: 'cap' },
     ccd ? { [externalPreparationFixture.ccdId]: ccd } : null);
     const heavyRepair = preview.audit.actions.find((action) => action.action === 'repair-heavy-atoms');
     const ligandRepair = preview.audit.actions.find((action) => action.action === 'prepare-ligands-from-ccd');
@@ -656,7 +1689,7 @@ const browserSuite = String.raw`(async () => {
       && !document.querySelector('#build-optimizer-select option[value="pocket-webgpu"]').disabled
       && document.querySelector('#build-optimizer-select option[value="webgpu"]').hidden
       && document.querySelector('#build-optimizer-select').value === 'ligand-rdkit',
-    'prepared 7KPA exposes ligand and pocket relaxation without an accidental full-complex Build action',
+    'prepared 7KPA exposes ligand and pocket relaxation without an accidental full-complex Design action',
     String(preparationMetrics.interactivePocketMovableAtoms.length));
     const polarRelaxation = preview.audit.actions.find((action) => action.action === 'relax-polar-hydrogens');
     preparationMetrics.polarHydrogenRelaxation = polarRelaxation;
@@ -686,6 +1719,275 @@ const browserSuite = String.raw`(async () => {
         && contact.distance < 2.0 && contact.cosine < -0.95),
     '7KPA preparation recovers the observed Tyr C151 O-H to D84 imidazole N2 contact',
     JSON.stringify(preparationMetrics.ligandContacts));
+    check(preparationMetrics.ligandContacts.some((contact) =>
+      contact.donor === 'NZ:LYS:A11' && contact.acceptor === 'O3:D84:C201'
+        && contact.distance < 2.6 && contact.cosine < -0.85),
+    '7KPA preparation recovers the Lys A11 N-H to D84 pyridone O3 contact',
+    JSON.stringify(preparationMetrics.ligandContacts));
+    if (externalPreparationFixture.waterPolicy === 'retain') {
+      const captureMolecule = structuredClone(preview.molecule);
+      captureMolecule.parameterization = {
+        forcefield:'7KPA contact-capture fixture', chargeModel:'test-only neutral terms',
+        sourceSha256:'7kpa-contact-capture', system:{
+          nonbonded:captureMolecule.atoms.map((_, index) => ({ index,
+            charge_e:0, sigma_nm:0.30, epsilon_kj:0.10 })),
+        },
+      };
+      api.loadObject(captureMolecule);
+      api.setDockingMode('propagate');
+      const hydratedReference = await api.captureDockingReference();
+      preparationMetrics.hydratedReferenceContacts = hydratedReference.hydrogenBonds;
+      const capturedLabels = hydratedReference.hydrogenBonds.map((entry) => entry.label);
+      const expectedHydratedLabels = [
+        'D84 C201 N3 → HOH C307 O',
+        'SER A60 N → D84 C201 O2',
+        'TYR C151 OH → D84 C201 N2',
+        'LYS A11 NZ → D84 C201 O3',
+      ];
+      check(capturedLabels.length === expectedHydratedLabels.length
+        && expectedHydratedLabels.every((label) => capturedLabels.includes(label)),
+      'hydrated 7KPA reference capture retains both pyridone contacts beyond the viewer display cap',
+      JSON.stringify(capturedLabels));
+      // Exact user regression: first saturate the two pyridone C=C bonds,
+      // delete that ring, build a valid cyclohexanol in a later commit, and
+      // only then assign C=O in a third commit. The Lys->O3 hypothesis must
+      // follow the exact replacement carbonyl across the cumulative edit
+      // region; the deleted N3-H->water hypothesis must remain unavailable.
+      const capturedHydratedMolecule = api.current().molecule;
+      const referenceLigandIds = new Set(capturedHydratedMolecule.atoms
+        .filter((atom) => atom.record === 'HETATM' && atom.residueName === 'D84')
+        .map((atom) => atom.designAtomId));
+      const originalO3Id = capturedHydratedMolecule.atoms.find((atom) =>
+        atom.record === 'HETATM' && atom.residueName === 'D84' && atom.atomName === 'O3')?.designAtomId;
+      const originalO2Id = capturedHydratedMolecule.atoms.find((atom) =>
+        atom.record === 'HETATM' && atom.residueName === 'D84' && atom.atomName === 'O2')?.designAtomId;
+      const originalC23Id = capturedHydratedMolecule.atoms.find((atom) =>
+        atom.record === 'HETATM' && atom.residueName === 'D84' && atom.atomName === 'C23')?.designAtomId;
+      const d84Index = (name) => api.current().molecule.atoms.findIndex((atom) =>
+        atom.record === 'HETATM' && atom.residueName === 'D84' && atom.atomName === name);
+      const o3Contact = hydratedReference.hydrogenBonds.find((entry) =>
+        entry.label === 'LYS A11 NZ → D84 C201 O3');
+      const n3Contact = hydratedReference.hydrogenBonds.find((entry) =>
+        entry.label === 'D84 C201 N3 → HOH C307 O');
+      // Preferred chemist route: keep graph identity, saturate the two C=C
+      // bonds, then change the lactam N-H into cyclohexanone CH2. Execute the
+      // complete edit through the public Chemist Actions surface so this is
+      // the same route available to an agent or a person, not a test-only
+      // direct call into pose code.
+      const chemist = await window.MolariumChemistActionsReady;
+      const directReferenceLigand = api.benchmarkCurrentLigand();
+      await chemist.execute({ action:'view.setMode', args:{ mode:'build' } });
+      await chemist.execute({ action:'build.setTool', args:{ tool:'select' } });
+      const directReference = (await chemist.inspect({ scope:'ligand', includeCoordinates:true,
+        maximumAtoms:200 })).result;
+      const directByName = new Map(directReference.atoms.map((atom) => [atom.atomName, atom]));
+      const directRequiredNames = ['C23','O3','C28','N3','C26','C27','C29','C30'];
+      if (directRequiredNames.some((name) => !directByName.has(name)))
+        throw new Error('7KPA direct-edit regression cannot find: '
+          + directRequiredNames.filter((name) => !directByName.has(name)).join(', '));
+      const directSelect = async (...names) => chemist.execute({ action:'selection.replace',
+        args:{ atomIds:names.map((name) => directByName.get(name).atomId) } });
+      await directSelect('C26','C27');
+      await chemist.execute({ action:'chemistry.setBond', args:{ order:1 } });
+      await directSelect('C30','C29');
+      await chemist.execute({ action:'chemistry.setBond', args:{ order:1 } });
+      const directLactamFinish = await chemist.execute({ action:'chemistry.finish' });
+      const directLactam = (await chemist.inspect({ scope:'ligand', includeCoordinates:true,
+        maximumAtoms:200 })).result;
+      if (diagnoseLactamPose) {
+        preparationMetrics.lactamRefinement =
+          (await chemist.execute({ action:'pose.refine', args:{ searchChains:8 } })).result.refinement;
+        const lactamPoseText = document.querySelector('.docking-pose')?.textContent || '';
+        const lactamScoreNote = document.querySelector('#docking-score-note')?.textContent || '';
+        const lactam = preparationMetrics.lactamRefinement;
+        check(lactam.selectedPhysicalComponents?.lennardJonesKcalMol > 100
+          && lactam.selectedPhysicalComponents.ligandStrainKcalMol < 10
+          && lactam.selectedPhysicalComponents.relativeInteractionKcalMol <= 100
+          && lactam.selectedConstraintPenaltyKcalMol < 5
+          && lactam.selectedChemicalValidity?.maximumAdditionalLennardJonesKcalMol === 100
+          && lactam.selectedChemicalValidity?.lennardJonesExcessKcalMol === 0
+          && lactam.selectedChemicalValidity?.minimumFixedCoreStartStericClashes >= 1
+          && lactamPoseText.includes('contact missed')
+          && !lactamPoseText.includes('kcal/mol')
+          && lactamScoreNote.includes('start'),
+        '7KPA lactam refinement separates inherited clash baseline from ligand strain and restraint failure',
+        JSON.stringify({ lactam, lactamPoseText, lactamScoreNote }));
+      }
+      await directSelect('N3');
+      await chemist.execute({ action:'chemistry.setAtom', args:{ element:'C', formalCharge:0 } });
+      const directCyclohexanoneFinish = await chemist.execute({ action:'chemistry.finish' });
+      const directCyclohexanone = (await chemist.inspect({ scope:'ligand', includeCoordinates:true,
+        maximumAtoms:200 })).result;
+      const liveDirectByName = new Map(directCyclohexanone.atoms.map((atom) => [atom.atomName, atom]));
+      const releasedIds = new Set(directCyclohexanone.transformedRingRegions
+        .flatMap((entry) => entry.releasedHeavyAtomIds || []));
+      const ringIds = ['O3','C28','N3','C26','C27','C29','C30']
+        .map((name) => directByName.get(name).atomId);
+      const c23Before = directByName.get('C23').coordinatesAngstrom;
+      const c23After = liveDirectByName.get('C23').coordinatesAngstrom;
+      const externalAnchorMotion = Math.hypot(...c23Before.map((value, axis) =>
+        value - c23After[axis]));
+      const releasedMotion = Math.max(...ringIds.map((id) => {
+        const before = directReference.atoms.find((atom) => atom.atomId === id)?.coordinatesAngstrom;
+        const after = directCyclohexanone.atoms.find((atom) => atom.atomId === id)?.coordinatesAngstrom;
+        return before && after ? Math.hypot(...before.map((value, axis) => value - after[axis])) : 0;
+      }));
+      const directO3Id = directByName.get('O3').atomId;
+      const directC28Id = directByName.get('C28').atomId;
+      const finalCarbonyl = directCyclohexanone.bonds.find((bond) =>
+        bond.atomIds.includes(directO3Id) && bond.atomIds.includes(directC28Id));
+      const directO3Contact = directCyclohexanone.contacts.find((entry) =>
+        entry.contactId === o3Contact?.id);
+      const directN3Contact = directCyclohexanone.contacts.find((entry) =>
+        entry.contactId === n3Contact?.id);
+      check(directLactamFinish.result.validation?.valid
+        && directCyclohexanoneFinish.result.validation?.valid
+        && directCyclohexanone.atoms.find((atom) => atom.atomId === directByName.get('N3').atomId)?.element === 'C'
+        && Number(finalCarbonyl?.order) === 2
+        && ringIds.every((id) => releasedIds.has(id))
+        && !releasedIds.has(directByName.get('C23').atomId)
+        && externalAnchorMotion < 1e-7 && releasedMotion > 1e-3
+        && directO3Contact?.available && directO3Contact.required
+        && directN3Contact && !directN3Contact.available,
+      '7KPA direct saturation and N-to-CH2 edit releases the transformed ring while preserving its scaffold and carbonyl hypothesis',
+      JSON.stringify({ directLactamFinish, directLactam,
+        directCyclohexanoneFinish,
+        transformedRingRegions:directCyclohexanone.transformedRingRegions,
+        externalAnchorMotion, releasedMotion, finalCarbonyl,
+        directO3Contact, directN3Contact }));
+      // An explicit validation-only export can compare the edited bound
+      // geometry against the crystallographic parent with the same isolated-
+      // ligand strain protocol. It deliberately omits the receptor, so this
+      // fixture is not an interaction or binding score.
+      const directLigand = api.benchmarkCurrentLigand();
+      const editedStrainMolecule = { name:'7KPA D84 cyclohexanone strain probe', charge:0,
+        multiplicity:1,
+        atoms:directLigand.atoms.map((atom) => ({ element:atom.element,
+          designAtomId:atom.designAtomId, atomName:atom.atomName,
+          x:atom.x, y:atom.y, z:atom.z, charge:0 })),
+        bonds:directLigand.bonds.map((bond) => ({ ...bond })) };
+      const referenceStrainMolecule = { name:'7KPA D84 crystallographic strain control',
+        charge:0, multiplicity:1,
+        atoms:directReferenceLigand.atoms.map((atom) => ({ element:atom.element,
+          designAtomId:atom.designAtomId, atomName:atom.atomName,
+          x:atom.x, y:atom.y, z:atom.z, charge:0 })),
+        bonds:directReferenceLigand.bonds.map((bond) => ({ ...bond })) };
+      preparationMetrics.cyclohexanoneStrainFixture = exportStrainFixture
+        ? { reference:referenceStrainMolecule, edited:editedStrainMolecule } : null;
+      // Restore the exact prepared reference before independently testing the
+      // harder delete-and-rebuild feature-remapping route below.
+      api.loadObject(captureMolecule);
+      await chemist.execute({ action:'view.setMode', args:{ mode:'build' } });
+      await chemist.execute({ action:'build.setTool', args:{ tool:'select' } });
+      await chemist.execute({ action:'pose.captureReference', args:{ mode:'propagate' } });
+      const saturationIndices = ['C26', 'C27', 'C30', 'C29'].map((name) => [name, d84Index(name)]);
+      if (saturationIndices.some(([, index]) => index < 0))
+        throw new Error('7KPA regression cannot find pyridone atoms: ' + JSON.stringify(saturationIndices));
+      await api.stageBondCurrent(saturationIndices[0][1], saturationIndices[1][1], 1);
+      await api.stageBondCurrent(d84Index('C30'), d84Index('C29'), 1);
+      const saturationFinish = await api.finishChemistryCurrent();
+      for (const name of ['O3', 'C28', 'N3', 'C27', 'C29', 'C30', 'C26'])
+        await api.stageDeleteAtomCurrent(d84Index(name));
+      const ringDeletionFinish = await api.finishChemistryCurrent();
+      const deletedRingState = api.dockingContactResolutions();
+      const scaffoldAnchor = d84Index('C23');
+      const addPendingCarbon = async (target) => {
+        const beforeIds = new Set(api.current().molecule.atoms.map((atom) => atom.designAtomId));
+        await api.stageAddElementCurrent('C', target);
+        return api.current().molecule.atoms.findIndex((atom) => atom.element === 'C'
+          && !beforeIds.has(atom.designAtomId));
+      };
+      const ringC4 = await addPendingCarbon(scaffoldAnchor);
+      const ringC3 = await addPendingCarbon(ringC4);
+      const ringC2 = await addPendingCarbon(ringC3);
+      const ringC1 = await addPendingCarbon(ringC2);
+      const ringC6 = await addPendingCarbon(ringC1);
+      const ringC5 = await addPendingCarbon(ringC6);
+      await api.stageBondCurrent(ringC5, ringC4, 1);
+      const beforeOxygenIds = new Set(api.current().molecule.atoms.map((atom) => atom.designAtomId));
+      await api.stageAddElementCurrent('O', ringC1);
+      const stagedOxygen = api.current().molecule.atoms.findIndex((atom) => atom.element === 'O'
+        && !beforeOxygenIds.has(atom.designAtomId));
+      const stagedOxygenId = api.current().molecule.atoms[stagedOxygen]?.designAtomId;
+      const cyclohexanolFinish = await api.finishChemistryCurrent();
+      const intermediateContactState = api.dockingContactResolutions();
+      const liveAfterAlcohol = api.current().molecule;
+      const replacementOxygen = liveAfterAlcohol.atoms.findIndex((atom) => atom.element === 'O'
+        && atom.record === 'HETATM' && !referenceLigandIds.has(atom.designAtomId)
+        && atom.designAtomId === stagedOxygenId);
+      const replacementCarbon = liveAfterAlcohol.bonds.flatMap((bond) => bond.a === replacementOxygen
+        ? [bond.b] : bond.b === replacementOxygen ? [bond.a] : [])
+        .find((index) => liveAfterAlcohol.atoms[index]?.element === 'C');
+      const alcoholBond = liveAfterAlcohol.bonds.find((bond) =>
+        bond.a === replacementOxygen && bond.b === replacementCarbon
+        || bond.b === replacementOxygen && bond.a === replacementCarbon);
+      const alcoholHasHydrogen = liveAfterAlcohol.bonds.some((bond) =>
+        (bond.a === replacementOxygen && liveAfterAlcohol.atoms[bond.b]?.element === 'H')
+        || (bond.b === replacementOxygen && liveAfterAlcohol.atoms[bond.a]?.element === 'H'));
+      await api.stageBondCurrent(replacementCarbon, replacementOxygen, 2);
+      const carbonylFinish = await api.finishChemistryCurrent();
+      const cumulativeContactState = api.dockingContactResolutions();
+      const o3Remap = cumulativeContactState.remaps.find((entry) => entry.contactId === o3Contact?.id);
+      const o3RemapChain = cumulativeContactState.remapChains
+        .find((entry) => entry.contactId === o3Contact?.id)?.chain || [];
+      const unresolvedN3 = cumulativeContactState.proposals.find((entry) => entry.id === n3Contact?.id);
+      const intermediateO3 = intermediateContactState.remaps
+        .find((entry) => entry.contactId === o3Contact?.id);
+      const intermediateN3 = intermediateContactState.remaps
+        .find((entry) => entry.contactId === n3Contact?.id);
+      const finalMolecule = api.current().molecule;
+      const finalOxygen = finalMolecule.atoms.findIndex((atom) => atom.designAtomId === stagedOxygenId);
+      const finalComponent = new Set([finalOxygen]), componentQueue = [finalOxygen];
+      while (componentQueue.length) {
+        const index = componentQueue.shift();
+        finalMolecule.bonds.forEach((bond) => {
+          const neighbor = bond.a === index ? bond.b : bond.b === index ? bond.a : -1;
+          if (neighbor >= 0 && !finalComponent.has(neighbor)) {
+            finalComponent.add(neighbor); componentQueue.push(neighbor);
+          }
+        });
+      }
+      const expectedCumulativeIds = [...finalComponent]
+        .map((index) => finalMolecule.atoms[index]?.designAtomId)
+        .filter((id) => id && !referenceLigandIds.has(id)).sort();
+      check(saturationFinish.validation.valid && ringDeletionFinish.validation.valid
+        && cyclohexanolFinish.validation.valid && carbonylFinish.validation.valid
+        && alcoholBond?.order === 1 && alcoholHasHydrogen
+        && deletedRingState.proposals.some((entry) => entry.id === o3Contact?.id
+          && entry.status === 'unavailable')
+        && intermediateContactState.proposals.length === 0
+        && intermediateO3?.method === 'automatic-unique-role-compatible'
+        && intermediateO3?.matchKind === 'role-compatible-bioisostere'
+        && intermediateO3?.cumulativeEditRegionAtomIds.length >= 7
+        && intermediateN3?.method === 'automatic-unique-role-compatible'
+        && intermediateN3?.matchKind === 'role-compatible-bioisostere'
+        && cumulativeContactState.remaps.length === 1
+        && o3Remap?.method === 'automatic-unique-role-compatible'
+        && o3Remap?.matchKind === 'role-compatible-bioisostere'
+        && o3Remap?.algorithm === 'role-compatible-edit-boundary/v3'
+        && o3Remap.candidateIds.length === 1
+        && o3RemapChain.length === 2
+        && JSON.stringify(o3RemapChain[0].boundaryAnchorIds) === JSON.stringify([originalC23Id])
+        && o3RemapChain[0].cumulativeEditRegionAtomIds.includes(stagedOxygenId)
+        && !o3RemapChain[0].cumulativeEditRegionAtomIds.includes(originalC23Id)
+        && !o3RemapChain[0].cumulativeEditRegionAtomIds.includes(originalO2Id)
+        && o3RemapChain.flatMap((entry) => entry.editLineage).length === 3
+        && o3RemapChain.flatMap((entry) => entry.editLineage).every((entry) =>
+          entry.committedEditId && entry.beforeTopologySha256 && entry.afterTopologySha256)
+        && o3RemapChain[0].originalLigandAtomIds.includes(originalO3Id)
+        && o3RemapChain.every((entry) => entry.replacementLigandAtomIds.includes(stagedOxygenId))
+        && o3Remap.replacementLigandAtomIds.includes(stagedOxygenId)
+        && unresolvedN3?.status === 'unavailable',
+      '7KPA saturate-delete-build-C=O sequence tracks role-compatible OH hypotheses then retains only the carbonyl acceptor',
+      JSON.stringify({ validation:[saturationFinish, ringDeletionFinish, cyclohexanolFinish,
+        carbonylFinish].map((entry) => entry.validation), deletedRingState,
+        intermediateContactState, cumulativeContactState, o3RemapChain,
+        originalO3Id, stagedOxygenId,
+        originalC23Id, originalO2Id, replacementOxygen, replacementCarbon,
+        alcoholBond, alcoholHasHydrogen, expectedCumulativeIds }));
+      api.loadObject(preview.molecule);
+      api.setRepresentation('cartoon');
+    }
     const contactOnly7kpa = api.setPocketAtomMode('contacts');
     preparationMetrics.contactOnlyPocket = contactOnly7kpa;
     check(contactOnly7kpa.residueKeys.length === 3 && contactOnly7kpa.radiusResidueCount === 36
@@ -763,6 +2065,21 @@ const browserSuite = String.raw`(async () => {
           '7KPA prepared complex begins stable local OpenMM Reference WASM minimization', JSON.stringify(preparationMetrics));
       }
     }
+    if (testScope === '7kpa-contact-capture') {
+      const scopedChecks = checks.filter((item) =>
+        item.label.includes('Lys A11 N-H to D84 pyridone O3')
+        || item.label.includes('hydrated 7KPA reference capture')
+        || item.label.includes('7KPA lactam refinement separates')
+        || item.label.includes('7KPA direct saturation and N-to-CH2 edit')
+        || item.label.includes('7KPA saturate-delete-build-C=O sequence'));
+      const failed = scopedChecks.filter((item) => !item.passed);
+      return { passed:scopedChecks.length - failed.length, total:scopedChecks.length, failed,
+        optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,
+        preparationMetrics:{ ligandContacts:preparationMetrics.ligandContacts,
+          hydratedReferenceContacts:preparationMetrics.hydratedReferenceContacts,
+          lactamRefinement:preparationMetrics.lactamRefinement || null,
+          cyclohexanoneStrainFixture:preparationMetrics.cyclohexanoneStrainFixture } };
+    }
   }
   const smilesCases = [
     ['O', 'H2O', 0],
@@ -787,7 +2104,7 @@ const browserSuite = String.raw`(async () => {
     'apply-atom-chemistry', 'apply-bond-chemistry', 'delete-bond-chemistry',
     'add-explicit-hydrogen', 'remove-explicit-hydrogen', 'delete-selected-atom']
     .every((id) => document.getElementById(id)),
-  'Build exposes atom identity, formal charge, bond-order, bond topology, and explicit-H controls');
+  'Design exposes atom identity, formal charge, bond-order, bond topology, and explicit-H controls');
   api.load('CC');
   const buildCameraBefore = api.viewerState();
   api.setInternalCoordinate([0, 1], 3, true);
@@ -796,7 +2113,7 @@ const browserSuite = String.raw`(async () => {
     && Math.hypot(buildCameraAfter.center.x - buildCameraBefore.center.x,
       buildCameraAfter.center.y - buildCameraBefore.center.y,
       buildCameraAfter.center.z - buildCameraBefore.center.z) < 1e-9,
-  'Build modifications preserve the current camera frame instead of auto-zooming',
+  'Design modifications preserve the current camera frame instead of auto-zooming',
   JSON.stringify({ before:buildCameraBefore, after:buildCameraAfter }));
   const bondedHydrogenIndices = (molecule, atomIndex) => molecule.bonds.flatMap((bond) => bond.a === atomIndex
     ? [bond.b] : bond.b === atomIndex ? [bond.a] : [])
@@ -833,27 +2150,36 @@ const browserSuite = String.raw`(async () => {
   api.load('N');
   const ammoniumEdit = await api.editAtomCurrent(0, 'N', 1);
   const ammoniumHydrogens = bondedHydrogenIndices(ammoniumEdit.molecule, 0);
+  const ammoniumBondLengths = ammoniumHydrogens.map((index) =>
+    atomDistance(ammoniumEdit.molecule, 0, index));
   const ammoniumAngles = ammoniumHydrogens.flatMap((first, position) =>
     ammoniumHydrogens.slice(position + 1).map((second) => atomAngle(ammoniumEdit.molecule, first, 0, second)));
   check(ammoniumEdit.formula === 'H4N' && ammoniumEdit.charge === 1
     && ammoniumEdit.molecule.atoms[0].formalCharge === 1
     && ammoniumEdit.valenceViolations.length === 0 && ammoniumEdit.validation.valid
-    && ammoniumHydrogens.every((index) => Math.abs(atomDistance(ammoniumEdit.molecule, 0, index) - 1.01) < 1e-6)
-    && ammoniumAngles.every((angle) => Math.abs(angle - 109.4712206) < 1e-5),
+    && ammoniumBondLengths.every((length) => length > 0.95 && length < 1.10)
+    // The local MMFF/UFF polish is allowed to move the ideal construction by
+    // sub-millidegrees; test tetrahedral chemistry, not floating-point identity.
+    && ammoniumAngles.every((angle) => Math.abs(angle - 109.4712206) < 1e-3),
   'formal-charge editing produces a sanitized tetrahedral explicit ammonium ion',
-  JSON.stringify({ validation:ammoniumEdit.validation, angles:ammoniumAngles }));
+  JSON.stringify({ validation:ammoniumEdit.validation,
+    bondLengths:ammoniumBondLengths, angles:ammoniumAngles }));
 
   api.load('C');
   const waterEdit = await api.editAtomCurrent(0, 'O', 0);
   const waterHydrogens = bondedHydrogenIndices(waterEdit.molecule, 0);
+  const waterBondLengths = waterHydrogens.map((index) =>
+    atomDistance(waterEdit.molecule, 0, index));
   const waterAngle = atomAngle(waterEdit.molecule, waterHydrogens[0], 0, waterHydrogens[1]);
   check(waterEdit.formula === 'H2O' && waterEdit.molecule.atoms[0].element === 'O'
     && waterEdit.valenceViolations.length === 0 && waterEdit.validation.valid
     && api.structureComponents().components[0]?.atomCount === waterEdit.atoms
-    && waterHydrogens.every((index) => Math.abs(atomDistance(waterEdit.molecule, 0, index) - 0.98) < 1e-6)
-    && Math.abs(waterAngle - 104.52) < 1e-5,
+    && waterBondLengths.every((length) => length > 0.90 && length < 1.05)
+    // Isolated-water force fields do not share one exact gas-phase angle. The
+    // invariant here is a chemically bent, non-linear H-O-H geometry.
+    && waterAngle > 100 && waterAngle < 110,
   'element replacement reconciles methane into sanitized bent water geometry',
-  JSON.stringify({ validation:waterEdit.validation, angle:waterAngle,
+  JSON.stringify({ validation:waterEdit.validation, bondLengths:waterBondLengths, angle:waterAngle,
     components:api.structureComponents() }));
 
   api.load('C.C');
@@ -922,8 +2248,13 @@ const browserSuite = String.raw`(async () => {
     && attachedHydrogens(afterCarbonylStage, pyridoneOxygen) === 0
     && JSON.stringify(afterCarbonylStage.atoms.map((atom) => [atom.x, atom.y, atom.z])) === pyridoneCoordinates
     && !document.querySelector('#chemistry-pending').classList.contains('hidden')
+    && !document.querySelector('#viewer-finish-chemistry').classList.contains('hidden')
+    && !document.querySelector('#viewer-discard-chemistry').classList.contains('hidden')
+    && document.querySelector('#export-button').classList.contains('hidden')
+    && !document.querySelector('#fullscreen-button').classList.contains('hidden')
+    && document.querySelector('#optimize-button').disabled
     && !document.querySelector('#chemistry-immediate-refine').checked,
-  'the first staged tautomer edit changes topology without inventing O-H or moving coordinates');
+  'a staged edit preserves geometry and promotes Finish chemistry into the viewer toolbar');
   const stagedPyridinol = await api.stageBondCurrent(pyridoneCarbon, pyridoneNitrogen, 2);
   const beforeTautomerFinish = api.current().molecule;
   check(stagedPyridinol.validation.pending && api.chemistryTransaction()?.editCount === 2
@@ -940,7 +2271,9 @@ const browserSuite = String.raw`(async () => {
     && attachedHydrogens(pyridinol.molecule, pyridoneNitrogen) === 0
     && Math.abs(atomDistance(pyridinol.molecule, pyridoneOxygen, pyridinolHydrogen) - 0.98) < 0.08
     && pyridinolOhAngle > 90 && pyridinolOhAngle < 125
-    && document.querySelector('#chemistry-pending').classList.contains('hidden'),
+    && document.querySelector('#chemistry-pending').classList.contains('hidden')
+    && document.querySelector('#viewer-finish-chemistry').classList.contains('hidden')
+    && !document.querySelector('#export-button').classList.contains('hidden'),
   'Finish transfers pyridone N-H to O-H, validates once, and closes the staged batch',
   JSON.stringify({ final:pyridinol.validation,
     oxygenHydrogens:attachedHydrogens(pyridinol.molecule, pyridoneOxygen),
@@ -983,7 +2316,7 @@ const browserSuite = String.raw`(async () => {
     protectedProteinAtom(api.current().molecule)[axis]);
   check(document.querySelector('#build-optimizer-select').value === 'ligand-rdkit'
     && !document.querySelector('#build-optimizer-select option[value="ligand-rdkit"]').disabled,
-  'a protein–ligand complex defaults Build optimization to the safe ligand-only path');
+  'a protein–ligand complex defaults Design optimization to the safe ligand-only path');
   await api.editBondCurrent(pyridoneCarbon, pyridoneOxygen, 1);
   await api.editBondCurrent(pyridoneCarbon, pyridoneNitrogen, 2);
   const pdbLigandPolish = await new Promise((resolve, reject) => {
@@ -1034,7 +2367,7 @@ const browserSuite = String.raw`(async () => {
     && !document.querySelector('#result-frames').classList.contains('hidden')
     && document.querySelector('#result-frame-heading').textContent.includes('Minimization path')
     && document.querySelector('#result-title').textContent === 'Ligand Optimization',
-  'ligand-only Build optimization opens its saved full-complex minimization path in View',
+  'ligand-only Design optimization opens its saved full-complex minimization path in View',
   JSON.stringify(explicitLigandFrames));
   api.selectCalculationFrame(0);
   const protectedAtLigandStart = ['x', 'y', 'z'].map((axis) =>
@@ -1123,6 +2456,11 @@ const browserSuite = String.raw`(async () => {
     clientX: editCanvasRect.left + editTarget.sx,
     clientY: editCanvasRect.top + editTarget.sy,
   }));
+  document.querySelector('#molecule-canvas').dispatchEvent(new PointerEvent('pointerup', {
+    bubbles: true, pointerId: 40,
+    clientX: editCanvasRect.left + editTarget.sx,
+    clientY: editCanvasRect.top + editTarget.sy,
+  }));
   const interactivePolish = await new Promise((resolve, reject) => {
     const started = performance.now();
     const poll = () => {
@@ -1163,9 +2501,61 @@ const browserSuite = String.raw`(async () => {
     clientX: canvasRect.left + hydrogenScreen.sx,
     clientY: canvasRect.top + hydrogenScreen.sy,
   }));
+  document.querySelector('#molecule-canvas').dispatchEvent(new PointerEvent('pointerup', {
+    bubbles: true, pointerId: 41,
+    clientX: canvasRect.left + hydrogenScreen.sx,
+    clientY: canvasRect.top + hydrogenScreen.sy,
+  }));
   const clickAdded = api.current();
   check(clickAdded.formula === 'C7H8', 'element tool click adds methyl without fake bonds', clickAdded.formula);
   check(clickAdded.bonds === 15 && clickAdded.valenceViolations.length === 0, 'element tool click keeps explicit valid topology', clickAdded.bonds + ' bonds');
+
+  api.load('c1ccccc1');
+  document.querySelector('[data-mode="build"]').click();
+  document.querySelector('[data-tool="select"]').click();
+  const buildCanvas = document.querySelector('#molecule-canvas');
+  const buildRect = buildCanvas.getBoundingClientRect();
+  const buildAtom = api.viewerState().atoms.find((atom) => atom.index === 0);
+  const buildRotationBefore = api.viewerState().rotation;
+  buildCanvas.dispatchEvent(new PointerEvent('pointerdown', { bubbles:true, pointerId:42,
+    button:0, clientX:buildRect.left + buildAtom.sx, clientY:buildRect.top + buildAtom.sy }));
+  buildCanvas.dispatchEvent(new PointerEvent('pointermove', { bubbles:true, pointerId:42,
+    button:0, buttons:1, clientX:buildRect.left + buildAtom.sx + 70, clientY:buildRect.top + buildAtom.sy + 35 }));
+  buildCanvas.dispatchEvent(new PointerEvent('pointerup', { bubbles:true, pointerId:42,
+    button:0, clientX:buildRect.left + buildAtom.sx + 70, clientY:buildRect.top + buildAtom.sy + 35 }));
+  const buildRotationAfter = api.viewerState().rotation;
+  const buildRotationDelta = ['w', 'x', 'y', 'z'].reduce((sum, key) =>
+    sum + Math.abs(buildRotationAfter[key] - buildRotationBefore[key]), 0);
+  check(buildRotationDelta > 1e-3
+    && document.querySelector('#geometry-selection-help').textContent.includes('Choose Select'),
+  'left-drag rotates in Design Select without accidentally selecting the starting atom',
+  JSON.stringify({ buildRotationDelta }));
+
+  for (let index = 0; index < 6; index++) {
+    const projected = api.viewerState().atoms.find((atom) => atom.index === index);
+    buildCanvas.dispatchEvent(new PointerEvent('pointerdown', { bubbles:true, pointerId:50 + index,
+      button:0, clientX:buildRect.left + projected.sx, clientY:buildRect.top + projected.sy }));
+    buildCanvas.dispatchEvent(new PointerEvent('pointerup', { bubbles:true, pointerId:50 + index,
+      button:0, clientX:buildRect.left + projected.sx, clientY:buildRect.top + projected.sy }));
+  }
+  check(document.querySelector('#geometry-selection-help').textContent.includes('6 atoms selected for a docking core')
+    && document.querySelector('#build-status').textContent.includes('6 atoms selected'),
+  'Design Select accepts a connected docking core larger than four atoms');
+
+  const buildPanBefore = api.viewerState().pan;
+  const coordinatesBeforeBuildPan = api.current().molecule.atoms.map((atom) => [atom.x, atom.y, atom.z]);
+  buildCanvas.dispatchEvent(new PointerEvent('pointerdown', { bubbles:true, pointerId:60,
+    button:2, clientX:buildRect.left + 200, clientY:buildRect.top + 200 }));
+  buildCanvas.dispatchEvent(new PointerEvent('pointermove', { bubbles:true, pointerId:60,
+    button:2, buttons:2, clientX:buildRect.left + 230, clientY:buildRect.top + 182 }));
+  buildCanvas.dispatchEvent(new PointerEvent('pointerup', { bubbles:true, pointerId:60,
+    button:2, clientX:buildRect.left + 230, clientY:buildRect.top + 182 }));
+  const buildPanAfter = api.viewerState().pan;
+  check(buildPanAfter.x - buildPanBefore.x === 30 && buildPanAfter.y - buildPanBefore.y === -18
+    && JSON.stringify(api.current().molecule.atoms.map((atom) => [atom.x, atom.y, atom.z]))
+      === JSON.stringify(coordinatesBeforeBuildPan),
+  'right-drag pans the full scene in Design without changing molecular coordinates',
+  JSON.stringify({ before:buildPanBefore, after:buildPanAfter }));
 
   const cf3Seed = api.attach('c1ccccc1', 'trifluoromethyl', 0).molecule;
   const cf3Carbon = cf3Seed.atoms.findIndex((atom, index) => index > 5 && atom.element === 'C' && !atom.aromatic);
@@ -1242,7 +2632,7 @@ const browserSuite = String.raw`(async () => {
     'conformer search is directly selectable and chooses its WebGPU backend');
   check(![...document.querySelector('#build-optimizer-select').options].some((option) => option.value === 'browser' || option.value === 'openmm')
       && ![...document.querySelector('#method-select').options].some((option) => option.value === 'openmm'),
-    'Build and Run do not expose approximate cleanup or OpenMM Reference');
+    'Design and Simulate do not expose approximate cleanup or OpenMM Reference');
   check(document.querySelector('#solvent-select').value === 'obc2'
       && document.querySelector('#constraint-select').value === 'hbonds'
       && !document.querySelector('#cutoff-select')
@@ -1420,11 +2810,25 @@ const browserSuite = String.raw`(async () => {
     'STORMM retained frames pass positional X–H, size, COM, and fitted-RMSD diagnostics',
     JSON.stringify(constrainedStormmTrajectory));
   check(constrainedStormmFrames.alignment?.mode === 'fixed-identity heavy-atom rigid fit'
-      && constrainedStormmFrames.alignment.referenceFrame === 0
+      && constrainedStormmFrames.alignment.referenceFrame === null
+      && constrainedStormmFrames.alignment.referenceGeometry === 'input coordinates'
+      && constrainedStormmFrames.alignment.sharedAcrossReplicas
       && constrainedStormmFrames.alignment.heavyAtomCount === 3
       && constrainedStormmFrames.alignment.displayOnly,
-    'STORMM MD replicas are display-aligned to their own first frame without changing raw diagnostics',
+    'STORMM MD replicas share the unrandomized input display reference without changing raw diagnostics',
     JSON.stringify(constrainedStormmFrames.alignment));
+  api.selectCalculationFrame(0);
+  const alignedStormmReplica0 = Float64Array.from(
+    api.current().molecule.atoms.flatMap((atom) => [atom.x, atom.y, atom.z]));
+  api.selectCalculationReplica(1);
+  const alignedStormmReplica1 = Float64Array.from(
+    api.current().molecule.atoms.flatMap((atom) => [atom.x, atom.y, atom.z]));
+  const directCoordinateRmsd = (first, second) => Math.sqrt(first.reduce((sum, value, index) =>
+    sum + (value - second[index]) ** 2, 0) / (first.length / 3));
+  const replicaPairRmsd = directCoordinateRmsd(alignedStormmReplica0, alignedStormmReplica1);
+  check(replicaPairRmsd < 0.15,
+    'switching STORMM replicas preserves one display orientation despite randomized starts',
+    replicaPairRmsd.toExponential(3) + ' Å direct coordinate RMSD');
   api.load('CCCC');
   const conformerSearch = await api.calculateCurrent('conformers', 'stormm', {
     conformerCount: 32, conformerSearchSteps: 50, conformerClusterRms: 0.5,
@@ -1690,9 +3094,9 @@ const browserSuite = String.raw`(async () => {
   check(Math.abs(cameraAfter.scale - cameraBefore.scale) < 1e-9, 'viewer fit stays constant through rotation', cameraBefore.scale + ' → ' + cameraAfter.scale);
   check(Math.abs(quaternionNorm - 1) < 1e-9, 'trackball quaternion remains normalized', String(quaternionNorm));
   document.querySelector('[data-mode="run"]').click();
-  check(!document.querySelector('#run-left-panel').classList.contains('hidden'), 'Run mode shows calculation controls');
-  check(document.querySelector('#display-options').classList.contains('hidden'), 'Run mode hides View-only display controls');
-  check(document.querySelector('.protein-fold-card').classList.contains('hidden'), 'Run mode keeps protein folding controls out of the calculation workflow');
+  check(!document.querySelector('#run-left-panel').classList.contains('hidden'), 'Simulate mode shows calculation controls');
+  check(document.querySelector('#display-options').classList.contains('hidden'), 'Simulate mode hides View-only display controls');
+  check(document.querySelector('.protein-fold-card').classList.contains('hidden'), 'Simulate mode keeps protein folding controls out of the calculation workflow');
   const workerAsset = document.querySelector('link[data-rdkit-worker]').href;
   const workerResponse = await fetch(workerAsset);
   const workerSource = await workerResponse.text();
@@ -1904,12 +3308,12 @@ const browserSuite = String.raw`(async () => {
   }
   const solventSelect = document.querySelector('#solvent-select');
   check(solventSelect && [...solventSelect.options].some((option) => option.value === 'obc2'),
-    'Run controls expose OBC2 implicit water');
+    'Simulate controls expose OBC2 implicit water');
   solventSelect.value = 'obc2';
   solventSelect.dispatchEvent(new Event('change'));
   check(document.querySelector('#environment-info').textContent.includes('mbondi2')
       && document.querySelectorAll('.info-button[aria-describedby]').length >= 3,
-    'Run information buttons explain the selected OBC2 model');
+    'Simulate information buttons explain the selected OBC2 model');
   solventSelect.value = 'vacuum';
   solventSelect.dispatchEvent(new Event('change'));
   const obcReference = await api.calculateCurrent('energy', 'openmm', { implicitSolvent: 'obc2' });
@@ -1948,7 +3352,7 @@ const browserSuite = String.raw`(async () => {
       + cutoffForceComparison.rmsError.toExponential(4) + ' kJ/mol/nm RMS' : 'missing force vectors');
   check([...document.querySelector('#constraint-select').options].some((option) => option.value === 'hbonds')
       && !document.querySelector('#cutoff-select'),
-    'Run controls expose X–H SHAKE/RATTLE but keep the validation-only cutoff out of the UI');
+    'Simulate controls expose X–H SHAKE/RATTLE but keep the validation-only cutoff out of the UI');
   api.load('CCO');
   const constrainedReference = await api.calculateCurrent('dynamics', 'openmm', {
     constraintMode: 'hbonds', implicitSolvent: 'obc2', nonbondedCutoffNm: 1.0,
@@ -2061,7 +3465,7 @@ const browserSuite = String.raw`(async () => {
     'Rosemary fixture contains the complete exported OpenMM System', JSON.stringify(rosemary.parameterCounts));
   check(document.querySelector('#method-select option[value="webgpu"]').textContent.includes('Rosemary')
     && document.querySelector('#method-info').textContent.includes('NAGL'),
-    'Run controls identify Rosemary and NAGL for the prepared protein');
+    'Simulate controls identify Rosemary and NAGL for the prepared protein');
   check(document.querySelector('#protein-result-title').textContent.includes('Rosemary')
     && document.querySelector('#protein-plddt').textContent === 'PDB',
     'experimental PDB coordinates are not presented as an OpenFold confidence score');
@@ -2115,28 +3519,38 @@ const browserSuite = String.raw`(async () => {
   }
 
   api.load('B');
-  check(!document.querySelector('#run-left-panel').classList.contains('hidden') && document.querySelector('#display-options').classList.contains('hidden'), 'loading a molecule preserves the Run-mode panel state');
+  check(!document.querySelector('#run-left-panel').classList.contains('hidden') && document.querySelector('#display-options').classList.contains('hidden'), 'loading a molecule preserves the Simulate-mode panel state');
   const uffEnergy = await api.calculateCurrent('energy', 'rdkit');
   check(uffEnergy.forcefield === 'UFF' && uffEnergy.fallback, 'unsupported MMFF94 chemistry uses genuine UFF fallback', JSON.stringify(uffEnergy));
   check(Number.isFinite(uffEnergy.finalEnergy), 'UFF fallback energy is finite', String(uffEnergy.finalEnergy));
   check(uffEnergy.unit === 'kcal/mol', 'UFF fallback reports kcal/mol', uffEnergy.unit);
 
+  if (captureDockingUi) {
+    api.loadObject(dockingFixture);
+    document.querySelector('.mode-bar button[data-mode="build"]').click();
+    api.setDockingMode('selected-core');
+    api.setDockingSelection([3, 4, 5]);
+    await api.captureDockingReference();
+    await api.runConstrainedDocking({ conformerCount:4, seed:20260819, torsionSteps:32 });
+  }
   const failed = checks.filter((item) => !item.passed);
   return { passed: checks.length - failed.length, total: checks.length, failed, optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics, preparationMetrics };
 })()`;
 
 try {
   if (!externalAppUrl) {
-    server = Bun.spawn(['bun', 'server.js', '--port', String(appPort)], {
+    server = Bun.spawn(['bun', 'server.js',
+      ...(productionApiBoundary ? [] : ['--test-api']), '--port', String(appPort)], {
       cwd: import.meta.dir,
       stdout: 'ignore',
       stderr: 'pipe',
     });
   }
-  await waitFor(async () => (await fetch(appUrl)).ok);
+  await waitFor(async () => (await fetch(appUrl)).ok, 10000, `Molarium server at ${appUrl}`);
 
   chrome = Bun.spawn([
     chromePath,
+    ...chromePlatformArgs,
     '--headless',
     '--disable-extensions',
     '--no-first-run',
@@ -2149,13 +3563,16 @@ try {
   const page = await waitFor(async () => {
     const pages = await (await fetch(`http://127.0.0.1:${debugPort}/json`)).json();
     return pages.find((item) => item.type === 'page' && item.url === appUrl);
-  });
+  }, 10000, `Chrome page at ${appUrl} on debugging port ${debugPort}`);
   const client = new DevToolsClient(page.webSocketDebuggerUrl);
   await client.open();
   await waitFor(async () => {
-    const readiness = await client.call('Runtime.evaluate', { expression: 'Boolean(window.molariumTest)', returnByValue: true });
+    const readiness = await client.call('Runtime.evaluate', {
+      expression:productionApiBoundary
+        ? 'Boolean(window.MolariumChemistActionsReady)'
+        : 'Boolean(window.molariumTest)', returnByValue: true });
     return readiness.result.value;
-  });
+  }, 10000, productionApiBoundary ? 'Chemist Actions API readiness' : 'Molarium test API readiness');
   const evaluation = await client.call('Runtime.evaluate', { expression: browserSuite, awaitPromise: true, returnByValue: true });
   if (evaluation.exceptionDetails) throw new Error(evaluation.exceptionDetails.exception?.description || evaluation.exceptionDetails.text);
   if (Bun.env.MOLARIUM_TEST_SCREENSHOT) {
@@ -2171,6 +3588,17 @@ try {
   }
   client.close();
   const report = evaluation.result.value;
+  if (Bun.env.MOLARIUM_OPENMM_POSE_RESULT && report.openmmPoseMetrics)
+    await Bun.write(Bun.env.MOLARIUM_OPENMM_POSE_RESULT,
+      JSON.stringify(report.openmmPoseMetrics, null, 2) + '\n');
+  if (Bun.env.MOLARIUM_EXPORT_STRAIN_FIXTURE
+      && report.preparationMetrics?.cyclohexanoneStrainFixture) {
+    await Bun.write(Bun.env.MOLARIUM_EXPORT_STRAIN_FIXTURE,
+      JSON.stringify(report.preparationMetrics.cyclohexanoneStrainFixture, null, 2));
+    report.preparationMetrics.cyclohexanoneStrainFixture = {
+      writtenTo:Bun.env.MOLARIUM_EXPORT_STRAIN_FIXTURE,
+    };
+  }
   for (const failure of report.failed) console.error(`FAIL ${failure.label}${failure.details ? ` — ${failure.details}` : ''}`);
   console.log(`${report.passed}/${report.total} browser checks passed`);
   if (report.optimizationMetrics) {

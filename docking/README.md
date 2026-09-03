@@ -1,0 +1,140 @@
+# Molarium reference-guided pose protocols
+
+Molarium Pose Propagation-1 and ConstraintDock-1 are independent, browser-oriented protocols for
+reference-pose analogue refinement and required hydrogen-bond constrained ligand posing. They are
+the first Molarium features organized explicitly as
+a reproducible-method implementation: the executable protocol, scientific lineage, exclusions,
+seeds, geometric constraints, run events, and result hashes travel together.
+
+## Scientific lineage
+
+The design is informed by the staged-search separation described for Glide and by ICM's use of
+internal-coordinate sampling and soft restraints. Glide's public API distinguishes reference-ligand
+core constraints from receptor H-bond constraints; ICM's public documentation describes
+flat-bottom interaction restraints and reference-ligand tethers. Pose Propagation 0.8 adds an
+independent contact-capture stage, chemically protected ring moves, explicit capture-sanity gates,
+and guarded physical refinement.
+Rowan's open-source `openconf` analogue mode informed the
+free-terminal-rotor/exact-core boundary; the AutoPose preprint is recorded as a related R-group pose
+construction approach. Molarium does not execute or copy either method. It does not
+implement either product's grids, search, refinement, or scoring function.
+
+Pose Propagation-1 additionally follows the published congeneric/RBFE pattern of inheriting a
+trusted common region and sampling only modified substituents. Molarium edits preserve exact stable
+atom identities, so the default does not infer or ask the user to select an MCS. Every surviving
+reference heavy atom is fixed automatically unless the recorded edit changes an existing ring;
+then the complete transformed ring is released behind its fixed external scaffold boundary.
+
+- Cournia Z et al. *Relative Binding Free Energy Calculations in Drug Discovery: Recent Advances
+  and Practical Considerations.* J Chem Inf Model. 2017.
+  [doi:10.1021/acs.jcim.7b00564](https://doi.org/10.1021/acs.jcim.7b00564)
+- Ohadi D et al. *Input Pose is Key to Performance of Free Energy Perturbation: Benchmarking with
+  Monoacylglycerol Lipase.* J Chem Inf Model. 2024.
+  [doi:10.1021/acs.jcim.4c01223](https://doi.org/10.1021/acs.jcim.4c01223)
+- Pinheiro JP et al. *TEMPL: A Template-Based Protein-Ligand Pose Prediction Baseline.* J Chem Inf
+  Model. 2025. [doi:10.1021/acs.jcim.5c01985](https://doi.org/10.1021/acs.jcim.5c01985)
+
+- Friesner RA et al. *Glide: a new approach for rapid, accurate docking and scoring. 1. Method and
+  assessment of docking accuracy.* J Med Chem. 2004;47:1739-1749.
+  [doi:10.1021/jm0306430](https://doi.org/10.1021/jm0306430)
+- Totrov M, Abagyan R. *Flexible protein-ligand docking by global energy optimization in internal
+  coordinates.* Proteins. 1997;Suppl 1:215-220.
+  [PubMed 9485515](https://pubmed.ncbi.nlm.nih.gov/9485515/)
+- [Schrodinger public Glide constraint API](https://learn.schrodinger.com/public/python_api/2025-3/api/schrodinger.application.glide.constraints.html)
+- [MolSoft public ligand-tether and distance-restraint documentation](https://molsoft.com/~eugene/icmpro/ligand-tether.html)
+- [MolSoft public small-molecule docking tutorial](https://molsoft.com/~jack/icmpro/start-dock.html)
+- [Rowan Scientific `openconf`](https://github.com/rowansci/openconf) (MIT-licensed method
+  inspiration; no source code is bundled or copied)
+- Ponzoni L, York F, Kelley B. *AutoPose: R-Group Decomposition Based Posing for RBFE.* ChemRxiv
+  (2026). [doi:10.26434/chemrxiv.15004703/v1](https://doi.org/10.26434/chemrxiv.15004703/v1)
+
+This is not a port or reimplementation of either commercial product. Molarium does not use
+proprietary source code, Glide grids, GlideScore, ICM grids, ICM Score, or undisclosed product
+defaults. The published ideas are reproduced with explicit Molarium geometry, sampling, physical
+energy, and penalty definitions.
+
+## Executable boundary
+
+ConstraintDock version `0.4.0` and Pose Propagation version `0.9.0` implement and test:
+
+- least-squares reference-core alignment;
+- exact reference-coordinate snapping for every mapped core atom plus an independent RMSD audit;
+- explicit donor-hydrogen-acceptor distance and angle audits;
+- required-H-bond feasibility and transparent penalty scoring;
+- deterministic feasible-first pose ranking;
+- stable atom identities for edit-derived reference cores;
+- automatic inheritance of surviving reference heavy atoms, with an explicit audited whole-ring
+  release when a committed edit changes existing ring chemistry;
+- reference-preserving edit cleanup by default, with the older free local ring cleanup available explicitly;
+- exact restoration of surviving ligand-donor hydrogens used by selected captured contacts;
+- post-sanitization transfer of a deleted contact participant to every donor/acceptor-role-compatible
+  feature at the same recorded edit boundary, with multiple candidates evaluated as an any-of restraint;
+- a dedicated pharmacophore-capture objective in which required contacts drive conformer generation
+  before physical energy is allowed to act;
+- deterministic annealed stochastic line search over acyclic torsions and isolated saturated-ring
+  crankshafts that moves only graph branches containing no inherited atom; this is not equilibrium
+  Metropolis/Hastings sampling and not ICM BPMC;
+- exclusion of ring moves touching perceived tetrahedral stereocenters, ring carbonyl/multiple-bond
+  atoms, or lactam/conjugated geometry;
+- a registered capture-sanity gate at 100 kcal/mol relative ligand strain and no more than two
+  additional steric-clash diagnostics versus the best exact-core start;
+- exhaustive best-improvement capture polish over every registered move, angle, and line fraction;
+- physical refinement and OpenMM fixed-scaffold relaxation only after contact capture;
+- hard feasible-state retention for required contacts during search;
+- a transparent receptor-site score using cross OpenFF Lennard-Jones and Coulomb terms plus relative
+  vacuum OpenFF Sage 2.1 intramolecular ligand energy;
+- deterministic in-browser ETKDGv3 conformer generation and core alignment;
+- fixed-scaffold OpenFF Sage relaxation in OpenMM WebAssembly with a receptor-aware
+  feasibility/objective safeguard;
+- a compact Design-mode setup, top-five pose selector, and pose application that leaves the receptor fixed;
+- input and protocol SHA-256 hashes;
+- an append-only, hash-chained run labbook with JSON and Markdown representations.
+
+The receptor is rigid. There is no receptor grid, induced-fit refinement, solvation/desolvation
+term, entropy model, or binding-free-energy estimate. The cross score uses the captured receptor's
+numeric nonbonded terms, fresh edited-ligand OpenFF terms, an explicit relative dielectric of 4,
+and relative vacuum OpenFF Sage ligand energy. Both the receptor interaction and ligand strain are
+reported relative to the lowest inherited fixed-core starting seed; subtracting the constant receptor
+baseline changes displayed scores but not proposal acceptance or pose ranking. RDKit
+MMFF94/UFF still prepares the initial ETKDG conformers but is not the final strain score. The result is a
+pose-ranking score, not a binding affinity.
+
+The browser gate uses a synthetic protein–ligand fixture to execute capture, add a new ligand atom,
+discard stale complex parameters, freshly parameterize the edited ligand with OpenFF/OpenMM WASM,
+run RDKit WASM generation, rank the constrained poses, replay them deterministically, verify the
+hash chain, and apply a pose without moving the receptor. It also proves that a removed contact atom
+is either transferred by the role-compatible edit-boundary rule or explicitly omitted. Accuracy claims still require prospective
+cognate-redocking and cross-docking benchmarks; version 0.8 must be presented as experimental until
+those are added.
+
+## Labbook design
+
+The shareable audit records hashes of the exact receptor and ligand inputs rather than embedding
+their coordinates. This lets a user establish that two runs used identical proprietary structures
+without disclosing those structures. It records:
+
+- application and protocol version;
+- immutable protocol snapshot and hash;
+- input labels, atom counts, and SHA-256 hashes;
+- explicit core atom mapping and required H-bond selections;
+- omitted or unavailable reference contacts and their reason;
+- random seed and every non-default setting;
+- torsion definitions, proposal schedule, acceptance/improvement counts, and per-conformer outcomes;
+- runtime/backend information supplied by the browser;
+- ordered stage events linked by SHA-256;
+- constraint geometry, scores, selected pose, and final labbook hash.
+
+Run the local unit gate with:
+
+```sh
+npm run test:docking
+npm test
+```
+
+The normative, implementation-independent Pose Propagation procedure is
+[`POSE-PROPAGATION-PROTOCOL.md`](./POSE-PROPAGATION-PROTOCOL.md). The detailed evidence and
+decision history is maintained in [`DECISIONS.md`](./DECISIONS.md). Human–agent observations,
+hypotheses, changes, and test outcomes are curated in
+[`HUMAN-AGENT-DEVELOPMENT-LOG.md`](./HUMAN-AGENT-DEVELOPMENT-LOG.md).
+Run-specific scientific rationale can be appended as ordinary `decision` or `note` labbook events;
+those entries receive the same hashes as calculation-stage events.

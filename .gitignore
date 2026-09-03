@@ -30,6 +30,12 @@ out/
 work/
 outputs/
 
+# Local scratch and superseded publication staging. Final generated evidence is
+# copied into assets/media/ and paper/figures/ before it is committed.
+/output/
+/tmp/
+/paper/figures/fig1_molarium_views.png
+
 # Local/editor files
 .DS_Store
 *.swp
@@ -41,6 +47,15 @@ pnpm-debug.log*
 
 # Paper build intermediates (source and checked-in PDFs remain tracked)
 paper/build/
+
+# Private Codex transcript exports. Curated, redacted debugging episodes belong
+# in paper/development-log/episodes/; raw and machine exports never do.
+paper/development-log/private/
+
+# Restartable per-case and smoke benchmark artifacts are local working evidence.
+# Frozen aggregate and scored reports remain tracked beside the benchmark.
+docking/benchmark/results/
+docking/benchmark/benchmark-results.v*-smoke*.json
 
 # Downloaded public model assets
 mlip/models/*.onnx

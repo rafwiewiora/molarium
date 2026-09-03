@@ -1,0 +1,152 @@
+{
+  "schema": "molarium.cdk2-designer-movie-assets/v1",
+  "routeId": "cdk2-designer-intent",
+  "scientificStatus": "designer-directed-hit-to-lead-success",
+  "claim": "A designer-selected C19 exit vector carries the 1H1Q hit pose through two Agent API design steps.",
+  "agentApi": {
+    "auditSha256": "8195e425dc403dafbee2d142d481caa18e75b4692f0b307338f74ba029c2b8bb",
+    "records": 23,
+    "attachmentAtomName": "C19",
+    "checkpoints": [
+      {
+        "stepId": "add-meta-chloro",
+        "predictedStateId": "6CP",
+        "filename": "add-meta-chloro-prediction.json",
+        "sha256": "f7cf98c3be3d662c38627dfaf70ab536ffff03fe2be6489a4611c373faceb080",
+        "bytes": 370373,
+        "attachmentAtomId": "reference-1H1Q:HETATM:A:2A6:1298::C19:8956",
+        "attachmentAtomName": "C19",
+        "freezeActionSequence": 12
+      },
+      {
+        "stepId": "replace-chloro-with-sulfonamide",
+        "predictedStateId": "N76",
+        "filename": "replace-chloro-with-sulfonamide-prediction.json",
+        "sha256": "102ca8c85c47af2fd8d6ded3bd11f121cf642f02f9d558847c5c9a0912a55219",
+        "bytes": 376567,
+        "attachmentAtomId": "reference-1H1Q:HETATM:A:2A6:1298::C19:8956",
+        "attachmentAtomName": "C19",
+        "freezeActionSequence": 22
+      }
+    ]
+  },
+  "evaluation": [
+    {
+      "stepId": "add-meta-chloro",
+      "predictedStateId": "6CP",
+      "holdoutPdbId": "1H1R",
+      "receptorCaRmsdAngstrom": 0.3433524325435319,
+      "activeSiteHeavyAtomRmsdAngstrom": 0.5257212168500687,
+      "ligandRmsdAngstrom": 1.0571242757085262,
+      "editedRegionRmsdAngstrom": 0.5262978924462307
+    },
+    {
+      "stepId": "replace-chloro-with-sulfonamide",
+      "predictedStateId": "N76",
+      "holdoutPdbId": "1OIU",
+      "receptorCaRmsdAngstrom": 0.4202334506003466,
+      "activeSiteHeavyAtomRmsdAngstrom": 1.0459891996095538,
+      "ligandRmsdAngstrom": 0.8486284480918886,
+      "editedRegionRmsdAngstrom": 1.8265958085461205
+    }
+  ],
+  "editTargets": {
+    "add-meta-chloro": [
+      4.10980870842833,
+      40.127843302918954,
+      45.977856499682055
+    ],
+    "replace-chloro-with-sulfonamide": [
+      3.6877645869971225,
+      40.26344708305099,
+      45.64056556725642
+    ]
+  },
+  "inputs": [
+    {
+      "path": "design-history/structures/generated/cdk2-designer-campaign.json",
+      "sha256": "f1e22cd609cd97792f5d7c1217e0fb0e551cc2ea490e1f2b4925451faf7f78ec",
+      "schemaMigration": {
+        "kind": "schema-identifier-only",
+        "fromSchema": "molarium.design-campaign/v1",
+        "toSchema": "molarium.registered-design-route/v1",
+        "frozenInputSha256": "9e3e247b6aa17619fc632e1075921c1f1108c21671d71f577070c6907add2c6e",
+        "currentSha256": "f1e22cd609cd97792f5d7c1217e0fb0e551cc2ea490e1f2b4925451faf7f78ec"
+      }
+    },
+    {
+      "path": "outputs/design-history/cdk2-designer-intent-success/prediction-manifest.json",
+      "sha256": "c680c737899b19a717b805127f88b89c3a51b04fdcd130913a25e027cc382eef"
+    },
+    {
+      "path": "outputs/design-history/cdk2-designer-intent-success/chemist-action-audit.json",
+      "sha256": "8195e425dc403dafbee2d142d481caa18e75b4692f0b307338f74ba029c2b8bb"
+    },
+    {
+      "path": "outputs/design-history/cdk2-designer-intent-success/holdout-evaluation-summary.json",
+      "sha256": "ba48f845ea83956ff001500362f70609d7a3987ec86d8c8f229b17efd93ae5bd"
+    }
+  ],
+  "assets": [
+    {
+      "path": "design-history/structures/generated/cdk2-designer-6cp-prediction.pdb",
+      "role": "designer-directed-prediction",
+      "stepId": "add-meta-chloro",
+      "sha256": "01902f9fc27da1615ddb0fd368680d46990e8cdedca69e1ba8a5a96716467b54",
+      "bytes": 2455
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-1h1r-6cp-aligned-holdout.pdb",
+      "role": "aligned-crystal-validation",
+      "stepId": "add-meta-chloro",
+      "sha256": "ff150c7a2ddfb6162939c0165f8f86f3dd0fa8d34273c775bf969a42d20e58e4",
+      "bytes": 1979
+    },
+    {
+      "path": "outputs/design-history/cdk2-designer-intent-success/add-meta-chloro-holdout-evaluation.json",
+      "role": "pose-evaluation",
+      "stepId": "add-meta-chloro",
+      "sha256": "31fe9982cc1a826eb6158961d9458031cfaef117164cdf02d229209a83549373",
+      "bytes": 1617
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-designer-n76-prediction.pdb",
+      "role": "designer-directed-prediction",
+      "stepId": "replace-chloro-with-sulfonamide",
+      "sha256": "5c85ef62fad1c8cb249425037d2efcadb7279533f6a81df75ad1738578b5ddf3",
+      "bytes": 2743
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-1oiu-n76-aligned-holdout.pdb",
+      "role": "aligned-crystal-validation",
+      "stepId": "replace-chloro-with-sulfonamide",
+      "sha256": "8dea2ae93f904e4a6d832965666eab4756a87f1426e9d65e9bfab62a9cd1542d",
+      "bytes": 2216
+    },
+    {
+      "path": "outputs/design-history/cdk2-designer-intent-success/replace-chloro-with-sulfonamide-holdout-evaluation.json",
+      "role": "pose-evaluation",
+      "stepId": "replace-chloro-with-sulfonamide",
+      "sha256": "a76df1d6ed238efc160aa233828b37499361e58d10e29d0a57c18527d953779b",
+      "bytes": 1632
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-1h1q-protein.pdb",
+      "role": "hit-derived",
+      "sha256": "8a843f464da254b7105b49b0b807776a99e580e04a12991a9543ada88c34d39f",
+      "bytes": 193622
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-1h1q-pocket.pdb",
+      "role": "hit-derived",
+      "sha256": "62e704cef12bf838a5ea17aeb8ce996b11d62b9944f929dcb63da1761c0df849",
+      "bytes": 13450
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-1h1q-ligand.pdb",
+      "role": "hit-derived",
+      "sha256": "29c14fe39eb50a70cc8c3f88ce4686c8c134ab7d9ad7cef3b61b4c54943f2b81",
+      "bytes": 2006
+    }
+  ]
+}

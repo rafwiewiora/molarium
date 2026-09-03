@@ -1,0 +1,161 @@
+{
+  "schema": "molarium.structure-story/v1",
+  "id": "cdk2-designer-hit-to-lead",
+  "title": "One hit pose, two predictions, two crystal wins",
+  "subtitle": "CDK2 · designer intent resolves the exit vector · Agent API predictions are frozen before each crystal reveal",
+  "width": 1600,
+  "height": 900,
+  "fps": 18,
+  "assetManifest": "../structures/generated/cdk2-designer-movie-assets.json",
+  "sources": [
+    { "label": "Davies et al. · purine CDK2 inhibitor design", "url": "https://doi.org/10.1038/nsb842" },
+    { "label": "1H1Q · starting hit pose", "url": "https://www.rcsb.org/structure/1H1Q" },
+    { "label": "1H1R · 6CP structural validation", "url": "https://www.rcsb.org/structure/1H1R" },
+    { "label": "1OIU · sulfonamide structural validation", "url": "https://www.rcsb.org/structure/1OIU" }
+  ],
+  "legend": [
+    { "label": "starting hit · 1H1Q/2A6", "color": "#247d95" },
+    { "label": "Agent API prediction", "color": "#826cae" },
+    { "label": "crystal validation", "color": "#dc8747" }
+  ],
+  "cameras": {
+    "overview": { "target": [4.35, 40.55, 46.65], "radius": 6.4, "view": [1, 0.18, 0.06] },
+    "edit": { "target": [4.35, 40.55, 46.65], "radius": 6.4, "view": [1, 0.18, 0.06] }
+  },
+  "scenes": {
+    "fixedHitReceptor": {
+      "label": "Fixed receptor and pocket from the only coordinate input · 1H1Q",
+      "models": [
+        { "ref": "protein", "path": "cdk2-1h1q-protein.pdb", "representation": "cartoon", "colorScheme": "chain-id", "alpha": 0.13 },
+        { "ref": "pocket", "path": "cdk2-1h1q-pocket.pdb", "representation": "ball-and-stick", "color": "#5f7289", "alpha": 0.24, "sizeFactor": 0.11 }
+      ]
+    },
+    "hit": {
+      "extends": "fixedHitReceptor",
+      "label": "Starting hit · 2A6 in 1H1Q",
+      "coordinateClass": "allowed-input",
+      "coordinateLabel": "START · experimental hit pose · only coordinate input",
+      "models": [
+        { "ref": "hit", "path": "cdk2-1h1q-ligand.pdb", "representation": "ball-and-stick", "color": "#247d95", "sizeFactor": 0.24 }
+      ]
+    },
+    "prediction6cp": {
+      "extends": "fixedHitReceptor",
+      "label": "6CP · designer-directed prediction",
+      "coordinateClass": "frozen-prediction",
+      "coordinateLabel": "PREDICTION · grown from selected C19 · frozen at Agent API sequence 12",
+      "models": [
+        { "ref": "prediction", "path": "cdk2-designer-6cp-prediction.pdb", "representation": "ball-and-stick", "color": "#826cae", "sizeFactor": 0.25 }
+      ]
+    },
+    "crystal6cp": {
+      "extends": "fixedHitReceptor",
+      "label": "6CP · post-freeze 1H1R crystal reveal",
+      "coordinateClass": "evaluation-holdout",
+      "coordinateLabel": "REVEAL · 1H1R opened after prediction freeze",
+      "models": [
+        { "ref": "crystal", "path": "cdk2-1h1r-6cp-aligned-holdout.pdb", "representation": "ball-and-stick", "color": "#dc8747", "sizeFactor": 0.25 }
+      ]
+    },
+    "predictionN76": {
+      "extends": "fixedHitReceptor",
+      "label": "Sulfonamide · designer-directed prediction",
+      "coordinateClass": "frozen-prediction",
+      "coordinateLabel": "PREDICTION · grown from predicted 6CP · frozen at Agent API sequence 22",
+      "models": [
+        { "ref": "prediction", "path": "cdk2-designer-n76-prediction.pdb", "representation": "ball-and-stick", "color": "#826cae", "sizeFactor": 0.25 }
+      ]
+    },
+    "crystalN76": {
+      "extends": "fixedHitReceptor",
+      "label": "Sulfonamide · post-freeze 1OIU crystal reveal",
+      "coordinateClass": "evaluation-holdout",
+      "coordinateLabel": "REVEAL · 1OIU opened after prediction freeze · 0.85 Å ligand RMSD",
+      "models": [
+        { "ref": "crystal", "path": "cdk2-1oiu-n76-aligned-holdout.pdb", "representation": "ball-and-stick", "color": "#dc8747", "sizeFactor": 0.25 }
+      ]
+    }
+  },
+  "cues": [
+    {
+      "id": "hit-pose",
+      "title": "Begin with a useful bound hit",
+      "body": "2A6 anchors its purine core in the CDK2 hinge and presents a phenyl edge toward an open pocket. That experimental pose is the structural starting point.",
+      "detail": "PDB 1H1Q · one coordinate-bearing starting structure",
+      "scene": "hit", "durationMs": 3800,
+      "cameraStart": "overview", "cameraEnd": "overview"
+    },
+    {
+      "id": "select-c19",
+      "title": "The designer chooses where to grow",
+      "body": "Select carbon C19 as the meta exit vector. That persistent atom identity removes the ring symmetry ambiguity before any pose search begins.",
+      "detail": "Agent API · session.inspect → attachmentAtomId for C19",
+      "focusLabel": "selected exit vector · C19",
+      "scene": "hit", "durationMs": 2800,
+      "cameraStart": "overview", "cameraEnd": "edit"
+    },
+    {
+      "id": "grow-chlorine",
+      "title": "Grow the first analogue",
+      "body": "designRoute.applyStep preserves the selected attachment while the graph changes from H to Cl. Pose refinement keeps the inherited hinge-binding core in place.",
+      "detail": "Agent API · applyStep({ stepId, attachmentAtomId }) → pose.refine → pose.apply",
+      "focusLabel": "new chlorine",
+      "scene": "prediction6cp", "durationMs": 3200,
+      "cameraStart": "edit", "cameraEnd": "edit"
+    },
+    {
+      "id": "validate-6cp",
+      "title": "The first growth vector lands",
+      "body": "First the frozen purple prediction is shown alone. Then the post-freeze 1H1R crystal replaces it in the identical frame: the chlorine lands on the same side of the ring without an obscuring overlay.",
+      "detail": "Agent API sequence 12 freeze → 1H1R opened after freeze · edited group RMSD 0.53 Å · whole ligand RMSD 1.06 Å",
+      "focusLabel": "prediction, then crystal · same frame",
+      "scene": "prediction6cp", "sceneSequence": ["prediction6cp", "crystal6cp"], "durationMs": 5200,
+      "cameraStart": "edit", "cameraEnd": "edit"
+    },
+    {
+      "id": "carry-forward",
+      "title": "Carry the predicted pose forward",
+      "body": "The first Agent API prediction becomes the structural reference for the next design step. The trajectory is continuous from the original hit.",
+      "detail": "pose.captureReference · predicted 6CP becomes the next starting state",
+      "focusLabel": "predicted intermediate",
+      "scene": "prediction6cp", "durationMs": 2800,
+      "cameraStart": "edit", "cameraEnd": "edit"
+    },
+    {
+      "id": "select-c19-again",
+      "title": "Use the same designer-controlled exit vector",
+      "body": "C19 remains a persistent atom in predicted 6CP. Selecting it again directs the chlorine-to-sulfonamide transformation into the intended pocket volume.",
+      "detail": "Agent API · C19 attachmentAtomId preserved across the predicted intermediate",
+      "focusLabel": "Cl → sulfonamide at C19",
+      "scene": "prediction6cp", "durationMs": 2400,
+      "cameraStart": "edit", "cameraEnd": "edit"
+    },
+    {
+      "id": "grow-sulfonamide",
+      "title": "Grow the lead-like polar group",
+      "body": "The second graph edit replaces chlorine with sulfonamide. The predicted group expands into the selected pocket region while the hit-derived core remains anchored.",
+      "detail": "Agent API · second applyStep → 64-candidate refinement → frozen N76 prediction",
+      "focusLabel": "predicted sulfonamide",
+      "scene": "predictionN76", "durationMs": 3400,
+      "cameraStart": "edit", "cameraEnd": "edit"
+    },
+    {
+      "id": "validate-n76",
+      "title": "The second bound pose is reproduced",
+      "body": "The frozen purple N76 prediction is replaced by the post-freeze 1OIU crystal without moving the camera or receptor. The complete ligand pose is reproduced; no double molecule is needed to make the result legible.",
+      "detail": "Agent API sequence 22 freeze → 1OIU opened after freeze · whole ligand RMSD 0.85 Å · edited group RMSD 1.83 Å",
+      "focusLabel": "prediction, then crystal · same frame",
+      "scene": "predictionN76", "sceneSequence": ["predictionN76", "crystalN76"], "durationMs": 5400,
+      "cameraStart": "edit", "cameraEnd": "edit"
+    },
+    {
+      "id": "success",
+      "title": "One hit pose supports two design steps",
+      "body": "Explicit designer intent turns a graph edit into a spatial design action. The Agent API carries the 1H1Q pose through chlorine growth and onward to the sulfonamide bound pose.",
+      "detail": "2A6 → 6CP → N76 · designer-directed structural progression",
+      "focusLabel": "hit-to-lead structural success",
+      "scene": "crystalN76", "durationMs": 4000,
+      "cameraStart": "edit", "cameraEnd": "edit"
+    }
+  ]
+}

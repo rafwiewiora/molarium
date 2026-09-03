@@ -1,0 +1,20 @@
+{
+  "1": "Load the coordinate-bearing 5OVE/AXE hit only",
+  "6": "Stage the scaffold rewrite to compound 17 (AWT)",
+  "16": "Merge the fragment-derived pocket idea to compound 18 (AWZ)",
+  "26": "Grow compound 21 (AWW), creating the Phe890-in clash",
+  "28": "Enumerate Phe890 rotamers from the hit-derived receptor state",
+  "29": "Test Phe890 branch 1",
+  "42": "Re-enumerate and test Phe890 branch 6",
+  "56": "Re-enumerate and test Phe890 branch 7",
+  "70": "Re-enumerate the deterministic ensemble for the selected route",
+  "71": "Apply selected Phe890 rotamer index 5",
+  "72": "Accept the selected receptor branch as the pose reference",
+  "73": "Refine compound 21 against the selected Phe890 branch",
+  "74": "Apply the selected compound 21 pose",
+  "76": "Relax the selected coupled ligand and receptor branch",
+  "82": "Stage the final BAY-293 (AXH) graph",
+  "83": "Refine BAY-293 from the predicted compound 21 reference",
+  "84": "Apply the selected BAY-293 pose",
+  "86": "Relax the final predicted BAY-293 complex"
+}

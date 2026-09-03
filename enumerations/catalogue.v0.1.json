@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "catalogueId": "molarium-7kpa-high-disruption-enumerations",
+  "version": "0.1.0",
+  "status": "development",
+  "reference": {
+    "pdbId": "7KPA",
+    "componentId": "D84",
+    "purpose": "Stress reference-guided pose propagation with scaffold hops that deliberately reduce graph conservation. These are pose-generation experiments, not affinity or synthetic-feasibility claims."
+  },
+  "transformations": [
+    {
+      "id": "pyrrolidone-to-pyrazole",
+      "name": "Pyrrolidone to N-linked pyrazole",
+      "expectedProductGraphSha256": "5bbf0f9412c26c5b077e4ecf6309bdca2ac3d411c1f00ed17ed186befca803c0",
+      "family": "heterocycle-replacement",
+      "hypothesis": "The new ring nitrogen can replace the pyrrolidone carbonyl acceptor while the rest of the ligand pose is inherited.",
+      "requiredContactKeys": ["pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor", "pyridoneDonor"],
+      "operations": [
+        { "op": "deleteAtom", "atom": "O2" },
+        { "op": "setAtom", "atom": "C19", "element": "N", "formalCharge": 0 },
+        { "op": "setBond", "atoms": ["C19", "C18"], "order": 2 },
+        { "op": "setBond", "atoms": ["C17", "C16"], "order": 2 },
+        { "op": "finish" }
+      ],
+      "risks": ["tautomer-enumeration", "acceptor-remap", "aromaticity-assignment"]
+    },
+    {
+      "id": "pyrrolidone-to-tetrahydropyran",
+      "name": "Pyrrolidone to ring-expanded tetrahydropyran",
+      "expectedProductGraphSha256": "9c04f1989866f3912847ba7ebe35b7211155503053434e4e8a7b27d77a3bafb0",
+      "family": "ring-expansion",
+      "hypothesis": "A ring oxygen near the former carbonyl region can be restraint-seeded toward the captured donor.",
+      "requiredContactKeys": ["pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor", "pyridoneDonor"],
+      "operations": [
+        { "op": "setAtom", "atom": "N1", "element": "C", "formalCharge": 0 },
+        { "op": "setAtom", "atom": "C19", "element": "O", "formalCharge": 0 },
+        { "op": "deleteAtom", "atom": "O2" },
+        { "op": "deleteBond", "atoms": ["C18", "C19"] },
+        { "op": "addAtom", "attachedTo": "C18", "element": "C", "as": "thpBridge" },
+        { "op": "createBond", "atoms": ["thpBridge", "C19"], "order": 1 },
+        { "op": "finish" }
+      ],
+      "risks": ["ring-expansion", "acceptor-remap", "new-ring-conformer-search"]
+    },
+    {
+      "id": "phenyl-pyrrolidone-to-spiro-ketone",
+      "name": "Phenyl–pyrrolidone to spiro[4.5] ketone",
+      "expectedProductGraphSha256": "7bed2605e581a5fa0c02d212388702522989e123676ad1941e02d30a7469f730",
+      "family": "dual-scaffold-replacement",
+      "hypothesis": "A spiro ketone can retain the original carbonyl acceptor while replacing both the phenyl linker and lactam nitrogen topology.",
+      "requiredContactKeys": ["pyrrolidoneAcceptor", "benzimidazoleAcceptor", "pyridoneAcceptor", "pyridoneDonor"],
+      "operations": [
+        { "op": "setBond", "atoms": ["C10", "C11"], "order": 1 },
+        { "op": "setBond", "atoms": ["C11", "C12"], "order": 1 },
+        { "op": "setBond", "atoms": ["C12", "C13"], "order": 1 },
+        { "op": "setBond", "atoms": ["C13", "C14"], "order": 1 },
+        { "op": "setBond", "atoms": ["C14", "C15"], "order": 1 },
+        { "op": "setBond", "atoms": ["C15", "C10"], "order": 1 },
+        { "op": "deleteAtom", "atom": "N1" },
+        { "op": "createBond", "atoms": ["C14", "C16"], "order": 1 },
+        { "op": "createBond", "atoms": ["C14", "C19"], "order": 1 },
+        { "op": "finish" }
+      ],
+      "risks": ["large-mcs-break", "spiro-stereochemistry", "multi-ring-conformer-search", "high-strain-start"]
+    }
+  ]
+}
