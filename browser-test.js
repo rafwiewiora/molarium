@@ -105,6 +105,16 @@ const browserSuite = String.raw`(async () => {
   const check = (condition, label, details = '') => {
     checks.push({ label, passed: Boolean(condition), details });
   };
+  const waitForHistoryAction = async (action, afterSequence = 0) => {
+    const chemist = await window.MolariumChemistActionsReady;
+    for (let attempt = 0; attempt < 100; attempt++) {
+      const record = chemist.history().find((entry) =>
+        entry.sequence > afterSequence && entry.action === action && entry.status !== 'running');
+      if (record) return record;
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    }
+    return null;
+  };
   const compareForces = (candidate, reference) => {
     if (!Array.isArray(candidate) || !Array.isArray(reference) || candidate.length !== reference.length || !candidate.length)
       return null;
@@ -240,15 +250,6 @@ const browserSuite = String.raw`(async () => {
     check(loadedEthane.result.load?.kind === 'smiles'
       && loadedEthane.result.load?.protonationStateCount >= 1,
     'the public identifier action uses the complete 3D and protonation workflow');
-    const waitForHistoryAction = async (action, afterSequence = 0) => {
-      for (let attempt = 0; attempt < 100; attempt++) {
-        const record = chemist.history().find((entry) =>
-          entry.sequence > afterSequence && entry.action === action);
-        if (record) return record;
-        await new Promise((resolve) => setTimeout(resolve, 20));
-      }
-      return null;
-    };
     const campaignId = 'browser-human-clicks-' + Date.now().toString(36);
     await chemist.execute({ action:'campaign.create', args:{ campaignId,
       title:'Human click provenance', initialCommitMessage:'Starting ethane' } });
@@ -1080,13 +1081,17 @@ const browserSuite = String.raw`(async () => {
   'Finish chemistry automatically transfers a required contact to one exact replacement feature',
   JSON.stringify({ remapFinish, contactResolutions }));
   const replacementCarbonylOxygenId = contactResolutions.remaps[0]?.replacementLigandAtomIds[0];
+  const undoSequence = (await window.MolariumChemistActionsReady).history().at(-1)?.sequence || 0;
   document.querySelector('#undo-atom').click();
+  await waitForHistoryAction('history.undo', undoSequence);
   const undoneContactState = api.dockingContactResolutions();
   check(api.current().molecule.atoms.some((atom) => atom.designAtomId === replacedCarbonylOxygenId)
     && !api.current().molecule.atoms.some((atom) => atom.designAtomId === replacementCarbonylOxygenId)
     && undoneContactState.remaps.length === 0 && undoneContactState.proposals.length === 0,
   'Undo restores both the reference feature and its matching restraint state');
+  const redoSequence = (await window.MolariumChemistActionsReady).history().at(-1)?.sequence || 0;
   document.querySelector('#redo-atom').click();
+  await waitForHistoryAction('history.redo', redoSequence);
   const redoneContactState = api.dockingContactResolutions();
   check(api.current().molecule.atoms.some((atom) => atom.designAtomId === replacementCarbonylOxygenId)
     && !api.current().molecule.atoms.some((atom) => atom.designAtomId === replacedCarbonylOxygenId)
@@ -1125,7 +1130,9 @@ const browserSuite = String.raw`(async () => {
     && !document.querySelector('#run-constrained-docking').disabled,
   'immediate chemistry edits transfer a contact to a role-compatible replacement',
   JSON.stringify(immediateContactState));
+  const contactSequence = (await window.MolariumChemistActionsReady).history().at(-1)?.sequence || 0;
   roleCompatibleRemapContact.querySelector('input').click();
+  await waitForHistoryAction('pose.setContact', contactSequence);
   check(!api.dockingContactResolutions().selectedIds.length
     && !document.querySelector('#run-constrained-docking').disabled,
   'a user may explicitly omit a viable role-compatible contact');
