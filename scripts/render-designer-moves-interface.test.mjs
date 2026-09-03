@@ -54,6 +54,11 @@ try {
   const app = await readFile(new URL('../app.js', import.meta.url), 'utf8');
   assert.match(app, /tools\.dataset\.replayStatus = state\.designerMoveReplaying/,
     'the interface must expose final replay success or failure to the renderer');
+
+  const browserHelper = await readFile(new URL('./headless-chrome.mjs', import.meta.url), 'utf8');
+  assert.match(browserHelper, /MOLARIUM_HEADLESS_SOFTWARE_WEBGPU/,
+    'the remote render must explicitly opt in to the Linux software WebGPU adapter');
+  assert.match(browserHelper, /--enable-unsafe-webgpu/);
   assert.match(app, /action:'designerScript\.loadRegistered', args:\{ storyId \}/,
     'story deep links must use the one public registered-story loader');
   assert.match(app, /action:'session\.clear', args:\{\}/,

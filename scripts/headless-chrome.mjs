@@ -59,6 +59,13 @@ export async function startMolariumBrowser({ root, appPath, url = null, width = 
   const chromePath = process.env.CHROME_PATH || (process.platform === 'darwin'
     ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
     : '/usr/bin/google-chrome');
+  // GitHub's Linux runners have no physical GPU.  Opt in only for the
+  // explicitly requested trusted local Molarium render job; ordinary browser
+  // tests and user launches keep Chrome's normal adapter policy.
+  const softwareWebgpuArguments = process.platform === 'linux'
+    && process.env.MOLARIUM_HEADLESS_SOFTWARE_WEBGPU === '1'
+    ? ['--use-angle=vulkan', '--enable-features=Vulkan',
+      '--disable-vulkan-surface', '--enable-unsafe-webgpu'] : [];
   const profile = await mkdtemp(join(tmpdir(), 'molarium-history-browser-'));
   const server = url ? null : Bun.spawn(['bun', 'server.js', ...(localOnly ? ['--local-only'] : []),
     '--port', String(appPort)], { cwd:root, stdout:'ignore', stderr:'pipe' });
@@ -69,6 +76,7 @@ export async function startMolariumBrowser({ root, appPath, url = null, width = 
       url ? 'Molarium deployment' : 'Molarium server');
     chrome = Bun.spawn([chromePath,
       ...(process.platform === 'linux' ? ['--no-sandbox', '--disable-dev-shm-usage'] : []),
+      ...softwareWebgpuArguments,
       '--headless', '--disable-extensions', '--no-first-run', '--hide-scrollbars',
       '--force-color-profile=srgb', `--remote-debugging-port=${debugPort}`,
       `--user-data-dir=${profile}`, `--window-size=${width},${height}`, appUrl,
