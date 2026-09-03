@@ -254,7 +254,7 @@ export const MOLARIUM_POSE_PROPAGATION_PROTOCOL = Object.freeze({
     coordinateSource:'live edited-ligand coordinates plus deterministic captured-feature axis seeds; no ETKDG',
     featureGuidedSeeding:'cover every registered spatial-feature map and affected pre-existing rotor, then allocate remaining candidates deterministically across target-directed and untargeted torsions',
     featureGuidedAxialAnglesDegrees:Object.freeze([0, 60, -60, 120, -120, 180]),
-    featureGuidedLimitation:'single-anchor noncore edit regions only; seeding changes no bond length, bond angle, or inherited coordinate',
+    featureGuidedLimitation:'single-anchor edit regions, registered seed-only spatial-feature maps, and eligible affected pre-existing rotors; affected rotors may release mapped atoms on the movable side, while every other inherited coordinate remains exact and no seed stretches a bond',
     candidateFill:'deduplicate at 1e-6 Å; require complete spatial-feature-map and affected-rotor coverage; then fill by deterministic round robin and repeat only when unique seeds are exhausted',
     independentVariable:'deterministic feature seed ordinal plus restraint-biased internal-coordinate chain seed',
     baseSeed:20260819,

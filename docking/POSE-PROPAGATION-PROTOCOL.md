@@ -218,14 +218,39 @@ every inherited heavy atom to the captured reference before sampling.
 
 ## Candidate initialization
 
-The default is 16 candidates. The first seed is a `Float64Array` copy of the live edited-ligand
-coordinates. Additional deterministic feature-guided seeds are constructed for selected contacts
-that have a captured ligand-feature reference point and whose complete noncore edit region connects
-to exactly one inherited anchor. The anchor-to-feature vector is aligned to the captured reference
-vector and the complete edit region is rotated about that target axis by
-`[0,60,-60,120,-120,180]°`. Seeding is rigid within the edit region: it changes no bond length, bond
-angle, or inherited coordinate. Seeds are deduplicated after rounding coordinates to `1e-6 Å`; the
-ordered unique list repeats until 16 candidates exist.
+The default is 16 candidates and feature-seeding protocol `v5`. The first seed is a
+`Float64Array` copy of the live edited-ligand coordinates. Additional deterministic seeds cover
+three kinds of local hypotheses:
+
+- selected contacts with a captured ligand-feature reference point, sampled by aligning the
+  anchor-to-feature vector and rotating the complete single-anchor edit region through
+  `[0,60,-60,120,-120,180]°`;
+- eligible pre-existing non-ring single-bond rotors in the declared edit environment, sampled by
+  the registered edit-region angle grid; and
+- every registered spatial-feature atom-map variant, placed from its reference coordinates as a
+  seed-only hypothesis.
+
+A spatial feature in this stage is neither a hard coordinate correspondence nor a required scoring
+restraint. It broadens initial placement hypotheses; physical and required-contact criteria still
+rank the resulting poses. Likewise, an affected pre-existing rotor can release only the mapped core
+atoms on its movable side for seeding. All other inherited heavy atoms remain exact. Every seeding
+operation is an internal-coordinate rotation or rigid feature placement followed by ordinary local
+geometry repair; it does not stretch a bond to force a match.
+
+`v5` treats every spatial-feature map and every affected-rotor hypothesis as a required coverage
+stratum. After retaining the unaltered first seed, it deterministically chooses candidates until all
+required strata are represented, then allocates the remaining candidate budget breadth-first and
+round-robin across the available strata. Coordinates are deduplicated after rounding to
+`1e-6 Å`. If the requested candidate count cannot represent every required stratum, initialization
+fails rather than silently omitting one. Only after unique selected seeds are exhausted may the
+ordered list repeat to fill the requested count.
+
+The result records the coverage policy, requested and unique counts, every stratum, which seed
+ordinals cover it, and whether all required strata were covered. A prospective workflow must require
+`coverageComplete: true` and retain this table in its action audit. Compatibility protocols `v3`
+and `v4` remain explicit: `v3` scans single-anchor edit regions while affected pre-existing rotors
+remain fixed; `v4` adds those affected rotors but retains the older generated-order allocation and
+does not guarantee spatial-feature-map coverage.
 
 Pose propagation does not run ETKDG, MMFF, UFF, rigid-body randomization, or shape alignment. Regions
 with zero or multiple inherited anchors do not receive feature-axis seeds. Subsequent candidate
