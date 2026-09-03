@@ -8805,6 +8805,11 @@ async function replayDesignerMoveScript() {
       const failed = replay.steps.find((step) => step.status === 'failed');
       throw new Error(`Replay stopped at move ${(failed?.index ?? 0) + 1}: ${failed?.error || 'unknown error'}`);
     }
+    // The ordinary per-step checkpoint is captured while its result cue is
+    // visible. Replace the terminal checkpoint after the final clear phase so
+    // returning to the end of a completed story restores the actual clean UI.
+    captureDesignerMoveCheckpoint(script.actions.length,
+      replay.steps.at(-1) || script.actions.at(-1));
     showToast(`${script.actions.length} designer moves replayed through the public Agent API`);
   } finally {
     if (script.actions.length && (designerMoveCueElements.length

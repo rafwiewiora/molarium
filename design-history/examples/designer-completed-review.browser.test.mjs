@@ -34,6 +34,8 @@ try {
       previousDisabled:document.querySelector('#previous-designer-move').disabled,
       nextDisabled:document.querySelector('#next-designer-move').disabled,
       label:document.querySelector('#replay-designer-moves').textContent,
+      cueCount:document.querySelectorAll('.designer-move-cue').length,
+      demoActive:document.body.classList.contains('designer-move-demo-active'),
     };
   })()`);
   assert.equal(completed.index, 2);
@@ -41,6 +43,8 @@ try {
   assert.equal(completed.review.checkpointCount, 3);
   assert.equal(completed.previousDisabled, false);
   assert.equal(completed.nextDisabled, true);
+  assert.equal(completed.cueCount, 0);
+  assert.equal(completed.demoActive, false);
   assert.match(completed.label, /Replay story/);
 
   await browser.evaluate(`document.querySelector('#previous-designer-move').click()`);
@@ -59,8 +63,14 @@ try {
   const afterReturn = await browser.evaluate(`({
     label:document.querySelector('#replay-designer-moves').textContent,
     actions:window.MolariumChemistActions.history().map(record => record.action),
+    cueCount:document.querySelectorAll('.designer-move-cue').length,
+    demoActive:document.body.classList.contains('designer-move-demo-active'),
   })`);
   assert.match(afterReturn.label, /Replay story/);
+  assert.equal(afterReturn.cueCount, 0,
+    'returning to the terminal checkpoint must not resurrect the final cue');
+  assert.equal(afterReturn.demoActive, false,
+    'returning to the terminal checkpoint must restore the cleared layout');
   assert.deepEqual(afterReturn.actions.slice(actionsBeforeReturn.length), ['designerScript.step']);
   assert.equal(afterReturn.actions.filter(action => action === 'view.setMode').length,
     actionsBeforeReturn.filter(action => action === 'view.setMode').length,

@@ -15,7 +15,7 @@ const assetRelease = String(process.env.MOLARIUM_ASSET_RELEASE || `v${packageJso
 const assetBase = `${assetOrigin}/${assetRelease}/`;
 
 const files = [
-  'LICENSE', 'README.md', 'CHEMIST-ACTIONS-API.md', 'DESIGNER-MOVES.md', 'THIRD_PARTY_NOTICES.md',
+  'LICENSE', 'NOTICE', 'README.md', 'CHEMIST-ACTIONS-API.md', 'DESIGNER-MOVES.md', 'THIRD_PARTY_NOTICES.md',
   'index.html', 'app.js', 'chemist-actions.mjs', 'styles.css', 'molarium-workspace.css', 'independent-layout-study.css',
   'protein-residue-templates.js', 'rdkit-worker.js', 'openmm-worker.js', 'webgpu-worker.js',
   'stormm-worker.js', 'mlip-worker.js', 'local-lab-test.js',
@@ -32,6 +32,7 @@ const files = [
   'design-history/designer-replay-review.mjs',
   'design-history/live-campaign.mjs', 'design-history/live-campaign-store.mjs',
   'design-history/structures/design-route.mjs',
+  'design-history/structures/registered-ligand-graph.mjs',
   'design-history/examples/sos1-growth-clash-v7-captions.json',
   'design-history/examples/sos1-growth-clash-v7.provenance.json',
   'design-history/examples/sos1-growth-clash-v7.full.action-script.json',

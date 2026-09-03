@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 const root = resolve(import.meta.dir, '..');
 const reviewedFiles = [
   'LICENSE',
+  'NOTICE',
   'THIRD_PARTY_NOTICES.md',
   'app.js',
   'chemist-actions.mjs',
@@ -85,6 +86,7 @@ const reviewedFiles = [
   'design-history/live-campaign.mjs',
   'design-history/live-campaign-store.mjs',
   'design-history/replay.mjs',
+  'design-history/structures/registered-ligand-graph.mjs',
   'design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
 ];
 
