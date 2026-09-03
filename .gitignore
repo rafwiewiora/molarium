@@ -30,6 +30,12 @@ out/
 work/
 outputs/
 
+# Local scratch and superseded publication staging. Final generated evidence is
+# copied into assets/media/ and paper/figures/ before it is committed.
+/output/
+/tmp/
+/paper/figures/fig1_molarium_views.png
+
 # Local/editor files
 .DS_Store
 *.swp

@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CHEMIST_ACTIONS_SCHEMA } from '../../chemist-actions.mjs';
 import { actionScriptSha256, replayActionScript,
   validateActionScript } from '../replay.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
+const root = resolve(here, '../..');
 const load = async (filename) => JSON.parse(await readFile(join(here, filename), 'utf8'));
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
@@ -70,6 +71,26 @@ for (const [key, script, filename] of [
 ]) {
   assert.equal(await actionScriptSha256(script), provenance.scripts[key].actionScriptSha256);
   assert.equal(digest(await readFile(join(here, filename))), provenance.scripts[key].fileSha256);
+}
+
+const publication = provenance.publicationReplay;
+const presentation = await load('sos1-growth-clash-v7.presentation.action-script.json');
+const remoteAudit = await load('sos1-growth-clash-v7.remote-replay-audit.json');
+assert.equal(validateActionScript(presentation), presentation);
+assert.equal(presentation.actions.length, publication.presentationScript.actions);
+assert.equal(await actionScriptSha256(presentation),
+  publication.presentationScript.actionScriptSha256);
+assert.equal(digest(await readFile(join(here,
+  'sos1-growth-clash-v7.presentation.action-script.json'))),
+publication.presentationScript.fileSha256);
+assert.equal(remoteAudit.records.length, publication.chemistActionAudit.records);
+assert.equal(remoteAudit.records.filter((record) => record.status === 'completed').length,
+  publication.chemistActionAudit.completedRecords);
+assert.equal(digest(await readFile(join(here,
+  'sos1-growth-clash-v7.remote-replay-audit.json'))),
+publication.chemistActionAudit.sha256);
+for (const record of [publication.renderManifest, publication.movie, publication.paperFigure]) {
+  assert.equal(digest(await readFile(join(root, record.path))), record.sha256);
 }
 
 for (const script of [full, selected]) {

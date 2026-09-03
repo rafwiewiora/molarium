@@ -367,13 +367,13 @@
     },
     {
       "path": "assets/media/sos1-designer-moves-molarium-interface.mp4",
-      "bytes": 2860932,
-      "sha256": "9871a91aed89dbe1a3f4b2810f1d3b9e989bb79842b3b1f700ada2e5812c62d8"
+      "bytes": 3036951,
+      "sha256": "071b7622d2bda301e0c8e029da4d940d9608869013be33f7099c6992ce838591"
     },
     {
       "path": "assets/media/sos1-designer-moves-molarium-interface.render-manifest.json",
-      "bytes": 86098,
-      "sha256": "4796c495ad7bf56bbcb3e8adf95daa167a3f8388046f41c4844e1d5adb484896"
+      "bytes": 84909,
+      "sha256": "c9fa86947e706a99475bad7675842b1f49e9a3501f90dbdbc4a5885377d3d5a9"
     },
     {
       "path": "assets/molarium-logo.svg",

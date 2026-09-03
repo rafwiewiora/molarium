@@ -52,6 +52,41 @@
       "meaning": "Fail-closed operational replay of the already-selected route. It pins the v3 pose-seeding protocol, persistent Phe890 identity, the unique normalized chi-angle branch, and feasible pose applications. Same-execution coordinate hashes still guard enumeration and application, but post-WebGPU coordinate bytes are not treated as a portable cross-adapter identity. It omits discarded branches and read-only freeze inspections, so it is not the evidence that branch search occurred."
     }
   },
+  "publicationReplay": {
+    "githubActionsRun": 33726810931,
+    "sourceCommit": "903ca5e84923210f86c2fb563e3b0e4e74dc55fc",
+    "presentationScript": {
+      "path": "design-history/examples/sos1-growth-clash-v7.presentation.action-script.json",
+      "actions": 51,
+      "scientificActions": 33,
+      "presentationActions": 18,
+      "actionScriptSha256": "bb20da3478b8def5b3244ae6c60dbf49df95b13353c5c9cbb99434576705de57",
+      "fileSha256": "ca7241c2c81373ceee5ebb28fcf318b500f5355d0ff919cbf435cd6272fbe78f"
+    },
+    "chemistActionAudit": {
+      "path": "design-history/examples/sos1-growth-clash-v7.remote-replay-audit.json",
+      "records": 208,
+      "completedRecords": 208,
+      "sha256": "bb9512d1379dba9548eae504fb545a2dca278955f8f12eb5af1ee564a47b29b8"
+    },
+    "renderManifest": {
+      "path": "assets/media/sos1-designer-moves-molarium-interface.render-manifest.json",
+      "sha256": "c9fa86947e706a99475bad7675842b1f49e9a3501f90dbdbc4a5885377d3d5a9"
+    },
+    "movie": {
+      "path": "assets/media/sos1-designer-moves-molarium-interface.mp4",
+      "sha256": "071b7622d2bda301e0c8e029da4d940d9608869013be33f7099c6992ce838591",
+      "width": 1600,
+      "height": 1000,
+      "fps": 12,
+      "frames": 1207,
+      "durationSeconds": 100.583333
+    },
+    "paperFigure": {
+      "path": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "sha256": "fc9a9ca9bfa384bfb7a14773ac5ec387d08f9f2e96af42e4213ee2d8946ce888"
+    }
+  },
   "frozenCheckpoints": [
     {
       "stepId": "scaffold-rewrite",

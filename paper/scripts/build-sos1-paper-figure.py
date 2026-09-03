@@ -9,10 +9,12 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 VENDOR = ROOT.parent / "pdfs" / "python_pkgs"
-if VENDOR.exists():
-    sys.path.insert(0, str(VENDOR))
-
-from PIL import Image, ImageDraw, ImageFont
+try:
+    from PIL import Image, ImageDraw, ImageFont
+except ImportError:
+    if VENDOR.exists():
+        sys.path.insert(0, str(VENDOR))
+    from PIL import Image, ImageDraw, ImageFont
 
 
 DEFAULT_RENDER = (

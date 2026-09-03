@@ -85,3 +85,36 @@ recorded after native-WebGPU relaxation. The portable script was corrected to
 guard the persistent Phe890 identity, chi definitions, selection method, and
 unique physical branch. The implementation still requires an exact dynamic
 coordinate match between enumeration and application within either run.
+
+## Public-API and publication closure
+
+The publication renderer originally used a synthetic browser file-input event
+to import the saved action script. That was replaced with the public
+`designerScript.load` action, followed by a real press of the visible replay
+control. This exposed one final API-parity defect: the generic Chemist Actions
+input copier allowed eight nested levels, while Molarium's own valid replay
+payload requires nine. The public boundary now allows twelve levels while
+retaining its plain-JSON, 2,048-node, and 8-MiB limits and forbidden-key checks.
+The renderer therefore uses no unpublished route to establish or mutate
+molecular state.
+
+GitHub Actions run `33726810931`, at commit
+`903ca5e84923210f86c2fb563e3b0e4e74dc55fc`, completed the corrected replay on
+Chrome 152 software WebGPU. The preserved execution contains 51 replayable
+actions (33 scientific and 18 presentation actions), 208 completed API audit
+records, and 150 hash-verified interface captures. Each of the four pose
+searches evaluated 64 deterministic chains on three workers; the selected pose
+was feasible in every case. Phe890 was selected by the unique circularly
+equivalent $\chi_1/\chi_2=-180^{\circ}/90^{\circ}$ branch, and enumeration and
+application agreed on both the same-run input-coordinate digest and the
+selected candidate-coordinate digest.
+
+The resulting 1600-by-1000, 12-frame-per-second movie contains 1,207 frames
+(100.583333 s) and has SHA-256
+`071b7622d2bda301e0c8e029da4d940d9608869013be33f7099c6992ce838591`.
+Manual review covered the hit-centered camera, compound-21 edit and clash view,
+the interpolated Phe890 motion, the re-fitted and relaxed open-pocket state, and
+the final relaxed BAY-293 state. The validated movie, render manifest, and
+five-panel paper figure are checked into their public repository destinations;
+the temporary CI artifact and local staging directory are not publication
+sources.
