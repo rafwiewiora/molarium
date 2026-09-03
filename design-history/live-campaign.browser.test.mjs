@@ -8,7 +8,9 @@ const productionBuild = process.env.MOLARIUM_CAMPAIGN_DIST === '1';
 const browser = await startMolariumBrowser({ root,
   appPath:productionBuild ? 'dist/?blank' : '?blank', width:1600, height:1000 });
 const execute = (action, args = {}) => browser.evaluate(
-  `window.MolariumChemistActions.execute(${JSON.stringify({ action, args })})`);
+  `window.MolariumChemistActionsReady.then((api) => api.execute(${JSON.stringify({ action, args })}))`);
+const chemistActionsReady = () => browser.evaluate(
+  `window.MolariumChemistActionsReady?.then((api) => Boolean(api?.execute))`);
 
 const alaninePdb = `ATOM      1  N   ALA A   1      -1.458   0.000   0.000  1.00 20.00           N
 ATOM      2  CA  ALA A   1       0.000   0.000   0.000  1.00 20.00           C
@@ -18,7 +20,7 @@ ATOM      5  CB  ALA A   1       0.540  -0.770  -1.210  1.00 20.00           C
 END`;
 
 try {
-  await waitFor(async () => browser.evaluate(`Boolean(window.MolariumChemistActions)`),
+  await waitFor(chemistActionsReady,
     60000, 'Chemist Actions API');
   await browser.evaluate(`(() => {
     document.querySelector('#structure-input').value = ${JSON.stringify(alaninePdb)};
@@ -98,8 +100,10 @@ try {
     && script.coverage?.kind === 'public-actions-only'
     && script.coverage?.complete === false));
 
-  await browser.evaluate(`location.reload()`);
-  await waitFor(async () => browser.evaluate(`Boolean(window.MolariumChemistActions)`),
+  await browser.evaluate(`window.__molariumReloadSentinel = true; location.reload(); true`);
+  await waitFor(async () => browser.evaluate(
+    `document.readyState === 'complete' && !window.__molariumReloadSentinel
+      && window.MolariumChemistActionsReady?.then((api) => Boolean(api?.execute))`),
     60000, 'reloaded Chemist Actions API');
   await execute('view.setMode', { mode:'build' });
   const restored = await execute('campaign.inspect');
