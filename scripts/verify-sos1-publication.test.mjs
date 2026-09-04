@@ -19,6 +19,9 @@ const replayRelative = 'design-history/examples/sos1-current.action-script.json'
 const provenanceRelative = 'design-history/examples/sos1-current.provenance.json';
 const storyRelative = 'design-history/structure-viewer/sos1-current.json';
 const assetManifestRelative = 'design-history/structures/generated/sos1-current-assets.json';
+const movieRelative = 'assets/media/sos1-designer-moves-molarium-interface.mp4';
+const renderRelative =
+  'assets/media/sos1-designer-moves-molarium-interface.render-manifest.json';
 const descriptorPath = join(scratch, SOS1_PUBLICATION_DECLARATION);
 
 async function writeJson(path, value) {
@@ -129,6 +132,30 @@ try {
   const replay = await buildAcceptedSos1ReplayScript(accepted);
   const replayPath = join(scratch, replayRelative);
   let replayBytes = await writeJson(replayPath, replay.script);
+  const movieBytes = Buffer.from('accepted Local Lab interface movie');
+  await mkdir(dirname(join(scratch, movieRelative)), { recursive:true });
+  await writeFile(join(scratch, movieRelative), movieBytes);
+  const renderManifest = {
+    schema:'molarium.designer-moves-interface-render/v1', complete:true,
+    replay:{ status:'completed' },
+    acceptedRun:{ accepted:true, id:runId,
+      predictionManifestSha256:sha256(manifestBytes),
+      evaluationSummarySha256:sha256(evaluationBytes) },
+    sourceScript:{ fileSha256:sha256(replayBytes),
+      actionScriptSha256:replay.actionScriptSha256,
+      sourceAuditSha256:sha256(auditBytes) },
+    networkPolicy:{ responsePolicy:'local-only-v1',
+      contentSecurityPolicy:"default-src 'self'; connect-src 'self'; object-src 'none'",
+      runtimeMode:'local-lab', runtimeLocalOnly:true, runtimePolicy:'local-only-v1',
+      allowedNetworkOrigins:['http://127.0.0.1:50001'], documentMode:'local-lab',
+      badgeMode:'local-lab', badgeLocalLab:true,
+      badgeText:'Local Lab · network locked', foldDisabled:true,
+      msaEndpointDisabled:true, ccdRetrievalDisabled:true, verified:true },
+    video:{ filename:'sos1-designer-moves-molarium-interface.mp4',
+      sha256:sha256(movieBytes), bytes:movieBytes.length,
+      width:1600, height:1000, frames:1, durationSeconds:1 },
+  };
+  const renderBytes = await writeJson(join(scratch, renderRelative), renderManifest);
   const checkpointLinks = checkpointRecords.map(({ stepId, sha256:checkpointSha256 }) =>
     ({ stepId, sha256:checkpointSha256 }));
   const acceptedLink = {
@@ -202,6 +229,9 @@ try {
       checkpoints:checkpointLinks },
     publicReplay:{ path:replayRelative, sha256:sha256(replayBytes),
       actionScriptSha256:await actionScriptSha256(replay.script) },
+    interfaceMovie:{ path:movieRelative, sha256:sha256(movieBytes), bytes:movieBytes.length,
+      renderManifest:{ path:renderRelative, sha256:sha256(renderBytes),
+        bytes:renderBytes.length } },
     checkpointReview:{ path:storyRelative, sha256:sha256(storyBytes) },
     integration:{ applicationSource:'app.js',
       structureViewerSource:'design-history/structure-viewer/viewer.mjs',
@@ -216,7 +246,8 @@ try {
   const viewerSource = `const STORY_REGISTRY = Object.freeze({\n`
     + `  '${story.id}':Object.freeze({ path:'./sos1-current.json', `
     + `sha256:'${sha256(storyBytes)}' })\n});\n`;
-  const required = [SOS1_PUBLICATION_DECLARATION, replayRelative, storyRelative];
+  const required = [SOS1_PUBLICATION_DECLARATION, replayRelative, storyRelative,
+    movieRelative, renderRelative];
   const buildSource = `const files = [\n${required.map((path) => `  '${path}',`).join('\n')}\n];\n`
     + `const redirects = '/sos1-hit-to-bay293/replay /design-history/structure-viewer/?story=${story.id} 302';\n`;
   const manifestSource = `const reviewedFiles = [\n${required.map((path) =>

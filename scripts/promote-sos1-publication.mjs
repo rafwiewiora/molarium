@@ -205,7 +205,7 @@ export function promotionStages(options) {
       ...command('bun', ['scripts/capture-paper-figure1.mjs', '--install']) },
     { id:'publication', description:'Promote replay, checkpoint review, provenance and declaration',
       ...command(process.execPath, ['scripts/build-sos1-publication.mjs',
-        '--run', options.runDirectory]) },
+        '--run', options.runDirectory, '--render-dir', options.renderDirectory]) },
     { id:'verify-publication', description:'Verify every declared hash and registry binding',
       ...command(process.execPath, ['scripts/verify-sos1-publication.mjs']) },
     { id:'manifest', description:'Regenerate the Local Lab reviewed-file manifest',

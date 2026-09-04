@@ -9,6 +9,8 @@ import { buildAcceptedSos1ReplayScript, requireExplicitRunDirectory, sha256,
   SOS1_ROUTE_ID, SOS1_STEP_IDS, verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
 import { SOS1_PUBLICATION_DECLARATION,
   SOS1_PUBLICATION_SCHEMA } from './verify-sos1-publication.mjs';
+import { INSTALLED_MOVIE, INSTALLED_RENDER_MANIFEST,
+  verifyInterfaceRenderForInstallation } from './install-sos1-interface-render.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const SOS1_PUBLIC_REPLAY =
@@ -122,9 +124,13 @@ function acceptedRunLink(accepted) {
   };
 }
 
-export async function buildSos1PublicationRecords(accepted) {
+export async function buildSos1PublicationRecords(accepted, { interfaceMovie } = {}) {
   assert(accepted?.evaluation?.accepted === true,
     'SOS1 publication records require an accepted evaluation');
+  assert(interfaceMovie?.path === INSTALLED_MOVIE && interfaceMovie?.sha256
+    && interfaceMovie?.renderManifest?.path === INSTALLED_RENDER_MANIFEST
+    && interfaceMovie?.renderManifest?.sha256,
+  'SOS1 publication records require the verified installed interface movie');
   const replay = await buildAcceptedSos1ReplayScript(accepted);
   const replayBytes = jsonBytes(replay.script);
   const link = acceptedRunLink(accepted);
@@ -252,6 +258,7 @@ export async function buildSos1PublicationRecords(accepted) {
       sourceAuditSha256:link.sourceAuditSha256, checkpoints:link.checkpoints },
     publicReplay:{ path:SOS1_PUBLIC_REPLAY, sha256:sha256(replayBytes),
       actionScriptSha256:await actionScriptSha256(replay.script) },
+    interfaceMovie,
     checkpointReview:{ path:SOS1_PUBLIC_REVIEW, sha256:sha256(reviewBytes) },
     integration:{ applicationSource:'app.js',
       structureViewerSource:'design-history/structure-viewer/viewer.mjs',
@@ -344,7 +351,8 @@ export function rewritePublicationIntegration({ appSource, viewerSource, buildSo
     + `    path:'./${basename(SOS1_PUBLIC_REVIEW)}',\n`
     + `    sha256:'${sha256(records.reviewBytes)}',\n  }),`);
 
-  const assetPaths = [...records.checkpointAssets.keys()];
+  const assetPaths = [...records.checkpointAssets.keys(), INSTALLED_MOVIE,
+    INSTALLED_RENDER_MANIFEST];
   let build = buildSource.replace(/\nconst generatedStructures = await readdir\([\s\S]*?\n\s*\.map\(\(name\) => `design-history\/structures\/generated\/\$\{name\}`\)\);\n/, '\n');
   build = replaceManagedArrayEntries(build, 'files', assetPaths);
   build = build.replaceAll('story=sos1-chemist-actions-review',
@@ -359,12 +367,24 @@ export function rewritePublicationIntegration({ appSource, viewerSource, buildSo
     manifestSource:manifest, serverSource:server };
 }
 
-export async function writeSos1Publication(accepted, { root = ROOT } = {}) {
+export async function writeSos1Publication(accepted, { root = ROOT, renderDirectory } = {}) {
   assert.equal(resolve(root), ROOT,
     'SOS1 publication builder only writes the checked-out production repository');
+  assert(renderDirectory, 'SOS1 publication builder requires the explicit accepted render directory');
   for (const token of LEGACY_REFERENCES)
     assert(!accepted.runId.includes(token), `Refusing retired SOS1 run ${accepted.runId}`);
-  const records = await buildSos1PublicationRecords(accepted);
+  const verifiedRender = await verifyInterfaceRenderForInstallation(accepted, renderDirectory);
+  const [installedMovieBytes, installedManifestBytes] = await Promise.all([
+    readFile(resolve(root, INSTALLED_MOVIE)), readFile(resolve(root, INSTALLED_RENDER_MANIFEST)),
+  ]);
+  assert.equal(sha256(installedMovieBytes), sha256(verifiedRender.videoBytes),
+    'installed interface movie differs from the accepted render');
+  assert.equal(sha256(installedManifestBytes), sha256(verifiedRender.manifestBytes),
+    'installed interface render manifest differs from the accepted render');
+  const interfaceMovie = { path:INSTALLED_MOVIE, sha256:sha256(installedMovieBytes),
+    bytes:installedMovieBytes.length, renderManifest:{ path:INSTALLED_RENDER_MANIFEST,
+      sha256:sha256(installedManifestBytes), bytes:installedManifestBytes.length } };
+  const records = await buildSos1PublicationRecords(accepted, { interfaceMovie });
   const sourcePaths = {
     appSource:'app.js', viewerSource:'design-history/structure-viewer/viewer.mjs',
     buildSource:'scripts/build-web.mjs',
@@ -392,8 +412,13 @@ export async function writeSos1Publication(accepted, { root = ROOT } = {}) {
 
 export async function main(argv = process.argv.slice(2)) {
   const runDirectory = requireExplicitRunDirectory(argv, { root:ROOT });
+  const renderValue = argv.includes('--render-dir')
+    ? argv[argv.indexOf('--render-dir') + 1]
+    : argv.find((entry) => entry.startsWith('--render-dir='))?.slice('--render-dir='.length);
+  if (!renderValue) throw new Error('--render-dir is required; no render is selected implicitly');
   const accepted = await verifyAcceptedSos1Run(runDirectory);
-  const result = await writeSos1Publication(accepted);
+  const result = await writeSos1Publication(accepted,
+    { renderDirectory:resolve(ROOT, renderValue) });
   process.stdout.write(`${JSON.stringify({ acceptedRun:accepted.runId, ...result }, null, 2)}\n`);
 }
 

@@ -12,7 +12,8 @@ import { buildSos1PublicationRecords, pdbFromFrozenInspection, rewritePublicatio
   SOS1_PUBLIC_REPLAY, SOS1_PUBLIC_REVIEW,
   SOS1_PUBLIC_REVIEW_ID } from './build-sos1-publication.mjs';
 import { verifyPreHoldoutPromotionInputs } from './promote-sos1-publication.mjs';
-import { verifyInterfaceRenderForInstallation } from './install-sos1-interface-render.mjs';
+import { INSTALLED_MOVIE, INSTALLED_RENDER_MANIFEST,
+  verifyInterfaceRenderForInstallation } from './install-sos1-interface-render.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const atoms = [
@@ -101,7 +102,10 @@ const evaluationBytes = Buffer.from(`${JSON.stringify(evaluation)}\n`);
 const syntheticAccepted = { runId:'guarded-v10-test',
   directory:join(root, 'outputs/design-history/guarded-v10-test'), manifest, manifestBytes,
   evaluation, evaluationBytes, audit, auditBytes, checkpoints };
-const records = await buildSos1PublicationRecords(syntheticAccepted);
+const records = await buildSos1PublicationRecords(syntheticAccepted, { interfaceMovie:{
+  path:INSTALLED_MOVIE, sha256:fixedHash('movie'), bytes:5,
+  renderManifest:{ path:INSTALLED_RENDER_MANIFEST, sha256:fixedHash('render'), bytes:6 },
+} });
 assert.equal(records.review.review.calculationPolicy, 'never-run');
 assert.equal(records.review.cues.length, 4);
 assert.equal(expandStructureTimeline(records.review).length, 4,
@@ -143,7 +147,8 @@ for (const source of Object.values(rewritten))
 assert(rewritten.appSource.includes(`script:'./${SOS1_PUBLIC_REPLAY}'`));
 assert(rewritten.viewerSource.includes(`'${SOS1_PUBLIC_REVIEW_ID}'`));
 for (const path of [SOS1_PUBLIC_REPLAY, SOS1_PUBLIC_PROVENANCE,
-  SOS1_PUBLIC_ASSET_MANIFEST, SOS1_PUBLIC_REVIEW, ...checkpointAssets.keys()]) {
+  SOS1_PUBLIC_ASSET_MANIFEST, SOS1_PUBLIC_REVIEW, INSTALLED_MOVIE,
+  INSTALLED_RENDER_MANIFEST, ...checkpointAssets.keys()]) {
   assert(rewritten.buildSource.includes(`'${path}'`), `build missing ${path}`);
   assert(rewritten.manifestSource.includes(`'${path}'`), `manifest missing ${path}`);
 }

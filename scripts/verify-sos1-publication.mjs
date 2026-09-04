@@ -11,6 +11,7 @@ import { validatePrecomputedCheckpointReview } from
 import { parsePdb } from '../design-history/structures/pipeline.mjs';
 import { buildAcceptedSos1ReplayScript, sha256,
   SOS1_ROUTE_ID, SOS1_STEP_IDS, verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
+import { verifyLocalLabCaptureState } from './local-lab-capture.mjs';
 
 export const SOS1_PUBLICATION_SCHEMA = 'molarium.sos1-publication/v1';
 export const SOS1_PUBLICATION_DECLARATION =
@@ -52,6 +53,18 @@ async function pinnedJson(root, record, label) {
   const bytes = await readFile(path);
   assert.equal(sha256(bytes), record.sha256, `${label} changed after publication declaration`);
   return { path, bytes, value:JSON.parse(bytes) };
+}
+
+async function pinnedBytes(root, record, label) {
+  assert(record && typeof record === 'object' && !Array.isArray(record),
+    `${label} must be a pinned artifact record`);
+  requireSha256(record.sha256, `${label}.sha256`);
+  const path = repositoryPath(root, record.path, `${label}.path`);
+  const bytes = await readFile(path);
+  assert.equal(sha256(bytes), record.sha256, `${label} changed after publication declaration`);
+  if (record.bytes != null) assert.equal(bytes.length, record.bytes,
+    `${label} byte count changed`);
+  return { path, bytes };
 }
 
 async function pinnedJsonBeside(root, ownerPath, record, label) {
@@ -271,7 +284,8 @@ function validateProductionIntegration({ declaration, applicationSource, structu
     'structure-viewer registry');
 
   const required = [SOS1_PUBLICATION_DECLARATION, declaration.publicReplay.path,
-    declaration.checkpointReview.path];
+    declaration.checkpointReview.path, declaration.interfaceMovie.path,
+    declaration.interfaceMovie.renderManifest.path];
   const buildFiles = declaredStringArray(buildSource, 'files', 'production build');
   const manifestFiles = declaredStringArray(manifestSource, 'reviewedFiles',
     'local manifest generator');
@@ -343,6 +357,33 @@ export async function verifySos1Publication({
     'public replay was not generated from the accepted run audit');
   assertRunLink(publicReplay.value.sourceAudit, accepted, checkpoints, 'public replay');
 
+  const interfaceMovie = await pinnedBytes(root, declaration.interfaceMovie,
+    'publication interfaceMovie');
+  const interfaceRender = await pinnedJson(root, declaration.interfaceMovie?.renderManifest,
+    'publication interfaceMovie.renderManifest');
+  const render = interfaceRender.value;
+  assert.equal(render.schema, 'molarium.designer-moves-interface-render/v1');
+  assert.equal(render.complete, true, 'publication interface render is incomplete');
+  assert.equal(render.replay?.status, 'completed', 'publication interface replay failed');
+  assert.equal(render.acceptedRun?.accepted, true);
+  assert.equal(render.acceptedRun?.id, accepted.runId,
+    'publication interface movie belongs to another run');
+  assert.equal(render.acceptedRun?.predictionManifestSha256, sha256(accepted.manifestBytes));
+  assert.equal(render.acceptedRun?.evaluationSummarySha256, sha256(accepted.evaluationBytes));
+  assert.equal(render.sourceScript?.fileSha256, declaration.publicReplay.sha256,
+    'publication movie did not use the declared replay bytes');
+  assert.equal(render.sourceScript?.actionScriptSha256,
+    declaration.publicReplay.actionScriptSha256,
+  'publication movie did not use the declared canonical replay');
+  assert.equal(render.sourceScript?.sourceAuditSha256, sha256(accepted.auditBytes));
+  const allowedOrigins = render.networkPolicy?.allowedNetworkOrigins;
+  assert(Array.isArray(allowedOrigins) && allowedOrigins.length === 1,
+    'publication movie has no unique Local Lab origin');
+  verifyLocalLabCaptureState(render.networkPolicy, allowedOrigins[0]);
+  assert.equal(render.video?.filename, basename(declaration.interfaceMovie.path));
+  assert.equal(render.video?.sha256, declaration.interfaceMovie.sha256);
+  assert.equal(render.video?.bytes, interfaceMovie.bytes.length);
+
   const story = await pinnedJson(root, declaration.checkpointReview,
     'publication checkpointReview');
   assertNoLegacyReferences(JSON.stringify(story.value), 'checkpoint review');
@@ -407,6 +448,8 @@ export async function verifySos1Publication({
   return Object.freeze({ declaration, acceptedRunId:accepted.runId,
     declarationSha256:sha256(declarationBytes), publicReplaySha256:sha256(publicReplay.bytes),
     checkpointReviewSha256:sha256(story.bytes),
+    interfaceMovieSha256:sha256(interfaceMovie.bytes),
+    interfaceRenderManifestSha256:sha256(interfaceRender.bytes),
     checkpointReviewProvenanceSha256:sha256(provenance.bytes),
     checkpointReviewAssetManifestSha256:sha256(assetManifest.bytes), checkpoints });
 }
