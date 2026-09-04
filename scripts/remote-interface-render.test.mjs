@@ -9,6 +9,7 @@ const renderingProbe = await readFile(
   new URL('./probe-headless-rendering.mjs', import.meta.url), 'utf8');
 const renderer = await readFile(
   new URL('./render-designer-moves-interface.mjs', import.meta.url), 'utf8');
+const app = await readFile(new URL('../app.js', import.meta.url), 'utf8');
 
 assert.match(runner, /verify-sos1-frozen-browser-publication\.mjs/);
 assert.match(runner, /--result-class complete-frozen/);
@@ -42,5 +43,9 @@ assert.match(renderingProbe, /swiftshader\|llvmpipe\|software/);
 assert.match(renderingProbe, /waitFor\(\(\) => browser\.evaluate/);
 assert.match(renderer, /campaignPath:`\.\/\$\{SOS1_PREDICTION_CAMPAIGN_DIRECTORY\}/);
 assert.match(renderer, /replayKind === 'checkpoint-review' \? SOS1_PREDICTION_REVIEW/);
+assert.match(app, /loadMolecule\(molecule, !preserveView, preserveView\)/,
+  'campaign checkpoint review must retain the semantic component focus');
+assert.match(app, /zoom:state\.zoom, focusedComponentCenter:state\.focusedComponentCenter/,
+  'campaign view-preservation audit must cover the actual pocket-fit center');
 
 console.log('Remote SOS1 interface-render setup: PASS');

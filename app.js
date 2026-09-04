@@ -3302,7 +3302,7 @@ function composition(atoms) {
 
 function toSubscript(value) { return String(value).replace(/\d/g, (d) => '₀₁₂₃₄₅₆₇₈₉'[d]); }
 
-function loadMolecule(molecule, resetView = true) {
+function loadMolecule(molecule, resetView = true, preserveDisplay = false) {
   if (!state.calculating) clearCalculationResult();
   state.chemistryTransaction = null;
   state.chemistryEditFinishing = false;
@@ -3333,7 +3333,7 @@ function loadMolecule(molecule, resetView = true) {
   state.selectedAtom = null;
   state.selectedAtoms = [];
   delete document.querySelector('#build-optimizer-select').dataset.userSelected;
-  resetStructureComponents(molecule);
+  resetStructureComponents(molecule, preserveDisplay);
   state.proteinPrediction = molecule.prediction || null;
   state.representation = state.proteinPrediction ? 'cartoon' : 'ball-stick';
   const representationSelect = document.querySelector('#representation-select');
@@ -9225,7 +9225,7 @@ async function prepareLiveCampaignBranchMolecule(campaign, branch, { required = 
 
 function applyLiveCampaignBranchMolecule(molecule, { preserveView = false } = {}) {
   const audit = structuredClone(state.chemistActionAudit);
-  loadMolecule(molecule, !preserveView);
+  loadMolecule(molecule, !preserveView, preserveView);
   state.chemistActionAudit = audit;
   state.molecule.source = { ...(state.molecule.source || {}),
     chemistActionAudit:structuredClone(audit) };
@@ -9705,7 +9705,8 @@ function installChemistActionsApi(module) {
       const cameraBefore = JSON.stringify({ rotation:state.rotation,
         viewProjectionCenter:state.viewProjectionCenter,
         viewProjectionRadius:state.viewProjectionRadius, viewPan:state.viewPan,
-        zoom:state.zoom });
+        zoom:state.zoom, focusedComponentCenter:state.focusedComponentCenter,
+        focusedComponentRadius:state.focusedComponentRadius });
       const displayBefore = JSON.stringify({ focusedAtomIds:state.focusedAtomIds,
         focusedAtomCenter:state.focusedAtomCenter,
         focusedAtomRadius:state.focusedAtomRadius,
@@ -9721,7 +9722,8 @@ function installChemistActionsApi(module) {
       const cameraAfter = JSON.stringify({ rotation:state.rotation,
         viewProjectionCenter:state.viewProjectionCenter,
         viewProjectionRadius:state.viewProjectionRadius, viewPan:state.viewPan,
-        zoom:state.zoom });
+        zoom:state.zoom, focusedComponentCenter:state.focusedComponentCenter,
+        focusedComponentRadius:state.focusedComponentRadius });
       const displayAfter = JSON.stringify({ focusedAtomIds:state.focusedAtomIds,
         focusedAtomCenter:state.focusedAtomCenter,
         focusedAtomRadius:state.focusedAtomRadius,
