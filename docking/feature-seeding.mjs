@@ -656,7 +656,15 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
     'captured-feature-map', featureSeedingProtocol === 'v5'));
   variants.forEach((variant, variantIndex) => {
     const region = movableFeatureRegion(molecule, variant.featureAtomIndex, seedingCore, entries);
-    if (!region) return;
+    // A captured feature that remains in the registered hard core has exactly
+    // one permitted coordinate state. Represent that state with the unaltered
+    // candidate; the H-bond geometry is still evaluated independently by the
+    // pose-feasibility gate. An empty required stratum would incorrectly turn
+    // an immutable contact into a search-coverage failure.
+    if (!region) {
+      cover(initialCandidate, targetStrata[variantIndex]);
+      return;
+    }
     const anchor = point(positions, region.anchorAtomIndex);
     const feature = point(positions, variant.featureAtomIndex);
     const alignment = alignmentAxisAngle(feature.map((value, index) => value - anchor[index]),

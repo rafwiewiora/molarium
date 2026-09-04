@@ -97,4 +97,19 @@ assert.throws(() => featureGuidedPoseSeeds({ ...input, count:1 }),
   /requires at least 3 search chains/,
   'a cap too small for the required strata must fail closed');
 
+const fixedFeature = featureGuidedPoseSeeds({
+  molecule:{ atoms:[{ element:'N' }, { element:'C' }],
+    bonds:[{ a:0,b:1,order:1 }] },
+  initialPositions:Float64Array.from([0,0,0, 1.3,0,0]),
+  coreAtomIndices:[0,1], count:1, featureSeedingProtocol:'v5',
+  hydrogenBondConstraints:[{ id:'fixed-core-contact', receptorRole:'acceptor',
+    donor:{ scope:'ligand', atomIndex:0 },
+    targetLigandFeatureReferencePoint:{ x:0, y:0, z:0 } }],
+});
+assert.equal(fixedFeature.targetVariantCount, 1);
+assert.equal(fixedFeature.coverage.requiredStrataCount, 1);
+assert.equal(fixedFeature.coverage.allRequiredStrataCovered, true);
+assert.deepEqual(fixedFeature.coverage.strata[0].selectedSeedOrdinals, [0],
+  'an immutable hard-core contact is covered by its sole allowed coordinate state');
+
 console.log('Feature-guided pose seeds cover registered feature maps and affected rotors deterministically');
