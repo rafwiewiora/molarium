@@ -5,6 +5,7 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { promoteCompletedRender } from './atomic-render-output.mjs';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
+import { verifyBrowserLocalLabCapture } from './local-lab-capture.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SOURCE_PATH = 'outputs/design-history/sos1-preapproval/source/6EPM.pdb';
@@ -183,13 +184,14 @@ async function main() {
   const stagingDirectory = await mkdtemp(join(dirname(options.outputDirectory),
     '.fig1-molarium-interface-'));
   const browser = await startMolariumBrowser({ root, appPath:'index.html?blank=1',
-    width:options.width, height:options.height, localOnly:false });
+    width:options.width, height:options.height, localOnly:true });
   let complete = false;
   try {
     await waitFor(async () => browser.evaluate(`document.readyState === 'complete'
       && Boolean(window.MolariumChemistActions)
       && window.MolariumChemistActions.schema === 'molarium.chemist-actions/v1'`),
     90000, 'public Chemist Actions API');
+    const networkPolicy = await verifyBrowserLocalLabCapture(browser);
     const description = await browser.evaluate('window.MolariumChemistActions.describe()');
     let inspection;
     for (const request of figure1ActionPlan(sourceBytes.toString('utf8'))) {
@@ -243,7 +245,7 @@ async function main() {
       scene:{ assembly:'complete deposited KRAS–SOS1 protein assembly',
         selectedLigand:'BQ5/F1', glycerolVisible:false, waterPolicy:'exclude',
         displayHydrogens:false, pocketAtoms:true, representation:'cartoon' },
-      ligand, depiction, interface:interfaceState,
+      ligand, depiction, interface:interfaceState, networkPolicy,
       publicActions:{ schema:description.schema,
         guarantee:description.guarantee, records:actionAudit.length,
         actionNames:actionAudit.map((record) => record.action),
@@ -271,4 +273,3 @@ async function main() {
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] || '').href) await main();
-

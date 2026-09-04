@@ -7,6 +7,7 @@ import { actionScriptSha256 } from '../design-history/replay.mjs';
 import { buildPocketInterfaceStory } from '../design-history/interface-story.mjs';
 import { promoteCompletedRender } from './atomic-render-output.mjs';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
+import { verifyBrowserLocalLabCapture } from './local-lab-capture.mjs';
 import { buildAcceptedSos1ReplayScript, requireExplicitRunDirectory,
   verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
 
@@ -54,6 +55,7 @@ const frameDirectory = join(temporary, 'frames');
 const qaDirectory = join(publicationStaging, 'qa');
 let browser = null;
 let browserVersion = null;
+let networkPolicy = null;
 const captured = [];
 let frameIndex = 0;
 
@@ -155,6 +157,7 @@ try {
     await window.MolariumChemistActionsReady;
     return true;
   })()`), 30000, 'ready Molarium Chemist Actions and Designer moves UI');
+  networkPolicy = await verifyBrowserLocalLabCapture(browser);
   await browser.evaluate(`document.querySelector('.mode-bar button[data-mode="build"]').click();
     document.querySelector('#designer-move-tools').scrollIntoView({block:'center'}); true`);
   await delay(400);
@@ -263,6 +266,7 @@ try {
     renderer:{ path:relative(root, fileURLToPath(import.meta.url)), sha256:digest(rendererBytes),
       browserProduct:browserVersion.product, userAgent:browserVersion.userAgent },
     viewport:{ width, height, deviceScaleFactor:1 },
+    networkPolicy,
     replay:{ status:replayStatus,
       exactExpectationCount:presentationScript.actions.filter((step) => step.expect).length },
     audit:{ path:'chemist-action-audit.json', sha256:digest(auditBytes), records:audit.length },

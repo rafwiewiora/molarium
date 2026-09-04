@@ -52,6 +52,10 @@ try {
     'the renderer must never select an SOS1 run implicitly');
   assert.match(renderer, /verifyAcceptedSos1Run\(runDirectory\)/,
     'the renderer must reject a run that failed independent evaluation');
+  assert.match(renderer, /verifyBrowserLocalLabCapture\(browser\)/,
+    'the renderer must prove that publication assets use the real Local Lab policy');
+  assert.match(renderer, /localOnly:true/,
+    'the renderer must start the network-locked Local Lab server');
   assert.match(renderer, /path:'source\.action-script\.json'/,
     'the selected public source actions must be retained with the render');
   assert.doesNotMatch(renderer, /DOM\.setFileInputFiles/,

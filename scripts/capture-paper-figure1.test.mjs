@@ -2,6 +2,23 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { figure1ActionPlan, verifyBq5Inspection,
   verifyVisibleBq5Depiction } from './capture-paper-figure1.mjs';
+import { verifyLocalLabCaptureState } from './local-lab-capture.mjs';
+
+const localLab = verifyLocalLabCaptureState({
+  responsePolicy:'local-only-v1',
+  contentSecurityPolicy:"default-src 'self'; connect-src 'self'; object-src 'none'",
+  runtimeMode:'local-lab', runtimeLocalOnly:true, runtimePolicy:'local-only-v1',
+  allowedNetworkOrigins:['http://127.0.0.1:50001'], documentMode:'local-lab',
+  badgeMode:'local-lab', badgeLocalLab:true,
+  badgeText:'Local Lab · network locked', foldDisabled:true,
+  msaEndpointDisabled:true, ccdRetrievalDisabled:true,
+}, 'http://127.0.0.1:50001');
+assert.equal(localLab.verified, true);
+assert.throws(() => verifyLocalLabCaptureState({ ...localLab,
+  responsePolicy:'connected-v1' }, 'http://127.0.0.1:50001'), /not enforcing/);
+assert.throws(() => verifyLocalLabCaptureState({ ...localLab,
+  badgeText:'Local Lab · network locked', foldDisabled:false },
+  'http://127.0.0.1:50001'), /fold control enabled/);
 
 const atoms = Array.from({ length:16 }, (_, index) => ({
   atomId:`bq5-${index}`, element:index < 3 ? 'N' : 'C', formalCharge:0,
@@ -62,6 +79,9 @@ assert(!source.includes('loadMolecule('), 'Figure 1 capture must not mutate the 
 assert.match(source, /window\.MolariumChemistActions\.execute/);
 assert.match(source, /verifyBq5Inspection\(inspection\)/);
 assert.match(source, /verifyVisibleBq5Depiction\(await readVisibleDepiction/);
+assert.match(source, /verifyBrowserLocalLabCapture\(browser\)/);
+assert.match(source, /localOnly:true/);
+assert.doesNotMatch(source, /localOnly:false/);
 assert.match(source, /promoteCompletedRender\(\{ stagingDirectory/);
 assert.match(source, /complete:true/);
 
