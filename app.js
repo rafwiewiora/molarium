@@ -8359,6 +8359,10 @@ const DESIGNER_MOVE_CHECKPOINT_STATE_KEYS = Object.freeze([
   'depictionPinnedLigand', 'depictionOrientationAnchor',
   'depictionTemplateMolBlock', 'depictionTool', 'depictionBondStart',
   'depictionBondOrder',
+  // Campaign imports are molecular state transitions.  Cache the matching
+  // Design History frontier with each visible review frame so backward/forward
+  // navigation never leaves coordinates paired with the wrong campaign head.
+  'liveCampaign', 'liveCampaignBranch', 'liveCampaignCommittedThroughSequence',
 ]);
 
 function cloneDesignerMoveCheckpointMolecule(molecule) {
@@ -8441,13 +8445,14 @@ function restoreChemistActionGuardCheckpoint(checkpoint) {
     updateStructureComponentsUi(); updatePreparationInspectorUi();
     updateInfo(); updateGeometryControl(); updateOptimizerControls();
     updateDockingUi(); renderDockingResults(); updateSidechainRotamerControls();
-    updateHistoryButtons(); setMode(state.mode);
+    updateHistoryButtons(); updateLiveCampaignUi(); setMode(state.mode);
     if (state.calculationFrames.length) {
       updateEnergyChart(state.calculationFrames);
       updateCalculationFrameUI();
     }
     schedule2DDepiction(0);
   } else setMode(state.mode);
+  if (!state.molecule) updateLiveCampaignUi();
   restoreDesignerMoveDomCheckpoint(checkpoint.dom);
   draw();
 }
@@ -8498,13 +8503,13 @@ function restoreDesignerMoveCheckpoint(index) {
     updateStructureComponentsUi(); updatePreparationInspectorUi();
     updateInfo(); updateGeometryControl(); updateOptimizerControls();
     updateDockingUi(); renderDockingResults(); updateSidechainRotamerControls();
-    updateHistoryButtons(); setMode(state.mode);
+    updateHistoryButtons(); updateLiveCampaignUi(); setMode(state.mode);
     if (state.calculationFrames.length) {
       updateEnergyChart(state.calculationFrames);
       updateCalculationFrameUI();
     }
     schedule2DDepiction(0);
-  } else setMode(state.mode);
+  } else { updateLiveCampaignUi(); setMode(state.mode); }
   restoreDesignerMoveDomCheckpoint(checkpoint.dom);
   designerMoveCueElements = [...document.querySelectorAll('.designer-move-cue')];
   state.designerMoveReplayIndex = index;
@@ -8678,6 +8683,8 @@ function updateDesignerMoveControls(message = null, captionOverride = null,
   const detail = document.querySelector('#designer-move-detail');
   if (detail) detail.textContent = detailOverride ?? (review.completed && review.reviewing
     ? `Reviewing move ${state.designerMoveReplayIndex} of ${state.designerMoveReplayFrontier}; no calculation is rerun.`
+    : review.completed && script?.provenance?.reviewOnly
+      ? 'Accepted content-addressed checkpoints · calculation-free review · non-promotable.'
     : state.designerMoveReplayPaused
     ? state.designerMoveReplayActionRunning
       ? `Pause requested; move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} will finish first.`
@@ -8788,6 +8795,8 @@ function showDesignerMoveCue(step = null, { preserveLayout = false } = {}) {
     const tool = step.args?.tool === 'move' ? 'manipulate' : step.args?.tool;
     selector = `#build-tool-tabs [data-tool="${CSS.escape(String(tool || ''))}"]`;
   } else if (step.action?.startsWith('designRoute.')) selector = '#designer-move-tools';
+  else if (step.action === 'campaign.import' || step.action === 'campaign.switchBranch')
+    selector = '#designer-move-tools';
   else if (step.action?.startsWith('selection.') || step.action === 'session.inspect')
     selector = '.viewer-stage';
   const element = selector ? document.querySelector(selector) : null;
@@ -8817,6 +8826,10 @@ function showDesignerMoveCue(step = null, { preserveLayout = false } = {}) {
 
 function designerMoveResultCaption(step) {
   if (step.status === 'failed') return `${step.action} failed; no result was applied.`;
+  if (step.action === 'campaign.import' || step.action === 'campaign.switchBranch') {
+    const accepted = step.review?.sourceStatus === 'accepted';
+    return `${accepted ? 'Accepted immutable checkpoint' : 'Design History checkpoint'} restored for review · no calculation was run${step.review?.promotable === false ? ' · review is non-promotable' : ''}.`;
+  }
   if (step.action === 'pose.refine') {
     const count = Number(step.result?.refinement?.candidates || 0);
     const execution = step.result?.refinement?.poseSearchExecution;
@@ -8873,6 +8886,8 @@ function showDesignerMoveResultCue(step) {
     'optimization.run':'.viewer-stage',
     'view.focusComponent':'.viewer-stage',
     'view.focusAtoms':'.viewer-stage',
+    'campaign.import':'.viewer-stage',
+    'campaign.switchBranch':'.viewer-stage',
     'view.highlightAtoms':'.viewer-stage',
   };
   const selector = resultSelectors[step.action];
