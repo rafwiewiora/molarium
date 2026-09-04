@@ -17,6 +17,8 @@ const reviewedFiles = [
   'protein-residue-templates.js',
   'server.js',
   'scripts/generate-local-lab-manifest.mjs',
+  'scripts/build-sos1-publication.mjs',
+  'scripts/promote-sos1-publication.mjs',
   'scripts/sos1-accepted-run.mjs',
   'scripts/verify-sos1-publication.mjs',
   'styles.css',
@@ -97,8 +99,6 @@ const reviewedFiles = [
   'design-history/structures/design-route.mjs',
   'design-history/structures/registered-ligand-graph.mjs',
   'design-history/structures/ligands/bq5-rcsb-ccd.json',
-  'design-history/examples/sos1-publication.json',
-  'design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
 ];
 
 const files = [];

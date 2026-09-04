@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { cp, mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -35,11 +35,6 @@ const files = [
   'design-history/structures/design-route.mjs',
   'design-history/structures/registered-ligand-graph.mjs',
   'design-history/structures/ligands/bq5-rcsb-ccd.json',
-  'design-history/examples/sos1-publication.json',
-  'design-history/examples/sos1-growth-clash-v7-captions.json',
-  'design-history/examples/sos1-growth-clash-v7.provenance.json',
-  'design-history/examples/sos1-growth-clash-v7.full.action-script.json',
-  'design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
   'design-history/stories/generated/index.json',
   'design-history/stories/generated/bclxl-fragment-linking.campaign.json',
   'design-history/stories/generated/bclxl-fragment-linking.movie.json',
@@ -56,8 +51,6 @@ const files = [
   'design-history/structure-viewer/bclxl-fragment-linking.json',
   'design-history/structure-viewer/cdk2-hit-only-prospective.json',
   'design-history/structure-viewer/cdk2-designer-hit-to-lead.json',
-  'design-history/structure-viewer/sos1-hit-only-success.json',
-  'design-history/structure-viewer/sos1-chemist-actions-review.json',
   'design-history/structure-review/index.html',
   'design-history/structures/generated/manifest.json',
   'design-history/structures/generated/bclxl-trajectory-manifest.json',
@@ -131,12 +124,6 @@ const files = [
   'vendor/onnxruntime-web/ort.webgpu.bundle.min.mjs',
 ];
 
-const generatedStructures = await readdir(join(root, 'design-history/structures/generated'));
-files.push(...generatedStructures
-  .filter((name) => ((name.startsWith('sos1-v7-') || name.startsWith('sos1-full-'))
-    && name.endsWith('.pdb')) || name === 'sos1-prospective-movie-assets.json')
-  .map((name) => `design-history/structures/generated/${name}`));
-
 const headers = `/*
   Cache-Control: no-cache
   Cross-Origin-Embedder-Policy: require-corp
@@ -165,8 +152,8 @@ await writeFile(join(output, 'runtime-config.js'),
   })});\n`);
 await writeFile(join(output, '_headers'), headers);
 await writeFile(join(output, '_redirects'), [
-  '/sos1-hit-to-bay293/replay /design-history/structure-viewer/?story=sos1-chemist-actions-review 302',
-  '/sos1-hit-to-bay293/replay/ /design-history/structure-viewer/?story=sos1-chemist-actions-review 302',
+  '/sos1-hit-to-bay293/replay /design-history/structure-viewer/?story=sos1-hit-to-bay293-review 302',
+  '/sos1-hit-to-bay293/replay/ /design-history/structure-viewer/?story=sos1-hit-to-bay293-review 302',
   '/sos1-hit-to-bay293 /?story=sos1-hit-to-bay293 302',
   '/sos1-hit-to-bay293/ /?story=sos1-hit-to-bay293 302',
   '',

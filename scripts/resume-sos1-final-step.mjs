@@ -8,6 +8,8 @@ import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
+if (!args.includes('--test-only-unsafe-resume'))
+  throw new Error('Test-only historical resume is quarantined; publication runs must use run:sos1-prospective');
 const valueFor = (name) => {
   const index = args.indexOf(name);
   if (index >= 0) return args[index + 1];

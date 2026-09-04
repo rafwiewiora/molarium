@@ -7,7 +7,7 @@ import { expandStructureTimeline } from './timeline.mjs';
 import { validatePrecomputedCheckpointReview } from './checkpoint-review.mjs';
 
 const root = resolve(import.meta.dirname, '../..');
-const storyPath = resolve(import.meta.dirname, 'sos1-chemist-actions-review.json');
+const storyPath = resolve(import.meta.dirname, 'sos1-accepted-review.json');
 const storyBytes = await readFile(storyPath);
 const story = JSON.parse(storyBytes);
 const readPinnedJson = async ({ path, sha256 }) => {
@@ -29,7 +29,7 @@ assert.ok(CHEMIST_ACTION_SCOPES.structureStory.every((action) =>
 assert.equal(CHEMIST_ACTION_SCOPES.structureStory.some((action) =>
   /optimization|pose|designRoute/.test(action)), false,
   'the review viewer must not expose scientific mutation actions');
-assert.equal(story.cues.length, 5);
+assert.equal(story.cues.length, 4);
 assert.equal(expandStructureTimeline(story).length, story.cues.length,
   'each arrowable item must be one immutable saved endpoint, not an interpolated scene');
 
@@ -44,7 +44,7 @@ for (const scene of Object.values(story.scenes)) {
 
 const viewer = await readFile(resolve(import.meta.dirname, 'viewer.mjs'), 'utf8');
 const storySha256 = createHash('sha256').update(storyBytes).digest('hex');
-assert.match(viewer, new RegExp(`'sos1-chemist-actions-review':[\\s\\S]*${storySha256}`),
+assert.match(viewer, new RegExp(`'sos1-hit-to-bay293-review':[\\s\\S]*${storySha256}`),
   'the registered review must pin the exact story JSON');
 
 const build = await readFile(resolve(root, 'scripts/build-web.mjs'), 'utf8');

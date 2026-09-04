@@ -18,6 +18,8 @@ import { verifyFrozenDesignRouteInput } from
 import { requireExplicitRunDirectory,
   verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
 
+throw new Error('Retired archival asset builder: use promote:sos1-publication with an accepted run');
+
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const valueFor = (name) => {

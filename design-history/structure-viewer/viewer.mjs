@@ -12,11 +12,6 @@ const STORY_REGISTRY=Object.freeze({
   'bclxl-fragment-linking':Object.freeze({path:'./bclxl-fragment-linking.json'}),
   'cdk2-hit-only-prospective':Object.freeze({path:'./cdk2-hit-only-prospective.json'}),
   'cdk2-designer-hit-to-lead':Object.freeze({path:'./cdk2-designer-hit-to-lead.json'}),
-  'sos1-hit-only-success':Object.freeze({path:'./sos1-hit-only-success.json'}),
-  'sos1-chemist-actions-review':Object.freeze({
-    path:'./sos1-chemist-actions-review.json',
-    sha256:'dba92bc5fbdf993a65db5013af8a43e11e5863bc266a3ee4f213abff99402f43',
-  }),
 });
 const PREFIX={x1:'7gn8',x38:'7gnr-aligned',bclxl:'3spf',bclxlTemplate:'3sp7-aligned'};
 const LIGAND_COLOR={x1:0x826cae,x38:0xdc8747,bclxl:0x247d95};

@@ -17026,13 +17026,6 @@ async function loadLaunchMolecule() {
 }
 
 const DESIGNER_STORY_LINKS = Object.freeze({
-  'sos1-hit-to-bay293':Object.freeze({
-    title:'SOS1 hit to BAY-293',
-    script:'./design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
-    sourcePath:'design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
-    sourceSha256:'8dc2fe984ce417ce836bd12cc8d46a749fa937b225c78869855ab803576ffef5',
-    presentation:'chemist-pocket',
-  }),
 });
 
 async function loadRegisteredDesignerScript(storyId) {
