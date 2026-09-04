@@ -616,6 +616,15 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
   });
   const affectedStrata = affectedRotors.map((rotor) =>
     stratum(`affected-rotor:bond-${rotor.bondIndex}`, 'affected-existing-rotor', true));
+  // Graph edits can make the two endpoint orientations of an affected rotor
+  // chemically inequivalent even when the inherited MCS has only one exact
+  // atom mapping (for example, an asymmetric substituent on a retained ring).
+  // Reserve the opposite endpoint before spending a bounded chain budget on
+  // fine angular sampling.  The unaltered reference is already selected as
+  // the zero-degree endpoint.
+  const affectedOppositeStrata = affectedRotors.map((rotor) =>
+    stratum(`affected-rotor-opposite:bond-${rotor.bondIndex}`,
+      'affected-existing-rotor-opposite-orientation', true));
   affectedRotors.forEach((rotor, rotorIndex) => {
     editRegionAnglesDegrees.forEach((angleDegrees) => {
       const seeded = rotateRegion(positions, rotor.atomIndices, rotor.origin,
@@ -634,6 +643,8 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
       if (featureSeedingProtocol !== 'v5'
         || Number(angleDegrees) !== 0 && candidate !== initialCandidate)
         cover(candidate, affectedStrata[rotorIndex]);
+      if (featureSeedingProtocol === 'v5' && Number(angleDegrees) === 180)
+        cover(candidate, affectedOppositeStrata[rotorIndex]);
     });
   });
   const targetStrata = variants.map((variant, index) => stratum(

@@ -34,6 +34,10 @@ assert.match(api.describe().actions['designerScript.export'].arguments.kind,
 assert.match(api.describe().actions['interface.presentDesignerStep'].arguments.phase,
   /before \| after \| clear/);
 assert(Object.hasOwn(api.describe().actions, 'pose.addContact'));
+assert.match(api.describe().actions['pose.addContact'].arguments.ligandAtom,
+  /componentId.*atomName/);
+assert.match(api.describe().actions['pose.addContact'].arguments.receptorAtom,
+  /residueName.*chain.*residueIndex.*atomName/);
 assert(Object.hasOwn(api.describe().actions, 'pose.forgetContact'));
 assert(Object.hasOwn(api.describe().actions, 'pose.updateReceptorReference'));
 assert(Object.hasOwn(api.describe().actions, 'pose.enumerateSidechainRotamers'));
@@ -92,6 +96,10 @@ assert.match(appSource, /restoreChemistActionGuardCheckpoint\(rollback\)/,
   'guard failure restores the complete captured action state');
 assert.match(appSource, /stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA/,
   'scientific action results identify their versioned identity-topology-coordinate hash');
+assert.match(appSource, /resolveLigandAtomSelector/,
+  'portable ligand selectors are resolved through the public contact action');
+assert.match(appSource, /resolveReceptorAtomSelector/,
+  'portable receptor selectors are resolved through the public contact action');
 
 const first = await api.execute({ requestId:'chemist-1', action:'view.setMode', args:{ mode:'build' } });
 assert.equal(first.status, 'completed');

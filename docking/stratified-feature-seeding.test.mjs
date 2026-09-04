@@ -54,14 +54,21 @@ assert.equal(first.seeds.length, 8);
 assert.equal(sixteen.seeds.length, 16);
 assert.equal(sixteen.coverage.allRequiredStrataCovered, true);
 assert.equal(first.coverage.policy, 'required-strata-then-round-robin/v1');
-assert.equal(first.coverage.requiredStrataCount, 2);
-assert.equal(first.coverage.coveredRequiredStrataCount, 2);
+assert.equal(first.coverage.requiredStrataCount, 3);
+assert.equal(first.coverage.coveredRequiredStrataCount, 3);
 assert.equal(first.coverage.allRequiredStrataCovered, true);
 assert(first.coverage.strata.filter((entry) => entry.required)
   .every((entry) => entry.selectedSeedOrdinals.length > 0));
 assert(first.coverage.strata.find((entry) => entry.kind === 'spatial-feature-map')
   .bestRmsdAngstrom < 1e-10,
   'the candidate assigned to a spatial-feature map should be the best generated map fit');
+const opposite = first.coverage.strata.find((entry) =>
+  entry.kind === 'affected-existing-rotor-opposite-orientation');
+assert(opposite?.required && opposite.selectedSeedOrdinals.length === 1,
+  'bounded v5 search must retain an opposite endpoint for every affected rotor');
+assert(first.seeds.some((entry) => entry.audit.method === 'affected-existing-rotor-torsion-scan'
+  && entry.audit.axialAngleDegrees === 180),
+  'the 180-degree affected-ring orientation must reach the searched seed set');
 const firstUntargetedOrdinal = first.seeds.findIndex((entry) =>
   entry.audit.method === 'untargeted-edit-region-torsion-scan');
 const requiredFirstOrdinals = first.coverage.strata.filter((entry) => entry.required)
@@ -75,7 +82,7 @@ assert.deepEqual(first.seeds.map((entry) => ({
 })), 'stratified selection must be deterministic');
 
 assert.throws(() => featureGuidedPoseSeeds({ ...input, count:1 }),
-  /requires at least 2 search chains/,
+  /requires at least 3 search chains/,
   'a cap too small for the required strata must fail closed');
 
 console.log('Feature-guided pose seeds cover registered feature maps and affected rotors deterministically');

@@ -23,6 +23,16 @@ assert.match(source, /valence safeguard did not inspect the exact staged product
 assert.match(source, /requireExactStagedProductGraph\(ligand, staged, stepId\)/);
 assert.match(source, /requireRegisteredFeatureRefinement\(refined, staged, stepId\)/,
   'registered retained features must be checked on the public pose result');
+assert.match(source,
+  /ligandAtom:\{ componentId:'heterogen:A:1104::AWW', atomName:'N7' \}[\s\S]*receptorAtom:\{ residueName:'ASN', chain:'A', residueIndex:879,[\s\S]*atomName:'OD1'/,
+  'AWW search must preserve the starting-coordinate N7 to ASN879 OD1 contact');
+assert.match(source,
+  /ligandAtom:\{ componentId:'heterogen:A:1104::AWW', atomName:'OX3' \}[\s\S]*receptorAtom:\{ residueName:'TYR', chain:'A', residueIndex:884,[\s\S]*atomName:'O'/,
+  'AWW search must install the declared OX3 to Tyr884 backbone-carbonyl intent');
+assert.match(source, /transientContactIds = \[hingeContact, intendedContact\]/,
+  'both public required contacts must participate in every Phe branch');
+assert.match(source, /await execute\('pose\.forgetContact'/,
+  'AWW-only design hypotheses must be retired through the public API before the AXH edit');
 assert.match(source, /await execute\('campaign\.create'/,
   'the runner must begin a public full-system Design History');
 assert.match(source, /await execute\('campaign\.commitCurrent'/,

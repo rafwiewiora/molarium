@@ -517,7 +517,7 @@ try {
   const description = await browser.evaluate(`window.MolariumChemistActions.describe()`);
   for (const action of ['designRoute.load', 'designRoute.applyStep',
     'designRoute.inspect', 'protein.prepare', 'pose.captureReference',
-    'pose.updateReceptorReference', 'pose.refine',
+    'pose.updateReceptorReference', 'pose.addContact', 'pose.forgetContact', 'pose.refine',
     'pose.apply', 'pose.enumerateSidechainRotamers', 'pose.applySidechainRotamer',
     'protein.parameterize', 'optimization.run', 'history.undo', 'session.inspect',
     'campaign.create', 'campaign.commitCurrent', 'campaign.verify', 'campaign.export']) {
@@ -551,11 +551,31 @@ try {
     console.log(`${stepId}: staging the reported graph against the preceding prediction`);
     const staged = await execute('designRoute.applyStep', { stepId }, `${stepId}-stage`);
     let rotamerDecision = null;
+    let transientContactIds = [];
     let refinement, parameterization;
     let relaxation = { method:'none',
       interpretation:'Pose search only; receptor and selected pose were left unchanged.' };
     if (stepId === 'open-phe890-pocket') {
       console.log(`${stepId}: ranking coupled Phe890 and ligand-pose branches`);
+      const hingeContact = await execute('pose.addContact', {
+        ligandAtom:{ componentId:'heterogen:A:1104::AWW', atomName:'N7' },
+        receptorAtom:{ residueName:'ASN', chain:'A', residueIndex:879,
+          insertionCode:'', atomName:'OD1' },
+        ligandRole:'donor',
+      }, `${stepId}-preserve-asn879-od1-contact`);
+      const intendedContact = await execute('pose.addContact', {
+        ligandAtom:{ componentId:'heterogen:A:1104::AWW', atomName:'OX3' },
+        receptorAtom:{ residueName:'TYR', chain:'A', residueIndex:884,
+          insertionCode:'', atomName:'O' },
+        ligandRole:'donor',
+      }, `${stepId}-add-tyr884-backbone-contact`);
+      if (hingeContact.result.contact?.required !== true
+        || intendedContact.result.contact?.required !== true
+        || intendedContact.result.contact?.origin?.kind
+          !== 'user-added-hydrogen-bond-hypothesis')
+        throw new Error(`${stepId}: declared AWW H-bond intents were not installed`);
+      transientContactIds = [hingeContact, intendedContact]
+        .map((response) => response.result.contact.contactId);
       rotamerDecision = await choosePhe890Branch(stepId, {
         referenceLigand:previousFrozenLigand,
         hardAtomNames:staged.result.designStep.poseTransferPlan.hardConstraintAtomNames,
@@ -687,6 +707,11 @@ try {
     console.log(`${stepId}: frozen ${digest(bytes).slice(0, 12)}`);
 
     if (stepIndex < stepIds.length - 1) {
+      if (stepId === 'open-phe890-pocket') {
+        for (const [index, contactId] of transientContactIds.entries())
+          await execute('pose.forgetContact', { contactId },
+            `${stepId}-retire-contact-${index + 1}`);
+      }
       await execute('view.setMode', { mode:'build' }, `${stepId}-advance-build`);
       await execute('pose.captureReference', { mode:'propagate' },
         `${stepId}-capture-predicted-reference`);

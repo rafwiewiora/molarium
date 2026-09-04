@@ -10391,19 +10391,35 @@ function installChemistActionsApi(module) {
       updateDockingUi(); return chemistActionSummary({ contactId:args.contactId,
         required:args.required }); },
     'pose.addContact':async (args) => { chemistActionKeys(args,
-      ['ligandAtomId','receptorAtomId','ligandRole']);
-      if (typeof args.ligandAtomId !== 'string' || !args.ligandAtomId
-        || typeof args.receptorAtomId !== 'string' || !args.receptorAtomId)
-        throw new Error('ligandAtomId and receptorAtomId must be persistent atom IDs');
+      ['ligandAtomId','receptorAtomId','ligandAtom','receptorAtom','ligandRole']);
+      const ligandUsesId = typeof args.ligandAtomId === 'string' && Boolean(args.ligandAtomId);
+      const receptorUsesId = typeof args.receptorAtomId === 'string' && Boolean(args.receptorAtomId);
+      if (ligandUsesId === Boolean(args.ligandAtom)
+        || receptorUsesId === Boolean(args.receptorAtom))
+        throw new Error('Provide exactly one ligand atom ID or selector and exactly one receptor atom ID or selector');
       const ligandRole = chemistActionEnum(args.ligandRole ?? 'auto',
         ['auto','acceptor','donor'], 'ligandRole');
       const byId = await ensureChemistActionAtomIds();
-      if (!byId.has(args.ligandAtomId)) throw new Error(`Unknown persistent atom ID: ${args.ligandAtomId}`);
-      if (!byId.has(args.receptorAtomId)) throw new Error(`Unknown persistent atom ID: ${args.receptorAtomId}`);
-      const definition = await addManualDockingContactByIndices(byId.get(args.ligandAtomId),
-        byId.get(args.receptorAtomId), ligandRole, 'chemist-actions-two-atom-selection');
+      if (ligandUsesId && !byId.has(args.ligandAtomId))
+        throw new Error(`Unknown persistent atom ID: ${args.ligandAtomId}`);
+      if (receptorUsesId && !byId.has(args.receptorAtomId))
+        throw new Error(`Unknown persistent atom ID: ${args.receptorAtomId}`);
+      const selectors = ligandUsesId && receptorUsesId ? null
+        : await import('./docking/portable-atom-selector.mjs');
+      const ligandAtomIndex = ligandUsesId ? byId.get(args.ligandAtomId)
+        : selectors.resolveLigandAtomSelector({ molecule:state.molecule,
+          components:state.structureComponents, selector:args.ligandAtom });
+      const receptorAtomIndex = receptorUsesId ? byId.get(args.receptorAtomId)
+        : selectors.resolveReceptorAtomSelector({ molecule:state.molecule,
+          selector:args.receptorAtom });
+      const method = ligandUsesId && receptorUsesId
+        ? 'chemist-actions-two-atom-selection' : 'chemist-actions-portable-atom-selectors';
+      const definition = await addManualDockingContactByIndices(ligandAtomIndex,
+        receptorAtomIndex, ligandRole, method);
       return chemistActionSummary({ contact:{ contactId:definition.id,
-        label:definition.label, required:true, origin:structuredClone(definition.origin) } }); },
+        label:definition.label, required:true, origin:structuredClone(definition.origin),
+        resolvedAtomIds:{ ligand:state.molecule.atoms[ligandAtomIndex].designAtomId,
+          receptor:state.molecule.atoms[receptorAtomIndex].designAtomId } } }); },
     'pose.forgetContact':async (args) => { chemistActionKeys(args, ['contactId']);
       if (typeof args.contactId !== 'string' || !args.contactId)
         throw new Error('contactId must be a contact ID');
