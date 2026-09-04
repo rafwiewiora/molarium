@@ -50,13 +50,15 @@ THRESHOLDS = {
 }
 
 CONTINUITY_THRESHOLDS = {
-    "hardRegionFitRmsdAngstrom": 0.60,
-    "hardRegionMaximumDisplacementAngstrom": 1.00,
-    "releasedRegionRmsdAngstrom": 2.50,
-    "distalFeatureRmsdAngstrom": 1.50,
-    "distalFeatureCentroidDisplacementAngstrom": 1.50,
-    "distalFeaturePlaneAngleDegrees": 30.0,
-    "distalFeatureRadialDistanceDeltaAngstrom": 1.00,
+    "hardRegionSameReceptorFrameRmsdAngstrom": 0.60,
+    "hardRegionSameReceptorFrameMaximumDisplacementAngstrom": 1.00,
+    "hardRegionSameReceptorFrameCentroidDisplacementAngstrom": 0.50,
+    "hardRegionRigidBodyOrientationChangeDegrees": 15.0,
+    "releasedRegionAfterHardCoreRigidSuperpositionRmsdAngstrom": 2.50,
+    "distalFeatureAfterHardCoreRigidSuperpositionRmsdAngstrom": 1.50,
+    "distalFeatureAfterHardCoreRigidSuperpositionCentroidDisplacementAngstrom": 1.50,
+    "distalFeatureAfterHardCoreRigidSuperpositionPlaneAngleDegrees": 30.0,
+    "distalFeatureAfterHardCoreRigidSuperpositionRadialDistanceDeltaAngstrom": 1.00,
 }
 
 PHE890_SIDECHAIN_ATOMS = ["CB", "CG", "CD1", "CD2", "CE1", "CE2", "CZ"]
@@ -158,6 +160,12 @@ def kabsch(reference: np.ndarray, mobile: np.ndarray) -> tuple[np.ndarray, np.nd
     aligned = mobile @ rotation + translation
     rmsd = float(np.sqrt(np.mean(np.sum((reference - aligned) ** 2, axis=1))))
     return rotation, translation, rmsd
+
+
+def rotation_angle_degrees(rotation: np.ndarray) -> float:
+    """Return the proper-rotation angle represented by a 3x3 rotation matrix."""
+    cosine = float((np.trace(rotation) - 1.0) / 2.0)
+    return float(math.degrees(math.acos(min(1.0, max(-1.0, cosine)))))
 
 
 def receptor_alignment(reference_rows: list[dict], mobile_rows: list[dict]) -> dict:
@@ -332,6 +340,23 @@ def geometry_metrics(first: np.ndarray, second: np.ndarray,
             "holdoutRadialDistanceFromHardCoreAngstrom": second_radius,
             "radialDistanceFromHardCoreDeltaAngstrom": abs(first_radius - second_radius),
         })
+    return result
+
+
+def transition_geometry_metrics(before: np.ndarray, after: np.ndarray,
+                                hard_before: np.ndarray | None = None,
+                                hard_after: np.ndarray | None = None) -> dict:
+    """Name generic geometry fields for a before/after checkpoint transition."""
+    result = geometry_metrics(before, after, hard_before, hard_after)
+    result["fromStateRadiusOfGyrationAngstrom"] = result.pop(
+        "predictedRadiusOfGyrationAngstrom")
+    result["toStateRadiusOfGyrationAngstrom"] = result.pop(
+        "holdoutRadiusOfGyrationAngstrom")
+    if "predictedRadialDistanceFromHardCoreAngstrom" in result:
+        result["fromStateRadialDistanceFromHardCoreAngstrom"] = result.pop(
+            "predictedRadialDistanceFromHardCoreAngstrom")
+        result["toStateRadialDistanceFromHardCoreAngstrom"] = result.pop(
+            "holdoutRadialDistanceFromHardCoreAngstrom")
     return result
 
 
@@ -624,7 +649,14 @@ def holdout_acceptance(receptor: dict, ligand: dict, regions: dict,
 
 
 def aww_axh_continuity(campaign: dict, checkpoints: dict[str, dict]) -> dict:
-    """Evaluate the graph-registered AWW to AXH transition without a ligand fit."""
+    """Evaluate AWW-to-AXH continuity in their shared frozen receptor frame.
+
+    Hard-region acceptance uses the coordinates exactly as recorded.  A
+    hard-region rigid superposition is computed only to separate internal
+    deformation from rigid-body motion and to provide a local frame for the
+    deliberately released and seed-only regions; it never replaces the raw
+    same-frame acceptance measurements.
+    """
     final_step = next(step for step in campaign["steps"] if step["id"] == "finish-bay-293")
     regions = route_regions(final_step)
     pose_map = final_step["posePropagationMap"]
@@ -636,19 +668,37 @@ def aww_axh_continuity(campaign: dict, checkpoints: dict[str, dict]) -> dict:
                 for entry in pose_map["commonAtoms"]}
     hard_before = np.array([before_by_name[mappings[index]] for index in regions["hard"]])
     hard_after = np.array([after_by_name[product_names[index]] for index in regions["hard"]])
+    hard_same_frame_metrics = transition_geometry_metrics(hard_before, hard_after)
     rotation, translation, hard_fit_rmsd = kabsch(hard_before, hard_after)
     aligned_after_all = transform_points(np.array([
         after_by_name[name] for name in product_names]),
         {"rotation": rotation, "translation": translation})
     hard_after_aligned = aligned_after_all[regions["hard"]]
-    hard_metrics = geometry_metrics(hard_before, hard_after_aligned)
-    hard_metrics["fitRmsdAngstrom"] = hard_fit_rmsd
+    hard_internal_shape_geometry = transition_geometry_metrics(
+        hard_before, hard_after_aligned)
+    hard_internal_shape_metrics = {
+        "atomCount": hard_internal_shape_geometry["atomCount"],
+        "rmsdAfterRigidSuperpositionAngstrom": hard_fit_rmsd,
+        "maximumResidualDisplacementAfterRigidSuperpositionAngstrom":
+            hard_internal_shape_geometry["maximumDisplacementAngstrom"],
+        "radialProfileRmsdAfterRigidSuperpositionAngstrom":
+            hard_internal_shape_geometry["radialProfileRmsdAngstrom"],
+        "diagnosticOnly": True,
+        "usedForAcceptance": False,
+    }
+    hard_rigid_body_motion = {
+        "centroidDisplacementAngstrom":
+            hard_same_frame_metrics["centroidDisplacementAngstrom"],
+        "orientationChangeDegrees": rotation_angle_degrees(rotation),
+        "estimatedBy": "best rigid transform from AXH hard atoms to AWW hard atoms",
+        "usedForAcceptance": True,
+    }
 
     released_metrics = None
     if regions["released"]:
         released_before = np.array([
             before_by_name[mappings[index]] for index in regions["released"]])
-        released_metrics = geometry_metrics(
+        released_metrics = transition_geometry_metrics(
             released_before, aligned_after_all[regions["released"]],
             hard_before, hard_after_aligned)
 
@@ -667,44 +717,77 @@ def aww_axh_continuity(campaign: dict, checkpoints: dict[str, dict]) -> dict:
             before = np.array([before_by_name[name]
                                for name in variant["referenceAtomNames"]])
             after = aligned_after_all[variant["productAtomIndices"]]
-            metrics = geometry_metrics(before, after, hard_before, hard_after_aligned)
+            metrics = transition_geometry_metrics(
+                before, after, hard_before, hard_after_aligned)
             candidates.append((metrics["rmsdAngstrom"], variant_index, metrics))
         _, selected_variant, distal_metrics = min(candidates, key=lambda entry: entry[0])
         distal_metrics["mappingVariantsEvaluated"] = len(variants)
         distal_metrics["selectedMappingVariant"] = selected_variant
 
     checks = [
-        limit_check("hard-region-fit", hard_metrics["fitRmsdAngstrom"],
-                    CONTINUITY_THRESHOLDS["hardRegionFitRmsdAngstrom"]),
-        limit_check("hard-region-maximum-displacement",
-                    hard_metrics["maximumDisplacementAngstrom"],
-                    CONTINUITY_THRESHOLDS["hardRegionMaximumDisplacementAngstrom"]),
+        limit_check("hard-region-same-receptor-frame-rmsd",
+                    hard_same_frame_metrics["rmsdAngstrom"],
+                    CONTINUITY_THRESHOLDS[
+                        "hardRegionSameReceptorFrameRmsdAngstrom"]),
+        limit_check("hard-region-same-receptor-frame-maximum-displacement",
+                    hard_same_frame_metrics["maximumDisplacementAngstrom"],
+                    CONTINUITY_THRESHOLDS[
+                        "hardRegionSameReceptorFrameMaximumDisplacementAngstrom"]),
+        limit_check("hard-region-same-receptor-frame-centroid-displacement",
+                    hard_rigid_body_motion["centroidDisplacementAngstrom"],
+                    CONTINUITY_THRESHOLDS[
+                        "hardRegionSameReceptorFrameCentroidDisplacementAngstrom"]),
+        limit_check("hard-region-rigid-body-orientation-change",
+                    hard_rigid_body_motion["orientationChangeDegrees"],
+                    CONTINUITY_THRESHOLDS[
+                        "hardRegionRigidBodyOrientationChangeDegrees"]),
     ]
     if released_metrics is not None:
-        checks.append(limit_check("released-region-rmsd", released_metrics["rmsdAngstrom"],
-                                  CONTINUITY_THRESHOLDS["releasedRegionRmsdAngstrom"]))
+        checks.append(limit_check(
+            "released-region-after-hard-core-rigid-superposition-rmsd",
+            released_metrics["rmsdAngstrom"],
+            CONTINUITY_THRESHOLDS[
+                "releasedRegionAfterHardCoreRigidSuperpositionRmsdAngstrom"]))
     if distal_metrics is not None:
         checks.extend([
-            limit_check("distal-feature-rmsd", distal_metrics["rmsdAngstrom"],
-                        CONTINUITY_THRESHOLDS["distalFeatureRmsdAngstrom"]),
-            limit_check("distal-feature-centroid",
+            limit_check("distal-feature-after-hard-core-rigid-superposition-rmsd",
+                        distal_metrics["rmsdAngstrom"],
+                        CONTINUITY_THRESHOLDS[
+                            "distalFeatureAfterHardCoreRigidSuperpositionRmsdAngstrom"]),
+            limit_check("distal-feature-after-hard-core-rigid-superposition-centroid",
                         distal_metrics["centroidDisplacementAngstrom"],
-                        CONTINUITY_THRESHOLDS["distalFeatureCentroidDisplacementAngstrom"]),
-            limit_check("distal-feature-radial-distance",
+                        CONTINUITY_THRESHOLDS[
+                            "distalFeatureAfterHardCoreRigidSuperposition"
+                            "CentroidDisplacementAngstrom"]),
+            limit_check("distal-feature-after-hard-core-rigid-superposition-radial-distance",
                         distal_metrics["radialDistanceFromHardCoreDeltaAngstrom"],
-                        CONTINUITY_THRESHOLDS["distalFeatureRadialDistanceDeltaAngstrom"]),
+                        CONTINUITY_THRESHOLDS[
+                            "distalFeatureAfterHardCoreRigidSuperposition"
+                            "RadialDistanceDeltaAngstrom"]),
         ])
         if distal_metrics["principalPlaneAngleDegrees"] is not None:
-            checks.append(limit_check("distal-feature-plane",
-                                      distal_metrics["principalPlaneAngleDegrees"],
-                                      CONTINUITY_THRESHOLDS["distalFeaturePlaneAngleDegrees"]))
+            checks.append(limit_check(
+                "distal-feature-after-hard-core-rigid-superposition-plane",
+                distal_metrics["principalPlaneAngleDegrees"],
+                CONTINUITY_THRESHOLDS[
+                    "distalFeatureAfterHardCoreRigidSuperpositionPlaneAngleDegrees"]))
     return {
-        "schema": "molarium.design-prediction-continuity-evaluation/v1",
+        "schema": "molarium.design-prediction-continuity-evaluation/v2",
         "transition": {"fromStepId": "open-phe890-pocket", "fromStateId": "AWW",
                        "toStepId": "finish-bay-293", "toStateId": "AXH"},
-        "alignment": "AXH aligned to AWW using only route-declared hard atoms",
-        "regions": {"hard": hard_metrics, "released": released_metrics,
-                    "distalFeature": distal_metrics},
+        "acceptanceCoordinateFrame": (
+            "raw AWW and AXH coordinates in the same frozen receptor frame; "
+            "no ligand or hard-region fit"),
+        "diagnosticRigidFit": (
+            "AXH hard atoms rigidly superposed on AWW hard atoms only for "
+            "internal-shape diagnostics and released/seed-only relative geometry"),
+        "regions": {
+            "hardSameReceptorFrame": hard_same_frame_metrics,
+            "hardRigidBodyMotionInSameReceptorFrame": hard_rigid_body_motion,
+            "hardInternalShapeAfterRigidSuperposition": hard_internal_shape_metrics,
+            "releasedAfterHardCoreRigidSuperposition": released_metrics,
+            "distalFeatureAfterHardCoreRigidSuperposition": distal_metrics,
+        },
         "accepted": all(check["passed"] for check in checks),
         "thresholds": CONTINUITY_THRESHOLDS,
         "checks": checks,

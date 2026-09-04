@@ -80,7 +80,7 @@ class EvaluatorTest(unittest.TestCase):
         self.assertFalse(clash["valid"])
         self.assertGreater(clash["proteinLigandSevereClashes"], 0)
 
-    def test_aww_axh_continuity_uses_route_correspondence(self) -> None:
+    def continuity_fixture(self) -> tuple[dict, dict[str, np.ndarray]]:
         pose_map = self.final_step["posePropagationMap"]
         product_names = self.final_step["productAtomNames"]
 
@@ -88,7 +88,7 @@ class EvaluatorTest(unittest.TestCase):
             return np.array([index % 5.0, (index * index) % 7.0,
                              math.sin(index * 0.7)])
 
-        after_points = {name: point(index) + np.array([2.0, -1.0, 0.5])
+        after_points = {name: point(index)
                         for index, name in enumerate(product_names)}
         before_points = {}
         for mapping in pose_map["commonAtoms"]:
@@ -105,17 +105,81 @@ class EvaluatorTest(unittest.TestCase):
 
         checkpoints = {"open-phe890-pocket": checkpoint(before_points),
                        "finish-bay-293": checkpoint(after_points)}
+        return checkpoints, after_points
+
+    def test_aww_axh_continuity_accepts_route_registered_same_frame_fixture(self) -> None:
+        checkpoints, after_points = self.continuity_fixture()
+        product_names = self.final_step["productAtomNames"]
         continuity = EVALUATOR.aww_axh_continuity(self.campaign, checkpoints)
         self.assertTrue(continuity["accepted"])
-        self.assertLess(continuity["regions"]["distalFeature"]["rmsdAngstrom"], 1e-8)
+        self.assertEqual(
+            continuity["schema"],
+            "molarium.design-prediction-continuity-evaluation/v2")
+        self.assertLess(
+            continuity["regions"]["distalFeatureAfterHardCoreRigidSuperposition"]
+            ["rmsdAngstrom"], 1e-8)
+        self.assertFalse(
+            continuity["regions"]["hardInternalShapeAfterRigidSuperposition"]
+            ["usedForAcceptance"])
+        self.assertNotIn("hardRegionFitRmsdAngstrom", continuity["thresholds"])
+        self.assertNotIn("hard-region-fit",
+                         [check["id"] for check in continuity["checks"]])
+        self.assertNotIn(
+            "predictedRadiusOfGyrationAngstrom",
+            continuity["regions"]["hardSameReceptorFrame"])
 
         displaced = dict(after_points)
         for index in EVALUATOR.route_regions(self.final_step)["distalFeature"]:
             displaced[product_names[index]] = displaced[product_names[index]] + np.array([3.0, 0.0, 0.0])
-        checkpoints["finish-bay-293"] = checkpoint(displaced)
+        checkpoints["finish-bay-293"]["ligand"]["atoms"] = [
+            atom(name, "C", coordinates.tolist())
+            for name, coordinates in displaced.items()]
         continuity = EVALUATOR.aww_axh_continuity(self.campaign, checkpoints)
         self.assertFalse(continuity["accepted"])
-        self.assertIn("distal-feature-rmsd", continuity["failedChecks"])
+        self.assertIn("distal-feature-after-hard-core-rigid-superposition-rmsd",
+                      continuity["failedChecks"])
+
+    def test_aww_axh_continuity_rejects_rigid_translation_hidden_by_fit(self) -> None:
+        checkpoints, after_points = self.continuity_fixture()
+        translated = {name: point + np.array([2.0, -1.0, 0.5])
+                      for name, point in after_points.items()}
+        checkpoints["finish-bay-293"]["ligand"]["atoms"] = [
+            atom(name, "C", point.tolist()) for name, point in translated.items()]
+
+        continuity = EVALUATOR.aww_axh_continuity(self.campaign, checkpoints)
+
+        self.assertFalse(continuity["accepted"])
+        self.assertIn("hard-region-same-receptor-frame-rmsd",
+                      continuity["failedChecks"])
+        self.assertIn("hard-region-same-receptor-frame-centroid-displacement",
+                      continuity["failedChecks"])
+        self.assertLess(
+            continuity["regions"]["hardInternalShapeAfterRigidSuperposition"]
+            ["rmsdAfterRigidSuperpositionAngstrom"], 1e-8)
+
+    def test_aww_axh_continuity_rejects_rigid_rotation_hidden_by_fit(self) -> None:
+        checkpoints, after_points = self.continuity_fixture()
+        angle = math.radians(35.0)
+        rotation = np.array([[math.cos(angle), -math.sin(angle), 0.0],
+                             [math.sin(angle), math.cos(angle), 0.0],
+                             [0.0, 0.0, 1.0]])
+        center = np.mean(np.array(list(after_points.values())), axis=0)
+        rotated = {name: (point - center) @ rotation + center
+                   for name, point in after_points.items()}
+        checkpoints["finish-bay-293"]["ligand"]["atoms"] = [
+            atom(name, "C", point.tolist()) for name, point in rotated.items()]
+
+        continuity = EVALUATOR.aww_axh_continuity(self.campaign, checkpoints)
+
+        self.assertFalse(continuity["accepted"])
+        self.assertIn("hard-region-rigid-body-orientation-change",
+                      continuity["failedChecks"])
+        self.assertGreater(
+            continuity["regions"]["hardRigidBodyMotionInSameReceptorFrame"]
+            ["orientationChangeDegrees"], 30.0)
+        self.assertLess(
+            continuity["regions"]["hardInternalShapeAfterRigidSuperposition"]
+            ["rmsdAfterRigidSuperpositionAngstrom"], 1e-8)
 
 
 if __name__ == "__main__":
