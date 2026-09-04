@@ -17,6 +17,7 @@ const AWZ_CAMPAIGN_SHA256 =
 const AWW_COMPONENT_ID = 'heterogen:A:1104::AWW';
 const REQUIRED_HARD_ATOM_NAMES = Object.freeze(['C12']);
 const REQUIRED_RELEASED_ATOM_NAMES = Object.freeze(['C15','CX4','CX5']);
+const THIOPHENE_FLIP_ATOM_NAMES = Object.freeze(['N7','C12','C15','CX2']);
 const PHE_STATES = Object.freeze([
   Object.freeze({ id:'native', chiDegrees:null }),
   Object.freeze({ id:'plus60', chiDegrees:Object.freeze([60, 90]) }),
@@ -48,6 +49,30 @@ function distance(first, second) {
     value - second.coordinatesAngstrom[index]));
 }
 
+function torsionDegrees(first, second, third, last) {
+  const subtract = (a, b) => a.map((value, index) => value - b[index]);
+  const dot = (a, b) => a.reduce((sum, value, index) => sum + value * b[index], 0);
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1],
+    a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const normalize = (value) => {
+    const length = Math.hypot(...value);
+    assert(length > 1e-8, 'Thiophene torsion axis must be non-degenerate');
+    return value.map((entry) => entry / length);
+  };
+  const axis = normalize(subtract(third.coordinatesAngstrom, second.coordinatesAngstrom));
+  const firstVector = subtract(first.coordinatesAngstrom, second.coordinatesAngstrom);
+  const lastVector = subtract(last.coordinatesAngstrom, third.coordinatesAngstrom);
+  const firstPlane = subtract(firstVector, axis.map((value) => value * dot(firstVector, axis)));
+  const lastPlane = subtract(lastVector, axis.map((value) => value * dot(lastVector, axis)));
+  const v = normalize(firstPlane), w = normalize(lastPlane);
+  return Math.atan2(dot(cross(axis, v), w), dot(v, w)) * 180 / Math.PI;
+}
+
+function oppositeTorsion(value) {
+  const rotated = Number(value) + 180;
+  return rotated > 180 ? rotated - 360 : rotated;
+}
+
 function contactMatches(contact, ligandAtomName, receptorResidueName,
   receptorResidueIndex, receptorAtomName) {
   const participants = contact.hydrogenBond?.participants || {};
@@ -68,7 +93,7 @@ function selectedRequiredHydrogenBonds(refinement, requiredContactIds) {
 }
 
 async function runBranch({ root, serializedCampaign, branch,
-  reviewModeRequested = false }) {
+  reviewModeRequested = false, forceThiopheneFlip = false }) {
   const browser = await startMolariumBrowser({ root, appPath:'?blank=1',
     width:1200, height:800 });
   const records = [];
@@ -96,8 +121,32 @@ async function runBranch({ root, serializedCampaign, branch,
     });
     assert.equal(staged.designStep.stateId, 'AWW');
     const stagedLigand = await execute('session.inspect', {
-      scope:'ligand', includeCoordinates:false, maximumAtoms:256,
+      scope:'ligand', includeCoordinates:forceThiopheneFlip, maximumAtoms:256,
     });
+    let forcedThiopheneTorsion = null;
+    if (forceThiopheneFlip) {
+      const torsionAtoms = THIOPHENE_FLIP_ATOM_NAMES.map((atomName) =>
+        atom(stagedLigand, 'AWW', 1104, atomName));
+      const beforeDegrees = torsionDegrees(...torsionAtoms);
+      const targetDegrees = oppositeTorsion(beforeDegrees);
+      const changed = await execute('geometry.setInternalCoordinate', {
+        atomIds:torsionAtoms.map((entry) => entry.atomId),
+        value:targetDegrees, moveConnected:true,
+      });
+      const afterLigand = await execute('session.inspect', {
+        scope:'ligand', includeCoordinates:true, maximumAtoms:256,
+      });
+      const afterAtoms = THIOPHENE_FLIP_ATOM_NAMES.map((atomName) =>
+        atom(afterLigand, 'AWW', 1104, atomName));
+      forcedThiopheneTorsion = {
+        atomNames:[...THIOPHENE_FLIP_ATOM_NAMES],
+        atomIds:torsionAtoms.map((entry) => entry.atomId),
+        axisAtomNames:['C12','C15'], beforeDegrees,
+        requestedDegrees:targetDegrees, afterDegrees:torsionDegrees(...afterAtoms),
+        apiResult:changed.internalCoordinate,
+        interpretation:'explicit 180-degree designer rotation about the external thiophene bond; no holdout coordinates used',
+      };
+    }
     const rotamers = await execute('pose.enumerateSidechainRotamers', {
       receptorResidue:{ residueName:'PHE', chain:'A', residueIndex:890,
         insertionCode:'' }, maximumCandidates:32,
@@ -224,6 +273,7 @@ async function runBranch({ root, serializedCampaign, branch,
         productHeavyAtoms:staged.designStep.productHeavyAtoms },
       sidechain:{ generatedCandidateCount:rotamers.sidechainRotamers.generatedCandidateCount,
         applied:appliedRotamer?.sidechainRotamer || appliedRotamer?.appliedSidechainRotamer || null },
+      forcedThiopheneTorsion,
       hydration:{ usedForPoseSelection:false,
         interpretation:'pose.refine scores protein ATOM records, not crystallographic waters; water mobility is evaluated only during later full-system induced-fit relaxation' },
       contacts:{ requiredContactIds, n7Source:n7Contact.source,
@@ -247,6 +297,7 @@ async function main(args = process.argv.slice(2)) {
   if (!outputArg) throw new Error('Usage: bun scripts/sos1-aww-designer-contact-factorial.browser.mjs --output <new-directory> [--branch phe-native|phe-plus60|phe-out] [--capture-review-coordinates]');
   const branchArg = valueFor(args, '--branch');
   const captureReviewCoordinates = args.includes('--capture-review-coordinates');
+  const forceThiopheneFlip = args.includes('--force-thiophene-flip');
   const branches = branchArg ? BRANCHES.filter((branch) => branch.id === branchArg) : BRANCHES;
   if (!branches.length) throw new Error(`Unknown factorial branch: ${branchArg}`);
   const output = resolve(process.cwd(), outputArg);
@@ -266,6 +317,9 @@ async function main(args = process.argv.slice(2)) {
     branches:branches.map((branch) => ({ id:branch.id, pheState:branch.phe.id,
       chiDegrees:branch.phe.chiDegrees })), searchChains:8,
     designerIntent:[
+      ...(forceThiopheneFlip
+        ? ['Rotate the AWW thiophene-bearing arm by 180 degrees about C12-C15 before pose refinement']
+        : []),
       'AWW OX3 hydroxyl donor -> TYR A884 backbone O acceptor',
       'AWW N7 donor -> ASN A879 OD1 acceptor',
     ],
@@ -281,7 +335,7 @@ async function main(args = process.argv.slice(2)) {
   for (const branch of branches) {
     const result = await runBranch({ root,
       serializedCampaign:campaignBytes.toString('utf8'), branch,
-      reviewModeRequested:captureReviewCoordinates });
+      reviewModeRequested:captureReviewCoordinates, forceThiopheneFlip });
     results.push(result);
     await save(`${branch.id}.json`, result);
     console.log(`SOS1_AWW_FACTORIAL ${JSON.stringify({ branch:branch.id,
