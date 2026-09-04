@@ -268,7 +268,7 @@ const ACTIONS = Object.freeze({
     arguments:Object.freeze({}) }),
   'campaign.import': Object.freeze({
     description:'Verify, persist, and restore a canonical serialized design campaign.',
-    arguments:Object.freeze({ serialized:'canonical campaign JSON string',
+    arguments:Object.freeze({ serialized:'canonical campaign JSON string (maximum 32 MiB)',
       preserveView:'optional boolean; retain the current comparison camera' }) }),
   'campaign.export': Object.freeze({
     description:'Return canonical JSON for the active design campaign.', arguments:Object.freeze({}) }),
@@ -327,6 +327,11 @@ const MAX_INPUT_NODES = 2048;
 // envelopes.  Eight MiB covers the browser's current structure-upload limit
 // without turning Chemist Actions into an unbounded ingestion endpoint.
 const MAX_INPUT_BYTES = 8 * 1024 * 1024;
+// Full-system, append-only campaigns contain repeated content-addressed
+// checkpoints and are legitimately larger than a single uploaded structure.
+// Keep this exception action-scoped so ordinary controls retain the tighter
+// ingestion boundary.
+const MAX_CAMPAIGN_IMPORT_BYTES = 32 * 1024 * 1024;
 
 function plainClone(value, state = { nodes:0 }, depth = 0) {
   if (depth > MAX_INPUT_DEPTH) throw new Error(`Chemist action input exceeds depth ${MAX_INPUT_DEPTH}`);
@@ -347,10 +352,11 @@ function plainClone(value, state = { nodes:0 }, depth = 0) {
   return result;
 }
 
-function checkedInput(value) {
+function checkedInput(value, maximumBytes = MAX_INPUT_BYTES) {
   const input = plainClone(value == null ? {} : value);
   const text = JSON.stringify(input);
-  if (text.length > MAX_INPUT_BYTES) throw new Error(`Chemist action input exceeds ${MAX_INPUT_BYTES} bytes`);
+  if (text.length > maximumBytes)
+    throw new Error(`Chemist action input exceeds ${maximumBytes} bytes`);
   return input;
 }
 
@@ -387,12 +393,15 @@ export function createChemistActionsApi({ routes, now = () => new Date().toISOSt
   let queue = Promise.resolve();
 
   const run = async (request) => {
-    const envelope = checkedInput(request);
+    const requestedAction = typeof request?.action === 'string' ? request.action : '';
+    const maximumBytes = requestedAction === 'campaign.import'
+      ? MAX_CAMPAIGN_IMPORT_BYTES : MAX_INPUT_BYTES;
+    const envelope = checkedInput(request, maximumBytes);
     const action = String(envelope.action || '');
     const requestId = envelope.requestId == null ? null : String(envelope.requestId).slice(0, 160);
     if (!Object.hasOwn(enabledDefinitions, action))
       throw publicError(`Unknown chemist action: ${action || '(empty)'}`);
-    const args = checkedInput(envelope.args || {});
+    const args = checkedInput(envelope.args || {}, maximumBytes);
     const startedAt = now(), started = monotonicNow();
     const record = { sequence:++sequence, schema:CHEMIST_ACTIONS_SCHEMA, requestId,
       action, args:snapshot(args), startedAt, status:'running' };

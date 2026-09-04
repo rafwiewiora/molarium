@@ -114,6 +114,20 @@ for (let depth = 0; depth < 13; depth++) excessiveDepth = { nested:excessiveDept
 await assert.rejects(() => api.execute({ action:'designerScript.load',
   args:{ script:excessiveDepth } }), /input exceeds depth 12/);
 
+const sizeRoutes = {
+  'campaign.import':async () => ({ imported:true }),
+  'view.setMode':async () => ({ mode:'view' }),
+};
+const sizeApi = createChemistActionsApi({ routes:sizeRoutes,
+  enabledActions:Object.keys(sizeRoutes), historyLimit:1 });
+const fullSystemCampaign = 'x'.repeat(9 * 1024 * 1024);
+await sizeApi.execute({ action:'campaign.import',
+  args:{ serialized:fullSystemCampaign } });
+await assert.rejects(() => sizeApi.execute({ action:'view.setMode',
+  args:{ padding:fullSystemCampaign } }), /input exceeds 8388608 bytes/);
+assert.match(sizeApi.describe().actions['campaign.import'].arguments.serialized,
+  /32 MiB/);
+
 const order = [];
 routes['chemistry.finish'] = undefined;
 const serialRoutes = Object.fromEntries(Object.keys(CHEMIST_ACTION_DEFINITIONS).map((action) =>
