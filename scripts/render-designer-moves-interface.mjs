@@ -103,6 +103,17 @@ const presentationScript = buildPocketInterfaceStory({
 const presentationScriptSha256 = await actionScriptSha256(presentationScript);
 const presentationBytes = Buffer.from(`${JSON.stringify(presentationScript, null, 2)}\n`);
 const cameraContract = verifyPresentationCameraContract(presentationScript);
+// A checkpoint review starts from a genuinely blank canvas.  Its first
+// campaign therefore has to exist before the public focus action can resolve a
+// ligand.  Keep those public setup actions in the audit, but do not present the
+// transient whole-protein import as a settled prediction checkpoint.  The
+// first visible molecular frame is the result of the one allowed focus action;
+// every later campaign import preserves that camera.
+const checkpointReviewBootstrapEnd = replayKind === 'checkpoint-review'
+  ? presentationScript.actions.findIndex((step) => step.action === 'view.focusComponent') + 1
+  : 0;
+if (replayKind === 'checkpoint-review' && checkpointReviewBootstrapEnd < 1)
+  throw new Error('Checkpoint review is missing its initial public pocket-focus action');
 
 await mkdir(dirname(output), { recursive:true });
 const temporary = await mkdtemp(join(tmpdir(), 'molarium-interface-movie-'));
@@ -245,16 +256,23 @@ try {
       lastActionNumber = actionNumber;
       await delay(70);
       const step = presentationScript.actions[actionNumber - 1];
-      await appendFrame(`${actionNumber}. Press ${step.caption || step.action}`,
-        designerMoviePressFrames(step, fps), actionNumber - 1);
+      const checkpointBootstrap = checkpointReviewBootstrapEnd > 0
+        && actionNumber <= checkpointReviewBootstrapEnd;
+      if (!checkpointBootstrap)
+        await appendFrame(`${actionNumber}. Press ${step.caption || step.action}`,
+          designerMoviePressFrames(step, fps), actionNumber - 1);
       const outcome = await waitForInterfaceAction(actionNumber, actionNumber - 1, step,
         Math.max(1000, timeout - (Date.now() - started)));
       if (outcome.status !== 'completed')
         throw new Error(`Molarium replay action ${actionNumber} failed: ${outcome.error || outcome.status}`);
       await waitForVisibleResult(actionNumber);
-      await appendFrame(`${actionNumber}. Result ${step.caption || step.action}`,
-        designerMovieResultFrames(step, fps), actionNumber - 1);
-      console.log(`Captured interface action ${actionNumber}/${presentationScript.actions.length} · ${step.action}`);
+      if (!checkpointBootstrap)
+        await appendFrame(`${actionNumber}. Result ${step.caption || step.action}`,
+          designerMovieResultFrames(step, fps), actionNumber - 1);
+      else if (actionNumber === checkpointReviewBootstrapEnd)
+        await appendFrame('First frozen prediction checkpoint in fixed local pocket',
+          designerMovieResultFrames(step, fps), actionNumber - 1);
+      console.log(`${checkpointBootstrap ? 'Executed checkpoint-review bootstrap' : 'Captured interface action'} ${actionNumber}/${presentationScript.actions.length} · ${step.action}`);
     }
     if (status.notice) throw new Error(`Molarium replay notice: ${status.notice}`);
     if (status.replayStatus === 'failed')
@@ -344,7 +362,12 @@ try {
     viewport,
     networkPolicy,
     presentation:{ ...DESIGNER_MOVIE_PRESENTATION, initialInterface,
-      completedInterface, cameraContract, highlightCameraAudit },
+      completedInterface, cameraContract, highlightCameraAudit,
+      checkpointReviewBootstrap:checkpointReviewBootstrapEnd > 0 ? {
+        publicActionCount:checkpointReviewBootstrapEnd,
+        firstVisibleMolecularFrame:'result of view.focusComponent',
+        transientWholeProteinFramePublished:false,
+      } : null },
     replay:{ status:replayStatus,
       exactExpectationCount:presentationScript.actions.filter((step) => step.expect).length },
     audit:{ path:'chemist-action-audit.json', sha256:digest(auditBytes), records:audit.length },

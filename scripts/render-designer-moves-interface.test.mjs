@@ -88,6 +88,10 @@ try {
     'the renderer must reject presentation scripts that refit the camera');
   assert.match(renderer, /verifyHighlightCameraAudit/,
     'the renderer must verify runtime camera preservation for every highlight');
+  assert.match(renderer, /checkpointReviewBootstrapEnd/,
+    'checkpoint review must audit its initial import while deferring visible molecular frames until pocket focus');
+  assert.match(renderer, /transientWholeProteinFramePublished:false/,
+    'checkpoint review must state that the transient whole-protein setup frame was not published');
   assert.match(renderer, /action:'designerScript\.inspect'/,
     'the renderer must inspect terminal review state through the public API');
   assert.match(renderer, /verifyCompletedInterfaceSnapshot/,
