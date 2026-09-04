@@ -665,6 +665,8 @@ body.designer-move-demo-active .designer-move-demo-reveal.hidden { display: bloc
 .geometry-value input::-webkit-inner-spin-button { display: none; }
 .geometry-value span { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); color: var(--quiet); font-size: 9px; pointer-events: none; }
 .move-connected { display: flex; align-items: center; gap: 6px; margin-top: 9px; color: var(--secondary); font-size: 11px; }
+.designer-ligand-pose-lock { color: var(--ink); font-weight: 650; }
+.designer-ligand-pose-lock input { accent-color: var(--accent); }
 .chemistry-selection-help { margin-bottom: 7px; }
 .chemistry-atom-editor { display: grid; grid-template-columns: .8fr 1fr; gap: 6px; }
 .chemistry-atom-editor label { min-width: 0; color: var(--quiet); font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }

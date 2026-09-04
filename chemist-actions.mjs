@@ -143,6 +143,10 @@ const ACTIONS = Object.freeze({
   'history.redo': Object.freeze({ description:'Redo the last undone chemist action.', arguments:Object.freeze({}) }),
   'pose.captureReference': Object.freeze({ description:'Capture the current ligand pose as the reference.',
     arguments:Object.freeze({ mode:'propagate | selected-core' }) }),
+  'pose.setDesignerLigandPoseFixed': Object.freeze({
+    description:'Fix or release the current ligand coordinates as provenance-labelled designer intent; while fixed, only receptor-response sampling may move coordinates.',
+    arguments:Object.freeze({ fixed:'boolean',
+      label:'optional non-empty provenance label, at most 160 characters' }) }),
   'pose.updateReceptorReference': Object.freeze({
     description:'Update moved receptor-site coordinates while retaining the captured ligand-core lineage.',
     arguments:Object.freeze({}) }),

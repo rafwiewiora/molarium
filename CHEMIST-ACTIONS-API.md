@@ -74,6 +74,7 @@ Undo, and Redo therefore behave exactly as they do for an interactive user.
 - `fragment.stage`, `fragment.attach`
 - `history.undo`, `history.redo`
 - `pose.captureReference`, `pose.updateReceptorReference`, `pose.setContact`, `pose.addContact`, `pose.forgetContact`,
+  `pose.setDesignerLigandPoseFixed`,
   `pose.setEditCleanup`, `pose.clearReference`, `pose.remapContact`, `pose.refine`,
   `pose.inspectRefinementCapture`, `pose.apply`,
   `pose.enumerateSidechainRotamers`, `pose.applySidechainRotamer`
@@ -239,6 +240,38 @@ the visible pose list but leaves the 3D molecule fixed until `pose.apply`;
 `pose.enumerateSidechainRotamers` likewise fills the branch list but leaves the receptor fixed until
 `pose.applySidechainRotamer`. Replay result cues state this explicitly and hold on the result card
 at human reading speed before the corresponding Apply action.
+
+### Designer-fixed ligand geometry and receptor response
+
+An attachment, branch rotation, or torsion remains an ordinary public design action. The visible
+**Adjust Geometry** control and an agent both call `geometry.setInternalCoordinate`; its response
+records the changed persistent atom IDs and the defining move. The human or agent can then call
+`pose.setDesignerLigandPoseFixed({fixed:true, label:"reason"})`. Molarium hashes the current ligand
+coordinates, identity, chemistry, and internal topology without changing any coordinate.
+
+While fixed, side-chain enumeration and application may move receptor atoms but verify that the
+ligand hash is identical before and after. Ligand pose search/application, ligand-moving
+optimization, chemistry or fragment edits, route graph edits, and coordinate-bearing trajectory
+or conformer selection fail closed until
+`pose.setDesignerLigandPoseFixed({fixed:false})` releases the intent. Energy-only evaluation remains
+available. The visible checkbox calls this same public action, and the content-addressed record is
+stored with the molecule so Undo/Redo and Designer Moves checkpoints preserve it.
+
+```js
+await MolariumChemistActions.execute({
+  action: "geometry.setInternalCoordinate",
+  args: { atomIds: [a, b, c, d], value: 178, moveConnected: true }
+});
+await MolariumChemistActions.execute({
+  action: "pose.setDesignerLigandPoseFixed",
+  args: { fixed: true, label: "chemist-selected terminal-ring orientation" }
+});
+await MolariumChemistActions.execute({
+  action: "pose.enumerateSidechainRotamers",
+  args: { receptorResidue: { residueName: "PHE", chain: "A", residueIndex: 890 },
+    maximumCandidates: 32 }
+});
+```
 
 Every completed `pose.refine` atomically stores its selected candidate as a content-addressed
 coordinate delta before an expected-output guard is evaluated. This capture does not apply or alter

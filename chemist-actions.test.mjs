@@ -40,6 +40,7 @@ assert.match(api.describe().actions['pose.addContact'].arguments.receptorAtom,
   /residueName.*chain.*residueIndex.*atomName/);
 assert(Object.hasOwn(api.describe().actions, 'pose.forgetContact'));
 assert(Object.hasOwn(api.describe().actions, 'pose.updateReceptorReference'));
+assert(Object.hasOwn(api.describe().actions, 'pose.setDesignerLigandPoseFixed'));
 assert(Object.hasOwn(api.describe().actions, 'pose.enumerateSidechainRotamers'));
 assert(Object.hasOwn(api.describe().actions, 'pose.applySidechainRotamer'));
 assert(Object.hasOwn(api.describe().actions, 'pose.inspectRefinementCapture'));
@@ -78,6 +79,8 @@ assert.match(api.describe().actions['pose.refine'].arguments.featureSeedingProto
   /v3 \| v4 \| v5.*default v5/);
 assert.match(api.describe().actions['pose.inspectRefinementCapture'].arguments.captureId,
   /optional lowercase SHA-256/);
+assert.match(api.describe().actions['pose.setDesignerLigandPoseFixed'].description,
+  /designer intent.*receptor-response/i);
 assert(!Object.hasOwn(api.describe().actions, 'test.loadObject'));
 assert.match(api.describe().guarantee, /no arbitrary code/);
 assert.match(api.describe().guarantee, /every saved replay and visible playback control executes only public routes/i);

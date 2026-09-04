@@ -76,3 +76,4 @@ assert.deepEqual(replayCalls, script.actions.map(({ action, args }) => ({ action
 console.log('Chemist Action audit state-guard integration: PASS');
 
 await import('./docking/refinement-capture.integration.test.mjs');
+await import('./docking/designer-ligand-pose-lock.test.mjs');

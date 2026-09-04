@@ -7,6 +7,8 @@ import { DESIGNER_REVIEW_DIRECTIONS, designerReplayReviewState,
 import { MOLECULAR_STATE_HASH_SCHEMA, molecularStateSha256 } from './molecular-state-hash.mjs';
 import { registeredFixedAtomMotion, registeredPoseRetentionPlan } from
   './docking/registered-pose-retention.mjs';
+import { createDesignerLigandPoseLock, designerLigandPoseLockDescriptor,
+  inspectDesignerLigandPoseLock } from './docking/designer-ligand-pose-lock.mjs';
 import { resolveCampaignAssetSource } from './design-history/campaign-source.mjs';
 
 const MOLARIUM_NETWORK_POLICY = Object.freeze({
@@ -4133,6 +4135,26 @@ function currentDockingLigandAtomIndices(reference = state.dockingReference) {
   return dockingLigandAtomIndicesInMolecule(state.molecule, reference);
 }
 
+function activeDesignerLigandPoseLock() {
+  const lock = state.molecule?.source?.designerFixedLigandPose;
+  return lock?.active === true ? lock : null;
+}
+
+async function inspectActiveDesignerLigandPoseLock() {
+  const lock = activeDesignerLigandPoseLock();
+  if (!lock) return null;
+  const ligandAtomIndices = currentDockingLigandAtomIndices();
+  if (!ligandAtomIndices.length)
+    throw new Error('The designer-fixed ligand component is no longer available');
+  return inspectDesignerLigandPoseLock({ molecule:state.molecule, ligandAtomIndices, lock });
+}
+
+async function rejectLigandMotionWhileDesignerFixed(action) {
+  if (!activeDesignerLigandPoseLock()) return;
+  await inspectActiveDesignerLigandPoseLock();
+  throw new Error(`Designer-fixed ligand pose is active: ${action} cannot move or rerank the ligand. Release the fixed pose first, or use receptor-only response.`);
+}
+
 function currentIndicesForDockingPlan(plan) {
   const byId = new Map(state.molecule?.atoms?.map((atom, index) => [atom.designAtomId, index]) || []);
   const indices = plan.molecule.atoms.map((atom) => byId.get(atom.designAtomId));
@@ -4708,14 +4730,18 @@ function updateDockingUi() {
     const addContact = document.querySelector('#add-docking-contact');
     addContact.disabled = state.dockingRunning || pendingChemistry
       || state.chemistryEditFinishing;
-    run.disabled = state.dockingRunning || pendingChemistry || unresolvedSelected.length > 0;
+    const designerFixed = Boolean(activeDesignerLigandPoseLock());
+    run.disabled = state.dockingRunning || pendingChemistry || unresolvedSelected.length > 0
+      || designerFixed;
     run.textContent = state.dockingRunning ? 'Refining…'
       : referenceMode === 'pose-propagation' ? 'Refine edited group' : 'Dock';
     if (!state.dockingRunning) {
       const fixedAtoms = referenceMode === 'pose-propagation'
         ? survivingReferenceHeavyAtoms(state.dockingReference, ligand)
         : state.dockingReference.ligand.coreAtomIds.length;
-      if (pendingChemistry) setDockingStatus('Finish chemistry before refining the pose.');
+      if (designerFixed)
+        setDockingStatus('Designer-fixed ligand pose is active; use receptor side-chain branches or release it before ligand refinement.');
+      else if (pendingChemistry) setDockingStatus('Finish chemistry before refining the pose.');
       else if (unresolvedSelected.length) {
         const unresolved = unresolvedSelected.map((id) =>
           state.dockingContactRemapProposals.get(id)).filter(Boolean);
@@ -5919,9 +5945,12 @@ function renderDockingResults() {
   const selected = result.run.candidates[state.dockingPoseIndex] || entries[0]?.pose;
   const applyButton = document.querySelector('#apply-docking-pose');
   if (applyButton) {
-    applyButton.disabled = !selected?.feasible;
-    applyButton.title = selected && !selected.feasible
-      ? 'This pose failed the required-contact or physical-feasibility gate.' : '';
+    const designerFixed = Boolean(activeDesignerLigandPoseLock());
+    applyButton.disabled = !selected?.feasible || designerFixed;
+    applyButton.title = designerFixed
+      ? 'Release the designer-fixed ligand pose before applying a ligand-search result.'
+      : selected && !selected.feasible
+        ? 'This pose failed the required-contact or physical-feasibility gate.' : '';
   }
   const selectedValidity = selected?.physicalDetails?.chemicalValidity;
   const scoreBreakdown = selected
@@ -6977,10 +7006,22 @@ function updateGeometryControl() {
   const input = document.querySelector('#geometry-value');
   const unit = document.querySelector('#geometry-unit');
   const help = document.querySelector('#geometry-selection-help');
+  const poseLockControl = document.querySelector('#designer-ligand-pose-lock');
+  const poseLockStatus = document.querySelector('#designer-ligand-pose-lock-status');
+  const designerFixed = Boolean(activeDesignerLigandPoseLock());
+  if (poseLockControl) {
+    poseLockControl.checked = designerFixed;
+    poseLockControl.disabled = !state.molecule || state.mode !== 'build'
+      || Boolean(state.chemistryTransaction || state.chemistryEditFinishing)
+      || !designerFixed && !dockingLigandComponent();
+  }
+  if (poseLockStatus) poseLockStatus.textContent = designerFixed
+    ? 'Designer intent is fixed: receptor branches may respond, but ligand pose search, application, and ligand-moving optimization are disabled.'
+    : 'After an attachment or torsion edit, fix the current ligand coordinates as designer intent before sampling receptor response.';
   if (!slider || !input || !help) { updateChemistryEditor(); return; }
   const selection = geometrySelection();
   const ready = selection && !selection.error;
-  slider.disabled = !ready; input.disabled = !ready;
+  slider.disabled = !ready || designerFixed; input.disabled = !ready || designerFixed;
   if (!ready) {
     unit.textContent = '—'; input.value = ''; slider.value = '50';
     help.textContent = selection?.error || (state.selectedAtoms.length
@@ -6994,7 +7035,9 @@ function updateGeometryControl() {
   slider.value = String(selection.value);
   if (document.activeElement !== input) input.value = selection.value.toFixed(selection.decimals);
   unit.textContent = selection.unit;
-  help.textContent = `${selection.name} ${selectionDescription()} · ${selection.value.toFixed(selection.decimals)} ${selection.unit}`;
+  help.textContent = designerFixed
+    ? `${selection.name} ${selectionDescription()} · ligand coordinates fixed; release designer intent to edit.`
+    : `${selection.name} ${selectionDescription()} · ${selection.value.toFixed(selection.decimals)} ${selection.unit}`;
   updateChemistryEditor();
 }
 
@@ -8207,6 +8250,10 @@ function sidechainRotamerPublicResult(ensemble) {
     inputChiDegrees:structuredClone(ensemble.inputChiDegrees),
     generatedCandidateCount:ensemble.generatedCandidateCount,
     candidates:ensemble.candidates.map(({ positions, ...candidate }) => structuredClone(candidate)),
+    designerFixedLigandPose:structuredClone(ensemble.designerFixedLigandPose || null),
+    ligandPosePolicy:ensemble.designerFixedLigandPose
+      ? 'designer-fixed; receptor branches were ranked without generating or reranking ligand poses'
+      : 'current ligand coordinates used for receptor-branch ranking',
   };
 }
 
@@ -8242,7 +8289,7 @@ function updateSidechainRotamerControls() {
     if ([...select.options].some((option) => option.value === selectedValue)) select.value = selectedValue;
     status.textContent = `${sidechainRotamerResidueLabel(ensemble.residue)} · ${ensemble.candidates.length} ranked branches. Apply one, then physically refine it.`;
   } else if (eligible) {
-    status.textContent = `${selected.residueName} ${selected.chain || 'A'}${selected.residueIndex}${selected.insertionCode || ''} selected · enumerate discrete chi-angle branches before minimization.`;
+    status.textContent = `${selected.residueName} ${selected.chain || 'A'}${selected.residueIndex}${selected.insertionCode || ''} selected · enumerate discrete chi-angle branches${activeDesignerLigandPoseLock() ? ' against the designer-fixed ligand' : ' before minimization'}.`;
   } else if (selected && isProteinAtom(selected)) {
     status.textContent = `${selected.residueName || 'Residue'} has no safe independent rotamer move.`;
   } else {
@@ -8260,6 +8307,7 @@ async function enumerateCurrentSidechainRotamers(residueAtomIndex, maximumCandid
   const selected = state.molecule?.atoms?.[residueAtomIndex];
   if (!selected || !isProteinAtom(selected))
     throw new Error('receptorAtomId must identify an atom in a protein residue');
+  const designerFixedLigandPose = await inspectActiveDesignerLigandPoseLock();
   const module = await import('./docking/sidechain-rotamers.mjs');
   const result = module.enumerateSidechainRotamers({ molecule:state.molecule,
     residueAtomIndex, ligandAtomIndices:currentDockingLigandAtomIndices(), maximumCandidates });
@@ -8275,6 +8323,12 @@ async function enumerateCurrentSidechainRotamers(residueAtomIndex, maximumCandid
     });
     candidate.coordinateSha256 = await sha256Hex(coordinates.buffer);
   }
+  if (designerFixedLigandPose) {
+    const after = await inspectActiveDesignerLigandPoseLock();
+    if (after.lockId !== designerFixedLigandPose.lockId)
+      throw new Error('Designer-fixed ligand pose changed during receptor-branch enumeration');
+    result.designerFixedLigandPose = after;
+  }
   state.sidechainRotamerEnsemble = result;
   updateSidechainRotamerControls();
   return sidechainRotamerPublicResult(result);
@@ -8286,6 +8340,7 @@ async function applyCurrentSidechainRotamer(selector, {
   if (state.mode !== 'build') throw new Error('Enter Design mode before applying a side-chain rotamer.');
   if (state.chemistryTransaction)
     throw new Error('Finish or discard pending chemistry before applying a side-chain rotamer.');
+  const designerFixedLigandPose = await inspectActiveDesignerLigandPoseLock();
   const ensemble = state.sidechainRotamerEnsemble;
   if (!ensemble) throw new Error('Enumerate a side-chain rotamer ensemble first');
   const currentCoordinateSha256 = await moleculeCoordinateSha256();
@@ -8327,6 +8382,17 @@ async function applyCurrentSidechainRotamer(selector, {
     updateStoredBondDistances();
   }
   const appliedCoordinateSha256 = await moleculeCoordinateSha256();
+  let verifiedDesignerFixedLigandPose = designerFixedLigandPose;
+  if (designerFixedLigandPose) {
+    try {
+      verifiedDesignerFixedLigandPose = await inspectActiveDesignerLigandPoseLock();
+      if (verifiedDesignerFixedLigandPose.lockId !== designerFixedLigandPose.lockId)
+        throw new Error('Designer-fixed ligand pose record changed during receptor response');
+    } catch (error) {
+      restoreMolecule(state.buildHistory.pop());
+      throw error;
+    }
+  }
   if (appliedCoordinateSha256 !== candidate.coordinateSha256) {
     restoreMolecule(state.buildHistory.pop());
     throw new Error('Applied side-chain coordinates did not match the enumerated branch hash');
@@ -8350,6 +8416,10 @@ async function applyCurrentSidechainRotamer(selector, {
     severeClashes:candidate.severeClashes,
     generatedCandidateCount:ensemble.generatedCandidateCount,
     retainedCandidateCount:ensemble.candidates.length,
+    designerFixedLigandPose:structuredClone(verifiedDesignerFixedLigandPose || null),
+    ligandPosePolicy:verifiedDesignerFixedLigandPose
+      ? 'designer-fixed; receptor-only branch applied'
+      : 'current ligand coordinates used for receptor-branch ranking',
     coordinateInputClass:state.molecule.source?.designRoute?.coordinateInputClass || 'current-visible-complex',
   };
   const previous = state.molecule.source?.sidechainRotamerApplications || [];
@@ -8632,6 +8702,7 @@ const DESIGNER_MOVE_RESULT_HOLDS_MS = Object.freeze({
   'designRoute.load':1500,
   'protein.prepare':1400,
   'pose.captureReference':1400,
+  'pose.setDesignerLigandPoseFixed':1400,
   'designRoute.applyStep':2800,
   'pose.refine':3200,
   'pose.apply':2800,
@@ -8823,6 +8894,7 @@ function showDesignerMoveCue(step = null, { preserveLayout = false } = {}) {
     'chemistry.finish':'#finish-chemistry-changes',
     'chemistry.discard':'#discard-chemistry-changes',
     'pose.captureReference':'#capture-docking-reference',
+    'pose.setDesignerLigandPoseFixed':'#designer-ligand-pose-lock',
     'pose.updateReceptorReference':'#update-docking-receptor',
     'pose.refine':'#run-constrained-docking', 'pose.apply':'#apply-docking-pose',
     'pose.enumerateSidechainRotamers':'#enumerate-sidechain-rotamers',
@@ -9529,6 +9601,7 @@ async function fetchRegisteredDesignRoute(routeId) {
 function installChemistActionsApi(module) {
   const empty = (args) => chemistActionKeys(args);
   const summarizeMutation = async (operation, target = {}) => {
+    await rejectLigandMotionWhileDesignerFixed('chemistry mutation');
     const result = await operation();
     return chemistActionSummary({ ...target, chemistryEditPolicy:state.chemistryEditPolicy,
       validation:structuredClone(result?.validation || null),
@@ -9978,6 +10051,7 @@ function installChemistActionsApi(module) {
       return chemistActionSummary({ buildTool:tool }); },
     'protein.prepare':async (args) => { chemistActionKeys(args,
       ['pH','histidine','repairMissingHeavy','ligandPolicy','waterPolicy','gapPolicy']);
+      await rejectLigandMotionWhileDesignerFixed('protein.prepare');
       const options = normalizePdbPreparationOptions(args);
       document.querySelector('#preparation-ph').value = options.pH.toFixed(1);
       document.querySelector('#preparation-histidine').value = options.histidine;
@@ -10036,6 +10110,7 @@ function installChemistActionsApi(module) {
       return chemistActionSummary({ predictionCancellation:{ requested:active } }); },
     'ligand.installRegisteredGraph':async (args) => { chemistActionKeys(args,
       ['locator','graphSha256','definition']);
+      await rejectLigandMotionWhileDesignerFixed('ligand.installRegisteredGraph');
       if (!state.molecule?.atoms?.length)
         throw new Error('Load a coordinate-bearing molecule before installing a ligand graph');
       if (!args.locator || typeof args.locator !== 'object' || Array.isArray(args.locator))
@@ -10110,6 +10185,7 @@ function installChemistActionsApi(module) {
         stateCount:result.states.length, variantsTruncated:Boolean(result.variantsTruncated),
         sitesTruncated:Boolean(result.sitesTruncated) } }); },
     'ligand.applyProtonation':async (args) => { chemistActionKeys(args, ['index']);
+      await rejectLigandMotionWhileDesignerFixed('ligand.applyProtonation');
       const index = Number(args.index);
       if (!Number.isInteger(index) || index < 0
         || index >= (state.ligandProtonation?.states?.length || 0))
@@ -10124,6 +10200,7 @@ function installChemistActionsApi(module) {
       ['atomIds','value','moveConnected']);
       if (state.mode !== 'build')
         throw new Error('Enter Design mode before changing internal coordinates');
+      await rejectLigandMotionWhileDesignerFixed('geometry.setInternalCoordinate');
       if (!Array.isArray(args.atomIds) || args.atomIds.length < 2 || args.atomIds.length > 4
         || args.atomIds.some((id) => typeof id !== 'string' || !id)
         || new Set(args.atomIds).size !== args.atomIds.length)
@@ -10142,16 +10219,32 @@ function installChemistActionsApi(module) {
       updateGeometryControl();
       const before = geometrySelection();
       if (!before || before.error) throw new Error(before?.error || 'Invalid geometry selection');
+      const coordinateBefore = chemistActionCoordinateSnapshot();
       beginGeometryEdit();
       try {
         if (!applyGeometryValue(value)) throw new Error('Internal-coordinate edit failed');
       } finally { finishGeometryEdit(); }
       const after = geometrySelection();
+      const outputCoordinateSha256 = await moleculeCoordinateSha256();
+      const coordinateChanges = chemistActionCoordinateChanges(coordinateBefore);
+      const definingMove = {
+        schema:'molarium.designer-geometry-move/v1',
+        action:'geometry.setInternalCoordinate',
+        atomIds:structuredClone(args.atomIds),
+        kind:after.kind, value:after.value, unit:after.unit,
+        moveConnected:args.moveConnected !== false,
+        outputCoordinateSha256,
+        changedAtomIds:structuredClone(coordinateChanges.changedAtomIds),
+      };
+      state.molecule.source = { ...(state.molecule.source || {}),
+        latestDesignerGeometryMove:definingMove };
       return chemistActionSummary({ internalCoordinate:{ kind:after.kind,
-        value:after.value, unit:after.unit, moveConnected:args.moveConnected !== false } }); },
+        value:after.value, unit:after.unit, moveConnected:args.moveConnected !== false },
+      outputCoordinateSha256, ...coordinateChanges }); },
     'geometry.translateAtoms':async (args) => { chemistActionKeys(args,
       ['atomIds','deltaAngstrom']);
       if (state.mode !== 'build') throw new Error('Enter Design mode before moving atoms');
+      await rejectLigandMotionWhileDesignerFixed('geometry.translateAtoms');
       if (!Array.isArray(args.atomIds) || !args.atomIds.length || args.atomIds.length > 256
         || args.atomIds.some((id) => typeof id !== 'string' || !id))
         throw new Error('atomIds must contain 1 to 256 persistent atom IDs');
@@ -10208,6 +10301,7 @@ function installChemistActionsApi(module) {
     'fragment.attach':async (args) => { chemistActionKeys(args,
       ['attachedToAtomId','positionAngstrom']);
       if (state.mode !== 'build') throw new Error('Enter Design mode before attaching a fragment');
+      await rejectLigandMotionWhileDesignerFixed('fragment.attach');
       if (!state.stagedFragment) throw new Error('Stage a fragment before attaching it');
       if (args.attachedToAtomId == null && args.positionAngstrom == null)
         throw new Error('Provide attachedToAtomId or positionAngstrom');
@@ -10298,6 +10392,7 @@ function installChemistActionsApi(module) {
     'chemistry.addAtom':async (args) => { chemistActionKeys(args,
       ['attachedToAtomId','positionAngstrom','element']);
       if (state.mode !== 'build') throw new Error('Enter Design mode before adding an atom.');
+      await rejectLigandMotionWhileDesignerFixed('chemistry.addAtom');
       if (!ELEMENTS[args.element])
         throw new Error('element must be a supported element symbol');
       if (args.attachedToAtomId == null) {
@@ -10368,6 +10463,7 @@ function installChemistActionsApi(module) {
       const target = await chemistryTargetAtomIds(args, 1);
       return summarizeMutation(() => removeSelectedHydrogenChemistry(), target); },
     'chemistry.finish':async (args) => { empty(args);
+      await rejectLigandMotionWhileDesignerFixed('chemistry.finish');
       if (!state.chemistryTransaction) throw new Error('There are no pending chemistry changes to finish.');
       const result = await finishChemistryTransaction();
       if (!result?.validation?.valid || result.pending)
@@ -10401,6 +10497,56 @@ function installChemistActionsApi(module) {
       return chemistActionSummary({ poseReference:{ mode:reference.mode,
         coreAtomCount:reference.ligand.coreAtomIds.length,
         contactCount:reference.hydrogenBonds.length } }); },
+    'pose.setDesignerLigandPoseFixed':async (args) => { chemistActionKeys(args,
+      ['fixed','label']);
+      if (state.mode !== 'build')
+        throw new Error('Enter Design mode before fixing a designer ligand pose.');
+      if (typeof args.fixed !== 'boolean') throw new Error('fixed must be boolean');
+      if (args.label != null && (typeof args.label !== 'string'
+        || !args.label.trim() || args.label.length > 160))
+        throw new Error('label must be a non-empty string of at most 160 characters');
+      if (state.chemistryTransaction || state.chemistryEditFinishing)
+        throw new Error('Finish or discard pending chemistry before fixing the ligand pose.');
+      await ensureChemistActionAtomIds();
+      const current = activeDesignerLigandPoseLock();
+      if (args.fixed && current) {
+        const descriptor = await inspectActiveDesignerLigandPoseLock();
+        updateGeometryControl(); updateOptimizerControls(); updateDockingUi();
+        return chemistActionSummary({ designerFixedLigandPose:descriptor,
+          changedAtomIds:[], movedHeavyAtomCount:0 });
+      }
+      if (!args.fixed && !current) {
+        updateGeometryControl(); updateOptimizerControls(); updateDockingUi();
+        return chemistActionSummary({ designerFixedLigandPose:null,
+          released:false, changedAtomIds:[], movedHeavyAtomCount:0 });
+      }
+      let nextLock = null;
+      if (args.fixed) {
+        const ligandAtomIndices = currentDockingLigandAtomIndices();
+        if (!ligandAtomIndices.length) throw new Error('Choose one ligand component first.');
+        nextLock = await createDesignerLigandPoseLock({ molecule:state.molecule,
+          ligandAtomIndices, label:args.label,
+          definingMove:state.molecule.source?.latestDesignerGeometryMove || null });
+      }
+      pushBuildHistory();
+      if (args.fixed) {
+        state.molecule.source = { ...(state.molecule.source || {}),
+          designerFixedLigandPose:nextLock };
+      } else {
+        const source = { ...(state.molecule.source || {}) };
+        delete source.designerFixedLigandPose;
+        state.molecule.source = source;
+      }
+      state.dockingResult = null; state.dockingPoseIndex = 0;
+      state.sidechainRotamerEnsemble = null;
+      updateGeometryControl(); updateOptimizerControls(); updateDockingUi();
+      renderDockingResults(); updateSidechainRotamerControls(); updateHistoryButtons(); draw();
+      const descriptor = activeDesignerLigandPoseLock()
+        ? designerLigandPoseLockDescriptor(activeDesignerLigandPoseLock()) : null;
+      showToast(descriptor ? 'Current ligand pose fixed as designer intent'
+        : 'Designer-fixed ligand pose released');
+      return chemistActionSummary({ designerFixedLigandPose:descriptor,
+        released:!args.fixed, changedAtomIds:[], movedHeavyAtomCount:0 }); },
     'pose.updateReceptorReference':async (args) => { empty(args);
       return chemistActionSummary({ receptorReference:
         await updateCurrentDockingReceptorReference() }); },
@@ -10485,6 +10631,7 @@ function installChemistActionsApi(module) {
       ['searchChains','execution','featureSeedingProtocol',
         'expectedInputCoordinateSha256','expectedSelectedCoordinateSha256',
         'expectedInputStateSha256','expectedSelectedStateSha256']);
+      await rejectLigandMotionWhileDesignerFixed('pose.refine');
       const expectedInput = expectedCoordinateSha256(args, 'expectedInputCoordinateSha256');
       const expectedSelected = expectedCoordinateSha256(args,
         'expectedSelectedCoordinateSha256');
@@ -10610,6 +10757,7 @@ function installChemistActionsApi(module) {
       ['index','allowInfeasible','expectedInputCoordinateSha256',
         'expectedSelectedCoordinateSha256','expectedOutputCoordinateSha256',
         'expectedInputStateSha256','expectedSelectedStateSha256','expectedOutputStateSha256']);
+      await rejectLigandMotionWhileDesignerFixed('pose.apply');
       const expectedInput = expectedCoordinateSha256(args, 'expectedInputCoordinateSha256');
       const expectedSelected = expectedCoordinateSha256(args,
         'expectedSelectedCoordinateSha256');
@@ -10730,6 +10878,7 @@ function installChemistActionsApi(module) {
     'optimization.run':async (args) => { chemistActionKeys(args,
       ['method','expectedInputCoordinateSha256','expectedOutputCoordinateSha256',
         'expectedInputStateSha256','expectedOutputStateSha256']);
+      await rejectLigandMotionWhileDesignerFixed('optimization.run');
       const expectedInput = expectedCoordinateSha256(args, 'expectedInputCoordinateSha256');
       const expectedOutput = expectedCoordinateSha256(args, 'expectedOutputCoordinateSha256');
       const expectedInputState = expectedMolecularStateSha256(args, 'expectedInputStateSha256');
@@ -10777,6 +10926,7 @@ function installChemistActionsApi(module) {
       ['job','method','options']);
       const job = chemistActionEnum(args.job,
         ['geometry','energy','dynamics','conformers'], 'job');
+      if (job !== 'energy') await rejectLigandMotionWhileDesignerFixed(`calculation.run(${job})`);
       const method = chemistActionEnum(args.method,
         ['openmm','webgpu','stormm','rdkit','ani2x'], 'method');
       if (args.options != null && (!args.options || typeof args.options !== 'object'
@@ -10810,6 +10960,7 @@ function installChemistActionsApi(module) {
         peakAggregateReplicaStepsPerSecond:result.peakAggregateReplicaStepsPerSecond,
         elapsedMs:result.elapsedMs, samples:structuredClone(result.samples || []) } }); },
     'calculation.selectFrame':async (args) => { chemistActionKeys(args, ['index']);
+      await rejectLigandMotionWhileDesignerFixed('calculation.selectFrame');
       const index = Number(args.index);
       if (!Number.isInteger(index) || index < 0 || index >= state.calculationFrames.length)
         throw new Error('index must identify a saved calculation frame');
@@ -10818,6 +10969,7 @@ function installChemistActionsApi(module) {
         step:state.calculationFrames[index].step,
         energy:state.calculationFrames[index].energy } }); },
     'calculation.selectReplica':async (args) => { chemistActionKeys(args, ['index']);
+      await rejectLigandMotionWhileDesignerFixed('calculation.selectReplica');
       const index = Number(args.index), count = Number(state.calculationEnsemble?.replicaCount || 0);
       if (!Number.isInteger(index) || index < 0 || index >= count)
         throw new Error('index must identify an ensemble replica');
@@ -10825,6 +10977,7 @@ function installChemistActionsApi(module) {
       return chemistActionSummary({ calculationReplica:{ index,
         frameCount:state.calculationFrames.length } }); },
     'calculation.selectConformer':async (args) => { chemistActionKeys(args, ['rank']);
+      await rejectLigandMotionWhileDesignerFixed('calculation.selectConformer');
       const rank = Number(args.rank);
       const order = state.conformerAnalysis
         ? activeConformerPlotOrder(state.conformerAnalysis) : [];
@@ -10834,6 +10987,7 @@ function installChemistActionsApi(module) {
       return chemistActionSummary({ conformer:{ rank,
         replicaIndex:state.calculationReplicaIndex } }); },
     'calculation.setPlayback':async (args) => { chemistActionKeys(args, ['playing']);
+      if (args.playing === true) await rejectLigandMotionWhileDesignerFixed('calculation.setPlayback');
       if (typeof args.playing !== 'boolean') throw new Error('playing must be boolean');
       if (args.playing && state.calculationFrames.length < 2)
         throw new Error('At least two saved frames are required for playback');
@@ -11306,6 +11460,7 @@ function installChemistActionsApi(module) {
           .map((step) => step.id) } }); },
     'designRoute.applyStep':async (args) => { chemistActionKeys(args,
       ['stepId','attachmentAtomId']);
+      await rejectLigandMotionWhileDesignerFixed('designRoute.applyStep');
       if (!state.designRoute) throw new Error('Load a registered design route first');
       if (typeof args.stepId !== 'string' || !args.stepId)
         throw new Error('stepId must be a registered design-step ID');
@@ -15997,13 +16152,17 @@ function updateOptimizerControls() {
         : 'Evaluate the current structure without moving its atoms.';
   setText('#method-help', conciseHelp);
   const chemistryBlocked = Boolean(state.chemistryTransaction || state.chemistryEditFinishing);
+  const designerFixed = Boolean(activeDesignerLigandPoseLock());
   const optimizeButton = document.querySelector('#optimize-button');
   const calculationButton = document.querySelector('#run-calculation');
   if (optimizeButton)
-    optimizeButton.disabled = chemistryBlocked || state.minimizing || state.preparing || state.calculating;
+    optimizeButton.disabled = chemistryBlocked || designerFixed
+      || state.minimizing || state.preparing || state.calculating;
   if (calculationButton)
     calculationButton.disabled = chemistryBlocked || state.preparing || state.calculating;
-  if (chemistryBlocked)
+  if (designerFixed)
+    setText('#build-optimizer-help', 'Designer-fixed ligand pose is active. Use receptor-only side-chain branches, or release the pose before ligand-moving optimization.');
+  else if (chemistryBlocked)
     setText('#build-optimizer-help', 'Finish or discard the pending chemistry before optimization.');
 }
 
@@ -16587,6 +16746,13 @@ geometrySlider.addEventListener('change', (event) => {
 });
 geometryValue.addEventListener('change', (event) => {
   runCurrentGeometryAction(event.target.value).catch(() => updateGeometryControl());
+});
+document.querySelector('#designer-ligand-pose-lock').addEventListener('change', (event) => {
+  const fixed = event.currentTarget.checked;
+  runChemistUiAction('pose.setDesignerLigandPoseFixed', {
+    fixed,
+    ...(fixed ? { label:'Designer-fixed current ligand geometry' } : {}),
+  }).catch(() => updateGeometryControl());
 });
 
 document.querySelector('#undo-atom').addEventListener('click', () => {
