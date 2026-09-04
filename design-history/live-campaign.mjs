@@ -143,11 +143,24 @@ export function moleculeFromSnapshot(snapshot) {
       ...(record.stereochemistry == null ? {} : { stereochemistry:text(record.stereochemistry) }) };
   });
   const metadata = snapshot.properties?.molecule || {};
+  const proteinAtoms = atoms.filter((atom) => atom.record === 'ATOM').length;
+  const residues = new Set(atoms.filter((atom) => atom.record === 'ATOM')
+    .map((atom) => `${atom.chain || 'A'}:${atom.residueIndex}:${atom.insertionCode || ''}`)).size;
+  const source = { ...cloneRecord(metadata.source || {}),
+    ...(proteinAtoms ? { residues, proteinAtoms,
+      heterogenAtoms:atoms.length - proteinAtoms } : {}) };
   return { name:text(metadata.name || snapshot.label || 'Campaign molecule'),
     smiles:text(snapshot.canonicalSmiles || ''), canonicalSmiles:snapshot.canonicalSmiles || null,
     charge:Number(metadata.charge ?? 0), multiplicity:Number(metadata.multiplicity ?? 1),
     pointGroup:text(metadata.pointGroup || 'C1'), symmetryNumber:Number(metadata.symmetryNumber ?? 1),
-    source:cloneRecord(metadata.source || {}), atoms, bonds };
+    source, atoms, bonds,
+    // Canonical campaign snapshots already retain the full protein graph, but
+    // the minimal molecule metadata intentionally omits the viewer-only PDB
+    // prediction object. Reconstruct that derived marker so a public campaign
+    // import restores protein/cartoon controls without changing snapshot bytes.
+    ...(proteinAtoms ? { prediction:{ kind:'pdb-import', pdb:'', sequence:'',
+      meanPlddt:0, ptm:0, msaDepth:0, provider:'campaign-checkpoint', recycles:0,
+      model:source.pdbId || 'campaign checkpoint' } } : {}) };
 }
 
 export async function moleculeMatchesSnapshot(molecule, snapshot) {
