@@ -187,6 +187,8 @@ export async function main(args = process.argv.slice(2)) {
 
     phase = 'reference';
     await execute('protein.parameterize', {}, 'recovery-parameterize-aww');
+    await execute('view.setMode', { mode:'build' },
+      'recovery-enter-design-mode');
     await execute('pose.captureReference', { mode:'propagate' },
       'recovery-capture-aww-reference');
 
