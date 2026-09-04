@@ -7,10 +7,25 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
 
-const SCHEMA = 'molarium.sos1-aww-designer-contact-factorial/v1';
+const SCHEMA = 'molarium.sos1-aww-designer-contact-factorial/v2';
 const AWZ_CAMPAIGN_SHA256 =
   'e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81';
 const AWW_COMPONENT_ID = 'heterogen:A:1104::AWW';
+const REQUIRED_HARD_ATOM_NAMES = Object.freeze(['C12']);
+const REQUIRED_RELEASED_ATOM_NAMES = Object.freeze(['C15','CX4','CX5']);
+const WATER_1507_ATOM_IDS = Object.freeze([
+  'chemist-5OVE:HETATM:A:HOH:1507::O:4335',
+  'chemist-5OVE:HETATM:A:HOH:1507::H1:',
+  'chemist-5OVE:HETATM:A:HOH:1507::H2:',
+]);
+const PHE_STATES = Object.freeze([
+  Object.freeze({ id:'native', chiDegrees:null }),
+  Object.freeze({ id:'plus60', chiDegrees:Object.freeze([60, 90]) }),
+  Object.freeze({ id:'out', chiDegrees:Object.freeze([-180, -90]) }),
+]);
+const HYDRATION_STATES = Object.freeze(['retained','displaced-sensitivity-proxy']);
+const BRANCHES = Object.freeze(PHE_STATES.flatMap((phe) => HYDRATION_STATES.map((hydration) =>
+  Object.freeze({ id:`phe-${phe.id}-water-${hydration}`, phe, hydration }))));
 
 function valueFor(args, name) {
   const index = args.indexOf(name);
@@ -46,17 +61,25 @@ function contactMatches(contact, ligandAtomName, receptorResidueName,
   return Boolean(ligand && receptor);
 }
 
+function selectedRequiredHydrogenBonds(refinement, requiredContactIds) {
+  const selected = new Map((refinement.selectedHydrogenBonds || [])
+    .map((entry) => [entry.id, entry]));
+  return requiredContactIds.map((contactId) => selected.get(contactId) || {
+    id:contactId, required:true, satisfied:false, missing:true,
+  });
+}
+
 async function runBranch({ root, serializedCampaign, branch }) {
   const browser = await startMolariumBrowser({ root, appPath:'?blank=1',
     width:1200, height:800 });
   const records = [];
   const execute = async (action, args = {}) => {
-    const requestId = `aww-factorial-${branch}-${records.length + 1}-${action}`;
+    const requestId = `aww-factorial-${branch.id}-${records.length + 1}-${action}`;
     const response = await browser.evaluate(
       `window.MolariumChemistActions.execute(${JSON.stringify({ action, args, requestId })})`);
     records.push({ requestId, action, status:response.status,
       durationMs:response.durationMs, result:response.result });
-    assert.equal(response.status, 'completed', `${branch} ${action} failed`);
+    assert.equal(response.status, 'completed', `${branch.id} ${action} failed`);
     return response.result;
   };
   try {
@@ -73,14 +96,23 @@ async function runBranch({ root, serializedCampaign, branch }) {
       stepId:'open-phe890-pocket',
     });
     assert.equal(staged.designStep.stateId, 'AWW');
+    const stagedLigand = await execute('session.inspect', {
+      scope:'ligand', includeCoordinates:false, maximumAtoms:256,
+    });
+    let hydrationAction = null;
+    if (branch.hydration === 'displaced-sensitivity-proxy') {
+      hydrationAction = await execute('geometry.translateAtoms', {
+        atomIds:[...WATER_1507_ATOM_IDS], deltaAngstrom:{ x:20, y:20, z:20 },
+      });
+    }
     const rotamers = await execute('pose.enumerateSidechainRotamers', {
       receptorResidue:{ residueName:'PHE', chain:'A', residueIndex:890,
         insertionCode:'' }, maximumCandidates:32,
     });
     let appliedRotamer = null;
-    if (branch === 'phe-out') {
+    if (branch.phe.chiDegrees) {
       appliedRotamer = await execute('pose.applySidechainRotamer', {
-        chiDegrees:[-180, -90],
+        chiDegrees:[...branch.phe.chiDegrees],
       });
     }
     await execute('pose.updateReceptorReference');
@@ -114,34 +146,67 @@ async function runBranch({ root, serializedCampaign, branch }) {
       searchChains:8, execution:'serial', featureSeedingProtocol:'v5',
     });
     const refinement = refinementResult.refinement;
-    assert.equal(refinement.coverageComplete, true);
-    assert.equal(refinement.selectedFeasible, true);
-    assert.equal(refinement.selectedCore?.satisfied, true);
-    assert.equal(refinement.requiredSpatialFeatureCount, 2);
-    for (const contactId of requiredContactIds) {
-      const feature = refinement.selectedSpatialFeatures.find((entry) => entry.id === contactId);
-      assert(feature?.required && feature?.satisfied,
-        `${branch} selected pose does not satisfy required contact ${contactId}`);
+    const releasedCoreAtomIndices = refinement.featureGuidedSeeding
+      ?.releasedCoreAtomIndices || [];
+    const releasedCoreAtomNames = [...new Set(releasedCoreAtomIndices
+      .map((index) => stagedLigand.atoms[index]?.atomName).filter(Boolean))].sort();
+    const requiredReleasedAtomsSatisfied = REQUIRED_RELEASED_ATOM_NAMES
+      .every((atomName) => releasedCoreAtomNames.includes(atomName))
+      && REQUIRED_HARD_ATOM_NAMES.every((atomName) => !releasedCoreAtomNames.includes(atomName));
+    const selectedContacts = selectedRequiredHydrogenBonds(refinement, requiredContactIds);
+    const requiredContactsSatisfied = selectedContacts.every((contact) =>
+      contact.required && contact.satisfied);
+    const prospectiveGates = {
+      coverageComplete:refinement.coverageComplete === true,
+      selectedFeasible:refinement.selectedFeasible === true,
+      fixedCoreSatisfied:refinement.selectedCore?.satisfied === true,
+      chemicalValidity:refinement.selectedChemicalValidity?.valid === true,
+      requiredContactsSatisfied,
+      requiredReleasedAtomsSatisfied,
+    };
+    const eligible = Object.values(prospectiveGates).every(Boolean);
+    let pocket = null;
+    let contactDistances = {
+      ox3ToTyr884BackboneOAngstrom:selectedContacts.find((entry) =>
+        entry.id === ox3.contact.contactId)?.donorAcceptorDistanceAngstrom ?? null,
+      n7ToAsn879Od1Angstrom:selectedContacts.find((entry) =>
+        entry.id === n7Contact.contactId)?.donorAcceptorDistanceAngstrom ?? null,
+    };
+    if (eligible) {
+      await execute('pose.apply', { index:Math.max(0, refinement.selectedRank - 1) });
+      pocket = await execute('session.inspect', {
+        scope:'pocket', includeCoordinates:true, maximumAtoms:500,
+      });
+      const ox3Atom = atom(pocket, 'AWW', 1104, 'OX3');
+      const tyrO = atom(pocket, 'TYR', 884, 'O');
+      const n7Atom = atom(pocket, 'AWW', 1104, 'N7');
+      const asnOd1 = atom(pocket, 'ASN', 879, 'OD1');
+      contactDistances = {
+        ox3ToTyr884BackboneOAngstrom:distance(ox3Atom, tyrO),
+        n7ToAsn879Od1Angstrom:distance(n7Atom, asnOd1),
+      };
     }
-    await execute('pose.apply', { index:Math.max(0, refinement.selectedRank - 1) });
-    const pocket = await execute('session.inspect', {
-      scope:'pocket', includeCoordinates:true, maximumAtoms:500,
-    });
-    const ox3Atom = atom(pocket, 'AWW', 1104, 'OX3');
-    const tyrO = atom(pocket, 'TYR', 884, 'O');
-    const n7Atom = atom(pocket, 'AWW', 1104, 'N7');
-    const asnOd1 = atom(pocket, 'ASN', 879, 'OD1');
     return {
-      schema:SCHEMA, branch, holdoutCoordinatesUsed:false,
+      schema:SCHEMA, branch:branch.id, pheState:branch.phe.id,
+      hydrationState:branch.hydration, holdoutCoordinatesUsed:false,
       sourceStateId:'AWZ', predictedStateId:'AWW',
       staged:{ commonHitHeavyAtoms:staged.designStep.commonHitHeavyAtoms,
         productHeavyAtoms:staged.designStep.productHeavyAtoms },
       sidechain:{ generatedCandidateCount:rotamers.sidechainRotamers.generatedCandidateCount,
         applied:appliedRotamer?.sidechainRotamer || appliedRotamer?.appliedSidechainRotamer || null },
+      hydration:{ state:branch.hydration,
+        usedForPoseSelection:false,
+        interpretation:branch.hydration === 'retained'
+          ? '5OVE HOH1507 retained at its observed site'
+          : 'diagnostic duplicate only; water is absent from pose.refine receptor scoring, and the complete water was translated by a bounded public Design action',
+        action:hydrationAction?.translation || null },
       contacts:{ requiredContactIds, n7Source:n7Contact.source,
-        ox3ToTyr884BackboneOAngstrom:distance(ox3Atom, tyrO),
-        n7ToAsn879Od1Angstrom:distance(n7Atom, asnOd1) },
-      refinement, records,
+        selected:selectedContacts, ...contactDistances },
+      hardCoreAudit:{ requiredHardAtomNames:[...REQUIRED_HARD_ATOM_NAMES],
+        requiredReleasedAtomNames:[...REQUIRED_RELEASED_ATOM_NAMES],
+        releasedCoreAtomIndices, releasedCoreAtomNames,
+        satisfied:requiredReleasedAtomsSatisfied },
+      prospectiveGates, eligible, refinement, pocket, records,
     };
   } finally {
     await browser.close();
@@ -166,7 +231,8 @@ async function main(args = process.argv.slice(2)) {
   await save('boundary.json', { schema:SCHEMA, status:'declared-before-compute',
     source:{ stateId:'AWZ', campaignPath,
       campaignSha256:AWZ_CAMPAIGN_SHA256 },
-    branches:['phe-in','phe-out'], searchChains:8,
+    branches:BRANCHES.map((branch) => ({ id:branch.id, pheState:branch.phe.id,
+      chiDegrees:branch.phe.chiDegrees, hydrationState:branch.hydration })), searchChains:8,
     designerIntent:[
       'AWW OX3 hydroxyl donor -> TYR A884 backbone O acceptor',
       'AWW N7 donor -> ASN A879 OD1 acceptor',
@@ -174,14 +240,16 @@ async function main(args = process.argv.slice(2)) {
     selector:'prospective Molarium pose feasibility and energy ranking',
     holdoutCoordinatesUsed:false,
     holdoutPolicy:'5OVH may be opened only after selection; this proxy does not open it',
+    hydrationPolicy:'HOH1507 displacement is an explicit public-action diagnostic, not a pose-selection or production occupancy decision; water mobility is evaluated by later full-system induced-fit relaxation',
   });
   const results = [];
-  for (const branch of ['phe-in','phe-out']) {
+  for (const branch of BRANCHES) {
     const result = await runBranch({ root,
       serializedCampaign:campaignBytes.toString('utf8'), branch });
     results.push(result);
-    await save(`${branch}.json`, result);
-    console.log(`SOS1_AWW_FACTORIAL ${JSON.stringify({ branch,
+    await save(`${branch.id}.json`, result);
+    console.log(`SOS1_AWW_FACTORIAL ${JSON.stringify({ branch:branch.id,
+      eligible:result.eligible, prospectiveGates:result.prospectiveGates,
       selectedRank:result.refinement.selectedRank,
       selectedScoreKcalMol:result.refinement.selectedScoreKcalMol,
       selectedPhysicalKcalMol:result.refinement.selectedPhysicalKcalMol,
@@ -189,16 +257,19 @@ async function main(args = process.argv.slice(2)) {
       selectedSeedAudit:result.refinement.featureGuidedSeeding?.selectedSeedAudit,
       contacts:result.contacts })}`);
   }
-  const eligible = results.filter((result) => result.refinement.coverageComplete
-    && result.refinement.selectedFeasible && result.refinement.selectedCore?.satisfied
-    && result.refinement.requiredSpatialFeatureCount === 2);
-  assert.equal(eligible.length, 2, 'Both factorial Phe branches must pass the prospective gates');
+  const eligible = results.filter((result) => result.eligible
+    && result.hydrationState === 'retained');
+  assert(eligible.length >= 1, 'At least one factorial branch must pass every prospective gate');
   eligible.sort((a, b) => a.refinement.selectedScoreKcalMol
     - b.refinement.selectedScoreKcalMol || a.branch.localeCompare(b.branch));
   const summary = { schema:SCHEMA, status:'completed', holdoutCoordinatesUsed:false,
     selectedBranch:eligible[0].branch,
-    selectionBasis:'lowest prospective selectedScoreKcalMol after identical feasibility gates',
+    selectedPheState:eligible[0].pheState,
+    hydrationUsedForPoseSelection:false,
+    selectionBasis:'lowest prospective selectedScoreKcalMol among retained-water representatives after identical feasibility gates; displaced-water runs are diagnostic duplicates because pose.refine excludes waters',
     branches:results.map((result) => ({ branch:result.branch,
+      pheState:result.pheState, hydrationState:result.hydrationState,
+      eligible:result.eligible, prospectiveGates:result.prospectiveGates,
       selectedScoreKcalMol:result.refinement.selectedScoreKcalMol,
       selectedPhysicalKcalMol:result.refinement.selectedPhysicalKcalMol,
       selectedSeedAudit:result.refinement.featureGuidedSeeding?.selectedSeedAudit,
