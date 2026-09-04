@@ -22,6 +22,40 @@ assert.deepEqual(prefix.objects.snapshots[startingSnapshotId], startingSnapshot,
 assert.equal(Object.keys(prefix.objects.commits).length, 1);
 assert.equal(Object.keys(prefix.objects.snapshots).length, 1);
 
+const checkpointReview = JSON.parse(await readFile(new URL(
+  '../design-history/examples/sos1-prediction-checkpoint-review.action-script.json',
+  import.meta.url)));
+const expectedReviewCheckpoints = [
+  ['starting-hit', 'Review the exact prepared 5OVE/AXE starting hit',
+    'registered-starting-hit', false],
+  ['scaffold-rewrite', 'Review scaffold-rewrite prediction checkpoint',
+    'complete-frozen-prediction', true],
+  ['fragment-merge', 'Review fragment-merge prediction checkpoint',
+    'complete-frozen-prediction', true],
+  ['open-phe890-pocket', 'Review open-phe890-pocket prediction checkpoint',
+    'complete-frozen-prediction', true],
+  ['finish-bay-293', 'Review finish-bay-293 prediction checkpoint',
+    'complete-frozen-prediction', true],
+];
+assert.equal(checkpointReview.actions.length, expectedReviewCheckpoints.length);
+for (const [index, [stepId, caption, sourceStatus, preserveView]]
+  of expectedReviewCheckpoints.entries()) {
+  const move = checkpointReview.actions[index];
+  assert.equal(move.action, 'campaign.import');
+  assert.equal(move.caption, caption);
+  assert.equal(move.args.preserveView, preserveView);
+  assert.equal(move.review.sourceStatus, sourceStatus);
+  assert.equal(move.review.calculationPolicy, 'none');
+  assert.equal(move.review.holdoutCoordinatesIncluded, false);
+  assert.match(move.args.sourcePath,
+    new RegExp(`/${stepId === 'starting-hit' ? 'starting-hit' : stepId}-campaign\\.json$`));
+}
+assert.equal(checkpointReview.actions[0].review.registeredStartingHit, true);
+assert.equal(checkpointReview.actions[0].review.exactHistoryPrefix, true);
+for (const unavailable of SOS1_CHECKPOINT_GRANULARITY.unavailableIndependentStates)
+  assert.equal(checkpointReview.actions.some((move) => move.caption.includes(unavailable)), false,
+    `${unavailable} must not be presented as an independently recorded coordinate checkpoint`);
+
 const audit = JSON.parse(await readFile(new URL(
   '../design-history/publications/sos1/source-runs/sos1-a013-a018-complete-frozen/chemist-action-audit.json',
   import.meta.url)));
