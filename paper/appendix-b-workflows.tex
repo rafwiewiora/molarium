@@ -115,7 +115,7 @@ A deposited PDB structure is not automatically a simulation-ready system. Atoms 
 \begin{enumerate}
 \item Load the PDB structure and inspect the protein, ligand, waters, other components, and the region around the intended binding site before preparing anything.
 \item Open \textbf{Protein Preparation}. Choose pH, histidine policy, supported missing-heavy-atom repair, ligand treatment, water treatment, and gap policy.
-\item Run \textbf{Prepare structure}. Molarium constructs an internal preview that inventories residues, missing atoms, sequence gaps, ligands, waters, clashes, and invalid coordinates. Within scope, it can retrieve CCD information, reconstruct supported missing side-chain atoms, add standard hydrogens and terminal oxygen, choose histidine states, and scan polar-hydrogen orientations.
+\item Run \textbf{Prepare structure}. Molarium constructs an internal preview that inventories residues, missing atoms, sequence gaps, ligands, waters, clashes, and invalid coordinates. Within scope, connected mode can retrieve CCD information, while Local Lab can use an already installed, hash-pinned registered ligand graph without an external lookup. Preparation can reconstruct supported missing side-chain atoms, add standard hydrogens and terminal oxygen, choose histidine states, and scan polar-hydrogen orientations.
 \item An unresolved blocker stops the operation and exposes the preview for review. A blocker-free preview is immediately parameterized and applied; there is no normal second Apply step.
 \item Inspect every applied change, warning, and attached audit. Download the preparation report if the decisions must survive the browser session.
 \end{enumerate}
@@ -534,7 +534,7 @@ Molarium records several different kinds of evidence. They answer different ques
 \textbf{Record} & \textbf{Question answered} & \textbf{Persistence and limit}\\
 \midrule
 \endhead
-Chemist Actions audit & What recognized public action was requested, with what arguments and outcome? & Session memory; serialized calls; bounded history, normally 500 entries; cleared with the scene unless exported through a script path.\\
+Chemist Actions audit & What recognized public action was requested, with what arguments and outcome? & Page-lifetime public API memory, normally at most 500 entries; clearing the scene discards the molecule-attached copy but not the API history; export or commit is required for persistence beyond page reload.\\
 Preparation or calculation record & What system, model, settings, energies, frames, warnings, or audit produced this result? & Attached to the in-memory state and available through workflow-specific reports or exports.\\
 Docking labbook & How were mapping, feasibility, scoring, rejection, and selection handled? & Exportable JSON and Markdown/notes with chained hashes.\\
 Designer action script & Which completed public actions should be replayed? & Exportable JSON; replay invokes the same guarded routes; not a complete UI or binary session snapshot.\\

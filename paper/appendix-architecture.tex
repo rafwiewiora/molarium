@@ -118,7 +118,7 @@ The numerical recipe crossing these layers has a narrow contract:
 
 For ordinary small molecules, a JavaScript SMIRNOFF parameterizer uses RDKit to
 apply Sage 2.1.0 patterns and assign labelled Gasteiger charges
-\cite{boothroyd2023sage,gasteiger1980charges}. Prepared Rosemary fixtures keep
+\cite{boothroyd2023sage,gasteiger1980charges}. Prepared protein validation fixtures keep
 their exported numerical recipes and NAGL charges. CPU/GPU comparisons therefore
 use identical graphs and numbers, not two separately prepared approximations.
 
@@ -478,8 +478,11 @@ merge algorithm. Three linked record types answer different provenance
 questions:
 
 \paragraph{Current product boundary.}
-The live application keeps at most 500 Chemist Actions records in memory, and
-clearing the scene clears that transient audit. The Design History panel and
+The public API keeps at most 500 Chemist Actions records for the lifetime of the
+page. A copy is attached to the current molecule; clearing the scene discards
+that molecule-attached copy, while the public API history remains available
+until page reload. Records that must persist beyond the page lifetime must be
+exported or attached to a campaign commit. The Design History panel and
 public \texttt{campaign.*} actions can create a locally persisted campaign,
 atomically commit the visible molecule, create or restore branches, merge branch
 histories, record decisions, verify the append-only record, and import or export
@@ -627,7 +630,7 @@ Replay rules:
     unreasonably large or deeply nested inputs are rejected;
   \item Designer Moves JSON files must be smaller than 2~MB; each serialized
     API request and its argument object are capped at 8~MiB for ASCII JSON,
-    eight nested levels, and 2,048 JSON nodes;
+    twelve nested levels, and 2,048 JSON nodes;
   \item an action may give a name to a returned value, such as a stable atom ID;
     a later action may reuse that name without embedding new code;
   \item the runner executes one allowed action at a time through
