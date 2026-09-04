@@ -134,13 +134,16 @@ async function runBranch({ root, serializedCampaign, branch }) {
       searchChains:8, execution:'serial', featureSeedingProtocol:'v5',
     });
     const refinement = refinementResult.refinement;
-    const releasedCoreAtomIndices = refinement.featureGuidedSeeding
+    const runtimeReleasedCoreAtomIndices = refinement.featureGuidedSeeding
       ?.releasedCoreAtomIndices || [];
-    const releasedCoreAtomNames = [...new Set(releasedCoreAtomIndices
+    const runtimeReleasedCoreAtomNames = [...new Set(runtimeReleasedCoreAtomIndices
       .map((index) => stagedLigand.atoms[index]?.atomName).filter(Boolean))].sort();
+    const registeredReleasedAtomNames = staged.designStep.poseTransferPlan
+      ?.releasedMappedAtomNames || [];
     const requiredReleasedAtomsSatisfied = REQUIRED_RELEASED_ATOM_NAMES
-      .every((atomName) => releasedCoreAtomNames.includes(atomName))
-      && REQUIRED_HARD_ATOM_NAMES.every((atomName) => !releasedCoreAtomNames.includes(atomName));
+      .every((atomName) => registeredReleasedAtomNames.includes(atomName))
+      && REQUIRED_HARD_ATOM_NAMES.every((atomName) =>
+        !registeredReleasedAtomNames.includes(atomName));
     const selectedContacts = selectedRequiredHydrogenBonds(refinement, requiredContactIds);
     const requiredContactsSatisfied = selectedContacts.every((contact) =>
       contact.required && contact.satisfied);
@@ -187,7 +190,8 @@ async function runBranch({ root, serializedCampaign, branch }) {
         selected:selectedContacts, ...contactDistances },
       hardCoreAudit:{ requiredHardAtomNames:[...REQUIRED_HARD_ATOM_NAMES],
         requiredReleasedAtomNames:[...REQUIRED_RELEASED_ATOM_NAMES],
-        releasedCoreAtomIndices, releasedCoreAtomNames,
+        registeredReleasedAtomNames,
+        runtimeReleasedCoreAtomIndices, runtimeReleasedCoreAtomNames,
         satisfied:requiredReleasedAtomsSatisfied },
       prospectiveGates, eligible, refinement, pocket, records,
     };

@@ -112,4 +112,22 @@ assert.equal(fixedFeature.coverage.allRequiredStrataCovered, true);
 assert.deepEqual(fixedFeature.coverage.strata[0].selectedSeedOrdinals, [0],
   'an immutable hard-core contact is covered by its sole allowed coordinate state');
 
+const fixedDonor = featureGuidedPoseSeeds({
+  molecule:{ atoms:[{ element:'N' }, { element:'C' }, { element:'H' }],
+    bonds:[{ a:0,b:1,order:1 }, { a:0,b:2,order:1 }] },
+  initialPositions:Float64Array.from([0,0,0, -1.3,0,0, 0,1,0]),
+  coreAtomIndices:[0,1], count:2, featureSeedingProtocol:'v5',
+  hydrogenBondConstraints:[{ id:'fixed-donor-contact', receptorRole:'acceptor',
+    donor:{ scope:'ligand', atomIndex:0 }, hydrogen:{ scope:'ligand', atomIndex:2 },
+    acceptor:{ scope:'receptor', point:{ x:2.9, y:0, z:0 } },
+    targetLigandFeatureReferencePoint:{ x:0, y:0, z:0 } }],
+});
+assert.equal(fixedDonor.coverage.allRequiredStrataCovered, true);
+const orientedDonor = fixedDonor.seeds.find((seed) =>
+  seed.audit.method === 'fixed-core-donor-hydrogen-alignment');
+assert(orientedDonor);
+assert.deepEqual(Array.from(orientedDonor.positions.slice(0, 9)),
+  [0,0,0, -1.3,0,0, 1,0,0],
+  'a hard-core ligand donor may orient only its bonded hydrogen toward the receptor acceptor');
+
 console.log('Feature-guided pose seeds cover registered feature maps and affected rotors deterministically');

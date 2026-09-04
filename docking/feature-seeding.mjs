@@ -427,8 +427,17 @@ function targetVariants(definitions) {
       if (!referencePoint || ![referencePoint.x, referencePoint.y, referencePoint.z].every(Number.isFinite)) return;
       const feature = entry.receptorRole === 'donor' ? entry.acceptor : entry.donor;
       if (feature?.scope !== 'ligand' || !Number.isInteger(feature.atomIndex)) return;
+      const ligandDonorHydrogenAtomIndex = entry.receptorRole === 'acceptor'
+        && entry.hydrogen?.scope === 'ligand' && Number.isInteger(entry.hydrogen.atomIndex)
+        ? entry.hydrogen.atomIndex : null;
+      const receptorAcceptorPoint = entry.receptorRole === 'acceptor'
+        && entry.acceptor?.scope === 'receptor'
+        && [entry.acceptor.point?.x, entry.acceptor.point?.y, entry.acceptor.point?.z]
+          .every(Number.isFinite)
+        ? [entry.acceptor.point.x, entry.acceptor.point.y, entry.acceptor.point.z] : null;
       variants.push({ constraintId:definition.id, alternativeId:entry.id,
         featureAtomIndex:feature.atomIndex,
+        ligandDonorHydrogenAtomIndex, receptorAcceptorPoint,
         target:[referencePoint.x, referencePoint.y, referencePoint.z] });
     });
   });
@@ -662,7 +671,23 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
     // pose-feasibility gate. An empty required stratum would incorrectly turn
     // an immutable contact into a search-coverage failure.
     if (!region) {
-      cover(initialCandidate, targetStrata[variantIndex]);
+      const donor = point(positions, variant.featureAtomIndex);
+      const hydrogenIndex = variant.ligandDonorHydrogenAtomIndex;
+      const acceptor = variant.receptorAcceptorPoint;
+      const hydrogen = Number.isInteger(hydrogenIndex) ? point(positions, hydrogenIndex) : null;
+      const donorHydrogenLength = hydrogen ? Math.hypot(...hydrogen
+        .map((value, index) => value - donor[index])) : 0;
+      const direction = acceptor ? normalized(acceptor
+        .map((value, index) => value - donor[index])) : null;
+      if (hydrogen && direction && donorHydrogenLength > 0.5 && donorHydrogenLength < 1.5) {
+        const oriented = new Float64Array(positions);
+        for (let axis = 0; axis < 3; axis++)
+          oriented[hydrogenIndex * 3 + axis] = donor[axis] + direction[axis] * donorHydrogenLength;
+        add(oriented, { method:'fixed-core-donor-hydrogen-alignment',
+          constraintId:variant.constraintId, alternativeId:variant.alternativeId,
+          donorAtomIndex:variant.featureAtomIndex, hydrogenAtomIndex:hydrogenIndex,
+          movedAtomCount:1, movedHeavyAtomCount:0 }, targetStrata[variantIndex]);
+      } else cover(initialCandidate, targetStrata[variantIndex]);
       return;
     }
     const anchor = point(positions, region.anchorAtomIndex);
