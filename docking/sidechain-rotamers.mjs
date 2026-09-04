@@ -1,4 +1,5 @@
 export const SIDECHAIN_ROTAMER_SCHEMA = 'molarium.sidechain-rotamers/v1';
+export const SIDECHAIN_ROTAMER_ENUMERATOR_METHOD = 'canonical-chi-grid-steric-prerank-v1';
 export const SIDECHAIN_ROTAMER_CHI_TOLERANCE_DEGREES = 0.001;
 
 // Standard heavy-atom chi definitions. Proline is deliberately absent because
@@ -402,6 +403,7 @@ export function enumerateSidechainRotamers({ molecule, residueAtomIndex,
   }));
   return {
     schema:SIDECHAIN_ROTAMER_SCHEMA,
+    method:SIDECHAIN_ROTAMER_ENUMERATOR_METHOD,
     residue:{ residueName, chain:selected.chain || 'A', residueIndex:selected.residueIndex,
       insertionCode:selected.insertionCode || '', atomIndices:residueIndices,
       sidechainAtomIndices:sidechainIndices },

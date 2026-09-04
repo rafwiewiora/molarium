@@ -10,6 +10,9 @@ import { MOLARIUM_CONSTRAINT_DOCK_PROTOCOL } from '../docking/protocol.mjs';
 import { AUDIT_STATE_HASH_GUARDS, actionScriptFromAudit } from '../design-history/replay.mjs';
 import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
+import { parseDiagnosticPhe890SeedChiDegrees,
+  diagnosticPhe890ProtocolFields, diagnosticPhe890SeedChiIdentity,
+  resolveDiagnosticPhe890Candidate } from './sos1-diagnostic-phe-selector.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -21,6 +24,12 @@ const valueFor = (name) => {
 const requestedStop = valueFor('--stop-after');
 const diagnosticPhe890CoordinateSha256 = valueFor(
   '--diagnostic-phe890-coordinate-sha256');
+const diagnosticPhe890SeedChiDegrees = parseDiagnosticPhe890SeedChiDegrees(valueFor(
+  '--diagnostic-phe890-seed-chi-degrees'));
+if (diagnosticPhe890CoordinateSha256 != null && diagnosticPhe890SeedChiDegrees != null)
+  throw new Error('Specify only one diagnostic Phe890 selector');
+const diagnosticPhe890 = diagnosticPhe890CoordinateSha256 != null
+  || diagnosticPhe890SeedChiDegrees != null;
 const relaxMethod = valueFor('--relax') || 'induced-fit-webgpu';
 const branchCount = Number(valueFor('--rotamer-branches') || 32);
 const branchSearchChains = Number(valueFor('--branch-search-chains') || 32);
@@ -44,10 +53,10 @@ if (!['auto','serial'].includes(poseExecution))
 if (diagnosticPhe890CoordinateSha256 != null
   && !/^[a-f0-9]{64}$/.test(diagnosticPhe890CoordinateSha256))
   throw new Error('--diagnostic-phe890-coordinate-sha256 must be a lowercase SHA-256 digest');
-if (diagnosticPhe890CoordinateSha256 != null
+if (diagnosticPhe890
   && !['open-phe890-pocket', 'finish-bay-293'].includes(requestedStop))
   throw new Error('A diagnostic Phe890 branch is non-promotable and requires --stop-after open-phe890-pocket or finish-bay-293');
-if (diagnosticPhe890CoordinateSha256 != null && valueFor('--output') == null)
+if (diagnosticPhe890 && valueFor('--output') == null)
   throw new Error('A diagnostic Phe890 branch requires an explicit --output directory');
 const stepIds = allSteps.slice(0, stopIndex + 1);
 const completeRouteRun = stepIds.length === allSteps.length;
@@ -290,12 +299,15 @@ async function choosePhe890Branch(stepId, { referenceLigand, hardAtomNames,
   changedLigandAtomIds, expectedProductHeavyBondCount } = {}) {
   let ensemble = await enumeratePhe890(stepId);
   const availableCandidates = uniqueSidechainRotamerCandidates(ensemble.candidates,
-    { maximum:diagnosticPhe890CoordinateSha256 == null ? branchCount : 32 });
-  const candidates = diagnosticPhe890CoordinateSha256 == null ? availableCandidates
-    : availableCandidates.filter((candidate) =>
-      candidate.coordinateSha256 === diagnosticPhe890CoordinateSha256);
-  if (diagnosticPhe890CoordinateSha256 != null && candidates.length !== 1)
-    throw new Error('The diagnostic Phe890 coordinate SHA-256 does not identify exactly one current candidate');
+    { maximum:diagnosticPhe890 ? 32 : branchCount });
+  const diagnosticCandidate = resolveDiagnosticPhe890Candidate({ ...ensemble,
+    candidates:availableCandidates }, {
+    coordinateSha256:diagnosticPhe890CoordinateSha256,
+    seedChiDegrees:diagnosticPhe890SeedChiDegrees,
+  });
+  const diagnosticSeedChiIdentity = diagnosticPhe890SeedChiDegrees == null ? null
+    : diagnosticPhe890SeedChiIdentity(ensemble, diagnosticPhe890SeedChiDegrees);
+  const candidates = diagnosticCandidate == null ? availableCandidates : [diagnosticCandidate];
   if (!candidates.length) throw new Error('Phe890 enumeration returned no candidates');
   const branches = [];
   for (let ordinal = 0; ordinal < candidates.length; ordinal++) {
@@ -307,6 +319,13 @@ async function choosePhe890Branch(stepId, { referenceLigand, hardAtomNames,
       expectedInputCoordinateSha256:ensemble.inputCoordinateSha256,
       expectedSelectedCoordinateSha256:candidate.coordinateSha256,
     }, `${stepId}-apply-phe890-branch-${candidate.rank}`);
+    const appliedSeedPocket = await execute('session.inspect', {
+      scope:'pocket', includeCoordinates:true, maximumAtoms:500,
+    }, `${stepId}-inspect-applied-phe890-seed-${candidate.rank}`);
+    const appliedSeedChiDegrees = measureInspectedSidechainChiAngles({
+      atoms:appliedSeedPocket.result.atoms, residue:PHE890,
+    });
+    assertSidechainChiAnglesReproduced(candidate.chiDegrees, appliedSeedChiDegrees);
     const receptorReference = await execute('pose.updateReceptorReference', {},
       `${stepId}-accept-receptor-branch-${candidate.rank}`);
     const refined = requireCompleteSeedCoverage(await executeGuarded('pose.refine', {
@@ -323,7 +342,7 @@ async function choosePhe890Branch(stepId, { referenceLigand, hardAtomNames,
     const relaxed = await executeGuarded('optimization.run', {
       method:'induced-fit-webgpu',
     }, `${stepId}-relax-phe890-branch-${candidate.rank}`);
-    if (diagnosticPhe890CoordinateSha256 != null)
+    if (diagnosticPhe890)
       requireAcceptedRelaxation(relaxed, `${stepId} diagnostic branch ${candidate.rank}`,
         expectedProductHeavyBondCount);
     const ligand = await execute('session.inspect', {
@@ -344,7 +363,7 @@ async function choosePhe890Branch(stepId, { referenceLigand, hardAtomNames,
     branches.push({
       candidateIndex:candidate.index, candidateRank:candidate.rank,
       source:candidate.source, chiDegrees:candidate.chiDegrees,
-      seedChiDegrees:candidate.chiDegrees, relaxedChiDegrees,
+      seedChiDegrees:candidate.chiDegrees, appliedSeedChiDegrees, relaxedChiDegrees,
       prerankScore:candidate.score, prerankStericPenalty:candidate.stericPenalty,
       prerankLigandStericPenalty:candidate.ligandStericPenalty,
       prerankSevereClashes:candidate.severeClashes,
@@ -366,26 +385,30 @@ async function choosePhe890Branch(stepId, { referenceLigand, hardAtomNames,
       },
       optimization:relaxed.result.optimization,
     });
-    if (diagnosticPhe890CoordinateSha256 != null) {
+    if (diagnosticPhe890) {
       const selected = branches[0];
+      const selectorLabel = diagnosticPhe890CoordinateSha256 != null
+        ? 'exact candidate coordinate SHA' : 'unique seed chi vector';
       return {
         schema:'molarium.sidechain-branch-decision/v1', residue:'PHE A890',
         coordinateInputClass:'registered-hit-only', branchCount:1,
         publicationEligible:false, diagnosticOnly:true,
         deterministicFinalReplayVerified:false,
-        diagnosticReason:'single exact-coordinate branch proxy; branch competition was not rerun',
+        diagnosticReason:`single ${selectorLabel} proxy; branch competition was not rerun`,
+        diagnosticSelector:diagnosticSeedChiIdentity,
         enumeration:{ inputCoordinateSha256:ensemble.inputCoordinateSha256,
           inputChiDegrees:ensemble.inputChiDegrees,
           generatedCandidateCount:ensemble.generatedCandidateCount,
           retainedCandidateCount:ensemble.candidates.length,
-          branchSampling:'one exact coordinate-SHA-selected candidate from the complete current enumeration' },
+          branchSampling:`one ${selectorLabel}-selected candidate from the complete current enumeration` },
         branches,
         selected:{ candidateIndex:selected.candidateIndex,
           candidateRank:selected.candidateRank, source:selected.source,
           chiDegrees:selected.chiDegrees, seedChiDegrees:selected.seedChiDegrees,
+          appliedSeedChiDegrees:selected.appliedSeedChiDegrees,
           relaxedChiDegrees:selected.relaxedChiDegrees,
           selectedCoordinateSha256:selected.selectedCoordinateSha256,
-          criterion:'diagnostic exact candidate coordinate SHA; non-promotable',
+          criterion:`diagnostic ${selectorLabel}; non-promotable`,
           receptorReference:selected.receptorReference,
           refinement:selected.refinement, parameterization:selected.parameterization,
           postRelaxation:selected.postRelaxation, optimization:selected.optimization },
@@ -503,6 +526,7 @@ try {
   const boundary = await execute('designRoute.inspect', {}, 'route-inspect-boundary');
   let previousFrozenLigand = null;
   let retainedPhe890ChiDegrees = null;
+  let diagnosticResolvedPhe890 = null;
 
   for (let stepIndex = 0; stepIndex < stepIds.length; stepIndex++) {
     const stepId = stepIds[stepIndex];
@@ -523,6 +547,13 @@ try {
       refinement = rotamerDecision.selected.refinement;
       parameterization = rotamerDecision.selected.parameterization;
       relaxation = rotamerDecision.selected.optimization;
+      if (diagnosticPhe890) diagnosticResolvedPhe890 = {
+        inputCoordinateSha256:rotamerDecision.enumeration.inputCoordinateSha256,
+        selectedCoordinateSha256:rotamerDecision.selected.selectedCoordinateSha256,
+        seedChiDegrees:rotamerDecision.selected.seedChiDegrees,
+        appliedSeedChiDegrees:rotamerDecision.selected.appliedSeedChiDegrees,
+        semanticIdentity:rotamerDecision.diagnosticSelector,
+      };
     } else {
       console.log(`${stepId}: fixed-receptor pose search`);
       const refined = requireCompleteSeedCoverage(await executeGuarded('pose.refine', {
@@ -598,7 +629,13 @@ try {
       filename, sha256:digest(bytes), bytes:bytes.length,
       ligandCoordinateSha256:coordinateDigest(ligand),
       pocketCoordinateSha256:coordinateDigest(pocket),
-      freezeActionSequence:pocket.sequence });
+      freezeActionSequence:pocket.sequence,
+      ...(rotamerDecision ? { rotamerSelection:{
+        inputCoordinateSha256:rotamerDecision.enumeration.inputCoordinateSha256,
+        selectedCoordinateSha256:rotamerDecision.selected.selectedCoordinateSha256,
+        seedChiDegrees:rotamerDecision.selected.seedChiDegrees,
+        appliedSeedChiDegrees:rotamerDecision.selected.appliedSeedChiDegrees,
+      } } : {}) });
     previousFrozenLigand = structuredClone(ligand.result);
     console.log(`${stepId}: frozen ${digest(bytes).slice(0, 12)}`);
 
@@ -620,9 +657,9 @@ try {
   const manifest = {
     schema:'molarium.design-prediction-run/v1',
     routeId:'sos1-hit-only',
-    status:completeRouteRun && diagnosticPhe890CoordinateSha256 == null && relaxMethod !== 'none'
+    status:completeRouteRun && !diagnosticPhe890 && relaxMethod !== 'none'
       ? 'predictions-frozen-holdouts-unopened' : 'diagnostic-non-promotable',
-    publicationEligible:completeRouteRun && diagnosticPhe890CoordinateSha256 == null
+    publicationEligible:completeRouteRun && !diagnosticPhe890
       && relaxMethod !== 'none',
     protocol:{ initialCoordinateInput:'PDB 5OVE/AXE only',
       sequentialPredictedReferences:true, relaxMethod,
@@ -634,8 +671,16 @@ try {
         finalPoseSearchChains:branchSearchChains,
         featureSeedingProtocol:'v5',
         criterion:COUPLED_SIDECHAIN_POSE_SELECTION_CRITERION,
-        diagnosticExactCoordinateSha256:diagnosticPhe890CoordinateSha256 || null,
-        diagnosticOnly:diagnosticPhe890CoordinateSha256 != null } },
+        ...diagnosticPhe890ProtocolFields({
+          coordinateSha256:diagnosticPhe890CoordinateSha256,
+          seedChiDegrees:diagnosticPhe890SeedChiDegrees,
+          resolved:diagnosticResolvedPhe890,
+        }),
+        diagnosticOrigin:diagnosticPhe890SeedChiDegrees == null ? null : {
+          priorRunnerCommit:'b9e0d2ca446e352ff6e69e0130330aa38e331d1b',
+          priorCoordinateSha256:'d71e8fd1de31afb49c7bc54509f18cf59aa21b45e21cc51ee6a6f888e6fd2669',
+          purpose:'reselect the same preregistered canonical seed-chi basin after the preceding coordinate state changed' },
+        } },
     checkpoints,
     agentApi:{ schema:description.schema, actions:Object.keys(description.actions),
       auditRecords:audit.length, auditSha256:digest(auditBytes),

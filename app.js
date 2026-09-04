@@ -8168,6 +8168,7 @@ async function dockingPoseStateSha256(result, pose) {
 function sidechainRotamerPublicResult(ensemble) {
   return {
     schema:ensemble.schema,
+    method:ensemble.method,
     inputCoordinateSha256:ensemble.inputCoordinateSha256,
     receptorAtomId:ensemble.receptorAtomId,
     residue:structuredClone(ensemble.residue),
@@ -8306,7 +8307,7 @@ async function applyCurrentSidechainRotamer(selector, {
   }
   const application = {
     schema:'molarium.sidechain-rotamer-application/v1',
-    method:'canonical-chi-grid-steric-prerank-v1',
+    method:ensemble.method,
     residue:structuredClone(ensemble.residue), receptorAtomId:ensemble.receptorAtomId,
     inputCoordinateSha256:ensemble.inputCoordinateSha256,
     selectedCoordinateSha256:candidate.coordinateSha256,

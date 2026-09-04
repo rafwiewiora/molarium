@@ -31,6 +31,7 @@ const inspectedResidue = (source = molecule.atoms.slice(0, 11)) => source.map((e
 const ensemble = enumerateSidechainRotamers({ molecule, residueAtomIndex:6,
   ligandAtomIndices:[11], maximumCandidates:32 });
 assert.equal(ensemble.schema, SIDECHAIN_ROTAMER_SCHEMA);
+assert.equal(ensemble.method, 'canonical-chi-grid-steric-prerank-v1');
 assert.equal(ensemble.residue.residueName, 'PHE');
 assert.deepEqual(ensemble.axes.map((entry) => entry.chi), ['chi1','chi2']);
 assert(ensemble.candidates.length >= 8);
