@@ -76,7 +76,9 @@ function digest(value, label) {
 
 async function checkpointMove(checkpoint, index) {
   const startingHit = checkpoint?.registeredStartingHit === true;
-  if (!startingHit && checkpoint?.completeFrozenPrediction !== true)
+  const prospectiveIntermediate = checkpoint?.prospectiveIntermediate === true;
+  if ([startingHit, prospectiveIntermediate,
+    checkpoint?.completeFrozenPrediction === true].filter(Boolean).length !== 1)
     throw new Error(`Checkpoint ${index + 1} is not from a complete frozen prediction run`);
   if (startingHit && checkpoint?.exactHistoryPrefix !== true)
     throw new Error(`Checkpoint ${index + 1} starting hit is not an exact campaign history prefix`);
@@ -102,9 +104,11 @@ async function checkpointMove(checkpoint, index) {
         `Checkpoint ${index + 1} label`)}`,
       ...(index > 0 ? { expect:{ 'campaignImport.viewPreserved':true } } : {}),
       review:{ schema:FROZEN_CHECKPOINT_REVIEW_SCHEMA,
-        sourceStatus:startingHit ? 'registered-starting-hit' : 'complete-frozen-prediction',
+        sourceStatus:startingHit ? 'registered-starting-hit' : prospectiveIntermediate
+          ? 'prospective-intermediate-checkpoint' : 'complete-frozen-prediction',
         immutableSnapshot:true, ...(startingHit ? { registeredStartingHit:true,
-          exactHistoryPrefix:true } : {}),
+          exactHistoryPrefix:true } : {}), ...(prospectiveIntermediate
+          ? { prospectiveIntermediate:true } : {}),
         promotable:false, calculationPolicy:'none', holdoutCoordinatesIncluded:false,
         checkpointSha256, campaignSha256,
         campaignId:text(checkpoint.campaignId, `Checkpoint ${index + 1} campaignId`),
@@ -133,9 +137,11 @@ async function checkpointMove(checkpoint, index) {
     caption:`Review ${label}`,
     ...(index > 0 ? { expect:{ 'campaignImport.viewPreserved':true } } : {}),
     review:{ schema:FROZEN_CHECKPOINT_REVIEW_SCHEMA,
-      sourceStatus:startingHit ? 'registered-starting-hit' : 'complete-frozen-prediction',
+      sourceStatus:startingHit ? 'registered-starting-hit' : prospectiveIntermediate
+        ? 'prospective-intermediate-checkpoint' : 'complete-frozen-prediction',
       immutableSnapshot:true, ...(startingHit ? { registeredStartingHit:true,
-        exactHistoryPrefix:true } : {}),
+        exactHistoryPrefix:true } : {}), ...(prospectiveIntermediate
+        ? { prospectiveIntermediate:true } : {}),
       promotable:false, calculationPolicy:'none', holdoutCoordinatesIncluded:false,
       checkpointSha256, campaignSha256, campaignId:campaign.campaignId,
       branch, commitId, snapshotId } };

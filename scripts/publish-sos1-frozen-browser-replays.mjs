@@ -9,7 +9,8 @@ import { exactCampaignHistoryPrefix, frozenCheckpointReviewScript } from
 import { serializeCampaign } from '../design-history/live-campaign-store.mjs';
 import { actionScriptSha256 } from '../design-history/replay.mjs';
 import { buildFrozenSos1ReplayScript, requireExplicitRunDirectory, sha256,
-  SOS1_STEP_IDS, verifyCompleteFrozenSos1Run } from './sos1-accepted-run.mjs';
+  SOS1_INTERMEDIATE_CHECKPOINT_IDS, SOS1_STEP_IDS,
+  verifyCompleteFrozenSos1Run } from './sos1-accepted-run.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const SOS1_PREDICTION_REPLAY =
@@ -48,6 +49,20 @@ function reviewCheckpoint(verified, stepId) {
     snapshotId:fullSystem.record.snapshotId, label:`${stepId} prediction checkpoint` };
 }
 
+function intermediateReviewCheckpoint(fullSystem) {
+  const stageId = fullSystem.record.stageId;
+  return { prospectiveIntermediate:true, frozenBeforeHoldoutAccess:true,
+    checkpointSha256:fullSystem.record.snapshotId.replace(/^snapshot:/, ''),
+    campaignSha256:fullSystem.record.sha256,
+    campaignPath:`./${SOS1_PREDICTION_CAMPAIGN_DIRECTORY}/${stageId}-campaign.json`,
+    campaignId:fullSystem.record.campaignId,
+    branch:fullSystem.record.branch, commitId:fullSystem.record.commitId,
+    snapshotId:fullSystem.record.snapshotId,
+    label:stageId === 'compound-21-graph-edit-before-phe890-rotamer'
+      ? 'compound 21 graph edit before Phe890 movement'
+      : 'selected Phe890-out branch before ligand refinement' };
+}
+
 async function startingHitReviewRecord(verified) {
   const scaffold = verified.checkpoints.get('scaffold-rewrite')?.fullSystemCampaign;
   assert(scaffold, 'scaffold-rewrite full-system campaign is unavailable');
@@ -78,21 +93,28 @@ async function startingHitReviewRecord(verified) {
   });
 }
 
-export const SOS1_CHECKPOINT_GRANULARITY = Object.freeze({
-  schema:'molarium.checkpoint-review-granularity/v1',
-  startingHitIncluded:true,
-  startingHitSource:'exact scaffold-rewrite campaign history prefix',
-  syntheticCoordinatesUsed:false,
-  independentlyCommittedStates:Object.freeze([
-    'registered-starting-hit', 'scaffold-rewrite', 'fragment-merge',
-    'open-phe890-pocket', 'finish-bay-293',
-  ]),
-  unavailableIndependentStates:Object.freeze([
-    'compound-21-graph-edit-before-phe890-rotamer',
-    'phe890-rotamer-before-coupled-relaxation',
-  ]),
-  limitation:'The source run did not commit separate full-system snapshots between compound-21 graph editing, Phe890 rotamer application, and coupled relaxation. The calculation-free review therefore keeps those operations in their single exact open-phe890-pocket checkpoint and does not synthesize intermediate coordinates.',
-});
+function checkpointGranularity(intermediateIds = []) {
+  const available = SOS1_INTERMEDIATE_CHECKPOINT_IDS.filter((id) =>
+    intermediateIds.includes(id));
+  const unavailable = SOS1_INTERMEDIATE_CHECKPOINT_IDS.filter((id) =>
+    !available.includes(id));
+  return Object.freeze({
+    schema:'molarium.checkpoint-review-granularity/v1',
+    startingHitIncluded:true,
+    startingHitSource:'exact scaffold-rewrite campaign history prefix',
+    syntheticCoordinatesUsed:false,
+    independentlyCommittedStates:Object.freeze([
+      'registered-starting-hit', 'scaffold-rewrite', 'fragment-merge',
+      ...available, 'open-phe890-pocket', 'finish-bay-293',
+    ]),
+    unavailableIndependentStates:Object.freeze(unavailable),
+    limitation:unavailable.length
+      ? 'The source run did not commit every requested pre-refinement full-system state. The calculation-free review exposes only exact commits and never synthesizes coordinates.'
+      : 'Every displayed state is an exact, pre-holdout full-system campaign commit; no coordinates were synthesized.',
+  });
+}
+
+export const SOS1_CHECKPOINT_GRANULARITY = checkpointGranularity();
 
 export async function buildFrozenBrowserPublicationRecords(verified,
   { sourceRunDirectory = null } = {}) {
@@ -102,18 +124,30 @@ export async function buildFrozenBrowserPublicationRecords(verified,
   const replayBytes = jsonBytes(replay.script);
   const postFreezeEvaluation = evaluationOutcome(verified);
   const startingHit = await startingHitReviewRecord(verified);
+  const intermediateCampaigns = verified.checkpoints.get('open-phe890-pocket')
+    ?.intermediateFullSystemCampaigns || [];
+  const intermediateIds = intermediateCampaigns.map((entry) => entry.record.stageId);
+  const reviewCheckpoints = [startingHit.checkpoint,
+    reviewCheckpoint(verified, 'scaffold-rewrite'),
+    reviewCheckpoint(verified, 'fragment-merge'),
+    ...intermediateCampaigns.map(intermediateReviewCheckpoint),
+    reviewCheckpoint(verified, 'open-phe890-pocket'),
+    reviewCheckpoint(verified, 'finish-bay-293')];
   const review = await frozenCheckpointReviewScript({
     label:`SOS1 prediction checkpoint review ${verified.runId}`,
-    checkpoints:[startingHit.checkpoint,
-      ...SOS1_STEP_IDS.map((stepId) => reviewCheckpoint(verified, stepId))],
-    postFreezeEvaluation, coordinateGranularity:SOS1_CHECKPOINT_GRANULARITY,
+    checkpoints:reviewCheckpoints,
+    postFreezeEvaluation, coordinateGranularity:checkpointGranularity(intermediateIds),
   });
   const reviewBytes = jsonBytes(review);
   const campaignAssets = [startingHit.asset, ...SOS1_STEP_IDS.map((stepId) => {
     const fullSystem = verified.checkpoints.get(stepId).fullSystemCampaign;
     return { stepId, path:`${SOS1_PREDICTION_CAMPAIGN_DIRECTORY}/${stepId}-campaign.json`,
       sha256:fullSystem.record.sha256, bytes:fullSystem.campaignBytes };
-  })];
+  }), ...intermediateCampaigns.map((fullSystem) => ({
+    stepId:fullSystem.record.stageId,
+    path:`${SOS1_PREDICTION_CAMPAIGN_DIRECTORY}/${fullSystem.record.stageId}-campaign.json`,
+    sha256:fullSystem.record.sha256, bytes:fullSystem.campaignBytes,
+  }))];
   const declaration = {
     schema:'molarium.sos1-frozen-browser-publication/v1',
     routeId:'sos1-hit-only', publicationClass:'complete-frozen-prediction',
@@ -125,7 +159,11 @@ export async function buildFrozenBrowserPublicationRecords(verified,
         sha256:verified.checkpoints.get(stepId).entry.sha256,
         fullSystemCampaignSha256:
           verified.checkpoints.get(stepId).fullSystemCampaign.record.sha256,
-        publishedCampaignPath:campaignAssets.find((asset) => asset.stepId === stepId).path })) },
+        publishedCampaignPath:campaignAssets.find((asset) => asset.stepId === stepId).path })),
+      intermediateCheckpoints:intermediateCampaigns.map((entry) => ({
+        stageId:entry.record.stageId, sha256:entry.record.sha256,
+        publishedCampaignPath:campaignAssets.find((asset) =>
+          asset.stepId === entry.record.stageId).path })) },
     postFreezeEvaluation,
     executableReplay:{ path:SOS1_PREDICTION_REPLAY, sha256:sha256(replayBytes),
       actionScriptSha256:await actionScriptSha256(replay.script),

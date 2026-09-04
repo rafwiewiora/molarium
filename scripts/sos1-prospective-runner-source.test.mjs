@@ -43,6 +43,27 @@ assert.match(source, /await execute\('campaign\.export'/,
   'every full-system checkpoint must export a publicly resumable campaign');
 assert.match(source, /fullSystemCampaign:campaignRecord/,
   'coordinate checkpoints must pin their full-system campaign snapshot');
+const graphEditCommit = source.indexOf(
+  "stageId:'compound-21-graph-edit-before-phe890-rotamer'");
+const selectedRotamerCommit = source.indexOf(
+  "stageId:'phe890-rotamer-before-coupled-relaxation'");
+const stagedGraph = source.indexOf("const staged = await execute('designRoute.applyStep'");
+const branchSearch = source.indexOf('rotamerDecision = await choosePhe890Branch');
+const selectedRotamerApply = source.indexOf("`${stepId}-apply-selected-phe890-branch`");
+const selectedCommitCallback = source.indexOf('await onSelectedRotamerApplied',
+  selectedRotamerApply);
+const selectedPoseRefinement = source.indexOf("`${stepId}-pose-selected-phe890-branch`",
+  selectedRotamerApply);
+assert(graphEditCommit > stagedGraph && graphEditCommit < branchSearch,
+  'compound-21 graph coordinates must be committed after the edit and before branch search');
+assert(selectedRotamerCommit > source.indexOf('onSelectedRotamerApplied:async () =>'),
+  'the selected-rotamer callback must create its exact campaign checkpoint');
+assert(selectedRotamerApply < selectedCommitCallback
+  && selectedCommitCallback < selectedPoseRefinement,
+  'selected Phe890 coordinates must be committed before ligand refinement');
+assert.match(source,
+  /intermediateFullSystemCheckpoints:\[\s*'compound-21-graph-edit-before-phe890-rotamer',\s*'phe890-rotamer-before-coupled-relaxation'/,
+  'the production manifest must declare both ordered pre-refinement checkpoints');
 assert.match(source, /Phe890 left the selected predecessor rotamer basin/,
   'final checkpoint must retain and remeasure the prospective Phe890 state');
 assert(!source.includes('window.molariumTest'));

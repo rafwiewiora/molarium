@@ -53,6 +53,15 @@ assert.equal((await frozenCheckpointReviewScript({ label:'Starting hit review', 
   exactHistoryPrefix:true,
 }], postFreezeEvaluation:{ summarySha256:'a'.repeat(64) } })).actions[0]
   .review.sourceStatus, 'registered-starting-hit');
+const intermediate = await frozenCheckpointReviewScript({
+  label:'Prospective intermediate review', checkpoints:[{
+    ...checkpoints[0], completeFrozenPrediction:undefined,
+    prospectiveIntermediate:true,
+  }], postFreezeEvaluation:{ summarySha256:'a'.repeat(64) } });
+assert.equal(intermediate.actions[0].review.sourceStatus,
+  'prospective-intermediate-checkpoint');
+assert.equal(intermediate.actions[0].review.prospectiveIntermediate, true);
+assert.equal(intermediate.actions[0].review.immutableSnapshot, true);
 await assert.rejects(() => frozenCheckpointReviewScript({ label:'Synthetic starting hit',
   checkpoints:[{ ...checkpoints[0], completeFrozenPrediction:undefined,
     registeredStartingHit:true, exactHistoryPrefix:false }],

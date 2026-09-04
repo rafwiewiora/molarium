@@ -12,6 +12,10 @@ export const SOS1_ROUTE_ID = 'sos1-hit-only';
 export const SOS1_STEP_IDS = Object.freeze([
   'scaffold-rewrite', 'fragment-merge', 'open-phe890-pocket', 'finish-bay-293',
 ]);
+export const SOS1_INTERMEDIATE_CHECKPOINT_IDS = Object.freeze([
+  'compound-21-graph-edit-before-phe890-rotamer',
+  'phe890-rotamer-before-coupled-relaxation',
+]);
 const HOLDOUT_IDS = Object.freeze(['5OVF', '5OVG', '5OVH', '5OVI']);
 
 export function sha256(bytes) {
@@ -190,6 +194,39 @@ function assertReplayContainsNoCoordinatesOrHoldouts(script) {
   visit(script);
 }
 
+async function verifiedFullSystemCampaign(directory, campaignRecord, label) {
+  assert(campaignRecord && campaignRecord.schema === 'molarium.full-system-checkpoint/v1',
+    `${label}: exact full-system campaign record is missing`);
+  if (SOS1_INTERMEDIATE_CHECKPOINT_IDS.includes(campaignRecord.stageId))
+    assert.equal(campaignRecord.frozenBeforeHoldoutAccess, true,
+      `${label}: intermediate campaign was not frozen before holdout access`);
+  assert.equal(basename(campaignRecord.filename), campaignRecord.filename,
+    `${label}: full-system campaign filename is not local to the run`);
+  const campaignBytes = await readFile(join(directory, campaignRecord.filename));
+  assert.equal(campaignBytes.length, campaignRecord.bytes,
+    `${label}: full-system campaign byte count changed`);
+  assert.equal(sha256(campaignBytes), campaignRecord.sha256,
+    `${label}: full-system campaign changed`);
+  const serializedCampaign = campaignBytes.toString('utf8');
+  const campaign = deserializeCampaign(serializedCampaign);
+  assert.equal(serializeCampaign(campaign), serializedCampaign,
+    `${label}: full-system campaign is not canonically serialized`);
+  const campaignVerification = await verifyCampaign(campaign);
+  assert.equal(campaignVerification.valid, true,
+    `${label}: full-system campaign is invalid: ${campaignVerification.reason}`);
+  assert.equal(campaign.campaignId, campaignRecord.campaignId,
+    `${label}: full-system campaign ID changed`);
+  assert.equal(campaign.branches?.[campaignRecord.branch], campaignRecord.commitId,
+    `${label}: full-system campaign branch head changed`);
+  assert.equal(campaign.objects?.commits?.[campaignRecord.commitId]?.snapshotId,
+    campaignRecord.snapshotId,
+    `${label}: full-system campaign commit does not select its frozen snapshot`);
+  assert(campaign.objects?.snapshots?.[campaignRecord.snapshotId],
+    `${label}: full-system campaign snapshot is missing`);
+  assertNoHoldoutCoordinatePayload(campaign, `${label} full-system campaign`);
+  return { record:campaignRecord, campaign, campaignBytes, serializedCampaign };
+}
+
 /**
  * Verify the immutable pre-freeze evidence and the independent post-freeze
  * acceptance verdict before a run may feed any public replay or movie asset.
@@ -269,6 +306,12 @@ export async function verifyCompleteFrozenSos1Run(runDirectory) {
   'one or more SOS1 holdout evaluation records are incomplete');
   assert.deepEqual(manifest.checkpoints?.map((entry) => entry.stepId), SOS1_STEP_IDS,
     'prediction manifest is not the complete SOS1 route');
+  const intermediateCheckpointIds = manifest.intermediateFullSystemCheckpoints || [];
+  assert(Array.isArray(intermediateCheckpointIds),
+    'intermediateFullSystemCheckpoints must be an ordered array');
+  if (intermediateCheckpointIds.length)
+    assert.deepEqual(intermediateCheckpointIds, SOS1_INTERMEDIATE_CHECKPOINT_IDS,
+      'production intermediate full-system checkpoint contract changed');
 
   const checkpoints = new Map();
   for (const entry of manifest.checkpoints) {
@@ -293,37 +336,28 @@ export async function verifyCompleteFrozenSos1Run(runDirectory) {
     assertAcceptedCheckpointRelaxation(checkpoint, entry.stepId);
     assertNoHoldoutCoordinatePayload(checkpoint, `${entry.stepId} checkpoint`);
     const campaignRecord = checkpoint.fullSystemCampaign;
-    assert(campaignRecord && campaignRecord.schema === 'molarium.full-system-checkpoint/v1',
-      `${entry.stepId}: exact full-system campaign record is missing`);
     assert.deepEqual(entry.fullSystemCampaign, campaignRecord,
       `${entry.stepId}: manifest and checkpoint full-system campaign records differ`);
-    assert.equal(basename(campaignRecord.filename), campaignRecord.filename,
-      `${entry.stepId}: full-system campaign filename is not local to the run`);
-    const campaignBytes = await readFile(join(directory, campaignRecord.filename));
-    assert.equal(campaignBytes.length, campaignRecord.bytes,
-      `${entry.stepId}: full-system campaign byte count changed`);
-    assert.equal(sha256(campaignBytes), campaignRecord.sha256,
-      `${entry.stepId}: full-system campaign changed`);
-    const serializedCampaign = campaignBytes.toString('utf8');
-    const campaign = deserializeCampaign(serializedCampaign);
-    assert.equal(serializeCampaign(campaign), serializedCampaign,
-      `${entry.stepId}: full-system campaign is not canonically serialized`);
-    const campaignVerification = await verifyCampaign(campaign);
-    assert.equal(campaignVerification.valid, true,
-      `${entry.stepId}: full-system campaign is invalid: ${campaignVerification.reason}`);
-    assert.equal(campaign.campaignId, campaignRecord.campaignId,
-      `${entry.stepId}: full-system campaign ID changed`);
-    assert.equal(campaign.branches?.[campaignRecord.branch], campaignRecord.commitId,
-      `${entry.stepId}: full-system campaign branch head changed`);
-    assert.equal(campaign.objects?.commits?.[campaignRecord.commitId]?.snapshotId,
-      campaignRecord.snapshotId,
-      `${entry.stepId}: full-system campaign commit does not select its frozen snapshot`);
-    assert(campaign.objects?.snapshots?.[campaignRecord.snapshotId],
-      `${entry.stepId}: full-system campaign snapshot is missing`);
-    assertNoHoldoutCoordinatePayload(campaign, `${entry.stepId} full-system campaign`);
+    const fullSystemCampaign = await verifiedFullSystemCampaign(directory,
+      campaignRecord, entry.stepId);
+    const intermediateRecords = checkpoint.intermediateFullSystemCampaigns || [];
+    assert.deepEqual(entry.intermediateFullSystemCampaigns || [], intermediateRecords,
+      `${entry.stepId}: manifest and checkpoint intermediate campaigns differ`);
+    if (entry.stepId === 'open-phe890-pocket' && intermediateCheckpointIds.length)
+      assert.deepEqual(intermediateRecords.map((record) => record.stageId),
+        intermediateCheckpointIds,
+      `${entry.stepId}: exact intermediate campaign order changed`);
+    else assert.equal(intermediateRecords.length, 0,
+      `${entry.stepId}: undeclared intermediate full-system campaigns are present`);
+    const intermediateFullSystemCampaigns = [];
+    for (const record of intermediateRecords) {
+      assert.equal(record.frozenBeforeHoldoutAccess, true,
+        `${record.stageId}: intermediate campaign was not frozen prospectively`);
+      intermediateFullSystemCampaigns.push(await verifiedFullSystemCampaign(directory,
+        record, record.stageId));
+    }
     checkpoints.set(entry.stepId, { entry, checkpoint, bytes,
-      fullSystemCampaign:{ record:campaignRecord, campaign, campaignBytes,
-        serializedCampaign } });
+      fullSystemCampaign, intermediateFullSystemCampaigns });
   }
   const branchDecision = checkpoints.get('open-phe890-pocket')?.checkpoint?.rotamerDecision;
   assert.equal(branchDecision?.publicationEligible, true,
@@ -367,7 +401,15 @@ function publicationReplayRecords(audit) {
     ? audit.records.filter((record) => record.sequence <= maximum) : audit.records;
   assert(candidates.every((record) => record.retryProvenance?.publicationReplay !== false),
     'executable replay selection includes a non-replay recovery action');
-  return candidates.filter(selectedRouteRecord);
+  const selected = candidates.filter(selectedRouteRecord);
+  let presentedMode = null;
+  return selected.filter((record) => {
+    if (record.action !== 'view.setMode') return true;
+    const mode = String(record.args?.mode || '');
+    if (mode === presentedMode) return false;
+    presentedMode = mode;
+    return true;
+  });
 }
 
 function captionForRecord(record) {

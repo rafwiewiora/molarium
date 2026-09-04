@@ -149,6 +149,8 @@ try {
   for (const stepId of steps) {
     push(`${stepId}-stage`, 'designRoute.applyStep', { stepId });
     if (stepId === 'open-phe890-pocket') {
+      for (let retry = 1; retry <= 3; retry++)
+        push(`${stepId}-return-build-${retry}`, 'view.setMode', { mode:'build' });
       push(`${stepId}-enumerate-phe890-initial`, 'pose.enumerateSidechainRotamers',
         { receptorAtomId:'receptor:PHE:890:CG', maximumCandidates:32 });
       push(`${stepId}-apply-phe890-branch-1`, 'pose.applySidechainRotamer',
@@ -184,6 +186,7 @@ try {
       title:`Full system ${stepId}`, createdAt:occurredAt,
       actors:[{ id:'agent.test', type:'agent', displayName:'Test agent' }] });
     let parentCommitId = null;
+    const intermediateFullSystemCampaigns = [];
     if (stepId === 'scaffold-rewrite') {
       const startingSnapshotId = await storeSnapshot(campaign, { label:'5OVE · registered hit',
         graph:{ atoms:[
@@ -196,6 +199,40 @@ try {
       parentCommitId = await commitMolecule(campaign, { snapshotId:startingSnapshotId,
         parents:[], branch:'main', message:'Capture the prepared 5OVE/AXE coordinate boundary',
         actorId:'agent.test', occurredAt, tags:[] });
+    }
+    if (stepId === 'open-phe890-pocket') {
+      for (const [stageOffset, stageId] of [
+        [0, 'compound-21-graph-edit-before-phe890-rotamer'],
+        [1, 'phe890-rotamer-before-coupled-relaxation'],
+      ]) {
+        const stageSnapshotId = await storeSnapshot(campaign, { label:stageId,
+          graph:{ atoms:[
+            { atomId:'a1', element:'C', formalCharge:0, record:'HETATM', atomName:'C1',
+              residueName:'LIG', chain:'L', residueIndex:1 },
+            { atomId:'a2', element:'N', formalCharge:0, record:'HETATM', atomName:'N1',
+              residueName:'LIG', chain:'L', residueIndex:1 },
+            { atomId:'receptor:PHE:890:CG', element:'C', formalCharge:0, record:'ATOM',
+              atomName:'CG', residueName:'PHE', chain:'A', residueIndex:890 },
+          ], bonds:[{ atomIds:['a1','a2'], order:1 }] }, coordinates:{ unit:'angstrom',
+            atomIds:['a1','a2','receptor:PHE:890:CG'],
+            positions:[[index,0,0],[index + 1.4,0,0],[0,index + 1 + stageOffset,0]] } });
+        const stageCommitId = await commitMolecule(campaign, { snapshotId:stageSnapshotId,
+          parents:parentCommitId ? [parentCommitId] : [], branch:'main',
+          message:`Freeze ${stageId}`, actorId:'agent.test', occurredAt,
+          tags:['pre-holdout','pre-refinement'] });
+        parentCommitId = stageCommitId;
+        const stageCampaignBytes = Buffer.from(serializeCampaign(campaign));
+        const stageFilename = `${stageId}-campaign.json`;
+        await writeFile(join(scratch, stageFilename), stageCampaignBytes);
+        intermediateFullSystemCampaigns.push({
+          schema:'molarium.full-system-checkpoint/v1', stageId,
+          frozenBeforeHoldoutAccess:true,
+          campaignId:campaign.campaignId, branch:'main', commitId:stageCommitId,
+          snapshotId:stageSnapshotId, filename:stageFilename,
+          sha256:sha256(stageCampaignBytes), bytes:stageCampaignBytes.length,
+          commitActionSequence:1, exportActionSequence:2, verification:{ valid:true },
+        });
+      }
     }
     const snapshotId = await storeSnapshot(campaign, { label:stepId, graph:{ atoms:[
       { atomId:'a1', element:'C', formalCharge:0, record:'HETATM', atomName:'C1',
@@ -227,6 +264,7 @@ try {
         publicationEligible:true, diagnosticOnly:false,
         deterministicFinalReplayVerified:true } } : {}),
       staging:{ productHeavyGraph, poseTransferPlan:{ featureCorrespondences:[] } },
+      intermediateFullSystemCampaigns,
       fullSystemCampaign,
       ligand:{ ...inspectedLigand, atoms:inspectedLigand.atoms.map((atom, atomIndex) => ({
         ...atom, coordinatesAngstrom:[index + atomIndex * 1.4, 0, 0],
@@ -237,10 +275,15 @@ try {
     await writeFile(join(scratch, filename), bytes);
     checkpoints.push({ stepId, predictedStateId:['AWT','AWZ','AWW','AXH'][index],
       filename, sha256:sha256(bytes), freezeActionSequence:freezeSequences.get(stepId),
+      intermediateFullSystemCampaigns,
       fullSystemCampaign });
   }
   const manifest = { schema:'molarium.design-prediction-run/v1', routeId:'sos1-hit-only',
-    status:'predictions-frozen-holdouts-unopened', publicationEligible:true, protocol:{
+    status:'predictions-frozen-holdouts-unopened', publicationEligible:true,
+    intermediateFullSystemCheckpoints:[
+      'compound-21-graph-edit-before-phe890-rotamer',
+      'phe890-rotamer-before-coupled-relaxation',
+    ], protocol:{
       initialCoordinateInput:'PDB 5OVE/AXE only', sequentialPredictedReferences:true,
       phe890Branching:{ diagnosticOnly:false, diagnosticExactCoordinateSha256:null } },
     checkpoints, agentApi:{ auditSha256:sha256(auditBytes), auditRecords:records.length } };
@@ -274,6 +317,9 @@ try {
     step.action === 'designRoute.applyStep').map((step) => step.args.stepId), steps);
   assert.equal(replay.script.actions.filter((step) =>
     step.action === 'pose.applySidechainRotamer').length, 1);
+  assert.deepEqual(replay.script.actions.filter((step) => step.action === 'view.setMode')
+    .map((step) => step.args.mode), ['build'],
+  'presentation replay must collapse duplicate successful same-mode retry bookkeeping');
   assert.equal(replay.script.actions.filter((step) => step.action === 'session.inspect'
     && step.args.scope === 'pocket' && step.args.includeCoordinates === true).length, steps.length);
   assert(!JSON.stringify(replay.script).includes('discarded'));
@@ -315,25 +361,45 @@ try {
     ['finish-bay-293']);
   assert(browserPublication.reviewBytes.length < 1024 * 1024,
     'checkpoint review must not inline full-system campaigns');
-  assert.equal(browserPublication.review.actions.length, steps.length + 1,
-    'checkpoint review must include the exact prepared starting hit before predictions');
+  assert.equal(browserPublication.review.actions.length, steps.length + 3,
+    'checkpoint review must include the starting hit and both exact pre-refinement states');
   assert.equal(browserPublication.review.actions[0].review.registeredStartingHit, true);
   assert.equal(browserPublication.review.actions[0].review.exactHistoryPrefix, true);
   assert.equal(browserPublication.review.provenance.coordinateGranularity
     .syntheticCoordinatesUsed, false);
   assert.deepEqual(browserPublication.review.provenance.coordinateGranularity
-    .unavailableIndependentStates, [
+    .unavailableIndependentStates, [],
+    'all declared pre-refinement states must be independently reviewable');
+  assert.deepEqual(browserPublication.review.provenance.coordinateGranularity
+    .independentlyCommittedStates, [
+      'registered-starting-hit', 'scaffold-rewrite', 'fragment-merge',
       'compound-21-graph-edit-before-phe890-rotamer',
       'phe890-rotamer-before-coupled-relaxation',
-    ], 'the review must disclose that graph-edit and Phe890 pre-relax states were not committed');
+      'open-phe890-pocket', 'finish-bay-293',
+    ]);
+  assert.deepEqual(browserPublication.review.actions.map((step) => step.caption), [
+    'Review the exact prepared 5OVE/AXE starting hit',
+    'Review scaffold-rewrite prediction checkpoint',
+    'Review fragment-merge prediction checkpoint',
+    'Review compound 21 graph edit before Phe890 movement',
+    'Review selected Phe890-out branch before ligand refinement',
+    'Review open-phe890-pocket prediction checkpoint',
+    'Review finish-bay-293 prediction checkpoint',
+  ]);
   assert(browserPublication.review.actions.every((step) =>
     step.action === 'campaign.import' && step.args.serialized == null
     && /^[a-f0-9]{64}$/.test(step.args.sourceSha256)
     && /^\.\/design-history\/publications\/sos1\/checkpoints\//
       .test(step.args.sourcePath)));
-  assert.deepEqual(browserPublication.campaignAssets.slice(1).map((asset) => asset.sha256),
+  assert.deepEqual(browserPublication.campaignAssets.slice(1, steps.length + 1)
+    .map((asset) => asset.sha256),
     steps.map((stepId) => completeFrozen.checkpoints.get(stepId)
       .fullSystemCampaign.record.sha256));
+  assert.deepEqual(browserPublication.campaignAssets.slice(steps.length + 1)
+    .map((asset) => asset.stepId), [
+      'compound-21-graph-edit-before-phe890-rotamer',
+      'phe890-rotamer-before-coupled-relaxation',
+    ]);
   const startingAsset = browserPublication.campaignAssets[0];
   assert.equal(startingAsset.stepId, 'starting-hit');
   const startingCampaign = JSON.parse(startingAsset.bytes);

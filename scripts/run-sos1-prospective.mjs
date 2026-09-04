@@ -75,6 +75,33 @@ const execute = (action, actionArgs = {}, requestId = action) => browser.evaluat
   })})`);
 const checkpoints = [];
 
+async function commitFullSystemCampaignState({ stageId, filename, message, label,
+  tags, requestPrefix }) {
+  const campaignCommit = await execute('campaign.commitCurrent', {
+    message, label, tags,
+  }, `${requestPrefix}-commit-full-system`);
+  const campaignVerification = await execute('campaign.verify', {},
+    `${requestPrefix}-verify-full-system`);
+  if (campaignVerification.result.campaignVerification?.valid !== true)
+    throw new Error(`${stageId}: full-system Design History failed verification`);
+  const campaignExport = await execute('campaign.export', {},
+    `${requestPrefix}-export-full-system`);
+  const campaignBytes = Buffer.from(campaignExport.result.campaignExport.serialized);
+  await writeFile(join(output, filename), campaignBytes);
+  return {
+    schema:'molarium.full-system-checkpoint/v1', stageId,
+    frozenBeforeHoldoutAccess:true,
+    campaignId:campaignExport.result.campaignExport.campaignId,
+    branch:campaignExport.result.campaignExport.branch,
+    commitId:campaignCommit.result.campaignCommit.commitId,
+    snapshotId:campaignCommit.result.campaignCommit.snapshotId,
+    filename, sha256:digest(campaignBytes), bytes:campaignBytes.length,
+    commitActionSequence:campaignCommit.sequence,
+    exportActionSequence:campaignExport.sequence,
+    verification:campaignVerification.result.campaignVerification,
+  };
+}
+
 function requirePublicationStateHashes(response, action, label) {
   const guard = AUDIT_STATE_HASH_GUARDS[action];
   if (!guard) throw new Error(`${label}: ${action} is not a state-guarded action`);
@@ -304,7 +331,8 @@ async function enumeratePhe890(stepId, ordinal = 'initial') {
 }
 
 async function choosePhe890Branch(stepId, { referenceLigand, hardAtomNames,
-  changedLigandAtomIds, expectedProductHeavyBondCount } = {}) {
+  changedLigandAtomIds, expectedProductHeavyBondCount,
+  onSelectedRotamerApplied = null } = {}) {
   let ensemble = await enumeratePhe890(stepId);
   const availableCandidates = uniqueSidechainRotamerCandidates(ensemble.candidates,
     { maximum:diagnosticPhe890 ? 32 : branchCount });
@@ -439,6 +467,8 @@ async function choosePhe890Branch(stepId, { referenceLigand, hardAtomNames,
     expectedInputCoordinateSha256:ensemble.inputCoordinateSha256,
     expectedSelectedCoordinateSha256:finalCandidate.coordinateSha256,
   }, `${stepId}-apply-selected-phe890-branch`);
+  if (onSelectedRotamerApplied)
+    await onSelectedRotamerApplied({ applied, candidate:finalCandidate, ensemble });
   const receptorReference = await execute('pose.updateReceptorReference', {},
     `${stepId}-accept-selected-receptor-branch`);
   const refinement = requireCompleteSeedCoverage(await executeGuarded('pose.refine', {
@@ -550,12 +580,21 @@ try {
     const stepId = stepIds[stepIndex];
     console.log(`${stepId}: staging the reported graph against the preceding prediction`);
     const staged = await execute('designRoute.applyStep', { stepId }, `${stepId}-stage`);
+    const intermediateFullSystemCampaigns = [];
     let rotamerDecision = null;
     let transientContactIds = [];
     let refinement, parameterization;
     let relaxation = { method:'none',
       interpretation:'Pose search only; receptor and selected pose were left unchanged.' };
     if (stepId === 'open-phe890-pocket') {
+      intermediateFullSystemCampaigns.push(await commitFullSystemCampaignState({
+        stageId:'compound-21-graph-edit-before-phe890-rotamer',
+        filename:'compound-21-graph-edit-before-phe890-rotamer-campaign.json',
+        message:'Freeze compound 21 graph edit before Phe890 movement',
+        label:'compound 21 graph edit · Phe890 in',
+        tags:['sos1-hit-only', 'pre-holdout', stepId, 'pre-refinement', 'graph-edit'],
+        requestPrefix:`${stepId}-graph-edit-before-phe890-rotamer`,
+      }));
       console.log(`${stepId}: ranking coupled Phe890 and ligand-pose branches`);
       const hingeContact = await execute('pose.addContact', {
         ligandAtom:{ componentId:'heterogen:A:1104::AWW', atomName:'N7' },
@@ -581,6 +620,17 @@ try {
         hardAtomNames:staged.result.designStep.poseTransferPlan.hardConstraintAtomNames,
         changedLigandAtomIds:staged.result.designStep.addedHeavyAtomIds,
         expectedProductHeavyBondCount:staged.result.designStep.productHeavyGraph?.bondCount,
+        onSelectedRotamerApplied:async () => {
+          intermediateFullSystemCampaigns.push(await commitFullSystemCampaignState({
+            stageId:'phe890-rotamer-before-coupled-relaxation',
+            filename:'phe890-rotamer-before-coupled-relaxation-campaign.json',
+            message:'Freeze selected Phe890 branch before ligand refinement',
+            label:'compound 21 · selected Phe890-out branch · pre-refinement',
+            tags:['sos1-hit-only', 'pre-holdout', stepId, 'pre-refinement',
+              'selected-sidechain-rotamer'],
+            requestPrefix:`${stepId}-selected-phe890-before-refinement`,
+          }));
+        },
       });
       refinement = rotamerDecision.selected.refinement;
       parameterization = rotamerDecision.selected.parameterization;
@@ -646,33 +696,13 @@ try {
         throw new Error(`${stepId}: Phe890 left the selected predecessor rotamer basin`);
     }
     const current = await execute('designRoute.inspect', {}, `${stepId}-inspect-state`);
-    const campaignCommit = await execute('campaign.commitCurrent', {
+    const campaignFilename = `${stepId}-campaign.json`;
+    const campaignRecord = await commitFullSystemCampaignState({
+      stageId:stepId, filename:campaignFilename,
       message:`Freeze ${stepId} prospective molecular state`,
       label:`${stepId} prediction`,
-      tags:['sos1-hit-only', 'pre-holdout', stepId],
-    }, `${stepId}-commit-full-system`);
-    const campaignVerification = await execute('campaign.verify', {},
-      `${stepId}-verify-full-system`);
-    if (campaignVerification.result.campaignVerification?.valid !== true)
-      throw new Error(`${stepId}: full-system Design History failed verification`);
-    const campaignExport = await execute('campaign.export', {},
-      `${stepId}-export-full-system`);
-    const campaignBytes = Buffer.from(
-      campaignExport.result.campaignExport.serialized);
-    const campaignFilename = `${stepId}-campaign.json`;
-    await writeFile(join(output, campaignFilename), campaignBytes);
-    const campaignRecord = {
-      schema:'molarium.full-system-checkpoint/v1',
-      campaignId:campaignExport.result.campaignExport.campaignId,
-      branch:campaignExport.result.campaignExport.branch,
-      commitId:campaignCommit.result.campaignCommit.commitId,
-      snapshotId:campaignCommit.result.campaignCommit.snapshotId,
-      filename:campaignFilename,
-      sha256:digest(campaignBytes), bytes:campaignBytes.length,
-      commitActionSequence:campaignCommit.sequence,
-      exportActionSequence:campaignExport.sequence,
-      verification:campaignVerification.result.campaignVerification,
-    };
+      tags:['sos1-hit-only', 'pre-holdout', stepId], requestPrefix:stepId,
+    });
     const checkpoint = {
       schema:'molarium.design-prediction-checkpoint/v1',
       routeId:'sos1-hit-only', stepId,
@@ -685,6 +715,7 @@ try {
       refinement, parameterization,
       rotamerDecision, relaxation,
       sidechainContinuity,
+      intermediateFullSystemCampaigns,
       fullSystemCampaign:campaignRecord,
       ligand:ligand.result, pocket:pocket.result,
     };
@@ -696,6 +727,7 @@ try {
       ligandCoordinateSha256:coordinateDigest(ligand),
       pocketCoordinateSha256:coordinateDigest(pocket),
       freezeActionSequence:pocket.sequence,
+      intermediateFullSystemCampaigns,
       fullSystemCampaign:campaignRecord,
       ...(rotamerDecision ? { rotamerSelection:{
         inputCoordinateSha256:rotamerDecision.enumeration.inputCoordinateSha256,
@@ -753,6 +785,10 @@ try {
           priorCoordinateSha256:'d71e8fd1de31afb49c7bc54509f18cf59aa21b45e21cc51ee6a6f888e6fd2669',
           purpose:'reselect the same preregistered canonical seed-chi basin after the preceding coordinate state changed' },
         } },
+      intermediateFullSystemCheckpoints:[
+        'compound-21-graph-edit-before-phe890-rotamer',
+        'phe890-rotamer-before-coupled-relaxation',
+      ],
     checkpoints,
     agentApi:{ schema:description.schema, actions:Object.keys(description.actions),
       auditRecords:audit.length, auditSha256:digest(auditBytes),
