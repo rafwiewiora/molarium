@@ -118,6 +118,18 @@ try {
       selectedStateSha256:digest('selected'), outputStateSha256:digest('output') } };
     if (action === 'optimization.run') return { optimization:{ ...common,
       accepted:true, outputStateSha256:digest('output') } };
+    if (action === 'pose.enumerateSidechainRotamers') return {
+      molecule:{ atoms:7935, bonds:8019 }, sidechainRotamers:{
+        residue:{ residueName:'PHE', chain:'A', residueIndex:890, insertionCode:'' },
+        generatedCandidateCount:13,
+      },
+    };
+    if (action === 'pose.applySidechainRotamer') return {
+      molecule:{ atoms:7935, bonds:8019 }, sidechainRotamer:{
+        residue:{ residueName:'PHE', chain:'A', residueIndex:890, insertionCode:'' },
+        chiDegrees:[-180,-90], source:'canonical-library',
+      },
+    };
     return undefined;
   };
   const push = (requestId, action, args = {}) => {

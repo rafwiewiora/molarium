@@ -129,7 +129,8 @@ assert.throws(() => actionScriptFromAudit({ schema:CHEMIST_ACTIONS_SCHEMA, recor
 assert.deepEqual(Object.keys(AUDIT_STATE_HASH_GUARDS).sort(),
   ['optimization.run','pose.apply','pose.refine']);
 assert.deepEqual(Object.keys(AUDIT_PORTABLE_SCIENTIFIC_GUARDS).sort(),
-  ['optimization.run','pose.apply','pose.refine']);
+  ['optimization.run','pose.apply','pose.applySidechainRotamer',
+    'pose.enumerateSidechainRotamers','pose.refine']);
 const hashes = Object.fromEntries('abcdef'.split('').map((key, index) =>
   [key, String(index + 1).repeat(64)]));
 const guardedAudit = { schema:CHEMIST_ACTIONS_SCHEMA, records:[
@@ -188,6 +189,32 @@ assert.equal(portable.actions[2].expect['optimization.valenceSafeguard.accepted'
 assert.equal(portable.actions[2].expect['optimization.fixedAtomMotion.accepted'], true);
 assert.equal(portable.sourceAudit.executionContract.mode, 'portable-scientific');
 assert.equal(portable.sourceAudit.executionContract.portableScientificGuardCount, 13);
+
+const portableRotamer = actionScriptFromAudit({ schema:CHEMIST_ACTIONS_SCHEMA, records:[
+  { sequence:1, action:'pose.enumerateSidechainRotamers', status:'completed',
+    args:{ receptorAtomId:'run-specific:PHE:890:CG', maximumCandidates:32 },
+    result:{ molecule:{ atoms:100, bonds:101 }, sidechainRotamers:{
+      residue:{ residueName:'PHE', chain:'A', residueIndex:890, insertionCode:'' },
+      generatedCandidateCount:13,
+    } } },
+  { sequence:2, action:'pose.applySidechainRotamer', status:'completed',
+    args:{ coordinateSha256:hashes.a, expectedInputCoordinateSha256:hashes.b,
+      expectedSelectedCoordinateSha256:hashes.a },
+    result:{ molecule:{ atoms:100, bonds:101 }, sidechainRotamer:{
+      residue:{ residueName:'PHE', chain:'A', residueIndex:890, insertionCode:'' },
+      chiDegrees:[-180,-90], source:'canonical-library',
+    } } },
+] }, { stateHashGuards:'off', executionContract:'portable-scientific' });
+assert.deepEqual(portableRotamer.actions[0].args, {
+  receptorResidue:{ residueName:'PHE', chain:'A', residueIndex:890, insertionCode:'' },
+  maximumCandidates:32,
+});
+assert.deepEqual(portableRotamer.actions[1].args, { chiDegrees:[-180,-90] });
+assert.equal(portableRotamer.actions[0].expect['sidechainRotamers.generatedCandidateCount'], 13);
+assert.equal(portableRotamer.actions[1].expect['sidechainRotamer.source'], 'canonical-library');
+assert.equal(Object.hasOwn(portableRotamer.actions[1].expect,
+  'sidechainRotamer.chiDegrees'), false,
+'the public chi selector is circular; +180 and -180 must not become an exact-output guard');
 assert.throws(() => actionScriptFromAudit(guardedAudit, {
   executionContract:'portable-scientific', stateHashGuards:'required',
 }), /portable-scientific execution requires stateHashGuards off/);

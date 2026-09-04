@@ -73,7 +73,42 @@ export const AUDIT_PORTABLE_SCIENTIFIC_GUARDS = Object.freeze({
     'accepted', 'valenceSafeguard.accepted', 'valenceSafeguard.complete',
     'registeredPoseRetention.accepted', 'fixedAtomMotion.accepted',
   ]) }),
+  'pose.enumerateSidechainRotamers':Object.freeze({ resultKey:'sidechainRotamers',
+    fields:Object.freeze([
+      'residue.residueName', 'residue.chain', 'residue.residueIndex',
+      'residue.insertionCode', 'generatedCandidateCount',
+    ]) }),
+  'pose.applySidechainRotamer':Object.freeze({ resultKey:'sidechainRotamer',
+    fields:Object.freeze([
+      'residue.residueName', 'residue.chain', 'residue.residueIndex',
+      'residue.insertionCode', 'source',
+    ]) }),
 });
+
+function portableScientificArguments(record, args) {
+  if (record.action === 'pose.enumerateSidechainRotamers') {
+    const residue = record.result?.sidechainRotamers?.residue;
+    if (!residue || typeof residue.residueName !== 'string'
+      || typeof residue.chain !== 'string' || !Number.isInteger(residue.residueIndex))
+      throw new Error(`Audit sequence ${record.sequence} has no stable receptor residue selector`);
+    delete args.receptorAtomId;
+    args.receptorResidue = {
+      residueName:residue.residueName,
+      chain:residue.chain,
+      residueIndex:residue.residueIndex,
+      insertionCode:String(residue.insertionCode || ''),
+    };
+  } else if (record.action === 'pose.applySidechainRotamer') {
+    const chiDegrees = record.result?.sidechainRotamer?.chiDegrees;
+    if (!Array.isArray(chiDegrees) || !chiDegrees.length
+      || chiDegrees.some((value) => !Number.isFinite(value)))
+      throw new Error(`Audit sequence ${record.sequence} has no stable side-chain chi selector`);
+    for (const key of ['index','coordinateSha256','expectedInputCoordinateSha256',
+      'expectedSelectedCoordinateSha256']) delete args[key];
+    args.chiDegrees = cloneRecord(chiDegrees);
+  }
+  return args;
+}
 
 function enrichStateHashGuards(record, args, mode) {
   const guard = AUDIT_STATE_HASH_GUARDS[record.action];
@@ -314,8 +349,10 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
     if (enrichStateHashGuards(record, args, stateHashGuards))
       stateHashGuardedActionCount += 1;
     const expect = {};
-    if (executionContract === 'portable-scientific')
+    if (executionContract === 'portable-scientific') {
+      portableScientificArguments(record, args);
       portableScientificGuardCount += enrichPortableScientificGuards(record, expect);
+    }
     const step = { action:record.action, args,
       ...(Object.keys(expect).length ? { expect } : {}) };
     if (includeAuditMetadata) step.auditSequence = sequence;

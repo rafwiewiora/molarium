@@ -38,6 +38,8 @@ assert(Object.hasOwn(api.describe().actions, 'pose.forgetContact'));
 assert(Object.hasOwn(api.describe().actions, 'pose.updateReceptorReference'));
 assert(Object.hasOwn(api.describe().actions, 'pose.enumerateSidechainRotamers'));
 assert(Object.hasOwn(api.describe().actions, 'pose.applySidechainRotamer'));
+assert.match(api.describe().actions['pose.enumerateSidechainRotamers'].arguments.receptorResidue,
+  /stable.*residueName.*chain.*residueIndex/i);
 assert(Object.hasOwn(api.describe().actions, 'chemistry.setEditPolicy'));
 assert.equal(api.describe().actions['chemistry.setAtom'].arguments.atomId,
   'persistent atom ID');

@@ -365,7 +365,21 @@
       "action": "pose.enumerateSidechainRotamers",
       "args": {
         "maximumCandidates": 32,
-        "receptorAtomId": "chemist-5OVE:ATOM:A:PHE:890::CG:2679"
+        "receptorResidue": {
+          "residueName": "PHE",
+          "chain": "A",
+          "residueIndex": 890,
+          "insertionCode": ""
+        }
+      },
+      "expect": {
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.residue.insertionCode": "",
+        "sidechainRotamers.generatedCandidateCount": 13,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
       },
       "auditSequence": 230,
       "auditRequestId": "open-phe890-pocket-enumerate-phe890-final",
@@ -374,9 +388,19 @@
     {
       "action": "pose.applySidechainRotamer",
       "args": {
-        "coordinateSha256": "f9aef3c53f3fd98b7f0595c078637f73a28a8ca16f69ef92a04b493386d97ef4",
-        "expectedInputCoordinateSha256": "1f76a2f8c801fc55f6dcdffe703ed26fd5d92da6d051d28e26556742679e46cf",
-        "expectedSelectedCoordinateSha256": "f9aef3c53f3fd98b7f0595c078637f73a28a8ca16f69ef92a04b493386d97ef4"
+        "chiDegrees": [
+          -180,
+          -90
+        ]
+      },
+      "expect": {
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.residue.insertionCode": "",
+        "sidechainRotamer.source": "canonical-library",
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
       },
       "auditSequence": 231,
       "auditRequestId": "open-phe890-pocket-apply-selected-phe890-branch",
@@ -614,7 +638,7 @@
       "mode": "portable-scientific",
       "coordinatePolicy": "recompute-without-exact-coordinate-hash",
       "identityTopologyPolicy": "registered-action graph and persistent-identity validation plus atom/bond cardinality",
-      "portableScientificGuardCount": 64
+      "portableScientificGuardCount": 78
     },
     "checkpoints": [
       {

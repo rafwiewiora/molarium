@@ -86,8 +86,8 @@
   },
   "executableReplay": {
     "path": "design-history/examples/sos1-prediction.action-script.json",
-    "sha256": "759cabadce5950b64e705ab0227c4c79d24b4a79e71a3257faea34d6ab1bb098",
-    "actionScriptSha256": "03d13c5e9e09859ad1485a0d624e704c9a1bda26303e4354f4d8b66e43eff695",
+    "sha256": "eb157eeda9044d2f2d5a3940a37a9dfd4ef29fdcf7754a79ad13fc56c407fd2d",
+    "actionScriptSha256": "c125e6857287d55a7f65a90fa9d4b14205d9a18c98979644be91f548d2975299",
     "publicUrl": "/sos1-hit-to-bay293"
   },
   "checkpointReview": {

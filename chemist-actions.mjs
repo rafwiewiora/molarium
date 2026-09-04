@@ -180,7 +180,9 @@ const ACTIONS = Object.freeze({
       expectedOutputStateSha256:'optional molarium.molecular-state-hash/v1 SHA-256; preferred atomic output guard' }) }),
   'pose.enumerateSidechainRotamers': Object.freeze({
     description:'Enumerate bounded canonical rotamers for one receptor side chain and rank them against the current complex.',
-    arguments:Object.freeze({ receptorAtomId:'persistent receptor atom ID', maximumCandidates:'integer 1–64' }) }),
+    arguments:Object.freeze({ receptorAtomId:'persistent receptor atom ID; exactly one receptor selector',
+      receptorResidue:'stable { residueName, chain, residueIndex, insertionCode? } selector; exactly one receptor selector',
+      maximumCandidates:'integer 1–64' }) }),
   'pose.applySidechainRotamer': Object.freeze({
     description:'Apply exactly one returned side-chain rotamer selected by legacy result index, normalized chi angles, or coordinate hash, with optional fail-closed coordinate guards.',
     arguments:Object.freeze({ index:'optional legacy non-negative result index; exactly one selector',

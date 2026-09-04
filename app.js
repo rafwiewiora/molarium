@@ -10580,16 +10580,48 @@ function installChemistActionsApi(module) {
         inputStateSha256, selectedStateSha256, outputStateSha256,
         ...coordinateChanges } }); },
     'pose.enumerateSidechainRotamers':async (args) => { chemistActionKeys(args,
-      ['receptorAtomId','maximumCandidates']);
-      if (typeof args.receptorAtomId !== 'string' || !args.receptorAtomId)
-        throw new Error('receptorAtomId must be a persistent receptor atom ID');
+      ['receptorAtomId','receptorResidue','maximumCandidates']);
+      const receptorSelectors = ['receptorAtomId','receptorResidue']
+        .filter((key) => Object.hasOwn(args, key));
+      if (receptorSelectors.length !== 1)
+        throw new Error('Specify exactly one receptor selector: receptorAtomId or receptorResidue');
       const maximumCandidates = Number(args.maximumCandidates ?? 32);
       if (!Number.isInteger(maximumCandidates) || maximumCandidates < 1 || maximumCandidates > 64)
         throw new Error('maximumCandidates must be an integer from 1 to 64');
       const byId = await ensureChemistActionAtomIds();
-      const residueAtomIndex = byId.get(args.receptorAtomId);
-      if (!Number.isInteger(residueAtomIndex))
-        throw new Error(`Unknown persistent atom ID: ${args.receptorAtomId}`);
+      let residueAtomIndex = null;
+      if (receptorSelectors[0] === 'receptorAtomId') {
+        if (typeof args.receptorAtomId !== 'string' || !args.receptorAtomId)
+          throw new Error('receptorAtomId must be a persistent receptor atom ID');
+        residueAtomIndex = byId.get(args.receptorAtomId);
+        if (!Number.isInteger(residueAtomIndex))
+          throw new Error(`Unknown persistent atom ID: ${args.receptorAtomId}`);
+      } else {
+        if (!args.receptorResidue || typeof args.receptorResidue !== 'object'
+          || Array.isArray(args.receptorResidue))
+          throw new Error('receptorResidue must be an object');
+        chemistActionKeys(args.receptorResidue,
+          ['residueName','chain','residueIndex','insertionCode']);
+        const selector = {
+          residueName:String(args.receptorResidue.residueName || '').trim().toUpperCase(),
+          chain:String(args.receptorResidue.chain || ''),
+          residueIndex:Number(args.receptorResidue.residueIndex),
+          insertionCode:String(args.receptorResidue.insertionCode || ''),
+        };
+        if (!selector.residueName || !selector.chain || !Number.isInteger(selector.residueIndex))
+          throw new Error('receptorResidue requires residueName, chain, and integer residueIndex');
+        const matches = state.molecule?.atoms?.map((atom, index) => ({ atom, index }))
+          .filter(({ atom }) => isProteinAtom(atom)
+            && String(atom.residueName || '').toUpperCase() === selector.residueName
+            && String(atom.chain || '') === selector.chain
+            && Number(atom.residueIndex) === selector.residueIndex
+            && String(atom.insertionCode || '') === selector.insertionCode) || [];
+        if (!matches.length)
+          throw new Error(`Unknown receptor residue: ${selector.residueName} ${selector.chain}${selector.residueIndex}${selector.insertionCode}`);
+        const representative = matches.find(({ atom }) => atom.atomName === 'CG')
+          || matches.find(({ atom }) => atom.atomName === 'CB') || matches[0];
+        residueAtomIndex = representative.index;
+      }
       const sidechainRotamers = await enumerateCurrentSidechainRotamers(
         residueAtomIndex, maximumCandidates);
       return chemistActionSummary({ sidechainRotamers }); },
@@ -17230,7 +17262,7 @@ const DESIGNER_STORY_LINKS = Object.freeze({
     title:'SOS1 prediction replay',
     script:'./design-history/examples/sos1-prediction.action-script.json',
     sourcePath:'design-history/examples/sos1-prediction.action-script.json',
-    sourceSha256:'759cabadce5950b64e705ab0227c4c79d24b4a79e71a3257faea34d6ab1bb098',
+    sourceSha256:'eb157eeda9044d2f2d5a3940a37a9dfd4ef29fdcf7754a79ad13fc56c407fd2d',
     presentation:'chemist-pocket',
   }),
   'sos1-hit-to-bay293-review':Object.freeze({
