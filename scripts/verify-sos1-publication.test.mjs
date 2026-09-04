@@ -59,7 +59,7 @@ try {
     if (action === 'pose.apply') return { appliedPose:{ ...common,
       selectedStateSha256:digest('selected'), outputStateSha256:digest('output') } };
     if (action === 'optimization.run') return { optimization:{ ...common,
-      outputStateSha256:digest('output') } };
+      accepted:true, outputStateSha256:digest('output') } };
     return undefined;
   };
   const push = (requestId, action, args = {}) => {
@@ -106,6 +106,9 @@ try {
     const checkpoint = { schema:'molarium.design-prediction-checkpoint/v1',
       routeId:'sos1-hit-only', stepId:input.stepId, predictedStateId:input.stateId,
       frozenBeforeHoldoutAccess:true,
+      relaxation:{ accepted:true },
+      ...(input.stepId === 'finish-bay-293' ? { sidechainContinuity:{
+        residue:'PHE A890', accepted:true, finalChiDegrees:[-170, 95] } } : {}),
       ...(input.stepId === 'open-phe890-pocket' ? { rotamerDecision:{
         publicationEligible:true, diagnosticOnly:false,
         deterministicFinalReplayVerified:true } } : {}),

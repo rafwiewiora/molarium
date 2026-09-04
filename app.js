@@ -5,6 +5,7 @@ import { applyRegisteredLigandDefinition, serializeRegisteredLigandDefinition,
 import { DESIGNER_REVIEW_DIRECTIONS, designerReplayReviewState,
   designerReplayReviewTarget } from './design-history/designer-replay-review.mjs';
 import { MOLECULAR_STATE_HASH_SCHEMA, molecularStateSha256 } from './molecular-state-hash.mjs';
+import { registeredPoseRetentionPlan } from './docking/registered-pose-retention.mjs';
 
 const MOLARIUM_NETWORK_POLICY = Object.freeze({
   mode:'connected', localOnly:false, policy:'connected-v1',
@@ -3691,14 +3692,26 @@ function interactivePocketMovableAtomIndices(molecule = state.molecule) {
   return [...movable].sort((first, second) => first - second);
 }
 
-function inducedFitPocketMovableAtomIndices(molecule = state.molecule) {
+function currentRegisteredPoseRetentionPlan(molecule = state.molecule) {
+  const releasedReferenceAtomIds = Array.from(
+    molecule?.source?.posePropagationEditRegions || []).flatMap((region) =>
+    Array.from(region.releasedHeavyAtomIds || []));
+  return registeredPoseRetentionPlan({ molecule, referenceLigand:state.dockingReference?.ligand,
+    spatialFeatures:molecule?.source?.posePropagationSpatialFeatures || [],
+    releasedReferenceAtomIds });
+}
+
+function inducedFitPocketMovableAtomIndices(molecule = state.molecule,
+  retentionPlan = currentRegisteredPoseRetentionPlan(molecule)) {
   if (!molecule?.atoms?.length) return [];
   const pocket = proteinLigandPocket(molecule, 6, true);
   if (!pocket.ligandIndices.size) return [];
   // Unlike the fast pocket lane, the induced-fit lane releases the backbone
   // and side chain of every residue entering the 6 Å shell.  Atoms outside
   // that shell remain fixed and provide the covalent/structural boundary.
+  const fixed = new Set(retentionPlan.fixedAtomIndices || []);
   return [...new Set([...pocket.ligandIndices, ...pocket.pocketAtomIndices])]
+    .filter((index) => !fixed.has(index))
     .sort((first, second) => first - second);
 }
 
@@ -5068,7 +5081,9 @@ async function runBrowserConstrainedDocking(options = {}) {
           return pairs;
         });
         return { id:feature.id, kind:feature.kind,
-          treatment:feature.treatment, restraint:structuredClone(feature.restraint),
+          treatment:feature.treatment, required:Boolean(feature.required),
+          source:feature.source, registeredIntentId:feature.registeredIntentId || null,
+          restraint:structuredClone(feature.restraint),
           atomPairVariants };
       }) : [];
     const contactAvailability = adapter.capturedHydrogenBondAvailability(effectiveHydrogenBonds,
@@ -5283,6 +5298,8 @@ async function runBrowserConstrainedDocking(options = {}) {
         })),
         spatialFeatures:spatialFeatureConstraints.map((feature) => ({
           id:feature.id, kind:feature.kind, treatment:feature.treatment,
+          required:feature.required, source:feature.source,
+          registeredIntentId:feature.registeredIntentId,
           restraint:structuredClone(feature.restraint),
           candidateMaps:feature.atomPairVariants.length,
           atomCount:feature.atomPairVariants[0]?.length || 0,
@@ -10422,6 +10439,7 @@ function installChemistActionsApi(module) {
         selectedScoreKcalMol:selected.totalScoreKcalMol,
         selectedPhysicalKcalMol:selected.physicalEnergyKcalMol,
         selectedConstraintPenaltyKcalMol:selected.constraintPenaltyKcalMol,
+        selectedCore:structuredClone(selected.core || null),
         selectedPhysicalComponents:selected.physicalDetails ? {
           lennardJonesKcalMol:selected.physicalDetails.lennardJonesKcalMol,
           coulombKcalMol:selected.physicalDetails.coulombKcalMol,
@@ -10433,6 +10451,9 @@ function installChemistActionsApi(module) {
         } : null,
         selectedChemicalValidity:structuredClone(selected.physicalDetails?.chemicalValidity || null),
         selectedHydrogenBonds:structuredClone(selected.hydrogenBonds),
+        selectedSpatialFeatures:structuredClone(selected.spatialFeatures || []),
+        requiredSpatialFeatureCount:(selected.spatialFeatures || [])
+          .filter((feature) => feature.required === true).length,
         featureGuidedSeeding:result.featureGuidedSeeding ? {
           method:result.featureGuidedSeeding.method,
           requestedCount:result.featureGuidedSeeding.requestedCount,
@@ -10570,8 +10591,10 @@ function installChemistActionsApi(module) {
           : 'Optimized coordinates do not match expectedOutputCoordinateSha256');
       }
       return chemistActionSummary({ optimization:{ method,
-        accepted:result.valenceSafeguard?.accepted ?? true,
+        accepted:(result.valenceSafeguard?.accepted ?? true)
+          && (result.registeredPoseRetention?.accepted ?? true),
         valenceSafeguard:structuredClone(result.valenceSafeguard || null),
+        registeredPoseRetention:structuredClone(result.registeredPoseRetention || null),
         initialEnergy:result.initialEnergy ?? null, finalEnergy:result.finalEnergy ?? null,
         iterations:result.iterations ?? null, converged:result.converged ?? null,
         elapsedMs:result.elapsedMs ?? null,
@@ -11407,7 +11430,8 @@ async function stageRegisteredDesignRouteProduct({ caseId, productSmiles, posePr
     }).filter(Boolean);
     const spatialFeatureDefinitions = spatialFeatureMappings.map((feature) => ({
       id:feature.id, kind:feature.kind, treatment:feature.treatment,
-      source:feature.source,
+      required:Boolean(feature.required), source:feature.source,
+      registeredIntentId:feature.registeredIntentId || null,
       restraint:structuredClone(feature.restraint),
       mappingVariants:feature.mappingVariants.map((variant) => ({
         referenceAtomIds:variant.atomPairs.map(([referenceIndex]) =>
@@ -11578,7 +11602,10 @@ async function stageRegisteredDesignRouteProduct({ caseId, productSmiles, posePr
           connectorRepair:structuredClone(seedConnectorRepair) },
         spatialFeatures:spatialFeatureMappings.map((feature) => ({
           id:feature.id, kind:feature.kind,
-          treatment:feature.treatment,
+          treatment:feature.treatment, source:feature.source,
+          registeredIntentId:feature.registeredIntentId || null,
+          required:Boolean(feature.required),
+          restraint:structuredClone(feature.restraint),
           atomCount:feature.mappingVariants[0]?.atomPairs.length || 0,
           candidateMaps:feature.mappingVariants.length,
           seedMaxDisplacementAngstrom:Math.max(0,
@@ -15748,8 +15775,13 @@ async function runSelectedBuildOptimization() {
   const inducedFitRelaxation = method === 'induced-fit-webgpu';
   const flexiblePocketRelaxation = pocketRelaxation || inducedFitRelaxation;
   const workerMethod = flexiblePocketRelaxation ? 'webgpu' : method;
+  const poseRetentionBefore = inducedFitRelaxation
+    ? currentRegisteredPoseRetentionPlan() : null;
+  if (poseRetentionBefore && !poseRetentionBefore.accepted)
+    throw new Error('The selected pose does not satisfy its required registered retention feature');
   const movableAtomIndices = pocketRelaxation ? interactivePocketMovableAtomIndices()
-    : inducedFitRelaxation ? inducedFitPocketMovableAtomIndices() : null;
+    : inducedFitRelaxation ? inducedFitPocketMovableAtomIndices(
+      state.molecule, poseRetentionBefore) : null;
   if (flexiblePocketRelaxation && !movableAtomIndices.length) {
     showNotice('Pocket relaxation needs a prepared protein–ligand complex.'); return null;
   }
@@ -15769,6 +15801,14 @@ async function runSelectedBuildOptimization() {
       maxDisplacement:inducedFitRelaxation ? 0.00075 : 0.001,
       savedFrameCount:BUILD_OPTIMIZATION_FRAME_COUNT,
     } : undefined });
+    if (result && poseRetentionBefore) {
+      const poseRetentionAfter = currentRegisteredPoseRetentionPlan();
+      result.registeredPoseRetention = {
+        before:structuredClone(poseRetentionBefore),
+        after:structuredClone(poseRetentionAfter),
+        accepted:poseRetentionAfter.accepted,
+      };
+    }
     if (result && valenceSnapshot) {
       const valenceSafeguard = validateLigandValenceGeometry(valenceSnapshot);
       if (!valenceSafeguard.accepted) {
@@ -15779,6 +15819,14 @@ async function runSelectedBuildOptimization() {
         return { ...result, valenceSafeguard };
       }
       result.valenceSafeguard = valenceSafeguard;
+    }
+    if (result?.registeredPoseRetention
+      && !result.registeredPoseRetention.accepted) {
+      restoreValenceGeometrySnapshot(valenceSnapshot);
+      clearCalculationResult(); state.lastCalculation = null;
+      updateStoredBondDistances(); updateInfo(); draw();
+      showToast('Relaxation rejected · required registered pose feature moved outside tolerance');
+      return result;
     }
     if (result && flexiblePocketRelaxation) setMode('view');
     return result;

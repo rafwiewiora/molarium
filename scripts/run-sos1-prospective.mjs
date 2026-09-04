@@ -45,8 +45,8 @@ if (diagnosticPhe890CoordinateSha256 != null
   && !/^[a-f0-9]{64}$/.test(diagnosticPhe890CoordinateSha256))
   throw new Error('--diagnostic-phe890-coordinate-sha256 must be a lowercase SHA-256 digest');
 if (diagnosticPhe890CoordinateSha256 != null
-  && requestedStop !== 'open-phe890-pocket')
-  throw new Error('A diagnostic Phe890 branch is non-promotable and requires --stop-after open-phe890-pocket');
+  && !['open-phe890-pocket', 'finish-bay-293'].includes(requestedStop))
+  throw new Error('A diagnostic Phe890 branch is non-promotable and requires --stop-after open-phe890-pocket or finish-bay-293');
 if (diagnosticPhe890CoordinateSha256 != null && valueFor('--output') == null)
   throw new Error('A diagnostic Phe890 branch requires an explicit --output directory');
 const stepIds = allSteps.slice(0, stopIndex + 1);
@@ -89,6 +89,112 @@ function requireCompleteSeedCoverage(response, label) {
     || refinement.coverage?.allRequiredStrataCovered !== true)
     throw new Error(`${label} did not cover every required pose-seed stratum`);
   return response;
+}
+
+function requireAcceptedRelaxation(response, label) {
+  if (response?.result?.optimization?.accepted !== true)
+    throw new Error(`${label}: required relaxation was rejected and restored`);
+  return response;
+}
+
+function requireRegisteredFeatureRefinement(refinement, staged, label) {
+  const required = Array.from(staged?.result?.designStep?.poseTransferPlan
+    ?.featureCorrespondences || []).filter((feature) => feature.required === true);
+  if (!required.length) return refinement;
+  const result = refinement?.result?.refinement;
+  if (result?.selectedFeasible !== true)
+    throw new Error(`${label}: selected pose is infeasible`);
+  if (!Number.isFinite(result.selectedCore?.rmsdAngstrom)
+    || !Number.isFinite(result.selectedCore?.maximumDisplacementAngstrom)
+    || result.selectedCore.rmsdAngstrom
+      > MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.coreConstraint.toleranceAngstrom
+    || result.selectedCore.maximumDisplacementAngstrom
+      > MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.coreConstraint.toleranceAngstrom)
+    throw new Error(`${label}: selected pose moved its registered hard anchor`);
+  if (result.requiredSpatialFeatureCount !== required.length)
+    throw new Error(`${label}: selected pose did not evaluate every required spatial feature`);
+  for (const expected of required) {
+    const matches = (result.selectedSpatialFeatures || []).filter((feature) =>
+      feature.id === expected.id
+      && feature.registeredIntentId === expected.registeredIntentId);
+    if (matches.length !== 1 || matches[0].required !== true
+      || matches[0].satisfied !== true
+      || matches[0].atomCount !== expected.mappingVariants[0].referenceAtomNames.length
+      || matches[0].candidateVariantCount !== expected.mappingVariants.length)
+      throw new Error(`${label}: required spatial-feature pose evidence is missing or incomplete`);
+  }
+  if (result.featureGuidedSeeding?.spatialFeatureMapCount
+    !== required.reduce((sum, feature) => sum + feature.mappingVariants.length, 0))
+    throw new Error(`${label}: pose seeding did not cover every registered feature map`);
+  return refinement;
+}
+
+function requireRegisteredFeatureRelaxation(relaxation, staged, label) {
+  const required = Array.from(staged?.result?.designStep?.poseTransferPlan
+    ?.featureCorrespondences || []).filter((feature) => feature.required === true);
+  if (!required.length) return relaxation;
+  const retention = relaxation?.registeredPoseRetention;
+  if (retention?.accepted !== true || retention.after?.active !== true
+    || retention.after?.accepted !== true
+    || !Number.isFinite(retention.after.hardAnchor?.rmsdAngstrom)
+    || !Number.isFinite(retention.after.hardAnchor?.maxDisplacementAngstrom)
+    || retention.after.hardAnchor.rmsdAngstrom > 1e-6
+    || retention.after.hardAnchor.maxDisplacementAngstrom > 1e-6)
+    throw new Error(`${label}: coupled relaxation did not retain the registered pose islands`);
+  if (!Array.isArray(retention.after.features)
+    || retention.after.features.length !== required.length)
+    throw new Error(`${label}: post-relax registered feature count is not exact`);
+  for (const expected of required) {
+    const matches = (retention.after.features || []).filter((feature) =>
+      feature.id === expected.id
+      && feature.registeredIntentId === expected.registeredIntentId);
+    if (matches.length !== 1 || matches[0].accepted !== true
+      || matches[0].rmsdAngstrom > expected.restraint.toleranceAngstrom
+      || !Number.isFinite(matches[0].centroidDisplacementAngstrom)
+      || !Number.isFinite(matches[0].planeNormalAngleDegrees))
+      throw new Error(`${label}: required retained feature failed its post-relax measurement`);
+  }
+  return relaxation;
+}
+
+function requireSaneInspectedLigand(inspection, label) {
+  requireCompleteInspection(inspection, `${label} ligand`);
+  const atoms = inspection?.result?.atoms || [];
+  const byId = new Map(atoms.map((atom) => [atom.atomId, atom]));
+  if (byId.size !== atoms.length) throw new Error(`${label}: duplicate ligand atom identity`);
+  const heavyBonds = [];
+  for (const bond of inspection?.result?.bonds || []) {
+    const first = byId.get(bond.atomIds?.[0]), second = byId.get(bond.atomIds?.[1]);
+    if (!first || !second || first.element === 'H' || second.element === 'H') continue;
+    heavyBonds.push(bond);
+    const distanceAngstrom = Math.hypot(...first.coordinatesAngstrom.map((value, axis) =>
+      value - second.coordinatesAngstrom[axis]));
+    if (!Number.isFinite(distanceAngstrom) || distanceAngstrom < 0.85
+      || distanceAngstrom > 2.2)
+      throw new Error(`${label}: heavy-atom bond ${bond.atomIds.join('-')} is ${distanceAngstrom.toFixed(3)} Å`);
+  }
+  if (atoms.filter((atom) => atom.element !== 'H').length > 1 && !heavyBonds.length)
+    throw new Error(`${label}: ligand inspection has no heavy-atom graph edges`);
+  return inspection;
+}
+
+function requireCompleteInspection(inspection, label) {
+  const atoms = inspection?.result?.atoms;
+  if (!Array.isArray(atoms) || !atoms.length
+    || inspection.result.truncated !== false
+    || !Number.isInteger(inspection.result.totalAtomCount)
+    || inspection.result.totalAtomCount !== atoms.length)
+    throw new Error(`${label}: coordinate inspection is incomplete`);
+  if (atoms.some((atom) => !Array.isArray(atom.coordinatesAngstrom)
+    || atom.coordinatesAngstrom.length !== 3
+    || !atom.coordinatesAngstrom.every(Number.isFinite)))
+    throw new Error(`${label}: coordinate inspection contains invalid coordinates`);
+  return inspection;
+}
+
+function periodicDistanceDegrees(first, second, period = 360) {
+  return Math.abs(((Number(first) - Number(second) + period / 2) % period + period)
+    % period - period / 2);
 }
 
 async function inspectPhe890(stepId) {
@@ -147,6 +253,8 @@ async function choosePhe890Branch(stepId, { referenceLigand, hardAtomNames,
     const relaxed = await executeGuarded('optimization.run', {
       method:'induced-fit-webgpu',
     }, `${stepId}-relax-phe890-branch-${candidate.rank}`);
+    if (diagnosticPhe890CoordinateSha256 != null)
+      requireAcceptedRelaxation(relaxed, `${stepId} diagnostic branch ${candidate.rank}`);
     const ligand = await execute('session.inspect', {
       scope:'ligand', includeCoordinates:true, maximumAtoms:256,
     }, `${stepId}-inspect-ligand-branch-${candidate.rank}`);
@@ -244,6 +352,7 @@ async function choosePhe890Branch(stepId, { referenceLigand, hardAtomNames,
   const relaxation = await executeGuarded('optimization.run', {
     method:'induced-fit-webgpu',
   }, `${stepId}-relax-selected-phe890-branch`);
+  requireAcceptedRelaxation(relaxation, `${stepId} selected branch`);
   const ligand = await execute('session.inspect', {
     scope:'ligand', includeCoordinates:true, maximumAtoms:256,
   }, `${stepId}-inspect-selected-ligand`);
@@ -321,6 +430,7 @@ try {
   await execute('pose.captureReference', { mode:'propagate' }, 'route-capture-hit');
   const boundary = await execute('designRoute.inspect', {}, 'route-inspect-boundary');
   let previousFrozenLigand = null;
+  let retainedPhe890ChiDegrees = null;
 
   for (let stepIndex = 0; stepIndex < stepIds.length; stepIndex++) {
     const stepId = stepIds[stepIndex];
@@ -346,6 +456,7 @@ try {
         searchChains:fixedSearchChains,
         execution:poseExecution, featureSeedingProtocol:'v5' },
       `${stepId}-pose-refine`), stepId);
+      requireRegisteredFeatureRefinement(refined, staged, stepId);
       const selectedIndex = Math.max(0,
         Number(refined.result.refinement.selectedRank || 1) - 1);
       await executeGuarded('pose.apply', { index:selectedIndex }, `${stepId}-pose-apply`);
@@ -357,15 +468,39 @@ try {
         console.log(`${stepId}: ${relaxMethod} relaxation`);
         const relaxed = await executeGuarded('optimization.run',
           { method:relaxMethod }, `${stepId}-complex-relax`);
+        requireAcceptedRelaxation(relaxed, stepId);
         relaxation = relaxed.result.optimization;
       }
     }
-    const ligand = await execute('session.inspect', {
+    if (relaxation?.accepted !== true)
+      throw new Error(`${stepId}: checkpoint lacks an accepted required relaxation`);
+    requireRegisteredFeatureRelaxation(relaxation, staged, stepId);
+    const ligand = requireSaneInspectedLigand(await execute('session.inspect', {
       scope:'ligand', includeCoordinates:true, maximumAtoms:256,
-    }, `${stepId}-freeze-ligand`);
-    const pocket = await execute('session.inspect', {
+    }, `${stepId}-freeze-ligand`), stepId);
+    const pocket = requireCompleteInspection(await execute('session.inspect', {
       scope:'pocket', includeCoordinates:true, maximumAtoms:500,
-    }, `${stepId}-freeze-pocket`);
+    }, `${stepId}-freeze-pocket`), `${stepId} pocket`);
+    let sidechainContinuity = null;
+    if (stepId === 'open-phe890-pocket') {
+      retainedPhe890ChiDegrees = measureInspectedSidechainChiAngles({
+        atoms:pocket.result.atoms, residue:PHE890,
+      });
+    } else if (stepId === 'finish-bay-293' && retainedPhe890ChiDegrees) {
+      const finalChiDegrees = measureInspectedSidechainChiAngles({
+        atoms:pocket.result.atoms, residue:PHE890,
+      });
+      const differencesDegrees = retainedPhe890ChiDegrees.map((value, index) =>
+        periodicDistanceDegrees(finalChiDegrees[index], value, index === 1 ? 180 : 360));
+      sidechainContinuity = { schema:'molarium.sidechain-state-continuity/v1',
+        residue:'PHE A890', source:'preceding frozen prediction',
+        referenceChiDegrees:retainedPhe890ChiDegrees,
+        finalChiDegrees, differencesDegrees, chiPeriodsDegrees:[360, 180],
+        maximumDifferenceDegrees:30,
+        accepted:differencesDegrees.every((value) => value <= 30) };
+      if (!sidechainContinuity.accepted)
+        throw new Error(`${stepId}: Phe890 left the selected predecessor rotamer basin`);
+    }
     const current = await execute('designRoute.inspect', {}, `${stepId}-inspect-state`);
     const checkpoint = {
       schema:'molarium.design-prediction-checkpoint/v1',
@@ -378,6 +513,7 @@ try {
       staging:staged.result.designStep,
       refinement, parameterization,
       rotamerDecision, relaxation,
+      sidechainContinuity,
       ligand:ligand.result, pocket:pocket.result,
     };
     const bytes = Buffer.from(`${JSON.stringify(checkpoint, null, 2)}\n`);
@@ -409,9 +545,9 @@ try {
   const manifest = {
     schema:'molarium.design-prediction-run/v1',
     routeId:'sos1-hit-only',
-    status:diagnosticPhe890CoordinateSha256 == null
+    status:diagnosticPhe890CoordinateSha256 == null && relaxMethod !== 'none'
       ? 'predictions-frozen-holdouts-unopened' : 'diagnostic-non-promotable',
-    publicationEligible:diagnosticPhe890CoordinateSha256 == null,
+    publicationEligible:diagnosticPhe890CoordinateSha256 == null && relaxMethod !== 'none',
     protocol:{ initialCoordinateInput:'PDB 5OVE/AXE only',
       sequentialPredictedReferences:true, relaxMethod,
       fixedPoseSearchChains:fixedSearchChains,

@@ -29,7 +29,7 @@ assert.deepEqual(semantics.introducedBoundaryAtomNames, ['CX3']);
 assert.ok(semantics.releasedReferenceAtomNames.includes('CX5'));
 assert.deepEqual(semantics.releasedMappedAtomNames, ['CX2', 'CX3', 'CX4', 'SX1']);
 assert.ok(semantics.addedProductAtomIndices.includes(8));
-assert.match(semantics.featureRule, /pose-search seeds/);
+assert.match(semantics.featureRule, /registered designer-intent retention/);
 assert.equal(semantics.featureCorrespondences.length, 1);
 assert.deepEqual(semantics.featureCorrespondences[0].mappingVariants[0], {
   referenceAtomNames:['CX5','CX11','CX12','CX13','CX14','CX15','CX16'],
@@ -37,20 +37,24 @@ assert.deepEqual(semantics.featureCorrespondences[0].mappingVariants[0], {
 });
 assert.equal(semantics.featureCorrespondences[0].mappingVariants.length, 4,
   'phenyl graph symmetry must remain explicit while seeds are enumerated');
-assert.equal(semantics.featureCorrespondences[0].transferMode, 'seed-only');
-assert.equal(semantics.featureCorrespondences[0].treatment, 'seed-only');
-assert.equal(semantics.featureCorrespondences[0].required, false);
-assert.equal(semantics.featureCorrespondences[0].restraint, undefined);
+assert.equal(semantics.featureCorrespondences[0].transferMode, 'score-only');
+assert.equal(semantics.featureCorrespondences[0].treatment, 'soft-restraint');
+assert.equal(semantics.featureCorrespondences[0].required, true);
+assert.equal(semantics.featureCorrespondences[0].registeredIntentId,
+  'retain-terminal-feature-through-bay293');
+assert.deepEqual(semantics.featureCorrespondences[0].restraint, {
+  metric:'graph-symmetry-minimized Cartesian RMSD', toleranceAngstrom:1.5,
+  weightKcalMolPerAngstrom2:20, required:true,
+});
 
 const requiredFeature = structuredClone(finalStep.posePropagationMap);
 requiredFeature.spatialFeatureCorrespondences[0] = {
-  ...requiredFeature.spatialFeatureCorrespondences[0],
-  transferMode:'score-only', treatment:'soft-restraint', required:true,
+  ...requiredFeature.spatialFeatureCorrespondences[0], source:'automatic-proposal',
   restraint:{ metric:'graph-symmetry-minimized Cartesian RMSD',
     toleranceAngstrom:0.75, weightKcalMolPerAngstrom2:20, required:true },
 };
 assert.throws(() => buildRegisteredPoseTransferPlan(requiredFeature, policy),
-  /automatic soft restraint cannot be required/);
+  /lacks registered designer intent/);
 
 const growth = buildRegisteredPoseTransferPlan({
   commonAtoms:[

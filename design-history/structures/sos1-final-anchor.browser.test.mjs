@@ -143,15 +143,17 @@ try {
   assert.equal(embedding.spatialFeatures.length, 1);
   assert.equal(embedding.spatialFeatures[0].id, 'secondary-exact-fragment-1');
   assert.equal(embedding.spatialFeatures[0].kind, 'conserved-fragment-rmsd');
-  assert.equal(embedding.spatialFeatures[0].treatment, 'seed-only');
+  assert.equal(embedding.spatialFeatures[0].treatment, 'soft-restraint');
+  assert.equal(embedding.spatialFeatures[0].source, 'registered-designer-intent');
+  assert.equal(embedding.spatialFeatures[0].registeredIntentId,
+    'retain-terminal-feature-through-bay293');
+  assert.equal(embedding.spatialFeatures[0].required, true);
   assert.equal(embedding.spatialFeatures[0].atomCount, 7);
   assert.equal(embedding.spatialFeatures[0].candidateMaps, 4);
-  assert.equal(embedding.spatialFeatures[0].seedMaxDisplacementAngstrom, 0);
+  assert.equal(embedding.spatialFeatures[0].restraint.toleranceAngstrom, 1.5);
   assert.deepEqual(transfer.releasedMappedAtomNames, ['CX2','CX3','CX4','SX1']);
-  assert.equal(embedding.seedOnlyPlacement.features.length, 1);
-  assert(embedding.seedOnlyPlacement.features[0].seededRmsdAngstrom
-    <= embedding.seedOnlyPlacement.features[0].initialRmsdAngstrom,
-  'seed-only torsion placement must not move the inherited fragment farther away');
+  assert.equal(embedding.seedOnlyPlacement.features.length, 0,
+    'required retention is scored during pose search, not silently fixed during graph staging');
   const heavyBondDistances = after.result.bonds.flatMap((bond) => {
     const first = afterById.get(bond.atomIds[0]), second = afterById.get(bond.atomIds[1]);
     if (!first || !second || first.element === 'H' || second.element === 'H') return [];
@@ -161,12 +163,8 @@ try {
   assert(Math.min(...heavyBondDistances) >= 0.9
     && Math.max(...heavyBondDistances) <= 1.95,
   `seeded graph replacement distorted a heavy-atom bond (${Math.min(...heavyBondDistances)}–${Math.max(...heavyBondDistances)} Å)`);
-  console.log('SOS1 AWW→AXH staging preserved the topology-derived hard core and a valid seed-only distal fragment', {
-    seedRmsdAngstrom:embedding.seedOnlyPlacement.features[0].seededRmsdAngstrom,
-    initialSeedRmsdAngstrom:embedding.seedOnlyPlacement.features[0].initialRmsdAngstrom,
-    finalSeedMaximumDisplacementAngstrom:embedding.spatialFeatures[0]
-      .seedMaxDisplacementAngstrom,
-    connectorRepair:embedding.seedOnlyPlacement.connectorRepair,
+  console.log('SOS1 AWW→AXH staging preserved the topology-derived hard core and registered distal-fragment restraint', {
+    featureToleranceAngstrom:embedding.spatialFeatures[0].restraint.toleranceAngstrom,
     maximumHeavyBondAngstrom:Math.max(...heavyBondDistances),
   });
   const history = await browser.evaluate(`window.MolariumChemistActions.history()`);

@@ -178,16 +178,20 @@ export function snapCorePositions(referencePositions, candidatePositions, atomPa
 }
 
 export function evaluateCoreConstraint(referencePositions, candidatePositions, atomPairs, settings) {
-  let sumSquared = 0;
+  let sumSquared = 0, maximumDisplacementAngstrom = 0;
   for (const [referenceAtom, candidateAtom] of atomPairs) {
     const reference = coordinates(referencePositions, referenceAtom);
     const candidate = coordinates(candidatePositions, candidateAtom);
-    sumSquared += reference.reduce((sum, value, axis) => sum + (value - candidate[axis]) ** 2, 0);
+    const squared = reference.reduce((sum, value, axis) =>
+      sum + (value - candidate[axis]) ** 2, 0);
+    sumSquared += squared;
+    maximumDisplacementAngstrom = Math.max(maximumDisplacementAngstrom, Math.sqrt(squared));
   }
   const rmsdAngstrom = Math.sqrt(sumSquared / atomPairs.length);
   const violationAngstrom = Math.max(0, rmsdAngstrom - Number(settings.toleranceAngstrom));
   return {
     rmsdAngstrom,
+    maximumDisplacementAngstrom,
     toleranceAngstrom:Number(settings.toleranceAngstrom),
     violationAngstrom,
     satisfied:violationAngstrom === 0,
@@ -223,6 +227,8 @@ export function evaluateSpatialFeatureConstraint(referencePositions, candidatePo
   const violationAngstrom = Math.max(0, selected.rmsdAngstrom - toleranceAngstrom);
   return { id:String(definition.id || 'spatial-feature'),
     kind:String(definition.kind || 'conserved-fragment-rmsd'),
+    source:definition.source || null,
+    registeredIntentId:definition.registeredIntentId || null,
     required:Boolean(definition.restraint?.required),
     selectedVariantIndex:selected.variantIndex,
     candidateVariantCount:scored.length,

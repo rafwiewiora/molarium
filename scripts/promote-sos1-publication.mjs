@@ -6,7 +6,8 @@ import { dirname, relative, resolve, sep } from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { argumentValue, requireExplicitRunDirectory, sha256,
-  SOS1_ROUTE_ID, SOS1_STEP_IDS, verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
+  SOS1_ROUTE_ID, SOS1_STEP_IDS, verifyAcceptedSos1Run,
+  assertAcceptedCheckpointRelaxation } from './sos1-accepted-run.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_PROTOCOL =
@@ -117,6 +118,12 @@ export async function verifyPreHoldoutPromotionInputs({ root = ROOT, runDirector
   assert.equal(manifest.schema, protocol.predictionInputs.runManifestSchema);
   assert.equal(manifest.routeId, SOS1_ROUTE_ID);
   assert.equal(manifest.status, 'predictions-frozen-holdouts-unopened');
+  assert.equal(manifest.publicationEligible, true,
+    'prediction manifest is explicitly non-promotable');
+  assert.equal(manifest.protocol?.phe890Branching?.diagnosticOnly, false,
+    'prediction manifest uses a diagnostic-only Phe890 selector');
+  assert.equal(manifest.protocol?.phe890Branching?.diagnosticExactCoordinateSha256, null,
+    'prediction manifest pins a diagnostic Phe890 coordinate');
   assert.equal(manifest.protocol?.initialCoordinateInput, 'PDB 5OVE/AXE only');
   assert.equal(manifest.protocol?.sequentialPredictedReferences, true);
   assert.deepEqual(manifest.checkpoints?.map((entry) => entry.stepId), SOS1_STEP_IDS);
@@ -158,11 +165,21 @@ export async function verifyPreHoldoutPromotionInputs({ root = ROOT, runDirector
     assert.equal(checkpoint.stepId, frozen.stepId);
     assert.equal(checkpoint.predictedStateId, frozen.predictedStateId);
     assert.equal(checkpoint.frozenBeforeHoldoutAccess, true);
+    assertAcceptedCheckpointRelaxation(checkpoint, frozen.stepId);
     completeInspection(checkpoint.ligand, `${frozen.stepId} ligand inspection`);
     completeInspection(checkpoint.pocket, `${frozen.stepId} pocket inspection`);
     assertNoEvaluationCoordinates(checkpoint, `${frozen.stepId} checkpoint`);
     checkpointHashes.push({ stepId:frozen.stepId, sha256:frozen.sha256 });
   }
+  const openDecisionPath = resolve(runDirectory,
+    manifest.checkpoints.find((entry) => entry.stepId === 'open-phe890-pocket').filename);
+  const openDecision = JSON.parse(await readFile(openDecisionPath)).rotamerDecision;
+  assert.equal(openDecision?.publicationEligible, true,
+    'Phe890 branch decision is non-promotable');
+  assert.equal(openDecision?.diagnosticOnly, false,
+    'Phe890 branch decision is diagnostic-only');
+  assert.equal(openDecision?.deterministicFinalReplayVerified, true,
+    'Phe890 branch decision lacks deterministic replay verification');
   return Object.freeze({ protocolSha256:sha256(protocolBytes),
     predictionManifestSha256:sha256(manifestBytes), sourceAuditSha256:sha256(auditBytes),
     routeSha256:sha256(routeBytes), checkpoints:checkpointHashes });

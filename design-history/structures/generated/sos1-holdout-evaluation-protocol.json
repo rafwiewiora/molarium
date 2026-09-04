@@ -4,12 +4,12 @@
   "registeredBeforeHoldoutAccess": true,
   "evaluator": {
     "path": "design-history/structures/evaluate-sos1-holdouts.py",
-    "sha256": "286a537144c1480a1d3b94cb7121d85fe51d139d54b931e2fc3fab89d6794271"
+    "sha256": "d54c03208a3c5489601d915ea89ffec14e115055a03f213d9ed816a246bdd6ed"
   },
   "registeredRoute": {
     "path": "design-history/structures/generated/sos1-prospective-campaign.json",
     "schema": "molarium.registered-design-route/v1",
-    "sha256": "52ae8aec5e765523bc50d8fcc10aa96d094ed94ab065cf5be5ae13c6e063cd1a"
+    "sha256": "ebddbc72585c89c365fa55d86e00e2bd7093754e7882b63cb92e439f9f74b11c"
   },
   "predictionInputs": {
     "runManifestSchema": "molarium.design-prediction-run/v1",

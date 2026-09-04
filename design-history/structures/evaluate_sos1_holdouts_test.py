@@ -166,6 +166,41 @@ class EvaluatorTest(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "diagnostic"):
             EVALUATOR.verify_publication_eligibility(manifest, checkpoints)
 
+    def test_required_relaxation_and_retention_fail_closed(self) -> None:
+        checkpoint = {"stepId": "finish-bay-293", "relaxation": {"accepted": True,
+            "registeredPoseRetention": {"accepted": True, "after": {
+                "active": True, "accepted": True,
+                "hardAnchor": {"rmsdAngstrom": 0.0,
+                               "maxDisplacementAngstrom": 0.0},
+                "features": [{
+                    "id": "terminal", "registeredIntentId": "retain-terminal",
+                    "rmsdAngstrom": 0.2, "centroidDisplacementAngstrom": 0.1,
+                    "planeNormalAngleDegrees": 2.0, "toleranceAngstrom": 1.5,
+                }]}}},
+            "sidechainContinuity": {"residue": "PHE A890", "accepted": True,
+                                      "finalChiDegrees": [-170.0, 95.0]},
+            "staging": {"poseTransferPlan": {"featureCorrespondences": [{
+                "id": "terminal", "registeredIntentId": "retain-terminal",
+                "required": True, "restraint": {"toleranceAngstrom": 1.5},
+            }]}}}
+        EVALUATOR.verify_accepted_checkpoint_relaxation(
+            checkpoint, "finish-bay-293")
+        rejected = json.loads(json.dumps(checkpoint))
+        rejected["relaxation"]["accepted"] = False
+        with self.assertRaisesRegex(RuntimeError, "was not accepted"):
+            EVALUATOR.verify_accepted_checkpoint_relaxation(
+                rejected, "finish-bay-293")
+        inactive = json.loads(json.dumps(checkpoint))
+        inactive["relaxation"]["registeredPoseRetention"]["after"]["active"] = False
+        with self.assertRaisesRegex(RuntimeError, "retention was not accepted"):
+            EVALUATOR.verify_accepted_checkpoint_relaxation(
+                inactive, "finish-bay-293")
+        ambiguous = json.loads(json.dumps(checkpoint))
+        ambiguous["relaxation"]["registeredPoseRetention"]["after"]["features"] *= 2
+        with self.assertRaisesRegex(RuntimeError, "feature count is not exact"):
+            EVALUATOR.verify_accepted_checkpoint_relaxation(
+                ambiguous, "finish-bay-293")
+
     def test_receptor_alignment_uses_only_registered_non_phe_anchors(self) -> None:
         anchors = EVALUATOR.EXPECTED_ALIGNMENT_ANCHORS
         protocol = {"receptorAlignment": {

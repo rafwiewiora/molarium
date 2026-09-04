@@ -43,6 +43,34 @@ GRAPH_SOURCES = {
     key: f"https://www.rcsb.org/ligand/{key}" for key in GRAPHS
 }
 
+# Human/agent design intent is declared separately from the graph algorithm that
+# proposes conserved fragments.  The declaration is part of the registered
+# route bytes (and therefore its pre-holdout SHA-256); the proposal cannot make
+# itself required merely by labelling its own output.
+RETAINED_FEATURE_INTENTS = {
+    "finish-bay-293": [{
+        "id": "retain-terminal-feature-through-bay293",
+        "featureId": "secondary-exact-fragment-1",
+        "kind": "conserved-fragment-rmsd",
+        "actorClass": "human",
+        "source": "registered-designer-intent",
+        "treatment": "soft-restraint",
+        "required": True,
+        "restraint": {
+            "metric": "graph-symmetry-minimized Cartesian RMSD",
+            "toleranceAngstrom": 1.5,
+            "weightKcalMolPerAngstrom2": 20,
+            "required": True,
+        },
+        "rationale": ("retain the separately conserved terminal ring feature "
+                      "while allowing the intervening graph rewrite"),
+    }],
+}
+
+
+def registered_intents(step_id: str) -> list[dict]:
+    return [dict(record) for record in RETAINED_FEATURE_INTENTS.get(step_id, [])]
+
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -313,7 +341,7 @@ def secondary_exact_feature(reference: Chem.Mol, reference_names: list[str],
         "transferMode": "seed-only",
         "treatment": "seed-only",
         "required": False,
-        "source": "disjoint exact graph correspondence; no product coordinates",
+        "source": "automatic-graph-proposal",
         "mcs": {"smarts": result.smartsString, "atoms": result.numAtoms,
                 "bonds": result.numBonds},
         "referenceAtomNames": [reference_names[index]
@@ -324,8 +352,34 @@ def secondary_exact_feature(reference: Chem.Mol, reference_names: list[str],
             "referenceMatches": len(reference_matches),
             "productMatches": len(product_matches),
             "candidateMaps": len(candidates),
-            "selection": "enumerate graph symmetry; use only as pose-search seeds",
+            "selection": ("enumerate graph symmetry; retain the registered terminal "
+                          "feature during pose search"),
         },
+}
+
+
+def apply_registered_feature_intent(feature: dict | None,
+                                    intents: list[dict], step_id: str) -> dict | None:
+    if feature is None:
+        if intents:
+            raise RuntimeError(f"{step_id}: registered retained feature was not detected")
+        return None
+    matching = [intent for intent in intents if intent["featureId"] == feature["id"]]
+    if not matching:
+        return feature
+    if len(matching) != 1:
+        raise RuntimeError(f"{step_id}: retained feature intent is ambiguous")
+    intent = matching[0]
+    if intent["kind"] != feature["kind"]:
+        raise RuntimeError(f"{step_id}: retained feature kind does not match graph proposal")
+    return {
+        **feature,
+        "transferMode": "score-only",
+        "treatment": intent["treatment"],
+        "required": intent["required"],
+        "source": intent["source"],
+        "registeredIntentId": intent["id"],
+        "restraint": dict(intent["restraint"]),
     }
 
 
@@ -451,7 +505,8 @@ def build_pose_map(reference: Chem.Mol, reference_names: list[str],
 
 
 def pose_map(reference: Chem.Mol, reference_names: list[str],
-             product: Chem.Mol, step_id: str) -> tuple[dict, list[str]]:
+             product: Chem.Mol, step_id: str,
+             intents: list[dict]) -> tuple[dict, list[str]]:
     result, reference_matches, product_matches = exact_mcs(reference, product)
     candidates = [(reference_match, product_match)
                   for reference_match in reference_matches
@@ -475,8 +530,9 @@ def pose_map(reference: Chem.Mol, reference_names: list[str],
                           "deterministic tie break"),
         },
     )
-    secondary = secondary_exact_feature(
-        reference, reference_names, product, reference_match, product_match)
+    secondary = apply_registered_feature_intent(secondary_exact_feature(
+        reference, reference_names, product, reference_match, product_match),
+        intents, step_id)
     if secondary:
         mapping["spatialFeatureCorrespondences"] = [secondary]
         mapping["seedMatchedHeavyAtoms"] = secondary["mcs"]["atoms"]
@@ -532,7 +588,7 @@ def pose_map(reference: Chem.Mol, reference_names: list[str],
             "An edited region changes its attachment atom within a mapped "
             "biconnected ring. Conserved scaffold junctions remain hard; the "
             "other ring atoms are released from hard coordinates, and any "
-            "separately conserved fragment is used only to seed pose search.")
+            "separately conserved terminal feature is retained as registered designer intent.")
     return mapping, product_names
 
 
@@ -664,8 +720,10 @@ def main() -> None:
     reference_names = hit_names
     for index, (reference_id, product_id) in enumerate(zip(sequence, sequence[1:])):
         step_id, compound, label = step_specs[index]
+        intents = registered_intents(step_id)
         mapping, product_names = pose_map(
-            molecules[reference_id], reference_names, molecules[product_id], step_id)
+            molecules[reference_id], reference_names, molecules[product_id], step_id,
+            intents)
         steps.append({
             "id": step_id, "sequenceIndex": index + 1,
             "referenceStateId": reference_id, "stateId": product_id,
@@ -674,6 +732,7 @@ def main() -> None:
             "inputKind": "molecular-graph-only",
             "productSmiles": canonical[product_id],
             "productAtomNames": product_names,
+            "retainedFeatureIntents": intents,
             "posePropagationMap": mapping,
         })
         reference_names = product_names

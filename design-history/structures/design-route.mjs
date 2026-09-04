@@ -45,7 +45,37 @@ function exactIntegerPartition(indices, size, label) {
     throw new Error(`${label} must exactly partition indices 0 through ${size - 1}`);
 }
 
-function validatePoseMap(poseMap, index) {
+function validateRetainedFeatureIntents(value, index) {
+  const label = `steps[${index}].retainedFeatureIntents`;
+  if (!Array.isArray(value)) throw new Error(`${label} must be an array`);
+  const byId = new Map();
+  value.forEach((intent, intentIndex) => {
+    const intentLabel = `${label}[${intentIndex}]`;
+    requireRecord(intent, intentLabel);
+    requireString(intent.id, `${intentLabel}.id`);
+    const featureId = requireString(intent.featureId, `${intentLabel}.featureId`);
+    if (byId.has(featureId)) throw new Error(`${label} repeats ${featureId}`);
+    if (intent.kind !== 'conserved-fragment-rmsd'
+      || intent.actorClass !== 'human'
+      || intent.source !== 'registered-designer-intent'
+      || intent.treatment !== 'soft-restraint'
+      || intent.required !== true)
+      throw new Error(`${intentLabel} is not an explicit required designer retention decision`);
+    const restraint = requireRecord(intent.restraint, `${intentLabel}.restraint`);
+    if (restraint.metric !== 'graph-symmetry-minimized Cartesian RMSD'
+      || restraint.required !== true
+      || !Number.isFinite(Number(restraint.toleranceAngstrom))
+      || Number(restraint.toleranceAngstrom) <= 0
+      || !Number.isFinite(Number(restraint.weightKcalMolPerAngstrom2))
+      || Number(restraint.weightKcalMolPerAngstrom2) <= 0)
+      throw new Error(`${intentLabel}.restraint is invalid`);
+    requireString(intent.rationale, `${intentLabel}.rationale`);
+    byId.set(featureId, intent);
+  });
+  return byId;
+}
+
+function validatePoseMap(poseMap, index, retainedFeatureIntents) {
   const label = `steps[${index}].posePropagationMap`;
   const referenceHeavyAtoms = requireNonnegativeInteger(
     poseMap.referenceHeavyAtoms, `${label}.referenceHeavyAtoms`);
@@ -94,6 +124,14 @@ function validatePoseMap(poseMap, index) {
     `${label} reference atom map`);
   exactIntegerPartition([...productIndices, ...addedIndices], productHeavyAtoms,
     `${label} product atom map`);
+  const referenceElementByName = new Map([
+    ...poseMap.commonAtoms.map((entry) => [entry.referenceAtomName, entry.element]),
+    ...poseMap.deletedReferenceAtoms.map((entry) => [entry.referenceAtomName, entry.element]),
+  ]);
+  const productElementByIndex = new Map([
+    ...poseMap.commonAtoms.map((entry) => [entry.productAtomIndex, entry.element]),
+    ...poseMap.addedProductAtoms.map((entry) => [entry.productAtomIndex, entry.element]),
+  ]);
   const commonNameSet = new Set(referenceNames), commonProductSet = new Set(productIndices);
   poseMap.referenceBoundary.forEach((entry, boundaryIndex) => {
     requireRecord(entry, `${label}.referenceBoundary[${boundaryIndex}]`);
@@ -216,7 +254,22 @@ function validatePoseMap(poseMap, index) {
       if (variant.referenceAtomNames.some((name) => hardReferenceNames.has(name))
         || variant.productAtomIndices.some((atomIndex) => hardProductIndices.has(atomIndex)))
         throw new Error(`${variantLabel} overlaps the hard correspondence`);
+      variant.referenceAtomNames.forEach((name, pairIndex) => {
+        if (!referenceElementByName.has(name)
+          || referenceElementByName.get(name)
+            !== productElementByIndex.get(variant.productAtomIndices[pairIndex]))
+          throw new Error(`${variantLabel} is not element-equivalent`);
+      });
     });
+    const productSets = feature.mappingVariants.map((variant) =>
+      [...variant.productAtomIndices].sort((a, b) => a - b).join(','));
+    if (new Set(productSets).size !== 1)
+      throw new Error(`${featureLabel} variants must describe one product fragment`);
+    const featureMcs = requireRecord(feature.mcs, `${featureLabel}.mcs`);
+    if (featureMcs.atoms !== feature.mappingVariants[0].productAtomIndices.length
+      || !Number.isInteger(featureMcs.bonds)
+      || featureMcs.bonds < featureMcs.atoms - 1)
+      throw new Error(`${featureLabel}.mcs does not describe a connected exact feature`);
     if (feature.treatment === 'soft-restraint') {
       const restraint = requireRecord(feature.restraint, `${featureLabel}.restraint`);
       if (restraint.metric !== 'graph-symmetry-minimized Cartesian RMSD')
@@ -224,10 +277,28 @@ function validatePoseMap(poseMap, index) {
       for (const field of ['toleranceAngstrom', 'weightKcalMolPerAngstrom2'])
         if (!Number.isFinite(Number(restraint[field])) || Number(restraint[field]) < 0)
           throw new Error(`${featureLabel}.restraint.${field} must be nonnegative`);
-      if (restraint.required !== false || feature.required === true)
-        throw new Error(`${featureLabel} automatically transferred soft restraints cannot be required`);
+      if (typeof feature.required !== 'boolean' || restraint.required !== feature.required)
+        throw new Error(`${featureLabel} soft-restraint required flags must agree`);
+      if (feature.required && feature.source !== 'registered-designer-intent')
+        throw new Error(`${featureLabel} required soft restraint must be registered designer intent`);
+      if (feature.required) {
+        const intent = retainedFeatureIntents.get(feature.id);
+        if (!intent || feature.registeredIntentId !== intent.id)
+          throw new Error(`${featureLabel} lacks its registered route intent declaration`);
+        if (feature.kind !== intent.kind || feature.treatment !== intent.treatment
+          || feature.source !== intent.source
+          || restraint.metric !== intent.restraint.metric
+          || Number(restraint.toleranceAngstrom) !== Number(intent.restraint.toleranceAngstrom)
+          || Number(restraint.weightKcalMolPerAngstrom2)
+            !== Number(intent.restraint.weightKcalMolPerAngstrom2))
+          throw new Error(`${featureLabel} does not match its registered route intent`);
+      }
     }
   });
+  for (const featureId of retainedFeatureIntents.keys()) {
+    if (!spatialFeatures.some((feature) => feature.id === featureId && feature.required === true))
+      throw new Error(`${label} did not realize retained feature intent ${featureId}`);
+  }
   return { referenceNames, releasedMappedNames };
 }
 
@@ -288,9 +359,12 @@ export function validateRegisteredDesignRoute(route, { expectedId = null } = {})
     requireString(step.label, `steps[${index}].label`);
     requireString(step.inputKind, `steps[${index}].inputKind`);
     requireString(step.productSmiles, `steps[${index}].productSmiles`);
+    const retainedFeatureIntents = validateRetainedFeatureIntents(
+      step.retainedFeatureIntents ?? [], index);
     const poseMap = requireRecord(step.posePropagationMap,
       `steps[${index}].posePropagationMap`);
-    const { referenceNames:commonNames, releasedMappedNames } = validatePoseMap(poseMap, index);
+    const { referenceNames:commonNames, releasedMappedNames } = validatePoseMap(
+      poseMap, index, retainedFeatureIntents);
     const protectedAnchor = poseMap.protectedReferenceAnchor;
     if (protectedAnchor != null) {
       requireRecord(protectedAnchor,

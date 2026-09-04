@@ -45,9 +45,15 @@ function spatialFeatureCorrespondences(map, byProductIndex) {
         || feature.restraint != null))
       throw new Error(`Registered spatial feature ${index + 1} seed-only transfer must be non-required`);
     if (feature.treatment === 'soft-restraint'
-      && (feature.transferMode !== 'score-only' || feature.required === true
-        || feature.restraint?.required !== false))
-      throw new Error(`Registered spatial feature ${index + 1} automatic soft restraint cannot be required`);
+      && (feature.transferMode !== 'score-only'
+        || typeof feature.required !== 'boolean'
+        || feature.restraint?.required !== feature.required))
+      throw new Error(`Registered spatial feature ${index + 1} soft-restraint flags disagree`);
+    if (feature.treatment === 'soft-restraint' && feature.required
+      && (feature.source !== 'registered-designer-intent'
+        || typeof feature.registeredIntentId !== 'string'
+        || !feature.registeredIntentId))
+      throw new Error(`Registered spatial feature ${index + 1} required restraint lacks registered designer intent`);
     const variants = Array.from(feature.mappingVariants || []);
     if (!feature.id || variants.length < 1)
       throw new Error(`Registered spatial feature ${index + 1} requires an id and mapping variants`);
@@ -68,15 +74,16 @@ function spatialFeatureCorrespondences(map, byProductIndex) {
     });
     const normalizedFeature = { id:feature.id, kind:feature.kind,
       transferMode:feature.transferMode, treatment:feature.treatment,
-      required:false,
+      required:Boolean(feature.required),
       source:feature.source || 'registered graph correspondence',
+      registeredIntentId:feature.registeredIntentId || null,
       mappingVariants:normalized };
     if (feature.treatment === 'soft-restraint') normalizedFeature.restraint = {
       metric:'graph-symmetry-minimized Cartesian RMSD',
         toleranceAngstrom:Number(feature.restraint?.toleranceAngstrom ?? 1),
         weightKcalMolPerAngstrom2:Number(
           feature.restraint?.weightKcalMolPerAngstrom2 ?? 20),
-        required:false };
+        required:Boolean(feature.required) };
     return normalizedFeature;
   });
 }
@@ -201,7 +208,7 @@ export function buildRegisteredPoseTransferPlan(poseMap, policy) {
     releasedBoundaryAtomNames, introducedBoundaryAtomNames,
     elementAgnosticAtomMatching:false,
     coordinateRule:'hard-fix protected common atoms; release attachment-migrated ring atoms and changed graph regions',
-    featureRule:'use separately conserved graph regions only as non-required pose-search seeds; transfer compatible interaction roles as soft restraints',
+    featureRule:'propose separately conserved graph regions as non-required seeds by default; honor explicitly registered designer-intent retention as symmetry-aware soft restraints',
   };
 }
 

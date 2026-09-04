@@ -65,6 +65,7 @@ for (const [index, stepId] of stepIds.entries()) {
     outputStateSha256:guarded(applyId, 'output') } });
   const relaxId = `${stepId}-complex-relax`;
   push(relaxId, 'optimization.run', { method:'induced-fit-webgpu' }, { optimization:{
+    accepted:true,
     stateHashSchema:'molarium.molecular-state-hash/v1',
     inputStateSha256:guarded(relaxId, 'input'),
     outputStateSha256:guarded(relaxId, 'output') } });
@@ -74,6 +75,9 @@ for (const [index, stepId] of stepIds.entries()) {
   const checkpoint = { schema:'molarium.design-prediction-checkpoint/v1',
     routeId:'sos1-hit-only', stepId, predictedStateId:stateId,
     frozenBeforeHoldoutAccess:true,
+    relaxation:{ accepted:true },
+    ...(stepId === 'finish-bay-293' ? { sidechainContinuity:{
+      residue:'PHE A890', accepted:true, finalChiDegrees:[-170, 95] } } : {}),
     ...(stepId === 'open-phe890-pocket' ? { rotamerDecision:{
       publicationEligible:true, diagnosticOnly:false,
       deterministicFinalReplayVerified:true } } : {}),

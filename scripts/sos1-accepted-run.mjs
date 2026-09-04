@@ -31,6 +31,56 @@ export function requireExplicitRunDirectory(argv, { root = process.cwd() } = {})
   return resolve(root, value);
 }
 
+export function assertAcceptedCheckpointRelaxation(checkpoint, label = checkpoint?.stepId) {
+  assert.equal(checkpoint?.relaxation?.accepted, true,
+    `${label}: required checkpoint relaxation was not accepted`);
+  if (checkpoint?.stepId === 'finish-bay-293') {
+    const continuity = checkpoint.sidechainContinuity;
+    assert.equal(continuity?.residue, 'PHE A890',
+      `${label}: final Phe890 state was not independently remeasured`);
+    assert.equal(continuity?.accepted, true,
+      `${label}: Phe890 left the selected predecessor rotamer basin`);
+    assert(Array.isArray(continuity.finalChiDegrees)
+      && continuity.finalChiDegrees.length >= 1
+      && continuity.finalChiDegrees.every(Number.isFinite),
+    `${label}: final Phe890 chi measurement is incomplete`);
+  }
+  const requiredFeatures = Array.from(
+    checkpoint?.staging?.poseTransferPlan?.featureCorrespondences || [])
+    .filter((feature) => feature.required === true);
+  if (!requiredFeatures.length) return;
+  const retention = checkpoint.relaxation.registeredPoseRetention;
+  assert.equal(retention?.accepted, true,
+    `${label}: registered pose retention was not accepted after relaxation`);
+  assert.equal(retention?.after?.active, true,
+    `${label}: registered pose retention was inactive after relaxation`);
+  assert.equal(retention?.after?.accepted, true,
+    `${label}: post-relax registered pose feature exceeds tolerance`);
+  assert(Number.isFinite(retention.after.hardAnchor?.rmsdAngstrom)
+    && Number.isFinite(retention.after.hardAnchor?.maxDisplacementAngstrom)
+    && retention.after.hardAnchor.rmsdAngstrom <= 1e-6
+    && retention.after.hardAnchor.maxDisplacementAngstrom <= 1e-6,
+  `${label}: registered hard anchor moved during coupled relaxation`);
+  assert.equal(retention.after.features?.length, requiredFeatures.length,
+    `${label}: post-relax registered feature count is not exact`);
+  for (const required of requiredFeatures) {
+    const matches = (retention.after.features || []).filter((feature) =>
+      feature.id === required.id
+      && feature.registeredIntentId === required.registeredIntentId);
+    assert.equal(matches.length, 1,
+      `${label}: required registered pose feature is missing or ambiguous after relaxation`);
+    const measured = matches[0];
+    for (const key of ['rmsdAngstrom','centroidDisplacementAngstrom',
+      'planeNormalAngleDegrees'])
+      assert(Number.isFinite(measured[key]), `${label}: ${required.id} lacks ${key}`);
+    assert.equal(measured.toleranceAngstrom,
+      required.restraint?.toleranceAngstrom,
+    `${label}: ${required.id} post-relax tolerance changed`);
+    assert(measured.rmsdAngstrom <= measured.toleranceAngstrom,
+      `${label}: ${required.id} moved outside its registered tolerance`);
+  }
+}
+
 function assertNoHoldoutCoordinatePayload(value, path = 'checkpoint') {
   if (Array.isArray(value)) {
     value.forEach((entry, index) => assertNoHoldoutCoordinatePayload(entry, `${path}[${index}]`));
@@ -129,6 +179,7 @@ export async function verifyAcceptedSos1Run(runDirectory) {
     const checkpoint = JSON.parse(bytes);
     assert.equal(checkpoint.stepId, entry.stepId);
     assert.equal(checkpoint.frozenBeforeHoldoutAccess, true);
+    assertAcceptedCheckpointRelaxation(checkpoint, entry.stepId);
     assertNoHoldoutCoordinatePayload(checkpoint, `${entry.stepId} checkpoint`);
     checkpoints.set(entry.stepId, { entry, checkpoint, bytes });
   }

@@ -864,6 +864,7 @@
         "O13",
         "C17"
       ],
+      "retainedFeatureIntents": [],
       "posePropagationMap": {
         "source": "reported molecular graphs plus deterministic local-context map; no later coordinates",
         "referenceHeavyAtoms": 27,
@@ -1146,6 +1147,7 @@
         "O13",
         "C17"
       ],
+      "retainedFeatureIntents": [],
       "posePropagationMap": {
         "source": "reported molecular graphs plus deterministic local-context map; no later coordinates",
         "referenceHeavyAtoms": 29,
@@ -1458,6 +1460,7 @@
         "SX1",
         "CX17"
       ],
+      "retainedFeatureIntents": [],
       "posePropagationMap": {
         "source": "reported molecular graphs plus deterministic local-context map; no later coordinates",
         "referenceHeavyAtoms": 31,
@@ -1810,6 +1813,24 @@
         "C1",
         "CX2"
       ],
+      "retainedFeatureIntents": [
+        {
+          "id": "retain-terminal-feature-through-bay293",
+          "featureId": "secondary-exact-fragment-1",
+          "kind": "conserved-fragment-rmsd",
+          "actorClass": "human",
+          "source": "registered-designer-intent",
+          "treatment": "soft-restraint",
+          "required": true,
+          "restraint": {
+            "metric": "graph-symmetry-minimized Cartesian RMSD",
+            "toleranceAngstrom": 1.5,
+            "weightKcalMolPerAngstrom2": 20,
+            "required": true
+          },
+          "rationale": "retain the separately conserved terminal ring feature while allowing the intervening graph rewrite"
+        }
+      ],
       "posePropagationMap": {
         "source": "reported molecular graphs plus deterministic local-context map; no later coordinates",
         "referenceHeavyAtoms": 31,
@@ -2110,10 +2131,10 @@
           {
             "id": "secondary-exact-fragment-1",
             "kind": "conserved-fragment-rmsd",
-            "transferMode": "seed-only",
-            "treatment": "seed-only",
-            "required": false,
-            "source": "disjoint exact graph correspondence; no product coordinates",
+            "transferMode": "score-only",
+            "treatment": "soft-restraint",
+            "required": true,
+            "source": "registered-designer-intent",
             "mcs": {
               "smarts": "[#6]1:&@[#6]:&@[#6]:&@[#6]:&@[#6]:&@[#6]:&@1-&!@[#6&!R]",
               "atoms": 7,
@@ -2223,7 +2244,14 @@
               "referenceMatches": 2,
               "productMatches": 2,
               "candidateMaps": 4,
-              "selection": "enumerate graph symmetry; use only as pose-search seeds"
+              "selection": "enumerate graph symmetry; retain the registered terminal feature during pose search"
+            },
+            "registeredIntentId": "retain-terminal-feature-through-bay293",
+            "restraint": {
+              "metric": "graph-symmetry-minimized Cartesian RMSD",
+              "toleranceAngstrom": 1.5,
+              "weightKcalMolPerAngstrom2": 20,
+              "required": true
             }
           }
         ],
@@ -2325,7 +2353,7 @@
             "unmapped deleted and added graph regions"
           ]
         },
-        "transitionExplanation": "An edited region changes its attachment atom within a mapped biconnected ring. Conserved scaffold junctions remain hard; the other ring atoms are released from hard coordinates, and any separately conserved fragment is used only to seed pose search."
+        "transitionExplanation": "An edited region changes its attachment atom within a mapped biconnected ring. Conserved scaffold junctions remain hard; the other ring atoms are released from hard coordinates, and any separately conserved terminal feature is retained as registered designer intent."
       }
     }
   ],

@@ -223,6 +223,59 @@ def verify_publication_eligibility(manifest: dict, checkpoints: dict[str, dict])
         raise RuntimeError("Phe890 decision is diagnostic or lacks deterministic replay")
 
 
+def verify_accepted_checkpoint_relaxation(checkpoint: dict, step_id: str) -> None:
+    relaxation = checkpoint.get("relaxation", {})
+    if relaxation.get("accepted") is not True:
+        raise RuntimeError(f"{step_id}: required checkpoint relaxation was not accepted")
+    if step_id == "finish-bay-293":
+        continuity = checkpoint.get("sidechainContinuity", {})
+        if continuity.get("residue") != "PHE A890" \
+                or continuity.get("accepted") is not True \
+                or not continuity.get("finalChiDegrees") \
+                or not all(isinstance(value, (int, float)) and math.isfinite(value)
+                           for value in continuity["finalChiDegrees"]):
+            raise RuntimeError(
+                f"{step_id}: final Phe890 state was not retained and remeasured")
+    required = [feature for feature in checkpoint.get("staging", {})
+                .get("poseTransferPlan", {}).get("featureCorrespondences", [])
+                if feature.get("required") is True]
+    if not required:
+        return
+    retention = relaxation.get("registeredPoseRetention", {})
+    after = retention.get("after", {})
+    if retention.get("accepted") is not True or after.get("accepted") is not True \
+            or after.get("active") is not True:
+        raise RuntimeError(f"{step_id}: registered pose retention was not accepted")
+    hard = after.get("hardAnchor", {})
+    if not all(isinstance(hard.get(key), (int, float)) and math.isfinite(hard[key])
+               and hard[key] <= 1e-6
+               for key in ("rmsdAngstrom", "maxDisplacementAngstrom")):
+        raise RuntimeError(f"{step_id}: hard anchor moved during coupled relaxation")
+    measured = after.get("features", [])
+    if len(measured) != len(required):
+        raise RuntimeError(
+            f"{step_id}: post-relax registered feature count is not exact")
+    for required_feature in required:
+        matches = [feature for feature in measured
+                   if feature.get("id") == required_feature.get("id")
+                   and feature.get("registeredIntentId")
+                   == required_feature.get("registeredIntentId")]
+        if len(matches) != 1:
+            raise RuntimeError(
+                f"{step_id}: required post-relax feature is missing or ambiguous")
+        feature = matches[0]
+        for key in ("rmsdAngstrom", "centroidDisplacementAngstrom",
+                    "planeNormalAngleDegrees"):
+            if not isinstance(feature.get(key), (int, float)) \
+                    or not math.isfinite(feature[key]):
+                raise RuntimeError(f"{step_id}: post-relax feature lacks {key}")
+        tolerance = required_feature.get("restraint", {}).get("toleranceAngstrom")
+        if feature.get("toleranceAngstrom") != tolerance \
+                or feature["rmsdAngstrom"] > tolerance:
+            raise RuntimeError(
+                f"{step_id}: post-relax feature moved outside registered tolerance")
+
+
 def verify_run(run_dir: Path, protocol: dict) \
         -> tuple[bytes, dict, dict[str, dict], list[dict], dict]:
     manifest_bytes, manifest = read_json(run_dir / "prediction-manifest.json")
@@ -244,6 +297,7 @@ def verify_run(run_dir: Path, protocol: dict) \
             raise RuntimeError(f"{frozen['stepId']}: frozen checkpoint hash changed")
         if not checkpoint.get("frozenBeforeHoldoutAccess"):
             raise RuntimeError(f"{frozen['stepId']}: freeze boundary is absent")
+        verify_accepted_checkpoint_relaxation(checkpoint, frozen["stepId"])
         if checkpoint.get("schema") != protocol["predictionInputs"]["checkpointSchema"] \
                 or checkpoint.get("routeId", checkpoint.get("campaignId")) != "sos1-hit-only" \
                 or checkpoint.get("stepId") != frozen["stepId"] \
@@ -619,8 +673,13 @@ def route_regions(step: dict) -> dict[str, list[int]]:
 
     feature_indices: set[int] = set()
     for feature in pose_map.get("spatialFeatureCorrespondences", []):
-        if feature.get("treatment") != "seed-only" \
-                and feature.get("transferMode") != "seed-only":
+        retained = (feature.get("treatment") == "seed-only"
+                    or feature.get("transferMode") == "seed-only"
+                    or (feature.get("treatment") == "soft-restraint"
+                        and feature.get("required") is True
+                        and feature.get("source") == "registered-designer-intent"
+                        and feature.get("registeredIntentId")))
+        if not retained:
             continue
         variants = feature.get("mappingVariants") or [feature]
         variant_sets = {tuple(sorted(variant["productAtomIndices"])) for variant in variants}
@@ -941,13 +1000,22 @@ def aww_axh_continuity(campaign: dict, checkpoints: dict[str, dict]) -> dict:
 
     distal_metrics = None
     selected_variant = None
+    registered_intents = final_step.get("retainedFeatureIntents", [])
+    if len(registered_intents) != 1:
+        raise RuntimeError("AWW to AXH continuity requires one registered retained-feature intent")
     features = [feature for feature in pose_map.get("spatialFeatureCorrespondences", [])
                 if feature.get("treatment") == "seed-only"
-                or feature.get("transferMode") == "seed-only"]
+                or feature.get("transferMode") == "seed-only"
+                or (feature.get("treatment") == "soft-restraint"
+                    and feature.get("required") is True
+                    and feature.get("source") == "registered-designer-intent"
+                    and feature.get("registeredIntentId"))]
+    if len(features) != 1:
+        raise RuntimeError("AWW to AXH continuity requires exactly one registered retained feature")
     if features:
-        if len(features) != 1:
-            raise RuntimeError("AWW to AXH continuity currently requires one seed-only feature")
         feature = features[0]
+        if feature.get("registeredIntentId") != registered_intents[0].get("id"):
+            raise RuntimeError("AWW to AXH retained feature is not linked to registered intent")
         variants = feature.get("mappingVariants") or [feature]
         candidates = []
         for variant_index, variant in enumerate(variants):

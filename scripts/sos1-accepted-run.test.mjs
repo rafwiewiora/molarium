@@ -3,10 +3,37 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
-import { buildAcceptedSos1ReplayScript, requireExplicitRunDirectory, sha256,
-  verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
+import { assertAcceptedCheckpointRelaxation, buildAcceptedSos1ReplayScript,
+  requireExplicitRunDirectory, sha256, verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
 
 assert.throws(() => requireExplicitRunDirectory([]), /--run is required/);
+
+const retainedCheckpoint = {
+  stepId:'finish-bay-293',
+  sidechainContinuity:{ residue:'PHE A890', accepted:true,
+    finalChiDegrees:[-170, 95] },
+  staging:{ poseTransferPlan:{ featureCorrespondences:[{
+    id:'terminal', registeredIntentId:'retain-terminal', required:true,
+    restraint:{ toleranceAngstrom:1.5 },
+  }] } },
+  relaxation:{ accepted:true, registeredPoseRetention:{ accepted:true, after:{
+    active:true, accepted:true,
+    hardAnchor:{ rmsdAngstrom:0, maxDisplacementAngstrom:0 },
+    features:[{ id:'terminal', registeredIntentId:'retain-terminal', accepted:true,
+      rmsdAngstrom:0.2, centroidDisplacementAngstrom:0.1,
+      planeNormalAngleDegrees:2, toleranceAngstrom:1.5 }],
+  } } },
+};
+assert.doesNotThrow(() => assertAcceptedCheckpointRelaxation(retainedCheckpoint));
+const ambiguousRetention = structuredClone(retainedCheckpoint);
+ambiguousRetention.relaxation.registeredPoseRetention.after.features.push(
+  structuredClone(ambiguousRetention.relaxation.registeredPoseRetention.after.features[0]));
+assert.throws(() => assertAcceptedCheckpointRelaxation(ambiguousRetention),
+  /feature count is not exact/);
+const inactiveRetention = structuredClone(retainedCheckpoint);
+inactiveRetention.relaxation.registeredPoseRetention.after.active = false;
+assert.throws(() => assertAcceptedCheckpointRelaxation(inactiveRetention),
+  /was inactive/);
 
 const scratch = await mkdtemp(join(tmpdir(), 'molarium-accepted-sos1-'));
 const steps = ['scaffold-rewrite', 'fragment-merge', 'open-phe890-pocket', 'finish-bay-293'];
@@ -21,7 +48,7 @@ try {
     if (action === 'pose.apply') return { appliedPose:{ ...common,
       selectedStateSha256:digest('selected'), outputStateSha256:digest('output') } };
     if (action === 'optimization.run') return { optimization:{ ...common,
-      outputStateSha256:digest('output') } };
+      accepted:true, outputStateSha256:digest('output') } };
     return undefined;
   };
   const push = (requestId, action, args = {}) => {
@@ -73,6 +100,9 @@ try {
   for (const [index, stepId] of steps.entries()) {
     const body = { schema:'molarium.design-prediction-checkpoint/v1',
       routeId:'sos1-hit-only', stepId, frozenBeforeHoldoutAccess:true,
+      relaxation:{ accepted:true },
+      ...(stepId === 'finish-bay-293' ? { sidechainContinuity:{
+        residue:'PHE A890', accepted:true, finalChiDegrees:[-170, 95] } } : {}),
       ...(stepId === 'open-phe890-pocket' ? { rotamerDecision:{
         publicationEligible:true, diagnosticOnly:false,
         deterministicFinalReplayVerified:true } } : {}),
@@ -142,8 +172,28 @@ try {
 
   await writeFile(join(scratch, 'prediction-manifest.json'), manifestBytes);
   await writeFile(join(scratch, 'holdout-evaluation-summary.json'), `${JSON.stringify(evaluation)}\n`);
+  const rejectedRelaxationPath = join(scratch, 'finish-bay-293-prediction.json');
+  const rejectedRelaxation = JSON.parse(await readFile(rejectedRelaxationPath, 'utf8'));
+  rejectedRelaxation.relaxation.accepted = false;
+  const rejectedRelaxationBytes = Buffer.from(`${JSON.stringify(rejectedRelaxation)}\n`);
+  await writeFile(rejectedRelaxationPath, rejectedRelaxationBytes);
+  const rejectedRelaxationManifest = { ...manifest,
+    checkpoints:manifest.checkpoints.map((entry) => entry.stepId === 'finish-bay-293'
+      ? { ...entry, sha256:sha256(rejectedRelaxationBytes) } : entry) };
+  const rejectedRelaxationManifestBytes = Buffer.from(
+    `${JSON.stringify(rejectedRelaxationManifest)}\n`);
+  await writeFile(join(scratch, 'prediction-manifest.json'), rejectedRelaxationManifestBytes);
+  await writeFile(join(scratch, 'holdout-evaluation-summary.json'), `${JSON.stringify({
+    ...evaluation, predictionManifestSha256:sha256(rejectedRelaxationManifestBytes),
+  })}\n`);
+  await assert.rejects(() => verifyAcceptedSos1Run(scratch), /relaxation was not accepted/);
+
+  await writeFile(join(scratch, 'prediction-manifest.json'), manifestBytes);
+  await writeFile(join(scratch, 'holdout-evaluation-summary.json'), `${JSON.stringify(evaluation)}\n`);
   const finalPath = join(scratch, 'finish-bay-293-prediction.json');
-  const contaminated = JSON.parse(await readFile(finalPath, 'utf8'));
+  const originalFinal = { ...rejectedRelaxation, relaxation:{ accepted:true } };
+  await writeFile(finalPath, `${JSON.stringify(originalFinal)}\n`);
+  const contaminated = structuredClone(originalFinal);
   contaminated.evaluation = { role:'evaluation-only', pdbId:'5OVI',
     coordinatesAngstrom:[1,2,3] };
   const contaminatedBytes = Buffer.from(`${JSON.stringify(contaminated)}\n`);

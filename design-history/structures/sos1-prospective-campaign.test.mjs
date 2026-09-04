@@ -20,12 +20,22 @@ const automaticallyRequiredFeature = automaticallyRequired.steps.at(-1)
 automaticallyRequiredFeature.transferMode = 'score-only';
 automaticallyRequiredFeature.treatment = 'soft-restraint';
 automaticallyRequiredFeature.required = true;
+automaticallyRequiredFeature.source = 'automatic-proposal';
 automaticallyRequiredFeature.restraint = {
   metric:'graph-symmetry-minimized Cartesian RMSD', toleranceAngstrom:0.75,
   weightKcalMolPerAngstrom2:20, required:true,
 };
 assert.throws(() => validateRegisteredDesignRoute(automaticallyRequired),
-  /automatically transferred soft restraints cannot be required/);
+  /required soft restraint must be registered designer intent/);
+const unregisteredIntent = structuredClone(campaign);
+unregisteredIntent.steps.at(-1).retainedFeatureIntents = [];
+assert.throws(() => validateRegisteredDesignRoute(unregisteredIntent),
+  /lacks its registered route intent declaration/);
+const mismatchedIntent = structuredClone(campaign);
+mismatchedIntent.steps.at(-1).posePropagationMap
+  .spatialFeatureCorrespondences[0].registeredIntentId = 'forged-intent';
+assert.throws(() => validateRegisteredDesignRoute(mismatchedIntent),
+  /lacks its registered route intent declaration/);
 assert.equal(campaign.id, 'sos1-hit-only');
 assert.equal(campaign.hit.pdbId, '5OVE');
 assert.equal(campaign.hit.stateId, 'AXE');
@@ -103,16 +113,25 @@ for (const step of campaign.steps) {
     assert.equal(map.spatialFeatureCorrespondences.length, 1);
     const feature = map.spatialFeatureCorrespondences[0];
     assert.equal(feature.kind, 'conserved-fragment-rmsd');
-    assert.equal(feature.transferMode, 'seed-only');
-    assert.equal(feature.treatment, 'seed-only');
-    assert.equal(feature.required, false);
-    assert.equal(feature.restraint, undefined);
+    assert.equal(feature.transferMode, 'score-only');
+    assert.equal(feature.treatment, 'soft-restraint');
+    assert.equal(feature.required, true);
+    assert.equal(feature.source, 'registered-designer-intent');
+    assert.equal(feature.registeredIntentId,
+      'retain-terminal-feature-through-bay293');
+    assert.deepEqual(step.retainedFeatureIntents.map((intent) => intent.id),
+      ['retain-terminal-feature-through-bay293']);
+    assert.deepEqual(feature.restraint, {
+      metric:'graph-symmetry-minimized Cartesian RMSD', toleranceAngstrom:1.5,
+      weightKcalMolPerAngstrom2:20, required:true,
+    });
     assert.equal(feature.mappingVariants.length, 4);
     assert.deepEqual(feature.referenceAtomNames,
       ['CX5','CX11','CX12','CX13','CX14','CX15','CX16']);
     assert.match(map.transitionExplanation, /attachment atom within a mapped biconnected ring/);
-    assert.match(map.transitionExplanation, /only to seed pose search/);
+    assert.match(map.transitionExplanation, /registered designer intent/);
   } else {
+    assert.deepEqual(step.retainedFeatureIntents, []);
     assert(map.commonHeavyAtoms >= 15, `${step.id} must retain a substantial 3D anchor`);
     assert.equal(map.mcs.atoms, map.commonHeavyAtoms);
     assert.equal(map.hardCoordinateHeavyAtoms, map.commonHeavyAtoms);
