@@ -24,6 +24,7 @@ const files = [
   'design-history/publications/sos1/checkpoints/finish-bay-293-campaign.json',
   'LICENSE', 'NOTICE', 'README.md', 'CHEMIST-ACTIONS-API.md', 'DESIGNER-MOVES.md', 'THIRD_PARTY_NOTICES.md',
   'index.html', 'app.js', 'chemist-actions.mjs', 'styles.css', 'molarium-workspace.css', 'independent-layout-study.css',
+  'molecular-state-hash.mjs',
   'protein-residue-templates.js', 'rdkit-worker.js', 'openmm-worker.js', 'webgpu-worker.js',
   'stormm-worker.js', 'mlip-worker.js', 'local-lab-test.js',
   'validation/README.md', 'validation/dashboard.mjs', 'validation/registry.v0.1.json',
@@ -35,6 +36,8 @@ const files = [
   'docking/benchmark/7kpa-manual-contact-panel.README.md',
   'docking/benchmark/7kpa-manual-contact-smoke.v0.1.json',
   'docking/benchmark/7kpa-manual-contact-results.psiblue.v0.1.json',
+  'docking/registered-pose-retention.mjs',
+  'docking/registered-spatial-feature-restraint.mjs',
   'design-history/README.md', 'design-history/integrity.mjs', 'design-history/ledger.mjs',
   'design-history/movie.mjs', 'design-history/replay.mjs', 'design-history/interface-story.mjs',
   'design-history/designer-replay-review.mjs',
@@ -133,6 +136,16 @@ const files = [
   'webgpu/README.md', 'webgpu/molarium-webgpu.wgsl',
   'vendor/onnxruntime-web/ort.webgpu.bundle.min.mjs',
 ];
+
+// Fail during the build, rather than in the browser, when a top-level app
+// module is omitted from the explicit Cloudflare bundle.
+const deployedFiles = new Set(files);
+const appSource = await readFile(join(root, 'app.js'), 'utf8');
+for (const match of appSource.matchAll(/\bfrom\s*['"](\.[^'"]+)['"]/g)) {
+  const importedPath = match[1].replace(/^\.\//, '');
+  if (!deployedFiles.has(importedPath))
+    throw new Error(`app.js imports ${importedPath}, but the web bundle omits it`);
+}
 
 const headers = `/*
   Cache-Control: no-cache
