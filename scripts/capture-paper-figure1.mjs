@@ -37,8 +37,13 @@ function connectedAtomCount(atomIds, bonds) {
   return visited.size;
 }
 
-export function verifyBq5Inspection(envelope) {
+export function verifyBq5Inspection(envelope, definition) {
   const inspection = envelope?.result || envelope;
+  assert.equal(definition?.id, EXPECTED_LIGAND.residueName,
+    'The inspection must be checked against the registered BQ5 definition');
+  const expectedGraphSha256 = sha256(serializeRegisteredLigandDefinition(definition));
+  assert.equal(expectedGraphSha256, definition.graphSha256,
+    'The expected BQ5 definition does not match its registered graph hash');
   assert.equal(inspection?.scope, 'ligand', 'The public inspection must target one ligand');
   assert.equal(inspection?.truncated, false, 'The ligand inspection must not be truncated');
   assert(Array.isArray(inspection?.atoms) && Array.isArray(inspection?.bonds),
@@ -71,16 +76,38 @@ export function verifyBq5Inspection(envelope) {
   const multipleBondCount = heavyBonds.filter((bond) => Number(bond.order) > 1).length;
   assert(aromaticBondCount >= 5 || multipleBondCount >= 5,
     'BQ5 lacks the CCD aromatic/multiple-bond chemistry; raw PDB CONECT topology is insufficient');
-  const atomNameById = new Map(heavyAtoms.map((atom) => [atom.atomId, atom.atomName]));
+  assert.equal(new Set(inspection.atoms.map((atom) => atom.atomName)).size,
+    inspection.atoms.length, 'The prepared BQ5 atom names must be unique');
+  const atomNameById = new Map(inspection.atoms.map((atom) => [atom.atomId, atom.atomName]));
+  const inspectedDefinition = {
+    id:EXPECTED_LIGAND.residueName,
+    atoms:inspection.atoms.map((atom) => ({
+      id:atom.atomName, element:atom.element, formalCharge:Number(atom.formalCharge),
+      aromatic:Boolean(atom.aromatic), leaving:false,
+    })),
+    bonds:inspection.bonds.map((bond) => {
+      const [a, b] = bond.atomIds || [];
+      assert(atomNameById.has(a) && atomNameById.has(b),
+        'The prepared BQ5 graph contains a bond to an uninspected atom');
+      return { a:atomNameById.get(a), b:atomNameById.get(b),
+        order:Number(bond.order), aromatic:Boolean(bond.aromatic) };
+    }),
+  };
+  const inspectedGraphSha256 = sha256(serializeRegisteredLigandDefinition(
+    inspectedDefinition));
+  assert.equal(inspectedGraphSha256, expectedGraphSha256,
+    'The inspected post-preparation BQ5 graph does not equal the pinned registered graph');
+  const heavyAtomNameById = new Map(heavyAtoms.map((atom) => [atom.atomId, atom.atomName]));
   const graph = heavyBonds.map((bond) => ({
-    atoms:bond.atomIds.map((id) => atomNameById.get(id)).sort(),
+    atoms:bond.atomIds.map((id) => heavyAtomNameById.get(id)).sort(),
     order:Number(bond.order), aromatic:Boolean(bond.aromatic),
   })).sort((first, second) => `${first.atoms}:${first.order}`.localeCompare(
     `${second.atoms}:${second.order}`));
   return {
     identity:{ ...EXPECTED_LIGAND }, atomIds:heavyIds, heavyAtomCount:heavyAtoms.length,
     heavyBondCount:heavyBonds.length, aromaticBondCount, multipleBondCount,
-    graphSha256:sha256(JSON.stringify({
+    graphSha256:inspectedGraphSha256,
+    heavyGraphSha256:sha256(JSON.stringify({
       atoms:heavyAtoms.map((atom) => [atom.atomName, atom.element, atom.formalCharge,
         Boolean(atom.aromatic)]).sort(), bonds:graph,
     })),
@@ -218,7 +245,7 @@ async function main() {
       }
       if (request.action === 'session.inspect') inspection = envelope;
     }
-    const ligand = verifyBq5Inspection(inspection);
+    const ligand = verifyBq5Inspection(inspection, bq5Definition);
     const installedGraph = graphInstallation?.result?.registeredLigandGraph;
     assert.equal(installedGraph?.graphSha256, bq5Definition.graphSha256,
       'The public action did not install the pinned BQ5 graph');

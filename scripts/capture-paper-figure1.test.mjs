@@ -23,50 +23,54 @@ assert.throws(() => verifyLocalLabCaptureState({ ...localLab,
   badgeText:'Local Lab · network locked', foldDisabled:false },
   'http://127.0.0.1:50001'), /fold control enabled/);
 
-const atoms = Array.from({ length:16 }, (_, index) => ({
-  atomId:`bq5-${index}`, element:index < 3 ? 'N' : 'C', formalCharge:0,
-  aromatic:index < 11, atomName:`A${index}`, residueName:'BQ5', chain:'S', residueIndex:1101,
+const bq5Definition = JSON.parse(await readFile(new URL(
+  '../design-history/structures/ligands/bq5-rcsb-ccd.json', import.meta.url), 'utf8'));
+const atoms = bq5Definition.atoms.map((atom, index) => ({
+  atomId:`bq5-${index}`, element:atom.element, formalCharge:atom.formalCharge,
+  aromatic:atom.aromatic, atomName:atom.id, residueName:'BQ5', chain:'S', residueIndex:1101,
 }));
-const bonds = Array.from({ length:15 }, (_, index) => ({
-  atomIds:[`bq5-${index}`, `bq5-${index + 1}`], order:index < 6 ? 1.5 : 1,
-  aromatic:index < 6,
+const atomIdByName = new Map(atoms.map((atom) => [atom.atomName, atom.atomId]));
+const bonds = bq5Definition.bonds.map((bond) => ({
+  atomIds:[atomIdByName.get(bond.a), atomIdByName.get(bond.b)],
+  order:bond.order, aromatic:bond.aromatic,
 }));
-bonds.push(
-  { atomIds:['bq5-0', 'bq5-5'], order:1.5, aromatic:true },
-  { atomIds:['bq5-6', 'bq5-10'], order:1.5, aromatic:true },
-  { atomIds:['bq5-10', 'bq5-15'], order:1, aromatic:false },
-);
-const ligand = verifyBq5Inspection({ scope:'ligand', truncated:false, atoms, bonds });
+const ligand = verifyBq5Inspection({ scope:'ligand', truncated:false, atoms, bonds },
+  bq5Definition);
 assert.equal(ligand.heavyAtomCount, 16);
 assert.equal(ligand.heavyBondCount, 18);
-assert.match(ligand.graphSha256, /^[a-f0-9]{64}$/);
+assert.equal(ligand.graphSha256, bq5Definition.graphSha256);
 
 assert.throws(() => verifyBq5Inspection({ scope:'ligand', truncated:false,
-  atoms:atoms.map((atom, index) => index ? atom : { ...atom, residueName:'GLY' }), bonds }),
+  atoms:atoms.map((atom, index) => index ? atom : { ...atom, residueName:'GLY' }), bonds },
+  bq5Definition),
 /not exclusively BQ5/);
 assert.throws(() => verifyBq5Inspection({ scope:'ligand', truncated:false,
-  atoms, bonds:bonds.map((bond) => ({ ...bond, order:1, aromatic:false })) }),
+  atoms, bonds:bonds.map((bond) => ({ ...bond, order:1, aromatic:false })) }, bq5Definition),
 /CCD aromatic\/multiple-bond chemistry/);
+assert.throws(() => verifyBq5Inspection({ scope:'ligand', truncated:false,
+  atoms, bonds:bonds.map((bond, index) => index === 6 ? { ...bond, order:2 } : bond) },
+  bq5Definition), /does not equal the pinned registered graph/,
+'same-size but chemically different inspected graphs must fail closed');
 
-const svg = '<svg>' + atoms.map((_, index) =>
-  `<path class="atom-${index}"/>`).join('') + bonds.map((_, index) =>
+const depictionAtomIndices = Array.from({ length:ligand.heavyAtomCount }, (_, index) => index);
+const depictionBondIndices = Array.from({ length:ligand.heavyBondCount }, (_, index) => index);
+const svg = '<svg>' + depictionAtomIndices.map((index) =>
+  `<path class="atom-${index}"/>`).join('') + depictionBondIndices.map((index) =>
   `<path class="bond-${index}"/>`).join('') + '</svg>';
 assert.deepEqual(verifyVisibleBq5Depiction({ visible:true, label:'BQ5 ligand', pending:false,
-  error:null, hasSvg:true, atomIndices:atoms.map((_, index) => index),
-  bondIndices:bonds.map((_, index) => index), svg, svgLength:svg.length }, ligand), {
+  error:null, hasSvg:true, atomIndices:depictionAtomIndices,
+  bondIndices:depictionBondIndices, svg, svgLength:svg.length }, ligand), {
   label:'BQ5 ligand', heavyAtomCount:16, heavyBondCount:18,
   svgSha256:verifyVisibleBq5Depiction({ visible:true, label:'BQ5 ligand', pending:false,
-    error:null, hasSvg:true, atomIndices:atoms.map((_, index) => index),
-    bondIndices:bonds.map((_, index) => index), svg, svgLength:svg.length }, ligand).svgSha256,
+    error:null, hasSvg:true, atomIndices:depictionAtomIndices,
+    bondIndices:depictionBondIndices, svg, svgLength:svg.length }, ligand).svgSha256,
 });
 assert.throws(() => verifyVisibleBq5Depiction({ visible:true, label:'6EPM complex',
   pending:false, error:null, hasSvg:true,
   atomIndices:Array.from({ length:200 }, (_, index) => index),
-  bondIndices:bonds.map((_, index) => index), svg, svgLength:svg.length }, ligand),
+  bondIndices:depictionBondIndices, svg, svgLength:svg.length }, ligand),
 /not labelled as BQ5/);
 
-const bq5Definition = JSON.parse(await readFile(new URL(
-  '../design-history/structures/ligands/bq5-rcsb-ccd.json', import.meta.url), 'utf8'));
 assert.equal(createHash('sha256').update(serializeRegisteredLigandDefinition(
   bq5Definition)).digest('hex'), bq5Definition.graphSha256);
 assert.equal(bq5Definition.source.contentSha256,
@@ -88,7 +92,7 @@ const source = await readFile(new URL('./capture-paper-figure1.mjs', import.meta
 assert(!source.includes('window.molariumTest'), 'Figure 1 capture must not use test-only state');
 assert(!source.includes('loadMolecule('), 'Figure 1 capture must not mutate the viewer directly');
 assert.match(source, /window\.MolariumChemistActions\.execute/);
-assert.match(source, /verifyBq5Inspection\(inspection\)/);
+assert.match(source, /verifyBq5Inspection\(inspection, bq5Definition\)/);
 assert.match(source, /verifyVisibleBq5Depiction\(await readVisibleDepiction/);
 assert.match(source, /verifyBrowserLocalLabCapture\(browser\)/);
 assert.match(source, /localOnly:true/);

@@ -153,10 +153,11 @@ the ordinary action audit. It does not fetch a chemical-component record.
 
 After installation, `protein.prepare` may use `ligandPolicy: "registered"`. That mode prepares the
 installed graph from its pinned local definition, excludes other unregistered heterogens, and makes
-no CCD network request. Figure 1 uses this sequence with the bundled BQ5 definition: load 6EPM,
-install the BQ5 graph at chain S residue 1101, prepare in registered-only mode, and inspect the
-result. RDKit WebAssembly then generates the visible 2D layout from the installed chemistry; its
-coordinates are not used as molecular coordinates.
+no external CCD request; Local Lab permits only same-origin localhost requests. Figure 1 uses this
+sequence with the bundled BQ5 definition: load 6EPM, install the BQ5 graph at chain S residue 1101,
+prepare in registered-only mode, and inspect the result. RDKit WebAssembly then generates the
+visible 2D layout from the installed chemistry; its coordinates are not used as molecular
+coordinates.
 
 There is no alternate or compatibility alias for these actions. Saved scripts, interactive replay,
 and agent calls all use the same `designRoute.*` names. Only `designRoute.load` accepts `routeId`.
