@@ -21,10 +21,6 @@ automaticallyRequiredFeature.transferMode = 'score-only';
 automaticallyRequiredFeature.treatment = 'soft-restraint';
 automaticallyRequiredFeature.required = true;
 automaticallyRequiredFeature.source = 'automatic-proposal';
-automaticallyRequiredFeature.restraint = {
-  metric:'graph-symmetry-minimized Cartesian RMSD', toleranceAngstrom:0.75,
-  weightKcalMolPerAngstrom2:20, required:true,
-};
 assert.throws(() => validateRegisteredDesignRoute(automaticallyRequired),
   /required soft restraint must be registered designer intent/);
 const unregisteredIntent = structuredClone(campaign);
@@ -122,8 +118,16 @@ for (const step of campaign.steps) {
     assert.deepEqual(step.retainedFeatureIntents.map((intent) => intent.id),
       ['retain-terminal-feature-through-bay293']);
     assert.deepEqual(feature.restraint, {
-      metric:'graph-symmetry-minimized Cartesian RMSD', toleranceAngstrom:1.5,
+      schema:'molarium.registered-soft-spatial-feature-restraint/v1',
+      metric:'graph-symmetry-minimized Cartesian RMSD', toleranceAngstrom:2.25,
       weightKcalMolPerAngstrom2:20, required:true,
+      parameterDecision:{
+        schema:'molarium.registered-spatial-feature-parameter-decision/v1',
+        actorClass:'human', basis:'pre-holdout-diagnostic',
+        sourceAttemptId:'sos1-final-retention-9a73dd8-20260904t0535z-use1b-a010-r01',
+        observedBestRmsdAngstrom:2.161703263647055,
+        selectedToleranceAngstrom:2.25, holdoutCoordinatesUsed:false,
+      },
     });
     assert.equal(feature.mappingVariants.length, 4);
     assert.deepEqual(feature.referenceAtomNames,

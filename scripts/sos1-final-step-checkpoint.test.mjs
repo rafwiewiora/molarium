@@ -94,6 +94,7 @@ assert(!runner.includes('5OVI'), 'diagnostic runner must not name or open the ho
 assert.match(runner, /campaign\.import/);
 assert.match(runner, /designRoute\.resume/);
 assert.match(runner, /pose\.refine/);
+assert.match(runner, /optimization\.run/);
 assert.match(runner, /candidate-gate\.json/);
 assert.match(runner, /diagnosticOnly:true, promotable:false/);
 
@@ -102,6 +103,7 @@ const allowed = new Set([
   'campaign.import','campaign.verify','designRoute.resume','view.setMode',
   'protein.parameterize','pose.captureReference','session.inspect',
   'designRoute.applyStep','pose.refine','pose.apply','designRoute.inspect',
+  'optimization.run',
 ]);
 assert(invoked.length > 0);
 assert.deepEqual([...new Set(invoked.filter((name) => !allowed.has(name)))], []);

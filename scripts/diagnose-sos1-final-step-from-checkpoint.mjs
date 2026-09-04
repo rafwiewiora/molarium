@@ -13,6 +13,42 @@ import {
 import { validateRegisteredDesignRoute } from
   '../design-history/structures/design-route.mjs';
 
+function requireAcceptedContinuity(optimization, requiredFeatures) {
+  assert.equal(optimization?.accepted, true,
+    'coupled relaxation was rejected and restored');
+  const safeguard = optimization?.valenceSafeguard;
+  assert.equal(safeguard?.schema, 'molarium.ligand-valence-safeguard/v1');
+  assert.equal(safeguard?.accepted, true);
+  assert.equal(safeguard?.complete, true);
+  assert.deepEqual(safeguard?.violations, []);
+  assert.equal(safeguard?.checkedHeavyBonds, safeguard?.expectedHeavyBonds);
+  assert.equal(safeguard?.bondMeasurements?.length, safeguard?.checkedHeavyBonds);
+  assert.equal(safeguard?.bondMeasurements?.every((bond) => bond.accepted === true), true);
+  const retention = optimization?.registeredPoseRetention;
+  assert.equal(retention?.accepted, true,
+    'coupled relaxation did not preserve registered pose continuity');
+  for (const evidence of [retention.before, retention.after]) {
+    assert.equal(evidence?.active, true);
+    assert.equal(evidence?.accepted, true);
+    assert.equal(evidence?.hardAnchor?.rmsdAngstrom, 0);
+    assert.equal(evidence?.hardAnchor?.maxDisplacementAngstrom, 0);
+    assert.equal(evidence?.features?.length, requiredFeatures.length);
+  }
+  for (const feature of requiredFeatures) {
+    const before = retention.before.features.filter((entry) => entry.id === feature.id);
+    const after = retention.after.features.filter((entry) => entry.id === feature.id);
+    assert.equal(before.length, 1);
+    assert.equal(after.length, 1);
+    for (const measured of [before[0], after[0]]) {
+      assert.equal(measured.accepted, true);
+      assert.equal(measured.toleranceAngstrom, feature.restraint.toleranceAngstrom);
+      assert(measured.rmsdAngstrom <= feature.restraint.toleranceAngstrom);
+    }
+    assert.deepEqual(before[0].productAtomIds, after[0].productAtomIds);
+  }
+  return optimization;
+}
+
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const route = JSON.parse(await readFile(join(root,
   'design-history/structures/generated/sos1-prospective-campaign.json'), 'utf8'));
@@ -127,6 +163,12 @@ try {
   const selectedIndex = Math.max(0, Number(refinement.selectedRank || 1) - 1);
   await execute('pose.apply', { index:selectedIndex },
     'diagnostic-apply-selected-final-axh');
+  phase = 'coupled-relaxation';
+  const relaxed = await execute('optimization.run', {
+    method:'induced-fit-webgpu',
+  }, 'diagnostic-relax-selected-final-axh');
+  const optimization = requireAcceptedContinuity(
+    relaxed.result.optimization, requiredFeatures);
   const afterLigand = await execute('session.inspect', {
     scope:'ligand', includeCoordinates:true, maximumAtoms:256,
   }, 'diagnostic-inspect-selected-axh-ligand');
@@ -146,7 +188,7 @@ try {
     holdoutCoordinatesUsed:false, searchChains,
     sourceCheckpointSha256:frozen.checkpointSha256,
     campaignSha256:sha256(Buffer.from(restored.serialized)),
-    parameterization:parameterization.result.parameterization,
+    parameterization:parameterization.result.parameterization, optimization,
     gate, designRoute:designRoute.result.designRoute,
     ligand:afterLigand.result, pocket:afterPocket.result,
     referencePocket:beforePocket.result,

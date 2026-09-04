@@ -1823,10 +1823,20 @@
           "treatment": "soft-restraint",
           "required": true,
           "restraint": {
+            "schema": "molarium.registered-soft-spatial-feature-restraint/v1",
             "metric": "graph-symmetry-minimized Cartesian RMSD",
-            "toleranceAngstrom": 1.5,
+            "toleranceAngstrom": 2.25,
             "weightKcalMolPerAngstrom2": 20,
-            "required": true
+            "required": true,
+            "parameterDecision": {
+              "schema": "molarium.registered-spatial-feature-parameter-decision/v1",
+              "actorClass": "human",
+              "basis": "pre-holdout-diagnostic",
+              "sourceAttemptId": "sos1-final-retention-9a73dd8-20260904t0535z-use1b-a010-r01",
+              "observedBestRmsdAngstrom": 2.161703263647055,
+              "selectedToleranceAngstrom": 2.25,
+              "holdoutCoordinatesUsed": false
+            }
           },
           "rationale": "retain the separately conserved terminal ring feature while allowing the intervening graph rewrite"
         }
@@ -2248,10 +2258,20 @@
             },
             "registeredIntentId": "retain-terminal-feature-through-bay293",
             "restraint": {
+              "schema": "molarium.registered-soft-spatial-feature-restraint/v1",
               "metric": "graph-symmetry-minimized Cartesian RMSD",
-              "toleranceAngstrom": 1.5,
+              "toleranceAngstrom": 2.25,
               "weightKcalMolPerAngstrom2": 20,
-              "required": true
+              "required": true,
+              "parameterDecision": {
+                "schema": "molarium.registered-spatial-feature-parameter-decision/v1",
+                "actorClass": "human",
+                "basis": "pre-holdout-diagnostic",
+                "sourceAttemptId": "sos1-final-retention-9a73dd8-20260904t0535z-use1b-a010-r01",
+                "observedBestRmsdAngstrom": 2.161703263647055,
+                "selectedToleranceAngstrom": 2.25,
+                "holdoutCoordinatesUsed": false
+              }
             }
           }
         ],

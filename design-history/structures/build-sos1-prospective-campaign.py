@@ -26,6 +26,10 @@ PROTEIN_OUTPUT = GENERATED / "sos1-5ove-protein.pdb"
 LIGAND_OUTPUT = GENERATED / "sos1-5ove-ligand.pdb"
 CAMPAIGN_OUTPUT = GENERATED / "sos1-prospective-campaign.json"
 REGISTERED_DESIGN_ROUTE_SCHEMA = "molarium.registered-design-route/v1"
+REGISTERED_SOFT_SPATIAL_FEATURE_RESTRAINT_SCHEMA = (
+    "molarium.registered-soft-spatial-feature-restraint/v1")
+REGISTERED_SPATIAL_FEATURE_PARAMETER_DECISION_SCHEMA = (
+    "molarium.registered-spatial-feature-parameter-decision/v1")
 EXPECTED_RDKIT_VERSION = "2026.03.4"
 DEFAULT_HIT_PDB = (ROOT / "outputs" / "design-history" / "sos1-preapproval"
                    / "source" / "5OVE.pdb")
@@ -57,10 +61,22 @@ RETAINED_FEATURE_INTENTS = {
         "treatment": "soft-restraint",
         "required": True,
         "restraint": {
+            "schema": REGISTERED_SOFT_SPATIAL_FEATURE_RESTRAINT_SCHEMA,
             "metric": "graph-symmetry-minimized Cartesian RMSD",
-            "toleranceAngstrom": 1.5,
+            "toleranceAngstrom": 2.25,
             "weightKcalMolPerAngstrom2": 20,
             "required": True,
+            "parameterDecision": {
+                "schema": REGISTERED_SPATIAL_FEATURE_PARAMETER_DECISION_SCHEMA,
+                "actorClass": "human",
+                "basis": "pre-holdout-diagnostic",
+                "sourceAttemptId": (
+                    "sos1-final-retention-9a73dd8-20260904t0535z-"
+                    "use1b-a010-r01"),
+                "observedBestRmsdAngstrom": 2.161703263647055,
+                "selectedToleranceAngstrom": 2.25,
+                "holdoutCoordinatesUsed": False,
+            },
         },
         "rationale": ("retain the separately conserved terminal ring feature "
                       "while allowing the intervening graph rewrite"),

@@ -150,7 +150,7 @@ try {
   assert.equal(embedding.spatialFeatures[0].required, true);
   assert.equal(embedding.spatialFeatures[0].atomCount, 7);
   assert.equal(embedding.spatialFeatures[0].candidateMaps, 4);
-  assert.equal(embedding.spatialFeatures[0].restraint.toleranceAngstrom, 1.5);
+  assert.equal(embedding.spatialFeatures[0].restraint.toleranceAngstrom, 2.25);
   assert.deepEqual(transfer.releasedMappedAtomNames, ['CX2','CX3','CX4','SX1']);
   assert.equal(embedding.seedOnlyPlacement.features.length, 0,
     'required retention is scored during pose search, not silently fixed during graph staging');

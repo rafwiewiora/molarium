@@ -230,9 +230,13 @@ three kinds of local hypotheses:
 - every registered spatial-feature atom-map variant, placed from its reference coordinates as a
   seed-only hypothesis.
 
-A spatial feature in this stage is neither a hard coordinate correspondence nor a required scoring
-restraint. It broadens initial placement hypotheses; physical and required-contact criteria still
-rank the resulting poses. Likewise, an affected pre-existing rotor can release only the mapped core
+A seed-only spatial feature in this stage is neither a hard coordinate correspondence nor a required
+scoring restraint. A required soft spatial feature must instead be declared by the route under
+`molarium.registered-soft-spatial-feature-restraint/v1`; its tolerance and weight are then applied
+to every candidate and coupled-relaxation continuity check. The parameter-decision record identifies
+the human actor, immutable pre-holdout diagnostic, observed RMSD, selected tolerance, and confirms
+that no holdout coordinates were used. These features broaden initial placement hypotheses while
+remaining distinct from atom identity. Likewise, an affected pre-existing rotor can release only the mapped core
 atoms on its movable side for seeding. All other inherited heavy atoms remain exact. Every seeding
 operation is an internal-coordinate rotation or rigid feature placement followed by ordinary local
 geometry repair; it does not stretch a bond to force a match.

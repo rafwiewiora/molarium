@@ -136,8 +136,11 @@ compatible donor/acceptor roles may transfer as soft restraints but never as ato
 route policy requires complete-ring correspondence and explicitly rejects element-agnostic hard
 matching. Thus a bioisosteric ring replacement keeps the unchanged external scaffold fixed while the
 replacement ring is rebuilt and searched. Adding a substituent to an otherwise unchanged ring does
-not release that ring. Designer-directed steps
-also require `attachmentAtomId`, the same persistent ligand atom ID that an interactive chemist
+not release that ring. Designer-directed steps register required soft spatial features with
+`molarium.registered-soft-spatial-feature-restraint/v1`. The restraint carries its tolerance,
+weight, and a versioned pre-holdout parameter-decision record; this makes protocol changes visible in
+the route hash and action audit rather than embedding an unreported acceptance exception. They also
+require `attachmentAtomId`, the same persistent ligand atom ID that an interactive chemist
 selects as the exit vector; the route rejects a symmetry-equivalent map attached anywhere else.
 Later protein or ligand coordinates are not available to the route. Evaluation holdouts remain
 locked until prediction coordinates and their action audit have been frozen.

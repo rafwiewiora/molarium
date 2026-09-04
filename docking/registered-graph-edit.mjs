@@ -1,6 +1,9 @@
 export const REGISTERED_POSE_PROPAGATION_POLICY_SCHEMA =
   'molarium.registered-pose-propagation-policy/v1';
 
+import { validateRegisteredSoftSpatialFeatureRestraint } from
+  './registered-spatial-feature-restraint.mjs';
+
 const REQUIRED_POLICY = Object.freeze({
   atomCorrespondence:'exact-element',
   bondCorrespondence:'exact-order',
@@ -78,12 +81,18 @@ function spatialFeatureCorrespondences(map, byProductIndex) {
       source:feature.source || 'registered graph correspondence',
       registeredIntentId:feature.registeredIntentId || null,
       mappingVariants:normalized };
-    if (feature.treatment === 'soft-restraint') normalizedFeature.restraint = {
-      metric:'graph-symmetry-minimized Cartesian RMSD',
-        toleranceAngstrom:Number(feature.restraint?.toleranceAngstrom ?? 1),
-        weightKcalMolPerAngstrom2:Number(
-          feature.restraint?.weightKcalMolPerAngstrom2 ?? 20),
-        required:Boolean(feature.required) };
+    if (feature.treatment === 'soft-restraint') {
+      const restraint = validateRegisteredSoftSpatialFeatureRestraint(
+        feature.restraint, `Registered spatial feature ${feature.id} restraint`);
+      normalizedFeature.restraint = {
+        schema:restraint.schema,
+        metric:restraint.metric,
+        toleranceAngstrom:Number(restraint.toleranceAngstrom),
+        weightKcalMolPerAngstrom2:Number(restraint.weightKcalMolPerAngstrom2),
+        required:Boolean(feature.required),
+        parameterDecision:structuredClone(restraint.parameterDecision),
+      };
+    }
     return normalizedFeature;
   });
 }

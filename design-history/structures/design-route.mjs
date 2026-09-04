@@ -1,6 +1,8 @@
 import { EXACT_REGISTERED_POSE_PROPAGATION_POLICY,
   validateRegisteredPosePropagationPolicy } from
   '../../docking/registered-graph-edit.mjs';
+import { validateRegisteredSoftSpatialFeatureRestraint } from
+  '../../docking/registered-spatial-feature-restraint.mjs';
 
 export const REGISTERED_DESIGN_ROUTE_SCHEMA = 'molarium.registered-design-route/v1';
 
@@ -61,14 +63,8 @@ function validateRetainedFeatureIntents(value, index) {
       || intent.treatment !== 'soft-restraint'
       || intent.required !== true)
       throw new Error(`${intentLabel} is not an explicit required designer retention decision`);
-    const restraint = requireRecord(intent.restraint, `${intentLabel}.restraint`);
-    if (restraint.metric !== 'graph-symmetry-minimized Cartesian RMSD'
-      || restraint.required !== true
-      || !Number.isFinite(Number(restraint.toleranceAngstrom))
-      || Number(restraint.toleranceAngstrom) <= 0
-      || !Number.isFinite(Number(restraint.weightKcalMolPerAngstrom2))
-      || Number(restraint.weightKcalMolPerAngstrom2) <= 0)
-      throw new Error(`${intentLabel}.restraint is invalid`);
+    const restraint = validateRegisteredSoftSpatialFeatureRestraint(
+      intent.restraint, `${intentLabel}.restraint`);
     requireString(intent.rationale, `${intentLabel}.rationale`);
     byId.set(featureId, intent);
   });
@@ -271,12 +267,8 @@ function validatePoseMap(poseMap, index, retainedFeatureIntents) {
       || featureMcs.bonds < featureMcs.atoms - 1)
       throw new Error(`${featureLabel}.mcs does not describe a connected exact feature`);
     if (feature.treatment === 'soft-restraint') {
-      const restraint = requireRecord(feature.restraint, `${featureLabel}.restraint`);
-      if (restraint.metric !== 'graph-symmetry-minimized Cartesian RMSD')
-        throw new Error(`${featureLabel}.restraint metric changed`);
-      for (const field of ['toleranceAngstrom', 'weightKcalMolPerAngstrom2'])
-        if (!Number.isFinite(Number(restraint[field])) || Number(restraint[field]) < 0)
-          throw new Error(`${featureLabel}.restraint.${field} must be nonnegative`);
+      const restraint = validateRegisteredSoftSpatialFeatureRestraint(
+        feature.restraint, `${featureLabel}.restraint`);
       if (typeof feature.required !== 'boolean' || restraint.required !== feature.required)
         throw new Error(`${featureLabel} soft-restraint required flags must agree`);
       if (feature.required && feature.source !== 'registered-designer-intent')
@@ -290,7 +282,9 @@ function validatePoseMap(poseMap, index, retainedFeatureIntents) {
           || restraint.metric !== intent.restraint.metric
           || Number(restraint.toleranceAngstrom) !== Number(intent.restraint.toleranceAngstrom)
           || Number(restraint.weightKcalMolPerAngstrom2)
-            !== Number(intent.restraint.weightKcalMolPerAngstrom2))
+            !== Number(intent.restraint.weightKcalMolPerAngstrom2)
+          || JSON.stringify(restraint.parameterDecision)
+            !== JSON.stringify(intent.restraint.parameterDecision))
           throw new Error(`${featureLabel} does not match its registered route intent`);
       }
     }
