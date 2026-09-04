@@ -167,21 +167,32 @@ class EvaluatorTest(unittest.TestCase):
             EVALUATOR.verify_publication_eligibility(manifest, checkpoints)
 
     def test_required_relaxation_and_retention_fail_closed(self) -> None:
+        retention_phase = {
+            "active": True, "accepted": True,
+            "fixedAtomIds": ["hard-1", "p-1", "p-2", "p-3"],
+            "hardAnchor": {"rmsdAngstrom": 0.0,
+                           "maxDisplacementAngstrom": 0.0},
+            "features": [{
+                "id": "terminal", "registeredIntentId": "retain-terminal",
+                "accepted": True, "productAtomIds": ["p-1", "p-2", "p-3"],
+                "symmetryVariantCount": 2,
+                "rmsdAngstrom": 0.2, "centroidDisplacementAngstrom": 0.1,
+                "planeNormalAngleDegrees": 2.0, "toleranceAngstrom": 1.5,
+            }],
+        }
         checkpoint = {"stepId": "finish-bay-293", "relaxation": {"accepted": True,
-            "registeredPoseRetention": {"accepted": True, "after": {
-                "active": True, "accepted": True,
-                "hardAnchor": {"rmsdAngstrom": 0.0,
-                               "maxDisplacementAngstrom": 0.0},
-                "features": [{
-                    "id": "terminal", "registeredIntentId": "retain-terminal",
-                    "rmsdAngstrom": 0.2, "centroidDisplacementAngstrom": 0.1,
-                    "planeNormalAngleDegrees": 2.0, "toleranceAngstrom": 1.5,
-                }]}}},
+            "registeredPoseRetention": {"accepted": True,
+                "before": json.loads(json.dumps(retention_phase)),
+                "after": json.loads(json.dumps(retention_phase))}},
             "sidechainContinuity": {"residue": "PHE A890", "accepted": True,
                                       "finalChiDegrees": [-170.0, 95.0]},
             "staging": {"poseTransferPlan": {"featureCorrespondences": [{
                 "id": "terminal", "registeredIntentId": "retain-terminal",
                 "required": True, "restraint": {"toleranceAngstrom": 1.5},
+                "mappingVariants": [
+                    {"referenceAtomNames": ["R1", "R2", "R3"]},
+                    {"referenceAtomNames": ["R1", "R2", "R3"]},
+                ],
             }]}}}
         EVALUATOR.verify_accepted_checkpoint_relaxation(
             checkpoint, "finish-bay-293")
@@ -200,6 +211,17 @@ class EvaluatorTest(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "feature count is not exact"):
             EVALUATOR.verify_accepted_checkpoint_relaxation(
                 ambiguous, "finish-bay-293")
+        no_before = json.loads(json.dumps(checkpoint))
+        del no_before["relaxation"]["registeredPoseRetention"]["before"]
+        with self.assertRaisesRegex(RuntimeError, "retention was not accepted"):
+            EVALUATOR.verify_accepted_checkpoint_relaxation(
+                no_before, "finish-bay-293")
+        changed_atoms = json.loads(json.dumps(checkpoint))
+        changed_atoms["relaxation"]["registeredPoseRetention"]["after"] \
+            ["features"][0]["productAtomIds"][2] = "p-4"
+        with self.assertRaisesRegex(RuntimeError, "atom identities changed"):
+            EVALUATOR.verify_accepted_checkpoint_relaxation(
+                changed_atoms, "finish-bay-293")
 
     def test_receptor_alignment_uses_only_registered_non_phe_anchors(self) -> None:
         anchors = EVALUATOR.EXPECTED_ALIGNMENT_ANCHORS

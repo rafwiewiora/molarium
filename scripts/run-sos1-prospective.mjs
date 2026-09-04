@@ -134,25 +134,50 @@ function requireRegisteredFeatureRelaxation(relaxation, staged, label) {
     ?.featureCorrespondences || []).filter((feature) => feature.required === true);
   if (!required.length) return relaxation;
   const retention = relaxation?.registeredPoseRetention;
-  if (retention?.accepted !== true || retention.after?.active !== true
-    || retention.after?.accepted !== true
-    || !Number.isFinite(retention.after.hardAnchor?.rmsdAngstrom)
-    || !Number.isFinite(retention.after.hardAnchor?.maxDisplacementAngstrom)
-    || retention.after.hardAnchor.rmsdAngstrom > 1e-6
-    || retention.after.hardAnchor.maxDisplacementAngstrom > 1e-6)
+  const before = retention?.before, after = retention?.after;
+  if (retention?.accepted !== true || before?.active !== true
+    || before?.accepted !== true || after?.active !== true
+    || after?.accepted !== true)
     throw new Error(`${label}: coupled relaxation did not retain the registered pose islands`);
-  if (!Array.isArray(retention.after.features)
-    || retention.after.features.length !== required.length)
-    throw new Error(`${label}: post-relax registered feature count is not exact`);
+  for (const [phase, evidence] of [['before', before], ['after', after]]) {
+    if (!Number.isFinite(evidence.hardAnchor?.rmsdAngstrom)
+      || !Number.isFinite(evidence.hardAnchor?.maxDisplacementAngstrom)
+      || evidence.hardAnchor.rmsdAngstrom > 1e-6
+      || evidence.hardAnchor.maxDisplacementAngstrom > 1e-6)
+      throw new Error(`${label}: registered hard anchor moved ${phase} coupled relaxation`);
+  }
+  if (!Array.isArray(before.features) || before.features.length !== required.length
+    || !Array.isArray(after.features) || after.features.length !== required.length)
+    throw new Error(`${label}: pre/post-relax registered feature count is not exact`);
+  const beforeFixed = Array.from(before.fixedAtomIds || []);
+  const afterFixed = Array.from(after.fixedAtomIds || []);
+  if (new Set(beforeFixed).size !== beforeFixed.length
+    || new Set(afterFixed).size !== afterFixed.length
+    || JSON.stringify(beforeFixed) !== JSON.stringify(afterFixed))
+    throw new Error(`${label}: registered retained atom identities changed during relaxation`);
   for (const expected of required) {
-    const matches = (retention.after.features || []).filter((feature) =>
+    const expectedMaps = expected.mappingVariants.length;
+    const byPhase = [before, after].map((evidence) => evidence.features.filter((feature) =>
       feature.id === expected.id
-      && feature.registeredIntentId === expected.registeredIntentId);
-    if (matches.length !== 1 || matches[0].accepted !== true
-      || matches[0].rmsdAngstrom > expected.restraint.toleranceAngstrom
-      || !Number.isFinite(matches[0].centroidDisplacementAngstrom)
-      || !Number.isFinite(matches[0].planeNormalAngleDegrees))
-      throw new Error(`${label}: required retained feature failed its post-relax measurement`);
+      && feature.registeredIntentId === expected.registeredIntentId));
+    for (const matches of byPhase) {
+      const measured = matches[0];
+      if (matches.length !== 1 || measured.accepted !== true
+        || measured.toleranceAngstrom !== expected.restraint.toleranceAngstrom
+        || measured.symmetryVariantCount !== expectedMaps
+        || measured.rmsdAngstrom > expected.restraint.toleranceAngstrom
+        || !Number.isFinite(measured.rmsdAngstrom)
+        || !Number.isFinite(measured.centroidDisplacementAngstrom)
+        || !Number.isFinite(measured.planeNormalAngleDegrees)
+        || !Array.isArray(measured.productAtomIds)
+        || measured.productAtomIds.length
+          !== expected.mappingVariants[0].referenceAtomNames.length
+        || new Set(measured.productAtomIds).size !== measured.productAtomIds.length)
+        throw new Error(`${label}: required retained feature lacks complete pre/post-relax evidence`);
+    }
+    if (JSON.stringify(byPhase[0][0].productAtomIds)
+      !== JSON.stringify(byPhase[1][0].productAtomIds))
+      throw new Error(`${label}: required retained feature atom identities changed during relaxation`);
   }
   return relaxation;
 }

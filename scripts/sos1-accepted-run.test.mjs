@@ -15,14 +15,25 @@ const retainedCheckpoint = {
   staging:{ poseTransferPlan:{ featureCorrespondences:[{
     id:'terminal', registeredIntentId:'retain-terminal', required:true,
     restraint:{ toleranceAngstrom:1.5 },
+    mappingVariants:[
+      { referenceAtomNames:['R1','R2','R3'], productAtomIndices:[0,1,2] },
+      { referenceAtomNames:['R1','R2','R3'], productAtomIndices:[2,1,0] },
+    ],
   }] } },
-  relaxation:{ accepted:true, registeredPoseRetention:{ accepted:true, after:{
-    active:true, accepted:true,
-    hardAnchor:{ rmsdAngstrom:0, maxDisplacementAngstrom:0 },
-    features:[{ id:'terminal', registeredIntentId:'retain-terminal', accepted:true,
-      rmsdAngstrom:0.2, centroidDisplacementAngstrom:0.1,
-      planeNormalAngleDegrees:2, toleranceAngstrom:1.5 }],
-  } } },
+  relaxation:{ accepted:true, registeredPoseRetention:{ accepted:true,
+    before:{ active:true, accepted:true, fixedAtomIds:['hard-1','p-1','p-2','p-3'],
+      hardAnchor:{ rmsdAngstrom:0, maxDisplacementAngstrom:0 },
+      features:[{ id:'terminal', registeredIntentId:'retain-terminal', accepted:true,
+        productAtomIds:['p-1','p-2','p-3'], symmetryVariantCount:2,
+        rmsdAngstrom:0.2, centroidDisplacementAngstrom:0.1,
+        planeNormalAngleDegrees:2, toleranceAngstrom:1.5 }] },
+    after:{ active:true, accepted:true, fixedAtomIds:['hard-1','p-1','p-2','p-3'],
+      hardAnchor:{ rmsdAngstrom:0, maxDisplacementAngstrom:0 },
+      features:[{ id:'terminal', registeredIntentId:'retain-terminal', accepted:true,
+        productAtomIds:['p-1','p-2','p-3'], symmetryVariantCount:2,
+        rmsdAngstrom:0.2, centroidDisplacementAngstrom:0.1,
+        planeNormalAngleDegrees:2, toleranceAngstrom:1.5 }] },
+  } },
 };
 assert.doesNotThrow(() => assertAcceptedCheckpointRelaxation(retainedCheckpoint));
 const ambiguousRetention = structuredClone(retainedCheckpoint);
@@ -34,6 +45,20 @@ const inactiveRetention = structuredClone(retainedCheckpoint);
 inactiveRetention.relaxation.registeredPoseRetention.after.active = false;
 assert.throws(() => assertAcceptedCheckpointRelaxation(inactiveRetention),
   /was inactive/);
+const missingBeforeRetention = structuredClone(retainedCheckpoint);
+delete missingBeforeRetention.relaxation.registeredPoseRetention.before;
+assert.throws(() => assertAcceptedCheckpointRelaxation(missingBeforeRetention),
+  /inactive before relaxation/);
+const changedRetainedAtoms = structuredClone(retainedCheckpoint);
+changedRetainedAtoms.relaxation.registeredPoseRetention.after.features[0]
+  .productAtomIds[2] = 'p-4';
+assert.throws(() => assertAcceptedCheckpointRelaxation(changedRetainedAtoms),
+  /atom identities changed/);
+const lostSymmetryCoverage = structuredClone(retainedCheckpoint);
+lostSymmetryCoverage.relaxation.registeredPoseRetention.before.features[0]
+  .symmetryVariantCount = 1;
+assert.throws(() => assertAcceptedCheckpointRelaxation(lostSymmetryCoverage),
+  /symmetry coverage changed/);
 
 const scratch = await mkdtemp(join(tmpdir(), 'molarium-accepted-sos1-'));
 const steps = ['scaffold-rewrite', 'fragment-merge', 'open-phe890-pocket', 'finish-bay-293'];

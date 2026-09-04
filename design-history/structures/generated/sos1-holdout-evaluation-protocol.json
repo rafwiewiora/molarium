@@ -4,7 +4,7 @@
   "registeredBeforeHoldoutAccess": true,
   "evaluator": {
     "path": "design-history/structures/evaluate-sos1-holdouts.py",
-    "sha256": "d54c03208a3c5489601d915ea89ffec14e115055a03f213d9ed816a246bdd6ed"
+    "sha256": "3462417808398b08996f6eea77f33c0e5d34989708a18b5f0b093e1de67fdc2a"
   },
   "registeredRoute": {
     "path": "design-history/structures/generated/sos1-prospective-campaign.json",

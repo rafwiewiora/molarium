@@ -52,32 +52,63 @@ export function assertAcceptedCheckpointRelaxation(checkpoint, label = checkpoin
   const retention = checkpoint.relaxation.registeredPoseRetention;
   assert.equal(retention?.accepted, true,
     `${label}: registered pose retention was not accepted after relaxation`);
+  assert.equal(retention?.before?.active, true,
+    `${label}: registered pose retention was inactive before relaxation`);
+  assert.equal(retention?.before?.accepted, true,
+    `${label}: registered pose feature exceeded tolerance before relaxation`);
   assert.equal(retention?.after?.active, true,
     `${label}: registered pose retention was inactive after relaxation`);
   assert.equal(retention?.after?.accepted, true,
     `${label}: post-relax registered pose feature exceeds tolerance`);
-  assert(Number.isFinite(retention.after.hardAnchor?.rmsdAngstrom)
-    && Number.isFinite(retention.after.hardAnchor?.maxDisplacementAngstrom)
-    && retention.after.hardAnchor.rmsdAngstrom <= 1e-6
-    && retention.after.hardAnchor.maxDisplacementAngstrom <= 1e-6,
-  `${label}: registered hard anchor moved during coupled relaxation`);
+  for (const [phase, evidence] of [['before', retention.before],
+    ['after', retention.after]]) {
+    assert(Number.isFinite(evidence.hardAnchor?.rmsdAngstrom)
+      && Number.isFinite(evidence.hardAnchor?.maxDisplacementAngstrom)
+      && evidence.hardAnchor.rmsdAngstrom <= 1e-6
+      && evidence.hardAnchor.maxDisplacementAngstrom <= 1e-6,
+    `${label}: registered hard anchor moved ${phase} coupled relaxation`);
+  }
+  assert.deepEqual(retention.before.fixedAtomIds, retention.after.fixedAtomIds,
+    `${label}: registered retained atom identities changed during relaxation`);
+  assert.equal(new Set(retention.before.fixedAtomIds || []).size,
+    retention.before.fixedAtomIds?.length,
+  `${label}: pre-relax retained atom identities are duplicated`);
   assert.equal(retention.after.features?.length, requiredFeatures.length,
     `${label}: post-relax registered feature count is not exact`);
+  assert.equal(retention.before.features?.length, requiredFeatures.length,
+    `${label}: pre-relax registered feature count is not exact`);
   for (const required of requiredFeatures) {
-    const matches = (retention.after.features || []).filter((feature) =>
-      feature.id === required.id
-      && feature.registeredIntentId === required.registeredIntentId);
-    assert.equal(matches.length, 1,
-      `${label}: required registered pose feature is missing or ambiguous after relaxation`);
-    const measured = matches[0];
-    for (const key of ['rmsdAngstrom','centroidDisplacementAngstrom',
-      'planeNormalAngleDegrees'])
-      assert(Number.isFinite(measured[key]), `${label}: ${required.id} lacks ${key}`);
-    assert.equal(measured.toleranceAngstrom,
-      required.restraint?.toleranceAngstrom,
-    `${label}: ${required.id} post-relax tolerance changed`);
-    assert(measured.rmsdAngstrom <= measured.toleranceAngstrom,
+    assert(Array.isArray(required.mappingVariants) && required.mappingVariants.length,
+      `${label}: ${required.id} registered symmetry maps are unavailable`);
+    const pairCount = required.mappingVariants[0]?.referenceAtomNames?.length;
+    assert(Number.isInteger(pairCount) && pairCount >= 3,
+      `${label}: ${required.id} registered feature atom coverage is incomplete`);
+    const measuredByPhase = [retention.before, retention.after].map((evidence) => {
+      const matches = (evidence.features || []).filter((feature) =>
+        feature.id === required.id
+        && feature.registeredIntentId === required.registeredIntentId);
+      assert.equal(matches.length, 1,
+        `${label}: required registered pose feature is missing or ambiguous`);
+      const measured = matches[0];
+      for (const key of ['rmsdAngstrom','centroidDisplacementAngstrom',
+        'planeNormalAngleDegrees'])
+        assert(Number.isFinite(measured[key]), `${label}: ${required.id} lacks ${key}`);
+      assert.equal(measured.toleranceAngstrom,
+        required.restraint?.toleranceAngstrom,
+      `${label}: ${required.id} registered tolerance changed`);
+      assert.equal(measured.symmetryVariantCount, required.mappingVariants.length,
+        `${label}: ${required.id} symmetry coverage changed`);
+      assert.equal(measured.productAtomIds?.length, pairCount,
+        `${label}: ${required.id} retained atom coverage changed`);
+      assert.equal(new Set(measured.productAtomIds || []).size, pairCount,
+        `${label}: ${required.id} retained atom identities are duplicated`);
+      assert(measured.accepted === true
+        && measured.rmsdAngstrom <= measured.toleranceAngstrom,
       `${label}: ${required.id} moved outside its registered tolerance`);
+      return measured;
+    });
+    assert.deepEqual(measuredByPhase[0].productAtomIds, measuredByPhase[1].productAtomIds,
+      `${label}: ${required.id} retained atom identities changed during relaxation`);
   }
 }
 

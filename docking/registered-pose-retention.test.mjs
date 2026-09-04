@@ -35,6 +35,8 @@ assert.equal(retained.features[0].selectedVariantIndex, 1,
 assert.equal(retained.features[0].rmsdAngstrom, 0);
 assert.equal(retained.features[0].centroidDisplacementAngstrom, 0);
 assert.equal(retained.features[0].planeNormalAngleDegrees, 0);
+assert.deepEqual(retained.features[0].productAtomIds,
+  ['new-1','new-2','new-3','new-4']);
 assert.equal(retained.hardAnchor.rmsdAngstrom, 0);
 assert.equal(retained.hardAnchor.maxDisplacementAngstrom, 0);
 assert.deepEqual(retained.fixedAtomIds,

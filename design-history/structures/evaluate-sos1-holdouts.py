@@ -242,38 +242,73 @@ def verify_accepted_checkpoint_relaxation(checkpoint: dict, step_id: str) -> Non
     if not required:
         return
     retention = relaxation.get("registeredPoseRetention", {})
+    before = retention.get("before", {})
     after = retention.get("after", {})
-    if retention.get("accepted") is not True or after.get("accepted") is not True \
+    if retention.get("accepted") is not True \
+            or before.get("accepted") is not True \
+            or before.get("active") is not True \
+            or after.get("accepted") is not True \
             or after.get("active") is not True:
         raise RuntimeError(f"{step_id}: registered pose retention was not accepted")
-    hard = after.get("hardAnchor", {})
-    if not all(isinstance(hard.get(key), (int, float)) and math.isfinite(hard[key])
-               and hard[key] <= 1e-6
-               for key in ("rmsdAngstrom", "maxDisplacementAngstrom")):
-        raise RuntimeError(f"{step_id}: hard anchor moved during coupled relaxation")
-    measured = after.get("features", [])
-    if len(measured) != len(required):
+    for phase, evidence in (("before", before), ("after", after)):
+        hard = evidence.get("hardAnchor", {})
+        if not all(isinstance(hard.get(key), (int, float))
+                   and math.isfinite(hard[key]) and hard[key] <= 1e-6
+                   for key in ("rmsdAngstrom", "maxDisplacementAngstrom")):
+            raise RuntimeError(
+                f"{step_id}: hard anchor moved {phase} coupled relaxation")
+    before_fixed = before.get("fixedAtomIds")
+    after_fixed = after.get("fixedAtomIds")
+    if not isinstance(before_fixed, list) or not isinstance(after_fixed, list) \
+            or len(set(before_fixed)) != len(before_fixed) \
+            or before_fixed != after_fixed:
         raise RuntimeError(
-            f"{step_id}: post-relax registered feature count is not exact")
+            f"{step_id}: registered retained atom identities changed")
+    before_features = before.get("features", [])
+    after_features = after.get("features", [])
+    if len(before_features) != len(required) \
+            or len(after_features) != len(required):
+        raise RuntimeError(
+            f"{step_id}: pre/post-relax registered feature count is not exact")
     for required_feature in required:
-        matches = [feature for feature in measured
-                   if feature.get("id") == required_feature.get("id")
-                   and feature.get("registeredIntentId")
-                   == required_feature.get("registeredIntentId")]
-        if len(matches) != 1:
+        variants = required_feature.get("mappingVariants", [])
+        if not variants or len(variants[0].get("referenceAtomNames", [])) < 3:
             raise RuntimeError(
-                f"{step_id}: required post-relax feature is missing or ambiguous")
-        feature = matches[0]
-        for key in ("rmsdAngstrom", "centroidDisplacementAngstrom",
-                    "planeNormalAngleDegrees"):
-            if not isinstance(feature.get(key), (int, float)) \
-                    or not math.isfinite(feature[key]):
-                raise RuntimeError(f"{step_id}: post-relax feature lacks {key}")
+                f"{step_id}: required registered feature mapping is incomplete")
+        expected_atoms = len(variants[0]["referenceAtomNames"])
         tolerance = required_feature.get("restraint", {}).get("toleranceAngstrom")
-        if feature.get("toleranceAngstrom") != tolerance \
-                or feature["rmsdAngstrom"] > tolerance:
+        measured_by_phase = []
+        for phase, measured in (("before", before_features),
+                                ("after", after_features)):
+            matches = [feature for feature in measured
+                       if feature.get("id") == required_feature.get("id")
+                       and feature.get("registeredIntentId")
+                       == required_feature.get("registeredIntentId")]
+            if len(matches) != 1:
+                raise RuntimeError(
+                    f"{step_id}: required {phase}-relax feature is missing or ambiguous")
+            feature = matches[0]
+            for key in ("rmsdAngstrom", "centroidDisplacementAngstrom",
+                        "planeNormalAngleDegrees"):
+                if not isinstance(feature.get(key), (int, float)) \
+                        or not math.isfinite(feature[key]):
+                    raise RuntimeError(
+                        f"{step_id}: {phase}-relax feature lacks {key}")
+            atom_ids = feature.get("productAtomIds")
+            if feature.get("accepted") is not True \
+                    or feature.get("toleranceAngstrom") != tolerance \
+                    or feature.get("symmetryVariantCount") != len(variants) \
+                    or not isinstance(atom_ids, list) \
+                    or len(atom_ids) != expected_atoms \
+                    or len(set(atom_ids)) != expected_atoms \
+                    or feature["rmsdAngstrom"] > tolerance:
+                raise RuntimeError(
+                    f"{step_id}: {phase}-relax registered feature evidence is incomplete")
+            measured_by_phase.append(feature)
+        if measured_by_phase[0]["productAtomIds"] \
+                != measured_by_phase[1]["productAtomIds"]:
             raise RuntimeError(
-                f"{step_id}: post-relax feature moved outside registered tolerance")
+                f"{step_id}: retained feature atom identities changed")
 
 
 def verify_run(run_dir: Path, protocol: dict) \
