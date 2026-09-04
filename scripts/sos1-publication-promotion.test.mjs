@@ -12,6 +12,7 @@ import { buildSos1PublicationRecords, pdbFromFrozenInspection, rewritePublicatio
   SOS1_PUBLIC_REPLAY, SOS1_PUBLIC_REVIEW,
   SOS1_PUBLIC_REVIEW_ID } from './build-sos1-publication.mjs';
 import { verifyPreHoldoutPromotionInputs } from './promote-sos1-publication.mjs';
+import { verifyInterfaceRenderForInstallation } from './install-sos1-interface-render.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const atoms = [
@@ -97,9 +98,10 @@ const manifestBytes = Buffer.from(`${JSON.stringify(manifest)}\n`);
 const evaluation = { accepted:true, continuity:{ accepted:true },
   results:stepIds.map((stepId) => ({ stepId, accepted:true, failedChecks:[] })) };
 const evaluationBytes = Buffer.from(`${JSON.stringify(evaluation)}\n`);
-const records = await buildSos1PublicationRecords({ runId:'guarded-v10-test',
+const syntheticAccepted = { runId:'guarded-v10-test',
   directory:join(root, 'outputs/design-history/guarded-v10-test'), manifest, manifestBytes,
-  evaluation, evaluationBytes, audit, auditBytes, checkpoints });
+  evaluation, evaluationBytes, audit, auditBytes, checkpoints };
+const records = await buildSos1PublicationRecords(syntheticAccepted);
 assert.equal(records.review.review.calculationPolicy, 'never-run');
 assert.equal(records.review.cues.length, 4);
 assert.equal(expandStructureTimeline(records.review).length, 4,
@@ -165,6 +167,37 @@ try {
     protocolPath });
   assert.equal(preflight.routeSha256, protocol.registeredRoute.sha256);
   assert.equal(preflight.checkpoints.length, 4);
+  const render = join(scratch, 'interface-render');
+  await mkdir(render);
+  const videoBytes = Buffer.from('accepted interface movie fixture');
+  await writeFile(join(render, 'source.action-script.json'), records.replayBytes);
+  await writeFile(join(render, 'sos1-designer-moves-molarium-interface.mp4'), videoBytes);
+  const localLab = { responsePolicy:'local-only-v1',
+    contentSecurityPolicy:"default-src 'self'; connect-src 'self'; object-src 'none'",
+    runtimeMode:'local-lab', runtimeLocalOnly:true, runtimePolicy:'local-only-v1',
+    allowedNetworkOrigins:['http://127.0.0.1:50001'], documentMode:'local-lab',
+    badgeMode:'local-lab', badgeLocalLab:true, badgeText:'Local Lab · network locked',
+    foldDisabled:true, msaEndpointDisabled:true, ccdRetrievalDisabled:true, verified:true };
+  const renderManifest = {
+    schema:'molarium.designer-moves-interface-render/v1', complete:true,
+    replay:{ status:'completed' }, acceptedRun:{ accepted:true, id:syntheticAccepted.runId,
+      predictionManifestSha256:fixedHash(manifestBytes),
+      evaluationSummarySha256:fixedHash(evaluationBytes) }, networkPolicy:localLab,
+    sourceScript:{ path:'source.action-script.json', fileSha256:fixedHash(records.replayBytes),
+      actionScriptSha256:records.replay.actionScriptSha256,
+      sourceAuditSha256:fixedHash(auditBytes) },
+    video:{ filename:'sos1-designer-moves-molarium-interface.mp4',
+      sha256:fixedHash(videoBytes), bytes:videoBytes.length, width:1600, height:1000,
+      frames:1, durationSeconds:1 },
+  };
+  await writeFile(join(render, 'render-manifest.json'),
+    `${JSON.stringify(renderManifest)}\n`);
+  const verifiedRender = await verifyInterfaceRenderForInstallation(syntheticAccepted, render);
+  assert.equal(verifiedRender.videoBytes.toString(), videoBytes.toString());
+  await writeFile(join(render, 'render-manifest.json'), `${JSON.stringify({ ...renderManifest,
+    networkPolicy:{ ...localLab, runtimeLocalOnly:false } })}\n`);
+  await assert.rejects(() => verifyInterfaceRenderForInstallation(syntheticAccepted, render),
+    /permits connected features/);
   // This deliberately nonexistent holdout directory proves preflight did not
   // resolve or read evaluation coordinates.
   const result = spawnSync(process.execPath, ['scripts/promote-sos1-publication.mjs',
