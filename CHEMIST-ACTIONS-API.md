@@ -215,12 +215,24 @@ action audit and the response reports `infeasibleOverride:true`. The visible App
 disabled for infeasible results, so an ordinary human click cannot silently bypass required-contact
 or physical-feasibility gates.
 
-`pose.refine`, `pose.apply`, and `optimization.run` return SHA-256 fingerprints for their input and
-result coordinates. Their optional `expected*CoordinateSha256` arguments turn those fingerprints
-into fail-closed guards. Input or selected-pose mismatches abort before mutation. An output mismatch
-after pose application or optimization restores the pre-action molecule and Undo/Redo history.
-These hashes identify exact serialized floating-point coordinates within one numerical execution;
-they are not a tolerance-based scientific equivalence test across WebGPU adapters.
+`pose.refine`, `pose.apply`, and `optimization.run` return both legacy coordinate fingerprints and
+preferred `molarium.molecular-state-hash/v1` fingerprints. The versioned state hash binds persistent
+atom identity, atom chemistry, molecular charge and multiplicity, bond topology, and exact
+coordinates; atom-array order and bond direction are canonicalized. Pin it with
+`expectedInputStateSha256`, `expectedSelectedStateSha256`, or `expectedOutputStateSha256`. Input and
+selected-state mismatches abort before mutation. An output mismatch restores the complete
+pre-action molecule, Undo/Redo history, pose or conformer ensemble, calculation results, selection,
+view state, and corresponding interface controls atomically. `expected*CoordinateSha256` remains
+accepted for saved pre-v1 records, but does not guard identity or topology and should not be used for
+new publication replays. Neither digest is a tolerance-based scientific-equivalence test across
+WebGPU adapters.
+
+Saved action scripts must name the target of every selection-dependent chemistry operation:
+`atomId` for atom edits and `atomIds` for bond edits. `selection.replace` remains a visible,
+replayable interface action, but it is never accepted as an implicit scientific target in a saved
+publication replay. When converting a legacy execution audit, `actionScriptFromAudit` can
+materialize an unambiguous preceding `selection.replace` into the generated action arguments; the
+resulting saved script is explicit and passes the same validator as a newly authored script.
 
 `pose.refine` accepts `execution: "auto"` (the default) or `execution: "serial"`. Auto execution
 partitions independent, deterministically seeded pose chains over a bounded browser Worker ensemble

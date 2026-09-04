@@ -93,11 +93,13 @@ export async function executeEnumerationPlan(api, plan, { maximumAtoms = 500 } =
       }); continue;
     }
     const atomReferences = operation.atoms || [operation.atom];
-    await execute('selection.replace', { atomIds:await Promise.all(atomReferences.map(resolve)) });
+    const target = await Promise.all(atomReferences.map(resolve));
+    await execute('selection.replace', { atomIds:target });
     const action = SELECTION_ACTIONS[operation.op];
     const args = operation.op === 'setAtom'
-      ? { element:operation.element, formalCharge:operation.formalCharge ?? 0 }
-      : operation.op === 'setBond' ? { order:operation.order } : {};
+      ? { atomId:target[0], element:operation.element, formalCharge:operation.formalCharge ?? 0 }
+      : operation.op === 'setBond' ? { atomIds:target, order:operation.order }
+        : target.length === 1 ? { atomId:target[0] } : { atomIds:target };
     await execute(action, args);
   }
   return { schema:'molarium.enumeration-execution/v1', aliases:Object.fromEntries(aliases),

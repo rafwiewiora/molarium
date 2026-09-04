@@ -439,9 +439,12 @@ function compile7kpaScript(entry, ids) {
       const action = { setAtom:'chemistry.setAtom', setBond:'chemistry.setBond',
         deleteAtom:'chemistry.deleteAtom', deleteBond:'chemistry.deleteBond',
         addHydrogen:'chemistry.addHydrogen', removeHydrogen:'chemistry.removeHydrogen' }[operation.op];
+      const target = atoms.map(ref);
       const args = operation.op === 'setAtom'
-        ? { element:operation.element, formalCharge:operation.formalCharge ?? 0 }
-        : operation.op === 'setBond' ? { order:operation.order } : {};
+        ? { atomId:target[0], element:operation.element,
+          formalCharge:operation.formalCharge ?? 0 }
+        : operation.op === 'setBond' ? { atomIds:target, order:operation.order }
+          : atoms.length === 1 ? { atomId:target[0] } : { atomIds:target };
       actions.push({ action, args, caption:`Apply ${operation.op}.` });
     }
   }

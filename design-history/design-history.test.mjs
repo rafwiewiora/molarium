@@ -33,7 +33,8 @@ async function populatedCampaign() {
   const actionScriptId = await storeActionScript(value, { label:'Replace terminal oxygen', actions:[
     { action:'view.setMode', args:{ mode:'build' }, caption:'Open Design.' },
     { action:'selection.replace', args:{ atomIds:['ligand:A2'] }, caption:'Select the oxygen.' },
-    { action:'chemistry.setAtom', args:{ element:'N', formalCharge:0 }, caption:'Change O to N.' },
+    { action:'chemistry.setAtom', args:{ atomId:'ligand:A2', element:'N', formalCharge:0 },
+      caption:'Change O to N.' },
     { action:'chemistry.finish', args:{}, caption:'Finish the chemical state.' },
   ], expectedStartSnapshotId:referenceSnapshot });
   const analogueSnapshot = await storeSnapshot(value, { label:'Analogue', canonicalSmiles:'CCN' });
@@ -119,7 +120,8 @@ assert.match((await verifyCampaign(finalizedTamper)).reason, /campaign hash mism
 const script = value.objects.actionScripts[actionScriptId];
 assert.equal(validateActionScript(script), script);
 assert.throws(() => validateActionScript({ schema:script.schema,
-  actions:[{ action:'chemistry.setAtom', args:{ privateRoute:{ module:'internal' } } }] }),
+  actions:[{ action:'chemistry.setAtom', args:{ atomId:'ligand:A2',
+    privateRoute:{ module:'internal' } } }] }),
   /Chemist Actions boundary/);
 assert.throws(() => validateActionScript({ schema:script.schema,
   actions:[{ action:'coordinates.teleport', args:{} }] }), /unavailable route/);

@@ -107,4 +107,21 @@ assert.throws(() => validateActionScript({ schema:'molarium.chemist-action-scrip
   label:'Bad expectation', actions:[{ action:'session.inspect', args:{},
     expect:{ 'bad path':true } }] }), /invalid expectation path/);
 
+assert.throws(() => validateActionScript({ schema:'molarium.chemist-action-script/v1',
+  label:'Implicit chemistry target', actions:[
+    { action:'selection.replace', args:{ atomIds:['persistent-a'] } },
+    { action:'chemistry.deleteAtom', args:{} },
+  ] }), /requires explicit atomId.*ambient selection/);
+
+const migratedLegacyAudit = actionScriptFromAudit({ schema:CHEMIST_ACTIONS_SCHEMA, records:[
+  { sequence:1, action:'selection.replace', args:{ atomIds:['persistent-a'] },
+    status:'completed' },
+  { sequence:2, action:'chemistry.deleteAtom', args:{}, status:'completed' },
+] });
+assert.deepEqual(migratedLegacyAudit.actions[1].args, { atomId:'persistent-a' },
+  'audit conversion may materialize a prior explicit selection, but saved scripts must contain the target');
+assert.throws(() => actionScriptFromAudit({ schema:CHEMIST_ACTIONS_SCHEMA, records:[
+  { sequence:1, action:'chemistry.setBond', args:{ order:2 }, status:'completed' },
+] }), /cannot be migrated.*no explicit atomIds/);
+
 console.log('Chemist action audit converter: PASS');

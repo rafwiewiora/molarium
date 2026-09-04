@@ -3,6 +3,7 @@ import { applyRegisteredLigandDefinition, validateConnectedMolecularGraph } from
   './design-history/structures/registered-ligand-graph.mjs';
 import { DESIGNER_REVIEW_DIRECTIONS, designerReplayReviewState,
   designerReplayReviewTarget } from './design-history/designer-replay-review.mjs';
+import { MOLECULAR_STATE_HASH_SCHEMA, molecularStateSha256 } from './molecular-state-hash.mjs';
 
 const MOLARIUM_NETWORK_POLICY = Object.freeze({
   mode:'connected', localOnly:false, policy:'connected-v1',
@@ -8069,6 +8070,13 @@ function expectedCoordinateSha256(args, key) {
   return args[key];
 }
 
+function expectedMolecularStateSha256(args, key) {
+  if (!Object.hasOwn(args, key)) return null;
+  if (typeof args[key] !== 'string' || !/^[a-f0-9]{64}$/.test(args[key]))
+    throw new Error(`${key} must be a lowercase SHA-256 hex digest`);
+  return args[key];
+}
+
 async function assertCurrentCoordinateSha256(expected, key = 'expectedInputCoordinateSha256') {
   const actual = await moleculeCoordinateSha256();
   if (expected != null && actual !== expected)
@@ -8076,11 +8084,26 @@ async function assertCurrentCoordinateSha256(expected, key = 'expectedInputCoord
   return actual;
 }
 
-function coordinateGuardRollback(snapshot, buildHistory, redoHistory) {
-  restoreMolecule(snapshot);
-  state.buildHistory = buildHistory;
-  state.redoHistory = redoHistory;
-  updateHistoryButtons();
+async function currentMolecularStateSha256(expected = null,
+  key = 'expectedInputStateSha256') {
+  const actual = await molecularStateSha256(state.molecule);
+  if (expected != null && actual !== expected)
+    throw new Error(`Current molecular state does not match ${key}`);
+  return actual;
+}
+
+async function dockingPoseStateSha256(result, pose) {
+  const molecule = structuredClone(state.molecule);
+  const indices = currentIndicesForDockingPlan(result.plan);
+  if (pose.positions.length !== indices.length * 3)
+    throw new Error('Selected refined pose has the wrong coordinate count');
+  indices.forEach((atomIndex, positionIndex) => {
+    const atom = molecule.atoms[atomIndex];
+    atom.x = pose.positions[positionIndex * 3];
+    atom.y = pose.positions[positionIndex * 3 + 1];
+    atom.z = pose.positions[positionIndex * 3 + 2];
+  });
+  return molecularStateSha256(molecule);
 }
 
 function sidechainRotamerPublicResult(ensemble) {
@@ -8322,6 +8345,50 @@ function restoreDesignerMoveDomCheckpoint(records) {
     if (record.ariaExpanded == null) element.removeAttribute('aria-expanded');
     else element.setAttribute('aria-expanded', record.ariaExpanded);
   }
+}
+
+const CHEMIST_ACTION_GUARD_EXTRA_STATE_KEYS = Object.freeze([
+  'buildHistory', 'redoHistory', 'chemistryEditFinishing', 'minimizing', 'preparing',
+  'calculating', 'calculationPlaying', 'calculationPlaybackTime', 'dockingRunning',
+  'protonatingLigand', 'ligandProtonationSequence',
+]);
+
+function captureChemistActionGuardCheckpoint() {
+  const keys = [...new Set([
+    ...DESIGNER_MOVE_CHECKPOINT_STATE_KEYS, ...CHEMIST_ACTION_GUARD_EXTRA_STATE_KEYS,
+  ])];
+  return { molecule:cloneDesignerMoveCheckpointMolecule(state.molecule),
+    values:Object.fromEntries(keys.map((key) => [key, structuredClone(state[key])])),
+    dom:captureDesignerMoveDomCheckpoint() };
+}
+
+function restoreChemistActionGuardCheckpoint(checkpoint) {
+  if (!checkpoint) return;
+  const liveAudit = state.chemistActionAudit;
+  Object.entries(checkpoint.values).forEach(([key, value]) => {
+    state[key] = structuredClone(value);
+  });
+  state.molecule = cloneDesignerMoveCheckpointMolecule(checkpoint.molecule);
+  state.chemistActionAudit = liveAudit;
+  state.depictionSequence += 1; state.depictionKey = null;
+  state.depictionGlobalAtomIndices = []; state.depictionGlobalBondPairs = [];
+  state.depictionAtomObjects = []; state.depictionComponentId = null;
+  if (state.molecule) state.molecule.source = { ...(state.molecule.source || {}),
+    chemistActionAudit:structuredClone(liveAudit) };
+  if (state.molecule) {
+    updatePdbPreparationUi(); updateLigandProtonationUi();
+    updateStructureComponentsUi(); updatePreparationInspectorUi();
+    updateInfo(); updateGeometryControl(); updateOptimizerControls();
+    updateDockingUi(); renderDockingResults(); updateSidechainRotamerControls();
+    updateHistoryButtons(); setMode(state.mode);
+    if (state.calculationFrames.length) {
+      updateEnergyChart(state.calculationFrames);
+      updateCalculationFrameUI();
+    }
+    schedule2DDepiction(0);
+  } else setMode(state.mode);
+  restoreDesignerMoveDomCheckpoint(checkpoint.dom);
+  draw();
 }
 
 function captureDesignerMoveCheckpoint(index, step = null) {
@@ -10208,17 +10275,26 @@ function installChemistActionsApi(module) {
       return chemistActionSummary({ contactRemap:structuredClone(remap) }); },
     'pose.refine':async (args) => { chemistActionKeys(args,
       ['searchChains','execution','featureSeedingProtocol',
-        'expectedInputCoordinateSha256','expectedSelectedCoordinateSha256']);
+        'expectedInputCoordinateSha256','expectedSelectedCoordinateSha256',
+        'expectedInputStateSha256','expectedSelectedStateSha256']);
       const expectedInput = expectedCoordinateSha256(args, 'expectedInputCoordinateSha256');
       const expectedSelected = expectedCoordinateSha256(args,
         'expectedSelectedCoordinateSha256');
+      const expectedInputState = expectedMolecularStateSha256(args,
+        'expectedInputStateSha256');
+      const expectedSelectedState = expectedMolecularStateSha256(args,
+        'expectedSelectedStateSha256');
+      await ensureChemistActionAtomIds();
       const inputCoordinateSha256 = await assertCurrentCoordinateSha256(expectedInput);
+      const inputStateSha256 = await currentMolecularStateSha256(expectedInputState);
       const searchChains = Number(args.searchChains ?? 16);
       if (![8,16,32,64].includes(searchChains))
         throw new Error('searchChains must be 8, 16, 32, or 64');
       const execution = chemistActionEnum(args.execution ?? 'auto', ['auto','serial'], 'execution');
       const featureSeedingProtocol = chemistActionEnum(args.featureSeedingProtocol ?? 'v5',
         ['v3','v4','v5'], 'featureSeedingProtocol');
+      const rollback = expectedSelected == null && expectedSelectedState == null
+        ? null : captureChemistActionGuardCheckpoint();
       const select = document.querySelector('#docking-conformer-count');
       select.value = String(searchChains); updateDockingUi();
       const result = await runBrowserConstrainedDocking({
@@ -10227,14 +10303,19 @@ function installChemistActionsApi(module) {
       });
       const selected = result.run.selected;
       const selectedCoordinateSha256 = await coordinateArraySha256(selected.positions);
-      if (expectedSelected != null && selectedCoordinateSha256 !== expectedSelected) {
-        state.dockingResult = null; state.dockingPoseIndex = 0;
-        renderDockingResults(); updateDockingUi();
-        throw new Error('Selected refined-pose coordinates do not match expectedSelectedCoordinateSha256');
+      const selectedStateSha256 = await dockingPoseStateSha256(result, selected);
+      if ((expectedSelected != null && selectedCoordinateSha256 !== expectedSelected)
+        || (expectedSelectedState != null && selectedStateSha256 !== expectedSelectedState)) {
+        restoreChemistActionGuardCheckpoint(rollback);
+        throw new Error(expectedSelectedState != null && selectedStateSha256 !== expectedSelectedState
+          ? 'Selected refined pose does not match expectedSelectedStateSha256'
+          : 'Selected refined-pose coordinates do not match expectedSelectedCoordinateSha256');
       }
       return chemistActionSummary({ refinement:{ candidates:result.run.candidates.length,
         feasible:result.run.feasibleCount, selectedRank:selected.rank,
+        stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
         inputCoordinateSha256, selectedCoordinateSha256,
+        inputStateSha256, selectedStateSha256,
         coverageComplete:result.featureGuidedSeeding?.coverage?.allRequiredStrataCovered ?? true,
         coverage:structuredClone(result.featureGuidedSeeding?.coverage || {
           policy:'not-applicable', allRequiredStrataCovered:true,
@@ -10273,11 +10354,16 @@ function installChemistActionsApi(module) {
         } : null } }); },
     'pose.apply':async (args) => { chemistActionKeys(args,
       ['index','allowInfeasible','expectedInputCoordinateSha256',
-        'expectedSelectedCoordinateSha256','expectedOutputCoordinateSha256']);
+        'expectedSelectedCoordinateSha256','expectedOutputCoordinateSha256',
+        'expectedInputStateSha256','expectedSelectedStateSha256','expectedOutputStateSha256']);
       const expectedInput = expectedCoordinateSha256(args, 'expectedInputCoordinateSha256');
       const expectedSelected = expectedCoordinateSha256(args,
         'expectedSelectedCoordinateSha256');
       const expectedOutput = expectedCoordinateSha256(args, 'expectedOutputCoordinateSha256');
+      const expectedInputState = expectedMolecularStateSha256(args, 'expectedInputStateSha256');
+      const expectedSelectedState = expectedMolecularStateSha256(args,
+        'expectedSelectedStateSha256');
+      const expectedOutputState = expectedMolecularStateSha256(args, 'expectedOutputStateSha256');
       const index = Number(args.index ?? 0);
       if (!Number.isInteger(index) || index < 0) throw new Error('index must be a non-negative integer');
       if (args.allowInfeasible != null && typeof args.allowInfeasible !== 'boolean')
@@ -10289,26 +10375,34 @@ function installChemistActionsApi(module) {
         throw new Error('The selected docking pose is infeasible; pass allowInfeasible:true to apply it explicitly.');
       await ensureChemistActionAtomIds();
       const inputCoordinateSha256 = await assertCurrentCoordinateSha256(expectedInput);
+      const inputStateSha256 = await currentMolecularStateSha256(expectedInputState);
       const selectedCoordinateSha256 = await coordinateArraySha256(selectedPose.positions);
       if (expectedSelected != null && selectedCoordinateSha256 !== expectedSelected)
         throw new Error('Selected refined-pose coordinates do not match expectedSelectedCoordinateSha256');
+      const selectedStateSha256 = await dockingPoseStateSha256(state.dockingResult, selectedPose);
+      if (expectedSelectedState != null && selectedStateSha256 !== expectedSelectedState)
+        throw new Error('Selected refined pose does not match expectedSelectedStateSha256');
       const before = chemistActionCoordinateSnapshot();
-      const rollback = expectedOutput == null ? null : {
-        snapshot:buildHistoryEntry(state.molecule),
-        buildHistory:state.buildHistory.slice(), redoHistory:state.redoHistory.slice(),
-      };
+      const rollback = expectedOutput == null && expectedOutputState == null
+        ? null : captureChemistActionGuardCheckpoint();
       state.dockingPoseIndex = index;
       const pose = await applySelectedDockingPose({ allowInfeasible });
       const outputCoordinateSha256 = await moleculeCoordinateSha256();
-      if (expectedOutput != null && outputCoordinateSha256 !== expectedOutput) {
-        coordinateGuardRollback(rollback.snapshot, rollback.buildHistory, rollback.redoHistory);
-        throw new Error('Applied refined-pose coordinates do not match expectedOutputCoordinateSha256');
+      const outputStateSha256 = await molecularStateSha256(state.molecule);
+      if ((expectedOutput != null && outputCoordinateSha256 !== expectedOutput)
+        || (expectedOutputState != null && outputStateSha256 !== expectedOutputState)) {
+        restoreChemistActionGuardCheckpoint(rollback);
+        throw new Error(expectedOutputState != null && outputStateSha256 !== expectedOutputState
+          ? 'Applied refined pose does not match expectedOutputStateSha256'
+          : 'Applied refined-pose coordinates do not match expectedOutputCoordinateSha256');
       }
       const coordinateChanges = chemistActionCoordinateChanges(before);
       return chemistActionSummary({ appliedPose:{ index, rank:pose.rank,
         feasible:pose.feasible, infeasibleOverride:!pose.feasible && allowInfeasible,
         scoreKcalMol:pose.totalScoreKcalMol,
+        stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
         inputCoordinateSha256, selectedCoordinateSha256, outputCoordinateSha256,
+        inputStateSha256, selectedStateSha256, outputStateSha256,
         ...coordinateChanges } }); },
     'pose.enumerateSidechainRotamers':async (args) => { chemistActionKeys(args,
       ['receptorAtomId','maximumCandidates']);
@@ -10348,29 +10442,35 @@ function installChemistActionsApi(module) {
       Object.assign(sidechainRotamer, chemistActionCoordinateChanges(before));
       return chemistActionSummary({ sidechainRotamer }); },
     'optimization.run':async (args) => { chemistActionKeys(args,
-      ['method','expectedInputCoordinateSha256','expectedOutputCoordinateSha256']);
+      ['method','expectedInputCoordinateSha256','expectedOutputCoordinateSha256',
+        'expectedInputStateSha256','expectedOutputStateSha256']);
       const expectedInput = expectedCoordinateSha256(args, 'expectedInputCoordinateSha256');
       const expectedOutput = expectedCoordinateSha256(args, 'expectedOutputCoordinateSha256');
+      const expectedInputState = expectedMolecularStateSha256(args, 'expectedInputStateSha256');
+      const expectedOutputState = expectedMolecularStateSha256(args, 'expectedOutputStateSha256');
       const method = chemistActionEnum(args.method,
         ['ligand-rdkit','pocket-webgpu','induced-fit-webgpu','webgpu','rdkit','ani2x'], 'method');
       if (state.mode !== 'build') throw new Error('Enter Design mode before optimizing.');
       const option = document.querySelector(`#build-optimizer-select option[value="${method}"]`);
       if (!option || option.disabled) throw new Error(`Optimization method ${method} is unavailable for this molecule`);
-      const select = document.querySelector('#build-optimizer-select');
-      select.value = method; select.dataset.userSelected = 'true'; updateOptimizerControls();
       await ensureChemistActionAtomIds();
       const inputCoordinateSha256 = await assertCurrentCoordinateSha256(expectedInput);
+      const inputStateSha256 = await currentMolecularStateSha256(expectedInputState);
+      const rollback = expectedOutput == null && expectedOutputState == null
+        ? null : captureChemistActionGuardCheckpoint();
+      const select = document.querySelector('#build-optimizer-select');
+      select.value = method; select.dataset.userSelected = 'true'; updateOptimizerControls();
       const before = chemistActionCoordinateSnapshot();
-      const rollback = expectedOutput == null ? null : {
-        snapshot:buildHistoryEntry(state.molecule),
-        buildHistory:state.buildHistory.slice(), redoHistory:state.redoHistory.slice(),
-      };
       const result = await runSelectedBuildOptimization();
       if (!result) throw new Error(`${method} optimization did not complete`);
       const outputCoordinateSha256 = await moleculeCoordinateSha256();
-      if (expectedOutput != null && outputCoordinateSha256 !== expectedOutput) {
-        coordinateGuardRollback(rollback.snapshot, rollback.buildHistory, rollback.redoHistory);
-        throw new Error('Optimized coordinates do not match expectedOutputCoordinateSha256');
+      const outputStateSha256 = await molecularStateSha256(state.molecule);
+      if ((expectedOutput != null && outputCoordinateSha256 !== expectedOutput)
+        || (expectedOutputState != null && outputStateSha256 !== expectedOutputState)) {
+        restoreChemistActionGuardCheckpoint(rollback);
+        throw new Error(expectedOutputState != null && outputStateSha256 !== expectedOutputState
+          ? 'Optimized molecular state does not match expectedOutputStateSha256'
+          : 'Optimized coordinates do not match expectedOutputCoordinateSha256');
       }
       return chemistActionSummary({ optimization:{ method,
         accepted:result.valenceSafeguard?.accepted ?? true,
@@ -10378,7 +10478,9 @@ function installChemistActionsApi(module) {
         initialEnergy:result.initialEnergy ?? null, finalEnergy:result.finalEnergy ?? null,
         iterations:result.iterations ?? null, converged:result.converged ?? null,
         elapsedMs:result.elapsedMs ?? null,
+        stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
         inputCoordinateSha256, outputCoordinateSha256,
+        inputStateSha256, outputStateSha256,
         ...chemistActionCoordinateChanges(before) } }); },
     'calculation.run':async (args) => { chemistActionKeys(args,
       ['job','method','options']);

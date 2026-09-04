@@ -10,8 +10,11 @@ Every selection-dependent chemistry move in a saved script must name its target 
 `atomId` or `atomIds`; publication replay never infers a target from ambient selection. Scripts also
 record `chemistry.setEditPolicy` when they choose staged versus immediate refinement. Coordinate-
 changing `pose.refine`, `pose.apply`, and `optimization.run` calls may pin the input, selected-pose,
-and output SHA-256 values returned by the preceding execution. A mismatched guard aborts, and a
-post-mutation mismatch restores the prior molecule and Undo/Redo history.
+and output `molarium.molecular-state-hash/v1` SHA-256 values returned by the preceding execution.
+These preferred guards bind persistent identity, chemistry, topology, and exact coordinates;
+coordinate-only guard names remain readable for pre-v1 records. A mismatched guard aborts, and a
+post-mutation mismatch atomically restores the prior molecular, calculation, ensemble, history,
+selection, view, and interface state.
 
 This is a hard boundary. The story builder validates the complete transformed script—including
 presentation steps—against the exported public action manifest. A deep link invokes
@@ -76,6 +79,12 @@ are not portable checkpoints after GPU relaxation: different conforming WebGPU a
 scientifically equivalent but byte-different floating-point coordinates. Cross-adapter replays should
 pin the residue identity and select the unique normalized chi-angle branch. `index` remains available
 for immediate choices from the visible list, but it is not a stable branch identity.
+
+Every atom or bond chemistry step in a saved story carries its own `atomId` or `atomIds`. A preceding
+selection step may show the chemist's click, but replay validation does not permit the chemistry step
+to inherit that ambient UI state. Legacy audits can be converted only when their recorded selection
+makes the target unambiguous; conversion writes the target into the resulting script before it is
+saved or replayed.
 
 The example is shortened for readability. A real script must include preparation, reference
 capture, pose refinement, parameterization, and any requested optimization in their execution

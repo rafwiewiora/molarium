@@ -161,8 +161,8 @@
           "browser-fixture"
         ]
       },
-      "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615": {
-        "actionScriptId": "script:999826d620fd26ea3ba5ee761a2fd6d035a6b62badaa40b2e395c743980f9a16",
+      "commit:57c96f36a1dcffd2f06d32a83f8331a1b22da28e6d54d90d369e6539e3f12739": {
+        "actionScriptId": "script:f6fa754d6337ef37e5925d4f2880fb411c0db92554ff4c60fdfcb547b579fb20",
         "branch": "enumeration.pyrrolidone-to-pyrazole",
         "evidenceIds": [],
         "hypothesisIds": [
@@ -179,8 +179,8 @@
           "stress-test"
         ]
       },
-      "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a": {
-        "actionScriptId": "script:63b4193f17a4fa6b6dfd4bd01277d25620341df70f6b40c5ce2aa58f0a33825a",
+      "commit:60c03c812211ea4092d6ad55f03b74c360f99b23a821a4765b522b9931119efa": {
+        "actionScriptId": "script:61a69425177d1e8a19ae243f2809c9d8f5c3965988fd37c74c264e9c82eec71c",
         "branch": "enumeration.pyrrolidone-to-tetrahydropyran",
         "evidenceIds": [],
         "hypothesisIds": [
@@ -197,8 +197,8 @@
           "stress-test"
         ]
       },
-      "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16": {
-        "actionScriptId": "script:5575e1c3d09d0d59398f7f0f6aa7a88430930c4f4cf63e6cff6fe089acc1d59c",
+      "commit:8a2deb80c9534ef9706275e83b01e3b07cedc87809575c63f3695b1b8c1d511f": {
+        "actionScriptId": "script:ac29b5fe9861daf6d049c6dc55c6306cedd5b1e99889d218ff51e1088af142e9",
         "branch": "enumeration.phenyl-pyrrolidone-to-spiro-ketone",
         "evidenceIds": [],
         "hypothesisIds": [
@@ -217,7 +217,7 @@
       }
     },
     "actionScripts": {
-      "script:999826d620fd26ea3ba5ee761a2fd6d035a6b62badaa40b2e395c743980f9a16": {
+      "script:f6fa754d6337ef37e5925d4f2880fb411c0db92554ff4c60fdfcb547b579fb20": {
         "actions": [
           {
             "action": "view.setMode",
@@ -251,7 +251,9 @@
           },
           {
             "action": "chemistry.deleteAtom",
-            "args": {},
+            "args": {
+              "atomId": "chemist-7KPA:HETATM:C:D84:201::O2:3214"
+            },
             "caption": "Apply deleteAtom."
           },
           {
@@ -266,6 +268,7 @@
           {
             "action": "chemistry.setAtom",
             "args": {
+              "atomId": "chemist-7KPA:HETATM:C:D84:201::C19:3213",
               "element": "N",
               "formalCharge": 0
             },
@@ -284,6 +287,10 @@
           {
             "action": "chemistry.setBond",
             "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C19:3213",
+                "chemist-7KPA:HETATM:C:D84:201::C18:3215"
+              ],
               "order": 2
             },
             "caption": "Apply setBond."
@@ -301,6 +308,10 @@
           {
             "action": "chemistry.setBond",
             "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C17:3183",
+                "chemist-7KPA:HETATM:C:D84:201::C16:3182"
+              ],
               "order": 2
             },
             "caption": "Apply setBond."
@@ -329,7 +340,7 @@
         "label": "Replay Pyrrolidone to N-linked pyrazole",
         "schema": "molarium.chemist-action-script/v1"
       },
-      "script:63b4193f17a4fa6b6dfd4bd01277d25620341df70f6b40c5ce2aa58f0a33825a": {
+      "script:61a69425177d1e8a19ae243f2809c9d8f5c3965988fd37c74c264e9c82eec71c": {
         "actions": [
           {
             "action": "view.setMode",
@@ -364,6 +375,7 @@
           {
             "action": "chemistry.setAtom",
             "args": {
+              "atomId": "chemist-7KPA:HETATM:C:D84:201::N1:3186",
               "element": "C",
               "formalCharge": 0
             },
@@ -381,6 +393,7 @@
           {
             "action": "chemistry.setAtom",
             "args": {
+              "atomId": "chemist-7KPA:HETATM:C:D84:201::C19:3213",
               "element": "O",
               "formalCharge": 0
             },
@@ -397,7 +410,9 @@
           },
           {
             "action": "chemistry.deleteAtom",
-            "args": {},
+            "args": {
+              "atomId": "chemist-7KPA:HETATM:C:D84:201::O2:3214"
+            },
             "caption": "Apply deleteAtom."
           },
           {
@@ -412,7 +427,12 @@
           },
           {
             "action": "chemistry.deleteBond",
-            "args": {},
+            "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C18:3215",
+                "chemist-7KPA:HETATM:C:D84:201::C19:3213"
+              ]
+            },
             "caption": "Apply deleteBond."
           },
           {
@@ -463,7 +483,7 @@
         "label": "Replay Pyrrolidone to ring-expanded tetrahydropyran",
         "schema": "molarium.chemist-action-script/v1"
       },
-      "script:5575e1c3d09d0d59398f7f0f6aa7a88430930c4f4cf63e6cff6fe089acc1d59c": {
+      "script:ac29b5fe9861daf6d049c6dc55c6306cedd5b1e99889d218ff51e1088af142e9": {
         "actions": [
           {
             "action": "view.setMode",
@@ -499,6 +519,10 @@
           {
             "action": "chemistry.setBond",
             "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C10:3175",
+                "chemist-7KPA:HETATM:C:D84:201::C11:3176"
+              ],
               "order": 1
             },
             "caption": "Apply setBond."
@@ -516,6 +540,10 @@
           {
             "action": "chemistry.setBond",
             "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C11:3176",
+                "chemist-7KPA:HETATM:C:D84:201::C12:3177"
+              ],
               "order": 1
             },
             "caption": "Apply setBond."
@@ -533,6 +561,10 @@
           {
             "action": "chemistry.setBond",
             "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C12:3177",
+                "chemist-7KPA:HETATM:C:D84:201::C13:3178"
+              ],
               "order": 1
             },
             "caption": "Apply setBond."
@@ -550,6 +582,10 @@
           {
             "action": "chemistry.setBond",
             "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C13:3178",
+                "chemist-7KPA:HETATM:C:D84:201::C14:3179"
+              ],
               "order": 1
             },
             "caption": "Apply setBond."
@@ -567,6 +603,10 @@
           {
             "action": "chemistry.setBond",
             "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C14:3179",
+                "chemist-7KPA:HETATM:C:D84:201::C15:3181"
+              ],
               "order": 1
             },
             "caption": "Apply setBond."
@@ -584,6 +624,10 @@
           {
             "action": "chemistry.setBond",
             "args": {
+              "atomIds": [
+                "chemist-7KPA:HETATM:C:D84:201::C15:3181",
+                "chemist-7KPA:HETATM:C:D84:201::C10:3175"
+              ],
               "order": 1
             },
             "caption": "Apply setBond."
@@ -599,7 +643,9 @@
           },
           {
             "action": "chemistry.deleteAtom",
-            "args": {},
+            "args": {
+              "atomId": "chemist-7KPA:HETATM:C:D84:201::N1:3186"
+            },
             "caption": "Apply deleteAtom."
           },
           {
@@ -652,9 +698,9 @@
   },
   "branches": {
     "main": "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8",
-    "enumeration.pyrrolidone-to-pyrazole": "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615",
-    "enumeration.pyrrolidone-to-tetrahydropyran": "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a",
-    "enumeration.phenyl-pyrrolidone-to-spiro-ketone": "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16"
+    "enumeration.pyrrolidone-to-pyrazole": "commit:57c96f36a1dcffd2f06d32a83f8331a1b22da28e6d54d90d369e6539e3f12739",
+    "enumeration.pyrrolidone-to-tetrahydropyran": "commit:60c03c812211ea4092d6ad55f03b74c360f99b23a821a4765b522b9931119efa",
+    "enumeration.phenyl-pyrrolidone-to-spiro-ketone": "commit:8a2deb80c9534ef9706275e83b01e3b07cedc87809575c63f3695b1b8c1d511f"
   },
   "events": [
     {
@@ -768,14 +814,14 @@
     {
       "actorId": "agent.sol",
       "branch": "enumeration.pyrrolidone-to-pyrazole",
-      "eventId": "event:53bc9892c251193a120db3af298650ae12e939366305f924845e7c0c06a36743",
+      "eventId": "event:3a1ec175b345fe6acafec3e6151f4f6eb531dfc6ff5b3efda24e1603798412ce",
       "index": 4,
       "kind": "molecule.committed",
       "occurredAt": "2026-08-23T00:00:04.000Z",
       "parentEventIds": [],
       "payload": {
-        "actionScriptId": "script:999826d620fd26ea3ba5ee761a2fd6d035a6b62badaa40b2e395c743980f9a16",
-        "commitId": "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615",
+        "actionScriptId": "script:f6fa754d6337ef37e5925d4f2880fb411c0db92554ff4c60fdfcb547b579fb20",
+        "commitId": "commit:57c96f36a1dcffd2f06d32a83f8331a1b22da28e6d54d90d369e6539e3f12739",
         "evidenceIds": [],
         "hypothesisIds": [
           "event:a26bc416804d58b99cbe863a04d06fe5f04d06d9cfb683b7498c481f151a473c"
@@ -797,15 +843,15 @@
         "source.enumeration-catalogue"
       ],
       "subjectIds": [
-        "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615",
+        "commit:57c96f36a1dcffd2f06d32a83f8331a1b22da28e6d54d90d369e6539e3f12739",
         "snapshot:b1fc430673672e3f5d82b80c37241d5e9f00657b03050860bd64a2c291258a94"
       ],
-      "entrySha256": "304bafde8016a61a4a1fff421995464b162df4a499f01ffaa26408318071ab50"
+      "entrySha256": "7b949d67ce59af97523c588a547f000f58cef449aad651347cfc1e9ca5b30f1c"
     },
     {
       "actorId": "system.browser",
       "branch": "enumeration.pyrrolidone-to-pyrazole",
-      "eventId": "event:453bd40d35692ab593484d98e1d4f6e8397f56fa67bcc743218081bb3f0f5898",
+      "eventId": "event:69c03408d5484f36c208cd3efc2245f0e62879ae6104de9cc4c8344934e9ad5c",
       "index": 5,
       "kind": "calculation.completed",
       "occurredAt": "2026-08-23T00:00:05.000Z",
@@ -820,21 +866,21 @@
         "searchChains": 8,
         "stericClashes": 0
       },
-      "previousEntrySha256": "304bafde8016a61a4a1fff421995464b162df4a499f01ffaa26408318071ab50",
+      "previousEntrySha256": "7b949d67ce59af97523c588a547f000f58cef449aad651347cfc1e9ca5b30f1c",
       "recordedAt": "2026-08-30T20:00:05.000Z",
       "schema": "molarium.design-event/v1",
       "sourceIds": [
         "source.enumeration-results"
       ],
       "subjectIds": [
-        "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615"
+        "commit:57c96f36a1dcffd2f06d32a83f8331a1b22da28e6d54d90d369e6539e3f12739"
       ],
-      "entrySha256": "f660f45f2a34a0998a3d1a705b78a255dd7cecb0dfc2c0dbb90638e6e4bc3c55"
+      "entrySha256": "15343feef6cb9950ea2a1d12d0647eef663aeceb3cc158f0aa7f6425b3ea0de2"
     },
     {
       "actorId": "human.project-lead",
       "branch": "enumeration.pyrrolidone-to-pyrazole",
-      "eventId": "event:31096d35b5348646463e212351f37e714fd653742bdd735ec3459f7fb33e71a2",
+      "eventId": "event:5f31b0fad8875dce774679171d59e28eecf2b52442bff1a4cb38d7148fdae4a9",
       "index": 6,
       "kind": "decision.recorded",
       "occurredAt": "2026-08-23T00:00:06.000Z",
@@ -842,36 +888,36 @@
       "payload": {
         "disposition": "progressed",
         "evidenceIds": [
-          "event:453bd40d35692ab593484d98e1d4f6e8397f56fa67bcc743218081bb3f0f5898"
+          "event:69c03408d5484f36c208cd3efc2245f0e62879ae6104de9cc4c8344934e9ad5c"
         ],
         "rationale": "Contact-feasible poses passed the registered absolute clash and interaction screen.",
         "reasonCodes": [
           "other"
         ],
-        "targetCommitId": "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615"
+        "targetCommitId": "commit:57c96f36a1dcffd2f06d32a83f8331a1b22da28e6d54d90d369e6539e3f12739"
       },
-      "previousEntrySha256": "f660f45f2a34a0998a3d1a705b78a255dd7cecb0dfc2c0dbb90638e6e4bc3c55",
+      "previousEntrySha256": "15343feef6cb9950ea2a1d12d0647eef663aeceb3cc158f0aa7f6425b3ea0de2",
       "recordedAt": "2026-08-30T20:00:06.000Z",
       "schema": "molarium.design-event/v1",
       "sourceIds": [
         "source.enumeration-results"
       ],
       "subjectIds": [
-        "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615"
+        "commit:57c96f36a1dcffd2f06d32a83f8331a1b22da28e6d54d90d369e6539e3f12739"
       ],
-      "entrySha256": "cad08509388ba3ba9c45fb406c1a843995ff6d943c52d042a4f7cae81bc672f5"
+      "entrySha256": "2641ac83d7ecaf9690b466df1bee41975699fd1c7afa8a4e3b97a147ca995cfb"
     },
     {
       "actorId": "agent.sol",
       "branch": "enumeration.pyrrolidone-to-tetrahydropyran",
-      "eventId": "event:53dad19cee2cb0b0f83e808aad63036d7331ae5552ceef66b39dcd1e96d88132",
+      "eventId": "event:47cae97df90e2ba4c1859165bc74aea9619b71cc3dde83721299d86ea7e747c7",
       "index": 7,
       "kind": "molecule.committed",
       "occurredAt": "2026-08-23T00:00:07.000Z",
       "parentEventIds": [],
       "payload": {
-        "actionScriptId": "script:63b4193f17a4fa6b6dfd4bd01277d25620341df70f6b40c5ce2aa58f0a33825a",
-        "commitId": "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a",
+        "actionScriptId": "script:61a69425177d1e8a19ae243f2809c9d8f5c3965988fd37c74c264e9c82eec71c",
+        "commitId": "commit:60c03c812211ea4092d6ad55f03b74c360f99b23a821a4765b522b9931119efa",
         "evidenceIds": [],
         "hypothesisIds": [
           "event:a26bc416804d58b99cbe863a04d06fe5f04d06d9cfb683b7498c481f151a473c"
@@ -886,22 +932,22 @@
           "stress-test"
         ]
       },
-      "previousEntrySha256": "cad08509388ba3ba9c45fb406c1a843995ff6d943c52d042a4f7cae81bc672f5",
+      "previousEntrySha256": "2641ac83d7ecaf9690b466df1bee41975699fd1c7afa8a4e3b97a147ca995cfb",
       "recordedAt": "2026-08-30T20:00:07.000Z",
       "schema": "molarium.design-event/v1",
       "sourceIds": [
         "source.enumeration-catalogue"
       ],
       "subjectIds": [
-        "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a",
+        "commit:60c03c812211ea4092d6ad55f03b74c360f99b23a821a4765b522b9931119efa",
         "snapshot:3103fddda0f5b16b51f4edb21c5faf79b8d243889e0ba84245103bfcafe62108"
       ],
-      "entrySha256": "fe3813f29c67749e97910aabcf180a2bc31507eaf5a03f7eb8cd61d7ce5a7abe"
+      "entrySha256": "db26ee45685a006037d5eae9e4cc61fed7a4f80c76434380279714a6ebbac28a"
     },
     {
       "actorId": "system.browser",
       "branch": "enumeration.pyrrolidone-to-tetrahydropyran",
-      "eventId": "event:5d6bf996568fec0ba17a674e47922c803f1942da43f4bf98a7b18d2eeb3e186e",
+      "eventId": "event:c54c9b1d8837b5564083eb1397b683d3e7e374f742daea3457e577eec16ef058",
       "index": 8,
       "kind": "calculation.completed",
       "occurredAt": "2026-08-23T00:00:08.000Z",
@@ -916,21 +962,21 @@
         "searchChains": 8,
         "stericClashes": 2
       },
-      "previousEntrySha256": "fe3813f29c67749e97910aabcf180a2bc31507eaf5a03f7eb8cd61d7ce5a7abe",
+      "previousEntrySha256": "db26ee45685a006037d5eae9e4cc61fed7a4f80c76434380279714a6ebbac28a",
       "recordedAt": "2026-08-30T20:00:08.000Z",
       "schema": "molarium.design-event/v1",
       "sourceIds": [
         "source.enumeration-results"
       ],
       "subjectIds": [
-        "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a"
+        "commit:60c03c812211ea4092d6ad55f03b74c360f99b23a821a4765b522b9931119efa"
       ],
-      "entrySha256": "470431fae428647de7f44cf8c3bab36a9cb53776810dc694ac91cd2e95089770"
+      "entrySha256": "a70ccebf4da764af7b1045d28e959fedf7214499a1071040c21a1498124af5c2"
     },
     {
       "actorId": "human.project-lead",
       "branch": "enumeration.pyrrolidone-to-tetrahydropyran",
-      "eventId": "event:0d5a124643484a812a65e9a3c85b39d2f96e053b21101f015e6527e657f3ddbc",
+      "eventId": "event:b2a4d8a9258661bbd0c12581f3547bf9a0c315bc41fb80bdd6c863ce54869170",
       "index": 9,
       "kind": "decision.recorded",
       "occurredAt": "2026-08-23T00:00:09.000Z",
@@ -938,36 +984,36 @@
       "payload": {
         "disposition": "progressed",
         "evidenceIds": [
-          "event:5d6bf996568fec0ba17a674e47922c803f1942da43f4bf98a7b18d2eeb3e186e"
+          "event:c54c9b1d8837b5564083eb1397b683d3e7e374f742daea3457e577eec16ef058"
         ],
         "rationale": "The ring-expanded case met the preregistered development boundary, with visual review retained.",
         "reasonCodes": [
           "other"
         ],
-        "targetCommitId": "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a"
+        "targetCommitId": "commit:60c03c812211ea4092d6ad55f03b74c360f99b23a821a4765b522b9931119efa"
       },
-      "previousEntrySha256": "470431fae428647de7f44cf8c3bab36a9cb53776810dc694ac91cd2e95089770",
+      "previousEntrySha256": "a70ccebf4da764af7b1045d28e959fedf7214499a1071040c21a1498124af5c2",
       "recordedAt": "2026-08-30T20:00:09.000Z",
       "schema": "molarium.design-event/v1",
       "sourceIds": [
         "source.enumeration-results"
       ],
       "subjectIds": [
-        "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a"
+        "commit:60c03c812211ea4092d6ad55f03b74c360f99b23a821a4765b522b9931119efa"
       ],
-      "entrySha256": "d6a72a06949265533cec744e2485bf82d3153d1d4e7e000346f3431f6b1777ee"
+      "entrySha256": "2d537adf4f5fd240653d5b6c1051df9c899a0d0eba3ad9ffcdfafcbece42773a"
     },
     {
       "actorId": "agent.sol",
       "branch": "enumeration.phenyl-pyrrolidone-to-spiro-ketone",
-      "eventId": "event:73409a05a88dae05c99c907e600631597fcda2fe6d5439a06f7728d02382cdf9",
+      "eventId": "event:3dd24d10ef84192f6ce73f47ad9006ed9b01930ae647c3cd1a68dbe5c4e13a8f",
       "index": 10,
       "kind": "molecule.committed",
       "occurredAt": "2026-08-23T00:00:10.000Z",
       "parentEventIds": [],
       "payload": {
-        "actionScriptId": "script:5575e1c3d09d0d59398f7f0f6aa7a88430930c4f4cf63e6cff6fe089acc1d59c",
-        "commitId": "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16",
+        "actionScriptId": "script:ac29b5fe9861daf6d049c6dc55c6306cedd5b1e99889d218ff51e1088af142e9",
+        "commitId": "commit:8a2deb80c9534ef9706275e83b01e3b07cedc87809575c63f3695b1b8c1d511f",
         "evidenceIds": [],
         "hypothesisIds": [
           "event:a26bc416804d58b99cbe863a04d06fe5f04d06d9cfb683b7498c481f151a473c"
@@ -982,22 +1028,22 @@
           "stress-test"
         ]
       },
-      "previousEntrySha256": "d6a72a06949265533cec744e2485bf82d3153d1d4e7e000346f3431f6b1777ee",
+      "previousEntrySha256": "2d537adf4f5fd240653d5b6c1051df9c899a0d0eba3ad9ffcdfafcbece42773a",
       "recordedAt": "2026-08-30T20:00:10.000Z",
       "schema": "molarium.design-event/v1",
       "sourceIds": [
         "source.enumeration-catalogue"
       ],
       "subjectIds": [
-        "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16",
+        "commit:8a2deb80c9534ef9706275e83b01e3b07cedc87809575c63f3695b1b8c1d511f",
         "snapshot:0a4b06194df355adfdc872f6c2ea8d33a4aec3ec6fbb2241df2ede558bb5c62e"
       ],
-      "entrySha256": "7fc34c58adafc88d5119d9847fccf7732dd60c061219861f62808c4900968e13"
+      "entrySha256": "13f3d5b1d4c9848b26b8b86f802adf48d498427298bf4b2035416305269863c7"
     },
     {
       "actorId": "system.browser",
       "branch": "enumeration.phenyl-pyrrolidone-to-spiro-ketone",
-      "eventId": "event:f834a5861cef1072d51269a483df69ae3178678e68f7905177375702d22a46e6",
+      "eventId": "event:3caf8c8d356d0084c63af48937b74b3d2f3c8ed03e7c7551b6d66d3b9c5800ad",
       "index": 11,
       "kind": "calculation.completed",
       "occurredAt": "2026-08-23T00:00:11.000Z",
@@ -1012,21 +1058,21 @@
         "searchChains": 8,
         "stericClashes": 11
       },
-      "previousEntrySha256": "7fc34c58adafc88d5119d9847fccf7732dd60c061219861f62808c4900968e13",
+      "previousEntrySha256": "13f3d5b1d4c9848b26b8b86f802adf48d498427298bf4b2035416305269863c7",
       "recordedAt": "2026-08-30T20:00:11.000Z",
       "schema": "molarium.design-event/v1",
       "sourceIds": [
         "source.enumeration-results"
       ],
       "subjectIds": [
-        "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16"
+        "commit:8a2deb80c9534ef9706275e83b01e3b07cedc87809575c63f3695b1b8c1d511f"
       ],
-      "entrySha256": "fad71272ce222ec707fead462cabc0dde4261c3f1e68032826028072a9fa10f2"
+      "entrySha256": "12dc709b409bedd68d910daa364fbd9dc3d07f2affcc6d03a4486cb483655d97"
     },
     {
       "actorId": "human.project-lead",
       "branch": "enumeration.phenyl-pyrrolidone-to-spiro-ketone",
-      "eventId": "event:e88cb98a8978d9662efd5bcc531be4e444b1331f76b9bae8a9673fa4518f71b3",
+      "eventId": "event:0df95ba1967df8fa1583f9ce15249a70a094c2d2bf89787cb38fd54735973086",
       "index": 12,
       "kind": "decision.recorded",
       "occurredAt": "2026-08-23T00:00:12.000Z",
@@ -1034,48 +1080,48 @@
       "payload": {
         "disposition": "not-progressed",
         "evidenceIds": [
-          "event:f834a5861cef1072d51269a483df69ae3178678e68f7905177375702d22a46e6"
+          "event:3caf8c8d356d0084c63af48937b74b3d2f3c8ed03e7c7551b6d66d3b9c5800ad"
         ],
         "rationale": "Contact satisfaction did not rescue 11 clashes and a strongly positive absolute receptor–ligand interaction energy.",
         "reasonCodes": [
           "strain"
         ],
-        "targetCommitId": "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16"
+        "targetCommitId": "commit:8a2deb80c9534ef9706275e83b01e3b07cedc87809575c63f3695b1b8c1d511f"
       },
-      "previousEntrySha256": "fad71272ce222ec707fead462cabc0dde4261c3f1e68032826028072a9fa10f2",
+      "previousEntrySha256": "12dc709b409bedd68d910daa364fbd9dc3d07f2affcc6d03a4486cb483655d97",
       "recordedAt": "2026-08-30T20:00:12.000Z",
       "schema": "molarium.design-event/v1",
       "sourceIds": [
         "source.enumeration-results"
       ],
       "subjectIds": [
-        "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16"
+        "commit:8a2deb80c9534ef9706275e83b01e3b07cedc87809575c63f3695b1b8c1d511f"
       ],
-      "entrySha256": "6aca4c7f2e6e3b1254d66a965f9d52c2ba11df2885fb50a434fa6534731821a0"
+      "entrySha256": "c7d2bb7a9a934a00112c1ebb099fbf89c045a9b106627e4f0c882c62fa5bed7d"
     },
     {
       "actorId": "agent.sol",
       "branch": "main",
-      "eventId": "event:0e5a0087299286bd5ad2570ab229cff68cbcf4359c19d29e691cc0515efc742b",
+      "eventId": "event:c3f7ccd084d849b0cbbf33113fb0a06d661e346e4267e43057fa2fa18bf782ce",
       "index": 13,
       "kind": "campaign.completed",
       "occurredAt": "2026-08-30T20:30:00.000Z",
       "parentEventIds": [],
       "payload": {
         "branchHeads": {
-          "enumeration.phenyl-pyrrolidone-to-spiro-ketone": "commit:dcecd2b5045f9d82bdfbc77f6d9837643eff71f4da68f57334da01f38016cc16",
-          "enumeration.pyrrolidone-to-pyrazole": "commit:1a3d2ba835019492d6ee73595e1276b1cd0fa26c7819d0f59b0a71eec9337615",
-          "enumeration.pyrrolidone-to-tetrahydropyran": "commit:21b8366e0c8d8eb3c89c132049e06b3f7a870c18dca93ac2848d17813f4ba16a",
+          "enumeration.phenyl-pyrrolidone-to-spiro-ketone": "commit:8a2deb80c9534ef9706275e83b01e3b07cedc87809575c63f3695b1b8c1d511f",
+          "enumeration.pyrrolidone-to-pyrazole": "commit:57c96f36a1dcffd2f06d32a83f8331a1b22da28e6d54d90d369e6539e3f12739",
+          "enumeration.pyrrolidone-to-tetrahydropyran": "commit:60c03c812211ea4092d6ad55f03b74c360f99b23a821a4765b522b9931119efa",
           "main": "commit:1ae02b7b192bae9818a618c0eb7320b819b969bd7539db58de843ff54b364be8"
         }
       },
-      "previousEntrySha256": "6aca4c7f2e6e3b1254d66a965f9d52c2ba11df2885fb50a434fa6534731821a0",
+      "previousEntrySha256": "c7d2bb7a9a934a00112c1ebb099fbf89c045a9b106627e4f0c882c62fa5bed7d",
       "recordedAt": "2026-08-30T20:30:00.000Z",
       "schema": "molarium.design-event/v1",
       "sourceIds": [],
       "subjectIds": [],
-      "entrySha256": "4b809effb165e5624bc45c829b3b98dfbe324338c93742ea92bf05231c0a963d"
+      "entrySha256": "b1721d738132ccf3b8b50657f6a149c2c19ff0d17e35e29ffffb6029f2d7c499"
     }
   ],
-  "campaignSha256": "5fbf34c9441dda3a4b73d1f59e6aced78b813bb73c82eae78dcc4b653fa5a129"
+  "campaignSha256": "fdbdf9cedcc2770ba63328300939eb8259d8a4bafaaa3df4adea26216ce6a1a8"
 }

@@ -29,6 +29,29 @@ const FORBIDDEN_BOUNDARY_KEYS = new Set([
   'directCoordinates', 'internalCallback', 'module', 'eval', 'sourceCode', 'privateRoute',
 ]);
 
+export const EXPLICIT_CHEMISTRY_TARGETS = Object.freeze({
+  'chemistry.setAtom':Object.freeze({ key:'atomId', count:1 }),
+  'chemistry.deleteAtom':Object.freeze({ key:'atomId', count:1 }),
+  'chemistry.addHydrogen':Object.freeze({ key:'atomId', count:1 }),
+  'chemistry.removeHydrogen':Object.freeze({ key:'atomId', count:1 }),
+  'chemistry.setBond':Object.freeze({ key:'atomIds', count:2 }),
+  'chemistry.deleteBond':Object.freeze({ key:'atomIds', count:2 }),
+});
+
+function validateExplicitChemistryTarget(step, stepNumber) {
+  const target = EXPLICIT_CHEMISTRY_TARGETS[step.action];
+  if (!target) return;
+  if (!Object.hasOwn(step.args || {}, target.key))
+    throw new Error(`Action step ${stepNumber} ${step.action} requires explicit ${target.key}; saved publication replays cannot use ambient selection`);
+  const raw = step.args[target.key], values = target.count === 1 ? [raw] : raw;
+  if (!Array.isArray(values) || values.length !== target.count
+    || values.some((value) => !(typeof value === 'string' && value)
+      && !(value && typeof value === 'object' && Object.keys(value).length === 1
+        && typeof value.$binding === 'string' && value.$binding))
+    || new Set(values.map((value) => canonicalJson(value))).size !== values.length)
+    throw new Error(`Action step ${stepNumber} ${target.key} must contain ${target.count} distinct persistent atom ${target.count === 1 ? 'ID' : 'IDs'}`);
+}
+
 function assertNoBoundaryShortcut(value, path = 'step') {
   if (Array.isArray(value)) {
     value.forEach((entry, index) => assertNoBoundaryShortcut(entry, `${path}[${index}]`));
@@ -102,6 +125,7 @@ export function validateActionScript(script) {
     if (!Object.hasOwn(CHEMIST_ACTION_DEFINITIONS, step.action))
       throw new Error(`Action step ${index + 1} uses unavailable route ${step.action}`);
     cloneRecord(step.args || {});
+    validateExplicitChemistryTarget(step, index + 1);
     validateExpectations(step.expect, index + 1);
     assertNoBoundaryShortcut(step, `Action step ${index + 1}`);
     for (const reference of bindingReferences(step.args || {}))
@@ -159,6 +183,7 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
     throw new Error('captionsBySequence must be an object keyed by audit sequence');
   const seenSequences = new Set(), readOnly = new Set(READ_ONLY_CHEMIST_ACTIONS);
   const actions = [];
+  let selectedAtomIds = [];
   for (const [recordIndex, record] of records.entries()) {
     if (!record || typeof record !== 'object')
       throw new Error(`Audit record ${recordIndex + 1} must be an object`);
@@ -167,12 +192,28 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
       throw new Error(`Audit record ${recordIndex + 1} requires a positive integer sequence`);
     if (seenSequences.has(sequence)) throw new Error(`Duplicate audit sequence ${sequence}`);
     seenSequences.add(sequence);
-    if (record.status !== 'completed' || (requested && !requested.has(sequence))) continue;
+    if (record.status !== 'completed') continue;
+    if (record.action === 'selection.replace' && Array.isArray(record.args?.atomIds))
+      selectedAtomIds = cloneRecord(record.args.atomIds);
+    else if (record.action === 'selection.clear'
+      || ['session.loadStructure','session.loadIdentifier','session.loadFixture','designRoute.load']
+        .includes(record.action)) selectedAtomIds = [];
+    if (requested && !requested.has(sequence)) continue;
     if (isNonReplayableAction(record.action)) continue;
     if (!includeReadOnly && readOnly.has(record.action)) continue;
     if (!Object.hasOwn(CHEMIST_ACTION_DEFINITIONS, record.action))
       throw new Error(`Audit sequence ${sequence} uses unavailable route ${record.action}`);
-    const step = { action:record.action, args:cloneRecord(record.args || {}) };
+    const args = cloneRecord(record.args || {});
+    const target = EXPLICIT_CHEMISTRY_TARGETS[record.action];
+    if (target && !Object.hasOwn(args, target.key)) {
+      const recorded = record.result?.[target.key];
+      const values = recorded == null ? selectedAtomIds
+        : target.count === 1 ? [recorded] : recorded;
+      if (!Array.isArray(values) || values.length !== target.count)
+        throw new Error(`Audit sequence ${sequence} cannot be migrated: ${record.action} has no explicit ${target.key} and no unambiguous recorded selection`);
+      args[target.key] = cloneRecord(target.count === 1 ? values[0] : values);
+    }
+    const step = { action:record.action, args };
     if (includeAuditMetadata) step.auditSequence = sequence;
     if (includeAuditMetadata && typeof record.requestId === 'string' && record.requestId)
       step.auditRequestId = record.requestId;

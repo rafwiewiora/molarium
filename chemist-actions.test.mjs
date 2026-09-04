@@ -57,6 +57,12 @@ assert.match(api.describe().actions['pose.apply'].arguments.expectedOutputCoordi
   /SHA-256/);
 assert.match(api.describe().actions['optimization.run'].arguments.expectedInputCoordinateSha256,
   /SHA-256/);
+assert.match(api.describe().actions['pose.refine'].arguments.expectedSelectedStateSha256,
+  /molecular-state-hash\/v1/);
+assert.match(api.describe().actions['pose.apply'].arguments.expectedOutputStateSha256,
+  /atomic output guard/);
+assert.match(api.describe().actions['optimization.run'].arguments.expectedInputStateSha256,
+  /preferred input guard/);
 assert(Object.hasOwn(api.describe().actions, 'structureStory.selectFrame'));
 assert.match(api.describe().actions['session.inspect'].arguments.scope, /pocket/);
 assert.match(api.describe().actions['view.setMode'].description, /View, Design, or Simulate/);
@@ -76,6 +82,11 @@ assert.match(appSource, /selectDepictionAtomsThroughAction[\s\S]{0,320}selection
   '2D selection goes through the public selection action');
 assert.match(appSource, /Applied refined-pose coordinates do not match expectedOutputCoordinateSha256/);
 assert.match(appSource, /Optimized coordinates do not match expectedOutputCoordinateSha256/);
+assert.match(appSource, /captureChemistActionGuardCheckpoint/);
+assert.match(appSource, /restoreChemistActionGuardCheckpoint\(rollback\)/,
+  'guard failure restores the complete captured action state');
+assert.match(appSource, /stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA/,
+  'scientific action results identify their versioned identity-topology-coordinate hash');
 
 const first = await api.execute({ requestId:'chemist-1', action:'view.setMode', args:{ mode:'build' } });
 assert.equal(first.status, 'completed');
