@@ -199,7 +199,10 @@ async function runBranch({ root, serializedCampaign, branch }) {
 async function main(args = process.argv.slice(2)) {
   const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
   const outputArg = valueFor(args, '--output');
-  if (!outputArg) throw new Error('Usage: bun scripts/sos1-aww-designer-contact-factorial.browser.mjs --output <new-directory>');
+  if (!outputArg) throw new Error('Usage: bun scripts/sos1-aww-designer-contact-factorial.browser.mjs --output <new-directory> [--branch phe-native|phe-plus60|phe-out]');
+  const branchArg = valueFor(args, '--branch');
+  const branches = branchArg ? BRANCHES.filter((branch) => branch.id === branchArg) : BRANCHES;
+  if (!branches.length) throw new Error(`Unknown factorial branch: ${branchArg}`);
   const output = resolve(process.cwd(), outputArg);
   try { await access(output); throw new Error(`Refusing to overwrite immutable attempt: ${output}`); }
   catch (error) { if (error.code !== 'ENOENT') throw error; }
@@ -214,7 +217,7 @@ async function main(args = process.argv.slice(2)) {
   await save('boundary.json', { schema:SCHEMA, status:'declared-before-compute',
     source:{ stateId:'AWZ', campaignPath,
       campaignSha256:AWZ_CAMPAIGN_SHA256 },
-    branches:BRANCHES.map((branch) => ({ id:branch.id, pheState:branch.phe.id,
+    branches:branches.map((branch) => ({ id:branch.id, pheState:branch.phe.id,
       chiDegrees:branch.phe.chiDegrees })), searchChains:8,
     designerIntent:[
       'AWW OX3 hydroxyl donor -> TYR A884 backbone O acceptor',
@@ -226,7 +229,7 @@ async function main(args = process.argv.slice(2)) {
     hydrationPolicy:'water is outside pose.refine scoring; HOH1507 mobility and remaining overlap are evaluated by later full-system induced-fit relaxation of the prospective winner',
   });
   const results = [];
-  for (const branch of BRANCHES) {
+  for (const branch of branches) {
     const result = await runBranch({ root,
       serializedCampaign:campaignBytes.toString('utf8'), branch });
     results.push(result);

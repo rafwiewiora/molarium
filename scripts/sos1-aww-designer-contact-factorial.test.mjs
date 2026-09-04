@@ -19,6 +19,8 @@ assert.doesNotMatch(source, /Both factorial Phe branches must pass/);
 assert.match(source, /hydrationUsedForPoseSelection:false/);
 assert.match(source, /water is outside pose\.refine scoring/);
 assert.doesNotMatch(source, /geometry\.translateAtoms/);
+assert.match(source, /--branch phe-native\|phe-plus60\|phe-out/);
+assert.match(source, /Unknown factorial branch/);
 assert.match(source, /5OVH may be opened only after selection; this proxy does not open it/);
 assert.doesNotMatch(source, /designRoute\.load[^\n]*5OVH/);
 
