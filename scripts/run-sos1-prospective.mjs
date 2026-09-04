@@ -692,6 +692,28 @@ try {
   await writeFile(join(output, 'prediction-manifest.json'),
     `${JSON.stringify(manifest, null, 2)}\n`);
   console.log(`Wrote ${relative(root, join(output, 'prediction-manifest.json'))}`);
+} catch (error) {
+  let audit = [];
+  try {
+    audit = await browser.evaluate(`window.MolariumChemistActions?.history?.() || []`);
+  } catch {
+    // Preserve the original scientific failure even if the browser itself has exited.
+  }
+  const auditEnvelope = { schema:'molarium.chemist-actions/v1', routeId:'sos1-hit-only',
+    status:'failed', records:audit };
+  const auditBytes = Buffer.from(`${JSON.stringify(auditEnvelope, null, 2)}\n`);
+  await writeFile(join(output, 'chemist-action-audit.json'), auditBytes);
+  const lastRecord = audit.at(-1) || null;
+  await writeFile(join(output, 'failed-run.json'), `${JSON.stringify({
+    schema:'molarium.design-prediction-failure/v1', routeId:'sos1-hit-only',
+    diagnostic:diagnosticPhe890, requestedStop, relaxMethod,
+    error:{ name:String(error?.name || 'Error'), message:String(error?.message || error),
+      stack:String(error?.stack || '') },
+    completedCheckpoints:checkpoints,
+    auditRecords:audit.length, auditSha256:digest(auditBytes), lastRecord,
+  }, null, 2)}\n`);
+  console.error(`Preserved failed-run.json with ${audit.length} public action records`);
+  throw error;
 } finally {
   await browser.close();
 }

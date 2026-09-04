@@ -10454,6 +10454,18 @@ function installChemistActionsApi(module) {
         selectedChemicalValidity:structuredClone(selected.physicalDetails?.chemicalValidity || null),
         selectedHydrogenBonds:structuredClone(selected.hydrogenBonds),
         selectedSpatialFeatures:structuredClone(selected.spatialFeatures || []),
+        candidateGateSummary:result.run.candidates.map((candidate) => ({
+          rank:candidate.rank, conformerIndex:candidate.conformerIndex,
+          feasible:candidate.feasible,
+          totalScoreKcalMol:candidate.totalScoreKcalMol,
+          physicalEnergyKcalMol:candidate.physicalEnergyKcalMol,
+          constraintPenaltyKcalMol:candidate.constraintPenaltyKcalMol,
+          physicalFeasible:candidate.physicalFeasible,
+          core:structuredClone(candidate.core || null),
+          hydrogenBonds:structuredClone(candidate.hydrogenBonds || []),
+          spatialFeatures:structuredClone(candidate.spatialFeatures || []),
+          chemicalValidity:structuredClone(candidate.physicalDetails?.chemicalValidity || null),
+        })),
         requiredSpatialFeatureCount:(selected.spatialFeatures || [])
           .filter((feature) => feature.required === true).length,
         featureGuidedSeeding:result.featureGuidedSeeding ? {
