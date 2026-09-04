@@ -74,6 +74,9 @@ assert.match(api.describe().guarantee, /no arbitrary code/);
 assert.match(api.describe().guarantee, /every saved replay and visible playback control executes only public routes/i);
 
 const appSource = readFileSync(new URL('./app.js', import.meta.url), 'utf8');
+assert.match(appSource,
+  /resolveCampaignAssetSource\(args\.sourcePath, args\.sourceSha256, location\.href\)/);
+assert.match(appSource, /Campaign asset integrity check failed/);
 assert.match(appSource, /if \(state\.designerMoveReplaying\)[\s\S]{0,200}saved publication replay/,
   'saved replays fail closed when selection-dependent chemistry omits persistent targets');
 assert.match(appSource, /runChemistUiAction\('chemistry\.addHydrogen',\s*\{\s*atomId:/,
@@ -123,10 +126,17 @@ const sizeApi = createChemistActionsApi({ routes:sizeRoutes,
 const fullSystemCampaign = 'x'.repeat(9 * 1024 * 1024);
 await sizeApi.execute({ action:'campaign.import',
   args:{ serialized:fullSystemCampaign } });
+await assert.rejects(() => sizeApi.execute({ action:'campaign.import', args:{
+  sourcePath:'./campaign.json', sourceSha256:'a'.repeat(64),
+  padding:fullSystemCampaign,
+} }), /input exceeds 8388608 bytes/,
+'path-based campaign imports must use the normal small action envelope');
 await assert.rejects(() => sizeApi.execute({ action:'view.setMode',
   args:{ padding:fullSystemCampaign } }), /input exceeds 8388608 bytes/);
 assert.match(sizeApi.describe().actions['campaign.import'].arguments.serialized,
   /32 MiB/);
+assert.match(sizeApi.describe().actions['campaign.import'].arguments.sourceSha256,
+  /SHA-256/);
 
 const order = [];
 routes['chemistry.finish'] = undefined;

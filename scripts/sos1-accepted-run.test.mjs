@@ -276,9 +276,16 @@ try {
   assert.equal(browserPublication.declaration.postFreezeEvaluation.accepted, false);
   assert.deepEqual(browserPublication.declaration.postFreezeEvaluation.failedStepIds,
     ['finish-bay-293']);
-  assert.deepEqual(browserPublication.review.actions.map((step) => step.args.serialized),
+  assert(browserPublication.reviewBytes.length < 1024 * 1024,
+    'checkpoint review must not inline full-system campaigns');
+  assert(browserPublication.review.actions.every((step) =>
+    step.action === 'campaign.import' && step.args.serialized == null
+    && /^[a-f0-9]{64}$/.test(step.args.sourceSha256)
+    && /^\.\/design-history\/publications\/sos1\/checkpoints\//
+      .test(step.args.sourcePath)));
+  assert.deepEqual(browserPublication.campaignAssets.map((asset) => asset.sha256),
     steps.map((stepId) => completeFrozen.checkpoints.get(stepId)
-      .fullSystemCampaign.serializedCampaign));
+      .fullSystemCampaign.record.sha256));
   assert.equal(browserPublication.review.provenance.postFreezeEvaluation.accepted, false);
   await assert.rejects(() => verifyAcceptedSos1Run(scratch), /was not accepted/);
 

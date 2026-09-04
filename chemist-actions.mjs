@@ -267,8 +267,10 @@ const ACTIONS = Object.freeze({
     description:'Close the active local campaign without deleting its persisted commits.',
     arguments:Object.freeze({}) }),
   'campaign.import': Object.freeze({
-    description:'Verify, persist, and restore a canonical serialized design campaign.',
+    description:'Verify, persist, and restore either canonical campaign JSON or a hash-pinned same-origin campaign asset.',
     arguments:Object.freeze({ serialized:'canonical campaign JSON string (maximum 32 MiB)',
+      sourcePath:'alternative traversal-free same-origin campaign asset path',
+      sourceSha256:'required lowercase SHA-256 digest when sourcePath is used',
       preserveView:'optional boolean; retain the current comparison camera' }) }),
   'campaign.export': Object.freeze({
     description:'Return canonical JSON for the active design campaign.', arguments:Object.freeze({}) }),
@@ -395,6 +397,7 @@ export function createChemistActionsApi({ routes, now = () => new Date().toISOSt
   const run = async (request) => {
     const requestedAction = typeof request?.action === 'string' ? request.action : '';
     const maximumBytes = requestedAction === 'campaign.import'
+      && typeof request?.args?.serialized === 'string'
       ? MAX_CAMPAIGN_IMPORT_BYTES : MAX_INPUT_BYTES;
     const envelope = checkedInput(request, maximumBytes);
     const action = String(envelope.action || '');

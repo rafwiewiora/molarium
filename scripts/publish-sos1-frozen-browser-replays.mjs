@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import assert from 'node:assert/strict';
-import { readFile, rename, writeFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
+import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
+import { dirname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { frozenCheckpointReviewScript } from
   '../design-history/frozen-checkpoint-review.mjs';
@@ -17,6 +17,8 @@ export const SOS1_PREDICTION_REVIEW =
   'design-history/examples/sos1-prediction-checkpoint-review.action-script.json';
 export const SOS1_PREDICTION_DECLARATION =
   'design-history/publications/sos1/browser-replay-declaration.json';
+export const SOS1_PREDICTION_CAMPAIGN_DIRECTORY =
+  'design-history/publications/sos1/checkpoints';
 
 const jsonBytes = (value) => Buffer.from(`${JSON.stringify(value, null, 2)}\n`);
 
@@ -37,12 +39,14 @@ function reviewCheckpoint(verified, stepId) {
   return { completeFrozenPrediction:true, frozenBeforeHoldoutAccess:true,
     checkpointSha256:frozen.entry.sha256,
     campaignSha256:fullSystem.record.sha256,
-    serializedCampaign:fullSystem.serializedCampaign,
+    campaignPath:`./${SOS1_PREDICTION_CAMPAIGN_DIRECTORY}/${stepId}-campaign.json`,
+    campaignId:fullSystem.record.campaignId,
     branch:fullSystem.record.branch, commitId:fullSystem.record.commitId,
     snapshotId:fullSystem.record.snapshotId, label:`${stepId} prediction checkpoint` };
 }
 
-export async function buildFrozenBrowserPublicationRecords(verified) {
+export async function buildFrozenBrowserPublicationRecords(verified,
+  { sourceRunDirectory = null } = {}) {
   assert.deepEqual([...verified.checkpoints.keys()], SOS1_STEP_IDS,
     'prediction browser publication requires the complete ordered SOS1 route');
   const replay = await buildFrozenSos1ReplayScript(verified);
@@ -54,16 +58,23 @@ export async function buildFrozenBrowserPublicationRecords(verified) {
     postFreezeEvaluation,
   });
   const reviewBytes = jsonBytes(review);
+  const campaignAssets = SOS1_STEP_IDS.map((stepId) => {
+    const fullSystem = verified.checkpoints.get(stepId).fullSystemCampaign;
+    return { stepId, path:`${SOS1_PREDICTION_CAMPAIGN_DIRECTORY}/${stepId}-campaign.json`,
+      sha256:fullSystem.record.sha256, bytes:fullSystem.campaignBytes };
+  });
   const declaration = {
     schema:'molarium.sos1-frozen-browser-publication/v1',
     routeId:'sos1-hit-only', publicationClass:'complete-frozen-prediction',
     sourceRun:{ id:verified.runId,
+      ...(sourceRunDirectory ? { directory:sourceRunDirectory } : {}),
       predictionManifestSha256:sha256(verified.manifestBytes),
       sourceAuditSha256:sha256(verified.auditBytes),
       checkpoints:SOS1_STEP_IDS.map((stepId) => ({ stepId,
         sha256:verified.checkpoints.get(stepId).entry.sha256,
         fullSystemCampaignSha256:
-          verified.checkpoints.get(stepId).fullSystemCampaign.record.sha256 })) },
+          verified.checkpoints.get(stepId).fullSystemCampaign.record.sha256,
+        publishedCampaignPath:campaignAssets.find((asset) => asset.stepId === stepId).path })) },
     postFreezeEvaluation,
     executableReplay:{ path:SOS1_PREDICTION_REPLAY, sha256:sha256(replayBytes),
       actionScriptSha256:await actionScriptSha256(replay.script),
@@ -73,7 +84,7 @@ export async function buildFrozenBrowserPublicationRecords(verified) {
       promotable:false, publicUrl:'/sos1-hit-to-bay293/review' },
   };
   return Object.freeze({ replay:replay.script, replayBytes, review, reviewBytes,
-    declaration, declarationBytes:jsonBytes(declaration) });
+    campaignAssets, declaration, declarationBytes:jsonBytes(declaration) });
 }
 
 function registryBounds(source) {
@@ -137,9 +148,11 @@ export function rewriteFrozenBrowserIntegration({ appSource, buildSource, manife
     `    title:'SOS1 prediction checkpoint review',\n`
     + `    script:'./${SOS1_PREDICTION_REVIEW}',\n`
     + `    sourcePath:'${SOS1_PREDICTION_REVIEW}',\n`
-    + `    sourceSha256:'${sha256(records.reviewBytes)}',`);
+    + `    sourceSha256:'${sha256(records.reviewBytes)}',\n`
+    + `    presentation:'chemist-pocket',`);
   const paths = [SOS1_PREDICTION_REPLAY, SOS1_PREDICTION_REVIEW,
-    SOS1_PREDICTION_DECLARATION];
+    SOS1_PREDICTION_DECLARATION,
+    ...(records.campaignAssets || []).map((asset) => asset.path)];
   return { appSource:app, buildSource:addReviewedFiles(buildSource, 'files', paths),
     manifestSource:addReviewedFiles(manifestSource, 'reviewedFiles', paths) };
 }
@@ -153,7 +166,12 @@ async function atomicWrite(path, bytes) {
 export async function writeFrozenBrowserPublication(verified, { root = ROOT } = {}) {
   assert.equal(resolve(root), ROOT,
     'Frozen browser publication only writes the checked-out production repository');
-  const records = await buildFrozenBrowserPublicationRecords(verified);
+  const sourceRunDirectory = relative(root, verified.directory);
+  assert(sourceRunDirectory && sourceRunDirectory !== '..'
+    && !sourceRunDirectory.startsWith(`..${sep}`),
+  'source run must be preserved inside the production repository');
+  const records = await buildFrozenBrowserPublicationRecords(verified,
+    { sourceRunDirectory });
   const [appSource, buildSource, manifestSource] = await Promise.all([
     readFile(resolve(root, 'app.js'), 'utf8'),
     readFile(resolve(root, 'scripts/build-web.mjs'), 'utf8'),
@@ -161,6 +179,7 @@ export async function writeFrozenBrowserPublication(verified, { root = ROOT } = 
   ]);
   const rewritten = rewriteFrozenBrowserIntegration({ appSource, buildSource,
     manifestSource }, records);
+  await mkdir(resolve(root, SOS1_PREDICTION_CAMPAIGN_DIRECTORY), { recursive:true });
   await Promise.all([
     atomicWrite(resolve(root, SOS1_PREDICTION_REPLAY), records.replayBytes),
     atomicWrite(resolve(root, SOS1_PREDICTION_REVIEW), records.reviewBytes),
@@ -168,6 +187,8 @@ export async function writeFrozenBrowserPublication(verified, { root = ROOT } = 
     atomicWrite(resolve(root, 'scripts/build-web.mjs'), Buffer.from(rewritten.buildSource)),
     atomicWrite(resolve(root, 'scripts/generate-local-lab-manifest.mjs'),
       Buffer.from(rewritten.manifestSource)),
+    ...records.campaignAssets.map((asset) =>
+      atomicWrite(resolve(root, asset.path), asset.bytes)),
   ]);
   await atomicWrite(resolve(root, SOS1_PREDICTION_DECLARATION), records.declarationBytes);
   return records.declaration;

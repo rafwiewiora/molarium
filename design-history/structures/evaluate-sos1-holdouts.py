@@ -418,10 +418,33 @@ def verify_run(run_dir: Path, protocol: dict) \
     for previous, following in zip(expected_steps, expected_steps[1:]):
         freeze_sequence = next(entry["freezeActionSequence"] for entry in manifest["checkpoints"]
                                if entry["stepId"] == previous)
-        recapture = next((entry for entry in audit
-                          if entry.get("requestId") == f"{previous}-capture-predicted-reference"), None)
-        staged = next((entry for entry in audit
-                       if entry.get("requestId") == f"{following}-stage"), None)
+        recovery = manifest.get("retryProvenance") if following == "finish-bay-293" else None
+        if recovery:
+            if recovery.get("schema") != "molarium.sos1-recovered-run-assembly/v1":
+                raise RuntimeError("Final-step recovery provenance schema is invalid")
+            recovery_audit = recovery.get("finalStepAudit", {})
+            recapture_sequence = recovery_audit.get("captureActionSequence")
+            stage_sequence = recovery_audit.get("stageActionSequence")
+            final_freeze_sequence = recovery_audit.get("freezeActionSequence")
+            recapture = next((entry for entry in audit
+                              if entry.get("sequence") == recapture_sequence
+                              and entry.get("action") == "pose.captureReference"
+                              and entry.get("status") == "completed"), None)
+            staged = next((entry for entry in audit
+                           if entry.get("sequence") == stage_sequence
+                           and entry.get("action") == "designRoute.applyStep"
+                           and entry.get("args", {}).get("stepId") == following
+                           and entry.get("status") == "completed"), None)
+            final_entry = next(entry for entry in manifest["checkpoints"]
+                               if entry["stepId"] == following)
+            if final_entry.get("freezeActionSequence") != final_freeze_sequence:
+                raise RuntimeError("Final checkpoint does not point to recovery freeze evidence")
+        else:
+            recapture = next((entry for entry in audit
+                              if entry.get("requestId")
+                              == f"{previous}-capture-predicted-reference"), None)
+            staged = next((entry for entry in audit
+                           if entry.get("requestId") == f"{following}-stage"), None)
         if not recapture or not staged or not (freeze_sequence < recapture["sequence"] < staged["sequence"]):
             raise RuntimeError(f"{following}: preceding frozen prediction was not recaptured")
     return manifest_bytes, manifest, checkpoints, audit, campaign

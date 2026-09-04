@@ -43,6 +43,17 @@ assert.equal(review.provenance.postFreezeEvaluation.accepted, false);
 assert.equal(review.provenance.promotable, false);
 assert.equal(review.provenance.calculationPolicy, 'none');
 assert(!JSON.stringify(review).includes('directCoordinates'));
+const externalReview = await frozenCheckpointReviewScript({
+  label:'External checkpoint review', checkpoints:[{
+    ...checkpoints[0], serializedCampaign:undefined,
+    campaignId:'frozen-browser-1',
+    campaignPath:'./design-history/publications/sos1/checkpoints/scaffold-rewrite-campaign.json',
+  }], postFreezeEvaluation:{ summarySha256:'a'.repeat(64) } });
+assert.equal(externalReview.actions[0].args.serialized, undefined);
+assert.equal(externalReview.actions[0].args.sourceSha256,
+  checkpoints[0].campaignSha256);
+assert.match(externalReview.actions[0].args.sourcePath,
+  /^\.\/design-history\/publications\/sos1\/checkpoints\//);
 await assert.rejects(() => frozenCheckpointReviewScript({ label:'bad', checkpoints:[{
   ...checkpoints[0], completeFrozenPrediction:false,
 }], postFreezeEvaluation:{ summarySha256:'a'.repeat(64) } }),
@@ -59,6 +70,8 @@ const rewritten = rewriteFrozenBrowserIntegration({ appSource,
 { replayBytes:Buffer.from('replay'), reviewBytes:Buffer.from('review') });
 assert.match(rewritten.appSource, /title:'SOS1 prediction replay'/);
 assert.match(rewritten.appSource, /title:'SOS1 prediction checkpoint review'/);
+assert.match(rewritten.appSource,
+  /'sos1-hit-to-bay293-review':[\s\S]*?presentation:'chemist-pocket'/);
 assert(!/title:'SOS1 accepted|title:'[^']*success/i.test(rewritten.appSource));
 for (const path of [SOS1_PREDICTION_REPLAY, SOS1_PREDICTION_REVIEW,
   SOS1_PREDICTION_DECLARATION]) {
@@ -67,7 +80,9 @@ for (const path of [SOS1_PREDICTION_REPLAY, SOS1_PREDICTION_REVIEW,
 }
 const publisherSource = await readFile(new URL(
   './publish-sos1-frozen-browser-replays.mjs', import.meta.url), 'utf8');
-assert.match(publisherSource, /fullSystem\.serializedCampaign/);
+assert.match(publisherSource, /campaignPath:/);
+assert.match(publisherSource, /campaignAssets/);
+assert(!publisherSource.includes('serializedCampaign:fullSystem.serializedCampaign'));
 assert.match(publisherSource, /verifyCompleteFrozenSos1Run/);
 assert.match(publisherSource, /buildFrozenSos1ReplayScript/);
 assert(!publisherSource.includes('verifyAcceptedSos1Run'));

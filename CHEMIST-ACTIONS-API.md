@@ -101,6 +101,10 @@ atom IDs before hashing the snapshot.
 `campaign.createBranch` creates a branch at an explicit commit or the current
 head. `campaign.switchBranch` refuses to discard uncommitted molecular changes,
 then reconstructs the graph and coordinates at the selected branch head.
+`campaign.import` accepts either inline canonical JSON in `serialized`, or the
+pair `sourcePath` and `sourceSha256`. The latter is restricted to a traversal-free
+same-origin path and verifies the exact bytes before canonical campaign and
+ledger verification; it keeps large checkpoint campaigns out of replay scripts.
 `campaign.mergeBranch` records the molecule currently visible on the target
 branch as the explicit merge result and retains the target and source commits as
 ordered parents; it does not attempt an automatic chemical graph merge.

@@ -217,6 +217,44 @@ export async function verifyCompleteFrozenSos1Run(runDirectory) {
     'Chemist Actions audit changed after prediction freeze');
   assert.equal(manifest.agentApi?.auditRecords, audit.records?.length,
     'Chemist Actions audit record count changed');
+  const retry = manifest.retryProvenance;
+  if (retry != null) {
+    assert.equal(retry.schema, 'molarium.sos1-recovered-run-assembly/v1');
+    assert.equal(audit.retryProvenance?.schema, retry.schema,
+      'recovery provenance differs between manifest and audit');
+    assert.deepEqual(audit.retryProvenance, retry,
+      'recovery provenance differs between manifest and audit');
+    assert.equal(audit.replaySelection?.maximumSequence, 251,
+      'recovered replay boundary must select the original 251-action attempt');
+    assert.equal(audit.replaySelection?.sourceAttemptId, retry.original?.attemptId);
+    assert.equal(audit.replaySelection?.excludedRecoveryAttemptId,
+      retry.recovery?.attemptId);
+    for (const field of ['failedRunSha256','auditSha256'])
+      assert(/^[a-f0-9]{64}$/.test(retry.original?.[field] || ''),
+        `recovery provenance original.${field} is invalid`);
+    for (const field of ['resultSha256','auditSha256','campaignSha256'])
+      assert(/^[a-f0-9]{64}$/.test(retry.recovery?.[field] || ''),
+        `recovery provenance recovery.${field} is invalid`);
+    assert(audit.records.slice(251).length > 0
+      && audit.records.slice(251).every((record) =>
+        record.retryProvenance?.publicationReplay === false
+        && record.retryProvenance?.attemptId === retry.recovery.attemptId),
+    'one or more recovery actions can leak into the executable publication replay');
+    const expectedRecoveryActions = [
+      ['captureActionSequence','pose.captureReference'],
+      ['stageActionSequence','designRoute.applyStep'],
+      ['freezeActionSequence','session.inspect'],
+      ['commitActionSequence','campaign.commitCurrent'],
+      ['exportActionSequence','campaign.export'],
+    ];
+    for (const [field, action] of expectedRecoveryActions) {
+      const sequence = retry.finalStepAudit?.[field];
+      const record = audit.records.find((entry) => entry.sequence === sequence);
+      assert(record?.status === 'completed' && record.action === action
+        && record.retryProvenance?.publicationReplay === false,
+      `recovery provenance ${field} does not identify its completed recovery action`);
+    }
+  }
   assert.equal(evaluation.schema, 'molarium.design-prediction-holdout-evaluation-summary/v2');
   assert.equal(evaluation.routeId, SOS1_ROUTE_ID);
   assert.equal(evaluation.predictionManifestSha256, sha256(manifestBytes),
@@ -241,6 +279,10 @@ export async function verifyCompleteFrozenSos1Run(runDirectory) {
       && freezeRecord.args?.scope === 'pocket'
       && freezeRecord.args?.includeCoordinates === true,
     `${entry.stepId}: freeze action is not the completed coordinate-bearing pocket inspection`);
+    if (entry.stepId === 'finish-bay-293' && manifest.retryProvenance)
+      assert.equal(entry.freezeActionSequence,
+        manifest.retryProvenance.finalStepAudit.freezeActionSequence,
+      'final checkpoint freeze does not point to the recovery audit evidence');
     const bytes = await readFile(join(directory, entry.filename));
     assert.equal(sha256(bytes), entry.sha256, `${entry.stepId}: frozen checkpoint changed`);
     const checkpoint = JSON.parse(bytes);
@@ -317,6 +359,15 @@ function selectedRouteRecord(record) {
   return !requestId.endsWith('-locate-phe890');
 }
 
+function publicationReplayRecords(audit) {
+  const maximum = audit.replaySelection?.maximumSequence;
+  const candidates = Number.isInteger(maximum)
+    ? audit.records.filter((record) => record.sequence <= maximum) : audit.records;
+  assert(candidates.every((record) => record.retryProvenance?.publicationReplay !== false),
+    'executable replay selection includes a non-replay recovery action');
+  return candidates.filter(selectedRouteRecord);
+}
+
 function captionForRecord(record) {
   const id = String(record.requestId || '');
   const captions = [
@@ -347,7 +398,7 @@ function captionForRecord(record) {
 /** Build the calculation-bearing, selected-route replay from a verified run audit. */
 export async function buildAcceptedSos1ReplayScript(verified) {
   const records = verified.audit.records || [];
-  const selected = records.filter(selectedRouteRecord);
+  const selected = publicationReplayRecords(verified.audit);
   const sequences = selected.map((record) => record.sequence);
   const captionsBySequence = Object.fromEntries(selected.map((record) =>
     [record.sequence, captionForRecord(record)]));
@@ -386,7 +437,7 @@ export async function buildAcceptedSos1ReplayScript(verified) {
  * separately attached post-freeze holdout evaluation passed. */
 export async function buildFrozenSos1ReplayScript(verified) {
   const records = verified.audit.records || [];
-  const selected = records.filter(selectedRouteRecord);
+  const selected = publicationReplayRecords(verified.audit);
   const sequences = selected.map((record) => record.sequence);
   const captionsBySequence = Object.fromEntries(selected.map((record) =>
     [record.sequence, captionForRecord(record)]));

@@ -27,12 +27,31 @@ async function checkpointMove(checkpoint, index) {
   const checkpointSha256 = digest(checkpoint.checkpointSha256,
     `Checkpoint ${index + 1} checkpointSha256`);
   const serialized = String(checkpoint.serializedCampaign || '');
-  if (!serialized.trim())
-    throw new Error(`Checkpoint ${index + 1} serializedCampaign must not be empty`);
+  const campaignPath = String(checkpoint.campaignPath || '');
+  if (Boolean(serialized.trim()) === Boolean(campaignPath.trim()))
+    throw new Error(`Checkpoint ${index + 1} requires exactly one serializedCampaign or campaignPath`);
   const campaignSha256 = digest(checkpoint.campaignSha256,
     `Checkpoint ${index + 1} campaignSha256`);
-  if (await sha256Text(serialized) !== campaignSha256)
+  if (serialized && await sha256Text(serialized) !== campaignSha256)
     throw new Error(`Checkpoint ${index + 1} campaign bytes do not match campaignSha256`);
+  if (!serialized) {
+    if (campaignPath.includes('..') || campaignPath.includes('\\')
+      || campaignPath.startsWith('/') || campaignPath.includes('?') || campaignPath.includes('#'))
+      throw new Error(`Checkpoint ${index + 1} campaignPath is not a safe relative asset path`);
+    return { action:'campaign.import', args:{ sourcePath:campaignPath,
+      sourceSha256:campaignSha256, preserveView:index > 0 },
+      caption:`Review ${text(checkpoint.label || `Prediction checkpoint ${index + 1}`,
+        `Checkpoint ${index + 1} label`)}`,
+      ...(index > 0 ? { expect:{ 'campaignImport.viewPreserved':true } } : {}),
+      review:{ schema:FROZEN_CHECKPOINT_REVIEW_SCHEMA,
+        sourceStatus:'complete-frozen-prediction', immutableSnapshot:true,
+        promotable:false, calculationPolicy:'none', holdoutCoordinatesIncluded:false,
+        checkpointSha256, campaignSha256,
+        campaignId:text(checkpoint.campaignId, `Checkpoint ${index + 1} campaignId`),
+        branch:text(checkpoint.branch, `Checkpoint ${index + 1} branch`),
+        commitId:text(checkpoint.commitId, `Checkpoint ${index + 1} commitId`),
+        snapshotId:text(checkpoint.snapshotId, `Checkpoint ${index + 1} snapshotId`) } };
+  }
   const campaign = deserializeCampaign(serialized);
   if (serializeCampaign(campaign) !== serialized)
     throw new Error(`Checkpoint ${index + 1} campaign is not canonically serialized`);

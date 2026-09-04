@@ -7,6 +7,7 @@ import { DESIGNER_REVIEW_DIRECTIONS, designerReplayReviewState,
 import { MOLECULAR_STATE_HASH_SCHEMA, molecularStateSha256 } from './molecular-state-hash.mjs';
 import { registeredFixedAtomMotion, registeredPoseRetentionPlan } from
   './docking/registered-pose-retention.mjs';
+import { resolveCampaignAssetSource } from './design-history/campaign-source.mjs';
 
 const MOLARIUM_NETWORK_POLICY = Object.freeze({
   mode:'connected', localOnly:false, policy:'connected-v1',
@@ -10945,18 +10946,31 @@ function installChemistActionsApi(module) {
       return chemistActionSummary({ campaignClosed:{ campaignId:closedCampaignId,
         persisted:true } }); },
     'campaign.import':async (args) => { chemistActionKeys(args,
-      ['serialized','preserveView']);
-      if (typeof args.serialized !== 'string' || !args.serialized.trim())
-        throw new Error('serialized must be canonical campaign JSON');
+      ['serialized','preserveView','sourcePath','sourceSha256']);
+      const inline = typeof args.serialized === 'string' && Boolean(args.serialized.trim());
+      const external = args.sourcePath != null || args.sourceSha256 != null;
+      if (inline === external)
+        throw new Error('Provide exactly one of serialized or sourcePath/sourceSha256');
       if (args.preserveView != null && typeof args.preserveView !== 'boolean')
         throw new Error('preserveView must be boolean');
+      let serialized = args.serialized;
+      let source = null;
+      if (external) {
+        source = resolveCampaignAssetSource(args.sourcePath, args.sourceSha256, location.href);
+        const response = await fetch(source.url, { cache:'no-store' });
+        if (!response.ok) throw new Error(`Campaign asset could not be loaded (${response.status})`);
+        const bytes = await response.arrayBuffer();
+        if (await sha256Hex(bytes) !== source.sourceSha256)
+          throw new Error('Campaign asset integrity check failed');
+        serialized = new TextDecoder().decode(bytes);
+      }
       await ensureLiveCampaignPersistence();
       const [live, storeModule] = await Promise.all([
         getLiveCampaignModule(), getLiveCampaignStoreModule(),
       ]);
-      const campaign = storeModule.deserializeCampaign(args.serialized);
+      const campaign = storeModule.deserializeCampaign(serialized);
       const canonical = storeModule.serializeCampaign(campaign);
-      if (`${args.serialized.trim()}\n` !== canonical)
+      if (`${serialized.trim()}\n` !== canonical)
         throw new Error('Campaign JSON must use the canonical serialized representation');
       const verification = await live.verifyLiveCampaign(campaign);
       if (!verification.valid) throw new Error(`Campaign is invalid: ${verification.reason}`);
@@ -10982,6 +10996,8 @@ function installChemistActionsApi(module) {
       updateLiveCampaignUi();
       return chemistActionSummary({ campaignImport:{ campaignId:campaign.campaignId,
         title:campaign.title, branch, commitId:checkout.commitId,
+        sourcePath:source?.sourcePath || null,
+        sourceSha256:source?.sourceSha256 || null,
         preserveViewRequested:Boolean(args.preserveView),
         viewPreserved:Boolean(args.preserveView) && cameraAfter === cameraBefore,
         verification:structuredClone(verification) } }); },

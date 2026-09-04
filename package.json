@@ -44,7 +44,7 @@
     "run:sos1-prospective": "bun scripts/run-sos1-prospective.mjs",
     "test:sos1-campaign": "node design-history/structures/sos1-prospective-campaign.test.mjs && node design-history/structures/registered-ligand-graph.test.mjs",
     "test:sos1-accepted-run": "node scripts/sos1-accepted-run.test.mjs",
-    "verify:sos1-publication": "node scripts/verify-sos1-publication.mjs",
+    "verify:sos1-publication": "node scripts/verify-sos1-deployment.mjs",
     "test:sos1-publication-preflight": "node scripts/verify-sos1-publication.test.mjs",
     "test:sos1-promotion": "node scripts/sos1-publication-promotion.test.mjs && node scripts/verify-sos1-publication.test.mjs && node scripts/capture-paper-figure1.test.mjs && node paper/scripts/build-sos1-results-tex.test.mjs && PYTHONPYCACHEPREFIX=/tmp/molarium-paper-pycache python3 -m py_compile paper/scripts/build-sos1-paper-figure.py",
     "test:registered-ligand-depiction-browser": "MOLARIUM_TEST_API=1 bun design-history/structures/registered-ligand-depiction.browser.test.mjs",
