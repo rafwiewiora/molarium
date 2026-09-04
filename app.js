@@ -19,10 +19,12 @@ const MOLARIUM_LOCAL_ONLY = MOLARIUM_NETWORK_POLICY.localOnly === true;
 const MOLARIUM_ASSET_BASE = MOLARIUM_NETWORK_POLICY.assetBase
   ? new URL(MOLARIUM_NETWORK_POLICY.assetBase, location.href).href : null;
 let hydrogenBondFeaturePerception = null;
+let hydrogenBondFeatureBulkPerception = null;
 let hydrogenBondFeatureValidation = null;
 let manualHydrogenBondModule = null;
 import('./docking/contact-remap.mjs').then((module) => {
   hydrogenBondFeaturePerception = module.perceiveHydrogenBondFeature;
+  hydrogenBondFeatureBulkPerception = module.perceiveHydrogenBondFeatures;
   hydrogenBondFeatureValidation = module.validateCapturedLigandHydrogenBondFeature;
   if (typeof state !== 'undefined' && state.molecule) draw();
 }).catch(() => { /* capture/refinement reports a precise error if the module is unavailable */ });
@@ -4023,7 +4025,15 @@ function nonCovalentInteractions(molecule, cycles = findRingCycles(molecule), al
     adjacency[bond.b].push(bond.a);
   });
   const donors = [], acceptors = [];
-  if (hydrogenBondFeaturePerception) {
+  if (hydrogenBondFeatureBulkPerception) {
+    const atomIndices = allowed ? [...allowed] : null;
+    hydrogenBondFeatureBulkPerception(molecule, atomIndices)
+      .forEach(({ atomIndex:index, donor, acceptor }) => {
+      donor?.hydrogenIndices.filter((hydrogen) => !allowed || allowed.has(hydrogen))
+        .forEach((hydrogen) => donors.push({ donor:index, hydrogen }));
+      if (acceptor) acceptors.push(index);
+      });
+  } else if (hydrogenBondFeaturePerception) {
     molecule.atoms.forEach((_, index) => {
       if (allowed && !allowed.has(index)) return;
       const donor = hydrogenBondFeaturePerception(molecule, index, 'donor');

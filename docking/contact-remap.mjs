@@ -96,9 +96,7 @@ function roundedBondOrder(order) {
   return Math.abs(value - 1.5) < 0.1 ? 1.5 : Math.round(value);
 }
 
-export function perceiveHydrogenBondFeature(molecule, atomIndex, role) {
-  if (!molecule?.atoms?.length || !Array.isArray(molecule.bonds)) return null;
-  const entries = adjacency(molecule);
+function perceiveHydrogenBondFeatureWithAdjacency(molecule, entries, atomIndex, role) {
   const atom = molecule.atoms[atomIndex];
   if (!atom) return null;
   const donor = role === 'donor' ? donorType(molecule, entries, atomIndex) : null;
@@ -113,6 +111,33 @@ export function perceiveHydrogenBondFeature(molecule, atomIndex, role) {
     aromatic:Boolean(atom.aromatic), heavyDegree:heavyNeighbors.length, heavyNeighbors, type });
   return { role, type, atomIndex, signature,
     hydrogenIndices:donor ? [...donor.hydrogens] : [] };
+}
+
+export function perceiveHydrogenBondFeature(molecule, atomIndex, role) {
+  if (!molecule?.atoms?.length || !Array.isArray(molecule.bonds)) return null;
+  return perceiveHydrogenBondFeatureWithAdjacency(
+    molecule, adjacency(molecule), atomIndex, role);
+}
+
+// Bulk scans intentionally build fresh adjacency once per call. Keeping the
+// graph local avoids stale-cache invalidation after a live chemistry edit while
+// eliminating two complete bond scans for every atom in viewer interaction
+// perception.
+export function perceiveHydrogenBondFeatures(molecule, atomIndices = null) {
+  if (!molecule?.atoms?.length || !Array.isArray(molecule.bonds)) return [];
+  const entries = adjacency(molecule);
+  const indices = atomIndices == null
+    ? molecule.atoms.map((_, index) => index)
+    : [...new Set(Array.from(atomIndices, Number))]
+      .filter((index) => Number.isInteger(index)
+        && index >= 0 && index < molecule.atoms.length)
+      .sort((first, second) => first - second);
+  return indices.map((atomIndex) => ({ atomIndex,
+    donor:perceiveHydrogenBondFeatureWithAdjacency(
+      molecule, entries, atomIndex, 'donor'),
+    acceptor:perceiveHydrogenBondFeatureWithAdjacency(
+      molecule, entries, atomIndex, 'acceptor'),
+  }));
 }
 
 export function hydrogenBondFeatureSignature(molecule, atomIndex, role) {
@@ -142,14 +167,14 @@ export function perceiveLigandHydrogenBondFeatures(molecule, ligandAtomIndices) 
   if (!molecule?.atoms?.length) throw new Error('A molecular graph is required');
   const ligand = new Set(Array.from(ligandAtomIndices || [], Number));
   const acceptors = [], donors = [];
-  [...ligand].sort((first, second) => first - second).forEach((atomIndex) => {
-    const acceptor = perceiveHydrogenBondFeature(molecule, atomIndex, 'acceptor');
+  perceiveHydrogenBondFeatures(molecule, ligand).forEach(({
+    atomIndex, acceptor, donor,
+  }) => {
     if (acceptor) acceptors.push({ role:'acceptor', type:acceptor.type, atomIndex,
       atomIds:[molecule.atoms[atomIndex].designAtomId],
       signature:acceptor.signature,
       replacement:{ acceptor:{ ...descriptor(molecule, atomIndex),
         featureSignature:acceptor.signature } } });
-    const donor = perceiveHydrogenBondFeature(molecule, atomIndex, 'donor');
     if (!donor) return;
     donors.push(...donor.hydrogenIndices.map((hydrogenIndex) => ({
       role:'donor', type:donor.type, atomIndex, hydrogenIndex,
