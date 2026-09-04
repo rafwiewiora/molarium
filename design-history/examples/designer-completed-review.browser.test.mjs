@@ -35,6 +35,8 @@ try {
       nextDisabled:document.querySelector('#next-designer-move').disabled,
       label:document.querySelector('#replay-designer-moves').textContent,
       cueCount:document.querySelectorAll('.designer-move-cue').length,
+      pressCount:document.querySelectorAll('.designer-move-press').length,
+      changeCount:document.querySelectorAll('.designer-move-change').length,
       demoActive:document.body.classList.contains('designer-move-demo-active'),
     };
   })()`);
@@ -44,6 +46,8 @@ try {
   assert.equal(completed.previousDisabled, false);
   assert.equal(completed.nextDisabled, true);
   assert.equal(completed.cueCount, 0);
+  assert.equal(completed.pressCount, 0);
+  assert.equal(completed.changeCount, 0);
   assert.equal(completed.demoActive, false);
   assert.match(completed.label, /Replay story/);
 
@@ -64,11 +68,17 @@ try {
     label:document.querySelector('#replay-designer-moves').textContent,
     actions:window.MolariumChemistActions.history().map(record => record.action),
     cueCount:document.querySelectorAll('.designer-move-cue').length,
+    pressCount:document.querySelectorAll('.designer-move-press').length,
+    changeCount:document.querySelectorAll('.designer-move-change').length,
     demoActive:document.body.classList.contains('designer-move-demo-active'),
   })`);
   assert.match(afterReturn.label, /Replay story/);
   assert.equal(afterReturn.cueCount, 0,
     'returning to the terminal checkpoint must not resurrect the final cue');
+  assert.equal(afterReturn.pressCount, 0,
+    'returning to the terminal checkpoint must not resurrect a pressed-control cue');
+  assert.equal(afterReturn.changeCount, 0,
+    'returning to the terminal checkpoint must not resurrect red change controls');
   assert.equal(afterReturn.demoActive, false,
     'returning to the terminal checkpoint must restore the cleared layout');
   assert.deepEqual(afterReturn.actions.slice(actionsBeforeReturn.length), ['designerScript.step']);
