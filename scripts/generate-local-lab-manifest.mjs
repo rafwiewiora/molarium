@@ -18,6 +18,7 @@ const reviewedFiles = [
   'server.js',
   'scripts/generate-local-lab-manifest.mjs',
   'scripts/build-sos1-publication.mjs',
+  'scripts/install-sos1-interface-render.mjs',
   'scripts/promote-sos1-publication.mjs',
   'scripts/sos1-accepted-run.mjs',
   'scripts/verify-sos1-publication.mjs',

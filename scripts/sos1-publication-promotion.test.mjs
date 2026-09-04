@@ -176,6 +176,8 @@ try {
   assert.equal(plan.holdoutsRemainUnopened, true);
   assert.deepEqual(plan.excludedStages, ['git','github','deploy']);
   assert(plan.stages.find((stage) => stage.id === 'evaluate').opensHoldouts);
+  assert(plan.stages.some((stage) => stage.id === 'install-interface-render'),
+    'accepted interface render must replace the installed publication movie');
   assert.equal(spawnSync(process.execPath, ['scripts/promote-sos1-publication.mjs',
     '--run', run], { cwd:root }).status, 1,
   'implicit holdout directory must be rejected');
@@ -188,15 +190,21 @@ try {
 
 const builder = await readFile(join(root, 'scripts/build-sos1-publication.mjs'), 'utf8');
 const orchestrator = await readFile(join(root, 'scripts/promote-sos1-publication.mjs'), 'utf8');
+const movieInstaller = await readFile(
+  join(root, 'scripts/install-sos1-interface-render.mjs'), 'utf8');
 const retiredBuilder = await readFile(
   join(root, 'scripts/build-sos1-prospective-movie-assets.mjs'), 'utf8');
 const testResume = await readFile(join(root, 'scripts/resume-sos1-final-step.mjs'), 'utf8');
 assert(!builder.includes('window.molariumTest'));
 assert(!orchestrator.includes('window.molariumTest'));
+assert(!movieInstaller.includes('window.molariumTest'));
 assert.match(orchestrator, /explicit --open-holdouts consent/);
 assert.match(builder, /coordinatePolicy:'frozen-prediction-checkpoints-only'/);
 assert.match(builder, /sourceAction:'session.inspect'/);
 assert.match(builder, /The declaration is the commit point and is deliberately written last/);
+assert.match(movieInstaller, /verifyLocalLabCaptureState/);
+assert.match(movieInstaller, /buildAcceptedSos1ReplayScript/);
+assert.match(movieInstaller, /Movie first, pinned manifest last/);
 assert.match(retiredBuilder, /Retired archival asset builder/);
 assert.match(testResume, /--test-only-unsafe-resume/);
 
