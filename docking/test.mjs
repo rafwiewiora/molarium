@@ -394,6 +394,27 @@ assert.equal(chemicallyGatedRun.feasibleCount, 1,
 assert.equal(chemicallyGatedRun.selected.conformerIndex, 1);
 assert.equal(chemicallyGatedRun.candidates.find((entry) => entry.conformerIndex === 0)
   .physicalFeasible, false);
+const spatiallyGatedRun = await runConstrainedDocking({
+  referencePositions:captured.positions,
+  candidateConformers:[translatedBad, translatedGood],
+  coreAtomPairs:mappedCore.atomPairs,
+  spatialFeatureConstraints:[{
+    id:'retained-terminal-feature', kind:'conserved-fragment-rmsd',
+    atomPairVariants:[[[0,0],[1,1],[3,3]]],
+    restraint:{ toleranceAngstrom:0.1, weightKcalMolPerAngstrom2:20, required:true },
+  }],
+  protocol:MOLARIUM_CONSTRAINT_DOCK_PROTOCOL,
+  physicalScore:({ conformerIndex }) => conformerIndex === 0 ? -100 : -10,
+});
+assert.equal(spatiallyGatedRun.feasibleCount, 1,
+  'a required registered spatial feature must participate in final workflow feasibility');
+assert.equal(spatiallyGatedRun.selected.conformerIndex, 1,
+  'a lower physical score must not outrank a pose that violates a required spatial feature');
+assert.equal(spatiallyGatedRun.selected.spatialFeatures.length, 1);
+assert.equal(spatiallyGatedRun.selected.spatialFeatures[0].id, 'retained-terminal-feature');
+assert.equal(spatiallyGatedRun.selected.spatialFeatures[0].satisfied, true);
+assert.equal(spatiallyGatedRun.candidates.find((entry) => entry.conformerIndex === 0)
+  .spatialFeatures[0].satisfied, false);
 assert.deepEqual(await verifyLabbook(workflowLabbook), { valid:true, reason:null, events:2 });
 await assert.rejects(() => appendLabbookEvent(labbook, {
   at:'2026-08-19T12:00:05.000Z', stage:'late-note', status:'invalid', details:{},

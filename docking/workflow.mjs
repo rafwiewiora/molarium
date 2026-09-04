@@ -1,4 +1,5 @@
 import { applyCoreTransform, evaluateCoreConstraint, evaluateHydrogenBondConstraint,
+  evaluateSpatialFeatureConstraints,
   fittedCoreTransform, restoreCapturedLigandDonorHydrogens, rankConstrainedPoses,
   scoreConstrainedPose, snapCorePositions } from './constraints.mjs';
 import { appendLabbookEvent } from './labbook.mjs';
@@ -56,7 +57,8 @@ export function evaluatePoseHydrogenBonds(definitions, positions, settings) {
 }
 
 export async function runConstrainedDocking({ referencePositions, candidateConformers, coreAtomPairs,
-  hydrogenBondConstraints = [], protocol, physicalScore, refinePose = null, labbook = null,
+  hydrogenBondConstraints = [], spatialFeatureConstraints = [], protocol, physicalScore,
+  refinePose = null, labbook = null,
   refineBatch = null, afterRefinement = null, capturedLigandHydrogenRestoration = false,
   yieldControl = null, startedAt = new Date().toISOString(), completedAt = null }) {
   if (typeof physicalScore !== 'function') throw new TypeError('A physicalScore callback is required');
@@ -71,7 +73,9 @@ export async function runConstrainedDocking({ referencePositions, candidateConfo
   const conformers = candidateConformers.map((positions) => conformerArray(positions, expectedLength));
   if (labbook) await appendLabbookEvent(labbook, { at:startedAt, stage:'pose-generation', status:'received',
     details:{ conformers:conformers.length, coreAtomPairs:coreAtomPairs.length,
-      requiredHydrogenBonds:hydrogenBondConstraints.filter((entry) => entry.required !== false).length } });
+      requiredHydrogenBonds:hydrogenBondConstraints.filter((entry) => entry.required !== false).length,
+      requiredSpatialFeatures:spatialFeatureConstraints.filter((entry) =>
+        entry?.restraint?.required === true).length } });
 
   const prepared = conformers.map((positions) => {
     const transform = fittedCoreTransform(referencePositions, positions, coreAtomPairs);
@@ -117,11 +121,14 @@ export async function runConstrainedDocking({ referencePositions, candidateConfo
     const core = evaluateCoreConstraint(referencePositions, positions, coreAtomPairs, protocol.coreConstraint);
     const hydrogenBonds = evaluatePoseHydrogenBonds(hydrogenBondConstraints, positions,
       protocol.hydrogenBondConstraint);
-    const score = scoreConstrainedPose({ physicalEnergyKcalMol, core, hydrogenBonds });
+    const spatialFeatures = evaluateSpatialFeatureConstraints(
+      referencePositions, positions, spatialFeatureConstraints);
+    const score = scoreConstrainedPose({ physicalEnergyKcalMol, core, hydrogenBonds,
+      spatialFeatures });
     const physicalFeasible = typeof physical !== 'object' || physical?.feasible !== false;
     if (!physicalFeasible) score.feasible = false;
     candidates.push({ conformerIndex:index, fittedCoreRmsdAngstrom:transform.fittedRmsdAngstrom,
-      positions, core, hydrogenBonds, refinement,
+      positions, core, hydrogenBonds, spatialFeatures, refinement,
       hydrogenRestoration:prepared[index].hydrogenRestoration,
       physicalDetails:typeof physical === 'object' ? physical : null,
       physicalFeasible,

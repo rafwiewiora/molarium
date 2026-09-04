@@ -5633,6 +5633,7 @@ async function runBrowserConstrainedDocking(options = {}) {
       candidateConformers:valid.map((entry) => entry.positions),
       coreAtomPairs:coreMap.atomPairs,
       hydrogenBondConstraints:mappedHydrogenBonds.constraints,
+      spatialFeatureConstraints,
       capturedLigandHydrogenRestoration:posePropagation,
       protocol:activeProtocol,
       ...(posePropagation
