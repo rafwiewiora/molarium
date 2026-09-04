@@ -4,6 +4,10 @@ import { tmpdir } from 'node:os';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { actionScriptSha256 } from '../design-history/replay.mjs';
+import { acceptedCheckpointReviewScript } from
+  '../design-history/accepted-checkpoint-review.mjs';
+import { frozenCheckpointReviewScript } from
+  '../design-history/frozen-checkpoint-review.mjs';
 import { buildPocketInterfaceStory } from '../design-history/interface-story.mjs';
 import { promoteCompletedRender } from './atomic-render-output.mjs';
 import { DESIGNER_MOVIE_PRESENTATION, designerMoviePressFrames,
@@ -15,7 +19,7 @@ import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
 import { verifyBrowserLocalLabCapture } from './local-lab-capture.mjs';
 import { buildAcceptedSos1ReplayScript, buildFrozenSos1ReplayScript,
   requireExplicitRunDirectory, verifyAcceptedSos1Run,
-  verifyCompleteFrozenSos1Run } from './sos1-accepted-run.mjs';
+  verifyCompleteFrozenSos1Run, SOS1_STEP_IDS } from './sos1-accepted-run.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -39,19 +43,48 @@ const sourceActionLimit = Number(valueFor('--source-actions') || 0);
 const resultClass = valueFor('--result-class') || 'accepted';
 if (!['accepted','complete-frozen'].includes(resultClass))
   throw new Error('--result-class must be accepted or complete-frozen');
+const replayKind = valueFor('--replay-kind') || 'executable';
+if (!['executable','checkpoint-review'].includes(replayKind))
+  throw new Error('--replay-kind must be executable or checkpoint-review');
 // The accepted path remains the default and retains the independent holdout
 // gate.  An honest complete-frozen render must be explicitly requested; it
 // verifies the same immutable pre-holdout science but never claims acceptance.
 const verifiedRun = resultClass === 'accepted'
   ? await verifyAcceptedSos1Run(runDirectory)
   : await verifyCompleteFrozenSos1Run(runDirectory);
-const verifiedReplay = resultClass === 'accepted'
+const reviewCheckpoint = (stepId) => {
+  const frozen = verifiedRun.checkpoints.get(stepId);
+  const fullSystem = frozen.fullSystemCampaign;
+  return { accepted:resultClass === 'accepted', completeFrozenPrediction:true,
+    frozenBeforeHoldoutAccess:true, checkpointSha256:frozen.entry.sha256,
+    campaignSha256:fullSystem.record.sha256,
+    serializedCampaign:fullSystem.serializedCampaign,
+    branch:fullSystem.record.branch, commitId:fullSystem.record.commitId,
+    snapshotId:fullSystem.record.snapshotId, label:`${stepId} prediction checkpoint` };
+};
+let verifiedReplay;
+if (replayKind === 'checkpoint-review') {
+  const checkpoints = SOS1_STEP_IDS.map(reviewCheckpoint);
+  const script = resultClass === 'accepted'
+    ? await acceptedCheckpointReviewScript({
+      label:`SOS1 accepted checkpoint review ${verifiedRun.runId}`, checkpoints })
+    : await frozenCheckpointReviewScript({
+      label:`SOS1 prediction checkpoint review ${verifiedRun.runId}`, checkpoints,
+      postFreezeEvaluation:{ summarySha256:digest(verifiedRun.evaluationBytes),
+        accepted:verifiedRun.evaluation.accepted === true,
+        continuityAccepted:verifiedRun.evaluation.continuity?.accepted === true,
+        failedStepIds:verifiedRun.evaluation.results.filter((entry) =>
+          entry.accepted !== true).map((entry) => entry.stepId) } });
+  verifiedReplay = { script, sourceAuditSha256:null, sourceAuditRecords:null,
+    selectedAuditSequences:[] };
+} else verifiedReplay = resultClass === 'accepted'
   ? await buildAcceptedSos1ReplayScript(verifiedRun)
   : await buildFrozenSos1ReplayScript(verifiedRun);
 const sourceScript = verifiedReplay.script;
 const sourceScriptBytes = Buffer.from(`${JSON.stringify(sourceScript, null, 2)}\n`);
 const sourceScriptArtifactPath = `${relative(root, runDirectory)}/${resultClass === 'accepted'
-  ? 'accepted-selected-route' : 'complete-frozen-selected-route'}.action-script.json`;
+  ? 'accepted' : 'complete-frozen'}-${replayKind === 'executable'
+  ? 'selected-route' : 'checkpoint-review'}.action-script.json`;
 const sourceActions = smoke ? sourceScript.actions.slice(0, 4)
   : sourceActionLimit > 0 ? sourceScript.actions.slice(0, sourceActionLimit)
     : sourceScript.actions;
@@ -275,7 +308,7 @@ try {
     schema:'molarium.designer-moves-interface-render/v1',
     generatedAt:new Date().toISOString(),
     operationBoundary:'The renderer imports JSON and presses visible Molarium controls; all molecular operations execute through window.MolariumChemistActions.',
-    sourceRun:{ id:verifiedRun.runId, resultClass,
+    sourceRun:{ id:verifiedRun.runId, resultClass, replayKind,
       predictionManifestSha256:digest(verifiedRun.manifestBytes),
       evaluationSummarySha256:digest(verifiedRun.evaluationBytes),
       holdoutAccepted:verifiedRun.evaluation.accepted === true },
@@ -285,9 +318,11 @@ try {
     sourceScript:{ path:'source.action-script.json', provenancePath:sourceScriptArtifactPath,
       fileSha256:digest(sourceScriptBytes),
       actionScriptSha256:await actionScriptSha256(sourceScript), actions:sourceScript.actions.length,
-      sourceAuditSha256:verifiedReplay.sourceAuditSha256,
-      sourceAuditRecords:verifiedReplay.sourceAuditRecords,
-      selectedAuditSequences:verifiedReplay.selectedAuditSequences },
+      ...(verifiedReplay.sourceAuditSha256 ? {
+        sourceAuditSha256:verifiedReplay.sourceAuditSha256,
+        sourceAuditRecords:verifiedReplay.sourceAuditRecords,
+        selectedAuditSequences:verifiedReplay.selectedAuditSequences,
+      } : { calculationPolicy:'none', exactFullSystemCheckpoints:SOS1_STEP_IDS.length }) },
     presentationScript:{ path:'presentation.action-script.json',
       fileSha256:digest(presentationBytes), actionScriptSha256:presentationScriptSha256,
       actions:presentationScript.actions.length, insertedViewActions:

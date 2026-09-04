@@ -60,6 +60,14 @@ try {
     'an explicitly requested complete-frozen result must verify all immutable checkpoints');
   assert.match(renderer, /buildFrozenSos1ReplayScript\(verifiedRun\)/,
     'a complete-frozen render must use provenance that does not claim acceptance');
+  assert.match(renderer, /const replayKind = valueFor\('--replay-kind'\) \|\| 'executable'/,
+    'the executable public-action replay must remain the default');
+  assert.match(renderer, /\['executable','checkpoint-review'\]\.includes\(replayKind\)/,
+    'the renderer must expose only executable and exact-checkpoint replay modes');
+  assert.match(renderer, /frozenCheckpointReviewScript\(/,
+    'complete-frozen calculation-free review must use the verified checkpoint builder');
+  assert.match(renderer, /calculationPolicy:'none', exactFullSystemCheckpoints:SOS1_STEP_IDS\.length/,
+    'checkpoint-review renders must declare their calculation-free boundary');
   assert.match(renderer, /resultClass === 'accepted' \? \{ acceptedRun:/,
     'only the strict accepted path may emit acceptedRun manifest provenance');
   assert.match(renderer, /holdoutAccepted:verifiedRun\.evaluation\.accepted === true/,
