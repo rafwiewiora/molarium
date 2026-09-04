@@ -5,6 +5,8 @@ import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { receptorStateComparablePoseScore }
+  from '../docking/receptor-state-comparable-score.mjs';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
 
 const SCHEMA = 'molarium.sos1-aww-designer-contact-factorial/v2';
@@ -181,6 +183,9 @@ async function runBranch({ root, serializedCampaign, branch }) {
       requiredReleasedAtomsSatisfied,
     };
     const eligible = Object.values(prospectiveGates).every(Boolean);
+    const comparablePoseScore = eligible
+      ? receptorStateComparablePoseScore(refinement.selectedPhysicalComponents)
+      : null;
     let pocket = null;
     let contactDistances = {
       ox3ToTyr884BackboneOAngstrom:selectedContacts.find((entry) =>
@@ -218,7 +223,7 @@ async function runBranch({ root, serializedCampaign, branch }) {
         registeredReleasedAtomNames,
         runtimeReleasedCoreAtomIndices, runtimeReleasedCoreAtomNames,
         satisfied:requiredReleasedAtomsSatisfied },
-      prospectiveGates, eligible, refinement, pocket, records,
+      prospectiveGates, eligible, comparablePoseScore, refinement, pocket, records,
     };
   } finally {
     await browser.close();
@@ -274,16 +279,19 @@ async function main(args = process.argv.slice(2)) {
   }
   const eligible = results.filter((result) => result.eligible);
   assert(eligible.length >= 1, 'At least one factorial branch must pass every prospective gate');
-  eligible.sort((a, b) => a.refinement.selectedScoreKcalMol
-    - b.refinement.selectedScoreKcalMol || a.branch.localeCompare(b.branch));
+  eligible.sort((first, second) => first.comparablePoseScore.energyKcalMol
+    - second.comparablePoseScore.energyKcalMol
+    || first.branch.localeCompare(second.branch));
   const summary = { schema:SCHEMA, status:'completed', holdoutCoordinatesUsed:false,
     selectedBranch:eligible[0].branch,
     selectedPheState:eligible[0].pheState,
+    selectedComparablePoseScore:eligible[0].comparablePoseScore,
     hydrationUsedForPoseSelection:false,
-    selectionBasis:'lowest prospective selectedScoreKcalMol among the three Phe890 states after identical feasibility gates; crystallographic water is evaluated later in full-system relaxation',
+    selectionBasis:'lowest cross-receptor-state pose score (unnormalized receptor-ligand interaction plus weighted relative ligand strain) among the three Phe890 states after identical feasibility gates; this is not a binding free energy, and crystallographic water is evaluated later in full-system relaxation',
     branches:results.map((result) => ({ branch:result.branch,
       pheState:result.pheState,
       eligible:result.eligible, prospectiveGates:result.prospectiveGates,
+      comparablePoseScore:result.comparablePoseScore,
       selectedScoreKcalMol:result.refinement.selectedScoreKcalMol,
       selectedPhysicalKcalMol:result.refinement.selectedPhysicalKcalMol,
       selectedSeedAudit:result.refinement.featureGuidedSeeding?.selectedSeedAudit,

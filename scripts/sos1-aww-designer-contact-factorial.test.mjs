@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { receptorStateComparablePoseScore }
+  from '../docking/receptor-state-comparable-score.mjs';
 
 const source = await readFile(new URL(
   './sos1-aww-designer-contact-factorial.browser.mjs', import.meta.url), 'utf8');
@@ -30,5 +32,24 @@ assert.match(source, /--branch phe-native\|phe-plus60\|phe-out/);
 assert.match(source, /Unknown factorial branch/);
 assert.match(source, /5OVH may be opened only after selection; this proxy does not open it/);
 assert.doesNotMatch(source, /designRoute\.load[^\n]*5OVH/);
+assert.match(source, /receptorStateComparablePoseScore/);
+assert.match(source, /selectedComparablePoseScore/);
+assert.match(source, /unnormalized receptor-ligand interaction plus weighted relative ligand strain/);
+assert.doesNotMatch(source, /eligible\.sort\(\(a, b\) => a\.refinement\.selectedScoreKcalMol/);
+
+const crossReceptorFixture = [{ id:'phe-native',
+  physical:{ interactionKcalMol:2.3771642901472685,
+    ligandStrainKcalMol:-6.7494358418232 } },
+{ id:'phe-plus60', physical:{ interactionKcalMol:3.418926590090871,
+  ligandStrainKcalMol:-6.7494358418232 } },
+{ id:'phe-out', physical:{ interactionKcalMol:65.29064423748174,
+  ligandStrainKcalMol:-7.874888407538187 } }];
+const ranked = crossReceptorFixture.map((entry) => ({ ...entry,
+  comparablePoseScore:receptorStateComparablePoseScore(entry.physical) }))
+  .sort((first, second) => first.comparablePoseScore.energyKcalMol
+    - second.comparablePoseScore.energyKcalMol || first.id.localeCompare(second.id));
+assert.deepEqual(ranked.map((entry) => entry.id),
+  ['phe-native', 'phe-plus60', 'phe-out'],
+'factorial selection must compare unnormalized interactions across receptor states');
 
 console.log('SOS1 AWW designer-contact factorial source tests passed');
