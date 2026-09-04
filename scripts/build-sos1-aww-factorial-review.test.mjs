@@ -82,6 +82,16 @@ const artifacts = [
   branchArtifact('phe-plus60','plus60',.1),
   branchArtifact('phe-out','out',.2),
 ];
+const legacyArtifacts = clone(artifacts).map((artifact) => {
+  const capture = artifact.reviewCoordinateCapture;
+  capture.schema = 'molarium.sos1-aww-diagnostic-coordinate-review/v1';
+  delete capture.reviewModeRequested;
+  delete capture.disposition;
+  delete capture.prospectiveEligible;
+  capture.eligibilityUnchanged = artifact.eligible;
+  capture.purpose = 'Coordinate review only; never production selection or promotion evidence.';
+  return artifact;
+});
 const pdbText = pdbFromInspectionAtoms(commonProtein, {
   title:'synthetic 5OVE receptor', proteinRecords:true,
 });
@@ -115,11 +125,24 @@ assert(data.ligands[0].focusPdb.includes('PHE A 890'));
 assert(data.receptor.proteinPdb.includes('ATOM'));
 assert.deepEqual(data.receptor.focusResidues, [884,890]);
 
+const legacyData = buildSos1AwwFactorialReviewData({ ...input,
+  artifacts:legacyArtifacts });
+assert.equal(legacyData.ligands.length, 3);
+assert(legacyData.ligands.every((entry) => entry.badge === 'rejected'
+  && entry.coordinateClass === 'diagnostic-nonpromotable'
+  && entry.review.promotable === false));
+
 for (const [label, mutate, pattern] of [
   ['missing capture', (value) => { delete value.artifacts[0].reviewCoordinateCapture; },
     /explicit diagnostic coordinate capture is required/],
   ['promotable capture', (value) => { value.artifacts[0].reviewCoordinateCapture.promotable = true; },
     /true !== false/],
+  ['eligible current capture', (value) => {
+    value.artifacts[0].eligible = true;
+    for (const gate of Object.keys(value.artifacts[0].prospectiveGates))
+      value.artifacts[0].prospectiveGates[gate] = true;
+    value.artifacts[0].reviewCoordinateCapture.prospectiveEligible = true;
+  }, /this viewer accepts rejected branches only/],
   ['holdout contamination', (value) => { value.artifacts[0].holdoutCoordinatesUsed = true; },
     /holdout coordinates are forbidden/],
   ['missing contact point', (value) => {

@@ -15,6 +15,8 @@ const viewerDirectory = path.join(root, 'design-history/structure-review');
 const vendorDirectory = path.join(root, 'docking/validation/pose-viewer/vendor');
 const FACTORIAL_SCHEMA = 'molarium.sos1-aww-designer-contact-factorial/v2';
 const REVIEW_SCHEMA = 'molarium.structure-overlay-review/v1';
+const LEGACY_DIAGNOSTIC_CAPTURE_SCHEMA =
+  'molarium.sos1-aww-diagnostic-coordinate-review/v1';
 const STANDARD_RESIDUES = new Set([
   'ALA','ARG','ASN','ASP','CYS','GLN','GLU','GLY','HIS','ILE',
   'LEU','LYS','MET','PHE','PRO','SER','THR','TRP','TYR','VAL',
@@ -123,24 +125,43 @@ function validateBranch(artifact, spec, artifactSha256) {
   assert.equal(artifact.eligible, Object.values(artifact.prospectiveGates).every(Boolean),
     `${spec.id}: eligibility differs from the frozen gates`);
   const capture = artifact.reviewCoordinateCapture;
-  assert.equal(capture?.schema, SOS1_AWW_REVIEW_CAPTURE_SCHEMA,
+  assert([LEGACY_DIAGNOSTIC_CAPTURE_SCHEMA, SOS1_AWW_REVIEW_CAPTURE_SCHEMA]
+    .includes(capture?.schema),
     `${spec.id}: explicit diagnostic coordinate capture is required`);
   assert.equal(capture.requested, true);
-  assert.equal(capture.disposition, 'rejected-nonpromotable',
-    `${spec.id}: this viewer accepts rejected branches only`);
   assert.equal(capture.diagnosticOnly, true);
   assert.equal(capture.promotable, false);
   assert.equal(capture.branch, spec.id);
-  assert.equal(capture.prospectiveEligible, artifact.eligible,
-    `${spec.id}: capture eligibility differs from the prospective result`);
-  assert.equal(capture.eligibilityUnchanged, true,
-    `${spec.id}: review capture changed prospective eligibility`);
+  assert.equal(artifact.eligible, false,
+    `${spec.id}: this viewer accepts rejected branches only`);
+  if (capture.schema === SOS1_AWW_REVIEW_CAPTURE_SCHEMA) {
+    assert.equal(capture.disposition, 'rejected-nonpromotable',
+      `${spec.id}: current capture disposition is not rejected`);
+    assert.equal(capture.prospectiveEligible, artifact.eligible,
+      `${spec.id}: capture eligibility differs from the prospective result`);
+    assert.equal(capture.eligibilityUnchanged, true,
+      `${spec.id}: review capture changed prospective eligibility`);
+  } else {
+    assert.equal(capture.disposition, undefined,
+      `${spec.id}: legacy capture has unexpected current-schema disposition`);
+    assert.equal(capture.prospectiveEligible, undefined,
+      `${spec.id}: legacy capture has unexpected current-schema eligibility`);
+    assert.equal(capture.eligibilityUnchanged, artifact.eligible,
+      `${spec.id}: legacy capture eligibility differs from the prospective result`);
+  }
   assert.equal(capture.selectedFeasible, artifact.prospectiveGates.selectedFeasible === true,
     `${spec.id}: capture feasibility differs from the frozen gate`);
+  assert(Number.isInteger(capture.selectedRank) && capture.selectedRank >= 1,
+    `${spec.id}: capture selected rank is invalid`);
   assert.equal(capture.appliedPoseIndex, capture.selectedRank - 1,
     `${spec.id}: capture applied a different ranked pose`);
   assert.equal(capture.allowInfeasible, true,
     `${spec.id}: review coordinates must use the guarded diagnostic path`);
+  assert.equal(capture.infeasibleOverride, true,
+    `${spec.id}: rejected pose was not applied through the infeasible override`);
+  assert.match(String(capture.purpose || ''),
+    /never production selection or promotion evidence/i,
+    `${spec.id}: capture purpose does not forbid promotion`);
   for (const key of ['selectedCoordinateSha256','selectedStateSha256',
     'outputCoordinateSha256','outputStateSha256']) digest(capture[key], `${spec.id}.${key}`);
   assert.equal(artifact.pocket?.scope, 'pocket');
