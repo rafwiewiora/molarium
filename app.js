@@ -1097,10 +1097,11 @@ async function update2DDepiction() {
   drawing.replaceChildren(Object.assign(document.createElement('span'), { textContent:'Drawing…' }));
   try {
     const anchor = activeDepictionOrientationAnchor();
-    const trustedSanitizedGraph = Boolean(state.molecule?.source?.initialGeometryPolish
-      || state.chemistryTransaction?.snapshot?.source?.initialGeometryPolish);
+    const allowUnsanitizedDepictionFallback = Boolean(state.molecule?.source?.initialGeometryPolish
+      || state.chemistryTransaction?.snapshot?.source?.initialGeometryPolish
+      || state.molecule?.source?.verifiedCampaignSnapshot?.verificationValid === true);
     const result = await runRDKitJob('depict', target.molecule, () => {},
-      { trustedSanitizedGraph });
+      { allowUnsanitizedDepictionFallback });
     if (sequence !== state.depictionSequence || key !== state.depictionKey) return;
     const svg = sanitizedDepictionSvg(result.svg);
     drawing.replaceChildren(svg);
@@ -1119,6 +1120,7 @@ async function update2DDepiction() {
     panel.dataset.alignmentBackend = alignment
       ? 'RDKit 2D layout + viewport alignment' : 'fresh RDKit 2D layout';
     panel.dataset.rdkitVersion = result.rdkitVersion || '';
+    panel.dataset.sanitization = result.sanitization || '';
     delete panel.dataset.error; delete panel.dataset.pending;
   } catch (error) {
     if (sequence !== state.depictionSequence) return;
@@ -8573,12 +8575,15 @@ function reviewDesignerMoveCheckpoint(direction) {
   const atFinal = target === state.designerMoveReplayFrontier;
   const caption = target === 0 ? 'Blank canvas before the first story move'
     : atFinal && review.completed ? 'Story complete'
+      : atFinal && review.failed ? 'Story stopped at this move'
       : completed?.caption || completed?.action || 'Completed story state';
-  updateDesignerMoveControls(`${review.completed ? 'Review' : 'Paused'} · cached checkpoint ${target} of ${state.designerMoveReplayFrontier}`,
+  updateDesignerMoveControls(`${review.failed ? 'Failed replay' : review.completed ? 'Review' : 'Paused'} · cached checkpoint ${target} of ${state.designerMoveReplayFrontier}`,
     caption, target === 0
       ? 'Reviewing the untouched starting canvas.'
       : atFinal && review.completed
         ? 'Returned to the final computed story state. Replay story starts a new execution.'
+        : atFinal && review.failed
+          ? `Stopped at move ${target}: ${completed?.error || state.designerMoveReplay?.error || 'the public action failed'}. No result was applied.`
         : `Reviewing move ${target} of ${state.designerMoveReplayFrontier}; no calculation is rerun.`);
 }
 
@@ -8653,13 +8658,15 @@ function updateDesignerMoveControls(message = null, captionOverride = null,
   const replayButton = document.querySelector('#replay-designer-moves');
   const review = currentDesignerReplayReviewState();
   replayButton.disabled = !script
-    || state.designerMoveReplayScheduled && !state.designerMoveReplaying;
+    || state.designerMoveReplayScheduled && !state.designerMoveReplaying
+    || review.failed;
   replayButton.textContent = state.designerMoveReplayScheduled && !state.designerMoveReplaying
     ? 'Starting story…' : state.designerMoveReplaying
     ? (state.designerMoveReplayPaused
       ? (state.designerMoveReplayIndex < state.designerMoveReplayFrontier
         ? '▶ Return & continue' : '▶ Continue') : '❚❚ Pause')
-    : (review.completed && review.reviewing ? '▶ Return to final'
+    : (review.failed ? 'Story stopped'
+      : review.completed && review.reviewing ? '▶ Return to final'
       : state.designerMoveReplayIndex >= actionCount && actionCount ? '↻ Replay story' : '▶ Play story');
   const checkpointNavigation = review.available;
   document.querySelector('#previous-designer-move').disabled =
@@ -8684,7 +8691,12 @@ function updateDesignerMoveControls(message = null, captionOverride = null,
       ? activeStepCaption : designerMoveCaption());
   document.querySelector('#designer-move-caption').textContent = storyCaption;
   const detail = document.querySelector('#designer-move-detail');
-  if (detail) detail.textContent = detailOverride ?? (review.completed && review.reviewing
+  const failedStep = state.designerMoveReplay?.steps?.find((step) => step.status === 'failed');
+  if (detail) detail.textContent = detailOverride ?? (review.failed
+    ? state.designerMoveReplayIndex >= state.designerMoveReplayFrontier
+      ? `Stopped at move ${(failedStep?.index ?? state.designerMoveReplayFrontier - 1) + 1}: ${failedStep?.error || state.designerMoveReplay?.error || 'the public action failed'}. Use Restart to begin a new execution.`
+      : `Reviewing move ${state.designerMoveReplayIndex} before the failure at move ${state.designerMoveReplayFrontier}; no calculation is rerun.`
+    : review.completed && review.reviewing
     ? `Reviewing move ${state.designerMoveReplayIndex} of ${state.designerMoveReplayFrontier}; no calculation is rerun.`
     : review.completed && script?.provenance?.reviewOnly
       ? script.provenance.sourceStatus === 'accepted'
@@ -10985,6 +10997,24 @@ function installChemistActionsApi(module) {
       if (!branch) throw new Error('Campaign has no branch to restore');
       const checkout = await prepareLiveCampaignBranchMolecule(campaign, branch,
         { required:true });
+      const commit = campaign.objects?.commits?.[checkout.commitId];
+      if (!commit?.snapshotId)
+        throw new Error('Campaign branch head does not reference a molecular snapshot');
+      // Added only to the in-memory viewer copy after canonical
+      // deserialization and full ledger verification. It never alters the
+      // committed molecule or its scientific coordinates. Some registered
+      // aromatic graphs omit V2000-only atom flags such as [nH], so RDKit may
+      // need a drawing-only unsanitized fallback after its strict parse fails.
+      checkout.molecule.source = { ...(checkout.molecule.source || {}),
+        verifiedCampaignSnapshot:{
+          schema:'molarium.verified-campaign-snapshot/v1',
+          verificationValid:true,
+          campaignId:campaign.campaignId,
+          commitId:checkout.commitId,
+          snapshotId:commit.snapshotId,
+          canonicalSha256:source?.sourceSha256
+            || await sha256Hex(new TextEncoder().encode(canonical)),
+        } };
       await saveLiveCampaign(campaign, branch);
       state.chemistActionAudit = [];
       state.liveCampaign = campaign; state.liveCampaignBranch = branch;
@@ -11040,6 +11070,9 @@ function installChemistActionsApi(module) {
         if (state.designerMoveReplayPaused) resumeDesignerMoveReplay();
       } else if (currentDesignerReplayReviewState().reviewing) {
         throw new Error('Return to the final completed checkpoint before replaying the story');
+      } else if (currentDesignerReplayReviewState().failed) {
+        const failed = state.designerMoveReplay?.steps?.find((step) => step.status === 'failed');
+        throw new Error(`Story stopped at move ${(failed?.index ?? state.designerMoveReplayFrontier - 1) + 1}: ${failed?.error || state.designerMoveReplay?.error || 'the public action failed'}. Use designerScript.restart before starting a new execution.`);
       } else if (!state.designerMoveReplayScheduled) {
         // replayDesignerMoveScript executes the constituent actions through this
         // same serialized API.  Start it only after the play route returns, or
@@ -11070,7 +11103,7 @@ function installChemistActionsApi(module) {
         DESIGNER_REVIEW_DIRECTIONS, 'direction');
       const review = currentDesignerReplayReviewState();
       if (!review.available)
-        throw new Error('Pause an active replay or complete it before reviewing checkpoints');
+        throw new Error('Pause, complete, or stop a replay before reviewing checkpoints');
       const before = state.designerMoveReplayIndex;
       reviewDesignerMoveCheckpoint(direction);
       if (state.designerMoveReplayIndex === before)
@@ -11789,6 +11822,7 @@ const molariumTestApi = Object.freeze({
       pendingChanges:state.chemistryTransaction?.editCount || 0,
       hasSvg:Boolean(svg), atomClasses:svg?.querySelectorAll('[class*="atom-"]').length || 0,
       rdkitVersion:panel.dataset.rdkitVersion || null,
+      sanitization:panel.dataset.sanitization || null,
       alignedAtoms:Number(panel.dataset.alignedAtoms || 0),
       alignmentBackend:panel.dataset.alignmentBackend || null };
   },
@@ -17191,14 +17225,14 @@ const DESIGNER_STORY_LINKS = Object.freeze({
     title:'SOS1 prediction replay',
     script:'./design-history/examples/sos1-prediction.action-script.json',
     sourcePath:'design-history/examples/sos1-prediction.action-script.json',
-    sourceSha256:'b2b42b9bc940c55c00b43f680f72798fe3a1f379677c7cdaedcc4bb7f52dccf6',
+    sourceSha256:'759cabadce5950b64e705ab0227c4c79d24b4a79e71a3257faea34d6ab1bb098',
     presentation:'chemist-pocket',
   }),
   'sos1-hit-to-bay293-review':Object.freeze({
     title:'SOS1 prediction checkpoint review',
     script:'./design-history/examples/sos1-prediction-checkpoint-review.action-script.json',
     sourcePath:'design-history/examples/sos1-prediction-checkpoint-review.action-script.json',
-    sourceSha256:'2fd7e8fb8283c2f60980f99c9185982c0053187d5b86e245a64475c322b75d7b',
+    sourceSha256:'7f309257a71a4427b66013d0d40880e52a40053c908fcea83e0223cede7e0413',
     presentation:'chemist-pocket',
   }),
 });

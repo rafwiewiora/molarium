@@ -435,8 +435,11 @@ export async function buildAcceptedSos1ReplayScript(verified) {
     selectedAuditSequences:sequences });
 }
 
-/** Build the same guarded public-action replay without implying that the
- * separately attached post-freeze holdout evaluation passed. */
+/** Build a calculation-bearing, cross-platform recomputation without implying
+ * that the separately attached post-freeze holdout evaluation passed.  Exact
+ * coordinate hashes belong to the separate checkpoint-review route: here the
+ * registered route guards graph/identity and discrete scientific expectations
+ * guard feasibility, feature coverage, valence and pose retention. */
 export async function buildFrozenSos1ReplayScript(verified) {
   const records = verified.audit.records || [];
   const selected = publicationReplayRecords(verified.audit);
@@ -449,7 +452,8 @@ export async function buildFrozenSos1ReplayScript(verified) {
     includeSequences:sequences,
     captionsBySequence,
     includeAuditMetadata:true,
-    stateHashGuards:'required',
+    stateHashGuards:'off',
+    executionContract:'portable-scientific',
     provenance:{ runId:verified.runId,
       publicationClass:'complete-frozen-prediction',
       predictionManifestSha256:sha256(verified.manifestBytes),
@@ -472,8 +476,12 @@ export async function buildFrozenSos1ReplayScript(verified) {
     1, 'prediction replay must apply exactly one Phe890 rotamer');
   assert(script.actions.every((step) => !step.action.startsWith('designerScript.')
     && step.action !== 'interface.presentDesignerStep'));
-  assert.equal(script.sourceAudit?.stateHashGuards?.mode, 'required',
-    'prediction replay must require molecular-state guards');
+  assert.equal(script.sourceAudit?.stateHashGuards?.mode, 'off',
+    'cross-platform prediction recomputation must not require exact coordinate hashes');
+  assert.equal(script.sourceAudit?.executionContract?.mode, 'portable-scientific',
+    'prediction replay must guard discrete scientific outcomes');
+  assert(script.sourceAudit.executionContract.portableScientificGuardCount > 0,
+    'prediction replay must contain portable scientific result guards');
   return Object.freeze({ script, actionScriptSha256:await actionScriptSha256(script),
     sourceAuditSha256:sha256(verified.auditBytes), sourceAuditRecords:records.length,
     selectedAuditSequences:sequences });

@@ -55,6 +55,26 @@ export const AUDIT_STATE_HASH_GUARDS = Object.freeze({
   }) }),
 });
 
+// A recomputation is not an exact checkpoint replay: browser/driver arithmetic
+// can legitimately change coordinate bytes while preserving the registered
+// molecular graph and the scientific acceptance contract.  These fields are
+// deliberately discrete (never energies or coordinates), so they can fail a
+// rerun for a changed scientific outcome without demanding byte-identical
+// floating-point output.
+export const AUDIT_PORTABLE_SCIENTIFIC_GUARDS = Object.freeze({
+  'pose.refine':Object.freeze({ resultKey:'refinement', fields:Object.freeze([
+    'coverageComplete', 'selectedFeasible', 'selectedCore.satisfied',
+    'requiredSpatialFeatureCount',
+  ]) }),
+  'pose.apply':Object.freeze({ resultKey:'appliedPose', fields:Object.freeze([
+    'feasible', 'infeasibleOverride',
+  ]) }),
+  'optimization.run':Object.freeze({ resultKey:'optimization', fields:Object.freeze([
+    'accepted', 'valenceSafeguard.accepted', 'valenceSafeguard.complete',
+    'registeredPoseRetention.accepted', 'fixedAtomMotion.accepted',
+  ]) }),
+});
+
 function enrichStateHashGuards(record, args, mode) {
   const guard = AUDIT_STATE_HASH_GUARDS[record.action];
   if (!guard || mode === 'off') return false;
@@ -78,6 +98,34 @@ function enrichStateHashGuards(record, args, mode) {
     args[argumentKey] = digest;
   }
   return true;
+}
+
+function valueAtPath(value, path) {
+  return String(path).split('.').reduce((current, part) => current?.[part], value);
+}
+
+function enrichPortableScientificGuards(record, expect) {
+  const guard = AUDIT_PORTABLE_SCIENTIFIC_GUARDS[record.action];
+  if (!guard) return 0;
+  const result = record.result?.[guard.resultKey];
+  let count = 0;
+  for (const path of guard.fields) {
+    const expected = valueAtPath(result, path);
+    if (expected === undefined) continue;
+    expect[`${guard.resultKey}.${path}`] = cloneRecord(expected);
+    count += 1;
+  }
+  // Atom/bond cardinality complements the registered route's exact graph and
+  // persistent-identity validation, catching loss/addition without coupling a
+  // portable rerun to coordinate bytes.
+  for (const key of ['atoms','bonds']) {
+    const expected = record.result?.molecule?.[key];
+    if (Number.isInteger(expected) && expected >= 0) {
+      expect[`molecule.${key}`] = expected;
+      count += 1;
+    }
+  }
+  return count;
 }
 
 function validateExplicitChemistryTarget(step, stepNumber) {
@@ -219,16 +267,21 @@ function selectedSequences(value) {
 export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit replay',
   includeReadOnly = true, includeSequences = null, captionsBySequence = {},
   captionFromRequestId = false, includeAuditMetadata = false, provenance = null,
-  stateHashGuards = 'auto' } = {}) {
+  stateHashGuards = 'auto', executionContract = 'exact-recorded-state' } = {}) {
   const records = auditRecords(audit), requested = selectedSequences(includeSequences);
   if (!['auto','required','off'].includes(stateHashGuards))
     throw new Error('stateHashGuards must be auto, required, or off');
+  if (!['exact-recorded-state','portable-scientific'].includes(executionContract))
+    throw new Error('executionContract must be exact-recorded-state or portable-scientific');
+  if (executionContract === 'portable-scientific' && stateHashGuards !== 'off')
+    throw new Error('portable-scientific execution requires stateHashGuards off');
   if (!captionsBySequence || typeof captionsBySequence !== 'object'
     || Array.isArray(captionsBySequence))
     throw new Error('captionsBySequence must be an object keyed by audit sequence');
   const seenSequences = new Set(), readOnly = new Set(READ_ONLY_CHEMIST_ACTIONS);
   const actions = [];
   let selectedAtomIds = [], stateHashGuardedActionCount = 0;
+  let portableScientificGuardCount = 0;
   for (const [recordIndex, record] of records.entries()) {
     if (!record || typeof record !== 'object')
       throw new Error(`Audit record ${recordIndex + 1} must be an object`);
@@ -260,7 +313,11 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
     }
     if (enrichStateHashGuards(record, args, stateHashGuards))
       stateHashGuardedActionCount += 1;
-    const step = { action:record.action, args };
+    const expect = {};
+    if (executionContract === 'portable-scientific')
+      portableScientificGuardCount += enrichPortableScientificGuards(record, expect);
+    const step = { action:record.action, args,
+      ...(Object.keys(expect).length ? { expect } : {}) };
     if (includeAuditMetadata) step.auditSequence = sequence;
     if (includeAuditMetadata && typeof record.requestId === 'string' && record.requestId)
       step.auditRequestId = record.requestId;
@@ -297,6 +354,13 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
       ...(stateHashGuardedActionCount || stateHashGuards !== 'auto' ? { stateHashGuards:{
         mode:stateHashGuards, schema:MOLECULAR_STATE_HASH_SCHEMA,
         guardedActionCount:stateHashGuardedActionCount } } : {}),
+      executionContract:{ mode:executionContract,
+        coordinatePolicy:executionContract === 'portable-scientific'
+          ? 'recompute-without-exact-coordinate-hash' : 'exact-recorded-state',
+        identityTopologyPolicy:executionContract === 'portable-scientific'
+          ? 'registered-action graph and persistent-identity validation plus atom/bond cardinality'
+          : 'identity-topology-coordinate state hash',
+        portableScientificGuardCount },
       ...(provenance == null ? {} : cloneRecord(provenance)) },
   };
   return validateActionScript(script);

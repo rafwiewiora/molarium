@@ -6,12 +6,13 @@ import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { actionScriptSha256, validateActionScript } from '../design-history/replay.mjs';
 import { verifyCampaign } from '../design-history/ledger.mjs';
+import { exactCampaignHistoryPrefix } from '../design-history/frozen-checkpoint-review.mjs';
 import { deserializeCampaign, serializeCampaign } from
   '../design-history/live-campaign-store.mjs';
 import { buildFrozenSos1ReplayScript, sha256, SOS1_STEP_IDS,
   verifyCompleteFrozenSos1Run } from './sos1-accepted-run.mjs';
 import { SOS1_PREDICTION_CAMPAIGN_DIRECTORY, SOS1_PREDICTION_DECLARATION,
-  SOS1_PREDICTION_REPLAY, SOS1_PREDICTION_REVIEW } from
+  SOS1_PREDICTION_REPLAY, SOS1_PREDICTION_REVIEW, SOS1_STARTING_HIT_CAMPAIGN } from
   './publish-sos1-frozen-browser-replays.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -69,7 +70,9 @@ export async function verifySos1FrozenBrowserPublication({ root = ROOT,
   assert.equal(declaration.executableReplay.publicUrl, '/sos1-hit-to-bay293');
   assert.equal(await actionScriptSha256(replay.value),
     declaration.executableReplay.actionScriptSha256);
-  assert.equal(replay.value.sourceAudit?.stateHashGuards?.mode, 'required');
+  assert.equal(replay.value.sourceAudit?.stateHashGuards?.mode, 'off');
+  assert.equal(replay.value.sourceAudit?.executionContract?.mode, 'portable-scientific');
+  assert(replay.value.sourceAudit.executionContract.portableScientificGuardCount > 0);
   const generated = await buildFrozenSos1ReplayScript(verified);
   assert.equal(await actionScriptSha256(replay.value), generated.actionScriptSha256,
     'executable replay is not the selected public-action audit route');
@@ -84,7 +87,41 @@ export async function verifySos1FrozenBrowserPublication({ root = ROOT,
     declaration.checkpointReview.actionScriptSha256);
   assert(review.bytes.length < 1024 * 1024,
     'checkpoint review inlines campaigns instead of referencing separate assets');
-  assert.equal(review.value.actions.length, SOS1_STEP_IDS.length);
+  const startingHit = declaration.checkpointReview.startingHit || null;
+  const actionOffset = startingHit ? 1 : 0;
+  assert.equal(review.value.actions.length, SOS1_STEP_IDS.length + actionOffset);
+  if (startingHit) {
+    assert.equal(startingHit.campaignPath, SOS1_STARTING_HIT_CAMPAIGN);
+    const startingBytes = await readFile(safePath(root, startingHit.campaignPath,
+      'starting-hit campaign asset'));
+    assert.equal(sha256(startingBytes), startingHit.campaignSha256,
+      'starting-hit campaign asset changed');
+    const startingCampaign = deserializeCampaign(startingBytes.toString('utf8'));
+    assert.equal(serializeCampaign(startingCampaign), startingBytes.toString('utf8'));
+    assert.equal((await verifyCampaign(startingCampaign)).valid, true);
+    assert.equal(startingCampaign.branches.main, startingHit.commitId);
+    assert.equal(startingCampaign.objects.commits[startingHit.commitId]?.snapshotId,
+      startingHit.snapshotId);
+    const sourceScaffold = verified.checkpoints.get('scaffold-rewrite').fullSystemCampaign;
+    const expectedPrefix = await exactCampaignHistoryPrefix(sourceScaffold.campaign,
+      startingHit.commitId);
+    assert.equal(serializeCampaign(expectedPrefix), serializeCampaign(startingCampaign),
+      'starting-hit asset is not the exact scaffold campaign history prefix');
+    const action = review.value.actions[0];
+    assert.equal(action.action, 'campaign.import');
+    assert.equal(action.args.sourcePath, `./${startingHit.campaignPath}`);
+    assert.equal(action.args.sourceSha256, startingHit.campaignSha256);
+    assert.equal(action.args.preserveView, false);
+    assert.equal(action.review.registeredStartingHit, true);
+    assert.equal(action.review.exactHistoryPrefix, true);
+    assert.equal(review.value.provenance.coordinateGranularity?.syntheticCoordinatesUsed,
+      false);
+    assert.deepEqual(review.value.provenance.coordinateGranularity
+      ?.unavailableIndependentStates, [
+        'compound-21-graph-edit-before-phe890-rotamer',
+        'phe890-rotamer-before-coupled-relaxation',
+      ], 'checkpoint review conceals its missing intermediate full-system commits');
+  }
 
   for (const [index, stepId] of SOS1_STEP_IDS.entries()) {
     const declared = declaration.sourceRun.checkpoints[index];
@@ -94,13 +131,13 @@ export async function verifySos1FrozenBrowserPublication({ root = ROOT,
       frozen.fullSystemCampaign.record.sha256);
     const expectedPath = `${SOS1_PREDICTION_CAMPAIGN_DIRECTORY}/${stepId}-campaign.json`;
     assert.equal(declared.publishedCampaignPath, expectedPath);
-    const action = review.value.actions[index];
+    const action = review.value.actions[index + actionOffset];
     assert.equal(action.action, 'campaign.import');
     assert.equal(Object.hasOwn(action.args, 'serialized'), false,
       `${stepId}: review action inlines the full campaign`);
     assert.equal(action.args.sourcePath, `./${expectedPath}`);
     assert.equal(action.args.sourceSha256, declared.fullSystemCampaignSha256);
-    assert.equal(Boolean(action.args.preserveView), index > 0);
+    assert.equal(Boolean(action.args.preserveView), index + actionOffset > 0);
     assert.equal(action.review.campaignId,
       frozen.fullSystemCampaign.record.campaignId);
     assert.equal(action.review.commitId,
@@ -139,6 +176,7 @@ export async function verifySos1FrozenBrowserPublication({ root = ROOT,
   }
   const requiredAssets = [declarationPath, SOS1_PREDICTION_REPLAY,
     SOS1_PREDICTION_REVIEW,
+    ...(startingHit ? [startingHit.campaignPath] : []),
     ...declaration.sourceRun.checkpoints.map((entry) => entry.publishedCampaignPath)];
   for (const asset of requiredAssets) {
     assert(build.includes(`'${asset}'`), `build omits ${asset}`);

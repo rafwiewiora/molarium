@@ -57,9 +57,15 @@
       "args": {
         "execution": "serial",
         "featureSeedingProtocol": "v5",
-        "searchChains": 8,
-        "expectedInputStateSha256": "5093b67db748c4eff31c55066d8d080e18febf60862dd8a63cbcd1b420584cb7",
-        "expectedSelectedStateSha256": "8555324e26933e3771911fd2e7188485fe5c38a8f6fb983a576ad9a03156d14d"
+        "searchChains": 8
+      },
+      "expect": {
+        "refinement.coverageComplete": true,
+        "refinement.selectedFeasible": true,
+        "refinement.selectedCore.satisfied": true,
+        "refinement.requiredSpatialFeatureCount": 0,
+        "molecule.atoms": 7929,
+        "molecule.bonds": 8013
       },
       "auditSequence": 8,
       "auditRequestId": "scaffold-rewrite-pose-refine",
@@ -68,10 +74,13 @@
     {
       "action": "pose.apply",
       "args": {
-        "index": 0,
-        "expectedInputStateSha256": "5093b67db748c4eff31c55066d8d080e18febf60862dd8a63cbcd1b420584cb7",
-        "expectedSelectedStateSha256": "8555324e26933e3771911fd2e7188485fe5c38a8f6fb983a576ad9a03156d14d",
-        "expectedOutputStateSha256": "8555324e26933e3771911fd2e7188485fe5c38a8f6fb983a576ad9a03156d14d"
+        "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true,
+        "appliedPose.infeasibleOverride": false,
+        "molecule.atoms": 7929,
+        "molecule.bonds": 8013
       },
       "auditSequence": 9,
       "auditRequestId": "scaffold-rewrite-pose-apply",
@@ -87,9 +96,15 @@
     {
       "action": "optimization.run",
       "args": {
-        "method": "induced-fit-webgpu",
-        "expectedInputStateSha256": "8555324e26933e3771911fd2e7188485fe5c38a8f6fb983a576ad9a03156d14d",
-        "expectedOutputStateSha256": "24e0df714b70a4cb5c9ee6da3fc37a5bd8b9c65ae1ba298de3ae3b87e3d46bc8"
+        "method": "induced-fit-webgpu"
+      },
+      "expect": {
+        "optimization.accepted": true,
+        "optimization.valenceSafeguard.accepted": true,
+        "optimization.valenceSafeguard.complete": true,
+        "optimization.registeredPoseRetention.accepted": true,
+        "molecule.atoms": 7929,
+        "molecule.bonds": 8013
       },
       "auditSequence": 11,
       "auditRequestId": "scaffold-rewrite-complex-relax",
@@ -138,9 +153,15 @@
       "args": {
         "execution": "serial",
         "featureSeedingProtocol": "v5",
-        "searchChains": 8,
-        "expectedInputStateSha256": "21a2e83fc376f49e00478024299e9614610bc477d9bddfe603bb3fd00e42eeff",
-        "expectedSelectedStateSha256": "b1660c03540dc4a986fda6d16f73eaf7e1aff6615d63e74f64323d2add165c0b"
+        "searchChains": 8
+      },
+      "expect": {
+        "refinement.coverageComplete": true,
+        "refinement.selectedFeasible": true,
+        "refinement.selectedCore.satisfied": true,
+        "refinement.requiredSpatialFeatureCount": 0,
+        "molecule.atoms": 7933,
+        "molecule.bonds": 8018
       },
       "auditSequence": 21,
       "auditRequestId": "fragment-merge-pose-refine",
@@ -149,10 +170,13 @@
     {
       "action": "pose.apply",
       "args": {
-        "index": 0,
-        "expectedInputStateSha256": "21a2e83fc376f49e00478024299e9614610bc477d9bddfe603bb3fd00e42eeff",
-        "expectedSelectedStateSha256": "b1660c03540dc4a986fda6d16f73eaf7e1aff6615d63e74f64323d2add165c0b",
-        "expectedOutputStateSha256": "b1660c03540dc4a986fda6d16f73eaf7e1aff6615d63e74f64323d2add165c0b"
+        "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true,
+        "appliedPose.infeasibleOverride": false,
+        "molecule.atoms": 7933,
+        "molecule.bonds": 8018
       },
       "auditSequence": 22,
       "auditRequestId": "fragment-merge-pose-apply",
@@ -168,9 +192,15 @@
     {
       "action": "optimization.run",
       "args": {
-        "method": "induced-fit-webgpu",
-        "expectedInputStateSha256": "b1660c03540dc4a986fda6d16f73eaf7e1aff6615d63e74f64323d2add165c0b",
-        "expectedOutputStateSha256": "2171ae87e6d4768bfaae19c13da97885d3c04d08a4cd7a8a5dccf20002fd8a9f"
+        "method": "induced-fit-webgpu"
+      },
+      "expect": {
+        "optimization.accepted": true,
+        "optimization.valenceSafeguard.accepted": true,
+        "optimization.valenceSafeguard.complete": true,
+        "optimization.registeredPoseRetention.accepted": true,
+        "molecule.atoms": 7933,
+        "molecule.bonds": 8018
       },
       "auditSequence": 24,
       "auditRequestId": "fragment-merge-complex-relax",
@@ -364,9 +394,15 @@
       "args": {
         "execution": "serial",
         "featureSeedingProtocol": "v5",
-        "searchChains": 8,
-        "expectedInputStateSha256": "324673fdba8afdf762576430a3ff9b2c0e43ca9e3226e0f93485a6a9a58a10e2",
-        "expectedSelectedStateSha256": "9840e4ac30959e8eb7c5e03fb588113509c2e600fc7e2342587c7e42cbdf9f4b"
+        "searchChains": 8
+      },
+      "expect": {
+        "refinement.coverageComplete": true,
+        "refinement.selectedFeasible": true,
+        "refinement.selectedCore.satisfied": true,
+        "refinement.requiredSpatialFeatureCount": 0,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
       },
       "auditSequence": 233,
       "auditRequestId": "open-phe890-pocket-pose-selected-phe890-branch",
@@ -375,10 +411,13 @@
     {
       "action": "pose.apply",
       "args": {
-        "index": 0,
-        "expectedInputStateSha256": "324673fdba8afdf762576430a3ff9b2c0e43ca9e3226e0f93485a6a9a58a10e2",
-        "expectedSelectedStateSha256": "9840e4ac30959e8eb7c5e03fb588113509c2e600fc7e2342587c7e42cbdf9f4b",
-        "expectedOutputStateSha256": "9840e4ac30959e8eb7c5e03fb588113509c2e600fc7e2342587c7e42cbdf9f4b"
+        "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true,
+        "appliedPose.infeasibleOverride": false,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
       },
       "auditSequence": 234,
       "auditRequestId": "open-phe890-pocket-apply-selected-phe890-pose",
@@ -394,9 +433,15 @@
     {
       "action": "optimization.run",
       "args": {
-        "method": "induced-fit-webgpu",
-        "expectedInputStateSha256": "9840e4ac30959e8eb7c5e03fb588113509c2e600fc7e2342587c7e42cbdf9f4b",
-        "expectedOutputStateSha256": "9cd9a36491c2ebbf35d425f3bd67f1a60d6b064cb93b9b2908c5781ada90af79"
+        "method": "induced-fit-webgpu"
+      },
+      "expect": {
+        "optimization.accepted": true,
+        "optimization.valenceSafeguard.accepted": true,
+        "optimization.valenceSafeguard.complete": true,
+        "optimization.registeredPoseRetention.accepted": true,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
       },
       "auditSequence": 236,
       "auditRequestId": "open-phe890-pocket-relax-selected-phe890-branch",
@@ -445,9 +490,15 @@
       "args": {
         "execution": "serial",
         "featureSeedingProtocol": "v5",
-        "searchChains": 8,
-        "expectedInputStateSha256": "4f0473373d9383bc6135a409b0649145aa900108b4f9fcbe3261a9a4faf4f03f",
-        "expectedSelectedStateSha256": "3753816555aeb023069dd04751c467d1af388d401eda65d8c5128a4e6b1348b5"
+        "searchChains": 8
+      },
+      "expect": {
+        "refinement.coverageComplete": true,
+        "refinement.selectedFeasible": true,
+        "refinement.selectedCore.satisfied": true,
+        "refinement.requiredSpatialFeatureCount": 1,
+        "molecule.atoms": 7937,
+        "molecule.bonds": 8021
       },
       "auditSequence": 248,
       "auditRequestId": "finish-bay-293-pose-refine",
@@ -456,10 +507,13 @@
     {
       "action": "pose.apply",
       "args": {
-        "index": 0,
-        "expectedInputStateSha256": "4f0473373d9383bc6135a409b0649145aa900108b4f9fcbe3261a9a4faf4f03f",
-        "expectedSelectedStateSha256": "3753816555aeb023069dd04751c467d1af388d401eda65d8c5128a4e6b1348b5",
-        "expectedOutputStateSha256": "3753816555aeb023069dd04751c467d1af388d401eda65d8c5128a4e6b1348b5"
+        "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true,
+        "appliedPose.infeasibleOverride": false,
+        "molecule.atoms": 7937,
+        "molecule.bonds": 8021
       },
       "auditSequence": 249,
       "auditRequestId": "finish-bay-293-pose-apply",
@@ -475,9 +529,15 @@
     {
       "action": "optimization.run",
       "args": {
-        "method": "induced-fit-webgpu",
-        "expectedInputStateSha256": "3753816555aeb023069dd04751c467d1af388d401eda65d8c5128a4e6b1348b5",
-        "expectedOutputStateSha256": "34becadb6cc639e42b63e1311ffec5596fcb831ac697bf76af010641caecb2d8"
+        "method": "induced-fit-webgpu"
+      },
+      "expect": {
+        "optimization.accepted": true,
+        "optimization.valenceSafeguard.accepted": true,
+        "optimization.valenceSafeguard.complete": true,
+        "optimization.registeredPoseRetention.accepted": true,
+        "molecule.atoms": 7937,
+        "molecule.bonds": 8021
       },
       "auditSequence": 251,
       "auditRequestId": "finish-bay-293-complex-relax",
@@ -546,9 +606,15 @@
     "replayControllerActionsExcluded": 0,
     "readOnlyInspectionsIncluded": true,
     "stateHashGuards": {
-      "mode": "required",
+      "mode": "off",
       "schema": "molarium.molecular-state-hash/v1",
-      "guardedActionCount": 12
+      "guardedActionCount": 0
+    },
+    "executionContract": {
+      "mode": "portable-scientific",
+      "coordinatePolicy": "recompute-without-exact-coordinate-hash",
+      "identityTopologyPolicy": "registered-action graph and persistent-identity validation plus atom/bond cardinality",
+      "portableScientificGuardCount": 64
     },
     "checkpoints": [
       {

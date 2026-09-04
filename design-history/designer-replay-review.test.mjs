@@ -30,8 +30,20 @@ const reviewingCompleted = designerReplayReviewState({ replayStatus:'completed',
 assert.equal(reviewingCompleted.reviewing, true);
 assert.equal(designerReplayReviewTarget(reviewingCompleted, 'final'), 51);
 
+const failed = designerReplayReviewState({ replayStatus:'failed',
+  index:10, frontier:10, checkpointCount:11 });
+assert.equal(failed.available, true);
+assert.equal(failed.failed, true);
+assert.equal(failed.atFinal, true);
+assert.equal(designerReplayReviewTarget(failed, 'previous'), 9);
+const reviewingFailed = designerReplayReviewState({ replayStatus:'failed',
+  index:9, frontier:10, checkpointCount:11 });
+assert.equal(reviewingFailed.reviewing, true);
+assert.equal(designerReplayReviewTarget(reviewingFailed, 'next'), 10);
+assert.equal(designerReplayReviewTarget(reviewingFailed, 'final'), 10);
+
 assert.throws(() => designerReplayReviewTarget(running, 'previous'),
-  /No completed replay checkpoints/);
+  /No replay checkpoints/);
 assert.throws(() => designerReplayReviewTarget(completed, 'future'),
   /direction must be one of/);
 

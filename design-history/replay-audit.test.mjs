@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { CHEMIST_ACTIONS_SCHEMA } from '../chemist-actions.mjs';
 import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
-import { AUDIT_STATE_HASH_GUARDS, NON_REPLAYABLE_ACTION_NAMES, NON_REPLAYABLE_ACTION_PREFIXES,
+import { AUDIT_PORTABLE_SCIENTIFIC_GUARDS, AUDIT_STATE_HASH_GUARDS,
+  NON_REPLAYABLE_ACTION_NAMES, NON_REPLAYABLE_ACTION_PREFIXES,
   actionScriptFromAudit, replayActionScript, validateActionScript } from './replay.mjs';
 
 const audit = { schema:CHEMIST_ACTIONS_SCHEMA, routeId:'converter-test', records:[
@@ -127,6 +128,8 @@ assert.throws(() => actionScriptFromAudit({ schema:CHEMIST_ACTIONS_SCHEMA, recor
 
 assert.deepEqual(Object.keys(AUDIT_STATE_HASH_GUARDS).sort(),
   ['optimization.run','pose.apply','pose.refine']);
+assert.deepEqual(Object.keys(AUDIT_PORTABLE_SCIENTIFIC_GUARDS).sort(),
+  ['optimization.run','pose.apply','pose.refine']);
 const hashes = Object.fromEntries('abcdef'.split('').map((key, index) =>
   [key, String(index + 1).repeat(64)]));
 const guardedAudit = { schema:CHEMIST_ACTIONS_SCHEMA, records:[
@@ -156,6 +159,41 @@ assert.equal(actionScriptFromAudit(guardedAudit,
   { stateHashGuards:'required' }).sourceAudit.stateHashGuards.guardedActionCount, 3);
 assert.equal(Object.keys(actionScriptFromAudit(guardedAudit,
   { stateHashGuards:'off' }).actions[0].args).includes('expectedInputStateSha256'), false);
+const portableAudit = structuredClone(guardedAudit);
+portableAudit.records[0].result.molecule = { atoms:14, bonds:15 };
+Object.assign(portableAudit.records[0].result.refinement, {
+  coverageComplete:true, selectedFeasible:true,
+  selectedCore:{ satisfied:true }, requiredSpatialFeatureCount:2,
+});
+Object.assign(portableAudit.records[1].result.appliedPose, {
+  feasible:true, infeasibleOverride:false,
+});
+Object.assign(portableAudit.records[2].result.optimization, {
+  accepted:true, valenceSafeguard:{ accepted:true, complete:true },
+  registeredPoseRetention:{ accepted:true }, fixedAtomMotion:{ accepted:true },
+});
+const portable = actionScriptFromAudit(portableAudit, {
+  stateHashGuards:'off', executionContract:'portable-scientific',
+});
+assert.deepEqual(portable.actions[0].args, { searchChains:16 });
+assert.deepEqual(portable.actions[0].expect, {
+  'refinement.coverageComplete':true,
+  'refinement.selectedFeasible':true,
+  'refinement.selectedCore.satisfied':true,
+  'refinement.requiredSpatialFeatureCount':2,
+  'molecule.atoms':14,
+  'molecule.bonds':15,
+});
+assert.equal(portable.actions[2].expect['optimization.valenceSafeguard.accepted'], true);
+assert.equal(portable.actions[2].expect['optimization.fixedAtomMotion.accepted'], true);
+assert.equal(portable.sourceAudit.executionContract.mode, 'portable-scientific');
+assert.equal(portable.sourceAudit.executionContract.portableScientificGuardCount, 13);
+assert.throws(() => actionScriptFromAudit(guardedAudit, {
+  executionContract:'portable-scientific', stateHashGuards:'required',
+}), /portable-scientific execution requires stateHashGuards off/);
+assert.throws(() => actionScriptFromAudit(guardedAudit, {
+  executionContract:'portable-ish', stateHashGuards:'off',
+}), /executionContract must be/);
 assert.throws(() => actionScriptFromAudit({ schema:CHEMIST_ACTIONS_SCHEMA, records:[
   { sequence:1, action:'pose.refine', args:{ searchChains:16 }, status:'completed', result:{} },
 ] }, { stateHashGuards:'required' }), /missing molarium\.molecular-state-hash\/v1 result guards/);
