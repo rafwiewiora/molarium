@@ -730,6 +730,7 @@ const state = {
   selectedAtom: null,
   selectedAtoms: [],
   chemistryTransaction: null,
+  chemistryEditPolicy: 'staged',
   chemistryEditFinishing: false,
   chemistActionAudit: [],
   liveCampaign: null,
@@ -7028,7 +7029,7 @@ function selectedProteinChemistryLocked(indices = state.selectedAtoms) {
 }
 
 function chemistryImmediateRefinementEnabled() {
-  return Boolean(document.querySelector('#chemistry-immediate-refine')?.checked);
+  return state.chemistryEditPolicy === 'immediate-refine';
 }
 
 function beginChemistryTransaction() {
@@ -7051,6 +7052,7 @@ function updateChemistryTransactionUi() {
   const panel = document.querySelector('#chemistry-pending');
   const immediate = document.querySelector('#chemistry-immediate-refine');
   if (!panel || !immediate) return;
+  immediate.checked = state.chemistryEditPolicy === 'immediate-refine';
   panel.classList.toggle('hidden', !pending);
   immediate.disabled = pending || state.chemistryEditFinishing;
   document.querySelector('#finish-chemistry-changes').disabled = !pending || state.chemistryEditFinishing;
@@ -7999,10 +8001,15 @@ function moleculeDiagnostics(molecule) {
 
 async function runImmediateChemistryTestEdit(callback) {
   const control = document.querySelector('#chemistry-immediate-refine');
-  const previous = control.checked;
+  const previous = state.chemistryEditPolicy;
+  state.chemistryEditPolicy = 'immediate-refine';
   control.checked = true;
   try { return await callback(); }
-  finally { control.checked = previous; updateChemistryEditor(); }
+  finally {
+    state.chemistryEditPolicy = previous;
+    control.checked = previous === 'immediate-refine';
+    updateChemistryEditor();
+  }
 }
 
 const SIDECHAIN_ROTAMER_RESIDUES = new Set([
@@ -8044,6 +8051,36 @@ function chemistActionCoordinateChanges(before, molecule = state.molecule,
 
 async function moleculeCoordinateSha256(molecule = state.molecule) {
   return sha256Hex(chemistActionCoordinateArray(molecule).buffer);
+}
+
+async function coordinateArraySha256(coordinates) {
+  if (!ArrayBuffer.isView(coordinates) && !Array.isArray(coordinates))
+    throw new Error('Coordinate result is not a numeric array');
+  const normalized = Float64Array.from(coordinates, Number);
+  if (!normalized.length || normalized.some((value) => !Number.isFinite(value)))
+    throw new Error('Coordinate result contains no finite coordinate set');
+  return sha256Hex(normalized.buffer);
+}
+
+function expectedCoordinateSha256(args, key) {
+  if (!Object.hasOwn(args, key)) return null;
+  if (typeof args[key] !== 'string' || !/^[a-f0-9]{64}$/.test(args[key]))
+    throw new Error(`${key} must be a lowercase SHA-256 hex digest`);
+  return args[key];
+}
+
+async function assertCurrentCoordinateSha256(expected, key = 'expectedInputCoordinateSha256') {
+  const actual = await moleculeCoordinateSha256();
+  if (expected != null && actual !== expected)
+    throw new Error(`Current coordinates do not match ${key}`);
+  return actual;
+}
+
+function coordinateGuardRollback(snapshot, buildHistory, redoHistory) {
+  restoreMolecule(snapshot);
+  state.buildHistory = buildHistory;
+  state.redoHistory = redoHistory;
+  updateHistoryButtons();
 }
 
 function sidechainRotamerPublicResult(ensemble) {
@@ -8221,6 +8258,7 @@ const DESIGNER_MOVE_CHECKPOINT_STATE_KEYS = Object.freeze([
   'vdw', 'representation',
   'mode', 'selectedElement', 'buildTool',
   'stagedFragment', 'selectedAtom', 'selectedAtoms', 'chemistryTransaction',
+  'chemistryEditPolicy',
   'designRoute', 'designRouteStepId', 'geometryEditActive', 'lastCalculation',
   'calculationFrames', 'calculationRawFrames', 'calculationProjectionRadius',
   'calculationEnsemble', 'conformerAnalysis', 'conformerDisplayAlignment',
@@ -8598,6 +8636,7 @@ function showDesignerMoveCue(step = null, { preserveLayout = false } = {}) {
     'history.undo':'#undo-atom', 'history.redo':'#redo-atom',
     'chemistry.setAtom':'#apply-atom-chemistry',
     'chemistry.setBond':'#apply-bond-chemistry',
+    'chemistry.setEditPolicy':'#chemistry-immediate-refine',
     'chemistry.deleteAtom':'#delete-selected-atom',
     'chemistry.deleteBond':'#delete-bond-chemistry',
     'chemistry.addHydrogen':'#add-explicit-hydrogen',
@@ -8887,7 +8926,8 @@ function chemistActionSummary(extra = {}) {
   return { molecule:molecule ? { name:molecule.name || 'Molecule', atoms:molecule.atoms.length,
     bonds:molecule.bonds.length, chemistryValidation:structuredClone(
       molecule.source?.chemistryValidation || null) } : null,
-  mode:state.mode, selectedAtomIds:(state.selectedAtoms || [])
+  mode:state.mode, chemistryEditPolicy:state.chemistryEditPolicy,
+  selectedAtomIds:(state.selectedAtoms || [])
     .map((index) => molecule?.atoms?.[index]?.designAtomId).filter(Boolean),
   pendingChemistry:state.chemistryTransaction ? {
     editCount:state.chemistryTransaction.editCount,
@@ -8900,7 +8940,8 @@ function persistChemistActionAudit(record) {
   const entry = { schema:'molarium.chemist-action-audit/v1', ...structuredClone(record),
     outcomeState:{ moleculeName:state.molecule.name || 'Molecule',
       atomCount:state.molecule.atoms.length, bondCount:state.molecule.bonds.length,
-      mode:state.mode, pendingChemistry:Boolean(state.chemistryTransaction),
+      mode:state.mode, chemistryEditPolicy:state.chemistryEditPolicy,
+      pendingChemistry:Boolean(state.chemistryTransaction),
       selectedAtomIds:(state.selectedAtoms || []).map((index) =>
         state.molecule.atoms[index]?.designAtomId).filter(Boolean) } };
   state.chemistActionAudit = [...state.chemistActionAudit, entry].slice(-500);
@@ -9289,13 +9330,37 @@ async function fetchRegisteredDesignRoute(routeId) {
 
 function installChemistActionsApi(module) {
   const empty = (args) => chemistActionKeys(args);
-  const summarizeMutation = async (operation) => {
+  const summarizeMutation = async (operation, target = {}) => {
     const result = await operation();
-    return chemistActionSummary({ validation:structuredClone(result?.validation || null),
+    return chemistActionSummary({ ...target, chemistryEditPolicy:state.chemistryEditPolicy,
+      validation:structuredClone(result?.validation || null),
       polish:result?.polish ? { cleanupMode:result.polish.cleanupMode || null,
         initialEnergy:result.polish.initialEnergy ?? null,
         finalEnergy:result.polish.finalEnergy ?? null } : null,
       contactFeatureRemaps:structuredClone(result?.contactFeatureRemaps || []) });
+  };
+  const chemistryTargetAtomIds = async (args, count) => {
+    const key = count === 1 ? 'atomId' : 'atomIds';
+    const byId = await ensureChemistActionAtomIds();
+    let atomIds;
+    if (Object.hasOwn(args, key)) atomIds = count === 1 ? [args.atomId] : args.atomIds;
+    else {
+      if (state.designerMoveReplaying)
+        throw new Error(`${key} is required in a saved publication replay`);
+      atomIds = state.selectedAtoms.map((index) => state.molecule?.atoms?.[index]?.designAtomId);
+    }
+    if (!Array.isArray(atomIds) || atomIds.length !== count
+      || atomIds.some((id) => typeof id !== 'string' || !id)
+      || new Set(atomIds).size !== atomIds.length)
+      throw new Error(count === 1
+        ? 'atomId must be one persistent atom ID'
+        : 'atomIds must contain two different persistent atom IDs');
+    const indices = atomIds.map((id) => {
+      if (!byId.has(id)) throw new Error(`Unknown persistent atom ID: ${id}`);
+      return byId.get(id);
+    });
+    setDepictionSelection(indices);
+    return count === 1 ? { atomId:atomIds[0] } : { atomIds:[...atomIds] };
   };
   const routes = {
     'session.inspect':async (args) => { chemistActionKeys(args,
@@ -9933,8 +9998,6 @@ function installChemistActionsApi(module) {
       return chemistActionSummary({ attachedFragment:{ id:state.stagedFragment.id,
         attachedToAtomId:args.attachedToAtomId || null, addedAtomIds } }); },
     'selection.replace':async (args) => { chemistActionKeys(args, ['atomIds']);
-      if (state.mode !== 'build' || state.buildTool !== 'select')
-        throw new Error('Enter Design mode and choose Select before selecting atoms.');
       if (!Array.isArray(args.atomIds) || !args.atomIds.length || args.atomIds.length > 256
         || args.atomIds.some((id) => typeof id !== 'string' || !id))
         throw new Error('atomIds must contain 1 to 256 persistent atom IDs');
@@ -9963,11 +10026,21 @@ function installChemistActionsApi(module) {
     'selection.clear':async (args) => { empty(args); state.selectedAtoms = [];
       state.selectedAtom = null; updateGeometryControl(); updateBuildStatus(); updateDockingUi();
       draw(); schedule2DDepiction(0); return chemistActionSummary(); },
-    'chemistry.setAtom':async (args) => { chemistActionKeys(args, ['element','formalCharge']);
+    'chemistry.setEditPolicy':async (args) => { chemistActionKeys(args, ['mode']);
+      if (state.chemistryTransaction)
+        throw new Error('Finish or discard pending chemistry before changing the edit policy.');
+      const mode = chemistActionEnum(args.mode, ['staged','immediate-refine'], 'mode');
+      state.chemistryEditPolicy = mode;
+      updateChemistryEditor();
+      return chemistActionSummary({ chemistryEditPolicy:mode }); },
+    'chemistry.setAtom':async (args) => { chemistActionKeys(args,
+      ['atomId','element','formalCharge']);
+      const target = await chemistryTargetAtomIds(args, 1);
       return summarizeMutation(() => applySelectedAtomChemistry(args.element,
-        args.formalCharge ?? 0)); },
-    'chemistry.setBond':async (args) => { chemistActionKeys(args, ['order']);
-      return summarizeMutation(() => applySelectedBondChemistry(args.order)); },
+        args.formalCharge ?? 0), target); },
+    'chemistry.setBond':async (args) => { chemistActionKeys(args, ['atomIds','order']);
+      const target = await chemistryTargetAtomIds(args, 2);
+      return summarizeMutation(() => applySelectedBondChemistry(args.order), target); },
     'chemistry.addAtom':async (args) => { chemistActionKeys(args,
       ['attachedToAtomId','positionAngstrom','element']);
       if (state.mode !== 'build') throw new Error('Enter Design mode before adding an atom.');
@@ -10028,14 +10101,18 @@ function installChemistActionsApi(module) {
       });
       setDepictionSelection(indices);
       return summarizeMutation(() => applySelectedBondChemistry(args.order)); },
-    'chemistry.deleteAtom':async (args) => { empty(args);
-      return summarizeMutation(() => deleteSelectedAtomChemistry()); },
-    'chemistry.deleteBond':async (args) => { empty(args);
-      return summarizeMutation(() => deleteSelectedBondChemistry()); },
-    'chemistry.addHydrogen':async (args) => { empty(args);
-      return summarizeMutation(() => addSelectedHydrogenChemistry()); },
-    'chemistry.removeHydrogen':async (args) => { empty(args);
-      return summarizeMutation(() => removeSelectedHydrogenChemistry()); },
+    'chemistry.deleteAtom':async (args) => { chemistActionKeys(args, ['atomId']);
+      const target = await chemistryTargetAtomIds(args, 1);
+      return summarizeMutation(() => deleteSelectedAtomChemistry(), target); },
+    'chemistry.deleteBond':async (args) => { chemistActionKeys(args, ['atomIds']);
+      const target = await chemistryTargetAtomIds(args, 2);
+      return summarizeMutation(() => deleteSelectedBondChemistry(), target); },
+    'chemistry.addHydrogen':async (args) => { chemistActionKeys(args, ['atomId']);
+      const target = await chemistryTargetAtomIds(args, 1);
+      return summarizeMutation(() => addSelectedHydrogenChemistry(), target); },
+    'chemistry.removeHydrogen':async (args) => { chemistActionKeys(args, ['atomId']);
+      const target = await chemistryTargetAtomIds(args, 1);
+      return summarizeMutation(() => removeSelectedHydrogenChemistry(), target); },
     'chemistry.finish':async (args) => { empty(args);
       if (!state.chemistryTransaction) throw new Error('There are no pending chemistry changes to finish.');
       const result = await finishChemistryTransaction();
@@ -10130,7 +10207,12 @@ function installChemistActionsApi(module) {
         args.candidateId, 'chemist-actions-role-compatible');
       return chemistActionSummary({ contactRemap:structuredClone(remap) }); },
     'pose.refine':async (args) => { chemistActionKeys(args,
-      ['searchChains','execution','featureSeedingProtocol']);
+      ['searchChains','execution','featureSeedingProtocol',
+        'expectedInputCoordinateSha256','expectedSelectedCoordinateSha256']);
+      const expectedInput = expectedCoordinateSha256(args, 'expectedInputCoordinateSha256');
+      const expectedSelected = expectedCoordinateSha256(args,
+        'expectedSelectedCoordinateSha256');
+      const inputCoordinateSha256 = await assertCurrentCoordinateSha256(expectedInput);
       const searchChains = Number(args.searchChains ?? 16);
       if (![8,16,32,64].includes(searchChains))
         throw new Error('searchChains must be 8, 16, 32, or 64');
@@ -10144,8 +10226,15 @@ function installChemistActionsApi(module) {
         featureSeedingProtocol,
       });
       const selected = result.run.selected;
+      const selectedCoordinateSha256 = await coordinateArraySha256(selected.positions);
+      if (expectedSelected != null && selectedCoordinateSha256 !== expectedSelected) {
+        state.dockingResult = null; state.dockingPoseIndex = 0;
+        renderDockingResults(); updateDockingUi();
+        throw new Error('Selected refined-pose coordinates do not match expectedSelectedCoordinateSha256');
+      }
       return chemistActionSummary({ refinement:{ candidates:result.run.candidates.length,
         feasible:result.run.feasibleCount, selectedRank:selected.rank,
+        inputCoordinateSha256, selectedCoordinateSha256,
         coverageComplete:result.featureGuidedSeeding?.coverage?.allRequiredStrataCovered ?? true,
         coverage:structuredClone(result.featureGuidedSeeding?.coverage || {
           policy:'not-applicable', allRequiredStrataCovered:true,
@@ -10182,7 +10271,13 @@ function installChemistActionsApi(module) {
           selectedSeedAudit:structuredClone(result.featureGuidedSeeding.seedAudits
             .find((entry) => entry.conformerIndex === selected.conformerIndex) || null),
         } : null } }); },
-    'pose.apply':async (args) => { chemistActionKeys(args, ['index','allowInfeasible']);
+    'pose.apply':async (args) => { chemistActionKeys(args,
+      ['index','allowInfeasible','expectedInputCoordinateSha256',
+        'expectedSelectedCoordinateSha256','expectedOutputCoordinateSha256']);
+      const expectedInput = expectedCoordinateSha256(args, 'expectedInputCoordinateSha256');
+      const expectedSelected = expectedCoordinateSha256(args,
+        'expectedSelectedCoordinateSha256');
+      const expectedOutput = expectedCoordinateSha256(args, 'expectedOutputCoordinateSha256');
       const index = Number(args.index ?? 0);
       if (!Number.isInteger(index) || index < 0) throw new Error('index must be a non-negative integer');
       if (args.allowInfeasible != null && typeof args.allowInfeasible !== 'boolean')
@@ -10193,13 +10288,27 @@ function installChemistActionsApi(module) {
       if (!selectedPose.feasible && !allowInfeasible)
         throw new Error('The selected docking pose is infeasible; pass allowInfeasible:true to apply it explicitly.');
       await ensureChemistActionAtomIds();
+      const inputCoordinateSha256 = await assertCurrentCoordinateSha256(expectedInput);
+      const selectedCoordinateSha256 = await coordinateArraySha256(selectedPose.positions);
+      if (expectedSelected != null && selectedCoordinateSha256 !== expectedSelected)
+        throw new Error('Selected refined-pose coordinates do not match expectedSelectedCoordinateSha256');
       const before = chemistActionCoordinateSnapshot();
+      const rollback = expectedOutput == null ? null : {
+        snapshot:buildHistoryEntry(state.molecule),
+        buildHistory:state.buildHistory.slice(), redoHistory:state.redoHistory.slice(),
+      };
       state.dockingPoseIndex = index;
       const pose = await applySelectedDockingPose({ allowInfeasible });
+      const outputCoordinateSha256 = await moleculeCoordinateSha256();
+      if (expectedOutput != null && outputCoordinateSha256 !== expectedOutput) {
+        coordinateGuardRollback(rollback.snapshot, rollback.buildHistory, rollback.redoHistory);
+        throw new Error('Applied refined-pose coordinates do not match expectedOutputCoordinateSha256');
+      }
       const coordinateChanges = chemistActionCoordinateChanges(before);
       return chemistActionSummary({ appliedPose:{ index, rank:pose.rank,
         feasible:pose.feasible, infeasibleOverride:!pose.feasible && allowInfeasible,
         scoreKcalMol:pose.totalScoreKcalMol,
+        inputCoordinateSha256, selectedCoordinateSha256, outputCoordinateSha256,
         ...coordinateChanges } }); },
     'pose.enumerateSidechainRotamers':async (args) => { chemistActionKeys(args,
       ['receptorAtomId','maximumCandidates']);
@@ -10238,7 +10347,10 @@ function installChemistActionsApi(module) {
       });
       Object.assign(sidechainRotamer, chemistActionCoordinateChanges(before));
       return chemistActionSummary({ sidechainRotamer }); },
-    'optimization.run':async (args) => { chemistActionKeys(args, ['method']);
+    'optimization.run':async (args) => { chemistActionKeys(args,
+      ['method','expectedInputCoordinateSha256','expectedOutputCoordinateSha256']);
+      const expectedInput = expectedCoordinateSha256(args, 'expectedInputCoordinateSha256');
+      const expectedOutput = expectedCoordinateSha256(args, 'expectedOutputCoordinateSha256');
       const method = chemistActionEnum(args.method,
         ['ligand-rdkit','pocket-webgpu','induced-fit-webgpu','webgpu','rdkit','ani2x'], 'method');
       if (state.mode !== 'build') throw new Error('Enter Design mode before optimizing.');
@@ -10247,15 +10359,26 @@ function installChemistActionsApi(module) {
       const select = document.querySelector('#build-optimizer-select');
       select.value = method; select.dataset.userSelected = 'true'; updateOptimizerControls();
       await ensureChemistActionAtomIds();
+      const inputCoordinateSha256 = await assertCurrentCoordinateSha256(expectedInput);
       const before = chemistActionCoordinateSnapshot();
+      const rollback = expectedOutput == null ? null : {
+        snapshot:buildHistoryEntry(state.molecule),
+        buildHistory:state.buildHistory.slice(), redoHistory:state.redoHistory.slice(),
+      };
       const result = await runSelectedBuildOptimization();
       if (!result) throw new Error(`${method} optimization did not complete`);
+      const outputCoordinateSha256 = await moleculeCoordinateSha256();
+      if (expectedOutput != null && outputCoordinateSha256 !== expectedOutput) {
+        coordinateGuardRollback(rollback.snapshot, rollback.buildHistory, rollback.redoHistory);
+        throw new Error('Optimized coordinates do not match expectedOutputCoordinateSha256');
+      }
       return chemistActionSummary({ optimization:{ method,
         accepted:result.valenceSafeguard?.accepted ?? true,
         valenceSafeguard:structuredClone(result.valenceSafeguard || null),
         initialEnergy:result.initialEnergy ?? null, finalEnergy:result.finalEnergy ?? null,
         iterations:result.iterations ?? null, converged:result.converged ?? null,
         elapsedMs:result.elapsedMs ?? null,
+        inputCoordinateSha256, outputCoordinateSha256,
         ...chemistActionCoordinateChanges(before) } }); },
     'calculation.run':async (args) => { chemistActionKeys(args,
       ['job','method','options']);
@@ -11494,22 +11617,26 @@ const molariumTestApi = Object.freeze({
     return runImmediateChemistryTestEdit(() => removeSelectedHydrogenChemistry());
   },
   async stageBondCurrent(first, second, order = 1) {
+    state.chemistryEditPolicy = 'staged';
     document.querySelector('#chemistry-immediate-refine').checked = false;
     state.selectedAtoms = [first, second]; state.selectedAtom = second; updateGeometryControl();
     return applySelectedBondChemistry(order);
   },
   async stageAtomCurrent(index, element, formalCharge = 0) {
+    state.chemistryEditPolicy = 'staged';
     document.querySelector('#chemistry-immediate-refine').checked = false;
     state.selectedAtoms = [index]; state.selectedAtom = index; updateGeometryControl();
     return applySelectedAtomChemistry(element, formalCharge);
   },
   async stageDeleteAtomCurrent(index) {
+    state.chemistryEditPolicy = 'staged';
     document.querySelector('#chemistry-immediate-refine').checked = false;
     state.selectedAtoms = [index]; state.selectedAtom = index; updateGeometryControl();
     return deleteSelectedAtomChemistry();
   },
   async stageAddElementCurrent(element, targetIndex) {
     if (!ELEMENTS[element]) throw new Error(`Unknown element ${element}`);
+    state.chemistryEditPolicy = 'staged';
     document.querySelector('#chemistry-immediate-refine').checked = false;
     state.selectedAtoms = [targetIndex]; state.selectedAtom = targetIndex; updateGeometryControl();
     return applyChemistryMutation((molecule) => {
@@ -15682,6 +15809,13 @@ document.querySelector('#structure-2d-discard').addEventListener('click', () => 
     state.depictionBondStart = null; update2DEditorUi();
   }).catch(() => {});
 });
+async function selectDepictionAtomsThroughAction(indices) {
+  if (!indices.length) return runChemistUiAction('selection.clear');
+  await ensureChemistActionAtomIds();
+  return runChemistUiAction('selection.replace', {
+    atomIds:indices.map((index) => state.molecule?.atoms?.[index]?.designAtomId),
+  });
+}
 document.querySelector('#structure-2d-drawing').addEventListener('click', async (event) => {
   const svg = event.currentTarget.querySelector('svg');
   if (!svg || state.depictionEditing) return;
@@ -15691,8 +15825,8 @@ document.querySelector('#structure-2d-drawing').addEventListener('click', async 
   const globalAtom = localAtom == null ? null : state.depictionGlobalAtomIndices[localAtom];
   const globalBond = hit.preferBond ? state.depictionGlobalBondPairs[localBond] : null;
   if (state.depictionTool === 'select') {
-    if (globalBond) setDepictionSelection(globalBond);
-    else if (globalAtom != null) selectDepictionAtom(localAtom);
+    if (globalBond) await selectDepictionAtomsThroughAction(globalBond).catch(() => {});
+    else if (globalAtom != null) await selectDepictionAtomsThroughAction([globalAtom]).catch(() => {});
     return;
   }
   if (state.mode !== 'build') {
@@ -15710,27 +15844,37 @@ document.querySelector('#structure-2d-drawing').addEventListener('click', async 
     return;
   }
   if (state.depictionTool === 'erase') {
+    await ensureChemistActionAtomIds();
     if (globalBond) {
-      setDepictionSelection(globalBond);
-      runChemistUiAction('chemistry.deleteBond').catch(() => {});
+      runChemistUiAction('chemistry.deleteBond', {
+        atomIds:globalBond.map((index) => state.molecule.atoms[index].designAtomId),
+      }).catch(() => {});
     } else if (globalAtom != null) {
-      setDepictionSelection([globalAtom]);
-      runChemistUiAction('chemistry.deleteAtom').catch(() => {});
+      runChemistUiAction('chemistry.deleteAtom', {
+        atomId:state.molecule.atoms[globalAtom].designAtomId,
+      }).catch(() => {});
     }
     return;
   }
   if (state.depictionTool === 'bond') {
     if (globalBond) {
-      setDepictionSelection(globalBond);
-      runChemistUiAction('chemistry.setBond', { order:state.depictionBondOrder })
+      await ensureChemistActionAtomIds();
+      runChemistUiAction('chemistry.setBond', {
+        atomIds:globalBond.map((index) => state.molecule.atoms[index].designAtomId),
+        order:state.depictionBondOrder,
+      })
         .catch(() => {}); return;
     }
     if (globalAtom == null) return;
     if (state.depictionBondStart == null) {
-      state.depictionBondStart = globalAtom; setDepictionSelection([globalAtom]); update2DEditorUi(); return;
+      state.depictionBondStart = globalAtom;
+      await selectDepictionAtomsThroughAction([globalAtom]).catch(() => {});
+      update2DEditorUi(); return;
     }
     if (state.depictionBondStart === globalAtom) {
-      state.depictionBondStart = null; setDepictionSelection([]); update2DEditorUi(); return;
+      state.depictionBondStart = null;
+      await selectDepictionAtomsThroughAction([]).catch(() => {});
+      update2DEditorUi(); return;
     }
     const first = state.depictionBondStart;
     await ensureChemistActionAtomIds();
@@ -15935,28 +16079,47 @@ document.querySelector('#undo-atom').addEventListener('click', () => {
 document.querySelector('#redo-atom').addEventListener('click', () => {
   runChemistUiAction('history.redo').catch(() => {});
 });
-document.querySelector('#apply-atom-chemistry').addEventListener('click', () => {
+async function selectedChemistryTargetArgs(count) {
+  if (state.selectedAtoms.length !== count)
+    throw new Error(`Select exactly ${count === 1 ? 'one atom' : 'two atoms'}.`);
+  await ensureChemistActionAtomIds();
+  const atomIds = state.selectedAtoms.map((index) => state.molecule?.atoms?.[index]?.designAtomId);
+  if (atomIds.some((id) => typeof id !== 'string' || !id))
+    throw new Error('The selected atom does not have a persistent identity.');
+  return count === 1 ? { atomId:atomIds[0] } : { atomIds };
+}
+document.querySelector('#apply-atom-chemistry').addEventListener('click', async () => {
+  const target = await selectedChemistryTargetArgs(1).catch(() => null);
+  if (!target) return;
   runChemistUiAction('chemistry.setAtom', {
+    ...target,
     element:document.querySelector('#chemistry-element').value,
     formalCharge:Number(document.querySelector('#chemistry-formal-charge').value),
   }).catch(() => {});
 });
-document.querySelector('#apply-bond-chemistry').addEventListener('click', () => {
+document.querySelector('#apply-bond-chemistry').addEventListener('click', async () => {
+  const target = await selectedChemistryTargetArgs(2).catch(() => null);
+  if (!target) return;
   runChemistUiAction('chemistry.setBond', {
+    ...target,
     order:Number(document.querySelector('#chemistry-bond-order').value),
   }).catch(() => {});
 });
-document.querySelector('#delete-bond-chemistry').addEventListener('click', () => {
-  runChemistUiAction('chemistry.deleteBond').catch(() => {});
+document.querySelector('#delete-bond-chemistry').addEventListener('click', async () => {
+  const target = await selectedChemistryTargetArgs(2).catch(() => null);
+  if (target) runChemistUiAction('chemistry.deleteBond', target).catch(() => {});
 });
-document.querySelector('#add-explicit-hydrogen').addEventListener('click', () => {
-  runChemistUiAction('chemistry.addHydrogen').catch(() => {});
+document.querySelector('#add-explicit-hydrogen').addEventListener('click', async () => {
+  const target = await selectedChemistryTargetArgs(1).catch(() => null);
+  if (target) runChemistUiAction('chemistry.addHydrogen', target).catch(() => {});
 });
-document.querySelector('#remove-explicit-hydrogen').addEventListener('click', () => {
-  runChemistUiAction('chemistry.removeHydrogen').catch(() => {});
+document.querySelector('#remove-explicit-hydrogen').addEventListener('click', async () => {
+  const target = await selectedChemistryTargetArgs(1).catch(() => null);
+  if (target) runChemistUiAction('chemistry.removeHydrogen', target).catch(() => {});
 });
-document.querySelector('#delete-selected-atom').addEventListener('click', () => {
-  runChemistUiAction('chemistry.deleteAtom').catch(() => {});
+document.querySelector('#delete-selected-atom').addEventListener('click', async () => {
+  const target = await selectedChemistryTargetArgs(1).catch(() => null);
+  if (target) runChemistUiAction('chemistry.deleteAtom', target).catch(() => {});
 });
 document.querySelector('#finish-chemistry-changes').addEventListener('click', () => {
   runChemistUiAction('chemistry.finish').catch(() => {});
@@ -15970,7 +16133,11 @@ document.querySelector('#viewer-finish-chemistry').addEventListener('click', () 
 document.querySelector('#viewer-discard-chemistry').addEventListener('click', () => {
   runChemistUiAction('chemistry.discard').catch(() => {});
 });
-document.querySelector('#chemistry-immediate-refine').addEventListener('change', updateChemistryEditor);
+document.querySelector('#chemistry-immediate-refine').addEventListener('change', (event) => {
+  runChemistUiAction('chemistry.setEditPolicy', {
+    mode:event.target.checked ? 'immediate-refine' : 'staged',
+  }).catch(() => updateChemistryEditor());
+});
 document.querySelector('#docking-mode').addEventListener('change', updateDockingUi);
 document.querySelector('#docking-edit-cleanup').addEventListener('change', () => {
   runChemistUiAction('pose.setEditCleanup', {
@@ -16238,8 +16405,9 @@ async function addElementFromViewerThroughAction(clientX, clientY) {
   });
   await ensureChemistActionAtomIds();
   if (state.selectedElement === 'H') {
-    setDepictionSelection([targetIndex]);
-    return runChemistUiAction('chemistry.addHydrogen');
+    return runChemistUiAction('chemistry.addHydrogen', {
+      atomId:state.molecule.atoms[targetIndex].designAtomId,
+    });
   }
   return runChemistUiAction('chemistry.addAtom', {
     attachedToAtomId:state.molecule.atoms[targetIndex].designAtomId,
@@ -16412,7 +16580,8 @@ document.querySelector('#export-button').addEventListener('click', exportXYZ);
 function clearScene({ announce = false } = {}) {
   clearCalculationResult(); state.lastCalculation = null;
   state.molecule = null; state.selectedAtom = null; state.selectedAtoms = [];
-  state.chemistryTransaction = null; state.chemistryEditFinishing = false;
+  state.chemistryTransaction = null; state.chemistryEditPolicy = 'staged';
+  state.chemistryEditFinishing = false;
   state.ligandProtonation = null; state.protonatingLigand = false; state.ligandProtonationSequence++;
   state.designRoute = null; state.designRouteStepId = null;
   state.chemistActionAudit = [];
@@ -16430,6 +16599,7 @@ function clearScene({ announce = false } = {}) {
   document.querySelector('#display-theme-select').value = state.displayColorTheme;
   document.querySelector('#change-marker-select').value = state.changeMarkerStyle;
   document.querySelector('#steric-clash-toggle').checked = false;
+  document.querySelector('#chemistry-immediate-refine').checked = false;
   updateStericClashDisplayLabel(0);
   state.viewProjectionCenter = null; state.viewProjectionRadius = null; state.projection = null;
   state.structureComponents = []; state.atomComponentIds = [];

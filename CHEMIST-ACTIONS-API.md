@@ -32,26 +32,27 @@ editor actions, while the structure-story viewer advertises only its timeline ac
 const molarium = await window.MolariumChemistActionsReady;
 
 await molarium.execute({ action: 'view.setMode', args: { mode: 'build' } });
-await molarium.execute({ action: 'build.setTool', args: { tool: 'select' } });
-
 const graph = (await molarium.inspect({
   scope: 'ligand',
   maximumAtoms: 200,
 })).result;
 
+await molarium.execute({ action: 'chemistry.setEditPolicy', args: { mode: 'staged' } });
 await molarium.execute({
-  action: 'selection.replace',
-  args: { atomIds: ['persistent-id-a', 'persistent-id-b'] },
+  action: 'chemistry.setBond',
+  args: { atomIds: ['persistent-id-a', 'persistent-id-b'], order: 1 },
 });
-await molarium.execute({ action: 'chemistry.setBond', args: { order: 1 } });
 await molarium.execute({ action: 'chemistry.finish' });
 ```
 
-Selections use persistent `designAtomId` values returned by `session.inspect`, never mutable array
-indices. `selection.replace` applies selections in click order and enforces the UI rule that each
-additional atom must bond to the existing connected path. Chemistry edits enter the ordinary
-pending transaction. Hydrogens, valence, aromaticity, sanitization, local refinement, contact
-feature transfer, Undo, and Redo therefore behave exactly as they do for an interactive user.
+Chemistry targets and selections use persistent `designAtomId` values returned by
+`session.inspect`, never mutable array indices. Target-dependent chemistry actions carry their own
+`atomId` or `atomIds`; a saved publication replay is rejected if it relies on ambient selection.
+`selection.replace` remains the public action used by both the 2D depiction and the 3D viewer for
+visible selection. `chemistry.setEditPolicy` makes batching behavior part of the action audit:
+`staged` waits for `chemistry.finish`, while `immediate-refine` validates, refines, and commits each
+edit. Hydrogens, valence, aromaticity, sanitization, local refinement, contact feature transfer,
+Undo, and Redo therefore behave exactly as they do for an interactive user.
 
 ## Available routes
 
@@ -64,7 +65,7 @@ feature transfer, Undo, and Redo therefore behave exactly as they do for an inte
 - `build.setTool`
 - `protein.prepare`, `protein.parameterize`, `protein.predict`, `protein.cancelPrediction`
 - `selection.replace`, `selection.clear`
-- `chemistry.setAtom`, `chemistry.setBond`, `chemistry.addAtom`, `chemistry.createBond`
+- `chemistry.setEditPolicy`, `chemistry.setAtom`, `chemistry.setBond`, `chemistry.addAtom`, `chemistry.createBond`
 - `chemistry.deleteAtom`, `chemistry.deleteBond`
 - `chemistry.addHydrogen`, `chemistry.removeHydrogen`
 - `chemistry.finish`, `chemistry.discard`
@@ -213,6 +214,13 @@ such a negative-control result only by sending `allowInfeasible:true`; that over
 action audit and the response reports `infeasibleOverride:true`. The visible Apply pose button is
 disabled for infeasible results, so an ordinary human click cannot silently bypass required-contact
 or physical-feasibility gates.
+
+`pose.refine`, `pose.apply`, and `optimization.run` return SHA-256 fingerprints for their input and
+result coordinates. Their optional `expected*CoordinateSha256` arguments turn those fingerprints
+into fail-closed guards. Input or selected-pose mismatches abort before mutation. An output mismatch
+after pose application or optimization restores the pre-action molecule and Undo/Redo history.
+These hashes identify exact serialized floating-point coordinates within one numerical execution;
+they are not a tolerance-based scientific equivalence test across WebGPU adapters.
 
 `pose.refine` accepts `execution: "auto"` (the default) or `execution: "serial"`. Auto execution
 partitions independent, deterministically seeded pose chains over a bounded browser Worker ensemble

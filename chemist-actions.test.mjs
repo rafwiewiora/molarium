@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { CHEMIST_ACTIONS_SCHEMA, CHEMIST_ACTION_DEFINITIONS, CHEMIST_ACTION_SCOPES,
   createChemistActionsApi } from './chemist-actions.mjs';
 
@@ -37,12 +38,25 @@ assert(Object.hasOwn(api.describe().actions, 'pose.forgetContact'));
 assert(Object.hasOwn(api.describe().actions, 'pose.updateReceptorReference'));
 assert(Object.hasOwn(api.describe().actions, 'pose.enumerateSidechainRotamers'));
 assert(Object.hasOwn(api.describe().actions, 'pose.applySidechainRotamer'));
+assert(Object.hasOwn(api.describe().actions, 'chemistry.setEditPolicy'));
+assert.equal(api.describe().actions['chemistry.setAtom'].arguments.atomId,
+  'persistent atom ID');
+assert.match(api.describe().actions['chemistry.setBond'].arguments.atomIds,
+  /two persistent atom IDs/);
+assert.equal(api.describe().actions['chemistry.addHydrogen'].arguments.atomId,
+  'persistent atom ID');
 assert.match(api.describe().actions['pose.applySidechainRotamer'].arguments.chiDegrees,
   /uniquely matched/);
 assert.match(api.describe().actions['pose.applySidechainRotamer'].arguments.coordinateSha256,
   /SHA-256/);
 assert.match(api.describe().actions['pose.apply'].arguments.allowInfeasible,
   /false by default/);
+assert.match(api.describe().actions['pose.refine'].arguments.expectedSelectedCoordinateSha256,
+  /SHA-256/);
+assert.match(api.describe().actions['pose.apply'].arguments.expectedOutputCoordinateSha256,
+  /SHA-256/);
+assert.match(api.describe().actions['optimization.run'].arguments.expectedInputCoordinateSha256,
+  /SHA-256/);
 assert(Object.hasOwn(api.describe().actions, 'structureStory.selectFrame'));
 assert.match(api.describe().actions['session.inspect'].arguments.scope, /pocket/);
 assert.match(api.describe().actions['view.setMode'].description, /View, Design, or Simulate/);
@@ -52,6 +66,16 @@ assert.match(api.describe().actions['pose.refine'].arguments.featureSeedingProto
 assert(!Object.hasOwn(api.describe().actions, 'test.loadObject'));
 assert.match(api.describe().guarantee, /no arbitrary code/);
 assert.match(api.describe().guarantee, /every saved replay and visible playback control executes only public routes/i);
+
+const appSource = readFileSync(new URL('./app.js', import.meta.url), 'utf8');
+assert.match(appSource, /if \(state\.designerMoveReplaying\)[\s\S]{0,200}saved publication replay/,
+  'saved replays fail closed when selection-dependent chemistry omits persistent targets');
+assert.match(appSource, /runChemistUiAction\('chemistry\.addHydrogen',\s*\{\s*atomId:/,
+  'viewer Add-H records its persistent target');
+assert.match(appSource, /selectDepictionAtomsThroughAction[\s\S]{0,320}selection\.replace/,
+  '2D selection goes through the public selection action');
+assert.match(appSource, /Applied refined-pose coordinates do not match expectedOutputCoordinateSha256/);
+assert.match(appSource, /Optimized coordinates do not match expectedOutputCoordinateSha256/);
 
 const first = await api.execute({ requestId:'chemist-1', action:'view.setMode', args:{ mode:'build' } });
 assert.equal(first.status, 'completed');

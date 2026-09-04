@@ -6,6 +6,13 @@ visible interface. A saved route is ordinary JSON with schema
 human captions. It contains no executable code, private callbacks, force-field objects, or direct
 coordinate replacement.
 
+Every selection-dependent chemistry move in a saved script must name its target with a persistent
+`atomId` or `atomIds`; publication replay never infers a target from ambient selection. Scripts also
+record `chemistry.setEditPolicy` when they choose staged versus immediate refinement. Coordinate-
+changing `pose.refine`, `pose.apply`, and `optimization.run` calls may pin the input, selected-pose,
+and output SHA-256 values returned by the preceding execution. A mismatched guard aborts, and a
+post-mutation mismatch restores the prior molecule and Undo/Redo history.
+
 This is a hard boundary. The story builder validates the complete transformed script—including
 presentation steps—against the exported public action manifest. A deep link invokes
 `designerScript.loadRegistered`, which resolves the registry entry, verifies the pinned source
