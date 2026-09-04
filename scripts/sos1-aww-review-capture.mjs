@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 export const SOS1_AWW_REVIEW_CAPTURE_SCHEMA =
-  'molarium.sos1-aww-diagnostic-coordinate-review/v1';
+  'molarium.sos1-aww-selected-pose-coordinate-capture/v1';
 
 function sha256(value, label) {
   const text = String(value || '');
@@ -9,13 +9,13 @@ function sha256(value, label) {
   return text;
 }
 
-export function diagnosticPoseApplyArgs(refinement) {
+export function diagnosticPoseApplyArgs(refinement, { allowInfeasible = true } = {}) {
   const selectedRank = Number(refinement?.selectedRank);
   assert(Number.isInteger(selectedRank) && selectedRank >= 1,
     'Diagnostic review capture requires a positive selectedRank');
   return {
     index:selectedRank - 1,
-    allowInfeasible:true,
+    allowInfeasible:Boolean(allowInfeasible),
     expectedInputCoordinateSha256:sha256(refinement.inputCoordinateSha256,
       'refinement.inputCoordinateSha256'),
     expectedSelectedCoordinateSha256:sha256(refinement.selectedCoordinateSha256,
@@ -28,7 +28,7 @@ export function diagnosticPoseApplyArgs(refinement) {
 }
 
 export function diagnosticReviewCaptureRecord({ refinement, appliedPose, pocket,
-  branch, eligible }) {
+  branch, eligible, reviewModeRequested = false, allowInfeasible = false }) {
   assert.equal(pocket?.scope, 'pocket');
   assert.equal(pocket?.truncated, false,
     'Diagnostic review capture requires an untruncated pocket inspection');
@@ -46,14 +46,17 @@ export function diagnosticReviewCaptureRecord({ refinement, appliedPose, pocket,
   return {
     schema:SOS1_AWW_REVIEW_CAPTURE_SCHEMA,
     requested:true,
-    diagnosticOnly:true,
-    promotable:false,
+    reviewModeRequested:Boolean(reviewModeRequested),
+    disposition:eligible ? 'eligible' : 'rejected-nonpromotable',
+    diagnosticOnly:!eligible,
+    promotable:Boolean(eligible),
     branch:String(branch),
-    eligibilityUnchanged:Boolean(eligible),
+    prospectiveEligible:Boolean(eligible),
+    eligibilityUnchanged:true,
     selectedFeasible:refinement?.selectedFeasible === true,
     selectedRank:Number(refinement.selectedRank),
     appliedPoseIndex:Number(appliedPose.index),
-    allowInfeasible:true,
+    allowInfeasible:Boolean(allowInfeasible),
     infeasibleOverride:Boolean(appliedPose.infeasibleOverride),
     selectedCoordinateSha256:refinement.selectedCoordinateSha256,
     selectedStateSha256:refinement.selectedStateSha256,
@@ -61,6 +64,8 @@ export function diagnosticReviewCaptureRecord({ refinement, appliedPose, pocket,
     outputStateSha256:appliedPose.outputStateSha256,
     pocketAtomCount:pocket.atoms.length,
     contactAnnotationCount:pocket.contacts?.length || 0,
-    purpose:'Coordinate review only; never production selection or promotion evidence.',
+    purpose:eligible
+      ? 'Automatic coordinate preservation for a prospectively eligible selected pose.'
+      : 'Automatic coordinate preservation of a rejected pose for diagnosis only; never production selection or promotion evidence.',
   };
 }

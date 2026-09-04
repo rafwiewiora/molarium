@@ -68,7 +68,7 @@ function selectedRequiredHydrogenBonds(refinement, requiredContactIds) {
 }
 
 async function runBranch({ root, serializedCampaign, branch,
-  captureReviewCoordinates = false }) {
+  reviewModeRequested = false }) {
   const browser = await startMolariumBrowser({ root, appPath:'?blank=1',
     width:1200, height:800 });
   const records = [];
@@ -197,26 +197,26 @@ async function runBranch({ root, serializedCampaign, branch,
       n7ToAsn879Od1Angstrom:selectedContacts.find((entry) =>
         entry.id === n7Contact.contactId)?.donorAcceptorDistanceAngstrom ?? null,
     };
-    if (eligible || captureReviewCoordinates) {
-      const poseApplyArgs = captureReviewCoordinates
-        ? diagnosticPoseApplyArgs(refinement)
-        : { index:Math.max(0, refinement.selectedRank - 1) };
-      const applied = await execute('pose.apply', poseApplyArgs);
-      pocket = await execute('session.inspect', {
-        scope:'pocket', includeCoordinates:true, maximumAtoms:500,
-      });
-      if (captureReviewCoordinates) reviewCoordinateCapture =
-        diagnosticReviewCaptureRecord({ refinement,
-          appliedPose:applied.appliedPose, pocket, branch:branch.id, eligible });
-      const ox3Atom = atom(pocket, 'AWW', 1104, 'OX3');
-      const tyrO = atom(pocket, 'TYR', 884, 'O');
-      const n7Atom = atom(pocket, 'AWW', 1104, 'N7');
-      const asnOd1 = atom(pocket, 'ASN', 879, 'OD1');
-      contactDistances = {
-        ox3ToTyr884BackboneOAngstrom:distance(ox3Atom, tyrO),
-        n7ToAsn879Od1Angstrom:distance(n7Atom, asnOd1),
-      };
-    }
+    // Coordinate preservation happens only after eligibility is frozen and
+    // never feeds back into the selector. Rejected candidates require an
+    // explicit, audited public override; eligible candidates remain fail-closed.
+    const poseApplyArgs = diagnosticPoseApplyArgs(refinement,
+      { allowInfeasible:!eligible });
+    const applied = await execute('pose.apply', poseApplyArgs);
+    pocket = await execute('session.inspect', {
+      scope:'pocket', includeCoordinates:true, maximumAtoms:500,
+    });
+    reviewCoordinateCapture = diagnosticReviewCaptureRecord({ refinement,
+      appliedPose:applied.appliedPose, pocket, branch:branch.id, eligible,
+      reviewModeRequested, allowInfeasible:poseApplyArgs.allowInfeasible });
+    const ox3Atom = atom(pocket, 'AWW', 1104, 'OX3');
+    const tyrO = atom(pocket, 'TYR', 884, 'O');
+    const n7Atom = atom(pocket, 'AWW', 1104, 'N7');
+    const asnOd1 = atom(pocket, 'ASN', 879, 'OD1');
+    contactDistances = {
+      ox3ToTyr884BackboneOAngstrom:distance(ox3Atom, tyrO),
+      n7ToAsn879Od1Angstrom:distance(n7Atom, asnOd1),
+    };
     return {
       schema:SCHEMA, branch:branch.id, pheState:branch.phe.id,
       holdoutCoordinatesUsed:false, sourceStateId:'AWZ', predictedStateId:'AWW',
@@ -273,15 +273,15 @@ async function main(args = process.argv.slice(2)) {
     holdoutCoordinatesUsed:false,
     holdoutPolicy:'5OVH may be opened only after selection; this proxy does not open it',
     hydrationPolicy:'water is outside pose.refine scoring; HOH1507 mobility and remaining overlap are evaluated by later full-system induced-fit relaxation of the prospective winner',
-    reviewCoordinateCapture:{ requested:captureReviewCoordinates,
-      diagnosticOnly:true, promotable:false,
-      policy:'When explicitly requested, apply the already-selected pose with public pose.apply allowInfeasible only after eligibility is frozen, then inspect an untruncated coordinate-bearing pocket.' },
+    coordinateCapture:{ always:true,
+      reviewModeRequested:captureReviewCoordinates,
+      policy:'After eligibility is frozen, every selected pose is applied through public pose.apply with hash guards and inspected as an untruncated coordinate-bearing pocket. Rejected poses are explicitly nonpromotable.' },
   });
   const results = [];
   for (const branch of branches) {
     const result = await runBranch({ root,
       serializedCampaign:campaignBytes.toString('utf8'), branch,
-      captureReviewCoordinates });
+      reviewModeRequested:captureReviewCoordinates });
     results.push(result);
     await save(`${branch.id}.json`, result);
     console.log(`SOS1_AWW_FACTORIAL ${JSON.stringify({ branch:branch.id,

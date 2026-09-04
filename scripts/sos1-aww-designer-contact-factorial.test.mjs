@@ -37,12 +37,15 @@ assert.match(source, /selectedComparablePoseScore/);
 assert.match(source, /unnormalized receptor-ligand interaction plus weighted relative ligand strain/);
 assert.doesNotMatch(source, /eligible\.sort\(\(a, b\) => a\.refinement\.selectedScoreKcalMol/);
 assert.match(source, /--capture-review-coordinates/);
-assert.match(source, /diagnosticPoseApplyArgs\(refinement\)/);
+assert.match(source, /coordinateCapture:\{ always:true/);
+assert.match(source, /diagnosticPoseApplyArgs\(refinement,\s+\{ allowInfeasible:!eligible \}\)/);
 assert.match(source, /diagnosticReviewCaptureRecord/);
 assert.match(source, /status:selected \? 'completed' : 'diagnostic-review-only'/);
 assert.match(source, /if \(!captureReviewCoordinates\)\s+assert\(eligible\.length >= 1/);
+assert.doesNotMatch(source, /if \(eligible \|\| captureReviewCoordinates\)/,
+'default factorial execution must preserve selected coordinates for every branch');
 assert(source.indexOf('const eligible = Object.values(prospectiveGates).every(Boolean)')
-  < source.indexOf('const poseApplyArgs = captureReviewCoordinates'),
+  < source.indexOf('const poseApplyArgs = diagnosticPoseApplyArgs'),
 'diagnostic coordinate capture must occur only after eligibility is frozen');
 
 const crossReceptorFixture = [{ id:'phe-native',
