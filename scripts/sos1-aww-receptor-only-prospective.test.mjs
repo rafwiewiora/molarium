@@ -22,6 +22,9 @@ assert.match(source, /e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e32
 assert.match(source, /sourcePath:`\.\/\$\{SOURCE_CAMPAIGN_PATH\}`/,
   'campaign import must avoid cloning a multi-megabyte serialized argument');
 assert.match(source, /designRoute\.resume[\s\S]{0,120}stateId:SOURCE_STATE_ID/);
+assert.match(source,
+  /execute\('protein\.parameterize'[\s\S]{0,240}maximumCoordinateDisplacementAngstrom, 0/,
+  'the resumed coordinate checkpoint must be parameterized without movement');
 assert.match(source, /stepId:AWW_STEP_ID/);
 assert.match(source, /aww-graph-only-campaign\.json/);
 const graphOnlyCommit = source.indexOf("'commit-aww-graph-only'");
@@ -59,8 +62,6 @@ assert.doesNotMatch(source, /execute\('pose\.apply'/);
 assert.doesNotMatch(source, /execute\('pose\.updateReceptorReference'/);
 assert.doesNotMatch(source, /execute\('optimization\.run'/);
 assert.doesNotMatch(source, /execute\('calculation\.run'/);
-assert.doesNotMatch(source, /execute\('protein\.parameterize'/,
-  'receptor-only discrete enumeration must not perform unused force-field setup');
 assert.doesNotMatch(source, /5OV[F-I]/,
   'prediction source must not name later structures');
 assert.match(source, /Refusing to overwrite immutable attempt/);

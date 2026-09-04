@@ -185,7 +185,8 @@ async function main() {
       'window.MolariumChemistActions.describe()');
     for (const action of ['campaign.import', 'campaign.verify', 'campaign.commitCurrent',
       'campaign.export', 'designRoute.resume', 'designRoute.applyStep',
-      'pose.captureReference', 'geometry.setInternalCoordinate', 'pose.addContact',
+      'protein.parameterize', 'pose.captureReference',
+      'geometry.setInternalCoordinate', 'pose.addContact',
       'pose.setDesignerLigandPoseFixed',
       'pose.enumerateSidechainRotamers', 'pose.applySidechainRotamer', 'session.inspect'])
       assert(description.actions[action], `Required public action is unavailable: ${action}`);
@@ -215,6 +216,10 @@ async function main() {
       routeId:'sos1-hit-only', stateId:SOURCE_STATE_ID,
     }, 'resume-awz-route');
     assert.equal(resumed.result.designRoute.currentStateId, SOURCE_STATE_ID);
+    const parameterized = await execute('protein.parameterize', {},
+      'parameterize-awz-without-motion');
+    assert.equal(parameterized.result.parameterization.maximumCoordinateDisplacementAngstrom, 0,
+      'Parameter assignment must not move the frozen AWZ source coordinates');
     await execute('view.setMode', { mode:'build' }, 'enter-design');
     await execute('pose.captureReference', { mode:'propagate' }, 'capture-awz-reference');
 
