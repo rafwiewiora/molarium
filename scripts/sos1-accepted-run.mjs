@@ -174,6 +174,10 @@ export async function buildAcceptedSos1ReplayScript(verified) {
     provenance:{ runId:verified.runId,
       predictionManifestSha256:sha256(verified.manifestBytes),
       evaluationSummarySha256:sha256(verified.evaluationBytes),
+      sourceAuditSha256:sha256(verified.auditBytes),
+      sourceAuditRecords:records.length,
+      checkpoints:SOS1_STEP_IDS.map((stepId) => ({ stepId,
+        sha256:verified.checkpoints.get(stepId).entry.sha256 })),
       accepted:true },
   });
   validateActionScript(script);

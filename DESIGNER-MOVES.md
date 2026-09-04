@@ -194,6 +194,64 @@ failure exits nonzero, deletes the staged artifacts, and leaves the previous mov
 sources unchanged. The paper figure builder accepts only a complete manifest with replay status
 `completed` and verifies each selected frame's SHA-256 before updating the figure.
 
+## SOS1 publication preflight
+
+The production build, local manifest generator, and scientific CI all run
+`npm run verify:sos1-publication` before accepting the public SOS1 story. The verifier reads exactly
+one declaration, `design-history/examples/sos1-publication.json`; it never selects the newest output
+directory or repairs missing files. Until a complete accepted run has been promoted and that
+declaration exists, these release commands intentionally fail.
+
+The declaration uses schema `molarium.sos1-publication/v1` and names one immutable accepted-run
+directory, one public Chemist Actions replay, and one arrowable checkpoint review. It pins the
+prediction manifest, holdout acceptance summary, source action audit, every frozen checkpoint, the
+canonical replay hash, and both public artifact file hashes. It also identifies the application,
+production-build, and local-manifest sources that must register those same artifacts. A minimal
+shape is:
+
+```json
+{
+  "schema": "molarium.sos1-publication/v1",
+  "routeId": "sos1-hit-only",
+  "storyId": "sos1-hit-to-bay293-review",
+  "acceptedRun": {
+    "id": "sos1-hit-only-coupled-postrelax-v9",
+    "directory": "design-history/publications/sos1/sos1-hit-only-coupled-postrelax-v9",
+    "predictionManifestSha256": "<sha256>",
+    "evaluationSummarySha256": "<sha256>",
+    "sourceAuditSha256": "<sha256>",
+    "checkpoints": [
+      { "stepId": "scaffold-rewrite", "sha256": "<sha256>" },
+      { "stepId": "fragment-merge", "sha256": "<sha256>" },
+      { "stepId": "open-phe890-pocket", "sha256": "<sha256>" },
+      { "stepId": "finish-bay-293", "sha256": "<sha256>" }
+    ]
+  },
+  "publicReplay": {
+    "path": "design-history/examples/sos1-current.action-script.json",
+    "sha256": "<file-sha256>",
+    "actionScriptSha256": "<canonical-json-sha256>"
+  },
+  "checkpointReview": {
+    "path": "design-history/structure-viewer/sos1-current.json",
+    "sha256": "<file-sha256>"
+  },
+  "integration": {
+    "applicationSource": "app.js",
+    "buildSource": "scripts/build-web.mjs",
+    "manifestSource": "scripts/generate-local-lab-manifest.mjs"
+  }
+}
+```
+
+Passing the preflight means that the independent holdout verdict accepts all four route steps and
+continuity check; manifest-to-evaluation, manifest-to-audit, and manifest-to-checkpoint hashes still
+match; the public replay is byte-pinned and is canonically identical to the selected replay rebuilt
+from that audit; every replay operation is in the public Chemist Actions registry; no replay request
+uses `featureSeedingProtocol: "v3"`; and the application, checkpoint review, build, and local
+manifest all refer to the same declared run. Updating a filename or a displayed story without
+promoting its accepted evidence therefore cannot pass production CI.
+
 Importing a valid script clears the existing molecule before installing the story. This guarantees
 that the first molecular state is produced by the first recorded action, rather than inherited
 from the viewer's launch molecule or a previous session.

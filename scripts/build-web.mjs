@@ -34,6 +34,7 @@ const files = [
   'design-history/live-campaign.mjs', 'design-history/live-campaign-store.mjs',
   'design-history/structures/design-route.mjs',
   'design-history/structures/registered-ligand-graph.mjs',
+  'design-history/examples/sos1-publication.json',
   'design-history/examples/sos1-growth-clash-v7-captions.json',
   'design-history/examples/sos1-growth-clash-v7.provenance.json',
   'design-history/examples/sos1-growth-clash-v7.full.action-script.json',
