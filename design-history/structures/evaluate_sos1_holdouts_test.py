@@ -44,6 +44,16 @@ class EvaluatorTest(unittest.TestCase):
         self.assertTrue(set(regions["hard"]).isdisjoint(regions["released"]))
         self.assertTrue(set(regions["hard"]).isdisjoint(regions["distalFeature"]))
 
+    def test_registered_pre_holdout_protocol_pins_current_evaluator(self) -> None:
+        protocol_bytes, protocol = EVALUATOR.verify_evaluation_protocol(
+            EVALUATOR.DEFAULT_PROTOCOL_PATH)
+        self.assertTrue(protocol_bytes)
+        self.assertTrue(protocol["registeredBeforeHoldoutAccess"])
+        self.assertEqual(protocol["holdoutCoordinateHashBinding"],
+                         "post-open-evaluation-report-only")
+        self.assertEqual(protocol["receptorAlignment"]["anchors"],
+                         EVALUATOR.EXPECTED_ALIGNMENT_ANCHORS)
+
     def test_geometry_reports_plane_and_radial_changes(self) -> None:
         first = np.array([[-1.0, 0.0, 0.0], [0.5, math.sqrt(3) / 2, 0.0],
                           [0.5, -math.sqrt(3) / 2, 0.0]])
@@ -79,6 +89,101 @@ class EvaluatorTest(unittest.TestCase):
         clash = EVALUATOR.prediction_integrity(clashing, step, template)
         self.assertFalse(clash["valid"])
         self.assertGreater(clash["proteinLigandSevereClashes"], 0)
+
+    def test_exact_registered_graph_rejects_same_size_wrong_edges(self) -> None:
+        template = Chem.MolFromSmiles("C1CCC1")
+        exact_coordinates = Chem.MolFromSmiles("C1CCC1")
+        exact, mappings, validation = EVALUATOR.exact_registered_graph_mappings(
+            template, exact_coordinates)
+        self.assertTrue(mappings)
+        self.assertTrue(validation["exactBondOrderAndAromaticity"])
+        self.assertEqual(EVALUATOR.bond_chemistry_signature(exact),
+                         EVALUATOR.bond_chemistry_signature(template))
+
+        wrong_edges = Chem.MolFromSmiles("CC1CC1")
+        self.assertEqual(wrong_edges.GetNumAtoms(), template.GetNumAtoms())
+        self.assertEqual(wrong_edges.GetNumBonds(), template.GetNumBonds())
+        with self.assertRaisesRegex(RuntimeError, "exactly isomorphic"):
+            EVALUATOR.exact_registered_graph_mappings(template, wrong_edges)
+
+    def test_registered_graph_restores_and_checks_aromatic_chemistry(self) -> None:
+        template = Chem.MolFromSmiles("c1ccncc1")
+        coordinate_graph = Chem.RWMol()
+        for atom_record in template.GetAtoms():
+            coordinate_graph.AddAtom(Chem.Atom(atom_record.GetAtomicNum()))
+        for bond in template.GetBonds():
+            coordinate_graph.AddBond(bond.GetBeginAtomIdx(), bond.GetEndAtomIdx(),
+                                     Chem.BondType.SINGLE)
+        registered, mappings, validation = EVALUATOR.exact_registered_graph_mappings(
+            template, coordinate_graph.GetMol())
+        self.assertTrue(mappings)
+        self.assertTrue(all(atom_record.GetIsAromatic()
+                            for atom_record in registered.GetAtoms()))
+        self.assertTrue(all(bond.GetIsAromatic() for bond in registered.GetBonds()))
+        self.assertEqual(validation["bondOrderAndAromaticitySource"],
+                         "hash-pinned registered route productSmiles")
+
+    def test_coordinate_inspections_must_be_complete(self) -> None:
+        complete = {
+            "ligand": {"atoms": [atom("C1", "C", [0.0, 0.0, 0.0])],
+                       "totalAtomCount": 1, "truncated": False},
+            "pocket": {"atoms": [atom("CA", "C", [1.0, 0.0, 0.0], "ALA")],
+                       "totalAtomCount": 1, "truncated": False},
+        }
+        EVALUATOR.verify_complete_coordinate_inspections(complete, "fixture")
+
+        truncated = json.loads(json.dumps(complete))
+        truncated["nestedEvidence"] = {
+            "atoms": [atom("C2", "C", [2.0, 0.0, 0.0])],
+            "totalAtomCount": 2,
+            "truncated": True,
+        }
+        with self.assertRaisesRegex(RuntimeError, "truncated"):
+            EVALUATOR.verify_complete_coordinate_inspections(truncated, "fixture")
+
+        incomplete_count = json.loads(json.dumps(complete))
+        incomplete_count["ligand"]["totalAtomCount"] = 2
+        with self.assertRaisesRegex(RuntimeError, "incomplete atom coverage"):
+            EVALUATOR.verify_complete_coordinate_inspections(
+                incomplete_count, "fixture")
+
+    def test_receptor_alignment_uses_only_registered_non_phe_anchors(self) -> None:
+        anchors = EVALUATOR.EXPECTED_ALIGNMENT_ANCHORS
+        protocol = {"receptorAlignment": {
+            "anchors": anchors,
+            "minimumAnchorCount": len(anchors),
+            "excludedDesignedResidues": [
+                {"chain": "A", "residueNumber": 890, "residueName": "PHE"}],
+        }}
+
+        def row(entry: dict, point: np.ndarray) -> dict:
+            return {"record": "ATOM", "chain": entry["chain"],
+                    "residueNumber": entry["residueNumber"],
+                    "insertionCode": entry["insertionCode"],
+                    "residueName": entry["residueName"],
+                    "atomName": entry["atomName"], "point": point}
+
+        reference = []
+        mobile = []
+        shift = np.array([4.0, -2.0, 1.0])
+        for index, entry in enumerate(anchors):
+            point = np.array([index % 3.0, (index * index) % 5.0,
+                              math.sin(index)])
+            reference.append(row(entry, point))
+            mobile.append(row(entry, point + shift))
+        phe = {"chain": "A", "residueNumber": 890, "insertionCode": "",
+               "residueName": "PHE", "atomName": "CA"}
+        reference.append(row(phe, np.array([0.0, 0.0, 0.0])))
+        mobile.append(row(phe, np.array([100.0, 100.0, 100.0])))
+
+        alignment = EVALUATOR.receptor_alignment(reference, mobile, protocol)
+        self.assertLess(alignment["rmsdAngstrom"], 1e-8)
+        self.assertEqual(alignment["atoms"], len(anchors))
+        self.assertEqual(alignment["excludedDesignedResidues"],
+                         protocol["receptorAlignment"]["excludedDesignedResidues"])
+
+        with self.assertRaisesRegex(RuntimeError, "anchors are incomplete"):
+            EVALUATOR.receptor_alignment(reference[:-2], mobile[:-2], protocol)
 
     def continuity_fixture(self) -> tuple[dict, dict[str, np.ndarray]]:
         pose_map = self.final_step["posePropagationMap"]

@@ -16,11 +16,43 @@ from pathlib import Path
 
 import numpy as np
 from rdkit import Chem
-from rdkit.Chem import rdFMCS
+from rdkit.Chem import AllChem
 
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
+DEFAULT_PROTOCOL_PATH = (
+    HERE / "generated/sos1-holdout-evaluation-protocol.json")
+
+EXPECTED_HOLDOUTS = [
+    {"stepId": "scaffold-rewrite", "pdbId": "5OVF", "filename": "5OVF.pdb",
+     "ligandComponentId": "AWT", "ligandChain": "A", "ligandResidueNumber": 1101},
+    {"stepId": "fragment-merge", "pdbId": "5OVG", "filename": "5OVG.pdb",
+     "ligandComponentId": "AWZ", "ligandChain": "A", "ligandResidueNumber": 1101},
+    {"stepId": "open-phe890-pocket", "pdbId": "5OVH", "filename": "5OVH.pdb",
+     "ligandComponentId": "AWW", "ligandChain": "A", "ligandResidueNumber": 1101},
+    {"stepId": "finish-bay-293", "pdbId": "5OVI", "filename": "5OVI.pdb",
+     "ligandComponentId": "AXH", "ligandChain": "A", "ligandResidueNumber": 2001},
+]
+
+EXPECTED_ALIGNMENT_ANCHORS = [
+    {"chain": "A", "residueNumber": 874, "insertionCode": "",
+     "residueName": "VAL", "atomName": "CA"},
+    {"chain": "A", "residueNumber": 876, "insertionCode": "",
+     "residueName": "SER", "atomName": "CA"},
+    {"chain": "A", "residueNumber": 880, "insertionCode": "",
+     "residueName": "SER", "atomName": "CA"},
+    {"chain": "A", "residueNumber": 885, "insertionCode": "",
+     "residueName": "ARG", "atomName": "CA"},
+    {"chain": "A", "residueNumber": 893, "insertionCode": "",
+     "residueName": "ILE", "atomName": "CA"},
+    {"chain": "A", "residueNumber": 899, "insertionCode": "",
+     "residueName": "LYS", "atomName": "CA"},
+    {"chain": "A", "residueNumber": 904, "insertionCode": "",
+     "residueName": "ALA", "atomName": "CA"},
+    {"chain": "A", "residueNumber": 906, "insertionCode": "",
+     "residueName": "GLU", "atomName": "CA"},
+]
 
 
 # These are prospective evaluation criteria, not fitting parameters.  Every
@@ -74,16 +106,120 @@ def read_json(path: Path) -> tuple[bytes, dict]:
     return data, json.loads(data)
 
 
-def verify_run(run_dir: Path) -> tuple[bytes, dict, dict[str, dict], list[dict], dict]:
+def verify_evaluation_protocol(path: Path) -> tuple[bytes, dict]:
+    """Verify the protocol registration without resolving any holdout file."""
+    protocol_bytes, protocol = read_json(path)
+    if protocol.get("schema") != "molarium.sos1-holdout-evaluation-protocol/v1":
+        raise RuntimeError("Unexpected SOS1 holdout evaluation protocol schema")
+    if protocol.get("routeId") != "sos1-hit-only" \
+            or protocol.get("registeredBeforeHoldoutAccess") is not True:
+        raise RuntimeError("SOS1 evaluation protocol is not registered pre-holdout")
+    if protocol.get("holdoutCoordinateHashBinding") != "post-open-evaluation-report-only":
+        raise RuntimeError("Holdout coordinate hashes must be bound only after opening")
+
+    evaluator = protocol.get("evaluator", {})
+    evaluator_path = (ROOT / evaluator.get("path", "")).resolve()
+    if evaluator_path != Path(__file__).resolve():
+        raise RuntimeError("Evaluation protocol names a different evaluator source")
+    if digest(evaluator_path.read_bytes()) != evaluator.get("sha256"):
+        raise RuntimeError("Evaluation protocol evaluator source hash changed")
+    if protocol.get("thresholds") != THRESHOLDS \
+            or protocol.get("continuityThresholds") != CONTINUITY_THRESHOLDS:
+        raise RuntimeError("Evaluation protocol thresholds changed")
+
+    route = protocol.get("registeredRoute", {})
+    route_path = (ROOT / route.get("path", "")).resolve()
+    expected_route_path = (
+        HERE / "generated/sos1-prospective-campaign.json").resolve()
+    if route_path != expected_route_path:
+        raise RuntimeError("Evaluation protocol names a different registered route")
+    route_bytes, route_record = read_json(route_path)
+    if digest(route_bytes) != route.get("sha256") \
+            or route_record.get("schema") != route.get("schema") \
+            or route_record.get("id") != "sos1-hit-only":
+        raise RuntimeError("Registered SOS1 route identity or hash changed")
+
+    if protocol.get("holdouts") != EXPECTED_HOLDOUTS:
+        raise RuntimeError("Evaluation protocol holdout identities changed")
+    prediction_inputs = protocol.get("predictionInputs", {})
+    if prediction_inputs.get("runManifestSchema") != "molarium.design-prediction-run/v1" \
+            or prediction_inputs.get("checkpointSchema") \
+            != "molarium.design-prediction-checkpoint/v1" \
+            or prediction_inputs.get("requiredStepIds") \
+            != [entry["stepId"] for entry in EXPECTED_HOLDOUTS] \
+            or prediction_inputs.get("requireCompleteCoordinateInspections") is not True:
+        raise RuntimeError("Evaluation protocol prediction input rules changed")
+    alignment = protocol.get("receptorAlignment", {})
+    if alignment.get("anchors") != EXPECTED_ALIGNMENT_ANCHORS:
+        raise RuntimeError("Evaluation protocol receptor anchors changed")
+    if alignment.get("excludedDesignedResidues") != [
+            {"chain": "A", "residueNumber": 890, "residueName": "PHE"}]:
+        raise RuntimeError("Evaluation protocol does not exclude designed Phe890")
+    if alignment.get("minimumAnchorCount") != len(EXPECTED_ALIGNMENT_ANCHORS):
+        raise RuntimeError("Evaluation protocol anchor count changed")
+    if alignment.get("fitAcceptanceThresholdAngstrom") \
+            != THRESHOLDS["receptorAlignmentRmsdAngstrom"]:
+        raise RuntimeError("Evaluation protocol receptor fit threshold changed")
+    return protocol_bytes, protocol
+
+
+def coordinate_inspections(value: object, path: str = "checkpoint") -> list[tuple[str, dict]]:
+    """Collect persisted session inspections that contain Cartesian coordinates."""
+    found: list[tuple[str, dict]] = []
+    if isinstance(value, dict):
+        atoms = value.get("atoms")
+        if isinstance(atoms, list) and (
+                "truncated" in value or "totalAtomCount" in value
+                or any("coordinatesAngstrom" in atom for atom in atoms
+                       if isinstance(atom, dict))):
+            found.append((path, value))
+        for key, child in value.items():
+            found.extend(coordinate_inspections(child, f"{path}.{key}"))
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            found.extend(coordinate_inspections(child, f"{path}[{index}]"))
+    return found
+
+
+def verify_complete_coordinate_inspections(checkpoint: dict, step_id: str) -> None:
+    """Reject capped coordinate evidence before it reaches any evaluator metric."""
+    for required in ["ligand", "pocket"]:
+        inspection = checkpoint.get(required)
+        if not isinstance(inspection, dict) or not inspection.get("atoms"):
+            raise RuntimeError(f"{step_id}: frozen {required} inspection is absent")
+        if inspection.get("truncated") is not False:
+            raise RuntimeError(f"{step_id}: frozen {required} inspection is truncated")
+    inspections = coordinate_inspections(checkpoint)
+    if len(inspections) < 2:
+        raise RuntimeError(f"{step_id}: frozen coordinate evidence is incomplete")
+    for location, inspection in inspections:
+        if inspection.get("truncated") is not False:
+            raise RuntimeError(f"{step_id}: coordinate inspection {location} is truncated")
+        total = inspection.get("totalAtomCount")
+        if not isinstance(total, int) or total != len(inspection["atoms"]):
+            raise RuntimeError(
+                f"{step_id}: coordinate inspection {location} has incomplete atom coverage")
+        for atom in inspection["atoms"]:
+            point = atom.get("coordinatesAngstrom")
+            if not isinstance(point, list) or len(point) != 3 \
+                    or not all(isinstance(value, (int, float)) and math.isfinite(value)
+                               for value in point):
+                raise RuntimeError(
+                    f"{step_id}: coordinate inspection {location} has invalid coordinates")
+
+
+def verify_run(run_dir: Path, protocol: dict) \
+        -> tuple[bytes, dict, dict[str, dict], list[dict], dict]:
     manifest_bytes, manifest = read_json(run_dir / "prediction-manifest.json")
+    if manifest.get("schema") != protocol["predictionInputs"]["runManifestSchema"]:
+        raise RuntimeError("Unexpected SOS1 prediction run manifest schema")
     if manifest.get("routeId") != "sos1-hit-only":
         raise RuntimeError("Not a SOS1 hit-only prediction run")
     if manifest.get("status") != "predictions-frozen-holdouts-unopened":
         raise RuntimeError("Predictions were not frozen before evaluation")
     if manifest.get("protocol", {}).get("initialCoordinateInput") != "PDB 5OVE/AXE only":
         raise RuntimeError("The run did not start from 5OVE/AXE only")
-    expected_steps = ["scaffold-rewrite", "fragment-merge",
-                      "open-phe890-pocket", "finish-bay-293"]
+    expected_steps = [entry["stepId"] for entry in protocol["holdouts"]]
     if [entry["stepId"] for entry in manifest.get("checkpoints", [])] != expected_steps:
         raise RuntimeError("The complete four-step SOS1 sequence is not frozen")
     checkpoints = {}
@@ -93,6 +229,12 @@ def verify_run(run_dir: Path) -> tuple[bytes, dict, dict[str, dict], list[dict],
             raise RuntimeError(f"{frozen['stepId']}: frozen checkpoint hash changed")
         if not checkpoint.get("frozenBeforeHoldoutAccess"):
             raise RuntimeError(f"{frozen['stepId']}: freeze boundary is absent")
+        if checkpoint.get("schema") != protocol["predictionInputs"]["checkpointSchema"] \
+                or checkpoint.get("routeId", checkpoint.get("campaignId")) != "sos1-hit-only" \
+                or checkpoint.get("stepId") != frozen["stepId"] \
+                or checkpoint.get("predictedStateId") != frozen["predictedStateId"]:
+            raise RuntimeError(f"{frozen['stepId']}: checkpoint identity changed")
+        verify_complete_coordinate_inspections(checkpoint, frozen["stepId"])
         checkpoints[frozen["stepId"]] = checkpoint
     audit_bytes, audit_wrapper = read_json(run_dir / "chemist-action-audit.json")
     if digest(audit_bytes) != manifest["agentApi"]["auditSha256"]:
@@ -113,6 +255,10 @@ def verify_run(run_dir: Path) -> tuple[bytes, dict, dict[str, dict], list[dict],
     campaign_bytes, campaign = read_json(campaign_path)
     if digest(campaign_bytes) != manifest["inputs"]["campaign"]["sha256"]:
         raise RuntimeError("Pre-freeze campaign hash changed")
+    registered_route = protocol["registeredRoute"]
+    if digest(campaign_bytes) != registered_route["sha256"] \
+            or campaign.get("schema") != registered_route["schema"]:
+        raise RuntimeError("Prediction manifest and evaluation protocol route differ")
     for previous, following in zip(expected_steps, expected_steps[1:]):
         freeze_sequence = next(entry["freezeActionSequence"] for entry in manifest["checkpoints"]
                                if entry["stepId"] == previous)
@@ -147,6 +293,18 @@ def pdb_rows(text: str) -> list[dict]:
     return rows
 
 
+def pdb_identifier(text: str) -> str | None:
+    header = next((line for line in text.splitlines() if line.startswith("HEADER")), None)
+    if header is None:
+        return None
+    fixed = header[62:66].strip().upper()
+    if len(fixed) == 4 and fixed[0].isdigit():
+        return fixed
+    words = header.split()
+    trailing = words[-1].upper() if words else ""
+    return trailing if len(trailing) == 4 and trailing[0].isdigit() else None
+
+
 def kabsch(reference: np.ndarray, mobile: np.ndarray) -> tuple[np.ndarray, np.ndarray, float]:
     reference_center = reference.mean(axis=0)
     mobile_center = mobile.mean(axis=0)
@@ -168,39 +326,55 @@ def rotation_angle_degrees(rotation: np.ndarray) -> float:
     return float(math.degrees(math.acos(min(1.0, max(-1.0, cosine)))))
 
 
-def receptor_alignment(reference_rows: list[dict], mobile_rows: list[dict]) -> dict:
-    def key(row: dict) -> str:
-        return f"{row['residueNumber']}:{row['insertionCode']}:{row['residueName']}"
+def receptor_alignment(reference_rows: list[dict], mobile_rows: list[dict],
+                       protocol: dict) -> dict:
+    """Align on the pre-registered, Phe890-excluding receptor anchors only."""
+    def key(row: dict) -> tuple[str, int, str, str, str]:
+        return (row["chain"], row["residueNumber"], row["insertionCode"],
+                row["residueName"], row["atomName"])
+
     reference = {key(row): row["point"] for row in reference_rows
-                 if row["record"] == "ATOM" and row["chain"] == "A"
-                 and row["atomName"] == "CA"}
+                 if row["record"] == "ATOM"}
     mobile = {key(row): row["point"] for row in mobile_rows
-              if row["record"] == "ATOM" and row["chain"] == "A"
-              and row["atomName"] == "CA"}
-    keys = sorted(set(reference) & set(mobile))
-    if len(keys) < 20:
-        raise RuntimeError("Insufficient SOS1 backbone atoms for holdout alignment")
+              if row["record"] == "ATOM"}
+    anchor_records = protocol["receptorAlignment"]["anchors"]
+    keys = [(entry["chain"], entry["residueNumber"], entry["insertionCode"],
+             entry["residueName"], entry["atomName"])
+            for entry in anchor_records]
+    missing_reference = [entry for entry, anchor in zip(anchor_records, keys)
+                         if anchor not in reference]
+    missing_mobile = [entry for entry, anchor in zip(anchor_records, keys)
+                      if anchor not in mobile]
+    if missing_reference or missing_mobile \
+            or len(keys) < protocol["receptorAlignment"]["minimumAnchorCount"]:
+        raise RuntimeError(
+            "Registered SOS1 receptor alignment anchors are incomplete: "
+            f"prediction={missing_reference}, holdout={missing_mobile}")
     rotation, translation, rmsd = kabsch(
         np.array([reference[key] for key in keys]),
         np.array([mobile[key] for key in keys]))
     return {"rotation": rotation, "translation": translation,
-            "atoms": len(keys), "rmsdAngstrom": rmsd}
+            "atoms": len(keys), "rmsdAngstrom": rmsd,
+            "anchorRecords": anchor_records,
+            "excludedDesignedResidues":
+                protocol["receptorAlignment"]["excludedDesignedResidues"]}
 
 
 def transform_points(points: np.ndarray, alignment: dict) -> np.ndarray:
     return points @ alignment["rotation"] + alignment["translation"]
 
 
-def ligand_fragment(path: Path, residue_name: str, residue_number: int) -> tuple[Chem.Mol, list[str]]:
-    full = Chem.MolFromPDBFile(str(path), removeHs=True, sanitize=False)
+def ligand_fragment(pdb_text: str, residue_name: str, residue_number: int,
+                    chain: str = "A") -> tuple[Chem.Mol, list[str]]:
+    full = Chem.MolFromPDBBlock(pdb_text, removeHs=True, sanitize=False)
     if full is None:
-        raise RuntimeError(f"Unable to parse {path.name}")
+        raise RuntimeError("Unable to parse opened holdout PDB bytes")
     selected = []
     names = []
     for atom in full.GetAtoms():
         info = atom.GetPDBResidueInfo()
         if (info and info.GetResidueName().strip() == residue_name
-                and info.GetChainId().strip() == "A"
+                and info.GetChainId().strip() == chain
                 and info.GetResidueNumber() == residue_number):
             selected.append(atom.GetIdx())
             names.append(info.GetName().strip())
@@ -222,30 +396,77 @@ def ligand_fragment(path: Path, residue_name: str, residue_number: int) -> tuple
     return molecule, names
 
 
-def symmetry_mappings(template: Chem.Mol, fragment: Chem.Mol) -> list[list[int]]:
-    result = rdFMCS.FindMCS(
-        [template, fragment], timeout=30,
-        atomCompare=rdFMCS.AtomCompare.CompareElements,
-        bondCompare=rdFMCS.BondCompare.CompareAny,
-        ringMatchesRingOnly=False, completeRingsOnly=False,
-    )
-    if result.canceled or result.numAtoms != template.GetNumAtoms() \
-            or result.numAtoms != fragment.GetNumAtoms():
-        raise RuntimeError("Holdout ligand graph does not match the registered product graph")
-    query = Chem.MolFromSmarts(result.smartsString)
-    template_matches = template.GetSubstructMatches(query, uniquify=False, maxMatches=4096)
-    fragment_matches = fragment.GetSubstructMatches(query, uniquify=False, maxMatches=4096)
-    mappings = set()
-    for template_match in template_matches:
-        for fragment_match in fragment_matches:
-            mapping = [None] * template.GetNumAtoms()
-            for template_index, fragment_index in zip(template_match, fragment_match):
-                mapping[template_index] = fragment_index
-            if all(index is not None for index in mapping):
-                mappings.add(tuple(mapping))
+def bond_chemistry_signature(molecule: Chem.Mol, mapping: list[int] | None = None) \
+        -> list[tuple[int, int, float, bool]]:
+    mapping = mapping or list(range(molecule.GetNumAtoms()))
+    signature = []
+    for bond in molecule.GetBonds():
+        first = mapping[bond.GetBeginAtomIdx()]
+        second = mapping[bond.GetEndAtomIdx()]
+        signature.append((min(first, second), max(first, second),
+                          float(bond.GetBondTypeAsDouble()), bond.GetIsAromatic()))
+    return sorted(signature)
+
+
+def exact_registered_graph_mappings(template: Chem.Mol, coordinate_fragment: Chem.Mol) \
+        -> tuple[Chem.Mol, list[list[int]], dict]:
+    """Return only exact registered-chemistry graph isomorphisms.
+
+    PDB coordinates do not authoritatively encode small-molecule bond order.
+    Therefore elemental connectivity must first be exactly isomorphic, after
+    which bond orders, formal charges, and aromaticity are assigned from the
+    pre-registered product graph.  The resulting graph is then checked with
+    exact edges, bond orders, and aromatic flags.  No partial MCS is accepted.
+    """
+    if template.GetNumAtoms() != coordinate_fragment.GetNumAtoms() \
+            or template.GetNumBonds() != coordinate_fragment.GetNumBonds():
+        raise RuntimeError(
+            "Holdout ligand atom or edge count does not match the registered product graph")
+    try:
+        registered_fragment = AllChem.AssignBondOrdersFromTemplate(
+            template, coordinate_fragment)
+    except (ValueError, RuntimeError) as error:
+        raise RuntimeError(
+            "Holdout ligand elemental connectivity is not exactly isomorphic "
+            "to the registered product graph") from error
+    matches = registered_fragment.GetSubstructMatches(
+        template, uniquify=False, useChirality=False, maxMatches=4096)
+    expected_signature = bond_chemistry_signature(template)
+    mappings = []
+    for mapping in matches:
+        if len(mapping) != template.GetNumAtoms():
+            continue
+        atom_chemistry_matches = all(
+            template.GetAtomWithIdx(template_index).GetAtomicNum()
+            == registered_fragment.GetAtomWithIdx(fragment_index).GetAtomicNum()
+            and template.GetAtomWithIdx(template_index).GetFormalCharge()
+            == registered_fragment.GetAtomWithIdx(fragment_index).GetFormalCharge()
+            and template.GetAtomWithIdx(template_index).GetIsAromatic()
+            == registered_fragment.GetAtomWithIdx(fragment_index).GetIsAromatic()
+            for template_index, fragment_index in enumerate(mapping))
+        inverse = [None] * len(mapping)
+        for template_index, fragment_index in enumerate(mapping):
+            inverse[fragment_index] = template_index
+        chemistry_matches = (
+            atom_chemistry_matches
+            and bond_chemistry_signature(registered_fragment, inverse)
+            == expected_signature)
+        if chemistry_matches:
+            mappings.append(tuple(mapping))
+    mappings = sorted(set(mappings))
     if not mappings:
-        raise RuntimeError("No complete ligand symmetry map was found")
-    return [list(mapping) for mapping in sorted(mappings)]
+        raise RuntimeError(
+            "Holdout ligand lacks an exact edge/bond-order/aromaticity mapping "
+            "to the registered product graph")
+    validation = {
+        "method": "exact registered graph isomorphism",
+        "coordinateConnectivity": "PDB elemental edges; no partial MCS",
+        "bondOrderAndAromaticitySource": "hash-pinned registered route productSmiles",
+        "atomCount": template.GetNumAtoms(),
+        "edgeCount": template.GetNumBonds(),
+        "exactBondOrderAndAromaticity": True,
+    }
+    return registered_fragment, [list(mapping) for mapping in mappings], validation
 
 
 def rmsd(first: np.ndarray, second: np.ndarray, indices: list[int] | None = None) -> float:
@@ -797,24 +1018,29 @@ def aww_axh_continuity(campaign: dict, checkpoints: dict[str, dict]) -> dict:
 
 def evaluate_verified_run(run_dir: Path, holdout_dir: Path, manifest_bytes: bytes,
                           manifest: dict, checkpoints: dict[str, dict],
-                          campaign: dict) -> dict:
+                          campaign: dict, protocol_bytes: bytes,
+                          protocol: dict) -> dict:
     """Read holdouts and evaluate a run whose complete freeze boundary passed."""
-    evaluations = [
-        ("scaffold-rewrite", "5OVF", "AWT", 1101),
-        ("fragment-merge", "5OVG", "AWZ", 1101),
-        ("open-phe890-pocket", "5OVH", "AWW", 1101),
-        ("finish-bay-293", "5OVI", "AXH", 2001),
-    ]
     full_results = []
-    for step_id, pdb_id, ligand_id, residue_number in evaluations:
-        holdout_path = holdout_dir / f"{pdb_id}.pdb"
+    holdout_dir = holdout_dir.resolve()
+    for evaluation in protocol["holdouts"]:
+        step_id = evaluation["stepId"]
+        pdb_id = evaluation["pdbId"]
+        ligand_id = evaluation["ligandComponentId"]
+        residue_number = evaluation["ligandResidueNumber"]
+        holdout_path = (holdout_dir / evaluation["filename"]).resolve()
+        if holdout_path.parent != holdout_dir:
+            raise RuntimeError(f"{step_id}: holdout filename escapes the registered directory")
         holdout_bytes = holdout_path.read_bytes()
-        holdout_rows = pdb_rows(holdout_bytes.decode())
+        holdout_text = holdout_bytes.decode()
+        if pdb_identifier(holdout_text) != pdb_id:
+            raise RuntimeError(f"{step_id}: opened holdout is not registered PDB {pdb_id}")
+        holdout_rows = pdb_rows(holdout_text)
         step = next(step for step in campaign["steps"] if step["id"] == step_id)
         checkpoint = checkpoints[step_id]
-        # Protein preparation centers the complex.  Align the holdout directly
-        # into the frozen prediction's receptor frame using the inspected
-        # pocket C-alpha atoms, not the raw 5OVE file frame.
+        # Protein preparation centers the complex. Align the holdout directly
+        # into the frozen prediction's receptor frame using the pre-registered
+        # Phe890-excluding anchor list, never a data-dependent pocket intersection.
         reference_rows = [{
             "record": "ATOM", "atomName": atom["atomName"],
             "residueName": atom["residueName"], "chain": atom["chain"],
@@ -822,14 +1048,16 @@ def evaluate_verified_run(run_dir: Path, holdout_dir: Path, manifest_bytes: byte
             "point": np.array(atom["coordinatesAngstrom"]),
         } for atom in checkpoint["pocket"]["atoms"]
             if atom["residueName"] and atom["atomName"] == "CA"]
-        alignment = receptor_alignment(reference_rows, holdout_rows)
+        alignment = receptor_alignment(reference_rows, holdout_rows, protocol)
         predicted_by_name = coordinates_by_name(checkpoint)
         predicted = np.array([predicted_by_name[name] for name in step["productAtomNames"]])
         template = Chem.MolFromSmiles(step["productSmiles"])
         if template is None or template.GetNumAtoms() != len(step["productAtomNames"]):
             raise RuntimeError(f"{step_id}: registered product graph cannot be reconstructed")
-        fragment, fragment_names = ligand_fragment(holdout_path, ligand_id, residue_number)
-        mappings = symmetry_mappings(template, fragment)
+        coordinate_fragment, fragment_names = ligand_fragment(
+            holdout_text, ligand_id, residue_number, evaluation["ligandChain"])
+        fragment, mappings, graph_validation = exact_registered_graph_mappings(
+            template, coordinate_fragment)
         conformer = fragment.GetConformer()
         fragment_points = np.array([[conformer.GetAtomPosition(index).x,
                                      conformer.GetAtomPosition(index).y,
@@ -865,12 +1093,16 @@ def evaluate_verified_run(run_dir: Path, holdout_dir: Path, manifest_bytes: byte
         whole_geometry = geometry_metrics(predicted, best_holdout)
         phe890 = phe890_metrics(predicted_phe_rows, holdout_rows, alignment)
         integrity = prediction_integrity(checkpoint, step, template)
-        receptor = {"alignmentScope": "frozen predicted SOS1 pocket C-alpha atoms",
+        receptor = {"alignmentScope": (
+                        "pre-registered stable SOS1 C-alpha anchors; designed Phe890 excluded"),
                     "alignmentAtoms": alignment["atoms"],
-                    "alignmentRmsdAngstrom": alignment["rmsdAngstrom"]}
+                    "alignmentRmsdAngstrom": alignment["rmsdAngstrom"],
+                    "anchorRecords": alignment["anchorRecords"],
+                    "excludedDesignedResidues": alignment["excludedDesignedResidues"]}
         ligand = {
             "scoringMethod": "receptor-aligned, graph-symmetry-minimized, no ligand fit",
             "symmetryMappings": len(mappings), "heavyAtoms": template.GetNumAtoms(),
+            "registeredGraphValidation": graph_validation,
             "rmsdAngstrom": best_rmsd,
             # Compatibility field now means only route-declared hard coordinates.
             "inheritedRegionRmsdAngstrom": region_metrics["hard"]["rmsdAngstrom"],
@@ -893,6 +1125,7 @@ def evaluate_verified_run(run_dir: Path, holdout_dir: Path, manifest_bytes: byte
             "predictedStateId": checkpoint["predictedStateId"],
             "boundary": {
                 "predictionManifestSha256": digest(manifest_bytes),
+                "evaluationProtocolSha256": digest(protocol_bytes),
                 "frozenPredictionSha256": next(entry["sha256"] for entry in manifest["checkpoints"]
                                                    if entry["stepId"] == step_id),
                 "holdoutOpenedOnlyAfterAllFreezeHashesAndAgentAuditVerified": True,
@@ -958,6 +1191,13 @@ def evaluate_verified_run(run_dir: Path, holdout_dir: Path, manifest_bytes: byte
         "schema": "molarium.design-prediction-holdout-evaluation-summary/v2",
         "routeId": "sos1-hit-only",
         "predictionManifestSha256": digest(manifest_bytes),
+        "evaluationProtocolSha256": digest(protocol_bytes),
+        "evaluationProtocol": {
+            "schema": protocol["schema"],
+            "evaluatorSha256": protocol["evaluator"]["sha256"],
+            "registeredRouteSha256": protocol["registeredRoute"]["sha256"],
+            "holdoutCoordinateHashBinding": protocol["holdoutCoordinateHashBinding"],
+        },
         "holdoutsOpenedOnlyAfterAllFreezeHashesAndAgentAuditVerified": True,
         "accepted": all(result["accepted"] for result in full_results),
         "continuity": continuity,
@@ -974,14 +1214,19 @@ def main() -> None:
                         default=ROOT / "outputs/design-history/sos1-hit-only-prospective")
     parser.add_argument("--holdout-dir", type=Path,
                         default=ROOT / "outputs/design-history/sos1-preapproval/source")
+    parser.add_argument("--protocol", type=Path, default=DEFAULT_PROTOCOL_PATH)
     args = parser.parse_args()
     run_dir = args.run.resolve()
 
-    # No holdout path is resolved or read until the complete prediction
-    # manifest, every frozen checkpoint, and the public-action audit verify.
-    manifest_bytes, manifest, checkpoints, _, campaign = verify_run(run_dir)
+    # No holdout path is resolved or read until the registered evaluation
+    # protocol, complete prediction manifest, every frozen checkpoint, and
+    # public-action audit verify.
+    protocol_bytes, protocol = verify_evaluation_protocol(args.protocol.resolve())
+    manifest_bytes, manifest, checkpoints, _, campaign = verify_run(
+        run_dir, protocol)
     report = evaluate_verified_run(run_dir, args.holdout_dir.resolve(), manifest_bytes,
-                                   manifest, checkpoints, campaign)
+                                   manifest, checkpoints, campaign,
+                                   protocol_bytes, protocol)
     print(json.dumps(report, indent=2))
 
 
