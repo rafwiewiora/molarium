@@ -13,8 +13,9 @@ import { DESIGNER_MOVIE_PRESENTATION, designerMoviePressFrames,
 } from './designer-movie-presentation.mjs';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
 import { verifyBrowserLocalLabCapture } from './local-lab-capture.mjs';
-import { buildAcceptedSos1ReplayScript, requireExplicitRunDirectory,
-  verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
+import { buildAcceptedSos1ReplayScript, buildFrozenSos1ReplayScript,
+  requireExplicitRunDirectory, verifyAcceptedSos1Run,
+  verifyCompleteFrozenSos1Run } from './sos1-accepted-run.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -35,11 +36,22 @@ const fps = Number(valueFor('--fps') || 12);
 const smoke = has('--smoke');
 const viewport = verifyMovieViewport({ width, height, deviceScaleFactor:1 });
 const sourceActionLimit = Number(valueFor('--source-actions') || 0);
-const verifiedRun = await verifyAcceptedSos1Run(runDirectory);
-const acceptedReplay = await buildAcceptedSos1ReplayScript(verifiedRun);
-const sourceScript = acceptedReplay.script;
+const resultClass = valueFor('--result-class') || 'accepted';
+if (!['accepted','complete-frozen'].includes(resultClass))
+  throw new Error('--result-class must be accepted or complete-frozen');
+// The accepted path remains the default and retains the independent holdout
+// gate.  An honest complete-frozen render must be explicitly requested; it
+// verifies the same immutable pre-holdout science but never claims acceptance.
+const verifiedRun = resultClass === 'accepted'
+  ? await verifyAcceptedSos1Run(runDirectory)
+  : await verifyCompleteFrozenSos1Run(runDirectory);
+const verifiedReplay = resultClass === 'accepted'
+  ? await buildAcceptedSos1ReplayScript(verifiedRun)
+  : await buildFrozenSos1ReplayScript(verifiedRun);
+const sourceScript = verifiedReplay.script;
 const sourceScriptBytes = Buffer.from(`${JSON.stringify(sourceScript, null, 2)}\n`);
-const sourceScriptArtifactPath = `${relative(root, runDirectory)}/accepted-selected-route.action-script.json`;
+const sourceScriptArtifactPath = `${relative(root, runDirectory)}/${resultClass === 'accepted'
+  ? 'accepted-selected-route' : 'complete-frozen-selected-route'}.action-script.json`;
 const sourceActions = smoke ? sourceScript.actions.slice(0, 4)
   : sourceActionLimit > 0 ? sourceScript.actions.slice(0, sourceActionLimit)
     : sourceScript.actions;
@@ -263,15 +275,19 @@ try {
     schema:'molarium.designer-moves-interface-render/v1',
     generatedAt:new Date().toISOString(),
     operationBoundary:'The renderer imports JSON and presses visible Molarium controls; all molecular operations execute through window.MolariumChemistActions.',
-    acceptedRun:{ id:verifiedRun.runId,
+    sourceRun:{ id:verifiedRun.runId, resultClass,
       predictionManifestSha256:digest(verifiedRun.manifestBytes),
-      evaluationSummarySha256:digest(verifiedRun.evaluationBytes), accepted:true },
+      evaluationSummarySha256:digest(verifiedRun.evaluationBytes),
+      holdoutAccepted:verifiedRun.evaluation.accepted === true },
+    ...(resultClass === 'accepted' ? { acceptedRun:{ id:verifiedRun.runId,
+      predictionManifestSha256:digest(verifiedRun.manifestBytes),
+      evaluationSummarySha256:digest(verifiedRun.evaluationBytes), accepted:true } } : {}),
     sourceScript:{ path:'source.action-script.json', provenancePath:sourceScriptArtifactPath,
       fileSha256:digest(sourceScriptBytes),
       actionScriptSha256:await actionScriptSha256(sourceScript), actions:sourceScript.actions.length,
-      sourceAuditSha256:acceptedReplay.sourceAuditSha256,
-      sourceAuditRecords:acceptedReplay.sourceAuditRecords,
-      selectedAuditSequences:acceptedReplay.selectedAuditSequences },
+      sourceAuditSha256:verifiedReplay.sourceAuditSha256,
+      sourceAuditRecords:verifiedReplay.sourceAuditRecords,
+      selectedAuditSequences:verifiedReplay.selectedAuditSequences },
     presentationScript:{ path:'presentation.action-script.json',
       fileSha256:digest(presentationBytes), actionScriptSha256:presentationScriptSha256,
       actions:presentationScript.actions.length, insertedViewActions:

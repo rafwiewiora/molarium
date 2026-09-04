@@ -51,7 +51,19 @@ try {
   assert.match(renderer, /requireExplicitRunDirectory\(args/,
     'the renderer must never select an SOS1 run implicitly');
   assert.match(renderer, /verifyAcceptedSos1Run\(runDirectory\)/,
-    'the renderer must reject a run that failed independent evaluation');
+    'accepted rendering must retain the independent holdout gate');
+  assert.match(renderer, /const resultClass = valueFor\('--result-class'\) \|\| 'accepted'/,
+    'accepted rendering must remain the default');
+  assert.match(renderer, /\['accepted','complete-frozen'\]\.includes\(resultClass\)/,
+    'the renderer must expose only the two explicit scientific result classes');
+  assert.match(renderer, /verifyCompleteFrozenSos1Run\(runDirectory\)/,
+    'an explicitly requested complete-frozen result must verify all immutable checkpoints');
+  assert.match(renderer, /buildFrozenSos1ReplayScript\(verifiedRun\)/,
+    'a complete-frozen render must use provenance that does not claim acceptance');
+  assert.match(renderer, /resultClass === 'accepted' \? \{ acceptedRun:/,
+    'only the strict accepted path may emit acceptedRun manifest provenance');
+  assert.match(renderer, /holdoutAccepted:verifiedRun\.evaluation\.accepted === true/,
+    'every render must state the attached post-freeze evaluation outcome honestly');
   assert.match(renderer, /verifyBrowserLocalLabCapture\(browser\)/,
     'the renderer must prove that publication assets use the real Local Lab policy');
   assert.match(renderer, /localOnly:true/,
