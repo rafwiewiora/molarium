@@ -306,13 +306,20 @@ def verify_accepted_checkpoint_relaxation(checkpoint: dict, step_id: str) -> Non
         raise RuntimeError(
             f"{step_id}: registered retained atom identities changed")
     fixed_motion = retention.get("fixedAtomMotion", {})
+    fixed_residual = fixed_motion.get(
+        "maximumFloat32RoundTripResidualAngstrom")
+    fixed_tolerance = fixed_motion.get("toleranceAngstrom")
     if fixed_motion.get("accepted") is not True \
             or fixed_motion.get("atomIds") != before_fixed \
             or fixed_motion.get("atomCount") != len(before_fixed) \
             or not all(isinstance(fixed_motion.get(key), (int, float))
                        and math.isfinite(fixed_motion[key])
                        for key in ("rmsdAngstrom", "maximumDisplacementAngstrom")) \
-            or fixed_motion["maximumDisplacementAngstrom"] > 1e-6:
+            or not isinstance(fixed_residual, (int, float)) \
+            or not math.isfinite(fixed_residual) \
+            or not isinstance(fixed_tolerance, (int, float)) \
+            or not math.isfinite(fixed_tolerance) \
+            or fixed_residual > fixed_tolerance:
         raise RuntimeError(
             f"{step_id}: registered fixed atoms moved during coupled relaxation")
     before_features = before.get("features", [])
