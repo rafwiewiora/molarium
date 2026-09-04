@@ -5,6 +5,8 @@ import { fileURLToPath } from 'node:url';
 import { COUPLED_SIDECHAIN_POSE_SELECTION_CRITERION,
   evaluatePostRelaxedLigandPocket, selectCoupledSidechainPoseBranch,
   uniqueSidechainRotamerCandidates } from '../docking/sidechain-rotamers.mjs';
+import { AUDIT_STATE_HASH_GUARDS, actionScriptFromAudit } from '../design-history/replay.mjs';
+import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -48,6 +50,24 @@ const execute = (action, actionArgs = {}, requestId = action) => browser.evaluat
     action, args:actionArgs, requestId,
   })})`);
 const checkpoints = [];
+
+function requirePublicationStateHashes(response, action, label) {
+  const guard = AUDIT_STATE_HASH_GUARDS[action];
+  if (!guard) throw new Error(`${label}: ${action} is not a state-guarded action`);
+  const result = response?.result?.[guard.resultKey];
+  if (result?.stateHashSchema !== MOLECULAR_STATE_HASH_SCHEMA)
+    throw new Error(`${label}: ${action} did not return ${MOLECULAR_STATE_HASH_SCHEMA}`);
+  for (const resultKey of Object.keys(guard.fields)) {
+    if (typeof result[resultKey] !== 'string' || !/^[a-f0-9]{64}$/.test(result[resultKey]))
+      throw new Error(`${label}: ${action} did not return a valid ${resultKey}`);
+  }
+  return response;
+}
+
+async function executeGuarded(action, actionArgs, requestId) {
+  return requirePublicationStateHashes(await execute(action, actionArgs, requestId),
+    action, requestId);
+}
 
 function requireCompleteSeedCoverage(response, label) {
   const refinement = response?.result?.refinement;
@@ -93,18 +113,18 @@ async function choosePhe890Branch(stepId) {
     }, `${stepId}-apply-phe890-branch-${candidate.rank}`);
     const receptorReference = await execute('pose.updateReceptorReference', {},
       `${stepId}-accept-receptor-branch-${candidate.rank}`);
-    const refined = requireCompleteSeedCoverage(await execute('pose.refine', {
+    const refined = requireCompleteSeedCoverage(await executeGuarded('pose.refine', {
       searchChains:branchSearchChains,
       execution:poseExecution, featureSeedingProtocol:'v5' },
     `${stepId}-pose-branch-${candidate.rank}`), `${stepId} branch ${candidate.rank}`);
     const selectedPoseIndex = Math.max(0,
       Number(refined.result.refinement.selectedRank || 1) - 1);
-    await execute('pose.apply', { index:selectedPoseIndex,
+    await executeGuarded('pose.apply', { index:selectedPoseIndex,
       ...(refined.result.refinement.selectedFeasible ? {} : { allowInfeasible:true }) },
       `${stepId}-apply-pose-branch-${candidate.rank}`);
     const parameterized = await execute('protein.parameterize', {},
       `${stepId}-parameterize-branch-${candidate.rank}`);
-    const relaxed = await execute('optimization.run', {
+    const relaxed = await executeGuarded('optimization.run', {
       method:'induced-fit-webgpu',
     }, `${stepId}-relax-phe890-branch-${candidate.rank}`);
     const ligand = await execute('session.inspect', {
@@ -160,17 +180,17 @@ async function choosePhe890Branch(stepId) {
   }, `${stepId}-apply-selected-phe890-branch`);
   const receptorReference = await execute('pose.updateReceptorReference', {},
     `${stepId}-accept-selected-receptor-branch`);
-  const refinement = requireCompleteSeedCoverage(await execute('pose.refine', {
+  const refinement = requireCompleteSeedCoverage(await executeGuarded('pose.refine', {
     searchChains:branchSearchChains,
     execution:poseExecution, featureSeedingProtocol:'v5' },
   `${stepId}-pose-selected-phe890-branch`), `${stepId} selected branch`);
   const selectedPoseIndex = Math.max(0,
     Number(refinement.result.refinement.selectedRank || 1) - 1);
-  await execute('pose.apply', { index:selectedPoseIndex },
+  await executeGuarded('pose.apply', { index:selectedPoseIndex },
     `${stepId}-apply-selected-phe890-pose`);
   const parameterization = await execute('protein.parameterize', {},
     `${stepId}-parameterize-selected-phe890-branch`);
-  const relaxation = await execute('optimization.run', {
+  const relaxation = await executeGuarded('optimization.run', {
     method:'induced-fit-webgpu',
   }, `${stepId}-relax-selected-phe890-branch`);
   const ligand = await execute('session.inspect', {
@@ -257,20 +277,20 @@ try {
       relaxation = rotamerDecision.selected.optimization;
     } else {
       console.log(`${stepId}: fixed-receptor pose search`);
-      const refined = requireCompleteSeedCoverage(await execute('pose.refine', {
+      const refined = requireCompleteSeedCoverage(await executeGuarded('pose.refine', {
         searchChains:fixedSearchChains,
         execution:poseExecution, featureSeedingProtocol:'v5' },
       `${stepId}-pose-refine`), stepId);
       const selectedIndex = Math.max(0,
         Number(refined.result.refinement.selectedRank || 1) - 1);
-      await execute('pose.apply', { index:selectedIndex }, `${stepId}-pose-apply`);
+      await executeGuarded('pose.apply', { index:selectedIndex }, `${stepId}-pose-apply`);
       const parameterized = await execute('protein.parameterize', {},
         `${stepId}-parameterize-without-motion`);
       refinement = refined.result.refinement;
       parameterization = parameterized.result.parameterization;
       if (relaxMethod !== 'none') {
         console.log(`${stepId}: ${relaxMethod} relaxation`);
-        const relaxed = await execute('optimization.run',
+        const relaxed = await executeGuarded('optimization.run',
           { method:relaxMethod }, `${stepId}-complex-relax`);
         relaxation = relaxed.result.optimization;
       }
@@ -313,9 +333,9 @@ try {
   }
 
   const audit = await browser.evaluate(`window.MolariumChemistActions.history()`);
-  const auditBytes = Buffer.from(`${JSON.stringify({
-    schema:description.schema, routeId:'sos1-hit-only', records:audit,
-  }, null, 2)}\n`);
+  const auditEnvelope = { schema:description.schema, routeId:'sos1-hit-only', records:audit };
+  const guardProbe = actionScriptFromAudit(auditEnvelope, { stateHashGuards:'required' });
+  const auditBytes = Buffer.from(`${JSON.stringify(auditEnvelope, null, 2)}\n`);
   await writeFile(join(output, 'chemist-action-audit.json'), auditBytes);
   const campaignPath = join(root,
     'design-history/structures/generated/sos1-prospective-campaign.json');
@@ -336,7 +356,8 @@ try {
         criterion:COUPLED_SIDECHAIN_POSE_SELECTION_CRITERION } },
     checkpoints,
     agentApi:{ schema:description.schema, actions:Object.keys(description.actions),
-      auditRecords:audit.length, auditSha256:digest(auditBytes) },
+      auditRecords:audit.length, auditSha256:digest(auditBytes),
+      stateHashGuards:guardProbe.sourceAudit.stateHashGuards },
     inputs:{ campaign:{ path:relative(root, campaignPath),
       sha256:digest(await readFile(campaignPath)) },
       runner:{ path:relative(root, runnerPath), sha256:digest(await readFile(runnerPath)) } },

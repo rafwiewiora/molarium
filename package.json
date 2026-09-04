@@ -51,7 +51,7 @@
     "test:structure-story": "npm run test:structure-story-core && npm run test:structure-story-browser",
     "test:logo": "bun scripts/molarium-logo-test.mjs",
     "test:docking": "node docking/test.mjs && node docking/registered-graph-edit.test.mjs && node docking/manual-hbond.test.mjs && node docking/restraint-biased-search.test.mjs && node docking/pose-search-ensemble.test.mjs && node docking/ring-conformer-generator.test.mjs && node docking/sidechain-rotamers.test.mjs && node docking/affected-environment-seeding.test.mjs && node docking/stratified-feature-seeding.test.mjs && node chemist-actions.test.mjs",
-    "test:chemist-actions": "node chemist-actions.test.mjs && node molecular-state-hash.test.mjs",
+    "test:chemist-actions": "node chemist-actions.test.mjs && node molecular-state-hash.test.mjs && node chemist-action-state-guard.integration.test.mjs",
     "test:chemist-actions-browser": "MOLARIUM_TEST_SCOPE=chemist-actions bun browser-test.js",
     "test:designer-story-link-browser": "bun design-history/examples/designer-story-link.browser.test.mjs",
     "test:sos1-refinement-responsive-browser": "bun design-history/examples/sos1-refinement-responsive.browser.test.mjs",
