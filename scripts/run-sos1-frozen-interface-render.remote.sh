@@ -92,13 +92,30 @@ cd "$SOURCE"
 PATH="$(dirname "$BUN"):$PATH" nice -n 10 "$BUN" install --frozen-lockfile \
   > "$ATTEMPT/bun-install.log" 2>&1
 PATH="$(dirname "$BUN"):$PATH" CHROME_PATH="$CHROME_WRAPPER" \
-  "$BUN" scripts/probe-headless-webgpu.mjs \
-  > "$ATTEMPT/hardware-webgpu-probe.json" \
-  2> "$ATTEMPT/hardware-webgpu-probe.stderr.log"
-jq -e '.isFallbackAdapter == false
-  and .deviceLost == false
-  and .maxStorageBuffersPerShaderStage >= 9' \
-  "$ATTEMPT/hardware-webgpu-probe.json" > "$ATTEMPT/hardware-webgpu-gate.log"
+  "$BUN" scripts/probe-headless-rendering.mjs \
+  > "$ATTEMPT/hardware-rendering-probe.json" \
+  2> "$ATTEMPT/hardware-rendering-probe.stderr.log"
+jq -e '.softwareFallback == false
+  and (((.renderer + " " + .vendor) | ascii_downcase) | contains("nvidia"))' \
+  "$ATTEMPT/hardware-rendering-probe.json" > "$ATTEMPT/hardware-rendering-gate.log"
+
+if [[ "$REPLAY_KIND" == executable ]]; then
+  PATH="$(dirname "$BUN"):$PATH" CHROME_PATH="$CHROME_WRAPPER" \
+    "$BUN" scripts/probe-headless-webgpu.mjs \
+    > "$ATTEMPT/hardware-webgpu-probe.json" \
+    2> "$ATTEMPT/hardware-webgpu-probe.stderr.log"
+  jq -e '.isFallbackAdapter == false
+    and .deviceLost == false
+    and .maxStorageBuffersPerShaderStage >= 9' \
+    "$ATTEMPT/hardware-webgpu-probe.json" > "$ATTEMPT/hardware-webgpu-gate.log"
+else
+  jq -n '{ required:false, status:"not-run",
+    reason:"Checkpoint review imports exact full-system checkpoints and performs no calculation." }' \
+    > "$ATTEMPT/hardware-webgpu-probe.json"
+  : > "$ATTEMPT/hardware-webgpu-probe.stderr.log"
+  jq -e '.required == false and .status == "not-run"' \
+    "$ATTEMPT/hardware-webgpu-probe.json" > "$ATTEMPT/hardware-webgpu-gate.log"
+fi
 
 PATH="$(dirname "$BUN"):$PATH" "$BUN" \
   scripts/verify-sos1-frozen-browser-publication.mjs \
@@ -142,6 +159,8 @@ jq -e --arg replayKind "$REPLAY_KIND" '
 nice -n 10 tar -czf "$ATTEMPT/$ATTEMPT_ID-artifacts.tar.gz" \
   -C "$ATTEMPT" "$(basename "$OUTPUT")" \
   provenance.env command.txt gpu.txt chrome.txt ffmpeg.txt bun.txt \
+  hardware-rendering-probe.json hardware-rendering-probe.stderr.log \
+  hardware-rendering-gate.log \
   hardware-webgpu-probe.json hardware-webgpu-gate.log \
   publication-preflight.log renderer-preflight.log blank-interface-preflight.log \
   render.stdout.log render.stderr.log render-gate.log

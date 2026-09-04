@@ -5,6 +5,8 @@ const [runner, chrome] = await Promise.all([
   readFile(new URL('./run-sos1-frozen-interface-render.remote.sh', import.meta.url), 'utf8'),
   readFile(new URL('./chrome-l4-hardware.sh', import.meta.url), 'utf8'),
 ]);
+const renderingProbe = await readFile(
+  new URL('./probe-headless-rendering.mjs', import.meta.url), 'utf8');
 
 assert.match(runner, /verify-sos1-frozen-browser-publication\.mjs/);
 assert.match(runner, /--result-class complete-frozen/);
@@ -24,10 +26,16 @@ assert.match(runner, /presentation\.completedInterface\.previousEnabled == true/
 assert.match(runner, /presentation\.completedInterface\.cueCount == 0/);
 assert.match(runner, /SAFE_TO_STOP/);
 assert.match(runner, /grep -Eq '\^NVIDIA L4,'/);
+assert.match(runner, /probe-headless-rendering\.mjs/);
+assert.match(runner, /hardware-rendering-gate\.log/);
+assert.match(runner, /if \[\[ "\$REPLAY_KIND" == executable \]\]/);
+assert.match(runner, /Checkpoint review imports exact full-system checkpoints/);
 assert.doesNotMatch(runner, /run-sos1-prospective|resume-sos1|recover-sos1|evaluate-sos1/,
   'publication rendering must not rerun or evaluate science');
 assert.match(chrome, /--use-angle=vulkan/);
 assert.match(chrome, /--disable-software-rasterizer/);
 assert.match(chrome, /VK_ICD_FILENAMES/);
+assert.match(renderingProbe, /WEBGL_debug_renderer_info/);
+assert.match(renderingProbe, /swiftshader\|llvmpipe\|software/);
 
 console.log('Remote SOS1 interface-render setup: PASS');
