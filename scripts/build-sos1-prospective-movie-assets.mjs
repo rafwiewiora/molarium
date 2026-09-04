@@ -335,15 +335,19 @@ const phe890PeptideContext = subsetPdb(parsePdb(review.receptor.proteinPdb),
   '5OVE hit-derived peptide context flanking Phe890');
 for (const entry of review.ligands) {
   const predictionSpec = STEPS.find((spec) => `${spec.state}-prediction` === entry.id);
+  const checkpointBinding = predictionSpec ? {
+    stepId:predictionSpec.id,
+    checkpointSha256:verified.checkpoints.get(predictionSpec.id).frozen.sha256,
+  } : {};
   const renderedLigandPdb = predictionSpec ? withLigandConnectivity(entry.ligandPdb,
     verified.checkpoints.get(predictionSpec.id).checkpoint.ligand) : entry.ligandPdb;
   await emit(`sos1-v7-${entry.id}-ligand.pdb`, renderedLigandPdb,
-    `${entry.coordinateClass}-ligand`, { stateId:entry.id });
+    `${entry.coordinateClass}-ligand`, { stateId:entry.id, ...checkpointBinding });
   await emit(`sos1-v7-${entry.id}-phe890.pdb`, entry.focusPdb,
-    `${entry.coordinateClass}-phe890`, { stateId:entry.id });
+    `${entry.coordinateClass}-phe890`, { stateId:entry.id, ...checkpointBinding });
   await emit(`sos1-v7-${entry.id}-phe890-peptide.pdb`, combinePdb(
     `${entry.id} Phe890 with local peptide`, phe890PeptideContext, entry.focusPdb),
-  `${entry.coordinateClass}-phe890-local-peptide`, { stateId:entry.id });
+  `${entry.coordinateClass}-phe890-local-peptide`, { stateId:entry.id, ...checkpointBinding });
 }
 
 // A full-ligand color swap makes a chemical edit look like an unrelated molecule

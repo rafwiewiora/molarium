@@ -17,14 +17,23 @@ export function validatePrecomputedCheckpointReview(story, {
   if (provenance?.sourceRun?.audit?.sha256 !== review.sourceAuditSha256
     || assetManifest?.boundary?.agentApiAuditSha256 !== review.sourceAuditSha256)
     throw new Error('Checkpoint review source-audit provenance does not agree');
-  if (provenance?.scripts?.fullExploration?.fileSha256 !== review.actionScript?.sha256)
+  const provenanceScripts = Object.values(provenance?.scripts || {});
+  const matchingProvenanceScripts = provenanceScripts.filter((script) =>
+    script?.fileSha256 === review.actionScript?.sha256);
+  if (matchingProvenanceScripts.length !== 1)
     throw new Error('Checkpoint review action-script provenance does not agree');
   if (!Array.isArray(actionScript?.actions) || !actionScript.actions.length)
     throw new Error('Checkpoint review requires its source Chemist Actions script');
   if (!Array.isArray(assetManifest?.assets) || !Array.isArray(assetManifest?.checkpoints))
     throw new Error('Checkpoint review requires its generated-asset manifest');
 
-  const assets = new Map(assetManifest.assets.map((asset) => [asset.path.split('/').at(-1), asset]));
+  const assets = new Map();
+  for (const asset of assetManifest.assets) {
+    const name = asset.path?.split('/').at(-1);
+    if (!name || assets.has(name))
+      throw new Error(`Checkpoint review asset manifest has duplicate or invalid path ${asset.path}`);
+    assets.set(name, asset);
+  }
   for (const [sceneId, scene] of Object.entries(story.scenes || {})) {
     for (const model of scene.models || []) {
       requireSha256(model.sha256, `scene ${sceneId} model ${model.path}`);
@@ -42,7 +51,14 @@ export function validatePrecomputedCheckpointReview(story, {
     if (!checkpoint || !Number.isInteger(checkpoint.sourceActionSequence)
       || checkpoint.sourceActionSequence < 1)
       throw new Error(`Checkpoint cue ${cue.id} requires a source action sequence`);
-    const action = actionScript.actions[checkpoint.sourceActionSequence - 1];
+    const auditedActions = actionScript.actions.filter((step) =>
+      Number.isInteger(step.auditSequence));
+    const matchingActions = auditedActions.length
+      ? auditedActions.filter((step) => step.auditSequence === checkpoint.sourceActionSequence)
+      : [actionScript.actions[checkpoint.sourceActionSequence - 1]].filter(Boolean);
+    if (matchingActions.length !== 1)
+      throw new Error(`Checkpoint cue ${cue.id} does not identify one source Chemist Action`);
+    const action = matchingActions[0];
     if (!action || action.action !== checkpoint.sourceAction)
       throw new Error(`Checkpoint cue ${cue.id} does not match its source Chemist Action`);
     if (checkpoint.predictionSha256) {

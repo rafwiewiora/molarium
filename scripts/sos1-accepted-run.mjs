@@ -109,6 +109,15 @@ export async function verifyAcceptedSos1Run(runDirectory) {
 
   const checkpoints = new Map();
   for (const entry of manifest.checkpoints) {
+    assert(Number.isInteger(entry.freezeActionSequence) && entry.freezeActionSequence > 0,
+      `${entry.stepId}: prediction manifest has no freeze action sequence`);
+    const freezeRecord = audit.records?.find((record) =>
+      record.sequence === entry.freezeActionSequence);
+    assert(freezeRecord && freezeRecord.status === 'completed'
+      && freezeRecord.action === 'session.inspect'
+      && freezeRecord.args?.scope === 'pocket'
+      && freezeRecord.args?.includeCoordinates === true,
+    `${entry.stepId}: freeze action is not the completed coordinate-bearing pocket inspection`);
     const bytes = await readFile(join(directory, entry.filename));
     assert.equal(sha256(bytes), entry.sha256, `${entry.stepId}: frozen checkpoint changed`);
     const checkpoint = JSON.parse(bytes);
@@ -123,8 +132,9 @@ export async function verifyAcceptedSos1Run(runDirectory) {
 
 function selectedRouteRecord(record) {
   if (record?.status !== 'completed') return false;
-  if (record.action === 'session.inspect' || record.action === 'designRoute.inspect') return false;
   const requestId = String(record.requestId || '');
+  if (record.action === 'designRoute.inspect') return false;
+  if (record.action === 'session.inspect') return requestId.endsWith('-freeze-pocket');
   if (!requestId.startsWith('open-phe890-pocket-')) return true;
   if (/-branch-\d+(?:-|$)/.test(requestId)) return false;
   if (/-enumerate-phe890-(?:initial|branch-\d+)$/.test(requestId)) return false;
@@ -167,7 +177,7 @@ export async function buildAcceptedSos1ReplayScript(verified) {
     [record.sequence, captionForRecord(record)]));
   const script = actionScriptFromAudit(verified.audit, {
     label:`SOS1 hit-to-BAY-293 accepted run ${verified.runId}`,
-    includeReadOnly:false,
+    includeReadOnly:true,
     includeSequences:sequences,
     captionsBySequence,
     includeAuditMetadata:true,
