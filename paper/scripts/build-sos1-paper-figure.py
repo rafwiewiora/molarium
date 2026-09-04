@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Compose Figure 2 from synchronized result frames in the interface replay."""
+"""Compose Figure 2 from the exact five-state SOS1 checkpoint review.
+
+This is a presentation-only operation. It consumes hash-pinned full-interface
+captures from the calculation-free public ``campaign.import`` review and never
+derives, interpolates, or edits molecular coordinates.
+"""
 
 from argparse import ArgumentParser
 from hashlib import sha256
@@ -18,65 +23,21 @@ except ImportError:
 
 
 OUTPUT = ROOT / "paper" / "figures" / "fig2_sos1_hit_to_bay293.png"
-STEP_IDS = [
-    "scaffold-rewrite", "fragment-merge", "open-phe890-pocket", "finish-bay-293"
+CHECKPOINTS = [
+    ("A", "starting-hit", "starting-hit-campaign.json"),
+    ("B", "scaffold-rewrite", "scaffold-rewrite-campaign.json"),
+    ("C", "fragment-merge", "fragment-merge-campaign.json"),
+    ("D", "open-phe890-pocket", "open-phe890-pocket-campaign.json"),
+    ("E", "finish-bay-293", "finish-bay-293-campaign.json"),
 ]
 HOLDOUT_IDS = {"5OVF", "5OVG", "5OVH", "5OVI"}
-COORDINATE_KEYS = {
-    "coordinates", "coordinatesAngstrom", "directCoordinates", "pdbText", "molBlock"
-}
-
-# Resolve publication states from replay semantics rather than from action
-# numbers, which change whenever the interface presentation gains or loses a
-# cue. Immutable request IDs from the accepted pre-freeze audit distinguish
-# captions reused for compound 21 and BAY-293.
-CHECKPOINTS = [
-    {
-        "label": "A",
-        "action": "view.focusComponent",
-        "caption": "Center the hit and the local pocket where every design decision will be made",
-        "after_request": "route-prepare-hit",
-        "before_request": "route-capture-hit",
-    },
-    {
-        "label": "B",
-        "action": "view.highlightAtoms",
-        "caption": "See exactly where the ligand graph changed",
-        "after_request": "open-phe890-pocket-stage",
-        "before_request": "open-phe890-pocket-enumerate-phe890-final",
-    },
-    {
-        "label": "C",
-        "action": "view.highlightAtoms",
-        "caption": "See Phe890 move out of the ligand growth path",
-        "after_request": "open-phe890-pocket-apply-selected-phe890-branch",
-        "before_request": "open-phe890-pocket-accept-selected-receptor-branch",
-    },
-    {
-        "label": "D",
-        "action": "view.highlightAtoms",
-        "caption": "Compare the relaxed ligand–pocket geometry in the same fixed view",
-        "after_request": "open-phe890-pocket-relax-selected-phe890-branch",
-        "before_request": "open-phe890-pocket-advance-build",
-    },
-    {
-        "label": "E",
-        "action": "view.highlightAtoms",
-        "caption": "Compare the relaxed ligand–pocket geometry in the same fixed view",
-        "after_request": "finish-bay-293-complex-relax",
-        "before_request": "finish-bay-293-advance-build",
-    },
-]
-if len(CHECKPOINTS) != 5:
-    raise RuntimeError("Publication Figure 2 must contain exactly five interface panels")
 
 
 def font(size: int):
-    candidates = [
+    for candidate in (
         "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
         "/System/Library/Fonts/Supplemental/Helvetica.ttc",
-    ]
-    for candidate in candidates:
+    ):
         try:
             return ImageFont.truetype(candidate, size=size)
         except OSError:
@@ -84,11 +45,7 @@ def font(size: int):
     return ImageFont.load_default()
 
 
-def json_file(path: Path):
-    return json.loads(path.read_text())
-
-
-def file_sha256(path: Path) -> str:
+def digest(path: Path) -> str:
     return sha256(path.read_bytes()).hexdigest()
 
 
@@ -98,245 +55,137 @@ def require_hash(value, label: str):
         raise ValueError(f"{label} is not a lowercase SHA-256 fingerprint")
 
 
-def assert_no_holdout_coordinates(value, path="checkpoint"):
-    if isinstance(value, list):
-        for index, entry in enumerate(value):
-            assert_no_holdout_coordinates(entry, f"{path}[{index}]")
-        return
-    if not isinstance(value, dict):
-        return
-    coordinate_payload = any(key in value for key in COORDINATE_KEYS)
-    identities = {
-        str(value.get("pdbId", "")).upper(),
-        str(value.get("holdoutPdbId", "")).upper(),
-    }
-    holdout_identity = (value.get("coordinateClass") == "evaluation-only-holdout"
-                        or value.get("role") == "evaluation-only"
-                        or bool(identities & HOLDOUT_IDS))
-    if coordinate_payload and holdout_identity:
-        raise ValueError(f"{path} contains evaluation-only holdout coordinates")
-    for key, entry in value.items():
-        assert_no_holdout_coordinates(entry, f"{path}.{key}")
+def safe_repo_source(source_path: str) -> Path:
+    if not isinstance(source_path, str) or not source_path.startswith("./"):
+        raise ValueError("Checkpoint sourcePath must be a same-origin relative path")
+    path = (ROOT / source_path[2:]).resolve()
+    if ROOT.resolve() not in path.parents:
+        raise ValueError("Checkpoint sourcePath escapes the repository")
+    return path
 
 
-def verify_accepted_inputs(run_dir: Path, render_dir: Path, render_manifest: dict):
-    required = [
-        run_dir / "prediction-manifest.json",
-        run_dir / "holdout-evaluation-summary.json",
-        run_dir / "chemist-action-audit.json",
-    ]
-    if any(not path.exists() for path in required):
-        missing = [str(path) for path in required if not path.exists()]
-        raise FileNotFoundError(f"Accepted-run evidence is incomplete: {missing}")
-    prediction_bytes = required[0].read_bytes()
-    evaluation_bytes = required[1].read_bytes()
-    audit_bytes = required[2].read_bytes()
-    prediction = json.loads(prediction_bytes)
-    evaluation = json.loads(evaluation_bytes)
-    audit = json.loads(audit_bytes)
+def verify_inputs(run_dir: Path, render_dir: Path, manifest: dict):
+    if manifest.get("schema") != "molarium.designer-moves-interface-render/v1" \
+            or manifest.get("complete") is not True \
+            or manifest.get("replay", {}).get("status") != "completed":
+        raise ValueError("Figure 2 requires a completed interface checkpoint review")
+    source_run = manifest.get("sourceRun", {})
+    if source_run.get("id") != run_dir.name \
+            or source_run.get("resultClass") != "complete-frozen" \
+            or source_run.get("replayKind") != "checkpoint-review":
+        raise ValueError("Figure 2 requires the declared complete-frozen checkpoint review")
+    presentation = manifest.get("presentation", {})
+    if presentation.get("cameraContract", {}).get("verified") is not True \
+            or presentation.get("highlightCameraAudit", {}).get("verified") is not True:
+        raise ValueError("Figure 2 requires a verified fixed interface camera")
+    if manifest.get("networkPolicy", {}).get("badgeText") != "Local Lab · network locked":
+        raise ValueError("Figure 2 must show the network-locked Local Lab")
+
+    prediction_path = run_dir / "prediction-manifest.json"
+    prediction = json.loads(prediction_path.read_text())
     if prediction.get("schema") != "molarium.design-prediction-run/v1" \
             or prediction.get("routeId") != "sos1-hit-only" \
-            or prediction.get("status") != "predictions-frozen-holdouts-unopened":
-        raise ValueError("Figure 2 requires a frozen SOS1 hit-only prediction manifest")
-    if prediction.get("protocol", {}).get("initialCoordinateInput") != "PDB 5OVE/AXE only" \
-            or prediction.get("protocol", {}).get("sequentialPredictedReferences") is not True:
-        raise ValueError("Figure 2 prediction manifest violates the prospective boundary")
-    if prediction.get("agentApi", {}).get("auditSha256") != sha256(audit_bytes).hexdigest() \
-            or prediction.get("agentApi", {}).get("auditRecords") != len(audit.get("records", [])):
-        raise ValueError("Pre-freeze Chemist Actions audit does not match the prediction manifest")
-    if evaluation.get("schema") != \
-            "molarium.design-prediction-holdout-evaluation-summary/v2" \
-            or evaluation.get("routeId") != "sos1-hit-only" \
-            or evaluation.get("predictionManifestSha256") != sha256(prediction_bytes).hexdigest():
-        raise ValueError("Holdout evaluation does not belong to the prediction manifest")
-    if evaluation.get("holdoutsOpenedOnlyAfterAllFreezeHashesAndAgentAuditVerified") is not True \
-            or evaluation.get("accepted") is not True \
-            or evaluation.get("continuity", {}).get("accepted") is not True:
-        raise ValueError("Figure 2 refuses a run that failed holdout or continuity acceptance")
-    results = evaluation.get("results", [])
-    if [entry.get("stepId") for entry in results] != STEP_IDS \
-            or not all(entry.get("accepted") is True
-                       and entry.get("failedChecks") == [] for entry in results):
-        raise ValueError("Figure 2 requires four accepted SOS1 evaluation results")
-    checkpoints = prediction.get("checkpoints", [])
-    if [entry.get("stepId") for entry in checkpoints] != STEP_IDS:
-        raise ValueError("Prediction manifest does not contain the complete SOS1 route")
-    for entry in checkpoints:
-        checkpoint_path = run_dir / entry["filename"]
-        checkpoint_bytes = checkpoint_path.read_bytes()
-        if sha256(checkpoint_bytes).hexdigest() != entry.get("sha256"):
-            raise ValueError(f"Frozen checkpoint changed: {entry['stepId']}")
-        checkpoint = json.loads(checkpoint_bytes)
-        if checkpoint.get("stepId") != entry["stepId"] \
-                or checkpoint.get("frozenBeforeHoldoutAccess") is not True:
-            raise ValueError(f"Invalid frozen checkpoint: {entry['stepId']}")
-        assert_no_holdout_coordinates(checkpoint, f"{entry['stepId']} checkpoint")
+            or prediction.get("status") != "predictions-frozen-holdouts-unopened" \
+            or prediction.get("protocol", {}).get("initialCoordinateInput") != "PDB 5OVE/AXE only":
+        raise ValueError("Run does not preserve the SOS1 prospective coordinate boundary")
+    require_hash(source_run.get("predictionManifestSha256"), "sourceRun prediction hash")
+    if digest(prediction_path) != source_run["predictionManifestSha256"]:
+        raise ValueError("Render is not bound to this prediction manifest")
 
-    accepted = render_manifest.get("acceptedRun", {})
-    for key in ("predictionManifestSha256", "evaluationSummarySha256"):
-        require_hash(accepted.get(key), f"render-manifest acceptedRun.{key}")
-    if accepted.get("accepted") is not True \
-            or accepted.get("id") != run_dir.name \
-            or accepted.get("predictionManifestSha256") != sha256(prediction_bytes).hexdigest() \
-            or accepted.get("evaluationSummarySha256") != sha256(evaluation_bytes).hexdigest():
-        raise ValueError("Interface render is not bound to this accepted SOS1 run")
-
-    source_record = render_manifest.get("sourceScript", {})
-    source_path = (render_dir / source_record.get("path", "")).resolve()
-    if render_dir.resolve() not in source_path.parents or not source_path.is_file():
-        raise ValueError("Interface render has an invalid source action-script path")
-    require_hash(source_record.get("fileSha256"), "render-manifest sourceScript.fileSha256")
-    if file_sha256(source_path) != source_record["fileSha256"] \
-            or source_record.get("sourceAuditSha256") != sha256(audit_bytes).hexdigest():
-        raise ValueError("Interface replay source does not match its accepted pre-freeze audit")
-    source = json_file(source_path)
-    serialized = json.dumps(source, sort_keys=True)
+    source_record = manifest.get("sourceScript", {})
+    source_copy = render_dir / source_record.get("path", "")
+    require_hash(source_record.get("fileSha256"), "source script hash")
+    if not source_copy.is_file() or digest(source_copy) != source_record["fileSha256"]:
+        raise ValueError("Rendered source action script failed its manifest hash")
+    source = json.loads(source_copy.read_text())
+    actions = source.get("actions", [])
     if source.get("schema") != "molarium.chemist-action-script/v1" \
-            or any(pdb_id in serialized for pdb_id in HOLDOUT_IDS):
-        raise ValueError("Interface replay source contains a holdout or has the wrong schema")
-    if any(key in serialized for key in [f'"{key}"' for key in COORDINATE_KEYS]):
-        raise ValueError("Interface replay source embeds coordinates")
-    if any(str(step.get("action", "")).startswith("designerScript.")
-           or step.get("action") == "interface.presentDesignerStep"
-           for step in source.get("actions", [])):
-        raise ValueError("Interface replay source contains a private replay shortcut")
-    source_request_ids = [step.get("auditRequestId") for step in source.get("actions", [])]
-    if not source_request_ids or any(not request_id for request_id in source_request_ids):
-        raise ValueError("Interface replay source is not traceable to audit request IDs")
-    timeline_request_ids = [step.get("auditRequestId")
-                            for step in render_manifest["presentationScript"]["timeline"]
-                            if step.get("auditRequestId")]
-    if timeline_request_ids != source_request_ids:
-        raise ValueError("Presentation timeline changed or reordered the accepted source actions")
+            or len(actions) != len(CHECKPOINTS) \
+            or any(step.get("action") != "campaign.import" for step in actions):
+        raise ValueError("Figure 2 source must be the five public campaign.import actions")
+
+    for index, (step, (_, checkpoint_id, filename)) in enumerate(zip(actions, CHECKPOINTS)):
+        action_args = step.get("args", {})
+        review = step.get("review", {})
+        path = safe_repo_source(action_args.get("sourcePath"))
+        if path.name != filename or not path.is_file():
+            raise ValueError(f"Missing exact {checkpoint_id} campaign")
+        require_hash(action_args.get("sourceSha256"), f"{checkpoint_id} source hash")
+        if digest(path) != action_args["sourceSha256"] \
+                or review.get("campaignSha256") != action_args["sourceSha256"] \
+                or review.get("immutableSnapshot") is not True \
+                or review.get("calculationPolicy") != "none" \
+                or review.get("holdoutCoordinatesIncluded") is not False:
+            raise ValueError(f"Invalid exact {checkpoint_id} campaign declaration")
+        if index == 0 and (review.get("registeredStartingHit") is not True
+                           or review.get("exactHistoryPrefix") is not True):
+            raise ValueError("Panel A is not the exact registered starting-hit checkpoint")
+    serialized = json.dumps(source, sort_keys=True).upper()
+    if any(pdb_id in serialized for pdb_id in HOLDOUT_IDS):
+        raise ValueError("Checkpoint review source contains post-freeze holdout identity")
 
 
-def unique_request_step(timeline, request_id: str):
-    matches = [step for step in timeline if step.get("auditRequestId") == request_id]
+def exact_capture(manifest: dict, render_dir: Path, label: str, checkpoint_index: int):
+    captures = manifest.get("captures", [])
+    if checkpoint_index == 0:
+        matches = [capture for capture in captures
+                   if capture.get("label") ==
+                   "First frozen prediction checkpoint in fixed local pocket"]
+    else:
+        imports = [step for step in manifest["presentationScript"]["timeline"]
+                   if step.get("action") == "campaign.import"]
+        if len(imports) != len(CHECKPOINTS):
+            raise ValueError("Presentation timeline does not contain five checkpoint imports")
+        import_number = imports[checkpoint_index]["actionNumber"]
+        upper = next((step["actionNumber"] for step in imports
+                      if step["actionNumber"] > import_number), float("inf"))
+        matches = [capture for capture in captures
+                   if isinstance(capture.get("actionIndex"), int)
+                   and import_number - 1 < capture["actionIndex"] < upper - 1
+                   and capture.get("action") == "view.highlightAtoms"
+                   and capture.get("label", "").startswith(
+                       f"{capture['actionIndex'] + 1}. Result ")]
     if len(matches) != 1:
-        raise ValueError(f"Expected one timeline step for audit request {request_id!r}; "
-                         f"found {len(matches)}")
-    return matches[0]
-
-
-def unique_step(timeline, action: str, caption: str):
-    matches = [
-        step for step in timeline
-        if step.get("action") == action and step.get("caption") == caption
-    ]
-    if len(matches) != 1:
-        raise ValueError(
-            f"Expected one timeline step for {action!r} / {caption!r}; "
-            f"found {len(matches)}"
-        )
-    return matches[0]
-
-
-def resolve_checkpoint(manifest, checkpoint):
-    timeline = manifest["presentationScript"]["timeline"]
-    lower = 0
-    upper = float("inf")
-    if checkpoint.get("after_request"):
-        lower = unique_request_step(timeline, checkpoint["after_request"])["actionNumber"]
-    if checkpoint.get("before_request"):
-        upper = unique_request_step(timeline, checkpoint["before_request"])["actionNumber"]
-    matches = [
-        step for step in timeline
-        if step.get("action") == checkpoint["action"]
-        and step.get("caption") == checkpoint["caption"]
-        and lower < step["actionNumber"] < upper
-    ]
-    if len(matches) != 1:
-        raise ValueError(
-            f"Expected one semantic checkpoint {checkpoint['label']} between "
-            f"actions {lower} and {upper}; found {len(matches)}"
-        )
-    return matches[0]
-
-
-def result_capture(manifest, render_dir: Path, checkpoint):
-    step = resolve_checkpoint(manifest, checkpoint)
-    action_number = step["actionNumber"]
-    action = step["action"]
-    matches = [
-        capture for capture in manifest["captures"]
-        if capture.get("actionIndex") == action_number - 1
-        and capture.get("action") == action
-        and capture["label"].startswith(f"{action_number}. Result ")
-    ]
-    if len(matches) != 1:
-        raise ValueError(
-            f"Expected one synchronized result capture for action {action_number}; "
-            f"found {len(matches)}"
-        )
+        raise ValueError(f"Expected one settled exact capture for panel {label}; found {len(matches)}")
     path = render_dir / matches[0]["qaFilename"]
-    if not path.exists():
-        raise FileNotFoundError(path)
-    expected_sha256 = matches[0].get("sha256")
-    if expected_sha256 and sha256(path.read_bytes()).hexdigest() != expected_sha256:
-        raise ValueError(f"Interface frame failed its render-manifest hash: {path}")
+    if not path.is_file() or digest(path) != matches[0].get("sha256"):
+        raise ValueError(f"Panel {label} failed its render-manifest hash")
     return path
 
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument(
-        "--run",
-        type=Path,
-        required=True,
-        help="Explicit accepted SOS1 run directory; no run is selected implicitly",
-    )
-    parser.add_argument(
-        "--render-dir",
-        type=Path,
-        required=True,
-        help=(
-            "Directory containing the accepted interface replay's "
-            "render-manifest.json and synchronized QA frames"
-        ),
-    )
+    parser.add_argument("--run", type=Path, required=True,
+                        help="Explicit complete-frozen SOS1 source-run directory")
+    parser.add_argument("--render-dir", type=Path, required=True,
+                        help="Completed five-state checkpoint-review render directory")
     parser.add_argument("--output", type=Path, default=OUTPUT)
     args = parser.parse_args()
-    run_dir = args.run.resolve()
-    render_dir = args.render_dir.resolve()
-    manifest_path = render_dir / "render-manifest.json"
-    manifest = json.loads(manifest_path.read_text())
-    if manifest.get("schema") != "molarium.designer-moves-interface-render/v1":
-        raise ValueError("Unsupported interface render manifest schema")
-    if manifest.get("complete") is not True or manifest.get("replay", {}).get("status") != "completed":
-        raise ValueError("Paper frames require a complete, expectation-passing interface replay")
-    verify_accepted_inputs(run_dir, render_dir, manifest)
+    run_dir, render_dir = args.run.resolve(), args.render_dir.resolve()
+    manifest = json.loads((render_dir / "render-manifest.json").read_text())
+    verify_inputs(run_dir, render_dir, manifest)
 
     images = []
-    for checkpoint in CHECKPOINTS:
-        path = result_capture(manifest, render_dir, checkpoint)
-        images.append((checkpoint["label"], Image.open(path).convert("RGB")))
-
+    for index, (label, _, _) in enumerate(CHECKPOINTS):
+        capture = exact_capture(manifest, render_dir, label, index)
+        images.append((label, Image.open(capture).convert("RGB")))
     panel_w, panel_h = images[0][1].size
     if any(image.size != (panel_w, panel_h) for _, image in images):
-        raise ValueError("All interface frames must use the same viewport")
+        raise ValueError("All exact interface frames must use the same viewport")
+
     gutter = 18
     canvas = Image.new("RGB", (panel_w * 2 + gutter, panel_h * 3 + gutter * 2), "white")
     draw = ImageDraw.Draw(canvas)
     label_font = font(48)
-
     for index, (label, image) in enumerate(images):
-        # Five molecular states read more cleanly without a sixth explanatory
-        # card. Center the final state beneath the two paired rows.
-        if index == len(images) - 1:
-            x = (canvas.width - panel_w) // 2
-            y = panel_h * 2 + gutter * 2
-        else:
-            x = (index % 2) * (panel_w + gutter)
-            y = (index // 2) * (panel_h + gutter)
+        x = (canvas.width - panel_w) // 2 if index == 4 else (index % 2) * (panel_w + gutter)
+        y = panel_h * 2 + gutter * 2 if index == 4 else (index // 2) * (panel_h + gutter)
         canvas.paste(image, (x, y))
-        badge_x, badge_y = x + 354, y + 18
-        draw.rounded_rectangle(
-            (badge_x, badge_y, badge_x + 66, badge_y + 66),
-            radius=14,
-            fill=(19, 35, 50),
-            outline=(255, 255, 255),
-            width=3,
-        )
+        # Put the panel key between the left UI and molecule without covering
+        # the Molarium brand or the checkpoint caption.
+        badge_x, badge_y = x + 350, y + 18
+        draw.rounded_rectangle((badge_x, badge_y, badge_x + 66, badge_y + 66),
+                               radius=14, fill=(19, 35, 50), outline="white", width=3)
         draw.text((badge_x + 17, badge_y + 7), label, font=label_font, fill="white")
 
     args.output.parent.mkdir(parents=True, exist_ok=True)

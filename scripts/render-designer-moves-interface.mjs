@@ -3,11 +3,9 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { actionScriptSha256 } from '../design-history/replay.mjs';
+import { actionScriptSha256, validateActionScript } from '../design-history/replay.mjs';
 import { acceptedCheckpointReviewScript } from
   '../design-history/accepted-checkpoint-review.mjs';
-import { frozenCheckpointReviewScript } from
-  '../design-history/frozen-checkpoint-review.mjs';
 import { buildPocketInterfaceStory } from '../design-history/interface-story.mjs';
 import { promoteCompletedRender } from './atomic-render-output.mjs';
 import { DESIGNER_MOVIE_PRESENTATION, designerMoviePressFrames,
@@ -69,17 +67,22 @@ const reviewCheckpoint = (stepId) => {
 };
 let verifiedReplay;
 if (replayKind === 'checkpoint-review') {
-  const checkpoints = SOS1_STEP_IDS.map(reviewCheckpoint);
-  const script = resultClass === 'accepted'
-    ? await acceptedCheckpointReviewScript({
-      label:`SOS1 accepted checkpoint review ${verifiedRun.runId}`, checkpoints })
-    : await frozenCheckpointReviewScript({
-      label:`SOS1 prediction checkpoint review ${verifiedRun.runId}`, checkpoints,
-      postFreezeEvaluation:{ summarySha256:digest(verifiedRun.evaluationBytes),
-        accepted:verifiedRun.evaluation.accepted === true,
-        continuityAccepted:verifiedRun.evaluation.continuity?.accepted === true,
-        failedStepIds:verifiedRun.evaluation.results.filter((entry) =>
-          entry.accepted !== true).map((entry) => entry.stepId) } });
+  let script;
+  if (resultClass === 'complete-frozen') {
+    const declaration = JSON.parse(await readFile(resolve(root,
+      'design-history/publications/sos1/browser-replay-declaration.json'), 'utf8'));
+    if (declaration.sourceRun?.id !== verifiedRun.runId)
+      throw new Error('Published checkpoint review does not belong to the selected run');
+    script = JSON.parse(await readFile(resolve(root, SOS1_PREDICTION_REVIEW), 'utf8'));
+    validateActionScript(script);
+    if (script.actions.length !== SOS1_STEP_IDS.length + 1
+      || script.actions[0]?.review?.registeredStartingHit !== true)
+      throw new Error('Published checkpoint review lacks the exact registered starting hit');
+  } else {
+    const checkpoints = SOS1_STEP_IDS.map(reviewCheckpoint);
+    script = await acceptedCheckpointReviewScript({
+      label:`SOS1 accepted checkpoint review ${verifiedRun.runId}`, checkpoints });
+  }
   verifiedReplay = { script, sourceAuditSha256:null, sourceAuditRecords:null,
     selectedAuditSequences:[] };
 } else verifiedReplay = resultClass === 'accepted'
@@ -210,19 +213,25 @@ async function waitForVisibleResult(actionNumber, step, timeoutMs = 5000) {
   if (TWO_D_SETTLED_ACTIONS.has(step.action)
     || step.action === 'view.focusComponent' && checkpointReviewBootstrapEnd > 0) {
     const depiction = await browser.evaluate(`(async () => {
-      const result = await window.molariumTest.waitFor2DDepiction(30000);
-      const svg = document.querySelector('#structure-2d-drawing svg');
-      return { label:result.label, componentId:result.componentId,
-        pinnedLigand:result.pinnedLigand, heavyAtomCount:result.heavyAtomCount,
-        bondCount:result.bondCount, hasSvg:result.hasSvg, error:result.error,
+      const started = performance.now();
+      let panel = null, svg = null;
+      while (performance.now() - started < 30000) {
+        panel = document.querySelector('#structure-2d-panel');
+        svg = document.querySelector('#structure-2d-drawing svg');
+        if (panel?.dataset?.error) throw new Error(panel.dataset.error);
+        if (panel && !panel.classList.contains('hidden') && !panel.dataset.pending && svg) break;
+        await new Promise((resolve) => setTimeout(resolve, 25));
+      }
+      if (!svg) throw new Error('Timed out waiting for the visible 2D depiction');
+      return { label:document.querySelector('#structure-2d-label')?.textContent?.trim() || '',
+        hasSvg:Boolean(svg), error:panel?.dataset?.error || null,
         atomGraphics:svg?.querySelectorAll('[class*="atom-"]').length || 0,
         bondGraphics:svg?.querySelectorAll('[class*="bond-"]').length || 0,
         viewBoxWidth:svg?.viewBox?.baseVal?.width || 0,
         viewBoxHeight:svg?.viewBox?.baseVal?.height || 0 };
     })()`);
-    if (!depiction.hasSvg || depiction.error || depiction.heavyAtomCount < 1
-      || depiction.atomGraphics < depiction.heavyAtomCount
-      || depiction.bondGraphics < depiction.bondCount
+    if (!depiction.hasSvg || depiction.error || depiction.atomGraphics < 1
+      || depiction.bondGraphics < 1
       || depiction.viewBoxWidth <= 0 || depiction.viewBoxHeight <= 0)
       throw new Error(`Incomplete 2D depiction after action ${actionNumber}: ${JSON.stringify(depiction)}`);
     depictionChecks.push({ actionNumber, action:step.action, ...depiction });

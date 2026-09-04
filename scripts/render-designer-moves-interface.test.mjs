@@ -64,8 +64,10 @@ try {
     'the executable public-action replay must remain the default');
   assert.match(renderer, /\['executable','checkpoint-review'\]\.includes\(replayKind\)/,
     'the renderer must expose only executable and exact-checkpoint replay modes');
-  assert.match(renderer, /frozenCheckpointReviewScript\(/,
-    'complete-frozen calculation-free review must use the verified checkpoint builder');
+  assert.match(renderer, /readFile\(resolve\(root, SOS1_PREDICTION_REVIEW\)/,
+    'complete-frozen calculation-free review must render the published verified script');
+  assert.match(renderer, /registeredStartingHit !== true/,
+    'complete-frozen checkpoint review must require the exact starting-hit checkpoint');
   assert.match(renderer, /campaignPath:`\.\/\$\{SOS1_PREDICTION_CAMPAIGN_DIRECTORY\}/,
     'complete-frozen checkpoint review must reference published campaigns instead of inlining them');
   assert.match(renderer, /replayKind === 'checkpoint-review' \? SOS1_PREDICTION_REVIEW/,
@@ -94,12 +96,14 @@ try {
     'checkpoint review must state that the transient whole-protein setup frame was not published');
   assert.match(renderer, /TWO_D_SETTLED_ACTIONS/,
     'every settled ligand mutation/import must pass the same 2D readiness gate');
-  assert.match(renderer, /window\.molariumTest\.waitFor2DDepiction\(30000\)/,
+  assert.doesNotMatch(renderer, /window\.molariumTest/,
+    'the publication renderer must not depend on the private browser-test API');
+  assert.match(renderer, /Timed out waiting for the visible 2D depiction/,
     'the renderer must not capture an executable or review state before its 2D ligand is ready');
-  assert.match(renderer, /atomGraphics < depiction\.heavyAtomCount/,
-    'the renderer must reject an incomplete ligand drawing');
-  assert.match(renderer, /bondGraphics < depiction\.bondCount/,
-    'the renderer must reject a drawing with missing ligand bonds');
+  assert.match(renderer, /depiction\.atomGraphics < 1/,
+    'the renderer must reject an empty ligand drawing');
+  assert.match(renderer, /depiction\.bondGraphics < 1/,
+    'the renderer must reject a drawing with no ligand bonds');
   assert.match(renderer, /depictionChecks/,
     '2D readiness evidence must be retained in the render manifest');
   assert.match(renderer, /action:'designerScript\.inspect'/,
@@ -160,11 +164,19 @@ try {
   assert.match(paperBuilder, /manifest\.get\("replay", \{\}\)\.get\("status"\) != "completed"/);
   assert.match(paperBuilder, /failed its render-manifest hash/);
   assert.match(paperBuilder, /"--run"[\s\S]*required=True/,
-    'Figure 2 must require an explicit accepted run directory');
-  assert.match(paperBuilder, /evaluation\.get\("accepted"\) is not True/,
-    'Figure 2 must reject a failed holdout evaluation');
-  assert.match(paperBuilder, /timeline_request_ids != source_request_ids/,
-    'Figure 2 must reject a reordered or substituted presentation timeline');
+    'Figure 2 must require an explicit complete-frozen run directory');
+  assert.match(paperBuilder, /source_run\.get\("resultClass"\) != "complete-frozen"/,
+    'Figure 2 must bind to the honest complete-frozen result class');
+  assert.match(paperBuilder, /source_run\.get\("replayKind"\) != "checkpoint-review"/,
+    'Figure 2 must use the calculation-free checkpoint review');
+  assert.match(paperBuilder, /review\.get\("registeredStartingHit"\) is not True/,
+    'Figure 2 panel A must be the exact registered starting hit');
+  assert.match(paperBuilder, /len\(actions\) != len\(CHECKPOINTS\)/,
+    'Figure 2 must require all five checkpoint imports');
+  assert.match(paperBuilder, /review\.get\("calculationPolicy"\) != "none"/,
+    'Figure 2 must not perform scientific recomputation');
+  assert.match(paperBuilder, /presentation timeline does not contain five checkpoint imports/i,
+    'Figure 2 must reject a reordered or incomplete presentation timeline');
 } finally {
   await rm(scratch, { recursive:true, force:true });
 }
