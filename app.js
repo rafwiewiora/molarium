@@ -8687,7 +8687,11 @@ function updateDesignerMoveControls(message = null, captionOverride = null,
   if (detail) detail.textContent = detailOverride ?? (review.completed && review.reviewing
     ? `Reviewing move ${state.designerMoveReplayIndex} of ${state.designerMoveReplayFrontier}; no calculation is rerun.`
     : review.completed && script?.provenance?.reviewOnly
-      ? 'Accepted content-addressed checkpoints · calculation-free review · non-promotable.'
+      ? script.provenance.sourceStatus === 'accepted'
+        ? 'Accepted content-addressed checkpoints · calculation-free review · non-promotable.'
+        : script.provenance.sourceStatus === 'complete-frozen-prediction'
+          ? 'Frozen prediction checkpoints · calculation-free review · non-promotable.'
+          : 'Content-addressed checkpoints · calculation-free review · non-promotable.'
     : state.designerMoveReplayPaused
     ? state.designerMoveReplayActionRunning
       ? `Pause requested; move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} will finish first.`

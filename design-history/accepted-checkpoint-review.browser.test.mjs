@@ -99,6 +99,8 @@ try {
   assert.match(completed.playLabel, /Replay story/);
   assert.deepEqual(completed.calculations, []);
   assert.match(completed.status, /Accepted source checkpoint 2/);
+  assert.equal(completed.detail,
+    'Accepted content-addressed checkpoints · calculation-free review · non-promotable.');
   const imports = await browser.evaluate(`window.MolariumChemistActions.history()
     .filter((entry) => entry.action === 'campaign.import')
     .map((entry) => ({ preserveView:entry.args.preserveView,
@@ -131,6 +133,30 @@ try {
     `document.querySelector('#campaign-status').textContent`), /Accepted source checkpoint 2/);
   assert.match(await browser.evaluate(
     `document.querySelector('#designer-move-detail').textContent`), /calculation-free review/i);
+
+  const frozenScript = {
+    ...script,
+    label:'Frozen prediction checkpoint review',
+    provenance:{ ...script.provenance,
+      sourceStatus:'complete-frozen-prediction' },
+    actions:script.actions.map((action) => ({ ...action,
+      review:{ ...action.review,
+        sourceStatus:'complete-frozen-prediction' } })),
+  };
+  await browser.evaluate(`(async (script) => {
+    const api = await window.MolariumChemistActionsReady;
+    await api.execute({ action:'designerScript.load', args:{ script } });
+    await api.execute({ action:'designerScript.play', args:{ playing:true } });
+  })(${JSON.stringify(frozenScript)})`);
+  await waitFor(async () => browser.evaluate(
+    `document.querySelector('#designer-move-tools')?.dataset.replayStatus === 'completed'`),
+  30000, 'completed frozen-prediction checkpoint review');
+  const frozenDetail = await browser.evaluate(
+    `document.querySelector('#designer-move-detail').textContent`);
+  assert.equal(frozenDetail,
+    'Frozen prediction checkpoints · calculation-free review · non-promotable.');
+  assert.doesNotMatch(frozenDetail, /accepted/i,
+    'a complete frozen prediction must never be described as accepted');
 
   const origin = new URL(browser.appUrl).origin;
   for (const [route, expectedStory] of [
