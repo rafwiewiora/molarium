@@ -56,10 +56,13 @@ for (const [earlier, later] of [
   ['pose.captureReference','designRoute.applyStep'],
   ['designRoute.applyStep','pose.refine'],
   ['pose.refine','pose.apply'],
+  ['pose.apply','protein.parameterize'],
   ['pose.apply','optimization.run'],
   ['optimization.run','campaign.commitCurrent'],
   ['campaign.commitCurrent','campaign.export'],
 ]) assert(invoked.indexOf(earlier) < invoked.lastIndexOf(later),
   `${earlier} must precede ${later}`);
+assert(invoked.lastIndexOf('protein.parameterize') < invoked.indexOf('optimization.run'),
+  'selected AXH product must be parameterized before coupled relaxation');
 
 console.log('SOS1 full-system checkpoint-4 recovery runner: PASS');

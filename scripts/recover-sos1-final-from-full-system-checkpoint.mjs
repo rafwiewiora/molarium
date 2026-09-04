@@ -210,6 +210,12 @@ export async function main(args = process.argv.slice(2)) {
     await execute('pose.apply', { index:Math.max(0,
       Number(refinement.selectedRank || 1) - 1) }, 'recovery-apply-final-axh');
 
+    // AXH contains atoms absent from the imported AWW checkpoint. Parameterize
+    // the selected product, rather than relying on predecessor parameters,
+    // before coupled relaxation.
+    const parameterized = await execute('protein.parameterize', {},
+      'recovery-parameterize-final-axh');
+
     const beforePocket = (await execute('session.inspect', { scope:'pocket',
       includeCoordinates:true, maximumAtoms:500 }, 'recovery-inspect-pre-relax-pocket')).result;
     phase = 'coupled-relaxation';
@@ -248,6 +254,7 @@ export async function main(args = process.argv.slice(2)) {
       holdoutCoordinatesUsed:false, sourceCampaignSha256:expectedSha256,
       finalCampaignSha256:sha256(exportedBytes), searchChains,
       candidateGate, fixedAtomGate:relaxation.fixedAtomGate,
+      parameterization:parameterized.result.parameterization,
       optimization:relaxation.optimization, ligand:ligand.result,
       designRoute:routeInspection.result.designRoute,
       commit:committed.result.campaignCommit,
