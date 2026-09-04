@@ -181,6 +181,7 @@ export async function buildAcceptedSos1ReplayScript(verified) {
     includeSequences:sequences,
     captionsBySequence,
     includeAuditMetadata:true,
+    stateHashGuards:'required',
     provenance:{ runId:verified.runId,
       predictionManifestSha256:sha256(verified.manifestBytes),
       evaluationSummarySha256:sha256(verified.evaluationBytes),
@@ -198,6 +199,8 @@ export async function buildAcceptedSos1ReplayScript(verified) {
     1, 'selected-route replay must apply exactly one Phe890 rotamer');
   assert(script.actions.every((step) => !step.action.startsWith('designerScript.')
     && step.action !== 'interface.presentDesignerStep'));
+  assert.equal(script.sourceAudit?.stateHashGuards?.mode, 'required',
+    'accepted publication replay must require molecular-state guards');
   return Object.freeze({ script, actionScriptSha256:await actionScriptSha256(script),
     sourceAuditSha256:sha256(verified.auditBytes), sourceAuditRecords:records.length,
     selectedAuditSequences:sequences });

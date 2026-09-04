@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { actionScriptSha256 } from '../design-history/replay.mjs';
+import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
 import { buildAcceptedSos1ReplayScript, sha256,
   verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
 import { SOS1_PUBLICATION_DECLARATION,
@@ -46,9 +47,23 @@ function pdb(title, atoms, { ligand = false } = {}) {
 
 try {
   const records = [];
+  const guardedResult = (requestId, action) => {
+    const digest = (role) => sha256(Buffer.from(`${requestId}:${role}`));
+    const common = { stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
+      inputStateSha256:digest('input') };
+    if (action === 'pose.refine') return { refinement:{ ...common,
+      selectedStateSha256:digest('selected') } };
+    if (action === 'pose.apply') return { appliedPose:{ ...common,
+      selectedStateSha256:digest('selected'), outputStateSha256:digest('output') } };
+    if (action === 'optimization.run') return { optimization:{ ...common,
+      outputStateSha256:digest('output') } };
+    return undefined;
+  };
   const push = (requestId, action, args = {}) => {
     const record = { sequence:records.length + 1, schema:'molarium.chemist-actions/v1',
       requestId, action, args, status:'completed' };
+    const result = guardedResult(requestId, action);
+    if (result) record.result = result;
     records.push(record);
     return record;
   };
@@ -228,6 +243,17 @@ try {
   const verified = await verifySos1Publication({ root:scratch });
   assert.equal(verified.acceptedRunId, runId);
   assert.deepEqual(verified.checkpoints, checkpointLinks);
+  assert.equal(replay.script.sourceAudit.stateHashGuards.mode, 'required');
+
+  const missingGuardReplay = structuredClone(replay.script);
+  delete missingGuardReplay.actions.find((step) => step.action === 'pose.refine')
+    .args.expectedSelectedStateSha256;
+  replayBytes = await writeJson(replayPath, missingGuardReplay);
+  declaration.publicReplay.sha256 = sha256(replayBytes);
+  declaration.publicReplay.actionScriptSha256 = await actionScriptSha256(missingGuardReplay);
+  await writeJson(descriptorPath, declaration);
+  await assert.rejects(() => verifySos1Publication({ root:scratch }),
+    /expectedSelectedStateSha256 must be a lowercase SHA-256 digest/);
 
   const v3Replay = structuredClone(replay.script);
   v3Replay.actions.find((step) => step.action === 'pose.refine')

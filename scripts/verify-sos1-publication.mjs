@@ -4,7 +4,8 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { basename, dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { actionScriptSha256, validateActionScript } from '../design-history/replay.mjs';
+import { ACTION_SCRIPT_SCHEMA, AUDIT_STATE_HASH_GUARDS,
+  actionScriptSha256, validateActionScript } from '../design-history/replay.mjs';
 import { validatePrecomputedCheckpointReview } from
   '../design-history/structure-viewer/checkpoint-review.mjs';
 import { parsePdb } from '../design-history/structures/pipeline.mjs';
@@ -78,6 +79,17 @@ function assertNoV3(value, path = 'public replay') {
     if (key === 'featureSeedingProtocol' && entry === 'v3')
       throw new Error(`${path}.${key} uses forbidden featureSeedingProtocol v3`);
     assertNoV3(entry, `${path}.${key}`);
+  }
+}
+
+function assertRequiredStateGuards(script) {
+  assert.equal(script?.schema, ACTION_SCRIPT_SCHEMA);
+  for (const [index, step] of script.actions.entries()) {
+    const guard = AUDIT_STATE_HASH_GUARDS[step.action];
+    if (!guard) continue;
+    for (const argumentKey of Object.values(guard.fields))
+      requireSha256(step.args?.[argumentKey],
+        `public replay action ${index + 1} ${step.action}.${argumentKey}`);
   }
 }
 
@@ -314,6 +326,12 @@ export async function verifySos1Publication({
     'publication publicReplay');
   assertNoLegacyReferences(JSON.stringify(publicReplay.value), 'public replay');
   validateActionScript(publicReplay.value);
+  assert.equal(publicReplay.value.sourceAudit?.stateHashGuards?.mode, 'required',
+    'public replay was not promoted with required molecular-state guards');
+  assert.equal(publicReplay.value.sourceAudit?.stateHashGuards?.schema,
+    'molarium.molecular-state-hash/v1',
+    'public replay uses an unsupported molecular-state guard schema');
+  assertRequiredStateGuards(publicReplay.value);
   assertNoV3(publicReplay.value);
   requireSha256(declaration.publicReplay.actionScriptSha256,
     'publication publicReplay.actionScriptSha256');

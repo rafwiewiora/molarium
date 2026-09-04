@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
 import { buildAcceptedSos1ReplayScript, requireExplicitRunDirectory, sha256,
   verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
 
@@ -11,9 +12,23 @@ const scratch = await mkdtemp(join(tmpdir(), 'molarium-accepted-sos1-'));
 const steps = ['scaffold-rewrite', 'fragment-merge', 'open-phe890-pocket', 'finish-bay-293'];
 try {
   const records = [];
+  const guardedResult = (requestId, action) => {
+    const digest = (role) => sha256(Buffer.from(`${requestId}:${role}`));
+    const common = { stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
+      inputStateSha256:digest('input') };
+    if (action === 'pose.refine') return { refinement:{ ...common,
+      selectedStateSha256:digest('selected') } };
+    if (action === 'pose.apply') return { appliedPose:{ ...common,
+      selectedStateSha256:digest('selected'), outputStateSha256:digest('output') } };
+    if (action === 'optimization.run') return { optimization:{ ...common,
+      outputStateSha256:digest('output') } };
+    return undefined;
+  };
   const push = (requestId, action, args = {}) => {
     const record = { sequence:records.length + 1, schema:'molarium.chemist-actions/v1', requestId,
       action, args, status:'completed' };
+    const result = guardedResult(requestId, action);
+    if (result) record.result = result;
     records.push(record);
     return record;
   };
@@ -91,6 +106,12 @@ try {
     && step.args.scope === 'pocket' && step.args.includeCoordinates === true).length, steps.length);
   assert(!JSON.stringify(replay.script).includes('discarded'));
   assert.equal(replay.script.sourceAudit.accepted, true);
+  assert.equal(replay.script.sourceAudit.stateHashGuards.mode, 'required');
+  assert.equal(replay.script.sourceAudit.stateHashGuards.guardedActionCount, 12);
+  const preGuardAudit = structuredClone(verified.audit);
+  delete preGuardAudit.records.find((record) => record.action === 'pose.refine').result;
+  await assert.rejects(() => buildAcceptedSos1ReplayScript({ ...verified,
+    audit:preGuardAudit }), /missing molarium\.molecular-state-hash\/v1 result guards/);
 
   const rejected = { ...evaluation, accepted:false };
   await writeFile(join(scratch, 'holdout-evaluation-summary.json'), `${JSON.stringify(rejected)}\n`);
