@@ -171,6 +171,20 @@ try {
     const campaign = createCampaign({ campaignId:`accepted-run-${stepId}`,
       title:`Full system ${stepId}`, createdAt:occurredAt,
       actors:[{ id:'agent.test', type:'agent', displayName:'Test agent' }] });
+    let parentCommitId = null;
+    if (stepId === 'scaffold-rewrite') {
+      const startingSnapshotId = await storeSnapshot(campaign, { label:'5OVE · registered hit',
+        graph:{ atoms:[
+          { atomId:'hit:c1', element:'C', formalCharge:0, record:'HETATM', atomName:'C1',
+            residueName:'AXE', chain:'A', residueIndex:1104 },
+          { atomId:'receptor:PHE:890:CG', element:'C', formalCharge:0, record:'ATOM',
+            atomName:'CG', residueName:'PHE', chain:'A', residueIndex:890 },
+        ], bonds:[] }, coordinates:{ unit:'angstrom',
+          atomIds:['hit:c1','receptor:PHE:890:CG'], positions:[[0,0,0],[0,1,0]] } });
+      parentCommitId = await commitMolecule(campaign, { snapshotId:startingSnapshotId,
+        parents:[], branch:'main', message:'Capture the prepared 5OVE/AXE coordinate boundary',
+        actorId:'agent.test', occurredAt, tags:[] });
+    }
     const snapshotId = await storeSnapshot(campaign, { label:stepId, graph:{ atoms:[
       { atomId:'a1', element:'C', formalCharge:0, record:'HETATM', atomName:'C1',
         residueName:'LIG', chain:'L', residueIndex:1 },
@@ -181,7 +195,8 @@ try {
     ], bonds:[{ atomIds:['a1','a2'], order:1 }] }, coordinates:{ unit:'angstrom',
       atomIds:['a1','a2','receptor:PHE:890:CG'],
       positions:[[index,0,0],[index + 1.4,0,0],[0,index + 1,0]] } });
-    const commitId = await commitMolecule(campaign, { snapshotId, parents:[], branch:'main',
+    const commitId = await commitMolecule(campaign, { snapshotId,
+      parents:parentCommitId ? [parentCommitId] : [], branch:'main',
       message:`Freeze ${stepId}`, actorId:'agent.test', occurredAt,
       tags:['accepted','pre-holdout'] });
     const campaignBytes = Buffer.from(serializeCampaign(campaign));
@@ -279,14 +294,33 @@ try {
     ['finish-bay-293']);
   assert(browserPublication.reviewBytes.length < 1024 * 1024,
     'checkpoint review must not inline full-system campaigns');
+  assert.equal(browserPublication.review.actions.length, steps.length + 1,
+    'checkpoint review must include the exact prepared starting hit before predictions');
+  assert.equal(browserPublication.review.actions[0].review.registeredStartingHit, true);
+  assert.equal(browserPublication.review.actions[0].review.exactHistoryPrefix, true);
+  assert.equal(browserPublication.review.provenance.coordinateGranularity
+    .syntheticCoordinatesUsed, false);
+  assert.deepEqual(browserPublication.review.provenance.coordinateGranularity
+    .unavailableIndependentStates, [
+      'compound-21-graph-edit-before-phe890-rotamer',
+      'phe890-rotamer-before-coupled-relaxation',
+    ], 'the review must disclose that graph-edit and Phe890 pre-relax states were not committed');
   assert(browserPublication.review.actions.every((step) =>
     step.action === 'campaign.import' && step.args.serialized == null
     && /^[a-f0-9]{64}$/.test(step.args.sourceSha256)
     && /^\.\/design-history\/publications\/sos1\/checkpoints\//
       .test(step.args.sourcePath)));
-  assert.deepEqual(browserPublication.campaignAssets.map((asset) => asset.sha256),
+  assert.deepEqual(browserPublication.campaignAssets.slice(1).map((asset) => asset.sha256),
     steps.map((stepId) => completeFrozen.checkpoints.get(stepId)
       .fullSystemCampaign.record.sha256));
+  const startingAsset = browserPublication.campaignAssets[0];
+  assert.equal(startingAsset.stepId, 'starting-hit');
+  const startingCampaign = JSON.parse(startingAsset.bytes);
+  assert.equal(Object.keys(startingCampaign.objects.commits).length, 1);
+  assert.equal(Object.keys(startingCampaign.objects.snapshots).length, 1);
+  assert.equal(startingCampaign.branches.main,
+    browserPublication.review.actions[0].review.commitId);
+  assert.equal(startingCampaign.objects.commits[startingCampaign.branches.main].parents.length, 0);
   assert.equal(browserPublication.review.provenance.postFreezeEvaluation.accepted, false);
   await assert.rejects(() => verifyAcceptedSos1Run(scratch), /was not accepted/);
 

@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { commitMolecule, createCampaign, storeSnapshot } from
   '../design-history/ledger.mjs';
 import { serializeCampaign } from '../design-history/live-campaign-store.mjs';
-import { frozenCheckpointReviewScript } from
+import { exactCampaignHistoryPrefix, frozenCheckpointReviewScript } from
   '../design-history/frozen-checkpoint-review.mjs';
 import { rewriteFrozenBrowserIntegration, SOS1_PREDICTION_DECLARATION,
   SOS1_PREDICTION_REPLAY, SOS1_PREDICTION_REVIEW } from
@@ -43,6 +43,21 @@ assert.equal(review.provenance.postFreezeEvaluation.accepted, false);
 assert.equal(review.provenance.promotable, false);
 assert.equal(review.provenance.calculationPolicy, 'none');
 assert(!JSON.stringify(review).includes('directCoordinates'));
+const firstCampaign = JSON.parse(checkpoints[0].serializedCampaign);
+const firstPrefix = await exactCampaignHistoryPrefix(firstCampaign, checkpoints[0].commitId);
+assert.deepEqual(firstPrefix.objects.snapshots[checkpoints[0].snapshotId],
+  firstCampaign.objects.snapshots[checkpoints[0].snapshotId],
+  'an exact history prefix must retain the source snapshot byte-for-byte');
+assert.equal((await frozenCheckpointReviewScript({ label:'Starting hit review', checkpoints:[{
+  ...checkpoints[0], completeFrozenPrediction:undefined, registeredStartingHit:true,
+  exactHistoryPrefix:true,
+}], postFreezeEvaluation:{ summarySha256:'a'.repeat(64) } })).actions[0]
+  .review.sourceStatus, 'registered-starting-hit');
+await assert.rejects(() => frozenCheckpointReviewScript({ label:'Synthetic starting hit',
+  checkpoints:[{ ...checkpoints[0], completeFrozenPrediction:undefined,
+    registeredStartingHit:true, exactHistoryPrefix:false }],
+  postFreezeEvaluation:{ summarySha256:'a'.repeat(64) } }),
+/starting hit is not an exact campaign history prefix/);
 const externalReview = await frozenCheckpointReviewScript({
   label:'External checkpoint review', checkpoints:[{
     ...checkpoints[0], serializedCampaign:undefined,

@@ -142,10 +142,10 @@ async function runCalculation(message) {
       rdMol = module.get_mol(moleculeToMolBlock(molecule), JSON.stringify({
         sanitize:true, removeHs:true, strictParsing:false,
       }));
-      // RDKit-originated embedded molecules have already passed sanitization.
-      // Their simplified live V2000 round-trip omits a few atom-property flags
-      // (for example [nH]); permit drawing that already-validated graph only.
-      if (!rdMol && options.trustedSanitizedGraph === true) rdMol = module.get_mol(
+      // Some provenance-bounded live graphs omit V2000-only atom-property
+      // flags (for example [nH]) in the viewer representation. Permit a
+      // drawing-only fallback for those graphs; calculations remain strict.
+      if (!rdMol && options.allowUnsanitizedDepictionFallback === true) rdMol = module.get_mol(
         moleculeToMolBlock(molecule), JSON.stringify({
           sanitize:false, removeHs:false, strictParsing:false,
         }));
@@ -173,8 +173,9 @@ async function runCalculation(message) {
         throw new Error('RDKit returned an invalid 2D depiction');
       self.postMessage({
         type:'result', id, job, svg, atomCount:molecule.atoms.length,
-        sanitization:options.trustedSanitizedGraph === true
-          ? 'RDKit-origin graph; strict parse with provenance-bounded fallback' : 'strict RDKit sanitization',
+        sanitization:options.allowUnsanitizedDepictionFallback === true
+          ? 'provenance-bounded graph; strict parse with drawing-only fallback'
+          : 'strict RDKit sanitization',
         rdkitVersion:module.version?.() || null, elapsedMs:performance.now() - started,
         platform:'WebAssembly', backend:'RDKit MolDraw2D',
       });

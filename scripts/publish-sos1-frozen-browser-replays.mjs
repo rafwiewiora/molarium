@@ -4,8 +4,9 @@ import assert from 'node:assert/strict';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { frozenCheckpointReviewScript } from
+import { exactCampaignHistoryPrefix, frozenCheckpointReviewScript } from
   '../design-history/frozen-checkpoint-review.mjs';
+import { serializeCampaign } from '../design-history/live-campaign-store.mjs';
 import { actionScriptSha256 } from '../design-history/replay.mjs';
 import { buildFrozenSos1ReplayScript, requireExplicitRunDirectory, sha256,
   SOS1_STEP_IDS, verifyCompleteFrozenSos1Run } from './sos1-accepted-run.mjs';
@@ -19,6 +20,8 @@ export const SOS1_PREDICTION_DECLARATION =
   'design-history/publications/sos1/browser-replay-declaration.json';
 export const SOS1_PREDICTION_CAMPAIGN_DIRECTORY =
   'design-history/publications/sos1/checkpoints';
+export const SOS1_STARTING_HIT_CAMPAIGN =
+  `${SOS1_PREDICTION_CAMPAIGN_DIRECTORY}/starting-hit-campaign.json`;
 
 const jsonBytes = (value) => Buffer.from(`${JSON.stringify(value, null, 2)}\n`);
 
@@ -45,6 +48,52 @@ function reviewCheckpoint(verified, stepId) {
     snapshotId:fullSystem.record.snapshotId, label:`${stepId} prediction checkpoint` };
 }
 
+async function startingHitReviewRecord(verified) {
+  const scaffold = verified.checkpoints.get('scaffold-rewrite')?.fullSystemCampaign;
+  assert(scaffold, 'scaffold-rewrite full-system campaign is unavailable');
+  const scaffoldHead = scaffold.campaign.objects?.commits?.[scaffold.record.commitId];
+  assert.equal(scaffoldHead?.parents?.length, 1,
+    'scaffold-rewrite must have one exact prepared-hit parent commit');
+  const commitId = scaffoldHead.parents[0];
+  const commit = scaffold.campaign.objects.commits[commitId];
+  assert.equal(commit?.parents?.length, 0,
+    'prepared 5OVE/AXE coordinate boundary must be the root commit');
+  const campaign = await exactCampaignHistoryPrefix(scaffold.campaign, commitId);
+  const serializedCampaign = serializeCampaign(campaign);
+  const bytes = Buffer.from(serializedCampaign);
+  const snapshotId = commit.snapshotId;
+  assert.deepEqual(campaign.objects.snapshots[snapshotId],
+    scaffold.campaign.objects.snapshots[snapshotId],
+    'starting-hit history prefix changed the exact molecular snapshot');
+  const campaignSha256 = sha256(bytes);
+  return Object.freeze({
+    checkpoint:{ registeredStartingHit:true, exactHistoryPrefix:true,
+      frozenBeforeHoldoutAccess:true,
+      checkpointSha256:snapshotId.replace(/^snapshot:/, ''), campaignSha256,
+      campaignPath:`./${SOS1_STARTING_HIT_CAMPAIGN}`,
+      campaignId:campaign.campaignId, branch:commit.branch, commitId, snapshotId,
+      label:'the exact prepared 5OVE/AXE starting hit' },
+    asset:{ stepId:'starting-hit', path:SOS1_STARTING_HIT_CAMPAIGN,
+      sha256:campaignSha256, bytes },
+  });
+}
+
+export const SOS1_CHECKPOINT_GRANULARITY = Object.freeze({
+  schema:'molarium.checkpoint-review-granularity/v1',
+  startingHitIncluded:true,
+  startingHitSource:'exact scaffold-rewrite campaign history prefix',
+  syntheticCoordinatesUsed:false,
+  independentlyCommittedStates:Object.freeze([
+    'registered-starting-hit', 'scaffold-rewrite', 'fragment-merge',
+    'open-phe890-pocket', 'finish-bay-293',
+  ]),
+  unavailableIndependentStates:Object.freeze([
+    'compound-21-graph-edit-before-phe890-rotamer',
+    'phe890-rotamer-before-coupled-relaxation',
+  ]),
+  limitation:'The source run did not commit separate full-system snapshots between compound-21 graph editing, Phe890 rotamer application, and coupled relaxation. The calculation-free review therefore keeps those operations in their single exact open-phe890-pocket checkpoint and does not synthesize intermediate coordinates.',
+});
+
 export async function buildFrozenBrowserPublicationRecords(verified,
   { sourceRunDirectory = null } = {}) {
   assert.deepEqual([...verified.checkpoints.keys()], SOS1_STEP_IDS,
@@ -52,17 +101,19 @@ export async function buildFrozenBrowserPublicationRecords(verified,
   const replay = await buildFrozenSos1ReplayScript(verified);
   const replayBytes = jsonBytes(replay.script);
   const postFreezeEvaluation = evaluationOutcome(verified);
+  const startingHit = await startingHitReviewRecord(verified);
   const review = await frozenCheckpointReviewScript({
     label:`SOS1 prediction checkpoint review ${verified.runId}`,
-    checkpoints:SOS1_STEP_IDS.map((stepId) => reviewCheckpoint(verified, stepId)),
-    postFreezeEvaluation,
+    checkpoints:[startingHit.checkpoint,
+      ...SOS1_STEP_IDS.map((stepId) => reviewCheckpoint(verified, stepId))],
+    postFreezeEvaluation, coordinateGranularity:SOS1_CHECKPOINT_GRANULARITY,
   });
   const reviewBytes = jsonBytes(review);
-  const campaignAssets = SOS1_STEP_IDS.map((stepId) => {
+  const campaignAssets = [startingHit.asset, ...SOS1_STEP_IDS.map((stepId) => {
     const fullSystem = verified.checkpoints.get(stepId).fullSystemCampaign;
     return { stepId, path:`${SOS1_PREDICTION_CAMPAIGN_DIRECTORY}/${stepId}-campaign.json`,
       sha256:fullSystem.record.sha256, bytes:fullSystem.campaignBytes };
-  });
+  })];
   const declaration = {
     schema:'molarium.sos1-frozen-browser-publication/v1',
     routeId:'sos1-hit-only', publicationClass:'complete-frozen-prediction',
@@ -81,7 +132,12 @@ export async function buildFrozenBrowserPublicationRecords(verified,
       publicUrl:'/sos1-hit-to-bay293' },
     checkpointReview:{ path:SOS1_PREDICTION_REVIEW, sha256:sha256(reviewBytes),
       actionScriptSha256:await actionScriptSha256(review), calculationPolicy:'none',
-      promotable:false, publicUrl:'/sos1-hit-to-bay293/review' },
+      promotable:false, publicUrl:'/sos1-hit-to-bay293/review',
+      startingHit:{ campaignPath:SOS1_STARTING_HIT_CAMPAIGN,
+        campaignSha256:startingHit.asset.sha256,
+        commitId:startingHit.checkpoint.commitId,
+        snapshotId:startingHit.checkpoint.snapshotId,
+        source:'exact scaffold-rewrite campaign history prefix' } },
   };
   return Object.freeze({ replay:replay.script, replayBytes, review, reviewBytes,
     campaignAssets, declaration, declarationBytes:jsonBytes(declaration) });

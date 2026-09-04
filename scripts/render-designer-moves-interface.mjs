@@ -130,7 +130,13 @@ let initialInterface = null;
 let completedInterface = null;
 let highlightCameraAudit = null;
 const captured = [];
+const depictionChecks = [];
 let frameIndex = 0;
+
+const TWO_D_SETTLED_ACTIONS = new Set([
+  'designRoute.load', 'protein.prepare', 'designRoute.applyStep', 'pose.apply',
+  'pose.applySidechainRotamer', 'optimization.run', 'campaign.import',
+]);
 
 async function appendFrame(label, repeats = 1, actionIndex = null) {
   const bytes = await browser.capturePng();
@@ -190,7 +196,7 @@ async function waitForInterfaceAction(actionNumber, actionIndex, step, timeoutMs
   throw new Error(`Timed out waiting for completed interface action ${actionNumber}`);
 }
 
-async function waitForVisibleResult(actionNumber, timeoutMs = 5000) {
+async function waitForVisibleResult(actionNumber, step, timeoutMs = 5000) {
   await waitFor(async () => browser.evaluate(`(() => {
     const progress = document.querySelector('#designer-move-progress-label')?.textContent || '';
     const completed = Number(progress.split('/')[0]?.trim());
@@ -201,6 +207,26 @@ async function waitForVisibleResult(actionNumber, timeoutMs = 5000) {
   // Let the result caption, demo layout, and WebGL draw scheduled by the
   // checkpoint settle before taking the evidence frame.
   await delay(100);
+  if (TWO_D_SETTLED_ACTIONS.has(step.action)
+    || step.action === 'view.focusComponent' && checkpointReviewBootstrapEnd > 0) {
+    const depiction = await browser.evaluate(`(async () => {
+      const result = await window.molariumTest.waitFor2DDepiction(30000);
+      const svg = document.querySelector('#structure-2d-drawing svg');
+      return { label:result.label, componentId:result.componentId,
+        pinnedLigand:result.pinnedLigand, heavyAtomCount:result.heavyAtomCount,
+        bondCount:result.bondCount, hasSvg:result.hasSvg, error:result.error,
+        atomGraphics:svg?.querySelectorAll('[class*="atom-"]').length || 0,
+        bondGraphics:svg?.querySelectorAll('[class*="bond-"]').length || 0,
+        viewBoxWidth:svg?.viewBox?.baseVal?.width || 0,
+        viewBoxHeight:svg?.viewBox?.baseVal?.height || 0 };
+    })()`);
+    if (!depiction.hasSvg || depiction.error || depiction.heavyAtomCount < 1
+      || depiction.atomGraphics < depiction.heavyAtomCount
+      || depiction.bondGraphics < depiction.bondCount
+      || depiction.viewBoxWidth <= 0 || depiction.viewBoxHeight <= 0)
+      throw new Error(`Incomplete 2D depiction after action ${actionNumber}: ${JSON.stringify(depiction)}`);
+    depictionChecks.push({ actionNumber, action:step.action, ...depiction });
+  }
 }
 
 try {
@@ -265,7 +291,7 @@ try {
         Math.max(1000, timeout - (Date.now() - started)));
       if (outcome.status !== 'completed')
         throw new Error(`Molarium replay action ${actionNumber} failed: ${outcome.error || outcome.status}`);
-      await waitForVisibleResult(actionNumber);
+      await waitForVisibleResult(actionNumber, step);
       if (!checkpointBootstrap)
         await appendFrame(`${actionNumber}. Result ${step.caption || step.action}`,
           designerMovieResultFrames(step, fps), actionNumber - 1);
@@ -363,6 +389,7 @@ try {
     networkPolicy,
     presentation:{ ...DESIGNER_MOVIE_PRESENTATION, initialInterface,
       completedInterface, cameraContract, highlightCameraAudit,
+      depictionChecks,
       checkpointReviewBootstrap:checkpointReviewBootstrapEnd > 0 ? {
         publicActionCount:checkpointReviewBootstrapEnd,
         firstVisibleMolecularFrame:'result of view.focusComponent',

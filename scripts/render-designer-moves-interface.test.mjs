@@ -92,6 +92,16 @@ try {
     'checkpoint review must audit its initial import while deferring visible molecular frames until pocket focus');
   assert.match(renderer, /transientWholeProteinFramePublished:false/,
     'checkpoint review must state that the transient whole-protein setup frame was not published');
+  assert.match(renderer, /TWO_D_SETTLED_ACTIONS/,
+    'every settled ligand mutation/import must pass the same 2D readiness gate');
+  assert.match(renderer, /window\.molariumTest\.waitFor2DDepiction\(30000\)/,
+    'the renderer must not capture an executable or review state before its 2D ligand is ready');
+  assert.match(renderer, /atomGraphics < depiction\.heavyAtomCount/,
+    'the renderer must reject an incomplete ligand drawing');
+  assert.match(renderer, /bondGraphics < depiction\.bondCount/,
+    'the renderer must reject a drawing with missing ligand bonds');
+  assert.match(renderer, /depictionChecks/,
+    '2D readiness evidence must be retained in the render manifest');
   assert.match(renderer, /action:'designerScript\.inspect'/,
     'the renderer must inspect terminal review state through the public API');
   assert.match(renderer, /verifyCompletedInterfaceSnapshot/,

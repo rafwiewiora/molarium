@@ -6,6 +6,61 @@ import { validateActionScript } from './replay.mjs';
 export const FROZEN_CHECKPOINT_REVIEW_SCHEMA =
   'molarium.frozen-prediction-checkpoint-review/v1';
 
+/** Return a verified, canonical prefix of an existing campaign ending at an
+ * already-recorded commit. Snapshot, commit, action-script, and event bytes
+ * are copied verbatim; no molecular state is reconstructed. */
+export async function exactCampaignHistoryPrefix(campaign, commitId) {
+  const sourceVerification = await verifyCampaign(campaign);
+  if (!sourceVerification.valid)
+    throw new Error(`Cannot prefix an invalid campaign: ${sourceVerification.reason}`);
+  const targetCommitId = text(commitId, 'History-prefix commitId');
+  if (!campaign.objects?.commits?.[targetCommitId])
+    throw new Error(`History-prefix commit is unavailable: ${targetCommitId}`);
+  const targetEventIndex = campaign.events.findIndex((event) =>
+    event.kind === 'molecule.committed' && event.payload?.commitId === targetCommitId);
+  if (targetEventIndex < 0)
+    throw new Error(`History-prefix commit has no chained event: ${targetCommitId}`);
+
+  const prefix = structuredClone(campaign);
+  prefix.events = prefix.events.slice(0, targetEventIndex + 1);
+  const retainedCommitIds = new Set(prefix.events.flatMap((event) =>
+    event.kind === 'molecule.committed' ? [event.payload.commitId] : []));
+  prefix.objects.commits = Object.fromEntries(Object.entries(prefix.objects.commits)
+    .filter(([id]) => retainedCommitIds.has(id)));
+  for (const [id, commit] of Object.entries(prefix.objects.commits))
+    if (commit.parents.some((parent) => !retainedCommitIds.has(parent)))
+      throw new Error(`History-prefix commit ${id} depends on a later or missing parent`);
+  const retainedSnapshotIds = new Set(Object.values(prefix.objects.commits)
+    .map((commit) => commit.snapshotId));
+  const retainedActionScriptIds = new Set(Object.values(prefix.objects.commits)
+    .flatMap((commit) => commit.actionScriptId ? [commit.actionScriptId] : []));
+  prefix.objects.snapshots = Object.fromEntries(Object.entries(prefix.objects.snapshots)
+    .filter(([id]) => retainedSnapshotIds.has(id)));
+  prefix.objects.actionScripts = Object.fromEntries(Object.entries(prefix.objects.actionScripts)
+    .filter(([id]) => retainedActionScriptIds.has(id)));
+
+  const branches = { main:null };
+  for (const event of prefix.events) {
+    if (event.kind === 'branch.created')
+      branches[event.payload.branch] = event.payload.fromCommitId;
+    if (event.kind === 'molecule.committed') {
+      const commit = prefix.objects.commits[event.payload.commitId];
+      if (!Object.hasOwn(branches, commit.branch))
+        branches[commit.branch] = commit.parents[0] || null;
+      branches[commit.branch] = event.payload.commitId;
+    }
+  }
+  prefix.branches = branches;
+  prefix.finalizedAt = null;
+  prefix.campaignSha256 = null;
+  const prefixVerification = await verifyCampaign(prefix);
+  if (!prefixVerification.valid)
+    throw new Error(`Campaign history prefix is invalid: ${prefixVerification.reason}`);
+  if (prefix.branches[prefix.objects.commits[targetCommitId].branch] !== targetCommitId)
+    throw new Error('History-prefix target is not the resulting branch head');
+  return prefix;
+}
+
 function text(value, label) {
   const result = String(value || '').trim();
   if (!result) throw new Error(`${label} must not be empty`);
@@ -20,8 +75,11 @@ function digest(value, label) {
 }
 
 async function checkpointMove(checkpoint, index) {
-  if (checkpoint?.completeFrozenPrediction !== true)
+  const startingHit = checkpoint?.registeredStartingHit === true;
+  if (!startingHit && checkpoint?.completeFrozenPrediction !== true)
     throw new Error(`Checkpoint ${index + 1} is not from a complete frozen prediction run`);
+  if (startingHit && checkpoint?.exactHistoryPrefix !== true)
+    throw new Error(`Checkpoint ${index + 1} starting hit is not an exact campaign history prefix`);
   if (checkpoint.frozenBeforeHoldoutAccess !== true)
     throw new Error(`Checkpoint ${index + 1} was not frozen before holdout access`);
   const checkpointSha256 = digest(checkpoint.checkpointSha256,
@@ -44,7 +102,9 @@ async function checkpointMove(checkpoint, index) {
         `Checkpoint ${index + 1} label`)}`,
       ...(index > 0 ? { expect:{ 'campaignImport.viewPreserved':true } } : {}),
       review:{ schema:FROZEN_CHECKPOINT_REVIEW_SCHEMA,
-        sourceStatus:'complete-frozen-prediction', immutableSnapshot:true,
+        sourceStatus:startingHit ? 'registered-starting-hit' : 'complete-frozen-prediction',
+        immutableSnapshot:true, ...(startingHit ? { registeredStartingHit:true,
+          exactHistoryPrefix:true } : {}),
         promotable:false, calculationPolicy:'none', holdoutCoordinatesIncluded:false,
         checkpointSha256, campaignSha256,
         campaignId:text(checkpoint.campaignId, `Checkpoint ${index + 1} campaignId`),
@@ -73,7 +133,9 @@ async function checkpointMove(checkpoint, index) {
     caption:`Review ${label}`,
     ...(index > 0 ? { expect:{ 'campaignImport.viewPreserved':true } } : {}),
     review:{ schema:FROZEN_CHECKPOINT_REVIEW_SCHEMA,
-      sourceStatus:'complete-frozen-prediction', immutableSnapshot:true,
+      sourceStatus:startingHit ? 'registered-starting-hit' : 'complete-frozen-prediction',
+      immutableSnapshot:true, ...(startingHit ? { registeredStartingHit:true,
+        exactHistoryPrefix:true } : {}),
       promotable:false, calculationPolicy:'none', holdoutCoordinatesIncluded:false,
       checkpointSha256, campaignSha256, campaignId:campaign.campaignId,
       branch, commitId, snapshotId } };
@@ -82,7 +144,7 @@ async function checkpointMove(checkpoint, index) {
 /** Build a calculation-free review of exact, content-addressed full-system
  * checkpoints. Post-freeze evaluation is metadata and never changes a snapshot. */
 export async function frozenCheckpointReviewScript({ label, checkpoints,
-  postFreezeEvaluation } = {}) {
+  postFreezeEvaluation, coordinateGranularity = null } = {}) {
   if (!Array.isArray(checkpoints) || !checkpoints.length)
     throw new Error('At least one complete frozen prediction checkpoint is required');
   const actions = [];
@@ -101,6 +163,8 @@ export async function frozenCheckpointReviewScript({ label, checkpoints,
       promotable:false,
       nonPromotableReason:'Checkpoint review performs no scientific calculation.',
       calculationPolicy:'none', holdoutCoordinatesIncluded:false,
+      ...(coordinateGranularity ? { coordinateGranularity:
+        structuredClone(coordinateGranularity) } : {}),
       publicChemistActions:['campaign.import'], postFreezeEvaluation:evaluation },
     actions };
   validateActionScript(script);
