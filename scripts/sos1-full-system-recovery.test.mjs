@@ -14,9 +14,25 @@ const passed = fixedAtomRelaxationGate({ before, after,
   fixedAtomIds:['fixed-1','fixed-2'] });
 assert.equal(passed.passed, true);
 assert.equal(passed.comparison,
-  'immediate-pre-relaxation-versus-immediate-post-relaxation');
+  'post-WebGPU coordinates versus exact float32-nm round-trip of pre-WebGPU coordinates');
 assert.equal(passed.maximumDisplacementAngstrom, 0);
+assert(passed.maximumFloat32RoundTripResidualAngstrom <= passed.toleranceAngstrom);
 assert.equal(passed.comparedAtomCount, 2);
+
+const preWebGpu = -23.28110572094604;
+const float32RoundTrip = Math.fround(preWebGpu / 10) * 10;
+const exactRoundTripPoint = [float32RoundTrip,
+  Math.fround(2 / 10) * 10, Math.fround(3 / 10) * 10];
+const representationOnly = fixedAtomRelaxationGate({
+  before:inspection([atom('fixed-1',[preWebGpu,2,3])]),
+  after:inspection([atom('fixed-1',exactRoundTripPoint)]),
+  fixedAtomIds:['fixed-1'],
+});
+assert(representationOnly.maximumDisplacementAngstrom > representationOnly.toleranceAngstrom,
+  'fixture must reproduce a raw displacement above the strict physical residual tolerance');
+assert.equal(representationOnly.maximumFloat32RoundTripResidualAngstrom, 0);
+assert.equal(representationOnly.passed, true,
+  'an exact float32-nm storage round trip is representation loss, not fixed-atom motion');
 
 const moved = fixedAtomRelaxationGate({ before,
   after:inspection([atom('fixed-1',[1.01,2,3]), atom('fixed-2',[4,5,6])]),

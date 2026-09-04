@@ -4,6 +4,8 @@ import assert from 'node:assert/strict';
 import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { registeredFixedAtomMotion } from
+  '../docking/registered-pose-retention.mjs';
 import { verifyCampaign } from '../design-history/ledger.mjs';
 import { deserializeCampaign, serializeCampaign } from
   '../design-history/live-campaign-store.mjs';
@@ -65,15 +67,18 @@ export function fixedAtomRelaxationGate({ before, after, fixedAtomIds,
     .map((atomId) => { const first = beforeById.get(atomId), second = afterById.get(atomId);
       return { atomId, displacementAngstrom:Math.hypot(
         first[0] - second[0], first[1] - second[1], first[2] - second[2]) }; });
-  const maximumDisplacementAngstrom = displacements.length
-    ? Math.max(...displacements.map((entry) => entry.displacementAngstrom)) : null;
-  return { schema:SOS1_FULL_SYSTEM_RECOVERY_SCHEMA,
-    comparison:'immediate-pre-relaxation-versus-immediate-post-relaxation',
+  const fixedCoordinates = (coordinateById) => ({ atomIds:[...fixedAtomIds],
+    positions:fixedAtomIds.filter((id) => coordinateById.has(id))
+      .map((id) => coordinateById.get(id)) });
+  const motion = registeredFixedAtomMotion(
+    { fixedCoordinatesAngstrom:fixedCoordinates(beforeById) },
+    { fixedCoordinatesAngstrom:fixedCoordinates(afterById) }, toleranceAngstrom);
+  return { ...motion, schema:SOS1_FULL_SYSTEM_RECOVERY_SCHEMA,
     toleranceAngstrom, fixedAtomCount:fixedAtomIds.length,
     comparedAtomCount:displacements.length, missingBefore, missingAfter,
-    maximumDisplacementAngstrom, displacements,
+    displacements,
     passed:!missingBefore.length && !missingAfter.length
-      && maximumDisplacementAngstrom <= toleranceAngstrom };
+      && motion.accepted === true };
 }
 
 function requireAcceptedRelaxation(optimization, requiredFeatureIds,
@@ -165,7 +170,7 @@ export async function main(args = process.argv.slice(2)) {
       stateId:'AWW', stepId:'open-phe890-pocket', frozenBeforeHoldoutAccess:true },
     authorization:'All molecular-state changes use public Molarium Chemist Actions.',
     holdoutCoordinatesUsed:false, immutableAttempt:true, searchChains,
-    fixedAtomGate:'immediate pre-relaxation coordinates versus immediate post-relaxation coordinates',
+    fixedAtomGate:'post-WebGPU coordinates versus exact float32-nm round-trip of immediate pre-WebGPU coordinates',
   });
 
   const route = JSON.parse(await readFile(join(root,
