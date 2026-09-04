@@ -16,7 +16,7 @@
     .lede,.note{color:var(--muted);font-size:12px}.note{padding-top:9px}.boundary{border-left:3px solid #8aa7b8;padding:8px 10px;margin:14px 0;background:#f5f9fb;color:#4d6172;font-size:11px}
     button{font:inherit;color:inherit}.small-button{border:1px solid #cbd5e1;background:#fff;cursor:pointer;border-radius:8px;padding:6px 9px;font-size:11px;font-weight:700}.small-button:hover{border-color:#8ba9bd;background:#f2f7fa}.small-button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
     .button-row{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.checks{display:grid;gap:8px}.checks label{display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer}.checks input{accent-color:var(--blue);width:16px;height:16px}.swatch{width:10px;height:10px;border-radius:50%;flex:0 0 auto}.start-tag{margin-left:auto;border-radius:999px;background:#eee9f5;color:#6a5687;padding:2px 6px;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
-    .status{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:10px 11px;margin:12px 0}.pill{border-radius:999px;padding:3px 8px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:#e8f6ef;color:var(--green)}
+    .status{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:10px 11px;margin:12px 0}.pill{border-radius:999px;padding:3px 8px;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:#e8f6ef;color:var(--green)}.pill.reject{background:#fff0ee;color:#a33b2a}
     table{width:100%;border-collapse:collapse;font-size:11px}th,td{padding:6px 4px;border-bottom:1px solid #edf0f4;text-align:left;vertical-align:top}th{color:var(--muted);font-size:9px;letter-spacing:.07em;text-transform:uppercase}td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}a{color:#2e7096;text-decoration:none}a:hover{text-decoration:underline}
     details{border-top:1px solid var(--line);margin-top:18px;padding-top:12px}summary{cursor:pointer;color:var(--muted);font-weight:650;font-size:12px}.hash{overflow-wrap:anywhere;white-space:pre-wrap;font:10px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#788397}
     #stage{position:relative;min-width:0;overflow:hidden}#viewer{position:absolute;inset:0}.msp-plugin{background:#fff!important}
@@ -97,6 +97,7 @@ function setLigands(predicate){for(const [index,ligand] of DATA.ligands.entries(
 function renderControls(){
   $('title').textContent=DATA.title;$('subtitle').textContent=DATA.subtitle;$('boundary').textContent=DATA.boundary;
   $('ligand-heading').textContent=DATA.labels?.ligandHeading||'Experimental ligands';
+  $('start-only').textContent=DATA.labels?.firstOnlyButton||'Starting hit only';
   $('focus-switch').textContent=DATA.labels?.focusButton||'Focus design region';
   $('protein-label').textContent=DATA.labels?.protein||`${DATA.receptor.pdbId} receptor cartoon`;
   $('pocket-label').textContent=DATA.labels?.pocket||`Union contact shell within ${DATA.receptor.pocket.cutoffAngstrom} Å`;
@@ -105,6 +106,8 @@ function renderControls(){
   $('alignment-note').textContent=DATA.labels?.alignmentNote||`RMSD is the whole-chain rigid alignment used only to place each experimental ligand in the ${DATA.receptor.pdbId} coordinate frame.`;
   $('metric-heading').textContent=DATA.labels?.metricHeading||'Cα RMSD';
   $('status-pill').textContent=DATA.labels?.statusPill||'X-ray overlay';
+  $('status-pill').classList.toggle('reject',DATA.labels?.statusTone==='reject');
+  if(DATA.labels?.focusSnapshotsDefaultVisible===true)$('sidechains').checked=true;
   for(const [index,ligand] of DATA.ligands.entries()){
     const badge=ligand.badge?`<span class="start-tag">${ligand.badge}</span>`:(index===0?'<span class="start-tag">start</span>':'');
     const checked=ligand.defaultVisible===false?'':' checked';
