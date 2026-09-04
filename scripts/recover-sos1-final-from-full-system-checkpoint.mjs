@@ -15,6 +15,17 @@ import { finalDiagnosticGate, sha256 } from './sos1-final-step-checkpoint.mjs';
 export const SOS1_FULL_SYSTEM_RECOVERY_SCHEMA =
   'molarium.sos1-full-system-final-recovery/v1';
 
+// These coordinate digests were recorded by the original immutable a013
+// prediction run before any holdout was opened.  Supplying them through the
+// public action API makes this narrow recovery fail closed if the selector,
+// pose application, or coupled relaxation no longer reproduces that run.
+const A013_FINAL_SELECTED_COORDINATE_SHA256 =
+  'a5724fac3051b1c5fb97aa80064cbcd71396ce138e59738911d57bc4327dfd28';
+const A013_FINAL_APPLIED_COORDINATE_SHA256 =
+  'a7891a9f5a76cb29341a04194b8f064110232eba486038c91d03d01ba372b52b';
+const A013_FINAL_RELAXED_COORDINATE_SHA256 =
+  '2065bca8aa7c5ee71d5d52954705042dc122aeaa7f4d4edfc55ab6162a8d8c7b';
+
 function valueFor(args, name) {
   const index = args.indexOf(name);
   if (index >= 0) return args[index + 1];
@@ -202,7 +213,9 @@ export async function main(args = process.argv.slice(2)) {
 
     phase = 'final-refinement';
     const refined = await execute('pose.refine', { searchChains, execution:'serial',
-      featureSeedingProtocol:'v5' }, 'recovery-refine-final-axh');
+      featureSeedingProtocol:'v5',
+      expectedSelectedCoordinateSha256:A013_FINAL_SELECTED_COORDINATE_SHA256,
+    }, 'recovery-refine-final-axh');
     refinement = refined.result.refinement;
     candidateGate = finalDiagnosticGate(refinement, requiredFeatureIds);
     await saveJson('refinement.json', refinement);
@@ -210,7 +223,10 @@ export async function main(args = process.argv.slice(2)) {
     if (!candidateGate.passed) throw new Error(
       `Final selector failed closed: feasible=${candidateGate.selectedFeasible}, missing=${candidateGate.missingRequiredFeatureIds.join(',') || 'none'}, unsatisfied=${candidateGate.unsatisfiedRequiredFeatureIds.join(',') || 'none'}`);
     await execute('pose.apply', { index:Math.max(0,
-      Number(refinement.selectedRank || 1) - 1) }, 'recovery-apply-final-axh');
+      Number(refinement.selectedRank || 1) - 1),
+      expectedSelectedCoordinateSha256:A013_FINAL_SELECTED_COORDINATE_SHA256,
+      expectedOutputCoordinateSha256:A013_FINAL_APPLIED_COORDINATE_SHA256,
+    }, 'recovery-apply-final-axh');
 
     // AXH contains atoms absent from the imported AWW checkpoint. Parameterize
     // the selected product, rather than relying on predecessor parameters,
@@ -221,8 +237,10 @@ export async function main(args = process.argv.slice(2)) {
     const beforePocket = (await execute('session.inspect', { scope:'pocket',
       includeCoordinates:true, maximumAtoms:500 }, 'recovery-inspect-pre-relax-pocket')).result;
     phase = 'coupled-relaxation';
-    const relaxed = await execute('optimization.run', { method:'induced-fit-webgpu' },
-      'recovery-relax-final-axh');
+    const relaxed = await execute('optimization.run', { method:'induced-fit-webgpu',
+      expectedInputCoordinateSha256:A013_FINAL_APPLIED_COORDINATE_SHA256,
+      expectedOutputCoordinateSha256:A013_FINAL_RELAXED_COORDINATE_SHA256,
+    }, 'recovery-relax-final-axh');
     const afterPocket = (await execute('session.inspect', { scope:'pocket',
       includeCoordinates:true, maximumAtoms:500 }, 'recovery-inspect-post-relax-pocket')).result;
     const relaxation = requireAcceptedRelaxation(relaxed.result.optimization,

@@ -69,5 +69,19 @@ assert(invoked.lastIndexOf('protein.parameterize') < invoked.indexOf('optimizati
 assert.match(runner,
   /execute\('view\.setMode', \{ mode:'build' \},\s*'recovery-enter-design-mode'\);\s*await execute\('pose\.captureReference'/,
   'recovery must enter Design through the public API immediately before reference capture');
+for (const digest of [
+  'a5724fac3051b1c5fb97aa80064cbcd71396ce138e59738911d57bc4327dfd28',
+  'a7891a9f5a76cb29341a04194b8f064110232eba486038c91d03d01ba372b52b',
+  '2065bca8aa7c5ee71d5d52954705042dc122aeaa7f4d4edfc55ab6162a8d8c7b',
+]) assert(runner.includes(digest), `recovery lacks preserved a013 coordinate guard ${digest}`);
+assert.match(runner,
+  /pose\.refine'[\s\S]*expectedSelectedCoordinateSha256:A013_FINAL_SELECTED_COORDINATE_SHA256/,
+  'recovery selector must fail closed against the preserved a013 selected coordinates');
+assert.match(runner,
+  /pose\.apply'[\s\S]*expectedOutputCoordinateSha256:A013_FINAL_APPLIED_COORDINATE_SHA256/,
+  'recovery pose application must fail closed against the preserved a013 applied coordinates');
+assert.match(runner,
+  /optimization\.run'[\s\S]*expectedInputCoordinateSha256:A013_FINAL_APPLIED_COORDINATE_SHA256[\s\S]*expectedOutputCoordinateSha256:A013_FINAL_RELAXED_COORDINATE_SHA256/,
+  'recovery relaxation must fail closed against the preserved a013 input/output coordinates');
 
 console.log('SOS1 full-system checkpoint-4 recovery runner: PASS');
