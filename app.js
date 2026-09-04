@@ -9150,6 +9150,13 @@ let liveCampaignStoreModulePromise = null;
 let liveCampaignStorePromise = null;
 let liveCampaignRestorePromise = null;
 let liveCampaignUiBusy = false;
+let refinementCaptureStorePromise = null;
+
+function getRefinementCaptureStore() {
+  refinementCaptureStorePromise ||= import('./docking/refinement-capture-store.mjs')
+    .then((module) => module.createRefinementCaptureStore());
+  return refinementCaptureStorePromise;
+}
 
 function getLiveCampaignModule() {
   liveCampaignModulePromise ||= import('./design-history/live-campaign.mjs');
@@ -10505,6 +10512,18 @@ function installChemistActionsApi(module) {
       const selected = result.run.selected;
       const selectedCoordinateSha256 = await coordinateArraySha256(selected.positions);
       const selectedStateSha256 = await dockingPoseStateSha256(result, selected);
+      // Coordinate preservation is part of pose.refine itself, not a later
+      // application policy. Persist the selected candidate before any output
+      // guard can reject it, without changing the live molecular state.
+      const captureModule = await import('./docking/refinement-capture-store.mjs');
+      const refinementCapture = await captureModule.createRefinementCapture({
+        inputStateSha256, selectedStateSha256, selectedCoordinateSha256,
+        atomIds:result.plan.molecule.atoms.map((atom) => atom.designAtomId),
+        positions:selected.positions, selectedRank:selected.rank,
+        selectedFeasible:selected.feasible,
+      });
+      const refinementCaptureDescriptor = await (await getRefinementCaptureStore())
+        .save(refinementCapture);
       if ((expectedSelected != null && selectedCoordinateSha256 !== expectedSelected)
         || (expectedSelectedState != null && selectedStateSha256 !== expectedSelectedState)) {
         restoreChemistActionGuardCheckpoint(rollback);
@@ -10517,6 +10536,7 @@ function installChemistActionsApi(module) {
         stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
         inputCoordinateSha256, selectedCoordinateSha256,
         inputStateSha256, selectedStateSha256,
+        selectedCoordinateCapture:refinementCaptureDescriptor,
         coverageComplete:result.featureGuidedSeeding?.coverage?.allRequiredStrataCovered ?? true,
         coverage:structuredClone(result.featureGuidedSeeding?.coverage || {
           policy:'not-applicable', allRequiredStrataCovered:true,
@@ -10573,6 +10593,19 @@ function installChemistActionsApi(module) {
           selectedSeedAudit:structuredClone(result.featureGuidedSeeding.seedAudits
             .find((entry) => entry.conformerIndex === selected.conformerIndex) || null),
         } : null } }); },
+    'pose.inspectRefinementCapture':async (args) => { chemistActionKeys(args,
+      ['captureId','includeCoordinates']);
+      const captureId = expectedCoordinateSha256(args, 'captureId');
+      if (args.includeCoordinates != null && typeof args.includeCoordinates !== 'boolean')
+        throw new Error('includeCoordinates must be a boolean');
+      const store = await getRefinementCaptureStore();
+      const record = captureId == null ? await store.latest() : await store.load(captureId);
+      if (!record) throw new Error(captureId == null
+        ? 'No refined-pose capture has been saved'
+        : `Refined-pose capture ${captureId} does not exist`);
+      const module = await import('./docking/refinement-capture-store.mjs');
+      return chemistActionSummary({ refinementCapture:args.includeCoordinates === true
+        ? structuredClone(record.capture) : module.refinementCaptureDescriptor(record) }); },
     'pose.apply':async (args) => { chemistActionKeys(args,
       ['index','allowInfeasible','expectedInputCoordinateSha256',
         'expectedSelectedCoordinateSha256','expectedOutputCoordinateSha256',
@@ -10847,6 +10880,8 @@ function installChemistActionsApi(module) {
         throw new Error('initialCommitMessage must be a non-empty string');
       if (state.chemistryTransaction)
         throw new Error('Finish pending chemistry before committing the initial state');
+      if (state.molecule?.source?.docking?.feasible === false)
+        throw new Error('An infeasible refined pose cannot start a promotable design campaign');
       const live = await getLiveCampaignModule();
       let campaign = await live.createLiveCampaign({ campaignId, title,
         description:String(args.description || ''), actorId, actorDisplayName:actorName,
@@ -10878,6 +10913,8 @@ function installChemistActionsApi(module) {
       if (!state.liveCampaign) throw new Error('Start or import a design campaign first');
       if (!state.molecule?.atoms?.length) throw new Error('Load a molecule before committing it');
       if (state.chemistryTransaction) throw new Error('Finish pending chemistry before committing');
+      if (state.molecule?.source?.docking?.feasible === false)
+        throw new Error('An infeasible refined pose cannot be committed or promoted');
       const message = String(args.message || '').trim();
       if (!message) throw new Error('message must not be empty');
       if (args.label != null && (typeof args.label !== 'string' || !args.label.trim()))

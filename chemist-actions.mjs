@@ -172,6 +172,12 @@ const ACTIONS = Object.freeze({
       expectedSelectedCoordinateSha256:'optional lowercase SHA-256; discard the run unless its selected pose matches',
       expectedInputStateSha256:'optional molarium.molecular-state-hash/v1 SHA-256; preferred identity/topology/coordinate input guard',
       expectedSelectedStateSha256:'optional molarium.molecular-state-hash/v1 SHA-256; preferred selected-pose guard' }) }),
+  'pose.inspectRefinementCapture': Object.freeze({
+    description:'Inspect an immutable, automatically saved refined-pose candidate without applying it.',
+    arguments:Object.freeze({
+      captureId:'optional lowercase SHA-256; omit to inspect the most recently saved candidate',
+      includeCoordinates:'optional boolean; false returns only the compact descriptor',
+    }) }),
   'pose.apply': Object.freeze({
     description:'Apply one returned refined pose by zero-based result index; infeasible poses fail closed unless explicitly overridden.',
     arguments:Object.freeze({ index:'non-negative integer',

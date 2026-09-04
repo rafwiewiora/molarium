@@ -7,6 +7,7 @@ export const REPLAY_SCHEMA = 'molarium.chemist-action-replay/v1';
 
 export const READ_ONLY_CHEMIST_ACTIONS = Object.freeze([
   'session.inspect', 'designRoute.inspect', 'structureStory.inspect',
+  'pose.inspectRefinementCapture',
 ]);
 
 // These records control the container or the replay that is producing the

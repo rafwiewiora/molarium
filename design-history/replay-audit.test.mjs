@@ -3,7 +3,11 @@ import { CHEMIST_ACTIONS_SCHEMA } from '../chemist-actions.mjs';
 import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
 import { AUDIT_PORTABLE_SCIENTIFIC_GUARDS, AUDIT_STATE_HASH_GUARDS,
   NON_REPLAYABLE_ACTION_NAMES, NON_REPLAYABLE_ACTION_PREFIXES,
-  actionScriptFromAudit, replayActionScript, validateActionScript } from './replay.mjs';
+  READ_ONLY_CHEMIST_ACTIONS, actionScriptFromAudit, replayActionScript,
+  validateActionScript } from './replay.mjs';
+
+assert.equal(READ_ONLY_CHEMIST_ACTIONS.includes('pose.inspectRefinementCapture'), true,
+  'coordinate-capture inspection must remain an optional read-only replay record');
 
 const audit = { schema:CHEMIST_ACTIONS_SCHEMA, routeId:'converter-test', records:[
   { sequence:1, requestId:'load', action:'designRoute.load',

@@ -42,6 +42,7 @@ assert(Object.hasOwn(api.describe().actions, 'pose.forgetContact'));
 assert(Object.hasOwn(api.describe().actions, 'pose.updateReceptorReference'));
 assert(Object.hasOwn(api.describe().actions, 'pose.enumerateSidechainRotamers'));
 assert(Object.hasOwn(api.describe().actions, 'pose.applySidechainRotamer'));
+assert(Object.hasOwn(api.describe().actions, 'pose.inspectRefinementCapture'));
 assert.match(api.describe().actions['pose.enumerateSidechainRotamers'].arguments.receptorResidue,
   /stable.*residueName.*chain.*residueIndex/i);
 assert(Object.hasOwn(api.describe().actions, 'chemistry.setEditPolicy'));
@@ -75,6 +76,8 @@ assert.match(api.describe().actions['view.setMode'].description, /View, Design, 
 assert.equal(api.describe().actions['view.setMode'].arguments.mode, 'view | build | run');
 assert.match(api.describe().actions['pose.refine'].arguments.featureSeedingProtocol,
   /v3 \| v4 \| v5.*default v5/);
+assert.match(api.describe().actions['pose.inspectRefinementCapture'].arguments.captureId,
+  /optional lowercase SHA-256/);
 assert(!Object.hasOwn(api.describe().actions, 'test.loadObject'));
 assert.match(api.describe().guarantee, /no arbitrary code/);
 assert.match(api.describe().guarantee, /every saved replay and visible playback control executes only public routes/i);

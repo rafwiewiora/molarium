@@ -250,6 +250,8 @@ export async function createLiveCampaign({ campaignId, title, description = '',
 export async function commitLiveMolecule(campaign, { molecule, audit = [], branch = 'main',
   message, label = null, actorId, occurredAt = null, lastAuditSequence = 0,
   hypothesisIds = [], evidenceIds = [], sourceIds = [], tags = [] } = {}) {
+  if (molecule?.source?.docking?.feasible === false)
+    throw new Error('An infeasible refined pose cannot be committed or promoted');
   const next = cloneCampaign(campaign);
   await requireValidCampaign(next);
   if (!Object.hasOwn(next.branches, branch)) throw new Error(`Unknown branch: ${branch}`);

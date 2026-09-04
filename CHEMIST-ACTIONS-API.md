@@ -74,7 +74,8 @@ Undo, and Redo therefore behave exactly as they do for an interactive user.
 - `fragment.stage`, `fragment.attach`
 - `history.undo`, `history.redo`
 - `pose.captureReference`, `pose.updateReceptorReference`, `pose.setContact`, `pose.addContact`, `pose.forgetContact`,
-  `pose.setEditCleanup`, `pose.clearReference`, `pose.remapContact`, `pose.refine`, `pose.apply`,
+  `pose.setEditCleanup`, `pose.clearReference`, `pose.remapContact`, `pose.refine`,
+  `pose.inspectRefinementCapture`, `pose.apply`,
   `pose.enumerateSidechainRotamers`, `pose.applySidechainRotamer`
 - `optimization.run`
 - `calculation.run`, `calculation.tuneReplicas`, `calculation.selectFrame`,
@@ -239,11 +240,21 @@ the visible pose list but leaves the 3D molecule fixed until `pose.apply`;
 `pose.applySidechainRotamer`. Replay result cues state this explicitly and hold on the result card
 at human reading speed before the corresponding Apply action.
 
+Every completed `pose.refine` atomically stores its selected candidate as a content-addressed
+coordinate delta before an expected-output guard is evaluated. This capture does not apply or alter
+the live molecule and is always non-promotable by itself. The ordinary refinement response contains
+only a compact capture ID and hashes. `pose.inspectRefinementCapture` returns that descriptor by
+default and returns its atom IDs and coordinates only when `includeCoordinates:true` is explicitly
+requested. Omitting `captureId` retrieves the most recent capture, including one retained after a
+failed expected-selected guard.
+
 `pose.apply` fails closed when the selected refined pose is marked infeasible. An agent may apply
 such a negative-control result only by sending `allowInfeasible:true`; that override remains in the
 action audit and the response reports `infeasibleOverride:true`. The visible Apply pose button is
 disabled for infeasible results, so an ordinary human click cannot silently bypass required-contact
 or physical-feasibility gates.
+An explicitly applied infeasible pose also cannot be committed to a live design campaign; failed
+coordinates remain available through their separate non-promotable refinement capture.
 
 `pose.refine`, `pose.apply`, and `optimization.run` return both legacy coordinate fingerprints and
 preferred `molarium.molecular-state-hash/v1` fingerprints. The versioned state hash binds persistent
