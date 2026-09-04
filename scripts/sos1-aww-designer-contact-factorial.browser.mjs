@@ -153,15 +153,26 @@ async function runBranch({ root, serializedCampaign, branch }) {
         .map((entry) => entry.constraintId));
     const donorHydrogensComposedWithHeavySeed = requiredContactIds.every((contactId) =>
       selectedDonorContactIds.has(contactId));
+    const binaryEndpointSignatures = new Set(['0/0', '180/0', '0/180', '180/180']);
+    const selectedBinaryEndpointSignatures = new Set((refinement.coverage?.strata || [])
+      .filter((entry) => entry.kind === 'affected-existing-two-rotor-endpoint'
+        && entry.required === true && entry.selectedSeedOrdinals?.length > 0)
+      .map((entry) => entry.rotorAnglesDegrees?.join('/')));
     const coupledRotorCoverage = refinement.featureGuidedSeeding
-      ?.affectedRotorCombinationCount === 1
+      ?.affectedRotorCombinationCount === binaryEndpointSignatures.size
       && refinement.featureGuidedSeeding?.affectedRotorCombinationCandidateCount > 0
-      && refinement.coverage?.strata?.some((entry) =>
-        entry.kind === 'affected-existing-two-rotor-combination'
-          && entry.required === true && entry.selectedSeedOrdinals?.length > 0);
+      && [...binaryEndpointSignatures].every((signature) =>
+        selectedBinaryEndpointSignatures.has(signature));
+    const endpointFeatureCoverage = refinement.coverage?.strata
+      ?.filter((entry) => entry.kind === 'affected-existing-two-rotor-endpoint-feature'
+        && entry.required === true)
+      .every((entry) => entry.selectedSeedOrdinals?.length > 0)
+      && refinement.coverage?.strata?.filter((entry) =>
+        entry.kind === 'affected-existing-two-rotor-endpoint-feature').length >= 2;
     const prospectiveGates = {
       coverageComplete:refinement.coverageComplete === true,
       coupledRotorCoverage,
+      endpointFeatureCoverage,
       donorHydrogensComposedWithHeavySeed,
       selectedFeasible:refinement.selectedFeasible === true,
       fixedCoreSatisfied:refinement.selectedCore?.satisfied === true,

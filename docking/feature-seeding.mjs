@@ -550,6 +550,8 @@ function priorityStratifiedSeeds({ candidates, initialCandidate, strata, request
   const evidence = strata.map((stratum) => ({
     id:stratum.id, kind:stratum.kind, required:stratum.required,
     candidateCount:stratum.candidates.length,
+    ...(stratum.rotorAnglesDegrees == null ? {}
+      : { rotorAnglesDegrees:[...stratum.rotorAnglesDegrees] }),
     ...(stratum.bestRmsdAngstrom == null ? {}
       : { bestRmsdAngstrom:stratum.bestRmsdAngstrom }),
     selectedSeedOrdinals:[...new Set(stratum.candidates
@@ -695,20 +697,33 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
   });
   // A pair of registered affected rotors is a coupled heavy-atom degree of
   // freedom: scoring either torsion only on top of the inherited value of the
-  // other can miss the feasible basin. Enumerate the pair without consulting
-  // any product/holdout coordinates. Axes are recomputed after the first
-  // rotation so nested distal regions remain chemically connected.
+  // other can miss the feasible basin. Enumerate the registered Cartesian grid
+  // and require each of the four binary endpoints (0/0, 180/0, 0/180, 180/180)
+  // without consulting any product/holdout coordinates. Axes are recomputed
+  // after the first rotation so nested distal regions remain connected.
   const affectedRotorCombinationStrata = [];
+  const affectedRotorEndpointCandidates = new Map();
   let affectedRotorCombinationCandidateCount = 0;
   if (featureSeedingProtocol === 'v5' && affectedRotors.length === 2) {
-    const combinationStratum = stratum(
-      `affected-rotor-combination:bond-${affectedRotors[0].bondIndex}+bond-${affectedRotors[1].bondIndex}`,
-      'affected-existing-two-rotor-combination', true);
-    affectedRotorCombinationStrata.push(combinationStratum);
-    const nonzeroAngles = Array.from(editRegionAnglesDegrees, Number)
-      .filter((angleDegrees) => angleDegrees !== 0);
-    for (const firstAngleDegrees of nonzeroAngles) {
-      for (const secondAngleDegrees of nonzeroAngles) {
+    if (requested < 4)
+      throw new Error(`Feature-guided seeding requires at least 4 search chains to cover the four binary endpoint states of two affected rotors; requested ${requested}`);
+    const binaryEndpoints = [[0,0], [180,0], [0,180], [180,180]];
+    const endpointStrataBySignature = new Map(binaryEndpoints.map((rotorAnglesDegrees) => {
+      const signature = rotorAnglesDegrees.join('/');
+      const endpointStratum = stratum(
+        `affected-rotor-endpoints:bond-${affectedRotors[0].bondIndex}+bond-${affectedRotors[1].bondIndex}:${signature}`,
+        'affected-existing-two-rotor-endpoint', true);
+      endpointStratum.rotorAnglesDegrees = rotorAnglesDegrees;
+      affectedRotorCombinationStrata.push(endpointStratum);
+      return [signature, endpointStratum];
+    }));
+    const registeredAngles = Array.from(editRegionAnglesDegrees, Number);
+    for (const requiredAngleDegrees of [0, 180]) {
+      if (!registeredAngles.includes(requiredAngleDegrees))
+        throw new Error(`Two-rotor endpoint coverage requires registered angle ${requiredAngleDegrees} degrees`);
+    }
+    for (const firstAngleDegrees of registeredAngles) {
+      for (const secondAngleDegrees of registeredAngles) {
         const rotorAnglesDegrees = [firstAngleDegrees, secondAngleDegrees];
         let seeded = new Float64Array(positions);
         let validCombination = true;
@@ -736,9 +751,22 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
           movedHeavyAtomCount:movedAtomIndices.filter((atomIndex) =>
             molecule.atoms[atomIndex]?.element !== 'H').length,
           releasedCoreAtomIndices,
-        }, combinationStratum);
+        });
+        const endpointSignature = rotorAnglesDegrees.join('/');
+        const endpointStratum = endpointStrataBySignature.get(endpointSignature);
+        if (endpointStratum) {
+          cover(candidate, endpointStratum);
+          affectedRotorEndpointCandidates.set(endpointSignature, candidate);
+          candidate.audit = { ...candidate.audit,
+            coupledRotorEndpointSignatures:[...new Set([
+              ...(candidate.audit.coupledRotorEndpointSignatures || []),
+              endpointSignature,
+            ])],
+          };
+        }
         affectedRotors.forEach((_, rotorIndex) => {
-          cover(candidate, affectedStrata[rotorIndex]);
+          if (rotorAnglesDegrees[rotorIndex] !== 0)
+            cover(candidate, affectedStrata[rotorIndex]);
           if (rotorAnglesDegrees[rotorIndex] === 180)
             cover(candidate, affectedOppositeStrata[rotorIndex]);
         });
@@ -778,6 +806,47 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
         movedAtomCount:region.atomIndices.length, axialAngleDegrees:Number(angleDegrees) },
       targetStrata[variantIndex]);
     });
+    if (featureSeedingProtocol === 'v5' && affectedRotors.length === 2) {
+      // A movable captured feature must also be sampled inside the flipped
+      // endpoint basins. Otherwise the bounded search can cover the endpoint
+      // and the feature in two unrelated candidates and never test whether
+      // the requested interaction is compatible with that heavy orientation.
+      for (const endpointSignature of ['180/0', '180/180']) {
+        const endpointCandidate = affectedRotorEndpointCandidates.get(endpointSignature);
+        if (!endpointCandidate) continue;
+        const endpointAnglesDegrees = endpointSignature.split('/').map(Number);
+        const jointStratum = stratum(
+          `affected-rotor-endpoint-feature:${variant.constraintId}:${variant.alternativeId || 'primary'}:${variantIndex}:${endpointSignature}`,
+          'affected-existing-two-rotor-endpoint-feature', true);
+        jointStratum.rotorAnglesDegrees = endpointAnglesDegrees;
+        const endpointAnchor = point(endpointCandidate.positions, region.anchorAtomIndex);
+        const endpointFeature = point(endpointCandidate.positions, variant.featureAtomIndex);
+        const endpointAlignment = alignmentAxisAngle(
+          endpointFeature.map((value, index) => value - endpointAnchor[index]),
+          variant.target.map((value, index) => value - endpointAnchor[index]));
+        if (!endpointAlignment) continue;
+        const endpointAligned = rotateRegion(endpointCandidate.positions, region.atomIndices,
+          endpointAnchor, endpointAlignment.axis, endpointAlignment.angle);
+        const endpointTargetAxis = normalized(variant.target
+          .map((value, index) => value - endpointAnchor[index]));
+        if (!endpointTargetAxis) continue;
+        axialAnglesDegrees.forEach((angleDegrees) => {
+          const seeded = rotateRegion(endpointAligned, region.atomIndices, endpointAnchor,
+            endpointTargetAxis, Number(angleDegrees) * Math.PI / 180);
+          const candidate = add(seeded, {
+            method:'captured-feature-alignment-in-two-rotor-endpoint',
+            constraintId:variant.constraintId,
+            alternativeId:variant.alternativeId,
+            featureAtomIndex:variant.featureAtomIndex,
+            anchorAtomIndex:region.anchorAtomIndex,
+            coupledRotorEndpointSignatures:[endpointSignature],
+            movedAtomCount:region.atomIndices.length,
+            axialAngleDegrees:Number(angleDegrees),
+          }, jointStratum);
+          cover(candidate, targetStrata[variantIndex]);
+        });
+      }
+    }
   });
   const spatialStrata = spatialVariants.map((variant) => stratum(
     `spatial-feature:${variant.featureId}:feature-${variant.featureIndex}:map-${variant.mappingVariantIndex}`,
