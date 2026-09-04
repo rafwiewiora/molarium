@@ -147,6 +147,11 @@ jq -e --arg replayKind "$REPLAY_KIND" '
   and .presentation.initialInterface.sceneHidden == true
   and .presentation.completedInterface.previousEnabled == true
   and .presentation.completedInterface.cueCount == 0
+  and (if $replayKind == "checkpoint-review" then
+    .presentation.checkpointReviewBootstrap.transientWholeProteinFramePublished == false
+    and .presentation.checkpointReviewBootstrap.firstVisibleMolecularFrame
+      == "result of view.focusComponent"
+  else true end)
   and .networkPolicy.runtimeMode == "local-lab"
   and .networkPolicy.runtimeLocalOnly == true
   and .video.width == 1600 and .video.height == 1000

@@ -27,6 +27,9 @@ assert.match(runner, /exactFullSystemCheckpoints == 4/);
 assert.match(runner, /networkPolicy\.runtimeLocalOnly == true/);
 assert.match(runner, /presentation\.completedInterface\.previousEnabled == true/);
 assert.match(runner, /presentation\.completedInterface\.cueCount == 0/);
+assert.match(runner,
+  /presentation\.checkpointReviewBootstrap\.transientWholeProteinFramePublished == false/,
+  'remote gate must reject a review that publishes the transient whole-protein import');
 assert.match(runner, /SAFE_TO_STOP/);
 assert.match(runner, /grep -Eq '\^NVIDIA L4,'/);
 assert.match(runner, /probe-headless-rendering\.mjs/);
