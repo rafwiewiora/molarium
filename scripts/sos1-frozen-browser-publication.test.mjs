@@ -36,6 +36,8 @@ const review = await frozenCheckpointReviewScript({ label:'SOS1 prediction check
     continuityAccepted:false, failedStepIds:['finish-bay-293'] } });
 assert.deepEqual(review.actions.map((step) => step.action),
   ['campaign.import','campaign.import']);
+assert.deepEqual(review.actions.map((step) => step.args.preserveView), [false,true]);
+assert.equal(review.actions[1].expect['campaignImport.viewPreserved'], true);
 assert.equal(review.provenance.sourceStatus, 'complete-frozen-prediction');
 assert.equal(review.provenance.postFreezeEvaluation.accepted, false);
 assert.equal(review.provenance.promotable, false);

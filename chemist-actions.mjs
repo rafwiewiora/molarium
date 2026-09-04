@@ -268,7 +268,8 @@ const ACTIONS = Object.freeze({
     arguments:Object.freeze({}) }),
   'campaign.import': Object.freeze({
     description:'Verify, persist, and restore a canonical serialized design campaign.',
-    arguments:Object.freeze({ serialized:'canonical campaign JSON string' }) }),
+    arguments:Object.freeze({ serialized:'canonical campaign JSON string',
+      preserveView:'optional boolean; retain the current comparison camera' }) }),
   'campaign.export': Object.freeze({
     description:'Return canonical JSON for the active design campaign.', arguments:Object.freeze({}) }),
   'designerScript.load': Object.freeze({

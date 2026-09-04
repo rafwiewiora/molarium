@@ -50,7 +50,9 @@ async function checkpointMove(checkpoint, index) {
     throw new Error(`Checkpoint ${index + 1} snapshot is unavailable`);
   const label = text(checkpoint.label || `Prediction checkpoint ${index + 1}`,
     `Checkpoint ${index + 1} label`);
-  return { action:'campaign.import', args:{ serialized }, caption:`Review ${label}`,
+  return { action:'campaign.import', args:{ serialized, preserveView:index > 0 },
+    caption:`Review ${label}`,
+    ...(index > 0 ? { expect:{ 'campaignImport.viewPreserved':true } } : {}),
     review:{ schema:FROZEN_CHECKPOINT_REVIEW_SCHEMA,
       sourceStatus:'complete-frozen-prediction', immutableSnapshot:true,
       promotable:false, calculationPolicy:'none', holdoutCoordinatesIncluded:false,

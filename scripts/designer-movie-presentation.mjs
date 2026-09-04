@@ -23,6 +23,7 @@ export const DESIGNER_MOVIE_PRESENTATION = Object.freeze({
     'pose.applySidechainRotamer':3.2,
     'pose.updateReceptorReference':2.2,
     'optimization.run':3.0,
+    'campaign.import':2.8,
     'view.highlightAtoms':2.6,
   }),
 });
@@ -31,7 +32,7 @@ const framesForSeconds = (fps, seconds) => Math.max(1, Math.round(fps * seconds)
 
 export function designerMoviePressFrames(step, fps) {
   const molecularChange = ['designRoute.applyStep', 'pose.applySidechainRotamer',
-    'pose.apply', 'optimization.run'].includes(step?.action);
+    'pose.apply', 'optimization.run', 'campaign.import'].includes(step?.action);
   return framesForSeconds(fps, molecularChange
     ? DESIGNER_MOVIE_PRESENTATION.seconds.pressMolecularChange
     : DESIGNER_MOVIE_PRESENTATION.seconds.pressDefault);

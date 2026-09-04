@@ -9,8 +9,10 @@ assert.equal(DESIGNER_MOVIE_PRESENTATION.schema,
   'molarium.designer-moves-interface-presentation/v1');
 assert.equal(designerMoviePressFrames({ action:'session.inspect' }, 10), 8);
 assert.equal(designerMoviePressFrames({ action:'designRoute.applyStep' }, 10), 12);
+assert.equal(designerMoviePressFrames({ action:'campaign.import' }, 10), 12);
 assert.equal(designerMovieResultFrames({ action:'session.inspect' }, 10), 15);
 assert.equal(designerMovieResultFrames({ action:'pose.refine' }, 10), 35);
+assert.equal(designerMovieResultFrames({ action:'campaign.import' }, 10), 28);
 assert.deepEqual(verifyMovieViewport({ width:1600, height:1000, deviceScaleFactor:1 }),
   { width:1600, height:1000, deviceScaleFactor:1, verified:true });
 assert.throws(() => verifyMovieViewport({ width:1200, height:1000 }), /at least 1280px/);

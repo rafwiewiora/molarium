@@ -57,8 +57,9 @@ async function acceptedCheckpointMove(checkpoint, index) {
     `Checkpoint ${index + 1} label`);
   return {
     action:'campaign.import',
-    args:{ serialized },
+    args:{ serialized, preserveView:index > 0 },
     caption:`Review ${label}`,
+    ...(index > 0 ? { expect:{ 'campaignImport.viewPreserved':true } } : {}),
     review:{
       schema:ACCEPTED_CHECKPOINT_REVIEW_SCHEMA,
       sourceStatus:'accepted',

@@ -8606,6 +8606,7 @@ const DESIGNER_MOVE_RESULT_HOLDS_MS = Object.freeze({
   'pose.enumerateSidechainRotamers':3200,
   'pose.applySidechainRotamer':3400,
   'optimization.run':2800,
+  'campaign.import':2800,
   'view.setDisplay':1600,
   'view.focusComponent':1400,
   'view.focusAtoms':3000,
@@ -8829,7 +8830,9 @@ function designerMoveResultCaption(step) {
   if (step.status === 'failed') return `${step.action} failed; no result was applied.`;
   if (step.action === 'campaign.import' || step.action === 'campaign.switchBranch') {
     const accepted = step.review?.sourceStatus === 'accepted';
-    return `${accepted ? 'Accepted immutable checkpoint' : 'Design History checkpoint'} restored for review · no calculation was run${step.review?.promotable === false ? ' · review is non-promotable' : ''}.`;
+    const frozen = step.review?.sourceStatus === 'complete-frozen-prediction';
+    return `${accepted ? 'Accepted immutable checkpoint' : frozen
+      ? 'Frozen prediction checkpoint' : 'Design History checkpoint'} restored for review · no calculation was run${step.review?.promotable === false ? ' · review is non-promotable' : ''}.`;
   }
   if (step.action === 'pose.refine') {
     const count = Number(step.result?.refinement?.candidates || 0);
@@ -9215,9 +9218,9 @@ async function prepareLiveCampaignBranchMolecule(campaign, branch, { required = 
   return { commitId, molecule:live.moleculeFromCampaignCommit(campaign, commitId) };
 }
 
-function applyLiveCampaignBranchMolecule(molecule) {
+function applyLiveCampaignBranchMolecule(molecule, { preserveView = false } = {}) {
   const audit = structuredClone(state.chemistActionAudit);
-  loadMolecule(molecule);
+  loadMolecule(molecule, !preserveView);
   state.chemistActionAudit = audit;
   state.molecule.source = { ...(state.molecule.source || {}),
     chemistActionAudit:structuredClone(audit) };
@@ -10941,9 +10944,12 @@ function installChemistActionsApi(module) {
       updateLiveCampaignUi('Campaign closed; its commits remain stored locally.', 'success');
       return chemistActionSummary({ campaignClosed:{ campaignId:closedCampaignId,
         persisted:true } }); },
-    'campaign.import':async (args) => { chemistActionKeys(args, ['serialized']);
+    'campaign.import':async (args) => { chemistActionKeys(args,
+      ['serialized','preserveView']);
       if (typeof args.serialized !== 'string' || !args.serialized.trim())
         throw new Error('serialized must be canonical campaign JSON');
+      if (args.preserveView != null && typeof args.preserveView !== 'boolean')
+        throw new Error('preserveView must be boolean');
       await ensureLiveCampaignPersistence();
       const [live, storeModule] = await Promise.all([
         getLiveCampaignModule(), getLiveCampaignStoreModule(),
@@ -10963,10 +10969,21 @@ function installChemistActionsApi(module) {
       state.chemistActionAudit = [];
       state.liveCampaign = campaign; state.liveCampaignBranch = branch;
       state.liveCampaignCommittedThroughSequence = 0;
-      applyLiveCampaignBranchMolecule(checkout.molecule);
+      const cameraBefore = JSON.stringify({ rotation:state.rotation,
+        viewProjectionCenter:state.viewProjectionCenter,
+        viewProjectionRadius:state.viewProjectionRadius, viewPan:state.viewPan,
+        zoom:state.zoom });
+      applyLiveCampaignBranchMolecule(checkout.molecule,
+        { preserveView:Boolean(args.preserveView) });
+      const cameraAfter = JSON.stringify({ rotation:state.rotation,
+        viewProjectionCenter:state.viewProjectionCenter,
+        viewProjectionRadius:state.viewProjectionRadius, viewPan:state.viewPan,
+        zoom:state.zoom });
       updateLiveCampaignUi();
       return chemistActionSummary({ campaignImport:{ campaignId:campaign.campaignId,
         title:campaign.title, branch, commitId:checkout.commitId,
+        preserveViewRequested:Boolean(args.preserveView),
+        viewPreserved:Boolean(args.preserveView) && cameraAfter === cameraBefore,
         verification:structuredClone(verification) } }); },
     'campaign.export':async (args) => { empty(args);
       await ensureLiveCampaignPersistence();

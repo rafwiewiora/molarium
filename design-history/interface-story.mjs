@@ -8,6 +8,11 @@ const DISPLAY_STEP = Object.freeze({ action:'view.setDisplay', args:Object.freez
   showPocketAtoms:true, showHulls:false, showStericClashes:false,
   colorTheme:'design-hit', changeMarkers:'halo',
 }), caption:'Strip away visual noise so the hit and its binding pocket are easy to read' });
+const CHECKPOINT_DISPLAY_STEP = Object.freeze({ action:'view.setDisplay', args:Object.freeze({
+  representation:'cartoon', showHydrogens:false, showInteractions:false,
+  showPocketAtoms:true, showHulls:false, showStericClashes:false,
+  colorTheme:'design-prediction', changeMarkers:'halo',
+}), caption:'Show each frozen prediction in the same local pocket view' });
 const PREDICTION_DISPLAY_STEP = Object.freeze({ action:'view.setDisplay',
   args:Object.freeze({ colorTheme:'design-prediction' }),
   caption:'Mark the transition from experimental hit to prospective prediction' });
@@ -45,6 +50,7 @@ export function buildPocketInterfaceStory(sourceScript, { sourcePath = null,
   let activeStepId = null;
   let predictionThemeApplied = false;
   let phe890ContextActive = false;
+  let cameraEstablished = false;
   const actions = sourceScript.actions.flatMap((step, index) => {
     if (step.action === 'designRoute.applyStep') activeStepId = step.args?.stepId || null;
     if (step.action === 'designRoute.applyStep' && activeStepId === 'open-phe890-pocket')
@@ -62,14 +68,23 @@ export function buildPocketInterfaceStory(sourceScript, { sourcePath = null,
     const switchToPrediction = step.action === 'designRoute.applyStep'
       && !predictionThemeApplied;
     if (switchToPrediction) predictionThemeApplied = true;
+    const establishPreparedCamera = step.action === 'protein.prepare' && !cameraEstablished;
+    const establishCheckpointCamera = step.action === 'campaign.import' && !cameraEstablished;
+    if (establishPreparedCamera || establishCheckpointCamera) cameraEstablished = true;
+    if (establishCheckpointCamera) predictionThemeApplied = true;
     return [capturedStep,
-      ...(step.action === 'protein.prepare'
+      ...(establishPreparedCamera
         ? [structuredClone(DISPLAY_STEP), structuredClone(INITIAL_FOCUS_STEP)] : []),
+      ...(establishCheckpointCamera
+        ? [structuredClone(CHECKPOINT_DISPLAY_STEP), structuredClone(INITIAL_FOCUS_STEP)] : []),
       ...(switchToPrediction ? [structuredClone(PREDICTION_DISPLAY_STEP)] : []),
       ...(step.action === 'designRoute.applyStep' && activeStepId === 'open-phe890-pocket'
         ? [structuredClone(CLASH_DISPLAY_STEP)] : []),
       ...(step.action === 'pose.applySidechainRotamer'
         ? [structuredClone(CLASH_CLEAR_STEP)] : []),
+      ...(step.action === 'campaign.import' ? [{ action:'view.highlightAtoms', args:{
+        atomIds:[], residueLabels:[structuredClone(PHE890_LABEL)],
+      }, caption:'Keep Phe890 labeled while the frozen prediction changes in place' }] : []),
       ...(binding ? [{ action:'view.highlightAtoms', args:{
         atomIds:clearRelaxationMarkers ? [] : { $binding:binding },
         ...(residueLabels.length ? { residueLabels:structuredClone(residueLabels) } : {}),

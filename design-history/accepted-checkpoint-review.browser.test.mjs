@@ -99,6 +99,14 @@ try {
   assert.match(completed.playLabel, /Replay story/);
   assert.deepEqual(completed.calculations, []);
   assert.match(completed.status, /Accepted source checkpoint 2/);
+  const imports = await browser.evaluate(`window.MolariumChemistActions.history()
+    .filter((entry) => entry.action === 'campaign.import')
+    .map((entry) => ({ preserveView:entry.args.preserveView,
+      viewPreserved:entry.result?.campaignImport?.viewPreserved }))`);
+  assert.deepEqual(imports, [
+    { preserveView:false, viewPreserved:false },
+    { preserveView:true, viewPreserved:true },
+  ], 'checkpoint review must retain one comparison camera after its first import');
 
   await browser.evaluate(`document.querySelector('#previous-designer-move').click()`);
   await waitFor(async () => browser.evaluate(

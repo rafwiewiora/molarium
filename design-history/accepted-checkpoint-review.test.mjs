@@ -36,6 +36,8 @@ async function fixture(index) {
 const checkpoints = [await fixture(1), await fixture(2)];
 const script = await acceptedCheckpointReviewScript({ label:'Accepted states', checkpoints });
 assert.deepEqual(script.actions.map(({ action }) => action), ['campaign.import','campaign.import']);
+assert.deepEqual(script.actions.map((step) => step.args.preserveView), [false,true]);
+assert.equal(script.actions[1].expect['campaignImport.viewPreserved'], true);
 assert.equal(script.provenance.promotable, false);
 assert.equal(script.provenance.calculationPolicy, 'none');
 assert.equal(script.provenance.holdoutCoordinatesIncluded, false);

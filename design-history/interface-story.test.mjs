@@ -71,4 +71,24 @@ assert.match(story.actions.find((step) => step.action === 'view.highlightAtoms'
   && /pyrazole/.test(step.caption))?.caption,
   /pyrazole.*Phe890.*Lys898.*no direct H-bond/i);
 assert.match(await actionScriptSha256(story), /^[0-9a-f]{64}$/);
+
+const checkpointSource = { schema:'molarium.chemist-action-script/v1',
+  label:'Frozen checkpoint review', actions:[
+    { action:'campaign.import', args:{ serialized:'first', preserveView:false } },
+    { action:'campaign.import', args:{ serialized:'second', preserveView:true },
+      expect:{ 'campaignImport.viewPreserved':true } },
+  ] };
+const checkpointStory = buildPocketInterfaceStory(checkpointSource);
+assert.equal(checkpointStory.actions.filter((step) =>
+  step.action === 'view.focusComponent').length, 1,
+'calculation-free review must establish the pocket camera exactly once');
+assert.equal(checkpointStory.actions.filter((step) =>
+  step.action === 'view.setDisplay').length, 1);
+assert.equal(checkpointStory.actions.filter((step) =>
+  step.action === 'view.highlightAtoms').length, 2);
+assert(checkpointStory.actions.filter((step) => step.action === 'view.highlightAtoms')
+  .every((step) => step.args.atomIds.length === 0
+    && step.args.residueLabels?.[0]?.label === 'Phe890'));
+assert.equal(checkpointStory.actions.filter((step) =>
+  step.action === 'view.setCamera').length, 0);
 console.log('Interface story test passed: 33 scientific actions + 18 presentation actions');
