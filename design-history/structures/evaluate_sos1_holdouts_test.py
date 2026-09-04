@@ -202,6 +202,10 @@ class EvaluatorTest(unittest.TestCase):
         checkpoint = {"stepId": "finish-bay-293", "ligand": ligand,
             "relaxation": {"accepted": True, "valenceSafeguard": valence,
             "registeredPoseRetention": {"accepted": True,
+                "fixedAtomMotion": {"accepted": True,
+                    "atomIds": ["hard-1", "p-1", "p-2", "p-3"],
+                    "atomCount": 4, "rmsdAngstrom": 2e-7,
+                    "maximumDisplacementAngstrom": 4e-7},
                 "before": json.loads(json.dumps(retention_phase)),
                 "after": json.loads(json.dumps(retention_phase))}},
             "sidechainContinuity": {"residue": "PHE A890", "accepted": True,
@@ -253,6 +257,14 @@ class EvaluatorTest(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "atom identities changed"):
             EVALUATOR.verify_accepted_checkpoint_relaxation(
                 changed_atoms, "finish-bay-293")
+        moved_fixed = json.loads(json.dumps(checkpoint))
+        moved_fixed["relaxation"]["registeredPoseRetention"] \
+            ["fixedAtomMotion"]["accepted"] = False
+        moved_fixed["relaxation"]["registeredPoseRetention"] \
+            ["fixedAtomMotion"]["maximumDisplacementAngstrom"] = 0.001
+        with self.assertRaisesRegex(RuntimeError, "fixed atoms moved"):
+            EVALUATOR.verify_accepted_checkpoint_relaxation(
+                moved_fixed, "finish-bay-293")
 
     def test_receptor_alignment_uses_only_registered_non_phe_anchors(self) -> None:
         anchors = EVALUATOR.EXPECTED_ALIGNMENT_ANCHORS

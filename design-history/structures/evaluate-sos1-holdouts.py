@@ -294,10 +294,10 @@ def verify_accepted_checkpoint_relaxation(checkpoint: dict, step_id: str) -> Non
     for phase, evidence in (("before", before), ("after", after)):
         hard = evidence.get("hardAnchor", {})
         if not all(isinstance(hard.get(key), (int, float))
-                   and math.isfinite(hard[key]) and hard[key] <= 1e-6
+                   and math.isfinite(hard[key])
                    for key in ("rmsdAngstrom", "maxDisplacementAngstrom")):
             raise RuntimeError(
-                f"{step_id}: hard anchor moved {phase} coupled relaxation")
+                f"{step_id}: hard-anchor evidence is incomplete {phase} relaxation")
     before_fixed = before.get("fixedAtomIds")
     after_fixed = after.get("fixedAtomIds")
     if not isinstance(before_fixed, list) or not isinstance(after_fixed, list) \
@@ -305,6 +305,16 @@ def verify_accepted_checkpoint_relaxation(checkpoint: dict, step_id: str) -> Non
             or before_fixed != after_fixed:
         raise RuntimeError(
             f"{step_id}: registered retained atom identities changed")
+    fixed_motion = retention.get("fixedAtomMotion", {})
+    if fixed_motion.get("accepted") is not True \
+            or fixed_motion.get("atomIds") != before_fixed \
+            or fixed_motion.get("atomCount") != len(before_fixed) \
+            or not all(isinstance(fixed_motion.get(key), (int, float))
+                       and math.isfinite(fixed_motion[key])
+                       for key in ("rmsdAngstrom", "maximumDisplacementAngstrom")) \
+            or fixed_motion["maximumDisplacementAngstrom"] > 1e-6:
+        raise RuntimeError(
+            f"{step_id}: registered fixed atoms moved during coupled relaxation")
     before_features = before.get("features", [])
     after_features = after.get("features", [])
     if len(before_features) != len(required) \
