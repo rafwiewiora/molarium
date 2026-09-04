@@ -23,6 +23,13 @@ const movieRelative = 'assets/media/sos1-designer-moves-molarium-interface.mp4';
 const renderRelative =
   'assets/media/sos1-designer-moves-molarium-interface.render-manifest.json';
 const descriptorPath = join(scratch, SOS1_PUBLICATION_DECLARATION);
+const productHeavyGraph = { atomCount:2, bondCount:1, atoms:[
+  { atomName:'C1', element:'C', formalCharge:0, aromatic:false },
+  { atomName:'N1', element:'N', formalCharge:0, aromatic:false },
+], bonds:[{ atomNames:['C1','N1'], order:1, aromatic:false }] };
+const valenceSafeguard = { schema:'molarium.ligand-valence-safeguard/v1',
+  accepted:true, complete:true, checkedHeavyBonds:1, expectedHeavyBonds:1,
+  bondMeasurements:[{ accepted:true }], violations:[] };
 
 async function writeJson(path, value) {
   const bytes = Buffer.from(`${JSON.stringify(value, null, 2)}\n`);
@@ -83,8 +90,12 @@ try {
     push(`${stepId}-pose-refine`, 'pose.refine',
       { searchChains:8, execution:'serial', featureSeedingProtocol:'v5' });
     push(`${stepId}-pose-apply`, 'pose.apply', { index:0 });
-    const ligandAtoms = [{ atomId:`ligand:${stepId}:C1`, atomName:'C1', element:'C',
-      coordinatesAngstrom:[index, 0, 0] }];
+    const ligandAtoms = [
+      { atomId:`ligand:${stepId}:C1`, atomName:'C1', element:'C', formalCharge:0,
+        aromatic:false, coordinatesAngstrom:[index, 0, 0] },
+      { atomId:`ligand:${stepId}:N1`, atomName:'N1', element:'N', formalCharge:0,
+        aromatic:false, coordinatesAngstrom:[index + 1.4, 0, 0] },
+    ];
     const pocketAtoms = [
       { atomId:'receptor:PHE:890:CG', atomName:'CG', element:'C', residueName:'PHE',
         chain:'A', residueIndex:890, coordinatesAngstrom:[0, index + 1, 0] },
@@ -106,14 +117,17 @@ try {
     const checkpoint = { schema:'molarium.design-prediction-checkpoint/v1',
       routeId:'sos1-hit-only', stepId:input.stepId, predictedStateId:input.stateId,
       frozenBeforeHoldoutAccess:true,
-      relaxation:{ accepted:true },
+      relaxation:{ accepted:true, valenceSafeguard },
+      staging:{ productHeavyGraph, poseTransferPlan:{ featureCorrespondences:[] } },
       ...(input.stepId === 'finish-bay-293' ? { sidechainContinuity:{
         residue:'PHE A890', accepted:true, finalChiDegrees:[-170, 95] } } : {}),
       ...(input.stepId === 'open-phe890-pocket' ? { rotamerDecision:{
         publicationEligible:true, diagnosticOnly:false,
         deterministicFinalReplayVerified:true } } : {}),
       ligand:{ atoms:input.ligandAtoms, truncated:false,
-        totalAtomCount:input.ligandAtoms.length },
+        totalAtomCount:input.ligandAtoms.length,
+        bonds:[{ atomIds:[input.ligandAtoms[0].atomId,input.ligandAtoms[1].atomId],
+          order:1, aromatic:false }] },
       pocket:{ atoms:input.pocketAtoms, truncated:false,
         totalAtomCount:input.pocketAtoms.length } };
     const filename = `${input.stepId}-prediction.json`;

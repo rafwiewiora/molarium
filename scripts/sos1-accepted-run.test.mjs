@@ -8,11 +8,26 @@ import { assertAcceptedCheckpointRelaxation, buildAcceptedSos1ReplayScript,
 
 assert.throws(() => requireExplicitRunDirectory([]), /--run is required/);
 
+const productHeavyGraph = { atomCount:2, bondCount:1,
+  atoms:[
+    { atomName:'C1', element:'C', formalCharge:0, aromatic:false },
+    { atomName:'N1', element:'N', formalCharge:0, aromatic:false },
+  ], bonds:[{ atomNames:['C1','N1'], order:1, aromatic:false }] };
+const valenceSafeguard = { schema:'molarium.ligand-valence-safeguard/v1',
+  accepted:true, complete:true, checkedHeavyBonds:1, expectedHeavyBonds:1,
+  bondMeasurements:[{ atomNames:['C1','N1'], accepted:true }], violations:[] };
+const inspectedLigand = { atoms:[
+  { atomId:'a1', atomName:'C1', element:'C', formalCharge:0, aromatic:false,
+    coordinatesAngstrom:[0,0,0] },
+  { atomId:'a2', atomName:'N1', element:'N', formalCharge:0, aromatic:false,
+    coordinatesAngstrom:[1.4,0,0] },
+], bonds:[{ atomIds:['a1','a2'], order:1, aromatic:false }] };
+
 const retainedCheckpoint = {
   stepId:'finish-bay-293',
   sidechainContinuity:{ residue:'PHE A890', accepted:true,
     finalChiDegrees:[-170, 95] },
-  staging:{ poseTransferPlan:{ featureCorrespondences:[{
+  staging:{ productHeavyGraph, poseTransferPlan:{ featureCorrespondences:[{
     id:'terminal', registeredIntentId:'retain-terminal', required:true,
     restraint:{ toleranceAngstrom:1.5 },
     mappingVariants:[
@@ -20,7 +35,9 @@ const retainedCheckpoint = {
       { referenceAtomNames:['R1','R2','R3'], productAtomIndices:[2,1,0] },
     ],
   }] } },
-  relaxation:{ accepted:true, registeredPoseRetention:{ accepted:true,
+  ligand:inspectedLigand,
+  relaxation:{ accepted:true, valenceSafeguard,
+    registeredPoseRetention:{ accepted:true,
     before:{ active:true, accepted:true, fixedAtomIds:['hard-1','p-1','p-2','p-3'],
       hardAnchor:{ rmsdAngstrom:0, maxDisplacementAngstrom:0 },
       features:[{ id:'terminal', registeredIntentId:'retain-terminal', accepted:true,
@@ -36,6 +53,14 @@ const retainedCheckpoint = {
   } },
 };
 assert.doesNotThrow(() => assertAcceptedCheckpointRelaxation(retainedCheckpoint));
+const missingValenceEvidence = structuredClone(retainedCheckpoint);
+delete missingValenceEvidence.relaxation.valenceSafeguard;
+assert.throws(() => assertAcceptedCheckpointRelaxation(missingValenceEvidence),
+  /heavy-bond safeguard evidence is missing/);
+const wrongProductGraph = structuredClone(retainedCheckpoint);
+wrongProductGraph.ligand.bonds[0].order = 2;
+assert.throws(() => assertAcceptedCheckpointRelaxation(wrongProductGraph),
+  /bond graph differs from staged product/);
 const ambiguousRetention = structuredClone(retainedCheckpoint);
 ambiguousRetention.relaxation.registeredPoseRetention.after.features.push(
   structuredClone(ambiguousRetention.relaxation.registeredPoseRetention.after.features[0]));
@@ -125,13 +150,16 @@ try {
   for (const [index, stepId] of steps.entries()) {
     const body = { schema:'molarium.design-prediction-checkpoint/v1',
       routeId:'sos1-hit-only', stepId, frozenBeforeHoldoutAccess:true,
-      relaxation:{ accepted:true },
+      relaxation:{ accepted:true, valenceSafeguard },
       ...(stepId === 'finish-bay-293' ? { sidechainContinuity:{
         residue:'PHE A890', accepted:true, finalChiDegrees:[-170, 95] } } : {}),
       ...(stepId === 'open-phe890-pocket' ? { rotamerDecision:{
         publicationEligible:true, diagnosticOnly:false,
         deterministicFinalReplayVerified:true } } : {}),
-      ligand:{ atoms:[{ atomName:'C1', coordinatesAngstrom:[index, 0, 0] }] },
+      staging:{ productHeavyGraph, poseTransferPlan:{ featureCorrespondences:[] } },
+      ligand:{ ...inspectedLigand, atoms:inspectedLigand.atoms.map((atom, atomIndex) => ({
+        ...atom, coordinatesAngstrom:[index + atomIndex * 1.4, 0, 0],
+      })) },
       pocket:{ atoms:[] } };
     const bytes = Buffer.from(`${JSON.stringify(body)}\n`);
     const filename = `${stepId}-prediction.json`;
@@ -216,7 +244,8 @@ try {
   await writeFile(join(scratch, 'prediction-manifest.json'), manifestBytes);
   await writeFile(join(scratch, 'holdout-evaluation-summary.json'), `${JSON.stringify(evaluation)}\n`);
   const finalPath = join(scratch, 'finish-bay-293-prediction.json');
-  const originalFinal = { ...rejectedRelaxation, relaxation:{ accepted:true } };
+  const originalFinal = { ...rejectedRelaxation,
+    relaxation:{ accepted:true, valenceSafeguard } };
   await writeFile(finalPath, `${JSON.stringify(originalFinal)}\n`);
   const contaminated = structuredClone(originalFinal);
   contaminated.evaluation = { role:'evaluation-only', pdbId:'5OVI',

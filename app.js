@@ -10591,7 +10591,10 @@ function installChemistActionsApi(module) {
           : 'Optimized coordinates do not match expectedOutputCoordinateSha256');
       }
       return chemistActionSummary({ optimization:{ method,
-        accepted:(result.valenceSafeguard?.accepted ?? true)
+        accepted:(method !== 'induced-fit-webgpu'
+          || result.valenceSafeguard?.accepted === true
+            && result.valenceSafeguard?.complete === true
+            && result.valenceSafeguard?.checkedHeavyBonds > 0)
           && (result.registeredPoseRetention?.accepted ?? true),
         valenceSafeguard:structuredClone(result.valenceSafeguard || null),
         registeredPoseRetention:structuredClone(result.registeredPoseRetention || null),
@@ -11148,6 +11151,7 @@ function installChemistActionsApi(module) {
       return chemistActionSummary({ designStep:{ id:step.id, stateId:step.stateId,
         referenceStateId:step.referenceStateId || null,
         inputKind:step.inputKind, productHeavyAtoms:staged.productHeavyAtoms,
+        productHeavyGraph:structuredClone(staged.productHeavyGraph),
         commonHitHeavyAtoms:staged.commonHeavyAtoms,
         addedHeavyAtomIds:[...(staged.registeredEditRegion.addedHeavyAtomIds || [])],
         changedAtomIds,
@@ -11571,9 +11575,29 @@ async function stageRegisteredDesignRouteProduct({ caseId, productSmiles, posePr
         treatment:'soft-restraint',
       }))),
     ];
+    const productHeavyGraph = {
+      atomCount:productHeavyIndices.length,
+      bondCount:product.bonds.filter((bond) =>
+        product.atoms[bond.a]?.element !== 'H'
+          && product.atoms[bond.b]?.element !== 'H').length,
+      atoms:productHeavyIndices.map((atomIndex) => {
+        const atom = product.atoms[atomIndex];
+        return { atomName:atom.atomName, element:atom.element,
+          formalCharge:atomFormalCharge(atom), aromatic:Boolean(atom.aromatic) };
+      }).sort((first, second) => first.atomName.localeCompare(second.atomName)),
+      bonds:product.bonds.flatMap((bond) => {
+        const first = product.atoms[bond.a], second = product.atoms[bond.b];
+        if (!first || !second || first.element === 'H' || second.element === 'H') return [];
+        return [{ atomNames:[first.atomName, second.atomName].sort(),
+          order:Number(bond.order || 1),
+          aromatic:Boolean(bond.aromatic || Number(bond.order) === 1.5) }];
+      }).sort((first, second) => first.atomNames.join('\0').localeCompare(
+        second.atomNames.join('\0'))),
+    };
     updateInfo(); updateDockingUi(); updateOptimizerControls(); draw();
     return { caseId:caseId || null, productAtoms:currentPlan.molecule.atoms.length,
       productHeavyAtoms:productHeavyIndices.length,
+      productHeavyGraph,
       commonHeavyAtoms:poseTransferPlan.mappedAtomPairs.length,
       selectedContactIds:[...selected], unavailableTargets, remappedTargets,
       poseTransferPlan:structuredClone(poseTransferPlan),
@@ -15859,23 +15883,30 @@ function captureLigandValenceGeometry() {
 }
 
 function validateLigandValenceGeometry(snapshot) {
-  if (!snapshot?.bonds?.length) return { accepted:true, checkedHeavyBonds:0, violations:[] };
+  if (!snapshot?.bonds?.length) return { schema:'molarium.ligand-valence-safeguard/v1',
+    accepted:false, complete:false, checkedHeavyBonds:0, expectedHeavyBonds:0,
+    bondMeasurements:[], violations:[{ failure:'no-heavy-bond-evidence' }] };
   const molecule = state.molecule;
-  const violations = snapshot.bonds.flatMap((bond) => {
+  const bondMeasurements = snapshot.bonds.map((bond) => {
     const after = Math.hypot(
       molecule.atoms[bond.a].x - molecule.atoms[bond.b].x,
       molecule.atoms[bond.a].y - molecule.atoms[bond.b].y,
       molecule.atoms[bond.a].z - molecule.atoms[bond.b].z);
     const stretched = after > bond.before + 0.45 && after > bond.target * 1.25;
     const compressed = after < bond.before - 0.35 && after < bond.target * 0.75;
-    return stretched || compressed ? [{ atomNames:bond.atomNames,
+    return { atomNames:bond.atomNames,
       beforeAngstrom:Number(bond.before.toFixed(3)),
       afterAngstrom:Number(after.toFixed(3)),
       targetAngstrom:Number(bond.target.toFixed(3)),
-      failure:stretched ? 'stretched' : 'compressed' }] : [];
+      accepted:!stretched && !compressed,
+      failure:stretched ? 'stretched' : compressed ? 'compressed' : null };
   });
-  return { accepted:violations.length === 0,
-    checkedHeavyBonds:snapshot.bonds.length, violations };
+  const violations = bondMeasurements.filter((entry) => !entry.accepted);
+  return { schema:'molarium.ligand-valence-safeguard/v1',
+    accepted:violations.length === 0, complete:true,
+    checkedHeavyBonds:bondMeasurements.length,
+    expectedHeavyBonds:snapshot.bonds.length,
+    bondMeasurements, violations };
 }
 
 function restoreValenceGeometrySnapshot(snapshot) {

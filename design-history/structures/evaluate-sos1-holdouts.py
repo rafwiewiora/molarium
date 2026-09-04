@@ -227,6 +227,47 @@ def verify_accepted_checkpoint_relaxation(checkpoint: dict, step_id: str) -> Non
     relaxation = checkpoint.get("relaxation", {})
     if relaxation.get("accepted") is not True:
         raise RuntimeError(f"{step_id}: required checkpoint relaxation was not accepted")
+    graph = checkpoint.get("staging", {}).get("productHeavyGraph", {})
+    if graph.get("atomCount") != len(graph.get("atoms", [])) \
+            or graph.get("bondCount") != len(graph.get("bonds", [])) \
+            or not isinstance(graph.get("bondCount"), int) \
+            or graph["bondCount"] < 1:
+        raise RuntimeError(f"{step_id}: exact staged product graph is incomplete")
+    safeguard = relaxation.get("valenceSafeguard", {})
+    if safeguard.get("schema") != "molarium.ligand-valence-safeguard/v1" \
+            or safeguard.get("accepted") is not True \
+            or safeguard.get("complete") is not True \
+            or safeguard.get("checkedHeavyBonds") != graph["bondCount"] \
+            or safeguard.get("expectedHeavyBonds") != graph["bondCount"] \
+            or len(safeguard.get("bondMeasurements", [])) != graph["bondCount"] \
+            or any(bond.get("accepted") is not True
+                   for bond in safeguard.get("bondMeasurements", [])) \
+            or safeguard.get("violations") != []:
+        raise RuntimeError(
+            f"{step_id}: accepted heavy-bond safeguard evidence is incomplete")
+    ligand = checkpoint.get("ligand", {})
+    atoms = [atom for atom in ligand.get("atoms", []) if atom.get("element") != "H"]
+    by_id = {atom.get("atomId"): atom for atom in ligand.get("atoms", [])}
+    actual_atoms = sorted([{
+        "atomName": atom.get("atomName"), "element": atom.get("element"),
+        "formalCharge": atom.get("formalCharge"),
+        "aromatic": bool(atom.get("aromatic")),
+    } for atom in atoms], key=lambda atom: atom["atomName"])
+    actual_bonds = []
+    for bond in ligand.get("bonds", []):
+        first = by_id.get((bond.get("atomIds") or [None, None])[0])
+        second = by_id.get((bond.get("atomIds") or [None, None])[1])
+        if not first or not second or first.get("element") == "H" \
+                or second.get("element") == "H":
+            continue
+        actual_bonds.append({
+            "atomNames": sorted([first.get("atomName"), second.get("atomName")]),
+            "order": bond.get("order", 1), "aromatic": bool(bond.get("aromatic")),
+        })
+    actual_bonds.sort(key=lambda bond: "\0".join(bond["atomNames"]))
+    if len(atoms) != graph["atomCount"] or actual_atoms != graph["atoms"] \
+            or actual_bonds != graph["bonds"]:
+        raise RuntimeError(f"{step_id}: inspected ligand graph differs from staged product")
     if step_id == "finish-bay-293":
         continuity = checkpoint.get("sidechainContinuity", {})
         if continuity.get("residue") != "PHE A890" \

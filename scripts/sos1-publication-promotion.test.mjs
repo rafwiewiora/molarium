@@ -41,6 +41,13 @@ const push = (requestId, action, args = {}, result = undefined) => {
   return record;
 };
 const guarded = (requestId, role) => fixedHash(`${requestId}:${role}`);
+const productHeavyGraph = { atomCount:2, bondCount:1, atoms:[
+  { atomName:'C1', element:'C', formalCharge:0, aromatic:false },
+  { atomName:'N1', element:'N', formalCharge:0, aromatic:false },
+], bonds:[{ atomNames:['C1','N1'], order:1, aromatic:false }] };
+const valenceSafeguard = { schema:'molarium.ligand-valence-safeguard/v1',
+  accepted:true, complete:true, checkedHeavyBonds:1, expectedHeavyBonds:1,
+  bondMeasurements:[{ accepted:true }], violations:[] };
 push('route-load-hit', 'designRoute.load', { routeId:'sos1-hit-only' });
 const checkpoints = new Map(), manifestCheckpoints = [];
 for (const [index, stepId] of stepIds.entries()) {
@@ -75,14 +82,19 @@ for (const [index, stepId] of stepIds.entries()) {
   const checkpoint = { schema:'molarium.design-prediction-checkpoint/v1',
     routeId:'sos1-hit-only', stepId, predictedStateId:stateId,
     frozenBeforeHoldoutAccess:true,
-    relaxation:{ accepted:true },
+    relaxation:{ accepted:true, valenceSafeguard },
     ...(stepId === 'finish-bay-293' ? { sidechainContinuity:{
       residue:'PHE A890', accepted:true, finalChiDegrees:[-170, 95] } } : {}),
     ...(stepId === 'open-phe890-pocket' ? { rotamerDecision:{
       publicationEligible:true, diagnosticOnly:false,
       deterministicFinalReplayVerified:true } } : {}),
-    ligand:{ truncated:false, totalAtomCount:1, atoms:[{ atomId:`${stateId}:C1`,
-      atomName:'C1', element:'C', coordinatesAngstrom:[index, 0, 0] }] },
+    staging:{ productHeavyGraph, poseTransferPlan:{ featureCorrespondences:[] } },
+    ligand:{ truncated:false, totalAtomCount:2, atoms:[
+      { atomId:`${stateId}:C1`, atomName:'C1', element:'C', formalCharge:0,
+        aromatic:false, coordinatesAngstrom:[index, 0, 0] },
+      { atomId:`${stateId}:N1`, atomName:'N1', element:'N', formalCharge:0,
+        aromatic:false, coordinatesAngstrom:[index + 1.4, 0, 0] },
+    ], bonds:[{ atomIds:[`${stateId}:C1`,`${stateId}:N1`], order:1, aromatic:false }] },
     pocket:{ truncated:false, totalAtomCount:2, atoms:[
       { atomId:'receptor:PHE:890:CG', atomName:'CG', element:'C', residueName:'PHE',
         chain:'A', residueIndex:890, coordinatesAngstrom:[0, index + 1, 0] },

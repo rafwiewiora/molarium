@@ -34,6 +34,38 @@ export function requireExplicitRunDirectory(argv, { root = process.cwd() } = {})
 export function assertAcceptedCheckpointRelaxation(checkpoint, label = checkpoint?.stepId) {
   assert.equal(checkpoint?.relaxation?.accepted, true,
     `${label}: required checkpoint relaxation was not accepted`);
+  const graph = checkpoint?.staging?.productHeavyGraph;
+  assert(graph && graph.atomCount === graph.atoms?.length
+    && graph.bondCount === graph.bonds?.length && graph.bondCount > 0,
+  `${label}: exact staged product graph evidence is incomplete`);
+  const safeguard = checkpoint.relaxation.valenceSafeguard;
+  assert(safeguard?.schema === 'molarium.ligand-valence-safeguard/v1'
+    && safeguard.accepted === true && safeguard.complete === true
+    && safeguard.checkedHeavyBonds === graph.bondCount
+    && safeguard.expectedHeavyBonds === graph.bondCount
+    && safeguard.bondMeasurements?.length === graph.bondCount
+    && safeguard.bondMeasurements.every((bond) => bond.accepted === true)
+    && safeguard.violations?.length === 0,
+  `${label}: complete accepted heavy-bond safeguard evidence is missing`);
+  const ligandAtoms = (checkpoint?.ligand?.atoms || []).filter((atom) => atom.element !== 'H');
+  const ligandById = new Map((checkpoint?.ligand?.atoms || []).map((atom) => [atom.atomId, atom]));
+  const actualAtoms = ligandAtoms.map((atom) => ({ atomName:atom.atomName,
+    element:atom.element, formalCharge:atom.formalCharge,
+    aromatic:Boolean(atom.aromatic) }))
+    .sort((first, second) => first.atomName.localeCompare(second.atomName));
+  const actualBonds = (checkpoint?.ligand?.bonds || []).flatMap((bond) => {
+    const first = ligandById.get(bond.atomIds?.[0]), second = ligandById.get(bond.atomIds?.[1]);
+    if (!first || !second || first.element === 'H' || second.element === 'H') return [];
+    return [{ atomNames:[first.atomName, second.atomName].sort(),
+      order:Number(bond.order || 1), aromatic:Boolean(bond.aromatic) }];
+  }).sort((first, second) => first.atomNames.join('\0').localeCompare(
+    second.atomNames.join('\0')));
+  assert.equal(ligandAtoms.length, graph.atomCount,
+    `${label}: inspected ligand heavy-atom count differs from staged product`);
+  assert.deepEqual(actualAtoms, graph.atoms,
+    `${label}: inspected ligand atom graph differs from staged product`);
+  assert.deepEqual(actualBonds, graph.bonds,
+    `${label}: inspected ligand bond graph differs from staged product`);
   if (checkpoint?.stepId === 'finish-bay-293') {
     const continuity = checkpoint.sidechainContinuity;
     assert.equal(continuity?.residue, 'PHE A890',

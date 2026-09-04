@@ -50,6 +50,7 @@ if (diagnosticPhe890CoordinateSha256 != null
 if (diagnosticPhe890CoordinateSha256 != null && valueFor('--output') == null)
   throw new Error('A diagnostic Phe890 branch requires an explicit --output directory');
 const stepIds = allSteps.slice(0, stopIndex + 1);
+const completeRouteRun = stepIds.length === allSteps.length;
 const output = resolve(root, valueFor('--output')
   || 'outputs/design-history/sos1-hit-only-prospective');
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
@@ -91,9 +92,22 @@ function requireCompleteSeedCoverage(response, label) {
   return response;
 }
 
-function requireAcceptedRelaxation(response, label) {
-  if (response?.result?.optimization?.accepted !== true)
+function requireAcceptedRelaxation(response, label, expectedHeavyBonds = null) {
+  const optimization = response?.result?.optimization;
+  const safeguard = optimization?.valenceSafeguard;
+  if (optimization?.accepted !== true)
     throw new Error(`${label}: required relaxation was rejected and restored`);
+  if (safeguard?.schema !== 'molarium.ligand-valence-safeguard/v1'
+    || safeguard.accepted !== true || safeguard.complete !== true
+    || !Number.isInteger(safeguard.checkedHeavyBonds)
+    || safeguard.checkedHeavyBonds < 1
+    || safeguard.expectedHeavyBonds !== safeguard.checkedHeavyBonds
+    || safeguard.bondMeasurements?.length !== safeguard.checkedHeavyBonds
+    || safeguard.bondMeasurements.some((bond) => bond.accepted !== true)
+    || safeguard.violations?.length !== 0)
+    throw new Error(`${label}: accepted relaxation lacks complete heavy-bond safeguard evidence`);
+  if (expectedHeavyBonds != null && safeguard.checkedHeavyBonds !== expectedHeavyBonds)
+    throw new Error(`${label}: valence safeguard did not inspect the exact staged product graph`);
   return response;
 }
 
@@ -203,6 +217,37 @@ function requireSaneInspectedLigand(inspection, label) {
   return inspection;
 }
 
+function requireExactStagedProductGraph(inspection, staged, label) {
+  const expected = staged?.result?.designStep?.productHeavyGraph;
+  if (!expected || expected.atomCount !== staged.result.designStep.productHeavyAtoms
+    || expected.atoms?.length !== expected.atomCount
+    || expected.bonds?.length !== expected.bondCount)
+    throw new Error(`${label}: staged product graph evidence is incomplete`);
+  const atoms = inspection.result.atoms.filter((atom) => atom.element !== 'H');
+  if (atoms.length !== expected.atomCount)
+    throw new Error(`${label}: inspected ligand heavy-atom count differs from staged product`);
+  const byId = new Map(inspection.result.atoms.map((atom) => [atom.atomId, atom]));
+  const actualAtoms = atoms.map((atom) => ({ atomName:atom.atomName,
+    element:atom.element, formalCharge:atom.formalCharge,
+    aromatic:Boolean(atom.aromatic) }))
+    .sort((first, second) => first.atomName.localeCompare(second.atomName));
+  if (actualAtoms.some((atom) => typeof atom.atomName !== 'string' || !atom.atomName)
+    || new Set(actualAtoms.map((atom) => atom.atomName)).size !== actualAtoms.length
+    || JSON.stringify(actualAtoms) !== JSON.stringify(expected.atoms))
+    throw new Error(`${label}: inspected ligand atom graph differs from staged product`);
+  const actualBonds = inspection.result.bonds.flatMap((bond) => {
+    const first = byId.get(bond.atomIds?.[0]), second = byId.get(bond.atomIds?.[1]);
+    if (!first || !second || first.element === 'H' || second.element === 'H') return [];
+    return [{ atomNames:[first.atomName, second.atomName].sort(),
+      order:Number(bond.order || 1), aromatic:Boolean(bond.aromatic) }];
+  }).sort((first, second) => first.atomNames.join('\0').localeCompare(
+    second.atomNames.join('\0')));
+  if (actualBonds.length !== expected.bondCount
+    || JSON.stringify(actualBonds) !== JSON.stringify(expected.bonds))
+    throw new Error(`${label}: inspected ligand bond graph differs from staged product`);
+  return inspection;
+}
+
 function requireCompleteInspection(inspection, label) {
   const atoms = inspection?.result?.atoms;
   if (!Array.isArray(atoms) || !atoms.length
@@ -242,7 +287,7 @@ async function enumeratePhe890(stepId, ordinal = 'initial') {
 }
 
 async function choosePhe890Branch(stepId, { referenceLigand, hardAtomNames,
-  changedLigandAtomIds } = {}) {
+  changedLigandAtomIds, expectedProductHeavyBondCount } = {}) {
   let ensemble = await enumeratePhe890(stepId);
   const availableCandidates = uniqueSidechainRotamerCandidates(ensemble.candidates,
     { maximum:diagnosticPhe890CoordinateSha256 == null ? branchCount : 32 });
@@ -279,7 +324,8 @@ async function choosePhe890Branch(stepId, { referenceLigand, hardAtomNames,
       method:'induced-fit-webgpu',
     }, `${stepId}-relax-phe890-branch-${candidate.rank}`);
     if (diagnosticPhe890CoordinateSha256 != null)
-      requireAcceptedRelaxation(relaxed, `${stepId} diagnostic branch ${candidate.rank}`);
+      requireAcceptedRelaxation(relaxed, `${stepId} diagnostic branch ${candidate.rank}`,
+        expectedProductHeavyBondCount);
     const ligand = await execute('session.inspect', {
       scope:'ligand', includeCoordinates:true, maximumAtoms:256,
     }, `${stepId}-inspect-ligand-branch-${candidate.rank}`);
@@ -377,7 +423,8 @@ async function choosePhe890Branch(stepId, { referenceLigand, hardAtomNames,
   const relaxation = await executeGuarded('optimization.run', {
     method:'induced-fit-webgpu',
   }, `${stepId}-relax-selected-phe890-branch`);
-  requireAcceptedRelaxation(relaxation, `${stepId} selected branch`);
+  requireAcceptedRelaxation(relaxation, `${stepId} selected branch`,
+    expectedProductHeavyBondCount);
   const ligand = await execute('session.inspect', {
     scope:'ligand', includeCoordinates:true, maximumAtoms:256,
   }, `${stepId}-inspect-selected-ligand`);
@@ -471,6 +518,7 @@ try {
         referenceLigand:previousFrozenLigand,
         hardAtomNames:staged.result.designStep.poseTransferPlan.hardConstraintAtomNames,
         changedLigandAtomIds:staged.result.designStep.addedHeavyAtomIds,
+        expectedProductHeavyBondCount:staged.result.designStep.productHeavyGraph?.bondCount,
       });
       refinement = rotamerDecision.selected.refinement;
       parameterization = rotamerDecision.selected.parameterization;
@@ -493,7 +541,8 @@ try {
         console.log(`${stepId}: ${relaxMethod} relaxation`);
         const relaxed = await executeGuarded('optimization.run',
           { method:relaxMethod }, `${stepId}-complex-relax`);
-        requireAcceptedRelaxation(relaxed, stepId);
+        requireAcceptedRelaxation(relaxed, stepId,
+          staged.result.designStep.productHeavyGraph?.bondCount);
         relaxation = relaxed.result.optimization;
       }
     }
@@ -503,6 +552,7 @@ try {
     const ligand = requireSaneInspectedLigand(await execute('session.inspect', {
       scope:'ligand', includeCoordinates:true, maximumAtoms:256,
     }, `${stepId}-freeze-ligand`), stepId);
+    requireExactStagedProductGraph(ligand, staged, stepId);
     const pocket = requireCompleteInspection(await execute('session.inspect', {
       scope:'pocket', includeCoordinates:true, maximumAtoms:500,
     }, `${stepId}-freeze-pocket`), `${stepId} pocket`);
@@ -570,9 +620,10 @@ try {
   const manifest = {
     schema:'molarium.design-prediction-run/v1',
     routeId:'sos1-hit-only',
-    status:diagnosticPhe890CoordinateSha256 == null && relaxMethod !== 'none'
+    status:completeRouteRun && diagnosticPhe890CoordinateSha256 == null && relaxMethod !== 'none'
       ? 'predictions-frozen-holdouts-unopened' : 'diagnostic-non-promotable',
-    publicationEligible:diagnosticPhe890CoordinateSha256 == null && relaxMethod !== 'none',
+    publicationEligible:completeRouteRun && diagnosticPhe890CoordinateSha256 == null
+      && relaxMethod !== 'none',
     protocol:{ initialCoordinateInput:'PDB 5OVE/AXE only',
       sequentialPredictedReferences:true, relaxMethod,
       fixedPoseSearchChains:fixedSearchChains,

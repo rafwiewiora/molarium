@@ -167,6 +167,25 @@ class EvaluatorTest(unittest.TestCase):
             EVALUATOR.verify_publication_eligibility(manifest, checkpoints)
 
     def test_required_relaxation_and_retention_fail_closed(self) -> None:
+        product_graph = {"atomCount": 2, "bondCount": 1,
+            "atoms": [
+                {"atomName": "C1", "element": "C", "formalCharge": 0,
+                 "aromatic": False},
+                {"atomName": "N1", "element": "N", "formalCharge": 0,
+                 "aromatic": False}],
+            "bonds": [{"atomNames": ["C1", "N1"], "order": 1,
+                       "aromatic": False}]}
+        valence = {"schema": "molarium.ligand-valence-safeguard/v1",
+            "accepted": True, "complete": True, "checkedHeavyBonds": 1,
+            "expectedHeavyBonds": 1,
+            "bondMeasurements": [{"accepted": True}], "violations": []}
+        ligand = {"atoms": [
+            {"atomId": "a1", "atomName": "C1", "element": "C",
+             "formalCharge": 0, "aromatic": False},
+            {"atomId": "a2", "atomName": "N1", "element": "N",
+             "formalCharge": 0, "aromatic": False}],
+            "bonds": [{"atomIds": ["a1", "a2"], "order": 1,
+                       "aromatic": False}]}
         retention_phase = {
             "active": True, "accepted": True,
             "fixedAtomIds": ["hard-1", "p-1", "p-2", "p-3"],
@@ -180,13 +199,15 @@ class EvaluatorTest(unittest.TestCase):
                 "planeNormalAngleDegrees": 2.0, "toleranceAngstrom": 1.5,
             }],
         }
-        checkpoint = {"stepId": "finish-bay-293", "relaxation": {"accepted": True,
+        checkpoint = {"stepId": "finish-bay-293", "ligand": ligand,
+            "relaxation": {"accepted": True, "valenceSafeguard": valence,
             "registeredPoseRetention": {"accepted": True,
                 "before": json.loads(json.dumps(retention_phase)),
                 "after": json.loads(json.dumps(retention_phase))}},
             "sidechainContinuity": {"residue": "PHE A890", "accepted": True,
                                       "finalChiDegrees": [-170.0, 95.0]},
-            "staging": {"poseTransferPlan": {"featureCorrespondences": [{
+            "staging": {"productHeavyGraph": product_graph,
+                        "poseTransferPlan": {"featureCorrespondences": [{
                 "id": "terminal", "registeredIntentId": "retain-terminal",
                 "required": True, "restraint": {"toleranceAngstrom": 1.5},
                 "mappingVariants": [
@@ -196,6 +217,16 @@ class EvaluatorTest(unittest.TestCase):
             }]}}}
         EVALUATOR.verify_accepted_checkpoint_relaxation(
             checkpoint, "finish-bay-293")
+        no_valence = json.loads(json.dumps(checkpoint))
+        del no_valence["relaxation"]["valenceSafeguard"]
+        with self.assertRaisesRegex(RuntimeError, "safeguard evidence is incomplete"):
+            EVALUATOR.verify_accepted_checkpoint_relaxation(
+                no_valence, "finish-bay-293")
+        wrong_graph = json.loads(json.dumps(checkpoint))
+        wrong_graph["ligand"]["bonds"][0]["order"] = 2
+        with self.assertRaisesRegex(RuntimeError, "ligand graph differs"):
+            EVALUATOR.verify_accepted_checkpoint_relaxation(
+                wrong_graph, "finish-bay-293")
         rejected = json.loads(json.dumps(checkpoint))
         rejected["relaxation"]["accepted"] = False
         with self.assertRaisesRegex(RuntimeError, "was not accepted"):
