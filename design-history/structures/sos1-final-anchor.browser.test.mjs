@@ -107,6 +107,17 @@ try {
 
   const embedding = staged.result.designStep.embedding;
   const transfer = staged.result.designStep.poseTransferPlan;
+  const addedHeavyAtomIds = staged.result.designStep.addedHeavyAtomIds;
+  assert(Array.isArray(addedHeavyAtomIds) && addedHeavyAtomIds.length > 0,
+    'public designRoute.applyStep must expose route-added heavy persistent IDs');
+  assert.equal(new Set(addedHeavyAtomIds).size, addedHeavyAtomIds.length);
+  assert(addedHeavyAtomIds.every((atomId) => after.result.atoms.some((atom) =>
+    atom.atomId === atomId && atom.element !== 'H')),
+  'every public addedHeavyAtomId must identify a current heavy ligand atom');
+  assert(addedHeavyAtomIds.every((atomId) =>
+    staged.result.designStep.changedAtomIds.includes(atomId)));
+  assert(staged.result.designStep.changedAtomIds.length > addedHeavyAtomIds.length,
+    'added-heavy IDs must exclude the separate affected inherited-core region');
   assert.deepEqual(embedding.protectedReference, {
     method:'exact-common-subgraph-after-topology-release/v1',
     label:'exact mapped atoms outside attachment-migrated ring blocks',

@@ -106,15 +106,22 @@ try {
     const checkpoint = { schema:'molarium.design-prediction-checkpoint/v1',
       routeId:'sos1-hit-only', stepId:input.stepId, predictedStateId:input.stateId,
       frozenBeforeHoldoutAccess:true,
-      ligand:{ atoms:input.ligandAtoms }, pocket:{ atoms:input.pocketAtoms } };
+      ...(input.stepId === 'open-phe890-pocket' ? { rotamerDecision:{
+        publicationEligible:true, diagnosticOnly:false,
+        deterministicFinalReplayVerified:true } } : {}),
+      ligand:{ atoms:input.ligandAtoms, truncated:false,
+        totalAtomCount:input.ligandAtoms.length },
+      pocket:{ atoms:input.pocketAtoms, truncated:false,
+        totalAtomCount:input.pocketAtoms.length } };
     const filename = `${input.stepId}-prediction.json`;
     const bytes = await writeJson(join(runDirectory, filename), checkpoint);
     checkpointRecords.push({ stepId:input.stepId, predictedStateId:input.stateId,
       filename, sha256:sha256(bytes), freezeActionSequence:input.freezeActionSequence });
   }
   const manifest = { schema:'molarium.design-prediction-run/v1', routeId:'sos1-hit-only',
-    status:'predictions-frozen-holdouts-unopened', protocol:{
-      initialCoordinateInput:'PDB 5OVE/AXE only', sequentialPredictedReferences:true },
+    status:'predictions-frozen-holdouts-unopened', publicationEligible:true, protocol:{
+      initialCoordinateInput:'PDB 5OVE/AXE only', sequentialPredictedReferences:true,
+      phe890Branching:{ diagnosticOnly:false, diagnosticExactCoordinateSha256:null } },
     checkpoints:checkpointRecords,
     agentApi:{ auditSha256:sha256(auditBytes), auditRecords:records.length } };
   const manifestBytes = await writeJson(join(runDirectory, 'prediction-manifest.json'), manifest);

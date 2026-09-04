@@ -84,6 +84,12 @@ export async function verifyAcceptedSos1Run(runDirectory) {
   assert.equal(manifest.schema, 'molarium.design-prediction-run/v1');
   assert.equal(manifest.routeId, SOS1_ROUTE_ID);
   assert.equal(manifest.status, 'predictions-frozen-holdouts-unopened');
+  assert.equal(manifest.publicationEligible, true,
+    'SOS1 run is explicitly non-promotable');
+  assert.equal(manifest.protocol?.phe890Branching?.diagnosticOnly, false,
+    'SOS1 run uses a diagnostic-only Phe890 selector');
+  assert.equal(manifest.protocol?.phe890Branching?.diagnosticExactCoordinateSha256, null,
+    'SOS1 run pins a diagnostic Phe890 coordinate');
   assert.equal(manifest.protocol?.initialCoordinateInput, 'PDB 5OVE/AXE only');
   assert.equal(manifest.protocol?.sequentialPredictedReferences, true);
   assert.equal(manifest.agentApi?.auditSha256, sha256(auditBytes),
@@ -126,6 +132,13 @@ export async function verifyAcceptedSos1Run(runDirectory) {
     assertNoHoldoutCoordinatePayload(checkpoint, `${entry.stepId} checkpoint`);
     checkpoints.set(entry.stepId, { entry, checkpoint, bytes });
   }
+  const branchDecision = checkpoints.get('open-phe890-pocket')?.checkpoint?.rotamerDecision;
+  assert.equal(branchDecision?.publicationEligible, true,
+    'Phe890 branch decision is explicitly non-promotable');
+  assert.equal(branchDecision?.diagnosticOnly, false,
+    'diagnostic-only Phe890 branch cannot feed publication assets');
+  assert.equal(branchDecision?.deterministicFinalReplayVerified, true,
+    'Phe890 branch decision lacks deterministic final replay verification');
   return Object.freeze({ directory, runId:basename(directory), manifest, manifestBytes,
     evaluation, evaluationBytes, audit, auditBytes, checkpoints });
 }

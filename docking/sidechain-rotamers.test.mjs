@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { applySidechainRotamer, assertSidechainChiAnglesReproduced,
   assertSidechainRotamerCoordinateGuards,
-  enumerateSidechainRotamers, evaluatePostRelaxedLigandPocket,
+  enumerateSidechainRotamers, evaluatePostRelaxedBranchObjective,
+  evaluatePostRelaxedLigandPocket,
   measureInspectedSidechainChiAngles, selectSidechainRotamerCandidate,
   selectCoupledSidechainPoseBranch,
   SIDECHAIN_ROTAMER_SCHEMA, uniqueSidechainRotamerCandidates } from './sidechain-rotamers.mjs';
@@ -160,12 +161,118 @@ assert.equal(clashingGeometry.feasible, false);
 assert.equal(clashingGeometry.severeClashes, 1);
 assert(clashingGeometry.score > separatedGeometry.score);
 
-const postRelaxation = (score, feasible = true) => ({
+const inspected = (atoms) => ({ scope:'ligand', truncated:false,
+  totalAtomCount:atoms.length, atoms });
+const inspectedAtom = (atomId, atomName, coordinatesAngstrom, element = 'C') => ({
+  atomId, atomName, element, coordinatesAngstrom,
+});
+const referenceInspection = inspected([
+  inspectedAtom('hard-1', 'C1', [0,0,0]),
+  inspectedAtom('hard-2', 'C2', [1,0,0]),
+  inspectedAtom('hard-3', 'C3', [0,1,0]),
+]);
+const relaxedInspection = inspected([
+  inspectedAtom('hard-1', 'C1', [0,0,0]),
+  inspectedAtom('hard-2', 'C2', [1,0,0]),
+  inspectedAtom('hard-3', 'C3', [0,1,0]),
+  inspectedAtom('changed-1', 'C4', [10,0,0]),
+]);
+const engagedPocket = inspected([
+  ...relaxedInspection.atoms,
+  inspectedAtom('receptor-1', 'CG', [12.7,0,0]),
+]);
+const retainedEngagement = evaluatePostRelaxedBranchObjective({
+  referenceLigand:referenceInspection, ligand:relaxedInspection, pocket:engagedPocket,
+  hardAtomNames:['C1','C2','C3'], changedLigandAtomIds:['changed-1'],
+});
+assert.equal(retainedEngagement.feasible, true);
+assert.equal(retainedEngagement.poseIntent.hardAnchorRmsdAngstrom, 0);
+assert.equal(retainedEngagement.poseIntent.superpositionApplied, false);
+assert.equal(retainedEngagement.changedRegionEngagement.engagedHeavyAtomFraction, 1);
+assert(retainedEngagement.changedRegionEngagement.engagementScore > 0);
+const penetratingObjective = evaluatePostRelaxedBranchObjective({
+  referenceLigand:referenceInspection, ligand:relaxedInspection,
+  pocket:inspected([...relaxedInspection.atoms,
+    inspectedAtom('receptor-1', 'CG', [12.5,0,0])]),
+  hardAtomNames:['C1','C2','C3'], changedLigandAtomIds:['changed-1'],
+});
+assert.equal(penetratingObjective.changedRegionEngagement.engagementScore, 0,
+  'a pair inside the existing 0.78 van der Waals overlap boundary is not rewarded as engagement');
+assert(penetratingObjective.receptorAware.score > 0);
+const escapedInspection = inspected(relaxedInspection.atoms.map((entry) =>
+  entry.atomId === 'changed-1' ? { ...entry, coordinatesAngstrom:[20,0,0] } : entry));
+const escapedObjective = evaluatePostRelaxedBranchObjective({
+  referenceLigand:referenceInspection, ligand:escapedInspection,
+  pocket:inspected([...escapedInspection.atoms,
+    inspectedAtom('receptor-1', 'CG', [12.7,0,0])]),
+  hardAtomNames:['C1','C2','C3'], changedLigandAtomIds:['changed-1'],
+});
+assert.equal(escapedObjective.feasible, true,
+  'absence of a clash alone does not prove changed-region pocket engagement');
+assert.equal(escapedObjective.changedRegionEngagement.engagementScore, 0);
+const translatedInspection = inspected(relaxedInspection.atoms.map((entry) =>
+  ['hard-1','hard-2','hard-3'].includes(entry.atomId)
+    ? { ...entry, coordinatesAngstrom:entry.coordinatesAngstrom.map((value, axis) =>
+      axis === 0 ? value + 1 : value) } : entry));
+const translatedObjective = evaluatePostRelaxedBranchObjective({
+  referenceLigand:referenceInspection, ligand:translatedInspection,
+  pocket:inspected([...translatedInspection.atoms,
+    inspectedAtom('receptor-1', 'CG', [12.7,0,0])]),
+  hardAtomNames:['C1','C2','C3'], changedLigandAtomIds:['changed-1'],
+});
+assert.equal(translatedObjective.feasible, false,
+  'raw same-frame anchor displacement is not hidden by rigid superposition');
+assert.equal(translatedObjective.poseIntent.hardAnchorCentroidDisplacementAngstrom, 1);
+assert.throws(() => evaluatePostRelaxedBranchObjective({
+  referenceLigand:{ ...referenceInspection, truncated:true },
+  ligand:relaxedInspection, pocket:engagedPocket,
+  hardAtomNames:['C1','C2','C3'], changedLigandAtomIds:['changed-1'],
+}), /truncated:false/);
+assert.throws(() => evaluatePostRelaxedBranchObjective({
+  referenceLigand:referenceInspection,
+  ligand:{ ...relaxedInspection, totalAtomCount:relaxedInspection.atoms.length + 1 },
+  pocket:engagedPocket,
+  hardAtomNames:['C1','C2','C3'], changedLigandAtomIds:['changed-1'],
+}), /complete totalAtomCount coverage/);
+assert.throws(() => evaluatePostRelaxedBranchObjective({
+  referenceLigand:referenceInspection,
+  ligand:inspected([...relaxedInspection.atoms,
+    { ...relaxedInspection.atoms[0], atomName:'C5' }]),
+  pocket:engagedPocket,
+  hardAtomNames:['C1','C2','C3'], changedLigandAtomIds:['changed-1'],
+}), /unique persistent atom IDs/);
+assert.throws(() => evaluatePostRelaxedBranchObjective({
+  referenceLigand:referenceInspection,
+  ligand:inspected(relaxedInspection.atoms.map((entry) => entry.atomName === 'C1'
+    ? { ...entry, atomId:'replacement-hard-1' } : entry)),
+  pocket:engagedPocket,
+  hardAtomNames:['C1','C2','C3'], changedLigandAtomIds:['changed-1'],
+}), /changed persistent identity/);
+const softOverlapObjective = evaluatePostRelaxedBranchObjective({
+  referenceLigand:referenceInspection, ligand:relaxedInspection,
+  pocket:inspected([...relaxedInspection.atoms,
+    inspectedAtom('receptor-1', 'CG', [12.3,0,0])]),
+  hardAtomNames:['C1','C2','C3'], changedLigandAtomIds:['changed-1'],
+});
+assert.equal(softOverlapObjective.changedRegionEngagement.engagementScore, 0,
+  'the full 0.62-to-0.78 soft-overlap interval is penalized but never rewarded');
+assert(softOverlapObjective.receptorAware.score > 0);
+
+const branchObjective = (engagementScore = 0.5, feasible = true) => ({
+  feasible,
+  poseIntent:{ satisfied:feasible, hardAnchorRmsdAngstrom:0.1 },
+  changedRegionEngagement:{ engagementScore, engagedHeavyAtomFraction:1,
+    contactPairCount:2 },
+});
+const postRelaxation = (score, feasible = true, engagementScore = 0.5) => ({
   receptorAware:{ feasible, score },
+  branchObjective:branchObjective(engagementScore, feasible),
   topPoseEvidence:{
     schema:'molarium.coordinate-evidence/v1',
-    ligand:{ atoms:[{ atomId:'ligand-c', element:'C', coordinatesAngstrom:[0,0,0] }] },
-    pocket:{ atoms:[{ atomId:'receptor-c', element:'C', coordinatesAngstrom:[4,0,0] }] },
+    ligand:{ truncated:false, totalAtomCount:1,
+      atoms:[{ atomId:'ligand-c', element:'C', coordinatesAngstrom:[0,0,0] }] },
+    pocket:{ truncated:false, totalAtomCount:1,
+      atoms:[{ atomId:'receptor-c', element:'C', coordinatesAngstrom:[4,0,0] }] },
     ligandCoordinateSha256:'a'.repeat(64),
     pocketCoordinateSha256:'b'.repeat(64),
   },
@@ -186,6 +293,15 @@ const coupled = [
 ];
 assert.equal(selectCoupledSidechainPoseBranch(coupled).candidateRank, 6,
   'absolute post-relaxation receptor geometry outranks baseline-relative pre-relax values');
+assert.equal(selectCoupledSidechainPoseBranch([
+  { candidateRank:1, refinement:{ selectedFeasible:true },
+    postRelaxation:postRelaxation(0, true, 0),
+    optimization:{ accepted:true, finalEnergy:-100 } },
+  { candidateRank:2, refinement:{ selectedFeasible:true },
+    postRelaxation:postRelaxation(0.75, true, 0.8),
+    optimization:{ accepted:true, finalEnergy:-90 } },
+]).candidateRank, 2,
+'capped changed-region engagement outranks a zero-overlap branch that escaped the pocket');
 assert.equal(selectCoupledSidechainPoseBranch([
   { candidateRank:6, refinement:{ selectedFeasible:true, selectedScoreKcalMol:40,
     selectedChemicalValidity:{ additionalStericClashes:0 } },
@@ -210,13 +326,14 @@ assert.equal(selectCoupledSidechainPoseBranch([
 assert.throws(() => selectCoupledSidechainPoseBranch([
   { refinement:{ selectedFeasible:false, selectedScoreKcalMol:-100,
     selectedChemicalValidity:{ additionalStericClashes:0 } },
-    postRelaxation:postRelaxation(0, false),
+    postRelaxation:postRelaxation(0, true),
     optimization:{ accepted:true, finalEnergy:-1000 } },
-]), /post-relaxation receptor-aware evidence/);
+]), /preserved registered pose intent/,
+'a post-relax branch cannot rescue a refinement that was already infeasible');
 assert.throws(() => selectCoupledSidechainPoseBranch([
   { candidateRank:1, refinement:{ selectedFeasible:true, selectedScoreKcalMol:-100 },
     optimization:{ accepted:true, finalEnergy:-1000 } },
-]), /post-relaxation receptor-aware evidence/,
+]), /preserved registered pose intent/,
 'pre-relax scoring cannot silently stand in for missing current-state evidence');
 
 console.log('Side-chain rotamer enumeration: PASS');

@@ -208,6 +208,21 @@ def verify_complete_coordinate_inspections(checkpoint: dict, step_id: str) -> No
                     f"{step_id}: coordinate inspection {location} has invalid coordinates")
 
 
+def verify_publication_eligibility(manifest: dict, checkpoints: dict[str, dict]) -> None:
+    """Reject diagnostic/proxy runs before any holdout coordinate file is opened."""
+    if manifest.get("publicationEligible") is not True:
+        raise RuntimeError("Prediction run is explicitly non-promotable")
+    branching = manifest.get("protocol", {}).get("phe890Branching", {})
+    if branching.get("diagnosticOnly") is not False \
+            or branching.get("diagnosticExactCoordinateSha256") is not None:
+        raise RuntimeError("Prediction run uses a diagnostic Phe890 selector")
+    decision = checkpoints.get("open-phe890-pocket", {}).get("rotamerDecision", {})
+    if decision.get("publicationEligible") is not True \
+            or decision.get("diagnosticOnly") is not False \
+            or decision.get("deterministicFinalReplayVerified") is not True:
+        raise RuntimeError("Phe890 decision is diagnostic or lacks deterministic replay")
+
+
 def verify_run(run_dir: Path, protocol: dict) \
         -> tuple[bytes, dict, dict[str, dict], list[dict], dict]:
     manifest_bytes, manifest = read_json(run_dir / "prediction-manifest.json")
@@ -236,6 +251,7 @@ def verify_run(run_dir: Path, protocol: dict) \
             raise RuntimeError(f"{frozen['stepId']}: checkpoint identity changed")
         verify_complete_coordinate_inspections(checkpoint, frozen["stepId"])
         checkpoints[frozen["stepId"]] = checkpoint
+    verify_publication_eligibility(manifest, checkpoints)
     audit_bytes, audit_wrapper = read_json(run_dir / "chemist-action-audit.json")
     if digest(audit_bytes) != manifest["agentApi"]["auditSha256"]:
         raise RuntimeError("Chemist Actions audit hash changed")

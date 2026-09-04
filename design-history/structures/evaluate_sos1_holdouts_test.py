@@ -147,6 +147,25 @@ class EvaluatorTest(unittest.TestCase):
             EVALUATOR.verify_complete_coordinate_inspections(
                 incomplete_count, "fixture")
 
+    def test_diagnostic_branch_is_rejected_before_holdout_evaluation(self) -> None:
+        manifest = {"publicationEligible": True, "protocol": {"phe890Branching": {
+            "diagnosticOnly": False, "diagnosticExactCoordinateSha256": None}}}
+        checkpoints = {"open-phe890-pocket": {"rotamerDecision": {
+            "publicationEligible": True, "diagnosticOnly": False,
+            "deterministicFinalReplayVerified": True}}}
+        EVALUATOR.verify_publication_eligibility(manifest, checkpoints)
+        with self.assertRaisesRegex(RuntimeError, "non-promotable"):
+            EVALUATOR.verify_publication_eligibility(
+                {"publicationEligible": False}, checkpoints)
+        diagnostic_manifest = json.loads(json.dumps(manifest))
+        diagnostic_manifest["protocol"]["phe890Branching"] = {
+            "diagnosticOnly": True, "diagnosticExactCoordinateSha256": "d" * 64}
+        with self.assertRaisesRegex(RuntimeError, "diagnostic Phe890 selector"):
+            EVALUATOR.verify_publication_eligibility(diagnostic_manifest, checkpoints)
+        checkpoints["open-phe890-pocket"]["rotamerDecision"]["diagnosticOnly"] = True
+        with self.assertRaisesRegex(RuntimeError, "diagnostic"):
+            EVALUATOR.verify_publication_eligibility(manifest, checkpoints)
+
     def test_receptor_alignment_uses_only_registered_non_phe_anchors(self) -> None:
         anchors = EVALUATOR.EXPECTED_ALIGNMENT_ANCHORS
         protocol = {"receptorAlignment": {

@@ -74,6 +74,9 @@ for (const [index, stepId] of stepIds.entries()) {
   const checkpoint = { schema:'molarium.design-prediction-checkpoint/v1',
     routeId:'sos1-hit-only', stepId, predictedStateId:stateId,
     frozenBeforeHoldoutAccess:true,
+    ...(stepId === 'open-phe890-pocket' ? { rotamerDecision:{
+      publicationEligible:true, diagnosticOnly:false,
+      deterministicFinalReplayVerified:true } } : {}),
     ligand:{ truncated:false, totalAtomCount:1, atoms:[{ atomId:`${stateId}:C1`,
       atomName:'C1', element:'C', coordinatesAngstrom:[index, 0, 0] }] },
     pocket:{ truncated:false, totalAtomCount:2, atoms:[
@@ -92,8 +95,10 @@ const audit = { schema:'molarium.chemist-actions/v1', routeId:'sos1-hit-only',
   records:auditRecords };
 const auditBytes = Buffer.from(`${JSON.stringify(audit)}\n`);
 const manifest = { schema:'molarium.design-prediction-run/v1', routeId:'sos1-hit-only',
-  status:'predictions-frozen-holdouts-unopened', checkpoints:manifestCheckpoints,
-  protocol:{ initialCoordinateInput:'PDB 5OVE/AXE only', sequentialPredictedReferences:true },
+  status:'predictions-frozen-holdouts-unopened', publicationEligible:true,
+  checkpoints:manifestCheckpoints,
+  protocol:{ initialCoordinateInput:'PDB 5OVE/AXE only', sequentialPredictedReferences:true,
+    phe890Branching:{ diagnosticOnly:false, diagnosticExactCoordinateSha256:null } },
   agentApi:{ auditSha256:fixedHash(auditBytes), auditRecords:auditRecords.length } };
 const manifestBytes = Buffer.from(`${JSON.stringify(manifest)}\n`);
 const evaluation = { accepted:true, continuity:{ accepted:true },

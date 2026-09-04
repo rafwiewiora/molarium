@@ -431,7 +431,10 @@ export function applySidechainRotamer(molecule, ensemble, index) {
 }
 
 export const COUPLED_SIDECHAIN_POSE_SELECTION_CRITERION =
-  'lowest absolute receptor-aware steric score among feasible post-relaxation branches; finite relaxed energy, pre-relax pose score, and candidate rank break ties';
+  'registered hard-anchor retention is required; maximize changed-region post-relaxation van der Waals engagement, then minimize absolute receptor overlap, hard-anchor displacement, relaxed energy, pre-relax pose score, and candidate rank';
+
+export const CHANGED_REGION_VDW_ENGAGEMENT_MAXIMUM_RATIO = 1.25;
+export const CHANGED_REGION_VDW_ENGAGEMENT_MINIMUM_RATIO = 0.78;
 
 function normalizedElement(element) {
   const text = String(element || '').trim();
@@ -507,15 +510,168 @@ export function evaluatePostRelaxedLigandPocket({ ligandAtoms, pocketAtoms } = {
   };
 }
 
+function completeInspection(value, label) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)
+    || !Array.isArray(value.atoms) || !value.atoms.length)
+    throw new Error(`${label} must be a coordinate-bearing session.inspect result`);
+  if (value.truncated !== false)
+    throw new Error(`${label} must explicitly report truncated:false`);
+  if (!Number.isInteger(value.totalAtomCount)
+    || value.totalAtomCount !== value.atoms.length)
+    throw new Error(`${label} must report complete totalAtomCount coverage`);
+  return value.atoms;
+}
+
+function inspectedHeavyAtoms(value, label) {
+  return completeInspection(value, label)
+    .filter((atom) => normalizedElement(atom?.element) !== 'H')
+    .map((atom) => ({ ...atom, point:inspectedPoint(atom) }));
+}
+
+function uniqueAtomByName(atoms, atomName, label) {
+  const matches = atoms.filter((atom) => atom?.atomName === atomName);
+  if (matches.length !== 1)
+    throw new Error(`${label} must contain exactly one heavy atom named ${atomName}`);
+  return matches[0];
+}
+
+/**
+ * Audit a relaxed coupled ligand/receptor branch against intent that existed before the branch.
+ * The hard anchor comes only from the registered predecessor-product graph map.  Its coordinates
+ * are compared without superposition because the receptor frame is fixed.  Pocket engagement is
+ * evaluated only for route-declared changed ligand atoms, so a large inherited core cannot hide a
+ * newly designed region that escaped the pocket.  No target or later structure is accepted here.
+ */
+export function evaluatePostRelaxedBranchObjective({ referenceLigand, ligand, pocket,
+  hardAtomNames, changedLigandAtomIds, coreToleranceAngstrom = 0.5 } = {}) {
+  const referenceAtoms = inspectedHeavyAtoms(referenceLigand, 'Reference ligand inspection');
+  const ligandAtoms = inspectedHeavyAtoms(ligand, 'Relaxed ligand inspection');
+  const pocketAtoms = inspectedHeavyAtoms(pocket, 'Relaxed pocket inspection');
+  const ligandAtomIds = ligandAtoms.map((atom) => atom.atomId);
+  if (ligandAtomIds.some((id) => typeof id !== 'string' || !id)
+    || new Set(ligandAtomIds).size !== ligandAtomIds.length)
+    throw new Error('Relaxed ligand inspection must contain unique persistent atom IDs');
+  const names = Array.from(hardAtomNames || []);
+  if (names.length < 3 || new Set(names).size !== names.length
+    || names.some((name) => typeof name !== 'string' || !name))
+    throw new Error('Registered hardAtomNames must contain at least three unique names');
+  const tolerance = Number(coreToleranceAngstrom);
+  if (!Number.isFinite(tolerance) || tolerance < 0)
+    throw new Error('coreToleranceAngstrom must be finite and nonnegative');
+  let hardSquared = 0, hardMaximum = 0;
+  const referenceCentroid = [0,0,0], relaxedCentroid = [0,0,0];
+  for (const name of names) {
+    const before = uniqueAtomByName(referenceAtoms, name, 'Reference ligand inspection');
+    const after = uniqueAtomByName(ligandAtoms, name, 'Relaxed ligand inspection');
+    if (typeof before.atomId !== 'string' || !before.atomId
+      || before.atomId !== after.atomId)
+      throw new Error(`Registered hard atom ${name} changed persistent identity`);
+    if (normalizedElement(before.element) !== normalizedElement(after.element))
+      throw new Error(`Registered hard atom ${name} changed element`);
+    const squared = before.point.reduce((sum, coordinate, axis) =>
+      sum + (coordinate - after.point[axis]) ** 2, 0);
+    hardSquared += squared; hardMaximum = Math.max(hardMaximum, Math.sqrt(squared));
+    for (let axis = 0; axis < 3; axis++) {
+      referenceCentroid[axis] += before.point[axis] / names.length;
+      relaxedCentroid[axis] += after.point[axis] / names.length;
+    }
+  }
+  const hardAnchorRmsdAngstrom = Math.sqrt(hardSquared / names.length);
+  const hardAnchorCentroidDisplacementAngstrom = Math.hypot(
+    ...referenceCentroid.map((coordinate, axis) => coordinate - relaxedCentroid[axis]));
+  const ligandIds = new Set(ligandAtomIds);
+  const receptorAtoms = pocketAtoms.filter((atom) => !ligandIds.has(atom.atomId));
+  if (!receptorAtoms.length)
+    throw new Error('Relaxed pocket inspection must contain receptor heavy atoms');
+  const changedIds = Array.from(changedLigandAtomIds || []);
+  if (!changedIds.length || new Set(changedIds).size !== changedIds.length
+    || changedIds.some((id) => typeof id !== 'string' || !id))
+    throw new Error('changedLigandAtomIds must contain unique persistent atom IDs');
+  const ligandById = new Map(ligandAtoms.map((atom) => [atom.atomId, atom]));
+  const changedAtoms = changedIds.map((id) => {
+    const atom = ligandById.get(id);
+    if (!atom) throw new Error(`Changed ligand atom ${id} is absent from relaxed inspection`);
+    return atom;
+  });
+  let contactPairCount = 0;
+  const perAtomEngagement = changedAtoms.map((changed) => {
+    let closest = Number.POSITIVE_INFINITY, strongest = 0;
+    for (const receptor of receptorAtoms) {
+      const distance = Math.hypot(...changed.point.map((coordinate, axis) =>
+        coordinate - receptor.point[axis]));
+      const radii = (VDW_RADII[normalizedElement(changed.element)] || 1.75)
+        + (VDW_RADII[normalizedElement(receptor.element)] || 1.75);
+      const ratio = distance / radii;
+      closest = Math.min(closest, ratio);
+      if (ratio >= CHANGED_REGION_VDW_ENGAGEMENT_MINIMUM_RATIO
+        && ratio <= CHANGED_REGION_VDW_ENGAGEMENT_MAXIMUM_RATIO) {
+        contactPairCount += 1;
+        strongest = Math.max(strongest,
+          (CHANGED_REGION_VDW_ENGAGEMENT_MAXIMUM_RATIO - ratio)
+            / (CHANGED_REGION_VDW_ENGAGEMENT_MAXIMUM_RATIO
+              - CHANGED_REGION_VDW_ENGAGEMENT_MINIMUM_RATIO));
+      }
+    }
+    return { closest, strength:Math.min(1, strongest) };
+  });
+  const engagedHeavyAtomCount = perAtomEngagement.filter((entry) => entry.strength > 0).length;
+  const engagementScore = perAtomEngagement.reduce((sum, entry) =>
+    sum + entry.strength, 0) / changedAtoms.length;
+  const closestVdwRatios = perAtomEngagement.map((entry) => entry.closest);
+  const receptorAware = evaluatePostRelaxedLigandPocket({
+    ligandAtoms:ligand.atoms, pocketAtoms:pocket.atoms,
+  });
+  const poseIntent = {
+    method:'raw-same-receptor-frame-registered-hard-anchor-v1',
+    atomCount:names.length,
+    toleranceAngstrom:tolerance,
+    hardAnchorRmsdAngstrom:Number(hardAnchorRmsdAngstrom.toFixed(6)),
+    hardAnchorMaximumDisplacementAngstrom:Number(hardMaximum.toFixed(6)),
+    hardAnchorCentroidDisplacementAngstrom:
+      Number(hardAnchorCentroidDisplacementAngstrom.toFixed(6)),
+    satisfied:hardAnchorRmsdAngstrom <= tolerance,
+    superpositionApplied:false,
+  };
+  const changedRegionEngagement = {
+    method:'changed-region-nearest-receptor-vdw-ratio-v1',
+    changedHeavyAtomCount:changedAtoms.length,
+    engagedHeavyAtomCount,
+    engagedHeavyAtomFraction:Number((engagedHeavyAtomCount / changedAtoms.length).toFixed(6)),
+    engagementScore:Number(engagementScore.toFixed(6)),
+    contactPairCount,
+    minimumContactVdwRatio:CHANGED_REGION_VDW_ENGAGEMENT_MINIMUM_RATIO,
+    maximumContactVdwRatio:CHANGED_REGION_VDW_ENGAGEMENT_MAXIMUM_RATIO,
+    meanClosestVdwRatio:Number((closestVdwRatios.reduce((sum, value) => sum + value, 0)
+      / closestVdwRatios.length).toFixed(6)),
+    maximumClosestVdwRatio:Number(Math.max(...closestVdwRatios).toFixed(6)),
+  };
+  return {
+    method:'registered-pose-retention-plus-changed-region-vdw-engagement-v1',
+    prospectiveInputsOnly:true,
+    feasible:poseIntent.satisfied && receptorAware.feasible,
+    poseIntent, changedRegionEngagement, receptorAware,
+  };
+}
+
 export function selectCoupledSidechainPoseBranch(branches) {
   if (!Array.isArray(branches)) throw new Error('Coupled side-chain branches must be an array');
   const digest = /^[a-f0-9]{64}$/;
   const viable = branches.filter((branch) => {
     const postRelaxation = branch?.postRelaxation;
     const evidence = postRelaxation?.topPoseEvidence;
-    return postRelaxation?.receptorAware?.feasible === true
+    const objective = postRelaxation?.branchObjective;
+    return branch.refinement?.selectedFeasible === true
+    && objective?.feasible === true
+    && objective?.poseIntent?.satisfied === true
+    && Number.isFinite(objective.poseIntent.hardAnchorRmsdAngstrom)
+    && Number.isFinite(objective.changedRegionEngagement?.engagedHeavyAtomFraction)
+    && Number.isFinite(objective.changedRegionEngagement?.engagementScore)
+    && Number.isFinite(objective.changedRegionEngagement?.contactPairCount)
+    && postRelaxation?.receptorAware?.feasible === true
     && Number.isFinite(postRelaxation.receptorAware.score)
     && evidence?.schema === 'molarium.coordinate-evidence/v1'
+    && evidence.ligand?.truncated === false
+    && evidence.pocket?.truncated === false
     && Array.isArray(evidence.ligand?.atoms) && evidence.ligand.atoms.length > 0
     && Array.isArray(evidence.pocket?.atoms) && evidence.pocket.atoms.length > 0
     && digest.test(evidence.ligandCoordinateSha256 || '')
@@ -524,9 +680,15 @@ export function selectCoupledSidechainPoseBranch(branches) {
     && Number.isFinite(branch.optimization?.finalEnergy);
   });
   if (!viable.length)
-    throw new Error('No side-chain branch produced feasible post-relaxation receptor-aware evidence and finite relaxation');
+    throw new Error('No side-chain branch preserved registered pose intent with complete, feasible post-relaxation evidence');
   return [...viable].sort((first, second) =>
-    first.postRelaxation.receptorAware.score - second.postRelaxation.receptorAware.score
+    second.postRelaxation.branchObjective.changedRegionEngagement.engagementScore
+      - first.postRelaxation.branchObjective.changedRegionEngagement.engagementScore
+    || second.postRelaxation.branchObjective.changedRegionEngagement.engagedHeavyAtomFraction
+      - first.postRelaxation.branchObjective.changedRegionEngagement.engagedHeavyAtomFraction
+    || first.postRelaxation.receptorAware.score - second.postRelaxation.receptorAware.score
+    || first.postRelaxation.branchObjective.poseIntent.hardAnchorRmsdAngstrom
+      - second.postRelaxation.branchObjective.poseIntent.hardAnchorRmsdAngstrom
     || first.optimization.finalEnergy - second.optimization.finalEnergy
     || Number(first.refinement?.selectedScoreKcalMol ?? Number.POSITIVE_INFINITY)
       - Number(second.refinement?.selectedScoreKcalMol ?? Number.POSITIVE_INFINITY)

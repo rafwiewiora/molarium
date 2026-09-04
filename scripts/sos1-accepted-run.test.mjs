@@ -73,6 +73,9 @@ try {
   for (const [index, stepId] of steps.entries()) {
     const body = { schema:'molarium.design-prediction-checkpoint/v1',
       routeId:'sos1-hit-only', stepId, frozenBeforeHoldoutAccess:true,
+      ...(stepId === 'open-phe890-pocket' ? { rotamerDecision:{
+        publicationEligible:true, diagnosticOnly:false,
+        deterministicFinalReplayVerified:true } } : {}),
       ligand:{ atoms:[{ atomName:'C1', coordinatesAngstrom:[index, 0, 0] }] },
       pocket:{ atoms:[] } };
     const bytes = Buffer.from(`${JSON.stringify(body)}\n`);
@@ -82,8 +85,9 @@ try {
       filename, sha256:sha256(bytes), freezeActionSequence:freezeSequences.get(stepId) });
   }
   const manifest = { schema:'molarium.design-prediction-run/v1', routeId:'sos1-hit-only',
-    status:'predictions-frozen-holdouts-unopened', protocol:{
-      initialCoordinateInput:'PDB 5OVE/AXE only', sequentialPredictedReferences:true },
+    status:'predictions-frozen-holdouts-unopened', publicationEligible:true, protocol:{
+      initialCoordinateInput:'PDB 5OVE/AXE only', sequentialPredictedReferences:true,
+      phe890Branching:{ diagnosticOnly:false, diagnosticExactCoordinateSha256:null } },
     checkpoints, agentApi:{ auditSha256:sha256(auditBytes), auditRecords:records.length } };
   const manifestBytes = Buffer.from(`${JSON.stringify(manifest)}\n`);
   await writeFile(join(scratch, 'prediction-manifest.json'), manifestBytes);
@@ -117,6 +121,26 @@ try {
   await writeFile(join(scratch, 'holdout-evaluation-summary.json'), `${JSON.stringify(rejected)}\n`);
   await assert.rejects(() => verifyAcceptedSos1Run(scratch), /was not accepted/);
 
+  await writeFile(join(scratch, 'holdout-evaluation-summary.json'), `${JSON.stringify(evaluation)}\n`);
+  const nonPromotableManifest = { ...manifest, publicationEligible:false };
+  const nonPromotableBytes = Buffer.from(`${JSON.stringify(nonPromotableManifest)}\n`);
+  await writeFile(join(scratch, 'prediction-manifest.json'), nonPromotableBytes);
+  await writeFile(join(scratch, 'holdout-evaluation-summary.json'), `${JSON.stringify({
+    ...evaluation, predictionManifestSha256:sha256(nonPromotableBytes),
+  })}\n`);
+  await assert.rejects(() => verifyAcceptedSos1Run(scratch), /explicitly non-promotable/);
+
+  const diagnosticProtocolManifest = { ...manifest, protocol:{ ...manifest.protocol,
+    phe890Branching:{ diagnosticOnly:true,
+      diagnosticExactCoordinateSha256:'d'.repeat(64) } } };
+  const diagnosticProtocolBytes = Buffer.from(`${JSON.stringify(diagnosticProtocolManifest)}\n`);
+  await writeFile(join(scratch, 'prediction-manifest.json'), diagnosticProtocolBytes);
+  await writeFile(join(scratch, 'holdout-evaluation-summary.json'), `${JSON.stringify({
+    ...evaluation, predictionManifestSha256:sha256(diagnosticProtocolBytes),
+  })}\n`);
+  await assert.rejects(() => verifyAcceptedSos1Run(scratch), /diagnostic-only Phe890/);
+
+  await writeFile(join(scratch, 'prediction-manifest.json'), manifestBytes);
   await writeFile(join(scratch, 'holdout-evaluation-summary.json'), `${JSON.stringify(evaluation)}\n`);
   const finalPath = join(scratch, 'finish-bay-293-prediction.json');
   const contaminated = JSON.parse(await readFile(finalPath, 'utf8'));

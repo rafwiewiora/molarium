@@ -11126,6 +11126,7 @@ function installChemistActionsApi(module) {
         referenceStateId:step.referenceStateId || null,
         inputKind:step.inputKind, productHeavyAtoms:staged.productHeavyAtoms,
         commonHitHeavyAtoms:staged.commonHeavyAtoms,
+        addedHeavyAtomIds:[...(staged.registeredEditRegion.addedHeavyAtomIds || [])],
         changedAtomIds,
         poseTransferPlan:structuredClone(staged.poseTransferPlan),
         spatialIntent,

@@ -3,9 +3,10 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { assertSidechainChiAnglesReproduced, COUPLED_SIDECHAIN_POSE_SELECTION_CRITERION,
-  evaluatePostRelaxedLigandPocket, measureInspectedSidechainChiAngles,
+  evaluatePostRelaxedBranchObjective, measureInspectedSidechainChiAngles,
   selectCoupledSidechainPoseBranch,
   uniqueSidechainRotamerCandidates } from '../docking/sidechain-rotamers.mjs';
+import { MOLARIUM_CONSTRAINT_DOCK_PROTOCOL } from '../docking/protocol.mjs';
 import { AUDIT_STATE_HASH_GUARDS, actionScriptFromAudit } from '../design-history/replay.mjs';
 import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
@@ -18,6 +19,8 @@ const valueFor = (name) => {
   return args.find((entry) => entry.startsWith(`${name}=`))?.slice(name.length + 1);
 };
 const requestedStop = valueFor('--stop-after');
+const diagnosticPhe890CoordinateSha256 = valueFor(
+  '--diagnostic-phe890-coordinate-sha256');
 const relaxMethod = valueFor('--relax') || 'induced-fit-webgpu';
 const branchCount = Number(valueFor('--rotamer-branches') || 32);
 const branchSearchChains = Number(valueFor('--branch-search-chains') || 32);
@@ -38,6 +41,14 @@ if (![8,16,32,64].includes(fixedSearchChains))
   throw new Error('--fixed-search-chains must be 8, 16, 32, or 64');
 if (!['auto','serial'].includes(poseExecution))
   throw new Error('--pose-execution must be auto or serial');
+if (diagnosticPhe890CoordinateSha256 != null
+  && !/^[a-f0-9]{64}$/.test(diagnosticPhe890CoordinateSha256))
+  throw new Error('--diagnostic-phe890-coordinate-sha256 must be a lowercase SHA-256 digest');
+if (diagnosticPhe890CoordinateSha256 != null
+  && requestedStop !== 'open-phe890-pocket')
+  throw new Error('A diagnostic Phe890 branch is non-promotable and requires --stop-after open-phe890-pocket');
+if (diagnosticPhe890CoordinateSha256 != null && valueFor('--output') == null)
+  throw new Error('A diagnostic Phe890 branch requires an explicit --output directory');
 const stepIds = allSteps.slice(0, stopIndex + 1);
 const output = resolve(root, valueFor('--output')
   || 'outputs/design-history/sos1-hit-only-prospective');
@@ -99,10 +110,16 @@ async function enumeratePhe890(stepId, ordinal = 'initial') {
   return response.result.sidechainRotamers;
 }
 
-async function choosePhe890Branch(stepId) {
+async function choosePhe890Branch(stepId, { referenceLigand, hardAtomNames,
+  changedLigandAtomIds } = {}) {
   let ensemble = await enumeratePhe890(stepId);
-  const candidates = uniqueSidechainRotamerCandidates(ensemble.candidates,
-    { maximum:branchCount });
+  const availableCandidates = uniqueSidechainRotamerCandidates(ensemble.candidates,
+    { maximum:diagnosticPhe890CoordinateSha256 == null ? branchCount : 32 });
+  const candidates = diagnosticPhe890CoordinateSha256 == null ? availableCandidates
+    : availableCandidates.filter((candidate) =>
+      candidate.coordinateSha256 === diagnosticPhe890CoordinateSha256);
+  if (diagnosticPhe890CoordinateSha256 != null && candidates.length !== 1)
+    throw new Error('The diagnostic Phe890 coordinate SHA-256 does not identify exactly one current candidate');
   if (!candidates.length) throw new Error('Phe890 enumeration returned no candidates');
   const branches = [];
   for (let ordinal = 0; ordinal < candidates.length; ordinal++) {
@@ -136,10 +153,12 @@ async function choosePhe890Branch(stepId) {
     const pocket = await execute('session.inspect', {
       scope:'pocket', includeCoordinates:true, maximumAtoms:500,
     }, `${stepId}-inspect-pocket-branch-${candidate.rank}`);
-    const receptorAware = evaluatePostRelaxedLigandPocket({
-      ligandAtoms:ligand.result.atoms,
-      pocketAtoms:pocket.result.atoms,
+    const branchObjective = evaluatePostRelaxedBranchObjective({
+      referenceLigand, ligand:ligand.result, pocket:pocket.result,
+      hardAtomNames, changedLigandAtomIds,
+      coreToleranceAngstrom:MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.coreConstraint.toleranceAngstrom,
     });
+    const receptorAware = branchObjective.receptorAware;
     const relaxedChiDegrees = measureInspectedSidechainChiAngles({
       atoms:pocket.result.atoms, residue:PHE890,
     });
@@ -157,7 +176,7 @@ async function choosePhe890Branch(stepId) {
       relaxedLigandCoordinateSha256:coordinateDigest(ligand),
       relaxedPocketCoordinateSha256:coordinateDigest(pocket),
       postRelaxation:{
-        receptorAware,
+        receptorAware, branchObjective,
         topPoseEvidence:{
           schema:'molarium.coordinate-evidence/v1',
           ligand:ligand.result,
@@ -168,6 +187,31 @@ async function choosePhe890Branch(stepId) {
       },
       optimization:relaxed.result.optimization,
     });
+    if (diagnosticPhe890CoordinateSha256 != null) {
+      const selected = branches[0];
+      return {
+        schema:'molarium.sidechain-branch-decision/v1', residue:'PHE A890',
+        coordinateInputClass:'registered-hit-only', branchCount:1,
+        publicationEligible:false, diagnosticOnly:true,
+        deterministicFinalReplayVerified:false,
+        diagnosticReason:'single exact-coordinate branch proxy; branch competition was not rerun',
+        enumeration:{ inputCoordinateSha256:ensemble.inputCoordinateSha256,
+          inputChiDegrees:ensemble.inputChiDegrees,
+          generatedCandidateCount:ensemble.generatedCandidateCount,
+          retainedCandidateCount:ensemble.candidates.length,
+          branchSampling:'one exact coordinate-SHA-selected candidate from the complete current enumeration' },
+        branches,
+        selected:{ candidateIndex:selected.candidateIndex,
+          candidateRank:selected.candidateRank, source:selected.source,
+          chiDegrees:selected.chiDegrees, seedChiDegrees:selected.seedChiDegrees,
+          relaxedChiDegrees:selected.relaxedChiDegrees,
+          selectedCoordinateSha256:selected.selectedCoordinateSha256,
+          criterion:'diagnostic exact candidate coordinate SHA; non-promotable',
+          receptorReference:selected.receptorReference,
+          refinement:selected.refinement, parameterization:selected.parameterization,
+          postRelaxation:selected.postRelaxation, optimization:selected.optimization },
+      };
+    }
     await execute('history.undo', {}, `${stepId}-undo-branch-${candidate.rank}-relaxation`);
     await execute('history.undo', {}, `${stepId}-undo-branch-${candidate.rank}-pose`);
     await execute('history.undo', {}, `${stepId}-undo-branch-${candidate.rank}-rotamer`);
@@ -215,11 +259,13 @@ async function choosePhe890Branch(stepId) {
     || pocketCoordinateSha256 !== selected.relaxedPocketCoordinateSha256)
     throw new Error('The selected post-relaxation branch changed during deterministic replay');
   assertSidechainChiAnglesReproduced(selected.relaxedChiDegrees, relaxedChiDegrees);
+  const branchObjective = evaluatePostRelaxedBranchObjective({
+    referenceLigand, ligand:ligand.result, pocket:pocket.result,
+    hardAtomNames, changedLigandAtomIds,
+    coreToleranceAngstrom:MOLARIUM_CONSTRAINT_DOCK_PROTOCOL.coreConstraint.toleranceAngstrom,
+  });
   const postRelaxation = {
-    receptorAware:evaluatePostRelaxedLigandPocket({
-      ligandAtoms:ligand.result.atoms,
-      pocketAtoms:pocket.result.atoms,
-    }),
+    receptorAware:branchObjective.receptorAware, branchObjective,
     topPoseEvidence:{
       schema:'molarium.coordinate-evidence/v1',
       ligand:ligand.result,
@@ -231,6 +277,8 @@ async function choosePhe890Branch(stepId) {
   return {
     schema:'molarium.sidechain-branch-decision/v1', residue:'PHE A890',
     coordinateInputClass:'registered-hit-only', branchCount:branches.length,
+    publicationEligible:true, diagnosticOnly:false,
+    deterministicFinalReplayVerified:true,
     enumeration:{ inputCoordinateSha256:ensemble.inputCoordinateSha256,
       inputChiDegrees:ensemble.inputChiDegrees,
       generatedCandidateCount:ensemble.generatedCandidateCount,
@@ -272,6 +320,7 @@ try {
   }, 'route-prepare-hit');
   await execute('pose.captureReference', { mode:'propagate' }, 'route-capture-hit');
   const boundary = await execute('designRoute.inspect', {}, 'route-inspect-boundary');
+  let previousFrozenLigand = null;
 
   for (let stepIndex = 0; stepIndex < stepIds.length; stepIndex++) {
     const stepId = stepIds[stepIndex];
@@ -283,7 +332,11 @@ try {
       interpretation:'Pose search only; receptor and selected pose were left unchanged.' };
     if (stepId === 'open-phe890-pocket') {
       console.log(`${stepId}: ranking coupled Phe890 and ligand-pose branches`);
-      rotamerDecision = await choosePhe890Branch(stepId);
+      rotamerDecision = await choosePhe890Branch(stepId, {
+        referenceLigand:previousFrozenLigand,
+        hardAtomNames:staged.result.designStep.poseTransferPlan.hardConstraintAtomNames,
+        changedLigandAtomIds:staged.result.designStep.addedHeavyAtomIds,
+      });
       refinement = rotamerDecision.selected.refinement;
       parameterization = rotamerDecision.selected.parameterization;
       relaxation = rotamerDecision.selected.optimization;
@@ -335,6 +388,7 @@ try {
       ligandCoordinateSha256:coordinateDigest(ligand),
       pocketCoordinateSha256:coordinateDigest(pocket),
       freezeActionSequence:pocket.sequence });
+    previousFrozenLigand = structuredClone(ligand.result);
     console.log(`${stepId}: frozen ${digest(bytes).slice(0, 12)}`);
 
     if (stepIndex < stepIds.length - 1) {
@@ -355,7 +409,9 @@ try {
   const manifest = {
     schema:'molarium.design-prediction-run/v1',
     routeId:'sos1-hit-only',
-    status:'predictions-frozen-holdouts-unopened',
+    status:diagnosticPhe890CoordinateSha256 == null
+      ? 'predictions-frozen-holdouts-unopened' : 'diagnostic-non-promotable',
+    publicationEligible:diagnosticPhe890CoordinateSha256 == null,
     protocol:{ initialCoordinateInput:'PDB 5OVE/AXE only',
       sequentialPredictedReferences:true, relaxMethod,
       fixedPoseSearchChains:fixedSearchChains,
@@ -365,7 +421,9 @@ try {
         branchPoseSearchChains:branchSearchChains,
         finalPoseSearchChains:branchSearchChains,
         featureSeedingProtocol:'v5',
-        criterion:COUPLED_SIDECHAIN_POSE_SELECTION_CRITERION } },
+        criterion:COUPLED_SIDECHAIN_POSE_SELECTION_CRITERION,
+        diagnosticExactCoordinateSha256:diagnosticPhe890CoordinateSha256 || null,
+        diagnosticOnly:diagnosticPhe890CoordinateSha256 != null } },
     checkpoints,
     agentApi:{ schema:description.schema, actions:Object.keys(description.actions),
       auditRecords:audit.length, auditSha256:digest(auditBytes),
