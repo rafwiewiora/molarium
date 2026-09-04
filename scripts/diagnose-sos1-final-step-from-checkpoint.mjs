@@ -38,7 +38,8 @@ function requireAcceptedContinuity(optimization, requiredFeatures) {
   }
   assert.equal(retention.fixedAtomMotion?.accepted, true,
     'registered fixed atoms moved during coupled relaxation');
-  assert(retention.fixedAtomMotion.maximumDisplacementAngstrom <= 1e-6,
+  assert(retention.fixedAtomMotion.maximumFloat32RoundTripResidualAngstrom
+    <= retention.fixedAtomMotion.toleranceAngstrom,
     'registered fixed atoms exceeded the relaxation motion tolerance');
   for (const feature of requiredFeatures) {
     const before = retention.before.features.filter((entry) => entry.id === feature.id);

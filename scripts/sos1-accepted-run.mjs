@@ -108,7 +108,9 @@ export function assertAcceptedCheckpointRelaxation(checkpoint, label = checkpoin
   assert(retention.fixedAtomMotion?.accepted === true
     && Number.isFinite(retention.fixedAtomMotion.rmsdAngstrom)
     && Number.isFinite(retention.fixedAtomMotion.maximumDisplacementAngstrom)
-    && retention.fixedAtomMotion.maximumDisplacementAngstrom <= 1e-6,
+    && Number.isFinite(retention.fixedAtomMotion.maximumFloat32RoundTripResidualAngstrom)
+    && retention.fixedAtomMotion.maximumFloat32RoundTripResidualAngstrom
+      <= retention.fixedAtomMotion.toleranceAngstrom,
   `${label}: registered fixed atoms moved during coupled relaxation`);
   assert.equal(new Set(retention.before.fixedAtomIds || []).size,
     retention.before.fixedAtomIds?.length,

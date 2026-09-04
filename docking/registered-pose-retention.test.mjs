@@ -52,6 +52,24 @@ assert.equal(registeredFixedAtomMotion(retained, numericallyStable).accepted, tr
 numericallyStable.fixedCoordinatesAngstrom.positions[0][0] += 2e-6;
 assert.equal(registeredFixedAtomMotion(retained, numericallyStable).accepted, false);
 
+// Fixed WebGPU coordinates round-trip through float32 storage. At PDB-scale
+// coordinate magnitudes that representation change can exceed 1e-6 A even
+// though the kernel never moved the atom.
+const float32Before = structuredClone(retained);
+float32Before.fixedCoordinatesAngstrom.positions[0] =
+  [2.929527927295551, -23.28110572094604, 25.397429751258578];
+const float32After = structuredClone(float32Before);
+float32After.fixedCoordinatesAngstrom.positions =
+  float32Before.fixedCoordinatesAngstrom.positions.map((position) =>
+    position.map((value) => Math.fround(value / 10) * 10));
+const float32Motion = registeredFixedAtomMotion(float32Before, float32After);
+assert(float32Motion.maximumDisplacementAngstrom > 1e-6);
+assert.equal(float32Motion.maximumFloat32RoundTripResidualAngstrom, 0);
+assert.equal(float32Motion.accepted, true);
+float32After.fixedCoordinatesAngstrom.positions[0][0] += 2e-6;
+assert.equal(registeredFixedAtomMotion(float32Before, float32After).accepted, false,
+  'motion beyond the exact float32-nm round trip must still fail');
+
 const drifted = structuredClone(molecule);
 for (const current of drifted.atoms.slice(3)) current.x += 1;
 const rejected = registeredPoseRetentionPlan({ molecule:drifted, referenceLigand,

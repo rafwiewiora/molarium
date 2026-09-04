@@ -165,7 +165,10 @@ function requireRegisteredFeatureRelaxation(relaxation, staged, label) {
   if (retention.fixedAtomMotion?.accepted !== true
     || !Number.isFinite(retention.fixedAtomMotion.rmsdAngstrom)
     || !Number.isFinite(retention.fixedAtomMotion.maximumDisplacementAngstrom)
-    || retention.fixedAtomMotion.maximumDisplacementAngstrom > 1e-6)
+    || !Number.isFinite(retention.fixedAtomMotion
+      .maximumFloat32RoundTripResidualAngstrom)
+    || retention.fixedAtomMotion.maximumFloat32RoundTripResidualAngstrom
+      > retention.fixedAtomMotion.toleranceAngstrom)
     throw new Error(`${label}: registered fixed atoms moved during coupled relaxation`);
   for (const [phase, evidence] of [['before', before], ['after', after]]) {
     if (!Number.isFinite(evidence.hardAnchor?.rmsdAngstrom)

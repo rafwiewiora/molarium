@@ -90,14 +90,36 @@ export function registeredFixedAtomMotion(before, after, toleranceAngstrom = 1e-
       || !position.every(Number.isFinite) || !next.every(Number.isFinite)) return NaN;
     return distance(position, next);
   });
-  const complete = displacements.every(Number.isFinite);
+  // WebGPU position storage is float32 in nm. A fixed coordinate that entered
+  // the optimizer as a JavaScript double in A therefore returns as
+  // Math.fround(value / 10) * 10, which can look like >1e-6 A of motion at
+  // ordinary PDB coordinate scales. Test actual motion against that exact
+  // round-trip value; do not loosen the physical residual tolerance or
+  // mistake representation loss for motion.
+  const float32RoundTripResiduals = beforePositions.map((position, index) => {
+    const next = afterPositions[index];
+    if (!Array.isArray(position) || !Array.isArray(next)
+      || position.length !== 3 || next.length !== 3
+      || !position.every(Number.isFinite) || !next.every(Number.isFinite)) return NaN;
+    return distance(position.map((value) => Math.fround(value / 10) * 10), next);
+  });
+  const complete = displacements.every(Number.isFinite)
+    && float32RoundTripResiduals.every(Number.isFinite);
   const maximumDisplacementAngstrom = complete ? Math.max(...displacements) : null;
   const rmsdAngstrom = complete ? Math.sqrt(displacements.reduce(
     (sum, value) => sum + value * value, 0) / displacements.length) : null;
+  const maximumFloat32RoundTripResidualAngstrom = complete
+    ? Math.max(...float32RoundTripResiduals) : null;
+  const float32RoundTripResidualRmsdAngstrom = complete ? Math.sqrt(
+    float32RoundTripResiduals.reduce((sum, value) => sum + value * value, 0)
+      / float32RoundTripResiduals.length) : null;
   return Object.freeze({ accepted:complete
-      && maximumDisplacementAngstrom <= toleranceAngstrom,
+      && maximumFloat32RoundTripResidualAngstrom <= toleranceAngstrom,
+    comparison:'post-WebGPU coordinates versus exact float32-nm round-trip of pre-WebGPU coordinates',
     toleranceAngstrom, atomIds, atomCount:atomIds.length,
     maximumDisplacementAngstrom, rmsdAngstrom,
+    maximumFloat32RoundTripResidualAngstrom,
+    float32RoundTripResidualRmsdAngstrom,
     ...(complete ? {} : { reason:'fixed atom coordinates are incomplete' }) });
 }
 

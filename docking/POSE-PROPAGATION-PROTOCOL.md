@@ -123,6 +123,10 @@ atoms. The captured numeric nonbonded parameters and coordinates are retained.
 Before a run, every captured receptor atom must still exist with the same element and must be within
 `1e-6 Å` of its captured coordinate. Otherwise the run fails and a new reference must be captured.
 
+After a direct-WebGPU relaxation, fixed-atom motion is measured against the exact float32-nm round
+trip of the immediate pre-relaxation coordinates. The residual tolerance remains `1e-6 Å`; this
+distinguishes physical motion from the representational rounding imposed by WebGPU position buffers.
+
 ## Required hydrogen bonds
 
 Reference-contact detection uses explicit hydrogens and the same typed graph function used by
