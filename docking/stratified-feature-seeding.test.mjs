@@ -46,9 +46,21 @@ const input = {
 const first = featureGuidedPoseSeeds(input);
 const second = featureGuidedPoseSeeds(input);
 const sixteen = featureGuidedPoseSeeds({ ...input, count:16 });
+const prereleased = featureGuidedPoseSeeds({ ...input,
+  coreAtomIndices:[0,1,2],
+  inheritedAtomIndices:[0,1,2,3,4,5,6,7,8],
+});
 assert.equal(first.method, 'molarium-edit-region-axis-seeding/v5');
 assert.equal(first.spatialFeatureMapCount, 1);
 assert.equal(first.affectedRotorCount, 1);
+assert.equal(prereleased.hardCoreAtomCount, 3);
+assert.equal(prereleased.inheritedAtomCount, 9);
+assert.equal(prereleased.affectedRotorCount, 1,
+  'a registered distal release must retain inherited-rotor discovery');
+assert(prereleased.coverage.strata.some((entry) =>
+  entry.kind === 'affected-existing-rotor-opposite-orientation'
+    && entry.selectedSeedOrdinals.length === 1),
+'a registered distal release must retain mandatory opposite-orientation coverage');
 assert.equal(first.untargetedRotorCount, 1);
 assert.equal(first.seeds.length, 8);
 assert.equal(sixteen.seeds.length, 16);

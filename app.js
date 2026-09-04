@@ -3711,7 +3711,8 @@ function currentRegisteredPoseRetentionPlan(molecule = state.molecule) {
 }
 
 function inducedFitPocketMovableAtomIndices(molecule = state.molecule,
-  retentionPlan = currentRegisteredPoseRetentionPlan(molecule)) {
+  retentionPlan = currentRegisteredPoseRetentionPlan(molecule),
+  additionalMovableAtomIndices = []) {
   if (!molecule?.atoms?.length) return [];
   const pocket = proteinLigandPocket(molecule, 6, true);
   if (!pocket.ligandIndices.size) return [];
@@ -3719,7 +3720,8 @@ function inducedFitPocketMovableAtomIndices(molecule = state.molecule,
   // and side chain of every residue entering the 6 Å shell.  Atoms outside
   // that shell remain fixed and provide the covalent/structural boundary.
   const fixed = new Set(retentionPlan.fixedAtomIndices || []);
-  return [...new Set([...pocket.ligandIndices, ...pocket.pocketAtomIndices])]
+  return [...new Set([...pocket.ligandIndices, ...pocket.pocketAtomIndices,
+    ...additionalMovableAtomIndices])]
     .filter((index) => !fixed.has(index))
     .sort((first, second) => first - second);
 }
@@ -5130,6 +5132,15 @@ async function runBrowserConstrainedDocking(options = {}) {
       const graphEdit = state.molecule.source?.posePropagationGraphEdit || {};
       const localIndexById = new Map(plan.molecule.atoms.map((atom, index) =>
         [atom.designAtomId, index]));
+      // A registered topology release removes atoms from the hard coordinate
+      // core, but they remain inherited atoms.  Keep them in rotor discovery
+      // so a released inter-ring axis still receives mandatory orientation
+      // coverage rather than collapsing into one undifferentiated edit region.
+      const inheritedAtomIndices = [...new Set([
+        ...coreAtomIndices,
+        ...releasedReferenceAtomIds.map((id) => localIndexById.get(id))
+          .filter(Number.isInteger),
+      ])].sort((first, second) => first - second);
       const editedAtomIndices = [...new Set([
         ...coreMap.addedAtomIds,
         ...Array.from(graphEdit.addedAtomIds || []),
@@ -5137,7 +5148,7 @@ async function runBrowserConstrainedDocking(options = {}) {
       const affectedAtomIndices = [...new Set(Array.from(graphEdit.affectedCoreAtomIds || [])
         .map((id) => localIndexById.get(id)).filter(Number.isInteger))];
       featureSeedResult = featureSeeding.featureGuidedPoseSeeds({ molecule:plan.molecule,
-        initialPositions:editedPositions, coreAtomIndices,
+        initialPositions:editedPositions, coreAtomIndices, inheritedAtomIndices,
         editedAtomIndices, affectedAtomIndices,
         hydrogenBondConstraints:mappedHydrogenBonds.constraints,
         spatialFeatureConstraints,
@@ -10392,11 +10403,16 @@ function installChemistActionsApi(module) {
         required:args.required }); },
     'pose.addContact':async (args) => { chemistActionKeys(args,
       ['ligandAtomId','receptorAtomId','ligandAtom','receptorAtom','ligandRole']);
-      const ligandUsesId = typeof args.ligandAtomId === 'string' && Boolean(args.ligandAtomId);
-      const receptorUsesId = typeof args.receptorAtomId === 'string' && Boolean(args.receptorAtomId);
-      if (ligandUsesId === Boolean(args.ligandAtom)
-        || receptorUsesId === Boolean(args.receptorAtom))
+      const ligandUsesId = Object.hasOwn(args, 'ligandAtomId');
+      const receptorUsesId = Object.hasOwn(args, 'receptorAtomId');
+      const ligandUsesSelector = Object.hasOwn(args, 'ligandAtom');
+      const receptorUsesSelector = Object.hasOwn(args, 'receptorAtom');
+      if (ligandUsesId === ligandUsesSelector || receptorUsesId === receptorUsesSelector)
         throw new Error('Provide exactly one ligand atom ID or selector and exactly one receptor atom ID or selector');
+      if (ligandUsesId && (typeof args.ligandAtomId !== 'string' || !args.ligandAtomId))
+        throw new Error('ligandAtomId must be a persistent atom ID');
+      if (receptorUsesId && (typeof args.receptorAtomId !== 'string' || !args.receptorAtomId))
+        throw new Error('receptorAtomId must be a persistent atom ID');
       const ligandRole = chemistActionEnum(args.ligandRole ?? 'auto',
         ['auto','acceptor','donor'], 'ligandRole');
       const byId = await ensureChemistActionAtomIds();
@@ -11615,8 +11631,10 @@ async function stageRegisteredDesignRouteProduct({ caseId, productSmiles, posePr
     const releasedMappedRegion = releasedMappedHeavyIds.length ? [{
       schema:'molarium.docking.registered-coordinate-release/v1',
       editId:caseId || null,
-      reason:'attachment-migration-within-mapped-biconnected-ring',
+      reason:'registered-graph-topology-release',
       releasedHeavyAtomIds:[...releasedMappedHeavyIds].sort(),
+      releasePlans:structuredClone(poseTransferPlan.releasedRegions.filter((entry) =>
+        entry.reason !== poseTransferPlan.editKind)),
       source:'registered graph topology; no product or holdout coordinates',
     }] : [];
     const next = { ...state.molecule, atoms, bonds,
@@ -15959,9 +15977,14 @@ async function runSelectedBuildOptimization() {
     ? currentRegisteredPoseRetentionPlan() : null;
   if (poseRetentionBefore && !poseRetentionBefore.accepted)
     throw new Error('The selected pose does not satisfy its required registered retention feature');
+  const displaceableWater = inducedFitRelaxation
+    ? (await import('./docking/displaceable-waters.mjs')).displaceableWaterPlan({
+      molecule:state.molecule,
+      ligandAtomIndices:[...connectedLigandAtomIndexSet(state.molecule)],
+    }) : null;
   const movableAtomIndices = pocketRelaxation ? interactivePocketMovableAtomIndices()
     : inducedFitRelaxation ? inducedFitPocketMovableAtomIndices(
-      state.molecule, poseRetentionBefore) : null;
+      state.molecule, poseRetentionBefore, displaceableWater.atomIndices) : null;
   if (flexiblePocketRelaxation && !movableAtomIndices.length) {
     showNotice('Pocket relaxation needs a prepared protein–ligand complex.'); return null;
   }
@@ -15981,6 +16004,8 @@ async function runSelectedBuildOptimization() {
       maxDisplacement:inducedFitRelaxation ? 0.00075 : 0.001,
       savedFrameCount:BUILD_OPTIMIZATION_FRAME_COUNT,
     } : undefined });
+    if (result && displaceableWater)
+      result.displaceableWater = structuredClone(displaceableWater);
     if (result && poseRetentionBefore) {
       const poseRetentionAfter = currentRegisteredPoseRetentionPlan();
       const fixedAtomMotion = registeredFixedAtomMotion(

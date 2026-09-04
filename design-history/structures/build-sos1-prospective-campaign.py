@@ -296,6 +296,136 @@ def migrated_mapped_ring_blocks(reference: Chem.Mol, reference_names: list[str],
     return results
 
 
+def component_without_bond(molecule: Chem.Mol, start: int,
+                           first: int, second: int) -> set[int]:
+    """Return one graph component after removing an explicitly named bond."""
+    visited = {start}
+    pending = [start]
+    while pending:
+        atom_index = pending.pop()
+        for neighbor in molecule.GetAtomWithIdx(atom_index).GetNeighbors():
+            neighbor_index = neighbor.GetIdx()
+            if ({atom_index, neighbor_index} == {first, second}
+                    or neighbor_index in visited):
+                continue
+            visited.add(neighbor_index)
+            pending.append(neighbor_index)
+    return visited
+
+
+def amide_like_bond(molecule: Chem.Mol, first: int, second: int) -> bool:
+    def carbonyl_attached_to(carbon_index: int, hetero_index: int) -> bool:
+        carbon = molecule.GetAtomWithIdx(carbon_index)
+        hetero = molecule.GetAtomWithIdx(hetero_index)
+        if (carbon.GetSymbol() != "C"
+                or hetero.GetSymbol() not in {"N", "O", "S"}):
+            return False
+        return any(
+            neighbor.GetIdx() != hetero_index
+            and neighbor.GetSymbol() in {"O", "S"}
+            and molecule.GetBondBetweenAtoms(
+                carbon_index, neighbor.GetIdx()).GetBondTypeAsDouble() >= 1.9
+            for neighbor in carbon.GetNeighbors())
+    return (carbonyl_attached_to(first, second)
+            or carbonyl_attached_to(second, first))
+
+
+def edit_associated_mapped_rotor_releases(
+        reference: Chem.Mol, reference_names: list[str], product: Chem.Mol,
+        reference_match: tuple[int, ...], product_match: tuple[int, ...]) -> list[dict]:
+    """Release the distal side of edit-associated, ring-bearing C--C rotors.
+
+    Exact graph identity does not imply that a torsion inherited from the
+    predecessor is experimentally known.  For an acyclic mapped C--C single
+    bond at a ring junction, a graph rewrite on the smaller mapped side makes
+    that side a pose-search variable.  The larger mapped component is retained
+    as the coordinate-trusted upstream anchor.  This is graph/provenance-only:
+    neither product nor holdout coordinates participate.
+
+    Both bond endpoints are included in the declared distal region.  Keeping
+    the proximal endpoint hard and releasing the distal endpoint permits the
+    later constrained refinement to adjust the ring junction rather than only
+    spin an otherwise immobilized axis.
+    """
+    reference_to_product = dict(zip(reference_match, product_match))
+    product_to_reference = dict(zip(product_match, reference_match))
+    mapped_reference = set(reference_to_product)
+    mapped_product = set(product_to_reference)
+    reference_external = {
+        index for index in mapped_reference
+        if any(neighbor.GetIdx() not in mapped_reference
+               for neighbor in reference.GetAtomWithIdx(index).GetNeighbors())
+    }
+    product_external_as_reference = {
+        product_to_reference[index] for index in mapped_product
+        if any(neighbor.GetIdx() not in mapped_product
+               for neighbor in product.GetAtomWithIdx(index).GetNeighbors())
+    }
+    edited_boundary = reference_external | product_external_as_reference
+    releases = []
+    for bond in reference.GetBonds():
+        first, second = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
+        if first not in mapped_reference or second not in mapped_reference:
+            continue
+        product_first = reference_to_product[first]
+        product_second = reference_to_product[second]
+        product_bond = product.GetBondBetweenAtoms(product_first, product_second)
+        if (product_bond is None
+                or bond.GetBondTypeAsDouble() != 1.0
+                or product_bond.GetBondTypeAsDouble() != 1.0
+                or bond.GetIsAromatic() or product_bond.GetIsAromatic()
+                or amide_like_bond(reference, first, second)
+                or amide_like_bond(product, product_first, product_second)):
+            continue
+        first_atom, second_atom = (reference.GetAtomWithIdx(first),
+                                   reference.GetAtomWithIdx(second))
+        # Ring-bearing carbon junctions are the medicinal-chemistry torsions
+        # whose orientation becomes ambiguous after a distal graph rewrite.
+        # This excludes a conserved anilide/amine linker merely because an edit
+        # occurred farther down the molecule.
+        if (first_atom.GetSymbol() != "C" or second_atom.GetSymbol() != "C"
+                or not (first_atom.IsInRing() or second_atom.IsInRing())):
+            continue
+        first_side = component_without_bond(reference, first, first, second)
+        if second in first_side:
+            continue  # the bond itself lies in a ring
+        second_side = component_without_bond(reference, second, first, second)
+        first_common = first_side & mapped_reference
+        second_common = second_side & mapped_reference
+        if not (first_common & edited_boundary or second_common & edited_boundary):
+            continue
+        # Preserve the larger exact mapped component.  A deterministic index
+        # tie-break is recorded but is not coordinate-derived.
+        first_key = (len(first_common), -min(first_common))
+        second_key = (len(second_common), -min(second_common))
+        if first_key >= second_key:
+            anchor_side, distal_side = first_common, second_common
+            proximal, distal = first, second
+        else:
+            anchor_side, distal_side = second_common, first_common
+            proximal, distal = second, first
+        if not distal_side & edited_boundary:
+            continue
+        releases.append({
+            "id": f"edit-associated-mapped-rotor-release-{len(releases) + 1}",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release",
+            "referenceBondAtomNames": [reference_names[first], reference_names[second]],
+            "productBondAtomIndices": [product_first, product_second],
+            "proximalReferenceAtomName": reference_names[proximal],
+            "distalReferenceAtomName": reference_names[distal],
+            "anchorReferenceAtomNames": [reference_names[index]
+                                          for index in sorted(anchor_side)],
+            "releasedReferenceAtomNames": [reference_names[index]
+                                            for index in sorted(distal_side)],
+            "releasedProductAtomIndices": [reference_to_product[index]
+                                            for index in sorted(distal_side)],
+            "selection": ("larger exact mapped component retained; smaller "
+                          "edit-associated component released"),
+            "coordinateInputs": [],
+        })
+    return releases
+
+
 def secondary_exact_feature(reference: Chem.Mol, reference_names: list[str],
                             product: Chem.Mol,
                             primary_reference_match: tuple[int, ...],
@@ -562,17 +692,30 @@ def pose_map(reference: Chem.Mol, reference_names: list[str],
     migrations = migrated_mapped_ring_blocks(
         reference, reference_names, product, reference_match, product_match)
     mapping["mappedRingAttachmentMigrations"] = migrations
-    released_names = {
+    rotor_releases = edit_associated_mapped_rotor_releases(
+        reference, reference_names, product, reference_match, product_match)
+    mapping["mappedRotorReleases"] = rotor_releases
+    ring_released_names = {
         name for migration in migrations
         for name in migration["releasedReferenceAtomNames"]
     }
+    rotor_released_names = {
+        name for release in rotor_releases
+        for name in release["releasedReferenceAtomNames"]
+    }
+    released_names = ring_released_names | rotor_released_names
     released_product_indices = {
         atom_index for migration in migrations
         for atom_index in migration["releasedProductAtomIndices"]
+    } | {
+        atom_index for release in rotor_releases
+        for atom_index in release["releasedProductAtomIndices"]
     }
     mapping["releasedMappedAtoms"] = [
         {**entry,
-         "reason": "attachment-migration-within-mapped-biconnected-ring"}
+         "reason": ("attachment-migration-within-mapped-biconnected-ring"
+                    if entry["referenceAtomName"] in ring_released_names
+                    else "edit-associated-ring-bearing-mapped-rotor-distal-release")}
         for entry in mapping["commonAtoms"]
         if entry["referenceAtomName"] in released_names
     ]
@@ -590,21 +733,33 @@ def pose_map(reference: Chem.Mol, reference_names: list[str],
                 entry["productAtomIndex"] for entry in mapping["releasedMappedAtoms"]}:
             raise RuntimeError(f"{step_id}: mapped ring release is internally inconsistent")
         mapping["protectedReferenceAnchor"] = {
-            "method": "exact-common-subgraph-after-topology-release/v1",
-            "label": "exact mapped atoms outside attachment-migrated ring blocks",
+            "method": "exact-common-subgraph-after-topology-release/v2",
+            "label": ("exact mapped upstream atoms outside topology-released "
+                      "rings and edit-associated rotor distal sides"),
             "referenceAtomNames": [entry["referenceAtomName"] for entry in hard_common],
             "atoms": len(hard_common),
             "bonds": hard_bonds,
             "releasedRegions": [
                 "mapped biconnected ring atoms affected by attachment migration",
+                "distal sides of edit-associated ring-bearing mapped carbon rotors",
                 "unmapped deleted and added graph regions",
             ],
         }
+        explanations = []
+        if migrations:
+            explanations.append(
+                "an edited region changes its attachment atom within a mapped "
+                "biconnected ring")
+        if rotor_releases:
+            explanations.append(
+                "a distal graph rewrite makes mapped ring-bearing carbon rotors "
+                "pose-search variables")
         mapping["transitionExplanation"] = (
-            "An edited region changes its attachment atom within a mapped "
-            "biconnected ring. Conserved scaffold junctions remain hard; the "
-            "other ring atoms are released from hard coordinates, and any "
-            "separately conserved terminal feature is retained as registered designer intent.")
+            "; ".join(explanations).capitalize()
+            + ". The exact mapped upstream scaffold remains hard; topology-released "
+              "atoms may move without consulting product or holdout coordinates, and "
+              "any separately conserved terminal feature is retained as registered "
+              "designer intent.")
     return mapping, product_names
 
 
@@ -759,6 +914,14 @@ def main() -> None:
         "schema": REGISTERED_DESIGN_ROUTE_SCHEMA,
         "id": "sos1-hit-only",
         "title": "SOS1 five-state hit-only conformational replay",
+        "posePropagationPolicy": {
+            "schema": "molarium.registered-pose-propagation-policy/v1",
+            "atomCorrespondence": "exact-element",
+            "bondCorrespondence": "exact-order",
+            "ringCorrespondence": "complete-rings-only",
+            "changedRingTreatment": "release-from-hard-core",
+            "featureTransfer": "role-compatible-restraints",
+        },
         "protocolBoundary": {
             "coordinateInputs": ["PDB 5OVE SOS1 protein", "PDB 5OVE ligand AXE"],
             "allowedLaterInputs": ["reported compound molecular graphs"],

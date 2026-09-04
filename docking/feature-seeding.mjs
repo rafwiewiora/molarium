@@ -537,6 +537,7 @@ function priorityStratifiedSeeds({ candidates, initialCandidate, strata, request
 }
 
 export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomIndices,
+  inheritedAtomIndices = null,
   hydrogenBondConstraints = [], count = 16,
   spatialFeatureConstraints = [], referencePositions = null,
   editedAtomIndices = [], affectedAtomIndices = [], environmentBondRadius = 2,
@@ -550,6 +551,9 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
   const requested = Math.max(1, Math.round(Number(count)));
   const positions = finitePositions(initialPositions, molecule.atoms.length);
   const core = new Set(Array.from(coreAtomIndices || [], Number));
+  const inheritedCore = new Set(Array.from(
+    inheritedAtomIndices ?? coreAtomIndices ?? [], Number));
+  for (const atomIndex of core) inheritedCore.add(atomIndex);
   const entries = adjacency(molecule);
   const variants = targetVariants(hydrogenBondConstraints);
   const spatialVariants = featureSeedingProtocol === 'v5'
@@ -578,7 +582,7 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
   };
   const initialCandidate = add(positions, { method:'unaltered-reference-propagation' });
   const affectedRotors = ['v4', 'v5'].includes(featureSeedingProtocol)
-    ? affectedEnvironmentRotors(molecule, core, entries, positions,
+    ? affectedEnvironmentRotors(molecule, inheritedCore, entries, positions,
       editedAtomIndices, affectedAtomIndices, environmentBondRadius)
     : [];
   const releasedCoreAtomIndices = [...new Set(affectedRotors
@@ -710,6 +714,7 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
     targetVariantCount:variants.length, spatialFeatureMapCount:spatialVariants.length,
     untargetedRotorCount:untargetedRotors.length,
     affectedRotorCount:affectedRotors.length, releasedCoreAtomIndices,
+    inheritedAtomCount:inheritedCore.size, hardCoreAtomCount:core.size,
     affectedRotors:affectedRotors.map((rotor) => ({
       bondIndex:rotor.bondIndex,
       fixedEndpointAtomIndex:rotor.fixedEndpointAtomIndex,

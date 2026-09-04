@@ -119,9 +119,9 @@ try {
   assert(staged.result.designStep.changedAtomIds.length > addedHeavyAtomIds.length,
     'added-heavy IDs must exclude the separate affected inherited-core region');
   assert.deepEqual(embedding.protectedReference, {
-    method:'exact-common-subgraph-after-topology-release/v1',
-    label:'exact mapped atoms outside attachment-migrated ring blocks',
-    atomCount:11,
+    method:'exact-common-subgraph-after-topology-release/v2',
+    label:'exact mapped upstream atoms outside topology-released rings and edit-associated rotor distal sides',
+    atomCount:10,
     atomNames:protectedNames,
     maxDisplacementAngstrom:0,
   });
@@ -151,7 +151,13 @@ try {
   assert.equal(embedding.spatialFeatures[0].atomCount, 7);
   assert.equal(embedding.spatialFeatures[0].candidateMaps, 4);
   assert.equal(embedding.spatialFeatures[0].restraint.toleranceAngstrom, 2.25);
-  assert.deepEqual(transfer.releasedMappedAtomNames, ['CX2','CX3','CX4','SX1']);
+  assert.deepEqual(transfer.releasedMappedAtomNames,
+    ['C15','CX2','CX3','CX4','SX1']);
+  assert(transfer.releasedRegions.some((region) =>
+    region.reason === 'edit-associated-ring-bearing-mapped-rotor-distal-release'
+      && region.proximalReferenceAtomName === 'C12'
+      && region.distalReferenceAtomName === 'C15'
+      && region.coordinateInputs.length === 0));
   assert.equal(embedding.seedOnlyPlacement.features.length, 0,
     'required retention is scored during pose search, not silently fixed during graph staging');
   const heavyBondDistances = after.result.bonds.flatMap((bond) => {

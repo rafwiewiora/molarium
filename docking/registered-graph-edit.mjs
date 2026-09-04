@@ -193,6 +193,19 @@ export function buildRegisteredPoseTransferPlan(poseMap, policy) {
         migration.retainedJunctionReferenceAtomNames || []),
     });
   }
+  for (const release of Array.from(map.mappedRotorReleases || [])) {
+    releasedRegions.push({
+      id:release.id,
+      reason:release.reason,
+      referenceAtomNames:Array.from(release.releasedReferenceAtomNames || []),
+      productAtomIndices:Array.from(release.releasedProductAtomIndices || []),
+      referenceBondAtomNames:Array.from(release.referenceBondAtomNames || []),
+      proximalReferenceAtomName:release.proximalReferenceAtomName,
+      distalReferenceAtomName:release.distalReferenceAtomName,
+      selection:release.selection,
+      coordinateInputs:Array.from(release.coordinateInputs || []),
+    });
+  }
   return {
     schema:'molarium.pose-transfer-plan/v2',
     algorithm:{ id:'molarium-registered-graph-correspondence', version:'2' },
@@ -216,7 +229,7 @@ export function buildRegisteredPoseTransferPlan(poseMap, policy) {
     referenceBoundaryAtomNames, productBoundaryAtomNames,
     releasedBoundaryAtomNames, introducedBoundaryAtomNames,
     elementAgnosticAtomMatching:false,
-    coordinateRule:'hard-fix protected common atoms; release attachment-migrated ring atoms and changed graph regions',
+    coordinateRule:'hard-fix protected upstream common atoms; release graph-changed regions, attachment-migrated ring atoms, and distal sides of registered edit-associated mapped rotors',
     featureRule:'propose separately conserved graph regions as non-required seeds by default; honor explicitly registered designer-intent retention as symmetry-aware soft restraints',
   };
 }

@@ -16,18 +16,24 @@ assert.equal(semantics.schema, 'molarium.pose-transfer-plan/v2');
 assert.equal(semantics.editKind, 'attachment-rewire');
 assert.equal(semantics.elementAgnosticAtomMatching, false);
 assert.equal(semantics.mappedAtomPairs.length, 15);
-assert.equal(semantics.hardConstraintAtomNames.length, 11);
-assert.equal(semantics.exactAtomPairs.length, 11);
-assert.equal(semantics.releasedMappedAtomPairs.length, 4);
+assert.equal(semantics.hardConstraintAtomNames.length, 10);
+assert.equal(semantics.exactAtomPairs.length, 10);
+assert.equal(semantics.releasedMappedAtomPairs.length, 5);
 assert.equal(semantics.exactAtomPairs.every((entry) =>
   entry.match === 'exact-element-and-conserved-bond-graph'), true);
 assert.equal(semantics.releasedRegions[0].reason, 'attachment-rewire');
 assert.equal(semantics.releasedRegions[1].reason,
   'attachment-migration-within-mapped-biconnected-ring');
+assert.equal(semantics.releasedRegions[2].reason,
+  'edit-associated-ring-bearing-mapped-rotor-distal-release');
+assert.deepEqual(semantics.releasedRegions[2].referenceBondAtomNames,
+  ['C12','C15']);
+assert.deepEqual(semantics.releasedRegions[2].coordinateInputs, []);
 assert.deepEqual(semantics.releasedBoundaryAtomNames, ['CX4']);
 assert.deepEqual(semantics.introducedBoundaryAtomNames, ['CX3']);
 assert.ok(semantics.releasedReferenceAtomNames.includes('CX5'));
-assert.deepEqual(semantics.releasedMappedAtomNames, ['CX2', 'CX3', 'CX4', 'SX1']);
+assert.deepEqual(semantics.releasedMappedAtomNames,
+  ['C15', 'CX2', 'CX3', 'CX4', 'SX1']);
 assert.ok(semantics.addedProductAtomIndices.includes(8));
 assert.match(semantics.featureRule, /registered designer-intent retention/);
 assert.equal(semantics.featureCorrespondences.length, 1);

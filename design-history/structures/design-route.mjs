@@ -193,10 +193,46 @@ function validatePoseMap(poseMap, index, retainedFeatureIntents) {
       throw new Error(`${migrationLabel} product atom indices must be integer arrays`);
     migrationReleasedNames.push(...migration.releasedReferenceAtomNames);
   });
-  if (new Set(migrationReleasedNames).size !== migrationReleasedNames.length
-    || migrationReleasedNames.length !== releasedMappedNames.length
-    || releasedMappedNames.some((name) => !migrationReleasedNames.includes(name)))
-    throw new Error(`${label} ring migrations must exactly explain released mapped atoms`);
+  const rotorReleases = poseMap.mappedRotorReleases ?? [];
+  if (!Array.isArray(rotorReleases))
+    throw new Error(`${label}.mappedRotorReleases must be an array`);
+  const rotorReleasedNames = [];
+  rotorReleases.forEach((release, releaseIndex) => {
+    const releaseLabel = `${label}.mappedRotorReleases[${releaseIndex}]`;
+    requireRecord(release, releaseLabel);
+    requireString(release.id, `${releaseLabel}.id`);
+    if (release.reason !== 'edit-associated-ring-bearing-mapped-rotor-distal-release')
+      throw new Error(`${releaseLabel}.reason changed`);
+    for (const field of ['referenceBondAtomNames', 'anchorReferenceAtomNames',
+      'releasedReferenceAtomNames'])
+      requireStringArray(release[field], `${releaseLabel}.${field}`);
+    if (release.referenceBondAtomNames.length !== 2)
+      throw new Error(`${releaseLabel}.referenceBondAtomNames must identify one bond`);
+    requireString(release.proximalReferenceAtomName,
+      `${releaseLabel}.proximalReferenceAtomName`);
+    requireString(release.distalReferenceAtomName,
+      `${releaseLabel}.distalReferenceAtomName`);
+    requireString(release.selection, `${releaseLabel}.selection`);
+    if (!Array.isArray(release.productBondAtomIndices)
+      || release.productBondAtomIndices.length !== 2
+      || release.productBondAtomIndices.some((value) => !Number.isInteger(value))
+      || !Array.isArray(release.releasedProductAtomIndices)
+      || release.releasedProductAtomIndices.some((value) => !Number.isInteger(value)))
+      throw new Error(`${releaseLabel} product atom indices must be integer arrays`);
+    if (!Array.isArray(release.coordinateInputs) || release.coordinateInputs.length)
+      throw new Error(`${releaseLabel}.coordinateInputs must prove graph-only selection`);
+    if (!release.releasedReferenceAtomNames.includes(release.distalReferenceAtomName)
+      || release.anchorReferenceAtomNames.includes(release.distalReferenceAtomName)
+      || !release.anchorReferenceAtomNames.includes(release.proximalReferenceAtomName))
+      throw new Error(`${releaseLabel} must orient its proximal and distal sides`);
+    rotorReleasedNames.push(...release.releasedReferenceAtomNames);
+  });
+  const explainedReleasedNames = new Set([
+    ...migrationReleasedNames, ...rotorReleasedNames,
+  ]);
+  if (explainedReleasedNames.size !== releasedMappedNames.length
+    || releasedMappedNames.some((name) => !explainedReleasedNames.has(name)))
+    throw new Error(`${label} topology releases must exactly explain released mapped atoms`);
   const releasedMappedHeavyAtoms = requireNonnegativeInteger(
     poseMap.releasedMappedHeavyAtoms ?? releasedMappedAtoms.length,
     `${label}.releasedMappedHeavyAtoms`);

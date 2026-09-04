@@ -9,7 +9,7 @@
   "registeredRoute": {
     "path": "design-history/structures/generated/sos1-prospective-campaign.json",
     "schema": "molarium.registered-design-route/v1",
-    "sha256": "289ec8532d5fc2aa8a02c401435a8c6c4071a54cb9888d63e9f4cf5b4495c601"
+    "sha256": "dfd6de5a8f5c8a6bb50b552399365eabcb894cbcf2d709a4b9f47ae71757f5e4"
   },
   "predictionInputs": {
     "runManifestSchema": "molarium.design-prediction-run/v1",

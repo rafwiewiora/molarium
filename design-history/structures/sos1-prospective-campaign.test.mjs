@@ -73,25 +73,47 @@ for (const step of campaign.steps) {
   assert.equal(step.productAtomNames.length, step.posePropagationMap.productHeavyAtoms);
   assert.equal(new Set(step.productAtomNames).size, step.productAtomNames.length);
   const map = step.posePropagationMap;
+  assert(Array.isArray(map.mappedRotorReleases));
+  assert(map.mappedRotorReleases.every((release) =>
+    release.coordinateInputs.length === 0
+      && release.reason === 'edit-associated-ring-bearing-mapped-rotor-distal-release'),
+  `${step.id} rotor release must be graph/provenance-only`);
+  if (step.id === 'open-phe890-pocket') {
+    assert.deepEqual(map.mappedRotorReleases.map((release) => ({
+      bond:release.referenceBondAtomNames,
+      proximal:release.proximalReferenceAtomName,
+      distal:release.distalReferenceAtomName,
+    })), [
+      { bond:['C12','C15'], proximal:'C12', distal:'C15' },
+      { bond:['CX4','CX5'], proximal:'CX4', distal:'CX5' },
+    ]);
+    assert.deepEqual(map.releasedMappedAtoms.map((entry) => entry.referenceAtomName),
+      ['C15','CX2','CX3','CX4','SX1','CX5']);
+    assert.deepEqual(map.protectedReferenceAnchor.referenceAtomNames,
+      ['C1','C2','N6','C11','N8','C3','N7','C12','C16','CX1']);
+    assert.equal(map.hardCoordinateHeavyAtoms, 10);
+    assert.equal(map.releasedMappedHeavyAtoms, 6);
+  }
   if (step.id === 'finish-bay-293') {
     assert.equal(map.commonHeavyAtoms, 15);
     assert.deepEqual(map.protectedReferenceAnchor, {
-      method:'exact-common-subgraph-after-topology-release/v1',
-      label:'exact mapped atoms outside attachment-migrated ring blocks',
+      method:'exact-common-subgraph-after-topology-release/v2',
+      label:'exact mapped upstream atoms outside topology-released rings and edit-associated rotor distal sides',
       referenceAtomNames:['C1', 'C2', 'N6', 'C11', 'N8', 'C3', 'N7', 'C12',
-        'C16', 'C15', 'CX1'],
-      atoms:11,
-      bonds:11,
+        'C16', 'CX1'],
+      atoms:10,
+      bonds:10,
       releasedRegions:[
         'mapped biconnected ring atoms affected by attachment migration',
+        'distal sides of edit-associated ring-bearing mapped carbon rotors',
         'unmapped deleted and added graph regions',
       ],
     });
     assert.equal(map.mcs.atoms, map.commonHeavyAtoms);
-    assert.equal(map.hardCoordinateHeavyAtoms, 11);
-    assert.equal(map.releasedMappedHeavyAtoms, 4);
+    assert.equal(map.hardCoordinateHeavyAtoms, 10);
+    assert.equal(map.releasedMappedHeavyAtoms, 5);
     assert.deepEqual(map.releasedMappedAtoms.map((entry) => entry.referenceAtomName),
-      ['CX2', 'CX3', 'CX4', 'SX1']);
+      ['C15', 'CX2', 'CX3', 'CX4', 'SX1']);
     assert.equal(map.mappedRingAttachmentMigrations.length, 1);
     assert.deepEqual(map.mappedRingAttachmentMigrations[0], {
       id:'mapped-ring-attachment-migration-1',
@@ -104,6 +126,8 @@ for (const step of campaign.steps) {
       releasedReferenceAtomNames:['CX2', 'CX3', 'CX4', 'SX1'],
       releasedProductAtomIndices:[31, 9, 10, 11],
     });
+    assert.deepEqual(map.mappedRotorReleases.map((release) =>
+      release.referenceBondAtomNames), [['C12','C15']]);
     assert.equal(map.seedMatchedHeavyAtoms, 7);
     assert.equal(map.totalReferencedHeavyAtoms, 22);
     assert.equal(map.spatialFeatureCorrespondences.length, 1);
@@ -134,13 +158,13 @@ for (const step of campaign.steps) {
       ['CX5','CX11','CX12','CX13','CX14','CX15','CX16']);
     assert.match(map.transitionExplanation, /attachment atom within a mapped biconnected ring/);
     assert.match(map.transitionExplanation, /registered designer intent/);
-  } else {
+  } else if (step.id !== 'open-phe890-pocket') {
     assert.deepEqual(step.retainedFeatureIntents, []);
     assert(map.commonHeavyAtoms >= 15, `${step.id} must retain a substantial 3D anchor`);
     assert.equal(map.mcs.atoms, map.commonHeavyAtoms);
-    assert.equal(map.hardCoordinateHeavyAtoms, map.commonHeavyAtoms);
-    assert.equal(map.releasedMappedHeavyAtoms, 0);
-    assert.deepEqual(map.releasedMappedAtoms, []);
+    assert.equal(map.hardCoordinateHeavyAtoms + map.releasedMappedHeavyAtoms,
+      map.commonHeavyAtoms);
+    assert(map.releasedMappedAtoms.length > 0);
     assert.deepEqual(map.mappedRingAttachmentMigrations, []);
     assert.equal(map.seedMatchedHeavyAtoms, 0);
     assert.equal(map.totalReferencedHeavyAtoms, map.commonHeavyAtoms);

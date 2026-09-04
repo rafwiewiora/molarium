@@ -34,10 +34,10 @@ class EvaluatorTest(unittest.TestCase):
         cls.final_step = next(step for step in cls.campaign["steps"]
                               if step["id"] == "finish-bay-293")
 
-    def test_final_route_has_disjoint_11_4_7_partition(self) -> None:
+    def test_final_route_has_disjoint_10_5_7_partition(self) -> None:
         regions = EVALUATOR.route_regions(self.final_step)
-        self.assertEqual(len(regions["hard"]), 11)
-        self.assertEqual(len(regions["released"]), 4)
+        self.assertEqual(len(regions["hard"]), 10)
+        self.assertEqual(len(regions["released"]), 5)
         self.assertEqual(len(regions["distalFeature"]), 7)
         self.assertEqual(len(regions["edited"]), 10)
         self.assertEqual(len(regions["mapped"]), 15)
