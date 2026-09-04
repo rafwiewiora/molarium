@@ -326,7 +326,9 @@ async function main() {
     const selected = ensemble.candidates[0];
     assert.equal(selected.rank, 1, 'The first Phe890 candidate is not declared rank 1');
     const application = await execute('pose.applySidechainRotamer', {
-      coordinateSha256:selected.coordinateSha256,
+      // The scientific choice is the portable chi-angle state. The coordinate
+      // digest remains a fail-closed guard, not the semantic selector.
+      chiDegrees:selected.chiDegrees,
       expectedInputCoordinateSha256:ensemble.inputCoordinateSha256,
       expectedSelectedCoordinateSha256:selected.coordinateSha256,
     }, 'apply-top-phe890-steric-rank');

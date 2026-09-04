@@ -46,7 +46,8 @@ assert(intentCommit > 0 && enumeration > intentCommit,
   'designer ligand intent must be committed before Phe890 enumeration');
 assert.match(source, /const selected = ensemble\.candidates\[0\]/,
   'the declared steric rank, rather than a retrospectively chosen chi vector, selects Phe890');
-assert.match(source, /coordinateSha256:selected\.coordinateSha256/);
+assert.match(source, /chiDegrees:selected\.chiDegrees/,
+  'the selected receptor response must replay by portable chi angles');
 assert.match(source, /expectedInputCoordinateSha256:ensemble\.inputCoordinateSha256/);
 assert.match(source, /expectedSelectedCoordinateSha256:selected\.coordinateSha256/);
 assert.match(source, /assert\.deepEqual\(canonicalLigandInspection\(inspections\.ligandAfterPhe\),[\s\S]{0,180}frozenLigandState/,
