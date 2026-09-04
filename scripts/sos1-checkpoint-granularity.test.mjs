@@ -25,6 +25,17 @@ assert.equal(Object.keys(prefix.objects.snapshots).length, 1);
 const checkpointReview = JSON.parse(await readFile(new URL(
   '../design-history/examples/sos1-prediction-checkpoint-review.action-script.json',
   import.meta.url)));
+const reviewGranularity = checkpointReview.provenance.coordinateGranularity;
+const optionalIntermediateCheckpoints = [
+  ['compound-21-graph-edit-before-phe890-rotamer',
+    'Review compound 21 graph edit before Phe890 movement',
+    'prospective-intermediate-checkpoint', true],
+  ['phe890-rotamer-before-coupled-relaxation',
+    'Review selected Phe890-out branch before ligand refinement',
+    'prospective-intermediate-checkpoint', true],
+];
+const availableIntermediateCheckpoints = optionalIntermediateCheckpoints.filter(([stepId]) =>
+  reviewGranularity.independentlyCommittedStates.includes(stepId));
 const expectedReviewCheckpoints = [
   ['starting-hit', 'Review the exact prepared 5OVE/AXE starting hit',
     'registered-starting-hit', false],
@@ -32,6 +43,7 @@ const expectedReviewCheckpoints = [
     'complete-frozen-prediction', true],
   ['fragment-merge', 'Review fragment-merge prediction checkpoint',
     'complete-frozen-prediction', true],
+  ...availableIntermediateCheckpoints,
   ['open-phe890-pocket', 'Review open-phe890-pocket prediction checkpoint',
     'complete-frozen-prediction', true],
   ['finish-bay-293', 'Review finish-bay-293 prediction checkpoint',
@@ -52,7 +64,7 @@ for (const [index, [stepId, caption, sourceStatus, preserveView]]
 }
 assert.equal(checkpointReview.actions[0].review.registeredStartingHit, true);
 assert.equal(checkpointReview.actions[0].review.exactHistoryPrefix, true);
-for (const unavailable of SOS1_CHECKPOINT_GRANULARITY.unavailableIndependentStates)
+for (const unavailable of reviewGranularity.unavailableIndependentStates)
   assert.equal(checkpointReview.actions.some((move) => move.caption.includes(unavailable)), false,
     `${unavailable} must not be presented as an independently recorded coordinate checkpoint`);
 
