@@ -13,19 +13,13 @@ const AWZ_CAMPAIGN_SHA256 =
 const AWW_COMPONENT_ID = 'heterogen:A:1104::AWW';
 const REQUIRED_HARD_ATOM_NAMES = Object.freeze(['C12']);
 const REQUIRED_RELEASED_ATOM_NAMES = Object.freeze(['C15','CX4','CX5']);
-const WATER_1507_ATOM_IDS = Object.freeze([
-  'chemist-5OVE:HETATM:A:HOH:1507::O:4335',
-  'chemist-5OVE:HETATM:A:HOH:1507::H1:',
-  'chemist-5OVE:HETATM:A:HOH:1507::H2:',
-]);
 const PHE_STATES = Object.freeze([
   Object.freeze({ id:'native', chiDegrees:null }),
   Object.freeze({ id:'plus60', chiDegrees:Object.freeze([60, 90]) }),
   Object.freeze({ id:'out', chiDegrees:Object.freeze([-180, -90]) }),
 ]);
-const HYDRATION_STATES = Object.freeze(['retained','displaced-sensitivity-proxy']);
-const BRANCHES = Object.freeze(PHE_STATES.flatMap((phe) => HYDRATION_STATES.map((hydration) =>
-  Object.freeze({ id:`phe-${phe.id}-water-${hydration}`, phe, hydration }))));
+const BRANCHES = Object.freeze(PHE_STATES.map((phe) =>
+  Object.freeze({ id:`phe-${phe.id}`, phe })));
 
 function valueFor(args, name) {
   const index = args.indexOf(name);
@@ -99,12 +93,6 @@ async function runBranch({ root, serializedCampaign, branch }) {
     const stagedLigand = await execute('session.inspect', {
       scope:'ligand', includeCoordinates:false, maximumAtoms:256,
     });
-    let hydrationAction = null;
-    if (branch.hydration === 'displaced-sensitivity-proxy') {
-      hydrationAction = await execute('geometry.translateAtoms', {
-        atomIds:[...WATER_1507_ATOM_IDS], deltaAngstrom:{ x:20, y:20, z:20 },
-      });
-    }
     const rotamers = await execute('pose.enumerateSidechainRotamers', {
       receptorResidue:{ residueName:'PHE', chain:'A', residueIndex:890,
         insertionCode:'' }, maximumCandidates:32,
@@ -188,18 +176,13 @@ async function runBranch({ root, serializedCampaign, branch }) {
     }
     return {
       schema:SCHEMA, branch:branch.id, pheState:branch.phe.id,
-      hydrationState:branch.hydration, holdoutCoordinatesUsed:false,
-      sourceStateId:'AWZ', predictedStateId:'AWW',
+      holdoutCoordinatesUsed:false, sourceStateId:'AWZ', predictedStateId:'AWW',
       staged:{ commonHitHeavyAtoms:staged.designStep.commonHitHeavyAtoms,
         productHeavyAtoms:staged.designStep.productHeavyAtoms },
       sidechain:{ generatedCandidateCount:rotamers.sidechainRotamers.generatedCandidateCount,
         applied:appliedRotamer?.sidechainRotamer || appliedRotamer?.appliedSidechainRotamer || null },
-      hydration:{ state:branch.hydration,
-        usedForPoseSelection:false,
-        interpretation:branch.hydration === 'retained'
-          ? '5OVE HOH1507 retained at its observed site'
-          : 'diagnostic duplicate only; water is absent from pose.refine receptor scoring, and the complete water was translated by a bounded public Design action',
-        action:hydrationAction?.translation || null },
+      hydration:{ usedForPoseSelection:false,
+        interpretation:'pose.refine scores protein ATOM records, not crystallographic waters; water mobility is evaluated only during later full-system induced-fit relaxation' },
       contacts:{ requiredContactIds, n7Source:n7Contact.source,
         selected:selectedContacts, ...contactDistances },
       hardCoreAudit:{ requiredHardAtomNames:[...REQUIRED_HARD_ATOM_NAMES],
@@ -232,7 +215,7 @@ async function main(args = process.argv.slice(2)) {
     source:{ stateId:'AWZ', campaignPath,
       campaignSha256:AWZ_CAMPAIGN_SHA256 },
     branches:BRANCHES.map((branch) => ({ id:branch.id, pheState:branch.phe.id,
-      chiDegrees:branch.phe.chiDegrees, hydrationState:branch.hydration })), searchChains:8,
+      chiDegrees:branch.phe.chiDegrees })), searchChains:8,
     designerIntent:[
       'AWW OX3 hydroxyl donor -> TYR A884 backbone O acceptor',
       'AWW N7 donor -> ASN A879 OD1 acceptor',
@@ -240,7 +223,7 @@ async function main(args = process.argv.slice(2)) {
     selector:'prospective Molarium pose feasibility and energy ranking',
     holdoutCoordinatesUsed:false,
     holdoutPolicy:'5OVH may be opened only after selection; this proxy does not open it',
-    hydrationPolicy:'HOH1507 displacement is an explicit public-action diagnostic, not a pose-selection or production occupancy decision; water mobility is evaluated by later full-system induced-fit relaxation',
+    hydrationPolicy:'water is outside pose.refine scoring; HOH1507 mobility and remaining overlap are evaluated by later full-system induced-fit relaxation of the prospective winner',
   });
   const results = [];
   for (const branch of BRANCHES) {
@@ -257,8 +240,7 @@ async function main(args = process.argv.slice(2)) {
       selectedSeedAudit:result.refinement.featureGuidedSeeding?.selectedSeedAudit,
       contacts:result.contacts })}`);
   }
-  const eligible = results.filter((result) => result.eligible
-    && result.hydrationState === 'retained');
+  const eligible = results.filter((result) => result.eligible);
   assert(eligible.length >= 1, 'At least one factorial branch must pass every prospective gate');
   eligible.sort((a, b) => a.refinement.selectedScoreKcalMol
     - b.refinement.selectedScoreKcalMol || a.branch.localeCompare(b.branch));
@@ -266,9 +248,9 @@ async function main(args = process.argv.slice(2)) {
     selectedBranch:eligible[0].branch,
     selectedPheState:eligible[0].pheState,
     hydrationUsedForPoseSelection:false,
-    selectionBasis:'lowest prospective selectedScoreKcalMol among retained-water representatives after identical feasibility gates; displaced-water runs are diagnostic duplicates because pose.refine excludes waters',
+    selectionBasis:'lowest prospective selectedScoreKcalMol among the three Phe890 states after identical feasibility gates; crystallographic water is evaluated later in full-system relaxation',
     branches:results.map((result) => ({ branch:result.branch,
-      pheState:result.pheState, hydrationState:result.hydrationState,
+      pheState:result.pheState,
       eligible:result.eligible, prospectiveGates:result.prospectiveGates,
       selectedScoreKcalMol:result.refinement.selectedScoreKcalMol,
       selectedPhysicalKcalMol:result.refinement.selectedPhysicalKcalMol,
