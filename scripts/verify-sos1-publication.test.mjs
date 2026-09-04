@@ -3,6 +3,8 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { actionScriptSha256 } from '../design-history/replay.mjs';
+import { acceptedInspectionCheckpointReviewScript } from
+  '../design-history/accepted-checkpoint-review.mjs';
 import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
 import { buildAcceptedSos1ReplayScript, sha256,
   verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
@@ -16,6 +18,8 @@ const runId = 'sos1-hit-only-coupled-postrelax-v9-test';
 const runRelative = `design-history/publications/sos1/${runId}`;
 const runDirectory = join(scratch, runRelative);
 const replayRelative = 'design-history/examples/sos1-current.action-script.json';
+const checkpointApplicationRelative =
+  'design-history/examples/sos1-current-checkpoint-review.action-script.json';
 const provenanceRelative = 'design-history/examples/sos1-current.provenance.json';
 const storyRelative = 'design-history/structure-viewer/sos1-current.json';
 const assetManifestRelative = 'design-history/structures/generated/sos1-current-assets.json';
@@ -188,6 +192,21 @@ try {
     evaluationSummarySha256:sha256(evaluationBytes), sourceAuditSha256:sha256(auditBytes),
     checkpoints:checkpointLinks,
   };
+  const checkpointApplication = await acceptedInspectionCheckpointReviewScript({
+    label:'Accepted checkpoint review',
+    checkpoints:checkpointInputs.map((input) => ({ accepted:true,
+      frozenBeforeHoldoutAccess:true,
+      checkpointSha256:checkpointRecords.find((entry) =>
+        entry.stepId === input.stepId).sha256,
+      label:input.stepId,
+      ligand:{ atoms:input.ligandAtoms,
+        bonds:[{ atomIds:[input.ligandAtoms[0].atomId,input.ligandAtoms[1].atomId], order:1 }] },
+      pocket:{ atoms:input.pocketAtoms, truncated:false,
+        totalAtomCount:input.pocketAtoms.length },
+    })),
+  });
+  const checkpointApplicationBytes = await writeJson(
+    join(scratch, checkpointApplicationRelative), checkpointApplication);
 
   const assets = [];
   const scenes = {};
@@ -256,7 +275,10 @@ try {
     interfaceMovie:{ path:movieRelative, sha256:sha256(movieBytes), bytes:movieBytes.length,
       renderManifest:{ path:renderRelative, sha256:sha256(renderBytes),
         bytes:renderBytes.length } },
-    checkpointReview:{ path:storyRelative, sha256:sha256(storyBytes) },
+    checkpointReview:{ path:storyRelative, sha256:sha256(storyBytes), application:{
+      path:checkpointApplicationRelative, sha256:sha256(checkpointApplicationBytes),
+      actionScriptSha256:await actionScriptSha256(checkpointApplication),
+      calculationPolicy:'none', promotable:false } },
     integration:{ applicationSource:'app.js',
       structureViewerSource:'design-history/structure-viewer/viewer.mjs',
       buildSource:'scripts/build-web.mjs',
@@ -266,17 +288,21 @@ try {
 
   const appSource = `const DESIGNER_STORY_LINKS = Object.freeze({\n`
     + `  'sos1-hit-to-bay293':Object.freeze({ script:'./${replayRelative}', `
-    + `sourcePath:'${replayRelative}', sourceSha256:'${sha256(replayBytes)}' })\n});\n`;
+    + `sourcePath:'${replayRelative}', sourceSha256:'${sha256(replayBytes)}' }),\n`
+    + `  '${story.id}':Object.freeze({ script:'./${checkpointApplicationRelative}', `
+    + `sourcePath:'${checkpointApplicationRelative}', `
+    + `sourceSha256:'${sha256(checkpointApplicationBytes)}' })\n});\n`;
   const viewerSource = `const STORY_REGISTRY = Object.freeze({\n`
     + `  '${story.id}':Object.freeze({ path:'./sos1-current.json', `
     + `sha256:'${sha256(storyBytes)}' })\n});\n`;
-  const required = [SOS1_PUBLICATION_DECLARATION, replayRelative, storyRelative,
+  const required = [SOS1_PUBLICATION_DECLARATION, replayRelative,
+    checkpointApplicationRelative, storyRelative,
     movieRelative, renderRelative];
   const buildSource = `const files = [\n${required.map((path) => `  '${path}',`).join('\n')}\n];\n`
-    + `const redirects = '/sos1-hit-to-bay293/replay /design-history/structure-viewer/?story=${story.id} 302';\n`;
+    + `const redirects = '/sos1-hit-to-bay293/replay /?story=${story.id} 302';\n`;
   const manifestSource = `const reviewedFiles = [\n${required.map((path) =>
     `  '${path}',`).join('\n')}\n];\n`;
-  const serverSource = `const redirect = '/design-history/structure-viewer/?story=${story.id}';\n`;
+  const serverSource = `const redirect = '/?story=${story.id}';\n`;
   await writeFile(join(scratch, 'app.js'), appSource);
   await writeFile(join(scratch, 'design-history/structure-viewer/viewer.mjs'), viewerSource);
   await mkdir(join(scratch, 'scripts'), { recursive:true });

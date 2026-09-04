@@ -51,12 +51,20 @@ const browser = await startMolariumBrowser({
 try {
   await waitFor(async () => browser.evaluate(`Boolean(window.MolariumChemistActionsReady)`),
     30000, 'Molarium API');
+  await waitFor(async () => browser.evaluate(
+    `document.querySelector('#molecule-info').classList.contains('hidden')
+      && document.querySelector('.scene-card').classList.contains('hidden')`),
+  30000, 'blank review canvas');
   const initial = await browser.evaluate(`({
     moleculeHidden:document.querySelector('#molecule-info').classList.contains('hidden'),
     sceneHidden:document.querySelector('.scene-card').classList.contains('hidden'),
+    networkLabel:document.querySelector('#network-policy-label').textContent.trim(),
+    structureViewer:location.pathname.includes('/design-history/structure-viewer/'),
   })`);
   assert.equal(initial.moleculeHidden, true);
   assert.equal(initial.sceneHidden, true);
+  assert.equal(initial.networkLabel, 'Local Lab · network locked');
+  assert.equal(initial.structureViewer, false);
 
   await browser.evaluate(`(async (script) => {
     const api = await window.MolariumChemistActionsReady;
@@ -115,6 +123,31 @@ try {
     `document.querySelector('#campaign-status').textContent`), /Accepted source checkpoint 2/);
   assert.match(await browser.evaluate(
     `document.querySelector('#designer-move-detail').textContent`), /calculation-free review/i);
+
+  const origin = new URL(browser.appUrl).origin;
+  for (const [route, expectedStory] of [
+    ['/sos1-hit-to-bay293', 'sos1-hit-to-bay293'],
+    ['/sos1-hit-to-bay293/review', 'sos1-hit-to-bay293-review'],
+    ['/sos1-hit-to-bay293/replay', 'sos1-hit-to-bay293-review'],
+  ]) {
+    await browser.client.call('Page.navigate', { url:`${origin}${route}` });
+    await waitFor(async () => browser.evaluate(
+      `location.pathname === '/' && new URLSearchParams(location.search).get('story') === ${JSON.stringify(expectedStory)}`),
+    30000, `Molarium application route ${route}`);
+    await waitFor(async () => browser.evaluate(
+      `document.querySelector('#network-policy-label')?.textContent.trim() === 'Local Lab · network locked'`),
+    30000, `Molarium application shell ${route}`);
+    const routed = await browser.evaluate(`({
+      pathname:location.pathname,
+      story:new URLSearchParams(location.search).get('story'),
+      networkLabel:document.querySelector('#network-policy-label').textContent.trim(),
+      structureViewer:location.pathname.includes('/design-history/structure-viewer/'),
+    })`);
+    assert.deepEqual(routed, {
+      pathname:'/', story:expectedStory,
+      networkLabel:'Local Lab · network locked', structureViewer:false,
+    });
+  }
 
   console.log('Accepted checkpoint review browser test: PASS');
 } finally {

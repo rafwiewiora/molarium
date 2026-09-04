@@ -5,6 +5,8 @@ import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { basename, dirname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { actionScriptSha256 } from '../design-history/replay.mjs';
+import { acceptedInspectionCheckpointReviewScript } from
+  '../design-history/accepted-checkpoint-review.mjs';
 import { buildAcceptedSos1ReplayScript, requireExplicitRunDirectory, sha256,
   SOS1_ROUTE_ID, SOS1_STEP_IDS, verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
 import { SOS1_PUBLICATION_DECLARATION,
@@ -15,6 +17,8 @@ import { INSTALLED_MOVIE, INSTALLED_RENDER_MANIFEST,
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const SOS1_PUBLIC_REPLAY =
   'design-history/examples/sos1-accepted.action-script.json';
+export const SOS1_PUBLIC_CHECKPOINT_REVIEW =
+  'design-history/examples/sos1-accepted-checkpoint-review.action-script.json';
 export const SOS1_PUBLIC_PROVENANCE =
   'design-history/examples/sos1-accepted.provenance.json';
 export const SOS1_PUBLIC_ASSET_MANIFEST =
@@ -133,6 +137,21 @@ export async function buildSos1PublicationRecords(accepted, { interfaceMovie } =
   'SOS1 publication records require the verified installed interface movie');
   const replay = await buildAcceptedSos1ReplayScript(accepted);
   const replayBytes = jsonBytes(replay.script);
+  const checkpointReviewScript = await acceptedInspectionCheckpointReviewScript({
+    label:'SOS1 accepted checkpoints · calculation-free review',
+    checkpoints:SOS1_STEP_IDS.map((stepId) => {
+      const frozen = accepted.checkpoints.get(stepId);
+      return {
+        accepted:true,
+        frozenBeforeHoldoutAccess:true,
+        checkpointSha256:frozen.entry.sha256,
+        pocket:frozen.checkpoint.pocket,
+        ligand:frozen.checkpoint.ligand,
+        label:STEP_COPY[stepId].title,
+      };
+    }),
+  });
+  const checkpointReviewBytes = jsonBytes(checkpointReviewScript);
   const link = acceptedRunLink(accepted);
   const assets = [], scenes = {}, cameras = {}, checkpointAssets = new Map();
 
@@ -259,13 +278,18 @@ export async function buildSos1PublicationRecords(accepted, { interfaceMovie } =
     publicReplay:{ path:SOS1_PUBLIC_REPLAY, sha256:sha256(replayBytes),
       actionScriptSha256:await actionScriptSha256(replay.script) },
     interfaceMovie,
-    checkpointReview:{ path:SOS1_PUBLIC_REVIEW, sha256:sha256(reviewBytes) },
+    checkpointReview:{ path:SOS1_PUBLIC_REVIEW, sha256:sha256(reviewBytes),
+      application:{ path:SOS1_PUBLIC_CHECKPOINT_REVIEW,
+        sha256:sha256(checkpointReviewBytes),
+        actionScriptSha256:await actionScriptSha256(checkpointReviewScript),
+        calculationPolicy:'none', promotable:false } },
     integration:{ applicationSource:'app.js',
       structureViewerSource:'design-history/structure-viewer/viewer.mjs',
       buildSource:'scripts/build-web.mjs',
       manifestSource:'scripts/generate-local-lab-manifest.mjs', serverSource:'server.js' },
   };
-  return Object.freeze({ replay, replayBytes, provenance, provenanceBytes,
+  return Object.freeze({ replay, replayBytes, checkpointReviewScript,
+    checkpointReviewBytes, provenance, provenanceBytes,
     assetManifest, assetManifestBytes, review, reviewBytes, declaration,
     declarationBytes:jsonBytes(declaration), checkpointAssets });
 }
@@ -336,12 +360,19 @@ function replaceManagedArrayEntries(source, name, managedPaths) {
 export function rewritePublicationIntegration({ appSource, viewerSource, buildSource,
   manifestSource, serverSource }, records) {
   let app = withoutRegistryEntry(appSource, 'DESIGNER_STORY_LINKS', 'sos1-hit-to-bay293');
+  app = withoutRegistryEntry(app, 'DESIGNER_STORY_LINKS', SOS1_PUBLIC_REVIEW_ID);
   app = appendRegistryEntry(app, 'DESIGNER_STORY_LINKS',
     `  'sos1-hit-to-bay293':Object.freeze({\n`
     + `    title:'SOS1 hit to BAY-293',\n    script:'./${SOS1_PUBLIC_REPLAY}',\n`
     + `    sourcePath:'${SOS1_PUBLIC_REPLAY}',\n`
     + `    sourceSha256:'${sha256(records.replayBytes)}',\n`
     + `    presentation:'chemist-pocket',\n  }),`);
+  app = appendRegistryEntry(app, 'DESIGNER_STORY_LINKS',
+    `  '${SOS1_PUBLIC_REVIEW_ID}':Object.freeze({\n`
+    + `    title:'SOS1 accepted checkpoints',\n`
+    + `    script:'./${SOS1_PUBLIC_CHECKPOINT_REVIEW}',\n`
+    + `    sourcePath:'${SOS1_PUBLIC_CHECKPOINT_REVIEW}',\n`
+    + `    sourceSha256:'${sha256(records.checkpointReviewBytes)}',\n  }),`);
 
   let viewer = viewerSource;
   for (const key of ['sos1-hit-only-success', 'sos1-chemist-actions-review',
@@ -352,14 +383,18 @@ export function rewritePublicationIntegration({ appSource, viewerSource, buildSo
     + `    sha256:'${sha256(records.reviewBytes)}',\n  }),`);
 
   const assetPaths = [...records.checkpointAssets.keys(), INSTALLED_MOVIE,
-    INSTALLED_RENDER_MANIFEST];
+    INSTALLED_RENDER_MANIFEST, SOS1_PUBLIC_CHECKPOINT_REVIEW];
   let build = buildSource.replace(/\nconst generatedStructures = await readdir\([\s\S]*?\n\s*\.map\(\(name\) => `design-history\/structures\/generated\/\$\{name\}`\)\);\n/, '\n');
   build = replaceManagedArrayEntries(build, 'files', assetPaths);
   build = build.replaceAll('story=sos1-chemist-actions-review',
-    `story=${SOS1_PUBLIC_REVIEW_ID}`);
+    `story=${SOS1_PUBLIC_REVIEW_ID}`)
+    .replaceAll('/design-history/structure-viewer/?story=sos1-hit-to-bay293-review',
+      '/?story=sos1-hit-to-bay293-review');
   let manifest = replaceManagedArrayEntries(manifestSource, 'reviewedFiles', assetPaths);
-  const server = serverSource.replaceAll('story=sos1-chemist-actions-review',
-    `story=${SOS1_PUBLIC_REVIEW_ID}`);
+  const server = serverSource
+    .replaceAll('story=sos1-chemist-actions-review', `story=${SOS1_PUBLIC_REVIEW_ID}`)
+    .replaceAll('/design-history/structure-viewer/?story=sos1-hit-to-bay293-review',
+      '/?story=sos1-hit-to-bay293-review');
   for (const [label, source] of Object.entries({ app, viewer, build, manifest, server }))
     for (const token of LEGACY_REFERENCES)
       assert(!source.includes(token), `${label} still contains retired reference ${token}`);
@@ -396,6 +431,7 @@ export async function writeSos1Publication(accepted, { root = ROOT, renderDirect
 
   const artifacts = new Map([
     [SOS1_PUBLIC_REPLAY, records.replayBytes],
+    [SOS1_PUBLIC_CHECKPOINT_REVIEW, records.checkpointReviewBytes],
     [SOS1_PUBLIC_PROVENANCE, records.provenanceBytes],
     [SOS1_PUBLIC_ASSET_MANIFEST, records.assetManifestBytes],
     [SOS1_PUBLIC_REVIEW, records.reviewBytes],

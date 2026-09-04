@@ -8,7 +8,7 @@ import { validatePrecomputedCheckpointReview } from
   '../design-history/structure-viewer/checkpoint-review.mjs';
 import { expandStructureTimeline } from '../design-history/structure-viewer/timeline.mjs';
 import { buildSos1PublicationRecords, pdbFromFrozenInspection, rewritePublicationIntegration,
-  SOS1_PUBLIC_ASSET_MANIFEST, SOS1_PUBLIC_PROVENANCE,
+  SOS1_PUBLIC_ASSET_MANIFEST, SOS1_PUBLIC_CHECKPOINT_REVIEW, SOS1_PUBLIC_PROVENANCE,
   SOS1_PUBLIC_REPLAY, SOS1_PUBLIC_REVIEW,
   SOS1_PUBLIC_REVIEW_ID } from './build-sos1-publication.mjs';
 import { verifyPreHoldoutPromotionInputs } from './promote-sos1-publication.mjs';
@@ -128,6 +128,12 @@ const records = await buildSos1PublicationRecords(syntheticAccepted, { interface
   renderManifest:{ path:INSTALLED_RENDER_MANIFEST, sha256:fixedHash('render'), bytes:6 },
 } });
 assert.equal(records.review.review.calculationPolicy, 'never-run');
+assert.deepEqual(records.checkpointReviewScript.actions.map((step) => step.action),
+  ['campaign.import','campaign.import','campaign.import','campaign.import']);
+assert.equal(records.checkpointReviewScript.provenance.calculationPolicy, 'none');
+assert.equal(records.checkpointReviewScript.provenance.promotable, false);
+assert(!/5OV[F-I]/.test(records.checkpointReviewBytes.toString()),
+  'application checkpoint review must not identify or embed evaluation structures');
 assert.equal(records.review.cues.length, 4);
 assert.equal(expandStructureTimeline(records.review).length, 4,
   'arrowable review must expose exactly one immutable frame per checkpoint');
@@ -160,15 +166,18 @@ const checkpointAssets = new Map([
 ]);
 const rewritten = rewritePublicationIntegration({ appSource, viewerSource, buildSource,
   manifestSource, serverSource }, { replayBytes:Buffer.from('replay'),
+  checkpointReviewBytes:Buffer.from('checkpoint-review'),
   reviewBytes:Buffer.from('review'), checkpointAssets });
 const retired = ['sos1-growth-clash-v7','sos1-v7-','sos1-chemist-actions-review',
   'sos1-hit-only-success'];
 for (const source of Object.values(rewritten))
   for (const token of retired) assert(!source.includes(token));
 assert(rewritten.appSource.includes(`script:'./${SOS1_PUBLIC_REPLAY}'`));
+assert(rewritten.appSource.includes(`script:'./${SOS1_PUBLIC_CHECKPOINT_REVIEW}'`));
 assert(rewritten.viewerSource.includes(`'${SOS1_PUBLIC_REVIEW_ID}'`));
 for (const path of [SOS1_PUBLIC_REPLAY, SOS1_PUBLIC_PROVENANCE,
-  SOS1_PUBLIC_ASSET_MANIFEST, SOS1_PUBLIC_REVIEW, INSTALLED_MOVIE,
+  SOS1_PUBLIC_ASSET_MANIFEST, SOS1_PUBLIC_REVIEW, SOS1_PUBLIC_CHECKPOINT_REVIEW,
+  INSTALLED_MOVIE,
   INSTALLED_RENDER_MANIFEST, ...checkpointAssets.keys()]) {
   assert(rewritten.buildSource.includes(`'${path}'`), `build missing ${path}`);
   assert(rewritten.manifestSource.includes(`'${path}'`), `manifest missing ${path}`);

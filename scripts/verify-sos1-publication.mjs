@@ -275,6 +275,15 @@ function validateProductionIntegration({ declaration, applicationSource, structu
     'application registry');
   assertQuotedField(appRecord, 'sourceSha256', declaration.publicReplay.sha256,
     'application registry');
+  const checkpointApplication = declaration.checkpointReview.application;
+  const checkpointAppRecord = frozenRegistryRecord(applicationSource,
+    'DESIGNER_STORY_LINKS', declaration.storyId, 'application checkpoint-review registry');
+  assertQuotedField(checkpointAppRecord, 'script', `./${checkpointApplication.path}`,
+    'application checkpoint-review registry');
+  assertQuotedField(checkpointAppRecord, 'sourcePath', checkpointApplication.path,
+    'application checkpoint-review registry');
+  assertQuotedField(checkpointAppRecord, 'sourceSha256', checkpointApplication.sha256,
+    'application checkpoint-review registry');
 
   const reviewRecord = frozenRegistryRecord(structureViewerSource, 'STORY_REGISTRY',
     declaration.storyId, 'structure-viewer registry');
@@ -284,7 +293,8 @@ function validateProductionIntegration({ declaration, applicationSource, structu
     'structure-viewer registry');
 
   const required = [SOS1_PUBLICATION_DECLARATION, declaration.publicReplay.path,
-    declaration.checkpointReview.path, declaration.interfaceMovie.path,
+    declaration.checkpointReview.path, checkpointApplication.path,
+    declaration.interfaceMovie.path,
     declaration.interfaceMovie.renderManifest.path];
   const buildFiles = declaredStringArray(buildSource, 'files', 'production build');
   const manifestFiles = declaredStringArray(manifestSource, 'reviewedFiles',
@@ -293,11 +303,15 @@ function validateProductionIntegration({ declaration, applicationSource, structu
     assert(buildFiles.includes(path), `production build does not package ${path}`);
     assert(manifestFiles.includes(path), `local manifest generator does not review ${path}`);
   }
-  const redirect = `/design-history/structure-viewer/?story=${declaration.storyId}`;
+  const redirect = `/?story=${declaration.storyId}`;
   assert(buildSource.includes(`/sos1-hit-to-bay293/replay ${redirect} 302`),
     'production redirect does not select the declared checkpoint review');
   assert(serverSource.includes(redirect),
     'local server redirect does not select the declared checkpoint review');
+  assert(!buildSource.includes('/sos1-hit-to-bay293/replay /design-history/structure-viewer/'),
+    'production review URL still redirects to the retired structure viewer');
+  assert(!serverSource.includes('/design-history/structure-viewer/?story=sos1-hit-to-bay293-review'),
+    'local review URL still redirects to the retired structure viewer');
 }
 
 /**
@@ -386,6 +400,23 @@ export async function verifySos1Publication({
 
   const story = await pinnedJson(root, declaration.checkpointReview,
     'publication checkpointReview');
+  const checkpointApplication = await pinnedJson(root,
+    declaration.checkpointReview.application, 'application checkpointReview');
+  validateActionScript(checkpointApplication.value);
+  assert.equal(await actionScriptSha256(checkpointApplication.value),
+    declaration.checkpointReview.application.actionScriptSha256,
+    'application checkpoint-review action script changed');
+  assert.equal(checkpointApplication.value.provenance?.reviewOnly, true,
+    'application checkpoint review is not labeled review-only');
+  assert.equal(checkpointApplication.value.provenance?.promotable, false,
+    'application checkpoint review is not explicitly non-promotable');
+  assert.equal(checkpointApplication.value.provenance?.calculationPolicy, 'none',
+    'application checkpoint review permits calculation');
+  assert(checkpointApplication.value.actions?.length === SOS1_STEP_IDS.length
+    && checkpointApplication.value.actions.every((step) => step.action === 'campaign.import'),
+  'application checkpoint review must restore one public campaign per accepted checkpoint');
+  assertNoLegacyReferences(JSON.stringify(checkpointApplication.value),
+    'application checkpoint review');
   assertNoLegacyReferences(JSON.stringify(story.value), 'checkpoint review');
   assertNoV3(story.value, 'checkpoint review');
   assert.equal(story.value.schema, 'molarium.structure-story/v1');
@@ -448,6 +479,7 @@ export async function verifySos1Publication({
   return Object.freeze({ declaration, acceptedRunId:accepted.runId,
     declarationSha256:sha256(declarationBytes), publicReplaySha256:sha256(publicReplay.bytes),
     checkpointReviewSha256:sha256(story.bytes),
+    checkpointApplicationSha256:sha256(checkpointApplication.bytes),
     interfaceMovieSha256:sha256(interfaceMovie.bytes),
     interfaceRenderManifestSha256:sha256(interfaceRender.bytes),
     checkpointReviewProvenanceSha256:sha256(provenance.bytes),

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { acceptedCheckpointReviewScript } from './accepted-checkpoint-review.mjs';
+import { acceptedCheckpointReviewScript, acceptedInspectionCheckpointReviewScript } from
+  './accepted-checkpoint-review.mjs';
 import { commitMolecule, createCampaign, storeSnapshot, verifyCampaign } from './ledger.mjs';
 import { serializeCampaign } from './live-campaign-store.mjs';
 
@@ -45,6 +46,27 @@ assert(!JSON.stringify(script).includes('pose.refine'));
 assert(!JSON.stringify(script).includes('optimization.run'));
 assert(!JSON.stringify(script).includes('directCoordinates'));
 
+const inspectionScript = await acceptedInspectionCheckpointReviewScript({
+  label:'Accepted inspections', checkpoints:[1,2].map((index) => ({
+    accepted:true, frozenBeforeHoldoutAccess:true,
+    checkpointSha256:String(index).repeat(64), label:`inspection ${index}`,
+    ligand:{ atoms:[{ atomId:'L:C1' },{ atomId:'L:N1' }], bonds:[{
+      atomIds:['L:C1','L:N1'], order:1,
+    }] },
+    pocket:{ truncated:false, totalAtomCount:3, atoms:[
+      { atomId:'L:C1', atomName:'C1', element:'C', residueName:'LIG',
+        coordinatesAngstrom:[index,0,0] },
+      { atomId:'L:N1', atomName:'N1', element:'N', residueName:'LIG',
+        coordinatesAngstrom:[index + 1,0,0] },
+      { atomId:'A:10:CA', atomName:'CA', element:'C', residueName:'PHE', chain:'A',
+        residueIndex:10, coordinatesAngstrom:[0,index,0] },
+    ], bonds:[{ atomIds:['L:C1','L:N1'], order:1 }] },
+  })) });
+assert.deepEqual(inspectionScript.actions.map((step) => step.action),
+  ['campaign.import','campaign.import']);
+assert(inspectionScript.actions.every((step) =>
+  !step.args.serialized.includes('directCoordinates')));
+
 await assert.rejects(() => acceptedCheckpointReviewScript({ checkpoints:[{
   ...checkpoints[0], accepted:false,
 }] }), /not an accepted scientific result/);
@@ -53,4 +75,3 @@ await assert.rejects(() => acceptedCheckpointReviewScript({ checkpoints:[{
 }] }), /campaign bytes do not match/);
 
 console.log('Accepted checkpoint review builder test: PASS');
-

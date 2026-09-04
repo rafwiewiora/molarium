@@ -152,8 +152,10 @@ await writeFile(join(output, 'runtime-config.js'),
   })});\n`);
 await writeFile(join(output, '_headers'), headers);
 await writeFile(join(output, '_redirects'), [
-  '/sos1-hit-to-bay293/replay /design-history/structure-viewer/?story=sos1-hit-to-bay293-review 302',
-  '/sos1-hit-to-bay293/replay/ /design-history/structure-viewer/?story=sos1-hit-to-bay293-review 302',
+  '/sos1-hit-to-bay293/replay /?story=sos1-hit-to-bay293-review 302',
+  '/sos1-hit-to-bay293/replay/ /?story=sos1-hit-to-bay293-review 302',
+  '/sos1-hit-to-bay293/review /?story=sos1-hit-to-bay293-review 302',
+  '/sos1-hit-to-bay293/review/ /?story=sos1-hit-to-bay293-review 302',
   '/sos1-hit-to-bay293 /?story=sos1-hit-to-bay293 302',
   '/sos1-hit-to-bay293/ /?story=sos1-hit-to-bay293 302',
   '',

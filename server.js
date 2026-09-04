@@ -65,9 +65,9 @@ const server = Bun.serve({
   ...(localOnly ? { hostname:'127.0.0.1' } : {}),
   async fetch(request) {
     const url = new URL(request.url);
-    if (url.pathname === '/sos1-hit-to-bay293/replay'
-      || url.pathname === '/sos1-hit-to-bay293/replay/')
-      return Response.redirect(`${url.origin}/design-history/structure-viewer/?story=sos1-hit-to-bay293-review`, 302);
+    if (['/sos1-hit-to-bay293/replay','/sos1-hit-to-bay293/replay/',
+      '/sos1-hit-to-bay293/review','/sos1-hit-to-bay293/review/'].includes(url.pathname))
+      return Response.redirect(`${url.origin}/?story=sos1-hit-to-bay293-review`, 302);
     if (url.pathname === '/sos1-hit-to-bay293' || url.pathname === '/sos1-hit-to-bay293/')
       return Response.redirect(`${url.origin}/?story=sos1-hit-to-bay293`, 302);
     let pathname;
