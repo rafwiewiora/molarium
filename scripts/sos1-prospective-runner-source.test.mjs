@@ -23,6 +23,16 @@ assert.match(source, /valence safeguard did not inspect the exact staged product
 assert.match(source, /requireExactStagedProductGraph\(ligand, staged, stepId\)/);
 assert.match(source, /requireRegisteredFeatureRefinement\(refined, staged, stepId\)/,
   'registered retained features must be checked on the public pose result');
+assert.match(source, /await execute\('campaign\.create'/,
+  'the runner must begin a public full-system Design History');
+assert.match(source, /await execute\('campaign\.commitCurrent'/,
+  'every accepted molecular checkpoint must commit the full system');
+assert.match(source, /await execute\('campaign\.verify'/,
+  'every full-system checkpoint must pass ledger verification');
+assert.match(source, /await execute\('campaign\.export'/,
+  'every full-system checkpoint must export a publicly resumable campaign');
+assert.match(source, /fullSystemCampaign:campaignRecord/,
+  'coordinate checkpoints must pin their full-system campaign snapshot');
 assert.match(source, /Phe890 left the selected predecessor rotamer basin/,
   'final checkpoint must retain and remeasure the prospective Phe890 state');
 assert(!source.includes('window.molariumTest'));

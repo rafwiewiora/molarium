@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { dirname, join, relative, resolve } from 'node:path';
+import { basename, dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { assertSidechainChiAnglesReproduced, COUPLED_SIDECHAIN_POSE_SELECTION_CRITERION,
   evaluatePostRelaxedBranchObjective, measureInspectedSidechainChiAngles,
@@ -511,7 +511,8 @@ try {
     'designRoute.inspect', 'protein.prepare', 'pose.captureReference',
     'pose.updateReceptorReference', 'pose.refine',
     'pose.apply', 'pose.enumerateSidechainRotamers', 'pose.applySidechainRotamer',
-    'protein.parameterize', 'optimization.run', 'history.undo', 'session.inspect']) {
+    'protein.parameterize', 'optimization.run', 'history.undo', 'session.inspect',
+    'campaign.create', 'campaign.commitCurrent', 'campaign.verify', 'campaign.export']) {
     if (!description.actions[action]) throw new Error(`Public action is missing: ${action}`);
   }
 
@@ -522,6 +523,15 @@ try {
     pH:7.4, histidine:'auto', repairMissingHeavy:true,
     ligandPolicy:'ccd', waterPolicy:'retain', gapPolicy:'cap',
   }, 'route-prepare-hit');
+  const campaignId = `sos1-run-${digest(Buffer.from(
+    relative(root, output) || basename(output))).slice(0, 16)}`;
+  await execute('campaign.create', {
+    campaignId,
+    title:'SOS1 hit-only prospective design route',
+    description:'Full-system checkpoints created by the public Chemist Actions API.',
+    actorId:'agent.sos1-runner', actorName:'SOS1 prospective runner',
+    initialCommitMessage:'Capture the prepared 5OVE/AXE coordinate boundary',
+  }, 'route-create-design-history');
   await execute('pose.captureReference', { mode:'propagate' }, 'route-capture-hit');
   const boundary = await execute('designRoute.inspect', {}, 'route-inspect-boundary');
   let previousFrozenLigand = null;
@@ -608,6 +618,33 @@ try {
         throw new Error(`${stepId}: Phe890 left the selected predecessor rotamer basin`);
     }
     const current = await execute('designRoute.inspect', {}, `${stepId}-inspect-state`);
+    const campaignCommit = await execute('campaign.commitCurrent', {
+      message:`Freeze ${stepId} prospective molecular state`,
+      label:`${stepId} prediction`,
+      tags:['sos1-hit-only', 'pre-holdout', stepId],
+    }, `${stepId}-commit-full-system`);
+    const campaignVerification = await execute('campaign.verify', {},
+      `${stepId}-verify-full-system`);
+    if (campaignVerification.result.campaignVerification?.valid !== true)
+      throw new Error(`${stepId}: full-system Design History failed verification`);
+    const campaignExport = await execute('campaign.export', {},
+      `${stepId}-export-full-system`);
+    const campaignBytes = Buffer.from(
+      campaignExport.result.campaignExport.serialized);
+    const campaignFilename = `${stepId}-campaign.json`;
+    await writeFile(join(output, campaignFilename), campaignBytes);
+    const campaignRecord = {
+      schema:'molarium.full-system-checkpoint/v1',
+      campaignId:campaignExport.result.campaignExport.campaignId,
+      branch:campaignExport.result.campaignExport.branch,
+      commitId:campaignCommit.result.campaignCommit.commitId,
+      snapshotId:campaignCommit.result.campaignCommit.snapshotId,
+      filename:campaignFilename,
+      sha256:digest(campaignBytes), bytes:campaignBytes.length,
+      commitActionSequence:campaignCommit.sequence,
+      exportActionSequence:campaignExport.sequence,
+      verification:campaignVerification.result.campaignVerification,
+    };
     const checkpoint = {
       schema:'molarium.design-prediction-checkpoint/v1',
       routeId:'sos1-hit-only', stepId,
@@ -620,6 +657,7 @@ try {
       refinement, parameterization,
       rotamerDecision, relaxation,
       sidechainContinuity,
+      fullSystemCampaign:campaignRecord,
       ligand:ligand.result, pocket:pocket.result,
     };
     const bytes = Buffer.from(`${JSON.stringify(checkpoint, null, 2)}\n`);
@@ -630,6 +668,7 @@ try {
       ligandCoordinateSha256:coordinateDigest(ligand),
       pocketCoordinateSha256:coordinateDigest(pocket),
       freezeActionSequence:pocket.sequence,
+      fullSystemCampaign:campaignRecord,
       ...(rotamerDecision ? { rotamerSelection:{
         inputCoordinateSha256:rotamerDecision.enumeration.inputCoordinateSha256,
         selectedCoordinateSha256:rotamerDecision.selected.selectedCoordinateSha256,
