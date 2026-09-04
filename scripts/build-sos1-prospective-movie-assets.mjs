@@ -15,6 +15,8 @@ import {
 } from '../design-history/structures/pipeline.mjs';
 import { verifyFrozenDesignRouteInput } from
   '../design-history/structures/design-route-provenance.mjs';
+import { requireExplicitRunDirectory,
+  verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -23,10 +25,9 @@ const valueFor = (name) => {
   if (index >= 0) return args[index + 1];
   return args.find((entry) => entry.startsWith(`${name}=`))?.slice(name.length + 1);
 };
-const runDirectory = resolve(root, valueFor('--run')
-  || 'outputs/design-history/sos1-hit-only-growth-clash-v7');
+const runDirectory = requireExplicitRunDirectory(args, { root });
 const reviewPath = resolve(root, valueFor('--review')
-  || 'outputs/design-history/sos1-hit-only-growth-clash-v7/review/data.json');
+  || join(relative(root, runDirectory), 'review/data.json'));
 const sourceDirectory = resolve(root, valueFor('--source-dir')
   || 'outputs/design-history/sos1-preapproval/source');
 const generated = resolve(root, valueFor('--output') || 'design-history/structures/generated');
@@ -178,32 +179,17 @@ function pheIntermediate(startText, targetText, progress, ordinal) {
 }
 
 async function verifyPredictionRun() {
-  const manifestBytes = await readFile(join(runDirectory, 'prediction-manifest.json'));
-  const manifest = JSON.parse(manifestBytes);
-  assert.equal(manifest.routeId, 'sos1-hit-only');
-  assert.equal(manifest.status, 'predictions-frozen-holdouts-unopened');
-  assert.equal(manifest.protocol.initialCoordinateInput, 'PDB 5OVE/AXE only');
-  assert.equal(manifest.protocol.sequentialPredictedReferences, true);
-  const checkpoints = new Map();
-  for (const frozen of manifest.checkpoints) {
-    const bytes = await readFile(join(runDirectory, frozen.filename));
-    assert.equal(digest(bytes), frozen.sha256, `${frozen.stepId}: prediction hash changed`);
-    const checkpoint = JSON.parse(bytes);
-    assert.equal(checkpoint.frozenBeforeHoldoutAccess, true);
-    checkpoints.set(frozen.stepId, { frozen, checkpoint, bytes });
-  }
-  const auditBytes = await readFile(join(runDirectory, 'chemist-action-audit.json'));
-  assert.equal(digest(auditBytes), manifest.agentApi.auditSha256, 'Agent API audit hash changed');
-  assert.equal(JSON.parse(auditBytes).records.length, manifest.agentApi.auditRecords);
+  const accepted = await verifyAcceptedSos1Run(runDirectory);
+  const { manifestBytes, manifest, auditBytes } = accepted;
+  const checkpoints = new Map([...accepted.checkpoints].map(([stepId, value]) =>
+    [stepId, { frozen:value.entry, checkpoint:value.checkpoint, bytes:value.bytes }]));
   const campaignBytes = await readFile(join(root, manifest.inputs.campaign.path));
   const campaignInput = verifyFrozenDesignRouteInput(
     campaignBytes, manifest.inputs.campaign.sha256);
   const runnerBytes = await readFile(join(root, manifest.inputs.runner.path));
   assert.equal(digest(runnerBytes), manifest.inputs.runner.sha256, 'runner hash changed');
-  const evaluationSummaryBytes = await readFile(join(runDirectory, 'holdout-evaluation-summary.json'));
-  const evaluationSummary = JSON.parse(evaluationSummaryBytes);
-  assert.equal(evaluationSummary.predictionManifestSha256, digest(manifestBytes));
-  assert.equal(evaluationSummary.holdoutsOpenedOnlyAfterAllFreezeHashesAndAgentAuditVerified, true);
+  const evaluationSummaryBytes = accepted.evaluationBytes;
+  const evaluationSummary = accepted.evaluation;
   const evaluations = new Map();
   for (const spec of STEPS) {
     const bytes = await readFile(join(runDirectory, `${spec.id}-holdout-evaluation.json`));
@@ -225,7 +211,7 @@ const verified = await verifyPredictionRun();
 const reviewBytes = await readFile(reviewPath);
 const review = JSON.parse(reviewBytes);
 assert.equal(review.schema, 'molarium.structure-overlay-review/v1');
-assert.equal(review.id, 'sos1-v7-prediction-review');
+assert.equal(review.id, 'sos1-accepted-prediction-review');
 assert.equal(review.sources.predictionManifestSha256, digest(verified.manifestBytes));
 assert.equal(review.sources.evaluationSummarySha256, digest(verified.evaluationSummaryBytes));
 const byId = new Map(review.ligands.map((entry) => [entry.id, entry]));

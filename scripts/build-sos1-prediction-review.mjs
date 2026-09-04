@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import {
   alignModels, atomsForResidue, coordinateSphere, parsePdb, sha256, subsetPdb,
 } from '../design-history/structures/pipeline.mjs';
+import { requireExplicitRunDirectory, verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const viewerDirectory = path.join(root, 'design-history/structure-review');
@@ -37,8 +38,7 @@ function parseArguments(argv) {
     if (!name?.startsWith('--') || !value) throw new Error('Arguments must be --name value pairs');
     values[name.slice(2)] = value;
   }
-  const runDirectory = path.resolve(values.run || path.join(root,
-    'outputs/design-history/sos1-hit-only-growth-clash-v7'));
+  const runDirectory = requireExplicitRunDirectory(argv, { root });
   return {
     runDirectory,
     sourceDirectory:path.resolve(values['source-dir'] || path.join(root,
@@ -80,28 +80,8 @@ function roundedSphere(atoms) {
 }
 
 async function verifiedRun(runDirectory) {
-  const manifestBytes = await readFile(path.join(runDirectory, 'prediction-manifest.json'));
-  const manifest = JSON.parse(manifestBytes);
-  assert.equal(manifest.status, 'predictions-frozen-holdouts-unopened');
-  assert.equal(manifest.protocol.initialCoordinateInput, 'PDB 5OVE/AXE only');
-  const checkpoints = new Map();
-  for (const entry of manifest.checkpoints) {
-    const bytes = await readFile(path.join(runDirectory, entry.filename));
-    assert.equal(sha256(bytes), entry.sha256, `${entry.stepId}: frozen prediction hash changed`);
-    const checkpoint = JSON.parse(bytes);
-    assert.equal(checkpoint.frozenBeforeHoldoutAccess, true);
-    checkpoints.set(entry.stepId, { entry, checkpoint });
-  }
-  const auditBytes = await readFile(path.join(runDirectory, 'chemist-action-audit.json'));
-  assert.equal(sha256(auditBytes), manifest.agentApi.auditSha256, 'Agent API audit hash changed');
-  const campaignBytes = await readFile(path.join(root, manifest.inputs.campaign.path));
-  assert.equal(sha256(campaignBytes), manifest.inputs.campaign.sha256, 'campaign hash changed');
-  const runnerBytes = await readFile(path.join(root, manifest.inputs.runner.path));
-  assert.equal(sha256(runnerBytes), manifest.inputs.runner.sha256, 'runner hash changed');
-  const evaluationBytes = await readFile(path.join(runDirectory, 'holdout-evaluation-summary.json'));
-  const evaluation = JSON.parse(evaluationBytes);
-  assert.equal(evaluation.predictionManifestSha256, sha256(manifestBytes));
-  assert.equal(evaluation.holdoutsOpenedOnlyAfterAllFreezeHashesAndAgentAuditVerified, true);
+  const accepted = await verifyAcceptedSos1Run(runDirectory);
+  const { manifestBytes, manifest, checkpoints, evaluationBytes, evaluation } = accepted;
   const evaluationDetails = new Map();
   for (const summary of evaluation.results) {
     const detailBytes = await readFile(path.join(runDirectory,
@@ -217,7 +197,7 @@ async function main() {
     title:'Frozen prospective contact pocket', proteinRecords:true,
   });
   const data = {
-    schema:'molarium.structure-overlay-review/v1', id:'sos1-v7-prediction-review',
+    schema:'molarium.structure-overlay-review/v1', id:'sos1-accepted-prediction-review',
     title:'SOS1 prospective prediction review',
     subtitle:'Frozen hit-only predictions against post-freeze crystal evaluation',
     boundary:'Only 5OVE/AXE seeded the trajectory. 5OVF–5OVI were opened after all prediction and Agent API hashes passed.',

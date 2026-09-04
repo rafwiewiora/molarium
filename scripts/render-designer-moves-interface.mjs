@@ -3,10 +3,12 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { actionScriptSha256, validateActionScript } from '../design-history/replay.mjs';
+import { actionScriptSha256 } from '../design-history/replay.mjs';
 import { buildPocketInterfaceStory } from '../design-history/interface-story.mjs';
 import { promoteCompletedRender } from './atomic-render-output.mjs';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
+import { buildAcceptedSos1ReplayScript, requireExplicitRunDirectory,
+  verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -18,17 +20,19 @@ const valueFor = (name) => {
 };
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const delay = (milliseconds) => new Promise((resolveDelay) => setTimeout(resolveDelay, milliseconds));
-const scriptPath = resolve(root, valueFor('--script')
-  || 'design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json');
+const runDirectory = requireExplicitRunDirectory(args, { root });
 const output = resolve(root, valueFor('--output')
-  || 'outputs/design-history/sos1-hit-only-growth-clash-v7/interface-movie');
+  || join(relative(root, runDirectory), 'interface-movie'));
 const width = Number(valueFor('--width') || 1600);
 const height = Number(valueFor('--height') || 1000);
 const fps = Number(valueFor('--fps') || 12);
 const smoke = has('--smoke');
 const sourceActionLimit = Number(valueFor('--source-actions') || 0);
-const sourceScriptBytes = await readFile(scriptPath);
-const sourceScript = validateActionScript(JSON.parse(sourceScriptBytes));
+const verifiedRun = await verifyAcceptedSos1Run(runDirectory);
+const acceptedReplay = await buildAcceptedSos1ReplayScript(verifiedRun);
+const sourceScript = acceptedReplay.script;
+const sourceScriptBytes = Buffer.from(`${JSON.stringify(sourceScript, null, 2)}\n`);
+const sourceScriptArtifactPath = `${relative(root, runDirectory)}/accepted-selected-route.action-script.json`;
 const sourceActions = smoke ? sourceScript.actions.slice(0, 4)
   : sourceActionLimit > 0 ? sourceScript.actions.slice(0, sourceActionLimit)
     : sourceScript.actions;
@@ -36,7 +40,7 @@ const presentationScript = buildPocketInterfaceStory({
   schema:sourceScript.schema,
   label:sourceScript.label,
   actions:sourceActions,
-}, { sourcePath:relative(root, scriptPath), sourceSha256:digest(sourceScriptBytes) });
+}, { sourcePath:sourceScriptArtifactPath, sourceSha256:digest(sourceScriptBytes) });
 const presentationScriptSha256 = await actionScriptSha256(presentationScript);
 const presentationBytes = Buffer.from(`${JSON.stringify(presentationScript, null, 2)}\n`);
 
@@ -44,6 +48,7 @@ await mkdir(dirname(output), { recursive:true });
 const temporary = await mkdtemp(join(tmpdir(), 'molarium-interface-movie-'));
 const publicationStaging = await mkdtemp(join(dirname(output),
   `.${basename(output)}.pending-`));
+const sourceScriptPath = join(publicationStaging, 'source.action-script.json');
 const presentationPath = join(publicationStaging, 'presentation.action-script.json');
 const frameDirectory = join(temporary, 'frames');
 const qaDirectory = join(publicationStaging, 'qa');
@@ -139,6 +144,7 @@ async function waitForVisibleResult(actionNumber, timeoutMs = 5000) {
 try {
   await mkdir(frameDirectory);
   await mkdir(qaDirectory, { recursive:true });
+  await writeFile(sourceScriptPath, sourceScriptBytes);
   await writeFile(presentationPath, presentationBytes);
   browser = await startMolariumBrowser({ root,
     appPath:'index.html?blank=1&designer-moves-movie=1', width, height, localOnly:true });
@@ -229,15 +235,22 @@ try {
   const stream = JSON.parse(await new Response(probe.stdout).text()).streams?.[0];
   const audit = await browser.evaluate(`window.MolariumChemistActions.history()`);
   const auditBytes = Buffer.from(`${JSON.stringify({ schema:'molarium.chemist-actions/v1',
-    sourceScript:relative(root, scriptPath), records:audit }, null, 2)}\n`);
+    sourceScript:sourceScriptArtifactPath, records:audit }, null, 2)}\n`);
   await writeFile(join(publicationStaging, 'chemist-action-audit.json'), auditBytes);
   const rendererBytes = await readFile(fileURLToPath(import.meta.url));
   const manifest = {
     schema:'molarium.designer-moves-interface-render/v1',
     generatedAt:new Date().toISOString(),
     operationBoundary:'The renderer imports JSON and presses visible Molarium controls; all molecular operations execute through window.MolariumChemistActions.',
-    sourceScript:{ path:relative(root, scriptPath), fileSha256:digest(sourceScriptBytes),
-      actionScriptSha256:await actionScriptSha256(sourceScript), actions:sourceScript.actions.length },
+    acceptedRun:{ id:verifiedRun.runId,
+      predictionManifestSha256:digest(verifiedRun.manifestBytes),
+      evaluationSummarySha256:digest(verifiedRun.evaluationBytes), accepted:true },
+    sourceScript:{ path:'source.action-script.json', provenancePath:sourceScriptArtifactPath,
+      fileSha256:digest(sourceScriptBytes),
+      actionScriptSha256:await actionScriptSha256(sourceScript), actions:sourceScript.actions.length,
+      sourceAuditSha256:acceptedReplay.sourceAuditSha256,
+      sourceAuditRecords:acceptedReplay.sourceAuditRecords,
+      selectedAuditSequences:acceptedReplay.selectedAuditSequences },
     presentationScript:{ path:'presentation.action-script.json',
       fileSha256:digest(presentationBytes), actionScriptSha256:presentationScriptSha256,
       actions:presentationScript.actions.length, insertedViewActions:

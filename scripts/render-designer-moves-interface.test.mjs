@@ -48,6 +48,12 @@ try {
     'the renderer must not race the application module and its UI listeners');
   assert.match(renderer, /action:'designerScript\.load'/,
     'the renderer imports the exact JSON through the public Agent API');
+  assert.match(renderer, /requireExplicitRunDirectory\(args/,
+    'the renderer must never select an SOS1 run implicitly');
+  assert.match(renderer, /verifyAcceptedSos1Run\(runDirectory\)/,
+    'the renderer must reject a run that failed independent evaluation');
+  assert.match(renderer, /path:'source\.action-script\.json'/,
+    'the selected public source actions must be retained with the render');
   assert.doesNotMatch(renderer, /DOM\.setFileInputFiles/,
     'the renderer must not depend on a synthetic operating-system file event');
   assert.match(renderer, /path:'presentation\.action-script\.json'/,

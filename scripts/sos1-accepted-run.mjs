@@ -1,0 +1,190 @@
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
+import { basename, join, resolve } from 'node:path';
+import { actionScriptFromAudit, actionScriptSha256,
+  validateActionScript } from '../design-history/replay.mjs';
+
+export const SOS1_ROUTE_ID = 'sos1-hit-only';
+export const SOS1_STEP_IDS = Object.freeze([
+  'scaffold-rewrite', 'fragment-merge', 'open-phe890-pocket', 'finish-bay-293',
+]);
+const HOLDOUT_IDS = Object.freeze(['5OVF', '5OVG', '5OVH', '5OVI']);
+
+export function sha256(bytes) {
+  return createHash('sha256').update(bytes).digest('hex');
+}
+
+export function argumentValue(argv, name) {
+  const index = argv.indexOf(name);
+  if (index >= 0) {
+    const value = argv[index + 1];
+    if (!value || value.startsWith('--')) throw new Error(`${name} requires a value`);
+    return value;
+  }
+  return argv.find((entry) => entry.startsWith(`${name}=`))?.slice(name.length + 1) || null;
+}
+
+export function requireExplicitRunDirectory(argv, { root = process.cwd() } = {}) {
+  const value = argumentValue(argv, '--run');
+  if (!value) throw new Error('--run is required; SOS1 publication assets never select a run implicitly');
+  return resolve(root, value);
+}
+
+function assertNoHoldoutCoordinatePayload(value, path = 'checkpoint') {
+  if (Array.isArray(value)) {
+    value.forEach((entry, index) => assertNoHoldoutCoordinatePayload(entry, `${path}[${index}]`));
+    return;
+  }
+  if (!value || typeof value !== 'object') return;
+  const coordinatePayload = Object.hasOwn(value, 'coordinatesAngstrom')
+    || Object.hasOwn(value, 'coordinates') || Object.hasOwn(value, 'pdbText')
+    || Object.hasOwn(value, 'molBlock');
+  const holdoutIdentity = value.coordinateClass === 'evaluation-only-holdout'
+    || value.role === 'evaluation-only'
+    || HOLDOUT_IDS.includes(String(value.pdbId || '').toUpperCase())
+    || HOLDOUT_IDS.includes(String(value.holdoutPdbId || '').toUpperCase());
+  if (coordinatePayload && holdoutIdentity)
+    throw new Error(`${path} contains evaluation-only holdout coordinates`);
+  for (const [key, entry] of Object.entries(value))
+    assertNoHoldoutCoordinatePayload(entry, `${path}.${key}`);
+}
+
+function assertReplayContainsNoCoordinatesOrHoldouts(script) {
+  const serialized = JSON.stringify(script);
+  for (const pdbId of HOLDOUT_IDS)
+    assert(!serialized.includes(pdbId), `Replay script contains holdout identifier ${pdbId}`);
+  const forbiddenKeys = new Set(['coordinates', 'coordinatesAngstrom', 'directCoordinates',
+    'pdbText', 'molBlock', 'internalCallback', 'privateRoute']);
+  const visit = (value, path = 'script') => {
+    if (Array.isArray(value)) return value.forEach((entry, index) => visit(entry, `${path}[${index}]`));
+    if (!value || typeof value !== 'object') return;
+    for (const [key, entry] of Object.entries(value)) {
+      if (forbiddenKeys.has(key)) throw new Error(`${path}.${key} embeds coordinates or a private shortcut`);
+      visit(entry, `${path}.${key}`);
+    }
+  };
+  visit(script);
+}
+
+/**
+ * Verify the immutable pre-freeze evidence and the independent post-freeze
+ * acceptance verdict before a run may feed any public replay or movie asset.
+ */
+export async function verifyAcceptedSos1Run(runDirectory) {
+  const directory = resolve(runDirectory);
+  const [manifestBytes, evaluationBytes, auditBytes] = await Promise.all([
+    readFile(join(directory, 'prediction-manifest.json')),
+    readFile(join(directory, 'holdout-evaluation-summary.json')),
+    readFile(join(directory, 'chemist-action-audit.json')),
+  ]);
+  const manifest = JSON.parse(manifestBytes);
+  const evaluation = JSON.parse(evaluationBytes);
+  const audit = JSON.parse(auditBytes);
+  assert.equal(manifest.schema, 'molarium.design-prediction-run/v1');
+  assert.equal(manifest.routeId, SOS1_ROUTE_ID);
+  assert.equal(manifest.status, 'predictions-frozen-holdouts-unopened');
+  assert.equal(manifest.protocol?.initialCoordinateInput, 'PDB 5OVE/AXE only');
+  assert.equal(manifest.protocol?.sequentialPredictedReferences, true);
+  assert.equal(manifest.agentApi?.auditSha256, sha256(auditBytes),
+    'Chemist Actions audit changed after prediction freeze');
+  assert.equal(manifest.agentApi?.auditRecords, audit.records?.length,
+    'Chemist Actions audit record count changed');
+  assert.equal(evaluation.schema, 'molarium.design-prediction-holdout-evaluation-summary/v2');
+  assert.equal(evaluation.routeId, SOS1_ROUTE_ID);
+  assert.equal(evaluation.predictionManifestSha256, sha256(manifestBytes),
+    'holdout evaluation does not belong to this prediction manifest');
+  assert.equal(evaluation.holdoutsOpenedOnlyAfterAllFreezeHashesAndAgentAuditVerified, true);
+  assert.equal(evaluation.accepted, true,
+    'SOS1 run was not accepted by the independent holdout evaluation');
+  assert.equal(evaluation.continuity?.accepted, true,
+    'AWW-to-AXH continuity was not accepted');
+  assert.deepEqual(evaluation.results?.map((entry) => entry.stepId), SOS1_STEP_IDS,
+    'holdout evaluation is not the complete SOS1 route');
+  assert(evaluation.results.every((entry) => entry.accepted === true
+    && Array.isArray(entry.failedChecks) && entry.failedChecks.length === 0),
+  'one or more SOS1 holdout evaluations failed');
+  assert.deepEqual(manifest.checkpoints?.map((entry) => entry.stepId), SOS1_STEP_IDS,
+    'prediction manifest is not the complete SOS1 route');
+
+  const checkpoints = new Map();
+  for (const entry of manifest.checkpoints) {
+    const bytes = await readFile(join(directory, entry.filename));
+    assert.equal(sha256(bytes), entry.sha256, `${entry.stepId}: frozen checkpoint changed`);
+    const checkpoint = JSON.parse(bytes);
+    assert.equal(checkpoint.stepId, entry.stepId);
+    assert.equal(checkpoint.frozenBeforeHoldoutAccess, true);
+    assertNoHoldoutCoordinatePayload(checkpoint, `${entry.stepId} checkpoint`);
+    checkpoints.set(entry.stepId, { entry, checkpoint, bytes });
+  }
+  return Object.freeze({ directory, runId:basename(directory), manifest, manifestBytes,
+    evaluation, evaluationBytes, audit, auditBytes, checkpoints });
+}
+
+function selectedRouteRecord(record) {
+  if (record?.status !== 'completed') return false;
+  if (record.action === 'session.inspect' || record.action === 'designRoute.inspect') return false;
+  const requestId = String(record.requestId || '');
+  if (!requestId.startsWith('open-phe890-pocket-')) return true;
+  if (/-branch-\d+(?:-|$)/.test(requestId)) return false;
+  if (/-enumerate-phe890-(?:initial|branch-\d+)$/.test(requestId)) return false;
+  return !requestId.endsWith('-locate-phe890');
+}
+
+function captionForRecord(record) {
+  const id = String(record.requestId || '');
+  const captions = [
+    [/route-load-hit$/, 'Begin with the only allowed coordinates: the 5OVE/AXE hit'],
+    [/route-enter-build$/, 'Enter Design to make the first prospective decision'],
+    [/route-prepare-hit$/, 'Prepare the experimental hit complex locally'],
+    [/route-capture-hit$/, 'Capture the hit pose and pocket as the first design reference'],
+    [/scaffold-rewrite-stage$/, 'Rewrite the hit scaffold to make compound 17'],
+    [/fragment-merge-stage$/, 'Merge the larger fragment idea to make compound 18'],
+    [/open-phe890-pocket-stage$/, 'Grow compound 21 into the Phe890-in volume'],
+    [/enumerate-phe890-final$/, 'Enumerate the complete Phe890 chi1/chi2 rotamer set'],
+    [/apply-selected-phe890-branch$/, 'Choose the predicted Phe890-out branch'],
+    [/accept-selected-receptor-branch$/, 'Use the selected open pocket as the receptor reference'],
+    [/pose-selected-phe890-branch$/, 'Search ligand poses against the selected Phe890-out pocket'],
+    [/apply-selected-phe890-pose$/, 'Apply the coupled ligand–pocket solution'],
+    [/finish-bay-293-stage$/, 'Construct the final BAY-293 graph from compound 21'],
+    [/-pose-refine$/, 'Search the registered ligand pose ensemble'],
+    [/-pose-apply$/, 'Apply the highest-ranked feasible pose'],
+    [/-parameterize(?:-without-motion)?$/, 'Parameterize the selected ligand–pocket state'],
+    [/-complex-relax$/, 'Relax the ligand and pocket together'],
+    [/-advance-build$/, 'Return to Design with the accepted prediction'],
+    [/-capture-predicted-reference$/, 'Capture this prediction as the next design reference'],
+  ];
+  return captions.find(([pattern]) => pattern.test(id))?.[1]
+    || id.replaceAll('-', ' ').replace(/^\w/, (value) => value.toUpperCase());
+}
+
+/** Build the calculation-bearing, selected-route replay from a verified run audit. */
+export async function buildAcceptedSos1ReplayScript(verified) {
+  const records = verified.audit.records || [];
+  const selected = records.filter(selectedRouteRecord);
+  const sequences = selected.map((record) => record.sequence);
+  const captionsBySequence = Object.fromEntries(selected.map((record) =>
+    [record.sequence, captionForRecord(record)]));
+  const script = actionScriptFromAudit(verified.audit, {
+    label:`SOS1 hit-to-BAY-293 accepted run ${verified.runId}`,
+    includeReadOnly:false,
+    includeSequences:sequences,
+    captionsBySequence,
+    includeAuditMetadata:true,
+    provenance:{ runId:verified.runId,
+      predictionManifestSha256:sha256(verified.manifestBytes),
+      evaluationSummarySha256:sha256(verified.evaluationBytes),
+      accepted:true },
+  });
+  validateActionScript(script);
+  assertReplayContainsNoCoordinatesOrHoldouts(script);
+  assert.deepEqual(script.actions.filter((step) => step.action === 'designRoute.applyStep')
+    .map((step) => step.args.stepId), SOS1_STEP_IDS);
+  assert.equal(script.actions.filter((step) => step.action === 'pose.applySidechainRotamer').length,
+    1, 'selected-route replay must apply exactly one Phe890 rotamer');
+  assert(script.actions.every((step) => !step.action.startsWith('designerScript.')
+    && step.action !== 'interface.presentDesignerStep'));
+  return Object.freeze({ script, actionScriptSha256:await actionScriptSha256(script),
+    sourceAuditSha256:sha256(verified.auditBytes), sourceAuditRecords:records.length,
+    selectedAuditSequences:sequences });
+}
