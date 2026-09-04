@@ -69,7 +69,7 @@ Undo, and Redo therefore behave exactly as they do for an interactive user.
 - `chemistry.deleteAtom`, `chemistry.deleteBond`
 - `chemistry.addHydrogen`, `chemistry.removeHydrogen`
 - `chemistry.finish`, `chemistry.discard`
-- `ligand.enumerateProtonation`, `ligand.applyProtonation`
+- `ligand.installRegisteredGraph`, `ligand.enumerateProtonation`, `ligand.applyProtonation`
 - `geometry.setInternalCoordinate`, `geometry.translateAtoms`
 - `fragment.stage`, `fragment.attach`
 - `history.undo`, `history.redo`
@@ -141,6 +141,22 @@ also require `attachmentAtomId`, the same persistent ligand atom ID that an inte
 selects as the exit vector; the route rejects a symmetry-equivalent map attached anywhere else.
 Later protein or ligand coordinates are not available to the route. Evaluation holdouts remain
 locked until prediction coordinates and their action audit have been frozen.
+
+## Installing reviewed ligand chemistry in Local Lab
+
+`ligand.installRegisteredGraph` binds an exact registered graph to an explicitly located ligand
+that already has coordinates. The request supplies the residue locator, the complete named graph,
+and the SHA-256 of its canonical graph representation. Molarium rejects a hash mismatch, ambiguous
+or incomplete atom-name mapping, element mismatch, disconnected graph, or any heavy-coordinate
+movement. The completed action reports input and output molecular-state hashes and is recorded in
+the ordinary action audit. It does not fetch a chemical-component record.
+
+After installation, `protein.prepare` may use `ligandPolicy: "registered"`. That mode prepares the
+installed graph from its pinned local definition, excludes other unregistered heterogens, and makes
+no CCD network request. Figure 1 uses this sequence with the bundled BQ5 definition: load 6EPM,
+install the BQ5 graph at chain S residue 1101, prepare in registered-only mode, and inspect the
+result. RDKit WebAssembly then generates the visible 2D layout from the installed chemistry; its
+coordinates are not used as molecular coordinates.
 
 There is no alternate or compatibility alias for these actions. Saved scripts, interactive replay,
 and agent calls all use the same `designRoute.*` names. Only `designRoute.load` accepts `routeId`.

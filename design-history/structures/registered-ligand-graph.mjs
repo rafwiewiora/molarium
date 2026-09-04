@@ -13,6 +13,52 @@ function normalizedResidueIdentity(atom) {
   };
 }
 
+function normalizeLocator(locator, fallbackResidueName = '') {
+  const value = requireObject(locator, 'Registered ligand locator');
+  const residueName = String(value.residueName || fallbackResidueName).trim().toUpperCase();
+  const chain = String(value.chain || '');
+  const residueIndex = Number(value.residueIndex);
+  const insertionCode = String(value.insertionCode || '');
+  if (!residueName || !chain || !Number.isInteger(residueIndex))
+    throw new Error('Registered ligand locator requires residueName, chain, and integer residueIndex');
+  return { residueName, chain, residueIndex, insertionCode };
+}
+
+export function canonicalRegisteredLigandDefinition(definition) {
+  requireObject(definition, 'Registered ligand definition');
+  const id = String(definition.id || '').trim().toUpperCase();
+  if (!id || !Array.isArray(definition.atoms) || !Array.isArray(definition.bonds))
+    throw new Error('Registered ligand definition requires id, atoms, and bonds');
+  const atoms = definition.atoms.map((atom) => ({
+    id:String(atom?.id || '').trim(), element:String(atom?.element || '').trim(),
+    formalCharge:Number(atom?.formalCharge ?? atom?.charge ?? 0),
+    aromatic:Boolean(atom?.aromatic), leaving:Boolean(atom?.leaving),
+  })).sort((first, second) => first.id.localeCompare(second.id));
+  if (atoms.some((atom) => !atom.id || !atom.element || !Number.isInteger(atom.formalCharge)))
+    throw new Error(`Registered ${id} atoms require names, elements, and integer formal charges`);
+  const names = new Set(atoms.map((atom) => atom.id));
+  if (names.size !== atoms.length) throw new Error(`Registered ${id} atom names must be unique`);
+  const bondKeys = new Set();
+  const bonds = definition.bonds.map((bond) => {
+    const endpoints = [String(bond?.a || '').trim(), String(bond?.b || '').trim()]
+      .sort((first, second) => first.localeCompare(second));
+    const [a, b] = endpoints;
+    const order = Number(bond?.order ?? 1);
+    if (!names.has(a) || !names.has(b) || a === b || !Number.isFinite(order)
+      || order <= 0 || order > 4)
+      throw new Error(`Registered ${id} contains an invalid bond`);
+    const key = `${a}:${b}`;
+    if (bondKeys.has(key)) throw new Error(`Registered ${id} contains duplicate bond ${key}`);
+    bondKeys.add(key);
+    return { a, b, order, aromatic:Boolean(bond?.aromatic) };
+  }).sort((first, second) => `${first.a}:${first.b}`.localeCompare(`${second.a}:${second.b}`));
+  return { schema:'molarium.registered-ligand-graph/v1', id, atoms, bonds };
+}
+
+export function serializeRegisteredLigandDefinition(definition) {
+  return JSON.stringify(canonicalRegisteredLigandDefinition(definition));
+}
+
 export function validateConnectedMolecularGraph(molecule, { maximumAtoms = 256 } = {}) {
   requireObject(molecule, 'Molecule');
   if (!Array.isArray(molecule.atoms) || !molecule.atoms.length)
@@ -70,7 +116,7 @@ export function validateConnectedMolecularGraph(molecule, { maximumAtoms = 256 }
  * are deliberately ignored and no missing atom (including hydrogen) is added.
  */
 export function applyRegisteredLigandDefinition(inputMolecule, {
-  residueName, definition,
+  residueName, locator:requestedLocator = null, definition,
 } = {}) {
   requireObject(inputMolecule, 'Coordinate molecule');
   requireObject(definition, 'Registered ligand definition');
@@ -94,10 +140,17 @@ export function applyRegisteredLigandDefinition(inputMolecule, {
   if (!retainedHeavyNames.length)
     throw new Error(`Registered ${expectedResidueName} definition has no retained heavy atoms`);
 
+  const targetLocator = requestedLocator
+    ? normalizeLocator(requestedLocator, expectedResidueName) : null;
+  if (targetLocator && targetLocator.residueName !== expectedResidueName)
+    throw new Error('Registered ligand locator and definition residue names differ');
   const candidateGroups = new Map();
   inputMolecule.atoms.forEach((atom, index) => {
     if (String(atom.residueName || '').trim().toUpperCase() !== expectedResidueName) return;
     const identity = normalizedResidueIdentity(atom);
+    if (targetLocator && (identity.chain !== targetLocator.chain
+      || identity.residueIndex !== targetLocator.residueIndex
+      || identity.insertionCode !== targetLocator.insertionCode)) return;
     const key = `${identity.chain}:${identity.residueIndex}:${identity.insertionCode}:${identity.residueName}`;
     if (!candidateGroups.has(key)) candidateGroups.set(key, { identity, indices:[] });
     candidateGroups.get(key).indices.push(index);
@@ -129,7 +182,7 @@ export function applyRegisteredLigandDefinition(inputMolecule, {
   ]);
   for (const [name, index] of existingByName) {
     const expected = definitionByName.get(name);
-    molecule.atoms[index].charge = Number(expected.charge || 0);
+    molecule.atoms[index].charge = Number(expected.formalCharge ?? expected.charge ?? 0);
     molecule.atoms[index].aromatic = Boolean(expected.aromatic);
     molecule.atoms[index].ccd = expectedResidueName;
   }
@@ -158,6 +211,7 @@ export function applyRegisteredLigandDefinition(inputMolecule, {
     throw new Error('Registered ligand graph installation changed coordinate-bearing PDB atoms');
   const locator = { ...group.identity };
   molecule.source = { ...(molecule.source || {}), registeredLigandGraph:{
+    ...(molecule.source?.registeredLigandGraph || {}),
     definitionId:String(definition.id || expectedResidueName), locator,
     atomNameMapping:'exact residue and PDB atom names', coordinates:'unchanged PDB input',
     heavyAtomCount:graph.heavyAtomCount, bondCount:graph.bondCount,

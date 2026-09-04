@@ -96,6 +96,7 @@ const reviewedFiles = [
   'design-history/replay.mjs',
   'design-history/structures/design-route.mjs',
   'design-history/structures/registered-ligand-graph.mjs',
+  'design-history/structures/ligands/bq5-rcsb-ccd.json',
   'design-history/examples/sos1-publication.json',
   'design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
 ];

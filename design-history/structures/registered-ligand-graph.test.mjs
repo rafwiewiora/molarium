@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
-import { applyRegisteredLigandDefinition, validateConnectedMolecularGraph } from
+import { applyRegisteredLigandDefinition, serializeRegisteredLigandDefinition,
+  validateConnectedMolecularGraph } from
   './registered-ligand-graph.mjs';
 
 const route = JSON.parse(await readFile(new URL(
@@ -55,5 +57,56 @@ assert.throws(() => applyRegisteredLigandDefinition({ ...raw,
   residueName:'AXE', definition:route.hit.ligandDefinition,
 }), /exactly one residue/,
 'an ambiguous residue mapping must fail closed');
+
+const explicitlyLocated = applyRegisteredLigandDefinition({ ...raw,
+  atoms:[...raw.atoms, { ...raw.atoms[0], chain:'B' }] }, {
+  residueName:'AXE', locator:{ residueName:'AXE', chain:'A', residueIndex:1104,
+    insertionCode:'' }, definition:route.hit.ligandDefinition,
+});
+assert.equal(explicitlyLocated.heavyAtomCount, 27,
+  'an explicit locator must select only the requested coordinate ligand');
+
+const bq5Definition = JSON.parse(await readFile(new URL(
+  './ligands/bq5-rcsb-ccd.json', import.meta.url), 'utf8'));
+assert.equal(createHash('sha256').update(serializeRegisteredLigandDefinition(
+  bq5Definition)).digest('hex'), bq5Definition.graphSha256,
+'the bundled BQ5 definition must match its semantic graph hash');
+assert.equal(createHash('sha256').update(serializeRegisteredLigandDefinition({
+  ...bq5Definition, atoms:[...bq5Definition.atoms].reverse(),
+  bonds:[...bq5Definition.bonds].reverse(),
+})).digest('hex'), bq5Definition.graphSha256,
+'the semantic graph hash must not depend on JSON atom or bond ordering');
+assert.notEqual(createHash('sha256').update(serializeRegisteredLigandDefinition({
+  ...bq5Definition, bonds:bq5Definition.bonds.map((bond, index) =>
+    index ? bond : { ...bond, order:1 }),
+})).digest('hex'), bq5Definition.graphSha256,
+'a changed bond order must not retain the reviewed graph hash');
+assert.equal(bq5Definition.atoms.filter((atom) => atom.element !== 'H').length, 16);
+assert.equal(bq5Definition.atoms.filter((atom) => atom.element === 'H').length, 15);
+assert.equal(bq5Definition.bonds.filter((bond) => {
+  const byName = new Map(bq5Definition.atoms.map((atom) => [atom.id, atom]));
+  return byName.get(bond.a)?.element !== 'H' && byName.get(bond.b)?.element !== 'H';
+}).length, 18);
+const pdb6epm = await readFile(new URL(
+  '../../outputs/design-history/sos1-preapproval/source/6EPM.pdb', import.meta.url), 'utf8');
+const bq5Atoms = pdb6epm.split(/\r?\n/).flatMap((line) => {
+  if (line.slice(0, 6).trim() !== 'HETATM' || line.slice(17, 20).trim() !== 'BQ5') return [];
+  return [{ record:'HETATM', atomName:line.slice(12, 16).trim(),
+    residueName:'BQ5', chain:line.slice(21, 22).trim(),
+    residueIndex:Number.parseInt(line.slice(22, 26), 10),
+    insertionCode:line.slice(26, 27).trim(), element:line.slice(76, 78).trim(),
+    x:Number(line.slice(30, 38)), y:Number(line.slice(38, 46)),
+    z:Number(line.slice(46, 54)), charge:0 }];
+});
+const bq5Coordinates = bq5Atoms.map(({ x, y, z }) => [x, y, z]);
+const bq5Installed = applyRegisteredLigandDefinition({ name:'6EPM BQ5', atoms:bq5Atoms,
+  bonds:[], charge:0, source:{ format:'pdb', pdbId:'6EPM' } }, {
+  locator:{ residueName:'BQ5', chain:'S', residueIndex:1101, insertionCode:'' },
+  definition:bq5Definition,
+});
+assert.equal(bq5Installed.heavyAtomCount, 16);
+assert.equal(bq5Installed.bondCount, 18);
+assert.equal(bq5Installed.coordinateMaximumDisplacement, 0);
+assert.deepEqual(bq5Installed.molecule.atoms.map(({ x, y, z }) => [x, y, z]), bq5Coordinates);
 
 console.log('Registered ligand graph installation: PASS');

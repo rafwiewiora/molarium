@@ -1,8 +1,11 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { figure1ActionPlan, verifyBq5Inspection,
   verifyVisibleBq5Depiction } from './capture-paper-figure1.mjs';
 import { verifyLocalLabCaptureState } from './local-lab-capture.mjs';
+import { serializeRegisteredLigandDefinition } from
+  '../design-history/structures/registered-ligand-graph.mjs';
 
 const localLab = verifyLocalLabCaptureState({
   responsePolicy:'local-only-v1',
@@ -62,15 +65,23 @@ assert.throws(() => verifyVisibleBq5Depiction({ visible:true, label:'6EPM comple
   bondIndices:bonds.map((_, index) => index), svg, svgLength:svg.length }, ligand),
 /not labelled as BQ5/);
 
-const plan = figure1ActionPlan('HEADER 6EPM');
+const bq5Definition = JSON.parse(await readFile(new URL(
+  '../design-history/structures/ligands/bq5-rcsb-ccd.json', import.meta.url), 'utf8'));
+assert.equal(createHash('sha256').update(serializeRegisteredLigandDefinition(
+  bq5Definition)).digest('hex'), bq5Definition.graphSha256);
+assert.equal(bq5Definition.source.contentSha256,
+  '82cba5e4347e1afaa92e99065e1efcfb4854b7d30d4654fc7e340b9a9e1e71a9');
+const plan = figure1ActionPlan('HEADER 6EPM', bq5Definition);
 assert.deepEqual(plan.map((request) => request.action), [
-  'session.loadStructure', 'protein.prepare', 'view.setMode', 'view.setDisplay',
-  'view.setComponentVisibility', 'view.focusComponent', 'session.inspect',
+  'session.loadStructure', 'ligand.installRegisteredGraph', 'protein.prepare',
+  'view.setMode', 'view.setDisplay', 'view.focusComponent', 'session.inspect',
 ]);
 assert.equal(plan[0].args.content, 'HEADER 6EPM');
-assert.equal(plan[1].args.ligandPolicy, 'ccd');
-assert.equal(plan[4].args.ordinal, 0);
-assert.equal(plan[5].args.ordinal, 1);
+assert.equal(plan[1].args.graphSha256, bq5Definition.graphSha256);
+assert.deepEqual(plan[1].args.locator,
+  { residueName:'BQ5', chain:'S', residueIndex:1101, insertionCode:'' });
+assert.equal(plan[2].args.ligandPolicy, 'registered');
+assert.equal(plan[5].args.ordinal, 0);
 assert.equal(plan[6].args.scope, 'ligand');
 
 const source = await readFile(new URL('./capture-paper-figure1.mjs', import.meta.url), 'utf8');
@@ -82,7 +93,24 @@ assert.match(source, /verifyVisibleBq5Depiction\(await readVisibleDepiction/);
 assert.match(source, /verifyBrowserLocalLabCapture\(browser\)/);
 assert.match(source, /localOnly:true/);
 assert.doesNotMatch(source, /localOnly:false/);
+assert.doesNotMatch(source, /selection\.replace/);
+assert.match(source, /exact reviewed public-action sequence/);
+assert.match(source, /fig1_molarium_interface\.capture-manifest\.json/);
+assert.match(source, /fig1_molarium_interface\.chemist-action-audit\.json/);
 assert.match(source, /promoteCompletedRender\(\{ stagingDirectory/);
 assert.match(source, /complete:true/);
+
+const [appSource, apiSource, webBuildSource, manifestSource] = await Promise.all([
+  readFile(new URL('../app.js', import.meta.url), 'utf8'),
+  readFile(new URL('../chemist-actions.mjs', import.meta.url), 'utf8'),
+  readFile(new URL('./build-web.mjs', import.meta.url), 'utf8'),
+  readFile(new URL('./generate-local-lab-manifest.mjs', import.meta.url), 'utf8'),
+]);
+assert.match(apiSource, /'ligand\.installRegisteredGraph'/);
+assert.match(appSource, /'ligand\.installRegisteredGraph':async/);
+assert.match(appSource, /prepare-ligands-from-registered-graph/);
+for (const bundler of [webBuildSource, manifestSource])
+  assert.match(bundler, /design-history\/structures\/ligands\/bq5-rcsb-ccd\.json/,
+    'The pinned BQ5 graph must be part of every reviewed production bundle');
 
 console.log('Figure 1 deterministic public-action capture checks passed');

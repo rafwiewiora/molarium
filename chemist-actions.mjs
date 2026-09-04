@@ -72,7 +72,7 @@ const ACTIONS = Object.freeze({
   'protein.prepare': Object.freeze({
     description:'Prepare and parameterize the loaded protein complex through the visible preparation workflow.',
     arguments:Object.freeze({ pH:'number 0…14', histidine:'auto | hid | hie | hip',
-      repairMissingHeavy:'boolean', ligandPolicy:'ccd | exclude',
+      repairMissingHeavy:'boolean', ligandPolicy:'ccd | registered | exclude',
       waterPolicy:'crucial | retain | exclude', gapPolicy:'cap | block' }) }),
   'protein.parameterize': Object.freeze({
     description:'Assign force-field parameters to the current edited complex without moving coordinates.',
@@ -116,6 +116,11 @@ const ACTIONS = Object.freeze({
   'ligand.applyProtonation': Object.freeze({
     description:'Apply one enumerated protonation state and rebuild its three-dimensional geometry.',
     arguments:Object.freeze({ index:'zero-based state index' }) }),
+  'ligand.installRegisteredGraph': Object.freeze({
+    description:'Install a hash-pinned registered ligand graph onto one explicitly located coordinate ligand without moving its heavy atoms.',
+    arguments:Object.freeze({ locator:'{ residueName, chain, residueIndex, insertionCode }',
+      graphSha256:'lowercase SHA-256 of the canonical registered graph',
+      definition:'registered ligand definition with exact named atoms, charges, bond orders, and aromaticity' }) }),
   'geometry.setInternalCoordinate': Object.freeze({
     description:'Set a bond length, angle, or torsion for a connected atom path.',
     arguments:Object.freeze({ atomIds:'array of 2–4 persistent atom IDs', value:'finite number',

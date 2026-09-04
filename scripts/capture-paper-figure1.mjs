@@ -6,10 +6,13 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { promoteCompletedRender } from './atomic-render-output.mjs';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
 import { verifyBrowserLocalLabCapture } from './local-lab-capture.mjs';
+import { serializeRegisteredLigandDefinition } from
+  '../design-history/structures/registered-ligand-graph.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SOURCE_PATH = 'outputs/design-history/sos1-preapproval/source/6EPM.pdb';
 const SOURCE_SHA256 = '8513597c3d91e0f37217c9c4a60cd11e2e1900494931c1bda8dc882fecc24446';
+const BQ5_DEFINITION_PATH = 'design-history/structures/ligands/bq5-rcsb-ccd.json';
 const EXPECTED_LIGAND = Object.freeze({
   residueName:'BQ5', chain:'S', residueIndex:1101, heavyAtomCount:16, heavyBondCount:18,
 });
@@ -103,14 +106,21 @@ export function verifyVisibleBq5Depiction(depiction, ligand) {
     heavyBondCount:bondIndices.length, svgSha256:sha256(depiction.svg) };
 }
 
-export function figure1ActionPlan(pdbContent) {
+export function figure1ActionPlan(pdbContent, bq5Definition) {
+  assert.equal(bq5Definition?.id, 'BQ5', 'The pinned Figure 1 ligand definition must be BQ5');
+  assert.match(String(bq5Definition?.graphSha256 || ''), /^[a-f0-9]{64}$/,
+    'The pinned Figure 1 ligand definition requires a graph SHA-256');
   return [
     { requestId:'figure1-load-6epm', action:'session.loadStructure', args:{
       content:pdbContent, format:'pdb', name:'6EPM · KRAS–SOS1 with fragment F1', polish:false,
     } },
+    { requestId:'figure1-install-bq5-graph', action:'ligand.installRegisteredGraph', args:{
+      locator:{ residueName:'BQ5', chain:'S', residueIndex:1101, insertionCode:'' },
+      graphSha256:bq5Definition.graphSha256, definition:bq5Definition,
+    } },
     { requestId:'figure1-prepare-6epm', action:'protein.prepare', args:{
       pH:7.4, histidine:'auto', repairMissingHeavy:true,
-      ligandPolicy:'ccd', waterPolicy:'exclude', gapPolicy:'cap',
+      ligandPolicy:'registered', waterPolicy:'exclude', gapPolicy:'cap',
     } },
     { requestId:'figure1-view-workspace', action:'view.setMode', args:{ mode:'view' } },
     { requestId:'figure1-display-complex', action:'view.setDisplay', args:{
@@ -119,11 +129,8 @@ export function figure1ActionPlan(pdbContent) {
       showStericClashes:false, colorTheme:'standard', changeMarkers:'none',
       autoRotate:'none', playing:false,
     } },
-    { requestId:'figure1-hide-glycerol', action:'view.setComponentVisibility', args:{
-      kind:'ligand', ordinal:0, visible:false,
-    } },
     { requestId:'figure1-focus-bq5', action:'view.focusComponent', args:{
-      kind:'ligand', ordinal:1, isolate:false,
+      kind:'ligand', ordinal:0, isolate:false,
     } },
     { requestId:'figure1-inspect-bq5', action:'session.inspect', args:{
       scope:'ligand', includeCoordinates:false, maximumAtoms:256,
@@ -177,9 +184,15 @@ async function readVisibleDepiction(browser) {
 async function main() {
   const options = parseArguments(process.argv.slice(2));
   const sourcePath = resolve(root, SOURCE_PATH);
-  const sourceBytes = await readFile(sourcePath);
+  const [sourceBytes, definitionBytes] = await Promise.all([
+    readFile(sourcePath), readFile(resolve(root, BQ5_DEFINITION_PATH)),
+  ]);
   if (sha256(sourceBytes) !== SOURCE_SHA256)
     throw new Error('The pinned 6EPM source differs from the reviewed Figure 1 input');
+  const bq5Definition = JSON.parse(definitionBytes);
+  if (sha256(serializeRegisteredLigandDefinition(bq5Definition))
+    !== bq5Definition.graphSha256)
+    throw new Error('The pinned BQ5 definition does not match its registered graph hash');
   await mkdir(dirname(options.outputDirectory), { recursive:true });
   const stagingDirectory = await mkdtemp(join(dirname(options.outputDirectory),
     '.fig1-molarium-interface-'));
@@ -194,24 +207,29 @@ async function main() {
     const networkPolicy = await verifyBrowserLocalLabCapture(browser);
     const description = await browser.evaluate('window.MolariumChemistActions.describe()');
     let inspection;
-    for (const request of figure1ActionPlan(sourceBytes.toString('utf8'))) {
+    const plan = figure1ActionPlan(sourceBytes.toString('utf8'), bq5Definition);
+    let graphInstallation;
+    for (const request of plan) {
       const envelope = await execute(browser, request);
+      if (request.action === 'ligand.installRegisteredGraph') graphInstallation = envelope;
       if (request.action === 'view.focusComponent') {
         assert.match(String(envelope.result?.focusedComponent?.label || ''), /BQ5/i,
-          'Ligand ordinal 1 is not BQ5 in the pinned 6EPM structure');
+          'The retained registered ligand is not BQ5 in the pinned 6EPM structure');
       }
       if (request.action === 'session.inspect') inspection = envelope;
     }
     const ligand = verifyBq5Inspection(inspection);
-    await execute(browser, { requestId:'figure1-select-bq5', action:'selection.replace',
-      args:{ atomIds:ligand.atomIds } });
+    const installedGraph = graphInstallation?.result?.registeredLigandGraph;
+    assert.equal(installedGraph?.graphSha256, bq5Definition.graphSha256,
+      'The public action did not install the pinned BQ5 graph');
+    assert.equal(installedGraph?.coordinateMaximumDisplacementAngstrom, 0,
+      'Installing the BQ5 graph moved deposited heavy coordinates');
     await waitFor(async () => {
       const candidate = await readVisibleDepiction(browser);
       return candidate.hasSvg && !candidate.pending && !candidate.error ? candidate : null;
     }, 90000, 'registered BQ5 2D depiction');
-    // Keep BQ5 as the sole visible ligand so the 2D panel remains pinned to it,
-    // then clear selection/focus to capture the complete KRAS–SOS1 cartoon cleanly.
-    await execute(browser, { requestId:'figure1-clear-selection', action:'selection.clear', args:{} });
+    // Registered-only preparation excluded glycerol and pinned BQ5 as the sole
+    // ligand depiction target. Clear component focus without changing that pin.
     await execute(browser, { requestId:'figure1-clear-component-focus', action:'view.clearFocus',
       args:{ kind:'component' } });
     await execute(browser, { requestId:'figure1-fixed-camera', action:'view.setCamera', args:{
@@ -234,6 +252,16 @@ async function main() {
     assert.equal(interfaceState.twoDPanelVisible, true, 'The BQ5 2D panel is hidden');
     const png = await browser.capturePng();
     const actionAudit = await browser.evaluate('window.MolariumChemistActions.history()');
+    const expectedAudit = [
+      { requestId:'url-blank-session', action:'session.clear' },
+      ...plan.map(({ requestId, action }) => ({ requestId, action })),
+      { requestId:'figure1-clear-component-focus', action:'view.clearFocus' },
+      { requestId:'figure1-fixed-camera', action:'view.setCamera' },
+    ];
+    assert.deepEqual(actionAudit.map(({ requestId, action, status }) =>
+      ({ requestId, action, status })), expectedAudit.map((record) =>
+      ({ ...record, status:'completed' })),
+    'Figure 1 must be produced by the exact reviewed public-action sequence');
     const auditBytes = Buffer.from(`${JSON.stringify({ schema:description.schema,
       figure:'Figure 1', records:actionAudit }, null, 2)}\n`);
     await writeFile(join(stagingDirectory, 'chemist-action-audit.json'), auditBytes);
@@ -242,10 +270,15 @@ async function main() {
       schema:'molarium.paper-interface-capture/v1', complete:true,
       generatedAt:new Date().toISOString(), figure:'Figure 1',
       source:{ path:SOURCE_PATH, sha256:SOURCE_SHA256, pdbId:'6EPM' },
-      scene:{ assembly:'complete deposited KRAS–SOS1 protein assembly',
-        selectedLigand:'BQ5/F1', glycerolVisible:false, waterPolicy:'exclude',
+      scene:{ assembly:'both deposited coordinate-bearing KRAS and SOS1 chains; 631 modeled residues',
+        selectedLigand:'BQ5/F1', ligandPreparation:'hash-pinned registered graph',
+        glycerolPolicy:'excluded as unregistered heterogen', waterPolicy:'exclude',
         displayHydrogens:false, pocketAtoms:true, representation:'cartoon' },
-      ligand, depiction, interface:interfaceState, networkPolicy,
+      ligand:{ ...ligand, registeredGraphSha256:bq5Definition.graphSha256,
+        definitionPath:BQ5_DEFINITION_PATH,
+        definitionFileSha256:sha256(definitionBytes),
+        source:structuredClone(bq5Definition.source) },
+      depiction, interface:interfaceState, networkPolicy,
       publicActions:{ schema:description.schema,
         guarantee:description.guarantee, records:actionAudit.length,
         actionNames:actionAudit.map((record) => record.action),
@@ -262,12 +295,18 @@ async function main() {
   await promoteCompletedRender({ stagingDirectory,
     outputDirectory:options.outputDirectory, complete });
   if (options.install) {
-    const verifiedPng = await readFile(join(options.outputDirectory, 'fig1_molarium_interface.png'));
-    const installPath = resolve(root, 'paper/figures/fig1_molarium_interface.png');
-    const temporaryPath = `${installPath}.pending-${process.pid}`;
-    await writeFile(temporaryPath, verifiedPng);
     const { rename } = await import('node:fs/promises');
-    await rename(temporaryPath, installPath);
+    for (const [sourceName, installName] of [
+      ['fig1_molarium_interface.png', 'fig1_molarium_interface.png'],
+      ['capture-manifest.json', 'fig1_molarium_interface.capture-manifest.json'],
+      ['chemist-action-audit.json', 'fig1_molarium_interface.chemist-action-audit.json'],
+    ]) {
+      const bytes = await readFile(join(options.outputDirectory, sourceName));
+      const installPath = resolve(root, 'paper/figures', installName);
+      const temporaryPath = `${installPath}.pending-${process.pid}`;
+      await writeFile(temporaryPath, bytes);
+      await rename(temporaryPath, installPath);
+    }
   }
   console.log(`Verified Figure 1 capture: ${relative(root, options.outputDirectory)}`);
 }

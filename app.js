@@ -1,5 +1,6 @@
 import { validateRegisteredDesignRoute } from './design-history/structures/design-route.mjs';
-import { applyRegisteredLigandDefinition, validateConnectedMolecularGraph } from
+import { applyRegisteredLigandDefinition, serializeRegisteredLigandDefinition,
+  validateConnectedMolecularGraph } from
   './design-history/structures/registered-ligand-graph.mjs';
 import { DESIGNER_REVIEW_DIRECTIONS, designerReplayReviewState,
   designerReplayReviewTarget } from './design-history/designer-replay-review.mjs';
@@ -2105,7 +2106,7 @@ function prepareLigandsFromCcdDefinitions(inputMolecule, definitions) {
       if (!expected) throw new Error(`${group.residueName} atom ${name} is absent from its CCD definition`);
       if (molecule.atoms[index].element !== expected.element)
         throw new Error(`${group.residueName} atom ${name} element differs from CCD (${molecule.atoms[index].element}/${expected.element})`);
-      molecule.atoms[index].charge = expected.charge;
+      molecule.atoms[index].charge = Number(expected.formalCharge ?? expected.charge ?? 0);
       molecule.atoms[index].aromatic = expected.aromatic;
       molecule.atoms[index].ccd = group.residueName;
     }
@@ -2137,7 +2138,8 @@ function prepareLigandsFromCcdDefinitions(inputMolecule, definitions) {
       const index = molecule.atoms.length;
       molecule.atoms.push({ element: 'H', ...position, record: 'HETATM', atomName: atom.id,
         residueName: group.residueName, chain: group.chain, residueIndex: group.residueIndex,
-        insertionCode: group.insertionCode, occupancy: 0, charge: atom.charge, prepared: true, ccd: group.residueName });
+        insertionCode: group.insertionCode, occupancy: 0,
+        charge:Number(atom.formalCharge ?? atom.charge ?? 0), prepared: true, ccd: group.residueName });
       ccdIndex.set(atom.id, index); inGroup.add(index);
     }
     for (const bond of definition.bonds) {
@@ -3071,7 +3073,8 @@ function normalizePdbPreparationOptions(options = {}) {
     histidine: ['auto', 'hid', 'hie', 'hip'].includes(String(options.histidine || '').toLowerCase())
       ? String(options.histidine).toLowerCase() : 'auto',
     repairMissingHeavy: options.repairMissingHeavy !== false,
-    ligandPolicy: options.ligandPolicy === 'exclude' ? 'exclude' : 'ccd',
+    ligandPolicy: ['ccd', 'registered', 'exclude'].includes(options.ligandPolicy)
+      ? options.ligandPolicy : 'ccd',
     waterPolicy: ['crucial', 'retain', 'exclude'].includes(options.waterPolicy)
       ? options.waterPolicy : 'crucial',
     gapPolicy: options.gapPolicy === 'block' ? 'block' : 'cap',
@@ -3148,6 +3151,40 @@ async function createPdbPreparationPreview(inputMolecule, rawOptions = {}, suppl
     const before = molecule.atoms.length;
     molecule = moleculeWithAtomsRemoved(molecule, (atom) => atom.record === 'HETATM' && !isWaterAtom(atom));
     actions.push({ action: 'exclude-heterogens', atomsRemoved: before - molecule.atoms.length });
+  } else if (options.ligandPolicy === 'registered') {
+    const registration = molecule.source?.registeredLigandGraph;
+    const locator = registration?.locator;
+    const definition = registration?.definition;
+    if (!locator || !definition || !registration.graphSha256) {
+      blockers.push('Registered-ligand preparation requires a hash-pinned graph installed through ligand.installRegisteredGraph');
+    } else {
+      try {
+        const actualGraphSha256 = await sha256Hex(new TextEncoder().encode(
+          serializeRegisteredLigandDefinition(definition)));
+        if (actualGraphSha256 !== registration.graphSha256)
+          throw new Error('stored definition does not match its registered graph hash');
+        molecule = applyRegisteredLigandDefinition(molecule, {
+          locator, residueName:locator.residueName, definition,
+        }).molecule;
+        const before = molecule.atoms.length;
+        molecule = moleculeWithAtomsRemoved(molecule, (atom) => atom.record === 'HETATM'
+          && !isWaterAtom(atom) && !(String(atom.residueName || '').trim().toUpperCase()
+            === locator.residueName && String(atom.chain || 'A') === locator.chain
+            && Number(atom.residueIndex || 0) === locator.residueIndex
+            && String(atom.insertionCode || '') === locator.insertionCode));
+        actions.push({ action:'exclude-unregistered-heterogens',
+          atomsRemoved:before - molecule.atoms.length,
+          retained:{ ...structuredClone(locator), graphSha256:registration.graphSha256 } });
+        const result = prepareLigandsFromCcdDefinitions(molecule, {
+          [locator.residueName]:structuredClone(definition),
+        });
+        molecule = result.molecule;
+        actions.push({ action:'prepare-ligands-from-registered-graph',
+          graphSha256:registration.graphSha256, components:result.prepared });
+      } catch (error) {
+        blockers.push(`Registered ligand preparation failed: ${error.message}`);
+      }
+    }
   } else {
     const ligandGroups = proteinPreparationReport(molecule).ligandGroups.filter((group) => group.heavyAtoms > 1);
     if (ligandGroups.length) {
@@ -3215,7 +3252,10 @@ async function createPdbPreparationPreview(inputMolecule, rawOptions = {}, suppl
   const audit = {
     schema: 1, engine: 'Molarium browser protein preparation 0.4',
     references: {
-      residueTemplates: 'PDBFixer 1.12 / MIT', ligandChemistry: 'RCSB Chemical Component Dictionary',
+      residueTemplates: 'PDBFixer 1.12 / MIT',
+      ligandChemistry: options.ligandPolicy === 'registered'
+        ? `hash-pinned registered graph ${molecule.source?.registeredLigandGraph?.graphSha256 || '(missing)'}`
+        : options.ligandPolicy === 'ccd' ? 'RCSB Chemical Component Dictionary' : 'excluded',
       numericParameters: 'OpenFF Sage 2.1.0 with explicitly labelled RDKit Gasteiger charges',
       parameterizationScope: 'Experimental whole-system small-molecule-style assignment; not a validated protein force field',
     },
@@ -3477,7 +3517,9 @@ function updatePreparationInspectorUi() {
       ? 'Repair preview requires review' : 'Repair preview ready';
     const detail = document.createElement('span');
     const addedHeavy = preview.audit.actions.find((action) => action.action === 'repair-heavy-atoms')?.added || 0;
-    const ligandCount = preview.audit.actions.find((action) => action.action === 'prepare-ligands-from-ccd')?.components?.length || 0;
+    const ligandCount = preview.audit.actions.find((action) =>
+      ['prepare-ligands-from-ccd', 'prepare-ligands-from-registered-graph'].includes(action.action))
+      ?.components?.length || 0;
     const crucialWaters = preview.audit.actions.find((action) => action.action === 'retain-crucial-crystallographic-water');
     const waters = crucialWaters
       ? ` · ${crucialWaters.watersRetained}/${crucialWaters.watersExamined} crucial crystal waters kept`
@@ -3486,7 +3528,7 @@ function updatePreparationInspectorUi() {
     const polar = polarRelaxation
       ? ` · ${polarRelaxation.rotatableHydrogens} polar H locally relaxed in ${polarRelaxation.elapsedMs.toFixed(1)} ms`
       : '';
-    detail.textContent = `${preview.molecule.atoms.length} output atoms · ${addedHeavy} heavy atoms rebuilt · ${ligandCount} CCD ligand components${waters}${polar} · pH ${preview.options.pH.toFixed(1)} · ${preview.audit.blockers.length} blockers.`;
+    detail.textContent = `${preview.molecule.atoms.length} output atoms · ${addedHeavy} heavy atoms rebuilt · ${ligandCount} prepared ligand components${waters}${polar} · pH ${preview.options.pH.toFixed(1)} · ${preview.audit.blockers.length} blockers.`;
     previewBox.append(title, detail);
   }
   const issues = document.querySelector('#preparation-issues'); issues.replaceChildren();
@@ -9901,6 +9943,60 @@ function installChemistActionsApi(module) {
       const active = Boolean(state.foldAbortController);
       state.foldAbortController?.abort();
       return chemistActionSummary({ predictionCancellation:{ requested:active } }); },
+    'ligand.installRegisteredGraph':async (args) => { chemistActionKeys(args,
+      ['locator','graphSha256','definition']);
+      if (!state.molecule?.atoms?.length)
+        throw new Error('Load a coordinate-bearing molecule before installing a ligand graph');
+      if (!args.locator || typeof args.locator !== 'object' || Array.isArray(args.locator))
+        throw new Error('locator must be an object');
+      chemistActionKeys(args.locator,
+        ['residueName','chain','residueIndex','insertionCode']);
+      const locator = {
+        residueName:String(args.locator.residueName || '').trim().toUpperCase(),
+        chain:String(args.locator.chain || ''), residueIndex:Number(args.locator.residueIndex),
+        insertionCode:String(args.locator.insertionCode || ''),
+      };
+      if (!locator.residueName || !locator.chain || !Number.isInteger(locator.residueIndex))
+        throw new Error('locator requires residueName, chain, and integer residueIndex');
+      if (typeof args.graphSha256 !== 'string' || !/^[a-f0-9]{64}$/.test(args.graphSha256))
+        throw new Error('graphSha256 must be a lowercase SHA-256 digest');
+      if (!args.definition || typeof args.definition !== 'object'
+        || Array.isArray(args.definition)) throw new Error('definition must be an object');
+      const serializedGraph = serializeRegisteredLigandDefinition(args.definition);
+      const actualGraphSha256 = await sha256Hex(new TextEncoder().encode(serializedGraph));
+      if (actualGraphSha256 !== args.graphSha256
+        || args.definition.graphSha256 != null
+          && args.definition.graphSha256 !== args.graphSha256)
+        throw new Error('Registered ligand graph hash mismatch');
+      await ensureChemistActionAtomIds();
+      const inputStateSha256 = await molecularStateSha256(state.molecule);
+      const installed = applyRegisteredLigandDefinition(state.molecule, {
+        residueName:locator.residueName, locator, definition:args.definition,
+      });
+      if (installed.coordinateMaximumDisplacement !== 0)
+        throw new Error('Registered ligand graph installation moved coordinate-bearing atoms');
+      installed.molecule.source = { ...(installed.molecule.source || {}),
+        registeredLigandGraph:{
+          ...(installed.molecule.source?.registeredLigandGraph || {}),
+          graphSha256:actualGraphSha256,
+          definition:structuredClone(args.definition),
+        } };
+      delete installed.molecule.parameterization;
+      if (installed.molecule.preparation) installed.molecule.preparation = {
+        ...installed.molecule.preparation, status:'topology-updated', parameterized:false,
+      };
+      pushBuildHistory();
+      loadMolecule(installed.molecule, false); updateHistoryButtons();
+      const outputStateSha256 = await molecularStateSha256(state.molecule);
+      return chemistActionSummary({ registeredLigandGraph:{ locator:installed.locator,
+        definitionId:String(args.definition.id || locator.residueName),
+        graphSha256:actualGraphSha256, atomCount:installed.atomCount,
+        heavyAtomCount:installed.heavyAtomCount, bondCount:installed.bondCount,
+        connected:installed.connected,
+        coordinateMaximumDisplacementAngstrom:installed.coordinateMaximumDisplacement,
+        stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
+        inputStateSha256, outputStateSha256,
+      } }); },
     'ligand.enumerateProtonation':async (args) => { chemistActionKeys(args,
       ['pH','smiles','pHSpread','precision','maximumStates']);
       const pH = Number(args.pH ?? 7.4), pHSpread = Number(args.pHSpread ?? .5);
@@ -12550,7 +12646,9 @@ async function prepareCurrentPdb(optionsOverride = null, suppliedCcdDefinitions 
       atoms: prepared.atoms.length, bonds: prepared.bonds.length,
       hydrogensAdded: preview.audit.actions.find((action) => action.action === 'rebuild-protein-hydrogens')?.added || 0,
       heavyAtomsAdded: preview.audit.actions.find((action) => action.action === 'repair-heavy-atoms')?.added || 0,
-      ligandsPrepared: preview.audit.actions.find((action) => action.action === 'prepare-ligands-from-ccd')?.components?.length || 0,
+      ligandsPrepared: preview.audit.actions.find((action) =>
+        ['prepare-ligands-from-ccd', 'prepare-ligands-from-registered-graph'].includes(action.action))
+        ?.components?.length || 0,
       forcefield: parameters.forcefield, chargeModel: parameters.chargeModel,
       parameterCounts: parameters.parameterCounts, audit: prepared.preparation.audit,
     };
