@@ -36,6 +36,14 @@ assert.match(source, /receptorStateComparablePoseScore/);
 assert.match(source, /selectedComparablePoseScore/);
 assert.match(source, /unnormalized receptor-ligand interaction plus weighted relative ligand strain/);
 assert.doesNotMatch(source, /eligible\.sort\(\(a, b\) => a\.refinement\.selectedScoreKcalMol/);
+assert.match(source, /--capture-review-coordinates/);
+assert.match(source, /diagnosticPoseApplyArgs\(refinement\)/);
+assert.match(source, /diagnosticReviewCaptureRecord/);
+assert.match(source, /status:selected \? 'completed' : 'diagnostic-review-only'/);
+assert.match(source, /if \(!captureReviewCoordinates\)\s+assert\(eligible\.length >= 1/);
+assert(source.indexOf('const eligible = Object.values(prospectiveGates).every(Boolean)')
+  < source.indexOf('const poseApplyArgs = captureReviewCoordinates'),
+'diagnostic coordinate capture must occur only after eligibility is frozen');
 
 const crossReceptorFixture = [{ id:'phe-native',
   physical:{ interactionKcalMol:2.3771642901472685,

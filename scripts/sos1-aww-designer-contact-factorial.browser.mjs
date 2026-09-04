@@ -8,6 +8,8 @@ import { fileURLToPath } from 'node:url';
 import { receptorStateComparablePoseScore }
   from '../docking/receptor-state-comparable-score.mjs';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
+import { diagnosticPoseApplyArgs, diagnosticReviewCaptureRecord }
+  from './sos1-aww-review-capture.mjs';
 
 const SCHEMA = 'molarium.sos1-aww-designer-contact-factorial/v2';
 const AWZ_CAMPAIGN_SHA256 =
@@ -65,7 +67,8 @@ function selectedRequiredHydrogenBonds(refinement, requiredContactIds) {
   });
 }
 
-async function runBranch({ root, serializedCampaign, branch }) {
+async function runBranch({ root, serializedCampaign, branch,
+  captureReviewCoordinates = false }) {
   const browser = await startMolariumBrowser({ root, appPath:'?blank=1',
     width:1200, height:800 });
   const records = [];
@@ -187,17 +190,24 @@ async function runBranch({ root, serializedCampaign, branch }) {
       ? receptorStateComparablePoseScore(refinement.selectedPhysicalComponents)
       : null;
     let pocket = null;
+    let reviewCoordinateCapture = null;
     let contactDistances = {
       ox3ToTyr884BackboneOAngstrom:selectedContacts.find((entry) =>
         entry.id === ox3.contact.contactId)?.donorAcceptorDistanceAngstrom ?? null,
       n7ToAsn879Od1Angstrom:selectedContacts.find((entry) =>
         entry.id === n7Contact.contactId)?.donorAcceptorDistanceAngstrom ?? null,
     };
-    if (eligible) {
-      await execute('pose.apply', { index:Math.max(0, refinement.selectedRank - 1) });
+    if (eligible || captureReviewCoordinates) {
+      const poseApplyArgs = captureReviewCoordinates
+        ? diagnosticPoseApplyArgs(refinement)
+        : { index:Math.max(0, refinement.selectedRank - 1) };
+      const applied = await execute('pose.apply', poseApplyArgs);
       pocket = await execute('session.inspect', {
         scope:'pocket', includeCoordinates:true, maximumAtoms:500,
       });
+      if (captureReviewCoordinates) reviewCoordinateCapture =
+        diagnosticReviewCaptureRecord({ refinement,
+          appliedPose:applied.appliedPose, pocket, branch:branch.id, eligible });
       const ox3Atom = atom(pocket, 'AWW', 1104, 'OX3');
       const tyrO = atom(pocket, 'TYR', 884, 'O');
       const n7Atom = atom(pocket, 'AWW', 1104, 'N7');
@@ -223,7 +233,8 @@ async function runBranch({ root, serializedCampaign, branch }) {
         registeredReleasedAtomNames,
         runtimeReleasedCoreAtomIndices, runtimeReleasedCoreAtomNames,
         satisfied:requiredReleasedAtomsSatisfied },
-      prospectiveGates, eligible, comparablePoseScore, refinement, pocket, records,
+      prospectiveGates, eligible, comparablePoseScore,
+      reviewCoordinateCapture, refinement, pocket, records,
     };
   } finally {
     await browser.close();
@@ -233,8 +244,9 @@ async function runBranch({ root, serializedCampaign, branch }) {
 async function main(args = process.argv.slice(2)) {
   const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
   const outputArg = valueFor(args, '--output');
-  if (!outputArg) throw new Error('Usage: bun scripts/sos1-aww-designer-contact-factorial.browser.mjs --output <new-directory> [--branch phe-native|phe-plus60|phe-out]');
+  if (!outputArg) throw new Error('Usage: bun scripts/sos1-aww-designer-contact-factorial.browser.mjs --output <new-directory> [--branch phe-native|phe-plus60|phe-out] [--capture-review-coordinates]');
   const branchArg = valueFor(args, '--branch');
+  const captureReviewCoordinates = args.includes('--capture-review-coordinates');
   const branches = branchArg ? BRANCHES.filter((branch) => branch.id === branchArg) : BRANCHES;
   if (!branches.length) throw new Error(`Unknown factorial branch: ${branchArg}`);
   const output = resolve(process.cwd(), outputArg);
@@ -261,11 +273,15 @@ async function main(args = process.argv.slice(2)) {
     holdoutCoordinatesUsed:false,
     holdoutPolicy:'5OVH may be opened only after selection; this proxy does not open it',
     hydrationPolicy:'water is outside pose.refine scoring; HOH1507 mobility and remaining overlap are evaluated by later full-system induced-fit relaxation of the prospective winner',
+    reviewCoordinateCapture:{ requested:captureReviewCoordinates,
+      diagnosticOnly:true, promotable:false,
+      policy:'When explicitly requested, apply the already-selected pose with public pose.apply allowInfeasible only after eligibility is frozen, then inspect an untruncated coordinate-bearing pocket.' },
   });
   const results = [];
   for (const branch of branches) {
     const result = await runBranch({ root,
-      serializedCampaign:campaignBytes.toString('utf8'), branch });
+      serializedCampaign:campaignBytes.toString('utf8'), branch,
+      captureReviewCoordinates });
     results.push(result);
     await save(`${branch.id}.json`, result);
     console.log(`SOS1_AWW_FACTORIAL ${JSON.stringify({ branch:branch.id,
@@ -278,20 +294,28 @@ async function main(args = process.argv.slice(2)) {
       contacts:result.contacts })}`);
   }
   const eligible = results.filter((result) => result.eligible);
-  assert(eligible.length >= 1, 'At least one factorial branch must pass every prospective gate');
+  if (!captureReviewCoordinates)
+    assert(eligible.length >= 1, 'At least one factorial branch must pass every prospective gate');
   eligible.sort((first, second) => first.comparablePoseScore.energyKcalMol
     - second.comparablePoseScore.energyKcalMol
     || first.branch.localeCompare(second.branch));
-  const summary = { schema:SCHEMA, status:'completed', holdoutCoordinatesUsed:false,
-    selectedBranch:eligible[0].branch,
-    selectedPheState:eligible[0].pheState,
-    selectedComparablePoseScore:eligible[0].comparablePoseScore,
+  const selected = eligible[0] || null;
+  const summary = { schema:SCHEMA,
+    status:selected ? 'completed' : 'diagnostic-review-only',
+    holdoutCoordinatesUsed:false,
+    selectedBranch:selected?.branch || null,
+    selectedPheState:selected?.pheState || null,
+    selectedComparablePoseScore:selected?.comparablePoseScore || null,
+    reviewCoordinateCaptureRequested:captureReviewCoordinates,
     hydrationUsedForPoseSelection:false,
-    selectionBasis:'lowest cross-receptor-state pose score (unnormalized receptor-ligand interaction plus weighted relative ligand strain) among the three Phe890 states after identical feasibility gates; this is not a binding free energy, and crystallographic water is evaluated later in full-system relaxation',
+    selectionBasis:selected
+      ? 'lowest cross-receptor-state pose score (unnormalized receptor-ligand interaction plus weighted relative ligand strain) among the three Phe890 states after identical feasibility gates; this is not a binding free energy, and crystallographic water is evaluated later in full-system relaxation'
+      : 'No branch selected: coordinates were captured only for diagnostic review after unchanged prospective eligibility gates failed.',
     branches:results.map((result) => ({ branch:result.branch,
       pheState:result.pheState,
       eligible:result.eligible, prospectiveGates:result.prospectiveGates,
       comparablePoseScore:result.comparablePoseScore,
+      reviewCoordinateCapture:result.reviewCoordinateCapture,
       selectedScoreKcalMol:result.refinement.selectedScoreKcalMol,
       selectedPhysicalKcalMol:result.refinement.selectedPhysicalKcalMol,
       selectedSeedAudit:result.refinement.featureGuidedSeeding?.selectedSeedAudit,
