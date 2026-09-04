@@ -21,6 +21,11 @@ assert.deepEqual(joined.records[251].retryProvenance, {
   schema:SOS1_RECOVERED_RUN_SCHEMA, attemptId:'a014', originalSequence:1,
   publicationReplay:false,
 });
+const explicitlyNamed = combineRecoveryAudits(original, recovery,
+  { originalAttemptId:'a013', recoveryAttemptId:'a018' });
+assert.equal(explicitlyNamed.replaySelection.sourceAttemptId, 'a013');
+assert.equal(explicitlyNamed.replaySelection.excludedRecoveryAttemptId, 'a018');
+assert.equal(explicitlyNamed.records[251].retryProvenance.attemptId, 'a018');
 assert.throws(() => combineRecoveryAudits({ ...original,
   records:original.records.slice(0, 250) }, recovery), /exactly 251 records/);
 assert.throws(() => combineRecoveryAudits(original, { ...recovery,

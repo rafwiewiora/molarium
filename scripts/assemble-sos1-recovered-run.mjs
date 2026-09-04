@@ -249,10 +249,14 @@ export async function main(args = process.argv.slice(2)) {
   const baseDirectory = valueFor(args, '--base-run');
   const recoveryDirectory = valueFor(args, '--recovery-run');
   const outputDirectory = valueFor(args, '--output');
+  const baseAttemptId = valueFor(args, '--base-attempt');
+  const recoveryAttemptId = valueFor(args, '--recovery-attempt');
   if (!baseDirectory || !recoveryDirectory || !outputDirectory) throw new Error(
-    'Usage: node scripts/assemble-sos1-recovered-run.mjs --base-run <a013-run-directory> --recovery-run <successful-a014-directory> --output <new-directory>');
+    'Usage: node scripts/assemble-sos1-recovered-run.mjs --base-run <a013-run-directory> --recovery-run <successful-recovery-directory> --output <new-directory> [--base-attempt a013 --recovery-attempt a018]');
   const assembled = await assembleRecoveredSos1Run({ baseDirectory, recoveryDirectory,
-    outputDirectory });
+    outputDirectory,
+    ...(baseAttemptId ? { baseAttemptId } : {}),
+    ...(recoveryAttemptId ? { recoveryAttemptId } : {}) });
   process.stdout.write(`${JSON.stringify({ output:assembled.output,
     predictionManifestSha256:sha256(jsonBytes(assembled.manifest)),
     auditSha256:assembled.manifest.agentApi.auditSha256 }, null, 2)}\n`);
