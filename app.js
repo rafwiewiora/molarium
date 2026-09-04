@@ -843,7 +843,12 @@ function depictionTarget(molecule = state.molecule) {
   if (!molecule?.atoms?.length) return null;
   const eligible = (component) => {
     if (!component || !['ligand', 'molecule'].includes(component.kind)) return false;
-    const heavy = component.atomIndices.filter((index) => molecule.atoms[index]?.element !== 'H');
+    // Component discovery and molecule replacement are scheduled separately.
+    // During that short handoff an old component can still contain indices from
+    // the previous molecule. Treat it as ineligible instead of attempting to
+    // depict a mixture of the two states.
+    if (!component.atomIndices.every((index) => molecule.atoms[index])) return false;
+    const heavy = component.atomIndices.filter((index) => molecule.atoms[index].element !== 'H');
     return heavy.length > 0 && heavy.length <= MAX_DEPICTION_ATOMS;
   };
   const selectedComponentId = state.selectedAtom == null ? null : state.atomComponentIds[state.selectedAtom];
@@ -862,7 +867,7 @@ function depictionTarget(molecule = state.molecule) {
   const main = state.structureComponents.find((component) => component.kind === 'molecule' && eligible(component));
   const component = pinnedComponent || selectedComponent || focusedComponent || ligand || main;
   if (!component) return null;
-  const globalAtomIndices = component.atomIndices.filter((index) => molecule.atoms[index].element !== 'H');
+  const globalAtomIndices = component.atomIndices.filter((index) => molecule.atoms[index]?.element !== 'H');
   const mapped = mappedMoleculeSubset(molecule, globalAtomIndices, component.label || '2D structure');
   if (!mapped) return null;
   const graph = validateConnectedMolecularGraph(mapped.molecule, { maximumAtoms:MAX_DEPICTION_ATOMS });

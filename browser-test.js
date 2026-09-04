@@ -1102,7 +1102,7 @@ const browserSuite = String.raw`(async () => {
     && redoneContactState.remaps.length === 1 && redoneContactState.proposals.length === 0,
   'Redo restores the replacement feature and its audited restraint mapping');
   let remappedContactRun = null;
-  try { remappedContactRun = await api.runConstrainedDocking({ conformerCount:2,
+  try { remappedContactRun = await api.runConstrainedDocking({ conformerCount:4,
     seed:20260819, torsionSteps:4, fixedRelaxIterations:2 }); }
   catch (error) { check(false, 'the remapped feature participates in reference-guided refinement', error.message); }
   if (remappedContactRun) {
@@ -1263,7 +1263,7 @@ const browserSuite = String.raw`(async () => {
   'two sulfonyl oxygens remain an uncollapsed role-compatible any-of hypothesis in the browser',
   JSON.stringify({ sulfoneFinish, sulfoneContactState, sulfoneOldOxygenId }));
   let sulfoneRun = null;
-  try { sulfoneRun = await api.runConstrainedDocking({ conformerCount:2,
+  try { sulfoneRun = await api.runConstrainedDocking({ conformerCount:4,
     seed:20260819, torsionSteps:4, fixedRelaxIterations:2 }); }
   catch (error) { check(false, 'ambiguous any-of hypotheses execute in reference-guided refinement',
     error.message); }
