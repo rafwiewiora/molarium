@@ -187,7 +187,7 @@ function assertReplayContainsNoCoordinatesOrHoldouts(script) {
  * Verify the immutable pre-freeze evidence and the independent post-freeze
  * acceptance verdict before a run may feed any public replay or movie asset.
  */
-export async function verifyAcceptedSos1Run(runDirectory) {
+export async function verifyCompleteFrozenSos1Run(runDirectory) {
   const directory = resolve(runDirectory);
   const [manifestBytes, evaluationBytes, auditBytes] = await Promise.all([
     readFile(join(directory, 'prediction-manifest.json')),
@@ -217,15 +217,11 @@ export async function verifyAcceptedSos1Run(runDirectory) {
   assert.equal(evaluation.predictionManifestSha256, sha256(manifestBytes),
     'holdout evaluation does not belong to this prediction manifest');
   assert.equal(evaluation.holdoutsOpenedOnlyAfterAllFreezeHashesAndAgentAuditVerified, true);
-  assert.equal(evaluation.accepted, true,
-    'SOS1 run was not accepted by the independent holdout evaluation');
-  assert.equal(evaluation.continuity?.accepted, true,
-    'AWW-to-AXH continuity was not accepted');
   assert.deepEqual(evaluation.results?.map((entry) => entry.stepId), SOS1_STEP_IDS,
     'holdout evaluation is not the complete SOS1 route');
-  assert(evaluation.results.every((entry) => entry.accepted === true
-    && Array.isArray(entry.failedChecks) && entry.failedChecks.length === 0),
-  'one or more SOS1 holdout evaluations failed');
+  assert(evaluation.results.every((entry) => typeof entry.accepted === 'boolean'
+    && Array.isArray(entry.failedChecks)),
+  'one or more SOS1 holdout evaluation records are incomplete');
   assert.deepEqual(manifest.checkpoints?.map((entry) => entry.stepId), SOS1_STEP_IDS,
     'prediction manifest is not the complete SOS1 route');
 
@@ -289,6 +285,20 @@ export async function verifyAcceptedSos1Run(runDirectory) {
     'Phe890 branch decision lacks deterministic final replay verification');
   return Object.freeze({ directory, runId:basename(directory), manifest, manifestBytes,
     evaluation, evaluationBytes, audit, auditBytes, checkpoints });
+}
+
+/** Apply the independent post-freeze acceptance gate without changing the
+ * complete-frozen-run verifier used by explicitly prediction-only publishing. */
+export async function verifyAcceptedSos1Run(runDirectory) {
+  const verified = await verifyCompleteFrozenSos1Run(runDirectory);
+  assert.equal(verified.evaluation.accepted, true,
+    'SOS1 run was not accepted by the independent holdout evaluation');
+  assert.equal(verified.evaluation.continuity?.accepted, true,
+    'AWW-to-AXH continuity was not accepted');
+  assert(verified.evaluation.results.every((entry) => entry.accepted === true
+    && entry.failedChecks.length === 0),
+  'one or more SOS1 holdout evaluations failed');
+  return verified;
 }
 
 function selectedRouteRecord(record) {
@@ -362,6 +372,50 @@ export async function buildAcceptedSos1ReplayScript(verified) {
     && step.action !== 'interface.presentDesignerStep'));
   assert.equal(script.sourceAudit?.stateHashGuards?.mode, 'required',
     'accepted publication replay must require molecular-state guards');
+  return Object.freeze({ script, actionScriptSha256:await actionScriptSha256(script),
+    sourceAuditSha256:sha256(verified.auditBytes), sourceAuditRecords:records.length,
+    selectedAuditSequences:sequences });
+}
+
+/** Build the same guarded public-action replay without implying that the
+ * separately attached post-freeze holdout evaluation passed. */
+export async function buildFrozenSos1ReplayScript(verified) {
+  const records = verified.audit.records || [];
+  const selected = records.filter(selectedRouteRecord);
+  const sequences = selected.map((record) => record.sequence);
+  const captionsBySequence = Object.fromEntries(selected.map((record) =>
+    [record.sequence, captionForRecord(record)]));
+  const script = actionScriptFromAudit(verified.audit, {
+    label:`SOS1 hit-to-BAY-293 prediction replay ${verified.runId}`,
+    includeReadOnly:true,
+    includeSequences:sequences,
+    captionsBySequence,
+    includeAuditMetadata:true,
+    stateHashGuards:'required',
+    provenance:{ runId:verified.runId,
+      publicationClass:'complete-frozen-prediction',
+      predictionManifestSha256:sha256(verified.manifestBytes),
+      sourceAuditSha256:sha256(verified.auditBytes),
+      sourceAuditRecords:records.length,
+      checkpoints:SOS1_STEP_IDS.map((stepId) => ({ stepId,
+        sha256:verified.checkpoints.get(stepId).entry.sha256 })),
+      postFreezeEvaluation:{ attached:true,
+        summarySha256:sha256(verified.evaluationBytes),
+        accepted:verified.evaluation.accepted === true,
+        continuityAccepted:verified.evaluation.continuity?.accepted === true,
+        failedStepIds:verified.evaluation.results
+          .filter((entry) => entry.accepted !== true).map((entry) => entry.stepId) } },
+  });
+  validateActionScript(script);
+  assertReplayContainsNoCoordinatesOrHoldouts(script);
+  assert.deepEqual(script.actions.filter((step) => step.action === 'designRoute.applyStep')
+    .map((step) => step.args.stepId), SOS1_STEP_IDS);
+  assert.equal(script.actions.filter((step) => step.action === 'pose.applySidechainRotamer').length,
+    1, 'prediction replay must apply exactly one Phe890 rotamer');
+  assert(script.actions.every((step) => !step.action.startsWith('designerScript.')
+    && step.action !== 'interface.presentDesignerStep'));
+  assert.equal(script.sourceAudit?.stateHashGuards?.mode, 'required',
+    'prediction replay must require molecular-state guards');
   return Object.freeze({ script, actionScriptSha256:await actionScriptSha256(script),
     sourceAuditSha256:sha256(verified.auditBytes), sourceAuditRecords:records.length,
     selectedAuditSequences:sequences });

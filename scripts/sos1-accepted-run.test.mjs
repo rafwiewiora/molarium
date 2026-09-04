@@ -6,7 +6,10 @@ import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
 import { commitMolecule, createCampaign, storeSnapshot } from '../design-history/ledger.mjs';
 import { serializeCampaign } from '../design-history/live-campaign-store.mjs';
 import { assertAcceptedCheckpointRelaxation, buildAcceptedSos1ReplayScript,
-  requireExplicitRunDirectory, sha256, verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
+  buildFrozenSos1ReplayScript, requireExplicitRunDirectory, sha256,
+  verifyAcceptedSos1Run, verifyCompleteFrozenSos1Run } from './sos1-accepted-run.mjs';
+import { buildFrozenBrowserPublicationRecords } from
+  './publish-sos1-frozen-browser-replays.mjs';
 
 assert.throws(() => requireExplicitRunDirectory([]), /--run is required/);
 
@@ -241,8 +244,29 @@ try {
   await assert.rejects(() => buildAcceptedSos1ReplayScript({ ...verified,
     audit:preGuardAudit }), /missing molarium\.molecular-state-hash\/v1 result guards/);
 
-  const rejected = { ...evaluation, accepted:false };
+  const rejected = { ...evaluation, accepted:false, continuity:{ accepted:false },
+    results:evaluation.results.map((entry, index) => index === evaluation.results.length - 1
+      ? { ...entry, accepted:false, failedChecks:['ligandRmsdAngstrom'] } : entry) };
   await writeFile(join(scratch, 'holdout-evaluation-summary.json'), `${JSON.stringify(rejected)}\n`);
+  const completeFrozen = await verifyCompleteFrozenSos1Run(scratch);
+  assert.equal(completeFrozen.evaluation.accepted, false);
+  const predictionReplay = await buildFrozenSos1ReplayScript(completeFrozen);
+  assert.match(predictionReplay.script.label, /prediction replay/);
+  assert.equal(predictionReplay.script.sourceAudit.publicationClass,
+    'complete-frozen-prediction');
+  assert.equal(predictionReplay.script.sourceAudit.postFreezeEvaluation.accepted, false);
+  assert.equal(predictionReplay.script.sourceAudit.postFreezeEvaluation.continuityAccepted, false);
+  assert.deepEqual(predictionReplay.script.sourceAudit.postFreezeEvaluation.failedStepIds,
+    ['finish-bay-293']);
+  assert.equal(Object.hasOwn(predictionReplay.script.sourceAudit, 'accepted'), false);
+  const browserPublication = await buildFrozenBrowserPublicationRecords(completeFrozen);
+  assert.equal(browserPublication.declaration.postFreezeEvaluation.accepted, false);
+  assert.deepEqual(browserPublication.declaration.postFreezeEvaluation.failedStepIds,
+    ['finish-bay-293']);
+  assert.deepEqual(browserPublication.review.actions.map((step) => step.args.serialized),
+    steps.map((stepId) => completeFrozen.checkpoints.get(stepId)
+      .fullSystemCampaign.serializedCampaign));
+  assert.equal(browserPublication.review.provenance.postFreezeEvaluation.accepted, false);
   await assert.rejects(() => verifyAcceptedSos1Run(scratch), /was not accepted/);
 
   await writeFile(join(scratch, 'holdout-evaluation-summary.json'), `${JSON.stringify(evaluation)}\n`);
