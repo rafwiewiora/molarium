@@ -167,6 +167,63 @@ function torsionDegrees(first, second, third, fourth) {
   return normalizeDegrees(Math.atan2(dot(cross(axis, v), w), dot(v, w)) * 180 / Math.PI);
 }
 
+/**
+ * Measure the standard heavy-atom chi angles of one explicitly located residue from a
+ * coordinate-bearing `session.inspect` atom list. This is intentionally separate from rotamer
+ * enumeration: an induced-fit calculation can move the selected side chain after its seed
+ * rotamer was applied, so scientific records must distinguish the seed angles from the relaxed
+ * angles actually present in the inspected coordinates.
+ */
+export function measureInspectedSidechainChiAngles({ atoms, residue } = {}) {
+  if (!Array.isArray(atoms) || !atoms.length)
+    throw new Error('Side-chain chi measurement requires inspected atoms');
+  if (!residue || typeof residue !== 'object' || Array.isArray(residue))
+    throw new Error('Side-chain chi measurement requires an explicit residue locator');
+  const residueName = String(residue.residueName || '').toUpperCase();
+  const definitions = CHI_ATOMS[residueName];
+  if (!definitions)
+    throw new Error(`${residueName || 'This residue'} does not have measurable side-chain chi angles`);
+  if (typeof residue.chain !== 'string' || !Number.isInteger(residue.residueIndex)
+    || residue.insertionCode != null && typeof residue.insertionCode !== 'string')
+    throw new Error('The residue locator requires chain, integer residueIndex, and optional insertionCode');
+  const insertionCode = String(residue.insertionCode || '');
+  const located = atoms.filter((atom) => String(atom?.residueName || '').toUpperCase() === residueName
+    && String(atom?.chain || '') === residue.chain
+    && atom?.residueIndex === residue.residueIndex
+    && String(atom?.insertionCode || '') === insertionCode);
+  const requiredNames = [...new Set(definitions.flat())];
+  const byName = new Map();
+  for (const name of requiredNames) {
+    const matches = located.filter((atom) => atom?.atomName === name);
+    if (matches.length !== 1) {
+      const label = `${residueName} ${residue.chain}${residue.residueIndex}${insertionCode}`;
+      if (!matches.length) throw new Error(`${label} is missing ${name} for chi measurement`);
+      throw new Error(`${label} contains multiple ${name} atoms for chi measurement`);
+    }
+    byName.set(name, matches[0]);
+  }
+  return definitions.map((names) => Number(torsionDegrees(
+    ...names.map((name) => {
+      const [x,y,z] = inspectedPoint(byName.get(name));
+      return { x,y,z };
+    })).toFixed(3)));
+}
+
+export function assertSidechainChiAnglesReproduced(expected, observed,
+  { toleranceDegrees = SIDECHAIN_ROTAMER_CHI_TOLERANCE_DEGREES } = {}) {
+  if (!Array.isArray(expected) || !expected.length || expected.some((value) => !Number.isFinite(value))
+    || !Array.isArray(observed) || observed.some((value) => !Number.isFinite(value))
+    || expected.length !== observed.length)
+    throw new Error('Comparable side-chain chi vectors must contain the same number of finite angles');
+  if (!Number.isFinite(toleranceDegrees) || toleranceDegrees < 0)
+    throw new Error('toleranceDegrees must be a non-negative finite number');
+  const mismatch = expected.findIndex((value, index) =>
+    circularDegreeDistance(value, observed[index]) > toleranceDegrees);
+  if (mismatch >= 0)
+    throw new Error(`Relaxed side-chain chi${mismatch + 1} changed during deterministic replay`);
+  return true;
+}
+
 function rotatePoint(point, origin, axis, radians) {
   const relative = { x:point.x - origin.x, y:point.y - origin.y, z:point.z - origin.z };
   const cosine = Math.cos(radians), sine = Math.sin(radians);

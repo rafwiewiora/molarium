@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
-import { applySidechainRotamer, assertSidechainRotamerCoordinateGuards,
+import { applySidechainRotamer, assertSidechainChiAnglesReproduced,
+  assertSidechainRotamerCoordinateGuards,
   enumerateSidechainRotamers, evaluatePostRelaxedLigandPocket,
-  selectSidechainRotamerCandidate, selectCoupledSidechainPoseBranch,
+  measureInspectedSidechainChiAngles, selectSidechainRotamerCandidate,
+  selectCoupledSidechainPoseBranch,
   SIDECHAIN_ROTAMER_SCHEMA, uniqueSidechainRotamerCandidates } from './sidechain-rotamers.mjs';
 
 const atom = (atomName, x, y, z, extra = {}) => ({ record:'ATOM', residueName:'PHE',
@@ -19,6 +21,11 @@ const atoms = [
 const bonds = [[0,1],[1,2],[2,3],[1,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,5]]
   .map(([a,b]) => ({ a,b,order:1 }));
 const molecule = { atoms:structuredClone(atoms), bonds:structuredClone(bonds) };
+const inspectedResidue = (source = molecule.atoms.slice(0, 11)) => source.map((entry) => ({
+  atomId:`test:${entry.atomName}`, atomName:entry.atomName, element:entry.element,
+  residueName:entry.residueName, chain:entry.chain, residueIndex:entry.residueIndex,
+  insertionCode:entry.insertionCode || '', coordinatesAngstrom:[entry.x, entry.y, entry.z],
+}));
 
 const ensemble = enumerateSidechainRotamers({ molecule, residueAtomIndex:6,
   ligandAtomIndices:[11], maximumCandidates:32 });
@@ -29,6 +36,9 @@ assert(ensemble.candidates.length >= 8);
 assert(ensemble.candidates.some((entry) => Math.abs(Math.abs(entry.chiDegrees[0]) - 180) < 1));
 assert(ensemble.candidates.some((entry) => Math.abs(entry.chiDegrees[1] - 90) < 1));
 assert(ensemble.candidates[0].score <= ensemble.candidates.at(-1).score);
+assert.deepEqual(measureInspectedSidechainChiAngles({ atoms:inspectedResidue(),
+  residue:{ residueName:'PHE', chain:'A', residueIndex:890, insertionCode:'' } }),
+ensemble.inputChiDegrees, 'coordinate-bearing inspection reproduces the enumerated input chi angles');
 const completeChiBranches = uniqueSidechainRotamerCandidates(ensemble.candidates);
 assert.equal(completeChiBranches.length, ensemble.candidates.length,
   'the enumerator already returns unique complete chi-angle branches');
@@ -48,10 +58,27 @@ const originalBackbone = molecule.atoms.slice(0, 4).map(({ x,y,z }) => [x,y,z]);
 const originalLigand = [molecule.atoms[11].x, molecule.atoms[11].y, molecule.atoms[11].z];
 const applied = applySidechainRotamer(molecule, ensemble, 0);
 assert.equal(applied.rank, 1);
+assert.deepEqual(measureInspectedSidechainChiAngles({ atoms:inspectedResidue(),
+  residue:{ residueName:'PHE', chain:'A', residueIndex:890, insertionCode:'' } }),
+applied.chiDegrees, 'relaxed-coordinate measurement is independent of the seed rotamer label');
 assert.deepEqual(molecule.atoms.slice(0, 4).map(({ x,y,z }) => [x,y,z]), originalBackbone);
 assert.deepEqual([molecule.atoms[11].x, molecule.atoms[11].y, molecule.atoms[11].z], originalLigand);
 assert.throws(() => enumerateSidechainRotamers({ molecule, residueAtomIndex:11 }), /not in a protein/);
 assert.throws(() => applySidechainRotamer(molecule, ensemble, 100), /does not exist/);
+assert.throws(() => measureInspectedSidechainChiAngles({ atoms:inspectedResidue().filter((entry) =>
+  entry.atomName !== 'CD1'), residue:{ residueName:'PHE', chain:'A', residueIndex:890 } }),
+/missing CD1/);
+assert.throws(() => measureInspectedSidechainChiAngles({ atoms:[...inspectedResidue(),
+  inspectedResidue().find((entry) => entry.atomName === 'CG')],
+residue:{ residueName:'PHE', chain:'A', residueIndex:890 } }), /multiple CG/);
+assert.throws(() => measureInspectedSidechainChiAngles({ atoms:inspectedResidue(),
+  residue:{ residueName:'PHE', chain:'A', residueIndex:891 } }), /missing N/);
+assert.equal(assertSidechainChiAnglesReproduced([-180, 90], [180, 90]), true,
+  'deterministic replay comparison treats the signed 180-degree boundary circularly');
+assert.throws(() => assertSidechainChiAnglesReproduced([-60, 180], [-61, 180]),
+  /chi1 changed during deterministic replay/);
+assert.throws(() => assertSidechainChiAnglesReproduced([-60, 180], [-60]),
+  /same number of finite angles/);
 
 const stableSelectionEnsemble = { schema:SIDECHAIN_ROTAMER_SCHEMA,
   inputCoordinateSha256:'1'.repeat(64), axes:[{ chi:'chi1' }, { chi:'chi2' }], candidates:[

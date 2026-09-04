@@ -193,6 +193,12 @@ residue identity and unique chi angles; use an index only for an immediate inter
 The chosen branch should then be physically refined and compared with the other branches; the
 steric pre-rank is not an affinity score.
 
+Coupled side-chain/pose searches record both `seedChiDegrees`, measured when the enumerated branch
+is applied, and `relaxedChiDegrees`, remeasured from the coordinate-bearing `session.inspect`
+pocket response after induced-fit minimization. The final deterministic replay must reproduce the
+relaxed ligand and pocket coordinate hashes and the remeasured chi vector. A seed rotamer label is
+therefore never evidence that the relaxed side chain remained in the same conformational basin.
+
 `pose.updateReceptorReference` accepts a moved receptor-site branch without replacing the captured
 ligand reference or its persistent atom lineage. It refreshes the receptor coordinates and any
 captured receptor contact descriptors, records before/after coordinate hashes, and leaves ligand

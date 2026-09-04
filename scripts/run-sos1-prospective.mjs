@@ -2,8 +2,9 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { COUPLED_SIDECHAIN_POSE_SELECTION_CRITERION,
-  evaluatePostRelaxedLigandPocket, selectCoupledSidechainPoseBranch,
+import { assertSidechainChiAnglesReproduced, COUPLED_SIDECHAIN_POSE_SELECTION_CRITERION,
+  evaluatePostRelaxedLigandPocket, measureInspectedSidechainChiAngles,
+  selectCoupledSidechainPoseBranch,
   uniqueSidechainRotamerCandidates } from '../docking/sidechain-rotamers.mjs';
 import { AUDIT_STATE_HASH_GUARDS, actionScriptFromAudit } from '../design-history/replay.mjs';
 import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
@@ -23,6 +24,8 @@ const branchSearchChains = Number(valueFor('--branch-search-chains') || 32);
 const fixedSearchChains = Number(valueFor('--fixed-search-chains') || 64);
 const poseExecution = valueFor('--pose-execution') || 'auto';
 const allSteps = ['scaffold-rewrite', 'fragment-merge', 'open-phe890-pocket', 'finish-bay-293'];
+const PHE890 = Object.freeze({ residueName:'PHE', chain:'A', residueIndex:890,
+  insertionCode:'' });
 const stopIndex = requestedStop ? allSteps.indexOf(requestedStop) : allSteps.length - 1;
 if (stopIndex < 0) throw new Error(`Unknown --stop-after step: ${requestedStop}`);
 if (!['none', 'pocket-webgpu', 'induced-fit-webgpu'].includes(relaxMethod))
@@ -137,9 +140,13 @@ async function choosePhe890Branch(stepId) {
       ligandAtoms:ligand.result.atoms,
       pocketAtoms:pocket.result.atoms,
     });
+    const relaxedChiDegrees = measureInspectedSidechainChiAngles({
+      atoms:pocket.result.atoms, residue:PHE890,
+    });
     branches.push({
       candidateIndex:candidate.index, candidateRank:candidate.rank,
       source:candidate.source, chiDegrees:candidate.chiDegrees,
+      seedChiDegrees:candidate.chiDegrees, relaxedChiDegrees,
       prerankScore:candidate.score, prerankStericPenalty:candidate.stericPenalty,
       prerankLigandStericPenalty:candidate.ligandStericPenalty,
       prerankSevereClashes:candidate.severeClashes,
@@ -201,9 +208,13 @@ async function choosePhe890Branch(stepId) {
   }, `${stepId}-inspect-selected-pocket`);
   const ligandCoordinateSha256 = coordinateDigest(ligand);
   const pocketCoordinateSha256 = coordinateDigest(pocket);
+  const relaxedChiDegrees = measureInspectedSidechainChiAngles({
+    atoms:pocket.result.atoms, residue:PHE890,
+  });
   if (ligandCoordinateSha256 !== selected.relaxedLigandCoordinateSha256
     || pocketCoordinateSha256 !== selected.relaxedPocketCoordinateSha256)
     throw new Error('The selected post-relaxation branch changed during deterministic replay');
+  assertSidechainChiAnglesReproduced(selected.relaxedChiDegrees, relaxedChiDegrees);
   const postRelaxation = {
     receptorAware:evaluatePostRelaxedLigandPocket({
       ligandAtoms:ligand.result.atoms,
@@ -228,6 +239,7 @@ async function choosePhe890Branch(stepId) {
     branches, selected:{ candidateIndex:finalCandidate.index,
       candidateRank:finalCandidate.rank, source:finalCandidate.source,
       chiDegrees:finalCandidate.chiDegrees,
+      seedChiDegrees:finalCandidate.chiDegrees, relaxedChiDegrees,
       selectedCoordinateSha256:applied.result.sidechainRotamer.selectedCoordinateSha256,
       criterion:COUPLED_SIDECHAIN_POSE_SELECTION_CRITERION,
       receptorReference:receptorReference.result.receptorReference,

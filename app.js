@@ -9305,6 +9305,7 @@ async function inspectChemistActionState({ scope = 'ligand', includeCoordinates 
       formalCharge:atomFormalCharge(atom), aromatic:Boolean(atom.aromatic),
       atomName:atom.atomName || null, residueName:atom.residueName || null,
       chain:atom.chain || null, residueIndex:atom.residueIndex ?? null,
+      insertionCode:atom.insertionCode || '',
       ...(includeCoordinates ? { coordinatesAngstrom:[Number(atom.x),Number(atom.y),Number(atom.z)] } : {}) };
   });
   const bonds = state.molecule.bonds.flatMap((bond) => included.has(bond.a) && included.has(bond.b)
