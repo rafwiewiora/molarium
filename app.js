@@ -16573,9 +16573,17 @@ document.querySelector('#replay-designer-moves').addEventListener('click', async
     const review = currentDesignerReplayReviewState();
     if (review.completed && review.reviewing)
       await runChemistUiAction('designerScript.step', { direction:'final' }, { reportError:false });
-    else await runChemistUiAction('designerScript.play', {
-      playing:!state.designerMoveReplaying || state.designerMoveReplayPaused,
-    }, { reportError:false });
+    else {
+      // Make the human "Return & continue" transport explicit at the same
+      // public boundary used by agents.  Restoring the live frontier first
+      // prevents this click from ever being interpreted as a fresh replay.
+      if (review.live && review.reviewing)
+        await runChemistUiAction('designerScript.step',
+          { direction:'final' }, { reportError:false });
+      await runChemistUiAction('designerScript.play', {
+        playing:!state.designerMoveReplaying || state.designerMoveReplayPaused,
+      }, { reportError:false });
+    }
   }
   catch (error) { showNotice(error.message); }
   finally { updateDesignerMoveControls(); }

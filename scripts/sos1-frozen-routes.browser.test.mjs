@@ -76,9 +76,72 @@ try {
   const review = await waitForBlankStory('sos1-hit-to-bay293-review');
   assert(!/accepted|success/i.test(review.snapshot.title),
     'the complete-frozen review route must not claim acceptance or success');
+  const reviewMoveCount = review.registered.installed.actionCount;
   await screenshot('02-review-blank-full-interface.png');
 
   await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
+  await waitFor(async () => browser.evaluate(
+    `Number(document.querySelector('#designer-move-progress-label')?.textContent?.split('/')[0]) >= 1
+      || document.querySelector('#designer-move-tools')?.dataset.replayStatus === 'failed'`),
+  120000, 'first calculation-free prediction checkpoint');
+  const firstMoveStatus = await browser.evaluate(`({
+    replayStatus:document.querySelector('#designer-move-tools')?.dataset.replayStatus,
+    progress:document.querySelector('#designer-move-progress-label')?.textContent,
+    notice:document.querySelector('#notice')?.textContent,
+  })`);
+  assert.notEqual(firstMoveStatus.replayStatus, 'failed',
+    `prediction review failed before its first checkpoint: ${JSON.stringify(firstMoveStatus)}`);
+  await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
+  await waitFor(async () => browser.evaluate(
+    `document.querySelector('#replay-designer-moves')?.textContent?.includes('Continue')
+      && !document.querySelector('#previous-designer-move')?.disabled`),
+  30000, 'paused calculation-free prediction review');
+  const pausedFrontier = await browser.evaluate(`Number(
+    document.querySelector('#designer-move-progress-label').textContent.split('/')[0])`);
+  assert.ok(pausedFrontier >= 1);
+  const firstImportCount = await browser.evaluate(`window.MolariumChemistActions.history()
+    .filter((entry) => entry.action === 'campaign.import').length`);
+  await browser.evaluate(`document.querySelector('#previous-designer-move').click()`);
+  await waitFor(async () => browser.evaluate(
+    `document.querySelector('#designer-move-progress-label')?.textContent?.trim()
+      === '${pausedFrontier - 1} / ${reviewMoveCount}'`),
+  30000, 'previous calculation-free checkpoint during a pause');
+  assert.match(await browser.evaluate(
+    `document.querySelector('#replay-designer-moves').textContent`), /Return & continue/);
+  const actionsBeforeContinue = await browser.evaluate(
+    `window.MolariumChemistActions.history().map((entry) => entry.action)`);
+  await browser.evaluate(`(() => {
+    window.__sos1TransportProgress = [];
+    const label = document.querySelector('#designer-move-progress-label');
+    window.__sos1TransportObserver = new MutationObserver(() =>
+      window.__sos1TransportProgress.push(label.textContent.trim()));
+    window.__sos1TransportObserver.observe(label, {
+      childList:true, characterData:true, subtree:true,
+    });
+  })()`);
+  await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
+  await waitFor(async () => browser.evaluate(
+    `Number(document.querySelector('#designer-move-progress-label')?.textContent?.split('/')[0])
+      > ${pausedFrontier}`),
+  30000, 'resume from the live calculation-free frontier');
+  const resumed = await browser.evaluate(`({
+    importCount:window.MolariumChemistActions.history()
+      .filter((entry) => entry.action === 'campaign.import').length,
+    loadCount:window.MolariumChemistActions.history()
+      .filter((entry) => entry.action === 'designerScript.loadRegistered').length,
+    actions:window.MolariumChemistActions.history().map((entry) => entry.action),
+    progress:(window.__sos1TransportObserver?.disconnect(),
+      window.__sos1TransportProgress || []),
+  })`);
+  assert.ok(resumed.importCount >= firstImportCount,
+    'resuming the review must preserve all already completed checkpoint imports');
+  assert.equal(resumed.loadCount, 1,
+    'Return & continue must not reload the registered story from move 1');
+  assert.deepEqual(resumed.actions.slice(actionsBeforeContinue.length, actionsBeforeContinue.length + 2),
+    ['designerScript.step','designerScript.play'],
+    'the human Return & continue control must publicly restore the frontier before resuming');
+  assert.ok(resumed.progress.every((label) => Number(label.split('/')[0]) >= pausedFrontier),
+    `Return & continue visibly rewound below frontier ${pausedFrontier}: ${resumed.progress.join(', ')}`);
   await waitFor(async () => browser.evaluate(
     `document.querySelector('#designer-move-tools')?.dataset.replayStatus === 'completed'`),
   120000, 'complete calculation-free prediction review');
