@@ -5,7 +5,7 @@ import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { basename, dirname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { actionScriptSha256 } from '../design-history/replay.mjs';
-import { acceptedInspectionCheckpointReviewScript } from
+import { acceptedCheckpointReviewScript } from
   '../design-history/accepted-checkpoint-review.mjs';
 import { buildAcceptedSos1ReplayScript, requireExplicitRunDirectory, sha256,
   SOS1_ROUTE_ID, SOS1_STEP_IDS, verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
@@ -137,16 +137,20 @@ export async function buildSos1PublicationRecords(accepted, { interfaceMovie } =
   'SOS1 publication records require the verified installed interface movie');
   const replay = await buildAcceptedSos1ReplayScript(accepted);
   const replayBytes = jsonBytes(replay.script);
-  const checkpointReviewScript = await acceptedInspectionCheckpointReviewScript({
+  const checkpointReviewScript = await acceptedCheckpointReviewScript({
     label:'SOS1 accepted checkpoints · calculation-free review',
     checkpoints:SOS1_STEP_IDS.map((stepId) => {
       const frozen = accepted.checkpoints.get(stepId);
+      const fullSystem = frozen.fullSystemCampaign;
       return {
         accepted:true,
         frozenBeforeHoldoutAccess:true,
         checkpointSha256:frozen.entry.sha256,
-        pocket:frozen.checkpoint.pocket,
-        ligand:frozen.checkpoint.ligand,
+        campaignSha256:fullSystem.record.sha256,
+        serializedCampaign:fullSystem.serializedCampaign,
+        branch:fullSystem.record.branch,
+        commitId:fullSystem.record.commitId,
+        snapshotId:fullSystem.record.snapshotId,
         label:STEP_COPY[stepId].title,
       };
     }),

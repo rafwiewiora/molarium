@@ -4,6 +4,9 @@ import { readFile } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
 import { actionScriptFromAudit, actionScriptSha256,
   validateActionScript } from '../design-history/replay.mjs';
+import { verifyCampaign } from '../design-history/ledger.mjs';
+import { deserializeCampaign, serializeCampaign } from
+  '../design-history/live-campaign-store.mjs';
 
 export const SOS1_ROUTE_ID = 'sos1-hit-only';
 export const SOS1_STEP_IDS = Object.freeze([
@@ -244,7 +247,38 @@ export async function verifyAcceptedSos1Run(runDirectory) {
     assert.equal(checkpoint.frozenBeforeHoldoutAccess, true);
     assertAcceptedCheckpointRelaxation(checkpoint, entry.stepId);
     assertNoHoldoutCoordinatePayload(checkpoint, `${entry.stepId} checkpoint`);
-    checkpoints.set(entry.stepId, { entry, checkpoint, bytes });
+    const campaignRecord = checkpoint.fullSystemCampaign;
+    assert(campaignRecord && campaignRecord.schema === 'molarium.full-system-checkpoint/v1',
+      `${entry.stepId}: exact full-system campaign record is missing`);
+    assert.deepEqual(entry.fullSystemCampaign, campaignRecord,
+      `${entry.stepId}: manifest and checkpoint full-system campaign records differ`);
+    assert.equal(basename(campaignRecord.filename), campaignRecord.filename,
+      `${entry.stepId}: full-system campaign filename is not local to the run`);
+    const campaignBytes = await readFile(join(directory, campaignRecord.filename));
+    assert.equal(campaignBytes.length, campaignRecord.bytes,
+      `${entry.stepId}: full-system campaign byte count changed`);
+    assert.equal(sha256(campaignBytes), campaignRecord.sha256,
+      `${entry.stepId}: full-system campaign changed`);
+    const serializedCampaign = campaignBytes.toString('utf8');
+    const campaign = deserializeCampaign(serializedCampaign);
+    assert.equal(serializeCampaign(campaign), serializedCampaign,
+      `${entry.stepId}: full-system campaign is not canonically serialized`);
+    const campaignVerification = await verifyCampaign(campaign);
+    assert.equal(campaignVerification.valid, true,
+      `${entry.stepId}: full-system campaign is invalid: ${campaignVerification.reason}`);
+    assert.equal(campaign.campaignId, campaignRecord.campaignId,
+      `${entry.stepId}: full-system campaign ID changed`);
+    assert.equal(campaign.branches?.[campaignRecord.branch], campaignRecord.commitId,
+      `${entry.stepId}: full-system campaign branch head changed`);
+    assert.equal(campaign.objects?.commits?.[campaignRecord.commitId]?.snapshotId,
+      campaignRecord.snapshotId,
+      `${entry.stepId}: full-system campaign commit does not select its frozen snapshot`);
+    assert(campaign.objects?.snapshots?.[campaignRecord.snapshotId],
+      `${entry.stepId}: full-system campaign snapshot is missing`);
+    assertNoHoldoutCoordinatePayload(campaign, `${entry.stepId} full-system campaign`);
+    checkpoints.set(entry.stepId, { entry, checkpoint, bytes,
+      fullSystemCampaign:{ record:campaignRecord, campaign, campaignBytes,
+        serializedCampaign } });
   }
   const branchDecision = checkpoints.get('open-phe890-pocket')?.checkpoint?.rotamerDecision;
   assert.equal(branchDecision?.publicationEligible, true,

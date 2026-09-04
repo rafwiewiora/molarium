@@ -7,6 +7,8 @@ import { parsePdb } from '../design-history/structures/pipeline.mjs';
 import { validatePrecomputedCheckpointReview } from
   '../design-history/structure-viewer/checkpoint-review.mjs';
 import { expandStructureTimeline } from '../design-history/structure-viewer/timeline.mjs';
+import { commitMolecule, createCampaign, storeSnapshot } from '../design-history/ledger.mjs';
+import { serializeCampaign } from '../design-history/live-campaign-store.mjs';
 import { buildSos1PublicationRecords, pdbFromFrozenInspection, rewritePublicationIntegration,
   SOS1_PUBLIC_ASSET_MANIFEST, SOS1_PUBLIC_CHECKPOINT_REVIEW, SOS1_PUBLIC_PROVENANCE,
   SOS1_PUBLIC_REPLAY, SOS1_PUBLIC_REVIEW,
@@ -79,6 +81,35 @@ for (const [index, stepId] of stepIds.entries()) {
   const freeze = push(`${stepId}-freeze-pocket`, 'session.inspect',
     { scope:'pocket', includeCoordinates:true, maximumAtoms:500 });
   const stateId = stateIds[index];
+  const occurredAt = `2026-01-0${index + 1}T00:00:00.000Z`;
+  const campaign = createCampaign({ campaignId:`promotion-${stepId}`,
+    title:`Full system ${stepId}`, createdAt:occurredAt,
+    actors:[{ id:'agent.test', type:'agent', displayName:'Test agent' }] });
+  const snapshotAtoms = [
+    { atomId:`${stateId}:C1`, atomName:'C1', element:'C', formalCharge:0,
+      aromatic:false, record:'HETATM', residueName:'LIG', chain:'L', residueIndex:1 },
+    { atomId:`${stateId}:N1`, atomName:'N1', element:'N', formalCharge:0,
+      aromatic:false, record:'HETATM', residueName:'LIG', chain:'L', residueIndex:1 },
+    { atomId:'receptor:PHE:890:CG', atomName:'CG', element:'C', formalCharge:0,
+      record:'ATOM', residueName:'PHE', chain:'A', residueIndex:890 },
+    { atomId:'receptor:ASN:879:CA', atomName:'CA', element:'C', formalCharge:0,
+      record:'ATOM', residueName:'ASN', chain:'A', residueIndex:879 },
+  ];
+  const snapshotId = await storeSnapshot(campaign, { label:stepId,
+    graph:{ atoms:snapshotAtoms,
+      bonds:[{ atomIds:[`${stateId}:C1`,`${stateId}:N1`], order:1 }] },
+    coordinates:{ unit:'angstrom', atomIds:snapshotAtoms.map((atom) => atom.atomId),
+      positions:[[index,0,0],[index + 1.4,0,0],[0,index + 1,0],[2,index + 1,0]] } });
+  const commitId = await commitMolecule(campaign, { snapshotId, parents:[], branch:'main',
+    message:`Freeze ${stepId}`, actorId:'agent.test', occurredAt,
+    tags:['accepted','pre-holdout'] });
+  const serializedCampaign = serializeCampaign(campaign);
+  const campaignBytes = Buffer.from(serializedCampaign);
+  const fullSystemCampaignRecord = { schema:'molarium.full-system-checkpoint/v1',
+    campaignId:campaign.campaignId, branch:'main', commitId, snapshotId,
+    filename:`${stepId}-campaign.json`, sha256:fixedHash(campaignBytes),
+    bytes:campaignBytes.length, commitActionSequence:1, exportActionSequence:2,
+    verification:{ valid:true } };
   const checkpoint = { schema:'molarium.design-prediction-checkpoint/v1',
     routeId:'sos1-hit-only', stepId, predictedStateId:stateId,
     frozenBeforeHoldoutAccess:true,
@@ -89,6 +120,7 @@ for (const [index, stepId] of stepIds.entries()) {
       publicationEligible:true, diagnosticOnly:false,
       deterministicFinalReplayVerified:true } } : {}),
     staging:{ productHeavyGraph, poseTransferPlan:{ featureCorrespondences:[] } },
+    fullSystemCampaign:fullSystemCampaignRecord,
     ligand:{ truncated:false, totalAtomCount:2, atoms:[
       { atomId:`${stateId}:C1`, atomName:'C1', element:'C', formalCharge:0,
         aromatic:false, coordinatesAngstrom:[index, 0, 0] },
@@ -103,8 +135,11 @@ for (const [index, stepId] of stepIds.entries()) {
     ] } };
   const checkpointBytes = Buffer.from(`${JSON.stringify(checkpoint)}\n`);
   const entry = { stepId, predictedStateId:stateId, filename:`${stepId}.json`,
-    sha256:fixedHash(checkpointBytes), freezeActionSequence:freeze.sequence };
-  checkpoints.set(stepId, { entry, checkpoint, bytes:checkpointBytes });
+    sha256:fixedHash(checkpointBytes), freezeActionSequence:freeze.sequence,
+    fullSystemCampaign:fullSystemCampaignRecord };
+  checkpoints.set(stepId, { entry, checkpoint, bytes:checkpointBytes,
+    fullSystemCampaign:{ record:fullSystemCampaignRecord, campaign, campaignBytes,
+      serializedCampaign } });
   manifestCheckpoints.push(entry);
 }
 const audit = { schema:'molarium.chemist-actions/v1', routeId:'sos1-hit-only',
@@ -130,6 +165,9 @@ const records = await buildSos1PublicationRecords(syntheticAccepted, { interface
 assert.equal(records.review.review.calculationPolicy, 'never-run');
 assert.deepEqual(records.checkpointReviewScript.actions.map((step) => step.action),
   ['campaign.import','campaign.import','campaign.import','campaign.import']);
+assert.deepEqual(records.checkpointReviewScript.actions.map((step) => step.args.serialized),
+  stepIds.map((stepId) => checkpoints.get(stepId).fullSystemCampaign.serializedCampaign),
+  'publication review must import the exact frozen full-system campaign bytes');
 assert.equal(records.checkpointReviewScript.provenance.calculationPolicy, 'none');
 assert.equal(records.checkpointReviewScript.provenance.promotable, false);
 assert(!/5OV[F-I]/.test(records.checkpointReviewBytes.toString()),

@@ -3,6 +3,8 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
+import { commitMolecule, createCampaign, storeSnapshot } from '../design-history/ledger.mjs';
+import { serializeCampaign } from '../design-history/live-campaign-store.mjs';
 import { assertAcceptedCheckpointRelaxation, buildAcceptedSos1ReplayScript,
   requireExplicitRunDirectory, sha256, verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
 
@@ -148,6 +150,30 @@ try {
   await writeFile(join(scratch, 'chemist-action-audit.json'), auditBytes);
   const checkpoints = [];
   for (const [index, stepId] of steps.entries()) {
+    const occurredAt = `2026-01-0${index + 1}T00:00:00.000Z`;
+    const campaign = createCampaign({ campaignId:`accepted-run-${stepId}`,
+      title:`Full system ${stepId}`, createdAt:occurredAt,
+      actors:[{ id:'agent.test', type:'agent', displayName:'Test agent' }] });
+    const snapshotId = await storeSnapshot(campaign, { label:stepId, graph:{ atoms:[
+      { atomId:'a1', element:'C', formalCharge:0, record:'HETATM', atomName:'C1',
+        residueName:'LIG', chain:'L', residueIndex:1 },
+      { atomId:'a2', element:'N', formalCharge:0, record:'HETATM', atomName:'N1',
+        residueName:'LIG', chain:'L', residueIndex:1 },
+      { atomId:'receptor:PHE:890:CG', element:'C', formalCharge:0, record:'ATOM',
+        atomName:'CG', residueName:'PHE', chain:'A', residueIndex:890 },
+    ], bonds:[{ atomIds:['a1','a2'], order:1 }] }, coordinates:{ unit:'angstrom',
+      atomIds:['a1','a2','receptor:PHE:890:CG'],
+      positions:[[index,0,0],[index + 1.4,0,0],[0,index + 1,0]] } });
+    const commitId = await commitMolecule(campaign, { snapshotId, parents:[], branch:'main',
+      message:`Freeze ${stepId}`, actorId:'agent.test', occurredAt,
+      tags:['accepted','pre-holdout'] });
+    const campaignBytes = Buffer.from(serializeCampaign(campaign));
+    const campaignFilename = `${stepId}-campaign.json`;
+    await writeFile(join(scratch, campaignFilename), campaignBytes);
+    const fullSystemCampaign = { schema:'molarium.full-system-checkpoint/v1',
+      campaignId:campaign.campaignId, branch:'main', commitId, snapshotId,
+      filename:campaignFilename, sha256:sha256(campaignBytes), bytes:campaignBytes.length,
+      commitActionSequence:1, exportActionSequence:2, verification:{ valid:true } };
     const body = { schema:'molarium.design-prediction-checkpoint/v1',
       routeId:'sos1-hit-only', stepId, frozenBeforeHoldoutAccess:true,
       relaxation:{ accepted:true, valenceSafeguard },
@@ -157,6 +183,7 @@ try {
         publicationEligible:true, diagnosticOnly:false,
         deterministicFinalReplayVerified:true } } : {}),
       staging:{ productHeavyGraph, poseTransferPlan:{ featureCorrespondences:[] } },
+      fullSystemCampaign,
       ligand:{ ...inspectedLigand, atoms:inspectedLigand.atoms.map((atom, atomIndex) => ({
         ...atom, coordinatesAngstrom:[index + atomIndex * 1.4, 0, 0],
       })) },
@@ -165,7 +192,8 @@ try {
     const filename = `${stepId}-prediction.json`;
     await writeFile(join(scratch, filename), bytes);
     checkpoints.push({ stepId, predictedStateId:['AWT','AWZ','AWW','AXH'][index],
-      filename, sha256:sha256(bytes), freezeActionSequence:freezeSequences.get(stepId) });
+      filename, sha256:sha256(bytes), freezeActionSequence:freezeSequences.get(stepId),
+      fullSystemCampaign });
   }
   const manifest = { schema:'molarium.design-prediction-run/v1', routeId:'sos1-hit-only',
     status:'predictions-frozen-holdouts-unopened', publicationEligible:true, protocol:{
@@ -184,6 +212,19 @@ try {
     `${JSON.stringify(evaluation)}\n`);
 
   const verified = await verifyAcceptedSos1Run(scratch);
+  for (const stepId of steps) {
+    const fullSystem = verified.checkpoints.get(stepId).fullSystemCampaign;
+    assert.equal(sha256(fullSystem.campaignBytes), fullSystem.record.sha256);
+    assert.equal(fullSystem.campaign.branches[fullSystem.record.branch],
+      fullSystem.record.commitId);
+  }
+  const firstCampaignPath = join(scratch,
+    verified.checkpoints.get(steps[0]).fullSystemCampaign.record.filename);
+  const firstCampaignBytes = await readFile(firstCampaignPath);
+  await writeFile(firstCampaignPath, Buffer.concat([firstCampaignBytes, Buffer.from(' ')]));
+  await assert.rejects(() => verifyAcceptedSos1Run(scratch),
+    /full-system campaign byte count changed/);
+  await writeFile(firstCampaignPath, firstCampaignBytes);
   const replay = await buildAcceptedSos1ReplayScript(verified);
   assert.deepEqual(replay.script.actions.filter((step) =>
     step.action === 'designRoute.applyStep').map((step) => step.args.stepId), steps);

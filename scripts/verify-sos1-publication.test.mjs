@@ -3,8 +3,10 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { actionScriptSha256 } from '../design-history/replay.mjs';
-import { acceptedInspectionCheckpointReviewScript } from
+import { acceptedCheckpointReviewScript } from
   '../design-history/accepted-checkpoint-review.mjs';
+import { commitMolecule, createCampaign, storeSnapshot } from '../design-history/ledger.mjs';
+import { serializeCampaign } from '../design-history/live-campaign-store.mjs';
 import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
 import { buildAcceptedSos1ReplayScript, sha256,
   verifyAcceptedSos1Run } from './sos1-accepted-run.mjs';
@@ -117,7 +119,30 @@ try {
   const auditBytes = await writeJson(join(runDirectory, 'chemist-action-audit.json'), audit);
 
   const checkpointRecords = [];
-  for (const input of checkpointInputs) {
+  for (const [index, input] of checkpointInputs.entries()) {
+    const occurredAt = `2026-01-0${index + 1}T00:00:00.000Z`;
+    const campaign = createCampaign({ campaignId:`publication-${input.stepId}`,
+      title:`Full system ${input.stepId}`, createdAt:occurredAt,
+      actors:[{ id:'agent.test', type:'agent', displayName:'Test agent' }] });
+    const graphAtoms = [...input.ligandAtoms.map((atom) => ({ ...atom,
+      record:'HETATM', residueName:'LIG', chain:'L', residueIndex:1 })),
+    ...input.pocketAtoms.map((atom) => ({ ...atom, record:'ATOM' }))];
+    const snapshotId = await storeSnapshot(campaign, { label:input.stepId,
+      graph:{ atoms:graphAtoms.map(({ coordinatesAngstrom, ...atom }) => atom),
+        bonds:[{ atomIds:[input.ligandAtoms[0].atomId,input.ligandAtoms[1].atomId],
+          order:1 }] },
+      coordinates:{ unit:'angstrom', atomIds:graphAtoms.map((atom) => atom.atomId),
+        positions:graphAtoms.map((atom) => atom.coordinatesAngstrom) } });
+    const commitId = await commitMolecule(campaign, { snapshotId, parents:[], branch:'main',
+      message:`Freeze ${input.stepId}`, actorId:'agent.test', occurredAt,
+      tags:['accepted','pre-holdout'] });
+    const campaignBytes = Buffer.from(serializeCampaign(campaign));
+    const campaignFilename = `${input.stepId}-campaign.json`;
+    await writeFile(join(runDirectory, campaignFilename), campaignBytes);
+    const fullSystemCampaign = { schema:'molarium.full-system-checkpoint/v1',
+      campaignId:campaign.campaignId, branch:'main', commitId, snapshotId,
+      filename:campaignFilename, sha256:sha256(campaignBytes), bytes:campaignBytes.length,
+      commitActionSequence:1, exportActionSequence:2, verification:{ valid:true } };
     const checkpoint = { schema:'molarium.design-prediction-checkpoint/v1',
       routeId:'sos1-hit-only', stepId:input.stepId, predictedStateId:input.stateId,
       frozenBeforeHoldoutAccess:true,
@@ -128,6 +153,7 @@ try {
       ...(input.stepId === 'open-phe890-pocket' ? { rotamerDecision:{
         publicationEligible:true, diagnosticOnly:false,
         deterministicFinalReplayVerified:true } } : {}),
+      fullSystemCampaign,
       ligand:{ atoms:input.ligandAtoms, truncated:false,
         totalAtomCount:input.ligandAtoms.length,
         bonds:[{ atomIds:[input.ligandAtoms[0].atomId,input.ligandAtoms[1].atomId],
@@ -137,7 +163,8 @@ try {
     const filename = `${input.stepId}-prediction.json`;
     const bytes = await writeJson(join(runDirectory, filename), checkpoint);
     checkpointRecords.push({ stepId:input.stepId, predictedStateId:input.stateId,
-      filename, sha256:sha256(bytes), freezeActionSequence:input.freezeActionSequence });
+      filename, sha256:sha256(bytes), freezeActionSequence:input.freezeActionSequence,
+      fullSystemCampaign });
   }
   const manifest = { schema:'molarium.design-prediction-run/v1', routeId:'sos1-hit-only',
     status:'predictions-frozen-holdouts-unopened', publicationEligible:true, protocol:{
@@ -192,18 +219,20 @@ try {
     evaluationSummarySha256:sha256(evaluationBytes), sourceAuditSha256:sha256(auditBytes),
     checkpoints:checkpointLinks,
   };
-  const checkpointApplication = await acceptedInspectionCheckpointReviewScript({
+  const checkpointApplication = await acceptedCheckpointReviewScript({
     label:'Accepted checkpoint review',
-    checkpoints:checkpointInputs.map((input) => ({ accepted:true,
+    checkpoints:steps.map((stepId) => {
+      const source = accepted.checkpoints.get(stepId);
+      return { accepted:true,
       frozenBeforeHoldoutAccess:true,
-      checkpointSha256:checkpointRecords.find((entry) =>
-        entry.stepId === input.stepId).sha256,
-      label:input.stepId,
-      ligand:{ atoms:input.ligandAtoms,
-        bonds:[{ atomIds:[input.ligandAtoms[0].atomId,input.ligandAtoms[1].atomId], order:1 }] },
-      pocket:{ atoms:input.pocketAtoms, truncated:false,
-        totalAtomCount:input.pocketAtoms.length },
-    })),
+      checkpointSha256:source.entry.sha256,
+      campaignSha256:source.fullSystemCampaign.record.sha256,
+      serializedCampaign:source.fullSystemCampaign.serializedCampaign,
+      branch:source.fullSystemCampaign.record.branch,
+      commitId:source.fullSystemCampaign.record.commitId,
+      snapshotId:source.fullSystemCampaign.record.snapshotId,
+      label:stepId };
+    }),
   });
   const checkpointApplicationBytes = await writeJson(
     join(scratch, checkpointApplicationRelative), checkpointApplication);
