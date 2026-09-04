@@ -147,8 +147,22 @@ async function runBranch({ root, serializedCampaign, branch }) {
     const selectedContacts = selectedRequiredHydrogenBonds(refinement, requiredContactIds);
     const requiredContactsSatisfied = selectedContacts.every((contact) =>
       contact.required && contact.satisfied);
+    const selectedSeedAudit = refinement.featureGuidedSeeding?.selectedSeedAudit || {};
+    const selectedDonorContactIds = new Set(
+      (selectedSeedAudit.donorHydrogenAlignments || [])
+        .map((entry) => entry.constraintId));
+    const donorHydrogensComposedWithHeavySeed = requiredContactIds.every((contactId) =>
+      selectedDonorContactIds.has(contactId));
+    const coupledRotorCoverage = refinement.featureGuidedSeeding
+      ?.affectedRotorCombinationCount === 1
+      && refinement.featureGuidedSeeding?.affectedRotorCombinationCandidateCount > 0
+      && refinement.coverage?.strata?.some((entry) =>
+        entry.kind === 'affected-existing-two-rotor-combination'
+          && entry.required === true && entry.selectedSeedOrdinals?.length > 0);
     const prospectiveGates = {
       coverageComplete:refinement.coverageComplete === true,
+      coupledRotorCoverage,
+      donorHydrogensComposedWithHeavySeed,
       selectedFeasible:refinement.selectedFeasible === true,
       fixedCoreSatisfied:refinement.selectedCore?.satisfied === true,
       chemicalValidity:refinement.selectedChemicalValidity?.valid === true,

@@ -10561,6 +10561,10 @@ function installChemistActionsApi(module) {
           spatialFeatureMapCount:result.featureGuidedSeeding.spatialFeatureMapCount,
           untargetedRotorCount:result.featureGuidedSeeding.untargetedRotorCount,
           affectedRotorCount:result.featureGuidedSeeding.affectedRotorCount,
+          affectedRotorCombinationCount:
+            result.featureGuidedSeeding.affectedRotorCombinationCount,
+          affectedRotorCombinationCandidateCount:
+            result.featureGuidedSeeding.affectedRotorCombinationCandidateCount,
           releasedCoreAtomIndices:structuredClone(
             result.featureGuidedSeeding.releasedCoreAtomIndices),
           affectedRotors:structuredClone(result.featureGuidedSeeding.affectedRotors),

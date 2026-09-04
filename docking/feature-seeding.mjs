@@ -465,6 +465,39 @@ function spatialFeatureMapVariants(definitions) {
     || first.featureIndex - second.featureIndex);
 }
 
+function alignLigandDonorHydrogens(positions, variants) {
+  const aligned = new Float64Array(positions), audit = [];
+  const unambiguous = new Map();
+  Array.from(variants || []).forEach((variant) => {
+    const hydrogenIndex = variant.ligandDonorHydrogenAtomIndex;
+    if (!Number.isInteger(hydrogenIndex) || !variant.receptorAcceptorPoint) return;
+    const prior = unambiguous.get(hydrogenIndex);
+    if (prior) prior.ambiguous = true;
+    else unambiguous.set(hydrogenIndex, { variant, ambiguous:false });
+  });
+  for (const { variant, ambiguous } of unambiguous.values()) {
+    // One donor hydrogen cannot point at two independent acceptors at once.
+    // Leave such cases to the ordinary constraint scorer rather than making
+    // an arbitrary order-dependent choice.
+    if (ambiguous) continue;
+    const donor = point(aligned, variant.featureAtomIndex);
+    const hydrogen = point(aligned, variant.ligandDonorHydrogenAtomIndex);
+    const length = Math.hypot(...hydrogen.map((value, index) => value - donor[index]));
+    const direction = normalized(variant.receptorAcceptorPoint
+      .map((value, index) => value - donor[index]));
+    if (!direction || !(length > 0.5 && length < 1.5)) continue;
+    for (let axis = 0; axis < 3; axis++)
+      aligned[variant.ligandDonorHydrogenAtomIndex * 3 + axis] =
+        donor[axis] + direction[axis] * length;
+    audit.push({ constraintId:variant.constraintId,
+      alternativeId:variant.alternativeId,
+      donorAtomIndex:variant.featureAtomIndex,
+      hydrogenAtomIndex:variant.ligandDonorHydrogenAtomIndex,
+      method:'donor-hydrogen-alignment-after-heavy-seeding/v1' });
+  }
+  return { positions:aligned, audit };
+}
+
 function priorityStratifiedSeeds({ candidates, initialCandidate, strata, requested }) {
   const required = strata.filter((stratum) => stratum.required);
   const selected = [], selectedSet = new Set();
@@ -660,6 +693,59 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
         cover(candidate, affectedOppositeStrata[rotorIndex]);
     });
   });
+  // A pair of registered affected rotors is a coupled heavy-atom degree of
+  // freedom: scoring either torsion only on top of the inherited value of the
+  // other can miss the feasible basin. Enumerate the pair without consulting
+  // any product/holdout coordinates. Axes are recomputed after the first
+  // rotation so nested distal regions remain chemically connected.
+  const affectedRotorCombinationStrata = [];
+  let affectedRotorCombinationCandidateCount = 0;
+  if (featureSeedingProtocol === 'v5' && affectedRotors.length === 2) {
+    const combinationStratum = stratum(
+      `affected-rotor-combination:bond-${affectedRotors[0].bondIndex}+bond-${affectedRotors[1].bondIndex}`,
+      'affected-existing-two-rotor-combination', true);
+    affectedRotorCombinationStrata.push(combinationStratum);
+    const nonzeroAngles = Array.from(editRegionAnglesDegrees, Number)
+      .filter((angleDegrees) => angleDegrees !== 0);
+    for (const firstAngleDegrees of nonzeroAngles) {
+      for (const secondAngleDegrees of nonzeroAngles) {
+        const rotorAnglesDegrees = [firstAngleDegrees, secondAngleDegrees];
+        let seeded = new Float64Array(positions);
+        let validCombination = true;
+        for (let rotorIndex = 0; rotorIndex < affectedRotors.length; rotorIndex++) {
+          const rotor = affectedRotors[rotorIndex];
+          const origin = point(seeded, rotor.fixedEndpointAtomIndex);
+          const axis = normalized(point(seeded, rotor.movableEndpointAtomIndex)
+            .map((value, index) => value - origin[index]));
+          if (!axis) { validCombination = false; break; }
+          seeded = rotateRegion(seeded, rotor.atomIndices, origin, axis,
+            rotorAnglesDegrees[rotorIndex] * Math.PI / 180);
+        }
+        if (!validCombination) continue;
+        const movedAtomIndices = [...new Set(affectedRotors
+          .flatMap((rotor) => rotor.atomIndices))].sort((a, b) => a - b);
+        const candidate = add(seeded, {
+          method:'affected-existing-two-rotor-torsion-scan',
+          rotors:affectedRotors.map((rotor, rotorIndex) => ({
+            bondIndex:rotor.bondIndex,
+            fixedEndpointAtomIndex:rotor.fixedEndpointAtomIndex,
+            movableEndpointAtomIndex:rotor.movableEndpointAtomIndex,
+            axialAngleDegrees:rotorAnglesDegrees[rotorIndex],
+          })),
+          movedAtomCount:movedAtomIndices.length,
+          movedHeavyAtomCount:movedAtomIndices.filter((atomIndex) =>
+            molecule.atoms[atomIndex]?.element !== 'H').length,
+          releasedCoreAtomIndices,
+        }, combinationStratum);
+        affectedRotors.forEach((_, rotorIndex) => {
+          cover(candidate, affectedStrata[rotorIndex]);
+          if (rotorAnglesDegrees[rotorIndex] === 180)
+            cover(candidate, affectedOppositeStrata[rotorIndex]);
+        });
+        affectedRotorCombinationCandidateCount += 1;
+      }
+    }
+  }
   const targetStrata = variants.map((variant, index) => stratum(
     `captured-feature:${variant.constraintId}:${variant.alternativeId || 'primary'}:${index}`,
     'captured-feature-map', featureSeedingProtocol === 'v5'));
@@ -671,23 +757,7 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
     // pose-feasibility gate. An empty required stratum would incorrectly turn
     // an immutable contact into a search-coverage failure.
     if (!region) {
-      const donor = point(positions, variant.featureAtomIndex);
-      const hydrogenIndex = variant.ligandDonorHydrogenAtomIndex;
-      const acceptor = variant.receptorAcceptorPoint;
-      const hydrogen = Number.isInteger(hydrogenIndex) ? point(positions, hydrogenIndex) : null;
-      const donorHydrogenLength = hydrogen ? Math.hypot(...hydrogen
-        .map((value, index) => value - donor[index])) : 0;
-      const direction = acceptor ? normalized(acceptor
-        .map((value, index) => value - donor[index])) : null;
-      if (hydrogen && direction && donorHydrogenLength > 0.5 && donorHydrogenLength < 1.5) {
-        const oriented = new Float64Array(positions);
-        for (let axis = 0; axis < 3; axis++)
-          oriented[hydrogenIndex * 3 + axis] = donor[axis] + direction[axis] * donorHydrogenLength;
-        add(oriented, { method:'fixed-core-donor-hydrogen-alignment',
-          constraintId:variant.constraintId, alternativeId:variant.alternativeId,
-          donorAtomIndex:variant.featureAtomIndex, hydrogenAtomIndex:hydrogenIndex,
-          movedAtomCount:1, movedHeavyAtomCount:0 }, targetStrata[variantIndex]);
-      } else cover(initialCandidate, targetStrata[variantIndex]);
+      cover(initialCandidate, targetStrata[variantIndex]);
       return;
     }
     const anchor = point(positions, region.anchorAtomIndex);
@@ -734,6 +804,21 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
     spatialStrata[variantIndex].bestRmsdAngstrom = ranked[0].score.rmsdAngstrom;
     cover(ranked[0].candidate, spatialStrata[variantIndex]);
   });
+  if (featureSeedingProtocol === 'v5') {
+    // Proton direction is conditional on the heavy-atom pose. Compose it with
+    // every generated heavy seed (including every two-rotor combination)
+    // instead of offering a disconnected H-only candidate that can consume a
+    // bounded search slot while leaving the heavy orientation unexplored.
+    unique.forEach((candidate) => {
+      const composition = alignLigandDonorHydrogens(candidate.positions, variants);
+      candidate.positions = composition.positions;
+      if (composition.audit.length) candidate.audit = { ...candidate.audit,
+        donorHydrogenComposition:
+          'donor-hydrogen-alignment-after-heavy-seeding/v1',
+        donorHydrogenAlignments:composition.audit,
+      };
+    });
+  }
   const stratified = featureSeedingProtocol === 'v5'
     ? priorityStratifiedSeeds({ candidates:unique, initialCandidate,
       strata, requested })
@@ -747,6 +832,8 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
     targetVariantCount:variants.length, spatialFeatureMapCount:spatialVariants.length,
     untargetedRotorCount:untargetedRotors.length,
     affectedRotorCount:affectedRotors.length, releasedCoreAtomIndices,
+    affectedRotorCombinationCount:affectedRotorCombinationStrata.length,
+    affectedRotorCombinationCandidateCount,
     inheritedAtomCount:inheritedCore.size, hardCoreAtomCount:core.size,
     affectedRotors:affectedRotors.map((rotor) => ({
       bondIndex:rotor.bondIndex,
@@ -761,7 +848,7 @@ export function featureGuidedPoseSeeds({ molecule, initialPositions, coreAtomInd
     coverage:stratified.coverage,
     method:`molarium-edit-region-axis-seeding/${featureSeedingProtocol}`,
     limitation:['v4', 'v5'].includes(featureSeedingProtocol)
-      ? 'single-anchor edit regions and pre-existing non-ring single bonds within the declared edit environment are scanned; amide-like and genuinely rigid bonds remain fixed'
+      ? 'single-anchor edit regions and pre-existing non-ring single bonds within the declared edit environment are scanned, with coupled enumeration for exactly two registered affected rotors; amide-like and genuinely rigid bonds remain fixed'
       : 'single-anchor edit regions are scanned; affected pre-existing rotors remain fixed' };
 }
 

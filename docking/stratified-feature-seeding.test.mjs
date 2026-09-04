@@ -124,10 +124,13 @@ const fixedDonor = featureGuidedPoseSeeds({
 });
 assert.equal(fixedDonor.coverage.allRequiredStrataCovered, true);
 const orientedDonor = fixedDonor.seeds.find((seed) =>
-  seed.audit.method === 'fixed-core-donor-hydrogen-alignment');
+  seed.audit.donorHydrogenComposition
+    === 'donor-hydrogen-alignment-after-heavy-seeding/v1');
 assert(orientedDonor);
+assert.equal(orientedDonor.audit.method, 'unaltered-reference-propagation');
+assert.equal(orientedDonor.audit.donorHydrogenAlignments.length, 1);
 assert.deepEqual(Array.from(orientedDonor.positions.slice(0, 9)),
   [0,0,0, -1.3,0,0, 1,0,0],
-  'a hard-core ligand donor may orient only its bonded hydrogen toward the receptor acceptor');
+  'a hard-core ligand donor orients only its bonded hydrogen after the heavy seed is fixed');
 
 console.log('Feature-guided pose seeds cover registered feature maps and affected rotors deterministically');
