@@ -167,24 +167,33 @@ class EvaluatorTest(unittest.TestCase):
             EVALUATOR.verify_publication_eligibility(manifest, checkpoints)
 
     def test_required_relaxation_and_retention_fail_closed(self) -> None:
-        product_graph = {"atomCount": 2, "bondCount": 1,
+        product_graph = {"atomCount": 3, "bondCount": 2,
             "atoms": [
                 {"atomName": "C1", "element": "C", "formalCharge": 0,
                  "aromatic": False},
                 {"atomName": "N1", "element": "N", "formalCharge": 0,
+                 "aromatic": False},
+                {"atomName": "O1", "element": "O", "formalCharge": 0,
                  "aromatic": False}],
             "bonds": [{"atomNames": ["C1", "N1"], "order": 1,
+                       "aromatic": False},
+                      {"atomNames": ["N1", "O1"], "order": 1,
                        "aromatic": False}]}
         valence = {"schema": "molarium.ligand-valence-safeguard/v1",
-            "accepted": True, "complete": True, "checkedHeavyBonds": 1,
-            "expectedHeavyBonds": 1,
-            "bondMeasurements": [{"accepted": True}], "violations": []}
+            "accepted": True, "complete": True, "checkedHeavyBonds": 2,
+            "expectedHeavyBonds": 2,
+            "bondMeasurements": [{"accepted": True}, {"accepted": True}],
+            "violations": []}
         ligand = {"atoms": [
             {"atomId": "a1", "atomName": "C1", "element": "C",
              "formalCharge": 0, "aromatic": False},
             {"atomId": "a2", "atomName": "N1", "element": "N",
+             "formalCharge": 0, "aromatic": False},
+            {"atomId": "a3", "atomName": "O1", "element": "O",
              "formalCharge": 0, "aromatic": False}],
             "bonds": [{"atomIds": ["a1", "a2"], "order": 1,
+                       "aromatic": False},
+                      {"atomIds": ["a2", "a3"], "order": 1,
                        "aromatic": False}]}
         retention_phase = {
             "active": True, "accepted": True,
@@ -223,6 +232,17 @@ class EvaluatorTest(unittest.TestCase):
             }]}}}
         EVALUATOR.verify_accepted_checkpoint_relaxation(
             checkpoint, "finish-bay-293")
+        reordered = json.loads(json.dumps(checkpoint))
+        reordered["ligand"]["atoms"].reverse()
+        reordered["ligand"]["bonds"].reverse()
+        for bond in reordered["ligand"]["bonds"]:
+            bond["atomIds"].reverse()
+        reordered["staging"]["productHeavyGraph"]["atoms"].reverse()
+        reordered["staging"]["productHeavyGraph"]["bonds"].reverse()
+        for bond in reordered["staging"]["productHeavyGraph"]["bonds"]:
+            bond["atomNames"].reverse()
+        EVALUATOR.verify_accepted_checkpoint_relaxation(
+            reordered, "finish-bay-293")
         no_valence = json.loads(json.dumps(checkpoint))
         del no_valence["relaxation"]["valenceSafeguard"]
         with self.assertRaisesRegex(RuntimeError, "safeguard evidence is incomplete"):

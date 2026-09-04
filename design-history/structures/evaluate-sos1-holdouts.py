@@ -223,6 +223,32 @@ def verify_publication_eligibility(manifest: dict, checkpoints: dict[str, dict])
         raise RuntimeError("Phe890 decision is diagnostic or lacks deterministic replay")
 
 
+def canonical_heavy_atom_records(records: list[dict]) -> list[dict]:
+    """Normalize graph atom records without discarding chemical identity."""
+    canonical = [{
+        "atomName": atom.get("atomName"), "element": atom.get("element"),
+        "formalCharge": atom.get("formalCharge"),
+        "aromatic": bool(atom.get("aromatic")),
+    } for atom in records]
+    return sorted(canonical, key=lambda atom: json.dumps(
+        atom, sort_keys=True, separators=(",", ":")))
+
+
+def canonical_heavy_bond_records(records: list[dict]) -> list[dict]:
+    """Normalize endpoint direction and record order while retaining chemistry."""
+    canonical = []
+    for bond in records:
+        atom_names = bond.get("atomNames")
+        if not isinstance(atom_names, list) or len(atom_names) != 2:
+            raise RuntimeError("Staged or inspected heavy bond lacks two atom names")
+        canonical.append({
+            "atomNames": sorted(atom_names), "order": bond.get("order", 1),
+            "aromatic": bool(bond.get("aromatic")),
+        })
+    return sorted(canonical, key=lambda bond: json.dumps(
+        bond, sort_keys=True, separators=(",", ":")))
+
+
 def verify_accepted_checkpoint_relaxation(checkpoint: dict, step_id: str) -> None:
     relaxation = checkpoint.get("relaxation", {})
     if relaxation.get("accepted") is not True:
@@ -248,11 +274,11 @@ def verify_accepted_checkpoint_relaxation(checkpoint: dict, step_id: str) -> Non
     ligand = checkpoint.get("ligand", {})
     atoms = [atom for atom in ligand.get("atoms", []) if atom.get("element") != "H"]
     by_id = {atom.get("atomId"): atom for atom in ligand.get("atoms", [])}
-    actual_atoms = sorted([{
+    actual_atoms = canonical_heavy_atom_records([{
         "atomName": atom.get("atomName"), "element": atom.get("element"),
         "formalCharge": atom.get("formalCharge"),
         "aromatic": bool(atom.get("aromatic")),
-    } for atom in atoms], key=lambda atom: atom["atomName"])
+    } for atom in atoms])
     actual_bonds = []
     for bond in ligand.get("bonds", []):
         first = by_id.get((bond.get("atomIds") or [None, None])[0])
@@ -264,9 +290,11 @@ def verify_accepted_checkpoint_relaxation(checkpoint: dict, step_id: str) -> Non
             "atomNames": sorted([first.get("atomName"), second.get("atomName")]),
             "order": bond.get("order", 1), "aromatic": bool(bond.get("aromatic")),
         })
-    actual_bonds.sort(key=lambda bond: "\0".join(bond["atomNames"]))
-    if len(atoms) != graph["atomCount"] or actual_atoms != graph["atoms"] \
-            or actual_bonds != graph["bonds"]:
+    actual_bonds = canonical_heavy_bond_records(actual_bonds)
+    staged_atoms = canonical_heavy_atom_records(graph["atoms"])
+    staged_bonds = canonical_heavy_bond_records(graph["bonds"])
+    if len(atoms) != graph["atomCount"] or actual_atoms != staged_atoms \
+            or actual_bonds != staged_bonds:
         raise RuntimeError(f"{step_id}: inspected ligand graph differs from staged product")
     if step_id == "finish-bay-293":
         continuity = checkpoint.get("sidechainContinuity", {})
@@ -370,7 +398,8 @@ def verify_accepted_checkpoint_relaxation(checkpoint: dict, step_id: str) -> Non
 
 
 def verify_run(run_dir: Path, protocol: dict) \
-        -> tuple[bytes, dict, dict[str, dict], list[dict], dict]:
+        -> tuple[bytes, dict, dict[str, dict], dict[str, list[dict]],
+                 list[dict], dict]:
     manifest_bytes, manifest = read_json(run_dir / "prediction-manifest.json")
     if manifest.get("schema") != protocol["predictionInputs"]["runManifestSchema"]:
         raise RuntimeError("Unexpected SOS1 prediction run manifest schema")
@@ -384,6 +413,7 @@ def verify_run(run_dir: Path, protocol: dict) \
     if [entry["stepId"] for entry in manifest.get("checkpoints", [])] != expected_steps:
         raise RuntimeError("The complete four-step SOS1 sequence is not frozen")
     checkpoints = {}
+    reference_rows_by_step = {}
     for frozen in manifest["checkpoints"]:
         data, checkpoint = read_json(run_dir / frozen["filename"])
         if digest(data) != frozen["sha256"]:
@@ -398,6 +428,8 @@ def verify_run(run_dir: Path, protocol: dict) \
             raise RuntimeError(f"{frozen['stepId']}: checkpoint identity changed")
         verify_complete_coordinate_inspections(checkpoint, frozen["stepId"])
         checkpoints[frozen["stepId"]] = checkpoint
+        reference_rows_by_step[frozen["stepId"]] = \
+            verified_full_system_reference_rows(run_dir, frozen, checkpoint)
     verify_publication_eligibility(manifest, checkpoints)
     audit_bytes, audit_wrapper = read_json(run_dir / "chemist-action-audit.json")
     if digest(audit_bytes) != manifest["agentApi"]["auditSha256"]:
@@ -454,7 +486,8 @@ def verify_run(run_dir: Path, protocol: dict) \
                            if entry.get("requestId") == f"{following}-stage"), None)
         if not recapture or not staged or not (freeze_sequence < recapture["sequence"] < staged["sequence"]):
             raise RuntimeError(f"{following}: preceding frozen prediction was not recaptured")
-    return manifest_bytes, manifest, checkpoints, audit, campaign
+    return (manifest_bytes, manifest, checkpoints, reference_rows_by_step,
+            audit, campaign)
 
 
 def pdb_rows(text: str) -> list[dict]:
@@ -544,6 +577,64 @@ def receptor_alignment(reference_rows: list[dict], mobile_rows: list[dict],
             "anchorRecords": anchor_records,
             "excludedDesignedResidues":
                 protocol["receptorAlignment"]["excludedDesignedResidues"]}
+
+
+def verified_full_system_reference_rows(run_dir: Path, frozen: dict,
+                                        checkpoint: dict) -> list[dict]:
+    """Load receptor coordinates from the checkpoint's hash-bound full system.
+
+    The inspected pocket is a display subset whose membership can change as the
+    ligand grows.  It is therefore not an admissible source for the fixed,
+    route-wide receptor-alignment anchors.
+    """
+    step_id = frozen["stepId"]
+    manifest_ref = frozen.get("fullSystemCampaign")
+    checkpoint_ref = checkpoint.get("fullSystemCampaign")
+    if not isinstance(manifest_ref, dict) or checkpoint_ref != manifest_ref \
+            or manifest_ref.get("schema") != "molarium.full-system-checkpoint/v1":
+        raise RuntimeError(f"{step_id}: full-system checkpoint binding is invalid")
+    campaign_path = (run_dir / manifest_ref.get("filename", "")).resolve()
+    if campaign_path.parent != run_dir.resolve():
+        raise RuntimeError(f"{step_id}: full-system campaign path escapes run directory")
+    campaign_bytes, full_campaign = read_json(campaign_path)
+    if digest(campaign_bytes) != manifest_ref.get("sha256") \
+            or len(campaign_bytes) != manifest_ref.get("bytes") \
+            or full_campaign.get("campaignId") != manifest_ref.get("campaignId"):
+        raise RuntimeError(f"{step_id}: full-system campaign binding changed")
+    commit = full_campaign.get("objects", {}).get("commits", {}).get(
+        manifest_ref.get("commitId"))
+    snapshot_id = manifest_ref.get("snapshotId")
+    if not isinstance(commit, dict) or commit.get("snapshotId") != snapshot_id \
+            or commit.get("branch") != manifest_ref.get("branch"):
+        raise RuntimeError(f"{step_id}: full-system commit does not select registered snapshot")
+    snapshot = full_campaign.get("objects", {}).get("snapshots", {}).get(snapshot_id)
+    graph = snapshot.get("graph", {}) if isinstance(snapshot, dict) else {}
+    coordinates = snapshot.get("coordinates", {}) if isinstance(snapshot, dict) else {}
+    atoms = graph.get("atoms")
+    atom_ids = coordinates.get("atomIds")
+    positions = coordinates.get("positions")
+    if coordinates.get("unit") != "angstrom" \
+            or not isinstance(atoms, list) or not isinstance(atom_ids, list) \
+            or not isinstance(positions, list) \
+            or len(atoms) != len(atom_ids) or len(atoms) != len(positions):
+        raise RuntimeError(f"{step_id}: full-system snapshot coordinates are incomplete")
+    rows = []
+    for atom, atom_id, position in zip(atoms, atom_ids, positions):
+        if atom.get("atomId") != atom_id:
+            raise RuntimeError(f"{step_id}: full-system atom/coordinate order changed")
+        if atom.get("record") != "ATOM":
+            continue
+        if not isinstance(position, list) or len(position) != 3 \
+                or not all(isinstance(value, (int, float)) and math.isfinite(value)
+                           for value in position):
+            raise RuntimeError(f"{step_id}: full-system receptor coordinate is invalid")
+        rows.append({
+            "record": "ATOM", "atomName": atom.get("atomName"),
+            "residueName": atom.get("residueName"), "chain": atom.get("chain"),
+            "residueNumber": atom.get("residueIndex"), "insertionCode": "",
+            "point": np.array(position, dtype=float),
+        })
+    return rows
 
 
 def transform_points(points: np.ndarray, alignment: dict) -> np.ndarray:
@@ -1218,6 +1309,7 @@ def aww_axh_continuity(campaign: dict, checkpoints: dict[str, dict]) -> dict:
 
 def evaluate_verified_run(run_dir: Path, holdout_dir: Path, manifest_bytes: bytes,
                           manifest: dict, checkpoints: dict[str, dict],
+                          reference_rows_by_step: dict[str, list[dict]],
                           campaign: dict, protocol_bytes: bytes,
                           protocol: dict) -> dict:
     """Read holdouts and evaluate a run whose complete freeze boundary passed."""
@@ -1241,13 +1333,7 @@ def evaluate_verified_run(run_dir: Path, holdout_dir: Path, manifest_bytes: byte
         # Protein preparation centers the complex. Align the holdout directly
         # into the frozen prediction's receptor frame using the pre-registered
         # Phe890-excluding anchor list, never a data-dependent pocket intersection.
-        reference_rows = [{
-            "record": "ATOM", "atomName": atom["atomName"],
-            "residueName": atom["residueName"], "chain": atom["chain"],
-            "residueNumber": atom["residueIndex"], "insertionCode": "",
-            "point": np.array(atom["coordinatesAngstrom"]),
-        } for atom in checkpoint["pocket"]["atoms"]
-            if atom["residueName"] and atom["atomName"] == "CA"]
+        reference_rows = reference_rows_by_step[step_id]
         alignment = receptor_alignment(reference_rows, holdout_rows, protocol)
         predicted_by_name = coordinates_by_name(checkpoint)
         predicted = np.array([predicted_by_name[name] for name in step["productAtomNames"]])
@@ -1422,10 +1508,10 @@ def main() -> None:
     # protocol, complete prediction manifest, every frozen checkpoint, and
     # public-action audit verify.
     protocol_bytes, protocol = verify_evaluation_protocol(args.protocol.resolve())
-    manifest_bytes, manifest, checkpoints, _, campaign = verify_run(
-        run_dir, protocol)
+    (manifest_bytes, manifest, checkpoints, reference_rows_by_step, _,
+     campaign) = verify_run(run_dir, protocol)
     report = evaluate_verified_run(run_dir, args.holdout_dir.resolve(), manifest_bytes,
-                                   manifest, checkpoints, campaign,
+                                   manifest, checkpoints, reference_rows_by_step, campaign,
                                    protocol_bytes, protocol)
     print(json.dumps(report, indent=2))
 
