@@ -20,6 +20,8 @@ import { verifyBrowserLocalLabCapture } from './local-lab-capture.mjs';
 import { buildAcceptedSos1ReplayScript, buildFrozenSos1ReplayScript,
   requireExplicitRunDirectory, verifyAcceptedSos1Run,
   verifyCompleteFrozenSos1Run, SOS1_STEP_IDS } from './sos1-accepted-run.mjs';
+import { SOS1_PREDICTION_CAMPAIGN_DIRECTORY, SOS1_PREDICTION_REVIEW } from
+  './publish-sos1-frozen-browser-replays.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -58,7 +60,10 @@ const reviewCheckpoint = (stepId) => {
   return { accepted:resultClass === 'accepted', completeFrozenPrediction:true,
     frozenBeforeHoldoutAccess:true, checkpointSha256:frozen.entry.sha256,
     campaignSha256:fullSystem.record.sha256,
-    serializedCampaign:fullSystem.serializedCampaign,
+    ...(resultClass === 'complete-frozen'
+      ? { campaignPath:`./${SOS1_PREDICTION_CAMPAIGN_DIRECTORY}/${stepId}-campaign.json` }
+      : { serializedCampaign:fullSystem.serializedCampaign }),
+    campaignId:fullSystem.record.campaignId,
     branch:fullSystem.record.branch, commitId:fullSystem.record.commitId,
     snapshotId:fullSystem.record.snapshotId, label:`${stepId} prediction checkpoint` };
 };
@@ -82,9 +87,11 @@ if (replayKind === 'checkpoint-review') {
   : await buildFrozenSos1ReplayScript(verifiedRun);
 const sourceScript = verifiedReplay.script;
 const sourceScriptBytes = Buffer.from(`${JSON.stringify(sourceScript, null, 2)}\n`);
-const sourceScriptArtifactPath = `${relative(root, runDirectory)}/${resultClass === 'accepted'
-  ? 'accepted' : 'complete-frozen'}-${replayKind === 'executable'
-  ? 'selected-route' : 'checkpoint-review'}.action-script.json`;
+const sourceScriptArtifactPath = resultClass === 'complete-frozen'
+  && replayKind === 'checkpoint-review' ? SOS1_PREDICTION_REVIEW
+  : `${relative(root, runDirectory)}/${resultClass === 'accepted'
+    ? 'accepted' : 'complete-frozen'}-${replayKind === 'executable'
+    ? 'selected-route' : 'checkpoint-review'}.action-script.json`;
 const sourceActions = smoke ? sourceScript.actions.slice(0, 4)
   : sourceActionLimit > 0 ? sourceScript.actions.slice(0, sourceActionLimit)
     : sourceScript.actions;

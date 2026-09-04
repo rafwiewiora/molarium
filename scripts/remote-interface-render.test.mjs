@@ -7,6 +7,8 @@ const [runner, chrome] = await Promise.all([
 ]);
 const renderingProbe = await readFile(
   new URL('./probe-headless-rendering.mjs', import.meta.url), 'utf8');
+const renderer = await readFile(
+  new URL('./render-designer-moves-interface.mjs', import.meta.url), 'utf8');
 
 assert.match(runner, /verify-sos1-frozen-browser-publication\.mjs/);
 assert.match(runner, /--result-class complete-frozen/);
@@ -37,5 +39,7 @@ assert.match(chrome, /--disable-software-rasterizer/);
 assert.match(chrome, /VK_ICD_FILENAMES/);
 assert.match(renderingProbe, /WEBGL_debug_renderer_info/);
 assert.match(renderingProbe, /swiftshader\|llvmpipe\|software/);
+assert.match(renderer, /campaignPath:`\.\/\$\{SOS1_PREDICTION_CAMPAIGN_DIRECTORY\}/);
+assert.match(renderer, /replayKind === 'checkpoint-review' \? SOS1_PREDICTION_REVIEW/);
 
 console.log('Remote SOS1 interface-render setup: PASS');

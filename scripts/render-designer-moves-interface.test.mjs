@@ -66,6 +66,10 @@ try {
     'the renderer must expose only executable and exact-checkpoint replay modes');
   assert.match(renderer, /frozenCheckpointReviewScript\(/,
     'complete-frozen calculation-free review must use the verified checkpoint builder');
+  assert.match(renderer, /campaignPath:`\.\/\$\{SOS1_PREDICTION_CAMPAIGN_DIRECTORY\}/,
+    'complete-frozen checkpoint review must reference published campaigns instead of inlining them');
+  assert.match(renderer, /replayKind === 'checkpoint-review' \? SOS1_PREDICTION_REVIEW/,
+    'checkpoint-review render provenance must name the published action script');
   assert.match(renderer, /calculationPolicy:'none', exactFullSystemCheckpoints:SOS1_STEP_IDS\.length/,
     'checkpoint-review renders must declare their calculation-free boundary');
   assert.match(renderer, /resultClass === 'accepted' \? \{ acceptedRun:/,
