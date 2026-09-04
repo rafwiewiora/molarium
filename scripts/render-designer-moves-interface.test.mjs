@@ -58,6 +58,8 @@ try {
     'the renderer must not depend on a synthetic operating-system file event');
   assert.match(renderer, /path:'presentation\.action-script\.json'/,
     'the exact public API replay JSON must be retained with the render artifact');
+  assert.match(renderer, /auditRequestId:step\.auditRequestId \|\| null/,
+    'paper checkpoints must retain immutable source-audit request IDs');
   assert.match(renderer, /entry\.requestId === 'story-/,
     'the renderer must identify constituent moves by public request ID, not audit-array position');
   assert.doesNotMatch(renderer, /records\[\$\{auditBaseline \+ actionNumber\}\]/,
@@ -101,6 +103,12 @@ try {
   assert.match(paperBuilder, /manifest\.get\("complete"\) is not True/);
   assert.match(paperBuilder, /manifest\.get\("replay", \{\}\)\.get\("status"\) != "completed"/);
   assert.match(paperBuilder, /failed its render-manifest hash/);
+  assert.match(paperBuilder, /"--run"[\s\S]*required=True/,
+    'Figure 2 must require an explicit accepted run directory');
+  assert.match(paperBuilder, /evaluation\.get\("accepted"\) is not True/,
+    'Figure 2 must reject a failed holdout evaluation');
+  assert.match(paperBuilder, /timeline_request_ids != source_request_ids/,
+    'Figure 2 must reject a reordered or substituted presentation timeline');
 } finally {
   await rm(scratch, { recursive:true, force:true });
 }

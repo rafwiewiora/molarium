@@ -257,6 +257,8 @@ try {
         presentationScript.actions.length - sourceActions.length,
       timeline:presentationScript.actions.map((step, index) => ({
         actionNumber:index + 1, action:step.action, caption:step.caption || null,
+        auditSequence:step.auditSequence || null,
+        auditRequestId:step.auditRequestId || null,
       })) },
     renderer:{ path:relative(root, fileURLToPath(import.meta.url)), sha256:digest(rendererBytes),
       browserProduct:browserVersion.product, userAgent:browserVersion.userAgent },

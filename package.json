@@ -30,6 +30,8 @@
     "build:sos1-movie-assets": "node scripts/build-sos1-prospective-movie-assets.mjs",
     "build:sos1-accepted-replay": "node scripts/build-sos1-accepted-replay.mjs",
     "build:sos1-prediction-review": "node scripts/build-sos1-prediction-review.mjs",
+    "build:paper-sos1-results": "node paper/scripts/build-sos1-results-tex.mjs",
+    "test:paper-sos1-assets": "node paper/scripts/build-sos1-results-tex.test.mjs && PYTHONPYCACHEPREFIX=/tmp/molarium-paper-pycache python3 -m py_compile paper/scripts/build-sos1-paper-figure.py",
     "build:sos1-structure-review": "node scripts/build-sos1-structure-review.mjs",
     "run:bclxl-prospective": "bun scripts/run-bclxl-prospective.mjs",
     "run:cdk2-prospective": "bun scripts/run-cdk2-prospective.mjs",
