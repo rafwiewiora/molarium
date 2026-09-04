@@ -30,10 +30,16 @@ function requireAcceptedContinuity(optimization, requiredFeatures) {
   for (const evidence of [retention.before, retention.after]) {
     assert.equal(evidence?.active, true);
     assert.equal(evidence?.accepted, true);
-    assert.equal(evidence?.hardAnchor?.rmsdAngstrom, 0);
-    assert.equal(evidence?.hardAnchor?.maxDisplacementAngstrom, 0);
+    assert(Number.isFinite(evidence?.hardAnchor?.rmsdAngstrom));
+    assert(Number.isFinite(evidence?.hardAnchor?.maxDisplacementAngstrom));
+    assert(Array.isArray(evidence?.fixedCoordinatesAngstrom?.atomIds));
+    assert(Array.isArray(evidence?.fixedCoordinatesAngstrom?.positions));
     assert.equal(evidence?.features?.length, requiredFeatures.length);
   }
+  assert.equal(retention.fixedAtomMotion?.accepted, true,
+    'registered fixed atoms moved during coupled relaxation');
+  assert(retention.fixedAtomMotion.maximumDisplacementAngstrom <= 1e-6,
+    'registered fixed atoms exceeded the relaxation motion tolerance');
   for (const feature of requiredFeatures) {
     const before = retention.before.features.filter((entry) => entry.id === feature.id);
     const after = retention.after.features.filter((entry) => entry.id === feature.id);

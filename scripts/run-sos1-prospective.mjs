@@ -162,12 +162,17 @@ function requireRegisteredFeatureRelaxation(relaxation, staged, label) {
     || before?.accepted !== true || after?.active !== true
     || after?.accepted !== true)
     throw new Error(`${label}: coupled relaxation did not retain the registered pose islands`);
+  if (retention.fixedAtomMotion?.accepted !== true
+    || !Number.isFinite(retention.fixedAtomMotion.rmsdAngstrom)
+    || !Number.isFinite(retention.fixedAtomMotion.maximumDisplacementAngstrom)
+    || retention.fixedAtomMotion.maximumDisplacementAngstrom > 1e-6)
+    throw new Error(`${label}: registered fixed atoms moved during coupled relaxation`);
   for (const [phase, evidence] of [['before', before], ['after', after]]) {
     if (!Number.isFinite(evidence.hardAnchor?.rmsdAngstrom)
       || !Number.isFinite(evidence.hardAnchor?.maxDisplacementAngstrom)
-      || evidence.hardAnchor.rmsdAngstrom > 1e-6
-      || evidence.hardAnchor.maxDisplacementAngstrom > 1e-6)
-      throw new Error(`${label}: registered hard anchor moved ${phase} coupled relaxation`);
+      || !Array.isArray(evidence.fixedCoordinatesAngstrom?.atomIds)
+      || !Array.isArray(evidence.fixedCoordinatesAngstrom?.positions))
+      throw new Error(`${label}: registered hard-anchor evidence is incomplete ${phase} coupled relaxation`);
   }
   if (!Array.isArray(before.features) || before.features.length !== required.length
     || !Array.isArray(after.features) || after.features.length !== required.length)

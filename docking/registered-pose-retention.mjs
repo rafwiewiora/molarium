@@ -67,6 +67,40 @@ function completeFeature(feature) {
     && feature?.restraint?.required === true;
 }
 
+export function registeredFixedAtomMotion(before, after, toleranceAngstrom = 1e-6) {
+  const beforeCoordinates = before?.fixedCoordinatesAngstrom;
+  const afterCoordinates = after?.fixedCoordinatesAngstrom;
+  const atomIds = Array.from(beforeCoordinates?.atomIds || []);
+  const afterIds = Array.from(afterCoordinates?.atomIds || []);
+  const beforePositions = Array.from(beforeCoordinates?.positions || []);
+  const afterPositions = Array.from(afterCoordinates?.positions || []);
+  if (!atomIds.length || atomIds.length !== afterIds.length
+    || atomIds.length !== beforePositions.length
+    || atomIds.length !== afterPositions.length
+    || JSON.stringify(atomIds) !== JSON.stringify(afterIds)) {
+    return Object.freeze({ accepted:false, toleranceAngstrom,
+      reason:'fixed atom identities or coordinate coverage changed', atomIds,
+      atomCount:atomIds.length, maximumDisplacementAngstrom:null,
+      rmsdAngstrom:null });
+  }
+  const displacements = beforePositions.map((position, index) => {
+    const next = afterPositions[index];
+    if (!Array.isArray(position) || !Array.isArray(next)
+      || position.length !== 3 || next.length !== 3
+      || !position.every(Number.isFinite) || !next.every(Number.isFinite)) return NaN;
+    return distance(position, next);
+  });
+  const complete = displacements.every(Number.isFinite);
+  const maximumDisplacementAngstrom = complete ? Math.max(...displacements) : null;
+  const rmsdAngstrom = complete ? Math.sqrt(displacements.reduce(
+    (sum, value) => sum + value * value, 0) / displacements.length) : null;
+  return Object.freeze({ accepted:complete
+      && maximumDisplacementAngstrom <= toleranceAngstrom,
+    toleranceAngstrom, atomIds, atomCount:atomIds.length,
+    maximumDisplacementAngstrom, rmsdAngstrom,
+    ...(complete ? {} : { reason:'fixed atom coordinates are incomplete' }) });
+}
+
 /**
  * Build and evaluate the registered coordinate-retention islands used by a
  * coupled relaxation. Every target comes from the immediately preceding
@@ -149,11 +183,23 @@ export function registeredPoseRetentionPlan({ molecule, referenceLigand,
   const fixedAtomIndices = fixedAtomIds.map((id) => currentById.get(id));
   if (fixedAtomIndices.some((index) => !Number.isInteger(index)))
     throw new Error('A registered pose-retention atom is absent from the current molecule');
+  // Record exactly what the optimizer is instructed to hold fixed. Hard-anchor
+  // RMSD is relative to the predecessor pose and may be non-zero after a
+  // permitted pose-search adjustment; these coordinates prove the separate
+  // claim that coupled relaxation itself did not move a fixed atom.
+  const fixedCoordinatesAngstrom = {
+    atomIds:[...fixedAtomIds],
+    positions:fixedAtomIndices.map((index) => {
+      const atom = molecule.atoms[index];
+      return [Number(atom.x), Number(atom.y), Number(atom.z)];
+    }),
+  };
   return Object.freeze({
     schema:'molarium.registered-pose-retention/v1', active:true,
     method:'hold registered predecessor-coordinate islands during coupled relaxation',
     accepted:features.every((feature) => feature.accepted),
-    fixedAtomIndices, fixedAtomIds, hardAnchorAtomIds:[...hardAnchorAtomIds].sort(),
+    fixedAtomIndices, fixedAtomIds, fixedCoordinatesAngstrom,
+    hardAnchorAtomIds:[...hardAnchorAtomIds].sort(),
     hardAnchor:hardAnchorMetrics ? { atomCount:hardAnchorAtomIds.length,
       ...hardAnchorMetrics } : null,
     features,

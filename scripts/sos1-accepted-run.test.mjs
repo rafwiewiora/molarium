@@ -43,14 +43,21 @@ const retainedCheckpoint = {
   ligand:inspectedLigand,
   relaxation:{ accepted:true, valenceSafeguard,
     registeredPoseRetention:{ accepted:true,
+    fixedAtomMotion:{ accepted:true, toleranceAngstrom:1e-6,
+      atomIds:['hard-1','p-1','p-2','p-3'], atomCount:4,
+      rmsdAngstrom:2e-7, maximumDisplacementAngstrom:4e-7 },
     before:{ active:true, accepted:true, fixedAtomIds:['hard-1','p-1','p-2','p-3'],
-      hardAnchor:{ rmsdAngstrom:0, maxDisplacementAngstrom:0 },
+      fixedCoordinatesAngstrom:{ atomIds:['hard-1','p-1','p-2','p-3'],
+        positions:[[0.1,0,0],[1,0,0],[2,0,0],[3,0,0]] },
+      hardAnchor:{ rmsdAngstrom:0.1, maxDisplacementAngstrom:0.1 },
       features:[{ id:'terminal', registeredIntentId:'retain-terminal', accepted:true,
         productAtomIds:['p-1','p-2','p-3'], symmetryVariantCount:2,
         rmsdAngstrom:0.2, centroidDisplacementAngstrom:0.1,
         planeNormalAngleDegrees:2, toleranceAngstrom:1.5 }] },
     after:{ active:true, accepted:true, fixedAtomIds:['hard-1','p-1','p-2','p-3'],
-      hardAnchor:{ rmsdAngstrom:0, maxDisplacementAngstrom:0 },
+      fixedCoordinatesAngstrom:{ atomIds:['hard-1','p-1','p-2','p-3'],
+        positions:[[0.1,0,0],[1,0,0],[2,0,0],[3,0,0]] },
+      hardAnchor:{ rmsdAngstrom:0.1, maxDisplacementAngstrom:0.1 },
       features:[{ id:'terminal', registeredIntentId:'retain-terminal', accepted:true,
         productAtomIds:['p-1','p-2','p-3'], symmetryVariantCount:2,
         rmsdAngstrom:0.2, centroidDisplacementAngstrom:0.1,
@@ -84,6 +91,12 @@ changedRetainedAtoms.relaxation.registeredPoseRetention.after.features[0]
   .productAtomIds[2] = 'p-4';
 assert.throws(() => assertAcceptedCheckpointRelaxation(changedRetainedAtoms),
   /atom identities changed/);
+const movedFixedAtom = structuredClone(retainedCheckpoint);
+movedFixedAtom.relaxation.registeredPoseRetention.fixedAtomMotion.accepted = false;
+movedFixedAtom.relaxation.registeredPoseRetention.fixedAtomMotion
+  .maximumDisplacementAngstrom = 0.001;
+assert.throws(() => assertAcceptedCheckpointRelaxation(movedFixedAtom),
+  /fixed atoms moved/);
 const lostSymmetryCoverage = structuredClone(retainedCheckpoint);
 lostSymmetryCoverage.relaxation.registeredPoseRetention.before.features[0]
   .symmetryVariantCount = 1;

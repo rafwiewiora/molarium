@@ -5,7 +5,8 @@ import { applyRegisteredLigandDefinition, serializeRegisteredLigandDefinition,
 import { DESIGNER_REVIEW_DIRECTIONS, designerReplayReviewState,
   designerReplayReviewTarget } from './design-history/designer-replay-review.mjs';
 import { MOLECULAR_STATE_HASH_SCHEMA, molecularStateSha256 } from './molecular-state-hash.mjs';
-import { registeredPoseRetentionPlan } from './docking/registered-pose-retention.mjs';
+import { registeredFixedAtomMotion, registeredPoseRetentionPlan } from
+  './docking/registered-pose-retention.mjs';
 
 const MOLARIUM_NETWORK_POLICY = Object.freeze({
   mode:'connected', localOnly:false, policy:'connected-v1',
@@ -15856,10 +15857,13 @@ async function runSelectedBuildOptimization() {
     } : undefined });
     if (result && poseRetentionBefore) {
       const poseRetentionAfter = currentRegisteredPoseRetentionPlan();
+      const fixedAtomMotion = registeredFixedAtomMotion(
+        poseRetentionBefore, poseRetentionAfter);
       result.registeredPoseRetention = {
         before:structuredClone(poseRetentionBefore),
         after:structuredClone(poseRetentionAfter),
-        accepted:poseRetentionAfter.accepted,
+        fixedAtomMotion:structuredClone(fixedAtomMotion),
+        accepted:poseRetentionAfter.accepted && fixedAtomMotion.accepted,
       };
     }
     if (result && valenceSnapshot) {

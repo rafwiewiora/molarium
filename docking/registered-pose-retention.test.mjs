@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { registeredPoseRetentionPlan } from './registered-pose-retention.mjs';
+import { registeredFixedAtomMotion, registeredPoseRetentionPlan } from
+  './registered-pose-retention.mjs';
 
 const atom = (designAtomId, element, x, y, z) => ({ designAtomId, element, x, y, z });
 const referenceLigand = {
@@ -41,6 +42,15 @@ assert.equal(retained.hardAnchor.rmsdAngstrom, 0);
 assert.equal(retained.hardAnchor.maxDisplacementAngstrom, 0);
 assert.deepEqual(retained.fixedAtomIds,
   ['hard-a','hard-b','hard-c','new-1','new-2','new-3','new-4']);
+assert.deepEqual(retained.fixedCoordinatesAngstrom, {
+  atomIds:['hard-a','hard-b','hard-c','new-1','new-2','new-3','new-4'],
+  positions:[[0,0,0],[1,0,0],[0,1,0],[5,1,0],[6,1,0],[6,0,0],[5,0,0]],
+});
+const numericallyStable = structuredClone(retained);
+numericallyStable.fixedCoordinatesAngstrom.positions[0][0] += 4e-7;
+assert.equal(registeredFixedAtomMotion(retained, numericallyStable).accepted, true);
+numericallyStable.fixedCoordinatesAngstrom.positions[0][0] += 2e-6;
+assert.equal(registeredFixedAtomMotion(retained, numericallyStable).accepted, false);
 
 const drifted = structuredClone(molecule);
 for (const current of drifted.atoms.slice(3)) current.x += 1;

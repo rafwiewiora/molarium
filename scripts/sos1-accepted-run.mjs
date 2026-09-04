@@ -99,12 +99,17 @@ export function assertAcceptedCheckpointRelaxation(checkpoint, label = checkpoin
     ['after', retention.after]]) {
     assert(Number.isFinite(evidence.hardAnchor?.rmsdAngstrom)
       && Number.isFinite(evidence.hardAnchor?.maxDisplacementAngstrom)
-      && evidence.hardAnchor.rmsdAngstrom <= 1e-6
-      && evidence.hardAnchor.maxDisplacementAngstrom <= 1e-6,
-    `${label}: registered hard anchor moved ${phase} coupled relaxation`);
+      && Array.isArray(evidence.fixedCoordinatesAngstrom?.atomIds)
+      && Array.isArray(evidence.fixedCoordinatesAngstrom?.positions),
+    `${label}: registered hard-anchor evidence is incomplete ${phase} coupled relaxation`);
   }
   assert.deepEqual(retention.before.fixedAtomIds, retention.after.fixedAtomIds,
     `${label}: registered retained atom identities changed during relaxation`);
+  assert(retention.fixedAtomMotion?.accepted === true
+    && Number.isFinite(retention.fixedAtomMotion.rmsdAngstrom)
+    && Number.isFinite(retention.fixedAtomMotion.maximumDisplacementAngstrom)
+    && retention.fixedAtomMotion.maximumDisplacementAngstrom <= 1e-6,
+  `${label}: registered fixed atoms moved during coupled relaxation`);
   assert.equal(new Set(retention.before.fixedAtomIds || []).size,
     retention.before.fixedAtomIds?.length,
   `${label}: pre-relax retained atom identities are duplicated`);
