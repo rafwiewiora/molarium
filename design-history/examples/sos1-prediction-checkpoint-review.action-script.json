@@ -10,6 +10,24 @@
     "nonPromotableReason": "Checkpoint review performs no scientific calculation.",
     "calculationPolicy": "none",
     "holdoutCoordinatesIncluded": false,
+    "coordinateGranularity": {
+      "schema": "molarium.checkpoint-review-granularity/v1",
+      "startingHitIncluded": true,
+      "startingHitSource": "exact scaffold-rewrite campaign history prefix",
+      "syntheticCoordinatesUsed": false,
+      "independentlyCommittedStates": [
+        "registered-starting-hit",
+        "scaffold-rewrite",
+        "fragment-merge",
+        "open-phe890-pocket",
+        "finish-bay-293"
+      ],
+      "unavailableIndependentStates": [
+        "compound-21-graph-edit-before-phe890-rotamer",
+        "phe890-rotamer-before-coupled-relaxation"
+      ],
+      "limitation": "The source run did not commit separate full-system snapshots between compound-21 graph editing, Phe890 rotamer application, and coupled relaxation. The calculation-free review therefore keeps those operations in their single exact open-phe890-pocket checkpoint and does not synthesize intermediate coordinates."
+    },
     "publicChemistActions": [
       "campaign.import"
     ],
@@ -29,11 +47,39 @@
     {
       "action": "campaign.import",
       "args": {
-        "sourcePath": "./design-history/publications/sos1/checkpoints/scaffold-rewrite-campaign.json",
-        "sourceSha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+        "sourcePath": "./design-history/publications/sos1/checkpoints/starting-hit-campaign.json",
+        "sourceSha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6",
         "preserveView": false
       },
+      "caption": "Review the exact prepared 5OVE/AXE starting hit",
+      "review": {
+        "schema": "molarium.frozen-prediction-checkpoint-review/v1",
+        "sourceStatus": "registered-starting-hit",
+        "immutableSnapshot": true,
+        "registeredStartingHit": true,
+        "exactHistoryPrefix": true,
+        "promotable": false,
+        "calculationPolicy": "none",
+        "holdoutCoordinatesIncluded": false,
+        "checkpointSha256": "463a3efd937fc719719256336bd1cb9b5db19a26df2f8db9d5bdfc4c353dd972",
+        "campaignSha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6",
+        "campaignId": "sos1-run-766bdc2ebf83a561",
+        "branch": "main",
+        "commitId": "commit:481b690c9b92896a18b858d8522ddb7c55be00b3b416922dcc814a7f0cec826b",
+        "snapshotId": "snapshot:463a3efd937fc719719256336bd1cb9b5db19a26df2f8db9d5bdfc4c353dd972"
+      }
+    },
+    {
+      "action": "campaign.import",
+      "args": {
+        "sourcePath": "./design-history/publications/sos1/checkpoints/scaffold-rewrite-campaign.json",
+        "sourceSha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+        "preserveView": true
+      },
       "caption": "Review scaffold-rewrite prediction checkpoint",
+      "expect": {
+        "campaignImport.viewPreserved": true
+      },
       "review": {
         "schema": "molarium.frozen-prediction-checkpoint-review/v1",
         "sourceStatus": "complete-frozen-prediction",

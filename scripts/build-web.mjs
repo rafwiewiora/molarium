@@ -15,6 +15,7 @@ const assetRelease = String(process.env.MOLARIUM_ASSET_RELEASE || `v${packageJso
 const assetBase = `${assetOrigin}/${assetRelease}/`;
 
 const files = [
+  'design-history/publications/sos1/checkpoints/starting-hit-campaign.json',
   'design-history/examples/sos1-prediction.action-script.json',
   'design-history/examples/sos1-prediction-checkpoint-review.action-script.json',
   'design-history/publications/sos1/browser-replay-declaration.json',

@@ -288,6 +288,15 @@ try {
   assert.deepEqual(predictionReplay.script.sourceAudit.postFreezeEvaluation.failedStepIds,
     ['finish-bay-293']);
   assert.equal(Object.hasOwn(predictionReplay.script.sourceAudit, 'accepted'), false);
+  assert.equal(predictionReplay.script.sourceAudit.stateHashGuards.mode, 'off');
+  assert.equal(predictionReplay.script.sourceAudit.executionContract.mode,
+    'portable-scientific');
+  assert(predictionReplay.script.sourceAudit.executionContract
+    .portableScientificGuardCount > 0);
+  const firstPredictionRefinement = predictionReplay.script.actions.find((step) =>
+    step.action === 'pose.refine');
+  assert.equal(Object.hasOwn(firstPredictionRefinement.args,
+    'expectedInputStateSha256'), false);
   const browserPublication = await buildFrozenBrowserPublicationRecords(completeFrozen);
   assert.equal(browserPublication.declaration.postFreezeEvaluation.accepted, false);
   assert.deepEqual(browserPublication.declaration.postFreezeEvaluation.failedStepIds,
