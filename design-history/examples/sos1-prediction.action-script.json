@@ -1,0 +1,588 @@
+{
+  "schema": "molarium.chemist-action-script/v1",
+  "label": "SOS1 hit-to-BAY-293 prediction replay sos1-a013-a018-complete-frozen",
+  "actions": [
+    {
+      "action": "designRoute.load",
+      "args": {
+        "routeId": "sos1-hit-only"
+      },
+      "auditSequence": 1,
+      "auditRequestId": "route-load-hit",
+      "caption": "Begin with the only allowed coordinates: the 5OVE/AXE hit"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 2,
+      "auditRequestId": "route-enter-build",
+      "caption": "Enter Design to make the first prospective decision"
+    },
+    {
+      "action": "protein.prepare",
+      "args": {
+        "gapPolicy": "cap",
+        "histidine": "auto",
+        "ligandPolicy": "ccd",
+        "pH": 7.4,
+        "repairMissingHeavy": true,
+        "waterPolicy": "retain"
+      },
+      "auditSequence": 3,
+      "auditRequestId": "route-prepare-hit",
+      "caption": "Prepare the experimental hit complex locally"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "auditSequence": 5,
+      "auditRequestId": "route-capture-hit",
+      "caption": "Capture the hit pose and pocket as the first design reference"
+    },
+    {
+      "action": "designRoute.applyStep",
+      "args": {
+        "stepId": "scaffold-rewrite"
+      },
+      "auditSequence": 7,
+      "auditRequestId": "scaffold-rewrite-stage",
+      "caption": "Rewrite the hit scaffold to make compound 17"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "execution": "serial",
+        "featureSeedingProtocol": "v5",
+        "searchChains": 8,
+        "expectedInputStateSha256": "5093b67db748c4eff31c55066d8d080e18febf60862dd8a63cbcd1b420584cb7",
+        "expectedSelectedStateSha256": "8555324e26933e3771911fd2e7188485fe5c38a8f6fb983a576ad9a03156d14d"
+      },
+      "auditSequence": 8,
+      "auditRequestId": "scaffold-rewrite-pose-refine",
+      "caption": "Search the registered ligand pose ensemble"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0,
+        "expectedInputStateSha256": "5093b67db748c4eff31c55066d8d080e18febf60862dd8a63cbcd1b420584cb7",
+        "expectedSelectedStateSha256": "8555324e26933e3771911fd2e7188485fe5c38a8f6fb983a576ad9a03156d14d",
+        "expectedOutputStateSha256": "8555324e26933e3771911fd2e7188485fe5c38a8f6fb983a576ad9a03156d14d"
+      },
+      "auditSequence": 9,
+      "auditRequestId": "scaffold-rewrite-pose-apply",
+      "caption": "Apply the highest-ranked feasible pose"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "auditSequence": 10,
+      "auditRequestId": "scaffold-rewrite-parameterize-without-motion",
+      "caption": "Parameterize the selected ligand–pocket state"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu",
+        "expectedInputStateSha256": "8555324e26933e3771911fd2e7188485fe5c38a8f6fb983a576ad9a03156d14d",
+        "expectedOutputStateSha256": "24e0df714b70a4cb5c9ee6da3fc37a5bd8b9c65ae1ba298de3ae3b87e3d46bc8"
+      },
+      "auditSequence": 11,
+      "auditRequestId": "scaffold-rewrite-complex-relax",
+      "caption": "Relax the ligand and pocket together"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 13,
+      "auditRequestId": "scaffold-rewrite-freeze-pocket",
+      "caption": "Scaffold rewrite freeze pocket"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 18,
+      "auditRequestId": "scaffold-rewrite-advance-build",
+      "caption": "Return to Design with the accepted prediction"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "auditSequence": 19,
+      "auditRequestId": "scaffold-rewrite-capture-predicted-reference",
+      "caption": "Capture this prediction as the next design reference"
+    },
+    {
+      "action": "designRoute.applyStep",
+      "args": {
+        "stepId": "fragment-merge"
+      },
+      "auditSequence": 20,
+      "auditRequestId": "fragment-merge-stage",
+      "caption": "Merge the larger fragment idea to make compound 18"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "execution": "serial",
+        "featureSeedingProtocol": "v5",
+        "searchChains": 8,
+        "expectedInputStateSha256": "21a2e83fc376f49e00478024299e9614610bc477d9bddfe603bb3fd00e42eeff",
+        "expectedSelectedStateSha256": "b1660c03540dc4a986fda6d16f73eaf7e1aff6615d63e74f64323d2add165c0b"
+      },
+      "auditSequence": 21,
+      "auditRequestId": "fragment-merge-pose-refine",
+      "caption": "Search the registered ligand pose ensemble"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0,
+        "expectedInputStateSha256": "21a2e83fc376f49e00478024299e9614610bc477d9bddfe603bb3fd00e42eeff",
+        "expectedSelectedStateSha256": "b1660c03540dc4a986fda6d16f73eaf7e1aff6615d63e74f64323d2add165c0b",
+        "expectedOutputStateSha256": "b1660c03540dc4a986fda6d16f73eaf7e1aff6615d63e74f64323d2add165c0b"
+      },
+      "auditSequence": 22,
+      "auditRequestId": "fragment-merge-pose-apply",
+      "caption": "Apply the highest-ranked feasible pose"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "auditSequence": 23,
+      "auditRequestId": "fragment-merge-parameterize-without-motion",
+      "caption": "Parameterize the selected ligand–pocket state"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu",
+        "expectedInputStateSha256": "b1660c03540dc4a986fda6d16f73eaf7e1aff6615d63e74f64323d2add165c0b",
+        "expectedOutputStateSha256": "2171ae87e6d4768bfaae19c13da97885d3c04d08a4cd7a8a5dccf20002fd8a9f"
+      },
+      "auditSequence": 24,
+      "auditRequestId": "fragment-merge-complex-relax",
+      "caption": "Relax the ligand and pocket together"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 26,
+      "auditRequestId": "fragment-merge-freeze-pocket",
+      "caption": "Fragment merge freeze pocket"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 31,
+      "auditRequestId": "fragment-merge-advance-build",
+      "caption": "Return to Design with the accepted prediction"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "auditSequence": 32,
+      "auditRequestId": "fragment-merge-capture-predicted-reference",
+      "caption": "Capture this prediction as the next design reference"
+    },
+    {
+      "action": "designRoute.applyStep",
+      "args": {
+        "stepId": "open-phe890-pocket"
+      },
+      "auditSequence": 33,
+      "auditRequestId": "open-phe890-pocket-stage",
+      "caption": "Grow compound 21 into the Phe890-in volume"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 48,
+      "auditRequestId": "open-phe890-pocket-return-build-1",
+      "caption": "Open phe890 pocket return build 1"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 63,
+      "auditRequestId": "open-phe890-pocket-return-build-2",
+      "caption": "Open phe890 pocket return build 2"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 78,
+      "auditRequestId": "open-phe890-pocket-return-build-3",
+      "caption": "Open phe890 pocket return build 3"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 93,
+      "auditRequestId": "open-phe890-pocket-return-build-4",
+      "caption": "Open phe890 pocket return build 4"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 108,
+      "auditRequestId": "open-phe890-pocket-return-build-5",
+      "caption": "Open phe890 pocket return build 5"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 123,
+      "auditRequestId": "open-phe890-pocket-return-build-6",
+      "caption": "Open phe890 pocket return build 6"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 138,
+      "auditRequestId": "open-phe890-pocket-return-build-7",
+      "caption": "Open phe890 pocket return build 7"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 153,
+      "auditRequestId": "open-phe890-pocket-return-build-8",
+      "caption": "Open phe890 pocket return build 8"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 168,
+      "auditRequestId": "open-phe890-pocket-return-build-9",
+      "caption": "Open phe890 pocket return build 9"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 183,
+      "auditRequestId": "open-phe890-pocket-return-build-10",
+      "caption": "Open phe890 pocket return build 10"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 198,
+      "auditRequestId": "open-phe890-pocket-return-build-11",
+      "caption": "Open phe890 pocket return build 11"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 213,
+      "auditRequestId": "open-phe890-pocket-return-build-12",
+      "caption": "Open phe890 pocket return build 12"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 228,
+      "auditRequestId": "open-phe890-pocket-return-build-13",
+      "caption": "Open phe890 pocket return build 13"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 32,
+        "receptorAtomId": "chemist-5OVE:ATOM:A:PHE:890::CG:2679"
+      },
+      "auditSequence": 230,
+      "auditRequestId": "open-phe890-pocket-enumerate-phe890-final",
+      "caption": "Enumerate the complete Phe890 chi1/chi2 rotamer set"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "coordinateSha256": "f9aef3c53f3fd98b7f0595c078637f73a28a8ca16f69ef92a04b493386d97ef4",
+        "expectedInputCoordinateSha256": "1f76a2f8c801fc55f6dcdffe703ed26fd5d92da6d051d28e26556742679e46cf",
+        "expectedSelectedCoordinateSha256": "f9aef3c53f3fd98b7f0595c078637f73a28a8ca16f69ef92a04b493386d97ef4"
+      },
+      "auditSequence": 231,
+      "auditRequestId": "open-phe890-pocket-apply-selected-phe890-branch",
+      "caption": "Choose the predicted Phe890-out branch"
+    },
+    {
+      "action": "pose.updateReceptorReference",
+      "args": {},
+      "auditSequence": 232,
+      "auditRequestId": "open-phe890-pocket-accept-selected-receptor-branch",
+      "caption": "Use the selected open pocket as the receptor reference"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "execution": "serial",
+        "featureSeedingProtocol": "v5",
+        "searchChains": 8,
+        "expectedInputStateSha256": "324673fdba8afdf762576430a3ff9b2c0e43ca9e3226e0f93485a6a9a58a10e2",
+        "expectedSelectedStateSha256": "9840e4ac30959e8eb7c5e03fb588113509c2e600fc7e2342587c7e42cbdf9f4b"
+      },
+      "auditSequence": 233,
+      "auditRequestId": "open-phe890-pocket-pose-selected-phe890-branch",
+      "caption": "Search ligand poses against the selected Phe890-out pocket"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0,
+        "expectedInputStateSha256": "324673fdba8afdf762576430a3ff9b2c0e43ca9e3226e0f93485a6a9a58a10e2",
+        "expectedSelectedStateSha256": "9840e4ac30959e8eb7c5e03fb588113509c2e600fc7e2342587c7e42cbdf9f4b",
+        "expectedOutputStateSha256": "9840e4ac30959e8eb7c5e03fb588113509c2e600fc7e2342587c7e42cbdf9f4b"
+      },
+      "auditSequence": 234,
+      "auditRequestId": "open-phe890-pocket-apply-selected-phe890-pose",
+      "caption": "Apply the coupled ligand–pocket solution"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "auditSequence": 235,
+      "auditRequestId": "open-phe890-pocket-parameterize-selected-phe890-branch",
+      "caption": "Open phe890 pocket parameterize selected phe890 branch"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu",
+        "expectedInputStateSha256": "9840e4ac30959e8eb7c5e03fb588113509c2e600fc7e2342587c7e42cbdf9f4b",
+        "expectedOutputStateSha256": "9cd9a36491c2ebbf35d425f3bd67f1a60d6b064cb93b9b2908c5781ada90af79"
+      },
+      "auditSequence": 236,
+      "auditRequestId": "open-phe890-pocket-relax-selected-phe890-branch",
+      "caption": "Open phe890 pocket relax selected phe890 branch"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 240,
+      "auditRequestId": "open-phe890-pocket-freeze-pocket",
+      "caption": "Open phe890 pocket freeze pocket"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 245,
+      "auditRequestId": "open-phe890-pocket-advance-build",
+      "caption": "Return to Design with the accepted prediction"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "auditSequence": 246,
+      "auditRequestId": "open-phe890-pocket-capture-predicted-reference",
+      "caption": "Capture this prediction as the next design reference"
+    },
+    {
+      "action": "designRoute.applyStep",
+      "args": {
+        "stepId": "finish-bay-293"
+      },
+      "auditSequence": 247,
+      "auditRequestId": "finish-bay-293-stage",
+      "caption": "Construct the final BAY-293 graph from compound 21"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "execution": "serial",
+        "featureSeedingProtocol": "v5",
+        "searchChains": 8,
+        "expectedInputStateSha256": "4f0473373d9383bc6135a409b0649145aa900108b4f9fcbe3261a9a4faf4f03f",
+        "expectedSelectedStateSha256": "3753816555aeb023069dd04751c467d1af388d401eda65d8c5128a4e6b1348b5"
+      },
+      "auditSequence": 248,
+      "auditRequestId": "finish-bay-293-pose-refine",
+      "caption": "Search the registered ligand pose ensemble"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0,
+        "expectedInputStateSha256": "4f0473373d9383bc6135a409b0649145aa900108b4f9fcbe3261a9a4faf4f03f",
+        "expectedSelectedStateSha256": "3753816555aeb023069dd04751c467d1af388d401eda65d8c5128a4e6b1348b5",
+        "expectedOutputStateSha256": "3753816555aeb023069dd04751c467d1af388d401eda65d8c5128a4e6b1348b5"
+      },
+      "auditSequence": 249,
+      "auditRequestId": "finish-bay-293-pose-apply",
+      "caption": "Apply the highest-ranked feasible pose"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "auditSequence": 250,
+      "auditRequestId": "finish-bay-293-parameterize-without-motion",
+      "caption": "Parameterize the selected ligand–pocket state"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu",
+        "expectedInputStateSha256": "3753816555aeb023069dd04751c467d1af388d401eda65d8c5128a4e6b1348b5",
+        "expectedOutputStateSha256": "34becadb6cc639e42b63e1311ffec5596fcb831ac697bf76af010641caecb2d8"
+      },
+      "auditSequence": 251,
+      "auditRequestId": "finish-bay-293-complex-relax",
+      "caption": "Relax the ligand and pocket together"
+    }
+  ],
+  "sourceAudit": {
+    "schema": "molarium.chemist-actions/v1",
+    "routeId": "sos1-hit-only",
+    "recordCount": 270,
+    "includedRecordCount": 49,
+    "includedSequences": [
+      1,
+      2,
+      3,
+      5,
+      7,
+      8,
+      9,
+      10,
+      11,
+      13,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      26,
+      31,
+      32,
+      33,
+      48,
+      63,
+      78,
+      93,
+      108,
+      123,
+      138,
+      153,
+      168,
+      183,
+      198,
+      213,
+      228,
+      230,
+      231,
+      232,
+      233,
+      234,
+      235,
+      236,
+      240,
+      245,
+      246,
+      247,
+      248,
+      249,
+      250,
+      251
+    ],
+    "failedRecordsExcluded": 0,
+    "nonReplayableActionsExcluded": 15,
+    "campaignBookkeepingExcluded": 15,
+    "replayControllerActionsExcluded": 0,
+    "readOnlyInspectionsIncluded": true,
+    "stateHashGuards": {
+      "mode": "required",
+      "schema": "molarium.molecular-state-hash/v1",
+      "guardedActionCount": 12
+    },
+    "checkpoints": [
+      {
+        "sha256": "5fe79927f85d1bec145746d8a867fe9a64047e22ac8f5de10e8dd1e2dd4f9ace",
+        "stepId": "scaffold-rewrite"
+      },
+      {
+        "sha256": "da323462256b61653ac6a2c59ae8dc596a9b81e88cb3eba6055f83cb67093033",
+        "stepId": "fragment-merge"
+      },
+      {
+        "sha256": "510154612002504393429956877e1be312fff6bb23450e62974ab0ffd1954c88",
+        "stepId": "open-phe890-pocket"
+      },
+      {
+        "sha256": "e94988b7fda9e85dcc81dc44ecac42d013c1a117a796c75c506aeb3354cc4649",
+        "stepId": "finish-bay-293"
+      }
+    ],
+    "postFreezeEvaluation": {
+      "accepted": false,
+      "attached": true,
+      "continuityAccepted": false,
+      "failedStepIds": [
+        "fragment-merge",
+        "open-phe890-pocket",
+        "finish-bay-293"
+      ],
+      "summarySha256": "a62bdc8a4e10e26dd053372d01433f4de854cf8021f147862363c1ca2b844ad4"
+    },
+    "predictionManifestSha256": "03311779f5c968db80cf246753cd3b81227b98c4a7e4bb8ae4cff3da68a03701",
+    "publicationClass": "complete-frozen-prediction",
+    "runId": "sos1-a013-a018-complete-frozen",
+    "sourceAuditRecords": 270,
+    "sourceAuditSha256": "a4410e215592b0c1ed42a1ebb5b5d61b01e541fa3eea06599a70d6ec5d70e9d8"
+  }
+}

@@ -1,0 +1,501 @@
+{
+  "schema": "molarium.design-prediction-holdout-evaluation/v2",
+  "routeId": "sos1-hit-only",
+  "stepId": "fragment-merge",
+  "predictedStateId": "AWZ",
+  "boundary": {
+    "predictionManifestSha256": "03311779f5c968db80cf246753cd3b81227b98c4a7e4bb8ae4cff3da68a03701",
+    "evaluationProtocolSha256": "b48de687cfc0587130e3caae2d003f5d04028b751acd97c75796dbdaa686dcea",
+    "frozenPredictionSha256": "da323462256b61653ac6a2c59ae8dc596a9b81e88cb3eba6055f83cb67093033",
+    "holdoutOpenedOnlyAfterAllFreezeHashesAndAgentAuditVerified": true
+  },
+  "holdout": {
+    "role": "evaluation-only",
+    "pdbId": "5OVG",
+    "ligandComponentId": "AWZ",
+    "coordinateSha256": "771a3401446c0966926541fae833d9354555bbc376c084957f6d3ab93c15938d"
+  },
+  "receptor": {
+    "alignmentScope": "pre-registered stable SOS1 C-alpha anchors; designed Phe890 excluded",
+    "alignmentAtoms": 8,
+    "alignmentRmsdAngstrom": 0.09613788708111223,
+    "anchorRecords": [
+      {
+        "chain": "A",
+        "residueNumber": 874,
+        "insertionCode": "",
+        "residueName": "VAL",
+        "atomName": "CA"
+      },
+      {
+        "chain": "A",
+        "residueNumber": 876,
+        "insertionCode": "",
+        "residueName": "SER",
+        "atomName": "CA"
+      },
+      {
+        "chain": "A",
+        "residueNumber": 880,
+        "insertionCode": "",
+        "residueName": "SER",
+        "atomName": "CA"
+      },
+      {
+        "chain": "A",
+        "residueNumber": 885,
+        "insertionCode": "",
+        "residueName": "ARG",
+        "atomName": "CA"
+      },
+      {
+        "chain": "A",
+        "residueNumber": 893,
+        "insertionCode": "",
+        "residueName": "ILE",
+        "atomName": "CA"
+      },
+      {
+        "chain": "A",
+        "residueNumber": 899,
+        "insertionCode": "",
+        "residueName": "LYS",
+        "atomName": "CA"
+      },
+      {
+        "chain": "A",
+        "residueNumber": 904,
+        "insertionCode": "",
+        "residueName": "ALA",
+        "atomName": "CA"
+      },
+      {
+        "chain": "A",
+        "residueNumber": 906,
+        "insertionCode": "",
+        "residueName": "GLU",
+        "atomName": "CA"
+      }
+    ],
+    "excludedDesignedResidues": [
+      {
+        "chain": "A",
+        "residueNumber": 890,
+        "residueName": "PHE"
+      }
+    ]
+  },
+  "poseGeneration": {
+    "featureSeedingMethod": "molarium-edit-region-axis-seeding/v5",
+    "uniqueSeedCount": 23,
+    "untargetedRotorCount": 1,
+    "editRegionAnglesDegrees": [
+      0,
+      30,
+      -30,
+      60,
+      -60,
+      90,
+      -90,
+      120,
+      -120,
+      150,
+      -150,
+      180
+    ],
+    "selectedSeedAudit": {
+      "conformerIndex": 1,
+      "method": "untargeted-edit-region-torsion-scan",
+      "anchorAtomIndex": 23,
+      "axisAtomIndex": 27,
+      "boundaryAtomIndices": [
+        27
+      ],
+      "attachmentMode": "single-boundary-bond",
+      "movedAtomCount": 28,
+      "movedHeavyAtomCount": 15,
+      "axialAngleDegrees": 30,
+      "coverageStratumIds": [
+        "untargeted-rotor:23:27:0",
+        "affected-rotor:bond-10"
+      ],
+      "selectionOrdinal": 1,
+      "uniqueSelectionOrdinal": 1
+    }
+  },
+  "ligand": {
+    "scoringMethod": "receptor-aligned, graph-symmetry-minimized, no ligand fit",
+    "symmetryMappings": 1,
+    "heavyAtoms": 31,
+    "registeredGraphValidation": {
+      "method": "exact registered graph isomorphism",
+      "coordinateConnectivity": "PDB elemental edges; no partial MCS",
+      "bondOrderAndAromaticitySource": "hash-pinned registered route productSmiles",
+      "atomCount": 31,
+      "edgeCount": 35,
+      "exactBondOrderAndAromaticity": true
+    },
+    "rmsdAngstrom": 1.8744205309203883,
+    "inheritedRegionRmsdAngstrom": 0.5773364390547276,
+    "hardRegionRmsdAngstrom": 0.5773364390547276,
+    "releasedRegionRmsdAngstrom": null,
+    "distalFeatureRmsdAngstrom": null,
+    "mappedRegionRmsdAngstrom": 0.5773364390547276,
+    "editedRegionRmsdAngstrom": 2.9238101884279994,
+    "geometry": {
+      "atomCount": 31,
+      "rmsdAngstrom": 1.8744205309203883,
+      "maximumDisplacementAngstrom": 6.120711556675453,
+      "centroidDisplacementAngstrom": 0.906882583500494,
+      "principalPlaneAngleDegrees": 62.620296517819874,
+      "radialProfileRmsdAngstrom": 0.4176960819091556,
+      "predictedRadiusOfGyrationAngstrom": 4.319315634451127,
+      "holdoutRadiusOfGyrationAngstrom": 4.457251468971464,
+      "radiusOfGyrationDeltaAngstrom": 0.13793583452033698
+    },
+    "regions": {
+      "hard": {
+        "atomCount": 19,
+        "rmsdAngstrom": 0.5773364390547276,
+        "maximumDisplacementAngstrom": 0.742762336072091,
+        "centroidDisplacementAngstrom": 0.5170118379137228,
+        "principalPlaneAngleDegrees": 1.2368723202608622,
+        "radialProfileRmsdAngstrom": 0.019817707425825587,
+        "predictedRadiusOfGyrationAngstrom": 3.2308592940901857,
+        "holdoutRadiusOfGyrationAngstrom": 3.2405289597623055,
+        "radiusOfGyrationDeltaAngstrom": 0.009669665672119798,
+        "predictedRadialDistanceFromHardCoreAngstrom": 0.0,
+        "holdoutRadialDistanceFromHardCoreAngstrom": 0.0,
+        "radialDistanceFromHardCoreDeltaAngstrom": 0.0,
+        "productAtomIndices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          26,
+          27,
+          28,
+          29,
+          30
+        ],
+        "productAtomNames": [
+          "C18",
+          "O14",
+          "C10",
+          "C5",
+          "C2",
+          "N6",
+          "C11",
+          "CX1",
+          "N8",
+          "C3",
+          "N7",
+          "C12",
+          "C16",
+          "C15",
+          "C1",
+          "C4",
+          "C9",
+          "O13",
+          "C17"
+        ]
+      },
+      "released": null,
+      "distalFeature": null,
+      "edited": {
+        "atomCount": 12,
+        "rmsdAngstrom": 2.9238101884279994,
+        "maximumDisplacementAngstrom": 6.120711556675453,
+        "centroidDisplacementAngstrom": 2.02335517154236,
+        "principalPlaneAngleDegrees": 63.75506046133177,
+        "radialProfileRmsdAngstrom": 0.20429596498696412,
+        "predictedRadiusOfGyrationAngstrom": 2.4789207433928513,
+        "holdoutRadiusOfGyrationAngstrom": 2.3943653749190212,
+        "radiusOfGyrationDeltaAngstrom": 0.08455536847383005,
+        "predictedRadialDistanceFromHardCoreAngstrom": 6.45316410995604,
+        "holdoutRadialDistanceFromHardCoreAngstrom": 6.874341449100552,
+        "radialDistanceFromHardCoreDeltaAngstrom": 0.4211773391445117,
+        "productAtomIndices": [
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25
+        ],
+        "productAtomNames": [
+          "CX2",
+          "CX3",
+          "CX4",
+          "CX5",
+          "CX6",
+          "NX1",
+          "CX7",
+          "NX2",
+          "CX8",
+          "CX9",
+          "CX10",
+          "SX1"
+        ]
+      },
+      "mapped": {
+        "atomCount": 19,
+        "rmsdAngstrom": 0.5773364390547276,
+        "maximumDisplacementAngstrom": 0.742762336072091,
+        "centroidDisplacementAngstrom": 0.5170118379137228,
+        "principalPlaneAngleDegrees": 1.2368723202608622,
+        "radialProfileRmsdAngstrom": 0.019817707425825587,
+        "predictedRadiusOfGyrationAngstrom": 3.2308592940901857,
+        "holdoutRadiusOfGyrationAngstrom": 3.2405289597623055,
+        "radiusOfGyrationDeltaAngstrom": 0.009669665672119798,
+        "predictedRadialDistanceFromHardCoreAngstrom": 0.0,
+        "holdoutRadialDistanceFromHardCoreAngstrom": 0.0,
+        "radialDistanceFromHardCoreDeltaAngstrom": 0.0,
+        "productAtomIndices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          26,
+          27,
+          28,
+          29,
+          30
+        ],
+        "productAtomNames": [
+          "C18",
+          "O14",
+          "C10",
+          "C5",
+          "C2",
+          "N6",
+          "C11",
+          "CX1",
+          "N8",
+          "C3",
+          "N7",
+          "C12",
+          "C16",
+          "C15",
+          "C1",
+          "C4",
+          "C9",
+          "O13",
+          "C17"
+        ]
+      }
+    },
+    "selectedHoldoutAtomNames": [
+      "C29",
+      "O28",
+      "C27",
+      "C26",
+      "C4",
+      "N5",
+      "C6",
+      "C7",
+      "N8",
+      "C9",
+      "N10",
+      "C11",
+      "C12",
+      "C13",
+      "C14",
+      "C15",
+      "C16",
+      "C18",
+      "C22",
+      "N21",
+      "C20",
+      "N19",
+      "C25",
+      "C24",
+      "C23",
+      "S17",
+      "C3",
+      "C2",
+      "C1",
+      "O30",
+      "C31"
+    ]
+  },
+  "phe890": {
+    "predictedChiDegrees": [
+      -76.72918488815881,
+      -71.03159584960724
+    ],
+    "holdoutChiDegrees": [
+      -75.64048301121986,
+      -87.85172823052963
+    ],
+    "chi1DifferenceDegrees": 1.0887018769389556,
+    "chi2DifferenceDegrees": 16.820132380922388,
+    "sidechainAtomNames": [
+      "CB",
+      "CG",
+      "CD1",
+      "CD2",
+      "CE1",
+      "CE2",
+      "CZ"
+    ],
+    "sidechainLabelMapping": "deposited",
+    "sidechainRmsdAngstrom": 0.24828637686745728,
+    "sidechainMaximumDisplacementAngstrom": 0.3699431558508668
+  },
+  "integrity": {
+    "valid": true,
+    "heavyAtomCount": 31,
+    "heavyAtomNamesUnique": true,
+    "heavyAtomNamesMatchRegisteredProduct": true,
+    "elementsMatchRegisteredProduct": true,
+    "allCoordinatesFinite": true,
+    "heavyAtomTopologyMatchesRegisteredProduct": true,
+    "minimumBondLengthToCovalentRadiiRatio": 0.8897004842176786,
+    "maximumBondLengthToCovalentRadiiRatio": 1.0828031880390354,
+    "ligandInternalSevereClashes": 0,
+    "proteinLigandSevereClashes": 0,
+    "severeClashRadiusFraction": 0.62
+  },
+  "acceptance": {
+    "accepted": false,
+    "thresholds": {
+      "receptorAlignmentRmsdAngstrom": 1.25,
+      "ligandRmsdAngstrom": 2.0,
+      "ligandCentroidDisplacementAngstrom": 1.5,
+      "ligandPrincipalPlaneAngleDegrees": 35.0,
+      "ligandRadialProfileRmsdAngstrom": 1.0,
+      "hardRegionRmsdAngstrom": 1.25,
+      "hardRegionMaximumDisplacementAngstrom": 2.25,
+      "releasedRegionRmsdAngstrom": 2.5,
+      "distalFeatureRmsdAngstrom": 2.0,
+      "distalFeatureCentroidDisplacementAngstrom": 2.0,
+      "distalFeaturePlaneAngleDegrees": 30.0,
+      "distalFeatureRadialDistanceDeltaAngstrom": 1.0,
+      "phe890Chi1DifferenceDegrees": 25.0,
+      "phe890Chi2DifferenceDegrees": 35.0,
+      "phe890SidechainRmsdAngstrom": 1.5,
+      "phe890SidechainMaximumDisplacementAngstrom": 2.5,
+      "minimumBondLengthToCovalentRadiiRatio": 0.65,
+      "maximumBondLengthToCovalentRadiiRatio": 1.45,
+      "maximumLigandInternalSevereClashes": 0,
+      "maximumProteinLigandSevereClashes": 0
+    },
+    "checks": [
+      {
+        "id": "receptor-alignment",
+        "observed": 0.09613788708111223,
+        "operator": "<=",
+        "threshold": 1.25,
+        "passed": true
+      },
+      {
+        "id": "whole-ligand-rmsd",
+        "observed": 1.8744205309203883,
+        "operator": "<=",
+        "threshold": 2.0,
+        "passed": true
+      },
+      {
+        "id": "whole-ligand-centroid",
+        "observed": 0.906882583500494,
+        "operator": "<=",
+        "threshold": 1.5,
+        "passed": true
+      },
+      {
+        "id": "whole-ligand-radial-profile",
+        "observed": 0.4176960819091556,
+        "operator": "<=",
+        "threshold": 1.0,
+        "passed": true
+      },
+      {
+        "id": "hard-region-rmsd",
+        "observed": 0.5773364390547276,
+        "operator": "<=",
+        "threshold": 1.25,
+        "passed": true
+      },
+      {
+        "id": "hard-region-maximum-displacement",
+        "observed": 0.742762336072091,
+        "operator": "<=",
+        "threshold": 2.25,
+        "passed": true
+      },
+      {
+        "id": "phe890-chi1",
+        "observed": 1.0887018769389556,
+        "operator": "<=",
+        "threshold": 25.0,
+        "passed": true
+      },
+      {
+        "id": "phe890-chi2",
+        "observed": 16.820132380922388,
+        "operator": "<=",
+        "threshold": 35.0,
+        "passed": true
+      },
+      {
+        "id": "phe890-sidechain-rmsd",
+        "observed": 0.24828637686745728,
+        "operator": "<=",
+        "threshold": 1.5,
+        "passed": true
+      },
+      {
+        "id": "phe890-sidechain-maximum-displacement",
+        "observed": 0.3699431558508668,
+        "operator": "<=",
+        "threshold": 2.5,
+        "passed": true
+      },
+      {
+        "id": "registered-chemistry-and-coordinate-integrity",
+        "observed": true,
+        "operator": "is",
+        "threshold": true,
+        "passed": true
+      },
+      {
+        "id": "whole-ligand-principal-plane",
+        "observed": 62.620296517819874,
+        "operator": "<=",
+        "threshold": 35.0,
+        "passed": false
+      }
+    ],
+    "failedChecks": [
+      "whole-ligand-principal-plane"
+    ]
+  },
+  "accepted": false
+}

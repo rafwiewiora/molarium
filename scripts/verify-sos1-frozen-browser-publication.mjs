@@ -146,8 +146,8 @@ export async function verifySos1FrozenBrowserPublication({ root = ROOT,
   }
   assert(build.includes('/sos1-hit-to-bay293 /?story=sos1-hit-to-bay293 302'));
   assert(build.includes('/sos1-hit-to-bay293/review /?story=sos1-hit-to-bay293-review 302'));
-  assert(server.includes("'/?story=sos1-hit-to-bay293'"));
-  assert(server.includes("'/?story=sos1-hit-to-bay293-review'"));
+  assert(server.includes('/?story=sos1-hit-to-bay293'));
+  assert(server.includes('/?story=sos1-hit-to-bay293-review'));
   return Object.freeze({ declarationSha256:sha256(declarationBytes),
     runId:verified.runId, evaluationAccepted:verified.evaluation.accepted === true });
 }

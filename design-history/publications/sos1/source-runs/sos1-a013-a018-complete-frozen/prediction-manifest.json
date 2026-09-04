@@ -1,0 +1,204 @@
+{
+  "schema": "molarium.design-prediction-run/v1",
+  "routeId": "sos1-hit-only",
+  "status": "predictions-frozen-holdouts-unopened",
+  "publicationEligible": true,
+  "protocol": {
+    "initialCoordinateInput": "PDB 5OVE/AXE only",
+    "sequentialPredictedReferences": true,
+    "relaxMethod": "induced-fit-webgpu",
+    "phe890Branching": {
+      "diagnosticOnly": false,
+      "diagnosticExactCoordinateSha256": null
+    }
+  },
+  "checkpoints": [
+    {
+      "stepId": "scaffold-rewrite",
+      "predictedStateId": "AWT",
+      "filename": "scaffold-rewrite-prediction.json",
+      "sha256": "5fe79927f85d1bec145746d8a867fe9a64047e22ac8f5de10e8dd1e2dd4f9ace",
+      "bytes": 371119,
+      "ligandCoordinateSha256": "1809b8ae5b5972a6619bb7ca5ac011ddd1005a0b5c008c9e6af9658c6192955b",
+      "pocketCoordinateSha256": "725e4572ae1c806c477a6dc73d1849b032ac1c06012458cf7e51e7508a60894a",
+      "freezeActionSequence": 13,
+      "fullSystemCampaign": {
+        "schema": "molarium.full-system-checkpoint/v1",
+        "campaignId": "sos1-run-766bdc2ebf83a561",
+        "branch": "main",
+        "commitId": "commit:2c9880158ecce4b2140629dc84a9428e8dfcfa0d42b1aed54caa2bf24ba4b680",
+        "snapshotId": "snapshot:56afdcd914e17c8aa09d5347e7d5b9e95f3b8f3a89b8069fbaee1dc460e1d02a",
+        "filename": "scaffold-rewrite-campaign.json",
+        "sha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+        "bytes": 5990361,
+        "commitActionSequence": 15,
+        "exportActionSequence": 17,
+        "verification": {
+          "valid": true,
+          "reason": null,
+          "events": 3,
+          "commits": 2,
+          "decisions": 0
+        }
+      }
+    },
+    {
+      "stepId": "fragment-merge",
+      "predictedStateId": "AWZ",
+      "filename": "fragment-merge-prediction.json",
+      "sha256": "da323462256b61653ac6a2c59ae8dc596a9b81e88cb3eba6055f83cb67093033",
+      "bytes": 390324,
+      "ligandCoordinateSha256": "c9a3fed2c837e2c6c76015cd3cee236fa5d5eff0338e024e167cf44b324b47cd",
+      "pocketCoordinateSha256": "7a8b4c78e8aa231f9c9bc8a9744c7d8fef8a62a0045baa69095580a0f0f7ba35",
+      "freezeActionSequence": 26,
+      "fullSystemCampaign": {
+        "schema": "molarium.full-system-checkpoint/v1",
+        "campaignId": "sos1-run-766bdc2ebf83a561",
+        "branch": "main",
+        "commitId": "commit:dc66adfd95d39456389739404fcb11a63188199ac603ecbeb45f0c40199dc95a",
+        "snapshotId": "snapshot:d895de9868c4a37951748701a3d21e835454d314361933197ef65a5530f61c98",
+        "filename": "fragment-merge-campaign.json",
+        "sha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81",
+        "bytes": 8990688,
+        "commitActionSequence": 28,
+        "exportActionSequence": 30,
+        "verification": {
+          "valid": true,
+          "reason": null,
+          "events": 4,
+          "commits": 3,
+          "decisions": 0
+        }
+      }
+    },
+    {
+      "stepId": "open-phe890-pocket",
+      "predictedStateId": "AWW",
+      "filename": "open-phe890-pocket-prediction.json",
+      "sha256": "510154612002504393429956877e1be312fff6bb23450e62974ab0ffd1954c88",
+      "bytes": 6591669,
+      "ligandCoordinateSha256": "6feebe970d64c17889e7315d46e11a02e6b4769cbc92d8e237a2978802474721",
+      "pocketCoordinateSha256": "d5bf4d8b70dde02b4feac70b43daed6d3137739b2c358d074361a2b9046436ff",
+      "freezeActionSequence": 240,
+      "fullSystemCampaign": {
+        "schema": "molarium.full-system-checkpoint/v1",
+        "campaignId": "sos1-run-766bdc2ebf83a561",
+        "branch": "main",
+        "commitId": "commit:ccde95f4afba9a304259797dca370fdd87441bb34a406b4e6235ffc83801354e",
+        "snapshotId": "snapshot:fcf4928c5f0c80617ef00e81b218aaca10f1d81b4c3eb68bfe056e98e8584bba",
+        "filename": "open-phe890-pocket-campaign.json",
+        "sha256": "1b174568da864bbfdbd268363bfaba03a9e180b3210de129705fa6f6191eb5fc",
+        "bytes": 12037534,
+        "commitActionSequence": 242,
+        "exportActionSequence": 244,
+        "verification": {
+          "valid": true,
+          "reason": null,
+          "events": 5,
+          "commits": 4,
+          "decisions": 0
+        }
+      },
+      "rotamerSelection": {
+        "inputCoordinateSha256": "1f76a2f8c801fc55f6dcdffe703ed26fd5d92da6d051d28e26556742679e46cf",
+        "selectedCoordinateSha256": "f9aef3c53f3fd98b7f0595c078637f73a28a8ca16f69ef92a04b493386d97ef4",
+        "seedChiDegrees": [
+          -180,
+          -90
+        ]
+      }
+    },
+    {
+      "stepId": "finish-bay-293",
+      "predictedStateId": "AXH",
+      "filename": "finish-bay-293-prediction.json",
+      "sha256": "e94988b7fda9e85dcc81dc44ecac42d013c1a117a796c75c506aeb3354cc4649",
+      "bytes": 427622,
+      "ligandCoordinateSha256": "e3d57bdc7d506b485e821b0d6af601e4a787e5d186888a66b8f872b7de64ab09",
+      "pocketCoordinateSha256": "02d482692cb2ac00e19daa884a23e7e896fb907aeb9142df61f4464132b3e118",
+      "freezeActionSequence": 265,
+      "fullSystemCampaign": {
+        "schema": "molarium.full-system-checkpoint/v1",
+        "campaignId": "sos1-run-766bdc2ebf83a561",
+        "branch": "main",
+        "commitId": "commit:ec6fad30a24010d0c4a3e31cc5aada5c58e848fc3bfd1d8f83894fe28113ae84",
+        "snapshotId": "snapshot:45b06beefd27f99952c9a84ca386de4f9e26c227d8538d0a9c49c944d1dfcd9f",
+        "filename": "finish-bay-293-campaign.json",
+        "sha256": "d4685188148b963795ce5d434611b31614a72455a37f34c8f98648f589c2da32",
+        "bytes": 15041989,
+        "commitActionSequence": 268,
+        "exportActionSequence": 270,
+        "verification": {
+          "valid": true,
+          "reason": null,
+          "events": 6,
+          "commits": 5,
+          "decisions": 0
+        }
+      }
+    }
+  ],
+  "agentApi": {
+    "schema": "molarium.chemist-actions/v1",
+    "actions": [
+      "designRoute.load",
+      "view.setMode",
+      "protein.prepare",
+      "campaign.create",
+      "pose.captureReference",
+      "designRoute.inspect",
+      "designRoute.applyStep",
+      "pose.refine",
+      "pose.apply",
+      "protein.parameterize",
+      "optimization.run",
+      "session.inspect",
+      "campaign.commitCurrent",
+      "campaign.verify",
+      "campaign.export",
+      "pose.enumerateSidechainRotamers",
+      "pose.applySidechainRotamer",
+      "pose.updateReceptorReference",
+      "history.undo",
+      "session.clear",
+      "campaign.import",
+      "designRoute.resume"
+    ],
+    "auditRecords": 270,
+    "auditSha256": "a4410e215592b0c1ed42a1ebb5b5d61b01e541fa3eea06599a70d6ec5d70e9d8",
+    "replaySelection": {
+      "schema": "molarium.sos1-recovered-run-assembly/v1",
+      "sourceAttemptId": "a013",
+      "maximumSequence": 251,
+      "excludedRecoveryAttemptId": "a018"
+    }
+  },
+  "inputs": {
+    "campaign": {
+      "path": "design-history/structures/generated/sos1-prospective-campaign.json",
+      "sha256": "289ec8532d5fc2aa8a02c401435a8c6c4071a54cb9888d63e9f4cf5b4495c601"
+    }
+  },
+  "retryProvenance": {
+    "schema": "molarium.sos1-recovered-run-assembly/v1",
+    "original": {
+      "attemptId": "a013",
+      "failedRunSha256": "cdcb7976a3b284629f0e443f7719895fe834bb7bcdb6835ad6330f79283a7297",
+      "auditSha256": "43d7faab5c32e2eeaaa27e55f7371f96fdb28506bf905fc831a8e8a54dfe5d59",
+      "maximumSequence": 251
+    },
+    "recovery": {
+      "attemptId": "a018",
+      "resultSha256": "05871ce3e3ee860e0d8b380b357c93f4dda67a04a8caf0f33017bcd971627d0c",
+      "auditSha256": "39137fa45e3754e7aef312dde0c98ecb55f6a32db69983cba1041786ca1167a3",
+      "campaignSha256": "d4685188148b963795ce5d434611b31614a72455a37f34c8f98648f589c2da32"
+    },
+    "finalStepAudit": {
+      "captureActionSequence": 258,
+      "stageActionSequence": 259,
+      "freezeActionSequence": 265,
+      "commitActionSequence": 268,
+      "exportActionSequence": 270
+    }
+  }
+}

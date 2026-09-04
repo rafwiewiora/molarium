@@ -2,6 +2,13 @@ import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dir, '..');
 const reviewedFiles = [
+  'design-history/examples/sos1-prediction.action-script.json',
+  'design-history/examples/sos1-prediction-checkpoint-review.action-script.json',
+  'design-history/publications/sos1/browser-replay-declaration.json',
+  'design-history/publications/sos1/checkpoints/scaffold-rewrite-campaign.json',
+  'design-history/publications/sos1/checkpoints/fragment-merge-campaign.json',
+  'design-history/publications/sos1/checkpoints/open-phe890-pocket-campaign.json',
+  'design-history/publications/sos1/checkpoints/finish-bay-293-campaign.json',
   'LICENSE',
   'NOTICE',
   'THIRD_PARTY_NOTICES.md',

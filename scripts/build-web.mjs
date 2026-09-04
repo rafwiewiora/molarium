@@ -15,6 +15,13 @@ const assetRelease = String(process.env.MOLARIUM_ASSET_RELEASE || `v${packageJso
 const assetBase = `${assetOrigin}/${assetRelease}/`;
 
 const files = [
+  'design-history/examples/sos1-prediction.action-script.json',
+  'design-history/examples/sos1-prediction-checkpoint-review.action-script.json',
+  'design-history/publications/sos1/browser-replay-declaration.json',
+  'design-history/publications/sos1/checkpoints/scaffold-rewrite-campaign.json',
+  'design-history/publications/sos1/checkpoints/fragment-merge-campaign.json',
+  'design-history/publications/sos1/checkpoints/open-phe890-pocket-campaign.json',
+  'design-history/publications/sos1/checkpoints/finish-bay-293-campaign.json',
   'LICENSE', 'NOTICE', 'README.md', 'CHEMIST-ACTIONS-API.md', 'DESIGNER-MOVES.md', 'THIRD_PARTY_NOTICES.md',
   'index.html', 'app.js', 'chemist-actions.mjs', 'styles.css', 'molarium-workspace.css', 'independent-layout-study.css',
   'protein-residue-templates.js', 'rdkit-worker.js', 'openmm-worker.js', 'webgpu-worker.js',

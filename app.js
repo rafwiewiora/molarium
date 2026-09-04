@@ -17177,6 +17177,20 @@ async function loadLaunchMolecule() {
 }
 
 const DESIGNER_STORY_LINKS = Object.freeze({
+  'sos1-hit-to-bay293':Object.freeze({
+    title:'SOS1 prediction replay',
+    script:'./design-history/examples/sos1-prediction.action-script.json',
+    sourcePath:'design-history/examples/sos1-prediction.action-script.json',
+    sourceSha256:'b2b42b9bc940c55c00b43f680f72798fe3a1f379677c7cdaedcc4bb7f52dccf6',
+    presentation:'chemist-pocket',
+  }),
+  'sos1-hit-to-bay293-review':Object.freeze({
+    title:'SOS1 prediction checkpoint review',
+    script:'./design-history/examples/sos1-prediction-checkpoint-review.action-script.json',
+    sourcePath:'design-history/examples/sos1-prediction-checkpoint-review.action-script.json',
+    sourceSha256:'2fd7e8fb8283c2f60980f99c9185982c0053187d5b86e245a64475c322b75d7b',
+    presentation:'chemist-pocket',
+  }),
 });
 
 async function loadRegisteredDesignerScript(storyId) {

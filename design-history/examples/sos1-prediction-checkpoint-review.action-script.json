@@ -1,0 +1,131 @@
+{
+  "schema": "molarium.chemist-action-script/v1",
+  "label": "SOS1 prediction checkpoint review sos1-a013-a018-complete-frozen",
+  "provenance": {
+    "schema": "molarium.frozen-prediction-checkpoint-review/v1",
+    "reviewOnly": true,
+    "sourceStatus": "complete-frozen-prediction",
+    "sourceSnapshotsContentAddressed": true,
+    "promotable": false,
+    "nonPromotableReason": "Checkpoint review performs no scientific calculation.",
+    "calculationPolicy": "none",
+    "holdoutCoordinatesIncluded": false,
+    "publicChemistActions": [
+      "campaign.import"
+    ],
+    "postFreezeEvaluation": {
+      "attached": true,
+      "summarySha256": "a62bdc8a4e10e26dd053372d01433f4de854cf8021f147862363c1ca2b844ad4",
+      "accepted": false,
+      "continuityAccepted": false,
+      "failedStepIds": [
+        "fragment-merge",
+        "open-phe890-pocket",
+        "finish-bay-293"
+      ]
+    }
+  },
+  "actions": [
+    {
+      "action": "campaign.import",
+      "args": {
+        "sourcePath": "./design-history/publications/sos1/checkpoints/scaffold-rewrite-campaign.json",
+        "sourceSha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+        "preserveView": false
+      },
+      "caption": "Review scaffold-rewrite prediction checkpoint",
+      "review": {
+        "schema": "molarium.frozen-prediction-checkpoint-review/v1",
+        "sourceStatus": "complete-frozen-prediction",
+        "immutableSnapshot": true,
+        "promotable": false,
+        "calculationPolicy": "none",
+        "holdoutCoordinatesIncluded": false,
+        "checkpointSha256": "5fe79927f85d1bec145746d8a867fe9a64047e22ac8f5de10e8dd1e2dd4f9ace",
+        "campaignSha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+        "campaignId": "sos1-run-766bdc2ebf83a561",
+        "branch": "main",
+        "commitId": "commit:2c9880158ecce4b2140629dc84a9428e8dfcfa0d42b1aed54caa2bf24ba4b680",
+        "snapshotId": "snapshot:56afdcd914e17c8aa09d5347e7d5b9e95f3b8f3a89b8069fbaee1dc460e1d02a"
+      }
+    },
+    {
+      "action": "campaign.import",
+      "args": {
+        "sourcePath": "./design-history/publications/sos1/checkpoints/fragment-merge-campaign.json",
+        "sourceSha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81",
+        "preserveView": true
+      },
+      "caption": "Review fragment-merge prediction checkpoint",
+      "expect": {
+        "campaignImport.viewPreserved": true
+      },
+      "review": {
+        "schema": "molarium.frozen-prediction-checkpoint-review/v1",
+        "sourceStatus": "complete-frozen-prediction",
+        "immutableSnapshot": true,
+        "promotable": false,
+        "calculationPolicy": "none",
+        "holdoutCoordinatesIncluded": false,
+        "checkpointSha256": "da323462256b61653ac6a2c59ae8dc596a9b81e88cb3eba6055f83cb67093033",
+        "campaignSha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81",
+        "campaignId": "sos1-run-766bdc2ebf83a561",
+        "branch": "main",
+        "commitId": "commit:dc66adfd95d39456389739404fcb11a63188199ac603ecbeb45f0c40199dc95a",
+        "snapshotId": "snapshot:d895de9868c4a37951748701a3d21e835454d314361933197ef65a5530f61c98"
+      }
+    },
+    {
+      "action": "campaign.import",
+      "args": {
+        "sourcePath": "./design-history/publications/sos1/checkpoints/open-phe890-pocket-campaign.json",
+        "sourceSha256": "1b174568da864bbfdbd268363bfaba03a9e180b3210de129705fa6f6191eb5fc",
+        "preserveView": true
+      },
+      "caption": "Review open-phe890-pocket prediction checkpoint",
+      "expect": {
+        "campaignImport.viewPreserved": true
+      },
+      "review": {
+        "schema": "molarium.frozen-prediction-checkpoint-review/v1",
+        "sourceStatus": "complete-frozen-prediction",
+        "immutableSnapshot": true,
+        "promotable": false,
+        "calculationPolicy": "none",
+        "holdoutCoordinatesIncluded": false,
+        "checkpointSha256": "510154612002504393429956877e1be312fff6bb23450e62974ab0ffd1954c88",
+        "campaignSha256": "1b174568da864bbfdbd268363bfaba03a9e180b3210de129705fa6f6191eb5fc",
+        "campaignId": "sos1-run-766bdc2ebf83a561",
+        "branch": "main",
+        "commitId": "commit:ccde95f4afba9a304259797dca370fdd87441bb34a406b4e6235ffc83801354e",
+        "snapshotId": "snapshot:fcf4928c5f0c80617ef00e81b218aaca10f1d81b4c3eb68bfe056e98e8584bba"
+      }
+    },
+    {
+      "action": "campaign.import",
+      "args": {
+        "sourcePath": "./design-history/publications/sos1/checkpoints/finish-bay-293-campaign.json",
+        "sourceSha256": "d4685188148b963795ce5d434611b31614a72455a37f34c8f98648f589c2da32",
+        "preserveView": true
+      },
+      "caption": "Review finish-bay-293 prediction checkpoint",
+      "expect": {
+        "campaignImport.viewPreserved": true
+      },
+      "review": {
+        "schema": "molarium.frozen-prediction-checkpoint-review/v1",
+        "sourceStatus": "complete-frozen-prediction",
+        "immutableSnapshot": true,
+        "promotable": false,
+        "calculationPolicy": "none",
+        "holdoutCoordinatesIncluded": false,
+        "checkpointSha256": "e94988b7fda9e85dcc81dc44ecac42d013c1a117a796c75c506aeb3354cc4649",
+        "campaignSha256": "d4685188148b963795ce5d434611b31614a72455a37f34c8f98648f589c2da32",
+        "campaignId": "sos1-run-766bdc2ebf83a561",
+        "branch": "main",
+        "commitId": "commit:ec6fad30a24010d0c4a3e31cc5aada5c58e848fc3bfd1d8f83894fe28113ae84",
+        "snapshotId": "snapshot:45b06beefd27f99952c9a84ca386de4f9e26c227d8538d0a9c49c944d1dfcd9f"
+      }
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "schema": "molarium.sos1-frozen-browser-publication/v1",
+  "routeId": "sos1-hit-only",
+  "publicationClass": "complete-frozen-prediction",
+  "sourceRun": {
+    "id": "sos1-a013-a018-complete-frozen",
+    "directory": "design-history/publications/sos1/source-runs/sos1-a013-a018-complete-frozen",
+    "predictionManifestSha256": "03311779f5c968db80cf246753cd3b81227b98c4a7e4bb8ae4cff3da68a03701",
+    "sourceAuditSha256": "a4410e215592b0c1ed42a1ebb5b5d61b01e541fa3eea06599a70d6ec5d70e9d8",
+    "checkpoints": [
+      {
+        "stepId": "scaffold-rewrite",
+        "sha256": "5fe79927f85d1bec145746d8a867fe9a64047e22ac8f5de10e8dd1e2dd4f9ace",
+        "fullSystemCampaignSha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+        "publishedCampaignPath": "design-history/publications/sos1/checkpoints/scaffold-rewrite-campaign.json"
+      },
+      {
+        "stepId": "fragment-merge",
+        "sha256": "da323462256b61653ac6a2c59ae8dc596a9b81e88cb3eba6055f83cb67093033",
+        "fullSystemCampaignSha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81",
+        "publishedCampaignPath": "design-history/publications/sos1/checkpoints/fragment-merge-campaign.json"
+      },
+      {
+        "stepId": "open-phe890-pocket",
+        "sha256": "510154612002504393429956877e1be312fff6bb23450e62974ab0ffd1954c88",
+        "fullSystemCampaignSha256": "1b174568da864bbfdbd268363bfaba03a9e180b3210de129705fa6f6191eb5fc",
+        "publishedCampaignPath": "design-history/publications/sos1/checkpoints/open-phe890-pocket-campaign.json"
+      },
+      {
+        "stepId": "finish-bay-293",
+        "sha256": "e94988b7fda9e85dcc81dc44ecac42d013c1a117a796c75c506aeb3354cc4649",
+        "fullSystemCampaignSha256": "d4685188148b963795ce5d434611b31614a72455a37f34c8f98648f589c2da32",
+        "publishedCampaignPath": "design-history/publications/sos1/checkpoints/finish-bay-293-campaign.json"
+      }
+    ]
+  },
+  "postFreezeEvaluation": {
+    "schema": "molarium.sos1-post-freeze-evaluation-outcome/v1",
+    "attached": true,
+    "summarySha256": "a62bdc8a4e10e26dd053372d01433f4de854cf8021f147862363c1ca2b844ad4",
+    "accepted": false,
+    "continuityAccepted": false,
+    "failedStepIds": [
+      "fragment-merge",
+      "open-phe890-pocket",
+      "finish-bay-293"
+    ],
+    "results": [
+      {
+        "stepId": "scaffold-rewrite",
+        "accepted": true,
+        "failedChecks": []
+      },
+      {
+        "stepId": "fragment-merge",
+        "accepted": false,
+        "failedChecks": [
+          "whole-ligand-principal-plane"
+        ]
+      },
+      {
+        "stepId": "open-phe890-pocket",
+        "accepted": false,
+        "failedChecks": [
+          "whole-ligand-rmsd",
+          "whole-ligand-centroid",
+          "hard-region-rmsd",
+          "hard-region-maximum-displacement",
+          "phe890-sidechain-rmsd",
+          "whole-ligand-principal-plane"
+        ]
+      },
+      {
+        "stepId": "finish-bay-293",
+        "accepted": false,
+        "failedChecks": [
+          "whole-ligand-rmsd",
+          "whole-ligand-principal-plane",
+          "distal-feature-rmsd",
+          "distal-feature-centroid",
+          "distal-feature-radial-distance",
+          "aww-to-axh-continuity"
+        ]
+      }
+    ]
+  },
+  "executableReplay": {
+    "path": "design-history/examples/sos1-prediction.action-script.json",
+    "sha256": "b2b42b9bc940c55c00b43f680f72798fe3a1f379677c7cdaedcc4bb7f52dccf6",
+    "actionScriptSha256": "623e2e1b9dba3b12056ea743e936f311724d07024bd731c28da1c6d88270c4eb",
+    "publicUrl": "/sos1-hit-to-bay293"
+  },
+  "checkpointReview": {
+    "path": "design-history/examples/sos1-prediction-checkpoint-review.action-script.json",
+    "sha256": "2fd7e8fb8283c2f60980f99c9185982c0053187d5b86e245a64475c322b75d7b",
+    "actionScriptSha256": "56e2efe017b9eea35e71eae601741c4dddc9ff5a206fc813c88ba35bf617780b",
+    "calculationPolicy": "none",
+    "promotable": false,
+    "publicUrl": "/sos1-hit-to-bay293/review"
+  }
+}
