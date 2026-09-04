@@ -56,6 +56,20 @@ try {
     'the renderer must prove that publication assets use the real Local Lab policy');
   assert.match(renderer, /localOnly:true/,
     'the renderer must start the network-locked Local Lab server');
+  assert.match(renderer, /appPath:'index\.html\?blank=1&designer-moves-movie=1'/,
+    'the renderer must begin on the real blank Molarium canvas');
+  assert.match(renderer, /verifyBlankInterfaceSnapshot/,
+    'the renderer must fail if the blank full-interface frame is missing');
+  assert.match(renderer, /verifyPresentationCameraContract/,
+    'the renderer must reject presentation scripts that refit the camera');
+  assert.match(renderer, /verifyHighlightCameraAudit/,
+    'the renderer must verify runtime camera preservation for every highlight');
+  assert.match(renderer, /action:'designerScript\.inspect'/,
+    'the renderer must inspect terminal review state through the public API');
+  assert.match(renderer, /verifyCompletedInterfaceSnapshot/,
+    'the renderer must reject a completed story whose arrows no longer work');
+  assert.match(renderer, /presentation:\{ \.\.\.DESIGNER_MOVIE_PRESENTATION/,
+    'the renderer manifest must retain its pacing and interface evidence');
   assert.match(renderer, /path:'source\.action-script\.json'/,
     'the selected public source actions must be retained with the render');
   assert.doesNotMatch(renderer, /DOM\.setFileInputFiles/,

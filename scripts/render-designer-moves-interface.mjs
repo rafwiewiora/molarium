@@ -6,6 +6,11 @@ import { fileURLToPath } from 'node:url';
 import { actionScriptSha256 } from '../design-history/replay.mjs';
 import { buildPocketInterfaceStory } from '../design-history/interface-story.mjs';
 import { promoteCompletedRender } from './atomic-render-output.mjs';
+import { DESIGNER_MOVIE_PRESENTATION, designerMoviePressFrames,
+  designerMovieResultFrames, readBlankInterfaceSnapshot, verifyBlankInterfaceSnapshot,
+  verifyCompletedInterfaceSnapshot, verifyHighlightCameraAudit,
+  verifyMovieViewport, verifyPresentationCameraContract,
+} from './designer-movie-presentation.mjs';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
 import { verifyBrowserLocalLabCapture } from './local-lab-capture.mjs';
 import { buildAcceptedSos1ReplayScript, requireExplicitRunDirectory,
@@ -28,6 +33,7 @@ const width = Number(valueFor('--width') || 1600);
 const height = Number(valueFor('--height') || 1000);
 const fps = Number(valueFor('--fps') || 12);
 const smoke = has('--smoke');
+const viewport = verifyMovieViewport({ width, height, deviceScaleFactor:1 });
 const sourceActionLimit = Number(valueFor('--source-actions') || 0);
 const verifiedRun = await verifyAcceptedSos1Run(runDirectory);
 const acceptedReplay = await buildAcceptedSos1ReplayScript(verifiedRun);
@@ -44,6 +50,7 @@ const presentationScript = buildPocketInterfaceStory({
 }, { sourcePath:sourceScriptArtifactPath, sourceSha256:digest(sourceScriptBytes) });
 const presentationScriptSha256 = await actionScriptSha256(presentationScript);
 const presentationBytes = Buffer.from(`${JSON.stringify(presentationScript, null, 2)}\n`);
+const cameraContract = verifyPresentationCameraContract(presentationScript);
 
 await mkdir(dirname(output), { recursive:true });
 const temporary = await mkdtemp(join(tmpdir(), 'molarium-interface-movie-'));
@@ -56,6 +63,9 @@ const qaDirectory = join(publicationStaging, 'qa');
 let browser = null;
 let browserVersion = null;
 let networkPolicy = null;
+let initialInterface = null;
+let completedInterface = null;
+let highlightCameraAudit = null;
 const captured = [];
 let frameIndex = 0;
 
@@ -73,19 +83,6 @@ async function appendFrame(label, repeats = 1, actionIndex = null) {
   captured.push({ label, actionIndex, action:step?.action || null,
     caption:step?.caption || null, repeats, sha256, bytes:bytes.length, qaFilename:`qa/${qaFilename}`,
     firstFrame:frameIndex - repeats, lastFrame:frameIndex - 1 });
-}
-
-function holdFrames(step) {
-  if (!step) return fps;
-  if (step.action === 'view.setDisplay') return Math.round(fps * 1.1);
-  if (step.action === 'view.focusComponent') return Math.round(fps * 2.4);
-  if (step.action === 'designRoute.applyStep') return Math.round(fps * 1.8);
-  if (step.action === 'pose.applySidechainRotamer') return Math.round(fps * 2.2);
-  if (step.action === 'view.highlightAtoms') return Math.round(fps * 1.8);
-  if (['designRoute.load', 'pose.enumerateSidechainRotamers',
-    'pose.updateReceptorReference', 'pose.apply', 'optimization.run'].includes(step.action))
-    return Math.round(fps * 1.5);
-  return Math.max(5, Math.round(fps * .75));
 }
 
 async function waitForInterfaceAction(actionNumber, actionIndex, step, timeoutMs) {
@@ -161,7 +158,9 @@ try {
   await browser.evaluate(`document.querySelector('.mode-bar button[data-mode="build"]').click();
     document.querySelector('#designer-move-tools').scrollIntoView({block:'center'}); true`);
   await delay(400);
-  await appendFrame('Molarium Design interface before import', Math.round(fps * 1.5));
+  initialInterface = verifyBlankInterfaceSnapshot(await readBlankInterfaceSnapshot(browser));
+  await appendFrame('Molarium Design interface before import', Math.round(fps
+    * DESIGNER_MOVIE_PRESENTATION.seconds.blankCanvas));
 
   const importEnvelope = await browser.evaluate(`window.MolariumChemistActions.execute(${JSON.stringify({
     requestId:`renderer-import-${presentationScriptSha256.slice(0, 12)}`,
@@ -171,7 +170,8 @@ try {
     throw new Error(`Public designerScript.load failed: ${importEnvelope?.error || importEnvelope?.status || 'unknown status'}`);
   await waitFor(async () => browser.evaluate(`document.querySelector('#designer-move-status')
     .textContent.includes('replayable move')`), 10000, 'visible imported designer moves');
-  await appendFrame('Imported JSON action script', Math.round(fps * 1.5));
+  await appendFrame('Imported JSON action script', Math.round(fps
+    * DESIGNER_MOVIE_PRESENTATION.seconds.importedStory));
 
   await browser.evaluate(`document.querySelector('#replay-designer-moves').click(); true`);
   let lastActionNumber = 0;
@@ -194,15 +194,14 @@ try {
       await delay(70);
       const step = presentationScript.actions[actionNumber - 1];
       await appendFrame(`${actionNumber}. Press ${step.caption || step.action}`,
-        Math.max(3, Math.round(fps * (['designRoute.applyStep',
-          'pose.applySidechainRotamer'].includes(step.action) ? .7 : .35))), actionNumber - 1);
+        designerMoviePressFrames(step, fps), actionNumber - 1);
       const outcome = await waitForInterfaceAction(actionNumber, actionNumber - 1, step,
         Math.max(1000, timeout - (Date.now() - started)));
       if (outcome.status !== 'completed')
         throw new Error(`Molarium replay action ${actionNumber} failed: ${outcome.error || outcome.status}`);
       await waitForVisibleResult(actionNumber);
       await appendFrame(`${actionNumber}. Result ${step.caption || step.action}`,
-        holdFrames(step), actionNumber - 1);
+        designerMovieResultFrames(step, fps), actionNumber - 1);
       console.log(`Captured interface action ${actionNumber}/${presentationScript.actions.length} · ${step.action}`);
     }
     if (status.notice) throw new Error(`Molarium replay notice: ${status.notice}`);
@@ -219,7 +218,25 @@ try {
   if (replayStatus !== 'completed')
     throw new Error(`Refusing to render an interface replay with status ${replayStatus}`);
   await delay(250);
-  await appendFrame('Replay completed in Molarium', Math.round(fps * 2.5));
+  completedInterface = verifyCompletedInterfaceSnapshot(await browser.evaluate(`(async () => {
+    const inspected = await window.MolariumChemistActions.execute({
+      requestId:'renderer-terminal-review-${presentationScriptSha256.slice(0, 12)}',
+      action:'designerScript.inspect', args:{}
+    });
+    const state = inspected?.result?.designerScript || {};
+    return {
+      replayStatus:document.querySelector('#designer-move-tools')?.dataset.replayStatus || null,
+      progress:document.querySelector('#designer-move-progress-label')?.textContent?.trim() || '',
+      previousEnabled:!document.querySelector('#previous-designer-move')?.disabled,
+      nextEnabled:!document.querySelector('#next-designer-move')?.disabled,
+      playLabel:document.querySelector('#replay-designer-moves')?.textContent?.trim() || '',
+      cueCount:document.querySelectorAll('.designer-move-cue').length,
+      demoActive:document.body.classList.contains('designer-move-demo-active'),
+      review:{ ...(state.review || {}), index:state.index, frontier:state.frontier },
+    };
+  })()`), presentationScript.actions.length);
+  await appendFrame('Replay completed in Molarium', Math.round(fps
+    * DESIGNER_MOVIE_PRESENTATION.seconds.completedStory));
 
   const videoPath = join(publicationStaging, 'sos1-designer-moves-molarium-interface.mp4');
   const ffmpeg = Bun.spawn(['ffmpeg', '-y', '-hide_banner', '-loglevel', 'error',
@@ -237,6 +254,7 @@ try {
   if (await probe.exited !== 0) throw new Error(await new Response(probe.stderr).text());
   const stream = JSON.parse(await new Response(probe.stdout).text()).streams?.[0];
   const audit = await browser.evaluate(`window.MolariumChemistActions.history()`);
+  highlightCameraAudit = verifyHighlightCameraAudit(audit, cameraContract.highlightCount);
   const auditBytes = Buffer.from(`${JSON.stringify({ schema:'molarium.chemist-actions/v1',
     sourceScript:sourceScriptArtifactPath, records:audit }, null, 2)}\n`);
   await writeFile(join(publicationStaging, 'chemist-action-audit.json'), auditBytes);
@@ -265,8 +283,10 @@ try {
       })) },
     renderer:{ path:relative(root, fileURLToPath(import.meta.url)), sha256:digest(rendererBytes),
       browserProduct:browserVersion.product, userAgent:browserVersion.userAgent },
-    viewport:{ width, height, deviceScaleFactor:1 },
+    viewport,
     networkPolicy,
+    presentation:{ ...DESIGNER_MOVIE_PRESENTATION, initialInterface,
+      completedInterface, cameraContract, highlightCameraAudit },
     replay:{ status:replayStatus,
       exactExpectationCount:presentationScript.actions.filter((step) => step.expect).length },
     audit:{ path:'chemist-action-audit.json', sha256:digest(auditBytes), records:audit.length },
