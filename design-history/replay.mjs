@@ -1,4 +1,5 @@
 import { CHEMIST_ACTION_DEFINITIONS, CHEMIST_ACTIONS_SCHEMA } from '../chemist-actions.mjs';
+import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
 import { canonicalJson, cloneRecord, sha256Object } from './integrity.mjs';
 
 export const ACTION_SCRIPT_SCHEMA = 'molarium.chemist-action-script/v1';
@@ -37,6 +38,47 @@ export const EXPLICIT_CHEMISTRY_TARGETS = Object.freeze({
   'chemistry.setBond':Object.freeze({ key:'atomIds', count:2 }),
   'chemistry.deleteBond':Object.freeze({ key:'atomIds', count:2 }),
 });
+
+export const AUDIT_STATE_HASH_GUARDS = Object.freeze({
+  'pose.refine':Object.freeze({ resultKey:'refinement', fields:Object.freeze({
+    inputStateSha256:'expectedInputStateSha256',
+    selectedStateSha256:'expectedSelectedStateSha256',
+  }) }),
+  'pose.apply':Object.freeze({ resultKey:'appliedPose', fields:Object.freeze({
+    inputStateSha256:'expectedInputStateSha256',
+    selectedStateSha256:'expectedSelectedStateSha256',
+    outputStateSha256:'expectedOutputStateSha256',
+  }) }),
+  'optimization.run':Object.freeze({ resultKey:'optimization', fields:Object.freeze({
+    inputStateSha256:'expectedInputStateSha256',
+    outputStateSha256:'expectedOutputStateSha256',
+  }) }),
+});
+
+function enrichStateHashGuards(record, args, mode) {
+  const guard = AUDIT_STATE_HASH_GUARDS[record.action];
+  if (!guard || mode === 'off') return false;
+  const result = record.result?.[guard.resultKey];
+  const fields = Object.entries(guard.fields);
+  const hasAnyHash = fields.some(([resultKey]) => result?.[resultKey] != null);
+  const hasV1Schema = result?.stateHashSchema === MOLECULAR_STATE_HASH_SCHEMA;
+  if (!hasV1Schema && !hasAnyHash) {
+    if (mode === 'required')
+      throw new Error(`Audit sequence ${record.sequence} ${record.action} is missing ${MOLECULAR_STATE_HASH_SCHEMA} result guards`);
+    return false;
+  }
+  if (!hasV1Schema)
+    throw new Error(`Audit sequence ${record.sequence} ${record.action} has state hashes without ${MOLECULAR_STATE_HASH_SCHEMA}`);
+  for (const [resultKey, argumentKey] of fields) {
+    const digest = result[resultKey];
+    if (typeof digest !== 'string' || !/^[a-f0-9]{64}$/.test(digest))
+      throw new Error(`Audit sequence ${record.sequence} ${record.action} has no valid ${resultKey}`);
+    if (Object.hasOwn(args, argumentKey) && args[argumentKey] !== digest)
+      throw new Error(`Audit sequence ${record.sequence} ${record.action} ${argumentKey} conflicts with its recorded result`);
+    args[argumentKey] = digest;
+  }
+  return true;
+}
 
 function validateExplicitChemistryTarget(step, stepNumber) {
   const target = EXPLICIT_CHEMISTRY_TARGETS[step.action];
@@ -176,14 +218,17 @@ function selectedSequences(value) {
  */
 export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit replay',
   includeReadOnly = true, includeSequences = null, captionsBySequence = {},
-  captionFromRequestId = false, includeAuditMetadata = false, provenance = null } = {}) {
+  captionFromRequestId = false, includeAuditMetadata = false, provenance = null,
+  stateHashGuards = 'auto' } = {}) {
   const records = auditRecords(audit), requested = selectedSequences(includeSequences);
+  if (!['auto','required','off'].includes(stateHashGuards))
+    throw new Error('stateHashGuards must be auto, required, or off');
   if (!captionsBySequence || typeof captionsBySequence !== 'object'
     || Array.isArray(captionsBySequence))
     throw new Error('captionsBySequence must be an object keyed by audit sequence');
   const seenSequences = new Set(), readOnly = new Set(READ_ONLY_CHEMIST_ACTIONS);
   const actions = [];
-  let selectedAtomIds = [];
+  let selectedAtomIds = [], stateHashGuardedActionCount = 0;
   for (const [recordIndex, record] of records.entries()) {
     if (!record || typeof record !== 'object')
       throw new Error(`Audit record ${recordIndex + 1} must be an object`);
@@ -213,6 +258,8 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
         throw new Error(`Audit sequence ${sequence} cannot be migrated: ${record.action} has no explicit ${target.key} and no unambiguous recorded selection`);
       args[target.key] = cloneRecord(target.count === 1 ? values[0] : values);
     }
+    if (enrichStateHashGuards(record, args, stateHashGuards))
+      stateHashGuardedActionCount += 1;
     const step = { action:record.action, args };
     if (includeAuditMetadata) step.auditSequence = sequence;
     if (includeAuditMetadata && typeof record.requestId === 'string' && record.requestId)
@@ -247,6 +294,9 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
         && (String(record.action || '').startsWith('designerScript.')
           || record.action === 'interface.presentDesignerStep')).length,
       readOnlyInspectionsIncluded:Boolean(includeReadOnly),
+      ...(stateHashGuardedActionCount || stateHashGuards !== 'auto' ? { stateHashGuards:{
+        mode:stateHashGuards, schema:MOLECULAR_STATE_HASH_SCHEMA,
+        guardedActionCount:stateHashGuardedActionCount } } : {}),
       ...(provenance == null ? {} : cloneRecord(provenance)) },
   };
   return validateActionScript(script);

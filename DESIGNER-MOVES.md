@@ -86,6 +86,13 @@ to inherit that ambient UI state. Legacy audits can be converted only when their
 makes the target unambiguous; conversion writes the target into the resulting script before it is
 saved or replayed.
 
+`actionScriptFromAudit` automatically promotes complete v1 state hashes returned by
+`pose.refine`, `pose.apply`, and `optimization.run` into expected guards on the emitted actions.
+Publication builders pass `{ stateHashGuards: "required" }`; an older or incomplete audit then
+fails conversion rather than yielding a nominally reproducible but unguarded replay. The default
+`"auto"` mode enriches every complete v1 record it sees while leaving genuinely pre-v1 records
+readable as historical, unguarded exports.
+
 The example is shortened for readability. A real script must include preparation, reference
 capture, pose refinement, parameterization, and any requested optimization in their execution
 order. The complete examples linked below do so.

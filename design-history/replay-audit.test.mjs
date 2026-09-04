@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { CHEMIST_ACTIONS_SCHEMA } from '../chemist-actions.mjs';
-import { NON_REPLAYABLE_ACTION_NAMES, NON_REPLAYABLE_ACTION_PREFIXES,
+import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
+import { AUDIT_STATE_HASH_GUARDS, NON_REPLAYABLE_ACTION_NAMES, NON_REPLAYABLE_ACTION_PREFIXES,
   actionScriptFromAudit, replayActionScript, validateActionScript } from './replay.mjs';
 
 const audit = { schema:CHEMIST_ACTIONS_SCHEMA, routeId:'converter-test', records:[
@@ -123,5 +124,53 @@ assert.deepEqual(migratedLegacyAudit.actions[1].args, { atomId:'persistent-a' },
 assert.throws(() => actionScriptFromAudit({ schema:CHEMIST_ACTIONS_SCHEMA, records:[
   { sequence:1, action:'chemistry.setBond', args:{ order:2 }, status:'completed' },
 ] }), /cannot be migrated.*no explicit atomIds/);
+
+assert.deepEqual(Object.keys(AUDIT_STATE_HASH_GUARDS).sort(),
+  ['optimization.run','pose.apply','pose.refine']);
+const hashes = Object.fromEntries('abcdef'.split('').map((key, index) =>
+  [key, String(index + 1).repeat(64)]));
+const guardedAudit = { schema:CHEMIST_ACTIONS_SCHEMA, records:[
+  { sequence:1, action:'pose.refine', args:{ searchChains:16 }, status:'completed',
+    result:{ refinement:{ stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
+      inputStateSha256:hashes.a, selectedStateSha256:hashes.b } } },
+  { sequence:2, action:'pose.apply', args:{ index:0 }, status:'completed',
+    result:{ appliedPose:{ stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
+      inputStateSha256:hashes.a, selectedStateSha256:hashes.b,
+      outputStateSha256:hashes.c } } },
+  { sequence:3, action:'optimization.run', args:{ method:'induced-fit-webgpu' },
+    status:'completed', result:{ optimization:{ stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
+      inputStateSha256:hashes.c, outputStateSha256:hashes.d } } },
+] };
+const automaticallyGuarded = actionScriptFromAudit(guardedAudit);
+assert.deepEqual(automaticallyGuarded.actions.map((step) => step.args), [
+  { searchChains:16, expectedInputStateSha256:hashes.a,
+    expectedSelectedStateSha256:hashes.b },
+  { index:0, expectedInputStateSha256:hashes.a,
+    expectedSelectedStateSha256:hashes.b, expectedOutputStateSha256:hashes.c },
+  { method:'induced-fit-webgpu', expectedInputStateSha256:hashes.c,
+    expectedOutputStateSha256:hashes.d },
+]);
+assert.deepEqual(automaticallyGuarded.sourceAudit.stateHashGuards,
+  { mode:'auto', schema:MOLECULAR_STATE_HASH_SCHEMA, guardedActionCount:3 });
+assert.equal(actionScriptFromAudit(guardedAudit,
+  { stateHashGuards:'required' }).sourceAudit.stateHashGuards.guardedActionCount, 3);
+assert.equal(Object.keys(actionScriptFromAudit(guardedAudit,
+  { stateHashGuards:'off' }).actions[0].args).includes('expectedInputStateSha256'), false);
+assert.throws(() => actionScriptFromAudit({ schema:CHEMIST_ACTIONS_SCHEMA, records:[
+  { sequence:1, action:'pose.refine', args:{ searchChains:16 }, status:'completed', result:{} },
+] }, { stateHashGuards:'required' }), /missing molarium\.molecular-state-hash\/v1 result guards/);
+assert.throws(() => actionScriptFromAudit({ schema:CHEMIST_ACTIONS_SCHEMA, records:[
+  { sequence:1, action:'pose.apply', args:{ index:0 }, status:'completed',
+    result:{ appliedPose:{ stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
+      inputStateSha256:hashes.a, selectedStateSha256:hashes.b } } },
+] }), /no valid outputStateSha256/);
+assert.throws(() => actionScriptFromAudit({ schema:CHEMIST_ACTIONS_SCHEMA, records:[
+  { sequence:1, action:'optimization.run',
+    args:{ method:'webgpu', expectedInputStateSha256:hashes.e }, status:'completed',
+    result:{ optimization:{ stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
+      inputStateSha256:hashes.a, outputStateSha256:hashes.f } } },
+] }), /expectedInputStateSha256 conflicts/);
+assert.throws(() => actionScriptFromAudit(guardedAudit, { stateHashGuards:'sometimes' }),
+  /must be auto, required, or off/);
 
 console.log('Chemist action audit converter: PASS');

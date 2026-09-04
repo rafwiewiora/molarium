@@ -234,6 +234,14 @@ publication replay. When converting a legacy execution audit, `actionScriptFromA
 materialize an unambiguous preceding `selection.replace` into the generated action arguments; the
 resulting saved script is explicit and passes the same validator as a newly authored script.
 
+Audit conversion uses `stateHashGuards: "auto"` by default. For each `pose.refine`, `pose.apply`, or
+`optimization.run` result that identifies `molarium.molecular-state-hash/v1`, the converter copies
+the recorded input, selected, and output hashes into the corresponding `expected*StateSha256`
+request arguments. A partial v1 result or a conflict with an already supplied guard is rejected.
+Publication builders should request `stateHashGuards: "required"`; conversion then fails if any
+included scientific action lacks its complete v1 result hashes. `"off"` exists only for explicitly
+unguarded historical export.
+
 `pose.refine` accepts `execution: "auto"` (the default) or `execution: "serial"`. Auto execution
 partitions independent, deterministically seeded pose chains over a bounded browser Worker ensemble
 and restores results to conformer-index order before ranking. The response and hash-linked labbook
