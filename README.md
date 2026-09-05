@@ -21,6 +21,9 @@ timing scope, raw repetitions, source hashes, and failed attempts. It includes t
 official 2,489-atom DHFR GBSA input alongside isolated force terms, Trp-cage, ubiquitin,
 and cutoff/coordinate stress tests. Unsupported PME and periodic benchmarks are
 listed explicitly; they are not replaced by vacuum calculations.
+The [measured results](./benchmarks/simulation/results/README.md) distinguish
+fixed-input kernel agreement from original-input precision limits and preserve
+failures alongside passing cases.
 
 ## Quick start
 

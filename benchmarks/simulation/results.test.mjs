@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync,readdirSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {gunzipSync} from 'node:zlib';
+import {spawnSync} from 'node:child_process';
 import {compare} from './metrics.mjs';
 const base=new URL('./results/',import.meta.url);
 const sha=b=>createHash('sha256').update(b).digest('hex');
@@ -25,11 +26,20 @@ const byHash=hash=>{
   return JSON.parse(gunzipSync(readFileSync(found.path)));
 };
 const runs=JSON.parse(readFileSync(new URL('runs.json',base))).runs;
+test('headline tables are regenerated from the frozen evidence',()=>{
+  const result=spawnSync(process.execPath,[new URL('./build-report.mjs',import.meta.url).pathname,'--check']);
+  assert.equal(result.status,0,result.stderr.toString());
+});
 for(const run of runs)test(`recompute every published acceptance decision: ${run.label}`,()=>{
   const score=JSON.parse(gunzipSync(readFileSync(new URL(`${run.scoreDirectory||run.directory}/${run.score}.gz`,base))));
   const packet=byHash(score.sources.packetSha256),reference=byHash(score.sources.referenceSha256),actual=byHash(score.sources.actualSha256);
   assert.equal(packet.cases.length,47);assert.equal(actual.cases.length,47);
   assert.equal(reference.cases.length,47);
+  if(actual.source?.sourceHashes){
+    for(const [path,expected] of Object.entries(actual.source.sourceHashes))
+      assert.equal(sha(readFileSync(new URL(`../../${path}`,import.meta.url))),expected,
+        `Published GPU result is stale for ${path}; rerun the benchmark after implementation changes`);
+  }
   for(const c of packet.cases){
     const a=actual.cases.find(row=>row.id===c.id),r=reference.cases.find(row=>row.id===c.id);
     assert.equal(a.status,'ok');assert.equal(r.status,'ok');

@@ -2,13 +2,14 @@
 import {readFile,writeFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {gunzipSync} from 'node:zlib';
-import {summarize} from './metrics.mjs';
+import {summarize,compare} from './metrics.mjs';
 const base=new URL('./results/',import.meta.url);
 const sha=b=>createHash('sha256').update(b).digest('hex');
-async function artifact(directory,name){
+async function artifact(directory,name,expectedRawSha){
   const manifest=JSON.parse(await readFile(new URL(`${directory}/manifest.json`,base)));
   const entry=manifest.files.find(f=>f.name===`${name}.gz`);
   if(!entry)throw new Error(`Missing artifact ${directory}/${name}`);
+  if(expectedRawSha&&entry.uncompressedSha256!==expectedRawSha)throw new Error('Wrong reference/result artifact');
   const bytes=await readFile(new URL(`${directory}/${entry.name}`,base));
   if(sha(bytes)!==entry.sha256)throw new Error('Compressed evidence hash mismatch');
   const raw=gunzipSync(bytes);
@@ -16,12 +17,18 @@ async function artifact(directory,name){
   return JSON.parse(raw);
 }
 const index=JSON.parse(await readFile(new URL('./results/runs.json',import.meta.url)));
+const protocolBytes=await readFile(new URL('./protocol.json',import.meta.url));
+const protocol=JSON.parse(protocolBytes);
 const groups=[];
 for(const run of index.runs){
   const measured=await artifact(run.directory,run.actual),score=await artifact(run.scoreDirectory||run.directory,run.score);
   if(score.sources.actualSha256!==sha(gunzipSync(await readFile(new URL(`${run.directory}/${run.actual}.gz`,base)))))
     throw new Error(`Score belongs to another result: ${run.label}`);
-  groups.push({...run,scoreFilename:run.score,measured,score});
+  const reference=await artifact(run.referenceDirectory||run.directory,'reference.json',score.sources.referenceSha256);
+  if(reference.protocolSha256!==sha(protocolBytes))throw new Error('Results use another protocol version');
+  const original=measured.cases.map(c=>({id:c.id,...compare(reference.cases.find(r=>r.id===c.id).original,
+    c.result||c.original,protocol.accuracy)}));
+  groups.push({...run,scoreFilename:run.score,measured,score,original});
 }
 const fmt=n=>Number(n).toExponential(2);
 const timing=n=>Number(n).toFixed(1);
@@ -37,7 +44,25 @@ for(const {label,score} of groups){
   if(score.gate.total!==47)throw new Error('This results table requires the complete 47-case suite');
   lines.push(`| ${label} | ${score.gate.passedCases}/${score.gate.total} | ${fmt(score.gate.medianOfCaseMedianSymmetricAtomError)} | ${fmt(score.gate.maximumForceRelativeRms)} |`);
 }
-lines.push('','## Throughput','','Median ns/day; brackets contain the P05–P95 spread of five warmed samples.',
+lines.push('','## Original-input agreement: precision limits','','The same preset tolerances are also applied to the original double-valued inputs.',
+  'This is separate from the fixed-f32-input kernel gate above. Native platforms use',
+  'their recorded original-input evaluations here, not their rounded-input evaluations.','',
+  '| Hardware / implementation | Original-input cases passing | Largest force relative RMS |',
+  '| --- | ---: | ---: |');
+for(const g of groups)lines.push(`| ${g.label} | ${g.original.filter(c=>c.passed).length}/47 | ${fmt(Math.max(...g.original.map(c=>c.forceRelativeRms||0)))} |`);
+const translated=groups[0].original.find(c=>c.id==='ubiquitin-translated-500A-vacuum');
+const minimized=groups[0].original.find(c=>c.id==='ubiquitin-original-vacuum');
+lines.push('','WebGPU, OpenCL single, and CUDA single/mixed miss the original-input tolerance',
+  'on minimized ubiquitin in vacuum and four 500 Å translation cases. The largest',
+  `relative force error is about ${(translated.forceRelativeRms*100).toFixed(1)}% for translated, near-minimized ubiquitin.`,
+  `For M1 Pro, its absolute Cartesian force RMS error is ${translated.forceRms.toFixed(3)} kJ/mol/nm against`,
+  `a reference force RMS of ${translated.referenceRms.toFixed(3)} kJ/mol/nm. Untranslated minimized ubiquitin has`,
+  `${minimized.forceRms.toFixed(4)} kJ/mol/nm RMS error (about ${(minimized.forceRelativeRms*100).toFixed(2)}%). These are real precision limitations,`,
+  'not passing end-to-end comparisons. The supplied oracle isolates input rounding',
+  'as the dominant contribution; the double-precision CUDA original-input run passes.',
+  'Do not infer translation-invariant high relative force accuracy near a minimum',
+  'from the fixed-input kernel gate. No tolerance was loosened to hide these cases.','',
+  '## Throughput','','Median ns/day; brackets contain the P05–P95 spread of five warmed samples.',
   'All use 250-step jobs/blocks, 1 fs, 300 K and friction 1/ps. The column headings',
   'identify different timing scopes and integrators: these columns must not be',
   'converted into claims of matched kernel speedups. See the [protocol](../README.md#speed-protocol-and-interpretation).','');
@@ -80,8 +105,14 @@ lines.push('','M1 Pro measurements used the local interactive workstation; CPU/b
   '## Failed and superseded attempts','',
   '- [Initial M1 Pro run](m1pro-regression-before/manifest.json): 44/46 passed; detected serial f32 energy-summation loss.',
   '- [Corrected original suite](m1pro-regression-after/manifest.json): 46/46 passed with unchanged thresholds.',
+  '- [L4 setup failures](l4-setup-failures/manifest.json): transient adapter startup and incompatible CUDA plugin; retained separately from accepted runs.',
   '- The complete expanded suite above uses explicit DHFR OBC radii and sufficient neighbor capacity.',
   '- Missing CUDA plugins or unavailable hardware adapters are setup failures, never passing accuracy/speed results.','');
 const output=new URL('./results/README.md',import.meta.url);
-await writeFile(output,lines.join('\n'));
-console.log(`Generated ${output.pathname}`);
+if(process.argv.includes('--check')){
+  if(await readFile(output,'utf8')!==lines.join('\n'))throw new Error('Results README is stale; regenerate it');
+  console.log('Generated results README matches frozen evidence');
+}else{
+  await writeFile(output,lines.join('\n'));
+  console.log(`Generated ${output.pathname}`);
+}

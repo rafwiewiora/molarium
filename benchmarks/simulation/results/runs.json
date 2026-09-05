@@ -2,6 +2,9 @@
   "runs": [
     {"label":"Apple M1 Pro — WebGPU f32", "directory":"m1pro-20260905-a07", "actual":"webgpu.json", "score":"score.json"},
     {"label":"Apple M1 Pro — OpenMM OpenCL single", "directory":"m1pro-20260905-a07", "actual":"opencl-single.json", "score":"opencl-score.json"},
-    {"label":"NVIDIA L4 — WebGPU f32", "directory":"l4-20260905-a07", "actual":"webgpu.json", "score":"score.json"}
+    {"label":"NVIDIA L4 — WebGPU f32", "directory":"l4-20260905-a07", "actual":"webgpu.json", "score":"score.json"},
+    {"label":"NVIDIA L4 — OpenMM CUDA single", "directory":"l4-20260905-a09", "referenceDirectory":"l4-20260905-a07", "actual":"cuda-single.json", "score":"cuda-single-score.json"},
+    {"label":"NVIDIA L4 — OpenMM CUDA mixed", "directory":"l4-20260905-a09", "referenceDirectory":"l4-20260905-a07", "actual":"cuda-mixed.json", "score":"cuda-mixed-score.json"},
+    {"label":"NVIDIA L4 — OpenMM CUDA double", "directory":"l4-20260905-a09", "referenceDirectory":"l4-20260905-a07", "actual":"cuda-double.json", "score":"cuda-double-score.json"}
   ]
 }

@@ -1,0 +1,20 @@
+{
+  "schema": "molarium.simulation-benchmark-evidence/v1",
+  "attempt": "l4-setup-failures",
+  "files": [
+    {
+      "name": "adapter-startup.json.gz",
+      "sha256": "def8f01c4920baa449c488a9422191183aaecc5cef18aea6c161075941b0455a",
+      "uncompressedSha256": "035b27a03dcc42d8633a718cfdde0a0fb8cc1cffb3e8efa2807c4a55f91945d2",
+      "bytes": 1833,
+      "compressedBytes": 1053
+    },
+    {
+      "name": "cuda-plugin-abi.json.gz",
+      "sha256": "4a5d895febb8cc70c1730d9e08d5f348784267f6f7615c3a353cbeda42b271fb",
+      "uncompressedSha256": "73cdf4858910a9bc27c4510b8c179a6ad3d023d7130f83d134bd03095acb17df",
+      "bytes": 1022,
+      "compressedBytes": 624
+    }
+  ]
+}

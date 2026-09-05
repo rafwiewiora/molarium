@@ -9,9 +9,12 @@ or independent assignment of charges/parameters.
 The pinned [protocol](./protocol.json), [case generator](./prepare.mjs),
 [native oracle](./native_openmm.py), [browser runner](./run-browser.mjs), and
 [acceptance tests](./metrics.test.mjs) are the reproducible source of truth.
-[Measured results and raw evidence](./results/README.md): the complete 47-case
-suite passes on Apple M1 Pro and NVIDIA L4, with five-repeat throughput tables.
-The initial failing energy-summation run is preserved alongside the correction.
+[Measured results and raw evidence](./results/README.md): 47/47 fixed-f32-input
+kernel comparisons pass on Apple M1 Pro and NVIDIA L4. Against original
+double-valued inputs, 42/47 meet the same strict tolerance; near-minimum and
+translated-coordinate precision limits are prominent in the results. Native
+OpenCL/CUDA precision baselines and five-repeat throughput tables are included.
+The initial energy-summation failure is preserved alongside its correction.
 
 ## Reproduce
 
@@ -55,6 +58,8 @@ Run CUDA `mixed` and `double` separately to characterize precision. The scorer
 also accepts native platform results as `--actual`. Missing platforms produce
 an error artifact, not a passing row. `CHROME_PATH` selects a Chrome binary or
 a reviewed hardware-specific launcher. Preserve that launcher's flags with a result.
+For NVIDIA Linux, an equivalent launcher to the measured L4 run is included:
+`CHROME_PATH="$PWD/benchmarks/simulation/chrome-nvidia.sh" bun benchmarks/simulation/run-browser.mjs --speed --output PATH.json`.
 
 For a quick isolated subset, `prepare.mjs --without-upstream` generates 46 cases
 without a network download. The full suite has 47. `run-browser.mjs --cases ID,ID`
@@ -166,3 +171,7 @@ Upstream inputs and force fields retain their original licenses. The exporter
 records commit-pinned source URLs, downloaded-file hashes, force-field XML hashes,
 and an audit serialization of the actual OpenMM System. It downloads the upstream
 benchmark script for provenance but does not execute downloaded Python code.
+
+CI rechecks every frozen file hash, recomputes every published pass/fail decision,
+and rejects headline WebGPU results whose executable source hashes no longer match
+the checkout. New implementation changes therefore require fresh benchmark evidence.

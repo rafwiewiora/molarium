@@ -15,6 +15,35 @@ comparisons remain in each score artifact. All forces are included.
 | Apple M1 Pro — WebGPU f32 | 47/47 | 6.63e-7 | 1.94e-4 |
 | Apple M1 Pro — OpenMM OpenCL single | 47/47 | 7.07e-7 | 1.86e-4 |
 | NVIDIA L4 — WebGPU f32 | 47/47 | 8.12e-7 | 1.43e-4 |
+| NVIDIA L4 — OpenMM CUDA single | 47/47 | 1.09e-6 | 1.32e-4 |
+| NVIDIA L4 — OpenMM CUDA mixed | 47/47 | 1.09e-6 | 1.32e-4 |
+| NVIDIA L4 — OpenMM CUDA double | 47/47 | 1.17e-8 | 6.93e-6 |
+
+## Original-input agreement: precision limits
+
+The same preset tolerances are also applied to the original double-valued inputs.
+This is separate from the fixed-f32-input kernel gate above. Native platforms use
+their recorded original-input evaluations here, not their rounded-input evaluations.
+
+| Hardware / implementation | Original-input cases passing | Largest force relative RMS |
+| --- | ---: | ---: |
+| Apple M1 Pro — WebGPU f32 | 42/47 | 6.53e-2 |
+| Apple M1 Pro — OpenMM OpenCL single | 42/47 | 6.53e-2 |
+| NVIDIA L4 — WebGPU f32 | 42/47 | 6.53e-2 |
+| NVIDIA L4 — OpenMM CUDA single | 42/47 | 6.53e-2 |
+| NVIDIA L4 — OpenMM CUDA mixed | 42/47 | 6.53e-2 |
+| NVIDIA L4 — OpenMM CUDA double | 47/47 | 6.50e-5 |
+
+WebGPU, OpenCL single, and CUDA single/mixed miss the original-input tolerance
+on minimized ubiquitin in vacuum and four 500 Å translation cases. The largest
+relative force error is about 6.5% for translated, near-minimized ubiquitin.
+For M1 Pro, its absolute Cartesian force RMS error is 0.540 kJ/mol/nm against
+a reference force RMS of 8.261 kJ/mol/nm. Untranslated minimized ubiquitin has
+0.0320 kJ/mol/nm RMS error (about 0.39%). These are real precision limitations,
+not passing end-to-end comparisons. The supplied oracle isolates input rounding
+as the dominant contribution; the double-precision CUDA original-input run passes.
+Do not infer translation-invariant high relative force accuracy near a minimum
+from the fixed-input kernel gate. No tolerance was loosened to hide these cases.
 
 ## Throughput
 
@@ -23,34 +52,34 @@ All use 250-step jobs/blocks, 1 fs, 300 K and friction 1/ps. The column headings
 identify different timing scopes and integrators: these columns must not be
 converted into claims of matched kernel speedups. See the [protocol](../README.md#speed-protocol-and-interpretation).
 
-| Workload | Apple M1 Pro — WebGPU f32; production job | Apple M1 Pro — OpenMM OpenCL single; resident Context | NVIDIA L4 — WebGPU f32; production job |
-| --- | ---: | ---: | ---: |
-| trpcage-original-vacuum | 223.0 [222.5–223.3] | 921.7 [912.2–926.2] | 302.5 [301.4–303.2] |
-| trpcage-original-obc2 | 133.3 [133.2–133.5] | 447.7 [445.9–450.3] | 144.0 [143.6–144.5] |
-| trpcage-cutoff-obc2 | 67.5 [67.4–67.6] | 306.5 [301.9–307.3] | 97.2 [96.6–97.3] |
-| trpcage-hbonds-obc2 | 128.1 [127.7–128.2] | 416.9 [414.8–418.4] | 140.4 [139.9–140.9] |
-| ubiquitin-original-vacuum | 91.2 [91.0–91.2] | 488.4 [486.2–488.8] | 103.0 [102.7–103.3] |
-| ubiquitin-original-obc2 | 40.7 [40.7–40.8] | 212.8 [211.9–213.3] | 41.7 [41.6–41.8] |
-| ubiquitin-cutoff-obc2 | 22.6 [22.6–22.6] | 209.5 [209.0–209.8] | 33.8 [33.5–33.8] |
-| ubiquitin-hbonds-obc2 | 39.5 [39.5–39.6] | 204.7 [203.5–205.4] | 41.0 [41.0–41.2] |
-| openmm-dhfr-gbsa | 8.3 [8.3–8.3] | 109.9 [109.5–110.2] | 14.7 [14.7–14.7] |
+| Workload | Apple M1 Pro — WebGPU f32; production job | Apple M1 Pro — OpenMM OpenCL single; resident Context | NVIDIA L4 — WebGPU f32; production job | NVIDIA L4 — OpenMM CUDA single; resident Context |
+| --- | ---: | ---: | ---: | ---: |
+| trpcage-original-vacuum | 223.0 [222.5–223.3] | 921.7 [912.2–926.2] | 302.5 [301.4–303.2] | 4412.3 [4402.9–4421.1] |
+| trpcage-original-obc2 | 133.3 [133.2–133.5] | 447.7 [445.9–450.3] | 144.0 [143.6–144.5] | 1932.2 [1928.1–1934.7] |
+| trpcage-cutoff-obc2 | 67.5 [67.4–67.6] | 306.5 [301.9–307.3] | 97.2 [96.6–97.3] | 1157.6 [1153.6–1159.9] |
+| trpcage-hbonds-obc2 | 128.1 [127.7–128.2] | 416.9 [414.8–418.4] | 140.4 [139.9–140.9] | 1753.3 [1751.5–1754.2] |
+| ubiquitin-original-vacuum | 91.2 [91.0–91.2] | 488.4 [486.2–488.8] | 103.0 [102.7–103.3] | 2951.9 [2920.2–2952.6] |
+| ubiquitin-original-obc2 | 40.7 [40.7–40.8] | 212.8 [211.9–213.3] | 41.7 [41.6–41.8] | 1055.8 [1055.5–1055.9] |
+| ubiquitin-cutoff-obc2 | 22.6 [22.6–22.6] | 209.5 [209.0–209.8] | 33.8 [33.5–33.8] | 952.1 [949.2–954.3] |
+| ubiquitin-hbonds-obc2 | 39.5 [39.5–39.6] | 204.7 [203.5–205.4] | 41.0 [41.0–41.2] | 998.4 [998.3–998.5] |
+| openmm-dhfr-gbsa | 8.3 [8.3–8.3] | 109.9 [109.5–110.2] | 14.7 [14.7–14.7] | 531.3 [530.9–535.7] |
 
 ## Single-point latency
 
 Median milliseconds for energy plus all Cartesian forces. The same scope distinction
 applies: browser jobs include fresh packing/allocation and transfers; native Contexts are resident.
 
-| Workload | Apple M1 Pro — WebGPU f32 | Apple M1 Pro — OpenMM OpenCL single | NVIDIA L4 — WebGPU f32 |
-| --- | ---: | ---: | ---: |
-| trpcage-original-vacuum | 7.1 | 0.9 | 25.8 |
-| trpcage-original-obc2 | 8.6 | 1.2 | 29.6 |
-| trpcage-cutoff-obc2 | 12.5 | 1.4 | 37.0 |
-| trpcage-hbonds-obc2 | 8.7 | 1.2 | 30.1 |
-| ubiquitin-original-vacuum | 25.6 | 1.1 | 88.2 |
-| ubiquitin-original-obc2 | 29.0 | 1.8 | 110.0 |
-| ubiquitin-cutoff-obc2 | 37.0 | 1.8 | 122.7 |
-| ubiquitin-hbonds-obc2 | 29.6 | 1.8 | 110.6 |
-| openmm-dhfr-gbsa | 125.7 | 3.0 | 142.1 |
+| Workload | Apple M1 Pro — WebGPU f32 | Apple M1 Pro — OpenMM OpenCL single | NVIDIA L4 — WebGPU f32 | NVIDIA L4 — OpenMM CUDA single |
+| --- | ---: | ---: | ---: | ---: |
+| trpcage-original-vacuum | 7.1 | 0.9 | 25.8 | 0.1 |
+| trpcage-original-obc2 | 8.6 | 1.2 | 29.6 | 0.1 |
+| trpcage-cutoff-obc2 | 12.5 | 1.4 | 37.0 | 0.1 |
+| trpcage-hbonds-obc2 | 8.7 | 1.2 | 30.1 | 0.1 |
+| ubiquitin-original-vacuum | 25.6 | 1.1 | 88.2 | 0.1 |
+| ubiquitin-original-obc2 | 29.0 | 1.8 | 110.0 | 0.1 |
+| ubiquitin-cutoff-obc2 | 37.0 | 1.8 | 122.7 | 0.1 |
+| ubiquitin-hbonds-obc2 | 29.6 | 1.8 | 110.6 | 0.1 |
+| openmm-dhfr-gbsa | 125.7 | 3.0 | 142.1 | 0.2 |
 
 ## Hardware and raw artifacts
 
@@ -60,6 +89,12 @@ applies: browser jobs include fresh packing/allocation and transfers; native Con
   OpenMM 8.2.0.dev-5377094; macOS-26.5.2-arm64-arm-64bit; Python 3.12.13 (main, Jun 23 2026, 15:44:24) [Clang 22.1.3 ].
 - NVIDIA L4 — WebGPU f32: [raw results](l4-20260905-a07/webgpu.json.gz), [score](l4-20260905-a07/score.json.gz), [manifest](l4-20260905-a07/manifest.json).
   Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36; adapter {"vendor":"nvidia","architecture":"lovelace","device":"","description":"","isFallbackAdapter":false}.
+- NVIDIA L4 — OpenMM CUDA single: [raw results](l4-20260905-a09/cuda-single.json.gz), [score](l4-20260905-a09/cuda-single-score.json.gz), [manifest](l4-20260905-a09/manifest.json).
+  OpenMM 8.2.0.dev-5377094; Linux-6.8.0-1066-gcp-x86_64-with-glibc2.35; Python 3.10.12 (main, Jul 15 2026, 23:40:17) [GCC 11.4.0].
+- NVIDIA L4 — OpenMM CUDA mixed: [raw results](l4-20260905-a09/cuda-mixed.json.gz), [score](l4-20260905-a09/cuda-mixed-score.json.gz), [manifest](l4-20260905-a09/manifest.json).
+  OpenMM 8.2.0.dev-5377094; Linux-6.8.0-1066-gcp-x86_64-with-glibc2.35; Python 3.10.12 (main, Jul 15 2026, 23:40:17) [GCC 11.4.0].
+- NVIDIA L4 — OpenMM CUDA double: [raw results](l4-20260905-a09/cuda-double.json.gz), [score](l4-20260905-a09/cuda-double-score.json.gz), [manifest](l4-20260905-a09/manifest.json).
+  OpenMM 8.2.0.dev-5377094; Linux-6.8.0-1066-gcp-x86_64-with-glibc2.35; Python 3.10.12 (main, Jul 15 2026, 23:40:17) [GCC 11.4.0].
 
 M1 Pro measurements used the local interactive workstation; CPU/background activity
 was not isolated. L4 measurements used the existing dedicated benchmark VM with no
@@ -73,5 +108,6 @@ the checkout base, not a claim that all measured worktree files were unchanged.
 
 - [Initial M1 Pro run](m1pro-regression-before/manifest.json): 44/46 passed; detected serial f32 energy-summation loss.
 - [Corrected original suite](m1pro-regression-after/manifest.json): 46/46 passed with unchanged thresholds.
+- [L4 setup failures](l4-setup-failures/manifest.json): transient adapter startup and incompatible CUDA plugin; retained separately from accepted runs.
 - The complete expanded suite above uses explicit DHFR OBC radii and sufficient neighbor capacity.
 - Missing CUDA plugins or unavailable hardware adapters are setup failures, never passing accuracy/speed results.
