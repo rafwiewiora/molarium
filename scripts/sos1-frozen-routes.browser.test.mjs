@@ -238,6 +238,24 @@ try {
     `document.querySelectorAll('.designer-move-cue, .designer-move-press, .designer-move-change').length`),
   0, 'terminal review navigation must clear transient change markers');
 
+  await browser.client.call('Page.navigate', { url:`${origin}/sos1.html` });
+  await waitFor(async () => browser.evaluate(`Boolean(document.querySelector('video'))`),
+    30000, 'SOS1 movie page');
+  await waitFor(async () => browser.evaluate(`document.querySelector('video')?.readyState >= 1`),
+    60000, 'full MP4 metadata');
+  const moviePage = await browser.evaluate(`({
+    options:[...document.querySelectorAll('.options .button')].map((a) => a.getAttribute('href')),
+    duration:document.querySelector('video').duration,
+    width:document.querySelector('video').videoWidth,
+    height:document.querySelector('video').videoHeight,
+    overflow:document.documentElement.scrollWidth > innerWidth,
+  })`);
+  assert.deepEqual(moviePage.options, ['/sos1-hit-to-bay293','/sos1-hit-to-bay293/review','#movie']);
+  assert(Math.abs(moviePage.duration - 595.583333) < 0.1);
+  assert.equal(moviePage.width, 1600); assert.equal(moviePage.height, 1000);
+  assert.equal(moviePage.overflow, false);
+  await screenshot('04-movies-page.png');
+
   console.log('SOS1 frozen public routes browser QA: blank executable/review entries, honest labels, '
     + 'fixed camera, exact arrowable checkpoints, complete 2D ligand, and zero review calculations PASS');
 } catch (error) {

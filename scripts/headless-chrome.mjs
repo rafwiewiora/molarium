@@ -97,7 +97,8 @@ export async function startMolariumBrowser({ root, appPath, url = null, width = 
     ], { stdout:'ignore', stderr:'ignore' });
     const page = await waitFor(async () => {
       const pages = await (await fetch(`http://127.0.0.1:${debugPort}/json`)).json();
-      return pages.find((entry) => entry.type === 'page' && entry.url.startsWith(appUrl));
+      return pages.find((entry) => entry.type === 'page'
+        && entry.url.startsWith(`${new URL(appUrl).origin}/`));
     }, 15000, 'Chrome page');
     client = new DevToolsClient(page.webSocketDebuggerUrl);
     await client.open();
