@@ -79,9 +79,6 @@ push('setup-reference', 'pose.captureReference', { mode:'propagate' });
 push('apply-aww-graph', 'designRoute.applyStep', { stepId:'open-phe890-pocket' }, {
   designStep:{ referenceStateId:'AWZ', stateId:'AWW', inputKind:'molecular-graph-only' },
 });
-push('set-designer-aww-torsion', 'geometry.setInternalCoordinate', {
-  atomIds:['aww:N7','aww:C12','aww:C15','aww:CX2'], value:173.5, moveConnected:true,
-}, { internalCoordinate:{ kind:'torsion', moveConnected:true } });
 push('record-designer-asn879-hypothesis', 'pose.addContact', {
   ligandAtom:{ componentId:'heterogen:A:1104::AWW', atomName:'N7' },
   receptorAtom:{ residueName:'ASN', chain:'A', residueIndex:879,
@@ -91,7 +88,16 @@ push('record-designer-tyr884-hypothesis', 'pose.addContact', {
   ligandAtom:{ componentId:'heterogen:A:1104::AWW', atomName:'OX3' },
   receptorAtom:{ residueName:'TYR', chain:'A', residueIndex:884,
     insertionCode:'', atomName:'O' }, ligandRole:'donor',
-}, { contact:{ required:true, origin:{ kind:'user-added-hydrogen-bond-hypothesis' } } });
+}, { contact:{ required:true, origin:{ kind:'user-added-hydrogen-bond-hypothesis' },
+  resolvedAtomIds:{ ligand:'aww:OX3', receptor:'protein:A:884:O' } } });
+push('align-designer-aww-branch-to-tyr884', 'geometry.alignBranchToContact', {
+  axisAtomIds:['aww:C12','aww:C15'], ligandFeatureAtomId:'aww:OX3',
+  receptorTargetAtomId:'protein:A:884:O', targetDistanceAngstrom:2.9,
+  solution:'best-directional',
+}, { designerBranchContact:{ externalReferenceCoordinatesUsed:false,
+  targetReachable:true, objective:{ kind:'atom-distance',
+    targetDistanceAngstrom:2.9, solution:'best-directional' },
+  appliedRotationDegrees:177.4 } });
 const lockId = 'a'.repeat(64);
 push('fix-designer-ligand-intent', 'pose.setDesignerLigandPoseFixed', {
   fixed:true, label:'AWW explicit directional intent',
@@ -126,9 +132,11 @@ const boundary = { schema:'molarium.sos1-aww-receptor-only-prospective/v1',
     path:sourcePath, sha256:sha256(sourceBytes),
     coordinateLineage:'registered 5OVE/AXE coordinate boundary' },
   product:{ stateId:'AWW', graphInput:'reported molecular graph only' },
-  designerIntent:{ action:'geometry.setInternalCoordinate',
-    atomNames:['N7','C12','C15','CX2'], relativeRotationDegrees:180,
-    moveConnected:true, hypothesesAreScoringResults:false },
+  designerIntent:{ action:'geometry.alignBranchToContact',
+    orderedAxisAtomNames:['C12','C15'], ligandFeatureAtom:'AWW OX3',
+    receptorTargetAtom:'TYR A884 O', targetDistanceAngstrom:2.9,
+    solution:'best-directional', externalReferenceCoordinatesUsed:false,
+    hypothesesAreScoringResults:false },
   receptorPrediction:{ residue:{ residueName:'PHE', chain:'A', residueIndex:890 },
     ligandCoordinatesFixed:true }, laterStructureAccess:false };
 const manifest = { schema:'molarium.sos1-aww-receptor-only-prospective/v1',
@@ -203,13 +211,22 @@ assert.deepEqual(publication.executable.actions
   .filter((step) => step.action === 'designRoute.applyStep')
   .map((step) => step.args.stepId),
 ['scaffold-rewrite','fragment-merge','open-phe890-pocket']);
-for (const action of ['geometry.setInternalCoordinate','pose.addContact',
+for (const action of ['geometry.alignBranchToContact','pose.addContact',
   'pose.setDesignerLigandPoseFixed','pose.enumerateSidechainRotamers',
   'pose.applySidechainRotamer'])
   assert(publication.executable.actions.some((step) => step.action === action),
     `executable story omits ${action}`);
 assert.equal(publication.executable.actions.some((step) =>
-  ['pose.refine','pose.apply','optimization.run','calculation.run'].includes(step.action)), false);
+  ['geometry.setInternalCoordinate','pose.refine','pose.apply','optimization.run',
+    'calculation.run'].includes(step.action)), false);
+const executableActions = publication.executable.actions.map((step) => step.action);
+const contactIndices = executableActions.flatMap((action, index) =>
+  action === 'pose.addContact' ? [index] : []);
+const alignmentIndex = executableActions.indexOf('geometry.alignBranchToContact');
+const lockIndex = executableActions.indexOf('pose.setDesignerLigandPoseFixed');
+assert.equal(contactIndices.length, 2);
+assert(contactIndices.every((index) => index < alignmentIndex));
+assert(alignmentIndex < lockIndex);
 const portableRotamer = publication.executable.actions.find((step) =>
   step.action === 'pose.applySidechainRotamer');
 assert.deepEqual(portableRotamer.args, { chiDegrees:[-60,90] });
@@ -218,6 +235,43 @@ assert.deepEqual(publication.declaration.scientificContract.predictedDegreesOfFr
   ['PHE A890 side chain']);
 assert.equal(publication.declaration.scientificValidation.accepted, true);
 assert(!/5OV[F-I]/.test(publication.executableBytes.toString()));
+
+const legacyBoundary = structuredClone(boundary);
+legacyBoundary.designerIntent = { action:'geometry.setInternalCoordinate',
+  atomNames:['N7','C12','C15','CX2'], relativeRotationDegrees:180,
+  moveConnected:true, hypothesesAreScoringResults:false };
+await writeFile(join(run, 'boundary.json'),
+  `${JSON.stringify(legacyBoundary, null, 2)}\n`);
+await assert.rejects(() => verifySos1AwwReceptorOnlyRun(run, { root }),
+  /contact-directed branch alignment/);
+await writeFile(join(run, 'boundary.json'), `${JSON.stringify(boundary, null, 2)}\n`);
+
+const legacyAudit = structuredClone(audit);
+const legacyAlignment = legacyAudit.records.find((record) =>
+  record.action === 'geometry.alignBranchToContact');
+legacyAlignment.action = 'geometry.setInternalCoordinate';
+legacyAlignment.args = { atomIds:['aww:N7','aww:C12','aww:C15','aww:CX2'],
+  value:173.5, moveConnected:true };
+legacyAlignment.result = { internalCoordinate:{ kind:'torsion', moveConnected:true } };
+await writeFile(join(run, 'chemist-action-audit.json'),
+  `${JSON.stringify(legacyAudit, null, 2)}\n`);
+await assert.rejects(() => verifySos1AwwReceptorOnlyRun(run, { root }),
+  /ordered graph\/contact\/directional-geometry\/lock\/Phe response/);
+await writeFile(join(run, 'chemist-action-audit.json'),
+  `${JSON.stringify(audit, null, 2)}\n`);
+
+const wrongOrderAudit = structuredClone(audit);
+const wrongOrderAlignment = wrongOrderAudit.records.find((record) =>
+  record.action === 'geometry.alignBranchToContact');
+const firstContact = wrongOrderAudit.records.find((record) => record.action === 'pose.addContact');
+[wrongOrderAlignment.sequence, firstContact.sequence] =
+  [firstContact.sequence, wrongOrderAlignment.sequence];
+await writeFile(join(run, 'chemist-action-audit.json'),
+  `${JSON.stringify(wrongOrderAudit, null, 2)}\n`);
+await assert.rejects(() => verifySos1AwwReceptorOnlyRun(run, { root }),
+  /ordered graph\/contact\/directional-geometry\/lock\/Phe response/);
+await writeFile(join(run, 'chemist-action-audit.json'),
+  `${JSON.stringify(audit, null, 2)}\n`);
 
 const rejectedValidation = structuredClone(validation);
 rejectedValidation.accepted = false;
@@ -247,6 +301,6 @@ prohibitedAudit.currentRunRequestIds.push('forbidden-refine');
 await writeFile(join(run, 'chemist-action-audit.json'),
   `${JSON.stringify(prohibitedAudit, null, 2)}\n`);
 await assert.rejects(() => verifySos1AwwReceptorOnlyRun(run, { root }),
-  /ligand-moving or coupled calculation/);
+  /legacy torsion, ligand-moving action, or coupled calculation/);
 
 console.log('SOS1 AWW receptor-only publication adapter: exact campaigns, public-action replay, calculation-free review, fixed ligand, and no holdouts PASS');
