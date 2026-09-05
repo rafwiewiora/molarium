@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { sos1StoryCaption } from '../design-history/sos1-story-captions.mjs';
+import { buildPocketInterfaceStory } from '../design-history/interface-story.mjs';
+const script = JSON.parse(await readFile(new URL('../design-history/publications/sos1/designer-intent-2026-09-04/executable.action-script.json',import.meta.url)));
+const before = JSON.stringify(script);
+const captions = script.actions.map((step) => sos1StoryCaption(script,step));
+assert.equal(captions.length,159);
+assert(captions.every((caption) => caption && !/\broute\b|sos1 aww receptor only|axh-continuation|\w+\.\w+/i.test(caption)));
+assert(captions.includes('Continue the design from AWW'));
+assert(captions.includes('Make the final chemical changes to reach BAY-293'));
+assert.equal(sos1StoryCaption({}, {action:'test',caption:'Original caption'}),'Original caption');
+assert.equal(JSON.stringify(script),before,'Captions must not mutate scientific replay evidence');
+const installed = buildPocketInterfaceStory(script,
+  {sourceSha256:'7eed2dff0bf3fa127f87b2322aaea4b615d458ad6d8ef3af3c5b5886dc8fe9c3'});
+const installedBefore = JSON.stringify(installed);
+assert(installed.actions.every((step) => !/\broute\b|sos1 aww receptor only|axh-continuation/i.test(sos1StoryCaption(installed,step))));
+assert.equal(sos1StoryCaption(installed,installed.actions[0]),'Start from the SOS1-bound hit, AXE');
+assert.equal(JSON.stringify(installed),installedBefore);
+console.log('SOS1 human-readable captions: all 159 steps; original script unchanged PASS');

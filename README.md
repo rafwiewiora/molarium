@@ -305,8 +305,9 @@ the complete SOS1/Phe890 example are documented in
 The live SOS1 route is registered at `/sos1-hit-to-bay293`. After a completed run its cached
 per-action checkpoints remain arrowable until **Replay story** or **Restart** is explicitly chosen.
 The companion `/sos1-hit-to-bay293/review` (also `/replay`) path is a calculation-free
-review of seven SHA-256-pinned full-system checkpoints. The complete live-calculation
-recording is at `/sos1-hit-to-bay293/movie`; `/sos1` links all three versions and the paper.
+review of seven SHA-256-pinned full-system checkpoints. The 63-second checkpoint
+movie with brief recorded-calculation popups is at `/sos1-hit-to-bay293/movie`;
+`/sos1` links all three versions and the paper.
 
 Production loads `app.js` as a module and does not install the privileged regression harness.
 Automation hosts must grant agents only the frozen JSON action object, not an arbitrary JavaScript

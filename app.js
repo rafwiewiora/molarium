@@ -12,6 +12,7 @@ import { createDesignerLigandPoseLock, designerLigandPoseLockDescriptor,
 import { searchBestDirectionalBranchContact, solveDirectedBranchContact } from
   './docking/designer-branch-contact.mjs';
 import { resolveCampaignAssetSource, readCampaignAssetResponse } from './design-history/campaign-source.mjs';
+import { sos1StoryCaption } from './design-history/sos1-story-captions.mjs';
 
 const MOLARIUM_NETWORK_POLICY = Object.freeze({
   mode:'connected', localOnly:false, policy:'connected-v1',
@@ -8684,7 +8685,7 @@ function designerMoveCaption(index = state.designerMoveReplayIndex) {
   if (!actions.length) return 'Load a story to begin.';
   if (index >= actions.length) return 'Story complete.';
   const step = actions[Math.max(0, index)];
-  return step.caption || step.action;
+  return sos1StoryCaption(state.designerMoveScript, step);
 }
 
 function resetDesignerMovePlayback() {
@@ -8734,7 +8735,7 @@ function reviewDesignerMoveCheckpoint(direction) {
   const caption = target === 0 ? 'Blank canvas before the first story move'
     : atFinal && review.completed ? 'Story complete'
       : atFinal && review.failed ? 'Story stopped at this move'
-      : completed?.caption || completed?.action || 'Completed story state';
+      : sos1StoryCaption(state.designerMoveScript, completed) || 'Completed story state';
   updateDesignerMoveControls(`${review.failed ? 'Failed replay' : review.completed ? 'Review' : 'Paused'} · cached checkpoint ${target} of ${state.designerMoveReplayFrontier}`,
     caption, target === 0
       ? 'Reviewing the untouched starting canvas.'
@@ -8843,8 +8844,7 @@ function updateDesignerMoveControls(message = null, captionOverride = null,
     state.designerMoveReplayIndex);
   document.querySelector('#designer-move-progress-label').textContent =
     `${Math.min(actionCount, state.designerMoveReplayIndex)} / ${actionCount}`;
-  const activeStepCaption = state.designerMoveReplayStep?.caption
-    || state.designerMoveReplayStep?.action;
+  const activeStepCaption = sos1StoryCaption(script, state.designerMoveReplayStep);
   const storyCaption = captionOverride
     || (state.designerMoveReplaying && activeStepCaption
       ? activeStepCaption : designerMoveCaption());
@@ -9109,7 +9109,7 @@ async function presentDesignerMoveStep(index, phase) {
     state.designerMoveReplayIndex = index;
     showDesignerMoveCue(step);
     updateDesignerMoveControls(
-      `Move ${index + 1} of ${script.actions.length} · ${step.caption || step.action}`);
+      `Move ${index + 1} of ${script.actions.length} · ${sos1StoryCaption(script, step)}`);
   } else {
     // A molecular action can schedule registered-ligand/RDKit drawing after
     // its public API result is ready.  Settle that exact drawing before the
@@ -9118,11 +9118,11 @@ async function presentDesignerMoveStep(index, phase) {
     state.designerMoveReplayActionRunning = false;
     state.designerMoveReplayIndex = index + 1;
     showDesignerMoveResultCue(step);
-    const message = `Completed move ${index + 1} of ${script.actions.length} · ${step.caption || step.action}`;
-    updateDesignerMoveControls(message, step.caption || step.action,
+    const message = `Completed move ${index + 1} of ${script.actions.length} · ${sos1StoryCaption(script, step)}`;
+    updateDesignerMoveControls(message, sos1StoryCaption(script, step),
       designerMoveResultCaption(step));
     captureDesignerMoveCheckpoint(index + 1, step);
-    updateDesignerMoveControls(message, step.caption || step.action,
+    updateDesignerMoveControls(message, sos1StoryCaption(script, step),
       designerMoveResultCaption(step));
     return { index, phase, action:source.action, checkpointIndex:index + 1,
       depiction };

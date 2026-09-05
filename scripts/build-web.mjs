@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { cp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { browserModuleClosure, sos1ReleaseWebFiles } from './web-bundle-dependencies.mjs';
+import { ARCHIVED_SOS1_VIDEO_PATH, browserModuleClosure, sos1ReleaseWebFiles } from './web-bundle-dependencies.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const output = join(root, 'dist');
@@ -185,7 +185,8 @@ await writeFile(join(output, '_redirects'), [
   // An explicit /sos1 -> /sos1.html redirect would therefore loop.
   '/sos1/ /sos1 302',
   '/sos1-hit-to-bay293/movies /sos1 302',
-  '/sos1-hit-to-bay293/movie /design-history/publications/sos1/designer-intent-2026-09-04/executable.mp4 302',
+  `/${ARCHIVED_SOS1_VIDEO_PATH} /sos1 302`,
+  '/sos1-hit-to-bay293/movie /sos1#movie 302',
   '/sos1-hit-to-bay293/replay /?story=sos1-hit-to-bay293-review 302',
   '/sos1-hit-to-bay293/replay/ /?story=sos1-hit-to-bay293-review 302',
   '/sos1-hit-to-bay293/review /?story=sos1-hit-to-bay293-review 302',
