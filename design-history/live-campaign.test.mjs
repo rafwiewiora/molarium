@@ -44,6 +44,28 @@ assert.equal(chargedPayload.graph.atoms[2].altLoc, 'A');
 assert.equal(moleculeFromCampaignCommit({ objects:{ commits:{ charged:{ snapshotId:'charged' } },
   snapshots:{ charged:{ ...chargedPayload, schema:'molarium.molecule-snapshot/v1' } } } },
   'charged').atoms[2].charge, 1);
+const proteinPayload = snapshotPayloadFromMolecule({ ...molecule,
+  source:{ format:'pdb', pdbId:'5OVE' },
+  atoms:[
+    { designAtomId:'protein:n', element:'N', atomName:'N', record:'ATOM',
+      residueName:'GLY', residueIndex:1, chain:'A', x:0, y:0, z:0 },
+    { designAtomId:'protein:ca', element:'C', atomName:'CA', record:'ATOM',
+      residueName:'GLY', residueIndex:1, chain:'A', x:1.4, y:0, z:0 },
+    { designAtomId:'ligand:c', element:'C', atomName:'C1', record:'HETATM',
+      residueName:'LIG', residueIndex:2, chain:'A', x:2.8, y:0, z:0 },
+  ], bonds:[{ a:0, b:1, order:1 }] });
+const restoredProtein = moleculeFromCampaignCommit({ objects:{
+  commits:{ protein:{ snapshotId:'protein' } },
+  snapshots:{ protein:{ ...proteinPayload, schema:'molarium.molecule-snapshot/v1' } },
+} }, 'protein');
+assert.equal(restoredProtein.prediction.kind, 'pdb-import');
+assert.equal(restoredProtein.prediction.provider, 'campaign-checkpoint');
+assert.equal(restoredProtein.source.pdbId, '5OVE');
+assert.equal(restoredProtein.source.proteinAtoms, 2);
+assert.equal(restoredProtein.source.residues, 1);
+assert.equal(await moleculeMatchesSnapshot(restoredProtein,
+  { ...proteinPayload, schema:'molarium.molecule-snapshot/v1' }), true,
+  'derived viewer metadata must not change the canonical molecular snapshot');
 assert.throws(() => snapshotPayloadFromMolecule({ ...molecule,
   atoms:molecule.atoms.map((atom) => ({ ...atom, designAtomId:null })) }), /persistent designAtomId/);
 

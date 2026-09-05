@@ -28,7 +28,7 @@
   citecolor=molblue,
   urlcolor=molblue,
   pdftitle={Molarium: Agent-Generated Adaptive Software for Molecular Design},
-  pdfauthor={Rafal P. Wiewiora, W. Patrick Walters, and Woody Sherman}
+  pdfauthor={Rafal P. Wiewiora and Woody Sherman}
 }
 
 \captionsetup{font=small,labelfont=bf}
@@ -39,7 +39,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\footnotesize\color{gray}Molarium: Agent-Generated Adaptive Software for Molecular Design}
-\fancyhead[R]{\footnotesize\color{gray}Wiewiora, Walters, and Sherman}
+\fancyhead[R]{\footnotesize\color{gray}Wiewiora and Sherman}
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 
@@ -63,6 +63,13 @@
   \end{center}
 }
 
+% This file is emitted only by paper/scripts/build-sos1-results-tex.mjs after
+% the complete prediction run passes the independent holdout acceptance gate.
+\IfFileExists{generated/sos1-accepted-results.tex}{%
+  \input{generated/sos1-accepted-results.tex}%
+}{}
+\input{generated/sos1-designer-intent-results.tex}
+
 \newcommand{\appendixsection}[2]{%
   \clearpage
   \refstepcounter{section}%
@@ -80,14 +87,13 @@
 \title{\textcolor{molblue}{\textbf{Molarium: Agent-Generated Adaptive Software for Molecular Design}}\\[0.5em]
 \large A perspective on persistent molecular state, scientific contracts, and decision provenance in drug discovery}
 \author{%
-\begin{tabular}{@{}ccc@{}}
-\textbf{Rafal P. Wiewiora} & \textbf{W. Patrick Walters} & \textbf{Woody Sherman}\\
-\normalsize PsiThera & \normalsize OpenADMET & \normalsize PsiThera\\
+\begin{tabular}{@{}cc@{}}
+\textbf{Rafal P. Wiewiora} & \textbf{Woody Sherman}\\
+\normalsize PsiThera & \normalsize PsiThera\\
 \small\texttt{rafal.wiewiora@psithera.com} &
-\small\texttt{pat.walters@omsf.io} &
 \small\texttt{woody.sherman@psithera.com}
 \end{tabular}}
-\date{September 2, 2026}
+\date{September 4, 2026}
 
 \begin{document}
 \maketitle
@@ -126,18 +132,21 @@ Three task-specific views illustrate this separation. View emphasizes the molecu
 \begin{figure}[htbp]
   \centering
   \safeincludegraphics[width=\linewidth]{figures/fig1_molarium_interface.png}
-  \caption{Molarium in its normal View workspace after browser-local Sage/CCD preparation of the experimental fragment F1-bound KRAS--SOS1 complex (PDB 6EPM). The official RCSB Chemical Component Dictionary topology supplies the BQ5/F1 bond orders and the chemically correct 2D depiction shown at lower left. The complete deposited protein assembly is shown as cartoons, while BQ5/F1 and protein residues within 5~\AA{} are rendered atomically to localize the allosteric design pocket. Preparation excluded crystallographic water; glycerol and display hydrogens are hidden for clarity. This scene provides structural context; the prospective hit-to-BAY-293 trajectory in Fig.~\ref{fig:sos1story} began independently from the 5OVE/AXE structure alone.}
+  \caption{Molarium in its normal View workspace, running as the network-locked Local Lab, after browser-local preparation of the experimental fragment F1-bound KRAS--SOS1 complex (PDB 6EPM). Both deposited coordinate-bearing protein chains and all 631 modeled residues are shown as cartoons; BQ5/F1 and protein residues within 5~\AA{} are rendered atomically to localize the allosteric design pocket. An exact, hash-pinned BQ5 graph derived from the official RCSB Chemical Component Dictionary supplies atom names, elements, formal charges, bond orders, and aromaticity without moving deposited ligand heavy atoms or making an external CCD request; Local Lab permits only requests to the local application origin. RDKit WebAssembly generates the lower-left 2D layout from that registered chemistry. Preparation excludes crystallographic water and unregistered glycerol; display hydrogens are hidden for clarity. This scene provides structural context; the prospective hit-to-BAY-293 trajectory in Fig.~\ref{fig:sos1story} began independently from the 5OVE/AXE structure alone.}
   \label{fig:views}
 \end{figure}
 
 \begin{figure}[htbp]
   \centering
-  \safeincludegraphics[width=\linewidth]{figures/fig2_sos1_hit_to_bay293.png}
-  \caption{Hit-only SOS1 design replayed in the Molarium interface through the public Chemist Actions API. (A) The prepared 5OVE/AXE hit (teal) and its local pocket establish the camera used throughout; 5OVE/AXE was the sole coordinate-bearing input. (B) Sequential scaffold rewriting and growth produces compound 21/AWW (purple) in the inherited Phe890-in pocket. The cyan halo identifies the edited ligand region, gold identifies Phe890, and magenta dotted connectors mark severe ligand--protein short contacts recalculated from the live coordinates. (C) A discrete side-chain search presents alternatives and the designer chooses the Phe890-out hypothesis; only the six moved Phe890 heavy atoms are haloed. (D) In the opened pocket, a 64-chain restrained search re-fits compound 21, applies the selected feasible pose, and couples it to the receptor during WebGPU relaxation. The ligand displacement from B to D is a modeled coordinate change, not camera motion or an MD trajectory. Between D and E, AWW is changed to BAY-293/AXH by rebuilding its distal arm from the other thiophene attachment position. Exact element and conserved-bond correspondence holds the 15-heavy-atom proximal quinazoline--thiophene core fixed during staging; the 16-heavy-atom old distal region is deleted and the 17-heavy-atom AXH distal region is released for sampling. No element-agnostic atom correspondence is allowed. A new 64-chain pose search selects a feasible conformation and repositions nine released ligand heavy atoms (maximum displacement 5.90~\AA{}); coupled WebGPU relaxation then moves 49 ligand and nearby pocket heavy atoms above the 0.08~\AA{} reporting threshold (maximum displacement 1.19~\AA{}). (E) The resulting BAY-293 prediction is shown with the same camera. The replay ends at this prediction and never opens 5OVI. Independent post-freeze comparison with 5OVI subsequently gave a receptor-aligned, graph-symmetry-minimized ligand RMSD of 1.215~\AA{} and Phe890 $\chi_1$ values of $-172.43^{\circ}$ in the prediction and $-166.55^{\circ}$ in the crystal; those validation coordinates did not seed the replay.}
+  \safeincludegraphics[width=\linewidth]{figures/fig2_sos1_designer_intent.png}
+  \caption{Designer intent and receptor response in the real Molarium interface. Six frames from the calculation-free, hash-pinned checkpoint movie show (A) the prepared 5OVE/AXE hit, (B) AWZ, (C) the AWW graph with its inherited arm direction, (D) the designer-directed AWW pose before receptor movement, (E) the energy-selected Phe890 response with the ligand fixed, and (F) the BAY-293 continuation. The full movie also includes the intervening scaffold-rewrite checkpoint. The pocket camera is preserved, the 2D graph remains visible, and the Local Lab is network-locked. Purple ligands, gold Phe890, and the labeled Tyr884 backbone contact distinguish the ligand and receptor decisions. The intent is crystal-informed but no later crystal coordinates are supplied to the replay.}
   \label{fig:sos1story}
 \end{figure}
+\clearpage
 
-The executable replay is available at \url{https://molarium.org/sos1-hit-to-bay293}.
+The purpose of this replay is to make a medicinal-chemistry argument inspectable rather than merely animate a structural series. Starting from the sole coordinate-bearing input, 5OVE/AXE, it exposes the public actions that change the ligand graph, preserve the precursor outside a declared moving branch, record the AWW direction and Tyr884 contact, lock the ligand, and calculate the Phe890 response. The final graph rewrite then retains the distal spatial feature while rebuilding the BAY-293 attachment. Exact checkpoints support calculation-free review; a separate executable script records the same scientific operations through the public API. The AWW and BAY-293 ligand RMSDs are \SosIntentLigandRmsd{} and \SosIntentAxhLigandRmsd{}~\AA{}, respectively, in a receptor-aligned, graph-symmetry-minimized comparison without ligand fitting. These reference-informed examples demonstrate inspectable design logic, not blinded predictive accuracy.
+
+The accompanying source package contains the executable script, the calculation-free checkpoint-review script, their exact coordinate campaigns, and the full-interface movie. Their content hashes identify this result independently of changes to the live Molarium website.
 
 This separation becomes important when interfaces are inexpensive to modify. If every generated view can redefine a molecule, select a different charge model, change protonation, alter preparation, or reinterpret a trajectory, flexibility becomes a source of scientific ambiguity. Generated adaptive software therefore requires a stronger boundary between presentation and scientific state than a conventional fixed interface typically provides.
 
@@ -315,7 +324,7 @@ State and provenance & JavaScript modules, background workers, Canvas, Web Crypt
 
 Internal units are nm, ps, daltons, kJ/mol, and kJ/mol/nm; the interface presents angstroms and kcal/mol where appropriate. Numerical engines execute in reusable Web Workers so rendering and user interaction remain responsive. Requests carry job identifiers, and failed workers are discarded and recreated. Results return as compact coordinate, force, energy, or trajectory arrays mapped to the originating atom identities.
 
-For ordinary small molecules, the browser parameterizer applies Sage 2.1.0 patterns and labelled Gasteiger charges \citep{boothroyd2023sage,gasteiger1980charges}. Prepared Rosemary validation fixtures retain their exported numerical recipes and NAGL charges. CPU/GPU comparisons therefore operate on the same prepared graph and numerical inputs rather than independently parameterized systems.
+For ordinary small molecules, the browser parameterizer applies Sage 2.1.0 patterns and labelled Gasteiger charges \citep{boothroyd2023sage,gasteiger1980charges}. Prepared protein validation fixtures retain their exported numerical recipes and NAGL charges. CPU/GPU comparisons therefore operate on the same prepared graph and numerical inputs rather than independently parameterized systems.
 
 \subsubsection{OpenMM WebAssembly reference}
 
@@ -425,7 +434,7 @@ Two extension paths are represented in the architecture but are not complete pro
 
 Molarium separates operational, numerical, and decision provenance. A molecular snapshot records one explicit state. Content-addressed commits link that state to parent states, action scripts, hypotheses, and evidence. Branches preserve alternative design routes, and decisions record which route progressed, stopped, or was deferred. These semantics are implemented as a custom content-addressed ledger rather than a Git repository or a general structural merge algorithm.
 
-The current live application retains at most 500 Chemist Actions audit records in memory; clearing the scene clears that audit unless the relevant actions have been exported or attached to a campaign commit. The Design History interface and public \texttt{campaign.*} actions can create a local campaign, atomically commit the visible molecule, create and restore branches, record decisions, merge branch histories, and verify the append-only record. Campaign JSON and the active branch are persisted in browser IndexedDB. Each commit contains a complete molecular snapshot; an attached action script records the completed public operations observed since the previous commit but is explicitly marked as incomplete coverage.
+The public API retains at most 500 Chemist Actions audit records for the lifetime of the page. A copy is attached to the current molecule; clearing the scene discards that molecule-attached copy, while the public API history remains available until page reload. Records that must persist beyond the page lifetime must be exported or attached to a campaign commit. The Design History interface and public \texttt{campaign.*} actions can create a local campaign, atomically commit the visible molecule, create and restore branches, record decisions, merge branch histories, and verify the append-only record. Campaign JSON and the active branch are persisted in browser IndexedDB. Each commit contains a complete molecular snapshot; an attached action script records the completed public operations observed since the previous commit but is explicitly marked as incomplete coverage.
 
 \begin{table}[htbp]
 \centering\small
@@ -462,25 +471,27 @@ A decision-to-state linkage has the following form; full identifiers are SHA-256
     "payload": {
       "targetCommitId": "commit:<selected-child>",
       "disposition": "progressed",
-      "reasonCodes": ["contact-loss"],
-      "rationale": "Phe-out removes growth-induced clashes.",
+      "reasonCodes": ["designer-contact-retained"],
+      "rationale": "Selected receptor state preserves the declared contact.",
       "evidenceIds": ["event:<rotamer-search>"]
     }
   }
 }
 \end{lstlisting}
 
-Executable replays use \texttt{molarium.chemist-action-script/v1}. Scripts contain ordered calls to the allow-listed Chemist Actions API rather than arbitrary code or direct coordinate replacement. Designer Moves JSON files must be smaller than 2 MB; each serialized API request and its argument object are capped at 8 MiB for ASCII JSON, eight nested levels, and 2,048 JSON nodes. Actions can name returned stable identifiers for reuse by later steps. The runner executes one action at a time through \texttt{api.execute(\{action,args\})}, derives a repeatable request ID from the script fingerprint, and stops on the first failure. Replay results use \texttt{molarium.chemist-action-replay/v1} and record the source fingerprint and each step outcome. Presentation actions can alter focus or styling but cannot change molecular graph or coordinates except through the same allow-listed state-changing actions.
+Executable replays use \texttt{molarium.chemist-action-script/v1}. Scripts contain ordered calls to the allow-listed Chemist Actions API rather than arbitrary code or direct coordinate replacement. Designer Moves JSON files must be smaller than 2 MB. Ordinary API requests are capped at 8 MiB for ASCII JSON, twelve nested levels, and 2,048 JSON nodes. Loading a multi-action script permits 32,768 nodes while retaining the depth and byte limits; each constituent action still uses the ordinary request limits. Serialized full-system campaign imports have a separate 32 MiB byte allowance. Actions can name returned stable identifiers for reuse by later steps. The runner executes one action at a time through \texttt{api.execute(\{action,args\})}, derives a repeatable request ID from the script fingerprint, and stops on the first failure. Replay results use \texttt{molarium.chemist-action-replay/v1} and record the source fingerprint and each step outcome. Presentation actions can alter focus or styling but cannot change molecular graph or coordinates except through the same allow-listed state-changing actions.
 
 The SOS1 replay is identified by a stable public route and by exact release and content fingerprints. A human-readable URL can resolve to a newer release, whereas the release commit, route-file fingerprint, and canonical action-script fingerprint identify the reviewed bytes and normalized JSON content. The live workflow can capture a starting state, record exploration actions, apply and relax selected states, and export action and numerical records. Formal campaign commits and decision events are represented by the ledger layer described above.
 
-\subsection{SOS1 hit-to-BAY-293 executable replay}
+\subsection{SOS1 designer-intent replay}
 
-The SOS1 example follows the analogue series reported by Hillig and colleagues \citep{hillig2019sos1}. The supplied design information consisted of the 5OVE/AXE coordinate-bearing starting complex and the published analogue graphs for AWT, AWZ, AWW, and AXH. The later analogue poses and receptor conformations were withheld during prediction. Each analogue was propagated from the preceding frozen prediction rather than from its corresponding later crystal structure.
+The SOS1 example follows the analogue series reported by Hillig and colleagues \citep{hillig2019sos1}. Its coordinate-generating workflow starts from the 5OVE/AXE complex and the published analogue graphs for AWT, AWZ, AWW, and AXH. The later crystal series was inspected to infer the designer's intended AWW exit direction and interaction hypothesis. This demonstration is therefore reference-informed, not a blinded reproduction. Later crystal coordinates are not used as coordinate targets or imported into the design trajectory.
 
-The selected route contains 33 recorded API actions: 29 molecular or protocol operations and four workspace switches. The full exploration audit contains 89 completed API calls, including three Phe890/pose branches, nine undo calls, and deterministic reselection. The rendered interface sequence adds 18 display-only actions for 51 replay steps. Later crystal structures were opened only after four prediction checkpoints and the exploration audit had been hashed. Display and focus actions are non-mutating.
+The executable replay is generated from the frozen runs' API audits rather than from a hand-maintained action list. It retains all 13 Phe890 candidate applications, energy calculations, and restoration actions. Inspection requests are replayed, but their saved coordinate results are not embedded as inputs. Portable ligand-axis selectors resolve named atoms in the current component; canonical side-chain candidates use chi angles, whereas the unchanged control selects the current input conformation. Recomputed coordinates and energies may differ from the frozen record, so movie export requires the recorded final response to remain the lowest-energy clash-free candidate under the fresh calculations. The separate checkpoint review imports seven exact saved states without recalculation. The designer-directed AWW state is frozen before receptor selection, and the selected receptor state is hashed before numerical comparison with 5OVH. This ordering prevents post-comparison coordinate edits within the recorded run; it does not erase the prior inspection used to formulate the hypothesis. Display and focus actions are non-mutating.
 
-Graph edits are transferred by chemistry rather than by spatial coincidence or atom-list position. Element- and bond-order-exact atoms in a conserved bond graph may remain hard coordinate anchors. An attachment rewire or ring-system replacement automatically releases the complete changed region for sampling while retaining the unchanged external scaffold. Compatible donor or acceptor roles may transfer as soft pharmacophore restraints across a bioisosteric edit, including across elements, but cannot establish atom identity. This rule is used for every registered design route; it is not specific to SOS1 or to the rendered replay.
+Graph edits are transferred by chemistry rather than by spatial coincidence or atom-list position. Element- and bond-order-exact atoms in a conserved bond graph retain explicit lineage. In the AWW workflow, the precursor coordinates outside the declared moving branch are preserved. The chemist uses the public \texttt{geometry.alignBranchToContact} action to specify forward rotation about N7--C12 within $0$--$60^{\circ}$, a $+150^{\circ}$ primary rotation about C12--C15, and the intended OX3 donor contact to the Tyr884 backbone carbonyl oxygen. Two downstream torsions and the donor hydrogen orientation complete the bounded contact search. Atom selectors and every generated coordinate derive from the current structure; no later crystal coordinate is a target. Candidates must clear fixed receptor atoms and retained source waters. Only the six movable Phe890 ring atoms may initially overlap the ligand; the immovable C$\beta$ atom is not exempt.
+
+The resulting AWW ligand pose is an explicit designer hypothesis inferred from the series' reported interaction logic, not an attempt to reproduce deposited ligand coordinates exactly. Once that decision is recorded, the ligand coordinates are locked. The response calculation varies only the Phe890 side chain while the ligand, backbone, other receptor atoms, and source waters remain fixed. This separation prevents a receptor-response calculation from silently rewriting the chemist's ligand hypothesis. Tyr884 supplies a backbone-carbonyl contact; a Tyr884 side-chain flip is neither required nor modeled.
 
 The analogue transitions involve substantial graph rewrites while preserving explicit atom lineage (Table~\ref{tab:appA_lineage}).
 
@@ -500,52 +511,58 @@ AWW--AXH & 15 & 16 & 17 & 1\\
 \end{tabular}
 \end{table}
 
-Each ``64-chain'' search comprises 64 independently seeded local pose searches, distributed over three browser workers in the recorded replay. Parameterization without motion assigns the numerical force-field representation while preserving coordinates; only the subsequent relaxation changes coordinates. The SOS1 route uses whole-system Sage 2.1.0 with deterministic Gasteiger charges. AWT, AWZ, AWW, and AXH contain 7,929, 7,933, 7,935, and 7,937 particles, respectively. This charge assignment is part of the recorded protocol and is distinct from standard Sage workflows using AM1-BCC or NAGL charges.
+The frozen-run manifest records every graph edit, internal-coordinate change, contact declaration, coordinate lock, and receptor candidate examined. Parameterization without motion assigns the numerical force-field representation while preserving coordinates. The SOS1 route uses whole-system Sage 2.1.0 with deterministic Gasteiger charges. Exact particle counts and charge assignment remain attached to the frozen run rather than being copied into a hand-maintained narrative.
 
-Before flexible relaxation, Molarium stores ligand bond lengths and rejects a relaxed pose if any heavy-atom bond is both more than 0.45 \AA{} longer and 1.25-fold its assigned target, or both more than 0.35 \AA{} shorter and below 0.75-fold its target. Rejected relaxation restores the previous pose rather than accepting an improved score with a broken molecular geometry.
+The AWW receptor-response verifier compares ligand coordinates before and after every candidate calculation and rejects any candidate that moves the locked designer ligand. Contact measurements and candidate coordinates are retained even for rejected states, but rejection cannot be converted into a promotable result by the review or replay layer.
 
 \begin{table}[htbp]
 \centering\small
-\caption{Sequence of molecular states in the SOS1 replay. Predictions, rather than future crystal structures, seed the next step.}
+\caption{Reference-informed construction and evaluation boundary for the AWW designer-intent replay.}
 \label{tab:appA_sos1_beats}
 \begin{tabularx}{\linewidth}{@{}p{0.07\linewidth}p{0.25\linewidth}X@{}}
 \toprule
 \textbf{Step} & \textbf{Operation} & \textbf{State/evidence}\\
 \midrule
-0 & Load and prepare & 5OVE/AXE only; capture the compound 1 reference and coordinate boundary\\
-1 & Rewrite to compound 17 (AWT) & Search independent reference-guided poses; apply the selected pose; parameterize; relax\\
-2 & Rewrite to compound 18 (AWZ) & Propagate from predicted AWT, not 5OVF; apply, parameterize, relax\\
-3 & Grow compound 21 (AWW) & New ring enters the Phe890-in volume; fixed-core representative gains four clashes\\
-4 & Resolve pocket state & Enumerate discrete Phe890 rotamers; select outward branch; retain the moved receptor as the next reference\\
-5 & Predict BAY-293 (AXH) & Grow from frozen AWW; 64-chain pose search; apply; parameterize without motion; relax; freeze\\
-6 & Evaluate holdouts & Compare AWT/AWZ/AWW/BAY-293 with 5OVF/5OVG/5OVH/5OVI\\
+0 & Load and prepare & 5OVE/AXE is the sole coordinate-bearing input\\
+1 & Register the precursor & Apply the registered graph edits while preserving the precursor pose and atom lineage\\
+2 & Record interaction intent & Declare the AWW OX3 donor--Tyr884 backbone-carbonyl-oxygen contact\\
+3 & Direct AWW geometry & Bound the forward N7--C12 rotation, apply the $+150^{\circ}$ primary rotation, and solve coupled contact torsions using current coordinates only\\
+4 & Lock the ligand & Freeze all ligand coordinates as the designer-selected hypothesis\\
+5 & Predict receptor response & Enumerate and rank Phe890 states with ligand, backbone, and other receptor atoms fixed\\
+6 & Freeze, then evaluate & Hash the result before numerical comparison with the previously inspected 5OVH structure\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-The Phe890 conformational step is treated as a discrete state search because local minimization does not reliably cross the relevant side-chain torsional barrier. Separate rotamer basins are generated before local ligand--pocket relaxation. Feasible branches are ranked first by clashes introduced by ligand growth, then by pose score and finite relaxed energy. The nominal $-60^{\circ}$ branch adds four clashes above the fixed-core baseline and is rejected; the $-180^{\circ}$ branch adds none and is selected; the $+60^{\circ}$ branch adds two and remains feasible. The outward Phe890 $\chi_1$ basin is therefore selected before 5OVH or 5OVI is revealed.
+The Phe890 conformational step is treated as a discrete receptor-state search because local minimization does not reliably cross the relevant side-chain torsional barrier. All \SosIntentCandidateCount{} enumerated $\chi_1/\chi_2$ candidates received fixed-coordinate, full-system OpenMM single-point energy evaluations with OBC2 implicit solvent. Selection used the minimum finite energy among candidates with no severe clashes, yielding $(-180^{\circ},90^{\circ})$. Ligand coordinates remained exactly equal before and after every candidate calculation. The selected basin and all alternatives were recorded before numerical crystal comparison.
 
-For post-freeze structural evaluation, predicted receptors are aligned to their holdouts using 23, 25, 25, and 27 pocket C$\alpha$ atoms for AWT through AXH. Ligand RMSD is then calculated over 29, 31, 31, and 32 heavy atoms, minimizing over 2, 1, 1, and 1 graph-symmetry mappings, respectively; the ligand itself is not fitted. Results are reported in Table~\ref{tab:appA_sos1_eval}.
+The selected Phe890 state clears the designer-directed ligand: OX3--Tyr884 O is \SosIntentContactDistance{}~\AA{}, the donor--hydrogen--acceptor angle is \SosIntentContactAngle{}$^{\circ}$, and no severe ligand-internal or ligand--protein clashes remain. The primary arm torsion differs from 5OVH by \SosIntentPrimaryDifference{}$^{\circ}$. Phe890 $\chi_1$ and symmetry-aware $\chi_2$ differ by \SosIntentChiOneDifference{}$^{\circ}$ and \SosIntentChiTwoDifference{}$^{\circ}$, respectively. These measurements describe the geometry produced by the recorded designer hypothesis and receptor response.
 
+The BAY-293 continuation resumes this exact full-system AWW checkpoint through the public API, releases the ligand lock for the new graph edit, and applies the registered distal-feature retention rule. Eight native refinement candidates precede coupled relaxation with explicit fixed-atom and ligand-valence checks. The resulting 32-heavy-atom ligand has no severe internal or protein clashes. Its Phe890 side-chain RMSD to 5OVI is \SosIntentAxhPheRmsd{}~\AA{}. The seven-atom distal feature moves by \SosIntentAxhDistalRmsd{}~\AA{} RMSD and \SosIntentAxhDistalCentroid{}~\AA{} in centroid position relative to the AWW hypothesis, within the registered 2.25~\AA{} feature tolerance. This is bounded spatial retention, not an assertion that the distal ring is immobile or that the experimental H-to-I displacement was exactly recovered.
+
+For post-freeze structural evaluation, the predicted receptor can be aligned to 5OVH using common pocket C$\alpha$ atoms and the saved designer-directed AWW geometry can be measured against the experimental structure. The validation record is measurement-only: it contains no holdout coordinates that can be imported into the replay. Each result retains its acceptance status; freezing a prediction does not imply that it passed the later experimental comparison.
+
+\ifdefined\SosAcceptedRunId
 \begin{table}[htbp]
 \centering\small
-\caption{Post-freeze structural evaluation. Torsions are predicted/crystal in degrees; ligand RMSD is receptor-aligned and graph-symmetry-minimized.}
+\caption{Accepted-run post-freeze structural evaluation. Torsions are predicted/crystal in degrees; ligand RMSD is receptor-aligned and graph-symmetry-minimized.}
 \label{tab:appA_sos1_eval}
 \begin{tabular}{@{}lllll@{}}
 \toprule
 \textbf{Prediction} & \textbf{Holdout} & \textbf{Ligand RMSD (\AA{})} & \textbf{Phe890 $\chi_1$} & \textbf{Phe890 $\chi_2$}\\
 \midrule
-AWT & 5OVF & 0.516 & -77.6 / -71.5 & -71.7 / -71.7\\
-AWZ & 5OVG & 1.528 & -73.4 / -75.6 & -92.0 / -87.9\\
-AWW & 5OVH & 2.137 & -172.2 / +175.8 & +116.1 / +76.3\\
-BAY-293 & 5OVI & 1.215 & -172.4 / -166.5 & +108.7 / +71.7\\
+AWT & 5OVF & \SosAwtLigandRmsd & \SosAwtPheChiOne & \SosAwtPheChiTwo\\
+AWZ & 5OVG & \SosAwzLigandRmsd & \SosAwzPheChiOne & \SosAwzPheChiTwo\\
+AWW & 5OVH & \SosAwwLigandRmsd & \SosAwwPheChiOne & \SosAwwPheChiTwo\\
+BAY-293 & 5OVI & \SosAxhLigandRmsd & \SosAxhPheChiOne & \SosAxhPheChiTwo\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The replay recovers the experimentally observed outward Phe890 $\chi_1$ basin before exposure to 5OVH or 5OVI. The terminal $\chi_2$ orientation is less accurate, differing by approximately $40^{\circ}$ for AWW and $37^{\circ}$ for BAY-293. The corresponding ligand RMSDs range from 0.516 to 2.137 \AA{} under receptor-aligned, symmetry-minimized evaluation.
+Run \SosAcceptedRunId{} passed all registered holdout and continuity checks. The exact evaluation-summary fingerprint is \texttt{\SosEvaluationHashShort}; the generated table above is not maintained independently of that record.
+\fi
 
-The interface replay executes from a blank canvas through the public Chemist Actions API. Pose and rotamer generation leave coordinates unchanged until an explicit Apply action. The replay therefore represents discrete state transitions rather than interpolated trajectories or molecular dynamics. Its 51-action rendered sequence lasts 101.08~s while the action audit records approximately 1,189.9~s of operation durations; timing remains attached to the audit and render manifest, and the rendered sequence is not used as a performance benchmark. Comparison of fragment-bound 6EPM with the 5OVE starting structure shows that the inhibitory Tyr884 arrangement is already present at the coordinate boundary; the hit-only route does not predict a Tyr884 transition.
+The interface replay executes from a blank canvas through the public Chemist Actions API. The precursor-preserving graph operation, $+150^{\circ}$ internal-coordinate change, Tyr884 contact declaration, ligand lock, Phe890 enumeration, and prediction freeze are therefore inspectable state transitions rather than an interpolated trajectory or molecular dynamics. Action counts and timings remain attached to the frozen-run audit and render manifest; the rendered sequence is not used as a performance benchmark. The route predicts a Phe890 response to a fixed ligand hypothesis; it does not predict a Tyr884 backbone transition.
 
 \end{small}
 

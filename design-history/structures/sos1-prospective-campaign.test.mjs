@@ -14,6 +14,24 @@ const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
 assert.equal(campaign.schema, REGISTERED_DESIGN_ROUTE_SCHEMA);
 assert.equal(validateRegisteredDesignRoute(campaign, { expectedId:'sos1-hit-only' }), campaign);
+const automaticallyRequired = structuredClone(campaign);
+const automaticallyRequiredFeature = automaticallyRequired.steps.at(-1)
+  .posePropagationMap.spatialFeatureCorrespondences[0];
+automaticallyRequiredFeature.transferMode = 'score-only';
+automaticallyRequiredFeature.treatment = 'soft-restraint';
+automaticallyRequiredFeature.required = true;
+automaticallyRequiredFeature.source = 'automatic-proposal';
+assert.throws(() => validateRegisteredDesignRoute(automaticallyRequired),
+  /required soft restraint must be registered designer intent/);
+const unregisteredIntent = structuredClone(campaign);
+unregisteredIntent.steps.at(-1).retainedFeatureIntents = [];
+assert.throws(() => validateRegisteredDesignRoute(unregisteredIntent),
+  /lacks its registered route intent declaration/);
+const mismatchedIntent = structuredClone(campaign);
+mismatchedIntent.steps.at(-1).posePropagationMap
+  .spatialFeatureCorrespondences[0].registeredIntentId = 'forged-intent';
+assert.throws(() => validateRegisteredDesignRoute(mismatchedIntent),
+  /lacks its registered route intent declaration/);
 assert.equal(campaign.id, 'sos1-hit-only');
 assert.equal(campaign.hit.pdbId, '5OVE');
 assert.equal(campaign.hit.stateId, 'AXE');
@@ -55,25 +73,102 @@ for (const step of campaign.steps) {
   assert.equal(step.productAtomNames.length, step.posePropagationMap.productHeavyAtoms);
   assert.equal(new Set(step.productAtomNames).size, step.productAtomNames.length);
   const map = step.posePropagationMap;
+  assert(Array.isArray(map.mappedRotorReleases));
+  assert(map.mappedRotorReleases.every((release) =>
+    release.coordinateInputs.length === 0
+      && release.reason === 'edit-associated-ring-bearing-mapped-rotor-distal-release'),
+  `${step.id} rotor release must be graph/provenance-only`);
+  if (step.id === 'open-phe890-pocket') {
+    assert.deepEqual(map.mappedRotorReleases.map((release) => ({
+      bond:release.referenceBondAtomNames,
+      proximal:release.proximalReferenceAtomName,
+      distal:release.distalReferenceAtomName,
+    })), [
+      { bond:['C12','C15'], proximal:'C12', distal:'C15' },
+      { bond:['CX4','CX5'], proximal:'CX4', distal:'CX5' },
+    ]);
+    assert.deepEqual(map.releasedMappedAtoms.map((entry) => entry.referenceAtomName),
+      ['C15','CX2','CX3','CX4','SX1','CX5']);
+    assert.deepEqual(map.protectedReferenceAnchor.referenceAtomNames,
+      ['C1','C2','N6','C11','N8','C3','N7','C12','C16','CX1']);
+    assert.equal(map.hardCoordinateHeavyAtoms, 10);
+    assert.equal(map.releasedMappedHeavyAtoms, 6);
+  }
   if (step.id === 'finish-bay-293') {
     assert.equal(map.commonHeavyAtoms, 15);
     assert.deepEqual(map.protectedReferenceAnchor, {
-      method:'maximum-common-substructure/v1',
-      label:'AWW proximal quinazoline-thiophene core',
+      method:'exact-common-subgraph-after-topology-release/v2',
+      label:'exact mapped upstream atoms outside topology-released rings and edit-associated rotor distal sides',
       referenceAtomNames:['C1', 'C2', 'N6', 'C11', 'N8', 'C3', 'N7', 'C12',
-        'C16', 'C15', 'CX2', 'CX3', 'CX4', 'SX1', 'CX1'],
-      atoms:15,
-      bonds:16,
+        'C16', 'CX1'],
+      atoms:10,
+      bonds:10,
       releasedRegions:[
-        'regioisomeric distal phenyl/benzylic arm',
-        'hydroxymethyl-to-methylaminomethyl substituent',
+        'mapped biconnected ring atoms affected by attachment migration',
+        'distal sides of edit-associated ring-bearing mapped carbon rotors',
+        'unmapped deleted and added graph regions',
       ],
     });
     assert.equal(map.mcs.atoms, map.commonHeavyAtoms);
-    assert.match(map.transitionExplanation, /different thiophene positions/);
-  } else {
+    assert.equal(map.hardCoordinateHeavyAtoms, 10);
+    assert.equal(map.releasedMappedHeavyAtoms, 5);
+    assert.deepEqual(map.releasedMappedAtoms.map((entry) => entry.referenceAtomName),
+      ['C15', 'CX2', 'CX3', 'CX4', 'SX1']);
+    assert.equal(map.mappedRingAttachmentMigrations.length, 1);
+    assert.deepEqual(map.mappedRingAttachmentMigrations[0], {
+      id:'mapped-ring-attachment-migration-1',
+      reason:'attachment-migration-within-mapped-biconnected-ring',
+      referenceBlockAtomNames:['C15', 'CX2', 'CX3', 'CX4', 'SX1'],
+      productBlockAtomIndices:[12, 31, 9, 10, 11],
+      referenceAttachmentAtomNames:['CX4'],
+      productAttachmentReferenceAtomNames:['CX3'],
+      retainedJunctionReferenceAtomNames:['C15'],
+      releasedReferenceAtomNames:['CX2', 'CX3', 'CX4', 'SX1'],
+      releasedProductAtomIndices:[31, 9, 10, 11],
+    });
+    assert.deepEqual(map.mappedRotorReleases.map((release) =>
+      release.referenceBondAtomNames), [['C12','C15']]);
+    assert.equal(map.seedMatchedHeavyAtoms, 7);
+    assert.equal(map.totalReferencedHeavyAtoms, 22);
+    assert.equal(map.spatialFeatureCorrespondences.length, 1);
+    const feature = map.spatialFeatureCorrespondences[0];
+    assert.equal(feature.kind, 'conserved-fragment-rmsd');
+    assert.equal(feature.transferMode, 'score-only');
+    assert.equal(feature.treatment, 'soft-restraint');
+    assert.equal(feature.required, true);
+    assert.equal(feature.source, 'registered-designer-intent');
+    assert.equal(feature.registeredIntentId,
+      'retain-terminal-feature-through-bay293');
+    assert.deepEqual(step.retainedFeatureIntents.map((intent) => intent.id),
+      ['retain-terminal-feature-through-bay293']);
+    assert.deepEqual(feature.restraint, {
+      schema:'molarium.registered-soft-spatial-feature-restraint/v1',
+      metric:'graph-symmetry-minimized Cartesian RMSD', toleranceAngstrom:2.25,
+      weightKcalMolPerAngstrom2:20, required:true,
+      parameterDecision:{
+        schema:'molarium.registered-spatial-feature-parameter-decision/v1',
+        actorClass:'human', basis:'pre-holdout-diagnostic',
+        sourceAttemptId:'sos1-final-retention-9a73dd8-20260904t0535z-use1b-a010-r01',
+        observedBestRmsdAngstrom:2.161703263647055,
+        selectedToleranceAngstrom:2.25, holdoutCoordinatesUsed:false,
+      },
+    });
+    assert.equal(feature.mappingVariants.length, 4);
+    assert.deepEqual(feature.referenceAtomNames,
+      ['CX5','CX11','CX12','CX13','CX14','CX15','CX16']);
+    assert.match(map.transitionExplanation, /attachment atom within a mapped biconnected ring/);
+    assert.match(map.transitionExplanation, /registered designer intent/);
+  } else if (step.id !== 'open-phe890-pocket') {
+    assert.deepEqual(step.retainedFeatureIntents, []);
     assert(map.commonHeavyAtoms >= 15, `${step.id} must retain a substantial 3D anchor`);
     assert.equal(map.mcs.atoms, map.commonHeavyAtoms);
+    assert.equal(map.hardCoordinateHeavyAtoms + map.releasedMappedHeavyAtoms,
+      map.commonHeavyAtoms);
+    assert(map.releasedMappedAtoms.length > 0);
+    assert.deepEqual(map.mappedRingAttachmentMigrations, []);
+    assert.equal(map.seedMatchedHeavyAtoms, 0);
+    assert.equal(map.totalReferencedHeavyAtoms, map.commonHeavyAtoms);
+    assert.deepEqual(map.spatialFeatureCorrespondences, []);
   }
   assert.equal(map.commonAtoms.length, map.commonHeavyAtoms);
   assert.equal(map.commonAtoms.length + map.deletedReferenceAtoms.length,

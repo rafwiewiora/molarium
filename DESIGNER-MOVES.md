@@ -6,6 +6,16 @@ visible interface. A saved route is ordinary JSON with schema
 human captions. It contains no executable code, private callbacks, force-field objects, or direct
 coordinate replacement.
 
+Every selection-dependent chemistry move in a saved script must name its target with a persistent
+`atomId` or `atomIds`; publication replay never infers a target from ambient selection. Scripts also
+record `chemistry.setEditPolicy` when they choose staged versus immediate refinement. Coordinate-
+changing `pose.refine`, `pose.apply`, and `optimization.run` calls may pin the input, selected-pose,
+and output `molarium.molecular-state-hash/v1` SHA-256 values returned by the preceding execution.
+These preferred guards bind persistent identity, chemistry, topology, and exact coordinates;
+coordinate-only guard names remain readable for pre-v1 records. A mismatched guard aborts, and a
+post-mutation mismatch atomically restores the prior molecular, calculation, ensemble, history,
+selection, view, and interface state.
+
 This is a hard boundary. The story builder validates the complete transformed script—including
 presentation steps—against the exported public action manifest. A deep link invokes
 `designerScript.loadRegistered`, which resolves the registry entry, verifies the pinned source
@@ -69,6 +79,19 @@ are not portable checkpoints after GPU relaxation: different conforming WebGPU a
 scientifically equivalent but byte-different floating-point coordinates. Cross-adapter replays should
 pin the residue identity and select the unique normalized chi-angle branch. `index` remains available
 for immediate choices from the visible list, but it is not a stable branch identity.
+
+Every atom or bond chemistry step in a saved story carries its own `atomId` or `atomIds`. A preceding
+selection step may show the chemist's click, but replay validation does not permit the chemistry step
+to inherit that ambient UI state. Legacy audits can be converted only when their recorded selection
+makes the target unambiguous; conversion writes the target into the resulting script before it is
+saved or replayed.
+
+`actionScriptFromAudit` automatically promotes complete v1 state hashes returned by
+`pose.refine`, `pose.apply`, and `optimization.run` into expected guards on the emitted actions.
+Publication builders pass `{ stateHashGuards: "required" }`; an older or incomplete audit then
+fails conversion rather than yielding a nominally reproducible but unguarded replay. The default
+`"auto"` mode enriches every complete v1 record it sees while leaving genuinely pre-v1 records
+readable as historical, unguarded exports.
 
 The example is shortened for readability. A real script must include preparation, reference
 capture, pose refinement, parameterization, and any requested optimization in their execution
@@ -171,17 +194,123 @@ during execution and pauses at the next action boundary, after the current scien
 finishes. While paused, **◀** and **▶** invoke the public `designerScript.step` action to review
 already-computed application checkpoints. That action restores the molecular coordinates, camera,
 active panels, pose results, and calculation display without re-executing or deleting a scientific
-constituent action. **Continue** first returns to the live
-execution frontier and then resumes. **↺ Restart** returns to the blank canvas. Presentation-only `view.setDisplay` and
+constituent action. The same cached checkpoints remain available after the story completes. At that
+point the arrows review the completed route, **Return to final** invokes
+`designerScript.step { direction: "final" }`, and **Replay story** begins a new execution only from
+the terminal checkpoint. **Continue** first returns to the live execution frontier and then resumes
+an active paused run. **↺ Restart** explicitly discards the cached review and returns to the blank
+canvas. Presentation-only `view.setDisplay` and
 `view.focusComponent` actions select a clean chemist pocket view and keep the active ligand in
 frame; they do not change molecular coordinates or replace any scientific action.
 
 The interface renderer writes its MP4, audit, manifest, and synchronized QA frames into a private
 staging directory. It publishes that directory only after every public action and every `expect`
 check has completed, FFmpeg and FFprobe have succeeded, and the manifest is marked complete. Any
-failure exits nonzero, deletes the staged artifacts, and leaves the previous movie and paper-frame
+failure exits nonzero, retains its diagnostic evidence without promoting it, and leaves the previous movie and paper-frame
 sources unchanged. The paper figure builder accepts only a complete manifest with replay status
 `completed` and verifies each selected frame's SHA-256 before updating the figure.
+
+## Current SOS1 designer-intent release (2026-09-04)
+
+The [SOS1 movie page](https://molarium.org/sos1) offers three views of the same
+reference-informed design story:
+
+- [Recomputable replay](https://molarium.org/sos1-hit-to-bay293): all 159 scientific
+  actions plus 43 presentation actions, including every one of the 13 Phe890
+  trial energies, their undo operations, selection, and BAY-293 continuation.
+- [Precomputed replay](https://molarium.org/sos1-hit-to-bay293/review): seven exact
+  native full-system campaigns, including the graph-only, placed-ligand, and
+  receptor-response states. Play, pause, and arrows use the main Molarium interface
+  without scientific recalculation. The final campaign is losslessly compressed;
+  its decoded canonical hash and complete ledger are verified before import.
+- [Full MP4](https://molarium.org/sos1-hit-to-bay293/movie): a 595.58-second,
+  1600 × 1000 recording of the complete recomputation. The release also includes
+  a 62.75-second recording of the exact checkpoint review and the paper PDF.
+
+The crystal series was inspected to infer designer intent, not to fit later
+crystal coordinates. The declared ligand placement is held fixed during Phe890
+selection, all starting waters are retained, and Tyr884 provides a backbone
+contact rather than a prescribed side-chain flip. Fresh calculations may change
+coordinates and energies; saved checkpoints preserve the exact paper results.
+
+`design-history/publications/sos1/designer-intent-2026-09-04/release.json` pins
+both scripts, seven campaigns, both recordings, their native manifests, the
+paper, and losslessly compressed source evidence. `npm run verify:sos1-publication`
+restores that evidence into a temporary directory, independently reconstructs
+the public scripts from the native audits, checks all hashes and script-result
+bindings, and verifies the full movie's 813 contiguous audit records and scientific
+outcomes. This release is explicitly reference-informed, not an accepted blind
+holdout experiment. Its verifier does not fall back to historical evidence on failure.
+
+For local replay, follow the README's asset-download and Local Lab setup, then
+open the same paths on the local server. To verify a fresh checkout:
+
+```sh
+bun install --frozen-lockfile
+npm run test:sos1-intent
+npm run verify:sos1-publication
+npm run build:web
+```
+
+The earlier accepted-run and growth-clash examples below are archival protocol
+documentation; they do not define the current public URLs or paper results.
+
+## Historical accepted-run publication preflight
+
+The historical accepted-run verifier reads exactly
+one declaration, `design-history/examples/sos1-publication.json`; it never selects the newest output
+directory or repairs missing files. Its acceptance gate is unchanged; the current
+reference-informed release uses the separate explicit declaration described above.
+
+The declaration uses schema `molarium.sos1-publication/v1` and names one immutable accepted-run
+directory, one public Chemist Actions replay, and one arrowable checkpoint review. It pins the
+prediction manifest, holdout acceptance summary, source action audit, every frozen checkpoint, the
+canonical replay hash, and both public artifact file hashes. It also identifies the application,
+production-build, and local-manifest sources that must register those same artifacts. A minimal
+shape is:
+
+```json
+{
+  "schema": "molarium.sos1-publication/v1",
+  "routeId": "sos1-hit-only",
+  "storyId": "sos1-hit-to-bay293-review",
+  "acceptedRun": {
+    "id": "sos1-hit-only-coupled-postrelax-v9",
+    "directory": "design-history/publications/sos1/sos1-hit-only-coupled-postrelax-v9",
+    "predictionManifestSha256": "<sha256>",
+    "evaluationSummarySha256": "<sha256>",
+    "sourceAuditSha256": "<sha256>",
+    "checkpoints": [
+      { "stepId": "scaffold-rewrite", "sha256": "<sha256>" },
+      { "stepId": "fragment-merge", "sha256": "<sha256>" },
+      { "stepId": "open-phe890-pocket", "sha256": "<sha256>" },
+      { "stepId": "finish-bay-293", "sha256": "<sha256>" }
+    ]
+  },
+  "publicReplay": {
+    "path": "design-history/examples/sos1-current.action-script.json",
+    "sha256": "<file-sha256>",
+    "actionScriptSha256": "<canonical-json-sha256>"
+  },
+  "checkpointReview": {
+    "path": "design-history/structure-viewer/sos1-current.json",
+    "sha256": "<file-sha256>"
+  },
+  "integration": {
+    "applicationSource": "app.js",
+    "buildSource": "scripts/build-web.mjs",
+    "manifestSource": "scripts/generate-local-lab-manifest.mjs"
+  }
+}
+```
+
+Passing the preflight means that the independent holdout verdict accepts all four route steps and
+continuity check; manifest-to-evaluation, manifest-to-audit, and manifest-to-checkpoint hashes still
+match; the public replay is byte-pinned and is canonically identical to the selected replay rebuilt
+from that audit; every replay operation is in the public Chemist Actions registry; no replay request
+uses `featureSeedingProtocol: "v3"`; and the application, checkpoint review, build, and local
+manifest all refer to the same declared run. Updating a filename or a displayed story without
+promoting its accepted evidence therefore cannot pass production CI.
 
 Importing a valid script clears the existing molecule before installing the story. This guarantees
 that the first molecular state is produced by the first recorded action, rather than inherited
@@ -194,14 +323,23 @@ than array indices. Values returned
 by one action can be captured and referenced by later actions with the existing `capture` and
 `{ "$binding": "name" }` fields supported by `molarium.chemist-action-script/v1`.
 
-## SOS1 growth-clash-v7 example
+## Historical SOS1 growth-clash-v7 example
 
-The paper-facing permalink is `https://molarium.org/sos1-hit-to-bay293`. It opens Molarium on a
+The original growth-clash-v7 registration opened Molarium on a
 blank canvas with the selected route preloaded at move 0; the reader explicitly presses
 **▶ Play story** to begin. The registered presentation retains all 33 scientific actions and
 adds the same 18 view/focus actions used by the interface movie. The deployment redirects this
 stable path to the registered story ID, so the paper URL does not expose an asset path or require
 a manual JSON import.
+
+For readers who want instant arrow-by-arrow inspection without waiting for pose or WebGPU work,
+the historical assets supplied a separate precomputed review. Its five
+items are the loaded 5OVE hit and the four frozen prediction endpoints from source-audit sequences
+12, 22, 78, and 88. The page runs no scientific calculation and exposes only the public
+`structureStory.*` presentation actions. Before displaying a checkpoint it verifies the registered
+story, source action script, provenance record, generated-asset manifest, and every displayed PDB
+against pinned SHA-256 digests. It deliberately contains neither interpolated side-chain frames nor
+post-freeze holdout coordinates; those are not execution checkpoints.
 
 The example is pinned to the successful run whose audit SHA-256 is
 `38d8fbd3e2675fd1203a13a7e235ff848eaf627a0d7c8450865a762f9fbe5e5b`:

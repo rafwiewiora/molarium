@@ -2,6 +2,14 @@
   "schema": "molarium.registered-design-route/v1",
   "id": "sos1-hit-only",
   "title": "SOS1 five-state hit-only conformational replay",
+  "posePropagationPolicy": {
+    "schema": "molarium.registered-pose-propagation-policy/v1",
+    "atomCorrespondence": "exact-element",
+    "bondCorrespondence": "exact-order",
+    "ringCorrespondence": "complete-rings-only",
+    "changedRingTreatment": "release-from-hard-core",
+    "featureTransfer": "role-compatible-restraints"
+  },
   "protocolBoundary": {
     "coordinateInputs": [
       "PDB 5OVE SOS1 protein",
@@ -864,6 +872,7 @@
         "O13",
         "C17"
       ],
+      "retainedFeatureIntents": [],
       "posePropagationMap": {
         "source": "reported molecular graphs plus deterministic local-context map; no later coordinates",
         "referenceHeavyAtoms": 27,
@@ -1093,7 +1102,141 @@
             "editedProductAtomIndex": 18,
             "bondType": "SINGLE"
           }
-        ]
+        ],
+        "spatialFeatureCorrespondences": [],
+        "seedMatchedHeavyAtoms": 0,
+        "totalReferencedHeavyAtoms": 23,
+        "mappedRingAttachmentMigrations": [],
+        "mappedRotorReleases": [
+          {
+            "id": "edit-associated-mapped-rotor-release-1",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release",
+            "referenceBondAtomNames": [
+              "C12",
+              "C15"
+            ],
+            "productBondAtomIndices": [
+              11,
+              13
+            ],
+            "proximalReferenceAtomName": "C12",
+            "distalReferenceAtomName": "C15",
+            "anchorReferenceAtomNames": [
+              "C18",
+              "O14",
+              "C10",
+              "C5",
+              "C2",
+              "N6",
+              "C11",
+              "N8",
+              "C3",
+              "N7",
+              "C12",
+              "C16",
+              "C1",
+              "C4",
+              "C9",
+              "O13",
+              "C17"
+            ],
+            "releasedReferenceAtomNames": [
+              "C15",
+              "C20",
+              "C23",
+              "C24",
+              "C21",
+              "C19"
+            ],
+            "releasedProductAtomIndices": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              23
+            ],
+            "selection": "larger exact mapped component retained; smaller edit-associated component released",
+            "coordinateInputs": []
+          }
+        ],
+        "releasedMappedAtoms": [
+          {
+            "referenceAtomIndex": 12,
+            "referenceAtomName": "C15",
+            "productAtomIndex": 13,
+            "element": "C",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release"
+          },
+          {
+            "referenceAtomIndex": 13,
+            "referenceAtomName": "C20",
+            "productAtomIndex": 14,
+            "element": "C",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release"
+          },
+          {
+            "referenceAtomIndex": 14,
+            "referenceAtomName": "C23",
+            "productAtomIndex": 15,
+            "element": "C",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release"
+          },
+          {
+            "referenceAtomIndex": 15,
+            "referenceAtomName": "C24",
+            "productAtomIndex": 16,
+            "element": "C",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release"
+          },
+          {
+            "referenceAtomIndex": 16,
+            "referenceAtomName": "C21",
+            "productAtomIndex": 17,
+            "element": "C",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release"
+          },
+          {
+            "referenceAtomIndex": 21,
+            "referenceAtomName": "C19",
+            "productAtomIndex": 23,
+            "element": "C",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release"
+          }
+        ],
+        "hardCoordinateHeavyAtoms": 17,
+        "releasedMappedHeavyAtoms": 6,
+        "protectedReferenceAnchor": {
+          "method": "exact-common-subgraph-after-topology-release/v2",
+          "label": "exact mapped upstream atoms outside topology-released rings and edit-associated rotor distal sides",
+          "referenceAtomNames": [
+            "C18",
+            "O14",
+            "C10",
+            "C5",
+            "C2",
+            "N6",
+            "C11",
+            "N8",
+            "C3",
+            "C1",
+            "C4",
+            "C9",
+            "O13",
+            "C17",
+            "N7",
+            "C12",
+            "C16"
+          ],
+          "atoms": 17,
+          "bonds": 18,
+          "releasedRegions": [
+            "mapped biconnected ring atoms affected by attachment migration",
+            "distal sides of edit-associated ring-bearing mapped carbon rotors",
+            "unmapped deleted and added graph regions"
+          ]
+        },
+        "transitionExplanation": "A distal graph rewrite makes mapped ring-bearing carbon rotors pose-search variables. The exact mapped upstream scaffold remains hard; topology-released atoms may move without consulting product or holdout coordinates, and any separately conserved terminal feature is retained as registered designer intent."
       }
     },
     {
@@ -1139,6 +1282,7 @@
         "O13",
         "C17"
       ],
+      "retainedFeatureIntents": [],
       "posePropagationMap": {
         "source": "reported molecular graphs plus deterministic local-context map; no later coordinates",
         "referenceHeavyAtoms": 29,
@@ -1398,7 +1542,98 @@
             "editedProductAtomIndex": 25,
             "bondType": "AROMATIC"
           }
-        ]
+        ],
+        "spatialFeatureCorrespondences": [],
+        "seedMatchedHeavyAtoms": 0,
+        "totalReferencedHeavyAtoms": 19,
+        "mappedRingAttachmentMigrations": [],
+        "mappedRotorReleases": [
+          {
+            "id": "edit-associated-mapped-rotor-release-1",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release",
+            "referenceBondAtomNames": [
+              "C12",
+              "C15"
+            ],
+            "productBondAtomIndices": [
+              11,
+              13
+            ],
+            "proximalReferenceAtomName": "C12",
+            "distalReferenceAtomName": "C15",
+            "anchorReferenceAtomNames": [
+              "C18",
+              "O14",
+              "C10",
+              "C5",
+              "C2",
+              "N6",
+              "C11",
+              "CX1",
+              "N8",
+              "C3",
+              "N7",
+              "C12",
+              "C16",
+              "C1",
+              "C4",
+              "C9",
+              "O13",
+              "C17"
+            ],
+            "releasedReferenceAtomNames": [
+              "C15"
+            ],
+            "releasedProductAtomIndices": [
+              13
+            ],
+            "selection": "larger exact mapped component retained; smaller edit-associated component released",
+            "coordinateInputs": []
+          }
+        ],
+        "releasedMappedAtoms": [
+          {
+            "referenceAtomIndex": 13,
+            "referenceAtomName": "C15",
+            "productAtomIndex": 13,
+            "element": "C",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release"
+          }
+        ],
+        "hardCoordinateHeavyAtoms": 18,
+        "releasedMappedHeavyAtoms": 1,
+        "protectedReferenceAnchor": {
+          "method": "exact-common-subgraph-after-topology-release/v2",
+          "label": "exact mapped upstream atoms outside topology-released rings and edit-associated rotor distal sides",
+          "referenceAtomNames": [
+            "C18",
+            "O14",
+            "C10",
+            "C5",
+            "C2",
+            "N6",
+            "C11",
+            "CX1",
+            "N8",
+            "C3",
+            "C1",
+            "C4",
+            "C9",
+            "O13",
+            "C17",
+            "N7",
+            "C12",
+            "C16"
+          ],
+          "atoms": 18,
+          "bonds": 19,
+          "releasedRegions": [
+            "mapped biconnected ring atoms affected by attachment migration",
+            "distal sides of edit-associated ring-bearing mapped carbon rotors",
+            "unmapped deleted and added graph regions"
+          ]
+        },
+        "transitionExplanation": "A distal graph rewrite makes mapped ring-bearing carbon rotors pose-search variables. The exact mapped upstream scaffold remains hard; topology-released atoms may move without consulting product or holdout coordinates, and any separately conserved terminal feature is retained as registered designer intent."
       }
     },
     {
@@ -1444,6 +1679,7 @@
         "SX1",
         "CX17"
       ],
+      "retainedFeatureIntents": [],
       "posePropagationMap": {
         "source": "reported molecular graphs plus deterministic local-context map; no later coordinates",
         "referenceHeavyAtoms": 31,
@@ -1742,7 +1978,166 @@
             "editedProductAtomIndex": 26,
             "bondType": "AROMATIC"
           }
-        ]
+        ],
+        "spatialFeatureCorrespondences": [],
+        "seedMatchedHeavyAtoms": 0,
+        "totalReferencedHeavyAtoms": 16,
+        "mappedRingAttachmentMigrations": [],
+        "mappedRotorReleases": [
+          {
+            "id": "edit-associated-mapped-rotor-release-1",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release",
+            "referenceBondAtomNames": [
+              "C12",
+              "C15"
+            ],
+            "productBondAtomIndices": [
+              15,
+              17
+            ],
+            "proximalReferenceAtomName": "C12",
+            "distalReferenceAtomName": "C15",
+            "anchorReferenceAtomNames": [
+              "C2",
+              "N6",
+              "C11",
+              "CX1",
+              "N8",
+              "C3",
+              "N7",
+              "C12",
+              "C16",
+              "C1"
+            ],
+            "releasedReferenceAtomNames": [
+              "C15",
+              "CX2",
+              "CX3",
+              "CX4",
+              "CX5",
+              "SX1"
+            ],
+            "releasedProductAtomIndices": [
+              17,
+              18,
+              19,
+              20,
+              21,
+              29
+            ],
+            "selection": "larger exact mapped component retained; smaller edit-associated component released",
+            "coordinateInputs": []
+          },
+          {
+            "id": "edit-associated-mapped-rotor-release-2",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release",
+            "referenceBondAtomNames": [
+              "CX4",
+              "CX5"
+            ],
+            "productBondAtomIndices": [
+              20,
+              21
+            ],
+            "proximalReferenceAtomName": "CX4",
+            "distalReferenceAtomName": "CX5",
+            "anchorReferenceAtomNames": [
+              "C2",
+              "N6",
+              "C11",
+              "CX1",
+              "N8",
+              "C3",
+              "N7",
+              "C12",
+              "C16",
+              "C15",
+              "CX2",
+              "CX3",
+              "CX4",
+              "SX1",
+              "C1"
+            ],
+            "releasedReferenceAtomNames": [
+              "CX5"
+            ],
+            "releasedProductAtomIndices": [
+              21
+            ],
+            "selection": "larger exact mapped component retained; smaller edit-associated component released",
+            "coordinateInputs": []
+          }
+        ],
+        "releasedMappedAtoms": [
+          {
+            "referenceAtomIndex": 13,
+            "referenceAtomName": "C15",
+            "productAtomIndex": 17,
+            "element": "C",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release"
+          },
+          {
+            "referenceAtomIndex": 14,
+            "referenceAtomName": "CX2",
+            "productAtomIndex": 18,
+            "element": "C",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release"
+          },
+          {
+            "referenceAtomIndex": 15,
+            "referenceAtomName": "CX3",
+            "productAtomIndex": 19,
+            "element": "C",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release"
+          },
+          {
+            "referenceAtomIndex": 16,
+            "referenceAtomName": "CX4",
+            "productAtomIndex": 20,
+            "element": "C",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release"
+          },
+          {
+            "referenceAtomIndex": 25,
+            "referenceAtomName": "SX1",
+            "productAtomIndex": 29,
+            "element": "S",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release"
+          },
+          {
+            "referenceAtomIndex": 17,
+            "referenceAtomName": "CX5",
+            "productAtomIndex": 21,
+            "element": "C",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release"
+          }
+        ],
+        "hardCoordinateHeavyAtoms": 10,
+        "releasedMappedHeavyAtoms": 6,
+        "protectedReferenceAnchor": {
+          "method": "exact-common-subgraph-after-topology-release/v2",
+          "label": "exact mapped upstream atoms outside topology-released rings and edit-associated rotor distal sides",
+          "referenceAtomNames": [
+            "C1",
+            "C2",
+            "N6",
+            "C11",
+            "N8",
+            "C3",
+            "N7",
+            "C12",
+            "C16",
+            "CX1"
+          ],
+          "atoms": 10,
+          "bonds": 10,
+          "releasedRegions": [
+            "mapped biconnected ring atoms affected by attachment migration",
+            "distal sides of edit-associated ring-bearing mapped carbon rotors",
+            "unmapped deleted and added graph regions"
+          ]
+        },
+        "transitionExplanation": "A distal graph rewrite makes mapped ring-bearing carbon rotors pose-search variables. The exact mapped upstream scaffold remains hard; topology-released atoms may move without consulting product or holdout coordinates, and any separately conserved terminal feature is retained as registered designer intent."
       }
     },
     {
@@ -1788,6 +2183,34 @@
         "CX18",
         "C1",
         "CX2"
+      ],
+      "retainedFeatureIntents": [
+        {
+          "id": "retain-terminal-feature-through-bay293",
+          "featureId": "secondary-exact-fragment-1",
+          "kind": "conserved-fragment-rmsd",
+          "actorClass": "human",
+          "source": "registered-designer-intent",
+          "treatment": "soft-restraint",
+          "required": true,
+          "restraint": {
+            "schema": "molarium.registered-soft-spatial-feature-restraint/v1",
+            "metric": "graph-symmetry-minimized Cartesian RMSD",
+            "toleranceAngstrom": 2.25,
+            "weightKcalMolPerAngstrom2": 20,
+            "required": true,
+            "parameterDecision": {
+              "schema": "molarium.registered-spatial-feature-parameter-decision/v1",
+              "actorClass": "human",
+              "basis": "pre-holdout-diagnostic",
+              "sourceAttemptId": "sos1-final-retention-9a73dd8-20260904t0535z-use1b-a010-r01",
+              "observedBestRmsdAngstrom": 2.161703263647055,
+              "selectedToleranceAngstrom": 2.25,
+              "holdoutCoordinatesUsed": false
+            }
+          },
+          "rationale": "retain the separately conserved terminal ring feature while allowing the intervening graph rewrite"
+        }
       ],
       "posePropagationMap": {
         "source": "reported molecular graphs plus deterministic local-context map; no later coordinates",
@@ -2085,9 +2508,273 @@
             "bondType": "AROMATIC"
           }
         ],
+        "spatialFeatureCorrespondences": [
+          {
+            "id": "secondary-exact-fragment-1",
+            "kind": "conserved-fragment-rmsd",
+            "transferMode": "score-only",
+            "treatment": "soft-restraint",
+            "required": true,
+            "source": "registered-designer-intent",
+            "mcs": {
+              "smarts": "[#6]1:&@[#6]:&@[#6]:&@[#6]:&@[#6]:&@[#6]:&@1-&!@[#6&!R]",
+              "atoms": 7,
+              "bonds": 7
+            },
+            "referenceAtomNames": [
+              "CX5",
+              "CX11",
+              "CX12",
+              "CX13",
+              "CX14",
+              "CX15",
+              "CX16"
+            ],
+            "productAtomIndices": [
+              8,
+              7,
+              6,
+              5,
+              4,
+              3,
+              2
+            ],
+            "mappingVariants": [
+              {
+                "referenceAtomNames": [
+                  "CX5",
+                  "CX11",
+                  "CX12",
+                  "CX13",
+                  "CX14",
+                  "CX15",
+                  "CX16"
+                ],
+                "productAtomIndices": [
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2
+                ]
+              },
+              {
+                "referenceAtomNames": [
+                  "CX14",
+                  "CX13",
+                  "CX12",
+                  "CX11",
+                  "CX5",
+                  "CX15",
+                  "CX16"
+                ],
+                "productAtomIndices": [
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  3,
+                  2
+                ]
+              },
+              {
+                "referenceAtomNames": [
+                  "CX5",
+                  "CX11",
+                  "CX12",
+                  "CX13",
+                  "CX14",
+                  "CX15",
+                  "CX16"
+                ],
+                "productAtomIndices": [
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  3,
+                  2
+                ]
+              },
+              {
+                "referenceAtomNames": [
+                  "CX14",
+                  "CX13",
+                  "CX12",
+                  "CX11",
+                  "CX5",
+                  "CX15",
+                  "CX16"
+                ],
+                "productAtomIndices": [
+                  8,
+                  7,
+                  6,
+                  5,
+                  4,
+                  3,
+                  2
+                ]
+              }
+            ],
+            "ambiguity": {
+              "referenceMatches": 2,
+              "productMatches": 2,
+              "candidateMaps": 4,
+              "selection": "enumerate graph symmetry; retain the registered terminal feature during pose search"
+            },
+            "registeredIntentId": "retain-terminal-feature-through-bay293",
+            "restraint": {
+              "schema": "molarium.registered-soft-spatial-feature-restraint/v1",
+              "metric": "graph-symmetry-minimized Cartesian RMSD",
+              "toleranceAngstrom": 2.25,
+              "weightKcalMolPerAngstrom2": 20,
+              "required": true,
+              "parameterDecision": {
+                "schema": "molarium.registered-spatial-feature-parameter-decision/v1",
+                "actorClass": "human",
+                "basis": "pre-holdout-diagnostic",
+                "sourceAttemptId": "sos1-final-retention-9a73dd8-20260904t0535z-use1b-a010-r01",
+                "observedBestRmsdAngstrom": 2.161703263647055,
+                "selectedToleranceAngstrom": 2.25,
+                "holdoutCoordinatesUsed": false
+              }
+            }
+          }
+        ],
+        "seedMatchedHeavyAtoms": 7,
+        "totalReferencedHeavyAtoms": 22,
+        "mappedRingAttachmentMigrations": [
+          {
+            "id": "mapped-ring-attachment-migration-1",
+            "reason": "attachment-migration-within-mapped-biconnected-ring",
+            "referenceBlockAtomNames": [
+              "C15",
+              "CX2",
+              "CX3",
+              "CX4",
+              "SX1"
+            ],
+            "productBlockAtomIndices": [
+              12,
+              31,
+              9,
+              10,
+              11
+            ],
+            "referenceAttachmentAtomNames": [
+              "CX4"
+            ],
+            "productAttachmentReferenceAtomNames": [
+              "CX3"
+            ],
+            "retainedJunctionReferenceAtomNames": [
+              "C15"
+            ],
+            "releasedReferenceAtomNames": [
+              "CX2",
+              "CX3",
+              "CX4",
+              "SX1"
+            ],
+            "releasedProductAtomIndices": [
+              31,
+              9,
+              10,
+              11
+            ]
+          }
+        ],
+        "mappedRotorReleases": [
+          {
+            "id": "edit-associated-mapped-rotor-release-1",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release",
+            "referenceBondAtomNames": [
+              "C12",
+              "C15"
+            ],
+            "productBondAtomIndices": [
+              13,
+              12
+            ],
+            "proximalReferenceAtomName": "C12",
+            "distalReferenceAtomName": "C15",
+            "anchorReferenceAtomNames": [
+              "C1",
+              "C2",
+              "N6",
+              "C11",
+              "CX1",
+              "N8",
+              "C3",
+              "N7",
+              "C12",
+              "C16"
+            ],
+            "releasedReferenceAtomNames": [
+              "C15",
+              "CX2",
+              "CX3",
+              "CX4",
+              "SX1"
+            ],
+            "releasedProductAtomIndices": [
+              12,
+              31,
+              9,
+              10,
+              11
+            ],
+            "selection": "larger exact mapped component retained; smaller edit-associated component released",
+            "coordinateInputs": []
+          }
+        ],
+        "releasedMappedAtoms": [
+          {
+            "referenceAtomIndex": 17,
+            "referenceAtomName": "C15",
+            "productAtomIndex": 12,
+            "element": "C",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release"
+          },
+          {
+            "referenceAtomIndex": 18,
+            "referenceAtomName": "CX2",
+            "productAtomIndex": 31,
+            "element": "C",
+            "reason": "attachment-migration-within-mapped-biconnected-ring"
+          },
+          {
+            "referenceAtomIndex": 19,
+            "referenceAtomName": "CX3",
+            "productAtomIndex": 9,
+            "element": "C",
+            "reason": "attachment-migration-within-mapped-biconnected-ring"
+          },
+          {
+            "referenceAtomIndex": 20,
+            "referenceAtomName": "CX4",
+            "productAtomIndex": 10,
+            "element": "C",
+            "reason": "attachment-migration-within-mapped-biconnected-ring"
+          },
+          {
+            "referenceAtomIndex": 29,
+            "referenceAtomName": "SX1",
+            "productAtomIndex": 11,
+            "element": "S",
+            "reason": "attachment-migration-within-mapped-biconnected-ring"
+          }
+        ],
+        "hardCoordinateHeavyAtoms": 10,
+        "releasedMappedHeavyAtoms": 5,
         "protectedReferenceAnchor": {
-          "method": "maximum-common-substructure/v1",
-          "label": "AWW proximal quinazoline-thiophene core",
+          "method": "exact-common-subgraph-after-topology-release/v2",
+          "label": "exact mapped upstream atoms outside topology-released rings and edit-associated rotor distal sides",
           "referenceAtomNames": [
             "C1",
             "C2",
@@ -2098,21 +2785,17 @@
             "N7",
             "C12",
             "C16",
-            "C15",
-            "CX2",
-            "CX3",
-            "CX4",
-            "SX1",
             "CX1"
           ],
-          "atoms": 15,
-          "bonds": 16,
+          "atoms": 10,
+          "bonds": 10,
           "releasedRegions": [
-            "regioisomeric distal phenyl/benzylic arm",
-            "hydroxymethyl-to-methylaminomethyl substituent"
+            "mapped biconnected ring atoms affected by attachment migration",
+            "distal sides of edit-associated ring-bearing mapped carbon rotors",
+            "unmapped deleted and added graph regions"
           ]
         },
-        "transitionExplanation": "AWW and AXH attach the distal phenyl arm at different thiophene positions; that arm cannot remain spatially fixed while the proximal core is retained."
+        "transitionExplanation": "An edited region changes its attachment atom within a mapped biconnected ring; a distal graph rewrite makes mapped ring-bearing carbon rotors pose-search variables. The exact mapped upstream scaffold remains hard; topology-released atoms may move without consulting product or holdout coordinates, and any separately conserved terminal feature is retained as registered designer intent."
       }
     }
   ],

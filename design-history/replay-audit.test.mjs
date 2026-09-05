@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict';
 import { CHEMIST_ACTIONS_SCHEMA } from '../chemist-actions.mjs';
-import { NON_REPLAYABLE_ACTION_NAMES, NON_REPLAYABLE_ACTION_PREFIXES,
-  actionScriptFromAudit, replayActionScript, validateActionScript } from './replay.mjs';
+import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
+import { AUDIT_PORTABLE_SCIENTIFIC_GUARDS, AUDIT_STATE_HASH_GUARDS,
+  NON_REPLAYABLE_ACTION_NAMES, NON_REPLAYABLE_ACTION_PREFIXES,
+  READ_ONLY_CHEMIST_ACTIONS, actionScriptFromAudit, replayActionScript,
+  validateActionScript } from './replay.mjs';
+
+assert.equal(READ_ONLY_CHEMIST_ACTIONS.includes('pose.inspectRefinementCapture'), true,
+  'coordinate-capture inspection must remain an optional read-only replay record');
 
 const audit = { schema:CHEMIST_ACTIONS_SCHEMA, routeId:'converter-test', records:[
   { sequence:1, requestId:'load', action:'designRoute.load',
@@ -106,5 +112,174 @@ assert.match(mismatched.steps[0].error, /expectation failed.*feasible/i);
 assert.throws(() => validateActionScript({ schema:'molarium.chemist-action-script/v1',
   label:'Bad expectation', actions:[{ action:'session.inspect', args:{},
     expect:{ 'bad path':true } }] }), /invalid expectation path/);
+
+assert.throws(() => validateActionScript({ schema:'molarium.chemist-action-script/v1',
+  label:'Implicit chemistry target', actions:[
+    { action:'selection.replace', args:{ atomIds:['persistent-a'] } },
+    { action:'chemistry.deleteAtom', args:{} },
+  ] }), /requires explicit atomId.*ambient selection/);
+
+const migratedLegacyAudit = actionScriptFromAudit({ schema:CHEMIST_ACTIONS_SCHEMA, records:[
+  { sequence:1, action:'selection.replace', args:{ atomIds:['persistent-a'] },
+    status:'completed' },
+  { sequence:2, action:'chemistry.deleteAtom', args:{}, status:'completed' },
+] });
+assert.deepEqual(migratedLegacyAudit.actions[1].args, { atomId:'persistent-a' },
+  'audit conversion may materialize a prior explicit selection, but saved scripts must contain the target');
+assert.throws(() => actionScriptFromAudit({ schema:CHEMIST_ACTIONS_SCHEMA, records:[
+  { sequence:1, action:'chemistry.setBond', args:{ order:2 }, status:'completed' },
+] }), /cannot be migrated.*no explicit atomIds/);
+
+assert.deepEqual(Object.keys(AUDIT_STATE_HASH_GUARDS).sort(),
+  ['optimization.run','pose.apply','pose.refine']);
+const portableInput = actionScriptFromAudit({ records:[{ sequence:1,
+  action:'pose.applySidechainRotamer', status:'completed', args:{ index:8 },
+  result:{ sidechainRotamer:{ source:'input', chiDegrees:[-76.729,-71.032] } },
+}] }, { executionContract:'portable-scientific', stateHashGuards:'off' });
+assert.deepEqual(portableInput.actions[0].args, { source:'input' });
+assert.equal(portableInput.actions[0].expect['sidechainRotamer.source'], 'input');
+assert.deepEqual(Object.keys(AUDIT_PORTABLE_SCIENTIFIC_GUARDS).sort(),
+  ['geometry.alignBranchToContact','optimization.run','pose.apply','pose.applySidechainRotamer',
+    'pose.enumerateSidechainRotamers','pose.refine']);
+const hashes = Object.fromEntries('abcdef'.split('').map((key, index) =>
+  [key, String(index + 1).repeat(64)]));
+const axisNames = ['N7','C12','C15','CX4','CX5','CX15','CX16'];
+const axisAudit = { schema:CHEMIST_ACTIONS_SCHEMA, records:[
+  { sequence:1, action:'session.inspect', args:{ scope:'ligand' }, status:'completed',
+    result:{ scope:'ligand', truncated:false, atoms:axisNames.map((atomName) => ({
+      atomId:`old:${atomName}`, atomName, residueName:'AWW', chain:'A', residueIndex:1104,
+      coordinatesAngstrom:[1,2,3],
+    })) } },
+  { sequence:2, action:'geometry.alignBranchToContact', status:'completed',
+    args:{ axisAtomIds:['old:C12','old:C15'], upstreamAxisAtomIds:['old:N7','old:C12'],
+      coupledAxisAtomIds:[['old:CX4','old:CX5'],['old:CX15','old:CX16']],
+      solution:'best-directional', contactId:'contact-2',
+      upstreamRotationRangeDegrees:[0,60], designerPrimaryRotationDegrees:150,
+      allowedResponseAtoms:[] }, result:{ designerBranchContact:{
+      externalReferenceCoordinatesUsed:false, solution:'best-directional',
+      selected:{ internalSevereContactCount:0, contacts:{ outsideAllowedResponseContactCount:0 } } } } },
+] };
+const portableAxis = actionScriptFromAudit(axisAudit, { includeReadOnly:false,
+  executionContract:'portable-scientific', stateHashGuards:'off' });
+const selector = (atomName) => ({ componentId:'heterogen:A:1104::AWW', atomName });
+assert.equal(portableAxis.actions.length, 1);
+assert.deepEqual(portableAxis.actions[0].args.axisAtomSelectors, ['C12','C15'].map(selector));
+assert.deepEqual(portableAxis.actions[0].args.upstreamAxisAtomSelectors, ['N7','C12'].map(selector));
+assert.deepEqual(portableAxis.actions[0].args.coupledAxisAtomSelectors,
+  [['CX4','CX5'],['CX15','CX16']].map((pair) => pair.map(selector)));
+assert(!JSON.stringify(portableAxis).includes('old:'));
+assert(!JSON.stringify(portableAxis).includes('coordinatesAngstrom'));
+assert.equal(portableAxis.actions[0].expect['designerBranchContact.selected.internalSevereContactCount'], 0);
+assert.deepEqual(axisAudit.records[1].args.axisAtomIds, ['old:C12','old:C15']);
+assert.throws(() => actionScriptFromAudit({ ...axisAudit, records:axisAudit.records.slice(1) },
+  { executionContract:'portable-scientific', stateHashGuards:'off' }), /no current ligand selector/);
+assert.throws(() => actionScriptFromAudit({ ...axisAudit, records:[axisAudit.records[0],
+  { sequence:2, action:'designRoute.applyStep', args:{ stepId:'next' }, status:'completed' },
+  { ...axisAudit.records[1], sequence:3 }] },
+  { executionContract:'portable-scientific', stateHashGuards:'off' }), /no current ligand selector/);
+const guardedAudit = { schema:CHEMIST_ACTIONS_SCHEMA, records:[
+  { sequence:1, action:'pose.refine', args:{ searchChains:16 }, status:'completed',
+    result:{ refinement:{ stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
+      inputStateSha256:hashes.a, selectedStateSha256:hashes.b } } },
+  { sequence:2, action:'pose.apply', args:{ index:0 }, status:'completed',
+    result:{ appliedPose:{ stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
+      inputStateSha256:hashes.a, selectedStateSha256:hashes.b,
+      outputStateSha256:hashes.c } } },
+  { sequence:3, action:'optimization.run', args:{ method:'induced-fit-webgpu' },
+    status:'completed', result:{ optimization:{ stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
+      inputStateSha256:hashes.c, outputStateSha256:hashes.d } } },
+] };
+const automaticallyGuarded = actionScriptFromAudit(guardedAudit);
+assert.deepEqual(automaticallyGuarded.actions.map((step) => step.args), [
+  { searchChains:16, expectedInputStateSha256:hashes.a,
+    expectedSelectedStateSha256:hashes.b },
+  { index:0, expectedInputStateSha256:hashes.a,
+    expectedSelectedStateSha256:hashes.b, expectedOutputStateSha256:hashes.c },
+  { method:'induced-fit-webgpu', expectedInputStateSha256:hashes.c,
+    expectedOutputStateSha256:hashes.d },
+]);
+assert.deepEqual(automaticallyGuarded.sourceAudit.stateHashGuards,
+  { mode:'auto', schema:MOLECULAR_STATE_HASH_SCHEMA, guardedActionCount:3 });
+assert.equal(actionScriptFromAudit(guardedAudit,
+  { stateHashGuards:'required' }).sourceAudit.stateHashGuards.guardedActionCount, 3);
+assert.equal(Object.keys(actionScriptFromAudit(guardedAudit,
+  { stateHashGuards:'off' }).actions[0].args).includes('expectedInputStateSha256'), false);
+const portableAudit = structuredClone(guardedAudit);
+portableAudit.records[0].result.molecule = { atoms:14, bonds:15 };
+Object.assign(portableAudit.records[0].result.refinement, {
+  coverageComplete:true, selectedFeasible:true,
+  selectedCore:{ satisfied:true }, requiredSpatialFeatureCount:2,
+});
+Object.assign(portableAudit.records[1].result.appliedPose, {
+  feasible:true, infeasibleOverride:false,
+});
+Object.assign(portableAudit.records[2].result.optimization, {
+  accepted:true, valenceSafeguard:{ accepted:true, complete:true },
+  registeredPoseRetention:{ accepted:true }, fixedAtomMotion:{ accepted:true },
+});
+const portable = actionScriptFromAudit(portableAudit, {
+  stateHashGuards:'off', executionContract:'portable-scientific',
+});
+assert.deepEqual(portable.actions[0].args, { searchChains:16 });
+assert.deepEqual(portable.actions[0].expect, {
+  'refinement.coverageComplete':true,
+  'refinement.selectedFeasible':true,
+  'refinement.selectedCore.satisfied':true,
+  'refinement.requiredSpatialFeatureCount':2,
+  'molecule.atoms':14,
+  'molecule.bonds':15,
+});
+assert.equal(portable.actions[2].expect['optimization.valenceSafeguard.accepted'], true);
+assert.equal(portable.actions[2].expect['optimization.fixedAtomMotion.accepted'], true);
+assert.equal(portable.sourceAudit.executionContract.mode, 'portable-scientific');
+assert.equal(portable.sourceAudit.executionContract.portableScientificGuardCount, 13);
+
+const portableRotamer = actionScriptFromAudit({ schema:CHEMIST_ACTIONS_SCHEMA, records:[
+  { sequence:1, action:'pose.enumerateSidechainRotamers', status:'completed',
+    args:{ receptorAtomId:'run-specific:PHE:890:CG', maximumCandidates:32 },
+    result:{ molecule:{ atoms:100, bonds:101 }, sidechainRotamers:{
+      residue:{ residueName:'PHE', chain:'A', residueIndex:890, insertionCode:'' },
+      generatedCandidateCount:13,
+    } } },
+  { sequence:2, action:'pose.applySidechainRotamer', status:'completed',
+    args:{ coordinateSha256:hashes.a, expectedInputCoordinateSha256:hashes.b,
+      expectedSelectedCoordinateSha256:hashes.a },
+    result:{ molecule:{ atoms:100, bonds:101 }, sidechainRotamer:{
+      residue:{ residueName:'PHE', chain:'A', residueIndex:890, insertionCode:'' },
+      chiDegrees:[-180,-90], source:'canonical-library',
+    } } },
+] }, { stateHashGuards:'off', executionContract:'portable-scientific' });
+assert.deepEqual(portableRotamer.actions[0].args, {
+  receptorResidue:{ residueName:'PHE', chain:'A', residueIndex:890, insertionCode:'' },
+  maximumCandidates:32,
+});
+assert.deepEqual(portableRotamer.actions[1].args, { chiDegrees:[-180,-90] });
+assert.equal(portableRotamer.actions[0].expect['sidechainRotamers.generatedCandidateCount'], 13);
+assert.equal(portableRotamer.actions[1].expect['sidechainRotamer.source'], 'canonical-library');
+assert.equal(Object.hasOwn(portableRotamer.actions[1].expect,
+  'sidechainRotamer.chiDegrees'), false,
+'the public chi selector is circular; +180 and -180 must not become an exact-output guard');
+assert.throws(() => actionScriptFromAudit(guardedAudit, {
+  executionContract:'portable-scientific', stateHashGuards:'required',
+}), /portable-scientific execution requires stateHashGuards off/);
+assert.throws(() => actionScriptFromAudit(guardedAudit, {
+  executionContract:'portable-ish', stateHashGuards:'off',
+}), /executionContract must be/);
+assert.throws(() => actionScriptFromAudit({ schema:CHEMIST_ACTIONS_SCHEMA, records:[
+  { sequence:1, action:'pose.refine', args:{ searchChains:16 }, status:'completed', result:{} },
+] }, { stateHashGuards:'required' }), /missing molarium\.molecular-state-hash\/v1 result guards/);
+assert.throws(() => actionScriptFromAudit({ schema:CHEMIST_ACTIONS_SCHEMA, records:[
+  { sequence:1, action:'pose.apply', args:{ index:0 }, status:'completed',
+    result:{ appliedPose:{ stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
+      inputStateSha256:hashes.a, selectedStateSha256:hashes.b } } },
+] }), /no valid outputStateSha256/);
+assert.throws(() => actionScriptFromAudit({ schema:CHEMIST_ACTIONS_SCHEMA, records:[
+  { sequence:1, action:'optimization.run',
+    args:{ method:'webgpu', expectedInputStateSha256:hashes.e }, status:'completed',
+    result:{ optimization:{ stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
+      inputStateSha256:hashes.a, outputStateSha256:hashes.f } } },
+] }), /expectedInputStateSha256 conflicts/);
+assert.throws(() => actionScriptFromAudit(guardedAudit, { stateHashGuards:'sometimes' }),
+  /must be auto, required, or off/);
 
 console.log('Chemist action audit converter: PASS');

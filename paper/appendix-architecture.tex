@@ -1,6 +1,12 @@
 \section{Molarium architecture and executable design history}
 \label{app:architecture}
 
+% Emitted only after a complete SOS1 prediction run passes the independent
+% post-freeze holdout and inter-step continuity gate.
+\IfFileExists{generated/sos1-accepted-results.tex}{%
+  \input{generated/sos1-accepted-results.tex}%
+}{}
+
 This appendix specifies the implementation beneath the browser interface. It
 separates deployed capabilities from proposed workflows and closes with the
 selected SOS1 route underlying the paper movie.
@@ -112,7 +118,7 @@ The numerical recipe crossing these layers has a narrow contract:
 
 For ordinary small molecules, a JavaScript SMIRNOFF parameterizer uses RDKit to
 apply Sage 2.1.0 patterns and assign labelled Gasteiger charges
-\cite{boothroyd2023sage,gasteiger1980charges}. Prepared Rosemary fixtures keep
+\cite{boothroyd2023sage,gasteiger1980charges}. Prepared protein validation fixtures keep
 their exported numerical recipes and NAGL charges. CPU/GPU comparisons therefore
 use identical graphs and numbers, not two separately prepared approximations.
 
@@ -472,8 +478,11 @@ merge algorithm. Three linked record types answer different provenance
 questions:
 
 \paragraph{Current product boundary.}
-The live application keeps at most 500 Chemist Actions records in memory, and
-clearing the scene clears that transient audit. The Design History panel and
+The public API keeps at most 500 Chemist Actions records for the lifetime of the
+page. A copy is attached to the current molecule; clearing the scene discards
+that molecule-attached copy, while the public API history remains available
+until page reload. Records that must persist beyond the page lifetime must be
+exported or attached to a campaign commit. The Design History panel and
 public \texttt{campaign.*} actions can create a locally persisted campaign,
 atomically commit the visible molecule, create or restore branches, merge branch
 histories, record decisions, verify the append-only record, and import or export
@@ -601,8 +610,12 @@ list of allowed instructions, not a program:
     },
     {
       "action": "pose.applySidechainRotamer",
-      "args": {"index": 5},
-      "caption": "Apply selected Phe890 rotamer index 5"
+      "args": {
+        "coordinateSha256": "<selected-coordinate-hash>",
+        "expectedInputCoordinateSha256": "<enumeration-input-hash>",
+        "expectedSelectedCoordinateSha256": "<selected-coordinate-hash>"
+      },
+      "caption": "Apply the hash-pinned Phe890 candidate"
     }
   ]
 }
@@ -617,7 +630,7 @@ Replay rules:
     unreasonably large or deeply nested inputs are rejected;
   \item Designer Moves JSON files must be smaller than 2~MB; each serialized
     API request and its argument object are capped at 8~MiB for ASCII JSON,
-    eight nested levels, and 2,048 JSON nodes;
+    twelve nested levels, and 2,048 JSON nodes;
   \item an action may give a name to a returned value, such as a stable atom ID;
     a later action may reuse that name without embedding new code;
   \item the runner executes one allowed action at a time through
@@ -632,12 +645,12 @@ Replay rules:
 \end{itemize}
 
 A stable URL such as \url{https://molarium.org/sos1-hit-to-bay293} identifies the
-story. The friendly URL may point to a newer release later; the release commit
-and selected-route file fingerprint
-\texttt{34d1db8acb8e6c5e...f1d6af713e7aa7} identify the exact bytes reviewed. Its
-canonical action-script fingerprint
-\texttt{b042f0e6d4c6f569...49f4105b1d8f790} identifies the normalized JSON content, so
-harmless whitespace changes do not create a logically new route.
+story. The friendly URL may point to a newer release later; the accepted run
+package records the release commit, prediction-manifest fingerprint,
+evaluation-summary fingerprint, pre-freeze audit fingerprint, and canonical
+action-script fingerprint that identify the reviewed bytes. These values are
+read from the accepted artifacts rather than copied into this manuscript, so a
+superseded run cannot remain cited accidentally.
 
 The practical workflow is therefore: capture a trusted starting snapshot;
 explore poses or conformations while saving the action audit; apply and relax a
@@ -665,13 +678,11 @@ was:
   \item the sole coordinate-bearing design input was 5OVE/AXE;
   \item each analogue began from the preceding frozen prediction, never from
     the corresponding later crystal;
-  \item the selected route contains 33 recorded API actions: 29 molecular or
-    protocol operations and four workspace switches;
-  \item the complete exploration audit contains 89 completed API calls,
-    including three Phe890/pose branches, nine undo calls, and deterministic
-    reselection; these are operational records, not formal ledger decisions;
-  \item the interface presentation adds 18 display-only actions, for 51 replay
-    steps in the film;
+  \item the selected replay is derived mechanically from the accepted run's
+    pre-freeze API audit rather than maintained as a separate action list;
+  \item exploratory branches remain in the audit, while only the selected
+    calculation-bearing route and non-mutating presentation actions enter the
+    public replay;
   \item later crystals: opened only after four prediction checkpoints and the
     audit were hashed;
   \item display and focus actions could not change the graph or coordinates.
@@ -708,13 +719,11 @@ exception.
   \end{tabular}
 \end{table}
 
-``64 search chains'' means 64 independently seeded local pose searches, not 64
-protein chains. ``Parameterize without motion'' means assign coefficients while
-leaving coordinates unchanged; only the following relaxation may move atoms.
-The experimental SOS1 route used whole-system Sage 2.1.0/Gasteiger preparation.
-AWT, AWZ, AWW, and AXH contained 7,929,
-7,933, 7,935, and 7,937 particles, respectively. This charge-model boundary is
-part of the method, not a standard Sage AM1-BCC or NAGL preparation.
+Each pose-search chain is an independently seeded local search, not a protein
+chain. Search width, worker policy, charge model, and particle count are read
+from the accepted run manifest. ``Parameterize without motion'' means assign
+coefficients while leaving coordinates unchanged; only the following relaxation
+may move atoms.
 
 Before flexible relaxation, the application stores the ligand bond lengths. It
 restores the previous pose if any heavy-atom bond is both more than 0.45~\AA{}
@@ -737,15 +746,15 @@ molecule.
     \midrule
     0 & Load and prepare & 5OVE/AXE only; capture compound~1 reference and hit
       boundary \\
-    1 & Rewrite to compound~17 (AWT) & Run 64 independent reference-guided pose
+    1 & Rewrite to compound~17 (AWT) & Run independent reference-guided pose
       searches; apply the selected pose; parameterize; relax \\
     2 & Merge to compound~18 (AWZ) & Propagate from predicted AWT, not 5OVF;
       apply, parameterize, relax \\
-    3 & Grow compound~21 (AWW) & New ring enters the Phe890-in volume; the
-      fixed-core representative gains four clashes \\
+    3 & Grow compound~21 (AWW) & New growth enters the Phe890-in volume; evaluate
+      the resulting ligand--pocket contacts \\
     4 & Resolve the pocket & Enumerate discrete Phe890 rotamers; select the
       outward branch; accept its moved receptor as the next reference \\
-    5 & Predict BAY-293 (AXH) & Grow from frozen AWW; 64-chain pose search; apply,
+    5 & Predict BAY-293 (AXH) & Grow from frozen AWW; stratified pose search; apply,
       parameterize without motion, relax, freeze \\
     6 & Reveal holdouts & Compare AWT/AWZ/AWW/BAY-293 with
       5OVF/5OVG/5OVH/5OVI \\
@@ -756,23 +765,23 @@ molecule.
 
 The conformational step is necessary because local minimization normally cannot
 cross the torsional barrier between side-chain rotamers. Molarium therefore
-created separate starting basins before local ligand--pocket relaxation. It
-ranked feasible branches first by the fewest clashes added by growth, then by
-pose score and finite relaxed energy. The nominal $-60^\circ$ branch added four
-clashes above the fixed-core baseline and was infeasible; the
-$-180^\circ$ branch added none and was selected; the $+60^\circ$ branch added
-two and remained a feasible alternative. This is the causal point of the story:
-the analogue's growth made the inward state untenable before 5OVH or 5OVI was
-opened.
+creates complete $\chi_1/\chi_2$ candidates before coupled ligand--pocket pose
+search and relaxation. Branches are ranked from post-relaxation coordinate
+evidence, with chemically invalid states rejected before score comparison. The
+selected basin and all evaluated alternatives are recorded before 5OVH or 5OVI
+is opened.
 
-For structural evaluation, each predicted receptor was aligned to its holdout
-on 23, 25, 25, and 27 pocket C$\alpha$ atoms for AWT through AXH. Ligand RMSD was
-then computed over 29, 31, 31, and 32 heavy atoms, minimizing over 2, 1, 1, and
-1 graph-symmetry mappings, respectively. The ligand itself was not fitted.
+For structural evaluation, each predicted receptor is aligned to its holdout on
+the common pocket C$\alpha$ atoms. Ligand RMSD is then computed over the complete
+registered heavy-atom graph, minimizing only over graph automorphisms; the
+ligand itself is not fitted. Acceptance also requires the hard-core, released,
+and seed-only regions, Phe890 geometry, covalent integrity, severe-clash checks,
+and AWW-to-AXH continuity all to pass.
 
+\ifdefined\SosAcceptedRunId
 \begin{table}[htbp]
   \centering
-  \caption{Post-freeze structural evaluation. Torsions are predicted/crystal in
+  \caption{Accepted-run post-freeze structural evaluation. Torsions are predicted/crystal in
   degrees; ligand RMSD is receptor-aligned and graph-symmetry-minimized.}
   \label{tab:sos1-evaluation}
   \footnotesize
@@ -780,20 +789,19 @@ then computed over 29, 31, 31, and 32 heavy atoms, minimizing over 2, 1, 1, and
     \toprule
     Prediction & Holdout & Ligand RMSD (\AA) & Phe890 chi1 & Phe890 chi2 \\
     \midrule
-    AWT & 5OVF & 0.516 & -77.6 / -71.5 & -71.7 / -71.7 \\
-    AWZ & 5OVG & 1.528 & -73.4 / -75.6 & -92.0 / -87.9 \\
-    AWW & 5OVH & 2.137 & -172.2 / +175.8 & +116.1 / +76.3 \\
-    BAY-293 & 5OVI & 1.215 & -172.4 / -166.5 & +108.7 / +71.7 \\
+    AWT & 5OVF & \SosAwtLigandRmsd & \SosAwtPheChiOne & \SosAwtPheChiTwo \\
+    AWZ & 5OVG & \SosAwzLigandRmsd & \SosAwzPheChiOne & \SosAwzPheChiTwo \\
+    AWW & 5OVH & \SosAwwLigandRmsd & \SosAwwPheChiOne & \SosAwwPheChiTwo \\
+    BAY-293 & 5OVI & \SosAxhLigandRmsd & \SosAxhPheChiOne & \SosAxhPheChiTwo \\
     \bottomrule
   \end{tabular}
 \end{table}
 \FloatBarrier
 
-The ligand poses are useful but not atom-perfect. The central success is the
-prospective pocket switch. The replay recovered the experimentally observed
-outward $\chi_1$ basin before seeing 5OVH or 5OVI; it did not recover the exact
-$\chi_2$ terminal-ring orientation, which differs by approximately $40^\circ$
-for AWW and $37^\circ$ for BAY-293.
+Run \SosAcceptedRunId{} passed every registered holdout and continuity check.
+The evaluation-summary fingerprint is \texttt{\SosEvaluationHashShort}; the
+table is generated from that record and is not maintained independently.
+\fi
 
 The interface film starts on a genuinely blank canvas, selects the same JSON
 available to readers through \emph{Designer moves}, and presses the visible Play
@@ -805,20 +813,20 @@ Apply changes the molecular state.
 
 The film shows discrete before/after molecular states. It does not interpolate
 coordinates or present the transition as molecular dynamics. Result frames are
-held long enough to inspect new information. The current 101.08-s interface cut
-condenses approximately 1,189.9~s of durations in its 51-action render audit;
-full operation durations remain in the audit and render manifest. The film is
-therefore an explanatory replay, not a runtime benchmark.
+held long enough to inspect new information. Exact action counts and operation
+durations remain in the accepted audit and render manifest. The film is an
+explanatory replay, not a runtime benchmark.
 
 The current replay can focus on heavy atoms displaced by at least 0.08~\AA{},
 highlight up to the 24 largest changes, and retain their local context. The
-current complete MP4 uses this changed-region emphasis where the replay calls
-for it.
+render manifest records each synchronized result frame used for review.
 
 Tyr884 is separate historical context. Comparing fragment-bound 6EPM with 5OVE
 shows that the inhibitory Tyr884 arrangement already exists in the starting
 5OVE coordinates. The hit-only route predicts no Tyr884 movement.
 
-Recommended main-text frames are: (1) blank imported story; (2) 5OVE hit
-boundary; (3) AWW/Phe890-in clash; (4) applied Phe890-out branch; (5) frozen
-BAY-293 prediction; and (6) separately labelled post-freeze 5OVI comparison.
+The five recommended main-text frames are all captured from the accepted public
+interface replay: (1) the prepared 5OVE/AXE hit and pocket; (2) AWW in the
+Phe890-in pocket; (3) the applied Phe890-out branch; (4) relaxed AWW in the
+opened pocket; and (5) the frozen BAY-293 prediction. No holdout coordinate is
+loaded into a replay checkpoint or publication frame.

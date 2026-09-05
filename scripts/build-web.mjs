@@ -1,7 +1,8 @@
 import { createHash } from 'node:crypto';
-import { cp, mkdir, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { browserModuleClosure, sos1ReleaseWebFiles } from './web-bundle-dependencies.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const output = join(root, 'dist');
@@ -15,26 +16,40 @@ const assetRelease = String(process.env.MOLARIUM_ASSET_RELEASE || `v${packageJso
 const assetBase = `${assetOrigin}/${assetRelease}/`;
 
 const files = [
-  'LICENSE', 'README.md', 'CHEMIST-ACTIONS-API.md', 'DESIGNER-MOVES.md', 'THIRD_PARTY_NOTICES.md',
+  'design-history/publications/sos1/checkpoints/starting-hit-campaign.json',
+  'design-history/examples/sos1-prediction.action-script.json',
+  'design-history/examples/sos1-prediction-checkpoint-review.action-script.json',
+  'design-history/publications/sos1/browser-replay-declaration.json',
+  'design-history/publications/sos1/checkpoints/scaffold-rewrite-campaign.json',
+  'design-history/publications/sos1/checkpoints/fragment-merge-campaign.json',
+  'design-history/publications/sos1/checkpoints/open-phe890-pocket-campaign.json',
+  'design-history/publications/sos1/checkpoints/finish-bay-293-campaign.json',
+  'LICENSE', 'NOTICE', 'README.md', 'CHEMIST-ACTIONS-API.md', 'DESIGNER-MOVES.md', 'THIRD_PARTY_NOTICES.md',
   'index.html', 'app.js', 'chemist-actions.mjs', 'styles.css', 'molarium-workspace.css', 'independent-layout-study.css',
+  'molecular-state-hash.mjs',
   'protein-residue-templates.js', 'rdkit-worker.js', 'openmm-worker.js', 'webgpu-worker.js',
   'stormm-worker.js', 'mlip-worker.js', 'local-lab-test.js',
   'validation/README.md', 'validation/dashboard.mjs', 'validation/registry.v0.1.json',
   'validation/registry.v0.2.json',
   'docking/benchmark/manifest.v0.1.json', 'docking/benchmark/benchmark-results.v0.1.scored.json',
   'docking/benchmark/RESULTS.v0.1.md', 'docking/benchmark/7kpa-two-terminus-panel.v0.1.json',
+  'docking/benchmark/7kpa-two-terminus-panel.mjs',
   'docking/benchmark/7kpa-manual-contact-panel.mjs',
   'docking/benchmark/7kpa-manual-contact-panel.README.md',
   'docking/benchmark/7kpa-manual-contact-smoke.v0.1.json',
   'docking/benchmark/7kpa-manual-contact-results.psiblue.v0.1.json',
+  'docking/registered-pose-retention.mjs',
+  'docking/registered-spatial-feature-restraint.mjs',
   'design-history/README.md', 'design-history/integrity.mjs', 'design-history/ledger.mjs',
   'design-history/movie.mjs', 'design-history/replay.mjs', 'design-history/interface-story.mjs',
+  'design-history/designer-replay-review.mjs',
+  'design-history/campaign-source.mjs',
+  'scripts/verify-sos1-frozen-browser-publication.mjs',
+  'scripts/verify-sos1-deployment.mjs',
   'design-history/live-campaign.mjs', 'design-history/live-campaign-store.mjs',
   'design-history/structures/design-route.mjs',
-  'design-history/examples/sos1-growth-clash-v7-captions.json',
-  'design-history/examples/sos1-growth-clash-v7.provenance.json',
-  'design-history/examples/sos1-growth-clash-v7.full.action-script.json',
-  'design-history/examples/sos1-growth-clash-v7.selected-route.action-script.json',
+  'design-history/structures/registered-ligand-graph.mjs',
+  'design-history/structures/ligands/bq5-rcsb-ccd.json',
   'design-history/stories/generated/index.json',
   'design-history/stories/generated/bclxl-fragment-linking.campaign.json',
   'design-history/stories/generated/bclxl-fragment-linking.movie.json',
@@ -46,11 +61,11 @@ const files = [
   'design-history/viewer/styles.css', 'design-history/viewer/viewer.mjs',
   'design-history/structure-viewer/index.html', 'design-history/structure-viewer/timeline.mjs',
   'design-history/structure-viewer/viewer.mjs',
+  'design-history/structure-viewer/checkpoint-review.mjs',
   'design-history/structure-viewer/moonshot-dndi-6510.json',
   'design-history/structure-viewer/bclxl-fragment-linking.json',
   'design-history/structure-viewer/cdk2-hit-only-prospective.json',
   'design-history/structure-viewer/cdk2-designer-hit-to-lead.json',
-  'design-history/structure-viewer/sos1-hit-only-success.json',
   'design-history/structure-review/index.html',
   'design-history/structures/generated/manifest.json',
   'design-history/structures/generated/bclxl-trajectory-manifest.json',
@@ -111,6 +126,7 @@ const files = [
   'rdkit/RDKIT-LICENSE.txt', 'rdkit/README.md', 'rdkit/dimorphite-sites.js',
   'rdkit/dist/RDKit_minimal.js', 'rdkit/dist/RDKit_minimal.wasm',
   'docking/browser-adapter.mjs', 'docking/constraints.mjs', 'docking/contact-remap.mjs',
+  'docking/manual-hbond.mjs',
   'docking/feature-seeding.mjs', 'docking/restraint-biased-search.mjs',
   'docking/labbook.mjs', 'docking/protocol.mjs', 'docking/receptor-score.mjs',
   'docking/pose-propagation-scoring.mjs', 'docking/pose-search-ensemble.mjs',
@@ -123,11 +139,19 @@ const files = [
   'vendor/onnxruntime-web/ort.webgpu.bundle.min.mjs',
 ];
 
-const generatedStructures = await readdir(join(root, 'design-history/structures/generated'));
-files.push(...generatedStructures
-  .filter((name) => ((name.startsWith('sos1-v7-') || name.startsWith('sos1-full-'))
-    && name.endsWith('.pdb')) || name === 'sos1-prospective-movie-assets.json')
-  .map((name) => `design-history/structures/generated/${name}`));
+files.push(...await sos1ReleaseWebFiles(root));
+const closedFiles = await browserModuleClosure(root, files);
+files.splice(0, files.length, ...closedFiles);
+
+// Fail during the build, rather than in the browser, when a top-level app
+// module is omitted from the explicit Cloudflare bundle.
+const deployedFiles = new Set(files);
+const appSource = await readFile(join(root, 'app.js'), 'utf8');
+for (const match of appSource.matchAll(/\bfrom\s*['"](\.[^'"]+)['"]/g)) {
+  const importedPath = match[1].replace(/^\.\//, '');
+  if (!deployedFiles.has(importedPath))
+    throw new Error(`app.js imports ${importedPath}, but the web bundle omits it`);
+}
 
 const headers = `/*
   Cache-Control: no-cache
@@ -157,6 +181,15 @@ await writeFile(join(output, 'runtime-config.js'),
   })});\n`);
 await writeFile(join(output, '_headers'), headers);
 await writeFile(join(output, '_redirects'), [
+  // Pages serves sos1.html at /sos1 and canonicalizes /sos1.html back to it.
+  // An explicit /sos1 -> /sos1.html redirect would therefore loop.
+  '/sos1/ /sos1 302',
+  '/sos1-hit-to-bay293/movies /sos1 302',
+  '/sos1-hit-to-bay293/movie /design-history/publications/sos1/designer-intent-2026-09-04/executable.mp4 302',
+  '/sos1-hit-to-bay293/replay /?story=sos1-hit-to-bay293-review 302',
+  '/sos1-hit-to-bay293/replay/ /?story=sos1-hit-to-bay293-review 302',
+  '/sos1-hit-to-bay293/review /?story=sos1-hit-to-bay293-review 302',
+  '/sos1-hit-to-bay293/review/ /?story=sos1-hit-to-bay293-review 302',
   '/sos1-hit-to-bay293 /?story=sos1-hit-to-bay293 302',
   '/sos1-hit-to-bay293/ /?story=sos1-hit-to-bay293 302',
   '',

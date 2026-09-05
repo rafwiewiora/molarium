@@ -26,6 +26,10 @@ PROTEIN_OUTPUT = GENERATED / "sos1-5ove-protein.pdb"
 LIGAND_OUTPUT = GENERATED / "sos1-5ove-ligand.pdb"
 CAMPAIGN_OUTPUT = GENERATED / "sos1-prospective-campaign.json"
 REGISTERED_DESIGN_ROUTE_SCHEMA = "molarium.registered-design-route/v1"
+REGISTERED_SOFT_SPATIAL_FEATURE_RESTRAINT_SCHEMA = (
+    "molarium.registered-soft-spatial-feature-restraint/v1")
+REGISTERED_SPATIAL_FEATURE_PARAMETER_DECISION_SCHEMA = (
+    "molarium.registered-spatial-feature-parameter-decision/v1")
 EXPECTED_RDKIT_VERSION = "2026.03.4"
 DEFAULT_HIT_PDB = (ROOT / "outputs" / "design-history" / "sos1-preapproval"
                    / "source" / "5OVE.pdb")
@@ -42,6 +46,46 @@ GRAPHS = {
 GRAPH_SOURCES = {
     key: f"https://www.rcsb.org/ligand/{key}" for key in GRAPHS
 }
+
+# Human/agent design intent is declared separately from the graph algorithm that
+# proposes conserved fragments.  The declaration is part of the registered
+# route bytes (and therefore its pre-holdout SHA-256); the proposal cannot make
+# itself required merely by labelling its own output.
+RETAINED_FEATURE_INTENTS = {
+    "finish-bay-293": [{
+        "id": "retain-terminal-feature-through-bay293",
+        "featureId": "secondary-exact-fragment-1",
+        "kind": "conserved-fragment-rmsd",
+        "actorClass": "human",
+        "source": "registered-designer-intent",
+        "treatment": "soft-restraint",
+        "required": True,
+        "restraint": {
+            "schema": REGISTERED_SOFT_SPATIAL_FEATURE_RESTRAINT_SCHEMA,
+            "metric": "graph-symmetry-minimized Cartesian RMSD",
+            "toleranceAngstrom": 2.25,
+            "weightKcalMolPerAngstrom2": 20,
+            "required": True,
+            "parameterDecision": {
+                "schema": REGISTERED_SPATIAL_FEATURE_PARAMETER_DECISION_SCHEMA,
+                "actorClass": "human",
+                "basis": "pre-holdout-diagnostic",
+                "sourceAttemptId": (
+                    "sos1-final-retention-9a73dd8-20260904t0535z-"
+                    "use1b-a010-r01"),
+                "observedBestRmsdAngstrom": 2.161703263647055,
+                "selectedToleranceAngstrom": 2.25,
+                "holdoutCoordinatesUsed": False,
+            },
+        },
+        "rationale": ("retain the separately conserved terminal ring feature "
+                      "while allowing the intervening graph rewrite"),
+    }],
+}
+
+
+def registered_intents(step_id: str) -> list[dict]:
+    return [dict(record) for record in RETAINED_FEATURE_INTENTS.get(step_id, [])]
 
 
 def sha256(path: Path) -> str:
@@ -77,6 +121,412 @@ def exact_mcs(reference: Chem.Mol, product: Chem.Mol) -> tuple:
     if not reference_matches or not product_matches:
         raise RuntimeError("SOS1 graph MCS has no complete match")
     return result, reference_matches, product_matches
+
+
+def induced_subgraph(molecule: Chem.Mol,
+                     retained_indices: list[int]) -> tuple[Chem.Mol, list[int]]:
+    """Return an index-preserving graph induced by ``retained_indices``.
+
+    The graph is intentionally not sanitized: deleting a protected component
+    can leave an aromatic boundary atom in another component.  FMCS only needs
+    the recorded atom and bond properties, and accepting a sanitizer repair
+    here would silently change the registered molecular graph.
+    """
+    retained = sorted(set(retained_indices))
+    old_to_new: dict[int, int] = {}
+    editable = Chem.RWMol()
+    for old_index in retained:
+        old_to_new[old_index] = editable.AddAtom(
+            Chem.Atom(molecule.GetAtomWithIdx(old_index)))
+    for bond in molecule.GetBonds():
+        first, second = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
+        if first in old_to_new and second in old_to_new:
+            editable.AddBond(old_to_new[first], old_to_new[second], bond.GetBondType())
+            copied = editable.GetBondBetweenAtoms(old_to_new[first], old_to_new[second])
+            copied.SetIsAromatic(bond.GetIsAromatic())
+    result = editable.GetMol()
+    Chem.FastFindRings(result)
+    return result, retained
+
+
+def biconnected_atom_blocks(molecule: Chem.Mol) -> list[tuple[int, ...]]:
+    """Return deterministic vertex-biconnected atom blocks.
+
+    This is a graph-only Tarjan traversal.  A cyclic block represents a ring
+    system even when RDKit's smallest-ring basis chooses a different set of
+    individual rings for a fused system.
+    """
+    adjacency = {
+        atom.GetIdx(): sorted(neighbor.GetIdx() for neighbor in atom.GetNeighbors())
+        for atom in molecule.GetAtoms()
+    }
+    discovery: dict[int, int] = {}
+    low: dict[int, int] = {}
+    parent: dict[int, int | None] = {}
+    edge_stack: list[tuple[int, int]] = []
+    blocks: list[tuple[int, ...]] = []
+    clock = 0
+
+    def finish_block(stop: tuple[int, int]) -> None:
+        atoms: set[int] = set()
+        while edge_stack:
+            edge = edge_stack.pop()
+            atoms.update(edge)
+            if edge == stop:
+                break
+        if atoms:
+            blocks.append(tuple(sorted(atoms)))
+
+    def visit(atom_index: int) -> None:
+        nonlocal clock
+        clock += 1
+        discovery[atom_index] = low[atom_index] = clock
+        for neighbor_index in adjacency[atom_index]:
+            if neighbor_index not in discovery:
+                parent[neighbor_index] = atom_index
+                edge_stack.append((atom_index, neighbor_index))
+                visit(neighbor_index)
+                low[atom_index] = min(low[atom_index], low[neighbor_index])
+                if low[neighbor_index] >= discovery[atom_index]:
+                    finish_block((atom_index, neighbor_index))
+            elif (parent.get(atom_index) != neighbor_index
+                  and discovery[neighbor_index] < discovery[atom_index]):
+                low[atom_index] = min(low[atom_index], discovery[neighbor_index])
+                edge_stack.append((neighbor_index, atom_index))
+
+    for atom_index in sorted(adjacency):
+        if atom_index in discovery:
+            continue
+        parent[atom_index] = None
+        visit(atom_index)
+        if edge_stack:
+            finish_block(edge_stack[0])
+    return sorted(set(blocks), key=lambda block: (block[0], len(block), block))
+
+
+def block_bond_count(molecule: Chem.Mol, block: set[int]) -> int:
+    return sum(1 for bond in molecule.GetBonds()
+               if bond.GetBeginAtomIdx() in block
+               and bond.GetEndAtomIdx() in block)
+
+
+def migrated_mapped_ring_blocks(reference: Chem.Mol, reference_names: list[str],
+                                product: Chem.Mol,
+                                reference_match: tuple[int, ...],
+                                product_match: tuple[int, ...]) -> list[dict]:
+    """Identify mapped cyclic blocks whose edited-region attachment migrates.
+
+    A mapped ring cannot be a rigid coordinate anchor when an edited region
+    leaves one ring atom and enters another.  The graph identity remains
+    registered, but all ring atoms except conserved junctions to the remaining
+    mapped scaffold are released from the hard coordinate anchor.
+    """
+    reference_to_product = dict(zip(reference_match, product_match))
+    product_to_reference = dict(zip(product_match, reference_match))
+    mapped_reference = set(reference_to_product)
+    mapped_product = set(product_to_reference)
+
+    def external_sites(molecule: Chem.Mol, mapped: set[int]) -> set[int]:
+        return {atom_index for atom_index in mapped
+                if any(neighbor.GetIdx() not in mapped
+                       for neighbor in molecule.GetAtomWithIdx(atom_index).GetNeighbors())}
+
+    reference_external = external_sites(reference, mapped_reference)
+    product_external_as_reference = {
+        product_to_reference[index]
+        for index in external_sites(product, mapped_product)
+    }
+    product_blocks = [set(block) for block in biconnected_atom_blocks(product)]
+    results = []
+    for reference_block_tuple in biconnected_atom_blocks(reference):
+        reference_block = set(reference_block_tuple)
+        if (len(reference_block) < 3
+                or block_bond_count(reference, reference_block) < len(reference_block)
+                or not reference_block.issubset(mapped_reference)):
+            continue
+        product_block = {reference_to_product[index] for index in reference_block}
+        if not any(product_block.issubset(candidate)
+                   and block_bond_count(product, candidate) >= len(candidate)
+                   for candidate in product_blocks):
+            continue
+        old_sites = reference_block & reference_external
+        new_sites = reference_block & product_external_as_reference
+        migrated_from = old_sites - new_sites
+        migrated_to = new_sites - old_sites
+        if not migrated_from or not migrated_to:
+            continue
+
+        retained_junctions = set()
+        for reference_index in reference_block:
+            product_index = reference_to_product[reference_index]
+            for neighbor in reference.GetAtomWithIdx(reference_index).GetNeighbors():
+                neighbor_index = neighbor.GetIdx()
+                if neighbor_index in reference_block or neighbor_index not in mapped_reference:
+                    continue
+                product_neighbor = reference_to_product[neighbor_index]
+                reference_bond = reference.GetBondBetweenAtoms(
+                    reference_index, neighbor_index)
+                product_bond = product.GetBondBetweenAtoms(product_index, product_neighbor)
+                if (product_bond is not None
+                        and reference_bond is not None
+                        and product_bond.GetBondType() == reference_bond.GetBondType()):
+                    retained_junctions.add(reference_index)
+                    break
+        released = reference_block - retained_junctions
+        if not released:
+            continue
+        results.append({
+            "id": f"mapped-ring-attachment-migration-{len(results) + 1}",
+            "reason": "attachment-migration-within-mapped-biconnected-ring",
+            "referenceBlockAtomNames": [reference_names[index]
+                                        for index in sorted(reference_block)],
+            "productBlockAtomIndices": [reference_to_product[index]
+                                        for index in sorted(reference_block)],
+            "referenceAttachmentAtomNames": [reference_names[index]
+                                             for index in sorted(old_sites)],
+            "productAttachmentReferenceAtomNames": [reference_names[index]
+                                                    for index in sorted(new_sites)],
+            "retainedJunctionReferenceAtomNames": [reference_names[index]
+                                                   for index in sorted(retained_junctions)],
+            "releasedReferenceAtomNames": [reference_names[index]
+                                           for index in sorted(released)],
+            "releasedProductAtomIndices": [reference_to_product[index]
+                                           for index in sorted(released)],
+        })
+    return results
+
+
+def component_without_bond(molecule: Chem.Mol, start: int,
+                           first: int, second: int) -> set[int]:
+    """Return one graph component after removing an explicitly named bond."""
+    visited = {start}
+    pending = [start]
+    while pending:
+        atom_index = pending.pop()
+        for neighbor in molecule.GetAtomWithIdx(atom_index).GetNeighbors():
+            neighbor_index = neighbor.GetIdx()
+            if ({atom_index, neighbor_index} == {first, second}
+                    or neighbor_index in visited):
+                continue
+            visited.add(neighbor_index)
+            pending.append(neighbor_index)
+    return visited
+
+
+def amide_like_bond(molecule: Chem.Mol, first: int, second: int) -> bool:
+    def carbonyl_attached_to(carbon_index: int, hetero_index: int) -> bool:
+        carbon = molecule.GetAtomWithIdx(carbon_index)
+        hetero = molecule.GetAtomWithIdx(hetero_index)
+        if (carbon.GetSymbol() != "C"
+                or hetero.GetSymbol() not in {"N", "O", "S"}):
+            return False
+        return any(
+            neighbor.GetIdx() != hetero_index
+            and neighbor.GetSymbol() in {"O", "S"}
+            and molecule.GetBondBetweenAtoms(
+                carbon_index, neighbor.GetIdx()).GetBondTypeAsDouble() >= 1.9
+            for neighbor in carbon.GetNeighbors())
+    return (carbonyl_attached_to(first, second)
+            or carbonyl_attached_to(second, first))
+
+
+def edit_associated_mapped_rotor_releases(
+        reference: Chem.Mol, reference_names: list[str], product: Chem.Mol,
+        reference_match: tuple[int, ...], product_match: tuple[int, ...]) -> list[dict]:
+    """Release the distal side of edit-associated, ring-bearing C--C rotors.
+
+    Exact graph identity does not imply that a torsion inherited from the
+    predecessor is experimentally known.  For an acyclic mapped C--C single
+    bond at a ring junction, a graph rewrite on the smaller mapped side makes
+    that side a pose-search variable.  The larger mapped component is retained
+    as the coordinate-trusted upstream anchor.  This is graph/provenance-only:
+    neither product nor holdout coordinates participate.
+
+    Both bond endpoints are included in the declared distal region.  Keeping
+    the proximal endpoint hard and releasing the distal endpoint permits the
+    later constrained refinement to adjust the ring junction rather than only
+    spin an otherwise immobilized axis.
+    """
+    reference_to_product = dict(zip(reference_match, product_match))
+    product_to_reference = dict(zip(product_match, reference_match))
+    mapped_reference = set(reference_to_product)
+    mapped_product = set(product_to_reference)
+    reference_external = {
+        index for index in mapped_reference
+        if any(neighbor.GetIdx() not in mapped_reference
+               for neighbor in reference.GetAtomWithIdx(index).GetNeighbors())
+    }
+    product_external_as_reference = {
+        product_to_reference[index] for index in mapped_product
+        if any(neighbor.GetIdx() not in mapped_product
+               for neighbor in product.GetAtomWithIdx(index).GetNeighbors())
+    }
+    edited_boundary = reference_external | product_external_as_reference
+    releases = []
+    for bond in reference.GetBonds():
+        first, second = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
+        if first not in mapped_reference or second not in mapped_reference:
+            continue
+        product_first = reference_to_product[first]
+        product_second = reference_to_product[second]
+        product_bond = product.GetBondBetweenAtoms(product_first, product_second)
+        if (product_bond is None
+                or bond.GetBondTypeAsDouble() != 1.0
+                or product_bond.GetBondTypeAsDouble() != 1.0
+                or bond.GetIsAromatic() or product_bond.GetIsAromatic()
+                or amide_like_bond(reference, first, second)
+                or amide_like_bond(product, product_first, product_second)):
+            continue
+        first_atom, second_atom = (reference.GetAtomWithIdx(first),
+                                   reference.GetAtomWithIdx(second))
+        # Ring-bearing carbon junctions are the medicinal-chemistry torsions
+        # whose orientation becomes ambiguous after a distal graph rewrite.
+        # This excludes a conserved anilide/amine linker merely because an edit
+        # occurred farther down the molecule.
+        if (first_atom.GetSymbol() != "C" or second_atom.GetSymbol() != "C"
+                or not (first_atom.IsInRing() or second_atom.IsInRing())):
+            continue
+        first_side = component_without_bond(reference, first, first, second)
+        if second in first_side:
+            continue  # the bond itself lies in a ring
+        second_side = component_without_bond(reference, second, first, second)
+        first_common = first_side & mapped_reference
+        second_common = second_side & mapped_reference
+        if not (first_common & edited_boundary or second_common & edited_boundary):
+            continue
+        # Preserve the larger exact mapped component.  A deterministic index
+        # tie-break is recorded but is not coordinate-derived.
+        first_key = (len(first_common), -min(first_common))
+        second_key = (len(second_common), -min(second_common))
+        if first_key >= second_key:
+            anchor_side, distal_side = first_common, second_common
+            proximal, distal = first, second
+        else:
+            anchor_side, distal_side = second_common, first_common
+            proximal, distal = second, first
+        if not distal_side & edited_boundary:
+            continue
+        releases.append({
+            "id": f"edit-associated-mapped-rotor-release-{len(releases) + 1}",
+            "reason": "edit-associated-ring-bearing-mapped-rotor-distal-release",
+            "referenceBondAtomNames": [reference_names[first], reference_names[second]],
+            "productBondAtomIndices": [product_first, product_second],
+            "proximalReferenceAtomName": reference_names[proximal],
+            "distalReferenceAtomName": reference_names[distal],
+            "anchorReferenceAtomNames": [reference_names[index]
+                                          for index in sorted(anchor_side)],
+            "releasedReferenceAtomNames": [reference_names[index]
+                                            for index in sorted(distal_side)],
+            "releasedProductAtomIndices": [reference_to_product[index]
+                                            for index in sorted(distal_side)],
+            "selection": ("larger exact mapped component retained; smaller "
+                          "edit-associated component released"),
+            "coordinateInputs": [],
+        })
+    return releases
+
+
+def secondary_exact_feature(reference: Chem.Mol, reference_names: list[str],
+                            product: Chem.Mol,
+                            primary_reference_match: tuple[int, ...],
+                            primary_product_match: tuple[int, ...]) -> dict | None:
+    """Find a second conserved graph region without making it a hard core.
+
+    RDKit FMCS is connected.  Analogue rewrites can nevertheless retain two
+    spatially meaningful pieces separated by changed connectivity.  We remove
+    the primary hard MCS and run the same exact, complete-ring search on the
+    remaining graph.  Every graph-symmetric atom map is retained for later
+    coordinate-free pose ranking; the deterministic first map is used only to
+    construct an initial seed.
+    """
+    reference_available = [index for index in range(reference.GetNumAtoms())
+                           if index not in set(primary_reference_match)]
+    product_available = [index for index in range(product.GetNumAtoms())
+                         if index not in set(primary_product_match)]
+    if len(reference_available) < 3 or len(product_available) < 3:
+        return None
+    reference_remainder, reference_origin = induced_subgraph(
+        reference, reference_available)
+    product_remainder, product_origin = induced_subgraph(product, product_available)
+    result, reference_matches, product_matches = exact_mcs(
+        reference_remainder, product_remainder)
+    if result.numAtoms < 5:
+        return None
+    candidates = []
+    seen = set()
+    for reference_match in reference_matches:
+        for product_match in product_matches:
+            original_reference = tuple(reference_origin[index]
+                                       for index in reference_match)
+            original_product = tuple(product_origin[index]
+                                     for index in product_match)
+            reference_set, product_set = set(original_reference), set(original_product)
+            if not any(set(ring).issubset(reference_set)
+                       for ring in reference.GetRingInfo().AtomRings()):
+                continue
+            if not any(set(ring).issubset(product_set)
+                       for ring in product.GetRingInfo().AtomRings()):
+                continue
+            key = (original_reference, original_product)
+            if key in seen:
+                continue
+            seen.add(key)
+            candidates.append((original_reference, original_product))
+    candidates.sort(key=lambda pair: match_quality(
+        reference, product, pair[0], pair[1]))
+    if not candidates:
+        return None
+    selected_reference, selected_product = candidates[0]
+    variants = [{
+        "referenceAtomNames": [reference_names[index] for index in reference_match],
+        "productAtomIndices": list(product_match),
+    } for reference_match, product_match in candidates]
+    return {
+        "id": "secondary-exact-fragment-1",
+        "kind": "conserved-fragment-rmsd",
+        "transferMode": "seed-only",
+        "treatment": "seed-only",
+        "required": False,
+        "source": "automatic-graph-proposal",
+        "mcs": {"smarts": result.smartsString, "atoms": result.numAtoms,
+                "bonds": result.numBonds},
+        "referenceAtomNames": [reference_names[index]
+                               for index in selected_reference],
+        "productAtomIndices": list(selected_product),
+        "mappingVariants": variants,
+        "ambiguity": {
+            "referenceMatches": len(reference_matches),
+            "productMatches": len(product_matches),
+            "candidateMaps": len(candidates),
+            "selection": ("enumerate graph symmetry; retain the registered terminal "
+                          "feature during pose search"),
+        },
+}
+
+
+def apply_registered_feature_intent(feature: dict | None,
+                                    intents: list[dict], step_id: str) -> dict | None:
+    if feature is None:
+        if intents:
+            raise RuntimeError(f"{step_id}: registered retained feature was not detected")
+        return None
+    matching = [intent for intent in intents if intent["featureId"] == feature["id"]]
+    if not matching:
+        return feature
+    if len(matching) != 1:
+        raise RuntimeError(f"{step_id}: retained feature intent is ambiguous")
+    intent = matching[0]
+    if intent["kind"] != feature["kind"]:
+        raise RuntimeError(f"{step_id}: retained feature kind does not match graph proposal")
+    return {
+        **feature,
+        "transferMode": "score-only",
+        "treatment": intent["treatment"],
+        "required": intent["required"],
+        "source": intent["source"],
+        "registeredIntentId": intent["id"],
+        "restraint": dict(intent["restraint"]),
+    }
 
 
 def assigned_product_names(product: Chem.Mol, common: list[dict]) -> list[str]:
@@ -201,14 +651,15 @@ def build_pose_map(reference: Chem.Mol, reference_names: list[str],
 
 
 def pose_map(reference: Chem.Mol, reference_names: list[str],
-             product: Chem.Mol, step_id: str) -> tuple[dict, list[str]]:
+             product: Chem.Mol, step_id: str,
+             intents: list[dict]) -> tuple[dict, list[str]]:
     result, reference_matches, product_matches = exact_mcs(reference, product)
     candidates = [(reference_match, product_match)
                   for reference_match in reference_matches
                   for product_match in product_matches]
     reference_match, product_match = min(
         candidates, key=lambda pair: match_quality(reference, product, *pair))
-    return build_pose_map(
+    mapping, product_names = build_pose_map(
         reference, reference_names, product, step_id,
         reference_match, product_match,
         source=("reported molecular graphs plus deterministic local-context map; "
@@ -225,6 +676,91 @@ def pose_map(reference: Chem.Mol, reference_names: list[str],
                           "deterministic tie break"),
         },
     )
+    secondary = apply_registered_feature_intent(secondary_exact_feature(
+        reference, reference_names, product, reference_match, product_match),
+        intents, step_id)
+    if secondary:
+        mapping["spatialFeatureCorrespondences"] = [secondary]
+        mapping["seedMatchedHeavyAtoms"] = secondary["mcs"]["atoms"]
+        mapping["totalReferencedHeavyAtoms"] = (
+            mapping["commonHeavyAtoms"] + mapping["seedMatchedHeavyAtoms"])
+    else:
+        mapping["spatialFeatureCorrespondences"] = []
+        mapping["seedMatchedHeavyAtoms"] = 0
+        mapping["totalReferencedHeavyAtoms"] = mapping["commonHeavyAtoms"]
+
+    migrations = migrated_mapped_ring_blocks(
+        reference, reference_names, product, reference_match, product_match)
+    mapping["mappedRingAttachmentMigrations"] = migrations
+    rotor_releases = edit_associated_mapped_rotor_releases(
+        reference, reference_names, product, reference_match, product_match)
+    mapping["mappedRotorReleases"] = rotor_releases
+    ring_released_names = {
+        name for migration in migrations
+        for name in migration["releasedReferenceAtomNames"]
+    }
+    rotor_released_names = {
+        name for release in rotor_releases
+        for name in release["releasedReferenceAtomNames"]
+    }
+    released_names = ring_released_names | rotor_released_names
+    released_product_indices = {
+        atom_index for migration in migrations
+        for atom_index in migration["releasedProductAtomIndices"]
+    } | {
+        atom_index for release in rotor_releases
+        for atom_index in release["releasedProductAtomIndices"]
+    }
+    mapping["releasedMappedAtoms"] = [
+        {**entry,
+         "reason": ("attachment-migration-within-mapped-biconnected-ring"
+                    if entry["referenceAtomName"] in ring_released_names
+                    else "edit-associated-ring-bearing-mapped-rotor-distal-release")}
+        for entry in mapping["commonAtoms"]
+        if entry["referenceAtomName"] in released_names
+    ]
+    hard_common = [entry for entry in mapping["commonAtoms"]
+                   if entry["referenceAtomName"] not in released_names]
+    mapping["hardCoordinateHeavyAtoms"] = len(hard_common)
+    mapping["releasedMappedHeavyAtoms"] = len(released_names)
+    if released_names:
+        hard_reference_indices = {entry["referenceAtomIndex"] for entry in hard_common}
+        hard_bonds = block_bond_count(reference, hard_reference_indices)
+        if len(hard_common) < 3:
+            raise RuntimeError(
+                f"{step_id}: attachment migration leaves fewer than three hard atoms")
+        if released_product_indices != {
+                entry["productAtomIndex"] for entry in mapping["releasedMappedAtoms"]}:
+            raise RuntimeError(f"{step_id}: mapped ring release is internally inconsistent")
+        mapping["protectedReferenceAnchor"] = {
+            "method": "exact-common-subgraph-after-topology-release/v2",
+            "label": ("exact mapped upstream atoms outside topology-released "
+                      "rings and edit-associated rotor distal sides"),
+            "referenceAtomNames": [entry["referenceAtomName"] for entry in hard_common],
+            "atoms": len(hard_common),
+            "bonds": hard_bonds,
+            "releasedRegions": [
+                "mapped biconnected ring atoms affected by attachment migration",
+                "distal sides of edit-associated ring-bearing mapped carbon rotors",
+                "unmapped deleted and added graph regions",
+            ],
+        }
+        explanations = []
+        if migrations:
+            explanations.append(
+                "an edited region changes its attachment atom within a mapped "
+                "biconnected ring")
+        if rotor_releases:
+            explanations.append(
+                "a distal graph rewrite makes mapped ring-bearing carbon rotors "
+                "pose-search variables")
+        mapping["transitionExplanation"] = (
+            "; ".join(explanations).capitalize()
+            + ". The exact mapped upstream scaffold remains hard; topology-released "
+              "atoms may move without consulting product or holdout coordinates, and "
+              "any separately conserved terminal feature is retained as registered "
+              "designer intent.")
+    return mapping, product_names
 
 
 def hit_graph_atom_names(hit_pdb: Path, reference: Chem.Mol) -> list[str]:
@@ -355,25 +891,10 @@ def main() -> None:
     reference_names = hit_names
     for index, (reference_id, product_id) in enumerate(zip(sequence, sequence[1:])):
         step_id, compound, label = step_specs[index]
+        intents = registered_intents(step_id)
         mapping, product_names = pose_map(
-            molecules[reference_id], reference_names, molecules[product_id], step_id)
-        if step_id == "finish-bay-293":
-            mapping["protectedReferenceAnchor"] = {
-                "method": "maximum-common-substructure/v1",
-                "label": "AWW proximal quinazoline-thiophene core",
-                "referenceAtomNames": [entry["referenceAtomName"]
-                                       for entry in mapping["commonAtoms"]],
-                "atoms": mapping["commonHeavyAtoms"],
-                "bonds": mapping["mcs"]["bonds"],
-                "releasedRegions": [
-                    "regioisomeric distal phenyl/benzylic arm",
-                    "hydroxymethyl-to-methylaminomethyl substituent",
-                ],
-            }
-            mapping["transitionExplanation"] = (
-                "AWW and AXH attach the distal phenyl arm at different thiophene "
-                "positions; that arm cannot remain spatially fixed while the "
-                "proximal core is retained.")
+            molecules[reference_id], reference_names, molecules[product_id], step_id,
+            intents)
         steps.append({
             "id": step_id, "sequenceIndex": index + 1,
             "referenceStateId": reference_id, "stateId": product_id,
@@ -382,6 +903,7 @@ def main() -> None:
             "inputKind": "molecular-graph-only",
             "productSmiles": canonical[product_id],
             "productAtomNames": product_names,
+            "retainedFeatureIntents": intents,
             "posePropagationMap": mapping,
         })
         reference_names = product_names
@@ -392,6 +914,14 @@ def main() -> None:
         "schema": REGISTERED_DESIGN_ROUTE_SCHEMA,
         "id": "sos1-hit-only",
         "title": "SOS1 five-state hit-only conformational replay",
+        "posePropagationPolicy": {
+            "schema": "molarium.registered-pose-propagation-policy/v1",
+            "atomCorrespondence": "exact-element",
+            "bondCorrespondence": "exact-order",
+            "ringCorrespondence": "complete-rings-only",
+            "changedRingTreatment": "release-from-hard-core",
+            "featureTransfer": "role-compatible-restraints",
+        },
         "protocolBoundary": {
             "coordinateInputs": ["PDB 5OVE SOS1 protein", "PDB 5OVE ligand AXE"],
             "allowedLaterInputs": ["reported compound molecular graphs"],

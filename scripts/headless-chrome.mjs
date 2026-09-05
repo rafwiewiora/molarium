@@ -21,6 +21,13 @@ export class DevToolsClient {
     this.socket = new WebSocket(url);
     this.nextId = 1;
     this.pending = new Map();
+    this.socket.addEventListener('close', () => {
+      for (const pending of this.pending.values()) {
+        clearTimeout(pending.timer);
+        pending.reject(new Error('Chrome debugging connection closed'));
+      }
+      this.pending.clear();
+    });
   }
 
   async open() {
@@ -34,15 +41,20 @@ export class DevToolsClient {
       const pending = this.pending.get(message.id);
       if (!pending) return;
       this.pending.delete(message.id);
+      clearTimeout(pending.timer);
       if (message.error) pending.reject(new Error(message.error.message));
       else pending.resolve(message.result);
     });
   }
 
-  call(method, params = {}) {
+  call(method, params = {}, timeoutMs = 300000) {
     const id = this.nextId++;
     return new Promise((resolve, reject) => {
-      this.pending.set(id, { resolve, reject });
+      const timer = setTimeout(() => {
+        this.pending.delete(id);
+        reject(new Error(`Chrome command ${method} timed out after ${timeoutMs} ms`));
+      }, timeoutMs);
+      this.pending.set(id, { resolve, reject, timer });
       this.socket.send(JSON.stringify({ id, method, params }));
     });
   }
@@ -85,7 +97,8 @@ export async function startMolariumBrowser({ root, appPath, url = null, width = 
     ], { stdout:'ignore', stderr:'ignore' });
     const page = await waitFor(async () => {
       const pages = await (await fetch(`http://127.0.0.1:${debugPort}/json`)).json();
-      return pages.find((entry) => entry.type === 'page' && entry.url.startsWith(appUrl));
+      return pages.find((entry) => entry.type === 'page'
+        && entry.url.startsWith(`${new URL(appUrl).origin}/`));
     }, 15000, 'Chrome page');
     client = new DevToolsClient(page.webSocketDebuggerUrl);
     await client.open();

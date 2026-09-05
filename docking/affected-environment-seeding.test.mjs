@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { featureGuidedPoseSeeds } from './feature-seeding.mjs';
+import { featureGuidedPoseSeeds, placeSeedOnlyFragments } from './feature-seeding.mjs';
 
 const benzamide = {
   atoms:[
@@ -72,7 +72,7 @@ assert.deepEqual(Array.from(difluoroSeeds.seeds[1].positions.slice(0, 12)),
 assert(Math.abs(difluoroSeeds.seeds[1].positions[14]) > 0.4,
   'the pre-existing aromatic ring must actually rotate out of plane');
 assert.throws(() => featureGuidedPoseSeeds({ ...difluoroSeedInput,
-  featureSeedingProtocol:'v2' }), /must be v3 or v4/);
+  featureSeedingProtocol:'v2' }), /must be v3, v4, or v5/);
 
 const rigidRing = {
   atoms:[
@@ -110,5 +110,38 @@ const amideSeeds = featureGuidedPoseSeeds({ molecule:amideEdit,
   count:16, hydrogenBondConstraints:[] });
 assert.equal(amideSeeds.affectedRotors.length, 0,
   'a nearby edit must not turn the conjugated amide C-N bond into a rotor');
+
+const seedOnlyMolecule = {
+  atoms:Array.from({ length:6 }, () => ({ element:'C' })),
+  bonds:[
+    { a:0,b:1,order:1 }, { a:1,b:2,order:1 }, { a:2,b:3,order:1 },
+    { a:3,b:4,order:1.5,aromatic:true }, { a:4,b:5,order:1.5,aromatic:true },
+    { a:5,b:3,order:1.5,aromatic:true },
+  ],
+};
+const seedOnlyInitial = Float64Array.from([
+  0,0,0, 1,0,0, 2,0,0, 3,0,0, 3,1,0, 2.2,.5,0,
+]);
+const seedOnlyReference = Float64Array.from([
+  0,0,0, 1,0,0, 2,0,0, 3,0,0, 3,0,1, 2.2,0,.5,
+]);
+const seededFragment = placeSeedOnlyFragments({ molecule:seedOnlyMolecule,
+  initialPositions:seedOnlyInitial, referencePositions:seedOnlyReference,
+  hardCoreAtomPairs:[[0,0],[1,1]], sweeps:2,
+  features:[{ id:'prediction-only-ring', treatment:'seed-only',
+    mappingVariants:[{ atomPairs:[[3,3],[4,4],[5,5]] }] }],
+});
+assert.deepEqual(Array.from(seededFragment.positions.slice(0, 6)),
+  Array.from(seedOnlyInitial.slice(0, 6)),
+  'a seed-only feature must not change the hard-core transform');
+assert(seededFragment.features[0].seededRmsdAngstrom
+  < seededFragment.features[0].initialRmsdAngstrom,
+  'torsion seeding should move a predecessor fragment closer without restraining it');
+for (const bond of seedOnlyMolecule.bonds) {
+  const distance = (positions) => Math.hypot(...[0,1,2].map((axis) =>
+    positions[bond.a * 3 + axis] - positions[bond.b * 3 + axis]));
+  assert(Math.abs(distance(seededFragment.positions) - distance(seedOnlyInitial)) < 1e-10,
+    'seed-only placement must preserve every bond length');
+}
 
 console.log('Affected-environment seeding activates 2,6 torsion and preserves rigid edits');

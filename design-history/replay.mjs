@@ -1,4 +1,5 @@
 import { CHEMIST_ACTION_DEFINITIONS, CHEMIST_ACTIONS_SCHEMA } from '../chemist-actions.mjs';
+import { MOLECULAR_STATE_HASH_SCHEMA } from '../molecular-state-hash.mjs';
 import { canonicalJson, cloneRecord, sha256Object } from './integrity.mjs';
 
 export const ACTION_SCRIPT_SCHEMA = 'molarium.chemist-action-script/v1';
@@ -6,6 +7,7 @@ export const REPLAY_SCHEMA = 'molarium.chemist-action-replay/v1';
 
 export const READ_ONLY_CHEMIST_ACTIONS = Object.freeze([
   'session.inspect', 'designRoute.inspect', 'structureStory.inspect',
+  'pose.inspectRefinementCapture',
 ]);
 
 // These records control the container or the replay that is producing the
@@ -28,6 +30,174 @@ function isNonReplayableAction(action) {
 const FORBIDDEN_BOUNDARY_KEYS = new Set([
   'directCoordinates', 'internalCallback', 'module', 'eval', 'sourceCode', 'privateRoute',
 ]);
+
+export const EXPLICIT_CHEMISTRY_TARGETS = Object.freeze({
+  'chemistry.setAtom':Object.freeze({ key:'atomId', count:1 }),
+  'chemistry.deleteAtom':Object.freeze({ key:'atomId', count:1 }),
+  'chemistry.addHydrogen':Object.freeze({ key:'atomId', count:1 }),
+  'chemistry.removeHydrogen':Object.freeze({ key:'atomId', count:1 }),
+  'chemistry.setBond':Object.freeze({ key:'atomIds', count:2 }),
+  'chemistry.deleteBond':Object.freeze({ key:'atomIds', count:2 }),
+});
+
+export const AUDIT_STATE_HASH_GUARDS = Object.freeze({
+  'pose.refine':Object.freeze({ resultKey:'refinement', fields:Object.freeze({
+    inputStateSha256:'expectedInputStateSha256',
+    selectedStateSha256:'expectedSelectedStateSha256',
+  }) }),
+  'pose.apply':Object.freeze({ resultKey:'appliedPose', fields:Object.freeze({
+    inputStateSha256:'expectedInputStateSha256',
+    selectedStateSha256:'expectedSelectedStateSha256',
+    outputStateSha256:'expectedOutputStateSha256',
+  }) }),
+  'optimization.run':Object.freeze({ resultKey:'optimization', fields:Object.freeze({
+    inputStateSha256:'expectedInputStateSha256',
+    outputStateSha256:'expectedOutputStateSha256',
+  }) }),
+});
+
+// A recomputation is not an exact checkpoint replay: browser/driver arithmetic
+// can legitimately change coordinate bytes while preserving the registered
+// molecular graph and the scientific acceptance contract.  These fields are
+// deliberately discrete (never energies or coordinates), so they can fail a
+// rerun for a changed scientific outcome without demanding byte-identical
+// floating-point output.
+export const AUDIT_PORTABLE_SCIENTIFIC_GUARDS = Object.freeze({
+  'geometry.alignBranchToContact':Object.freeze({ resultKey:'designerBranchContact',
+    fields:Object.freeze(['externalReferenceCoordinatesUsed', 'solution',
+      'selected.internalSevereContactCount', 'selected.contacts.outsideAllowedResponseContactCount']) }),
+  'pose.refine':Object.freeze({ resultKey:'refinement', fields:Object.freeze([
+    'coverageComplete', 'selectedFeasible', 'selectedCore.satisfied',
+    'requiredSpatialFeatureCount',
+  ]) }),
+  'pose.apply':Object.freeze({ resultKey:'appliedPose', fields:Object.freeze([
+    'feasible', 'infeasibleOverride',
+  ]) }),
+  'optimization.run':Object.freeze({ resultKey:'optimization', fields:Object.freeze([
+    'accepted', 'valenceSafeguard.accepted', 'valenceSafeguard.complete',
+    'registeredPoseRetention.accepted', 'fixedAtomMotion.accepted',
+  ]) }),
+  'pose.enumerateSidechainRotamers':Object.freeze({ resultKey:'sidechainRotamers',
+    fields:Object.freeze([
+      'residue.residueName', 'residue.chain', 'residue.residueIndex',
+      'residue.insertionCode', 'generatedCandidateCount',
+    ]) }),
+  'pose.applySidechainRotamer':Object.freeze({ resultKey:'sidechainRotamer',
+    fields:Object.freeze([
+      'residue.residueName', 'residue.chain', 'residue.residueIndex',
+      'residue.insertionCode', 'source',
+    ]) }),
+});
+
+function portableScientificArguments(record, args, ligandSelectorsById) {
+  if (record.action === 'pose.enumerateSidechainRotamers') {
+    const residue = record.result?.sidechainRotamers?.residue;
+    if (!residue || typeof residue.residueName !== 'string'
+      || typeof residue.chain !== 'string' || !Number.isInteger(residue.residueIndex))
+      throw new Error(`Audit sequence ${record.sequence} has no stable receptor residue selector`);
+    delete args.receptorAtomId;
+    args.receptorResidue = {
+      residueName:residue.residueName,
+      chain:residue.chain,
+      residueIndex:residue.residueIndex,
+      insertionCode:String(residue.insertionCode || ''),
+    };
+  } else if (record.action === 'pose.applySidechainRotamer') {
+    const chiDegrees = record.result?.sidechainRotamer?.chiDegrees;
+    if (!Array.isArray(chiDegrees) || !chiDegrees.length
+      || chiDegrees.some((value) => !Number.isFinite(value)))
+      throw new Error(`Audit sequence ${record.sequence} has no stable side-chain chi selector`);
+    for (const key of ['index','coordinateSha256','chiDegrees','source','expectedInputCoordinateSha256',
+      'expectedSelectedCoordinateSha256']) delete args[key];
+    if (record.result?.sidechainRotamer?.source === 'input') args.source = 'input';
+    else args.chiDegrees = cloneRecord(chiDegrees);
+  } else if (record.action === 'geometry.alignBranchToContact') {
+    for (const [idKey, selectorKey, coupled] of [
+      ['axisAtomIds','axisAtomSelectors',false],
+      ['coupledAxisAtomIds','coupledAxisAtomSelectors',true],
+      ['upstreamAxisAtomIds','upstreamAxisAtomSelectors',false],
+    ]) {
+      if (!Object.hasOwn(args, idKey)) continue;
+      if (Object.hasOwn(args, selectorKey))
+        throw new Error(`Audit sequence ${record.sequence} contains both ${idKey} and ${selectorKey}`);
+      const axis = (ids) => ids.map((id) => {
+        const selector = ligandSelectorsById.get(id);
+        if (!selector) throw new Error(`Audit sequence ${record.sequence} has no current ligand selector for ${id}`);
+        return cloneRecord(selector);
+      });
+      args[selectorKey] = coupled ? args[idKey].map(axis) : axis(args[idKey]);
+      delete args[idKey];
+    }
+  }
+  return args;
+}
+
+function enrichStateHashGuards(record, args, mode) {
+  const guard = AUDIT_STATE_HASH_GUARDS[record.action];
+  if (!guard || mode === 'off') return false;
+  const result = record.result?.[guard.resultKey];
+  const fields = Object.entries(guard.fields);
+  const hasAnyHash = fields.some(([resultKey]) => result?.[resultKey] != null);
+  const hasV1Schema = result?.stateHashSchema === MOLECULAR_STATE_HASH_SCHEMA;
+  if (!hasV1Schema && !hasAnyHash) {
+    if (mode === 'required')
+      throw new Error(`Audit sequence ${record.sequence} ${record.action} is missing ${MOLECULAR_STATE_HASH_SCHEMA} result guards`);
+    return false;
+  }
+  if (!hasV1Schema)
+    throw new Error(`Audit sequence ${record.sequence} ${record.action} has state hashes without ${MOLECULAR_STATE_HASH_SCHEMA}`);
+  for (const [resultKey, argumentKey] of fields) {
+    const digest = result[resultKey];
+    if (typeof digest !== 'string' || !/^[a-f0-9]{64}$/.test(digest))
+      throw new Error(`Audit sequence ${record.sequence} ${record.action} has no valid ${resultKey}`);
+    if (Object.hasOwn(args, argumentKey) && args[argumentKey] !== digest)
+      throw new Error(`Audit sequence ${record.sequence} ${record.action} ${argumentKey} conflicts with its recorded result`);
+    args[argumentKey] = digest;
+  }
+  return true;
+}
+
+function valueAtPath(value, path) {
+  return String(path).split('.').reduce((current, part) => current?.[part], value);
+}
+
+function enrichPortableScientificGuards(record, expect) {
+  const guard = AUDIT_PORTABLE_SCIENTIFIC_GUARDS[record.action];
+  if (!guard) return 0;
+  const result = record.result?.[guard.resultKey];
+  let count = 0;
+  for (const path of guard.fields) {
+    const expected = valueAtPath(result, path);
+    if (expected === undefined) continue;
+    expect[`${guard.resultKey}.${path}`] = cloneRecord(expected);
+    count += 1;
+  }
+  // Atom/bond cardinality complements the registered route's exact graph and
+  // persistent-identity validation, catching loss/addition without coupling a
+  // portable rerun to coordinate bytes.
+  for (const key of ['atoms','bonds']) {
+    const expected = record.result?.molecule?.[key];
+    if (Number.isInteger(expected) && expected >= 0) {
+      expect[`molecule.${key}`] = expected;
+      count += 1;
+    }
+  }
+  return count;
+}
+
+function validateExplicitChemistryTarget(step, stepNumber) {
+  const target = EXPLICIT_CHEMISTRY_TARGETS[step.action];
+  if (!target) return;
+  if (!Object.hasOwn(step.args || {}, target.key))
+    throw new Error(`Action step ${stepNumber} ${step.action} requires explicit ${target.key}; saved publication replays cannot use ambient selection`);
+  const raw = step.args[target.key], values = target.count === 1 ? [raw] : raw;
+  if (!Array.isArray(values) || values.length !== target.count
+    || values.some((value) => !(typeof value === 'string' && value)
+      && !(value && typeof value === 'object' && Object.keys(value).length === 1
+        && typeof value.$binding === 'string' && value.$binding))
+    || new Set(values.map((value) => canonicalJson(value))).size !== values.length)
+    throw new Error(`Action step ${stepNumber} ${target.key} must contain ${target.count} distinct persistent atom ${target.count === 1 ? 'ID' : 'IDs'}`);
+}
 
 function assertNoBoundaryShortcut(value, path = 'step') {
   if (Array.isArray(value)) {
@@ -102,6 +272,7 @@ export function validateActionScript(script) {
     if (!Object.hasOwn(CHEMIST_ACTION_DEFINITIONS, step.action))
       throw new Error(`Action step ${index + 1} uses unavailable route ${step.action}`);
     cloneRecord(step.args || {});
+    validateExplicitChemistryTarget(step, index + 1);
     validateExpectations(step.expect, index + 1);
     assertNoBoundaryShortcut(step, `Action step ${index + 1}`);
     for (const reference of bindingReferences(step.args || {}))
@@ -152,13 +323,23 @@ function selectedSequences(value) {
  */
 export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit replay',
   includeReadOnly = true, includeSequences = null, captionsBySequence = {},
-  captionFromRequestId = false, includeAuditMetadata = false, provenance = null } = {}) {
+  captionFromRequestId = false, includeAuditMetadata = false, provenance = null,
+  stateHashGuards = 'auto', executionContract = 'exact-recorded-state' } = {}) {
   const records = auditRecords(audit), requested = selectedSequences(includeSequences);
+  if (!['auto','required','off'].includes(stateHashGuards))
+    throw new Error('stateHashGuards must be auto, required, or off');
+  if (!['exact-recorded-state','portable-scientific'].includes(executionContract))
+    throw new Error('executionContract must be exact-recorded-state or portable-scientific');
+  if (executionContract === 'portable-scientific' && stateHashGuards !== 'off')
+    throw new Error('portable-scientific execution requires stateHashGuards off');
   if (!captionsBySequence || typeof captionsBySequence !== 'object'
     || Array.isArray(captionsBySequence))
     throw new Error('captionsBySequence must be an object keyed by audit sequence');
   const seenSequences = new Set(), readOnly = new Set(READ_ONLY_CHEMIST_ACTIONS);
   const actions = [];
+  let selectedAtomIds = [], stateHashGuardedActionCount = 0;
+  let portableScientificGuardCount = 0;
+  const ligandSelectorsById = new Map();
   for (const [recordIndex, record] of records.entries()) {
     if (!record || typeof record !== 'object')
       throw new Error(`Audit record ${recordIndex + 1} must be an object`);
@@ -167,12 +348,53 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
       throw new Error(`Audit record ${recordIndex + 1} requires a positive integer sequence`);
     if (seenSequences.has(sequence)) throw new Error(`Duplicate audit sequence ${sequence}`);
     seenSequences.add(sequence);
-    if (record.status !== 'completed' || (requested && !requested.has(sequence))) continue;
+    if (record.status !== 'completed') continue;
+    if (executionContract === 'portable-scientific') {
+      if (['designRoute.applyStep','designRoute.load','campaign.import','session.clear',
+        'session.loadStructure','session.loadIdentifier','session.loadFixture'].includes(record.action))
+        ligandSelectorsById.clear();
+      const inspection = record.action === 'session.inspect' ? record.result : null;
+      if (inspection?.scope === 'ligand' && inspection.truncated === false) {
+        ligandSelectorsById.clear();
+        for (const atom of inspection.atoms || []) {
+          if (typeof atom.atomId !== 'string' || typeof atom.atomName !== 'string'
+            || typeof atom.residueName !== 'string' || !Number.isInteger(atom.residueIndex)) continue;
+          ligandSelectorsById.set(atom.atomId, {
+            componentId:`heterogen:${atom.chain || ''}:${atom.residueIndex}:${atom.insertionCode || ''}:${atom.residueName}`,
+            atomName:atom.atomName,
+          });
+        }
+      }
+    }
+    if (record.action === 'selection.replace' && Array.isArray(record.args?.atomIds))
+      selectedAtomIds = cloneRecord(record.args.atomIds);
+    else if (record.action === 'selection.clear'
+      || ['session.loadStructure','session.loadIdentifier','session.loadFixture','designRoute.load']
+        .includes(record.action)) selectedAtomIds = [];
+    if (requested && !requested.has(sequence)) continue;
     if (isNonReplayableAction(record.action)) continue;
     if (!includeReadOnly && readOnly.has(record.action)) continue;
     if (!Object.hasOwn(CHEMIST_ACTION_DEFINITIONS, record.action))
       throw new Error(`Audit sequence ${sequence} uses unavailable route ${record.action}`);
-    const step = { action:record.action, args:cloneRecord(record.args || {}) };
+    const args = cloneRecord(record.args || {});
+    const target = EXPLICIT_CHEMISTRY_TARGETS[record.action];
+    if (target && !Object.hasOwn(args, target.key)) {
+      const recorded = record.result?.[target.key];
+      const values = recorded == null ? selectedAtomIds
+        : target.count === 1 ? [recorded] : recorded;
+      if (!Array.isArray(values) || values.length !== target.count)
+        throw new Error(`Audit sequence ${sequence} cannot be migrated: ${record.action} has no explicit ${target.key} and no unambiguous recorded selection`);
+      args[target.key] = cloneRecord(target.count === 1 ? values[0] : values);
+    }
+    if (enrichStateHashGuards(record, args, stateHashGuards))
+      stateHashGuardedActionCount += 1;
+    const expect = {};
+    if (executionContract === 'portable-scientific') {
+      portableScientificArguments(record, args, ligandSelectorsById);
+      portableScientificGuardCount += enrichPortableScientificGuards(record, expect);
+    }
+    const step = { action:record.action, args,
+      ...(Object.keys(expect).length ? { expect } : {}) };
     if (includeAuditMetadata) step.auditSequence = sequence;
     if (includeAuditMetadata && typeof record.requestId === 'string' && record.requestId)
       step.auditRequestId = record.requestId;
@@ -206,6 +428,16 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
         && (String(record.action || '').startsWith('designerScript.')
           || record.action === 'interface.presentDesignerStep')).length,
       readOnlyInspectionsIncluded:Boolean(includeReadOnly),
+      ...(stateHashGuardedActionCount || stateHashGuards !== 'auto' ? { stateHashGuards:{
+        mode:stateHashGuards, schema:MOLECULAR_STATE_HASH_SCHEMA,
+        guardedActionCount:stateHashGuardedActionCount } } : {}),
+      executionContract:{ mode:executionContract,
+        coordinatePolicy:executionContract === 'portable-scientific'
+          ? 'recompute-without-exact-coordinate-hash' : 'exact-recorded-state',
+        identityTopologyPolicy:executionContract === 'portable-scientific'
+          ? 'registered-action graph and persistent-identity validation plus atom/bond cardinality'
+          : 'identity-topology-coordinate state hash',
+        portableScientificGuardCount },
       ...(provenance == null ? {} : cloneRecord(provenance)) },
   };
   return validateActionScript(script);

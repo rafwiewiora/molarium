@@ -48,10 +48,80 @@ try {
     'the renderer must not race the application module and its UI listeners');
   assert.match(renderer, /action:'designerScript\.load'/,
     'the renderer imports the exact JSON through the public Agent API');
+  assert.match(renderer, /requireExplicitRunDirectory\(args/,
+    'the renderer must never select an SOS1 run implicitly');
+  assert.match(renderer, /verifyAcceptedSos1Run\(runDirectory\)/,
+    'accepted rendering must retain the independent holdout gate');
+  assert.match(renderer, /const resultClass = valueFor\('--result-class'\) \|\| 'accepted'/,
+    'accepted rendering must remain the default');
+  assert.match(renderer, /\['accepted','complete-frozen','designer-intent','designer-intent-frozen'\]\.includes\(resultClass\)/,
+    'reference-informed designer intent must be an explicit separate result class');
+  assert.match(renderer, /verifySos1AwwReceptorOnlyRun\(runDirectory,/,
+    'designer-intent rendering must verify the frozen receptor-response run');
+  assert.match(renderer, /verifyCompleteFrozenSos1Run\(runDirectory\)/,
+    'an explicitly requested complete-frozen result must verify all immutable checkpoints');
+  assert.match(renderer, /buildFrozenSos1ReplayScript\(verifiedRun\)/,
+    'a complete-frozen render must use provenance that does not claim acceptance');
+  assert.match(renderer, /const replayKind = valueFor\('--replay-kind'\) \|\| 'executable'/,
+    'the executable public-action replay must remain the default');
+  assert.match(renderer, /\['executable','checkpoint-review'\]\.includes\(replayKind\)/,
+    'the renderer must expose only executable and exact-checkpoint replay modes');
+  assert.match(renderer, /readFile\(resolve\(root, SOS1_PREDICTION_REVIEW\)/,
+    'complete-frozen calculation-free review must render the published verified script');
+  assert.match(renderer, /registeredStartingHit !== true/,
+    'complete-frozen checkpoint review must require the exact starting-hit checkpoint');
+  assert.match(renderer, /campaignPath:`\.\/\$\{SOS1_PREDICTION_CAMPAIGN_DIRECTORY\}/,
+    'complete-frozen checkpoint review must reference published campaigns instead of inlining them');
+  assert.match(renderer, /replayKind === 'checkpoint-review' \? SOS1_PREDICTION_REVIEW/,
+    'checkpoint-review render provenance must name the published action script');
+  assert.match(renderer, /calculationPolicy:'none', exactFullSystemCheckpoints:designerIntent/,
+    'checkpoint-review renders must declare their calculation-free boundary');
+  assert.match(renderer, /resultClass === 'accepted' \? \{ acceptedRun:/,
+    'only the strict accepted path may emit acceptedRun manifest provenance');
+  assert.match(renderer, /holdoutAccepted:verifiedRun\.evaluation\.accepted === true/,
+    'every render must state the attached post-freeze evaluation outcome honestly');
+  assert.match(renderer, /verifyBrowserLocalLabCapture\(browser\)/,
+    'the renderer must prove that publication assets use the real Local Lab policy');
+  assert.match(renderer, /localOnly:true/,
+    'the renderer must start the network-locked Local Lab server');
+  assert.match(renderer, /appPath:'index\.html\?blank=1&designer-moves-movie=1'/,
+    'the renderer must begin on the real blank Molarium canvas');
+  assert.match(renderer, /verifyBlankInterfaceSnapshot/,
+    'the renderer must fail if the blank full-interface frame is missing');
+  assert.match(renderer, /verifyPresentationCameraContract/,
+    'the renderer must reject presentation scripts that refit the camera');
+  assert.match(renderer, /verifyHighlightCameraAudit/,
+    'the renderer must verify runtime camera preservation for every highlight');
+  assert.match(renderer, /checkpointReviewBootstrapEnd/,
+    'checkpoint review must audit its initial import while deferring visible molecular frames until pocket focus');
+  assert.match(renderer, /transientWholeProteinFramePublished:false/,
+    'checkpoint review must state that the transient whole-protein setup frame was not published');
+  assert.match(renderer, /TWO_D_SETTLED_ACTIONS/,
+    'every settled ligand mutation/import must pass the same 2D readiness gate');
+  assert.doesNotMatch(renderer, /window\.molariumTest/,
+    'the publication renderer must not depend on the private browser-test API');
+  assert.match(renderer, /Timed out waiting for the visible 2D depiction/,
+    'the renderer must not capture an executable or review state before its 2D ligand is ready');
+  assert.match(renderer, /depiction\.atomGraphics < 1/,
+    'the renderer must reject an empty ligand drawing');
+  assert.match(renderer, /depiction\.bondGraphics < 1/,
+    'the renderer must reject a drawing with no ligand bonds');
+  assert.match(renderer, /depictionChecks/,
+    '2D readiness evidence must be retained in the render manifest');
+  assert.match(renderer, /action:'designerScript\.inspect'/,
+    'the renderer must inspect terminal review state through the public API');
+  assert.match(renderer, /verifyCompletedInterfaceSnapshot/,
+    'the renderer must reject a completed story whose arrows no longer work');
+  assert.match(renderer, /presentation:\{ \.\.\.DESIGNER_MOVIE_PRESENTATION/,
+    'the renderer manifest must retain its pacing and interface evidence');
+  assert.match(renderer, /path:'source\.action-script\.json'/,
+    'the selected public source actions must be retained with the render');
   assert.doesNotMatch(renderer, /DOM\.setFileInputFiles/,
     'the renderer must not depend on a synthetic operating-system file event');
   assert.match(renderer, /path:'presentation\.action-script\.json'/,
     'the exact public API replay JSON must be retained with the render artifact');
+  assert.match(renderer, /auditRequestId:step\.auditRequestId \|\| null/,
+    'paper checkpoints must retain immutable source-audit request IDs');
   assert.match(renderer, /entry\.requestId === 'story-/,
     'the renderer must identify constituent moves by public request ID, not audit-array position');
   assert.doesNotMatch(renderer, /records\[\$\{auditBaseline \+ actionNumber\}\]/,
@@ -95,6 +165,20 @@ try {
   assert.match(paperBuilder, /manifest\.get\("complete"\) is not True/);
   assert.match(paperBuilder, /manifest\.get\("replay", \{\}\)\.get\("status"\) != "completed"/);
   assert.match(paperBuilder, /failed its render-manifest hash/);
+  assert.match(paperBuilder, /"--run"[\s\S]*required=True/,
+    'Figure 2 must require an explicit complete-frozen run directory');
+  assert.match(paperBuilder, /source_run\.get\("resultClass"\) != "complete-frozen"/,
+    'Figure 2 must bind to the honest complete-frozen result class');
+  assert.match(paperBuilder, /source_run\.get\("replayKind"\) != "checkpoint-review"/,
+    'Figure 2 must use the calculation-free checkpoint review');
+  assert.match(paperBuilder, /review\.get\("registeredStartingHit"\) is not True/,
+    'Figure 2 panel A must be the exact registered starting hit');
+  assert.match(paperBuilder, /len\(actions\) != len\(CHECKPOINTS\)/,
+    'Figure 2 must require all five checkpoint imports');
+  assert.match(paperBuilder, /review\.get\("calculationPolicy"\) != "none"/,
+    'Figure 2 must not perform scientific recomputation');
+  assert.match(paperBuilder, /presentation timeline does not contain five checkpoint imports/i,
+    'Figure 2 must reject a reordered or incomplete presentation timeline');
 } finally {
   await rm(scratch, { recursive:true, force:true });
 }

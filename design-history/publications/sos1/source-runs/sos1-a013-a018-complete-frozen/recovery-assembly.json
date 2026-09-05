@@ -1,0 +1,22 @@
+{
+  "schema": "molarium.sos1-recovered-run-assembly/v1",
+  "original": {
+    "attemptId": "a013",
+    "failedRunSha256": "cdcb7976a3b284629f0e443f7719895fe834bb7bcdb6835ad6330f79283a7297",
+    "auditSha256": "43d7faab5c32e2eeaaa27e55f7371f96fdb28506bf905fc831a8e8a54dfe5d59",
+    "maximumSequence": 251
+  },
+  "recovery": {
+    "attemptId": "a018",
+    "resultSha256": "05871ce3e3ee860e0d8b380b357c93f4dda67a04a8caf0f33017bcd971627d0c",
+    "auditSha256": "39137fa45e3754e7aef312dde0c98ecb55f6a32db69983cba1041786ca1167a3",
+    "campaignSha256": "d4685188148b963795ce5d434611b31614a72455a37f34c8f98648f589c2da32"
+  },
+  "finalStepAudit": {
+    "captureActionSequence": 258,
+    "stageActionSequence": 259,
+    "freezeActionSequence": 265,
+    "commitActionSequence": 268,
+    "exportActionSequence": 270
+  }
+}

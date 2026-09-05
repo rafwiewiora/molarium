@@ -1,4 +1,5 @@
 export const SIDECHAIN_ROTAMER_SCHEMA = 'molarium.sidechain-rotamers/v1';
+export const SIDECHAIN_ROTAMER_ENUMERATOR_METHOD = 'canonical-chi-grid-steric-prerank-v1';
 export const SIDECHAIN_ROTAMER_CHI_TOLERANCE_DEGREES = 0.001;
 
 // Standard heavy-atom chi definitions. Proline is deliberately absent because
@@ -70,6 +71,30 @@ function circularDegreeDistance(first, second) {
 }
 
 /**
+ * Retain every distinct complete chi-vector in ranked order. A coupled search must not collapse
+ * candidates solely because they share chi1: terminal chi angles can move the same side chain into
+ * materially different ligand environments. The optional maximum is an explicit cost cap, not a
+ * diversity heuristic.
+ */
+export function uniqueSidechainRotamerCandidates(candidates, { maximum = 64 } = {}) {
+  if (!Array.isArray(candidates)) throw new Error('Side-chain candidates must be an array');
+  if (!Number.isInteger(maximum) || maximum < 1 || maximum > 64)
+    throw new Error('maximum must be an integer from 1 to 64');
+  const unique = [];
+  for (const candidate of candidates) {
+    if (!Array.isArray(candidate?.chiDegrees) || !candidate.chiDegrees.length
+      || candidate.chiDegrees.some((value) => !Number.isFinite(value)))
+      throw new Error('Every side-chain candidate must contain finite chiDegrees');
+    if (unique.some((retained) => retained.chiDegrees.length === candidate.chiDegrees.length
+      && retained.chiDegrees.every((value, index) => circularDegreeDistance(
+        value, candidate.chiDegrees[index]) <= SIDECHAIN_ROTAMER_CHI_TOLERANCE_DEGREES))) continue;
+    unique.push(candidate);
+    if (unique.length >= maximum) break;
+  }
+  return unique;
+}
+
+/**
  * Resolve a rotamer by an explicit, fail-closed public selector. Result indices are retained for
  * the visible select control, while chi angles and coordinate hashes remain stable when ranking
  * changes. Chi matching treats -180 and +180 as the same angle and requires one unique match.
@@ -79,11 +104,18 @@ export function selectSidechainRotamerCandidate(ensemble, selector = {}) {
     throw new Error('No compatible side-chain rotamer ensemble is available');
   if (!selector || typeof selector !== 'object' || Array.isArray(selector))
     throw new Error('A side-chain rotamer selector must be an object');
-  const selectorKeys = ['index','chiDegrees','coordinateSha256']
+  const selectorKeys = ['index','chiDegrees','coordinateSha256','source']
     .filter((key) => Object.hasOwn(selector, key));
   if (selectorKeys.length !== 1)
-    throw new Error('Specify exactly one side-chain rotamer selector: index, chiDegrees, or coordinateSha256');
+    throw new Error('Specify exactly one side-chain rotamer selector: index, chiDegrees, coordinateSha256, or source');
   const selectorKey = selectorKeys[0];
+  if (selectorKey === 'source') {
+    if (selector.source !== 'input') throw new Error('source selector must be input');
+    const matches = ensemble.candidates.filter((candidate) => candidate.source === 'input');
+    if (matches.length !== 1)
+      throw new Error(`source input must resolve to exactly one candidate; found ${matches.length}`);
+    return matches[0];
+  }
   if (selectorKey === 'index') {
     if (!Number.isInteger(selector.index) || selector.index < 0)
       throw new Error('index must be a non-negative integer');
@@ -143,6 +175,63 @@ function torsionDegrees(first, second, third, fourth) {
   return normalizeDegrees(Math.atan2(dot(cross(axis, v), w), dot(v, w)) * 180 / Math.PI);
 }
 
+/**
+ * Measure the standard heavy-atom chi angles of one explicitly located residue from a
+ * coordinate-bearing `session.inspect` atom list. This is intentionally separate from rotamer
+ * enumeration: an induced-fit calculation can move the selected side chain after its seed
+ * rotamer was applied, so scientific records must distinguish the seed angles from the relaxed
+ * angles actually present in the inspected coordinates.
+ */
+export function measureInspectedSidechainChiAngles({ atoms, residue } = {}) {
+  if (!Array.isArray(atoms) || !atoms.length)
+    throw new Error('Side-chain chi measurement requires inspected atoms');
+  if (!residue || typeof residue !== 'object' || Array.isArray(residue))
+    throw new Error('Side-chain chi measurement requires an explicit residue locator');
+  const residueName = String(residue.residueName || '').toUpperCase();
+  const definitions = CHI_ATOMS[residueName];
+  if (!definitions)
+    throw new Error(`${residueName || 'This residue'} does not have measurable side-chain chi angles`);
+  if (typeof residue.chain !== 'string' || !Number.isInteger(residue.residueIndex)
+    || residue.insertionCode != null && typeof residue.insertionCode !== 'string')
+    throw new Error('The residue locator requires chain, integer residueIndex, and optional insertionCode');
+  const insertionCode = String(residue.insertionCode || '');
+  const located = atoms.filter((atom) => String(atom?.residueName || '').toUpperCase() === residueName
+    && String(atom?.chain || '') === residue.chain
+    && atom?.residueIndex === residue.residueIndex
+    && String(atom?.insertionCode || '') === insertionCode);
+  const requiredNames = [...new Set(definitions.flat())];
+  const byName = new Map();
+  for (const name of requiredNames) {
+    const matches = located.filter((atom) => atom?.atomName === name);
+    if (matches.length !== 1) {
+      const label = `${residueName} ${residue.chain}${residue.residueIndex}${insertionCode}`;
+      if (!matches.length) throw new Error(`${label} is missing ${name} for chi measurement`);
+      throw new Error(`${label} contains multiple ${name} atoms for chi measurement`);
+    }
+    byName.set(name, matches[0]);
+  }
+  return definitions.map((names) => Number(torsionDegrees(
+    ...names.map((name) => {
+      const [x,y,z] = inspectedPoint(byName.get(name));
+      return { x,y,z };
+    })).toFixed(3)));
+}
+
+export function assertSidechainChiAnglesReproduced(expected, observed,
+  { toleranceDegrees = SIDECHAIN_ROTAMER_CHI_TOLERANCE_DEGREES } = {}) {
+  if (!Array.isArray(expected) || !expected.length || expected.some((value) => !Number.isFinite(value))
+    || !Array.isArray(observed) || observed.some((value) => !Number.isFinite(value))
+    || expected.length !== observed.length)
+    throw new Error('Comparable side-chain chi vectors must contain the same number of finite angles');
+  if (!Number.isFinite(toleranceDegrees) || toleranceDegrees < 0)
+    throw new Error('toleranceDegrees must be a non-negative finite number');
+  const mismatch = expected.findIndex((value, index) =>
+    circularDegreeDistance(value, observed[index]) > toleranceDegrees);
+  if (mismatch >= 0)
+    throw new Error(`Relaxed side-chain chi${mismatch + 1} changed during deterministic replay`);
+  return true;
+}
+
 function rotatePoint(point, origin, axis, radians) {
   const relative = { x:point.x - origin.x, y:point.y - origin.y, z:point.z - origin.z };
   const cosine = Math.cos(radians), sine = Math.sin(radians);
@@ -189,6 +278,47 @@ function localExclusions(adjacency, maximumBondDistance = 3) {
     }
   });
   return excluded;
+}
+
+// Only atoms off a declared chi axis can respond. In particular, CB is on
+// CA–CB and must never acquire clash permission merely by belonging to Phe.
+export function sidechainResponseAtomIndices({ molecule, residue } = {}) {
+  const definitions = CHI_ATOMS[residue?.residueName];
+  if (!definitions) throw new Error('Response residue has no supported side-chain chi rotations');
+  const indices = molecule.atoms.flatMap((atom, index) =>
+    atom.residueName === residue.residueName && (atom.chain || '') === residue.chain
+      && atom.residueIndex === residue.residueIndex
+      && (atom.insertionCode || '') === (residue.insertionCode || '')
+      && (!atom.record || atom.record === 'ATOM') ? [index] : []);
+  const named = (name) => {
+    const matches = indices.filter((index) => molecule.atoms[index].atomName === name);
+    if (matches.length !== 1) throw new Error(`Response residue must contain exactly one ${name}`);
+    return matches[0];
+  };
+  const adjacency = adjacencyFor(molecule), movable = new Set();
+  for (const names of definitions) {
+    const [, proximal, distal] = names.map(named);
+    if (!adjacency[proximal].includes(distal)) throw new Error('Response chi axis is not bonded');
+    const seen = new Set([distal]), queue = [distal];
+    while (queue.length) {
+      const index = queue.shift();
+      for (const neighbor of adjacency[index]) {
+        if (index === distal && neighbor === proximal) continue;
+        if (!seen.has(neighbor)) { seen.add(neighbor); queue.push(neighbor); }
+      }
+    }
+    if (seen.has(proximal) || [...seen].some((index) => !indices.includes(index)))
+      throw new Error('Response chi branch is cyclic or linked outside the residue');
+    const origin = molecule.atoms[proximal];
+    const axis = unit(vector(origin, molecule.atoms[distal]));
+    for (const index of seen) {
+      const offset = vector(origin, molecule.atoms[index]);
+      const perpendicular = cross(axis, offset);
+      if (Math.hypot(perpendicular.x, perpendicular.y, perpendicular.z) > 1e-8)
+        movable.add(index);
+    }
+  }
+  return [...movable].sort((a, b) => a - b);
 }
 
 function coordinateRmsd(first, second, atomIndices) {
@@ -321,6 +451,7 @@ export function enumerateSidechainRotamers({ molecule, residueAtomIndex,
   }));
   return {
     schema:SIDECHAIN_ROTAMER_SCHEMA,
+    method:SIDECHAIN_ROTAMER_ENUMERATOR_METHOD,
     residue:{ residueName, chain:selected.chain || 'A', residueIndex:selected.residueIndex,
       insertionCode:selected.insertionCode || '', atomIndices:residueIndices,
       sidechainAtomIndices:sidechainIndices },
@@ -350,21 +481,267 @@ export function applySidechainRotamer(molecule, ensemble, index) {
 }
 
 export const COUPLED_SIDECHAIN_POSE_SELECTION_CRITERION =
-  'fewest growth-induced steric clashes among feasible receptor branches; receptor-aware ligand pose score and finite relaxed energy break ties';
+  'registered hard-anchor retention is required; maximize changed-region post-relaxation van der Waals engagement, then minimize absolute receptor overlap, hard-anchor displacement, relaxed energy, pre-relax pose score, and candidate rank';
+
+export const CHANGED_REGION_VDW_ENGAGEMENT_MAXIMUM_RATIO = 1.25;
+export const CHANGED_REGION_VDW_ENGAGEMENT_MINIMUM_RATIO = 0.78;
+
+function normalizedElement(element) {
+  const text = String(element || '').trim();
+  if (!text) return '';
+  return text.length === 1 ? text.toUpperCase()
+    : `${text[0].toUpperCase()}${text.slice(1).toLowerCase()}`;
+}
+
+function inspectedPoint(atom) {
+  const coordinates = atom?.coordinatesAngstrom;
+  if (!Array.isArray(coordinates) || coordinates.length !== 3
+    || coordinates.some((value) => !Number.isFinite(Number(value))))
+    throw new Error('Post-relaxation atom evidence must contain finite coordinatesAngstrom');
+  return coordinates.map(Number);
+}
+
+/**
+ * Score the current relaxed ligand against the current receptor pocket without subtracting the
+ * starting branch. This deliberately small absolute audit catches the failure mode where a branch
+ * with a clashing starting receptor appears acceptable only because its pre-relax score is
+ * baseline-relative. Coordinate-bearing inputs are expected to come from session.inspect.
+ */
+export function evaluatePostRelaxedLigandPocket({ ligandAtoms, pocketAtoms } = {}) {
+  if (!Array.isArray(ligandAtoms) || !ligandAtoms.length)
+    throw new Error('Post-relaxation scoring requires ligandAtoms');
+  if (!Array.isArray(pocketAtoms) || !pocketAtoms.length)
+    throw new Error('Post-relaxation scoring requires pocketAtoms');
+  const ligandIds = new Set(ligandAtoms.map((atom) => atom?.atomId).filter(Boolean));
+  const ligand = ligandAtoms.filter((atom) => normalizedElement(atom?.element) !== 'H')
+    .map((atom) => ({ atom, point:inspectedPoint(atom) }));
+  const receptor = pocketAtoms.filter((atom) => !ligandIds.has(atom?.atomId)
+    && normalizedElement(atom?.element) !== 'H')
+    .map((atom) => ({ atom, point:inspectedPoint(atom) }));
+  if (!ligand.length || !receptor.length)
+    throw new Error('Post-relaxation scoring requires heavy ligand and receptor atoms');
+  let stericPenalty = 0, severeClashes = 0;
+  let minimumDistance = Number.POSITIVE_INFINITY, maximumOverlap = 0;
+  const severePairs = [];
+  for (const ligandEntry of ligand) for (const receptorEntry of receptor) {
+    const [lx,ly,lz] = ligandEntry.point, [rx,ry,rz] = receptorEntry.point;
+    const distance = Math.hypot(lx - rx, ly - ry, lz - rz);
+    minimumDistance = Math.min(minimumDistance, distance);
+    const ligandRadius = VDW_RADII[normalizedElement(ligandEntry.atom.element)] || 1.75;
+    const receptorRadius = VDW_RADII[normalizedElement(receptorEntry.atom.element)] || 1.75;
+    const radius = ligandRadius + receptorRadius;
+    const overlap = Math.max(0, radius * 0.78 - distance);
+    if (!overlap) continue;
+    stericPenalty += overlap * overlap;
+    maximumOverlap = Math.max(maximumOverlap, overlap);
+    if (distance < radius * 0.62) {
+      severeClashes += 1;
+      if (severePairs.length < 32) severePairs.push({
+        ligandAtomId:ligandEntry.atom.atomId || null,
+        receptorAtomId:receptorEntry.atom.atomId || null,
+        distanceAngstrom:Number(distance.toFixed(4)),
+        overlapAngstrom:Number(overlap.toFixed(4)),
+      });
+    }
+  }
+  const score = severeClashes * 100 + stericPenalty * 10;
+  return {
+    method:'absolute-heavy-atom-overlap-v1',
+    interpretation:'absolute post-relaxation ligand-versus-current-receptor steric audit',
+    feasible:severeClashes === 0,
+    score:Number(score.toFixed(6)),
+    severeClashes,
+    stericPenalty:Number(stericPenalty.toFixed(6)),
+    minimumNonbondedDistanceAngstrom:Number(minimumDistance.toFixed(4)),
+    maximumOverlapAngstrom:Number(maximumOverlap.toFixed(4)),
+    ligandHeavyAtomCount:ligand.length,
+    receptorHeavyAtomCount:receptor.length,
+    severePairs,
+  };
+}
+
+function completeInspection(value, label) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)
+    || !Array.isArray(value.atoms) || !value.atoms.length)
+    throw new Error(`${label} must be a coordinate-bearing session.inspect result`);
+  if (value.truncated !== false)
+    throw new Error(`${label} must explicitly report truncated:false`);
+  if (!Number.isInteger(value.totalAtomCount)
+    || value.totalAtomCount !== value.atoms.length)
+    throw new Error(`${label} must report complete totalAtomCount coverage`);
+  return value.atoms;
+}
+
+function inspectedHeavyAtoms(value, label) {
+  return completeInspection(value, label)
+    .filter((atom) => normalizedElement(atom?.element) !== 'H')
+    .map((atom) => ({ ...atom, point:inspectedPoint(atom) }));
+}
+
+function uniqueAtomByName(atoms, atomName, label) {
+  const matches = atoms.filter((atom) => atom?.atomName === atomName);
+  if (matches.length !== 1)
+    throw new Error(`${label} must contain exactly one heavy atom named ${atomName}`);
+  return matches[0];
+}
+
+/**
+ * Audit a relaxed coupled ligand/receptor branch against intent that existed before the branch.
+ * The hard anchor comes only from the registered predecessor-product graph map.  Its coordinates
+ * are compared without superposition because the receptor frame is fixed.  Pocket engagement is
+ * evaluated only for route-declared changed ligand atoms, so a large inherited core cannot hide a
+ * newly designed region that escaped the pocket.  No target or later structure is accepted here.
+ */
+export function evaluatePostRelaxedBranchObjective({ referenceLigand, ligand, pocket,
+  hardAtomNames, changedLigandAtomIds, coreToleranceAngstrom = 0.5 } = {}) {
+  const referenceAtoms = inspectedHeavyAtoms(referenceLigand, 'Reference ligand inspection');
+  const ligandAtoms = inspectedHeavyAtoms(ligand, 'Relaxed ligand inspection');
+  const pocketAtoms = inspectedHeavyAtoms(pocket, 'Relaxed pocket inspection');
+  const ligandAtomIds = ligandAtoms.map((atom) => atom.atomId);
+  if (ligandAtomIds.some((id) => typeof id !== 'string' || !id)
+    || new Set(ligandAtomIds).size !== ligandAtomIds.length)
+    throw new Error('Relaxed ligand inspection must contain unique persistent atom IDs');
+  const names = Array.from(hardAtomNames || []);
+  if (names.length < 3 || new Set(names).size !== names.length
+    || names.some((name) => typeof name !== 'string' || !name))
+    throw new Error('Registered hardAtomNames must contain at least three unique names');
+  const tolerance = Number(coreToleranceAngstrom);
+  if (!Number.isFinite(tolerance) || tolerance < 0)
+    throw new Error('coreToleranceAngstrom must be finite and nonnegative');
+  let hardSquared = 0, hardMaximum = 0;
+  const referenceCentroid = [0,0,0], relaxedCentroid = [0,0,0];
+  for (const name of names) {
+    const before = uniqueAtomByName(referenceAtoms, name, 'Reference ligand inspection');
+    const after = uniqueAtomByName(ligandAtoms, name, 'Relaxed ligand inspection');
+    if (typeof before.atomId !== 'string' || !before.atomId
+      || before.atomId !== after.atomId)
+      throw new Error(`Registered hard atom ${name} changed persistent identity`);
+    if (normalizedElement(before.element) !== normalizedElement(after.element))
+      throw new Error(`Registered hard atom ${name} changed element`);
+    const squared = before.point.reduce((sum, coordinate, axis) =>
+      sum + (coordinate - after.point[axis]) ** 2, 0);
+    hardSquared += squared; hardMaximum = Math.max(hardMaximum, Math.sqrt(squared));
+    for (let axis = 0; axis < 3; axis++) {
+      referenceCentroid[axis] += before.point[axis] / names.length;
+      relaxedCentroid[axis] += after.point[axis] / names.length;
+    }
+  }
+  const hardAnchorRmsdAngstrom = Math.sqrt(hardSquared / names.length);
+  const hardAnchorCentroidDisplacementAngstrom = Math.hypot(
+    ...referenceCentroid.map((coordinate, axis) => coordinate - relaxedCentroid[axis]));
+  const ligandIds = new Set(ligandAtomIds);
+  const receptorAtoms = pocketAtoms.filter((atom) => !ligandIds.has(atom.atomId));
+  if (!receptorAtoms.length)
+    throw new Error('Relaxed pocket inspection must contain receptor heavy atoms');
+  const changedIds = Array.from(changedLigandAtomIds || []);
+  if (!changedIds.length || new Set(changedIds).size !== changedIds.length
+    || changedIds.some((id) => typeof id !== 'string' || !id))
+    throw new Error('changedLigandAtomIds must contain unique persistent atom IDs');
+  const ligandById = new Map(ligandAtoms.map((atom) => [atom.atomId, atom]));
+  const changedAtoms = changedIds.map((id) => {
+    const atom = ligandById.get(id);
+    if (!atom) throw new Error(`Changed ligand atom ${id} is absent from relaxed inspection`);
+    return atom;
+  });
+  let contactPairCount = 0;
+  const perAtomEngagement = changedAtoms.map((changed) => {
+    let closest = Number.POSITIVE_INFINITY, strongest = 0;
+    for (const receptor of receptorAtoms) {
+      const distance = Math.hypot(...changed.point.map((coordinate, axis) =>
+        coordinate - receptor.point[axis]));
+      const radii = (VDW_RADII[normalizedElement(changed.element)] || 1.75)
+        + (VDW_RADII[normalizedElement(receptor.element)] || 1.75);
+      const ratio = distance / radii;
+      closest = Math.min(closest, ratio);
+      if (ratio >= CHANGED_REGION_VDW_ENGAGEMENT_MINIMUM_RATIO
+        && ratio <= CHANGED_REGION_VDW_ENGAGEMENT_MAXIMUM_RATIO) {
+        contactPairCount += 1;
+        strongest = Math.max(strongest,
+          (CHANGED_REGION_VDW_ENGAGEMENT_MAXIMUM_RATIO - ratio)
+            / (CHANGED_REGION_VDW_ENGAGEMENT_MAXIMUM_RATIO
+              - CHANGED_REGION_VDW_ENGAGEMENT_MINIMUM_RATIO));
+      }
+    }
+    return { closest, strength:Math.min(1, strongest) };
+  });
+  const engagedHeavyAtomCount = perAtomEngagement.filter((entry) => entry.strength > 0).length;
+  const engagementScore = perAtomEngagement.reduce((sum, entry) =>
+    sum + entry.strength, 0) / changedAtoms.length;
+  const closestVdwRatios = perAtomEngagement.map((entry) => entry.closest);
+  const receptorAware = evaluatePostRelaxedLigandPocket({
+    ligandAtoms:ligand.atoms, pocketAtoms:pocket.atoms,
+  });
+  const poseIntent = {
+    method:'raw-same-receptor-frame-registered-hard-anchor-v1',
+    atomCount:names.length,
+    toleranceAngstrom:tolerance,
+    hardAnchorRmsdAngstrom:Number(hardAnchorRmsdAngstrom.toFixed(6)),
+    hardAnchorMaximumDisplacementAngstrom:Number(hardMaximum.toFixed(6)),
+    hardAnchorCentroidDisplacementAngstrom:
+      Number(hardAnchorCentroidDisplacementAngstrom.toFixed(6)),
+    satisfied:hardAnchorRmsdAngstrom <= tolerance,
+    superpositionApplied:false,
+  };
+  const changedRegionEngagement = {
+    method:'changed-region-nearest-receptor-vdw-ratio-v1',
+    changedHeavyAtomCount:changedAtoms.length,
+    engagedHeavyAtomCount,
+    engagedHeavyAtomFraction:Number((engagedHeavyAtomCount / changedAtoms.length).toFixed(6)),
+    engagementScore:Number(engagementScore.toFixed(6)),
+    contactPairCount,
+    minimumContactVdwRatio:CHANGED_REGION_VDW_ENGAGEMENT_MINIMUM_RATIO,
+    maximumContactVdwRatio:CHANGED_REGION_VDW_ENGAGEMENT_MAXIMUM_RATIO,
+    meanClosestVdwRatio:Number((closestVdwRatios.reduce((sum, value) => sum + value, 0)
+      / closestVdwRatios.length).toFixed(6)),
+    maximumClosestVdwRatio:Number(Math.max(...closestVdwRatios).toFixed(6)),
+  };
+  return {
+    method:'registered-pose-retention-plus-changed-region-vdw-engagement-v1',
+    prospectiveInputsOnly:true,
+    feasible:poseIntent.satisfied && receptorAware.feasible,
+    poseIntent, changedRegionEngagement, receptorAware,
+  };
+}
 
 export function selectCoupledSidechainPoseBranch(branches) {
   if (!Array.isArray(branches)) throw new Error('Coupled side-chain branches must be an array');
-  const viable = branches.filter((branch) => branch?.refinement?.selectedFeasible
-    && Number.isFinite(branch.refinement.selectedChemicalValidity?.additionalStericClashes)
-    && Number.isFinite(branch.refinement.selectedScoreKcalMol)
-    && Number.isFinite(branch.optimization?.finalEnergy));
+  const digest = /^[a-f0-9]{64}$/;
+  const viable = branches.filter((branch) => {
+    const postRelaxation = branch?.postRelaxation;
+    const evidence = postRelaxation?.topPoseEvidence;
+    const objective = postRelaxation?.branchObjective;
+    return branch.refinement?.selectedFeasible === true
+    && objective?.feasible === true
+    && objective?.poseIntent?.satisfied === true
+    && Number.isFinite(objective.poseIntent.hardAnchorRmsdAngstrom)
+    && Number.isFinite(objective.changedRegionEngagement?.engagedHeavyAtomFraction)
+    && Number.isFinite(objective.changedRegionEngagement?.engagementScore)
+    && Number.isFinite(objective.changedRegionEngagement?.contactPairCount)
+    && postRelaxation?.receptorAware?.feasible === true
+    && Number.isFinite(postRelaxation.receptorAware.score)
+    && evidence?.schema === 'molarium.coordinate-evidence/v1'
+    && evidence.ligand?.truncated === false
+    && evidence.pocket?.truncated === false
+    && Array.isArray(evidence.ligand?.atoms) && evidence.ligand.atoms.length > 0
+    && Array.isArray(evidence.pocket?.atoms) && evidence.pocket.atoms.length > 0
+    && digest.test(evidence.ligandCoordinateSha256 || '')
+    && digest.test(evidence.pocketCoordinateSha256 || '')
+    && branch.optimization?.accepted === true
+    && Number.isFinite(branch.optimization?.finalEnergy);
+  });
   if (!viable.length)
-    throw new Error('No side-chain branch produced a feasible clash-audited pose and finite relaxation');
+    throw new Error('No side-chain branch preserved registered pose intent with complete, feasible post-relaxation evidence');
   return [...viable].sort((first, second) =>
-    first.refinement.selectedChemicalValidity.additionalStericClashes
-      - second.refinement.selectedChemicalValidity.additionalStericClashes
-    || first.refinement.selectedScoreKcalMol - second.refinement.selectedScoreKcalMol
+    second.postRelaxation.branchObjective.changedRegionEngagement.engagementScore
+      - first.postRelaxation.branchObjective.changedRegionEngagement.engagementScore
+    || second.postRelaxation.branchObjective.changedRegionEngagement.engagedHeavyAtomFraction
+      - first.postRelaxation.branchObjective.changedRegionEngagement.engagedHeavyAtomFraction
+    || first.postRelaxation.receptorAware.score - second.postRelaxation.receptorAware.score
+    || first.postRelaxation.branchObjective.poseIntent.hardAnchorRmsdAngstrom
+      - second.postRelaxation.branchObjective.poseIntent.hardAnchorRmsdAngstrom
     || first.optimization.finalEnergy - second.optimization.finalEnergy
+    || Number(first.refinement?.selectedScoreKcalMol ?? Number.POSITIVE_INFINITY)
+      - Number(second.refinement?.selectedScoreKcalMol ?? Number.POSITIVE_INFINITY)
     || Number(first.candidateRank ?? Number.MAX_SAFE_INTEGER)
       - Number(second.candidateRank ?? Number.MAX_SAFE_INTEGER))[0];
 }

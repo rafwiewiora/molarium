@@ -115,7 +115,7 @@ A deposited PDB structure is not automatically a simulation-ready system. Atoms 
 \begin{enumerate}
 \item Load the PDB structure and inspect the protein, ligand, waters, other components, and the region around the intended binding site before preparing anything.
 \item Open \textbf{Protein Preparation}. Choose pH, histidine policy, supported missing-heavy-atom repair, ligand treatment, water treatment, and gap policy.
-\item Run \textbf{Prepare structure}. Molarium constructs an internal preview that inventories residues, missing atoms, sequence gaps, ligands, waters, clashes, and invalid coordinates. Within scope, it can retrieve CCD information, reconstruct supported missing side-chain atoms, add standard hydrogens and terminal oxygen, choose histidine states, and scan polar-hydrogen orientations.
+\item Run \textbf{Prepare structure}. Molarium constructs an internal preview that inventories residues, missing atoms, sequence gaps, ligands, waters, clashes, and invalid coordinates. Within scope, connected mode can retrieve CCD information, while Local Lab can use an already installed, hash-pinned registered ligand graph without an external lookup. Preparation can reconstruct supported missing side-chain atoms, add standard hydrogens and terminal oxygen, choose histidine states, and scan polar-hydrogen orientations.
 \item An unresolved blocker stops the operation and exposes the preview for review. A blocker-free preview is immediately parameterized and applied; there is no normal second Apply step.
 \item Inspect every applied change, warning, and attached audit. Download the preparation report if the decisions must survive the browser session.
 \end{enumerate}
@@ -534,7 +534,7 @@ Molarium records several different kinds of evidence. They answer different ques
 \textbf{Record} & \textbf{Question answered} & \textbf{Persistence and limit}\\
 \midrule
 \endhead
-Chemist Actions audit & What recognized public action was requested, with what arguments and outcome? & Session memory; serialized calls; bounded history, normally 500 entries; cleared with the scene unless exported through a script path.\\
+Chemist Actions audit & What recognized public action was requested, with what arguments and outcome? & Page-lifetime public API memory, normally at most 500 entries; clearing the scene discards the molecule-attached copy but not the API history; export or commit is required for persistence beyond page reload.\\
 Preparation or calculation record & What system, model, settings, energies, frames, warnings, or audit produced this result? & Attached to the in-memory state and available through workflow-specific reports or exports.\\
 Docking labbook & How were mapping, feasibility, scoring, rejection, and selection handled? & Exportable JSON and Markdown/notes with chained hashes.\\
 Designer action script & Which completed public actions should be replayed? & Exportable JSON; replay invokes the same guarded routes; not a complete UI or binary session snapshot.\\
@@ -606,10 +606,10 @@ await api.execute({action:"campaign.create", args:{
   initialCommitMessage:"Register 5OVE/AXE starting state"}})
 // chemist or agent performs guarded molecular actions
 await api.execute({action:"campaign.commitCurrent", args:{
-  message:"Accept Phe890-out design state", tags:["prospective"]}})
+  message:"Record designer-directed AWW state", tags:["prospective"]}})
 await api.execute({action:"campaign.recordDecision", args:{
   disposition:"progressed",
-  rationale:"No new clashes after pocket-state search"}})
+  rationale:"Ligand pose locked before receptor-state search"}})
 await api.execute({action:"campaign.verify", args:{}})
 \end{lstlisting}
 
@@ -647,7 +647,4 @@ The manifest is the executable authority: a narrative skill contract cannot add 
 \subhead{Capabilities deliberately outside these workflows}
 
 The current workbench does not provide missing-loop construction, membrane or general metal preparation, covalent-ligand parameterization, periodic explicit solvent, PME, production-scale trajectories, binding free energy, global docking, general remote CUDA execution, GFN/xTB, general combinatorial enumeration, or automatic campaign selection. Their absence is part of the operating contract rather than a prompt to approximate them silently.
-
-{\footnotesize
-This task-centered appendix intentionally omits maintainer file paths, source-line numbers, worker lifecycle details, JSON nesting limits, deployment internals, and the complete repository test list. Those remain valuable implementation and audit documentation, but they are not required for a scientist or agent to understand how to perform and judge the workflows above.\par}
 \endgroup
