@@ -181,9 +181,10 @@ await writeFile(join(output, 'runtime-config.js'),
   })});\n`);
 await writeFile(join(output, '_headers'), headers);
 await writeFile(join(output, '_redirects'), [
-  '/sos1 /sos1.html 302',
-  '/sos1/ /sos1.html 302',
-  '/sos1-hit-to-bay293/movies /sos1.html 302',
+  // Pages serves sos1.html at /sos1 and canonicalizes /sos1.html back to it.
+  // An explicit /sos1 -> /sos1.html redirect would therefore loop.
+  '/sos1/ /sos1 302',
+  '/sos1-hit-to-bay293/movies /sos1 302',
   '/sos1-hit-to-bay293/movie /design-history/publications/sos1/designer-intent-2026-09-04/executable.mp4 302',
   '/sos1-hit-to-bay293/replay /?story=sos1-hit-to-bay293-review 302',
   '/sos1-hit-to-bay293/replay/ /?story=sos1-hit-to-bay293-review 302',

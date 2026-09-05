@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
+import { readFile } from 'node:fs/promises';
 import { browserModuleClosure, sos1ReleaseWebFiles } from './web-bundle-dependencies.mjs';
 
 const root = await mkdtemp(join(tmpdir(), 'molarium-web-closure-test-'));
@@ -26,5 +27,8 @@ try {
   assert.deepEqual(await sos1ReleaseWebFiles(root), [`${prefix}/release.json`, 'sos1.html', `${prefix}/movie.mp4`]);
   await writeFile(declaration, JSON.stringify({ asset:{ path:`${prefix}/../escape` } }));
   await assert.rejects(sos1ReleaseWebFiles(root));
+  const build = await readFile(resolve(import.meta.dirname, 'build-web.mjs'), 'utf8');
+  assert(!/^\s*['"]\/sos1 \/sos1\.html 30[1278]['"]/m.test(build),
+    'Cloudflare canonical HTML redirects must not form a /sos1 loop');
   console.log('Web bundle recursive dependencies and release paths: PASS');
 } finally { await rm(root, { recursive:true, force:true }); }

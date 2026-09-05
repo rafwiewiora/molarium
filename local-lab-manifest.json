@@ -102,8 +102,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 69237,
-      "sha256": "60f481a5c65166a32033b062b08c638b12a9d869c9c8f6dda5758944f0e3305a"
+      "bytes": 69226,
+      "sha256": "d28ad400d2d7f71d8f97c25235cf2738dc598c03196bb3d860573bae18c561db"
     },
     {
       "path": "local-lab-test.js",
