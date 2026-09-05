@@ -1,4 +1,5 @@
 import { resolve } from 'node:path';
+import { browserModuleClosure, sos1ReleaseWebFiles } from './web-bundle-dependencies.mjs';
 
 const root = resolve(import.meta.dir, '..');
 const reviewedFiles = [
@@ -117,7 +118,8 @@ const reviewedFiles = [
 ];
 
 const files = [];
-for (const path of reviewedFiles) {
+for (const path of await browserModuleClosure(root,
+  [...reviewedFiles, ...await sos1ReleaseWebFiles(root)])) {
   const file = Bun.file(resolve(root, path));
   if (!(await file.exists())) throw new Error(`Missing reviewed file: ${path}`);
   const bytes = await file.arrayBuffer();

@@ -6,6 +6,7 @@ import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
+import { loadA010GraphCheckpoint } from './sos1-aww-graph-checkpoint.mjs';
 import { ENERGY_OPTIONS, evaluateDesignerHydrogenBond,
   rankFiniteClashFreeCandidates } from
   './rank-sos1-phe890-fixed-ligand-energy.browser.mjs';
@@ -21,12 +22,16 @@ const AWW_STEP_ID = 'open-phe890-pocket';
 const DESIGNER_TORSION_ATOM_NAMES = Object.freeze(['N7', 'C12', 'C15', 'CX2']);
 const DESIGNER_PRIMARY_ROTATION_DEGREES = 150;
 const DESIGNER_PRIMARY_AXIS_ATOM_NAMES = Object.freeze(['C12', 'C15']);
+const DESIGNER_UPSTREAM_AXIS_ATOM_NAMES = Object.freeze(['N7', 'C12']);
+const DESIGNER_UPSTREAM_RANGE_DEGREES = Object.freeze([0,60]);
 const DESIGNER_COUPLED_AXIS_ATOM_NAMES = Object.freeze([
   Object.freeze(['CX4', 'CX5']),
   Object.freeze(['CX15', 'CX16']),
 ]);
 const PHE890 = Object.freeze({ residueName:'PHE', chain:'A', residueIndex:890,
   insertionCode:'' });
+const PHE890_RESPONSE_ATOMS = Object.freeze(['CG','CD1','CD2','CE1','CE2','CZ']
+  .map((atomName) => Object.freeze({ ...PHE890, atomName })));
 const DISALLOWED_CURRENT_RUN_ACTIONS = new Set([
   'geometry.setInternalCoordinate',
   'pose.refine', 'pose.apply', 'pose.updateReceptorReference', 'optimization.run',
@@ -173,10 +178,16 @@ async function main() {
     if (error.code !== 'ENOENT') throw error;
   }
 
-  const sourceCampaign = resolve(root, SOURCE_CAMPAIGN_PATH);
-  const sourceBytes = await readFile(sourceCampaign);
-  assert.equal(sha256(sourceBytes), SOURCE_CAMPAIGN_SHA256,
-    'The exact frozen AWZ source campaign bytes changed');
+  const graphCheckpointArg = valueFor('--graph-checkpoint');
+  const graphSource = graphCheckpointArg
+    ? await loadA010GraphCheckpoint(resolve(root, graphCheckpointArg)) : null;
+  const sourceCampaign = resolve(root, graphCheckpointArg || SOURCE_CAMPAIGN_PATH);
+  const sourcePath = relative(root, sourceCampaign);
+  assert(sourcePath && !sourcePath.startsWith('..') && !sourcePath.startsWith('/'),
+    'Source checkpoint must be inside the repository');
+  const sourceBytes = graphSource?.bytes || await readFile(sourceCampaign);
+  const sourceSha256 = graphSource?.sha256 || SOURCE_CAMPAIGN_SHA256;
+  assert.equal(sha256(sourceBytes), sourceSha256, 'The frozen source campaign bytes changed');
   await mkdir(output, { recursive:false });
   const save = async (filename, value) => {
     const bytes = Buffer.isBuffer(value) ? value : jsonBytes(value);
@@ -188,20 +199,24 @@ async function main() {
     schema:SCHEMA,
     status:'declared-before-compute',
     predictionScope:'AWW ligand intent followed by a receptor-only Phe890 response',
-    source:{ stateId:SOURCE_STATE_ID, kind:'exact-frozen-full-system-campaign',
-      path:SOURCE_CAMPAIGN_PATH, sha256:SOURCE_CAMPAIGN_SHA256,
+    source:{ stateId:graphSource ? PRODUCT_STATE_ID : SOURCE_STATE_ID,
+      kind:graphSource ? 'exact-frozen-graph-only-campaign' : 'exact-frozen-full-system-campaign',
+      path:sourcePath, sha256:sourceSha256,
       coordinateLineage:'registered 5OVE/AXE coordinate boundary' },
     product:{ stateId:PRODUCT_STATE_ID, graphInput:'reported molecular graph only' },
     designerIntent:{ action:'geometry.alignBranchToContact',
       interpretation:'chemist-directed branch orientation in the current scene; not an external pose placement',
       orderedAxisAtomNames:[...DESIGNER_PRIMARY_AXIS_ATOM_NAMES],
       designerPrimaryRotationDegrees:DESIGNER_PRIMARY_ROTATION_DEGREES,
+      upstreamAxisAtomNames:[...DESIGNER_UPSTREAM_AXIS_ATOM_NAMES],
+      upstreamRotationRangeDegrees:[...DESIGNER_UPSTREAM_RANGE_DEGREES],
+      upstreamDirectionIntent:'grow the arm into the current Phe-occupied pocket',
       coupledAxisAtomNames:DESIGNER_COUPLED_AXIS_ATOM_NAMES.map((axis) => [...axis]),
       directionalContact:{ ligandAtom:'AWW OX3', receptorAtom:'TYR A884 O',
         contactIdSource:'result.contact.contactId from the preceding pose.addContact action' },
       solution:'best-directional', currentSceneCoordinatesOnly:true,
       externalReferenceCoordinatesUsed:false,
-      allowedResponseResidues:[PHE890],
+      allowedResponseAtoms:PHE890_RESPONSE_ATOMS,
       interactionHypotheses:[
         { ligandAtom:'AWW N7', receptorAtom:'ASN A879 OD1', ligandRole:'donor' },
         { ligandAtom:'AWW OX3', receptorAtom:'TYR A884 O', ligandRole:'donor' },
@@ -213,7 +228,10 @@ async function main() {
       energy:{ job:'energy', method:'openmm', options:ENERGY_OPTIONS,
         coordinatePolicy:'fixed-coordinate single-point; no optimization or dynamics' },
       everyEnumeratedCandidateEvaluated:true, ligandCoordinatesFixed:true },
-    laterStructureAccess:false,
+    laterStructureAccess:true,
+    designerIntentOrigin:'reported-series-informed designer hypothesis',
+    externalReferenceCoordinatesUsed:false,
+    waterPolicy:'all source waters retained and fixed',
     prohibitedCurrentRunActions:[...DISALLOWED_CURRENT_RUN_ACTIONS],
   };
   const boundaryFile = await save('boundary.json', boundary);
@@ -228,6 +246,7 @@ async function main() {
     await waitFor(async () => browser.evaluate(
       'Boolean(window.MolariumChemistActionsReady)'), 90000,
     'Molarium Chemist Actions API');
+    await browser.evaluate('window.MolariumChemistActionsReady.then(() => true)');
     const description = await browser.evaluate(
       'window.MolariumChemistActions.describe()');
     for (const action of ['campaign.import', 'campaign.verify', 'campaign.commitCurrent',
@@ -253,8 +272,8 @@ async function main() {
     };
 
     const imported = await execute('campaign.import', {
-      sourcePath:`./${SOURCE_CAMPAIGN_PATH}`,
-      sourceSha256:SOURCE_CAMPAIGN_SHA256,
+      sourcePath:`./${sourcePath}`,
+      sourceSha256,
     }, 'import-awz-source');
     assert.equal(imported.result.campaignImport.verification.valid, true,
       'The imported AWZ campaign did not verify');
@@ -262,9 +281,10 @@ async function main() {
     assert.equal(verifiedSource.result.campaignVerification.valid, true,
       'The active AWZ campaign failed verification');
     const resumed = await execute('designRoute.resume', {
-      routeId:'sos1-hit-only', stateId:SOURCE_STATE_ID,
+      routeId:'sos1-hit-only', stateId:graphSource ? PRODUCT_STATE_ID : SOURCE_STATE_ID,
     }, 'resume-awz-route');
-    assert.equal(resumed.result.designRoute.currentStateId, SOURCE_STATE_ID);
+    assert.equal(resumed.result.designRoute.currentStateId,
+      graphSource ? PRODUCT_STATE_ID : SOURCE_STATE_ID);
     const sourceParameterized = await execute('protein.parameterize', {},
       'parameterize-awz-without-motion');
     assert.equal(sourceParameterized.result.parameterization
@@ -273,7 +293,13 @@ async function main() {
     await execute('view.setMode', { mode:'build' }, 'enter-design');
     await execute('pose.captureReference', { mode:'propagate' }, 'capture-awz-reference');
 
-    const staged = await execute('designRoute.applyStep', {
+    let staged;
+    if (graphSource) {
+      checkpoints.graphOnly = { commitId:graphSource.commitId,
+        snapshotId:graphSource.snapshotId,
+        ...(await save('aww-graph-only-campaign.json', graphSource.bytes)) };
+    } else {
+    staged = await execute('designRoute.applyStep', {
       stepId:AWW_STEP_ID,
     }, 'apply-aww-graph');
     assert.equal(staged.result.designStep.referenceStateId, SOURCE_STATE_ID);
@@ -294,6 +320,7 @@ async function main() {
       ...(await save('aww-graph-only-campaign.json',
         Buffer.from(graphOnlyExport.result.campaignExport.serialized))),
     };
+    }
 
     inspections.stagedLigand = requireInspection((await execute('session.inspect', {
       scope:'ligand', includeCoordinates:true, maximumAtoms:256,
@@ -341,8 +368,10 @@ async function main() {
       solution:'best-directional',
       contactId:distalHypothesis.result.contact.contactId,
       designerPrimaryRotationDegrees:DESIGNER_PRIMARY_ROTATION_DEGREES,
+      upstreamAxisAtomIds:DESIGNER_UPSTREAM_AXIS_ATOM_NAMES.map(atomId),
+      upstreamRotationRangeDegrees:[...DESIGNER_UPSTREAM_RANGE_DEGREES],
       coupledAxisAtomIds,
-      allowedResponseResidues:[PHE890],
+      allowedResponseAtoms:PHE890_RESPONSE_ATOMS,
     }, 'align-designer-aww-branch-to-tyr884');
     const designerBranchContact = designerMove.result.designerBranchContact;
     assert.equal(designerBranchContact.coordinateOrigin, 'current-visible-molecule');
@@ -352,6 +381,11 @@ async function main() {
       distalHypothesis.result.contact.contactId);
     assert.deepEqual(designerBranchContact.orderedAxisAtomIds, primaryAxisAtomIds);
     assert.deepEqual(designerBranchContact.coupledAxisAtomIds, coupledAxisAtomIds);
+    assert.deepEqual(designerBranchContact.upstreamAxisAtomIds,
+      DESIGNER_UPSTREAM_AXIS_ATOM_NAMES.map(atomId));
+    assert.deepEqual(designerBranchContact.upstreamRotationRangeDegrees,
+      DESIGNER_UPSTREAM_RANGE_DEGREES);
+    assert.equal(designerBranchContact.selected.internalSevereContactCount, 0);
     assert.equal(designerBranchContact.allowedResponseResidues?.length, 1);
     assert(sameResidue(designerBranchContact.allowedResponseResidues[0], PHE890),
       'The current-scene search did not preserve the declared Phe890 response allowance');
@@ -630,12 +664,12 @@ async function main() {
       < currentRunAudit.findIndex((record) => record.requestId === enumeration.requestId),
     'Ligand intent must be committed before receptor enumeration');
     const auditRecord = { schema:description.schema, protocol:SCHEMA,
-      sourceCampaignSha256:SOURCE_CAMPAIGN_SHA256,
+      sourceCampaignSha256:sourceSha256,
       currentRunRequestIds:[...currentRequestIds], records:audit };
     const auditFile = await save('chemist-action-audit.json', auditRecord);
     const inspectionFile = await save('coordinate-inspections.json', {
       schema:'molarium.sos1-aww-receptor-only-coordinate-evidence/v1',
-      sourceCampaignSha256:SOURCE_CAMPAIGN_SHA256,
+      sourceCampaignSha256:sourceSha256,
       designerTorsion:{ atomNames:[...DESIGNER_TORSION_ATOM_NAMES],
         atomIds:torsionAtoms.map((atom) => atom.atomId), beforeDegrees,
         afterDegrees,
@@ -671,14 +705,15 @@ async function main() {
 
     const manifest = {
       schema:SCHEMA,
-      status:'prediction-frozen-later-structures-unopened',
+      status:'prediction-frozen-reference-informed-designer-intent',
       publicationEligible:true,
       predictionScope:boundary.predictionScope,
       source:boundary.source,
       scientificContract:{
-        predecessorPosePolicy:'exact frozen AWZ full-system campaign; no regenerated AWT/AWZ geometry',
-        graphAction:'registered AWW molecular graph installed by designRoute.applyStep',
-        directionalIntent:'chemist-specified +150 degree C12-to-C15 branch rotation followed by current-scene coupled-axis directional contact search',
+        predecessorPosePolicy:'exact frozen source campaign; no regenerated precursor geometry',
+        graphAction:graphSource ? 'resume exact a010 graph-only checkpoint'
+          : 'registered AWW molecular graph installed by designRoute.applyStep',
+        directionalIntent:'forward N7-to-C12 exit direction within 0 to 60 degrees, fixed +150 degree C12-to-C15 rotation, and two coupled contact rotors',
         directionalIntentCoordinateOrigin:'current visible AWZ-derived molecule and receptor only; no external reference coordinates',
         designerInteractionHypotheses:'N7 to ASN A879 OD1 and OX3 to TYR A884 backbone O; declared intent only, not scoring results',
         designerFixedLigandPoseLockId:designerLock.lockId,
@@ -691,9 +726,15 @@ async function main() {
           === postPheLigandFingerprints.coordinateSha256,
         poseRefinementUsed:false,
         optimizationUsed:false,
-        laterStructureAccess:false,
+        laterStructureAccess:true,
+        designerIntentOrigin:boundary.designerIntentOrigin,
+        externalReferenceCoordinatesUsed:false,
+        waterPolicy:boundary.waterPolicy,
       },
-      staging:{ stepId:staged.result.designStep.id,
+      staging:graphSource ? { stepId:AWW_STEP_ID, referenceStateId:SOURCE_STATE_ID,
+        stateId:PRODUCT_STATE_ID, inputKind:'molecular-graph-only',
+        execution:'resumed-from-verified-graph-checkpoint',
+        graphOnlyCheckpoint:checkpoints.graphOnly } : { stepId:staged.result.designStep.id,
         referenceStateId:staged.result.designStep.referenceStateId,
         stateId:staged.result.designStep.stateId,
         inputKind:staged.result.designStep.inputKind,
@@ -762,6 +803,14 @@ async function main() {
       campaignSha256:checkpoints.receptorResponse.sha256,
     })}`);
   } catch (error) {
+    try {
+      if (browser) {
+        await save('failure-browser-state.json', await browser.evaluate(`({
+          readyState:document.readyState, apiInstalled:Boolean(window.MolariumChemistActions),
+          bodyText:document.body?.innerText?.slice(0,16000) || '' })`));
+        await save('failure-browser.png', await browser.capturePng());
+      }
+    } catch { /* Preserve the originating error if the browser has disappeared. */ }
     let audit = [];
     try {
       audit = browser ? await browser.evaluate(
@@ -771,19 +820,19 @@ async function main() {
     }
     const auditFile = await save('chemist-action-audit.json', {
       schema:'molarium.chemist-actions/v1', protocol:SCHEMA,
-      sourceCampaignSha256:SOURCE_CAMPAIGN_SHA256,
+      sourceCampaignSha256:sourceSha256,
       status:'failed', records:audit,
     });
     if (Object.keys(inspections).length)
       await save('partial-coordinate-inspections.json', { schema:SCHEMA, inspections });
     await save('failed-run.json', {
       schema:'molarium.sos1-aww-receptor-only-failure/v1',
-      status:'failed', sourceCampaignSha256:SOURCE_CAMPAIGN_SHA256,
+      status:'failed', sourceCampaignSha256:sourceSha256,
       error:{ name:String(error?.name || 'Error'),
         message:String(error?.message || error), stack:String(error?.stack || '') },
       completedActions:localRecords.map((record) => ({
         requestId:record.requestId, action:record.action, sequence:record.sequence })),
-      checkpoints, boundary:boundaryFile, audit:auditFile, laterStructureAccess:false,
+      checkpoints, boundary:boundaryFile, audit:auditFile, laterStructureAccess:true,
     });
     throw error;
   } finally {

@@ -104,11 +104,18 @@ export function selectSidechainRotamerCandidate(ensemble, selector = {}) {
     throw new Error('No compatible side-chain rotamer ensemble is available');
   if (!selector || typeof selector !== 'object' || Array.isArray(selector))
     throw new Error('A side-chain rotamer selector must be an object');
-  const selectorKeys = ['index','chiDegrees','coordinateSha256']
+  const selectorKeys = ['index','chiDegrees','coordinateSha256','source']
     .filter((key) => Object.hasOwn(selector, key));
   if (selectorKeys.length !== 1)
-    throw new Error('Specify exactly one side-chain rotamer selector: index, chiDegrees, or coordinateSha256');
+    throw new Error('Specify exactly one side-chain rotamer selector: index, chiDegrees, coordinateSha256, or source');
   const selectorKey = selectorKeys[0];
+  if (selectorKey === 'source') {
+    if (selector.source !== 'input') throw new Error('source selector must be input');
+    const matches = ensemble.candidates.filter((candidate) => candidate.source === 'input');
+    if (matches.length !== 1)
+      throw new Error(`source input must resolve to exactly one candidate; found ${matches.length}`);
+    return matches[0];
+  }
   if (selectorKey === 'index') {
     if (!Number.isInteger(selector.index) || selector.index < 0)
       throw new Error('index must be a non-negative integer');
@@ -271,6 +278,47 @@ function localExclusions(adjacency, maximumBondDistance = 3) {
     }
   });
   return excluded;
+}
+
+// Only atoms off a declared chi axis can respond. In particular, CB is on
+// CA–CB and must never acquire clash permission merely by belonging to Phe.
+export function sidechainResponseAtomIndices({ molecule, residue } = {}) {
+  const definitions = CHI_ATOMS[residue?.residueName];
+  if (!definitions) throw new Error('Response residue has no supported side-chain chi rotations');
+  const indices = molecule.atoms.flatMap((atom, index) =>
+    atom.residueName === residue.residueName && (atom.chain || '') === residue.chain
+      && atom.residueIndex === residue.residueIndex
+      && (atom.insertionCode || '') === (residue.insertionCode || '')
+      && (!atom.record || atom.record === 'ATOM') ? [index] : []);
+  const named = (name) => {
+    const matches = indices.filter((index) => molecule.atoms[index].atomName === name);
+    if (matches.length !== 1) throw new Error(`Response residue must contain exactly one ${name}`);
+    return matches[0];
+  };
+  const adjacency = adjacencyFor(molecule), movable = new Set();
+  for (const names of definitions) {
+    const [, proximal, distal] = names.map(named);
+    if (!adjacency[proximal].includes(distal)) throw new Error('Response chi axis is not bonded');
+    const seen = new Set([distal]), queue = [distal];
+    while (queue.length) {
+      const index = queue.shift();
+      for (const neighbor of adjacency[index]) {
+        if (index === distal && neighbor === proximal) continue;
+        if (!seen.has(neighbor)) { seen.add(neighbor); queue.push(neighbor); }
+      }
+    }
+    if (seen.has(proximal) || [...seen].some((index) => !indices.includes(index)))
+      throw new Error('Response chi branch is cyclic or linked outside the residue');
+    const origin = molecule.atoms[proximal];
+    const axis = unit(vector(origin, molecule.atoms[distal]));
+    for (const index of seen) {
+      const offset = vector(origin, molecule.atoms[index]);
+      const perpendicular = cross(axis, offset);
+      if (Math.hypot(perpendicular.x, perpendicular.y, perpendicular.z) > 1e-8)
+        movable.add(index);
+    }
+  }
+  return [...movable].sort((a, b) => a - b);
 }
 
 function coordinateRmsd(first, second, atomIndices) {

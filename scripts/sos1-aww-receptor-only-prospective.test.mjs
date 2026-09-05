@@ -7,6 +7,8 @@ const source = await readFile(new URL(
 const sourceCampaignBytes = await readFile(new URL(
   '../design-history/publications/sos1/checkpoints/fragment-merge-campaign.json',
   import.meta.url));
+assert.match(source, /await browser.evaluate\('window.MolariumChemistActionsReady.then\(\(\) => true\)'\)/,
+  'the runner must await API installation, not merely the existence of its readiness promise');
 assert.equal(createHash('sha256').update(sourceCampaignBytes).digest('hex'),
   'e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81');
 const sourceCampaign = JSON.parse(sourceCampaignBytes);
@@ -19,9 +21,12 @@ assert.match(source, /fragment-merge-campaign\.json/,
   'the runner must resume the exact frozen AWZ full-system campaign');
 assert.match(source, /e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81/,
   'the AWZ source bytes must be hash-pinned');
-assert.match(source, /sourcePath:`\.\/\$\{SOURCE_CAMPAIGN_PATH\}`/,
+assert.match(source, /sourcePath:`\.\/\$\{sourcePath\}`/,
   'campaign import must avoid cloning a multi-megabyte serialized argument');
-assert.match(source, /designRoute\.resume[\s\S]{0,120}stateId:SOURCE_STATE_ID/);
+assert.match(source, /designRoute\.resume[\s\S]{0,160}stateId:graphSource \? PRODUCT_STATE_ID : SOURCE_STATE_ID/);
+assert.match(source, /loadA010GraphCheckpoint/);
+assert.match(source, /DESIGNER_UPSTREAM_AXIS_ATOM_NAMES = Object\.freeze\(\['N7', 'C12'\]\)/);
+assert.match(source, /DESIGNER_UPSTREAM_RANGE_DEGREES = Object\.freeze\(\[0,60\]\)/);
 assert.match(source, /stepId:AWW_STEP_ID/);
 assert.match(source, /aww-graph-only-campaign\.json/);
 const graphOnlyCommit = source.indexOf("'commit-aww-graph-only'");
@@ -42,7 +47,7 @@ assert.match(source, /solution:'best-directional'/);
 assert.match(source, /contactId:distalHypothesis\.result\.contact\.contactId/);
 assert.match(source, /designerPrimaryRotationDegrees:DESIGNER_PRIMARY_ROTATION_DEGREES/);
 assert.match(source, /coupledAxisAtomIds/);
-assert.match(source, /allowedResponseResidues:\[PHE890\]/);
+assert.match(source, /allowedResponseAtoms:PHE890_RESPONSE_ATOMS/);
 assert.doesNotMatch(source, /ligandFeatureAtomId:/);
 assert.doesNotMatch(source, /receptorTargetAtomId:/);
 assert.doesNotMatch(source, /targetDistanceAngstrom:/);

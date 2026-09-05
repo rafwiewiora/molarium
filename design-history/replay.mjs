@@ -63,6 +63,9 @@ export const AUDIT_STATE_HASH_GUARDS = Object.freeze({
 // rerun for a changed scientific outcome without demanding byte-identical
 // floating-point output.
 export const AUDIT_PORTABLE_SCIENTIFIC_GUARDS = Object.freeze({
+  'geometry.alignBranchToContact':Object.freeze({ resultKey:'designerBranchContact',
+    fields:Object.freeze(['externalReferenceCoordinatesUsed', 'solution',
+      'selected.internalSevereContactCount', 'selected.contacts.outsideAllowedResponseContactCount']) }),
   'pose.refine':Object.freeze({ resultKey:'refinement', fields:Object.freeze([
     'coverageComplete', 'selectedFeasible', 'selectedCore.satisfied',
     'requiredSpatialFeatureCount',
@@ -86,7 +89,7 @@ export const AUDIT_PORTABLE_SCIENTIFIC_GUARDS = Object.freeze({
     ]) }),
 });
 
-function portableScientificArguments(record, args) {
+function portableScientificArguments(record, args, ligandSelectorsById) {
   if (record.action === 'pose.enumerateSidechainRotamers') {
     const residue = record.result?.sidechainRotamers?.residue;
     if (!residue || typeof residue.residueName !== 'string'
@@ -104,9 +107,27 @@ function portableScientificArguments(record, args) {
     if (!Array.isArray(chiDegrees) || !chiDegrees.length
       || chiDegrees.some((value) => !Number.isFinite(value)))
       throw new Error(`Audit sequence ${record.sequence} has no stable side-chain chi selector`);
-    for (const key of ['index','coordinateSha256','expectedInputCoordinateSha256',
+    for (const key of ['index','coordinateSha256','chiDegrees','source','expectedInputCoordinateSha256',
       'expectedSelectedCoordinateSha256']) delete args[key];
-    args.chiDegrees = cloneRecord(chiDegrees);
+    if (record.result?.sidechainRotamer?.source === 'input') args.source = 'input';
+    else args.chiDegrees = cloneRecord(chiDegrees);
+  } else if (record.action === 'geometry.alignBranchToContact') {
+    for (const [idKey, selectorKey, coupled] of [
+      ['axisAtomIds','axisAtomSelectors',false],
+      ['coupledAxisAtomIds','coupledAxisAtomSelectors',true],
+      ['upstreamAxisAtomIds','upstreamAxisAtomSelectors',false],
+    ]) {
+      if (!Object.hasOwn(args, idKey)) continue;
+      if (Object.hasOwn(args, selectorKey))
+        throw new Error(`Audit sequence ${record.sequence} contains both ${idKey} and ${selectorKey}`);
+      const axis = (ids) => ids.map((id) => {
+        const selector = ligandSelectorsById.get(id);
+        if (!selector) throw new Error(`Audit sequence ${record.sequence} has no current ligand selector for ${id}`);
+        return cloneRecord(selector);
+      });
+      args[selectorKey] = coupled ? args[idKey].map(axis) : axis(args[idKey]);
+      delete args[idKey];
+    }
   }
   return args;
 }
@@ -318,6 +339,7 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
   const actions = [];
   let selectedAtomIds = [], stateHashGuardedActionCount = 0;
   let portableScientificGuardCount = 0;
+  const ligandSelectorsById = new Map();
   for (const [recordIndex, record] of records.entries()) {
     if (!record || typeof record !== 'object')
       throw new Error(`Audit record ${recordIndex + 1} must be an object`);
@@ -327,6 +349,23 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
     if (seenSequences.has(sequence)) throw new Error(`Duplicate audit sequence ${sequence}`);
     seenSequences.add(sequence);
     if (record.status !== 'completed') continue;
+    if (executionContract === 'portable-scientific') {
+      if (['designRoute.applyStep','designRoute.load','campaign.import','session.clear',
+        'session.loadStructure','session.loadIdentifier','session.loadFixture'].includes(record.action))
+        ligandSelectorsById.clear();
+      const inspection = record.action === 'session.inspect' ? record.result : null;
+      if (inspection?.scope === 'ligand' && inspection.truncated === false) {
+        ligandSelectorsById.clear();
+        for (const atom of inspection.atoms || []) {
+          if (typeof atom.atomId !== 'string' || typeof atom.atomName !== 'string'
+            || typeof atom.residueName !== 'string' || !Number.isInteger(atom.residueIndex)) continue;
+          ligandSelectorsById.set(atom.atomId, {
+            componentId:`heterogen:${atom.chain || ''}:${atom.residueIndex}:${atom.insertionCode || ''}:${atom.residueName}`,
+            atomName:atom.atomName,
+          });
+        }
+      }
+    }
     if (record.action === 'selection.replace' && Array.isArray(record.args?.atomIds))
       selectedAtomIds = cloneRecord(record.args.atomIds);
     else if (record.action === 'selection.clear'
@@ -351,7 +390,7 @@ export function actionScriptFromAudit(audit, { label = 'Chemist Actions audit re
       stateHashGuardedActionCount += 1;
     const expect = {};
     if (executionContract === 'portable-scientific') {
-      portableScientificArguments(record, args);
+      portableScientificArguments(record, args, ligandSelectorsById);
       portableScientificGuardCount += enrichPortableScientificGuards(record, expect);
     }
     const step = { action:record.action, args,

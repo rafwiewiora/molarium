@@ -1,0 +1,508 @@
+{
+  "schema": "molarium.sos1-designer-intent-release/v1",
+  "referenceInformed": true,
+  "source": {
+    "aww": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021",
+    "axh": "outputs/design-history/sos1-axh-from-intent-a022"
+  },
+  "executable": {
+    "path": "design-history/publications/sos1/designer-intent-2026-09-04/executable.action-script.json",
+    "bytes": 69210,
+    "sha256": "7eed2dff0bf3fa127f87b2322aaea4b615d458ad6d8ef3af3c5b5886dc8fe9c3"
+  },
+  "precomputed": {
+    "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-review.action-script.json",
+    "bytes": 9203,
+    "sha256": "6ab36deb2cab37fd888eff9c2006c8c14e06be351d4cdc160dd173c994393211"
+  },
+  "checkpoints": [
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/starting-hit-campaign.json",
+      "bytes": 2992881,
+      "sha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6",
+      "canonicalSha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6",
+      "id": "starting-hit",
+      "commitId": "commit:481b690c9b92896a18b858d8522ddb7c55be00b3b416922dcc814a7f0cec826b",
+      "snapshotId": "snapshot:463a3efd937fc719719256336bd1cb9b5db19a26df2f8db9d5bdfc4c353dd972"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/scaffold-rewrite-campaign.json",
+      "bytes": 5990361,
+      "sha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+      "canonicalSha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+      "id": "scaffold-rewrite",
+      "commitId": "commit:2c9880158ecce4b2140629dc84a9428e8dfcfa0d42b1aed54caa2bf24ba4b680",
+      "snapshotId": "snapshot:56afdcd914e17c8aa09d5347e7d5b9e95f3b8f3a89b8069fbaee1dc460e1d02a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/fragment-merge-campaign.json",
+      "bytes": 8990688,
+      "sha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81",
+      "canonicalSha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81",
+      "id": "fragment-merge",
+      "commitId": "commit:dc66adfd95d39456389739404fcb11a63188199ac603ecbeb45f0c40199dc95a",
+      "snapshotId": "snapshot:d895de9868c4a37951748701a3d21e835454d314361933197ef65a5530f61c98"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-graph-campaign.json",
+      "bytes": 11992522,
+      "sha256": "c0672efabc8da255de45a6d8b41f3f1a2bb0652ac2e683a70a9ed33b8692b3b1",
+      "canonicalSha256": "c0672efabc8da255de45a6d8b41f3f1a2bb0652ac2e683a70a9ed33b8692b3b1",
+      "id": "aww-graph",
+      "commitId": "commit:8b51a53bd69a948e1ff6573a46f6c419e2305628bdbcd70b4978b4adef568d2e",
+      "snapshotId": "snapshot:0adf84081e034501a5ef67f81a7996bff1d213c29bf11bdd8419df43778fe41b"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-designer-intent-campaign.json",
+      "bytes": 14997311,
+      "sha256": "a1f0424ce1be8dde42180dbe76c5beae8565b56a8739a222b8fc9b1b6a91a3ae",
+      "canonicalSha256": "a1f0424ce1be8dde42180dbe76c5beae8565b56a8739a222b8fc9b1b6a91a3ae",
+      "id": "aww-designer-intent",
+      "commitId": "commit:7425b28b37d00d1f8bc6aac34ba8c6e474d9559ba757d7bd0f43b4326b9b69ed",
+      "snapshotId": "snapshot:ea059ee77316f80236aebcbbebea57fc187062c32ffc3d54856cde3363c0dfc0"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-phe890-response-campaign.json",
+      "bytes": 18021280,
+      "sha256": "b551d8e7d0489955c8885397fd4b8ddb2c783b559c6f616cf89356a763a30601",
+      "canonicalSha256": "b551d8e7d0489955c8885397fd4b8ddb2c783b559c6f616cf89356a763a30601",
+      "id": "aww-phe890-response",
+      "commitId": "commit:dbc740acb98a727d941b32dd65bff30917a0330fba3d9ce7227a6165ab7445d3",
+      "snapshotId": "snapshot:874f601573f2555d44a08e92fafe84ef4103041c472dd790ff988f99f437e9ee"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/finish-bay-293-campaign.json.gz",
+      "bytes": 3335877,
+      "sha256": "dbe42835d58b058a68e829412b2c30fbf9332bf8590b03b2a048ab950b991c95",
+      "encoding": "gzip",
+      "canonicalSha256": "247314e796be9c823e0545817bbec55d2b1232d32ae0cb5bfcd7264bb25408f3",
+      "id": "finish-bay-293",
+      "commitId": "commit:911cbe21f3cea3d75bb4916fa4a9313a942126c23c985f38ac5811878f169b34",
+      "snapshotId": "snapshot:901cddaaf385d22cdb6420fcaccecd783ed2b0e3d0a054a91b1220f219d4e3d0"
+    }
+  ],
+  "movies": {
+    "executable": {
+      "video": {
+        "path": "design-history/publications/sos1/designer-intent-2026-09-04/executable.mp4",
+        "bytes": 11679818,
+        "sha256": "5e9e7fc6f81efae0f1d1ff536493cf3da2b6c731bd6a66202aa9a560e9a48ff6"
+      },
+      "manifest": {
+        "path": "design-history/publications/sos1/designer-intent-2026-09-04/executable.render-manifest.json",
+        "bytes": 327839,
+        "sha256": "fcbcea308cfc94547beee1e3c46b947716172deb9c8d98288d8c623a3e654f0e"
+      },
+      "sourceScript": "outputs/design-history/sos1-hit-to-bay293-executable-interface-m006/source.action-script.json",
+      "audit": "outputs/design-history/sos1-hit-to-bay293-executable-interface-m006/chemist-action-audit.json"
+    },
+    "precomputed": {
+      "video": {
+        "path": "design-history/publications/sos1/designer-intent-2026-09-04/precomputed.mp4",
+        "bytes": 1358960,
+        "sha256": "1f0961eebc767243f502b4b2effebcdbf6bc9a3bab98fd4764670ab368d4204e"
+      },
+      "manifest": {
+        "path": "design-history/publications/sos1/designer-intent-2026-09-04/precomputed.render-manifest.json",
+        "bytes": 29627,
+        "sha256": "0a995235659817d1c9ac1c11d0cd644e2db59c4ccd6c557a8f7dc7ddff7755a4"
+      },
+      "sourceScript": "outputs/design-history/sos1-hit-to-bay293-intent-interface-m003/source.action-script.json",
+      "audit": "outputs/design-history/sos1-hit-to-bay293-intent-interface-m003/chemist-action-audit.json"
+    }
+  },
+  "evidence": [
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/001-chemist-action-audit.json.gz",
+      "bytes": 7672950,
+      "sha256": "a3e836fef3a052c9a5cbdcd339ff31a479a908c044580c5cddf6bb48a6fd3dbf",
+      "originalPath": "design-history/publications/sos1/source-runs/sos1-a013-a018-complete-frozen/chemist-action-audit.json",
+      "originalBytes": 74369576,
+      "originalSha256": "a4410e215592b0c1ed42a1ebb5b5d61b01e541fa3eea06599a70d6ec5d70e9d8",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/002-aww-graph-only-campaign.json.gz",
+      "bytes": 1459576,
+      "sha256": "bce1a5d1020599e5ef691c331f27b293aa2bff8461bcc5cec0005659363a8108",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-c46d8e5-a010/aww-graph-only-campaign.json",
+      "originalBytes": 11992522,
+      "originalSha256": "c0672efabc8da255de45a6d8b41f3f1a2bb0652ac2e683a70a9ed33b8692b3b1",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/003-chemist-action-audit.json.gz",
+      "bytes": 3922302,
+      "sha256": "c19c1a245cba2ea97f2d91a4bbf164c9ac0932bace3613924a32343dd490847c",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-c46d8e5-a010/chemist-action-audit.json",
+      "originalBytes": 36981242,
+      "originalSha256": "ed11d53e86f93405f22e096ddd143be3c0ca19de0f7b03641b88f7303cbb83c3",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/004-aww-designer-ligand-intent-campaign.json.gz",
+      "bytes": 1836069,
+      "sha256": "6c71a54840b388b71d570cbb827a56db0e8baf373adda51fa519a2474b05f5fa",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/aww-designer-ligand-intent-campaign.json",
+      "originalBytes": 14997311,
+      "originalSha256": "a1f0424ce1be8dde42180dbe76c5beae8565b56a8739a222b8fc9b1b6a91a3ae",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/005-aww-graph-only-campaign.json.gz",
+      "bytes": 1459576,
+      "sha256": "bce1a5d1020599e5ef691c331f27b293aa2bff8461bcc5cec0005659363a8108",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/aww-graph-only-campaign.json",
+      "originalBytes": 11992522,
+      "originalSha256": "c0672efabc8da255de45a6d8b41f3f1a2bb0652ac2e683a70a9ed33b8692b3b1",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/006-aww-receptor-only-prediction-campaign.json.gz",
+      "bytes": 2210960,
+      "sha256": "247e739f22759ba863d7dbfee527ac9ae5661fe77a5f541ded743580d96e039a",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/aww-receptor-only-prediction-campaign.json",
+      "originalBytes": 18021280,
+      "originalSha256": "b551d8e7d0489955c8885397fd4b8ddb2c783b559c6f616cf89356a763a30601",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/007-boundary.json.gz",
+      "bytes": 1349,
+      "sha256": "ea72ac60a223769235d8541903a2e3f23c70263e157b29974e1e64fa6ea853d8",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/boundary.json",
+      "originalBytes": 3917,
+      "originalSha256": "a5e116a62cd7be4947f34d38947136a4b2333ef785aa8e05271d12b9157ec6bc",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/008-chemist-action-audit.json.gz",
+      "bytes": 4675382,
+      "sha256": "ce1581ee0b9679ca40aaa26aa2cc74ea7ffaa209bd2a32722754e7679844a566",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/chemist-action-audit.json",
+      "originalBytes": 43734258,
+      "originalSha256": "88ba6bb017ef46a2f93224a11bdc2e10beebb8864a8e1934188d752b8190147c",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/009-coordinate-inspections.json.gz",
+      "bytes": 113626,
+      "sha256": "5c02084701c8f8d288fdc48e3c72243bff96f9783396cd5c357a7b32606f144a",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/coordinate-inspections.json",
+      "originalBytes": 1288645,
+      "originalSha256": "0aff54e3881185c58e93934cd067686228114e1ea517a6cdd6f96977ff4d3e65",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/010-phe890-candidate-01.json.gz",
+      "bytes": 30448,
+      "sha256": "f5a1af9abdd92f46f8606df8ff128223d64feaae4e6f0930d829330bcee939a4",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/phe890-candidate-01.json",
+      "originalBytes": 308875,
+      "originalSha256": "22fbd85a89ba2359504074951b8e91ae29f82cd65193fca5ba6562704f7bd1a2",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/011-phe890-candidate-02.json.gz",
+      "bytes": 30436,
+      "sha256": "037f2c4a0c21a78d9abb92963d7632fbc21dcca8d507ac2748e7ea9d51d2a822",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/phe890-candidate-02.json",
+      "originalBytes": 308875,
+      "originalSha256": "2b026ffc9c221b9a982f568acd89ca17e5f892c449636e6c2e27e2eaf5752977",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/012-phe890-candidate-03.json.gz",
+      "bytes": 30439,
+      "sha256": "4f5fe1e3baa714e926561eac8a51b24134aa34c8791ceb22138a826ffcca4880",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/phe890-candidate-03.json",
+      "originalBytes": 308874,
+      "originalSha256": "f74d4d73e5bbfb50e91502f655f92dcb1e93627740e09fc6244c9f708916da1a",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/013-phe890-candidate-04.json.gz",
+      "bytes": 30433,
+      "sha256": "d3f99ce7741c2116630549356b56e52ca27a20ae28cf1d29bf0c00af0be8bb65",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/phe890-candidate-04.json",
+      "originalBytes": 308874,
+      "originalSha256": "d4645b68b72a3184cc7d739bb9d836a29ddec2a82f1a2d5d506138b1b4d6d3c1",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/014-phe890-candidate-05.json.gz",
+      "bytes": 30443,
+      "sha256": "882508a74c7598daf7de869bf73714e630c8b5a8f153cb4187af08ff614bf267",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/phe890-candidate-05.json",
+      "originalBytes": 308883,
+      "originalSha256": "712b94a8668cd4c1635b6e4fe3be44cf4ea47b7b2e5a51c3d2d30c56e1c88f4c",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/015-phe890-candidate-06.json.gz",
+      "bytes": 30443,
+      "sha256": "bad4daf5385a56e15d5e19b3b9e9ca739e1faf171875181d6b303f8e183d8f78",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/phe890-candidate-06.json",
+      "originalBytes": 308886,
+      "originalSha256": "e197de1a379ac4732ec453bde2ef0aa196a4eaf7727f4ce45a37c999f8f89d44",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/016-phe890-candidate-07.json.gz",
+      "bytes": 30437,
+      "sha256": "bfd78ae112652dffdf0cd2f64aec178014ff4be7eb0ae3b0d7227b5a5cb783c2",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/phe890-candidate-07.json",
+      "originalBytes": 308881,
+      "originalSha256": "080806addf714b567a07c8bbfa683392d18aa097b16180ed9af6cd8b5e9ad2ca",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/017-phe890-candidate-08.json.gz",
+      "bytes": 30428,
+      "sha256": "bb7f46829ebab71e309a21dba1b0c651daf232aa63c21ccc921cd3f956a50909",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/phe890-candidate-08.json",
+      "originalBytes": 308875,
+      "originalSha256": "0052f02dfe7bae5d254db286e851102667d81a6a9a1b2d3ec025ad2152656ce3",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/018-phe890-candidate-09.json.gz",
+      "bytes": 30351,
+      "sha256": "1aa47a82d1b7dc1f576d971a51a7e702b49b339badf6013c8c969c025e596653",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/phe890-candidate-09.json",
+      "originalBytes": 308604,
+      "originalSha256": "e1b9a7d219b30f712d247e3e9ac7978e804c6d438462e8471be71973f5be976d",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/019-phe890-candidate-10.json.gz",
+      "bytes": 30452,
+      "sha256": "3671f705e7a2bab288366d7f33bbc9c075068a69eece28c61611244f13c32d61",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/phe890-candidate-10.json",
+      "originalBytes": 308910,
+      "originalSha256": "3e79d19a6622b9936edc8db26f21c821e0d4d01dbf2f63236047ba06486bf80d",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/020-phe890-candidate-11.json.gz",
+      "bytes": 30436,
+      "sha256": "ffca1650dd1737d93d4315661c77c06bc57a5a69050a28350dc75bf95b54da12",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/phe890-candidate-11.json",
+      "originalBytes": 308916,
+      "originalSha256": "d0a38208cac10053548955639a5ffaa46a8d4c04fcf4d6ed26fecb1678c9fcaf",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/021-phe890-candidate-12.json.gz",
+      "bytes": 30456,
+      "sha256": "4a6b418a265e9cf3a6e5d0ca3cd6f1ae06303007bd31f7ff5b7be7e53f1a0fdc",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/phe890-candidate-12.json",
+      "originalBytes": 308913,
+      "originalSha256": "495410998453ee1d0583e3150838d056a22ff371dde1ae95286cc6caec01777c",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/022-phe890-candidate-13.json.gz",
+      "bytes": 30427,
+      "sha256": "01126cf601b1e13693ca09763c2319b7feb3678104d4980c207cbffc5045ad55",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/phe890-candidate-13.json",
+      "originalBytes": 308917,
+      "originalSha256": "d61b0872b4183c0c6df64c3c716c0bb5be313f5fbdc14fb3077c124d3e9ab548",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/023-post-freeze-validation.json.gz",
+      "bytes": 1960,
+      "sha256": "230c17676a8a381cddb2a115d40718fd714fd1794b37c99b1eca6c8537f9859c",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/post-freeze-validation.json",
+      "originalBytes": 5167,
+      "originalSha256": "515ae2db7c495dc08df36750b238678b76da7d27f95902cddc59b8d75366e00e",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/024-prediction-manifest.json.gz",
+      "bytes": 8697,
+      "sha256": "45956fcdeca91ac1a29fe8d59430a10bce2dd6520482f53905a5af6ab014565c",
+      "originalPath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/prediction-manifest.json",
+      "originalBytes": 57278,
+      "originalSha256": "e71c8309dd7cc62f642fb699542b0f1c4ff02ac107782a2bbf72f98a8d932dd0",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/025-boundary.json.gz",
+      "bytes": 555,
+      "sha256": "ba92199d6016634383f8341cf677b6d6fcf858f4fa1b4a1f53495a32cfcc497b",
+      "originalPath": "outputs/design-history/sos1-axh-from-intent-a022/boundary.json",
+      "originalBytes": 949,
+      "originalSha256": "93962598088388df6c7025d7b90ef6ef9bc766ed9b84d5e10b4b0d644d5e4c4b",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/026-candidate-gate.json.gz",
+      "bytes": 1566,
+      "sha256": "0f170745931e1e844b4c098d3154808e1b74a2e7f1a6add67e1106053db46dce",
+      "originalPath": "outputs/design-history/sos1-axh-from-intent-a022/candidate-gate.json",
+      "originalBytes": 14438,
+      "originalSha256": "cb51a0169fd287844db61d5bc3a48d5161e541af3f22c0a529f4071e04b5d4c6",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/027-chemist-action-audit.json.gz",
+      "bytes": 9071095,
+      "sha256": "99cda15ee0aeaa9c4df44a585aa143d38eb2689ce2e20f36f5c5ae451a0fe9fd",
+      "originalPath": "outputs/design-history/sos1-axh-from-intent-a022/chemist-action-audit.json",
+      "originalBytes": 81481985,
+      "originalSha256": "007eecda4739d341935d8305e52e08a4a357ffd116ba572ec9864fca3be9c2da",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/028-continuation-manifest.json.gz",
+      "bytes": 992,
+      "sha256": "16db9a1f826b5987b9c08270fdd3f4abec3f9d5e9c4e46c1a1409e1076f19fd7",
+      "originalPath": "outputs/design-history/sos1-axh-from-intent-a022/continuation-manifest.json",
+      "originalBytes": 2145,
+      "originalSha256": "3b294e864fa26726455b650535ac43620610f2a22dfc83557629382e83a4b498",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/029-finish-bay-293-campaign.json.gz",
+      "bytes": 3335877,
+      "sha256": "dbe42835d58b058a68e829412b2c30fbf9332bf8590b03b2a048ab950b991c95",
+      "originalPath": "outputs/design-history/sos1-axh-from-intent-a022/finish-bay-293-campaign.json",
+      "originalBytes": 27029529,
+      "originalSha256": "247314e796be9c823e0545817bbec55d2b1232d32ae0cb5bfcd7264bb25408f3",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/030-fixed-atom-gate.json.gz",
+      "bytes": 794,
+      "sha256": "b968d788cc6b0401754718764d8b5cafb5c3696f85f69040cb25248f2bce7440",
+      "originalPath": "outputs/design-history/sos1-axh-from-intent-a022/fixed-atom-gate.json",
+      "originalBytes": 3955,
+      "originalSha256": "ff69a5a134f3621d7af241842323d04f271dbe2f52aa51e67e0c655bdc45ee53",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/031-graph-only-campaign.json.gz",
+      "bytes": 2585207,
+      "sha256": "1823d42928b024ff13da8a864b747375a79378184d18722f01c60942b3d9588d",
+      "originalPath": "outputs/design-history/sos1-axh-from-intent-a022/graph-only-campaign.json",
+      "originalBytes": 21024423,
+      "originalSha256": "3cb09565f58887439dbd6aadbe237e8d5caf7b5c5d39f805a64251c2cfc8a0f9",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/032-graph-only-coordinates.json.gz",
+      "bytes": 32788,
+      "sha256": "38cca53843568efd2c0ca53283886027b12e70f5e9c87f4ca46bc1bf26e011a1",
+      "originalPath": "outputs/design-history/sos1-axh-from-intent-a022/graph-only-coordinates.json",
+      "originalBytes": 351137,
+      "originalSha256": "0e9ae607a87c0db06c441a6d33a69344c705fdedfd8f8ff606620f9ca6960677",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/033-optimization.json.gz",
+      "bytes": 3572,
+      "sha256": "36ae8f1c2597236a55ed3898ee56b4d2df34d41fd793c6ba24861a4b1872a9d2",
+      "originalPath": "outputs/design-history/sos1-axh-from-intent-a022/optimization.json",
+      "originalBytes": 26064,
+      "originalSha256": "cab7492290664d636f0cef00976ea7e0467b7ee330d2d98d52af094fc78e88ef",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/034-post-freeze-comparison.json.gz",
+      "bytes": 1976,
+      "sha256": "b48f24839774072dd7746c61abba498ef809c9ef8615fb255514baf20d3d4329",
+      "originalPath": "outputs/design-history/sos1-axh-from-intent-a022/post-freeze-comparison.json",
+      "originalBytes": 5562,
+      "originalSha256": "a93e0df1d2f612a2335a4ca50d65556c8a545611d57249ed9e9275a5d1192145",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/035-refinement.json.gz",
+      "bytes": 3354,
+      "sha256": "1e82d1572a5965c3e550046284e0bf96e11a970aee291a61f6a335958da6be05",
+      "originalPath": "outputs/design-history/sos1-axh-from-intent-a022/refinement.json",
+      "originalBytes": 27346,
+      "originalSha256": "3297157c58212cea8546b7b5845afe8ede3fead9d9174d1f4a21f026309e2d58",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/036-relaxed-coordinates.json.gz",
+      "bytes": 32813,
+      "sha256": "ab985310545d6a062319c4ad8e87dcccd0eb72248f62304abb6711de1c2067f6",
+      "originalPath": "outputs/design-history/sos1-axh-from-intent-a022/relaxed-coordinates.json",
+      "originalBytes": 351151,
+      "originalSha256": "3150f7365737bde98bfca6efbebd17a7b975b18a9101bc27ab2c6b39883f2f12",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/037-selected-campaign.json.gz",
+      "bytes": 2960086,
+      "sha256": "22a22f8ac4da883e600d402150168a36100561fc0a5448a02f9d241890c4cd9a",
+      "originalPath": "outputs/design-history/sos1-axh-from-intent-a022/selected-campaign.json",
+      "originalBytes": 24027072,
+      "originalSha256": "7c5e3a00d0622a20aec01d89e3ad4d3d760d3742662eac5d7122f2660089be8f",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/038-selected-coordinates.json.gz",
+      "bytes": 32769,
+      "sha256": "a81eacc1eff5ea01d75a2923d47b079ff79503617e3184c0e155dad160203ba8",
+      "originalPath": "outputs/design-history/sos1-axh-from-intent-a022/selected-coordinates.json",
+      "originalBytes": 351153,
+      "originalSha256": "9f0be87e9983fa07020d18034d5998e2edd7fd76633d4e8801c52b1cbb4f55d9",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/039-source-aww-coordinates.json.gz",
+      "bytes": 31597,
+      "sha256": "3d642e97a068c23e8fa35829ff0e1adcf63748cfe65bfbe82dc9f9596aeabec1",
+      "originalPath": "outputs/design-history/sos1-axh-from-intent-a022/source-aww-coordinates.json",
+      "originalBytes": 345725,
+      "originalSha256": "9185ab2e9030353cfecc02f8e0e420246e6d0935556abefbec37cff41916ff9c",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/040-chemist-action-audit.json.gz",
+      "bytes": 939254,
+      "sha256": "2cbd928a0c5b1bd193bed102b505500ad5db2d6d36ab27abd675678dd4d97b0a",
+      "originalPath": "outputs/design-history/sos1-hit-to-bay293-executable-interface-m006/chemist-action-audit.json",
+      "originalBytes": 11181633,
+      "originalSha256": "dbe2dac05748fb5c5c1b5492ed1c00dd9478d42f41bc56f35307ff0bbc6bcc2d",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/041-source.action-script.json.gz",
+      "bytes": 6645,
+      "sha256": "2860fd4588430eae3d4700bc531972aa0b564dc8f045a080ef990814c8c0e5c4",
+      "originalPath": "outputs/design-history/sos1-hit-to-bay293-executable-interface-m006/source.action-script.json",
+      "originalBytes": 69210,
+      "originalSha256": "7eed2dff0bf3fa127f87b2322aaea4b615d458ad6d8ef3af3c5b5886dc8fe9c3",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/042-chemist-action-audit.json.gz",
+      "bytes": 7772,
+      "sha256": "aff75cf85d830040a3a2d454adb86fd0251d9d633f9e4883d56a2568229cc25f",
+      "originalPath": "outputs/design-history/sos1-hit-to-bay293-intent-interface-m003/chemist-action-audit.json",
+      "originalBytes": 97390,
+      "originalSha256": "609ae0913adb8014dd501c8558dfac4686bb070074fd1836d87353a55f407b7c",
+      "encoding": "gzip"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/043-source.action-script.json.gz",
+      "bytes": 2047,
+      "sha256": "663f35fbb1ece0c5ad84a57cbbdb3949fb9bf41adc0b48f5eb6d90afacffa237",
+      "originalPath": "outputs/design-history/sos1-hit-to-bay293-intent-interface-m003/source.action-script.json",
+      "originalBytes": 9320,
+      "originalSha256": "786dcac09bd531d0cec79f05b60b81c545667bf929b222190536b410da26a889",
+      "encoding": "gzip"
+    }
+  ],
+  "paper": {
+    "path": "design-history/publications/sos1/designer-intent-2026-09-04/molarium-paper.pdf",
+    "bytes": 2565196,
+    "sha256": "aa0455b52ebdadf47ade6538bc3cfb4c087bf72bb4f0747125646b35ac7d70bb"
+  }
+}

@@ -206,17 +206,61 @@ frame; they do not change molecular coordinates or replace any scientific action
 The interface renderer writes its MP4, audit, manifest, and synchronized QA frames into a private
 staging directory. It publishes that directory only after every public action and every `expect`
 check has completed, FFmpeg and FFprobe have succeeded, and the manifest is marked complete. Any
-failure exits nonzero, deletes the staged artifacts, and leaves the previous movie and paper-frame
+failure exits nonzero, retains its diagnostic evidence without promoting it, and leaves the previous movie and paper-frame
 sources unchanged. The paper figure builder accepts only a complete manifest with replay status
 `completed` and verifies each selected frame's SHA-256 before updating the figure.
 
-## SOS1 publication preflight
+## Current SOS1 designer-intent release (2026-09-04)
 
-The production build, local manifest generator, and scientific CI all run
-`npm run verify:sos1-publication` before accepting the public SOS1 story. The verifier reads exactly
+The [SOS1 movie page](https://molarium.org/sos1) offers three views of the same
+reference-informed design story:
+
+- [Recomputable replay](https://molarium.org/sos1-hit-to-bay293): all 159 scientific
+  actions plus 43 presentation actions, including every one of the 13 Phe890
+  trial energies, their undo operations, selection, and BAY-293 continuation.
+- [Precomputed replay](https://molarium.org/sos1-hit-to-bay293/review): seven exact
+  native full-system campaigns, including the graph-only, placed-ligand, and
+  receptor-response states. Play, pause, and arrows use the main Molarium interface
+  without scientific recalculation. The final campaign is losslessly compressed;
+  its decoded canonical hash and complete ledger are verified before import.
+- [Full MP4](https://molarium.org/sos1-hit-to-bay293/movie): a 595.58-second,
+  1600 × 1000 recording of the complete recomputation. The release also includes
+  a 62.75-second recording of the exact checkpoint review and the paper PDF.
+
+The crystal series was inspected to infer designer intent, not to fit later
+crystal coordinates. The declared ligand placement is held fixed during Phe890
+selection, all starting waters are retained, and Tyr884 provides a backbone
+contact rather than a prescribed side-chain flip. Fresh calculations may change
+coordinates and energies; saved checkpoints preserve the exact paper results.
+
+`design-history/publications/sos1/designer-intent-2026-09-04/release.json` pins
+both scripts, seven campaigns, both recordings, their native manifests, the
+paper, and losslessly compressed source evidence. `npm run verify:sos1-publication`
+restores that evidence into a temporary directory, independently reconstructs
+the public scripts from the native audits, checks all hashes and script-result
+bindings, and verifies the full movie's 813 contiguous audit records and scientific
+outcomes. This release is explicitly reference-informed, not an accepted blind
+holdout experiment. Its verifier does not fall back to historical evidence on failure.
+
+For local replay, follow the README's asset-download and Local Lab setup, then
+open the same paths on the local server. To verify a fresh checkout:
+
+```sh
+bun install --frozen-lockfile
+npm run test:sos1-intent
+npm run verify:sos1-publication
+npm run build:web
+```
+
+The earlier accepted-run and growth-clash examples below are archival protocol
+documentation; they do not define the current public URLs or paper results.
+
+## Historical accepted-run publication preflight
+
+The historical accepted-run verifier reads exactly
 one declaration, `design-history/examples/sos1-publication.json`; it never selects the newest output
-directory or repairs missing files. Until a complete accepted run has been promoted and that
-declaration exists, these release commands intentionally fail.
+directory or repairs missing files. Its acceptance gate is unchanged; the current
+reference-informed release uses the separate explicit declaration described above.
 
 The declaration uses schema `molarium.sos1-publication/v1` and names one immutable accepted-run
 directory, one public Chemist Actions replay, and one arrowable checkpoint review. It pins the
@@ -279,9 +323,9 @@ than array indices. Values returned
 by one action can be captured and referenced by later actions with the existing `capture` and
 `{ "$binding": "name" }` fields supported by `molarium.chemist-action-script/v1`.
 
-## SOS1 growth-clash-v7 example
+## Historical SOS1 growth-clash-v7 example
 
-The paper-facing permalink is `https://molarium.org/sos1-hit-to-bay293`. It opens Molarium on a
+The original growth-clash-v7 registration opened Molarium on a
 blank canvas with the selected route preloaded at move 0; the reader explicitly presses
 **▶ Play story** to begin. The registered presentation retains all 33 scientific actions and
 adds the same 18 view/focus actions used by the interface movie. The deployment redirects this
@@ -289,7 +333,7 @@ stable path to the registered story ID, so the paper URL does not expose an asse
 a manual JSON import.
 
 For readers who want instant arrow-by-arrow inspection without waiting for pose or WebGPU work,
-`https://molarium.org/sos1-hit-to-bay293/replay` opens a separate precomputed review. Its five
+the historical assets supplied a separate precomputed review. Its five
 items are the loaded 5OVE hit and the four frozen prediction endpoints from source-audit sequences
 12, 22, 78, and 88. The page runs no scientific calculation and exposes only the public
 `structureStory.*` presentation actions. Before displaying a checkpoint it verifies the registered

@@ -54,8 +54,10 @@ try {
     'accepted rendering must retain the independent holdout gate');
   assert.match(renderer, /const resultClass = valueFor\('--result-class'\) \|\| 'accepted'/,
     'accepted rendering must remain the default');
-  assert.match(renderer, /\['accepted','complete-frozen'\]\.includes\(resultClass\)/,
-    'the renderer must expose only the two explicit scientific result classes');
+  assert.match(renderer, /\['accepted','complete-frozen','designer-intent','designer-intent-frozen'\]\.includes\(resultClass\)/,
+    'reference-informed designer intent must be an explicit separate result class');
+  assert.match(renderer, /verifySos1AwwReceptorOnlyRun\(runDirectory,/,
+    'designer-intent rendering must verify the frozen receptor-response run');
   assert.match(renderer, /verifyCompleteFrozenSos1Run\(runDirectory\)/,
     'an explicitly requested complete-frozen result must verify all immutable checkpoints');
   assert.match(renderer, /buildFrozenSos1ReplayScript\(verifiedRun\)/,
@@ -72,7 +74,7 @@ try {
     'complete-frozen checkpoint review must reference published campaigns instead of inlining them');
   assert.match(renderer, /replayKind === 'checkpoint-review' \? SOS1_PREDICTION_REVIEW/,
     'checkpoint-review render provenance must name the published action script');
-  assert.match(renderer, /calculationPolicy:'none', exactFullSystemCheckpoints:SOS1_STEP_IDS\.length/,
+  assert.match(renderer, /calculationPolicy:'none', exactFullSystemCheckpoints:designerIntent/,
     'checkpoint-review renders must declare their calculation-free boundary');
   assert.match(renderer, /resultClass === 'accepted' \? \{ acceptedRun:/,
     'only the strict accepted path may emit acceptedRun manifest provenance');

@@ -1,3 +1,5 @@
+import { sidechainResponseAtomIndices } from './sidechain-rotamers.mjs';
+
 const EPSILON = 1e-10;
 
 function finitePoint(point, label) {
@@ -177,23 +179,42 @@ function residueLocatorKey(locator) {
   return `${locator.residueName}|${locator.chain}|${locator.residueIndex}|${locator.insertionCode || ''}`;
 }
 
-function normalizeAllowedResponseResidues(values) {
-  if (!Array.isArray(values) || !values.length || values.length > 16)
-    throw new Error('allowedResponseResidues must contain 1–16 portable residue locators');
+function atomLocatorKey(locator) {
+  return `${residueLocatorKey(locator)}|${locator.atomName}`;
+}
+
+function normalizeAllowedResponseAtoms(values, molecule, ligand) {
+  if (!Array.isArray(values) || values.length > 128)
+    throw new Error('allowedResponseAtoms must contain 0–128 portable atom locators');
   const result = values.map((value, ordinal) => {
     const residueName = String(value?.residueName || '').trim().toUpperCase();
     const chain = String(value?.chain || '').trim();
     const residueIndex = Number(value?.residueIndex);
     const insertionCode = String(value?.insertionCode || '').trim();
-    if (!residueName || !chain || !Number.isInteger(residueIndex) || insertionCode.length > 4)
-      throw new Error(`allowedResponseResidues[${ordinal}] is not a portable residue locator`);
-    return { residueName, chain, residueIndex, insertionCode };
+    const atomName = String(value?.atomName || '').trim().toUpperCase();
+    if (!residueName || typeof value?.chain !== 'string'
+      || !Number.isInteger(value?.residueIndex) || insertionCode.length > 4 || !atomName)
+      throw new Error(`allowedResponseAtoms[${ordinal}] is not a portable atom locator`);
+    return { residueName, chain, residueIndex, insertionCode, atomName };
   });
-  const unique = new Map(result.map((locator) => [residueLocatorKey(locator), locator]));
+  const unique = new Map(result.map((locator) => [atomLocatorKey(locator), locator]));
   if (unique.size !== result.length)
-    throw new Error('allowedResponseResidues must not contain duplicates');
-  return [...unique.values()].sort((first, second) =>
-    residueLocatorKey(first).localeCompare(residueLocatorKey(second)));
+    throw new Error('allowedResponseAtoms must not contain duplicates');
+  const reachable = new Map();
+  for (const locator of result) {
+    const matches = molecule.atoms.flatMap((atom, index) =>
+      atomLocatorKey({ ...residueLocator(atom), atomName:atom.atomName })
+        === atomLocatorKey(locator) ? [index] : []);
+    if (matches.length !== 1 || ligand.has(matches[0])
+      || molecule.atoms[matches[0]].element === 'H')
+      throw new Error('Each allowedResponseAtoms locator must resolve to one receptor heavy atom');
+    const key = residueLocatorKey(locator);
+    if (!reachable.has(key)) reachable.set(key,
+      new Set(sidechainResponseAtomIndices({ molecule, residue:locator })));
+    if (!reachable.get(key).has(matches[0]))
+      throw new Error(`allowedResponseAtoms ${atomLocatorKey(locator)} is fixed under side-chain chi rotations`);
+  }
+  return result;
 }
 
 function moleculeAdjacency(molecule) {
@@ -278,9 +299,9 @@ function geometryPasses(geometry, settings) {
 }
 
 function severeContacts(molecule, coordinates, ligandAtomIndices,
-  allowedResponseResidues, radiusFraction) {
-  const ligand = new Set(ligandAtomIndices), allowed = new Set(allowedResponseResidues
-    .map(residueLocatorKey));
+  allowedResponseAtoms, radiusFraction) {
+  const ligand = new Set(ligandAtomIndices), allowed = new Set(allowedResponseAtoms
+    .map(atomLocatorKey));
   const ligandHeavy = ligandAtomIndices.filter((index) => molecule.atoms[index].element !== 'H');
   const receptorHeavy = molecule.atoms.flatMap((atom, index) =>
     !ligand.has(index) && atom.element !== 'H' ? [{ atom, index }] : []);
@@ -303,7 +324,8 @@ function severeContacts(molecule, coordinates, ligandAtomIndices,
           const threshold = radiusFraction * ((VDW_RADII_ANGSTROM[molecule.atoms[ligandIndex]
             .element] || 1.7) + (VDW_RADII_ANGSTROM[atom.element] || 1.7));
           if (actualDistance >= threshold) continue;
-          const locator = residueLocator(atom), responseAllowed = allowed.has(residueLocatorKey(locator));
+          const locator = residueLocator(atom), responseAllowed = allowed.has(
+            atomLocatorKey({ ...locator, atomName:atom.atomName }));
           pairs.push({ ligandAtomIndex:ligandIndex, receptorAtomIndex:index, locator,
             distanceAngstrom:actualDistance, thresholdAngstrom:threshold,
             overlapAngstrom:threshold - actualDistance, responseAllowed });
@@ -317,9 +339,12 @@ function severeContacts(molecule, coordinates, ligandAtomIndices,
   pairs.forEach((pair) => {
     const key = residueLocatorKey(pair.locator);
     if (!groups.has(key)) groups.set(key, { residue:pair.locator,
-      responseAllowed:pair.responseAllowed, contactCount:0, maximumOverlapAngstrom:0,
+      responseAllowed:true, contactCount:0, outsideAllowedResponseContactCount:0,
+      maximumOverlapAngstrom:0,
       atomPairs:[] });
     const group = groups.get(key);
+    group.responseAllowed &&= pair.responseAllowed;
+    if (!pair.responseAllowed) group.outsideAllowedResponseContactCount += 1;
     group.contactCount += 1;
     group.maximumOverlapAngstrom = Math.max(group.maximumOverlapAngstrom,
       pair.overlapAngstrom);
@@ -328,6 +353,7 @@ function severeContacts(molecule, coordinates, ligandAtomIndices,
       ligandAtomName:molecule.atoms[pair.ligandAtomIndex].atomName || null,
       receptorAtomId:molecule.atoms[pair.receptorAtomIndex].designAtomId || null,
       receptorAtomName:molecule.atoms[pair.receptorAtomIndex].atomName || null,
+      responseAllowed:pair.responseAllowed,
       distanceAngstrom:pair.distanceAngstrom, thresholdAngstrom:pair.thresholdAngstrom,
       overlapAngstrom:pair.overlapAngstrom,
     });
@@ -335,18 +361,25 @@ function severeContacts(molecule, coordinates, ligandAtomIndices,
   const contactsByResidue = [...groups.values()].sort((first, second) =>
     residueLocatorKey(first.residue).localeCompare(residueLocatorKey(second.residue)));
   return { totalContactCount:pairs.length,
+    allowedResponseContactCount:pairs.filter((pair) => pair.responseAllowed).length,
+    allowedResponseOverlapSquaredAngstrom2:pairs.filter((pair) => pair.responseAllowed)
+      .reduce((sum, pair) => sum + pair.overlapAngstrom ** 2, 0),
     outsideAllowedResponseContactCount:pairs.filter((pair) => !pair.responseAllowed).length,
     maximumOverlapAngstrom:pairs[0]?.overlapAngstrom || 0, contactsByResidue };
 }
 
 function candidateOrder(first, second) {
-  return first.contactScore - second.contactScore
-    || first.targetPointErrorAngstrom - second.targetPointErrorAngstrom
-    || first.contacts.totalContactCount - second.contacts.totalContactCount
+  return first.contacts.allowedResponseContactCount - second.contacts.allowedResponseContactCount
+    || first.contacts.allowedResponseOverlapSquaredAngstrom2
+      - second.contacts.allowedResponseOverlapSquaredAngstrom2
     || first.contacts.maximumOverlapAngstrom - second.contacts.maximumOverlapAngstrom
+    || first.contactScore - second.contactScore
+    || first.targetPointErrorAngstrom - second.targetPointErrorAngstrom
+    || Math.abs(first.upstreamRotationDegrees) - Math.abs(second.upstreamRotationDegrees)
     || first.coupledMovementDegrees - second.coupledMovementDegrees
     || first.coupledRotationDegrees[0] - second.coupledRotationDegrees[0]
     || first.coupledRotationDegrees[1] - second.coupledRotationDegrees[1]
+    || first.upstreamRotationDegrees - second.upstreamRotationDegrees
     || first.hydrogenRotationDegrees - second.hydrogenRotationDegrees;
 }
 
@@ -358,13 +391,15 @@ function searchAngleValues(stepDegrees) {
 /**
  * Apply one fixed chemist-directed primary branch rotation, then search two
  * declared downstream ligand rotors and the explicit donor-H torsion using
- * only the current molecule.  Receptor contacts may remain only in portable
- * residues explicitly designated for a subsequent receptor-only response.
+ * only the current molecule. Receptor contacts may remain only at explicitly
+ * named atoms reachable by the subsequent side-chain chi response.
  */
 export function searchBestDirectionalBranchContact({ molecule, ligandAtomIndices,
   primaryAxisAtomIndices, coupledAxisAtomIndices, designerPrimaryRotationDegrees,
+  upstreamAxisAtomIndices, upstreamRotationRangeDegrees,
   donorAtomIndex, hydrogenAtomIndex, acceptorAtomIndex, carbonylAtomIndex,
-  allowedResponseResidues, settings:requestedSettings = {} } = {}) {
+  allowedResponseAtoms, allowedResponseResidues, onCandidate,
+  settings:requestedSettings = {} } = {}) {
   if (!molecule?.atoms?.length || !Array.isArray(molecule.bonds))
     throw new Error('best-directional contact search requires a complete molecule');
   const ligand = new Set(Array.from(ligandAtomIndices || [], Number));
@@ -380,10 +415,32 @@ export function searchBestDirectionalBranchContact({ molecule, ligandAtomIndices
     throw new Error('designerPrimaryRotationDegrees must be finite and within ±360');
   if (!Array.isArray(coupledAxisAtomIndices) || coupledAxisAtomIndices.length !== 2)
     throw new Error('coupledAxisAtomIndices must contain exactly two ordered ligand bonds');
-  const allowed = normalizeAllowedResponseResidues(allowedResponseResidues);
+  if (allowedResponseResidues !== undefined)
+    throw new Error('allowedResponseResidues is audit-only; supply allowedResponseAtoms');
+  const allowed = normalizeAllowedResponseAtoms(allowedResponseAtoms, molecule, ligand);
+  if (onCandidate !== undefined && typeof onCandidate !== 'function')
+    throw new Error('onCandidate must be a function');
   const adjacency = moleculeAdjacency(molecule);
   const primary = validateDirectedAxis(molecule, adjacency, ligand,
     primaryAxisAtomIndices, 'primaryAxisAtomIndices');
+  let upstream = null, upstreamRange = [0,0];
+  if (upstreamAxisAtomIndices !== undefined || upstreamRotationRangeDegrees !== undefined) {
+    upstream = validateDirectedAxis(molecule, adjacency, ligand,
+      upstreamAxisAtomIndices, 'upstreamAxisAtomIndices');
+    if (!upstream.atomIndices.includes(primary.fixed)
+      || !upstream.atomIndices.includes(primary.moving)
+      || primary.atomIndices.includes(upstream.fixed))
+      throw new Error('The upstream axis must strictly precede the primary moving branch');
+    if (!Array.isArray(upstreamRotationRangeDegrees)
+      || upstreamRotationRangeDegrees.length !== 2
+      || upstreamRotationRangeDegrees.some((value) => !Number.isFinite(value)
+        || value % 10 !== 0 || Math.abs(value) > 180)
+      || upstreamRotationRangeDegrees[0] > 0 || upstreamRotationRangeDegrees[1] < 0
+      || upstreamRotationRangeDegrees[1] - upstreamRotationRangeDegrees[0] > 120)
+      throw new Error('upstreamRotationRangeDegrees must bracket zero on a 10-degree grid with span at most 120 degrees');
+    upstreamRange = [...upstreamRotationRangeDegrees];
+  }
+  const moving = upstream || primary;
   const coupled = coupledAxisAtomIndices.map((pair, ordinal) =>
     validateDirectedAxis(molecule, adjacency, ligand, pair,
       `coupledAxisAtomIndices[${ordinal}]`));
@@ -418,8 +475,25 @@ export function searchBestDirectionalBranchContact({ molecule, ligandAtomIndices
     throw new Error('The recorded ligand donor must lie in the primary moving branch');
 
   const initialCoordinates = copyCoordinates(molecule);
-  const primaryCoordinates = initialCoordinates.map((point) => ({ ...point }));
-  rotateCoordinates(primaryCoordinates, primary, primaryRotation);
+  const primaryCoordinatesByUpstream = new Map();
+  const coordinatesForUpstream = (degrees) => {
+    if (!primaryCoordinatesByUpstream.has(degrees)) {
+      const coordinates = initialCoordinates.map((point) => ({ ...point }));
+      if (upstream) rotateCoordinates(coordinates, upstream, degrees);
+      rotateCoordinates(coordinates, primary, primaryRotation);
+      primaryCoordinatesByUpstream.set(degrees, coordinates);
+    }
+    return primaryCoordinatesByUpstream.get(degrees);
+  };
+  const heavy = [...ligand].filter((index) => molecule.atoms[index].element !== 'H');
+  const internalPairs = heavy.flatMap((first, ordinal) => {
+    const excluded = new Set([first, ...adjacency[first],
+      ...adjacency[first].flatMap((neighbor) => adjacency[neighbor])]);
+    return heavy.slice(ordinal + 1).filter((second) => !excluded.has(second))
+      .map((second) => [first, second, SEVERE_CLASH_RADIUS_FRACTION
+        * ((VDW_RADII_ANGSTROM[molecule.atoms[first].element] || 1.7)
+          + (VDW_RADII_ANGSTROM[molecule.atoms[second].element] || 1.7))]);
+  });
   const targetDirection = scale(subtract(initialCoordinates[acceptor],
     initialCoordinates[carbonyl]), 1 / distance(initialCoordinates[acceptor],
     initialCoordinates[carbonyl]));
@@ -428,9 +502,9 @@ export function searchBestDirectionalBranchContact({ molecule, ligandAtomIndices
 
   const counts = { evaluatedHeavyRotorCells:0, evaluatedHydrogenSolutions:0,
     directionalGatePassed:0, outsideAllowedResponseGatePassed:0 };
-  const evaluate = (firstDegrees, secondDegrees) => {
+  const evaluate = (firstDegrees, secondDegrees, upstreamDegrees = 0) => {
     counts.evaluatedHeavyRotorCells += 1;
-    const base = primaryCoordinates.map((point) => ({ ...point }));
+    const base = coordinatesForUpstream(upstreamDegrees).map((point) => ({ ...point }));
     rotateCoordinates(base, coupled[0], firstDegrees);
     rotateCoordinates(base, coupled[1], secondDegrees);
     const hydrogenSolutions = ['positive','negative'].map((solution) =>
@@ -446,16 +520,34 @@ export function searchBestDirectionalBranchContact({ molecule, ligandAtomIndices
       const coordinates = base.map((point) => ({ ...point }));
       rotateCoordinates(coordinates, hydrogenAxis, solution.appliedRotationDegrees);
       const geometry = hydrogenBondGeometry(coordinates, donor, hydrogen, acceptor, carbonyl);
-      if (!geometryPasses(geometry, settings)) return [];
-      counts.directionalGatePassed += 1;
+      const directionalGatePassed = geometryPasses(geometry, settings);
       const contacts = severeContacts(molecule, coordinates, [...ligand], allowed,
         SEVERE_CLASH_RADIUS_FRACTION);
-      if (contacts.outsideAllowedResponseContactCount) return [];
+      const fixedAtomGatePassed = contacts.outsideAllowedResponseContactCount === 0;
+      const internalSevereContactCount = internalPairs.reduce((count, [first, second, threshold]) =>
+        count + Number(distance(coordinates[first], coordinates[second]) < threshold), 0);
+      const internalAtomGatePassed = internalSevereContactCount === 0;
+      onCandidate?.({ ordinal:counts.evaluatedHydrogenSolutions,
+        designerPrimaryRotationDegrees:primaryRotation,
+        upstreamRotationDegrees:upstreamDegrees,
+        coupledRotationDegrees:[normalizeSignedDegrees(firstDegrees),
+          normalizeSignedDegrees(secondDegrees)],
+        donorHydrogenRotationDegrees:normalizeSignedDegrees(solution.appliedRotationDegrees),
+        contactGeometry:geometry, contacts, directionalGatePassed, fixedAtomGatePassed,
+        internalSevereContactCount, internalAtomGatePassed,
+        eligible:directionalGatePassed && fixedAtomGatePassed && internalAtomGatePassed,
+        coordinates:moving.atomIndices.map((atomIndex) => ({ atomIndex,
+          coordinatesAngstrom:[coordinates[atomIndex].x, coordinates[atomIndex].y,
+            coordinates[atomIndex].z] })) });
+      if (!directionalGatePassed) return [];
+      counts.directionalGatePassed += 1;
+      if (!fixedAtomGatePassed || !internalAtomGatePassed) return [];
       counts.outsideAllowedResponseGatePassed += 1;
       const coupledRotationDegrees = [normalizeSignedDegrees(firstDegrees),
         normalizeSignedDegrees(secondDegrees)];
       const hydrogenRotationDegrees = normalizeSignedDegrees(solution.appliedRotationDegrees);
-      return [{ coupledRotationDegrees, hydrogenRotationDegrees, geometry, contacts,
+      return [{ upstreamRotationDegrees:upstreamDegrees, internalSevereContactCount,
+        coupledRotationDegrees, hydrogenRotationDegrees, geometry, contacts,
         contactScore:contactScore(geometry, settings),
         targetPointErrorAngstrom:distance(coordinates[donor], targetPoint),
         coupledMovementDegrees:coupledRotationDegrees.reduce((sum, value) =>
@@ -464,9 +556,11 @@ export function searchBestDirectionalBranchContact({ molecule, ligandAtomIndices
     });
   };
   const coarseCountsBefore = { ...counts }, coarseCandidates = [];
-  for (const firstDegrees of searchAngleValues(settings.coarseStepDegrees))
-    for (const secondDegrees of searchAngleValues(settings.coarseStepDegrees))
-      coarseCandidates.push(...evaluate(firstDegrees, secondDegrees));
+  for (let upstreamDegrees = upstreamRange[0]; upstreamDegrees <= upstreamRange[1];
+    upstreamDegrees += settings.coarseStepDegrees)
+    for (const firstDegrees of searchAngleValues(settings.coarseStepDegrees))
+      for (const secondDegrees of searchAngleValues(settings.coarseStepDegrees))
+        coarseCandidates.push(...evaluate(firstDegrees, secondDegrees, upstreamDegrees));
   coarseCandidates.sort(candidateOrder);
   const coarseCounts = Object.fromEntries(Object.keys(counts).map((key) =>
     [key, counts[key] - coarseCountsBefore[key]]));
@@ -476,25 +570,34 @@ export function searchBestDirectionalBranchContact({ molecule, ligandAtomIndices
     throw error;
   }
   const center = coarseCandidates[0].coupledRotationDegrees, localCountsBefore = { ...counts };
+  const upstreamCenter = coarseCandidates[0].upstreamRotationDegrees;
+  const upstreamLocalRange = upstream ? [Math.max(upstreamRange[0], upstreamCenter - 10),
+    Math.min(upstreamRange[1], upstreamCenter + 10)] : [0,0];
   const localCandidates = [];
-  for (let firstDegrees = center[0] - settings.localSpanDegrees;
-    firstDegrees <= center[0] + settings.localSpanDegrees; firstDegrees += settings.localStepDegrees)
-    for (let secondDegrees = center[1] - settings.localSpanDegrees;
-      secondDegrees <= center[1] + settings.localSpanDegrees; secondDegrees += settings.localStepDegrees)
-      localCandidates.push(...evaluate(firstDegrees, secondDegrees));
+  for (let upstreamDegrees = upstreamLocalRange[0]; upstreamDegrees <= upstreamLocalRange[1];
+    upstreamDegrees += settings.localStepDegrees)
+    for (let firstDegrees = center[0] - settings.localSpanDegrees;
+      firstDegrees <= center[0] + settings.localSpanDegrees; firstDegrees += settings.localStepDegrees)
+      for (let secondDegrees = center[1] - settings.localSpanDegrees;
+        secondDegrees <= center[1] + settings.localSpanDegrees; secondDegrees += settings.localStepDegrees)
+        localCandidates.push(...evaluate(firstDegrees, secondDegrees, upstreamDegrees));
   localCandidates.sort(candidateOrder);
   const localCounts = Object.fromEntries(Object.keys(counts).map((key) =>
     [key, counts[key] - localCountsBefore[key]]));
   const selected = localCandidates[0] || coarseCandidates[0];
-  const selectedCoordinates = primary.atomIndices.map((atomIndex) => ({ atomIndex,
+  const selectedCoordinates = moving.atomIndices.map((atomIndex) => ({ atomIndex,
     coordinatesAngstrom:[selected.coordinates[atomIndex].x,
       selected.coordinates[atomIndex].y, selected.coordinates[atomIndex].z] }));
   return Object.freeze({
     schema:'molarium.best-directional-branch-contact/v1',
     coordinateOrigin:'current-visible-molecule', externalReferenceCoordinatesUsed:false,
-    allowedResponseResidues:Object.freeze(allowed.map((locator) => Object.freeze({ ...locator }))),
+    allowedResponseAtoms:Object.freeze(allowed.map((locator) => Object.freeze({ ...locator }))),
+    allowedResponseResidues:Object.freeze([...new Map(allowed.map((locator) =>
+      [residueLocatorKey(locator), Object.freeze(residueLocator(locator))])).values()]),
     selected:Object.freeze({
       designerPrimaryRotationDegrees:primaryRotation,
+      upstreamRotationDegrees:selected.upstreamRotationDegrees,
+      internalSevereContactCount:selected.internalSevereContactCount,
       coupledRotationDegrees:Object.freeze([...selected.coupledRotationDegrees]),
       donorHydrogenRotationDegrees:selected.hydrogenRotationDegrees,
       contactGeometry:Object.freeze({ ...selected.geometry }),
@@ -504,13 +607,15 @@ export function searchBestDirectionalBranchContact({ molecule, ligandAtomIndices
       coupledMovementDegrees:selected.coupledMovementDegrees,
     }),
     searchAudit:Object.freeze({
-      algorithm:'fixed-primary-two-coupled-rotors-plus-donor-h/v1',
+      algorithm:'bounded-upstream-fixed-primary-two-coupled-rotors-plus-donor-h/atom-response-v3',
+      upstream:Object.freeze({ axisAtomIndices:upstream ? [...upstreamAxisAtomIndices] : null,
+        rangeDegrees:[...upstreamRange], localCenterDegrees:upstreamCenter }),
       coarse:Object.freeze({ stepDegrees:settings.coarseStepDegrees,
-        heavyRotorCellCount:searchAngleValues(settings.coarseStepDegrees).length ** 2,
+        heavyRotorCellCount:coarseCounts.evaluatedHeavyRotorCells,
         permittedCandidateCount:coarseCandidates.length, ...coarseCounts }),
       local:Object.freeze({ stepDegrees:settings.localStepDegrees,
         spanDegrees:settings.localSpanDegrees, centerDegrees:Object.freeze([...center]),
-        heavyRotorCellCount:(settings.localSpanDegrees * 2 / settings.localStepDegrees + 1) ** 2,
+        heavyRotorCellCount:localCounts.evaluatedHeavyRotorCells,
         permittedCandidateCount:localCandidates.length, ...localCounts }),
       gates:Object.freeze({
         maximumDonorAcceptorDistanceAngstrom:settings.maximumDonorAcceptorDistanceAngstrom,
@@ -519,12 +624,15 @@ export function searchBestDirectionalBranchContact({ molecule, ligandAtomIndices
         minimumCarbonylAcceptorAngleDegrees:settings.minimumCarbonylAcceptorAngleDegrees,
         severeClashRadiusFraction:SEVERE_CLASH_RADIUS_FRACTION,
         outsideAllowedResponseContactCount:0,
+        internalSevereContactCount:0,
+        waterPolicy:'all source waters retained and fixed',
       }),
-      ranking:Object.freeze(['contactScore','targetPointErrorAngstrom',
-        'totalAllowedResponseContactCount','maximumOverlapAngstrom',
+      ranking:Object.freeze(['allowedResponseContactCount',
+        'allowedResponseOverlapSquaredAngstrom2','maximumOverlapAngstrom',
+        'contactScore','targetPointErrorAngstrom','absoluteUpstreamRotationDegrees',
         'coupledMovementDegrees','signed-rotation-lexical']),
     }),
-    movingAtomIndices:Object.freeze([...primary.atomIndices]),
+    movingAtomIndices:Object.freeze([...moving.atomIndices]),
     selectedCoordinates:Object.freeze(selectedCoordinates.map((entry) => Object.freeze(entry))),
   });
 }

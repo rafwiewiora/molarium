@@ -1,0 +1,812 @@
+{
+  "schema": "molarium.designer-moves-interface-render/v1",
+  "generatedAt": "2026-09-05T03:56:15.530Z",
+  "operationBoundary": "The renderer imports JSON and presses visible Molarium controls; all molecular operations execute through window.MolariumChemistActions.",
+  "sourceRun": {
+    "id": "sos1-aww-receptor-only-intent-v5-a021",
+    "resultClass": "designer-intent-frozen",
+    "replayKind": "checkpoint-review",
+    "predictionManifestSha256": "e71c8309dd7cc62f642fb699542b0f1c4ff02ac107782a2bbf72f98a8d932dd0",
+    "evaluationSummarySha256": "515ae2db7c495dc08df36750b238678b76da7d27f95902cddc59b8d75366e00e",
+    "designerIntentReferenceInformed": true,
+    "receptorPredictionScope": "fixed ligand; Phe890 side-chain response",
+    "holdoutAccepted": false
+  },
+  "sourceScript": {
+    "path": "source.action-script.json",
+    "provenancePath": "outputs/design-history/sos1-aww-receptor-only-intent-v5-a021/publication-with-axh/checkpoint-review.action-script.json",
+    "fileSha256": "786dcac09bd531d0cec79f05b60b81c545667bf929b222190536b410da26a889",
+    "actionScriptSha256": "21a4b682966fbfebd9be4044be0a6f9f08643d40aba2c63a2a06e78b6372d583",
+    "actions": 7,
+    "calculationPolicy": "none",
+    "exactFullSystemCheckpoints": 7
+  },
+  "presentationScript": {
+    "path": "presentation.action-script.json",
+    "fileSha256": "03e1750c3136ef57cf95f7f3c90a8d89b3265ec701d9af5a2fec7883e3d1a327",
+    "actionScriptSha256": "509d5bb02cc4e742c915e8497103c946a30e5c7625d94eda3eb72b6fbb5f3460",
+    "actions": 18,
+    "insertedViewActions": 11,
+    "timeline": [
+      {
+        "actionNumber": 1,
+        "action": "campaign.import",
+        "caption": "Review the exact prepared 5OVE/AXE starting hit",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 2,
+        "action": "view.setDisplay",
+        "caption": "Show each frozen prediction in the same local pocket view",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 3,
+        "action": "view.focusComponent",
+        "caption": "Center the hit and the local pocket where every design decision will be made",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 4,
+        "action": "view.highlightAtoms",
+        "caption": "Start from the experimental hit and its Phe890-in pocket",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 5,
+        "action": "campaign.import",
+        "caption": "Review the scaffold-rewrite checkpoint",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 6,
+        "action": "view.highlightAtoms",
+        "caption": "Rewrite the scaffold while retaining the original pocket context",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 7,
+        "action": "campaign.import",
+        "caption": "Review the fragment-merge checkpoint",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 8,
+        "action": "view.highlightAtoms",
+        "caption": "AWZ precursor: the distal arm has not yet opened the Phe890 pocket",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 9,
+        "action": "campaign.import",
+        "caption": "Review the AWW graph before directional placement",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 10,
+        "action": "view.highlightAtoms",
+        "caption": "AWW graph edit: inspect the inherited arm direction before designer placement",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 11,
+        "action": "campaign.import",
+        "caption": "Review the fixed AWW designer-intent pose",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 12,
+        "action": "view.setDisplay",
+        "caption": "Show the severe ligand–protein contacts created by compound 21 growth",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 13,
+        "action": "view.highlightAtoms",
+        "caption": "Rotate the AWW arm toward the Tyr884 backbone contact; only the movable Phe890 ring overlaps",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 14,
+        "action": "campaign.import",
+        "caption": "Review the receptor-only Phe890 response",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 15,
+        "action": "view.setDisplay",
+        "caption": "The selected Phe890-out branch clears the severe contacts",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 16,
+        "action": "view.highlightAtoms",
+        "caption": "The energy-selected Phe890 flip clears the fixed ligand; Tyr884 supplies the backbone contact",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 17,
+        "action": "campaign.import",
+        "caption": "Review the BAY-293 attachment rewrite",
+        "auditSequence": null,
+        "auditRequestId": null
+      },
+      {
+        "actionNumber": 18,
+        "action": "view.highlightAtoms",
+        "caption": "BAY-293: rewire the thiophene attachment while retaining the distal spatial feature",
+        "auditSequence": null,
+        "auditRequestId": null
+      }
+    ]
+  },
+  "renderer": {
+    "path": "scripts/render-designer-moves-interface.mjs",
+    "sha256": "7b6494a873bad247755d18d06c6672463dcf8784ebdcbe1fd42d1c3122ba6f3d",
+    "browserProduct": "Chrome/152.0.7977.82",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36"
+  },
+  "viewport": {
+    "width": 1600,
+    "height": 1000,
+    "deviceScaleFactor": 1,
+    "verified": true
+  },
+  "networkPolicy": {
+    "responsePolicy": "local-only-v1",
+    "contentSecurityPolicy": "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src 'self'; form-action 'none'; frame-ancestors 'none'; frame-src 'none'; img-src 'self' data: blob:; manifest-src 'self'; media-src 'self' blob:; object-src 'none'; script-src 'self' 'unsafe-eval' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:",
+    "runtimeMode": "local-lab",
+    "runtimeLocalOnly": true,
+    "runtimePolicy": "local-only-v1",
+    "allowedNetworkOrigins": [
+      "http://127.0.0.1:50991"
+    ],
+    "documentMode": "local-lab",
+    "badgeMode": "local-lab",
+    "badgeLocalLab": true,
+    "badgeText": "Local Lab · network locked",
+    "foldDisabled": true,
+    "msaEndpointDisabled": true,
+    "ccdRetrievalDisabled": true,
+    "verified": true
+  },
+  "presentation": {
+    "schema": "molarium.designer-moves-interface-presentation/v1",
+    "minimumViewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "seconds": {
+      "blankCanvas": 2.2,
+      "importedStory": 2,
+      "pressDefault": 0.8,
+      "pressMolecularChange": 1.2,
+      "resultDefault": 1.5,
+      "completedStory": 3
+    },
+    "resultSeconds": {
+      "designRoute.load": 2,
+      "protein.prepare": 2,
+      "view.setDisplay": 1.6,
+      "view.focusComponent": 2.8,
+      "designRoute.applyStep": 2.8,
+      "pose.refine": 3.5,
+      "pose.apply": 2.8,
+      "pose.enumerateSidechainRotamers": 3.2,
+      "pose.applySidechainRotamer": 3.2,
+      "pose.updateReceptorReference": 2.2,
+      "optimization.run": 3,
+      "campaign.import": 2.8,
+      "view.highlightAtoms": 2.6
+    },
+    "initialInterface": {
+      "brand": "MOLARIUM",
+      "modeLabels": [
+        "View",
+        "Design",
+        "Simulate"
+      ],
+      "activeMode": "build",
+      "viewerHintVisible": true,
+      "moleculeInfoHidden": true,
+      "sceneHidden": true,
+      "visibleRegions": {
+        "header": true,
+        "leftPanel": true,
+        "viewer": true,
+        "rightPanel": true
+      },
+      "verified": true
+    },
+    "completedInterface": {
+      "replayStatus": "completed",
+      "progress": "18 / 18",
+      "previousEnabled": true,
+      "nextEnabled": false,
+      "playLabel": "↻ Replay story",
+      "cueCount": 0,
+      "demoActive": false,
+      "review": {
+        "available": true,
+        "live": false,
+        "completed": true,
+        "failed": false,
+        "index": 18,
+        "frontier": 18,
+        "checkpointCount": 19,
+        "atStart": false,
+        "atFinal": true,
+        "reviewing": false
+      },
+      "verified": true
+    },
+    "cameraContract": {
+      "verified": true,
+      "focusComponentCount": 1,
+      "focusAtomsCount": 0,
+      "setCameraCount": 0,
+      "highlightCount": 7
+    },
+    "highlightCameraAudit": {
+      "verified": true,
+      "auditedHighlightCount": 7
+    },
+    "depictionChecks": [
+      {
+        "actionNumber": 1,
+        "action": "campaign.import",
+        "label": "AXE ligand",
+        "hasSvg": true,
+        "error": null,
+        "atomGraphics": 63,
+        "bondGraphics": 57,
+        "viewBoxWidth": 260,
+        "viewBoxHeight": 184,
+        "visibleWidth": 210,
+        "visibleHeight": 150
+      },
+      {
+        "actionNumber": 3,
+        "action": "view.focusComponent",
+        "label": "AXE ligand",
+        "hasSvg": true,
+        "error": null,
+        "atomGraphics": 63,
+        "bondGraphics": 57,
+        "viewBoxWidth": 260,
+        "viewBoxHeight": 184,
+        "visibleWidth": 210,
+        "visibleHeight": 150
+      },
+      {
+        "actionNumber": 5,
+        "action": "campaign.import",
+        "label": "AWT ligand",
+        "hasSvg": true,
+        "error": null,
+        "atomGraphics": 80,
+        "bondGraphics": 72,
+        "viewBoxWidth": 260,
+        "viewBoxHeight": 184,
+        "visibleWidth": 210,
+        "visibleHeight": 150
+      },
+      {
+        "actionNumber": 7,
+        "action": "campaign.import",
+        "label": "AWZ ligand",
+        "hasSvg": true,
+        "error": null,
+        "atomGraphics": 73,
+        "bondGraphics": 64,
+        "viewBoxWidth": 260,
+        "viewBoxHeight": 184,
+        "visibleWidth": 210,
+        "visibleHeight": 150
+      },
+      {
+        "actionNumber": 9,
+        "action": "campaign.import",
+        "label": "AWW ligand",
+        "hasSvg": true,
+        "error": null,
+        "atomGraphics": 73,
+        "bondGraphics": 64,
+        "viewBoxWidth": 260,
+        "viewBoxHeight": 184,
+        "visibleWidth": 210,
+        "visibleHeight": 150
+      },
+      {
+        "actionNumber": 11,
+        "action": "campaign.import",
+        "label": "AWW ligand",
+        "hasSvg": true,
+        "error": null,
+        "atomGraphics": 73,
+        "bondGraphics": 64,
+        "viewBoxWidth": 260,
+        "viewBoxHeight": 184,
+        "visibleWidth": 210,
+        "visibleHeight": 150
+      },
+      {
+        "actionNumber": 14,
+        "action": "campaign.import",
+        "label": "AWW ligand",
+        "hasSvg": true,
+        "error": null,
+        "atomGraphics": 73,
+        "bondGraphics": 64,
+        "viewBoxWidth": 260,
+        "viewBoxHeight": 184,
+        "visibleWidth": 210,
+        "visibleHeight": 150
+      },
+      {
+        "actionNumber": 17,
+        "action": "campaign.import",
+        "label": "AXH ligand",
+        "hasSvg": true,
+        "error": null,
+        "atomGraphics": 70,
+        "bondGraphics": 61,
+        "viewBoxWidth": 260,
+        "viewBoxHeight": 184,
+        "visibleWidth": 210,
+        "visibleHeight": 150
+      }
+    ],
+    "checkpointReviewBootstrap": {
+      "publicActionCount": 3,
+      "firstVisibleMolecularFrame": "result of view.focusComponent",
+      "transientWholeProteinFramePublished": false
+    }
+  },
+  "replay": {
+    "status": "completed",
+    "exactExpectationCount": 6
+  },
+  "audit": {
+    "path": "chemist-action-audit.json",
+    "sha256": "609ae0913adb8014dd501c8558dfac4686bb070074fd1836d87353a55f407b7c",
+    "records": 77
+  },
+  "captures": [
+    {
+      "label": "Molarium Design interface before import",
+      "actionIndex": null,
+      "action": null,
+      "caption": null,
+      "repeats": 26,
+      "sha256": "56b9ebc9fdd9567d5b977715dbcf1ff306f433263d65eac6d72e194ef8cecba8",
+      "bytes": 260431,
+      "qaFilename": "qa/01-molarium-design-interface-before-import.png",
+      "firstFrame": 0,
+      "lastFrame": 25
+    },
+    {
+      "label": "Imported JSON action script",
+      "actionIndex": null,
+      "action": null,
+      "caption": null,
+      "repeats": 24,
+      "sha256": "ac5aeb52b86ffd7f1bdd2ce231e8060212ba8c294d0ff5d6118342a6d3c82632",
+      "bytes": 158465,
+      "qaFilename": "qa/02-imported-json-action-script.png",
+      "firstFrame": 26,
+      "lastFrame": 49
+    },
+    {
+      "label": "First frozen prediction checkpoint in fixed local pocket",
+      "actionIndex": 2,
+      "action": "view.focusComponent",
+      "caption": "Center the hit and the local pocket where every design decision will be made",
+      "repeats": 34,
+      "sha256": "db61c63d7b6fc6a4bf826ff9d25eeb615346cccd77c5b670eb666452f151fd2c",
+      "bytes": 274580,
+      "qaFilename": "qa/03-first-frozen-prediction-checkpoint-in-fixed-local-pocket.png",
+      "firstFrame": 50,
+      "lastFrame": 83
+    },
+    {
+      "label": "4. Press Start from the experimental hit and its Phe890-in pocket",
+      "actionIndex": 3,
+      "action": "view.highlightAtoms",
+      "caption": "Start from the experimental hit and its Phe890-in pocket",
+      "repeats": 10,
+      "sha256": "96e202271958142d54c71c6a248af06b54c1dca06ab46c28e867386a17789b44",
+      "bytes": 270362,
+      "qaFilename": "qa/04-4-press-start-from-the-experimental-hit-and-its-phe890-in-pocket.png",
+      "firstFrame": 84,
+      "lastFrame": 93
+    },
+    {
+      "label": "4. Result Start from the experimental hit and its Phe890-in pocket",
+      "actionIndex": 3,
+      "action": "view.highlightAtoms",
+      "caption": "Start from the experimental hit and its Phe890-in pocket",
+      "repeats": 31,
+      "sha256": "8cd4067ad1c03522c8ec45a976cacc3df60b1d4e1682505d6cf4c3880827ccb3",
+      "bytes": 282023,
+      "qaFilename": "qa/05-4-result-start-from-the-experimental-hit-and-its-phe890-in-pocket.png",
+      "firstFrame": 94,
+      "lastFrame": 124
+    },
+    {
+      "label": "5. Press Review the scaffold-rewrite checkpoint",
+      "actionIndex": 4,
+      "action": "campaign.import",
+      "caption": "Review the scaffold-rewrite checkpoint",
+      "repeats": 14,
+      "sha256": "9689aa41211faa4ec7f2489f90b69bad8eb89018ab216f2321a848589188eea6",
+      "bytes": 275554,
+      "qaFilename": "qa/06-5-press-review-the-scaffold-rewrite-checkpoint.png",
+      "firstFrame": 125,
+      "lastFrame": 138
+    },
+    {
+      "label": "5. Result Review the scaffold-rewrite checkpoint",
+      "actionIndex": 4,
+      "action": "campaign.import",
+      "caption": "Review the scaffold-rewrite checkpoint",
+      "repeats": 34,
+      "sha256": "b776774b78aa7936dc66fb547ca13af0c3d036770d251a623bd12e257c67e4b7",
+      "bytes": 285059,
+      "qaFilename": "qa/07-5-result-review-the-scaffold-rewrite-checkpoint.png",
+      "firstFrame": 139,
+      "lastFrame": 172
+    },
+    {
+      "label": "6. Press Rewrite the scaffold while retaining the original pocket context",
+      "actionIndex": 5,
+      "action": "view.highlightAtoms",
+      "caption": "Rewrite the scaffold while retaining the original pocket context",
+      "repeats": 10,
+      "sha256": "5dc645c2d0b6c68de2520dd2b31a43542b893a8ef7ece13b0ec6a41701d164d6",
+      "bytes": 286691,
+      "qaFilename": "qa/08-6-press-rewrite-the-scaffold-while-retaining-the-original-pocket-context.png",
+      "firstFrame": 173,
+      "lastFrame": 182
+    },
+    {
+      "label": "6. Result Rewrite the scaffold while retaining the original pocket context",
+      "actionIndex": 5,
+      "action": "view.highlightAtoms",
+      "caption": "Rewrite the scaffold while retaining the original pocket context",
+      "repeats": 31,
+      "sha256": "1e79b79c1be14e3f93191499f817454700eedb353b5f47ed7f9312bd29c94235",
+      "bytes": 298253,
+      "qaFilename": "qa/09-6-result-rewrite-the-scaffold-while-retaining-the-original-pocket-contex.png",
+      "firstFrame": 183,
+      "lastFrame": 213
+    },
+    {
+      "label": "7. Press Review the fragment-merge checkpoint",
+      "actionIndex": 6,
+      "action": "campaign.import",
+      "caption": "Review the fragment-merge checkpoint",
+      "repeats": 14,
+      "sha256": "7a310c2f66ba7e915b3cbd2caadc85d60f2cc78883351d9aa9facf502f9ce29f",
+      "bytes": 290764,
+      "qaFilename": "qa/10-7-press-review-the-fragment-merge-checkpoint.png",
+      "firstFrame": 214,
+      "lastFrame": 227
+    },
+    {
+      "label": "7. Result Review the fragment-merge checkpoint",
+      "actionIndex": 6,
+      "action": "campaign.import",
+      "caption": "Review the fragment-merge checkpoint",
+      "repeats": 34,
+      "sha256": "99e06217d462d860c1a54d120507438beada9db4131c7f7c544b0bed4585de33",
+      "bytes": 272105,
+      "qaFilename": "qa/11-7-result-review-the-fragment-merge-checkpoint.png",
+      "firstFrame": 228,
+      "lastFrame": 261
+    },
+    {
+      "label": "8. Press AWZ precursor: the distal arm has not yet opened the Phe890 pocket",
+      "actionIndex": 7,
+      "action": "view.highlightAtoms",
+      "caption": "AWZ precursor: the distal arm has not yet opened the Phe890 pocket",
+      "repeats": 10,
+      "sha256": "0429fd77635d3b8b2d7486a0dcae2df92dadfdcedae69176ef55b0f1cacfbe3b",
+      "bytes": 275086,
+      "qaFilename": "qa/12-8-press-awz-precursor-the-distal-arm-has-not-yet-opened-the-phe890-pocke.png",
+      "firstFrame": 262,
+      "lastFrame": 271
+    },
+    {
+      "label": "8. Result AWZ precursor: the distal arm has not yet opened the Phe890 pocket",
+      "actionIndex": 7,
+      "action": "view.highlightAtoms",
+      "caption": "AWZ precursor: the distal arm has not yet opened the Phe890 pocket",
+      "repeats": 31,
+      "sha256": "a12b84661a5dba647e934f4d3c295c1231decf80e48105fedf7dfa62fafed4ba",
+      "bytes": 286358,
+      "qaFilename": "qa/13-8-result-awz-precursor-the-distal-arm-has-not-yet-opened-the-phe890-pock.png",
+      "firstFrame": 272,
+      "lastFrame": 302
+    },
+    {
+      "label": "9. Press Review the AWW graph before directional placement",
+      "actionIndex": 8,
+      "action": "campaign.import",
+      "caption": "Review the AWW graph before directional placement",
+      "repeats": 14,
+      "sha256": "ed2ee97e73b7726243f6f768b6632dcfd72203885125e730c4ce7269e2a3c4c6",
+      "bytes": 280651,
+      "qaFilename": "qa/14-9-press-review-the-aww-graph-before-directional-placement.png",
+      "firstFrame": 303,
+      "lastFrame": 316
+    },
+    {
+      "label": "9. Result Review the AWW graph before directional placement",
+      "actionIndex": 8,
+      "action": "campaign.import",
+      "caption": "Review the AWW graph before directional placement",
+      "repeats": 34,
+      "sha256": "928e2d568b9ba810d9f794a6d7d63035ea61709f6fc8d4867c62fac85cca6eb7",
+      "bytes": 274547,
+      "qaFilename": "qa/15-9-result-review-the-aww-graph-before-directional-placement.png",
+      "firstFrame": 317,
+      "lastFrame": 350
+    },
+    {
+      "label": "10. Press AWW graph edit: inspect the inherited arm direction before designer placement",
+      "actionIndex": 9,
+      "action": "view.highlightAtoms",
+      "caption": "AWW graph edit: inspect the inherited arm direction before designer placement",
+      "repeats": 10,
+      "sha256": "29054f135b854c94325c0aff5b4e0564ed50dda1f78442db57c333d2c45fda6b",
+      "bytes": 279777,
+      "qaFilename": "qa/16-10-press-aww-graph-edit-inspect-the-inherited-arm-direction-before-desig.png",
+      "firstFrame": 351,
+      "lastFrame": 360
+    },
+    {
+      "label": "10. Result AWW graph edit: inspect the inherited arm direction before designer placement",
+      "actionIndex": 9,
+      "action": "view.highlightAtoms",
+      "caption": "AWW graph edit: inspect the inherited arm direction before designer placement",
+      "repeats": 31,
+      "sha256": "40c280674f59aac66f2613d7b41f9b383caf6f75bd19defe6dab77191ad32941",
+      "bytes": 290636,
+      "qaFilename": "qa/17-10-result-aww-graph-edit-inspect-the-inherited-arm-direction-before-desi.png",
+      "firstFrame": 361,
+      "lastFrame": 391
+    },
+    {
+      "label": "11. Press Review the fixed AWW designer-intent pose",
+      "actionIndex": 10,
+      "action": "campaign.import",
+      "caption": "Review the fixed AWW designer-intent pose",
+      "repeats": 14,
+      "sha256": "1cd4b8197f34ce4fc691fe02de6b43ba278f9fbea01c49cf99108ea78064c487",
+      "bytes": 279606,
+      "qaFilename": "qa/18-11-press-review-the-fixed-aww-designer-intent-pose.png",
+      "firstFrame": 392,
+      "lastFrame": 405
+    },
+    {
+      "label": "11. Result Review the fixed AWW designer-intent pose",
+      "actionIndex": 10,
+      "action": "campaign.import",
+      "caption": "Review the fixed AWW designer-intent pose",
+      "repeats": 34,
+      "sha256": "5be1c2ba8e861d1a1d556797ca4ab2c8038762d09a8ebec46ec82ab2d0bcdd19",
+      "bytes": 283709,
+      "qaFilename": "qa/19-11-result-review-the-fixed-aww-designer-intent-pose.png",
+      "firstFrame": 406,
+      "lastFrame": 439
+    },
+    {
+      "label": "12. Press Show the severe ligand–protein contacts created by compound 21 growth",
+      "actionIndex": 11,
+      "action": "view.setDisplay",
+      "caption": "Show the severe ligand–protein contacts created by compound 21 growth",
+      "repeats": 10,
+      "sha256": "e4de2f1abb7e66344ea937455ccfe811ba1b989c9ee70224f0065b7eebd8d1a9",
+      "bytes": 320727,
+      "qaFilename": "qa/20-12-press-show-the-severe-ligand-protein-contacts-created-by-compound-21-.png",
+      "firstFrame": 440,
+      "lastFrame": 449
+    },
+    {
+      "label": "12. Result Show the severe ligand–protein contacts created by compound 21 growth",
+      "actionIndex": 11,
+      "action": "view.setDisplay",
+      "caption": "Show the severe ligand–protein contacts created by compound 21 growth",
+      "repeats": 19,
+      "sha256": "ae090669a01e36786e79ed75eab6e63b8b595c889e870e12bcb334fc0d4c4144",
+      "bytes": 323027,
+      "qaFilename": "qa/21-12-result-show-the-severe-ligand-protein-contacts-created-by-compound-21.png",
+      "firstFrame": 450,
+      "lastFrame": 468
+    },
+    {
+      "label": "13. Press Rotate the AWW arm toward the Tyr884 backbone contact; only the movable Phe890 ring overlaps",
+      "actionIndex": 12,
+      "action": "view.highlightAtoms",
+      "caption": "Rotate the AWW arm toward the Tyr884 backbone contact; only the movable Phe890 ring overlaps",
+      "repeats": 10,
+      "sha256": "3b5a77a05b31cb7991cbe36b9998135f5614d97b1b2120ac292f1961e29b4a72",
+      "bytes": 295105,
+      "qaFilename": "qa/22-13-press-rotate-the-aww-arm-toward-the-tyr884-backbone-contact-only-the-.png",
+      "firstFrame": 469,
+      "lastFrame": 478
+    },
+    {
+      "label": "13. Result Rotate the AWW arm toward the Tyr884 backbone contact; only the movable Phe890 ring overlaps",
+      "actionIndex": 12,
+      "action": "view.highlightAtoms",
+      "caption": "Rotate the AWW arm toward the Tyr884 backbone contact; only the movable Phe890 ring overlaps",
+      "repeats": 31,
+      "sha256": "e4b85454da201d67a4f861b2e72eb3a01d2f138a970457994ca9185505851c3f",
+      "bytes": 306835,
+      "qaFilename": "qa/23-13-result-rotate-the-aww-arm-toward-the-tyr884-backbone-contact-only-the.png",
+      "firstFrame": 479,
+      "lastFrame": 509
+    },
+    {
+      "label": "14. Press Review the receptor-only Phe890 response",
+      "actionIndex": 13,
+      "action": "campaign.import",
+      "caption": "Review the receptor-only Phe890 response",
+      "repeats": 14,
+      "sha256": "c9d4b202fcbade0961765fb5e9d7c874596a324743932d405a01e8f7a6d8d460",
+      "bytes": 291719,
+      "qaFilename": "qa/24-14-press-review-the-receptor-only-phe890-response.png",
+      "firstFrame": 510,
+      "lastFrame": 523
+    },
+    {
+      "label": "14. Result Review the receptor-only Phe890 response",
+      "actionIndex": 13,
+      "action": "campaign.import",
+      "caption": "Review the receptor-only Phe890 response",
+      "repeats": 34,
+      "sha256": "ad361b7825d3c7760551a5e4bd2c86bf1c13bf08b7c418c07cadaf09755fdfa8",
+      "bytes": 285181,
+      "qaFilename": "qa/25-14-result-review-the-receptor-only-phe890-response.png",
+      "firstFrame": 524,
+      "lastFrame": 557
+    },
+    {
+      "label": "15. Press The selected Phe890-out branch clears the severe contacts",
+      "actionIndex": 14,
+      "action": "view.setDisplay",
+      "caption": "The selected Phe890-out branch clears the severe contacts",
+      "repeats": 10,
+      "sha256": "bf3410fedf384f9efef8178c6f337a195d5a9a54c320403eafe6a30d6b353ab9",
+      "bytes": 317722,
+      "qaFilename": "qa/26-15-press-the-selected-phe890-out-branch-clears-the-severe-contacts.png",
+      "firstFrame": 558,
+      "lastFrame": 567
+    },
+    {
+      "label": "15. Result The selected Phe890-out branch clears the severe contacts",
+      "actionIndex": 14,
+      "action": "view.setDisplay",
+      "caption": "The selected Phe890-out branch clears the severe contacts",
+      "repeats": 19,
+      "sha256": "5182a2816c33cf23d58e17d26f0a46585351f68f81bdd3c72245cf09905ff1fc",
+      "bytes": 317082,
+      "qaFilename": "qa/27-15-result-the-selected-phe890-out-branch-clears-the-severe-contacts.png",
+      "firstFrame": 568,
+      "lastFrame": 586
+    },
+    {
+      "label": "16. Press The energy-selected Phe890 flip clears the fixed ligand; Tyr884 supplies the backbone contact",
+      "actionIndex": 15,
+      "action": "view.highlightAtoms",
+      "caption": "The energy-selected Phe890 flip clears the fixed ligand; Tyr884 supplies the backbone contact",
+      "repeats": 10,
+      "sha256": "85cc742a67c637ea1c3085c1ed7391c3d01fd08b07e8b10c2b9e6ac55cd6a88c",
+      "bytes": 294663,
+      "qaFilename": "qa/28-16-press-the-energy-selected-phe890-flip-clears-the-fixed-ligand-tyr884-.png",
+      "firstFrame": 587,
+      "lastFrame": 596
+    },
+    {
+      "label": "16. Result The energy-selected Phe890 flip clears the fixed ligand; Tyr884 supplies the backbone contact",
+      "actionIndex": 15,
+      "action": "view.highlightAtoms",
+      "caption": "The energy-selected Phe890 flip clears the fixed ligand; Tyr884 supplies the backbone contact",
+      "repeats": 31,
+      "sha256": "2a45c9065171f3b30dc21c922ba0b08be43f66b444b451eb961531a046fa05c1",
+      "bytes": 305832,
+      "qaFilename": "qa/29-16-result-the-energy-selected-phe890-flip-clears-the-fixed-ligand-tyr884.png",
+      "firstFrame": 597,
+      "lastFrame": 627
+    },
+    {
+      "label": "17. Press Review the BAY-293 attachment rewrite",
+      "actionIndex": 16,
+      "action": "campaign.import",
+      "caption": "Review the BAY-293 attachment rewrite",
+      "repeats": 14,
+      "sha256": "854ea8b2b571b3bf45a0bc5592a19702b1dba83f8a4fea05e000e165a10ab5aa",
+      "bytes": 291748,
+      "qaFilename": "qa/30-17-press-review-the-bay-293-attachment-rewrite.png",
+      "firstFrame": 628,
+      "lastFrame": 641
+    },
+    {
+      "label": "17. Result Review the BAY-293 attachment rewrite",
+      "actionIndex": 16,
+      "action": "campaign.import",
+      "caption": "Review the BAY-293 attachment rewrite",
+      "repeats": 34,
+      "sha256": "25baddd2d944a13bb52c46c6913ca49b5fd14d2cc78d3d22062bf04d4f57c6be",
+      "bytes": 299281,
+      "qaFilename": "qa/31-17-result-review-the-bay-293-attachment-rewrite.png",
+      "firstFrame": 642,
+      "lastFrame": 675
+    },
+    {
+      "label": "18. Press BAY-293: rewire the thiophene attachment while retaining the distal spatial feature",
+      "actionIndex": 17,
+      "action": "view.highlightAtoms",
+      "caption": "BAY-293: rewire the thiophene attachment while retaining the distal spatial feature",
+      "repeats": 10,
+      "sha256": "72b355ca00e41531ea1c759d612dcecfbe86d0d6534fc539f2212237e2d21ad0",
+      "bytes": 306794,
+      "qaFilename": "qa/32-18-press-bay-293-rewire-the-thiophene-attachment-while-retaining-the-dis.png",
+      "firstFrame": 676,
+      "lastFrame": 685
+    },
+    {
+      "label": "18. Result BAY-293: rewire the thiophene attachment while retaining the distal spatial feature",
+      "actionIndex": 17,
+      "action": "view.highlightAtoms",
+      "caption": "BAY-293: rewire the thiophene attachment while retaining the distal spatial feature",
+      "repeats": 31,
+      "sha256": "aa0c5247cf484675db6805b4cdc255e3008a95a505f2ebbe33282ab021594fb9",
+      "bytes": 317613,
+      "qaFilename": "qa/33-18-result-bay-293-rewire-the-thiophene-attachment-while-retaining-the-di.png",
+      "firstFrame": 686,
+      "lastFrame": 716
+    },
+    {
+      "label": "Replay completed in Molarium",
+      "actionIndex": null,
+      "action": null,
+      "caption": null,
+      "repeats": 36,
+      "sha256": "a167e1095622ca5aaff2c0fb7b04d05964d1859ba83eed54aab41278efca2fb3",
+      "bytes": 383837,
+      "qaFilename": "qa/34-replay-completed-in-molarium.png",
+      "firstFrame": 717,
+      "lastFrame": 752
+    }
+  ],
+  "video": {
+    "filename": "sos1-designer-moves-molarium-interface.mp4",
+    "sha256": "1f0961eebc767243f502b4b2effebcdbf6bc9a3bab98fd4764670ab368d4204e",
+    "bytes": 1358960,
+    "width": 1600,
+    "height": 1000,
+    "fps": 12,
+    "frames": 753,
+    "durationSeconds": 62.75
+  },
+  "complete": true
+}

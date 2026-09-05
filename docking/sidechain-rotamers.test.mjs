@@ -5,7 +5,8 @@ import { applySidechainRotamer, assertSidechainChiAnglesReproduced,
   evaluatePostRelaxedLigandPocket,
   measureInspectedSidechainChiAngles, selectSidechainRotamerCandidate,
   selectCoupledSidechainPoseBranch,
-  SIDECHAIN_ROTAMER_SCHEMA, uniqueSidechainRotamerCandidates } from './sidechain-rotamers.mjs';
+  SIDECHAIN_ROTAMER_SCHEMA, sidechainResponseAtomIndices,
+  uniqueSidechainRotamerCandidates } from './sidechain-rotamers.mjs';
 
 const atom = (atomName, x, y, z, extra = {}) => ({ record:'ATOM', residueName:'PHE',
   chain:'A', residueIndex:890, insertionCode:'', element:'C', atomName, x, y, z, ...extra });
@@ -22,6 +23,11 @@ const atoms = [
 const bonds = [[0,1],[1,2],[2,3],[1,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,5]]
   .map(([a,b]) => ({ a,b,order:1 }));
 const molecule = { atoms:structuredClone(atoms), bonds:structuredClone(bonds) };
+assert.deepEqual(sidechainResponseAtomIndices({ molecule,
+  residue:{ residueName:'PHE', chain:'A', residueIndex:890, insertionCode:'' } })
+  .map((index) => molecule.atoms[index].atomName).sort(),
+['CG','CD1','CD2','CE1','CE2','CZ'].sort(),
+'chi response permission excludes Phe CB and every backbone atom');
 const inspectedResidue = (source = molecule.atoms.slice(0, 11)) => source.map((entry) => ({
   atomId:`test:${entry.atomName}`, atomName:entry.atomName, element:entry.element,
   residueName:entry.residueName, chain:entry.chain, residueIndex:entry.residueIndex,
@@ -94,6 +100,19 @@ assert.equal(selectSidechainRotamerCandidate(stableSelectionEnsemble,
 'chi selection is circularly normalized rather than tied to rank ordering');
 assert.equal(selectSidechainRotamerCandidate(stableSelectionEnsemble,
   { coordinateSha256:'2'.repeat(64) }).index, 2);
+const freshInput = { index:12, source:'input', chiDegrees:[-75.1,-72.2],
+  coordinateSha256:'8'.repeat(64) };
+assert.equal(selectSidechainRotamerCandidate({ ...stableSelectionEnsemble,
+  candidates:[...stableSelectionEnsemble.candidates, freshInput] }, { source:'input' }), freshInput,
+'unchanged input selection follows the current enumeration, not old numerical angles');
+assert.throws(() => selectSidechainRotamerCandidate(stableSelectionEnsemble,
+  { source:'input' }), /exactly one candidate/);
+assert.throws(() => selectSidechainRotamerCandidate({ ...stableSelectionEnsemble,
+  candidates:[freshInput, { ...freshInput, index:13 }] }, { source:'input' }), /exactly one candidate/);
+assert.throws(() => selectSidechainRotamerCandidate(stableSelectionEnsemble,
+  { source:'canonical-library' }), /must be input/);
+assert.throws(() => selectSidechainRotamerCandidate(stableSelectionEnsemble,
+  { source:'input', chiDegrees:[-180,90] }), /exactly one side-chain rotamer selector/);
 assert.throws(() => selectSidechainRotamerCandidate(stableSelectionEnsemble, {}),
   /exactly one side-chain rotamer selector/);
 assert.throws(() => selectSidechainRotamerCandidate(stableSelectionEnsemble,

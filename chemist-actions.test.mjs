@@ -88,11 +88,12 @@ assert.deepEqual(Object.keys(api.describe().actions['pose.setDesignerLigandPoseF
 assert.match(api.describe().actions['geometry.setInternalCoordinate'].description,
   /path order defines.*branch direction.*other precursor coordinates are preserved/i);
 assert.match(api.describe().actions['geometry.alignBranchToContact'].description,
-  /directed ligand branch.*current visible coordinates.*best-directional.*preserving every atom outside/i);
+  /directed ligand branch.*current visible coordinates.*best-directional.*every atom outside.*stays fixed/i);
 assert.deepEqual(Object.keys(api.describe().actions['geometry.alignBranchToContact'].arguments).sort(),
-  ['allowedResponseResidues','axisAtomIds','contactId','coupledAxisAtomIds',
+  ['allowedResponseAtoms','axisAtomIds','contactId','coupledAxisAtomIds',
+    'axisAtomSelectors','coupledAxisAtomSelectors','upstreamAxisAtomSelectors',
     'designerPrimaryRotationDegrees','ligandFeatureAtomId','receptorTargetAtomId','solution',
-    'targetDistanceAngstrom'].sort());
+    'targetDistanceAngstrom','upstreamAxisAtomIds','upstreamRotationRangeDegrees'].sort());
 assert.match(api.describe().actions['geometry.alignBranchToContact'].arguments.solution,
   /best-directional/);
 assert.match(api.describe().actions['geometry.alignBranchToContact'].arguments.contactId,
@@ -153,6 +154,7 @@ await assert.rejects(() => api.execute({ action:'designerScript.load',
 
 const sizeRoutes = {
   'campaign.import':async () => ({ imported:true }),
+  'designerScript.load':async () => ({ loaded:true }),
   'view.setMode':async () => ({ mode:'view' }),
 };
 const sizeApi = createChemistActionsApi({ routes:sizeRoutes,
@@ -171,6 +173,17 @@ assert.match(sizeApi.describe().actions['campaign.import'].arguments.serialized,
   /32 MiB/);
 assert.match(sizeApi.describe().actions['campaign.import'].arguments.sourceSha256,
   /SHA-256/);
+const longReplay = { ...nestedReplay, actions:Array.from({ length:202 }, () =>
+  structuredClone(nestedReplay.actions[0])) };
+await sizeApi.execute({ action:'designerScript.load', args:{ script:longReplay } });
+await assert.rejects(() => sizeApi.execute({ action:'view.setMode', args:{ script:longReplay } }),
+  /input is too large/, 'ordinary controls keep the 2048-node limit');
+await assert.rejects(() => sizeApi.execute({ action:'designerScript.load',
+  args:{ script:{ actions:Array(32768).fill(null) } } }), /input is too large/,
+  'script loading retains a bounded structural budget');
+await assert.rejects(() => sizeApi.execute({ action:'designerScript.load',
+  args:{ script:{ padding:fullSystemCampaign } } }), /input exceeds 8388608 bytes/,
+  'script loading retains the original byte limit');
 
 const order = [];
 routes['chemistry.finish'] = undefined;

@@ -47,6 +47,7 @@ def frozen():
         "manifestBytes": b"manifest\n", "campaignBytes": b"campaign\n",
         "evidenceBytes": b"evidence\n", "auditBytes": b"audit\n",
         "sourceBytes": b"source\n",
+        "boundary": {"laterStructureAccess": False},
         "manifest": {"designerTorsion": {
             "beforeDegrees": 72.0, "requestedDegrees": -108.0,
             "afterDegrees": -108.0}},
@@ -93,6 +94,25 @@ def report(measured=None, geometry=None):
 
 
 class ReceptorOnlyValidationTest(unittest.TestCase):
+    def test_invalid_ligand_cannot_pass_on_contact_and_phe_alone(self):
+        value = MODULE.build_validation_report(
+            frozen=frozen(), measurement=measurement(), integrity={"valid": False},
+            contact=contact(), holdout_bytes=b"holdout", protocol_bytes=b"protocol",
+            route_bytes=b"route", evaluator=Evaluator, designer_validator=DesignerValidator)
+        self.assertFalse(value["accepted"])
+        self.assertEqual(value["failedChecks"], ["ligandIntegrity"])
+
+    def test_reference_informed_report_does_not_claim_unopened_holdout(self):
+        source = frozen()
+        source["boundary"]["laterStructureAccess"] = True
+        value = MODULE.build_validation_report(
+            frozen=source, measurement=measurement(), integrity={"valid": True},
+            contact=contact(), holdout_bytes=b"holdout", protocol_bytes=b"protocol",
+            route_bytes=b"route", evaluator=Evaluator, designer_validator=DesignerValidator)
+        self.assertTrue(value["designerIntentReferenceInformed"])
+        self.assertFalse(value["predictionFrozenBeforeValidationAccess"])
+        self.assertTrue(value["predictionFrozenBeforeNumericalComparison"])
+
     def test_accepted_report_matches_publication_adapter_contract(self):
         value = report()
         self.assertEqual(value["schema"], MODULE.VALIDATION_SCHEMA)

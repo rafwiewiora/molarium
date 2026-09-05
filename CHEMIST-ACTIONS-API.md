@@ -107,6 +107,10 @@ then reconstructs the graph and coordinates at the selected branch head.
 pair `sourcePath` and `sourceSha256`. The latter is restricted to a traversal-free
 same-origin path and verifies the exact bytes before canonical campaign and
 ledger verification; it keeps large checkpoint campaigns out of replay scripts.
+Optional `sourceEncoding: "gzip"` provides lossless compressed transport. The
+`sourceSha256` digest always covers the decoded canonical bytes; both the
+download and decoded campaign are limited to 32 MiB. No state is imported before
+hash, canonical-serialization, and ledger checks pass.
 `campaign.mergeBranch` records the molecule currently visible on the target
 branch as the explicit merge result and retains the target and source commits as
 ordered parents; it does not attempt an automatic chemical graph merge.

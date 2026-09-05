@@ -11,7 +11,7 @@ import { createDesignerLigandPoseLock, designerLigandPoseLockDescriptor,
   inspectDesignerLigandPoseLock } from './docking/designer-ligand-pose-lock.mjs';
 import { searchBestDirectionalBranchContact, solveDirectedBranchContact } from
   './docking/designer-branch-contact.mjs';
-import { resolveCampaignAssetSource } from './design-history/campaign-source.mjs';
+import { resolveCampaignAssetSource, readCampaignAssetResponse } from './design-history/campaign-source.mjs';
 
 const MOLARIUM_NETWORK_POLICY = Object.freeze({
   mode:'connected', localOnly:false, policy:'connected-v1',
@@ -8932,8 +8932,9 @@ function applyDesignerMoveDemoLayout(step, activeElement) {
     card.classList.toggle('designer-move-demo-minimized', !isActive && !isTransport);
   });
   const depiction = document.querySelector('#structure-2d-panel');
-  depiction?.classList.toggle('designer-move-demo-minimized',
-    !depiction.classList.contains('hidden') && !depiction.contains(activeElement));
+  // The 2D graph is scientific context for every molecular checkpoint, not
+  // an inactive control card. Keep it visible while replay cues move around.
+  depiction?.classList.remove('designer-move-demo-minimized');
   if (step.action === 'view.setDisplay' && activeElement?.classList.contains('hidden'))
     activeElement.classList.add('designer-move-demo-reveal');
 }
@@ -10356,7 +10357,16 @@ function installChemistActionsApi(module) {
     'geometry.alignBranchToContact':async (args) => { chemistActionKeys(args,
       ['axisAtomIds','ligandFeatureAtomId','receptorTargetAtomId',
         'targetDistanceAngstrom','solution','contactId','designerPrimaryRotationDegrees',
-        'coupledAxisAtomIds','allowedResponseResidues']);
+        'coupledAxisAtomIds','allowedResponseAtoms',
+        'upstreamAxisAtomIds','upstreamRotationRangeDegrees',
+        'axisAtomSelectors','coupledAxisAtomSelectors','upstreamAxisAtomSelectors']);
+      if (['axisAtomSelectors','coupledAxisAtomSelectors','upstreamAxisAtomSelectors']
+        .some((key) => Object.hasOwn(args, key))) {
+        await ensureChemistActionAtomIds();
+        const { resolveLigandAxisArguments } = await import('./docking/portable-atom-selector.mjs');
+        args = resolveLigandAxisArguments({ molecule:state.molecule,
+          components:state.structureComponents, args });
+      }
       if (state.mode !== 'build')
         throw new Error('Enter Design mode before aligning a ligand branch');
       await rejectLigandMotionWhileDesignerFixed('geometry.alignBranchToContact');
@@ -10390,10 +10400,18 @@ function installChemistActionsApi(module) {
         if (!Number.isFinite(designerPrimaryRotationDegrees)
           || Math.abs(designerPrimaryRotationDegrees) > 360)
           throw new Error('designerPrimaryRotationDegrees must be finite and within ±360');
-        if (!Array.isArray(args.allowedResponseResidues) || !args.allowedResponseResidues.length)
-          throw new Error('allowedResponseResidues must name the portable receptor responses');
+        if (!Array.isArray(args.allowedResponseAtoms))
+          throw new Error('allowedResponseAtoms must explicitly name the movable receptor atoms');
+        const hasUpstream = args.upstreamAxisAtomIds !== undefined
+          || args.upstreamRotationRangeDegrees !== undefined;
+        if (hasUpstream && (!Array.isArray(args.upstreamAxisAtomIds)
+          || args.upstreamAxisAtomIds.length !== 2
+          || args.upstreamAxisAtomIds[0] === args.upstreamAxisAtomIds[1]
+          || args.upstreamAxisAtomIds.some((id) => typeof id !== 'string' || !id)))
+          throw new Error('upstreamAxisAtomIds must contain two distinct persistent ligand atom IDs');
         const byId = await ensureChemistActionAtomIds();
         const requestedIds = [...args.axisAtomIds, ...args.coupledAxisAtomIds.flat(),
+          ...(hasUpstream ? args.upstreamAxisAtomIds : []),
           definition.donor.designAtomId, definition.hydrogen.designAtomId,
           definition.acceptor.designAtomId];
         requestedIds.forEach((id) => {
@@ -10435,14 +10453,21 @@ function installChemistActionsApi(module) {
           orderedPrimaryAxisAtomIds:structuredClone(args.axisAtomIds),
           designerPrimaryRotationDegrees,
           coupledAxisAtomIds:structuredClone(args.coupledAxisAtomIds),
-          allowedResponseResidues:structuredClone(args.allowedResponseResidues),
-          algorithm:'fixed-primary-two-coupled-rotors-plus-donor-h/v1',
+          upstreamAxisAtomIds:hasUpstream ? structuredClone(args.upstreamAxisAtomIds) : null,
+          upstreamRotationRangeDegrees:hasUpstream
+            ? structuredClone(args.upstreamRotationRangeDegrees) : null,
+          allowedResponseAtoms:structuredClone(args.allowedResponseAtoms),
+          algorithm:'bounded-upstream-fixed-primary-two-coupled-rotors-plus-donor-h/atom-response-v3',
         };
         const searchDefinitionSha256 = await sha256Hex(new TextEncoder()
           .encode(JSON.stringify(searchDefinition)));
         const searched = searchBestDirectionalBranchContact({ molecule:state.molecule,
           ligandAtomIndices:[...ligandIndices],
           primaryAxisAtomIndices:args.axisAtomIds.map((id) => byId.get(id)),
+          ...(hasUpstream ? {
+            upstreamAxisAtomIndices:args.upstreamAxisAtomIds.map((id) => byId.get(id)),
+            upstreamRotationRangeDegrees:args.upstreamRotationRangeDegrees,
+          } : {}),
           coupledAxisAtomIndices:args.coupledAxisAtomIds.map((pair) =>
             pair.map((id) => byId.get(id))),
           designerPrimaryRotationDegrees,
@@ -10450,9 +10475,9 @@ function installChemistActionsApi(module) {
           hydrogenAtomIndex:byId.get(definition.hydrogen.designAtomId),
           acceptorAtomIndex:acceptorIndex,
           carbonylAtomIndex:carbonylCandidates[0].index,
-          allowedResponseResidues:args.allowedResponseResidues });
+          allowedResponseAtoms:args.allowedResponseAtoms });
         if (searched.selected.contacts.outsideAllowedResponseContactCount !== 0)
-          throw new Error('Best-directional search retained a severe contact outside allowed response residues');
+          throw new Error('Best-directional search retained a severe contact with a fixed receptor atom');
         const movingIndexSet = new Set(searched.movingAtomIndices);
         const movingAtomIds = searched.movingAtomIndices.map((index) =>
           state.molecule.atoms[index].designAtomId).sort();
@@ -10497,19 +10522,24 @@ function installChemistActionsApi(module) {
           schema:'molarium.designer-geometry-move/v1',
           action:'geometry.alignBranchToContact', solution:'best-directional',
           coordinateOrigin:'current-visible-molecule',
-          coordinateOperation:'fixed-primary-coupled-directional-contact-search',
+          coordinateOperation:'bounded-upstream-fixed-primary-coupled-directional-contact-search',
           externalReferenceCoordinatesUsed:false, contactId:args.contactId,
           orderedAxisAtomIds:structuredClone(args.axisAtomIds),
           coupledAxisAtomIds:structuredClone(args.coupledAxisAtomIds),
+          upstreamAxisAtomIds:hasUpstream ? structuredClone(args.upstreamAxisAtomIds) : null,
+          upstreamRotationRangeDegrees:hasUpstream
+            ? structuredClone(args.upstreamRotationRangeDegrees) : null,
+          allowedResponseAtoms:structuredClone(searched.allowedResponseAtoms),
           allowedResponseResidues:structuredClone(searched.allowedResponseResidues),
           selected:structuredClone(searched.selected),
           searchAudit:structuredClone(searched.searchAudit), hashes,
-          branchDirection:{ cutBondAtomIds:structuredClone(args.axisAtomIds),
-            movingSideStartsAtAtomId:args.axisAtomIds[1],
+          branchDirection:{ cutBondAtomIds:structuredClone(hasUpstream
+            ? args.upstreamAxisAtomIds : args.axisAtomIds),
+            movingSideStartsAtAtomId:(hasUpstream ? args.upstreamAxisAtomIds : args.axisAtomIds)[1],
             movingAtomCount:movingAtomIds.length, movingAtomIdsSha256 },
           preservedPrecursorAtomCount:preservedAtomIds.length,
           preservedPrecursorAtomIdsSha256:preservedAtomIdsSha256,
-          precursorCoordinatePolicy:'all atoms outside the directed primary moving branch remain bitwise unchanged',
+          precursorCoordinatePolicy:'all atoms outside the outermost declared moving branch remain bitwise unchanged',
           changedAtomIds:structuredClone(coordinateChanges.changedAtomIds),
         };
         state.molecule.source = { ...(state.molecule.source || {}),
@@ -10520,6 +10550,9 @@ function installChemistActionsApi(module) {
           contactId:args.contactId,
           orderedAxisAtomIds:structuredClone(args.axisAtomIds),
           coupledAxisAtomIds:structuredClone(args.coupledAxisAtomIds),
+          upstreamAxisAtomIds:structuredClone(definingMove.upstreamAxisAtomIds),
+          upstreamRotationRangeDegrees:structuredClone(definingMove.upstreamRotationRangeDegrees),
+          allowedResponseAtoms:structuredClone(searched.allowedResponseAtoms),
           allowedResponseResidues:structuredClone(searched.allowedResponseResidues),
           selected:structuredClone(searched.selected),
           searchAudit:structuredClone(searched.searchAudit), hashes,
@@ -11259,12 +11292,12 @@ function installChemistActionsApi(module) {
         residueAtomIndex, maximumCandidates);
       return chemistActionSummary({ sidechainRotamers }); },
     'pose.applySidechainRotamer':async (args) => { chemistActionKeys(args,
-      ['index','chiDegrees','coordinateSha256','expectedInputCoordinateSha256',
+      ['index','chiDegrees','coordinateSha256','source','expectedInputCoordinateSha256',
         'expectedSelectedCoordinateSha256']);
-      const selectorKeys = ['index','chiDegrees','coordinateSha256']
+      const selectorKeys = ['index','chiDegrees','coordinateSha256','source']
         .filter((key) => Object.hasOwn(args, key));
       if (selectorKeys.length !== 1)
-        throw new Error('Specify exactly one side-chain rotamer selector: index, chiDegrees, or coordinateSha256');
+        throw new Error('Specify exactly one side-chain rotamer selector: index, chiDegrees, coordinateSha256, or source');
       const selectorKey = selectorKeys[0];
       if (selectorKey === 'index' && (!Number.isInteger(args.index) || args.index < 0))
         throw new Error('index must be a non-negative integer');
@@ -11644,11 +11677,13 @@ function installChemistActionsApi(module) {
       return chemistActionSummary({ campaignClosed:{ campaignId:closedCampaignId,
         persisted:true } }); },
     'campaign.import':async (args) => { chemistActionKeys(args,
-      ['serialized','preserveView','sourcePath','sourceSha256']);
+      ['serialized','preserveView','sourcePath','sourceSha256','sourceEncoding']);
       const inline = typeof args.serialized === 'string' && Boolean(args.serialized.trim());
       const external = args.sourcePath != null || args.sourceSha256 != null;
       if (inline === external)
         throw new Error('Provide exactly one of serialized or sourcePath/sourceSha256');
+      if (args.sourceEncoding != null && (!external || args.sourceEncoding !== 'gzip'))
+        throw new Error('sourceEncoding must be gzip and requires an external campaign asset');
       if (args.preserveView != null && typeof args.preserveView !== 'boolean')
         throw new Error('preserveView must be boolean');
       let serialized = args.serialized;
@@ -11657,7 +11692,7 @@ function installChemistActionsApi(module) {
         source = resolveCampaignAssetSource(args.sourcePath, args.sourceSha256, location.href);
         const response = await fetch(source.url, { cache:'no-store' });
         if (!response.ok) throw new Error(`Campaign asset could not be loaded (${response.status})`);
-        const bytes = await response.arrayBuffer();
+        const bytes = await readCampaignAssetResponse(response, args.sourceEncoding);
         if (await sha256Hex(bytes) !== source.sourceSha256)
           throw new Error('Campaign asset integrity check failed');
         serialized = new TextDecoder().decode(bytes);
@@ -17932,17 +17967,17 @@ async function loadLaunchMolecule() {
 
 const DESIGNER_STORY_LINKS = Object.freeze({
   'sos1-hit-to-bay293':Object.freeze({
-    title:'SOS1 prediction replay',
-    script:'./design-history/examples/sos1-prediction.action-script.json',
-    sourcePath:'design-history/examples/sos1-prediction.action-script.json',
-    sourceSha256:'eb157eeda9044d2f2d5a3940a37a9dfd4ef29fdcf7754a79ad13fc56c407fd2d',
+    title:'SOS1 reference-informed designer-intent replay',
+    script:'./design-history/publications/sos1/designer-intent-2026-09-04/executable.action-script.json',
+    sourcePath:'design-history/publications/sos1/designer-intent-2026-09-04/executable.action-script.json',
+    sourceSha256:'7eed2dff0bf3fa127f87b2322aaea4b615d458ad6d8ef3af3c5b5886dc8fe9c3',
     presentation:'chemist-pocket',
   }),
   'sos1-hit-to-bay293-review':Object.freeze({
-    title:'SOS1 prediction checkpoint review',
-    script:'./design-history/examples/sos1-prediction-checkpoint-review.action-script.json',
-    sourcePath:'design-history/examples/sos1-prediction-checkpoint-review.action-script.json',
-    sourceSha256:'7f309257a71a4427b66013d0d40880e52a40053c908fcea83e0223cede7e0413',
+    title:'SOS1 reference-informed checkpoint review',
+    script:'./design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-review.action-script.json',
+    sourcePath:'design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-review.action-script.json',
+    sourceSha256:'6ab36deb2cab37fd888eff9c2006c8c14e06be351d4cdc160dd173c994393211',
     presentation:'chemist-pocket',
   }),
 });

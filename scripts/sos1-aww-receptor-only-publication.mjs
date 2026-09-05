@@ -17,6 +17,12 @@ const REVIEW_SCHEMA = 'molarium.sos1-aww-receptor-only-checkpoint-review/v1';
 const DECLARATION_SCHEMA = 'molarium.sos1-aww-receptor-only-browser-publication/v1';
 const SHA256 = /^[a-f0-9]{64}$/;
 const HOLDOUT_IDS = /5OV[F-I]/i;
+const ENERGY_OPTIONS = Object.freeze({ implicitSolvent:'obc2',
+  nonbondedCutoffNm:1.0, constraintMode:'none' });
+const PHE890_RESPONSE_ATOMS = Object.freeze(
+  ['CG','CD1','CD2','CE1','CE2','CZ'].map((atomName) => Object.freeze({
+    residueName:'PHE', chain:'A', residueIndex:890, insertionCode:'', atomName,
+  })));
 const CURRENT_REQUIRED_ACTIONS = Object.freeze([
   'designRoute.applyStep',
   'pose.addContact',
@@ -29,7 +35,7 @@ const CURRENT_REQUIRED_ACTIONS = Object.freeze([
 const PROHIBITED_ACTIONS = new Set([
   'geometry.setInternalCoordinate',
   'pose.refine', 'pose.apply', 'pose.updateReceptorReference',
-  'optimization.run', 'calculation.run',
+  'optimization.run',
 ]);
 export const SOS1_AWW_PUBLIC_CHECKPOINT_DIRECTORY =
   'design-history/publications/sos1/checkpoints';
@@ -63,21 +69,35 @@ function assertNoHoldoutPayload(value, label) {
     `${label} contains a later crystal identifier`);
 }
 
-function assertMeasurementOnlyValidation(validation) {
+function assertMeasurementOnlyValidation(validation, { requireAccepted = true } = {}) {
   assert.equal(validation.schema, VALIDATION_SCHEMA);
-  assert.equal(validation.accepted, true,
+  if (requireAccepted) assert.equal(validation.accepted, true,
     'post-freeze scientific validation did not accept this prediction');
-  assert.equal(validation.predictionFrozenBeforeValidationAccess, true,
-    'scientific validation was not performed after prediction freeze');
+  else {
+    assert.equal(validation.designerIntentReferenceInformed, true,
+      'complete-frozen review is explicitly limited to reference-informed runs');
+    assert.equal(validation.checks?.ligandIntegrity?.accepted, true,
+      'complete-frozen review cannot bypass ligand chemistry or clash integrity');
+    assert.equal(validation.accepted, validation.failedChecks.length === 0);
+    assert.deepEqual(validation.failedChecks,
+      Object.entries(validation.checks).filter(([, check]) => check.accepted !== true)
+        .map(([name]) => name), 'failed-check list is inconsistent');
+  }
+  assert.equal(validation.predictionFrozenBeforeValidationAccess,
+    validation.designerIntentReferenceInformed !== true,
+    'validation must state whether crystal inspection preceded the frozen run');
+  if (validation.designerIntentReferenceInformed)
+    assert.equal(validation.predictionFrozenBeforeNumericalComparison, true,
+      'numerical comparison was not performed after prediction freeze');
   assert.equal(validation.measurementOnly, true,
     'post-freeze validation must contain measurements only');
   assert.equal(validation.holdoutCoordinatesIncluded, false,
     'post-freeze validation embeds holdout coordinates');
-  assert.equal(validation.checks?.phe890?.accepted, true,
+  if (requireAccepted) assert.equal(validation.checks?.phe890?.accepted, true,
     'post-freeze Phe890 validation was not accepted');
   assert.equal(validation.checks?.designerInteraction?.accepted, true,
     'post-freeze designer-interaction validation was not accepted');
-  assert.deepEqual(validation.failedChecks || [], [],
+  if (requireAccepted) assert.deepEqual(validation.failedChecks || [], [],
     'post-freeze validation contains failed checks');
   const forbiddenKeys = new Set(['atom','atoms','bond','bonds','coordinate','coordinates',
     'coordinatesangstrom','molecule','pdb','pdbdata','pdbtext','position','positions',
@@ -186,7 +206,8 @@ function contact(records, ligandAtomName, receptor) {
 
 /** Verify the immutable output of the public-action AWW designer-intent run.
  * This is intentionally independent of the older coupled-pose/AXH verifier. */
-export async function verifySos1AwwReceptorOnlyRun(runDirectory, { root = ROOT } = {}) {
+export async function verifySos1AwwReceptorOnlyRun(runDirectory,
+  { root = ROOT, requireAccepted = true } = {}) {
   const directory = resolve(runDirectory);
   const [manifestFile, boundaryFile, auditFile, inspectionFile, validationFile] = await Promise.all([
     readJson(resolve(directory, 'prediction-manifest.json'), 'prediction manifest'),
@@ -199,38 +220,78 @@ export async function verifySos1AwwReceptorOnlyRun(runDirectory, { root = ROOT }
   const manifest = manifestFile.value, boundary = boundaryFile.value;
   const audit = auditFile.value, inspection = inspectionFile.value;
   const validation = validationFile.value;
+  const referenceInformed = manifest.status === 'prediction-frozen-reference-informed-designer-intent';
+  const graphResume = boundary.source?.kind === 'exact-frozen-graph-only-campaign';
   assert.equal(manifest.schema, RUN_SCHEMA);
   assert.equal(boundary.schema, RUN_SCHEMA);
-  assert.equal(manifest.status, 'prediction-frozen-later-structures-unopened');
+  assert.equal(manifest.status, referenceInformed
+    ? 'prediction-frozen-reference-informed-designer-intent'
+    : 'prediction-frozen-later-structures-unopened');
   assert.equal(manifest.publicationEligible, true);
-  assert.equal(boundary.laterStructureAccess, false);
-  assert.equal(manifest.scientificContract?.laterStructureAccess, false);
+  assert.equal(boundary.laterStructureAccess, referenceInformed);
+  assert.equal(manifest.scientificContract?.laterStructureAccess, referenceInformed);
+  if (referenceInformed) {
+    assert.equal(boundary.designerIntentOrigin, 'reported-series-informed designer hypothesis');
+    assert.equal(boundary.externalReferenceCoordinatesUsed, false);
+    assert.equal(manifest.scientificContract.externalReferenceCoordinatesUsed, false);
+    assert.equal(validation.designerIntentReferenceInformed, true);
+    assert.equal(boundary.waterPolicy, 'all source waters retained and fixed');
+    assert.deepEqual(boundary.designerIntent.upstreamAxisAtomNames, ['N7','C12']);
+    assert.deepEqual(boundary.designerIntent.upstreamRotationRangeDegrees, [0,60]);
+  }
   assert.equal(manifest.scientificContract?.receptorOnly, true);
   assert.equal(manifest.scientificContract?.poseRefinementUsed, false);
   assert.equal(manifest.scientificContract?.optimizationUsed, false);
   assert.equal(manifest.scientificContract?.ligandIntentFrozenBeforeReceptorPrediction, true);
   assert.equal(manifest.scientificContract?.ligandCoordinateEquality, true);
+  assert.equal(manifest.scientificContract?.everyEnumeratedReceptorCandidateEvaluated, true);
   assert.equal(manifest.fixedLigand?.exactEquality, true);
   assert.deepEqual(manifest.fixedLigand?.before, manifest.fixedLigand?.after,
     'manifest does not prove exact ligand-state equality across the Phe890 response');
   assert.deepEqual(inspection.fixedLigand?.before, inspection.fixedLigand?.after,
     'coordinate evidence does not prove exact ligand-state equality');
   assert.equal(inspection.fixedLigand?.exactEquality, true);
-  assertMeasurementOnlyValidation(validation);
+  assertMeasurementOnlyValidation(validation, { requireAccepted });
   assert.equal(validation.predictionManifestSha256, sha256(manifestFile.bytes),
     'post-freeze validation does not belong to this prediction manifest');
+  assert.deepEqual(manifest.boundary, manifest.evidence?.boundary,
+    'prediction manifest does not bind one exact prospective boundary');
+  assert.equal(manifest.boundary?.filename, 'boundary.json');
+  assert.equal(manifest.boundary?.bytes, boundaryFile.bytes.length,
+    'prospective boundary byte count changed');
+  assert.equal(manifest.boundary?.sha256, sha256(boundaryFile.bytes),
+    'prospective boundary bytes changed');
+  for (const [key, file] of [['audit', auditFile], ['coordinateInspections', inspectionFile]]) {
+    const descriptor = manifest.evidence?.[key];
+    assert.equal(descriptor?.filename, key === 'audit'
+      ? 'chemist-action-audit.json' : 'coordinate-inspections.json');
+    assert.equal(descriptor?.bytes, file.bytes.length, `${key} evidence byte count changed`);
+    assert.equal(descriptor?.sha256, sha256(file.bytes), `${key} evidence bytes changed`);
+  }
   assert.equal(boundary.designerIntent?.action, 'geometry.alignBranchToContact',
     'designer intent must use contact-directed branch alignment');
   assert.deepEqual(boundary.designerIntent?.orderedAxisAtomNames, ['C12','C15']);
-  assert.equal(boundary.designerIntent?.ligandFeatureAtom, 'AWW OX3');
-  assert.equal(boundary.designerIntent?.receptorTargetAtom, 'TYR A884 O');
+  assert.equal(boundary.designerIntent?.designerPrimaryRotationDegrees, 150);
+  assert.deepEqual(boundary.designerIntent?.coupledAxisAtomNames,
+    [['CX4','CX5'],['CX15','CX16']]);
+  assert.deepEqual(boundary.designerIntent?.directionalContact, {
+    ligandAtom:'AWW OX3', receptorAtom:'TYR A884 O',
+    contactIdSource:'result.contact.contactId from the preceding pose.addContact action',
+  });
   assert.equal(boundary.designerIntent?.solution, 'best-directional',
     'designer intent must select the declared best-directional solution');
-  assert(Number.isFinite(boundary.designerIntent?.targetDistanceAngstrom)
-    && boundary.designerIntent.targetDistanceAngstrom > 0,
-  'designer branch-contact target distance is invalid');
+  assert.equal(boundary.designerIntent?.currentSceneCoordinatesOnly, true);
   assert.equal(boundary.designerIntent?.externalReferenceCoordinatesUsed, false);
   assert.equal(boundary.designerIntent?.hypothesesAreScoringResults, false);
+  assert.deepEqual(boundary.designerIntent?.allowedResponseAtoms,
+    PHE890_RESPONSE_ATOMS,
+  'designer intent must permit only the movable Phe890 heavy side-chain atoms');
+  assert.deepEqual(boundary.receptorPrediction?.energy, {
+    job:'energy', method:'openmm', options:ENERGY_OPTIONS,
+    coordinatePolicy:'fixed-coordinate single-point; no optimization or dynamics',
+  });
+  assert.equal(boundary.receptorPrediction?.everyEnumeratedCandidateEvaluated, true);
+  assert.equal(boundary.receptorPrediction?.ligandCoordinatesFixed, true);
 
   const sourcePath = safePath(root, boundary.source?.path, 'source campaign path');
   const sourceBytes = await readFile(sourcePath);
@@ -246,6 +307,13 @@ export async function verifySos1AwwReceptorOnlyRun(runDirectory, { root = ROOT }
 
   const graphOnly = await verifiedCampaign(directory,
     campaignRecord(manifest, 'graphOnly'), 'AWW graph-only');
+  if (graphResume) {
+    assert.equal(boundary.source.stateId, 'AWW');
+    assert.equal(boundary.source.sha256,
+      'c0672efabc8da255de45a6d8b41f3f1a2bb0652ac2e683a70a9ed33b8692b3b1');
+    assert.equal(graphOnly.record.sha256, boundary.source.sha256);
+    assert.equal(graphOnly.record.commitId, sourceCampaign.branches.main);
+  }
   const ligandIntent = await verifiedCampaign(directory,
     campaignRecord(manifest, 'ligandIntent'), 'AWW designer intent');
   const receptorResponse = await verifiedCampaign(directory,
@@ -258,15 +326,40 @@ export async function verifySos1AwwReceptorOnlyRun(runDirectory, { root = ROOT }
   assertContainsHistory(receptorResponse, ligandIntent);
 
   const records = currentRecords(audit);
-  assert(actionSubsequence(records, CURRENT_REQUIRED_ACTIONS),
+  assert.deepEqual(audit.currentRunRequestIds, manifest.currentRun?.currentRunRequestIds,
+    'currentRunRequestIds are not bound to the prediction manifest');
+  assert.equal(records.length, manifest.currentRun?.actionCount);
+  assert.deepEqual(records.map((record) => record.sequence),
+    Array.from({ length:records.length }, (_, index) =>
+      manifest.currentRun.firstSequence + index),
+  'current-run sequences are not complete and contiguous');
+  assert.equal(records.at(-1)?.sequence, manifest.currentRun?.lastSequence);
+  assert.deepEqual(records.map((record) => record.action), manifest.currentRun?.actions,
+    'current-run actions differ from the frozen manifest');
+  assert(actionSubsequence(records, graphResume
+    ? CURRENT_REQUIRED_ACTIONS.slice(1) : CURRENT_REQUIRED_ACTIONS),
     'current-run audit lacks the ordered graph/contact/directional-geometry/lock/Phe response');
   assert.deepEqual(records.filter((record) => PROHIBITED_ACTIONS.has(record.action)), [],
-    'a legacy torsion, ligand-moving action, or coupled calculation entered the receptor-only run');
+    'a legacy torsion, ligand-moving action, or coupled relaxation entered the receptor-only run');
+  assert.deepEqual(manifest.currentRun?.prohibitedActionsObserved, []);
+  const calculations = records.filter((record) => record.action === 'calculation.run');
+  for (const record of calculations) {
+    assert.deepEqual(record.args, { job:'energy', method:'openmm', options:ENERGY_OPTIONS },
+      'receptor-only run contains a calculation other than the exact OpenMM/OBC2 single-point energy');
+    assert.equal(record.result?.calculation?.job, 'energy');
+    assert.equal(record.result?.calculation?.method, 'openmm');
+    assert.equal(record.result?.calculation?.movedHeavyAtomCount, 0,
+      'single-point energy moved a heavy atom');
+    assert.equal(record.result?.calculation?.maximumDisplacementAngstrom, 0,
+      'single-point energy changed coordinates');
+  }
   const graph = records.find((record) => record.action === 'designRoute.applyStep');
-  assert.equal(graph?.args?.stepId, 'open-phe890-pocket');
-  assert.equal(graph?.result?.designStep?.referenceStateId, 'AWZ');
-  assert.equal(graph?.result?.designStep?.stateId, 'AWW');
-  assert.equal(graph?.result?.designStep?.inputKind, 'molecular-graph-only');
+  if (!graphResume || graph) {
+    assert.equal(graph?.args?.stepId, 'open-phe890-pocket');
+    assert.equal(graph?.result?.designStep?.referenceStateId, 'AWZ');
+    assert.equal(graph?.result?.designStep?.stateId, 'AWW');
+    assert.equal(graph?.result?.designStep?.inputKind, 'molecular-graph-only');
+  }
   const hingeContact = contact(records, 'N7', { residueName:'ASN', chain:'A',
     residueIndex:879, atomName:'OD1' });
   const directionalContact = contact(records, 'OX3', { residueName:'TYR', chain:'A',
@@ -286,25 +379,49 @@ export async function verifySos1AwwReceptorOnlyRun(runDirectory, { root = ROOT }
     'receptor-only run must contain one designer-directed branch alignment');
   const alignment = alignments[0];
   assert.equal(alignment.args?.solution, 'best-directional');
-  assert(Array.isArray(alignment.args?.axisAtomIds)
-    && alignment.args.axisAtomIds.length === 2
-    && alignment.args.axisAtomIds.every((atomId) => typeof atomId === 'string' && atomId),
-  'designer branch alignment does not identify an ordered two-atom axis');
-  assert.equal(typeof alignment.args?.ligandFeatureAtomId, 'string');
-  assert.equal(typeof alignment.args?.receptorTargetAtomId, 'string');
-  assert.equal(alignment.args.ligandFeatureAtomId,
-    directionalContact.result.contact.resolvedAtomIds?.ligand,
-  'directional geometry does not use the declared ligand contact atom');
-  assert.equal(alignment.args.receptorTargetAtomId,
-    directionalContact.result.contact.resolvedAtomIds?.receptor,
-  'directional geometry does not use the declared receptor contact atom');
-  assert.equal(alignment.args?.targetDistanceAngstrom,
-    boundary.designerIntent.targetDistanceAngstrom);
-  assert.equal(alignment.result?.designerBranchContact?.externalReferenceCoordinatesUsed,
-    false);
-  assert.equal(alignment.result?.designerBranchContact?.targetReachable, true);
-  assert.equal(alignment.result?.designerBranchContact?.objective?.solution,
-    'best-directional');
+  const stagedIds = new Map((inspection.inspections?.stagedLigand?.atoms || [])
+    .filter((atom) => atom.residueName === 'AWW' && Number(atom.residueIndex) === 1104)
+    .map((atom) => [atom.atomName, atom.atomId]));
+  const expectedPrimaryAxis = ['C12','C15'].map((name) => stagedIds.get(name));
+  const expectedCoupledAxes = [['CX4','CX5'],['CX15','CX16']]
+    .map((axis) => axis.map((name) => stagedIds.get(name)));
+  assert(expectedPrimaryAxis.every(Boolean)
+    && expectedCoupledAxes.flat().every(Boolean),
+  'coordinate evidence lacks the declared AWW axes');
+  assert.deepEqual(alignment.args?.axisAtomIds, expectedPrimaryAxis);
+  assert.deepEqual(alignment.args?.coupledAxisAtomIds, expectedCoupledAxes);
+  assert.equal(alignment.args?.designerPrimaryRotationDegrees, 150);
+  assert.deepEqual(alignment.args?.allowedResponseAtoms,
+    PHE890_RESPONSE_ATOMS);
+  assert.equal(alignment.args?.contactId,
+    directionalContact.result.contact.contactId,
+  'directional geometry does not use the declared contactId');
+  const move = alignment.result?.designerBranchContact;
+  assert.equal(move?.coordinateOrigin, 'current-visible-molecule');
+  assert.equal(move?.externalReferenceCoordinatesUsed, false);
+  assert.equal(move?.solution, 'best-directional');
+  assert.equal(move?.contactId, directionalContact.result.contact.contactId);
+  assert.deepEqual(move?.orderedAxisAtomIds, expectedPrimaryAxis);
+  assert.deepEqual(move?.coupledAxisAtomIds, expectedCoupledAxes);
+  assert.deepEqual(move?.allowedResponseAtoms, PHE890_RESPONSE_ATOMS);
+  assert.deepEqual(move?.allowedResponseResidues,
+    [{ residueName:'PHE', chain:'A', residueIndex:890, insertionCode:'' }],
+  'derived response-residue audit grouping is not Phe890-only');
+  assert.equal(move?.selected?.designerPrimaryRotationDegrees, 150);
+  if (referenceInformed) {
+    const upstreamIds = ['N7','C12'].map((name) => stagedIds.get(name));
+    assert(upstreamIds.every(Boolean));
+    assert.deepEqual(alignment.args.upstreamAxisAtomIds, upstreamIds);
+    assert.deepEqual(alignment.args.upstreamRotationRangeDegrees, [0,60]);
+    assert.deepEqual(move.upstreamAxisAtomIds, upstreamIds);
+    assert.deepEqual(move.upstreamRotationRangeDegrees, [0,60]);
+    assert(move.selected.upstreamRotationDegrees >= 0 && move.selected.upstreamRotationDegrees <= 60);
+    assert.equal(move.selected.internalSevereContactCount, 0);
+  }
+  assert.equal(move?.selected?.contactGeometry?.dhaAngleDegrees >= 150, true,
+    'designer contact does not satisfy the 150 degree directional H-bond gate');
+  assert.equal(move?.selected?.contacts?.outsideAllowedResponseContactCount, 0,
+    'designer geometry permits a severe response outside Phe890');
   assert(hingeContact.sequence < alignment.sequence
     && directionalContact.sequence < alignment.sequence,
   'designer contact hypotheses must be recorded before directional geometry is applied');
@@ -320,21 +437,93 @@ export async function verifySos1AwwReceptorOnlyRun(runDirectory, { root = ROOT }
     lock.result.designerFixedLigandPose.lockId);
   assert.equal(enumeration?.result?.sidechainRotamers?.ligandPosePolicy,
     'designer-fixed; receptor branches were ranked without generating or reranking ligand poses');
-  const application = records.find((record) => record.action === 'pose.applySidechainRotamer');
+  assert.equal(enumeration?.result?.sidechainRotamers?.generatedCandidateCount,
+    enumeration?.result?.sidechainRotamers?.candidates?.length,
+  'Phe890 enumeration does not retain every generated candidate');
+  const application = records.findLast((record) =>
+    record.action === 'pose.applySidechainRotamer');
   assert.equal(application?.result?.sidechainRotamer?.designerFixedLigandPose?.lockId,
     lock.result.designerFixedLigandPose.lockId);
   assert(Array.isArray(application?.result?.sidechainRotamer?.chiDegrees)
     && application.result.sidechainRotamer.chiDegrees.every(Number.isFinite),
   'selected Phe890 response lacks a portable chi-angle identity');
+  assert.equal(manifest.designerFixedLigandPose?.lockId,
+    lock.result.designerFixedLigandPose.lockId);
+  assert.equal(inspection.designerFixedLigandPose?.lockId,
+    lock.result.designerFixedLigandPose.lockId);
+  assert.equal(manifest.scientificContract?.designerFixedLigandPoseLockId,
+    lock.result.designerFixedLigandPose.lockId);
+
+  const candidateDescriptors = manifest.phe890Selection?.candidateFiles;
+  const generatedCount = manifest.phe890Selection?.generatedCandidateCount;
+  assert(Array.isArray(candidateDescriptors) && candidateDescriptors.length > 0,
+    'prediction manifest lacks saved Phe890 candidate coordinates');
+  assert.equal(generatedCount, manifest.phe890Selection?.evaluatedCandidateCount);
+  assert.equal(generatedCount, candidateDescriptors.length);
+  assert.equal(manifest.phe890Selection?.everyGeneratedCandidateEvaluated, true);
+  assert.equal(calculations.length, generatedCount,
+    'run does not contain exactly one energy calculation per generated candidate');
+  assert.deepEqual(manifest.evidence?.phe890Candidates, candidateDescriptors,
+    'candidate coordinate evidence is not hash-bound by the manifest');
+  assert.deepEqual(inspection.phe890CandidateFiles?.map((entry) => entry.file),
+    candidateDescriptors, 'coordinate inspection does not bind every candidate file');
+  const enumeratedHashes = enumeration.result.sidechainRotamers.candidates
+    .map((candidate) => candidate.coordinateSha256);
+  assert.equal(new Set(enumeratedHashes).size, generatedCount);
+  const candidateEvidence = [];
+  for (const [index, descriptor] of candidateDescriptors.entries()) {
+    const candidateFile = await readJson(resolve(directory, descriptor.filename),
+      `Phe890 candidate ${index + 1}`);
+    assert.equal(candidateFile.bytes.length, descriptor.bytes);
+    assert.equal(sha256(candidateFile.bytes), descriptor.sha256);
+    const candidate = candidateFile.value;
+    assert.equal(candidate.ordinal, index + 1);
+    assert.equal(candidate.coordinatesSaved, true);
+    assert(enumeratedHashes.includes(candidate.coordinateSha256));
+    assert.equal(inspection.phe890CandidateFiles[index].ordinal, index + 1);
+    assert.equal(inspection.phe890CandidateFiles[index].coordinateSha256,
+      candidate.coordinateSha256);
+    assert(Array.isArray(candidate.ligand?.atoms) && candidate.ligand.atoms.length > 0);
+    assert(Array.isArray(candidate.pocket?.atoms) && candidate.pocket.atoms.length > 0);
+    assert.deepEqual(candidate.energy?.options, ENERGY_OPTIONS);
+    assert.equal(candidate.energy?.job, 'energy');
+    assert.equal(candidate.energy?.method, 'openmm');
+    assert.equal(candidate.energy?.assertedZeroCoordinateMotion, true);
+    assert.equal(candidate.energy?.result?.movedHeavyAtomCount, 0);
+    assert.equal(candidate.energy?.result?.maximumDisplacementAngstrom, 0);
+    candidateEvidence.push(candidate);
+  }
+  assert.deepEqual(new Set(candidateEvidence.map((candidate) => candidate.coordinateSha256)),
+    new Set(enumeratedHashes), 'saved candidates do not cover the full enumeration');
+  const eligible = candidateEvidence.filter((candidate) =>
+    candidate.severeClashes === 0 && Number.isFinite(candidate.fullSystemEnergy))
+    .sort((left, right) => left.fullSystemEnergy - right.fullSystemEnergy
+      || JSON.stringify(left.chiDegrees).localeCompare(JSON.stringify(right.chiDegrees))
+      || left.coordinateSha256.localeCompare(right.coordinateSha256));
+  assert(eligible.length > 0, 'no finite clash-free candidate is available');
+  assert.equal(manifest.phe890Selection.selectedCoordinateSha256,
+    eligible[0].coordinateSha256,
+  'frozen Phe890 response is not the energy-selected candidate');
+  assert.equal(manifest.phe890Selection.selectedFullSystemEnergy,
+    eligible[0].fullSystemEnergy);
+  assert.equal(application.result.sidechainRotamer.selectedCoordinateSha256,
+    eligible[0].coordinateSha256);
+  assert.deepEqual(manifest.currentRun?.energyCalculations,
+    calculations.map((record) => ({ requestId:record.requestId,
+      job:record.args.job, method:record.args.method, options:record.args.options,
+      movedHeavyAtomCount:record.result.calculation.movedHeavyAtomCount,
+      maximumDisplacementAngstrom:record.result.calculation.maximumDisplacementAngstrom,
+      assertedZeroCoordinateMotion:true })),
+  'manifest energy evidence differs from the public action audit');
   assertNoHoldoutPayload(boundary, 'prospective boundary');
   assertNoHoldoutPayload(manifest, 'prediction manifest');
   assertNoHoldoutPayload(audit, 'Chemist Actions audit');
   assertNoHoldoutPayload(inspection, 'coordinate evidence');
-  return Object.freeze({ directory, runId:basename(directory), root,
+  return Object.freeze({ directory, runId:basename(directory), root, referenceInformed, graphResume,
     manifest, manifestBytes:manifestFile.bytes, boundary, boundaryBytes:boundaryFile.bytes,
     audit, auditBytes:auditFile.bytes, inspection, inspectionBytes:inspectionFile.bytes,
     validation, validationBytes:validationFile.bytes,
-    records, source:{ path:sourcePath, bytes:sourceBytes, campaign:sourceCampaign,
+    records, candidateEvidence, source:{ path:sourcePath, bytes:sourceBytes, campaign:sourceCampaign,
       sha256:boundary.source.sha256 },
     checkpoints:Object.freeze({ graphOnly, ligandIntent, receptorResponse }) });
 }
@@ -377,6 +566,8 @@ function reviewScript(verified, assets) {
     caption:`Review ${asset.label}`,
     ...(index ? { expect:{ 'campaignImport.viewPreserved':true } } : {}),
     review:{ schema:REVIEW_SCHEMA, immutableSnapshot:true, promotable:false,
+      designStage:asset.id,
+      ...(index === 0 ? { registeredStartingHit:true, exactHistoryPrefix:true } : {}),
       calculationPolicy:'none', holdoutCoordinatesIncluded:false,
       checkpointSha256:asset.checkpointSha256, campaignSha256:asset.sha256,
       campaignId:asset.campaign.campaignId, branch:asset.branch,
@@ -384,7 +575,9 @@ function reviewScript(verified, assets) {
   return validateActionScript({ schema:'molarium.chemist-action-script/v1',
     label:`SOS1 AWW designer-intent checkpoint review ${verified.runId}`,
     provenance:{ schema:REVIEW_SCHEMA, reviewOnly:true,
-      sourceStatus:'prospective-designer-intent-receptor-response',
+      sourceStatus:verified.referenceInformed ? 'reference-informed-designer-intent-receptor-response'
+        : 'prospective-designer-intent-receptor-response',
+      designerIntentReferenceInformed:verified.referenceInformed,
       sourceSnapshotsContentAddressed:true, promotable:false,
       nonPromotableReason:'Checkpoint review performs no scientific calculation.',
       calculationPolicy:'none', holdoutCoordinatesIncluded:false,
@@ -406,20 +599,21 @@ function caption(record) {
       'Choose the contact-compatible attachment direction explicitly'],
     [/fix-designer-ligand-intent$/, 'Fix the chemist-selected ligand pose'],
     [/enumerate-phe890$/, 'Enumerate receptor-only Phe890 responses'],
-    [/apply-top-phe890-steric-rank$/, 'Apply the prospectively ranked Phe890 response'],
+    [/energy-phe890-\d+$/, 'Measure one fixed-coordinate Phe890 candidate energy'],
+    [/apply-energy-selected-phe890$/, 'Apply the energy-selected Phe890 response'],
   ];
   return captions.find(([pattern]) => pattern.test(id))?.[1]
     || id.replaceAll('-', ' ').replace(/^./, (character) => character.toUpperCase());
 }
 
-function executableScript(verified, upstream) {
+function executableScript(verified, upstream, sourceAwzSha256) {
   const upstreamRecords = upstream?.audit?.records || [];
   const cutoff = upstreamRecords.find((record) =>
     record.requestId === 'fragment-merge-capture-predicted-reference');
   assert(cutoff?.status === 'completed' && cutoff.action === 'pose.captureReference',
     'upstream audit lacks the exact post-AWZ reference-capture seam');
   const predecessor = upstream?.sourceCampaignSha256;
-  assert.equal(predecessor, verified.source.sha256,
+  assert.equal(predecessor, sourceAwzSha256,
     'upstream recomputation audit does not terminate at the imported AWZ source campaign');
   const prefix = upstreamRecords.filter((record) => record.sequence <= cutoff.sequence
     && record.status === 'completed');
@@ -428,8 +622,25 @@ function executableScript(verified, upstream) {
   'upstream replay does not contain the ordered AWT and AWZ graph steps');
   const firstCurrent = verified.records.findIndex((record) =>
     record.action === 'designRoute.applyStep' && record.args?.stepId === 'open-phe890-pocket');
-  assert(firstCurrent >= 0, 'current run lacks its AWW graph step');
-  const suffix = verified.records.slice(firstCurrent);
+  let suffix;
+  if (verified.graphResume) {
+    const bridgeRecords = upstream.graphAudit?.records;
+    assert(Array.isArray(bridgeRecords) && Buffer.isBuffer(upstream.graphAuditBytes),
+      'graph resume requires the original hashable a010 graph-build audit');
+    const graphImport = bridgeRecords.find((record) => record.action === 'campaign.import');
+    assert.equal(graphImport?.args?.sourceSha256, sourceAwzSha256);
+    const bridgeStart = bridgeRecords.findIndex((record) => record.action === 'designRoute.resume');
+    const graphCommit = bridgeRecords.findIndex((record) => record.action === 'campaign.commitCurrent'
+      && record.result?.campaignCommit?.commitId === verified.checkpoints.graphOnly.record.commitId);
+    assert(bridgeStart >= 0 && graphCommit > bridgeStart,
+      'original graph-build audit does not prove the resumed commit');
+    const newStart = verified.records.findIndex((record) => record.action === 'designRoute.resume');
+    assert(newStart >= 0, 'current run lacks its graph-resume action');
+    suffix = [...bridgeRecords.slice(bridgeStart, graphCommit + 1), ...verified.records.slice(newStart)];
+  } else {
+    assert(firstCurrent >= 0, 'current run lacks its AWW graph step');
+    suffix = verified.records.slice(firstCurrent);
+  }
   const sourceRecords = [...prefix, ...suffix];
   const records = sourceRecords.map((record, index) => ({ ...structuredClone(record),
     sequence:index + 1 }));
@@ -445,10 +656,13 @@ function executableScript(verified, upstream) {
       sourceAuditSha256:sha256(verified.auditBytes),
       scientificValidationSha256:sha256(verified.validationBytes),
       upstreamAuditSha256:sha256(upstream.auditBytes),
+      ...(verified.graphResume ? { graphBuildAuditSha256:sha256(upstream.graphAuditBytes) } : {}),
       upstreamCutoffSequence:cutoff.sequence,
       sourceCampaignSha256:verified.source.sha256,
+      designerIntentReferenceInformed:verified.referenceInformed,
       coordinatePolicy:'5OVE/AXE precursor plus public molecular-graph, contact, and directional-geometry actions; no later crystal coordinates',
-      ligandIntent:'chemist-recorded contact hypotheses, contact-compatible attachment direction, then fixed ligand pose',
+      ligandIntent:'chemist-recorded contacts, +150 degree primary rotation, current-coordinate coupled-axis direction, then fixed ligand pose',
+      receptorSelection:'minimum finite full-system OpenMM/OBC2 single-point energy among every zero-severe-clash Phe890 candidate',
       predictedDegreesOfFreedom:'Phe890 side chain only' },
   });
   assert.equal(script.actions[0].action, 'designRoute.load',
@@ -458,7 +672,7 @@ function executableScript(verified, upstream) {
   assert.deepEqual(script.actions.filter((step) => step.action === 'designRoute.applyStep')
     .map((step) => step.args.stepId),
   ['scaffold-rewrite','fragment-merge','open-phe890-pocket']);
-  assert(!script.actions.some((step) => PROHIBITED_ACTIONS.has(step.action)),
+  assert(!suffix.some((record) => PROHIBITED_ACTIONS.has(record.action)),
     'AWW executable story contains a prohibited legacy torsion or coupled calculation');
   const rotamer = script.actions.find((step) =>
     step.action === 'pose.applySidechainRotamer');
@@ -475,12 +689,12 @@ function executableScript(verified, upstream) {
 /** Build both browser inputs in memory. This function deliberately performs no
  * repository writes, registry changes, deployment, or scientific calculation. */
 export async function buildSos1AwwReceptorOnlyPublicationRecords(verified,
-  { upstream } = {}) {
+  { upstream, checkpointDirectory = SOS1_AWW_PUBLIC_CHECKPOINT_DIRECTORY } = {}) {
   assert(upstream?.audit && Buffer.isBuffer(upstream.auditBytes),
     'an explicit hashable upstream Chemist Actions audit is required');
   const chain = ancestry(verified.source.campaign);
-  assert.equal(chain.length, 3,
-    'AWZ source campaign must contain exactly the prepared hit, AWT, and AWZ commits');
+  assert.equal(chain.length, verified.graphResume ? 4 : 3,
+    'Source campaign must contain the prepared hit, AWT, AWZ, and optionally the resumed AWW graph commit');
   const [starting, scaffold, fragment] = chain;
   const assets = [
     await prefixAsset(verified, starting, 'starting-hit',
@@ -496,25 +710,37 @@ export async function buildSos1AwwReceptorOnlyPublicationRecords(verified,
     exactAsset(verified.checkpoints.receptorResponse, 'aww-phe890-response',
       'aww-phe890-response-campaign.json', 'the receptor-only Phe890 response'),
   ];
-  const executable = executableScript(verified, upstream);
+  safePath(verified.root, checkpointDirectory, 'checkpoint asset directory');
+  for (const asset of assets)
+    asset.path = `${checkpointDirectory}/${basename(asset.path)}`;
+  const executable = executableScript(verified, upstream, assets[2].sha256);
   const review = reviewScript(verified, assets);
   const executableBytes = jsonBytes(executable), reviewBytes = jsonBytes(review);
   const declaration = { schema:DECLARATION_SCHEMA,
-    routeId:'sos1-hit-only', publicationClass:'prospective-designer-intent-receptor-response',
+    routeId:'sos1-hit-only', publicationClass:verified.referenceInformed
+      ? 'reference-informed-designer-intent-receptor-response' : 'prospective-designer-intent-receptor-response',
     sourceRun:{ id:verified.runId,
       manifestSha256:sha256(verified.manifestBytes),
       auditSha256:sha256(verified.auditBytes),
       scientificValidationSha256:sha256(verified.validationBytes),
       sourceCampaignSha256:verified.source.sha256 },
-    scientificContract:{ precursorCoordinates:'registered 5OVE/AXE lineage',
+    scientificContract:{ scope:'AWW designer-intent and receptor-response segment',
+      precursorCoordinates:'registered 5OVE/AXE lineage',
+      designerIntentReferenceInformed:verified.referenceInformed,
       laterCrystalCoordinatesUsed:false,
-      ligandDirection:'explicit chemist contact hypotheses followed by best-directional branch alignment',
+      ligandDirection:'explicit chemist contacts, +150 degree primary rotation, and current-coordinate coupled-axis branch alignment',
       ligandPoseFixedBeforePrediction:true, predictedDegreesOfFreedom:['PHE A890 side chain'],
+      receptorSelection:'minimum finite full-system OpenMM/OBC2 single-point energy among every zero-severe-clash candidate',
+      everyEnumeratedCandidateEvaluated:true,
+      energyOptions:ENERGY_OPTIONS,
       poseRefinementUsed:false, optimizationUsed:false },
-    scientificValidation:{ schema:VALIDATION_SCHEMA, accepted:true,
-      predictionFrozenBeforeValidationAccess:true, measurementOnly:true,
+    scientificValidation:{ schema:VALIDATION_SCHEMA, accepted:verified.validation.accepted,
+      predictionFrozenBeforeValidationAccess:!verified.referenceInformed,
+      predictionFrozenBeforeNumericalComparison:true, measurementOnly:true,
       holdoutCoordinatesIncluded:false,
-      phe890Accepted:true, designerInteractionAccepted:true },
+      failedChecks:structuredClone(verified.validation.failedChecks || []),
+      phe890Accepted:verified.validation.checks.phe890.accepted,
+      designerInteractionAccepted:verified.validation.checks.designerInteraction.accepted },
     checkpoints:assets.map((asset) => ({ id:asset.id, path:asset.path,
       sha256:asset.sha256, commitId:asset.commitId, snapshotId:asset.snapshotId })),
     executableReplay:{ path:SOS1_AWW_EXECUTABLE_REPLAY,

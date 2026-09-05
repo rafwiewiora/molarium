@@ -33,6 +33,36 @@ export function resolveLigandAtomSelector({ molecule, components, selector } = {
   return uniqueMatch(matches, `Ligand selector ${componentId}/${atomName}`);
 }
 
+// Resolve only identities. Bond, branch, contact, and fixed-atom validation
+// remain the responsibility of the existing geometry action.
+export function resolveLigandAxisArguments({ molecule, components, args } = {}) {
+  const resolved = { ...args };
+  for (const [selectorKey, idKey, coupled] of [
+    ['axisAtomSelectors', 'axisAtomIds', false],
+    ['coupledAxisAtomSelectors', 'coupledAxisAtomIds', true],
+    ['upstreamAxisAtomSelectors', 'upstreamAxisAtomIds', false],
+  ]) {
+    if (!Object.hasOwn(args, selectorKey)) continue;
+    if (Object.hasOwn(args, idKey))
+      throw new Error(`Provide ${selectorKey} or ${idKey}, not both`);
+    const axis = (selectors) => {
+      if (!Array.isArray(selectors) || selectors.length !== 2)
+        throw new Error(`${selectorKey} requires ordered pairs of ligand selectors`);
+      return selectors.map((selector) => {
+        const index = resolveLigandAtomSelector({ molecule, components, selector });
+        const id = molecule.atoms[index].designAtomId;
+        if (typeof id !== 'string' || !id) throw new Error('Resolved ligand atom has no persistent identity');
+        return id;
+      });
+    };
+    if (coupled && (!Array.isArray(args[selectorKey]) || args[selectorKey].length !== 2))
+      throw new Error(`${selectorKey} requires exactly two ordered axes`);
+    resolved[idKey] = coupled ? args[selectorKey].map(axis) : axis(args[selectorKey]);
+    delete resolved[selectorKey];
+  }
+  return resolved;
+}
+
 export function resolveReceptorAtomSelector({ molecule, selector } = {}) {
   if (!molecule?.atoms?.length)
     throw new Error('Receptor atom selection requires a molecule');

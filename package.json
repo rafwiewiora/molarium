@@ -31,6 +31,7 @@
     "test:sos1-interface-presentation": "node scripts/sos1-interface-presentation-source.test.mjs",
     "test:sos1-interface-presentation-browser": "MOLARIUM_TEST_API=1 bun design-history/examples/sos1-interface-presentation.browser.test.mjs",
     "test:sos1-frozen-routes-browser": "bun scripts/sos1-frozen-routes.browser.test.mjs",
+    "test:sos1-intent": "node design-history/campaign-source.test.mjs && node docking/portable-atom-selector.test.mjs && node docking/designer-branch-contact.test.mjs && node scripts/native-audit-collector.test.mjs && node scripts/sos1-executable-science.test.mjs && node scripts/sos1-intent-release.test.mjs && node scripts/web-bundle-dependencies.test.mjs && node scripts/sos1-aww-receptor-only-publication.test.mjs && node scripts/sos1-aww-receptor-only-prospective.test.mjs && npm run test:chemist-actions && npm run test:interface-story && npm run test:designer-moves-renderer && npm run test:designer-replay-review",
     "promote:sos1-publication": "node scripts/promote-sos1-publication.mjs",
     "build:sos1-accepted-replay": "node scripts/build-sos1-accepted-replay.mjs",
     "build:sos1-prediction-review": "node scripts/build-sos1-prediction-review.mjs",
@@ -53,7 +54,7 @@
     "test:structure-story-core": "node design-history/structures/pipeline.test.mjs && node design-history/structure-viewer/timeline.test.mjs && node design-history/structures/build-assets.mjs && node design-history/structures/bclxl-trajectory.test.mjs && node design-history/structures/design-route.test.mjs && node design-history/structures/bclxl-prospective-campaign.test.mjs && node design-history/structures/cdk2-prospective-campaign.test.mjs && node design-history/structures/sos1-prospective-campaign.test.mjs",
     "test:designer-replay-review": "node design-history/designer-replay-review.test.mjs && node scripts/sos1-checkpoint-granularity.test.mjs",
     "test:designer-replay-review-browser": "bun design-history/examples/designer-completed-review.browser.test.mjs",
-    "test:structure-story-browser": "bun design-history/structure-viewer/browser.test.mjs && bun design-history/structure-viewer/bclxl.browser.test.mjs && bun design-history/structure-viewer/cdk2-designer.browser.test.mjs && bun design-history/structure-viewer/sos1.browser.test.mjs",
+    "test:structure-story-browser": "bun design-history/structure-viewer/browser.test.mjs && bun design-history/structure-viewer/bclxl.browser.test.mjs && bun design-history/structure-viewer/cdk2-designer.browser.test.mjs",
     "test:structure-story": "npm run test:structure-story-core && npm run test:structure-story-browser",
     "test:logo": "bun scripts/molarium-logo-test.mjs",
     "test:docking": "node docking/test.mjs && node docking/registered-graph-edit.test.mjs && node docking/manual-hbond.test.mjs && node docking/restraint-biased-search.test.mjs && node docking/pose-search-ensemble.test.mjs && node docking/ring-conformer-generator.test.mjs && node docking/sidechain-rotamers.test.mjs && node docking/affected-environment-seeding.test.mjs && node docking/stratified-feature-seeding.test.mjs && node chemist-actions.test.mjs",
@@ -109,8 +110,8 @@
     "test:stormm-constraints": "node stormm/test.mjs --constraints-only",
     "test:stormm-openmm": "node stormm/openmm-reference-validation.mjs",
     "benchmark:stormm": "node stormm/openmm-reference-validation.mjs --benchmark",
-    "test:ci:scientific": "npm run test:sos1-promotion && npm run verify:sos1-publication && npm run test:validation-registry && npm run test:docking && npm run test:enumerations && npm run test:7kpa-analogue-panel && npm run test:7kpa-manual-contacts && npm run test:cloud-panel-packet && npm run test:cloud-panel-shortlist && npm run test:openmm-wasm && npm run test:pose-viewer && npm run test:openfold-features && npm run test:logo && npm run test:development-log && npm run test:paper-figure1 && npm run test:design-history && npm run test:structure-story-core",
-    "test:ci:browser": "npm run test:docking-browser && npm run test:2d && npm run test:chemist-actions-browser && npm run test:manual-hbond-browser && npm run test:chemist-actions-production && npm run test:openmm-worker-browser && npm run test:design-history-browser && npm run test:live-campaign-production && npm run test:structure-story-browser && npm run test:designer-replay-review-browser && npm run test:sos1-refinement-responsive-browser",
+    "test:ci:scientific": "npm run test:sos1-intent && npm run test:sos1-promotion && npm run verify:sos1-publication && npm run test:validation-registry && npm run test:docking && npm run test:enumerations && npm run test:7kpa-analogue-panel && npm run test:7kpa-manual-contacts && npm run test:cloud-panel-packet && npm run test:cloud-panel-shortlist && npm run test:openmm-wasm && npm run test:pose-viewer && npm run test:openfold-features && npm run test:logo && npm run test:development-log && npm run test:paper-figure1 && npm run test:design-history && npm run test:structure-story-core",
+    "test:ci:browser": "npm run test:docking-browser && npm run test:2d && npm run test:chemist-actions-browser && npm run test:manual-hbond-browser && npm run test:chemist-actions-production && npm run test:openmm-worker-browser && npm run test:design-history-browser && npm run test:live-campaign-production && npm run test:structure-story-browser && npm run test:designer-replay-review-browser && npm run test:sos1-frozen-routes-browser && npm run test:sos1-refinement-responsive-browser",
     "test:ci:webgpu": "npm run test:stormm-webgpu"
   },
   "dependencies": {

@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { cp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { browserModuleClosure, sos1ReleaseWebFiles } from './web-bundle-dependencies.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const output = join(root, 'dist');
@@ -138,6 +139,10 @@ const files = [
   'vendor/onnxruntime-web/ort.webgpu.bundle.min.mjs',
 ];
 
+files.push(...await sos1ReleaseWebFiles(root));
+const closedFiles = await browserModuleClosure(root, files);
+files.splice(0, files.length, ...closedFiles);
+
 // Fail during the build, rather than in the browser, when a top-level app
 // module is omitted from the explicit Cloudflare bundle.
 const deployedFiles = new Set(files);
@@ -176,6 +181,10 @@ await writeFile(join(output, 'runtime-config.js'),
   })});\n`);
 await writeFile(join(output, '_headers'), headers);
 await writeFile(join(output, '_redirects'), [
+  '/sos1 /sos1.html 302',
+  '/sos1/ /sos1.html 302',
+  '/sos1-hit-to-bay293/movies /sos1.html 302',
+  '/sos1-hit-to-bay293/movie /design-history/publications/sos1/designer-intent-2026-09-04/executable.mp4 302',
   '/sos1-hit-to-bay293/replay /?story=sos1-hit-to-bay293-review 302',
   '/sos1-hit-to-bay293/replay/ /?story=sos1-hit-to-bay293-review 302',
   '/sos1-hit-to-bay293/review /?story=sos1-hit-to-bay293-review 302',

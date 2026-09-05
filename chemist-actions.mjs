@@ -126,9 +126,10 @@ const ACTIONS = Object.freeze({
     arguments:Object.freeze({ atomIds:'array of 2–4 persistent atom IDs', value:'finite number',
       moveConnected:'boolean' }) }),
   'geometry.alignBranchToContact': Object.freeze({
-    description:'Rotate an explicitly directed ligand branch using only current visible coordinates. Legacy modes solve one atom distance; best-directional fixes a declared primary rotation and searches two coupled ligand rotors plus donor-H direction against a prior manual contact while preserving every atom outside the primary branch.',
+    description:'Rotate an explicitly directed ligand branch using only current visible coordinates. Legacy modes solve one atom distance; best-directional fixes a declared primary rotation and searches two coupled ligand rotors plus donor-H direction against a prior manual contact. An optional bounded upstream rotor adjusts the exit direction; every atom outside the outermost declared branch stays fixed.',
     arguments:Object.freeze({
       axisAtomIds:'exactly two bonded ligand atom IDs ordered preserved-side to moving-side',
+      axisAtomSelectors:'alternative to axisAtomIds: exactly two { componentId, atomName } ligand selectors in the same directed order',
       ligandFeatureAtomId:'legacy modes: ligand atom ID in the moving branch',
       receptorTargetAtomId:'legacy modes: protein atom ID outside the moving branch',
       targetDistanceAngstrom:'legacy modes: number greater than 0 and at most 10',
@@ -136,7 +137,11 @@ const ACTIONS = Object.freeze({
       contactId:'best-directional: prior required manual hydrogen-bond contact ID',
       designerPrimaryRotationDegrees:'best-directional: explicit fixed right-hand rotation around axisAtomIds',
       coupledAxisAtomIds:'best-directional: exactly two additional ordered ligand single-bond axes',
-      allowedResponseResidues:'best-directional: 1–16 portable { residueName, chain, residueIndex, insertionCode? } receptor locators',
+      coupledAxisAtomSelectors:'alternative to coupledAxisAtomIds: two ordered pairs of { componentId, atomName } ligand selectors',
+      upstreamAxisAtomIds:'best-directional: optional ordered ligand single-bond axis strictly upstream of the primary branch',
+      upstreamAxisAtomSelectors:'alternative to upstreamAxisAtomIds: ordered pair of { componentId, atomName } ligand selectors',
+      upstreamRotationRangeDegrees:'best-directional: required with upstreamAxisAtomIds; [minimum,maximum] bracketing zero on a 10-degree grid with span at most 120 degrees',
+      allowedResponseAtoms:'best-directional: 0–128 portable { residueName, chain, residueIndex, insertionCode?, atomName } receptor heavy atoms reachable by side-chain chi rotations; all other atoms forbid severe clashes',
     }) }),
   'geometry.translateAtoms': Object.freeze({
     description:'Translate selected atoms by a bounded Cartesian displacement, matching the Design Move gesture.',
@@ -211,10 +216,11 @@ const ACTIONS = Object.freeze({
       receptorResidue:'stable { residueName, chain, residueIndex, insertionCode? } selector; exactly one receptor selector',
       maximumCandidates:'integer 1–64' }) }),
   'pose.applySidechainRotamer': Object.freeze({
-    description:'Apply exactly one returned side-chain rotamer selected by legacy result index, normalized chi angles, or coordinate hash, with optional fail-closed coordinate guards.',
+    description:'Apply exactly one returned side-chain rotamer selected by legacy result index, normalized chi angles, coordinate hash, or the current input conformation, with optional fail-closed coordinate guards.',
     arguments:Object.freeze({ index:'optional legacy non-negative result index; exactly one selector',
       chiDegrees:'optional array of chi angles in degrees; circularly normalized and uniquely matched; exactly one selector',
       coordinateSha256:'optional lowercase SHA-256 of an enumerated candidate; exactly one selector',
+      source:'optional input; select the unique unchanged conformation in the current enumeration; exactly one selector',
       expectedInputCoordinateSha256:'optional lowercase SHA-256; abort unless it matches the enumerated and current input coordinates',
       expectedSelectedCoordinateSha256:'optional lowercase SHA-256; abort unless it matches the selected and applied coordinates' }) }),
   'optimization.run': Object.freeze({ description:'Run one optimization method exposed in the Design method menu.',
@@ -300,6 +306,7 @@ const ACTIONS = Object.freeze({
     arguments:Object.freeze({ serialized:'canonical campaign JSON string (maximum 32 MiB)',
       sourcePath:'alternative traversal-free same-origin campaign asset path',
       sourceSha256:'required lowercase SHA-256 digest when sourcePath is used',
+      sourceEncoding:'optional gzip transport; sourceSha256 always hashes the decoded canonical campaign',
       preserveView:'optional boolean; retain the current comparison camera' }) }),
   'campaign.export': Object.freeze({
     description:'Return canonical JSON for the active design campaign.', arguments:Object.freeze({}) }),
@@ -352,6 +359,10 @@ const FORBIDDEN_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
 // while the independent node and byte ceilings still bound traversal and memory.
 const MAX_INPUT_DEPTH = 12;
 const MAX_INPUT_NODES = 2048;
+// A full multi-stage replay contains hundreds of individually bounded public
+// actions. Only script loading gets this larger structural budget; execution of
+// each embedded action still passes through the ordinary control limits.
+const MAX_SCRIPT_LOAD_NODES = 32768;
 // A complete coordinate-bearing PDB is intentionally accepted as one string by
 // session.loadStructure.  Keep the structural JSON guards below, but do not
 // impose the much smaller limit that is appropriate only for ordinary control
@@ -364,9 +375,9 @@ const MAX_INPUT_BYTES = 8 * 1024 * 1024;
 // ingestion boundary.
 const MAX_CAMPAIGN_IMPORT_BYTES = 32 * 1024 * 1024;
 
-function plainClone(value, state = { nodes:0 }, depth = 0) {
+function plainClone(value, state = { nodes:0, maximumNodes:MAX_INPUT_NODES }, depth = 0) {
   if (depth > MAX_INPUT_DEPTH) throw new Error(`Chemist action input exceeds depth ${MAX_INPUT_DEPTH}`);
-  if (++state.nodes > MAX_INPUT_NODES) throw new Error('Chemist action input is too large');
+  if (++state.nodes > state.maximumNodes) throw new Error('Chemist action input is too large');
   if (value == null || ['string', 'number', 'boolean'].includes(typeof value)) {
     if (typeof value === 'number' && !Number.isFinite(value))
       throw new Error('Chemist action input numbers must be finite');
@@ -383,8 +394,8 @@ function plainClone(value, state = { nodes:0 }, depth = 0) {
   return result;
 }
 
-function checkedInput(value, maximumBytes = MAX_INPUT_BYTES) {
-  const input = plainClone(value == null ? {} : value);
+function checkedInput(value, maximumBytes = MAX_INPUT_BYTES, maximumNodes = MAX_INPUT_NODES) {
+  const input = plainClone(value == null ? {} : value, { nodes:0, maximumNodes });
   const text = JSON.stringify(input);
   if (text.length > maximumBytes)
     throw new Error(`Chemist action input exceeds ${maximumBytes} bytes`);
@@ -428,12 +439,14 @@ export function createChemistActionsApi({ routes, now = () => new Date().toISOSt
     const maximumBytes = requestedAction === 'campaign.import'
       && typeof request?.args?.serialized === 'string'
       ? MAX_CAMPAIGN_IMPORT_BYTES : MAX_INPUT_BYTES;
-    const envelope = checkedInput(request, maximumBytes);
+    const maximumNodes = requestedAction === 'designerScript.load'
+      ? MAX_SCRIPT_LOAD_NODES : MAX_INPUT_NODES;
+    const envelope = checkedInput(request, maximumBytes, maximumNodes);
     const action = String(envelope.action || '');
     const requestId = envelope.requestId == null ? null : String(envelope.requestId).slice(0, 160);
     if (!Object.hasOwn(enabledDefinitions, action))
       throw publicError(`Unknown chemist action: ${action || '(empty)'}`);
-    const args = checkedInput(envelope.args || {}, maximumBytes);
+    const args = checkedInput(envelope.args || {}, maximumBytes, maximumNodes);
     const startedAt = now(), started = monotonicNow();
     const record = { sequence:++sequence, schema:CHEMIST_ACTIONS_SCHEMA, requestId,
       action, args:snapshot(args), startedAt, status:'running' };

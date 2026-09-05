@@ -46,19 +46,20 @@ const bestDirectional = searchBestDirectionalBranchContact({ molecule,
   ligandAtomIndices:[0,1,2,3,4,5,6,7], primaryAxisAtomIndices:[0,1],
   coupledAxisAtomIndices:[[1,2],[3,4]], designerPrimaryRotationDegrees:0,
   donorAtomIndex:6, hydrogenAtomIndex:7, acceptorAtomIndex:9, carbonylAtomIndex:8,
-  allowedResponseResidues:[{ residueName:'PHE', chain:'A', residueIndex:99 }] });
+  allowedResponseAtoms:[] });
 assert.equal(bestDirectional.schema, 'molarium.best-directional-branch-contact/v1');
 assert.equal(bestDirectional.externalReferenceCoordinatesUsed, false);
 assert.equal(bestDirectional.coordinateOrigin, 'current-visible-molecule');
-assert.deepEqual(bestDirectional.allowedResponseResidues,
-  [{ residueName:'PHE', chain:'A', residueIndex:99, insertionCode:'' }]);
-assert.deepEqual(Object.keys(bestDirectional).sort(), ['allowedResponseResidues',
+assert.deepEqual(bestDirectional.allowedResponseResidues, []);
+assert.deepEqual(bestDirectional.allowedResponseAtoms, []);
+assert.deepEqual(Object.keys(bestDirectional).sort(), ['allowedResponseAtoms','allowedResponseResidues',
   'coordinateOrigin','externalReferenceCoordinatesUsed','movingAtomIndices','schema',
   'searchAudit','selected','selectedCoordinates'].sort());
 assert.deepEqual(Object.keys(bestDirectional.selected).sort(), [
   'contactGeometry','contactScore','contacts','coupledMovementDegrees',
   'coupledRotationDegrees','designerPrimaryRotationDegrees',
-  'donorHydrogenRotationDegrees','targetPointErrorAngstrom'].sort());
+  'donorHydrogenRotationDegrees','internalSevereContactCount',
+  'targetPointErrorAngstrom','upstreamRotationDegrees'].sort());
 assert.equal(bestDirectional.selected.designerPrimaryRotationDegrees, 0);
 assert.equal(bestDirectional.selected.contacts.outsideAllowedResponseContactCount, 0);
 assert(bestDirectional.selected.contactGeometry.donorAcceptorDistanceAngstrom <= 3.5);
@@ -80,6 +81,49 @@ assert.throws(() => searchBestDirectionalBranchContact({ molecule,
   coupledAxisAtomIndices:[[1,2],[3,4]], designerPrimaryRotationDegrees:0,
   donorAtomIndex:6, hydrogenAtomIndex:7, acceptorAtomIndex:9, carbonylAtomIndex:8,
   allowedResponseResidues:[] }), /allowedResponseResidues/);
+
+const request = { molecule, ligandAtomIndices:[0,1,2,3,4,5,6,7],
+  primaryAxisAtomIndices:[0,1], coupledAxisAtomIndices:[[1,2],[3,4]],
+  designerPrimaryRotationDegrees:0, donorAtomIndex:6, hydrogenAtomIndex:7,
+  acceptorAtomIndex:9, carbonylAtomIndex:8, allowedResponseAtoms:[] };
+const collision = structuredClone(molecule);
+collision.atoms.push({ ...collision.atoms[0], designAtomId:'fixed-CB',
+  record:'ATOM', residueName:'PHE', residueIndex:99, atomName:'CB' });
+let rejected = 0;
+assert.throws(() => searchBestDirectionalBranchContact({ ...request, molecule:collision,
+  onCandidate(candidate) {
+    rejected += 1;
+    assert.equal(candidate.fixedAtomGatePassed, false);
+    assert.equal(candidate.eligible, false);
+    assert(candidate.contacts.contactsByResidue.some((entry) =>
+      entry.atomPairs.some((pair) => pair.receptorAtomName === 'CB'
+        && pair.responseAllowed === false)));
+    assert.equal(candidate.coordinates.length, 7);
+  } }), /No best-directional candidate/);
+assert(rejected >= 1296, 'failed placement candidates must retain coordinates and the fixed-CB diagnosis');
+assert.deepEqual(collision.atoms[0], molecule.atoms[0], 'a failed search cannot move its input');
+assert.throws(() => searchBestDirectionalBranchContact({ ...request,
+  allowedResponseAtoms:[{ residueName:'TYR', chain:'A', residueIndex:42, atomName:'MISSING' }]
+}), /one receptor heavy atom/);
+
+const upstreamMolecule = structuredClone(molecule);
+upstreamMolecule.atoms.push({ ...atoms[0], designAtomId:'upstream-anchor', x:0, y:6, z:0 });
+upstreamMolecule.bonds.push({ a:10, b:0, order:1 });
+const upstreamBefore = structuredClone(upstreamMolecule);
+const upstreamResult = searchBestDirectionalBranchContact({ ...request,
+  molecule:upstreamMolecule, ligandAtomIndices:[0,1,2,3,4,5,6,7,10],
+  upstreamAxisAtomIndices:[10,0], upstreamRotationRangeDegrees:[0,10] });
+assert.deepEqual(upstreamMolecule, upstreamBefore, 'search must not mutate the input');
+assert(upstreamResult.selected.upstreamRotationDegrees >= 0
+  && upstreamResult.selected.upstreamRotationDegrees <= 10,
+  'search must retain the declared upstream direction');
+assert.deepEqual(upstreamResult.movingAtomIndices, [0,1,2,3,4,5,6,7]);
+assert.equal(upstreamResult.selected.internalSevereContactCount, 0);
+assert(upstreamResult.selectedCoordinates.every(({ atomIndex }) => ![8,9,10].includes(atomIndex)),
+  'receptor and upstream anchor must remain outside the moved coordinates');
+assert.throws(() => searchBestDirectionalBranchContact({ ...request,
+  upstreamAxisAtomIndices:[3,4], upstreamRotationRangeDegrees:[0,10] }),
+  /strictly precede/);
 
 const appSource = readFileSync(new URL('../app.js', import.meta.url), 'utf8');
 assert.doesNotMatch(appSource, /preservedPrecursorAtomIdsSha256\s*[,}]/,

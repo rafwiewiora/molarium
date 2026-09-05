@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { startMolariumBrowser, waitFor } from './headless-chrome.mjs';
 
@@ -17,6 +17,18 @@ const browser = await startMolariumBrowser({
   width:1600,
   height:1000,
 });
+
+const checkpointReviewScript = JSON.parse(await readFile(join(root,
+  'design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-review.action-script.json')));
+const release = JSON.parse(await readFile(join(root,
+  'design-history/publications/sos1/designer-intent-2026-09-04/release.json')));
+assert.equal(checkpointReviewScript.actions.length, 7);
+assert.deepEqual(checkpointReviewScript.actions.map((step) => step.args.sourceSha256),
+  release.checkpoints.map((checkpoint) => checkpoint.canonicalSha256),
+  'calculation-free review must retain all seven hash-pinned native checkpoints');
+assert.equal(checkpointReviewScript.actions.at(-1).args.sourceEncoding, 'gzip');
+assert(checkpointReviewScript.actions.every((step) => step.action === 'campaign.import'),
+  'each calculation-free checkpoint must be an exact campaign import');
 
 async function registeredStory() {
   return browser.evaluate(`window.MolariumChemistActions.history()
@@ -171,7 +183,8 @@ try {
       playLabel:document.querySelector('#replay-designer-moves')?.textContent?.trim(),
       cueCount:document.querySelectorAll('.designer-move-cue, .designer-move-press, .designer-move-change').length,
       calculations:history.filter((entry) => /^(pose\\.refine|optimization\\.|calculation\\.|protein\\.prepare)/.test(entry.action)).map((entry) => entry.action),
-      imports:imports.map((entry) => ({ preserveView:entry.args.preserveView,
+      imports:imports.map((entry) => ({ sourceSha256:entry.args.sourceSha256,
+        sourceEncoding:entry.args.sourceEncoding, preserveView:entry.args.preserveView,
         viewPreserved:entry.result?.campaignImport?.viewPreserved })),
       focusCount:history.filter((entry) => entry.action === 'view.focusComponent').length,
       highlights:highlights.map((entry) => entry.result?.highlightedAtoms || null),
@@ -188,14 +201,17 @@ try {
   assert.match(complete.playLabel, /Replay story/);
   assert.equal(complete.cueCount, 0);
   assert.deepEqual(complete.calculations, []);
-  assert.equal(complete.imports.length, 4);
+  assert.equal(complete.imports.length, checkpointReviewScript.actions.length);
+  assert.deepEqual(complete.imports.map((entry) => entry.sourceSha256),
+    release.checkpoints.map((checkpoint) => checkpoint.canonicalSha256));
+  assert.equal(complete.imports.at(-1).sourceEncoding, 'gzip');
   assert.deepEqual(complete.imports.map((entry) => entry.preserveView),
-    [false,true,true,true]);
+    [false, ...checkpointReviewScript.actions.slice(1).map(() => true)]);
   assert.deepEqual(complete.imports.map((entry) => entry.viewPreserved),
-    [false,true,true,true]);
+    [false, ...checkpointReviewScript.actions.slice(1).map(() => true)]);
   assert.equal(complete.focusCount, 1,
     'only the first exact checkpoint may establish the pocket camera');
-  assert.ok(complete.highlights.length >= 4);
+  assert.ok(complete.highlights.length >= checkpointReviewScript.actions.length);
   assert.ok(complete.highlights.every((entry) => entry?.cameraPreserved === true
     && entry?.displayContextPreserved === true));
   assert.ok(complete.highlights.at(-1)?.residueLabels?.some((entry) =>
@@ -224,6 +240,18 @@ try {
 
   console.log('SOS1 frozen public routes browser QA: blank executable/review entries, honest labels, '
     + 'fixed camera, exact arrowable checkpoints, complete 2D ligand, and zero review calculations PASS');
+} catch (error) {
+  const diagnostics = await browser.evaluate(`(() => ({
+    replayStatus:document.querySelector('#designer-move-tools')?.dataset.replayStatus || null,
+    progress:document.querySelector('#designer-move-progress-label')?.textContent?.trim() || null,
+    title:document.querySelector('#designer-move-title')?.textContent?.trim() || null,
+    detail:document.querySelector('#designer-move-detail')?.textContent?.trim() || null,
+    status:document.querySelector('#designer-move-status')?.textContent?.trim() || null,
+    notice:document.querySelector('#notice')?.textContent?.trim() || null,
+    lastHistory:window.MolariumChemistActions?.history?.().slice(-8) || [],
+  }))()`);
+  console.error(`SOS1 frozen-route failure diagnostics:\n${JSON.stringify(diagnostics, null, 2)}`);
+  throw error;
 } finally {
   await browser.close();
 }

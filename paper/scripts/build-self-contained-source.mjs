@@ -10,17 +10,18 @@ const marker = '\\input{appendix-b-workflows.tex}';
 if (!main.includes(marker)) throw new Error(`Missing source marker: ${marker}`);
 
 await mkdir(resolve(output, 'figures'), { recursive:true });
+const intentMarker = '\\input{generated/sos1-designer-intent-results.tex}';
+if (!main.includes(intentMarker)) throw new Error(`Missing source marker: ${intentMarker}`);
+const intentResults = await readFile(resolve(paper, 'generated/sos1-designer-intent-results.tex'), 'utf8');
 const complete = main.replace(marker,
-  `% Appendix B inlined from appendix-b-workflows.tex for a single editable source file.\n${appendixB}`);
+  `% Appendix B inlined from appendix-b-workflows.tex for a single editable source file.\n${appendixB}`)
+  .replace(intentMarker, `% Verified designer-intent measurements inlined.\n${intentResults}`);
 await writeFile(resolve(output, 'Molarium_complete.tex'), complete);
 
-for (const filename of [
-  'fig1_molarium_interface.png',
-  'fig2_sos1_hit_to_bay293.png',
-  'fig2_architecture.png',
-  'fig3_build_loop_compact.png',
-  'fig4_evidence_ladder_fixed.png',
-  'fig5_value_layers_fixed.png',
-]) await copyFile(resolve(paper, 'figures', filename), resolve(output, 'figures', filename));
+const figures = new Set([...complete.matchAll(/\{(figures\/[a-zA-Z0-9_.-]+)\}/g)]
+  .map((match) => match[1]));
+if (figures.size !== 6) throw new Error(`Expected six manuscript figures, found ${figures.size}`);
+for (const filename of figures)
+  await copyFile(resolve(paper, filename), resolve(output, filename));
 
 console.log(output);

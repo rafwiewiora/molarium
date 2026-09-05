@@ -91,4 +91,46 @@ assert(checkpointStory.actions.filter((step) => step.action === 'view.highlightA
     && step.args.residueLabels?.[0]?.label === 'Phe890'));
 assert.equal(checkpointStory.actions.filter((step) =>
   step.action === 'view.setCamera').length, 0);
+const intentReview = buildPocketInterfaceStory({ ...checkpointSource, actions:[
+  { action:'campaign.import', args:{ serialized:'graph' }, review:{ designStage:'aww-graph-only' } },
+  { action:'campaign.import', args:{ serialized:'intent', preserveView:true },
+    review:{ designStage:'aww-designer-intent' } },
+  { action:'campaign.import', args:{ serialized:'response', preserveView:true },
+    review:{ designStage:'aww-phe890-response' } },
+] });
+const intentImport = intentReview.actions.findIndex((step) =>
+  step.review?.designStage === 'aww-designer-intent');
+const responseImport = intentReview.actions.findIndex((step) =>
+  step.review?.designStage === 'aww-phe890-response');
+assert.equal(intentReview.actions[intentImport + 1].args.showStericClashes, true);
+assert.equal(intentReview.actions[responseImport + 1].args.showStericClashes, false);
+assert(intentReview.actions[intentImport + 2].args.residueLabels.some((entry) =>
+  entry.label === 'Tyr884 · backbone contact'));
+const intentExecutable = buildPocketInterfaceStory({ ...checkpointSource, actions:[
+  { action:'designRoute.applyStep', args:{ stepId:'open-phe890-pocket' } },
+  { action:'geometry.alignBranchToContact', args:{} },
+  { action:'pose.applySidechainRotamer', args:{ chiDegrees:[-180,90] } },
+] });
+const directionMove = intentExecutable.actions.findIndex((step) =>
+  step.action === 'geometry.alignBranchToContact');
+assert.equal(intentExecutable.actions[directionMove + 1].args.showStericClashes, true);
+assert.equal(Object.values(intentExecutable.actions[directionMove].capture)[0], 'changedAtomIds');
+assert(!intentExecutable.actions.slice(0, directionMove).some((step) =>
+  step.args?.showStericClashes === true));
+const candidateTrialSource = { ...checkpointSource, actions:[
+  { action:'pose.applySidechainRotamer', args:{ chiDegrees:[60,90] } },
+  { action:'calculation.run', args:{ job:'energy', method:'openmm' } },
+  { action:'history.undo', args:{} },
+  { action:'pose.applySidechainRotamer', args:{ chiDegrees:[-180,90] } },
+] };
+const candidateTrialStory = buildPocketInterfaceStory(candidateTrialSource);
+const responseIndices = candidateTrialStory.actions.flatMap((step, index) =>
+  step.action === 'pose.applySidechainRotamer' ? [index] : []);
+assert.equal(candidateTrialStory.actions[responseIndices[0] + 1].args.showStericClashes, true);
+assert.match(candidateTrialStory.actions[responseIndices[0] + 2].caption, /trial.*before.*energy/);
+assert.equal(candidateTrialStory.actions[responseIndices[1] + 1].args.showStericClashes, false);
+assert.match(candidateTrialStory.actions[responseIndices[1] + 2].caption, /selected/);
+assert.deepEqual(candidateTrialStory.actions.filter((step) =>
+  !insertedPresentationActions.has(step.action)).map(({ capture, ...step }) => step),
+candidateTrialSource.actions, 'candidate presentation must not change scientific actions');
 console.log('Interface story test passed: 33 scientific actions + 18 presentation actions');
