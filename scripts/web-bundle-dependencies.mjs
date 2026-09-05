@@ -41,5 +41,10 @@ export async function sos1ReleaseWebFiles(root) {
     for (const nested of Object.values(value)) visit(nested);
   };
   visit(release);
+  const popupDeclaration = `${prefix}/checkpoint-popups-v1/movie.json`;
+  try {
+    const popupMovie = JSON.parse(await readFile(resolve(root, popupDeclaration), 'utf8'));
+    paths.add(popupDeclaration); visit(popupMovie);
+  } catch (error) { if (error.code !== 'ENOENT') throw error; }
   return [...paths];
 }

@@ -24,6 +24,12 @@ const visit = (value) => {
   for (const nested of Object.values(value)) visit(nested);
 };
 visit(JSON.parse(declaration));
+const popupPath = 'design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/movie.json';
+try {
+  const bytes = await readFile(resolve(root,popupPath));
+  files.set(popupPath,{ path:popupPath,bytes:bytes.length,sha256:digest(bytes) });
+  visit(JSON.parse(bytes));
+} catch (error) { if (error.code !== 'ENOENT') throw error; }
 const queue = [...files.values()], checked = [];
 await Promise.all(Array.from({ length:3 }, async () => {
   for (;;) {

@@ -82,8 +82,8 @@
     },
     {
       "path": "DESIGNER-MOVES.md",
-      "bytes": 21013,
-      "sha256": "7aee893156fd503e326623b23ac0a791b3a378a784ee75ea1c9d6751881b9179"
+      "bytes": 21608,
+      "sha256": "30cf44a03188b3841b82eab71cd2333ebdffc91d2ef654be35988a15bf6a380d"
     },
     {
       "path": "design-history/campaign-source.mjs",
@@ -112,8 +112,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 13296,
-      "sha256": "0b4b0007f727af46c31b54087ca3b0303b1708b3a775f1cb0287d0182d81bc76"
+      "bytes": 13344,
+      "sha256": "bfbcc4fd3b007af74e7a53a8a5c77a208a6a18dd3d5b5dd7b075c02288c9553a"
     },
     {
       "path": "protein-residue-templates.js",
@@ -122,8 +122,8 @@
     },
     {
       "path": "server.js",
-      "bytes": 4996,
-      "sha256": "c4b85faef47979db7b1f196c1a30881e993e6e621c92761e80e4f0d04af85bde"
+      "bytes": 5026,
+      "sha256": "d9c6c3873405bf46f3b1388cf0e44fd140e25d2979c7020bc0df64c2843d3c1f"
     },
     {
       "path": "scripts/generate-local-lab-manifest.mjs",
@@ -162,8 +162,8 @@
     },
     {
       "path": "scripts/verify-sos1-deployment.mjs",
-      "bytes": 1645,
-      "sha256": "bca9624f77e9468bf39e50eafe6dd6839ad74d9d70b0a613d5e4d25ad3369f4d"
+      "bytes": 2042,
+      "sha256": "c981f1d81955ec30dddc041e83ae9d5dfbb0bb20b05d3ff1c3d05c7ec47c2e71"
     },
     {
       "path": "styles.css",
@@ -572,8 +572,8 @@
     },
     {
       "path": "sos1.html",
-      "bytes": 4179,
-      "sha256": "39f7e6da9085ca4570388d46cc9758685f34df3a6c1140c6f3b167b57c5f4056"
+      "bytes": 4225,
+      "sha256": "db0ba10cb46c76871cc3ae0551900199be9f631536d072bf00ab0472f0842db9"
     },
     {
       "path": "design-history/publications/sos1/designer-intent-2026-09-04/executable.action-script.json",
@@ -859,6 +859,321 @@
       "path": "design-history/publications/sos1/designer-intent-2026-09-04/molarium-paper.pdf",
       "bytes": 2565196,
       "sha256": "aa0455b52ebdadf47ade6538bc3cfb4c087bf72bb4f0747125646b35ac7d70bb"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/movie.json",
+      "bytes": 20484,
+      "sha256": "db654310e92dbc4be84b572ec134e0e3ec535eb87762d54158b57ab85d39f2df"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/checkpoint-overview.mp4",
+      "bytes": 1513417,
+      "sha256": "fe7ad6dd6f4892293cfef0b276444fa17cb49a8ab89dc53ac6f792b431caac78"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-blank.png",
+      "bytes": 8512,
+      "sha256": "e47db9d82dc470d3a7f42a66ed74fd41396b0a3c9c689d58e8bb08d226d70126"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-0-00.png",
+      "bytes": 35944,
+      "sha256": "431a3820d4da64e68e417fbe32a8d606393ceff4f6ac1ebf6f02b328797766ad"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-0-01.png",
+      "bytes": 37392,
+      "sha256": "c33ae2f88fdae5f3fd9b8215d1bdc25f71b38e565ecefab955c383a34b10ea4d"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-0-02.png",
+      "bytes": 37714,
+      "sha256": "07c741476f3ee07acacd4e56d17e988a0e8fc8dcfaddce229d4b0a4f3c085388"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-0-03.png",
+      "bytes": 37852,
+      "sha256": "3ed2813224190ec79506905990da3fe7e5e5be99bd42f8859342db2322db6e6a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-0-04.png",
+      "bytes": 37851,
+      "sha256": "a5967e4f9cccea7a5526ebfc68b96084d4bfc0cf205545fa5feb22a8cf1a3b38"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-0-05.png",
+      "bytes": 37476,
+      "sha256": "2cd19c833485408005f5767c543969110bb49ff101572674d5b65316bfc5e4dc"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-0-06.png",
+      "bytes": 37574,
+      "sha256": "d111fbff4dc1c6e2b62bd5eac3c710c5cd76e92daf5ec9b9bc5d853dabeb684d"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-0-07.png",
+      "bytes": 37456,
+      "sha256": "0fa9b431033d09404557b4e6e8892aaed90c4e2ea604207b521c7e1e5d788a68"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-0-08.png",
+      "bytes": 37347,
+      "sha256": "e77428ab4fcd62f014fd62b0bcaa84fdc409e7a2b48fd60960f97cb89ad3e4fa"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-0-09.png",
+      "bytes": 37421,
+      "sha256": "eee9a1b9de3cff6b469e9dbdbcc8d206a8642795ae1bfa69307caea084ef8e4f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-0-10.png",
+      "bytes": 37629,
+      "sha256": "07d707ae13b80dfc5fd35ff6f6723e3d677362509e0e2f2a232cf19177f59750"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-0-11.png",
+      "bytes": 37598,
+      "sha256": "1303f7fca43dc57fd6f191be27e00a5a276df7dc4a0ab229a3eb861b8f6daedd"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-1-00.png",
+      "bytes": 38615,
+      "sha256": "6f5ae3ab602673939e5c3dfc41119a63f17d3ba81b02f3e22ca470d7518fbcfe"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-1-01.png",
+      "bytes": 40051,
+      "sha256": "d1d84d82887a5fe1e76ce6c7be9539a6efc2d031057456e9dcb3fccd1ff4241b"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-1-02.png",
+      "bytes": 40394,
+      "sha256": "e5ffe749386b0223c787a3c5fcf4be6b84b43047825312c2ab5942359bcf1703"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-1-03.png",
+      "bytes": 40534,
+      "sha256": "445635626eb607c7cf723415f97b35bc78fdb1419158af45c1cb74424d952bfe"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-1-04.png",
+      "bytes": 40538,
+      "sha256": "f413d36fc5184eaa235c800ed1e71b85d4fe1f5b2ce07c628af912128de05a42"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-1-05.png",
+      "bytes": 40148,
+      "sha256": "e89fd1682cc7de921ccd5b7c65f24914f467b52f219ca447d13b8ca466f85ddd"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-1-06.png",
+      "bytes": 40253,
+      "sha256": "8637c5dfbe2998dcc7d486e99927451076e640d077809b1e3305ea5f94bbaf7d"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-1-07.png",
+      "bytes": 40126,
+      "sha256": "c0734b46186f148bce3ed1c903e2af22c3863bf75b2453612b272ebf77e46356"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-1-08.png",
+      "bytes": 40017,
+      "sha256": "9ac1fbc2f587f20b1c5ed41b776e018e0bc591fab616627f17ac574c395a9c13"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-1-09.png",
+      "bytes": 40088,
+      "sha256": "68c6b6a36fd8e8914ec720fc5de2af86a780271b07b7c6019f3554a922dcb2e4"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-1-10.png",
+      "bytes": 40310,
+      "sha256": "b53388b9101a69037e961702b456b6b8d9b3c69a9f8d955eec04116a14dfad3a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-1-11.png",
+      "bytes": 40286,
+      "sha256": "31e9f152124b10140435edccc0a6e6d8a78127dd5834f6abfcc1b9987f44a645"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-2-00.png",
+      "bytes": 38585,
+      "sha256": "23f85b9ebf5fd0e3681e26b3ead7688ca1ebeffdb8cc96ef27260cff80354c6b"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-2-01.png",
+      "bytes": 40027,
+      "sha256": "89cd74007c691e5c6758773abe00c870e769c2684d9996a3427c5273bb32dec0"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-2-02.png",
+      "bytes": 40364,
+      "sha256": "3f5eb92d726db7450f328da320b261ff53ee88bfc5fab2834b021ad7fc1411af"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-2-03.png",
+      "bytes": 40507,
+      "sha256": "ca6bd41e88408d93b17f134e5a7d51fdd5d4735b080b7b049a3ef02f8d81fc06"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-2-04.png",
+      "bytes": 40509,
+      "sha256": "8ba6c5ef364d320aa869ddc841dd93970e361e4860ec4b1e50008af9e7400c1f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-2-05.png",
+      "bytes": 40111,
+      "sha256": "df35c77022e7e116f0e7d5ef83172f3c08d081c4376b7ddcfcc58f1744b70361"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-2-06.png",
+      "bytes": 40227,
+      "sha256": "8dfd6f509eb40a0bbce368fee3a3bd2c88baa26f65cdc4c0e7ae3a4f8cbeda91"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-2-07.png",
+      "bytes": 40093,
+      "sha256": "88c32ec2e84d414a16fe384be9a490a703acf8162bfb54498ce92fdcb69e1ec1"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-2-08.png",
+      "bytes": 39990,
+      "sha256": "1c40d1154a9b21bc3f28d1921cf2d78fb8059cfbe4b075460c6b7fd3709c4c11"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-2-09.png",
+      "bytes": 40062,
+      "sha256": "1d4f721967e4bd4196c7d9a3f94ae6b4d8c19170bf60f986509773a31707fafd"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-2-10.png",
+      "bytes": 40207,
+      "sha256": "1d48f49d777aad5def7b0de501dff10d58aa57f80671aa92f94f5cb2f6ca2d01"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-2-11.png",
+      "bytes": 40132,
+      "sha256": "58d1e999f42c4a29bca2bd3beefb38eef7a8b60db00e9a90deb1e364da22e99e"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-3-00.png",
+      "bytes": 38892,
+      "sha256": "d956a2727bbd4c674f7938c03a1e112006266aa95eef134560fe0234d53de68c"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-3-01.png",
+      "bytes": 40338,
+      "sha256": "40fac12e16c2e874cc308008dfe76f65ea1682a4e5e87a3cfa5f48edf7dc6d4d"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-3-02.png",
+      "bytes": 40669,
+      "sha256": "d18247f24525b0bf94afa7d306945db178572ed737bff6876466a0ba8d538f25"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-3-03.png",
+      "bytes": 40811,
+      "sha256": "31275c4e2dde3b893ff214d8fa53dca1feda12c436964050e57e350162d15e79"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-3-04.png",
+      "bytes": 40631,
+      "sha256": "1942c16616b282fb26604be05152eac8d4ac19ae3bd669fc13e48cf4fca53583"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-3-05.png",
+      "bytes": 40424,
+      "sha256": "af2e5bf439db8a73954f056d296455d762b384cb42926f9f55ba0084aca92912"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-3-06.png",
+      "bytes": 40527,
+      "sha256": "6b6e7f26fc76d4fe443040729aac5a2bf3e70c8a6d5748d1f67fdcdd65ff99a2"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-3-07.png",
+      "bytes": 40408,
+      "sha256": "82085addfa09592e4af999cbb8ad80c7e265ab7f2a671a6a50e66f016460040e"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-3-08.png",
+      "bytes": 40298,
+      "sha256": "eb755db468004f672cf5f1bfbf10f7845fb16479b553b7c89304fc83078fd607"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-3-09.png",
+      "bytes": 40376,
+      "sha256": "d04e93d6bf99d436770679f273e7724a3f234b2f4e3bd61ac2b685b0f39406ef"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-3-10.png",
+      "bytes": 40509,
+      "sha256": "97254e5edfeb9c4fc24fbd627af3a0ec598960a62488d66950e3e796666a95bd"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-3-11.png",
+      "bytes": 40439,
+      "sha256": "474851e50f82c37d25b711c4e440767dea76196bd1333f858dab755605e8e391"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-4-00.png",
+      "bytes": 38847,
+      "sha256": "458ca36a73d7c3c5968cfc28f7e67695e8972c1cfad235dac62cbe4cd89b705a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-4-01.png",
+      "bytes": 40299,
+      "sha256": "8550672ac016843b189aa1294602d62770afa720393c9796ad14871ca47822d8"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-4-02.png",
+      "bytes": 40633,
+      "sha256": "6876b0b366d880cdd01a979ed3d0a4b2ef82632eee9cc9c916f92770c5c03ad0"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-4-03.png",
+      "bytes": 40776,
+      "sha256": "3df43a667ca1b374a6538d809d7805b28c23187b5dbde01c9cec09f9ce462356"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-4-04.png",
+      "bytes": 40595,
+      "sha256": "167ce3c582df2068c65a7c034842d8861411d91e2a3c4c4040645cd9888d239a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-4-05.png",
+      "bytes": 40387,
+      "sha256": "cf53a2f4c1fc3b4c7cf69b37ae7975963f9ffc5c47542cb30b54c2283c0cccb2"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-4-06.png",
+      "bytes": 40493,
+      "sha256": "64d5ec70f22487d65112eac2dd83f937a6216dab5c6d53160f30bba21abf5c3f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-4-07.png",
+      "bytes": 40367,
+      "sha256": "40fb4c2a1fef8d47ec36238e357f4d3f8e985bcb2df3a4812f9bba5c29501658"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-4-08.png",
+      "bytes": 40264,
+      "sha256": "a19e25a69853630d88379b161f6f7803c458fdc673fa6908f8c1492039fe536a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-4-09.png",
+      "bytes": 40334,
+      "sha256": "261b191b94d8d322a0dc5cb2f6c85105205e7289dc5cc5d5394267da9f7d093d"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-4-10.png",
+      "bytes": 40472,
+      "sha256": "f50d8199f368c933ca54c492d3d5bf37118c4f977d0fac61f01051abd86bd821"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/overlay-4-11.png",
+      "bytes": 40403,
+      "sha256": "6b65f6985ad39f65243669df753375925357de83b7aa149a0306f1f43e655700"
     },
     {
       "path": "docking/designer-ligand-pose-lock.mjs",

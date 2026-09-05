@@ -26,7 +26,7 @@
     "render:design-story": "bun scripts/render-design-story.mjs",
     "render:structure-story": "bun scripts/render-structure-story.mjs",
     "render:designer-moves-interface": "bun scripts/render-designer-moves-interface.mjs",
-    "test:designer-moves-renderer": "node scripts/designer-movie-presentation.test.mjs && node scripts/render-designer-moves-interface.test.mjs",
+    "test:designer-moves-renderer": "node scripts/designer-movie-presentation.test.mjs && node scripts/render-designer-moves-interface.test.mjs && node scripts/sos1-checkpoint-popups.test.mjs",
     "test:designer-moves-renderer-browser": "bun scripts/designer-movie-entry.browser.test.mjs && bun design-history/examples/designer-completed-review.browser.test.mjs",
     "test:sos1-interface-presentation": "node scripts/sos1-interface-presentation-source.test.mjs",
     "test:sos1-interface-presentation-browser": "MOLARIUM_TEST_API=1 bun design-history/examples/sos1-interface-presentation.browser.test.mjs",

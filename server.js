@@ -70,7 +70,7 @@ const server = Bun.serve({
     if (['/sos1','/sos1/','/sos1-hit-to-bay293/movies'].includes(url.pathname))
       return Response.redirect(`${url.origin}/sos1.html`, 302);
     if (url.pathname === '/sos1-hit-to-bay293/movie')
-      return Response.redirect(`${url.origin}/design-history/publications/sos1/designer-intent-2026-09-04/executable.mp4`, 302);
+      return Response.redirect(`${url.origin}/design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/checkpoint-overview.mp4`, 302);
     if (['/sos1-hit-to-bay293/replay','/sos1-hit-to-bay293/replay/',
       '/sos1-hit-to-bay293/review','/sos1-hit-to-bay293/review/'].includes(url.pathname))
       return Response.redirect(`${url.origin}/?story=sos1-hit-to-bay293-review`, 302);

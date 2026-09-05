@@ -251,10 +251,16 @@ try {
     overflow:document.documentElement.scrollWidth > innerWidth,
   })`);
   assert.deepEqual(moviePage.options, ['/sos1-hit-to-bay293','/sos1-hit-to-bay293/review','#movie']);
-  assert(Math.abs(moviePage.duration - 595.583333) < 0.1);
+  assert(Math.abs(moviePage.duration - 62.75) < 0.1);
   assert.equal(moviePage.width, 1600); assert.equal(moviePage.height, 1000);
   assert.equal(moviePage.overflow, false);
   await screenshot('04-movies-page.png');
+  await browser.evaluate(`document.querySelector('video').currentTime = 43.2`);
+  await waitFor(async () => browser.evaluate(`!document.querySelector('video').seeking
+    && Math.abs(document.querySelector('video').currentTime - 43.2) < 0.1`),
+    30000, 'recorded Phe890 calculation popup');
+  await browser.evaluate(`document.querySelector('video').scrollIntoView({block:'center'})`);
+  await screenshot('05-recorded-phe890-calculation-popup.png');
 
   console.log('SOS1 frozen public routes browser QA: blank executable/review entries, honest labels, '
     + 'fixed camera, exact arrowable checkpoints, complete 2D ligand, and zero review calculations PASS');
