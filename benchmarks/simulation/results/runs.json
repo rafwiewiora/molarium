@@ -1,0 +1,7 @@
+{
+  "runs": [
+    {"label":"Apple M1 Pro — WebGPU f32", "directory":"m1pro-20260905-a07", "actual":"webgpu.json", "score":"score.json"},
+    {"label":"Apple M1 Pro — OpenMM OpenCL single", "directory":"m1pro-20260905-a07", "actual":"opencl-single.json", "score":"opencl-score.json"},
+    {"label":"NVIDIA L4 — WebGPU f32", "directory":"l4-20260905-a07", "actual":"webgpu.json", "score":"score.json"}
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "schema": "molarium.simulation-benchmark-protocol/v1",
+  "id": "openmm-agreement-2026-09-v1",
+  "nativeOpenmmVersion": "8.2.0",
+  "units": {"energy": "kJ/mol", "force": "kJ/mol/nm", "position": "nm"},
+  "accuracy": {
+    "energyAbsoluteTolerance": 0.001,
+    "energyComponentScaledTolerance": 0.00003,
+    "forceRmsAbsoluteTolerance": 0.002,
+    "forceRelativeRmsTolerance": 0.001,
+    "forceMaxAbsoluteTolerance": 0.02,
+    "forceMaxReferenceScaledTolerance": 0.003,
+    "reference": "native OpenMM Reference, double precision; both original and f32-rounded inputs",
+    "gateInput": "f32-rounded",
+    "quantile": "linear interpolation at (n-1)*p; symmetric relative atom error is zero only when both vectors are exactly zero"
+  },
+  "performance": {
+    "repeats": 5,
+    "warmups": 1,
+    "minimumSampleSeconds": 2,
+    "mdStepsPerJob": 250,
+    "timestepPs": 0.001,
+    "temperatureK": 300,
+    "frictionPerPs": 1,
+    "constraintMode": "none",
+    "savedFramesPerJob": 2,
+    "scope": "production worker end-to-end jobs; separately label native resident Context timings; neither is a kernel-only measurement"
+  },
+  "sources": [
+    {"id": "openmm-benchmark", "url": "https://github.com/openmm/openmm/blob/0da03998df892bbb0a954ad3767c30a0cc53a11c/examples/benchmarks/benchmark.py", "commit": "0da03998df892bbb0a954ad3767c30a0cc53a11c"},
+    {"id": "openmm-validation", "url": "https://docs.openmm.org/latest/userguide/library/07_testing_validation.html"},
+    {"id": "openmm7-paper", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5549999/"}
+  ],
+  "upstreamCoverage": [
+    {"case": "gbsa", "system": "DHFR, AMBER99SB/OBC2, 2 nm nonperiodic cutoff", "energyForce": "export-and-verify", "speed": "modified-integrator comparison only", "note": "Upstream uses hydrogen mass repartitioning, 4 fs, HBonds, friction 91/ps and LangevinMiddle; do not label our default 1 fs Langevin workload an exact timing reproduction."},
+    {"case": "rf", "status": "unsupported", "reason": "periodic boundary conditions"},
+    {"case": "pme", "status": "unsupported", "reason": "periodic boundary conditions and PME"},
+    {"case": "apoa1rf", "status": "unsupported", "reason": "periodic boundary conditions"},
+    {"case": "apoa1pme", "status": "unsupported", "reason": "periodic boundary conditions and PME"},
+    {"case": "apoa1ljpme", "status": "unsupported", "reason": "periodic boundary conditions and LJPME"},
+    {"case": "amoebagk", "status": "unsupported", "reason": "polarizable AMOEBA multipoles and generalized Kirkwood"},
+    {"case": "amoebapme", "status": "unsupported", "reason": "polarizable AMOEBA and PME"},
+    {"case": "amber20-dhfr", "status": "unsupported", "reason": "periodic boundary conditions and PME"},
+    {"case": "amber20-cellulose", "status": "unsupported", "reason": "periodic boundary conditions and PME"},
+    {"case": "amber20-stmv", "status": "unsupported", "reason": "periodic boundary conditions and PME"}
+  ]
+}

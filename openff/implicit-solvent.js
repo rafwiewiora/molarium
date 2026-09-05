@@ -26,6 +26,29 @@ export function obc2Parameters(molecule, system) {
   if (!Array.isArray(system?.nonbonded) || system.nonbonded.length !== atoms.length)
     throw new Error('OBC2 requires one nonbonded charge per atom');
 
+  // Prepared numeric Systems may carry explicit radii (e.g. the official
+  // OpenMM AMBER99/OBC benchmark does not use our default mbondi2 radii).
+  // Preserve those parameters, but reject constants the current WGSL kernels
+  // cannot represent. Unannotated Sage/Rosemary inputs keep the same defaults.
+  const prepared = molecule.parameterization?.implicitSolvent;
+  if (prepared != null) {
+    for (const [name, value] of Object.entries(OBC2_SETTINGS)) {
+      if (prepared[name] !== value)
+        throw new Error(`Prepared OBC2 has unsupported ${name}: ${prepared[name]}`);
+    }
+    if (!Array.isArray(prepared.particles) || prepared.particles.length !== atoms.length)
+      throw new Error('Prepared OBC2 requires one radius and scale per atom');
+    const particles = prepared.particles.map((particle, index) => {
+      const { charge_e, radius_nm, scale } = particle;
+      if (![charge_e, radius_nm, scale].every(Number.isFinite)
+          || radius_nm <= OBC2_SETTINGS.radiusOffsetNm || scale <= 0
+          || charge_e !== system.nonbonded[index].charge_e)
+        throw new Error(`Prepared OBC2 contains invalid or mismatched parameters at atom ${index + 1}`);
+      return { charge_e, radius_nm, scale };
+    });
+    return { ...OBC2_SETTINGS, particles };
+  }
+
   const neighbors = Array.from({ length: atoms.length }, () => []);
   molecule.bonds.forEach((bond, index) => {
     const first = Number(bond.a), second = Number(bond.b);

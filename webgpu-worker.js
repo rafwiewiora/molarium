@@ -673,6 +673,8 @@ async function runCalculation(message) {
       constraintError: job !== 'energy' && simulationConfig.constraints.length
         ? Math.max(diagnostics[1], maximumConstraintError(positions, simulationConfig.constraints)) : null,
       platform: 'WebGPU',
+      gpuAdapter: Object.fromEntries(['vendor', 'architecture', 'device', 'description', 'isFallbackAdapter']
+        .map((key) => [key, gpu.adapter.info?.[key] ?? gpu.adapter[key] ?? null])),
       backend: parameterized.forcefield.includes('Rosemary') ? 'Rosemary WebGPU' : 'Sage WebGPU',
       unit: 'kcal/mol',
       timestepFs: job === 'dynamics' ? simulation.settings.dt * 1000 : null,

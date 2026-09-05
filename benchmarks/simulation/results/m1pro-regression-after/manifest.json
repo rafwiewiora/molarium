@@ -1,0 +1,20 @@
+{
+  "schema": "molarium.simulation-benchmark-evidence/v1",
+  "attempt": "m1pro-20260905-a02",
+  "files": [
+    {
+      "name": "score.json.gz",
+      "sha256": "1d03d64fca6fc827fc90590462cb6e1ed77a1572aad4bedb20cd716b0ed23d3f",
+      "uncompressedSha256": "23ca3cd5170b7a95e760dec9d7faf8322d54d5abf120e3e5d8b1e2f3e28d0ded",
+      "bytes": 144401,
+      "compressedBytes": 24799
+    },
+    {
+      "name": "webgpu.json.gz",
+      "sha256": "ae8fffba9825bcac8aec827e43663c22f1c28faa1633530e5d5bbde0fe7e708b",
+      "uncompressedSha256": "8c182691ba257456948f8eafc5eae6e515a044da50c2c860531d6156f37052ca",
+      "bytes": 1807130,
+      "compressedBytes": 524328
+    }
+  ]
+}
