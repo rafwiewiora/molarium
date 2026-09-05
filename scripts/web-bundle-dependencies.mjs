@@ -2,6 +2,10 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { dirname, relative, resolve } from 'node:path';
 
+// Retain the original release evidence in Git, but do not publish this recording.
+export const ARCHIVED_SOS1_VIDEO_PATH =
+  'design-history/publications/sos1/designer-intent-2026-09-04/executable.mp4';
+
 export async function browserModuleClosure(root, initialFiles) {
   const files = new Set(initialFiles), queue = initialFiles.filter((path) =>
     /\.(?:mjs|js)$/.test(path) && !path.startsWith('scripts/'));
@@ -31,7 +35,7 @@ export async function sos1ReleaseWebFiles(root) {
   let release;
   try { release = JSON.parse(await readFile(resolve(root, declaration), 'utf8')); }
   catch (error) { if (error.code === 'ENOENT') return []; throw error; }
-  const paths = new Set([declaration, 'sos1.html']);
+  const paths = new Set([declaration, 'sos1.html', 'sos1-movie.mjs']);
   const visit = (value) => {
     if (!value || typeof value !== 'object') return;
     if (typeof value.path === 'string') {
@@ -41,5 +45,11 @@ export async function sos1ReleaseWebFiles(root) {
     for (const nested of Object.values(value)) visit(nested);
   };
   visit(release);
+  const popupDeclaration = `${prefix}/checkpoint-popups-v2/movie.json`;
+  try {
+    const popupMovie = JSON.parse(await readFile(resolve(root, popupDeclaration), 'utf8'));
+    paths.add(popupDeclaration); visit(popupMovie);
+  } catch (error) { if (error.code !== 'ENOENT') throw error; }
+  paths.delete(ARCHIVED_SOS1_VIDEO_PATH);
   return [...paths];
 }

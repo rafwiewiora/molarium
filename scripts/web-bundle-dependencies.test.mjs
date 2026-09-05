@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { readFile } from 'node:fs/promises';
-import { browserModuleClosure, sos1ReleaseWebFiles } from './web-bundle-dependencies.mjs';
+import { ARCHIVED_SOS1_VIDEO_PATH, browserModuleClosure, sos1ReleaseWebFiles } from './web-bundle-dependencies.mjs';
 
 const root = await mkdtemp(join(tmpdir(), 'molarium-web-closure-test-'));
 try {
@@ -23,12 +23,17 @@ try {
   const prefix = 'design-history/publications/sos1/designer-intent-2026-09-04';
   await mkdir(join(root, prefix), { recursive:true });
   const declaration = join(root, prefix, 'release.json');
-  await writeFile(declaration, JSON.stringify({ nested:{ asset:{ path:`${prefix}/movie.mp4` } } }));
-  assert.deepEqual(await sos1ReleaseWebFiles(root), [`${prefix}/release.json`, 'sos1.html', `${prefix}/movie.mp4`]);
+  await writeFile(declaration, JSON.stringify({ nested:{ asset:{ path:`${prefix}/movie.mp4` } },
+    archived:{ path:ARCHIVED_SOS1_VIDEO_PATH } }));
+  assert.deepEqual(await sos1ReleaseWebFiles(root), [`${prefix}/release.json`, 'sos1.html', 'sos1-movie.mjs', `${prefix}/movie.mp4`]);
   await writeFile(declaration, JSON.stringify({ asset:{ path:`${prefix}/../escape` } }));
   await assert.rejects(sos1ReleaseWebFiles(root));
   const build = await readFile(resolve(import.meta.dirname, 'build-web.mjs'), 'utf8');
   assert(!/^\s*['"]\/sos1 \/sos1\.html 30[1278]['"]/m.test(build),
     'Cloudflare canonical HTML redirects must not form a /sos1 loop');
+  assert(build.includes('`/${ARCHIVED_SOS1_VIDEO_PATH} /sos1 302`'));
+  const page = await readFile(resolve(import.meta.dirname, '../sos1.html'), 'utf8');
+  assert(!page.includes(ARCHIVED_SOS1_VIDEO_PATH));
+  assert(!page.includes('Full calculation-by-calculation recording'));
   console.log('Web bundle recursive dependencies and release paths: PASS');
 } finally { await rm(root, { recursive:true, force:true }); }

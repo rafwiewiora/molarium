@@ -29,16 +29,18 @@
   <section class="options" aria-label="Three ways to follow the story">
     <article><h2>1. Recompute the story</h2><p>Run all 159 scientific actions in your browser, including 13 fixed-coordinate Phe890 energy calculations and the BAY-293 continuation. Requires WebGPU and several minutes.</p><a class="button" href="/sos1-hit-to-bay293">Open recomputable replay</a></article>
     <article><h2>2. Inspect saved states</h2><p>Review seven exact full-system checkpoints without recalculation. Play, pause, and use the arrows to compare the ligand placement and Phe890 response.</p><a class="button" href="/sos1-hit-to-bay293/review">Open precomputed replay</a></article>
-    <article><h2>3. Watch the movie</h2><p>A verified 9-minute, 56-second recording of the complete executable story. Scientific calculations are rerun; display holds compress the waiting time.</p><a class="button" href="#movie">Watch MP4</a></article>
+    <article><h2>3. Watch the movie</h2><p>A 63-second tour of the saved checkpoints, with one-second popups for the recorded calculation steps. No calculations are rerun.</p><a class="button" href="#movie">Watch MP4</a></article>
   </section>
-  <section id="movie" aria-labelledby="movie-title"><h2 id="movie-title">Full executable movie</h2>
-    <video controls preload="metadata" playsinline aria-label="SOS1 full executable Molarium movie">
-      <source src="/design-history/publications/sos1/designer-intent-2026-09-04/executable.mp4" type="video/mp4">
-      <a href="/sos1-hit-to-bay293/movie">Download the MP4</a>
+  <section id="movie" aria-labelledby="movie-title"><h2 id="movie-title">Checkpoint movie</h2>
+    <video controls preload="auto" playsinline aria-label="SOS1 precomputed checkpoint movie with brief calculation popups">
+      <source src="/design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/checkpoint-overview.mp4" type="video/mp4">
+      Your browser cannot play this video. Use the download link below.
     </video>
-    <p><a href="/sos1-hit-to-bay293/movie">Download full MP4</a> · <a href="/design-history/publications/sos1/designer-intent-2026-09-04/precomputed.mp4">Watch the 63-second checkpoint overview</a></p>
+    <p id="movie-playback-status" role="status">Loading the movie for smooth forward and backward seeking…</p>
+    <p><a href="/design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/checkpoint-overview.mp4" download="sos1-checkpoint-overview.mp4">Download checkpoint MP4</a></p>
   </section>
   <p class="note">This demonstration is reference-informed: the crystal series was inspected to infer designer intent. Later crystal coordinates were not imported as design targets. The predicted response is a Phe890 side-chain flip; Tyr884 supplies the backbone contact. Source waters are retained. Recalculation can change numerical coordinates and energies; the saved checkpoints preserve the exact paper results.</p>
   <footer><a href="/design-history/publications/sos1/designer-intent-2026-09-04/molarium-paper.pdf">Read the paper</a> · <a href="/design-history/publications/sos1/designer-intent-2026-09-04/release.json">Release fingerprints and evidence</a> · <a href="/DESIGNER-MOVES.md">Replay methods</a></footer>
+  <script type="module" src="/sos1-movie.mjs"></script>
 </body>
 </html>

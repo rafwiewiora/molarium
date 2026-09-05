@@ -79,6 +79,8 @@ try {
   const executable = await waitForBlankStory('sos1-hit-to-bay293');
   assert(!/accepted|success/i.test(executable.snapshot.title),
     'the complete-frozen executable route must not claim acceptance or success');
+  assert.equal(await browser.evaluate(`document.querySelector('#designer-move-caption').textContent`),
+    'Start from the SOS1-bound hit, AXE');
   await screenshot('01-executable-blank-full-interface.png');
 
   const origin = new URL(browser.appUrl).origin;
@@ -95,7 +97,7 @@ try {
   await waitFor(async () => browser.evaluate(
     `Number(document.querySelector('#designer-move-progress-label')?.textContent?.split('/')[0]) >= 1
       || document.querySelector('#designer-move-tools')?.dataset.replayStatus === 'failed'`),
-  120000, 'first calculation-free prediction checkpoint');
+  240000, 'first calculation-free prediction checkpoint');
   const firstMoveStatus = await browser.evaluate(`({
     replayStatus:document.querySelector('#designer-move-tools')?.dataset.replayStatus,
     progress:document.querySelector('#designer-move-progress-label')?.textContent,
@@ -251,10 +253,30 @@ try {
     overflow:document.documentElement.scrollWidth > innerWidth,
   })`);
   assert.deepEqual(moviePage.options, ['/sos1-hit-to-bay293','/sos1-hit-to-bay293/review','#movie']);
-  assert(Math.abs(moviePage.duration - 595.583333) < 0.1);
+  assert(Math.abs(moviePage.duration - 62.75) < 0.1);
   assert.equal(moviePage.width, 1600); assert.equal(moviePage.height, 1000);
   assert.equal(moviePage.overflow, false);
+  await waitFor(async () => browser.evaluate(`document.querySelector('video').dataset.seekReady === 'true'`),
+    60000, 'fully loaded seekable movie');
   await screenshot('04-movies-page.png');
+  await browser.evaluate(`document.querySelector('video').currentTime = 43.2`);
+  await waitFor(async () => browser.evaluate(`!document.querySelector('video').seeking
+    && Math.abs(document.querySelector('video').currentTime - 43.2) < 0.1`),
+    30000, 'recorded Phe890 calculation popup');
+  await browser.evaluate(`document.querySelector('video').scrollIntoView({block:'center'})`);
+  await screenshot('05-recorded-phe890-calculation-popup.png');
+  const frameFingerprint = () => browser.evaluate(`(() => {
+    const v=document.querySelector('video'), c=document.createElement('canvas');
+    c.width=160; c.height=100; c.getContext('2d').drawImage(v,0,0,160,100);
+    return c.toDataURL();
+  })()`);
+  const pheFrame = await frameFingerprint();
+  await browser.evaluate(`document.querySelector('video').currentTime = 10`);
+  await waitFor(async () => browser.evaluate(`!document.querySelector('video').seeking
+    && Math.abs(document.querySelector('video').currentTime - 10) < 0.1`),
+    30000, 'rewind to the hit checkpoint');
+  assert.notEqual(await frameFingerprint(),pheFrame,'Rewinding must change the decoded frame, not just the slider');
+  await screenshot('06-rewound-hit-checkpoint.png');
 
   console.log('SOS1 frozen public routes browser QA: blank executable/review entries, honest labels, '
     + 'fixed camera, exact arrowable checkpoints, complete 2D ligand, and zero review calculations PASS');

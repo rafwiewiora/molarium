@@ -223,9 +223,24 @@ reference-informed design story:
   receptor-response states. Play, pause, and arrows use the main Molarium interface
   without scientific recalculation. The final campaign is losslessly compressed;
   its decoded canonical hash and complete ledger are verified before import.
-- [Full MP4](https://molarium.org/sos1-hit-to-bay293/movie): a 595.58-second,
-  1600 × 1000 recording of the complete recomputation. The release also includes
-  a 62.75-second recording of the exact checkpoint review and the paper PDF.
+- [Checkpoint MP4](https://molarium.org/sos1-hit-to-bay293/movie): the 62.75-second,
+  1600 × 1000 precomputed overview, with five one-second recorded-calculation
+  popups. Transparent overlays reuse Molarium's native calculation card; the
+  original checkpoint frames and timeline are unchanged. The full
+  calculation-by-calculation MP4 is not published; its original file and
+  fingerprint remain archived in the repository for provenance.
+
+The presentation-only addendum is pinned in
+`designer-intent-2026-09-04/checkpoint-popups-v2/movie.json`. It contains the
+source movie hashes, cue frame ranges, all transparent overlay frames, output
+fingerprint, and composition command. `bun scripts/render-sos1-checkpoint-popups.mjs`
+rebuilds it from the original checkpoint movie and native UI (requires Chrome
+and FFmpeg; refuses to replace an existing addendum). No science is rerun.
+Popup status messages match the actual worker progress text verbatim. The
+movie uses one-second keyframe intervals; the viewing page loads a local Blob
+so that scrubbing does not depend on the host supporting partial downloads.
+Human-readable live replay captions are a display-only layer: the pinned
+scientific action script and all of its arguments remain unchanged.
 
 The crystal series was inspected to infer designer intent, not to fit later
 crystal coordinates. The declared ligand placement is held fixed during Phe890
