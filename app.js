@@ -10283,7 +10283,7 @@ function installChemistActionsApi(module) {
         moveConnected:args.moveConnected !== false,
         branchDirection:structuredClone(definingMove.branchDirection),
         preservedPrecursorAtomCount:preservedAtomIds.length,
-        preservedPrecursorAtomIdsSha256,
+        preservedPrecursorAtomIdsSha256:preservedAtomIdsSha256,
         externalReferenceCoordinatesUsed:false },
       outputCoordinateSha256, ...coordinateChanges }); },
     'geometry.alignBranchToContact':async (args) => { chemistActionKeys(args,
@@ -10411,7 +10411,7 @@ function installChemistActionsApi(module) {
         appliedRotationDegrees:solved.appliedRotationDegrees,
         branchDirection:structuredClone(definingMove.branchDirection),
         preservedPrecursorAtomCount:preservedAtomIds.length,
-        preservedPrecursorAtomIdsSha256 },
+        preservedPrecursorAtomIdsSha256:preservedAtomIdsSha256 },
       outputCoordinateSha256, ...coordinateChanges }); },
     'geometry.translateAtoms':async (args) => { chemistActionKeys(args,
       ['atomIds','deltaAngstrom']);

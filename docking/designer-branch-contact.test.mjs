@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { solveDirectedBranchContact } from './designer-branch-contact.mjs';
 
 const common = { axisStart:{ x:0, y:0, z:0 }, axisEnd:{ x:1, y:0, z:0 },
@@ -26,5 +27,11 @@ assert.throws(() => solveDirectedBranchContact({ ...common,
   ligandFeature:{ x:2, y:0, z:0 } }), /lies on the rotation axis/);
 assert.throws(() => solveDirectedBranchContact({ ...common, solution:'crystal' }),
   /nearest, positive, or negative/);
+
+const appSource = readFileSync(new URL('../app.js', import.meta.url), 'utf8');
+assert.doesNotMatch(appSource, /preservedPrecursorAtomIdsSha256\s*[,}]/,
+  'public action summaries must bind the stored preserved-atom digest explicitly');
+assert.match(appSource,
+  /preservedPrecursorAtomIdsSha256:preservedAtomIdsSha256/g);
 
 console.log('Designer-directed branch contact solver tests: PASS');
