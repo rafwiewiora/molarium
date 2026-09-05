@@ -9,6 +9,7 @@ import { registeredFixedAtomMotion, registeredPoseRetentionPlan } from
   './docking/registered-pose-retention.mjs';
 import { createDesignerLigandPoseLock, designerLigandPoseLockDescriptor,
   inspectDesignerLigandPoseLock } from './docking/designer-ligand-pose-lock.mjs';
+import { solveDirectedBranchContact } from './docking/designer-branch-contact.mjs';
 import { resolveCampaignAssetSource } from './design-history/campaign-source.mjs';
 
 const MOLARIUM_NETWORK_POLICY = Object.freeze({
@@ -10284,6 +10285,133 @@ function installChemistActionsApi(module) {
         preservedPrecursorAtomCount:preservedAtomIds.length,
         preservedPrecursorAtomIdsSha256,
         externalReferenceCoordinatesUsed:false },
+      outputCoordinateSha256, ...coordinateChanges }); },
+    'geometry.alignBranchToContact':async (args) => { chemistActionKeys(args,
+      ['axisAtomIds','ligandFeatureAtomId','receptorTargetAtomId',
+        'targetDistanceAngstrom','solution']);
+      if (state.mode !== 'build')
+        throw new Error('Enter Design mode before aligning a ligand branch');
+      await rejectLigandMotionWhileDesignerFixed('geometry.alignBranchToContact');
+      if (!Array.isArray(args.axisAtomIds) || args.axisAtomIds.length !== 2
+        || args.axisAtomIds.some((id) => typeof id !== 'string' || !id)
+        || args.axisAtomIds[0] === args.axisAtomIds[1])
+        throw new Error('axisAtomIds must contain two distinct persistent ligand atom IDs');
+      if (typeof args.ligandFeatureAtomId !== 'string' || !args.ligandFeatureAtomId
+        || typeof args.receptorTargetAtomId !== 'string' || !args.receptorTargetAtomId)
+        throw new Error('ligandFeatureAtomId and receptorTargetAtomId must be persistent atom IDs');
+      const targetDistanceAngstrom = Number(args.targetDistanceAngstrom);
+      if (!Number.isFinite(targetDistanceAngstrom) || targetDistanceAngstrom <= 0
+        || targetDistanceAngstrom > 10)
+        throw new Error('targetDistanceAngstrom must be greater than 0 and at most 10');
+      const solution = chemistActionEnum(args.solution ?? 'nearest',
+        ['nearest','positive','negative'], 'solution');
+      const byId = await ensureChemistActionAtomIds();
+      const requestedIds = [...args.axisAtomIds, args.ligandFeatureAtomId,
+        args.receptorTargetAtomId];
+      requestedIds.forEach((id) => {
+        if (!byId.has(id)) throw new Error(`Unknown persistent atom ID: ${id}`);
+      });
+      const [axisStartIndex, axisEndIndex] = args.axisAtomIds.map((id) => byId.get(id));
+      const featureIndex = byId.get(args.ligandFeatureAtomId);
+      const targetIndex = byId.get(args.receptorTargetAtomId);
+      const ligandIndices = new Set(currentDockingLigandAtomIndices());
+      if (![axisStartIndex, axisEndIndex, featureIndex].every((index) => ligandIndices.has(index)))
+        throw new Error('The directed axis and ligandFeatureAtomId must be in the selected ligand');
+      if (!isProteinAtom(state.molecule.atoms[targetIndex]))
+        throw new Error('receptorTargetAtomId must identify a protein atom');
+      const axisBond = bondBetween(state.molecule, axisStartIndex, axisEndIndex);
+      if (!axisBond || Number(axisBond.order) !== 1 || axisBond.aromatic)
+        throw new Error('axisAtomIds must identify a non-aromatic single bond');
+      const movement = connectedSide(state.molecule, axisEndIndex, axisStartIndex,
+        axisStartIndex, axisEndIndex);
+      if (movement.cyclic)
+        throw new Error('The directed branch axis is cyclic and cannot be rotated independently');
+      if (!movement.atoms.includes(featureIndex))
+        throw new Error('ligandFeatureAtomId must lie on the moving side of the directed axis');
+      if (!movement.atoms.every((index) => ligandIndices.has(index)))
+        throw new Error('The directed moving branch must remain within the selected ligand');
+      if (movement.atoms.includes(targetIndex))
+        throw new Error('receptorTargetAtomId cannot be part of the moving branch');
+
+      const axisStart = state.molecule.atoms[axisStartIndex];
+      const axisEnd = state.molecule.atoms[axisEndIndex];
+      const feature = state.molecule.atoms[featureIndex];
+      const target = state.molecule.atoms[targetIndex];
+      const solved = solveDirectedBranchContact({ axisStart, axisEnd,
+        ligandFeature:feature, receptorTarget:target, targetDistanceAngstrom, solution });
+      const movingIndexSet = new Set(movement.atoms);
+      const movingAtomIds = movement.atoms.map((index) =>
+        state.molecule.atoms[index].designAtomId).sort();
+      const preservedAtoms = state.molecule.atoms.flatMap((atom, index) =>
+        movingIndexSet.has(index) ? [] : [{ atomId:atom.designAtomId,
+          coordinates:[Number(atom.x), Number(atom.y), Number(atom.z)] }]);
+      const preservedAtomIds = preservedAtoms.map(({ atomId }) => atomId).sort();
+      const movingAtomIdsSha256 = await sha256Hex(new TextEncoder()
+        .encode(JSON.stringify(movingAtomIds)));
+      const preservedAtomIdsSha256 = await sha256Hex(new TextEncoder()
+        .encode(JSON.stringify(preservedAtomIds)));
+      const coordinateBefore = chemistActionCoordinateSnapshot();
+      pushBuildHistory();
+      rotateAtomsAroundAxis(movement.atoms, axisStart,
+        subtractVectors(axisEnd, axisStart), solved.appliedRotationDegrees * Math.PI / 180);
+      const byIdAfter = new Map(state.molecule.atoms.map((atom) => [atom.designAtomId, atom]));
+      const alteredPreservedAtom = preservedAtoms.find(({ atomId, coordinates }) => {
+        const atom = byIdAfter.get(atomId);
+        return !atom || Number(atom.x) !== coordinates[0]
+          || Number(atom.y) !== coordinates[1] || Number(atom.z) !== coordinates[2];
+      });
+      if (alteredPreservedAtom) {
+        restoreMolecule(state.buildHistory.pop());
+        throw new Error(`Directed branch alignment moved preserved atom ${alteredPreservedAtom.atomId}`);
+      }
+      clearCalculationResult(); updateStoredBondDistances();
+      updateInfo(); updateGeometryControl(); updateHistoryButtons(); draw();
+      const outputCoordinateSha256 = await moleculeCoordinateSha256();
+      const coordinateChanges = chemistActionCoordinateChanges(coordinateBefore);
+      const movedFeature = state.molecule.atoms[featureIndex];
+      const achievedDistanceAngstrom = Math.hypot(movedFeature.x - target.x,
+        movedFeature.y - target.y, movedFeature.z - target.z);
+      const definingMove = {
+        schema:'molarium.designer-geometry-move/v1',
+        action:'geometry.alignBranchToContact',
+        coordinateOrigin:'current-visible-molecule',
+        coordinateOperation:'directed-branch-rotation-to-current-receptor-atom',
+        externalReferenceCoordinatesUsed:false,
+        orderedAxisAtomIds:structuredClone(args.axisAtomIds),
+        ligandFeatureAtomId:args.ligandFeatureAtomId,
+        receptorTargetAtomId:args.receptorTargetAtomId,
+        objective:{ kind:'atom-distance', targetDistanceAngstrom,
+          solution, rightHandAxisOrder:'first-to-second' },
+        priorDistanceAngstrom:solved.currentDistanceAngstrom,
+        achievedDistanceAngstrom,
+        targetReachable:solved.targetReachable,
+        attainableDistanceRangeAngstrom:[...solved.attainableDistanceRangeAngstrom],
+        appliedRotationDegrees:solved.appliedRotationDegrees,
+        branchDirection:{ cutBondAtomIds:structuredClone(args.axisAtomIds),
+          movingSideStartsAtAtomId:args.axisAtomIds[1],
+          movingAtomCount:movingAtomIds.length, movingAtomIdsSha256 },
+        preservedPrecursorAtomCount:preservedAtomIds.length,
+        preservedPrecursorAtomIdsSha256:preservedAtomIdsSha256,
+        precursorCoordinatePolicy:'all atoms outside the directed moving branch remain bitwise unchanged',
+        outputCoordinateSha256,
+        changedAtomIds:structuredClone(coordinateChanges.changedAtomIds),
+      };
+      state.molecule.source = { ...(state.molecule.source || {}),
+        latestDesignerGeometryMove:definingMove };
+      return chemistActionSummary({ designerBranchContact:{
+        coordinateOrigin:definingMove.coordinateOrigin,
+        externalReferenceCoordinatesUsed:false,
+        orderedAxisAtomIds:structuredClone(args.axisAtomIds),
+        ligandFeatureAtomId:args.ligandFeatureAtomId,
+        receptorTargetAtomId:args.receptorTargetAtomId,
+        objective:structuredClone(definingMove.objective),
+        priorDistanceAngstrom:solved.currentDistanceAngstrom,
+        achievedDistanceAngstrom, targetReachable:solved.targetReachable,
+        attainableDistanceRangeAngstrom:[...solved.attainableDistanceRangeAngstrom],
+        appliedRotationDegrees:solved.appliedRotationDegrees,
+        branchDirection:structuredClone(definingMove.branchDirection),
+        preservedPrecursorAtomCount:preservedAtomIds.length,
+        preservedPrecursorAtomIdsSha256 },
       outputCoordinateSha256, ...coordinateChanges }); },
     'geometry.translateAtoms':async (args) => { chemistActionKeys(args,
       ['atomIds','deltaAngstrom']);

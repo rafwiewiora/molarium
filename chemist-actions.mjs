@@ -125,6 +125,15 @@ const ACTIONS = Object.freeze({
     description:'Set a bond length, angle, or torsion along an ordered connected atom path; the path order defines the moved branch direction and all other precursor coordinates are preserved.',
     arguments:Object.freeze({ atomIds:'array of 2–4 persistent atom IDs', value:'finite number',
       moveConnected:'boolean' }) }),
+  'geometry.alignBranchToContact': Object.freeze({
+    description:'Rotate one explicitly directed ligand branch toward a receptor atom using only their current visible coordinates, preserving every atom outside that branch.',
+    arguments:Object.freeze({
+      axisAtomIds:'exactly two bonded ligand atom IDs ordered preserved-side to moving-side',
+      ligandFeatureAtomId:'ligand atom ID in the moving branch',
+      receptorTargetAtomId:'protein atom ID outside the moving branch',
+      targetDistanceAngstrom:'number greater than 0 and at most 10',
+      solution:'optional nearest | positive | negative right-hand rotation around the ordered axis',
+    }) }),
   'geometry.translateAtoms': Object.freeze({
     description:'Translate selected atoms by a bounded Cartesian displacement, matching the Design Move gesture.',
     arguments:Object.freeze({ atomIds:'array of 1–256 persistent atom IDs',

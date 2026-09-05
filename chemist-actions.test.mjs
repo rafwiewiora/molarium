@@ -23,6 +23,7 @@ assert(Object.hasOwn(api.describe().actions, 'view.highlightAtoms'));
 assert(Object.hasOwn(api.describe().actions, 'view.setDisplay'));
 assert(Object.hasOwn(api.describe().actions, 'session.loadStructure'));
 assert(Object.hasOwn(api.describe().actions, 'geometry.setInternalCoordinate'));
+assert(Object.hasOwn(api.describe().actions, 'geometry.alignBranchToContact'));
 assert(Object.hasOwn(api.describe().actions, 'calculation.run'));
 assert(Object.hasOwn(api.describe().actions, 'campaign.import'));
 assert(Object.hasOwn(api.describe().actions, 'designerScript.play'));
@@ -86,6 +87,11 @@ assert.deepEqual(Object.keys(api.describe().actions['pose.setDesignerLigandPoseF
   ['fixed','label'], 'the designer lock cannot accept a pose or coordinates');
 assert.match(api.describe().actions['geometry.setInternalCoordinate'].description,
   /path order defines.*branch direction.*other precursor coordinates are preserved/i);
+assert.match(api.describe().actions['geometry.alignBranchToContact'].description,
+  /directed ligand branch.*current visible coordinates.*preserving every atom outside/i);
+assert.deepEqual(Object.keys(api.describe().actions['geometry.alignBranchToContact'].arguments).sort(),
+  ['axisAtomIds','ligandFeatureAtomId','receptorTargetAtomId','solution',
+    'targetDistanceAngstrom'].sort());
 assert.match(api.describe().actions['designRoute.applyStep'].description,
   /current visible precursor.*preserving mapped precursor coordinates.*without loading external pose coordinates/i);
 assert(!Object.hasOwn(api.describe().actions, 'test.loadObject'));

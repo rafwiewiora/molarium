@@ -259,6 +259,15 @@ coordinates came from the current visible molecule and that no external referenc
 used. These records distinguish a chemist-directed relative edit from forbidden known-pose
 placement while remaining independent of any particular target or ligand.
 
+`geometry.alignBranchToContact` is the corresponding spatial-objective edit. The chemist supplies
+an ordered rotatable ligand bond (preserved side first, moving side second), one feature atom on the
+moving branch, one receptor atom already visible in the current structure, and a target interatomic
+distance. Molarium solves the directed bond rotation from those current coordinates, reports the
+signed rotation and attainable distance range, and again verifies that every atom outside the
+moving ligand branch is bitwise unchanged. An optional nearest/positive/negative choice resolves
+the two geometric solutions under the right-hand rule. No crystal or other reference pose is an
+input to this action.
+
 While fixed, side-chain enumeration and application may move receptor atoms but verify that the
 ligand hash is identical before and after. Ligand pose search/application, ligand-moving
 optimization, chemistry or fragment edits, route graph edits, and coordinate-bearing trajectory

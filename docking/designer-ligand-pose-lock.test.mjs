@@ -79,6 +79,7 @@ assert.match(appSource,
 assert.match(appSource,
   /cloneDesignerMoveCheckpointMolecule[\s\S]{0,350}\.\.\.\(molecule\.source \|\| \{\}\)/);
 for (const action of ['pose.refine','pose.apply','optimization.run','geometry.translateAtoms',
+  'geometry.alignBranchToContact',
   'designRoute.applyStep','calculation.selectFrame'])
   assert(appSource.includes(`rejectLigandMotionWhileDesignerFixed('${action}')`),
     `${action} must fail closed while designer ligand geometry is fixed`);
