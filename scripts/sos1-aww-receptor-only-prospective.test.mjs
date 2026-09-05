@@ -28,12 +28,16 @@ assert.match(source,
 assert.match(source, /stepId:AWW_STEP_ID/);
 assert.match(source, /aww-graph-only-campaign\.json/);
 const graphOnlyCommit = source.indexOf("'commit-aww-graph-only'");
-const designerTorsion = source.indexOf("execute('geometry.setInternalCoordinate'");
+const designerTorsion = source.indexOf("execute('geometry.alignBranchToContact'");
 assert(graphOnlyCommit > 0 && designerTorsion > graphOnlyCommit,
   'the raw AWW graph must be committed before designer torsion intent');
 assert.match(source, /DESIGNER_TORSION_ATOM_NAMES = Object\.freeze\(\['N7', 'C12', 'C15', 'CX2'\]\)/);
-assert.match(source, /execute\('geometry\.setInternalCoordinate'/);
-assert.match(source, /relativeRotationDegrees:180/);
+assert.match(source, /execute\('geometry\.alignBranchToContact'/);
+assert.match(source, /axisAtomIds:\[torsionAtoms\[1\]\.atomId, torsionAtoms\[2\]\.atomId\]/);
+assert.match(source, /ligandFeatureAtomId:ox3\.atomId/);
+assert.match(source, /receptorTargetAtomId:tyr884O\.atomId/);
+assert.match(source, /DESIGNER_CONTACT_TARGET_ANGSTROM = 2\.9/);
+assert.match(source, /externalReferenceCoordinatesUsed, false/);
 assert.match(source, /execute\('pose\.addContact'/);
 assert.match(source, /atomName:'N7'[\s\S]{0,180}residueName:'ASN'[\s\S]{0,100}residueIndex:879/);
 assert.match(source, /atomName:'OX3'[\s\S]{0,180}residueName:'TYR'[\s\S]{0,100}residueIndex:884/);
@@ -60,6 +64,7 @@ assert.match(source, /DISALLOWED_CURRENT_RUN_ACTIONS/);
 assert.doesNotMatch(source, /execute\('pose\.refine'/);
 assert.doesNotMatch(source, /execute\('pose\.apply'/);
 assert.doesNotMatch(source, /execute\('pose\.updateReceptorReference'/);
+assert.doesNotMatch(source, /execute\('geometry\.setInternalCoordinate'/);
 assert.doesNotMatch(source, /execute\('optimization\.run'/);
 assert.doesNotMatch(source, /execute\('calculation\.run'/);
 assert.doesNotMatch(source, /5OV[F-I]/,

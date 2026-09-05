@@ -16,6 +16,7 @@ const SOURCE_STATE_ID = 'AWZ';
 const PRODUCT_STATE_ID = 'AWW';
 const AWW_STEP_ID = 'open-phe890-pocket';
 const DESIGNER_TORSION_ATOM_NAMES = Object.freeze(['N7', 'C12', 'C15', 'CX2']);
+const DESIGNER_CONTACT_TARGET_ANGSTROM = 2.9;
 const PHE890 = Object.freeze({ residueName:'PHE', chain:'A', residueIndex:890,
   insertionCode:'' });
 const DISALLOWED_CURRENT_RUN_ACTIONS = new Set([
@@ -45,11 +46,6 @@ function circularDistanceDegrees(first, second) {
   if (difference <= -180) difference += 360;
   if (difference > 180) difference -= 360;
   return Math.abs(difference);
-}
-
-function oppositeTorsion(value) {
-  const rotated = Number(value) + 180;
-  return rotated > 180 ? rotated - 360 : rotated;
 }
 
 function torsionDegrees(first, second, third, last) {
@@ -154,9 +150,12 @@ async function main() {
       path:SOURCE_CAMPAIGN_PATH, sha256:SOURCE_CAMPAIGN_SHA256,
       coordinateLineage:'registered 5OVE/AXE coordinate boundary' },
     product:{ stateId:PRODUCT_STATE_ID, graphInput:'reported molecular graph only' },
-    designerIntent:{ action:'geometry.setInternalCoordinate',
-      atomNames:[...DESIGNER_TORSION_ATOM_NAMES], relativeRotationDegrees:180,
-      moveConnected:true,
+    designerIntent:{ action:'geometry.alignBranchToContact',
+      interpretation:'chemist-directed branch orientation in the current scene; not an external pose placement',
+      orderedAxisAtomNames:['C12', 'C15'], ligandFeatureAtom:'AWW OX3',
+      receptorTargetAtom:'TYR A884 O',
+      targetDistanceAngstrom:DESIGNER_CONTACT_TARGET_ANGSTROM,
+      solution:'nearest', externalReferenceCoordinatesUsed:false,
       interactionHypotheses:[
         { ligandAtom:'AWW N7', receptorAtom:'ASN A879 OD1', ligandRole:'donor' },
         { ligandAtom:'AWW OX3', receptorAtom:'TYR A884 O', ligandRole:'donor' },
@@ -186,7 +185,7 @@ async function main() {
     for (const action of ['campaign.import', 'campaign.verify', 'campaign.commitCurrent',
       'campaign.export', 'designRoute.resume', 'designRoute.applyStep',
       'protein.parameterize', 'pose.captureReference',
-      'geometry.setInternalCoordinate', 'pose.addContact',
+      'geometry.alignBranchToContact', 'pose.addContact',
       'pose.setDesignerLigandPoseFixed',
       'pose.enumerateSidechainRotamers', 'pose.applySidechainRotamer', 'session.inspect'])
       assert(description.actions[action], `Required public action is unavailable: ${action}`);
@@ -248,16 +247,29 @@ async function main() {
     inspections.stagedLigand = requireInspection((await execute('session.inspect', {
       scope:'ligand', includeCoordinates:true, maximumAtoms:256,
     }, 'inspect-staged-aww-ligand')).result, 'staged AWW ligand');
+    inspections.pocketAtDesignerIntent = requireInspection((await execute('session.inspect', {
+      scope:'pocket', includeCoordinates:true, maximumAtoms:500,
+    }, 'inspect-current-pocket-for-designer-intent')).result,
+    'current pocket for designer intent');
     const torsionAtoms = DESIGNER_TORSION_ATOM_NAMES.map((atomName) =>
       uniqueAtom(inspections.stagedLigand, PRODUCT_STATE_ID, 1104, atomName));
     const beforeDegrees = torsionDegrees(...torsionAtoms);
-    const requestedDegrees = oppositeTorsion(beforeDegrees);
-    const designerMove = await execute('geometry.setInternalCoordinate', {
-      atomIds:torsionAtoms.map((atom) => atom.atomId),
-      value:requestedDegrees, moveConnected:true,
-    }, 'set-designer-aww-torsion');
-    assert.equal(designerMove.result.internalCoordinate.kind, 'torsion');
-    assert.equal(designerMove.result.internalCoordinate.moveConnected, true);
+    const ox3 = uniqueAtom(inspections.stagedLigand, PRODUCT_STATE_ID, 1104, 'OX3');
+    const tyr884O = uniqueAtom(inspections.pocketAtDesignerIntent, 'TYR', 884, 'O');
+    const designerMove = await execute('geometry.alignBranchToContact', {
+      axisAtomIds:[torsionAtoms[1].atomId, torsionAtoms[2].atomId],
+      ligandFeatureAtomId:ox3.atomId,
+      receptorTargetAtomId:tyr884O.atomId,
+      targetDistanceAngstrom:DESIGNER_CONTACT_TARGET_ANGSTROM,
+      solution:'nearest',
+    }, 'align-designer-aww-branch-to-tyr884');
+    const designerBranchContact = designerMove.result.designerBranchContact;
+    assert.equal(designerBranchContact.externalReferenceCoordinatesUsed, false);
+    assert.equal(designerBranchContact.targetReachable, true,
+      'The chemist-requested current-scene contact is not reachable by the directed branch');
+    assert(Math.abs(designerBranchContact.achievedDistanceAngstrom
+      - DESIGNER_CONTACT_TARGET_ANGSTROM) <= 0.01,
+    'The public geometry action did not reproduce the chemist-requested contact distance');
 
     inspections.ligandIntent = requireInspection((await execute('session.inspect', {
       scope:'ligand', includeCoordinates:true, maximumAtoms:256,
@@ -265,8 +277,9 @@ async function main() {
     const rotatedAtoms = DESIGNER_TORSION_ATOM_NAMES.map((atomName) =>
       uniqueAtom(inspections.ligandIntent, PRODUCT_STATE_ID, 1104, atomName));
     const afterDegrees = torsionDegrees(...rotatedAtoms);
-    assert(circularDistanceDegrees(afterDegrees, requestedDegrees) <= 0.05,
-      'The public geometry action did not reproduce the requested designer torsion');
+    const expectedAfterDegrees = beforeDegrees + designerBranchContact.appliedRotationDegrees;
+    assert(circularDistanceDegrees(afterDegrees, expectedAfterDegrees) <= 0.05,
+      'The public geometry action did not reproduce its signed designer rotation');
     const hingeHypothesis = await execute('pose.addContact', {
       ligandAtom:{ componentId:'heterogen:A:1104::AWW', atomName:'N7' },
       receptorAtom:{ residueName:'ASN', chain:'A', residueIndex:879,
@@ -288,7 +301,7 @@ async function main() {
     }
     const fixed = await execute('pose.setDesignerLigandPoseFixed', {
       fixed:true,
-      label:'AWW explicit 180-degree directional intent before Phe890 response',
+      label:'AWW explicit OX3 toward Tyr884 directional intent before Phe890 response',
     }, 'fix-designer-ligand-intent');
     const designerLock = fixed.result.designerFixedLigandPose;
     assert.equal(designerLock?.active, true,
@@ -397,8 +410,8 @@ async function main() {
       sourceCampaignSha256:SOURCE_CAMPAIGN_SHA256,
       designerTorsion:{ atomNames:[...DESIGNER_TORSION_ATOM_NAMES],
         atomIds:torsionAtoms.map((atom) => atom.atomId), beforeDegrees,
-        relativeRotationDegrees:180, requestedDegrees, afterDegrees,
-        actionResult:designerMove.result.internalCoordinate },
+        afterDegrees, appliedRotationDegrees:designerBranchContact.appliedRotationDegrees },
+      designerBranchContact,
       designerFixedLigandPose:designerLock,
       designerInteractionHypotheses:{
         interpretation:'chemist-supplied directional hypotheses; not computed interaction results and not used to rank the receptor-only rotamers',
@@ -421,7 +434,8 @@ async function main() {
       scientificContract:{
         predecessorPosePolicy:'exact frozen AWZ full-system campaign; no regenerated AWT/AWZ geometry',
         graphAction:'registered AWW molecular graph installed by designRoute.applyStep',
-        directionalIntent:'chemist-specified 180 degree relative torsion through geometry.setInternalCoordinate',
+        directionalIntent:'chemist-specified C12-C15 branch orientation placing OX3 toward Tyr884 O through geometry.alignBranchToContact',
+        directionalIntentCoordinateOrigin:'current visible AWZ-derived molecule and receptor only; no external reference coordinates',
         designerInteractionHypotheses:'N7 to ASN A879 OD1 and OX3 to TYR A884 backbone O; declared intent only, not scoring results',
         designerFixedLigandPoseLockId:designerLock.lockId,
         ligandIntentFrozenBeforeReceptorPrediction:true,
@@ -442,7 +456,9 @@ async function main() {
         addedHeavyAtomIds:staged.result.designStep.addedHeavyAtomIds,
         graphOnlyCheckpoint:checkpoints.graphOnly },
       designerTorsion:{ atomNames:[...DESIGNER_TORSION_ATOM_NAMES],
-        beforeDegrees, requestedDegrees, afterDegrees },
+        beforeDegrees, afterDegrees,
+        appliedRotationDegrees:designerBranchContact.appliedRotationDegrees },
+      designerBranchContact,
       designerFixedLigandPose:designerLock,
       designerInteractionHypotheses:{ scoringResults:false,
         contacts:[hingeHypothesis.result.contact, distalHypothesis.result.contact] },
