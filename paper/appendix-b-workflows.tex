@@ -606,14 +606,13 @@ await api.execute({action:"campaign.create", args:{
   initialCommitMessage:"Register 5OVE/AXE starting state"}})
 // chemist or agent performs guarded molecular actions
 await api.execute({action:"campaign.commitCurrent", args:{
-  message:"Accept Phe890-out design state", tags:["prospective"]}})
+  message:"Record designer-directed AWW state", tags:["prospective"]}})
 await api.execute({action:"campaign.recordDecision", args:{
   disposition:"progressed",
-  rationale:"No new clashes after pocket-state search"}})
+  rationale:"Ligand pose locked before receptor-state search"}})
 await api.execute({action:"campaign.verify", args:{}})
 \end{lstlisting}
 
-\clearpage
 \workflowsection{B.11}{How skill contracts, API actions, and Design History fit together}{Current conceptual and executable relationship}{How does a written agent contract become an authorized action and then a durable scientific decision?}
 
 The three layers serve different purposes and should not be collapsed:

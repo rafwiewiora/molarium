@@ -138,12 +138,12 @@ Three task-specific views illustrate this separation. View emphasizes the molecu
 \begin{figure}[htbp]
   \centering
   \safeincludegraphics[width=\linewidth]{figures/fig2_sos1_hit_to_bay293.png}
-  \caption{Calculation-free review of five exact, hash-pinned SOS1 design states in the full Molarium interface. Starting from a blank canvas, each state is loaded by the public \texttt{campaign.import} action. The first state establishes one pocket camera; the later imports preserve it. All panels show the network-locked Local Lab. (A) The exact prepared 5OVE/AXE starting hit, reconstructed from the registered root history prefix; 5OVE/AXE was the sole coordinate-bearing input. (B) The frozen scaffold-rewrite state (AWT). (C) The frozen fragment-merge state (AWZ). (D) The frozen compound-21/AWW prediction with the predicted Phe890-out open pocket. (E) The relaxed final BAY-293/AXH frozen prediction. Ligands are purple, neighboring pocket atoms are gray, and Phe890 is gold. The panels are saved full-system campaign checkpoints, not interpolated structures, and stepping through them performs no scientific recomputation. Post-freeze comparison with 5OVI was evaluated separately and did not seed any displayed state; this figure presents the complete frozen prediction sequence without labeling it as experimentally accepted.}
+  \caption{Interim calculation-free review of hash-pinned SOS1 design states in the full Molarium interface. Starting from a blank canvas, each state is loaded by the public \texttt{campaign.import} action; the first state establishes the pocket camera and later imports preserve it. All panels show the network-locked Local Lab. The corrected prospective contract preserves the registered precursor pose, records the chemist's explicit $+150^{\circ}$ primary rotation of the AWW thiophene arm and intended OX3--Tyr884 backbone-carbonyl contact, locks the resulting ligand coordinates, and predicts only the Phe890 receptor response. The later 5OVH structure is unavailable to the replay and is opened only after the prediction has been frozen. Ligands are purple, neighboring pocket atoms are gray, and Phe890 is gold. This image is retained temporarily to show the checkpoint-review interface; it is not evidence of an accepted Phe890 state, final BAY-293 pose, or ligand RMSD.}
   \label{fig:sos1story}
 \end{figure}
 \clearpage
 
-The purpose of this replay is to make a medicinal-chemistry argument inspectable rather than merely animate a structural series. Starting from the sole coordinate-bearing input, 5OVE/AXE, it exposes each public action that changes the ligand graph, selects a pose, tests the Phe890 conformational hypothesis, relaxes the complex, and freezes a prediction; post-freeze accuracy is evaluated separately. Exact saved checkpoints support calculation-free review, while the executable route reruns the underlying operations. The final state only partially recovers 5OVI: the Phe890 side chain and conserved ligand core have RMSDs of 0.682 and 0.537~\AA{}, respectively, whereas the complete ligand and distal feature have RMSDs of 2.897 and 4.841~\AA{}. This demonstrates how Molarium can visualize and reproduce the design logic of medicinal- and computational-chemistry papers, including results that only partly recover the experimental structures.
+The purpose of this replay is to make a medicinal-chemistry argument inspectable rather than merely animate a structural series. Starting from the sole coordinate-bearing input, 5OVE/AXE, it exposes the public actions that change the ligand graph, preserve the registered precursor pose, record the chemist's selected AWW torsion and Tyr884 contact, lock the ligand, and then predict the Phe890 response. Exact saved checkpoints support calculation-free review, while the executable route performs the same operations through the public interface and API. Together these modes show how Molarium can visualize and reproduce the design logic reported in medicinal- and computational-chemistry papers rather than presenting only a final structure. Experimental comparison is a separate post-freeze operation and no final Phe890 or ligand-RMSD result is reported here pending an accepted run.
 
 The executable replay is available at \url{https://molarium.org/sos1-hit-to-bay293}.
 
@@ -470,8 +470,8 @@ A decision-to-state linkage has the following form; full identifiers are SHA-256
     "payload": {
       "targetCommitId": "commit:<selected-child>",
       "disposition": "progressed",
-      "reasonCodes": ["contact-loss"],
-      "rationale": "Phe-out removes growth-induced clashes.",
+      "reasonCodes": ["designer-contact-retained"],
+      "rationale": "Selected receptor state preserves the declared contact.",
       "evidenceIds": ["event:<rotamer-search>"]
     }
   }
@@ -482,13 +482,15 @@ Executable replays use \texttt{molarium.chemist-action-script/v1}. Scripts conta
 
 The SOS1 replay is identified by a stable public route and by exact release and content fingerprints. A human-readable URL can resolve to a newer release, whereas the release commit, route-file fingerprint, and canonical action-script fingerprint identify the reviewed bytes and normalized JSON content. The live workflow can capture a starting state, record exploration actions, apply and relax selected states, and export action and numerical records. Formal campaign commits and decision events are represented by the ledger layer described above.
 
-\subsection{SOS1 hit-to-BAY-293 executable replay}
+\subsection{SOS1 prospective design replay}
 
-The SOS1 example follows the analogue series reported by Hillig and colleagues \citep{hillig2019sos1}. The supplied design information consisted of the 5OVE/AXE coordinate-bearing starting complex and the published analogue graphs for AWT, AWZ, AWW, and AXH. The later analogue poses and receptor conformations were withheld during prediction. Each analogue was propagated from the preceding frozen prediction rather than from its corresponding later crystal structure.
+The SOS1 example follows the analogue series reported by Hillig and colleagues \citep{hillig2019sos1}. The supplied design information consisted of the 5OVE/AXE coordinate-bearing starting complex and the published analogue graphs for AWT, AWZ, AWW, and AXH. Later analogue poses and receptor conformations are validation-only information and are unavailable while a prediction is being constructed.
 
-The selected replay is generated from the complete frozen run's pre-freeze API audit rather than from a hand-maintained action list. Exploratory branches and coordinate-bearing inspection results remain in the audit but are not embedded in the selected replay. Later crystal structures are opened only after all four prediction checkpoints and the exploration audit have been hashed. Display and focus actions are non-mutating.
+The selected replay is generated from a frozen run's pre-validation API audit rather than from a hand-maintained action list. Exploratory branches and coordinate-bearing inspection results remain in the audit but are not embedded in the selected replay. For the AWW step, 5OVH is opened only after the designer-directed ligand state and predicted receptor response have been frozen and hashed. Display and focus actions are non-mutating.
 
-Graph edits are transferred by chemistry rather than by spatial coincidence or atom-list position. Element- and bond-order-exact atoms in a conserved bond graph may remain hard coordinate anchors. An attachment rewire or ring-system replacement automatically releases the complete changed region for sampling while retaining the unchanged external scaffold. Compatible donor or acceptor roles may transfer as soft pharmacophore restraints across a bioisosteric edit, including across elements, but cannot establish atom identity. This rule is used for every registered design route; it is not specific to SOS1 or to the rendered replay.
+Graph edits are transferred by chemistry rather than by spatial coincidence or atom-list position. Element- and bond-order-exact atoms in a conserved bond graph retain explicit lineage. In the AWW workflow, the registered precursor coordinates are preserved rather than being snapped to a later crystal pose. The chemist then uses \texttt{geometry.setInternalCoordinate} to apply a $+150^{\circ}$ primary rotation to the thiophene-bearing arm and records the intended OX3 donor contact to the Tyr884 backbone carbonyl oxygen using selectors resolved in the current structure. No 5OVH coordinates participate in either operation.
+
+The resulting AWW ligand pose is an explicit designer decision, not a pose prediction. Once that decision is recorded, the ligand coordinates are locked. The prospective calculation varies only the Phe890 side chain while the ligand, backbone, and other receptor atoms remain fixed. This separation prevents a receptor-response calculation from silently rewriting the chemist's ligand hypothesis.
 
 The analogue transitions involve substantial graph rewrites while preserving explicit atom lineage (Table~\ref{tab:appA_lineage}).
 
@@ -508,32 +510,32 @@ AWW--AXH & 15 & 16 & 17 & 1\\
 \end{tabular}
 \end{table}
 
-Each pose-search chain is an independently seeded local search, not a protein chain. The frozen-run manifest records the search width and execution policy used at every stage. Parameterization without motion assigns the numerical force-field representation while preserving coordinates; only the subsequent relaxation changes coordinates. The SOS1 route uses whole-system Sage 2.1.0 with deterministic Gasteiger charges. The exact particle counts and charge assignment remain attached to the frozen run rather than being copied into a hand-maintained narrative.
+The frozen-run manifest records every graph edit, internal-coordinate change, contact declaration, coordinate lock, and receptor candidate examined. Parameterization without motion assigns the numerical force-field representation while preserving coordinates. The SOS1 route uses whole-system Sage 2.1.0 with deterministic Gasteiger charges. Exact particle counts and charge assignment remain attached to the frozen run rather than being copied into a hand-maintained narrative.
 
-Before flexible relaxation, Molarium stores ligand bond lengths and rejects a relaxed pose if any heavy-atom bond is both more than 0.45 \AA{} longer and 1.25-fold its assigned target, or both more than 0.35 \AA{} shorter and below 0.75-fold its target. Rejected relaxation restores the previous pose rather than accepting an improved score with a broken molecular geometry.
+The AWW receptor-response verifier compares ligand coordinates before and after every candidate calculation and rejects any candidate that moves the locked designer ligand. Contact measurements and candidate coordinates are retained even for rejected states, but rejection cannot be converted into a promotable result by the review or replay layer.
 
 \begin{table}[htbp]
 \centering\small
-\caption{Sequence of molecular states in the SOS1 replay. Predictions, rather than future crystal structures, seed the next step.}
+\caption{Prospective construction and validation boundary for the AWW designer-intent replay.}
 \label{tab:appA_sos1_beats}
 \begin{tabularx}{\linewidth}{@{}p{0.07\linewidth}p{0.25\linewidth}X@{}}
 \toprule
 \textbf{Step} & \textbf{Operation} & \textbf{State/evidence}\\
 \midrule
-0 & Load and prepare & 5OVE/AXE only; capture the compound 1 reference and coordinate boundary\\
-1 & Rewrite to compound 17 (AWT) & Search independent reference-guided poses; apply the selected pose; parameterize; relax\\
-2 & Rewrite to compound 18 (AWZ) & Propagate from predicted AWT, not 5OVF; apply, parameterize, relax\\
-3 & Grow compound 21 (AWW) & New growth enters the Phe890-in volume; evaluate the resulting ligand--pocket contacts\\
-4 & Resolve pocket state & Enumerate discrete Phe890 rotamers; select outward branch; retain the moved receptor as the next reference\\
-5 & Predict BAY-293 (AXH) & Grow from frozen AWW; stratified pose search; apply; parameterize without motion; relax; freeze\\
-6 & Evaluate holdouts & Compare AWT/AWZ/AWW/BAY-293 with 5OVF/5OVG/5OVH/5OVI\\
+0 & Load and prepare & 5OVE/AXE is the sole coordinate-bearing input\\
+1 & Register the precursor & Apply the registered graph edits while preserving the precursor pose and atom lineage\\
+2 & Direct AWW geometry & Apply the chemist's $+150^{\circ}$ primary arm rotation using current coordinates only\\
+3 & Record interaction intent & Declare the AWW OX3 donor--Tyr884 backbone-carbonyl-oxygen contact\\
+4 & Lock the ligand & Freeze all ligand coordinates as the designer-selected hypothesis\\
+5 & Predict receptor response & Enumerate and rank Phe890 states with ligand, backbone, and other receptor atoms fixed\\
+6 & Freeze, then validate & Hash the prediction before opening 5OVH for measurement-only comparison\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-The Phe890 conformational step is treated as a discrete state search because local minimization does not reliably cross the relevant side-chain torsional barrier. Complete $\chi_1/\chi_2$ candidates are generated before coupled ligand--pocket pose search and relaxation. Branches are ranked from post-relaxation coordinate evidence, with chemically invalid states rejected before score comparison. The selected basin and its alternatives are recorded before 5OVH or 5OVI is revealed.
+The Phe890 conformational step is treated as a discrete receptor-state search because local minimization does not reliably cross the relevant side-chain torsional barrier. Complete $\chi_1/\chi_2$ candidates are generated against the fixed designer ligand and ranked prospectively, with chemically invalid states rejected before score comparison. The selected basin and its alternatives are recorded before 5OVH is revealed. No particular Phe890 basin is claimed here until a run passes the registered scientific acceptance checks.
 
-For post-freeze structural evaluation, each predicted receptor is aligned to its holdout using the common pocket C$\alpha$ atoms. Ligand RMSD is then calculated over the complete registered heavy-atom graph, minimizing only over graph automorphisms; the ligand itself is not fitted. The evaluator also checks hard-core geometry, released and seed-only regions, Phe890 side-chain geometry, covalent integrity, severe clashes, and AWW-to-AXH continuity. Each reported result retains its per-state acceptance status; freezing a complete prediction does not imply that it passed the later holdout evaluation.
+For post-freeze structural evaluation, the predicted receptor can be aligned to 5OVH using common pocket C$\alpha$ atoms and the saved designer-directed AWW geometry can be measured against the experimental structure. The validation record is measurement-only: it contains no holdout coordinates that can be imported into the replay. Each result retains its acceptance status; freezing a prediction does not imply that it passed the later experimental comparison.
 
 \ifdefined\SosAcceptedRunId
 \begin{table}[htbp]
@@ -555,7 +557,7 @@ BAY-293 & 5OVI & \SosAxhLigandRmsd & \SosAxhPheChiOne & \SosAxhPheChiTwo\\
 Run \SosAcceptedRunId{} passed all registered holdout and continuity checks. The exact evaluation-summary fingerprint is \texttt{\SosEvaluationHashShort}; the generated table above is not maintained independently of that record.
 \fi
 
-The interface replay executes from a blank canvas through the public Chemist Actions API. Pose and rotamer generation leave coordinates unchanged until an explicit Apply action. The replay therefore represents discrete state transitions rather than interpolated trajectories or molecular dynamics. Action counts and timings remain attached to the frozen-run audit and render manifest; the rendered sequence is not used as a performance benchmark. Comparison of fragment-bound 6EPM with the 5OVE starting structure shows that the inhibitory Tyr884 arrangement is already present at the coordinate boundary; the hit-only route does not predict a Tyr884 transition.
+The interface replay executes from a blank canvas through the public Chemist Actions API. The precursor-preserving graph operation, $+150^{\circ}$ internal-coordinate change, Tyr884 contact declaration, ligand lock, Phe890 enumeration, and prediction freeze are therefore inspectable state transitions rather than an interpolated trajectory or molecular dynamics. Action counts and timings remain attached to the frozen-run audit and render manifest; the rendered sequence is not used as a performance benchmark. The route predicts a Phe890 response to a fixed ligand hypothesis; it does not predict a Tyr884 backbone transition.
 
 \end{small}
 
