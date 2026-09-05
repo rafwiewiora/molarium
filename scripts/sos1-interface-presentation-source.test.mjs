@@ -15,6 +15,15 @@ assert.match(app, /'depictionPinnedLigand', 'depictionOrientationAnchor'/,
   'story checkpoints must retain the active ligand chosen for 2D depiction');
 assert.match(app, /restoreDesignerMoveCheckpoint[\s\S]*?state\.depictionKey = null; state\.depictionGlobalAtomIndices = \[\]/,
   'checkpoint navigation must rebuild the 2D atom map against restored coordinates');
+assert.match(app,
+  /async function presentDesignerMoveStep[\s\S]*?await awaitScheduledRegisteredLigandDepiction\(\)[\s\S]*?captureDesignerMoveCheckpoint/,
+  'the after phase must settle the registered-ligand SVG before capturing a visible checkpoint');
+assert.match(app,
+  /coverage\.atomCount !== target\.globalAtomIndices\.length[\s\S]*?coverage\.bondCount !== target\.molecule\.bonds\.length/,
+  'registered-ligand checkpoints must fail closed on incomplete SVG atom or bond coverage');
+assert.match(app,
+  /source\?\.registeredLigandGraph\?\.graphSha256[\s\S]*?source\?\.designRoute\?\.coordinateInputClass === 'registered-hit-only'/,
+  'hash-pinned registered graphs and registered route intermediates must retain a graph-faithful drawing fallback');
 
 assert.equal(story.actions.filter((step) => step.action === 'view.focusComponent').length, 1);
 assert.equal(story.actions.filter((step) => step.action === 'view.focusAtoms').length, 0);

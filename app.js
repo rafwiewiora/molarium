@@ -1110,7 +1110,9 @@ async function update2DDepiction() {
     const anchor = activeDepictionOrientationAnchor();
     const allowUnsanitizedDepictionFallback = Boolean(state.molecule?.source?.initialGeometryPolish
       || state.chemistryTransaction?.snapshot?.source?.initialGeometryPolish
-      || state.molecule?.source?.verifiedCampaignSnapshot?.verificationValid === true);
+      || state.molecule?.source?.verifiedCampaignSnapshot?.verificationValid === true
+      || state.molecule?.source?.registeredLigandGraph?.graphSha256
+      || state.molecule?.source?.designRoute?.coordinateInputClass === 'registered-hit-only');
     const result = await runRDKitJob('depict', target.molecule, () => {},
       { allowUnsanitizedDepictionFallback });
     if (sequence !== state.depictionSequence || key !== state.depictionKey) return;
@@ -1172,6 +1174,64 @@ function schedule2DDepiction(delay = 50) {
   }
   else update2DSelectionOverlay();
   state.depictionTimer = setTimeout(update2DDepiction, delay);
+}
+
+function depictionSvgCoverage(svg, target) {
+  const atomOrdinals = new Set(), bondOrdinals = new Set();
+  svg?.querySelectorAll('[class]').forEach((node) => {
+    for (const className of node.classList) {
+      const atom = /^atom-(\d+)$/.exec(className);
+      const bond = /^bond-(\d+)$/.exec(className);
+      if (atom) atomOrdinals.add(Number(atom[1]));
+      if (bond) bondOrdinals.add(Number(bond[1]));
+    }
+  });
+  return {
+    atomCount:[...atomOrdinals].filter((index) => index >= 0
+      && index < target.globalAtomIndices.length).length,
+    bondCount:[...bondOrdinals].filter((index) => index >= 0
+      && index < target.molecule.bonds.length).length,
+  };
+}
+
+function completedRegisteredLigandDepiction(target) {
+  const panel = document.querySelector('#structure-2d-panel');
+  const svg = document.querySelector('#structure-2d-drawing svg');
+  if (panel.dataset.error) throw new Error(`Registered-ligand 2D depiction failed: ${panel.dataset.error}`);
+  if (panel.classList.contains('hidden') || panel.dataset.pending || !svg)
+    throw new Error('Registered-ligand 2D depiction did not complete');
+  const coverage = depictionSvgCoverage(svg, target);
+  if (state.depictionComponentId !== target.componentId
+    || state.depictionGlobalAtomIndices.length !== target.globalAtomIndices.length
+    || state.depictionGlobalBondPairs.length !== target.molecule.bonds.length
+    || coverage.atomCount !== target.globalAtomIndices.length
+    || coverage.bondCount !== target.molecule.bonds.length)
+    throw new Error('Registered-ligand 2D depiction is incomplete');
+  return { componentId:target.componentId,
+    heavyAtomCount:target.globalAtomIndices.length,
+    bondCount:target.molecule.bonds.length,
+    svgHeavyAtomCoverageCount:coverage.atomCount,
+    svgBondCoverageCount:coverage.bondCount };
+}
+
+async function awaitScheduledRegisteredLigandDepiction() {
+  if (!state.depictionPinnedLigand) return null;
+  let lastError = null;
+  // Flush the most recent scheduled render directly.  A concurrent older
+  // RDKit result is invalidated by update2DDepiction's sequence token; retrying
+  // immediately follows the newer molecular target without a timing sleep.
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    clearTimeout(state.depictionTimer); state.depictionTimer = 0;
+    const target = depictionTarget();
+    if (!target) throw new Error('The registered ligand has no 2D depiction target');
+    const signature = depictionSignature(target);
+    await update2DDepiction();
+    const currentTarget = depictionTarget();
+    if (!currentTarget || depictionSignature(currentTarget) !== signature) continue;
+    try { return completedRegisteredLigandDepiction(currentTarget); }
+    catch (error) { lastError = error; }
+  }
+  throw lastError || new Error('Registered-ligand 2D depiction was superseded before completion');
 }
 
 function depictionAtomPoint(svg, atomIndex) {
@@ -9026,7 +9086,7 @@ function showDesignerMoveResultCue(step) {
   }
 }
 
-function presentDesignerMoveStep(index, phase) {
+async function presentDesignerMoveStep(index, phase) {
   const script = state.designerMoveScript;
   if (!script) throw new Error('Load a designer-move script first');
   if (!Number.isInteger(index) || index < 0 || index >= script.actions.length)
@@ -9050,6 +9110,10 @@ function presentDesignerMoveStep(index, phase) {
     updateDesignerMoveControls(
       `Move ${index + 1} of ${script.actions.length} · ${step.caption || step.action}`);
   } else {
+    // A molecular action can schedule registered-ligand/RDKit drawing after
+    // its public API result is ready.  Settle that exact drawing before the
+    // visible frontier advances or its review checkpoint is captured.
+    const depiction = await awaitScheduledRegisteredLigandDepiction();
     state.designerMoveReplayActionRunning = false;
     state.designerMoveReplayIndex = index + 1;
     showDesignerMoveResultCue(step);
@@ -9059,6 +9123,8 @@ function presentDesignerMoveStep(index, phase) {
     captureDesignerMoveCheckpoint(index + 1, step);
     updateDesignerMoveControls(message, step.caption || step.action,
       designerMoveResultCaption(step));
+    return { index, phase, action:source.action, checkpointIndex:index + 1,
+      depiction };
   }
   return { index, phase, action:source.action,
     checkpointIndex:phase === 'after' ? index + 1 : null };
@@ -9745,7 +9811,7 @@ function installChemistActionsApi(module) {
         throw new Error('index must be a non-negative integer');
       const phase = chemistActionEnum(args.phase, ['before','after','clear'], 'phase');
       return chemistActionSummary({ designerPresentation:
-        presentDesignerMoveStep(index, phase) }); },
+        await presentDesignerMoveStep(index, phase) }); },
     'view.setMode':async (args) => { chemistActionKeys(args, ['mode']);
       const mode = chemistActionEnum(args.mode, ['view','build','run'], 'mode');
       if (!setMode(mode)) throw new Error(`Molarium could not enter ${mode} mode`);
@@ -10382,7 +10448,7 @@ function installChemistActionsApi(module) {
           designerPrimaryRotationDegrees,
           donorAtomIndex:byId.get(definition.donor.designAtomId),
           hydrogenAtomIndex:byId.get(definition.hydrogen.designAtomId),
-          acceptorAtomIndex,
+          acceptorAtomIndex:acceptorIndex,
           carbonylAtomIndex:carbonylCandidates[0].index,
           allowedResponseResidues:args.allowedResponseResidues });
         if (searched.selected.contacts.outsideAllowedResponseContactCount !== 0)
@@ -12432,6 +12498,9 @@ const molariumTestApi = Object.freeze({
   twoDDepiction() {
     const panel = document.querySelector('#structure-2d-panel');
     const svg = document.querySelector('#structure-2d-drawing svg');
+    const target = svg ? depictionTarget() : null;
+    const coverage = svg && target ? depictionSvgCoverage(svg, target)
+      : { atomCount:0, bondCount:0 };
     return { visible:!panel.classList.contains('hidden'), label:document.querySelector('#structure-2d-label').textContent,
       atomIndices:state.depictionGlobalAtomIndices.slice(), bondPairs:structuredClone(state.depictionGlobalBondPairs),
       heavyAtomCount:state.depictionGlobalAtomIndices.length,
@@ -12442,6 +12511,8 @@ const molariumTestApi = Object.freeze({
       selectedAtoms:state.selectedAtoms.slice(), tool:state.depictionTool, mode:state.mode,
       pendingChanges:state.chemistryTransaction?.editCount || 0,
       hasSvg:Boolean(svg), atomClasses:svg?.querySelectorAll('[class*="atom-"]').length || 0,
+      svgHeavyAtomCoverageCount:coverage.atomCount,
+      svgBondCoverageCount:coverage.bondCount,
       rdkitVersion:panel.dataset.rdkitVersion || null,
       sanitization:panel.dataset.sanitization || null,
       alignedAtoms:Number(panel.dataset.alignedAtoms || 0),

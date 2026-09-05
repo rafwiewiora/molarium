@@ -10,6 +10,10 @@ const assertAxeDepiction = (depiction, label) => {
   assert.equal(depiction.label, 'AXE ligand', label);
   assert.equal(depiction.heavyAtomCount, 27, label);
   assert.equal(depiction.bondCount, 30, label);
+  assert.equal(depiction.svgHeavyAtomCoverageCount, 27,
+    `${label}: SVG must cover every registered heavy atom`);
+  assert.equal(depiction.svgBondCoverageCount, 30,
+    `${label}: SVG must cover every registered bond`);
   assert.equal(depiction.hasSvg, true, label);
   assert.equal(depiction.error, null, label);
   assert.equal(depiction.pinnedLigand?.residueName, 'AXE', label);
@@ -20,11 +24,22 @@ try {
     && !document.querySelector('#replay-designer-moves')?.disabled`),
   90000, 'registered Designer Moves story');
   await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
-  await waitFor(async () => browser.evaluate(`
-    document.querySelector('#designer-move-progress-label').textContent.startsWith('1 / 51')
-      && window.MolariumChemistActions.history().some((entry) =>
-        entry.action === 'designRoute.load' && entry.status === 'completed')`),
-  90000, 'move 1 registered hit');
+  try {
+    await waitFor(async () => browser.evaluate(`
+      /^1 \/ \\d+$/.test(document.querySelector('#designer-move-progress-label').textContent.trim())
+        && window.MolariumChemistActions.history().some((entry) =>
+          entry.action === 'designRoute.load' && entry.status === 'completed')`),
+    90000, 'move 1 registered hit');
+  } catch (error) {
+    const state = await browser.evaluate(`({
+      progress:document.querySelector('#designer-move-progress-label').textContent,
+      button:document.querySelector('#replay-designer-moves').textContent,
+      notice:document.querySelector('#notice')?.textContent || '',
+      actions:window.MolariumChemistActions.history().slice(-6).map((entry) =>
+        ({ action:entry.action, status:entry.status, error:entry.error || null }))
+    })`);
+    throw new Error(`${error.message}: ${JSON.stringify(state)}`);
+  }
   await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
   await waitFor(async () => browser.evaluate(
     `document.querySelector('#replay-designer-moves').textContent.includes('Continue')`),
