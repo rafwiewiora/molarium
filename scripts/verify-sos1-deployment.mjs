@@ -17,7 +17,7 @@ if (await exists('design-history/publications/sos1/designer-intent-2026-09-04/re
   const { verifySos1IntentRelease } = await import('./sos1-intent-release.mjs');
   const result = await verifySos1IntentRelease({ root });
   console.log(`SOS1 deployment preflight: verified designer intent · ${result.executableActions} actions · ${result.exactCheckpoints} exact checkpoints`);
-  if (await exists('design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/movie.json')) {
+  if (await exists('design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/movie.json')) {
     const { verifyCheckpointPopupMovie } = await import('./sos1-checkpoint-popups.mjs');
     const movie = await verifyCheckpointPopupMovie(root);
     console.log(`Checkpoint movie: ${movie.durationSeconds}s · ${movie.popups.length} recorded-calculation popups · 1s each`);

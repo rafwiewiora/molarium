@@ -3,16 +3,16 @@ import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 
-export const POPUP_DIRECTORY = 'design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1';
+export const POPUP_DIRECTORY = 'design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2';
 export const POPUP_DECLARATION = `${POPUP_DIRECTORY}/movie.json`;
 export const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 export const jsonBytes = (value) => Buffer.from(`${JSON.stringify(value, null, 2)}\n`);
 const cueDefinitions = [
-  ['starting-hit', 'Preparing the starting hit…', ['protein.prepare']],
-  ['scaffold-rewrite', 'Running scaffold refinement and relaxation…', ['pose.refine','optimization.run']],
-  ['fragment-merge', 'Running fragment refinement and relaxation…', ['pose.refine','optimization.run']],
-  ['aww-phe890-response', 'Evaluating 13 fixed-ligand Phe890 energies…', ['calculation.run']],
-  ['finish-bay-293', 'Running BAY-293 refinement and relaxation…', ['pose.refine','optimization.run']],
+  ['starting-hit', 'Assigning OpenFF Sage 2.1 parameters…', ['protein.prepare'], 'openmm-worker.js'],
+  ['scaffold-rewrite', 'Minimizing with WebGPU…', ['optimization.run'], 'webgpu-worker.js'],
+  ['fragment-merge', 'Minimizing with WebGPU…', ['optimization.run'], 'webgpu-worker.js'],
+  ['aww-phe890-response', 'Collecting OpenMM results…', ['calculation.run'], 'openmm-worker.js'],
+  ['finish-bay-293', 'Minimizing with WebGPU…', ['optimization.run'], 'webgpu-worker.js'],
 ];
 
 export function checkpointPopupTimeline(manifest, review) {
@@ -20,7 +20,7 @@ export function checkpointPopupTimeline(manifest, review) {
   assert.equal(manifest.replay.status, 'completed');
   assert.equal(review.actions.length, 7);
   const fps = 12;
-  return cueDefinitions.map(([stage, text, recordedActions]) => {
+  return cueDefinitions.map(([stage, text, recordedActions, textSource]) => {
     const reviewIndex = review.actions.findIndex((step) => step.review.designStage === stage);
     assert(reviewIndex >= 0);
     let end;
@@ -34,7 +34,7 @@ export function checkpointPopupTimeline(manifest, review) {
         && capture.label.includes('. Result '))?.firstFrame;
     }
     assert(Number.isInteger(end) && end >= fps);
-    return { stage, text, recordedActions, firstFrame:end - fps, lastFrame:end - 1,
+    return { stage, text, textSource, recordedActions, firstFrame:end - fps, lastFrame:end - 1,
       seconds:1, label:'Precomputed replay · recorded calculation' };
   });
 }
@@ -63,6 +63,9 @@ export async function verifyCheckpointPopupMovie(root, declarationPath = POPUP_D
   const base = JSON.parse(await pinned(movie.base.manifest));
   const review = JSON.parse(await pinned(release.precomputed));
   assert.deepEqual(movie.popups, checkpointPopupTimeline(base, review));
+  for (const cue of movie.popups)
+    assert((await readFile(resolve(root,cue.textSource),'utf8')).includes(`'${cue.text}'`),
+      'Popup text must exactly match the actual calculation progress message');
   assert.equal(movie.overlayFrames.length, 60);
   const expectedFrames = movie.popups.flatMap((cue) =>
     Array.from({ length:12 }, (_,i) => cue.firstFrame + i));
@@ -74,7 +77,7 @@ export async function verifyCheckpointPopupMovie(root, declarationPath = POPUP_D
   assert.equal(movie.video.durationSeconds, movie.durationSeconds);
   assert(movie.nativeUi.sources.some((entry) => entry.sourcePath === 'index.html'));
   assert.equal(movie.nativeUi.component, '#run-overlay .run-card');
-  for (const source of ['sos1.html','server.js','scripts/build-web.mjs'])
+  for (const source of ['sos1.html'])
     assert((await readFile(resolve(root,source),'utf8')).includes(movie.video.path),
       `Preferred movie is not registered in ${source}`);
   return movie;

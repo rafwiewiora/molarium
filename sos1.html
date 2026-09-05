@@ -32,13 +32,15 @@
     <article><h2>3. Watch the movie</h2><p>A 63-second tour of the saved checkpoints, with one-second popups for the recorded calculation steps. No calculations are rerun.</p><a class="button" href="#movie">Watch MP4</a></article>
   </section>
   <section id="movie" aria-labelledby="movie-title"><h2 id="movie-title">Checkpoint movie</h2>
-    <video controls preload="metadata" playsinline aria-label="SOS1 precomputed checkpoint movie with brief calculation popups">
-      <source src="/design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v1/checkpoint-overview.mp4" type="video/mp4">
-      <a href="/sos1-hit-to-bay293/movie">Download the MP4</a>
+    <video controls preload="auto" playsinline aria-label="SOS1 precomputed checkpoint movie with brief calculation popups">
+      <source src="/design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/checkpoint-overview.mp4" type="video/mp4">
+      Your browser cannot play this video. Use the download link below.
     </video>
-    <p><a href="/sos1-hit-to-bay293/movie">Download checkpoint MP4</a> · <a href="/design-history/publications/sos1/designer-intent-2026-09-04/executable.mp4">Full calculation-by-calculation recording (9m56s)</a></p>
+    <p id="movie-playback-status" role="status">Loading the movie for smooth forward and backward seeking…</p>
+    <p><a href="/design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/checkpoint-overview.mp4" download="sos1-checkpoint-overview.mp4">Download checkpoint MP4</a></p>
   </section>
   <p class="note">This demonstration is reference-informed: the crystal series was inspected to infer designer intent. Later crystal coordinates were not imported as design targets. The predicted response is a Phe890 side-chain flip; Tyr884 supplies the backbone contact. Source waters are retained. Recalculation can change numerical coordinates and energies; the saved checkpoints preserve the exact paper results.</p>
   <footer><a href="/design-history/publications/sos1/designer-intent-2026-09-04/molarium-paper.pdf">Read the paper</a> · <a href="/design-history/publications/sos1/designer-intent-2026-09-04/release.json">Release fingerprints and evidence</a> · <a href="/DESIGNER-MOVES.md">Replay methods</a></footer>
+  <script type="module" src="/sos1-movie.mjs"></script>
 </body>
 </html>

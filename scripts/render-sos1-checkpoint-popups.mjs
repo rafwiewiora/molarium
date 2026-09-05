@@ -61,7 +61,7 @@ try {
     '-framerate','12','-i',join(frames, 'frame-%04d.png'),
     '-filter_complex','[0:v][1:v]overlay=0:0:format=auto:shortest=1,format=yuv420p[v]',
     '-map','[v]','-an','-frames:v','753','-c:v','libx264','-preset','medium','-crf','18',
-    '-movflags','+faststart'];
+    '-g','12','-keyint_min','12','-sc_threshold','0','-movflags','+faststart'];
   const encode = Bun.spawn(['ffmpeg','-hide_banner','-loglevel','error',...encoding,join(stage,movieName)],
     { stdout:'ignore', stderr:'pipe' });
   const errors = await new Response(encode.stderr).text();
@@ -75,7 +75,7 @@ try {
   assert.equal(Number(info.duration), 62.75);
   const videoBytes = await readFile(join(stage,movieName));
   const sources = [];
-  for (const sourcePath of ['index.html','styles.css','molarium-workspace.css',
+  for (const sourcePath of ['index.html','styles.css','molarium-workspace.css','openmm-worker.js','webgpu-worker.js',
     'scripts/sos1-calculation-popup.html','scripts/sos1-calculation-popup.mjs','scripts/render-sos1-checkpoint-popups.mjs',
     'scripts/sos1-checkpoint-popups.mjs'])
     sources.push({ sourcePath, sha256:sha256(await readFile(resolve(root,sourcePath))) });
