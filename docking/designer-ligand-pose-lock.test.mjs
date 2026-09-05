@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { assertDesignerLigandPoseReceptorOnlyTransition,
-  createDesignerLigandPoseLock, DESIGNER_LIGAND_POSE_LOCK_SCHEMA,
+  createDesignerLigandPoseLock, DESIGNER_LIGAND_POSE_COORDINATE_ORIGIN,
+  DESIGNER_LIGAND_POSE_LOCK_SCHEMA,
   designerLigandPoseLockDescriptor, inspectDesignerLigandPoseLock } from
   './designer-ligand-pose-lock.mjs';
 
@@ -16,8 +17,17 @@ const molecule = () => ({ atoms:[
 
 const start = molecule();
 const definingMove = { schema:'molarium.designer-geometry-move/v1',
-  action:'geometry.setInternalCoordinate', atomIds:['ligand:L:1:C1','ligand:L:1:S1'],
-  kind:'bond', value:1.7, unit:'Å', moveConnected:true,
+  action:'geometry.setInternalCoordinate', coordinateOrigin:'current-visible-molecule',
+  coordinateOperation:'relative-internal-coordinate-edit',
+  externalReferenceCoordinatesUsed:false,
+  orderedAtomIds:['ligand:L:1:C1','ligand:L:1:S1'],
+  kind:'bond', priorValue:1.5, requestedValue:1.7, appliedValue:1.7,
+  unit:'Å', moveConnected:true,
+  branchDirection:{ cutBondAtomIds:['ligand:L:1:C1','ligand:L:1:S1'],
+    movingSideStartsAtAtomId:'ligand:L:1:S1', movingAtomCount:1,
+    movingAtomIdsSha256:'b'.repeat(64) },
+  preservedPrecursorAtomCount:2, preservedPrecursorAtomIdsSha256:'c'.repeat(64),
+  precursorCoordinatePolicy:'all atoms outside the directed moving branch remain bitwise unchanged',
   outputCoordinateSha256:'a'.repeat(64), changedAtomIds:['ligand:L:1:S1'] };
 const lock = await createDesignerLigandPoseLock({ molecule:start,
   ligandAtomIndices:[1,2], label:'Fix the chemist-selected thiophene orientation', definingMove });
@@ -27,6 +37,9 @@ assert.equal(lock.ligandAtomIds.length, 2);
 assert.match(lock.lockId, /^[0-9a-f]{64}$/);
 assert.match(lock.coordinateSha256, /^[0-9a-f]{64}$/);
 assert.match(lock.ligandStateSha256, /^[0-9a-f]{64}$/);
+assert.equal(lock.coordinateOrigin, DESIGNER_LIGAND_POSE_COORDINATE_ORIGIN);
+assert.equal(lock.externalReferenceCoordinatesUsed, false);
+assert.match(lock.coordinateInputPolicy, /no coordinate or pose-id input accepted/);
 assert(!Object.hasOwn(designerLigandPoseLockDescriptor(lock), 'ligandAtomIds'),
   'public action descriptor stays compact and does not copy coordinates or atom IDs');
 assert(!JSON.stringify(designerLigandPoseLockDescriptor(lock)).includes('coordinatesAngstrom'));
@@ -69,5 +82,11 @@ for (const action of ['pose.refine','pose.apply','optimization.run','geometry.tr
   'designRoute.applyStep','calculation.selectFrame'])
   assert(appSource.includes(`rejectLigandMotionWhileDesignerFixed('${action}')`),
     `${action} must fail closed while designer ligand geometry is fixed`);
+assert.match(appSource,
+  /coordinateOperation:'relative-internal-coordinate-edit'[\s\S]{0,900}branchDirection:[\s\S]{0,600}preservedPrecursorAtomIdsSha256/,
+  'the public internal-coordinate action records direction and preserved precursor evidence');
+assert.match(appSource,
+  /coordinateOperation:'registered-graph-edit-with-mapped-coordinate-preservation'[\s\S]{0,300}externalReferenceCoordinatesUsed:false/,
+  'registered graph edits explicitly distinguish precursor preservation from pose injection');
 
 console.log('Designer-fixed ligand pose lock tests: PASS');

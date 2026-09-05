@@ -10219,27 +10219,71 @@ function installChemistActionsApi(module) {
       updateGeometryControl();
       const before = geometrySelection();
       if (!before || before.error) throw new Error(before?.error || 'Invalid geometry selection');
+      const movement = geometryMovingAtoms(before);
+      if (movement.cyclic)
+        throw new Error(`Move connected atoms is unavailable across this ring ${before.kind}`);
+      const movingIndexSet = new Set(movement.atoms);
+      const movingAtomIds = movement.atoms.map((index) =>
+        state.molecule.atoms[index]?.designAtomId).filter(Boolean).sort();
+      const preservedAtoms = state.molecule.atoms.flatMap((atom, index) =>
+        movingIndexSet.has(index) ? [] : [{ atomId:atom.designAtomId,
+          coordinates:[Number(atom.x), Number(atom.y), Number(atom.z)] }]);
+      const preservedAtomIds = preservedAtoms.map(({ atomId }) => atomId).sort();
+      const movingAtomIdsSha256 = await sha256Hex(new TextEncoder()
+        .encode(JSON.stringify(movingAtomIds)));
+      const preservedAtomIdsSha256 = await sha256Hex(new TextEncoder()
+        .encode(JSON.stringify(preservedAtomIds)));
       const coordinateBefore = chemistActionCoordinateSnapshot();
       beginGeometryEdit();
       try {
         if (!applyGeometryValue(value)) throw new Error('Internal-coordinate edit failed');
       } finally { finishGeometryEdit(); }
       const after = geometrySelection();
+      const byIdAfter = new Map(state.molecule.atoms.map((atom) => [atom.designAtomId, atom]));
+      const alteredPreservedAtom = preservedAtoms.find(({ atomId, coordinates }) => {
+        const atom = byIdAfter.get(atomId);
+        return !atom || Number(atom.x) !== coordinates[0]
+          || Number(atom.y) !== coordinates[1] || Number(atom.z) !== coordinates[2];
+      });
+      if (alteredPreservedAtom) {
+        restoreMolecule(state.buildHistory.pop());
+        throw new Error(`Internal-coordinate edit moved preserved atom ${alteredPreservedAtom.atomId}`);
+      }
       const outputCoordinateSha256 = await moleculeCoordinateSha256();
       const coordinateChanges = chemistActionCoordinateChanges(coordinateBefore);
       const definingMove = {
         schema:'molarium.designer-geometry-move/v1',
         action:'geometry.setInternalCoordinate',
-        atomIds:structuredClone(args.atomIds),
-        kind:after.kind, value:after.value, unit:after.unit,
+        coordinateOrigin:'current-visible-molecule',
+        coordinateOperation:'relative-internal-coordinate-edit',
+        externalReferenceCoordinatesUsed:false,
+        orderedAtomIds:structuredClone(args.atomIds),
+        kind:after.kind, priorValue:before.value, requestedValue:value,
+        appliedValue:after.value, unit:after.unit,
         moveConnected:args.moveConnected !== false,
+        branchDirection:{
+          cutBondAtomIds:before.kind === 'bond'
+            ? structuredClone(args.atomIds.slice(0, 2))
+            : structuredClone(args.atomIds.slice(1, 3)),
+          movingSideStartsAtAtomId:before.kind === 'bond' ? args.atomIds[1] : args.atomIds[2],
+          movingAtomCount:movingAtomIds.length, movingAtomIdsSha256,
+        },
+        preservedPrecursorAtomCount:preservedAtomIds.length,
+        preservedPrecursorAtomIdsSha256:preservedAtomIdsSha256,
+        precursorCoordinatePolicy:'all atoms outside the directed moving branch remain bitwise unchanged',
         outputCoordinateSha256,
         changedAtomIds:structuredClone(coordinateChanges.changedAtomIds),
       };
       state.molecule.source = { ...(state.molecule.source || {}),
         latestDesignerGeometryMove:definingMove };
       return chemistActionSummary({ internalCoordinate:{ kind:after.kind,
-        value:after.value, unit:after.unit, moveConnected:args.moveConnected !== false },
+        orderedAtomIds:structuredClone(args.atomIds),
+        priorValue:before.value, requestedValue:value, value:after.value, unit:after.unit,
+        moveConnected:args.moveConnected !== false,
+        branchDirection:structuredClone(definingMove.branchDirection),
+        preservedPrecursorAtomCount:preservedAtomIds.length,
+        preservedPrecursorAtomIdsSha256,
+        externalReferenceCoordinatesUsed:false },
       outputCoordinateSha256, ...coordinateChanges }); },
     'geometry.translateAtoms':async (args) => { chemistActionKeys(args,
       ['atomIds','deltaAngstrom']);
@@ -11528,6 +11572,10 @@ function installChemistActionsApi(module) {
       return chemistActionSummary({ designStep:{ id:step.id, stateId:step.stateId,
         referenceStateId:step.referenceStateId || null,
         inputKind:step.inputKind, productHeavyAtoms:staged.productHeavyAtoms,
+        coordinateOrigin:'current-visible-precursor',
+        coordinateOperation:'registered-graph-edit-with-mapped-coordinate-preservation',
+        externalReferenceCoordinatesUsed:false,
+        precursorCoordinatePolicy:'mapped precursor atoms retain their current coordinates; only registered added or affected atoms are initialized',
         productHeavyGraph:structuredClone(staged.productHeavyGraph),
         commonHitHeavyAtoms:staged.commonHeavyAtoms,
         addedHeavyAtomIds:[...(staged.registeredEditRegion.addedHeavyAtomIds || [])],

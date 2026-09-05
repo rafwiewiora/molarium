@@ -41,6 +41,7 @@ assert.match(api.describe().actions['pose.addContact'].arguments.receptorAtom,
 assert(Object.hasOwn(api.describe().actions, 'pose.forgetContact'));
 assert(Object.hasOwn(api.describe().actions, 'pose.updateReceptorReference'));
 assert(Object.hasOwn(api.describe().actions, 'pose.setDesignerLigandPoseFixed'));
+assert(!Object.hasOwn(api.describe().actions, 'pose.applyRegisteredDesignerPose'));
 assert(Object.hasOwn(api.describe().actions, 'pose.enumerateSidechainRotamers'));
 assert(Object.hasOwn(api.describe().actions, 'pose.applySidechainRotamer'));
 assert(Object.hasOwn(api.describe().actions, 'pose.inspectRefinementCapture'));
@@ -80,7 +81,13 @@ assert.match(api.describe().actions['pose.refine'].arguments.featureSeedingProto
 assert.match(api.describe().actions['pose.inspectRefinementCapture'].arguments.captureId,
   /optional lowercase SHA-256/);
 assert.match(api.describe().actions['pose.setDesignerLigandPoseFixed'].description,
-  /designer intent.*receptor-response/i);
+  /current visible.*accepts no pose ID or coordinate payload.*receptor-response/i);
+assert.deepEqual(Object.keys(api.describe().actions['pose.setDesignerLigandPoseFixed'].arguments).sort(),
+  ['fixed','label'], 'the designer lock cannot accept a pose or coordinates');
+assert.match(api.describe().actions['geometry.setInternalCoordinate'].description,
+  /path order defines.*branch direction.*other precursor coordinates are preserved/i);
+assert.match(api.describe().actions['designRoute.applyStep'].description,
+  /current visible precursor.*preserving mapped precursor coordinates.*without loading external pose coordinates/i);
 assert(!Object.hasOwn(api.describe().actions, 'test.loadObject'));
 assert.match(api.describe().guarantee, /no arbitrary code/);
 assert.match(api.describe().guarantee, /every saved replay and visible playback control executes only public routes/i);

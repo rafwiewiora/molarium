@@ -247,7 +247,17 @@ An attachment, branch rotation, or torsion remains an ordinary public design act
 **Adjust Geometry** control and an agent both call `geometry.setInternalCoordinate`; its response
 records the changed persistent atom IDs and the defining move. The human or agent can then call
 `pose.setDesignerLigandPoseFixed({fixed:true, label:"reason"})`. Molarium hashes the current ligand
-coordinates, identity, chemistry, and internal topology without changing any coordinate.
+coordinates, identity, chemistry, and internal topology without changing any coordinate. The action
+does not accept a pose ID, coordinate array, crystal structure, or other external placement. It
+means only “hold the ligand exactly where the preceding public design actions left it.”
+
+For an internal-coordinate edit, the ordered two-to-four-atom path records the direction of the
+moved branch, the value before the edit, the requested and applied value, and hashes of the moved
+and preserved atom sets. The handler verifies that every atom outside the directed branch remains
+bitwise unchanged. A registered graph-edit step likewise reports that its mapped precursor
+coordinates came from the current visible molecule and that no external reference coordinates were
+used. These records distinguish a chemist-directed relative edit from forbidden known-pose
+placement while remaining independent of any particular target or ligand.
 
 While fixed, side-chain enumeration and application may move receptor atoms but verify that the
 ligand hash is identical before and after. Ligand pose search/application, ligand-moving

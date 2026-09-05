@@ -122,7 +122,7 @@ const ACTIONS = Object.freeze({
       graphSha256:'lowercase SHA-256 of the canonical registered graph',
       definition:'registered ligand definition with exact named atoms, charges, bond orders, and aromaticity' }) }),
   'geometry.setInternalCoordinate': Object.freeze({
-    description:'Set a bond length, angle, or torsion for a connected atom path.',
+    description:'Set a bond length, angle, or torsion along an ordered connected atom path; the path order defines the moved branch direction and all other precursor coordinates are preserved.',
     arguments:Object.freeze({ atomIds:'array of 2–4 persistent atom IDs', value:'finite number',
       moveConnected:'boolean' }) }),
   'geometry.translateAtoms': Object.freeze({
@@ -144,7 +144,7 @@ const ACTIONS = Object.freeze({
   'pose.captureReference': Object.freeze({ description:'Capture the current ligand pose as the reference.',
     arguments:Object.freeze({ mode:'propagate | selected-core' }) }),
   'pose.setDesignerLigandPoseFixed': Object.freeze({
-    description:'Fix or release the current ligand coordinates as provenance-labelled designer intent; while fixed, only receptor-response sampling may move coordinates.',
+    description:'Fix or release the current visible ligand coordinates as provenance-labelled designer intent; this action accepts no pose ID or coordinate payload, and while fixed only receptor-response sampling may move coordinates.',
     arguments:Object.freeze({ fixed:'boolean',
       label:'optional non-empty provenance label, at most 160 characters' }) }),
   'pose.updateReceptorReference': Object.freeze({
@@ -241,7 +241,7 @@ const ACTIONS = Object.freeze({
     arguments:Object.freeze({ routeId:'registered design-route ID',
       stateId:'registered hit or product state ID' }) }),
   'designRoute.applyStep': Object.freeze({
-    description:'Stage one registered design-route graph step, preserving any designer-selected exit vector.',
+    description:'Apply one registered graph edit to the current visible precursor, preserving mapped precursor coordinates and any designer-selected exit vector without loading external pose coordinates.',
     arguments:Object.freeze({ stepId:'persistent design-step ID',
       attachmentAtomId:'persistent atom ID selected as the growth attachment point when required' }) }),
   'designRoute.inspect': Object.freeze({

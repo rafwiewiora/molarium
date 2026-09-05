@@ -2,6 +2,8 @@ import { canonicalValue, sha256Object } from '../design-history/integrity.mjs';
 
 export const DESIGNER_LIGAND_POSE_LOCK_SCHEMA =
   'molarium.designer-fixed-ligand-pose/v1';
+export const DESIGNER_LIGAND_POSE_COORDINATE_ORIGIN =
+  'current-visible-chemist-edited-geometry';
 
 function finiteCoordinate(value, label) {
   const number = Number(value);
@@ -84,6 +86,9 @@ export function designerLigandPoseLockDescriptor(lock) {
     atomCount:lock.ligandAtomIds.length,
     coordinateSha256:lock.coordinateSha256,
     ligandStateSha256:lock.ligandStateSha256,
+    coordinateOrigin:lock.coordinateOrigin,
+    coordinateInputPolicy:lock.coordinateInputPolicy,
+    externalReferenceCoordinatesUsed:lock.externalReferenceCoordinatesUsed,
     provenance:lock.provenance,
   });
 }
@@ -101,6 +106,9 @@ export async function createDesignerLigandPoseLock({ molecule, ligandAtomIndices
   const body = canonicalValue({
     schema:DESIGNER_LIGAND_POSE_LOCK_SCHEMA,
     active:true,
+    coordinateOrigin:DESIGNER_LIGAND_POSE_COORDINATE_ORIGIN,
+    coordinateInputPolicy:'lock-current-coordinates; no coordinate or pose-id input accepted',
+    externalReferenceCoordinatesUsed:false,
     ligandAtomIds:state.atomIds,
     ...hashes,
     provenance,
@@ -112,6 +120,11 @@ export async function inspectDesignerLigandPoseLock({ molecule, ligandAtomIndice
   lock } = {}) {
   if (lock?.schema !== DESIGNER_LIGAND_POSE_LOCK_SCHEMA || lock.active !== true)
     throw new Error(`Expected an active ${DESIGNER_LIGAND_POSE_LOCK_SCHEMA} record`);
+  if (lock.coordinateOrigin !== DESIGNER_LIGAND_POSE_COORDINATE_ORIGIN
+    || lock.coordinateInputPolicy
+      !== 'lock-current-coordinates; no coordinate or pose-id input accepted'
+    || lock.externalReferenceCoordinatesUsed !== false)
+    throw new Error('Designer-fixed ligand pose must originate from current visible coordinates');
   const { lockId, ...body } = canonicalValue(lock);
   if (await sha256Object(body) !== lockId)
     throw new Error('Designer-fixed ligand pose record hash changed');
