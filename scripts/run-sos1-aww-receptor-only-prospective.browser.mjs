@@ -265,6 +265,11 @@ async function main() {
       routeId:'sos1-hit-only', stateId:SOURCE_STATE_ID,
     }, 'resume-awz-route');
     assert.equal(resumed.result.designRoute.currentStateId, SOURCE_STATE_ID);
+    const sourceParameterized = await execute('protein.parameterize', {},
+      'parameterize-awz-without-motion');
+    assert.equal(sourceParameterized.result.parameterization
+      .maximumCoordinateDisplacementAngstrom, 0,
+    'Parameter assignment must not move the frozen AWZ source coordinates');
     await execute('view.setMode', { mode:'build' }, 'enter-design');
     await execute('pose.captureReference', { mode:'propagate' }, 'capture-awz-reference');
 
