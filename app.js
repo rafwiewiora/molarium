@@ -9,7 +9,8 @@ import { registeredFixedAtomMotion, registeredPoseRetentionPlan } from
   './docking/registered-pose-retention.mjs';
 import { createDesignerLigandPoseLock, designerLigandPoseLockDescriptor,
   inspectDesignerLigandPoseLock } from './docking/designer-ligand-pose-lock.mjs';
-import { solveDirectedBranchContact } from './docking/designer-branch-contact.mjs';
+import { searchBestDirectionalBranchContact, solveDirectedBranchContact } from
+  './docking/designer-branch-contact.mjs';
 import { resolveCampaignAssetSource } from './design-history/campaign-source.mjs';
 
 const MOLARIUM_NETWORK_POLICY = Object.freeze({
@@ -10288,10 +10289,179 @@ function installChemistActionsApi(module) {
       outputCoordinateSha256, ...coordinateChanges }); },
     'geometry.alignBranchToContact':async (args) => { chemistActionKeys(args,
       ['axisAtomIds','ligandFeatureAtomId','receptorTargetAtomId',
-        'targetDistanceAngstrom','solution']);
+        'targetDistanceAngstrom','solution','contactId','designerPrimaryRotationDegrees',
+        'coupledAxisAtomIds','allowedResponseResidues']);
       if (state.mode !== 'build')
         throw new Error('Enter Design mode before aligning a ligand branch');
       await rejectLigandMotionWhileDesignerFixed('geometry.alignBranchToContact');
+      const solution = chemistActionEnum(args.solution ?? 'nearest',
+        ['nearest','positive','negative','best-directional'], 'solution');
+      if (solution === 'best-directional') {
+        if (typeof args.contactId !== 'string' || !args.contactId)
+          throw new Error('best-directional solution requires a prior manual contactId');
+        const rawDefinition = state.dockingReference?.hydrogenBonds
+          ?.find((entry) => entry.id === args.contactId);
+        if (!rawDefinition || rawDefinition.origin?.kind
+          !== 'user-added-hydrogen-bond-hypothesis')
+          throw new Error('best-directional solution requires a prior manual hydrogen-bond contact');
+        if (!state.dockingSelectedHbondIds.has(args.contactId))
+          throw new Error(`Contact ${args.contactId} must be required before directional search`);
+        const definition = effectiveDockingHydrogenBondDefinition(rawDefinition);
+        if (definition.receptorRole !== 'acceptor'
+          || definition.donor?.scope !== 'ligand'
+          || definition.hydrogen?.scope !== 'ligand'
+          || definition.acceptor?.scope !== 'receptor')
+          throw new Error('best-directional solution requires a ligand donor-H to receptor acceptor contact');
+        if (!Array.isArray(args.axisAtomIds) || args.axisAtomIds.length !== 2
+          || args.axisAtomIds.some((id) => typeof id !== 'string' || !id)
+          || args.axisAtomIds[0] === args.axisAtomIds[1])
+          throw new Error('axisAtomIds must contain two distinct persistent ligand atom IDs');
+        if (!Array.isArray(args.coupledAxisAtomIds) || args.coupledAxisAtomIds.length !== 2
+          || args.coupledAxisAtomIds.some((pair) => !Array.isArray(pair) || pair.length !== 2
+            || pair[0] === pair[1] || pair.some((id) => typeof id !== 'string' || !id)))
+          throw new Error('coupledAxisAtomIds must contain exactly two ordered ligand bonds');
+        const designerPrimaryRotationDegrees = Number(args.designerPrimaryRotationDegrees);
+        if (!Number.isFinite(designerPrimaryRotationDegrees)
+          || Math.abs(designerPrimaryRotationDegrees) > 360)
+          throw new Error('designerPrimaryRotationDegrees must be finite and within ±360');
+        if (!Array.isArray(args.allowedResponseResidues) || !args.allowedResponseResidues.length)
+          throw new Error('allowedResponseResidues must name the portable receptor responses');
+        const byId = await ensureChemistActionAtomIds();
+        const requestedIds = [...args.axisAtomIds, ...args.coupledAxisAtomIds.flat(),
+          definition.donor.designAtomId, definition.hydrogen.designAtomId,
+          definition.acceptor.designAtomId];
+        requestedIds.forEach((id) => {
+          if (typeof id !== 'string' || !byId.has(id))
+            throw new Error(`Unknown persistent atom ID: ${id}`);
+        });
+        const ligandIndices = new Set(currentDockingLigandAtomIndices());
+        const acceptorIndex = byId.get(definition.acceptor.designAtomId);
+        const carbonylCandidates = state.molecule.bonds.flatMap((bond) => {
+          const neighbor = bond.a === acceptorIndex ? bond.b
+            : bond.b === acceptorIndex ? bond.a : null;
+          if (!Number.isInteger(neighbor)) return [];
+          const atom = state.molecule.atoms[neighbor];
+          return atom?.element === 'C' && isProteinAtom(atom)
+            ? [{ index:neighbor, sameResidue:atom.residueName
+              === state.molecule.atoms[acceptorIndex].residueName
+              && atom.chain === state.molecule.atoms[acceptorIndex].chain
+              && atom.residueIndex === state.molecule.atoms[acceptorIndex].residueIndex
+              && (atom.insertionCode || '')
+                === (state.molecule.atoms[acceptorIndex].insertionCode || ''),
+              backboneCarbonyl:atom.atomName === 'C',
+              multipleBond:Number(bond.order || 1) > 1.1 }]
+            : [];
+        }).sort((first, second) => Number(second.multipleBond) - Number(first.multipleBond)
+          || Number(second.backboneCarbonyl) - Number(first.backboneCarbonyl)
+          || Number(second.sameResidue) - Number(first.sameResidue)
+          || first.index - second.index);
+        if (!carbonylCandidates.length
+          || carbonylCandidates.length > 1
+            && carbonylCandidates[0].multipleBond === carbonylCandidates[1].multipleBond
+            && carbonylCandidates[0].backboneCarbonyl === carbonylCandidates[1].backboneCarbonyl
+            && carbonylCandidates[0].sameResidue === carbonylCandidates[1].sameResidue)
+          throw new Error('The receptor contact does not identify one unambiguous carbonyl acceptor');
+        const inputCoordinateSha256 = await moleculeCoordinateSha256();
+        const searchDefinition = {
+          schema:'molarium.best-directional-branch-contact-search/v1',
+          coordinateOrigin:'current-visible-molecule', externalReferenceCoordinatesUsed:false,
+          contactId:args.contactId, contactDefinition:structuredClone(definition),
+          orderedPrimaryAxisAtomIds:structuredClone(args.axisAtomIds),
+          designerPrimaryRotationDegrees,
+          coupledAxisAtomIds:structuredClone(args.coupledAxisAtomIds),
+          allowedResponseResidues:structuredClone(args.allowedResponseResidues),
+          algorithm:'fixed-primary-two-coupled-rotors-plus-donor-h/v1',
+        };
+        const searchDefinitionSha256 = await sha256Hex(new TextEncoder()
+          .encode(JSON.stringify(searchDefinition)));
+        const searched = searchBestDirectionalBranchContact({ molecule:state.molecule,
+          ligandAtomIndices:[...ligandIndices],
+          primaryAxisAtomIndices:args.axisAtomIds.map((id) => byId.get(id)),
+          coupledAxisAtomIndices:args.coupledAxisAtomIds.map((pair) =>
+            pair.map((id) => byId.get(id))),
+          designerPrimaryRotationDegrees,
+          donorAtomIndex:byId.get(definition.donor.designAtomId),
+          hydrogenAtomIndex:byId.get(definition.hydrogen.designAtomId),
+          acceptorAtomIndex,
+          carbonylAtomIndex:carbonylCandidates[0].index,
+          allowedResponseResidues:args.allowedResponseResidues });
+        if (searched.selected.contacts.outsideAllowedResponseContactCount !== 0)
+          throw new Error('Best-directional search retained a severe contact outside allowed response residues');
+        const movingIndexSet = new Set(searched.movingAtomIndices);
+        const movingAtomIds = searched.movingAtomIndices.map((index) =>
+          state.molecule.atoms[index].designAtomId).sort();
+        const preservedAtoms = state.molecule.atoms.flatMap((atom, index) =>
+          movingIndexSet.has(index) ? [] : [{ atomId:atom.designAtomId,
+            coordinates:[Number(atom.x), Number(atom.y), Number(atom.z)] }]);
+        const preservedAtomIds = preservedAtoms.map(({ atomId }) => atomId).sort();
+        const [movingAtomIdsSha256, preservedAtomIdsSha256] = await Promise.all([
+          sha256Hex(new TextEncoder().encode(JSON.stringify(movingAtomIds))),
+          sha256Hex(new TextEncoder().encode(JSON.stringify(preservedAtomIds))),
+        ]);
+        const selectedCoordinateRecord = searched.selectedCoordinates.map((entry) => ({
+          atomId:state.molecule.atoms[entry.atomIndex].designAtomId,
+          coordinatesAngstrom:[...entry.coordinatesAngstrom],
+        })).sort((first, second) => first.atomId.localeCompare(second.atomId));
+        const selectedCandidateSha256 = await sha256Hex(new TextEncoder().encode(JSON.stringify({
+          selected:searched.selected, selectedCoordinateRecord,
+        })));
+        const coordinateBefore = chemistActionCoordinateSnapshot();
+        pushBuildHistory();
+        searched.selectedCoordinates.forEach(({ atomIndex, coordinatesAngstrom }) => {
+          const atom = state.molecule.atoms[atomIndex];
+          [atom.x, atom.y, atom.z] = coordinatesAngstrom;
+        });
+        const byIdAfter = new Map(state.molecule.atoms.map((atom) => [atom.designAtomId, atom]));
+        const alteredPreservedAtom = preservedAtoms.find(({ atomId, coordinates }) => {
+          const atom = byIdAfter.get(atomId);
+          return !atom || Number(atom.x) !== coordinates[0]
+            || Number(atom.y) !== coordinates[1] || Number(atom.z) !== coordinates[2];
+        });
+        if (alteredPreservedAtom) {
+          restoreMolecule(state.buildHistory.pop());
+          throw new Error(`Best-directional search moved preserved atom ${alteredPreservedAtom.atomId}`);
+        }
+        clearCalculationResult(); updateStoredBondDistances();
+        updateInfo(); updateGeometryControl(); updateHistoryButtons(); draw();
+        const outputCoordinateSha256 = await moleculeCoordinateSha256();
+        const coordinateChanges = chemistActionCoordinateChanges(coordinateBefore);
+        const hashes = { inputCoordinateSha256, searchDefinitionSha256,
+          selectedCandidateSha256, outputCoordinateSha256 };
+        const definingMove = {
+          schema:'molarium.designer-geometry-move/v1',
+          action:'geometry.alignBranchToContact', solution:'best-directional',
+          coordinateOrigin:'current-visible-molecule',
+          coordinateOperation:'fixed-primary-coupled-directional-contact-search',
+          externalReferenceCoordinatesUsed:false, contactId:args.contactId,
+          orderedAxisAtomIds:structuredClone(args.axisAtomIds),
+          coupledAxisAtomIds:structuredClone(args.coupledAxisAtomIds),
+          allowedResponseResidues:structuredClone(searched.allowedResponseResidues),
+          selected:structuredClone(searched.selected),
+          searchAudit:structuredClone(searched.searchAudit), hashes,
+          branchDirection:{ cutBondAtomIds:structuredClone(args.axisAtomIds),
+            movingSideStartsAtAtomId:args.axisAtomIds[1],
+            movingAtomCount:movingAtomIds.length, movingAtomIdsSha256 },
+          preservedPrecursorAtomCount:preservedAtomIds.length,
+          preservedPrecursorAtomIdsSha256:preservedAtomIdsSha256,
+          precursorCoordinatePolicy:'all atoms outside the directed primary moving branch remain bitwise unchanged',
+          changedAtomIds:structuredClone(coordinateChanges.changedAtomIds),
+        };
+        state.molecule.source = { ...(state.molecule.source || {}),
+          latestDesignerGeometryMove:definingMove };
+        return chemistActionSummary({ designerBranchContact:{
+          coordinateOrigin:definingMove.coordinateOrigin,
+          externalReferenceCoordinatesUsed:false, solution:'best-directional',
+          contactId:args.contactId,
+          orderedAxisAtomIds:structuredClone(args.axisAtomIds),
+          coupledAxisAtomIds:structuredClone(args.coupledAxisAtomIds),
+          allowedResponseResidues:structuredClone(searched.allowedResponseResidues),
+          selected:structuredClone(searched.selected),
+          searchAudit:structuredClone(searched.searchAudit), hashes,
+          branchDirection:structuredClone(definingMove.branchDirection),
+          preservedPrecursorAtomCount:preservedAtomIds.length,
+          preservedPrecursorAtomIdsSha256:preservedAtomIdsSha256 },
+        outputCoordinateSha256, ...coordinateChanges });
+      }
       if (!Array.isArray(args.axisAtomIds) || args.axisAtomIds.length !== 2
         || args.axisAtomIds.some((id) => typeof id !== 'string' || !id)
         || args.axisAtomIds[0] === args.axisAtomIds[1])
@@ -10303,8 +10473,6 @@ function installChemistActionsApi(module) {
       if (!Number.isFinite(targetDistanceAngstrom) || targetDistanceAngstrom <= 0
         || targetDistanceAngstrom > 10)
         throw new Error('targetDistanceAngstrom must be greater than 0 and at most 10');
-      const solution = chemistActionEnum(args.solution ?? 'nearest',
-        ['nearest','positive','negative'], 'solution');
       const byId = await ensureChemistActionAtomIds();
       const requestedIds = [...args.axisAtomIds, args.ligandFeatureAtomId,
         args.receptorTargetAtomId];

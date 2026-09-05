@@ -88,10 +88,15 @@ assert.deepEqual(Object.keys(api.describe().actions['pose.setDesignerLigandPoseF
 assert.match(api.describe().actions['geometry.setInternalCoordinate'].description,
   /path order defines.*branch direction.*other precursor coordinates are preserved/i);
 assert.match(api.describe().actions['geometry.alignBranchToContact'].description,
-  /directed ligand branch.*current visible coordinates.*preserving every atom outside/i);
+  /directed ligand branch.*current visible coordinates.*best-directional.*preserving every atom outside/i);
 assert.deepEqual(Object.keys(api.describe().actions['geometry.alignBranchToContact'].arguments).sort(),
-  ['axisAtomIds','ligandFeatureAtomId','receptorTargetAtomId','solution',
+  ['allowedResponseResidues','axisAtomIds','contactId','coupledAxisAtomIds',
+    'designerPrimaryRotationDegrees','ligandFeatureAtomId','receptorTargetAtomId','solution',
     'targetDistanceAngstrom'].sort());
+assert.match(api.describe().actions['geometry.alignBranchToContact'].arguments.solution,
+  /best-directional/);
+assert.match(api.describe().actions['geometry.alignBranchToContact'].arguments.contactId,
+  /prior required manual/i);
 assert.match(api.describe().actions['designRoute.applyStep'].description,
   /current visible precursor.*preserving mapped precursor coordinates.*without loading external pose coordinates/i);
 assert(!Object.hasOwn(api.describe().actions, 'test.loadObject'));

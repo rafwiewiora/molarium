@@ -126,13 +126,17 @@ const ACTIONS = Object.freeze({
     arguments:Object.freeze({ atomIds:'array of 2–4 persistent atom IDs', value:'finite number',
       moveConnected:'boolean' }) }),
   'geometry.alignBranchToContact': Object.freeze({
-    description:'Rotate one explicitly directed ligand branch toward a receptor atom using only their current visible coordinates, preserving every atom outside that branch.',
+    description:'Rotate an explicitly directed ligand branch using only current visible coordinates. Legacy modes solve one atom distance; best-directional fixes a declared primary rotation and searches two coupled ligand rotors plus donor-H direction against a prior manual contact while preserving every atom outside the primary branch.',
     arguments:Object.freeze({
       axisAtomIds:'exactly two bonded ligand atom IDs ordered preserved-side to moving-side',
-      ligandFeatureAtomId:'ligand atom ID in the moving branch',
-      receptorTargetAtomId:'protein atom ID outside the moving branch',
-      targetDistanceAngstrom:'number greater than 0 and at most 10',
-      solution:'optional nearest | positive | negative right-hand rotation around the ordered axis',
+      ligandFeatureAtomId:'legacy modes: ligand atom ID in the moving branch',
+      receptorTargetAtomId:'legacy modes: protein atom ID outside the moving branch',
+      targetDistanceAngstrom:'legacy modes: number greater than 0 and at most 10',
+      solution:'optional nearest | positive | negative | best-directional',
+      contactId:'best-directional: prior required manual hydrogen-bond contact ID',
+      designerPrimaryRotationDegrees:'best-directional: explicit fixed right-hand rotation around axisAtomIds',
+      coupledAxisAtomIds:'best-directional: exactly two additional ordered ligand single-bond axes',
+      allowedResponseResidues:'best-directional: 1–16 portable { residueName, chain, residueIndex, insertionCode? } receptor locators',
     }) }),
   'geometry.translateAtoms': Object.freeze({
     description:'Translate selected atoms by a bounded Cartesian displacement, matching the Design Move gesture.',
