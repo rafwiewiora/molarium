@@ -1,5 +1,10 @@
 # OpenFF SMIRNOFF WebGPU backend
 
+See the [independent native-OpenMM benchmark suite](../benchmarks/simulation/README.md)
+for current, source-hashed energy/force validation and GPU timing protocols.
+Numerical results further below are historical local measurements. In particular,
+Reference/WASM speed ratios are not comparisons against native OpenMM CUDA/OpenCL.
+
 Molarium's experimental GPU method is a browser-native evaluator implemented by
 `webgpu-worker.js` and `molarium-webgpu.wgsl`. It is a direct **SMIRNOFF System
 evaluator on WebGPU**, not an OpenMM WebGPU platform. For ordinary small

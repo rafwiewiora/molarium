@@ -1,0 +1,55 @@
+{
+  "schema": "molarium.simulation-benchmark-evidence/v1",
+  "attempt": "l4-20260905-a09",
+  "files": [
+    {
+      "name": "cuda-double-score.json.gz",
+      "sha256": "e525281bd88417ba9a5f657ab636378859ebbdc0706d4b8f7387ce52bc7d8d58",
+      "uncompressedSha256": "59510b0469d4434313c3a5ce68d7cc48d129daa0c7442f4172c19294337d0d46",
+      "bytes": 145394,
+      "compressedBytes": 23895
+    },
+    {
+      "name": "cuda-double.json.gz",
+      "sha256": "eede8d5a983d4346d2397cb9151b27e9d2b01557bb7f7028549ab73b455c2317",
+      "uncompressedSha256": "78935b51aad5510f2eb74cbbf811b69148536607d01837496f37d34a4acf5d0a",
+      "bytes": 4103909,
+      "compressedBytes": 1360562
+    },
+    {
+      "name": "cuda-mixed-score.json.gz",
+      "sha256": "fb9933c9b25a5cdf5c4c4c26720bafb819edb6566e2a0a5dc70dac9ca92d42f4",
+      "uncompressedSha256": "522732f1b581b054d34211d0bfc3605acb74ad3353497f06d1b3228f71ffd6e0",
+      "bytes": 145540,
+      "compressedBytes": 24495
+    },
+    {
+      "name": "cuda-mixed.json.gz",
+      "sha256": "1068f35a26350470cc7b5d3133e5f11194b8c20908d06527dae28cb383034ca8",
+      "uncompressedSha256": "9b3172b63ef9013c69c2e3e8ff705036ddc1e74bce3600524d7fc3f6a64f6f26",
+      "bytes": 4102994,
+      "compressedBytes": 1283203
+    },
+    {
+      "name": "cuda-single-score.json.gz",
+      "sha256": "faff52ae149d55221f0f3e5dfa45e37468fa4b8e92bbd3ababf95b720180d588",
+      "uncompressedSha256": "515118416d2096e65013528f80385822d89b24ea49e4b9b48bed91454a68ec01",
+      "bytes": 176014,
+      "compressedBytes": 29126
+    },
+    {
+      "name": "cuda-single.json.gz",
+      "sha256": "4bf398d4d459860fa5e5fdb60e7e013086bf2e34a390400ce2eb617cdbc08dde",
+      "uncompressedSha256": "5667f6425250057c6e2c977d1cac0394bc0cdc2b1a7e29d95a57e3cd4954e9aa",
+      "bytes": 4127586,
+      "compressedBytes": 1289372
+    },
+    {
+      "name": "packet-d8c1bea6a64355251391c3ef777203999bc48f43348c6760333cd0cea8c44ce0.json.gz",
+      "sha256": "8255c58785a75e2b05c45055a7392d83cc52287ff5693ca693e7a6c6ea86800c",
+      "uncompressedSha256": "d8c1bea6a64355251391c3ef777203999bc48f43348c6760333cd0cea8c44ce0",
+      "bytes": 52643916,
+      "compressedBytes": 4340648
+    }
+  ]
+}

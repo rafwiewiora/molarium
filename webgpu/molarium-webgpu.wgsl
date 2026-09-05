@@ -762,11 +762,92 @@ fn obcForce(atom : u32) -> vec3<f32> {
   return force;
 }
 
-@compute @workgroup_size(1)
-fn computeEnergy(@builtin(global_invocation_id) gid : vec3<u32>) {
-  if (gid.x == 0u) {
-    output[0] = potential(0xffffffffu, 0.0);
+// Sum each atom's upper-triangle row separately, then reduce a workgroup tree.
+// A single f32 accumulator over every pair loses small LJ/GB contributions on
+// proteins (the independent native-OpenMM benchmark catches this for ubiquitin).
+// This changes accumulation order only: the pair equations and exclusions are
+// the same as the force kernels and the former serial energy evaluator.
+fn energyRow(atomA : u32) -> f32 {
+  var nonbondedEnergy = 0.0;
+  var solventEnergy = 0.0;
+  let recordBase = params.numAtoms + 1u;
+  var exceptionCursor = exceptions[atomA];
+  let exceptionEnd = exceptions[atomA + 1u];
+  while (exceptionCursor < exceptionEnd
+      && exceptions[recordBase + exceptionCursor * 4u] <= atomA) {
+    exceptionCursor = exceptionCursor + 1u;
   }
+  if (useCutoff()) {
+    for (var cursor = exceptionCursor; cursor < exceptionEnd; cursor = cursor + 1u) {
+      let atomB = exceptions[recordBase + cursor * 4u];
+      nonbondedEnergy = nonbondedEnergy + nonbondPotentialWithParameters(atomA, atomB,
+        0xffffffffu, 0.0, exceptionParametersAt(cursor), false);
+    }
+    let count = neighborCount(atomA);
+    for (var cursor = 0u; cursor < count; cursor = cursor + 1u) {
+      let atomB = neighborAt(atomA, cursor);
+      if (atomB > atomA) {
+        if (exceptionParameters(atomA, atomB).w < 0.5) {
+          nonbondedEnergy = nonbondedEnergy + nonbondPotentialWithParameters(atomA, atomB,
+            0xffffffffu, 0.0, ordinaryPairParameters(atomA, atomB), true);
+        }
+        if (params.implicitSolvent != 0u) { solventEnergy = solventEnergy + obcPairEnergy(atomA, atomB); }
+      }
+    }
+  } else {
+    for (var atomB = atomA + 1u; atomB < params.numAtoms; atomB = atomB + 1u) {
+      var values = vec4<f32>(0.0);
+      if (exceptionCursor < exceptionEnd
+          && exceptions[recordBase + exceptionCursor * 4u] == atomB) {
+        values = exceptionParametersAt(exceptionCursor);
+        exceptionCursor = exceptionCursor + 1u;
+      } else {
+        values = ordinaryPairParameters(atomA, atomB);
+      }
+      nonbondedEnergy = nonbondedEnergy + nonbondPotentialWithParameters(atomA, atomB,
+        0xffffffffu, 0.0, values, false);
+      if (params.implicitSolvent != 0u) { solventEnergy = solventEnergy + obcPairEnergy(atomA, atomB); }
+    }
+  }
+  if (params.implicitSolvent != 0u) {
+    let charge = particleParameters(atomA).x;
+    let radius = obcParameters(atomA).x;
+    let born = max(bornData(atomA).x, 1.0e-8);
+    solventEnergy = solventEnergy - 0.5 * ONE_4PI_EPS0 * OBC_DIELECTRIC_FACTOR * charge * charge / born;
+    let ratio = radius / born;
+    let ratio2 = ratio * ratio;
+    let ratio6 = ratio2 * ratio2 * ratio2;
+    solventEnergy = solventEnergy + OBC_SA_FACTOR * (radius + OBC_PROBE_RADIUS)
+      * (radius + OBC_PROBE_RADIUS) * ratio6;
+  }
+  return nonbondedEnergy + solventEnergy;
+}
+
+var<workgroup> energyReduction : array<f32, 64>;
+
+@compute @workgroup_size(WORKGROUP_SIZE)
+fn computeEnergy(@builtin(local_invocation_id) lid : vec3<u32>) {
+  let lane = lid.x;
+  var energy = 0.0;
+  for (var index = lane; index < params.numBonds; index = index + WORKGROUP_SIZE) {
+    energy = energy + bondPotential(index, 0xffffffffu, 0.0);
+  }
+  for (var index = lane; index < params.numAngles; index = index + WORKGROUP_SIZE) {
+    energy = energy + anglePotential(index, 0xffffffffu, 0.0);
+  }
+  for (var index = lane; index < params.numTorsions; index = index + WORKGROUP_SIZE) {
+    energy = energy + torsionPotential(index, 0xffffffffu, 0.0);
+  }
+  for (var atom = lane; atom < params.numAtoms; atom = atom + WORKGROUP_SIZE) {
+    energy = energy + energyRow(atom);
+  }
+  energyReduction[lane] = energy;
+  workgroupBarrier();
+  for (var stride = WORKGROUP_SIZE / 2u; stride > 0u; stride = stride / 2u) {
+    if (lane < stride) { energyReduction[lane] = energyReduction[lane] + energyReduction[lane + stride]; }
+    workgroupBarrier();
+  }
+  if (lane == 0u) { output[0] = energyReduction[0]; }
 }
 
 @compute @workgroup_size(WORKGROUP_SIZE)

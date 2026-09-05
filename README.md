@@ -12,6 +12,19 @@ The original vector identity is available as a reusable [logo](./assets/molarium
 The [SOS1 paper and movies](https://molarium.org/sos1) include a full recomputable
 browser story, a seven-checkpoint precomputed replay, and the complete MP4.
 
+## Simulation accuracy and GPU benchmarks
+
+[Reproduce the energy, force, and speed benchmarks](./benchmarks/simulation/README.md).
+The suite compares the production WebGPU worker with independently constructed native
+OpenMM Systems, preserves every Cartesian force, and reports hardware, precision,
+timing scope, raw repetitions, source hashes, and failed attempts. It includes the
+official 2,489-atom DHFR GBSA input alongside isolated force terms, Trp-cage, ubiquitin,
+and cutoff/coordinate stress tests. Unsupported PME and periodic benchmarks are
+listed explicitly; they are not replaced by vacuum calculations.
+The [measured results](./benchmarks/simulation/results/README.md) distinguish
+fixed-input kernel agreement from original-input precision limits and preserve
+failures alongside passing cases.
+
 ## Quick start
 
 Large ONNX models are served as versioned, hash-checked release assets rather than stored in the

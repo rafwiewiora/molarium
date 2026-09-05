@@ -59,6 +59,8 @@ jobs:
         run: bun install --frozen-lockfile
       - name: Run scientific validation suite
         run: npm run test:ci:scientific
+      - name: Check simulation benchmark acceptance logic and parameter import
+        run: npm run test:simulation-benchmarks
 
   browser:
     name: Browser integration
