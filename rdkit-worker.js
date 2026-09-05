@@ -134,14 +134,22 @@ async function runCalculation(message) {
     } finally { rdMol?.delete(); }
   }
   if (job === 'depict') {
-    if (!molecule?.atoms?.length || molecule.atoms.length > 256)
-      throw new Error('2D depiction supports molecular components with 1–256 atoms');
+    const heavyAtomCount = molecule?.atoms?.filter((atom) => atom.element !== 'H').length || 0;
+    if (!heavyAtomCount || heavyAtomCount > 256 || molecule.atoms.length > MAX_V2000_ATOMS)
+      throw new Error('2D depiction supports molecular components with 1–256 heavy atoms');
     let rdMol;
     try {
       rdMol = module.get_mol(moleculeToMolBlock(molecule), JSON.stringify({
-        sanitize:false, removeHs:false, strictParsing:false,
+        sanitize:true, removeHs:true, strictParsing:false,
       }));
-      if (!rdMol) throw new Error('RDKit could not read this molecular component');
+      // Some provenance-bounded live graphs omit V2000-only atom-property
+      // flags (for example [nH]) in the viewer representation. Permit a
+      // drawing-only fallback for those graphs; calculations remain strict.
+      if (!rdMol && options.allowUnsanitizedDepictionFallback === true) rdMol = module.get_mol(
+        moleculeToMolBlock(molecule), JSON.stringify({
+          sanitize:false, removeHs:false, strictParsing:false,
+        }));
+      if (!rdMol) throw new Error('RDKit refused an unsanitizable molecular component');
       // The molecular input carries the live 3D conformer. Always replace it
       // with a genuine 2D layout before drawing. Constraining a redraw to the
       // previous complete MolBlock can over-constrain a rewritten substituent
@@ -165,6 +173,9 @@ async function runCalculation(message) {
         throw new Error('RDKit returned an invalid 2D depiction');
       self.postMessage({
         type:'result', id, job, svg, atomCount:molecule.atoms.length,
+        sanitization:options.allowUnsanitizedDepictionFallback === true
+          ? 'provenance-bounded graph; strict parse with drawing-only fallback'
+          : 'strict RDKit sanitization',
         rdkitVersion:module.version?.() || null, elapsedMs:performance.now() - started,
         platform:'WebAssembly', backend:'RDKit MolDraw2D',
       });

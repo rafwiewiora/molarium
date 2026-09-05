@@ -53,6 +53,27 @@ assert.equal(donorDefinition.acceptor.designAtomId, 'rec-O');
 assert.equal(manualHydrogenBondParticipantKey(donorDefinition),
   'acceptor|lig-N|lig-H|rec-O');
 
+const rehydrogenatedDonor = {
+  atoms:[
+    { element:'N', atomName:'N7', x:0,y:0,z:0, designAtomId:'aww:N7' },
+    { element:'H', atomName:'HNEW39', x:-1,y:0,z:0, designAtomId:'aww:HNEW39' },
+    { element:'H', atomName:'HNEW43', x:1,y:0,z:0, designAtomId:'aww:HNEW43' },
+    { record:'ATOM', residueName:'ASN', chain:'A', residueIndex:879,
+      atomName:'OD1', element:'O', x:2.8,y:0,z:0, designAtomId:'asn879:OD1' },
+    { record:'ATOM', residueName:'ASN', chain:'A', residueIndex:879,
+      atomName:'CG', element:'C', x:4,y:0,z:0, designAtomId:'asn879:CG' },
+  ],
+  bonds:[{a:0,b:1,order:1},{a:0,b:2,order:1},{a:3,b:4,order:2}],
+};
+const rehydrogenated = createManualHydrogenBondDefinition({
+  molecule:rehydrogenatedDonor, ligandAtomIndices:[0,1,2],
+  ligandAtomIndex:0, receptorAtomIndex:3, ligandRole:'donor', id:'aww-asn879',
+});
+assert.equal(rehydrogenated.hydrogen.designAtomId, 'aww:HNEW43',
+  'a newly asserted donor contact resolves the best current hydrogen, not a stale prior ID');
+assert.deepEqual(rehydrogenated.origin.consideredHydrogenAtomIds,
+  ['aww:HNEW39','aww:HNEW43']);
+
 assert.deepEqual(manualHydrogenBondOptions({ molecule, ligandAtomIndices:ligand,
   ligandAtomIndex:9, receptorAtomIndex:2 }), []);
 assert.deepEqual(manualHydrogenBondOptions({ molecule, ligandAtomIndices:ligand,

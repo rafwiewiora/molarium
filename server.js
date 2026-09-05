@@ -53,6 +53,8 @@ const CONTENT_TYPES = Object.freeze({
   '.map': 'application/json; charset=utf-8',
   '.md': 'text/markdown; charset=utf-8',
   '.mp4': 'video/mp4',
+  '.pdf': 'application/pdf',
+  '.gz': 'application/gzip',
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
   '.txt': 'text/plain; charset=utf-8',
@@ -65,6 +67,13 @@ const server = Bun.serve({
   ...(localOnly ? { hostname:'127.0.0.1' } : {}),
   async fetch(request) {
     const url = new URL(request.url);
+    if (['/sos1','/sos1/','/sos1-hit-to-bay293/movies'].includes(url.pathname))
+      return Response.redirect(`${url.origin}/sos1.html`, 302);
+    if (url.pathname === '/sos1-hit-to-bay293/movie')
+      return Response.redirect(`${url.origin}/design-history/publications/sos1/designer-intent-2026-09-04/executable.mp4`, 302);
+    if (['/sos1-hit-to-bay293/replay','/sos1-hit-to-bay293/replay/',
+      '/sos1-hit-to-bay293/review','/sos1-hit-to-bay293/review/'].includes(url.pathname))
+      return Response.redirect(`${url.origin}/?story=sos1-hit-to-bay293-review`, 302);
     if (url.pathname === '/sos1-hit-to-bay293' || url.pathname === '/sos1-hit-to-bay293/')
       return Response.redirect(`${url.origin}/?story=sos1-hit-to-bay293`, 302);
     let pathname;

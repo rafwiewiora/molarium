@@ -213,20 +213,26 @@ function replayExpression(entry, replayOrdinal) {
           manualReplacementKeys.add(operation.contact);
           manualContactIdsByKey.set(operation.contact, result.contact.contactId);
         } else if (operation.op === 'setBond') {
+          const target = await atomIds(operation.atoms);
           await selectNames(operation.atoms);
-          await execute('chemistry.setBond', { order:operation.order });
+          await execute('chemistry.setBond', { atomIds:target, order:operation.order });
         } else if (operation.op === 'setAtom') {
+          const [atomId] = await atomIds([operation.atom]);
           await selectNames([operation.atom]);
-          await execute('chemistry.setAtom', { element:operation.element,
+          await execute('chemistry.setAtom', { atomId, element:operation.element,
             formalCharge:operation.formalCharge });
         } else if (operation.op === 'deleteAtom') {
-          await selectNames([operation.atom]); await execute('chemistry.deleteAtom');
+          const [atomId] = await atomIds([operation.atom]);
+          await selectNames([operation.atom]); await execute('chemistry.deleteAtom', { atomId });
         } else if (operation.op === 'addHydrogen') {
-          await selectNames([operation.atom]); await execute('chemistry.addHydrogen');
+          const [atomId] = await atomIds([operation.atom]);
+          await selectNames([operation.atom]); await execute('chemistry.addHydrogen', { atomId });
         } else if (operation.op === 'removeHydrogen') {
-          await selectNames([operation.atom]); await execute('chemistry.removeHydrogen');
+          const [atomId] = await atomIds([operation.atom]);
+          await selectNames([operation.atom]); await execute('chemistry.removeHydrogen', { atomId });
         } else if (operation.op === 'deleteBond') {
-          await selectNames(operation.atoms); await execute('chemistry.deleteBond');
+          const target = await atomIds(operation.atoms);
+          await selectNames(operation.atoms); await execute('chemistry.deleteBond', { atomIds:target });
         } else if (operation.op === 'addAtom') {
           const result = await execute('chemistry.addAtom', {
             attachedToAtomId:(await atomIds([operation.attachedTo]))[0],

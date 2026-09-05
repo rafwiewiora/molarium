@@ -32,26 +32,27 @@ editor actions, while the structure-story viewer advertises only its timeline ac
 const molarium = await window.MolariumChemistActionsReady;
 
 await molarium.execute({ action: 'view.setMode', args: { mode: 'build' } });
-await molarium.execute({ action: 'build.setTool', args: { tool: 'select' } });
-
 const graph = (await molarium.inspect({
   scope: 'ligand',
   maximumAtoms: 200,
 })).result;
 
+await molarium.execute({ action: 'chemistry.setEditPolicy', args: { mode: 'staged' } });
 await molarium.execute({
-  action: 'selection.replace',
-  args: { atomIds: ['persistent-id-a', 'persistent-id-b'] },
+  action: 'chemistry.setBond',
+  args: { atomIds: ['persistent-id-a', 'persistent-id-b'], order: 1 },
 });
-await molarium.execute({ action: 'chemistry.setBond', args: { order: 1 } });
 await molarium.execute({ action: 'chemistry.finish' });
 ```
 
-Selections use persistent `designAtomId` values returned by `session.inspect`, never mutable array
-indices. `selection.replace` applies selections in click order and enforces the UI rule that each
-additional atom must bond to the existing connected path. Chemistry edits enter the ordinary
-pending transaction. Hydrogens, valence, aromaticity, sanitization, local refinement, contact
-feature transfer, Undo, and Redo therefore behave exactly as they do for an interactive user.
+Chemistry targets and selections use persistent `designAtomId` values returned by
+`session.inspect`, never mutable array indices. Target-dependent chemistry actions carry their own
+`atomId` or `atomIds`; a saved publication replay is rejected if it relies on ambient selection.
+`selection.replace` remains the public action used by both the 2D depiction and the 3D viewer for
+visible selection. `chemistry.setEditPolicy` makes batching behavior part of the action audit:
+`staged` waits for `chemistry.finish`, while `immediate-refine` validates, refines, and commits each
+edit. Hydrogens, valence, aromaticity, sanitization, local refinement, contact feature transfer,
+Undo, and Redo therefore behave exactly as they do for an interactive user.
 
 ## Available routes
 
@@ -64,16 +65,18 @@ feature transfer, Undo, and Redo therefore behave exactly as they do for an inte
 - `build.setTool`
 - `protein.prepare`, `protein.parameterize`, `protein.predict`, `protein.cancelPrediction`
 - `selection.replace`, `selection.clear`
-- `chemistry.setAtom`, `chemistry.setBond`, `chemistry.addAtom`, `chemistry.createBond`
+- `chemistry.setEditPolicy`, `chemistry.setAtom`, `chemistry.setBond`, `chemistry.addAtom`, `chemistry.createBond`
 - `chemistry.deleteAtom`, `chemistry.deleteBond`
 - `chemistry.addHydrogen`, `chemistry.removeHydrogen`
 - `chemistry.finish`, `chemistry.discard`
-- `ligand.enumerateProtonation`, `ligand.applyProtonation`
+- `ligand.installRegisteredGraph`, `ligand.enumerateProtonation`, `ligand.applyProtonation`
 - `geometry.setInternalCoordinate`, `geometry.translateAtoms`
 - `fragment.stage`, `fragment.attach`
 - `history.undo`, `history.redo`
 - `pose.captureReference`, `pose.updateReceptorReference`, `pose.setContact`, `pose.addContact`, `pose.forgetContact`,
-  `pose.setEditCleanup`, `pose.clearReference`, `pose.remapContact`, `pose.refine`, `pose.apply`,
+  `pose.setDesignerLigandPoseFixed`,
+  `pose.setEditCleanup`, `pose.clearReference`, `pose.remapContact`, `pose.refine`,
+  `pose.inspectRefinementCapture`, `pose.apply`,
   `pose.enumerateSidechainRotamers`, `pose.applySidechainRotamer`
 - `optimization.run`
 - `calculation.run`, `calculation.tuneReplicas`, `calculation.selectFrame`,
@@ -100,6 +103,14 @@ atom IDs before hashing the snapshot.
 `campaign.createBranch` creates a branch at an explicit commit or the current
 head. `campaign.switchBranch` refuses to discard uncommitted molecular changes,
 then reconstructs the graph and coordinates at the selected branch head.
+`campaign.import` accepts either inline canonical JSON in `serialized`, or the
+pair `sourcePath` and `sourceSha256`. The latter is restricted to a traversal-free
+same-origin path and verifies the exact bytes before canonical campaign and
+ledger verification; it keeps large checkpoint campaigns out of replay scripts.
+Optional `sourceEncoding: "gzip"` provides lossless compressed transport. The
+`sourceSha256` digest always covers the decoded canonical bytes; both the
+download and decoded campaign are limited to 32 MiB. No state is imported before
+hash, canonical-serialization, and ledger checks pass.
 `campaign.mergeBranch` records the molecule currently visible on the target
 branch as the explicit merge result and retains the target and source commits as
 ordered parents; it does not attempt an automatic chemical graph merge.
@@ -135,11 +146,31 @@ compatible donor/acceptor roles may transfer as soft restraints but never as ato
 route policy requires complete-ring correspondence and explicitly rejects element-agnostic hard
 matching. Thus a bioisosteric ring replacement keeps the unchanged external scaffold fixed while the
 replacement ring is rebuilt and searched. Adding a substituent to an otherwise unchanged ring does
-not release that ring. Designer-directed steps
-also require `attachmentAtomId`, the same persistent ligand atom ID that an interactive chemist
+not release that ring. Designer-directed steps register required soft spatial features with
+`molarium.registered-soft-spatial-feature-restraint/v1`. The restraint carries its tolerance,
+weight, and a versioned pre-holdout parameter-decision record; this makes protocol changes visible in
+the route hash and action audit rather than embedding an unreported acceptance exception. They also
+require `attachmentAtomId`, the same persistent ligand atom ID that an interactive chemist
 selects as the exit vector; the route rejects a symmetry-equivalent map attached anywhere else.
 Later protein or ligand coordinates are not available to the route. Evaluation holdouts remain
 locked until prediction coordinates and their action audit have been frozen.
+
+## Installing reviewed ligand chemistry in Local Lab
+
+`ligand.installRegisteredGraph` binds an exact registered graph to an explicitly located ligand
+that already has coordinates. The request supplies the residue locator, the complete named graph,
+and the SHA-256 of its canonical graph representation. Molarium rejects a hash mismatch, ambiguous
+or incomplete atom-name mapping, element mismatch, disconnected graph, or any heavy-coordinate
+movement. The completed action reports input and output molecular-state hashes and is recorded in
+the ordinary action audit. It does not fetch a chemical-component record.
+
+After installation, `protein.prepare` may use `ligandPolicy: "registered"`. That mode prepares the
+installed graph from its pinned local definition, excludes other unregistered heterogens, and makes
+no external CCD request; Local Lab permits only same-origin localhost requests. Figure 1 uses this
+sequence with the bundled BQ5 definition: load 6EPM, install the BQ5 graph at chain S residue 1101,
+prepare in registered-only mode, and inspect the result. RDKit WebAssembly then generates the
+visible 2D layout from the installed chemistry; its coordinates are not used as molecular
+coordinates.
 
 There is no alternate or compatibility alias for these actions. Saved scripts, interactive replay,
 and agent calls all use the same `designRoute.*` names. Only `designRoute.load` accepts `routeId`.
@@ -175,6 +206,12 @@ residue identity and unique chi angles; use an index only for an immediate inter
 The chosen branch should then be physically refined and compared with the other branches; the
 steric pre-rank is not an affinity score.
 
+Coupled side-chain/pose searches record both `seedChiDegrees`, measured when the enumerated branch
+is applied, and `relaxedChiDegrees`, remeasured from the coordinate-bearing `session.inspect`
+pocket response after induced-fit minimization. The final deterministic replay must reproduce the
+relaxed ligand and pocket coordinate hashes and the remeasured chi vector. A seed rotamer label is
+therefore never evidence that the relaxed side chain remained in the same conformational basin.
+
 `pose.updateReceptorReference` accepts a moved receptor-site branch without replacing the captured
 ligand reference or its persistent atom lineage. It refreshes the receptor coordinates and any
 captured receptor contact descriptors, records before/after coordinate hashes, and leaves ligand
@@ -208,11 +245,99 @@ the visible pose list but leaves the 3D molecule fixed until `pose.apply`;
 `pose.applySidechainRotamer`. Replay result cues state this explicitly and hold on the result card
 at human reading speed before the corresponding Apply action.
 
+### Designer-fixed ligand geometry and receptor response
+
+An attachment, branch rotation, or torsion remains an ordinary public design action. The visible
+**Adjust Geometry** control and an agent both call `geometry.setInternalCoordinate`; its response
+records the changed persistent atom IDs and the defining move. The human or agent can then call
+`pose.setDesignerLigandPoseFixed({fixed:true, label:"reason"})`. Molarium hashes the current ligand
+coordinates, identity, chemistry, and internal topology without changing any coordinate. The action
+does not accept a pose ID, coordinate array, crystal structure, or other external placement. It
+means only “hold the ligand exactly where the preceding public design actions left it.”
+
+For an internal-coordinate edit, the ordered two-to-four-atom path records the direction of the
+moved branch, the value before the edit, the requested and applied value, and hashes of the moved
+and preserved atom sets. The handler verifies that every atom outside the directed branch remains
+bitwise unchanged. A registered graph-edit step likewise reports that its mapped precursor
+coordinates came from the current visible molecule and that no external reference coordinates were
+used. These records distinguish a chemist-directed relative edit from forbidden known-pose
+placement while remaining independent of any particular target or ligand.
+
+`geometry.alignBranchToContact` is the corresponding spatial-objective edit. The chemist supplies
+an ordered rotatable ligand bond (preserved side first, moving side second), one feature atom on the
+moving branch, one receptor atom already visible in the current structure, and a target interatomic
+distance. Molarium solves the directed bond rotation from those current coordinates, reports the
+signed rotation and attainable distance range, and again verifies that every atom outside the
+moving ligand branch is bitwise unchanged. An optional nearest/positive/negative choice resolves
+the two geometric solutions under the right-hand rule. No crystal or other reference pose is an
+input to this action.
+
+While fixed, side-chain enumeration and application may move receptor atoms but verify that the
+ligand hash is identical before and after. Ligand pose search/application, ligand-moving
+optimization, chemistry or fragment edits, route graph edits, and coordinate-bearing trajectory
+or conformer selection fail closed until
+`pose.setDesignerLigandPoseFixed({fixed:false})` releases the intent. Energy-only evaluation remains
+available. The visible checkbox calls this same public action, and the content-addressed record is
+stored with the molecule so Undo/Redo and Designer Moves checkpoints preserve it.
+
+```js
+await MolariumChemistActions.execute({
+  action: "geometry.setInternalCoordinate",
+  args: { atomIds: [a, b, c, d], value: 178, moveConnected: true }
+});
+await MolariumChemistActions.execute({
+  action: "pose.setDesignerLigandPoseFixed",
+  args: { fixed: true, label: "chemist-selected terminal-ring orientation" }
+});
+await MolariumChemistActions.execute({
+  action: "pose.enumerateSidechainRotamers",
+  args: { receptorResidue: { residueName: "PHE", chain: "A", residueIndex: 890 },
+    maximumCandidates: 32 }
+});
+```
+
+Every completed `pose.refine` atomically stores its selected candidate as a content-addressed
+coordinate delta before an expected-output guard is evaluated. This capture does not apply or alter
+the live molecule and is always non-promotable by itself. The ordinary refinement response contains
+only a compact capture ID and hashes. `pose.inspectRefinementCapture` returns that descriptor by
+default and returns its atom IDs and coordinates only when `includeCoordinates:true` is explicitly
+requested. Omitting `captureId` retrieves the most recent capture, including one retained after a
+failed expected-selected guard.
+
 `pose.apply` fails closed when the selected refined pose is marked infeasible. An agent may apply
 such a negative-control result only by sending `allowInfeasible:true`; that override remains in the
 action audit and the response reports `infeasibleOverride:true`. The visible Apply pose button is
 disabled for infeasible results, so an ordinary human click cannot silently bypass required-contact
 or physical-feasibility gates.
+An explicitly applied infeasible pose also cannot be committed to a live design campaign; failed
+coordinates remain available through their separate non-promotable refinement capture.
+
+`pose.refine`, `pose.apply`, and `optimization.run` return both legacy coordinate fingerprints and
+preferred `molarium.molecular-state-hash/v1` fingerprints. The versioned state hash binds persistent
+atom identity, atom chemistry, molecular charge and multiplicity, bond topology, and exact
+coordinates; atom-array order and bond direction are canonicalized. Pin it with
+`expectedInputStateSha256`, `expectedSelectedStateSha256`, or `expectedOutputStateSha256`. Input and
+selected-state mismatches abort before mutation. An output mismatch restores the complete
+pre-action molecule, Undo/Redo history, pose or conformer ensemble, calculation results, selection,
+view state, and corresponding interface controls atomically. `expected*CoordinateSha256` remains
+accepted for saved pre-v1 records, but does not guard identity or topology and should not be used for
+new publication replays. Neither digest is a tolerance-based scientific-equivalence test across
+WebGPU adapters.
+
+Saved action scripts must name the target of every selection-dependent chemistry operation:
+`atomId` for atom edits and `atomIds` for bond edits. `selection.replace` remains a visible,
+replayable interface action, but it is never accepted as an implicit scientific target in a saved
+publication replay. When converting a legacy execution audit, `actionScriptFromAudit` can
+materialize an unambiguous preceding `selection.replace` into the generated action arguments; the
+resulting saved script is explicit and passes the same validator as a newly authored script.
+
+Audit conversion uses `stateHashGuards: "auto"` by default. For each `pose.refine`, `pose.apply`, or
+`optimization.run` result that identifies `molarium.molecular-state-hash/v1`, the converter copies
+the recorded input, selected, and output hashes into the corresponding `expected*StateSha256`
+request arguments. A partial v1 result or a conflict with an already supplied guard is rejected.
+Publication builders should request `stateHashGuards: "required"`; conversion then fails if any
+included scientific action lacks its complete v1 result hashes. `"off"` exists only for explicitly
+unguarded historical export.
 
 `pose.refine` accepts `execution: "auto"` (the default) or `execution: "serial"`. Auto execution
 partitions independent, deterministically seeded pose chains over a bounded browser Worker ensemble
@@ -221,11 +346,16 @@ record the worker count, elapsed search time, throughput, and any serial fallbac
 reproducibility control: it uses the same seeds, restraint and physical objectives, and candidate
 ordering on the browser main thread.
 
-The optional `featureSeedingProtocol` pins the pose-seed generator. `v3` reproduces the registered
-SOS1 trajectory: it scans the edited single-anchor region but leaves affected pre-existing rotors
-fixed. `v4` is the default for new work and additionally samples eligible pre-existing rotors in
-the declared edit environment. The returned `refinement.featureGuidedSeeding.method` records the
-effective version, allowing a replay `expect` guard to stop if implementation drift changes it.
+The optional `featureSeedingProtocol` pins the pose-seed generator. `v3` scans the edited
+single-anchor region but leaves affected pre-existing rotors fixed. `v4` additionally samples
+eligible pre-existing rotors in the declared edit environment. `v5` is the default for new work:
+it deterministically covers every registered spatial-feature map and affected-rotor stratum before
+allocating remaining chains round-robin across other torsions. A chain cap that cannot cover the
+required strata fails closed. The response exposes `refinement.coverageComplete` and the complete
+machine-readable `refinement.coverage` table; a prospective runner must require both rather than
+publishing a partially covered search. The returned `refinement.featureGuidedSeeding.method`
+records the effective version, allowing a replay `expect` guard to stop if implementation drift
+changes it.
 
 Pose propagation has three separate relaxation concepts. Restraint-biased internal-coordinate
 search first uses selected flat-bottom hydrogen-bond potentials to generate contact-feasible poses;

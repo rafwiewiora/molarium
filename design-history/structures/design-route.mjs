@@ -1,6 +1,8 @@
 import { EXACT_REGISTERED_POSE_PROPAGATION_POLICY,
   validateRegisteredPosePropagationPolicy } from
   '../../docking/registered-graph-edit.mjs';
+import { validateRegisteredSoftSpatialFeatureRestraint } from
+  '../../docking/registered-spatial-feature-restraint.mjs';
 
 export const REGISTERED_DESIGN_ROUTE_SCHEMA = 'molarium.registered-design-route/v1';
 
@@ -45,7 +47,31 @@ function exactIntegerPartition(indices, size, label) {
     throw new Error(`${label} must exactly partition indices 0 through ${size - 1}`);
 }
 
-function validatePoseMap(poseMap, index) {
+function validateRetainedFeatureIntents(value, index) {
+  const label = `steps[${index}].retainedFeatureIntents`;
+  if (!Array.isArray(value)) throw new Error(`${label} must be an array`);
+  const byId = new Map();
+  value.forEach((intent, intentIndex) => {
+    const intentLabel = `${label}[${intentIndex}]`;
+    requireRecord(intent, intentLabel);
+    requireString(intent.id, `${intentLabel}.id`);
+    const featureId = requireString(intent.featureId, `${intentLabel}.featureId`);
+    if (byId.has(featureId)) throw new Error(`${label} repeats ${featureId}`);
+    if (intent.kind !== 'conserved-fragment-rmsd'
+      || intent.actorClass !== 'human'
+      || intent.source !== 'registered-designer-intent'
+      || intent.treatment !== 'soft-restraint'
+      || intent.required !== true)
+      throw new Error(`${intentLabel} is not an explicit required designer retention decision`);
+    const restraint = validateRegisteredSoftSpatialFeatureRestraint(
+      intent.restraint, `${intentLabel}.restraint`);
+    requireString(intent.rationale, `${intentLabel}.rationale`);
+    byId.set(featureId, intent);
+  });
+  return byId;
+}
+
+function validatePoseMap(poseMap, index, retainedFeatureIntents) {
   const label = `steps[${index}].posePropagationMap`;
   const referenceHeavyAtoms = requireNonnegativeInteger(
     poseMap.referenceHeavyAtoms, `${label}.referenceHeavyAtoms`);
@@ -94,6 +120,14 @@ function validatePoseMap(poseMap, index) {
     `${label} reference atom map`);
   exactIntegerPartition([...productIndices, ...addedIndices], productHeavyAtoms,
     `${label} product atom map`);
+  const referenceElementByName = new Map([
+    ...poseMap.commonAtoms.map((entry) => [entry.referenceAtomName, entry.element]),
+    ...poseMap.deletedReferenceAtoms.map((entry) => [entry.referenceAtomName, entry.element]),
+  ]);
+  const productElementByIndex = new Map([
+    ...poseMap.commonAtoms.map((entry) => [entry.productAtomIndex, entry.element]),
+    ...poseMap.addedProductAtoms.map((entry) => [entry.productAtomIndex, entry.element]),
+  ]);
   const commonNameSet = new Set(referenceNames), commonProductSet = new Set(productIndices);
   poseMap.referenceBoundary.forEach((entry, boundaryIndex) => {
     requireRecord(entry, `${label}.referenceBoundary[${boundaryIndex}]`);
@@ -110,7 +144,192 @@ function validatePoseMap(poseMap, index) {
   if (mcs.atoms !== commonHeavyAtoms)
     throw new Error(`${label}.mcs atom count changed`);
   requireNonnegativeInteger(mcs.bonds, `${label}.mcs.bonds`);
-  return { referenceNames };
+  const releasedMappedAtoms = poseMap.releasedMappedAtoms ?? [];
+  if (!Array.isArray(releasedMappedAtoms))
+    throw new Error(`${label}.releasedMappedAtoms must be an array`);
+  const commonByReferenceName = new Map(poseMap.commonAtoms.map((entry) =>
+    [entry.referenceAtomName, entry]));
+  const releasedMappedNames = [];
+  const releasedMappedProductIndices = [];
+  releasedMappedAtoms.forEach((entry, releasedIndex) => {
+    const releasedLabel = `${label}.releasedMappedAtoms[${releasedIndex}]`;
+    requireRecord(entry, releasedLabel);
+    requireString(entry.referenceAtomName, `${releasedLabel}.referenceAtomName`);
+    requireString(entry.reason, `${releasedLabel}.reason`);
+    const productAtomIndex = requireNonnegativeInteger(entry.productAtomIndex,
+      `${releasedLabel}.productAtomIndex`);
+    const commonEntry = commonByReferenceName.get(entry.referenceAtomName);
+    if (!commonEntry || commonEntry.productAtomIndex !== productAtomIndex
+      || commonEntry.referenceAtomIndex !== entry.referenceAtomIndex
+      || commonEntry.element !== entry.element)
+      throw new Error(`${releasedLabel} must exactly identify a mapped common atom`);
+    releasedMappedNames.push(entry.referenceAtomName);
+    releasedMappedProductIndices.push(productAtomIndex);
+  });
+  if (new Set(releasedMappedNames).size !== releasedMappedNames.length
+    || new Set(releasedMappedProductIndices).size !== releasedMappedProductIndices.length)
+    throw new Error(`${label}.releasedMappedAtoms must be one-to-one`);
+  const migrations = poseMap.mappedRingAttachmentMigrations ?? [];
+  if (!Array.isArray(migrations))
+    throw new Error(`${label}.mappedRingAttachmentMigrations must be an array`);
+  const migrationReleasedNames = [];
+  migrations.forEach((migration, migrationIndex) => {
+    const migrationLabel = `${label}.mappedRingAttachmentMigrations[${migrationIndex}]`;
+    requireRecord(migration, migrationLabel);
+    requireString(migration.id, `${migrationLabel}.id`);
+    if (migration.reason !== 'attachment-migration-within-mapped-biconnected-ring')
+      throw new Error(`${migrationLabel}.reason changed`);
+    for (const field of ['referenceBlockAtomNames', 'referenceAttachmentAtomNames',
+      'productAttachmentReferenceAtomNames', 'releasedReferenceAtomNames'])
+      requireStringArray(migration[field], `${migrationLabel}.${field}`);
+    if (!Array.isArray(migration.retainedJunctionReferenceAtomNames)
+      || migration.retainedJunctionReferenceAtomNames.some((value) =>
+        typeof value !== 'string' || !value.trim()))
+      throw new Error(`${migrationLabel}.retainedJunctionReferenceAtomNames must be a string array`);
+    if (!Array.isArray(migration.productBlockAtomIndices)
+      || !Array.isArray(migration.releasedProductAtomIndices)
+      || migration.productBlockAtomIndices.some((value) => !Number.isInteger(value))
+      || migration.releasedProductAtomIndices.some((value) => !Number.isInteger(value)))
+      throw new Error(`${migrationLabel} product atom indices must be integer arrays`);
+    migrationReleasedNames.push(...migration.releasedReferenceAtomNames);
+  });
+  const rotorReleases = poseMap.mappedRotorReleases ?? [];
+  if (!Array.isArray(rotorReleases))
+    throw new Error(`${label}.mappedRotorReleases must be an array`);
+  const rotorReleasedNames = [];
+  rotorReleases.forEach((release, releaseIndex) => {
+    const releaseLabel = `${label}.mappedRotorReleases[${releaseIndex}]`;
+    requireRecord(release, releaseLabel);
+    requireString(release.id, `${releaseLabel}.id`);
+    if (release.reason !== 'edit-associated-ring-bearing-mapped-rotor-distal-release')
+      throw new Error(`${releaseLabel}.reason changed`);
+    for (const field of ['referenceBondAtomNames', 'anchorReferenceAtomNames',
+      'releasedReferenceAtomNames'])
+      requireStringArray(release[field], `${releaseLabel}.${field}`);
+    if (release.referenceBondAtomNames.length !== 2)
+      throw new Error(`${releaseLabel}.referenceBondAtomNames must identify one bond`);
+    requireString(release.proximalReferenceAtomName,
+      `${releaseLabel}.proximalReferenceAtomName`);
+    requireString(release.distalReferenceAtomName,
+      `${releaseLabel}.distalReferenceAtomName`);
+    requireString(release.selection, `${releaseLabel}.selection`);
+    if (!Array.isArray(release.productBondAtomIndices)
+      || release.productBondAtomIndices.length !== 2
+      || release.productBondAtomIndices.some((value) => !Number.isInteger(value))
+      || !Array.isArray(release.releasedProductAtomIndices)
+      || release.releasedProductAtomIndices.some((value) => !Number.isInteger(value)))
+      throw new Error(`${releaseLabel} product atom indices must be integer arrays`);
+    if (!Array.isArray(release.coordinateInputs) || release.coordinateInputs.length)
+      throw new Error(`${releaseLabel}.coordinateInputs must prove graph-only selection`);
+    if (!release.releasedReferenceAtomNames.includes(release.distalReferenceAtomName)
+      || release.anchorReferenceAtomNames.includes(release.distalReferenceAtomName)
+      || !release.anchorReferenceAtomNames.includes(release.proximalReferenceAtomName))
+      throw new Error(`${releaseLabel} must orient its proximal and distal sides`);
+    rotorReleasedNames.push(...release.releasedReferenceAtomNames);
+  });
+  const explainedReleasedNames = new Set([
+    ...migrationReleasedNames, ...rotorReleasedNames,
+  ]);
+  if (explainedReleasedNames.size !== releasedMappedNames.length
+    || releasedMappedNames.some((name) => !explainedReleasedNames.has(name)))
+    throw new Error(`${label} topology releases must exactly explain released mapped atoms`);
+  const releasedMappedHeavyAtoms = requireNonnegativeInteger(
+    poseMap.releasedMappedHeavyAtoms ?? releasedMappedAtoms.length,
+    `${label}.releasedMappedHeavyAtoms`);
+  const hardCoordinateHeavyAtoms = requireNonnegativeInteger(
+    poseMap.hardCoordinateHeavyAtoms ?? commonHeavyAtoms,
+    `${label}.hardCoordinateHeavyAtoms`);
+  if (releasedMappedHeavyAtoms !== releasedMappedAtoms.length
+    || hardCoordinateHeavyAtoms + releasedMappedHeavyAtoms !== commonHeavyAtoms)
+    throw new Error(`${label} hard and released mapped atom counts must partition the common map`);
+  const spatialFeatures = poseMap.spatialFeatureCorrespondences ?? [];
+  if (!Array.isArray(spatialFeatures))
+    throw new Error(`${label}.spatialFeatureCorrespondences must be an array`);
+  const hardReferenceNames = new Set(referenceNames);
+  const hardProductIndices = new Set(productIndices);
+  spatialFeatures.forEach((feature, featureIndex) => {
+    const featureLabel = `${label}.spatialFeatureCorrespondences[${featureIndex}]`;
+    requireRecord(feature, featureLabel);
+    requireString(feature.id, `${featureLabel}.id`);
+    if (feature.kind !== 'conserved-fragment-rmsd')
+      throw new Error(`${featureLabel}.kind must be conserved-fragment-rmsd`);
+    if (!['seed-only', 'soft-restraint'].includes(feature.treatment))
+      throw new Error(`${featureLabel}.treatment must be seed-only or soft-restraint`);
+    if (feature.treatment === 'seed-only') {
+      if (feature.transferMode !== 'seed-only' || feature.required !== false)
+        throw new Error(`${featureLabel} seed-only transfer must be explicitly non-required`);
+      if (feature.restraint != null)
+        throw new Error(`${featureLabel} seed-only transfer must not define a restraint`);
+    } else if (feature.transferMode !== 'score-only') {
+      throw new Error(`${featureLabel} soft restraint must use score-only transfer mode`);
+    }
+    if (!Array.isArray(feature.mappingVariants) || !feature.mappingVariants.length)
+      throw new Error(`${featureLabel}.mappingVariants must be a non-empty array`);
+    feature.mappingVariants.forEach((variant, variantIndex) => {
+      const variantLabel = `${featureLabel}.mappingVariants[${variantIndex}]`;
+      requireRecord(variant, variantLabel);
+      if (!Array.isArray(variant.referenceAtomNames)
+        || !Array.isArray(variant.productAtomIndices)
+        || variant.referenceAtomNames.length < 3
+        || variant.referenceAtomNames.length !== variant.productAtomIndices.length)
+        throw new Error(`${variantLabel} must contain paired reference names and product indices`);
+      variant.referenceAtomNames.forEach((name) => requireString(name,
+        `${variantLabel}.referenceAtomNames`));
+      variant.productAtomIndices.forEach((atomIndex) => {
+        requireNonnegativeInteger(atomIndex, `${variantLabel}.productAtomIndices`);
+        if (atomIndex >= productHeavyAtoms)
+          throw new Error(`${variantLabel} product atom is outside the product graph`);
+      });
+      if (new Set(variant.referenceAtomNames).size !== variant.referenceAtomNames.length
+        || new Set(variant.productAtomIndices).size !== variant.productAtomIndices.length)
+        throw new Error(`${variantLabel} must be one-to-one`);
+      if (variant.referenceAtomNames.some((name) => hardReferenceNames.has(name))
+        || variant.productAtomIndices.some((atomIndex) => hardProductIndices.has(atomIndex)))
+        throw new Error(`${variantLabel} overlaps the hard correspondence`);
+      variant.referenceAtomNames.forEach((name, pairIndex) => {
+        if (!referenceElementByName.has(name)
+          || referenceElementByName.get(name)
+            !== productElementByIndex.get(variant.productAtomIndices[pairIndex]))
+          throw new Error(`${variantLabel} is not element-equivalent`);
+      });
+    });
+    const productSets = feature.mappingVariants.map((variant) =>
+      [...variant.productAtomIndices].sort((a, b) => a - b).join(','));
+    if (new Set(productSets).size !== 1)
+      throw new Error(`${featureLabel} variants must describe one product fragment`);
+    const featureMcs = requireRecord(feature.mcs, `${featureLabel}.mcs`);
+    if (featureMcs.atoms !== feature.mappingVariants[0].productAtomIndices.length
+      || !Number.isInteger(featureMcs.bonds)
+      || featureMcs.bonds < featureMcs.atoms - 1)
+      throw new Error(`${featureLabel}.mcs does not describe a connected exact feature`);
+    if (feature.treatment === 'soft-restraint') {
+      const restraint = validateRegisteredSoftSpatialFeatureRestraint(
+        feature.restraint, `${featureLabel}.restraint`);
+      if (typeof feature.required !== 'boolean' || restraint.required !== feature.required)
+        throw new Error(`${featureLabel} soft-restraint required flags must agree`);
+      if (feature.required && feature.source !== 'registered-designer-intent')
+        throw new Error(`${featureLabel} required soft restraint must be registered designer intent`);
+      if (feature.required) {
+        const intent = retainedFeatureIntents.get(feature.id);
+        if (!intent || feature.registeredIntentId !== intent.id)
+          throw new Error(`${featureLabel} lacks its registered route intent declaration`);
+        if (feature.kind !== intent.kind || feature.treatment !== intent.treatment
+          || feature.source !== intent.source
+          || restraint.metric !== intent.restraint.metric
+          || Number(restraint.toleranceAngstrom) !== Number(intent.restraint.toleranceAngstrom)
+          || Number(restraint.weightKcalMolPerAngstrom2)
+            !== Number(intent.restraint.weightKcalMolPerAngstrom2)
+          || JSON.stringify(restraint.parameterDecision)
+            !== JSON.stringify(intent.restraint.parameterDecision))
+          throw new Error(`${featureLabel} does not match its registered route intent`);
+      }
+    }
+  });
+  for (const featureId of retainedFeatureIntents.keys()) {
+    if (!spatialFeatures.some((feature) => feature.id === featureId && feature.required === true))
+      throw new Error(`${label} did not realize retained feature intent ${featureId}`);
+  }
+  return { referenceNames, releasedMappedNames };
 }
 
 /**
@@ -170,9 +389,12 @@ export function validateRegisteredDesignRoute(route, { expectedId = null } = {})
     requireString(step.label, `steps[${index}].label`);
     requireString(step.inputKind, `steps[${index}].inputKind`);
     requireString(step.productSmiles, `steps[${index}].productSmiles`);
+    const retainedFeatureIntents = validateRetainedFeatureIntents(
+      step.retainedFeatureIntents ?? [], index);
     const poseMap = requireRecord(step.posePropagationMap,
       `steps[${index}].posePropagationMap`);
-    const { referenceNames:commonNames } = validatePoseMap(poseMap, index);
+    const { referenceNames:commonNames, releasedMappedNames } = validatePoseMap(
+      poseMap, index, retainedFeatureIntents);
     const protectedAnchor = poseMap.protectedReferenceAnchor;
     if (protectedAnchor != null) {
       requireRecord(protectedAnchor,
@@ -183,12 +405,16 @@ export function validateRegisteredDesignRoute(route, { expectedId = null } = {})
         `steps[${index}].posePropagationMap.protectedReferenceAnchor.label`);
       const protectedNames = requireStringArray(protectedAnchor.referenceAtomNames,
         `steps[${index}].posePropagationMap.protectedReferenceAnchor.referenceAtomNames`);
+      const releasedSet = new Set(releasedMappedNames);
+      const expectedProtectedNames = commonNames.filter((name) => !releasedSet.has(name));
       if (new Set(protectedNames).size !== protectedNames.length
-        || protectedNames.length !== commonNames.length
-        || protectedNames.some((name, atomIndex) => name !== commonNames[atomIndex]))
-        throw new Error(`steps[${index}] protected anchor must exactly identify the fixed common atoms`);
+        || protectedNames.length !== expectedProtectedNames.length
+        || protectedNames.some((name, atomIndex) => name !== expectedProtectedNames[atomIndex]))
+        throw new Error(`steps[${index}] protected anchor must exactly identify the hard common atoms`);
       if (protectedAnchor.atoms !== protectedNames.length)
         throw new Error(`steps[${index}] protected anchor atom count changed`);
+    } else if (releasedMappedNames.length) {
+      throw new Error(`steps[${index}] released mapped atoms require a protected anchor`);
     }
   }
 

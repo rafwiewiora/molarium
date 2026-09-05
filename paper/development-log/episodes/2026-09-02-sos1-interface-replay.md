@@ -2,7 +2,7 @@
 
 Date: 2026-09-02 Pacific time
 
-Status: corrected replay source and publication-figure/movie construction; final generated assets require a complete, expectation-passing render
+Status: historical debugging record; the 2026-09-03 correction below supersedes the earlier final-step interpretation, and the next accepted render remains pending
 
 ## Trigger
 
@@ -148,3 +148,39 @@ actions, 208 completed API audit records, and 10 exact result expectations; all
 four 64-candidate pose searches used three workers. The final 1600-by-1000,
 12-frame-per-second movie contains 1,213 frames (101.083333 s) and has SHA-256
 `e8eb6d649105aadd0ff725090482f6764ac5534261b0920f1e5c16c481d38972`.
+
+## 2026-09-03 supersession: distal-ring motion and coupled search
+
+Review of the AWW intermediate showed that the final AXH transition was compensating for an
+upstream pose error: the AWW distal ring had already been placed in the wrong region. The visual
+motion was therefore not evidence of a required chemical rearrangement. An attempted correction
+that hard-preserved the AWW distal ring through the AXH step was also rejected; its frozen AXH
+prediction was 4.20~\AA{} from the AXH crystal under the registered comparison. Neither that
+experiment nor the earlier moving-ring render is an accepted prospective result.
+
+The topology policy was then generalized rather than patched for SOS1. For the registered
+AWW-to-AXH rewrite, topology decomposition identifies 11 exact mapped heavy atoms that remain hard,
+four mapped connector atoms in attachment-migrated ring blocks that are released, and a separate
+seven-atom distal feature that is used only to seed hypotheses. The seven-atom feature is not a hard
+coordinate constraint and not a required scoring restraint. This 11-hard/4-released/7-seed-only
+partition is derived from exact element, bond-order, ring-block, and edit-boundary correspondence.
+
+Because the error originates before the last graph rewrite, acceptance must be based on the coupled
+upstream search. The prospective runner now enumerates the complete bounded set of unique Phe890
+$\chi_1/\chi_2$ branches, performs ligand pose search for every retained receptor branch, evaluates
+the ligand and pocket after relaxation, and ranks only those post-relax states. It no longer samples
+one representative per $\chi_1$ basin or selects a branch from the pre-relax steric score alone.
+The pose search uses feature-seeding protocol v5: every registered spatial-feature map and every
+eligible affected-rotor stratum must receive a deterministic seed before remaining chains are
+distributed round-robin. An insufficient chain budget fails closed, and the coverage table is part
+of the public result.
+
+Registered-product staging now runs through the same public `designRoute.applyStep` action used by
+agents and the interface; the production action no longer depends on a privileged benchmark
+staging hook. Replay review also retains completed checkpoints for backward/forward navigation, and
+the registered AXE graph supplies the 2D depiction instead of a whole-complex fallback.
+
+These changes define the v9 acceptance candidate, not an accepted v9 result. A new full hit-only run
+must still pass the prospective coordinate boundary, complete v5 coverage, feasible post-relax
+selection, replay expectations, and independent AWW/AXH holdout measurements before its movie,
+figure, hashes, or numerical results supersede the earlier publication artifacts.

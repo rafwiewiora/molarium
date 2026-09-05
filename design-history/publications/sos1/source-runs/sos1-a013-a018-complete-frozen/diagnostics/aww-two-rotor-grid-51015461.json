@@ -1,0 +1,399 @@
+{
+  "schema": "molarium.sos1-aww-two-rotor-grid-provenance/v1",
+  "generatedBy": "scripts/sos1-aww-two-rotor-grid-provenance.mjs",
+  "status": "diagnostic-complete",
+  "purpose": "Fast geometry proxy for prospective AWW pose/Phe890 factorial design; not a production pose selector.",
+  "inputs": {
+    "prediction": {
+      "path": "design-history/publications/sos1/source-runs/sos1-a013-a018-complete-frozen/open-phe890-pocket-prediction.json",
+      "sha256": "510154612002504393429956877e1be312fff6bb23450e62974ab0ffd1954c88"
+    },
+    "holdoutEvaluation": {
+      "path": "design-history/publications/sos1/source-runs/sos1-a013-a018-complete-frozen/open-phe890-pocket-holdout-evaluation.json",
+      "sha256": "8682bf21c417453b8d4ea3e2a48e7a4ebf1f2769dbd1985ffd91b0a0cbf8408e"
+    },
+    "holdoutLigand": {
+      "path": "design-history/structures/generated/sos1-v7-aww-crystal-ligand.pdb",
+      "sha256": "d19f5e6b7aa102a410fd2ff36257cf97c1e86b920916bee90064af10a575364e"
+    },
+    "pheIn": {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-peptide-00.pdb",
+      "sha256": "5750c0432f43ff24423b2a5be4e0e4508e89e502aa605270c3f6d8a489bb84ed"
+    },
+    "phePlus60": {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-peptide-05.pdb",
+      "sha256": "3e0c466ec8b5bb8422113bb4e2abdaefcb51ae530acf52a39ead7b64482daa97"
+    },
+    "pheOut": {
+      "path": "design-history/structures/generated/sos1-v7-phe890-flip-peptide-07.pdb",
+      "sha256": "9361ec4eebbb77914da4e22fa4676853529626be328490ffa5de2f1eb9474873"
+    }
+  },
+  "grid": {
+    "rotorDeltaDegrees": [
+      0,
+      30,
+      60,
+      90,
+      120,
+      150,
+      180,
+      210,
+      240,
+      270,
+      300,
+      330
+    ],
+    "ligandRotors": [
+      {
+        "axis": [
+          "C12",
+          "C15"
+        ],
+        "movedAtomNames": [
+          "C15",
+          "CX2",
+          "CX3",
+          "CX4",
+          "SX1",
+          "CX5",
+          "CX11",
+          "CX12",
+          "CX13",
+          "CX14",
+          "CX15",
+          "CX16",
+          "OX3"
+        ]
+      },
+      {
+        "axis": [
+          "CX4",
+          "CX5"
+        ],
+        "movedAtomNames": [
+          "CX5",
+          "CX11",
+          "CX12",
+          "CX13",
+          "CX14",
+          "CX15",
+          "CX16",
+          "OX3"
+        ]
+      }
+    ],
+    "phe890Branches": [
+      {
+        "id": "phe-in-native",
+        "input": "pheIn"
+      },
+      {
+        "id": "phe-plus60-control",
+        "input": "phePlus60"
+      },
+      {
+        "id": "phe-out",
+        "input": "pheOut"
+      }
+    ],
+    "hydrationStates": [
+      "dry",
+      "retained-water-1507"
+    ],
+    "conceptualCellCount": 864,
+    "severeClashDefinition": {
+      "radiusFraction": 0.62,
+      "hydrogenAtomsExcluded": true
+    }
+  },
+  "prospectiveBoundary": {
+    "holdoutCoordinatesUsedForRanking": false,
+    "rankingStatus": "not-performed",
+    "statement": "The grid records prospective clash screens only. No cell or Phe890 branch is selected from 5OVH agreement.",
+    "availableWithoutHoldout": [
+      "Phe890 severe-clash count",
+      "other receptor severe-clash count",
+      "retained HOH1507 severe-clash count",
+      "N7-to-Asn879-OD1 heavy-atom distance"
+    ],
+    "fixedN7ToAsn879Od1Angstrom": 2.803,
+    "missingForScientificSelection": [
+      "force-field energy",
+      "ligand strain",
+      "hydrogen geometry after local minimization",
+      "post-relaxation contact satisfaction",
+      "water displacement free energy"
+    ]
+  },
+  "prospectiveScreen": [
+    {
+      "branch": "phe-in-native",
+      "hydration": "dry",
+      "prospective": {
+        "zeroSevereCellCount": 65,
+        "minimumSevereClashes": 0
+      }
+    },
+    {
+      "branch": "phe-in-native",
+      "hydration": "retained-water-1507",
+      "prospective": {
+        "zeroSevereCellCount": 24,
+        "minimumSevereClashes": 0
+      }
+    },
+    {
+      "branch": "phe-plus60-control",
+      "hydration": "dry",
+      "prospective": {
+        "zeroSevereCellCount": 55,
+        "minimumSevereClashes": 0
+      }
+    },
+    {
+      "branch": "phe-plus60-control",
+      "hydration": "retained-water-1507",
+      "prospective": {
+        "zeroSevereCellCount": 13,
+        "minimumSevereClashes": 0
+      }
+    },
+    {
+      "branch": "phe-out",
+      "hydration": "dry",
+      "prospective": {
+        "zeroSevereCellCount": 56,
+        "minimumSevereClashes": 0
+      }
+    },
+    {
+      "branch": "phe-out",
+      "hydration": "retained-water-1507",
+      "prospective": {
+        "zeroSevereCellCount": 13,
+        "minimumSevereClashes": 0
+      }
+    }
+  ],
+  "retrospectiveHoldoutDiagnostics": {
+    "evaluationOnly": true,
+    "holdoutPdbId": "5OVH",
+    "existingFrozenEvaluation": {
+      "accepted": false,
+      "wholeLigandRmsdAngstrom": 3.396349293033488,
+      "hardRegionRmsdAngstrom": 1.560146676787619,
+      "phe890SidechainRmsdAngstrom": 2.014844136989599
+    },
+    "torsionReferenceDegrees": {
+      "thiophene-a": -111.05,
+      "thiophene-b": 69.5,
+      "biaryl": -106.58
+    },
+    "branchSummaries": [
+      {
+        "branch": "phe-in-native",
+        "hydration": "dry",
+        "retrospective": {
+          "holdoutCompatibleCellCount": 9,
+          "zeroSevereHoldoutCompatibleCellCount": 3,
+          "bestZeroSevereHoldoutCompatibleCell": {
+            "firstAngleDegrees": 120,
+            "secondAngleDegrees": 300,
+            "wholeLigandRmsdAngstrom": 1.913,
+            "torsionErrorsDegrees": {
+              "thiophene-a": 19.2,
+              "thiophene-b": 28.5,
+              "biaryl": 38.4
+            }
+          },
+          "bestHoldoutCompatibleCell": {
+            "firstAngleDegrees": 180,
+            "secondAngleDegrees": 300,
+            "totalSevereClashes": 11,
+            "wholeLigandRmsdAngstrom": 1.147,
+            "torsionErrorsDegrees": {
+              "thiophene-a": 40.8,
+              "thiophene-b": 31.5,
+              "biaryl": 38.4
+            }
+          }
+        }
+      },
+      {
+        "branch": "phe-in-native",
+        "hydration": "retained-water-1507",
+        "retrospective": {
+          "holdoutCompatibleCellCount": 9,
+          "zeroSevereHoldoutCompatibleCellCount": 0,
+          "bestZeroSevereHoldoutCompatibleCell": null,
+          "bestHoldoutCompatibleCell": {
+            "firstAngleDegrees": 180,
+            "secondAngleDegrees": 300,
+            "totalSevereClashes": 12,
+            "wholeLigandRmsdAngstrom": 1.147,
+            "torsionErrorsDegrees": {
+              "thiophene-a": 40.8,
+              "thiophene-b": 31.5,
+              "biaryl": 38.4
+            }
+          }
+        }
+      },
+      {
+        "branch": "phe-plus60-control",
+        "hydration": "dry",
+        "retrospective": {
+          "holdoutCompatibleCellCount": 9,
+          "zeroSevereHoldoutCompatibleCellCount": 4,
+          "bestZeroSevereHoldoutCompatibleCell": {
+            "firstAngleDegrees": 150,
+            "secondAngleDegrees": 240,
+            "wholeLigandRmsdAngstrom": 1.597,
+            "torsionErrorsDegrees": {
+              "thiophene-a": 10.8,
+              "thiophene-b": 1.5,
+              "biaryl": 21.6
+            }
+          },
+          "bestHoldoutCompatibleCell": {
+            "firstAngleDegrees": 180,
+            "secondAngleDegrees": 300,
+            "totalSevereClashes": 7,
+            "wholeLigandRmsdAngstrom": 1.147,
+            "torsionErrorsDegrees": {
+              "thiophene-a": 40.8,
+              "thiophene-b": 31.5,
+              "biaryl": 38.4
+            }
+          }
+        }
+      },
+      {
+        "branch": "phe-plus60-control",
+        "hydration": "retained-water-1507",
+        "retrospective": {
+          "holdoutCompatibleCellCount": 9,
+          "zeroSevereHoldoutCompatibleCellCount": 0,
+          "bestZeroSevereHoldoutCompatibleCell": null,
+          "bestHoldoutCompatibleCell": {
+            "firstAngleDegrees": 180,
+            "secondAngleDegrees": 300,
+            "totalSevereClashes": 8,
+            "wholeLigandRmsdAngstrom": 1.147,
+            "torsionErrorsDegrees": {
+              "thiophene-a": 40.8,
+              "thiophene-b": 31.5,
+              "biaryl": 38.4
+            }
+          }
+        }
+      },
+      {
+        "branch": "phe-out",
+        "hydration": "dry",
+        "retrospective": {
+          "holdoutCompatibleCellCount": 9,
+          "zeroSevereHoldoutCompatibleCellCount": 5,
+          "bestZeroSevereHoldoutCompatibleCell": {
+            "firstAngleDegrees": 150,
+            "secondAngleDegrees": 270,
+            "wholeLigandRmsdAngstrom": 1.459,
+            "torsionErrorsDegrees": {
+              "thiophene-a": 10.8,
+              "thiophene-b": 1.5,
+              "biaryl": 8.4
+            }
+          },
+          "bestHoldoutCompatibleCell": {
+            "firstAngleDegrees": 180,
+            "secondAngleDegrees": 300,
+            "totalSevereClashes": 5,
+            "wholeLigandRmsdAngstrom": 1.147,
+            "torsionErrorsDegrees": {
+              "thiophene-a": 40.8,
+              "thiophene-b": 31.5,
+              "biaryl": 38.4
+            }
+          }
+        }
+      },
+      {
+        "branch": "phe-out",
+        "hydration": "retained-water-1507",
+        "retrospective": {
+          "holdoutCompatibleCellCount": 9,
+          "zeroSevereHoldoutCompatibleCellCount": 0,
+          "bestZeroSevereHoldoutCompatibleCell": null,
+          "bestHoldoutCompatibleCell": {
+            "firstAngleDegrees": 180,
+            "secondAngleDegrees": 300,
+            "totalSevereClashes": 6,
+            "wholeLigandRmsdAngstrom": 1.147,
+            "torsionErrorsDegrees": {
+              "thiophene-a": 40.8,
+              "thiophene-b": 31.5,
+              "biaryl": 38.4
+            }
+          }
+        }
+      }
+    ],
+    "pheInHighlightedCells": [
+      {
+        "firstAngleDegrees": 120,
+        "secondAngleDegrees": 240,
+        "pheSevere": 0,
+        "nonPheSevere": 0,
+        "waterSevere": 3,
+        "wholeLigandRmsdAngstrom": 2.056,
+        "torsionErrorsDegrees": {
+          "thiophene-a": 19.2,
+          "thiophene-b": 28.5,
+          "biaryl": 21.6
+        }
+      },
+      {
+        "firstAngleDegrees": 120,
+        "secondAngleDegrees": 270,
+        "pheSevere": 0,
+        "nonPheSevere": 0,
+        "waterSevere": 3,
+        "wholeLigandRmsdAngstrom": 1.988,
+        "torsionErrorsDegrees": {
+          "thiophene-a": 19.2,
+          "thiophene-b": 28.5,
+          "biaryl": 8.4
+        }
+      },
+      {
+        "firstAngleDegrees": 150,
+        "secondAngleDegrees": 240,
+        "pheSevere": 2,
+        "nonPheSevere": 0,
+        "waterSevere": 3,
+        "wholeLigandRmsdAngstrom": 1.597,
+        "torsionErrorsDegrees": {
+          "thiophene-a": 10.8,
+          "thiophene-b": 1.5,
+          "biaryl": 21.6
+        }
+      },
+      {
+        "firstAngleDegrees": 150,
+        "secondAngleDegrees": 270,
+        "pheSevere": 3,
+        "nonPheSevere": 0,
+        "waterSevere": 4,
+        "wholeLigandRmsdAngstrom": 1.459,
+        "torsionErrorsDegrees": {
+          "thiophene-a": 10.8,
+          "thiophene-b": 1.5,
+          "biaryl": 8.4
+        }
+      }
+    ],
+    "statement": "These values were computed after opening 5OVH and are diagnostic only; they must not select a production pose or receptor branch."
+  },
+  "conclusion": "A low-clash, holdout-compatible basin exists with native Phe890-in. Geometry alone does not establish which Phe890 branch wins; a prospective contact-aware coupled-energy selector is required."
+}

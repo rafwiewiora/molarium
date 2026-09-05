@@ -1,0 +1,108 @@
+{
+  "schema": "molarium.sos1-frozen-browser-publication/v1",
+  "routeId": "sos1-hit-only",
+  "publicationClass": "complete-frozen-prediction",
+  "sourceRun": {
+    "id": "sos1-a013-a018-complete-frozen",
+    "directory": "design-history/publications/sos1/source-runs/sos1-a013-a018-complete-frozen",
+    "predictionManifestSha256": "03311779f5c968db80cf246753cd3b81227b98c4a7e4bb8ae4cff3da68a03701",
+    "sourceAuditSha256": "a4410e215592b0c1ed42a1ebb5b5d61b01e541fa3eea06599a70d6ec5d70e9d8",
+    "checkpoints": [
+      {
+        "stepId": "scaffold-rewrite",
+        "sha256": "5fe79927f85d1bec145746d8a867fe9a64047e22ac8f5de10e8dd1e2dd4f9ace",
+        "fullSystemCampaignSha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+        "publishedCampaignPath": "design-history/publications/sos1/checkpoints/scaffold-rewrite-campaign.json"
+      },
+      {
+        "stepId": "fragment-merge",
+        "sha256": "da323462256b61653ac6a2c59ae8dc596a9b81e88cb3eba6055f83cb67093033",
+        "fullSystemCampaignSha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81",
+        "publishedCampaignPath": "design-history/publications/sos1/checkpoints/fragment-merge-campaign.json"
+      },
+      {
+        "stepId": "open-phe890-pocket",
+        "sha256": "510154612002504393429956877e1be312fff6bb23450e62974ab0ffd1954c88",
+        "fullSystemCampaignSha256": "1b174568da864bbfdbd268363bfaba03a9e180b3210de129705fa6f6191eb5fc",
+        "publishedCampaignPath": "design-history/publications/sos1/checkpoints/open-phe890-pocket-campaign.json"
+      },
+      {
+        "stepId": "finish-bay-293",
+        "sha256": "e94988b7fda9e85dcc81dc44ecac42d013c1a117a796c75c506aeb3354cc4649",
+        "fullSystemCampaignSha256": "d4685188148b963795ce5d434611b31614a72455a37f34c8f98648f589c2da32",
+        "publishedCampaignPath": "design-history/publications/sos1/checkpoints/finish-bay-293-campaign.json"
+      }
+    ]
+  },
+  "postFreezeEvaluation": {
+    "schema": "molarium.sos1-post-freeze-evaluation-outcome/v1",
+    "attached": true,
+    "summarySha256": "a62bdc8a4e10e26dd053372d01433f4de854cf8021f147862363c1ca2b844ad4",
+    "accepted": false,
+    "continuityAccepted": false,
+    "failedStepIds": [
+      "fragment-merge",
+      "open-phe890-pocket",
+      "finish-bay-293"
+    ],
+    "results": [
+      {
+        "stepId": "scaffold-rewrite",
+        "accepted": true,
+        "failedChecks": []
+      },
+      {
+        "stepId": "fragment-merge",
+        "accepted": false,
+        "failedChecks": [
+          "whole-ligand-principal-plane"
+        ]
+      },
+      {
+        "stepId": "open-phe890-pocket",
+        "accepted": false,
+        "failedChecks": [
+          "whole-ligand-rmsd",
+          "whole-ligand-centroid",
+          "hard-region-rmsd",
+          "hard-region-maximum-displacement",
+          "phe890-sidechain-rmsd",
+          "whole-ligand-principal-plane"
+        ]
+      },
+      {
+        "stepId": "finish-bay-293",
+        "accepted": false,
+        "failedChecks": [
+          "whole-ligand-rmsd",
+          "whole-ligand-principal-plane",
+          "distal-feature-rmsd",
+          "distal-feature-centroid",
+          "distal-feature-radial-distance",
+          "aww-to-axh-continuity"
+        ]
+      }
+    ]
+  },
+  "executableReplay": {
+    "path": "design-history/examples/sos1-prediction.action-script.json",
+    "sha256": "eb157eeda9044d2f2d5a3940a37a9dfd4ef29fdcf7754a79ad13fc56c407fd2d",
+    "actionScriptSha256": "c125e6857287d55a7f65a90fa9d4b14205d9a18c98979644be91f548d2975299",
+    "publicUrl": "/sos1-hit-to-bay293"
+  },
+  "checkpointReview": {
+    "path": "design-history/examples/sos1-prediction-checkpoint-review.action-script.json",
+    "sha256": "7f309257a71a4427b66013d0d40880e52a40053c908fcea83e0223cede7e0413",
+    "actionScriptSha256": "e95065e29b58cc01223572e23c18319bedbcb371c40749182545ad72d14e3b43",
+    "calculationPolicy": "none",
+    "promotable": false,
+    "publicUrl": "/sos1-hit-to-bay293/review",
+    "startingHit": {
+      "campaignPath": "design-history/publications/sos1/checkpoints/starting-hit-campaign.json",
+      "campaignSha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6",
+      "commitId": "commit:481b690c9b92896a18b858d8522ddb7c55be00b3b416922dcc814a7f0cec826b",
+      "snapshotId": "snapshot:463a3efd937fc719719256336bd1cb9b5db19a26df2f8db9d5bdfc4c353dd972",
+      "source": "exact scaffold-rewrite campaign history prefix"
+    }
+  }
+}

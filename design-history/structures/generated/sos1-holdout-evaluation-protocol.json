@@ -1,0 +1,166 @@
+{
+  "schema": "molarium.sos1-holdout-evaluation-protocol/v1",
+  "routeId": "sos1-hit-only",
+  "registeredBeforeHoldoutAccess": true,
+  "evaluator": {
+    "path": "design-history/structures/evaluate-sos1-holdouts.py",
+    "sha256": "324f7aa8e927e07bf624136688a945c78dc64a19ec711a82a163e995daac2b89"
+  },
+  "registeredRoute": {
+    "path": "design-history/structures/generated/sos1-prospective-campaign.json",
+    "schema": "molarium.registered-design-route/v1",
+    "sha256": "dfd6de5a8f5c8a6bb50b552399365eabcb894cbcf2d709a4b9f47ae71757f5e4"
+  },
+  "predictionInputs": {
+    "runManifestSchema": "molarium.design-prediction-run/v1",
+    "checkpointSchema": "molarium.design-prediction-checkpoint/v1",
+    "requiredStepIds": [
+      "scaffold-rewrite",
+      "fragment-merge",
+      "open-phe890-pocket",
+      "finish-bay-293"
+    ],
+    "requireCompleteCoordinateInspections": true,
+    "coordinateInspectionRule": "Every persisted inspection containing coordinates must have truncated=false and totalAtomCount equal to the stored atom count."
+  },
+  "thresholds": {
+    "receptorAlignmentRmsdAngstrom": 1.25,
+    "ligandRmsdAngstrom": 2.0,
+    "ligandCentroidDisplacementAngstrom": 1.5,
+    "ligandPrincipalPlaneAngleDegrees": 35.0,
+    "ligandRadialProfileRmsdAngstrom": 1.0,
+    "hardRegionRmsdAngstrom": 1.25,
+    "hardRegionMaximumDisplacementAngstrom": 2.25,
+    "releasedRegionRmsdAngstrom": 2.5,
+    "distalFeatureRmsdAngstrom": 2.0,
+    "distalFeatureCentroidDisplacementAngstrom": 2.0,
+    "distalFeaturePlaneAngleDegrees": 30.0,
+    "distalFeatureRadialDistanceDeltaAngstrom": 1.0,
+    "phe890Chi1DifferenceDegrees": 25.0,
+    "phe890Chi2DifferenceDegrees": 35.0,
+    "phe890SidechainRmsdAngstrom": 1.5,
+    "phe890SidechainMaximumDisplacementAngstrom": 2.5,
+    "minimumBondLengthToCovalentRadiiRatio": 0.65,
+    "maximumBondLengthToCovalentRadiiRatio": 1.45,
+    "maximumLigandInternalSevereClashes": 0,
+    "maximumProteinLigandSevereClashes": 0
+  },
+  "continuityThresholds": {
+    "hardRegionSameReceptorFrameRmsdAngstrom": 0.6,
+    "hardRegionSameReceptorFrameMaximumDisplacementAngstrom": 1.0,
+    "hardRegionSameReceptorFrameCentroidDisplacementAngstrom": 0.5,
+    "hardRegionRigidBodyOrientationChangeDegrees": 15.0,
+    "releasedRegionAfterHardCoreRigidSuperpositionRmsdAngstrom": 2.5,
+    "distalFeatureAfterHardCoreRigidSuperpositionRmsdAngstrom": 1.5,
+    "distalFeatureAfterHardCoreRigidSuperpositionCentroidDisplacementAngstrom": 1.5,
+    "distalFeatureAfterHardCoreRigidSuperpositionPlaneAngleDegrees": 30.0,
+    "distalFeatureAfterHardCoreRigidSuperpositionRadialDistanceDeltaAngstrom": 1.0
+  },
+  "receptorAlignment": {
+    "method": "Kabsch rigid superposition on the exact registered anchors",
+    "anchors": [
+      {
+        "chain": "A",
+        "residueNumber": 874,
+        "insertionCode": "",
+        "residueName": "VAL",
+        "atomName": "CA"
+      },
+      {
+        "chain": "A",
+        "residueNumber": 876,
+        "insertionCode": "",
+        "residueName": "SER",
+        "atomName": "CA"
+      },
+      {
+        "chain": "A",
+        "residueNumber": 880,
+        "insertionCode": "",
+        "residueName": "SER",
+        "atomName": "CA"
+      },
+      {
+        "chain": "A",
+        "residueNumber": 885,
+        "insertionCode": "",
+        "residueName": "ARG",
+        "atomName": "CA"
+      },
+      {
+        "chain": "A",
+        "residueNumber": 893,
+        "insertionCode": "",
+        "residueName": "ILE",
+        "atomName": "CA"
+      },
+      {
+        "chain": "A",
+        "residueNumber": 899,
+        "insertionCode": "",
+        "residueName": "LYS",
+        "atomName": "CA"
+      },
+      {
+        "chain": "A",
+        "residueNumber": 904,
+        "insertionCode": "",
+        "residueName": "ALA",
+        "atomName": "CA"
+      },
+      {
+        "chain": "A",
+        "residueNumber": 906,
+        "insertionCode": "",
+        "residueName": "GLU",
+        "atomName": "CA"
+      }
+    ],
+    "minimumAnchorCount": 8,
+    "excludedDesignedResidues": [
+      {
+        "chain": "A",
+        "residueNumber": 890,
+        "residueName": "PHE"
+      }
+    ],
+    "selectionRule": "Fixed route-wide C-alpha list spanning the inspected pocket; the explicitly designed Phe890 coordinate is excluded.",
+    "fitAcceptanceThresholdAngstrom": 1.25
+  },
+  "holdouts": [
+    {
+      "stepId": "scaffold-rewrite",
+      "pdbId": "5OVF",
+      "filename": "5OVF.pdb",
+      "ligandComponentId": "AWT",
+      "ligandChain": "A",
+      "ligandResidueNumber": 1101
+    },
+    {
+      "stepId": "fragment-merge",
+      "pdbId": "5OVG",
+      "filename": "5OVG.pdb",
+      "ligandComponentId": "AWZ",
+      "ligandChain": "A",
+      "ligandResidueNumber": 1101
+    },
+    {
+      "stepId": "open-phe890-pocket",
+      "pdbId": "5OVH",
+      "filename": "5OVH.pdb",
+      "ligandComponentId": "AWW",
+      "ligandChain": "A",
+      "ligandResidueNumber": 1101
+    },
+    {
+      "stepId": "finish-bay-293",
+      "pdbId": "5OVI",
+      "filename": "5OVI.pdb",
+      "ligandComponentId": "AXH",
+      "ligandChain": "A",
+      "ligandResidueNumber": 2001
+    }
+  ],
+  "holdoutCoordinateHashBinding": "post-open-evaluation-report-only",
+  "holdoutCoordinatePolicy": "Only expected PDB identities, filenames, ligand identities, and residue numbers are registered here. Coordinate bytes are neither opened nor hashed by this builder; each SHA-256 is first bound in the post-open evaluation report."
+}

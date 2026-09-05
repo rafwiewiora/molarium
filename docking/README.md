@@ -62,6 +62,9 @@ ConstraintDock version `0.4.0` and Pose Propagation version `0.9.0` implement an
 - explicit donor-hydrogen-acceptor distance and angle audits;
 - required-H-bond feasibility and transparent penalty scoring;
 - deterministic feasible-first pose ranking;
+- deterministic v5 seed stratification that covers every registered spatial-feature map and
+  eligible affected pre-existing rotor before distributing remaining chains round-robin, with an
+  insufficient chain budget rejected rather than partially searched;
 - stable atom identities for edit-derived reference cores;
 - automatic inheritance of surviving reference heavy atoms, with an explicit audited whole-ring
   release when a committed edit changes existing ring chemistry;

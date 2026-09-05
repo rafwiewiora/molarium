@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { MOLARIUM_CONSTRAINT_DOCK_PROTOCOL, MOLARIUM_POSE_PROPAGATION_PROTOCOL } from './protocol.mjs';
 import { applyCoreTransform, evaluateCoreConstraint, evaluateHydrogenBondConstraint,
+  evaluateSpatialFeatureConstraint,
   fittedCoreTransform, hydrogenBondGeometry, restoreCapturedLigandDonorHydrogens,
   rankConstrainedPoses, scoreConstrainedPose, snapCorePositions } from './constraints.mjs';
 import { appendLabbookEvent, completeLabbook, createLabbook, inputProvenance,
@@ -55,6 +56,31 @@ const badHbond = evaluateHydrogenBondConstraint({ ...hbondGeometry, dhaAngleDegr
 assert.equal(badHbond.satisfied, false);
 assert.ok(badHbond.penaltyKcalMol > 0);
 
+const spatialReference = Float64Array.from([
+  0,0,0, 1,0,0, 0,1,0,
+]);
+const spatialCandidate = Float64Array.from([
+  1,0,0, 0,0,0, 0,1,0,
+]);
+const spatialFeature = evaluateSpatialFeatureConstraint(
+  spatialReference, spatialCandidate, {
+    id:'symmetric-ring-fragment', kind:'conserved-fragment-rmsd',
+    atomPairVariants:[[[0,0],[1,1],[2,2]], [[0,1],[1,0],[2,2]]],
+    restraint:{ toleranceAngstrom:0.1, weightKcalMolPerAngstrom2:20, required:true },
+  });
+assert.equal(spatialFeature.selectedVariantIndex, 1,
+  'graph-symmetric fragment variants must be ranked by spatial fit');
+assert.equal(spatialFeature.satisfied, true);
+const displacedSpatialFeature = evaluateSpatialFeatureConstraint(
+  spatialReference, Float64Array.from(spatialCandidate, (value, index) =>
+    value + (index % 3 === 2 ? 2 : 0)), {
+    id:'symmetric-ring-fragment', kind:'conserved-fragment-rmsd',
+    atomPairVariants:[[[0,0],[1,1],[2,2]], [[0,1],[1,0],[2,2]]],
+    restraint:{ toleranceAngstrom:0.1, weightKcalMolPerAngstrom2:20, required:true },
+  });
+assert.equal(displacedSpatialFeature.satisfied, false);
+assert.ok(displacedSpatialFeature.penaltyKcalMol > 0);
+
 const donorHydrogenStart = Float64Array.from([0,0,0, 0,1,0]);
 const donorHydrogenRestored = restoreCapturedLigandDonorHydrogens(donorHydrogenStart, [{
   id:'ligand-donor', required:true,
@@ -98,6 +124,9 @@ const feasible = scoreConstrainedPose({ physicalEnergyKcalMol:-10, core,
   hydrogenBonds:[{ ...goodHbond, required:true }] });
 const infeasible = scoreConstrainedPose({ physicalEnergyKcalMol:-100, core,
   hydrogenBonds:[{ ...badHbond, required:true }] });
+const spatiallyInfeasible = scoreConstrainedPose({ physicalEnergyKcalMol:-100, core,
+  spatialFeatures:[displacedSpatialFeature] });
+assert.equal(spatiallyInfeasible.feasible, false);
 const ranked = rankConstrainedPoses([infeasible, feasible]);
 assert.equal(ranked[0].feasible, true);
 assert.equal(ranked[0].inputIndex, 1);
@@ -365,6 +394,27 @@ assert.equal(chemicallyGatedRun.feasibleCount, 1,
 assert.equal(chemicallyGatedRun.selected.conformerIndex, 1);
 assert.equal(chemicallyGatedRun.candidates.find((entry) => entry.conformerIndex === 0)
   .physicalFeasible, false);
+const spatiallyGatedRun = await runConstrainedDocking({
+  referencePositions:captured.positions,
+  candidateConformers:[translatedBad, translatedGood],
+  coreAtomPairs:mappedCore.atomPairs,
+  spatialFeatureConstraints:[{
+    id:'retained-terminal-feature', kind:'conserved-fragment-rmsd',
+    atomPairVariants:[[[0,0],[1,1],[3,3]]],
+    restraint:{ toleranceAngstrom:0.1, weightKcalMolPerAngstrom2:20, required:true },
+  }],
+  protocol:MOLARIUM_CONSTRAINT_DOCK_PROTOCOL,
+  physicalScore:({ conformerIndex }) => conformerIndex === 0 ? -100 : -10,
+});
+assert.equal(spatiallyGatedRun.feasibleCount, 1,
+  'a required registered spatial feature must participate in final workflow feasibility');
+assert.equal(spatiallyGatedRun.selected.conformerIndex, 1,
+  'a lower physical score must not outrank a pose that violates a required spatial feature');
+assert.equal(spatiallyGatedRun.selected.spatialFeatures.length, 1);
+assert.equal(spatiallyGatedRun.selected.spatialFeatures[0].id, 'retained-terminal-feature');
+assert.equal(spatiallyGatedRun.selected.spatialFeatures[0].satisfied, true);
+assert.equal(spatiallyGatedRun.candidates.find((entry) => entry.conformerIndex === 0)
+  .spatialFeatures[0].satisfied, false);
 assert.deepEqual(await verifyLabbook(workflowLabbook), { valid:true, reason:null, events:2 });
 await assert.rejects(() => appendLabbookEvent(labbook, {
   at:'2026-08-19T12:00:05.000Z', stage:'late-note', status:'invalid', details:{},
@@ -1203,7 +1253,7 @@ const featureSeeds = featureGuidedPoseSeeds({ molecule:featureSeedMolecule,
     hydrogen:{ scope:'receptor', point:{ x:0,y:2,z:0 } },
     acceptor:{ scope:'ligand', atomIndex:1 },
     targetLigandFeatureReferencePoint:{ x:0,y:1.2,z:0 } }] });
-assert.equal(featureSeeds.method, 'molarium-edit-region-axis-seeding/v4');
+assert.equal(featureSeeds.method, 'molarium-edit-region-axis-seeding/v5');
 assert.equal(featureSeeds.requestedCount, 7);
 assert.equal(featureSeeds.uniqueSeedCount, 7);
 assert.equal(featureSeeds.untargetedRotorCount, 0,
@@ -1218,6 +1268,7 @@ const multiAnchorSeeds = featureGuidedPoseSeeds({ molecule:{
   atoms:[{ element:'C' }, { element:'N' }, { element:'C' }],
   bonds:[{ a:0,b:1,order:1 }, { a:1,b:2,order:1 }] },
 initialPositions:featureSeedStart, coreAtomIndices:[0,2], count:3,
+featureSeedingProtocol:'v4',
 hydrogenBondConstraints:[{ id:'ring-feature', receptorRole:'donor',
   acceptor:{ scope:'ligand', atomIndex:1 },
   targetLigandFeatureReferencePoint:{ x:0,y:1,z:0 } }] });

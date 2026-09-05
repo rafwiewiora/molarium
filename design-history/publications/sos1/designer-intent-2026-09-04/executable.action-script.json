@@ -1,0 +1,2330 @@
+{
+  "schema": "molarium.chemist-action-script/v1",
+  "label": "SOS1 hit to BAY-293 · reference-informed designer-intent replay",
+  "actions": [
+    {
+      "action": "designRoute.load",
+      "args": {
+        "routeId": "sos1-hit-only"
+      },
+      "auditSequence": 1,
+      "auditRequestId": "route-load-hit",
+      "caption": "Begin with the only allowed coordinates: the 5OVE/AXE hit"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 2,
+      "auditRequestId": "route-enter-build",
+      "caption": "Route enter build"
+    },
+    {
+      "action": "protein.prepare",
+      "args": {
+        "gapPolicy": "cap",
+        "histidine": "auto",
+        "ligandPolicy": "ccd",
+        "pH": 7.4,
+        "repairMissingHeavy": true,
+        "waterPolicy": "retain"
+      },
+      "auditSequence": 3,
+      "auditRequestId": "route-prepare-hit",
+      "caption": "Route prepare hit"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "auditSequence": 5,
+      "auditRequestId": "route-capture-hit",
+      "caption": "Route capture hit"
+    },
+    {
+      "action": "designRoute.inspect",
+      "args": {},
+      "auditSequence": 6,
+      "auditRequestId": "route-inspect-boundary",
+      "caption": "Route inspect boundary"
+    },
+    {
+      "action": "designRoute.applyStep",
+      "args": {
+        "stepId": "scaffold-rewrite"
+      },
+      "auditSequence": 7,
+      "auditRequestId": "scaffold-rewrite-stage",
+      "caption": "Rewrite the hit scaffold"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "execution": "serial",
+        "featureSeedingProtocol": "v5",
+        "searchChains": 8
+      },
+      "expect": {
+        "refinement.coverageComplete": true,
+        "refinement.selectedFeasible": true,
+        "refinement.selectedCore.satisfied": true,
+        "refinement.requiredSpatialFeatureCount": 0,
+        "molecule.atoms": 7929,
+        "molecule.bonds": 8013
+      },
+      "auditSequence": 8,
+      "auditRequestId": "scaffold-rewrite-pose-refine",
+      "caption": "Scaffold rewrite pose refine"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true,
+        "appliedPose.infeasibleOverride": false,
+        "molecule.atoms": 7929,
+        "molecule.bonds": 8013
+      },
+      "auditSequence": 9,
+      "auditRequestId": "scaffold-rewrite-pose-apply",
+      "caption": "Scaffold rewrite pose apply"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "auditSequence": 10,
+      "auditRequestId": "scaffold-rewrite-parameterize-without-motion",
+      "caption": "Scaffold rewrite parameterize without motion"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "expect": {
+        "optimization.accepted": true,
+        "optimization.valenceSafeguard.accepted": true,
+        "optimization.valenceSafeguard.complete": true,
+        "optimization.registeredPoseRetention.accepted": true,
+        "molecule.atoms": 7929,
+        "molecule.bonds": 8013
+      },
+      "auditSequence": 11,
+      "auditRequestId": "scaffold-rewrite-complex-relax",
+      "caption": "Scaffold rewrite complex relax"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 12,
+      "auditRequestId": "scaffold-rewrite-freeze-ligand",
+      "caption": "Scaffold rewrite freeze ligand"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 13,
+      "auditRequestId": "scaffold-rewrite-freeze-pocket",
+      "caption": "Scaffold rewrite freeze pocket"
+    },
+    {
+      "action": "designRoute.inspect",
+      "args": {},
+      "auditSequence": 14,
+      "auditRequestId": "scaffold-rewrite-inspect-state",
+      "caption": "Scaffold rewrite inspect state"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 18,
+      "auditRequestId": "scaffold-rewrite-advance-build",
+      "caption": "Scaffold rewrite advance build"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "auditSequence": 19,
+      "auditRequestId": "scaffold-rewrite-capture-predicted-reference",
+      "caption": "Scaffold rewrite capture predicted reference"
+    },
+    {
+      "action": "designRoute.applyStep",
+      "args": {
+        "stepId": "fragment-merge"
+      },
+      "auditSequence": 20,
+      "auditRequestId": "fragment-merge-stage",
+      "caption": "Merge the prospective fragment design"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "execution": "serial",
+        "featureSeedingProtocol": "v5",
+        "searchChains": 8
+      },
+      "expect": {
+        "refinement.coverageComplete": true,
+        "refinement.selectedFeasible": true,
+        "refinement.selectedCore.satisfied": true,
+        "refinement.requiredSpatialFeatureCount": 0,
+        "molecule.atoms": 7933,
+        "molecule.bonds": 8018
+      },
+      "auditSequence": 21,
+      "auditRequestId": "fragment-merge-pose-refine",
+      "caption": "Fragment merge pose refine"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true,
+        "appliedPose.infeasibleOverride": false,
+        "molecule.atoms": 7933,
+        "molecule.bonds": 8018
+      },
+      "auditSequence": 22,
+      "auditRequestId": "fragment-merge-pose-apply",
+      "caption": "Fragment merge pose apply"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "auditSequence": 23,
+      "auditRequestId": "fragment-merge-parameterize-without-motion",
+      "caption": "Fragment merge parameterize without motion"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "expect": {
+        "optimization.accepted": true,
+        "optimization.valenceSafeguard.accepted": true,
+        "optimization.valenceSafeguard.complete": true,
+        "optimization.registeredPoseRetention.accepted": true,
+        "molecule.atoms": 7933,
+        "molecule.bonds": 8018
+      },
+      "auditSequence": 24,
+      "auditRequestId": "fragment-merge-complex-relax",
+      "caption": "Fragment merge complex relax"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 25,
+      "auditRequestId": "fragment-merge-freeze-ligand",
+      "caption": "Fragment merge freeze ligand"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 26,
+      "auditRequestId": "fragment-merge-freeze-pocket",
+      "caption": "Fragment merge freeze pocket"
+    },
+    {
+      "action": "designRoute.inspect",
+      "args": {},
+      "auditSequence": 27,
+      "auditRequestId": "fragment-merge-inspect-state",
+      "caption": "Fragment merge inspect state"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 31,
+      "auditRequestId": "fragment-merge-advance-build",
+      "caption": "Fragment merge advance build"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "auditSequence": 32,
+      "auditRequestId": "fragment-merge-capture-predicted-reference",
+      "caption": "Fragment merge capture predicted reference"
+    },
+    {
+      "action": "designRoute.resume",
+      "args": {
+        "routeId": "sos1-hit-only",
+        "stateId": "AWZ"
+      },
+      "auditSequence": 33,
+      "auditRequestId": "sos1-aww-receptor-only-3-resume-awz-route",
+      "caption": "Sos1 aww receptor only 3 resume awz route"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "auditSequence": 34,
+      "auditRequestId": "sos1-aww-receptor-only-4-parameterize-awz-without-motion",
+      "caption": "Sos1 aww receptor only 4 parameterize awz without motion"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 35,
+      "auditRequestId": "sos1-aww-receptor-only-5-enter-design",
+      "caption": "Sos1 aww receptor only 5 enter design"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "auditSequence": 36,
+      "auditRequestId": "sos1-aww-receptor-only-6-capture-awz-reference",
+      "caption": "Sos1 aww receptor only 6 capture awz reference"
+    },
+    {
+      "action": "designRoute.applyStep",
+      "args": {
+        "stepId": "open-phe890-pocket"
+      },
+      "auditSequence": 37,
+      "auditRequestId": "sos1-aww-receptor-only-7-apply-aww-graph",
+      "caption": "Install the reported AWW molecular graph without crystal coordinates"
+    },
+    {
+      "action": "designRoute.resume",
+      "args": {
+        "routeId": "sos1-hit-only",
+        "stateId": "AWW"
+      },
+      "auditSequence": 39,
+      "auditRequestId": "sos1-aww-receptor-only-3-resume-awz-route",
+      "caption": "Sos1 aww receptor only 3 resume awz route"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "auditSequence": 40,
+      "auditRequestId": "sos1-aww-receptor-only-4-parameterize-awz-without-motion",
+      "caption": "Sos1 aww receptor only 4 parameterize awz without motion"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 41,
+      "auditRequestId": "sos1-aww-receptor-only-5-enter-design",
+      "caption": "Sos1 aww receptor only 5 enter design"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "auditSequence": 42,
+      "auditRequestId": "sos1-aww-receptor-only-6-capture-awz-reference",
+      "caption": "Sos1 aww receptor only 6 capture awz reference"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 43,
+      "auditRequestId": "sos1-aww-receptor-only-7-inspect-staged-aww-ligand",
+      "caption": "Sos1 aww receptor only 7 inspect staged aww ligand"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 44,
+      "auditRequestId": "sos1-aww-receptor-only-8-inspect-current-pocket-for-designer-intent",
+      "caption": "Sos1 aww receptor only 8 inspect current pocket for designer intent"
+    },
+    {
+      "action": "pose.addContact",
+      "args": {
+        "ligandAtom": {
+          "atomName": "N7",
+          "componentId": "heterogen:A:1104::AWW"
+        },
+        "ligandRole": "donor",
+        "receptorAtom": {
+          "atomName": "OD1",
+          "chain": "A",
+          "insertionCode": "",
+          "residueIndex": 879,
+          "residueName": "ASN"
+        }
+      },
+      "auditSequence": 45,
+      "auditRequestId": "sos1-aww-receptor-only-9-record-designer-asn879-hypothesis",
+      "caption": "Record the N7 to Asn879 interaction hypothesis"
+    },
+    {
+      "action": "pose.addContact",
+      "args": {
+        "ligandAtom": {
+          "atomName": "OX3",
+          "componentId": "heterogen:A:1104::AWW"
+        },
+        "ligandRole": "donor",
+        "receptorAtom": {
+          "atomName": "O",
+          "chain": "A",
+          "insertionCode": "",
+          "residueIndex": 884,
+          "residueName": "TYR"
+        }
+      },
+      "auditSequence": 46,
+      "auditRequestId": "sos1-aww-receptor-only-10-record-designer-tyr884-hypothesis",
+      "caption": "Record the OX3 to Tyr884 backbone-oxygen hypothesis"
+    },
+    {
+      "action": "geometry.alignBranchToContact",
+      "args": {
+        "allowedResponseAtoms": [
+          {
+            "atomName": "CG",
+            "chain": "A",
+            "insertionCode": "",
+            "residueIndex": 890,
+            "residueName": "PHE"
+          },
+          {
+            "atomName": "CD1",
+            "chain": "A",
+            "insertionCode": "",
+            "residueIndex": 890,
+            "residueName": "PHE"
+          },
+          {
+            "atomName": "CD2",
+            "chain": "A",
+            "insertionCode": "",
+            "residueIndex": 890,
+            "residueName": "PHE"
+          },
+          {
+            "atomName": "CE1",
+            "chain": "A",
+            "insertionCode": "",
+            "residueIndex": 890,
+            "residueName": "PHE"
+          },
+          {
+            "atomName": "CE2",
+            "chain": "A",
+            "insertionCode": "",
+            "residueIndex": 890,
+            "residueName": "PHE"
+          },
+          {
+            "atomName": "CZ",
+            "chain": "A",
+            "insertionCode": "",
+            "residueIndex": 890,
+            "residueName": "PHE"
+          }
+        ],
+        "contactId": "manual-hbond-2",
+        "designerPrimaryRotationDegrees": 150,
+        "solution": "best-directional",
+        "upstreamRotationRangeDegrees": [
+          0,
+          60
+        ],
+        "axisAtomSelectors": [
+          {
+            "atomName": "C12",
+            "componentId": "heterogen:A:1104::AWW"
+          },
+          {
+            "atomName": "C15",
+            "componentId": "heterogen:A:1104::AWW"
+          }
+        ],
+        "coupledAxisAtomSelectors": [
+          [
+            {
+              "atomName": "CX4",
+              "componentId": "heterogen:A:1104::AWW"
+            },
+            {
+              "atomName": "CX5",
+              "componentId": "heterogen:A:1104::AWW"
+            }
+          ],
+          [
+            {
+              "atomName": "CX15",
+              "componentId": "heterogen:A:1104::AWW"
+            },
+            {
+              "atomName": "CX16",
+              "componentId": "heterogen:A:1104::AWW"
+            }
+          ]
+        ],
+        "upstreamAxisAtomSelectors": [
+          {
+            "atomName": "N7",
+            "componentId": "heterogen:A:1104::AWW"
+          },
+          {
+            "atomName": "C12",
+            "componentId": "heterogen:A:1104::AWW"
+          }
+        ]
+      },
+      "expect": {
+        "designerBranchContact.externalReferenceCoordinatesUsed": false,
+        "designerBranchContact.solution": "best-directional",
+        "designerBranchContact.selected.internalSevereContactCount": 0,
+        "designerBranchContact.selected.contacts.outsideAllowedResponseContactCount": 0,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 47,
+      "auditRequestId": "sos1-aww-receptor-only-11-align-designer-aww-branch-to-tyr884",
+      "caption": "Choose the contact-compatible attachment direction explicitly"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 48,
+      "auditRequestId": "sos1-aww-receptor-only-12-inspect-designer-ligand-intent",
+      "caption": "Sos1 aww receptor only 12 inspect designer ligand intent"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 49,
+      "auditRequestId": "sos1-aww-receptor-only-13-inspect-pocket-at-designer-ligand-intent",
+      "caption": "Sos1 aww receptor only 13 inspect pocket at designer ligand intent"
+    },
+    {
+      "action": "pose.setDesignerLigandPoseFixed",
+      "args": {
+        "fixed": true,
+        "label": "AWW +150 degree contact-directed ligand intent before Phe890 response"
+      },
+      "auditSequence": 50,
+      "auditRequestId": "sos1-aww-receptor-only-14-fix-designer-ligand-intent",
+      "caption": "Fix the chemist-selected ligand pose"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "auditSequence": 54,
+      "auditRequestId": "sos1-aww-receptor-only-18-parameterize-fixed-aww-without-motion",
+      "caption": "Sos1 aww receptor only 18 parameterize fixed aww without motion"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 55,
+      "auditRequestId": "sos1-aww-receptor-only-19-inspect-fixed-ligand-after-parameterization",
+      "caption": "Sos1 aww receptor only 19 inspect fixed ligand after parameterization"
+    },
+    {
+      "action": "pose.setDesignerLigandPoseFixed",
+      "args": {
+        "fixed": true,
+        "label": "AWW +150 degree contact-directed ligand intent before Phe890 response"
+      },
+      "auditSequence": 56,
+      "auditRequestId": "sos1-aww-receptor-only-20-verify-fixed-ligand-lock-after-parameterization",
+      "caption": "Sos1 aww receptor only 20 verify fixed ligand lock after parameterization"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 57,
+      "auditRequestId": "sos1-aww-receptor-only-21-inspect-pocket-before-phe",
+      "caption": "Sos1 aww receptor only 21 inspect pocket before phe"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 64,
+        "receptorResidue": {
+          "residueName": "PHE",
+          "chain": "A",
+          "residueIndex": 890,
+          "insertionCode": ""
+        }
+      },
+      "expect": {
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.residue.insertionCode": "",
+        "sidechainRotamers.generatedCandidateCount": 13,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 58,
+      "auditRequestId": "sos1-aww-receptor-only-22-enumerate-all-phe890",
+      "caption": "Sos1 aww receptor only 22 enumerate all phe890"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "chiDegrees": [
+          -180,
+          90
+        ]
+      },
+      "expect": {
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.residue.insertionCode": "",
+        "sidechainRotamer.source": "canonical-library",
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 59,
+      "auditRequestId": "sos1-aww-receptor-only-23-apply-phe890-1",
+      "caption": "Sos1 aww receptor only 23 apply phe890 1"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 60,
+      "auditRequestId": "sos1-aww-receptor-only-24-inspect-ligand-phe890-1",
+      "caption": "Sos1 aww receptor only 24 inspect ligand phe890 1"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 61,
+      "auditRequestId": "sos1-aww-receptor-only-25-inspect-pocket-phe890-1",
+      "caption": "Sos1 aww receptor only 25 inspect pocket phe890 1"
+    },
+    {
+      "action": "calculation.run",
+      "args": {
+        "job": "energy",
+        "method": "openmm",
+        "options": {
+          "constraintMode": "none",
+          "implicitSolvent": "obc2",
+          "nonbondedCutoffNm": 1
+        }
+      },
+      "auditSequence": 62,
+      "auditRequestId": "sos1-aww-receptor-only-26-energy-phe890-1",
+      "caption": "Measure one fixed-coordinate Phe890 candidate energy"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "auditSequence": 63,
+      "auditRequestId": "sos1-aww-receptor-only-27-undo-phe890-1",
+      "caption": "Sos1 aww receptor only 27 undo phe890 1"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 64,
+      "auditRequestId": "sos1-aww-receptor-only-28-inspect-restored-ligand-1",
+      "caption": "Sos1 aww receptor only 28 inspect restored ligand 1"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 64,
+        "receptorResidue": {
+          "residueName": "PHE",
+          "chain": "A",
+          "residueIndex": 890,
+          "insertionCode": ""
+        }
+      },
+      "expect": {
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.residue.insertionCode": "",
+        "sidechainRotamers.generatedCandidateCount": 13,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 65,
+      "auditRequestId": "sos1-aww-receptor-only-29-reenumerate-phe890-2",
+      "caption": "Sos1 aww receptor only 29 reenumerate phe890 2"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "chiDegrees": [
+          -180,
+          -90
+        ]
+      },
+      "expect": {
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.residue.insertionCode": "",
+        "sidechainRotamer.source": "canonical-library",
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 66,
+      "auditRequestId": "sos1-aww-receptor-only-30-apply-phe890-2",
+      "caption": "Sos1 aww receptor only 30 apply phe890 2"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 67,
+      "auditRequestId": "sos1-aww-receptor-only-31-inspect-ligand-phe890-2",
+      "caption": "Sos1 aww receptor only 31 inspect ligand phe890 2"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 68,
+      "auditRequestId": "sos1-aww-receptor-only-32-inspect-pocket-phe890-2",
+      "caption": "Sos1 aww receptor only 32 inspect pocket phe890 2"
+    },
+    {
+      "action": "calculation.run",
+      "args": {
+        "job": "energy",
+        "method": "openmm",
+        "options": {
+          "constraintMode": "none",
+          "implicitSolvent": "obc2",
+          "nonbondedCutoffNm": 1
+        }
+      },
+      "auditSequence": 69,
+      "auditRequestId": "sos1-aww-receptor-only-33-energy-phe890-2",
+      "caption": "Measure one fixed-coordinate Phe890 candidate energy"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "auditSequence": 70,
+      "auditRequestId": "sos1-aww-receptor-only-34-undo-phe890-2",
+      "caption": "Sos1 aww receptor only 34 undo phe890 2"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 71,
+      "auditRequestId": "sos1-aww-receptor-only-35-inspect-restored-ligand-2",
+      "caption": "Sos1 aww receptor only 35 inspect restored ligand 2"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 64,
+        "receptorResidue": {
+          "residueName": "PHE",
+          "chain": "A",
+          "residueIndex": 890,
+          "insertionCode": ""
+        }
+      },
+      "expect": {
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.residue.insertionCode": "",
+        "sidechainRotamers.generatedCandidateCount": 13,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 72,
+      "auditRequestId": "sos1-aww-receptor-only-36-reenumerate-phe890-3",
+      "caption": "Sos1 aww receptor only 36 reenumerate phe890 3"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "chiDegrees": [
+          -180,
+          0
+        ]
+      },
+      "expect": {
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.residue.insertionCode": "",
+        "sidechainRotamer.source": "canonical-library",
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 73,
+      "auditRequestId": "sos1-aww-receptor-only-37-apply-phe890-3",
+      "caption": "Sos1 aww receptor only 37 apply phe890 3"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 74,
+      "auditRequestId": "sos1-aww-receptor-only-38-inspect-ligand-phe890-3",
+      "caption": "Sos1 aww receptor only 38 inspect ligand phe890 3"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 75,
+      "auditRequestId": "sos1-aww-receptor-only-39-inspect-pocket-phe890-3",
+      "caption": "Sos1 aww receptor only 39 inspect pocket phe890 3"
+    },
+    {
+      "action": "calculation.run",
+      "args": {
+        "job": "energy",
+        "method": "openmm",
+        "options": {
+          "constraintMode": "none",
+          "implicitSolvent": "obc2",
+          "nonbondedCutoffNm": 1
+        }
+      },
+      "auditSequence": 76,
+      "auditRequestId": "sos1-aww-receptor-only-40-energy-phe890-3",
+      "caption": "Measure one fixed-coordinate Phe890 candidate energy"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "auditSequence": 77,
+      "auditRequestId": "sos1-aww-receptor-only-41-undo-phe890-3",
+      "caption": "Sos1 aww receptor only 41 undo phe890 3"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 78,
+      "auditRequestId": "sos1-aww-receptor-only-42-inspect-restored-ligand-3",
+      "caption": "Sos1 aww receptor only 42 inspect restored ligand 3"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 64,
+        "receptorResidue": {
+          "residueName": "PHE",
+          "chain": "A",
+          "residueIndex": 890,
+          "insertionCode": ""
+        }
+      },
+      "expect": {
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.residue.insertionCode": "",
+        "sidechainRotamers.generatedCandidateCount": 13,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 79,
+      "auditRequestId": "sos1-aww-receptor-only-43-reenumerate-phe890-4",
+      "caption": "Sos1 aww receptor only 43 reenumerate phe890 4"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "chiDegrees": [
+          -180,
+          180
+        ]
+      },
+      "expect": {
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.residue.insertionCode": "",
+        "sidechainRotamer.source": "canonical-library",
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 80,
+      "auditRequestId": "sos1-aww-receptor-only-44-apply-phe890-4",
+      "caption": "Sos1 aww receptor only 44 apply phe890 4"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 81,
+      "auditRequestId": "sos1-aww-receptor-only-45-inspect-ligand-phe890-4",
+      "caption": "Sos1 aww receptor only 45 inspect ligand phe890 4"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 82,
+      "auditRequestId": "sos1-aww-receptor-only-46-inspect-pocket-phe890-4",
+      "caption": "Sos1 aww receptor only 46 inspect pocket phe890 4"
+    },
+    {
+      "action": "calculation.run",
+      "args": {
+        "job": "energy",
+        "method": "openmm",
+        "options": {
+          "constraintMode": "none",
+          "implicitSolvent": "obc2",
+          "nonbondedCutoffNm": 1
+        }
+      },
+      "auditSequence": 83,
+      "auditRequestId": "sos1-aww-receptor-only-47-energy-phe890-4",
+      "caption": "Measure one fixed-coordinate Phe890 candidate energy"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "auditSequence": 84,
+      "auditRequestId": "sos1-aww-receptor-only-48-undo-phe890-4",
+      "caption": "Sos1 aww receptor only 48 undo phe890 4"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 85,
+      "auditRequestId": "sos1-aww-receptor-only-49-inspect-restored-ligand-4",
+      "caption": "Sos1 aww receptor only 49 inspect restored ligand 4"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 64,
+        "receptorResidue": {
+          "residueName": "PHE",
+          "chain": "A",
+          "residueIndex": 890,
+          "insertionCode": ""
+        }
+      },
+      "expect": {
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.residue.insertionCode": "",
+        "sidechainRotamers.generatedCandidateCount": 13,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 86,
+      "auditRequestId": "sos1-aww-receptor-only-50-reenumerate-phe890-5",
+      "caption": "Sos1 aww receptor only 50 reenumerate phe890 5"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "chiDegrees": [
+          60,
+          90
+        ]
+      },
+      "expect": {
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.residue.insertionCode": "",
+        "sidechainRotamer.source": "canonical-library",
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 87,
+      "auditRequestId": "sos1-aww-receptor-only-51-apply-phe890-5",
+      "caption": "Sos1 aww receptor only 51 apply phe890 5"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 88,
+      "auditRequestId": "sos1-aww-receptor-only-52-inspect-ligand-phe890-5",
+      "caption": "Sos1 aww receptor only 52 inspect ligand phe890 5"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 89,
+      "auditRequestId": "sos1-aww-receptor-only-53-inspect-pocket-phe890-5",
+      "caption": "Sos1 aww receptor only 53 inspect pocket phe890 5"
+    },
+    {
+      "action": "calculation.run",
+      "args": {
+        "job": "energy",
+        "method": "openmm",
+        "options": {
+          "constraintMode": "none",
+          "implicitSolvent": "obc2",
+          "nonbondedCutoffNm": 1
+        }
+      },
+      "auditSequence": 90,
+      "auditRequestId": "sos1-aww-receptor-only-54-energy-phe890-5",
+      "caption": "Measure one fixed-coordinate Phe890 candidate energy"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "auditSequence": 91,
+      "auditRequestId": "sos1-aww-receptor-only-55-undo-phe890-5",
+      "caption": "Sos1 aww receptor only 55 undo phe890 5"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 92,
+      "auditRequestId": "sos1-aww-receptor-only-56-inspect-restored-ligand-5",
+      "caption": "Sos1 aww receptor only 56 inspect restored ligand 5"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 64,
+        "receptorResidue": {
+          "residueName": "PHE",
+          "chain": "A",
+          "residueIndex": 890,
+          "insertionCode": ""
+        }
+      },
+      "expect": {
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.residue.insertionCode": "",
+        "sidechainRotamers.generatedCandidateCount": 13,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 93,
+      "auditRequestId": "sos1-aww-receptor-only-57-reenumerate-phe890-6",
+      "caption": "Sos1 aww receptor only 57 reenumerate phe890 6"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "chiDegrees": [
+          60,
+          -90
+        ]
+      },
+      "expect": {
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.residue.insertionCode": "",
+        "sidechainRotamer.source": "canonical-library",
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 94,
+      "auditRequestId": "sos1-aww-receptor-only-58-apply-phe890-6",
+      "caption": "Sos1 aww receptor only 58 apply phe890 6"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 95,
+      "auditRequestId": "sos1-aww-receptor-only-59-inspect-ligand-phe890-6",
+      "caption": "Sos1 aww receptor only 59 inspect ligand phe890 6"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 96,
+      "auditRequestId": "sos1-aww-receptor-only-60-inspect-pocket-phe890-6",
+      "caption": "Sos1 aww receptor only 60 inspect pocket phe890 6"
+    },
+    {
+      "action": "calculation.run",
+      "args": {
+        "job": "energy",
+        "method": "openmm",
+        "options": {
+          "constraintMode": "none",
+          "implicitSolvent": "obc2",
+          "nonbondedCutoffNm": 1
+        }
+      },
+      "auditSequence": 97,
+      "auditRequestId": "sos1-aww-receptor-only-61-energy-phe890-6",
+      "caption": "Measure one fixed-coordinate Phe890 candidate energy"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "auditSequence": 98,
+      "auditRequestId": "sos1-aww-receptor-only-62-undo-phe890-6",
+      "caption": "Sos1 aww receptor only 62 undo phe890 6"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 99,
+      "auditRequestId": "sos1-aww-receptor-only-63-inspect-restored-ligand-6",
+      "caption": "Sos1 aww receptor only 63 inspect restored ligand 6"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 64,
+        "receptorResidue": {
+          "residueName": "PHE",
+          "chain": "A",
+          "residueIndex": 890,
+          "insertionCode": ""
+        }
+      },
+      "expect": {
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.residue.insertionCode": "",
+        "sidechainRotamers.generatedCandidateCount": 13,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 100,
+      "auditRequestId": "sos1-aww-receptor-only-64-reenumerate-phe890-7",
+      "caption": "Sos1 aww receptor only 64 reenumerate phe890 7"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "chiDegrees": [
+          60,
+          0
+        ]
+      },
+      "expect": {
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.residue.insertionCode": "",
+        "sidechainRotamer.source": "canonical-library",
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 101,
+      "auditRequestId": "sos1-aww-receptor-only-65-apply-phe890-7",
+      "caption": "Sos1 aww receptor only 65 apply phe890 7"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 102,
+      "auditRequestId": "sos1-aww-receptor-only-66-inspect-ligand-phe890-7",
+      "caption": "Sos1 aww receptor only 66 inspect ligand phe890 7"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 103,
+      "auditRequestId": "sos1-aww-receptor-only-67-inspect-pocket-phe890-7",
+      "caption": "Sos1 aww receptor only 67 inspect pocket phe890 7"
+    },
+    {
+      "action": "calculation.run",
+      "args": {
+        "job": "energy",
+        "method": "openmm",
+        "options": {
+          "constraintMode": "none",
+          "implicitSolvent": "obc2",
+          "nonbondedCutoffNm": 1
+        }
+      },
+      "auditSequence": 104,
+      "auditRequestId": "sos1-aww-receptor-only-68-energy-phe890-7",
+      "caption": "Measure one fixed-coordinate Phe890 candidate energy"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "auditSequence": 105,
+      "auditRequestId": "sos1-aww-receptor-only-69-undo-phe890-7",
+      "caption": "Sos1 aww receptor only 69 undo phe890 7"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 106,
+      "auditRequestId": "sos1-aww-receptor-only-70-inspect-restored-ligand-7",
+      "caption": "Sos1 aww receptor only 70 inspect restored ligand 7"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 64,
+        "receptorResidue": {
+          "residueName": "PHE",
+          "chain": "A",
+          "residueIndex": 890,
+          "insertionCode": ""
+        }
+      },
+      "expect": {
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.residue.insertionCode": "",
+        "sidechainRotamers.generatedCandidateCount": 13,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 107,
+      "auditRequestId": "sos1-aww-receptor-only-71-reenumerate-phe890-8",
+      "caption": "Sos1 aww receptor only 71 reenumerate phe890 8"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "chiDegrees": [
+          60,
+          180
+        ]
+      },
+      "expect": {
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.residue.insertionCode": "",
+        "sidechainRotamer.source": "canonical-library",
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 108,
+      "auditRequestId": "sos1-aww-receptor-only-72-apply-phe890-8",
+      "caption": "Sos1 aww receptor only 72 apply phe890 8"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 109,
+      "auditRequestId": "sos1-aww-receptor-only-73-inspect-ligand-phe890-8",
+      "caption": "Sos1 aww receptor only 73 inspect ligand phe890 8"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 110,
+      "auditRequestId": "sos1-aww-receptor-only-74-inspect-pocket-phe890-8",
+      "caption": "Sos1 aww receptor only 74 inspect pocket phe890 8"
+    },
+    {
+      "action": "calculation.run",
+      "args": {
+        "job": "energy",
+        "method": "openmm",
+        "options": {
+          "constraintMode": "none",
+          "implicitSolvent": "obc2",
+          "nonbondedCutoffNm": 1
+        }
+      },
+      "auditSequence": 111,
+      "auditRequestId": "sos1-aww-receptor-only-75-energy-phe890-8",
+      "caption": "Measure one fixed-coordinate Phe890 candidate energy"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "auditSequence": 112,
+      "auditRequestId": "sos1-aww-receptor-only-76-undo-phe890-8",
+      "caption": "Sos1 aww receptor only 76 undo phe890 8"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 113,
+      "auditRequestId": "sos1-aww-receptor-only-77-inspect-restored-ligand-8",
+      "caption": "Sos1 aww receptor only 77 inspect restored ligand 8"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 64,
+        "receptorResidue": {
+          "residueName": "PHE",
+          "chain": "A",
+          "residueIndex": 890,
+          "insertionCode": ""
+        }
+      },
+      "expect": {
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.residue.insertionCode": "",
+        "sidechainRotamers.generatedCandidateCount": 13,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 114,
+      "auditRequestId": "sos1-aww-receptor-only-78-reenumerate-phe890-9",
+      "caption": "Sos1 aww receptor only 78 reenumerate phe890 9"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "source": "input"
+      },
+      "expect": {
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.residue.insertionCode": "",
+        "sidechainRotamer.source": "input",
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 115,
+      "auditRequestId": "sos1-aww-receptor-only-79-apply-phe890-9",
+      "caption": "Sos1 aww receptor only 79 apply phe890 9"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 116,
+      "auditRequestId": "sos1-aww-receptor-only-80-inspect-ligand-phe890-9",
+      "caption": "Sos1 aww receptor only 80 inspect ligand phe890 9"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 117,
+      "auditRequestId": "sos1-aww-receptor-only-81-inspect-pocket-phe890-9",
+      "caption": "Sos1 aww receptor only 81 inspect pocket phe890 9"
+    },
+    {
+      "action": "calculation.run",
+      "args": {
+        "job": "energy",
+        "method": "openmm",
+        "options": {
+          "constraintMode": "none",
+          "implicitSolvent": "obc2",
+          "nonbondedCutoffNm": 1
+        }
+      },
+      "auditSequence": 118,
+      "auditRequestId": "sos1-aww-receptor-only-82-energy-phe890-9",
+      "caption": "Measure one fixed-coordinate Phe890 candidate energy"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "auditSequence": 119,
+      "auditRequestId": "sos1-aww-receptor-only-83-undo-phe890-9",
+      "caption": "Sos1 aww receptor only 83 undo phe890 9"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 120,
+      "auditRequestId": "sos1-aww-receptor-only-84-inspect-restored-ligand-9",
+      "caption": "Sos1 aww receptor only 84 inspect restored ligand 9"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 64,
+        "receptorResidue": {
+          "residueName": "PHE",
+          "chain": "A",
+          "residueIndex": 890,
+          "insertionCode": ""
+        }
+      },
+      "expect": {
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.residue.insertionCode": "",
+        "sidechainRotamers.generatedCandidateCount": 13,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 121,
+      "auditRequestId": "sos1-aww-receptor-only-85-reenumerate-phe890-10",
+      "caption": "Sos1 aww receptor only 85 reenumerate phe890 10"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "chiDegrees": [
+          -60,
+          -90
+        ]
+      },
+      "expect": {
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.residue.insertionCode": "",
+        "sidechainRotamer.source": "canonical-library",
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 122,
+      "auditRequestId": "sos1-aww-receptor-only-86-apply-phe890-10",
+      "caption": "Sos1 aww receptor only 86 apply phe890 10"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 123,
+      "auditRequestId": "sos1-aww-receptor-only-87-inspect-ligand-phe890-10",
+      "caption": "Sos1 aww receptor only 87 inspect ligand phe890 10"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 124,
+      "auditRequestId": "sos1-aww-receptor-only-88-inspect-pocket-phe890-10",
+      "caption": "Sos1 aww receptor only 88 inspect pocket phe890 10"
+    },
+    {
+      "action": "calculation.run",
+      "args": {
+        "job": "energy",
+        "method": "openmm",
+        "options": {
+          "constraintMode": "none",
+          "implicitSolvent": "obc2",
+          "nonbondedCutoffNm": 1
+        }
+      },
+      "auditSequence": 125,
+      "auditRequestId": "sos1-aww-receptor-only-89-energy-phe890-10",
+      "caption": "Measure one fixed-coordinate Phe890 candidate energy"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "auditSequence": 126,
+      "auditRequestId": "sos1-aww-receptor-only-90-undo-phe890-10",
+      "caption": "Sos1 aww receptor only 90 undo phe890 10"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 127,
+      "auditRequestId": "sos1-aww-receptor-only-91-inspect-restored-ligand-10",
+      "caption": "Sos1 aww receptor only 91 inspect restored ligand 10"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 64,
+        "receptorResidue": {
+          "residueName": "PHE",
+          "chain": "A",
+          "residueIndex": 890,
+          "insertionCode": ""
+        }
+      },
+      "expect": {
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.residue.insertionCode": "",
+        "sidechainRotamers.generatedCandidateCount": 13,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 128,
+      "auditRequestId": "sos1-aww-receptor-only-92-reenumerate-phe890-11",
+      "caption": "Sos1 aww receptor only 92 reenumerate phe890 11"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "chiDegrees": [
+          -60,
+          90
+        ]
+      },
+      "expect": {
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.residue.insertionCode": "",
+        "sidechainRotamer.source": "canonical-library",
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 129,
+      "auditRequestId": "sos1-aww-receptor-only-93-apply-phe890-11",
+      "caption": "Sos1 aww receptor only 93 apply phe890 11"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 130,
+      "auditRequestId": "sos1-aww-receptor-only-94-inspect-ligand-phe890-11",
+      "caption": "Sos1 aww receptor only 94 inspect ligand phe890 11"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 131,
+      "auditRequestId": "sos1-aww-receptor-only-95-inspect-pocket-phe890-11",
+      "caption": "Sos1 aww receptor only 95 inspect pocket phe890 11"
+    },
+    {
+      "action": "calculation.run",
+      "args": {
+        "job": "energy",
+        "method": "openmm",
+        "options": {
+          "constraintMode": "none",
+          "implicitSolvent": "obc2",
+          "nonbondedCutoffNm": 1
+        }
+      },
+      "auditSequence": 132,
+      "auditRequestId": "sos1-aww-receptor-only-96-energy-phe890-11",
+      "caption": "Measure one fixed-coordinate Phe890 candidate energy"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "auditSequence": 133,
+      "auditRequestId": "sos1-aww-receptor-only-97-undo-phe890-11",
+      "caption": "Sos1 aww receptor only 97 undo phe890 11"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 134,
+      "auditRequestId": "sos1-aww-receptor-only-98-inspect-restored-ligand-11",
+      "caption": "Sos1 aww receptor only 98 inspect restored ligand 11"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 64,
+        "receptorResidue": {
+          "residueName": "PHE",
+          "chain": "A",
+          "residueIndex": 890,
+          "insertionCode": ""
+        }
+      },
+      "expect": {
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.residue.insertionCode": "",
+        "sidechainRotamers.generatedCandidateCount": 13,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 135,
+      "auditRequestId": "sos1-aww-receptor-only-99-reenumerate-phe890-12",
+      "caption": "Sos1 aww receptor only 99 reenumerate phe890 12"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "chiDegrees": [
+          -60,
+          0
+        ]
+      },
+      "expect": {
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.residue.insertionCode": "",
+        "sidechainRotamer.source": "canonical-library",
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 136,
+      "auditRequestId": "sos1-aww-receptor-only-100-apply-phe890-12",
+      "caption": "Sos1 aww receptor only 100 apply phe890 12"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 137,
+      "auditRequestId": "sos1-aww-receptor-only-101-inspect-ligand-phe890-12",
+      "caption": "Sos1 aww receptor only 101 inspect ligand phe890 12"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 138,
+      "auditRequestId": "sos1-aww-receptor-only-102-inspect-pocket-phe890-12",
+      "caption": "Sos1 aww receptor only 102 inspect pocket phe890 12"
+    },
+    {
+      "action": "calculation.run",
+      "args": {
+        "job": "energy",
+        "method": "openmm",
+        "options": {
+          "constraintMode": "none",
+          "implicitSolvent": "obc2",
+          "nonbondedCutoffNm": 1
+        }
+      },
+      "auditSequence": 139,
+      "auditRequestId": "sos1-aww-receptor-only-103-energy-phe890-12",
+      "caption": "Measure one fixed-coordinate Phe890 candidate energy"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "auditSequence": 140,
+      "auditRequestId": "sos1-aww-receptor-only-104-undo-phe890-12",
+      "caption": "Sos1 aww receptor only 104 undo phe890 12"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 141,
+      "auditRequestId": "sos1-aww-receptor-only-105-inspect-restored-ligand-12",
+      "caption": "Sos1 aww receptor only 105 inspect restored ligand 12"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 64,
+        "receptorResidue": {
+          "residueName": "PHE",
+          "chain": "A",
+          "residueIndex": 890,
+          "insertionCode": ""
+        }
+      },
+      "expect": {
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.residue.insertionCode": "",
+        "sidechainRotamers.generatedCandidateCount": 13,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 142,
+      "auditRequestId": "sos1-aww-receptor-only-106-reenumerate-phe890-13",
+      "caption": "Sos1 aww receptor only 106 reenumerate phe890 13"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "chiDegrees": [
+          -60,
+          -180
+        ]
+      },
+      "expect": {
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.residue.insertionCode": "",
+        "sidechainRotamer.source": "canonical-library",
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 143,
+      "auditRequestId": "sos1-aww-receptor-only-107-apply-phe890-13",
+      "caption": "Sos1 aww receptor only 107 apply phe890 13"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 144,
+      "auditRequestId": "sos1-aww-receptor-only-108-inspect-ligand-phe890-13",
+      "caption": "Sos1 aww receptor only 108 inspect ligand phe890 13"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 145,
+      "auditRequestId": "sos1-aww-receptor-only-109-inspect-pocket-phe890-13",
+      "caption": "Sos1 aww receptor only 109 inspect pocket phe890 13"
+    },
+    {
+      "action": "calculation.run",
+      "args": {
+        "job": "energy",
+        "method": "openmm",
+        "options": {
+          "constraintMode": "none",
+          "implicitSolvent": "obc2",
+          "nonbondedCutoffNm": 1
+        }
+      },
+      "auditSequence": 146,
+      "auditRequestId": "sos1-aww-receptor-only-110-energy-phe890-13",
+      "caption": "Measure one fixed-coordinate Phe890 candidate energy"
+    },
+    {
+      "action": "history.undo",
+      "args": {},
+      "auditSequence": 147,
+      "auditRequestId": "sos1-aww-receptor-only-111-undo-phe890-13",
+      "caption": "Sos1 aww receptor only 111 undo phe890 13"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 148,
+      "auditRequestId": "sos1-aww-receptor-only-112-inspect-restored-ligand-13",
+      "caption": "Sos1 aww receptor only 112 inspect restored ligand 13"
+    },
+    {
+      "action": "pose.enumerateSidechainRotamers",
+      "args": {
+        "maximumCandidates": 64,
+        "receptorResidue": {
+          "residueName": "PHE",
+          "chain": "A",
+          "residueIndex": 890,
+          "insertionCode": ""
+        }
+      },
+      "expect": {
+        "sidechainRotamers.residue.residueName": "PHE",
+        "sidechainRotamers.residue.chain": "A",
+        "sidechainRotamers.residue.residueIndex": 890,
+        "sidechainRotamers.residue.insertionCode": "",
+        "sidechainRotamers.generatedCandidateCount": 13,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 149,
+      "auditRequestId": "sos1-aww-receptor-only-113-reenumerate-selected-phe890",
+      "caption": "Sos1 aww receptor only 113 reenumerate selected phe890"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {
+        "chiDegrees": [
+          -180,
+          90
+        ]
+      },
+      "expect": {
+        "sidechainRotamer.residue.residueName": "PHE",
+        "sidechainRotamer.residue.chain": "A",
+        "sidechainRotamer.residue.residueIndex": 890,
+        "sidechainRotamer.residue.insertionCode": "",
+        "sidechainRotamer.source": "canonical-library",
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      },
+      "auditSequence": 150,
+      "auditRequestId": "sos1-aww-receptor-only-114-apply-energy-selected-phe890",
+      "caption": "Apply the energy-selected Phe890 response"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 151,
+      "auditRequestId": "sos1-aww-receptor-only-115-inspect-ligand-after-phe",
+      "caption": "Sos1 aww receptor only 115 inspect ligand after phe"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 152,
+      "auditRequestId": "sos1-aww-receptor-only-116-inspect-pocket-after-phe",
+      "caption": "Sos1 aww receptor only 116 inspect pocket after phe"
+    },
+    {
+      "action": "designRoute.resume",
+      "args": {
+        "routeId": "sos1-hit-only",
+        "stateId": "AWW"
+      },
+      "auditSequence": 4,
+      "auditRequestId": "axh-continuation-3-designRoute.resume"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "auditSequence": 5,
+      "auditRequestId": "axh-continuation-4-protein.parameterize"
+    },
+    {
+      "action": "view.setMode",
+      "args": {
+        "mode": "build"
+      },
+      "auditSequence": 6,
+      "auditRequestId": "axh-continuation-5-view.setMode"
+    },
+    {
+      "action": "pose.setDesignerLigandPoseFixed",
+      "args": {
+        "fixed": false
+      },
+      "auditSequence": 7,
+      "auditRequestId": "axh-continuation-6-pose.setDesignerLigandPoseFixed"
+    },
+    {
+      "action": "pose.captureReference",
+      "args": {
+        "mode": "propagate"
+      },
+      "auditSequence": 8,
+      "auditRequestId": "axh-continuation-7-pose.captureReference"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 9,
+      "auditRequestId": "axh-continuation-8-source-aww-ligand"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 10,
+      "auditRequestId": "axh-continuation-9-source-aww-pocket"
+    },
+    {
+      "action": "designRoute.applyStep",
+      "args": {
+        "stepId": "finish-bay-293"
+      },
+      "auditSequence": 11,
+      "auditRequestId": "axh-continuation-10-designRoute.applyStep"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 12,
+      "auditRequestId": "axh-continuation-11-graph-only-ligand"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 13,
+      "auditRequestId": "axh-continuation-12-graph-only-pocket"
+    },
+    {
+      "action": "pose.refine",
+      "args": {
+        "execution": "serial",
+        "featureSeedingProtocol": "v5",
+        "searchChains": 8
+      },
+      "expect": {
+        "refinement.coverageComplete": true,
+        "refinement.selectedFeasible": true,
+        "refinement.selectedCore.satisfied": true,
+        "refinement.requiredSpatialFeatureCount": 1,
+        "molecule.atoms": 7937,
+        "molecule.bonds": 8021
+      },
+      "auditSequence": 17,
+      "auditRequestId": "axh-continuation-16-pose.refine"
+    },
+    {
+      "action": "pose.apply",
+      "args": {
+        "index": 0
+      },
+      "expect": {
+        "appliedPose.feasible": true,
+        "appliedPose.infeasibleOverride": false,
+        "molecule.atoms": 7937,
+        "molecule.bonds": 8021
+      },
+      "auditSequence": 18,
+      "auditRequestId": "axh-continuation-17-pose.apply"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 19,
+      "auditRequestId": "axh-continuation-18-selected-ligand"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 20,
+      "auditRequestId": "axh-continuation-19-selected-pocket"
+    },
+    {
+      "action": "protein.parameterize",
+      "args": {},
+      "auditSequence": 24,
+      "auditRequestId": "axh-continuation-23-protein.parameterize"
+    },
+    {
+      "action": "optimization.run",
+      "args": {
+        "method": "induced-fit-webgpu"
+      },
+      "expect": {
+        "optimization.accepted": true,
+        "optimization.valenceSafeguard.accepted": true,
+        "optimization.valenceSafeguard.complete": true,
+        "optimization.registeredPoseRetention.accepted": true,
+        "molecule.atoms": 7937,
+        "molecule.bonds": 8021
+      },
+      "auditSequence": 25,
+      "auditRequestId": "axh-continuation-24-optimization.run"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 256,
+        "scope": "ligand"
+      },
+      "auditSequence": 26,
+      "auditRequestId": "axh-continuation-25-relaxed-ligand"
+    },
+    {
+      "action": "session.inspect",
+      "args": {
+        "includeCoordinates": true,
+        "maximumAtoms": 500,
+        "scope": "pocket"
+      },
+      "auditSequence": 27,
+      "auditRequestId": "axh-continuation-26-relaxed-pocket"
+    }
+  ],
+  "sourceAudit": {
+    "schema": "molarium.sos1-aww-receptor-only-browser-publication/v1",
+    "routeId": "sos1-hit-only",
+    "recordCount": 155,
+    "includedRecordCount": 141,
+    "includedSequences": [
+      1,
+      2,
+      3,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93,
+      94,
+      95,
+      96,
+      97,
+      98,
+      99,
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      133,
+      134,
+      135,
+      136,
+      137,
+      138,
+      139,
+      140,
+      141,
+      142,
+      143,
+      144,
+      145,
+      146,
+      147,
+      148,
+      149,
+      150,
+      151,
+      152
+    ],
+    "failedRecordsExcluded": 0,
+    "nonReplayableActionsExcluded": 14,
+    "campaignBookkeepingExcluded": 14,
+    "replayControllerActionsExcluded": 0,
+    "readOnlyInspectionsIncluded": true,
+    "stateHashGuards": {
+      "mode": "off",
+      "schema": "molarium.molecular-state-hash/v1",
+      "guardedActionCount": 0
+    },
+    "executionContract": {
+      "mode": "portable-scientific",
+      "coordinatePolicy": "recompute-without-exact-coordinate-hash",
+      "identityTopologyPolicy": "registered-action graph and persistent-identity validation plus atom/bond cardinality",
+      "portableScientificGuardCount": 234
+    },
+    "coordinatePolicy": "5OVE/AXE precursor plus public molecular-graph, contact, and directional-geometry actions; no later crystal coordinates",
+    "designerIntentReferenceInformed": true,
+    "graphBuildAuditSha256": "ed11d53e86f93405f22e096ddd143be3c0ca19de0f7b03641b88f7303cbb83c3",
+    "ligandIntent": "chemist-recorded contacts, +150 degree primary rotation, current-coordinate coupled-axis direction, then fixed ligand pose",
+    "predictedDegreesOfFreedom": "Phe890 side chain only",
+    "receptorSelection": "minimum finite full-system OpenMM/OBC2 single-point energy among every zero-severe-clash Phe890 candidate",
+    "scientificValidationSha256": "515ae2db7c495dc08df36750b238678b76da7d27f95902cddc59b8d75366e00e",
+    "sourceAuditSha256": "88ba6bb017ef46a2f93224a11bdc2e10beebb8864a8e1934188d752b8190147c",
+    "sourceCampaignSha256": "c0672efabc8da255de45a6d8b41f3f1a2bb0652ac2e683a70a9ed33b8692b3b1",
+    "sourceManifestSha256": "e71c8309dd7cc62f642fb699542b0f1c4ff02ac107782a2bbf72f98a8d932dd0",
+    "sourceRunId": "sos1-aww-receptor-only-intent-v5-a021",
+    "upstreamAuditSha256": "a4410e215592b0c1ed42a1ebb5b5d61b01e541fa3eea06599a70d6ec5d70e9d8",
+    "upstreamCutoffSequence": 32
+  },
+  "provenance": {
+    "continuationManifestSha256": "3b294e864fa26726455b650535ac43620610f2a22dfc83557629382e83a4b498",
+    "continuationAuditSha256": "007eecda4739d341935d8305e52e08a4a357ffd116ba572ec9864fca3be9c2da"
+  }
+}

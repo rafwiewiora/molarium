@@ -59,6 +59,7 @@
               <span>GitHub</span>
             </a>
             <a href="#methods" data-project-panel="methods">Methods</a>
+      <a href="/sos1">SOS1 movies</a>
             <a href="#validation" data-project-panel="validation">Validation</a>
             <a href="#credits" data-project-panel="credits">Credits</a>
           </nav>
@@ -181,6 +182,7 @@
                     <label>Ligands
                       <select id="preparation-ligands">
                         <option value="ccd">Prepare from RCSB CCD</option>
+                        <option value="registered">Prepare from installed registered graph</option>
                         <option value="exclude">Exclude from simulation</option>
                       </select>
                     </label>
@@ -392,6 +394,8 @@
               <label class="geometry-value"><input id="geometry-value" type="number" aria-label="Geometry value" disabled /><span id="geometry-unit">—</span></label>
             </div>
             <label class="move-connected"><input type="checkbox" id="move-connected" checked> Move connected atoms</label>
+            <label class="move-connected designer-ligand-pose-lock"><input type="checkbox" id="designer-ligand-pose-lock"> Hold current ligand geometry fixed</label>
+            <p class="optimizer-help" id="designer-ligand-pose-lock-status">After an attachment or torsion edit, fix the current ligand coordinates as designer intent before sampling receptor response.</p>
             <h2 class="compact-label build-section-label">Edit Chemistry</h2>
             <p class="panel-copy chemistry-selection-help" id="chemistry-selection-help">Choose Select, then pick one atom or a pair of atoms.</p>
             <div class="chemistry-atom-editor">
