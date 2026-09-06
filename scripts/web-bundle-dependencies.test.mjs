@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { ARCHIVED_SOS1_VIDEO_PATH, browserModuleClosure, sos1ReleaseWebFiles } from './web-bundle-dependencies.mjs';
+import { EXPLICIT_WEB_FILES } from './web-source-files.mjs';
 
 const root = await mkdtemp(join(tmpdir(), 'molarium-web-closure-test-'));
 try {
@@ -44,7 +45,7 @@ try {
   assert.match(reproductions, /<time datetime="2026-09-05">September 5, 2026<\/time>/);
   assert.match(reproductions, /href="\/sos1"/);
   assert.match(page, /href="\/reproductions">All reproductions<\/a>/);
-  assert(build.includes("'reproductions.html'"));
+  assert(EXPLICIT_WEB_FILES.includes('reproductions.html'));
   assert(!/^\s*['"]\/reproductions \/reproductions\.html 30[1278]['"]/m.test(build),
     'Cloudflare canonical HTML redirects must not form a /reproductions loop');
   console.log('Web bundle recursive dependencies and release paths: PASS');

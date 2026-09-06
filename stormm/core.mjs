@@ -6,6 +6,7 @@
 //   forces      : int64 split (2 x atomic<u32>, manual carry) @ 2^18 per kcal/mol/A
 //   coordinates : int64 fixed-point (2 x u32) @ 2^32 per A (authoritative; f32 mirror for kernels)
 // Single-contribution magnitude limit: |value| < 9e15 / scale (guard clamp far beyond physics).
+import { validateNumericSystem, validatePackedFloat32 } from '../openff/numeric-system.mjs';
 export const WG = 64;
 export const ESCALE = 4194304;        // 2^22 per kcal/mol
 export const FSCALE = 262144;         // 2^18 per kcal/mol/A
@@ -745,6 +746,7 @@ const KJ_TO_KCAL = 1 / 4.184;
 export function buildParameterizedSystem(molecule, parameterization,
     { dt = 0.001, implicitSolvent = null, coulombConstant = COUL } = {}){
   const system = parameterization?.system;
+  validateNumericSystem(molecule, system);
   const nAtoms = molecule?.atoms?.length;
   if (!Number.isInteger(nAtoms) || nAtoms < 1 || !system)
     throw new TypeError('A molecule and numeric parameterized System are required');
@@ -858,6 +860,8 @@ export function buildParameterizedSystem(molecule, parameterization,
       obc.push(radius, scale);
     });
   }
+  for (const [label, values] of Object.entries({props,coords,bondsP,angP,dihP,prP,constraintP,obc}))
+    validatePackedFloat32(`STORMM ${label}`, values);
   return pack({
     name: parameterization.forcefield || 'Parameterized OpenMM System',
     nAtoms, exclW, props, coords, colors,

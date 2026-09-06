@@ -1,12 +1,12 @@
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { startLocalTestServer } from './scripts/local-test-server.mjs';
 
 const seed = Math.floor(Math.random() * 1000);
-const appPort = Number(Bun.env.MOLARIUM_LOCAL_TEST_PORT) || 57000 + seed;
+const appPort = Number(Bun.env.MOLARIUM_LOCAL_TEST_PORT) || 0;
 const debugPort = Number(Bun.env.MOLARIUM_LOCAL_TEST_DEBUG_PORT) || 58000 + seed;
-const appUrl = `http://127.0.0.1:${appPort}/`;
-const appOrigin = new URL(appUrl).origin;
+let appUrl, appOrigin;
 const chromePath = Bun.env.CHROME_PATH || (process.platform === 'darwin'
   ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
   : '/usr/bin/google-chrome');
@@ -66,9 +66,11 @@ class DevToolsClient {
 }
 
 try {
-  server = Bun.spawn(['bun', 'server.js', '--local-only', '--test-api', '--port', String(appPort)], {
-    cwd:import.meta.dir, stdout:'ignore', stderr:'pipe',
-  });
+  const started = await startLocalTestServer({root:import.meta.dir,port:appPort,
+    args:['--local-only','--test-api']});
+  server = started.process;
+  appUrl = started.baseUrl;
+  appOrigin = new URL(appUrl).origin;
   const documentResponse = await waitFor(async () => {
     const response = await fetch(appUrl);
     return response.ok ? response : null;
@@ -207,5 +209,6 @@ try {
 } finally {
   chrome?.kill();
   server?.kill();
+  await Promise.allSettled([chrome?.exited, server?.exited]);
   await rm(profile, { recursive:true, force:true });
 }

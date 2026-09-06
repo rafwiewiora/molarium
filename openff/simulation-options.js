@@ -2,6 +2,9 @@
 // Numeric force-field Systems remain immutable: requested runtime constraints
 // are materialized in a shallow copy so cached Sage/Rosemary parameters can be
 // reused across flexible and constrained calculations.
+import { validateNumericSystem } from './numeric-system.mjs';
+export { validateNumericSystem } from './numeric-system.mjs';
+export { requestedSavedFrameCount } from './frame-contract.mjs';
 
 const pairKey = (first, second) => first < second ? `${first}:${second}` : `${second}:${first}`;
 
@@ -29,6 +32,7 @@ export function requestedCutoffNanometers(options = {}) {
 }
 
 export function configureSimulationSystem(molecule, system, options = {}) {
+  validateNumericSystem(molecule, system);
   if (!Array.isArray(molecule?.atoms) || !Array.isArray(system?.particles))
     throw new Error('A molecule and numeric force-field System are required');
   const atomCount = molecule.atoms.length;

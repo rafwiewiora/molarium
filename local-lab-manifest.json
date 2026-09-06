@@ -112,13 +112,13 @@
     },
     {
       "path": "local-lab-test.js",
-      "bytes": 11099,
-      "sha256": "dec4c0918c3cb449c6024da0eddfe0b7bb88104c1853a0ba4945a764443b570c"
+      "bytes": 11208,
+      "sha256": "bd5fc9f9f74c2bbd3958ec1948a50697bcbc25d56e5e2036f7e3223ad5e2a992"
     },
     {
       "path": "package.json",
-      "bytes": 13779,
-      "sha256": "21fd95e6cfdfa9a48858bc8e13de6eda315dcc7066014f73f0a9a7d176f4ebff"
+      "bytes": 13991,
+      "sha256": "9ea06e3f6a4dea197331467b9b720bc759bf00a40d143ad0975c8931bd78ba7d"
     },
     {
       "path": "protein-residue-templates.js",
@@ -127,13 +127,33 @@
     },
     {
       "path": "server.js",
-      "bytes": 5237,
-      "sha256": "9010a8901eb46c9389910441f7c9c0daac7d954dfb9b4caa1c149f75065cbc65"
+      "bytes": 6838,
+      "sha256": "8f25e30d15bfe8afa2c20a84fe61a92e4fc65304bfe9edea732b8da03582120a"
+    },
+    {
+      "path": "scripts/web-source-files.mjs",
+      "bytes": 8783,
+      "sha256": "0fb9d8abd33ec13528b8725c6fc1769d3ab81489e6b74716f6e77256cdffc864"
+    },
+    {
+      "path": "scripts/web-bundle-dependencies.mjs",
+      "bytes": 2607,
+      "sha256": "08d473ccb809fbc7938f375ca1d990934d8fa1ceb8c3331d2bb91a467acbd4bf"
+    },
+    {
+      "path": "scripts/public-file-policy.mjs",
+      "bytes": 1024,
+      "sha256": "97177b77882eab4f3a303686d80375c0c8886892ff02b01cf230cab3f0802187"
+    },
+    {
+      "path": "scripts/local-test-server.mjs",
+      "bytes": 1385,
+      "sha256": "5244ca3115b8c9fcc5f277cf5b56cbd15e1e6bc193418a26093ced7935fbb991"
     },
     {
       "path": "scripts/generate-local-lab-manifest.mjs",
-      "bytes": 6031,
-      "sha256": "9855e4d3306faa5b647a1334b0a2bb31123c3a4f1f3e31157fa2953442206d9a"
+      "bytes": 6177,
+      "sha256": "038c7e79f4685955cb28a3f7eb59bebc6d11c416ce7f5506937bb98cd14a2088"
     },
     {
       "path": "scripts/build-sos1-publication.mjs",
@@ -382,8 +402,8 @@
     },
     {
       "path": "openmm-worker.js",
-      "bytes": 27458,
-      "sha256": "b8eb728e136fa6dcd201c22fc3a98d9ff4a443ef995f3b0401fbabce8549ee50"
+      "bytes": 27538,
+      "sha256": "80166332dc10183af140c60fc259ba8d52ce14efa6c9d1cefeacd7fc27b29448"
     },
     {
       "path": "openmm/molarium-openmm.js",
@@ -397,8 +417,8 @@
     },
     {
       "path": "webgpu-worker.js",
-      "bytes": 33373,
-      "sha256": "5bf9045269a2e16e4bb6c1536f83c6fa90755f7b49a34e72f260877696e30656"
+      "bytes": 34141,
+      "sha256": "e3f0b11b59dbeba07452c4b9afeb9218253d1f2e3b6c7ceb034e14c05cdae16c"
     },
     {
       "path": "webgpu/molarium-webgpu.wgsl",
@@ -407,18 +427,18 @@
     },
     {
       "path": "stormm-worker.js",
-      "bytes": 17000,
-      "sha256": "715ba0e69d50f093cc4cab1d5be2d7f6ea7621b81cf388d0aeb7a2c364f52c8a"
+      "bytes": 19054,
+      "sha256": "a23b8c7e8a149e5a26218123c6d8a6283782a42f0fc27b2f280257e24dfd3994"
     },
     {
       "path": "stormm/core.mjs",
-      "bytes": 47805,
-      "sha256": "2d7a65af5174503af58f491155289141d5baa98ee1d04a6026c264bc2fe53a28"
+      "bytes": 48096,
+      "sha256": "6912a74c426431331ac47ccb06ac2f394f3f81004caa068c4780f46fab346c94"
     },
     {
       "path": "stormm/engine.mjs",
-      "bytes": 18729,
-      "sha256": "79e8ce52a2da17646efbbbf0038737120a6267fda0db09d3f74d33da2ec11976"
+      "bytes": 19276,
+      "sha256": "a23332d8ced0d5c7844c397c0b20c29da13b84bac2af31ede9b4e02a433c3b68"
     },
     {
       "path": "mlip-worker.js",
@@ -467,8 +487,8 @@
     },
     {
       "path": "openff/simulation-options.js",
-      "bytes": 4033,
-      "sha256": "3f90893919de5bc7503ad8e53c77f66a00cefd4bf3d7211c0440fa8ff7f24bfb"
+      "bytes": 4265,
+      "sha256": "82aee80ee1dcf5847a78d7d75d1cb6ac33e7bd499b94e9fbb88f1ef0e8776965"
     },
     {
       "path": "openfold/features.js",
@@ -1209,6 +1229,16 @@
       "path": "docking/displaceable-waters.mjs",
       "bytes": 2773,
       "sha256": "02a67a9a60904c82e911b9b765bc5b756b0b586d011a50b818ab79971f5e374b"
+    },
+    {
+      "path": "openff/frame-contract.mjs",
+      "bytes": 1604,
+      "sha256": "581d47b7bbce1ee9d15d8fbb1dd2d4cff0d8d1a40aed0010becd4e9b7771e3fb"
+    },
+    {
+      "path": "openff/numeric-system.mjs",
+      "bytes": 4433,
+      "sha256": "cc463cfc41acc6a4e0030251210b985d18e190eda0f0062ac0ddaac5f248ecbc"
     }
   ]
 }

@@ -76,9 +76,10 @@ function requireReplica(rep, nReps){
 export async function createEngine(device, topo, nReps,
     { T = 300, thermo = 0, gamma = 2.0, seed = 12345, initSeed = null,
       randomizeCoordinates = true, coordinateJitter = 0.02,
-      initialPositions = null,
+      initialPositions = null, evaluationOnly = false,
       constraintTolerance = 1e-5, constraintIterations = 32 } = {}){
   if (!device?.createBuffer) throw new TypeError('A WebGPU device is required');
+  if (typeof evaluationOnly !== 'boolean') throw new TypeError('evaluationOnly must be boolean');
   validateTopology(topo);
   if (!Number.isInteger(nReps) || nReps < 1)
     throw new RangeError('Replica count must be a positive integer');
@@ -207,6 +208,7 @@ export async function createEngine(device, topo, nReps,
     }
   }
   const run = (steps) => {                       // chunked submits: bounded command buffers
+    if (evaluationOnly) throw new Error('An evaluation-only engine cannot advance dynamics');
     if (!Number.isSafeInteger(steps) || steps < 0)
       throw new RangeError('MD step count must be a non-negative safe integer');
     while (steps > 0){
@@ -230,6 +232,7 @@ export async function createEngine(device, topo, nReps,
       new Float32Array([collisionRate, 0.0019872 * temperature]));
   };
   const relax = (iterations, { stepScale = 1e-4, maximumDisplacement = 0.01 } = {}) => {
+    if (evaluationOnly) throw new Error('An evaluation-only engine cannot minimize coordinates');
     if (!Number.isSafeInteger(iterations) || iterations < 0)
       throw new RangeError('Minimization iteration count must be a non-negative safe integer');
     if (!Number.isFinite(stepScale) || stepScale <= 0
@@ -269,6 +272,10 @@ export async function createEngine(device, topo, nReps,
     return { step: words[0], numericFlags: words[1] };
   }
   async function readConstraintStatus(){
+    if (evaluationOnly) return {
+      constraintCount:c.nConstraints, tolerance:constraintTolerance, iterations:0,
+      maximumResidual:null, replicas:[], converged:null, applied:false,
+    };
     if (!c.nConstraints) return {
       constraintCount: 0, tolerance: constraintTolerance, iterations: constraintIterations,
       maximumResidual: 0, replicas: [], converged: true,
@@ -297,7 +304,7 @@ export async function createEngine(device, topo, nReps,
       throw new Error(`WebGPU numerical fault at step ${status.step}: ${reasons.join(', ')}`);
     }
     const constraints = await readConstraintStatus();
-    if (!constraints.converged) {
+    if (!evaluationOnly && !constraints.converged) {
       const descriptions = constraints.replicas.map(({ replica, flags, residual }) => {
         const phases = [];
         if (flags & CONSTRAINT_FAULT_POSITION) phases.push('SHAKE');
@@ -309,7 +316,7 @@ export async function createEngine(device, topo, nReps,
     }
     return { ...status, constraints };
   }
-  if (c.nConstraints) {
+  if (c.nConstraints && !evaluationOnly) {
     // Project generated/jittered starting coordinates before they are exposed
     // as frame zero, then remove radial constraint velocity components.
     const enc = device.createCommandEncoder();

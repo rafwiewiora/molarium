@@ -26,8 +26,68 @@ def f32(value):
     return struct.unpack('<f', struct.pack('<f', value))[0]
 
 
+def validate_numeric_system(case):
+    """Independent boundary validation; no Molarium packing/physics is imported."""
+    numeric = case['configuredSystem']
+    fields = {
+        'particles': {'mass_amu'}, 'constraints': {'i', 'j', 'distance_nm'},
+        'bonds': {'i', 'j', 'r0_nm', 'k_kj_nm2'},
+        'angles': {'i', 'j', 'k', 'theta0_rad', 'k_kj_rad2'},
+        'torsions': {'i', 'j', 'k', 'l', 'periodicity', 'phase_rad', 'k_kj'},
+        'nonbonded': {'charge_e', 'sigma_nm', 'epsilon_kj'},
+        'exceptions': {'i', 'j', 'chargeprod_e2', 'sigma_nm', 'epsilon_kj'},
+    }
+    if not isinstance(numeric, dict) or set(numeric) != set(fields):
+        raise ValueError('Missing or unsupported numeric System content')
+    atoms = case['molecule']['atoms']
+    if not isinstance(atoms, list) or not atoms:
+        raise ValueError('A nonempty molecule is required')
+    n = len(atoms)
+    for atom in atoms:
+        if any(type(atom.get(axis)) not in (int, float) or not math.isfinite(atom[axis])
+               for axis in ('x', 'y', 'z')):
+            raise ValueError('Coordinates must be finite numbers')
+    index_fields = {'constraints': ('i', 'j'), 'bonds': ('i', 'j'),
+                    'angles': ('i', 'j', 'k'), 'torsions': ('i', 'j', 'k', 'l'),
+                    'exceptions': ('i', 'j')}
+    for kind, required in fields.items():
+        rows = numeric[kind]
+        if not isinstance(rows, list) or kind in ('particles', 'nonbonded') and len(rows) != n:
+            raise ValueError(f'Invalid {kind} array or particle count')
+        allowed = required | ({'index'} if kind in ('particles', 'nonbonded') else set())
+        pairs = set()
+        for ordinal, row in enumerate(rows):
+            if not isinstance(row, dict) or not required <= set(row) or set(row) - allowed:
+                raise ValueError(f'Missing or unsupported {kind} fields')
+            if any(type(value) not in (int, float) or not math.isfinite(value) for value in row.values()):
+                raise ValueError(f'Non-finite or nonnumeric {kind} term')
+            if 'index' in row and row['index'] != ordinal:
+                raise ValueError(f'{kind} index changes atom order')
+            indices = [row[key] for key in index_fields.get(kind, ())]
+            if any(value != int(value) or not 0 <= value < n for value in indices) or len(set(indices)) != len(indices):
+                raise ValueError(f'Invalid or repeated {kind} atom indices')
+            if kind in ('constraints', 'exceptions'):
+                pair = tuple(sorted(indices))
+                if pair in pairs:
+                    raise ValueError(f'Duplicate {kind} pair')
+                pairs.add(pair)
+            if kind == 'particles' and row['mass_amu'] <= 0:
+                raise ValueError('Mass must be positive; virtual sites are unsupported')
+            if kind == 'constraints' and row['distance_nm'] <= 0:
+                raise ValueError('Constraint distance must be positive')
+            for key in ('sigma_nm', 'epsilon_kj', 'r0_nm', 'k_kj_nm2', 'k_kj_rad2'):
+                if row.get(key, 0) < 0:
+                    raise ValueError(f'{kind}.{key} must be nonnegative')
+            if kind == 'angles' and not 0 <= row['theta0_rad'] <= math.pi:
+                raise ValueError('Angle must lie between zero and pi')
+            if kind == 'torsions' and (row['periodicity'] != int(row['periodicity'])
+                                       or not 1 <= row['periodicity'] <= 0x7fffffff):
+                raise ValueError('Periodicity must be a positive signed 32-bit integer')
+
+
 def build(case, rounded=False):
     """Use the exact exported terms; never infer bonds, charges or exclusions."""
+    validate_numeric_system(case)
     q = f32 if rounded else float
     numeric = case['configuredSystem']
     system = mm.System()

@@ -45,14 +45,29 @@ native original observation when reporting original-input agreement.
 A returned result is not enough: require finite energy and exactly 3N Cartesian forces,
 unique expected case IDs, reviewed protocol bytes, and explicit suite coverage. An empty
 suite, silently ignored force class, or missing frame is not evidence of correctness.
-The [Astra review](./reviews/ASTRA_REVIEW_OF_SOL_WORK_2026-09-05.md) records the remaining
-worker-boundary defects separately from the corrected scorer.
+The [Astra review](./reviews/ASTRA_REVIEW_OF_SOL_WORK_2026-09-05.md) preserves the original
+worker-boundary defects and appends their fixes and negative regression tests.
 
 ## Keep oracles and execution boundaries independent
 
 WASM OpenMM checks are useful compatibility diagnostics, not modern GPU performance
 baselines. The direct-worker native oracle builds analytic OpenMM forces independently
 from the numeric System; shared parameter assignment is still not independently validated.
-STORMM-worker/native OpenMM coverage remains a separate task. Frozen-evidence CI verifies
+STORMM-worker/native OpenMM coverage uses its own supported-case and original-input gate.
+Its Å/kcal parameter packing is not the direct worker's f32-nm packing. Frozen-evidence CI verifies
 archived results; it does not dispatch today's GPU kernels. Report fresh correctness runs
 separately, and never equate resident native-Context timing with browser whole-job timing.
+
+## Static scoring must preserve the supplied pose
+
+Constraints on a System are not permission to project a fixed-pose scoring input. STORMM's
+old score-batch initialization applied SHAKE before its first energy read. Read-only evaluation
+now preserves the coordinates and labels constraints as not applied; dynamics still projects
+them. A deliberately unsatisfied analytic constraint checks both the coordinates and forces.
+
+## A local URL does not make an entire checkout safe to serve
+
+Default both server modes to loopback, explicitly declare public files, reject dotfiles and
+foreign Host headers, and check canonical paths for symlink escape. Browser tests use
+OS-allocated server ports and visible startup errors; random port ranges and unread stderr
+can conceal a dead server or point a test at another process.

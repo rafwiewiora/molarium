@@ -43,6 +43,12 @@ bun run dev
 
 Open the local URL printed by Bun. A recent Chrome build is recommended for WebGPU.
 
+Both server modes bind to `127.0.0.1` by default and expose only declared runtime,
+public release, and reviewed integrity files—not the entire checkout. Dotfiles,
+private benchmark inputs, symlink escapes, and foreign Host headers are rejected.
+For intentional connected-mode LAN sharing, use `bun server.js --host 0.0.0.0`;
+this is not an authenticated service. Local Lab refuses non-loopback bindings.
+
 ### Local Lab for proprietary structures
 
 The normal development server is **connected mode**: calculations are local, while an explicit

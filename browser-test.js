@@ -2,14 +2,15 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { startLocalTestServer } from './scripts/local-test-server.mjs';
 
 // Pick per-run ports so a second Molarium checkout/test process cannot steal the
 // browser harness's fixed server or DevTools endpoint.
 const portSeed = Math.floor(Math.random() * 1000);
-const appPort = Number(Bun.env.MOLARIUM_TEST_PORT) || 54000 + portSeed;
+const appPort = Number(Bun.env.MOLARIUM_TEST_PORT) || 0;
 const debugPort = Number(Bun.env.MOLARIUM_TEST_DEBUG_PORT) || 56000 + portSeed;
 const externalAppUrl = Bun.env.MOLARIUM_TEST_URL;
-const appUrl = externalAppUrl || `http://localhost:${appPort}/`;
+let appUrl = externalAppUrl;
 const productionApiBoundary = Bun.env.MOLARIUM_TEST_SCOPE === 'chemist-actions-production-boundary';
 const chromePath = Bun.env.CHROME_PATH || (process.platform === 'darwin'
   ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
@@ -3539,12 +3540,10 @@ const browserSuite = String.raw`(async () => {
 
 try {
   if (!externalAppUrl) {
-    server = Bun.spawn(['bun', 'server.js',
-      ...(productionApiBoundary ? [] : ['--test-api']), '--port', String(appPort)], {
-      cwd: import.meta.dir,
-      stdout: 'ignore',
-      stderr: 'pipe',
-    });
+    const started = await startLocalTestServer({root:import.meta.dir,port:appPort,
+      args:productionApiBoundary ? [] : ['--test-api']});
+    server = started.process;
+    appUrl = started.baseUrl;
   }
   await waitFor(async () => (await fetch(appUrl)).ok, 10000, `Molarium server at ${appUrl}`);
 
@@ -3632,5 +3631,6 @@ try {
 } finally {
   chrome?.kill();
   server?.kill();
+  await Promise.allSettled([chrome?.exited, server?.exited]);
   await rm(profile, { recursive: true, force: true });
 }

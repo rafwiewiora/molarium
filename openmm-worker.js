@@ -253,9 +253,10 @@ async function runCalculation(message) {
   const { id, job, molecule, options = {} } = message;
   const started = performance.now();
   const parameterized = await parameterizeMolecule(id, molecule);
-  const [{ obc2Parameters, requestedImplicitSolvent }, { configureSimulationSystem }] = await Promise.all([
+  const [{ obc2Parameters, requestedImplicitSolvent }, { configureSimulationSystem, validateNumericSystem }] = await Promise.all([
     getImplicitSolvent(), getSimulationOptions(),
   ]);
+  validateNumericSystem(molecule, parameterized.system);
   const implicitModel = requestedImplicitSolvent(options);
   const implicitSolvent = implicitModel === 'obc2'
     ? obc2Parameters(molecule, parameterized.system) : null;
