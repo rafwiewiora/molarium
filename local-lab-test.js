@@ -157,6 +157,12 @@ try {
     check(violations.some((entry) => entry.directive === 'connect-src'), 'browser reports connect-src enforcement');
     check(violations.some((entry) => entry.directive === 'img-src'), 'browser reports img-src enforcement');
     document.querySelector('#network-policy-button').click();
+    // The visible control dispatches an asynchronous public Chemist Action.
+    // Observe its completion instead of checking the same click-task tick.
+    const privacyStarted = Date.now();
+    while (!document.querySelector('#project-info-dialog').open
+      && Date.now() - privacyStarted < 10_000)
+      await new Promise((resolve) => setTimeout(resolve, 20));
     check(document.querySelector('#project-info-dialog').open
       && !document.querySelector('[data-project-section="privacy"]').classList.contains('hidden'),
       'privacy panel explains the active policy');

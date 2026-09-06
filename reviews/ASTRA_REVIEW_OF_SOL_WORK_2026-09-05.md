@@ -295,3 +295,41 @@ incorrect readiness symbol and timed out; correcting the probe to the real
 The probes record behavior, not assertions that it is correct. Convert each confirmed issue
 into a failing regression test when implementing its fix. Keep this dated report unchanged
 and append a remediation log linking later fixes and rerun evidence.
+
+## Remediation log — September 5, 2026
+
+The original findings above are preserved as the review of `995f9fd`; they are not a
+claim that every defect remains in the source below this log. The user subsequently
+authorized implementation and public publication.
+
+First remediation increment:
+
+- **R3 fixed:** the scorer validates packet/result schemas, the reviewed protocol content
+  and hash, unique registered case IDs, nonempty coverage, declared atom counts, and exactly
+  3N finite forces in every original/rounded/measured observation. The 46-case suite is
+  explicitly named; diagnostic subsets never pass the acceptance gate. Regression tests
+  cover the original false-pass cases and forged protocol tolerances.
+- **R5 fixed:** native original-input agreement uses the native original-input observation.
+  All six published datasets were re-scored from hash-verified, unchanged raw evidence.
+  [New scores and provenance](../benchmarks/simulation/results/rescored-20260905-a03/manifest.json)
+  coexist with the original score artifacts. The CUDA-double original-input score now
+  correctly passes 47/47; fixed-input decisions and all timing samples are unchanged.
+- **R6 fixed:** the curated manifest was regenerated, the privacy-button check now waits
+  for its asynchronous public action, and `manifest:local:check` rejects stale committed
+  hashes without regenerating them. Local Lab passes **14/14**, with both CSP canaries
+  blocked and **zero** external requests reaching interception.
+- **R8 partially fixed:** CI now runs the Local Lab freshness and browser enforcement gate.
+  Fresh GPU numerical dispatch in CI remains open; archived-evidence tests are not a substitute.
+- **R1, R2, R4, R7 and native STORMM expansion remain open** for the next implementation
+  increment. [TODO](../TODO.md) retains these tasks and the unimplemented restrained relax.
+- The **Design-tab/LSD bug and Reproductions index** were separately merged in
+  [PR #19](https://github.com/rafwiewiora/molarium/pull/19). Source, production-bundle,
+  and deployed-site regressions all preserve exact LSD coordinates/bonds with a real SOS1
+  campaign saved; restoring it requires explicit `campaign.resume`.
+- An intermittent local Chrome replay-route check hung during its first checkpoint
+  import after rapid navigation. It reproduced on unchanged pre-fix source as well;
+  the fixed-source rerun and Linux CI passed. Root cause is not yet established or fixed.
+
+Verification for this increment: **63/63 simulation benchmark tests**, **14/14 Local Lab
+checks**, and the deployed saved-campaign regression pass. Frozen-evidence tests now
+recompute original-input and input-quantization metrics as well as the packed-input gate.

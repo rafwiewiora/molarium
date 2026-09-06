@@ -9,8 +9,9 @@ model parameters, force fields, and scientific data remain under their respectiv
 The original vector identity is available as a reusable [logo](./assets/molarium-logo.svg) and
 [mark](./assets/molarium-mark.svg).
 
-The [SOS1 paper and movies](https://molarium.org/sos1) include a full recomputable
-browser story, a seven-checkpoint precomputed replay, and the complete MP4.
+The [Reproductions index](https://molarium.org/reproductions) starts with
+[SOS1](https://molarium.org/sos1): a recomputable browser story, a seven-checkpoint
+precomputed replay, a checkpoint MP4, and the paper with supporting evidence.
 
 ## Simulation accuracy and GPU benchmarks
 
@@ -24,6 +25,9 @@ listed explicitly; they are not replaced by vacuum calculations.
 The [measured results](./benchmarks/simulation/results/README.md) distinguish
 fixed-input kernel agreement from original-input precision limits and preserve
 failures alongside passing cases.
+
+The preserved [Astra adversarial review and remediation log](./reviews/ASTRA_REVIEW_OF_SOL_WORK_2026-09-05.md)
+documents known boundaries, reproducible probes, fixes, and remaining validation work.
 
 ## Quick start
 

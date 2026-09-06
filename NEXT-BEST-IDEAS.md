@@ -121,8 +121,8 @@ These numbers are evidence for specific configurations, not universal speed clai
 | Direct Sage WebGPU | OpenMM Reference WASM | 1,231-atom ubiquitin, warm 1,000-step flexible vacuum MD, M1 Pro | **9.16x** worker-time speedup |
 | Direct Sage WebGPU | OpenMM Reference WASM | Ubiquitin, OBC2/ACE, flexible, warm 1,000 steps, M1 Pro | 29.33 vs 1.148 ns/day: **25.6x** |
 | Direct Sage WebGPU | OpenMM Reference WASM | Ubiquitin, OBC2/ACE, 1 nm cutoff, X-H constraints, 2 fs | 50.15 vs 5.32 ns/day: **9.43x** physical throughput |
-| STORMM-style replicas | OpenMM Reference CPU | 1,024 C16 replicas, equal aggregate warm steps, no setup/readback | **10.3x** |
-| STORMM-style replicas | OpenMM Reference CPU | 256 water27 replicas, equal aggregate warm steps, no setup/readback | **24.1x** |
+| STORMM-style replicas | OpenMM WASM Reference CPU | 1,024 C16 replicas, equal aggregate warm steps, no setup/readback | **10.3x** |
+| STORMM-style replicas | OpenMM WASM Reference CPU | 256 water27 replicas, equal aggregate warm steps, no setup/readback | **24.1x** |
 | STORMM-style WebGPU | Upstream STORMM CUDA on the same NVIDIA L4 | 16 alanine replicas, 10,000 steps, vacuum/OBC2, flexible/constrained | **0.39–0.73x** CUDA throughput |
 
 For the latest ANI benchmark, GPU time was split into 145.9 ms of AEV construction, 1,091.2 ms of
@@ -158,6 +158,15 @@ acceptance envelope requested in Gate I.
 ## Prioritized next ideas
 
 ### P0: make correctness and performance claims reproducible
+
+September 5 status: partially delivered for the **direct WebGPU worker**. The
+[47-case native OpenMM suite](./benchmarks/simulation/README.md) and its hash-pinned
+raw results cover Apple M1 Pro and NVIDIA L4, native OpenCL/CUDA precision, and five-repeat
+throughput with explicit timing boundaries. The updated scorer rejects malformed vectors,
+unknown protocols, and incomplete full-suite claims. This does not complete the STORMM-worker
+native comparison, third-vendor coverage, long-time gates, or whole-workflow conformer benchmark.
+The historical STORMM CUDA ratio above is not source-hashed current-worker evidence; its
+separately retained study must be published/reconciled before supporting a current claim.
 
 1. **Create one machine-readable result ledger.** Every benchmark should emit JSON containing the
    commit, fixture hashes, browser, adapter, driver, precision, timestep, warmup, sample distribution,
@@ -203,6 +212,10 @@ Relevant upstream projects: [ONNX Runtime WebGPU I/O binding](https://onnxruntim
    not establish stable long-time MD.
 
 ### P1: optimize replica search automatically
+
+Partially implemented: the STORMM replica-smoke sweep and visible recommended count already
+exist. Repeated samples with uncertainty, the cache policy below, cross-device validation,
+and adversarial exact-step/frame and replica-isolation coverage remain open.
 
 1. Run a short warmup sweep over replica counts on the current adapter and system.
 2. Choose the count that maximizes aggregate conformer-steps/s without exceeding memory or device
@@ -351,7 +364,8 @@ also require Gate J.
 | Conformer Arena | Shared seeds, one common Sage/OBC2 score, explicit vacuum ANI score, STORMM/OpenMM same-coordinate parity, symmetry-aware clustering, batch-use assertions | Checked-in end-to-end CPU baselines and external conformer-quality benchmark |
 | OpenFold 2 | Native graph parity, WebGPU/WASM parity, browser integration | Standard prediction-quality benchmark against experimental structures |
 
-The immediate recommendation is to spend the next development cycle on Gates H and I for ANI
-batching, timing the AEV/network/force stages, and creating the checked-in workflow benchmark.
-That gives us confidence in the speedup we just gained and tells us whether WGSL AEV work is the
-right optimization before another MLIP increases the validation burden.
+The immediate priorities are the remaining [review boundary fixes](./TODO.md), a direct
+native OpenMM oracle for the production STORMM worker, three-vendor Gate I coverage,
+and stronger Gate H replica isolation. WGSL AEV construction and stage timing are already
+implemented; extend their cross-device and mixed-convergence validation. The matched
+end-to-end conformer-quality benchmark remains open before making a whole-workflow speed claim.

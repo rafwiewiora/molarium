@@ -1,0 +1,55 @@
+{
+  "schema": "molarium.simulation-benchmark-evidence/v1",
+  "attempt": "rescored-20260905-a03",
+  "files": [
+    {
+      "name": "l4-20260905-a07-webgpu-score.json.gz",
+      "sha256": "0ae6952a4ae0740d09fccc1967c64d39d1624ad993cb3f113adbca77e9861c9b",
+      "uncompressedSha256": "0bac189da5f6dff525be7aa3a3d7416cbdabcd4e848bb41d4e283ca2630c70b6",
+      "bytes": 194663,
+      "compressedBytes": 31429
+    },
+    {
+      "name": "l4-20260905-a09-cuda-double-score.json.gz",
+      "sha256": "5b114eb8304d72285f71491adeecafddb067e00a52754257fbd3e85d21353595",
+      "uncompressedSha256": "adda7f3a6e5d5d7b67c86a8dc4cf38238ff6cf06c28a1872eff364cf6577e3de",
+      "bytes": 145884,
+      "compressedBytes": 24654
+    },
+    {
+      "name": "l4-20260905-a09-cuda-mixed-score.json.gz",
+      "sha256": "6517ef8017291b321873329edc3ef28111c8eaf46aa30b76c8a74ac9704f4fff",
+      "uncompressedSha256": "2ea1bcb5decc63d2dc243938e986c5d32cc9be92c0a375757f329568491e36c5",
+      "bytes": 145794,
+      "compressedBytes": 24592
+    },
+    {
+      "name": "l4-20260905-a09-cuda-single-score.json.gz",
+      "sha256": "fc50f581506788bbe510e8162ca02624439e29c44f2d2eb2a269cf7590b612c5",
+      "uncompressedSha256": "2c28f05858951e6593672c2338b0b9539b33b9161d7a4b1f60e696036b8b616d",
+      "bytes": 176261,
+      "compressedBytes": 29238
+    },
+    {
+      "name": "m1pro-20260905-a07-opencl-single-score.json.gz",
+      "sha256": "7d80b9625d12503dcff3d38ab7c133c5bf04590f9828705e9970eefabd4fd873",
+      "uncompressedSha256": "07650d69669e4f23309fb414f5c6d9c3a050a67288a913e456ee669c7e1e03a7",
+      "bytes": 175944,
+      "compressedBytes": 29204
+    },
+    {
+      "name": "m1pro-20260905-a07-webgpu-score.json.gz",
+      "sha256": "117e461c54b930343223de16be4532a1f585f6705fe0d136a9485aa506bf3805",
+      "uncompressedSha256": "5f1ef12ec56080c929df04b624420638e23bdb444f0f528db62e9c910333c463",
+      "bytes": 194835,
+      "compressedBytes": 31724
+    },
+    {
+      "name": "rescoring-provenance.json.gz",
+      "sha256": "a3341a9ad7930f63899f8f41c63f8a925dab84c90fb0b21686f1783b6ad748c9",
+      "uncompressedSha256": "a13788cd02dd7136cc03cd3ad1b7b7f11c025c3cca6c19902387e9e6015b1a1c",
+      "bytes": 5566,
+      "compressedBytes": 1332
+    }
+  ]
+}

@@ -30,4 +30,11 @@ test('energy gate uses sum of absolute components, not cancelled total energy', 
 test('quantiles interpolate and reject malformed input', () => {
   assert.equal(quantile([3, 1, 4, 2], 0.5), 2.5);
   assert.throws(() => quantile([], 0.5));
+  assert.throws(() => quantile([1, 2], NaN));
+});
+test('finite input components cannot overflow into an infinite passing tolerance', () => {
+  assert.throws(() => compare({...ref,components:{a:1e308,b:-1e308}},
+    {...ref,energy:1e200},limits), /Non-finite comparison/);
+  assert.throws(() => compare(ref,ref,{...limits,energyAbsoluteTolerance:Infinity}),
+    /Invalid acceptance tolerance/);
 });

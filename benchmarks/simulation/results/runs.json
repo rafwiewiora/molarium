@@ -1,10 +1,10 @@
 {
   "runs": [
-    {"label":"Apple M1 Pro — WebGPU f32", "directory":"m1pro-20260905-a07", "actual":"webgpu.json", "score":"score.json"},
-    {"label":"Apple M1 Pro — OpenMM OpenCL single", "directory":"m1pro-20260905-a07", "actual":"opencl-single.json", "score":"opencl-score.json"},
-    {"label":"NVIDIA L4 — WebGPU f32", "directory":"l4-20260905-a07", "actual":"webgpu.json", "score":"score.json"},
-    {"label":"NVIDIA L4 — OpenMM CUDA single", "directory":"l4-20260905-a09", "referenceDirectory":"l4-20260905-a07", "actual":"cuda-single.json", "score":"cuda-single-score.json"},
-    {"label":"NVIDIA L4 — OpenMM CUDA mixed", "directory":"l4-20260905-a09", "referenceDirectory":"l4-20260905-a07", "actual":"cuda-mixed.json", "score":"cuda-mixed-score.json"},
-    {"label":"NVIDIA L4 — OpenMM CUDA double", "directory":"l4-20260905-a09", "referenceDirectory":"l4-20260905-a07", "actual":"cuda-double.json", "score":"cuda-double-score.json"}
+    {"label":"Apple M1 Pro — WebGPU f32", "directory":"m1pro-20260905-a07", "actual":"webgpu.json", "scoreDirectory":"rescored-20260905-a03", "score":"m1pro-20260905-a07-webgpu-score.json"},
+    {"label":"Apple M1 Pro — OpenMM OpenCL single", "directory":"m1pro-20260905-a07", "actual":"opencl-single.json", "scoreDirectory":"rescored-20260905-a03", "score":"m1pro-20260905-a07-opencl-single-score.json"},
+    {"label":"NVIDIA L4 — WebGPU f32", "directory":"l4-20260905-a07", "actual":"webgpu.json", "scoreDirectory":"rescored-20260905-a03", "score":"l4-20260905-a07-webgpu-score.json"},
+    {"label":"NVIDIA L4 — OpenMM CUDA single", "directory":"l4-20260905-a09", "referenceDirectory":"l4-20260905-a07", "actual":"cuda-single.json", "scoreDirectory":"rescored-20260905-a03", "score":"l4-20260905-a09-cuda-single-score.json"},
+    {"label":"NVIDIA L4 — OpenMM CUDA mixed", "directory":"l4-20260905-a09", "referenceDirectory":"l4-20260905-a07", "actual":"cuda-mixed.json", "scoreDirectory":"rescored-20260905-a03", "score":"l4-20260905-a09-cuda-mixed-score.json"},
+    {"label":"NVIDIA L4 — OpenMM CUDA double", "directory":"l4-20260905-a09", "referenceDirectory":"l4-20260905-a07", "actual":"cuda-double.json", "scoreDirectory":"rescored-20260905-a03", "score":"l4-20260905-a09-cuda-double-score.json"}
   ]
 }

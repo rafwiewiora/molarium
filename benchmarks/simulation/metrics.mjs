@@ -1,6 +1,6 @@
 // No GPU or reference-engine dependency: test the acceptance logic independently.
 export function quantile(values, p) {
-  if (!values.length || !values.every(Number.isFinite) || p < 0 || p > 1)
+  if (!values.length || !values.every(Number.isFinite) || !Number.isFinite(p) || p < 0 || p > 1)
     throw new Error('Invalid quantile input');
   const sorted = [...values].sort((a, b) => a - b), index = (sorted.length - 1) * p;
   const lo = Math.floor(index), hi = Math.ceil(index);
@@ -11,6 +11,11 @@ export function summarize(values) {
     p05: quantile(values, 0.05), p95: quantile(values, 0.95), max: quantile(values, 1) };
 }
 export function compare(reference, actual, thresholds) {
+  for (const key of ['energyAbsoluteTolerance','energyComponentScaledTolerance',
+    'forceRmsAbsoluteTolerance','forceRelativeRmsTolerance',
+    'forceMaxAbsoluteTolerance','forceMaxReferenceScaledTolerance'])
+    if (!Number.isFinite(thresholds?.[key]) || thresholds[key] < 0)
+      throw new Error(`Invalid acceptance tolerance: ${key}`);
   const a = reference.forces, b = actual.forces;
   if (!a?.length || a.length % 3 || a.length !== b?.length)
     throw new Error('Force arrays must contain matching, nonempty Cartesian triples');
@@ -35,6 +40,9 @@ export function compare(reference, actual, thresholds) {
   const forceRmsLimit = thresholds.forceRmsAbsoluteTolerance + thresholds.forceRelativeRmsTolerance * referenceRms;
   const forceMaxLimit = thresholds.forceMaxAbsoluteTolerance
     + thresholds.forceMaxReferenceScaledTolerance * Math.max(...a.map(Math.abs));
+  if (![energyAbsolute,componentScale,energyLimit,forceRms,referenceRms,
+    forceRmsLimit,forceMaxAbsolute,forceMaxLimit].every(Number.isFinite))
+    throw new Error('Non-finite comparison metric; numerical overflow is not agreement');
   return { passed: energyAbsolute <= energyLimit && forceRms <= forceRmsLimit && forceMaxAbsolute <= forceMaxLimit,
     energyAbsolute, componentScale, energyLimit, forceRms, referenceRms,
     forceRelativeRms: referenceRms === 0 ? (forceRms === 0 ? 0 : null) : forceRms / referenceRms,
