@@ -156,6 +156,48 @@ It is not native STORMM and those older results are not part of this direct-work
 native-OpenMM gate. Replica throughput must be reported as aggregate replica-ns/day,
 never substituted for single-trajectory ns/day.
 
+### Production STORMM versus native OpenMM
+
+[Measured results and complete raw evidence](./results/STORMM.md): **22/22 supported
+cases pass on both M1 Pro and L4**, with 25 unsupported cases explicitly retained.
+
+Run the same frozen 47-case packet through `run-browser.mjs --backend stormm`.
+Its independently registered scope is **22 supported cases and 25 unsupported**:
+ten analytic cases and twelve Trp-cage cases are measured; nonzero cutoffs and
+Systems exceeding 512 atoms are reported explicitly, without modifying their
+Hamiltonians or substituting smaller systems. Add `--speed` for five-repeat,
+single-replica production-job timing on supported performance cases.
+
+```sh
+bun benchmarks/simulation/run-browser.mjs --backend stormm --speed \
+  --output benchmarks/simulation/attempts/my-gpu-stormm-a01/stormm.json
+node benchmarks/simulation/stormm-score.mjs \
+  --packet benchmarks/simulation/generated/packet.json \
+  --reference benchmarks/simulation/attempts/my-gpu-a01/reference.json \
+  --actual benchmarks/simulation/attempts/my-gpu-stormm-a01/stormm.json \
+  --output benchmarks/simulation/attempts/my-gpu-stormm-a01/score.json
+```
+
+This is an **original-input** comparison to independently constructed native
+OpenMM Reference, with the same numerical tolerances. It is not a matched-packed-input
+gate: STORMM's Å/kcal conversion and fixed-point accumulation differ from the direct
+worker's f32-nm representation. A passing supported subset never sets `fullSuitePassed`.
+Static energy/scoring preserves the supplied pose, including constraint-bearing
+Systems; SHAKE/RATTLE projection is applied only for dynamics/conformer work.
+The new `energy` worker job returns all 3N forces in kJ/mol/nm. Speed uses one
+replica, friction 1/ps, and records STORMM's production seeded initial-coordinate
+jitter. These are not matched resident-kernel timings or an ensemble speedup claim.
+
+WASM OpenMM remains useful as a portable in-browser diagnostic oracle and for
+offline demonstrations, but is not a modern performance competitor. Its existing
+five-pose native comparison does **not** certify every bridge option or benchmark.
+The native path above avoids depending on that unproven transitive equivalence.
+
+All three workers now reject unknown numeric System fields, unsupported force
+content, invalid parameter domains/indices, and non-finite coordinates before
+accepting supplied parameters. The Python oracle independently enforces the same
+seven-array contract. No valid fixture parameters are rewritten by validation.
+
 ## Regression discovered by this suite
 
 The initial M1 Pro run passed 44/46 cases. Ubiquitin's isolated LJ energy missed

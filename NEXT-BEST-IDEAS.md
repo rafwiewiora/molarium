@@ -163,8 +163,11 @@ September 5 status: partially delivered for the **direct WebGPU worker**. The
 [47-case native OpenMM suite](./benchmarks/simulation/README.md) and its hash-pinned
 raw results cover Apple M1 Pro and NVIDIA L4, native OpenCL/CUDA precision, and five-repeat
 throughput with explicit timing boundaries. The updated scorer rejects malformed vectors,
-unknown protocols, and incomplete full-suite claims. This does not complete the STORMM-worker
-native comparison, third-vendor coverage, long-time gates, or whole-workflow conformer benchmark.
+unknown protocols, and incomplete full-suite claims. A separate
+[production STORMM/native panel](./benchmarks/simulation/results/STORMM.md) now passes 22/22
+supported cases on both GPUs, retaining 25 explicit unsupported cases and single-replica
+timings. Third-vendor coverage, native ensemble timing strategies, long-time gates,
+and the whole-workflow conformer benchmark remain open.
 The historical STORMM CUDA ratio above is not source-hashed current-worker evidence; its
 separately retained study must be published/reconciled before supporting a current claim.
 
@@ -364,8 +367,8 @@ also require Gate J.
 | Conformer Arena | Shared seeds, one common Sage/OBC2 score, explicit vacuum ANI score, STORMM/OpenMM same-coordinate parity, symmetry-aware clustering, batch-use assertions | Checked-in end-to-end CPU baselines and external conformer-quality benchmark |
 | OpenFold 2 | Native graph parity, WebGPU/WASM parity, browser integration | Standard prediction-quality benchmark against experimental structures |
 
-The immediate priorities are the remaining [review boundary fixes](./TODO.md), a direct
-native OpenMM oracle for the production STORMM worker, three-vendor Gate I coverage,
+The immediate priorities are the remaining [review and reliability tasks](./TODO.md),
+matched native ensemble benchmarks for the production STORMM worker, three-vendor Gate I coverage,
 and stronger Gate H replica isolation. WGSL AEV construction and stage timing are already
 implemented; extend their cross-device and mixed-convergence validation. The matched
 end-to-end conformer-quality benchmark remains open before making a whole-workflow speed claim.

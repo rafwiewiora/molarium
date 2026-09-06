@@ -1,8 +1,9 @@
 import { buildAlkane, buildParameterizedSystem, buildWater, mulberry32 } from './stormm/core.mjs';
 import { createEngine } from './stormm/engine.mjs';
 import { obc2Parameters, requestedImplicitSolvent } from './openff/implicit-solvent.js';
-import { configureSimulationSystem } from './openff/simulation-options.js';
+import { configureSimulationSystem, requestedCutoffNanometers } from './openff/simulation-options.js';
 import { conformerSearchProtocol } from './openff/conformer-protocol.js';
+import { requestedSavedFrameCount, validateTrajectory } from './openff/frame-contract.mjs';
 
 const MAX_DYNAMICS_STEPS = 100_000;
 const REPLICA_SMOKE_COUNTS = Object.freeze([1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]);
@@ -33,13 +34,15 @@ async function getWebGPU(id) {
 }
 
 function topologyFor(name, molecule, options) {
+  for (const key of ['nonbondedCutoffNm','cutoffNm'])
+    if (requestedCutoffNanometers({ cutoffNm:options[key] }) !== 0)
+      throw new Error('STORMM supports only nonperiodic all-pairs interactions; nonzero cutoffs are unsupported');
   if (name === 'current') {
     const parameterization = molecule?.parameterization;
     // STORMM's current kernel is still all-pairs/nonperiodic. Reuse the shared
     // constraint materializer and timestep policy without accepting the direct
     // WebGPU path's optional Verlet cutoff.
-    const simulation = configureSimulationSystem(molecule, parameterization?.system,
-      { ...options, nonbondedCutoffNm:0 });
+    const simulation = configureSimulationSystem(molecule, parameterization?.system, options);
     const implicitModel = requestedImplicitSolvent(options);
     const implicitSolvent = implicitModel === 'obc2'
       ? obc2Parameters(molecule, simulation.system)
@@ -187,16 +190,19 @@ async function runReplicaSmoke(message) {
 async function runEnsemble(message) {
   const { id, job, molecule, options = {} } = message;
   const conformerSearch = job === 'conformers';
-  const scoreBatch = job === 'score-batch';
+  const energyOnly = job === 'energy';
+  const scoreBatch = job === 'score-batch' || energyOnly;
   if (job !== 'dynamics' && !conformerSearch && !scoreBatch)
-    throw new Error('The WebGPU ensemble supports dynamics, conformer search, and batched scoring only');
+    throw new Error('The WebGPU ensemble supports energy, dynamics, conformer search, and batched scoring only');
 
   const preset = String(options.stormmSystem || 'current');
   if ((conformerSearch || scoreBatch) && preset !== 'current')
     throw new Error(`${scoreBatch ? 'Batched scoring' : 'Conformer search'} requires the current molecule`);
   const topology = topologyFor(preset, molecule, options);
   const initialConformers = conformerSearch ? options.initialConformers : null;
-  const scoreCoordinates = scoreBatch ? options.coordinateStack : null;
+  const scoreCoordinates = energyOnly
+    ? Float64Array.from(molecule.atoms.flatMap(atom => [atom.x,atom.y,atom.z]))
+    : scoreBatch ? options.coordinateStack : null;
   const initialCoordinates = conformerSearch ? initialConformers : scoreCoordinates;
   const conformerStride = topology.nAtoms * 3;
   if ((conformerSearch || scoreBatch) && (!ArrayBuffer.isView(initialCoordinates)
@@ -204,8 +210,8 @@ async function runEnsemble(message) {
     throw new Error(`${scoreBatch ? 'Batched scoring' : 'Conformer search'} received an invalid coordinate stack`);
   const replicaCount = conformerSearch || scoreBatch
     ? initialCoordinates.length / conformerStride
-    : Math.round(Number(options.replicaCount ?? 64));
-  const steps = scoreBatch ? 0 : Math.round(Number(options.steps ?? 250));
+    : Number(options.replicaCount ?? 64);
+  const steps = scoreBatch ? 0 : Number(options.steps ?? 250);
   if (!Number.isInteger(replicaCount) || replicaCount < 1 || replicaCount > 1024)
     throw new Error('WebGPU replica count must be between 1 and 1024');
   if (preset === 'water27' && replicaCount > 256)
@@ -213,12 +219,12 @@ async function runEnsemble(message) {
   if (!scoreBatch && (!Number.isInteger(steps) || steps < 1 || steps > MAX_DYNAMICS_STEPS))
     throw new Error(`STORMM dynamics steps must be between 1 and ${MAX_DYNAMICS_STEPS.toLocaleString()}`);
 
-  let savedFrameCount = scoreBatch ? 1 : Math.max(2, Math.min(
-    steps + 1,
-    Math.round(Number(options.savedFrameCount ?? 26)),
-  ));
+  let savedFrameCount = requestedSavedFrameCount(options.savedFrameCount, steps);
   const temperature = Math.max(0, Number(options.temperature ?? 300));
   if (!Number.isFinite(temperature)) throw new Error('STORMM temperature must be finite');
+  const friction = Number(options.friction ?? 2);
+  if (!Number.isFinite(friction) || friction < 0)
+    throw new Error('STORMM friction must be finite and nonnegative');
 
   const started = performance.now();
   if (topology.nAtoms > 512)
@@ -226,7 +232,10 @@ async function runEnsemble(message) {
   const pairWork = replicaCount * topology.nAtoms * topology.nAtoms;
   if (pairWork > 2_100_000)
     throw new Error(`This ${topology.nAtoms}-atom System is too large for ${replicaCount} browser replicas; reduce the replica count`);
-  const { device } = await getWebGPU(id);
+  const { adapter, device } = await getWebGPU(id);
+  const adapterInfo = adapter.info || await adapter.requestAdapterInfo();
+  const gpuAdapter = Object.fromEntries(['vendor','architecture','device','description','isFallbackAdapter']
+    .map(key=>[key,adapterInfo[key] ?? adapter[key] ?? null]));
   progress(id, `Preparing fixed-point WebGPU kernels · ${replicaCount} ${scoreBatch ? 'structures' : conformerSearch ? 'conformers' : 'replicas'}…`, 0.55, 0.03);
   const protocol = conformerSearch ? conformerSearchProtocol(options) : null;
   const searchSteps = protocol?.searchSteps || 0;
@@ -236,12 +245,13 @@ async function runEnsemble(message) {
   const engine = await createEngine(device, topology, replicaCount, {
     T: conformerSearch ? 600 : temperature,
     thermo: 1,
-    gamma: 2,
+    gamma: friction,
     seed: 12345,
     initSeed: 42,
     randomizeCoordinates: !conformerSearch && !scoreBatch,
     coordinateJitter: conformerSearch || scoreBatch ? 0 : 0.02,
     initialPositions: conformerSearch || scoreBatch ? initialCoordinates : null,
+    evaluationOnly:scoreBatch,
     constraintTolerance: Number(options.constraintTolerance ?? 1e-5),
     constraintIterations: Math.round(Number(options.constraintIterations ?? 32)),
   });
@@ -261,6 +271,8 @@ async function runEnsemble(message) {
     await engine.done();
     const energies = await engine.readEnergies();
     const positions = await engine.readAllPositions();
+    if (energies.length !== replicaCount || positions.length !== replicaCount * topology.nAtoms * 4)
+      throw new Error('STORMM readback does not match the requested replica/atom counts');
     constraintStatus = await engine.readConstraintStatus();
     frameSteps[frame] = step;
     for (let replica = 0; replica < replicaCount; replica++)
@@ -269,8 +281,16 @@ async function runEnsemble(message) {
     stageElapsedMs[frame] += performance.now() - captureStarted;
   };
 
+  let singlePointForces = null;
   try {
     await capture(0, 0);
+    if (energyOnly) {
+      // Engine units are kcal/mol/Å; the public single-point force vector uses
+      // kJ/mol/nm, matching the direct worker and independent native oracle.
+      singlePointForces = Float64Array.from(await engine.readForces(0), value => value * 41.84);
+      if (singlePointForces.length !== atomStride || !singlePointForces.every(Number.isFinite))
+        throw new Error('STORMM single-point forces must contain exactly 3N finite components');
+    }
     let completed = 0;
     if (conformerSearch) {
       const totalWork = protocol.totalWork;
@@ -307,6 +327,9 @@ async function runEnsemble(message) {
     engine.destroy();
   }
 
+  validateTrajectory({atomCount:topology.nAtoms, replicaCount, frameCount:savedFrameCount,
+    frameSteps, energies:ensembleEnergies, trajectory:ensembleTrajectory,
+    expectedSteps:conformerSearch ? protocol.totalWork : steps});
   const lastFrame = savedFrameCount - 1;
   const positions = replicaPositions(
     ensembleTrajectory, lastFrame, 0, frameStride, atomStride,
@@ -320,6 +343,7 @@ async function runEnsemble(message) {
     initialEnergy,
     finalEnergy,
     positions,
+    ...(energyOnly ? {forces:singlePointForces, forceUnit:'kJ/mol/nm'} : {}),
     molecule: topologyMolecule(topology, preset, molecule),
     elapsedMs: performance.now() - started,
     setupMs,
@@ -328,9 +352,11 @@ async function runEnsemble(message) {
     forcefield: topology.parameterization?.forcefield || topology.name,
     chargeModel: topology.parameterization?.chargeModel,
     platform: 'WebGPU',
+    gpuAdapter,
     backend: 'STORMM WebGPU ensemble',
     unit: 'kcal/mol',
     timestepFs: topology.dt * 1000,
+    frictionPerPs: friction,
     frameCount: savedFrameCount,
     frameSteps,
     replicaCount,
@@ -346,6 +372,7 @@ async function runEnsemble(message) {
     constraintError: topology.counts.nConstraints ? constraintStatus.maximumResidual : null,
     constraintIterations: constraintStatus.iterations,
     constraintsConverged: constraintStatus.converged,
+    constraintsApplied: !scoreBatch && topology.counts.nConstraints > 0,
     conformerMethod: conformerSearch ? options.conformerMethod || 'ETKDGv3' : null,
     conformerPreparationForcefield: conformerSearch
       ? options.conformerPreparationForcefield || null : null,
@@ -356,6 +383,7 @@ async function runEnsemble(message) {
   };
   self.postMessage(result, [
     positions.buffer,
+    ...(singlePointForces ? [singlePointForces.buffer] : []),
     frameSteps.buffer,
     ensembleEnergies.buffer,
     ensembleTrajectory.buffer,

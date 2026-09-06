@@ -333,3 +333,62 @@ First remediation increment:
 Verification for this increment: **63/63 simulation benchmark tests**, **14/14 Local Lab
 checks**, and the deployed saved-campaign regression pass. Frozen-evidence tests now
 recompute original-input and input-quantization metrics as well as the packed-input gate.
+
+Second remediation increment:
+
+- **R1/R7 fixed in source:** the versioned seven-array numeric System contract rejects
+  unknown force-bearing fields, invalid indices/domains, non-finite numbers, and f32
+  overflow. All 47 published input Systems validate without changes. Signed Rosemary
+  torsion amplitudes remain valid. OpenMM WASM, direct WebGPU, and STORMM workers enforce
+  the boundary; the native Python builder has an independent validator. STORMM rejects
+  nonzero cutoffs under either alias, including conflicting aliases.
+- **R2 fixed in source:** both local modes default to loopback, explicit connected LAN
+  binding is opt-in, and exact public-path allowlisting plus canonical-path checks block
+  dotfiles, private artifacts, and symlink escape. Foreign Host headers and non-read
+  methods are rejected. Unit and live HTTP tests pass in both server modes.
+- **R4 fixed in source:** malformed frame/work counts fail before GPU allocation; STORMM
+  validates complete finite trajectory shapes and exact requested endpoints. The physical
+  M1 production-worker regression rejects 30 invalid requests and verifies analytic
+  energy/all forces, separate replica energies, and exact two-step frame output.
+- **R8 advanced:** CI now dispatches production workers on explicitly labelled software
+  WebGPU for correctness only. The physical M1 full STORMM suite passes, including force
+  finite differences, NVE, thermostat, determinism, replica isolation, and SHAKE/RATTLE.
+  A scheduled physical cross-vendor matrix and longer protein soaks remain open.
+- **Additional fixed-pose defect:** STORMM score-batch formerly projected constrained
+  input coordinates before scoring. Read-only evaluation now preserves the supplied pose,
+  cannot advance/minimize it, and exposes `constraintsApplied:false`. A deliberately
+  unsatisfied analytic bond constraint verifies unchanged coordinates, energy and forces.
+- **Native STORMM expansion:** the production worker now exposes an energy/all-force job;
+  a registered 22-case supported subset of the full 47-case native panel and a separate
+  original-input scorer retain 25 explicit unsupported cases. Physical measurements are
+  tracked separately from the existing direct-worker gate; do not equate STORMM Å/kcal
+  packing with the direct worker's f32-nm oracle.
+- **Replay startup remains unresolved:** the intermittent first-checkpoint import hang
+  also occurred in a Linux post-merge CI rerun. Three instrumented rapid-navigation runs
+  and an IndexedDB upgrade-navigation probe passed, so no root cause is established.
+  `scripts/diagnose-replay-startup.browser.mjs` preserves operation-only traces. The server
+  harness now uses OS-allocated ports and reports startup errors directly; this addresses
+  ambiguous startup diagnostics, not the separately observed checkpoint hang.
+
+Subsequent verification and replay investigation:
+
+- Fresh physical-GPU native comparisons pass on **both M1 Pro and L4**: **47/47** direct
+  fixed-f32-input cases and **22/22** original-input supported STORMM cases. All **25**
+  unsupported STORMM cases remain explicit. [STORMM results](../benchmarks/simulation/results/STORMM.md)
+  include complete forces and five-repeat single-replica timings; the direct headline
+  rows use new `*-contracts-20260905-a01` attempts. Prior measurements remain archived.
+- **86/86 benchmark tests pass**, including source freshness, hash verification, every
+  published numerical decision, malformed requests, and supported/unsupported coverage.
+  The full scientific suite passes. The temporary L4 was stopped after archival.
+- A sparse, non-pausing stage trace reproduced the replay hang: campaign asset download,
+  stream decoding, and SHA-256 completed, while the initial **IndexedDB open never resolved**.
+  Merely adding connection lifecycle cleanup did not recover that case. Blank reproduction
+  landing pages now defer database opening until an explicit campaign action; normal Design
+  still loads the saved-campaign offer. Connections close on navigation/version changes,
+  pending upgrades can be cancelled, failed opens are retryable, and an open that never
+  settles produces a bounded explicit error rather than an indefinite running action.
+- The same sparse rapid-navigation probe now completes **10/10 imports**.
+  [Before/after source-hashed evidence](replay-startup-2026-09-05-evidence.json) retains the
+  failure and recovery. The underlying browser storage implementation is not diagnosed;
+  broader cross-browser coverage remains necessary. No stored campaigns were deleted,
+  scientific checkpoints rewritten, or durable saves replaced by silent memory fallback.

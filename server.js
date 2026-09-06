@@ -1,4 +1,7 @@
-import { extname, join, normalize } from 'node:path';
+import { extname, join } from 'node:path';
+import { sourceWebFiles } from './scripts/web-source-files.mjs';
+import { browserModuleClosure } from './scripts/web-bundle-dependencies.mjs';
+import { resolvePublicFile } from './scripts/public-file-policy.mjs';
 
 const root = import.meta.dir;
 const portFlag = Bun.argv.findIndex((argument) => argument === '--port');
@@ -7,6 +10,26 @@ const requestedPort = portFlag >= 0 ? Bun.argv[portFlag + 1] : inlinePort?.slice
 const port = Number(requestedPort || Bun.env.PORT || 3000);
 const localOnly = Bun.argv.includes('--local-only') || Bun.env.MOLARIUM_LOCAL_ONLY === '1';
 const testApi = Bun.argv.includes('--test-api') || Bun.env.MOLARIUM_TEST_API === '1';
+const hostFlag = Bun.argv.indexOf('--host');
+const hostname = hostFlag >= 0 ? Bun.argv[hostFlag+1] : '127.0.0.1';
+if (!hostname || hostname.startsWith('--')) throw new Error('--host requires an explicit hostname');
+const loopbackNames = new Set(['localhost','127.0.0.1','::1','[::1]']);
+if (localOnly && !loopbackNames.has(hostname))
+  throw new Error('Local Lab must bind a loopback address');
+const runtimeFiles = await sourceWebFiles(root);
+const localManifest = await Bun.file(join(root,'local-lab-manifest.json')).json();
+const assetsManifest = await Bun.file(join(root,'r2-assets-manifest.json')).json();
+const diagnosticFiles = await browserModuleClosure(root,[
+  'benchmarks/simulation/runner.html','benchmarks/simulation/runner-page.mjs',
+  'scripts/sos1-calculation-popup.html','scripts/sos1-calculation-popup.mjs',
+]);
+const publicPaths = new Set([
+  ...runtimeFiles, ...runtimeFiles.map(path=>`dist/${path}`),
+  ...localManifest.files.map(file=>file.path), ...assetsManifest.files.map(file=>file.source),
+  ...diagnosticFiles, 'local-lab-manifest.json','dist/local-lab-manifest.json',
+  'r2-assets-manifest.json','dist/runtime-config.js',
+  ...(testApi ? ['openff/ubiquitin-1ubq.pdb','mlip/models/ani2x-goldens.json'] : []),
+]);
 
 const LOCAL_LAB_POLICY = [
   "default-src 'self'",
@@ -64,9 +87,14 @@ const CONTENT_TYPES = Object.freeze({
 
 const server = Bun.serve({
   port,
-  ...(localOnly ? { hostname:'127.0.0.1' } : {}),
+  hostname,
   async fetch(request) {
     const url = new URL(request.url);
+    if (loopbackNames.has(hostname) && !loopbackNames.has(url.hostname))
+      return new Response('Invalid Host', {status:400,headers:responseHeaders('text/plain; charset=utf-8')});
+    if (!['GET','HEAD'].includes(request.method))
+      return new Response('Method not allowed', {status:405,headers:{
+        ...responseHeaders('text/plain; charset=utf-8'),Allow:'GET, HEAD'}});
     if (['/reproductions','/reproductions/'].includes(url.pathname))
       return Response.redirect(`${url.origin}/reproductions.html`, 302);
     if (['/sos1','/sos1/','/sos1-hit-to-bay293/movies'].includes(url.pathname))
@@ -98,12 +126,10 @@ const server = Bun.serve({
         headers: responseHeaders('text/javascript; charset=utf-8', 'no-store'),
       });
     }
-    if (pathname.endsWith('/')) pathname += 'index.html';
-    const relative = normalize(pathname).replace(/^[/\\]+/, '');
-    const absolute = join(root, relative);
-    if (absolute !== root && !absolute.startsWith(`${root}/`))
-      return new Response('Forbidden', { status:403,
-        headers:responseHeaders('text/plain; charset=utf-8') });
+    const resolved = await resolvePublicFile(root, url.pathname, publicPaths);
+    if (!resolved) return new Response('Not found', {status:404,
+      headers:responseHeaders('text/plain; charset=utf-8')});
+    const {absolute,relative} = resolved;
 
     const file = Bun.file(absolute);
     if (!(await file.exists())) return new Response('Not found', { status:404,

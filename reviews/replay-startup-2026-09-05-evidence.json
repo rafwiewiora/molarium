@@ -1,0 +1,257 @@
+{
+  "schema": "molarium.replay-startup-diagnostic/v1",
+  "scope": "Owned disposable Chrome profile, sparse non-pausing stage markers, no coordinates retained",
+  "before": {
+    "commit": "304dff6",
+    "sourceHashes": {
+      "app.js": "9dc09d8e08d84e3b57ea9f4d21201efb983472f95a1958f5e1be14f51f5c9720",
+      "design-history/live-campaign-store.mjs": "66df49e9208d3c50ace6be263fce50eab596b6eebe6f4b01bae49f13912b17d6"
+    },
+    "snapshots": [
+      {
+        "attempt": 1,
+        "completed": false,
+        "trace": [
+          {
+            "kind": "stage",
+            "detail": "app.js:17753 state.chemistActionAudit = []",
+            "start": 132.9299999475479
+          },
+          {
+            "kind": "stage",
+            "detail": "app.js:9431 const workspace = await store.loadActive()",
+            "start": 173.18999993801117
+          },
+          {
+            "kind": "stage",
+            "detail": "design-history/live-campaign-store.mjs:101 const database = await open()",
+            "start": 173.38499999046326
+          },
+          {
+            "kind": "stage",
+            "detail": "design-history/live-campaign-store.mjs:57 const request = indexedDB.open(",
+            "start": 173.49500000476837
+          },
+          {
+            "kind": "stage",
+            "detail": "app.js:11719 const response = await fetch(source.url",
+            "start": 914.3549998998642
+          },
+          {
+            "kind": "stage",
+            "detail": "app.js:11721 const bytes = await readCampaignAssetResponse(response",
+            "start": 915.7350000143051
+          },
+          {
+            "kind": "stage",
+            "detail": "app.js:11722 if (await sha256Hex(bytes)",
+            "start": 919.3049999475479
+          },
+          {
+            "kind": "stage",
+            "detail": "app.js:11724 serialized = new TextDecoder().decode(bytes)",
+            "start": 921.204999923706
+          }
+        ],
+        "campaignStatus": "No active campaign · history stays on this device.",
+        "actionStates": [
+          {
+            "action": "designerScript.loadRegistered",
+            "status": "completed"
+          },
+          {
+            "action": "designerScript.play",
+            "status": "completed"
+          },
+          {
+            "action": "interface.presentDesignerStep",
+            "status": "completed"
+          },
+          {
+            "action": "campaign.import",
+            "status": "running"
+          }
+        ]
+      }
+    ]
+  },
+  "after": {
+    "sourceHashes": {
+      "app.js": "224454ca4ff155228de727043f01c0de6c94cbf3cbf245bce493923eb03fe44a",
+      "design-history/live-campaign-store.mjs": "b525a2cde0f5a6fd81ce4d4ecb2558a75074caac750209edd866f01f156fdfc5"
+    },
+    "attempts": [
+      {
+        "attempt": 1,
+        "completed": true,
+        "stageCount": 21,
+        "lastStages": [
+          {
+            "kind": "stage",
+            "detail": "design-history/live-campaign-store.mjs:122 await done;",
+            "start": 976.2599999904633
+          },
+          {
+            "kind": "stage",
+            "detail": "app.js:11772 state.chemistActionAudit = []",
+            "start": 979.1149998903275
+          }
+        ]
+      },
+      {
+        "attempt": 2,
+        "completed": true,
+        "stageCount": 23,
+        "lastStages": [
+          {
+            "kind": "stage",
+            "detail": "design-history/live-campaign-store.mjs:122 await done;",
+            "start": 971.7050000429153
+          },
+          {
+            "kind": "stage",
+            "detail": "app.js:11772 state.chemistActionAudit = []",
+            "start": 975.7850000858307
+          }
+        ]
+      },
+      {
+        "attempt": 3,
+        "completed": true,
+        "stageCount": 23,
+        "lastStages": [
+          {
+            "kind": "stage",
+            "detail": "design-history/live-campaign-store.mjs:122 await done;",
+            "start": 983.5249999761581
+          },
+          {
+            "kind": "stage",
+            "detail": "app.js:11772 state.chemistActionAudit = []",
+            "start": 997.5249999761581
+          }
+        ]
+      },
+      {
+        "attempt": 4,
+        "completed": true,
+        "stageCount": 23,
+        "lastStages": [
+          {
+            "kind": "stage",
+            "detail": "design-history/live-campaign-store.mjs:122 await done;",
+            "start": 981.7450000047684
+          },
+          {
+            "kind": "stage",
+            "detail": "app.js:11772 state.chemistActionAudit = []",
+            "start": 989.954999923706
+          }
+        ]
+      },
+      {
+        "attempt": 5,
+        "completed": true,
+        "stageCount": 23,
+        "lastStages": [
+          {
+            "kind": "stage",
+            "detail": "design-history/live-campaign-store.mjs:122 await done;",
+            "start": 1075.289999961853
+          },
+          {
+            "kind": "stage",
+            "detail": "app.js:11772 state.chemistActionAudit = []",
+            "start": 1095.9249999523163
+          }
+        ]
+      },
+      {
+        "attempt": 6,
+        "completed": true,
+        "stageCount": 23,
+        "lastStages": [
+          {
+            "kind": "stage",
+            "detail": "design-history/live-campaign-store.mjs:122 await done;",
+            "start": 995.6850000619888
+          },
+          {
+            "kind": "stage",
+            "detail": "app.js:11772 state.chemistActionAudit = []",
+            "start": 1001.9950000047684
+          }
+        ]
+      },
+      {
+        "attempt": 7,
+        "completed": true,
+        "stageCount": 23,
+        "lastStages": [
+          {
+            "kind": "stage",
+            "detail": "design-history/live-campaign-store.mjs:122 await done;",
+            "start": 983.7150000333786
+          },
+          {
+            "kind": "stage",
+            "detail": "app.js:11772 state.chemistActionAudit = []",
+            "start": 989.460000038147
+          }
+        ]
+      },
+      {
+        "attempt": 8,
+        "completed": true,
+        "stageCount": 23,
+        "lastStages": [
+          {
+            "kind": "stage",
+            "detail": "design-history/live-campaign-store.mjs:122 await done;",
+            "start": 975.7599999904633
+          },
+          {
+            "kind": "stage",
+            "detail": "app.js:11772 state.chemistActionAudit = []",
+            "start": 979.9850000143051
+          }
+        ]
+      },
+      {
+        "attempt": 9,
+        "completed": true,
+        "stageCount": 23,
+        "lastStages": [
+          {
+            "kind": "stage",
+            "detail": "design-history/live-campaign-store.mjs:122 await done;",
+            "start": 992.4750000238419
+          },
+          {
+            "kind": "stage",
+            "detail": "app.js:11772 state.chemistActionAudit = []",
+            "start": 1007.039999961853
+          }
+        ]
+      },
+      {
+        "attempt": 10,
+        "completed": true,
+        "stageCount": 23,
+        "lastStages": [
+          {
+            "kind": "stage",
+            "detail": "design-history/live-campaign-store.mjs:122 await done;",
+            "start": 997.9500000476837
+          },
+          {
+            "kind": "stage",
+            "detail": "app.js:11772 state.chemistActionAudit = []",
+            "start": 1013.3949999809265
+          }
+        ]
+      }
+    ]
+  },
+  "interpretation": "Before: asset transport and SHA complete, but initial IndexedDB open never resolves. Lifecycle cleanup alone did not recover it. After deferring blank-story database opens plus lifecycle/timeout hardening: ten rapid-navigation imports completed. This local probe does not establish the underlying Chromium storage defect."
+}

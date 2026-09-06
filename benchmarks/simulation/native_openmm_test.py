@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 import openmm as mm
 from openmm import unit
-from native_openmm import accuracy
+from native_openmm import accuracy, validate_numeric_system
 
 PACKET = Path(__file__).parent/'generated/packet.json'
 
@@ -19,6 +19,22 @@ class OracleTest(unittest.TestCase):
 
     def evaluate(self,case):
         return accuracy(case,self.platform,{},False)
+
+    def test_complete_numeric_contract(self):
+        for case in self.cases.values():
+            validate_numeric_system(case)
+        for key in ('customExternalForces', 'cmap', 'periodicBoxVectors', 'virtualSites'):
+            case = copy.deepcopy(self.cases['analytic-total'])
+            case['configuredSystem'][key] = []
+            with self.assertRaisesRegex(ValueError, 'unsupported numeric System'):
+                self.evaluate(case)
+        for kind, key, value in [('particles', 'mass_amu', float('inf')),
+                                 ('nonbonded', 'epsilon_kj', -1), ('bonds', 'i', 0.5),
+                                 ('bonds', 'ignoredForce', 1)]:
+            case = copy.deepcopy(self.cases['analytic-total'])
+            case['configuredSystem'][kind][0][key] = value
+            with self.assertRaises(ValueError):
+                self.evaluate(case)
 
     def test_harmonic_bond_analytic_energy_and_force(self):
         case=self.cases['analytic-bonds']

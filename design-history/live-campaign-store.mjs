@@ -48,14 +48,38 @@ function transactionDone(transaction) {
 
 export function createLiveCampaignStore({ indexedDB = globalThis.indexedDB,
   dbName = LIVE_CAMPAIGN_DB_NAME, storeName = LIVE_CAMPAIGN_STORE_NAME,
-  workspaceStoreName = LIVE_CAMPAIGN_WORKSPACE_STORE_NAME } = {}) {
+  workspaceStoreName = LIVE_CAMPAIGN_WORKSPACE_STORE_NAME, openTimeoutMs = 10000 } = {}) {
   if (!indexedDB?.open) throw new Error('IndexedDB is unavailable');
-  let databasePromise = null;
+  if (!Number.isFinite(openTimeoutMs) || openTimeoutMs <= 0)
+    throw new Error('IndexedDB open timeout must be finite and positive');
+  let databasePromise = null, databaseConnection = null, cancelOpening = null;
+  const close = () => {
+    cancelOpening?.(new Error('Local campaign database opening was cancelled by navigation or close'));
+    databaseConnection?.close();
+    databaseConnection = null;
+    databasePromise = null;
+  };
   const open = () => {
     if (databasePromise) return databasePromise;
-    databasePromise = new Promise((resolve, reject) => {
+    const pending = new Promise((resolve, reject) => {
       const request = indexedDB.open(dbName, LIVE_CAMPAIGN_DB_VERSION);
+      let settled = false;
+      const fail = error => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        if (cancelOpening === fail) cancelOpening = null;
+        // Only the unfinished schema upgrade is aborted; saved campaigns and
+        // already-started read/write transactions are never deleted or reset.
+        try { request.transaction?.abort(); } catch { /* request may not be ready */ }
+        reject(error);
+      };
+      const timer = setTimeout(() => fail(new Error(
+        `Local campaign database did not open within ${openTimeoutMs/1000} seconds; reload Molarium and retry. No campaign was saved.`)),
+      openTimeoutMs);
+      cancelOpening = fail;
       request.addEventListener('upgradeneeded', () => {
+        if (settled) { request.transaction?.abort(); return; }
         const database = request.result;
         if (!database.objectStoreNames.contains(storeName)) {
           const store = database.createObjectStore(storeName, { keyPath:'campaignId' });
@@ -64,13 +88,26 @@ export function createLiveCampaignStore({ indexedDB = globalThis.indexedDB,
         if (!database.objectStoreNames.contains(workspaceStoreName))
           database.createObjectStore(workspaceStoreName, { keyPath:'key' });
       });
-      request.addEventListener('success', () => resolve(request.result), { once:true });
-      request.addEventListener('error', () => reject(request.error || new Error('IndexedDB open failed')),
+      request.addEventListener('success', () => {
+        if (settled) { request.result.close(); return; }
+        settled = true;
+        clearTimeout(timer);
+        if (cancelOpening === fail) cancelOpening = null;
+        databaseConnection = request.result;
+        const connection = databaseConnection;
+        connection.addEventListener('versionchange', () => {
+          if (databaseConnection === connection) close(); else connection.close();
+        });
+        resolve(request.result);
+      }, { once:true });
+      request.addEventListener('error', () => fail(request.error || new Error('IndexedDB open failed')),
         { once:true });
-      request.addEventListener('blocked', () => reject(new Error('IndexedDB upgrade is blocked')),
+      request.addEventListener('blocked', () => fail(new Error('IndexedDB upgrade is blocked')),
         { once:true });
     });
-    return databasePromise;
+    databasePromise = pending;
+    pending.catch(() => { if (databasePromise === pending) databasePromise = null; });
+    return pending;
   };
   return Object.freeze({
     async save(campaign, { activeBranch = 'main' } = {}) {
@@ -128,9 +165,6 @@ export function createLiveCampaignStore({ indexedDB = globalThis.indexedDB,
       transaction.objectStore(workspaceStoreName).delete('active-campaign');
       await done;
     },
-    async close() {
-      const database = await databasePromise;
-      database?.close(); databasePromise = null;
-    },
+    close,
   });
 }

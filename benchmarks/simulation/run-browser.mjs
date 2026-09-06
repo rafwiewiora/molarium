@@ -5,11 +5,14 @@ import { platform, arch, cpus, release } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { resolve, dirname } from 'node:path';
 import { startMolariumBrowser, waitFor } from '../../scripts/headless-chrome.mjs';
+import {STORMM_CASES,stormmUnsupportedReason} from './stormm-scope.mjs';
 const root = fileURLToPath(new URL('../../',import.meta.url));
 const arg = (name,fallback) => {const i=process.argv.indexOf(`--${name}`); return i<0?fallback:process.argv[i+1];};
 const sha = b => createHash('sha256').update(b).digest('hex');
 const packetPath=resolve(arg('packet',`${root}/benchmarks/simulation/generated/packet.json`));
 const output=arg('output'); if(!output) throw new Error('--output is required');
+const backend=arg('backend','webgpu');
+if(!['webgpu','stormm'].includes(backend))throw new Error('Unsupported backend');
 if(await Bun.file(output).exists()) throw new Error('Output exists; use a new immutable attempt');
 const packetBytes=await readFile(packetPath),packet=JSON.parse(packetBytes);
 await mkdir(dirname(resolve(output)),{recursive:true});
@@ -23,10 +26,13 @@ const cases=packet.cases.filter(c=>!selected.length||selected.includes(c.id));
 if(!cases.length||selected.some(id=>!cases.some(c=>c.id===id))) throw new Error('Unknown/empty case selection');
 const sourceFiles=['webgpu-worker.js','webgpu/molarium-webgpu.wgsl','openff/implicit-solvent.js',
   'openff/simulation-options.js','benchmarks/simulation/run-browser.mjs','benchmarks/simulation/runner-page.mjs',
-  'benchmarks/simulation/runner.html','scripts/headless-chrome.mjs'];
+  'openff/numeric-system.mjs','openff/frame-contract.mjs','scripts/local-test-server.mjs',
+  'benchmarks/simulation/runner.html','scripts/headless-chrome.mjs',
+  ...(backend==='stormm'?['stormm-worker.js','stormm/core.mjs','stormm/engine.mjs',
+    'openff/conformer-protocol.js','benchmarks/simulation/stormm-scope.mjs']:[])];
 const sourceHashes=Object.fromEntries(await Promise.all(sourceFiles.map(async p=>[p,sha(await readFile(resolve(root,p)))])));
 const git = args => {try{return execFileSync('git',args,{cwd:root,encoding:'utf8',stdio:['ignore','pipe','ignore']}).trim();}catch{return null;}};
-const report={schema:'molarium.webgpu-simulation-benchmark/v1',timestamp:new Date().toISOString(),
+const report={schema:`molarium.${backend}-simulation-benchmark/v1`,timestamp:new Date().toISOString(),
   packetSha256:sha(packetBytes),protocolSha256:packet.protocolSha256,source:{commit:git(['rev-parse','HEAD']),sourceHashes},
   environment:{os:platform(),release:release(),arch:arch(),cpu:cpus()[0]?.model,bun:Bun.version},
   command:process.argv.slice(2),performanceSettings:{repeats,minimumSampleSeconds:seconds},cases:[]};
@@ -37,7 +43,7 @@ try {
 } catch { report.environment.hardware = null; }
 let browser;
 try {
-  browser=await startMolariumBrowser({root,appPath:'benchmarks/simulation/runner.html'});
+  browser=await startMolariumBrowser({root,appPath:`benchmarks/simulation/runner.html?backend=${backend}`});
   await waitFor(()=>browser.evaluate('Boolean(window.simulationBenchmark)'),20000,'benchmark module');
   for(let attempt=1;attempt<=10;attempt++){
     try{
@@ -55,6 +61,15 @@ try {
   for(const c of cases){
     const row={id:c.id,atomCount:c.molecule.atoms.length,classification:c.classification||'normal'};
     try{
+      if(backend==='stormm') {
+        const reason=stormmUnsupportedReason(c);
+        if(Boolean(reason)===STORMM_CASES.includes(c.id))throw new Error('STORMM case scope disagrees with packet capabilities');
+        if(reason) {
+          report.cases.push({...row,status:'unsupported',reason});
+          console.log(`${c.id}: unsupported (${reason})`);
+          continue;
+        }
+      }
       row.result=await browser.evaluate(`window.simulationBenchmark.accuracy(${JSON.stringify(c)})`);
       row.status='ok';
       if(process.argv.includes('--speed')&&c.performance)
@@ -67,4 +82,4 @@ finally{
   await browser?.close(); await mkdir(dirname(resolve(output)),{recursive:true});
   await writeFile(output,JSON.stringify(report,null,2)+'\n',{flag:'wx'});
 }
-if(report.error||report.cases.some(c=>c.status!=='ok'))process.exitCode=1;
+if(report.error||report.cases.some(c=>!['ok','unsupported'].includes(c.status)))process.exitCode=1;

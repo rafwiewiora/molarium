@@ -197,7 +197,9 @@ function packSmirnoffModel(molecule, system, temperature, forcefield, implicitSo
   const momentum = [0, 0, 0];
   molecule.atoms.forEach((atom, index) => {
     const mass = Number(system.particles[index]?.mass_amu);
-    if (!(mass > 0)) throw new Error(`${forcefield} contains an invalid mass for atom ${index + 1}`);
+    if (!Number.isFinite(mass) || !(mass > 0)
+        || !Number.isFinite(Math.fround(1 / mass)) || !(Math.fround(1 / mass) > 0))
+      throw new Error(`${forcefield} contains an invalid f32 inverse mass for atom ${index + 1}`);
     const isMovable = !movable || movable.has(index);
     posm.set([Number(atom.x) * 0.1, Number(atom.y) * 0.1, Number(atom.z) * 0.1,
       isMovable ? 1 / mass : 0], index * 4);
@@ -592,6 +594,8 @@ async function runCalculation(message) {
   const started = performance.now();
   uncapturedError = null;
   const parameterized = await parameterizeMolecule(id, molecule);
+  const { configureSimulationSystem, validateNumericSystem, requestedSavedFrameCount } = await getSimulationOptions();
+  validateNumericSystem(molecule, parameterized.system);
   const parameterCounts = Object.fromEntries(
     Object.entries(parameterized.system).map(([name, terms]) => [name, terms.length]),
   );
@@ -608,19 +612,29 @@ async function runCalculation(message) {
     });
     return;
   }
-  const [gpu, { configureSimulationSystem }] = await Promise.all([
-    getWebGPU(id), getSimulationOptions(),
-  ]);
   const { obc2Parameters, requestedImplicitSolvent } = await getImplicitSolvent();
   const implicitModel = requestedImplicitSolvent(options);
   const implicitSolvent = implicitModel === 'obc2'
     ? obc2Parameters(molecule, parameterized.system) : null;
   const temperature = Math.max(1, Number(options.temperature ?? 300));
+  if (!Number.isFinite(temperature)) throw new Error('WebGPU temperature must be finite');
+  const workSteps = job === 'geometry' ? Number(options.maxIterations ?? 750)
+    : job === 'dynamics' ? Number(options.steps ?? 250) : 0;
+  if (!Number.isInteger(workSteps) || workSteps < (job === 'dynamics' ? 1 : 0)
+      || workSteps > (job === 'geometry' ? 2000 : 5000))
+    throw new Error('WebGPU requires integer work counts: 0–2000 minimization iterations or 1–5000 dynamics steps');
+  const savedFrameCount = requestedSavedFrameCount(options.savedFrameCount, workSteps);
   const simulationConfig = configureSimulationSystem(molecule, parameterized.system, options);
   if (options.movableAtomIndices != null && job !== 'geometry')
     throw new Error('A movable-atom selection is supported only for WebGPU geometry minimization');
   const model = packSmirnoffModel(molecule, simulationConfig.system, temperature,
     parameterized.forcefield, implicitSolvent, options.movableAtomIndices);
+  for (const name of ['posm','velocity','bonds','angles','torsions','nonbonded','exceptions','constraints']) {
+    const words = model[name];
+    const floats = new Float32Array(words.buffer, words.byteOffset, words.byteLength / 4);
+    if (!floats.every(Number.isFinite)) throw new Error(`WebGPU packed ${name} contains non-finite f32 values`);
+  }
+  const gpu = await getWebGPU(id);
   progress(id, `Uploading ${parameterized.forcefield} System to WebGPU · ${model.count} atoms · ${model.sizes.torsions} torsions…`, 0.9, 0.08);
   const simulation = createSimulation(gpu.device, model, {
     ...options, dt: simulationConfig.timestepPs,
@@ -638,13 +652,9 @@ async function runCalculation(message) {
       });
     };
     if (job === 'geometry') {
-      const iterations = Math.min(2000, Math.max(0, Number(options.maxIterations ?? 750)));
-      await minimize(gpu, simulation, groups, id, iterations, options.savedFrameCount, captureFrame);
+      await minimize(gpu, simulation, groups, id, workSteps, savedFrameCount, captureFrame);
     } else if (job === 'dynamics') {
-      const steps = Math.round(Number(options.steps ?? 250));
-      if (!Number.isInteger(steps) || steps < 1 || steps > 5000)
-        throw new Error('Direct Sage WebGPU dynamics supports between 1 and 5,000 steps; use the STORMM WebGPU ensemble for longer trajectories');
-      await dynamics(gpu, simulation, groups, id, steps, options.savedFrameCount, captureFrame);
+      await dynamics(gpu, simulation, groups, id, workSteps, savedFrameCount, captureFrame);
     } else if (job !== 'energy') {
       throw new Error(`Unknown WebGPU job type: ${job}`);
     }

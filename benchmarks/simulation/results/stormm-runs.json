@@ -1,0 +1,6 @@
+{
+  "runs": [
+    {"label":"Apple M1 Pro", "directory":"m1pro-stormm-20260905-a01"},
+    {"label":"NVIDIA L4", "directory":"l4-stormm-20260905-a01"}
+  ]
+}

@@ -1,6 +1,7 @@
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { startLocalTestServer } from './local-test-server.mjs';
 
 const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
@@ -67,7 +68,7 @@ export async function startMolariumBrowser({ root, appPath, url = null, width = 
   if (!url && (!root || !appPath)) throw new Error('root and appPath are required for a local browser');
   if (url && !/^https?:\/\//.test(url)) throw new Error('url must use http or https');
   const seed = Math.floor(Math.random() * 1000);
-  const appPort = 50000 + seed, debugPort = 52000 + seed;
+  const debugPort = 52000 + seed;
   const chromePath = process.env.CHROME_PATH || (process.platform === 'darwin'
     ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
     : '/usr/bin/google-chrome');
@@ -81,11 +82,13 @@ export async function startMolariumBrowser({ root, appPath, url = null, width = 
       '--use-webgpu-adapter=swiftshader', '--disable-vulkan-surface',
       '--use-gpu-in-tests', '--enable-unsafe-swiftshader'] : [];
   const profile = await mkdtemp(join(tmpdir(), 'molarium-history-browser-'));
-  const server = url ? null : Bun.spawn(['bun', 'server.js', ...(localOnly ? ['--local-only'] : []),
-    '--port', String(appPort)], { cwd:root, stdout:'ignore', stderr:'pipe' });
-  const appUrl = url || `http://127.0.0.1:${appPort}/${appPath.replace(/^\/+/, '')}`;
-  let chrome = null, client = null;
+  let server = null, appUrl = url, chrome = null, client = null;
   try {
+    if (!url) {
+      const started = await startLocalTestServer({root,args:localOnly ? ['--local-only'] : []});
+      server = started.process;
+      appUrl = new URL(appPath.replace(/^\/+/, ''),started.baseUrl).href;
+    }
     await waitFor(async () => (await fetch(appUrl)).ok, 15000,
       url ? 'Molarium deployment' : 'Molarium server');
     chrome = Bun.spawn([chromePath,

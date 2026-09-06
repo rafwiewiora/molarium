@@ -1,5 +1,7 @@
 // Uses the production worker and its public messages, not a second implementation.
-const worker = new Worker('/webgpu-worker.js');
+const backend = new URLSearchParams(location.search).get('backend') || 'webgpu';
+if (!['webgpu','stormm'].includes(backend)) throw new Error('Unsupported benchmark backend');
+const worker = new Worker(`/${backend}-worker.js`,backend==='stormm'?{type:'module'}:{});
 const pending = new Map(); let id = 0;
 worker.addEventListener('message', ({data}) => {
   if (data.type === 'progress') return;
@@ -16,7 +18,8 @@ function run(molecule, options, job='energy') {
     const jobId = ++id;
     const timer = setTimeout(() => {pending.delete(jobId);reject(new Error('Worker job timed out'));},300000);
     pending.set(jobId,{resolve,reject,timer});
-    worker.postMessage({type:'run',id:jobId,job,molecule,options});
+    worker.postMessage({type:'run',id:jobId,job,molecule,
+      options:{...options,...(backend==='stormm'?{replicaCount:1,stormmSystem:'current'}:{})}});
   });
 }
 window.simulationBenchmark = {
@@ -36,10 +39,12 @@ window.simulationBenchmark = {
     const r = await run(c.molecule,c.options);
     if (r.gpuAdapter?.isFallbackAdapter || /swiftshader|llvmpipe|lavapipe|software/i.test(JSON.stringify(r.gpuAdapter)))
       throw new Error('Production worker selected a software adapter');
+    if (!Number.isFinite(r.finalEnergy) || r.forces?.length !== 3*c.molecule.atoms.length
+      || !Array.from(r.forces).every(Number.isFinite)) throw new Error('Invalid single-point energy/3N forces');
     return {energy:r.finalEnergy*4.184,forces:Array.from(r.forces),elapsedMs:r.elapsedMs,
       gpuAdapter:r.gpuAdapter,
       atomCount:c.molecule.atoms.length,constraintCount:r.constraintCount,cutoffNm:r.cutoffNm,
-      implicitSolvent:r.implicitSolvent};
+      implicitSolvent:r.implicitSolvent,constraintsApplied:r.constraintsApplied};
   },
   async speed(c,p,repeats,seconds) {
     const results = {};
@@ -54,14 +59,17 @@ window.simulationBenchmark = {
           workerMs+=last.elapsedMs; jobs++;
         } while ((performance.now()-start)<seconds*1000);
         const elapsed=(performance.now()-start)/1000;
-        if (!Number.isFinite(last.finalEnergy) || !Array.from(last.forces).every(Number.isFinite))
+        if (!Number.isFinite(last.finalEnergy) || (job==='energy'
+          && (last.forces?.length!==3*c.molecule.atoms.length || !Array.from(last.forces).every(Number.isFinite)))
+          || (job==='dynamics' && (!last.positions?.length || !Array.from(last.positions).every(Number.isFinite))))
           throw new Error('Non-finite trajectory or timed single-point result');
         if (repeat>=0) samples.push({seconds:elapsed,jobs,msPerJob:elapsed*1000/jobs,
           workerMsPerJob:workerMs/jobs,stepsPerSecond:job==='dynamics'?jobs*p.mdStepsPerJob/elapsed:null,
           nsPerDay:job==='dynamics'?jobs*p.mdStepsPerJob*p.timestepPs*86.4/elapsed:null,
           finalEnergy:last.finalEnergy*4.184,constraintError:last.constraintError,frameCount:last.frameCount});
       }
-      results[job]={scope:'production worker end-to-end; fresh simulation each job; compilation warmed; transfer and endpoint readbacks included',samples};
+      results[job]={scope:'production worker end-to-end; one replica; fresh simulation each job; compilation warmed; transfer and endpoint readbacks included'
+        +(backend==='stormm'&&job==='dynamics'?'; production seeded 0.02 Å initial coordinate jitter':''),samples};
     }
     return results;
   },

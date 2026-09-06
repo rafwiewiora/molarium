@@ -44,7 +44,8 @@ export function validateScoreInputs(packet, reference, actual,
   if (reference.data.schema !== 'molarium.native-openmm-benchmark/v1'
       || reference.data.platform !== 'Reference')
     throw new Error('The oracle must be native OpenMM Reference with its supported result schema');
-  if (!['molarium.native-openmm-benchmark/v1', 'molarium.webgpu-simulation-benchmark/v1']
+  if (!['molarium.native-openmm-benchmark/v1', 'molarium.webgpu-simulation-benchmark/v1',
+    'molarium.stormm-simulation-benchmark/v1']
     .includes(actual.data.schema)) throw new Error('Unsupported measured-result schema');
   const ids = caseIds(packet.data, 'Packet');
   const expected = SUITES[suite];

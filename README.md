@@ -25,6 +25,10 @@ listed explicitly; they are not replaced by vacuum calculations.
 The [measured results](./benchmarks/simulation/results/README.md) distinguish
 fixed-input kernel agreement from original-input precision limits and preserve
 failures alongside passing cases.
+The separate [production STORMM/native OpenMM results](./benchmarks/simulation/results/STORMM.md)
+pass energy and every force component's aggregate gates on **22/22 supported cases**
+on M1 Pro and L4, with **25 explicitly unsupported cases**. They include single-replica
+job timings and do not depend on treating the WASM bridge as fully native-validated.
 
 The preserved [Astra adversarial review and remediation log](./reviews/ASTRA_REVIEW_OF_SOL_WORK_2026-09-05.md)
 documents known boundaries, reproducible probes, fixes, and remaining validation work.
@@ -42,6 +46,12 @@ bun run dev
 ```
 
 Open the local URL printed by Bun. A recent Chrome build is recommended for WebGPU.
+
+Both server modes bind to `127.0.0.1` by default and expose only declared runtime,
+public release, and reviewed integrity files—not the entire checkout. Dotfiles,
+private benchmark inputs, symlink escapes, and foreign Host headers are rejected.
+For intentional connected-mode LAN sharing, use `bun server.js --host 0.0.0.0`;
+this is not an authenticated service. Local Lab refuses non-loopback bindings.
 
 ### Local Lab for proprietary structures
 

@@ -6580,7 +6580,10 @@ function setMode(mode) {
   renderDockingResults();
   if (mode === 'build') {
     requestAnimationFrame(drawFragmentPreviews);
-    ensureLiveCampaignPersistence();
+    // Reproduction landing pages intentionally start blank. Opening their
+    // preview must not start an IndexedDB upgrade just before navigating to
+    // another replay. Explicit campaign actions still initialize and persist.
+    if (!new URLSearchParams(location.search).has('story')) ensureLiveCampaignPersistence();
     updateLiveCampaignUi();
   }
   draw();
@@ -9312,7 +9315,16 @@ function getLiveCampaignStoreModule() {
 
 function getLiveCampaignStore() {
   liveCampaignStorePromise ||= getLiveCampaignStoreModule()
-    .then((module) => module.createLiveCampaignStore());
+    .then((module) => {
+      const store = module.createLiveCampaignStore();
+      // A frozen/navigated-away document must not retain a connection or an
+      // unfinished schema upgrade that blocks the next same-origin page.
+      window.addEventListener('pagehide', () => {
+        store.close();
+        liveCampaignRestorePromise = null;
+      });
+      return store;
+    });
   return liveCampaignStorePromise;
 }
 

@@ -1,0 +1,34 @@
+{
+  "schema": "molarium.simulation-benchmark-evidence/v1",
+  "attempt": "l4-contracts-20260905-a01",
+  "files": [
+    {
+      "name": "packet-d8c1bea6a64355251391c3ef777203999bc48f43348c6760333cd0cea8c44ce0.json.gz",
+      "sha256": "8255c58785a75e2b05c45055a7392d83cc52287ff5693ca693e7a6c6ea86800c",
+      "uncompressedSha256": "d8c1bea6a64355251391c3ef777203999bc48f43348c6760333cd0cea8c44ce0",
+      "bytes": 52643916,
+      "compressedBytes": 4340648
+    },
+    {
+      "name": "reference.json.gz",
+      "sha256": "2073a9b20d93323bc8c16a561c7d8c961c29340e881439602b86c3592c5a015a",
+      "uncompressedSha256": "58986007a1537d53f05b80887d82c0526c1e4e8a57b89df778ff59167c661dbf",
+      "bytes": 4069927,
+      "compressedBytes": 1352376
+    },
+    {
+      "name": "score.json.gz",
+      "sha256": "d6ba582aa9e3f3f7e3f158f1392e8e5d2389ab6ace2e26e0bf52a56663d197af",
+      "uncompressedSha256": "c276896fa572bcf3d71d010089487c06022940e3e05b94fb6022598e03a361f6",
+      "bytes": 195237,
+      "compressedBytes": 31581
+    },
+    {
+      "name": "webgpu.json.gz",
+      "sha256": "1448a8a88a95f0657b3cea88d0f2bbaddf08f8e8ef5310eeff82be9943fd898c",
+      "uncompressedSha256": "92de88a23dd7a4243825d41e401e854489c72dc2eac01993f1a602818c10ba2f",
+      "bytes": 2078842,
+      "compressedBytes": 593693
+    }
+  ]
+}

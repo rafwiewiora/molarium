@@ -5,6 +5,13 @@ is a STORMM-inspired implementation, not a port of the complete STORMM applicati
 Each current engine batches replicas of one topology; heterogeneous stacked-system
 synthesis remains a required architectural extension.
 
+The [production-worker/native OpenMM benchmark](../benchmarks/simulation/README.md#production-stormm-versus-native-openmm)
+is separate from the older bundled-WASM comparisons below. It retains the full 47-case
+packet, measures 22 supported cases, and explicitly marks 25 unsupported cases.
+Static `energy` and `score-batch` jobs preserve supplied coordinates without constraint
+projection; `energy` returns all Cartesian forces in kJ/mol/nm. Dynamics/conformer work
+retains SHAKE/RATTLE. Unknown System content and nonzero cutoffs fail explicitly.
+
 ## Files
 - `core.mjs` — WGSL kernels (valence, nonbond, OBC2/ACE, kickDrift, SHAKE, kickKE,
   RATTLE, tick), topology

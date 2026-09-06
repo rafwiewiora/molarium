@@ -8,6 +8,9 @@ Scores were regenerated after the [Astra review](../../../reviews/ASTRA_REVIEW_O
 to enforce exact force-vector shapes and correct native original-input selection.
 The [rescoring provenance](rescored-20260905-a03/rescoring-provenance.json.gz) binds old and new scores;
 all raw measurements, prior score files, tolerances, and timing samples remain unchanged.
+The headline direct-worker rows were subsequently remeasured after System-contract hardening
+(the `*-contracts-20260905-a01` attempts); historical rows and native GPU baselines remain archived.
+The separate [production STORMM/native comparison](STORMM.md) uses a smaller, explicitly declared scope.
 
 ## Energy and force agreement
 
@@ -59,15 +62,15 @@ converted into claims of matched kernel speedups. See the [protocol](../README.m
 
 | Workload | Apple M1 Pro — WebGPU f32; production job | Apple M1 Pro — OpenMM OpenCL single; resident Context | NVIDIA L4 — WebGPU f32; production job | NVIDIA L4 — OpenMM CUDA single; resident Context |
 | --- | ---: | ---: | ---: | ---: |
-| trpcage-original-vacuum | 223.0 [222.5–223.3] | 921.7 [912.2–926.2] | 302.5 [301.4–303.2] | 4412.3 [4402.9–4421.1] |
-| trpcage-original-obc2 | 133.3 [133.2–133.5] | 447.7 [445.9–450.3] | 144.0 [143.6–144.5] | 1932.2 [1928.1–1934.7] |
-| trpcage-cutoff-obc2 | 67.5 [67.4–67.6] | 306.5 [301.9–307.3] | 97.2 [96.6–97.3] | 1157.6 [1153.6–1159.9] |
-| trpcage-hbonds-obc2 | 128.1 [127.7–128.2] | 416.9 [414.8–418.4] | 140.4 [139.9–140.9] | 1753.3 [1751.5–1754.2] |
-| ubiquitin-original-vacuum | 91.2 [91.0–91.2] | 488.4 [486.2–488.8] | 103.0 [102.7–103.3] | 2951.9 [2920.2–2952.6] |
-| ubiquitin-original-obc2 | 40.7 [40.7–40.8] | 212.8 [211.9–213.3] | 41.7 [41.6–41.8] | 1055.8 [1055.5–1055.9] |
-| ubiquitin-cutoff-obc2 | 22.6 [22.6–22.6] | 209.5 [209.0–209.8] | 33.8 [33.5–33.8] | 952.1 [949.2–954.3] |
-| ubiquitin-hbonds-obc2 | 39.5 [39.5–39.6] | 204.7 [203.5–205.4] | 41.0 [41.0–41.2] | 998.4 [998.3–998.5] |
-| openmm-dhfr-gbsa | 8.3 [8.3–8.3] | 109.9 [109.5–110.2] | 14.7 [14.7–14.7] | 531.3 [530.9–535.7] |
+| trpcage-original-vacuum | 214.3 [214.0–214.9] | 921.7 [912.2–926.2] | 261.1 [260.2–263.5] | 4412.3 [4402.9–4421.1] |
+| trpcage-original-obc2 | 129.9 [129.8–130.2] | 447.7 [445.9–450.3] | 134.4 [133.6–134.8] | 1932.2 [1928.1–1934.7] |
+| trpcage-cutoff-obc2 | 66.7 [66.6–66.7] | 306.5 [301.9–307.3] | 92.3 [92.2–93.2] | 1157.6 [1153.6–1159.9] |
+| trpcage-hbonds-obc2 | 125.0 [125.0–125.4] | 416.9 [414.8–418.4] | 131.3 [130.8–131.9] | 1753.3 [1751.5–1754.2] |
+| ubiquitin-original-vacuum | 83.0 [82.7–83.7] | 488.4 [486.2–488.8] | 84.9 [83.5–85.3] | 2951.9 [2920.2–2952.6] |
+| ubiquitin-original-obc2 | 39.0 [39.0–39.2] | 212.8 [211.9–213.3] | 38.6 [38.3–38.7] | 1055.8 [1055.5–1055.9] |
+| ubiquitin-cutoff-obc2 | 22.2 [22.1–22.2] | 209.5 [209.0–209.8] | 31.6 [31.6–31.9] | 952.1 [949.2–954.3] |
+| ubiquitin-hbonds-obc2 | 37.9 [37.8–37.9] | 204.7 [203.5–205.4] | 37.9 [37.8–38.1] | 998.4 [998.3–998.5] |
+| openmm-dhfr-gbsa | 8.1 [8.1–8.1] | 109.9 [109.5–110.2] | 13.9 [13.8–14.0] | 531.3 [530.9–535.7] |
 
 ## Single-point latency
 
@@ -76,23 +79,23 @@ applies: browser jobs include fresh packing/allocation and transfers; native Con
 
 | Workload | Apple M1 Pro — WebGPU f32 | Apple M1 Pro — OpenMM OpenCL single | NVIDIA L4 — WebGPU f32 | NVIDIA L4 — OpenMM CUDA single |
 | --- | ---: | ---: | ---: | ---: |
-| trpcage-original-vacuum | 7.1 | 0.9 | 25.8 | 0.1 |
-| trpcage-original-obc2 | 8.6 | 1.2 | 29.6 | 0.1 |
-| trpcage-cutoff-obc2 | 12.5 | 1.4 | 37.0 | 0.1 |
-| trpcage-hbonds-obc2 | 8.7 | 1.2 | 30.1 | 0.1 |
-| ubiquitin-original-vacuum | 25.6 | 1.1 | 88.2 | 0.1 |
-| ubiquitin-original-obc2 | 29.0 | 1.8 | 110.0 | 0.1 |
-| ubiquitin-cutoff-obc2 | 37.0 | 1.8 | 122.7 | 0.1 |
-| ubiquitin-hbonds-obc2 | 29.6 | 1.8 | 110.6 | 0.1 |
-| openmm-dhfr-gbsa | 125.7 | 3.0 | 142.1 | 0.2 |
+| trpcage-original-vacuum | 11.1 | 0.9 | 34.3 | 0.1 |
+| trpcage-original-obc2 | 12.4 | 1.2 | 38.1 | 0.1 |
+| trpcage-cutoff-obc2 | 16.2 | 1.4 | 43.8 | 0.1 |
+| trpcage-hbonds-obc2 | 12.6 | 1.2 | 38.4 | 0.1 |
+| ubiquitin-original-vacuum | 48.7 | 1.1 | 128.2 | 0.1 |
+| ubiquitin-original-obc2 | 51.6 | 1.8 | 136.7 | 0.1 |
+| ubiquitin-cutoff-obc2 | 57.7 | 1.8 | 133.9 | 0.1 |
+| ubiquitin-hbonds-obc2 | 52.6 | 1.8 | 137.7 | 0.1 |
+| openmm-dhfr-gbsa | 161.2 | 3.0 | 257.1 | 0.2 |
 
 ## Hardware and raw artifacts
 
-- Apple M1 Pro — WebGPU f32: [raw results](m1pro-20260905-a07/webgpu.json.gz), [score](rescored-20260905-a03/m1pro-20260905-a07-webgpu-score.json.gz), [manifest](m1pro-20260905-a07/manifest.json).
+- Apple M1 Pro — WebGPU f32: [raw results](m1pro-contracts-20260905-a01/webgpu.json.gz), [score](m1pro-contracts-20260905-a01/score.json.gz), [manifest](m1pro-contracts-20260905-a01/manifest.json).
   Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36; adapter {"vendor":"apple","architecture":"metal-3","device":"","description":"","isFallbackAdapter":false}.
 - Apple M1 Pro — OpenMM OpenCL single: [raw results](m1pro-20260905-a07/opencl-single.json.gz), [score](rescored-20260905-a03/m1pro-20260905-a07-opencl-single-score.json.gz), [manifest](m1pro-20260905-a07/manifest.json).
   OpenMM 8.2.0.dev-5377094; macOS-26.5.2-arm64-arm-64bit; Python 3.12.13 (main, Jun 23 2026, 15:44:24) [Clang 22.1.3 ].
-- NVIDIA L4 — WebGPU f32: [raw results](l4-20260905-a07/webgpu.json.gz), [score](rescored-20260905-a03/l4-20260905-a07-webgpu-score.json.gz), [manifest](l4-20260905-a07/manifest.json).
+- NVIDIA L4 — WebGPU f32: [raw results](l4-contracts-20260905-a01/webgpu.json.gz), [score](l4-contracts-20260905-a01/score.json.gz), [manifest](l4-contracts-20260905-a01/manifest.json).
   Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36; adapter {"vendor":"nvidia","architecture":"lovelace","device":"","description":"","isFallbackAdapter":false}.
 - NVIDIA L4 — OpenMM CUDA single: [raw results](l4-20260905-a09/cuda-single.json.gz), [score](rescored-20260905-a03/l4-20260905-a09-cuda-single-score.json.gz), [manifest](l4-20260905-a09/manifest.json).
   OpenMM 8.2.0.dev-5377094; Linux-6.8.0-1066-gcp-x86_64-with-glibc2.35; Python 3.10.12 (main, Jul 15 2026, 23:40:17) [GCC 11.4.0].
