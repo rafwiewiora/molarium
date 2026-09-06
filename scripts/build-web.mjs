@@ -25,7 +25,7 @@ const files = [
   'design-history/publications/sos1/checkpoints/open-phe890-pocket-campaign.json',
   'design-history/publications/sos1/checkpoints/finish-bay-293-campaign.json',
   'LICENSE', 'NOTICE', 'README.md', 'CHEMIST-ACTIONS-API.md', 'DESIGNER-MOVES.md', 'THIRD_PARTY_NOTICES.md',
-  'index.html', 'app.js', 'chemist-actions.mjs', 'styles.css', 'molarium-workspace.css', 'independent-layout-study.css',
+  'index.html', 'reproductions.html', 'app.js', 'chemist-actions.mjs', 'styles.css', 'molarium-workspace.css', 'independent-layout-study.css',
   'molecular-state-hash.mjs',
   'protein-residue-templates.js', 'rdkit-worker.js', 'openmm-worker.js', 'webgpu-worker.js',
   'stormm-worker.js', 'mlip-worker.js', 'local-lab-test.js',
@@ -184,6 +184,7 @@ await writeFile(join(output, '_redirects'), [
   // Pages serves sos1.html at /sos1 and canonicalizes /sos1.html back to it.
   // An explicit /sos1 -> /sos1.html redirect would therefore loop.
   '/sos1/ /sos1 302',
+  '/reproductions/ /reproductions 302',
   '/sos1-hit-to-bay293/movies /sos1 302',
   `/${ARCHIVED_SOS1_VIDEO_PATH} /sos1 302`,
   '/sos1-hit-to-bay293/movie /sos1#movie 302',

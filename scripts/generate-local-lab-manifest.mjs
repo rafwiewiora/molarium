@@ -23,6 +23,7 @@ const reviewedFiles = [
   'bun.lock',
   'molarium-workspace.css',
   'index.html',
+  'reproductions.html',
   'local-lab-test.js',
   'package.json',
   'protein-residue-templates.js',
