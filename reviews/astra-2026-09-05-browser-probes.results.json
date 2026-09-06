@@ -1,0 +1,43 @@
+{
+  "schema": "molarium.adversarial-browser-probes/v1",
+  "generatedAt": "2026-09-06T02:23:12.104Z",
+  "findings": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36",
+    "adapter": {
+      "vendor": "apple",
+      "architecture": "metal-3"
+    },
+    "control": {
+      "type": "result",
+      "frameCount": 2,
+      "frameSteps": [
+        0,
+        2
+      ],
+      "positionCount": 6,
+      "initialEnergy": 398.6069574356079,
+      "finalEnergy": 39.98343801498413
+    },
+    "invalidFrames": {
+      "type": "result",
+      "frameCount": null,
+      "frameSteps": [],
+      "positionCount": 0
+    },
+    "unsupportedCutoff": {
+      "type": "result",
+      "frameCount": 2,
+      "frameSteps": [
+        0,
+        2
+      ],
+      "positionCount": 6,
+      "initialEnergy": 398.6069574356079,
+      "finalEnergy": 39.98343801498413
+    },
+    "gitMetadataRoute": {
+      "status": 200,
+      "bytes": 70
+    }
+  }
+}

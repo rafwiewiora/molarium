@@ -112,13 +112,13 @@
     },
     {
       "path": "local-lab-test.js",
-      "bytes": 10644,
-      "sha256": "1bdec450158e22758d50a3d150c94c669f2e4c646e56b46eb85f694d38301113"
+      "bytes": 11099,
+      "sha256": "dec4c0918c3cb449c6024da0eddfe0b7bb88104c1853a0ba4945a764443b570c"
     },
     {
       "path": "package.json",
-      "bytes": 13696,
-      "sha256": "e6dc44bff92b182584df36f9420079087a0b65491ce3e43b30d2d307a463ac15"
+      "bytes": 13779,
+      "sha256": "21fd95e6cfdfa9a48858bc8e13de6eda315dcc7066014f73f0a9a7d176f4ebff"
     },
     {
       "path": "protein-residue-templates.js",
@@ -132,8 +132,8 @@
     },
     {
       "path": "scripts/generate-local-lab-manifest.mjs",
-      "bytes": 5661,
-      "sha256": "677038814b80b7e8af104bee7ca9943fc7a8ad4608dc7a2a5a834c1b87efcce0"
+      "bytes": 6031,
+      "sha256": "9855e4d3306faa5b647a1334b0a2bb31123c3a4f1f3e31157fa2953442206d9a"
     },
     {
       "path": "scripts/build-sos1-publication.mjs",

@@ -5,7 +5,7 @@ import { join } from 'node:path';
 const seed = Math.floor(Math.random() * 1000);
 const appPort = Number(Bun.env.MOLARIUM_LOCAL_TEST_PORT) || 57000 + seed;
 const debugPort = Number(Bun.env.MOLARIUM_LOCAL_TEST_DEBUG_PORT) || 58000 + seed;
-const appUrl = `http://localhost:${appPort}/`;
+const appUrl = `http://127.0.0.1:${appPort}/`;
 const appOrigin = new URL(appUrl).origin;
 const chromePath = Bun.env.CHROME_PATH || (process.platform === 'darwin'
   ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
@@ -86,6 +86,7 @@ try {
 
   chrome = Bun.spawn([
     chromePath, '--headless', '--disable-extensions', '--no-first-run',
+    ...(process.platform === 'linux' ? ['--no-sandbox','--disable-dev-shm-usage'] : []),
     `--remote-debugging-port=${debugPort}`, `--user-data-dir=${profile}`,
     '--window-size=1400,1000', 'about:blank',
   ], { stdout:'ignore', stderr:'ignore' });
@@ -157,6 +158,12 @@ try {
     check(violations.some((entry) => entry.directive === 'connect-src'), 'browser reports connect-src enforcement');
     check(violations.some((entry) => entry.directive === 'img-src'), 'browser reports img-src enforcement');
     document.querySelector('#network-policy-button').click();
+    // The visible control dispatches an asynchronous public Chemist Action.
+    // Observe its completion instead of checking the same click-task tick.
+    const privacyStarted = Date.now();
+    while (!document.querySelector('#project-info-dialog').open
+      && Date.now() - privacyStarted < 10_000)
+      await new Promise((resolve) => setTimeout(resolve, 20));
     check(document.querySelector('#project-info-dialog').open
       && !document.querySelector('[data-project-section="privacy"]').classList.contains('hidden'),
       'privacy panel explains the active policy');

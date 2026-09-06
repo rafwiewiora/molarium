@@ -6,8 +6,11 @@ import { startMolariumBrowser, waitFor } from '../scripts/headless-chrome.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const productionBuild = process.env.MOLARIUM_CAMPAIGN_DIST === '1';
-const browser = await startMolariumBrowser({ root,
-  appPath:productionBuild ? 'dist/?blank' : '?blank', width:1600, height:1000 });
+const remoteBase = process.env.MOLARIUM_CAMPAIGN_BASE_URL;
+const browser = await startMolariumBrowser({
+  ...(remoteBase ? { url:new URL('?blank', remoteBase).href }
+    : { root, appPath:productionBuild ? 'dist/?blank' : '?blank' }),
+  width:1600, height:1000 });
 const execute = (action, args = {}) => browser.evaluate(
   `window.MolariumChemistActionsReady.then((api) => api.execute(${JSON.stringify({ action, args })}))`);
 const chemistActionsReady = () => browser.evaluate(
@@ -207,7 +210,7 @@ try {
   assert.deepEqual(resumedSos1.molecule, importedSos1.result.molecule);
   assert.equal(resumedSos1.campaign.currentCommitId, importedSos1.result.campaignImport.commitId);
 
-  console.log(`Live campaign ${productionBuild ? 'production' : 'source'} browser test passed: create/commit, branch checkout, merge, decision, explicit IndexedDB resume, blank/LSD preservation with saved SOS1, close/new, transactional import rejection`);
+  console.log(`Live campaign ${remoteBase ? 'deployed' : productionBuild ? 'production' : 'source'} browser test passed: create/commit, branch checkout, merge, decision, explicit IndexedDB resume, blank/LSD preservation with saved SOS1, close/new, transactional import rejection`);
 } finally {
   await browser.close();
 }

@@ -62,8 +62,15 @@ For NVIDIA Linux, an equivalent launcher to the measured L4 run is included:
 `CHROME_PATH="$PWD/benchmarks/simulation/chrome-nvidia.sh" bun benchmarks/simulation/run-browser.mjs --speed --output PATH.json`.
 
 For a quick isolated subset, `prepare.mjs --without-upstream` generates 46 cases
-without a network download. The full suite has 47. `run-browser.mjs --cases ID,ID`
-is a diagnostic subset; it cannot score as a full-suite pass. `--seconds` and
+without a network download; score it with `--suite openmm-small-46`. The default
+scorer requires all 47 registered cases, and separately reports `fullSuitePassed`.
+`run-browser.mjs --cases ID,ID` is a diagnostic subset; it cannot score as a
+full-suite pass. To inspect an explicitly subsetted packet with matching reference
+and measured case sets, `score.mjs --diagnostic` reports the observed comparisons
+but always leaves the acceptance gate false. Empty case sets are rejected.
+The scorer verifies supported input schemas, the actual reviewed protocol content
+and its SHA-256, unique expected case IDs, and exactly **3N finite forces** in
+every original, rounded, and measured observation. `--seconds` and
 `--repeats` override timing length explicitly and are recorded. Default: one
 warm-up, five measured repetitions, at least two seconds per sample.
 

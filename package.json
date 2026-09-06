@@ -14,6 +14,7 @@
     "start": "bun server.js",
     "start:local": "bun server.js --local-only",
     "manifest:local": "npm run verify:sos1-publication && bun scripts/generate-local-lab-manifest.mjs",
+    "manifest:local:check": "bun scripts/generate-local-lab-manifest.mjs --check",
     "build:validation-registry": "node validation/build-registry.mjs",
     "test:validation-registry": "node validation/validate-registry.mjs && node validation/dashboard.test.mjs",
     "test:local-lab": "bun local-lab-test.js",
