@@ -266,6 +266,9 @@ const ACTIONS = Object.freeze({
   'designRoute.inspect': Object.freeze({
     description:'Inspect the active route boundary, hit, and current graph-only design step.',
     arguments:Object.freeze({}) }),
+  'campaign.resume': Object.freeze({
+    description:'Explicitly resume the last saved local campaign, replacing the current molecule with its committed branch head. Opening Design or inspecting history never resumes it automatically.',
+    arguments:Object.freeze({}) }),
   'campaign.create': Object.freeze({
     description:'Start a locally persisted design campaign and commit the current Molarium molecule in the same action.',
     arguments:Object.freeze({ campaignId:'stable campaign ID', title:'campaign title',

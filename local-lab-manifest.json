@@ -62,13 +62,13 @@
     },
     {
       "path": "app.js",
-      "bytes": 986611,
-      "sha256": "c06691322ffa2c88d8137fb630320dc029ca9a66f65815fdd8bdee4219a19c5d"
+      "bytes": 988565,
+      "sha256": "9dc09d8e08d84e3b57ea9f4d21201efb983472f95a1958f5e1be14f51f5c9720"
     },
     {
       "path": "chemist-actions.mjs",
-      "bytes": 36133,
-      "sha256": "a7a794bb98131d34dc06c0d60845cdc48c0355896c83ce138d41340ae4764438"
+      "bytes": 36406,
+      "sha256": "edfcef1568aa40a8f10dd11fa849fa725dcd097ed6159081cbe0f718258ae0b4"
     },
     {
       "path": "molecular-state-hash.mjs",
@@ -77,8 +77,8 @@
     },
     {
       "path": "CHEMIST-ACTIONS-API.md",
-      "bytes": 32157,
-      "sha256": "3f3fc220c58d6e3e6d3da957338806350e28d8caf8dc00aabfdd482778727c6a"
+      "bytes": 32513,
+      "sha256": "292d109d183dc9e571aed7d269240f4aa1afcad17202d4c0fad0e1b0e6437057"
     },
     {
       "path": "DESIGNER-MOVES.md",
@@ -102,8 +102,13 @@
     },
     {
       "path": "index.html",
-      "bytes": 69226,
-      "sha256": "d28ad400d2d7f71d8f97c25235cf2738dc598c03196bb3d860573bae18c561db"
+      "bytes": 69489,
+      "sha256": "6439fb9b38c422dd17b1ca8d7ab3932ac2763d54efcab05830244891f358dc4c"
+    },
+    {
+      "path": "reproductions.html",
+      "bytes": 2862,
+      "sha256": "1873a7b3a1147cfda8374367a7d56751706cf2d1b1030e994e79152981e28e00"
     },
     {
       "path": "local-lab-test.js",
@@ -112,8 +117,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 13389,
-      "sha256": "ff342bd065debdf4bef8ca3bbd38e89ce18ef055c847efab3283ab6b7950f595"
+      "bytes": 13696,
+      "sha256": "e6dc44bff92b182584df36f9420079087a0b65491ce3e43b30d2d307a463ac15"
     },
     {
       "path": "protein-residue-templates.js",
@@ -122,13 +127,13 @@
     },
     {
       "path": "server.js",
-      "bytes": 5095,
-      "sha256": "928cc51e5213038867ac129e3ed8676391edbfa9854c77cbf3220283b7241c40"
+      "bytes": 5237,
+      "sha256": "9010a8901eb46c9389910441f7c9c0daac7d954dfb9b4caa1c149f75065cbc65"
     },
     {
       "path": "scripts/generate-local-lab-manifest.mjs",
-      "bytes": 5637,
-      "sha256": "33792f8db4b817182487b2b9368f9316d5da5929884e03ef29f599e63fe49975"
+      "bytes": 5661,
+      "sha256": "677038814b80b7e8af104bee7ca9943fc7a8ad4608dc7a2a5a834c1b87efcce0"
     },
     {
       "path": "scripts/build-sos1-publication.mjs",
@@ -392,13 +397,13 @@
     },
     {
       "path": "webgpu-worker.js",
-      "bytes": 33179,
-      "sha256": "092e6a42370a4ff9a6914bae43f614d905ad41b1472e65de251967322bfc3f3b"
+      "bytes": 33373,
+      "sha256": "5bf9045269a2e16e4bb6c1536f83c6fa90755f7b49a34e72f260877696e30656"
     },
     {
       "path": "webgpu/molarium-webgpu.wgsl",
-      "bytes": 37369,
-      "sha256": "c4bda20e403e174e9bac92f5e2a95b4f182c2ed4d138e34b5e334dd215f5bd13"
+      "bytes": 41147,
+      "sha256": "26907253e176239a01dd2a8a66d5236ddf47232f2ecdce0b4018fad09b688be3"
     },
     {
       "path": "stormm-worker.js",
@@ -447,8 +452,8 @@
     },
     {
       "path": "openff/implicit-solvent.js",
-      "bytes": 2380,
-      "sha256": "47ca80936c65325f38358b59d94a21ce9d8cec896dd8170e24a3ec9f49896064"
+      "bytes": 3659,
+      "sha256": "26da819efca497b93ad0686126aae75ac685eae953b1586a1858b1c102fec464"
     },
     {
       "path": "openff/sage-2.1.0.json",
@@ -572,8 +577,8 @@
     },
     {
       "path": "sos1.html",
-      "bytes": 4376,
-      "sha256": "0e5983c86cbcdb8061651f8603ea58feaebcdb888199f187a70dc63ace034b86"
+      "bytes": 4422,
+      "sha256": "045af02a6118e41cff8e2c328b3acc2d582798091a5c800991adaa9d95f3a880"
     },
     {
       "path": "sos1-movie.mjs",
