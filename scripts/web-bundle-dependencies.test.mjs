@@ -35,5 +35,17 @@ try {
   const page = await readFile(resolve(import.meta.dirname, '../sos1.html'), 'utf8');
   assert(!page.includes(ARCHIVED_SOS1_VIDEO_PATH));
   assert(!page.includes('Full calculation-by-calculation recording'));
+  const reproductions = await readFile(resolve(import.meta.dirname, '../reproductions.html'), 'utf8');
+  const home = await readFile(resolve(import.meta.dirname, '../index.html'), 'utf8');
+  assert.match(home, /href="\/reproductions">Reproductions<\/a>/);
+  assert(!home.includes('SOS1 movies'));
+  assert.match(reproductions, /<h1>Reproductions<\/h1>/);
+  assert.match(reproductions, /<ol[^>]+aria-label="Registered reproductions"/);
+  assert.match(reproductions, /<time datetime="2026-09-05">September 5, 2026<\/time>/);
+  assert.match(reproductions, /href="\/sos1"/);
+  assert.match(page, /href="\/reproductions">All reproductions<\/a>/);
+  assert(build.includes("'reproductions.html'"));
+  assert(!/^\s*['"]\/reproductions \/reproductions\.html 30[1278]['"]/m.test(build),
+    'Cloudflare canonical HTML redirects must not form a /reproductions loop');
   console.log('Web bundle recursive dependencies and release paths: PASS');
 } finally { await rm(root, { recursive:true, force:true }); }

@@ -83,7 +83,7 @@ Undo, and Redo therefore behave exactly as they do for an interactive user.
   `calculation.selectReplica`, `calculation.selectConformer`, `calculation.setPlayback`,
   `calculation.setConformerView`
 - `designRoute.load`, `designRoute.applyStep`, `designRoute.inspect`
-- `campaign.create`, `campaign.inspect`, `campaign.commitCurrent`
+- `campaign.create`, `campaign.resume`, `campaign.inspect`, `campaign.commitCurrent`
 - `campaign.createBranch`, `campaign.switchBranch`, `campaign.mergeBranch`
 - `campaign.recordDecision`, `campaign.verify`, `campaign.close`, `campaign.import`,
   `campaign.export`
@@ -118,8 +118,13 @@ ordered parents; it does not attempt an automatic chemical graph merge.
 commit. `campaign.verify` checks object hashes, commit-event agreement, the event
 hash chain, and branch heads derived from that chain.
 
-Campaign JSON and the selected branch are stored locally in IndexedDB. Reloading
-restores the active campaign and its head molecule. `campaign.close` removes the
+Campaign JSON and the selected branch are stored locally in IndexedDB. Reloading,
+opening Design, and `campaign.inspect` never replace the current molecule or
+activate a saved campaign. The Design History card offers **Resume saved campaign**;
+this explicit `campaign.resume` action restores the saved branch head and its
+molecule. Pending chemistry must be finished or discarded first. Starting a new
+campaign instead keeps the older campaign's commits stored locally.
+`campaign.close` removes the
 active-workspace pointer without deleting the stored campaign, allowing another
 campaign to be started. Import accepts a verified campaign whose selected branch
 head contains a complete graph and coordinate snapshot; repository campaigns

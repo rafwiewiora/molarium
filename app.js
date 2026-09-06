@@ -9290,6 +9290,7 @@ let liveCampaignModulePromise = null;
 let liveCampaignStoreModulePromise = null;
 let liveCampaignStorePromise = null;
 let liveCampaignRestorePromise = null;
+let savedLiveCampaignWorkspace = null;
 let liveCampaignUiBusy = false;
 let refinementCaptureStorePromise = null;
 
@@ -9333,6 +9334,11 @@ function updateLiveCampaignUi(message = '', status = '') {
   if (!createControls || !activeControls || !statusElement) return;
   createControls.classList.toggle('hidden', Boolean(campaign));
   activeControls.classList.toggle('hidden', !campaign);
+  const resumeControls = document.querySelector('#campaign-resume-controls');
+  resumeControls.classList.toggle('hidden', Boolean(campaign) || !savedLiveCampaignWorkspace);
+  document.querySelector('#campaign-resume').disabled = liveCampaignUiBusy;
+  document.querySelector('#campaign-resume-summary').textContent = savedLiveCampaignWorkspace
+    ? `Saved: ${savedLiveCampaignWorkspace.campaign.title}. Resuming replaces the current molecule with its last committed state.` : '';
   document.querySelector('#campaign-export').disabled = !campaign || liveCampaignUiBusy;
   document.querySelector('#campaign-verify').disabled = !campaign || liveCampaignUiBusy;
   document.querySelector('#campaign-close').disabled = !campaign || liveCampaignUiBusy;
@@ -9385,6 +9391,7 @@ function updateLiveCampaignUi(message = '', status = '') {
 async function saveLiveCampaign(campaign, activeBranch = state.liveCampaignBranch) {
   const store = await getLiveCampaignStore();
   await store.save(campaign, { activeBranch });
+  savedLiveCampaignWorkspace = null;
 }
 
 function currentChemistActionSequence() {
@@ -9426,16 +9433,11 @@ async function initializeLiveCampaignPersistence() {
     const { campaign } = workspace;
     const verification = await module.verifyLiveCampaign(campaign);
     if (!verification.valid) throw new Error(`Stored campaign is invalid: ${verification.reason}`);
-    const branch = Object.hasOwn(campaign.branches || {}, workspace.activeBranch)
-      ? workspace.activeBranch : 'main';
-    const checkout = await prepareLiveCampaignBranchMolecule(campaign, branch, { required:true });
-    state.liveCampaign = campaign;
-    state.liveCampaignBranch = branch;
-    // Chemist Actions sequence numbers are scoped to this page/API instance.
-    // A persisted campaign's historical sequence must not suppress new-session actions.
-    state.liveCampaignCommittedThroughSequence = 0;
-    applyLiveCampaignBranchMolecule(checkout.molecule);
-    updateLiveCampaignUi('Restored the most recent local campaign.', 'success');
+    // Opening Design or inspecting history must never check out a different
+    // molecule, even when this asynchronous storage read finishes later.
+    // Keep the verified save available for an explicit campaign.resume action.
+    savedLiveCampaignWorkspace = workspace;
+    updateLiveCampaignUi();
   } catch (error) {
     updateLiveCampaignUi(`Local campaign storage unavailable: ${error.message}`, 'failure');
   }
@@ -9449,6 +9451,10 @@ function ensureLiveCampaignPersistence() {
 function liveCampaignInspection() {
   const campaign = state.liveCampaign;
   if (!campaign) return { active:false, campaign:null,
+    savedCampaign:savedLiveCampaignWorkspace ? {
+      campaignId:savedLiveCampaignWorkspace.campaign.campaignId,
+      title:savedLiveCampaignWorkspace.campaign.title,
+    } : null,
     currentBranch:null, currentCommitId:null, uncommittedActionCount:0 };
   const committedThrough = Number(state.liveCampaignCommittedThroughSequence || 0);
   return { active:true, campaign:{ campaignId:campaign.campaignId, title:campaign.title,
@@ -11452,6 +11458,26 @@ function installChemistActionsApi(module) {
       return chemistActionSummary({ conformerView:Object.fromEntries(
         Object.entries(controls).map(([key, selector]) =>
           [key, document.querySelector(selector).value])) }); },
+    'campaign.resume':async (args) => { empty(args);
+      await ensureLiveCampaignPersistence();
+      if (state.liveCampaign) throw new Error('A design campaign is already active');
+      if (state.chemistryTransaction)
+        throw new Error('Finish or discard pending chemistry before resuming a campaign');
+      if (!savedLiveCampaignWorkspace) throw new Error('No saved campaign is available to resume');
+      const { campaign, activeBranch } = savedLiveCampaignWorkspace;
+      const branch = Object.hasOwn(campaign.branches || {}, activeBranch) ? activeBranch : 'main';
+      const checkout = await prepareLiveCampaignBranchMolecule(campaign, branch, { required:true });
+      await saveLiveCampaign(campaign, branch);
+      // Public action sequences belong to this page, not the saved session.
+      // Actions on the molecule being replaced do not belong to this campaign.
+      state.chemistActionAudit = [];
+      state.liveCampaign = campaign;
+      state.liveCampaignBranch = branch;
+      state.liveCampaignCommittedThroughSequence = 0;
+      applyLiveCampaignBranchMolecule(checkout.molecule);
+      updateLiveCampaignUi('Resumed the saved local campaign.', 'success');
+      return chemistActionSummary({ campaignResume:{ campaignId:campaign.campaignId,
+        title:campaign.title, branch, commitId:checkout.commitId } }); },
     'campaign.create':async (args) => { chemistActionKeys(args,
       ['campaignId','title','description','actorId','actorName','initialCommitMessage']);
       await ensureLiveCampaignPersistence();
@@ -17891,6 +17917,9 @@ document.querySelector('#campaign-verify').addEventListener('click', () =>
       ? `Verified ${verification.commits} commits and ${verification.events} chained events.`
       : `Verification failed: ${verification.reason}`;
   }));
+document.querySelector('#campaign-resume').addEventListener('click', () =>
+  runCampaignUiAction('campaign.resume', {}, (value) =>
+    `Resumed ${value.campaignResume.title} and restored its committed molecule.`));
 document.querySelector('#campaign-close').addEventListener('click', () =>
   runCampaignUiAction('campaign.close', {}, () =>
     'Campaign closed; its commits remain stored locally.'));

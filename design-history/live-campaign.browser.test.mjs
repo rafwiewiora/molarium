@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { writeFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import { startMolariumBrowser, waitFor } from '../scripts/headless-chrome.mjs';
 
@@ -106,6 +107,13 @@ try {
       && window.MolariumChemistActionsReady?.then((api) => Boolean(api?.execute))`),
     60000, 'reloaded Chemist Actions API');
   await execute('view.setMode', { mode:'build' });
+  const offered = await execute('campaign.inspect');
+  assert.equal(offered.result.campaign.active, false,
+    'Design and inspection must not automatically activate a saved campaign');
+  assert.equal(offered.result.campaign.savedCampaign.campaignId, 'browser-campaign');
+  assert.equal(offered.result.molecule, null,
+    'an explicitly blank startup must remain blank even with a saved campaign');
+  await execute('campaign.resume');
   const restored = await execute('campaign.inspect');
   assert.equal(restored.result.campaign.active, true);
   assert.equal(restored.result.campaign.currentBranch, 'main');
@@ -161,7 +169,45 @@ try {
   assert.equal(activeAfterRejectedImport, 'browser-campaign-2',
     'a rejected import must preserve the active durable workspace');
 
-  console.log(`Live campaign ${productionBuild ? 'production' : 'source'} browser test passed: create/commit, branch checkout, merge, decision, IndexedDB restore, close/new, transactional import rejection`);
+  // Reproduce the reported public-site regression with a real saved SOS1
+  // checkpoint, then revisit the ordinary LSD launch page in the same profile.
+  const sos1Path = 'design-history/publications/sos1/checkpoints/starting-hit-campaign.json';
+  const sos1Bytes = await readFile(resolve(root, sos1Path));
+  const importedSos1 = await execute('campaign.import', { sourcePath:`./${sos1Path}`,
+    sourceSha256:createHash('sha256').update(sos1Bytes).digest('hex') });
+  const launchUrl = new URL(browser.appUrl); launchUrl.search = '';
+  await browser.evaluate(`window.__molariumReloadSentinel = true; location.href = ${JSON.stringify(launchUrl.href)}; true`);
+  await waitFor(async () => browser.evaluate(
+    `document.readyState === 'complete' && !window.__molariumReloadSentinel
+      && window.MolariumChemistActionsReady?.then((api) => Boolean(api?.execute))`),
+    60000, 'fresh launch after saving SOS1');
+  await waitFor(async () => (await execute('session.inspect')).result?.molecule?.name === 'LSD',
+    30000, 'default LSD molecule');
+  const inspectAll = () => execute('session.inspect', { scope:'all', includeCoordinates:true });
+  const lsdBefore = (await inspectAll()).result;
+  await browser.evaluate(`document.querySelector('.mode-bar button[data-mode="build"]').click(); true`);
+  await waitFor(async () => browser.evaluate(
+    `!document.querySelector('#campaign-resume-controls').classList.contains('hidden')`),
+    30000, 'explicit saved-campaign resume offer');
+  const savedSos1 = (await execute('campaign.inspect')).result;
+  assert.equal(savedSos1.campaign.active, false);
+  assert.equal(savedSos1.campaign.savedCampaign.campaignId,
+    importedSos1.result.campaignImport.campaignId);
+  for (const mode of ['view', 'build', 'run', 'build']) {
+    await execute('view.setMode', { mode });
+    const after = (await inspectAll()).result;
+    assert.equal(after.molecule.name, 'LSD', 'mode changes must preserve the launch molecule');
+    assert.deepEqual(after.atoms, lsdBefore.atoms, 'mode changes must preserve exact LSD coordinates and atom identities');
+    assert.deepEqual(after.bonds, lsdBefore.bonds);
+  }
+  await browser.evaluate(`document.querySelector('#campaign-resume').click(); true`);
+  await waitFor(async () => (await execute('campaign.inspect')).result.campaign.active,
+    30000, 'explicit SOS1 resume');
+  const resumedSos1 = (await execute('campaign.inspect')).result;
+  assert.deepEqual(resumedSos1.molecule, importedSos1.result.molecule);
+  assert.equal(resumedSos1.campaign.currentCommitId, importedSos1.result.campaignImport.commitId);
+
+  console.log(`Live campaign ${productionBuild ? 'production' : 'source'} browser test passed: create/commit, branch checkout, merge, decision, explicit IndexedDB resume, blank/LSD preservation with saved SOS1, close/new, transactional import rejection`);
 } finally {
   await browser.close();
 }

@@ -67,6 +67,8 @@ const server = Bun.serve({
   ...(localOnly ? { hostname:'127.0.0.1' } : {}),
   async fetch(request) {
     const url = new URL(request.url);
+    if (['/reproductions','/reproductions/'].includes(url.pathname))
+      return Response.redirect(`${url.origin}/reproductions.html`, 302);
     if (['/sos1','/sos1/','/sos1-hit-to-bay293/movies'].includes(url.pathname))
       return Response.redirect(`${url.origin}/sos1.html`, 302);
     if (url.pathname === '/sos1-hit-to-bay293/movie')

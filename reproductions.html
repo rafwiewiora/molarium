@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An index of molecular design reproductions in Molarium, with recomputable stories, saved checkpoints, movies, and evidence.">
+  <title>Reproductions | Molarium</title>
+  <style>
+    :root { color-scheme:light; font-family:system-ui,sans-serif; color:#17313c; background:#f5f9fa; }
+    body { max-width:1100px; margin:auto; padding:28px; line-height:1.6; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+    a { color:#087c98; } header a { text-decoration:none; font-weight:650; }
+    h1 { font-size:clamp(28px,4vw,46px); line-height:1.15; margin-top:52px; }
+    .intro { max-width:790px; font-size:18px; color:#49626d; }
+    .reproductions { list-style:none; padding:0; margin:32px 0; display:grid; gap:20px; }
+    article { background:white; border:1px solid #d4e1e6; border-radius:14px; padding:24px; }
+    h2 { font-size:24px; line-height:1.25; margin:10px 0; }
+    .registered, .formats { color:#49626d; font-size:14px; }
+    .registered { margin:0; }
+    .button { display:inline-block; background:#087c98; color:white; border-radius:7px;
+      padding:10px 17px; font-weight:650; text-decoration:none; }
+    footer { border-top:1px solid #d4e1e6; margin-top:32px; padding-top:18px; color:#49626d; }
+    @media(max-width:780px) { body { padding:20px; } }
+  </style>
+</head>
+<body>
+  <header><a href="/">MOLARIUM · molecular studio</a><a href="https://github.com/rafwiewiora/molarium">Source repository</a></header>
+  <main>
+    <h1>Reproductions</h1>
+    <p class="intro">Molecular design stories explored in Molarium. Each entry links to its recomputable workflow, precomputed checkpoints, movie, and supporting evidence. New reproductions will be added here as they are registered.</p>
+    <ol class="reproductions" aria-label="Registered reproductions">
+      <li><article aria-labelledby="sos1-title">
+        <p class="registered">Registered <time datetime="2026-09-05">September 5, 2026</time></p>
+        <h2 id="sos1-title"><a href="/sos1">SOS1: designer intent and receptor response</a></h2>
+        <p>Follow the hit-to-BAY-293 series: declare ligand placement and contacts, hold the ligand fixed, and test the Phe890 response. A reference-informed exploration of designer intent, not a claim of blind crystal-pose reproduction.</p>
+        <p class="formats">Recomputable workflow · Precomputed replay · MP4 · Paper and evidence</p>
+        <a class="button" href="/sos1">Explore the SOS1 reproduction</a>
+      </article></li>
+    </ol>
+  </main>
+  <footer>Registration dates identify entries in this index; each reproduction retains its own scientific provenance and release history.</footer>
+</body>
+</html>
