@@ -334,7 +334,7 @@ Verification for this increment: **63/63 simulation benchmark tests**, **14/14 L
 checks**, and the deployed saved-campaign regression pass. Frozen-evidence tests now
 recompute original-input and input-quantization metrics as well as the packed-input gate.
 
-Second remediation increment (implementation and verification in progress):
+Second remediation increment:
 
 - **R1/R7 fixed in source:** the versioned seven-array numeric System contract rejects
   unknown force-bearing fields, invalid indices/domains, non-finite numbers, and f32
@@ -369,3 +369,26 @@ Second remediation increment (implementation and verification in progress):
   `scripts/diagnose-replay-startup.browser.mjs` preserves operation-only traces. The server
   harness now uses OS-allocated ports and reports startup errors directly; this addresses
   ambiguous startup diagnostics, not the separately observed checkpoint hang.
+
+Subsequent verification and replay investigation:
+
+- Fresh physical-GPU native comparisons pass on **both M1 Pro and L4**: **47/47** direct
+  fixed-f32-input cases and **22/22** original-input supported STORMM cases. All **25**
+  unsupported STORMM cases remain explicit. [STORMM results](../benchmarks/simulation/results/STORMM.md)
+  include complete forces and five-repeat single-replica timings; the direct headline
+  rows use new `*-contracts-20260905-a01` attempts. Prior measurements remain archived.
+- **86/86 benchmark tests pass**, including source freshness, hash verification, every
+  published numerical decision, malformed requests, and supported/unsupported coverage.
+  The full scientific suite passes. The temporary L4 was stopped after archival.
+- A sparse, non-pausing stage trace reproduced the replay hang: campaign asset download,
+  stream decoding, and SHA-256 completed, while the initial **IndexedDB open never resolved**.
+  Merely adding connection lifecycle cleanup did not recover that case. Blank reproduction
+  landing pages now defer database opening until an explicit campaign action; normal Design
+  still loads the saved-campaign offer. Connections close on navigation/version changes,
+  pending upgrades can be cancelled, failed opens are retryable, and an open that never
+  settles produces a bounded explicit error rather than an indefinite running action.
+- The same sparse rapid-navigation probe now completes **10/10 imports**.
+  [Before/after source-hashed evidence](replay-startup-2026-09-05-evidence.json) retains the
+  failure and recovery. The underlying browser storage implementation is not diagnosed;
+  broader cross-browser coverage remains necessary. No stored campaigns were deleted,
+  scientific checkpoints rewritten, or durable saves replaced by silent memory fallback.

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {startLocalTestServer} from './local-test-server.mjs';
 
 const root=new URL('../',import.meta.url).pathname;
-for(const args of [[],['--local-only']]) {
+for(const args of [[],['--local-only'],['--test-api']]) {
   const {process:server,baseUrl}=await startLocalTestServer({root,args});
   try {
     assert.equal(new URL(baseUrl).hostname,'127.0.0.1');
@@ -18,8 +18,10 @@ for(const args of [[],['--local-only']]) {
       'benchmarks/simulation/generated/packet.json','arbitrary.json']) {
       const response=await fetch(new URL(path,baseUrl));
       assert.equal(response.status,404,path);
-      if(args.length) assert.match(response.headers.get('content-security-policy'),/connect-src 'self'/);
+      if(args.includes('--local-only')) assert.match(response.headers.get('content-security-policy'),/connect-src 'self'/);
     }
+    const fixture=await fetch(new URL('openff/ubiquitin-1ubq.pdb',baseUrl));
+    assert.equal(fixture.status,args.includes('--test-api')?200:404,'test fixture requires explicit test API');
     assert.equal((await fetch(baseUrl,{headers:{Host:'foreign.example'}})).status,400);
     assert.equal((await fetch(baseUrl,{method:'POST'})).status,405);
     assert.equal((await fetch(baseUrl,{method:'HEAD'})).status,200);

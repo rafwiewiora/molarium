@@ -13,9 +13,11 @@ separate confirmed defects, completed fixes, and remaining validation work.
 - [x] Restrict development-server file exposure and bind loopback by default (R2).
 - [x] Validate STORMM frame requests and exact output shapes; wire production-worker numerical smoke tests into explicitly software-labelled CI (R4, part of R8).
 - [ ] Add scheduled physical cross-vendor release gates beyond the software correctness smoke job (remaining R8).
-- [ ] Compare the production STORMM worker directly with independently built native OpenMM Systems; preserve supported/unsupported case coverage explicitly.
+- [x] Compare the production STORMM worker directly with independently built native OpenMM Systems; 22/22 supported cases pass on M1 Pro and L4, with 25 unsupported cases retained explicitly.
+- [ ] Extend STORMM to matched multi-replica/native ensemble timings and longer-time constrained/OBC2 validation; single-replica job timing is not an ensemble speedup claim.
 - [ ] Extend the two-device direct-engine matrix to a third GPU vendor and longer-time dynamics/ensemble gates.
-- [ ] Diagnose the intermittent first-checkpoint import hang after rapid replay-route navigation. It reproduced on unchanged pre-fix source and a Linux post-merge CI rerun; instrumented probes pass without establishing the root cause. Keep this separate from the improved server-startup diagnostics.
+- [x] Trace the rapid-navigation checkpoint hang to a never-settling IndexedDB open; defer blank-story opens, close connections on navigation/version change, and fail explicitly on bounded open timeout. The source-hashed rapid-navigation probe completes 10/10 imports after the fix.
+- [ ] Extend the database-navigation regression across browsers; the underlying Chromium storage failure is not independently diagnosed.
 
 ## Reference-guided design
 

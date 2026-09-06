@@ -1,11 +1,47 @@
 // Isolated diagnostic for the intermittent first-checkpoint navigation hang.
 // No scientific coordinates or hashes are changed; capture only operation state.
 import {resolve} from 'node:path';
-import {writeFile} from 'node:fs/promises';
+import {readFile,writeFile} from 'node:fs/promises';
 import {startMolariumBrowser,waitFor} from './headless-chrome.mjs';
 const root=resolve(import.meta.dirname,'..');
 const browser=await startMolariumBrowser({root,appPath:'?blank'});
 try {
+  if(process.env.MOLARIUM_REPLAY_BREAKPOINT_TRACE==='1') {
+    // Sparse stage markers avoid wrapping every stream/digest/IDB promise and
+    // perturbing the timing of the race under investigation. Never pause execution.
+    await browser.client.call('Debugger.enable');
+    for(const [path,markers] of [
+      ['app.js',[
+        'const response = await fetch(source.url',
+        'const bytes = await readCampaignAssetResponse(response',
+        'if (await sha256Hex(bytes)',
+        'serialized = new TextDecoder().decode(bytes)',
+        'const campaign = storeModule.deserializeCampaign(serialized)',
+        'const verification = await live.verifyLiveCampaign(campaign)',
+        'if (!verification.valid) throw new Error(`Campaign is invalid:',
+        'const checkout = await prepareLiveCampaignBranchMolecule(campaign, branch,',
+        'await saveLiveCampaign(campaign, branch)',
+        'state.chemistActionAudit = []',
+        'const workspace = await store.loadActive()',
+        'if (!workspace?.campaign) return updateLiveCampaignUi()',
+      ]],
+      ['design-history/live-campaign-store.mjs',[
+        'const request = indexedDB.open(', 'const database = await open()',
+        'const workspace = await requestResult(', 'await done;',
+        "return workspace?.campaignId", "transaction.objectStore(storeName).put(",
+      ]],
+    ]) {
+      const lines=(await readFile(resolve(root,path),'utf8')).split('\n');
+      for(let lineNumber=0;lineNumber<lines.length;lineNumber++) {
+        const marker=markers.find(text=>lines[lineNumber].includes(text));
+        if(!marker)continue;
+        await browser.client.call('Debugger.setBreakpointByUrl',{
+          url:`${new URL(browser.appUrl).origin}/${path}`,lineNumber,
+          condition:`((globalThis.__replayStartupTrace ||= []).push({kind:'stage',detail:${JSON.stringify(path+':'+(lineNumber+1)+' '+marker)},start:performance.now()}),false)`,
+        });
+      }
+    }
+  } else {
   await browser.client.call('Page.addScriptToEvaluateOnNewDocument',{source:`(() => {
     const trace=[];window.__replayStartupTrace=trace;
     let sequence=0;
@@ -44,9 +80,10 @@ try {
       for(const event of ['complete','error','abort'])tx.addEventListener(event,()=>{item[event]=performance.now();});
       return tx;};
   })();`});
+  }
   const origin=new URL(browser.appUrl).origin;
   const snapshots=[];
-  for(let attempt=1;attempt<=3;attempt++) {
+  for(let attempt=1;attempt<=Number(process.env.MOLARIUM_REPLAY_ATTEMPTS||3);attempt++) {
     await browser.client.call('Page.navigate',{url:`${origin}/sos1-hit-to-bay293`});
     await waitFor(()=>browser.evaluate(`window.MolariumChemistActions?.history()
       .some(e=>e.action==='designerScript.loadRegistered'&&e.status==='completed'
@@ -62,7 +99,7 @@ try {
       .some(e=>e.action==='campaign.import'&&e.status==='completed')`),15000,'first import');completed=true; }
     catch { /* Preserve the stalled operation, not a fabricated pass. */ }
     const snapshot=await browser.evaluate(`({
-      trace:window.__replayStartupTrace,
+      trace:window.__replayStartupTrace||[],
       campaignStatus:document.querySelector('#campaign-status')?.textContent,
       actionStates:window.MolariumChemistActions.history().map(e=>({action:e.action,status:e.status})),
     })`);

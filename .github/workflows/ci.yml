@@ -103,6 +103,8 @@ jobs:
         run: npm run manifest:local:check
       - name: Check local server exposure and startup failure handling
         run: npm run test:server-security
+      - name: Check database cancellation, timeouts and recovery
+        run: npm run test:campaign-store
       - name: Verify privacy UI, content hashes, and blocked external canaries
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}

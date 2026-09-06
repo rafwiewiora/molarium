@@ -71,3 +71,13 @@ Default both server modes to loopback, explicitly declare public files, reject d
 foreign Host headers, and check canonical paths for symlink escape. Browser tests use
 OS-allocated server ports and visible startup errors; random port ranges and unread stderr
 can conceal a dead server or point a test at another process.
+
+## Navigation races need traces that do not overwhelm the timing
+
+Wrapping every stream, digest, and database promise made the checkpoint-import hang disappear
+in early probes. Sparse non-pausing stage markers reproduced it at `indexedDB.open`, after
+asset transport and SHA verification had already completed. Connection cleanup alone did not
+recover the case. Deferring database initialization on blank reproduction landing pages,
+alongside lifecycle cleanup and bounded explicit errors, passed ten repeated navigation imports.
+Preserve both failure and recovery traces; do not call a passing instrumented run a root-cause
+diagnosis or silently replace a failed durable save with volatile in-memory state.

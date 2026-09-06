@@ -62,8 +62,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 988565,
-      "sha256": "9dc09d8e08d84e3b57ea9f4d21201efb983472f95a1958f5e1be14f51f5c9720"
+      "bytes": 989178,
+      "sha256": "224454ca4ff155228de727043f01c0de6c94cbf3cbf245bce493923eb03fe44a"
     },
     {
       "path": "chemist-actions.mjs",
@@ -117,8 +117,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 13991,
-      "sha256": "9ea06e3f6a4dea197331467b9b720bc759bf00a40d143ad0975c8931bd78ba7d"
+      "bytes": 14077,
+      "sha256": "69453e9ffec86634597312b0b20be51cbc913c22b37421458c163704c0418e67"
     },
     {
       "path": "protein-residue-templates.js",
@@ -127,13 +127,13 @@
     },
     {
       "path": "server.js",
-      "bytes": 6838,
-      "sha256": "8f25e30d15bfe8afa2c20a84fe61a92e4fc65304bfe9edea732b8da03582120a"
+      "bytes": 6924,
+      "sha256": "cbad538dd4de88fb133b9409e504f2799966760fe4592fbcd3590b4919251d64"
     },
     {
       "path": "scripts/web-source-files.mjs",
-      "bytes": 8783,
-      "sha256": "0fb9d8abd33ec13528b8725c6fc1769d3ab81489e6b74716f6e77256cdffc864"
+      "bytes": 1269,
+      "sha256": "142da7288c0e93b4eccc09e935c602c4abe530adcf7cd7d58165a41bda73bec1"
     },
     {
       "path": "scripts/web-bundle-dependencies.mjs",
@@ -567,8 +567,8 @@
     },
     {
       "path": "design-history/live-campaign-store.mjs",
-      "bytes": 6425,
-      "sha256": "66df49e9208d3c50ace6be263fce50eab596b6eebe6f4b01bae49f13912b17d6"
+      "bytes": 8063,
+      "sha256": "b525a2cde0f5a6fd81ce4d4ecb2558a75074caac750209edd866f01f156fdfc5"
     },
     {
       "path": "design-history/replay.mjs",

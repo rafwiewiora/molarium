@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { ARCHIVED_SOS1_VIDEO_PATH, browserModuleClosure, sos1ReleaseWebFiles } from './web-bundle-dependencies.mjs';
-import { EXPLICIT_WEB_FILES } from './web-source-files.mjs';
+import { sourceWebFiles } from './web-source-files.mjs';
 
 const root = await mkdtemp(join(tmpdir(), 'molarium-web-closure-test-'));
 try {
@@ -16,6 +16,14 @@ try {
   await writeFile(join(root, 'leaf.js'), "import './nested/a.mjs';\n");
   assert.deepEqual(await browserModuleClosure(root, ['app.js']),
     ['app.js','nested/a.mjs','nested/b.mjs','worker.mjs','leaf.js']);
+  await mkdir(join(root,'scripts'));
+  await writeFile(join(root,'scripts/build-web.mjs'), "const files = [\n  'app.js', // public entry\n];\n");
+  assert.deepEqual(await sourceWebFiles(root),
+    ['app.js','nested/a.mjs','nested/b.mjs','worker.mjs','leaf.js']);
+  for(const value of ["getPrivateFiles()", "'../private.json'", "'.env'"]) {
+    await writeFile(join(root,'scripts/build-web.mjs'),`const files = [\n  ${value},\n];\n`);
+    await assert.rejects(sourceWebFiles(root),/declaration/);
+  }
   await writeFile(join(root, 'bad.js'), "import '../outside.mjs';\n");
   await assert.rejects(browserModuleClosure(root, ['bad.js']), /escapes/);
   await writeFile(join(root, 'bad.js'), "import './missing.mjs';\n");
@@ -45,7 +53,7 @@ try {
   assert.match(reproductions, /<time datetime="2026-09-05">September 5, 2026<\/time>/);
   assert.match(reproductions, /href="\/sos1"/);
   assert.match(page, /href="\/reproductions">All reproductions<\/a>/);
-  assert(EXPLICIT_WEB_FILES.includes('reproductions.html'));
+  assert((await sourceWebFiles(resolve(import.meta.dirname,'..'))).includes('reproductions.html'));
   assert(!/^\s*['"]\/reproductions \/reproductions\.html 30[1278]['"]/m.test(build),
     'Cloudflare canonical HTML redirects must not form a /reproductions loop');
   console.log('Web bundle recursive dependencies and release paths: PASS');

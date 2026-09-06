@@ -158,6 +158,9 @@ never substituted for single-trajectory ns/day.
 
 ### Production STORMM versus native OpenMM
 
+[Measured results and complete raw evidence](./results/STORMM.md): **22/22 supported
+cases pass on both M1 Pro and L4**, with 25 unsupported cases explicitly retained.
+
 Run the same frozen 47-case packet through `run-browser.mjs --backend stormm`.
 Its independently registered scope is **22 supported cases and 25 unsupported**:
 ten analytic cases and twelve Trp-cage cases are measured; nonzero cutoffs and

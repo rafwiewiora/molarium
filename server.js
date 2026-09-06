@@ -28,6 +28,7 @@ const publicPaths = new Set([
   ...localManifest.files.map(file=>file.path), ...assetsManifest.files.map(file=>file.source),
   ...diagnosticFiles, 'local-lab-manifest.json','dist/local-lab-manifest.json',
   'r2-assets-manifest.json','dist/runtime-config.js',
+  ...(testApi ? ['openff/ubiquitin-1ubq.pdb','mlip/models/ani2x-goldens.json'] : []),
 ]);
 
 const LOCAL_LAB_POLICY = [

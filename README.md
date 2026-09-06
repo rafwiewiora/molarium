@@ -25,6 +25,10 @@ listed explicitly; they are not replaced by vacuum calculations.
 The [measured results](./benchmarks/simulation/results/README.md) distinguish
 fixed-input kernel agreement from original-input precision limits and preserve
 failures alongside passing cases.
+The separate [production STORMM/native OpenMM results](./benchmarks/simulation/results/STORMM.md)
+pass energy and every force component's aggregate gates on **22/22 supported cases**
+on M1 Pro and L4, with **25 explicitly unsupported cases**. They include single-replica
+job timings and do not depend on treating the WASM bridge as fully native-validated.
 
 The preserved [Astra adversarial review and remediation log](./reviews/ASTRA_REVIEW_OF_SOL_WORK_2026-09-05.md)
 documents known boundaries, reproducible probes, fixes, and remaining validation work.
