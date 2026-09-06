@@ -112,8 +112,8 @@
     },
     {
       "path": "local-lab-test.js",
-      "bytes": 11010,
-      "sha256": "19724e29b6589a30a6a29a9f8cfb464506ace3344e7d0c921d4780925bc53b69"
+      "bytes": 11099,
+      "sha256": "dec4c0918c3cb449c6024da0eddfe0b7bb88104c1853a0ba4945a764443b570c"
     },
     {
       "path": "package.json",
