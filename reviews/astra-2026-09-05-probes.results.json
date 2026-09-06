@@ -1,0 +1,90 @@
+{
+  "schema": "molarium.adversarial-review-probes/v1",
+  "reviewLabel": "Astra review of Sol work",
+  "reviewedCommit": "995f9fd539b3c86eb698472e3aa9a88afbb6bd44",
+  "generatedAt": "2026-09-06T02:22:05.551Z",
+  "runtime": "v26.7.0",
+  "findings": {
+    "localLabManifest": {
+      "total": 240,
+      "mismatches": [
+        "package.json",
+        "webgpu-worker.js",
+        "webgpu/molarium-webgpu.wgsl",
+        "openff/implicit-solvent.js"
+      ]
+    },
+    "unsupportedForce": {
+      "accepted": true,
+      "packedIntegersUnchanged": true,
+      "packedFloatsUnchanged": true
+    },
+    "infiniteMass": {
+      "accepted": true,
+      "inverseMass": 0
+    },
+    "negativeLennardJones": {
+      "accepted": true,
+      "packedEpsilon": -0.10000000149011612
+    },
+    "emptySuite": {
+      "exitCode": 0,
+      "gate": {
+        "passed": true,
+        "total": 0,
+        "passedCases": 0,
+        "failures": [],
+        "medianOfCaseMedianSymmetricAtomError": null,
+        "maximumForceRelativeRms": null
+      }
+    },
+    "truncatedForces": {
+      "exitCode": 0,
+      "gate": {
+        "passed": true,
+        "total": 1,
+        "passedCases": 1,
+        "failures": [],
+        "medianOfCaseMedianSymmetricAtomError": 0,
+        "maximumForceRelativeRms": 0
+      }
+    },
+    "nativeOriginalScore": {
+      "recordedOriginalPassing": 42,
+      "independentlyRecomputedOriginalPassing": 47,
+      "total": 47
+    },
+    "publishedForceLengths": [
+      {
+        "label": "Apple M1 Pro — WebGPU f32",
+        "total": 47,
+        "invalid": []
+      },
+      {
+        "label": "Apple M1 Pro — OpenMM OpenCL single",
+        "total": 47,
+        "invalid": []
+      },
+      {
+        "label": "NVIDIA L4 — WebGPU f32",
+        "total": 47,
+        "invalid": []
+      },
+      {
+        "label": "NVIDIA L4 — OpenMM CUDA single",
+        "total": 47,
+        "invalid": []
+      },
+      {
+        "label": "NVIDIA L4 — OpenMM CUDA mixed",
+        "total": 47,
+        "invalid": []
+      },
+      {
+        "label": "NVIDIA L4 — OpenMM CUDA double",
+        "total": 47,
+        "invalid": []
+      }
+    ]
+  }
+}

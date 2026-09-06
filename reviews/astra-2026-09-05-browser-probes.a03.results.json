@@ -1,0 +1,55 @@
+{
+  "schema": "molarium.adversarial-browser-probes/v1",
+  "generatedAt": "2026-09-06T02:26:28.471Z",
+  "reviewedCommit": "995f9fd539b3c86eb698472e3aa9a88afbb6bd44",
+  "sourceHashes": {
+    "stormm-worker.js": "715ba0e69d50f093cc4cab1d5be2d7f6ea7621b81cf388d0aeb7a2c364f52c8a",
+    "stormm/core.mjs": "2d7a65af5174503af58f491155289141d5baa98ee1d04a6026c264bc2fe53a28",
+    "stormm/engine.mjs": "79e8ce52a2da17646efbbbf0038737120a6267fda0db09d3f74d33da2ec11976",
+    "server.js": "928cc51e5213038867ac129e3ed8676391edbfa9854c77cbf3220283b7241c40",
+    "app.js": "c06691322ffa2c88d8137fb630320dc029ca9a66f65815fdd8bdee4219a19c5d"
+  },
+  "findings": {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/152.0.0.0 Safari/537.36",
+    "adapter": {
+      "vendor": "apple",
+      "architecture": "metal-3"
+    },
+    "control": {
+      "type": "result",
+      "frameCount": 2,
+      "frameSteps": [
+        0,
+        2
+      ],
+      "positionCount": 6,
+      "initialEnergy": 398.6069574356079,
+      "finalEnergy": 39.98343801498413
+    },
+    "invalidFrames": {
+      "type": "result",
+      "frameCount": null,
+      "frameSteps": [],
+      "positionCount": 0
+    },
+    "unsupportedCutoff": {
+      "type": "result",
+      "frameCount": 2,
+      "frameSteps": [
+        0,
+        2
+      ],
+      "positionCount": 6,
+      "initialEnergy": 398.6069574356079,
+      "finalEnergy": 39.98343801498413
+    },
+    "gitMetadataRoute": {
+      "status": 200,
+      "bytes": 70
+    },
+    "privacyPanel": {
+      "immediate": false,
+      "afterWaiting": true
+    }
+  }
+}
