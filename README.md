@@ -33,6 +33,14 @@ job timings and do not depend on treating the WASM bridge as fully native-valida
 The preserved [Astra adversarial review and remediation log](./reviews/ASTRA_REVIEW_OF_SOL_WORK_2026-09-05.md)
 documents known boundaries, reproducible probes, fixes, and remaining validation work.
 
+## Design-function validation
+
+[H-bond propagation, pocket relaxation, and rotamer checks](./reviews/DESIGN_FUNCTION_VALIDATION_2026-09-06.md)
+exercise PARP2, p38, and CDK2 through the public API, with hands-on production-browser checks.
+The source-hashed action records include live contact geometry, fixed/released atom audits,
+negative controls, and known failures. This is functional validation, not a pose-accuracy or
+binding-affinity claim; the CDK2 required-contact-set preservation gate currently fails.
+
 ## Quick start
 
 Large ONNX models are served as versioned, hash-checked release assets rather than stored in the

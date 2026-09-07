@@ -187,10 +187,14 @@ reports a coordinate-displacement audit. It does not minimize or otherwise move 
 lets a frozen predicted intermediate become the reference for the next registered design step
 without importing a later crystal or conflating parameter assignment with relaxation.
 
-`optimization.run` also exposes `induced-fit-webgpu` for registered hit-only replays. It releases
-the ligand and every atom of protein residues entering a 6 Å pocket shell, including local
-backbone atoms, while the outer complex remains fixed. This is an experimental local induced-fit
-minimization, not an ensemble or a binding-affinity calculation.
+`optimization.run` exposes two different pocket minimizers. `pocket-webgpu` releases the ligand
+and pocket side chains in the 5 Å shell while keeping receptor backbone atoms fixed.
+`induced-fit-webgpu` releases whole protein residues entering a 6 Å shell, including backbone,
+and eligible displaceable waters. Its active reference-retention plan excludes protected ligand
+atoms from the movable set; other ligand atoms may move. The outer complex remains fixed.
+Neither minimizer includes the docking H-bond restraints as force terms. The induced-fit
+registered-pose and ligand-valence safeguards are separate checks, not H-bond guarantees.
+These are experimental local minimizations, not ensembles or binding-affinity calculations.
 
 `pose.enumerateSidechainRotamers` is the discrete move that precedes that minimization when a
 receptor side chain may need to cross a rotamer barrier. It accepts one persistent receptor atom
@@ -365,11 +369,23 @@ changes it.
 Pose propagation has three separate relaxation concepts. Restraint-biased internal-coordinate
 search first uses selected flat-bottom hydrogen-bond potentials to generate contact-feasible poses;
 required contacts then remain hard feasibility conditions while the rigid-receptor physical score is
-optimized. A ligand-only OpenMM/WASM pass repairs local Sage valence geometry with inherited heavy
+optimized. “Inherited” and “fixed” are distinct: v4/v5 may release distal inherited atoms on
+edit-associated rotors. `selectedCore` describes the remaining protected core; inspect the
+`featureGuidedSeeding.releasedCoreAtomIndices` and seed audit as well. These local indices refer
+to the ligand ordering returned by `pose.inspectRefinementCapture` with coordinates included.
+A ligand-only OpenMM/WASM pass repairs local Sage valence geometry with the protected heavy
 atoms fixed; it contains no receptor or explicit restraint force, so its output is accepted only if
 the complete receptor-aware restrained objective remains feasible and improves. The later
 `optimization.run({method:"induced-fit-webgpu"})` action is a distinct 6 Å complex minimization and
 does not currently include the docking interaction restraints as force terms.
+
+Current inspection caveat: `session.inspect().contacts[].hydrogenBond` may contain cached
+candidate geometry/satisfaction after a separate optimization, and receptor participant coordinates
+are captured reference points. For a live geometry audit, resolve participant IDs against current
+`session.inspect({scope:"pocket",includeCoordinates:true,maximumAtoms:500}).atoms`; check that all
+participants are present despite possible pocket truncation. Also compare required-contact sets
+across graph edits: the registered CDK2 path currently omits an unavailable required contact.
+The [dated functional audit](./reviews/DESIGN_FUNCTION_VALIDATION_2026-09-06.md) preserves both gaps.
 
 For pose propagation, `pose.refine` now seeds a single-anchor grown region across deterministic
 attachment-bond torsions even when no explicit hydrogen-bond target was captured. Target-directed

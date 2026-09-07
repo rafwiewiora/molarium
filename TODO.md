@@ -21,4 +21,9 @@ separate confirmed defects, completed fixes, and remaining validation work.
 
 ## Reference-guided design
 
+- [x] Run the [three-system API and hands-on browser functional panel](./reviews/DESIGN_FUNCTION_VALIDATION_2026-09-06.md); preserve successes, preparation failures, and the failed required-contact-set gate.
+- [ ] Preserve required-contact decisions through registered graph edits; CDK2 chlorination currently drops an unavailable required N7–water contact without a separate omission action.
+- [ ] Invalidate or clearly label cached pose-contact geometry after relaxation; expose live contact geometry from current participant coordinates.
+- [ ] Distinguish inherited atom identity, edit-associated rotor releases, and the actual fixed core in the UI/API; return stable IDs for every set.
+- [ ] Review automatic organic-fluorine H-bond acceptance and default requirement against a chemistry-specific contact model.
 - [ ] Add a separately labelled, reference-preserving restrained pocket relax: keep inherited ligand heavy atoms fixed, move edited/released ligand atoms and nearby receptor side chains, and retain the selected pharmacophore contacts as explicit restraints. Validate it independently from the current unconstrained pocket-relax action.

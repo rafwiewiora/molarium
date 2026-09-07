@@ -1,0 +1,313 @@
+- banner:
+  - link "Molarium home":
+    - /url: "#"
+    - generic: MOLARIUM
+    - generic: molecular studio
+  - button "Open data privacy and network policy":
+    - generic: Connected features
+  - navigation "Primary navigation":
+    - link "View Molarium on GitHub":
+      - /url: https://github.com/rafwiewiora/molarium
+      - generic: GitHub
+    - link "Methods":
+      - /url: "#methods"
+    - link "Reproductions":
+      - /url: /reproductions
+    - link "Validation":
+      - /url: "#validation"
+    - link "Credits":
+      - /url: "#credits"
+- main:
+  - complementary:
+    - button "Load Molecule" [expanded]:
+      - generic: Load Molecule
+    - tablist:
+      - tab "Paste"
+      - tab "Upload"
+      - tab "Identifier"
+    - generic: Identifier Input
+    - textbox "Identifier Input":
+      - /placeholder: SMILES, PDB ID (1UBQ), or a common name
+      - text: 4ZZY
+    - paragraph: Enter SMILES directly, a four-character PDB ID, or try LSD, caffeine, aspirin, benzene or water.
+    - button "Load"
+    - generic: PDB preparation
+    - generic: Prepared
+    - paragraph: OpenFF Sage 2.1.0 · 5784 atoms · 59 polar H relaxed
+    - generic "Options"
+    - option "Local H-bond choice" [selected]
+    - option "HID · Nδ1-H"
+    - option "HIE · Nε2-H"
+    - option "HIP · +1"
+    - option "Prepare from RCSB CCD" [selected]
+    - option "Prepare from installed registered graph"
+    - option "Exclude from simulation"
+    - option "Keep bridging/structural" [selected]
+    - option "Exclude"
+    - option "Retain + add H"
+    - option "Cap resolved segments" [selected]
+    - option "Block preparation—loop required"
+    - button "Prepared" [disabled]
+    - generic: Prepared simulation examples
+    - button "Trp-cage · 304 atoms"
+    - button "Ubiquitin · 1,231 atoms"
+    - button "Collapse Design tools" [expanded]:
+      - generic: Design tools
+    - button "⊕ Add"
+    - button "About Add": i
+    - button "⌖ Select"
+    - button "About Select": i
+    - button "✣ Move"
+    - button "About moving atoms": i
+    - heading "Reference-guided pose" [level=2]
+    - button "About reference-guided posing": i
+    - combobox "Reference-guided pose method" [disabled]:
+      - option "Propagate reference pose" [selected]
+      - option "Expert selected-core search"
+    - generic: Edit cleanup
+    - combobox "Analogue edit cleanup":
+      - option "Preserve reference" [selected]
+      - option "Free local cleanup"
+    - paragraph: 28 unchanged atoms fixed · 3 contacts
+    - button "Update moved receptor"
+    - button "Reset"
+    - generic: Required contacts
+    - button "Add hydrogen-bond contact": +
+    - checkbox "Require SER A470 OG → D7N A1584 O28" [checked]
+    - generic: SER A470 OG → D7N A1584 O28 · carbonyl acceptor
+    - checkbox "Require GLY A429 N → D7N A1584 O28" [checked]
+    - generic: GLY A429 N → D7N A1584 O28 · carbonyl acceptor
+    - checkbox "Require SER A328 OG → D7N A1584 F27"
+    - generic: SER A328 OG → D7N A1584 F27 · fluorine acceptor
+    - combobox "Torsion-search chain count":
+      - option "8 search chains"
+      - option "16 search chains"
+      - option "32 search chains"
+      - option "64 search chains" [selected]
+    - button "Refine edited group"
+    - heading "Element" [level=2]
+    - button "C"
+    - button "H"
+    - button "N"
+    - button "O"
+    - button "F"
+    - button "S"
+    - button "Cl"
+    - button "P"
+    - button "Br"
+    - button "I"
+    - heading "Actions" [level=2]
+    - combobox "Design optimizer":
+      - option "Pocket relax · WebGPU · 220 movable"
+      - option "Induced-fit pocket · WebGPU · 447 movable"
+      - option "Ligand only · MMFF94/UFF · 52 atoms" [selected]
+    - button "⚡ Optimize"
+    - paragraph: Cleans new atoms and hydrogens while inherited reference heavy atoms stay fixed.
+    - button "↶ Undo"
+    - button "↪ Redo" [disabled]
+    - heading "Side-chain conformations" [level=2]
+    - paragraph: Choose Select, then pick one atom in a protein side chain.
+    - button "Enumerate rotamers" [disabled]
+    - heading "Adjust Geometry" [level=2]
+    - paragraph: Selected Cl2819. Pick any second atom to create or edit a bond; continue along bonded atoms for an angle or torsion.
+    - slider [disabled]: "50"
+    - spinbutton "Geometry value" [disabled]
+    - generic: —
+    - checkbox "Move connected atoms" [checked]
+    - text: Move connected atoms
+    - checkbox "Hold current ligand geometry fixed"
+    - text: Hold current ligand geometry fixed
+    - paragraph: After an attachment or torsion edit, fix the current ligand coordinates as designer intent before sampling receptor response.
+    - heading "Edit Chemistry" [level=2]
+    - paragraph: Cl2819 · formal charge +0 · 0 explicit H
+    - text: Element
+    - combobox "Element":
+      - option "H"
+      - option "B"
+      - option "C"
+      - option "N"
+      - option "O"
+      - option "F"
+      - option "Si"
+      - option "P"
+      - option "S"
+      - option "Cl" [selected]
+      - option "Br"
+      - option "I"
+    - text: Formal charge
+    - spinbutton "Formal charge": "0"
+    - button "Apply atom"
+    - combobox "Bond order" [disabled]:
+      - option "Single" [selected]
+      - option "Double"
+      - option "Triple"
+      - option "Aromatic ring"
+    - button "Create bond" [disabled]
+    - button "Delete bond" [disabled]
+    - button "+ H"
+    - button "− H" [disabled]
+    - button "Delete atom"
+    - generic "Options"
+    - paragraph: RDKit sanitized · [H]c1c(Cl)c([H])c2c(c1C(=O)N([H])[H])C(=O)N(C1([H])C([H])([H])C([H])([H])N(C3([H])C([H])([H])C([H])([H])C(F)(F)C([H])([H])C3([H])[H])C([H])([H])C1([H])[H])C2([H])[H]
+    - text: ›
+  - generic "Interactive 3D molecule viewer"
+  - group "Mode selection":
+    - button "View"
+    - button "Design"
+    - button "Simulate"
+  - region "2D structure viewer":
+    - button "2D D7N ligand" [expanded]:
+      - strong: 2D
+      - generic: D7N ligand
+    - toolbar "2D drawing tools":
+      - button "Select" [pressed]
+      - button "Atom"
+      - button "Bond"
+      - button "Erase"
+    - text: Element
+    - combobox "2D drawing element":
+      - option "C" [selected]
+      - option "N"
+      - option "O"
+      - option "F"
+      - option "P"
+      - option "S"
+      - option "Cl"
+      - option "Br"
+      - option "I"
+    - text: Bond
+    - combobox "2D drawing bond order":
+      - option "Single" [selected]
+      - option "Double"
+      - option "Triple"
+      - option "Aromatic"
+    - img "RDKit 2D molecular depiction":
+    - paragraph: Select an atom or bond here; use the Design panel for element and charge changes.
+  - button "Export"
+  - button "Clear"
+  - button "Share"
+  - button "Save"
+  - button "Fullscreen"
+  - generic: "⊕ Add C: click near an atom to bond · click open space for a separate molecule"
+  - complementary:
+    - button "Collapse Molecule Info" [expanded]:
+      - generic: Molecule Info
+    - term: Atoms
+    - definition: C 1799, H 2917, Cl 1, F 2, N 485, O 561, S 19
+    - term: Formula
+    - definition: C₁₇₉₉H₂₉₁₇ClF₂N₄₈₅O₅₆₁S₁₉
+    - term: Charge
+    - definition: "-1"
+    - term: Multiplicity
+    - definition: "1"
+    - term: Point group
+    - definition: C1
+    - term: Symmetry no.
+    - definition: "1"
+    - text: SMILES
+    - code: Custom structure
+    - button "Copy"
+    - button "Components" [expanded]:
+      - generic: Components
+    - paragraph: 1 protein chain · 1 ligand · 41 waters
+    - checkbox "Show Protein chain A" [checked]
+    - strong: Protein chain A
+    - generic: 5609 atoms · 351 modeled residues
+    - button "Zoom to Protein chain A without hiding other components": Zoom
+    - button "Show only Protein chain A": Only
+    - checkbox "Show D7N ligand" [checked]
+    - strong: D7N ligand
+    - generic: 52 atoms · 2-[1-(4,4-DIFLUOROCYCLOHEXYL)-PIPERIDIN-4-YL]-6-FLUORO- 3-OXO-2,3-DIHYDRO-1H-ISOINDOLE-4-CARBOXAMIDE
+    - button "Zoom to D7N ligand without hiding other components": Zoom
+    - button "Show only D7N ligand": Only
+    - checkbox "Show Crystallographic water"
+    - strong: Crystallographic water
+    - generic: 123 atoms · 41 waters · hidden by default
+    - button "Zoom to Crystallographic water without hiding other components": Zoom
+    - button "Show only Crystallographic water": Only
+    - button "Show all"
+    - button "Reset view"
+    - button "Preparation details Ready":
+      - generic: Preparation details
+      - generic: Ready
+    - button "Collapse Design History" [expanded]:
+      - generic: Design History
+    - status: No active campaign · history stays on this device.
+    - paragraph: "Saved: SOS1 hit-only prospective design route. Resuming replaces the current molecule with its last committed state."
+    - button "Resume saved campaign"
+    - textbox "Campaign title"
+    - textbox "Campaign ID":
+      - /placeholder: campaign-id
+    - button "Start & commit"
+    - button "Import story"
+    - button "Import"
+    - button "Export" [disabled]
+    - button "Verify" [disabled]
+    - button "Close" [disabled]
+    - button "Collapse Design workspace" [expanded]:
+      - generic: Design workspace
+    - heading "Distinct poses" [level=2]
+    - strong: 1 distinct · 1 feasible · 8 workers · 21.7 s
+    - button "#1 Δ score -12.78 feasible":
+      - generic: "#1"
+      - generic: Δ score -12.78
+      - generic: feasible
+    - button "Apply pose" [active]
+    - button "Notes"
+    - button "JSON"
+    - paragraph: Δphysical -12.78 · restraints 0.00 kcal/mol · 0 clashes (start 0) · 2.9 chains/s
+    - heading "Fragment Library" [level=2]
+    - textbox "Custom SMILES"
+    - button "Stage"
+    - heading "Templates" [level=3]
+    - textbox "Search templates…"
+    - button "−CH₃ Methyl":
+      - strong: −CH₃
+      - generic: Methyl
+    - button "−CH₂CH₃ Ethyl":
+      - strong: −CH₂CH₃
+      - generic: Ethyl
+    - button "−CH(CH₃)₂ Isopropyl":
+      - strong: −CH(CH₃)₂
+      - generic: Isopropyl
+    - button "−C(CH₃)₃ Tert-butyl":
+      - strong: −C(CH₃)₃
+      - generic: Tert-butyl
+    - button "−CHO Formyl":
+      - strong: −CHO
+      - generic: Formyl
+    - button "−OH Hydroxyl":
+      - strong: −OH
+      - generic: Hydroxyl
+    - button "−COOH Carboxyl":
+      - strong: −COOH
+      - generic: Carboxyl
+    - button "−C≡CH Ethynyl":
+      - strong: −C≡CH
+      - generic: Ethynyl
+    - button "−CF₃ Trifluoromethyl":
+      - strong: −CF₃
+      - generic: Trifluoromethyl
+    - button "−C≡N Cyano":
+      - strong: −C≡N
+      - generic: Cyano
+    - button "−NH₂ Amino":
+      - strong: −NH₂
+      - generic: Amino
+    - button "−C₆H₅ Phenyl":
+      - strong: −C₆H₅
+      - generic: Phenyl
+    - button "Collapse OpenFold Prediction" [expanded]:
+      - generic: PDB · 4ZZY
+    - generic: Mean pLDDT
+    - strong: PDB
+    - generic: pTM
+    - strong: —
+    - generic: MSA depth
+    - strong: —
+    - generic: Backend
+    - strong: SAGE
+    - generic "Mean pLDDT"
+    - paragraph: 351 residues · 5784 atoms · explicit/template topology
+    - button "Download PDB"
+- status: Docking pose 1 applied

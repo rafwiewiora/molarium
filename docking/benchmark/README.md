@@ -18,6 +18,10 @@ The cohort is append-only. A frozen release never changes; corrections create a 
 and identify the superseded case. Every source coordinate/CCD file and every result artifact is
 SHA-256 addressed.
 
+The separate [2026-09-06 public-API and hands-on UI functional panel](../../reviews/DESIGN_FUNCTION_VALIDATION_2026-09-06.md)
+tests graph edits, required-contact persistence, both pocket minimizers, and discrete rotamer
+branches. It preserves a failed CDK2 intent-preservation gate and does not replace this frozen cohort.
+
 ## Pre-registration rules
 
 Before a case is run, its manifest entry fixes:

@@ -1,0 +1,237 @@
+- banner:
+  - link "Molarium home":
+    - /url: "#"
+    - generic: MOLARIUM
+    - generic: molecular studio
+  - button "Open data privacy and network policy":
+    - generic: Connected features
+  - navigation "Primary navigation":
+    - link "View Molarium on GitHub":
+      - /url: https://github.com/rafwiewiora/molarium
+      - generic: GitHub
+    - link "Methods":
+      - /url: "#methods"
+    - link "Reproductions":
+      - /url: /reproductions
+    - link "Validation":
+      - /url: "#validation"
+    - link "Credits":
+      - /url: "#credits"
+- main:
+  - complementary:
+    - button "Load Molecule" [expanded]:
+      - generic: Load Molecule
+    - tablist:
+      - tab "Paste"
+      - tab "Upload"
+      - tab "Identifier"
+    - generic: Identifier Input
+    - textbox "Identifier Input":
+      - /placeholder: SMILES, PDB ID (1UBQ), or a common name
+      - text: 4ZZY
+    - paragraph: Enter SMILES directly, a four-character PDB ID, or try LSD, caffeine, aspirin, benzene or water.
+    - button "Load"
+    - generic: PDB preparation
+    - generic: Prepared
+    - paragraph: OpenFF Sage 2.1.0 · 5784 atoms · 59 polar H relaxed
+    - generic "Options"
+    - option "Local H-bond choice" [selected]
+    - option "HID · Nδ1-H"
+    - option "HIE · Nε2-H"
+    - option "HIP · +1"
+    - option "Prepare from RCSB CCD" [selected]
+    - option "Prepare from installed registered graph"
+    - option "Exclude from simulation"
+    - option "Keep bridging/structural" [selected]
+    - option "Exclude"
+    - option "Retain + add H"
+    - option "Cap resolved segments" [selected]
+    - option "Block preparation—loop required"
+    - button "Prepared" [disabled]
+    - generic: Prepared simulation examples
+    - button "Trp-cage · 304 atoms"
+    - button "Ubiquitin · 1,231 atoms"
+    - button "Fold Protein" [expanded]:
+      - generic: Fold Protein
+    - text: Amino-acid sequence
+    - generic: 0/128
+    - textbox "Amino-acid sequence 0/128":
+      - /placeholder: Paste FASTA or a protein sequence (up to 128 residues)
+    - generic "MSA service settings"
+    - paragraph: The sequence is sent to the selected MSA service. Folding, confidence and coordinates run locally in this browser. First use downloads ~540 MB.
+    - button "Search MSA & fold locally"
+    - status: Ready · OpenFold pTM · WebGPU with WASM fallback
+    - button "Collapse Display Options" [expanded]:
+      - generic: Display Options
+    - generic: Representation
+    - combobox "Representation":
+      - option "Ball & stick"
+      - option "Cartoon" [selected]
+      - option "Cartoon + atoms"
+    - generic: Coloring
+    - combobox "Coloring":
+      - option "Standard" [selected]
+      - option "Design story · hit"
+      - option "Design story · prediction"
+      - option "Design story · validation"
+    - generic: Change marks
+    - combobox "Change marks":
+      - option "Atom rings" [selected]
+      - option "Subtle halo"
+      - option "Hidden"
+    - checkbox "Show van der Waals spheres"
+    - generic: Show van der Waals spheres
+    - checkbox "Show convex hulls" [checked]
+    - generic: Show convex hulls
+    - checkbox "Show hydrogen · 2,835" [checked]
+    - generic: Show hydrogen · 2,835
+    - checkbox "Show pocket atoms · 19 residues" [checked]
+    - generic: Show pocket atoms · 19 residues
+    - button "5 Å"
+    - checkbox "Show H-bonds & π-stacks · 11 H-bonds · 3 ligand contacts" [checked]
+    - generic: Show H-bonds & π-stacks · 11 H-bonds · 3 ligand contacts
+    - checkbox "Show severe clashes"
+    - generic: Show severe clashes
+    - generic: Auto-rotate
+    - combobox "Auto-rotate":
+      - option "None" [selected]
+      - option "Vertical"
+      - option "Diagonal"
+    - button "Play"
+    - text: Frame 1/1
+    - slider [disabled]: "1"
+    - text: ›
+  - generic "Interactive 3D molecule viewer"
+  - group "Mode selection":
+    - button "View"
+    - button "Design"
+    - button "Simulate"
+  - region "2D structure viewer":
+    - button "2D D7N ligand" [expanded]:
+      - strong: 2D
+      - generic: D7N ligand
+    - toolbar "2D drawing tools":
+      - button "Select" [pressed]
+      - button "Atom"
+      - button "Bond"
+      - button "Erase"
+    - text: Element
+    - combobox "2D drawing element":
+      - option "C" [selected]
+      - option "N"
+      - option "O"
+      - option "F"
+      - option "P"
+      - option "S"
+      - option "Cl"
+      - option "Br"
+      - option "I"
+    - text: Bond
+    - combobox "2D drawing bond order":
+      - option "Single" [selected]
+      - option "Double"
+      - option "Triple"
+      - option "Aromatic"
+    - img "RDKit 2D molecular depiction":
+    - paragraph: Select an atom here to select the same atom in 3D.
+  - button "Export"
+  - button "Clear"
+  - button "Share"
+  - button "Save"
+  - button "Fullscreen"
+  - complementary:
+    - button "Collapse Molecule Info" [expanded]:
+      - generic: Molecule Info
+    - term: Atoms
+    - definition: C 1799, H 2917, Cl 1, F 2, N 485, O 561, S 19
+    - term: Formula
+    - definition: C₁₇₉₉H₂₉₁₇ClF₂N₄₈₅O₅₆₁S₁₉
+    - term: Charge
+    - definition: "-1"
+    - term: Multiplicity
+    - definition: "1"
+    - term: Point group
+    - definition: C1
+    - term: Symmetry no.
+    - definition: "1"
+    - text: SMILES
+    - code: Custom structure
+    - button "Copy"
+    - button "Scene" [expanded]:
+      - generic: Scene
+    - strong: PDB 4ZZY
+    - generic: 5661/5784 atoms · cartoon · 19 pocket residues
+    - button "Components" [expanded]:
+      - generic: Components
+    - paragraph: 1 protein chain · 1 ligand · 41 waters
+    - checkbox "Show Protein chain A" [checked]
+    - strong: Protein chain A
+    - generic: 5609 atoms · 351 modeled residues
+    - button "Zoom to Protein chain A without hiding other components": Zoom
+    - button "Show only Protein chain A": Only
+    - checkbox "Show D7N ligand" [checked]
+    - strong: D7N ligand
+    - generic: 52 atoms · 2-[1-(4,4-DIFLUOROCYCLOHEXYL)-PIPERIDIN-4-YL]-6-FLUORO- 3-OXO-2,3-DIHYDRO-1H-ISOINDOLE-4-CARBOXAMIDE
+    - button "Zoom to D7N ligand without hiding other components": Zoom
+    - button "Show only D7N ligand": Only
+    - checkbox "Show Crystallographic water"
+    - strong: Crystallographic water
+    - generic: 123 atoms · 41 waters · hidden by default
+    - button "Zoom to Crystallographic water without hiding other components": Zoom
+    - button "Show only Crystallographic water": Only
+    - button "Show all"
+    - button "Reset view"
+    - button "Preparation details Ready":
+      - generic: Preparation details
+      - generic: Ready
+    - button "Collapse RDKit Result" [expanded]:
+      - generic: Optimization Energy
+    - img "Energy convergence chart":
+      - button "Show minimization frame 1"
+      - button "Show minimization frame 2"
+      - button "Show minimization frame 3"
+      - button "Show minimization frame 4"
+      - button "Show minimization frame 5"
+      - button "Show minimization frame 6"
+      - button "Show minimization frame 7"
+      - button "Show minimization frame 8"
+      - button "Show minimization frame 9"
+      - button "Show minimization frame 10"
+      - button "Show minimization frame 11"
+      - button "Show minimization frame 12"
+      - button "Show minimization frame 13"
+      - button "Show minimization frame 14"
+      - button "Show minimization frame 15"
+      - button "Show minimization frame 16"
+      - button "Show minimization frame 17"
+      - button "Show minimization frame 18"
+      - button "Show minimization frame 19"
+      - button "Show minimization frame 20"
+      - button "Show minimization frame 21"
+      - button "Show minimization frame 22"
+      - button "Show minimization frame 23"
+      - button "Show minimization frame 24"
+      - button "Show minimization frame 25"
+      - button "Show minimization frame 26"
+    - generic: Final potential energy
+    - strong: 835.7135 kcal/mol
+    - generic: Minimization path · 26 snapshots
+    - strong: Min frame 26/26 · step 120
+    - slider "Calculation frame": "25"
+    - button "↻ Replay trajectory"
+    - button "Show optimized geometry"
+    - paragraph: OpenFF Sage 2.1.0 · Gasteiger (RDKit, 12 iterations) · OBC2 implicit water · 2958 X–H constraints · 2 fs · 1.0 nm Verlet cutoff · 220 movable / 5564 fixed atoms · direct browser WebGPU f32 · experimental · 7.03 s
+    - button "Collapse OpenFold Prediction" [expanded]:
+      - generic: PDB · 4ZZY
+    - generic: Mean pLDDT
+    - strong: PDB
+    - generic: pTM
+    - strong: —
+    - generic: MSA depth
+    - strong: —
+    - generic: Backend
+    - strong: SAGE
+    - generic "Mean pLDDT"
+    - paragraph: 351 residues · 5784 atoms · explicit/template topology
+    - button "Download PDB"
+- status: Sage WebGPU complete · 835.7135 kcal/mol

@@ -3,6 +3,18 @@
 This file records implementation findings that changed a product or engineering decision. Measurements
 belong here only when their system, runtime, and timing boundary are clear.
 
+## A feasible pose can satisfy a silently weakened question
+
+The [September 6 design-function panel](./reviews/DESIGN_FUNCTION_VALIDATION_2026-09-06.md)
+found that registered CDK2 chlorination yielded 23/64 feasible candidate chains only after an
+unavailable, previously required water contact was automatically omitted. Validate the required
+contact **set across actions**, not merely each final candidate's `feasible` flag.
+
+Atom lineage is not a motion policy: that step deliberately samples an affected attachment torsion,
+releasing five inherited ring atoms while the remaining 19-atom core stays exactly fixed.
+Measure both sets. After receptor relaxation, remeasure contacts from live atom coordinates;
+cached candidate distances and captured receptor points need not describe the visible complex.
+
 ## A cutoff is not automatically faster
 
 The direct WebGPU engine has a correct, OpenMM-compared 1.0 nm nonperiodic cutoff path with a 1.2 nm
