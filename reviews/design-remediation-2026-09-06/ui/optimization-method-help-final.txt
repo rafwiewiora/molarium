@@ -1,0 +1,17 @@
+Compare optimization methods
+Close help
+
+Optimization is local energy minimization, not a search over discrete rotamer branches. None of these methods applies the required-contact restraints used by constrained ligand search. Inspect contacts again afterward.
+
+OpenFF Sage 2.1 · WebGPU · selected
+Minimize the numeric force-field system on WebGPU. All eligible atoms move; this is not a fixed-protein ligand search. The full-complex choice is not offered in Design for protein–ligand systems.
+Pocket relax · WebGPU · unavailable here
+5 Å pocket: move the entire ligand and nearby protein side chains. Protein backbone and outer atoms stay fixed. Required H-bonds are NOT enforced.
+Induced-fit pocket · WebGPU · unavailable here
+Experimental 6 Å pocket: move whole nearby protein residues, including backbone, plus eligible ligand/water atoms. Registered ligand-retention islands and outer atoms stay fixed. Its retained ligand set can differ from the search core. Required H-bonds are NOT enforced.
+Ligand only · MMFF94/UFF · unavailable here
+MMFF94/UFF ligand-only cleanup; protein fixed and omitted from the energy. Preserve reference fixes surviving reference heavy atoms when active. This cannot assess pocket clashes or enforce receptor H-bonds.
+MMFF94 · UFF fallback
+Local small-molecule MMFF94 optimization, with UFF fallback when needed. Not available for prepared protein systems; no receptor-contact restraints.
+ANI-2x · MLIP WebGPU
+Local ANI-2x machine-learning minimization for supported neutral H/C/N/O/F/S/Cl molecules. Not offered for protein–ligand complexes; no receptor-contact restraints.

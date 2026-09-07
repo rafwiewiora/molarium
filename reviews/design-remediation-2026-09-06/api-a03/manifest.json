@@ -1,0 +1,49 @@
+{
+  "schema": "molarium.design-remediation-archive/v1",
+  "archivedAt": "2026-09-07T01:40:59.250Z",
+  "startedAt": "2026-09-07T01:38:38.547Z",
+  "finishedAt": "2026-09-07T01:38:57.887Z",
+  "acceptance": "passed-source-stable-development-regression",
+  "findings": [
+    "DV-01",
+    "DV-02",
+    "DV-03"
+  ],
+  "gitHead": "29122735500bd49c5f9d20df705c5532a275b2ea",
+  "sourceSha256": {
+    "app.js": "4bbb8bab066ee9273ba54126d0b0bccb900c5ee7ba3f9c849404b666c8be48a4",
+    "docking/contact-state.mjs": "05263c53e7c5cbf097cc56bf988c7e4d9e0eed61e798a172243af30ba71d8c5a",
+    "docking/contact-capture-policy.mjs": "828468cf035d54ebbdd7ba649f062f459445dd7febd4cf0512881088f71deb66",
+    "docking/contact-remap.mjs": "6ddcd28e88c2f67859c22bc9ff68575c647eb23b4c4b1b9d143c2b80f7e7d776",
+    "docking/browser-adapter.mjs": "9c3cc68c6ce6b593b7283b0f8cb0408a55e49c2a79baa3a7d200a0bc9560b429",
+    "docking/protocol.mjs": "034218fcee594c708eecb04f9f31ec1ed1085dd8ea63d9c10869edcbbb4cf30e",
+    "docking/benchmark/design-contact-remediation.mjs": "74ca47f49ead9c500343cabd0475273587c034651a2e7228c863b3cd42525bf4",
+    "design-history/structures/generated/cdk2-prospective-campaign.json": "9f9687f711ac85d2a5826f218b850eee5f18a46484b43f64fe7101cfabf4b09a"
+  },
+  "files": [
+    {
+      "path": "result.json.gz",
+      "encoding": "gzip",
+      "bytes": 245141,
+      "sha256": "897ee6b9455159a62b78484baaaa2f909ec87f36c38e0d685bcb22569f92ea8e",
+      "decodedBytes": 3709966,
+      "decodedSha256": "87cfc671e28cc49855819966d2577b8e0853e0db15d1ef2309965b63c0f3d95c"
+    },
+    {
+      "path": "source-bundle.json.gz",
+      "encoding": "gzip",
+      "bytes": 250130,
+      "sha256": "df170357b3982f7136b67c52cd144e881ea3be2ba5e12dc7e653fd93cb7fe024",
+      "decodedBytes": 1132837,
+      "decodedSha256": "5d9e419a08d6a82214a682b1068b5972fb27e004ed69cd54bd940445020e9d46"
+    },
+    {
+      "path": "parp2-reference.pdb.gz",
+      "encoding": "gzip",
+      "bytes": 65038,
+      "sha256": "379ffdc720a5849266607273137ed01b8690cfe8762d44a0b22d36cf22afa052",
+      "decodedBytes": 272408,
+      "decodedSha256": "7342b80bdc90d1a32e101cc8cbe8c576efd5f26d4fcce8357003a9b06a3c3f8b"
+    }
+  ]
+}

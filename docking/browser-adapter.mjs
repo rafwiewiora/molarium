@@ -1,4 +1,5 @@
 import { ensureStableAtomIds } from './reference-core.mjs';
+import { capturedContactDefault } from './contact-capture-policy.mjs';
 import { perceiveHydrogenBondFeature,
   validateCapturedLigandHydrogenBondFeature } from './contact-remap.mjs';
 
@@ -77,7 +78,7 @@ export function captureCrossHydrogenBonds(molecule, ligandAtomIndices, hydrogenB
     return [{
       id:`reference-hbond-${ordinal + 1}`,
       label:`${atomLabel(donor, bond.donor)} → ${atomLabel(acceptor, bond.acceptor)}`,
-      required:true,
+      ...capturedContactDefault(molecule, bond.acceptor),
       receptorRole:donorIsLigand ? 'acceptor' : 'donor',
       donor:donorIsLigand ? ligandDescriptor(bond.donor, 'donor') : receptorDescriptor(bond.donor),
       hydrogen:hydrogenIsLigand ? ligandDescriptor(bond.hydrogen, 'hydrogen') : receptorDescriptor(bond.hydrogen),
@@ -115,7 +116,10 @@ export function mapCapturedHydrogenBonds(definitions, candidateAtoms, selectedId
         ? { ...definition.targetLigandFeatureReferencePoint } : null,
       donor, hydrogen, acceptor };
   };
-  const mapped = Array.from(definitions || []).flatMap((definition) => {
+  const mapped = Array.from(definitions || []).flatMap((rawDefinition) => {
+    // Explicit selection overrides a capture-time optional default.
+    const definition = selected ? { ...rawDefinition, required:selected.has(rawDefinition.id) }
+      : rawDefinition;
     if (selected && !selected.has(definition.id)) return [];
     if (definition.alternatives?.length) {
       const alternativeMissing = [];

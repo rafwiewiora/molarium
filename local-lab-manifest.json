@@ -62,8 +62,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 989178,
-      "sha256": "224454ca4ff155228de727043f01c0de6c94cbf3cbf245bce493923eb03fe44a"
+      "bytes": 992370,
+      "sha256": "c1d10fdff968b4eaafcaadd56b1773478c1aaa84b11603a121acc82f2985ff5d"
     },
     {
       "path": "chemist-actions.mjs",
@@ -77,8 +77,8 @@
     },
     {
       "path": "CHEMIST-ACTIONS-API.md",
-      "bytes": 32513,
-      "sha256": "292d109d183dc9e571aed7d269240f4aa1afcad17202d4c0fad0e1b0e6437057"
+      "bytes": 36860,
+      "sha256": "ddcd0a2bb9e0e4363cf9b1e6f1a3e609244684c9e1c30a89305d630afa4d4343"
     },
     {
       "path": "DESIGNER-MOVES.md",
@@ -98,12 +98,12 @@
     {
       "path": "molarium-workspace.css",
       "bytes": 9116,
-      "sha256": "8421b4b0555bcfc660cead4693b700a975a31da2dc7c5d24bf89902253f72e2c"
+      "sha256": "ab18b693d0a8d70b6fc304db800bb7db7f2c51fddc408f6e7e35daced2e4f4e5"
     },
     {
       "path": "index.html",
-      "bytes": 69489,
-      "sha256": "6439fb9b38c422dd17b1ca8d7ab3932ac2763d54efcab05830244891f358dc4c"
+      "bytes": 68252,
+      "sha256": "81737eea87e8718021a078c197a24c8256df0adff5c0a9f25db931aebf2c2a5b"
     },
     {
       "path": "reproductions.html",
@@ -117,8 +117,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 14077,
-      "sha256": "69453e9ffec86634597312b0b20be51cbc913c22b37421458c163704c0418e67"
+      "bytes": 14393,
+      "sha256": "720e7559993ca223e7b79d7dbddc2bd2c16deedea13fdc0ea38d440ae0e02e65"
     },
     {
       "path": "protein-residue-templates.js",
@@ -192,8 +192,8 @@
     },
     {
       "path": "styles.css",
-      "bytes": 70400,
-      "sha256": "574cb88bafc13966399dffc4ccfb239b1450828d8c75eea32598e788d2441808"
+      "bytes": 74256,
+      "sha256": "8f4ffbef4e6979fb34f2fef04406c9e3eb97a4bc4d5421ee16d7170dec7b0f77"
     },
     {
       "path": "validation/README.md",
@@ -237,8 +237,8 @@
     },
     {
       "path": "docking/browser-adapter.mjs",
-      "bytes": 12787,
-      "sha256": "1bd4da6b6ef1a862950f54408600df36e08ec51e9ad7b7856918a06ba87d3773"
+      "bytes": 13086,
+      "sha256": "9c3cc68c6ce6b593b7283b0f8cb0408a55e49c2a79baa3a7d200a0bc9560b429"
     },
     {
       "path": "docking/contact-remap.mjs",
@@ -1216,6 +1216,26 @@
       "sha256": "402968bdcfbd339ae65a8ee19e33ec5a24c8aae02d052a2353c92ee3234ab918"
     },
     {
+      "path": "docking/contact-state.mjs",
+      "bytes": 4519,
+      "sha256": "05263c53e7c5cbf097cc56bf988c7e4d9e0eed61e798a172243af30ba71d8c5a"
+    },
+    {
+      "path": "docking/contact-capture-policy.mjs",
+      "bytes": 1758,
+      "sha256": "828468cf035d54ebbdd7ba649f062f459445dd7febd4cf0512881088f71deb66"
+    },
+    {
+      "path": "docking/registered-donor-hydrogen.mjs",
+      "bytes": 4122,
+      "sha256": "5fdd27416bdd536111f4c1a3a821f942257a712731d72bef33f24602fcfc7c4c"
+    },
+    {
+      "path": "design-help.mjs",
+      "bytes": 33057,
+      "sha256": "35022be282a7b819809eba7c7cb02d639f2e6132a33e9fb33903362ff010dae6"
+    },
+    {
       "path": "docking/refinement-capture-store.mjs",
       "bytes": 8385,
       "sha256": "6822121e987fdb54568b3eee96927e7bfd9d860370568e1bdd5e8c5c2f7449bd"
@@ -1239,6 +1259,11 @@
       "path": "openff/numeric-system.mjs",
       "bytes": 4433,
       "sha256": "cc463cfc41acc6a4e0030251210b985d18e190eda0f0062ac0ddaac5f248ecbc"
+    },
+    {
+      "path": "workspace-help.mjs",
+      "bytes": 18598,
+      "sha256": "08e6ccd82455d7fb50452e077195fc362dd98c1bfd5a9cac96bb44f0d0e4e976"
     }
   ]
 }

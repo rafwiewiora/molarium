@@ -1,0 +1,32 @@
+{
+  "checkbox": true,
+  "focus": "About select atoms",
+  "helpCount": 173,
+  "panelBottom": 741,
+  "smilesWidth": 213.171875,
+  "toolbarTop": 750,
+  "tools": [
+    {
+      "height": 38,
+      "tool": "add",
+      "whiteSpace": "nowrap",
+      "width": 65.328125
+    },
+    {
+      "height": 38,
+      "tool": "select",
+      "whiteSpace": "nowrap",
+      "width": 65.3359375
+    },
+    {
+      "height": 38,
+      "tool": "manipulate",
+      "whiteSpace": "nowrap",
+      "width": 65.3359375
+    }
+  ],
+  "viewport": {
+    "height": 805,
+    "width": 1512
+  }
+}

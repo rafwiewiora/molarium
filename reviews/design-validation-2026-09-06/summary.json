@@ -1,0 +1,892 @@
+{
+  "schema": "molarium.design-function-validation-summary/v1",
+  "sourceCommit": "863aebadaa0af6299943846a628e83c94980d85f",
+  "protocolSha256": "0dcfec16539e315d5eaef4ad1e023c018bfd66284dce8ddc8ad9f200a62fe2e4",
+  "runnerSha256": "e7d44b74baf537da3f16f6c64d12cdf5cde93856c757aa6283be81d85454fae6",
+  "hardware": "Apple M1 Pro; local macOS Chrome; single-device functional tests, no speed-comparison claim",
+  "interpretation": "Development functional panel, selected using known preparation viability; not blind pose prediction or affinity validation.",
+  "results": [
+    {
+      "id": "parp2-distal-halogen",
+      "rawSha256": "7ed2693cea17a0538032b428cc633be40c53371feaa96c681f21f96db80ee7b1",
+      "rawBytes": 5832509,
+      "preparedAtomCount": 5901,
+      "baselineFeasible": 64,
+      "positive": {
+        "candidates": 64,
+        "feasible": 64,
+        "coverageComplete": true,
+        "selectedCore": {
+          "rmsdAngstrom": 0,
+          "maximumDisplacementAngstrom": 0,
+          "toleranceAngstrom": 0.5,
+          "violationAngstrom": 0,
+          "satisfied": true,
+          "penaltyKcalMol": 0
+        },
+        "protectedDisplacement": {
+          "compared": 27,
+          "maximumAngstrom": 0,
+          "moved": [],
+          "inputTruncated": false,
+          "outputTruncated": false
+        },
+        "releasedAtomIds": [
+          "chemist-4ZZY:HETATM:A:D7N:1584::F5:2820"
+        ],
+        "sameElementLineageDisplacement": {
+          "compared": 27,
+          "maximumAngstrom": 0,
+          "moved": [],
+          "inputTruncated": false,
+          "outputTruncated": false
+        },
+        "contactAudit": [
+          {
+            "id": "reference-hbond-32",
+            "label": "SER A470 OG → D7N A1584 O28",
+            "available": true,
+            "measurable": true,
+            "donorAcceptorAngstrom": 2.724007525687108,
+            "hydrogenAcceptorAngstrom": 1.776779972651189,
+            "dhaDegrees": 161.51781759801574,
+            "cachedSatisfied": true,
+            "cachedHydrogenAcceptorAngstrom": 1.7767799726511893,
+            "liveGeometryPass": true,
+            "cachedDistanceDeltaAngstrom": -2.220446049250313e-16
+          },
+          {
+            "id": "reference-hbond-35",
+            "label": "GLY A429 N → D7N A1584 O28",
+            "available": true,
+            "measurable": true,
+            "donorAcceptorAngstrom": 2.7637485413836043,
+            "hydrogenAcceptorAngstrom": 1.7871809068764348,
+            "dhaDegrees": 161.53213986006867,
+            "cachedSatisfied": true,
+            "cachedHydrogenAcceptorAngstrom": 1.787180906876435,
+            "liveGeometryPass": true,
+            "cachedDistanceDeltaAngstrom": -2.220446049250313e-16
+          }
+        ],
+        "droppedRequiredContacts": [],
+        "requiredContactSetPreserved": true,
+        "selectedSeedAudit": {
+          "conformerIndex": 0,
+          "method": "unaltered-reference-propagation",
+          "coverageStratumIds": [],
+          "selectionOrdinal": 0,
+          "uniqueSelectionOrdinal": 0
+        },
+        "poseSearchExecution": {
+          "backend": "deterministic Web Worker pose-chain ensemble",
+          "layout": "worker-partitioned independent chains; results restored to conformer order",
+          "workerCount": 8,
+          "chainCount": 64,
+          "elapsedMs": 654.1699999570847,
+          "chainsPerSecond": 97.83389639420727,
+          "deterministicOrdering": "independent per-chain seed; results restored to conformer index",
+          "fallbackReason": null
+        }
+      },
+      "fastPocket": {
+        "accepted": true,
+        "error": null,
+        "maximumLigandHeavyDisplacementAngstrom": 0.20783562607351377,
+        "ligandHeavyAtomsMovingOver001Angstrom": 28,
+        "sampledPocketAtoms": 500,
+        "pocketInspectionTruncated": true,
+        "contactAudit": [
+          {
+            "id": "reference-hbond-32",
+            "label": "SER A470 OG → D7N A1584 O28",
+            "available": true,
+            "measurable": true,
+            "donorAcceptorAngstrom": 2.7871694877486064,
+            "hydrogenAcceptorAngstrom": 1.8732708242896021,
+            "dhaDegrees": 153.7436253420754,
+            "cachedSatisfied": true,
+            "cachedHydrogenAcceptorAngstrom": 1.7767799726511893,
+            "liveGeometryPass": true,
+            "cachedDistanceDeltaAngstrom": 0.09649085163841287
+          },
+          {
+            "id": "reference-hbond-35",
+            "label": "GLY A429 N → D7N A1584 O28",
+            "available": true,
+            "measurable": true,
+            "donorAcceptorAngstrom": 2.778783999079599,
+            "hydrogenAcceptorAngstrom": 1.792596518943884,
+            "dhaDegrees": 164.4284440304975,
+            "cachedSatisfied": true,
+            "cachedHydrogenAcceptorAngstrom": 1.787180906876435,
+            "liveGeometryPass": true,
+            "cachedDistanceDeltaAngstrom": 0.005415612067448894
+          }
+        ],
+        "undoMaximumLigandDisplacementAngstrom": 0,
+        "fixedAtomMotion": null
+      },
+      "inducedFit": {
+        "accepted": true,
+        "error": null,
+        "maximumLigandHeavyDisplacementAngstrom": 0.09983096263884096,
+        "ligandHeavyAtomsMovingOver001Angstrom": 1,
+        "sampledPocketAtoms": 500,
+        "pocketInspectionTruncated": true,
+        "contactAudit": [
+          {
+            "id": "reference-hbond-32",
+            "label": "SER A470 OG → D7N A1584 O28",
+            "available": true,
+            "measurable": true,
+            "donorAcceptorAngstrom": 2.789617617951362,
+            "hydrogenAcceptorAngstrom": 1.8617815799313047,
+            "dhaDegrees": 156.61249128440664,
+            "cachedSatisfied": null,
+            "cachedHydrogenAcceptorAngstrom": null,
+            "liveGeometryPass": true,
+            "cachedDistanceDeltaAngstrom": null
+          },
+          {
+            "id": "reference-hbond-35",
+            "label": "GLY A429 N → D7N A1584 O28",
+            "available": true,
+            "measurable": true,
+            "donorAcceptorAngstrom": 2.7635140640230733,
+            "hydrogenAcceptorAngstrom": 1.798396878588986,
+            "dhaDegrees": 155.8938232372974,
+            "cachedSatisfied": null,
+            "cachedHydrogenAcceptorAngstrom": null,
+            "liveGeometryPass": true,
+            "cachedDistanceDeltaAngstrom": null
+          }
+        ],
+        "undoMaximumLigandDisplacementAngstrom": 0,
+        "fixedAtomMotion": {
+          "accepted": true,
+          "comparison": "post-WebGPU coordinates versus exact float32-nm round-trip of pre-WebGPU coordinates",
+          "toleranceAngstrom": 0.000001,
+          "atomIds": [
+            "chemist-4ZZY:HETATM:A:D7N:1584::C11:2814",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C13:2811",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C14:2808",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C15:2807",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C17:2809",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C18:2810",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C1:2821",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C20:2805",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C21:2804",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C22:2803",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C23:2800",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C24:2799",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C25:2798",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C2:2819",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C3:2818",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C4:2822",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C6:2823",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C7:2816",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C8:2817",
+            "chemist-4ZZY:HETATM:A:D7N:1584::C9:2813",
+            "chemist-4ZZY:HETATM:A:D7N:1584::F26:2801",
+            "chemist-4ZZY:HETATM:A:D7N:1584::F27:2802",
+            "chemist-4ZZY:HETATM:A:D7N:1584::N10:2812",
+            "chemist-4ZZY:HETATM:A:D7N:1584::N16:2806",
+            "chemist-4ZZY:HETATM:A:D7N:1584::N19:2825",
+            "chemist-4ZZY:HETATM:A:D7N:1584::O12:2815",
+            "chemist-4ZZY:HETATM:A:D7N:1584::O28:2824"
+          ],
+          "atomCount": 27,
+          "maximumDisplacementAngstrom": 3.4504235571296853e-7,
+          "rmsdAngstrom": 2.0484955107624172e-7,
+          "maximumFloat32RoundTripResidualAngstrom": 0,
+          "float32RoundTripResidualRmsdAngstrom": 0
+        }
+      },
+      "rotamer": {
+        "residue": {
+          "residueName": "SER",
+          "chain": "A",
+          "residueIndex": 470
+        },
+        "candidates": 4,
+        "seedChiDegrees": [
+          -60
+        ],
+        "maximumDisplacementAngstrom": 0.3126,
+        "feasibleAfterReceptorRefresh": 64,
+        "measuredPocketUndoMaximumDisplacementAngstrom": 0,
+        "pocketInspectionTruncated": true,
+        "error": null
+      },
+      "negative": {
+        "operation": "delete O28",
+        "chemistryValid": true,
+        "contacts": [
+          {
+            "id": "reference-hbond-32",
+            "required": true,
+            "available": false
+          },
+          {
+            "id": "reference-hbond-35",
+            "required": true,
+            "available": false
+          },
+          {
+            "id": "reference-hbond-266",
+            "required": false,
+            "available": true
+          }
+        ],
+        "error": "Error: ChemistActionError: A selected contact has no role-compatible replacement feature; omit it or continue editing.\n    at publicError (http://127.0.0.1:52171/chemist-actions.mjs:410:18)\n    at run (http://127.0.0.1:52171/chemist-actions.mjs:471:13)",
+        "feasible": null
+      },
+      "timings": {
+        "preparation": [
+          {
+            "elapsedMs": 5523,
+            "error": null
+          }
+        ],
+        "refinement": [
+          {
+            "elapsedMs": 1486,
+            "error": null
+          },
+          {
+            "elapsedMs": 1429,
+            "error": null
+          },
+          {
+            "elapsedMs": 1583,
+            "error": null
+          },
+          {
+            "elapsedMs": 38,
+            "error": "Error: ChemistActionError: A selected contact has no role-compatible replacement feature; omit it or continue editing.\n    at publicError (http://127.0.0.1:52171/chemist-actions.mjs:410:18)\n    at run (http://127.0.0.1:52171/chemist-actions.mjs:471:13)"
+          }
+        ],
+        "optimization": [
+          {
+            "elapsedMs": 3338,
+            "error": null
+          },
+          {
+            "elapsedMs": 3746,
+            "error": null
+          }
+        ]
+      },
+      "propagationGates": {
+        "nonemptyCandidates": true,
+        "hasFeasible": true,
+        "coverageComplete": true,
+        "protectedAtomsExact": true,
+        "allAppliedRequiredContactsGeometricallySatisfied": true,
+        "originalRequiredContactSetPreserved": true
+      }
+    },
+    {
+      "id": "p38-thiocarbonyl",
+      "rawSha256": "c63572f3cb342ffae3003ea98313dc41f2563221aab92ab989a253bc39e145ad",
+      "rawBytes": 5634466,
+      "preparedAtomCount": 6498,
+      "baselineFeasible": 64,
+      "positive": {
+        "candidates": 64,
+        "feasible": 64,
+        "coverageComplete": true,
+        "selectedCore": {
+          "rmsdAngstrom": 0,
+          "maximumDisplacementAngstrom": 0,
+          "toleranceAngstrom": 0.5,
+          "violationAngstrom": 0,
+          "satisfied": true,
+          "penaltyKcalMol": 0
+        },
+        "protectedDisplacement": {
+          "compared": 23,
+          "maximumAngstrom": 0,
+          "moved": [],
+          "inputTruncated": false,
+          "outputTruncated": false
+        },
+        "releasedAtomIds": [
+          "chemist-3FLY:HETATM:A:FLY:361::C7:2809",
+          "chemist-3FLY:HETATM:A:FLY:361::O15:2823"
+        ],
+        "sameElementLineageDisplacement": {
+          "compared": 24,
+          "maximumAngstrom": 0.08713867743604271,
+          "moved": [
+            {
+              "atomId": "chemist-3FLY:HETATM:A:FLY:361::C7:2809",
+              "atomName": "C7",
+              "residueName": "FLY",
+              "distance": 0.08713867743604271
+            }
+          ],
+          "inputTruncated": false,
+          "outputTruncated": false
+        },
+        "contactAudit": [
+          {
+            "id": "reference-hbond-183",
+            "label": "FLY A361 N12 → MET A109 O",
+            "available": true,
+            "measurable": true,
+            "donorAcceptorAngstrom": 2.8946379739096897,
+            "hydrogenAcceptorAngstrom": 1.959251987557414,
+            "dhaDegrees": 150.84466973580265,
+            "cachedSatisfied": true,
+            "cachedHydrogenAcceptorAngstrom": 1.9592519875574137,
+            "liveGeometryPass": true,
+            "cachedDistanceDeltaAngstrom": 2.220446049250313e-16
+          },
+          {
+            "id": "reference-hbond-190",
+            "label": "HOH A1065 O → FLY A361 O15",
+            "available": true,
+            "measurable": true,
+            "donorAcceptorAngstrom": 2.6804208691238705,
+            "hydrogenAcceptorAngstrom": 1.9851756437855548,
+            "dhaDegrees": 127.76561588044534,
+            "cachedSatisfied": true,
+            "cachedHydrogenAcceptorAngstrom": 1.9851756437855548,
+            "liveGeometryPass": true,
+            "cachedDistanceDeltaAngstrom": 0
+          }
+        ],
+        "droppedRequiredContacts": [],
+        "requiredContactSetPreserved": true,
+        "selectedSeedAudit": {
+          "conformerIndex": 0,
+          "method": "unaltered-reference-propagation",
+          "coverageStratumIds": [
+            "captured-feature:reference-hbond-190:reference-hbond-190:0"
+          ],
+          "selectionOrdinal": 0,
+          "uniqueSelectionOrdinal": 0
+        },
+        "poseSearchExecution": {
+          "backend": "deterministic Web Worker pose-chain ensemble",
+          "layout": "worker-partitioned independent chains; results restored to conformer order",
+          "workerCount": 8,
+          "chainCount": 64,
+          "elapsedMs": 182.68500006198883,
+          "chainsPerSecond": 350.32980254691665,
+          "deterministicOrdering": "independent per-chain seed; results restored to conformer index",
+          "fallbackReason": null
+        }
+      },
+      "fastPocket": {
+        "accepted": true,
+        "error": null,
+        "maximumLigandHeavyDisplacementAngstrom": 0.2912114553968377,
+        "ligandHeavyAtomsMovingOver001Angstrom": 25,
+        "sampledPocketAtoms": 500,
+        "pocketInspectionTruncated": true,
+        "contactAudit": [
+          {
+            "id": "reference-hbond-183",
+            "label": "FLY A361 N12 → MET A109 O",
+            "available": true,
+            "measurable": true,
+            "donorAcceptorAngstrom": 2.9004031385390743,
+            "hydrogenAcceptorAngstrom": 1.9771328830713684,
+            "dhaDegrees": 148.7739345112697,
+            "cachedSatisfied": true,
+            "cachedHydrogenAcceptorAngstrom": 1.9592519875574137,
+            "liveGeometryPass": true,
+            "cachedDistanceDeltaAngstrom": 0.017880895513954664
+          },
+          {
+            "id": "reference-hbond-190",
+            "label": "HOH A1065 O → FLY A361 O15",
+            "available": true,
+            "measurable": true,
+            "donorAcceptorAngstrom": 2.8810796001541696,
+            "hydrogenAcceptorAngstrom": 2.166226973753105,
+            "dhaDegrees": 130.4740534004754,
+            "cachedSatisfied": true,
+            "cachedHydrogenAcceptorAngstrom": 1.9851756437855548,
+            "liveGeometryPass": true,
+            "cachedDistanceDeltaAngstrom": 0.18105132996755002
+          }
+        ],
+        "undoMaximumLigandDisplacementAngstrom": 0,
+        "fixedAtomMotion": null
+      },
+      "inducedFit": {
+        "accepted": true,
+        "error": null,
+        "maximumLigandHeavyDisplacementAngstrom": 0.17107681534584437,
+        "ligandHeavyAtomsMovingOver001Angstrom": 2,
+        "sampledPocketAtoms": 500,
+        "pocketInspectionTruncated": true,
+        "contactAudit": [
+          {
+            "id": "reference-hbond-183",
+            "label": "FLY A361 N12 → MET A109 O",
+            "available": true,
+            "measurable": true,
+            "donorAcceptorAngstrom": 2.961749962444801,
+            "hydrogenAcceptorAngstrom": 2.018489393439704,
+            "dhaDegrees": 152.21414414376568,
+            "cachedSatisfied": null,
+            "cachedHydrogenAcceptorAngstrom": null,
+            "liveGeometryPass": true,
+            "cachedDistanceDeltaAngstrom": null
+          },
+          {
+            "id": "reference-hbond-190",
+            "label": "HOH A1065 O → FLY A361 O15",
+            "available": true,
+            "measurable": true,
+            "donorAcceptorAngstrom": 2.8646883564121692,
+            "hydrogenAcceptorAngstrom": 2.089522691796839,
+            "dhaDegrees": 137.0114815014702,
+            "cachedSatisfied": null,
+            "cachedHydrogenAcceptorAngstrom": null,
+            "liveGeometryPass": true,
+            "cachedDistanceDeltaAngstrom": null
+          }
+        ],
+        "undoMaximumLigandDisplacementAngstrom": 0,
+        "fixedAtomMotion": {
+          "accepted": true,
+          "comparison": "post-WebGPU coordinates versus exact float32-nm round-trip of pre-WebGPU coordinates",
+          "toleranceAngstrom": 0.000001,
+          "atomIds": [
+            "chemist-3FLY:HETATM:A:FLY:361::C11:2811",
+            "chemist-3FLY:HETATM:A:FLY:361::C13:2812",
+            "chemist-3FLY:HETATM:A:FLY:361::C14:2813",
+            "chemist-3FLY:HETATM:A:FLY:361::C17:2814",
+            "chemist-3FLY:HETATM:A:FLY:361::C18:2815",
+            "chemist-3FLY:HETATM:A:FLY:361::C19:2816",
+            "chemist-3FLY:HETATM:A:FLY:361::C20:2817",
+            "chemist-3FLY:HETATM:A:FLY:361::C21:2818",
+            "chemist-3FLY:HETATM:A:FLY:361::C22:2819",
+            "chemist-3FLY:HETATM:A:FLY:361::C25:2825",
+            "chemist-3FLY:HETATM:A:FLY:361::C2:2803",
+            "chemist-3FLY:HETATM:A:FLY:361::C3:2804",
+            "chemist-3FLY:HETATM:A:FLY:361::C4:2806",
+            "chemist-3FLY:HETATM:A:FLY:361::C5:2807",
+            "chemist-3FLY:HETATM:A:FLY:361::C6:2808",
+            "chemist-3FLY:HETATM:A:FLY:361::C9:2810",
+            "chemist-3FLY:HETATM:A:FLY:361::F23:2821",
+            "chemist-3FLY:HETATM:A:FLY:361::F24:2820",
+            "chemist-3FLY:HETATM:A:FLY:361::N10:2826",
+            "chemist-3FLY:HETATM:A:FLY:361::N12:2827",
+            "chemist-3FLY:HETATM:A:FLY:361::N1:2805",
+            "chemist-3FLY:HETATM:A:FLY:361::N8:2824",
+            "chemist-3FLY:HETATM:A:FLY:361::O16:2822"
+          ],
+          "atomCount": 23,
+          "maximumDisplacementAngstrom": 5.626382899621793e-7,
+          "rmsdAngstrom": 2.6807576599432477e-7,
+          "maximumFloat32RoundTripResidualAngstrom": 0,
+          "float32RoundTripResidualRmsdAngstrom": 0
+        }
+      },
+      "rotamer": {
+        "residue": {
+          "residueName": "MET",
+          "chain": "A",
+          "residueIndex": 109
+        },
+        "candidates": 16,
+        "seedChiDegrees": [
+          -60,
+          -60,
+          -60
+        ],
+        "maximumDisplacementAngstrom": 0.3283,
+        "feasibleAfterReceptorRefresh": 64,
+        "measuredPocketUndoMaximumDisplacementAngstrom": 0,
+        "pocketInspectionTruncated": true,
+        "error": null
+      },
+      "negative": {
+        "operation": "N12 -> C",
+        "chemistryValid": true,
+        "contacts": [
+          {
+            "id": "reference-hbond-183",
+            "required": true,
+            "available": false
+          },
+          {
+            "id": "reference-hbond-190",
+            "required": true,
+            "available": true
+          }
+        ],
+        "error": "Error: ChemistActionError: A selected contact has no role-compatible replacement feature; omit it or continue editing.\n    at publicError (http://127.0.0.1:52245/chemist-actions.mjs:410:18)\n    at run (http://127.0.0.1:52245/chemist-actions.mjs:471:13)",
+        "feasible": null
+      },
+      "timings": {
+        "preparation": [
+          {
+            "elapsedMs": 6832,
+            "error": null
+          }
+        ],
+        "refinement": [
+          {
+            "elapsedMs": 942,
+            "error": null
+          },
+          {
+            "elapsedMs": 782,
+            "error": null
+          },
+          {
+            "elapsedMs": 941,
+            "error": null
+          },
+          {
+            "elapsedMs": 38,
+            "error": "Error: ChemistActionError: A selected contact has no role-compatible replacement feature; omit it or continue editing.\n    at publicError (http://127.0.0.1:52245/chemist-actions.mjs:410:18)\n    at run (http://127.0.0.1:52245/chemist-actions.mjs:471:13)"
+          }
+        ],
+        "optimization": [
+          {
+            "elapsedMs": 3783,
+            "error": null
+          },
+          {
+            "elapsedMs": 4281,
+            "error": null
+          }
+        ]
+      },
+      "propagationGates": {
+        "nonemptyCandidates": true,
+        "hasFeasible": true,
+        "coverageComplete": true,
+        "protectedAtomsExact": true,
+        "allAppliedRequiredContactsGeometricallySatisfied": true,
+        "originalRequiredContactSetPreserved": true
+      }
+    },
+    {
+      "id": "cdk2-meta-chloro",
+      "rawSha256": "beb9ad76d7f67d43335bdedbdf30c25eb9ce675e4dbb0c946fd772be06863d08",
+      "rawBytes": 5453850,
+      "preparedAtomCount": 4867,
+      "baselineFeasible": 64,
+      "positive": {
+        "candidates": 64,
+        "feasible": 23,
+        "coverageComplete": true,
+        "selectedCore": {
+          "rmsdAngstrom": 0,
+          "maximumDisplacementAngstrom": 0,
+          "toleranceAngstrom": 0.5,
+          "violationAngstrom": 0,
+          "satisfied": true,
+          "penaltyKcalMol": 0
+        },
+        "protectedDisplacement": {
+          "compared": 19,
+          "maximumAngstrom": 0,
+          "moved": [],
+          "inputTruncated": false,
+          "outputTruncated": false
+        },
+        "releasedAtomIds": [
+          "reference-1H1Q:HETATM:A:2A6:1298::C21:8958",
+          "reference-1H1Q:HETATM:A:2A6:1298::C20:8957",
+          "reference-1H1Q:HETATM:A:2A6:1298::C22:8959",
+          "reference-1H1Q:HETATM:A:2A6:1298::C19:8956",
+          "reference-1H1Q:HETATM:A:2A6:1298::C18:8970"
+        ],
+        "sameElementLineageDisplacement": {
+          "compared": 24,
+          "maximumAngstrom": 2.505730629814241,
+          "moved": [
+            {
+              "atomId": "reference-1H1Q:HETATM:A:2A6:1298::C19:8956",
+              "atomName": "C19",
+              "residueName": "2A6",
+              "distance": 2.505730629814241
+            },
+            {
+              "atomId": "reference-1H1Q:HETATM:A:2A6:1298::C20:8957",
+              "atomName": "C20",
+              "residueName": "2A6",
+              "distance": 0.11277760116122101
+            },
+            {
+              "atomId": "reference-1H1Q:HETATM:A:2A6:1298::C21:8958",
+              "atomName": "C21",
+              "residueName": "2A6",
+              "distance": 2.3476171814588325
+            },
+            {
+              "atomId": "reference-1H1Q:HETATM:A:2A6:1298::C22:8959",
+              "atomName": "C22",
+              "residueName": "2A6",
+              "distance": 2.4139234076363008
+            },
+            {
+              "atomId": "reference-1H1Q:HETATM:A:2A6:1298::C18:8970",
+              "atomName": "C18",
+              "residueName": "2A6",
+              "distance": 2.4392347595553088
+            }
+          ],
+          "inputTruncated": false,
+          "outputTruncated": false
+        },
+        "contactAudit": [
+          {
+            "id": "reference-hbond-120",
+            "label": "LEU A83 N → 2A6 A1298 N3",
+            "available": true,
+            "measurable": true,
+            "donorAcceptorAngstrom": 3.0461442841730255,
+            "hydrogenAcceptorAngstrom": 2.0863509879057442,
+            "dhaDegrees": 157.94504809734235,
+            "cachedSatisfied": true,
+            "cachedHydrogenAcceptorAngstrom": 2.0863509879057442,
+            "liveGeometryPass": true,
+            "cachedDistanceDeltaAngstrom": 0
+          }
+        ],
+        "droppedRequiredContacts": [
+          {
+            "id": "reference-hbond-100",
+            "label": "2A6 A1298 N7 → HOH A2117 O",
+            "after": {
+              "contactId": "reference-hbond-100",
+              "label": "2A6 A1298 N7 → HOH A2117 O",
+              "origin": null,
+              "required": false,
+              "available": false,
+              "remapStatus": "unavailable",
+              "hydrogenBond": {
+                "receptorRole": "acceptor",
+                "selectedAlternativeId": null,
+                "satisfied": null,
+                "donorAcceptorDistanceAngstrom": null,
+                "hydrogenAcceptorDistanceAngstrom": null,
+                "dhaAngleDegrees": null,
+                "participants": {
+                  "donor": {
+                    "scope": "ligand",
+                    "atomId": "reference-1H1Q:HETATM:A:2A6:1298::N7:8964",
+                    "element": "N",
+                    "coordinatesAngstrom": [
+                      3.0520617488603348,
+                      5.247191048487423,
+                      -12.149759220886715
+                    ]
+                  },
+                  "hydrogen": {
+                    "scope": "ligand",
+                    "atomId": "reference-1H1Q:HETATM:A:2A6:1298::H18:",
+                    "element": "H"
+                  },
+                  "acceptor": {
+                    "scope": "receptor",
+                    "atomId": "reference-1H1Q:HETATM:A:HOH:2117::O:9111",
+                    "element": "O",
+                    "coordinatesAngstrom": [
+                      2.7510617488603346,
+                      6.420191048487425,
+                      -9.528759220886712
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "requiredContactSetPreserved": false,
+        "selectedSeedAudit": {
+          "conformerIndex": 1,
+          "method": "untargeted-edit-region-torsion-scan",
+          "anchorAtomIndex": 6,
+          "axisAtomIndex": 10,
+          "boundaryAtomIndices": [
+            8,
+            3
+          ],
+          "attachmentMode": "conserved-junction-ring-axis",
+          "movedAtomCount": 10,
+          "movedHeavyAtomCount": 6,
+          "axialAngleDegrees": 180,
+          "coverageStratumIds": [
+            "untargeted-rotor:6:10:0",
+            "affected-rotor:bond-5",
+            "affected-rotor-opposite:bond-5"
+          ],
+          "selectionOrdinal": 1,
+          "uniqueSelectionOrdinal": 1
+        },
+        "poseSearchExecution": {
+          "backend": "deterministic Web Worker pose-chain ensemble",
+          "layout": "worker-partitioned independent chains; results restored to conformer order",
+          "workerCount": 8,
+          "chainCount": 64,
+          "elapsedMs": 369.24000000953674,
+          "chainsPerSecond": 173.32900010385387,
+          "deterministicOrdering": "independent per-chain seed; results restored to conformer index",
+          "fallbackReason": null
+        }
+      },
+      "fastPocket": {
+        "accepted": true,
+        "error": null,
+        "maximumLigandHeavyDisplacementAngstrom": 0.5820119316998092,
+        "ligandHeavyAtomsMovingOver001Angstrom": 25,
+        "sampledPocketAtoms": 500,
+        "pocketInspectionTruncated": true,
+        "contactAudit": [
+          {
+            "id": "reference-hbond-120",
+            "label": "LEU A83 N → 2A6 A1298 N3",
+            "available": true,
+            "measurable": true,
+            "donorAcceptorAngstrom": 3.017676281110879,
+            "hydrogenAcceptorAngstrom": 2.067764336075744,
+            "dhaDegrees": 155.82681847961948,
+            "cachedSatisfied": true,
+            "cachedHydrogenAcceptorAngstrom": 2.0863509879057442,
+            "liveGeometryPass": true,
+            "cachedDistanceDeltaAngstrom": -0.01858665183000019
+          }
+        ],
+        "undoMaximumLigandDisplacementAngstrom": 0,
+        "fixedAtomMotion": null
+      },
+      "inducedFit": {
+        "accepted": true,
+        "error": null,
+        "maximumLigandHeavyDisplacementAngstrom": 0.03574048017820036,
+        "ligandHeavyAtomsMovingOver001Angstrom": 1,
+        "sampledPocketAtoms": 500,
+        "pocketInspectionTruncated": true,
+        "contactAudit": [
+          {
+            "id": "reference-hbond-120",
+            "label": "LEU A83 N → 2A6 A1298 N3",
+            "available": true,
+            "measurable": true,
+            "donorAcceptorAngstrom": 3.1072250444821248,
+            "hydrogenAcceptorAngstrom": 2.1332421907738506,
+            "dhaDegrees": 158.4774132007486,
+            "cachedSatisfied": null,
+            "cachedHydrogenAcceptorAngstrom": null,
+            "liveGeometryPass": true,
+            "cachedDistanceDeltaAngstrom": null
+          }
+        ],
+        "undoMaximumLigandDisplacementAngstrom": 0,
+        "fixedAtomMotion": {
+          "accepted": true,
+          "comparison": "post-WebGPU coordinates versus exact float32-nm round-trip of pre-WebGPU coordinates",
+          "toleranceAngstrom": 0.000001,
+          "atomIds": [
+            "reference-1H1Q:HETATM:A:2A6:1298::C10:8949",
+            "reference-1H1Q:HETATM:A:2A6:1298::C11:8950",
+            "reference-1H1Q:HETATM:A:2A6:1298::C12:8951",
+            "reference-1H1Q:HETATM:A:2A6:1298::C13:8952",
+            "reference-1H1Q:HETATM:A:2A6:1298::C14:8953",
+            "reference-1H1Q:HETATM:A:2A6:1298::C15:8954",
+            "reference-1H1Q:HETATM:A:2A6:1298::C16:8955",
+            "reference-1H1Q:HETATM:A:2A6:1298::C17:8969",
+            "reference-1H1Q:HETATM:A:2A6:1298::C18:8970",
+            "reference-1H1Q:HETATM:A:2A6:1298::C19:8956",
+            "reference-1H1Q:HETATM:A:2A6:1298::C20:8957",
+            "reference-1H1Q:HETATM:A:2A6:1298::C21:8958",
+            "reference-1H1Q:HETATM:A:2A6:1298::C22:8959",
+            "reference-1H1Q:HETATM:A:2A6:1298::C2:8947",
+            "reference-1H1Q:HETATM:A:2A6:1298::C4:8966",
+            "reference-1H1Q:HETATM:A:2A6:1298::C5:8963",
+            "reference-1H1Q:HETATM:A:2A6:1298::C6:8961",
+            "reference-1H1Q:HETATM:A:2A6:1298::C8:8948",
+            "reference-1H1Q:HETATM:A:2A6:1298::N1:8960",
+            "reference-1H1Q:HETATM:A:2A6:1298::N2:8968",
+            "reference-1H1Q:HETATM:A:2A6:1298::N3:8967",
+            "reference-1H1Q:HETATM:A:2A6:1298::N7:8964",
+            "reference-1H1Q:HETATM:A:2A6:1298::N9:8965",
+            "reference-1H1Q:HETATM:A:2A6:1298::O6:8962"
+          ],
+          "atomCount": 24,
+          "maximumDisplacementAngstrom": 5.953640375341267e-7,
+          "rmsdAngstrom": 3.296666644966937e-7,
+          "maximumFloat32RoundTripResidualAngstrom": 0,
+          "float32RoundTripResidualRmsdAngstrom": 0
+        }
+      },
+      "rotamer": {
+        "residue": {
+          "residueName": "PHE",
+          "chain": "A",
+          "residueIndex": 80
+        },
+        "candidates": 13,
+        "seedChiDegrees": [
+          -60,
+          -90
+        ],
+        "maximumDisplacementAngstrom": 2.9704,
+        "feasibleAfterReceptorRefresh": 23,
+        "measuredPocketUndoMaximumDisplacementAngstrom": 0,
+        "pocketInspectionTruncated": true,
+        "error": null
+      },
+      "negative": {
+        "operation": "N3 -> C",
+        "chemistryValid": false,
+        "error": "Error: ChemistActionError: Change an aromatic atom by first kekulizing its ring bond; aromatic heteroatom states are not guessed.\n    at publicError (http://127.0.0.1:52306/chemist-actions.mjs:410:18)\n    at run (http://127.0.0.1:52306/chemist-actions.mjs:471:13)",
+        "feasible": null
+      },
+      "timings": {
+        "preparation": [
+          {
+            "elapsedMs": 4046,
+            "error": null
+          }
+        ],
+        "refinement": [
+          {
+            "elapsedMs": 1225,
+            "error": null
+          },
+          {
+            "elapsedMs": 820,
+            "error": null
+          },
+          {
+            "elapsedMs": 892,
+            "error": null
+          }
+        ],
+        "optimization": [
+          {
+            "elapsedMs": 2877,
+            "error": null
+          },
+          {
+            "elapsedMs": 3294,
+            "error": null
+          }
+        ]
+      },
+      "propagationGates": {
+        "nonemptyCandidates": true,
+        "hasFeasible": true,
+        "coverageComplete": true,
+        "protectedAtomsExact": true,
+        "allAppliedRequiredContactsGeometricallySatisfied": true,
+        "originalRequiredContactSetPreserved": false
+      }
+    }
+  ],
+  "allPropagationContractsPass": false
+}

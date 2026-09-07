@@ -1,0 +1,9 @@
+Dynamics bond constraints
+Close help
+
+These constrain covalent X–H bond lengths—not noncovalent ligand–protein H-bonds or the Required contacts in Design. Unsupported methods ignore this setting.
+
+X–H constraints · 2 fs · selected
+Constrain X–H covalent bonds with SHAKE and project velocities with RATTLE; supported force-field dynamics use 2 fs steps.
+Flexible bonds · 1 fs
+Keep bonds flexible; supported force-field dynamics use 1 fs steps.

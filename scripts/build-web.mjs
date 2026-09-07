@@ -26,7 +26,7 @@ const files = [
   'design-history/publications/sos1/checkpoints/finish-bay-293-campaign.json',
   'LICENSE', 'NOTICE', 'README.md', 'CHEMIST-ACTIONS-API.md', 'DESIGNER-MOVES.md', 'THIRD_PARTY_NOTICES.md',
   'index.html', 'reproductions.html', 'app.js', 'chemist-actions.mjs', 'styles.css', 'molarium-workspace.css', 'independent-layout-study.css',
-  'molecular-state-hash.mjs',
+  'molecular-state-hash.mjs', 'design-help.mjs',
   'protein-residue-templates.js', 'rdkit-worker.js', 'openmm-worker.js', 'webgpu-worker.js',
   'stormm-worker.js', 'mlip-worker.js', 'local-lab-test.js',
   'validation/README.md', 'validation/dashboard.mjs', 'validation/registry.v0.1.json',

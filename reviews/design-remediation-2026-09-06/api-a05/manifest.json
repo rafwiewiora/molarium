@@ -1,0 +1,50 @@
+{
+  "schema": "molarium.design-remediation-archive/v1",
+  "archivedAt": "2026-09-07T01:49:15.864Z",
+  "startedAt": "2026-09-07T01:47:38.149Z",
+  "finishedAt": "2026-09-07T01:48:08.407Z",
+  "acceptance": "passed-source-stable-development-regression",
+  "findings": [
+    "DV-01",
+    "DV-02",
+    "DV-03"
+  ],
+  "gitHead": "29122735500bd49c5f9d20df705c5532a275b2ea",
+  "sourceSha256": {
+    "app.js": "c1d10fdff968b4eaafcaadd56b1773478c1aaa84b11603a121acc82f2985ff5d",
+    "docking/contact-state.mjs": "05263c53e7c5cbf097cc56bf988c7e4d9e0eed61e798a172243af30ba71d8c5a",
+    "docking/contact-capture-policy.mjs": "828468cf035d54ebbdd7ba649f062f459445dd7febd4cf0512881088f71deb66",
+    "docking/contact-remap.mjs": "6ddcd28e88c2f67859c22bc9ff68575c647eb23b4c4b1b9d143c2b80f7e7d776",
+    "docking/browser-adapter.mjs": "9c3cc68c6ce6b593b7283b0f8cb0408a55e49c2a79baa3a7d200a0bc9560b429",
+    "docking/protocol.mjs": "034218fcee594c708eecb04f9f31ec1ed1085dd8ea63d9c10869edcbbb4cf30e",
+    "docking/registered-donor-hydrogen.mjs": "5fdd27416bdd536111f4c1a3a821f942257a712731d72bef33f24602fcfc7c4c",
+    "docking/benchmark/design-contact-remediation.mjs": "31976de4897056c0155064bff44906c63b23d1970be3f3ae42fda1591f00d777",
+    "design-history/structures/generated/cdk2-prospective-campaign.json": "9f9687f711ac85d2a5826f218b850eee5f18a46484b43f64fe7101cfabf4b09a"
+  },
+  "files": [
+    {
+      "path": "result.json.gz",
+      "encoding": "gzip",
+      "bytes": 296221,
+      "sha256": "f159c859372d3bad25e353b8442e9780aea89ab7dcbd5f476aaaddc11293a508",
+      "decodedBytes": 4532688,
+      "decodedSha256": "d52ba48702390f9b5e2fb638571cd564b0d038869c245ec82b528e71c8ab26ca"
+    },
+    {
+      "path": "source-bundle.json.gz",
+      "encoding": "gzip",
+      "bytes": 251818,
+      "sha256": "6d3ce28227a475861f0000be35f6c68b2ff5bc81a81591250af1e6896fd94dc0",
+      "decodedBytes": 1139254,
+      "decodedSha256": "d6427ce4add22325d736be40641ce1d48ed77393650e7f4853cb70d4bb3a963d"
+    },
+    {
+      "path": "parp2-reference.pdb.gz",
+      "encoding": "gzip",
+      "bytes": 65038,
+      "sha256": "379ffdc720a5849266607273137ed01b8690cfe8762d44a0b22d36cf22afa052",
+      "decodedBytes": 272408,
+      "decodedSha256": "7342b80bdc90d1a32e101cc8cbe8c576efd5f26d4fcce8357003a9b06a3c3f8b"
+    }
+  ]
+}

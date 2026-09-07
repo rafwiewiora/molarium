@@ -1,0 +1,297 @@
+- banner:
+  - link "Molarium home":
+    - /url: "#"
+    - generic: MOLARIUM
+    - generic: molecular studio
+  - button "Open data privacy and network policy":
+    - generic: Local Lab · network locked
+  - navigation "Primary navigation":
+    - link "View Molarium on GitHub":
+      - /url: https://github.com/rafwiewiora/molarium
+      - generic: GitHub
+    - link "Methods":
+      - /url: "#methods"
+    - link "Reproductions":
+      - /url: /reproductions
+    - link "Validation":
+      - /url: "#validation"
+    - link "Credits":
+      - /url: "#credits"
+- main:
+  - complementary:
+    - button "Load Molecule" [expanded]:
+      - generic: Load Molecule
+    - tablist:
+      - tab "Paste"
+      - tab "Upload"
+      - tab "Identifier"
+    - generic: Structure Input
+    - textbox "Structure Input":
+      - /placeholder: Paste PDB or XYZ molecular data
+    - button "About load coordinate text": i
+    - button "Parse Input"
+    - button "About parse pasted coordinates": i
+    - generic: Protonation
+    - generic: 2 states
+    - text: pH
+    - spinbutton "pH": "7.4"
+    - button "About ligand protonation ph": i
+    - button "Enumerate"
+    - button "About enumerate ligand protonation states": i
+    - combobox "Protonation state":
+      - option "1. charge +1 · 85% · recommended" [selected]
+      - option "2. charge +0 · 15%"
+    - button "About choose a ligand protonation state": i
+    - button "Use state"
+    - button "About apply the chosen protonation state": i
+    - paragraph: Charge +1 · ~85% independent-site estimate · Amines_primary_secondary_tertiary pKa 8.2 ± 2.5 · Indole_pyrrole pKa 14.5 ± 4.1
+    - generic: Prepared simulation examples
+    - button "Trp-cage · 304 atoms"
+    - button "About load prepared trp-cage": i
+    - button "Ubiquitin · 1,231 atoms"
+    - button "About load prepared ubiquitin": i
+    - button "Collapse Design tools" [expanded]:
+      - generic: Design tools
+    - button "⊕ Add"
+    - button "About add atoms or fragments": i
+    - button "⌖ Select"
+    - button "About select atoms" [active]: i
+    - button "✣ Move"
+    - button "About move atoms directly": i
+    - heading "Element" [level=2]
+    - button "C"
+    - button "About choose an element to add · C": i
+    - button "H"
+    - button "About choose an element to add · H": i
+    - button "N"
+    - button "About choose an element to add · N": i
+    - button "O"
+    - button "About choose an element to add · O": i
+    - button "F"
+    - button "About choose an element to add · F": i
+    - button "S"
+    - button "About choose an element to add · S": i
+    - button "Cl"
+    - button "About choose an element to add · Cl": i
+    - button "P"
+    - button "About choose an element to add · P": i
+    - button "Br"
+    - button "About choose an element to add · Br": i
+    - button "I"
+    - button "About choose an element to add · I": i
+    - heading "Actions" [level=2]
+    - combobox "Design optimizer":
+      - option "OpenFF Sage 2.1 · WebGPU" [selected]
+      - option "MMFF94 · UFF fallback"
+      - option "ANI-2x · MLIP WebGPU"
+    - button "About compare optimization methods": i
+    - button "⚡ Optimize"
+    - button "About optimize with the selected method": i
+    - paragraph: The OpenFF Sage 2.1 numeric System runs directly on WebGPU. Independent OpenMM checks remain validation-only.
+    - button "↶ Undo" [disabled]
+    - button "About undo the last molecular edit": i
+    - button "↪ Redo" [disabled]
+    - button "About redo an undone edit": i
+    - heading "Adjust Geometry" [level=2]
+    - paragraph: Choose Select, then pick 2 atoms for a bond, 3 for an angle, or 4 for a torsion.
+    - slider [disabled]: "50"
+    - button "About adjust selected geometry": i
+    - spinbutton "Geometry value" [disabled]
+    - generic: —
+    - button "About set a precise geometry value": i
+    - checkbox "Move connected atoms" [checked]
+    - text: Move connected atoms
+    - button "About move the attached group": i
+    - checkbox "Hold current ligand geometry fixed" [disabled]
+    - text: Hold current ligand geometry fixed
+    - button "About hold the designer’s ligand pose": i
+    - paragraph: After an attachment or torsion edit, fix the current ligand coordinates as designer intent before sampling receptor response.
+    - heading "Edit Chemistry" [level=2]
+    - paragraph: Choose Select, then pick one atom or a pair of atoms.
+    - text: Element
+    - combobox "Element" [disabled]:
+      - option "H"
+      - option "B"
+      - option "C" [selected]
+      - option "N"
+      - option "O"
+      - option "F"
+      - option "Si"
+      - option "P"
+      - option "S"
+      - option "Cl"
+      - option "Br"
+      - option "I"
+    - button "About change the selected atom’s element": i
+    - text: Formal charge
+    - spinbutton "Formal charge" [disabled]: "0"
+    - button "About set formal charge": i
+    - button "Apply atom" [disabled]
+    - button "About apply atom chemistry": i
+    - combobox "Bond order" [disabled]:
+      - option "Single" [selected]
+      - option "Double"
+      - option "Triple"
+      - option "Aromatic ring"
+    - button "About choose bond chemistry": i
+    - button "Create bond" [disabled]
+    - button "About set a bond": i
+    - button "Delete bond" [disabled]
+    - button "About delete a bond": i
+    - button "+ H" [disabled]
+    - button "About add an explicit hydrogen": i
+    - button "− H" [disabled]
+    - button "About remove an explicit hydrogen": i
+    - button "Delete atom" [disabled]
+    - button "About delete the selected atom": i
+    - generic "Options"
+    - paragraph: Formal charge is editable; force-field partial charges remain derived.
+    - text: ›
+  - generic "Interactive 3D molecule viewer"
+  - group "Mode selection":
+    - button "View"
+    - button "Design"
+    - button "Simulate"
+  - region "2D structure viewer":
+    - button "2D LSD" [expanded]:
+      - strong: 2D
+      - generic: LSD
+    - toolbar "2D drawing tools":
+      - button "Select" [pressed]
+      - button "About select in 2d": i
+      - button "Atom"
+      - button "About draw an atom in 2d": i
+      - button "Bond"
+      - button "About draw a bond in 2d": i
+      - button "Erase"
+      - button "About erase 2d chemistry": i
+    - text: Element
+    - combobox "2D drawing element":
+      - option "C" [selected]
+      - option "N"
+      - option "O"
+      - option "F"
+      - option "P"
+      - option "S"
+      - option "Cl"
+      - option "Br"
+      - option "I"
+    - button "About element for 2d drawing": i
+    - text: Bond
+    - combobox "2D drawing bond order":
+      - option "Single" [selected]
+      - option "Double"
+      - option "Triple"
+      - option "Aromatic"
+    - button "About bond order for 2d drawing": i
+    - img "RDKit 2D molecular depiction":
+    - paragraph: Select an atom or bond here; use the Design panel for element and charge changes.
+  - button "Export"
+  - button "About export current coordinates": i
+  - button "Clear"
+  - button "About clear the molecular workspace": i
+  - button "Share"
+  - button "About share the current molecule": i
+  - button "Save"
+  - button "About save a picture": i
+  - button "Fullscreen"
+  - button "About toggle the full-screen viewer": i
+  - generic: "⊕ Add C: click near an atom to bond · click open space for a separate molecule"
+  - complementary:
+    - button "Collapse Molecule Info" [expanded]:
+      - generic: Molecule Info
+    - term: Atoms
+    - definition: C 20, H 25, N 3, O 1
+    - term: Formula
+    - definition: C₂₀H₂₅N₃O
+    - term: Charge
+    - definition: "0"
+    - term: Multiplicity
+    - definition: "1"
+    - term: Point group
+    - definition: C1
+    - term: Symmetry no.
+    - definition: "1"
+    - text: SMILES
+    - code: CCN(CC)C(=O)[C@H]1CN([C@@H]2CC3=CNC4=CC=CC(=C34)C2=C1)C
+    - button "Copy"
+    - button "About copy the chemical graph": i
+    - button "Collapse Design History" [expanded]:
+      - generic: Design History
+    - status: No active campaign · history stays on this device.
+    - textbox "Campaign title"
+    - button "About name the campaign": i
+    - textbox "Campaign ID":
+      - /placeholder: campaign-id
+    - button "About set the campaign identifier": i
+    - button "Start & commit"
+    - button "About start a campaign and commit": i
+    - button "Import story"
+    - button "About import an executable design story": i
+    - button "Import"
+    - button "About import saved campaign history": i
+    - button "Export" [disabled]
+    - button "About export the local campaign": i
+    - button "Verify" [disabled]
+    - button "About verify campaign integrity": i
+    - button "Close" [disabled]
+    - button "About close the active campaign": i
+    - button "Collapse Design workspace" [expanded]:
+      - generic: Design workspace
+    - heading "Fragment Library" [level=2]
+    - textbox "Custom SMILES"
+    - button "About specify a custom fragment": i
+    - button "Stage"
+    - button "About stage a fragment for attachment": i
+    - heading "Templates" [level=3]
+    - textbox "Search templates…"
+    - button "About find a fragment template": i
+    - button "−CH₃ Methyl":
+      - strong: −CH₃
+      - generic: Methyl
+    - button "About stage this fragment template · Methyl": i
+    - button "−CH₂CH₃ Ethyl":
+      - strong: −CH₂CH₃
+      - generic: Ethyl
+    - button "About stage this fragment template · Ethyl": i
+    - button "−CH(CH₃)₂ Isopropyl":
+      - strong: −CH(CH₃)₂
+      - generic: Isopropyl
+    - button "About stage this fragment template · Isopropyl": i
+    - button "−C(CH₃)₃ Tert-butyl":
+      - strong: −C(CH₃)₃
+      - generic: Tert-butyl
+    - button "About stage this fragment template · Tert-butyl": i
+    - button "−CHO Formyl":
+      - strong: −CHO
+      - generic: Formyl
+    - button "About stage this fragment template · Formyl": i
+    - button "−OH Hydroxyl":
+      - strong: −OH
+      - generic: Hydroxyl
+    - button "About stage this fragment template · Hydroxyl": i
+    - button "−COOH Carboxyl":
+      - strong: −COOH
+      - generic: Carboxyl
+    - button "About stage this fragment template · Carboxyl": i
+    - button "−C≡CH Ethynyl":
+      - strong: −C≡CH
+      - generic: Ethynyl
+    - button "About stage this fragment template · Ethynyl": i
+    - button "−CF₃ Trifluoromethyl":
+      - strong: −CF₃
+      - generic: Trifluoromethyl
+    - button "About stage this fragment template · Trifluoromethyl": i
+    - button "−C≡N Cyano":
+      - strong: −C≡N
+      - generic: Cyano
+    - button "About stage this fragment template · Cyano": i
+    - button "−NH₂ Amino":
+      - strong: −NH₂
+      - generic: Amino
+    - button "About stage this fragment template · Amino": i
+    - button "−C₆H₅ Phenyl":
+      - strong: −C₆H₅
+      - generic: Phenyl
+    - button "About stage this fragment template · Phenyl": i
+- status

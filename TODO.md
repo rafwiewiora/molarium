@@ -3,6 +3,8 @@
 The broader roadmap is in [NEXT-BEST-IDEAS.md](./NEXT-BEST-IDEAS.md).
 The dated [Astra review and remediation log](./reviews/ASTRA_REVIEW_OF_SOL_WORK_2026-09-05.md)
 separate confirmed defects, completed fixes, and remaining validation work.
+Design findings have their own [public finding-to-fix ledger](./reviews/DESIGN_FINDINGS_AND_FIXES_2026-09-06.md)
+with stable `DV-` identifiers and links to original observations and follow-up evidence.
 
 ## Simulation correctness and release gates
 
@@ -21,4 +23,11 @@ separate confirmed defects, completed fixes, and remaining validation work.
 
 ## Reference-guided design
 
-- [ ] Add a separately labelled, reference-preserving restrained pocket relax: keep inherited ligand heavy atoms fixed, move edited/released ligand atoms and nearby receptor side chains, and retain the selected pharmacophore contacts as explicit restraints. Validate it independently from the current unconstrained pocket-relax action.
+- [x] Run the [three-system API and hands-on browser functional panel](./reviews/DESIGN_FUNCTION_VALIDATION_2026-09-06.md); preserve successes, preparation failures, and the failed required-contact-set gate.
+- [x] Preserve required-contact decisions through registered graph edits and contact-list rendering, invalidate stale candidate feasibility after requirement changes, and preserve an unchanged single donor H across registered staging; both original CDK2 contacts now survive the source-stable API regression (DV-01).
+- [x] Separate cached candidate geometry from live geometry measured using current participant coordinates; commit applied alternative-feature maps with Undo/Redo state (DV-02).
+- [x] Distinguish inherited identity, released subsets and actual fixed core in the UI/API; provide concise accessible **i** help for 143 static workspace parameter/action controls plus dynamic Design controls, with explicit navigation exclusions and API-only overrides (DV-04).
+- [x] Make carbon-bound F hypotheses explicitly weak and optional by default under a versioned, primary-source-grounded capture policy; preserve explicit requirements and historical feature identities (DV-03). A general fluorine interaction model is not claimed.
+- [ ] Diagnose the uncurated full-assembly 1H1Q preparation's modeled-atom 0.098 Å clash without weakening the guard (DV-05).
+- [ ] Add a separately labelled, reference-preserving restrained pocket relax: keep protected inherited ligand heavy atoms fixed, move edited/released ligand atoms and nearby receptor side chains, and retain the selected pharmacophore contacts as explicit restraints. Validate it independently from the current unconstrained pocket-relax action (DV-06).
+- [ ] Extend full-complex Undo, matched API/UI water-policy, cross-browser, and coupled rotamer/minimization validation; the current panel's limited observations are retained as such (DV-07).

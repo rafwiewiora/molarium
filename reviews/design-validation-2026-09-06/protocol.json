@@ -1,0 +1,73 @@
+{
+  "schema": "molarium.design-function-validation/v1",
+  "startedAt": "2026-09-07T00:59:53.041Z",
+  "panel": [
+    {
+      "id": "parp2-distal-halogen",
+      "source": "prospective-parp2-4zzy-d7n-amide-to-nitrile",
+      "edit": {
+        "atom": "F5",
+        "element": "Cl"
+      },
+      "negativeAtom": "O28",
+      "rotamer": {
+        "residueName": "SER",
+        "chain": "A",
+        "residueIndex": 470
+      }
+    },
+    {
+      "id": "p38-thiocarbonyl",
+      "source": "prospective-p38-3fly-fly-carbonyl-to-thiocarbonyl",
+      "edit": {
+        "atom": "O15",
+        "element": "S"
+      },
+      "negativeAtom": "N12",
+      "negativeElement": "C",
+      "rotamer": {
+        "residueName": "MET",
+        "chain": "A",
+        "residueIndex": 109
+      }
+    },
+    {
+      "id": "cdk2-meta-chloro",
+      "source": "paired-cdk2-1h1q-2a6-to-1h1r-6cp",
+      "route": "cdk2-hit-only",
+      "step": "add-meta-chloro",
+      "negativeAtom": "N3",
+      "negativeElement": "C",
+      "rotamer": {
+        "residueName": "PHE",
+        "chain": "A",
+        "residueIndex": 80
+      }
+    }
+  ],
+  "interpretation": "Development functional panel, selected using known preparation viability; not blind pose prediction or affinity validation.",
+  "preparation": {
+    "pH": 7.4,
+    "histidine": "auto",
+    "repairMissingHeavy": true,
+    "ligandPolicy": "registered",
+    "waterPolicy": "retain",
+    "gapPolicy": "cap"
+  },
+  "requiredContactPolicy": "Require captured contacts with a ligand N/O donor or acceptor; omit other elements, including organofluorine acceptors, explicitly before edits.",
+  "search": {
+    "searchChains": 64,
+    "execution": "auto",
+    "featureSeedingProtocol": "v5"
+  },
+  "tests": [
+    "unmodified baseline",
+    "positive graph edit",
+    "exact protected coordinates after apply; report edit-associated rotor releases separately",
+    "live H-bond geometry before/after both pocket methods",
+    "single-sidechain discrete branch and Undo",
+    "delete PARP2 O28 or replace p38 N12/CDK2 N3 by carbon; required contacts must not silently disappear"
+  ],
+  "runnerSha256": "e7d44b74baf537da3f16f6c64d12cdf5cde93856c757aa6283be81d85454fae6",
+  "sourceCommit": "863aebadaa0af6299943846a628e83c94980d85f"
+}

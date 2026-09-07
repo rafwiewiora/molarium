@@ -869,13 +869,15 @@ const browserSuite = String.raw`(async () => {
   const dockingSelection = api.setDockingSelection([3, 4, 5]);
   const buildToolLayout = [...document.querySelectorAll('#build-tool-tabs .build-tool-choice')].map((choice) => {
     const button = choice.querySelector('[data-tool]');
-    const info = choice.querySelector('.build-tool-info');
+    const info = choice.querySelector('.design-info-button');
     const buttonRect = button.getBoundingClientRect();
     const infoRect = info.getBoundingClientRect();
     return {
       label:button.textContent.trim(), height:buttonRect.height,
-      infoPosition:getComputedStyle(info).position,
-      infoInsideButton:infoRect.top >= buttonRect.top - 0.5 && infoRect.bottom <= buttonRect.bottom + 0.5,
+      helpAssociated:info.getAttribute('aria-controls') === 'design-option-help'
+        && info.getAttribute('aria-haspopup') === 'dialog',
+      infoBesideButton:infoRect.left >= buttonRect.right - 0.5
+        && infoRect.top >= buttonRect.top - 0.5 && infoRect.bottom <= buttonRect.bottom + 0.5,
     };
   });
   check(!document.querySelector('#docking-workbench').classList.contains('hidden')
@@ -883,13 +885,21 @@ const browserSuite = String.raw`(async () => {
     && dockingSelection.status.includes('3 core atoms')
     && document.querySelector('#docking-workbench').previousElementSibling?.id === 'build-tool-tabs'
     && document.querySelectorAll('#build-tool-tabs [data-tool]').length === 3
-    && document.querySelectorAll('#build-tool-tabs .build-tool-info [aria-describedby]').length === 3
-    && buildToolLayout.every((entry) => entry.infoPosition === 'absolute' && entry.infoInsideButton)
+    && document.querySelectorAll('#build-tool-tabs .design-info-button[aria-controls="design-option-help"]').length === 3
+    && buildToolLayout.every((entry) => entry.helpAssociated && entry.infoBesideButton)
     && Math.max(...buildToolLayout.map((entry) => entry.height))
       - Math.min(...buildToolLayout.map((entry) => entry.height)) < 0.5
     && document.querySelector('#build-right-panel > .generated-card-heading span')?.textContent === 'Design workspace',
   'prepared protein-ligand complexes expose a compact core-constrained docking setup',
   JSON.stringify({ dockingSelection, buildToolLayout }));
+  const addHelp = document.querySelector('#build-tool-tabs [data-design-help-trigger="add"]');
+  const selectedBeforeHelp = document.querySelector('#build-tool-tabs [data-tool].selected')?.dataset.tool;
+  addHelp.click();
+  check(document.querySelector('#design-option-help').open
+    && document.querySelector('#design-option-help-title').textContent === 'Add atoms or fragments'
+    && document.querySelector('#build-tool-tabs [data-tool].selected')?.dataset.tool === selectedBeforeHelp,
+  'Design i button opens accessible help without changing the selected molecular tool');
+  document.querySelector('#design-option-help .soft-button').click();
   let dockingReference = null;
   try { dockingReference = await api.captureDockingReference(); }
   catch (error) { check(false, 'browser captures the ligand core and explicit cross H-bond', error.message); }
@@ -901,7 +911,7 @@ const browserSuite = String.raw`(async () => {
   'browser captures the ligand core and explicit cross H-bond', JSON.stringify(dockingReference));
   const editedDockingLigand = api.addElementCurrent('F', 6);
   check(editedDockingLigand.atoms === 9 && !api.current().molecule.parameterization
-    && document.querySelector('#docking-status').textContent.includes('3 core atoms'),
+    && document.querySelector('#docking-status').textContent.includes('3 fixed core atoms'),
   'an in-browser ligand edit invalidates stale complex parameters but preserves the docking reference',
   JSON.stringify(editedDockingLigand));
   let dockingRun = null;
@@ -955,10 +965,16 @@ const browserSuite = String.raw`(async () => {
   await api.deleteAtomCurrent(2);
   const unavailableContact = document.querySelector('#docking-hbond-list label.unavailable');
   check(unavailableContact?.textContent.includes('atom removed')
-    && unavailableContact.querySelector('input')?.disabled
-    && !unavailableContact.querySelector('input')?.checked,
-  'a captured contact whose ligand atom was deleted is disabled without unsafe remapping',
+    && !unavailableContact.querySelector('input')?.disabled
+    && unavailableContact.querySelector('input')?.checked,
+  'a deleted contact stays required and can be explicitly omitted, without unsafe remapping',
   unavailableContact?.textContent || 'missing unavailable contact');
+  let unavailableRequiredRejected = false;
+  try { await api.runConstrainedDocking({ conformerCount:2, seed:91, torsionSteps:8 }); }
+  catch (error) { unavailableRequiredRejected = /selected contact.*no role-compatible/i.test(error.message); }
+  check(unavailableRequiredRejected, 'selected-core search fails closed for an unavailable required contact');
+  await window.MolariumChemistActions.execute({ action:'pose.setContact',args:{
+    contactId:unavailableContact.querySelector('input').dataset.constraintId,required:false } });
   let omittedContactRun = null;
   try { omittedContactRun = await api.runConstrainedDocking({ conformerCount:2, seed:91, torsionSteps:8 }); }
   catch (error) { check(false, 'docking continues after an unavailable contact is explicitly omitted', error.message); }
@@ -998,8 +1014,8 @@ const browserSuite = String.raw`(async () => {
   check(propagationReference.mode === 'pose-propagation'
     && propagationReference.coreAtomIds.length === 6
     && cleanupDefault.visible && cleanupDefault.mode === 'preserve-reference'
-    && document.querySelector('#docking-status').textContent.includes('6 unchanged atoms fixed'),
-  'recorded edits automatically inherit every surviving reference heavy atom',
+    && document.querySelector('#docking-status').textContent.includes('6 inherited reference atoms'),
+  'recorded edits track inherited reference atoms without claiming all are the eventual fixed core',
   JSON.stringify(propagationReference));
   let propagationRun = null;
   try { propagationRun = await api.runConstrainedDocking({ conformerCount:2, seed:20260819,

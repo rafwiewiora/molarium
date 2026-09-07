@@ -3,6 +3,36 @@
 This file records implementation findings that changed a product or engineering decision. Measurements
 belong here only when their system, runtime, and timing boundary are clear.
 
+## A feasible pose can satisfy a silently weakened question
+
+The [September 6 design-function panel](./reviews/DESIGN_FUNCTION_VALIDATION_2026-09-06.md)
+found that registered CDK2 chlorination yielded 23/64 feasible candidate chains only after an
+unavailable, previously required water contact was automatically omitted. Validate the required
+contact **set across actions**, not merely each final candidate's `feasible` flag.
+
+Atom lineage is not a motion policy: that step deliberately samples an affected attachment torsion,
+releasing five inherited ring atoms while the remaining 19-atom core stays exactly fixed.
+Measure both sets. After receptor relaxation, remeasure contacts from live atom coordinates;
+cached candidate distances and captured receptor points need not describe the visible complex.
+
+The [public Design finding-to-fix ledger](./reviews/DESIGN_FINDINGS_AND_FIXES_2026-09-06.md)
+keeps each original observation linked to its implementation and regression evidence. Correcting
+software does not turn a frozen failed experiment into a historical pass. Required/optional contact
+intent, feature availability, candidate satisfaction, and current geometry are distinct state and
+must stay distinct in both the API and interface.
+
+The subsequent source-stable remediation showed a second layer: CDK2's N7–water contact looked
+missing because graph staging regenerated the unchanged donor H with a new ID. Preserving the
+single H under strict unchanged-chemistry/local-geometry conditions recovered both original
+contacts without omission. Fail-closed behavior prevents a false pass; repairing the identity
+cause restores the legitimate workflow. Changed chemistry and multi-H ambiguity still need an
+explicit correspondence decision, not the same automatic repair.
+
+Help text is part of the scientific contract. Explain what moves and what is enforced at the
+operation's control: constrained ligand propagation, unrestrained pocket minimization, induced-fit
+backbone motion, and discrete rotamer application answer different questions. An **i** button
+should clarify those differences, not replace an explicit warning or fail-closed action guard.
+
 ## A cutoff is not automatically faster
 
 The direct WebGPU engine has a correct, OpenMM-compared 1.0 nm nonperiodic cutoff path with a 1.2 nm
