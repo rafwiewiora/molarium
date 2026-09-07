@@ -1,0 +1,33 @@
+{
+  "checkbox": true,
+  "focus": "About select atoms",
+  "helpCount": 173,
+  "smiles": "CCN(CC)C(=O)[C@H]1CN([C@@H]2CC3=CNC4=CC=CC(=C34)C2=C1)C",
+  "tools": [
+    {
+      "height": 38,
+      "label": "⊕ Add",
+      "tool": "add",
+      "whiteSpace": "nowrap",
+      "width": 65.328125
+    },
+    {
+      "height": 38,
+      "label": "⌖ Select",
+      "tool": "select",
+      "whiteSpace": "nowrap",
+      "width": 65.3359375
+    },
+    {
+      "height": 38,
+      "label": "✣ Move",
+      "tool": "manipulate",
+      "whiteSpace": "nowrap",
+      "width": 65.3359375
+    }
+  ],
+  "viewport": {
+    "height": 805,
+    "width": 1512
+  }
+}

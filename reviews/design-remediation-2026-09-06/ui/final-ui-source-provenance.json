@@ -1,0 +1,65 @@
+{
+  "schema": "molarium.design-option-help-evidence/v1",
+  "capturedAt": "2026-09-07T01:56:18.893Z",
+  "sourceFiles": [
+    {
+      "path": "design-help.mjs",
+      "sha256": "35022be282a7b819809eba7c7cb02d639f2e6132a33e9fb33903362ff010dae6",
+      "bytes": 33057
+    },
+    {
+      "path": "workspace-help.mjs",
+      "sha256": "08e6ccd82455d7fb50452e077195fc362dd98c1bfd5a9cac96bb44f0d0e4e976",
+      "bytes": 18598
+    },
+    {
+      "path": "index.html",
+      "sha256": "81737eea87e8718021a078c197a24c8256df0adff5c0a9f25db931aebf2c2a5b",
+      "bytes": 68252
+    },
+    {
+      "path": "styles.css",
+      "sha256": "8f4ffbef4e6979fb34f2fef04406c9e3eb97a4bc4d5421ee16d7170dec7b0f77",
+      "bytes": 74256
+    },
+    {
+      "path": "molarium-workspace.css",
+      "sha256": "ab18b693d0a8d70b6fc304db800bb7db7f2c51fddc408f6e7e35daced2e4f4e5",
+      "bytes": 9116
+    },
+    {
+      "path": "design-help.test.mjs",
+      "sha256": "389bed20a5c194b6962ea760500053c7ebf2b09bac0ae72feda9637d6813b0c2",
+      "bytes": 5235
+    },
+    {
+      "path": "design-help.browser.test.mjs",
+      "sha256": "615837f3acab676e8674b3b78682238e2b59c103032eb2b7fcbab163edd66537",
+      "bytes": 7673
+    }
+  ],
+  "sourceTests": {
+    "passed": 6
+  },
+  "isolatedBrowserChecks": {
+    "passed": 10,
+    "staticControls": 143,
+    "renderedHelpButtons": 173,
+    "mobileViewport": {
+      "width": 390,
+      "height": 844
+    }
+  },
+  "dockingBrowserChecks": {
+    "passed": 79
+  },
+  "handsOnViewport": {
+    "width": 1512,
+    "height": 805
+  },
+  "finalScreenshots": [
+    "final-layout-v4.jpg",
+    "method-comparison-v4.jpg",
+    "covalent-constraints-v4.jpg"
+  ]
+}

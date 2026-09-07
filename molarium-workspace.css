@@ -198,7 +198,7 @@ body.molarium-workspace {
 }
 .molarium-workspace .structure-2d-panel {
   left: calc(min(318px, calc(50vw - 180px)) + 28px);
-  bottom: 16px;
+  bottom: 64px;
 }
 .molarium-workspace .canvas-help {
   bottom: 70px;

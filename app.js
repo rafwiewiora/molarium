@@ -13,6 +13,10 @@ import { searchBestDirectionalBranchContact, solveDirectedBranchContact } from
   './docking/designer-branch-contact.mjs';
 import { resolveCampaignAssetSource, readCampaignAssetResponse } from './design-history/campaign-source.mjs';
 import { sos1StoryCaption } from './design-history/sos1-story-captions.mjs';
+import { requiredContactPolicy, liveHydrogenBondState } from './docking/contact-state.mjs';
+import { CONTACT_CAPTURE_POLICY } from './docking/contact-capture-policy.mjs';
+import { preserveRegisteredDonorHydrogens } from './docking/registered-donor-hydrogen.mjs';
+import { installDesignHelp } from './design-help.mjs';
 
 const MOLARIUM_NETWORK_POLICY = Object.freeze({
   mode:'connected', localOnly:false, policy:'connected-v1',
@@ -4314,12 +4318,17 @@ function dockingContactAvailable(definition) {
 }
 
 function unresolvedSelectedDockingContacts() {
-  return [...state.dockingSelectedHbondIds].filter((id) =>
-    state.dockingContactRemapProposals.has(id)
-      && !state.dockingContactRemapProposals.get(id)?.candidates?.length);
+  return [...state.dockingSelectedHbondIds].filter((id) => {
+    const proposal = state.dockingContactRemapProposals.get(id);
+    if (proposal) return !proposal.candidates?.length;
+    const definition = state.dockingReference?.hydrogenBonds.find((entry) => entry.id === id);
+    return !definition || !dockingContactAvailable(effectiveDockingHydrogenBondDefinition(definition));
+  });
 }
 
 function dockingContactFeatureLabel(definition, proposal = null) {
+  if (definition?.evidenceClass === 'weak-covalent-fluorine-hypothesis')
+    return 'weak F-contact hypothesis';
   const ligandRole = proposal?.ligandRole
     || (definition?.receptorRole === 'donor' ? 'acceptor' : 'donor');
   const descriptor = ligandRole === 'acceptor' ? definition?.acceptor : definition?.donor;
@@ -4354,7 +4363,7 @@ function recordDockingContactRemap(audit) {
 }
 
 async function chooseDockingContactRemap(contactId, candidateId,
-  method = 'user-selected-role-compatible') {
+  method = 'user-selected-role-compatible', { preserveResult = false } = {}) {
   const proposal = state.dockingContactRemapProposals.get(contactId);
   const rawDefinition = state.dockingReference?.hydrogenBonds
     .find((definition) => definition.id === contactId);
@@ -4393,12 +4402,13 @@ async function chooseDockingContactRemap(contactId, candidateId,
       priorReplacementLigandAtomIds:priorChain.at(-1)?.replacementLigandAtomIds || [],
     } : null,
     geometryEvidence:structuredClone(candidate.geometry),
-    geometryUsedForSelection:false,
+    geometryUsedForSelection:method === 'applied-search-candidate',
+    selectedAlternativeId:candidateId,
   };
   state.dockingContactRemaps.set(contactId,
     { effectiveDefinition, audit, chain:[...structuredClone(priorChain), structuredClone(audit)] });
   state.dockingContactRemapProposals.delete(contactId);
-  state.dockingResult = null;
+  if (!preserveResult) state.dockingResult = null;
   recordDockingContactRemap(audit);
   updateDockingUi();
   showToast(method === 'automatic-unique-exact'
@@ -4705,11 +4715,9 @@ function renderDockingConstraints() {
     const effective = effectiveDockingHydrogenBondDefinition(definition);
     const pending = Boolean(state.chemistryTransaction);
     const available = !pending && !proposal && dockingContactAvailable(effective);
-    const selectedCoreUnavailable = !pending && !available && !proposal
-      && state.dockingReference?.mode !== 'pose-propagation';
-    if (selectedCoreUnavailable) state.dockingSelectedHbondIds.delete(definition.id);
     checkbox.checked = state.dockingSelectedHbondIds.has(definition.id);
-    checkbox.disabled = pending || selectedCoreUnavailable;
+    // Unavailable required contacts remain visible and can be explicitly omitted.
+    checkbox.disabled = pending;
     checkbox.dataset.constraintId = definition.id;
     checkbox.setAttribute('aria-label', `Require ${definition.label}`);
     checkbox.addEventListener('change', () => {
@@ -4797,7 +4805,7 @@ function updateDockingUi() {
     run.disabled = state.dockingRunning || pendingChemistry || unresolvedSelected.length > 0
       || designerFixed;
     run.textContent = state.dockingRunning ? 'Refining…'
-      : referenceMode === 'pose-propagation' ? 'Refine edited group' : 'Dock';
+      : referenceMode === 'pose-propagation' ? 'Constrained ligand search' : 'Search selected core';
     if (!state.dockingRunning) {
       const fixedAtoms = referenceMode === 'pose-propagation'
         ? survivingReferenceHeavyAtoms(state.dockingReference, ligand)
@@ -4822,7 +4830,11 @@ function updateDockingUi() {
       else {
         const hypothesisCount = [...state.dockingSelectedHbondIds].reduce((sum, id) =>
           sum + (state.dockingContactRemapProposals.get(id)?.candidates?.length || 0), 0);
-        setDockingStatus(`${fixedAtoms} ${referenceMode === 'pose-propagation' ? 'unchanged atoms fixed' : 'core atoms'} · ${contactCount} contact${contactCount === 1 ? '' : 's'}${hypothesisCount ? ` · ${hypothesisCount} replacement hypotheses` : ''}`);
+        const motion = state.dockingResult?.motionPolicy;
+        const coreStatus = motion
+          ? `${motion.protectedAtomIds.length} protected atoms fixed · ${motion.releasedInheritedAtomIds.length} inherited atoms released in last search`
+          : `${fixedAtoms} ${referenceMode === 'pose-propagation' ? 'inherited reference atoms; edit-associated torsions can release atoms' : 'fixed core atoms'}`;
+        setDockingStatus(`${coreStatus} · ${state.dockingSelectedHbondIds.size}/${contactCount} contacts required${hypothesisCount ? ` · ${hypothesisCount} replacement hypotheses` : ''}`);
       }
     }
     renderDockingConstraints();
@@ -4890,6 +4902,7 @@ async function captureCurrentDockingReference() {
     ligand,
     receptorSite,
     hydrogenBonds,
+    contactCapturePolicy:structuredClone(CONTACT_CAPTURE_POLICY),
     contactAmendments:[],
     receptorProvenanceAtomCount:receptorProvenanceAtomIndices.length,
     receptorInputText:adapter.dockingInputText(state.molecule, receptorProvenanceAtomIndices),
@@ -4900,7 +4913,8 @@ async function captureCurrentDockingReference() {
   };
   if (mode === 'pose-propagation')
     document.querySelector('#docking-edit-cleanup').value = 'preserve-reference';
-  state.dockingSelectedHbondIds = new Set(hydrogenBonds.map((entry) => entry.id));
+  state.dockingSelectedHbondIds = new Set(hydrogenBonds
+    .filter((entry) => entry.required !== false).map((entry) => entry.id));
   state.dockingContactRemaps = new Map();
   state.dockingContactRemapProposals = new Map();
   state.dockingContactDraft = null;
@@ -5212,8 +5226,10 @@ async function runBrowserConstrainedDocking(options = {}) {
       const availability = contactAvailability.find((entry) => entry.id === definition.id);
       if (selectedHbondIds.includes(definition.id)) return [];
       return [{ id:definition.id, label:definition.label,
-        reason:availability?.available ? 'user-disabled'
+        reason:availability?.available ? 'not-selected-as-required'
           : posePropagation ? 'ligand-feature-unavailable' : 'ligand-atom-removed',
+        captureDefaultRequired:definition.required !== false,
+        capturePolicy:definition.capturePolicy || 'legacy-all-captured-required',
         missingAtomIds:availability?.missingAtomIds || [],
         incompatibleAtomIds:availability?.incompatibleAtomIds || [] }];
     });
@@ -5392,6 +5408,7 @@ async function runBrowserConstrainedDocking(options = {}) {
       protocol:activeProtocol,
       selections:{
         referenceLigandSha256,
+        contactCapturePolicy:structuredClone(reference.contactCapturePolicy || null),
         coreAtomPairs:coreMap.atomPairs,
         coreAtomIds:posePropagation ? [...coreMap.mappedAtomIds] : [...reference.ligand.coreAtomIds],
         atomLineage:posePropagation ? {
@@ -5548,7 +5565,7 @@ async function runBrowserConstrainedDocking(options = {}) {
           'A deleted ligand contact atom can transfer to any complementary donor or acceptor created at the same recorded edit boundary; receptor participants remain immutable and physical refinement ranks the hypotheses.',
           ...(posePropagation ? [
             'Only capture-feasible poses enter physical search and fixed-scaffold OpenFF relaxation; a failed capture remains an explicit negative result.',
-            'Fixed-scaffold OpenFF relaxation repairs local valence geometry without moving inherited heavy atoms.',
+            'Fixed-scaffold OpenFF relaxation repairs local valence geometry without moving the remaining protected core; released inherited atoms may move.',
             'A relaxed pose is rejected if it loses contact feasibility or worsens the complete receptor-aware objective.',
           ] : []),
         ],
@@ -5832,7 +5849,7 @@ async function runBrowserConstrainedDocking(options = {}) {
             skippedAfterFailedCapture:refinementAudit.filter((entry) =>
               entry.stageOutcome === 'capture-infeasible').length,
             accepted:refinementAudit.filter((entry) => entry.relaxation?.accepted).length,
-            invariant:'all inherited heavy-atom coordinates remain bit-for-bit equal to the reference',
+            invariant:'remaining protected heavy-atom core coordinates stay bit-for-bit equal to the reference; declared released inherited atoms are not in this core',
             safeguard:'a relaxed pose is retained only when feasibility is preserved and the complete objective improves',
             perConformer:refinementAudit.map((entry) => ({ conformerIndex:entry.conformerIndex,
               relaxation:entry.relaxation })),
@@ -5908,6 +5925,12 @@ async function runBrowserConstrainedDocking(options = {}) {
       || adapter.dockingInputText(state.molecule, liveIndices) !== currentLigandInputText)
       throw new Error('The complex changed during docking; the stale result was discarded.');
     state.dockingResult = { run, labbook, plan, seed, requestedConformers,
+      motionPolicy:{ schema:'molarium.docking.search-motion-policy/v1', receptor:'fixed',
+        requiredHydrogenBonds:'hard-acceptance-gate',
+        protectedAtomIds:coreAtomIndices.map((index) => plan.molecule.atoms[index].designAtomId),
+        releasedInheritedAtomIds:[...(coreMap.releasedReferenceAtomIds || [])],
+        affectedRotorReleasedAtomIds:[...(coreMap.environmentReleasedAtomIds || [])],
+        addedAtomIds:[...(coreMap.addedAtomIds || [])] },
       poseSearchExecution:structuredClone(poseSearchExecution),
       distinctPoseEntries, distinctFeasibleCount,
       featureGuidedSeeding:featureSeedResult ? {
@@ -6041,8 +6064,18 @@ async function applySelectedDockingPose({ allowInfeasible = false } = {}) {
   const { receptorSiteIntegrity } = await import('./docking/receptor-score.mjs');
   if (!receptorSiteIntegrity(state.dockingReference.receptorSite, state.molecule).valid)
     throw new Error('The receptor changed after docking; reset the reference and run again.');
+  const appliedAlternatives = (pose.hydrogenBonds || []).filter((contact) =>
+    contact.selectedAlternativeId && state.dockingContactRemapProposals.has(contact.id));
+  for (const contact of appliedAlternatives) {
+    if (!state.dockingContactRemapProposals.get(contact.id)?.candidates
+      ?.some((candidate) => candidate.id === contact.selectedAlternativeId))
+      throw new Error('The selected contact replacement changed after docking; refine again.');
+  }
   pushBuildHistory();
   adapter.applyLigandPositions(state.molecule, liveIndices, pose.positions);
+  for (const contact of appliedAlternatives)
+    await chooseDockingContactRemap(contact.id, contact.selectedAlternativeId,
+      'applied-search-candidate', { preserveResult:true });
   state.molecule.source = { ...(state.molecule.source || {}), docking:{
     protocol:result.labbook.protocol.id, runId:result.labbook.runId, rank:pose.rank,
     feasible:pose.feasible, scoreKcalMol:pose.totalScoreKcalMol,
@@ -9526,6 +9559,8 @@ async function inspectChemistActionState({ scope = 'ligand', includeCoordinates 
   if (!Number.isInteger(limit) || limit < 1 || limit > 500)
     throw new Error('maximumAtoms must be an integer from 1 to 500');
   await ensureChemistActionAtomIds();
+  const atomsById = new Map(state.molecule.atoms.map((atom, index) =>
+    [atom.designAtomId, { atom, index }]));
   let indices;
   if (scope === 'selection') indices = [...state.selectedAtoms];
   else if (scope === 'ligand') indices = dockingLigandComponent()?.atomIndices.slice()
@@ -9534,7 +9569,9 @@ async function inspectChemistActionState({ scope = 'ligand', includeCoordinates 
   else if (scope === 'pocket') {
     if (!state.dockingReference) throw new Error('Capture a reference pose before inspecting the pocket');
     const byId = new Map(state.molecule.atoms.map((atom, index) => [atom.designAtomId, index]));
-    const contactParticipants = state.dockingReference.hydrogenBonds.flatMap((definition) =>
+    const contactDefinitions = state.dockingReference.hydrogenBonds.flatMap((definition) =>
+      [effectiveDockingHydrogenBondDefinition(definition), definition]);
+    const contactParticipants = contactDefinitions.flatMap((definition) =>
       [definition.donor, definition.hydrogen, definition.acceptor]
         .map((descriptor) => byId.get(descriptor?.designAtomId)).filter(Number.isInteger));
     const ligandIndices = currentDockingLigandAtomIndices();
@@ -9561,59 +9598,39 @@ async function inspectChemistActionState({ scope = 'ligand', includeCoordinates 
       aromatic:Boolean(bond.aromatic || Number(bond.order) === 1.5) }] : []);
   const currentPoseHydrogenBonds = new Map((state.dockingResult?.run?.candidates
     ?.[state.dockingPoseIndex]?.hydrogenBonds || []).map((entry) => [entry.id, entry]));
-  const participant = (descriptor) => {
-    if (!descriptor) return null;
-    if (descriptor.scope === 'receptor') return {
-      scope:'receptor', atomId:descriptor.designAtomId || null,
-      element:descriptor.element || null,
-      ...(includeCoordinates && descriptor.point ? { coordinatesAngstrom:[
-        Number(descriptor.point.x), Number(descriptor.point.y), Number(descriptor.point.z),
-      ] } : {}),
-    };
-    const atom = state.molecule.atoms.find((entry) =>
-      entry.designAtomId === descriptor.designAtomId);
-    return {
-      scope:'ligand', atomId:descriptor.designAtomId || null,
-      element:atom?.element || descriptor.element || null,
-      ...(includeCoordinates && atom ? { coordinatesAngstrom:[
-        Number(atom.x), Number(atom.y), Number(atom.z),
-      ] } : {}),
-    };
-  };
   const contacts = (state.dockingReference?.hydrogenBonds || []).map((definition) => {
-    let effective = effectiveDockingHydrogenBondDefinition(definition);
+    const effective = effectiveDockingHydrogenBondDefinition(definition);
     const proposal = state.dockingContactRemapProposals.get(definition.id);
     const poseContact = currentPoseHydrogenBonds.get(definition.id);
-    const selectedAlternative = poseContact?.selectedAlternativeId && proposal?.candidates
-      ?.find((candidate) => candidate.id === poseContact.selectedAlternativeId);
-    if (selectedAlternative?.replacement) {
-      effective = structuredClone(proposal.priorEffectiveDefinition || definition);
-      if (selectedAlternative.role === 'acceptor')
-        effective.acceptor = structuredClone(selectedAlternative.replacement.acceptor);
-      else {
-        effective.donor = structuredClone(selectedAlternative.replacement.donor);
-        effective.hydrogen = structuredClone(selectedAlternative.replacement.hydrogen);
-      }
-    }
+    const hydrogenBond = liveHydrogenBondState(state.molecule, effective, {
+      atomsById, includeCoordinates,
+      available:!proposal && dockingContactAvailable(effective),
+    });
     return { contactId:definition.id, label:definition.label,
       origin:structuredClone(definition.origin || null),
       required:state.dockingSelectedHbondIds.has(definition.id),
-      available:(!proposal || Boolean(selectedAlternative)) && dockingContactAvailable(effective),
+      available:hydrogenBond.available,
       remapStatus:proposal?.status || (state.dockingContactRemaps.has(definition.id) ? 'mapped' : 'original'),
-      hydrogenBond:{ receptorRole:effective.receptorRole,
-        selectedAlternativeId:poseContact?.selectedAlternativeId || null,
-        satisfied:poseContact?.satisfied ?? null,
-        donorAcceptorDistanceAngstrom:poseContact?.donorAcceptorDistanceAngstrom ?? null,
-        hydrogenAcceptorDistanceAngstrom:poseContact?.hydrogenAcceptorDistanceAngstrom ?? null,
-        dhaAngleDegrees:poseContact?.dhaAngleDegrees ?? null,
-        participants:{ donor:participant(effective.donor),
-          hydrogen:participant(effective.hydrogen),
-          acceptor:participant(effective.acceptor) } } };
+      capturePolicy:definition.capturePolicy || 'legacy-all-captured-required',
+      evidenceClass:definition.evidenceClass || null,
+      warning:definition.warning || null,
+      conventionalAcceptorHeuristic:definition.conventionalAcceptorHeuristic || null,
+      hydrogenBond:{ ...hydrogenBond,
+        selectedAlternativeId:state.dockingContactRemaps.get(definition.id)?.audit
+          ?.selectedAlternativeId || null },
+      // A selected search candidate is hypothetical until pose.apply. Never mix
+      // its winning feature/geometry with current atom coordinates.
+      candidateHydrogenBond:poseContact ? { ...structuredClone(poseContact),
+        geometrySource:'selected-search-candidate',
+        candidateRank:state.dockingResult.run.candidates[state.dockingPoseIndex].rank } : null,
+      referenceHydrogenBond:{ geometrySource:'captured-reference',
+        geometry:structuredClone(definition.referenceGeometry || null) } };
   });
   return chemistActionSummary({ scope, truncated:totalAtomCount > atoms.length,
     totalAtomCount, atoms, bonds, contacts,
     poseReference:state.dockingReference ? { mode:state.dockingReference.mode,
       capturedAt:state.dockingReference.capturedAt,
+      contactCapturePolicy:structuredClone(state.dockingReference.contactCapturePolicy || null),
       resultPoseCount:state.dockingResult?.run?.candidates?.length || 0 } : null,
     transformedRingRegions:structuredClone(
       state.molecule.source?.posePropagationEditRegions || []),
@@ -10953,6 +10970,8 @@ function installChemistActionsApi(module) {
       const reference = await captureCurrentDockingReference();
       return chemistActionSummary({ poseReference:{ mode:reference.mode,
         coreAtomCount:reference.ligand.coreAtomIds.length,
+        contactCapturePolicy:structuredClone(reference.contactCapturePolicy || null),
+        requiredContactIds:[...state.dockingSelectedHbondIds],
         contactCount:reference.hydrogenBonds.length } }); },
     'pose.setDesignerLigandPoseFixed':async (args) => { chemistActionKeys(args,
       ['fixed','label']);
@@ -11017,9 +11036,11 @@ function installChemistActionsApi(module) {
       if (args.required && (proposal || !dockingContactAvailable(
         effectiveDockingHydrogenBondDefinition(definition))))
         throw new Error(`Contact ${args.contactId} is not currently available; finish or reconcile the chemistry first.`);
+      const changed = state.dockingSelectedHbondIds.has(args.contactId) !== args.required;
       if (args.required) state.dockingSelectedHbondIds.add(args.contactId);
       else state.dockingSelectedHbondIds.delete(args.contactId);
-      updateDockingUi(); return chemistActionSummary({ contactId:args.contactId,
+      if (changed) { state.dockingResult = null; state.dockingPoseIndex = 0; }
+      updateDockingUi(); renderDockingResults(); return chemistActionSummary({ contactId:args.contactId,
         required:args.required }); },
     'pose.addContact':async (args) => { chemistActionKeys(args,
       ['ligandAtomId','receptorAtomId','ligandAtom','receptorAtom','ligandRole']);
@@ -11136,6 +11157,7 @@ function installChemistActionsApi(module) {
           : 'Selected refined-pose coordinates do not match expectedSelectedCoordinateSha256');
       }
       return chemistActionSummary({ refinement:{ candidates:result.run.candidates.length,
+        motionPolicy:structuredClone(result.motionPolicy),
         feasible:result.run.feasibleCount, selectedRank:selected.rank,
         stateHashSchema:MOLECULAR_STATE_HASH_SCHEMA,
         inputCoordinateSha256, selectedCoordinateSha256,
@@ -11980,6 +12002,7 @@ function installChemistActionsApi(module) {
       }
       const hitContacts = state.dockingReference.hydrogenBonds.map((definition) => ({
         kind:'hydrogen-bond', capturedId:definition.id, label:definition.label,
+        required:state.dockingSelectedHbondIds.has(definition.id),
       }));
       const staged = await stageRegisteredDesignRouteProduct({
         caseId:`${state.designRoute.id}:${step.id}`,
@@ -12016,6 +12039,8 @@ function installChemistActionsApi(module) {
         addedHeavyAtomIds:[...(staged.registeredEditRegion.addedHeavyAtomIds || [])],
         changedAtomIds,
         poseTransferPlan:structuredClone(staged.poseTransferPlan),
+        contactPolicy:structuredClone(staged.contactPolicy),
+        donorHydrogenLineage:structuredClone(staged.donorHydrogenLineage),
         spatialIntent,
         embedding:structuredClone(staged.embedding) } }); },
     'designRoute.inspect':async (args) => { empty(args);
@@ -12139,6 +12164,11 @@ async function stageRegisteredDesignRouteProduct({ caseId, productSmiles, posePr
       posePropagationMap, posePropagationPolicy
         || registeredGraphEdit.EXACT_REGISTERED_POSE_PROPAGATION_POLICY);
     const reference = state.dockingReference;
+    const contactPolicy = requiredContactPolicy(reference.hydrogenBonds,
+      state.dockingSelectedHbondIds, interactionHypotheses);
+    const effectiveReferenceContacts = effectiveDockingHydrogenBondDefinitions()
+      .map((definition) => structuredClone(definition));
+    const priorContactRemaps = new Map(state.dockingContactRemaps);
     const component = dockingLigandComponent();
     if (!component) throw new Error('The captured reference ligand component is missing');
     const beforePlan = adapter.createLigandPlan(state.molecule, component.atomIndices,
@@ -12288,6 +12318,8 @@ async function stageRegisteredDesignRouteProduct({ caseId, productSmiles, posePr
       atomMapSource:posePropagationMap.source || 'atom-maps.v0.1.json' };
     referenceCore.ensureStableAtomIds(product, `benchmark-product-${caseId || 'case'}`,
       state.molecule.source?.designAtomIdLedger || reference.ligand.atomIds);
+    const donorHydrogenLineage = preserveRegisteredDonorHydrogens(beforeLigand, product,
+      effectiveReferenceContacts);
     const releasedMappedHeavyIds = poseTransferPlan.releasedMappedAtomPairs.map((mapping) => {
       const productIndex = productHeavyIndices[mapping.productAtomIndex];
       return product.atoms[productIndex]?.designAtomId;
@@ -12384,7 +12416,7 @@ async function stageRegisteredDesignRouteProduct({ caseId, productSmiles, posePr
     const addedBenchmarkIdSet = new Set(addedBenchmarkAtomIds);
     const benchmarkEligibleAtomIndices = currentPlan.molecule.atoms.flatMap((atom, index) =>
       addedBenchmarkIdSet.has(atom.designAtomId) ? [index] : []);
-    const proposals = remap.proposeLigandHydrogenBondFeatureRemaps(reference.hydrogenBonds,
+    const proposals = remap.proposeLigandHydrogenBondFeatureRemaps(effectiveReferenceContacts,
       currentPlan.molecule, currentPlan.molecule.atoms.map((_, index) => index), {
         eligibleAtomIndices:benchmarkEligibleAtomIndices,
         beforeMolecule:beforeLigand,
@@ -12393,17 +12425,14 @@ async function stageRegisteredDesignRouteProduct({ caseId, productSmiles, posePr
       });
     const hypotheses = new Map(interactionHypotheses
       .filter((entry) => entry.kind === 'hydrogen-bond').map((entry) => [entry.capturedId, entry]));
-    for (const definition of reference.hydrogenBonds) {
-      const hypothesis = hypotheses.get(definition.id);
-      if (!hypothesis || hypothesis.label !== definition.label)
-        throw new Error(`Captured contact ${definition.id} differs from the pre-registered input`);
-    }
-    state.dockingContactRemaps = new Map();
+    state.dockingContactRemaps = new Map([...priorContactRemaps].filter(([id]) =>
+      proposals.find((proposal) => proposal.id === id)?.status === 'available'));
     state.dockingContactRemapProposals = new Map(proposals
       .filter((proposal) => proposal.status !== 'available')
       .map((proposal) => [proposal.id, { ...proposal,
-        priorEffectiveDefinition:structuredClone(reference.hydrogenBonds
+        priorEffectiveDefinition:structuredClone(effectiveReferenceContacts
           .find((definition) => definition.id === proposal.id)),
+        priorRemapChain:structuredClone(priorContactRemaps.get(proposal.id)?.chain || []),
         editLineage:[{
           method:posePropagationMap.protectedReferenceAnchor?.method
             || 'pre-registered-reference-product-MCS',
@@ -12412,19 +12441,20 @@ async function stageRegisteredDesignRouteProduct({ caseId, productSmiles, posePr
           referenceBoundary:structuredClone(posePropagationMap.referenceBoundary),
           productBoundary:structuredClone(posePropagationMap.productBoundary) }],
       }]));
-    const selected = new Set();
+    const selected = new Set(contactPolicy.requiredContactIds);
     const unavailableTargets = [], remappedTargets = [];
     for (const definition of reference.hydrogenBonds) {
       const hypothesis = hypotheses.get(definition.id);
       const proposal = proposals.find((entry) => entry.id === definition.id);
-      if (proposal?.status === 'available') selected.add(definition.id);
-      else if (hypothesis?.targetFeature && proposal?.candidates?.length) {
-        selected.add(definition.id); remappedTargets.push({ id:definition.id,
+      if (selected.has(definition.id) && proposal?.status !== 'available'
+        && proposal?.candidates?.length) {
+        remappedTargets.push({ id:definition.id,
           status:proposal.status, candidates:proposal.candidates.map((candidate) => ({
             id:candidate.id, role:candidate.role, type:candidate.type,
             matchKind:candidate.matchKind,
           })) });
-      } else if (hypothesis?.targetFeature) unavailableTargets.push({ id:definition.id,
+      } else if (selected.has(definition.id) && proposal?.status !== 'available')
+        unavailableTargets.push({ id:definition.id,
         expectedTransfer:hypothesis.expectedTransfer, status:proposal?.status || 'unavailable' });
     }
     state.dockingSelectedHbondIds = selected;
@@ -12462,6 +12492,9 @@ async function stageRegisteredDesignRouteProduct({ caseId, productSmiles, posePr
       productHeavyGraph,
       commonHeavyAtoms:poseTransferPlan.mappedAtomPairs.length,
       selectedContactIds:[...selected], unavailableTargets, remappedTargets,
+      contactPolicy:{ ...contactPolicy,
+        unresolvedRequiredContactIds:unavailableTargets.map((entry) => entry.id) },
+      donorHydrogenLineage,
       poseTransferPlan:structuredClone(poseTransferPlan),
       proposals:proposals.map((proposal) => ({ id:proposal.id, status:proposal.status,
         ligandRole:proposal.ligandRole, candidateCount:proposal.candidates.length,
@@ -16515,14 +16548,14 @@ function updateOptimizerControls() {
   const visibleBuildMethods = [...buildSelect.options]
     .filter((option) => !option.hidden && !option.disabled);
   buildSelect.classList.toggle('hidden', visibleBuildMethods.length <= 1);
-  buildSelect.parentElement.classList.toggle('single-action', visibleBuildMethods.length <= 1);
+  buildSelect.closest('.optimizer-picker').classList.toggle('single-action', visibleBuildMethods.length <= 1);
   const buildMethod = buildSelect.value;
   setText('#build-optimizer-help', buildMethod === 'webgpu'
       ? `The ${forcefield} numeric System runs directly on WebGPU. Independent OpenMM checks remain validation-only.`
       : buildMethod === 'pocket-webgpu'
-        ? `Pocket-aware 5 Å relaxation moves the ligand and pocket side chains on WebGPU; ${state.molecule.atoms.length - pocketMovableCount} outer protein atoms remain fixed. A chemically edited complex is reparameterized first.`
+        ? `5 Å pocket: the entire ligand and nearby side chains move; backbone and outer atoms stay fixed (${state.molecule.atoms.length - pocketMovableCount} fixed atoms). Required H-bonds are not enforced. Edited complexes are reparameterized first.`
       : buildMethod === 'induced-fit-webgpu'
-        ? `Experimental hit-only induced-fit relaxation moves the ligand plus complete residues entering a 6 Å shell, including local backbone atoms; ${state.molecule.atoms.length - inducedFitMovableCount} outer atoms remain fixed.`
+        ? `Experimental 6 Å pocket: whole nearby residues, including backbone, can move. Registered ligand-retention islands and outer atoms stay fixed (${state.molecule.atoms.length - inducedFitMovableCount} fixed atoms). Required H-bonds are not enforced.`
       : buildMethod === 'ligand-rdkit'
         ? state.dockingReference?.mode === 'pose-propagation'
           && selectedDockingEditCleanup() === 'preserve-reference'
@@ -18085,4 +18118,5 @@ initializeWorkspaceFromUrl();
 renderFragmentLibrary();
 updateHistoryButtons();
 updateOptimizerControls();
+installDesignHelp(document);
 requestAnimationFrame(animate);

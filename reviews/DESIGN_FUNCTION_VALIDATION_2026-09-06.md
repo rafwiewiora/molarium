@@ -5,6 +5,10 @@ This is a development regression panel, not a new blind pose-accuracy or affinit
 The systems were selected using existing preparation results; no analogue crystal coordinates
 were used for generation or consulted to choose a pose. The frozen 25-case cohort is unchanged.
 
+This report preserves the **pre-fix observations** at `863aeba`, not a claim about every later
+release. The public [finding-to-fix ledger](./DESIGN_FINDINGS_AND_FIXES_2026-09-06.md) tracks
+DV-01–DV-07, replacement tests, and unresolved boundaries without overwriting these results.
+
 ## What actually moves
 
 | Operation | Ligand | Receptor | Required H-bonds |
@@ -71,7 +75,7 @@ omitting that extra contact restored **8/8** feasible candidates. This exercises
 addition, geometric infeasibility, application rejection, and the required/optional switch without
 confounding the test with missing chemistry. [Raw action record](./design-validation-2026-09-06/impossible-contact.json.gz).
 
-## Confirmed gaps
+## Confirmed gaps in the audited baseline
 
 1. **Required-contact policy changes in the registered graph-edit path.** The CDK2 example loses
    a required contact without a separate `pose.setContact` decision. `stageBenchmarkPoseProduct`
@@ -90,7 +94,8 @@ confounding the test with missing chemistry. [Raw action record](./design-valida
    and required only captured ligand N/O contacts. It is not silently counted as an ordinary strong
    carbonyl/amine pharmacophore anchor.
 
-No production implementation has been changed by this validation pass.
+No production implementation was changed by this original validation pass. Subsequent fixes
+and separately recorded verification belong in the linked finding-to-fix ledger.
 
 ## Hands-on production-browser lane
 

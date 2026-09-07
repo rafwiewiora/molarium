@@ -39,7 +39,13 @@ documents known boundaries, reproducible probes, fixes, and remaining validation
 exercise PARP2, p38, and CDK2 through the public API, with hands-on production-browser checks.
 The source-hashed action records include live contact geometry, fixed/released atom audits,
 negative controls, and known failures. This is functional validation, not a pose-accuracy or
-binding-affinity claim; the CDK2 required-contact-set preservation gate currently fails.
+binding-affinity claim; the original CDK2 required-contact-set preservation gate failed.
+The public [finding-to-fix ledger](./reviews/DESIGN_FINDINGS_AND_FIXES_2026-09-06.md) links each
+finding to its remediation, regression evidence, and remaining limitations. Historical failures
+are preserved separately from checks of corrected behavior.
+The [source-stable remediation](./reviews/design-remediation-2026-09-06/api-a05/manifest.json)
+retains both original CDK2 H-bonds (23/64 feasible chains), reports live contact geometry, and
+still rejects a genuine acceptor-removal negative. The original failed gate is not rewritten.
 
 ## Quick start
 
@@ -266,10 +272,11 @@ residue centered during trajectory playback.
 ## Reference-guided pose refinement and constrained docking
 
 For a ligand edited inside Molarium, **Pose Propagation-1** is the default. Capture the prepared
-reference pose, edit the ligand, and refine: every surviving heavy atom is identified from the
-recorded graph-edit lineage and remains fixed at its exact reference coordinate unless the edit
-changes existing ring chemistry. A changed ring is released as one audited unit, including a direct
-carbonyl, while the external reference scaffold remains fixed. Added or replaced graph branches
+reference pose, edit the ligand, and refine: surviving heavy atoms are identified from the
+recorded graph-edit lineage. Changed ring regions and declared edit-associated torsions can release
+inherited atoms; the remaining protected core stays at its exact reference coordinates.
+A changed ring is released as one audited unit, including a direct carbonyl, while the external
+protected scaffold remains fixed. Added or replaced graph branches
 undergo deterministic-seed acyclic-torsion and protected-ring search. Moves touching a
 perceived stereocenter, ring carbonyl/multiple bond, or lactam geometry are excluded. Required
 contacts drive a dedicated pharmacophore-capture stage before ordinary physical scoring is allowed
@@ -280,7 +287,7 @@ receives a fixed-scaffold OpenFF Sage relaxation; a relaxed result is kept only 
 required-contact feasibility and improves the complete pose-ranking objective. No manual core
 selection is needed.
 
-**Optimize** and **Refine edited group** are deliberately different. Optimize performs one local
+**Optimize** and **Constrained ligand search** are deliberately different. Optimize performs one local
 force-field descent from the coordinates currently on screen; ligand-only Optimize does not include
 the receptor in its energy. Refine launches the selected number of independently seeded
 internal-coordinate search chains, first generates against the selected contact potentials,
@@ -288,6 +295,13 @@ physically refines only captured poses against the rigid receptor, applies
 guarded fixed-scaffold relaxation, clusters duplicate heavy-atom geometries, and reports distinct
 poses. It therefore perceives the receptor; it is still a local analogue-pose method, not global
 docking.
+
+Pocket relax releases the entire ligand and nearby protein side chains in a 5 Å pocket while
+keeping the backbone fixed. Induced-fit pocket relax includes complete residues entering a 6 Å
+shell, including backbone, while its active ligand-retention plan protects selected ligand atoms.
+Neither minimizer enforces the selected docking H-bonds. A side-chain rotamer branch is a discrete
+chi-angle change, not either minimizer. The [operation comparison and finding ledger](./reviews/DESIGN_FINDINGS_AND_FIXES_2026-09-06.md#operation-contracts)
+state the separate motion and acceptance policies.
 
 This follows established congeneric/RBFE pose-preparation practice: preserve a trusted reference
 common region, sample modified substituents, resolve local clashes, and audit alternate binding

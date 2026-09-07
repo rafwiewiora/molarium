@@ -392,3 +392,19 @@ Subsequent verification and replay investigation:
   failure and recovery. The underlying browser storage implementation is not diagnosed;
   broader cross-browser coverage remains necessary. No stored campaigns were deleted,
   scientific checkpoints rewritten, or durable saves replaced by silent memory fallback.
+
+## Public change links and subsequent Design review
+
+The first remediation increment above shipped in
+[PR #20](https://github.com/rafwiewiora/molarium/pull/20)
+([merge `343b1b2`](https://github.com/rafwiewiora/molarium/commit/343b1b27a4cdb73cfd67f544fe164e7dc3fbf9d3));
+the simulation-contract, native STORMM, and replay-startup work shipped in
+[PR #21](https://github.com/rafwiewiora/molarium/pull/21)
+([merge `863aeba`](https://github.com/rafwiewiora/molarium/commit/863aebadaa0af6299943846a628e83c94980d85f)).
+These links identify shipped changes, not a claim that every open boundary above is resolved.
+
+The subsequent [Design functional audit](./DESIGN_FUNCTION_VALIDATION_2026-09-06.md) preserves
+three-system API observations and hands-on browser checks. Its
+[DV-01–DV-07 finding-to-fix ledger](./DESIGN_FINDINGS_AND_FIXES_2026-09-06.md) separately tracks
+contact-intent preservation, live inspection, covalent-F defaults, option help, and unresolved
+preparation/validation limits. The two dated audits remain distinct evidence records.

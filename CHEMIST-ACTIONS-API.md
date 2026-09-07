@@ -379,18 +379,53 @@ the complete receptor-aware restrained objective remains feasible and improves. 
 `optimization.run({method:"induced-fit-webgpu"})` action is a distinct 6 Å complex minimization and
 does not currently include the docking interaction restraints as force terms.
 
-Current inspection caveat: `session.inspect().contacts[].hydrogenBond` may contain cached
-candidate geometry/satisfaction after a separate optimization, and receptor participant coordinates
-are captured reference points. For a live geometry audit, resolve participant IDs against current
-`session.inspect({scope:"pocket",includeCoordinates:true,maximumAtoms:500}).atoms`; check that all
-participants are present despite possible pocket truncation. Also compare required-contact sets
-across graph edits: the registered CDK2 path currently omits an unavailable required contact.
-The [dated functional audit](./reviews/DESIGN_FUNCTION_VALIDATION_2026-09-06.md) preserves both gaps.
+`session.inspect().contacts[].hydrogenBond` describes the **current molecule**, including live
+receptor participants. Its `geometrySource` is `current-molecule-coordinates`; `measurable`,
+`available`, and `roleCompatible` distinguish geometric measurement from chemical availability.
+Missing atoms, incompatible element identities, invalid coordinates, or an incompatible donor/acceptor
+role cannot inherit a cached satisfied result. Coordinate-bearing participants are returned only
+when `includeCoordinates:true` is requested. For an independent audit, also resolve their persistent
+IDs against `session.inspect({scope:"pocket",includeCoordinates:true,maximumAtoms:500}).atoms`
+and check inspection completeness rather than assuming the entire pocket fits within the cap.
 
-For pose propagation, `pose.refine` now seeds a single-anchor grown region across deterministic
+`candidateHydrogenBond` is separately labelled `selected-search-candidate`; it is a prediction,
+not a claim about the current visible molecule. `referenceHydrogenBond` preserves captured-reference
+geometry separately. A winning alternative feature remains hypothetical until `pose.apply`, which
+commits its remap with the pose. Changing a required/optional contact decision invalidates cached
+search candidates so an old feasibility result cannot be applied under a different requirement set.
+
+Registered graph edits preserve the prior required/optional set independently of contact
+availability, unless the authored step contains an explicit requirement decision. An unavailable
+required contact remains required and blocks refinement until it is resolved or explicitly omitted.
+Staging returns a `contactPolicy` audit with before/after decisions and unresolved required IDs.
+Its `donorHydrogenLineage` audit also records conservative preservation of a single captured
+donor H when the mapped donor's typed chemistry, heavy-neighbor identities/bond orders, and current
+local heavy-atom geometry are unchanged. The H retains its current precursor ID/name/coordinates;
+changed donor chemistry, altered geometry, missing H, and multiple-H ambiguity are not guessed.
+This prevents regenerated H names alone from making a chemically unchanged contact unavailable.
+The [original audit](./reviews/DESIGN_FUNCTION_VALIDATION_2026-09-06.md) and
+[finding-to-fix ledger](./reviews/DESIGN_FINDINGS_AND_FIXES_2026-09-06.md) preserve the former
+dropped-intent and stale-geometry defects and their regression evidence (DV-01/02).
+
+The refinement response's `motionPolicy` uses persistent IDs: `protectedAtomIds` is the actual
+hard core, `releasedInheritedAtomIds` records all released inherited atoms,
+`affectedRotorReleasedAtomIds` identifies its edit-associated torsion-release subset, and
+`addedAtomIds` records added atoms. The two release lists overlap; do not add their counts.
+The reference-retention plan used by later induced-fit minimization is separate from this search
+policy. Do not infer that all inherited IDs are fixed, or that either operation uses the other's set.
+
+New automatic contact captures record the versioned
+`ordinary-anchors-with-optional-covalent-fluorine/v1` policy. Carbon-bound F (C–F) contacts remain available
+as weak, chemistry-dependent hypotheses but are not required by default; explicit `pose.setContact`
+can require an available hypothesis. The contact's `evidenceClass`, `warning`, and
+`conventionalAcceptorHeuristic` disclose this distinction. This default-selection policy does not
+replace the force field or retrospectively alter frozen contact hypotheses (DV-03).
+
+For pose propagation, `pose.refine` seeds a single-anchor grown region across deterministic
 attachment-bond torsions even when no explicit hydrogen-bond target was captured. Target-directed
-regions keep their pharmacophore-axis seeds, multi-anchor regions remain rigid, and every surviving
-reference heavy atom stays exact. This includes a ring grown around a conserved junction atom: the
+regions keep their pharmacophore-axis seeds and multi-anchor regions remain rigid. The remaining
+protected reference heavy atoms stay exact; inherited atoms explicitly released by the active
+edit-associated rotor policy are not part of that hard core. This includes a ring grown around a conserved junction atom: the
 new ring rotates about the junction's external scaffold bond while the junction itself remains
 fixed. Untargeted edit axes use a deterministic 30° scan; captured pharmacophore axes retain their
 coarser directional scan. The `pose.refine` response and labbook record the unique seed count,
