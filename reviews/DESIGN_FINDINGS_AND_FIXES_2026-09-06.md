@@ -193,6 +193,15 @@ created by this three-system development panel.
 Implementation, regression, UI, and publication links are appended here when verified. The
 historical failures above remain visible after their software causes are corrected.
 
+The implementation for **DV-01–DV-04** is
+[commit `56f717c`](https://github.com/rafwiewiora/molarium/commit/56f717c89925a7d78088407e1649b18e4a6bdabd).
+The [integration record](./design-remediation-2026-09-06/integration.json) links that commit to
+the exact API/UI evidence and final local checks: 26 Design regressions, 86 simulation-evidence
+tests, the broad scientific suite, 14 Local Lab checks with zero intercepted external requests,
+and the 323-file production build. Remote CI and deployment status are separate release checks.
+DV-05 remains an undiagnosed preparation failure; DV-06/07 remain explicit capability and
+validation boundaries, not closed bugs.
+
 - [Intermediate API a03](./design-remediation-2026-09-06/api-a03/manifest.json): source-stable
   fail-closed contact policy, explicit-omission recovery (23/64), independently measured live
   geometry after pocket relaxation and receptor motion, stale-candidate rejection, and optional
