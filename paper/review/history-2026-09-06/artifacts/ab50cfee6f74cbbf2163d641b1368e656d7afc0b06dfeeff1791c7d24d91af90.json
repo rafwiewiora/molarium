@@ -1,0 +1,37 @@
+{
+  "renderManifestSha256": "0a995235659817d1c9ac1c11d0cd644e2db59c4ccd6c557a8f7dc7ddff7755a4",
+  "figureSha256": "962f6acecf2971357f6f87d6842820ec6d122351f2c8752152f7411ab6332018",
+  "captures": [
+    {
+      "stage": "starting-hit",
+      "path": "/Users/bb/repos/marco/tmp/molarium-bclxl/outputs/design-history/sos1-hit-to-bay293-intent-interface-m003/qa/03-first-frozen-prediction-checkpoint-in-fixed-local-pocket.png",
+      "sha256": "db61c63d7b6fc6a4bf826ff9d25eeb615346cccd77c5b670eb666452f151fd2c"
+    },
+    {
+      "stage": "fragment-merge",
+      "path": "/Users/bb/repos/marco/tmp/molarium-bclxl/outputs/design-history/sos1-hit-to-bay293-intent-interface-m003/qa/13-8-result-awz-precursor-the-distal-arm-has-not-yet-opened-the-phe890-pock.png",
+      "sha256": "a12b84661a5dba647e934f4d3c295c1231decf80e48105fedf7dfa62fafed4ba"
+    },
+    {
+      "stage": "aww-graph",
+      "path": "/Users/bb/repos/marco/tmp/molarium-bclxl/outputs/design-history/sos1-hit-to-bay293-intent-interface-m003/qa/17-10-result-aww-graph-edit-inspect-the-inherited-arm-direction-before-desi.png",
+      "sha256": "40c280674f59aac66f2613d7b41f9b383caf6f75bd19defe6dab77191ad32941"
+    },
+    {
+      "stage": "aww-designer-intent",
+      "path": "/Users/bb/repos/marco/tmp/molarium-bclxl/outputs/design-history/sos1-hit-to-bay293-intent-interface-m003/qa/23-13-result-rotate-the-aww-arm-toward-the-tyr884-backbone-contact-only-the.png",
+      "sha256": "e4b85454da201d67a4f861b2e72eb3a01d2f138a970457994ca9185505851c3f"
+    },
+    {
+      "stage": "aww-phe890-response",
+      "path": "/Users/bb/repos/marco/tmp/molarium-bclxl/outputs/design-history/sos1-hit-to-bay293-intent-interface-m003/qa/29-16-result-the-energy-selected-phe890-flip-clears-the-fixed-ligand-tyr884.png",
+      "sha256": "2a45c9065171f3b30dc21c922ba0b08be43f66b444b451eb961531a046fa05c1"
+    },
+    {
+      "stage": "finish-bay-293",
+      "path": "/Users/bb/repos/marco/tmp/molarium-bclxl/outputs/design-history/sos1-hit-to-bay293-intent-interface-m003/qa/33-18-result-bay-293-rewire-the-thiophene-attachment-while-retaining-the-di.png",
+      "sha256": "aa0c5247cf484675db6805b4cdc255e3008a95a505f2ebbe33282ab021594fb9"
+    }
+  ],
+  "policy": "unaltered full-interface captures; panel labels only; no molecular interpolation"
+}

@@ -60,6 +60,11 @@ with its `generated/` and `figures/` directories included.
 
 ## Development provenance
 
+The [manuscript review workspace and recovered draft history](review/README.md)
+preserve the September 6 author-supplied source, older drafts, full version
+comparisons, and separately selectable minimal writing/technical proposals.
+The review does not replace `main.tex` or apply editorial choices automatically.
+
 The implementation conversation is part of the evidence for this paper. See
 [`development-log/README.md`](development-log/README.md) for the private raw
 rollout, redacted transcript, and curated debugging-episode workflow. Never add

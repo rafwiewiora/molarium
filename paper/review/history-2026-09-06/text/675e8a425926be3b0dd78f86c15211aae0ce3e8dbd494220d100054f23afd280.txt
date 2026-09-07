@@ -1,0 +1,297 @@
+                      Molecular design software is now free
+                        Building a browser molecular workbench with GPT-5.6 Sol
+                                         Rafal P. Wiewiora       Woody Sherman
+                                                PsiThera, Watertown, MA
+                                              molarium.org       August 2026
+
+
+                                                        Abstract
+      What happens when a chemist asks a coding agent for the molecular-design environment they actually want,
+      then refuses to accept toy chemistry? Over several days, that conversation produced Molarium: a public
+      browser workbench for three-dimensional editing, protein preparation, conformer search, molecular mechanics,
+      ANI-2x, and short-chain protein prediction. GPT-5.6 Sol did not merely connect existing commands. It wrote
+      browser-native Sage forces, OBC2/ACE solvent, SHAKE/RATTLE constraints, a homogeneous-replica molecular
+      dynamics engine, and ANI-2x descriptor and force kernels. We tested those parts against OpenMM, TorchANI,
+      ﬁnite diﬀerences, and ﬁxed ﬁxtures. The artifact is therefore more than another software release. It is evidence
+      that, under expert direction, a current model can turn published methods into substantial, inspectable scientiﬁc
+      code while the research conversation is still under way. Equations and parameters made the new implementations
+      testable; trained weights and accumulated validation still had to be preserved and reused.
+
+    The result is not merely that an agent can operate scientiﬁc software. A chemist asked for
+     missing software, tested it while it was being written, and kept the resulting methods as
+                                           inspectable code.
+
+
+1    A molecule should not disappear into its software
+Molecular design begins with an act of spatial imagination: a chemist sees a molecule that does not yet exist. It
+is a beautiful job, and its software should honor it. Instead, the idea is often broken into a drawing package, a
+preparation wizard, a simulation script, a queue, and a diﬀerent viewer for the answer. Each handoﬀ asks the
+chemist to remember what the software has forgotten. The tools become the work.
+   We wanted the opposite feeling: the quiet pleasure of software that simply works. The molecule should turn
+when the chemist turns it. A carbonyl-to-enol edit should remain in front of them until both bond-order changes
+are ﬁnished. A calculation should return to the same scene, not to an anonymous output directory. The machinery
+should recede so that attention can stay with shape, strain, water, and the next chemical idea.
+
+Why the browser, and why now. For many years the browser was mainly a viewer or a front end to a remote
+calculation. Two platform changes made a local scientiﬁc application plausible. WebAssembly provided a portable,
+sandboxed target for mature C and C++ libraries, avoiding a complete rewrite in JavaScript [1]. WebGPU then
+exposed modern GPU buﬀers, compute shaders, and command queues through one browser API backed by native
+graphics systems [2]. Web molecular graphics had already established the interactive side of the problem [3]. The
+remaining step was to place chemical perception, numerical kernels, and the molecular canvas in the same local
+runtime.
+   This division suits molecular design. WebAssembly handles graph operations, ﬁle formats, control ﬂow, and
+reference calculations. WebGPU handles repeated ﬂoating-point work across atoms or conformers. Workers keep
+long calculations oﬀ the interface thread. The application can be served as static ﬁles, while the structures and
+supported calculations remain on the user’s device. OpenMM also provides an independent reference against which
+narrower browser kernels can be tested [4].
+   The more provocative result is not the interface but how it appeared. The ﬁrst instruction was almost unserious:
+build a copy of an existing molecular viewer. Minutes later the ﬁrst benzene was visibly wrong. “Can you actually
+test all this out?” became the governing question. A methyl fragment made a false bond; a triﬂuoromethyl group
+arrived ﬂat; changing one bond order prematurely bent an oxygen and rotated a ligand. Each visual objection
+became a test and then a change in the model of the molecule. Bond perception was separated from drawing;
+fragments received three-dimensional starting conformations; coupled edits were staged; cleanup was restricted to
+the atoms near the change.
+   The same pattern drove the numerics. “Is this a real force ﬁeld?” killed an early toy evaluator and moved the
+project to RDKit MMFF/UFF and prepared OpenFF Sage Systems [5, 8, 9, 10]. A disagreement between CPU
+and GPU energies exposed both a unit mistake and an architectural misunderstanding: OpenMM Reference in
+
+
+                                                             1
+WebAssembly was a CPU oracle, not the WebGPU engine. “Wait—aren’t we using WebGPU?” led to analytic
+WGSL forces, then compact sparse buﬀers, then tests on Trp-cage and ubiquitin. Asking for implicit solvent led
+to OBC2/ACE [11, 12]; asking whether that included SHAKE led to ﬁxed-point SHAKE/RATTLE [13, 14]; a
+100,000-step run that stopped immediately exposed a forgotten 5,000-step validation cap. This was not a model
+producing a ﬁnished application from one prompt. It was a chemist noticing the wrong thing on screen and an
+agent turning that objection into code, repeatedly.
+
+                                             A scientific build loop
+         CHEMIST NOTICES           AGENT IMPLEMENTS            INDEPENDENT CHECK           REPOSITORY KEEPS
+            wrong shape              topology + WGSL             OpenMM · TorchANI           method + tests
+            wrong energy            protocol + interface          finite differences     benchmark + provenance
+             stalled run
+
+
+
+Figure 1: The development conversation became a repeatable scientiﬁc loop. Visual and numerical failures produced
+code changes; independent oracles decided whether those changes survived; accepted methods remained with their
+tests and provenance.
+
+    That history gives “free” four distinct meanings:
+
+    1. Free to use. The public artifact has no license         2. Free to rebuild. We now take seriously the
+    fee, and supported calculations need not upload a          possibility that a suﬃciently speciﬁed method can be
+    structure.                                                 implemented from its paper during a project, rather
+    3. Free to preserve. A repository can keep agent-          than awaited as a product.
+    written methods long enough for other scientists to        4. Free to compose. One interface and ex-
+    inspect, test, and improve them.                           plicit protocols can make methods plug-and-play for
+                                                               chemists and for agents running reproducible bench-
+                                                               marks.
+
+   This is diﬀerent from asking a model to call a ﬁxed toolchain. Orchestration is right when trusted programs and
+trained models already exist, as recent protein-design systems demonstrate [23, 24]. Accordingly, Molarium keeps
+RDKit, OpenMM, ONNX Runtime, and the oﬃcial ANI-2x and OpenFold weights [5, 4, 18, 16, 17, 20]. GPT-5.6
+Sol wrote the missing browser-speciﬁc layers. Classical mechanics is unusually amenable to this division: equations,
+parameters, units, and reference values can make a new implementation answerable to independent calculation. A
+neural architecture alone cannot recreate its weights or its biological evidence. The model identity, conversation,
+commits, and validation outputs are part of the project record [22].
+
+
+2     The experiment as it unfolded
+By the end of the conversation, opening Molarium felt less like launching a suite than picking up one persistent
+molecular model. The 7KPA complex [21] in Figure 2 can be prepared, inspected, edited, and locally relaxed without
+leaving its scene. The preparation path resolves alternate locations and explicit connectivity, repairs supported
+residue atoms, adds hydrogens, and keeps a crystallographic water when its geometry supports a ligand–protein
+bridge. It does not conceal unresolved chemistry behind a green button.
+   The continuity is practical, not decorative:
+
+    • View keeps chains, ligand, waters, contacts, and the selected residue together.
+    • Build stages bond-order, charge, and hydrogen edits before cleanup is allowed to move the structure.
+    • Inspect returns aligned trajectories to the same canvas while preserving the raw coordinates for export.
+
+
+
+
+                                                           2
+Figure 2: The same 7KPA protein–ligand system during (A) contact inspection, (B) staged chemistry and pocket-
+local editing, and (C) residue-focused inspection. The molecule, selection, and chemical context survive the change
+of task.
+
+
+3     What the browser had to learn
+The browser is liberating precisely because it refuses the usual assumptions. There may be no Python, compiler,
+CUDA driver, or ﬁlesystem path that survives the next machine. WebAssembly gives mature C/C++ code a
+portable sandbox; WebGPU gives the page buﬀers, compute shaders, and command queues, but only fast f32
+arithmetic and no portable 64-bit atomics. The solution was not to pretend that these constraints did not exist. It
+was to make them the architecture.
+   Chemical preparation ends at a numeric System: explicit masses, charges, bonded terms, Lennard–Jones pa-
+rameters, exceptions, constraints, and optional generalized Born parameters. The GPU kernels never guess atom
+types. Browser small molecules use OpenFF Sage 2.1; the bundled protein ﬁxtures preserve exact numeric Systems
+exported from OpenFF Rosemary 3.0.0-alpha0 with NAGL charges [10, 19]. From that common boundary, the code
+chooses a layout that matches the scientiﬁc workload:
+
+                           One chemical boundary, three browser workloads
+                                                             DIRECT  WEBGPU
+                                                                one System
+                                                               one trajectory
+           PREPARE             NUMERIC SYSTEM                                                  CHECK
+        RDKit graph + 3D      masses · charges · terms       REPLICA  WEBGPU
+                                                                one topology              OpenMM Reference
+                              exceptions · constraints        many conformers                   TorchANI
+       OpenFF parameters                                                                   finite differences
+                              optional GB parameters                                         fixed fixtures
+                                                              ANI-2x + ONNX
+                                                                one model
+                                                              many conformers
+
+
+Figure 3: Preparation stops at an explicit numeric System. Three local execution layouts consume it or its coordi-
+nates, and each has a deliberately separate reference path.
+
+    • One System, one trajectory. Atom-centric WGSL kernels evaluate analytic Sage valence, Coulomb,
+      Lennard–Jones, and OBC2/ACE forces from sparse incidence buﬀers [10, 11, 12].
+    • One topology, many replicas. A second engine adds a replica dimension to every kernel, borrowing
+      STORMM’s synthesis idea rather than its source code [15]. Split-int64 force accumulation and ﬁxed-point
+      coordinates replace missing 64-bit atomics; replica-local SHAKE/RATTLE permits a 2 fs Langevin step [13,
+      14].
+    • One model, many conformers. WGSL constructs ANI-2x atomic environment vectors, ONNX Runtime
+      evaluates the oﬃcial eight TorchANI networks, and WGSL contracts derivatives back to coordinate forces
+      without a CPU round trip [16, 17, 18].
+
+    Each path has a deliberately narrow contract. The replica engine accepts homogeneous topologies, nonperiodic
+implicit solvent, and no PME; long-time stability remains to be established. The ANI-2x path is a vacuum model
+for neutral, closed-shell molecules of at most 96 supported atoms. OpenFold 2 is the opposite case: its scientiﬁc
+content is in trained weights, so the browser runs the existing model locally rather than claiming to reconstruct
+it [20].
+
+
+                                                         3
+       Equations can be reconstructed and checked. Trained weights, parameter sets, and
+                    accumulated experimental evidence must be preserved.
+   Every fast path answers to slower code. OpenMM 8.2 Reference WebAssembly re-evaluates the same numeric
+System in double precision [4]; native TorchANI checks ANI; ﬁnite diﬀerences check forces. Reference code is a
+test instrument, not a user-facing fallback. This distinction mattered throughout: agreement checks arithmetic, but
+shared parameters do not independently validate force-ﬁeld assignment.
+
+
+4    The conformer experiment
+Conformer search became the ﬁrst place where all of these choices met. The useful result was not one photogenic
+minimum but a diverse, inspectable set whose provenance stayed visible.
+ETKDGv3 seeds; MMFF94/UFF polish; Sage replica dynamics; common Sage and ANI scores;
+                          symmetry-aware clustering.
+   RDKit generates up to 64 symmetry-pruned ETKDGv3 seeds [5, 6, 7] and brieﬂy polishes them with MMFF94
+or UFF [8, 9]. The replica schedule then applies 2,500 Langevin steps at 600, 450, and 300 K, followed by 240
+ﬁxed-step Sage relaxation iterations in OBC2/ACE [10, 11, 12]. This ﬁnal stage is a bounded relaxation, not a
+converged minimizer. Symmetry-aware heavy-atom RMSD removes duplicate structures before clustering and SDF
+export.
+   The comparison retains three generators from the same seeds: MMFF-polished coordinates, replica/Sage co-
+ordinates, and ANI-2x-reﬁned coordinates. All ﬁnal coordinates receive a common Sage/OBC2 energy and, for
+supported molecules, a vacuum ANI-2x energy. The common Sage score makes the generators comparable and
+checks replica-engine parity on identical coordinates. It is not an independent physical oracle: the replica lane
+optimizes the same objective. The map can plot energy, structural variables, or rank against rank; color reports the
+generator, not the scoring model.
+   In an eight-molecule development panel, replica search found a lower common Sage minimum for four molecules.
+The median best-energy gain was only 0.128 kcal/mol. It added 75 structural clusters, including 44 within 3 kcal/mol
+that were absent from the seed lane’s window. The current evidence supports faster exploration and added diversity.
+It does not establish better conformer quality in general.
+
+                                                     Molecular simulation                                      Pipeline changes
+                                          Trp-cage        2.09x
+                                       Direct Sage                                               ANI-2x GPU                      6.77x
+                                 Ubiquitin vacuum                  9.16x                         buffer path
+                                       Direct Sage
+                                   Ubiquitin OBC2                                        25.6x
+                                       Direct Sage
+                                1,024 C16 replicas                   10.3x
+                                    Replica engine                                                    RDKit        1.77x
+                              256 water27 replicas                                      24.1x    worker pool
+                                    Replica engine
+                                                     0       5     10     15    20     25                   0    2     4      6     8
+                                                         speedup over OpenMM Reference WASM              speedup over prior browser path
+
+
+Figure 4: Engineering timings on one Apple M1 Pro. Direct and replica simulations use OpenMM Reference
+WebAssembly baselines; replica results omit setup and readback and use diﬀerent integrators. ANI-2x and RDKit
+compare with prior browser paths. None are native-CPU or CUDA comparisons.
+
+
+5    What survived measurement
+The ﬁrst honest result was negative: a GPU is a poor place to launch one tiny molecule. OpenMM Reference
+was 13.3-fold faster for one C16 and 3.5-fold faster for one water27 because GPU dispatch dominates tiny jobs.
+Larger or batched work reversed the result. Direct WebGPU reached 2.09-fold the Reference throughput for 304-
+atom Trp-cage, 9.16-fold for 1,231-atom vacuum ubiquitin, and 25.6-fold for ubiquitin with OBC2/ACE. At equal
+aggregate steps, 1,024 C16 replicas reached 10.3-fold and 256 water27 replicas 24.1-fold the Reference throughput.
+The baseline is double-precision OpenMM Reference WebAssembly, not native CPU or CUDA. Replica timings
+exclude setup and readback, and the integrators diﬀer.
+      WebGPU did not make one small molecule fast. It made enough molecular work fast.
+   Numerical tests are separate from product regressions. Direct Sage’s largest relative energy deviation from
+OpenMM was 2.361e-6; aspirin force relative RMS was 7.696e-7. Aspirin OBC2 diﬀered by 1.279e-4 kcal/mol with
+7.835e-7 force relative RMS. The replica engine’s largest energy error was 2.15e-5 kcal/mol and force relative RMS
+
+
+                                                                                    4
+was 6.66e-6. Against native TorchANI on six small molecules, ANI-2x reached 0.02572 kcal/mol maximum energy
+error and 1.022e-5 force relative RMS. These ﬁxtures test implementation parity, not force-ﬁeld accuracy, ANI
+transferability, or cross-vendor agreement.
+   The 418 browser checks prevent product regressions; they are not 418 scientiﬁc validations. Against prior browser
+paths, GPU-resident ANI descriptors and forces improved that stage 6.77-fold, while parallel RDKit workers im-
+proved a cold seed-generation run 1.77-fold (Figure 4).
+
+
+6    What this does—and does not—show
+The engines are nonperiodic and omit PME, barostats, membranes, and arbitrary OpenMM plugins. The single-
+precision, all-pairs replica engine accepts one topology at a time. OBC2 and browser protein parameterization
+remain experimental; ANI-2x is a restricted vacuum model; OpenFold supports one short chain and uses a network
+service only for a user-requested MSA.
+   Next tests require a frozen conformer benchmark with repeated seeds, reference-conformer recall, an independent
+energy judge, conﬁdence intervals, and a matched modern CPU baseline. The engines also need a cross-GPU matrix
+and longer NVE and constrained-solvent trajectories.
+   The conversation is part of the evidence, not decoration. We are preserving its timestamped transcript alongside
+commits, test outputs, benchmark artifacts, and ﬁle hashes, with credentials and private structure data removed
+before public release. Until active time is reconstructed from that archive, “several days” denotes the observed
+project interval rather than a controlled productivity measurement.
+   Molarium is public at https://molarium.org; source is at https://github.com/rafwiewiora/molarium. We
+began by asking for a nicer place to look at molecules. We ended with a sharper proposition: a chemist can now
+ask for missing scientiﬁc software during the work itself, watch it fail, demand the relevant comparison, and keep
+the resulting method as a public, testable artifact. GPT-5.6 Sol supplied extraordinary implementation speed. The
+chemist supplied the taste to notice a ﬂat triﬂuoromethyl group, the suspicion to question an energy scale, and
+the judgment to decide which failure mattered. Neither role is dispensable. The exciting future is not chemistry
+without chemists; it is chemistry in which beautiful ideas no longer have to wait for beautiful tools.
+
+
+References
+ [1] A. Haas et al. WebAssembly. PLDI (2017).
+ [2] W3C GPU for the Web Working Group. WebGPU speciﬁcation.
+ [3] A. S. Rose and P. W. Hildebrand. NGL Viewer. Nucleic Acids Research 43, W576–W579 (2015).
+ [4] P. Eastman et al. OpenMM 8. J. Phys. Chem. B 128, 109–116 (2024). doi:10.1021/acs.jpcb.3c06662.
+ [5] G. Landrum. RDKit: open-source cheminformatics, Release 2025.03.4. doi:10.5281/zenodo.591637.
+ [6] S. Riniker and G. A. Landrum. Better informed distance geometry for conformer generation. J. Chem. Inf. Model. 55, 2562–2574
+     (2015). doi:10.1021/acs.jcim.5b00654.
+ [7] S. Wang et al. ETKDG conformer generation for small rings and macrocycles. J. Chem. Inf. Model. 60, 2044–2058 (2020).
+     doi:10.1021/acs.jcim.0c00025.
+ [8] T. A. Halgren. Merck molecular force ﬁeld I: MMFF94. J. Comput. Chem. 17, 490–519 (1996).
+ [9] A. K. Rappé et al. UFF. J. Am. Chem. Soc. 114, 10024–10035 (1992). doi:10.1021/ja00051a040.
+[10] S. Boothroyd et al. Open Force Field 2.0.0: Sage. J. Chem. Theory Comput. 19, 3251–3275 (2023). doi:10.1021/acs.jctc.3c00039.
+[11] A. Onufriev, D. Bashford, and D. A. Case. Modiﬁed generalized Born model. Proteins 55, 383–394 (2004). doi:10.1002/prot.20033.
+[12] A. Schaefer and M. Karplus. Analytical continuum electrostatics. J. Phys. Chem. 100, 1578–1599 (1996). doi:10.1021/jp9521621.
+[13] J.-P. Ryckaert, G. Ciccotti, and H. J. C. Berendsen. SHAKE constraints. J. Comput. Phys. 23, 327–341 (1977). doi:10.1016/0021-
+     9991(77)90098-5.
+[14] H. C. Andersen. RATTLE. J. Comput. Phys. 52, 24–34 (1983). doi:10.1016/0021-9991(83)90014-1.
+[15] D. S. Cerutti, R. Wiewiora, S. Boothroyd, and W. Sherman. STORMM. J. Chem. Phys. 161, 032501 (2024). doi:10.1063/5.0211032.
+[16] X. Gao et al. TorchANI. J. Chem. Inf. Model. 60, 3408–3415 (2020). doi:10.1021/acs.jcim.0c00451.
+[17] C. Devereux et al. ANI-2x: extending ANI to sulfur and halogens. J. Chem. Theory Comput. 16, 4192–4202 (2020).
+     doi:10.1021/acs.jctc.0c00121.
+[18] Microsoft. ONNX Runtime, Web release 1.27.0.
+[19] Open Force Field Initiative. OpenFF Rosemary 3.0.0-alpha0 and NAGL openﬀ-gnn-am1bcc-1.0.0; exact ﬁxture provenance is
+     archived with Molarium.
+[20] G. Ahdritz et al. OpenFold. Nature Methods 21, 1514–1524 (2024). doi:10.1038/s41592-024-02272-z.
+[21] Protein Data Bank. Structure 7KPA. doi:10.2210/pdb7KPA/pdb.
+[22] OpenAI. GPT-5.6 Sol. Model-assisted development record, prompts, commits, test artifacts, and hashes are described in the
+     Molarium provenance archive (2026).
+[23] Anthropic. Claude accelerates protein design (2026).
+[24] OpenAI. Introducing new capabilities to GPT–Rosalind (2026).
+
+
+
+
+                                                                5
+

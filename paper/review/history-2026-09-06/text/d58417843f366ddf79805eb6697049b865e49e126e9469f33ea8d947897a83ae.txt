@@ -1,0 +1,6 @@
+                            A scientific build loop
+CHEMIST NOTICES   AGENT IMPLEMENTS        INDEPENDENT CHECK       REPOSITORY KEEPS
+  wrong shape       topology + WGSL        OpenMM · TorchANI         method + tests
+  wrong energy     protocol + interface     finite differences   benchmark + provenance
+   stalled run
+

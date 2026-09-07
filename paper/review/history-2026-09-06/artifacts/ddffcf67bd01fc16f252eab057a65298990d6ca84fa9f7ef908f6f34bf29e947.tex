@@ -1,0 +1,824 @@
+\section{Molarium architecture and executable design history}
+\label{app:architecture}
+
+This appendix specifies the implementation beneath the browser interface. It
+separates deployed capabilities from proposed workflows and closes with the
+selected SOS1 route underlying the paper movie.
+
+\subsection{Execution architecture}
+\label{app:wasm-webgpu}
+
+WebAssembly and WebGPU give the browser two different kinds of calculator.
+Emscripten can compile established C and C++ programs into WebAssembly's portable
+instruction format. WebGPU lets the browser submit parallel arithmetic to the
+laptop's graphics processor
+\cite{haas2017webassembly,w3c2025webgpu,w3c2026wgsl}. Neither knows chemistry by
+itself.
+
+\molarium{} therefore separates chemical interpretation from calculation. RDKit
+identifies chemical environments in the molecular graph. Molarium's JavaScript
+parameterizer then applies the OpenFF Sage tables to produce a numerical recipe:
+atom properties, bonded terms, nonbonded terms, and constraints. Missing bond,
+angle, torsion, or van der Waals parameters stop preparation rather than being
+guessed. OpenMM or WebGPU evaluates the same accepted recipe. The interface maps
+the returned coordinates and energies back onto the original atoms. This
+separation allows one engine to serve as a direct check on the other.
+
+For readers outside software development, ETKDG proposes plausible starting 3D
+shapes \cite{riniker2015etkdg,wang2020etkdg}. SMARTS
+patterns recognize chemical environments in a molecular graph. MMFF94 and UFF
+provide quick ligand-only geometry cleanup
+\cite{halgren1996mmff,rappe1992uff}. OBC2/ACE approximates solvent screening and
+the nonpolar cost of placing a molecule in solvent. ``Analytical forces'' means
+forces obtained directly by differentiating the energy equations, rather than
+by repeatedly perturbing each coordinate.
+
+The information flow is deliberately narrow:
+
+\begin{center}
+  \small
+  \begin{tabular}{c}
+    PDB or SMILES input \\
+    $\downarrow$ \\
+    molecular graph, stable atom identities, and coordinates \\
+    $\downarrow$ \\
+    RDKit interpretation $\rightarrow$ Sage numerical recipe \\
+    $\downarrow$ \\
+    three calculators: \\
+    OpenMM/WebAssembly reference; direct WebGPU; replica WebGPU \\
+    $\downarrow$ \\
+    viewer $+$ action audit $+$ numerical labbook $+$ design decisions
+  \end{tabular}
+\end{center}
+
+The architectural claim concerns this composition, not novelty in each of its
+parts. Background workers, atomwise GPU decomposition, graph-coloured
+constraints, fixed-point accumulation, canonical JSON, and cryptographic hashes
+are established techniques. Molarium combines them behind one numerical and
+action contract, then tests the boundaries created by that combination in a
+browser. The implementation results below therefore distinguish three things:
+routine choices needed to reproduce the software, changes forced by observed
+failures, and measured workload-dependent behaviour.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Current browser implementation.}
+  \label{tab:architecture-runtime}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.08}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.18\linewidth}
+                       >{\raggedright\arraybackslash}p{0.28\linewidth}
+                       >{\raggedright\arraybackslash}p{0.44\linewidth}@{}}
+    \toprule
+    Task & Software used & What it does \\
+    \midrule
+    Interpret the molecule & RDKit 2025.03.4, WebAssembly &
+      SMILES/graphs, ETKDGv3, SMARTS matching, MMFF94, explicit UFF fallback,
+      Gasteiger charges \\
+    Assign the force field & OpenFF Sage 2.1.0 &
+      Produces the complete numerical recipe: particles, bonds, angles,
+      torsions, nonbonded terms, exceptions, and constraints \\
+    Reference calculation & OpenMM 8.2.0 Reference, WebAssembly &
+      High-precision energy/forces, L-BFGS minimization, and short dynamics;
+      used as an answer key \\
+    Fast local calculation & WebGPU/WGSL, 32-bit floating point &
+      Evaluates one system directly on the GPU; includes analytical forces,
+      OBC2/ACE, minimization, and short dynamics \\
+    Many-copy calculation & STORMM-inspired WebGPU engine &
+      Advances many copies of one topology together; exact integer-based
+      accumulation; current limit 512 atoms per copy \\
+    Display and record & JavaScript modules, background workers, Canvas,
+      Web Crypto & Keeps atom identity, executes allowed actions, and writes
+      reproducible JSON records with SHA-256 fingerprints \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Table~\ref{tab:architecture-runtime} summarizes the concrete implementation.
+The numerical recipe crossing these layers has a narrow contract:
+
+\begin{itemize}
+  \item \textbf{Input.} A molecular graph plus coordinates, masses, charges,
+    bonded terms, nonbonded terms, exceptions, and constraints.
+  \item \textbf{Units.} nm, ps, daltons, kJ/mol, and kJ/mol/nm internally;
+    angstroms and kcal/mol in the interface.
+  \item \textbf{Isolation.} Each engine lives in a reusable background
+    worker---a separate browser task---so the molecular canvas and controls can
+    remain responsive. Jobs carry identifiers that match results to requests. A
+    crashed worker is discarded and recreated.
+  \item \textbf{Output.} Compact arrays of coordinates, forces, energies, and
+    trajectory frames return to the same molecular object and atom identities.
+\end{itemize}
+
+For ordinary small molecules, a JavaScript SMIRNOFF parameterizer uses RDKit to
+apply Sage 2.1.0 patterns and assign labelled Gasteiger charges
+\cite{boothroyd2023sage,gasteiger1980charges}. Prepared Rosemary fixtures keep
+their exported numerical recipes and NAGL charges. CPU/GPU comparisons therefore
+use identical graphs and numbers, not two separately prepared approximations.
+
+\subsubsection{OpenMM WebAssembly reference}
+
+Cross-compiling C++ and exposing a C interface are established deployment
+techniques. The relevant results here are that the browser build preserved the
+native calculation and that constrained setup exposed one browser-specific
+threading failure.
+
+\begin{description}
+  \item[Deployment.] We compiled OpenMM 8.2.0 with Emscripten 6.0.6-git and
+    CMake 3.31.0 \cite{eastman2017openmm,eastman2024openmm8}. A thin C interface
+    copies the numerical recipe into OpenMM and returns energies, forces, or
+    coordinates. The shipped source, two patches, interface, and built files
+    carry recorded fingerprints. A rebuild can be audited against those inputs;
+    byte-identical recompilation is not asserted.
+  \item[Reference configuration.] Nonperiodic OpenMM \texttt{System};
+    double-precision Reference
+    platform; energy, forces, L-BFGS, short dynamics, optional X--H constraints,
+    2~fs Langevin-middle integration, cutoff, and OBC2/ACE with mbondi2
+    radii \cite{onufriev2004obc2}.
+  \item[Browser-specific failure.] OpenMM normally creates helper CPU threads while setting
+    up constrained motion. This browser build has no such threads; without a
+    small serial patch, setup waits indefinitely. The patch affects only this
+    WebAssembly build, not native OpenMM.
+  \item[Measured parity.] First, the same C interface compiled natively and for
+    WebAssembly agreed to $2.84\times10^{-14}$~kcal/mol maximum energy difference
+    and $3.76\times10^{-15}$ relative force RMS. This tests whether OpenMM
+    survived conversion to the browser. We then sent five hash-selected
+    protein--ligand poses
+    through browser Sage and OpenMM using the same numerical inputs. The maximum
+    energy difference was
+    $1.24\times10^{-4}$~kcal/mol in vacuum and
+    $2.76\times10^{-4}$~kcal/mol with OBC2. Maximum relative force RMS error was
+    $1.16\times10^{-5}$ in both modes. These fixed-input regression results are
+    not general force-field accuracy claims.
+\end{description}
+
+\subsubsection{Direct WebGPU mechanics}
+
+This path does not run OpenMM on the GPU. It evaluates the same force-field
+equations directly in WebGPU Shading Language (WGSL), using 32-bit floating-point
+arithmetic. Its central trade-off is simple: repeat some arithmetic so that each
+force has exactly one writer. This favours deterministic browser execution over
+the more cooperative decompositions used by highly tuned GPU molecular-dynamics
+codes \cite{glaser2015strong}.
+
+\begin{itemize}
+  \item \textbf{Single-writer force accumulation---implementation choice.}
+    One invocation owns one atom's output force. A compact incidence list gives
+    it only the bonds, angles, and torsions involving that atom. Pair and valence
+    contributions are recomputed where necessary, after which the invocation
+    writes its force once. The method therefore needs no floating-point atomic
+    update to the force buffer; WGSL defines atomic integer types but no atomic
+    floating-point type \cite{w3c2026wgsl}. One-invocation-per-atom is a
+    conventional GPU decomposition, not a new algorithm.
+  \item \textbf{Quadratic pair allocation removed---failure-driven change.}
+    The first representation stored data for every possible atom pair and cost
+    $32N^2$ bytes: approximately 32~MB at 1,000 atoms and 2~GB at 8,000 atoms.
+    The deployed representation stores only excluded or specially scaled pairs;
+    ordinary Lennard--Jones parameters are mixed on demand. This change removed
+    the direct engine's former 512-atom allocation ceiling.
+  \item \textbf{OBC2/ACE mapped to three passes---method implementation.}
+    The first pass estimates Born radii, the second propagates their coordinate
+    derivatives, and the third accumulates solvent and nonpolar energies and
+    forces. The pass structure is an implementation of the published model, not
+    a new solvent model.
+  \item \textbf{Graph-coloured constraints---implementation choice.}
+    Optional X--H constraints use target distances from the assigned bonds.
+    Constraints with no shared atom are grouped so SHAKE and RATTLE corrections
+    can run concurrently \cite{ryckaert1977shake,andersen1983rattle}. Seeded
+    Langevin dynamics then supports 1~fs flexible or 2~fs constrained steps.
+  \item \textbf{Bounded pocket relaxation---product behaviour.} A bounded
+    steepest-descent procedure cleans geometry. Zero inverse mass fixes outer
+    receptor atoms, leaving only the ligand and selected pocket atoms free.
+\end{itemize}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Operating limits in the current direct WebGPU worker.}
+  \label{tab:direct-operating-limits}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.06}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.32\linewidth}
+                       >{\raggedright\arraybackslash}p{0.58\linewidth}@{}}
+    \toprule
+    Setting & Current value \\
+    \midrule
+    Principal force workgroup & 64 atomwise calculations \\
+    Time step & 1~fs flexible; 2~fs with X--H constraints \\
+    Constraint solve & Four graph-coloured sweeps by default; at most 32 \\
+    Minimization & 750 iterations by default; at most 2,000; each displacement
+      capped at 0.001~nm \\
+    Direct dynamics request & At most 5,000 steps; longer requests use the
+      ensemble route \\
+    Validation cutoff & 1.0~nm cutoff; 0.2~nm skin; rebuild every 20 steps \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Two measurements changed or bounded the design. First, a conventional
+neighbour-list cutoff did not help at these interactive system sizes. With a
+0.2~nm Verlet skin rebuilt every 20 steps, it made 5,000 constrained OBC2
+Trp-cage steps 46\% slower and 1,000 ubiquitin steps 17\% slower than the full
+nonbonded range on an Apple M1 Pro. Molarium therefore retains this route for
+validation but does not expose it in the product.
+
+Second, GPU benefit depended on amortization. One Trp-cage energy/force call took
+25.5~ms in WebGPU and 5.7~ms in OpenMM Reference: dispatch cost exceeded the
+saved arithmetic. Across 1,000 dynamics steps, WebGPU reached 214.9 versus
+102.8~ns/day for 304-atom Trp-cage and 65.18 versus 7.11~ns/day for 1,231-atom
+ubiquitin. These warmed, nonperiodic, all-pairs measurements identify a workload
+crossover; they are not claims about complete solvated-protein protocols. The
+direct path currently excludes periodic boundaries, particle-mesh Ewald
+electrostatics, explicit solvent, barostats, virtual sites, and arbitrary OpenMM
+custom forces.
+
+\subsubsection{Replica-parallel WebGPU}
+
+The second engine targets ensembles of independent copies of one topology. It
+maps one replica to each GPU workgroup, whereas the direct engine distributes
+one molecule across atom-owning invocations. This mapping is not itself novel;
+it creates a different throughput regime and requires a different memory layout.
+The implementation draws on STORMM's fixed-point and stacked-system design but
+is independent browser code \cite{cerutti2024stormm}. Replicas share a topology
+and parameter layout but never interact.
+
+Fixed-point accumulation is also established rather than a Molarium algorithm:
+it stores a scaled real number as an integer so concurrent additions can use
+exact integer operations. Its browser adaptation was consequential because WGSL
+exposes 32-bit integer atomics. Molarium represents each signed 64-bit
+accumulator as two 32-bit words and uses $2^{22}$ counts per kcal/mol for
+energies, $2^{18}$ counts per kcal/mol/\AA{} for forces, and $2^{32}$ counts per
+\AA{} for coordinates. This paired-word representation replaced 32-bit sums
+that silently overflowed in clashed systems. It produced bit-for-bit replay for
+identical seeds on the tested adapter.
+
+The integrator is deliberately conventional: velocity Verlet, seeded Langevin
+thermalization, and SHAKE/RATTLE. Constraint projection is serial within a
+replica while replicas remain parallel; the default relative tolerance is
+$10^{-5}$ with at most 32 iterations. Commands contain at most 50 steps. The
+important safety behaviour is fail-closed execution: persistent status words
+turn non-finite values, clamps, and failed constraints into terminal errors.
+Current limits are 512 atoms per replica, all-pairs nonbonded work, and the same
+atom count, topology, and parameters in every copy. Heterogeneous stacked
+systems remain proposed.
+
+Force evaluation still uses a separate 32-bit floating-point coordinate copy.
+That copy, not the exact store, sets the remaining spatial precision boundary:
+translating a test system 500~\AA{} from the origin changed its energies by
+approximately $3\times10^{-4}$ relative. A future implementation should recenter
+each work unit; widening the integer store cannot correct arithmetic already
+performed on the floating-point copy.
+
+The many-copy design pays off only when enough work is available. In warm tests,
+OpenMM Reference was 13.3-fold faster for one C16 molecule and 3.5-fold faster
+for one 27-water system. WebGPU was 10.3-fold faster for 1,024 C16 replicas and
+24.1-fold faster for 256 water replicas. These comparisons measure aggregate
+replica throughput; the two engines do not use identical integrators.
+
+\subsection{How the numerical rewrite was accelerated}
+\label{app:agent-development}
+
+The speed-up came from a shared executable specification, not from asking an
+agent to invent molecular dynamics from prose. Every implementation received the
+same atom order, coordinates, parameters, units, and named energy terms as the
+OpenMM reference. The agent then used a conventional differential-testing loop:
+
+\begin{enumerate}
+  \item start with exactly the same molecular graph, coordinates, and
+    force-field numbers used by the CPU calculation;
+  \item implement one term at a time---for example bonds before angles, and
+    angles before torsions---including both the GPU equation and the arrangement
+    of its input numbers in memory;
+  \item ask OpenMM to evaluate the identical input;
+  \item compare each named energy term and every $x$, $y$, and $z$ force;
+  \item stop at the first difference, correct it, and save a small test that
+    would fail if the error returned;
+  \item finally run the real WebGPU and WebAssembly code in a browser, rather
+    than a simplified stand-in.
+\end{enumerate}
+
+Differential testing is not new. What shortened this implementation was making
+the complete path---chemical typing, OpenMM adapter, GPU equations, browser
+workers, controls, and regression tests---addressable in one workspace. A visible
+failure could be reduced to the first disagreeing term without translating files
+or atom identities between teams or tools. Reusing exact inputs reduced
+coordination; it did not relax the numerical standard.
+
+Responsibility remained divided. Published methods and OpenMM supplied the
+equations and reference values. The human team set the scientific boundary,
+chose acceptable workflows, and interpreted results. The coding agent translated
+terms into browser code, isolated discrepancies, and retained regression tests.
+The public history shows an iterative implementation, but its first public
+commit was consolidated; it does not support a precise claim about elapsed
+development time.
+
+Several failures changed the architecture rather than being hidden by wider
+tolerances (Table~\ref{tab:architecture-failures}):
+
+\begin{table}[htbp]
+  \centering
+  \caption{Observed failures that changed the implementation.}
+  \label{tab:architecture-failures}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.06}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.27\linewidth}
+                       >{\raggedright\arraybackslash}p{0.31\linewidth}
+                       >{\raggedright\arraybackslash}p{0.32\linewidth}@{}}
+    \toprule
+    Observation & Design change & Retained check \\
+    \midrule
+    Pair table grew as 32 times atom-count squared & Store only exceptional pairs; mix
+      ordinary pairs as needed & Large-system allocation and parity tests \\
+    32-bit force/energy sums overflowed & Paired-word 64-bit fixed-point
+      accumulation and fault flags & Clashed system at about 2 million kcal/mol \\
+    Coordinates wrapped beyond 128~\AA & 64-bit fixed-point coordinate store
+      plus floating-point working copy & Whole system translated to 500~\AA \\
+    Standard cutoff ran slower & Keep it for validation; omit it from product
+      controls & Fixed Trp-cage/ubiquitin timing protocols \\
+    Apparent engine mismatch & Check atom order, hashes, and solvent mode before
+      changing code & Native/WebAssembly parity and matched-solvent comparison \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+\FloatBarrier
+
+The retained tests expose the seams where implementation errors actually
+appeared:
+
+\begin{itemize}
+  \item \textbf{Equation seam:} minimal bonds, angles, torsions, and exceptions
+    catch formula, sign, unit, and periodicity errors.
+  \item \textbf{Representation seam:} clashes, constraints, overflow, and
+    translated coordinates exercise projection and numerical range.
+  \item \textbf{Engine seam:} identical OpenMM and WebGPU inputs identify the
+    first disagreeing energy component or force coordinate.
+  \item \textbf{System seam:} protein fixtures exercise memory layout, special
+    pairs, and transfer between workers and the molecular object.
+  \item \textbf{Browser seam:} the shipped GPU and WebAssembly workers exercise
+    adapter support, worker recovery, and the visible controls.
+  \item \textbf{Performance seam:} fixed hardware and protocols retain correct
+    but slower results, including the rejected cutoff design.
+\end{itemize}
+
+Fixed random seeds and stable atom IDs make failures repeatable. Both engines
+reject impossible inputs and invalid memory ranges before display. The ensemble
+engine also stops on fixed-point overflow warnings or unconverged constraints;
+the direct engine reports its final constraint error, which browser tests compare
+with an acceptance threshold. Curated debugging records connect each observed
+failure to its diagnosis, code change, protective test, and remaining
+uncertainty; private raw transcripts are not scientific evidence.
+
+\paragraph{Reproduction difficulty and portability boundary.}
+Reproducing the present fixed-topology, nonperiodic mechanics was tractable once
+the reference calculation became executable, but it was not automatic. The
+difficulty was uneven:
+
+\begin{itemize}
+  \item \textbf{Individual force-field terms were bounded problems.} Each bond,
+    angle, torsion, pair, or solvent contribution had a published equation, a
+    fixed input, and an OpenMM result against which to compare it. Analytical
+    derivatives and OBC2 coupling still required careful work, but discrepancies
+    could be localized.
+  \item \textbf{The difficult problems crossed layers.} Atom identities had to
+    survive chemical perception, parameterization, GPU packing, calculation,
+    and display. Force ownership had to avoid races. Numerical ranges had to
+    survive clashes and translations. Long calculations had to yield often
+    enough that the browser remained usable.
+  \item \textbf{Validation remained irreducible.} An agent could translate and
+    test each term quickly, but it could not infer that two runs represented the
+    same physical model. Atom order, solvent mode, cutoffs, constraints, units,
+    and charge provenance still had to be matched explicitly.
+\end{itemize}
+
+These results do not imply that any simulation algorithm can be copied into
+WebGPU. They support a narrower working hypothesis: WebGPU is a strong target
+when state fits regular arrays, work can be divided into local or pairwise
+operations, global dependencies can be separated into a small number of kernel
+passes, and repeated work amortizes dispatch. Fixed-topology mechanics, local
+minimization, independent replicas, and graph-colourable constraints meet those
+conditions.
+
+Other methods may be expressible but unattractive. Algorithms that depend on
+64-bit floating-point arithmetic, frequent device-wide synchronization, rapidly
+changing graphs, large adaptive sparse structures, or mature FFT and sparse
+linear-algebra libraries require substantial redesign under current WGSL
+\cite{w3c2026wgsl}. Particle-mesh Ewald electrostatics, heterogeneous reactive
+systems, and some long-timescale production protocols therefore remain outside
+the demonstrated boundary. For such methods, a WebAssembly reference, a hybrid
+CPU/GPU path, or a remote specialist engine may be the more faithful design.
+
+A successful rewrite should consequently mean agreement on the same accepted
+inputs within a declared tolerance, together with measured usefulness on the
+target workload. It does not mean identical source code, universal bitwise
+reproducibility, or automatic speed-up.
+
+\subsection{Workflows}
+\label{app:workflows}
+
+``Local calculation'' and ``offline operation'' are different claims. In normal
+connected mode, computation stays on the device, but an explicit PDB/CCD lookup
+or sequence-alignment search contacts the service named in the interface. Local
+Lab serves a reviewed checkout from localhost under a restrictive browser
+Content Security Policy: external structure and alignment controls are disabled,
+and an egress-canary test fails if a synthetic private-data marker reaches an
+external request. A hosted page can still change the code it serves on a later
+visit; the strongest boundary is a reviewed versioned checkout with locally
+pinned assets.
+
+\paragraph{Supported now.}
+
+\begin{itemize}
+  \item \textbf{Local small-molecule work:} construct in synchronized 2D/3D;
+    validate the graph; run RDKit or direct-WebGPU calculations; inspect aligned
+    trajectories and energies; export. OpenMM WebAssembly supports internal
+    validation and fixed-scaffold operations but is not a selectable Simulate-panel
+    method.
+  \item \textbf{Protein--ligand pose propagation:} capture a trusted pose;
+    preserve atom lineage; sample only changed ligand branches; impose optional
+    contact hypotheses; and apply a selected pose while the receptor remains
+    fixed. A separate experimental induced-fit action releases the ligand and
+    every atom---backbone included---of protein residues entering a 6~\AA{}
+    pocket shell; all outer atoms remain fixed.
+  \item \textbf{Agent-operated design:} call the versioned Chemist Actions API,
+    not arbitrary page code. Here the API is a fixed menu of permitted actions;
+    the agent receives the same state-changing verbs a chemist can invoke---select,
+    edit, search, apply, relax, and undo---plus read-only inspection. It cannot
+    silently replace coordinates or call arbitrary page functions. Requests run
+    one at a time and record sequence, timestamps, arguments, status, and duration.
+\end{itemize}
+
+\paragraph{Proposed.}
+
+\begin{itemize}
+  \item \textbf{Local-to-specialist escalation:} export a checkpoint identified
+    by a content fingerprint, together with an explicit protocol for periodic
+    solvent, long trajectories,
+    free energy, or electronic structure; attach returned results as evidence
+    without replacing the local branch. Transport, scheduling, signatures, and
+    trust policy are not implemented.
+  \item \textbf{Collaborative molecular review:} branch by chemotype,
+    protonation state, pose, or author; merge by recording decision and
+    parentage, never by averaging coordinates; cite the exact branch and replay.
+\end{itemize}
+
+\subsection{Git-like history for molecules and decisions}
+\label{app:molecular-git}
+
+The Git analogy is simple: a \emph{snapshot} is one molecular state; a
+\emph{commit} records that state and why it was saved; a \emph{branch} preserves
+an alternative design route. A merge records which route was chosen and why. It
+never averages two molecular structures. This is a custom content-addressed
+ledger inspired by Git, not a Git repository or a general three-way molecular
+merge algorithm. Three linked record types answer different provenance
+questions:
+
+\paragraph{Current product boundary.}
+The live application keeps at most 500 Chemist Actions records in memory, and
+clearing the scene clears that transient audit. The Design History panel and
+public \texttt{campaign.*} actions can create a locally persisted campaign,
+atomically commit the visible molecule, create or restore branches, merge branch
+histories, record decisions, verify the append-only record, and import or export
+canonical campaign JSON. There is no hidden server sync or automatic commit:
+the user or agent must explicitly save a state. Each campaign commit contains a
+complete molecular snapshot; its attached action script contains the completed
+public operations captured since the preceding commit and remains marked as
+partial coverage rather than a complete browser-session recording.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Separation of operational, numerical, and design provenance.}
+  \label{tab:design-records}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.08}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}
+                       >{\raggedright\arraybackslash}p{0.28\linewidth}
+                       >{\raggedright\arraybackslash}p{0.38\linewidth}@{}}
+    \toprule
+    Record & Question & Contents \\
+    \midrule
+    Chemist Actions audit & What was requested? &
+      Public action, arguments, timing, status, compact after-state \\
+    Calculation labbook & What numerical protocol ran? &
+      Inputs, method, parameters, outputs, hash-linked events \\
+    Design campaign & Why did a state advance or stop? &
+      Snapshots, branches, parents, hypotheses, evidence, decisions \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Canonical JSON, SHA-256 fingerprints, parent links, and hash-chained events are
+standard provenance mechanisms. Molarium's contribution is their molecular
+binding: an operational record states what was requested, a numerical record
+states what calculation ran, and a design record states why one molecular state
+advanced. Keeping these questions separate prevents a successful replay from
+being mistaken for evidence that a design decision was scientifically sound.
+
+The ledger implementation uses schema \texttt{molarium.design-campaign/v1} and
+stores plain JSON in a
+single standardized ordering (canonical JSON). SHA-256 converts each snapshot,
+action script, or commit into a 64-character fingerprint: changing even one
+recorded value changes the fingerprint. Each commit names its snapshot,
+parent(s), branch, message, optional action script, hypotheses, evidence, and
+tags. Events are append-only and each includes the previous event's fingerprint,
+forming a chain. They also identify the actor (human, agent, system, or import)
+and source.
+Decision states are \texttt{progressed}, \texttt{not-progressed},
+\texttt{deferred}, \texttt{failed}, \texttt{duplicate},
+\texttt{superseded}, and \texttt{archived}. Finalization appends a completion
+event, hashes the campaign, and makes later additions or edited records fail
+verification. It does not make a JSON file physically unwritable. Hashes detect
+alteration; they are not author signatures.
+
+Registered design routes and campaign ledgers use separate schemas. The SOS1,
+BCL-xL, and CDK2 input protocols use
+\texttt{molarium.registered-\allowbreak design-\allowbreak route/v1}; they define the coordinate
+boundary, hash-pinned hit, and ordered graph edits. Append-only histories use
+\texttt{molarium.design-\allowbreak campaign/v1}; they contain snapshots, commits,
+branches, events, and decisions. The application validates a route before
+loading it, and cross-schema tests reject a route as a ledger or a ledger as a
+route.
+Frozen predictions made before the schema split retain their original input
+hash. A migration record stores both hashes and is accepted only when replacing
+the schema identifier reconstructs the exact frozen bytes; any other field
+change still fails verification. Public route actions are
+\texttt{designRoute.load}, \texttt{designRoute.applyStep}, and
+\texttt{designRoute.inspect}. The loader takes a \texttt{routeId}; applying a
+step takes a \texttt{stepId} and, only for routes with designer-directed spatial
+intent, an \texttt{attachmentAtomId}; inspection takes no arguments. No
+compatibility alias is exposed. Campaign-ledger operations remain a separate
+concern.
+
+The fingerprint seals one exact recorded representation. Two chemically
+equivalent SMILES, tautomers, protonation states, or atom orderings can still
+produce different fingerprints. It proves record identity---not chemical
+equivalence, authorship, or truth.
+
+A decision points to a molecular commit; that commit points to its selected
+snapshot, parent commits, action script, hypotheses, and evidence. The following
+field-level sketch shows the linkage. Full identifiers are SHA-256-derived
+strings rather than the shortened labels shown here.
+
+\noindent\begin{minipage}{\linewidth}
+\small
+\begin{verbatim}
+{
+  "moleculeCommit": {
+    "snapshotId": "snapshot:<selected-child>",
+    "parents": ["commit:<parent>"],
+    "actionScriptId": "script:<designer-moves>",
+    "hypothesisIds": ["event:<pocket-must-open>"]
+  },
+  "decisionEvent": {
+    "kind": "decision.recorded",
+    "actorId": "chemist.01",
+    "payload": {
+      "targetCommitId": "commit:<selected-child>",
+      "disposition": "progressed",
+      "reasonCodes": ["contact-loss"],
+      "rationale": "Phe-out removes growth-induced clashes.",
+      "evidenceIds": ["event:<rotamer-search>"]
+    }
+  }
+}
+\end{verbatim}
+\end{minipage}
+
+The following is an illustrative excerpt, not a complete executable route. The
+full story also contains preparation, reference capture, molecular growth, pose
+search, parameterization, and relaxation in the required order. A replay is a
+list of allowed instructions, not a program:
+
+\noindent\begin{minipage}{\linewidth}
+\small
+\begin{verbatim}
+{
+  "schema": "molarium.chemist-action-script/v1",
+  "label": "SOS1 selected Phe890 route",
+  "actions": [
+    {
+      "action": "designRoute.load",
+      "args": {"routeId": "sos1-hit-only"},
+      "caption": "Load the coordinate-bearing 5OVE/AXE hit only"
+    },
+    {
+      "action": "pose.applySidechainRotamer",
+      "args": {"index": 5},
+      "caption": "Apply selected Phe890 rotamer index 5"
+    }
+  ]
+}
+\end{verbatim}
+\end{minipage}
+
+Replay rules:
+
+\begin{itemize}
+  \item schema \texttt{molarium.chemist-action-script/v1}; standardized JSON;
+    unknown actions, executable code, direct coordinate replacement, and
+    unreasonably large or deeply nested inputs are rejected;
+  \item Designer Moves JSON files must be smaller than 2~MB; each serialized
+    API request and its argument object are capped at 8~MiB for ASCII JSON,
+    eight nested levels, and 2,048 JSON nodes;
+  \item an action may give a name to a returned value, such as a stable atom ID;
+    a later action may reuse that name without embedding new code;
+  \item the runner executes one allowed action at a time through
+    \texttt{api.execute(\{action,args\})}, assigns a repeatable request ID from
+    the script fingerprint, and stops at the first failure;
+  \item result schema \texttt{molarium.chemist-action-replay/v1} records the
+    source fingerprint and every step outcome;
+  \item import starts on a blank canvas at move zero; Play advances, Pause stops
+  at the next public-action boundary, and Restart returns to blank;
+  \item presentation actions may focus or style the view. They cannot change the
+    molecular graph or coordinates except through the same allowed actions.
+\end{itemize}
+
+A stable URL such as \url{https://molarium.org/sos1-hit-to-bay293} identifies the
+story. The friendly URL may point to a newer release later; the release commit
+and selected-route file fingerprint
+\texttt{34d1db8acb8e6c5e...f1d6af713e7aa7} identify the exact bytes reviewed. Its
+canonical action-script fingerprint
+\texttt{b042f0e6d4c6f569...49f4105b1d8f790} identifies the normalized JSON content, so
+harmless whitespace changes do not create a logically new route.
+
+The practical workflow is therefore: capture a trusted starting snapshot;
+explore poses or conformations while saving the action audit; apply and relax a
+selected state while saving its numerical record; record the decision and
+parentage in Design History; and publish the replay script, result, release
+commit, and fingerprints together. The live product exposes campaign creation,
+complete molecular-state commits, branches, explicit two-parent merges,
+decisions, verification, import, and export. A commit can attach the completed
+public actions since its parent, while the molecular snapshot remains
+authoritative because the action script does not capture every UI or calculation
+record.
+
+\subsection{SOS1 hit-to-BAY-293 interface movie}
+\label{app:sos1-movie}
+
+The movie replays the selected SOS1 route from the series reported by Hillig
+and colleagues \cite{hillig2019bay293}. The published analogue graphs for AWT,
+AWZ, AWW, and AXH were supplied. Their poses and receptor conformations were
+not. Thus the blinded question was where each known analogue would sit and
+whether its growth required the pocket to reorganize---not which compound to
+invent, whether to synthesize it, or what potency it would have. The boundary
+was:
+
+\begin{itemize}
+  \item the sole coordinate-bearing design input was 5OVE/AXE;
+  \item each analogue began from the preceding frozen prediction, never from
+    the corresponding later crystal;
+  \item the selected route contains 33 recorded API actions: 29 molecular or
+    protocol operations and four workspace switches;
+  \item the complete exploration audit contains 89 completed API calls,
+    including three Phe890/pose branches, nine undo calls, and deterministic
+    reselection; these are operational records, not formal ledger decisions;
+  \item the interface presentation adds 18 display-only actions, for 51 replay
+    steps in the film;
+  \item later crystals: opened only after four prediction checkpoints and the
+    audit were hashed;
+  \item display and focus actions could not change the graph or coordinates.
+\end{itemize}
+
+These are substantial graph rewrites rather than a sequence of single-atom
+substitutions. Table~\ref{tab:sos1-graph-edits} counts the atom lineage retained
+across each change. The first transition also had four possible graph mappings;
+the later transitions each had one.
+
+Pose transfer is determined by chemical graph correspondence, not proximity or
+atom-list order. Element- and bond-order-exact atoms in a conserved bond graph
+can remain hard coordinate anchors. A changed attachment or ring system is
+released in full for sampling while the unchanged external scaffold remains
+fixed. Compatible donor and acceptor roles can cross a bioisosteric edit as soft
+pharmacophore restraints, including across elements, but never establish atom
+identity. This is the registered-route rule for arbitrary edits, not an SOS1
+exception.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Heavy-atom lineage across the supplied SOS1 analogue graphs.}
+  \label{tab:sos1-graph-edits}
+  \footnotesize
+  \begin{tabular}{@{}lrrrr@{}}
+    \toprule
+    Transition & Retained & Deleted & Added & Candidate mappings \\
+    \midrule
+    AXE--AWT & 23 & 4 & 6 & 4 \\
+    AWT--AWZ & 19 & 10 & 12 & 1 \\
+    AWZ--AWW & 16 & 15 & 15 & 1 \\
+    AWW--AXH & 15 & 16 & 17 & 1 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+``64 search chains'' means 64 independently seeded local pose searches, not 64
+protein chains. ``Parameterize without motion'' means assign coefficients while
+leaving coordinates unchanged; only the following relaxation may move atoms.
+The experimental SOS1 route used whole-system Sage 2.1.0/Gasteiger preparation.
+AWT, AWZ, AWW, and AXH contained 7,929,
+7,933, 7,935, and 7,937 particles, respectively. This charge-model boundary is
+part of the method, not a standard Sage AM1-BCC or NAGL preparation.
+
+Before flexible relaxation, the application stores the ligand bond lengths. It
+restores the previous pose if any heavy-atom bond is both more than 0.45~\AA{}
+longer and 1.25-fold its assigned target, or both more than 0.35~\AA{} shorter
+and below 0.75-fold its target. A lower pose score therefore cannot buy a broken
+molecule.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Scientific beats in the SOS1 replay. Predictions, not future
+  crystals, seed the next step.}
+  \label{tab:sos1-replay}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.08}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.08\linewidth}
+                       >{\raggedright\arraybackslash}p{0.29\linewidth}
+                       >{\raggedright\arraybackslash}p{0.53\linewidth}@{}}
+    \toprule
+    Beat & Visible action & State/evidence \\
+    \midrule
+    0 & Load and prepare & 5OVE/AXE only; capture compound~1 reference and hit
+      boundary \\
+    1 & Rewrite to compound~17 (AWT) & Run 64 independent reference-guided pose
+      searches; apply the selected pose; parameterize; relax \\
+    2 & Merge to compound~18 (AWZ) & Propagate from predicted AWT, not 5OVF;
+      apply, parameterize, relax \\
+    3 & Grow compound~21 (AWW) & New ring enters the Phe890-in volume; the
+      fixed-core representative gains four clashes \\
+    4 & Resolve the pocket & Enumerate discrete Phe890 rotamers; select the
+      outward branch; accept its moved receptor as the next reference \\
+    5 & Predict BAY-293 (AXH) & Grow from frozen AWW; 64-chain pose search; apply,
+      parameterize without motion, relax, freeze \\
+    6 & Reveal holdouts & Compare AWT/AWZ/AWW/BAY-293 with
+      5OVF/5OVG/5OVH/5OVI \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+\FloatBarrier
+
+The conformational step is necessary because local minimization normally cannot
+cross the torsional barrier between side-chain rotamers. Molarium therefore
+created separate starting basins before local ligand--pocket relaxation. It
+ranked feasible branches first by the fewest clashes added by growth, then by
+pose score and finite relaxed energy. The nominal $-60^\circ$ branch added four
+clashes above the fixed-core baseline and was infeasible; the
+$-180^\circ$ branch added none and was selected; the $+60^\circ$ branch added
+two and remained a feasible alternative. This is the causal point of the story:
+the analogue's growth made the inward state untenable before 5OVH or 5OVI was
+opened.
+
+For structural evaluation, each predicted receptor was aligned to its holdout
+on 23, 25, 25, and 27 pocket C$\alpha$ atoms for AWT through AXH. Ligand RMSD was
+then computed over 29, 31, 31, and 32 heavy atoms, minimizing over 2, 1, 1, and
+1 graph-symmetry mappings, respectively. The ligand itself was not fitted.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Post-freeze structural evaluation. Torsions are predicted/crystal in
+  degrees; ligand RMSD is receptor-aligned and graph-symmetry-minimized.}
+  \label{tab:sos1-evaluation}
+  \footnotesize
+  \begin{tabular}{@{}llrll@{}}
+    \toprule
+    Prediction & Holdout & Ligand RMSD (\AA) & Phe890 chi1 & Phe890 chi2 \\
+    \midrule
+    AWT & 5OVF & 0.516 & -77.6 / -71.5 & -71.7 / -71.7 \\
+    AWZ & 5OVG & 1.528 & -73.4 / -75.6 & -92.0 / -87.9 \\
+    AWW & 5OVH & 2.137 & -172.2 / +175.8 & +116.1 / +76.3 \\
+    BAY-293 & 5OVI & 1.215 & -172.4 / -166.5 & +108.7 / +71.7 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+\FloatBarrier
+
+The ligand poses are useful but not atom-perfect. The central success is the
+prospective pocket switch. The replay recovered the experimentally observed
+outward $\chi_1$ basin before seeing 5OVH or 5OVI; it did not recover the exact
+$\chi_2$ terminal-ring orientation, which differs by approximately $40^\circ$
+for AWW and $37^\circ$ for BAY-293.
+
+The interface film starts on a genuinely blank canvas, selects the same JSON
+available to readers through \emph{Designer moves}, and presses the visible Play
+control. Subsequent operations run through the public Chemist Actions API while
+the corresponding visible control is highlighted; the renderer does not
+literally click every individual control. Unused panels collapse. Candidate
+generation holds its result list while coordinates remain frozen, and only
+Apply changes the molecular state.
+
+The film shows discrete before/after molecular states. It does not interpolate
+coordinates or present the transition as molecular dynamics. Result frames are
+held long enough to inspect new information. The current 101.08-s interface cut
+condenses approximately 1,189.9~s of durations in its 51-action render audit;
+full operation durations remain in the audit and render manifest. The film is
+therefore an explanatory replay, not a runtime benchmark.
+
+The current replay can focus on heavy atoms displaced by at least 0.08~\AA{},
+highlight up to the 24 largest changes, and retain their local context. The
+current complete MP4 uses this changed-region emphasis where the replay calls
+for it.
+
+Tyr884 is separate historical context. Comparing fragment-bound 6EPM with 5OVE
+shows that the inhibitory Tyr884 arrangement already exists in the starting
+5OVE coordinates. The hit-only route predicts no Tyr884 movement.
+
+Recommended main-text frames are: (1) blank imported story; (2) 5OVE hit
+boundary; (3) AWW/Phe890-in clash; (4) applied Phe890-out branch; (5) frozen
+BAY-293 prediction; and (6) separately labelled post-freeze 5OVI comparison.

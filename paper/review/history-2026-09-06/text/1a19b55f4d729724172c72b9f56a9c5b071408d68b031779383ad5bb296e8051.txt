@@ -1,0 +1,298 @@
+                   Molecular Design Software Is Now Free.
+                        Molecular Prediction Is Not.
+                                  Rafal P. Wiewiora                  Woody Sherman
+
+                                           Opinion draft — August 2026
+
+
+                                                         Abstract
+         Computational molecular design has traditionally bundled scientific models, numerical implementations,
+     interfaces, workflow plumbing, and expert practice into a single software product. Coding agents are beginning to
+     separate these layers. They can increasingly construct interfaces, integrations, analyses, and bounded scientific
+     tools on demand, sharply reducing the time and marginal cost required to reproduce implementation. Molarium
+     is our case study: a local-first workbench that runs substantial calculations in the browser. It unifies molecular
+     viewing, editing, preparation, conformer workflows, molecular mechanics, neural potentials, and protein-structure
+     prediction. Reference comparisons, model cards, provenance, a local security boundary, and explicit exclusions
+     make its scope inspectable. Accessibility is still not predictive validity. We argue that defensible value is moving
+     away from fixed feature inventories and toward validated scientific models, proprietary discovery intelligence,
+     and reusable skills that encode how an organization judges evidence. Molarium makes the tension concrete: the
+     interface may become fluid; the scientific contract may not.
+
+
+
+The interface is no longer the moat
+Historically, a request for a new molecular workflow entered a queue. Scientists translated the question into
+requirements; engineers connected formats, programs, databases, and visualizations; product teams anticipated edge
+cases; and organizations maintained the result. Even when an algorithm was public, turning it into dependable
+software required scarce time and specialized engineering.
+Coding agents change the latency between a scientific request and an executable artifact. Natural-language
+descriptions, examples, tests, and reference outputs can now act as a living specification. An agent can inspect a
+repository, write and run code, compare outputs, diagnose failures, and revise the implementation. Welsh predicted
+that conventional programming would recede behind learned systems [1]. The transition is no longer confined to
+programs encoded in model weights: the ordinary software surrounding scientific models is itself becoming generative.
+Calling molecular design software “free” is therefore an economic claim, not a literal one. Compute, support, security,
+maintenance, expert review, and validation still cost money. What is collapsing is the scarcity of implementation:
+the lead time and marginal effort needed to reproduce a wrapper, interface, report, integration, or project-specific
+workflow. A capability becomes commoditized before it becomes perfect. It is enough that more people can rebuild
+and adapt it at lower cost.
+This shift weakens a commercial moat based primarily on arranging public methods behind a polished interface.
+Usability still matters, but interfaces become easier to imitate and personalize. The durable application increasingly
+serves as a fluid presentation layer over scarcer assets: trusted models, curated data, prospective evidence, secure
+operations, and organization-specific judgment.
+
+
+Molarium is a workbench, not a demo
+Molarium is an MIT-licensed, local-first browser workbench for molecular viewing, editing, preparation, simulation,
+and analysis [2]. WebAssembly and WebGPU run most supported calculations on the user’s device [3, 4]. One explicit
+molecular state connects functions that otherwise span desktop applications, command-line programs, notebooks,
+and servers.
+Molarium accepts SMILES, Protein Data Bank (PDB), XYZ, and prepared fixtures. It displays proteins, ligands,
+waters, ions, hydrogen bonds, and aromatic contacts while preserving explicit topology. It batches chemistry edits,
+
+
+
+                                                              1
+validates the result, and relaxes the affected neighborhood. Intermediate tautomers and bond edits never masquerade
+as finished states. Undo, provenance, and structure export keep every intervention inspectable and reversible.
+Protein preparation resolves models and alternate locations, then applies residue templates and connection records.
+It rebuilds supported side-chain atoms, adds standard hydrogens, orients rotatable polar hydrogens, and screens
+crystallographic waters. An audit records each change. Preparation stops on unsupported chemistry, missing
+backbone atoms, and severe generated-atom clashes. It does not build missing loops, metal coordination, covalent
+ligands, membranes, or periodic solvent boxes [2]. The workbench acts only where its rules are defined.
+Three task-specific views share the same state (Figure 1). View shows the protein, ligand, waters, contacts, and
+selected residue. Build stages coupled bond-order, charge, and hydrogen edits and can optimize the ligand or local
+pocket without moving the rest of the protein. Inspect shows preparation findings, residue context, and aligned
+trajectories; exports retain raw coordinates. The controls change; molecular state and provenance persist.
+
+
+
+
+Figure 1: Three views of the same 7KPA complex: (A) View shows the protein, ligand, waters, and contacts; (B)
+Build stages chemistry and pocket-local edits; and (C) Inspect links a selected residue to preparation findings.
+Controls change; molecular context persists.
+
+The browser owns the molecular state, dispatches named engines, and returns evidence-bearing artifacts (Figure 2).
+A new interface need not redefine the state, engine, or numerical scope.
+
+         Browser-local scientific session
+                 Scientific state                       Workflows                   Versioned engines
+           structures, explicit topology,       build, prepare, search, min-       RDKit, OpenMM/Sage,
+              protonation, user edits            imize, simulate, analyze        WebGPU, ANI-2x, OpenFold
+
+                          Evidence layer — model and asset hashes, reference comparisons, scope
+                            checks, preparation reports, structures, trajectories, and provenance
+
+
+Figure 2: Molarium’s local-first architecture. Named engines act on explicit molecular state; evidence and provenance
+remain attached.
+
+
+
+One workbench, several scientific contracts
+Each calculation route keeps its scientific identity. RDKit handles chemical perception, ETKDGv3 embedding, and
+short MMFF94 or universal-force-field cleanup. Browser-native small molecules combine OpenFF Sage valence and
+van der Waals parameters [5] with labeled Gasteiger charges. Molarium can execute that numeric system through
+OpenMM’s double-precision Reference platform compiled to WebAssembly [6], an experimental direct Sage WebGPU
+implementation, or a STORMM-style WebGPU engine for homogeneous replicas. Comparisons reuse terms and
+coordinates; labels expose the engine and numerical scope.
+The Conformer Arena exposes the distinction. A worker pool creates shared RDKit seeds and briefly cleans them with
+MMFF94 or the universal force field. Molarium compares the untouched seeds, a Sage/OBC2 STORMM refinement,
+and a separate ANI-2x refinement. Every candidate receives a common Sage/OBC2 score; compatible candidates
+also receive a vacuum ANI-2x score [7]. Users can compare landscapes and rank orderings, but Molarium does not
+subtract absolute energies from different Hamiltonians. Symmetry-aware alignment changes display coordinates only;
+calculations and exports retain raw coordinates.
+
+
+
+                                                             2
+Protein support is narrower. Browser engines execute preparameterized OpenFF Rosemary fixtures but do not
+parameterize arbitrary proteins. A trained, template-free OpenFold export predicts one short protein chain after a
+configured service supplies a multiple-sequence alignment [8]. Its model card records the checkpoint, transformation,
+hashes, residue limits, recycle settings, and absence of templates or Amber relaxation. These are separate scientific
+contracts.
+Connected mode contacts external services only for explicit structure lookup or alignment search; calculation
+coordinates remain in the browser. Local Lab applies a restrictive content-security policy, disables external structure
+and sequence controls, verifies reviewed executable-file hashes, and probes attempted egress with a synthetic canary [2].
+Users must still verify the checkout and control the machine. The privacy boundary is testable, not absolute.
+
+
+Molarium makes validation a product feature
+Molarium separates execution from evidence. Its direct Sage and STORMM-style engines compare energies and
+forces with independent references on identical parameter arrays and coordinates. Tests cover finite-difference forces,
+trajectory endpoints, constraint residuals, deterministic replay, replica isolation, model hashes, supported elements,
+buffer limits, and non-finite failures. Native OpenMM, native TorchANI, hand-computable fixtures, and JavaScript
+double-precision calculations provide independent oracles [2]. Unknown terms and unsupported domains fail closed.
+Correct implementation is not valid prediction. Evidence rises from execution, to agreement with declared equations,
+to retrospective benchmarks, prospective transfer, and improved experimental decisions. A lower rung does not
+establish the next. Time-split validation tests prospective performance more faithfully than random partitions [9];
+data quality, bias, and changing experimental context still constrain apparent progress [10].
+Figure 3 places Molarium on the lower rungs. Cross-backend comparisons, model cards, and scope checks support
+execution and implementation agreement, not prospective validity. Higher rungs require temporally realistic
+benchmarks, predictions made before experiments, experimental feedback, and better decisions.
+
+                      5. Improves decisions and outcomes — prospective evidence connects prediction to conse-
+                      quential experimental choices.
+                      4. Transfers prospectively — the model remains useful for new chemistry, targets, and ex-
+                      perimental contexts.
+    More scientific   3. Performs retrospectively — a versioned benchmark measures accuracy, calibration, and
+      evidence        domain coverage.
+                      2. Matches its declaration — equations, parameters, and reference implementations agree on
+                      specified cases.
+                      1. Executes — the workflow runs, records provenance, and returns a technically valid artifact.
+
+
+Figure 3: An evidence ladder for agentic molecular design. Automation can accelerate every rung, but evidence at a
+lower rung does not establish the next.
+
+A preliminary conformer screen shows the distinction. Across eight molecules, STORMM found the lower minimum
+for four, with a median molecule-level gain of only 0.128 kcal/mol relative to the RDKit seed pool. It improved 41 of
+224 paired starting conformers and added 75 clusters absent from the untouched seed lane; 44 clusters were within 3
+kcal/mol in the STORMM lane but not in the untouched lane [2]. Same-coordinate STORMM and OpenMM energies
+agreed within tolerance, so implementation mismatch did not explain the mixed result. The evidence supports faster
+batch exploration and greater conformational diversity, not generally lower-energy conformers.
+The limits are explicit. Browser-native small molecules use Gasteiger charges instead of Sage’s preferred AM1-BCC or
+NAGL workflows. WebGPU uses single precision and omits periodic boundaries, particle-mesh Ewald electrostatics,
+barostats, and production explicit-solvent protocols. ANI-2x accepts only a declared neutral, closed-shell element
+and size domain; OpenFold accepts one short chain. Rosemary fixtures execute externally prepared protein systems
+but do not provide arbitrary in-browser protein parameterization. These exclusions keep the interface from enlarging
+the method’s claim.
+Molarium separates a generated interaction layer from a versioned scientific core. Agents may generate views, reports,
+or analyses; molecular state, model identity, parameters, scope checks, reference evidence, and provenance remain
+explicit. Otherwise automation scales epistemic error. Chemistry agents already join language models with literature,
+code, tools, and laboratory hardware [11, 12]; Molarium supplies their scientific contract.
+
+
+                                                             3
+Value moves to models, intelligence, and skills
+Molarium exposes a three-layer stack. Its MIT-licensed code, workflow state, visualizations, workers, and exports
+form the implementation and orchestration layer—the layer agents commoditize fastest. OpenFF Sage, OpenMM,
+ANI-2x, and OpenFold form the scientific-model layer, where value rests on accuracy, domain coverage, calibration,
+parameterization, and prospective validation. Molarium omits the third layer: proprietary discovery intelligence such
+as negative results, project history, design rationale, assay context, expert judgment, and organizational objectives.
+Local Lab provides a boundary for applying that intelligence without automatically disclosing molecular structures.
+
+                                Proprietary discovery intelligence
+      experimental context, negative results, rationale, expert judgment, and organizational policy
+                                           Scientific models                                            More scarcity
+          representations, parameters, trained weights, calibration, and prospective validation        and defensibility
+
+                                 Implementation and orchestration
+                  interfaces, wrappers, workflow plumbing, visualization, and reports
+                   Agents most directly reduce the marginal cost and lead time of this layer.
+
+
+Figure 4: Three interdependent layers of value. As implementation becomes easier to regenerate, defensible value
+shifts toward validated models and decision-relevant organizational intelligence.
+
+Implementation still matters: it makes models and organizational knowledge usable. It is simply less scarce than
+the knowledge that constrains it. Strong systems connect all three layers without blurring ownership: the interface
+reveals the model, the model exposes its evidence, and policy has an accountable owner. Molarium makes the first
+two layers inspectable; a governed connection to the third remains the next product problem.
+Proprietary intelligence is also more than a collection of assay tables and molecular structures. It includes why a
+measurement was distrusted, why a chemical series stopped, which approximation failed on a target class, and how
+evidence is balanced against safety, novelty, timeline, and portfolio constraints. Much of this context has historically
+lived in scientists’ heads, project meetings, slide decks, and informal conventions. Agents create an opportunity to
+apply it at the moment of decision, but only if organizations preserve provenance, disagreement, and uncertainty
+rather than flattening them into a single confident answer.
+Agents make the third layer operational through reusable scientific skills. A scientific skill should be more than a
+prompt or script. It should define its question, domain, inputs, versions, decision rules, controls, escalation conditions,
+uncertainty treatment, provenance, acceptance tests, and accountable owner. Principles for making scientific digital
+objects findable, accessible, interoperable, and reusable treat reuse and machine actionability as explicit goals [13];
+validated skills extend that ambition from data to scientific action.
+This is where commercial value becomes more interesting rather than disappearing. A generic feature may run a
+free-energy calculation. An organization-specific skill can encode how the organization prepares systems, selects
+perturbations, judges convergence, handles disagreement with experiment, and decides whether a result is strong
+enough to change synthesis priorities. The value lies not in the elegance of its prose but in the evidence and
+institutional knowledge it reliably enacts.
+The human role consequently moves toward judgment. Automation has long made operators more important at
+rare and consequential failure boundaries [14]. In molecular design, scientists still decide which question matters,
+which approximation is acceptable, which anomaly requires an independent control, and what consequence follows
+from being wrong. Agents can make those judgments executable and can challenge them with alternatives, but
+accountability does not disappear into the workflow.
+
+
+The product contract changes
+Fixed applications still matter for training, regulated operations, routine work, and stable tasks. The product
+contract changes: generated views and workflows must retain trusted scientific components, explicit data boundaries,
+reproducible state, and inspectable evidence. Molarium demonstrates this across editing, preparation, conformer
+comparison, minimization, dynamics, and structure prediction while keeping each method’s name and scope visible.
+
+
+
+                                                                4
+Agents may generate presentation and orchestration, but they must not silently substitute a charge model, alter
+protonation, change a stopping rule, or discard a failed hypothesis. Every result must record what ran: molecular
+state, model and parameter versions, external services, numerical settings, applicability limits, validation status, and
+human intervention. Fluid interfaces require stable invariants. Molarium exposes them through preparation audits,
+method labels, downloadable artifacts, and fail-closed scope checks.
+Commercially, differentiation moves toward resources that are difficult to imitate or substitute [15]. It also moves
+toward the ability to integrate specialized knowledge distributed across an organization [16]. Companies can still charge
+for excellent software, but the defensible offering increasingly includes validated models, curated benchmarks, governed
+access to proprietary context, secure execution, scientific support, and accountable stewardship. Composability
+becomes an advantage: customers should be able to create project-specific experiences without severing the evidence
+chain that makes the underlying methods trustworthy.
+This model also creates a maintenance obligation. Generated interfaces multiply the artifacts an organization
+must review, version, retire, and reproduce. Machine-learning systems already accrue technical debt from data
+dependencies, configuration, and changing external conditions [17]. Generated infrastructure worsens that burden
+when generation outpaces ownership. Scientific skills need tests, release policy, monitoring, and named stewards.
+
+
+The harder revolution
+The first agentic revolution is making computational molecular science accessible. A scientist can increasingly request
+a missing interface, analysis, or workflow and receive it while the question is still alive. Molarium demonstrates this
+across structure building and preparation, conformer comparison, local mechanics and neural potentials, trajectory
+inspection, and browser-local protein prediction. Its strongest feature is candor: it exposes limits as clearly as
+capabilities.
+The second revolution is harder. It requires models that generalize to new chemistry, represent the relevant biological
+context, quantify uncertainty, and survive prospective experimental tests. When anyone can generate a tool, the
+strategic question is no longer simply who owns the interface. It is who owns the evidence, model, representation,
+skill, and judgment that make the interface worth trusting.
+Software implementation is becoming cheap. Scientific truth is not.
+
+
+References
+ [1] Matt Welsh. The end of programming. Communications of                     [7] Xiang Gao, Farhad Ramezanghorbani, Olexandr Isayev,
+     the ACM, 66(1):34–35, 2023. doi: 10.1145/3570220.                             Justin S. Smith, and Adrian E. Roitberg. TorchANI: A free
+ [2] Rafal P. Wiewiora and Molarium contributors. Molarium:                        and open source PyTorch-based deep learning implementation
+     A local-first molecular viewer, builder, and simulation work-                 of the ANI neural network potentials. Journal of Chemi-
+     bench. GitHub repository, 2026. URL https://github.com/                       cal Information and Modeling, 60(7):3408–3415, 2020. doi:
+     rafwiewiora/molarium. Revision 40c1b0b, accessed 2026-08-                     10.1021/acs.jcim.0c00451.
+     24.                                                                       [8] Gustaf Ahdritz et al. OpenFold: Retraining AlphaFold2 yields
+ [3] Andreas Haas et al. Bringing the web up to speed with                         new insights into its learning mechanisms and capacity for
+     WebAssembly. In Proceedings of the 38th ACM SIGPLAN                           generalization. Nature Methods, 21(8):1514–1524, 2024. doi:
+     Conference on Programming Language Design and Implemen-                       10.1038/s41592-024-02272-z.
+     tation, pages 185–200, 2017. doi: 10.1145/3062341.3062363.                [9] Robert P. Sheridan. Time-split cross-validation as a method
+ [4] W3C GPU for the Web Working Group. WebGPU. W3C                                for estimating the goodness of prospective prediction. Journal
+     Candidate Recommendation Draft, 2025. URL https://www.                        of Chemical Information and Modeling, 53(4):783–790, 2013.
+     w3.org/TR/webgpu/. Accessed 2026-08-24.                                       doi: 10.1021/ci400084k.
+ [5] Simon Boothroyd et al. Development and benchmarking of                   [10] Andreas Bender and Isidro Cortés-Ciriano. Artificial intel-
+     open force field 2.0.0: The sage small molecule force field. Jour-            ligence in drug discovery: What is realistic, what are illu-
+     nal of Chemical Theory and Computation, 19(11):3251–3275,                     sions? part 1: Ways to make an impact, and why we are not
+     2023. doi: 10.1021/acs.jctc.3c00039.                                          there yet. Drug Discovery Today, 26(2):511–524, 2021. doi:
+ [6] Peter Eastman et al. OpenMM 8: Molecular dynamics                             10.1016/j.drudis.2020.12.009.
+     simulation with machine learning potentials. The Jour-                   [11] Andres M. Bran et al. Augmenting large language models with
+     nal of Physical Chemistry B, 128(1):109–116, 2024. doi:                       chemistry tools. Nature Machine Intelligence, 6(5):525–535,
+     10.1021/acs.jpcb.3c06662.                                                     2024. doi: 10.1038/s42256-024-00832-8.
+                                                                              [12] Daniil A. Boiko, Robert MacKnight, Ben Kline, and Gabe
+                                                                                   Gomes. Autonomous chemical research with large language
+                                                                                   models. Nature, 624(7992):570–578, 2023. doi: 10.1038/
+                                                                                   s41586-023-06792-0.
+
+
+
+                                                                          5
+[13] Mark D. Wilkinson et al. The FAIR guiding principles for           [16] Robert M. Grant. Toward a knowledge-based theory of the
+     scientific data management and stewardship. Scientific Data,            firm. Strategic Management Journal, 17(S2):109–122, 1996.
+     3:160018, 2016. doi: 10.1038/sdata.2016.18.                             doi: 10.1002/smj.4250171110.
+[14] Lisanne Bainbridge. Ironies of automation. Automatica, 19          [17] D. Sculley, Gary Holt, Daniel Golovin, Eugene Davydov, Todd
+     (6):775–779, 1983. doi: 10.1016/0005-1098(83)90046-8.                   Phillips, Dietmar Ebner, Vinay Chaudhary, Michael Young,
+[15] Jay B. Barney. Firm resources and sustained competitive                 Jean-François Crespo, and Dan Dennison. Hidden technical
+     advantage. Journal of Management, 17(1):99–120, 1991. doi:              debt in machine learning systems. In Advances in Neural
+     10.1177/014920639101700108.                                             Information Processing Systems, volume 28, pages 2503–2511,
+                                                                             2015.
+
+
+
+
+                                                                    6
+

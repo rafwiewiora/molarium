@@ -1,0 +1,22 @@
+                               The Molarium scientific build loop
+
+          SCIENTIST                           AGENT                                INDEPENDENT
+          NOTICES                             IMPLEMENTS                           CHECK
+          Wrong shape                         Representation                       OpenMM
+          Wrong energy                        Numerical kernel                     TorchANI
+          Unsupported method                  Protocol                             Finite differences
+          Stalled workflow                    Interface                            Fixed fixtures
+
+
+
+
+                                              REPOSITORY
+                                              KEEPS
+                                              Method + tests
+                                              Benchmark boundary
+                                              Limitations
+                                              Provenance
+
+
+A failure becomes scientific progress only when the objection becomes a test and the accepted change remains inspectable.
+
