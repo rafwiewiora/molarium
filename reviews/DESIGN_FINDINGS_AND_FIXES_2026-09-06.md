@@ -157,6 +157,12 @@ disabled-control help, unchanged checkbox/molecule state, and layout. Eleven nav
 buttons, hidden file-picker plumbing, and separate website-page widgets are explicitly outside this
 parameter-help inventory; no all-page audit is claimed.
 
+**Presentation follow-up, 7 September (EH-01).** The user found the ubiquitous icons
+too intrusive. [EH-01](./ESSENTIAL_HELP_REVIEW_2026-09-07.md) retains the authored
+catalogue but limits separate dialogs to 24 crucial decisions; routine/repeated
+controls use native descriptions without wrappers or icons. The counts and images
+above describe the original DV-04 implementation, not this revised presentation.
+
 ### DV-05 — Full-assembly 1H1Q preparation fails a severe-clash guard
 
 **Open observed failure.** The uncurated PDB loaded 9,325 atoms, four protein chains and two ligand
