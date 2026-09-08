@@ -1232,8 +1232,8 @@
     },
     {
       "path": "design-help.mjs",
-      "bytes": 33057,
-      "sha256": "35022be282a7b819809eba7c7cb02d639f2e6132a33e9fb33903362ff010dae6"
+      "bytes": 34442,
+      "sha256": "e8ec0d9780a65bf93a566e852e971ad58dbdfec534184603e20c248fdfe67627"
     },
     {
       "path": "docking/refinement-capture-store.mjs",

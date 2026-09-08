@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {DESIGN_HELP} from './design-help.mjs';
+import {DESIGN_HELP, ESSENTIAL_HELP_IDS} from './design-help.mjs';
 import {startMolariumBrowser,waitFor} from './scripts/headless-chrome.mjs';
 
 // Isolated CI browser, separate from the hands-on browser-control evidence.
@@ -22,16 +22,26 @@ try {
     await new Promise(requestAnimationFrame);
   })()`);
   const coverage = await browser.evaluate(`(() => {
-    const ids=${JSON.stringify(Object.keys(DESIGN_HELP))};
+    const ids=${JSON.stringify(ESSENTIAL_HELP_IDS)};
+    const routineIds=${JSON.stringify(Object.keys(DESIGN_HELP).filter(id=>!ESSENTIAL_HELP_IDS.includes(id)))};
     return {missing:ids.filter(id=>{
       const control=document.getElementById(id);
       const help=control?.closest('.design-help-control')?.querySelector(':scope > .design-info-button');
       return !help || help.getAttribute('aria-controls')!=='design-option-help'
         || help.getAttribute('aria-haspopup')!=='dialog' || help.disabled;
-    }), count:document.querySelectorAll('.design-info-button').length,
+    }), routineFailures:routineIds.filter(id=>{
+      const control=document.getElementById(id);
+      return !control?.title || control.closest('.design-help-control');
+    }), unexpected:[...document.querySelectorAll('.design-info-button')]
+      .filter(button=>!ids.includes(button.dataset.designHelpTrigger))
+      .map(button=>button.dataset.designHelpTrigger),
+    count:document.querySelectorAll('.design-info-button').length,
     labelSafe:!document.querySelector('#chemistry-element').labels[0].textContent.includes('About')};
   })()`);
-  check(coverage.missing.length===0, `all ${Object.keys(DESIGN_HELP).length} static controls have enabled, associated help`, coverage.missing.join(', '));
+  check(coverage.missing.length===0, `all ${ESSENTIAL_HELP_IDS.length} crucial controls have enabled, associated help`, coverage.missing.join(', '));
+  check(coverage.routineFailures.length===0, 'routine controls retain native descriptions without help wrappers', coverage.routineFailures.join(', '));
+  check(coverage.unexpected.length===0&&coverage.count===ESSENTIAL_HELP_IDS.length,
+    'EH-01: no repeated element, fragment, candidate or routine-action help icons', coverage.unexpected.join(', '));
   check(coverage.labelSafe, 'help does not pollute chemical field labels');
   const layout = await browser.evaluate(`(() => {
     const code=document.querySelector('#info-smiles').getBoundingClientRect();
@@ -81,8 +91,9 @@ try {
   check(before===after,'help does not change chemistry, selected optimizer/tool or checkbox');
   await browser.evaluate(`const input=document.querySelector('#fragment-search');input.value='phenyl';input.dispatchEvent(new Event('input',{bubbles:true}));`);
   await waitFor(() => browser.evaluate(`document.querySelectorAll('#fragment-grid .fragment-card').length===1
-    &&document.querySelectorAll('#fragment-grid .design-info-button').length===1`));
-  check(true,'dynamic fragment rerender retains exactly one help button per template');
+    &&document.querySelectorAll('#fragment-grid .design-info-button').length===0
+    &&document.querySelector('#fragment-grid .fragment-card').title.length>0`));
+  check(true,'dynamic fragment rerender retains a native description and zero repeated help icons');
   await browser.client.call('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
   await browser.evaluate(`document.querySelector('[data-design-help-trigger="build-optimizer-select"]').click()`);
   const mobile = await browser.evaluate(`(() => {
@@ -92,5 +103,6 @@ try {
       closeVisible:d.querySelector('button').getBoundingClientRect().top>=r.top};})()`);
   check(mobile.within&&mobile.titleVisible&&mobile.closeVisible,'mobile help fits the viewport with heading and close control initially visible');
   console.log(JSON.stringify({schema:'molarium.option-help-ui-test/v1',passed:checks.length,
-    staticControls:Object.keys(DESIGN_HELP).length,renderedHelpButtons:coverage.count,checks},null,2));
+    staticControls:Object.keys(DESIGN_HELP).length,essentialControls:ESSENTIAL_HELP_IDS.length,
+    renderedHelpButtons:coverage.count,checks},null,2));
 } finally { await browser.close(); }

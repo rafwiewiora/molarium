@@ -1,5 +1,6 @@
 // DV-04: operation policies must be readable without running an experiment.
-// One catalogue drives adjacent buttons, per-choice descriptions and coverage tests.
+// Keep the complete catalogue, but show adjacent buttons only for consequential
+// scientific choices. Routine controls must not become a wall of help icons.
 import {WORKSPACE_HELP} from './workspace-help.mjs';
 export const DESIGN_HELP = {
   ...WORKSPACE_HELP,
@@ -127,6 +128,26 @@ export function designHelpForControl(control) {
   return DESIGN_HELP[control.id] || DESIGN_HELP_DYNAMIC.find((entry) => control.matches(entry.selector)) || null;
 }
 
+// EH-01: one explanation per decision, not per element, candidate or action.
+// For example, the optimizer selector explains Optimize; docking-mode explains
+// Run search; Add required H-bond explains the repeated contact checkboxes.
+export const ESSENTIAL_HELP_IDS = Object.freeze([
+  'replay-designer-moves',
+  'docking-mode', 'docking-edit-cleanup', 'update-docking-receptor',
+  'add-docking-contact', 'build-optimizer-select',
+  'enumerate-sidechain-rotamers', 'designer-ligand-pose-lock',
+  'move-connected', 'chemistry-immediate-refine',
+  'preparation-histidine', 'preparation-ligands', 'preparation-waters',
+  'preparation-gaps', 'preparation-repair-heavy',
+  'ligand-protonation-run', 'fold-protein',
+  'job-select', 'method-select', 'solvent-select', 'constraint-select',
+  'stormm-replica-count', 'conformer-arena', 'verify-local-build',
+]);
+const essentialHelpIds = new Set(ESSENTIAL_HELP_IDS);
+export function hasEssentialDesignHelp(control) {
+  return essentialHelpIds.has(control.id);
+}
+
 // Native dialog provides focus containment and Escape dismissal on keyboard and touch.
 // Controls keep their IDs/listeners; the help buttons never execute their paired action.
 export function installDesignHelp(document) {
@@ -194,6 +215,12 @@ export function installDesignHelp(document) {
       if (!item) {
         const entry = designHelpForControl(control);
         if (!entry) continue;
+        if (!hasEssentialDesignHelp(control)) {
+          // Retain unobtrusive native hover help without adding layout wrappers
+          // or duplicate keyboard stops to routine and repeated controls.
+          if (!control.hasAttribute('title')) control.title = entry.text;
+          continue;
+        }
         // Keep labels intact and the help button outside them: i must neither
         // toggle a checkbox nor pollute another control's accessible name.
         const label = control.closest('label');
