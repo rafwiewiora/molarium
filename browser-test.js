@@ -858,6 +858,31 @@ const browserSuite = String.raw`(async () => {
       && labbook.selections.hydrogenBonds.some((entry) => entry.origin?.kind
         === 'user-added-hydrogen-bond-hypothesis'),
     'manual contact refinement is feature-biased and records its full amendment provenance');
+    // SR-01: a recomputed geometry may already satisfy a later declaration.
+    api.loadObject(valenceCompleteDockingFixture);
+    await chemist.execute({ action:'view.setMode', args:{ mode:'build' } });
+    await chemist.execute({ action:'pose.captureReference', args:{ mode:'propagate' } });
+    const autoCaptured = (await chemist.inspect({ scope:'pocket', includeCoordinates:true,
+      maximumAtoms:100 })).result;
+    const autoContact = autoCaptured.contacts.find((c) => c.hydrogenBond.receptorRole === 'donor');
+    const declaration = { ligandAtomId:autoContact.hydrogenBond.participants.acceptor.atomId,
+      receptorAtomId:autoContact.hydrogenBond.participants.donor.atomId, ligandRole:'acceptor' };
+    await chemist.execute({ action:'pose.setContact', args:{contactId:autoContact.contactId,required:false} });
+    const promoted = (await chemist.execute({ action:'pose.addContact', args:declaration })).result.contact;
+    const promotedState = (await chemist.inspect({ scope:'pocket', includeCoordinates:true,
+      maximumAtoms:100 })).result;
+    check(promoted.contactId === 'manual-hbond-1'
+      && promoted.origin.supersededCapturedContact.id === autoContact.contactId
+      && promotedState.contacts.length === autoCaptured.contacts.length
+      && !promotedState.contacts.some(c => c.contactId === autoContact.contactId)
+      && promotedState.contacts.find(c => c.contactId === promoted.contactId)?.required,
+    'explicit declaration promotes an automatic contact once, with stable manual numbering and captured provenance');
+    check(JSON.stringify(promotedState.atoms) === JSON.stringify(autoCaptured.atoms),
+      'contact promotion does not alter molecular atoms or coordinates');
+    let rejectedRepeatedDeclaration = false;
+    try { await chemist.execute({action:'pose.addContact',args:declaration}); }
+    catch (error) { rejectedRepeatedDeclaration = /already exists/.test(error.message); }
+    check(rejectedRepeatedDeclaration, 'a repeated explicit hypothesis still fails instead of duplicating a restraint');
     const failed = checks.filter((item) => !item.passed);
     return { passed:checks.length - failed.length, total:checks.length, failed,
       optimizationMetrics, rdkitMetrics, aniMetrics, webgpuMetrics, rosemaryMetrics,

@@ -468,6 +468,16 @@ audited hypothesis or asks the caller to choose the ligand role when both interp
 possible. `pose.forgetContact` removes a manually asserted or currently unavailable hypothesis from
 the active reference while retaining the amendment in the molecule ledger and run labbook.
 
+If the exact donor, hydrogen, and acceptor were already automatically captured,
+`pose.addContact` promotes that observation to a new required `manual-hbond-N`
+declaration instead of duplicating its restraint. The old reference contact is
+replaced; its original and effective definitions are retained under
+`contact.origin.supersededCapturedContact` and `supersededEffectiveDefinition`,
+and the amendment records `supersededContactId`. Use the returned contact ID for
+subsequent actions. An already explicit/manual duplicate still fails. This
+handles geometry-dependent automatic capture during genuine recomputation;
+it does not skip a failed scientific action or alter molecular coordinates.
+
 ## Audit
 
 Every recognized action records sequence, request ID, arguments, start/completion times, duration,

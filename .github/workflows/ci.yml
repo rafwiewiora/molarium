@@ -61,6 +61,8 @@ jobs:
         run: bun install --frozen-lockfile
       - name: Run scientific validation suite
         run: npm run test:ci:scientific
+      - name: Check all seven frozen SOS1 graphs through strict 2D depiction
+        run: npm run test:depiction-hydrogens
       - name: Check simulation benchmark acceptance logic and parameter import
         run: npm run test:simulation-benchmarks
       - name: Check Design finding regressions, option help, and preserved baseline evidence

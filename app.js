@@ -850,6 +850,20 @@ const sceneCtx = sceneCanvas.getContext('2d');
 
 const MAX_DEPICTION_ATOMS = 256;
 
+function depictionInputWithHydrogens(molecule, heavyIndices, pendingAtomIndices = new Set()) {
+  const included = new Set(heavyIndices);
+  for (const bond of molecule.bonds) {
+    if (included.has(bond.a) && !pendingAtomIndices.has(bond.a) && molecule.atoms[bond.b]?.element === 'H') included.add(bond.b);
+    if (included.has(bond.b) && !pendingAtomIndices.has(bond.b) && molecule.atoms[bond.a]?.element === 'H') included.add(bond.a);
+  }
+  // Retain the visible heavy-atom order; attached H atoms carry valence/[nH].
+  const indices = [...included];
+  const remap = new Map(indices.map((index, local) => [index, local]));
+  return { name:molecule.name, atoms:indices.map(index => ({ ...molecule.atoms[index] })),
+    bonds:molecule.bonds.filter(bond => included.has(bond.a) && included.has(bond.b))
+      .map(bond => ({ ...bond, a:remap.get(bond.a), b:remap.get(bond.b) })) };
+}
+
 function depictionTarget(molecule = state.molecule) {
   if (!molecule?.atoms?.length) return null;
   const eligible = (component) => {
@@ -882,11 +896,16 @@ function depictionTarget(molecule = state.molecule) {
   const mapped = mappedMoleculeSubset(molecule, globalAtomIndices, component.label || '2D structure');
   if (!mapped) return null;
   const graph = validateConnectedMolecularGraph(mapped.molecule, { maximumAtoms:MAX_DEPICTION_ATOMS });
-  return { ...mapped, graph, label:component.label || molecule.name || 'Structure', componentId:component.id };
+  // Staged edits retain old H until Finish. Infer H only at those pending edit
+  // sites in the drawing copy; keep explicit H on every unaffected atom.
+  const pendingAtomIndices = new Set([...(state.chemistryTransaction?.changedAtoms || [])]
+    .map(atom => molecule.atoms.indexOf(atom)).filter(index => index >= 0));
+  return { ...mapped, graph, workerMolecule:depictionInputWithHydrogens(molecule, mapped.globalAtomIndices, pendingAtomIndices),
+    label:component.label || molecule.name || 'Structure', componentId:component.id };
 }
 
 function depictionSignature(target) {
-  const molecule = target?.molecule;
+  const molecule = target?.workerMolecule || target?.molecule;
   if (!molecule) return '';
   return JSON.stringify({
     component:target.componentId,
@@ -1118,14 +1137,14 @@ async function update2DDepiction() {
       || state.molecule?.source?.verifiedCampaignSnapshot?.verificationValid === true
       || state.molecule?.source?.registeredLigandGraph?.graphSha256
       || state.molecule?.source?.designRoute?.coordinateInputClass === 'registered-hit-only');
-    const result = await runRDKitJob('depict', target.molecule, () => {},
+    const result = await runRDKitJob('depict', target.workerMolecule, () => {},
       { allowUnsanitizedDepictionFallback });
     if (sequence !== state.depictionSequence || key !== state.depictionKey) return;
     const svg = sanitizedDepictionSvg(result.svg);
     drawing.replaceChildren(svg);
     state.depictionGlobalAtomIndices = target.globalAtomIndices.slice();
-    state.depictionGlobalBondPairs = target.molecule.bonds.map((bond) => [
-      target.globalAtomIndices[bond.a], target.globalAtomIndices[bond.b],
+    state.depictionGlobalBondPairs = result.bondAtomIndices.map(([a,b]) => [
+      target.globalAtomIndices[a], target.globalAtomIndices[b],
     ]);
     state.depictionAtomObjects = target.globalAtomIndices.map((index) => state.molecule?.atoms?.[index] || null);
     state.depictionComponentId = target.componentId;
@@ -1139,6 +1158,7 @@ async function update2DDepiction() {
       ? 'RDKit 2D layout + viewport alignment' : 'fresh RDKit 2D layout';
     panel.dataset.rdkitVersion = result.rdkitVersion || '';
     panel.dataset.sanitization = result.sanitization || '';
+    panel.dataset.canonicalSmiles = result.canonicalSmiles || '';
     delete panel.dataset.error; delete panel.dataset.pending;
   } catch (error) {
     if (sequence !== state.depictionSequence) return;
@@ -4566,17 +4586,24 @@ async function addManualDockingContactByIndices(ligandAtomIndex, receptorAtomInd
   ensureStableAtomIds(state.molecule, `manual-contact-${state.molecule.source?.pdbId || 'complex'}`,
     state.dockingReference.ligand?.atomIds || []);
   const module = manualHydrogenBondModule || await import('./docking/manual-hbond.mjs');
-  const definition = module.createManualHydrogenBondDefinition({ molecule:state.molecule,
+  const proposed = module.createManualHydrogenBondDefinition({ molecule:state.molecule,
     ligandAtomIndices, ligandAtomIndex, receptorAtomIndex, ligandRole,
     id:nextManualDockingContactId(), method });
-  const key = module.manualHydrogenBondParticipantKey(definition);
-  const duplicate = state.dockingReference.hydrogenBonds.find((entry) =>
-    module.manualHydrogenBondParticipantKey(effectiveDockingHydrogenBondDefinition(entry)) === key);
-  if (duplicate) throw new Error(`That H-bond hypothesis already exists as ${duplicate.label}`);
+  const { definition, supersededContactId } = module.planManualHydrogenBondAddition(
+    state.dockingReference.hydrogenBonds, proposed,
+    effectiveDockingHydrogenBondDefinitions());
+  if (supersededContactId) {
+    state.dockingReference.hydrogenBonds = state.dockingReference.hydrogenBonds
+      .filter((entry) => entry.id !== supersededContactId);
+    state.dockingSelectedHbondIds.delete(supersededContactId);
+    state.dockingContactRemaps.delete(supersededContactId);
+    state.dockingContactRemapProposals.delete(supersededContactId);
+  }
   state.dockingReference.hydrogenBonds.push(definition);
   state.dockingSelectedHbondIds.add(definition.id);
   state.dockingResult = null; state.dockingPoseIndex = 0;
   recordManualDockingContactEvent('added', definition, {
+    supersededContactId,
     activeContactIds:[...state.dockingSelectedHbondIds] });
   await refreshDockingReceptorProvenance();
   state.dockingContactDraft = null;
@@ -8880,13 +8907,15 @@ function updateDesignerMoveControls(message = null, captionOverride = null,
     state.designerMoveReplayIndex);
   document.querySelector('#designer-move-progress-label').textContent =
     `${Math.min(actionCount, state.designerMoveReplayIndex)} / ${actionCount}`;
+  const failedStep = state.designerMoveReplay?.steps?.find((step) => step.status === 'failed');
   const activeStepCaption = sos1StoryCaption(script, state.designerMoveReplayStep);
   const storyCaption = captionOverride
-    || (state.designerMoveReplaying && activeStepCaption
+    || (review.failed && state.designerMoveReplayIndex >= state.designerMoveReplayFrontier
+      ? sos1StoryCaption(script, script?.actions?.[failedStep?.index])
+      : state.designerMoveReplaying && activeStepCaption
       ? activeStepCaption : designerMoveCaption());
   document.querySelector('#designer-move-caption').textContent = storyCaption;
   const detail = document.querySelector('#designer-move-detail');
-  const failedStep = state.designerMoveReplay?.steps?.find((step) => step.status === 'failed');
   if (detail) detail.textContent = detailOverride ?? (review.failed
     ? state.designerMoveReplayIndex >= state.designerMoveReplayFrontier
       ? `Stopped at move ${(failedStep?.index ?? state.designerMoveReplayFrontier - 1) + 1}: ${failedStep?.error || state.designerMoveReplay?.error || 'the public action failed'}. Use Restart to begin a new execution.`

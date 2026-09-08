@@ -86,7 +86,23 @@ try {
     actionsBeforeReturn.filter(action => action === 'view.setMode').length,
     'review navigation must restore checkpoints without rerunning constituent actions');
 
-  console.log('Completed Designer Moves review browser test: PASS');
+  await browser.evaluate(`(async () => {
+    const api = await window.MolariumChemistActionsReady;
+    await api.execute({action:'designerScript.load',args:{script:{
+      schema:'molarium.chemist-action-script/v1',label:'Failure-caption regression',actions:[
+        {action:'view.setMode',args:{mode:'build'},caption:'Successful setup'},
+        {action:'pose.setContact',args:{contactId:'nonexistent',required:true},caption:'Actual failed contact declaration'},
+        {action:'view.setMode',args:{mode:'view'},caption:'Unexecuted following step'}
+      ]}}});
+    await api.execute({action:'designerScript.play',args:{playing:true}});
+  })()`);
+  await waitFor(async () => browser.evaluate(
+    `document.querySelector('#designer-move-tools')?.dataset.replayStatus === 'failed'`),
+    30000, 'failed story caption');
+  assert.equal(await browser.evaluate(`document.querySelector('#designer-move-caption').textContent`),
+    'Actual failed contact declaration', 'failure must not display the following unexecuted action');
+  assert.match(await browser.evaluate(`document.querySelector('#designer-move-detail').textContent`), /Stopped at move 2/);
+  console.log('Completed Designer Moves review and failed-step caption browser tests: PASS');
 } finally {
   await browser.close();
 }

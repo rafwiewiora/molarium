@@ -5,6 +5,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "test:paper-submission": "node --test scripts/verify-paper-submission.test.mjs",
+    "test:depiction-hydrogens": "node rdkit-depiction-hydrogens.test.mjs",
     "build:web": "node scripts/verify-paper-submission.mjs && npm run verify:sos1-publication && node validation/validate-registry.mjs && bun scripts/build-web.mjs",
     "assets:download": "bun scripts/fetch-assets.mjs",
     "manifest:r2": "bun scripts/r2-assets.mjs",
