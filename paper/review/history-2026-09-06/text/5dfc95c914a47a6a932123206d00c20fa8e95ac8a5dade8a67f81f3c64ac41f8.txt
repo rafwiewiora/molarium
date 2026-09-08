@@ -1,0 +1,14 @@
+                    One chemical boundary, three browser workloads
+                                                  DIRECT  WEBGPU
+                                                     one System
+                                                    one trajectory
+    PREPARE             NUMERIC SYSTEM                                    CHECK
+ RDKit graph + 3D      masses · charges · terms   REPLICA  WEBGPU
+                                                     one topology    OpenMM Reference
+                       exceptions · constraints    many conformers         TorchANI
+OpenFF parameters                                                     finite differences
+                       optional GB parameters                           fixed fixtures
+                                                   ANI-2x + ONNX
+                                                     one model
+                                                   many conformers
+

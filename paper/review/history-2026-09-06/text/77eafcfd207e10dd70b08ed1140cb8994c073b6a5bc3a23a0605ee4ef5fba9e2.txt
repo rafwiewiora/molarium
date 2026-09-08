@@ -1,0 +1,253 @@
+ WORKING PREPRINT | 17 AUGUST 2026
+
+
+ Replica-synthesized molecular dynamics in
+ the browser
+ Direct validation of a STORMM-inspired WebGPU engine in the Marco molecular modeler
+
+
+
+ ABSTRACT
+ We implemented an isolated-boundary molecular-mechanics engine in WebGPU for the Marco browser molecular modeler,
+ adopting STORMM's strategy of advancing many independent systems in one GPU synthesis and fixed-point,
+ order-independent accumulation. Direct comparisons used upstream STORMM commit 3eeccbde5192. Alanine dipeptide
+ (22 atoms) and Trp-cage (304 atoms) passed preregistered energy and all-force thresholds for every supported vacuum
+ term and OBC2 generalized Born. Sixteen-replica NVE tests, bitwise replay, replica isolation, and replica-local
+ SHAKE/RATTLE constraints also passed. On one NVIDIA L4, Marco reached 0.51x and 0.73x upstream CUDA throughput
+ in flexible vacuum and OBC2 simulations, and 0.39x and 0.52x with 12 X-H constraints at 2 fs. The study establishes
+ numerical agreement and useful performance for a deliberately limited browser engine; it does not establish feature parity
+ with STORMM.
+
+
+                        A reproducible browser engine reaches 39-73% of upstream STORMM CUDA
+    Key result          throughput for the tested 16-replica L4 workloads while preserving force
+                        agreement, deterministic isolation, and constrained dynamics.
+
+
+
+
+ 1 Motivation
+ STORMM combines many molecular systems into a synthesis to fill a GPU efficiently and uses fixed-precision
+ representations to make parallel accumulation reproducible. This architecture is attractive in a browser, where one GPU
+ command stream can replace repeated JavaScript-to-device round trips and users benefit from local, installation-free
+ simulation. The original STORMM paper showed that batching many small implicit-solvent simulations can outperform
+ independent processes using NVIDIA MPS [1].
+
+ The present question is narrower: can a browser WebGPU implementation reproduce upstream STORMM's energy
+ surface and forces for the terms it claims to implement, while preserving independent replica behavior and useful
+ small-system throughput?
+
+
+
+ 2 Implementation
+ The engine evaluates harmonic bonds and angles, cosine periodic torsions, isolated no-cutoff Coulomb and 12-6
+ Lennard-Jones interactions with explicit exceptions, and OBC2 generalized Born with an optional ACE surface term. It
+ accepts numeric pair-distance constraints; Marco derives X-H targets from equilibrium bonds and selects a 2 fs time step.
+
+ One WebGPU workgroup advances each replica. Deterministic Gauss-Seidel SHAKE follows drift, and RATTLE projects
+ velocities after the second kick. Contributions use split signed 64-bit fixed-point arithmetic: 222 units per kcal/mol for
+ energy, 218 units per kcal/mol/A for force, and 232 units per A for authoritative coordinates. Rounded coordinate and
+ constraint increments return to that fixed-point representation. The same seed produces bitwise-identical trajectories.
+
+
+
+
+Marco STORMM-inspired WebGPU validation                                                                                       1
+ Marco normally converts a complete numeric OpenMM System after browser parameterization, without repeating chemical
+ perception. For this study, AMBER topologies supplied by STORMM were exported to the same numeric schema.
+ Validation metadata selects STORMM's AMBER Coulomb constant and matched OBC2 settings. This implementation is
+ STORMM-inspired, not a source translation; it uses no upstream CUDA kernels or data structures.
+
+
+
+ 3 Validation design
+ 3.1 Static energies and forces
+ Alanine dipeptide and Trp-cage coordinates and AMBER topologies came from upstream STORMM. Native references
+ were extracted from committed potential regression tests and snapshot arrays. Bonds, angles, periodic torsions, Coulomb
+ (ordinary plus 1-4), and Lennard-Jones (ordinary plus 1-4) were tested separately and as a supported-term total. OBC2
+ used external dielectric 78.5 with the surface-area term disabled to match the upstream polar-only snapshot.
+
+   Quantity                    Pass rule
+
+   Energy                      absolute error <= 0.02 kcal/mol or relative error <= 5 x 10-4
+
+   Force                       relative RMS <= 2 x 10-3 or absolute RMS <= 5 x 10-4 kcal/mol/A
+
+   NVE drift                   maximum normalized windowed drift <= 0.5%
+
+   Constraint distance         maximum relative residual <= 2 x 10-5
+
+ Table 1. Preregistered acceptance criteria encoded in the test programs.
+
+ Alanine's one CMAP term (-0.38861139 kcal/mol) is not implemented; it is recorded but excluded from the supported total.
+ Trp-cage requires no omitted term.
+
+ 3.2 Dynamics and constraints
+ Sixteen alanine replicas were propagated for 5,000 unconstrained NVE steps at 1 fs in vacuum and matched OBC2.
+ Windowed energy drift was normalized by 3NkBT/2 at 300 K. Two identical four-replica Langevin runs tested bitwise
+ replay; a one-replica run and replica zero of a 16-replica synthesis tested cross-replica isolation.
+
+ Constraint tests used four independent stacks of eight water molecules, with 16 coupled O-H constraints per replica, for
+ 500 Langevin steps at 2 fs and 1 x 10-5 relative tolerance. Tests covered distance and velocity residuals, replay,
+ one-versus-four replica isolation, and an intentional iteration-limit failure. A separate 500-step water test compared Marco
+ SHAKE/RATTLE with OpenMM Reference/CCMA.
+
+ 3.3 Performance
+ The matched workload contained 16 alanine replicas and 10,000 steps in vacuum or polar-only OBC2. Flexible runs used
+ 1 fs. Constrained runs used 12 X-H distances and 2 fs; upstream STORMM used rigid_geom on. Each median
+ contains five repeats. Upstream dynamics.stormm.cuda and WebGPU/Vulkan ran sequentially on one licensed
+ NVIDIA L4 (driver 595.71.05, CUDA 12.9). Native STORMM used its default single-precision valence and nonbonded
+ settings.
+
+
+
+
+Marco STORMM-inspired WebGPU validation                                                                                         2
+ 4 Results
+ 4.1 Direct agreement with native STORMM snapshots
+
+                                        Max energy rel.                                   OBC2 energy rel.        OBC2 force rel.
+   System                   Atoms                                  Total force rel. RMS
+                                        error                                             error                   RMS
+
+   Alanine dipeptide        22          5.09 x 10-6                4.30 x 10-4            2.24 x 10-7             7.48 x 10-7
+
+   Trp-cage                 304         3.06 x 10-6                2.34 x 10-5            1.60 x 10-6             3.07 x 10-6
+
+ Table 2. Same-L4 WebGPU errors against pinned native STORMM snapshots. All checks passed.
+
+                                                                                 -4                                         -3
+ The maximum absolute supported-total force error was 6.20 x 10 kcal/mol/A for alanine and 1.10 x 10 kcal/mol/A for
+ Trp-cage. The separately maintained OpenMM Reference suite also passed for all existing fixtures, including OBC2/ACE.
+
+ 4.2 Dynamics and constraints
+
+   Model                                        Maximum normalized windowed drift               Median across 16 replicas
+
+   Vacuum                                       0.2786%                                         0.0630%
+
+   OBC2 polar-only                              0.2748%                                         0.0607%
+
+ Table 3. Five-thousand-step NVE conservation at 1 fs on the L4.
+
+ Deterministic replay produced bitwise-identical energies and positions. Replica zero was also bitwise identical when
+ advanced alone or as part of a 16-system synthesis.
+
+
+    SHAKE distance            2.80 x 10-7                                   RATTLE velocity             2.78 x 10-8
+
+    Marco vs OpenMM           9.67 x 10-6                                   OpenMM CCMA                 3.50 x 10-7
+
+ Constraint residuals. Marco and OpenMM maximum relative distance errors both passed the shared 2 x 10^-5 criterion; replay and replica
+ isolation were bitwise exact.
+
+
+
+
+Marco STORMM-inspired WebGPU validation                                                                                                   3
+ 4.3 Same-GPU throughput
+                Aggregate throughput (ns/day)                                                       Upstream CUDA         WebGPU
+
+          80k
+
+
+
+
+          60k
+
+
+
+
+          40k
+
+
+
+
+          20k
+
+
+
+
+           0k
+                           Flexible                      Flexible                      X-H / 2 fs                     X-H / 2 fs
+                           vacuum                         OBC2                          vacuum                         OBC2
+
+
+ Figure 1. Median aggregate throughput for 16 alanine replicas and 10,000 steps. Both executables ran sequentially on the same NVIDIA L4; five
+ repeats per condition.
+
+
+   Dynamics                       Model                  STORMM CUDA ns/day            Marco WebGPU ns/day           WebGPU / CUDA
+
+   Flexible, 1 fs                 Vacuum                            55,340.3                    28,046.9                     0.507x
+
+   Flexible, 1 fs                 OBC2 polar-only                   28,069.0                    20,564.8                     0.733x
+
+   X-H constrained, 2 fs          Vacuum                            77,728.4                    30,635.2                     0.394x
+
+   X-H constrained, 2 fs          OBC2 polar-only                   46,026.3                    24,016.4                     0.522x
+
+ Table 4. Exact values plotted in Figure 1.
+
+ For this replicated workload, Marco reaches 51-73% of upstream CUDA throughput without constraints and 39-52% with
+ constraints. The larger constrained gap is consistent with Marco's general serial-per-replica Gauss-Seidel solver versus
+ specialized native constraint machinery; constraint parallelization is therefore a concrete optimization target.
+
+ 4.4 Auxiliary laptop result
+ On an M1 Pro, Marco WebGPU reached 12,009.1 ns/day in vacuum and 8,518.1 ns/day in OBC2, versus 10,460.8 and
+ 4,231.5 ns/day for a native CPU executable configured explicitly for double precision. These values demonstrate local
+ browser execution but are not used for the primary speed claim because devices and precision modes differ.
+
+
+
+
+Marco STORMM-inspired WebGPU validation                                                                                                          4
+ 5 Limitations and defensible claim
+ The browser engine is nonperiodic and all-pairs. It supports general numeric pair-distance constraints and X-H
+ SHAKE/RATTLE, but not specialized SETTLE or parallel constraint-graph kernels. It lacks PME, periodic boundaries,
+ neighbor lists, CMAP, GBn/GBn2, virtual sites, heterogeneous topologies within one synthesis, and free-energy methods.
+ Marco currently caps a replica at 512 atoms. Production OBC2 uses external dielectric 78.3 and ACE; the polar-only 78.5
+ configuration exists solely for exact upstream matching.
+
+
+         For the listed isolated-boundary terms and two pinned AMBER fixtures, the Marco WebGPU
+         engine reproduces upstream STORMM regression energies and forces within stated
+         tolerances, preserves deterministic independent replicas with or without X-H constraints,
+         and reaches 39-73% of upstream STORMM CUDA throughput for the tested 16-replica
+         NVIDIA L4 workloads.
+
+
+ It is not yet defensible to call this a full STORMM port or to extrapolate throughput to large periodic biomolecular
+ simulations. The original paper's ff14SB side-chain-only, GBn, hydrogen-mass-repartitioned 4 fs workload is intentionally
+ not treated as a direct comparator.
+
+
+
+ 6 Reproducibility
+ Inputs, pinned source commit, source and executable hashes, complete force vectors, encoded thresholds, repeat
+ timings, hardware labels, and result hashes are stored under stormm-study. Accepted same-L4 manifests are in
+ results/l4-vws. The upstream source required one recorded compile-only member-access patch that changes no
+ molecular-mechanics equation. The L4 runner pins the NVIDIA Vulkan ICD, rejects software adapters, runs native CUDA
+ and WebGPU sequentially, records the environment, and hashes all outputs.
+
+
+
+ 7 References
+ [1] D. S. Cerutti, R. Wiewiora, S. Boothroyd, and W. Sherman. "STORMM: Structure and topology replica molecular mechanics for chemical
+     simulations." Journal of Chemical Physics 161, 032501 (2024). doi:10.1063/5.0211032.
+
+ [2] STORMM developers. Official source repository, pinned at commit 3eeccbde519254620fdc024f396fa07df78ea69e.
+      github.com/Psivant/stormm.
+
+ [3] STORMM developers. Molecular Dynamics in STORMM. stormm.psithera.com/stormm-md.
+
+
+
+ Software availability: the validation package, browser engine, accepted manifests, and regeneration commands accompany this working preprint
+ in the Marco repository.
+
+
+
+
+Marco STORMM-inspired WebGPU validation                                                                                                         5
+

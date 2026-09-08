@@ -1,0 +1,470 @@
+\documentclass[11pt]{article}
+
+% A deliberately conventional preprint source: easy to import, diff, and restyle.
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage[section]{placeins}
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[
+  colorlinks=true,
+  linkcolor=MidnightBlue,
+  citecolor=MidnightBlue,
+  urlcolor=MidnightBlue,
+  pdftitle={Molecular Design Software Is Now Free. Molecular Prediction Is Not.},
+  pdfauthor={Rafal P. Wiewiora and Woody Sherman},
+  pdfsubject={Molarium as a case study in generated scientific infrastructure},
+  pdfkeywords={molecular design, agentic software, WebGPU, scientific validation, computational chemistry}
+]{hyperref}
+
+\graphicspath{{figures/}}
+\newcommand{\molarium}{\textnormal{\textsc{Molarium}}}
+\newcommand{\software}[1]{\texttt{#1}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.48em}
+\renewcommand{\arraystretch}{1.12}
+
+\title{\textbf{Molecular Design Software Is Now Free.\\Molecular Prediction Is Not.}\\[0.55em]
+\large \molarium{} as a case study in generated scientific infrastructure}
+\author{Rafal P. Wiewiora \and Woody Sherman\\[0.35em]
+\normalsize PsiThera, Watertown, Massachusetts, USA}
+\date{Perspective draft --- August 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Computational molecular design has historically bundled scientific models, numerical implementations, interfaces, workflow plumbing, and expert judgment into the same software product.
+Coding agents are beginning to separate those layers.
+They can increasingly generate interfaces, integrations, analyses, workflows, and bounded pieces of numerical software on demand.
+``Free'' is not literal: inference, review, validation, security, operation, and maintenance remain costly.
+The change is a collapse in the marginal time and cost required to reproduce parts of the implementation and orchestration layer.
+
+We argue that value in computational drug discovery is separating into three layers: implementation and orchestration, which are becoming generated infrastructure; scientific models, which remain differentiated by accuracy and validation; and proprietary discovery intelligence, including experimental data, project history, design rationale, expert judgment, and organizational objectives.
+Agents are already making computational chemistry easier to access.
+They do not automatically make it more predictive.
+
+\molarium{} provides an illustrative case rather than a controlled productivity study.
+Over an observed interval of several days, an expert chemist working with GPT-5.6 Sol produced a local-first browser workbench and browser-native implementations of OpenFF Sage forces, OBC2/ACE solvent, homogeneous-replica molecular dynamics with SHAKE/RATTLE, and GPU-resident ANI-2x descriptors and forces.
+The project preserved rather than regenerated RDKit, OpenMM, force-field parameters, official model weights, and accumulated scientific evidence.
+Reference comparisons support implementation parity for selected cases; workload-specific timings support acceleration for sufficiently large or batched browser work; and an early conformer experiment supports added exploration, not generally better conformer prediction.
+\molarium{} illustrates both sides of the thesis: substantial molecular-design software can now be generated during the scientific conversation itself.
+Scientific truth cannot.
+\end{abstract}
+
+\noindent\textbf{Keywords:}
+agentic software development; computational chemistry; molecular design; WebGPU; scientific validation; institutional knowledge
+
+\section{The implementation layer is becoming generated infrastructure}
+\label{sec:generated}
+
+``Molecular design software is now free'' is useful only as a provocation.
+Software is not free in the literal economic sense.
+Compute, model inference, review, testing, security, support, and maintenance all consume scarce resources.
+Nor is every scientific method open, portable, or appropriate for local execution.
+The consequential change is narrower: \emph{implementation is becoming less scarce}.
+
+For most of the history of computational drug discovery, a request for a new internal tool entered a queue.
+Someone had to translate the scientific need into a specification, implement the data model and interface, connect external programs, convert formats, write tests, deploy the result, and maintain it.
+Even when the underlying algorithm was public, the surrounding work could delay a useful workflow for months.
+
+Coding agents change the latency between a scientific request and an executable artifact.
+Natural-language instructions, examples, test cases, reference outputs, and interactive feedback can jointly serve as a specification.
+An agent can inspect a repository, write and execute code, compare outputs, diagnose failures, and revise the implementation.
+Repository-scale benchmarks have made this a serious software-engineering capability rather than a code-completion curiosity~\cite{jimenez2024swebench}.
+Recent systems sharpen both the opportunity and the limitation.
+Ayg\"un and colleagues showed that an AI system combining language models with search over candidate programs can generate high-performing empirical scientific software across several domains~\cite{aygun2026empirical}.
+By contrast, the AutoMat benchmark found that coding agents still struggled to reconstruct and support claims from underspecified computational materials-science papers; its best evaluated setting succeeded on 54.1\% of expert-curated tasks~\cite{huang2026automat}.
+In chemistry, ChemCrow and Coscientist have shown how language-model agents can orchestrate specialist tools, search, code, and experimental interfaces~\cite{bran2024chemcrow,boiko2023coscientist}.
+
+\molarium{} adds a different kind of evidence.
+The coding agent did not only decide which established program to call.
+Under expert direction, it implemented missing browser-specific scientific infrastructure, including substantial numerical kernels.
+The case does not establish a universal productivity multiplier, and active development time has not yet been reconstructed from the project archive.
+It shows only that a meaningful, bounded class of molecular-design implementation can now be created while the scientific question is still being formed.
+
+``Free'' can therefore be decomposed into five claims:
+\begin{enumerate}
+  \item \textbf{Free to use.} Original application code can be distributed without a license fee, and supported local calculations need not require a paid service.
+  \item \textbf{Free to rebuild.} A sufficiently explicit method may be reimplemented from equations, parameters, tests, and reference values rather than awaited as a product feature.
+  \item \textbf{Free to preserve.} The generated method, its tests, and its provenance can remain as inspectable code rather than disappearing into a transient conversation.
+  \item \textbf{Free to compose.} Interfaces and workflows can be built around the current scientific question rather than forcing the question into a fixed application.
+  \item \textbf{Not free to validate or operate at scale.} Scientific credibility, security, maintenance, heterogeneous hardware support, and dependable operation remain expensive.
+\end{enumerate}
+
+The qualification is the point.
+Lower implementation cost is important because it exposes what was never reducible to implementation in the first place.
+
+\section{Where value moves}
+\label{sec:value}
+
+Computational molecular design can be viewed as three coupled layers (Figure~\ref{fig:layers}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{three_layers.pdf}
+  \caption{Three layers of value in computational molecular science.
+  Implementation and orchestration are becoming increasingly reproducible by agents.
+  Scientific models remain differentiated by accuracy, domain coverage, and validation.
+  Proprietary discovery intelligence may become the deepest moat because it combines evidence, context, and judgment that are difficult to imitate.}
+  \label{fig:layers}
+\end{figure}
+
+The first layer has historically carried substantial commercial value.
+Companies and internal platform teams implemented algorithms, exposed command-line programs to chemists, built graphical interfaces, converted formats, integrated third-party tools, maintained workflow plumbing, and produced bespoke analysis views.
+Agents can now perform a remarkable fraction of this work on demand.
+A moat defined primarily as ``we integrated the tools and arranged the interface well'' is therefore becoming easier to reproduce.
+Mature applications still embody years of edge cases, compatibility work, user trust, support, and operational discipline; those assets should not be confused with a screen that can be regenerated.
+
+That does not make scientific-software companies irrelevant.
+It changes what customers are paying for.
+The more durable assets are validated models, high-quality data, proprietary parameterization, curated benchmarks, secure deployment, accountable scientific support, and organization-specific workflows whose decisions have been tested.
+The application remains important, but it increasingly expresses the moat rather than constituting it.
+
+The boundaries among the three layers are porous.
+Protonation policy, charge assignment, precision, integrator choice, stopping rules, and default visualization may look like implementation details but can alter a scientific result.
+``Implementation layer'' therefore does not mean ``scientifically neutral.''
+It means the part that can, in principle, be reconstructed from an explicit contract and subjected to falsifiable acceptance tests.
+
+The distinction between \emph{tool space} and \emph{model space} is equally important.
+Most current agents operate in tool space: they choose and coordinate docking, molecular dynamics, free-energy calculations, quantum chemistry, descriptors, or learned models.
+Better orchestration can make these methods easier to use, but it inherits their representations and failure modes.
+Predictive progress requires better models of molecular state, better training data, and better uncertainty---not merely a more fluent agent choosing from the existing menu~\cite{bender2021part1,bender2021part2,wigh2022representation}.
+
+This gives computational chemistry two different revolutions.
+The first is to make it accessible.
+The second, harder revolution is to make it predictive.
+Agents are already transforming the first.
+They do not automatically solve the second.
+
+\section{\molarium: a case study rather than a proof}
+\label{sec:case}
+
+\molarium{} is a public, local-first molecular viewer, builder, and simulation workbench~\cite{wiewiora2026molarium}.
+Most supported calculations run inside a contemporary browser using WebAssembly or WebGPU.
+The workbench can load small molecules and protein structures; preserve explicit topology during three-dimensional editing; prepare supported protein structures; run energies, minimization, molecular dynamics, and conformer searches; evaluate ANI-2x; and run a restricted, short-chain OpenFold model.
+A dedicated Local Lab mode restricts network access for proprietary structures and verifies the files that comprise the reviewed application build.
+This is an auditable technical control, not an absolute privacy guarantee: a hosted page controls the code it delivers, so the strongest boundary is a reviewed, versioned local checkout with independently verified assets.
+
+The browser matters for two reasons.
+First, it removes much of the installation and data-custody friction that has historically separated a scientist from a calculation.
+WebAssembly provides a portable target for mature compiled libraries, while WebGPU provides local accelerator access~\cite{haas2017wasm,w3c2025webgpu}.
+Browser molecular graphics were already well established~\cite{rose2015ngl}.
+Second, the browser is an unforgiving implementation environment.
+There may be no Python environment, CUDA toolkit, or persistent filesystem.
+WebGPU generally offers fast single-precision arithmetic but not the full programming model or numerical capabilities of native CUDA.
+These constraints make the boundary between scientific specification and implementation visible.
+
+\subsection{The development conversation became a scientific build loop}
+\label{sec:loop}
+
+The project did not emerge from one successful prompt.
+Early visual failures changed the representation of the molecule.
+A benzene was wrong.
+A methyl fragment formed a false bond from spatial proximity.
+A trifluoromethyl group arrived flat.
+A bond-order edit triggered geometry cleanup before the coupled chemical change was complete.
+These observations led to explicit topology, three-dimensional fragment coordinates, staged edits, and local rather than global cleanup.
+
+The same loop governed the numerics.
+Asking whether an early evaluator was a real force field moved the project to RDKit MMFF94/UFF and prepared OpenFF Sage systems~\cite{landrum2025rdkit,riniker2015etkdg,halgren1996mmff94,rappe1992uff,boothroyd2023sage}.
+A disagreement between CPU and GPU energies exposed both a unit error and an architectural misunderstanding: OpenMM Reference compiled to WebAssembly was a CPU oracle, not the WebGPU implementation~\cite{eastman2024openmm8}.
+Asking whether the application was really using WebGPU led to analytic WGSL force kernels.
+Asking for implicit solvent led to OBC2/ACE~\cite{onufriev2004obc,schaefer1996ace}.
+Asking whether constrained dynamics were supported led to SHAKE/RATTLE~\cite{ryckaert1977shake,andersen1983rattle}.
+A requested long run that stopped at a development cap exposed a product limit accidentally inherited from a test.
+
+The recurring loop is shown in Figure~\ref{fig:loop}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{build_loop.pdf}
+  \caption{The Molarium scientific build loop.
+  Visual, chemical, numerical, and workflow failures became implementation changes.
+  Independent reference paths determined whether those changes survived, and the repository retained accepted methods with tests, benchmark boundaries, limitations, and provenance.}
+  \label{fig:loop}
+\end{figure}
+
+The scientist's contribution was not a vague preference for a nicer interface.
+It was the ability to notice what was chemically implausible, ask whether the engine and units were what the interface claimed, select a meaningful reference, and decide which failure mattered.
+The agent supplied implementation speed.
+The scientist supplied the scientific standard.
+
+\subsection{What was generated and what was preserved}
+\label{sec:generated-preserved}
+
+The \molarium{} case is useful because the boundary is unusually explicit.
+Table~\ref{tab:generated-preserved} summarizes the division.
+
+\begin{table}[htbp]
+\centering
+\caption{Generated infrastructure versus preserved scientific assets in Molarium.}
+\label{tab:generated-preserved}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Generated or substantially implemented for Molarium} & \textbf{Preserved, reused, or treated as an external scientific asset} \\
+\midrule
+Persistent molecular canvas and topology-aware builder & RDKit chemical perception, file handling, ETKDGv3, MMFF94, and UFF \\
+Browser preparation, conformer, trajectory, and inspection workflows & OpenMM Reference as a slower numerical oracle \\
+Direct WebGPU evaluation of prepared Sage bonded, electrostatic, Lennard--Jones, and OBC2/ACE terms & Published force-field equations and OpenFF parameter sets \\
+Homogeneous-replica WebGPU engine with fixed-point accumulation, Langevin/Verlet integration, and replica-local SHAKE/RATTLE & STORMM as architectural inspiration and an independent upstream reference, not linked runtime code~\cite{cerutti2024stormm} \\
+WebGPU construction of ANI-2x atomic environment vectors and analytic contraction of descriptor derivatives to Cartesian forces & Official TorchANI/ANI-2x architecture, ensemble weights, and native reference values~\cite{gao2020torchani,devereux2020ani2x} \\
+Local-mode network controls, build manifests, egress tests, provenance views, and regression fixtures & OpenFold weights and their accumulated training and validation evidence~\cite{ahdritz2024openfold} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+This is more than glue code.
+The browser engines required new data layouts and algorithms.
+A prepared numeric molecular system---masses, charges, bonded terms, Lennard--Jones parameters, exceptions, constraints, and optional generalized-Born data---forms a common boundary.
+One execution path evaluates one system and trajectory.
+A second adds a replica dimension for many conformers of one topology.
+A third constructs ANI-2x descriptors and forces around preserved neural-network weights.
+Each path has a deliberately separate reference route (Figure~\ref{fig:architecture}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{architecture.pdf}
+  \caption{One explicit chemical boundary, three browser workloads.
+  Preparation ends at a declared numeric system rather than leaving the GPU kernels to infer chemistry.
+  Direct Sage WebGPU, homogeneous-replica WebGPU, and ANI-2x/ONNX consume that boundary or its coordinates, and each has a deliberately separate reference path.}
+  \label{fig:architecture}
+\end{figure}
+
+Yet the generated code did not regenerate the science embodied in parameter sets, trained weights, and accumulated validation.
+A force-field equation can be reimplemented and checked against reference values.
+A neural architecture cannot recreate the learned information in its weights or the experimental evidence that establishes where it works.
+\molarium{}'s original code is MIT-licensed, while bundled libraries, force fields, models, and data retain their upstream licenses.
+Generation does not erase provenance or authorship.
+
+The present scientific scope is deliberately narrow.
+The browser engines are nonperiodic and omit PME, barostats, membranes, and arbitrary OpenMM plugins.
+The replica engine accepts homogeneous copies of one topology, with a current per-replica size limit.
+ANI-2x is restricted to neutral, closed-shell molecules in its supported elemental domain; the browser OpenFold path handles one short chain; and arbitrary browser-native protein parameterization remains experimental.
+These boundaries are part of the result, not footnotes to be hidden~\cite{wiewiora2026molarium}.
+
+The central division is therefore:
+\begin{quote}
+\textbf{Equations and algorithms can often be reconstructed and checked.
+Parameters, weights, data, and accumulated scientific evidence must be preserved.}
+\end{quote}
+
+\section{What \molarium{} demonstrates---and what it does not}
+\label{sec:evidence}
+
+The strongest version of the paper depends on separating three questions that software demonstrations often collapse.
+
+\subsection{Did the implementation match its declared reference?}
+
+For selected fixtures, the answer is encouraging.
+Direct Sage WebGPU is compared with OpenMM Reference on the same prepared numeric system.
+ANI-2x browser evaluation is compared with native TorchANI.
+Analytic forces are checked with complete reference force vectors and finite differences.
+Small fixtures test units, exceptions, constraints, replica ordering, translation invariance, and failure behavior.
+
+On the recorded Apple M1 Pro development stack, the repository provisionally reports a maximum relative direct-Sage single-point deviation of approximately $2.4\times10^{-6}$ across its molecule panel and an aspirin force relative RMS of approximately $7.7\times10^{-7}$.
+The reported aspirin OBC2/ACE case differed from OpenMM by approximately $1.3\times10^{-4}$~kcal/mol, with a force relative RMS of approximately $7.8\times10^{-7}$.
+Against six native TorchANI fixtures, the browser ANI-2x path reported a maximum energy error of 0.02572~kcal/mol and a maximum relative force RMS of approximately $1.0\times10^{-5}$~\cite{wiewiora2026molarium}.
+
+These are provisional implementation-parity results on a particular browser and GPU stack.
+Publication claims should ultimately be generated from a frozen, machine-readable ledger containing the commit, fixture and model hashes, browser, adapter, driver, precision, and timing boundary.
+They do not validate Sage as a model of arbitrary chemistry, independently verify upstream parameter assignment, establish ANI-2x transferability, or demonstrate cross-vendor reproducibility.
+Shared parameters can allow two implementations to agree while preserving the same upstream mistake.
+That is why the repository distinguishes arithmetic parity from scientific validity and lists hand-computable fixtures, finite differences, native references, force tests, dynamics tests, and a cross-GPU matrix as separate validation gates.
+
+\subsection{Did the browser implementation make useful work faster?}
+
+Sometimes---and the negative cases are informative.
+GPU dispatch is a poor bargain for one tiny molecule.
+The project's early measurements found that a single small replica could be slower than OpenMM Reference WebAssembly because dispatch and synchronization dominated the arithmetic.
+Larger or batched work reversed the comparison.
+
+On one Apple M1 Pro, the repository records a 2.09-fold throughput advantage over OpenMM Reference WebAssembly for a warm 1,000-step, 304-atom Trp-cage vacuum run; a 9.16-fold worker-time advantage for 1,231-atom ubiquitin in vacuum; and a 25.6-fold advantage for the recorded ubiquitin OBC2/ACE workload.
+At equal aggregate warm integration steps, 1,024 C16 replicas reached a reported 10.3-fold advantage and 256 water27 replicas a 24.1-fold advantage over the stated Reference baseline.
+Moving ANI-2x descriptor and force work into GPU-resident buffers accelerated that stage 6.77-fold relative to the previous browser path~\cite{wiewiora2026molarium}.
+
+None of these is a native-CUDA claim.
+The direct and replica baselines, integrators, and timing boundaries differ; replica comparisons omit setup and readback.
+On the same NVIDIA L4, the current homogeneous-replica WebGPU engine delivered only 0.39--0.73 times the throughput of upstream STORMM CUDA for the recorded alanine tests.
+The complete conformer workflow still lacks a matched, modern end-to-end CPU baseline.
+
+The defensible conclusion is workload-specific:
+WebGPU did not make every molecular calculation fast.
+It made sufficiently large or batched local browser workloads useful enough to change the interaction design.
+
+\subsection{Did the conformer workflow become more predictive?}
+
+That remains unproven.
+\molarium{} starts from symmetry-pruned ETKDGv3 seeds, briefly polishes them with MMFF94 or UFF, advances them together with a homogeneous-replica Sage/OBC2 workflow, and optionally refines supported structures with vacuum ANI-2x.
+Final candidates can be compared with a common declared score and clustered by symmetry-aware heavy-atom RMSD.
+
+In an early eight-molecule development panel, the replica lane found a lower common Sage minimum for four molecules.
+The median molecule-level best-energy gain was only 0.128~kcal/mol.
+It added 75 structural clusters, including 44 within 3~kcal/mol that were absent from the seed lane's window.
+This supports increased exploration and diversity.
+It does not establish generally better conformer quality.
+
+The panel was small, used limited seeds, and judged structures with a model closely related to the replica objective.
+A publication-quality test requires a frozen chemically diverse panel, repeated seeds, reference-conformer recall, symmetry-aware RMSD and torsion coverage, convergent optimization, uncertainty over molecules and seeds, matched end-to-end timing, and an independent higher-level or experimental judge for a tractable subset.
+\molarium{}'s repository now states those requirements explicitly~\cite{wiewiora2026molarium}.
+
+Table~\ref{tab:claims} summarizes the epistemic center of the case study.
+
+\begin{table}[htbp]
+\centering
+\caption{Implementation, performance, and prediction are different claims.}
+\label{tab:claims}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{0.16\linewidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{Claim} & \textbf{What the current evidence supports} & \textbf{What it does not support} \\
+\midrule
+\textbf{Implementation} & Selected browser kernels reproduce declared equations and reference outputs within recorded tolerances & General force-field accuracy, parameter-assignment validity, model transferability, or cross-GPU equivalence \\
+\textbf{Performance} & Selected large or batched browser workloads outperform OpenMM Reference WebAssembly or earlier browser paths under stated timing boundaries & Universal speed, superiority to modern native CPU/GPU software, or an end-to-end conformer-workflow advantage \\
+\textbf{Prediction} & The conformer workflow can add structural diversity and explore additional low-scoring regions & Generally better conformers, prospective drug-discovery utility, or improved molecular prediction \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The ability to generate implementation rapidly is a real result.
+It should not be inflated into a result about molecular truth.
+
+\section{What does not become free}
+\label{sec:not-free}
+
+\molarium{} makes the broader argument concrete because the things it could not generate are more important than the things it could.
+
+\paragraph{Scientific validation does not become free.}
+Numerical parity requires independent energies, forces, invariances, and dynamics.
+Workflow utility requires frozen benchmarks and external judges.
+Predictive value requires prospective experimental evidence.
+Validation is not a final ceremony applied after an agent writes code; it is the specification that makes generated scientific software meaningful.
+
+\paragraph{Models and representations do not become free.}
+Agentic orchestration can expose docking, molecular dynamics, free-energy methods, quantum chemistry, and learned potentials through a better interface.
+It does not repair a force-field error, create missing biological context, solve rare-event sampling, calibrate uncertainty, or produce a more faithful representation of molecular state.
+The next scientific frontier remains better models and better molecular representations, not merely better access to existing ones~\cite{bender2021part1,bender2021part2,wigh2022representation}.
+
+\paragraph{High-quality data and proprietary knowledge do not become free.}
+A discovery organization's deepest assets include assay and compound data, negative results, historical SAR, structures and biophysics, model calibration and failure modes, target-specific knowledge, medicinal-chemistry judgment, design rationale, and the reasons compounds were advanced or rejected.
+This is not simply a data lake.
+It is accumulated institutional intelligence.
+
+\paragraph{Skills do not validate themselves.}
+Agents make it possible to encode institutional intelligence as reusable scientific skills: prepare a protein according to an internal protocol; choose protonation states using an evidence hierarchy; analyze an RBFE network and flag suspect convergence; or balance potency, permeability, clearance, novelty, synthetic accessibility, and program objectives.
+A credible skill must carry versions, provenance, domain limits, uncertainty, controls, failure conditions, tests, and an accountable owner.
+Work on reusable agent-created tools and the FAIR principles for scientific objects provide part of the intellectual foundation, but scientific skills extend the requirement from reusable data or code to reusable, governed action~\cite{cai2024toolmakers,wilkinson2016fair}.
+
+\paragraph{Security, scale, and stewardship do not become free.}
+A local-first application still needs a reviewed build, dependency and model hashes, network controls, incident response, user support, and maintenance across changing browsers and hardware.
+Agent-generated code can multiply faster than expert attention, amplifying the technical debt already familiar in machine-learning systems~\cite{sculley2015technicaldebt}.
+Low creation cost makes ownership more---not less---important.
+
+\paragraph{Scientific judgment does not become free.}
+Automation creates the familiar irony that the human becomes most important precisely when the system leaves its normal regime~\cite{bainbridge1983ironies}.
+The scarce questions are not how to click through a workflow.
+They are: What result looks wrong?
+What control is independent?
+What approximation is acceptable?
+What benchmark would change belief?
+Which uncertainty should remain visible?
+What should be built next?
+
+\molarium{}'s development record is a compact demonstration.
+The agent could implement a fragment builder; the chemist had to notice the flat trifluoromethyl group.
+The agent could produce an energy; the chemist had to question its scale and provenance.
+The agent could make a benchmark fast; the scientist had to decide whether the baseline and timing boundary were honest.
+As implementation accelerates, taste, suspicion, and judgment become the bottleneck.
+
+\section{Implications for molecular-design organizations}
+\label{sec:organizations}
+
+The commercial implication is not that scientific software disappears, nor that one public browser workbench proves an industry-wide economic transition.
+It is a concrete illustration of why the center of defensible value may shift.
+
+Generic workflow software becomes less differentiating when competitors and customers can reproduce much of it.
+Validated scientific assets, proprietary evidence, secure operation, and encoded organizational judgment become more differentiating.
+Vendors may increasingly expose value through trusted models, benchmarked services, data products, governed skills, and verification infrastructure, while interfaces become more dynamic and project-specific.
+Internal platform teams may spend less time recreating generic screens and more time making proprietary intelligence operational.
+
+The same shift changes the unit of software value.
+The traditional unit was the application or feature.
+The emerging unit may be a validated skill: a versioned decision process that combines models, tools, institutional rules, uncertainty, provenance, and acceptance tests.
+Such a skill can be invoked through many interfaces and improved as evidence accumulates.
+It can also be wrong, stale, or locally biased, so it requires the same governance as a model.
+
+\molarium{} is not yet such an organizational discovery system.
+It is a public case study that exposes the enabling pattern.
+A scientist described the missing environment, tested it while it was being constructed, and kept the resulting implementation with its limitations and checks.
+The same pattern can be applied inside a discovery organization, where the inputs are not only public equations and tools but also proprietary protocols, data, and design history.
+
+\section{Limits of the case study}
+\label{sec:limits}
+
+\molarium{} is one retrospective, author-involved case.
+It was developed by one expert scientist with one coding-agent system on a particular codebase and hardware environment.
+There was no randomized comparison, matched human engineering team, blinded evaluation, or prospective time accounting.
+The project was selected for discussion because it became unusually substantial.
+It therefore cannot establish a general productivity effect or the fraction of commercial scientific software that can be regenerated reliably.
+
+The current technical evidence is also developmental.
+Most numerical results come from one primary browser/GPU stack; the cross-vendor matrix and frozen result ledger remain open work.
+Performance comparisons use explicit but heterogeneous baselines and timing boundaries.
+The conformer panel is too small to support a general prediction claim.
+The provenance archive needed to distinguish generated, edited, and reused artifacts in detail is planned but not yet a finished publication package.
+
+These limitations do not negate the case, but they determine its role.
+\molarium{} should be presented as a documented case and a source of falsifiable hypotheses: that expert--agent teams can generate bounded scientific infrastructure rapidly; that validation becomes the central design problem; and that value shifts toward models, evidence, and judgment as implementation becomes easier to reproduce.
+Broader claims require broader studies.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+\molarium{} began as a request for a better place to look at and edit molecules.
+It became a local browser workbench containing substantial new interaction logic, scientific workflows, WebGPU molecular mechanics, homogeneous-replica dynamics, and GPU-resident ANI-2x descriptors and forces.
+The artifact is technically interesting, but its broader significance lies in what it reveals about scarcity.
+
+An expert scientist could ask for missing software during the work itself, watch it fail, demand the relevant comparison, and retain the accepted implementation as inspectable code.
+The software did not need to pre-exist as a product.
+That is generated scientific infrastructure.
+
+Nothing in the process made prediction free.
+Published equations still required faithful implementation.
+Parameter sets and model weights had to be preserved.
+Agreement with OpenMM or TorchANI did not validate the shared science.
+Performance did not establish conformer quality.
+A browser workbench did not supply prospective evidence, uncertainty calibration, proprietary data, cross-platform operations, or scientific judgment.
+
+As implementation becomes easier to reproduce, those scarce assets become more visible.
+The future suggested by \molarium{} is not molecular design without scientists or without scientific-software companies.
+It is molecular design in which implementation is less often the rate-limiting step---and in which better models, better data, better validation, better institutional memory, and better judgment become the clearest sources of value.
+
+\begin{quote}
+\centering
+\textbf{Software implementation is becoming cheap. Scientific truth is not.}
+\end{quote}
+
+\section*{AI assistance and availability}
+
+GPT-5.6 Sol was used as the primary coding agent during \molarium{}'s development~\cite{openai2026gpt56}.
+Its outputs were directed, inspected, tested, and revised by the human project lead.
+A GPT-5.6 model also assisted with restructuring and drafting this manuscript.
+The authors are responsible for the scientific claims, source attribution, final text, and decision to publish.
+
+\molarium{} source code and current technical documentation are publicly available at \url{https://github.com/rafwiewiora/molarium} and the application is available at \url{https://molarium.org}.
+A frozen validation ledger and redacted development-provenance archive should accompany any submitted version that relies on the quantitative case-study claims.
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}

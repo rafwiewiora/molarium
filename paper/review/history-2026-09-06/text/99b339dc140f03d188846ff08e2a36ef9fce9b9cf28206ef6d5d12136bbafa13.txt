@@ -1,0 +1,23 @@
+                      Three layers of value in computational molecular science
+                           Layer 3 | Proprietary discovery intelligence
+                           Internal data, negative results, project history, design rationale,
+                           expert judgment, experimental feedback, and business objectives
+
+
+
+
+Increasing scarcity                                                                                 Increasing reproducibility
+                           Layer 2 | Scientific models
+
+                                                                                                            by agents
+ and defensibility
+                           Force fields, QM methods, learned potentials, property and affinity
+                           models, structure predictors, parameters, weights, and representations
+
+
+
+
+                           Layer 1 | Implementation and orchestration
+                           Interfaces, scripts, wrappers, workflows, visualization, format
+                           conversion, data plumbing, deployment, and routine analysis
+

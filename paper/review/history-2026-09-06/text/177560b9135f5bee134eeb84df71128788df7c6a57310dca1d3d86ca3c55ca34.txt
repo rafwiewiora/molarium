@@ -1,0 +1,21 @@
+                One explicit chemical boundary, three browser workloads
+                                                   DIRECT WEBGPU          CHECK
+                                                   One system             OpenMM
+                                                   One trajectory         Reference
+
+
+
+
+PREPARE                 NUMERIC SYSTEM
+                        Masses and charges         REPLICA WEBGPU         CHECK
+RDKit graph + 3D        Bonded terms               One topology
+OpenFF parameters       Lennard-Jones              Many conformers        OpenMM +
+Explicit topology       Exceptions + constraints                          STORMM fixtures
+                        Optional GB data
+
+
+
+                                                   ANI-2x + ONNX          CHECK
+                                                   One preserved model    TorchANI +
+                                                   Many conformers        finite differences
+
