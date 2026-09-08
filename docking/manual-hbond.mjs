@@ -228,3 +228,22 @@ export function manualHydrogenBondParticipantKey(definition) {
     definition?.acceptor?.designAtomId].join('|');
 }
 
+// A recomputed pose can already satisfy a subsequently declared hypothesis.
+// Promote that automatically captured observation to an explicit declaration,
+// retaining its provenance, rather than adding the same restraint twice.
+export function planManualHydrogenBondAddition(definitions, definition,
+  effectiveDefinitions = definitions) {
+  const key = manualHydrogenBondParticipantKey(definition);
+  const matches = definitions.filter((entry, index) =>
+    manualHydrogenBondParticipantKey(effectiveDefinitions[index]) === key);
+  if (!matches.length) return { definition, supersededContactId:null };
+  if (matches.length !== 1) throw new Error('Multiple existing H-bonds match this hypothesis; reconcile them first');
+  const existing = matches[0];
+  if (existing.origin || !/^reference-hbond-\d+$/.test(existing.id))
+    throw new Error(`That H-bond hypothesis already exists as ${existing.label}`);
+  const effective = effectiveDefinitions[definitions.indexOf(existing)];
+  return { supersededContactId:existing.id,
+    definition:{ ...definition, origin:{ ...definition.origin,
+      supersededCapturedContact:structuredClone(existing),
+      supersededEffectiveDefinition:structuredClone(effective) } } };
+}

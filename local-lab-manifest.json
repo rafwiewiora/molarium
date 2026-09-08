@@ -72,8 +72,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 992370,
-      "sha256": "c1d10fdff968b4eaafcaadd56b1773478c1aaa84b11603a121acc82f2985ff5d"
+      "bytes": 994165,
+      "sha256": "3aa4c6429e2471aa2f32669441f78187f8d12f910d74e680c693910e2f83df66"
     },
     {
       "path": "chemist-actions.mjs",
@@ -87,8 +87,8 @@
     },
     {
       "path": "CHEMIST-ACTIONS-API.md",
-      "bytes": 36860,
-      "sha256": "ddcd0a2bb9e0e4363cf9b1e6f1a3e609244684c9e1c30a89305d630afa4d4343"
+      "bytes": 37554,
+      "sha256": "16bfdcfcaf993b0a7c5e36aac4dfacab296e1ca4121b75e56a2365ee29652126"
     },
     {
       "path": "DESIGNER-MOVES.md",
@@ -127,8 +127,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 14522,
-      "sha256": "5fcb5a8dd90b68af71ccd580bdd523df69b17d83d858c46b1dab23b10c779fbb"
+      "bytes": 14597,
+      "sha256": "e41d040384d7a0264b1053ecbe2100a81f896ccc34301244f5ba7de79913eb63"
     },
     {
       "path": "protein-residue-templates.js",
@@ -227,8 +227,8 @@
     },
     {
       "path": "rdkit-worker.js",
-      "bytes": 23786,
-      "sha256": "b397064c6a65ae2b2c6164ec13bd752d618a935f889fbf69d748bca24331cb44"
+      "bytes": 25022,
+      "sha256": "7b929dcfa40727d775ee92fb165c6d02f7653d825faaaed1b18f5b714a7ce81e"
     },
     {
       "path": "rdkit/dimorphite-sites.js",
@@ -267,8 +267,8 @@
     },
     {
       "path": "docking/manual-hbond.mjs",
-      "bytes": 11697,
-      "sha256": "7e587f4af78f02ba413a32f99a703cf23c4b2403a05b32fe37c54d446e44a792"
+      "bytes": 12914,
+      "sha256": "838bc1f8fc302eb4e041781adda8e3d1b7260dc525bae36b1a81321fb03c30bd"
     },
     {
       "path": "docking/pose-propagation-scoring.mjs",

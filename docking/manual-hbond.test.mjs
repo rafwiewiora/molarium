@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createManualHydrogenBondDefinition, manualHydrogenBondGeometry,
-  manualHydrogenBondOptions, manualHydrogenBondParticipantKey } from './manual-hbond.mjs';
+  manualHydrogenBondOptions, manualHydrogenBondParticipantKey,
+  planManualHydrogenBondAddition } from './manual-hbond.mjs';
 
 const molecule = {
   atoms:[
@@ -52,6 +53,26 @@ assert.equal(donorDefinition.hydrogen.referencePoint, undefined,
 assert.equal(donorDefinition.acceptor.designAtomId, 'rec-O');
 assert.equal(manualHydrogenBondParticipantKey(donorDefinition),
   'acceptor|lig-N|lig-H|rec-O');
+
+const capturedDonor = { ...structuredClone(donorDefinition), id:'reference-hbond-31' };
+delete capturedDonor.origin;
+const beforePromotion = JSON.stringify([capturedDonor, donorDefinition]);
+const promoted = planManualHydrogenBondAddition([capturedDonor], donorDefinition);
+assert.equal(promoted.supersededContactId, 'reference-hbond-31');
+assert.equal(promoted.definition.id, 'manual-hbond-2');
+assert.equal(promoted.definition.required, true);
+assert.deepEqual(promoted.definition.origin.supersededCapturedContact, capturedDonor);
+assert.equal(JSON.stringify([capturedDonor, donorDefinition]), beforePromotion,
+  'planning must not mutate captured or authored evidence');
+assert.throws(() => planManualHydrogenBondAddition([promoted.definition], donorDefinition),
+  /already exists/, 'a second explicit declaration is still rejected');
+assert.throws(() => planManualHydrogenBondAddition([capturedDonor,capturedDonor], donorDefinition),
+  /Multiple existing/);
+assert.equal(planManualHydrogenBondAddition([acceptorDefinition], donorDefinition).supersededContactId, null,
+  'different donor/hydrogen/acceptor participants never collide');
+const staleCaptured = { ...capturedDonor, donor:{...capturedDonor.donor,designAtomId:'old-donor'} };
+assert.equal(planManualHydrogenBondAddition([staleCaptured], donorDefinition, [capturedDonor]).supersededContactId,
+  staleCaptured.id, 'duplicate detection uses effective remapped participants');
 
 const rehydrogenatedDonor = {
   atoms:[

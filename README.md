@@ -12,6 +12,8 @@ The original vector identity is available as a reusable [logo](./assets/molarium
 The [Reproductions index](https://molarium.org/reproductions) starts with
 [SOS1](https://molarium.org/sos1): a recomputable browser story, a seven-checkpoint
 precomputed replay, a checkpoint MP4, and the paper with supporting evidence.
+The [live SOS1 replay correction record](./reviews/SOS1_RECOMPUTE_REVIEW_2026-09-08.md)
+tracks captured-contact redeclaration, stopped-step captions, and 2D aromatic depiction.
 
 Read the [ChemRxiv-submitted paper v1 (September 8, 2026)](./paper/submissions/chemrxiv-v1-2026-09-08/Molarium.pdf)
 by Rafal Wiewiora and Woody Sherman. The [submission record](./paper/submissions/chemrxiv-v1-2026-09-08/README.md)

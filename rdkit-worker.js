@@ -137,19 +137,38 @@ async function runCalculation(message) {
     const heavyAtomCount = molecule?.atoms?.filter((atom) => atom.element !== 'H').length || 0;
     if (!heavyAtomCount || heavyAtomCount > 256 || molecule.atoms.length > MAX_V2000_ATOMS)
       throw new Error('2D depiction supports molecular components with 1–256 heavy atoms');
-    let rdMol;
+    let rdMol, usedFallback = false;
     try {
       rdMol = module.get_mol(moleculeToMolBlock(molecule), JSON.stringify({
-        sanitize:true, removeHs:true, strictParsing:false,
+        sanitize:true, removeHs:false, strictParsing:false,
       }));
       // Some provenance-bounded live graphs omit V2000-only atom-property
       // flags (for example [nH]) in the viewer representation. Permit a
       // drawing-only fallback for those graphs; calculations remain strict.
-      if (!rdMol && options.allowUnsanitizedDepictionFallback === true) rdMol = module.get_mol(
-        moleculeToMolBlock(molecule), JSON.stringify({
+      if (!rdMol && options.allowUnsanitizedDepictionFallback === true) {
+        usedFallback = true;
+        const heavyIndices = molecule.atoms.flatMap((atom, index) => atom.element !== 'H' ? [index] : []);
+        const byIndex = new Map(heavyIndices.map((index, local) => [index, local]));
+        const heavyOnly = { ...molecule, atoms:heavyIndices.map(index => molecule.atoms[index]),
+          bonds:molecule.bonds.filter(bond => byIndex.has(bond.a) && byIndex.has(bond.b))
+            .map(bond => ({ ...bond, a:byIndex.get(bond.a), b:byIndex.get(bond.b) })) };
+        rdMol = module.get_mol(moleculeToMolBlock(heavyOnly), JSON.stringify({
           sanitize:false, removeHs:false, strictParsing:false,
         }));
+      }
       if (!rdMol) throw new Error('RDKit refused an unsanitizable molecular component');
+      // In the bundled RDKit, removing H during parsing loses aromatic N-H.
+      // Sanitize the full graph first; only then hide H in the drawing copy.
+      if (!usedFallback) {
+        const stripped = module.get_mol(rdMol.remove_hs(), JSON.stringify({
+          sanitize:true, removeHs:false, strictParsing:true,
+        }));
+        if (!stripped) throw new Error('RDKit could not preserve chemistry while hiding hydrogens');
+        rdMol.delete(); rdMol = stripped;
+      }
+      const canonicalSmiles = usedFallback ? null : rdMol.get_smiles();
+      const drawingGraph = JSON.parse(rdMol.get_json()).molecules[0];
+      const bondAtomIndices = drawingGraph.bonds.map(bond => bond.atoms);
       // The molecular input carries the live 3D conformer. Always replace it
       // with a genuine 2D layout before drawing. Constraining a redraw to the
       // previous complete MolBlock can over-constrain a rewritten substituent
@@ -158,10 +177,10 @@ async function runCalculation(message) {
       if (!rdMol.set_new_coords())
         throw new Error('RDKit could not generate 2D coordinates');
       const selected = Array.from(options.selectedAtomIndices || [], Number)
-        .filter((index) => Number.isInteger(index) && index >= 0 && index < molecule.atoms.length);
+        .filter((index) => Number.isInteger(index) && index >= 0 && index < drawingGraph.atoms.length);
       const selectedSet = new Set(selected);
-      const selectedBonds = molecule.bonds.flatMap((bond, index) =>
-        selectedSet.has(bond.a) && selectedSet.has(bond.b) ? [index] : []);
+      const selectedBonds = bondAtomIndices.flatMap(([a,b], index) =>
+        selectedSet.has(a) && selectedSet.has(b) ? [index] : []);
       const color = [0.09, 0.53, 0.72];
       const atomColors = Object.fromEntries(selected.map((index) => [index, color]));
       const bondColors = Object.fromEntries(selectedBonds.map((index) => [index, color]));
@@ -172,10 +191,10 @@ async function runCalculation(message) {
       if (typeof svg !== 'string' || !svg.includes('<svg'))
         throw new Error('RDKit returned an invalid 2D depiction');
       self.postMessage({
-        type:'result', id, job, svg, atomCount:molecule.atoms.length,
-        sanitization:options.allowUnsanitizedDepictionFallback === true
-          ? 'provenance-bounded graph; strict parse with drawing-only fallback'
-          : 'strict RDKit sanitization',
+        type:'result', id, job, svg, atomCount:drawingGraph.atoms.length,
+        canonicalSmiles, bondAtomIndices,
+        sanitization:usedFallback ? 'provenance-bounded drawing-only fallback'
+          : 'strict RDKit sanitization; hydrogens removed after sanitization',
         rdkitVersion:module.version?.() || null, elapsedMs:performance.now() - started,
         platform:'WebAssembly', backend:'RDKit MolDraw2D',
       });
