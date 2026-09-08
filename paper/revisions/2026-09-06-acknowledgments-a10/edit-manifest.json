@@ -1,0 +1,13 @@
+{
+  "schema": "molarium.approved-manuscript-edits/v1",
+  "baseRevision": "paper/revisions/2026-09-06-approved-comma-a09",
+  "baseSourceSha256": "23b716caeb899bebf76f117984390c7e691295766b1942fe6dc59daf54a41e02",
+  "outputSha256": "175fb214ddfa723c295c527ad546c4900dc5c421d505e06e1d887cc2f75ee54f",
+  "changes": [
+    {
+      "before": "\\appendix\n",
+      "after": "\\section*{Acknowledgments}\n\nWe thank Pat Walters and Haotian Li for insightful discussions and their ongoing creative support.\n\n\\appendix\n"
+    }
+  ],
+  "allOtherTextAndFiguresUnchanged": true
+}

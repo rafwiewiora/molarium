@@ -1,0 +1,448 @@
+{
+  "schema": "molarium.chemist-action-script/v1",
+  "label": "SOS1 chemical edits in the Molarium interface",
+  "actions": [
+    {
+      "action": "campaign.import",
+      "args": {
+        "sourcePath": "./design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/starting-hit-campaign.json",
+        "sourceSha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6",
+        "preserveView": false
+      },
+      "caption": "Review the exact prepared 5OVE/AXE starting hit",
+      "review": {
+        "schema": "molarium.sos1-aww-receptor-only-checkpoint-review/v1",
+        "immutableSnapshot": true,
+        "promotable": false,
+        "designStage": "starting-hit",
+        "registeredStartingHit": true,
+        "exactHistoryPrefix": true,
+        "calculationPolicy": "none",
+        "holdoutCoordinatesIncluded": false,
+        "checkpointSha256": "463a3efd937fc719719256336bd1cb9b5db19a26df2f8db9d5bdfc4c353dd972",
+        "campaignSha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6",
+        "campaignId": "sos1-run-766bdc2ebf83a561",
+        "branch": "main",
+        "commitId": "commit:481b690c9b92896a18b858d8522ddb7c55be00b3b416922dcc814a7f0cec826b",
+        "snapshotId": "snapshot:463a3efd937fc719719256336bd1cb9b5db19a26df2f8db9d5bdfc4c353dd972"
+      }
+    },
+    {
+      "action": "view.setDisplay",
+      "args": {
+        "representation": "cartoon",
+        "showHydrogens": false,
+        "showInteractions": false,
+        "showPocketAtoms": true,
+        "showHulls": false,
+        "showStericClashes": false,
+        "colorTheme": "design-prediction",
+        "changeMarkers": "halo"
+      },
+      "caption": "Show each frozen prediction in the same local pocket view"
+    },
+    {
+      "action": "view.focusComponent",
+      "args": {
+        "kind": "ligand",
+        "ordinal": 0,
+        "isolate": false
+      },
+      "caption": "Center the hit and the local pocket where every design decision will be made"
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": [],
+        "residueLabels": [
+          {
+            "chain": "A",
+            "residueIndex": 890,
+            "label": "Phe890",
+            "tone": "gold"
+          }
+        ]
+      },
+      "caption": "AXE starting hit: naphthyl group on the dimethoxyquinazoline scaffold.",
+      "expect": {
+        "highlightedAtoms.cameraPreserved": true,
+        "highlightedAtoms.displayContextPreserved": true
+      }
+    },
+    {
+      "action": "campaign.import",
+      "args": {
+        "sourcePath": "./design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/scaffold-rewrite-campaign.json",
+        "sourceSha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+        "preserveView": true
+      },
+      "caption": "Review the scaffold-rewrite checkpoint",
+      "expect": {
+        "campaignImport.viewPreserved": true
+      },
+      "review": {
+        "schema": "molarium.sos1-aww-receptor-only-checkpoint-review/v1",
+        "immutableSnapshot": true,
+        "promotable": false,
+        "designStage": "scaffold-rewrite",
+        "calculationPolicy": "none",
+        "holdoutCoordinatesIncluded": false,
+        "checkpointSha256": "56afdcd914e17c8aa09d5347e7d5b9e95f3b8f3a89b8069fbaee1dc460e1d02a",
+        "campaignSha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+        "campaignId": "sos1-run-766bdc2ebf83a561",
+        "branch": "main",
+        "commitId": "commit:2c9880158ecce4b2140629dc84a9428e8dfcfa0d42b1aed54caa2bf24ba4b680",
+        "snapshotId": "snapshot:56afdcd914e17c8aa09d5347e7d5b9e95f3b8f3a89b8069fbaee1dc460e1d02a"
+      }
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": [
+          "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX1:",
+          "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX2:",
+          "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX3:",
+          "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::NX1:",
+          "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::NX2:",
+          "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX4:"
+        ],
+        "residueLabels": [
+          {
+            "chain": "A",
+            "residueIndex": 890,
+            "label": "Phe890",
+            "tone": "gold"
+          }
+        ]
+      },
+      "caption": "AWT: replace naphthyl with pyrazolylphenyl; add a 2-methyl group.",
+      "expect": {
+        "highlightedAtoms.cameraPreserved": true,
+        "highlightedAtoms.displayContextPreserved": true
+      }
+    },
+    {
+      "action": "campaign.import",
+      "args": {
+        "sourcePath": "./design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/fragment-merge-campaign.json",
+        "sourceSha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81",
+        "preserveView": true
+      },
+      "caption": "Review the fragment-merge checkpoint",
+      "expect": {
+        "campaignImport.viewPreserved": true
+      },
+      "review": {
+        "schema": "molarium.sos1-aww-receptor-only-checkpoint-review/v1",
+        "immutableSnapshot": true,
+        "promotable": false,
+        "designStage": "fragment-merge",
+        "calculationPolicy": "none",
+        "holdoutCoordinatesIncluded": false,
+        "checkpointSha256": "d895de9868c4a37951748701a3d21e835454d314361933197ef65a5530f61c98",
+        "campaignSha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81",
+        "campaignId": "sos1-run-766bdc2ebf83a561",
+        "branch": "main",
+        "commitId": "commit:dc66adfd95d39456389739404fcb11a63188199ac603ecbeb45f0c40199dc95a",
+        "snapshotId": "snapshot:d895de9868c4a37951748701a3d21e835454d314361933197ef65a5530f61c98"
+      }
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": [
+          "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX2:",
+          "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX3:",
+          "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX4:",
+          "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX5:",
+          "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX6:",
+          "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::NX1:",
+          "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX7:",
+          "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::NX2:",
+          "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX8:",
+          "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX9:",
+          "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX10:",
+          "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::SX1:"
+        ],
+        "residueLabels": [
+          {
+            "chain": "A",
+            "residueIndex": 890,
+            "label": "Phe890",
+            "tone": "gold"
+          }
+        ]
+      },
+      "caption": "AWZ: replace phenyl with thiophene and merge the bicyclic heterocycle.",
+      "expect": {
+        "highlightedAtoms.cameraPreserved": true,
+        "highlightedAtoms.displayContextPreserved": true
+      }
+    },
+    {
+      "action": "campaign.import",
+      "args": {
+        "sourcePath": "./design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-graph-campaign.json",
+        "sourceSha256": "c0672efabc8da255de45a6d8b41f3f1a2bb0652ac2e683a70a9ed33b8692b3b1",
+        "preserveView": true
+      },
+      "caption": "Review the AWW graph before directional placement",
+      "expect": {
+        "campaignImport.viewPreserved": true
+      },
+      "review": {
+        "schema": "molarium.sos1-aww-receptor-only-checkpoint-review/v1",
+        "immutableSnapshot": true,
+        "promotable": false,
+        "designStage": "aww-graph",
+        "calculationPolicy": "none",
+        "holdoutCoordinatesIncluded": false,
+        "checkpointSha256": "0adf84081e034501a5ef67f81a7996bff1d213c29bf11bdd8419df43778fe41b",
+        "campaignSha256": "c0672efabc8da255de45a6d8b41f3f1a2bb0652ac2e683a70a9ed33b8692b3b1",
+        "campaignId": "sos1-run-766bdc2ebf83a561",
+        "branch": "main",
+        "commitId": "commit:8b51a53bd69a948e1ff6573a46f6c419e2305628bdbcd70b4978b4adef568d2e",
+        "snapshotId": "snapshot:0adf84081e034501a5ef67f81a7996bff1d213c29bf11bdd8419df43778fe41b"
+      }
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": [
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX6:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX1:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX7:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX8:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX2:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX9:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX10:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX11:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX12:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX13:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX14:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX15:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX16:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX3:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX17:"
+        ],
+        "residueLabels": [
+          {
+            "chain": "A",
+            "residueIndex": 890,
+            "label": "Phe890",
+            "tone": "gold"
+          }
+        ]
+      },
+      "caption": "AWW: install benzyl alcohol and the 5,8-dihydro core; inherited arm pose.",
+      "expect": {
+        "highlightedAtoms.cameraPreserved": true,
+        "highlightedAtoms.displayContextPreserved": true
+      }
+    },
+    {
+      "action": "campaign.import",
+      "args": {
+        "sourcePath": "./design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-designer-intent-campaign.json",
+        "sourceSha256": "a1f0424ce1be8dde42180dbe76c5beae8565b56a8739a222b8fc9b1b6a91a3ae",
+        "preserveView": true
+      },
+      "caption": "Review the fixed AWW designer-intent pose",
+      "expect": {
+        "campaignImport.viewPreserved": true
+      },
+      "review": {
+        "schema": "molarium.sos1-aww-receptor-only-checkpoint-review/v1",
+        "immutableSnapshot": true,
+        "promotable": false,
+        "designStage": "aww-designer-intent",
+        "calculationPolicy": "none",
+        "holdoutCoordinatesIncluded": false,
+        "checkpointSha256": "ea059ee77316f80236aebcbbebea57fc187062c32ffc3d54856cde3363c0dfc0",
+        "campaignSha256": "a1f0424ce1be8dde42180dbe76c5beae8565b56a8739a222b8fc9b1b6a91a3ae",
+        "campaignId": "sos1-run-766bdc2ebf83a561",
+        "branch": "main",
+        "commitId": "commit:7425b28b37d00d1f8bc6aac34ba8c6e474d9559ba757d7bd0f43b4326b9b69ed",
+        "snapshotId": "snapshot:ea059ee77316f80236aebcbbebea57fc187062c32ffc3d54856cde3363c0dfc0"
+      }
+    },
+    {
+      "action": "view.setDisplay",
+      "args": {
+        "showStericClashes": true
+      },
+      "caption": "Show the severe ligand–protein contacts created by compound 21 growth"
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": [
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX6:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX1:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX7:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX8:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX2:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX9:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX10:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX11:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX12:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX13:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX14:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX15:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX16:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX3:",
+          "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX17:"
+        ],
+        "residueLabels": [
+          {
+            "chain": "A",
+            "residueIndex": 890,
+            "label": "Phe890",
+            "tone": "gold"
+          },
+          {
+            "chain": "A",
+            "residueIndex": 884,
+            "label": "Tyr884 · backbone contact",
+            "tone": "blue"
+          }
+        ]
+      },
+      "caption": "AWW: benzyl alcohol and 5,8-dihydro core; orient the arm toward the Tyr884 backbone contact.",
+      "expect": {
+        "highlightedAtoms.cameraPreserved": true,
+        "highlightedAtoms.displayContextPreserved": true
+      }
+    },
+    {
+      "action": "campaign.import",
+      "args": {
+        "sourcePath": "./design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-phe890-response-campaign.json",
+        "sourceSha256": "b551d8e7d0489955c8885397fd4b8ddb2c783b559c6f616cf89356a763a30601",
+        "preserveView": true
+      },
+      "caption": "Review the receptor-only Phe890 response",
+      "expect": {
+        "campaignImport.viewPreserved": true
+      },
+      "review": {
+        "schema": "molarium.sos1-aww-receptor-only-checkpoint-review/v1",
+        "immutableSnapshot": true,
+        "promotable": false,
+        "designStage": "aww-phe890-response",
+        "calculationPolicy": "none",
+        "holdoutCoordinatesIncluded": false,
+        "checkpointSha256": "874f601573f2555d44a08e92fafe84ef4103041c472dd790ff988f99f437e9ee",
+        "campaignSha256": "b551d8e7d0489955c8885397fd4b8ddb2c783b559c6f616cf89356a763a30601",
+        "campaignId": "sos1-run-766bdc2ebf83a561",
+        "branch": "main",
+        "commitId": "commit:dbc740acb98a727d941b32dd65bff30917a0330fba3d9ce7227a6165ab7445d3",
+        "snapshotId": "snapshot:874f601573f2555d44a08e92fafe84ef4103041c472dd790ff988f99f437e9ee"
+      }
+    },
+    {
+      "action": "view.setDisplay",
+      "args": {
+        "showStericClashes": false
+      },
+      "caption": "The selected Phe890-out branch clears the severe contacts"
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": [],
+        "residueLabels": [
+          {
+            "chain": "A",
+            "residueIndex": 890,
+            "label": "Phe890",
+            "tone": "gold"
+          },
+          {
+            "chain": "A",
+            "residueIndex": 884,
+            "label": "Tyr884 · backbone contact",
+            "tone": "blue"
+          }
+        ]
+      },
+      "caption": "Same AWW ligand, held fixed: select a Phe890 rotamer that clears the arm.",
+      "expect": {
+        "highlightedAtoms.cameraPreserved": true,
+        "highlightedAtoms.displayContextPreserved": true
+      }
+    },
+    {
+      "action": "campaign.import",
+      "args": {
+        "sourcePath": "./design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/finish-bay-293-campaign.json.gz",
+        "sourceSha256": "247314e796be9c823e0545817bbec55d2b1232d32ae0cb5bfcd7264bb25408f3",
+        "preserveView": true,
+        "sourceEncoding": "gzip"
+      },
+      "expect": {
+        "campaignImport.viewPreserved": true
+      },
+      "caption": "Review the BAY-293 attachment rewrite",
+      "review": {
+        "designStage": "finish-bay-293",
+        "immutableSnapshot": true,
+        "calculationPolicy": "none",
+        "holdoutCoordinatesIncluded": false,
+        "campaignSha256": "247314e796be9c823e0545817bbec55d2b1232d32ae0cb5bfcd7264bb25408f3",
+        "campaignId": "sos1-run-766bdc2ebf83a561",
+        "branch": "main",
+        "commitId": "commit:911cbe21f3cea3d75bb4916fa4a9313a942126c23c985f38ac5811878f169b34",
+        "snapshotId": "snapshot:901cddaaf385d22cdb6420fcaccecd783ed2b0e3d0a054a91b1220f219d4e3d0"
+      }
+    },
+    {
+      "action": "view.highlightAtoms",
+      "args": {
+        "atomIds": [
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX5:",
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::NX1:",
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX6:",
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX7:",
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX8:",
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX9:",
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX10:",
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX11:",
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX12:",
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX13:",
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX14:",
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::OX1:",
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX15:",
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX16:",
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::OX2:",
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX17:",
+          "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX18:"
+        ],
+        "residueLabels": [
+          {
+            "chain": "A",
+            "residueIndex": 890,
+            "label": "Phe890",
+            "tone": "gold"
+          },
+          {
+            "chain": "A",
+            "residueIndex": 884,
+            "label": "Tyr884 · backbone contact",
+            "tone": "blue"
+          }
+        ]
+      },
+      "caption": "BAY-293: move thiophene attachment; alcohol to N-methylamine; restore the aromatic core.",
+      "expect": {
+        "highlightedAtoms.cameraPreserved": true,
+        "highlightedAtoms.displayContextPreserved": true
+      }
+    }
+  ],
+  "sourceScript": {
+    "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-review.action-script.json",
+    "sha256": "6ab36deb2cab37fd888eff9c2006c8c14e06be351d4cdc160dd173c994393211",
+    "transformation": "Capture each public mutation result; focus once on the starting ligand and retain that pocket camera for all later highlights. Phe890 stays labeled with its flanking peptide context; severe clashes are shown only from compound-21 growth until the Phe890-out branch is selected. Relaxation markers are cleared because before/after geometry is compared in place. No scientific action request removed or altered."
+  }
+}

@@ -1,0 +1,214 @@
+{
+  "schema": "molarium.full-interface-chemical-highlights/v1",
+  "figureSha256": "2a813e8751a885cc51f29cb8f0aed4556b8d629543d50c782ebe474f97a4cc83",
+  "capturePlanSha256": "ca2198d5d026842b9355ae3e653b92604bbc6845ceeb514a2a9ba1566fde58ab",
+  "presentationSha256": "7017de27f0cf2c93fd8c2ac97853ab134a246532553f42649d9e481852942551",
+  "imagePolicy": "Unaltered full-interface screenshots. Panel headings are outside screenshots. Molecular highlights are native app overlays from persistent atom IDs, not image edits.",
+  "calculationPolicy": "none",
+  "highlightMeaning": "Orange marks heavy atoms outside the registered atom-lineage conserved subgraph relative to the preceding chemical graph. AWW highlights persist through ligand placement and are cleared for the receptor-only panel. This is not a reaction mechanism or a unique chemical atom mapping.",
+  "captureBrowser": "Chrome via browser-client; visible Play/Previous/Next and Enlarge 2D controls",
+  "sourceCodeSha256": {
+    "app.js": "24e46f70c76c749fe42749c5218cb5c7f100ad8eb65cd83ded493daebc0ad546",
+    "index.html": "2dc9c8c7fe0f98be9fb91a4f52eccab16242eecb8afdaf4ceaa2ca33e0f71aeb",
+    "styles.css": "9ea5601c946e0662427e02cee13b685095a595561dda9156471a4aabbf37fcd5",
+    "molarium-workspace.css": "8421b4b0555bcfc660cead4693b700a975a31da2dc7c5d24bf89902253f72e2c",
+    "rdkit-worker.js": "ac09dc032bd5d15b92882f6e2c1b5be8d862245b7ef34fa6c9b3fe07446b60f8"
+  },
+  "depictionAlignment": {
+    "referenceSmarts": "[#6]1~[#6]~[#7]~[#6]~[#7]~[#6]~1~[#7]~[#6]",
+    "atomNames": [
+      "C1",
+      "C2",
+      "N6",
+      "C11",
+      "N8",
+      "C3",
+      "N7",
+      "C12"
+    ],
+    "policy": "RDKit constrained 2D scaffold depiction; all 3D coordinates and stereochemistry unchanged"
+  },
+  "workerAuditSha256": "3cd28346b1532c7aaa5b85d1c11afb48d30368504cc3cf2247a057b1a9cb72ed",
+  "captures": [
+    {
+      "stage": "starting-hit",
+      "imageSha256": "4de2144c248eb0ab3c212ac94934bfa526fd04c5d5657d1fa4cf0dd142a50f5d",
+      "checkpointSha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6",
+      "caption": "AXE starting hit: naphthyl group on the dimethoxyquinazoline scaffold.",
+      "depiction": {
+        "alignedAtoms": "8",
+        "alignmentBackend": "RDKit shared-scaffold 2D coordinates",
+        "canonicalSmiles": "COc1cc2ncnc(N[C@H](C)c3cccc4ccccc34)c2cc1OC",
+        "mode": "build",
+        "rdkitVersion": "2025.03.4",
+        "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization"
+      },
+      "docked": true,
+      "expanded": true,
+      "highlightedAtomIds": [],
+      "networkPolicy": "Local Lab \u00b7 network locked",
+      "replayStatus": "completed",
+      "reviewIndex": 5,
+      "svgSha256": "7a5d6aba4709dee0335f88ed908fd17f10adf13752e086ddeeb08938b34555e1"
+    },
+    {
+      "stage": "scaffold-rewrite",
+      "imageSha256": "289a8cd5d6dbf0b5eea2a9a727e243ace0c095ef642af0133632ed84d37c26f3",
+      "checkpointSha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+      "caption": "AWT: replace naphthyl with pyrazolylphenyl; add a 2-methyl group.",
+      "depiction": {
+        "alignedAtoms": "8",
+        "alignmentBackend": "RDKit shared-scaffold 2D coordinates",
+        "canonicalSmiles": "COc1cc2nc(C)nc(N[C@H](C)c3cccc(-c4cn[nH]c4)c3)c2cc1OC",
+        "mode": "build",
+        "rdkitVersion": "2025.03.4",
+        "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization"
+      },
+      "docked": true,
+      "expanded": true,
+      "highlightedAtomIds": [
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX1:",
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX2:",
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX3:",
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::NX1:",
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::NX2:",
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX4:"
+      ],
+      "networkPolicy": "Local Lab \u00b7 network locked",
+      "replayStatus": "completed",
+      "reviewIndex": 7,
+      "svgSha256": "1abd25b47a6169043fbd6fa65e74b06dbb54b9df4cb7151ae0e5f6b019da63cb"
+    },
+    {
+      "stage": "fragment-merge",
+      "imageSha256": "c75075ed44b0496afb895dfe103738434f9a9e4870ccab47d5b03733bfd6c4cf",
+      "checkpointSha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81",
+      "caption": "AWZ: replace phenyl with thiophene and merge the bicyclic heterocycle.",
+      "depiction": {
+        "alignedAtoms": "8",
+        "alignmentBackend": "RDKit shared-scaffold 2D coordinates",
+        "canonicalSmiles": "COc1cc2nc(C)nc(N[C@H](C)c3ccc(-c4cnc5n4CCC5)s3)c2cc1OC",
+        "mode": "build",
+        "rdkitVersion": "2025.03.4",
+        "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization"
+      },
+      "docked": true,
+      "expanded": true,
+      "highlightedAtomIds": [
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX2:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX3:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX4:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX5:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX6:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::NX1:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX7:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::NX2:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX8:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX9:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX10:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::SX1:"
+      ],
+      "networkPolicy": "Local Lab \u00b7 network locked",
+      "replayStatus": "completed",
+      "reviewIndex": 9,
+      "svgSha256": "adf5e72d4a133e13d8e950bb5d921493beaa27946280d8e455da6d8a8d959283"
+    },
+    {
+      "stage": "aww-designer-intent",
+      "imageSha256": "fe04dc59c47bd6caa414e7a82974e7986efe8c81d8f7aa5633a96ed201b9e9a7",
+      "checkpointSha256": "a1f0424ce1be8dde42180dbe76c5beae8565b56a8739a222b8fc9b1b6a91a3ae",
+      "caption": "AWW: benzyl alcohol and 5,8-dihydro core; orient the arm toward the Tyr884 backbone contact.",
+      "depiction": {
+        "alignedAtoms": "8",
+        "alignmentBackend": "RDKit shared-scaffold 2D coordinates",
+        "canonicalSmiles": "COC1=C(OC)Cc2c(nc(C)nc2N[C@H](C)c2ccc(-c3ccccc3CO)s2)C1",
+        "mode": "build",
+        "rdkitVersion": "2025.03.4",
+        "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization"
+      },
+      "docked": true,
+      "expanded": true,
+      "highlightedAtomIds": [
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX6:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX1:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX7:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX8:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX2:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX9:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX10:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX11:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX12:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX13:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX14:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX15:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX16:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX3:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX17:"
+      ],
+      "networkPolicy": "Local Lab \u00b7 network locked",
+      "replayStatus": "completed",
+      "reviewIndex": 14,
+      "svgSha256": "3f0c70d365cb647a910eeeb5dc7d11e6a04f56c1c16ea40826a1bd3fedeec327"
+    },
+    {
+      "stage": "aww-phe890-response",
+      "imageSha256": "d94026afb9fe1d5170dc14d16e551a75b94072f89ac46c8aa702d9bc42741501",
+      "checkpointSha256": "b551d8e7d0489955c8885397fd4b8ddb2c783b559c6f616cf89356a763a30601",
+      "caption": "Same AWW ligand, held fixed: select a Phe890 rotamer that clears the arm.",
+      "depiction": {
+        "alignedAtoms": "8",
+        "alignmentBackend": "RDKit shared-scaffold 2D coordinates",
+        "canonicalSmiles": "COC1=C(OC)Cc2c(nc(C)nc2N[C@H](C)c2ccc(-c3ccccc3CO)s2)C1",
+        "mode": "build",
+        "rdkitVersion": "2025.03.4",
+        "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization"
+      },
+      "docked": true,
+      "expanded": true,
+      "highlightedAtomIds": [],
+      "networkPolicy": "Local Lab \u00b7 network locked",
+      "replayStatus": "completed",
+      "reviewIndex": 17,
+      "svgSha256": "558c4647e03524e9a14817984a79486cee28dffd532faba2a71fa2c3feb07dee"
+    },
+    {
+      "stage": "finish-bay-293",
+      "imageSha256": "e424f9d439758601a462a48771d33f0218ca40f5db676c67e7b5ecdfd94c0dd7",
+      "checkpointSha256": "dbe42835d58b058a68e829412b2c30fbf9332bf8590b03b2a048ab950b991c95",
+      "caption": "BAY-293: move thiophene attachment; alcohol to N-methylamine; restore the aromatic core.",
+      "depiction": {
+        "alignedAtoms": "8",
+        "alignmentBackend": "RDKit shared-scaffold 2D coordinates",
+        "canonicalSmiles": "CNCc1ccccc1-c1csc([C@@H](C)Nc2nc(C)nc3cc(OC)c(OC)cc23)c1",
+        "mode": "build",
+        "rdkitVersion": "2025.03.4",
+        "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization"
+      },
+      "docked": true,
+      "expanded": true,
+      "highlightedAtomIds": [
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX5:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::NX1:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX6:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX7:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX8:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX9:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX10:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX11:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX12:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX13:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX14:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::OX1:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX15:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX16:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::OX2:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX17:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX18:"
+      ],
+      "networkPolicy": "Local Lab \u00b7 network locked",
+      "replayStatus": "completed",
+      "reviewIndex": 19,
+      "svgSha256": "6a70555a79e61e81b1f0528522fb3de31f602ca7d440de601b9d378967e107fa"
+    }
+  ]
+}

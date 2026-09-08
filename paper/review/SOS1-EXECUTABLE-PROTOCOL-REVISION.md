@@ -1,0 +1,29 @@
+# SOS1 executable-protocol manuscript revision
+
+## Follow-up: whole-movie pseudocode and human account (a19)
+
+The author clarified that the desired pseudocode covers the **whole movie**, condensing the API JSON rather than printing only the four-action AWW excerpt. The current deliverable is `paper/revisions/2026-09-07-whole-movie-human-account-a19/`. Listing 1 covers all seven checkpoint states in one page, abbreviates selectors, and collapses the precursor operations and 13 receptor trials into loops. The full 159-action script and seven-checkpoint review script are bundled unchanged. Pseudocode is explicitly non-executable; omitted session plumbing and inspections remain in the JSON. The original source-run selection rule is distinguished from replay of the fixed recorded choice and its fresh publication verification.
+
+At the author's next request, A.5.4 becomes a human account of the same checkpoints, linked to Appendix B's paired human/agent presentation. It explains supplied graphs versus coordinate hypotheses, constrained propagation versus local induced-fit relaxation, the AWW ligand's remaining Phe890 conflict before receptor sampling, and approximate rather than exact distal-feature retention. The frozen evidence supports the newly stated outcomes: 2 of 13 Phe890 states have zero severe clashes; the unchanged input has 11. For BAY-293, 3 of 8 candidates are feasible, 4 violate feature retention, and 1 fails physical feasibility. No unrecorded failure or historical chemist intention is invented. Numerical crystal comparisons and all figures are preserved. No scientific calculation was rerun.
+
+`whole-movie-pseudocode.test.mjs` checks full-script/checkpoint hashes, complete source-index coverage, printed-versus-bundled pseudocode equality, defining action inputs, fixed-choice replay wording, and the new outcome counts against compressed frozen scientific evidence. It also reconstructs the revision from its two exact manifest replacements and verifies unchanged figure bytes. The preceding native-JSON test remains a test of the preserved a18 artifact, not this new pseudocode representation.
+
+## Follow-up: native JSON and current Appendix B
+
+The author preferred the readability of the native JSON script to the JavaScript adapter. The preceding deliverable was `paper/revisions/2026-09-07-native-json-current-appendix-a18/`: the redundant pseudocode listing was removed, and the single remaining listing contained four native action records with every original argument, caption and expectation preserved. Only audit identifiers and two intervening read-only inspections were omitted. Starting-state preconditions remained explicit. That Prism ZIP included both the printed excerpt and the full frozen 159-action script; the old JavaScript module was not included in that bundle.
+
+The stale 2 September implementation-date sentence in Appendix B was replaced by an undated description of its scope. A fresh fetch on 7 September confirms public main remains `2ab30383d6160349aa3b1e980f7239d6854b329d`, with no code changes since the earlier implementation audit. The 52 example envelopes still match the current action names and argument keys. This is not a rerun of all scientific examples. The pending local audit-history-limit fix remains explicitly identified in the bundle's README/audit record, not claimed deployed.
+
+`native-json-listing.test.mjs` verifies that the printed JSON parses exactly to the packaged excerpt, that all four action records match the frozen release, and that the production runner stops before the ligand lock when a declared geometry outcome is absent. No molecular calculations are performed by this test.
+
+## Earlier JavaScript/pseudocode revision
+
+Author request: make the SOS1 account a dry specification of molecular design as pseudocode and executable public API code. Base manuscript: a11; deliverable: `paper/revisions/2026-09-06-sos1-executable-protocol-a14/`. The earlier a12 render splits the listings; a13 floats them; a14 keeps each listing together in reading order. Earlier versions remain intact.
+
+The main SOS1 paragraph and Appendix A.5 now distinguish supplied hypotheses, allowed atomic motion, candidate evaluation, selection, and measured outcomes. A pseudocode listing summarizes the complete design procedure. A separate JavaScript module implements the four central AWW contact/geometry/ligand-lock calls, with explicit starting-state preconditions. The complete 159-action published script remains the full executable protocol; the excerpt is not a replacement for preparation, receptor enumeration, or continuation.
+
+The protocol remains crystal-informed. No claim of blinded prediction, retrospective access to the original chemists' decision record, affinity improvement, or a newly run scientific experiment was added. Tyr884 is a backbone-carbonyl contact, not a modeled Tyr side-chain flip. The reported numerical results and all figure assets are unchanged. The exact particle counts now appear directly in the methods. The previous sentence about avoiding a hand-maintained narrative was removed.
+
+Evidence: the release action script SHA-256 is `7eed2dff0bf3fa127f87b2322aaea4b615d458ad6d8ef3af3c5b5886dc8fe9c3`. The excerpt test compares all four resolved action envelopes to source action indices 36, 37, 38 and 41; checks action names and argument keys; verifies use of the returned contact identifier; and confirms execution stops on a failed geometry action. Two tests pass. This is a contract/trace check, not molecular execution.
+
+The revision's edit manifest reconstructs both manuscript replacements from a11; the protocol evidence file identifies the source script and excerpt. The Prism bundle includes the same module printed in the paper. The original acceptance records remain in the scientific release; this prose revision does not modify their statuses or thresholds.

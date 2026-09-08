@@ -1,0 +1,13 @@
+{
+  "schema": "molarium.approved-manuscript-aligned-figure/v1",
+  "baseRevision": "paper/revisions/2026-09-07-interface-chemistry-a21",
+  "baseSourceSha256": "b2eb879807f7dbe484b09f7b81f0eb62182be18e3c72790432a3ef32ce098a23",
+  "outputSha256": "b2eb879807f7dbe484b09f7b81f0eb62182be18e3c72790432a3ef32ce098a23",
+  "changes": [],
+  "allTextUnchanged": true,
+  "allOtherFiguresUnchanged": true,
+  "figureChanges": {
+    "fig2_sos1_designer_intent.png": "2a813e8751a885cc51f29cb8f0aed4556b8d629543d50c782ebe474f97a4cc83",
+    "fig2_sos1_designer_intent.provenance.json": "b5ff18e84f53c43330b8184f12aff55d8d595822675339637c560d89cb6306ec"
+  }
+}

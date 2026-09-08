@@ -1,0 +1,178 @@
+{
+  "schema": "molarium.author-integration/v1",
+  "decisionExportSha256": "b4a73d02c626e0f74946979e29d0d8649eb0623f67b1d215dd1b4ce16c299906",
+  "exportedAt": "2026-09-07T02:50:04.907Z",
+  "reviewDataId": "e26884b097f429754f877bdff467b64036788a2a0ac912e28f1a66caaac89d44",
+  "sourceSha256": "3de523cc745279a9962cae7d1afb90ccb8867f8d4d086e449e5f146f84fc24ff",
+  "outputSha256": "3e1ea9687a95aaec4e6a2c9284618e691700580dae545bed866dc67e228cf1f7",
+  "applied": [
+    {
+      "id": "D038",
+      "kind": "earlier",
+      "before": "Each ``64-chain'' search comprises 64 independently seeded local pose searches. Parameterization without motion assigns the numerical force-field representation while preserving coordinates; only the subsequent relaxation changes coordinates. The SOS1 route uses whole-system Sage 2.1.0/Gasteiger preparation rather than the prepared Rosemary validation fixtures. AWT, AWZ, AWW, and AXH contain 7,929, 7,933, 7,935, and 7,937 particles, respectively. This charge assignment is part of the recorded protocol and is distinct from standard Sage workflows using AM1-BCC or NAGL charges.\n",
+      "after": "Each ``64-chain'' search comprises 64 independently seeded local pose searches, distributed over eight browser workers in the recorded replay. Parameterization without motion assigns the numerical force-field representation while preserving coordinates; only the subsequent relaxation changes coordinates. The SOS1 route uses whole-system Sage 2.1.0 with deterministic Gasteiger charges. AWT, AWZ, AWW, and AXH contain 7,929, 7,933, 7,935, and 7,937 particles, respectively. This charge assignment is part of the recorded protocol and is distinct from standard Sage workflows using AM1-BCC or NAGL charges.\n"
+    },
+    {
+      "id": "D034",
+      "kind": "earlier",
+      "before": "\\item \\textbf{Local small-molecule design.} Synchronized 2D/3D construction, graph validation, RDKit or direct-WebGPU calculations, aligned trajectory/energy inspection, and export. OpenMM/WebAssembly is used for internal validation and fixed-scaffold operations rather than as a selectable Run-panel method.\n",
+      "after": "\\item \\textbf{Local small-molecule design.} Synchronized 2D/3D construction, graph validation, RDKit or direct-WebGPU calculations, aligned trajectory/energy inspection, and export. OpenMM/WebAssembly is used for internal validation and fixed-scaffold operations rather than as a selectable Simulate-panel method.\n"
+    },
+    {
+      "id": "D026",
+      "kind": "earlier",
+      "before": "Molarium preserves distinctions among computational pathways even when they operate in the same workspace. RDKit supports chemical perception and conformer generation; OpenFF Sage defines a molecular-mechanics model; OpenMM Reference provides an independent numerical route for selected validation tests; STORMM-inspired WebGPU code advances homogeneous replicas; ANI-2x provides a machine-learned potential with a defined chemical domain; and OpenFold3 supports a separate protein-structure prediction pathway \\citep{riniker2015etkdg,boothroyd2023sage,eastman2024openmm8,cerutti2024stormm,devereux2020ani2x,ahdritz2024openfold}. These methods can be compared or chained without implying that their energies, assumptions, or domains are interchangeable. Appendix~\\ref{app:architecture} specifies the implemented numerical pathways and their validation boundaries; Appendix~\\ref{app:manual} records how those pathways are exposed, invoked, and constrained in the current workbench.\n",
+      "after": "Molarium preserves distinctions among computational pathways even when they operate in the same workspace. RDKit supports chemical perception and conformer generation; OpenFF Sage defines a molecular-mechanics model; OpenMM Reference provides an independent numerical route for selected validation tests; STORMM-inspired WebGPU code advances homogeneous replicas; ANI-2x provides a machine-learned potential with a defined chemical domain; and OpenFold supports a separate protein-structure prediction pathway \\citep{riniker2015etkdg,boothroyd2023sage,eastman2024openmm8,cerutti2024stormm,devereux2020ani2x,ahdritz2024openfold}. These methods can be compared or chained without implying that their energies, assumptions, or domains are interchangeable. Appendix~\\ref{app:architecture} specifies the implemented numerical pathways and their validation boundaries; Appendix~\\ref{app:manual} records how those pathways are exposed, invoked, and constrained in the current workbench.\n"
+    },
+    {
+      "id": "D007",
+      "kind": "custom",
+      "before": "\\date{September 3, 2026}\n",
+      "after": "\\date{September 6, 2026}\n"
+    },
+    {
+      "id": "D012",
+      "kind": "author-note",
+      "before": "a fixed software environments",
+      "after": "a fixed software environment",
+      "reason": "Singular agreement requested in note"
+    },
+    {
+      "id": "D012",
+      "kind": "author-note",
+      "before": "Implementing new methods from the literature or integrating open-source software often required software engineering support, if it was even possible.",
+      "after": "Even when feasible, implementing new methods from the literature or integrating open-source software often required software engineering support.",
+      "reason": "Minimal rewrite of the clunky feasibility qualification"
+    },
+    {
+      "id": "D015",
+      "kind": "author-note",
+      "before": "It began as a need for a better environment to view and modify molecular structures, then evolved through active scientific use, all over the course of a weekend to create the first version.",
+      "after": "It began as a need for a better environment to view and modify molecular structures; the first version evolved through active scientific use over a weekend.",
+      "reason": "Minimal rewrite of the first-version/weekend sentence"
+    },
+    {
+      "id": "D030",
+      "kind": "author-note",
+      "before": "resouirces",
+      "after": "resources",
+      "reason": "Requested spelling correction"
+    },
+    {
+      "id": "D031",
+      "kind": "author-note",
+      "before": "protien",
+      "after": "protein",
+      "reason": "Requested spelling correction"
+    },
+    {
+      "id": "D031",
+      "kind": "author-note",
+      "before": "In Molarium the editing",
+      "after": "In Molarium, the editing",
+      "reason": "Requested comma"
+    },
+    {
+      "id": "D032",
+      "kind": "author-note",
+      "before": "synthesized next while running",
+      "after": "synthesized next, while running",
+      "reason": "Requested comma"
+    },
+    {
+      "id": "D033",
+      "kind": "author-note",
+      "before": "andmethods",
+      "after": "and methods",
+      "reason": "Requested missing space"
+    },
+    {
+      "id": "D035",
+      "kind": "author-note",
+      "before": "The current live application retains at most 500 action records in memory; clearing the scene clears that audit.",
+      "after": "The current live application retains action records in memory; clearing the scene clears that audit.",
+      "reason": "Remove default-cap description following the requested code fix; pending paragraph choice is otherwise retained"
+    },
+    {
+      "id": "D037",
+      "kind": "author-note",
+      "before": "The SOS1, BCL-xL, and CDK2 routes use this schema.",
+      "after": "The SOS1 route uses this schema.",
+      "reason": "Keep the live manuscript focused on SOS1; frozen historical quotations are retained"
+    },
+    {
+      "id": "typesetting",
+      "kind": "compile-only",
+      "before": "\\usepackage{placeins}",
+      "after": "\\usepackage{placeins}\n\\usepackage{newunicodechar}\n\\newunicodechar{’}{\\textquoteright}"
+    },
+    {
+      "id": "typesetting",
+      "kind": "compile-only",
+      "before": "\\lstset{basicstyle=\\ttfamily\\footnotesize,breaklines=true,columns=fullflexible,keepspaces=true}",
+      "after": "\\lstset{basicstyle=\\ttfamily\\footnotesize,breaklines=true,columns=fullflexible,keepspaces=true,literate={’}{{\\textquoteright}}1}"
+    },
+    {
+      "id": "typesetting",
+      "kind": "compile-only",
+      "before": "Registered design routes use a separate \\texttt{molarium.registered-design-route/v1}",
+      "after": "Registered design routes use a separate \\path{molarium.registered-design-route/v1}"
+    },
+    {
+      "id": "typesetting",
+      "kind": "compile-only",
+      "before": "The \\texttt{molarium.design-campaign/v1} schema stores snapshots",
+      "after": "The \\path{molarium.design-campaign/v1} schema stores snapshots"
+    }
+  ],
+  "figures": [
+    {
+      "path": "figures/fig1_molarium_interface.png",
+      "sourceArtifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "sha256": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765"
+    },
+    {
+      "path": "figures/fig2_sos1_hit_to_bay293.png",
+      "sourceArtifact": "affadf33bdcd309e96bfbaf4c3d96e1505a9fcdd024404de3bddd8562a6efb72.png",
+      "sha256": "affadf33bdcd309e96bfbaf4c3d96e1505a9fcdd024404de3bddd8562a6efb72"
+    },
+    {
+      "path": "figures/fig2_architecture.png",
+      "sourceArtifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "sha256": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d"
+    },
+    {
+      "path": "figures/fig3_build_loop_compact.png",
+      "sourceArtifact": "2ef0fa02223c94ab381146959aaab523a512e80d9a394853387ce45fba48abd8.png",
+      "sha256": "2ef0fa02223c94ab381146959aaab523a512e80d9a394853387ce45fba48abd8"
+    },
+    {
+      "path": "figures/fig4_evidence_ladder_fixed.png",
+      "sourceArtifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "sha256": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3"
+    },
+    {
+      "path": "figures/fig5_value_layers_fixed.png",
+      "sourceArtifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "sha256": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342"
+    }
+  ],
+  "undecidedText": [
+    "D017",
+    "D018",
+    "D035",
+    "D037"
+  ],
+  "unselectedGroups": [
+    "figures",
+    "technical",
+    "suggestions"
+  ],
+  "mechanicalFixesSeparatelyApproved": false,
+  "archivePreservedVerbatim": true,
+  "noteClarifications": {
+    "D016": "The singular possessive \"the user's local device\" is grammatical and is retained.",
+    "D035": "Requested cap wording removed and local code fixed; other current paragraph claims are unchanged because the paragraph remains pending. Its claim that live campaign commits are unavailable remains a technical-review issue."
+  },
+  "status": "Author-selected text revision; not approval of undecided figures or scientific claims."
+}

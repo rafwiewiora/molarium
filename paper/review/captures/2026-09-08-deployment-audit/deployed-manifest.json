@@ -1,0 +1,1623 @@
+{
+  "schema": "molarium.web-release.v1",
+  "algorithm": "SHA-256",
+  "version": "1.0.0",
+  "assetBase": "https://assets.molarium.org/v1.0.0/",
+  "files": [
+    {
+      "path": "CHEMIST-ACTIONS-API.md",
+      "bytes": 36860,
+      "sha256": "ddcd0a2bb9e0e4363cf9b1e6f1a3e609244684c9e1c30a89305d630afa4d4343"
+    },
+    {
+      "path": "DESIGNER-MOVES.md",
+      "bytes": 22029,
+      "sha256": "40955ae1f1a061ffd18b0b2aa7251e0f67f369371961c637b8c50a1fbfd35c54"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": "NOTICE",
+      "bytes": 110,
+      "sha256": "3f70dde8ea08a117f276e4d16c7fa9fe01316eaf9166be3fb7c323d1d0f31f73"
+    },
+    {
+      "path": "README.md",
+      "bytes": 31807,
+      "sha256": "6fa2b9aac4c38f19ed6617302c18c5e8ea4879b0c7695390e3d8a29577f7b660"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "bytes": 7541,
+      "sha256": "41fa6202cd443f4105afa534397cfd40e2c28831222b0bf197e3c2986e0b16fb"
+    },
+    {
+      "path": "app.js",
+      "bytes": 992370,
+      "sha256": "c1d10fdff968b4eaafcaadd56b1773478c1aaa84b11603a121acc82f2985ff5d"
+    },
+    {
+      "path": "assets/lsd-launch.mol",
+      "bytes": 4643,
+      "sha256": "5f4f5e70f01164f9c82a811d53c34a78ac4c6e6070fcaec0ebcafd046d205735"
+    },
+    {
+      "path": "assets/media/sos1-designer-moves-molarium-interface.mp4",
+      "bytes": 728091,
+      "sha256": "54bfcfcc200d6e48e1d401fda9587dc0d7935df63213a3bb0e1981cc1ba8c164"
+    },
+    {
+      "path": "assets/media/sos1-designer-moves-molarium-interface.render-manifest.json",
+      "bytes": 16502,
+      "sha256": "f7115b68c8ac91a3a5a83f186343fa9f7f10f608eba243b4353f21b1480b7949"
+    },
+    {
+      "path": "assets/molarium-logo.svg",
+      "bytes": 1997,
+      "sha256": "8070371aa4ed720e3c8339db1ed286632a127068211dc3525d94244f3757ba80"
+    },
+    {
+      "path": "assets/molarium-mark.svg",
+      "bytes": 1593,
+      "sha256": "52b492bfc572b09c55d339b31665c6563120a8b1aa3e842aa43c3d3f4e7aa8ad"
+    },
+    {
+      "path": "chemist-actions.mjs",
+      "bytes": 36406,
+      "sha256": "edfcef1568aa40a8f10dd11fa849fa725dcd097ed6159081cbe0f718258ae0b4"
+    },
+    {
+      "path": "design-help.mjs",
+      "bytes": 34442,
+      "sha256": "e8ec0d9780a65bf93a566e852e971ad58dbdfec534184603e20c248fdfe67627"
+    },
+    {
+      "path": "design-history/README.md",
+      "bytes": 8096,
+      "sha256": "9e4d77a7eaf3f5f1bdaf8ef303699444253ab618e1fdb567fb19d6e03712e526"
+    },
+    {
+      "path": "design-history/campaign-source.mjs",
+      "bytes": 2716,
+      "sha256": "ed500abf4a705112685d6ec0e6b33311810eee7c33dac2d5b590a726fc74d787"
+    },
+    {
+      "path": "design-history/designer-replay-review.mjs",
+      "bytes": 1317,
+      "sha256": "4e5eea48f9b2817c5767fc38a008cbf569f41b2b4db6db0eff03d46364356947"
+    },
+    {
+      "path": "design-history/examples/sos1-prediction-checkpoint-review.action-script.json",
+      "bytes": 7805,
+      "sha256": "7f309257a71a4427b66013d0d40880e52a40053c908fcea83e0223cede7e0413"
+    },
+    {
+      "path": "design-history/examples/sos1-prediction.action-script.json",
+      "bytes": 19418,
+      "sha256": "eb157eeda9044d2f2d5a3940a37a9dfd4ef29fdcf7754a79ad13fc56c407fd2d"
+    },
+    {
+      "path": "design-history/integrity.mjs",
+      "bytes": 2048,
+      "sha256": "51db00571be74c77dd1d7bbb0ae00fee91eb952713357b4666a624bf00feacf2"
+    },
+    {
+      "path": "design-history/interface-story.mjs",
+      "bytes": 9234,
+      "sha256": "9921795cce1196b7ccfe9dfed50bc2b123dd21583d4a2b56ae1c25fffa7fde15"
+    },
+    {
+      "path": "design-history/ledger.mjs",
+      "bytes": 22271,
+      "sha256": "5121689a0f35473b2f1112c9db13dda63fdfd4778b665f0ae53eaf493cbd373f"
+    },
+    {
+      "path": "design-history/live-campaign-store.mjs",
+      "bytes": 8063,
+      "sha256": "b525a2cde0f5a6fd81ce4d4ecb2558a75074caac750209edd866f01f156fdfc5"
+    },
+    {
+      "path": "design-history/live-campaign.mjs",
+      "bytes": 16623,
+      "sha256": "7a79c69bbe5d0e2e257004836d9323afbb85bfd2ff27c154b0c7bdbddb337748"
+    },
+    {
+      "path": "design-history/movie.mjs",
+      "bytes": 4529,
+      "sha256": "9b47b1e4d67abdb76efc1735c5ef3fcdb42112af71aaf5f874415391f0e7e267"
+    },
+    {
+      "path": "design-history/publications/sos1/browser-replay-declaration.json",
+      "bytes": 4468,
+      "sha256": "46321c899b9d9a198f09780d97d3a91f5ded6dad574189c0b71f70d2fe2c3990"
+    },
+    {
+      "path": "design-history/publications/sos1/checkpoints/finish-bay-293-campaign.json",
+      "bytes": 15041989,
+      "sha256": "d4685188148b963795ce5d434611b31614a72455a37f34c8f98648f589c2da32"
+    },
+    {
+      "path": "design-history/publications/sos1/checkpoints/fragment-merge-campaign.json",
+      "bytes": 8990688,
+      "sha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81"
+    },
+    {
+      "path": "design-history/publications/sos1/checkpoints/open-phe890-pocket-campaign.json",
+      "bytes": 12037534,
+      "sha256": "1b174568da864bbfdbd268363bfaba03a9e180b3210de129705fa6f6191eb5fc"
+    },
+    {
+      "path": "design-history/publications/sos1/checkpoints/scaffold-rewrite-campaign.json",
+      "bytes": 5990361,
+      "sha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441"
+    },
+    {
+      "path": "design-history/publications/sos1/checkpoints/starting-hit-campaign.json",
+      "bytes": 2992881,
+      "sha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/checkpoint-overview.mp4",
+      "bytes": 7847302,
+      "sha256": "c44363f270d635fc189b46a92675c028d507e6c983bf60d7f676d5af7e7f2226"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/movie.json",
+      "bytes": 20916,
+      "sha256": "27db5094d49ea7eb7f6080289945fcac846907fdfa200f52c45d26f708697e0f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-00.png",
+      "bytes": 37598,
+      "sha256": "7a8fa42d7daeb0204df0fba0e5dc4c5ca79b76b1008caf5b089b124ef11a9cd7"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-01.png",
+      "bytes": 39001,
+      "sha256": "7770bec437e550f5266982566e035182d9c361051a21d2bc21033509e93055bf"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-02.png",
+      "bytes": 39334,
+      "sha256": "5631693e2e5bd6cc38e08df031e92cedf37f46091b4cdda348ba14b4c9e5a3e4"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-03.png",
+      "bytes": 39479,
+      "sha256": "3ea644cd9b83af23b6f414433d71cff37287cedbc9529383b85359a7e51dbb99"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-04.png",
+      "bytes": 39476,
+      "sha256": "53950465d880170059219f30f6e40b8eec212bedff7657d6ade8a0e1178e207d"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-05.png",
+      "bytes": 39089,
+      "sha256": "aacf8c1481076f23f81d37b380cd19baccc769e7347f1638408bb3d5236fe06f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-06.png",
+      "bytes": 39186,
+      "sha256": "ae2e1ec9199701c0dd27e7fdd17da05c6bdd8421ae46d41afbec7b1060ed7a8f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-07.png",
+      "bytes": 39068,
+      "sha256": "0ebf6b1d94939aa4c396b590b24c2f7ef9777d3c44c88d7ca77b9ec4e3382830"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-08.png",
+      "bytes": 38963,
+      "sha256": "60c3a5a9fc973c42e889ae5fc24d89ffbe87e6a0a2020e1ca8b000ed964cafc1"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-09.png",
+      "bytes": 39035,
+      "sha256": "51631be8153a8e499beb5e914e67fdf56ea6c0c385bbc0a3d578dd68d1b0b152"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-10.png",
+      "bytes": 39246,
+      "sha256": "88e155664bd443edcb985364e20ed27a81df9a7c8743d1d882e5b10e4d379a15"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-11.png",
+      "bytes": 39221,
+      "sha256": "180fd0a8e2ad4ce378ee6e67ce3398b9c9c0469ed345a84785f2fd5c45201165"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-00.png",
+      "bytes": 36343,
+      "sha256": "d77781f4a5ca79b355b6e6770c0259e6a0d676ab43261c3fe125b461077b0fa4"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-01.png",
+      "bytes": 37786,
+      "sha256": "901fb48c8655f8bfd2cb48ee7e8a2daf25b9d807b5b872e49df93d8f553f83ab"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-02.png",
+      "bytes": 38106,
+      "sha256": "642466a54c77ea3c71ec99c12640a46e70f90762aef4b6ca4c8ca3a398605a0a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-03.png",
+      "bytes": 38246,
+      "sha256": "93a014116525a83dafca12c7076ceb0ca45ed29b13cd3503e5fabec604623dc9"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-04.png",
+      "bytes": 38243,
+      "sha256": "e6521ba06a111fcbbede6fe9caeb8805a52d2a63af83c2f52ca228afd79d33fc"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-05.png",
+      "bytes": 37870,
+      "sha256": "ca1899038aeae803ebd19dbf4a7cea260c2f533304d95f5e700cd250f025ec5f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-06.png",
+      "bytes": 37962,
+      "sha256": "2a408219b38785424f73fd6113784e9d74b3ebf22eb6ba879652467bd93bdace"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-07.png",
+      "bytes": 37849,
+      "sha256": "d1bb2bbf30f69b4ceb2d566fb3420d5f7b07c5ffcbb1c6a0d46b36b066f08d77"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-08.png",
+      "bytes": 37745,
+      "sha256": "7cb0ce56cb3b093b5ba033544d484cb077dee22f781c116b8a47d301ade85e54"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-09.png",
+      "bytes": 37810,
+      "sha256": "7c4e7af63f49d831843b197ce9b868a09d3c696fca5ba6bcdec241fb3ebfb226"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-10.png",
+      "bytes": 38020,
+      "sha256": "85ad722546eb36332c4bd096f62ede14de28e16d6b77cd395855b68d2ff835a9"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-11.png",
+      "bytes": 37992,
+      "sha256": "667a4cfd70d204038c463348a0da90d3a571729c9c4d3779bca1b3acf9ce557f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-00.png",
+      "bytes": 36343,
+      "sha256": "d77781f4a5ca79b355b6e6770c0259e6a0d676ab43261c3fe125b461077b0fa4"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-01.png",
+      "bytes": 37786,
+      "sha256": "901fb48c8655f8bfd2cb48ee7e8a2daf25b9d807b5b872e49df93d8f553f83ab"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-02.png",
+      "bytes": 38106,
+      "sha256": "642466a54c77ea3c71ec99c12640a46e70f90762aef4b6ca4c8ca3a398605a0a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-03.png",
+      "bytes": 38246,
+      "sha256": "93a014116525a83dafca12c7076ceb0ca45ed29b13cd3503e5fabec604623dc9"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-04.png",
+      "bytes": 38243,
+      "sha256": "e6521ba06a111fcbbede6fe9caeb8805a52d2a63af83c2f52ca228afd79d33fc"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-05.png",
+      "bytes": 37870,
+      "sha256": "ca1899038aeae803ebd19dbf4a7cea260c2f533304d95f5e700cd250f025ec5f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-06.png",
+      "bytes": 37962,
+      "sha256": "2a408219b38785424f73fd6113784e9d74b3ebf22eb6ba879652467bd93bdace"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-07.png",
+      "bytes": 37849,
+      "sha256": "d1bb2bbf30f69b4ceb2d566fb3420d5f7b07c5ffcbb1c6a0d46b36b066f08d77"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-08.png",
+      "bytes": 37745,
+      "sha256": "7cb0ce56cb3b093b5ba033544d484cb077dee22f781c116b8a47d301ade85e54"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-09.png",
+      "bytes": 37810,
+      "sha256": "7c4e7af63f49d831843b197ce9b868a09d3c696fca5ba6bcdec241fb3ebfb226"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-10.png",
+      "bytes": 38020,
+      "sha256": "85ad722546eb36332c4bd096f62ede14de28e16d6b77cd395855b68d2ff835a9"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-11.png",
+      "bytes": 37992,
+      "sha256": "667a4cfd70d204038c463348a0da90d3a571729c9c4d3779bca1b3acf9ce557f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-00.png",
+      "bytes": 36784,
+      "sha256": "0cd49ae11a7eac7bccd2b3c8fee0f54d1a61281b96b042051038820359a43b75"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-01.png",
+      "bytes": 38217,
+      "sha256": "f5f72c032faefd416dd6eecab53e475a707431160937e34b7f861eed8f6d2c64"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-02.png",
+      "bytes": 38537,
+      "sha256": "1408424d1e418d4a035f53e4d78f3926489bc667150cb7790c65d108497256c6"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-03.png",
+      "bytes": 38676,
+      "sha256": "d2a3e66a5bcc80102cd08444216e1d8e6ee5535b52df58f6b95bb3a7716d1165"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-04.png",
+      "bytes": 38675,
+      "sha256": "33ccf7f957c171a6343d7072ac4f33d6bfcb292761e6a4c6ed0210a9fcb07c4d"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-05.png",
+      "bytes": 38299,
+      "sha256": "346ac4717942e54746dbedfca129c4989cd814ed3154b1de59e106d58e327222"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-06.png",
+      "bytes": 38392,
+      "sha256": "ab6dee6c9dc400ff7b8e6965b867b8b43db9d9b905129228e6820e92b26a5258"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-07.png",
+      "bytes": 38274,
+      "sha256": "c31c9da5ca33e11d1c23ccb703245f27450b84ab6defee38eb8bc270dca2682c"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-08.png",
+      "bytes": 38171,
+      "sha256": "03d5d165a90745085145ac9e8c341cff0813f4d47eabfc1778186f95c31c5c07"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-09.png",
+      "bytes": 38242,
+      "sha256": "e144cb7b2e50b08101c9f9c7e68fe5f91d6d4b340b866db4ba72c6a380dcb93c"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-10.png",
+      "bytes": 38449,
+      "sha256": "fc7adb4d2290c8052416e3ce87e070c29aa25f1076682d7da9349a11fc5b20d3"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-11.png",
+      "bytes": 38429,
+      "sha256": "e9b3bfd53d085eb1623083fa5c4c9e8dd279cbe50b5a8d53072a968494c92509"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-00.png",
+      "bytes": 36343,
+      "sha256": "d77781f4a5ca79b355b6e6770c0259e6a0d676ab43261c3fe125b461077b0fa4"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-01.png",
+      "bytes": 37786,
+      "sha256": "901fb48c8655f8bfd2cb48ee7e8a2daf25b9d807b5b872e49df93d8f553f83ab"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-02.png",
+      "bytes": 38106,
+      "sha256": "642466a54c77ea3c71ec99c12640a46e70f90762aef4b6ca4c8ca3a398605a0a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-03.png",
+      "bytes": 38246,
+      "sha256": "93a014116525a83dafca12c7076ceb0ca45ed29b13cd3503e5fabec604623dc9"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-04.png",
+      "bytes": 38243,
+      "sha256": "e6521ba06a111fcbbede6fe9caeb8805a52d2a63af83c2f52ca228afd79d33fc"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-05.png",
+      "bytes": 37870,
+      "sha256": "ca1899038aeae803ebd19dbf4a7cea260c2f533304d95f5e700cd250f025ec5f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-06.png",
+      "bytes": 37962,
+      "sha256": "2a408219b38785424f73fd6113784e9d74b3ebf22eb6ba879652467bd93bdace"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-07.png",
+      "bytes": 37849,
+      "sha256": "d1bb2bbf30f69b4ceb2d566fb3420d5f7b07c5ffcbb1c6a0d46b36b066f08d77"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-08.png",
+      "bytes": 37745,
+      "sha256": "7cb0ce56cb3b093b5ba033544d484cb077dee22f781c116b8a47d301ade85e54"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-09.png",
+      "bytes": 37810,
+      "sha256": "7c4e7af63f49d831843b197ce9b868a09d3c696fca5ba6bcdec241fb3ebfb226"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-10.png",
+      "bytes": 38020,
+      "sha256": "85ad722546eb36332c4bd096f62ede14de28e16d6b77cd395855b68d2ff835a9"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-11.png",
+      "bytes": 37992,
+      "sha256": "667a4cfd70d204038c463348a0da90d3a571729c9c4d3779bca1b3acf9ce557f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-blank.png",
+      "bytes": 8512,
+      "sha256": "e47db9d82dc470d3a7f42a66ed74fd41396b0a3c9c689d58e8bb08d226d70126"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-review.action-script.json",
+      "bytes": 9203,
+      "sha256": "6ab36deb2cab37fd888eff9c2006c8c14e06be351d4cdc160dd173c994393211"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-designer-intent-campaign.json",
+      "bytes": 14997311,
+      "sha256": "a1f0424ce1be8dde42180dbe76c5beae8565b56a8739a222b8fc9b1b6a91a3ae"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-graph-campaign.json",
+      "bytes": 11992522,
+      "sha256": "c0672efabc8da255de45a6d8b41f3f1a2bb0652ac2e683a70a9ed33b8692b3b1"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-phe890-response-campaign.json",
+      "bytes": 18021280,
+      "sha256": "b551d8e7d0489955c8885397fd4b8ddb2c783b559c6f616cf89356a763a30601"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/finish-bay-293-campaign.json.gz",
+      "bytes": 3335877,
+      "sha256": "dbe42835d58b058a68e829412b2c30fbf9332bf8590b03b2a048ab950b991c95"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/fragment-merge-campaign.json",
+      "bytes": 8990688,
+      "sha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/scaffold-rewrite-campaign.json",
+      "bytes": 5990361,
+      "sha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/starting-hit-campaign.json",
+      "bytes": 2992881,
+      "sha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/001-chemist-action-audit.json.gz",
+      "bytes": 7672950,
+      "sha256": "a3e836fef3a052c9a5cbdcd339ff31a479a908c044580c5cddf6bb48a6fd3dbf"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/002-aww-graph-only-campaign.json.gz",
+      "bytes": 1459576,
+      "sha256": "bce1a5d1020599e5ef691c331f27b293aa2bff8461bcc5cec0005659363a8108"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/003-chemist-action-audit.json.gz",
+      "bytes": 3922302,
+      "sha256": "c19c1a245cba2ea97f2d91a4bbf164c9ac0932bace3613924a32343dd490847c"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/004-aww-designer-ligand-intent-campaign.json.gz",
+      "bytes": 1836069,
+      "sha256": "6c71a54840b388b71d570cbb827a56db0e8baf373adda51fa519a2474b05f5fa"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/005-aww-graph-only-campaign.json.gz",
+      "bytes": 1459576,
+      "sha256": "bce1a5d1020599e5ef691c331f27b293aa2bff8461bcc5cec0005659363a8108"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/006-aww-receptor-only-prediction-campaign.json.gz",
+      "bytes": 2210960,
+      "sha256": "247e739f22759ba863d7dbfee527ac9ae5661fe77a5f541ded743580d96e039a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/007-boundary.json.gz",
+      "bytes": 1349,
+      "sha256": "ea72ac60a223769235d8541903a2e3f23c70263e157b29974e1e64fa6ea853d8"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/008-chemist-action-audit.json.gz",
+      "bytes": 4675382,
+      "sha256": "ce1581ee0b9679ca40aaa26aa2cc74ea7ffaa209bd2a32722754e7679844a566"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/009-coordinate-inspections.json.gz",
+      "bytes": 113626,
+      "sha256": "5c02084701c8f8d288fdc48e3c72243bff96f9783396cd5c357a7b32606f144a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/010-phe890-candidate-01.json.gz",
+      "bytes": 30448,
+      "sha256": "f5a1af9abdd92f46f8606df8ff128223d64feaae4e6f0930d829330bcee939a4"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/011-phe890-candidate-02.json.gz",
+      "bytes": 30436,
+      "sha256": "037f2c4a0c21a78d9abb92963d7632fbc21dcca8d507ac2748e7ea9d51d2a822"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/012-phe890-candidate-03.json.gz",
+      "bytes": 30439,
+      "sha256": "4f5fe1e3baa714e926561eac8a51b24134aa34c8791ceb22138a826ffcca4880"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/013-phe890-candidate-04.json.gz",
+      "bytes": 30433,
+      "sha256": "d3f99ce7741c2116630549356b56e52ca27a20ae28cf1d29bf0c00af0be8bb65"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/014-phe890-candidate-05.json.gz",
+      "bytes": 30443,
+      "sha256": "882508a74c7598daf7de869bf73714e630c8b5a8f153cb4187af08ff614bf267"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/015-phe890-candidate-06.json.gz",
+      "bytes": 30443,
+      "sha256": "bad4daf5385a56e15d5e19b3b9e9ca739e1faf171875181d6b303f8e183d8f78"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/016-phe890-candidate-07.json.gz",
+      "bytes": 30437,
+      "sha256": "bfd78ae112652dffdf0cd2f64aec178014ff4be7eb0ae3b0d7227b5a5cb783c2"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/017-phe890-candidate-08.json.gz",
+      "bytes": 30428,
+      "sha256": "bb7f46829ebab71e309a21dba1b0c651daf232aa63c21ccc921cd3f956a50909"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/018-phe890-candidate-09.json.gz",
+      "bytes": 30351,
+      "sha256": "1aa47a82d1b7dc1f576d971a51a7e702b49b339badf6013c8c969c025e596653"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/019-phe890-candidate-10.json.gz",
+      "bytes": 30452,
+      "sha256": "3671f705e7a2bab288366d7f33bbc9c075068a69eece28c61611244f13c32d61"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/020-phe890-candidate-11.json.gz",
+      "bytes": 30436,
+      "sha256": "ffca1650dd1737d93d4315661c77c06bc57a5a69050a28350dc75bf95b54da12"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/021-phe890-candidate-12.json.gz",
+      "bytes": 30456,
+      "sha256": "4a6b418a265e9cf3a6e5d0ca3cd6f1ae06303007bd31f7ff5b7be7e53f1a0fdc"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/022-phe890-candidate-13.json.gz",
+      "bytes": 30427,
+      "sha256": "01126cf601b1e13693ca09763c2319b7feb3678104d4980c207cbffc5045ad55"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/023-post-freeze-validation.json.gz",
+      "bytes": 1960,
+      "sha256": "230c17676a8a381cddb2a115d40718fd714fd1794b37c99b1eca6c8537f9859c"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/024-prediction-manifest.json.gz",
+      "bytes": 8697,
+      "sha256": "45956fcdeca91ac1a29fe8d59430a10bce2dd6520482f53905a5af6ab014565c"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/025-boundary.json.gz",
+      "bytes": 555,
+      "sha256": "ba92199d6016634383f8341cf677b6d6fcf858f4fa1b4a1f53495a32cfcc497b"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/026-candidate-gate.json.gz",
+      "bytes": 1566,
+      "sha256": "0f170745931e1e844b4c098d3154808e1b74a2e7f1a6add67e1106053db46dce"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/027-chemist-action-audit.json.gz",
+      "bytes": 9071095,
+      "sha256": "99cda15ee0aeaa9c4df44a585aa143d38eb2689ce2e20f36f5c5ae451a0fe9fd"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/028-continuation-manifest.json.gz",
+      "bytes": 992,
+      "sha256": "16db9a1f826b5987b9c08270fdd3f4abec3f9d5e9c4e46c1a1409e1076f19fd7"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/029-finish-bay-293-campaign.json.gz",
+      "bytes": 3335877,
+      "sha256": "dbe42835d58b058a68e829412b2c30fbf9332bf8590b03b2a048ab950b991c95"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/030-fixed-atom-gate.json.gz",
+      "bytes": 794,
+      "sha256": "b968d788cc6b0401754718764d8b5cafb5c3696f85f69040cb25248f2bce7440"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/031-graph-only-campaign.json.gz",
+      "bytes": 2585207,
+      "sha256": "1823d42928b024ff13da8a864b747375a79378184d18722f01c60942b3d9588d"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/032-graph-only-coordinates.json.gz",
+      "bytes": 32788,
+      "sha256": "38cca53843568efd2c0ca53283886027b12e70f5e9c87f4ca46bc1bf26e011a1"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/033-optimization.json.gz",
+      "bytes": 3572,
+      "sha256": "36ae8f1c2597236a55ed3898ee56b4d2df34d41fd793c6ba24861a4b1872a9d2"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/034-post-freeze-comparison.json.gz",
+      "bytes": 1976,
+      "sha256": "b48f24839774072dd7746c61abba498ef809c9ef8615fb255514baf20d3d4329"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/035-refinement.json.gz",
+      "bytes": 3354,
+      "sha256": "1e82d1572a5965c3e550046284e0bf96e11a970aee291a61f6a335958da6be05"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/036-relaxed-coordinates.json.gz",
+      "bytes": 32813,
+      "sha256": "ab985310545d6a062319c4ad8e87dcccd0eb72248f62304abb6711de1c2067f6"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/037-selected-campaign.json.gz",
+      "bytes": 2960086,
+      "sha256": "22a22f8ac4da883e600d402150168a36100561fc0a5448a02f9d241890c4cd9a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/038-selected-coordinates.json.gz",
+      "bytes": 32769,
+      "sha256": "a81eacc1eff5ea01d75a2923d47b079ff79503617e3184c0e155dad160203ba8"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/039-source-aww-coordinates.json.gz",
+      "bytes": 31597,
+      "sha256": "3d642e97a068c23e8fa35829ff0e1adcf63748cfe65bfbe82dc9f9596aeabec1"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/040-chemist-action-audit.json.gz",
+      "bytes": 939254,
+      "sha256": "2cbd928a0c5b1bd193bed102b505500ad5db2d6d36ab27abd675678dd4d97b0a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/041-source.action-script.json.gz",
+      "bytes": 6645,
+      "sha256": "2860fd4588430eae3d4700bc531972aa0b564dc8f045a080ef990814c8c0e5c4"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/042-chemist-action-audit.json.gz",
+      "bytes": 7772,
+      "sha256": "aff75cf85d830040a3a2d454adb86fd0251d9d633f9e4883d56a2568229cc25f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/043-source.action-script.json.gz",
+      "bytes": 2047,
+      "sha256": "663f35fbb1ece0c5ad84a57cbbdb3949fb9bf41adc0b48f5eb6d90afacffa237"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/executable.action-script.json",
+      "bytes": 69210,
+      "sha256": "7eed2dff0bf3fa127f87b2322aaea4b615d458ad6d8ef3af3c5b5886dc8fe9c3"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/executable.render-manifest.json",
+      "bytes": 327839,
+      "sha256": "fcbcea308cfc94547beee1e3c46b947716172deb9c8d98288d8c623a3e654f0e"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/molarium-paper.pdf",
+      "bytes": 2565196,
+      "sha256": "aa0455b52ebdadf47ade6538bc3cfb4c087bf72bb4f0747125646b35ac7d70bb"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/precomputed.mp4",
+      "bytes": 1358960,
+      "sha256": "1f0961eebc767243f502b4b2effebcdbf6bc9a3bab98fd4764670ab368d4204e"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/precomputed.render-manifest.json",
+      "bytes": 29627,
+      "sha256": "0a995235659817d1c9ac1c11d0cd644e2db59c4ccd6c557a8f7dc7ddff7755a4"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/release.json",
+      "bytes": 27592,
+      "sha256": "c26af7f823bb9443289d099e8da9ba0fd58404c15a9bf709fcdba8ef5834520e"
+    },
+    {
+      "path": "design-history/replay.mjs",
+      "bytes": 25325,
+      "sha256": "fcecd8e6b6efb4024563ef61a244c8c41441eba9f4a79299b29d033dc19c1622"
+    },
+    {
+      "path": "design-history/sos1-story-captions.mjs",
+      "bytes": 2869,
+      "sha256": "402968bdcfbd339ae65a8ee19e33ec5a24c8aae02d052a2353c92ee3234ab918"
+    },
+    {
+      "path": "design-history/stories/generated/bclxl-fragment-linking.campaign.json",
+      "bytes": 65200,
+      "sha256": "3afdfe85dcfe3d54532d78de03593a2a2bb7df62871bf6f1aacd1a7a2ad0b6dc"
+    },
+    {
+      "path": "design-history/stories/generated/bclxl-fragment-linking.movie.json",
+      "bytes": 4654,
+      "sha256": "44bf5193e124aabcb49003602ed5b5c17e1982e91ba97156e7797212b519bd09"
+    },
+    {
+      "path": "design-history/stories/generated/index.json",
+      "bytes": 2865,
+      "sha256": "7d17e282c3d1f88be41d205a528a3a7a5451381d2736d055f91c076a0b191f3b"
+    },
+    {
+      "path": "design-history/stories/generated/molarium-7kpa-rehearsal.campaign.json",
+      "bytes": 41827,
+      "sha256": "b24c6c502d2228b77717cea5951dbe51af0002e5de25c120bfc43374ced4f409"
+    },
+    {
+      "path": "design-history/stories/generated/molarium-7kpa-rehearsal.movie.json",
+      "bytes": 2292,
+      "sha256": "488d636dad3d63ef2eb9f137c64aa24ba3968bfa45fbab4aba88f45fdcae6cff"
+    },
+    {
+      "path": "design-history/stories/generated/moonshot-dndi-6510.campaign.json",
+      "bytes": 51050,
+      "sha256": "bf7a42ad61482fefbd6b145a7327ddb8a00fac3fef6110a56e7df1fec966e6f6"
+    },
+    {
+      "path": "design-history/stories/generated/moonshot-dndi-6510.movie.json",
+      "bytes": 3421,
+      "sha256": "16b42dc41f3909a40a24bd2631ebcfe4fa124bb989e7ff69e4b652ab45916067"
+    },
+    {
+      "path": "design-history/structure-review/index.html",
+      "bytes": 13967,
+      "sha256": "3e80a4d1b707120208adea46d6478387d4d131cbc4983192c8d47ad784a1ee4a"
+    },
+    {
+      "path": "design-history/structure-viewer/bclxl-fragment-linking.json",
+      "bytes": 7961,
+      "sha256": "6eeb652a2544844c1bc4547e750146a233c063eb9dfd3842cf7b8c0861615300"
+    },
+    {
+      "path": "design-history/structure-viewer/cdk2-designer-hit-to-lead.json",
+      "bytes": 8625,
+      "sha256": "068069fa4f19001aa9470994ada55efc1f9f8a8daa2126dd0b223e4b9005550d"
+    },
+    {
+      "path": "design-history/structure-viewer/cdk2-hit-only-prospective.json",
+      "bytes": 10066,
+      "sha256": "c37dcecf42c496a35791fd7caada8a4ff0436b3939ba2a39a13ce5e7e29ee31a"
+    },
+    {
+      "path": "design-history/structure-viewer/checkpoint-review.mjs",
+      "bytes": 4037,
+      "sha256": "9b7f8a0c513c603348efd00b6b03702f2e3635ffa3f63f4e7574a7b4d5dd8404"
+    },
+    {
+      "path": "design-history/structure-viewer/index.html",
+      "bytes": 8288,
+      "sha256": "ca96f6204c645ef3d755c8bdce2198efa6f52ae460b105c403c68c98379f83ee"
+    },
+    {
+      "path": "design-history/structure-viewer/moonshot-dndi-6510.json",
+      "bytes": 4767,
+      "sha256": "7212d5523ff7b2cba8468739e6d8d6a8f8528ef0ac75467b8f29c1811fa4ed92"
+    },
+    {
+      "path": "design-history/structure-viewer/timeline.mjs",
+      "bytes": 1934,
+      "sha256": "d984244323e4897b85079b4a3796191a0ce58d513545139128e4c94699be5d07"
+    },
+    {
+      "path": "design-history/structure-viewer/viewer.mjs",
+      "bytes": 18533,
+      "sha256": "424521de440469cb89bb8ca8da87856041e900afc54245d59f3953d35f61ad2e"
+    },
+    {
+      "path": "design-history/structures/design-route.mjs",
+      "bytes": 24422,
+      "sha256": "afd664d587af8624fb752daf586244d87935a792f6e652965bab1008237cd46b"
+    },
+    {
+      "path": "design-history/structures/generated/3sp7-aligned-ligand.pdb",
+      "bytes": 10261,
+      "sha256": "8b2c6d40bf257740094314f56e817ce1971f468930e424cb46ce01ebed6b06c2"
+    },
+    {
+      "path": "design-history/structures/generated/3sp7-aligned-pocket.pdb",
+      "bytes": 17389,
+      "sha256": "664e93a269807af903d310c5bddbe9af5f4efa0ce682a5ab557881b5beabeb2a"
+    },
+    {
+      "path": "design-history/structures/generated/3sp7-aligned-protein.pdb",
+      "bytes": 97498,
+      "sha256": "802448c99413a6bc5736ce723f41d0d827017127b0915480c4a72903248dee0c"
+    },
+    {
+      "path": "design-history/structures/generated/3spf-ligand.pdb",
+      "bytes": 6049,
+      "sha256": "9243aa397ad93d98f52a3300b032cb114c3293a64d94756ff52813bf43856a57"
+    },
+    {
+      "path": "design-history/structures/generated/3spf-pocket.pdb",
+      "bytes": 7993,
+      "sha256": "ead8b54a212bf4b5218c51104cffb2f64fa9c367099a4604f0467e6e37e15ec9"
+    },
+    {
+      "path": "design-history/structures/generated/3spf-protein.pdb",
+      "bytes": 92638,
+      "sha256": "12a6153ccb5f0d7dfc664b35e706eb2ed0860dc3d4c17c64a7f93b69cc53955d"
+    },
+    {
+      "path": "design-history/structures/generated/7gn8-interactions.mol",
+      "bytes": 426,
+      "sha256": "0fe0eaa33838bff1904256279610874ff51d2d270b7943295ec4a6056386c72e"
+    },
+    {
+      "path": "design-history/structures/generated/7gn8-ligand.pdb",
+      "bytes": 5077,
+      "sha256": "c76111e0e4cb907ccf493305dd8643dd69484ca66b75dd1cbefb96c58e764dec"
+    },
+    {
+      "path": "design-history/structures/generated/7gn8-pocket.pdb",
+      "bytes": 12205,
+      "sha256": "6c74085d6667387c762c5d519b47ae39f02cd29a3927a0737f48991b294ffec9"
+    },
+    {
+      "path": "design-history/structures/generated/7gn8-protein.pdb",
+      "bytes": 191053,
+      "sha256": "dca07eeec7b27ade550c8bf512b2649c9517bdf1f4cd2abfddc9215e9fbc90d9"
+    },
+    {
+      "path": "design-history/structures/generated/7gnr-aligned-interactions.mol",
+      "bytes": 427,
+      "sha256": "3bc273d19fc6517d685314517b5f4424cd9bb13e05d1903b1a4f4d9f1fbfbdd9"
+    },
+    {
+      "path": "design-history/structures/generated/7gnr-aligned-ligand.pdb",
+      "bytes": 5563,
+      "sha256": "d39e9ff58842eed01c6c047843b2a0f22283c6e22f8893221af41499345e0fc3"
+    },
+    {
+      "path": "design-history/structures/generated/7gnr-aligned-pocket.pdb",
+      "bytes": 11314,
+      "sha256": "a77a9c82fd9df52e0f065c3d2abb80689d5108e5100bb923bb8cee2b8662ab0d"
+    },
+    {
+      "path": "design-history/structures/generated/7gnr-aligned-protein.pdb",
+      "bytes": 191863,
+      "sha256": "80c0271346400ea0923f99262b756a9adc75d16c819685af46298c6c8502e8b2"
+    },
+    {
+      "path": "design-history/structures/generated/bclxl-compound-16-reconstructed.mol",
+      "bytes": 6203,
+      "sha256": "eaeee36f23b95f0069aefc9a57224405ad3f57404149e7cd5ff1beea37bb970a"
+    },
+    {
+      "path": "design-history/structures/generated/bclxl-compound-21-reconstructed.mol",
+      "bytes": 5526,
+      "sha256": "c34365b62c7dcaa63dad747b91a0dacacbbb9fbe125226f075739818271a980b"
+    },
+    {
+      "path": "design-history/structures/generated/bclxl-compound-6-reconstructed.mol",
+      "bytes": 6783,
+      "sha256": "732b1eff009c994adc54fc6282a03a42ba0b8f23a194d5e9070a8f0560c62a32"
+    },
+    {
+      "path": "design-history/structures/generated/bclxl-compound-7-reconstructed.mol",
+      "bytes": 6617,
+      "sha256": "1218389102242e049b2a0afe2c8217a58983145dd2800bddecd18ece8f4c2c87"
+    },
+    {
+      "path": "design-history/structures/generated/bclxl-prospective-campaign.json",
+      "bytes": 70023,
+      "sha256": "51150f6313d03b84dcc92652b8b67e1f5e51a341db64cce7817ab10bcbd4e051"
+    },
+    {
+      "path": "design-history/structures/generated/bclxl-trajectory-manifest.json",
+      "bytes": 13951,
+      "sha256": "a64c69ba9adf795faa94fd5a5a9c3c6349d00516036cadc6adaebc5f86ae0c2e"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-1h1q-ligand.pdb",
+      "bytes": 2006,
+      "sha256": "29c14fe39eb50a70cc8c3f88ce4686c8c134ab7d9ad7cef3b61b4c54943f2b81"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-1h1q-pocket.pdb",
+      "bytes": 13450,
+      "sha256": "62e704cef12bf838a5ea17aeb8ce996b11d62b9944f929dcb63da1761c0df849"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-1h1q-protein.pdb",
+      "bytes": 193622,
+      "sha256": "8a843f464da254b7105b49b0b807776a99e580e04a12991a9543ada88c34d39f"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-1h1r-6cp-aligned-holdout.pdb",
+      "bytes": 1979,
+      "sha256": "ff150c7a2ddfb6162939c0165f8f86f3dd0fa8d34273c775bf969a42d20e58e4"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-1oiu-n76-aligned-holdout.pdb",
+      "bytes": 2216,
+      "sha256": "8dea2ae93f904e4a6d832965666eab4756a87f1426e9d65e9bfab62a9cd1542d"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-6cp-frozen-prediction.pdb",
+      "bytes": 2455,
+      "sha256": "2ab64712b77f1e31519344e4224f8f58ee12e69f2595ee8e91f0b7ce2e8d5aa4"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-designer-6cp-prediction.pdb",
+      "bytes": 2455,
+      "sha256": "01902f9fc27da1615ddb0fd368680d46990e8cdedca69e1ba8a5a96716467b54"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-designer-campaign.json",
+      "bytes": 28929,
+      "sha256": "f1e22cd609cd97792f5d7c1217e0fb0e551cc2ea490e1f2b4925451faf7f78ec"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-designer-movie-assets.json",
+      "bytes": 5850,
+      "sha256": "3aecdd28d26417025d51350227be589e7488266b7749b0b43004f9e8efdd9f3e"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-designer-n76-prediction.pdb",
+      "bytes": 2743,
+      "sha256": "5c85ef62fad1c8cb249425037d2efcadb7279533f6a81df75ad1738578b5ddf3"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-n76-frozen-prediction.pdb",
+      "bytes": 2743,
+      "sha256": "b976c8a4f986687b5a60e04410e97fbbbd81cb5a4bf69d975d2db599ecc229c0"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-prospective-campaign.json",
+      "bytes": 28395,
+      "sha256": "9f9687f711ac85d2a5826f218b850eee5f18a46484b43f64fe7101cfabf4b09a"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-prospective-movie-assets.json",
+      "bytes": 7672,
+      "sha256": "cadba8341f2d974716ed5947db33fa74eae719fa2df7c7e8fa3e5e844799932f"
+    },
+    {
+      "path": "design-history/structures/generated/manifest.json",
+      "bytes": 5913,
+      "sha256": "c2c097551a6f3e22ea628206b6712e6abec132b576ab5675fd1fe7ae3c4b9866"
+    },
+    {
+      "path": "design-history/structures/generated/sos1-5ove-ligand.pdb",
+      "bytes": 2249,
+      "sha256": "8bfba3468142b7324c720e3727355c95d580db8fc82a72e15e56bd5324075e33"
+    },
+    {
+      "path": "design-history/structures/generated/sos1-5ove-protein.pdb",
+      "bytes": 324032,
+      "sha256": "f55fe755726646fa9d8ad345a9af4c373ebe64c4ecfead6bd8ffb79ff52843be"
+    },
+    {
+      "path": "design-history/structures/generated/sos1-prospective-campaign.json",
+      "bytes": 73959,
+      "sha256": "dfd6de5a8f5c8a6bb50b552399365eabcb894cbcf2d709a4b9f47ae71757f5e4"
+    },
+    {
+      "path": "design-history/structures/ligands/bq5-rcsb-ccd.json",
+      "bytes": 5236,
+      "sha256": "b13f95b7cd154c3f00757fc017963ac272caabfb3b9643bdb9bdce9265b4d9c9"
+    },
+    {
+      "path": "design-history/structures/registered-ligand-graph.mjs",
+      "bytes": 12466,
+      "sha256": "ba72bf7bda7a44bdf8bb3de13621d3b9ceea9f1fc0afed2ea65d91688afb9b50"
+    },
+    {
+      "path": "design-history/viewer/index.html",
+      "bytes": 3854,
+      "sha256": "6c1efa153748627a0a8ada67e752d4ca71a9ed56ed8e8e03ed6f24836b635b94"
+    },
+    {
+      "path": "design-history/viewer/model.mjs",
+      "bytes": 4697,
+      "sha256": "d4ff1d341db0fa093572cd349231b89130f0bc09d5d17324b839a0f6798f1d11"
+    },
+    {
+      "path": "design-history/viewer/styles.css",
+      "bytes": 10564,
+      "sha256": "14654000adfe672a97d0cbf886866a7c3c0af5d41741338247c91acf9f7afb55"
+    },
+    {
+      "path": "design-history/viewer/viewer.mjs",
+      "bytes": 18286,
+      "sha256": "e507e5821cb9b19f30b4d36741b19c31ddfba93c8e64ef5447f1b3dfc41d81d4"
+    },
+    {
+      "path": "docking/benchmark/7kpa-manual-contact-panel.README.md",
+      "bytes": 3260,
+      "sha256": "e28be4393bcc7826326885a145ddebad95f7828659146250e5fbaa5b7de80c2f"
+    },
+    {
+      "path": "docking/benchmark/7kpa-manual-contact-panel.mjs",
+      "bytes": 10495,
+      "sha256": "56ff864f0cbfd1c78dcf9d04fd12d89c72298297f821f11c6587bd4f78f35c05"
+    },
+    {
+      "path": "docking/benchmark/7kpa-manual-contact-results.psiblue.v0.1.json",
+      "bytes": 12189,
+      "sha256": "c28fa7e598654499f93fcdf64f68d767095a39838d36fa627986e43afef7813e"
+    },
+    {
+      "path": "docking/benchmark/7kpa-manual-contact-smoke.v0.1.json",
+      "bytes": 2917,
+      "sha256": "95f0bf7a23d90d8fa1a6a555ae0c1a85623543b8feac19bc24836e4bd10c1a08"
+    },
+    {
+      "path": "docking/benchmark/7kpa-two-terminus-panel.mjs",
+      "bytes": 24928,
+      "sha256": "46e4138526812d812e5291ab519f30364f1121f23d1329e80d55c984650b6cca"
+    },
+    {
+      "path": "docking/benchmark/7kpa-two-terminus-panel.v0.1.json",
+      "bytes": 14614,
+      "sha256": "de08bca3c70d2542630845c0e91cbe4492bed338bb446734c78015c64a62c174"
+    },
+    {
+      "path": "docking/benchmark/RESULTS.v0.1.md",
+      "bytes": 4492,
+      "sha256": "f9c56903799f2fcdb9237c6c602e625a6d2504515721cc74e577e9c0b07b72f6"
+    },
+    {
+      "path": "docking/benchmark/benchmark-results.v0.1.scored.json",
+      "bytes": 63576,
+      "sha256": "a378fb2a7bf9ab95b3ca18697037f79d4decbe5ce490c33617f6e1228ebf2359"
+    },
+    {
+      "path": "docking/benchmark/manifest.v0.1.json",
+      "bytes": 355005,
+      "sha256": "8d8a0840567321010ddd8600236b6e7ada1a177f16cbeeb22ad847bfce95e502"
+    },
+    {
+      "path": "docking/browser-adapter.mjs",
+      "bytes": 13086,
+      "sha256": "9c3cc68c6ce6b593b7283b0f8cb0408a55e49c2a79baa3a7d200a0bc9560b429"
+    },
+    {
+      "path": "docking/constraints.mjs",
+      "bytes": 14065,
+      "sha256": "3a1001af80e3fbf88611b80cd8fab83ab1301ee5a2c294ac93fdbaead4b6d328"
+    },
+    {
+      "path": "docking/contact-capture-policy.mjs",
+      "bytes": 1758,
+      "sha256": "828468cf035d54ebbdd7ba649f062f459445dd7febd4cf0512881088f71deb66"
+    },
+    {
+      "path": "docking/contact-remap.mjs",
+      "bytes": 30091,
+      "sha256": "6ddcd28e88c2f67859c22bc9ff68575c647eb23b4c4b1b9d143c2b80f7e7d776"
+    },
+    {
+      "path": "docking/contact-state.mjs",
+      "bytes": 4519,
+      "sha256": "05263c53e7c5cbf097cc56bf988c7e4d9e0eed61e798a172243af30ba71d8c5a"
+    },
+    {
+      "path": "docking/designer-branch-contact.mjs",
+      "bytes": 34742,
+      "sha256": "7a874ad2986befb5ff439aa86a22b83e5d892a05ddcb4493af129c54234d425f"
+    },
+    {
+      "path": "docking/designer-ligand-pose-lock.mjs",
+      "bytes": 7159,
+      "sha256": "ffb538c2507d8bff92b5dd3557e1f24b985687da288a2ddadb514513b9b94d38"
+    },
+    {
+      "path": "docking/displaceable-waters.mjs",
+      "bytes": 2773,
+      "sha256": "02a67a9a60904c82e911b9b765bc5b756b0b586d011a50b818ab79971f5e374b"
+    },
+    {
+      "path": "docking/feature-seeding.mjs",
+      "bytes": 50212,
+      "sha256": "2370c60a8d2168cd0102d2959ddcf99643d150729351682116a7ec74f02fe7fe"
+    },
+    {
+      "path": "docking/labbook.mjs",
+      "bytes": 10985,
+      "sha256": "31618cc9610e2ace643fb7e23f2fcfb580e91c60006b71f2919aa7c033b31713"
+    },
+    {
+      "path": "docking/manual-hbond.mjs",
+      "bytes": 11697,
+      "sha256": "7e587f4af78f02ba413a32f99a703cf23c4b2403a05b32fe37c54d446e44a792"
+    },
+    {
+      "path": "docking/portable-atom-selector.mjs",
+      "bytes": 4927,
+      "sha256": "4377e1e7c932308b2b83d5483f157887c3e7e0785b33d679475eba6b643a4040"
+    },
+    {
+      "path": "docking/pose-propagation-scoring.mjs",
+      "bytes": 8004,
+      "sha256": "45a550735169c7e82a74e31449f0ea5bc48ec8c087bffe751e0cb823b4b6ded4"
+    },
+    {
+      "path": "docking/pose-search-ensemble.mjs",
+      "bytes": 2423,
+      "sha256": "3c0412276d5df654fe0a56420c43efa26c25b6c2249c2faea49bf05316d58bd6"
+    },
+    {
+      "path": "docking/pose-search-worker.mjs",
+      "bytes": 718,
+      "sha256": "62cffba37a3c6b6e6646e6fc44fc0aaec7525b55f692bc324f4f1450f9e6b37e"
+    },
+    {
+      "path": "docking/protocol.mjs",
+      "bytes": 25227,
+      "sha256": "034218fcee594c708eecb04f9f31ec1ed1085dd8ea63d9c10869edcbbb4cf30e"
+    },
+    {
+      "path": "docking/receptor-score.mjs",
+      "bytes": 7428,
+      "sha256": "be6de7ef72fe573255403129a24dac65ad34a69e012352c7e16c39ab6859ca95"
+    },
+    {
+      "path": "docking/reference-core.mjs",
+      "bytes": 7706,
+      "sha256": "699fe700f9e6a7772a146f06714e55999cb67334fb66ad6a2aa01ec82b47db57"
+    },
+    {
+      "path": "docking/refinement-capture-store.mjs",
+      "bytes": 8385,
+      "sha256": "6822121e987fdb54568b3eee96927e7bfd9d860370568e1bdd5e8c5c2f7449bd"
+    },
+    {
+      "path": "docking/registered-donor-hydrogen.mjs",
+      "bytes": 4122,
+      "sha256": "5fdd27416bdd536111f4c1a3a821f942257a712731d72bef33f24602fcfc7c4c"
+    },
+    {
+      "path": "docking/registered-graph-edit.mjs",
+      "bytes": 12430,
+      "sha256": "dba0e67e23fda250831e87ccee58c486839adfa9c04dc790f0550f508b0cbd4a"
+    },
+    {
+      "path": "docking/registered-pose-retention.mjs",
+      "bytes": 11825,
+      "sha256": "2492bd98d0f3167b1761fd6a089d399905c7d4fb8aa75eca7ab9bc1cf23c7f79"
+    },
+    {
+      "path": "docking/registered-spatial-feature-restraint.mjs",
+      "bytes": 1817,
+      "sha256": "dfd11e2cebd9375c4688e03a3474d78e978ddeda51de6d461004653871e35dcd"
+    },
+    {
+      "path": "docking/restraint-biased-search.mjs",
+      "bytes": 32735,
+      "sha256": "ee819198ca0f3d0f13d7cfc76bde5c4c68f5d8193e1ee6fe9df9474a23a0ca64"
+    },
+    {
+      "path": "docking/sidechain-rotamers.mjs",
+      "bytes": 39584,
+      "sha256": "27dbd93142f6c46919a4eb9b31c592f728e46983ca0cf04bc3993112aff6601f"
+    },
+    {
+      "path": "docking/torsion-search.mjs",
+      "bytes": 11402,
+      "sha256": "b5f95084d92a1bffb80d77b91e17749e977e6df577915c8bccc8216daa51b670"
+    },
+    {
+      "path": "docking/transformed-ring-region.mjs",
+      "bytes": 9806,
+      "sha256": "55051b6bc6c54af702c211dc15216bcecb8342e9f97e036798baf4316f3ba076"
+    },
+    {
+      "path": "docking/validation/cloud-panel/RESULTS-2026-08-23.md",
+      "bytes": 5669,
+      "sha256": "08008ed7983a8c1904edfd01ea7ccc845dc6c7c76925b48e3b9997cf705108da"
+    },
+    {
+      "path": "docking/validation/cloud-panel/browser-sage-openmm-obc2-diagnostic-2026-08-23.json",
+      "bytes": 6968,
+      "sha256": "07eb6da633cabb806fe59e5307cf8b29864758cae278df92f78db2ba82c6f81d"
+    },
+    {
+      "path": "docking/validation/cloud-panel/browser-sage-openmm-validation-2026-08-23.json",
+      "bytes": 6962,
+      "sha256": "57749c23d3cdcac67f9f1d6a2fbbaa71b021ad09951f361a4c33749e8ec1d240"
+    },
+    {
+      "path": "docking/validation/cloud-panel/openmm-wasm-native-validation-2026-08-23.json",
+      "bytes": 5081,
+      "sha256": "28b1aa6848994438832670b1af641c78f9633ec543e76f087ccf7ba9f1d3b950"
+    },
+    {
+      "path": "docking/validation/pose-viewer/vendor/molstar-5.11.0.css",
+      "bytes": 72842,
+      "sha256": "5b68ceb6d3642549b4e9b2c071e58e41b98a5350ae269180587b39da86925d55"
+    },
+    {
+      "path": "docking/validation/pose-viewer/vendor/molstar-5.11.0.js",
+      "bytes": 5027864,
+      "sha256": "7fad5561c74bc900930fb57d6ab028d1aafdda82223a901bf932b1098e84f1f3"
+    },
+    {
+      "path": "docking/workflow.mjs",
+      "bytes": 8630,
+      "sha256": "4f2ab3bc9368caf7826c17dbf05ea305264c638e6c0f1820143736b3e7b78b62"
+    },
+    {
+      "path": "independent-layout-study.css",
+      "bytes": 5006,
+      "sha256": "e53ba1072d231ed91f703085c280d68e0f38e3f5fc50585167892d6d11badc88"
+    },
+    {
+      "path": "index.html",
+      "bytes": 68252,
+      "sha256": "81737eea87e8718021a078c197a24c8256df0adff5c0a9f25db931aebf2c2a5b"
+    },
+    {
+      "path": "licenses/APACHE-2.0-LICENSE.txt",
+      "bytes": 11350,
+      "sha256": "1d66811ba71443c10bc8535bdb862903a2062ca12b22a8530f555c7bce73268f"
+    },
+    {
+      "path": "licenses/DIMORPHITE-DL-NOTICE.txt",
+      "bytes": 1083,
+      "sha256": "c0a5747066691cd119d872c16b13104ffc3e0bfac9c64f50ae432594b793eda3"
+    },
+    {
+      "path": "licenses/ONNXRUNTIME-1.27.0-THIRD-PARTY-NOTICES.txt",
+      "bytes": 325054,
+      "sha256": "0e07b95f3a8d6230037707c5c4a2b554d12c4cb67369669ac255635528ffcee2"
+    },
+    {
+      "path": "licenses/ONNXRUNTIME-LICENSE.txt",
+      "bytes": 1073,
+      "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c"
+    },
+    {
+      "path": "licenses/OPENFOLD-LICENSE.txt",
+      "bytes": 11350,
+      "sha256": "1d66811ba71443c10bc8535bdb862903a2062ca12b22a8530f555c7bce73268f"
+    },
+    {
+      "path": "licenses/PDBFIXER-LICENSE.txt",
+      "bytes": 1239,
+      "sha256": "10842fdfa6a8e288ef6fca51fcba4d4b1410332740d6d0e80ba1cd30089b5b09"
+    },
+    {
+      "path": "local-lab-test.js",
+      "bytes": 11208,
+      "sha256": "bd5fc9f9f74c2bbd3958ec1948a50697bcbc25d56e5e2036f7e3223ad5e2a992"
+    },
+    {
+      "path": "mlip-worker.js",
+      "bytes": 35866,
+      "sha256": "3653741260e79aacad7baf4cbe1369877af90d1fe1290b770269913ac52076a9"
+    },
+    {
+      "path": "mlip/README.md",
+      "bytes": 1032,
+      "sha256": "0316279503887d47ab568a53a7e7d62326ca6129176f8c950cc194b2c8c4ab3c"
+    },
+    {
+      "path": "mlip/TORCHANI-LICENSE.txt",
+      "bytes": 1075,
+      "sha256": "7a0b590f5efe6fe60725ccad0f28721c62422685a36a37214dd147a9a78aee2b"
+    },
+    {
+      "path": "mlip/ani2x-webgpu.js",
+      "bytes": 23383,
+      "sha256": "ccbb460409e376ef980b98eb5e4675e0296a6e37939a11682a7a24a2e90890d9"
+    },
+    {
+      "path": "mlip/ani2x.js",
+      "bytes": 12800,
+      "sha256": "4bcdc242b488d2956840c83e92246e5de3e7002c515c96e866cd4dfd947f95a0"
+    },
+    {
+      "path": "molarium-workspace.css",
+      "bytes": 9116,
+      "sha256": "ab18b693d0a8d70b6fc304db800bb7db7f2c51fddc408f6e7e35daced2e4f4e5"
+    },
+    {
+      "path": "molecular-state-hash.mjs",
+      "bytes": 3504,
+      "sha256": "d3fa2cbba6e132c0618abb3c4483160c1b6f661f1b5ca8e1e2ee3d6ddd29c935"
+    },
+    {
+      "path": "openff/OPENFF-FORCEFIELDS-LICENSE.txt",
+      "bytes": 18693,
+      "sha256": "8e0281df4b7dd386c0b660f7476a74e486036d6d2f2372779e5561961a36e7b7"
+    },
+    {
+      "path": "openff/README.md",
+      "bytes": 3491,
+      "sha256": "32b8b7a75f12e14ea3e3f4c5f58fb702c30c0beba914d50671734f7b73839088"
+    },
+    {
+      "path": "openff/conformer-arena.js",
+      "bytes": 5535,
+      "sha256": "894bbf4b3a3c8385e616f740fa5c1db9456df1de3c21b07577d74cfde4b4cf6d"
+    },
+    {
+      "path": "openff/conformer-protocol.js",
+      "bytes": 1683,
+      "sha256": "48a9b1ab03b1ee27f4098d7ddd70792c567cbd81ec0b5e33deaccac434b032f7"
+    },
+    {
+      "path": "openff/frame-contract.mjs",
+      "bytes": 1604,
+      "sha256": "581d47b7bbce1ee9d15d8fbb1dd2d4cff0d8d1a40aed0010becd4e9b7771e3fb"
+    },
+    {
+      "path": "openff/implicit-solvent.js",
+      "bytes": 3659,
+      "sha256": "26da819efca497b93ad0686126aae75ac685eae953b1586a1858b1c102fec464"
+    },
+    {
+      "path": "openff/numeric-system.mjs",
+      "bytes": 4433,
+      "sha256": "cc463cfc41acc6a4e0030251210b985d18e190eda0f0062ac0ddaac5f248ecbc"
+    },
+    {
+      "path": "openff/rosemary-trp-cage.json",
+      "bytes": 474997,
+      "sha256": "6e77b93f624825cdcb02b29821deaa51e811215f8cff22e7ece7a3bdb9a28ea4"
+    },
+    {
+      "path": "openff/rosemary-ubiquitin.json",
+      "bytes": 1917591,
+      "sha256": "dd2d51eeeef1e48b5489cedcbf18d826fa791dab51d95d51595d2f9900f384a0"
+    },
+    {
+      "path": "openff/sage-2.1.0.json",
+      "bytes": 52501,
+      "sha256": "fab6465fe6fe1603f839ca02f9c14c024fc35ee31ac4bddefb0fac74aeb25cff"
+    },
+    {
+      "path": "openff/sage-parameterizer.js",
+      "bytes": 14670,
+      "sha256": "ddc2670becfd44dbfe12acbc41446bb18edd503b1beb0cfc7eade9dd27deb005"
+    },
+    {
+      "path": "openff/simulation-options.js",
+      "bytes": 4265,
+      "sha256": "82aee80ee1dcf5847a78d7d75d1cb6ac33e7bd499b94e9fbb88f1ef0e8776965"
+    },
+    {
+      "path": "openff/ubiquitin-1ubq-prepared.pdb",
+      "bytes": 99913,
+      "sha256": "1b8f2e998fd38ac408bb0277e2c523d9af63e90de3f70980403d020242cf41ca"
+    },
+    {
+      "path": "openfold-export-results/trained/MODEL-CARD.md",
+      "bytes": 1619,
+      "sha256": "aa7f353636682fa683c6638c8f26f9845b8cc0deff820344c077b0eb93017ae0"
+    },
+    {
+      "path": "openfold/features.js",
+      "bytes": 15598,
+      "sha256": "8a0eafe1676b4a39b3ea567a70eaaae94065bf21a735eaee4a6f7c4a8cd2be74"
+    },
+    {
+      "path": "openfold/msa-client.js",
+      "bytes": 8072,
+      "sha256": "98d80c658ec0682fb0b1ce59f2f6d4a3499321e34d6634dd73f4b64cf80b3777"
+    },
+    {
+      "path": "openfold/predictor.js",
+      "bytes": 8556,
+      "sha256": "e7cc98b5250989d9b61428e9e46b1b010cbc80bb1922bdc3b019a1bd0bf1e889"
+    },
+    {
+      "path": "openmm-worker.js",
+      "bytes": 27538,
+      "sha256": "80166332dc10183af140c60fc259ba8d52ce14efa6c9d1cefeacd7fc27b29448"
+    },
+    {
+      "path": "openmm/OPENMM-LICENSE.txt",
+      "bytes": 1101,
+      "sha256": "7db02052788ae82c227bf50d6787764734138bc05822723709c6bb69ece8fcd2"
+    },
+    {
+      "path": "openmm/README.md",
+      "bytes": 2932,
+      "sha256": "c5d0be8e1ec5c640495c3288a3579d38964f57cb02887b119f808234bd6036f1"
+    },
+    {
+      "path": "openmm/molarium-openmm.js",
+      "bytes": 10827,
+      "sha256": "a6eb81f1839ce85fe04e652bfad9bcf5fa5505eebb0ea7ccda47497b739f7e2e"
+    },
+    {
+      "path": "openmm/molarium-openmm.wasm",
+      "bytes": 905839,
+      "sha256": "94e0ec3e81b6d26f52e7e42cfc823e4fcf970ebe428f497aa66db6e64d4bd307"
+    },
+    {
+      "path": "protein-residue-templates.js",
+      "bytes": 4712,
+      "sha256": "2c6a0eb025a8375b2653657ca86dd313e0c3ae038f9866b36fe96d32ebf8d1ee"
+    },
+    {
+      "path": "rdkit-worker.js",
+      "bytes": 23786,
+      "sha256": "b397064c6a65ae2b2c6164ec13bd752d618a935f889fbf69d748bca24331cb44"
+    },
+    {
+      "path": "rdkit/RDKIT-LICENSE.txt",
+      "bytes": 1580,
+      "sha256": "daeb8d194502cbcf34c05c39541a0d02be65bc9bada5b891c1974cd24e9fca30"
+    },
+    {
+      "path": "rdkit/README.md",
+      "bytes": 2491,
+      "sha256": "6d2f908705aa97d49a513afc406f4534313369fe989542ee527520b8da2ec735"
+    },
+    {
+      "path": "rdkit/dimorphite-sites.js",
+      "bytes": 4428,
+      "sha256": "068012afec22b235177a4060c6f8f960de8bb6243394d36bd71ab7de755c13e8"
+    },
+    {
+      "path": "rdkit/dist/RDKit_minimal.js",
+      "bytes": 127197,
+      "sha256": "8fbe5a895562b7a86afb226b6e04caeab53acd86ffce3fdc59a3922a5df21659"
+    },
+    {
+      "path": "rdkit/dist/RDKit_minimal.wasm",
+      "bytes": 5634149,
+      "sha256": "813445a8b8459f6c44e65e572d4d674d58010fe7acd225ff06e054a3105abb94"
+    },
+    {
+      "path": "reproductions.html",
+      "bytes": 2862,
+      "sha256": "1873a7b3a1147cfda8374367a7d56751706cf2d1b1030e994e79152981e28e00"
+    },
+    {
+      "path": "runtime-config.js",
+      "bytes": 319,
+      "sha256": "791e89c933213ac16d9a11c0cc5885be2ea121a2668e3e8aeadab190f6ee2442"
+    },
+    {
+      "path": "scripts/local-test-server.mjs",
+      "bytes": 1385,
+      "sha256": "5244ca3115b8c9fcc5f277cf5b56cbd15e1e6bc193418a26093ced7935fbb991"
+    },
+    {
+      "path": "scripts/verify-sos1-deployment.mjs",
+      "bytes": 2042,
+      "sha256": "af3bcc6d7b9002b30a68e61e9828a7496b984649716225b949703cadae0fe525"
+    },
+    {
+      "path": "scripts/verify-sos1-frozen-browser-publication.mjs",
+      "bytes": 10795,
+      "sha256": "bd10dc5293e2d390b27954067ceca9336c519f9893a710685a06879e1b7308b2"
+    },
+    {
+      "path": "sos1-movie.mjs",
+      "bytes": 1245,
+      "sha256": "5c1c4b03c3b230cd4652a3dc95b3cee5f35a064527494fa698ce1a7cc986e2bd"
+    },
+    {
+      "path": "sos1.html",
+      "bytes": 4422,
+      "sha256": "045af02a6118e41cff8e2c328b3acc2d582798091a5c800991adaa9d95f3a880"
+    },
+    {
+      "path": "stormm-worker.js",
+      "bytes": 19054,
+      "sha256": "a23b8c7e8a149e5a26218123c6d8a6283782a42f0fc27b2f280257e24dfd3994"
+    },
+    {
+      "path": "stormm/LICENSE",
+      "bytes": 1078,
+      "sha256": "f39fae2208edb0cfa6719e510f33bb72aec9628e7c5984c906382d341e6f7f78"
+    },
+    {
+      "path": "stormm/README.md",
+      "bytes": 9929,
+      "sha256": "b92df52ed591c2cafe4a7e82492f0f1ae766da61b374dc8dc76180810edc9545"
+    },
+    {
+      "path": "stormm/core.mjs",
+      "bytes": 48096,
+      "sha256": "6912a74c426431331ac47ccb06ac2f394f3f81004caa068c4780f46fab346c94"
+    },
+    {
+      "path": "stormm/engine.mjs",
+      "bytes": 19276,
+      "sha256": "a23332d8ced0d5c7844c397c0b20c29da13b84bac2af31ede9b4e02a433c3b68"
+    },
+    {
+      "path": "styles.css",
+      "bytes": 74256,
+      "sha256": "8f4ffbef4e6979fb34f2fef04406c9e3eb97a4bc4d5421ee16d7170dec7b0f77"
+    },
+    {
+      "path": "validation/README.md",
+      "bytes": 1098,
+      "sha256": "0cf4e90ba5d4e47514d85e1443bf18b478d3cff8e2d0ca7482e4e25634630381"
+    },
+    {
+      "path": "validation/dashboard.mjs",
+      "bytes": 5645,
+      "sha256": "ccb8e7f52194b588c1090809db24fb4c874ad36a775053b96cc0827c5884a28f"
+    },
+    {
+      "path": "validation/registry.v0.1.json",
+      "bytes": 22923,
+      "sha256": "43295ca0ec2cfebee0a2cda3c5f8f0dae3ec3eedbc95dacf23be6ccdbf680a1b"
+    },
+    {
+      "path": "validation/registry.v0.2.json",
+      "bytes": 23509,
+      "sha256": "70d1ec75edbd42673244878bef0934d2dfc29ff0d1ed47d26b1eca1187a80a5f"
+    },
+    {
+      "path": "vendor/onnxruntime-web/ort.webgpu.bundle.min.mjs",
+      "bytes": 113035,
+      "sha256": "3a18c7f261e05d44a15b2eef18a28e5f53c044d5d140bcea6066baf1f09c8b53"
+    },
+    {
+      "path": "webgpu-worker.js",
+      "bytes": 34141,
+      "sha256": "e3f0b11b59dbeba07452c4b9afeb9218253d1f2e3b6c7ceb034e14c05cdae16c"
+    },
+    {
+      "path": "webgpu/README.md",
+      "bytes": 7759,
+      "sha256": "546d8989bce98ee007abcd5834e2681cd26f41bc49d3e48e2001d54a6a7014c1"
+    },
+    {
+      "path": "webgpu/molarium-webgpu.wgsl",
+      "bytes": 41147,
+      "sha256": "26907253e176239a01dd2a8a66d5236ddf47232f2ecdce0b4018fad09b688be3"
+    },
+    {
+      "path": "workspace-help.mjs",
+      "bytes": 18598,
+      "sha256": "08e6ccd82455d7fb50452e077195fc362dd98c1bfd5a9cac96bb44f0d0e4e976"
+    }
+  ]
+}

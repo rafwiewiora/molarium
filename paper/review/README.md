@@ -1,5 +1,12 @@
 # Manuscript review and recovered history
 
+**Current paper:** [ChemRxiv-submitted v1, September 8](../submissions/chemrxiv-v1-2026-09-08/README.md).
+The [September 8 history index](history-2026-09-08/README.md) continues this
+original review through a01–a28 and the final manual Prism edits. “Current”
+below and inside the review application means its frozen September 6 baseline,
+not the submitted manuscript. Appendix C survives here as historical evidence;
+it is not in submitted v1.
+
 This is an author-controlled editorial workspace, not a replacement manuscript. **Every choice starts undecided.** No review action rewrites LaTeX, replaces a figure, compiles a PDF, or publishes a decision.
 
 ## Open and review

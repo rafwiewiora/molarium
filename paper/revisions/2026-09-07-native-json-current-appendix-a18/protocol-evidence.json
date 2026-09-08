@@ -1,0 +1,22 @@
+{
+  "sourceSha256": "7eed2dff0bf3fa127f87b2322aaea4b615d458ad6d8ef3af3c5b5886dc8fe9c3",
+  "sourceActionIndices": [
+    36,
+    37,
+    38,
+    41
+  ],
+  "retainedFields": [
+    "caption",
+    "action",
+    "args",
+    "expect"
+  ],
+  "omittedFields": [
+    "auditSequence",
+    "auditRequestId"
+  ],
+  "omittedInterveningActions": "session.inspect only",
+  "formattingOnly": true,
+  "newScientificCalculations": false
+}

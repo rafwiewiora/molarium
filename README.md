@@ -13,6 +13,11 @@ The [Reproductions index](https://molarium.org/reproductions) starts with
 [SOS1](https://molarium.org/sos1): a recomputable browser story, a seven-checkpoint
 precomputed replay, a checkpoint MP4, and the paper with supporting evidence.
 
+Read the [ChemRxiv-submitted paper v1 (September 8, 2026)](./paper/submissions/chemrxiv-v1-2026-09-08/Molarium.pdf)
+by Rafal Wiewiora and Woody Sherman. The [submission record](./paper/submissions/chemrxiv-v1-2026-09-08/README.md)
+identifies the exact PDF; the [manuscript history](./paper/review/history-2026-09-08/README.md)
+preserves recovered drafts, 28 local revisions, review findings, and later Prism PDF exports.
+
 ## Simulation accuracy and GPU benchmarks
 
 [Reproduce the energy, force, and speed benchmarks](./benchmarks/simulation/README.md).

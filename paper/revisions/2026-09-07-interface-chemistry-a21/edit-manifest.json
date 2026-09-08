@@ -1,0 +1,22 @@
+{
+  "schema": "molarium.approved-manuscript-interface-figure/v1",
+  "baseRevision": "paper/revisions/2026-09-07-figure-clarity-a20",
+  "baseSourceSha256": "37d61889147fe36f1cc16a2781debc59ac0df66a15f76c824aa436a8e9cd293f",
+  "outputSha256": "b2eb879807f7dbe484b09f7b81f0eb62182be18e3c72790432a3ef32ce098a23",
+  "changes": [
+    {
+      "before": "  \\caption{Chemical edits and geometric operations in the SOS1 design sequence. (A--E) Graph-derived 2D depictions make the successive changes explicit: naphthyl replacement and 2-methyl addition; thiophene-linked fragment merge; benzyl-alcohol installation with the AWW 5,8-dihydro core; and the BAY-293 attachment, terminal-amine, and aromatic-core changes. Orange marks regions outside the registered atom-lineage conserved subgraph relative to the preceding graph, not a synthetic reaction mechanism. (F) The same AWW graph is placed toward the Tyr884 backbone-carbonyl contact. (G) Phe890 is sampled with that ligand fixed. (H) The seven-atom distal feature is retained approximately through the BAY-293 rewrite and relaxation. Purple shows the current ligand; gray dashes show previous positions, gold the Phe890 response, and the teal highlight the retained feature. The 3D details use exact saved checkpoint coordinates with a common projection and scale; arrows connect endpoint states, not simulated paths. The crystal series informed the hypothesis, but later crystal coordinates were not used to generate these states.}",
+      "after": "  \\caption{Chemical edits and receptor response in the Molarium interface. Each panel is a full-tool screenshot with the ligand graph in the enlarged 2D panel. (A) AXE starting hit. (B) AWT: replace naphthyl with pyrazolylphenyl and add a 2-methyl group. (C) AWZ: introduce thiophene and merge the bicyclic heterocycle. (D) AWW: install benzyl alcohol and the 5,8-dihydro core, then orient the arm toward the Tyr884 backbone-carbonyl contact. (E) Hold the same AWW ligand fixed while selecting a Phe890 rotamer that clears the arm. (F) BAY-293: move the thiophene attachment, replace the alcohol with an N-methylamine, and restore the aromatic core. Orange 2D highlights mark atoms outside the registered conserved atom-lineage subgraph relative to the preceding chemical graph; they do not depict a synthetic reaction mechanism. The AWW highlights persist through ligand placement and are cleared for the receptor-only panel. All panels use exact saved checkpoints in the same pocket view. The crystal series informed the design hypothesis, but later crystal coordinates were not used to generate these states.}"
+    },
+    {
+      "before": "Thia concept is analogous",
+      "after": "This concept is analogous"
+    }
+  ],
+  "allOtherTextUnchanged": true,
+  "allOtherFiguresUnchanged": true,
+  "figureChanges": {
+    "fig2_sos1_designer_intent.png": "65db5df508f049646d9b8a2a33190aeb3d970d13bf1492fb9204435ab296c5bc",
+    "fig2_sos1_designer_intent.provenance.json": "8e9a9fe018cb994c56d9c8271a14c7e519640ecb8c522e0c5abc37fe9cf5d410"
+  }
+}

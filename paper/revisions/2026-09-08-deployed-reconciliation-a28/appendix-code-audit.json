@@ -1,0 +1,32 @@
+{
+  "publicCodeCommit": "6d2f620d7d26e3dfd270c018f0a9be7a414f2163",
+  "checkedOn": "2026-09-08",
+  "deploymentAuditFile": "deployment-audit.json",
+  "liveFilesVerified": 80,
+  "liveManifestSha256": "1791228eda25bce866e45b189bddcdf8e795bf222c012c179027adc2eef67816",
+  "priorCodeAuditCommit": "2ab30383d6160349aa3b1e980f7239d6854b329d",
+  "scope": "All Appendix A/B sections and related main/figure claims compared with pinned public source; live served modules/release records hash-checked; representative live menus inspected; API example action names, keys and selected value vocabularies checked. Not execution of every molecular example or a new numerical benchmark.",
+  "command": "MOLARIUM_PUBLIC_CODE_COMMIT=6d2f620d7d26e3dfd270c018f0a9be7a414f2163 MOLARIUM_MANUSCRIPT_PATH=<main.tex> node --test paper/review/current-api-contract.test.mjs",
+  "scientificResultsChanged": false,
+  "figuresChanged": false,
+  "applicationChanged": false,
+  "implementationDefectsDocumented": [
+    "Prediction cancellation shares the serialized prediction queue and cannot interrupt the pending prediction."
+  ],
+  "undeployedLocalWork": [
+    "Unbounded action-history changes remain local; deployed API and scene audit buffers retain up to 500 entries.",
+    "Figure 2 uses local display-only aligned/enlarged/highlighted 2D controls, now explicitly identified in the caption."
+  ],
+  "uiChecks": [
+    "LSD remains loaded after switching View to Design",
+    "Essential-only help icons and Reproductions navigation present",
+    "OpenMM absent from visible Simulate menu",
+    "Conformer effort menu: quick, balanced, thorough",
+    "Precomputed SOS1 review opens with 18 presentation moves on blank canvas, awaiting Play"
+  ],
+  "reviewFiles": [
+    "DEPLOYED-AUDIT-APPENDIX-A-2026-09-08.md",
+    "DEPLOYED-AUDIT-APPENDIX-B-2026-09-08.md",
+    "DEPLOYED-AUDIT-SOS1-2026-09-08.md"
+  ]
+}

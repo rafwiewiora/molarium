@@ -1,0 +1,50 @@
+{
+  "schema": "molarium.paper-feedback-figure/v1",
+  "builderSha256": "8d179c765527f2c5cc0402fbaefb1073f7919caf589f33786fec413a247aa886",
+  "figureSha256": "9bcd8477a4d27b4ec02c8b3bf34c6abe266ace700202bc2dabbbfdce0d22cf6b",
+  "pdfSha256": "1ee44d0db0506d4306a3cbc5098e9d44ae69cc01290165147c1683d1f808b0ce",
+  "stages": [
+    [
+      "Scientist identifies",
+      [
+        "wrong shape",
+        "bad interaction",
+        "strained geometry",
+        "new method"
+      ]
+    ],
+    [
+      "Agent implements",
+      [
+        "representation",
+        "numerical kernel",
+        "protocol",
+        "interface"
+      ]
+    ],
+    [
+      "Independent check",
+      [
+        "OpenMM",
+        "TorchANI",
+        "finite differences",
+        "fixed fixtures"
+      ]
+    ],
+    [
+      "Repository keeps",
+      [
+        "method + tests",
+        "benchmark boundaries",
+        "limitations",
+        "provenance"
+      ]
+    ]
+  ],
+  "footer": [
+    "accepted changes become",
+    "the next scientific starting point"
+  ],
+  "change": "Reconstructed vector diagram; same text/sequence and four-box layout. The feedback arrow has one cubic shaft and one tangential triangular head, without the original spur.",
+  "imageEditAttempt": "Built-in image editor produced a clean arrow but changed outer margins; that raster was not used in the paper."
+}

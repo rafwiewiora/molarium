@@ -1,0 +1,27 @@
+{
+  "schema": "molarium.approved-manuscript-matched-figure-font/v1",
+  "baseRevision": "paper/revisions/2026-09-08-readable-protocol-a25",
+  "baseSourceSha256": "cdb14f27bca72abbe89de96d90ed9664bcbfdb5f54f055d51804a8c0f89fc798",
+  "outputSha256": "cdb14f27bca72abbe89de96d90ed9664bcbfdb5f54f055d51804a8c0f89fc798",
+  "changes": [],
+  "allTextUnchanged": true,
+  "allOtherFiguresUnchanged": true,
+  "figureWordingUnchanged": true,
+  "figureChanges": {
+    "fig3_build_loop_compact.pdf": {
+      "source": "paper/review/captures/2026-09-08-matched-figure-font-a26/fig3_build_loop_compact.pdf",
+      "beforeSha256": "1ee44d0db0506d4306a3cbc5098e9d44ae69cc01290165147c1683d1f808b0ce",
+      "afterSha256": "b0a14fdaacf074e8d1953d9d3dbc4cb7711f2a291e3db5639a3e68fd111314cc"
+    },
+    "fig3_build_loop_compact.png": {
+      "source": "paper/review/captures/2026-09-08-matched-figure-font-a26/fig3_build_loop_compact.png",
+      "beforeSha256": "9bcd8477a4d27b4ec02c8b3bf34c6abe266ace700202bc2dabbbfdce0d22cf6b",
+      "afterSha256": "e571d4c764d0b23e359e8823353219f41e6238ee12eb1e4c148e501146f79eec"
+    },
+    "fig3_build_loop_compact.provenance.json": {
+      "source": "paper/review/captures/2026-09-08-matched-figure-font-a26/fig3_build_loop_compact.provenance.json",
+      "beforeSha256": "88fa836f7d4851202e5d296cee2c9b3f5a6f359c6ffb7b116953180c5ccc3206",
+      "afterSha256": "ffdb14b01b87067dbfba055c505190bb56615ea6821ccac63d83864bafeb6a6b"
+    }
+  }
+}

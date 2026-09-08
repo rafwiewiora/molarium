@@ -1,0 +1,21 @@
+{
+  "schema": "molarium.approved-manuscript-edits/v1",
+  "baseRevision": "paper/revisions/2026-09-07-native-json-listing-a15",
+  "baseSourceSha256": "1a5ee9123e332946555783b7f1f0a41178a08275ef52446ffe2a101b0ac69973",
+  "outputSha256": "dd523758b3d670992a6e434afbb2b8f72ae6811b443f24e41edd34f225cc3477",
+  "changes": [
+    {
+      "before": "The following pseudocode summarizes the recorded procedure. The symbols denote molecular states and measured quantities, not additional API functions. The full executable action script includes the individual calls, arguments, inspection steps, and expected outcomes.\n\n\\noindent\\begin{minipage}{\\linewidth}\n\\begin{lstlisting}[language={},caption={SOS1 design protocol (pseudocode).},label={lst:sos1protocol}]\nstate := prepare(5OVE/AXE; retain source waters)\nfor graph in [AWT, AWZ]:\n    capture current pose; apply registered graph edit\n    search 8 ligand-pose chains; apply selected feasible pose\n    parameterize without motion; relax; retain resulting state\n\napply AWW graph edit; preserve inherited precursor coordinates\ndeclare N7--Asn879 OD1 and OX3--Tyr884 O donor contacts\nset C12--C15 primary rotation to +150 degrees\nsearch N7--C12 rotation in [0, 60] degrees,\n    two downstream torsions, and donor-H orientation\nrequire contact geometry and no disallowed severe clashes\nrecord and lock the resulting ligand coordinates\n\nfor each Phe890 candidate (including unchanged input):\n    apply candidate; keep ligand and all other atoms fixed\n    check coordinate invariants and severe clashes\n    evaluate whole-system OpenMM/OBC2 single-point energy\n    record result; restore the starting receptor state\nselect the minimum finite-energy candidate with zero severe clashes\napply selected receptor state; save AWW checkpoint\n\nrelease ligand lock; capture AWW pose; apply AXH graph edit\nrequire registered distal-feature retention\nsearch 8 ligand-pose chains; apply selected feasible pose\nparameterize without motion; run induced-fit relaxation\ncheck fixed atoms, ligand valence, and retained feature\nsave BAY-293 checkpoint\ncompare saved AWW and BAY-293 states with 5OVH and 5OVI\n\\end{lstlisting}\n\\end{minipage}\\par\\medskip\n\n",
+      "after": ""
+    },
+    {
+      "before": "presents the procedure as pseudocode together with an excerpt in the native executable JSON action format.",
+      "after": "presents the procedure through an excerpt in the native executable JSON action format."
+    },
+    {
+      "before": "This appendix describes the inspected browser implementation prepared on 2 September 2026 for the public Molarium release. It distinguishes current browser behavior from executable but experimental behavior.",
+      "after": "This appendix documents the browser workflows and public API, distinguishing established operations from experimental capabilities."
+    }
+  ],
+  "allOtherTextAndFiguresUnchanged": true
+}

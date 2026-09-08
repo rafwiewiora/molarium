@@ -1,0 +1,139 @@
+--- a24/main.tex
++++ a25/main.tex
+@@ -141,7 +141,9 @@
+   \label{fig:sos1story}
+ \end{figure}
+ 
+-The SOS1 replay expresses a molecular-design procedure as an executable program. Its public API actions specify graph edits, intended contacts, allowed atomic motions, candidate evaluations, and selection rules. The designer defines an AWW ligand direction and Tyr884 contact; a separate calculation tests the Phe890 response while holding that ligand pose fixed. The BAY-293 graph rewrite then retains a declared distal spatial feature. This separates the supplied hypothesis from the calculated response and records the alternatives examined, not only the final structure. A contact, permitted motion, or selection rule can be changed explicitly to define a new test. Appendix~\ref{app:architecture} pairs pseudocode for the complete movie with a human-readable account of the design decisions and outcomes; the full executable API JSON remains available. The AWW and BAY-293 ligand RMSDs are 0.851 and 1.880~\AA{}, respectively, after receptor alignment and graph-symmetry minimization without ligand fitting. The crystal series informed the hypothesis; this is not a blinded prediction.
++The SOS1 replay illustrates more than scriptability: a readable design narrative linked to executable operations and inspectable molecular states. Its public API actions specify graph edits, intended contacts, allowed atomic motions, candidate evaluations, and selection rules. The designer defines an AWW ligand direction and Tyr884 contact; a separate calculation tests the Phe890 response while holding that ligand pose fixed. The BAY-293 graph rewrite then retains a declared distal spatial feature. This separates the supplied hypothesis from the calculated response and records the alternatives examined, not only the final structure. A contact, permitted motion, or selection rule can be changed explicitly to define a new test. 
++
++Appendix~\ref{app:architecture} pairs a figure-linked protocol for the complete movie with a human-readable account of the design decisions and outcomes; the full executable API JSON remains available. This suggests a way to accompany a paper's computational design narrative with shorthand that humans and agents can inspect against explicit operations, checks, and saved results. Readability does not establish scientific correctness, and the shorthand does not replace the full execution record. The AWW and BAY-293 ligand RMSDs are 0.851 and 1.880~\AA{}, respectively, after receptor alignment and graph-symmetry minimization without ligand fitting. The crystal series informed the hypothesis; this is not a blinded prediction.
+ 
+ Three complementary views are available at \url{https://molarium.org/sos1}: the \href{https://molarium.org/sos1-hit-to-bay293}{recomputable replay} runs the recorded operations through the public API; the \href{https://molarium.org/sos1-hit-to-bay293/review}{precomputed replay} allows inspection of seven exact saved checkpoints without calculation; and the MP4 records that checkpoint review with brief calculation-status popups. Recalculation can change numerical results, whereas the saved states preserve the reported result. Neither the movie nor its shortened popups represent calculation speed; Appendix~\ref{app:architecture} gives the protocol and evidence boundary.
+ 
+@@ -526,14 +528,59 @@
+ 
+ \subsubsection{Pseudocode for the complete movie}
+ 
+-Listing~\ref{lst:sos1api} condenses the complete design sequence from the API JSON into pseudocode. Operation names follow the public API, while chemical selectors and arguments are abbreviated and repeated trials become loops. The checkpoint annotations identify the seven saved states shown in the movie; they are not additional API calls. Repeated inspections, workspace changes, and session-resumption calls are omitted. The listing is a reading guide, not a separately executable script. A \texttt{\#} introduces an explanatory comment; unprefixed lines specify operations or checks, including \texttt{require} and \texttt{inspect}. Indented argument continuations belong to the preceding instruction.
++Listing~\ref{lst:sos1api} is a reading guide to the full executable API record, not a separately executable script. Lettered blocks link the procedure to Fig.~\ref{fig:sos1story}; checkpoint numbers link it to the seven saved movie states. Panel D shows checkpoint 5, after the graph-only checkpoint 4. Chemical selectors and arguments are abbreviated, repeated trials become loops, and repeated inspections, workspace changes, and session-resumption calls are omitted. A \texttt{\#} marks a comment; unprefixed lines specify operations or checks. These include both API operations and checks performed by the surrounding audit, not only assertions enforced by the script runner.
++
++\begingroup
++\definecolor{sosedit}{RGB}{153,74,20}
++\definecolor{sosresponse}{RGB}{112,77,139}
++\definecolor{soscomment}{RGB}{81,98,108}
++\newcommand{\sosstage}[4]{%
++  \par\vspace{0.55em}\noindent
++  {\bfseries\color{#1}#2\quad #3}\par
++  {\small #4}\par\vspace{-0.35em}}
++\lstdefinestyle{sosreadable}{language={},basicstyle=\ttfamily\footnotesize,
++  morecomment=[l]{\#},commentstyle=\color{soscomment},
++  morekeywords={for,in,require,inspect,retain,verify},
++  keywordstyle=\color{molblue},
++  backgroundcolor=\color{callout!35!white},frame=l,
++  rulecolor=\color{molblue!35!white},framesep=5pt,
++  xleftmargin=6pt,xrightmargin=3pt,aboveskip=4pt,belowskip=3pt}
+ 
+ \begin{minipage}{\linewidth}
+-\begin{lstlisting}[language={},basicstyle=\ttfamily\footnotesize,caption={The whole SOS1 movie as pseudocode condensed from the public API action script. Angles are in degrees; distances are in angstroms unless stated otherwise.},label={lst:sos1api}]
++\small
++{\bfseries\color{molblue}One molecular state; different parts change}\par\vspace{0.25em}
++\begin{tabularx}{\linewidth}{@{}X@{\hspace{0.4em}}c@{\hspace{0.4em}}X@{\hspace{0.4em}}c@{\hspace{0.4em}}X@{}}
++\textcolor{sosedit}{\textbf{4\quad Install AWW}} & $\longrightarrow$ &
++\textcolor{molteal}{\textbf{5\quad Place the arm [D]}} & $\longrightarrow$ &
++\textcolor{sosresponse}{\textbf{6\quad Select Phe890 [E]}}\\[3pt]
++New ligand graph; inherited placement & &
++Same graph; ligand branch moves; receptor fixed & &
++Same graph; ligand fixed; Phe890 moves\\
++\end{tabularx}
++\vspace{0.4em}
++\noindent\colorbox{callout}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
++\textbf{Saved state:} parent-linked snapshots preserve the molecular graph and coordinates.\newline
++\textbf{How it was obtained:} attached public-action segments have explicit coverage limits; numerical audits are separate release files.}}
++\par\vspace{0.2em}
++Preparation and parameterization also belong to the state: parameterization assigns the numerical model without moving atoms. The arrows above show two transitions within the saved history, not the entire commit graph.
++\end{minipage}
++
++\par\vspace{0.8em}
++\refstepcounter{lstlisting}\label{lst:sos1api}
++{\small\textbf{Listing~\thelstlisting:} The SOS1 movie as a readable protocol. Letters refer to Fig.~\ref{fig:sos1story}. Orange identifies graph edits, teal ligand placement, and purple receptor response; the text labels also carry the meaning. Angles are in degrees; distances are in angstroms unless stated otherwise.}\par
++\begin{minipage}{\linewidth}
++\sosstage{molblue}{A}{Prepare the starting hit}{Checkpoint 1: AXE supplies the starting graph and coordinates.}
++\begin{lstlisting}[style=sosreadable]
+ designRoute.load("sos1-hit-only")                 # 5OVE / AXE
+ protein.prepare(pH=7.4, histidine=auto, ligand=CCD,
+                 repairMissingHeavy=true, gaps=cap, waters=retain)
+ pose.captureReference(mode=propagate)            # checkpoint 1: hit
++\end{lstlisting}
++\end{minipage}
++
++\begin{minipage}{\linewidth}
++\sosstage{sosedit}{B / C}{Change the scaffold, then propagate and relax}{Checkpoint 2: AWT (pyrazolylphenyl and 2-methyl). Checkpoint 3: AWZ (thiophene and merged bicyclic heterocycle). Search transfers the pose; subsequent local relaxation adjusts ligand and pocket.}
++\begin{lstlisting}[style=sosreadable]
+ for step in [scaffold-rewrite, fragment-merge]:   # AWT, then AWZ
+     designRoute.applyStep(step)
+     pose.refine(searchChains=8, execution=serial, featureSeeding=v5)
+@@ -544,9 +591,21 @@
+     require accepted relaxation, valence, and registered pose retention
+     # checkpoints 2 and 3: relaxed AWT and AWZ
+     pose.captureReference(mode=propagate)
++\end{lstlisting}
++\end{minipage}
++
++\begin{minipage}{\linewidth}
++\sosstage{sosedit}{D, first}{Install the AWW graph}{Checkpoint 4: introduce the benzyl-alcohol arm. This graph-only state precedes the placement shown in panel D.}
++\begin{lstlisting}[style=sosreadable]
+ protein.parameterize()
+ designRoute.applyStep(open-phe890-pocket)         # checkpoint 4: AWW graph
+ protein.parameterize(); pose.captureReference(mode=propagate)
++\end{lstlisting}
++\end{minipage}
++
++\begin{minipage}{\linewidth}
++\sosstage{molteal}{D, then}{Specify and place the ligand arm}{Checkpoint 5 / panel D: same graph, new ligand geometry. Only the declared branch moves; Phe890 has not yet responded.}
++\begin{lstlisting}[style=sosreadable]
+ pose.addContact(N7 donor -> Asn879.OD1)
+ pose.addContact(OX3 donor -> Tyr884.backboneO)
+ geometry.alignBranchToContact(target=Tyr884 contact, solution=best-directional,
+@@ -556,6 +615,13 @@
+ require no external coordinate targets, no internal severe clashes,
+         and no overlaps outside the allowed Phe890 response atoms
+ pose.setDesignerLigandPoseFixed(true)            # checkpoint 5: ligand intent
++\end{lstlisting}
++{\small\textcolor{molteal}{\textbf{Readout:}} Tyr884 backbone contact achieved; clashes with the allowed Phe890 ring remain. This is a ligand hypothesis, not yet a clash-free complex.}
++\end{minipage}
++
++\begin{minipage}{\linewidth}
++\sosstage{sosresponse}{E}{Test receptor responses to that fixed ligand}{Checkpoint 6: preserve the ligand graph and every ligand coordinate; change only the Phe890 conformation.}
++\begin{lstlisting}[style=sosreadable]
+ protein.parameterize(); pose.setDesignerLigandPoseFixed(true)
+ for candidate in pose.enumerateSidechainRotamers(Phe890, maximum=64):
+     pose.applySidechainRotamer(candidate)         # 13 states, including input
+@@ -568,6 +634,13 @@
+ # The replay reapplies the recorded choice; publication verification
+ # requires it still to satisfy that rule under the fresh calculations.
+ pose.applySidechainRotamer(chi=[-180,90])          # checkpoint 6: Phe890 response
++\end{lstlisting}
++{\small\textcolor{sosresponse}{\textbf{Readout:}} Two of 13 states are clash-free; the recorded choice has the lower finite energy. The ligand remains unchanged.}
++\end{minipage}
++
++\begin{minipage}{\linewidth}
++\sosstage{sosedit}{F}{Change the attachment while retaining a spatial feature}{Checkpoint 7: BAY-293. Move the thiophene attachment and replace the alcohol with an N-methylamine. Release the exact ligand lock, but retain the distal feature within its tolerance.}
++\begin{lstlisting}[style=sosreadable]
+ protein.parameterize(); pose.setDesignerLigandPoseFixed(false)
+ pose.captureReference(mode=propagate)
+ designRoute.applyStep(finish-bay-293)              # AXH graph; retain distal
+@@ -579,9 +652,12 @@
+ require accepted relaxation, fixed-atom, valence, and feature-retention checks
+ # checkpoint 7: BAY-293; inspect and save the resulting ligand and pocket
+ \end{lstlisting}
++{\small\textcolor{sosedit}{\textbf{Readout:}} Three of eight candidates are feasible; the selected, relaxed state passes the registered checks. Spatial retention is approximate, not an exact coordinate lock.}
+ \end{minipage}
+ 
+-The complete \href{https://molarium.org/design-history/publications/sos1/designer-intent-2026-09-04/executable.action-script.json}{executable action script} contains 159 executable public actions, with the full selectors, arguments, and result expectations. Its runner stops on a failed action or expectation. Candidate coordinates, energies, and rejected alternatives remain in the audit. The accompanying human account explains the choices and outcomes at each checkpoint, following the paired human/agent approach used in Appendix~\ref{app:manual}.
++\endgroup
++
++The full \href{https://molarium.org/design-history/publications/sos1/designer-intent-2026-09-04/executable.action-script.json}{executable action script} contains 159 public actions with full selectors, arguments, and result expectations. Its runner stops on a failed action or expectation. It is distinct from the partial public-action segments attached to individual campaign commits. Parent-linked checkpoint snapshots preserve the saved molecular states, while the release also supplies numerical audits, including candidate coordinates, energies, and rejected alternatives. Thus the reading guide, executable procedure, and saved evidence serve different purposes; none alone is a complete account of the design process.
+ 
+ \subsubsection{Human account: decisions and outcomes}
+ 

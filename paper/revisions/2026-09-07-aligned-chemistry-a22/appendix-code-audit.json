@@ -1,0 +1,8 @@
+{
+  "publicCodeCommit": "2ab30383d6160349aa3b1e980f7239d6854b329d",
+  "checkedOn": "2026-09-07",
+  "latestOriginMainUnchangedSincePriorCodeAudit": true,
+  "manuscriptCheck": "MOLARIUM_MANUSCRIPT_PATH=<this main.tex> node --test paper/review/current-api-contract.test.mjs",
+  "scope": "Action names and argument keys; prior implementation audit remains applicable because public code is unchanged. Not execution of every scientific example.",
+  "pendingLocalChange": "Default unbounded in-memory action history is tested locally but not yet in the public commit."
+}

@@ -1,0 +1,111 @@
+\subsection{SOS1: molecular design as an executable protocol}
+
+The SOS1 example represents a molecular-design procedure as an ordered program of graph edits, geometric instructions, interaction hypotheses, permitted atomic motions, candidate evaluations, and selection rules. The sequence follows the analogue series reported by Hillig and colleagues \citep{hillig2019sos1}. The program records which quantities are specified by the designer and which are determined by calculation. It is an executable representation of a design hypothesis, not a reconstruction of the original medicinal chemists' recorded decisions.
+
+\subsubsection{Inputs and preparation}
+
+The starting coordinates are the 5OVE/AXE complex. The subsequent molecular graphs are AWT, AWZ, AWW, and AXH (BAY-293). The later crystal series was inspected to infer the AWW arm direction and intended Tyr884 contact; those crystal coordinates were not imported into the trajectory or used as coordinate targets. The procedure is therefore reference-informed rather than blinded.
+
+Preparation uses pH 7.4, automatic histidine assignment, CCD ligand topology, missing-heavy-atom repair, capped gaps, and retained source waters. Parameterization assigns whole-system OpenFF Sage 2.1.0 parameters and deterministic Gasteiger charges without moving coordinates. The AWT, AWZ, AWW, and AXH systems contain 7,929, 7,933, 7,935, and 7,937 particles, respectively. The accompanying run records retain the assigned atomic charges and numerical parameters for each state.
+
+The registered graph edits preserve atom lineage through element- and bond-order-exact mappings of conserved subgraphs (Table~\ref{tab:appA_lineage}). Each new analogue starts from the preceding computed state. Molecular identity and pose-transfer rules are inputs to the operation; the later experimental pose is not.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Heavy-atom lineage across the supplied SOS1 analogue graphs.}
+\label{tab:appA_lineage}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Transition} & \textbf{Retained} & \textbf{Deleted} & \textbf{Added} & \textbf{Candidate mappings}\\
+\midrule
+AXE--AWT & 23 & 4 & 6 & 4\\
+AWT--AWZ & 19 & 10 & 12 & 1\\
+AWZ--AWW & 16 & 15 & 15 & 1\\
+AWW--AXH & 15 & 16 & 17 & 1\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Design procedure}
+
+The following pseudocode summarizes the recorded procedure. The symbols denote molecular states and measured quantities, not additional API functions. The full executable action script includes the individual calls, arguments, inspection steps, and expected outcomes.
+
+\noindent\begin{minipage}{\linewidth}
+\begin{lstlisting}[language={},caption={SOS1 design protocol (pseudocode).},label={lst:sos1protocol}]
+state := prepare(5OVE/AXE; retain source waters)
+for graph in [AWT, AWZ]:
+    capture current pose; apply registered graph edit
+    search 8 ligand-pose chains; apply selected feasible pose
+    parameterize without motion; relax; retain resulting state
+
+apply AWW graph edit; preserve inherited precursor coordinates
+declare N7--Asn879 OD1 and OX3--Tyr884 O donor contacts
+set C12--C15 primary rotation to +150 degrees
+search N7--C12 rotation in [0, 60] degrees,
+    two downstream torsions, and donor-H orientation
+require contact geometry and no disallowed severe clashes
+record and lock the resulting ligand coordinates
+
+for each Phe890 candidate (including unchanged input):
+    apply candidate; keep ligand and all other atoms fixed
+    check coordinate invariants and severe clashes
+    evaluate whole-system OpenMM/OBC2 single-point energy
+    record result; restore the starting receptor state
+select the minimum finite-energy candidate with zero severe clashes
+apply selected receptor state; save AWW checkpoint
+
+release ligand lock; capture AWW pose; apply AXH graph edit
+require registered distal-feature retention
+search 8 ligand-pose chains; apply selected feasible pose
+parameterize without motion; run induced-fit relaxation
+check fixed atoms, ligand valence, and retained feature
+save BAY-293 checkpoint
+compare saved AWW and BAY-293 states with 5OVH and 5OVI
+\end{lstlisting}
+\end{minipage}\par\medskip
+
+The AWW geometry instruction separates ligand placement from receptor response. The primary C12--C15 rotation is specified as $+150^{\circ}$. The upstream N7--C12 rotation is restricted to $0$--$60^{\circ}$; two downstream torsions and donor-hydrogen orientation are searched against the declared Tyr884 backbone-carbonyl contact. Atom selectors resolve atoms in the current structure. Coordinates outside the declared moving branch remain fixed. During ligand placement, only the six movable Phe890 ring atoms are permitted to overlap the growing ligand; Phe890 C$\beta$, other receptor atoms, and retained waters are not exempt from clash checks.
+
+Once the ligand pose is recorded, it is locked. Receptor sampling changes only Phe890 while the ligand, backbone, other receptor atoms, and source waters remain fixed. Tyr884 supplies a backbone-carbonyl contact; the procedure does not model a Tyr884 side-chain flip or backbone transition. This defines the calculation being tested: the receptor response to a specified ligand pose.
+
+\subsubsection{Public API representation}
+
+Listing~\ref{lst:sos1api} expresses the central ligand-design instruction as JavaScript using the public API. It starts after the AWW graph has been installed and a propagation reference captured, before manual contacts have been added. The returned Tyr884 contact identifier is passed to the geometry operation. The four calls and their resolved arguments match the published replay; the helper functions abbreviate selectors and stop execution on a failed action. This is an executable excerpt with stated preconditions, not a standalone replacement for the full protocol.
+
+\noindent\begin{minipage}{\linewidth}
+\begin{lstlisting}[language={},caption={Public API code for the AWW ligand hypothesis and coordinate lock.},label={lst:sos1api}]
+@@SOS1_API_EXCERPT@@
+\end{lstlisting}
+\end{minipage}\par\medskip
+
+The complete \href{https://molarium.org/design-history/publications/sos1/designer-intent-2026-09-04/executable.action-script.json}{executable action script} contains 159 executable public actions. It includes preparation, precursor transformations, all receptor candidates, energy evaluations, restoration steps, and the BAY-293 continuation. The run verifier checks ligand-coordinate equality across receptor trials and ranks candidates using the recorded clash counts and energies. Rejected candidates remain in the audit. The script thus records both the selected sequence and the alternatives evaluated to select it.
+
+\subsubsection{Candidate evaluation and results}
+
+The Phe890 search enumerated 13 states, including the unchanged input conformation. Each received a fixed-coordinate, full-system OpenMM single-point evaluation with OBC2 implicit solvent, a 1.0 nm nonbonded cutoff, and no constraints. The selection rule was the minimum finite energy among candidates with zero severe clashes. The selected library angles were $(\chi_1,\chi_2)=(-180^{\circ},90^{\circ})$. The ligand coordinates were unchanged across the trials. Discrete enumeration, rather than local minimization, supplies the alternative side-chain basins.
+
+The selected AWW state has an OX3--Tyr884 O distance of 2.829~\AA{} and a donor--hydrogen--acceptor angle of 155.288$^{\circ}$, with no severe ligand-internal or ligand--protein clashes. Relative to 5OVH, the primary arm torsion differs by 0.341$^{\circ}$; Phe890 $\chi_1$ and symmetry-aware $\chi_2$ differ by 4.236$^{\circ}$ and 13.672$^{\circ}$, respectively.
+
+For BAY-293, the AWW ligand lock is released before the AXH graph edit. The registered transfer rule retains a seven-atom distal spatial feature. Eight serial v5 pose-search chains precede application of the selected feasible pose and coupled induced-fit relaxation. Acceptance checks cover fixed-atom displacement, ligand valence, and the registered feature. The final 32-heavy-atom ligand has no severe internal or protein clashes. The distal feature moves by 1.529~\AA{} RMSD and 1.289~\AA{} in centroid position relative to AWW, within its registered 2.25~\AA{} tolerance. Phe890 side-chain RMSD to 5OVI is 0.928~\AA{}.
+
+The resulting states were saved before numerical comparison with the later crystal structures. Ligand RMSDs use pocket C$\alpha$ receptor alignment and graph-symmetry minimization, without an independent ligand fit (Table~\ref{tab:appA_sos1_eval}). These are structural measurements of a reference-informed procedure, not evidence of blinded pose prediction or affinity improvement.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Structural comparison of the saved SOS1 design states. Ligand RMSD is receptor-aligned and graph-symmetry-minimized.}
+\label{tab:appA_sos1_eval}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Checkpoint} & \textbf{Crystal comparison} & \textbf{Ligand RMSD (\AA{})}\\
+\midrule
+AWW ligand hypothesis and Phe890 response & 5OVH & 0.851\\
+BAY-293 continuation & 5OVI & 1.880\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Recomputation and inspection}
+
+The release provides three representations of the same procedure. The recomputable replay executes public actions and generates new coordinates and energies; these may differ from the saved run. Its publication check requires the recorded Phe890 choice to remain the lowest-energy clash-free candidate under the fresh calculations. The precomputed replay imports seven exact checkpoint campaigns without recalculation. The MP4 records navigation through those checkpoints, with five one-second popups showing the recorded calculation-status text. Its 62.75 s duration is presentation time, not calculation time. The \href{https://molarium.org/design-history/publications/sos1/designer-intent-2026-09-04/release.json}{release record} identifies the action script and checkpoint files; the \href{https://molarium.org/design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/movie.json}{movie manifest} identifies the rendered sequence.
+
+This representation makes a molecular-design procedure explicit at three levels: the supplied chemical hypothesis, the operations and selection rules used to evaluate it, and the resulting molecular states. Changing a contact, allowed motion, or selection rule defines a different procedure whose results must be recomputed. The saved coordinates document the outcome; the API program documents how that outcome was obtained.

@@ -1,0 +1,17 @@
+{
+  "schema": "molarium.approved-manuscript-evidence-arrow/v1",
+  "baseRevision": "paper/revisions/2026-09-07-chemical-difference-a23",
+  "baseSourceSha256": "a8a2c9bf2c2344761d013a7f9a252671dfdbae24eba565c3e2c95136978af932",
+  "outputSha256": "a8a2c9bf2c2344761d013a7f9a252671dfdbae24eba565c3e2c95136978af932",
+  "changes": [],
+  "allTextUnchanged": true,
+  "allOtherFiguresUnchanged": true,
+  "figureChange": {
+    "path": "figures/fig4_evidence_ladder_fixed.png",
+    "source": "/Users/bb/.codex/generated_images/01a06f7b-4a28-7483-a62c-d8e8cfb2db29/exec-57151065-c079-49b2-86b1-6dfc3cd2bb87.png",
+    "method": "AI raster edit via image_gen; arrow-label overlap correction; parent visually inspected",
+    "preservationScope": "Wording and box layout visually retained; image resampled, so pixels elsewhere are not claimed identical",
+    "beforeSha256": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3",
+    "afterSha256": "559f75c2751974472284eff70b656fdbc62e1406c59eec84c0241aea55ede5ad"
+  }
+}

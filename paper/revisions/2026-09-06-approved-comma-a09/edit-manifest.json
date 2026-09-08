@@ -1,0 +1,13 @@
+{
+  "schema": "molarium.approved-manuscript-edits/v1",
+  "baseRevision": "paper/revisions/2026-09-06-approved-hyphen-a08",
+  "baseSourceSha256": "d88ad72cb39bb70453b051e0687377e0c67ba7514faa4a5e9f96abd082afcf8a",
+  "outputSha256": "23b716caeb899bebf76f117984390c7e691295766b1942fe6dc59daf54a41e02",
+  "changes": [
+    {
+      "before": "and editing semantics and a questionable energy",
+      "after": "and editing semantics, and a questionable energy"
+    }
+  ],
+  "allOtherTextAndFiguresUnchanged": true
+}

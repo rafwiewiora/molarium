@@ -1,0 +1,17 @@
+{
+  "schema": "molarium.approved-manuscript-edits/v1",
+  "baseRevision": "paper/revisions/2026-09-06-acknowledgments-a10",
+  "baseSourceSha256": "175fb214ddfa723c295c527ad546c4900dc5c421d505e06e1d887cc2f75ee54f",
+  "outputSha256": "1dead6f34f79a035a8cb9a372c27f85383268bbbd23f9b8443c44d69cfa9a6d2",
+  "changes": [
+    {
+      "before": "Language-model assistance was also used in restructuring and drafting this manuscript.",
+      "after": "Language-model assistance was also used in restructuring and drafting this manuscript. Appendices A and B were drafted primarily by GPT-5.6 Sol and subsequently revised with AI assistance under human direction, with limited direct human editing."
+    },
+    {
+      "before": "Fixed-input parity was evaluated in two stages. The same C interface compiled natively and for WebAssembly agreed to a maximum energy difference of $2.84 \\times 10^{-14}$ kcal/mol and relative force RMS of $3.76 \\times 10^{-15}$. Five hash-selected protein--ligand poses were then prepared through browser Sage and evaluated with matched numerical inputs. Maximum energy differences were $1.24 \\times 10^{-4}$ kcal/mol in vacuum and $2.76 \\times 10^{-4}$ kcal/mol with OBC2; maximum relative force RMS error was $1.16 \\times 10^{-5}$ in both modes. These tests establish implementation parity for the specified fixtures and protocols.",
+      "after": "Fixed-input parity was evaluated in two stages using five poses derived from the 7KPA/D84 complex: two pyrazole poses, two tetrahydropyran poses, and one spiro-ketone negative control. These represent three analogue chemistries from one protein target, not five independent systems. The same C interface linked to native OpenMM Reference and compiled for WebAssembly agreed in vacuum, without constraints or a nonbonded cutoff, to a maximum energy difference of $2.84 \\times 10^{-14}$ kcal/mol and relative force RMS of $3.76 \\times 10^{-15}$. The same five poses were evaluated using browser Sage WebGPU and OpenMM WebAssembly with matched numerical inputs. Maximum energy differences were $1.24 \\times 10^{-4}$ kcal/mol in vacuum and $2.76 \\times 10^{-4}$ kcal/mol with OBC2; maximum relative force RMS error was $1.16 \\times 10^{-5}$ in both modes. These tests establish implementation parity for the specified fixtures and protocols."
+    }
+  ],
+  "allOtherTextAndFiguresUnchanged": true
+}

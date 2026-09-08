@@ -1,0 +1,98 @@
+[
+  {
+    "id": "B01-loading",
+    "before": "Start with \\code{?blank} when a reproducible workflow should begin from an empty canvas. Otherwise the application loads its bundled launch molecule. A structure can be pasted as XYZ or PDB text, uploaded as XYZ or PDB, entered as a SMILES string or PDB identifier in connected mode, or selected from the prepared examples. The current upload router should not be relied on for ordinary MOL-file ingestion, even though a V2000 parser exists elsewhere in the application.",
+    "after": "Start with \\code{?blank} when a reproducible workflow should begin from an empty canvas. Otherwise the application loads its bundled launch molecule. Paste and Upload accept PDB, XYZ, and supported V2000 MOL text; SMILES can be entered and embedded locally. PDB-identifier retrieval requires connected mode. Prepared examples provide another starting route.",
+    "evidence": "6d2f620 app.js:9743–9800,17099–17162; parseMolBlock:1406"
+  },
+  {
+    "id": "B03-protonation-target",
+    "before": "\\item Load the ligand from a SMILES string or select the ligand component whose identity you intend to change.",
+    "after": "\\item Load the ligand as a standalone SMILES-derived molecule. The visible protonation workflow is not an in-place editor for a selected ligand inside a protein complex.",
+    "evidence": "6d2f620 app.js:13981–14020"
+  },
+  {
+    "id": "B03-protonation-apply",
+    "before": "\\item Apply one state deliberately. Molarium re-embeds the chosen species, replaces the graph and coordinates, and invalidates state that depended on the former topology.",
+    "after": "\\item Apply one state deliberately. Molarium re-embeds the chosen species, replaces the entire current molecule's graph and coordinates, and invalidates state that depended on the former topology.",
+    "evidence": "6d2f620 app.js:14069–14084"
+  },
+  {
+    "id": "B04-staged-human",
+    "before": "\\item Enter \\textbf{Design} and select the relevant atom or bond in either view. Confirm the stable atom identity and local environment before changing it.",
+    "after": "\\item Enter \\textbf{Design} and select the relevant atom or bond in either view. Confirm the stable atom identity and local environment before changing it. Leave \\textbf{Finish and refine after every edit} off when grouping changes into the staged transaction described here.",
+    "evidence": "6d2f620 index.html:434; app.js:7264–7266,7281–7292"
+  },
+  {
+    "id": "B04-staged-api",
+    "before": "await api.execute({action:\"build.setTool\", args:{tool:\"select\"}})",
+    "after": "await api.execute({action:\"build.setTool\", args:{tool:\"select\"}})\nawait api.execute({action:\"chemistry.setEditPolicy\", args:{mode:\"staged\"}})",
+    "evidence": "6d2f620 chemist-actions.mjs:89–91"
+  },
+  {
+    "id": "B04-finish-label",
+    "before": "\\item Choose \\textbf{Finish chemistry}. RDKit sanitizes the graph, hydrogens are reconciled, eligible local coordinates are polished, reference contacts are remapped where applicable, obsolete parameterization is invalidated, and a single undo snapshot is created.",
+    "after": "\\item Choose \\textbf{Finish changes}. RDKit sanitizes the graph, hydrogens are reconciled, eligible local coordinates are polished, reference contacts are remapped where applicable, obsolete parameterization is invalidated, and a single undo snapshot is created.",
+    "evidence": "6d2f620 index.html:428,622"
+  },
+  {
+    "id": "B06-openmm-api",
+    "before": "Reference calculation inside another workflow & OpenMM 8.2 Reference & Double-precision internal parameterization, scoring, relaxation, and validation path. & Internal subsystem, not a selectable general Simulate method.\\\\",
+    "after": "Reference calculation inside another workflow & OpenMM 8.2 Reference & Double-precision internal parameterization, scoring, relaxation, and validation path. & Available through the public calculation API, but not listed in the Simulate method menu.\\\\",
+    "evidence": "6d2f620 index.html:461–466; chemist-actions.mjs:232–235; app.js:16110–16159"
+  },
+  {
+    "id": "B06-ui-api-boundary",
+    "before": "General Simulate jobs use \\code{calculation.run}; the action accepts only the installed engine/job combinations and the same bounded options as the interface. Selecting a returned frame is explicit because it writes those coordinates into the current molecule:",
+    "after": "General Simulate jobs use \\code{calculation.run}; the action accepts installed engine/job combinations and worker-validated numerical options. OpenMM is additionally available through this API, although it is absent from the Simulate method menu. Selecting a returned frame is explicit because it writes those coordinates into the current molecule:",
+    "evidence": "6d2f620 app.js:11403–11433,16125–16159"
+  },
+  {
+    "id": "B07-effort",
+    "before": "  options:{conformerCount:32, conformerEffort:\"standard\",",
+    "after": "  options:{conformerCount:32, conformerEffort:\"balanced\",",
+    "evidence": "6d2f620 index.html:520–524; openff/conformer-protocol.js:6–12"
+  },
+  {
+    "id": "B08-cancel-human",
+    "before": "\\item Run and monitor MSA and inference progress. The current browser model executes three recycle passes; this count is not user-configurable. Cancel aborts the active MSA/prediction controller.",
+    "after": "\\item Run and monitor MSA and inference progress. The current browser model executes three recycle passes; this count is not user-configurable. Cancellation is not reliable in the inspected release: the Cancel action queues behind the prediction rather than interrupting it.",
+    "evidence": "6d2f620 app.js:10197–10215,13389–13429,16912–16916,16955–16957; chemist-actions.mjs:481–484; actual pinned queue probe confirms ordering"
+  },
+  {
+    "id": "B08-cancel-api",
+    "before": "The workflow is exposed as \\code{protein.predict}; \\code{protein.cancelPrediction} aborts the active request. The MSA endpoint remains an explicit network boundary rather than a hidden service call:",
+    "after": "The workflow is exposed as \\code{protein.predict}. The installed \\code{protein.cancelPrediction} action shares its serialized queue and cannot interrupt a prediction already occupying that queue. The MSA endpoint remains an explicit network boundary rather than a hidden service call:",
+    "evidence": "6d2f620 app.js:10197–10215,12056–12058; chemist-actions.mjs:481–484"
+  },
+  {
+    "id": "B08-remove-cancel-snippet",
+    "before": "// while active:\nawait api.execute({action:\"protein.cancelPrediction\", args:{}})",
+    "after": "",
+    "evidence": "6d2f620 same queue evidence; the preceding await also settles prediction before the shown cancel call"
+  },
+  {
+    "id": "B09-mode-labels",
+    "before": "\\item Use the default \\textbf{Pose propagation} mode to map surviving reference atoms and seed the edited region. Use \\textbf{Expert selected core} only when you can justify at least three connected, non-collinear heavy atoms as a fixed reference.",
+    "after": "\\item Use the default \\textbf{Constrained pose propagation} mode to map surviving reference atoms and seed the edited region. Use \\textbf{Expert selected-core search} only when you can justify at least three connected, non-collinear heavy atoms as a fixed reference.",
+    "evidence": "6d2f620 index.html:313–315"
+  },
+  {
+    "id": "B10-audit-bound",
+    "before": "Chemist Actions audit & What recognized public action was requested, with what arguments and outcome? & Session memory; serialized calls; cleared with the scene unless exported through a script path.\\\\",
+    "after": "Chemist Actions audit & What recognized public action was requested, with what arguments and outcome? & Session memory; the API history and scene replay buffer each retain at most 500 entries. The scene buffer resets on scene replacement or Clear; export before entries are lost.\\\\",
+    "evidence": "6d2f620 chemist-actions.mjs:419–420,454–457,486; app.js:3396,9305–9316,17798"
+  },
+  {
+    "id": "B10-commit-coverage",
+    "before": "Design History is a live browser feature. \\code{campaign.create} creates a locally persisted campaign and atomically commits the visible molecule. \\code{campaign.commitCurrent} stores a complete graph-and-coordinate snapshot together with completed public actions since the prior commit. Branch switching restores the exact head molecule and refuses to proceed when the visible molecular state is dirty. Merge records the currently visible result with two parents; it is not an automatic structural merge. Decisions attach disposition, rationale, reason codes, and optional evidence to a commit. Verification recomputes content hashes, the append-only event chain, commit relationships, and branch heads derived from that chain.",
+    "after": "Design History is a live browser feature. \\code{campaign.create} creates a locally persisted campaign and atomically commits the visible molecule. \\code{campaign.commitCurrent} stores a complete graph-and-coordinate snapshot together with the retained completed public actions since the prior commit. The action script is explicitly partial; audit truncation is recorded when detected, while the complete molecular snapshot remains authoritative. Branch switching restores the exact head molecule and refuses to proceed when the visible molecular state is dirty. Merge records the currently visible result with two parents; it is not an automatic structural merge. Decisions attach disposition, rationale, reason codes, and optional evidence to a commit. Verification recomputes content hashes, the append-only event chain, commit relationships, and branch heads derived from that chain.",
+    "evidence": "6d2f620 design-history/live-campaign.mjs:192–233"
+  },
+  {
+    "id": "B10-coordinate-payloads",
+    "before": "Action script JSON & Public actions and bindings & Arbitrary code, direct coordinates, or complete view state\\\\",
+    "after": "Action script JSON & Public actions, bindings, and supported loader inputs & Arbitrary code, unguarded state injection, or a complete workbench snapshot\\\\",
+    "evidence": "6d2f620 chemist-actions.mjs:6–9,97–100; app.js:9743–9774; supported PDB/XYZ/MOL loaders contain coordinates"
+  }
+]

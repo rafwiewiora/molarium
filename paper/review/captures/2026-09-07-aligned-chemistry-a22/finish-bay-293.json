@@ -1,0 +1,36 @@
+{
+  "caption": "BAY-293: move thiophene attachment; alcohol to N-methylamine; restore the aromatic core.",
+  "depiction": {
+    "alignedAtoms": "8",
+    "alignmentBackend": "RDKit shared-scaffold 2D coordinates",
+    "canonicalSmiles": "CNCc1ccccc1-c1csc([C@@H](C)Nc2nc(C)nc3cc(OC)c(OC)cc23)c1",
+    "mode": "build",
+    "rdkitVersion": "2025.03.4",
+    "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization"
+  },
+  "docked": true,
+  "expanded": true,
+  "highlightedAtomIds": [
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX5:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::NX1:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX6:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX7:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX8:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX9:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX10:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX11:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX12:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX13:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX14:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::OX1:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX15:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX16:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::OX2:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX17:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX18:"
+  ],
+  "networkPolicy": "Local Lab · network locked",
+  "replayStatus": "completed",
+  "reviewIndex": 19,
+  "svgSha256": "6a70555a79e61e81b1f0528522fb3de31f602ca7d440de601b9d378967e107fa"
+}

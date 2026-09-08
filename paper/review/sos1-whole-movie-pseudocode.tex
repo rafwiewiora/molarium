@@ -1,0 +1,73 @@
+\subsubsection{Pseudocode for the complete movie}
+
+Listing~\ref{lst:sos1api} condenses the complete design sequence from the API JSON into pseudocode. Operation names follow the public API, while chemical selectors and arguments are abbreviated and repeated trials become loops. The checkpoint annotations identify the seven saved states shown in the movie; they are not additional API calls. Repeated inspections, workspace changes, and session-resumption calls are omitted. The listing is a reading guide, not a separately executable script.
+
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language={},basicstyle=\ttfamily\footnotesize,caption={The whole SOS1 movie as pseudocode condensed from the public API action script. Angles are in degrees; distances are in angstroms unless stated otherwise.},label={lst:sos1api}]
+designRoute.load("sos1-hit-only")                 # 5OVE / AXE
+protein.prepare(pH=7.4, histidine=auto, ligand=CCD,
+                repairMissingHeavy=true, gaps=cap, waters=retain)
+pose.captureReference(mode=propagate)            # checkpoint 1: hit
+for step in [scaffold-rewrite, fragment-merge]:   # AWT, then AWZ
+    designRoute.applyStep(step)
+    pose.refine(searchChains=8, execution=serial, featureSeeding=v5)
+    require complete coverage and feasible pose with retained core
+    pose.apply(index=0)
+    protein.parameterize()                      # no coordinate motion
+    optimization.run(method=induced-fit-webgpu)
+    require accepted relaxation, valence, and registered pose retention
+    # checkpoints 2 and 3: relaxed AWT and AWZ
+    pose.captureReference(mode=propagate)
+protein.parameterize()
+designRoute.applyStep(open-phe890-pocket)         # checkpoint 4: AWW graph
+protein.parameterize(); pose.captureReference(mode=propagate)
+pose.addContact(N7 donor -> Asn879.OD1)
+pose.addContact(OX3 donor -> Tyr884.backboneO)
+geometry.alignBranchToContact(target=Tyr884 contact, solution=best-directional,
+    primary=C12--C15:+150, upstream=N7--C12:0..60,
+    coupled=[CX4--CX5, CX15--CX16], donorHydrogen=search,
+    allowedResponseAtoms=Phe890.[CG,CD1,CD2,CE1,CE2,CZ])
+require no external coordinate targets, no internal severe clashes,
+        and no overlaps outside the allowed Phe890 response atoms
+pose.setDesignerLigandPoseFixed(true)            # checkpoint 5: ligand intent
+protein.parameterize(); pose.setDesignerLigandPoseFixed(true)
+for candidate in pose.enumerateSidechainRotamers(Phe890, maximum=64):
+    pose.applySidechainRotamer(candidate)         # 13 states, including input
+    inspect and retain ligand/pocket coordinates and severe-clash count
+    calculation.run(job=energy, method=openmm,
+                    solvent=OBC2, cutoff=1.0 nm, constraints=none)
+    retain energy; require ligand coordinates unchanged
+    history.undo(); verify restored ligand       # re-enumerate before next trial
+# Source-run rule: lowest finite energy among zero-severe-clash states.
+# The replay reapplies the recorded choice; publication verification
+# requires it still to satisfy that rule under the fresh calculations.
+pose.applySidechainRotamer(chi=[-180,90])          # checkpoint 6: Phe890 response
+protein.parameterize(); pose.setDesignerLigandPoseFixed(false)
+pose.captureReference(mode=propagate)
+designRoute.applyStep(finish-bay-293)              # AXH graph; retain distal
+                                                 # seven-atom feature, RMSD <=2.25
+pose.refine(searchChains=8, execution=serial, featureSeeding=v5)
+require complete coverage, feasible pose, retained core and required feature
+pose.apply(index=0); protein.parameterize()
+optimization.run(method=induced-fit-webgpu)
+require accepted relaxation, fixed-atom, valence, and feature-retention checks
+# checkpoint 7: BAY-293; inspect and save the resulting ligand and pocket
+\end{lstlisting}
+\end{minipage}
+
+The complete \href{https://molarium.org/design-history/publications/sos1/designer-intent-2026-09-04/executable.action-script.json}{executable action script} contains 159 executable public actions, with the full selectors, arguments, and result expectations. Its runner stops on a failed action or expectation. Candidate coordinates, energies, and rejected alternatives remain in the audit. The accompanying human account explains the choices and outcomes at each checkpoint, following the paired human/agent approach used in Appendix~\ref{app:manual}.
+
+\subsubsection{Human account: decisions and outcomes}
+
+At checkpoint 1, the prepared 5OVE/AXE hit defines the coordinate starting point. The later analogue graphs and the crystal-informed design hypothesis are supplied information, not discoveries made by the program. Retaining the source waters and choosing a preparation and charge-assignment protocol are modeling assumptions carried through the sequence.
+
+Checkpoints 2 and 3 ask whether the scaffold rewrite to AWT and fragment merge to AWZ can be accommodated while retaining the mapped core. Each edit first transfers the preceding pose, then searches eight pose-propagation chains. The selected feasible pose undergoes coupled ligand--pocket relaxation. Both steps passed the recorded coverage, core-retention, valence, and relaxation checks. This establishes usable starting states for the next edit, not the experimental accuracy of either intermediate. Constrained propagation preserves declared pose features during search; induced-fit relaxation subsequently adjusts permitted ligand and pocket coordinates locally. The latter is not a search over discrete receptor rotamers.
+
+Checkpoint 4 separates molecular identity from placement: installing the AWW graph does not itself specify the intended arm direction. At checkpoint 5, the designer supplies that direction and declares the Asn879 and Tyr884 contacts. The bounded search places the arm against the Tyr884 backbone carbonyl; declaring the Asn879 contact alone does not establish that it is satisfied. The selected pose meets the Tyr884 geometry requirement, with a donor--acceptor distance of 2.829~\AA{} and an angle of 155.288$^{\circ}$. It has no severe ligand-internal clashes or overlaps outside the permitted Phe890 ring atoms, but it still overlaps that ring. This checkpoint therefore records a ligand hypothesis that requires a receptor response, not an accepted final complex. No Tyr884 side-chain flip is involved.
+
+Checkpoint 6 asks whether Phe890 can accommodate that exact ligand pose. Locking the ligand prevents the calculation from resolving the problem by moving the proposed ligand instead. Of 13 enumerated receptor states, including the unchanged input, two have zero severe clashes; the unchanged input has 11. All 13 receive fixed-coordinate, full-system OpenMM energy evaluations with OBC2, a 1.0 nm cutoff, and no constraints. The lower-energy clash-free state has library angles $(\chi_1,\chi_2)=(-180^{\circ},90^{\circ})$. Thus discrete sampling resolves the steric conflict within the supplied candidate set while preserving the ligand and its Tyr884 contact. It does not establish the unique receptor conformation or a dynamical flipping pathway. Relative to 5OVH, the arm torsion differs by 0.341$^{\circ}$ and Phe890 $\chi_1$ and symmetry-aware $\chi_2$ by 4.236$^{\circ}$ and 13.672$^{\circ}$.
+
+Checkpoint 7 tests a different instruction: change the attachment to the BAY-293 graph while retaining a seven-atom distal spatial feature. The AWW coordinate lock is released; retaining a feature allows bounded movement rather than requiring identical coordinates. Of eight pose-search candidates, three are feasible: four others violate feature retention and one fails the physical-feasibility check. The selected feasible pose then undergoes induced-fit relaxation and passes the fixed-atom, valence, and feature-retention checks. The final 32-heavy-atom ligand has no severe internal or protein clashes. Its distal feature moves by 1.529~\AA{} RMSD and 1.289~\AA{} in centroid position, within the registered 2.25~\AA{} RMSD tolerance. This is approximate spatial retention, not exact reproduction; Phe890 side-chain RMSD to 5OVI is 0.928~\AA{}.
+
+The states were saved before numerical comparison with the later crystals. The final ligand comparisons in Table~\ref{tab:appA_sos1_eval} use pocket C$\alpha$ alignment and graph-symmetry minimization, without independently fitting the ligand. BAY-293 shows a larger deviation than AWW. These measurements describe the outcome of the stated, reference-informed design procedure; they do not demonstrate blinded pose prediction or affinity improvement.
+

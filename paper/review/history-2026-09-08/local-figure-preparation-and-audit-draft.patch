@@ -1,0 +1,547 @@
+diff --git a/CHEMIST-ACTIONS-API.md b/CHEMIST-ACTIONS-API.md
+index 17e63c8..491548c 100644
+--- a/CHEMIST-ACTIONS-API.md
++++ b/CHEMIST-ACTIONS-API.md
+@@ -237,6 +237,24 @@ use ordinary replay captures to pass one action's `changedAtomIds` result into t
+ request; they do not smuggle coordinates or private viewer state through the script. An empty list is valid when an
+ optimization was restored by a safeguard or no heavy atom exceeded the 0.08 Å display threshold.
+ 
++The same persistent-ID highlights now appear as orange halos in the active ligand's 2D drawing,
++with a count legend. Only depicted heavy atoms are marked; this display does not infer a reaction
++or a unique atom mapping. **Enlarge 2D** docks the drawing in the right sidebar without moving
++the 3D camera; **Compact 2D** restores the floating panel. The chosen drawing size persists during
++checkpoint review. The `sos1-chemical-edits` registered story reproduces the paper's highlighted
++chemical sequence using only frozen checkpoint imports and display actions. See the
++[Figure 2 review and reproduction notes](paper/review/INTERFACE-CHEMISTRY-REVIEW-2026-09-07.md).
++
++`view.setDepictionAlignment({referenceSmarts, enabled:true})` uses the current strict
++2D drawing as a reference and constrains subsequent drawings to the requested shared
++SMARTS substructure (at least three atoms). This changes only 2D layout, not molecular
++bonds, stereochemistry, 3D coordinates, or camera settings. The human equivalent is
++**Scaffold alignment → Align** in the 2D panel. **Clear alignment**, or the same API
++action with `{enabled:false}`, removes the reference; clear it before loading an
++unrelated scaffold. A nonmatching structure reports an alignment error rather than
++silently claiming alignment. The `sos1-chemical-edits-aligned` display-only story
++uses eight shared scaffold atoms for the aligned Figure 2 revision.
++
+ `view.setDisplay` also exposes the human-visible story palettes: `design-hit`,
+ `design-prediction`, and `design-validation` render ligand carbons in saturated teal, purple, and
+ orange respectively, while reducing ordinary pocket carbon and receptor-cartoon contrast. The
+diff --git a/app.js b/app.js
+index 9e16c11..a8d9373 100644
+--- a/app.js
++++ b/app.js
+@@ -827,6 +827,7 @@ const state = {
+   depictionPinnedLigand: null,
+   depictionOrientationAnchor: null,
+   depictionTemplateMolBlock: null,
++  depictionAlignment: null,
+   depictionKey: null,
+   depictionTool: 'select',
+   depictionBondStart: null,
+@@ -846,6 +847,20 @@ const sceneCtx = sceneCanvas.getContext('2d');
+ 
+ const MAX_DEPICTION_ATOMS = 256;
+ 
++function depictionInputWithHydrogens(molecule, heavyIndices) {
++  const included = new Set(heavyIndices);
++  for (const bond of molecule.bonds) {
++    if (included.has(bond.a) && molecule.atoms[bond.b]?.element === 'H') included.add(bond.b);
++    if (included.has(bond.b) && molecule.atoms[bond.a]?.element === 'H') included.add(bond.a);
++  }
++  // Keep the displayed heavy-atom order, appending H only for sanitization.
++  const indices = [...included];
++  const remap = new Map(indices.map((index, local) => [index, local]));
++  return { name:molecule.name, atoms:indices.map(index => ({ ...molecule.atoms[index] })),
++    bonds:molecule.bonds.filter(bond => included.has(bond.a) && included.has(bond.b))
++      .map(bond => ({ ...bond, a:remap.get(bond.a), b:remap.get(bond.b) })) };
++}
++
+ function depictionTarget(molecule = state.molecule) {
+   if (!molecule?.atoms?.length) return null;
+   const eligible = (component) => {
+@@ -878,7 +893,8 @@ function depictionTarget(molecule = state.molecule) {
+   const mapped = mappedMoleculeSubset(molecule, globalAtomIndices, component.label || '2D structure');
+   if (!mapped) return null;
+   const graph = validateConnectedMolecularGraph(mapped.molecule, { maximumAtoms:MAX_DEPICTION_ATOMS });
+-  return { ...mapped, graph, label:component.label || molecule.name || 'Structure', componentId:component.id };
++  return { ...mapped, graph, workerMolecule:depictionInputWithHydrogens(molecule, mapped.globalAtomIndices),
++    label:component.label || molecule.name || 'Structure', componentId:component.id };
+ }
+ 
+ function depictionSignature(target) {
+@@ -888,6 +904,9 @@ function depictionSignature(target) {
+     component:target.componentId,
+     atoms:molecule.atoms.map((atom) => [atom.element, atomFormalCharge(atom)]),
+     bonds:molecule.bonds.map((bond) => [bond.a, bond.b, Number(bond.order || 1)]),
++    explicitHydrogenBonds:target.workerMolecule?.bonds.filter(bond =>
++      target.workerMolecule.atoms[bond.a].element === 'H' || target.workerMolecule.atoms[bond.b].element === 'H')
++      .map(bond => [bond.a,bond.b]),
+   });
+ }
+ 
+@@ -910,6 +929,48 @@ function update2DSelectionOverlay() {
+   });
+ }
+ 
++function update2DHighlightOverlay() {
++  const svg = document.querySelector('#structure-2d-drawing svg');
++  const legend = document.querySelector('#structure-2d-highlight-legend');
++  if (legend) legend.classList.add('hidden');
++  if (!svg) return;
++  svg.querySelectorAll('[data-molarium-highlight]').forEach((node) => node.remove());
++  const emphasized = new Set(state.emphasizedAtomIds);
++  const points = new Map();
++  state.depictionGlobalAtomIndices.forEach((globalIndex, localIndex) => {
++    const atom = state.molecule?.atoms?.[globalIndex];
++    if (!atom || atom.element === 'H' || !emphasized.has(atom.designAtomId)) return;
++    const point = depictionAtomPoint(svg, localIndex);
++    if (point) points.set(globalIndex, { ...point, atomId:atom.designAtomId });
++  });
++  const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
++  group.setAttribute('data-molarium-highlight', 'true');
++  group.setAttribute('pointer-events', 'none');
++  // Coordinates are in the root SVG frame, including any retained-view alignment.
++  // Translucent halos leave RDKit's bond orders and stereochemistry visible.
++  state.depictionGlobalBondPairs.forEach(([a, b]) => {
++    const start = points.get(a), end = points.get(b);
++    if (!start || !end) return;
++    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
++    for (const [key, value] of Object.entries({ x1:start.x, y1:start.y,
++      x2:end.x, y2:end.y, stroke:'#f3a321', 'stroke-width':11,
++      'stroke-opacity':.27, 'stroke-linecap':'round' })) line.setAttribute(key, String(value));
++    group.appendChild(line);
++  });
++  for (const point of points.values()) {
++    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
++    for (const [key, value] of Object.entries({ cx:point.x, cy:point.y, r:7,
++      fill:'#f3a321', 'fill-opacity':.3, 'data-highlight-atom-id':point.atomId }))
++      circle.setAttribute(key, String(value));
++    group.appendChild(circle);
++  }
++  svg.appendChild(group);
++  if (legend && points.size) {
++    legend.textContent = `Orange: highlighted region (${points.size} atoms)`;
++    legend.classList.remove('hidden');
++  }
++}
++
+ function update2DEditorUi() {
+   const panel = document.querySelector('#structure-2d-panel');
+   if (!panel) return;
+@@ -1102,7 +1163,9 @@ async function update2DDepiction() {
+     return;
+   }
+   const key = depictionSignature(target);
+-  if (key === state.depictionKey && drawing.querySelector('svg')) return;
++  if (key === state.depictionKey && drawing.querySelector('svg')) {
++    update2DHighlightOverlay(); update2DSelectionOverlay(); return;
++  }
+   state.depictionKey = key;
+   panel.classList.remove('hidden');
+   setText('#structure-2d-label', target.label);
+@@ -1114,8 +1177,8 @@ async function update2DDepiction() {
+       || state.molecule?.source?.verifiedCampaignSnapshot?.verificationValid === true
+       || state.molecule?.source?.registeredLigandGraph?.graphSha256
+       || state.molecule?.source?.designRoute?.coordinateInputClass === 'registered-hit-only');
+-    const result = await runRDKitJob('depict', target.molecule, () => {},
+-      { allowUnsanitizedDepictionFallback });
++    const result = await runRDKitJob('depict', target.workerMolecule, () => {},
++      { allowUnsanitizedDepictionFallback, depictionAlignment:state.depictionAlignment });
+     if (sequence !== state.depictionSequence || key !== state.depictionKey) return;
+     const svg = sanitizedDepictionSvg(result.svg);
+     drawing.replaceChildren(svg);
+@@ -1125,14 +1188,20 @@ async function update2DDepiction() {
+     ]);
+     state.depictionAtomObjects = target.globalAtomIndices.map((index) => state.molecule?.atoms?.[index] || null);
+     state.depictionComponentId = target.componentId;
+-    state.depictionTemplateMolBlock = null;
++    state.depictionTemplateMolBlock = result.molBlock || null;
+     // Settle tool/help layout before converting the prior screen positions into
+     // this SVG's coordinate system. Design-mode help can change the panel height.
+     update2DEditorUi();
+-    const alignment = alignDepictionToPrevious(svg, target);
++    const alignment = result.alignment
++      ? { commonAtoms:result.alignment.atoms.length } : alignDepictionToPrevious(svg, target);
++    update2DHighlightOverlay(); update2DSelectionOverlay();
+     panel.dataset.alignedAtoms = String(alignment?.commonAtoms || 0);
+-    panel.dataset.alignmentBackend = alignment
+-      ? 'RDKit 2D layout + viewport alignment' : 'fresh RDKit 2D layout';
++    panel.dataset.alignmentBackend = result.alignment ? 'RDKit shared-scaffold 2D coordinates'
++      : alignment ? 'RDKit 2D layout + viewport alignment' : 'fresh RDKit 2D layout';
++    panel.dataset.canonicalSmiles = result.canonicalSmiles || '';
++    const alignmentLabel = document.querySelector('#structure-2d-alignment-status');
++    alignmentLabel.textContent = result.alignment ? `Scaffold aligned · ${result.alignment.atoms.length} atoms` : '';
++    alignmentLabel.classList.toggle('hidden', !result.alignment);
+     panel.dataset.rdkitVersion = result.rdkitVersion || '';
+     panel.dataset.sanitization = result.sanitization || '';
+     delete panel.dataset.error; delete panel.dataset.pending;
+@@ -1241,6 +1310,9 @@ function depictionAtomPoint(svg, atomIndex) {
+     const atomClasses = [...node.classList].flatMap((name) => {
+       const match = /^atom-(\d+)$/.exec(name); return match ? [Number(match[1])] : [];
+     });
++    // The substring query also finds atom-10 when locating atom-1.
++    // Reject those candidates before using their label or bond geometry.
++    if (!atomClasses.includes(atomIndex)) return;
+     if (node instanceof SVGGeometryElement && atomClasses.length >= 2) {
+       const length = node.getTotalLength();
+       const endpoint = atomClasses.indexOf(atomIndex) === 0
+@@ -2411,6 +2483,7 @@ function focusedAtomEntries(molecule = state.molecule) {
+ }
+ 
+ function updateChangedRegionChip() {
++  update2DHighlightOverlay();
+   const chip = document.querySelector('#changed-region-chip');
+   if (!chip) return;
+   const emphasized = new Set(state.emphasizedAtomIds);
+@@ -8523,7 +8596,7 @@ const DESIGNER_MOVE_CHECKPOINT_STATE_KEYS = Object.freeze([
+   'focusedAtomIds', 'focusedAtomCenter', 'focusedAtomRadius', 'focusedAtomContextRadius',
+   'focusedAtomContextIds', 'focusedAtomResidueLabels', 'emphasizedAtomIds',
+   'depictionPinnedLigand', 'depictionOrientationAnchor',
+-  'depictionTemplateMolBlock', 'depictionTool', 'depictionBondStart',
++  'depictionTemplateMolBlock', 'depictionAlignment', 'depictionTool', 'depictionBondStart',
+   'depictionBondOrder',
+   // Campaign imports are molecular state transitions.  Cache the matching
+   // Design History frontier with each visible review frame so backward/forward
+@@ -8564,8 +8637,13 @@ function restoreDesignerMoveDomCheckpoint(records) {
+   for (const record of records || []) {
+     const element = document.getElementById(record.id);
+     if (!element) continue;
++    // Drawing size/docking is a reader preference, not a molecular checkpoint.
++    if (record.id === 'structure-2d-enlarge') continue;
++    const depictionEnlarged = record.id === 'structure-2d-panel'
++      && element.classList.contains('enlarged');
+     if (record.className == null) element.removeAttribute('class');
+     else element.setAttribute('class', record.className);
++    if (record.id === 'structure-2d-panel') element.classList.toggle('enlarged', depictionEnlarged);
+     if (record.style == null) element.removeAttribute('style');
+     else element.setAttribute('style', record.style);
+     if (record.text != null && element.children.length === 0) element.textContent = record.text;
+@@ -8686,7 +8764,10 @@ function restoreDesignerMoveCheckpoint(index) {
+ function designerMoveCaption(index = state.designerMoveReplayIndex) {
+   const actions = state.designerMoveScript?.actions || [];
+   if (!actions.length) return 'Load a story to begin.';
+-  if (index >= actions.length) return 'Story complete.';
++  if (index >= actions.length) return sos1StoryCaption(state.designerMoveScript, actions.at(-1))
++    || 'Story complete.';
++  if (index > 0 && currentDesignerReplayReviewState().available)
++    return sos1StoryCaption(state.designerMoveScript, actions[index - 1]);
+   const step = actions[Math.max(0, index)];
+   return sos1StoryCaption(state.designerMoveScript, step);
+ }
+@@ -8736,8 +8817,7 @@ function reviewDesignerMoveCheckpoint(direction) {
+   const completed = checkpoint.step;
+   const atFinal = target === state.designerMoveReplayFrontier;
+   const caption = target === 0 ? 'Blank canvas before the first story move'
+-    : atFinal && review.completed ? 'Story complete'
+-      : atFinal && review.failed ? 'Story stopped at this move'
++    : atFinal && review.failed ? 'Story stopped at this move'
+       : sos1StoryCaption(state.designerMoveScript, completed) || 'Completed story state';
+   updateDesignerMoveControls(`${review.failed ? 'Failed replay' : review.completed ? 'Review' : 'Paused'} · cached checkpoint ${target} of ${state.designerMoveReplayFrontier}`,
+     caption, target === 0
+@@ -8874,7 +8954,7 @@ function updateDesignerMoveControls(message = null, captionOverride = null,
+         : `Paused before move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} of ${actionCount}.`
+     : state.designerMoveReplayActionRunning
+       ? `Running move ${Math.min(actionCount, state.designerMoveReplayIndex + 1)} of ${actionCount}…`
+-      : '');
++      : review.completed ? 'Story complete. Use the arrows to review the saved states.' : '');
+   if (message) status.textContent = message;
+   else if (script) status.textContent = `${script.label || 'Imported action script'} · ${script.actions.length} replayable move${script.actions.length === 1 ? '' : 's'} · ${script.schema}`;
+   else status.textContent = completedApiMoves
+@@ -9885,6 +9965,32 @@ function installChemistActionsApi(module) {
+         atomCount:targets.length, contextRadiusAngstrom,
+         highlighted:args.highlight !== false,
+         residueLabels:structuredClone(residueLabels) } }); },
++    'view.setDepictionAlignment':async (args) => {
++      chemistActionKeys(args, ['referenceSmarts','enabled']);
++      if (args.enabled != null && typeof args.enabled !== 'boolean') throw new Error('enabled must be boolean');
++      const enabled = args.enabled !== false;
++      if (enabled && (typeof args.referenceSmarts !== 'string' || !args.referenceSmarts.trim()
++        || args.referenceSmarts.length > 512)) throw new Error('Provide a shared-scaffold SMARTS string (1–512 characters)');
++      await awaitScheduledRegisteredLigandDepiction();
++      const previous = state.depictionAlignment;
++      if (enabled && !state.depictionTemplateMolBlock) throw new Error('A strictly sanitized 2D ligand is required for scaffold alignment');
++      state.depictionAlignment = enabled ? { referenceSmarts:args.referenceSmarts.trim(),
++        referenceMolBlock:state.depictionTemplateMolBlock } : null;
++      state.depictionKey = null;
++      await update2DDepiction();
++      const panel = document.querySelector('#structure-2d-panel');
++      if (panel.dataset.error) {
++        const error = panel.dataset.error;
++        state.depictionAlignment = previous; state.depictionKey = null;
++        await update2DDepiction();
++        throw new Error(error);
++      }
++      document.querySelector('#structure-2d-alignment-smarts').value = enabled ? args.referenceSmarts.trim() : '';
++      return chemistActionSummary({ depictionAlignment:{ enabled,
++        alignedAtoms:Number(panel.dataset.alignedAtoms || 0),
++        referenceSmarts:state.depictionAlignment?.referenceSmarts || null,
++        canonicalSmiles:panel.dataset.canonicalSmiles } });
++    },
+     'view.highlightAtoms':async (args) => { chemistActionKeys(args, ['atomIds','residueLabels']);
+       if (!Array.isArray(args.atomIds) || args.atomIds.length > 64
+         || args.atomIds.some((id) => typeof id !== 'string' || !id))
+@@ -16942,6 +17048,23 @@ document.querySelector('#structure-2d-toggle').addEventListener('click', (event)
+   event.currentTarget.setAttribute('aria-expanded', String(!collapsed));
+   event.currentTarget.querySelector('.chevron').classList.toggle('open', !collapsed);
+ });
++document.querySelector('#structure-2d-enlarge').addEventListener('click', (event) => {
++  const panel = document.querySelector('#structure-2d-panel');
++  const expanded = panel.classList.toggle('enlarged');
++  // The larger drawing belongs beside the pocket, not over its ligand.
++  if (expanded) document.querySelector('.panel-right').prepend(panel);
++  else document.querySelector('#run-overlay').before(panel);
++  event.currentTarget.setAttribute('aria-pressed', String(expanded));
++  event.currentTarget.textContent = expanded ? 'Compact 2D' : 'Enlarge 2D';
++});
++document.querySelector('#structure-2d-align-apply').addEventListener('click', () => {
++  runChemistUiAction('view.setDepictionAlignment', {
++    referenceSmarts:document.querySelector('#structure-2d-alignment-smarts').value,
++  }).catch(() => {});
++});
++document.querySelector('#structure-2d-align-clear').addEventListener('click', () => {
++  runChemistUiAction('view.setDepictionAlignment', { enabled:false }).catch(() => {});
++});
+ document.querySelectorAll('[data-2d-tool]').forEach((button) => button.addEventListener('click', async () => {
+   const tool = button.dataset['2dTool'];
+   if (tool !== 'select' && state.mode !== 'build') {
+@@ -17790,6 +17913,7 @@ function clearScene({ announce = false } = {}) {
+   state.depictionGlobalBondPairs = []; state.depictionAtomObjects = []; state.depictionComponentId = null;
+   state.depictionPinnedLigand = null;
+   state.depictionOrientationAnchor = null; state.depictionTemplateMolBlock = null;
++  state.depictionAlignment = null;
+   state.depictionBondStart = null;
+   const depictionPanel = document.querySelector('#structure-2d-panel');
+   depictionPanel.classList.add('hidden'); delete depictionPanel.dataset.pending;
+@@ -18007,6 +18131,24 @@ async function loadLaunchMolecule() {
+ }
+ 
+ const DESIGNER_STORY_LINKS = Object.freeze({
++  'sos1-chemical-difference':Object.freeze({
++    title:'SOS1 chemical edits · corrected highlight review',
++    script:'./design-history/publications/sos1/interface-chemical-difference-2026-09-07/presentation.action-script.json',
++    sourcePath:'design-history/publications/sos1/interface-chemical-difference-2026-09-07/presentation.action-script.json',
++    sourceSha256:'b18ce422da2dd4462a20da92cc0ea38c4c64c6f02d228b1b17d4549988dae0bd',
++  }),
++  'sos1-chemical-edits-aligned':Object.freeze({
++    title:'SOS1 chemical edits · aligned-scaffold checkpoint review',
++    script:'./design-history/publications/sos1/interface-aligned-chemistry-2026-09-07/presentation.action-script.json',
++    sourcePath:'design-history/publications/sos1/interface-aligned-chemistry-2026-09-07/presentation.action-script.json',
++    sourceSha256:'7017de27f0cf2c93fd8c2ac97853ab134a246532553f42649d9e481852942551',
++  }),
++  'sos1-chemical-edits':Object.freeze({
++    title:'SOS1 chemical edits · paper figure checkpoint review',
++    script:'./design-history/publications/sos1/interface-chemistry-2026-09-07/presentation.action-script.json',
++    sourcePath:'design-history/publications/sos1/interface-chemistry-2026-09-07/presentation.action-script.json',
++    sourceSha256:'c5de376c10ef2833fb62b8d34af2b5af445e3b948f045f37c85d9587a38fe7a7',
++  }),
+   'sos1-hit-to-bay293':Object.freeze({
+     title:'SOS1 reference-informed designer-intent replay',
+     script:'./design-history/publications/sos1/designer-intent-2026-09-04/executable.action-script.json',
+diff --git a/chemist-actions.mjs b/chemist-actions.mjs
+index 0510b61..34924ae 100644
+--- a/chemist-actions.mjs
++++ b/chemist-actions.mjs
+@@ -41,6 +41,10 @@ const ACTIONS = Object.freeze({
+     description:'Visibly emphasize atoms by persistent IDs without changing the camera, representation, or displayed molecular context.',
+     arguments:Object.freeze({ atomIds:'array of 0–64 persistent atom IDs',
+       residueLabels:'optional array of 0–8 { chain, residueIndex, insertionCode, label, tone?: gold | blue | slate } callouts' }) }),
++  'view.setDepictionAlignment': Object.freeze({
++    description:'Align future 2D drawings to a shared scaffold in the current drawing. Changes no molecular graph, stereochemistry, 3D coordinates, or camera. Clear when switching to an unrelated scaffold.',
++    arguments:Object.freeze({ referenceSmarts:'shared-scaffold SMARTS string (required when enabling; 1–512 characters)',
++      enabled:'optional boolean, default true; false clears alignment' }) }),
+   'view.setDisplay': Object.freeze({
+     description:'Set the same representation and visibility options available in Display Options.',
+     arguments:Object.freeze({ representation:'ball-stick | cartoon | both', showHydrogens:'boolean',
+@@ -417,9 +421,11 @@ function snapshot(value) {
+ }
+ 
+ export function createChemistActionsApi({ routes, now = () => new Date().toISOString(),
+-  monotonicNow = () => performance.now(), historyLimit = 500, recordAudit = null,
++  monotonicNow = () => performance.now(), historyLimit = Infinity, recordAudit = null,
+   enabledActions = Object.keys(ACTIONS) } = {}) {
+   if (!routes || typeof routes !== 'object') throw new TypeError('Chemist Actions requires a route adapter');
++  if (historyLimit !== Infinity && (!Number.isSafeInteger(historyLimit) || historyLimit < 1))
++    throw new TypeError('Chemist Actions historyLimit must be a positive safe integer or Infinity');
+   if (recordAudit != null && typeof recordAudit !== 'function')
+     throw new TypeError('Chemist Actions recordAudit must be a function');
+   if (!Array.isArray(enabledActions) || !enabledActions.length)
+@@ -454,7 +460,7 @@ export function createChemistActionsApi({ routes, now = () => new Date().toISOSt
+     const record = { sequence:++sequence, schema:CHEMIST_ACTIONS_SCHEMA, requestId,
+       action, args:snapshot(args), startedAt, status:'running' };
+     audit.push(record);
+-    if (audit.length > Math.max(1, Number(historyLimit) || 500)) audit.splice(0, audit.length - historyLimit);
++    if (audit.length > historyLimit) audit.splice(0, audit.length - historyLimit);
+     try {
+       const result = await routes[action](args);
+       record.status = 'completed'; record.completedAt = now();
+diff --git a/index.html b/index.html
+index 4e4bc6c..eb684d4 100644
+--- a/index.html
++++ b/index.html
+@@ -597,6 +597,7 @@
+                 <svg class="chevron open" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 4 4 4-4 4" /></svg>
+               </button>
+               <div class="structure-2d-body" id="structure-2d-body">
++                <button class="structure-2d-enlarge" id="structure-2d-enlarge" type="button" aria-pressed="false" title="Dock a larger 2D depiction in the right sidebar, beside the pocket. This changes neither the molecule nor the 3D camera.">Enlarge 2D</button>
+                 <div class="structure-2d-tools" role="toolbar" aria-label="2D drawing tools">
+                   <button class="selected" type="button" data-2d-tool="select" title="Select atoms in both views">Select</button>
+                   <button type="button" data-2d-tool="atom" title="Attach an atom">Atom</button>
+@@ -621,6 +622,14 @@
+                   <span>Drawing…</span>
+                 </div>
+                 <p id="structure-2d-help">Select an atom here to select the same atom in 3D.</p>
++                <p class="structure-2d-highlight-legend hidden" id="structure-2d-highlight-legend"></p>
++                <p class="hidden" id="structure-2d-alignment-status"></p>
++                <details class="structure-2d-alignment-controls">
++                  <summary>Scaffold alignment <span title="Keep the shared scaffold in the same 2D orientation. Enter a SMARTS substructure; at least three atoms must match. This does not move any 3D coordinates or change bonds or stereochemistry.">ⓘ</span></summary>
++                  <input id="structure-2d-alignment-smarts" aria-label="Shared scaffold SMARTS" placeholder="Shared scaffold SMARTS" />
++                  <button type="button" id="structure-2d-align-apply">Align</button>
++                  <button type="button" id="structure-2d-align-clear">Clear alignment</button>
++                </details>
+                 <div class="structure-2d-pending hidden" id="structure-2d-pending">
+                   <button class="primary-button" id="structure-2d-finish" type="button">Finish changes</button>
+                   <button class="soft-button" id="structure-2d-discard" type="button">Discard</button>
+diff --git a/rdkit-worker.js b/rdkit-worker.js
+index a11d43d..c69083f 100644
+--- a/rdkit-worker.js
++++ b/rdkit-worker.js
+@@ -137,19 +137,32 @@ async function runCalculation(message) {
+     const heavyAtomCount = molecule?.atoms?.filter((atom) => atom.element !== 'H').length || 0;
+     if (!heavyAtomCount || heavyAtomCount > 256 || molecule.atoms.length > MAX_V2000_ATOMS)
+       throw new Error('2D depiction supports molecular components with 1–256 heavy atoms');
+-    let rdMol;
++    let rdMol, referenceMol;
++    let usedFallback = false;
+     try {
+       rdMol = module.get_mol(moleculeToMolBlock(molecule), JSON.stringify({
+-        sanitize:true, removeHs:true, strictParsing:false,
++        sanitize:true, removeHs:false, strictParsing:false,
+       }));
+       // Some provenance-bounded live graphs omit V2000-only atom-property
+       // flags (for example [nH]) in the viewer representation. Permit a
+       // drawing-only fallback for those graphs; calculations remain strict.
+-      if (!rdMol && options.allowUnsanitizedDepictionFallback === true) rdMol = module.get_mol(
+-        moleculeToMolBlock(molecule), JSON.stringify({
++      if (!rdMol && options.allowUnsanitizedDepictionFallback === true) {
++        usedFallback = true;
++        rdMol = module.get_mol(moleculeToMolBlock(molecule), JSON.stringify({
+           sanitize:false, removeHs:false, strictParsing:false,
+         }));
++      }
+       if (!rdMol) throw new Error('RDKit refused an unsanitizable molecular component');
++      // Preserve explicit aromatic N-H through sanitization, then hide H atoms.
++      // Removing H during parsing loses that information in bundled RDKit 2025.
++      if (!usedFallback) {
++        const stripped = module.get_mol(rdMol.remove_hs(), JSON.stringify({
++          sanitize:true, removeHs:false, strictParsing:true,
++        }));
++        if (!stripped) throw new Error('RDKit could not preserve chemistry while hiding hydrogens');
++        rdMol.delete(); rdMol = stripped;
++      }
++      const canonicalSmiles = usedFallback ? null : rdMol.get_smiles();
+       // The molecular input carries the live 3D conformer. Always replace it
+       // with a genuine 2D layout before drawing. Constraining a redraw to the
+       // previous complete MolBlock can over-constrain a rewritten substituent
+@@ -157,6 +170,21 @@ async function runCalculation(message) {
+       // continuity with a screen-space rotation/scale/translation instead.
+       if (!rdMol.set_new_coords())
+         throw new Error('RDKit could not generate 2D coordinates');
++      let alignment = null;
++      if (options.depictionAlignment) {
++        const spec = options.depictionAlignment;
++        referenceMol = module.get_mol(spec.referenceMolBlock, JSON.stringify({sanitize:true,removeHs:false}));
++        if (!referenceMol) throw new Error('The 2D alignment reference is invalid');
++        const raw = rdMol.generate_aligned_coords(referenceMol, JSON.stringify({
++          referenceSmarts:spec.referenceSmarts, alignOnly:false, acceptFailure:false,
++        }));
++        if (!raw) throw new Error('The requested 2D scaffold does not match this ligand');
++        alignment = JSON.parse(raw);
++        if (!alignment.atoms || alignment.atoms.length < 3)
++          throw new Error('2D alignment requires at least three matching scaffold atoms');
++      }
++      if (canonicalSmiles && canonicalSmiles !== rdMol.get_smiles())
++        throw new Error('2D alignment changed molecular identity or stereochemistry');
+       const selected = Array.from(options.selectedAtomIndices || [], Number)
+         .filter((index) => Number.isInteger(index) && index >= 0 && index < molecule.atoms.length);
+       const selectedSet = new Set(selected);
+@@ -167,20 +195,20 @@ async function runCalculation(message) {
+       const bondColors = Object.fromEntries(selectedBonds.map((index) => [index, color]));
+       const svg = rdMol.get_svg_with_highlights(JSON.stringify({
+         width:260, height:184, atoms:selected, bonds:selectedBonds,
+-        atomColors, bondColors, highlightRadius:0.27,
++        atomColors, bondColors, highlightRadius:0.27, fixedBondLength:14,
+       }));
+       if (typeof svg !== 'string' || !svg.includes('<svg'))
+         throw new Error('RDKit returned an invalid 2D depiction');
+       self.postMessage({
+-        type:'result', id, job, svg, atomCount:molecule.atoms.length,
+-        sanitization:options.allowUnsanitizedDepictionFallback === true
+-          ? 'provenance-bounded graph; strict parse with drawing-only fallback'
+-          : 'strict RDKit sanitization',
++        type:'result', id, job, svg, atomCount:heavyAtomCount,
++        molBlock:usedFallback ? null : rdMol.get_molblock(), canonicalSmiles, alignment,
++        sanitization:usedFallback ? 'provenance-bounded drawing-only fallback'
++          : 'strict RDKit sanitization; hydrogens removed after sanitization',
+         rdkitVersion:module.version?.() || null, elapsedMs:performance.now() - started,
+         platform:'WebAssembly', backend:'RDKit MolDraw2D',
+       });
+       return;
+-    } finally { rdMol?.delete(); }
++    } finally { rdMol?.delete(); referenceMol?.delete(); }
+   }
+   if (job === 'protonation') {
+     const smiles = String(options.smiles || '').trim();
+diff --git a/scripts/build-web.mjs b/scripts/build-web.mjs
+index 128db16..c5426a1 100644
+--- a/scripts/build-web.mjs
++++ b/scripts/build-web.mjs
+@@ -16,6 +16,12 @@ const assetRelease = String(process.env.MOLARIUM_ASSET_RELEASE || `v${packageJso
+ const assetBase = `${assetOrigin}/${assetRelease}/`;
+ 
+ const files = [
++  'design-history/publications/sos1/interface-chemical-difference-2026-09-07/presentation.action-script.json',
++  'design-history/publications/sos1/interface-chemical-difference-2026-09-07/capture-plan.json',
++  'design-history/publications/sos1/interface-aligned-chemistry-2026-09-07/presentation.action-script.json',
++  'design-history/publications/sos1/interface-aligned-chemistry-2026-09-07/capture-plan.json',
++  'design-history/publications/sos1/interface-chemistry-2026-09-07/presentation.action-script.json',
++  'design-history/publications/sos1/interface-chemistry-2026-09-07/capture-plan.json',
+   'design-history/publications/sos1/checkpoints/starting-hit-campaign.json',
+   'design-history/examples/sos1-prediction.action-script.json',
+   'design-history/examples/sos1-prediction-checkpoint-review.action-script.json',
+diff --git a/scripts/native-audit-collector.mjs b/scripts/native-audit-collector.mjs
+index 732299c..0f63207 100644
+--- a/scripts/native-audit-collector.mjs
++++ b/scripts/native-audit-collector.mjs
+@@ -1,8 +1,8 @@
+ import assert from 'node:assert/strict';
+ 
+-// The public API exposes a bounded recent-history window. Collect completed
+-// native records as the replay advances so presentation cues cannot evict the
+-// beginning of a long scientific story from its movie's audit artifact.
++// Collect completed native records as the replay advances. The public API now
++// retains full session history by default; incremental collection also supports
++// explicitly bounded/older adapters and refuses gaps in a movie's audit artifact.
+ export function createNativeAuditCollector() {
+   const records = [];
+   return {
+diff --git a/styles.css b/styles.css
+index 7e0b8a3..f692fa3 100644
+--- a/styles.css
++++ b/styles.css
+@@ -468,6 +468,15 @@ select {
+ .structure-2d-heading small { overflow: hidden; color: var(--quiet); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+ .structure-2d-heading .chevron { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; }
+ .structure-2d-body { padding: 0 8px 7px; border-top: 1px solid rgba(226,232,240,.8); }
++.structure-2d-enlarge { display: block; margin: 6px 0 0 auto; padding: 3px 7px; border: 1px solid var(--line); border-radius: 5px; background: white; color: var(--ink); font: 650 9px/1.2 Inter, sans-serif; }
++.structure-2d-panel.enlarged:not(.collapsed) { width: min(400px, calc(100% - 24px)); }
++.structure-2d-panel.enlarged .structure-2d-drawing { height: 260px; }
++.structure-2d-panel.enlarged .structure-2d-body p { font-size: 10px; }
++.panel-right > .structure-2d-panel.enlarged { position: relative; left: auto; bottom: auto; width: 100%; flex: 0 0 auto; }
++.structure-2d-body .structure-2d-highlight-legend { margin-top: 5px; color: #945a04; }
++.structure-2d-alignment-controls { margin-top: 5px; color: var(--quiet); font-size: 9px; }
++.structure-2d-alignment-controls input { width: 100%; margin: 5px 0; font-size: 10px; }
++.structure-2d-alignment-controls button { font-size: 9px; padding: 3px 6px; }
+ .structure-2d-tools { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; padding: 7px 0 5px; }
+ .structure-2d-tools button { min-width: 0; padding: 5px 2px; border: 1px solid var(--line); border-radius: 6px; background: #fff; color: var(--quiet); font: 700 8px/1 Inter, sans-serif; }
+ .structure-2d-tools button:hover { background: #f2f6fa; color: var(--ink); }

@@ -1,0 +1,205 @@
+{
+  "schema": "molarium.paper-chemistry-figure/v1",
+  "figureSha256": "ad9910b96aedcc2401c66013ccd9b6726213c18a64771e9022501f4b81011724",
+  "builderSha256": "57050527e13e6842c1fc2fbc9378783e14d210869dd7eb7da38ab40b945b4f4a",
+  "rdkitVersion": "2026.03.6",
+  "sourceReleaseSha256": "c26af7f823bb9443289d099e8da9ba0fd58404c15a9bf709fcdba8ef5834520e",
+  "graphDepictions": [
+    {
+      "state": "AXE",
+      "isomericSmiles": "COc1cc2ncnc(N[C@H](C)c3cccc4ccccc34)c2cc1OC",
+      "heavyAtoms": 27,
+      "highlightedAtomIds": [],
+      "highlightMeaning": "outside the registered atom-lineage conserved subgraph relative to the preceding chemical graph"
+    },
+    {
+      "state": "AWT",
+      "isomericSmiles": "COc1cc2nc(C)nc(N[C@H](C)c3cccc(-c4cn[nH]c4)c3)c2cc1OC",
+      "heavyAtoms": 29,
+      "highlightedAtomIds": [
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX1:",
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX2:",
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX3:",
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::NX1:",
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::NX2:",
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX4:"
+      ],
+      "highlightMeaning": "outside the registered atom-lineage conserved subgraph relative to the preceding chemical graph"
+    },
+    {
+      "state": "AWZ",
+      "isomericSmiles": "COc1cc2nc(C)nc(N[C@H](C)c3ccc(-c4cnc5n4CCC5)s3)c2cc1OC",
+      "heavyAtoms": 31,
+      "highlightedAtomIds": [
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX2:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX3:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX4:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX5:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX6:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::NX1:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX7:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::NX2:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX8:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX9:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX10:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::SX1:"
+      ],
+      "highlightMeaning": "outside the registered atom-lineage conserved subgraph relative to the preceding chemical graph"
+    },
+    {
+      "state": "AWW",
+      "isomericSmiles": "COC1=C(OC)Cc2c(nc(C)nc2N[C@H](C)c2ccc(-c3ccccc3CO)s2)C1",
+      "heavyAtoms": 31,
+      "highlightedAtomIds": [
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX6:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX1:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX7:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX8:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX2:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX9:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX10:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX11:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX12:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX13:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX14:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX15:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX16:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX3:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX17:"
+      ],
+      "highlightMeaning": "outside the registered atom-lineage conserved subgraph relative to the preceding chemical graph"
+    },
+    {
+      "state": "AXH",
+      "isomericSmiles": "CNCc1ccccc1-c1csc([C@@H](C)Nc2nc(C)nc3cc(OC)c(OC)cc23)c1",
+      "heavyAtoms": 32,
+      "highlightedAtomIds": [
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX5:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::NX1:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX6:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX7:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX8:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX9:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX10:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX11:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX12:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX13:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX14:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::OX1:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX15:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX16:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::OX2:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX17:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX18:"
+      ],
+      "highlightMeaning": "outside the registered atom-lineage conserved subgraph relative to the preceding chemical graph"
+    }
+  ],
+  "checkpointSources": [
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/starting-hit-campaign.json",
+      "bytes": 2992881,
+      "sha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6",
+      "canonicalSha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6",
+      "id": "starting-hit",
+      "commitId": "commit:481b690c9b92896a18b858d8522ddb7c55be00b3b416922dcc814a7f0cec826b",
+      "snapshotId": "snapshot:463a3efd937fc719719256336bd1cb9b5db19a26df2f8db9d5bdfc4c353dd972"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/scaffold-rewrite-campaign.json",
+      "bytes": 5990361,
+      "sha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+      "canonicalSha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+      "id": "scaffold-rewrite",
+      "commitId": "commit:2c9880158ecce4b2140629dc84a9428e8dfcfa0d42b1aed54caa2bf24ba4b680",
+      "snapshotId": "snapshot:56afdcd914e17c8aa09d5347e7d5b9e95f3b8f3a89b8069fbaee1dc460e1d02a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/fragment-merge-campaign.json",
+      "bytes": 8990688,
+      "sha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81",
+      "canonicalSha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81",
+      "id": "fragment-merge",
+      "commitId": "commit:dc66adfd95d39456389739404fcb11a63188199ac603ecbeb45f0c40199dc95a",
+      "snapshotId": "snapshot:d895de9868c4a37951748701a3d21e835454d314361933197ef65a5530f61c98"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-graph-campaign.json",
+      "bytes": 11992522,
+      "sha256": "c0672efabc8da255de45a6d8b41f3f1a2bb0652ac2e683a70a9ed33b8692b3b1",
+      "canonicalSha256": "c0672efabc8da255de45a6d8b41f3f1a2bb0652ac2e683a70a9ed33b8692b3b1",
+      "id": "aww-graph",
+      "commitId": "commit:8b51a53bd69a948e1ff6573a46f6c419e2305628bdbcd70b4978b4adef568d2e",
+      "snapshotId": "snapshot:0adf84081e034501a5ef67f81a7996bff1d213c29bf11bdd8419df43778fe41b"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-designer-intent-campaign.json",
+      "bytes": 14997311,
+      "sha256": "a1f0424ce1be8dde42180dbe76c5beae8565b56a8739a222b8fc9b1b6a91a3ae",
+      "canonicalSha256": "a1f0424ce1be8dde42180dbe76c5beae8565b56a8739a222b8fc9b1b6a91a3ae",
+      "id": "aww-designer-intent",
+      "commitId": "commit:7425b28b37d00d1f8bc6aac34ba8c6e474d9559ba757d7bd0f43b4326b9b69ed",
+      "snapshotId": "snapshot:ea059ee77316f80236aebcbbebea57fc187062c32ffc3d54856cde3363c0dfc0"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-phe890-response-campaign.json",
+      "bytes": 18021280,
+      "sha256": "b551d8e7d0489955c8885397fd4b8ddb2c783b559c6f616cf89356a763a30601",
+      "canonicalSha256": "b551d8e7d0489955c8885397fd4b8ddb2c783b559c6f616cf89356a763a30601",
+      "id": "aww-phe890-response",
+      "commitId": "commit:dbc740acb98a727d941b32dd65bff30917a0330fba3d9ce7227a6165ab7445d3",
+      "snapshotId": "snapshot:874f601573f2555d44a08e92fafe84ef4103041c472dd790ff988f99f437e9ee"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/finish-bay-293-campaign.json.gz",
+      "bytes": 3335877,
+      "sha256": "dbe42835d58b058a68e829412b2c30fbf9332bf8590b03b2a048ab950b991c95",
+      "encoding": "gzip",
+      "canonicalSha256": "247314e796be9c823e0545817bbec55d2b1232d32ae0cb5bfcd7264bb25408f3",
+      "id": "finish-bay-293",
+      "commitId": "commit:911cbe21f3cea3d75bb4916fa4a9313a942126c23c985f38ac5811878f169b34",
+      "snapshotId": "snapshot:901cddaaf385d22cdb6420fcaccecd783ed2b0e3d0a054a91b1220f219d4e3d0"
+    }
+  ],
+  "projectionBasis": [
+    [
+      0.19688918095689484,
+      0.9739396743681958
+    ],
+    [
+      0.9527682549673353,
+      -0.1629854730163198
+    ],
+    [
+      0.23122997804917444,
+      -0.15772522397263777
+    ]
+  ],
+  "projectionBounds": [
+    -22.75226661740484,
+    -4.672793542579517,
+    -3.072942164269765,
+    9.464334227998132
+  ],
+  "policy": "Graph-derived 2D depictions and fixed-projection frozen-coordinate details; no image synthesis, molecular optimization, coordinate interpolation, or independent ligand fitting.",
+  "chemicalIdentityCheck": "AWW 5,8-dihydro bond pattern also checked against https://files.rcsb.org/ligands/download/AWW.cif; its coordinates were not used.",
+  "panelMapping": {
+    "A": "starting-hit",
+    "B": "scaffold-rewrite",
+    "C": "fragment-merge",
+    "D": "aww-graph",
+    "E": "finish-bay-293",
+    "F": [
+      "aww-graph",
+      "aww-designer-intent"
+    ],
+    "G": [
+      "aww-designer-intent",
+      "aww-phe890-response"
+    ],
+    "H": [
+      "aww-phe890-response",
+      "finish-bay-293"
+    ]
+  }
+}

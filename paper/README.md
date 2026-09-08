@@ -1,5 +1,20 @@
 # Preprint source
 
+## Submitted v1 — start here
+
+The authoritative [ChemRxiv-submitted v1 PDF](submissions/chemrxiv-v1-2026-09-08/Molarium.pdf)
+was supplied by the author on September 8, 2026 and is preserved byte-for-byte.
+See its [submission record](submissions/chemrxiv-v1-2026-09-08/README.md) and the
+[complete recovered history](review/history-2026-09-08/README.md).
+
+The author's [final Prism LaTeX export](submissions/chemrxiv-v1-2026-09-08/main.tex)
+and all six matching figure assets are now preserved with v1. Every figure was
+verified pixel-for-pixel against the submitted PDF. Revision a28 is an earlier
+source precursor, not the final source. The
+legacy `paper/main.tex` and build instructions below likewise describe an older
+draft; rebuilding them does not reproduce v1. The frozen replay's older PDF and
+release fingerprints are retained unchanged as historical evidence.
+
 The manuscript starts as a standard `article` rather than a publisher template.
 That keeps drafting pleasant, diffs readable, and later journal restyling
 contained to the preamble.
@@ -20,10 +35,10 @@ editing:
 make -C paper watch
 ```
 
-The checked-in Figure 2 and measurement macros reproduce the frozen
+The legacy checked-in Figure 2 and measurement macros reproduce the frozen
 reference-informed designer-intent results. The finished PDF is included in
-`design-history/publications/sos1/designer-intent-2026-09-04/` and linked from
-[the movie page](https://molarium.org/sos1). Ordinary compilation requires no
+`design-history/publications/sos1/designer-intent-2026-09-04/`; [the movie page](https://molarium.org/sos1)
+now links the separately versioned submitted v1 instead. Ordinary compilation requires no
 new scientific run. `npm run verify:sos1-publication` checks the released evidence.
 
 To regenerate Figure 2 from the original, complete native checkpoint render

@@ -1,0 +1,255 @@
+{
+  "rdkitVersion": "2025.03.4",
+  "referenceSmarts": "[#6]1~[#6]~[#7]~[#6]~[#7]~[#6]~1~[#7]~[#6]",
+  "results": [
+    {
+      "stage": "starting-hit",
+      "smiles": "COc1cc2ncnc(N[C@H](C)c3cccc4ccccc34)c2cc1OC",
+      "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization",
+      "alignment": null,
+      "checkpointSha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6",
+      "maxScaffoldCoordinateDeviation": 0,
+      "heavyAtoms": 27
+    },
+    {
+      "stage": "scaffold-rewrite",
+      "smiles": "COc1cc2nc(C)nc(N[C@H](C)c3cccc(-c4cn[nH]c4)c3)c2cc1OC",
+      "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization",
+      "alignment": {
+        "atoms": [
+          24,
+          4,
+          5,
+          6,
+          8,
+          9,
+          10,
+          11
+        ],
+        "bonds": [
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          23,
+          29
+        ]
+      },
+      "checkpointSha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+      "maxScaffoldCoordinateDeviation": 0,
+      "alignedAtomNames": [
+        "C1",
+        "C2",
+        "N6",
+        "C11",
+        "N8",
+        "C3",
+        "N7",
+        "C12"
+      ],
+      "heavyAtoms": 29
+    },
+    {
+      "stage": "fragment-merge",
+      "smiles": "COc1cc2nc(C)nc(N[C@H](C)c3ccc(-c4cnc5n4CCC5)s3)c2cc1OC",
+      "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization",
+      "alignment": {
+        "atoms": [
+          26,
+          4,
+          5,
+          6,
+          8,
+          9,
+          10,
+          11
+        ],
+        "bonds": [
+          4,
+          5,
+          7,
+          8,
+          9,
+          10,
+          25,
+          31
+        ]
+      },
+      "checkpointSha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81",
+      "maxScaffoldCoordinateDeviation": 0,
+      "alignedAtomNames": [
+        "C1",
+        "C2",
+        "N6",
+        "C11",
+        "N8",
+        "C3",
+        "N7",
+        "C12"
+      ],
+      "heavyAtoms": 31
+    },
+    {
+      "stage": "aww-graph",
+      "smiles": "COC1=C(OC)Cc2c(nc(C)nc2N[C@H](C)c2ccc(-c3ccccc3CO)s2)C1",
+      "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization",
+      "alignment": {
+        "atoms": [
+          7,
+          8,
+          9,
+          10,
+          12,
+          13,
+          14,
+          15
+        ],
+        "bonds": [
+          8,
+          9,
+          11,
+          12,
+          13,
+          14,
+          31,
+          7
+        ]
+      },
+      "checkpointSha256": "c0672efabc8da255de45a6d8b41f3f1a2bb0652ac2e683a70a9ed33b8692b3b1",
+      "maxScaffoldCoordinateDeviation": 0,
+      "alignedAtomNames": [
+        "C1",
+        "C2",
+        "N6",
+        "C11",
+        "N8",
+        "C3",
+        "N7",
+        "C12"
+      ],
+      "heavyAtoms": 31
+    },
+    {
+      "stage": "aww-designer-intent",
+      "smiles": "COC1=C(OC)Cc2c(nc(C)nc2N[C@H](C)c2ccc(-c3ccccc3CO)s2)C1",
+      "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization",
+      "alignment": {
+        "atoms": [
+          7,
+          8,
+          9,
+          10,
+          12,
+          13,
+          14,
+          15
+        ],
+        "bonds": [
+          8,
+          9,
+          11,
+          12,
+          13,
+          14,
+          31,
+          7
+        ]
+      },
+      "checkpointSha256": "a1f0424ce1be8dde42180dbe76c5beae8565b56a8739a222b8fc9b1b6a91a3ae",
+      "maxScaffoldCoordinateDeviation": 0,
+      "alignedAtomNames": [
+        "C1",
+        "C2",
+        "N6",
+        "C11",
+        "N8",
+        "C3",
+        "N7",
+        "C12"
+      ],
+      "heavyAtoms": 31
+    },
+    {
+      "stage": "aww-phe890-response",
+      "smiles": "COC1=C(OC)Cc2c(nc(C)nc2N[C@H](C)c2ccc(-c3ccccc3CO)s2)C1",
+      "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization",
+      "alignment": {
+        "atoms": [
+          7,
+          8,
+          9,
+          10,
+          12,
+          13,
+          14,
+          15
+        ],
+        "bonds": [
+          8,
+          9,
+          11,
+          12,
+          13,
+          14,
+          31,
+          7
+        ]
+      },
+      "checkpointSha256": "b551d8e7d0489955c8885397fd4b8ddb2c783b559c6f616cf89356a763a30601",
+      "maxScaffoldCoordinateDeviation": 0,
+      "alignedAtomNames": [
+        "C1",
+        "C2",
+        "N6",
+        "C11",
+        "N8",
+        "C3",
+        "N7",
+        "C12"
+      ],
+      "heavyAtoms": 31
+    },
+    {
+      "stage": "finish-bay-293",
+      "smiles": "CNCc1ccccc1-c1csc([C@@H](C)Nc2nc(C)nc3cc(OC)c(OC)cc23)c1",
+      "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization",
+      "alignment": {
+        "atoms": [
+          30,
+          21,
+          20,
+          18,
+          17,
+          16,
+          15,
+          13
+        ],
+        "bonds": [
+          20,
+          19,
+          17,
+          16,
+          15,
+          14,
+          33,
+          34
+        ]
+      },
+      "checkpointSha256": "dbe42835d58b058a68e829412b2c30fbf9332bf8590b03b2a048ab950b991c95",
+      "maxScaffoldCoordinateDeviation": 0,
+      "alignedAtomNames": [
+        "C1",
+        "C2",
+        "N6",
+        "C11",
+        "N8",
+        "C3",
+        "N7",
+        "C12"
+      ],
+      "heavyAtoms": 32
+    }
+  ]
+}

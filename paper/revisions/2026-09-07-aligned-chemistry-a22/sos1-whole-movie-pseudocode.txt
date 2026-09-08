@@ -1,0 +1,48 @@
+designRoute.load("sos1-hit-only")                 # 5OVE / AXE
+protein.prepare(pH=7.4, histidine=auto, ligand=CCD,
+                repairMissingHeavy=true, gaps=cap, waters=retain)
+pose.captureReference(mode=propagate)            # checkpoint 1: hit
+for step in [scaffold-rewrite, fragment-merge]:   # AWT, then AWZ
+    designRoute.applyStep(step)
+    pose.refine(searchChains=8, execution=serial, featureSeeding=v5)
+    require complete coverage and feasible pose with retained core
+    pose.apply(index=0)
+    protein.parameterize()                      # no coordinate motion
+    optimization.run(method=induced-fit-webgpu)
+    require accepted relaxation, valence, and registered pose retention
+    # checkpoints 2 and 3: relaxed AWT and AWZ
+    pose.captureReference(mode=propagate)
+protein.parameterize()
+designRoute.applyStep(open-phe890-pocket)         # checkpoint 4: AWW graph
+protein.parameterize(); pose.captureReference(mode=propagate)
+pose.addContact(N7 donor -> Asn879.OD1)
+pose.addContact(OX3 donor -> Tyr884.backboneO)
+geometry.alignBranchToContact(target=Tyr884 contact, solution=best-directional,
+    primary=C12--C15:+150, upstream=N7--C12:0..60,
+    coupled=[CX4--CX5, CX15--CX16], donorHydrogen=search,
+    allowedResponseAtoms=Phe890.[CG,CD1,CD2,CE1,CE2,CZ])
+require no external coordinate targets, no internal severe clashes,
+        and no overlaps outside the allowed Phe890 response atoms
+pose.setDesignerLigandPoseFixed(true)            # checkpoint 5: ligand intent
+protein.parameterize(); pose.setDesignerLigandPoseFixed(true)
+for candidate in pose.enumerateSidechainRotamers(Phe890, maximum=64):
+    pose.applySidechainRotamer(candidate)         # 13 states, including input
+    inspect and retain ligand/pocket coordinates and severe-clash count
+    calculation.run(job=energy, method=openmm,
+                    solvent=OBC2, cutoff=1.0 nm, constraints=none)
+    retain energy; require ligand coordinates unchanged
+    history.undo(); verify restored ligand       # re-enumerate before next trial
+# Source-run rule: lowest finite energy among zero-severe-clash states.
+# The replay reapplies the recorded choice; publication verification
+# requires it still to satisfy that rule under the fresh calculations.
+pose.applySidechainRotamer(chi=[-180,90])          # checkpoint 6: Phe890 response
+protein.parameterize(); pose.setDesignerLigandPoseFixed(false)
+pose.captureReference(mode=propagate)
+designRoute.applyStep(finish-bay-293)              # AXH graph; retain distal
+                                                 # seven-atom feature, RMSD <=2.25
+pose.refine(searchChains=8, execution=serial, featureSeeding=v5)
+require complete coverage, feasible pose, retained core and required feature
+pose.apply(index=0); protein.parameterize()
+optimization.run(method=induced-fit-webgpu)
+require accepted relaxation, fixed-atom, valence, and feature-retention checks
+# checkpoint 7: BAY-293; inspect and save the resulting ligand and pocket
