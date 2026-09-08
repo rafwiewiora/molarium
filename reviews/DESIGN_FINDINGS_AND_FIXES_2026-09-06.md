@@ -196,6 +196,13 @@ created by this three-system development panel.
 
 ## Remediation and release evidence
 
+The separate [SOS1 AWW source-graph discrepancy and author decision](./SOS1-AWW-SOURCE-GRAPH-DISCREPANCY-2026-09-07.md)
+records a later paper-review finding: the frozen run matches the deposited CCD
+graph, which differs from the original medicinal-chemistry drawing. The author
+chose to retain that input and its results, remove the misleading aromaticity-edit
+description, and preserve the discovery trail. This is an example of auditable
+reproducibility, not proof of input correctness or a claim of a corrected rerun.
+
 Implementation, regression, UI, and publication links are appended here when verified. The
 historical failures above remain visible after their software causes are corrected.
 
