@@ -1,0 +1,64 @@
+{
+  "schema": "molarium.submitted-figure-verification/v1",
+  "method": "Poppler pdfimages -png; Pillow RGB decoded pixel equality in document order",
+  "pdfSha256": "caa49f6fa273387ce52d0f51e15bbfc6ad23518e25350e49b004cb1259740cad",
+  "sourceSha256": "6964b04e39738a985e521bd8dc05bd0fff4bfad1abe715be47593b2382f80804",
+  "figures": [
+    {
+      "figure": 1,
+      "source": "figures/fig1_molarium_interface.png",
+      "width": 1600,
+      "height": 1000,
+      "sourceFileSha256": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765",
+      "rgbPixelSha256": "ac34cb2777161f05424c0f3a3115c47939662ec34836f4f8248119e19ddf2317",
+      "exactPixelMatch": true
+    },
+    {
+      "figure": 2,
+      "source": "figures/fig2_architecture.png",
+      "width": 2070,
+      "height": 680,
+      "sourceFileSha256": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d",
+      "rgbPixelSha256": "a75fd3ad4ea78aa499213d9cf55fe653e2fcb64e2b5d807dd9f3128dbe6f8701",
+      "exactPixelMatch": true
+    },
+    {
+      "figure": 3,
+      "source": "figures/fig2_sos1_designer_intent.png",
+      "width": 3048,
+      "height": 2835,
+      "sourceFileSha256": "22bd1240bc4135cc9ef6507a4d65454137bbe8e0e67fe57584388affa6bf2f5c",
+      "rgbPixelSha256": "5ee0acd3c796930253273890024e1049e97bfe159d2f32899a866172f1e99891",
+      "exactPixelMatch": true
+    },
+    {
+      "figure": 4,
+      "source": "figures/fig3_build_loop_compact.png",
+      "width": 3750,
+      "height": 1065,
+      "sourceFileSha256": "e571d4c764d0b23e359e8823353219f41e6238ee12eb1e4c148e501146f79eec",
+      "rgbPixelSha256": "8b3237e2c0d9479ea742d0f44f7be2da3ac9b8646be6cc3632be6e788808477a",
+      "exactPixelMatch": true
+    },
+    {
+      "figure": 5,
+      "source": "figures/fig4_evidence_ladder_fixed.png",
+      "width": 2188,
+      "height": 718,
+      "sourceFileSha256": "559f75c2751974472284eff70b656fdbc62e1406c59eec84c0241aea55ede5ad",
+      "rgbPixelSha256": "2e88a798dd6008e06223ade9317e9a2f4ab30bf8b6e6b58a5ffa458c164eaa30",
+      "exactPixelMatch": true
+    },
+    {
+      "figure": 6,
+      "source": "figures/fig5_value_layers_fixed.png",
+      "width": 2172,
+      "height": 724,
+      "sourceFileSha256": "3338413017afd509732fc5f223494680983d7fddaa75ae8f0e3d120b6d7ce60f",
+      "rgbPixelSha256": "b037bc910e475ae792bf88e5f04d2ba0d2985e5df55f77a60be52ce20df0a260",
+      "exactPixelMatch": true
+    }
+  ],
+  "allSixFiguresMatch": true,
+  "pdfRewritten": false
+}

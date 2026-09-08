@@ -1,0 +1,197 @@
+{
+  "schema": "molarium.approved-manuscript-deployed-reconciliation/v1",
+  "baseRevision": "paper/revisions/2026-09-08-value-figure-cleanup-a27",
+  "baseSourceSha256": "cdb14f27bca72abbe89de96d90ed9664bcbfdb5f54f055d51804a8c0f89fc798",
+  "outputSha256": "be5e1d8283d74173d761e0f8fc7d55aa20706ad71edaf0ab988ee66ab6408f1b",
+  "changes": [
+    {
+      "id": "A1-backend-units",
+      "before": "Internal units are nm, ps, daltons, kJ/mol, and kJ/mol/nm; the interface presents angstroms and kcal/mol where appropriate.",
+      "after": "The OpenMM and direct WebGPU paths use nm, ps, daltons, kJ/mol, and kJ/mol/nm. The replica engine uses angstroms and kcal/mol internally, with explicit conversion at the worker boundary; RDKit energies are in kcal/mol. The interface presents angstroms and kcal/mol where appropriate.",
+      "evidence": "a27 main.tex:332; pinned stormm/README.md:143, stormm-worker.js:288, webgpu/README.md units section, rdkit-worker.js:1\u20132."
+    },
+    {
+      "id": "A1-direct-request-limit",
+      "before": "Direct dynamics request & At most 5,000 steps; longer requests use the ensemble route",
+      "after": "Direct dynamics request & At most 5,000 steps per request",
+      "evidence": "a27 main.tex:366; pinned webgpu-worker.js:621\u2013625 rejects larger requests; app.js:16620\u201316628 disables/clamps larger direct UI selections. No automatic ensemble routing."
+    },
+    {
+      "id": "A1-replica-constraint-default",
+      "before": "the default relative tolerance is $10^{-5}$ with at most 32 iterations.",
+      "after": "the defaults are a relative tolerance of $10^{-5}$ and 32 iterations.",
+      "evidence": "a27 main.tex:382; pinned stormm/engine.mjs:80 default32, :91\u201394 allowed1\u2013256. Direct WebGPU's separate max32 at main.tex:364 remains correct."
+    },
+    {
+      "id": "main-partial-event-history",
+      "before": "Molarium extends this principle by preserving the sequence of molecular states and user actions that produced the current state. Edits, selections, manipulations, calculations, and other interactions form an event history rather than leaving only the final coordinates.",
+      "after": "Molarium extends this principle by preserving selected molecular states together with completed public actions captured between commits. These actions form an explicitly partial event history; direct interface changes are captured in graph-and-coordinate snapshots but are not necessarily represented as replayable actions.",
+      "evidence": "a27 main.tex:152; pinned design-history/live-campaign.mjs:204\u2013231 explicitly complete:false and directUiMutationsCapturedOnlyInSnapshot:true."
+    },
+    {
+      "id": "A3-openmm-api-availability",
+      "before": "OpenMM/WebAssembly is used for internal validation and fixed-scaffold operations rather than as a selectable Simulate-panel method.",
+      "after": "OpenMM/WebAssembly supports internal validation, fixed-scaffold operations, and general calculations through the public API, but is not a selectable Simulate-panel method.",
+      "evidence": "a27 main.tex:435; pinned chemist-actions.mjs:232\u2013235 calculation.run accepts openmm; app.js:16156\u201316158 calls runOpenMMJob."
+    },
+    {
+      "id": "A4-bounded-audit",
+      "before": "The live application records public actions in memory; clearing the scene clears that transient audit.",
+      "after": "The live application keeps separate API-history and scene-audit buffers, each retaining up to 500 public actions by default. Clearing the scene clears the scene audit, not the API-history buffer.",
+      "evidence": "a27 main.tex:446; pinned chemist-actions.mjs:419\u2013420 and :456\u2013457; app.js:9314, :12056\u201312059, :17798. The API object is not recreated by scene clearing."
+    },
+    {
+      "id": "A4-coordinate-bearing-allowlist",
+      "before": "Scripts contain ordered calls to the allow-listed Chemist Actions API rather than arbitrary code or direct coordinate replacement.",
+      "after": "Scripts contain ordered calls to the allow-listed Chemist Actions API rather than arbitrary code. Allowed actions include coordinate-bearing structure loading and snapshot or frame restoration; those operations are distinct from recomputing a design step.",
+      "evidence": "a27 main.tex:491; pinned chemist-actions.mjs:6\u20139 session.loadStructure includes PDB/XYZ/MOL; :239\u2013240 calculation.selectFrame; campaign restore paths also allowed."
+    },
+    {
+      "id": "A1-minimization-default-cap",
+      "before": "Minimization & 750 iterations by default; at most 2,000; each displacement capped at 0.001 nm",
+      "after": "Minimization & 750 iterations by default; at most 2,000; default displacement cap 0.001 nm",
+      "evidence": "a27 main.tex:365; pinned webgpu-worker.js:346 reads options.maxDisplacement with default 0.001; not a fixed worker maximum."
+    },
+    {
+      "id": "B01-loading",
+      "before": "Start with \\code{?blank} when a reproducible workflow should begin from an empty canvas. Otherwise the application loads its bundled launch molecule. A structure can be pasted as XYZ or PDB text, uploaded as XYZ or PDB, entered as a SMILES string or PDB identifier in connected mode, or selected from the prepared examples. The current upload router should not be relied on for ordinary MOL-file ingestion, even though a V2000 parser exists elsewhere in the application.",
+      "after": "Start with \\code{?blank} when a reproducible workflow should begin from an empty canvas. Otherwise the application loads its bundled launch molecule. Paste and Upload accept PDB, XYZ, and supported V2000 MOL text; SMILES can be entered and embedded locally. PDB-identifier retrieval requires connected mode. Prepared examples provide another starting route.",
+      "evidence": "6d2f620 app.js:9743\u20139800,17099\u201317162; parseMolBlock:1406"
+    },
+    {
+      "id": "B03-protonation-target",
+      "before": "\\item Load the ligand from a SMILES string or select the ligand component whose identity you intend to change.",
+      "after": "\\item Load the ligand as a standalone SMILES-derived molecule. The visible protonation workflow is not an in-place editor for a selected ligand inside a protein complex.",
+      "evidence": "6d2f620 app.js:13981\u201314020"
+    },
+    {
+      "id": "B03-protonation-apply",
+      "before": "\\item Apply one state deliberately. Molarium re-embeds the chosen species, replaces the graph and coordinates, and invalidates state that depended on the former topology.",
+      "after": "\\item Apply one state deliberately. Molarium re-embeds the chosen species, replaces the entire current molecule's graph and coordinates, and invalidates state that depended on the former topology.",
+      "evidence": "6d2f620 app.js:14069\u201314084"
+    },
+    {
+      "id": "B04-staged-human",
+      "before": "\\item Enter \\textbf{Design} and select the relevant atom or bond in either view. Confirm the stable atom identity and local environment before changing it.",
+      "after": "\\item Enter \\textbf{Design} and select the relevant atom or bond in either view. Confirm the stable atom identity and local environment before changing it. Leave \\textbf{Finish and refine after every edit} off when grouping changes into the staged transaction described here.",
+      "evidence": "6d2f620 index.html:434; app.js:7264\u20137266,7281\u20137292"
+    },
+    {
+      "id": "B04-staged-api",
+      "before": "await api.execute({action:\"build.setTool\", args:{tool:\"select\"}})",
+      "after": "await api.execute({action:\"build.setTool\", args:{tool:\"select\"}})\nawait api.execute({action:\"chemistry.setEditPolicy\", args:{mode:\"staged\"}})",
+      "evidence": "6d2f620 chemist-actions.mjs:89\u201391"
+    },
+    {
+      "id": "B04-finish-label",
+      "before": "\\item Choose \\textbf{Finish chemistry}. RDKit sanitizes the graph, hydrogens are reconciled, eligible local coordinates are polished, reference contacts are remapped where applicable, obsolete parameterization is invalidated, and a single undo snapshot is created.",
+      "after": "\\item Choose \\textbf{Finish changes}. RDKit sanitizes the graph, hydrogens are reconciled, eligible local coordinates are polished, reference contacts are remapped where applicable, obsolete parameterization is invalidated, and a single undo snapshot is created.",
+      "evidence": "6d2f620 index.html:428,622"
+    },
+    {
+      "id": "B06-openmm-api",
+      "before": "Reference calculation inside another workflow & OpenMM 8.2 Reference & Double-precision internal parameterization, scoring, relaxation, and validation path. & Internal subsystem, not a selectable general Simulate method.\\\\",
+      "after": "Reference calculation inside another workflow & OpenMM 8.2 Reference & Double-precision internal parameterization, scoring, relaxation, and validation path. & Available through the public calculation API, but not listed in the Simulate method menu.\\\\",
+      "evidence": "6d2f620 index.html:461\u2013466; chemist-actions.mjs:232\u2013235; app.js:16110\u201316159"
+    },
+    {
+      "id": "B06-ui-api-boundary",
+      "before": "General Simulate jobs use \\code{calculation.run}; the action accepts only the installed engine/job combinations and the same bounded options as the interface. Selecting a returned frame is explicit because it writes those coordinates into the current molecule:",
+      "after": "General Simulate jobs use \\code{calculation.run}; the action accepts installed engine/job combinations and worker-validated numerical options. OpenMM is additionally available through this API, although it is absent from the Simulate method menu. Selecting a returned frame is explicit because it writes those coordinates into the current molecule:",
+      "evidence": "6d2f620 app.js:11403\u201311433,16125\u201316159"
+    },
+    {
+      "id": "B07-effort",
+      "before": "  options:{conformerCount:32, conformerEffort:\"standard\",",
+      "after": "  options:{conformerCount:32, conformerEffort:\"balanced\",",
+      "evidence": "6d2f620 index.html:520\u2013524; openff/conformer-protocol.js:6\u201312"
+    },
+    {
+      "id": "B08-cancel-human",
+      "before": "\\item Run and monitor MSA and inference progress. The current browser model executes three recycle passes; this count is not user-configurable. Cancel aborts the active MSA/prediction controller.",
+      "after": "\\item Run and monitor MSA and inference progress. The current browser model executes three recycle passes; this count is not user-configurable. Cancellation is not reliable in the inspected release: the Cancel action queues behind the prediction rather than interrupting it.",
+      "evidence": "6d2f620 app.js:10197\u201310215,13389\u201313429,16912\u201316916,16955\u201316957; chemist-actions.mjs:481\u2013484; actual pinned queue probe confirms ordering"
+    },
+    {
+      "id": "B08-cancel-api",
+      "before": "The workflow is exposed as \\code{protein.predict}; \\code{protein.cancelPrediction} aborts the active request. The MSA endpoint remains an explicit network boundary rather than a hidden service call:",
+      "after": "The workflow is exposed as \\code{protein.predict}. The installed \\code{protein.cancelPrediction} action shares its serialized queue and cannot interrupt a prediction already occupying that queue. The MSA endpoint remains an explicit network boundary rather than a hidden service call:",
+      "evidence": "6d2f620 app.js:10197\u201310215,12056\u201312058; chemist-actions.mjs:481\u2013484"
+    },
+    {
+      "id": "B08-remove-cancel-snippet",
+      "before": "// while active:\nawait api.execute({action:\"protein.cancelPrediction\", args:{}})",
+      "after": "",
+      "evidence": "6d2f620 same queue evidence; the preceding await also settles prediction before the shown cancel call"
+    },
+    {
+      "id": "B09-mode-labels",
+      "before": "\\item Use the default \\textbf{Pose propagation} mode to map surviving reference atoms and seed the edited region. Use \\textbf{Expert selected core} only when you can justify at least three connected, non-collinear heavy atoms as a fixed reference.",
+      "after": "\\item Use the default \\textbf{Constrained pose propagation} mode to map surviving reference atoms and seed the edited region. Use \\textbf{Expert selected-core search} only when you can justify at least three connected, non-collinear heavy atoms as a fixed reference.",
+      "evidence": "6d2f620 index.html:313\u2013315"
+    },
+    {
+      "id": "B10-audit-bound",
+      "before": "Chemist Actions audit & What recognized public action was requested, with what arguments and outcome? & Session memory; serialized calls; cleared with the scene unless exported through a script path.\\\\",
+      "after": "Chemist Actions audit & What recognized public action was requested, with what arguments and outcome? & Session memory; the API history and scene replay buffer each retain at most 500 entries. The scene buffer resets on scene replacement or Clear; export before entries are lost.\\\\",
+      "evidence": "6d2f620 chemist-actions.mjs:419\u2013420,454\u2013457,486; app.js:3396,9305\u20139316,17798"
+    },
+    {
+      "id": "B10-commit-coverage",
+      "before": "Design History is a live browser feature. \\code{campaign.create} creates a locally persisted campaign and atomically commits the visible molecule. \\code{campaign.commitCurrent} stores a complete graph-and-coordinate snapshot together with completed public actions since the prior commit. Branch switching restores the exact head molecule and refuses to proceed when the visible molecular state is dirty. Merge records the currently visible result with two parents; it is not an automatic structural merge. Decisions attach disposition, rationale, reason codes, and optional evidence to a commit. Verification recomputes content hashes, the append-only event chain, commit relationships, and branch heads derived from that chain.",
+      "after": "Design History is a live browser feature. \\code{campaign.create} creates a locally persisted campaign and atomically commits the visible molecule. \\code{campaign.commitCurrent} stores a complete graph-and-coordinate snapshot together with the retained completed public actions since the prior commit. The action script is explicitly partial; audit truncation is recorded when detected, while the complete molecular snapshot remains authoritative. Branch switching restores the exact head molecule and refuses to proceed when the visible molecular state is dirty. Merge records the currently visible result with two parents; it is not an automatic structural merge. Decisions attach disposition, rationale, reason codes, and optional evidence to a commit. Verification recomputes content hashes, the append-only event chain, commit relationships, and branch heads derived from that chain.",
+      "evidence": "6d2f620 design-history/live-campaign.mjs:192\u2013233"
+    },
+    {
+      "id": "B10-coordinate-payloads",
+      "before": "Action script JSON & Public actions and bindings & Arbitrary code, direct coordinates, or complete view state\\\\",
+      "after": "Action script JSON & Public actions, bindings, and supported loader inputs & Arbitrary code, unguarded state injection, or a complete workbench snapshot\\\\",
+      "evidence": "6d2f620 chemist-actions.mjs:6\u20139,97\u2013100; app.js:9743\u20139774; supported PDB/XYZ/MOL loaders contain coordinates"
+    },
+    {
+      "id": "A-layout-avoid-stranded-final-paragraph",
+      "before": "\\appendixsection{Molarium architecture, numerical validation, and executable design history}{app:architecture}\n\\begin{small}\n\\setlength{\\emergencystretch}{2em}",
+      "after": "\\appendixsection{Molarium architecture, numerical validation, and executable design history}{app:architecture}\n\\begin{small}\n\\setlength{\\parskip}{0.35em}\n\\setlength{\\emergencystretch}{2em}",
+      "evidence": "Rendered a28 layout: slightly reduce Appendix A paragraph gaps to avoid stranding its final paragraph on a separate page; no wording or font-size change."
+    },
+    {
+      "id": "Figure2-local-presentation-build",
+      "before": "Each panel is a full-tool screenshot with the ligand graph in the enlarged 2D panel.",
+      "after": "Each panel is a full-tool screenshot from a local figure-preparation build. Its enlarged, scaffold-aligned 2D panels and orange highlights are display-only additions not present in the reviewed public interface; the saved molecular graphs and coordinates are unchanged.",
+      "evidence": "DEPLOYED-AUDIT-SOS1-2026-09-08.md"
+    },
+    {
+      "id": "B03-contract-preconditions",
+      "before": "\\contractrow{Preconditions}{A valid ligand or PDB structure is loaded; the relevant pH or experimental condition is known or stated as an assumption.}",
+      "after": "\\contractrow{Preconditions}{For the visible ligand workflow, a standalone SMILES-derived molecule with at most 256 atoms is loaded; protein choices require a PDB structure. The relevant pH is known or stated as an assumption.}",
+      "evidence": "DEPLOYED-AUDIT-APPENDIX-B-2026-09-08.md B03"
+    },
+    {
+      "id": "B03-contract-mutation",
+      "before": "\\contractrow{State mutation}{Applying a ligand state replaces graph and coordinates. Protein protonation changes are committed through preparation. Prior parameterization becomes obsolete.}",
+      "after": "\\contractrow{State mutation}{Applying a ligand state replaces the entire current molecule. Protein protonation changes are committed through preparation. Prior parameterization becomes obsolete.}",
+      "evidence": "DEPLOYED-AUDIT-APPENDIX-B-2026-09-08.md B03"
+    },
+    {
+      "id": "B09-essential-help",
+      "before": "Adjacent information buttons explain these policies and the available choices.",
+      "after": "Information buttons beside crucial choices explain these policies; routine controls retain unobtrusive descriptions.",
+      "evidence": "Public design-help.mjs; live Design and Simulate UI checked"
+    },
+    {
+      "id": "B09-explicit-infeasible-override",
+      "before": "Molarium does not silently apply the least-bad pose.",
+      "after": "Molarium does not silently apply the least-bad pose. An explicit, recorded API override (\\code{allowInfeasible:true}) can apply an infeasible candidate; the acceptance contract here excludes that override.",
+      "evidence": "DEPLOYED-AUDIT-APPENDIX-B-2026-09-08.md; chemist-actions.mjs:201-210"
+    },
+    {
+      "id": "B11-example-context",
+      "before": "The practical agent pattern is:",
+      "after": "The following agent pattern assumes the Design workspace, an active campaign, and a reviewed, unambiguous atom path:",
+      "evidence": "DEPLOYED-AUDIT-APPENDIX-B-2026-09-08.md B11"
+    }
+  ],
+  "allFiguresUnchanged": true,
+  "newScientificCalculations": false,
+  "publicCodeCommit": "6d2f620d7d26e3dfd270c018f0a9be7a414f2163"
+}

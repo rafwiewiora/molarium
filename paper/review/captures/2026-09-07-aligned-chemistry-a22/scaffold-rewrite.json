@@ -1,0 +1,25 @@
+{
+  "caption": "AWT: replace naphthyl with pyrazolylphenyl; add a 2-methyl group.",
+  "depiction": {
+    "alignedAtoms": "8",
+    "alignmentBackend": "RDKit shared-scaffold 2D coordinates",
+    "canonicalSmiles": "COc1cc2nc(C)nc(N[C@H](C)c3cccc(-c4cn[nH]c4)c3)c2cc1OC",
+    "mode": "build",
+    "rdkitVersion": "2025.03.4",
+    "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization"
+  },
+  "docked": true,
+  "expanded": true,
+  "highlightedAtomIds": [
+    "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX1:",
+    "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX2:",
+    "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX3:",
+    "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::NX1:",
+    "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::NX2:",
+    "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX4:"
+  ],
+  "networkPolicy": "Local Lab · network locked",
+  "replayStatus": "completed",
+  "reviewIndex": 7,
+  "svgSha256": "1abd25b47a6169043fbd6fa65e74b06dbb54b9df4cb7151ae0e5f6b019da63cb"
+}

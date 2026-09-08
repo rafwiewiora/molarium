@@ -1,0 +1,37 @@
+{
+  "schema": "molarium.approved-manuscript-figure-edits/v1",
+  "baseRevision": "paper/revisions/2026-09-07-whole-movie-human-account-a19",
+  "baseSourceSha256": "10583b7cc62458e8c90a9ccfd87d099f2a2e09eb77fe3e9ab2d3b08206c2acdc",
+  "outputSha256": "37d61889147fe36f1cc16a2781debc59ac0df66a15f76c824aa436a8e9cd293f",
+  "changes": [
+    {
+      "before": "  \\caption{Designer intent and receptor response in the Molarium interface. (A) The prepared 5OVE/AXE hit. (B) The AWZ precursor. (C) The AWW graph with its inherited arm direction. (D) The designer-directed AWW pose before receptor movement, with the intended Tyr884 backbone-carbonyl contact. (E) The energy-selected Phe890 response with the ligand fixed. (F) The BAY-293 continuation. Purple ligands, gold Phe890, and the labeled Tyr884 contact distinguish ligand placement from receptor response. These are exact saved checkpoints, not interpolated structures. The crystal series informed the design hypothesis, but later crystal coordinates were not imported into the trajectory.}",
+      "after": "  \\caption{Chemical edits and geometric operations in the SOS1 design sequence. (A--E) Graph-derived 2D depictions make the successive changes explicit: naphthyl replacement and 2-methyl addition; thiophene-linked fragment merge; benzyl-alcohol installation with the AWW 5,8-dihydro core; and the BAY-293 attachment, terminal-amine, and aromatic-core changes. Orange marks regions outside the registered atom-lineage conserved subgraph relative to the preceding graph, not a synthetic reaction mechanism. (F) The same AWW graph is placed toward the Tyr884 backbone-carbonyl contact. (G) Phe890 is sampled with that ligand fixed. (H) The seven-atom distal feature is retained approximately through the BAY-293 rewrite and relaxation. Purple shows the current ligand; gray dashes show previous positions, gold the Phe890 response, and the teal highlight the retained feature. The 3D details use exact saved checkpoint coordinates with a common projection and scale; arrows connect endpoint states, not simulated paths. The crystal series informed the hypothesis, but later crystal coordinates were not used to generate these states.}"
+    },
+    {
+      "before": "figures/fig3_build_loop_compact.png",
+      "after": "figures/fig3_build_loop_compact.pdf"
+    },
+    {
+      "before": "The listing is a reading guide, not a separately executable script.",
+      "after": "The listing is a reading guide, not a separately executable script. A \\texttt{\\#} introduces an explanatory comment; unprefixed lines specify operations or checks, including \\texttt{require} and \\texttt{inspect}. Indented argument continuations belong to the preceding instruction."
+    },
+    {
+      "before": "This appendix specifies the implementation and validation substrate underlying the architectural claims in the main text.",
+      "after": "\\textit{Authorship note for Appendices A and B.} These appendices were drafted primarily by GPT-5.6 Sol and subsequently revised with AI assistance under human direction, with limited direct human editing. The authors remain responsible for their content.\n\nThis appendix specifies the implementation and validation substrate underlying the architectural claims in the main text."
+    },
+    {
+      "before": "Molarium is designed so that a scientist working through the graphical interface and an agent operating through the Chemist Actions API act on the same molecular state and encounter the same scientific boundaries.",
+      "after": "\\textit{Authorship note.} This appendix shares the AI-drafting and limited-human-editing disclosure at the start of Appendix~\\ref{app:architecture}.\n\nMolarium is designed so that a scientist working through the graphical interface and an agent operating through the Chemist Actions API act on the same molecular state and encounter the same scientific boundaries."
+    }
+  ],
+  "allOtherTextUnchanged": true,
+  "unchangedFigureCount": 4,
+  "figureChanges": {
+    "fig2_sos1_designer_intent.png": "ad9910b96aedcc2401c66013ccd9b6726213c18a64771e9022501f4b81011724",
+    "fig2_sos1_designer_intent.provenance.json": "28bf0d78335e38354eb99ec90d5e25ba257e10a1a5d47b94a1516c5f1b64510b",
+    "fig3_build_loop_compact.png": "9bcd8477a4d27b4ec02c8b3bf34c6abe266ace700202bc2dabbbfdce0d22cf6b",
+    "fig3_build_loop_compact.pdf": "1ee44d0db0506d4306a3cbc5098e9d44ae69cc01290165147c1683d1f808b0ce",
+    "fig3_build_loop_compact.provenance.json": "88fa836f7d4851202e5d296cee2c9b3f5a6f359c6ffb7b116953180c5ccc3206"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schema": "molarium.approved-manuscript-edits/v1",
+  "baseSourceSha256": "191fe427b4dd10fdb31bf732657227b07a3a17688b8109c5a6de1842885c0d4d",
+  "outputSha256": "4f714111eccbca36a20c5adb1b1fe9b7c190a748e34a3e8792850180d16f56af",
+  "changes": [
+    {
+      "before": "Appendix~\\ref{app:manual} provides a module-by-module reference distinguishing current, experimental, repository-only, proposed, and retired functionality.",
+      "after": "Appendix~\\ref{app:manual} describes scientific workflows for human users and agents, pairing interface instructions with agent skill contracts and public API examples, and clarifying the requirements, outputs, and limitations of each workflow."
+    },
+    {
+      "before": " The optional connected-mode sequence-alignment search remains an explicit remote step (Appendix~\\ref{app:manual}).",
+      "after": ""
+    }
+  ],
+  "baseRevision": "paper/revisions/2026-09-06-no-editorial-appendix-a06",
+  "allOtherTextAndFiguresUnchanged": true
+}

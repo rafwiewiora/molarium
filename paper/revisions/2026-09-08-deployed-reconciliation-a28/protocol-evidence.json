@@ -1,0 +1,122 @@
+{
+  "schema": "molarium.manuscript-whole-movie-condensation/v1",
+  "sourceSha256": "7eed2dff0bf3fa127f87b2322aaea4b615d458ad6d8ef3af3c5b5886dc8fe9c3",
+  "sourceActionCount": 159,
+  "checkpointReviewSha256": "6ab36deb2cab37fd888eff9c2006c8c14e06be351d4cdc160dd173c994393211",
+  "pseudocodeSha256": "eb07fd83d02155611e2613527757165bd126807169a4c89195b2ec8deb1ffb73",
+  "directlyExecutable": false,
+  "newScientificCalculations": false,
+  "checkpointMapping": [
+    {
+      "checkpoint": 1,
+      "id": "starting-hit",
+      "sourceActionRangeInclusive": [
+        0,
+        4
+      ],
+      "checkpointSource": "./design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/starting-hit-campaign.json",
+      "checkpointSha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6",
+      "checkpointHashScope": "decoded JSON bytes (decompressed before hashing for .gz sources)"
+    },
+    {
+      "checkpoint": 2,
+      "id": "scaffold-rewrite",
+      "sourceActionRangeInclusive": [
+        5,
+        14
+      ],
+      "checkpointSource": "./design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/scaffold-rewrite-campaign.json",
+      "checkpointSha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+      "checkpointHashScope": "decoded JSON bytes (decompressed before hashing for .gz sources)"
+    },
+    {
+      "checkpoint": 3,
+      "id": "fragment-merge",
+      "sourceActionRangeInclusive": [
+        15,
+        28
+      ],
+      "checkpointSource": "./design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/fragment-merge-campaign.json",
+      "checkpointSha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81",
+      "checkpointHashScope": "decoded JSON bytes (decompressed before hashing for .gz sources)"
+    },
+    {
+      "checkpoint": 4,
+      "id": "aww-graph",
+      "sourceActionRangeInclusive": [
+        29,
+        35
+      ],
+      "checkpointSource": "./design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-graph-campaign.json",
+      "checkpointSha256": "c0672efabc8da255de45a6d8b41f3f1a2bb0652ac2e683a70a9ed33b8692b3b1",
+      "checkpointHashScope": "decoded JSON bytes (decompressed before hashing for .gz sources)"
+    },
+    {
+      "checkpoint": 5,
+      "id": "aww-designer-intent",
+      "sourceActionRangeInclusive": [
+        36,
+        45
+      ],
+      "checkpointSource": "./design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-designer-intent-campaign.json",
+      "checkpointSha256": "a1f0424ce1be8dde42180dbe76c5beae8565b56a8739a222b8fc9b1b6a91a3ae",
+      "checkpointHashScope": "decoded JSON bytes (decompressed before hashing for .gz sources)"
+    },
+    {
+      "checkpoint": 6,
+      "id": "aww-phe890-response",
+      "sourceActionRangeInclusive": [
+        46,
+        140
+      ],
+      "checkpointSource": "./design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-phe890-response-campaign.json",
+      "checkpointSha256": "b551d8e7d0489955c8885397fd4b8ddb2c783b559c6f616cf89356a763a30601",
+      "checkpointHashScope": "decoded JSON bytes (decompressed before hashing for .gz sources)"
+    },
+    {
+      "checkpoint": 7,
+      "id": "finish-bay-293",
+      "sourceActionRangeInclusive": [
+        141,
+        158
+      ],
+      "checkpointSource": "./design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/finish-bay-293-campaign.json.gz",
+      "checkpointSha256": "247314e796be9c823e0545817bbec55d2b1232d32ae0cb5bfcd7264bb25408f3",
+      "checkpointHashScope": "decoded JSON bytes (decompressed before hashing for .gz sources)"
+    }
+  ],
+  "condensation": [
+    "Full atom selectors become chemical names.",
+    "Repeated read-only inspections, workspace switches, route resumption and redundant reference/parameterization calls are condensed.",
+    "The AWT/AWZ sequence and 13 Phe890 trials become loops; restoration and re-enumeration remain explicit.",
+    "Checkpoint annotations describe saved movie states, not extra executable API calls.",
+    "Source-run energy selection and fixed-choice replay verification are distinguished.",
+    "Registered BAY feature rules and publication-controller acceptance checks are annotated alongside API calls."
+  ],
+  "humanAccountEvidence": {
+    "aWW": "evidence/024-prediction-manifest.json.gz",
+    "phe890Candidates": "evidence/010-phe890-candidate-01.json.gz through evidence/022-phe890-candidate-13.json.gz",
+    "bayCandidateGates": "evidence/026-candidate-gate.json.gz",
+    "precursorAcceptance": "Source action expectations at indices 6-9 and 16-19.",
+    "scope": "Observed candidate outcomes, not invented historical debugging episodes or original chemists' documented intentions."
+  },
+  "presentationRevision": {
+    "base": "a24",
+    "operationSequenceUnchanged": true,
+    "panelToCheckpoint": {
+      "A": 1,
+      "B": 2,
+      "C": 3,
+      "D": 5,
+      "E": 6,
+      "F": 7
+    },
+    "unpicturedCheckpoint": 4,
+    "stateTrace": [
+      4,
+      5,
+      6
+    ],
+    "provenanceBoundary": "Parent-linked snapshots; partial attached public-action histories; separate numerical audits. No claim of complete automatic provenance."
+  }
+}

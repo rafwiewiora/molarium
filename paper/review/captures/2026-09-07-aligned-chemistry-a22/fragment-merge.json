@@ -1,0 +1,31 @@
+{
+  "caption": "AWZ: replace phenyl with thiophene and merge the bicyclic heterocycle.",
+  "depiction": {
+    "alignedAtoms": "8",
+    "alignmentBackend": "RDKit shared-scaffold 2D coordinates",
+    "canonicalSmiles": "COc1cc2nc(C)nc(N[C@H](C)c3ccc(-c4cnc5n4CCC5)s3)c2cc1OC",
+    "mode": "build",
+    "rdkitVersion": "2025.03.4",
+    "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization"
+  },
+  "docked": true,
+  "expanded": true,
+  "highlightedAtomIds": [
+    "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX2:",
+    "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX3:",
+    "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX4:",
+    "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX5:",
+    "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX6:",
+    "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::NX1:",
+    "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX7:",
+    "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::NX2:",
+    "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX8:",
+    "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX9:",
+    "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX10:",
+    "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::SX1:"
+  ],
+  "networkPolicy": "Local Lab · network locked",
+  "replayStatus": "completed",
+  "reviewIndex": 9,
+  "svgSha256": "adf5e72d4a133e13d8e950bb5d921493beaa27946280d8e455da6d8a8d959283"
+}

@@ -1,0 +1,42 @@
+\subsubsection{Pseudocode for the complete movie}
+
+Listing~\ref{lst:sos1api} is a reading guide to the full executable API record, not a separately executable script. Lettered blocks link the procedure to Fig.~\ref{fig:sos1story}; checkpoint numbers link it to the seven saved movie states. Panel D shows checkpoint 5, after the graph-only checkpoint 4. Chemical selectors and arguments are abbreviated, repeated trials become loops, and repeated inspections, workspace changes, and session-resumption calls are omitted. A \texttt{\#} marks a comment; unprefixed lines specify operations or checks. These include both API operations and checks performed by the surrounding audit, not only assertions enforced by the script runner.
+
+\begingroup
+\definecolor{sosedit}{RGB}{153,74,20}
+\definecolor{sosresponse}{RGB}{112,77,139}
+\definecolor{soscomment}{RGB}{81,98,108}
+\newcommand{\sosstage}[4]{%
+  \par\vspace{0.55em}\noindent
+  {\bfseries\color{#1}#2\quad #3}\par
+  {\small #4}\par\vspace{-0.35em}}
+\lstdefinestyle{sosreadable}{language={},basicstyle=\ttfamily\footnotesize,
+  morecomment=[l]{\#},commentstyle=\color{soscomment},
+  morekeywords={for,in,require,inspect,retain,verify},
+  keywordstyle=\color{molblue},
+  backgroundcolor=\color{callout!35!white},frame=l,
+  rulecolor=\color{molblue!35!white},framesep=5pt,
+  xleftmargin=6pt,xrightmargin=3pt,aboveskip=4pt,belowskip=3pt}
+
+\begin{minipage}{\linewidth}
+\small
+{\bfseries\color{molblue}One molecular state; different parts change}\par\vspace{0.25em}
+\begin{tabularx}{\linewidth}{@{}X@{\hspace{0.4em}}c@{\hspace{0.4em}}X@{\hspace{0.4em}}c@{\hspace{0.4em}}X@{}}
+\textcolor{sosedit}{\textbf{4\quad Install AWW}} & $\longrightarrow$ &
+\textcolor{molteal}{\textbf{5\quad Place the arm [D]}} & $\longrightarrow$ &
+\textcolor{sosresponse}{\textbf{6\quad Select Phe890 [E]}}\\[3pt]
+New ligand graph; inherited placement & &
+Same graph; ligand branch moves; receptor fixed & &
+Same graph; ligand fixed; Phe890 moves\\
+\end{tabularx}
+\vspace{0.4em}
+\noindent\colorbox{callout}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+\textbf{Saved state:} parent-linked snapshots preserve the molecular graph and coordinates.\newline
+\textbf{How it was obtained:} attached public-action segments have explicit coverage limits; numerical audits are separate release files.}}
+\par\vspace{0.2em}
+Preparation and parameterization also belong to the state: parameterization assigns the numerical model without moving atoms. The arrows above show two transitions within the saved history, not the entire commit graph.
+\end{minipage}
+
+\par\vspace{0.8em}
+\refstepcounter{lstlisting}\label{lst:sos1api}
+{\small\textbf{Listing~\thelstlisting:} The SOS1 movie as a readable protocol. Letters refer to Fig.~\ref{fig:sos1story}. Orange identifies graph edits, teal ligand placement, and purple receptor response; the text labels also carry the meaning. Angles are in degrees; distances are in angstroms unless stated otherwise.}\par

@@ -1,0 +1,17 @@
+{
+  "caption": "AXE starting hit: naphthyl group on the dimethoxyquinazoline scaffold.",
+  "depiction": {
+    "alignedAtoms": "0",
+    "alignmentBackend": "fresh RDKit 2D layout",
+    "mode": "build",
+    "rdkitVersion": "2025.03.4",
+    "sanitization": "provenance-bounded graph; strict parse with drawing-only fallback"
+  },
+  "docked": true,
+  "expanded": true,
+  "highlightedAtomIds": [],
+  "networkPolicy": "Local Lab · network locked",
+  "replayStatus": "completed",
+  "reviewIndex": 4,
+  "depictionSvgSha256": "a49c06f8ea386306c36e7524c98b152c71464809333c6be48e54fbbbc975a669"
+}

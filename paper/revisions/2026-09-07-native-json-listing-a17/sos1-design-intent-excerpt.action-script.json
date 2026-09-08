@@ -1,0 +1,84 @@
+{
+  "schema": "molarium.chemist-action-script/v1",
+  "label": "SOS1 AWW contact placement and ligand lock (excerpt)",
+  "actions": [
+    {
+      "caption": "Record the N7 to Asn879 interaction hypothesis",
+      "action": "pose.addContact",
+      "args": {
+        "ligandAtom": {"atomName": "N7", "componentId": "heterogen:A:1104::AWW"},
+        "ligandRole": "donor",
+        "receptorAtom": {"atomName": "OD1", "chain": "A", "insertionCode": "", "residueIndex": 879,
+          "residueName": "ASN"}
+      }
+    },
+    {
+      "caption": "Record the OX3 to Tyr884 backbone-oxygen hypothesis",
+      "action": "pose.addContact",
+      "args": {
+        "ligandAtom": {"atomName": "OX3", "componentId": "heterogen:A:1104::AWW"},
+        "ligandRole": "donor",
+        "receptorAtom": {"atomName": "O", "chain": "A", "insertionCode": "", "residueIndex": 884,
+          "residueName": "TYR"}
+      }
+    },
+    {
+      "caption": "Choose the contact-compatible attachment direction explicitly",
+      "action": "geometry.alignBranchToContact",
+      "args": {
+        "allowedResponseAtoms": [
+          {"atomName": "CG", "chain": "A", "insertionCode": "", "residueIndex": 890,
+            "residueName": "PHE"},
+          {"atomName": "CD1", "chain": "A", "insertionCode": "", "residueIndex": 890,
+            "residueName": "PHE"},
+          {"atomName": "CD2", "chain": "A", "insertionCode": "", "residueIndex": 890,
+            "residueName": "PHE"},
+          {"atomName": "CE1", "chain": "A", "insertionCode": "", "residueIndex": 890,
+            "residueName": "PHE"},
+          {"atomName": "CE2", "chain": "A", "insertionCode": "", "residueIndex": 890,
+            "residueName": "PHE"},
+          {"atomName": "CZ", "chain": "A", "insertionCode": "", "residueIndex": 890,
+            "residueName": "PHE"}
+        ],
+        "contactId": "manual-hbond-2",
+        "designerPrimaryRotationDegrees": 150,
+        "solution": "best-directional",
+        "upstreamRotationRangeDegrees": [0, 60],
+        "axisAtomSelectors": [
+          {"atomName": "C12", "componentId": "heterogen:A:1104::AWW"},
+          {"atomName": "C15", "componentId": "heterogen:A:1104::AWW"}
+        ],
+        "coupledAxisAtomSelectors": [
+          [
+            {"atomName": "CX4", "componentId": "heterogen:A:1104::AWW"},
+            {"atomName": "CX5", "componentId": "heterogen:A:1104::AWW"}
+          ],
+          [
+            {"atomName": "CX15", "componentId": "heterogen:A:1104::AWW"},
+            {"atomName": "CX16", "componentId": "heterogen:A:1104::AWW"}
+          ]
+        ],
+        "upstreamAxisAtomSelectors": [
+          {"atomName": "N7", "componentId": "heterogen:A:1104::AWW"},
+          {"atomName": "C12", "componentId": "heterogen:A:1104::AWW"}
+        ]
+      },
+      "expect": {
+        "designerBranchContact.externalReferenceCoordinatesUsed": false,
+        "designerBranchContact.solution": "best-directional",
+        "designerBranchContact.selected.internalSevereContactCount": 0,
+        "designerBranchContact.selected.contacts.outsideAllowedResponseContactCount": 0,
+        "molecule.atoms": 7935,
+        "molecule.bonds": 8019
+      }
+    },
+    {
+      "caption": "Fix the chemist-selected ligand pose",
+      "action": "pose.setDesignerLigandPoseFixed",
+      "args": {
+        "fixed": true,
+        "label": "AWW +150 degree contact-directed ligand intent before Phe890 response"
+      }
+    }
+  ]
+}

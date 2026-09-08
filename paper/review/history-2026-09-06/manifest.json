@@ -1,0 +1,3780 @@
+{
+  "schema": "molarium.manuscript-recovery/v1",
+  "recoveredDate": "2026-09-06",
+  "builderSha256": "d06b4bbc265209f38e541ffa66b8213caea43103fb18a0612600085d04c2afa8",
+  "policy": {
+    "authorship": "Not inferred from metadata, filenames, Git authors, or similarity. Use declared lineage evidence separately.",
+    "dates": "Filesystem and ZIP dates are observations, not proven edit chronology.",
+    "originals": "Read-only; exact bytes retained by SHA-256.",
+    "coverage": "Named manuscript files in Downloads, named source bundles, all reachable Git paper snapshots; not unseen Prism sessions or private conversations.",
+    "comments": "Raw collaborator DOCX and comments stay private pending review.",
+    "publication": "Prepared for repository review; inclusion here does not mean publication or editorial approval."
+  },
+  "artifacts": [
+    {
+      "id": "e19f1a53d40e861f238cae80f8fe21fac6eb65c558c80690d57c93d385f06296.pdf",
+      "sha256": "e19f1a53d40e861f238cae80f8fe21fac6eb65c558c80690d57c93d385f06296",
+      "bytes": 97256,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 14,
+      "textSha256": "315a600cf254a957272f24a0c52e8f0bd6ae7a2486a0de09e830de7797096adf"
+    },
+    {
+      "id": "ca1efd8377e33ce1d88df3e7e34c20275f5403ef9eedb1192161b5b40acacf31.pdf",
+      "sha256": "ca1efd8377e33ce1d88df3e7e34c20275f5403ef9eedb1192161b5b40acacf31",
+      "bytes": 149803,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 21,
+      "textSha256": "2ae3bb39988a70529349e1065ec86494da6309747cb3e4505786e837bbe8763e"
+    },
+    {
+      "id": "5b92806552216c7e4cf2b2ffed90c8e429914b6bf1aec233290a84953fc682be.pdf",
+      "sha256": "5b92806552216c7e4cf2b2ffed90c8e429914b6bf1aec233290a84953fc682be",
+      "bytes": 118257,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 18,
+      "textSha256": "84d7b22f2657e7ef1338c15e58e5bd64bd095ebeee97b911744622497d96e63c"
+    },
+    {
+      "id": "cd7c29592d22870241c9b7f5178c3112c4aa71ef291b8f777cc53132f5dc365f.pdf",
+      "sha256": "cd7c29592d22870241c9b7f5178c3112c4aa71ef291b8f777cc53132f5dc365f",
+      "bytes": 104071,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 15,
+      "textSha256": "7e53a0a19e1e6ae32c16869878f212f4e8677cd1b59d57460c57b619de668bef"
+    },
+    {
+      "id": "1c75465d48a066578491ce042a8ee34ce974dd057d4693812893fc4d4ced4946.tex",
+      "sha256": "1c75465d48a066578491ce042a8ee34ce974dd057d4693812893fc4d4ced4946",
+      "bytes": 48883,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "dd9c8fe6919a982084ccae62aba81bcc13f445fcf1263fd528d7c1cbe6886c80.tex",
+      "sha256": "dd9c8fe6919a982084ccae62aba81bcc13f445fcf1263fd528d7c1cbe6886c80",
+      "bytes": 60122,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "e72b9bf9084102892434e4354d7ecaa0e9594abb38584bfa4240cde1f46df6fb.pdf",
+      "sha256": "e72b9bf9084102892434e4354d7ecaa0e9594abb38584bfa4240cde1f46df6fb",
+      "bytes": 1746741,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 11,
+      "textSha256": "03ecf76e97463c1ca991f317c28c00f7b2a472b765f4334d215292d3df620c0e"
+    },
+    {
+      "id": "8f1289a1ed012ffbf938e7c807842a3355b17882300e3de2ce9887b3ee5b892b.docx",
+      "sha256": "8f1289a1ed012ffbf938e7c807842a3355b17882300e3de2ce9887b3ee5b892b",
+      "bytes": 2121859,
+      "extension": ".docx",
+      "publication": "hash only; collaborator comments and raw DOCX held for privacy review",
+      "paragraphs": 96,
+      "trackedChanges": 0,
+      "comments": 7
+    },
+    {
+      "id": "131bdf3afaf4a6bb4db26e4e5e968715284bf58dbf41142fca56d8d0856f3a76.pdf",
+      "sha256": "131bdf3afaf4a6bb4db26e4e5e968715284bf58dbf41142fca56d8d0856f3a76",
+      "bytes": 2287023,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 37,
+      "textSha256": "da6be35e09292b5b274865ba40391b072372a3cc0934ca99274f03a23a289e53"
+    },
+    {
+      "id": "d098f3738d0e07df1b915761abc5f6576a7df91ad4d4455269ec12b7c184e2a9.tex",
+      "sha256": "d098f3738d0e07df1b915761abc5f6576a7df91ad4d4455269ec12b7c184e2a9",
+      "bytes": 141068,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "0082566fe07ee8da82cd8a1b0b10ba2df8441d0d056d360f3a34c451bdc2ade4.tex",
+      "sha256": "0082566fe07ee8da82cd8a1b0b10ba2df8441d0d056d360f3a34c451bdc2ade4",
+      "bytes": 141327,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "ec130e233185a3e91e86f9858fb592f4df2706801835039606f360aa5e59f38c.pdf",
+      "sha256": "ec130e233185a3e91e86f9858fb592f4df2706801835039606f360aa5e59f38c",
+      "bytes": 1966988,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 37,
+      "textSha256": "a663e6b66091110573daba6a7374497eed84681583ddab7fea66fb49acd8d75e"
+    },
+    {
+      "id": "5411421a6dccaecab6ea58be3b44da2bfb9c5001c74ae4e5cdd2d702585695a3.pdf",
+      "sha256": "5411421a6dccaecab6ea58be3b44da2bfb9c5001c74ae4e5cdd2d702585695a3",
+      "bytes": 2274348,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 37,
+      "textSha256": "4879ee85de792bde7b4bc0fccdb0ba9b953d8b4297c42a3961fd1a4726b1da14"
+    },
+    {
+      "id": "5513c066a601cc6cc71ff7b6f65949f4b78d90c65fe832ca994e33c378ac3c05.tex",
+      "sha256": "5513c066a601cc6cc71ff7b6f65949f4b78d90c65fe832ca994e33c378ac3c05",
+      "bytes": 61317,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "sha256": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765",
+      "bytes": 293624,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "sha256": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d",
+      "bytes": 98445,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "fc9a9ca9bfa384bfb7a14773ac5ec387d08f9f2e96af42e4213ee2d8946ce888.png",
+      "sha256": "fc9a9ca9bfa384bfb7a14773ac5ec387d08f9f2e96af42e4213ee2d8946ce888",
+      "bytes": 1193392,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "sha256": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476",
+      "bytes": 267068,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "sha256": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3",
+      "bytes": 124568,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "sha256": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342",
+      "bytes": 108085,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "a78f7d2f5e2bc95e1ec8f4265e8a0b410b9085f2c01fd23102c0ad090884bb01.tex",
+      "sha256": "a78f7d2f5e2bc95e1ec8f4265e8a0b410b9085f2c01fd23102c0ad090884bb01",
+      "bytes": 79697,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "5f639cc0a4bf05e0ae88725dc1957e64b09d29099b1b6252b51cbe211645c909.tex",
+      "sha256": "5f639cc0a4bf05e0ae88725dc1957e64b09d29099b1b6252b51cbe211645c909",
+      "bytes": 78843,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "e1af77f746bd21d7f409e5f88845b5961d8ca6fe1c73bdb976f93cd3a2bb7edf.pdf",
+      "sha256": "e1af77f746bd21d7f409e5f88845b5961d8ca6fe1c73bdb976f93cd3a2bb7edf",
+      "bytes": 2265727,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 37,
+      "textSha256": "4879ee85de792bde7b4bc0fccdb0ba9b953d8b4297c42a3961fd1a4726b1da14"
+    },
+    {
+      "id": "003bcedf221b83b50113411287addb7195e8ca042c18014987126ba774d9e889.tex",
+      "sha256": "003bcedf221b83b50113411287addb7195e8ca042c18014987126ba774d9e889",
+      "bytes": 79956,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "418fd2aeed5bcae4a9547778ca4c98100bfcecbadef322937ce797aca2baf9a8.png",
+      "sha256": "418fd2aeed5bcae4a9547778ca4c98100bfcecbadef322937ce797aca2baf9a8",
+      "bytes": 1152376,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "03f3c51ddce17bf958f565bebeb7df5fd8e1ca021ec3271aa63e09f587366a86.pdf",
+      "sha256": "03f3c51ddce17bf958f565bebeb7df5fd8e1ca021ec3271aa63e09f587366a86",
+      "bytes": 2225763,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 37,
+      "textSha256": "941ee4c78deef978f0cb2e452be050d85b631a84c2d996c35b302d82d2549ac6"
+    },
+    {
+      "id": "1644af9f292854ea86ae0f20d5236c32827c56d7ac3bc75c7ca6f68651bc29d8.tex",
+      "sha256": "1644af9f292854ea86ae0f20d5236c32827c56d7ac3bc75c7ca6f68651bc29d8",
+      "bytes": 58681,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "1d9f0c0fcb0a74eca4df50e609a3a6a2441d2b3f9b69de56c7988ece695898b1.png",
+      "sha256": "1d9f0c0fcb0a74eca4df50e609a3a6a2441d2b3f9b69de56c7988ece695898b1",
+      "bytes": 295307,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "bb9a91ba885600e45900210166bdd658117d106f7c1da8b8f7ac53f52d636ada.png",
+      "sha256": "bb9a91ba885600e45900210166bdd658117d106f7c1da8b8f7ac53f52d636ada",
+      "bytes": 1859731,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "sha256": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac",
+      "bytes": 8472,
+      "extension": ".bib",
+      "publication": "source artifact"
+    },
+    {
+      "id": "f7732758f6ae390b86c852c62c300f648261bc8849a6b31591fd593c3d6411f6.md",
+      "sha256": "f7732758f6ae390b86c852c62c300f648261bc8849a6b31591fd593c3d6411f6",
+      "bytes": 840,
+      "extension": ".md",
+      "publication": "source artifact"
+    },
+    {
+      "id": "f3b72f23c3e4c750f17b7d90bdf475b54d052b5d63196c92830856649839a6ce.png",
+      "sha256": "f3b72f23c3e4c750f17b7d90bdf475b54d052b5d63196c92830856649839a6ce",
+      "bytes": 1075743,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "affadf33bdcd309e96bfbaf4c3d96e1505a9fcdd024404de3bddd8562a6efb72.png",
+      "sha256": "affadf33bdcd309e96bfbaf4c3d96e1505a9fcdd024404de3bddd8562a6efb72",
+      "bytes": 997401,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "f4997580063baef3562fbcb6ad4949fc846e3f7a0352df13d84743ef1149bac7.png",
+      "sha256": "f4997580063baef3562fbcb6ad4949fc846e3f7a0352df13d84743ef1149bac7",
+      "bytes": 119475,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "2ef0fa02223c94ab381146959aaab523a512e80d9a394853387ce45fba48abd8.png",
+      "sha256": "2ef0fa02223c94ab381146959aaab523a512e80d9a394853387ce45fba48abd8",
+      "bytes": 266346,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "95572d7c730eebef4cf4c5bfecdbb826e16df5ab892becbc61cd9c85456d2691.png",
+      "sha256": "95572d7c730eebef4cf4c5bfecdbb826e16df5ab892becbc61cd9c85456d2691",
+      "bytes": 137028,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "1aaa3156971919f409d98baa237bd6cf54f134580ebf38bcf8420b62ca65c341.png",
+      "sha256": "1aaa3156971919f409d98baa237bd6cf54f134580ebf38bcf8420b62ca65c341",
+      "bytes": 104436,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "5c8ed34c08bc053ecfe827e76e2ecfc2f59c0b9bb59e6117bca40e0c7a327b90.pdf",
+      "sha256": "5c8ed34c08bc053ecfe827e76e2ecfc2f59c0b9bb59e6117bca40e0c7a327b90",
+      "bytes": 409855,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 14,
+      "textSha256": "111861d8482375861789e117878f4e582b05d2287f8da3420ddc33df6c088383"
+    },
+    {
+      "id": "9ea165deb8e651f8371879ae5896000018a40861d14b18314cb49469e44c54b0.tex",
+      "sha256": "9ea165deb8e651f8371879ae5896000018a40861d14b18314cb49469e44c54b0",
+      "bytes": 142029,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "1a19b55f4d729724172c72b9f56a9c5b071408d68b031779383ad5bb296e8051.pdf",
+      "sha256": "1a19b55f4d729724172c72b9f56a9c5b071408d68b031779383ad5bb296e8051",
+      "bytes": 1348299,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 6,
+      "textSha256": "585e0156be836ae69c5e5b7bfe0cb1ff3d5e713eca174f18ed0588d91e562ef6"
+    },
+    {
+      "id": "3de523cc745279a9962cae7d1afb90ccb8867f8d4d086e449e5f146f84fc24ff.tex",
+      "sha256": "3de523cc745279a9962cae7d1afb90ccb8867f8d4d086e449e5f146f84fc24ff",
+      "bytes": 258441,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "81a7927c03c0a121863f6af66412f5e5ebc9f6c3b658236029f39335d5a3dafb.pdf",
+      "sha256": "81a7927c03c0a121863f6af66412f5e5ebc9f6c3b658236029f39335d5a3dafb",
+      "bytes": 1691255,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 12,
+      "textSha256": "3269d7937f72af5f0e97cf1c84690b95821fa30f8f54228d84408913800dd9d4"
+    },
+    {
+      "id": "498821216134b5f3519e6f70e2cd9f4b421f7a3ff4d8b571ac8bdf776b4505e6.pdf",
+      "sha256": "498821216134b5f3519e6f70e2cd9f4b421f7a3ff4d8b571ac8bdf776b4505e6",
+      "bytes": 1877918,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 40,
+      "textSha256": "6c48540411c769df716b6008e95cc5942c4a6873e7bb35698bd9ed26dc551c7d"
+    },
+    {
+      "id": "73ad36f58900e8b47737c22178f6c08f1d6a0faa40758179ca110ac116b8f15f.pdf",
+      "sha256": "73ad36f58900e8b47737c22178f6c08f1d6a0faa40758179ca110ac116b8f15f",
+      "bytes": 2004995,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 38,
+      "textSha256": "a407d2cf2e0ae3da86f1297bbc8da51b86b3548f95eefa377a4cea5a44b92ce8"
+    },
+    {
+      "id": "576189e54da90ed249a88a1adf0b2921ebc965697c4381e768b189ce90ecb977.pdf",
+      "sha256": "576189e54da90ed249a88a1adf0b2921ebc965697c4381e768b189ce90ecb977",
+      "bytes": 2006672,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 38,
+      "textSha256": "7765ff646895ec0de79581f8e7cf17f3beb43728f4147e1acc8d9b86a7d1dc5d"
+    },
+    {
+      "id": "33e32a045199b347d506b0fb956ee912547d8b9c6893056585f8531d31b3e3b5.pdf",
+      "sha256": "33e32a045199b347d506b0fb956ee912547d8b9c6893056585f8531d31b3e3b5",
+      "bytes": 2286794,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 37,
+      "textSha256": "02c8d20fea96abeaecbb1b7e52b906dd76f7591663a00bcfb2784ad17dde1dbf"
+    },
+    {
+      "id": "e05fb163e78d6e06da4e5852b10f311f65a0ae629dd6f7f861ad4873bfbe2480.pdf",
+      "sha256": "e05fb163e78d6e06da4e5852b10f311f65a0ae629dd6f7f861ad4873bfbe2480",
+      "bytes": 2286973,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 37,
+      "textSha256": "c4cb8c6cd0e4fca5f112b1b74e5822e95ec3f7b7fefbf4f2f64e8e15744dfd36"
+    },
+    {
+      "id": "d8c320ad781a306b0fe8114656819a8ea49ed3bcd260560da8ad04ae48509fb6.pdf",
+      "sha256": "d8c320ad781a306b0fe8114656819a8ea49ed3bcd260560da8ad04ae48509fb6",
+      "bytes": 2367280,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 70,
+      "textSha256": "325eeef3601b9ce34ba06b7f9d52e42f7a31df010fa0a79cb6b06522cacb9491"
+    },
+    {
+      "id": "e2baf47dfa33e141ec714aebf69bf5f2ac61d65fb12b6821e2e2f099470ddf1f.pdf",
+      "sha256": "e2baf47dfa33e141ec714aebf69bf5f2ac61d65fb12b6821e2e2f099470ddf1f",
+      "bytes": 409855,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 14,
+      "textSha256": "111861d8482375861789e117878f4e582b05d2287f8da3420ddc33df6c088383"
+    },
+    {
+      "id": "1ecd9273f81373d2e3ea4ae2342e38a14b42c8ffcb3b36241865f9df31ba8667.tex",
+      "sha256": "1ecd9273f81373d2e3ea4ae2342e38a14b42c8ffcb3b36241865f9df31ba8667",
+      "bytes": 44067,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "675e8a425926be3b0dd78f86c15211aae0ce3e8dbd494220d100054f23afd280.pdf",
+      "sha256": "675e8a425926be3b0dd78f86c15211aae0ce3e8dbd494220d100054f23afd280",
+      "bytes": 1210741,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 5,
+      "textSha256": "a6a2a922b67b34854ced132320069a2bab06b199bfed6a329fc75740138683ef"
+    },
+    {
+      "id": "7a1a13cb64d77896ddf60170223d58165f8710d203f1c1ea50b93902ec2499dc.docx",
+      "sha256": "7a1a13cb64d77896ddf60170223d58165f8710d203f1c1ea50b93902ec2499dc",
+      "bytes": 27463,
+      "extension": ".docx",
+      "publication": "hash only; collaborator comments and raw DOCX held for privacy review",
+      "paragraphs": 129,
+      "trackedChanges": 0,
+      "comments": 0
+    },
+    {
+      "id": "681c00cfd08ca6098b35c027b1808ccaa298c820f31c4db53059c104573757c1.pdf",
+      "sha256": "681c00cfd08ca6098b35c027b1808ccaa298c820f31c4db53059c104573757c1",
+      "bytes": 1344101,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 12,
+      "textSha256": "85dce62d6b8b0a7236aecf6de4da35b75815aa1caa049334368ea483045c7393"
+    },
+    {
+      "id": "52a0a44ac82fc522ad41669521130efbf237ca10d38487774fab804623ce4955.docx",
+      "sha256": "52a0a44ac82fc522ad41669521130efbf237ca10d38487774fab804623ce4955",
+      "bytes": 31145,
+      "extension": ".docx",
+      "publication": "hash only; collaborator comments and raw DOCX held for privacy review",
+      "paragraphs": 76,
+      "trackedChanges": 0,
+      "comments": 0
+    },
+    {
+      "id": "f687b03e6a253e131f76e507afaf955a985d2dd62d4c751a0a10afcd471b62ab.pdf",
+      "sha256": "f687b03e6a253e131f76e507afaf955a985d2dd62d4c751a0a10afcd471b62ab",
+      "bytes": 105361,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 11,
+      "textSha256": "3c936b456ceff06352fa03deaa7fd7d0c4795d19399327aada75c4a631ca13bc"
+    },
+    {
+      "id": "a02bb737f967e94f8e601ca3480508aeacddecf0cfeeeb905d3eb32f10891fe0.tex",
+      "sha256": "a02bb737f967e94f8e601ca3480508aeacddecf0cfeeeb905d3eb32f10891fe0",
+      "bytes": 23828,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "a78edc573be89be9f88dfd0564f9a8854c4b96309039593816257a3463fd2a18.bib",
+      "sha256": "a78edc573be89be9f88dfd0564f9a8854c4b96309039593816257a3463fd2a18",
+      "bytes": 6068,
+      "extension": ".bib",
+      "publication": "source artifact"
+    },
+    {
+      "id": "eb58919a83aaf7807637286540d719b66382dd14eab6e239fe78689ce70fd31e.png",
+      "sha256": "eb58919a83aaf7807637286540d719b66382dd14eab6e239fe78689ce70fd31e",
+      "bytes": 1067692,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "00018352e587b7b79fe3e79ed2bb3eec164afca16c3c92b1d4c3f72c716b09bb.tex",
+      "sha256": "00018352e587b7b79fe3e79ed2bb3eec164afca16c3c92b1d4c3f72c716b09bb",
+      "bytes": 44851,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "1404125cb018fb90c4eea6cee73dea4c9d33a8fefbc496278c3366ace3002d44.png",
+      "sha256": "1404125cb018fb90c4eea6cee73dea4c9d33a8fefbc496278c3366ace3002d44",
+      "bytes": 114167,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "9a57302fd750afc24ad2bcd19fa799eecb2076d90ae2db5f6fd8c28dcae97f6d.pdf",
+      "sha256": "9a57302fd750afc24ad2bcd19fa799eecb2076d90ae2db5f6fd8c28dcae97f6d",
+      "bytes": 408516,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 14,
+      "textSha256": "111861d8482375861789e117878f4e582b05d2287f8da3420ddc33df6c088383"
+    },
+    {
+      "id": "99b339dc140f03d188846ff08e2a36ef9fce9b9cf28206ef6d5d12136bbafa13.pdf",
+      "sha256": "99b339dc140f03d188846ff08e2a36ef9fce9b9cf28206ef6d5d12136bbafa13",
+      "bytes": 22489,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 1,
+      "textSha256": "4abe4f7ec78221f1fa913838bd1300ac96cb32e4f66fc2874f3af90447e44197"
+    },
+    {
+      "id": "614662bb9483ebb67c3d8b7802f4806bf9b33b2155d89bab876be3aef09cd33b.pdf",
+      "sha256": "614662bb9483ebb67c3d8b7802f4806bf9b33b2155d89bab876be3aef09cd33b",
+      "bytes": 35733,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 1,
+      "textSha256": "5785a664a2ebdf83c165a6993d910975a2326bf6940bf2a794d98706c62dd958"
+    },
+    {
+      "id": "177560b9135f5bee134eeb84df71128788df7c6a57310dca1d3d86ca3c55ca34.pdf",
+      "sha256": "177560b9135f5bee134eeb84df71128788df7c6a57310dca1d3d86ca3c55ca34",
+      "bytes": 29903,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 1,
+      "textSha256": "49806a6f77782128155faf4116db4c4444cd1e05cffc6b1999faea1b9ce926c8"
+    },
+    {
+      "id": "9b24f0266c8ddba17559847adbc30f30736e9a9ada281c1b118befd8ac4fce1d.md",
+      "sha256": "9b24f0266c8ddba17559847adbc30f30736e9a9ada281c1b118befd8ac4fce1d",
+      "bytes": 8768,
+      "extension": ".md",
+      "publication": "source artifact"
+    },
+    {
+      "id": "335bed1bcfbce4ab16f27acc07e38be7987d4ec4b2eb50c26b581e92d562e546.tex",
+      "sha256": "335bed1bcfbce4ab16f27acc07e38be7987d4ec4b2eb50c26b581e92d562e546",
+      "bytes": 35391,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "4d519e9d8a4630718764f2024073b1afb3aefd1e85e87a7988c715011a920b09.bib",
+      "sha256": "4d519e9d8a4630718764f2024073b1afb3aefd1e85e87a7988c715011a920b09",
+      "bytes": 11531,
+      "extension": ".bib",
+      "publication": "source artifact"
+    },
+    {
+      "id": "a8657609ce77addf58387fd1e6cd3b19a6ea6bb205deb5c148e6ebccad90884a.md",
+      "sha256": "a8657609ce77addf58387fd1e6cd3b19a6ea6bb205deb5c148e6ebccad90884a",
+      "bytes": 888,
+      "extension": ".md",
+      "publication": "source artifact"
+    },
+    {
+      "id": "74e59b46584d05e94c7e4e2cb0a9ef46eb2877b411613e34b24ae27359dc4e5b.tex",
+      "sha256": "74e59b46584d05e94c7e4e2cb0a9ef46eb2877b411613e34b24ae27359dc4e5b",
+      "bytes": 1442,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "568d56ba0fcef06d4f2fb175953a3279fff277cc52bdf6e790bff4784b06f335.tex",
+      "sha256": "568d56ba0fcef06d4f2fb175953a3279fff277cc52bdf6e790bff4784b06f335",
+      "bytes": 43531,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "0efa68e51f7fb93ddf0ee8b974a60fc9e02de5f2d4bcf7f4cfdb4d90946956fd.tex",
+      "sha256": "0efa68e51f7fb93ddf0ee8b974a60fc9e02de5f2d4bcf7f4cfdb4d90946956fd",
+      "bytes": 61145,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "962f6acecf2971357f6f87d6842820ec6d122351f2c8752152f7411ab6332018.png",
+      "sha256": "962f6acecf2971357f6f87d6842820ec6d122351f2c8752152f7411ab6332018",
+      "bytes": 1481698,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "ab50cfee6f74cbbf2163d641b1368e656d7afc0b06dfeeff1791c7d24d91af90.json",
+      "sha256": "ab50cfee6f74cbbf2163d641b1368e656d7afc0b06dfeeff1791c7d24d91af90",
+      "bytes": 2290,
+      "extension": ".json",
+      "publication": "source artifact"
+    },
+    {
+      "id": "0caaf6dca5497bc4492047cc39b73ad6fa54dc3d1eb6debbe6e63ba8d982c5a8.png",
+      "sha256": "0caaf6dca5497bc4492047cc39b73ad6fa54dc3d1eb6debbe6e63ba8d982c5a8",
+      "bytes": 1236822,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "ab546eeb5b852833063db1ff288bd54a6150c52ac92b92a060717603612a1cf2.tex",
+      "sha256": "ab546eeb5b852833063db1ff288bd54a6150c52ac92b92a060717603612a1cf2",
+      "bytes": 1199,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "86f6ba79392fa32a342baf87b8e7110d5a610f8c40427d4498c52d9c6623efea.tex",
+      "sha256": "86f6ba79392fa32a342baf87b8e7110d5a610f8c40427d4498c52d9c6623efea",
+      "bytes": 84459,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "df177357cd6aec8a69149ff1e0e58463f6e28d7800ab31df41e95907aab03a10.tex",
+      "sha256": "df177357cd6aec8a69149ff1e0e58463f6e28d7800ab31df41e95907aab03a10",
+      "bytes": 81141,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "c03399ddaeb7a7e664e5ad69bd8ba149f7edf3bcd25fa121c87c2c0a12640b8f.tex",
+      "sha256": "c03399ddaeb7a7e664e5ad69bd8ba149f7edf3bcd25fa121c87c2c0a12640b8f",
+      "bytes": 61145,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "362688ce932eea64681f412051b517c18e941ca3c6acd158836081a4a9bf864e.tex",
+      "sha256": "362688ce932eea64681f412051b517c18e941ca3c6acd158836081a4a9bf864e",
+      "bytes": 81344,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "55447de2ea51734c66e254596a34365f0214592175fc21459fc8b856b8715338.tex",
+      "sha256": "55447de2ea51734c66e254596a34365f0214592175fc21459fc8b856b8715338",
+      "bytes": 81046,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "e271b5c22ea1d5e9774f8343035c48a7742ce8886df6b8812b2edfe22376bc67.png",
+      "sha256": "e271b5c22ea1d5e9774f8343035c48a7742ce8886df6b8812b2edfe22376bc67",
+      "bytes": 1415619,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "d4539e3e00b1ce24af78a2fb10eb186437ea75e463d6aad8d55322f3b6fe8057.tex",
+      "sha256": "d4539e3e00b1ce24af78a2fb10eb186437ea75e463d6aad8d55322f3b6fe8057",
+      "bytes": 80853,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "88445b52dcd63a59bab59fb5aa17b9d8f82c6164d69f38ae49298627ef89bce3.tex",
+      "sha256": "88445b52dcd63a59bab59fb5aa17b9d8f82c6164d69f38ae49298627ef89bce3",
+      "bytes": 43290,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "e47e68c4d614f669e707fd4b37b420e51e58c16cb89667260819ee9c72b466c7.tex",
+      "sha256": "e47e68c4d614f669e707fd4b37b420e51e58c16cb89667260819ee9c72b466c7",
+      "bytes": 60934,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "13e9736784693828fb1a137cbc63da60d0c7f3854268b5cca85e7567c2e86755.tex",
+      "sha256": "13e9736784693828fb1a137cbc63da60d0c7f3854268b5cca85e7567c2e86755",
+      "bytes": 80697,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "93eea6a469c2330e5fb514ff5cf1222ceb25ed4e3ebf7e012df6b6a9a992a206.tex",
+      "sha256": "93eea6a469c2330e5fb514ff5cf1222ceb25ed4e3ebf7e012df6b6a9a992a206",
+      "bytes": 80639,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "9192503ff2e2e849bf7a01978805a35559b86b6ee164730a9e8a91b9cc88fab7.tex",
+      "sha256": "9192503ff2e2e849bf7a01978805a35559b86b6ee164730a9e8a91b9cc88fab7",
+      "bytes": 80370,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "701cb66a4b28feff2010caec827614847861531b0c0e64557bd25664cb7a0538.tex",
+      "sha256": "701cb66a4b28feff2010caec827614847861531b0c0e64557bd25664cb7a0538",
+      "bytes": 43191,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "0fd24d33ccc7fb5ab9debba4bb62dee3545dfa3fd0773dbe580c5fd36fdc446f.tex",
+      "sha256": "0fd24d33ccc7fb5ab9debba4bb62dee3545dfa3fd0773dbe580c5fd36fdc446f",
+      "bytes": 80815,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "ddffcf67bd01fc16f252eab057a65298990d6ca84fa9f7ef908f6f34bf29e947.tex",
+      "sha256": "ddffcf67bd01fc16f252eab057a65298990d6ca84fa9f7ef908f6f34bf29e947",
+      "bytes": 43205,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "3cb4863e4529f204d6e3dbb3345bf37aa6327fa3675bb88ac0d0f84a8268530d.tex",
+      "sha256": "3cb4863e4529f204d6e3dbb3345bf37aa6327fa3675bb88ac0d0f84a8268530d",
+      "bytes": 1473,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "d3e7a9ec80c651ff2ec77eb0946a98789429ebab19d1e02394dfaa77d4c73034.tex",
+      "sha256": "d3e7a9ec80c651ff2ec77eb0946a98789429ebab19d1e02394dfaa77d4c73034",
+      "bytes": 80938,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "685112043a156f44a0e16bb803ecd058b6516d2d9018cca1a31b50eecfa289e3.tex",
+      "sha256": "685112043a156f44a0e16bb803ecd058b6516d2d9018cca1a31b50eecfa289e3",
+      "bytes": 42681,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "2487f2f29c50ef625884841a8e7db13edd4b07b6e39c3589803f0888b9cb8b84.tex",
+      "sha256": "2487f2f29c50ef625884841a8e7db13edd4b07b6e39c3589803f0888b9cb8b84",
+      "bytes": 79654,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "892101ac7a5f32ecb92b576c95bca562b17b05159443e8a5d75ba320e8234e3e.tex",
+      "sha256": "892101ac7a5f32ecb92b576c95bca562b17b05159443e8a5d75ba320e8234e3e",
+      "bytes": 79547,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "b36086db4da6f7500ddee5305a0f3d76ee46827cb8b37ba80b5401ddf45eecfc.tex",
+      "sha256": "b36086db4da6f7500ddee5305a0f3d76ee46827cb8b37ba80b5401ddf45eecfc",
+      "bytes": 60121,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "3ec989231c9872054e643f007d3913a475c8e54a572c502f60e686b2010a12ab.tex",
+      "sha256": "3ec989231c9872054e643f007d3913a475c8e54a572c502f60e686b2010a12ab",
+      "bytes": 42343,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "3a77c5a2d551ceca6750f637f49d44598f7d15cebeb6532a93e9140bd0542e81.tex",
+      "sha256": "3a77c5a2d551ceca6750f637f49d44598f7d15cebeb6532a93e9140bd0542e81",
+      "bytes": 42129,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "45a0ba271a89bbe044c9cf42188cc355a5de3122df37b9d718aa6d70b95476c7.tex",
+      "sha256": "45a0ba271a89bbe044c9cf42188cc355a5de3122df37b9d718aa6d70b95476c7",
+      "bytes": 32973,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "1cba52e61476e7306d815bbd46b3f55d099872ad953c8cd0fc776018814d5e9b.tex",
+      "sha256": "1cba52e61476e7306d815bbd46b3f55d099872ad953c8cd0fc776018814d5e9b",
+      "bytes": 16262,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "b326ec1dc4287fdd10c465cac44b252cfa3fbd3aaf58580e639c7a5e8f2278a2.bib",
+      "sha256": "b326ec1dc4287fdd10c465cac44b252cfa3fbd3aaf58580e639c7a5e8f2278a2",
+      "bytes": 9103,
+      "extension": ".bib",
+      "publication": "source artifact"
+    },
+    {
+      "id": "cf60193330f0c5cf48407cdd816bfc148cbc7aec7433cb7c066f1a9c8fc7dd1a.tex",
+      "sha256": "cf60193330f0c5cf48407cdd816bfc148cbc7aec7433cb7c066f1a9c8fc7dd1a",
+      "bytes": 42124,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "c247ed4253a9d628f407afdffcc133af689700ed3bd09d6b69a0a3b575a0db71.tex",
+      "sha256": "c247ed4253a9d628f407afdffcc133af689700ed3bd09d6b69a0a3b575a0db71",
+      "bytes": 42039,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "14bee4722c11532a77df93390fafaf44f0a3ec7610617c7d1448b8be8b2a970c.tex",
+      "sha256": "14bee4722c11532a77df93390fafaf44f0a3ec7610617c7d1448b8be8b2a970c",
+      "bytes": 41882,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "5e72c437b175a54d513d1680c9ba3fd2f01554033909b7c4e61ffb7cc97987b1.tex",
+      "sha256": "5e72c437b175a54d513d1680c9ba3fd2f01554033909b7c4e61ffb7cc97987b1",
+      "bytes": 41479,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "0992727367628f40404d1ca0ec15aa24b847fd2b5c4e4589f14d04ad1bb39fb1.tex",
+      "sha256": "0992727367628f40404d1ca0ec15aa24b847fd2b5c4e4589f14d04ad1bb39fb1",
+      "bytes": 36684,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "52e3a9fd2dddacf4ece0c714ab2016d1ba873d5fc875f7012608618b51e02d42.bib",
+      "sha256": "52e3a9fd2dddacf4ece0c714ab2016d1ba873d5fc875f7012608618b51e02d42",
+      "bytes": 8625,
+      "extension": ".bib",
+      "publication": "source artifact"
+    },
+    {
+      "id": "7ba9885c51b68d012766291aabcafa6efbe7694977eb8abb6c3306b9def98b6b.tex",
+      "sha256": "7ba9885c51b68d012766291aabcafa6efbe7694977eb8abb6c3306b9def98b6b",
+      "bytes": 17637,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "67c83e0432806622fe78b43a07bdee43116a0ad28971a6efde82ce7e5e0c14b0.tex",
+      "sha256": "67c83e0432806622fe78b43a07bdee43116a0ad28971a6efde82ce7e5e0c14b0",
+      "bytes": 16230,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "7afb69ce41bc528ee8bcadb8345bfe8c26075ea0e85f34075d0a62d6f7830cce.bib",
+      "sha256": "7afb69ce41bc528ee8bcadb8345bfe8c26075ea0e85f34075d0a62d6f7830cce",
+      "bytes": 6947,
+      "extension": ".bib",
+      "publication": "source artifact"
+    },
+    {
+      "id": "c278aa5c3bdd78fe3b1f5dbeea953b07d8812c5c37028d16f1fdda023bda86f4.tex",
+      "sha256": "c278aa5c3bdd78fe3b1f5dbeea953b07d8812c5c37028d16f1fdda023bda86f4",
+      "bytes": 25274,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "sha256": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b",
+      "bytes": 16189,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "sha256": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a",
+      "bytes": 2783,
+      "extension": ".bib",
+      "publication": "source artifact"
+    },
+    {
+      "id": "d58417843f366ddf79805eb6697049b865e49e126e9469f33ea8d947897a83ae.pdf",
+      "sha256": "d58417843f366ddf79805eb6697049b865e49e126e9469f33ea8d947897a83ae",
+      "bytes": 23537,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 1,
+      "textSha256": "54c7007e7d4ccfad55d852fd4918d85003a01a12365dffc483bd28fb044e76db"
+    },
+    {
+      "id": "28406207b1692004638d2c16ea559523f753721847395767be35de3ac482a704.png",
+      "sha256": "28406207b1692004638d2c16ea559523f753721847395767be35de3ac482a704",
+      "bytes": 72938,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "5dfc95c914a47a6a932123206d00c20fa8e95ac8a5dade8a67f81f3c64ac41f8.pdf",
+      "sha256": "5dfc95c914a47a6a932123206d00c20fa8e95ac8a5dade8a67f81f3c64ac41f8",
+      "bytes": 28957,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 1,
+      "textSha256": "dc941807765d20484cce374131af6372ec66e85b21b9b2051b56ae7b598f1d09"
+    },
+    {
+      "id": "d935cf0ea27c74ad48dbf2ee478fa0ca7d14ca2db69f4b3e426deb3330ea697f.png",
+      "sha256": "d935cf0ea27c74ad48dbf2ee478fa0ca7d14ca2db69f4b3e426deb3330ea697f",
+      "bytes": 123771,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "104ac084038f2907c8c84c44c421577dabce5dd649ff8aa8c209e93e3cd7da6c.pdf",
+      "sha256": "104ac084038f2907c8c84c44c421577dabce5dd649ff8aa8c209e93e3cd7da6c",
+      "bytes": 29155,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 1,
+      "textSha256": "e76f46a563aeed92baf70a445d8729fe7afbd8a5cfb246b008686330d4921861"
+    },
+    {
+      "id": "3dc200bdc3853b3ad5989a43181d163a7f264e57e921bc18e3b484839bd3fe64.png",
+      "sha256": "3dc200bdc3853b3ad5989a43181d163a7f264e57e921bc18e3b484839bd3fe64",
+      "bytes": 100078,
+      "extension": ".png",
+      "publication": "source artifact"
+    },
+    {
+      "id": "d459d602c354aae88289af9703e52b5385f34db4889da9d0722c5b9808f8e6f7.tex",
+      "sha256": "d459d602c354aae88289af9703e52b5385f34db4889da9d0722c5b9808f8e6f7",
+      "bytes": 23903,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "aa0455b52ebdadf47ade6538bc3cfb4c087bf72bb4f0747125646b35ac7d70bb.pdf",
+      "sha256": "aa0455b52ebdadf47ade6538bc3cfb4c087bf72bb4f0747125646b35ac7d70bb",
+      "bytes": 2565196,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 37,
+      "textSha256": "d6545dea43455b0d9fe6b50eca6eafbb96e9420fbe444e832a85b0f69415c2c5"
+    },
+    {
+      "id": "dff11caf9dc88964dad3c282446175593520f1e6dc7cc2358a05cec6b5857961.tex",
+      "sha256": "dff11caf9dc88964dad3c282446175593520f1e6dc7cc2358a05cec6b5857961",
+      "bytes": 16165,
+      "extension": ".tex",
+      "publication": "source artifact"
+    },
+    {
+      "id": "8ec461ffd1a8b6e4b234ca8294b48e7f9b49d3b88ae776048b945d039a412c8f.pdf",
+      "sha256": "8ec461ffd1a8b6e4b234ca8294b48e7f9b49d3b88ae776048b945d039a412c8f",
+      "bytes": 52449,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 5,
+      "textSha256": "d1f260d1df09374fee0da138b7494092a7f86fc0a56bac5670a291ad0f5b1edf"
+    },
+    {
+      "id": "77eafcfd207e10dd70b08ed1140cb8994c073b6a5bc3a23a0605ee4ef5fba9e2.pdf",
+      "sha256": "77eafcfd207e10dd70b08ed1140cb8994c073b6a5bc3a23a0605ee4ef5fba9e2",
+      "bytes": 16983,
+      "extension": ".pdf",
+      "publication": "source artifact",
+      "pages": 5,
+      "textSha256": "c42665fe0584de9fd160bd63ab5fd8b6dd0cf0adb1b12831ef078814130af123"
+    },
+    {
+      "id": "51897473d9c28736c2496be2574e08de58bb7db56d3d021455e320189d167f05.md",
+      "sha256": "51897473d9c28736c2496be2574e08de58bb7db56d3d021455e320189d167f05",
+      "bytes": 4118,
+      "extension": ".md",
+      "publication": "source artifact"
+    },
+    {
+      "id": "a8ded8360dbd054c9b13c0d8008e40b7aa5ded398bceb1371b712bfb3e1d7f8c.md",
+      "sha256": "a8ded8360dbd054c9b13c0d8008e40b7aa5ded398bceb1371b712bfb3e1d7f8c",
+      "bytes": 5809,
+      "extension": ".md",
+      "publication": "source artifact"
+    },
+    {
+      "id": "81b2cf22f178e3235805e967bc2ad328cef5978f53ca0b59f81a8da0c4f10fa7.json",
+      "sha256": "81b2cf22f178e3235805e967bc2ad328cef5978f53ca0b59f81a8da0c4f10fa7",
+      "bytes": 5733,
+      "extension": ".json",
+      "publication": "source artifact"
+    }
+  ],
+  "aliases": [
+    {
+      "source": "Molarium-architecture-appendix.pdf",
+      "origin": "Downloads",
+      "artifact": "e19f1a53d40e861f238cae80f8fe21fac6eb65c558c80690d57c93d385f06296.pdf",
+      "observedFileMtimeUTC": "2026-09-02T17:43:42.531864+00:00"
+    },
+    {
+      "source": "Molarium-operating-manual.pdf",
+      "origin": "Downloads",
+      "artifact": "ca1efd8377e33ce1d88df3e7e34c20275f5403ef9eedb1192161b5b40acacf31.pdf",
+      "observedFileMtimeUTC": "2026-09-02T17:39:05.336604+00:00"
+    },
+    {
+      "source": "Molarium-paper-with-architecture-appendix.pdf",
+      "origin": "Downloads",
+      "artifact": "5b92806552216c7e4cf2b2ffed90c8e429914b6bf1aec233290a84953fc682be.pdf",
+      "observedFileMtimeUTC": "2026-09-02T17:39:05.341004+00:00"
+    },
+    {
+      "source": "Molarium_Appendix_B_Workflows_for_Humans_and_Agents.pdf",
+      "origin": "Downloads",
+      "artifact": "cd7c29592d22870241c9b7f5178c3112c4aa71ef291b8f777cc53132f5dc365f.pdf",
+      "observedFileMtimeUTC": "2026-09-03T03:14:55.754090+00:00"
+    },
+    {
+      "source": "Molarium_Appendix_B_Workflows_for_Humans_and_Agents.provided-before-api-merge.tex",
+      "origin": "Downloads",
+      "artifact": "1c75465d48a066578491ce042a8ee34ce974dd057d4693812893fc4d4ced4946.tex",
+      "observedFileMtimeUTC": "2026-09-03T01:42:54.119384+00:00"
+    },
+    {
+      "source": "Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Downloads",
+      "artifact": "dd9c8fe6919a982084ccae62aba81bcc13f445fcf1263fd528d7c1cbe6886c80.tex",
+      "observedFileMtimeUTC": "2026-09-03T01:42:54.128369+00:00"
+    },
+    {
+      "source": "Molarium_Aug27.pdf",
+      "origin": "Downloads",
+      "artifact": "e72b9bf9084102892434e4354d7ecaa0e9594abb38584bfa4240cde1f46df6fb.pdf",
+      "observedFileMtimeUTC": "2026-08-27T23:08:12.412415+00:00"
+    },
+    {
+      "source": "Molarium_Aug27_with_comments.docx",
+      "origin": "Downloads",
+      "artifact": "8f1289a1ed012ffbf938e7c807842a3355b17882300e3de2ce9887b3ee5b892b.docx",
+      "observedFileMtimeUTC": "2026-08-27T23:37:04.182542+00:00"
+    },
+    {
+      "source": "Molarium_Sep2.pdf",
+      "origin": "Downloads",
+      "artifact": "131bdf3afaf4a6bb4db26e4e5e968715284bf58dbf41142fca56d8d0856f3a76.pdf",
+      "observedFileMtimeUTC": "2026-09-03T05:26:09.867090+00:00"
+    },
+    {
+      "source": "Molarium_complete_2026-09-02.tex",
+      "origin": "Downloads",
+      "artifact": "d098f3738d0e07df1b915761abc5f6576a7df91ad4d4455269ec12b7c184e2a9.tex",
+      "observedFileMtimeUTC": "2026-09-03T07:54:31.002694+00:00"
+    },
+    {
+      "source": "Molarium_complete_2026-09-03.tex",
+      "origin": "Downloads",
+      "artifact": "0082566fe07ee8da82cd8a1b0b10ba2df8441d0d056d360f3a34c451bdc2ade4.tex",
+      "observedFileMtimeUTC": "2026-09-03T16:49:41.390571+00:00"
+    },
+    {
+      "source": "Molarium_current_revised.pdf",
+      "origin": "Downloads",
+      "artifact": "ec130e233185a3e91e86f9858fb592f4df2706801835039606f360aa5e59f38c.pdf",
+      "observedFileMtimeUTC": "2026-09-03T03:14:57.669970+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02/Molarium_complete.tex",
+      "origin": "Downloads source directory",
+      "artifact": "d098f3738d0e07df1b915761abc5f6576a7df91ad4d4455269ec12b7c184e2a9.tex",
+      "observedFileMtimeUTC": "2026-09-03T20:21:55.735258+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02/Molarium_updated_2026-09-02.pdf",
+      "origin": "Downloads source directory",
+      "artifact": "5411421a6dccaecab6ea58be3b44da2bfb9c5001c74ae4e5cdd2d702585695a3.pdf",
+      "observedFileMtimeUTC": "2026-09-03T20:21:55.735258+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02/appendix-b-workflows.tex",
+      "origin": "Downloads source directory",
+      "artifact": "5513c066a601cc6cc71ff7b6f65949f4b78d90c65fe832ca994e33c378ac3c05.tex",
+      "observedFileMtimeUTC": "2026-09-03T20:21:55.735258+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02/figures/fig1_molarium_interface.png",
+      "origin": "Downloads source directory",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "observedFileMtimeUTC": "2026-09-03T20:21:55.735258+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02/figures/fig2_architecture.png",
+      "origin": "Downloads source directory",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "observedFileMtimeUTC": "2026-09-03T20:21:55.735258+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Downloads source directory",
+      "artifact": "fc9a9ca9bfa384bfb7a14773ac5ec387d08f9f2e96af42e4213ee2d8946ce888.png",
+      "observedFileMtimeUTC": "2026-09-03T20:21:55.735258+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02/figures/fig3_build_loop_compact.png",
+      "origin": "Downloads source directory",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "observedFileMtimeUTC": "2026-09-03T20:21:55.735258+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Downloads source directory",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "observedFileMtimeUTC": "2026-09-03T20:21:55.735258+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02/figures/fig5_value_layers_fixed.png",
+      "origin": "Downloads source directory",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "observedFileMtimeUTC": "2026-09-03T20:21:55.735258+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02/main-current-modular.tex",
+      "origin": "Downloads source directory",
+      "artifact": "a78f7d2f5e2bc95e1ec8f4265e8a0b410b9085f2c01fd23102c0ad090884bb01.tex",
+      "observedFileMtimeUTC": "2026-09-03T20:21:55.735258+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02/main-original-input.tex",
+      "origin": "Downloads source directory",
+      "artifact": "5f639cc0a4bf05e0ae88725dc1957e64b09d29099b1b6252b51cbe211645c909.tex",
+      "observedFileMtimeUTC": "2026-09-03T20:21:55.735258+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02.zip :: Molarium_paper_source_2026-09-02/main-original-input.tex",
+      "origin": "Downloads archive member",
+      "artifact": "5f639cc0a4bf05e0ae88725dc1957e64b09d29099b1b6252b51cbe211645c909.tex",
+      "observedFileMtimeUTC": "2026-09-03T07:50:47.940274+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02.zip :: Molarium_paper_source_2026-09-02/appendix-b-workflows.tex",
+      "origin": "Downloads archive member",
+      "artifact": "5513c066a601cc6cc71ff7b6f65949f4b78d90c65fe832ca994e33c378ac3c05.tex",
+      "observedFileMtimeUTC": "2026-09-03T07:50:47.940274+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02.zip :: Molarium_paper_source_2026-09-02/Molarium_complete.tex",
+      "origin": "Downloads archive member",
+      "artifact": "d098f3738d0e07df1b915761abc5f6576a7df91ad4d4455269ec12b7c184e2a9.tex",
+      "observedFileMtimeUTC": "2026-09-03T07:50:47.940274+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02.zip :: Molarium_paper_source_2026-09-02/main-current-modular.tex",
+      "origin": "Downloads archive member",
+      "artifact": "a78f7d2f5e2bc95e1ec8f4265e8a0b410b9085f2c01fd23102c0ad090884bb01.tex",
+      "observedFileMtimeUTC": "2026-09-03T07:50:47.940274+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02.zip :: Molarium_paper_source_2026-09-02/figures/fig1_molarium_interface.png",
+      "origin": "Downloads archive member",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "observedFileMtimeUTC": "2026-09-03T07:50:47.940274+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02.zip :: Molarium_paper_source_2026-09-02/figures/fig3_build_loop_compact.png",
+      "origin": "Downloads archive member",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "observedFileMtimeUTC": "2026-09-03T07:50:47.940274+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02.zip :: Molarium_paper_source_2026-09-02/figures/fig5_value_layers_fixed.png",
+      "origin": "Downloads archive member",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "observedFileMtimeUTC": "2026-09-03T07:50:47.940274+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02.zip :: Molarium_paper_source_2026-09-02/figures/fig2_architecture.png",
+      "origin": "Downloads archive member",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "observedFileMtimeUTC": "2026-09-03T07:50:47.940274+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02.zip :: Molarium_paper_source_2026-09-02/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Downloads archive member",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "observedFileMtimeUTC": "2026-09-03T07:50:47.940274+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02.zip :: Molarium_paper_source_2026-09-02/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Downloads archive member",
+      "artifact": "fc9a9ca9bfa384bfb7a14773ac5ec387d08f9f2e96af42e4213ee2d8946ce888.png",
+      "observedFileMtimeUTC": "2026-09-03T07:50:47.940274+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-02.zip :: Molarium_paper_source_2026-09-02/Molarium_updated_2026-09-02.pdf",
+      "origin": "Downloads archive member",
+      "artifact": "e1af77f746bd21d7f409e5f88845b5961d8ca6fe1c73bdb976f93cd3a2bb7edf.pdf",
+      "observedFileMtimeUTC": "2026-09-03T07:50:47.940274+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-03.zip :: Molarium_paper_source/main-original-input.tex",
+      "origin": "Downloads archive member",
+      "artifact": "5f639cc0a4bf05e0ae88725dc1957e64b09d29099b1b6252b51cbe211645c909.tex",
+      "observedFileMtimeUTC": "2026-09-03T16:49:41.400700+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-03.zip :: Molarium_paper_source/appendix-b-workflows.tex",
+      "origin": "Downloads archive member",
+      "artifact": "5513c066a601cc6cc71ff7b6f65949f4b78d90c65fe832ca994e33c378ac3c05.tex",
+      "observedFileMtimeUTC": "2026-09-03T16:49:41.400700+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-03.zip :: Molarium_paper_source/Molarium_complete.tex",
+      "origin": "Downloads archive member",
+      "artifact": "0082566fe07ee8da82cd8a1b0b10ba2df8441d0d056d360f3a34c451bdc2ade4.tex",
+      "observedFileMtimeUTC": "2026-09-03T16:49:41.400700+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-03.zip :: Molarium_paper_source/main-current-modular.tex",
+      "origin": "Downloads archive member",
+      "artifact": "003bcedf221b83b50113411287addb7195e8ca042c18014987126ba774d9e889.tex",
+      "observedFileMtimeUTC": "2026-09-03T16:49:41.400700+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-03.zip :: Molarium_paper_source/figures/fig1_molarium_interface.png",
+      "origin": "Downloads archive member",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "observedFileMtimeUTC": "2026-09-03T16:49:41.400700+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-03.zip :: Molarium_paper_source/figures/fig3_build_loop_compact.png",
+      "origin": "Downloads archive member",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "observedFileMtimeUTC": "2026-09-03T16:49:41.400700+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-03.zip :: Molarium_paper_source/figures/fig5_value_layers_fixed.png",
+      "origin": "Downloads archive member",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "observedFileMtimeUTC": "2026-09-03T16:49:41.400700+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-03.zip :: Molarium_paper_source/figures/fig2_architecture.png",
+      "origin": "Downloads archive member",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "observedFileMtimeUTC": "2026-09-03T16:49:41.400700+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-03.zip :: Molarium_paper_source/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Downloads archive member",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "observedFileMtimeUTC": "2026-09-03T16:49:41.400700+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-03.zip :: Molarium_paper_source/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Downloads archive member",
+      "artifact": "418fd2aeed5bcae4a9547778ca4c98100bfcecbadef322937ce797aca2baf9a8.png",
+      "observedFileMtimeUTC": "2026-09-03T16:49:41.400700+00:00"
+    },
+    {
+      "source": "Molarium_paper_source_2026-09-03.zip :: Molarium_paper_source/Molarium_updated_2026-09-03.pdf",
+      "origin": "Downloads archive member",
+      "artifact": "03f3c51ddce17bf958f565bebeb7df5fd8e1ca021ec3271aa63e09f587366a86.pdf",
+      "observedFileMtimeUTC": "2026-09-03T16:49:41.400700+00:00"
+    },
+    {
+      "source": "Molarium_revised_source/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Downloads source directory",
+      "artifact": "dd9c8fe6919a982084ccae62aba81bcc13f445fcf1263fd528d7c1cbe6886c80.tex",
+      "observedFileMtimeUTC": "2026-09-03T01:42:54.136465+00:00"
+    },
+    {
+      "source": "Molarium_revised_source/appendix-b-workflows.tex",
+      "origin": "Downloads source directory",
+      "artifact": "1644af9f292854ea86ae0f20d5236c32827c56d7ac3bc75c7ca6f68651bc29d8.tex",
+      "observedFileMtimeUTC": "2026-09-03T01:42:54.136465+00:00"
+    },
+    {
+      "source": "Molarium_revised_source/figures/fig1_molarium_interface.png",
+      "origin": "Downloads source directory",
+      "artifact": "1d9f0c0fcb0a74eca4df50e609a3a6a2441d2b3f9b69de56c7988ece695898b1.png",
+      "observedFileMtimeUTC": "2026-09-03T01:42:54.136465+00:00"
+    },
+    {
+      "source": "Molarium_revised_source/figures/fig2_architecture.png",
+      "origin": "Downloads source directory",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "observedFileMtimeUTC": "2026-09-03T01:42:54.136465+00:00"
+    },
+    {
+      "source": "Molarium_revised_source/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Downloads source directory",
+      "artifact": "bb9a91ba885600e45900210166bdd658117d106f7c1da8b8f7ac53f52d636ada.png",
+      "observedFileMtimeUTC": "2026-09-03T01:42:54.136465+00:00"
+    },
+    {
+      "source": "Molarium_revised_source/figures/fig3_build_loop_compact.png",
+      "origin": "Downloads source directory",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "observedFileMtimeUTC": "2026-09-03T01:42:54.136465+00:00"
+    },
+    {
+      "source": "Molarium_revised_source/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Downloads source directory",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "observedFileMtimeUTC": "2026-09-03T01:42:54.136465+00:00"
+    },
+    {
+      "source": "Molarium_revised_source/figures/fig5_value_layers_fixed.png",
+      "origin": "Downloads source directory",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "observedFileMtimeUTC": "2026-09-03T01:42:54.136465+00:00"
+    },
+    {
+      "source": "Molarium_revised_source/main.tex",
+      "origin": "Downloads source directory",
+      "artifact": "5f639cc0a4bf05e0ae88725dc1957e64b09d29099b1b6252b51cbe211645c909.tex",
+      "observedFileMtimeUTC": "2026-09-03T01:42:54.136465+00:00"
+    },
+    {
+      "source": "Molarium_revised_source/references.bib",
+      "origin": "Downloads source directory",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "observedFileMtimeUTC": "2026-09-03T01:42:54.136465+00:00"
+    },
+    {
+      "source": "Molarium_updated_2026-09-02.pdf",
+      "origin": "Downloads",
+      "artifact": "e1af77f746bd21d7f409e5f88845b5961d8ca6fe1c73bdb976f93cd3a2bb7edf.pdf",
+      "observedFileMtimeUTC": "2026-09-03T07:50:47.948377+00:00"
+    },
+    {
+      "source": "Molarium_updated_2026-09-02.tex",
+      "origin": "Downloads",
+      "artifact": "a78f7d2f5e2bc95e1ec8f4265e8a0b410b9085f2c01fd23102c0ad090884bb01.tex",
+      "observedFileMtimeUTC": "2026-09-03T07:50:47.951713+00:00"
+    },
+    {
+      "source": "Molarium_updated_2026-09-03.pdf",
+      "origin": "Downloads",
+      "artifact": "03f3c51ddce17bf958f565bebeb7df5fd8e1ca021ec3271aa63e09f587366a86.pdf",
+      "observedFileMtimeUTC": "2026-09-03T16:49:41.383697+00:00"
+    },
+    {
+      "source": "Molarium_updated_2026-09-03.tex",
+      "origin": "Downloads",
+      "artifact": "003bcedf221b83b50113411287addb7195e8ca042c18014987126ba774d9e889.tex",
+      "observedFileMtimeUTC": "2026-09-03T16:49:41.387253+00:00"
+    },
+    {
+      "source": "README (2).md",
+      "origin": "Downloads",
+      "artifact": "f7732758f6ae390b86c852c62c300f648261bc8849a6b31591fd593c3d6411f6.md",
+      "observedFileMtimeUTC": "2026-09-07T01:47:30.197084+00:00"
+    },
+    {
+      "source": "fig1_molarium_interface.png",
+      "origin": "Downloads",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "observedFileMtimeUTC": "2026-09-07T01:47:10.243829+00:00"
+    },
+    {
+      "source": "fig1_molarium_views (1).png",
+      "origin": "Downloads",
+      "artifact": "f3b72f23c3e4c750f17b7d90bdf475b54d052b5d63196c92830856649839a6ce.png",
+      "observedFileMtimeUTC": "2026-09-03T00:39:44.848622+00:00"
+    },
+    {
+      "source": "fig1_molarium_views (2).png",
+      "origin": "Downloads",
+      "artifact": "f3b72f23c3e4c750f17b7d90bdf475b54d052b5d63196c92830856649839a6ce.png",
+      "observedFileMtimeUTC": "2026-09-07T01:47:11.005169+00:00"
+    },
+    {
+      "source": "fig1_molarium_views.png",
+      "origin": "Downloads",
+      "artifact": "f3b72f23c3e4c750f17b7d90bdf475b54d052b5d63196c92830856649839a6ce.png",
+      "observedFileMtimeUTC": "2026-08-27T23:31:56.012213+00:00"
+    },
+    {
+      "source": "fig2_architecture (2).png",
+      "origin": "Downloads",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "observedFileMtimeUTC": "2026-09-07T01:47:13.687686+00:00"
+    },
+    {
+      "source": "fig2_sos1_hit_to_bay293.png",
+      "origin": "Downloads",
+      "artifact": "affadf33bdcd309e96bfbaf4c3d96e1505a9fcdd024404de3bddd8562a6efb72.png",
+      "observedFileMtimeUTC": "2026-09-07T01:47:15.501717+00:00"
+    },
+    {
+      "source": "fig3_build_loop (2).png",
+      "origin": "Downloads",
+      "artifact": "f4997580063baef3562fbcb6ad4949fc846e3f7a0352df13d84743ef1149bac7.png",
+      "observedFileMtimeUTC": "2026-09-07T01:47:18.156384+00:00"
+    },
+    {
+      "source": "fig3_build_loop_compact (1).png",
+      "origin": "Downloads",
+      "artifact": "2ef0fa02223c94ab381146959aaab523a512e80d9a394853387ce45fba48abd8.png",
+      "observedFileMtimeUTC": "2026-09-07T01:47:16.786137+00:00"
+    },
+    {
+      "source": "fig4_evidence_ladder (2).png",
+      "origin": "Downloads",
+      "artifact": "95572d7c730eebef4cf4c5bfecdbb826e16df5ab892becbc61cd9c85456d2691.png",
+      "observedFileMtimeUTC": "2026-09-07T01:47:21.677257+00:00"
+    },
+    {
+      "source": "fig4_evidence_ladder_fixed (1).png",
+      "origin": "Downloads",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "observedFileMtimeUTC": "2026-09-07T01:47:20.662811+00:00"
+    },
+    {
+      "source": "fig5_value_layers (2).png",
+      "origin": "Downloads",
+      "artifact": "1aaa3156971919f409d98baa237bd6cf54f134580ebf38bcf8420b62ca65c341.png",
+      "observedFileMtimeUTC": "2026-09-07T01:47:24.201975+00:00"
+    },
+    {
+      "source": "fig5_value_layers_fixed (2).png",
+      "origin": "Downloads",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "observedFileMtimeUTC": "2026-09-07T01:47:23.069208+00:00"
+    },
+    {
+      "source": "main (1).pdf",
+      "origin": "Downloads",
+      "artifact": "5c8ed34c08bc053ecfe827e76e2ecfc2f59c0b9bb59e6117bca40e0c7a327b90.pdf",
+      "observedFileMtimeUTC": "2026-08-26T22:13:11.629807+00:00"
+    },
+    {
+      "source": "main (1).pre-molarium-revision.tex",
+      "origin": "Downloads",
+      "artifact": "9ea165deb8e651f8371879ae5896000018a40861d14b18314cb49469e44c54b0.tex",
+      "observedFileMtimeUTC": "2026-09-03T01:24:59.511589+00:00"
+    },
+    {
+      "source": "main (1).tex",
+      "origin": "Downloads",
+      "artifact": "5f639cc0a4bf05e0ae88725dc1957e64b09d29099b1b6252b51cbe211645c909.tex",
+      "observedFileMtimeUTC": "2026-09-03T01:42:54.122517+00:00"
+    },
+    {
+      "source": "main (2).pdf",
+      "origin": "Downloads",
+      "artifact": "1a19b55f4d729724172c72b9f56a9c5b071408d68b031779383ad5bb296e8051.pdf",
+      "observedFileMtimeUTC": "2026-08-26T22:13:14.715969+00:00"
+    },
+    {
+      "source": "main (2).tex",
+      "origin": "Downloads",
+      "artifact": "3de523cc745279a9962cae7d1afb90ccb8867f8d4d086e449e5f146f84fc24ff.tex",
+      "observedFileMtimeUTC": "2026-09-07T01:47:32.781272+00:00"
+    },
+    {
+      "source": "main (3).pdf",
+      "origin": "Downloads",
+      "artifact": "81a7927c03c0a121863f6af66412f5e5ebc9f6c3b658236029f39335d5a3dafb.pdf",
+      "observedFileMtimeUTC": "2026-09-02T18:33:36.438284+00:00"
+    },
+    {
+      "source": "main (4).pdf",
+      "origin": "Downloads",
+      "artifact": "498821216134b5f3519e6f70e2cd9f4b421f7a3ff4d8b571ac8bdf776b4505e6.pdf",
+      "observedFileMtimeUTC": "2026-09-02T19:46:01.159751+00:00"
+    },
+    {
+      "source": "main (5).pdf",
+      "origin": "Downloads",
+      "artifact": "73ad36f58900e8b47737c22178f6c08f1d6a0faa40758179ca110ac116b8f15f.pdf",
+      "observedFileMtimeUTC": "2026-09-02T21:47:27.553455+00:00"
+    },
+    {
+      "source": "main (6).pdf",
+      "origin": "Downloads",
+      "artifact": "576189e54da90ed249a88a1adf0b2921ebc965697c4381e768b189ce90ecb977.pdf",
+      "observedFileMtimeUTC": "2026-09-03T04:58:08.737774+00:00"
+    },
+    {
+      "source": "main (7).pdf",
+      "origin": "Downloads",
+      "artifact": "33e32a045199b347d506b0fb956ee912547d8b9c6893056585f8531d31b3e3b5.pdf",
+      "observedFileMtimeUTC": "2026-09-03T05:25:30.855505+00:00"
+    },
+    {
+      "source": "main (8).pdf",
+      "origin": "Downloads",
+      "artifact": "e05fb163e78d6e06da4e5852b10f311f65a0ae629dd6f7f861ad4873bfbe2480.pdf",
+      "observedFileMtimeUTC": "2026-09-05T15:12:10.818453+00:00"
+    },
+    {
+      "source": "main (9).pdf",
+      "origin": "Downloads",
+      "artifact": "d8c320ad781a306b0fe8114656819a8ea49ed3bcd260560da8ad04ae48509fb6.pdf",
+      "observedFileMtimeUTC": "2026-09-07T01:33:26.300854+00:00"
+    },
+    {
+      "source": "main.pdf",
+      "origin": "Downloads",
+      "artifact": "e2baf47dfa33e141ec714aebf69bf5f2ac61d65fb12b6821e2e2f099470ddf1f.pdf",
+      "observedFileMtimeUTC": "2026-08-25T02:28:00.299555+00:00"
+    },
+    {
+      "source": "main.tex",
+      "origin": "Downloads",
+      "artifact": "1ecd9273f81373d2e3ea4ae2342e38a14b42c8ffcb3b36241865f9df31ba8667.tex",
+      "observedFileMtimeUTC": "2026-08-27T23:31:44.565752+00:00"
+    },
+    {
+      "source": "molarium-system-paper (1).pdf",
+      "origin": "Downloads",
+      "artifact": "675e8a425926be3b0dd78f86c15211aae0ce3e8dbd494220d100054f23afd280.pdf",
+      "observedFileMtimeUTC": "2026-08-24T23:02:42.761537+00:00"
+    },
+    {
+      "source": "molarium-system-paper.pdf",
+      "origin": "Downloads",
+      "artifact": "675e8a425926be3b0dd78f86c15211aae0ce3e8dbd494220d100054f23afd280.pdf",
+      "observedFileMtimeUTC": "2026-08-20T00:31:33.736259+00:00"
+    },
+    {
+      "source": "molarium-system-paper_feedback_woody_2026-08-19 (1).docx",
+      "origin": "Downloads",
+      "artifact": "7a1a13cb64d77896ddf60170223d58165f8710d203f1c1ea50b93902ec2499dc.docx",
+      "observedFileMtimeUTC": "2026-08-26T23:46:43.743094+00:00"
+    },
+    {
+      "source": "molarium-system-paper_feedback_woody_2026-08-19.docx",
+      "origin": "Downloads",
+      "artifact": "7a1a13cb64d77896ddf60170223d58165f8710d203f1c1ea50b93902ec2499dc.docx",
+      "observedFileMtimeUTC": "2026-08-24T23:02:39.814321+00:00"
+    },
+    {
+      "source": "molarium_generated_infrastructure_polished.pdf",
+      "origin": "Downloads",
+      "artifact": "681c00cfd08ca6098b35c027b1808ccaa298c820f31c4db53059c104573757c1.pdf",
+      "observedFileMtimeUTC": "2026-08-26T22:26:27.905329+00:00"
+    },
+    {
+      "source": "molarium_paper_woody_2026-08-25.docx",
+      "origin": "Downloads",
+      "artifact": "52a0a44ac82fc522ad41669521130efbf237ca10d38487774fab804623ce4955.docx",
+      "observedFileMtimeUTC": "2026-08-26T22:04:41.860266+00:00"
+    },
+    {
+      "source": "molarium_paper_woody_2026-08-25.pdf",
+      "origin": "Downloads",
+      "artifact": "f687b03e6a253e131f76e507afaf955a985d2dd62d4c751a0a10afcd471b62ab.pdf",
+      "observedFileMtimeUTC": "2026-08-26T22:06:29.899440+00:00"
+    },
+    {
+      "source": "molarium_prism_bundle.zip :: main.tex",
+      "origin": "Downloads archive member",
+      "artifact": "a02bb737f967e94f8e601ca3480508aeacddecf0cfeeeb905d3eb32f10891fe0.tex",
+      "observedFileMtimeUTC": "2026-08-25T02:29:58.983213+00:00"
+    },
+    {
+      "source": "molarium_prism_bundle.zip :: molarium_opinion_references.bib",
+      "origin": "Downloads archive member",
+      "artifact": "a78edc573be89be9f88dfd0564f9a8854c4b96309039593816257a3463fd2a18.bib",
+      "observedFileMtimeUTC": "2026-08-25T02:29:58.983213+00:00"
+    },
+    {
+      "source": "molarium_prism_bundle.zip :: figures/molarium-interface-workflow.png",
+      "origin": "Downloads archive member",
+      "artifact": "eb58919a83aaf7807637286540d719b66382dd14eab6e239fe78689ce70fd31e.png",
+      "observedFileMtimeUTC": "2026-08-25T02:29:58.983213+00:00"
+    },
+    {
+      "source": "molarium_prism_latex.zip :: molarium_prism_upload/references.bib",
+      "origin": "Downloads archive member",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "observedFileMtimeUTC": "2026-08-27T01:06:49.728120+00:00"
+    },
+    {
+      "source": "molarium_prism_latex.zip :: molarium_prism_upload/main.tex",
+      "origin": "Downloads archive member",
+      "artifact": "00018352e587b7b79fe3e79ed2bb3eec164afca16c3c92b1d4c3f72c716b09bb.tex",
+      "observedFileMtimeUTC": "2026-08-27T01:06:49.728120+00:00"
+    },
+    {
+      "source": "molarium_prism_latex.zip :: molarium_prism_upload/README.md",
+      "origin": "Downloads archive member",
+      "artifact": "f7732758f6ae390b86c852c62c300f648261bc8849a6b31591fd593c3d6411f6.md",
+      "observedFileMtimeUTC": "2026-08-27T01:06:49.728120+00:00"
+    },
+    {
+      "source": "molarium_prism_latex.zip :: molarium_prism_upload/figures/fig2_architecture.png",
+      "origin": "Downloads archive member",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "observedFileMtimeUTC": "2026-08-27T01:06:49.728120+00:00"
+    },
+    {
+      "source": "molarium_prism_latex.zip :: molarium_prism_upload/figures/fig3_build_loop.png",
+      "origin": "Downloads archive member",
+      "artifact": "1404125cb018fb90c4eea6cee73dea4c9d33a8fefbc496278c3366ace3002d44.png",
+      "observedFileMtimeUTC": "2026-08-27T01:06:49.728120+00:00"
+    },
+    {
+      "source": "molarium_prism_latex.zip :: molarium_prism_upload/figures/fig5_value_layers.png",
+      "origin": "Downloads archive member",
+      "artifact": "1aaa3156971919f409d98baa237bd6cf54f134580ebf38bcf8420b62ca65c341.png",
+      "observedFileMtimeUTC": "2026-08-27T01:06:49.728120+00:00"
+    },
+    {
+      "source": "molarium_prism_latex.zip :: molarium_prism_upload/figures/fig4_evidence_ladder.png",
+      "origin": "Downloads archive member",
+      "artifact": "95572d7c730eebef4cf4c5bfecdbb826e16df5ab892becbc61cd9c85456d2691.png",
+      "observedFileMtimeUTC": "2026-08-27T01:06:49.728120+00:00"
+    },
+    {
+      "source": "molarium_prism_latex.zip :: molarium_prism_upload/figures/fig1_molarium_views.png",
+      "origin": "Downloads archive member",
+      "artifact": "f3b72f23c3e4c750f17b7d90bdf475b54d052b5d63196c92830856649839a6ce.png",
+      "observedFileMtimeUTC": "2026-08-27T01:06:49.728120+00:00"
+    },
+    {
+      "source": "molarium_prism_latex_project.zip :: main.pdf",
+      "origin": "Downloads archive member",
+      "artifact": "9a57302fd750afc24ad2bcd19fa799eecb2076d90ae2db5f6fd8c28dcae97f6d.pdf",
+      "observedFileMtimeUTC": "2026-08-25T02:12:29.287127+00:00"
+    },
+    {
+      "source": "molarium_prism_latex_project.zip :: figures/three_layers.pdf",
+      "origin": "Downloads archive member",
+      "artifact": "99b339dc140f03d188846ff08e2a36ef9fce9b9cf28206ef6d5d12136bbafa13.pdf",
+      "observedFileMtimeUTC": "2026-08-25T02:12:29.287127+00:00"
+    },
+    {
+      "source": "molarium_prism_latex_project.zip :: figures/build_loop.pdf",
+      "origin": "Downloads archive member",
+      "artifact": "614662bb9483ebb67c3d8b7802f4806bf9b33b2155d89bab876be3aef09cd33b.pdf",
+      "observedFileMtimeUTC": "2026-08-25T02:12:29.287127+00:00"
+    },
+    {
+      "source": "molarium_prism_latex_project.zip :: figures/architecture.pdf",
+      "origin": "Downloads archive member",
+      "artifact": "177560b9135f5bee134eeb84df71128788df7c6a57310dca1d3d86ca3c55ca34.pdf",
+      "observedFileMtimeUTC": "2026-08-25T02:12:29.287127+00:00"
+    },
+    {
+      "source": "molarium_prism_latex_project.zip :: critique_memo.md",
+      "origin": "Downloads archive member",
+      "artifact": "9b24f0266c8ddba17559847adbc30f30736e9a9ada281c1b118befd8ac4fce1d.md",
+      "observedFileMtimeUTC": "2026-08-25T02:12:29.287127+00:00"
+    },
+    {
+      "source": "molarium_prism_latex_project.zip :: main.tex",
+      "origin": "Downloads archive member",
+      "artifact": "335bed1bcfbce4ab16f27acc07e38be7987d4ec4b2eb50c26b581e92d562e546.tex",
+      "observedFileMtimeUTC": "2026-08-25T02:12:29.287127+00:00"
+    },
+    {
+      "source": "molarium_prism_latex_project.zip :: references.bib",
+      "origin": "Downloads archive member",
+      "artifact": "4d519e9d8a4630718764f2024073b1afb3aefd1e85e87a7988c715011a920b09.bib",
+      "observedFileMtimeUTC": "2026-08-25T02:12:29.287127+00:00"
+    },
+    {
+      "source": "molarium_prism_latex_project.zip :: README.md",
+      "origin": "Downloads archive member",
+      "artifact": "a8657609ce77addf58387fd1e6cd3b19a6ea6bb205deb5c148e6ebccad90884a.md",
+      "observedFileMtimeUTC": "2026-08-25T02:12:29.287127+00:00"
+    },
+    {
+      "source": "references (2).bib",
+      "origin": "Downloads",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "observedFileMtimeUTC": "2026-09-07T01:47:28.097326+00:00"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "74e59b46584d05e94c7e4e2cb0a9ef46eb2877b411613e34b24ae27359dc4e5b.tex",
+      "gitCommit": "847e1c2bbcc5f4565e811d434bf0feafbb388ee4"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "568d56ba0fcef06d4f2fb175953a3279fff277cc52bdf6e790bff4784b06f335.tex",
+      "gitCommit": "847e1c2bbcc5f4565e811d434bf0feafbb388ee4"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0efa68e51f7fb93ddf0ee8b974a60fc9e02de5f2d4bcf7f4cfdb4d90946956fd.tex",
+      "gitCommit": "847e1c2bbcc5f4565e811d434bf0feafbb388ee4"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "847e1c2bbcc5f4565e811d434bf0feafbb388ee4"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "847e1c2bbcc5f4565e811d434bf0feafbb388ee4"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_designer_intent.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "962f6acecf2971357f6f87d6842820ec6d122351f2c8752152f7411ab6332018.png",
+      "gitCommit": "847e1c2bbcc5f4565e811d434bf0feafbb388ee4"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_designer_intent.provenance.json",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "ab50cfee6f74cbbf2163d641b1368e656d7afc0b06dfeeff1791c7d24d91af90.json",
+      "gitCommit": "847e1c2bbcc5f4565e811d434bf0feafbb388ee4"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0caaf6dca5497bc4492047cc39b73ad6fa54dc3d1eb6debbe6e63ba8d982c5a8.png",
+      "gitCommit": "847e1c2bbcc5f4565e811d434bf0feafbb388ee4"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "847e1c2bbcc5f4565e811d434bf0feafbb388ee4"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "847e1c2bbcc5f4565e811d434bf0feafbb388ee4"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "847e1c2bbcc5f4565e811d434bf0feafbb388ee4"
+    },
+    {
+      "source": "paper/generated/sos1-designer-intent-results.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "ab546eeb5b852833063db1ff288bd54a6150c52ac92b92a060717603612a1cf2.tex",
+      "gitCommit": "847e1c2bbcc5f4565e811d434bf0feafbb388ee4"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "86f6ba79392fa32a342baf87b8e7110d5a610f8c40427d4498c52d9c6623efea.tex",
+      "gitCommit": "847e1c2bbcc5f4565e811d434bf0feafbb388ee4"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "847e1c2bbcc5f4565e811d434bf0feafbb388ee4"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "74e59b46584d05e94c7e4e2cb0a9ef46eb2877b411613e34b24ae27359dc4e5b.tex",
+      "gitCommit": "411ece20a0e29342aa37a4af59bd9a7fad230954"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "568d56ba0fcef06d4f2fb175953a3279fff277cc52bdf6e790bff4784b06f335.tex",
+      "gitCommit": "411ece20a0e29342aa37a4af59bd9a7fad230954"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0efa68e51f7fb93ddf0ee8b974a60fc9e02de5f2d4bcf7f4cfdb4d90946956fd.tex",
+      "gitCommit": "411ece20a0e29342aa37a4af59bd9a7fad230954"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "411ece20a0e29342aa37a4af59bd9a7fad230954"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "411ece20a0e29342aa37a4af59bd9a7fad230954"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0caaf6dca5497bc4492047cc39b73ad6fa54dc3d1eb6debbe6e63ba8d982c5a8.png",
+      "gitCommit": "411ece20a0e29342aa37a4af59bd9a7fad230954"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "411ece20a0e29342aa37a4af59bd9a7fad230954"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "411ece20a0e29342aa37a4af59bd9a7fad230954"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "411ece20a0e29342aa37a4af59bd9a7fad230954"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "df177357cd6aec8a69149ff1e0e58463f6e28d7800ab31df41e95907aab03a10.tex",
+      "gitCommit": "411ece20a0e29342aa37a4af59bd9a7fad230954"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "411ece20a0e29342aa37a4af59bd9a7fad230954"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "74e59b46584d05e94c7e4e2cb0a9ef46eb2877b411613e34b24ae27359dc4e5b.tex",
+      "gitCommit": "4e97550bffb3dbe840e64fc89b5c9a001e58af2d"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "568d56ba0fcef06d4f2fb175953a3279fff277cc52bdf6e790bff4784b06f335.tex",
+      "gitCommit": "4e97550bffb3dbe840e64fc89b5c9a001e58af2d"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "c03399ddaeb7a7e664e5ad69bd8ba149f7edf3bcd25fa121c87c2c0a12640b8f.tex",
+      "gitCommit": "4e97550bffb3dbe840e64fc89b5c9a001e58af2d"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "4e97550bffb3dbe840e64fc89b5c9a001e58af2d"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "4e97550bffb3dbe840e64fc89b5c9a001e58af2d"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0caaf6dca5497bc4492047cc39b73ad6fa54dc3d1eb6debbe6e63ba8d982c5a8.png",
+      "gitCommit": "4e97550bffb3dbe840e64fc89b5c9a001e58af2d"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "4e97550bffb3dbe840e64fc89b5c9a001e58af2d"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "4e97550bffb3dbe840e64fc89b5c9a001e58af2d"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "4e97550bffb3dbe840e64fc89b5c9a001e58af2d"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "362688ce932eea64681f412051b517c18e941ca3c6acd158836081a4a9bf864e.tex",
+      "gitCommit": "4e97550bffb3dbe840e64fc89b5c9a001e58af2d"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "4e97550bffb3dbe840e64fc89b5c9a001e58af2d"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "74e59b46584d05e94c7e4e2cb0a9ef46eb2877b411613e34b24ae27359dc4e5b.tex",
+      "gitCommit": "a5cda6784a9bf3c85c61095e05c8825d84b05ca2"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "568d56ba0fcef06d4f2fb175953a3279fff277cc52bdf6e790bff4784b06f335.tex",
+      "gitCommit": "a5cda6784a9bf3c85c61095e05c8825d84b05ca2"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "c03399ddaeb7a7e664e5ad69bd8ba149f7edf3bcd25fa121c87c2c0a12640b8f.tex",
+      "gitCommit": "a5cda6784a9bf3c85c61095e05c8825d84b05ca2"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "a5cda6784a9bf3c85c61095e05c8825d84b05ca2"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "a5cda6784a9bf3c85c61095e05c8825d84b05ca2"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0caaf6dca5497bc4492047cc39b73ad6fa54dc3d1eb6debbe6e63ba8d982c5a8.png",
+      "gitCommit": "a5cda6784a9bf3c85c61095e05c8825d84b05ca2"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "a5cda6784a9bf3c85c61095e05c8825d84b05ca2"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "a5cda6784a9bf3c85c61095e05c8825d84b05ca2"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "a5cda6784a9bf3c85c61095e05c8825d84b05ca2"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "55447de2ea51734c66e254596a34365f0214592175fc21459fc8b856b8715338.tex",
+      "gitCommit": "a5cda6784a9bf3c85c61095e05c8825d84b05ca2"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "a5cda6784a9bf3c85c61095e05c8825d84b05ca2"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "74e59b46584d05e94c7e4e2cb0a9ef46eb2877b411613e34b24ae27359dc4e5b.tex",
+      "gitCommit": "fb1943879798fb6d5dc305dbca81f1f95369a873"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "568d56ba0fcef06d4f2fb175953a3279fff277cc52bdf6e790bff4784b06f335.tex",
+      "gitCommit": "fb1943879798fb6d5dc305dbca81f1f95369a873"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "c03399ddaeb7a7e664e5ad69bd8ba149f7edf3bcd25fa121c87c2c0a12640b8f.tex",
+      "gitCommit": "fb1943879798fb6d5dc305dbca81f1f95369a873"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "fb1943879798fb6d5dc305dbca81f1f95369a873"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "fb1943879798fb6d5dc305dbca81f1f95369a873"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e271b5c22ea1d5e9774f8343035c48a7742ce8886df6b8812b2edfe22376bc67.png",
+      "gitCommit": "fb1943879798fb6d5dc305dbca81f1f95369a873"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "fb1943879798fb6d5dc305dbca81f1f95369a873"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "fb1943879798fb6d5dc305dbca81f1f95369a873"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "fb1943879798fb6d5dc305dbca81f1f95369a873"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d4539e3e00b1ce24af78a2fb10eb186437ea75e463d6aad8d55322f3b6fe8057.tex",
+      "gitCommit": "fb1943879798fb6d5dc305dbca81f1f95369a873"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "fb1943879798fb6d5dc305dbca81f1f95369a873"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "74e59b46584d05e94c7e4e2cb0a9ef46eb2877b411613e34b24ae27359dc4e5b.tex",
+      "gitCommit": "8d94e91bf1c5f99f6459a4e7191e9b15465f81fa"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "88445b52dcd63a59bab59fb5aa17b9d8f82c6164d69f38ae49298627ef89bce3.tex",
+      "gitCommit": "8d94e91bf1c5f99f6459a4e7191e9b15465f81fa"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e47e68c4d614f669e707fd4b37b420e51e58c16cb89667260819ee9c72b466c7.tex",
+      "gitCommit": "8d94e91bf1c5f99f6459a4e7191e9b15465f81fa"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "8d94e91bf1c5f99f6459a4e7191e9b15465f81fa"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "8d94e91bf1c5f99f6459a4e7191e9b15465f81fa"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e271b5c22ea1d5e9774f8343035c48a7742ce8886df6b8812b2edfe22376bc67.png",
+      "gitCommit": "8d94e91bf1c5f99f6459a4e7191e9b15465f81fa"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "8d94e91bf1c5f99f6459a4e7191e9b15465f81fa"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "8d94e91bf1c5f99f6459a4e7191e9b15465f81fa"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "8d94e91bf1c5f99f6459a4e7191e9b15465f81fa"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "13e9736784693828fb1a137cbc63da60d0c7f3854268b5cca85e7567c2e86755.tex",
+      "gitCommit": "8d94e91bf1c5f99f6459a4e7191e9b15465f81fa"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "8d94e91bf1c5f99f6459a4e7191e9b15465f81fa"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "74e59b46584d05e94c7e4e2cb0a9ef46eb2877b411613e34b24ae27359dc4e5b.tex",
+      "gitCommit": "7689eec29496a7915c48e7140558a0c2b7abc660"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "88445b52dcd63a59bab59fb5aa17b9d8f82c6164d69f38ae49298627ef89bce3.tex",
+      "gitCommit": "7689eec29496a7915c48e7140558a0c2b7abc660"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e47e68c4d614f669e707fd4b37b420e51e58c16cb89667260819ee9c72b466c7.tex",
+      "gitCommit": "7689eec29496a7915c48e7140558a0c2b7abc660"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "7689eec29496a7915c48e7140558a0c2b7abc660"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "7689eec29496a7915c48e7140558a0c2b7abc660"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e271b5c22ea1d5e9774f8343035c48a7742ce8886df6b8812b2edfe22376bc67.png",
+      "gitCommit": "7689eec29496a7915c48e7140558a0c2b7abc660"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "7689eec29496a7915c48e7140558a0c2b7abc660"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "7689eec29496a7915c48e7140558a0c2b7abc660"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "7689eec29496a7915c48e7140558a0c2b7abc660"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "93eea6a469c2330e5fb514ff5cf1222ceb25ed4e3ebf7e012df6b6a9a992a206.tex",
+      "gitCommit": "7689eec29496a7915c48e7140558a0c2b7abc660"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "7689eec29496a7915c48e7140558a0c2b7abc660"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "74e59b46584d05e94c7e4e2cb0a9ef46eb2877b411613e34b24ae27359dc4e5b.tex",
+      "gitCommit": "d6bd50969c899b19e687caf6a916c58d7577da61"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "88445b52dcd63a59bab59fb5aa17b9d8f82c6164d69f38ae49298627ef89bce3.tex",
+      "gitCommit": "d6bd50969c899b19e687caf6a916c58d7577da61"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e47e68c4d614f669e707fd4b37b420e51e58c16cb89667260819ee9c72b466c7.tex",
+      "gitCommit": "d6bd50969c899b19e687caf6a916c58d7577da61"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "d6bd50969c899b19e687caf6a916c58d7577da61"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "d6bd50969c899b19e687caf6a916c58d7577da61"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e271b5c22ea1d5e9774f8343035c48a7742ce8886df6b8812b2edfe22376bc67.png",
+      "gitCommit": "d6bd50969c899b19e687caf6a916c58d7577da61"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "d6bd50969c899b19e687caf6a916c58d7577da61"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "d6bd50969c899b19e687caf6a916c58d7577da61"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "d6bd50969c899b19e687caf6a916c58d7577da61"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "9192503ff2e2e849bf7a01978805a35559b86b6ee164730a9e8a91b9cc88fab7.tex",
+      "gitCommit": "d6bd50969c899b19e687caf6a916c58d7577da61"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "d6bd50969c899b19e687caf6a916c58d7577da61"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "74e59b46584d05e94c7e4e2cb0a9ef46eb2877b411613e34b24ae27359dc4e5b.tex",
+      "gitCommit": "c9bb17ec0d3c8fb1fa718e2d9b36007899741ccc"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "701cb66a4b28feff2010caec827614847861531b0c0e64557bd25664cb7a0538.tex",
+      "gitCommit": "c9bb17ec0d3c8fb1fa718e2d9b36007899741ccc"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e47e68c4d614f669e707fd4b37b420e51e58c16cb89667260819ee9c72b466c7.tex",
+      "gitCommit": "c9bb17ec0d3c8fb1fa718e2d9b36007899741ccc"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "c9bb17ec0d3c8fb1fa718e2d9b36007899741ccc"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "c9bb17ec0d3c8fb1fa718e2d9b36007899741ccc"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e271b5c22ea1d5e9774f8343035c48a7742ce8886df6b8812b2edfe22376bc67.png",
+      "gitCommit": "c9bb17ec0d3c8fb1fa718e2d9b36007899741ccc"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "c9bb17ec0d3c8fb1fa718e2d9b36007899741ccc"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "c9bb17ec0d3c8fb1fa718e2d9b36007899741ccc"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "c9bb17ec0d3c8fb1fa718e2d9b36007899741ccc"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fd24d33ccc7fb5ab9debba4bb62dee3545dfa3fd0773dbe580c5fd36fdc446f.tex",
+      "gitCommit": "c9bb17ec0d3c8fb1fa718e2d9b36007899741ccc"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "c9bb17ec0d3c8fb1fa718e2d9b36007899741ccc"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "74e59b46584d05e94c7e4e2cb0a9ef46eb2877b411613e34b24ae27359dc4e5b.tex",
+      "gitCommit": "7ba01d958b454fe2cd8ed9b03b4aeb1ccdcd4823"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "701cb66a4b28feff2010caec827614847861531b0c0e64557bd25664cb7a0538.tex",
+      "gitCommit": "7ba01d958b454fe2cd8ed9b03b4aeb1ccdcd4823"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e47e68c4d614f669e707fd4b37b420e51e58c16cb89667260819ee9c72b466c7.tex",
+      "gitCommit": "7ba01d958b454fe2cd8ed9b03b4aeb1ccdcd4823"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "7ba01d958b454fe2cd8ed9b03b4aeb1ccdcd4823"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "7ba01d958b454fe2cd8ed9b03b4aeb1ccdcd4823"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e271b5c22ea1d5e9774f8343035c48a7742ce8886df6b8812b2edfe22376bc67.png",
+      "gitCommit": "7ba01d958b454fe2cd8ed9b03b4aeb1ccdcd4823"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "7ba01d958b454fe2cd8ed9b03b4aeb1ccdcd4823"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "7ba01d958b454fe2cd8ed9b03b4aeb1ccdcd4823"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "7ba01d958b454fe2cd8ed9b03b4aeb1ccdcd4823"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fd24d33ccc7fb5ab9debba4bb62dee3545dfa3fd0773dbe580c5fd36fdc446f.tex",
+      "gitCommit": "7ba01d958b454fe2cd8ed9b03b4aeb1ccdcd4823"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "7ba01d958b454fe2cd8ed9b03b4aeb1ccdcd4823"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "74e59b46584d05e94c7e4e2cb0a9ef46eb2877b411613e34b24ae27359dc4e5b.tex",
+      "gitCommit": "a5aa3e38fe1e59318e4862becf4b20cc0e4debb7"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "ddffcf67bd01fc16f252eab057a65298990d6ca84fa9f7ef908f6f34bf29e947.tex",
+      "gitCommit": "a5aa3e38fe1e59318e4862becf4b20cc0e4debb7"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "5513c066a601cc6cc71ff7b6f65949f4b78d90c65fe832ca994e33c378ac3c05.tex",
+      "gitCommit": "a5aa3e38fe1e59318e4862becf4b20cc0e4debb7"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "a5aa3e38fe1e59318e4862becf4b20cc0e4debb7"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "a5aa3e38fe1e59318e4862becf4b20cc0e4debb7"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e271b5c22ea1d5e9774f8343035c48a7742ce8886df6b8812b2edfe22376bc67.png",
+      "gitCommit": "a5aa3e38fe1e59318e4862becf4b20cc0e4debb7"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "a5aa3e38fe1e59318e4862becf4b20cc0e4debb7"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "a5aa3e38fe1e59318e4862becf4b20cc0e4debb7"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "a5aa3e38fe1e59318e4862becf4b20cc0e4debb7"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fd24d33ccc7fb5ab9debba4bb62dee3545dfa3fd0773dbe580c5fd36fdc446f.tex",
+      "gitCommit": "a5aa3e38fe1e59318e4862becf4b20cc0e4debb7"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "a5aa3e38fe1e59318e4862becf4b20cc0e4debb7"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "74e59b46584d05e94c7e4e2cb0a9ef46eb2877b411613e34b24ae27359dc4e5b.tex",
+      "gitCommit": "fa485330ea32ba139e8d4f62c93f5d770a4a4164"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "ddffcf67bd01fc16f252eab057a65298990d6ca84fa9f7ef908f6f34bf29e947.tex",
+      "gitCommit": "fa485330ea32ba139e8d4f62c93f5d770a4a4164"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "5513c066a601cc6cc71ff7b6f65949f4b78d90c65fe832ca994e33c378ac3c05.tex",
+      "gitCommit": "fa485330ea32ba139e8d4f62c93f5d770a4a4164"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "fa485330ea32ba139e8d4f62c93f5d770a4a4164"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "fa485330ea32ba139e8d4f62c93f5d770a4a4164"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e271b5c22ea1d5e9774f8343035c48a7742ce8886df6b8812b2edfe22376bc67.png",
+      "gitCommit": "fa485330ea32ba139e8d4f62c93f5d770a4a4164"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "fa485330ea32ba139e8d4f62c93f5d770a4a4164"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "fa485330ea32ba139e8d4f62c93f5d770a4a4164"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "fa485330ea32ba139e8d4f62c93f5d770a4a4164"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fd24d33ccc7fb5ab9debba4bb62dee3545dfa3fd0773dbe580c5fd36fdc446f.tex",
+      "gitCommit": "fa485330ea32ba139e8d4f62c93f5d770a4a4164"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "fa485330ea32ba139e8d4f62c93f5d770a4a4164"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "3cb4863e4529f204d6e3dbb3345bf37aa6327fa3675bb88ac0d0f84a8268530d.tex",
+      "gitCommit": "97ea836b0a74de53edd7510c7bbf1c86fdf2a6f3"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "ddffcf67bd01fc16f252eab057a65298990d6ca84fa9f7ef908f6f34bf29e947.tex",
+      "gitCommit": "97ea836b0a74de53edd7510c7bbf1c86fdf2a6f3"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "5513c066a601cc6cc71ff7b6f65949f4b78d90c65fe832ca994e33c378ac3c05.tex",
+      "gitCommit": "97ea836b0a74de53edd7510c7bbf1c86fdf2a6f3"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "97ea836b0a74de53edd7510c7bbf1c86fdf2a6f3"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "97ea836b0a74de53edd7510c7bbf1c86fdf2a6f3"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e271b5c22ea1d5e9774f8343035c48a7742ce8886df6b8812b2edfe22376bc67.png",
+      "gitCommit": "97ea836b0a74de53edd7510c7bbf1c86fdf2a6f3"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "97ea836b0a74de53edd7510c7bbf1c86fdf2a6f3"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "97ea836b0a74de53edd7510c7bbf1c86fdf2a6f3"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "97ea836b0a74de53edd7510c7bbf1c86fdf2a6f3"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d3e7a9ec80c651ff2ec77eb0946a98789429ebab19d1e02394dfaa77d4c73034.tex",
+      "gitCommit": "97ea836b0a74de53edd7510c7bbf1c86fdf2a6f3"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "97ea836b0a74de53edd7510c7bbf1c86fdf2a6f3"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "3cb4863e4529f204d6e3dbb3345bf37aa6327fa3675bb88ac0d0f84a8268530d.tex",
+      "gitCommit": "dca832c22b3e1dd6ab73c2e6e97e9d18aba71907"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "685112043a156f44a0e16bb803ecd058b6516d2d9018cca1a31b50eecfa289e3.tex",
+      "gitCommit": "dca832c22b3e1dd6ab73c2e6e97e9d18aba71907"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "5513c066a601cc6cc71ff7b6f65949f4b78d90c65fe832ca994e33c378ac3c05.tex",
+      "gitCommit": "dca832c22b3e1dd6ab73c2e6e97e9d18aba71907"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "dca832c22b3e1dd6ab73c2e6e97e9d18aba71907"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "dca832c22b3e1dd6ab73c2e6e97e9d18aba71907"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "418fd2aeed5bcae4a9547778ca4c98100bfcecbadef322937ce797aca2baf9a8.png",
+      "gitCommit": "dca832c22b3e1dd6ab73c2e6e97e9d18aba71907"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "dca832c22b3e1dd6ab73c2e6e97e9d18aba71907"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "dca832c22b3e1dd6ab73c2e6e97e9d18aba71907"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "dca832c22b3e1dd6ab73c2e6e97e9d18aba71907"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "003bcedf221b83b50113411287addb7195e8ca042c18014987126ba774d9e889.tex",
+      "gitCommit": "dca832c22b3e1dd6ab73c2e6e97e9d18aba71907"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "dca832c22b3e1dd6ab73c2e6e97e9d18aba71907"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "3cb4863e4529f204d6e3dbb3345bf37aa6327fa3675bb88ac0d0f84a8268530d.tex",
+      "gitCommit": "259371592216338eea8437b9984175cd8f79cc6e"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "685112043a156f44a0e16bb803ecd058b6516d2d9018cca1a31b50eecfa289e3.tex",
+      "gitCommit": "259371592216338eea8437b9984175cd8f79cc6e"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "5513c066a601cc6cc71ff7b6f65949f4b78d90c65fe832ca994e33c378ac3c05.tex",
+      "gitCommit": "259371592216338eea8437b9984175cd8f79cc6e"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "259371592216338eea8437b9984175cd8f79cc6e"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "259371592216338eea8437b9984175cd8f79cc6e"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "fc9a9ca9bfa384bfb7a14773ac5ec387d08f9f2e96af42e4213ee2d8946ce888.png",
+      "gitCommit": "259371592216338eea8437b9984175cd8f79cc6e"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "259371592216338eea8437b9984175cd8f79cc6e"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "259371592216338eea8437b9984175cd8f79cc6e"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "259371592216338eea8437b9984175cd8f79cc6e"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "a78f7d2f5e2bc95e1ec8f4265e8a0b410b9085f2c01fd23102c0ad090884bb01.tex",
+      "gitCommit": "259371592216338eea8437b9984175cd8f79cc6e"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "259371592216338eea8437b9984175cd8f79cc6e"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "3cb4863e4529f204d6e3dbb3345bf37aa6327fa3675bb88ac0d0f84a8268530d.tex",
+      "gitCommit": "2087c31dc0e073ca03b6e893e7536753489a510f"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "685112043a156f44a0e16bb803ecd058b6516d2d9018cca1a31b50eecfa289e3.tex",
+      "gitCommit": "2087c31dc0e073ca03b6e893e7536753489a510f"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "5513c066a601cc6cc71ff7b6f65949f4b78d90c65fe832ca994e33c378ac3c05.tex",
+      "gitCommit": "2087c31dc0e073ca03b6e893e7536753489a510f"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "2087c31dc0e073ca03b6e893e7536753489a510f"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "2087c31dc0e073ca03b6e893e7536753489a510f"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "affadf33bdcd309e96bfbaf4c3d96e1505a9fcdd024404de3bddd8562a6efb72.png",
+      "gitCommit": "2087c31dc0e073ca03b6e893e7536753489a510f"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "2087c31dc0e073ca03b6e893e7536753489a510f"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "2087c31dc0e073ca03b6e893e7536753489a510f"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "2087c31dc0e073ca03b6e893e7536753489a510f"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "2487f2f29c50ef625884841a8e7db13edd4b07b6e39c3589803f0888b9cb8b84.tex",
+      "gitCommit": "2087c31dc0e073ca03b6e893e7536753489a510f"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "2087c31dc0e073ca03b6e893e7536753489a510f"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "3cb4863e4529f204d6e3dbb3345bf37aa6327fa3675bb88ac0d0f84a8268530d.tex",
+      "gitCommit": "9ce3fbc3815299a96ae51475d395cfffb293b946"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "685112043a156f44a0e16bb803ecd058b6516d2d9018cca1a31b50eecfa289e3.tex",
+      "gitCommit": "9ce3fbc3815299a96ae51475d395cfffb293b946"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "5513c066a601cc6cc71ff7b6f65949f4b78d90c65fe832ca994e33c378ac3c05.tex",
+      "gitCommit": "9ce3fbc3815299a96ae51475d395cfffb293b946"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "9ce3fbc3815299a96ae51475d395cfffb293b946"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "9ce3fbc3815299a96ae51475d395cfffb293b946"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "affadf33bdcd309e96bfbaf4c3d96e1505a9fcdd024404de3bddd8562a6efb72.png",
+      "gitCommit": "9ce3fbc3815299a96ae51475d395cfffb293b946"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "9ce3fbc3815299a96ae51475d395cfffb293b946"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "9ce3fbc3815299a96ae51475d395cfffb293b946"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "9ce3fbc3815299a96ae51475d395cfffb293b946"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "2487f2f29c50ef625884841a8e7db13edd4b07b6e39c3589803f0888b9cb8b84.tex",
+      "gitCommit": "9ce3fbc3815299a96ae51475d395cfffb293b946"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "9ce3fbc3815299a96ae51475d395cfffb293b946"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "3cb4863e4529f204d6e3dbb3345bf37aa6327fa3675bb88ac0d0f84a8268530d.tex",
+      "gitCommit": "1689839ffaa2f33084049d30e886639953bcf66d"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "685112043a156f44a0e16bb803ecd058b6516d2d9018cca1a31b50eecfa289e3.tex",
+      "gitCommit": "1689839ffaa2f33084049d30e886639953bcf66d"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "5513c066a601cc6cc71ff7b6f65949f4b78d90c65fe832ca994e33c378ac3c05.tex",
+      "gitCommit": "1689839ffaa2f33084049d30e886639953bcf66d"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765.png",
+      "gitCommit": "1689839ffaa2f33084049d30e886639953bcf66d"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "1689839ffaa2f33084049d30e886639953bcf66d"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "affadf33bdcd309e96bfbaf4c3d96e1505a9fcdd024404de3bddd8562a6efb72.png",
+      "gitCommit": "1689839ffaa2f33084049d30e886639953bcf66d"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "1689839ffaa2f33084049d30e886639953bcf66d"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "1689839ffaa2f33084049d30e886639953bcf66d"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "1689839ffaa2f33084049d30e886639953bcf66d"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "892101ac7a5f32ecb92b576c95bca562b17b05159443e8a5d75ba320e8234e3e.tex",
+      "gitCommit": "1689839ffaa2f33084049d30e886639953bcf66d"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "1689839ffaa2f33084049d30e886639953bcf66d"
+    },
+    {
+      "source": "paper/Molarium_Appendix_B_Workflows_for_Humans_and_Agents.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "b36086db4da6f7500ddee5305a0f3d76ee46827cb8b37ba80b5401ddf45eecfc.tex",
+      "gitCommit": "4b866df4548d394dfe804db27ac90eb4743cfd9f"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "3ec989231c9872054e643f007d3913a475c8e54a572c502f60e686b2010a12ab.tex",
+      "gitCommit": "4b866df4548d394dfe804db27ac90eb4743cfd9f"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "1644af9f292854ea86ae0f20d5236c32827c56d7ac3bc75c7ca6f68651bc29d8.tex",
+      "gitCommit": "4b866df4548d394dfe804db27ac90eb4743cfd9f"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "1d9f0c0fcb0a74eca4df50e609a3a6a2441d2b3f9b69de56c7988ece695898b1.png",
+      "gitCommit": "4b866df4548d394dfe804db27ac90eb4743cfd9f"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "4b866df4548d394dfe804db27ac90eb4743cfd9f"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "bb9a91ba885600e45900210166bdd658117d106f7c1da8b8f7ac53f52d636ada.png",
+      "gitCommit": "4b866df4548d394dfe804db27ac90eb4743cfd9f"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "4b866df4548d394dfe804db27ac90eb4743cfd9f"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "4b866df4548d394dfe804db27ac90eb4743cfd9f"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "4b866df4548d394dfe804db27ac90eb4743cfd9f"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "5f639cc0a4bf05e0ae88725dc1957e64b09d29099b1b6252b51cbe211645c909.tex",
+      "gitCommit": "4b866df4548d394dfe804db27ac90eb4743cfd9f"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "4b866df4548d394dfe804db27ac90eb4743cfd9f"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "3a77c5a2d551ceca6750f637f49d44598f7d15cebeb6532a93e9140bd0542e81.tex",
+      "gitCommit": "abba155979d88175c844fa1038dbe41f201ceddf"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "45a0ba271a89bbe044c9cf42188cc355a5de3122df37b9d718aa6d70b95476c7.tex",
+      "gitCommit": "abba155979d88175c844fa1038dbe41f201ceddf"
+    },
+    {
+      "source": "paper/figures/fig1_molarium_interface.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "1d9f0c0fcb0a74eca4df50e609a3a6a2441d2b3f9b69de56c7988ece695898b1.png",
+      "gitCommit": "abba155979d88175c844fa1038dbe41f201ceddf"
+    },
+    {
+      "source": "paper/figures/fig2_architecture.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d.png",
+      "gitCommit": "abba155979d88175c844fa1038dbe41f201ceddf"
+    },
+    {
+      "source": "paper/figures/fig2_sos1_hit_to_bay293.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "bb9a91ba885600e45900210166bdd658117d106f7c1da8b8f7ac53f52d636ada.png",
+      "gitCommit": "abba155979d88175c844fa1038dbe41f201ceddf"
+    },
+    {
+      "source": "paper/figures/fig3_build_loop_compact.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "dcb0ca60381863337d0015240a49f0c3465652fe0a4cd01cf5a5ab25dcd0f476.png",
+      "gitCommit": "abba155979d88175c844fa1038dbe41f201ceddf"
+    },
+    {
+      "source": "paper/figures/fig4_evidence_ladder_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "42e93680e7e52bd2d96d3de1dcac0a60d5ed7283a8de9e8a3034162e8b34ada3.png",
+      "gitCommit": "abba155979d88175c844fa1038dbe41f201ceddf"
+    },
+    {
+      "source": "paper/figures/fig5_value_layers_fixed.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342.png",
+      "gitCommit": "abba155979d88175c844fa1038dbe41f201ceddf"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "5f639cc0a4bf05e0ae88725dc1957e64b09d29099b1b6252b51cbe211645c909.tex",
+      "gitCommit": "abba155979d88175c844fa1038dbe41f201ceddf"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "563f12fdabe6167fbccd18fb658812eac67e41444c0a212dba15f7b8193381ac.bib",
+      "gitCommit": "abba155979d88175c844fa1038dbe41f201ceddf"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "3a77c5a2d551ceca6750f637f49d44598f7d15cebeb6532a93e9140bd0542e81.tex",
+      "gitCommit": "d8d1b72c10d8ddda21936e74ac5a067319fb0333"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "1cba52e61476e7306d815bbd46b3f55d099872ad953c8cd0fc776018814d5e9b.tex",
+      "gitCommit": "d8d1b72c10d8ddda21936e74ac5a067319fb0333"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "b326ec1dc4287fdd10c465cac44b252cfa3fbd3aaf58580e639c7a5e8f2278a2.bib",
+      "gitCommit": "d8d1b72c10d8ddda21936e74ac5a067319fb0333"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "cf60193330f0c5cf48407cdd816bfc148cbc7aec7433cb7c066f1a9c8fc7dd1a.tex",
+      "gitCommit": "ae052c41fa9c876f8a2fd5fc31d365747a50edd1"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "1cba52e61476e7306d815bbd46b3f55d099872ad953c8cd0fc776018814d5e9b.tex",
+      "gitCommit": "ae052c41fa9c876f8a2fd5fc31d365747a50edd1"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "b326ec1dc4287fdd10c465cac44b252cfa3fbd3aaf58580e639c7a5e8f2278a2.bib",
+      "gitCommit": "ae052c41fa9c876f8a2fd5fc31d365747a50edd1"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "c247ed4253a9d628f407afdffcc133af689700ed3bd09d6b69a0a3b575a0db71.tex",
+      "gitCommit": "d44d8fd9e3bbc5fc493ec641b6cd5680c5de064c"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "1cba52e61476e7306d815bbd46b3f55d099872ad953c8cd0fc776018814d5e9b.tex",
+      "gitCommit": "d44d8fd9e3bbc5fc493ec641b6cd5680c5de064c"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "b326ec1dc4287fdd10c465cac44b252cfa3fbd3aaf58580e639c7a5e8f2278a2.bib",
+      "gitCommit": "d44d8fd9e3bbc5fc493ec641b6cd5680c5de064c"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "14bee4722c11532a77df93390fafaf44f0a3ec7610617c7d1448b8be8b2a970c.tex",
+      "gitCommit": "fcba270075dc8dd1aadddf0dfdb9de76df6f1efe"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "1cba52e61476e7306d815bbd46b3f55d099872ad953c8cd0fc776018814d5e9b.tex",
+      "gitCommit": "fcba270075dc8dd1aadddf0dfdb9de76df6f1efe"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "b326ec1dc4287fdd10c465cac44b252cfa3fbd3aaf58580e639c7a5e8f2278a2.bib",
+      "gitCommit": "fcba270075dc8dd1aadddf0dfdb9de76df6f1efe"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "5e72c437b175a54d513d1680c9ba3fd2f01554033909b7c4e61ffb7cc97987b1.tex",
+      "gitCommit": "663e4a71578db156fa341f811acd8b264a9f34df"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "1cba52e61476e7306d815bbd46b3f55d099872ad953c8cd0fc776018814d5e9b.tex",
+      "gitCommit": "663e4a71578db156fa341f811acd8b264a9f34df"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "b326ec1dc4287fdd10c465cac44b252cfa3fbd3aaf58580e639c7a5e8f2278a2.bib",
+      "gitCommit": "663e4a71578db156fa341f811acd8b264a9f34df"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0992727367628f40404d1ca0ec15aa24b847fd2b5c4e4589f14d04ad1bb39fb1.tex",
+      "gitCommit": "1ee16daa78b31970589463aad24d3688545e1683"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "1cba52e61476e7306d815bbd46b3f55d099872ad953c8cd0fc776018814d5e9b.tex",
+      "gitCommit": "1ee16daa78b31970589463aad24d3688545e1683"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "52e3a9fd2dddacf4ece0c714ab2016d1ba873d5fc875f7012608618b51e02d42.bib",
+      "gitCommit": "1ee16daa78b31970589463aad24d3688545e1683"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "7ba9885c51b68d012766291aabcafa6efbe7694977eb8abb6c3306b9def98b6b.tex",
+      "gitCommit": "8393d669d2a003f17b7c01fd2ebefa5df42048f2"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "67c83e0432806622fe78b43a07bdee43116a0ad28971a6efde82ce7e5e0c14b0.tex",
+      "gitCommit": "8393d669d2a003f17b7c01fd2ebefa5df42048f2"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "7afb69ce41bc528ee8bcadb8345bfe8c26075ea0e85f34075d0a62d6f7830cce.bib",
+      "gitCommit": "8393d669d2a003f17b7c01fd2ebefa5df42048f2"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "c278aa5c3bdd78fe3b1f5dbeea953b07d8812c5c37028d16f1fdda023bda86f4.tex",
+      "gitCommit": "e82452783bdd06b0b7fd3d7a859dec99fa8d0e52"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "67c83e0432806622fe78b43a07bdee43116a0ad28971a6efde82ce7e5e0c14b0.tex",
+      "gitCommit": "e82452783bdd06b0b7fd3d7a859dec99fa8d0e52"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "7afb69ce41bc528ee8bcadb8345bfe8c26075ea0e85f34075d0a62d6f7830cce.bib",
+      "gitCommit": "e82452783bdd06b0b7fd3d7a859dec99fa8d0e52"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "1cacec3aab97b31753bf4126115c95b4f91ace6c"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "1cacec3aab97b31753bf4126115c95b4f91ace6c"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "fe8e73b7804d4aabe9076510b3296ba19b581cd4"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "fe8e73b7804d4aabe9076510b3296ba19b581cd4"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "0639144e82096222d44e4a984b2b6f674ef7481f"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "0639144e82096222d44e4a984b2b6f674ef7481f"
+    },
+    {
+      "source": "paper/figures/development-loop.pdf",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d58417843f366ddf79805eb6697049b865e49e126e9469f33ea8d947897a83ae.pdf",
+      "gitCommit": "d602f42d4aa3b3cfff64d0783a3d48795fde89f2"
+    },
+    {
+      "source": "paper/figures/development-loop.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "28406207b1692004638d2c16ea559523f753721847395767be35de3ac482a704.png",
+      "gitCommit": "d602f42d4aa3b3cfff64d0783a3d48795fde89f2"
+    },
+    {
+      "source": "paper/figures/execution-map.pdf",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "5dfc95c914a47a6a932123206d00c20fa8e95ac8a5dade8a67f81f3c64ac41f8.pdf",
+      "gitCommit": "d602f42d4aa3b3cfff64d0783a3d48795fde89f2"
+    },
+    {
+      "source": "paper/figures/execution-map.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d935cf0ea27c74ad48dbf2ee478fa0ca7d14ca2db69f4b3e426deb3330ea697f.png",
+      "gitCommit": "d602f42d4aa3b3cfff64d0783a3d48795fde89f2"
+    },
+    {
+      "source": "paper/figures/interface-workflow.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "eb58919a83aaf7807637286540d719b66382dd14eab6e239fe78689ce70fd31e.png",
+      "gitCommit": "d602f42d4aa3b3cfff64d0783a3d48795fde89f2"
+    },
+    {
+      "source": "paper/figures/performance.pdf",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "104ac084038f2907c8c84c44c421577dabce5dd649ff8aa8c209e93e3cd7da6c.pdf",
+      "gitCommit": "d602f42d4aa3b3cfff64d0783a3d48795fde89f2"
+    },
+    {
+      "source": "paper/figures/performance.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "3dc200bdc3853b3ad5989a43181d163a7f264e57e921bc18e3b484839bd3fe64.png",
+      "gitCommit": "d602f42d4aa3b3cfff64d0783a3d48795fde89f2"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d459d602c354aae88289af9703e52b5385f34db4889da9d0722c5b9808f8e6f7.tex",
+      "gitCommit": "d602f42d4aa3b3cfff64d0783a3d48795fde89f2"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "d602f42d4aa3b3cfff64d0783a3d48795fde89f2"
+    },
+    {
+      "source": "paper/figures/development-loop.pdf",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d58417843f366ddf79805eb6697049b865e49e126e9469f33ea8d947897a83ae.pdf",
+      "gitCommit": "bf9817996d2a465f7dde5ec123a89065fb1c1e49"
+    },
+    {
+      "source": "paper/figures/development-loop.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "28406207b1692004638d2c16ea559523f753721847395767be35de3ac482a704.png",
+      "gitCommit": "bf9817996d2a465f7dde5ec123a89065fb1c1e49"
+    },
+    {
+      "source": "paper/figures/execution-map.pdf",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "5dfc95c914a47a6a932123206d00c20fa8e95ac8a5dade8a67f81f3c64ac41f8.pdf",
+      "gitCommit": "bf9817996d2a465f7dde5ec123a89065fb1c1e49"
+    },
+    {
+      "source": "paper/figures/execution-map.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d935cf0ea27c74ad48dbf2ee478fa0ca7d14ca2db69f4b3e426deb3330ea697f.png",
+      "gitCommit": "bf9817996d2a465f7dde5ec123a89065fb1c1e49"
+    },
+    {
+      "source": "paper/figures/interface-workflow.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "eb58919a83aaf7807637286540d719b66382dd14eab6e239fe78689ce70fd31e.png",
+      "gitCommit": "bf9817996d2a465f7dde5ec123a89065fb1c1e49"
+    },
+    {
+      "source": "paper/figures/performance.pdf",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "104ac084038f2907c8c84c44c421577dabce5dd649ff8aa8c209e93e3cd7da6c.pdf",
+      "gitCommit": "bf9817996d2a465f7dde5ec123a89065fb1c1e49"
+    },
+    {
+      "source": "paper/figures/performance.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "3dc200bdc3853b3ad5989a43181d163a7f264e57e921bc18e3b484839bd3fe64.png",
+      "gitCommit": "bf9817996d2a465f7dde5ec123a89065fb1c1e49"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d459d602c354aae88289af9703e52b5385f34db4889da9d0722c5b9808f8e6f7.tex",
+      "gitCommit": "bf9817996d2a465f7dde5ec123a89065fb1c1e49"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "bf9817996d2a465f7dde5ec123a89065fb1c1e49"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "ee8dbef31277fb0ea416e7147476711fdd187b88"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "ee8dbef31277fb0ea416e7147476711fdd187b88"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "f362735706a3455ab37f2a16d94acf9cbbccdc2e"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "f362735706a3455ab37f2a16d94acf9cbbccdc2e"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "3cbaaba1fe88d174f3c511d4c666941a8c42cbb0"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "3cbaaba1fe88d174f3c511d4c666941a8c42cbb0"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "3537dbbcd8f7a72f4718175632f7f45fecd86b19"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "3537dbbcd8f7a72f4718175632f7f45fecd86b19"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "a78572e07044ef9ada77e051ec0ad236da9edba4"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "a78572e07044ef9ada77e051ec0ad236da9edba4"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "69548921e89926cf3a9fa6b0e2b5cd0ec468ed35"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "69548921e89926cf3a9fa6b0e2b5cd0ec468ed35"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "2128f90110f52467fec4ef9c489ae7db25136abe"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "2128f90110f52467fec4ef9c489ae7db25136abe"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "75e4ccf4d4482870e1e5e06b4f5e38ef9d573d28"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "75e4ccf4d4482870e1e5e06b4f5e38ef9d573d28"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "142ad73eb55af790c2977ba420cc388c97ead20c"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "142ad73eb55af790c2977ba420cc388c97ead20c"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "286edb678bed7786b78d7b9720487ff897bb503c"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "286edb678bed7786b78d7b9720487ff897bb503c"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "4734fe578d87d53406b08d9a90f63652cd275da9"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "4734fe578d87d53406b08d9a90f63652cd275da9"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "b59a77d0f71edf509f844e614b09eaf9eca1a77a"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "b59a77d0f71edf509f844e614b09eaf9eca1a77a"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "62872bf7c78b9dd376d5039b7183508e25c271da"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "62872bf7c78b9dd376d5039b7183508e25c271da"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "ad85344fba3bde7ec39350a84a658944802bd91e"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "ad85344fba3bde7ec39350a84a658944802bd91e"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "9ff2a8d1d15f0456248f3aa662e7e62dea8746a0"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "9ff2a8d1d15f0456248f3aa662e7e62dea8746a0"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "d00560b9db64a559173920fc536a0d96d60753cf"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "d00560b9db64a559173920fc536a0d96d60753cf"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "b6dd16f809fe8b5eb397bf59a1eab50fca2af84e"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "b6dd16f809fe8b5eb397bf59a1eab50fca2af84e"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "ccec4ed5a138fd4d135300bfbc21521c14263852"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "ccec4ed5a138fd4d135300bfbc21521c14263852"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "797feb249743c5cdef683ee1fc4256adae2ae869"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "797feb249743c5cdef683ee1fc4256adae2ae869"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "b84bf5f6d3b4b804dc48aa163d5a82f2a13c58e4"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "b84bf5f6d3b4b804dc48aa163d5a82f2a13c58e4"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "82dd410275f00d3f606fe8c012aa16e2b7f201bf"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "82dd410275f00d3f606fe8c012aa16e2b7f201bf"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "b64a6d30a74a6651685953693468624a02666778"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "b64a6d30a74a6651685953693468624a02666778"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "c428114860893074a0860a124d8c7463e0af86d3"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "c428114860893074a0860a124d8c7463e0af86d3"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "e8dee1f8008d91a5dd8df2cc470fc1116a275648"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "e8dee1f8008d91a5dd8df2cc470fc1116a275648"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "d1cd31a9050df1c85fec780adcdd9eb2befdeb81"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "d1cd31a9050df1c85fec780adcdd9eb2befdeb81"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "b42bfdfd1c93d6e3251416a2e22b6fb4e200b9dd"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "b42bfdfd1c93d6e3251416a2e22b6fb4e200b9dd"
+    },
+    {
+      "source": "paper/figures/development-loop.pdf",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d58417843f366ddf79805eb6697049b865e49e126e9469f33ea8d947897a83ae.pdf",
+      "gitCommit": "40c1b0bf05db75f95a50ceda662258b01ceac822"
+    },
+    {
+      "source": "paper/figures/development-loop.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "28406207b1692004638d2c16ea559523f753721847395767be35de3ac482a704.png",
+      "gitCommit": "40c1b0bf05db75f95a50ceda662258b01ceac822"
+    },
+    {
+      "source": "paper/figures/execution-map.pdf",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "5dfc95c914a47a6a932123206d00c20fa8e95ac8a5dade8a67f81f3c64ac41f8.pdf",
+      "gitCommit": "40c1b0bf05db75f95a50ceda662258b01ceac822"
+    },
+    {
+      "source": "paper/figures/execution-map.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d935cf0ea27c74ad48dbf2ee478fa0ca7d14ca2db69f4b3e426deb3330ea697f.png",
+      "gitCommit": "40c1b0bf05db75f95a50ceda662258b01ceac822"
+    },
+    {
+      "source": "paper/figures/interface-workflow.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "eb58919a83aaf7807637286540d719b66382dd14eab6e239fe78689ce70fd31e.png",
+      "gitCommit": "40c1b0bf05db75f95a50ceda662258b01ceac822"
+    },
+    {
+      "source": "paper/figures/performance.pdf",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "104ac084038f2907c8c84c44c421577dabce5dd649ff8aa8c209e93e3cd7da6c.pdf",
+      "gitCommit": "40c1b0bf05db75f95a50ceda662258b01ceac822"
+    },
+    {
+      "source": "paper/figures/performance.png",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "3dc200bdc3853b3ad5989a43181d163a7f264e57e921bc18e3b484839bd3fe64.png",
+      "gitCommit": "40c1b0bf05db75f95a50ceda662258b01ceac822"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "d459d602c354aae88289af9703e52b5385f34db4889da9d0722c5b9808f8e6f7.tex",
+      "gitCommit": "40c1b0bf05db75f95a50ceda662258b01ceac822"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "40c1b0bf05db75f95a50ceda662258b01ceac822"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "e2b9f7f1ad8d21d361c0216887bc0eaf318caa4cb10c4c6ba9e0e7be37dda91b.tex",
+      "gitCommit": "aa6aece267032ce047c51ca371f978835631b5d8"
+    },
+    {
+      "source": "paper/references.bib",
+      "origin": "Git snapshot (not necessarily accepted)",
+      "artifact": "0fcbd09d835f099288d318c82d28e8bf5457cf042aa8ef85375a1b2d466b289a.bib",
+      "gitCommit": "aa6aece267032ce047c51ca371f978835631b5d8"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "review-worktree source",
+      "artifact": "86f6ba79392fa32a342baf87b8e7110d5a610f8c40427d4498c52d9c6623efea.tex"
+    },
+    {
+      "source": "paper/appendix-architecture.tex",
+      "origin": "review-worktree source",
+      "artifact": "568d56ba0fcef06d4f2fb175953a3279fff277cc52bdf6e790bff4784b06f335.tex"
+    },
+    {
+      "source": "paper/appendix-b-workflows.tex",
+      "origin": "review-worktree source",
+      "artifact": "0efa68e51f7fb93ddf0ee8b974a60fc9e02de5f2d4bcf7f4cfdb4d90946956fd.tex"
+    },
+    {
+      "source": "design-history/publications/sos1/designer-intent-2026-09-04/molarium-paper.pdf",
+      "origin": "review-worktree source",
+      "artifact": "aa0455b52ebdadf47ade6538bc3cfb4c087bf72bb4f0747125646b35ac7d70bb.pdf"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "marco working source",
+      "artifact": "dff11caf9dc88964dad3c282446175593520f1e6dc7cc2358a05cec6b5857961.tex"
+    },
+    {
+      "source": "output/pdf/molecular-design-tools-are-free-now.pdf",
+      "origin": "marco working source",
+      "artifact": "8ec461ffd1a8b6e4b234ca8294b48e7f9b49d3b88ae776048b945d039a412c8f.pdf"
+    },
+    {
+      "source": "output/pdf/marco-stormm-validation-preprint.pdf",
+      "origin": "marco working source",
+      "artifact": "77eafcfd207e10dd70b08ed1140cb8994c073b6a5bc3a23a0605ee4ef5fba9e2.pdf"
+    },
+    {
+      "source": "paper/main.tex",
+      "origin": "earlier public worktree source",
+      "artifact": "d459d602c354aae88289af9703e52b5385f34db4889da9d0722c5b9808f8e6f7.tex"
+    },
+    {
+      "source": "output/pdf/molarium-system-paper.pdf",
+      "origin": "earlier public worktree source",
+      "artifact": "675e8a425926be3b0dd78f86c15211aae0ce3e8dbd494220d100054f23afd280.pdf"
+    },
+    {
+      "source": "paper/PROVENANCE-ARCHIVE.md",
+      "origin": "earlier public worktree source",
+      "artifact": "51897473d9c28736c2496be2574e08de58bb7db56d3d021455e320189d167f05.md"
+    },
+    {
+      "source": "paper/provenance/manuscript-drafts-2026-08-26/README.md",
+      "origin": "earlier public worktree source",
+      "artifact": "a8ded8360dbd054c9b13c0d8008e40b7aa5ded398bceb1371b712bfb3e1d7f8c.md"
+    },
+    {
+      "source": "paper/provenance/manuscript-drafts-2026-08-26/manifest.json",
+      "origin": "earlier public worktree source",
+      "artifact": "81b2cf22f178e3235805e967bc2ad328cef5978f53ca0b59f81a8da0c4f10fa7.json"
+    }
+  ],
+  "gitCommits": [
+    "847e1c2bbcc5f4565e811d434bf0feafbb388ee4",
+    "411ece20a0e29342aa37a4af59bd9a7fad230954",
+    "4e97550bffb3dbe840e64fc89b5c9a001e58af2d",
+    "a5cda6784a9bf3c85c61095e05c8825d84b05ca2",
+    "fb1943879798fb6d5dc305dbca81f1f95369a873",
+    "8d94e91bf1c5f99f6459a4e7191e9b15465f81fa",
+    "7689eec29496a7915c48e7140558a0c2b7abc660",
+    "d6bd50969c899b19e687caf6a916c58d7577da61",
+    "c9bb17ec0d3c8fb1fa718e2d9b36007899741ccc",
+    "7ba01d958b454fe2cd8ed9b03b4aeb1ccdcd4823",
+    "a5aa3e38fe1e59318e4862becf4b20cc0e4debb7",
+    "fa485330ea32ba139e8d4f62c93f5d770a4a4164",
+    "97ea836b0a74de53edd7510c7bbf1c86fdf2a6f3",
+    "dca832c22b3e1dd6ab73c2e6e97e9d18aba71907",
+    "259371592216338eea8437b9984175cd8f79cc6e",
+    "2087c31dc0e073ca03b6e893e7536753489a510f",
+    "9ce3fbc3815299a96ae51475d395cfffb293b946",
+    "1689839ffaa2f33084049d30e886639953bcf66d",
+    "4b866df4548d394dfe804db27ac90eb4743cfd9f",
+    "abba155979d88175c844fa1038dbe41f201ceddf",
+    "d8d1b72c10d8ddda21936e74ac5a067319fb0333",
+    "ae052c41fa9c876f8a2fd5fc31d365747a50edd1",
+    "d44d8fd9e3bbc5fc493ec641b6cd5680c5de064c",
+    "fcba270075dc8dd1aadddf0dfdb9de76df6f1efe",
+    "663e4a71578db156fa341f811acd8b264a9f34df",
+    "1ee16daa78b31970589463aad24d3688545e1683",
+    "8393d669d2a003f17b7c01fd2ebefa5df42048f2",
+    "e82452783bdd06b0b7fd3d7a859dec99fa8d0e52",
+    "1cacec3aab97b31753bf4126115c95b4f91ace6c",
+    "fe8e73b7804d4aabe9076510b3296ba19b581cd4",
+    "0639144e82096222d44e4a984b2b6f674ef7481f",
+    "d602f42d4aa3b3cfff64d0783a3d48795fde89f2",
+    "bf9817996d2a465f7dde5ec123a89065fb1c1e49",
+    "ee8dbef31277fb0ea416e7147476711fdd187b88",
+    "f362735706a3455ab37f2a16d94acf9cbbccdc2e",
+    "3cbaaba1fe88d174f3c511d4c666941a8c42cbb0",
+    "3537dbbcd8f7a72f4718175632f7f45fecd86b19",
+    "a78572e07044ef9ada77e051ec0ad236da9edba4",
+    "69548921e89926cf3a9fa6b0e2b5cd0ec468ed35",
+    "2128f90110f52467fec4ef9c489ae7db25136abe",
+    "75e4ccf4d4482870e1e5e06b4f5e38ef9d573d28",
+    "142ad73eb55af790c2977ba420cc388c97ead20c",
+    "286edb678bed7786b78d7b9720487ff897bb503c",
+    "4734fe578d87d53406b08d9a90f63652cd275da9",
+    "b59a77d0f71edf509f844e614b09eaf9eca1a77a",
+    "62872bf7c78b9dd376d5039b7183508e25c271da",
+    "ad85344fba3bde7ec39350a84a658944802bd91e",
+    "9ff2a8d1d15f0456248f3aa662e7e62dea8746a0",
+    "d00560b9db64a559173920fc536a0d96d60753cf",
+    "b6dd16f809fe8b5eb397bf59a1eab50fca2af84e",
+    "ccec4ed5a138fd4d135300bfbc21521c14263852",
+    "797feb249743c5cdef683ee1fc4256adae2ae869",
+    "b84bf5f6d3b4b804dc48aa163d5a82f2a13c58e4",
+    "82dd410275f00d3f606fe8c012aa16e2b7f201bf",
+    "b64a6d30a74a6651685953693468624a02666778",
+    "c428114860893074a0860a124d8c7463e0af86d3",
+    "e8dee1f8008d91a5dd8df2cc470fc1116a275648",
+    "d1cd31a9050df1c85fec780adcdd9eb2befdeb81",
+    "b42bfdfd1c93d6e3251416a2e22b6fb4e200b9dd",
+    "40c1b0bf05db75f95a50ceda662258b01ceac822",
+    "aa6aece267032ce047c51ca371f978835631b5d8"
+  ]
+}

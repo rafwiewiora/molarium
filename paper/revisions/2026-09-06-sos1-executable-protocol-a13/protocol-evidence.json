@@ -1,0 +1,9 @@
+{
+  "fullActionScript": "design-history/publications/sos1/designer-intent-2026-09-04/executable.action-script.json",
+  "fullActionScriptSha256": "7eed2dff0bf3fa127f87b2322aaea4b615d458ad6d8ef3af3c5b5886dc8fe9c3",
+  "excerptSha256": "b3fd74a4d4f916ef81d35033b8ec05355415a0bb2179022f0637426b5e74e4e3",
+  "test": "node --test paper/review/sos1-design-intent-excerpt.test.mjs",
+  "verificationScope": "Exact resolved action/argument comparison with four published calls and failure-stop test; not a new molecular calculation.",
+  "mainTextAndAppendixA5Updated": true,
+  "figuresAndOtherSectionsUnchanged": true
+}

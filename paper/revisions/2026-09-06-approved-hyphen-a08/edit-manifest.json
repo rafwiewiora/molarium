@@ -1,0 +1,13 @@
+{
+  "schema": "molarium.approved-manuscript-edits/v1",
+  "baseRevision": "paper/revisions/2026-09-06-approved-intro-a07",
+  "baseSourceSha256": "4f714111eccbca36a20c5adb1b1fe9b7c190a748e34a3e8792850180d16f56af",
+  "outputSha256": "d88ad72cb39bb70453b051e0687377e0c67ba7514faa4a5e9f96abd082afcf8a",
+  "changes": [
+    {
+      "before": "A molecular-mechanics result",
+      "after": "A molecular mechanics result"
+    }
+  ],
+  "allOtherTextAndFiguresUnchanged": true
+}

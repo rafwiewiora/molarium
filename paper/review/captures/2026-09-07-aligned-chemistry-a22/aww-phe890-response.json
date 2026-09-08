@@ -1,0 +1,18 @@
+{
+  "caption": "Same AWW ligand, held fixed: select a Phe890 rotamer that clears the arm.",
+  "depiction": {
+    "alignedAtoms": "8",
+    "alignmentBackend": "RDKit shared-scaffold 2D coordinates",
+    "canonicalSmiles": "COC1=C(OC)Cc2c(nc(C)nc2N[C@H](C)c2ccc(-c3ccccc3CO)s2)C1",
+    "mode": "build",
+    "rdkitVersion": "2025.03.4",
+    "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization"
+  },
+  "docked": true,
+  "expanded": true,
+  "highlightedAtomIds": [],
+  "networkPolicy": "Local Lab · network locked",
+  "replayStatus": "completed",
+  "reviewIndex": 17,
+  "svgSha256": "558c4647e03524e9a14817984a79486cee28dffd532faba2a71fa2c3feb07dee"
+}

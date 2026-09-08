@@ -1,0 +1,14 @@
+                       Molecular simulation                                     Pipeline changes
+            Trp-cage        2.09x
+         Direct Sage                                              ANI-2x GPU                      6.77x
+   Ubiquitin vacuum                  9.16x                        buffer path
+         Direct Sage
+     Ubiquitin OBC2                                       25.6x
+         Direct Sage
+  1,024 C16 replicas                   10.3x
+      Replica engine                                                   RDKit        1.77x
+256 water27 replicas                                    24.1x     worker pool
+      Replica engine
+                       0       5     10     15    20     25                  0    2     4      6     8
+                           speedup over OpenMM Reference WASM             speedup over prior browser path
+

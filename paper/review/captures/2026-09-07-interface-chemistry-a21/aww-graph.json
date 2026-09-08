@@ -1,0 +1,33 @@
+{
+  "caption": "AWW: install benzyl alcohol and the 5,8-dihydro core; inherited arm pose.",
+  "depiction": {
+    "alignedAtoms": "0",
+    "alignmentBackend": "fresh RDKit 2D layout",
+    "mode": "build",
+    "rdkitVersion": "2025.03.4",
+    "sanitization": "provenance-bounded graph; strict parse with drawing-only fallback"
+  },
+  "docked": true,
+  "expanded": true,
+  "highlightedAtomIds": [
+    "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX6:",
+    "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX1:",
+    "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX7:",
+    "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX8:",
+    "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX2:",
+    "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX9:",
+    "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX10:",
+    "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX11:",
+    "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX12:",
+    "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX13:",
+    "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX14:",
+    "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX15:",
+    "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX16:",
+    "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX3:",
+    "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX17:"
+  ],
+  "networkPolicy": "Local Lab · network locked",
+  "replayStatus": "completed",
+  "reviewIndex": 10,
+  "depictionSvgSha256": "c17aded66f1a34a15844547a599622a749275ff738b0d6645801fbd2de754bda"
+}

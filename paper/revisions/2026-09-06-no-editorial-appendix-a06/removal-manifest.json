@@ -1,0 +1,10 @@
+{
+  "schema": "molarium.remove-editorial-appendix/v1",
+  "request": "Remove Appendix C from the paper; retain archived history.",
+  "baseSourceSha256": "7778e8628d62feba95346372ab0f659cb1f75d76ffede5b9b09df0feb4c696f3",
+  "outputSha256": "191fe427b4dd10fdb31bf732657227b07a3a17688b8109c5a6de1842885c0d4d",
+  "removedAppendixSha256": "8c0febd134be12013e4102a9338e822f7e9ba5670304df95c1998f544431d8ff",
+  "mainTextAndAppendicesABUnchanged": true,
+  "bibliographyUnchanged": true,
+  "archivedSource": "paper/revisions/2026-09-06-current-sos1-api-a05/main.tex"
+}

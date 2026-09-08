@@ -1,0 +1,63 @@
+{
+  "schema": "molarium.paper-submission/v1",
+  "version": "v1",
+  "submittedTo": "ChemRxiv",
+  "submittedDate": "2026-09-08",
+  "designationSource": "Author supplied this PDF as the version submitted to ChemRxiv.",
+  "publicationStatus": "submitted; public ChemRxiv landing page or DOI not yet supplied",
+  "title": "Molarium: Agent-Generated Adaptive Software for Molecular Design",
+  "authors": [
+    "Rafal Wiewiora",
+    "Woody Sherman"
+  ],
+  "pdf": {
+    "path": "paper/submissions/chemrxiv-v1-2026-09-08/Molarium.pdf",
+    "sha256": "caa49f6fa273387ce52d0f51e15bbfc6ad23518e25350e49b004cb1259740cad",
+    "bytes": 5961246,
+    "pages": 40
+  },
+  "exactSubmittedLatexAvailable": true,
+  "source": {
+    "path": "paper/submissions/chemrxiv-v1-2026-09-08/main.tex",
+    "sha256": "6964b04e39738a985e521bd8dc05bd0fff4bfad1abe715be47593b2382f80804",
+    "bytes": 158252,
+    "designation": "Final Prism LaTeX export supplied by the author after the submitted PDF."
+  },
+  "sourceAssets": [
+    {
+      "path": "paper/submissions/chemrxiv-v1-2026-09-08/figures/fig1_molarium_interface.png",
+      "sha256": "e7bc14fa9f4f520c76131cd09309740d223441d71e157e411d84509af68de765",
+      "bytes": 293624
+    },
+    {
+      "path": "paper/submissions/chemrxiv-v1-2026-09-08/figures/fig2_architecture.png",
+      "sha256": "d8792e8dfef4a84b3649e839c857a3fb3322e0eb760f885f2c9db961f3ae896d",
+      "bytes": 98445
+    },
+    {
+      "path": "paper/submissions/chemrxiv-v1-2026-09-08/figures/fig2_sos1_designer_intent.png",
+      "sha256": "22bd1240bc4135cc9ef6507a4d65454137bbe8e0e67fe57584388affa6bf2f5c",
+      "bytes": 2799284
+    },
+    {
+      "path": "paper/submissions/chemrxiv-v1-2026-09-08/figures/fig3_build_loop_compact.png",
+      "sha256": "e571d4c764d0b23e359e8823353219f41e6238ee12eb1e4c148e501146f79eec",
+      "bytes": 140798
+    },
+    {
+      "path": "paper/submissions/chemrxiv-v1-2026-09-08/figures/fig4_evidence_ladder_fixed.png",
+      "sha256": "559f75c2751974472284eff70b656fdbc62e1406c59eec84c0241aea55ede5ad",
+      "bytes": 1192391
+    },
+    {
+      "path": "paper/submissions/chemrxiv-v1-2026-09-08/figures/fig5_value_layers_fixed.png",
+      "sha256": "3338413017afd509732fc5f223494680983d7fddaa75ae8f0e3d120b6d7ce60f",
+      "bytes": 996357
+    }
+  ],
+  "sourceBoundary": "The final author-supplied Prism export is preserved unchanged. All six recovered PNG dependencies are checked pixel-for-pixel against the submitted PDF. The PDF is the original Prism output, not a local recompilation; byte-identical compiler reproduction is not claimed. a28 and main-12.pdf remain historical precursors.",
+  "figureVerification": "paper/submissions/chemrxiv-v1-2026-09-08/figure-verification.json",
+  "frozenScienceRelease": "design-history/publications/sos1/designer-intent-2026-09-04/release.json",
+  "frozenScienceChanged": false,
+  "archive": "paper/review/history-2026-09-08/manifest.json"
+}

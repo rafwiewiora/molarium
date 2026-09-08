@@ -1,0 +1,250 @@
+--- a27/main.tex
++++ a28/main.tex
+@@ -137,7 +137,7 @@
+ \begin{figure}[htbp]
+   \centering
+   \safeincludegraphics[width=\linewidth]{figures/fig2_sos1_designer_intent.png}
+-  \caption{Chemical edits and receptor response in the Molarium interface. Each panel is a full-tool screenshot with the ligand graph in the enlarged 2D panel. (A) AXE starting hit. (B) AWT: replace naphthyl with pyrazolylphenyl and add a 2-methyl group. (C) AWZ: introduce thiophene and merge the bicyclic heterocycle. (D) AWW: install benzyl alcohol and the 5,8-dihydro core, then orient the arm toward the Tyr884 backbone-carbonyl contact. (E) Hold the same AWW ligand fixed while selecting a Phe890 rotamer that clears the arm. (F) BAY-293: move the thiophene attachment and replace the alcohol with an N-methylamine. Orange 2D highlights mark added atoms and local chemical changes relative to the preceding structure; equivalent Kekul\'e representations and reassigned atom identifiers do not count as changes. The AWW highlights persist through ligand placement and are cleared for the receptor-only panel. All panels use exact saved checkpoints in the same pocket view. The crystal series informed the design hypothesis, but later crystal coordinates were not used to generate these states.}
++  \caption{Chemical edits and receptor response in the Molarium interface. Each panel is a full-tool screenshot from a local figure-preparation build. Its enlarged, scaffold-aligned 2D panels and orange highlights are display-only additions not present in the reviewed public interface; the saved molecular graphs and coordinates are unchanged. (A) AXE starting hit. (B) AWT: replace naphthyl with pyrazolylphenyl and add a 2-methyl group. (C) AWZ: introduce thiophene and merge the bicyclic heterocycle. (D) AWW: install benzyl alcohol and the 5,8-dihydro core, then orient the arm toward the Tyr884 backbone-carbonyl contact. (E) Hold the same AWW ligand fixed while selecting a Phe890 rotamer that clears the arm. (F) BAY-293: move the thiophene attachment and replace the alcohol with an N-methylamine. Orange 2D highlights mark added atoms and local chemical changes relative to the preceding structure; equivalent Kekul\'e representations and reassigned atom identifiers do not count as changes. The AWW highlights persist through ligand placement and are cleared for the receptor-only panel. All panels use exact saved checkpoints in the same pocket view. The crystal series informed the design hypothesis, but later crystal coordinates were not used to generate these states.}
+   \label{fig:sos1story}
+ \end{figure}
+ 
+@@ -149,7 +149,7 @@
+ 
+ This separation between interface and molecular state becomes important when interfaces are inexpensive to modify. If every generated view can redefine a molecule, select a different charge model, change protonation, alter preparation, or reinterpret a trajectory, flexibility becomes a source of scientific ambiguity. Generated adaptive software therefore requires a stronger boundary between presentation and scientific state than a conventional fixed interface typically provides.
+ 
+-Molarium extends this principle by preserving the sequence of molecular states and user actions that produced the current state. Edits, selections, manipulations, calculations, and other interactions form an event history rather than leaving only the final coordinates. The resulting architecture is closer to version control than to a traditional molecular project file. Each molecular state can be associated with the actions that produced it, the calculation applied to it, and the evidence available at that point in the design process.
++Molarium extends this principle by preserving selected molecular states together with completed public actions captured between commits. These actions form an explicitly partial event history; direct interface changes are captured in graph-and-coordinate snapshots but are not necessarily represented as replayable actions. The resulting architecture is closer to version control than to a traditional molecular project file. Each molecular state can be associated with the actions that produced it, the calculation applied to it, and the evidence available at that point in the design process.
+ 
+ This concept is analogous to ``Git for molecules'', although a drug design history is richer and more complex than tracking revisions of source code. A design history includes structural changes together with evolving hypotheses, model outputs, uncertainty, and experimental evidence. In a discovery setting, such a record could capture which analogs were considered, which structures or properties influenced a design, which alternatives were rejected, and what was learned when a compound was synthesized and tested. This creates a foundation for recording medicinal chemistry design trajectories rather than storing only the compounds that survived them. Much of the information that explains how a program learned lies in alternatives that were considered and abandoned, yet conventional compound databases usually only preserve experimental endpoints.
+ 
+@@ -285,6 +285,7 @@
+ 
+ \appendixsection{Molarium architecture, numerical validation, and executable design history}{app:architecture}
+ \begin{small}
++\setlength{\parskip}{0.35em}
+ \setlength{\emergencystretch}{2em}
+ 
+ \textit{Authorship note for Appendices A and B.} These appendices were drafted primarily by GPT-5.6 Sol and subsequently revised with AI assistance under human direction, with limited direct human editing. The authors remain responsible for their content.
+@@ -329,7 +330,7 @@
+ \end{tabularx}
+ \end{table}
+ 
+-Internal units are nm, ps, daltons, kJ/mol, and kJ/mol/nm; the interface presents angstroms and kcal/mol where appropriate. Numerical engines execute in reusable Web Workers so rendering and user interaction remain responsive. Requests carry job identifiers, and failed workers are discarded and recreated. Results return as compact coordinate, force, energy, or trajectory arrays mapped to the originating atom identities.
++The OpenMM and direct WebGPU paths use nm, ps, daltons, kJ/mol, and kJ/mol/nm. The replica engine uses angstroms and kcal/mol internally, with explicit conversion at the worker boundary; RDKit energies are in kcal/mol. The interface presents angstroms and kcal/mol where appropriate. Numerical engines execute in reusable Web Workers so rendering and user interaction remain responsive. Requests carry job identifiers, and failed workers are discarded and recreated. Results return as compact coordinate, force, energy, or trajectory arrays mapped to the originating atom identities.
+ 
+ For ordinary small molecules, the browser parameterizer applies Sage 2.1.0 patterns and labelled Gasteiger charges \citep{boothroyd2023sage,gasteiger1980charges}. Prepared Rosemary validation fixtures retain their exported numerical recipes and NAGL charges. CPU/GPU comparisons therefore operate on the same prepared graph and numerical inputs rather than independently parameterized systems.
+ 
+@@ -362,8 +363,8 @@
+ Principal force workgroup & 64 atomwise calculations\\
+ Time step & 1 fs flexible; 2 fs with X--H constraints\\
+ Constraint solve & Four graph-coloured sweeps by default; at most 32\\
+-Minimization & 750 iterations by default; at most 2,000; each displacement capped at 0.001 nm\\
+-Direct dynamics request & At most 5,000 steps; longer requests use the ensemble route\\
++Minimization & 750 iterations by default; at most 2,000; default displacement cap 0.001 nm\\
++Direct dynamics request & At most 5,000 steps per request\\
+ Validation cutoff & 1.0 nm cutoff; 0.2 nm skin; rebuild every 20 steps\\
+ \bottomrule
+ \end{tabularx}
+@@ -379,7 +380,7 @@
+ 
+ Concurrent accumulation uses paired 32-bit words to represent signed 64-bit fixed-point values because WGSL exposes 32-bit integer atomics. The implementation uses $2^{22}$ counts per kcal/mol for energies, $2^{18}$ counts per kcal/mol/\AA{} for forces, and $2^{32}$ counts per \AA{} for coordinates. This replaced 32-bit accumulators that overflowed silently in highly clashed configurations and produced bit-for-bit replay for identical seeds on the tested adapter.
+ 
+-Integration uses velocity Verlet, seeded Langevin thermalization, and SHAKE/RATTLE. Constraint projection is serial within a replica while replicas execute in parallel; the default relative tolerance is $10^{-5}$ with at most 32 iterations. Commands contain at most 50 steps. Persistent status words convert non-finite values, accumulator overflow, coordinate clamps, and failed constraints into terminal errors. Current limits are 512 atoms per replica, all-pairs nonbonded evaluation, and identical atom count, topology, and parameters across replicas.
++Integration uses velocity Verlet, seeded Langevin thermalization, and SHAKE/RATTLE. Constraint projection is serial within a replica while replicas execute in parallel; the defaults are a relative tolerance of $10^{-5}$ and 32 iterations. Commands contain at most 50 steps. Persistent status words convert non-finite values, accumulator overflow, coordinate clamps, and failed constraints into terminal errors. Current limits are 512 atoms per replica, all-pairs nonbonded evaluation, and identical atom count, topology, and parameters across replicas.
+ 
+ Force evaluation uses a separate 32-bit floating-point coordinate working copy. Translating a test system 500 \AA{} from the origin changed energies by approximately $3 \times 10^{-4}$ relative, identifying the working coordinate representation rather than the fixed-point store as the remaining translation-sensitivity boundary. Eliminating this source of error requires recentering before force evaluation or a wider working representation.
+ 
+@@ -432,7 +433,7 @@
+ Current workflow surfaces include:
+ 
+ \begin{itemize}[leftmargin=*]
+-\item \textbf{Local small-molecule design.} Synchronized 2D/3D construction, graph validation, RDKit or direct-WebGPU calculations, aligned trajectory/energy inspection, and export. OpenMM/WebAssembly is used for internal validation and fixed-scaffold operations rather than as a selectable Simulate-panel method.
++\item \textbf{Local small-molecule design.} Synchronized 2D/3D construction, graph validation, RDKit or direct-WebGPU calculations, aligned trajectory/energy inspection, and export. OpenMM/WebAssembly supports internal validation, fixed-scaffold operations, and general calculations through the public API, but is not a selectable Simulate-panel method.
+ \item \textbf{Protein--ligand pose propagation.} A trusted pose is captured with stable atom lineage. Constrained propagation searches edited groups and eligible edit-associated torsions against a fixed receptor, retaining the protected core and enforcing selected required-contact checks. Pocket relaxation moves the ligand and protein side chains in a 5~\AA{} pocket while fixing the backbone. Experimental induced-fit relaxation permits whole-residue motion within 6~\AA{}, including backbone, and eligible ligand/water motion, but fixes ligand atoms protected by registered retention rules. Neither minimization lane enforces the docking hydrogen-bond restraints; contacts must be inspected afterward. Discrete side-chain rotamer enumeration is a separate operation, not an automatic consequence of minimization.
+ \item \textbf{Agent-operated design.} Agents invoke the versioned Chemist Actions API rather than arbitrary page functions. The API exposes the same bounded state-changing verbs available to a chemist---including select, edit, search, apply, relax, and undo---plus read-only inspection. Requests execute serially and record sequence, timestamps, arguments, status, and duration.
+ \end{itemize}
+@@ -443,7 +444,7 @@
+ 
+ Molarium separates operational, numerical, and decision provenance. A molecular snapshot records one explicit state. Content-addressed commits link that state to parent states, action scripts, hypotheses, and evidence. Branches preserve alternative design routes, and decisions record which route progressed, stopped, or was deferred. These semantics are implemented as a custom content-addressed ledger rather than a Git repository or a general structural merge algorithm.
+ 
+-The live application records public actions in memory; clearing the scene clears that transient audit. The Design History interface and public \texttt{campaign.*} actions can create a local campaign, commit graph-and-coordinate snapshots and completed actions, create and restore branches, record decisions, merge branch histories, and verify the append-only record. Campaign JSON and the active branch are persisted in browser IndexedDB. Explicit export is needed for portable handoff. Attached action scripts cover completed public operations, not every transient interaction or the complete workbench state.
++The live application keeps separate API-history and scene-audit buffers, each retaining up to 500 public actions by default. Clearing the scene clears the scene audit, not the API-history buffer. The Design History interface and public \texttt{campaign.*} actions can create a local campaign, commit graph-and-coordinate snapshots and completed actions, create and restore branches, record decisions, merge branch histories, and verify the append-only record. Campaign JSON and the active branch are persisted in browser IndexedDB. Explicit export is needed for portable handoff. Attached action scripts cover completed public operations, not every transient interaction or the complete workbench state.
+ 
+ \begin{table}[htbp]
+ \centering\small
+@@ -488,7 +489,7 @@
+ }
+ \end{lstlisting}
+ 
+-Executable replays use \texttt{molarium.chemist-action-script/v1}. Scripts contain ordered calls to the allow-listed Chemist Actions API rather than arbitrary code or direct coordinate replacement. Designer Moves JSON files must be smaller than 2 MB. Ordinary API requests are capped at 8 MiB for ASCII JSON, twelve nested levels, and 2,048 JSON nodes. Loading a multi-action script permits 32,768 nodes while retaining the depth and byte limits; each constituent action uses the ordinary request limits. Serialized full-system campaign imports have a separate 32 MiB allowance. Actions can name returned stable identifiers for reuse by later steps. The runner executes one action at a time through \texttt{api.execute(\{action,args\})}, derives a repeatable request ID from the script fingerprint, and stops on the first failure. Replay results use \texttt{molarium.chemist-action-replay/v1} and record the source fingerprint and each step outcome. Presentation actions can alter focus or styling but cannot change molecular graph or coordinates except through the same allow-listed state-changing actions.
++Executable replays use \texttt{molarium.chemist-action-script/v1}. Scripts contain ordered calls to the allow-listed Chemist Actions API rather than arbitrary code. Allowed actions include coordinate-bearing structure loading and snapshot or frame restoration; those operations are distinct from recomputing a design step. Designer Moves JSON files must be smaller than 2 MB. Ordinary API requests are capped at 8 MiB for ASCII JSON, twelve nested levels, and 2,048 JSON nodes. Loading a multi-action script permits 32,768 nodes while retaining the depth and byte limits; each constituent action uses the ordinary request limits. Serialized full-system campaign imports have a separate 32 MiB allowance. Actions can name returned stable identifiers for reuse by later steps. The runner executes one action at a time through \texttt{api.execute(\{action,args\})}, derives a repeatable request ID from the script fingerprint, and stops on the first failure. Replay results use \texttt{molarium.chemist-action-replay/v1} and record the source fingerprint and each step outcome. Presentation actions can alter focus or styling but cannot change molecular graph or coordinates except through the same allow-listed state-changing actions.
+ 
+ The SOS1 replay is identified by a stable public route and by exact release and content fingerprints. A human-readable URL can resolve to a newer release, whereas the release commit, route-file fingerprint, and canonical action-script fingerprint identify the reviewed bytes and normalized JSON content. The live workflow can capture a starting state, record exploration actions, apply and relax selected states, and export action and numerical records. Formal campaign commits and decision events are represented by the ledger layer described above.
+ 
+@@ -769,7 +770,7 @@
+ 
+ \subhead{Starting from a structure}
+ 
+-Start with \code{?blank} when a reproducible workflow should begin from an empty canvas. Otherwise the application loads its bundled launch molecule. A structure can be pasted as XYZ or PDB text, uploaded as XYZ or PDB, entered as a SMILES string or PDB identifier in connected mode, or selected from the prepared examples. The current upload router should not be relied on for ordinary MOL-file ingestion, even though a V2000 parser exists elsewhere in the application.
++Start with \code{?blank} when a reproducible workflow should begin from an empty canvas. Otherwise the application loads its bundled launch molecule. Paste and Upload accept PDB, XYZ, and supported V2000 MOL text; SMILES can be entered and embedded locally. PDB-identifier retrieval requires connected mode. Prepared examples provide another starting route.
+ 
+ After loading, inspect atom count, formula, formal charge, connected components, graph connectivity, and the 3D structure. For a selected small-molecule component, compare the synchronized 2D depiction with the 3D graph. For PDB input, remember that only the first model is loaded and alternate locations are resolved by the implemented occupancy policy. For XYZ input, bonds are inferred from proximity and should be checked rather than assumed.
+ 
+@@ -868,10 +869,10 @@
+ \subhead{Ligand workflow}
+ 
+ \begin{enumerate}
+-\item Load the ligand from a SMILES string or select the ligand component whose identity you intend to change.
++\item Load the ligand as a standalone SMILES-derived molecule. The visible protonation workflow is not an in-place editor for a selected ligand inside a protein complex.
+ \item Choose a pH from 0 to 14 and enumerate candidate states. RDKit applies a versioned Dimorphite-style site table, edits formal charges and hydrogens, sanitizes each result, and returns an ordered list with estimated weights.
+ \item Inspect each candidate as chemistry: total charge, changed atoms, tautomeric or aromatic consequences, and compatibility with known assay conditions or the bound environment.
+-\item Apply one state deliberately. Molarium re-embeds the chosen species, replaces the graph and coordinates, and invalidates state that depended on the former topology.
++\item Apply one state deliberately. Molarium re-embeds the chosen species, replaces the entire current molecule's graph and coordinates, and invalidates state that depended on the former topology.
+ \end{enumerate}
+ 
+ \subhead{Protein workflow}
+@@ -882,10 +883,10 @@
+ 
+ \begin{skillcontract}{select\_protonation\_state}
+ \contractrow{Goal}{Make the intended protonation and formal-charge state explicit before editing or calculation.}
+-\contractrow{Preconditions}{A valid ligand or PDB structure is loaded; the relevant pH or experimental condition is known or stated as an assumption.}
++\contractrow{Preconditions}{For the visible ligand workflow, a standalone SMILES-derived molecule with at most 256 atoms is loaded; protein choices require a PDB structure. The relevant pH is known or stated as an assumption.}
+ \contractrow{Inputs}{pH; candidate-state selection; for proteins, histidine policy and local residues requiring review.}
+ \contractrow{Procedure}{Enumerate or preview; compare candidates; inspect charge and local interactions; apply exactly one accepted state; re-inspect the resulting graph.}
+-\contractrow{State mutation}{Applying a ligand state replaces graph and coordinates. Protein protonation changes are committed through preparation. Prior parameterization becomes obsolete.}
++\contractrow{State mutation}{Applying a ligand state replaces the entire current molecule. Protein protonation changes are committed through preparation. Prior parameterization becomes obsolete.}
+ \contractrow{Evidence}{pH, enumeration or preparation output, chosen state, total charge, changed sites, and stated rationale when more than one state is plausible.}
+ \contractrow{Success}{The authoritative graph explicitly represents the intended state and downstream methods will see the corresponding atoms and charges.}
+ \contractrow{On failure}{Report invalid pH, sanitization, embedding, or worker errors; do not partially apply or choose a different state merely because it runs.}
+@@ -911,10 +912,10 @@
+ \subhead{Human workflow}
+ 
+ \begin{enumerate}
+-\item Enter \textbf{Design} and select the relevant atom or bond in either view. Confirm the stable atom identity and local environment before changing it.
++\item Enter \textbf{Design} and select the relevant atom or bond in either view. Confirm the stable atom identity and local environment before changing it. Leave \textbf{Finish and refine after every edit} off when grouping changes into the staged transaction described here.
+ \item Apply the intended element replacement, bond order or aromaticity change, formal charge, explicit hydrogen, or stereochemical operation. Related operations remain in one pending chemistry transaction.
+ \item For coordinate-only geometry changes, select a connected path of two, three, or four atoms to set a distance, angle, or dihedral. Molarium moves the connected side defined by the graph and blocks ambiguous ring cuts.
+-\item Choose \textbf{Finish chemistry}. RDKit sanitizes the graph, hydrogens are reconciled, eligible local coordinates are polished, reference contacts are remapped where applicable, obsolete parameterization is invalidated, and a single undo snapshot is created.
++\item Choose \textbf{Finish changes}. RDKit sanitizes the graph, hydrogens are reconciled, eligible local coordinates are polished, reference contacts are remapped where applicable, obsolete parameterization is invalidated, and a single undo snapshot is created.
+ \item If validation fails, correct the still-pending transaction or choose \textbf{Discard} to restore the pre-edit state. Use Undo/Redo only after a transaction has been committed.
+ \end{enumerate}
+ 
+@@ -946,6 +947,7 @@
+ \begin{lstlisting}
+ await api.execute({action:"view.setMode", args:{mode:"build"}})
+ await api.execute({action:"build.setTool", args:{tool:"select"}})
++await api.execute({action:"chemistry.setEditPolicy", args:{mode:"staged"}})
+ await api.execute({action:"selection.replace", args:{atomIds:[anchorId]}})
+ await api.execute({action:"chemistry.addAtom",
+   args:{attachedToAtomId:anchorId, element:"Cl"}})
+@@ -1034,7 +1036,7 @@
+ Sage energy, relaxation, or bounded single-system MD & Direct WebGPU & Browser-GPU energy, forces, geometry, and saved frames from the numeric Sage system. & Experimental; f32; direct dynamics capped at 5,000 steps; no PBC or PME.\\
+ Many replicas of one topology & WebGPU ensemble & Homogeneous replica dynamics with energies, frames, timing, and constraint diagnostics. & Experimental; at most 512 atoms per replica, 1,024 replicas, and 100,000 steps; nonperiodic all-pairs model.\\
+ Electronic energy or geometry for an eligible neutral molecule & ANI-2x & Eight-model ANI-2x ensemble energy, spread, analytical forces, and optional optimized coordinates. & Experimental; connected neutral singlets with explicit H; H/C/N/O/S/F/Cl only; at most 96 atoms.\\
+-Reference calculation inside another workflow & OpenMM 8.2 Reference & Double-precision internal parameterization, scoring, relaxation, and validation path. & Internal subsystem, not a selectable general Simulate method.\\
++Reference calculation inside another workflow & OpenMM 8.2 Reference & Double-precision internal parameterization, scoring, relaxation, and validation path. & Available through the public calculation API, but not listed in the Simulate method menu.\\
+ \bottomrule
+ \end{longtable}
+ \endgroup
+@@ -1075,7 +1077,7 @@
+   args:{scope:"ligand", includeCoordinates:true, maximumAtoms:500}})
+ \end{lstlisting}
+ 
+-General Simulate jobs use \code{calculation.run}; the action accepts only the installed engine/job combinations and the same bounded options as the interface. Selecting a returned frame is explicit because it writes those coordinates into the current molecule:
++General Simulate jobs use \code{calculation.run}; the action accepts installed engine/job combinations and worker-validated numerical options. OpenMM is additionally available through this API, although it is absent from the Simulate method menu. Selecting a returned frame is explicit because it writes those coordinates into the current molecule:
+ 
+ \begin{lstlisting}
+ await api.execute({action:"calculation.run", args:{
+@@ -1121,7 +1123,7 @@
+ \begin{lstlisting}
+ await api.execute({action:"calculation.run", args:{
+   job:"conformers", method:"stormm",
+-  options:{conformerCount:32, conformerEffort:"standard",
++  options:{conformerCount:32, conformerEffort:"balanced",
+            conformerClusterRms:0.75, conformerArena:true}}})
+ await api.execute({action:"calculation.selectConformer", args:{rank:0}})
+ \end{lstlisting}
+@@ -1137,7 +1139,7 @@
+ \begin{enumerate}
+ \item Enter one amino-acid sequence using the standard residue alphabet or X. The current maximum length is 128 residues, using 64- or 128-residue feature buckets.
+ \item Inspect and accept the configured MSA endpoint and network boundary. First use may require approximately 540 MB of model assets.
+-\item Run and monitor MSA and inference progress. The current browser model executes three recycle passes; this count is not user-configurable. Cancel aborts the active MSA/prediction controller.
++\item Run and monitor MSA and inference progress. The current browser model executes three recycle passes; this count is not user-configurable. Cancellation is not reliable in the inspected release: the Cancel action queues behind the prediction rather than interrupting it.
+ \item On success, Molarium loads the prediction as the current molecule. Inspect chain completeness, residue mapping, gross geometry, and suitability for the downstream question before replacing other work.
+ \item Export the predicted structure as PDB if it must persist. Preparation and local relaxation are separate decisions.
+ \end{enumerate}
+@@ -1156,13 +1158,12 @@
+ \contractrow{Boundary}{No ligand co-folding, multimer prediction, templates, Amber relaxation, experimental validation, or production preparation.}
+ \end{skillcontract}
+ 
+-The workflow is exposed as \code{protein.predict}; \code{protein.cancelPrediction} aborts the active request. The MSA endpoint remains an explicit network boundary rather than a hidden service call:
++The workflow is exposed as \code{protein.predict}. The installed \code{protein.cancelPrediction} action shares its serialized queue and cannot interrupt a prediction already occupying that queue. The MSA endpoint remains an explicit network boundary rather than a hidden service call:
+ 
+ \begin{lstlisting}
+ await api.execute({action:"protein.predict", args:{
+   sequence:fastaText, msaEndpoint:"https://msa.example/api"}})
+-// while active:
+-await api.execute({action:"protein.cancelPrediction", args:{}})
++
+ \end{lstlisting}
+ 
+ \workflowsection{B.9}{Maintain an experimental pose while changing ligand chemistry}{Experimental current surface}{I trust the experimental pose of my starting ligand. How can I search for a plausible pose of an edited analogue without discarding what I already know?}
+@@ -1173,7 +1174,7 @@
+ 
+ \begin{enumerate}
+ \item Prepare and inspect the reference protein-ligand complex. In \textbf{Design}, capture the reference before editing. The capture stores ligand lineage, receptor atoms within 8~\AA, reference contacts, selected hydrogen bonds, settings, and provenance.
+-\item Use the default \textbf{Pose propagation} mode to map surviving reference atoms and seed the edited region. Use \textbf{Expert selected core} only when you can justify at least three connected, non-collinear heavy atoms as a fixed reference.
++\item Use the default \textbf{Constrained pose propagation} mode to map surviving reference atoms and seed the edited region. Use \textbf{Expert selected-core search} only when you can justify at least three connected, non-collinear heavy atoms as a fixed reference.
+ \item Edit and finish the analogue. Review remapped or unavailable contacts, transformed ring regions, atom mapping, and any constraints before starting the search.
+ \item Run the constrained search. Molarium verifies receptor and contact integrity, releases eligible transformed rings, generates deterministic feature and torsion seeds, freshly parameterizes the edited ligand, relaxes feasible candidates, and scores the distinct results.
+ \item Inspect the ranked candidates, not only rank 1. Compare mapped-core displacement, preserved or replaced interactions, ligand strain, clashes, ring and side-chain choices, and the reasons candidates were rejected.
+@@ -1182,9 +1183,9 @@
+ 
+ \subhead{What is being scored?}
+ 
+-The ranker uses a rigid receptor site within 8~\AA, Lennard-Jones and Coulomb ligand-receptor cross terms with relative dielectric 4, and relative vacuum ligand strain. It omits general receptor relaxation, water displacement, entropy, binding free energy, and broad macrocycle or fused-ring concerted search. The separate induced-fit Design optimizer is not part of this ranker and is not an affinity calculation. Required hydrogen bonds are acceptance conditions for constrained ligand search, not restraints in ligand cleanup, Pocket relax, or Induced-fit pocket. The latter two also differ in whether nearby backbone atoms may move and which ligand atoms remain protected. Adjacent information buttons explain these policies and the available choices. The UI uses v5 feature seeding and automatic worker execution; legacy seeding and execution overrides remain API-only. Weak covalent-fluorine contact hypotheses are optional by default.
+-
+-\lead{Negative results are results.}An invalid core, altered receptor, unmappable required atom, unavailable contact feature, parameterization failure, or absence of feasible candidates produces an explicit failed or negative record. Molarium does not silently apply the least-bad pose.
++The ranker uses a rigid receptor site within 8~\AA, Lennard-Jones and Coulomb ligand-receptor cross terms with relative dielectric 4, and relative vacuum ligand strain. It omits general receptor relaxation, water displacement, entropy, binding free energy, and broad macrocycle or fused-ring concerted search. The separate induced-fit Design optimizer is not part of this ranker and is not an affinity calculation. Required hydrogen bonds are acceptance conditions for constrained ligand search, not restraints in ligand cleanup, Pocket relax, or Induced-fit pocket. The latter two also differ in whether nearby backbone atoms may move and which ligand atoms remain protected. Information buttons beside crucial choices explain these policies; routine controls retain unobtrusive descriptions. The UI uses v5 feature seeding and automatic worker execution; legacy seeding and execution overrides remain API-only. Weak covalent-fluorine contact hypotheses are optional by default.
++
++\lead{Negative results are results.}An invalid core, altered receptor, unmappable required atom, unavailable contact feature, parameterization failure, or absence of feasible candidates produces an explicit failed or negative record. Molarium does not silently apply the least-bad pose. An explicit, recorded API override (\code{allowInfeasible:true}) can apply an infeasible candidate; the acceptance contract here excludes that override.
+ 
+ \begin{skillcontract}{maintain\_reference\_pose}
+ \contractrow{Goal}{Generate and review plausible local poses for one edited analogue while retaining explicit relationships to a trusted reference complex.}
+@@ -1236,7 +1237,7 @@
+ \textbf{Record} & \textbf{Question answered} & \textbf{Persistence and limit}\\
+ \midrule
+ \endhead
+-Chemist Actions audit & What recognized public action was requested, with what arguments and outcome? & Session memory; serialized calls; cleared with the scene unless exported through a script path.\\
++Chemist Actions audit & What recognized public action was requested, with what arguments and outcome? & Session memory; the API history and scene replay buffer each retain at most 500 entries. The scene buffer resets on scene replacement or Clear; export before entries are lost.\\
+ Preparation or calculation record & What system, model, settings, energies, frames, warnings, or audit produced this result? & Attached to the in-memory state and available through workflow-specific reports or exports.\\
+ Docking labbook & How were mapping, feasibility, scoring, rejection, and selection handled? & Exportable JSON and Markdown/notes with chained hashes.\\
+ Designer action script & Which completed public actions should be replayed? & Exportable JSON; replay invokes the same guarded routes; not a complete UI or binary session snapshot.\\
+@@ -1262,7 +1263,7 @@
+ 
+ \subhead{Live Design History}
+ 
+-Design History is a live browser feature. \code{campaign.create} creates a locally persisted campaign and atomically commits the visible molecule. \code{campaign.commitCurrent} stores a complete graph-and-coordinate snapshot together with completed public actions since the prior commit. Branch switching restores the exact head molecule and refuses to proceed when the visible molecular state is dirty. Merge records the currently visible result with two parents; it is not an automatic structural merge. Decisions attach disposition, rationale, reason codes, and optional evidence to a commit. Verification recomputes content hashes, the append-only event chain, commit relationships, and branch heads derived from that chain.
++Design History is a live browser feature. \code{campaign.create} creates a locally persisted campaign and atomically commits the visible molecule. \code{campaign.commitCurrent} stores a complete graph-and-coordinate snapshot together with the retained completed public actions since the prior commit. The action script is explicitly partial; audit truncation is recorded when detected, while the complete molecular snapshot remains authoritative. Branch switching restores the exact head molecule and refuses to proceed when the visible molecular state is dirty. Merge records the currently visible result with two parents; it is not an automatic structural merge. Decisions attach disposition, rationale, reason codes, and optional evidence to a commit. Verification recomputes content hashes, the append-only event chain, commit relationships, and branch heads derived from that chain.
+ 
+ Campaign JSON and the active branch are stored in browser IndexedDB. Reload makes the saved campaign available to resume without replacing the visible molecule. Explicit Resume restores the graph and coordinates at the active branch head; it does not restore parameter tables, docking candidates, calculation frames, view state, or the complete workbench session. \code{campaign.import} verifies the canonical JSON and requires a restorable graph/coordinate snapshot before mutating live state; \code{campaign.export} returns that canonical JSON. Closing a campaign clears the active pointer without deleting its commits. A live commit can attach a script of completed molecular Chemist Actions; the complete molecular snapshot remains authoritative. Campaign-management actions are excluded from molecule replay scripts so replay cannot recursively administer its own history.
+ 
+@@ -1284,7 +1285,7 @@
+ PDB protein & Imported or predicted protein coordinates and supported annotations & Complete application or preparation provenance\\
+ Preparation JSON & Policies, issues, audit, and readiness status & A production-readiness guarantee\\
+ Docking JSON/Markdown & Settings, mapping, candidates, failures, hashes, and selection & Author authentication or binding free energy\\
+-Action script JSON & Public actions and bindings & Arbitrary code, direct coordinates, or complete view state\\
++Action script JSON & Public actions, bindings, and supported loader inputs & Arbitrary code, unguarded state injection, or a complete workbench snapshot\\
+ PNG or share URL & A visual snapshot or current/registered URL & A reusable molecule or serialized live session\\
+ \bottomrule
+ \end{longtable}
+@@ -1325,7 +1326,7 @@
+ \item \textbf{Design History defines durable meaning over time.} It commits complete molecular states and can link them to an explicitly partial public-action script, branches, decisions, evidence, actors, and append-only integrity records. The snapshot answers ``what state was accepted?''; the action script answers ``which guarded operations were captured and can be replayed?''; and the decision answers ``why was it accepted?''
+ \end{enumerate}
+ 
+-The practical agent pattern is:
++The following agent pattern assumes the Design workspace, an active campaign, and a reviewed, unambiguous atom path:
+ 
+ \begin{lstlisting}
+ const manifest = api.describe();          // discover installed authority

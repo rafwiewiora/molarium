@@ -1,0 +1,30 @@
+{
+  "caption": "BAY-293: move thiophene attachment; alcohol to N-methylamine.",
+  "depiction": {
+    "alignedAtoms": "8",
+    "alignmentBackend": "RDKit shared-scaffold 2D coordinates",
+    "canonicalSmiles": "CNCc1ccccc1-c1csc([C@@H](C)Nc2nc(C)nc3cc(OC)c(OC)cc23)c1",
+    "mode": "build",
+    "rdkitVersion": "2025.03.4",
+    "sanitization": "strict RDKit sanitization; hydrogens removed after sanitization"
+  },
+  "docked": true,
+  "expanded": true,
+  "highlightedAtomIds": [
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX5:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::NX1:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX12:",
+    "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX3:",
+    "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX4:",
+    "chemist-5OVE:HETATM:A:AXE:1104::C2:4017",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX13:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX14:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX16:",
+    "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX18:",
+    "chemist-5OVE:HETATM:A:AXE:1104::C1:4016"
+  ],
+  "networkPolicy": "Local Lab · network locked",
+  "replayStatus": "completed",
+  "reviewIndex": 19,
+  "svgSha256": "22a4326af819e502e5640b000540318f90503343c2718dae3641c8a57dc8e12d"
+}

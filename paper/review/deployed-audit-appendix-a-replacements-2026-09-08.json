@@ -1,0 +1,50 @@
+[
+  {
+    "id": "A1-backend-units",
+    "before": "Internal units are nm, ps, daltons, kJ/mol, and kJ/mol/nm; the interface presents angstroms and kcal/mol where appropriate.",
+    "after": "The OpenMM and direct WebGPU paths use nm, ps, daltons, kJ/mol, and kJ/mol/nm. The replica engine uses angstroms and kcal/mol internally, with explicit conversion at the worker boundary; RDKit energies are in kcal/mol. The interface presents angstroms and kcal/mol where appropriate.",
+    "evidence": "a27 main.tex:332; pinned stormm/README.md:143, stormm-worker.js:288, webgpu/README.md units section, rdkit-worker.js:1–2."
+  },
+  {
+    "id": "A1-direct-request-limit",
+    "before": "Direct dynamics request & At most 5,000 steps; longer requests use the ensemble route",
+    "after": "Direct dynamics request & At most 5,000 steps per request",
+    "evidence": "a27 main.tex:366; pinned webgpu-worker.js:621–625 rejects larger requests; app.js:16620–16628 disables/clamps larger direct UI selections. No automatic ensemble routing."
+  },
+  {
+    "id": "A1-replica-constraint-default",
+    "before": "the default relative tolerance is $10^{-5}$ with at most 32 iterations.",
+    "after": "the defaults are a relative tolerance of $10^{-5}$ and 32 iterations.",
+    "evidence": "a27 main.tex:382; pinned stormm/engine.mjs:80 default32, :91–94 allowed1–256. Direct WebGPU's separate max32 at main.tex:364 remains correct."
+  },
+  {
+    "id": "main-partial-event-history",
+    "before": "Molarium extends this principle by preserving the sequence of molecular states and user actions that produced the current state. Edits, selections, manipulations, calculations, and other interactions form an event history rather than leaving only the final coordinates.",
+    "after": "Molarium extends this principle by preserving selected molecular states together with completed public actions captured between commits. These actions form an explicitly partial event history; direct interface changes are captured in graph-and-coordinate snapshots but are not necessarily represented as replayable actions.",
+    "evidence": "a27 main.tex:152; pinned design-history/live-campaign.mjs:204–231 explicitly complete:false and directUiMutationsCapturedOnlyInSnapshot:true."
+  },
+  {
+    "id": "A3-openmm-api-availability",
+    "before": "OpenMM/WebAssembly is used for internal validation and fixed-scaffold operations rather than as a selectable Simulate-panel method.",
+    "after": "OpenMM/WebAssembly supports internal validation, fixed-scaffold operations, and general calculations through the public API, but is not a selectable Simulate-panel method.",
+    "evidence": "a27 main.tex:435; pinned chemist-actions.mjs:232–235 calculation.run accepts openmm; app.js:16156–16158 calls runOpenMMJob."
+  },
+  {
+    "id": "A4-bounded-audit",
+    "before": "The live application records public actions in memory; clearing the scene clears that transient audit.",
+    "after": "The live application keeps separate API-history and scene-audit buffers, each retaining up to 500 public actions by default. Clearing the scene clears the scene audit, not the API-history buffer.",
+    "evidence": "a27 main.tex:446; pinned chemist-actions.mjs:419–420 and :456–457; app.js:9314, :12056–12059, :17798. The API object is not recreated by scene clearing."
+  },
+  {
+    "id": "A4-coordinate-bearing-allowlist",
+    "before": "Scripts contain ordered calls to the allow-listed Chemist Actions API rather than arbitrary code or direct coordinate replacement.",
+    "after": "Scripts contain ordered calls to the allow-listed Chemist Actions API rather than arbitrary code. Allowed actions include coordinate-bearing structure loading and snapshot or frame restoration; those operations are distinct from recomputing a design step.",
+    "evidence": "a27 main.tex:491; pinned chemist-actions.mjs:6–9 session.loadStructure includes PDB/XYZ/MOL; :239–240 calculation.selectFrame; campaign restore paths also allowed."
+  },
+  {
+    "id": "A1-minimization-default-cap",
+    "before": "Minimization & 750 iterations by default; at most 2,000; each displacement capped at 0.001 nm",
+    "after": "Minimization & 750 iterations by default; at most 2,000; default displacement cap 0.001 nm",
+    "evidence": "a27 main.tex:365; pinned webgpu-worker.js:346 reads options.maxDisplacement with default 0.001; not a fixed worker maximum."
+  }
+]

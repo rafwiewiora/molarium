@@ -1,0 +1,17 @@
+{
+  "schema": "molarium.approved-manuscript-value-figure-cleanup/v1",
+  "baseRevision": "paper/revisions/2026-09-08-matched-figure-font-a26",
+  "baseSourceSha256": "cdb14f27bca72abbe89de96d90ed9664bcbfdb5f54f055d51804a8c0f89fc798",
+  "outputSha256": "cdb14f27bca72abbe89de96d90ed9664bcbfdb5f54f055d51804a8c0f89fc798",
+  "changes": [],
+  "allTextUnchanged": true,
+  "allOtherFiguresUnchanged": true,
+  "figureChange": {
+    "path": "figures/fig5_value_layers_fixed.png",
+    "source": "/Users/bb/.codex/generated_images/01a06f7b-4a28-7483-a62c-d8e8cfb2db29/exec-fe872f0c-45a0-4db8-8f7b-c8eaef481e6c.png",
+    "method": "AI raster edit via image_gen; repair middle-box white edge gap and remove line-wrap hyphen from rationale",
+    "preservationScope": "All wording visually checked retained; rationale line wrapping corrected. Raster resampled with added outer whitespace; no claim of pixel-identical preservation elsewhere.",
+    "beforeSha256": "4b853d26905f9e5d42ad2e8bf54893a11ebaa552dcee697bac13ee69a423b342",
+    "afterSha256": "3338413017afd509732fc5f223494680983d7fddaa75ae8f0e3d120b6d7ce60f"
+  }
+}

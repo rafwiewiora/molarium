@@ -1,0 +1,22 @@
+{
+  "schema": "molarium.approved-manuscript-chemical-difference-figure/v1",
+  "baseRevision": "paper/revisions/2026-09-07-aligned-chemistry-a22",
+  "baseSourceSha256": "b2eb879807f7dbe484b09f7b81f0eb62182be18e3c72790432a3ef32ce098a23",
+  "outputSha256": "a8a2c9bf2c2344761d013a7f9a252671dfdbae24eba565c3e2c95136978af932",
+  "changes": [
+    {
+      "before": "Orange 2D highlights mark atoms outside the registered conserved atom-lineage subgraph relative to the preceding chemical graph; they do not depict a synthetic reaction mechanism.",
+      "after": "Orange 2D highlights mark added atoms and local chemical changes relative to the preceding structure; equivalent Kekul\\'e representations and reassigned atom identifiers do not count as changes."
+    },
+    {
+      "before": "(F) BAY-293: move the thiophene attachment, replace the alcohol with an N-methylamine, and restore the aromatic core.",
+      "after": "(F) BAY-293: move the thiophene attachment and replace the alcohol with an N-methylamine."
+    }
+  ],
+  "allOtherTextUnchanged": true,
+  "allOtherFiguresUnchanged": true,
+  "figureChanges": {
+    "fig2_sos1_designer_intent.png": "22bd1240bc4135cc9ef6507a4d65454137bbe8e0e67fe57584388affa6bf2f5c",
+    "fig2_sos1_designer_intent.provenance.json": "13aac8323e1b32945fad0f2cfc297884f8085b07f167963c2df2ef1c6a6d7252"
+  }
+}

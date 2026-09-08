@@ -3,6 +3,8 @@ import { browserModuleClosure, sos1ReleaseWebFiles } from './web-bundle-dependen
 
 const root = resolve(import.meta.dir, '..');
 const reviewedFiles = [
+  'paper/submissions/chemrxiv-v1-2026-09-08/Molarium.pdf',
+  'paper/submissions/chemrxiv-v1-2026-09-08/submission.json',
   'design-history/publications/sos1/checkpoints/starting-hit-campaign.json',
   'design-history/examples/sos1-prediction.action-script.json',
   'design-history/examples/sos1-prediction-checkpoint-review.action-script.json',

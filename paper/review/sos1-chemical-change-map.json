@@ -1,0 +1,1328 @@
+{
+  "schema": "molarium.sos1-chemical-change-map/v1",
+  "publicationStatus": "AUTHOR-RETAINED: describe existing PDB-derived frozen graphs; no corrected scientific rerun requested",
+  "authorDecision": "2026-09-07: author confirmed the PDB discrepancy, retained the existing graph and calculations, and requested removal of the restore-aromaticity description. Initial publication hold superseded; source discrepancy remains documented.",
+  "scientificDiscrepancy": "AWW in the frozen graph and RCSB CCD is 5,8-dihydro; Hillig et al. 2019 Figure 4B compound 21 has an aromatic quinazoline core. Do not publish this map as the intended design sequence. See SOS1-AWW-SOURCE-GRAPH-DISCREPANCY-2026-09-07.md.",
+  "rdkitVersion": "2025.03.4",
+  "releaseSha256": "c26af7f823bb9443289d099e8da9ba0fd58404c15a9bf709fcdba8ef5834520e",
+  "policy": "Strict full-H sanitization, then H removal and RDKit aromaticity normalization. Retained atom lineage plus explicitly reviewed structural correspondence, not an MCS or synthetic reaction mechanism. Highlight current atoms with changed normalized properties or incident bonds; additions and surviving deletion endpoints are included. Methoxy groups are conserved throughout.",
+  "immutableInputs": "Only graph and saved coordinates read; no graph edits, optimization or crystal-coordinate substitution.",
+  "states": [
+    {
+      "stage": "starting-hit",
+      "checkpointSha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6",
+      "snapshotId": "snapshot:463a3efd937fc719719256336bd1cb9b5db19a26df2f8db9d5bdfc4c353dd972",
+      "canonicalSmiles": "COc1cc2ncnc(N[C@H](C)c3cccc4ccccc34)c2cc1OC",
+      "highlightedAtomIds": [],
+      "highlightedAtomNames": [],
+      "comparisonStage": null,
+      "correspondence": [],
+      "changes": [],
+      "rationale": "Added/replacement atoms and endpoints of true normalized atom/bond changes; equivalent aromatic Kekule assignments and reallocated IDs alone are ignored."
+    },
+    {
+      "stage": "scaffold-rewrite",
+      "checkpointSha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441",
+      "snapshotId": "snapshot:56afdcd914e17c8aa09d5347e7d5b9e95f3b8f3a89b8069fbaee1dc460e1d02a",
+      "canonicalSmiles": "COc1cc2nc(C)nc(N[C@H](C)c3cccc(-c4cn[nH]c4)c3)c2cc1OC",
+      "highlightedAtomIds": [
+        "chemist-5OVE:HETATM:A:AXE:1104::C11:4019",
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX1:",
+        "chemist-5OVE:HETATM:A:AXE:1104::C21:4008",
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX2:",
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX3:",
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::NX1:",
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::NX2:",
+        "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX4:",
+        "chemist-5OVE:HETATM:A:AXE:1104::C19:4025"
+      ],
+      "highlightedAtomNames": [
+        "C11",
+        "CX1",
+        "C21",
+        "CX2",
+        "CX3",
+        "NX1",
+        "NX2",
+        "CX4",
+        "C19"
+      ],
+      "comparisonStage": "starting-hit",
+      "correspondence": [
+        {
+          "previousName": "C4",
+          "currentName": "C4",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C4:4002",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C4:4002",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C5",
+          "currentName": "C5",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C5:4003",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C5:4003",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C10",
+          "currentName": "C10",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C10:4004",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C10:4004",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C15",
+          "currentName": "C15",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C15:4005",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C15:4005",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C17",
+          "currentName": "C17",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C17:4006",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C17:4006",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C20",
+          "currentName": "C20",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C20:4007",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C20:4007",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C21",
+          "currentName": "C21",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C21:4008",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C21:4008",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C24",
+          "currentName": "C24",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C24:4010",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C24:4010",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C18",
+          "currentName": "C18",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C18:4012",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C18:4012",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "O14",
+          "currentName": "O14",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::O14:4013",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::O14:4013",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C9",
+          "currentName": "C9",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C9:4014",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C9:4014",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "O13",
+          "currentName": "O13",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::O13:4015",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::O13:4015",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C1",
+          "currentName": "C1",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C1:4016",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C1:4016",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C2",
+          "currentName": "C2",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C2:4017",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C2:4017",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "N6",
+          "currentName": "N6",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N6:4018",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N6:4018",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C11",
+          "currentName": "C11",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C11:4019",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C11:4019",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "N8",
+          "currentName": "N8",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N8:4020",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N8:4020",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C3",
+          "currentName": "C3",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C3:4021",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C3:4021",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "N7",
+          "currentName": "N7",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N7:4022",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N7:4022",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C12",
+          "currentName": "C12",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C12:4023",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C12:4023",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C16",
+          "currentName": "C16",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C16:4024",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C16:4024",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C19",
+          "currentName": "C19",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C19:4025",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C19:4025",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C23",
+          "currentName": "C23",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C23:4028",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C23:4028",
+          "basis": "registered lineage"
+        }
+      ],
+      "changes": [
+        {
+          "atomName": "C11",
+          "atomId": "chemist-5OVE:HETATM:A:AXE:1104::C11:4019",
+          "reasons": [
+            "normalized atom properties changed (element, H count, aromaticity, charge, isotope or CIP)",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX1",
+          "atomId": "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX1:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "C21",
+          "atomId": "chemist-5OVE:HETATM:A:AXE:1104::C21:4008",
+          "reasons": [
+            "bond to removed atom",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX2",
+          "atomId": "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX2:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX3",
+          "atomId": "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX3:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "NX1",
+          "atomId": "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::NX1:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "NX2",
+          "atomId": "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::NX2:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX4",
+          "atomId": "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX4:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "C19",
+          "atomId": "chemist-5OVE:HETATM:A:AXE:1104::C19:4025",
+          "reasons": [
+            "normalized atom properties changed (element, H count, aromaticity, charge, isotope or CIP)",
+            "bond to removed atom"
+          ]
+        }
+      ],
+      "rationale": "Added/replacement atoms and endpoints of true normalized atom/bond changes; equivalent aromatic Kekule assignments and reallocated IDs alone are ignored."
+    },
+    {
+      "stage": "fragment-merge",
+      "checkpointSha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81",
+      "snapshotId": "snapshot:d895de9868c4a37951748701a3d21e835454d314361933197ef65a5530f61c98",
+      "canonicalSmiles": "COc1cc2nc(C)nc(N[C@H](C)c3ccc(-c4cnc5n4CCC5)s3)c2cc1OC",
+      "highlightedAtomIds": [
+        "chemist-5OVE:HETATM:A:AXE:1104::C15:4005",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX2:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX3:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX4:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX5:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX6:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::NX1:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX7:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::NX2:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX8:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX9:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX10:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::SX1:"
+      ],
+      "highlightedAtomNames": [
+        "C15",
+        "CX2",
+        "CX3",
+        "CX4",
+        "CX5",
+        "CX6",
+        "NX1",
+        "CX7",
+        "NX2",
+        "CX8",
+        "CX9",
+        "CX10",
+        "SX1"
+      ],
+      "comparisonStage": "scaffold-rewrite",
+      "correspondence": [
+        {
+          "previousName": "C18",
+          "currentName": "C18",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C18:4012",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C18:4012",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "O14",
+          "currentName": "O14",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::O14:4013",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::O14:4013",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C10",
+          "currentName": "C10",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C10:4004",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C10:4004",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C5",
+          "currentName": "C5",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C5:4003",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C5:4003",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C2",
+          "currentName": "C2",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C2:4017",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C2:4017",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "N6",
+          "currentName": "N6",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N6:4018",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N6:4018",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C11",
+          "currentName": "C11",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C11:4019",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C11:4019",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "CX1",
+          "currentName": "CX1",
+          "previousAtomId": "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX1:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX1:",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "N8",
+          "currentName": "N8",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N8:4020",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N8:4020",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C3",
+          "currentName": "C3",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C3:4021",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C3:4021",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "N7",
+          "currentName": "N7",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N7:4022",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N7:4022",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C12",
+          "currentName": "C12",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C12:4023",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C12:4023",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C16",
+          "currentName": "C16",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C16:4024",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C16:4024",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C15",
+          "currentName": "C15",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C15:4005",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C15:4005",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C1",
+          "currentName": "C1",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C1:4016",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C1:4016",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C4",
+          "currentName": "C4",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C4:4002",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C4:4002",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C9",
+          "currentName": "C9",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C9:4014",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C9:4014",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "O13",
+          "currentName": "O13",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::O13:4015",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::O13:4015",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C17",
+          "currentName": "C17",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C17:4006",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C17:4006",
+          "basis": "registered lineage"
+        }
+      ],
+      "changes": [
+        {
+          "atomName": "C15",
+          "atomId": "chemist-5OVE:HETATM:A:AXE:1104::C15:4005",
+          "reasons": [
+            "bond to removed atom",
+            "bond to removed atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX2",
+          "atomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX2:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX3",
+          "atomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX3:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX4",
+          "atomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX4:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX5",
+          "atomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX5:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX6",
+          "atomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX6:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "NX1",
+          "atomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::NX1:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX7",
+          "atomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX7:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "NX2",
+          "atomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::NX2:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX8",
+          "atomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX8:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX9",
+          "atomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX9:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX10",
+          "atomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX10:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "SX1",
+          "atomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::SX1:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        }
+      ],
+      "rationale": "Added/replacement atoms and endpoints of true normalized atom/bond changes; equivalent aromatic Kekule assignments and reallocated IDs alone are ignored."
+    },
+    {
+      "stage": "aww-graph",
+      "checkpointSha256": "c0672efabc8da255de45a6d8b41f3f1a2bb0652ac2e683a70a9ed33b8692b3b1",
+      "snapshotId": "snapshot:0adf84081e034501a5ef67f81a7996bff1d213c29bf11bdd8419df43778fe41b",
+      "canonicalSmiles": "COC1=C(OC)Cc2c(nc(C)nc2N[C@H](C)c2ccc(-c3ccccc3CO)s2)C1",
+      "highlightedAtomIds": [
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX7:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX8:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX10:",
+        "chemist-5OVE:HETATM:A:AXE:1104::C1:4016",
+        "chemist-5OVE:HETATM:A:AXE:1104::C2:4017",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX5:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX11:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX12:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX13:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX14:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX15:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX16:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX3:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX17:"
+      ],
+      "highlightedAtomNames": [
+        "CX7",
+        "CX8",
+        "CX10",
+        "C1",
+        "C2",
+        "CX5",
+        "CX11",
+        "CX12",
+        "CX13",
+        "CX14",
+        "CX15",
+        "CX16",
+        "OX3",
+        "CX17"
+      ],
+      "comparisonStage": "fragment-merge",
+      "correspondence": [
+        {
+          "previousName": "C2",
+          "currentName": "C2",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C2:4017",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C2:4017",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "N6",
+          "currentName": "N6",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N6:4018",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N6:4018",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C11",
+          "currentName": "C11",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C11:4019",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C11:4019",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "CX1",
+          "currentName": "CX1",
+          "previousAtomId": "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX1:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX1:",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "N8",
+          "currentName": "N8",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N8:4020",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N8:4020",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C3",
+          "currentName": "C3",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C3:4021",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C3:4021",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "N7",
+          "currentName": "N7",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N7:4022",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N7:4022",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C12",
+          "currentName": "C12",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C12:4023",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C12:4023",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C16",
+          "currentName": "C16",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C16:4024",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C16:4024",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C15",
+          "currentName": "C15",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C15:4005",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C15:4005",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "CX2",
+          "currentName": "CX2",
+          "previousAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX2:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX2:",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "CX3",
+          "currentName": "CX3",
+          "previousAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX3:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX3:",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "CX4",
+          "currentName": "CX4",
+          "previousAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX4:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX4:",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "CX5",
+          "currentName": "CX5",
+          "previousAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX5:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX5:",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "SX1",
+          "currentName": "SX1",
+          "previousAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::SX1:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::SX1:",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C1",
+          "currentName": "C1",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C1:4016",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C1:4016",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C4",
+          "currentName": "CX10",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C4:4002",
+          "currentAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX10:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "C9",
+          "currentName": "CX8",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C9:4014",
+          "currentAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX8:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "O13",
+          "currentName": "OX2",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::O13:4015",
+          "currentAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX2:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "C17",
+          "currentName": "CX9",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C17:4006",
+          "currentAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX9:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "C10",
+          "currentName": "CX7",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C10:4004",
+          "currentAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX7:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "O14",
+          "currentName": "OX1",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::O14:4013",
+          "currentAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX1:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "C18",
+          "currentName": "CX6",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C18:4012",
+          "currentAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX6:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "C5",
+          "currentName": "CX17",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C5:4003",
+          "currentAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX17:",
+          "basis": "reviewed structural correspondence"
+        }
+      ],
+      "changes": [
+        {
+          "atomName": "CX7",
+          "atomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX7:",
+          "reasons": [
+            "normalized atom properties changed (element, H count, aromaticity, charge, isotope or CIP)",
+            "normalized bond order changed",
+            "normalized bond order changed"
+          ]
+        },
+        {
+          "atomName": "CX8",
+          "atomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX8:",
+          "reasons": [
+            "normalized atom properties changed (element, H count, aromaticity, charge, isotope or CIP)",
+            "normalized bond order changed",
+            "normalized bond order changed"
+          ]
+        },
+        {
+          "atomName": "CX10",
+          "atomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX10:",
+          "reasons": [
+            "normalized atom properties changed (element, H count, aromaticity, charge, isotope or CIP)",
+            "normalized bond order changed",
+            "normalized bond order changed"
+          ]
+        },
+        {
+          "atomName": "C1",
+          "atomId": "chemist-5OVE:HETATM:A:AXE:1104::C1:4016",
+          "reasons": [
+            "normalized bond order changed"
+          ]
+        },
+        {
+          "atomName": "C2",
+          "atomId": "chemist-5OVE:HETATM:A:AXE:1104::C2:4017",
+          "reasons": [
+            "normalized bond order changed"
+          ]
+        },
+        {
+          "atomName": "CX5",
+          "atomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX5:",
+          "reasons": [
+            "bond to removed atom",
+            "bond to removed atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX11",
+          "atomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX11:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX12",
+          "atomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX12:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX13",
+          "atomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX13:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX14",
+          "atomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX14:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX15",
+          "atomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX15:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX16",
+          "atomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX16:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "OX3",
+          "atomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX3:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX17",
+          "atomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX17:",
+          "reasons": [
+            "normalized atom properties changed (element, H count, aromaticity, charge, isotope or CIP)",
+            "normalized bond order changed",
+            "normalized bond order changed"
+          ]
+        }
+      ],
+      "rationale": "Added/replacement atoms and endpoints of true normalized atom/bond changes; equivalent aromatic Kekule assignments and reallocated IDs alone are ignored."
+    },
+    {
+      "stage": "aww-designer-intent",
+      "checkpointSha256": "a1f0424ce1be8dde42180dbe76c5beae8565b56a8739a222b8fc9b1b6a91a3ae",
+      "snapshotId": "snapshot:ea059ee77316f80236aebcbbebea57fc187062c32ffc3d54856cde3363c0dfc0",
+      "canonicalSmiles": "COC1=C(OC)Cc2c(nc(C)nc2N[C@H](C)c2ccc(-c3ccccc3CO)s2)C1",
+      "highlightedAtomIds": [
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX7:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX8:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX10:",
+        "chemist-5OVE:HETATM:A:AXE:1104::C1:4016",
+        "chemist-5OVE:HETATM:A:AXE:1104::C2:4017",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX5:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX11:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX12:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX13:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX14:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX15:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX16:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX3:",
+        "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX17:"
+      ],
+      "highlightedAtomNames": [
+        "CX7",
+        "CX8",
+        "CX10",
+        "C1",
+        "C2",
+        "CX5",
+        "CX11",
+        "CX12",
+        "CX13",
+        "CX14",
+        "CX15",
+        "CX16",
+        "OX3",
+        "CX17"
+      ],
+      "comparisonStage": "aww-graph",
+      "correspondence": [],
+      "changes": [],
+      "rationale": "Identical ligand chemistry: retain preceding chemical-edit highlights during pose placement."
+    },
+    {
+      "stage": "aww-phe890-response",
+      "checkpointSha256": "b551d8e7d0489955c8885397fd4b8ddb2c783b559c6f616cf89356a763a30601",
+      "snapshotId": "snapshot:874f601573f2555d44a08e92fafe84ef4103041c472dd790ff988f99f437e9ee",
+      "canonicalSmiles": "COC1=C(OC)Cc2c(nc(C)nc2N[C@H](C)c2ccc(-c3ccccc3CO)s2)C1",
+      "highlightedAtomIds": [],
+      "highlightedAtomNames": [],
+      "comparisonStage": "aww-graph",
+      "correspondence": [],
+      "changes": [],
+      "rationale": "Receptor-only response: ligand highlights cleared."
+    },
+    {
+      "stage": "finish-bay-293",
+      "checkpointSha256": "dbe42835d58b058a68e829412b2c30fbf9332bf8590b03b2a048ab950b991c95",
+      "snapshotId": "snapshot:901cddaaf385d22cdb6420fcaccecd783ed2b0e3d0a054a91b1220f219d4e3d0",
+      "canonicalSmiles": "CNCc1ccccc1-c1csc([C@@H](C)Nc2nc(C)nc3cc(OC)c(OC)cc23)c1",
+      "highlightedAtomIds": [
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX5:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::NX1:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX12:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX3:",
+        "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX4:",
+        "chemist-5OVE:HETATM:A:AXE:1104::C2:4017",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX13:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX14:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX16:",
+        "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX18:",
+        "chemist-5OVE:HETATM:A:AXE:1104::C1:4016"
+      ],
+      "highlightedAtomNames": [
+        "CX5",
+        "NX1",
+        "CX12",
+        "CX3",
+        "CX4",
+        "C2",
+        "CX13",
+        "CX14",
+        "CX16",
+        "CX18",
+        "C1"
+      ],
+      "comparisonStage": "aww-graph",
+      "correspondence": [
+        {
+          "previousName": "C1",
+          "currentName": "C1",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C1:4016",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C1:4016",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C2",
+          "currentName": "C2",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C2:4017",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C2:4017",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "N6",
+          "currentName": "N6",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N6:4018",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N6:4018",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C11",
+          "currentName": "C11",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C11:4019",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C11:4019",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "CX1",
+          "currentName": "CX1",
+          "previousAtomId": "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX1:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:scaffold-rewrite:HETATM:A:AWT:1104::CX1:",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "N8",
+          "currentName": "N8",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N8:4020",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N8:4020",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C3",
+          "currentName": "C3",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C3:4021",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C3:4021",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "N7",
+          "currentName": "N7",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N7:4022",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::N7:4022",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C12",
+          "currentName": "C12",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C12:4023",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C12:4023",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C16",
+          "currentName": "C16",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C16:4024",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C16:4024",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "C15",
+          "currentName": "C15",
+          "previousAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C15:4005",
+          "currentAtomId": "chemist-5OVE:HETATM:A:AXE:1104::C15:4005",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "CX2",
+          "currentName": "CX2",
+          "previousAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX2:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX2:",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "CX3",
+          "currentName": "CX3",
+          "previousAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX3:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX3:",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "CX4",
+          "currentName": "CX4",
+          "previousAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX4:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX4:",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "SX1",
+          "currentName": "SX1",
+          "previousAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::SX1:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::SX1:",
+          "basis": "registered lineage"
+        },
+        {
+          "previousName": "CX10",
+          "currentName": "CX18",
+          "previousAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX10:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX18:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "CX8",
+          "currentName": "CX16",
+          "previousAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX8:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX16:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "OX2",
+          "currentName": "OX2",
+          "previousAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX2:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::OX2:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "CX9",
+          "currentName": "CX17",
+          "previousAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX9:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX17:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "CX7",
+          "currentName": "CX14",
+          "previousAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX7:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX14:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "OX1",
+          "currentName": "OX1",
+          "previousAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX1:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::OX1:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "CX6",
+          "currentName": "CX15",
+          "previousAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX6:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX15:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "CX17",
+          "currentName": "CX13",
+          "previousAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX17:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX13:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "CX5",
+          "currentName": "CX12",
+          "previousAtomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX5:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX12:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "CX11",
+          "currentName": "CX11",
+          "previousAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX11:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX11:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "CX12",
+          "currentName": "CX10",
+          "previousAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX12:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX10:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "CX13",
+          "currentName": "CX9",
+          "previousAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX13:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX9:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "CX14",
+          "currentName": "CX8",
+          "previousAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX14:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX8:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "CX15",
+          "currentName": "CX7",
+          "previousAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX15:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX7:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "CX16",
+          "currentName": "CX6",
+          "previousAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::CX16:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX6:",
+          "basis": "reviewed structural correspondence"
+        },
+        {
+          "previousName": "OX3",
+          "currentName": "NX1",
+          "previousAtomId": "benchmark-product-sos1-hit-only:open-phe890-pocket:HETATM:A:AWW:1104::OX3:",
+          "currentAtomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::NX1:",
+          "basis": "reviewed structural correspondence"
+        }
+      ],
+      "changes": [
+        {
+          "atomName": "CX5",
+          "atomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX5:",
+          "reasons": [
+            "added or replacement atom",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "NX1",
+          "atomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::NX1:",
+          "reasons": [
+            "normalized atom properties changed (element, H count, aromaticity, charge, isotope or CIP)",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX12",
+          "atomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX12:",
+          "reasons": [
+            "bond removed",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX3",
+          "atomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX3:",
+          "reasons": [
+            "normalized atom properties changed (element, H count, aromaticity, charge, isotope or CIP)",
+            "bond added"
+          ]
+        },
+        {
+          "atomName": "CX4",
+          "atomId": "benchmark-product-sos1-hit-only:fragment-merge:HETATM:A:AWZ:1104::CX4:",
+          "reasons": [
+            "normalized atom properties changed (element, H count, aromaticity, charge, isotope or CIP)",
+            "bond removed"
+          ]
+        },
+        {
+          "atomName": "C2",
+          "atomId": "chemist-5OVE:HETATM:A:AXE:1104::C2:4017",
+          "reasons": [
+            "normalized bond order changed"
+          ]
+        },
+        {
+          "atomName": "CX13",
+          "atomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX13:",
+          "reasons": [
+            "normalized atom properties changed (element, H count, aromaticity, charge, isotope or CIP)",
+            "normalized bond order changed",
+            "normalized bond order changed"
+          ]
+        },
+        {
+          "atomName": "CX14",
+          "atomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX14:",
+          "reasons": [
+            "normalized atom properties changed (element, H count, aromaticity, charge, isotope or CIP)",
+            "normalized bond order changed",
+            "normalized bond order changed"
+          ]
+        },
+        {
+          "atomName": "CX16",
+          "atomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX16:",
+          "reasons": [
+            "normalized atom properties changed (element, H count, aromaticity, charge, isotope or CIP)",
+            "normalized bond order changed",
+            "normalized bond order changed"
+          ]
+        },
+        {
+          "atomName": "CX18",
+          "atomId": "benchmark-product-sos1-hit-only:finish-bay-293:HETATM:A:AXH:1104::CX18:",
+          "reasons": [
+            "normalized atom properties changed (element, H count, aromaticity, charge, isotope or CIP)",
+            "normalized bond order changed",
+            "normalized bond order changed"
+          ]
+        },
+        {
+          "atomName": "C1",
+          "atomId": "chemist-5OVE:HETATM:A:AXE:1104::C1:4016",
+          "reasons": [
+            "normalized bond order changed"
+          ]
+        }
+      ],
+      "rationale": "Added/replacement atoms and endpoints of true normalized atom/bond changes; equivalent aromatic Kekule assignments and reallocated IDs alone are ignored."
+    }
+  ]
+}
