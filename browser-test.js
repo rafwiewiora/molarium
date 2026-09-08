@@ -869,15 +869,11 @@ const browserSuite = String.raw`(async () => {
   const dockingSelection = api.setDockingSelection([3, 4, 5]);
   const buildToolLayout = [...document.querySelectorAll('#build-tool-tabs .build-tool-choice')].map((choice) => {
     const button = choice.querySelector('[data-tool]');
-    const info = choice.querySelector('.design-info-button');
     const buttonRect = button.getBoundingClientRect();
-    const infoRect = info.getBoundingClientRect();
     return {
       label:button.textContent.trim(), height:buttonRect.height,
-      helpAssociated:info.getAttribute('aria-controls') === 'design-option-help'
-        && info.getAttribute('aria-haspopup') === 'dialog',
-      infoBesideButton:infoRect.left >= buttonRect.right - 0.5
-        && infoRect.top >= buttonRect.top - 0.5 && infoRect.bottom <= buttonRect.bottom + 0.5,
+      nativeHelp:Boolean(button.title),
+      noHelpWrapper:!button.closest('.design-help-control'),
     };
   });
   check(!document.querySelector('#docking-workbench').classList.contains('hidden')
@@ -885,20 +881,20 @@ const browserSuite = String.raw`(async () => {
     && dockingSelection.status.includes('3 core atoms')
     && document.querySelector('#docking-workbench').previousElementSibling?.id === 'build-tool-tabs'
     && document.querySelectorAll('#build-tool-tabs [data-tool]').length === 3
-    && document.querySelectorAll('#build-tool-tabs .design-info-button[aria-controls="design-option-help"]').length === 3
-    && buildToolLayout.every((entry) => entry.helpAssociated && entry.infoBesideButton)
+    && document.querySelectorAll('#build-tool-tabs .design-info-button').length === 0
+    && buildToolLayout.every((entry) => entry.nativeHelp && entry.noHelpWrapper)
     && Math.max(...buildToolLayout.map((entry) => entry.height))
       - Math.min(...buildToolLayout.map((entry) => entry.height)) < 0.5
     && document.querySelector('#build-right-panel > .generated-card-heading span')?.textContent === 'Design workspace',
   'prepared protein-ligand complexes expose a compact core-constrained docking setup',
   JSON.stringify({ dockingSelection, buildToolLayout }));
-  const addHelp = document.querySelector('#build-tool-tabs [data-design-help-trigger="add"]');
+  const modeHelp = document.querySelector('[data-design-help-trigger="docking-mode"]');
   const selectedBeforeHelp = document.querySelector('#build-tool-tabs [data-tool].selected')?.dataset.tool;
-  addHelp.click();
+  modeHelp.click();
   check(document.querySelector('#design-option-help').open
-    && document.querySelector('#design-option-help-title').textContent === 'Add atoms or fragments'
+    && document.querySelector('#design-option-help-description').textContent.includes('protein fixed')
     && document.querySelector('#build-tool-tabs [data-tool].selected')?.dataset.tool === selectedBeforeHelp,
-  'Design i button opens accessible help without changing the selected molecular tool');
+  'crucial pose-mode i button opens accessible help without changing the selected molecular tool');
   document.querySelector('#design-option-help .soft-button').click();
   let dockingReference = null;
   try { dockingReference = await api.captureDockingReference(); }

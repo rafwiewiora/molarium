@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {DESIGN_HELP, DESIGN_HELP_DYNAMIC} from './design-help.mjs';
+import {DESIGN_HELP, DESIGN_HELP_DYNAMIC, ESSENTIAL_HELP_IDS, hasEssentialDesignHelp} from './design-help.mjs';
 
 const html = await readFile(new URL('./index.html', import.meta.url), 'utf8');
 const app = await readFile(new URL('./app.js', import.meta.url), 'utf8');
@@ -37,6 +37,21 @@ test('every authored catalogue key names a real static control', () => {
     assert.ok(entry.title.length >= 6 && entry.text.length >= 35, id);
     assert.ok(entry.text.length < 550, `${id} description should stay concise`);
   }
+});
+
+test('EH-01: only crucial decisions receive a separate help button', () => {
+  assert.equal(ESSENTIAL_HELP_IDS.length, 24);
+  assert.equal(new Set(ESSENTIAL_HELP_IDS).size, ESSENTIAL_HELP_IDS.length);
+  for (const id of ESSENTIAL_HELP_IDS) {
+    assert.ok(DESIGN_HELP[id], `${id} has authored help`);
+    assert.match(html, new RegExp(`\\bid="${id}"`), id);
+    assert.equal(hasEssentialDesignHelp({id}), true, id);
+  }
+  for (const id of ['designer-move-prev', 'designer-move-next', 'fragment-search',
+    'chemistry-element', 'structure-2d-element', 'optimize-button', '']) {
+    assert.equal(hasEssentialDesignHelp({id}), false, `${id || 'dynamic controls'} do not repeat help icons`);
+  }
+  assert.ok(Object.keys(DESIGN_HELP).length > 140, 'full help catalogue remains available');
 });
 
 test('shared workspace parameter and action controls also have help; navigation chrome is explicit', () => {
