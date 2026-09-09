@@ -16178,6 +16178,12 @@ async function runCalculation(overrides = {}) {
   const stormmSystem = job === 'conformers' ? 'current'
     : overrides.options?.stormmSystem || document.querySelector('#stormm-system').value;
   if (!state.molecule && (method !== 'stormm' || stormmSystem === 'current')) { showToast('Load a molecule first'); return null; }
+  // Match the preparation panel's Prepared criterion; reject before dispatching
+  // a worker or showing a calculation overlay. Built-in ensembles use their
+  // own prepared system, not the protein currently displayed in the viewer.
+  if ((method !== 'stormm' || stormmSystem === 'current')
+    && state.molecule?.atoms.some(isProteinAtom) && !state.molecule.parameterization?.system)
+    throw new Error('Please prepare protein');
   if (state.chemistryTransaction) {
     const message = 'Finish or discard the pending chemistry changes before running a calculation.';
     showNotice(message); throw new Error(message);
