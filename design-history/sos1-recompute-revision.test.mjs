@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { reviseSos1Recomputation, SOS1_SOURCE_SHA256, SOS1_CONTACT_RELEASE } from './sos1-recompute-revision.mjs';
+import { buildPocketInterfaceStory } from './interface-story.mjs';
+const bytes = await readFile(new URL('./publications/sos1/designer-intent-2026-09-04/executable.action-script.json', import.meta.url));
+assert.equal(createHash('sha256').update(bytes).digest('hex'), SOS1_SOURCE_SHA256);
+const source = JSON.parse(bytes), original = structuredClone(source);
+const revised = reviseSos1Recomputation(source, SOS1_SOURCE_SHA256);
+assert.deepEqual(source, original);
+assert.equal(revised.actions.length, 160);
+const index = revised.actions.findIndex((step) => step.action === SOS1_CONTACT_RELEASE.action);
+assert(index > 0);
+assert.equal(revised.actions[index - 1].args.stepId, 'finish-bay-293');
+assert.deepEqual(revised.actions[index], SOS1_CONTACT_RELEASE);
+assert.deepEqual(revised.actions.filter((_, i) => i !== index), source.actions,
+  'every original request and numerical acceptance gate remains byte-equivalent');
+assert.equal(buildPocketInterfaceStory(revised).actions.length, 203);
+assert.throws(() => reviseSos1Recomputation(source, 'wrong hash'), /Unrecognized/);
+assert.throws(() => reviseSos1Recomputation(revised, SOS1_SOURCE_SHA256), /159-action/);
+console.log('SR-07 explicit revision: 159 unchanged original actions + one visible release; PASS');

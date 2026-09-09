@@ -163,6 +163,83 @@ registry input. [Browser checks](../validation/dashboard.browser.test.mjs)
 verify the actual panel and that its three raw JSON links resolve. The existing
 general browser suite assertions and README descriptions are updated too.
 
+## SR-07 — final edit exposes a historical implicit contact omission
+
+Reported UI: move 193/202, final `pose.refine`, stopped with “A selected
+contact has no role-compatible replacement feature”. Unlike SR-05, the
+screenshot has the expected final system size and no extra built component.
+
+A fresh isolated browser reproduces the failure from the hash-pinned native
+AWW Phe890-response checkpoint, exclusively through public actions: resume
+AWW, parameterize without motion, release the ligand lock, capture reference,
+and apply `finish-bay-293`. The unresolved contact is **AWW A1104 OX3 → TYR
+A884 O** (`reference-hbond-78` in this fixture; IDs in a new computation can
+differ). OX3 is removed by the final graph rewrite; its contact has no
+role-compatible remap candidate. It remains required, and refinement correctly
+fails before computing. The failed preflight does not change contact state.
+This identifies a reproduced mechanism; the user's current replay export has
+not yet been supplied to establish its exact live contact ID.
+
+The immutable [original continuation audit](../design-history/publications/sos1/designer-intent-2026-09-04/evidence/027-chemist-action-audit.json.gz)
+shows the contact required and available at sequence 9, then unavailable and
+**not required** at sequence 12, immediately after graph editing. No explicit
+`pose.setContact` action made that decision. The old staging implementation
+silently selected only available contacts (or explicitly mapped hypotheses).
+Commit `56f717c` (6 September, DV-01) deliberately fixed that unsafe behavior:
+graph availability must not silently revise required contact intent. The
+frozen replay had not been reconciled with this stronger contract.
+
+This is not evidence that a new amine contact has been tested or preserved.
+Matching the historical experiment requires an explicit, visible release of
+the obsolete oxygen contact; testing a replacement-amine constraint is a
+different experiment. On 9 September the author approved the explicit release
+to match the recorded experiment, not a replacement-amine experiment.
+
+The [versioned scientific revision](../design-history/sos1-recompute-revision.mjs)
+adds one visible `pose.setContact` immediately after the final graph edit,
+targeting only the exact captured label. The manual checkbox is cued and cleared
+through the same public action used by hand. Capture numbering can vary; exact
+unique labels resolve the historical hypothesis. If that hypothesis was never
+captured in the new geometry, the explicitly authored `record-omission` policy
+records an absent-contact result without changing anything. Duplicate matches
+fail closed; no other unresolved requirement is released.
+
+This is deliberately separate from presentation expansion. It applies only to
+the hash-pinned registered recomputation, with original/revised counts and
+approval provenance in the installed-script export's `scientificRevision` metadata. All 159 original
+actions and acceptance gates remain unchanged, with one added scientific action
+and 203 interface moves. The frozen original JSON, seven precomputed checkpoints,
+MP4 and submitted manuscript remain unchanged. New exports carry the release;
+old imported scripts retain their old semantics and may still require explicit
+contact reconciliation.
+
+Diagnostic fix: [contact-state.mjs](../docking/contact-state.mjs) and
+[app.js](../app.js) name every unresolved contact and ID in the error and state
+that no constraint was dropped. [Unit tests](../docking/contact-state.test.mjs)
+cover named/unknown/multiple contacts and unchanged inputs. The
+[native-checkpoint browser regression](../scripts/sos1-final-contact.browser.test.mjs)
+hash-checks the original audit, verifies the historical implicit omission,
+and reproduces the current fail-closed result with unchanged contact state.
+The browser test also checks explicit release, the real checkbox, unchanged
+other requirements/atoms/bonds, and recorded absence. Nine contact-state unit
+tests pass. The revision test verifies exact preservation of all original
+requests and gates and rejects incompatible/double-applied revisions. Both
+focused suites are included in CI. This is **not a complete hit-to-product
+scientific rerun**; the optional full final-transition test starts from the
+native AWW checkpoint and runs the remaining original acceptance gates.
+That full final-transition test passed locally: pose refinement, selected-pose
+application and induced-fit relaxation completed with the original atom/bond,
+core, spatial-feature, valence and retention expectations. This does not claim
+that the full preceding hit→AWW route was recomputed in this test.
+
+CI follow-up: the existing selected-core negative test now requires the resolved
+contact ID and preserved-constraint message (79/79 local browser checks). A
+separate intermittent worker-contract CI startup failure occurred before any
+scientific assertion: a relative Worker URL was evaluated in Chrome's transient
+initial document. The [worker harness](../benchmarks/simulation/worker-contract.browser.mjs)
+now waits for the actual fixture URL and document readiness before creating
+workers. No worker implementation, tolerance or scientific assertion changes.
+
 ## Preservation and rerun commands
 
 The submitted PDF/LaTeX/figures, all archived intermediates, the 159 scientific
@@ -176,6 +253,8 @@ npm run test:manual-hbond-browser
 npm run test:depiction-hydrogens
 npm run test:2d
 npm run test:designer-replay-review-browser
+node docking/contact-state.test.mjs
+bun scripts/sos1-final-contact.browser.test.mjs
 npm run verify:sos1-publication
 npm run test:paper-submission
 ```

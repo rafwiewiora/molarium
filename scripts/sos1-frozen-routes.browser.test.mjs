@@ -77,6 +77,16 @@ async function screenshot(filename) {
 
 try {
   const executable = await waitForBlankStory('sos1-hit-to-bay293');
+  assert.equal(executable.registered.source.actionCount, 159);
+  assert.equal(executable.registered.installed.actionCount, 203);
+  assert.equal(executable.registered.installed.scientificRevision, 'sos1-explicit-final-contact-release/v1');
+  const installed = await browser.evaluate(`window.MolariumChemistActions.execute({
+    action:'designerScript.export', args:{kind:'installed-script'}
+  }).then(e => JSON.parse(e.result.designerScriptExport.serialized))`);
+  assert.equal(installed.scientificRevision.id, 'sos1-explicit-final-contact-release/v1');
+  const releaseAction = installed.actions.find(s => s.action === 'pose.setContact');
+  assert.equal(releaseAction.args.contactLabel, 'AWW A1104 OX3 → TYR A884 O');
+  assert.equal(releaseAction.args.required, false);
   assert(!/accepted|success/i.test(executable.snapshot.title),
     'the complete-frozen executable route must not claim acceptance or success');
   assert.equal(await browser.evaluate(`document.querySelector('#designer-move-caption').textContent`),
@@ -88,6 +98,7 @@ try {
     url:`${origin}/sos1-hit-to-bay293/review`,
   });
   const review = await waitForBlankStory('sos1-hit-to-bay293-review');
+  assert.equal(review.registered.installed.scientificRevision, null);
   assert(!/accepted|success/i.test(review.snapshot.title),
     'the complete-frozen review route must not claim acceptance or success');
   const reviewMoveCount = review.registered.installed.actionCount;

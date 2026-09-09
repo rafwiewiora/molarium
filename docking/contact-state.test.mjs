@@ -1,13 +1,35 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
-import { requiredContactPolicy, liveHydrogenBondState } from './contact-state.mjs';
+import { requiredContactPolicy, liveHydrogenBondState, unresolvedContactMessage, resolveContactRequirement } from './contact-state.mjs';
 import { capturedContactDefault, CONTACT_CAPTURE_POLICY } from './contact-capture-policy.mjs';
 import { captureCrossHydrogenBonds, mapCapturedHydrogenBonds } from './browser-adapter.mjs';
 import * as remapModule from './contact-remap.mjs';
 
 const definitions = [{ id:'anchor',label:'anchor' },{ id:'removed',label:'removed' }];
 const hypotheses = definitions.map(({ id,label }) => ({ kind:'hydrogen-bond',capturedId:id,label }));
+
+test('SR-07: exact labels survive capture numbering; absence and ambiguity fail closed by default', () => {
+  assert.equal(resolveContactRequirement(definitions, { contactLabel:'removed', required:false }).id, 'removed');
+  assert.equal(resolveContactRequirement(definitions, { contactId:'anchor', required:true }).id, 'anchor');
+  assert.throws(() => resolveContactRequirement(definitions, { contactLabel:'missing', required:false }), /Unknown/);
+  assert.equal(resolveContactRequirement(definitions, { contactLabel:'missing', required:false, ifAbsent:'record-omission' }), null);
+  assert.throws(() => resolveContactRequirement(definitions, { contactLabel:'missing', required:true, ifAbsent:'record-omission' }), /requires/);
+  assert.throws(() => resolveContactRequirement(definitions, { contactId:'anchor', required:false, ifAbsent:'record-omission' }), /requires/);
+  assert.throws(() => resolveContactRequirement([...definitions, definitions[0]], { contactLabel:'anchor', required:false }), /Ambiguous/);
+  assert.throws(() => resolveContactRequirement(definitions, { contactId:'anchor', contactLabel:'anchor', required:false }), /exactly one/);
+});
+
+test('SR-07: unresolved-contact errors identify the exact requirement without changing intent', () => {
+  const ids = ['reference-hbond-78'];
+  const definitions = [{ id:ids[0], label:'AWW A1104 OX3 → TYR A884 O' }];
+  assert.equal(unresolvedContactMessage(ids, definitions),
+    'Required contact AWW A1104 OX3 → TYR A884 O [reference-hbond-78] has no role-compatible replacement feature. '
+    + 'Explicitly revise the contact requirement or continue editing; no constraint was dropped.');
+  assert.match(unresolvedContactMessage([...ids, 'unknown'], definitions), /; unknown have no/);
+  assert.deepEqual(ids, ['reference-hbond-78']);
+  assert.equal(definitions[0].label, 'AWW A1104 OX3 → TYR A884 O');
+});
 
 test('DV-01: missing availability cannot omit required intent or re-enable omitted intent', () => {
   const policy = requiredContactPolicy(definitions, ['removed'], hypotheses);

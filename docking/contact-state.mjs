@@ -2,6 +2,32 @@ import { evaluateHydrogenBondConstraint } from './constraints.mjs';
 import { MOLARIUM_CONSTRAINT_DOCK_PROTOCOL } from './protocol.mjs';
 import { perceiveHydrogenBondFeature } from './contact-remap.mjs';
 
+export function unresolvedContactMessage(contactIds, definitions) {
+  const labels = new Map(definitions.map((entry) => [entry.id, entry.label]));
+  const contacts = contactIds.map((id) => labels.get(id) ? `${labels.get(id)} [${id}]` : id);
+  return `Required contact${contacts.length === 1 ? '' : 's'} ${contacts.join('; ')} `
+    + `${contacts.length === 1 ? 'has' : 'have'} no role-compatible replacement feature. `
+    + 'Explicitly revise the contact requirement or continue editing; no constraint was dropped.';
+}
+
+// A captured label identifies a historical hypothesis, even after its atom is
+// removed. Never resolve by array position, fuzzy text, or current geometry.
+export function resolveContactRequirement(definitions, args) {
+  const byId = Object.hasOwn(args, 'contactId');
+  const byLabel = Object.hasOwn(args, 'contactLabel');
+  if (byId === byLabel) throw new Error('Provide exactly one contactId or contactLabel');
+  const value = byId ? args.contactId : args.contactLabel;
+  if (typeof value !== 'string' || !value.trim()) throw new Error('Contact selector must be a non-empty string');
+  if (typeof args.required !== 'boolean') throw new Error('required must be boolean');
+  if (args.ifAbsent != null && (args.ifAbsent !== 'record-omission' || byId || args.required))
+    throw new Error('ifAbsent:record-omission requires contactLabel and required:false');
+  const matches = definitions.filter((entry) => (byId ? entry.id : entry.label) === value);
+  if (matches.length > 1) throw new Error(`Ambiguous captured contact: ${value}`);
+  if (!matches.length && args.ifAbsent !== 'record-omission')
+    throw new Error(`Unknown captured contact: ${value}`);
+  return matches[0] || null;
+}
+
 // DV-01: graph availability is not permission to change a designer's intent.
 export function requiredContactPolicy(definitions, priorRequiredIds, hypotheses = []) {
   const prior = new Set(priorRequiredIds);

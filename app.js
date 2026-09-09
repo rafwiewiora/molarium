@@ -14,7 +14,7 @@ import { searchBestDirectionalBranchContact, solveDirectedBranchContact } from
 import { resolveCampaignAssetSource, readCampaignAssetResponse } from './design-history/campaign-source.mjs';
 import { sos1StoryCaption } from './design-history/sos1-story-captions.mjs';
 import { phe890ComparisonPresentation } from './design-history/interface-story.mjs';
-import { requiredContactPolicy, liveHydrogenBondState } from './docking/contact-state.mjs';
+import { requiredContactPolicy, liveHydrogenBondState, unresolvedContactMessage, resolveContactRequirement } from './docking/contact-state.mjs';
 import { CONTACT_CAPTURE_POLICY } from './docking/contact-capture-policy.mjs';
 import { preserveRegisteredDonorHydrogens } from './docking/registered-donor-hydrogen.mjs';
 import { installDesignHelp } from './design-help.mjs';
@@ -5139,7 +5139,7 @@ async function runBrowserConstrainedDocking(options = {}) {
     throw new Error('Finish or discard the pending chemistry changes before refining the pose.');
   const unresolvedSelected = unresolvedSelectedDockingContacts();
   if (unresolvedSelected.length)
-    throw new Error('A selected contact has no role-compatible replacement feature; omit it or continue editing.');
+    throw new Error(unresolvedContactMessage(unresolvedSelected, reference.hydrogenBonds));
   state.dockingRunning = true; state.dockingResult = null;
   updateDockingUi(); setDockingStatus('Preparing edited ligand');
   try {
@@ -8836,6 +8836,7 @@ const DESIGNER_MOVE_RESULT_HOLDS_MS = Object.freeze({
   'designRoute.load':1500,
   'protein.prepare':1400,
   'pose.captureReference':1400,
+  'pose.setContact':2200,
   'pose.setDesignerLigandPoseFixed':1400,
   'designRoute.applyStep':2800,
   'pose.refine':3200,
@@ -9055,6 +9056,12 @@ function showDesignerMoveCue(step = null, { preserveLayout = false } = {}) {
     selector = '#designer-move-tools';
   else if (step.action?.startsWith('selection.') || step.action === 'session.inspect')
     selector = '.viewer-stage';
+  else if (step.action === 'pose.setContact') {
+    const definition = state.dockingReference?.hydrogenBonds.find((entry) =>
+      step.args?.contactId ? entry.id === step.args.contactId : entry.label === step.args?.contactLabel);
+    selector = definition ? `#docking-hbond-list input[data-constraint-id="${CSS.escape(definition.id)}"]`
+      : '#docking-hbond-list';
+  }
   const element = selector ? document.querySelector(selector) : null;
   applyDesignerMoveDemoLayout(step, element);
   if (!element) return;
@@ -9082,6 +9089,9 @@ function showDesignerMoveCue(step = null, { preserveLayout = false } = {}) {
 
 function designerMoveResultCaption(step) {
   if (step.status === 'failed') return `${step.action} failed; no result was applied.`;
+  if (step.action === 'pose.setContact')
+    return step.result?.absent ? 'This hypothesis was not captured; no requirement or coordinate changed.'
+      : `${step.result?.contactLabel || step.result?.contactId}: ${step.result?.required ? 'required' : 'not required'}. Other requirements and all coordinates are unchanged.`;
   if (step.action === 'campaign.import' || step.action === 'campaign.switchBranch') {
     const accepted = step.review?.sourceStatus === 'accepted';
     const frozen = step.review?.sourceStatus === 'complete-frozen-prediction';
@@ -9148,7 +9158,11 @@ function showDesignerMoveResultCue(step) {
     'campaign.switchBranch':'.viewer-stage',
     'view.highlightAtoms':'.viewer-stage',
   };
-  const selector = resultSelectors[step.action];
+  const selector = step.action === 'pose.setContact'
+    ? step.result?.contactId
+      ? `#docking-hbond-list input[data-constraint-id="${CSS.escape(step.result.contactId)}"]`
+      : '#docking-hbond-list'
+    : resultSelectors[step.action];
   const element = selector ? document.querySelector(selector) : null;
   if (!element) return;
   applyDesignerMoveDemoLayout(step, element);
@@ -11072,22 +11086,25 @@ function installChemistActionsApi(module) {
     'pose.updateReceptorReference':async (args) => { empty(args);
       return chemistActionSummary({ receptorReference:
         await updateCurrentDockingReceptorReference() }); },
-    'pose.setContact':async (args) => { chemistActionKeys(args, ['contactId','required']);
-      if (typeof args.contactId !== 'string' || !args.contactId)
-        throw new Error('contactId must be a captured contact ID');
-      if (typeof args.required !== 'boolean') throw new Error('required must be boolean');
-      const definition = state.dockingReference?.hydrogenBonds?.find((entry) => entry.id === args.contactId);
-      if (!definition) throw new Error(`Unknown captured contact: ${args.contactId}`);
+    'pose.setContact':async (args) => { chemistActionKeys(args, ['contactId','contactLabel','required','ifAbsent']);
+      if (!state.dockingReference) throw new Error('Capture a reference before revising contacts.');
+      const definition = resolveContactRequirement(state.dockingReference.hydrogenBonds, args);
+      if (!definition) return chemistActionSummary({ contactId:null, contactLabel:args.contactLabel,
+        required:false, changed:false, absent:true,
+        decision:'explicit-omission-of-uncaptured-hypothesis' });
+      const contactId = definition.id;
       const proposal = state.dockingContactRemapProposals.get(definition.id);
       if (args.required && (proposal || !dockingContactAvailable(
         effectiveDockingHydrogenBondDefinition(definition))))
         throw new Error(`Contact ${args.contactId} is not currently available; finish or reconcile the chemistry first.`);
-      const changed = state.dockingSelectedHbondIds.has(args.contactId) !== args.required;
-      if (args.required) state.dockingSelectedHbondIds.add(args.contactId);
-      else state.dockingSelectedHbondIds.delete(args.contactId);
+      const changed = state.dockingSelectedHbondIds.has(contactId) !== args.required;
+      if (args.required) state.dockingSelectedHbondIds.add(contactId);
+      else state.dockingSelectedHbondIds.delete(contactId);
+      recordManualDockingContactEvent('requirement-changed', definition,
+        { required:args.required, changed, activeContactIds:[...state.dockingSelectedHbondIds] });
       if (changed) { state.dockingResult = null; state.dockingPoseIndex = 0; }
-      updateDockingUi(); renderDockingResults(); return chemistActionSummary({ contactId:args.contactId,
-        required:args.required }); },
+      updateDockingUi(); renderDockingResults(); return chemistActionSummary({ contactId,
+        contactLabel:definition.label, required:args.required, changed, absent:false }); },
     'pose.addContact':async (args) => { chemistActionKeys(args,
       ['ligandAtomId','receptorAtomId','ligandAtom','receptorAtom','ligandRole']);
       const ligandUsesId = Object.hasOwn(args, 'ligandAtomId');
@@ -18094,6 +18111,7 @@ const DESIGNER_STORY_LINKS = Object.freeze({
     script:'./design-history/publications/sos1/designer-intent-2026-09-04/executable.action-script.json',
     sourcePath:'design-history/publications/sos1/designer-intent-2026-09-04/executable.action-script.json',
     sourceSha256:'7eed2dff0bf3fa127f87b2322aaea4b615d458ad6d8ef3af3c5b5886dc8fe9c3',
+    revision:'sos1-explicit-final-contact-release/v1',
     presentation:'chemist-pocket',
   }),
   'sos1-hit-to-bay293-review':Object.freeze({
@@ -18118,12 +18136,16 @@ async function loadRegisteredDesignerScript(storyId) {
   const replayModule = await import('./design-history/replay.mjs');
   replayModule.validateActionScript(sourceScript);
   const sourceActionScriptSha256 = await replayModule.actionScriptSha256(sourceScript);
+  const revisedScript = story.revision
+    ? (await import('./design-history/sos1-recompute-revision.mjs'))
+      .reviseSos1Recomputation(sourceScript, sourceFileSha256) : sourceScript;
   const installedScript = story.presentation === 'chemist-pocket'
     ? (await import('./design-history/interface-story.mjs'))
-      .buildPocketInterfaceStory(sourceScript, {
+      .buildPocketInterfaceStory(revisedScript, {
         sourcePath:story.sourcePath, sourceSha256:story.sourceSha256,
       })
-    : sourceScript;
+    : revisedScript;
+  if (story.revision) installedScript.scientificRevision = revisedScript.scientificRevision;
   const installedActionScriptSha256 = await replayModule.actionScriptSha256(installedScript);
   await installDesignerMoveScript(installedScript);
   if (!setMode('build')) throw new Error('Molarium could not enter Design mode');
@@ -18138,7 +18160,7 @@ async function loadRegisteredDesignerScript(storyId) {
       actionCount:sourceScript.actions.length },
     installed:{ actionScriptSha256:installedActionScriptSha256,
       actionCount:installedScript.actions.length,
-      presentation:story.presentation || null } };
+      presentation:story.presentation || null, scientificRevision:story.revision || null } };
 }
 
 async function initializeWorkspaceFromUrl() {

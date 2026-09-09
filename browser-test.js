@@ -991,7 +991,9 @@ const browserSuite = String.raw`(async () => {
   unavailableContact?.textContent || 'missing unavailable contact');
   let unavailableRequiredRejected = false;
   try { await api.runConstrainedDocking({ conformerCount:2, seed:91, torsionSteps:8 }); }
-  catch (error) { unavailableRequiredRejected = /selected contact.*no role-compatible/i.test(error.message); }
+  catch (error) { unavailableRequiredRejected = /required contact.*no role-compatible/i.test(error.message)
+    && error.message.includes(unavailableContact.querySelector('input').dataset.constraintId)
+    && error.message.includes('no constraint was dropped'); }
   check(unavailableRequiredRejected, 'selected-core search fails closed for an unavailable required contact');
   await window.MolariumChemistActions.execute({ action:'pose.setContact',args:{
     contactId:unavailableContact.querySelector('input').dataset.constraintId,required:false } });

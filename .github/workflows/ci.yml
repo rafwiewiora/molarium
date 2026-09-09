@@ -67,6 +67,8 @@ jobs:
         run: npm run test:simulation-benchmarks
       - name: Check Design finding regressions, option help, and preserved baseline evidence
         run: npm run test:design-validation
+      - name: Check explicit SOS1 contact revision against the immutable source
+        run: node design-history/sos1-recompute-revision.test.mjs
 
   browser:
     name: Browser integration
@@ -96,6 +98,10 @@ jobs:
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
         run: bun validation/dashboard.browser.test.mjs
+      - name: Check final SOS1 contact failure and explicit release through public actions
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+        run: bun scripts/sos1-final-contact.browser.test.mjs
 
   local-lab:
     name: Local Lab network and integrity
