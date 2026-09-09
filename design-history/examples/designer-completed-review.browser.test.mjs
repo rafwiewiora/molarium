@@ -137,6 +137,82 @@ try {
   })()`);
   assert.equal(await browser.evaluate(`document.querySelector('#designer-move-caption').textContent`),
     'Apply selected orientation');
+
+  await browser.evaluate(`(async () => {
+    const api = await window.MolariumChemistActionsReady;
+    await api.execute({action:'designerScript.load',args:{script:{
+      schema:'molarium.chemist-action-script/v1',label:'Replay input ownership',actions:[
+        {action:'session.loadStructure',args:{content:'C',format:'smiles',polish:false}},
+        {action:'view.setMode',args:{mode:'build'}},
+        {action:'session.inspect',args:{}},
+        {action:'session.inspect',args:{}}
+      ]}}});
+    await api.execute({action:'build.setTool',args:{tool:'add'}});
+    await api.execute({action:'designerScript.play',args:{playing:true}});
+  })()`);
+  await waitFor(async () => browser.evaluate(`(async () => {
+    const api = await window.MolariumChemistActionsReady;
+    const r = await api.execute({action:'designerScript.inspect',args:{}});
+    return r.result.designerScript.frontier >= 2;
+  })()`), 30000, 'molecule ready in running replay');
+  await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
+  await waitFor(async () => browser.evaluate(`(async () => {
+    const api = await window.MolariumChemistActionsReady;
+    return (await api.execute({action:'designerScript.inspect',args:{}})).result.designerScript.review.live;
+  })()`), 10000, 'paused replay input lock');
+  const countBeforeClick = await browser.evaluate(`(async () => {
+    const api = await window.MolariumChemistActionsReady;
+    return (await api.execute({action:'session.inspect',args:{}})).result.molecule.atoms;
+  })()`);
+  assert(Number.isInteger(countBeforeClick) && countBeforeClick > 0);
+  const coordinatesBeforeInput = await browser.evaluate(`(async () => {
+    const api = await window.MolariumChemistActionsReady;
+    return (await api.execute({action:'session.inspect',args:{scope:'all',includeCoordinates:true}})).result.atoms;
+  })()`);
+  await browser.evaluate(`(() => {
+    const canvas = document.querySelector('#molecule-canvas');
+    const rect = canvas.getBoundingClientRect();
+    for (const type of ['pointerdown','pointerup']) canvas.dispatchEvent(new PointerEvent(type,
+      {clientX:rect.left+12,clientY:rect.top+12,button:0,pointerId:71,bubbles:true}));
+    for (const [type,dx] of [['pointerdown',0],['pointermove',80],['pointerup',80]])
+      canvas.dispatchEvent(new PointerEvent(type,
+        {clientX:rect.left+100+dx,clientY:rect.top+100,button:0,pointerId:73,bubbles:true}));
+    document.querySelector('#clear-button').click();
+  })()`);
+  await waitFor(async () => browser.evaluate(`document.querySelector('#notice').textContent.includes('Replay controls the molecular state')`),
+    5000, 'manual clear refused');
+  const protectedState = await browser.evaluate(`(async () => {
+    const api = await window.MolariumChemistActionsReady;
+    return {atoms:(await api.execute({action:'session.inspect',args:{}})).result.molecule.atoms,
+      hint:document.querySelector('#build-status').textContent,
+      additions:api.history().filter(entry => entry.action === 'chemistry.addAtom').length};
+  })()`);
+  assert.equal(protectedState.atoms, countBeforeClick);
+  assert.equal(protectedState.additions, 0, 'a replay canvas click must not enqueue a methane addition');
+  assert.match(protectedState.hint, /Replay controls molecular edits/);
+  assert.deepEqual(await browser.evaluate(`(async () => {
+    const api = await window.MolariumChemistActionsReady;
+    return (await api.execute({action:'session.inspect',args:{scope:'all',includeCoordinates:true}})).result.atoms;
+  })()`), coordinatesBeforeInput, 'camera gestures cannot move molecular coordinates during replay');
+  assert(await browser.evaluate(`window.MolariumChemistActions.history().some(entry => entry.action === 'view.setCamera' && entry.status === 'completed')`),
+    'camera rotation must remain usable');
+  await browser.evaluate(`document.querySelector('#replay-designer-moves').click()`);
+  await waitFor(async () => browser.evaluate(`document.querySelector('#designer-move-tools').dataset.replayStatus === 'completed'`),
+    15000, 'protected replay can still complete');
+  await browser.evaluate(`(() => {
+    const canvas = document.querySelector('#molecule-canvas');
+    const rect = canvas.getBoundingClientRect();
+    for (const type of ['pointerdown','pointerup']) canvas.dispatchEvent(new PointerEvent(type,
+      {clientX:rect.left+12,clientY:rect.top+12,button:0,pointerId:72,bubbles:true}));
+  })()`);
+  await waitFor(async () => browser.evaluate(`(async () => {
+    const api = await window.MolariumChemistActionsReady;
+    return api.history().some(entry => entry.action === 'chemistry.addAtom' && entry.status === 'completed');
+  })()`), 15000, 'ordinary manual addition available after replay');
+  assert.equal(await browser.evaluate(`(async () => {
+    const api = await window.MolariumChemistActionsReady;
+    return (await api.execute({action:'session.inspect',args:{}})).result.molecule.atoms;
+  })()`), countBeforeClick + 5, 'one ordinary empty-space carbon click adds C plus four H');
   console.log('Completed Designer Moves review and failed-step caption browser tests: PASS');
 } finally {
   await browser.close();
