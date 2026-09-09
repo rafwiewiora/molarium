@@ -106,6 +106,41 @@ These tests, renderer/caption invariants, frozen-publication preflight, and
 production build passed locally. This is presentation validation, not a claim
 that a new complete scientific rerun has finished.
 
+## SR-05 — manual input can contaminate an active replay
+
+Reported screenshot: move 59/202 fails the unchanged expectation
+`molecule.atoms: expected 7935, received 7940`. The Components panel shows
+an additional five-atom **Built molecule**, separate from the 7,844-atom
+protein, 33 water atoms and 58-atom AWW ligand. This is evidence of an extra
+component, not evidence that rotamer enumeration should allow a larger system.
+
+Code inspection found that the Design canvas still scheduled Add/Move
+operations while replay was running or paused. In ordinary Add mode, a click
+on empty space adds a carbon and four hydrogens, exactly the reported excess.
+This mechanism is reproduced by the browser regression; the precise input
+event in the author's run is not confirmed without its exported action log.
+Do not infer user intent from the screenshot alone. The ligand-pose lock does
+not protect the earlier part of a replay before that lock is installed.
+
+Fix: [manual-input policy](../design-history/designer-replay-review.mjs) guards
+the shared manual Chemist Actions dispatcher during scheduled/running replay,
+including pauses. Canvas input uses camera gestures instead of Add/Move, and
+its hint explains this. Molecular mutations, manual undo, selection changes
+and additional calculations through that dispatcher are rejected before
+execution. Camera/display controls and replay transport remain available.
+The replay's own API requests are not blocked or changed; this is UI input
+protection, not an authentication boundary for external API callers.
+
+The [browser regression](../design-history/examples/designer-completed-review.browser.test.mjs)
+clicks the canvas during paused playback, attempts manual Clear, checks no
+atom addition and unchanged atom count, then resumes to completion. It also
+checks that normal Add mode remains available afterward and adds exactly five
+atoms. [Policy tests](../design-history/designer-replay-review.test.mjs) cover
+scheduled and running playback, inspection/transport exceptions and normal
+manual editing. No count guard is relaxed; no atom is silently deleted from
+the author's stopped run. The submitted paper and frozen scientific artifacts
+remain unchanged.
+
 ## Preservation and rerun commands
 
 The submitted PDF/LaTeX/figures, all archived intermediates, the 159 scientific

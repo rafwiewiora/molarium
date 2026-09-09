@@ -2,6 +2,17 @@ export const DESIGNER_REVIEW_DIRECTIONS = Object.freeze([
   'previous', 'next', 'final',
 ]);
 
+// Playback owns scientific inputs even while paused for checkpoint review.
+// This policy is for manual UI dispatch, never for the replay's own API calls.
+export function designerReplayAllowsManualAction(action, { replaying = false,
+  scheduled = false } = {}) {
+  if (!replaying && !scheduled) return true;
+  return action.startsWith('view.')
+    || ['interface.setPanelOpen', 'interface.openProjectInfo',
+      'session.inspect', 'session.share', 'designerScript.inspect',
+      'designerScript.play', 'designerScript.step', 'designerScript.export'].includes(action);
+}
+
 export function designerReplayReviewState({ replaying = false, paused = false,
   actionRunning = false, replayStatus = null, index = 0, frontier = 0,
   checkpointCount = 0 } = {}) {

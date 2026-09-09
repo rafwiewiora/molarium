@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { DESIGNER_REVIEW_DIRECTIONS, designerReplayReviewState,
-  designerReplayReviewTarget } from './designer-replay-review.mjs';
+  designerReplayReviewTarget, designerReplayAllowsManualAction } from './designer-replay-review.mjs';
 
 assert.deepEqual(DESIGNER_REVIEW_DIRECTIONS, ['previous', 'next', 'final']);
 
@@ -48,3 +48,16 @@ assert.throws(() => designerReplayReviewTarget(completed, 'future'),
   /direction must be one of/);
 
 console.log('Designer replay review navigation: PASS');
+
+for (const lock of [{ replaying:true }, { scheduled:true }]) {
+  for (const action of ['chemistry.addAtom', 'geometry.translateAtoms', 'history.undo',
+    'session.clear', 'session.loadStructure', 'pose.applySidechainRotamer', 'selection.replace',
+    'calculation.run', 'build.setTool', 'designerScript.load'])
+    assert.equal(designerReplayAllowsManualAction(action, lock), false, action);
+  for (const action of ['view.setCamera', 'view.setDisplay', 'interface.setPanelOpen',
+    'designerScript.play', 'designerScript.step', 'designerScript.export', 'session.inspect'])
+    assert.equal(designerReplayAllowsManualAction(action, lock), true, action);
+}
+assert.equal(designerReplayAllowsManualAction('chemistry.addAtom'), true,
+  'normal manual design remains available outside replay');
+console.log('Replay manual-input ownership policy: PASS');

@@ -3,7 +3,7 @@ import { applyRegisteredLigandDefinition, serializeRegisteredLigandDefinition,
   validateConnectedMolecularGraph } from
   './design-history/structures/registered-ligand-graph.mjs';
 import { DESIGNER_REVIEW_DIRECTIONS, designerReplayReviewState,
-  designerReplayReviewTarget } from './design-history/designer-replay-review.mjs';
+  designerReplayReviewTarget, designerReplayAllowsManualAction } from './design-history/designer-replay-review.mjs';
 import { MOLECULAR_STATE_HASH_SCHEMA, molecularStateSha256 } from './molecular-state-hash.mjs';
 import { registeredFixedAtomMotion, registeredPoseRetentionPlan } from
   './docking/registered-pose-retention.mjs';
@@ -6607,6 +6607,9 @@ function showNotice(message) {
 async function runChemistUiAction(action, args = {}, { reportError = true } = {}) {
   try {
     const api = await window.MolariumChemistActionsReady;
+    if (!designerReplayAllowsManualAction(action, {
+      replaying:state.designerMoveReplaying, scheduled:state.designerMoveReplayScheduled,
+    })) throw new Error('Replay controls the molecular state. You can rotate, zoom, pause and inspect; wait until replay ends before editing.');
     const response = await api.execute({ action, args });
     return response.result;
   } catch (error) {
@@ -8009,6 +8012,10 @@ function updateBuildStatus(extra = '') {
   }
   if (state.mode !== 'build') { status.classList.add('hidden'); return; }
   status.classList.remove('hidden');
+  if (state.designerMoveReplaying || state.designerMoveReplayScheduled) {
+    status.textContent = 'Replay controls molecular edits · drag to rotate · scroll to zoom · pause to inspect checkpoints';
+    return;
+  }
   if (extra) { status.innerHTML = extra; return; }
   if (state.buildTool === 'add' && state.stagedFragment) status.textContent = `⊕ ${state.stagedFragment.name}: click an atom to attach · click space to add`;
   else if (state.buildTool === 'add') status.textContent = `⊕ Add ${state.selectedElement}: click near an atom to bond · click open space for a separate molecule`;
@@ -8871,6 +8878,7 @@ async function holdDesignerMoveReplay(milliseconds) {
 
 function updateDesignerMoveControls(message = null, captionOverride = null,
   detailOverride = null) {
+  updateBuildStatus();
   const status = document.querySelector('#designer-move-status');
   if (!status) return;
   const tools = document.querySelector('#designer-move-tools');
@@ -17677,7 +17685,7 @@ async function selectViewerAtomThroughChemistAction(index) {
 }
 
 canvas.addEventListener('pointerdown', (event) => {
-  if (state.mode === 'build') {
+  if (state.mode === 'build' && !state.designerMoveReplaying && !state.designerMoveReplayScheduled) {
     if (state.minimizing) return;
     const panInput = event.button === 2 || (event.button === 0 && (event.ctrlKey || event.metaKey));
     if (event.button !== 0 && !panInput) return;
@@ -17724,7 +17732,8 @@ canvas.addEventListener('pointermove', (event) => {
     if (state.panningView) {
       state.viewPan.x += event.clientX - state.pointer.x;
       state.viewPan.y += event.clientY - state.pointer.y;
-    } else if (state.dragAtom != null && state.molecule?.atoms[state.dragAtom]) {
+    } else if (!state.designerMoveReplaying && !state.designerMoveReplayScheduled
+      && state.dragAtom != null && state.molecule?.atoms[state.dragAtom]) {
       const point = screenToMolecule(event.clientX, event.clientY);
       const atom = state.molecule.atoms[state.dragAtom];
       atom.x += point.x - state.dragStartPoint.x; atom.y += point.y - state.dragStartPoint.y; atom.z += point.z - state.dragStartPoint.z;
@@ -17775,7 +17784,8 @@ canvas.addEventListener('pointerup', (event) => {
   state.dragging = false; state.dragAtom = null; state.panningView = false;
   state.dragAtomOrigin = null;
   state.arcballStart = null; state.rotationStart = null; canvas.classList.remove('dragging', 'panning');
-  if (state.mode === 'build' && pendingBuildAction && event.button === 0
+  if (state.mode === 'build' && !state.designerMoveReplaying && !state.designerMoveReplayScheduled
+    && pendingBuildAction && event.button === 0
     && !event.ctrlKey && !event.metaKey && !pointerDragged) {
     const hit = hitTest(event.clientX, event.clientY);
     if (pendingBuildAction.tool === 'add') {
