@@ -102,6 +102,10 @@ jobs:
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
         run: bun scripts/sos1-final-contact.browser.test.mjs
+      - name: Check unprepared protein calculation notice and prepared controls
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+        run: bun scripts/unprepared-protein.browser.test.mjs
 
   local-lab:
     name: Local Lab network and integrity

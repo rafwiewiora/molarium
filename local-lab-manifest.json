@@ -72,8 +72,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 997186,
-      "sha256": "6f8af8ced3ebd09ffcd167a6a28cc51540ca7353e57984012fc71bd9ffdb6fac"
+      "bytes": 997620,
+      "sha256": "bd601656af6606ffd3424e78d664e1c4861f08f85cbfd312c1041895418e974a"
     },
     {
       "path": "chemist-actions.mjs",
