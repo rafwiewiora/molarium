@@ -72,8 +72,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 994165,
-      "sha256": "3aa4c6429e2471aa2f32669441f78187f8d12f910d74e680c693910e2f83df66"
+      "bytes": 994767,
+      "sha256": "9bb62733b103183b092ea53dd7ffb049a7e0b7ba6b69c43d3402ecf6d7c04da9"
     },
     {
       "path": "chemist-actions.mjs",
@@ -557,8 +557,8 @@
     },
     {
       "path": "design-history/interface-story.mjs",
-      "bytes": 9234,
-      "sha256": "9921795cce1196b7ccfe9dfed50bc2b123dd21583d4a2b56ae1c25fffa7fde15"
+      "bytes": 11568,
+      "sha256": "520a95ee5adb5075a37aeb74fe67067d4a51943496ecf52622e3636b359e3513"
     },
     {
       "path": "design-history/integrity.mjs",

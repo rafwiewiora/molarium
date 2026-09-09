@@ -80,6 +80,32 @@ their old H count intentionally remains until Finish. The drawing now infers H
 only at pending edited sites, preserving explicit H at unaffected atoms. This
 is a preview-copy operation; Finish still owns graph/H reconciliation.
 
+## SR-04 — candidate comparison overplays audit bookkeeping
+
+The author found the repeated Phe890 trials cumbersome and required that the
+demo show exactly the interface a person would use by hand, not an illustrative
+substitute. The replay retains all 13 energy trials, applications, undo actions,
+candidate-list regeneration, coordinate inspections, and review checkpoints.
+Only presentation changes: a common candidate-number heading, shorter pauses
+around repeated real controls/results, and no staged click or delay for
+`session.inspect` (a read-only API audit snapshot, not a manual button).
+Native calculation dialogs, their text and lifetime, the real candidate panel,
+and the selected-rotamer presentation are unchanged. There is no new progress
+modal, simulated calculation, skipped scientific action, or changed selection
+policy. The raw step counter and checkpoint slider remain fully granular.
+
+Implementation: [comparison presentation](../design-history/interface-story.mjs)
+and [live presenter](../app.js). Tests in
+[interface-story.test.mjs](../design-history/interface-story.test.mjs) require
+13 trial groups, unmodified requests/guards/bindings, ordinary presentation for
+the selected rotamer and precomputed review, and no compaction of relaxation.
+The [browser regression](../design-history/examples/designer-completed-review.browser.test.mjs)
+checks the candidate heading, the native Apply rotamer button cue, absence of
+an invented audit-snapshot click, and the distinct selected-result caption.
+These tests, renderer/caption invariants, frozen-publication preflight, and
+production build passed locally. This is presentation validation, not a claim
+that a new complete scientific rerun has finished.
+
 ## Preservation and rerun commands
 
 The submitted PDF/LaTeX/figures, all archived intermediates, the 159 scientific

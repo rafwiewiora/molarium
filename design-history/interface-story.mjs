@@ -1,5 +1,49 @@
 import { validateActionScript } from './replay.mjs';
 
+// Presentation only: the immutable requests, execution order, results and
+// review checkpoints remain intact. Recognize only audited Phe890 trials
+// that actually measure an energy and undo before another rotamer is applied.
+export function phe890ComparisonPresentation(script, index) {
+  const actions = script?.actions || [];
+  const trials = [];
+  const allowed = new Set(['session.inspect', 'view.setDisplay', 'view.highlightAtoms',
+    'calculation.run', 'history.undo', 'pose.enumerateSidechainRotamers']);
+  for (let start = 0; start < actions.length; start++) {
+    const step = actions[start];
+    if (step.action !== 'pose.applySidechainRotamer'
+      || step.expect?.['sidechainRotamer.residue.residueName'] !== 'PHE'
+      || step.expect?.['sidechainRotamer.residue.residueIndex'] !== 890) continue;
+    let end = start + 1;
+    while (end < actions.length && allowed.has(actions[end].action)) end++;
+    const body = actions.slice(start + 1, end);
+    const energy = body.findIndex((entry) => entry.action === 'calculation.run'
+      && entry.args?.job === 'energy');
+    const undo = body.findIndex((entry) => entry.action === 'history.undo');
+    if (energy < 0 || undo <= energy
+      || body.some((entry) => entry.action === 'calculation.run' && entry.args?.job !== 'energy')
+      || actions[end]?.action !== 'pose.applySidechainRotamer') continue;
+    trials.push({ start, end, chiDegrees:step.args?.chiDegrees });
+  }
+  const candidate = trials.findIndex(({ start, end }) => index >= start && index < end);
+  if (candidate < 0) return null;
+  const action = actions[index].action;
+  // Keep real controls/results visible. Read-only audit snapshots have no
+  // manual UI operation to act out. Native calculation dialogs are untouched.
+  const holds = {
+    'pose.applySidechainRotamer':[300, 700],
+    'view.setDisplay':[0, 0],
+    'view.highlightAtoms':[0, 700],
+    'session.inspect':[0, 0],
+    'calculation.run':[300, 900],
+    'history.undo':[200, 300],
+    'pose.enumerateSidechainRotamers':[200, 500],
+  };
+  return { caption:`Compare Phe890 orientations · candidate ${candidate + 1} of ${trials.length}`,
+    candidate:candidate + 1, count:trials.length, chiDegrees:trials[candidate].chiDegrees,
+    auditOnly:action === 'session.inspect',
+    beforeMs:holds[action][0], afterMs:holds[action][1] };
+}
+
 const INITIAL_FOCUS_STEP = Object.freeze({ action:'view.focusComponent',
   args:Object.freeze({ kind:'ligand', ordinal:0, isolate:false }),
   caption:'Center the hit and the local pocket where every design decision will be made' });
