@@ -232,6 +232,14 @@ application and induced-fit relaxation completed with the original atom/bond,
 core, spatial-feature, valence and retention expectations. This does not claim
 that the full preceding hit→AWW route was recomputed in this test.
 
+CI follow-up: the existing selected-core negative test now requires the resolved
+contact ID and preserved-constraint message (79/79 local browser checks). A
+separate intermittent worker-contract CI startup failure occurred before any
+scientific assertion: a relative Worker URL was evaluated in Chrome's transient
+initial document. The [worker harness](../benchmarks/simulation/worker-contract.browser.mjs)
+now waits for the actual fixture URL and document readiness before creating
+workers. No worker implementation, tolerance or scientific assertion changes.
+
 ## Preservation and rerun commands
 
 The submitted PDF/LaTeX/figures, all archived intermediates, the 159 scientific

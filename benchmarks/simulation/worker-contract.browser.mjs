@@ -1,9 +1,13 @@
 import assert from 'node:assert/strict';
 import {resolve} from 'node:path';
-import {startMolariumBrowser} from '../../scripts/headless-chrome.mjs';
+import {startMolariumBrowser,waitFor} from '../../scripts/headless-chrome.mjs';
 const root=resolve(import.meta.dirname,'../..');
 const browser=await startMolariumBrowser({root,appPath:'benchmarks/simulation/runner.html'});
 try {
+  // CDP may list the intended URL before the initial about:blank document has
+  // committed. Relative Worker URLs are invalid in that transient document.
+  await waitFor(() => browser.evaluate(`location.href === ${JSON.stringify(browser.appUrl)}
+    && document.readyState !== 'loading'`), 30000, 'worker-contract document navigation');
   const results=await browser.evaluate(`(async()=>{
     const base={atoms:[{element:'C',x:0,y:0,z:0},{element:'H',x:1.5,y:0,z:0}],bonds:[],
       parameterization:{forcefield:'Analytic bond contract fixture',system:{
