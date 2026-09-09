@@ -72,8 +72,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 995549,
-      "sha256": "7f4e810b528b4f51fd42340306b10ffe457a5a85cf2181b6f53c65ee40467344"
+      "bytes": 995603,
+      "sha256": "0cda1334088d04c5500693fb2dd52c455bfbf0fe41467c2f9830a3c2b685a6d0"
     },
     {
       "path": "chemist-actions.mjs",
@@ -112,8 +112,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 68252,
-      "sha256": "81737eea87e8718021a078c197a24c8256df0adff5c0a9f25db931aebf2c2a5b"
+      "bytes": 68254,
+      "sha256": "84da498bd0fb0a64d553c0b1c5400b36d18d9312a44982df6983278f2dfd684d"
     },
     {
       "path": "reproductions.html",
@@ -202,18 +202,18 @@
     },
     {
       "path": "styles.css",
-      "bytes": 74256,
-      "sha256": "8f4ffbef4e6979fb34f2fef04406c9e3eb97a4bc4d5421ee16d7170dec7b0f77"
+      "bytes": 74671,
+      "sha256": "63d9184a96ee0aea421c010749d5caea0c535f3738d71258c42b319612350554"
     },
     {
       "path": "validation/README.md",
-      "bytes": 1098,
-      "sha256": "0cf4e90ba5d4e47514d85e1443bf18b478d3cff8e2d0ca7482e4e25634630381"
+      "bytes": 1572,
+      "sha256": "9a7e5aee10818a62f6610480970cac5f8a8748382a950c9cb0e92bca09210ed8"
     },
     {
       "path": "validation/dashboard.mjs",
-      "bytes": 5645,
-      "sha256": "ccb8e7f52194b588c1090809db24fb4c874ad36a775053b96cc0827c5884a28f"
+      "bytes": 5112,
+      "sha256": "4bb0629e63af710269f237c130539f383e519a6346fdf567b3130ebe5a18e1f6"
     },
     {
       "path": "validation/registry.v0.1.json",

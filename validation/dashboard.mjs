@@ -4,75 +4,67 @@ function escapeHtml(value) {
   })[character]);
 }
 
-function pretty(value, digits = 3) {
-  return Number.isFinite(value) ? Number(value).toPrecision(digits).replace(/(?:\.0+|(?:(\.\d*?)0+))$/, '$1') : '—';
+function numerical(value) {
+  if (!Number.isFinite(value) || value < 0) throw new Error('Missing numerical comparison');
+  return value.toExponential(2);
 }
 
-function outcomeLabel(outcome) {
-  return ({
-    'success-feasible':'feasible',
-    'success-infeasible-negative-control':'negative held',
-    'preparation-blocked':'prep blocked',
-    'parameterization-unsupported':'unsupported',
-    'reference-contact-unavailable':'contact unavailable',
-    'no-feasible-pose':'no feasible pose',
-  })[outcome] || outcome;
-}
-
-function statusLabel(status) {
-  return ({ complete:'Complete', 'registered-partial':'Registered · partial',
-    'development-smoke':'Development smoke' })[status] || status;
-}
-
+// Explicit numerical subset: archived docking studies are not dashboard claims.
 export function validationDashboardHtml(registry) {
-  const h = registry.headline;
-  const docking = registry.studies.find(entry => entry.studyId === 'bioisostere-pose-propagation-v0.1');
-  const parity = registry.studies.find(entry => entry.studyId === 'high-disruption-cross-runtime-2026-08-23');
-  const studies = registry.studies.map(study => `
-    <article class="validation-study-card">
-      <div class="validation-study-heading">
-        <div><strong>${escapeHtml(study.title)}</strong><span>${escapeHtml(study.evidenceLevel)}</span></div>
-        <b data-validation-status="${escapeHtml(study.status)}">${escapeHtml(statusLabel(study.status))}</b>
-      </div>
-      <ul>${study.claims.map(claim => `<li>${escapeHtml(claim)}</li>`).join('')}</ul>
-      <div class="validation-artifact-links">${study.artifactIds.map(id => {
-        const item = registry.artifacts[id];
-        return `<a href="${escapeHtml(item.href)}" download title="SHA-256 ${escapeHtml(item.sha256)}">${escapeHtml(id)}</a>`;
-      }).join('')}</div>
-    </article>`).join('');
-  const rows = registry.cases.map(entry => `
-    <tr data-validation-tier="${escapeHtml(entry.tier)}" data-validation-outcome="${escapeHtml(entry.terminalOutcome)}">
-      <td><strong>${escapeHtml(entry.proteinTarget)}</strong><span>${escapeHtml(entry.referenceSystem)}</span></td>
-      <td>${escapeHtml(entry.transformation)}</td>
-      <td><span class="validation-outcome validation-outcome-${escapeHtml(entry.terminalOutcome)}">${escapeHtml(outcomeLabel(entry.terminalOutcome))}</span></td>
-      <td>${entry.pairedCrystal ? `${pretty(entry.pairedCrystal.top5MedianMinimumHeavyAtomRmsdAngstrom)} Å` : '—'}</td>
-    </tr>`).join('');
+  const parity = registry.studies.find(entry =>
+    entry.studyId === 'high-disruption-cross-runtime-2026-08-23');
+  if (!parity?.metrics || !parity.counts) throw new Error('Numerical evidence unavailable');
+  const m = parity.metrics;
+  const comparisons = [
+    ['Same OpenMM C interface: WebAssembly vs native',
+      m.openmmWasmVsNativeReferenceMaxEnergyDeltaKcalMol,
+      m.openmmWasmVsNativeReferenceMaxForceRelativeRms, 'openmmNative'],
+    ['Browser Sage vs OpenMM WebAssembly · vacuum',
+      m.browserSageVsOpenmmWasmVacuumMaxEnergyDeltaKcalMol,
+      m.browserSageVsOpenmmWasmVacuumMaxForceRelativeRms, 'browserVacuum'],
+    ['Browser Sage vs OpenMM WebAssembly · OBC2',
+      m.browserSageVsOpenmmWasmObc2MaxEnergyDeltaKcalMol,
+      m.browserSageVsOpenmmWasmObc2MaxForceRelativeRms, 'browserObc2'],
+  ];
+  const rows = comparisons.map(([label, energy, force, id]) => {
+    const artifact = registry.artifacts[id];
+    if (!artifact || !/^\.\/docking\/validation\/cloud-panel\/[\w.-]+\.json$/.test(artifact.href)
+      || !/^[a-f0-9]{64}$/.test(artifact.sha256)) throw new Error('Invalid numerical evidence link');
+    return `<tr data-validation-comparison="${id}"><th scope="row">${label}</th>
+      <td>${numerical(energy)}</td><td>${numerical(force)}</td>
+      <td><a href="${escapeHtml(artifact.href)}" download title="SHA-256 ${artifact.sha256}">Raw results</a></td></tr>`;
+  }).join('');
   return `
-    <p class="validation-dashboard-scope">${escapeHtml(registry.scope)}</p>
-    <div class="validation-count-grid">
-      <div><strong data-validation-count="reference-systems">${h.distinctReferenceSystems}</strong><span>reference complexes</span></div>
-      <div><strong data-validation-count="cases">${h.registeredDockingCases}</strong><span>registered cases</span></div>
-      <div><strong data-validation-count="targets">${h.uniqueProteinTargets}</strong><span>protein targets</span></div>
-      <div><strong data-validation-count="crystal-scored">${h.pairedCrystalScored}</strong><span>crystal-scored</span></div>
-    </div>
-    <div class="validation-definition">${h.casesReachingPoseSearch}/${h.registeredDockingCases} cases reached pose search. The native/GPU gate contains ${h.nativeGpuPoseInstances} exact poses from one target; pose count is not system count.</div>
-    <div class="validation-key-results">
-      <div><span>Pose benchmark</span><strong>${pretty(docking.metrics.pairedCrystalBestOfFiveMedianAngstrom)} Å</strong><small>median best-of-5 over 5 crystal pairs</small></div>
-      <div><span>Browser/native parity</span><strong>${pretty(parity.metrics.browserSageVsOpenmmWasmVacuumMaxEnergyDeltaKcalMol, 3)}</strong><small>max |ΔE| kcal/mol · 5 exact poses</small></div>
-    </div>
-    <div class="validation-study-grid">${studies}</div>
-    <details class="validation-case-ledger">
-      <summary>Case ledger <span>${registry.cases.length} preserved outcomes</span></summary>
-      <div class="validation-table-wrap"><table>
-        <thead><tr><th>Target / reference</th><th>Transformation</th><th>Outcome</th><th>Best-of-5</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table></div>
-    </details>
-    <details class="validation-counting-rules">
-      <summary>Counting rules</summary>
-      <dl>${Object.entries(registry.countingRules).map(([key, value]) => `<div><dt>${escapeHtml(key)}</dt><dd>${escapeHtml(value)}</dd></div>`).join('')}</dl>
-    </details>
-    <p class="validation-registry-footer">Registry ${escapeHtml(registry.version)} · frozen ${escapeHtml(registry.frozenAt)} · <a href="./validation/registry.v0.2.json" download>download machine-readable ledger</a></p>`;
+    <p class="validation-dashboard-scope">Numerical implementation checks on matched inputs.
+      These comparisons test energies and forces, not docking pose accuracy,
+      binding affinity, or force-field accuracy against experiment.</p>
+    <article class="validation-study-card">
+      <div class="validation-study-heading"><strong>Fixed-input cross-runtime agreement</strong></div>
+      <p>${escapeHtml(parity.counts.hashSelectedPoseInstances)} exact configurations from
+        ${escapeHtml(parity.counts.analogueChemistries)} analogue chemistries of the
+        7KPA/D84 complex: one reference system, not five independent systems.
+        Graphs, coordinates, parameters and solvent settings are matched.</p>
+      <div class="validation-table-wrap"><table class="validation-numerical-table">
+        <thead><tr><th scope="col">Comparison</th><th scope="col">Max |ΔE| (kcal/mol)</th>
+        <th scope="col">Max relative force RMS (unitless)</th><th scope="col">Evidence</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>
+      <p>The WebAssembly/native row checks compilation of the same C interface.
+        The browser Sage rows use that WebAssembly reference; they are not a
+        separate, independently constructed native oracle.</p>
+    </article>
+    <article class="validation-study-card">
+      <div class="validation-study-heading"><strong>Independent native OpenMM comparisons</strong></div>
+      <p>The broader WebGPU suite compares every Cartesian force with independently
+        constructed native OpenMM systems. Reports distinguish fixed-f32-input
+        agreement from original-input precision limits, and identify tested hardware.</p>
+      <div class="validation-artifact-links">
+        <a href="https://github.com/rafwiewiora/molarium/tree/main/benchmarks/simulation">Protocol and reproduction</a>
+        <a href="https://github.com/rafwiewiora/molarium/tree/main/benchmarks/simulation/results">Measured results and limitations</a>
+        <a href="https://github.com/rafwiewiora/molarium/blob/main/benchmarks/simulation/results/STORMM.md">STORMM/native comparison scope</a>
+      </div>
+    </article>
+    <p class="validation-registry-footer">Numerical subset of registry ${escapeHtml(registry.version)}
+      · frozen ${escapeHtml(registry.frozenAt)}. A passing check applies only to its specified fixtures and protocol.</p>`;
 }
 
 export async function mountValidationDashboard(root, href = './validation/registry.v0.2.json') {
@@ -86,7 +78,7 @@ export async function mountValidationDashboard(root, href = './validation/regist
     root.innerHTML = validationDashboardHtml(registry);
     root.dataset.validationMounted = 'true';
   } catch (error) {
-    root.innerHTML = `<p class="validation-dashboard-error">Validation ledger unavailable · ${escapeHtml(error.message)}</p>`;
+    root.innerHTML = `<p class="validation-dashboard-error">Numerical evidence unavailable · ${escapeHtml(error.message)}</p>`;
   } finally {
     root.removeAttribute('aria-busy');
   }

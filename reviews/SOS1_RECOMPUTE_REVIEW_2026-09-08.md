@@ -141,6 +141,28 @@ manual editing. No count guard is relaxed; no atom is silently deleted from
 the author's stopped run. The submitted paper and frozen scientific artifacts
 remain unchanged.
 
+## SR-06 — public Validation scope narrowed to numerical implementations
+
+The author requested that the public Validation panel not yet present docking
+pose accuracy. Previously its headline combined crystal-pose RMSD, docking
+case/target counts, chemistry feasibility, and numerical parity. The link
+existed in the initial August 19 release; the dashboard arrived August 24.
+
+[dashboard.mjs](../validation/dashboard.mjs) now renders an explicit numerical
+subset only: three matched-input energy/force comparisons, their one-system
+fixture scope, and raw evidence links. It distinguishes same-interface
+WASM/native parity from an independent native oracle, and links the broader
+WebGPU/native OpenMM and STORMM reports with their precision/scope limitations.
+Docking counts, RMSD headline, chemistry outcomes and the mixed-ledger download
+are removed from the panel, not deleted from the repository. The versioned
+registries, underlying artifacts and submitted manuscript are unchanged.
+
+[Renderer tests](../validation/dashboard.test.mjs) enforce the allowlist,
+units/values, no dependence on docking cases, safe evidence URLs and unchanged
+registry input. [Browser checks](../validation/dashboard.browser.test.mjs)
+verify the actual panel and that its three raw JSON links resolve. The existing
+general browser suite assertions and README descriptions are updated too.
+
 ## Preservation and rerun commands
 
 The submitted PDF/LaTeX/figures, all archived intermediates, the 159 scientific

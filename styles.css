@@ -126,6 +126,12 @@ button { cursor: pointer; }
 .project-credit-list { columns: 2; column-gap: 28px; }
 .project-credit-list li { break-inside: avoid; }
 .validation-dashboard { color: var(--secondary); }
+.validation-numerical-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.validation-numerical-table th, .validation-numerical-table td {
+  padding: 9px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top;
+}
+.validation-numerical-table td { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.validation-study-card + .validation-study-card { margin-top: 12px; }
 .validation-dashboard-loading, .validation-dashboard-error {
   margin: 0; padding: 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--muted);
 }

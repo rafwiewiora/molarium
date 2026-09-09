@@ -453,8 +453,11 @@ H-bond recapture panel is complete: two browser replays per case agreed exactly,
 feasible poses, and the sultam was a reproducible `no-feasible-pose` result. Its compact evidence
 also records per-action, refinement, scheduler, and memory timings.
 
-The top-bar **Validation** dashboard separates targets, reference complexes, registered cases,
-poses, and software assertions; every source artifact carries a SHA-256 digest. See
+The top-bar **Validation** dashboard is limited to numerical implementation checks:
+matched-input energy/force comparisons, fixture scope, and links to independent native
+OpenMM benchmarks and their precision limits. It does not present docking pose accuracy
+or chemistry-workflow success counts. The broader historical registry remains preserved
+in the repository; every source artifact carries a SHA-256 digest. See
 [`validation/README.md`](./validation/README.md) for the append-only update procedure.
 
 ## Scientific status

@@ -92,6 +92,10 @@ jobs:
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
         run: npm run test:design-help-browser
+      - name: Check numerical-only public validation panel and evidence links
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+        run: bun validation/dashboard.browser.test.mjs
 
   local-lab:
     name: Local Lab network and integrity
