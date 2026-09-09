@@ -72,13 +72,13 @@
     },
     {
       "path": "app.js",
-      "bytes": 995603,
-      "sha256": "0cda1334088d04c5500693fb2dd52c455bfbf0fe41467c2f9830a3c2b685a6d0"
+      "bytes": 997186,
+      "sha256": "6f8af8ced3ebd09ffcd167a6a28cc51540ca7353e57984012fc71bd9ffdb6fac"
     },
     {
       "path": "chemist-actions.mjs",
-      "bytes": 36406,
-      "sha256": "edfcef1568aa40a8f10dd11fa849fa725dcd097ed6159081cbe0f718258ae0b4"
+      "bytes": 36597,
+      "sha256": "3406812497c54bfa16b5f0c40289e6b941a2bf302b75dba9a7c88577eba28e01"
     },
     {
       "path": "molecular-state-hash.mjs",
@@ -87,8 +87,8 @@
     },
     {
       "path": "CHEMIST-ACTIONS-API.md",
-      "bytes": 37554,
-      "sha256": "16bfdcfcaf993b0a7c5e36aac4dfacab296e1ca4121b75e56a2365ee29652126"
+      "bytes": 38846,
+      "sha256": "c5c03c6ea4fff7e9bd6e86354d0931f2ef44503d8458de94333193969278739a"
     },
     {
       "path": "DESIGNER-MOVES.md",
@@ -1227,8 +1227,8 @@
     },
     {
       "path": "docking/contact-state.mjs",
-      "bytes": 4519,
-      "sha256": "05263c53e7c5cbf097cc56bf988c7e4d9e0eed61e798a172243af30ba71d8c5a"
+      "bytes": 6227,
+      "sha256": "eb804072b44c5597a14369584341765c49d0963bd6bf3f62fc9c60fc1d41e9d0"
     },
     {
       "path": "docking/contact-capture-policy.mjs",
@@ -1259,6 +1259,11 @@
       "path": "docking/displaceable-waters.mjs",
       "bytes": 2773,
       "sha256": "02a67a9a60904c82e911b9b765bc5b756b0b586d011a50b818ab79971f5e374b"
+    },
+    {
+      "path": "design-history/sos1-recompute-revision.mjs",
+      "bytes": 1846,
+      "sha256": "036f329315235b656aa0c30af9963dd0af5305408d23f6864dd675d5d5d558a6"
     },
     {
       "path": "openff/frame-contract.mjs",

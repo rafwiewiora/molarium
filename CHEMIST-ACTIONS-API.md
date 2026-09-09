@@ -421,6 +421,25 @@ can require an available hypothesis. The contact's `evidenceClass`, `warning`, a
 `conventionalAcceptorHeuristic` disclose this distinction. This default-selection policy does not
 replace the force field or retrospectively alter frozen contact hypotheses (DV-03).
 
+`pose.setContact` accepts exactly one `contactId` or exact, unique `contactLabel`,
+plus boolean `required`. Labels refer to captured hypotheses, so they can resolve
+an obsolete contact after its ligand atom has been removed. Ambiguous labels
+always fail. Missing contacts fail unless an explicit omission uses
+`{contactLabel, required:false, ifAbsent:'record-omission'}`; that returns
+`absent:true, changed:false, contactId:null` and records the request without
+changing any requirement. This accommodates geometry-dependent capture without
+silently omitting other contacts. Existing contacts return the resolved ID,
+label, requirement and change flag; requirement decisions are retained in contact
+amendments as well as the action audit. The manual checkbox uses this same action.
+
+The current registered SOS1 recomputation applies the author-approved
+`sos1-explicit-final-contact-release/v1` revision to the hash-pinned original
+script: one visible release of the obsolete OX3–Tyr884 contact after the final
+graph edit. Recorded API moves include the executed release; the
+`installed-script` export includes it plus `scientificRevision` metadata.
+The 159 original actions, numerical gates, frozen checkpoint review
+and movie remain unchanged; the revised interface replay has 203 moves.
+
 For pose propagation, `pose.refine` seeds a single-anchor grown region across deterministic
 attachment-bond torsions even when no explicit hydrogen-bond target was captured. Target-directed
 regions keep their pharmacophore-axis seeds and multi-anchor regions remain rigid. The remaining
