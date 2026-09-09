@@ -17942,7 +17942,8 @@ function openProjectInfoPanel(panel) {
     section.classList.toggle('hidden', section.dataset.projectSection !== panel);
   });
   projectInfoDialog.classList.toggle('validation-open', panel === 'validation');
-  projectInfoTitle.textContent = panel[0].toUpperCase() + panel.slice(1);
+  projectInfoTitle.textContent = panel === 'validation' ? 'Numerical validation'
+    : panel[0].toUpperCase() + panel.slice(1);
   if (panel === 'validation') ensureValidationDashboard();
   if (!projectInfoDialog.open) projectInfoDialog.showModal();
 }

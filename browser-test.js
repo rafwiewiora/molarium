@@ -476,17 +476,16 @@ const browserSuite = String.raw`(async () => {
     await new Promise(resolve => setTimeout(resolve, 100));
   check(document.querySelector('#project-info-dialog').classList.contains('validation-open')
     && !document.querySelector('[data-project-section="validation"]').classList.contains('hidden'),
-    'Validation opens the evidence-ledger dashboard');
-  check(validationRoot.querySelector('[data-validation-count="reference-systems"]')?.textContent === '18'
-    && validationRoot.querySelector('[data-validation-count="cases"]')?.textContent === '25'
-    && validationRoot.querySelector('[data-validation-count="targets"]')?.textContent === '15'
-    && validationRoot.querySelector('[data-validation-count="crystal-scored"]')?.textContent === '5',
-    'validation dashboard separates reference systems, cases, targets and crystal-scored pairs');
-  check(validationRoot.querySelectorAll('[data-validation-tier]').length === 25,
-    'validation dashboard preserves all 25 registered case outcomes');
-  check(validationRoot.textContent.includes('Registered · partial')
-    && validationRoot.textContent.includes('do not add twenty independent protein systems'),
-    'validation dashboard labels the 20-case single-system chemistry panel as partial');
+    'Validation opens the numerical implementation dashboard');
+  check(validationRoot.querySelectorAll('[data-validation-comparison]').length === 3
+    && validationRoot.textContent.includes('one reference system, not five independent systems'),
+    'validation dashboard scopes the three energy/force comparisons');
+  check(validationRoot.querySelectorAll('[data-validation-tier], [data-validation-count]').length === 0
+    && !/Pose benchmark|Best-of-5|crystal-scored/.test(validationRoot.textContent),
+    'public validation excludes docking accuracy and outcome counts');
+  check(validationRoot.textContent.includes('original-input precision limits')
+    && validationRoot.textContent.includes('not docking pose accuracy'),
+    'validation dashboard makes numerical limitations explicit');
   const registryResponse = await fetch('./validation/registry.v0.2.json');
   const registry = await registryResponse.json();
   check(registryResponse.ok && registry.schema === 'molarium.validation-registry/v1'

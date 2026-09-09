@@ -1,5 +1,12 @@
 # Validation registry
 
+The public **Validation** panel presents only numerical implementation checks.
+Its explicit subset includes fixed-input energy/force comparisons and links to
+the broader independent-native simulation benchmarks. It excludes docking pose
+accuracy, crystal-scored counts, chemistry feasibility and case-outcome tables.
+This presentation change does not alter the frozen registries or their evidence.
+Numerical agreement is not validation of a force field against experiment.
+
 `registry.v0.2.json` is Molarium's current machine-readable evidence ledger. Version 0.1 remains
 available as the earlier frozen record. The ledger deliberately separates:
 
