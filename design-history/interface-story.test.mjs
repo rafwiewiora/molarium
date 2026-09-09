@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { CHEMIST_ACTION_DEFINITIONS } from '../chemist-actions.mjs';
-import { buildPocketInterfaceStory } from './interface-story.mjs';
+import { buildPocketInterfaceStory, phe890ComparisonPresentation } from './interface-story.mjs';
 import { actionScriptSha256 } from './replay.mjs';
 
 const source = JSON.parse(await readFile(new URL(
@@ -134,3 +134,30 @@ assert.deepEqual(candidateTrialStory.actions.filter((step) =>
   !insertedPresentationActions.has(step.action)).map(({ capture, ...step }) => step),
 candidateTrialSource.actions, 'candidate presentation must not change scientific actions');
 console.log('Interface story test passed: 33 scientific actions + 18 presentation actions');
+
+const frozen = JSON.parse(await readFile(new URL(
+  './publications/sos1/designer-intent-2026-09-04/executable.action-script.json', import.meta.url)));
+const live = buildPocketInterfaceStory(frozen);
+const beforePacing = structuredClone(live);
+const groups = live.actions.map((step, index) => phe890ComparisonPresentation(live, index));
+const trials = groups.filter((group, index) => group
+  && live.actions[index].action === 'pose.applySidechainRotamer');
+assert.equal(trials.length, 13);
+assert.deepEqual(trials.map((group) => group.candidate), Array.from({ length:13 }, (_, i) => i + 1));
+assert(trials.every((group) => group.count === 13));
+assert.equal(groups.filter((group, index) => group
+  && live.actions[index].action === 'calculation.run').length, 13);
+assert(groups.filter((group, index) => group && live.actions[index].action === 'session.inspect')
+  .every((group) => group.auditOnly && group.beforeMs === 0 && group.afterMs === 0));
+assert(groups.filter((group, index) => group && live.actions[index].action === 'calculation.run')
+  .every((group) => !group.auditOnly && group.afterMs >= 900));
+const selectedIndex = live.actions.findLastIndex((step) => step.action === 'pose.applySidechainRotamer');
+assert.equal(groups[selectedIndex], null, 'selected rotamer retains the full result presentation');
+assert.equal(phe890ComparisonPresentation(checkpointStory, 0), null);
+assert.deepEqual(live, beforePacing, 'grouping cannot change requests, guards, bindings or captions');
+const unsafe = structuredClone(live);
+unsafe.actions[groups.findIndex((group, index) => group
+  && live.actions[index].action === 'calculation.run')].args.job = 'minimize';
+assert.equal(phe890ComparisonPresentation(unsafe, groups.findIndex(Boolean)), null,
+  'do not compact a relaxation as a fixed-coordinate comparison');
+console.log('Phe890 presentation: 13 trials grouped; native actions and selected result preserved');

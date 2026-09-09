@@ -102,6 +102,41 @@ try {
   assert.equal(await browser.evaluate(`document.querySelector('#designer-move-caption').textContent`),
     'Actual failed contact declaration', 'failure must not display the following unexecuted action');
   assert.match(await browser.evaluate(`document.querySelector('#designer-move-detail').textContent`), /Stopped at move 2/);
+  // Presentation-only probe: no candidate or energy execution is mocked.
+  // The presenter must cue the same native button used by a manual operator.
+  await browser.evaluate(`(async () => {
+    const api = await window.MolariumChemistActionsReady;
+    await api.execute({action:'designerScript.load',args:{script:{
+      schema:'molarium.chemist-action-script/v1',label:'Candidate presentation fixture',actions:[
+        {action:'pose.applySidechainRotamer',args:{chiDegrees:[60,90]},
+          expect:{'sidechainRotamer.residue.residueName':'PHE',
+            'sidechainRotamer.residue.residueIndex':890},caption:'Apply trial orientation'},
+        {action:'session.inspect',args:{scope:'ligand'},caption:'Record ligand coordinates'},
+        {action:'calculation.run',args:{job:'energy',method:'openmm'},caption:'Measure candidate energy'},
+        {action:'history.undo',args:{},caption:'Restore baseline'},
+        {action:'pose.applySidechainRotamer',args:{chiDegrees:[-180,90]},caption:'Apply selected orientation'}
+      ]}}});
+    await api.execute({action:'interface.presentDesignerStep',args:{index:0,phase:'before'}});
+  })()`);
+  assert.equal(await browser.evaluate(`document.querySelector('#designer-move-caption').textContent`),
+    'Compare Phe890 orientations · candidate 1 of 1');
+  assert.equal(await browser.evaluate(`document.querySelector('#apply-sidechain-rotamer').classList.contains('designer-move-cue')`), true);
+  assert.equal(await browser.evaluate(`document.querySelector('#designer-move-detail').textContent`), 'Apply trial orientation');
+  await browser.evaluate(`(async () => {
+    const api = await window.MolariumChemistActionsReady;
+    await api.execute({action:'interface.presentDesignerStep',args:{index:0,phase:'clear'}});
+    await api.execute({action:'interface.presentDesignerStep',args:{index:1,phase:'before'}});
+  })()`);
+  assert.equal(await browser.evaluate(`document.querySelectorAll('.designer-move-cue').length`), 0,
+    'an audit snapshot must not act out a manual button press');
+  assert.equal(await browser.evaluate(`document.querySelector('#designer-move-caption').textContent`),
+    'Compare Phe890 orientations · candidate 1 of 1');
+  await browser.evaluate(`(async () => {
+    const api = await window.MolariumChemistActionsReady;
+    await api.execute({action:'interface.presentDesignerStep',args:{index:4,phase:'before'}});
+  })()`);
+  assert.equal(await browser.evaluate(`document.querySelector('#designer-move-caption').textContent`),
+    'Apply selected orientation');
   console.log('Completed Designer Moves review and failed-step caption browser tests: PASS');
 } finally {
   await browser.close();

@@ -13,6 +13,7 @@ import { searchBestDirectionalBranchContact, solveDirectedBranchContact } from
   './docking/designer-branch-contact.mjs';
 import { resolveCampaignAssetSource, readCampaignAssetResponse } from './design-history/campaign-source.mjs';
 import { sos1StoryCaption } from './design-history/sos1-story-captions.mjs';
+import { phe890ComparisonPresentation } from './design-history/interface-story.mjs';
 import { requiredContactPolicy, liveHydrogenBondState } from './docking/contact-state.mjs';
 import { CONTACT_CAPTURE_POLICY } from './docking/contact-capture-policy.mjs';
 import { preserveRegisteredDonorHydrogens } from './docking/registered-donor-hydrogen.mjs';
@@ -8847,6 +8848,8 @@ const DESIGNER_MOVE_RESULT_HOLDS_MS = Object.freeze({
 });
 
 function designerMoveHoldMs(step, phase, moviePaced = false) {
+  const comparison = phe890ComparisonPresentation(state.designerMoveScript, step.index);
+  if (comparison) return phase === 'before' ? comparison.beforeMs : comparison.afterMs;
   if (phase === 'before') return moviePaced ? 900 : 700;
   const base = DESIGNER_MOVE_RESULT_HOLDS_MS[step.action]
     ?? (step.action?.startsWith('chemistry.') ? 1800
@@ -9164,6 +9167,8 @@ async function presentDesignerMoveStep(index, phase) {
   const step = pending?.index === index && pending?.action === source.action
     ? structuredClone(pending) : { ...structuredClone(source), index,
       status:phase === 'after' ? 'completed' : 'running' };
+  const comparison = phe890ComparisonPresentation(script, index);
+  const caption = comparison?.caption || sos1StoryCaption(script, step);
   if (phase === 'clear') {
     showDesignerMoveCue();
     return { index, phase, action:source.action, cleared:true };
@@ -9172,9 +9177,10 @@ async function presentDesignerMoveStep(index, phase) {
   state.designerMoveReplayStep = structuredClone(step);
   if (phase === 'before') {
     state.designerMoveReplayIndex = index;
-    showDesignerMoveCue(step);
+    if (!comparison?.auditOnly) showDesignerMoveCue(step);
     updateDesignerMoveControls(
-      `Move ${index + 1} of ${script.actions.length} · ${sos1StoryCaption(script, step)}`);
+      `Move ${index + 1} of ${script.actions.length} · ${sos1StoryCaption(script, step)}`,
+      caption, comparison ? sos1StoryCaption(script, step) : null);
   } else {
     // A molecular action can schedule registered-ligand/RDKit drawing after
     // its public API result is ready.  Settle that exact drawing before the
@@ -9182,13 +9188,16 @@ async function presentDesignerMoveStep(index, phase) {
     const depiction = await awaitScheduledRegisteredLigandDepiction();
     state.designerMoveReplayActionRunning = false;
     state.designerMoveReplayIndex = index + 1;
-    showDesignerMoveResultCue(step);
+    if (!comparison?.auditOnly) showDesignerMoveResultCue(step);
     const message = `Completed move ${index + 1} of ${script.actions.length} · ${sos1StoryCaption(script, step)}`;
-    updateDesignerMoveControls(message, sos1StoryCaption(script, step),
-      designerMoveResultCaption(step));
+    const resultCaption = comparison
+      ? `${sos1StoryCaption(script, step)} · ${designerMoveResultCaption(step)}`
+      : designerMoveResultCaption(step);
+    updateDesignerMoveControls(message, caption,
+      resultCaption);
     captureDesignerMoveCheckpoint(index + 1, step);
-    updateDesignerMoveControls(message, sos1StoryCaption(script, step),
-      designerMoveResultCaption(step));
+    updateDesignerMoveControls(message, caption,
+      resultCaption);
     return { index, phase, action:source.action, checkpointIndex:index + 1,
       depiction };
   }
