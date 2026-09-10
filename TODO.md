@@ -8,6 +8,9 @@ with stable `DV-` identifiers and links to original observations and follow-up e
 
 ## Simulation correctness and release gates
 
+- [x] Separate prepared-protein provenance from edited-System parameter validity, and minimize new/modified current Systems before MD by default ([SR-08/09](reviews/SIMULATION_READINESS_2026-09-10.md)).
+- [ ] Extend SR-09 beyond the 7KPA short-run reproduction: identify dominant starting-strain terms and test longer-time dynamics across prepared complexes and physical GPU vendors.
+
 - [x] Reject empty/incomplete benchmark gates, enforce exact finite 3N force vectors, and verify protocol content and result schemas (R3).
 - [x] Correct native original-input scoring and archive new derived scores without overwriting raw evidence (R5).
 - [x] Refresh Local Lab hashes, synchronize its privacy UI test, and add a non-mutating manifest freshness check in CI (R6).

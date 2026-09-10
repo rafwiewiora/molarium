@@ -18,3 +18,11 @@ not modified. No preparation is performed implicitly by this guard.
 five engines, the actual dynamics button and exact message, unchanged atoms and
 bonds, hidden overlay, and successful small-molecule/prepared-protein energies.
 No buttons, force fields, scientific acceptance checks or paper artifacts change.
+
+## Follow-up: edited-system regression (10 September)
+
+The original criterion above was too broad: adding an R group correctly deleted
+stale numerical parameters, but then incorrectly required protein preparation
+again. See [SR-08 and SR-09](./SIMULATION_READINESS_2026-09-10.md) for the correction,
+regression tests and separate 7KPA dynamics-startup investigation. The historical
+description above records PR #31's behavior, not the corrected policy.

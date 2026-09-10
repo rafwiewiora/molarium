@@ -105,7 +105,10 @@ jobs:
       - name: Check unprepared protein calculation notice and prepared controls
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
-        run: bun scripts/unprepared-protein.browser.test.mjs
+        run: |
+          node --test calculation-readiness.test.mjs
+          bun scripts/unprepared-protein.browser.test.mjs
+          MOLARIUM_TEST_API=1 bun scripts/calculation-readiness.browser.test.mjs
 
   local-lab:
     name: Local Lab network and integrity

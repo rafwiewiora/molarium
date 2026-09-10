@@ -187,6 +187,18 @@ reports a coordinate-displacement audit. It does not minimize or otherwise move 
 lets a frozen predicted intermediate become the reference for the next registered design step
 without importing a later crystal or conflating parameter assignment with relaxation.
 
+For `calculation.run`, an edited, previously prepared current system is retyped
+automatically when needed; its protein preparation and edited ligand are not
+replaced. A genuinely unprepared protein still returns `Please prepare protein`.
+Dynamics defaults to the checked **Minimize before first simulation** setting:
+full-system minimization first, then reuse for subsequent runs of the same state
+and energy settings. Changed chemistry, coordinates, parameters or energy settings
+require a new minimization; a matching manual full-system minimization also qualifies.
+`options.minimizeBeforeDynamics:false` is the explicit UI-equivalent opt-out.
+`calculation.preSimulationMinimization` records performed/reused/disabled preflight
+and its provenance. This application behavior does not change direct-worker
+fixed-input benchmarks. See [the readiness findings and limits](reviews/SIMULATION_READINESS_2026-09-10.md).
+
 `optimization.run` exposes two different pocket minimizers. `pocket-webgpu` releases the ligand
 and pocket side chains in the 5 Å shell while keeping receptor backbone atoms fixed.
 `induced-fit-webgpu` releases whole protein residues entering a 6 Å shell, including backbone,

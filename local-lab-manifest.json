@@ -72,13 +72,13 @@
     },
     {
       "path": "app.js",
-      "bytes": 997620,
-      "sha256": "bd601656af6606ffd3424e78d664e1c4861f08f85cbfd312c1041895418e974a"
+      "bytes": 1002827,
+      "sha256": "099b8607211daee612be711df4625ce9c19cb70490e583af31e2d051befbdf3c"
     },
     {
       "path": "chemist-actions.mjs",
-      "bytes": 36597,
-      "sha256": "3406812497c54bfa16b5f0c40289e6b941a2bf302b75dba9a7c88577eba28e01"
+      "bytes": 36786,
+      "sha256": "b19fd412f79ed07ef8581b348e00b4d498d97db72139fa3a79424edfc911892e"
     },
     {
       "path": "molecular-state-hash.mjs",
@@ -87,8 +87,8 @@
     },
     {
       "path": "CHEMIST-ACTIONS-API.md",
-      "bytes": 38846,
-      "sha256": "c5c03c6ea4fff7e9bd6e86354d0931f2ef44503d8458de94333193969278739a"
+      "bytes": 39762,
+      "sha256": "bb1b849947550a99f0ff7f4ca57559a0ba98e9c070d04b4a3a98ce49541a7834"
     },
     {
       "path": "DESIGNER-MOVES.md",
@@ -112,8 +112,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 68254,
-      "sha256": "84da498bd0fb0a64d553c0b1c5400b36d18d9312a44982df6983278f2dfd684d"
+      "bytes": 68628,
+      "sha256": "df76dfd8ac84835d0e566931fd97710120cd05c33a5a40858c8acfc55137312f"
     },
     {
       "path": "reproductions.html",
@@ -1242,8 +1242,13 @@
     },
     {
       "path": "design-help.mjs",
-      "bytes": 34442,
-      "sha256": "e8ec0d9780a65bf93a566e852e971ad58dbdfec534184603e20c248fdfe67627"
+      "bytes": 35023,
+      "sha256": "8e21c14a00f8413319a2d4fbc8d8290752a6eedd3573d1b6cc44c0ebf729a334"
+    },
+    {
+      "path": "calculation-readiness.mjs",
+      "bytes": 2286,
+      "sha256": "af418dbaa3acd12f1eee4d787393abdc1ce7dc4a78090ff529da301ada6c6517"
     },
     {
       "path": "docking/refinement-capture-store.mjs",
