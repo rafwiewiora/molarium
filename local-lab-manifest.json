@@ -72,8 +72,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 1002827,
-      "sha256": "099b8607211daee612be711df4625ce9c19cb70490e583af31e2d051befbdf3c"
+      "bytes": 1003728,
+      "sha256": "1ea0695a743aef015bd6c689a8f141503c8b18a43fc064f851cc22092108e2bc"
     },
     {
       "path": "chemist-actions.mjs",
@@ -87,8 +87,8 @@
     },
     {
       "path": "CHEMIST-ACTIONS-API.md",
-      "bytes": 39762,
-      "sha256": "bb1b849947550a99f0ff7f4ca57559a0ba98e9c070d04b4a3a98ce49541a7834"
+      "bytes": 39928,
+      "sha256": "233901f8ba9f57f34d9e2f44b1b0ac624c10387b7ef8f7fda1f57045ad0acf34"
     },
     {
       "path": "DESIGNER-MOVES.md",
@@ -112,8 +112,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 68628,
-      "sha256": "df76dfd8ac84835d0e566931fd97710120cd05c33a5a40858c8acfc55137312f"
+      "bytes": 68640,
+      "sha256": "8c2246484ac89bb01b5aae4af79e316a3b73b4d420858bf4a51e607604ab82cd"
     },
     {
       "path": "reproductions.html",
@@ -1242,13 +1242,13 @@
     },
     {
       "path": "design-help.mjs",
-      "bytes": 35023,
-      "sha256": "8e21c14a00f8413319a2d4fbc8d8290752a6eedd3573d1b6cc44c0ebf729a334"
+      "bytes": 35047,
+      "sha256": "09cec0c9f32ac1ff2cc9ebf6c249c12bf24e7562e158235d9948fc107d18cddb"
     },
     {
       "path": "calculation-readiness.mjs",
-      "bytes": 2286,
-      "sha256": "af418dbaa3acd12f1eee4d787393abdc1ce7dc4a78090ff529da301ada6c6517"
+      "bytes": 2732,
+      "sha256": "76811be088e8bc45a43233fd60b30ae37aabbed6600fe3d7e10fd30b45c43cc8"
     },
     {
       "path": "docking/refinement-capture-store.mjs",

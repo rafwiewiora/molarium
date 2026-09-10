@@ -5,6 +5,12 @@ belong here only when their system, runtime, and timing boundary are clear.
 
 ## Preparation, parameter validity and minimized geometry are separate states
 
+The [SR-10/11/12 follow-up](./reviews/SIMULATION_UI_CACHE_2026-09-10.md) adds
+three related lessons: refresh controls after clearing busy flags; test normal
+reload with warm script caches, not only fresh browsers; and distinguish exact
+saved display-aligned MD frames from arbitrary geometry edits when deciding
+whether minimization can be reused.
+
 An R-group edit must discard stale numerical parameters without discarding the
 fact that the protein was prepared. Re-running crystallographic ligand preparation
 is not a substitute for retyping the edited graph. Likewise, added/locally relaxed

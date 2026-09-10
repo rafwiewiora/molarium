@@ -19,7 +19,7 @@ import { CONTACT_CAPTURE_POLICY } from './docking/contact-capture-policy.mjs';
 import { preserveRegisteredDonorHydrogens } from './docking/registered-donor-hydrogen.mjs';
 import { installDesignHelp } from './design-help.mjs';
 import { hasPreparationHistory, invalidateNumericalParameters, dynamicsReadinessKey,
-  usableMinimization } from './calculation-readiness.mjs';
+  usableMinimization, matchesRecordedDynamicsFrame } from './calculation-readiness.mjs';
 
 const MOLARIUM_NETWORK_POLICY = Object.freeze({
   mode:'connected', localOnly:false, policy:'connected-v1',
@@ -767,6 +767,7 @@ const state = {
   calculating: false,
   lastCalculation: null,
   calculationFrames: [],
+  calculationReadinessProof: null,
   calculationRawFrames: [],
   calculationProjectionRadius: null,
   calculationEnsemble: null,
@@ -13677,6 +13678,7 @@ async function prepareCurrentPdb(optionsOverride = null, suppliedCcdDefinitions 
   } finally {
     state.preparing = false;
     updatePdbPreparationUi();
+    updateOptimizerControls();
   }
 }
 
@@ -15939,6 +15941,7 @@ function configureResultEnsemble(result) {
 
 function setCalculationFrames(result) {
   stopCalculationPlayback();
+  state.calculationReadinessProof = null;
   state.calculationRawFrames = [];
   state.calculationEnsemble = null;
   state.conformerAnalysis = null;
@@ -16013,6 +16016,7 @@ function setCalculationFrames(result) {
 
 function clearCalculationResult() {
   stopCalculationPlayback();
+  state.calculationReadinessProof = null;
   state.calculationFrames = [];
   state.calculationRawFrames = [];
   state.calculationProjectionRadius = null;
@@ -16253,11 +16257,16 @@ async function runCalculation(overrides = {}) {
     }
     if (supportsReadiness && job === 'dynamics') {
       const inputKey = await dynamicsReadinessKey(state.molecule,readinessMethod,options);
+      const proof = state.calculationReadinessProof;
+      const reusingRecordedFrame = options.minimizeBeforeDynamics !== false && proof
+        && matchesRecordedDynamicsFrame(state.molecule,state.calculationFrames)
+        && proof.contextKey === await dynamicsReadinessKey(state.molecule,readinessMethod,options,false);
       if (options.minimizeBeforeDynamics === false) {
         preSimulationMinimization = {status:'disabled',inputKey};
-      } else if (state.molecule.dynamicsReadiness?.key === inputKey) {
+      } else if (state.molecule.dynamicsReadiness?.key === inputKey || reusingRecordedFrame) {
         preSimulationMinimization = {status:'already-minimized',inputKey,
-          minimization:state.molecule.dynamicsReadiness.minimization};
+          ...(reusingRecordedFrame ? {source:'exact saved MD frame; unchanged chemistry and energy protocol'} : {}),
+          minimization:reusingRecordedFrame ? proof.minimization : state.molecule.dynamicsReadiness.minimization};
       } else {
         const minimizeOptions = {...options,maxIterations:750,tolerance:5,savedFrameCount:8};
         const minimized = await runWorkerJob(readinessMethod,'geometry',state.molecule,
@@ -16361,6 +16370,10 @@ async function runCalculation(overrides = {}) {
         key:await dynamicsReadinessKey(state.molecule,readinessMethod,options),
         minimization:preSimulationMinimization.status === 'performed'
           ? preSimulationMinimization : preSimulationMinimization.minimization,
+      };
+      state.calculationReadinessProof = {
+        contextKey:await dynamicsReadinessKey(state.molecule,readinessMethod,options,false),
+        minimization:state.molecule.dynamicsReadiness.minimization,
       };
     }
     result.preSimulationMinimization = preSimulationMinimization;

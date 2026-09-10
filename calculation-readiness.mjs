@@ -18,12 +18,12 @@ export function invalidateNumericalParameters(molecule) {
 }
 
 // Exact coordinates, topology, numerical parameters, engine and potential-energy
-// settings: a chemistry edit, frame change, or new force field cannot reuse this.
+// settings. The coordinate-free context is used only with an exact saved MD frame.
 // Deliberately exclude temperature, duration and display-only metadata.
-export async function dynamicsReadinessKey(molecule, method, options) {
+export async function dynamicsReadinessKey(molecule, method, options, includeCoordinates = true) {
   const input = JSON.stringify({
     atoms:molecule.atoms.map(a => [a.element,a.formalCharge ?? a.charge ?? 0,
-      Boolean(a.aromatic),a.x,a.y,a.z]),
+      Boolean(a.aromatic),...(includeCoordinates ? [a.x,a.y,a.z] : [])]),
     bonds:molecule.bonds.map(b => [b.a,b.b,b.order ?? 1,Boolean(b.aromatic)]),
     charge:molecule.charge ?? 0, system:molecule.parameterization,
     method, implicitSolvent:options.implicitSolvent,
@@ -31,6 +31,13 @@ export async function dynamicsReadinessKey(molecule, method, options) {
   });
   const digest = await crypto.subtle.digest('SHA-256',new TextEncoder().encode(input));
   return Array.from(new Uint8Array(digest),b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// Only an exact saved frame qualifies. No tolerance that might hide an edit.
+export function matchesRecordedDynamicsFrame(molecule, frames) {
+  return frames.some(frame => frame.positions?.length === molecule.atoms.length * 3
+    && molecule.atoms.every((atom,i) => ['x','y','z'].every((axis,j) =>
+      Number.isFinite(atom[axis]) && atom[axis] === frame.positions[i * 3 + j])));
 }
 
 export function usableMinimization(result, atomCount, options = {}) {

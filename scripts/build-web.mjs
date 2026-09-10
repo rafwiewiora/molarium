@@ -3,6 +3,7 @@ import { cp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ARCHIVED_SOS1_VIDEO_PATH, browserModuleClosure, sos1ReleaseWebFiles } from './web-bundle-dependencies.mjs';
+import { webCodeVersion, versionWebCode } from './version-web-code.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const output = join(root, 'dist');
@@ -181,6 +182,18 @@ await writeFile(join(output, 'runtime-config.js'),
     allowedNetworkOrigins:[assetOrigin, 'https://files.rcsb.org', 'https://api.colabfold.com'],
     buildManifest:'./local-lab-manifest.json', assetBase,
   })});\n`);
+// A browser can retain an earlier script even after it revalidates the HTML.
+// Give every local code dependency the same content-derived release identity.
+const codePaths=[...files,'runtime-config.js'].filter(path=>/\.(?:html|mjs|js|css)$/.test(path));
+const codeEntries=await Promise.all(codePaths.map(async path=>[path,await readFile(join(output,path))]));
+const codeVersion=webCodeVersion([...codeEntries,
+  ['build-versioning',await readFile(join(root,'scripts/version-web-code.mjs'))]]);
+const codeFiles=new Set(codePaths);
+for(const [path,bytes] of codeEntries) {
+  const text=bytes.toString('utf8');
+  const versioned=versionWebCode(text,path,codeFiles,codeVersion);
+  if(versioned!==text) await writeFile(join(output,path),versioned);
+}
 await writeFile(join(output, '_headers'), headers);
 await writeFile(join(output, '_redirects'), [
   // Pages serves sos1.html at /sos1 and canonicalizes /sos1.html back to it.
@@ -211,7 +224,7 @@ for (const path of [...files, 'runtime-config.js'].sort()) {
 }
 const manifest = {
   schema:'molarium.web-release.v1', algorithm:'SHA-256', version:packageJson.version,
-  assetBase, files:manifestFiles,
+  assetBase, codeVersion, files:manifestFiles,
 };
 await writeFile(join(output, 'local-lab-manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
 

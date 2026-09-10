@@ -35,7 +35,9 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
       - name: Build production bundle
-        run: npm run build:web
+        run: |
+          node scripts/version-web-code.test.mjs
+          npm run build:web
       - name: Check submitted manuscript integrity and tamper rejection
         run: npm run test:paper-submission
       - name: Preserve production bundle
@@ -108,7 +110,15 @@ jobs:
         run: |
           node --test calculation-readiness.test.mjs
           bun scripts/unprepared-protein.browser.test.mjs
+          bun scripts/preparation-button.browser.test.mjs
+          bun scripts/version-web-code.browser.test.mjs
           MOLARIUM_TEST_API=1 bun scripts/calculation-readiness.browser.test.mjs
+      - name: Check minimization reuse in the release bundle
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+        run: |
+          npm run build:web
+          bun scripts/readiness-release.browser.test.mjs
 
   local-lab:
     name: Local Lab network and integrity

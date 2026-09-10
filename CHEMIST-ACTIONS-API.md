@@ -194,6 +194,8 @@ Dynamics defaults to the checked **Minimize before first simulation** setting:
 full-system minimization first, then reuse for subsequent runs of the same state
 and energy settings. Changed chemistry, coordinates, parameters or energy settings
 require a new minimization; a matching manual full-system minimization also qualifies.
+Exact saved frames of the current qualified MD result also qualify, including
+display-aligned frames, provided chemistry, parameters and energy settings still match.
 `options.minimizeBeforeDynamics:false` is the explicit UI-equivalent opt-out.
 `calculation.preSimulationMinimization` records performed/reused/disabled preflight
 and its provenance. This application behavior does not change direct-worker

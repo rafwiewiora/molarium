@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { hasPreparationHistory, invalidateNumericalParameters,
-  dynamicsReadinessKey, usableMinimization } from './calculation-readiness.mjs';
+  dynamicsReadinessKey, usableMinimization, matchesRecordedDynamicsFrame } from './calculation-readiness.mjs';
 const molecule = () => ({atoms:[{element:'C',x:0,y:0,z:0},{element:'H',x:1,y:0,z:0}],
   bonds:[{a:0,b:1,order:1}],parameterization:{forcefield:'test',sourceSha256:'fixture',
     system:{particles:[{},{}]}}});
@@ -43,4 +43,15 @@ test('failed, zero-step or partial minimization cannot qualify the full system',
     assert.equal(usableMinimization(result,2),false);
   for(const opt of [{maxIterations:0},{movableAtomIndices:[0]},{fixedAtomIndices:[1]}])
     assert.equal(usableMinimization(good,2,opt),false);
+});
+test('saved-frame reuse requires exact coordinates and unchanged chemistry/protocol',async()=>{
+  const m=molecule(),frames=[{positions:new Float64Array([0,0,0,1,0,0])}];
+  const context=await dynamicsReadinessKey(m,'webgpu',options,false);
+  assert.equal(matchesRecordedDynamicsFrame(m,frames),true);
+  m.atoms[0].x=1e-12;
+  assert.equal(matchesRecordedDynamicsFrame(m,frames),false);
+  assert.equal(await dynamicsReadinessKey(m,'webgpu',options,false),context);
+  m.atoms[0].element='N';
+  assert.notEqual(await dynamicsReadinessKey(m,'webgpu',options,false),context);
+  assert.notEqual(await dynamicsReadinessKey(m,'webgpu',{...options,implicitSolvent:'vacuum'},false),context);
 });
