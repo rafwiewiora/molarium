@@ -52,7 +52,9 @@ STORMM uses WebGPU for this preflight. Independent built-in ensemble fixtures
 are outside this current-system policy. Minimized states and their subsequent
 MD endpoints are reused only when exact coordinates, chemistry, numerical
 parameters, engine, solvent, constraints and cutoff match. Edits and manual
-coordinate/frame changes therefore require new minimization. A successful
+coordinate/frame changes therefore required new minimization in PR #32. The
+[SR-12 follow-up](SIMULATION_UI_CACHE_2026-09-10.md) recognizes exact saved MD
+frames under the unchanged numerical protocol, including display alignment. A successful
 manual **full-system** minimization qualifies; partial ligand/pocket minimization
 does not. Duration and temperature changes alone do not erase minimization.
 Repeated jobs retain the existing velocity-initialization behavior; they are not

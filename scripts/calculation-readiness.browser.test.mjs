@@ -13,6 +13,14 @@ try {
   await execute('session.loadStructure',{format:'smiles',content:'CC',polish:false});
   assert.equal(pre(await calculate('dynamics')).status,'performed');
   assert.equal(pre(await calculate('dynamics')).status,'already-minimized');
+  // Replay's final frame is rigidly aligned, unlike the raw worker endpoint.
+  await execute('calculation.selectFrame',{index:0});
+  await execute('calculation.selectFrame',{index:1});
+  const replayed=pre(await calculate('dynamics'));
+  assert.equal(replayed.status,'already-minimized');
+  assert.match(replayed.source,/saved MD frame/);
+  await execute('calculation.selectFrame',{index:0});
+  assert.equal(pre(await calculate('dynamics')).status,'already-minimized');
   assert.equal(pre(await calculate('dynamics',{implicitSolvent:'vacuum'})).status,'performed');
   await calculate('geometry');
   assert.equal(pre(await calculate('dynamics')).status,'already-minimized');
