@@ -234,7 +234,8 @@ const ACTIONS = Object.freeze({
   'calculation.run': Object.freeze({
     description:'Run a Simulate calculation through the same installed engines and bounded settings as the interface.',
     arguments:Object.freeze({ job:'geometry | energy | dynamics | conformers',
-      method:'openmm | webgpu | stormm | rdkit | ani2x', options:'bounded calculation options' }) }),
+      method:'openmm | webgpu | stormm | rdkit | ani2x',
+      options:'bounded calculation options; minimizeBeforeDynamics defaults to the checked UI setting: minimize new/modified current systems before MD, reuse matching minimized states; false explicitly disables this preflight' }) }),
   'calculation.tuneReplicas': Object.freeze({
     description:'Measure and select a bounded STORMM replica count through the visible autotuner.',
     arguments:Object.freeze({}) }),

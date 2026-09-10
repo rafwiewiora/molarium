@@ -3,6 +3,17 @@
 This file records implementation findings that changed a product or engineering decision. Measurements
 belong here only when their system, runtime, and timing boundary are clear.
 
+## Preparation, parameter validity and minimized geometry are separate states
+
+An R-group edit must discard stale numerical parameters without discarding the
+fact that the protein was prepared. Re-running crystallographic ligand preparation
+is not a substitute for retyping the edited graph. Likewise, added/locally relaxed
+hydrogens do not imply that the full complex was minimized before MD. The
+[SR-08/09 reproduction](./reviews/SIMULATION_READINESS_2026-09-10.md) demonstrated
+both mistakes in the live workflow. Remember preparation provenance separately,
+key minimization reuse to the actual molecular state and energy protocol, and
+test user sequences (prepare → edit → finish → simulate), not just isolated actions.
+
 ## A feasible pose can satisfy a silently weakened question
 
 The [September 6 design-function panel](./reviews/DESIGN_FUNCTION_VALIDATION_2026-09-06.md)

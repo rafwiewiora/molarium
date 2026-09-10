@@ -18,6 +18,8 @@ import { requiredContactPolicy, liveHydrogenBondState, unresolvedContactMessage,
 import { CONTACT_CAPTURE_POLICY } from './docking/contact-capture-policy.mjs';
 import { preserveRegisteredDonorHydrogens } from './docking/registered-donor-hydrogen.mjs';
 import { installDesignHelp } from './design-help.mjs';
+import { hasPreparationHistory, invalidateNumericalParameters, dynamicsReadinessKey,
+  usableMinimization } from './calculation-readiness.mjs';
 
 const MOLARIUM_NETWORK_POLICY = Object.freeze({
   mode:'connected', localOnly:false, policy:'connected-v1',
@@ -6692,7 +6694,7 @@ function appendDisconnectedMolecule(baseMolecule, incoming, targetPoint) {
     z: targetPoint.z - anchor.z,
   });
   if (!baseMolecule?.atoms.length) return incoming;
-  delete baseMolecule.parameterization;
+  invalidateNumericalParameters(baseMolecule);
   const offset = baseMolecule.atoms.length;
   baseMolecule.atoms.push(...incoming.atoms);
   baseMolecule.bonds.push(...incoming.bonds.map((bond) => ({ ...bond, a: bond.a + offset, b: bond.b + offset })));
@@ -6951,7 +6953,7 @@ function reconcileAtomHydrogens(molecule, atomReferences) {
 }
 
 function invalidateEditedChemistry(molecule) {
-  delete molecule.parameterization;
+  invalidateNumericalParameters(molecule);
   molecule.charge = molecule.atoms.reduce((sum, atom) => sum + atomFormalCharge(atom), 0);
   molecule.smiles = 'Custom structure';
   molecule.source = { ...(molecule.source || {}), chemistryEdited:true };
@@ -7918,7 +7920,7 @@ function mergeFragmentIntoMolecule(baseMolecule, fragment, targetIndex = null, t
 
   // Numeric force-field Systems are valid only for the exact atom ordering and
   // topology they were generated from. Any builder edit must invalidate them.
-  delete baseMolecule.parameterization;
+  invalidateNumericalParameters(baseMolecule);
 
   if (targetIndex != null) {
     assertAvailableAttachmentValence(baseMolecule, targetIndex);
@@ -10311,7 +10313,7 @@ function installChemistActionsApi(module) {
           graphSha256:actualGraphSha256,
           definition:structuredClone(args.definition),
         } };
-      delete installed.molecule.parameterization;
+      invalidateNumericalParameters(installed.molecule);
       if (installed.molecule.preparation) installed.molecule.preparation = {
         ...installed.molecule.preparation, status:'topology-updated', parameterized:false,
       };
@@ -11474,6 +11476,8 @@ function installChemistActionsApi(module) {
       if (args.options != null && (!args.options || typeof args.options !== 'object'
         || Array.isArray(args.options))) throw new Error('options must be a plain object');
       const options = structuredClone(args.options || {});
+      if (options.minimizeBeforeDynamics != null && typeof options.minimizeBeforeDynamics !== 'boolean')
+        throw new Error('options.minimizeBeforeDynamics must be a boolean');
       // Worker-specific modules perform their own scientific bounds checking;
       // this public boundary additionally rejects pathologically large scalar
       // settings before any model or GPU asset is loaded.
@@ -11490,6 +11494,7 @@ function installChemistActionsApi(module) {
       const result = await runCalculation({ job, method, options });
       if (!result) throw new Error(`${method} ${job} calculation did not complete`);
       return chemistActionSummary({ calculation:{ job, method,
+        preSimulationMinimization:structuredClone(result.preSimulationMinimization || null),
         initialEnergy:result.initialEnergy ?? null, finalEnergy:result.finalEnergy ?? null,
         unit:result.unit || null, frameCount:state.calculationFrames.length,
         replicaCount:result.replicaCount || 1, elapsedMs:result.elapsedMs ?? null,
@@ -12427,7 +12432,7 @@ async function stageRegisteredDesignRouteProduct({ caseId, productSmiles, posePr
         productSmiles, atomMapSource:posePropagationMap.source || 'atom-maps.v0.1.json' },
         posePropagationSpatialFeatures:spatialFeatureDefinitions,
         posePropagationEditRegions:[...priorEditRegions, ...releasedMappedRegion].slice(-64) } };
-    delete next.parameterization;
+    invalidateNumericalParameters(next);
     state.molecule = next;
     state.dockingResult = null; state.dockingPoseIndex = 0;
     state.selectedAtom = null; state.selectedAtoms = [];
@@ -14780,6 +14785,31 @@ async function runConformerArena(molecule, seeds, options, onProgress, parameter
   return result;
 }
 
+function calculationOptionsFromUi(options = {}) {
+  return {
+    tolerance: 5, maxIterations: 750, snapshotFrequency: 25,
+    steps: Number(document.querySelector('#simulation-step-count').value), temperature: 300,
+    savedFrameCount: Number(document.querySelector('#trajectory-frame-count').value),
+    implicitSolvent: document.querySelector('#solvent-select')?.value || 'vacuum',
+    constraintMode: document.querySelector('#constraint-select')?.value || 'none',
+    // The current all-pairs neighbor-list builder makes the optional 1 nm
+    // path slower for the protein fixtures we benchmarked. Keep the
+    // validated kernel available to direct test/API calls, but production
+    // UI jobs deliberately use the complete nonbonded range.
+    nonbondedCutoffNm: 0,
+    stormmSystem: document.querySelector('#stormm-system').value,
+    replicaCount: Number(document.querySelector('#stormm-replica-count').value),
+    conformerCount: Number(document.querySelector('#conformer-count')?.value || 64),
+    conformerEffort: document.querySelector('#conformer-effort')?.value || 'balanced',
+    conformerClusterRms: Number(document.querySelector('#conformer-cluster-rms')?.value || 0.5),
+    conformerPruneRms: 0.35,
+    conformerSeed: 20260817,
+    conformerMinimizeIterations: 100,
+    minimizeBeforeDynamics: document.querySelector('#minimize-before-dynamics').checked,
+    ...options,
+  };
+}
+
 async function runWorkerJob(method, job, molecule, onProgress, options = {}) {
   const worker = await getCalculationWorker(method);
   const id = ++calculationSequence;
@@ -14787,27 +14817,7 @@ async function runWorkerJob(method, job, molecule, onProgress, options = {}) {
     pendingCalculations.set(id, { resolve, reject, onProgress, method, job });
     worker.postMessage({
       type: 'run', id, job, molecule: structuredClone(molecule),
-      options: {
-        tolerance: 5, maxIterations: 750, snapshotFrequency: 25,
-        steps: Number(document.querySelector('#simulation-step-count').value), temperature: 300,
-        savedFrameCount: Number(document.querySelector('#trajectory-frame-count').value),
-        implicitSolvent: document.querySelector('#solvent-select')?.value || 'vacuum',
-        constraintMode: document.querySelector('#constraint-select')?.value || 'none',
-        // The current all-pairs neighbor-list builder makes the optional 1 nm
-        // path slower for the protein fixtures we benchmarked.  Keep the
-        // validated kernel available to direct test/API calls, but production
-        // UI jobs deliberately use the complete nonbonded range.
-        nonbondedCutoffNm: 0,
-        stormmSystem: document.querySelector('#stormm-system').value,
-        replicaCount: Number(document.querySelector('#stormm-replica-count').value),
-        conformerCount: Number(document.querySelector('#conformer-count')?.value || 64),
-        conformerEffort: document.querySelector('#conformer-effort')?.value || 'balanced',
-        conformerClusterRms: Number(document.querySelector('#conformer-cluster-rms')?.value || 0.5),
-        conformerPruneRms: 0.35,
-        conformerSeed: 20260817,
-        conformerMinimizeIterations: 100,
-        ...options,
-      },
+      options: calculationOptionsFromUi(options),
     });
   });
 }
@@ -16178,16 +16188,15 @@ async function runCalculation(overrides = {}) {
   const stormmSystem = job === 'conformers' ? 'current'
     : overrides.options?.stormmSystem || document.querySelector('#stormm-system').value;
   if (!state.molecule && (method !== 'stormm' || stormmSystem === 'current')) { showToast('Load a molecule first'); return null; }
-  // Match the preparation panel's Prepared criterion; reject before dispatching
-  // a worker or showing a calculation overlay. Built-in ensembles use their
-  // own prepared system, not the protein currently displayed in the viewer.
-  if ((method !== 'stormm' || stormmSystem === 'current')
-    && state.molecule?.atoms.some(isProteinAtom) && !state.molecule.parameterization?.system)
-    throw new Error('Please prepare protein');
   if (state.chemistryTransaction) {
     const message = 'Finish or discard the pending chemistry changes before running a calculation.';
     showNotice(message); throw new Error(message);
   }
+  // Ligand edits invalidate numeric parameters, not completed protein preparation.
+  // Never treat an arbitrary "modified" status on a raw PDB as preparation.
+  if ((method !== 'stormm' || stormmSystem === 'current')
+    && state.molecule?.atoms.some(isProteinAtom) && !hasPreparationHistory(state.molecule))
+    throw new Error('Please prepare protein');
   if (state.calculating) { showToast('A calculation is already running'); return null; }
   stopCalculationPlayback();
 
@@ -16222,11 +16231,57 @@ async function runCalculation(overrides = {}) {
 
   try {
     let result;
+    const usesCurrentSystem = method !== 'stormm' || stormmSystem === 'current';
+    const readinessMethod = method === 'stormm' ? 'webgpu' : method;
+    const options = calculationOptionsFromUi(overrides.options);
+    const supportsReadiness = usesCurrentSystem && ['openmm','webgpu','stormm'].includes(method);
+    let preSimulationMinimization = null;
+    // Retype edited topology, retaining preparation/protonation and coordinates.
+    // Never rerun PDB/CCD preparation here: it could undo the user's R group.
+    if (supportsReadiness && !state.molecule.parameterization?.system) {
+      const parameters = await runWorkerJob(readinessMethod,'parameters',state.molecule,
+        setCalculationProgress, options);
+      state.molecule.parameterization = {
+        forcefield:parameters.forcefield, chargeModel:parameters.chargeModel,
+        sourceSha256:parameters.sourceSha256, system:parameters.system, labels:parameters.labels,
+      };
+      if (state.molecule.preparation) state.molecule.preparation = {
+        ...state.molecule.preparation, status:'parameterized-experimental', parameterized:true,
+      };
+      updatePdbPreparationUi();
+      updateOptimizerControls();
+    }
+    if (supportsReadiness && job === 'dynamics') {
+      const inputKey = await dynamicsReadinessKey(state.molecule,readinessMethod,options);
+      if (options.minimizeBeforeDynamics === false) {
+        preSimulationMinimization = {status:'disabled',inputKey};
+      } else if (state.molecule.dynamicsReadiness?.key === inputKey) {
+        preSimulationMinimization = {status:'already-minimized',inputKey,
+          minimization:state.molecule.dynamicsReadiness.minimization};
+      } else {
+        const minimizeOptions = {...options,maxIterations:750,tolerance:5,savedFrameCount:8};
+        const minimized = await runWorkerJob(readinessMethod,'geometry',state.molecule,
+          progress => setCalculationProgress({...progress,
+            phase:`Before dynamics · ${progress.phase}`}),minimizeOptions);
+        if (!usableMinimization(minimized,state.molecule.atoms.length,minimizeOptions))
+          throw new Error('Pre-simulation minimization did not produce a finite, non-increasing energy. Dynamics was not started; inspect or minimize the structure.');
+        applyCalculationPositions(minimized.positions);
+        preSimulationMinimization = {status:'performed',method:readinessMethod,
+          inputKey,outputKey:await dynamicsReadinessKey(state.molecule,readinessMethod,options),
+          initialEnergy:minimized.initialEnergy,finalEnergy:minimized.finalEnergy,
+          unit:minimized.unit,maxIterations:750,tolerance:5,elapsedMs:minimized.elapsedMs,
+          implicitSolvent:options.implicitSolvent,constraintMode:options.constraintMode,
+          nonbondedCutoffNm:options.nonbondedCutoffNm,forcefield:minimized.forcefield,
+          sourceSha256:minimized.sourceSha256};
+        state.molecule.dynamicsReadiness = {
+          key:preSimulationMinimization.outputKey,minimization:preSimulationMinimization};
+      }
+    }
     if (method === 'openmm') {
-      result = await runOpenMMJob(job, state.molecule, setCalculationProgress, overrides.options);
+      result = await runOpenMMJob(job, state.molecule, setCalculationProgress, options);
       if (job !== 'energy') applyCalculationPositions(result.positions);
     } else if (method === 'webgpu') {
-      result = await runWebGPUJob(job, state.molecule, setCalculationProgress, overrides.options);
+      result = await runWebGPUJob(job, state.molecule, setCalculationProgress, options);
       if (job !== 'energy') applyCalculationPositions(result.positions);
     } else if (method === 'stormm') {
       let stormmMolecule = state.molecule;
@@ -16255,7 +16310,7 @@ async function runCalculation(overrides = {}) {
         });
       }
       const calculationOptions = {
-        ...overrides.options,
+        ...options,
         stormmSystem,
         initialConformers: conformerSeeds?.conformers,
         conformerMethod: conformerSeeds?.conformerMethod,
@@ -16282,14 +16337,35 @@ async function runCalculation(overrides = {}) {
       loadMolecule(result.molecule);
       applyCalculationPositions(result.positions);
     } else if (method === 'rdkit') {
-      result = await runRDKitJob(job, state.molecule, setCalculationProgress, overrides.options);
+      result = await runRDKitJob(job, state.molecule, setCalculationProgress, options);
       if (job !== 'energy') applyCalculationPositions(result.positions);
     } else if (method === 'ani2x') {
-      result = await runAni2xJob(job, state.molecule, setCalculationProgress, overrides.options);
+      result = await runAni2xJob(job, state.molecule, setCalculationProgress, options);
       if (job !== 'energy') applyCalculationPositions(result.positions);
     }
     setCalculationFrames(result);
+    if (supportsReadiness && job === 'geometry'
+      && usableMinimization(result,state.molecule.atoms.length,options)) {
+      state.molecule.dynamicsReadiness = {
+        key:await dynamicsReadinessKey(state.molecule,readinessMethod,options),
+        minimization:{status:'manual',method:readinessMethod,initialEnergy:result.initialEnergy,
+          finalEnergy:result.finalEnergy,unit:result.unit,maxIterations:options.maxIterations,
+          implicitSolvent:options.implicitSolvent,constraintMode:options.constraintMode,
+          nonbondedCutoffNm:options.nonbondedCutoffNm,sourceSha256:result.sourceSha256},
+      };
+    } else if (supportsReadiness && job === 'dynamics'
+      && preSimulationMinimization?.status !== 'disabled'
+      && Number.isFinite(result.finalEnergy) && Array.from(result.positions).every(Number.isFinite)) {
+      // Continuing from the resulting MD frame does not require another minimum.
+      state.molecule.dynamicsReadiness = {
+        key:await dynamicsReadinessKey(state.molecule,readinessMethod,options),
+        minimization:preSimulationMinimization.status === 'performed'
+          ? preSimulationMinimization : preSimulationMinimization.minimization,
+      };
+    }
+    result.preSimulationMinimization = preSimulationMinimization;
     state.lastCalculation = {
+      preSimulationMinimization,
       job: result.job,
       initialEnergy: result.initialEnergy,
       finalEnergy: result.finalEnergy,
@@ -16388,6 +16464,10 @@ async function runCalculation(overrides = {}) {
           : method === 'rdkit'
             ? `${result.forcefield}${result.fallback ? ' fallback' : ''} · RDKit ${result.rdkitVersion} · browser WebAssembly${convergenceNote} · ${(result.elapsedMs / 1000).toFixed(2)} s`
           : `${result.model} · ${result.modelLevel} · total electronic energy · analytical AEV forces · ONNX Runtime Web ${result.platform} · ${result.modelEvaluations} evaluations · ensemble σ ${result.finalEnsembleStdDev.toFixed(3)} kcal/mol${convergenceNote} · ${(result.elapsedMs / 1000).toFixed(2)} s`);
+    if (preSimulationMinimization) document.querySelector('#result-meta').textContent +=
+      preSimulationMinimization.status === 'performed' ? ' · minimized before dynamics'
+        : preSimulationMinimization.status === 'already-minimized' ? ' · previously minimized state'
+          : ' · pre-simulation minimization disabled';
     updateCalculationFrameUI();
     document.querySelector('#result-card').classList.remove('hidden');
     if (state.calculationEnsemble) requestAnimationFrame(drawReplicaMosaic);
@@ -17920,6 +18000,7 @@ document.querySelector('#save-button').addEventListener('click', () => { const l
 document.querySelector('#fullscreen-button').addEventListener('click', () => { const viewer = document.querySelector('#viewer-container'); if (!document.fullscreenElement) viewer.requestFullscreen?.(); else document.exitFullscreen?.(); });
 function currentCalculationUiOptions() {
   return {
+    minimizeBeforeDynamics:document.querySelector('#minimize-before-dynamics').checked,
     steps:Number(document.querySelector('#simulation-step-count').value),
     savedFrameCount:Number(document.querySelector('#trajectory-frame-count').value),
     implicitSolvent:document.querySelector('#solvent-select').value,
