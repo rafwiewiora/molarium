@@ -114,6 +114,7 @@ const files = [
   'docking/validation/cloud-panel/openmm-wasm-native-validation-2026-08-23.json',
   'docking/validation/cloud-panel/RESULTS-2026-08-23.md',
   'assets/lsd-launch.mol', 'assets/molarium-logo.svg', 'assets/molarium-mark.svg',
+  'assets/molarium-social-v1.png',
   'assets/media/sos1-designer-moves-molarium-interface.mp4',
   'assets/media/sos1-designer-moves-molarium-interface.render-manifest.json',
   'licenses/APACHE-2.0-LICENSE.txt', 'licenses/DIMORPHITE-DL-NOTICE.txt', 'licenses/ONNXRUNTIME-1.27.0-THIRD-PARTY-NOTICES.txt',

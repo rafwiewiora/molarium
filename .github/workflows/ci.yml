@@ -38,6 +38,7 @@ jobs:
         run: |
           node scripts/version-web-code.test.mjs
           npm run build:web
+          node scripts/social-preview.test.mjs --dist
       - name: Check submitted manuscript integrity and tamper rejection
         run: npm run test:paper-submission
       - name: Preserve production bundle

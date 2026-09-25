@@ -112,8 +112,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 68640,
-      "sha256": "8c2246484ac89bb01b5aae4af79e316a3b73b4d420858bf4a51e607604ab82cd"
+      "bytes": 70363,
+      "sha256": "c96fe9259b2f8764fabfae5337f34fbfebc243e9fc9278df4361fae33f5baa18"
     },
     {
       "path": "reproductions.html",
@@ -162,8 +162,8 @@
     },
     {
       "path": "scripts/generate-local-lab-manifest.mjs",
-      "bytes": 6298,
-      "sha256": "044ff23cf37be61364723635a8d7d500f37b1784dbf59a0bcf559016c26a486b"
+      "bytes": 6333,
+      "sha256": "99a54d051478e13922b5126c9bbfa690b941cff1e4723703acb8aba076c63d88"
     },
     {
       "path": "scripts/build-sos1-publication.mjs",
@@ -549,6 +549,11 @@
       "path": "assets/molarium-mark.svg",
       "bytes": 1593,
       "sha256": "52b492bfc572b09c55d339b31665c6563120a8b1aa3e842aa43c3d3f4e7aa8ad"
+    },
+    {
+      "path": "assets/molarium-social-v1.png",
+      "bytes": 159567,
+      "sha256": "69bca066e0edb5a81f295f361940faa82e40154107b4e2a334fb8a4550cca04a"
     },
     {
       "path": "design-history/designer-replay-review.mjs",

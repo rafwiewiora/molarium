@@ -30,7 +30,7 @@ const server = Bun.serve({
     if (pathname === '/' || pathname === '/index.html') {
       const source = await Bun.file(join(root, 'index.html')).text();
       const html = source
-        .replace('<title>Molarium — 3D Molecular Viewer &amp; Builder</title>',
+        .replace(/<title>[^<]*<\/title>/,
           '<title>Molarium · Independent workspace study</title>')
         .replace('</head>', '    <link rel="stylesheet" href="./independent-layout-study.css" />\n  </head>')
         .replace('<body class="molarium-workspace">',
