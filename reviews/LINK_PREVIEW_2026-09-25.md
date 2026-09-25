@@ -39,3 +39,7 @@ provider fetches the page again; deployment cannot rewrite existing messages.
 
 Metadata follows the [Open Graph protocol](https://ogp.me/), including the four
 basic properties and image type, dimensions and alternative text.
+
+Release-gate follow-up: the first CI attempt exposed an existing delayed-polish
+race. Its separate [SR-13 finding and cancellation fix](STALE_POLISH_2026-09-25.md)
+are included in the same PR; the homepage preview itself does not change chemistry.

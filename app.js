@@ -6954,6 +6954,9 @@ function reconcileAtomHydrogens(molecule, atomReferences) {
 }
 
 function invalidateEditedChemistry(molecule) {
+  // A queued/in-flight polish retains indices from the old graph. Even if
+  // the molecule object survives this edit, those coordinates are now stale.
+  smallMoleculePolishSequence += 1;
   invalidateNumericalParameters(molecule);
   molecule.charge = molecule.atoms.reduce((sum, atom) => sum + atomFormalCharge(atom), 0);
   molecule.smiles = 'Custom structure';

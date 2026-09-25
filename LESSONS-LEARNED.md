@@ -5,6 +5,12 @@ belong here only when their system, runtime, and timing boundary are clear.
 
 ## Preparation, parameter validity and minimized geometry are separate states
 
+An unchanged molecule object does not imply an unchanged atom-index mapping.
+The [SR-13 release-gate failure](./reviews/STALE_POLISH_2026-09-25.md) showed that
+queued interactive polish must be invalidated on graph edits, even when those
+edits already discard numerical parameters. Check cancellation both before
+dispatch and after asynchronous worker completion.
+
 The [SR-10/11/12 follow-up](./reviews/SIMULATION_UI_CACHE_2026-09-10.md) adds
 three related lessons: refresh controls after clearing busy flags; test normal
 reload with warm script caches, not only fresh browsers; and distinguish exact

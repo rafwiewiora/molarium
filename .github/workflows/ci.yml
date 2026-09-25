@@ -110,6 +110,7 @@ jobs:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
         run: |
           node --test calculation-readiness.test.mjs
+          node --test scripts/stale-polish.test.mjs
           bun scripts/unprepared-protein.browser.test.mjs
           bun scripts/preparation-button.browser.test.mjs
           bun scripts/version-web-code.browser.test.mjs
