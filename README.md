@@ -426,9 +426,9 @@ To restore only the ANI-2x bundle for local validation, run
 ## Protein folding and protein–ligand cofolding
 
 The folding panel and `protein.predict` API support a pinned LocalFold backend:
-AlphaFold2 `model_1_ptm` for one protein chain, and OpenBind-0 for that protein
-with an optional ligand. OpenBind-0 accepts explicit SMILES or a PDB CCD code.
-Both use WebGPU with runtime-sized tensors rather than our old 128-residue
+AlphaFold2 `model_1_ptm` for one protein chain, and OpenBind-0 or Boltz-2 for that
+protein with an optional ligand. Both cofolding models accept explicit SMILES or
+a PDB CCD code. These models use WebGPU with runtime-sized tensors rather than our old 128-residue
 export limit; available GPU memory still bounds practical inputs.
 
 Choose single sequence, supplied A3M, or ColabFold MSA search. Only search sends
@@ -445,7 +445,12 @@ pins, ligand component, PDB and confidence arrays.
 This is an experimental integration. Apple M1 Pro browser checks cover monomer
 inference, 129-residue input, supplied A3M, SMILES/CCD cofolding and chemical-state
 preservation. They do not establish binding-pose accuracy or agreement with the
-original native OpenBind/AF2 implementations. Each prediction accepts one
+original native implementations. OpenBind-0 is the checkpoint released with
+OpenFold3 v0.5.0; it is distinct from the older protein-only OpenFold 2 backend.
+Boltz-2 is a separate trained structure model, with its own features and confidence
+head. The browser ports use quantized weights; Boltz affinity prediction is not
+exposed. See the [native comparison protocol and results](reviews/cofold-method-comparison-2026-11-12/README.md)
+for the limits of these engineering checks. Each prediction accepts one
 protein and at most one noncovalent ligand (150 heavy atoms); the library workflow
 queues multiple such predictions. Protein multimers,
 templates, nucleic acids and covalent cofolding are not exposed yet.
@@ -457,6 +462,8 @@ ETA, pause/resume, local checkpoints and portable exports. Review independently
 predicted complexes in Foldarium's grid or one at a time, record exact pose
 preferences/notes, and export a shortlist. See the [workflow and API](folding/LIBRARIES.md)
 and [measured throughput](reviews/library-cofolding-2026-11-12/README.md).
+Choose OpenBind-0 or Boltz-2 as the library method. Portable comparison libraries
+retain each pose's method, execution backend and provenance for human review.
 
 ### Legacy OpenFold 2
 

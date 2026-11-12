@@ -1,0 +1,4 @@
+numpy==2.3.4
+rdkit==2025.9.3
+gemmi==0.7.4
+biotite==2.0.0

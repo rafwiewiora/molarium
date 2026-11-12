@@ -1,8 +1,9 @@
 # Cofold a library and review it in Foldarium
 
 In **Protein folding → Compound library → Foldarium review**, paste one protein
-sequence and SMILES lines, optionally followed by unique names. The library uses
-OpenBind-0 with the alignment, sampling steps, recycles and base seed above it.
+sequence and SMILES lines, optionally followed by unique names. Choose OpenBind-0
+or Boltz-2 under **Library method**, with the alignment, sampling steps, recycles
+and base seed above it. This selection is independent of the single-prediction model.
 Choose poses per compound (default three), then **Cofold library**.
 
 The queue runs serially on the browser's GPU. It reuses loaded model weights and
@@ -33,7 +34,9 @@ to four independently seeded poses per compound, or inspect one at a time.
 Choose prefer/reject/unreviewed, add notes, or select none of these poses. Ligands
 move with their own receptors under a protein Cα alignment; they are never fitted
 to each other. Confidence and prediction-to-prediction Cα RMSD are not
-experimental correctness labels. The exact Foldarium source pin and narrowly
+experimental correctness labels. Every pose shows its model and execution backend;
+native comparison records without a measured individual inference time say so.
+The exact Foldarium source pin and narrowly
 defined asset URL transformation are in `vendor/foldarium/UPSTREAM.json`.
 The separately operated `www.foldarium.org` deployment is not changed by a
 Molarium release; exported libraries can move between origins when its reviewer
@@ -69,7 +72,7 @@ const api = await window.MolariumChemistActionsReady;
 const pending = api.execute({action: 'protein.cofoldLibrary', args: {
   sequence: 'NLYIQWLKDGGPSSGRPPPS',
   compounds: [{id: 'ethanol', smiles: 'CCO'}, {id: 'benzene', smiles: 'c1ccccc1'}],
-  name: 'Candidate library', samples: 3, seed: 0,
+  name: 'Candidate library', model: 'localfold-openbind0', samples: 3, seed: 0,
   msaMode: 'single', steps: 25, recycles: 2, retainPae: false
 }});
 // These two routes bypass the long action queue.
@@ -81,6 +84,9 @@ await api.execute({action: 'protein.resumeLibrary', args: {runId: library.runId}
 
 Seeds are base seed + sample index, reused across compounds. This is a
 reproducible request specification; floating-point results may vary by GPU.
+Use `model:'localfold-boltz2'` for the Boltz-2 structure model. Both browser
+cofolding models use int5 weights through LocalFold; their confidence scales are
+model-specific, and neither route provides binding-affinity estimates.
 The API also accepts the textarea's SMILES/name line format. The 10,000-entry
 structural input allowance is scoped to this bulk route; ordinary actions retain
 their existing input limits. Known failures are not automatically retried: make
@@ -97,6 +103,10 @@ promise for larger proteins, ligands, MSAs or other GPUs.
 The follow-up 16-compound/48-pose library completed in 135.31 seconds, averaging
 2.62 seconds per warm pose, with no failed predictions and stable instrumented
 post-pose GPU-buffer counts.
+The same 48 requests through Boltz-2 completed in 185.91 seconds, with a 29.11-second
+first pose and 3.33 seconds per warm pose. See the
+[method comparison record](../reviews/cofold-method-comparison-2026-11-12/README.md)
+for raw outputs, comparison definitions and the independent native protocol.
 
 ```sh
 node --test folding/library.test.mjs folding/integration.test.mjs

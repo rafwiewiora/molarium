@@ -106,7 +106,8 @@ await molarium.execute({action:'protein.predict', args:{
 }});
 ```
 
-Use `model:'localfold-af2'` without `ligand` for one protein; use
+Use `model:'localfold-boltz2'` for the experimental Boltz-2 structure port, or
+`model:'localfold-af2'` without `ligand` for one protein; use
 `model:'openfold'` for the retained 128-residue ONNX backend. `msaMode` is
 `single`, `provided` with an `a3m` string, or `search` with an HTTPS
 `msaEndpoint` (default `https://api.colabfold.com`). With no alignment arguments,
@@ -117,7 +118,7 @@ one protein and one optional noncovalent ligand; `ligand.type` is explicitly
 by Molarium's PDB importer; ligands have at most 150 heavy atoms.
 
 `recycles` counts additional trunk passes (0 still runs one pass), `steps` is
-OpenBind diffusion sampling steps, and `seed` is an unsigned 32-bit integer.
+OpenBind/Boltz diffusion sampling steps, and `seed` is an unsigned 32-bit integer.
 AlphaFold2 ignores the diffusion step count. The UI uses the same route and
 displays the requested model/inputs. `protein.cancelPrediction` can interrupt
 the pending prediction action; it is not queued behind it. Shard downloads
@@ -133,7 +134,10 @@ preparation selects that graph rather than a generic CCD lookup for `LIG`.
 Local Lab blocks the external weight-loading path. MSA search sends only the
 protein sequence to the selected search endpoint; single/provided modes do not
 perform a sequence search. These routes are experimental integration paths;
-native-model parity and binding-pose benchmarking remain separate work.
+native-model parity and binding-pose benchmarking remain separate work. The
+[native comparison protocol](folding/comparison/README.md) distinguishes matched
+trained checkpoints from numerical parity, sampling differences and experimental
+accuracy. Boltz-2 affinity inference is not exposed.
 
 ## Live design campaigns
 

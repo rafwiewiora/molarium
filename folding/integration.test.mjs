@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-import {foldingRequest,installFoldLigand,LOCALFOLD_REVISION,validateFoldComponent} from './request.mjs';
+import {foldingRequest,installFoldLigand,LOCALFOLD_REVISION,validateFoldComponent,COFOLD_FAMILIES} from './request.mjs';
 import {createChemistActionsApi} from '../chemist-actions.mjs';
 import {smilesComponent} from '../vendor/localfold/shared/chem/component.js';
 import {af3BatchFromA3m} from '../vendor/localfold/shared/af3/featurise/batch.js';
@@ -39,6 +39,17 @@ test('OpenBind featurisation contains real ligand atoms and bonds',async()=>{
   const {batch}=af3BatchFromA3m('ACDE',null,{ligands:[ligand],seed:0,...featuriserDialect(OPENBIND0)});
   assert.equal(batch.tokens,7,'four protein residues plus three atomised ligand tokens');
   assert.ok(batch.atomCount>ligand.atoms.length);
+});
+test('Boltz-2 selects its own feature dialect and immutable weight bundle',async()=>{
+  const {BOLTZ2}=await import('../vendor/localfold/shared/af3/dialect.js');
+  const {MODEL_BUNDLES,loadManifest}=await import('../vendor/localfold/shared/bundles/manifests/index.js');
+  const request=foldingRequest({model:'localfold-boltz2',sequence:'ACDE',ligand:{type:'smiles',value:'CCO'}});
+  const component=await smilesComponent(request.ligand.value,{code:'LIG'});
+  const {batch}=af3BatchFromA3m(request.sequence,null,{ligands:[component],seed:0,...featuriserDialect(BOLTZ2)});
+  assert.equal(COFOLD_FAMILIES[request.model],'boltz2');assert.equal(batch.tokens,7);
+  assert.equal(BOLTZ2.msaDoubleAddPair,true);assert.equal(BOLTZ2.realignSampler,true);
+  assert.notEqual(MODEL_BUNDLES.boltz2.remote,MODEL_BUNDLES.openbind0.remote);
+  assert.equal((await loadManifest('boltz2')).model.name,'boltz2');
 });
 test('oversized and disconnected ligand graphs reject before conformer generation',()=>{
   assert.throws(()=>validateFoldComponent({atoms:Array(151).fill({}),bonds:[]}),/150/);

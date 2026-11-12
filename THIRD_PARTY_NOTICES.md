@@ -109,7 +109,12 @@ Model weights are downloaded separately from the immutable URLs in LocalFold's
 bundle manifests. The AlphaFold2 parameters retain DeepMind's CC BY 4.0 terms;
 OpenBind-0 is the OpenFold3 v0.5.0 release under its upstream Apache 2.0 terms.
 These weights are not covered by Molarium's code license. The initial Molarium
-integration exposes AF2 monomer model_1_ptm and OpenBind-0, not DeepMind AF3.
+integration exposes AF2 monomer model_1_ptm, OpenBind-0 and Boltz-2 structure
+inference, not DeepMind AF3. [Boltz](https://github.com/jwohlwend/boltz) source and
+model weights are released under MIT terms. The browser downloads LocalFold's
+separately versioned int5 Boltz-2 structure bundle; no affinity model is loaded.
+Native comparison scripts use official OpenFold3 and Boltz releases separately
+from the browser backend and retain checkpoint hashes with each result.
 
 ## Foldarium local library reviewer
 

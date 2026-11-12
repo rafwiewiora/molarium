@@ -134,3 +134,19 @@ recover the case. Deferring database initialization on blank reproduction landin
 alongside lifecycle cleanup and bounded explicit errors, passed ten repeated navigation imports.
 Preserve both failure and recovery traces; do not call a passing instrumented run a root-cause
 diagnosis or silently replace a failed durable save with volatile in-memory state.
+
+## Native prediction comparison needs more than matching model names
+
+OpenBind-0 is not Foldarium's historical OpenFold3 preview-2 checkpoint or the
+older protein-only OpenFold 2 export. Pin the trained checkpoint and runtime
+separately. Equal integer seeds and sampling counts do not match random tensors,
+feature generation, quantization or samplers. Retain within-method seed spread
+alongside cross-engine pose differences, and preserve the predicted receptor
+when aligning a complex. Agreement on arbitrary test pairs is not experimental
+pose accuracy. The [cofolding comparison record](reviews/cofold-method-comparison-2026-11-12/README.md)
+preserves the first native results and the remaining work.
+
+A native mmCIF may omit a ligand's bonds. Recover correspondence from explicit
+named input chemistry and record its source hash; never infer the intended graph
+from possibly distorted predicted distances. A cached ligand conformer also does
+not prove which reference conformer the model actually used.

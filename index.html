@@ -241,6 +241,7 @@
                 <select id="fold-model">
                   <option value="localfold-af2">AlphaFold2 · LocalFold</option>
                   <option value="localfold-openbind0">OpenBind-0 · protein + ligand</option>
+                  <option value="localfold-boltz2">Boltz-2 · protein + ligand</option>
                   <option value="openfold">OpenFold · legacy ≤128 residues</option>
                 </select>
               </label>
@@ -263,7 +264,7 @@
                   <input id="msa-endpoint" type="url" value="https://api.colabfold.com" />
                 </label>
                 <label class="field-label">Recycles <input id="fold-recycles" type="number" min="0" max="20" step="1" value="2" /></label>
-                <label class="field-label">OpenBind sampling steps <input id="fold-steps" type="number" min="1" max="200" step="1" value="25" /></label>
+                <label class="field-label">Cofolding sampling steps <input id="fold-steps" type="number" min="1" max="200" step="1" value="25" /></label>
                 <label class="field-label">Random seed <input id="fold-seed" type="number" min="0" max="4294967295" step="1" value="0" /></label>
               </details>
               <p class="input-help fold-privacy">Inference runs here on WebGPU. First use downloads and caches the selected model weights from Hugging Face. Only MSA search sends your sequence to the selected service; CCD input fetches a public ligand definition. An MSA often improves prediction quality.</p>
@@ -271,10 +272,11 @@
                 <button class="primary-button" id="fold-protein">Fold locally</button>
                 <button class="soft-button hidden" id="cancel-fold">Cancel</button>
               </div>
-              <p class="fold-status" id="fold-status" role="status" aria-live="polite">Ready · AlphaFold2 / OpenBind-0 · WebGPU</p>
+              <p class="fold-status" id="fold-status" role="status" aria-live="polite">Ready · AlphaFold2 / OpenBind-0 / Boltz-2 · WebGPU</p>
               <details class="fold-settings" id="fold-library-panel">
                 <summary>Compound library → Foldarium review</summary>
-                <p class="input-help">Cofold the sequence above with each compound using OpenBind-0 and the alignment, steps, recycles and base seed above. One GPU job runs at a time; weights and the protein alignment are reused. Every pose is saved in this browser.</p>
+                <p class="input-help">Cofold the sequence above with each compound using the selected library method and the alignment, steps, recycles and base seed above. One GPU job runs at a time; weights and the protein alignment are reused. Every pose is saved in this browser.</p>
+                <label class="field-label">Library method <select id="fold-library-model"><option value="localfold-openbind0">OpenBind-0 · LocalFold</option><option value="localfold-boltz2">Boltz-2 · LocalFold</option></select></label>
                 <label class="field-label">Library name <input id="fold-library-name" value="Cofolding library" maxlength="200"></label>
                 <label class="field-label">Compounds · one SMILES per line, optionally followed by a name
                   <textarea id="fold-library-smiles" class="mono-input" rows="7" spellcheck="false" placeholder="CCO ethanol&#10;c1ccccc1 benzene&#10;CC(=O)Oc1ccccc1C(=O)O aspirin"></textarea>

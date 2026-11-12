@@ -46,12 +46,14 @@ try{
         'Clc1ccc(Cl)cc1 dichlorobenzene','FC(F)(F)c1ccccc1 trifluoromethylbenzene'].join('\n')}]:[])];
   for(const c of cases){
     const previous=await b.evaluate(`document.querySelector('#fold-library-saved').value`);
-    const input={...c,msaMode:'single',steps:process.argv.includes('--quick')?1:25,recycles:process.argv.includes('--quick')?0:2,seed:0};
+    const input={...c,model:process.argv.includes('--boltz2')?'localfold-boltz2':'localfold-openbind0',
+      msaMode:'single',steps:process.argv.includes('--quick')?1:25,recycles:process.argv.includes('--quick')?0:2,seed:0};
     await b.evaluate(`(()=>{
       const input=${JSON.stringify(input)};
       document.querySelector('#protein-sequence').value=input.sequence;
       document.querySelector('#fold-msa-mode').value='single';
       document.querySelector('#fold-library-name').value=input.name;
+      document.querySelector('#fold-library-model').value=input.model;
       document.querySelector('#fold-library-smiles').value=input.compounds;
       document.querySelector('#fold-library-samples').value=String(input.samples);
       document.querySelector('#fold-steps').value=String(input.steps);
@@ -85,6 +87,15 @@ try{
   await waitFor(()=>b.evaluate(`document.querySelectorAll('.viewer canvas').length>=2||Boolean(document.querySelector('.viewer.error'))`),60000,'Foldarium grid');
   const errors=await b.evaluate(`Array.from(document.querySelectorAll('.viewer.error'),e=>e.textContent)`);
   assert.deepEqual(errors,[]);
+  if(reuse){
+    const original=JSON.parse(await readFile(reuse,'utf8'));
+    if(original.run.request.model==='comparison-review-only'){
+      const heads=await b.evaluate(`Array.from(document.querySelectorAll('.pose-head'),e=>e.textContent)`);
+      const expected=[...new Set(original.poses.map(p=>p.result.model))];
+      for(const label of expected)assert.ok(heads.some(h=>h.includes(label)),`visible method label: ${label}`);
+      if(original.poses.some(p=>p.result.kind==='native'))assert.ok(heads.some(h=>h.includes('inference timing unavailable')));
+    }
+  }
   await b.evaluate(`window.__reviewCanvas=document.querySelector('.viewer canvas');document.querySelector('.choices button').click()`);
   await waitFor(()=>b.evaluate(`document.querySelector('#summary').textContent.includes('1 preferred poses')`),20000,'saved human preference');
   assert.equal(await b.evaluate(`window.__reviewCanvas===document.querySelector('.viewer canvas')`),true,'voting preserves the inspected viewer and camera');

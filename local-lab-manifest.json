@@ -67,38 +67,38 @@
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "bytes": 8987,
-      "sha256": "d7404a7453dc3a6e328284e84c51dcaba0341c27cfaab38bbe93cc651cfcb847"
+      "bytes": 9381,
+      "sha256": "1843639e5947713f7ea379179289be5dee5ae25a663e0233e423c4e289057667"
     },
     {
       "path": "app.js",
-      "bytes": 1009463,
-      "sha256": "f4429f2d50b2cd4b198b2c83e361a3fa85968a6eed74e87a6dbd210702a36628"
+      "bytes": 1009494,
+      "sha256": "c13e5e4d3792899d63e95feee1ca2a6edd4e912446d5a33f31693137a733fbe8"
     },
     {
       "path": "folding/request.mjs",
-      "bytes": 5489,
-      "sha256": "31faf8460934af6dbe0166e3dd0b251a35603a8ead5820d899b6c442cfd326b1"
+      "bytes": 5669,
+      "sha256": "732e2cdc4a219cfb97f6b8455c360eb19b0cf10ff13b1686a75cca9c2f979b3a"
     },
     {
       "path": "folding/localfold.mjs",
-      "bytes": 8547,
-      "sha256": "7b1c60a3ca2c9db95125ad852661ac57858c9cff6b9d9eb4eecd652d061b1756"
+      "bytes": 8709,
+      "sha256": "4136962ee8572fca8f23a4938ab85a56601d7926502d982fd304be06c050896d"
     },
     {
       "path": "folding/library.mjs",
-      "bytes": 8659,
-      "sha256": "5800d2dd31266022b45a1ef4b13d0c215e919625e71d6f8adb10437244ba7317"
+      "bytes": 8702,
+      "sha256": "d495a8557e69b272f13fa2ba0853cc5425784472b95ba4da55fbf47bfd93bfd9"
     },
     {
       "path": "folding/library-ui.mjs",
-      "bytes": 6740,
-      "sha256": "a6c0cc1b56068494e239de33e2df6ae8c02381ed1ace86e9fcbff9d394638e13"
+      "bytes": 6748,
+      "sha256": "65efff7d73c1e5cc79ecca14a6a9b45e392a0647fdf9547e6546361d3ddad5ab"
     },
     {
       "path": "folding/LIBRARIES.md",
-      "bytes": 6355,
-      "sha256": "d6fc44524e9a6cfb2c34250f8f5b90001ab9e068ec4e184538907ad7c39d889d"
+      "bytes": 7131,
+      "sha256": "e94337368a76f9f10b50a6ee6096eb13a0bd14f858453106f58391d8e7600796"
     },
     {
       "path": "reviews/library-cofolding-2026-11-12/README.md",
@@ -122,8 +122,8 @@
     },
     {
       "path": "vendor/foldarium/library-review.js",
-      "bytes": 12686,
-      "sha256": "502cc380fd71821998d714f7a02308958de6348e318f4b9e1d703ebc348f8d71"
+      "bytes": 12838,
+      "sha256": "e63be618821c6b090ee6d490a15174e9c209f836e4005d828928ccb6442a74e1"
     },
     {
       "path": "vendor/foldarium/library-format.js",
@@ -148,7 +148,7 @@
     {
       "path": "vendor/foldarium/UPSTREAM.json",
       "bytes": 2475,
-      "sha256": "421bac40cf88f4d6c8675b7504dbdfd6eefcde4228655c8639e63602c8e9520d"
+      "sha256": "f63c087a2e4f5e7c3b313769bac83ee4f95c5246acaf859061cf672cf923d98f"
     },
     {
       "path": "vendor/foldarium/assets/foldarium-mark.svg",
@@ -167,8 +167,8 @@
     },
     {
       "path": "chemist-actions.mjs",
-      "bytes": 38671,
-      "sha256": "2b91361ef199f1084a8875ac0c12a1b243b2d7ed968ee61af1a40e1e6b631886"
+      "bytes": 38759,
+      "sha256": "7b06700baed06dbaed6f7a73574d6f9bbabd5ea0ba1cd3765f52a00d3f409990"
     },
     {
       "path": "molecular-state-hash.mjs",
@@ -177,8 +177,8 @@
     },
     {
       "path": "CHEMIST-ACTIONS-API.md",
-      "bytes": 42482,
-      "sha256": "32c6b4fa803f6603a7241260ae16bb2d0af239dfa1c71437f1b059d0792c8ef3"
+      "bytes": 42782,
+      "sha256": "a8d429aa0b761aad3cd08204e03d8b54ea15b9844414b6579479835912cac166"
     },
     {
       "path": "DESIGNER-MOVES.md",
@@ -202,8 +202,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 75225,
-      "sha256": "91c0385403c58078914730421ab2cefb23c2f9de4424f237f4616b2b0bcb84a1"
+      "bytes": 75579,
+      "sha256": "34643708856dd3f316b3032f82794f8890bcbee8fa38679081567ba7a1910794"
     },
     {
       "path": "reproductions.html",
@@ -217,8 +217,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 14850,
-      "sha256": "a166e7c24c2dc7911fed3809a2b231255e9bd194d2eec0448114ab78ad6d5ccb"
+      "bytes": 14923,
+      "sha256": "1ad317843e920b8f099c524d674af13d719e8b2c3581a0b1d1446481f29f0787"
     },
     {
       "path": "protein-residue-templates.js",
@@ -1452,8 +1452,8 @@
     },
     {
       "path": "workspace-help.mjs",
-      "bytes": 23626,
-      "sha256": "528e6495f4fccdd5c6209d9c1ea3f5667be69fb67b57c53f3acec180414fd45c"
+      "bytes": 24383,
+      "sha256": "69798a9b304b68d5c4e496217268eb2fd6c8b0f32cc4d95419338cc734421bfe"
     },
     {
       "path": "vendor/localfold/shared/bundles/alphafold-fixture.js",
