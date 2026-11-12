@@ -123,7 +123,7 @@ def convert(path, smiles, sequence, native_topology=None):
         plddt.append(confidence);pdb_atoms.append({'slot':i,'atomName':name,'resName':res_name,'chain':chain,'resSeq':residue})
     pdb='\n'.join(lines)+'\nEND\n'
     component={'code':'LIG','atoms':comp_atoms,'bonds':comp_bonds,'smiles':smiles,
-      'chemistrySource':'Declared input SMILES mapped to the native output explicit connectivity; no bond inference from coordinates.',
+      'chemistrySource':'Declared input SMILES mapped by native atom names and explicit native '+('input-cache'if native_topology is not None else'output')+' connectivity; no bond inference from coordinates.',
       'referenceCoordinates':'Exported native prediction, not the native input conformer.'}
     proof={'nativeChainMapping':{str(protein_chain):'A',str(ligand_chain):'B'},
       'inputAtomToNativeName':[names[j]for j in mapping],'nativeConnectivitySha256':sha(json.dumps(bonds).encode()),
