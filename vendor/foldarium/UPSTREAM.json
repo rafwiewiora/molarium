@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/rafwiewiora/foldarium",
-  "revision": "ffe9ee6f7f6e5253e9629410f366aa4a13e1556b",
+  "revision": "b73ac80d9354dc0f323d7fb54d128f8c1ac0cb8e",
   "transformation": "Only the two Mol* 5.11.0 CDN URLs in library-review.html are replaced with existing same-version local assets.",
   "files": [
     {
@@ -29,9 +29,9 @@
     },
     {
       "path": "library-review.js",
-      "bytes": 12686,
-      "sha256": "502cc380fd71821998d714f7a02308958de6348e318f4b9e1d703ebc348f8d71",
-      "upstreamSha256": "502cc380fd71821998d714f7a02308958de6348e318f4b9e1d703ebc348f8d71"
+      "bytes": 12838,
+      "sha256": "e63be618821c6b090ee6d490a15174e9c209f836e4005d828928ccb6442a74e1",
+      "upstreamSha256": "e63be618821c6b090ee6d490a15174e9c209f836e4005d828928ccb6442a74e1"
     },
     {
       "path": "library-review.html",

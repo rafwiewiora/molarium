@@ -65,7 +65,7 @@ jobs:
       - name: Run scientific validation suite
         run: npm run test:ci:scientific
       - name: Check folding requests, chemical mapping and pinned upstream sources
-        run: node --test folding/integration.test.mjs folding/library.test.mjs
+        run: node --test folding/integration.test.mjs folding/library.test.mjs folding/comparison/*.test.mjs
       - name: Check all seven frozen SOS1 graphs through strict 2D depiction
         run: npm run test:depiction-hydrogens
       - name: Check simulation benchmark acceptance logic and parameter import
@@ -74,6 +74,20 @@ jobs:
         run: npm run test:design-validation
       - name: Check explicit SOS1 contact revision against the immutable source
         run: node design-history/sos1-recompute-revision.test.mjs
+
+  cofold-analysis:
+    name: Cofolding comparison integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Install isolated analysis dependencies
+        run: |
+          python3 -m venv /tmp/cofold-analysis
+          /tmp/cofold-analysis/bin/pip install -r folding/comparison/requirements-analysis.txt
+      - name: Check protein-frame metrics and native chemical identity
+        run: /tmp/cofold-analysis/bin/python -m unittest discover -s folding/comparison -p 'test_*.py'
 
   browser:
     name: Browser integration
@@ -107,6 +121,11 @@ jobs:
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
           MOLARIUM_LIBRARY_REUSE: reviews/library-cofolding-2026-11-12/standard/library-1.json
+        run: bun scripts/cofold-library.browser.mjs
+      - name: Check method-labelled browser/native comparison review
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          MOLARIUM_LIBRARY_REUSE: reviews/cofold-method-comparison-2026-11-12/boltz2-browser-native.library.json
         run: bun scripts/cofold-library.browser.mjs
       - name: Check numerical-only public validation panel and evidence links
         env:

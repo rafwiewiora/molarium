@@ -18,7 +18,7 @@ import { requiredContactPolicy, liveHydrogenBondState, unresolvedContactMessage,
 import { CONTACT_CAPTURE_POLICY } from './docking/contact-capture-policy.mjs';
 import { preserveRegisteredDonorHydrogens } from './docking/registered-donor-hydrogen.mjs';
 import { installDesignHelp } from './design-help.mjs';
-import {foldingRequest,installFoldLigand} from './folding/request.mjs';
+import {foldingRequest,installFoldLigand,COFOLD_FAMILIES} from './folding/request.mjs';
 import {LibraryController} from './folding/library-ui.mjs';
 import { hasPreparationHistory, invalidateNumericalParameters, dynamicsReadinessKey,
   usableMinimization, matchesRecordedDynamicsFrame } from './calculation-readiness.mjs';
@@ -17117,12 +17117,12 @@ function foldControlsRequest(){
   return {sequence:value('#protein-sequence'),model:value('#fold-model'),msaMode:value('#fold-msa-mode'),
     msaEndpoint:value('#msa-endpoint'),a3m:value('#fold-a3m'),recycles:Number(value('#fold-recycles')),
     steps:Number(value('#fold-steps')),seed:Number(value('#fold-seed')),
-    ligand:value('#fold-model')==='localfold-openbind0'&&value('#fold-ligand').trim()
+    ligand:Object.hasOwn(COFOLD_FAMILIES,value('#fold-model'))&&value('#fold-ligand').trim()
       ?{type:value('#fold-ligand-type'),value:value('#fold-ligand')}:null};
 }
 function updateFoldingControls(){
   const model=document.querySelector('#fold-model').value;
-  document.querySelector('#fold-ligand-fields').classList.toggle('hidden',model!=='localfold-openbind0');
+  document.querySelector('#fold-ligand-fields').classList.toggle('hidden',!Object.hasOwn(COFOLD_FAMILIES,model));
   if(model==='openfold'&&document.querySelector('#fold-msa-mode').value==='single')
     document.querySelector('#fold-msa-mode').value='search';
   document.querySelector('#fold-a3m').classList.toggle('hidden',document.querySelector('#fold-msa-mode').value!=='provided');

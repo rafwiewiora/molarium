@@ -5,6 +5,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "test:fold-library": "node --test folding/library.test.mjs folding/integration.test.mjs",
+    "test:fold-comparison": "node --test folding/comparison/*.test.mjs",
     "test:fold-library-browser": "MOLARIUM_LIBRARY_REUSE=reviews/library-cofolding-2026-11-12/standard/library-1.json bun scripts/cofold-library.browser.mjs",
     "test:paper-submission": "node --test scripts/verify-paper-submission.test.mjs",
     "test:depiction-hydrogens": "node rdkit-depiction-hydrogens.test.mjs",

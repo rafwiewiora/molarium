@@ -1,0 +1,2799 @@
+{
+  "schema": "molarium.web-release.v1",
+  "algorithm": "SHA-256",
+  "version": "1.0.0",
+  "assetBase": "https://assets.molarium.org/v1.0.0/",
+  "codeVersion": "b2f2339009bbed93953f358c8725919a98d8bfb91d5a84ba43024534e4ee79f4",
+  "files": [
+    {
+      "path": "CHEMIST-ACTIONS-API.md",
+      "bytes": 42482,
+      "sha256": "32c6b4fa803f6603a7241260ae16bb2d0af239dfa1c71437f1b059d0792c8ef3"
+    },
+    {
+      "path": "DESIGNER-MOVES.md",
+      "bytes": 22029,
+      "sha256": "40955ae1f1a061ffd18b0b2aa7251e0f67f369371961c637b8c50a1fbfd35c54"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": "NOTICE",
+      "bytes": 110,
+      "sha256": "3f70dde8ea08a117f276e4d16c7fa9fe01316eaf9166be3fb7c323d1d0f31f73"
+    },
+    {
+      "path": "README.md",
+      "bytes": 34868,
+      "sha256": "5c084360a6e82aaec590088311fb804e0356f87eefdbc57f38ad8b44f6500582"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "bytes": 8987,
+      "sha256": "d7404a7453dc3a6e328284e84c51dcaba0341c27cfaab38bbe93cc651cfcb847"
+    },
+    {
+      "path": "app.js",
+      "bytes": 1016127,
+      "sha256": "0c93f633b3cf78bd86f6a13de056fb9646029b1274b61e30d6839e93afb4362d"
+    },
+    {
+      "path": "assets/lsd-launch.mol",
+      "bytes": 4643,
+      "sha256": "5f4f5e70f01164f9c82a811d53c34a78ac4c6e6070fcaec0ebcafd046d205735"
+    },
+    {
+      "path": "assets/media/sos1-designer-moves-molarium-interface.mp4",
+      "bytes": 728091,
+      "sha256": "54bfcfcc200d6e48e1d401fda9587dc0d7935df63213a3bb0e1981cc1ba8c164"
+    },
+    {
+      "path": "assets/media/sos1-designer-moves-molarium-interface.render-manifest.json",
+      "bytes": 16502,
+      "sha256": "f7115b68c8ac91a3a5a83f186343fa9f7f10f608eba243b4353f21b1480b7949"
+    },
+    {
+      "path": "assets/molarium-logo.svg",
+      "bytes": 1997,
+      "sha256": "8070371aa4ed720e3c8339db1ed286632a127068211dc3525d94244f3757ba80"
+    },
+    {
+      "path": "assets/molarium-mark.svg",
+      "bytes": 1593,
+      "sha256": "52b492bfc572b09c55d339b31665c6563120a8b1aa3e842aa43c3d3f4e7aa8ad"
+    },
+    {
+      "path": "assets/molarium-social-v1.png",
+      "bytes": 159567,
+      "sha256": "69bca066e0edb5a81f295f361940faa82e40154107b4e2a334fb8a4550cca04a"
+    },
+    {
+      "path": "calculation-readiness.mjs",
+      "bytes": 2732,
+      "sha256": "76811be088e8bc45a43233fd60b30ae37aabbed6600fe3d7e10fd30b45c43cc8"
+    },
+    {
+      "path": "chemist-actions.mjs",
+      "bytes": 38753,
+      "sha256": "59dcd154680af29ce0ed12bcd8fa00a50ab1755cfea07fa4871d27320dc07ec2"
+    },
+    {
+      "path": "design-help.mjs",
+      "bytes": 35129,
+      "sha256": "921eb7a8091db5b195ceed1688fec4a123b6867dc8413a27ed19e1cc6af2c36f"
+    },
+    {
+      "path": "design-history/README.md",
+      "bytes": 8096,
+      "sha256": "9e4d77a7eaf3f5f1bdaf8ef303699444253ab618e1fdb567fb19d6e03712e526"
+    },
+    {
+      "path": "design-history/campaign-source.mjs",
+      "bytes": 2716,
+      "sha256": "ed500abf4a705112685d6ec0e6b33311810eee7c33dac2d5b590a726fc74d787"
+    },
+    {
+      "path": "design-history/designer-replay-review.mjs",
+      "bytes": 1891,
+      "sha256": "dc8cef5a07905f0fc0dd20bb2aec64aad0760659874b7bf593f3d72529bb3643"
+    },
+    {
+      "path": "design-history/examples/sos1-prediction-checkpoint-review.action-script.json",
+      "bytes": 7805,
+      "sha256": "7f309257a71a4427b66013d0d40880e52a40053c908fcea83e0223cede7e0413"
+    },
+    {
+      "path": "design-history/examples/sos1-prediction.action-script.json",
+      "bytes": 19418,
+      "sha256": "eb157eeda9044d2f2d5a3940a37a9dfd4ef29fdcf7754a79ad13fc56c407fd2d"
+    },
+    {
+      "path": "design-history/integrity.mjs",
+      "bytes": 2048,
+      "sha256": "51db00571be74c77dd1d7bbb0ae00fee91eb952713357b4666a624bf00feacf2"
+    },
+    {
+      "path": "design-history/interface-story.mjs",
+      "bytes": 11635,
+      "sha256": "1d35955a2075fe87730d30a7f96f26fa56c3334e508c9fe5193ea8246cead09e"
+    },
+    {
+      "path": "design-history/ledger.mjs",
+      "bytes": 22405,
+      "sha256": "b91cc166c49907da3463c31a3b31835d3106d152fdbccd5afc2eb569675d9844"
+    },
+    {
+      "path": "design-history/live-campaign-store.mjs",
+      "bytes": 8197,
+      "sha256": "f790485d6d28ac922cc5fba0c20dab69ead6c69d30c3c2379fe8c9cabf0d169d"
+    },
+    {
+      "path": "design-history/live-campaign.mjs",
+      "bytes": 16824,
+      "sha256": "344ad5159b168d9fd4af2b7391c2d2081ce41849da53a513f6854221d142d98e"
+    },
+    {
+      "path": "design-history/movie.mjs",
+      "bytes": 4596,
+      "sha256": "ddcfa229f14522d3b723481d54940e98f8fd6e394fd9d5ebf4aa2779917ee89c"
+    },
+    {
+      "path": "design-history/publications/sos1/browser-replay-declaration.json",
+      "bytes": 4468,
+      "sha256": "46321c899b9d9a198f09780d97d3a91f5ded6dad574189c0b71f70d2fe2c3990"
+    },
+    {
+      "path": "design-history/publications/sos1/checkpoints/finish-bay-293-campaign.json",
+      "bytes": 15041989,
+      "sha256": "d4685188148b963795ce5d434611b31614a72455a37f34c8f98648f589c2da32"
+    },
+    {
+      "path": "design-history/publications/sos1/checkpoints/fragment-merge-campaign.json",
+      "bytes": 8990688,
+      "sha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81"
+    },
+    {
+      "path": "design-history/publications/sos1/checkpoints/open-phe890-pocket-campaign.json",
+      "bytes": 12037534,
+      "sha256": "1b174568da864bbfdbd268363bfaba03a9e180b3210de129705fa6f6191eb5fc"
+    },
+    {
+      "path": "design-history/publications/sos1/checkpoints/scaffold-rewrite-campaign.json",
+      "bytes": 5990361,
+      "sha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441"
+    },
+    {
+      "path": "design-history/publications/sos1/checkpoints/starting-hit-campaign.json",
+      "bytes": 2992881,
+      "sha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/checkpoint-overview.mp4",
+      "bytes": 7847302,
+      "sha256": "c44363f270d635fc189b46a92675c028d507e6c983bf60d7f676d5af7e7f2226"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/movie.json",
+      "bytes": 20916,
+      "sha256": "27db5094d49ea7eb7f6080289945fcac846907fdfa200f52c45d26f708697e0f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-00.png",
+      "bytes": 37598,
+      "sha256": "7a8fa42d7daeb0204df0fba0e5dc4c5ca79b76b1008caf5b089b124ef11a9cd7"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-01.png",
+      "bytes": 39001,
+      "sha256": "7770bec437e550f5266982566e035182d9c361051a21d2bc21033509e93055bf"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-02.png",
+      "bytes": 39334,
+      "sha256": "5631693e2e5bd6cc38e08df031e92cedf37f46091b4cdda348ba14b4c9e5a3e4"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-03.png",
+      "bytes": 39479,
+      "sha256": "3ea644cd9b83af23b6f414433d71cff37287cedbc9529383b85359a7e51dbb99"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-04.png",
+      "bytes": 39476,
+      "sha256": "53950465d880170059219f30f6e40b8eec212bedff7657d6ade8a0e1178e207d"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-05.png",
+      "bytes": 39089,
+      "sha256": "aacf8c1481076f23f81d37b380cd19baccc769e7347f1638408bb3d5236fe06f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-06.png",
+      "bytes": 39186,
+      "sha256": "ae2e1ec9199701c0dd27e7fdd17da05c6bdd8421ae46d41afbec7b1060ed7a8f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-07.png",
+      "bytes": 39068,
+      "sha256": "0ebf6b1d94939aa4c396b590b24c2f7ef9777d3c44c88d7ca77b9ec4e3382830"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-08.png",
+      "bytes": 38963,
+      "sha256": "60c3a5a9fc973c42e889ae5fc24d89ffbe87e6a0a2020e1ca8b000ed964cafc1"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-09.png",
+      "bytes": 39035,
+      "sha256": "51631be8153a8e499beb5e914e67fdf56ea6c0c385bbc0a3d578dd68d1b0b152"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-10.png",
+      "bytes": 39246,
+      "sha256": "88e155664bd443edcb985364e20ed27a81df9a7c8743d1d882e5b10e4d379a15"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-0-11.png",
+      "bytes": 39221,
+      "sha256": "180fd0a8e2ad4ce378ee6e67ce3398b9c9c0469ed345a84785f2fd5c45201165"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-00.png",
+      "bytes": 36343,
+      "sha256": "d77781f4a5ca79b355b6e6770c0259e6a0d676ab43261c3fe125b461077b0fa4"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-01.png",
+      "bytes": 37786,
+      "sha256": "901fb48c8655f8bfd2cb48ee7e8a2daf25b9d807b5b872e49df93d8f553f83ab"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-02.png",
+      "bytes": 38106,
+      "sha256": "642466a54c77ea3c71ec99c12640a46e70f90762aef4b6ca4c8ca3a398605a0a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-03.png",
+      "bytes": 38246,
+      "sha256": "93a014116525a83dafca12c7076ceb0ca45ed29b13cd3503e5fabec604623dc9"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-04.png",
+      "bytes": 38243,
+      "sha256": "e6521ba06a111fcbbede6fe9caeb8805a52d2a63af83c2f52ca228afd79d33fc"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-05.png",
+      "bytes": 37870,
+      "sha256": "ca1899038aeae803ebd19dbf4a7cea260c2f533304d95f5e700cd250f025ec5f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-06.png",
+      "bytes": 37962,
+      "sha256": "2a408219b38785424f73fd6113784e9d74b3ebf22eb6ba879652467bd93bdace"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-07.png",
+      "bytes": 37849,
+      "sha256": "d1bb2bbf30f69b4ceb2d566fb3420d5f7b07c5ffcbb1c6a0d46b36b066f08d77"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-08.png",
+      "bytes": 37745,
+      "sha256": "7cb0ce56cb3b093b5ba033544d484cb077dee22f781c116b8a47d301ade85e54"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-09.png",
+      "bytes": 37810,
+      "sha256": "7c4e7af63f49d831843b197ce9b868a09d3c696fca5ba6bcdec241fb3ebfb226"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-10.png",
+      "bytes": 38020,
+      "sha256": "85ad722546eb36332c4bd096f62ede14de28e16d6b77cd395855b68d2ff835a9"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-1-11.png",
+      "bytes": 37992,
+      "sha256": "667a4cfd70d204038c463348a0da90d3a571729c9c4d3779bca1b3acf9ce557f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-00.png",
+      "bytes": 36343,
+      "sha256": "d77781f4a5ca79b355b6e6770c0259e6a0d676ab43261c3fe125b461077b0fa4"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-01.png",
+      "bytes": 37786,
+      "sha256": "901fb48c8655f8bfd2cb48ee7e8a2daf25b9d807b5b872e49df93d8f553f83ab"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-02.png",
+      "bytes": 38106,
+      "sha256": "642466a54c77ea3c71ec99c12640a46e70f90762aef4b6ca4c8ca3a398605a0a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-03.png",
+      "bytes": 38246,
+      "sha256": "93a014116525a83dafca12c7076ceb0ca45ed29b13cd3503e5fabec604623dc9"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-04.png",
+      "bytes": 38243,
+      "sha256": "e6521ba06a111fcbbede6fe9caeb8805a52d2a63af83c2f52ca228afd79d33fc"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-05.png",
+      "bytes": 37870,
+      "sha256": "ca1899038aeae803ebd19dbf4a7cea260c2f533304d95f5e700cd250f025ec5f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-06.png",
+      "bytes": 37962,
+      "sha256": "2a408219b38785424f73fd6113784e9d74b3ebf22eb6ba879652467bd93bdace"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-07.png",
+      "bytes": 37849,
+      "sha256": "d1bb2bbf30f69b4ceb2d566fb3420d5f7b07c5ffcbb1c6a0d46b36b066f08d77"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-08.png",
+      "bytes": 37745,
+      "sha256": "7cb0ce56cb3b093b5ba033544d484cb077dee22f781c116b8a47d301ade85e54"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-09.png",
+      "bytes": 37810,
+      "sha256": "7c4e7af63f49d831843b197ce9b868a09d3c696fca5ba6bcdec241fb3ebfb226"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-10.png",
+      "bytes": 38020,
+      "sha256": "85ad722546eb36332c4bd096f62ede14de28e16d6b77cd395855b68d2ff835a9"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-2-11.png",
+      "bytes": 37992,
+      "sha256": "667a4cfd70d204038c463348a0da90d3a571729c9c4d3779bca1b3acf9ce557f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-00.png",
+      "bytes": 36784,
+      "sha256": "0cd49ae11a7eac7bccd2b3c8fee0f54d1a61281b96b042051038820359a43b75"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-01.png",
+      "bytes": 38217,
+      "sha256": "f5f72c032faefd416dd6eecab53e475a707431160937e34b7f861eed8f6d2c64"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-02.png",
+      "bytes": 38537,
+      "sha256": "1408424d1e418d4a035f53e4d78f3926489bc667150cb7790c65d108497256c6"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-03.png",
+      "bytes": 38676,
+      "sha256": "d2a3e66a5bcc80102cd08444216e1d8e6ee5535b52df58f6b95bb3a7716d1165"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-04.png",
+      "bytes": 38675,
+      "sha256": "33ccf7f957c171a6343d7072ac4f33d6bfcb292761e6a4c6ed0210a9fcb07c4d"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-05.png",
+      "bytes": 38299,
+      "sha256": "346ac4717942e54746dbedfca129c4989cd814ed3154b1de59e106d58e327222"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-06.png",
+      "bytes": 38392,
+      "sha256": "ab6dee6c9dc400ff7b8e6965b867b8b43db9d9b905129228e6820e92b26a5258"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-07.png",
+      "bytes": 38274,
+      "sha256": "c31c9da5ca33e11d1c23ccb703245f27450b84ab6defee38eb8bc270dca2682c"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-08.png",
+      "bytes": 38171,
+      "sha256": "03d5d165a90745085145ac9e8c341cff0813f4d47eabfc1778186f95c31c5c07"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-09.png",
+      "bytes": 38242,
+      "sha256": "e144cb7b2e50b08101c9f9c7e68fe5f91d6d4b340b866db4ba72c6a380dcb93c"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-10.png",
+      "bytes": 38449,
+      "sha256": "fc7adb4d2290c8052416e3ce87e070c29aa25f1076682d7da9349a11fc5b20d3"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-3-11.png",
+      "bytes": 38429,
+      "sha256": "e9b3bfd53d085eb1623083fa5c4c9e8dd279cbe50b5a8d53072a968494c92509"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-00.png",
+      "bytes": 36343,
+      "sha256": "d77781f4a5ca79b355b6e6770c0259e6a0d676ab43261c3fe125b461077b0fa4"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-01.png",
+      "bytes": 37786,
+      "sha256": "901fb48c8655f8bfd2cb48ee7e8a2daf25b9d807b5b872e49df93d8f553f83ab"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-02.png",
+      "bytes": 38106,
+      "sha256": "642466a54c77ea3c71ec99c12640a46e70f90762aef4b6ca4c8ca3a398605a0a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-03.png",
+      "bytes": 38246,
+      "sha256": "93a014116525a83dafca12c7076ceb0ca45ed29b13cd3503e5fabec604623dc9"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-04.png",
+      "bytes": 38243,
+      "sha256": "e6521ba06a111fcbbede6fe9caeb8805a52d2a63af83c2f52ca228afd79d33fc"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-05.png",
+      "bytes": 37870,
+      "sha256": "ca1899038aeae803ebd19dbf4a7cea260c2f533304d95f5e700cd250f025ec5f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-06.png",
+      "bytes": 37962,
+      "sha256": "2a408219b38785424f73fd6113784e9d74b3ebf22eb6ba879652467bd93bdace"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-07.png",
+      "bytes": 37849,
+      "sha256": "d1bb2bbf30f69b4ceb2d566fb3420d5f7b07c5ffcbb1c6a0d46b36b066f08d77"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-08.png",
+      "bytes": 37745,
+      "sha256": "7cb0ce56cb3b093b5ba033544d484cb077dee22f781c116b8a47d301ade85e54"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-09.png",
+      "bytes": 37810,
+      "sha256": "7c4e7af63f49d831843b197ce9b868a09d3c696fca5ba6bcdec241fb3ebfb226"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-10.png",
+      "bytes": 38020,
+      "sha256": "85ad722546eb36332c4bd096f62ede14de28e16d6b77cd395855b68d2ff835a9"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-4-11.png",
+      "bytes": 37992,
+      "sha256": "667a4cfd70d204038c463348a0da90d3a571729c9c4d3779bca1b3acf9ce557f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-popups-v2/overlay-blank.png",
+      "bytes": 8512,
+      "sha256": "e47db9d82dc470d3a7f42a66ed74fd41396b0a3c9c689d58e8bb08d226d70126"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoint-review.action-script.json",
+      "bytes": 9203,
+      "sha256": "6ab36deb2cab37fd888eff9c2006c8c14e06be351d4cdc160dd173c994393211"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-designer-intent-campaign.json",
+      "bytes": 14997311,
+      "sha256": "a1f0424ce1be8dde42180dbe76c5beae8565b56a8739a222b8fc9b1b6a91a3ae"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-graph-campaign.json",
+      "bytes": 11992522,
+      "sha256": "c0672efabc8da255de45a6d8b41f3f1a2bb0652ac2e683a70a9ed33b8692b3b1"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/aww-phe890-response-campaign.json",
+      "bytes": 18021280,
+      "sha256": "b551d8e7d0489955c8885397fd4b8ddb2c783b559c6f616cf89356a763a30601"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/finish-bay-293-campaign.json.gz",
+      "bytes": 3335877,
+      "sha256": "dbe42835d58b058a68e829412b2c30fbf9332bf8590b03b2a048ab950b991c95"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/fragment-merge-campaign.json",
+      "bytes": 8990688,
+      "sha256": "e1a7722f517b5371efad860dc6d87bf31d813b05df6c3e72db74e71e3236cb81"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/scaffold-rewrite-campaign.json",
+      "bytes": 5990361,
+      "sha256": "c966034539263976089135ed14f3150a8b136cabcd20078b383e25cc4ccf5441"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/checkpoints/starting-hit-campaign.json",
+      "bytes": 2992881,
+      "sha256": "f17d3de27290e8b3b41d7c6ab5d2c56ac72971e0dc7495da9036f880e72c7da6"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/001-chemist-action-audit.json.gz",
+      "bytes": 7672950,
+      "sha256": "a3e836fef3a052c9a5cbdcd339ff31a479a908c044580c5cddf6bb48a6fd3dbf"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/002-aww-graph-only-campaign.json.gz",
+      "bytes": 1459576,
+      "sha256": "bce1a5d1020599e5ef691c331f27b293aa2bff8461bcc5cec0005659363a8108"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/003-chemist-action-audit.json.gz",
+      "bytes": 3922302,
+      "sha256": "c19c1a245cba2ea97f2d91a4bbf164c9ac0932bace3613924a32343dd490847c"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/004-aww-designer-ligand-intent-campaign.json.gz",
+      "bytes": 1836069,
+      "sha256": "6c71a54840b388b71d570cbb827a56db0e8baf373adda51fa519a2474b05f5fa"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/005-aww-graph-only-campaign.json.gz",
+      "bytes": 1459576,
+      "sha256": "bce1a5d1020599e5ef691c331f27b293aa2bff8461bcc5cec0005659363a8108"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/006-aww-receptor-only-prediction-campaign.json.gz",
+      "bytes": 2210960,
+      "sha256": "247e739f22759ba863d7dbfee527ac9ae5661fe77a5f541ded743580d96e039a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/007-boundary.json.gz",
+      "bytes": 1349,
+      "sha256": "ea72ac60a223769235d8541903a2e3f23c70263e157b29974e1e64fa6ea853d8"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/008-chemist-action-audit.json.gz",
+      "bytes": 4675382,
+      "sha256": "ce1581ee0b9679ca40aaa26aa2cc74ea7ffaa209bd2a32722754e7679844a566"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/009-coordinate-inspections.json.gz",
+      "bytes": 113626,
+      "sha256": "5c02084701c8f8d288fdc48e3c72243bff96f9783396cd5c357a7b32606f144a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/010-phe890-candidate-01.json.gz",
+      "bytes": 30448,
+      "sha256": "f5a1af9abdd92f46f8606df8ff128223d64feaae4e6f0930d829330bcee939a4"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/011-phe890-candidate-02.json.gz",
+      "bytes": 30436,
+      "sha256": "037f2c4a0c21a78d9abb92963d7632fbc21dcca8d507ac2748e7ea9d51d2a822"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/012-phe890-candidate-03.json.gz",
+      "bytes": 30439,
+      "sha256": "4f5fe1e3baa714e926561eac8a51b24134aa34c8791ceb22138a826ffcca4880"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/013-phe890-candidate-04.json.gz",
+      "bytes": 30433,
+      "sha256": "d3f99ce7741c2116630549356b56e52ca27a20ae28cf1d29bf0c00af0be8bb65"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/014-phe890-candidate-05.json.gz",
+      "bytes": 30443,
+      "sha256": "882508a74c7598daf7de869bf73714e630c8b5a8f153cb4187af08ff614bf267"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/015-phe890-candidate-06.json.gz",
+      "bytes": 30443,
+      "sha256": "bad4daf5385a56e15d5e19b3b9e9ca739e1faf171875181d6b303f8e183d8f78"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/016-phe890-candidate-07.json.gz",
+      "bytes": 30437,
+      "sha256": "bfd78ae112652dffdf0cd2f64aec178014ff4be7eb0ae3b0d7227b5a5cb783c2"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/017-phe890-candidate-08.json.gz",
+      "bytes": 30428,
+      "sha256": "bb7f46829ebab71e309a21dba1b0c651daf232aa63c21ccc921cd3f956a50909"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/018-phe890-candidate-09.json.gz",
+      "bytes": 30351,
+      "sha256": "1aa47a82d1b7dc1f576d971a51a7e702b49b339badf6013c8c969c025e596653"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/019-phe890-candidate-10.json.gz",
+      "bytes": 30452,
+      "sha256": "3671f705e7a2bab288366d7f33bbc9c075068a69eece28c61611244f13c32d61"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/020-phe890-candidate-11.json.gz",
+      "bytes": 30436,
+      "sha256": "ffca1650dd1737d93d4315661c77c06bc57a5a69050a28350dc75bf95b54da12"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/021-phe890-candidate-12.json.gz",
+      "bytes": 30456,
+      "sha256": "4a6b418a265e9cf3a6e5d0ca3cd6f1ae06303007bd31f7ff5b7be7e53f1a0fdc"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/022-phe890-candidate-13.json.gz",
+      "bytes": 30427,
+      "sha256": "01126cf601b1e13693ca09763c2319b7feb3678104d4980c207cbffc5045ad55"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/023-post-freeze-validation.json.gz",
+      "bytes": 1960,
+      "sha256": "230c17676a8a381cddb2a115d40718fd714fd1794b37c99b1eca6c8537f9859c"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/024-prediction-manifest.json.gz",
+      "bytes": 8697,
+      "sha256": "45956fcdeca91ac1a29fe8d59430a10bce2dd6520482f53905a5af6ab014565c"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/025-boundary.json.gz",
+      "bytes": 555,
+      "sha256": "ba92199d6016634383f8341cf677b6d6fcf858f4fa1b4a1f53495a32cfcc497b"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/026-candidate-gate.json.gz",
+      "bytes": 1566,
+      "sha256": "0f170745931e1e844b4c098d3154808e1b74a2e7f1a6add67e1106053db46dce"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/027-chemist-action-audit.json.gz",
+      "bytes": 9071095,
+      "sha256": "99cda15ee0aeaa9c4df44a585aa143d38eb2689ce2e20f36f5c5ae451a0fe9fd"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/028-continuation-manifest.json.gz",
+      "bytes": 992,
+      "sha256": "16db9a1f826b5987b9c08270fdd3f4abec3f9d5e9c4e46c1a1409e1076f19fd7"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/029-finish-bay-293-campaign.json.gz",
+      "bytes": 3335877,
+      "sha256": "dbe42835d58b058a68e829412b2c30fbf9332bf8590b03b2a048ab950b991c95"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/030-fixed-atom-gate.json.gz",
+      "bytes": 794,
+      "sha256": "b968d788cc6b0401754718764d8b5cafb5c3696f85f69040cb25248f2bce7440"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/031-graph-only-campaign.json.gz",
+      "bytes": 2585207,
+      "sha256": "1823d42928b024ff13da8a864b747375a79378184d18722f01c60942b3d9588d"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/032-graph-only-coordinates.json.gz",
+      "bytes": 32788,
+      "sha256": "38cca53843568efd2c0ca53283886027b12e70f5e9c87f4ca46bc1bf26e011a1"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/033-optimization.json.gz",
+      "bytes": 3572,
+      "sha256": "36ae8f1c2597236a55ed3898ee56b4d2df34d41fd793c6ba24861a4b1872a9d2"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/034-post-freeze-comparison.json.gz",
+      "bytes": 1976,
+      "sha256": "b48f24839774072dd7746c61abba498ef809c9ef8615fb255514baf20d3d4329"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/035-refinement.json.gz",
+      "bytes": 3354,
+      "sha256": "1e82d1572a5965c3e550046284e0bf96e11a970aee291a61f6a335958da6be05"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/036-relaxed-coordinates.json.gz",
+      "bytes": 32813,
+      "sha256": "ab985310545d6a062319c4ad8e87dcccd0eb72248f62304abb6711de1c2067f6"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/037-selected-campaign.json.gz",
+      "bytes": 2960086,
+      "sha256": "22a22f8ac4da883e600d402150168a36100561fc0a5448a02f9d241890c4cd9a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/038-selected-coordinates.json.gz",
+      "bytes": 32769,
+      "sha256": "a81eacc1eff5ea01d75a2923d47b079ff79503617e3184c0e155dad160203ba8"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/039-source-aww-coordinates.json.gz",
+      "bytes": 31597,
+      "sha256": "3d642e97a068c23e8fa35829ff0e1adcf63748cfe65bfbe82dc9f9596aeabec1"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/040-chemist-action-audit.json.gz",
+      "bytes": 939254,
+      "sha256": "2cbd928a0c5b1bd193bed102b505500ad5db2d6d36ab27abd675678dd4d97b0a"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/041-source.action-script.json.gz",
+      "bytes": 6645,
+      "sha256": "2860fd4588430eae3d4700bc531972aa0b564dc8f045a080ef990814c8c0e5c4"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/042-chemist-action-audit.json.gz",
+      "bytes": 7772,
+      "sha256": "aff75cf85d830040a3a2d454adb86fd0251d9d633f9e4883d56a2568229cc25f"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/evidence/043-source.action-script.json.gz",
+      "bytes": 2047,
+      "sha256": "663f35fbb1ece0c5ad84a57cbbdb3949fb9bf41adc0b48f5eb6d90afacffa237"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/executable.action-script.json",
+      "bytes": 69210,
+      "sha256": "7eed2dff0bf3fa127f87b2322aaea4b615d458ad6d8ef3af3c5b5886dc8fe9c3"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/executable.render-manifest.json",
+      "bytes": 327839,
+      "sha256": "fcbcea308cfc94547beee1e3c46b947716172deb9c8d98288d8c623a3e654f0e"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/molarium-paper.pdf",
+      "bytes": 2565196,
+      "sha256": "aa0455b52ebdadf47ade6538bc3cfb4c087bf72bb4f0747125646b35ac7d70bb"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/precomputed.mp4",
+      "bytes": 1358960,
+      "sha256": "1f0961eebc767243f502b4b2effebcdbf6bc9a3bab98fd4764670ab368d4204e"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/precomputed.render-manifest.json",
+      "bytes": 29627,
+      "sha256": "0a995235659817d1c9ac1c11d0cd644e2db59c4ccd6c557a8f7dc7ddff7755a4"
+    },
+    {
+      "path": "design-history/publications/sos1/designer-intent-2026-09-04/release.json",
+      "bytes": 27592,
+      "sha256": "c26af7f823bb9443289d099e8da9ba0fd58404c15a9bf709fcdba8ef5834520e"
+    },
+    {
+      "path": "design-history/replay.mjs",
+      "bytes": 25526,
+      "sha256": "cbbca389e9dc338cc974abef33cf7f5ac2231977db36fd5b2e2dbc7167530509"
+    },
+    {
+      "path": "design-history/sos1-recompute-revision.mjs",
+      "bytes": 1913,
+      "sha256": "31c2a7a9c051163ef9f04b84544ae3d6804117f0f7c0ba3ba8cc198bd43258db"
+    },
+    {
+      "path": "design-history/sos1-story-captions.mjs",
+      "bytes": 2869,
+      "sha256": "402968bdcfbd339ae65a8ee19e33ec5a24c8aae02d052a2353c92ee3234ab918"
+    },
+    {
+      "path": "design-history/stories/generated/bclxl-fragment-linking.campaign.json",
+      "bytes": 65200,
+      "sha256": "3afdfe85dcfe3d54532d78de03593a2a2bb7df62871bf6f1aacd1a7a2ad0b6dc"
+    },
+    {
+      "path": "design-history/stories/generated/bclxl-fragment-linking.movie.json",
+      "bytes": 4654,
+      "sha256": "44bf5193e124aabcb49003602ed5b5c17e1982e91ba97156e7797212b519bd09"
+    },
+    {
+      "path": "design-history/stories/generated/index.json",
+      "bytes": 2865,
+      "sha256": "7d17e282c3d1f88be41d205a528a3a7a5451381d2736d055f91c076a0b191f3b"
+    },
+    {
+      "path": "design-history/stories/generated/molarium-7kpa-rehearsal.campaign.json",
+      "bytes": 41827,
+      "sha256": "b24c6c502d2228b77717cea5951dbe51af0002e5de25c120bfc43374ced4f409"
+    },
+    {
+      "path": "design-history/stories/generated/molarium-7kpa-rehearsal.movie.json",
+      "bytes": 2292,
+      "sha256": "488d636dad3d63ef2eb9f137c64aa24ba3968bfa45fbab4aba88f45fdcae6cff"
+    },
+    {
+      "path": "design-history/stories/generated/moonshot-dndi-6510.campaign.json",
+      "bytes": 51050,
+      "sha256": "bf7a42ad61482fefbd6b145a7327ddb8a00fac3fef6110a56e7df1fec966e6f6"
+    },
+    {
+      "path": "design-history/stories/generated/moonshot-dndi-6510.movie.json",
+      "bytes": 3421,
+      "sha256": "16b42dc41f3909a40a24bd2631ebcfe4fa124bb989e7ff69e4b652ab45916067"
+    },
+    {
+      "path": "design-history/structure-review/index.html",
+      "bytes": 13967,
+      "sha256": "3e80a4d1b707120208adea46d6478387d4d131cbc4983192c8d47ad784a1ee4a"
+    },
+    {
+      "path": "design-history/structure-viewer/bclxl-fragment-linking.json",
+      "bytes": 7961,
+      "sha256": "6eeb652a2544844c1bc4547e750146a233c063eb9dfd3842cf7b8c0861615300"
+    },
+    {
+      "path": "design-history/structure-viewer/cdk2-designer-hit-to-lead.json",
+      "bytes": 8625,
+      "sha256": "068069fa4f19001aa9470994ada55efc1f9f8a8daa2126dd0b223e4b9005550d"
+    },
+    {
+      "path": "design-history/structure-viewer/cdk2-hit-only-prospective.json",
+      "bytes": 10066,
+      "sha256": "c37dcecf42c496a35791fd7caada8a4ff0436b3939ba2a39a13ce5e7e29ee31a"
+    },
+    {
+      "path": "design-history/structure-viewer/checkpoint-review.mjs",
+      "bytes": 4037,
+      "sha256": "9b7f8a0c513c603348efd00b6b03702f2e3635ffa3f63f4e7574a7b4d5dd8404"
+    },
+    {
+      "path": "design-history/structure-viewer/index.html",
+      "bytes": 8489,
+      "sha256": "22fba85ef67655b9084c69b9a0dc8a85b466a1fbc782bb5eb0ee71af9d739eb8"
+    },
+    {
+      "path": "design-history/structure-viewer/moonshot-dndi-6510.json",
+      "bytes": 4767,
+      "sha256": "7212d5523ff7b2cba8468739e6d8d6a8f8528ef0ac75467b8f29c1811fa4ed92"
+    },
+    {
+      "path": "design-history/structure-viewer/timeline.mjs",
+      "bytes": 1934,
+      "sha256": "d984244323e4897b85079b4a3796191a0ce58d513545139128e4c94699be5d07"
+    },
+    {
+      "path": "design-history/structure-viewer/viewer.mjs",
+      "bytes": 18734,
+      "sha256": "080f3f00e9f811812424d06a552755686a16f49e0f9005d5c254bb6cfb955e4f"
+    },
+    {
+      "path": "design-history/structures/design-route.mjs",
+      "bytes": 24556,
+      "sha256": "1169bbf586504517f352001144de988461e68ab02cf6fb6aa1412851b51e8753"
+    },
+    {
+      "path": "design-history/structures/generated/3sp7-aligned-ligand.pdb",
+      "bytes": 10261,
+      "sha256": "8b2c6d40bf257740094314f56e817ce1971f468930e424cb46ce01ebed6b06c2"
+    },
+    {
+      "path": "design-history/structures/generated/3sp7-aligned-pocket.pdb",
+      "bytes": 17389,
+      "sha256": "664e93a269807af903d310c5bddbe9af5f4efa0ce682a5ab557881b5beabeb2a"
+    },
+    {
+      "path": "design-history/structures/generated/3sp7-aligned-protein.pdb",
+      "bytes": 97498,
+      "sha256": "802448c99413a6bc5736ce723f41d0d827017127b0915480c4a72903248dee0c"
+    },
+    {
+      "path": "design-history/structures/generated/3spf-ligand.pdb",
+      "bytes": 6049,
+      "sha256": "9243aa397ad93d98f52a3300b032cb114c3293a64d94756ff52813bf43856a57"
+    },
+    {
+      "path": "design-history/structures/generated/3spf-pocket.pdb",
+      "bytes": 7993,
+      "sha256": "ead8b54a212bf4b5218c51104cffb2f64fa9c367099a4604f0467e6e37e15ec9"
+    },
+    {
+      "path": "design-history/structures/generated/3spf-protein.pdb",
+      "bytes": 92638,
+      "sha256": "12a6153ccb5f0d7dfc664b35e706eb2ed0860dc3d4c17c64a7f93b69cc53955d"
+    },
+    {
+      "path": "design-history/structures/generated/7gn8-interactions.mol",
+      "bytes": 426,
+      "sha256": "0fe0eaa33838bff1904256279610874ff51d2d270b7943295ec4a6056386c72e"
+    },
+    {
+      "path": "design-history/structures/generated/7gn8-ligand.pdb",
+      "bytes": 5077,
+      "sha256": "c76111e0e4cb907ccf493305dd8643dd69484ca66b75dd1cbefb96c58e764dec"
+    },
+    {
+      "path": "design-history/structures/generated/7gn8-pocket.pdb",
+      "bytes": 12205,
+      "sha256": "6c74085d6667387c762c5d519b47ae39f02cd29a3927a0737f48991b294ffec9"
+    },
+    {
+      "path": "design-history/structures/generated/7gn8-protein.pdb",
+      "bytes": 191053,
+      "sha256": "dca07eeec7b27ade550c8bf512b2649c9517bdf1f4cd2abfddc9215e9fbc90d9"
+    },
+    {
+      "path": "design-history/structures/generated/7gnr-aligned-interactions.mol",
+      "bytes": 427,
+      "sha256": "3bc273d19fc6517d685314517b5f4424cd9bb13e05d1903b1a4f4d9f1fbfbdd9"
+    },
+    {
+      "path": "design-history/structures/generated/7gnr-aligned-ligand.pdb",
+      "bytes": 5563,
+      "sha256": "d39e9ff58842eed01c6c047843b2a0f22283c6e22f8893221af41499345e0fc3"
+    },
+    {
+      "path": "design-history/structures/generated/7gnr-aligned-pocket.pdb",
+      "bytes": 11314,
+      "sha256": "a77a9c82fd9df52e0f065c3d2abb80689d5108e5100bb923bb8cee2b8662ab0d"
+    },
+    {
+      "path": "design-history/structures/generated/7gnr-aligned-protein.pdb",
+      "bytes": 191863,
+      "sha256": "80c0271346400ea0923f99262b756a9adc75d16c819685af46298c6c8502e8b2"
+    },
+    {
+      "path": "design-history/structures/generated/bclxl-compound-16-reconstructed.mol",
+      "bytes": 6203,
+      "sha256": "eaeee36f23b95f0069aefc9a57224405ad3f57404149e7cd5ff1beea37bb970a"
+    },
+    {
+      "path": "design-history/structures/generated/bclxl-compound-21-reconstructed.mol",
+      "bytes": 5526,
+      "sha256": "c34365b62c7dcaa63dad747b91a0dacacbbb9fbe125226f075739818271a980b"
+    },
+    {
+      "path": "design-history/structures/generated/bclxl-compound-6-reconstructed.mol",
+      "bytes": 6783,
+      "sha256": "732b1eff009c994adc54fc6282a03a42ba0b8f23a194d5e9070a8f0560c62a32"
+    },
+    {
+      "path": "design-history/structures/generated/bclxl-compound-7-reconstructed.mol",
+      "bytes": 6617,
+      "sha256": "1218389102242e049b2a0afe2c8217a58983145dd2800bddecd18ece8f4c2c87"
+    },
+    {
+      "path": "design-history/structures/generated/bclxl-prospective-campaign.json",
+      "bytes": 70023,
+      "sha256": "51150f6313d03b84dcc92652b8b67e1f5e51a341db64cce7817ab10bcbd4e051"
+    },
+    {
+      "path": "design-history/structures/generated/bclxl-trajectory-manifest.json",
+      "bytes": 13951,
+      "sha256": "a64c69ba9adf795faa94fd5a5a9c3c6349d00516036cadc6adaebc5f86ae0c2e"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-1h1q-ligand.pdb",
+      "bytes": 2006,
+      "sha256": "29c14fe39eb50a70cc8c3f88ce4686c8c134ab7d9ad7cef3b61b4c54943f2b81"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-1h1q-pocket.pdb",
+      "bytes": 13450,
+      "sha256": "62e704cef12bf838a5ea17aeb8ce996b11d62b9944f929dcb63da1761c0df849"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-1h1q-protein.pdb",
+      "bytes": 193622,
+      "sha256": "8a843f464da254b7105b49b0b807776a99e580e04a12991a9543ada88c34d39f"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-1h1r-6cp-aligned-holdout.pdb",
+      "bytes": 1979,
+      "sha256": "ff150c7a2ddfb6162939c0165f8f86f3dd0fa8d34273c775bf969a42d20e58e4"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-1oiu-n76-aligned-holdout.pdb",
+      "bytes": 2216,
+      "sha256": "8dea2ae93f904e4a6d832965666eab4756a87f1426e9d65e9bfab62a9cd1542d"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-6cp-frozen-prediction.pdb",
+      "bytes": 2455,
+      "sha256": "2ab64712b77f1e31519344e4224f8f58ee12e69f2595ee8e91f0b7ce2e8d5aa4"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-designer-6cp-prediction.pdb",
+      "bytes": 2455,
+      "sha256": "01902f9fc27da1615ddb0fd368680d46990e8cdedca69e1ba8a5a96716467b54"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-designer-campaign.json",
+      "bytes": 28929,
+      "sha256": "f1e22cd609cd97792f5d7c1217e0fb0e551cc2ea490e1f2b4925451faf7f78ec"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-designer-movie-assets.json",
+      "bytes": 5850,
+      "sha256": "3aecdd28d26417025d51350227be589e7488266b7749b0b43004f9e8efdd9f3e"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-designer-n76-prediction.pdb",
+      "bytes": 2743,
+      "sha256": "5c85ef62fad1c8cb249425037d2efcadb7279533f6a81df75ad1738578b5ddf3"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-n76-frozen-prediction.pdb",
+      "bytes": 2743,
+      "sha256": "b976c8a4f986687b5a60e04410e97fbbbd81cb5a4bf69d975d2db599ecc229c0"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-prospective-campaign.json",
+      "bytes": 28395,
+      "sha256": "9f9687f711ac85d2a5826f218b850eee5f18a46484b43f64fe7101cfabf4b09a"
+    },
+    {
+      "path": "design-history/structures/generated/cdk2-prospective-movie-assets.json",
+      "bytes": 7672,
+      "sha256": "cadba8341f2d974716ed5947db33fa74eae719fa2df7c7e8fa3e5e844799932f"
+    },
+    {
+      "path": "design-history/structures/generated/manifest.json",
+      "bytes": 5913,
+      "sha256": "c2c097551a6f3e22ea628206b6712e6abec132b576ab5675fd1fe7ae3c4b9866"
+    },
+    {
+      "path": "design-history/structures/generated/sos1-5ove-ligand.pdb",
+      "bytes": 2249,
+      "sha256": "8bfba3468142b7324c720e3727355c95d580db8fc82a72e15e56bd5324075e33"
+    },
+    {
+      "path": "design-history/structures/generated/sos1-5ove-protein.pdb",
+      "bytes": 324032,
+      "sha256": "f55fe755726646fa9d8ad345a9af4c373ebe64c4ecfead6bd8ffb79ff52843be"
+    },
+    {
+      "path": "design-history/structures/generated/sos1-prospective-campaign.json",
+      "bytes": 73959,
+      "sha256": "dfd6de5a8f5c8a6bb50b552399365eabcb894cbcf2d709a4b9f47ae71757f5e4"
+    },
+    {
+      "path": "design-history/structures/ligands/bq5-rcsb-ccd.json",
+      "bytes": 5236,
+      "sha256": "b13f95b7cd154c3f00757fc017963ac272caabfb3b9643bdb9bdce9265b4d9c9"
+    },
+    {
+      "path": "design-history/structures/registered-ligand-graph.mjs",
+      "bytes": 12466,
+      "sha256": "ba72bf7bda7a44bdf8bb3de13621d3b9ceea9f1fc0afed2ea65d91688afb9b50"
+    },
+    {
+      "path": "design-history/viewer/index.html",
+      "bytes": 3988,
+      "sha256": "43f3464498eb86d0646889c33e69db52ba2f6f4b88d449db8377eb5963b66b04"
+    },
+    {
+      "path": "design-history/viewer/model.mjs",
+      "bytes": 4764,
+      "sha256": "8a35db1b89228a99854da6ad2700f7889062f78a4dc8ba17a3075e38d9186f6a"
+    },
+    {
+      "path": "design-history/viewer/styles.css",
+      "bytes": 10564,
+      "sha256": "14654000adfe672a97d0cbf886866a7c3c0af5d41741338247c91acf9f7afb55"
+    },
+    {
+      "path": "design-history/viewer/viewer.mjs",
+      "bytes": 18554,
+      "sha256": "0fe6b468786e35fe99007a7b9ded077e47edae1b73f20875552414f7b197f207"
+    },
+    {
+      "path": "docking/benchmark/7kpa-manual-contact-panel.README.md",
+      "bytes": 3260,
+      "sha256": "e28be4393bcc7826326885a145ddebad95f7828659146250e5fbaa5b7de80c2f"
+    },
+    {
+      "path": "docking/benchmark/7kpa-manual-contact-panel.mjs",
+      "bytes": 10562,
+      "sha256": "c3c7895a4d99a03d31e6883ebd445f55a2b424a7745e9ac7f4437111f8ee78d9"
+    },
+    {
+      "path": "docking/benchmark/7kpa-manual-contact-results.psiblue.v0.1.json",
+      "bytes": 12189,
+      "sha256": "c28fa7e598654499f93fcdf64f68d767095a39838d36fa627986e43afef7813e"
+    },
+    {
+      "path": "docking/benchmark/7kpa-manual-contact-smoke.v0.1.json",
+      "bytes": 2917,
+      "sha256": "95f0bf7a23d90d8fa1a6a555ae0c1a85623543b8feac19bc24836e4bd10c1a08"
+    },
+    {
+      "path": "docking/benchmark/7kpa-two-terminus-panel.mjs",
+      "bytes": 24928,
+      "sha256": "46e4138526812d812e5291ab519f30364f1121f23d1329e80d55c984650b6cca"
+    },
+    {
+      "path": "docking/benchmark/7kpa-two-terminus-panel.v0.1.json",
+      "bytes": 14614,
+      "sha256": "de08bca3c70d2542630845c0e91cbe4492bed338bb446734c78015c64a62c174"
+    },
+    {
+      "path": "docking/benchmark/RESULTS.v0.1.md",
+      "bytes": 4492,
+      "sha256": "f9c56903799f2fcdb9237c6c602e625a6d2504515721cc74e577e9c0b07b72f6"
+    },
+    {
+      "path": "docking/benchmark/benchmark-results.v0.1.scored.json",
+      "bytes": 63576,
+      "sha256": "a378fb2a7bf9ab95b3ca18697037f79d4decbe5ce490c33617f6e1228ebf2359"
+    },
+    {
+      "path": "docking/benchmark/manifest.v0.1.json",
+      "bytes": 355005,
+      "sha256": "8d8a0840567321010ddd8600236b6e7ada1a177f16cbeeb22ad847bfce95e502"
+    },
+    {
+      "path": "docking/browser-adapter.mjs",
+      "bytes": 13287,
+      "sha256": "94a21ed06e97bd63ff053a622a43fe2ab25f96057ed45daf7c00f68a98599a77"
+    },
+    {
+      "path": "docking/constraints.mjs",
+      "bytes": 14065,
+      "sha256": "3a1001af80e3fbf88611b80cd8fab83ab1301ee5a2c294ac93fdbaead4b6d328"
+    },
+    {
+      "path": "docking/contact-capture-policy.mjs",
+      "bytes": 1758,
+      "sha256": "828468cf035d54ebbdd7ba649f062f459445dd7febd4cf0512881088f71deb66"
+    },
+    {
+      "path": "docking/contact-remap.mjs",
+      "bytes": 30091,
+      "sha256": "6ddcd28e88c2f67859c22bc9ff68575c647eb23b4c4b1b9d143c2b80f7e7d776"
+    },
+    {
+      "path": "docking/contact-state.mjs",
+      "bytes": 6428,
+      "sha256": "165651acf41cab40b3a91ac82f409da3037ece57b89cd75721d27bdec2fd7d41"
+    },
+    {
+      "path": "docking/designer-branch-contact.mjs",
+      "bytes": 34809,
+      "sha256": "05cf66013ae0aa9547634a426aece2c6b6ef55fb18e1b72da1c56c0d1f2e21cd"
+    },
+    {
+      "path": "docking/designer-ligand-pose-lock.mjs",
+      "bytes": 7226,
+      "sha256": "1971c117e873491f79cf8b8729a2dd6ab444353c4f06404a9da48a5f5547f5c2"
+    },
+    {
+      "path": "docking/displaceable-waters.mjs",
+      "bytes": 2773,
+      "sha256": "02a67a9a60904c82e911b9b765bc5b756b0b586d011a50b818ab79971f5e374b"
+    },
+    {
+      "path": "docking/feature-seeding.mjs",
+      "bytes": 50279,
+      "sha256": "db0c0c070fe9505b764dc68d91955c4a230084154f1136e63a5892f55a1be592"
+    },
+    {
+      "path": "docking/labbook.mjs",
+      "bytes": 11052,
+      "sha256": "b7a36b7ba02b18b6d786c2206253c0cb6ea74d824972d48924fe11f36403e041"
+    },
+    {
+      "path": "docking/manual-hbond.mjs",
+      "bytes": 12981,
+      "sha256": "296b741f460599ed9d585fa41d6e4154bd83fcb1107915429a5af27d11d08a9a"
+    },
+    {
+      "path": "docking/portable-atom-selector.mjs",
+      "bytes": 4927,
+      "sha256": "4377e1e7c932308b2b83d5483f157887c3e7e0785b33d679475eba6b643a4040"
+    },
+    {
+      "path": "docking/pose-propagation-scoring.mjs",
+      "bytes": 8339,
+      "sha256": "1cc3891fb2f7173ccae039a0fb27b3539025924baf86066044ad7c229795b45c"
+    },
+    {
+      "path": "docking/pose-search-ensemble.mjs",
+      "bytes": 2624,
+      "sha256": "5894fd7817ad49d99cff770a2ee55a148da8d9bf8563f843c14ba932bdd37489"
+    },
+    {
+      "path": "docking/pose-search-worker.mjs",
+      "bytes": 785,
+      "sha256": "14de409761d7adc70a71dca16cc1f357360808a1bed10dc7e0536d55e028841b"
+    },
+    {
+      "path": "docking/protocol.mjs",
+      "bytes": 25227,
+      "sha256": "034218fcee594c708eecb04f9f31ec1ed1085dd8ea63d9c10869edcbbb4cf30e"
+    },
+    {
+      "path": "docking/receptor-score.mjs",
+      "bytes": 7428,
+      "sha256": "be6de7ef72fe573255403129a24dac65ad34a69e012352c7e16c39ab6859ca95"
+    },
+    {
+      "path": "docking/reference-core.mjs",
+      "bytes": 7706,
+      "sha256": "699fe700f9e6a7772a146f06714e55999cb67334fb66ad6a2aa01ec82b47db57"
+    },
+    {
+      "path": "docking/refinement-capture-store.mjs",
+      "bytes": 8452,
+      "sha256": "87dedc9a7fc20eee16d292eb37f7190b0e9ad8a17eb8c2d6e8518a1c6e6eecd4"
+    },
+    {
+      "path": "docking/registered-donor-hydrogen.mjs",
+      "bytes": 4189,
+      "sha256": "379a920717d515d6ba44be9ad7e6e6bd7c3c6e4c1b7102e68ec57cdb06fcdd6f"
+    },
+    {
+      "path": "docking/registered-graph-edit.mjs",
+      "bytes": 12497,
+      "sha256": "55e75f750476b3019380fcf7db9bdcd77e6dce7b62f5d6ebd186875664d664a4"
+    },
+    {
+      "path": "docking/registered-pose-retention.mjs",
+      "bytes": 11825,
+      "sha256": "2492bd98d0f3167b1761fd6a089d399905c7d4fb8aa75eca7ab9bc1cf23c7f79"
+    },
+    {
+      "path": "docking/registered-spatial-feature-restraint.mjs",
+      "bytes": 1817,
+      "sha256": "dfd11e2cebd9375c4688e03a3474d78e978ddeda51de6d461004653871e35dcd"
+    },
+    {
+      "path": "docking/restraint-biased-search.mjs",
+      "bytes": 32735,
+      "sha256": "ee819198ca0f3d0f13d7cfc76bde5c4c68f5d8193e1ee6fe9df9474a23a0ca64"
+    },
+    {
+      "path": "docking/sidechain-rotamers.mjs",
+      "bytes": 39584,
+      "sha256": "27dbd93142f6c46919a4eb9b31c592f728e46983ca0cf04bc3993112aff6601f"
+    },
+    {
+      "path": "docking/torsion-search.mjs",
+      "bytes": 11402,
+      "sha256": "b5f95084d92a1bffb80d77b91e17749e977e6df577915c8bccc8216daa51b670"
+    },
+    {
+      "path": "docking/transformed-ring-region.mjs",
+      "bytes": 9873,
+      "sha256": "5f1312c06da09b31b3cf654368cd4bd9cc45c168670163269e39e7b79a156381"
+    },
+    {
+      "path": "docking/validation/cloud-panel/RESULTS-2026-08-23.md",
+      "bytes": 5669,
+      "sha256": "08008ed7983a8c1904edfd01ea7ccc845dc6c7c76925b48e3b9997cf705108da"
+    },
+    {
+      "path": "docking/validation/cloud-panel/browser-sage-openmm-obc2-diagnostic-2026-08-23.json",
+      "bytes": 6968,
+      "sha256": "07eb6da633cabb806fe59e5307cf8b29864758cae278df92f78db2ba82c6f81d"
+    },
+    {
+      "path": "docking/validation/cloud-panel/browser-sage-openmm-validation-2026-08-23.json",
+      "bytes": 6962,
+      "sha256": "57749c23d3cdcac67f9f1d6a2fbbaa71b021ad09951f361a4c33749e8ec1d240"
+    },
+    {
+      "path": "docking/validation/cloud-panel/openmm-wasm-native-validation-2026-08-23.json",
+      "bytes": 5081,
+      "sha256": "28b1aa6848994438832670b1af641c78f9633ec543e76f087ccf7ba9f1d3b950"
+    },
+    {
+      "path": "docking/validation/pose-viewer/vendor/molstar-5.11.0.css",
+      "bytes": 72842,
+      "sha256": "5b68ceb6d3642549b4e9b2c071e58e41b98a5350ae269180587b39da86925d55"
+    },
+    {
+      "path": "docking/validation/pose-viewer/vendor/molstar-5.11.0.js",
+      "bytes": 5027864,
+      "sha256": "7fad5561c74bc900930fb57d6ab028d1aafdda82223a901bf932b1098e84f1f3"
+    },
+    {
+      "path": "docking/workflow.mjs",
+      "bytes": 8764,
+      "sha256": "23050c7f1fcc34447473b6c752a2011597b14c1f7fcb1178a98d3848d312f986"
+    },
+    {
+      "path": "folding/LIBRARIES.md",
+      "bytes": 6355,
+      "sha256": "d6fc44524e9a6cfb2c34250f8f5b90001ab9e068ec4e184538907ad7c39d889d"
+    },
+    {
+      "path": "folding/library-ui.mjs",
+      "bytes": 6949,
+      "sha256": "65bc19e88fb6675127ba59b34f1630363280585dae9154b5fc76d59bb4b9772f"
+    },
+    {
+      "path": "folding/library.mjs",
+      "bytes": 8903,
+      "sha256": "1cbab378f7389002b65b98e6d21c05774f00eaa1f662bd408ae6ec5e281e2a1a"
+    },
+    {
+      "path": "folding/localfold.mjs",
+      "bytes": 9781,
+      "sha256": "07e38e7d17262be4f57c705badacc9f4ea29a7de4aeb5906ee8ea15d127f488f"
+    },
+    {
+      "path": "folding/request.mjs",
+      "bytes": 5736,
+      "sha256": "ffd2474f119b2e3becf12b230bb8fbae56822a4ab3ab70bd895b1564d4178084"
+    },
+    {
+      "path": "independent-layout-study.css",
+      "bytes": 5006,
+      "sha256": "e53ba1072d231ed91f703085c280d68e0f38e3f5fc50585167892d6d11badc88"
+    },
+    {
+      "path": "index.html",
+      "bytes": 76249,
+      "sha256": "1e8e6c3a2bfa1015b229922a228b9c525863eca6c6d8d155433eb0112ddfd2ae"
+    },
+    {
+      "path": "licenses/APACHE-2.0-LICENSE.txt",
+      "bytes": 11350,
+      "sha256": "1d66811ba71443c10bc8535bdb862903a2062ca12b22a8530f555c7bce73268f"
+    },
+    {
+      "path": "licenses/DIMORPHITE-DL-NOTICE.txt",
+      "bytes": 1083,
+      "sha256": "c0a5747066691cd119d872c16b13104ffc3e0bfac9c64f50ae432594b793eda3"
+    },
+    {
+      "path": "licenses/ONNXRUNTIME-1.27.0-THIRD-PARTY-NOTICES.txt",
+      "bytes": 325054,
+      "sha256": "0e07b95f3a8d6230037707c5c4a2b554d12c4cb67369669ac255635528ffcee2"
+    },
+    {
+      "path": "licenses/ONNXRUNTIME-LICENSE.txt",
+      "bytes": 1073,
+      "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c"
+    },
+    {
+      "path": "licenses/OPENFOLD-LICENSE.txt",
+      "bytes": 11350,
+      "sha256": "1d66811ba71443c10bc8535bdb862903a2062ca12b22a8530f555c7bce73268f"
+    },
+    {
+      "path": "licenses/PDBFIXER-LICENSE.txt",
+      "bytes": 1239,
+      "sha256": "10842fdfa6a8e288ef6fca51fcba4d4b1410332740d6d0e80ba1cd30089b5b09"
+    },
+    {
+      "path": "local-lab-test.js",
+      "bytes": 11275,
+      "sha256": "6330ef1f123a90bde116ab512a72014bc1e0ae6efef56d6d6740a6eca25d29e6"
+    },
+    {
+      "path": "mlip-worker.js",
+      "bytes": 36067,
+      "sha256": "6970f4f70cdab6f4070dc5f8c078f5d23e74b9520bf8a0aa970b79424e2594c7"
+    },
+    {
+      "path": "mlip/README.md",
+      "bytes": 1032,
+      "sha256": "0316279503887d47ab568a53a7e7d62326ca6129176f8c950cc194b2c8c4ab3c"
+    },
+    {
+      "path": "mlip/TORCHANI-LICENSE.txt",
+      "bytes": 1075,
+      "sha256": "7a0b590f5efe6fe60725ccad0f28721c62422685a36a37214dd147a9a78aee2b"
+    },
+    {
+      "path": "mlip/ani2x-webgpu.js",
+      "bytes": 23383,
+      "sha256": "ccbb460409e376ef980b98eb5e4675e0296a6e37939a11682a7a24a2e90890d9"
+    },
+    {
+      "path": "mlip/ani2x.js",
+      "bytes": 12800,
+      "sha256": "4bcdc242b488d2956840c83e92246e5de3e7002c515c96e866cd4dfd947f95a0"
+    },
+    {
+      "path": "molarium-workspace.css",
+      "bytes": 9116,
+      "sha256": "ab18b693d0a8d70b6fc304db800bb7db7f2c51fddc408f6e7e35daced2e4f4e5"
+    },
+    {
+      "path": "molecular-state-hash.mjs",
+      "bytes": 3504,
+      "sha256": "d3fa2cbba6e132c0618abb3c4483160c1b6f661f1b5ca8e1e2ee3d6ddd29c935"
+    },
+    {
+      "path": "openff/OPENFF-FORCEFIELDS-LICENSE.txt",
+      "bytes": 18693,
+      "sha256": "8e0281df4b7dd386c0b660f7476a74e486036d6d2f2372779e5561961a36e7b7"
+    },
+    {
+      "path": "openff/README.md",
+      "bytes": 3491,
+      "sha256": "32b8b7a75f12e14ea3e3f4c5f58fb702c30c0beba914d50671734f7b73839088"
+    },
+    {
+      "path": "openff/conformer-arena.js",
+      "bytes": 5535,
+      "sha256": "894bbf4b3a3c8385e616f740fa5c1db9456df1de3c21b07577d74cfde4b4cf6d"
+    },
+    {
+      "path": "openff/conformer-protocol.js",
+      "bytes": 1683,
+      "sha256": "48a9b1ab03b1ee27f4098d7ddd70792c567cbd81ec0b5e33deaccac434b032f7"
+    },
+    {
+      "path": "openff/frame-contract.mjs",
+      "bytes": 1604,
+      "sha256": "581d47b7bbce1ee9d15d8fbb1dd2d4cff0d8d1a40aed0010becd4e9b7771e3fb"
+    },
+    {
+      "path": "openff/implicit-solvent.js",
+      "bytes": 3659,
+      "sha256": "26da819efca497b93ad0686126aae75ac685eae953b1586a1858b1c102fec464"
+    },
+    {
+      "path": "openff/numeric-system.mjs",
+      "bytes": 4433,
+      "sha256": "cc463cfc41acc6a4e0030251210b985d18e190eda0f0062ac0ddaac5f248ecbc"
+    },
+    {
+      "path": "openff/rosemary-trp-cage.json",
+      "bytes": 474997,
+      "sha256": "6e77b93f624825cdcb02b29821deaa51e811215f8cff22e7ece7a3bdb9a28ea4"
+    },
+    {
+      "path": "openff/rosemary-ubiquitin.json",
+      "bytes": 1917591,
+      "sha256": "dd2d51eeeef1e48b5489cedcbf18d826fa791dab51d95d51595d2f9900f384a0"
+    },
+    {
+      "path": "openff/sage-2.1.0.json",
+      "bytes": 52501,
+      "sha256": "fab6465fe6fe1603f839ca02f9c14c024fc35ee31ac4bddefb0fac74aeb25cff"
+    },
+    {
+      "path": "openff/sage-parameterizer.js",
+      "bytes": 14670,
+      "sha256": "ddc2670becfd44dbfe12acbc41446bb18edd503b1beb0cfc7eade9dd27deb005"
+    },
+    {
+      "path": "openff/simulation-options.js",
+      "bytes": 4466,
+      "sha256": "fe19c5ed8a3b7daf5bcb8dab2e7400ca48cacd16d82cb00ebefffc513e2ca3ed"
+    },
+    {
+      "path": "openff/ubiquitin-1ubq-prepared.pdb",
+      "bytes": 99913,
+      "sha256": "1b8f2e998fd38ac408bb0277e2c523d9af63e90de3f70980403d020242cf41ca"
+    },
+    {
+      "path": "openfold-export-results/trained/MODEL-CARD.md",
+      "bytes": 1619,
+      "sha256": "aa7f353636682fa683c6638c8f26f9845b8cc0deff820344c077b0eb93017ae0"
+    },
+    {
+      "path": "openfold/features.js",
+      "bytes": 15598,
+      "sha256": "8a0eafe1676b4a39b3ea567a70eaaae94065bf21a735eaee4a6f7c4a8cd2be74"
+    },
+    {
+      "path": "openfold/msa-client.js",
+      "bytes": 8072,
+      "sha256": "98d80c658ec0682fb0b1ce59f2f6d4a3499321e34d6634dd73f4b64cf80b3777"
+    },
+    {
+      "path": "openfold/predictor.js",
+      "bytes": 8690,
+      "sha256": "1f87156c88bb92520576148fc91d7130a2abf4f774a9ac4c201fcb970c9bdf1d"
+    },
+    {
+      "path": "openmm-worker.js",
+      "bytes": 27940,
+      "sha256": "220ff2361ae1e79d086eb544757b1647cc1d4d5627d6187d65a3275d8bc901ae"
+    },
+    {
+      "path": "openmm/OPENMM-LICENSE.txt",
+      "bytes": 1101,
+      "sha256": "7db02052788ae82c227bf50d6787764734138bc05822723709c6bb69ece8fcd2"
+    },
+    {
+      "path": "openmm/README.md",
+      "bytes": 2932,
+      "sha256": "c5d0be8e1ec5c640495c3288a3579d38964f57cb02887b119f808234bd6036f1"
+    },
+    {
+      "path": "openmm/molarium-openmm.js",
+      "bytes": 10827,
+      "sha256": "a6eb81f1839ce85fe04e652bfad9bcf5fa5505eebb0ea7ccda47497b739f7e2e"
+    },
+    {
+      "path": "openmm/molarium-openmm.wasm",
+      "bytes": 905839,
+      "sha256": "94e0ec3e81b6d26f52e7e42cfc823e4fcf970ebe428f497aa66db6e64d4bd307"
+    },
+    {
+      "path": "paper/submissions/chemrxiv-v1-2026-09-08/Molarium.pdf",
+      "bytes": 5961246,
+      "sha256": "caa49f6fa273387ce52d0f51e15bbfc6ad23518e25350e49b004cb1259740cad"
+    },
+    {
+      "path": "paper/submissions/chemrxiv-v1-2026-09-08/submission.json",
+      "bytes": 2910,
+      "sha256": "9f06e1abc7cacec4e60527054b6457323a176fa3ba32c895cf54ef2a5d783e0c"
+    },
+    {
+      "path": "protein-residue-templates.js",
+      "bytes": 4712,
+      "sha256": "2c6a0eb025a8375b2653657ca86dd313e0c3ae038f9866b36fe96d32ebf8d1ee"
+    },
+    {
+      "path": "rdkit-worker.js",
+      "bytes": 25156,
+      "sha256": "ddbe85c4eec0b9b7353cee9d28d983b3638a84dec70108516dd672051815cb2a"
+    },
+    {
+      "path": "rdkit/RDKIT-LICENSE.txt",
+      "bytes": 1580,
+      "sha256": "daeb8d194502cbcf34c05c39541a0d02be65bc9bada5b891c1974cd24e9fca30"
+    },
+    {
+      "path": "rdkit/README.md",
+      "bytes": 2491,
+      "sha256": "6d2f908705aa97d49a513afc406f4534313369fe989542ee527520b8da2ec735"
+    },
+    {
+      "path": "rdkit/dimorphite-sites.js",
+      "bytes": 4428,
+      "sha256": "068012afec22b235177a4060c6f8f960de8bb6243394d36bd71ab7de755c13e8"
+    },
+    {
+      "path": "rdkit/dist/RDKit_minimal.js",
+      "bytes": 127197,
+      "sha256": "8fbe5a895562b7a86afb226b6e04caeab53acd86ffce3fdc59a3922a5df21659"
+    },
+    {
+      "path": "rdkit/dist/RDKit_minimal.wasm",
+      "bytes": 5634149,
+      "sha256": "813445a8b8459f6c44e65e572d4d674d58010fe7acd225ff06e054a3105abb94"
+    },
+    {
+      "path": "reproductions.html",
+      "bytes": 2862,
+      "sha256": "1873a7b3a1147cfda8374367a7d56751706cf2d1b1030e994e79152981e28e00"
+    },
+    {
+      "path": "reviews/library-cofolding-2026-11-12/README.md",
+      "bytes": 8018,
+      "sha256": "17a8bbfc5d2faa10040ffb72d61f51d52b3efa22897c1e06cbe207c2cea87594"
+    },
+    {
+      "path": "reviews/library-cofolding-2026-11-12/summary.json",
+      "bytes": 35618,
+      "sha256": "3e14fa4276a63ba636421e9c66b622dfa61de23c7f578b0c723a646b50888109"
+    },
+    {
+      "path": "runtime-config.js",
+      "bytes": 387,
+      "sha256": "a96964f0d7a775226faa7915d3b8d1ba4bf8a4699eb06cafbf3d13574f5845fe"
+    },
+    {
+      "path": "scripts/local-test-server.mjs",
+      "bytes": 1385,
+      "sha256": "5244ca3115b8c9fcc5f277cf5b56cbd15e1e6bc193418a26093ced7935fbb991"
+    },
+    {
+      "path": "scripts/verify-sos1-deployment.mjs",
+      "bytes": 2109,
+      "sha256": "2962beb03893c2c0f67fe37715eb97963e354ebda5bc67c3af81d58f5abae0ba"
+    },
+    {
+      "path": "scripts/verify-sos1-frozen-browser-publication.mjs",
+      "bytes": 10996,
+      "sha256": "a3050d81c0be75ed639816d1c13126ce6f1820116132d942e602f9ad01b9b4f4"
+    },
+    {
+      "path": "sos1-movie.mjs",
+      "bytes": 1245,
+      "sha256": "5c1c4b03c3b230cd4652a3dc95b3cee5f35a064527494fa698ce1a7cc986e2bd"
+    },
+    {
+      "path": "sos1.html",
+      "bytes": 5312,
+      "sha256": "f997b3bc22797bc38da4db1d7c01bc3e3dde6ae0877857cf06e77e04a9ef6bdd"
+    },
+    {
+      "path": "stormm-worker.js",
+      "bytes": 19456,
+      "sha256": "c4ef9291abc218fb71728cc6f1bac8e98c9e713d47af875383267ca05ae22337"
+    },
+    {
+      "path": "stormm/LICENSE",
+      "bytes": 1078,
+      "sha256": "f39fae2208edb0cfa6719e510f33bb72aec9628e7c5984c906382d341e6f7f78"
+    },
+    {
+      "path": "stormm/README.md",
+      "bytes": 9929,
+      "sha256": "b92df52ed591c2cafe4a7e82492f0f1ae766da61b374dc8dc76180810edc9545"
+    },
+    {
+      "path": "stormm/core.mjs",
+      "bytes": 48163,
+      "sha256": "742750568d20eeac0c36242bba9bf0b88f2a22507ffcaa4fc4968d19d9b88d76"
+    },
+    {
+      "path": "stormm/engine.mjs",
+      "bytes": 19343,
+      "sha256": "aabc4813983af5cad0d755a42040cabc85bd955976a00a9bc04b52395e99db53"
+    },
+    {
+      "path": "styles.css",
+      "bytes": 74671,
+      "sha256": "63d9184a96ee0aea421c010749d5caea0c535f3738d71258c42b319612350554"
+    },
+    {
+      "path": "validation/README.md",
+      "bytes": 1572,
+      "sha256": "9a7e5aee10818a62f6610480970cac5f8a8748382a950c9cb0e92bca09210ed8"
+    },
+    {
+      "path": "validation/dashboard.mjs",
+      "bytes": 5112,
+      "sha256": "4bb0629e63af710269f237c130539f383e519a6346fdf567b3130ebe5a18e1f6"
+    },
+    {
+      "path": "validation/registry.v0.1.json",
+      "bytes": 22923,
+      "sha256": "43295ca0ec2cfebee0a2cda3c5f8f0dae3ec3eedbc95dacf23be6ccdbf680a1b"
+    },
+    {
+      "path": "validation/registry.v0.2.json",
+      "bytes": 23509,
+      "sha256": "70d1ec75edbd42673244878bef0934d2dfc29ff0d1ed47d26b1eca1187a80a5f"
+    },
+    {
+      "path": "vendor/foldarium/LICENSE",
+      "bytes": 1071,
+      "sha256": "eab63784d10cad4231cca1d3f83e887d1753b62f0c6229928194d74b6220671e"
+    },
+    {
+      "path": "vendor/foldarium/UPSTREAM.json",
+      "bytes": 2475,
+      "sha256": "421bac40cf88f4d6c8675b7504dbdfd6eefcde4228655c8639e63602c8e9520d"
+    },
+    {
+      "path": "vendor/foldarium/assets/foldarium-mark.svg",
+      "bytes": 1506,
+      "sha256": "4501b7d4122f6eea01138bab69137f668adfc8c0eca60d629a3f1a0ecbf3537b"
+    },
+    {
+      "path": "vendor/foldarium/library-alignment.js",
+      "bytes": 2994,
+      "sha256": "e5879788335807fc56ed63a7f94ab7fbeaa4e1dabaa3969ec483a9f7eac3dc65"
+    },
+    {
+      "path": "vendor/foldarium/library-chemistry.js",
+      "bytes": 1247,
+      "sha256": "9cd2a16ceb4d30713a0b13a36b78ba06d771f28e45d8602acc53f1ff60dda9bd"
+    },
+    {
+      "path": "vendor/foldarium/library-format.js",
+      "bytes": 2930,
+      "sha256": "cd0e34fdffba257984e30b9a50e57b13d64d15e1515a22baef51b4b3f88562d3"
+    },
+    {
+      "path": "vendor/foldarium/library-review.css",
+      "bytes": 2320,
+      "sha256": "450352c06c7be38edb3446939806ecaa3cca7e3ccfc7f6c9181fd79d592ffb93"
+    },
+    {
+      "path": "vendor/foldarium/library-review.html",
+      "bytes": 2516,
+      "sha256": "120a6f6c4afa783a08a19989d3d690f905ac9ce5eebfbe94f000d8093e913d51"
+    },
+    {
+      "path": "vendor/foldarium/library-review.js",
+      "bytes": 12954,
+      "sha256": "fbb7b99fa6a901ac6d9d74981269c617eaa340de16ae031737a93677c7e2d8da"
+    },
+    {
+      "path": "vendor/foldarium/library-store.js",
+      "bytes": 5591,
+      "sha256": "c9ae235fddc2e7f1d943c8635ebf3b6ae5bae264f879e21763f690c634b43902"
+    },
+    {
+      "path": "vendor/localfold/LICENSE",
+      "bytes": 783,
+      "sha256": "dff27ba886d5afdad3633a66154e7cdcad045b6d9e2189767234ee5b7f50dc1f"
+    },
+    {
+      "path": "vendor/localfold/README.md",
+      "bytes": 7058,
+      "sha256": "a4928fd886d3392a8effef345ac1b84325a5066abc1a906fff5c25d49b6c6eac"
+    },
+    {
+      "path": "vendor/localfold/UPSTREAM.json",
+      "bytes": 35280,
+      "sha256": "2fa2dc96ff95ffe6eb0ef19377a17c7697d8708c71d7eef662ffc036a20a55b7"
+    },
+    {
+      "path": "vendor/localfold/cpu/af3/confidence/confidence.js",
+      "bytes": 27855,
+      "sha256": "60e046a4b29047c2066b7596b397139dcc5c0fb3a8732e4d24a1eed3007618f7"
+    },
+    {
+      "path": "vendor/localfold/cpu/af3/confidence/ptm.js",
+      "bytes": 6697,
+      "sha256": "614243add01aaaa68ae109ce778d5655ba16447162bad40967ba47829b2fab1b"
+    },
+    {
+      "path": "vendor/localfold/cpu/af3/diffusion/atom-conditioning.js",
+      "bytes": 8091,
+      "sha256": "ce42383b20cec0a38bfe43d789773180c788d4ff80c2b1b906000afab821bde4"
+    },
+    {
+      "path": "vendor/localfold/cpu/af3/diffusion/atom-encoder.js",
+      "bytes": 37244,
+      "sha256": "084d50bc0e3f628603790278c8bf2f128f0f590ddbddd8f40479c021dc04b3b9"
+    },
+    {
+      "path": "vendor/localfold/cpu/af3/diffusion/diffusion-sampler.js",
+      "bytes": 10654,
+      "sha256": "78fae06f2c1723c0575963fb684c9e2422c63071e7bb120047bc1478986186e5"
+    },
+    {
+      "path": "vendor/localfold/cpu/af3/diffusion/inpaint.js",
+      "bytes": 4116,
+      "sha256": "9b3a5638877242a90229fc164b7538302867cd17f713d365f93d6c1863cfdf13"
+    },
+    {
+      "path": "vendor/localfold/cpu/af3/diffusion/rigid-align.js",
+      "bytes": 7509,
+      "sha256": "66a93209692a72988c06bdeb80f5e8e686a4a04a4c7be38b3b0e6d864a7d0348"
+    },
+    {
+      "path": "vendor/localfold/cpu/af3/diffusion/steering.js",
+      "bytes": 6015,
+      "sha256": "c680a6a7aabcd406f3b3c9885998523f058a5718a61fbb370bcff063f47a7647"
+    },
+    {
+      "path": "vendor/localfold/cpu/af3/structure/structural-expander.js",
+      "bytes": 8812,
+      "sha256": "09228ebe8be05b7f999b1d0fd185212a434dee8731761b900613a704b7e7b7af"
+    },
+    {
+      "path": "vendor/localfold/cpu/af3/trunk/embedder.js",
+      "bytes": 14933,
+      "sha256": "95ca5372c228c9369ded55e58b0d47941b6a997837c86682559718151cfeb237"
+    },
+    {
+      "path": "vendor/localfold/cpu/af3/trunk/pairformer.js",
+      "bytes": 23930,
+      "sha256": "17be9b9578d17cecec224558c9b226aab1a69b8af465669971422c11e21d59fe"
+    },
+    {
+      "path": "vendor/localfold/cpu/af3/trunk/template.js",
+      "bytes": 21209,
+      "sha256": "02febb651261def20ba58b1c84c91c79acbd9092596cfd5d68c2b861168d7abd"
+    },
+    {
+      "path": "vendor/localfold/cpu/design/mpnn/accel.js",
+      "bytes": 11340,
+      "sha256": "03ffeb38054198d94e221ed819cb8e4c2c79cd296415c03400f62d2a3aa03746"
+    },
+    {
+      "path": "vendor/localfold/cpu/design/mpnn/constants.js",
+      "bytes": 4873,
+      "sha256": "3d309f069c71adbff0d054b27212df5aed06bbdd55314d86dfb96b873a30321f"
+    },
+    {
+      "path": "vendor/localfold/cpu/design/mpnn/features.js",
+      "bytes": 28860,
+      "sha256": "477f5d74557a9a6c26409c4f1b6ad762e9c47bf085be2e128253cf7e37b150bc"
+    },
+    {
+      "path": "vendor/localfold/cpu/design/mpnn/na.js",
+      "bytes": 17882,
+      "sha256": "f5ee299562c4aaa28f82dd9afa97039b494d4596de9d61a7085501297639afc2"
+    },
+    {
+      "path": "vendor/localfold/cpu/design/mpnn/ops.js",
+      "bytes": 12073,
+      "sha256": "07577dd71a6c641b5c50861bbbdf72239219d6637d2e3ad8561f687d2a78d41f"
+    },
+    {
+      "path": "vendor/localfold/cpu/design/mpnn/pdb.js",
+      "bytes": 19678,
+      "sha256": "572658a3db622dac0f299c43a644e86166f39d171eafbc313b793a5a63aa1732"
+    },
+    {
+      "path": "vendor/localfold/shared/af2/model/recycle-convergence.js",
+      "bytes": 6580,
+      "sha256": "0c6ab974e74d589c95164443d615a7e25f5016abcac408fc96df874f8d2c6d98"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/dialect.js",
+      "bytes": 96251,
+      "sha256": "7a79f76d4703cdb352a800f79a8f89bfe9354dde5d5a5c37239c3a5007858d3d"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/feature-convergence.js",
+      "bytes": 8298,
+      "sha256": "ee1086e6b0e969b9f3e30592bd3e0138d54d6ef0f81c4f46b68bfb8943f6ed9a"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/batch.js",
+      "bytes": 12923,
+      "sha256": "07355baaa039d14d46e11304d5ace24c9674a7f36887859eed29531e636a50d2"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/boltz2-conformers.js",
+      "bytes": 14385,
+      "sha256": "cfa2908e832ed77fe2fcb46697bdbb2e7ac7054e68a7970786586bcbcb60ac2e"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/ccd-component.js",
+      "bytes": 19217,
+      "sha256": "dc216fc21b33e21e986993ee7ce34e77f10a33b33676eacee5d218ea87db74dd"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/chai-msa.js",
+      "bytes": 12226,
+      "sha256": "74d3b0425a94913983dba9778a4221d5bbaab0fef743b6d97aed009e43c6d26c"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/chai1-conformers.js",
+      "bytes": 15413,
+      "sha256": "11fccca17d65c85f205543fd6eaa31f2d8e1d866c038558980c1191a762a12d6"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/constraints.js",
+      "bytes": 13922,
+      "sha256": "575eaa06712bd79dac37d807141cfff2300d31c3b009edaa75a996beed79f0bc"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/contact-classes.js",
+      "bytes": 2706,
+      "sha256": "ad1826533d0c3331842e7ca2318142201ddf65bcf0b6d7a17ecf7cdf00dd93ff"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/declared-leaving.js",
+      "bytes": 9049,
+      "sha256": "b550046b2129928a23243d7337ae5407d812bc34589123676900b2ff2b9c0853"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/featurise.js",
+      "bytes": 100771,
+      "sha256": "072d66a1b9a76cd687ea55c329b895bf94310ed73626c4c633e7b1e7f8e3c236"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/modified-parents.js",
+      "bytes": 14607,
+      "sha256": "497bf59a564669de126dab2645f6c85fac97a7a67b239a9fe1c391d0f3f42647"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/msa-features.js",
+      "bytes": 20309,
+      "sha256": "1fb60d81400ffaa4f441ed106944286e236cc4b04d6f1ede1a60363fa85d340f"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/reference-conformers-nucleic.js",
+      "bytes": 25144,
+      "sha256": "a03c8b575cd629d5144b048481d0a2d58aa552fe1c7afab73470f08cef5ed3d8"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/reference-conformers-unk.js",
+      "bytes": 1450,
+      "sha256": "eba1502b60788f5dd593e29fa45b9617325552cf37a03b0c2146d40b47956a23"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/reference-conformers.js",
+      "bytes": 21623,
+      "sha256": "0fcf80c4485fb315cc03ad50e2acffd76928ca28995c7f292ac94fab02789f35"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/standard-components.js",
+      "bytes": 68043,
+      "sha256": "8d37c3e81967318fdf36c2915afff4a3a139ebb8d73e6c50ee5cbc6880d93490"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/structural-tokens.js",
+      "bytes": 18844,
+      "sha256": "e842e4531f863ca39df16fd902f90e65874a533a4c3b7454624324d6ce73d75c"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/template-features.js",
+      "bytes": 36583,
+      "sha256": "faf2a61dc197af26415cf44968be6ba28b5b945b2a820112d15704f0ea7bfde6"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/template-fused-features.js",
+      "bytes": 10919,
+      "sha256": "f41076520d8a056ab272ee968dcda1c6636529aea0c8aae7a2d586114ca450b2"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/featurise/template-input.js",
+      "bytes": 21522,
+      "sha256": "613a3f90dcb8a9db5c58645bc88b984a4dcbe83d93da002bd9630fbb7a0c6108"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/msa-draw.js",
+      "bytes": 8695,
+      "sha256": "e9c3facec40585e0ed76de0f916982c4fcab10555eccc323d0d97b01b9447fcc"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/random.js",
+      "bytes": 776,
+      "sha256": "634b1c864cbe3fe4290caf218b05337023e3e2207213bbb7ebe57277118fae47"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/structure/pdb.js",
+      "bytes": 15965,
+      "sha256": "9f5a0c00f692a1a866ce7d9b974efbd0c08f6e69978f2c7b8255523934c9e3f7"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/structure/warm-start.js",
+      "bytes": 3573,
+      "sha256": "93b146f833400350fdc3f488b9a4756ed791d797a6d9b8521cae30acb2cfcc19"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/trunk/distogram-bins.js",
+      "bytes": 593,
+      "sha256": "efd69fd6f5f87810b4edf56cbefc9254754c6942abf1f23064f93525efcfce70"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/weights/diffusion-weights.js",
+      "bytes": 60529,
+      "sha256": "26dd41cfbde376bafac9a0e173b72888177f3727a1f79034a2a6f3c94b399a48"
+    },
+    {
+      "path": "vendor/localfold/shared/af3/weights/weights.js",
+      "bytes": 61985,
+      "sha256": "93cddb73cc5ea7b687cd3eb11e1e77e555d7992b05f0e712b8df0a6c575caa57"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/alphafold-fixture.js",
+      "bytes": 29632,
+      "sha256": "1a4f9a1b117acb39ec0a0a4d7bda54de1074356df0ba0f008e6699e4eac940a9"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/delta-tensor-store.js",
+      "bytes": 6967,
+      "sha256": "f986e835fdc88b8485440d254ee2e3ba08ffc4f8efaa0841d3805f1cd624195c"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/http-tensor-store.js",
+      "bytes": 30064,
+      "sha256": "4e21f5dc034e8ee9a1a25c1aec991d42c094ad7f5ebe2d17171c62ccf97559e0"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/af3.js",
+      "bytes": 118976,
+      "sha256": "84dee8b0ec55e91170af28e322cede04bd6a9715053288e2c49137ef24f5ab73"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/bioemu2.js",
+      "bytes": 425976,
+      "sha256": "e6df6a5fdc63129966da96f0aed0314ea075666c85730f3e34f62f8dff391d5b"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/boltz2.js",
+      "bytes": 125004,
+      "sha256": "3d695148670bbed83ecce567e4ae9e4a97c5aa150ad2cbb72c205879eeff9ec9"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/ef2-fast-300m.js",
+      "bytes": 196819,
+      "sha256": "7ddbead674f90ba86a4001e72829ec5f6ab9ddfd251c50a63a2b592a0003347b"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/esmc-300m.js",
+      "bytes": 47093,
+      "sha256": "0f03ba3fcb5cb97a034e084bce5095558efa70da9f04ce54c09d458686de273a"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/esmc.js",
+      "bytes": 56833,
+      "sha256": "83124cd53b429483899ff22520d009c332e191ff2efe9e86776b293755d16c13"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/esmfold2.js",
+      "bytes": 196819,
+      "sha256": "08e69b825965ff537ca62b9115b6527576469910bedb4adaf8c44bdf65743349"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/index.js",
+      "bytes": 31333,
+      "sha256": "44eb854eeca008bcd8f34213ab86e816f4a2540fe353ea389c3fa3f8a9d40c9b"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/intellifold2.js",
+      "bytes": 121003,
+      "sha256": "40d66fb14ebed78bb6bc2f0c694c4a14fc3b1fad4c0459204da45e7931424763"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/mol1.js",
+      "bytes": 128161,
+      "sha256": "b9ca97d3767ae434c1f472d82ecfa46000ab7c6798de19d9f505eb6d2cda1d10"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/monomer-2.js",
+      "bytes": 66538,
+      "sha256": "182bfbf6e9549178a4735b59222b024288f7a35a4520bc43510f8cdabdd9faa4"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/monomer-3.js",
+      "bytes": 54115,
+      "sha256": "63546a42b6e8c8beb5ead43956540714611a79f1074e4bf79baf38976dfad5df"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/monomer-4.js",
+      "bytes": 54115,
+      "sha256": "05e0e769d9d9141b6dc0abce322e0b6f1724b357ef03f42efd8a83ffc19a4626"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/monomer-5.js",
+      "bytes": 54115,
+      "sha256": "6eb89094cde6f20bee87c1f82ceeb8f6e52349b1e96e05ebd461ef2f40949365"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/monomer.js",
+      "bytes": 80436,
+      "sha256": "464faddf57b64dc9f16082f66da12de50ed94eab84c3c18f1c4649aa00699ad4"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/multimer-2.js",
+      "bytes": 68542,
+      "sha256": "00a38c95c886a55d611284c1c15cc9ca7d0c0b4e873fdd97084989993027e6ae"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/multimer-3.js",
+      "bytes": 68542,
+      "sha256": "c1c14cc7558ad07dd2b1e0320c2f96fc11ba9841e045bbc5ea3b361275aa1daa"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/multimer-4.js",
+      "bytes": 68542,
+      "sha256": "10def3d54312dc97a1fe37e9361055ea86b3e52c3bb7c7eef1d6071d3e63eac7"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/multimer-5.js",
+      "bytes": 68542,
+      "sha256": "632d077de365c88e8e78d363fd16225dc9fa63ce9b9b824c25cdae53982174ea"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/multimer.js",
+      "bytes": 83633,
+      "sha256": "180006aaabd2bf3b2405c40efa3762e06b4314cc22c0c248a07dfad9ce3bc516"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/openbind0.js",
+      "bytes": 118984,
+      "sha256": "52bb27334d1d8c593da908ab13c5cf5e54e37e9dc6206190a0634621aabe9f8f"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/opendde.js",
+      "bytes": 136449,
+      "sha256": "6cb74baa4875f0e115ce32d34c4bee13aa77cd394b9979b7ec0bb71ae342bf13"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/protenix2.js",
+      "bytes": 115434,
+      "sha256": "149353564b412e2198306ebe020b169c04183ae6abf9e7f2f39b80f82eb54c1b"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/manifests/rosettafold3.js",
+      "bytes": 129561,
+      "sha256": "6696ebfb964d28d64184b5bd4156253080f17928dc09e0f03bd69cc162d8fed5"
+    },
+    {
+      "path": "vendor/localfold/shared/bundles/script-tensor-store.js",
+      "bytes": 6774,
+      "sha256": "d89342ae26211f10220637057a119a26fccbf05c0198f47aa4349bf7ee7ddea5"
+    },
+    {
+      "path": "vendor/localfold/shared/chem/component.js",
+      "bytes": 11817,
+      "sha256": "48b7358425783618e81c3fa8baf497b0dd71d095cebc2ad1c286dbbd8c64ebcd"
+    },
+    {
+      "path": "vendor/localfold/shared/chem/conformer.js",
+      "bytes": 52175,
+      "sha256": "a96dd34c22b09c7d75cf0b132604c46a4c782506a2d73813ea347de054064325"
+    },
+    {
+      "path": "vendor/localfold/shared/chem/crosslinkers.js",
+      "bytes": 40570,
+      "sha256": "c9040b03d97b8a97107b00198b772cc6cdfb1f5b4ba62abb89716ab91887c24c"
+    },
+    {
+      "path": "vendor/localfold/shared/chem/geometry-tables.js",
+      "bytes": 14977,
+      "sha256": "c746dd31b807d5fd2819c5a45eaacd0b2d8d8c47c3626e57f1ee13c452f01aa1"
+    },
+    {
+      "path": "vendor/localfold/shared/chem/kekulize.js",
+      "bytes": 11516,
+      "sha256": "eee0dcf09c154d09dab78a35284411b02218f0881c9bf3dba2c39031186f3d44"
+    },
+    {
+      "path": "vendor/localfold/shared/chem/rings.js",
+      "bytes": 9774,
+      "sha256": "3dc0ab7f52e079c88405da77f849e7e436689a62d0b3868438e1c50a6bc218ea"
+    },
+    {
+      "path": "vendor/localfold/shared/chem/smiles.js",
+      "bytes": 22323,
+      "sha256": "55c59d2dd63778f1507b8417cd78f1da790901e9ab6905aacde7106a39f649ce"
+    },
+    {
+      "path": "vendor/localfold/shared/chem/stereo.js",
+      "bytes": 8221,
+      "sha256": "5205fc123fec43cce7239223541389c168c3922a452a699c6a12fa3fb2ed29dc"
+    },
+    {
+      "path": "vendor/localfold/shared/heads/contact-threshold.js",
+      "bytes": 7090,
+      "sha256": "a43a6ad39c5b414f115e991a9ff54d06ff703d9087b91b5638ea50d7c82c859b"
+    },
+    {
+      "path": "vendor/localfold/shared/heads/distogram.js",
+      "bytes": 7179,
+      "sha256": "4d54bb28eecde3bdc4f101f6b50fa87c521be693bb833707bd8c1c978c77cc28"
+    },
+    {
+      "path": "vendor/localfold/shared/heads/superpose-pdb.js",
+      "bytes": 11177,
+      "sha256": "80ab6dfb36155157f20cdf880048184f3f7c710c39f6143878934642343e792a"
+    },
+    {
+      "path": "vendor/localfold/shared/heads/tm-score.js",
+      "bytes": 23558,
+      "sha256": "01e2d073f1d116e6a4d8534014182ed1dc90d6f1c0d1af61f7cc043dd3a4f310"
+    },
+    {
+      "path": "vendor/localfold/shared/input/a3m-features.js",
+      "bytes": 27993,
+      "sha256": "8f0e542395f60f10a2fdc57131447649caf6b671c6f5cbfafefa8e2736019fba"
+    },
+    {
+      "path": "vendor/localfold/shared/input/a3m.js",
+      "bytes": 9958,
+      "sha256": "bca35cfb57c2154bcf95a14e3436afd4ee6d47cd7a83ded7176db6568ee36429"
+    },
+    {
+      "path": "vendor/localfold/shared/input/chains.js",
+      "bytes": 28594,
+      "sha256": "b79635429458667203311d4a7311950614fac984e1ab22b8332aae4fd563da47"
+    },
+    {
+      "path": "vendor/localfold/shared/input/query-only-features.js",
+      "bytes": 6151,
+      "sha256": "365eacb6ae885a3114dd2a5d6b91a81e36b45d2f7f2714c54409b913933a883e"
+    },
+    {
+      "path": "vendor/localfold/shared/weights/dtype.js",
+      "bytes": 20574,
+      "sha256": "29e0d5038fcde5279b2089c6e3e378bad22420a07c1b9f0c6329f078a3e22460"
+    },
+    {
+      "path": "vendor/localfold/shared/weights/float16.js",
+      "bytes": 10140,
+      "sha256": "49d35454447d3c2537a42445e518b672dec6b974411069db8bd1d637d745da80"
+    },
+    {
+      "path": "vendor/localfold/shared/weights/weight-pack.js",
+      "bytes": 5935,
+      "sha256": "3a07a5170e40cc5f602b9a06e71d870b3189433543af099bebdfebab570a41b7"
+    },
+    {
+      "path": "vendor/localfold/shared/weights/weight-sources.js",
+      "bytes": 3114,
+      "sha256": "d28ba4ca3d7bf5ad49c183b6f699ba96a9616ec5501d283e71060d4195ef0c23"
+    },
+    {
+      "path": "vendor/localfold/web/af3-model.js",
+      "bytes": 51750,
+      "sha256": "8ac673bf4b46028d34f4b4f1e95c4789e694d294a60dc2f52adf2a87301c3ee7"
+    },
+    {
+      "path": "vendor/localfold/web/align.js",
+      "bytes": 4649,
+      "sha256": "2b840af33d9d774aa1224d1f083338cdd718cb9f6985d6e1b41046923c4180dd"
+    },
+    {
+      "path": "vendor/localfold/web/dev-log.js",
+      "bytes": 11873,
+      "sha256": "58f47976d098db7510d827e8ca467a8185ec262c366c873017da7d908352b199"
+    },
+    {
+      "path": "vendor/localfold/web/model.js",
+      "bytes": 20168,
+      "sha256": "f86de724c6e8516bb5970842dadc0857257ed3b88143427b4be8aeb37dfc774c"
+    },
+    {
+      "path": "vendor/localfold/web/prediction-results.js",
+      "bytes": 20512,
+      "sha256": "78c8dfa561ed46325065ecbb5cb9ddaa7ac170598d9bde5c37d889e9d281bf8e"
+    },
+    {
+      "path": "vendor/localfold/web/template-source.js",
+      "bytes": 19214,
+      "sha256": "4f0fd583ea6694fd47eb8f58b1c7bd546c155b5021a9844184bd21dd004b4db2"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/confidence/confidence.js",
+      "bytes": 44600,
+      "sha256": "aa8b15578facd841a7c60b47e4704e6d5ebc451f48a333a789308f2a94ea4694"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/diffusion/atom-attention.js",
+      "bytes": 40030,
+      "sha256": "f8494301c651a9eebd358960a7970027cfb085f1e86da5114c6e4f5ca1e08952"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/diffusion/atom-conditioning.js",
+      "bytes": 11714,
+      "sha256": "158be3d653ce98f5054223a15ec7ff4d2c8eac44ff54fb0fbe1a0e61e0117488"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/diffusion/atom-encoder.js",
+      "bytes": 37489,
+      "sha256": "7bd56ba76b3c3a70747c2e2a593c3bc486ed6fc33bce40ccfc917519863a8e6e"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/diffusion/conditioning.js",
+      "bytes": 23018,
+      "sha256": "035bf83c173d649e2b1f1126f4812f0c35c19c48f146d2d6b49daa4b46fb502b"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/diffusion/head.js",
+      "bytes": 20068,
+      "sha256": "e728e401dbdd2b601ffb05ee3e0e17509c59e3e4af2bf2777d01b913d64b5113"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/diffusion/sampler.js",
+      "bytes": 13933,
+      "sha256": "0edcbbb9068323dfdd76b1171cdf0c6851860881ba3abf4fa72271467a30ad6d"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/diffusion/transformer.js",
+      "bytes": 38707,
+      "sha256": "76e0cae16f803252e853724b83a18ad72024ec1621cc894388090b697f7d60f9"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/model/fold-batch.js",
+      "bytes": 12299,
+      "sha256": "feb2290b9bd3733842d59809fab73e2caa14f63e0cce59dde63d3e0cf8d3a118"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/model/fold.js",
+      "bytes": 61122,
+      "sha256": "bb533ebdee7886ced693a45146e5f3efcf518016b166b8fda42c924167bcc7d4"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/trunk/embedder.js",
+      "bytes": 23263,
+      "sha256": "aa152785d6fe212e570588374d8c2a804573aed040fabb4bee84a6dcd9f07878"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/trunk/grid-attention.js",
+      "bytes": 21088,
+      "sha256": "715af92b8468d9068812f8ef9bf195e9be6719948e4be0c2045a8cef34bac545"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/trunk/msa-attention.js",
+      "bytes": 10403,
+      "sha256": "46c7c39e2feb1ee78afe808aa0bcf33733c8ef483d0f98ad4251b779940b2140"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/trunk/msa-block.js",
+      "bytes": 10463,
+      "sha256": "4617bec3751d5c77806254d4a8470c4b6f3dbde4b7b19fe544a18e3eedbc00e7"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/trunk/pairformer-block.js",
+      "bytes": 13025,
+      "sha256": "29ecb8d4afd3f95219ea26c0697b5c779563f54e11a12bac083a568b638fe83e"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/trunk/single-attention.js",
+      "bytes": 5260,
+      "sha256": "c13c6f584bb4c692bbeabc9a7fa1e58f4d093e3a6d2a02666f902637264e4176"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/trunk/template.js",
+      "bytes": 23252,
+      "sha256": "34aba984d2a8c9caa082e08403a4b8eb8d8c6ee0d07ba68c3b3512a40a03f2db"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/trunk/transition.js",
+      "bytes": 8818,
+      "sha256": "0d55cbb3db373a1c62fa87aff99717b5d883a06b9acc9070f526c639d893930a"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/trunk/triangle.js",
+      "bytes": 54329,
+      "sha256": "16f1328cf7344b7eb7263f712067240fd49ab70c98b0ae5eacc4c5b2d4aae0f6"
+    },
+    {
+      "path": "vendor/localfold/webgl/af3/trunk/trunk.js",
+      "bytes": 13466,
+      "sha256": "b0b3974a9aa4949f822b4ed136ac09b5c65dc265f80a97b6c5b254cdbc4046a2"
+    },
+    {
+      "path": "vendor/localfold/webgl/heads/confidence.js",
+      "bytes": 9280,
+      "sha256": "738b68d82435cc85b15ba31227a8683555c366d84a05b85e0dc15eac6ea7e7b3"
+    },
+    {
+      "path": "vendor/localfold/webgl/kernels/attention-flash.js",
+      "bytes": 22478,
+      "sha256": "78d6ca5493ec9814fb92f7c29994555a34bed5422cd5bf89ff67d45f95286801"
+    },
+    {
+      "path": "vendor/localfold/webgl/kernels/layer-norm.js",
+      "bytes": 17644,
+      "sha256": "4a1f9f91ecbdd4d9d8ba412bbd913fe247b50efeb098885637263b1065326dbd"
+    },
+    {
+      "path": "vendor/localfold/webgl/kernels/linear.js",
+      "bytes": 54389,
+      "sha256": "1f343c785ce7ca14f3b6558e59d782353c4605cb2187cf8acff222d7caa2fcd9"
+    },
+    {
+      "path": "vendor/localfold/webgl/kernels/outer-product-mean.js",
+      "bytes": 16930,
+      "sha256": "bfa50c1f9f6af0304f46087d61ece684132565be6e07e5625de7f33e3f440383"
+    },
+    {
+      "path": "vendor/localfold/webgl/runtime/context.js",
+      "bytes": 6313,
+      "sha256": "ee1744ad91e39f494d102aa4ce3b092adc8bde39eb63833a5a9d4bd6fb66c407"
+    },
+    {
+      "path": "vendor/localfold/webgl/runtime/elementwise.js",
+      "bytes": 14418,
+      "sha256": "3f0db379def689ab3193d256005eafcab67b0d4f7a123c364bdda612ddb77c4b"
+    },
+    {
+      "path": "vendor/localfold/webgl/runtime/execution.js",
+      "bytes": 68809,
+      "sha256": "c035933555342d4edf7bdf31b74864896360788a1f197fa0d758c7a3c1874d7b"
+    },
+    {
+      "path": "vendor/localfold/webgl/runtime/int5.js",
+      "bytes": 12572,
+      "sha256": "b9a20ede88356ce0fee5458c68e0ec0e4e87cde9d1c7215c465cb8a1b6ee511a"
+    },
+    {
+      "path": "vendor/localfold/webgl/runtime/pad-stride.js",
+      "bytes": 5785,
+      "sha256": "4ad7abef31a7c7e943440d486df6587864170ad805ede835233e92f4bbd2e2bf"
+    },
+    {
+      "path": "vendor/localfold/webgl/runtime/steps.js",
+      "bytes": 3785,
+      "sha256": "593dbca7e61fdf2b929aac5882dd7178dba1f05f9b4cd698f5068b9c4b5cc3c4"
+    },
+    {
+      "path": "vendor/localfold/webgl/runtime/storage.js",
+      "bytes": 32123,
+      "sha256": "a03a13d73821b737bbd45ed7faee4637f30ce08955493eca0a4758be69a871e1"
+    },
+    {
+      "path": "vendor/localfold/webgl/runtime/transpose.js",
+      "bytes": 3047,
+      "sha256": "853728d3ec410c82c5f8b481493eecbcdef1929de34dca64d2e02108fb46bb38"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af2/evoformer/block.js",
+      "bytes": 101827,
+      "sha256": "9c1948dd0f13e3e075609c8b8cf83e53adb50811c6ba893a39c9197781c55a30"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af2/evoformer/input-embedder.js",
+      "bytes": 20022,
+      "sha256": "55a4fc7aacf938ae889a8d049b9c1608b242d6de80dfe3ff7fbc7d6a87413439"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af2/evoformer/template.js",
+      "bytes": 18950,
+      "sha256": "f2764e15e151c04c70b51af27f8d955514b3ab52cffcb4d9819e8a6fc19fe530"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af2/model/monomer.js",
+      "bytes": 34881,
+      "sha256": "0032eed0d1d7b79cbbd3faae0c9df7b60afd2ac059d6143d669ba0d7a3c9d7b1"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af2/structure/core.js",
+      "bytes": 6603,
+      "sha256": "4d34125441b7a23db16d4e908c9cfdc846060c0d365896794fb55d32e57933f1"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af2/structure/geometry.js",
+      "bytes": 8574,
+      "sha256": "e050ec52abddbfab4292240557a24a92a0ab6b5b32d5e5bab2ccb5b04bd430d2"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af2/structure/initialize.js",
+      "bytes": 5929,
+      "sha256": "5e709c6364bd4670255e484bf1686ddc670fd0b7c5ca8f8a35930d8d3dc6d870"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af2/structure/ipa.js",
+      "bytes": 32692,
+      "sha256": "6f3e31da1a9f8c62c2545c4d68f2271f8174c598fcd0f85b04dcedfa87189612"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af2/structure/iteration.js",
+      "bytes": 16817,
+      "sha256": "44fba301bcef68519184fca9ef02853492b2bae0c6734684c888212b9805a8e0"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af2/structure/module.js",
+      "bytes": 4320,
+      "sha256": "46d4118e36cdb517804872faa29f8787756efc3218e50c0a8680b986d075a377"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af2/structure/sidechain.js",
+      "bytes": 8061,
+      "sha256": "b59b3cbbd67df306b1e1ad9e0a0c6887b4beac4aa397eb6804a3739b184a8a9c"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/confidence/confidence.js",
+      "bytes": 78568,
+      "sha256": "1498b4c51f7cde3c1c9ee6706128f4c92f7fc254cada50b6de8e40d4768e7b5c"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/confidence/opendde-confidence.js",
+      "bytes": 16290,
+      "sha256": "83c18805f25d4eefcfe1da62c915568c149d7dbd3bbe2e28b8a33c768e96b1ae"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/confidence/opendde-pair-readouts.js",
+      "bytes": 31371,
+      "sha256": "17f7d409d85c29a3e146a3998cec0383db9741797a038d98627dceb03065e2ea"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/diffusion/atom-decoder.js",
+      "bytes": 31112,
+      "sha256": "08e51b64e9e1f25a4787cc6db0b3b8743c25021468fb28eb530d054dc9efbb91"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/diffusion/atom-encoder.js",
+      "bytes": 128161,
+      "sha256": "49b94788a60edfc27dca5ba8059f0372877488aac8ab433fc0a6d2ef35a84c95"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/diffusion/diffusion-conditioning.js",
+      "bytes": 56072,
+      "sha256": "a5e0f09e0a282cc70761b597182122323d7ad89a34f4ddef1f9bcb1c08a7966b"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/diffusion/diffusion-head.js",
+      "bytes": 38579,
+      "sha256": "cb37f80721f2924d541aa7bb48b91bcf84959d939acefa74372df990a8aa8348"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/diffusion/diffusion-sampler.js",
+      "bytes": 8630,
+      "sha256": "697193efa748f8fff1e9f96a041f92bc3f554c3f8d25bff4e3717ce905e06308"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/diffusion/diffusion-transformer.js",
+      "bytes": 195496,
+      "sha256": "f17263bdec23304c5dda8b19edac728cd72606b6e4cedda24ac265eed13a41b1"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/fold.js",
+      "bytes": 96699,
+      "sha256": "d6910eb5cb879d6f879a9fdca1309df92f80cac6ee8d9c23449168ddc7c858c1"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/structure/structural-expander.js",
+      "bytes": 15272,
+      "sha256": "fb515c603f4a53f2155491e1283f2725fd231478de048b2f6a60ba932c939ea1"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/embedder.js",
+      "bytes": 46356,
+      "sha256": "dfb5b6ef85f660da0b8ef27fb2aacbf800f9845e5e7c0bcb1af1324b615e52c9"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/grid-attend-race.js",
+      "bytes": 26791,
+      "sha256": "5463d9bdd1b0d2bd3071d15b7e1ab68be618f5ee99da9e6a45d6d8a123e37122"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/grid-attention-matrix.js",
+      "bytes": 20530,
+      "sha256": "6bf46081555d3cb9abf003ed3729e4c9a8e823d3ea7d648705cd0f558722cc5c"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/grid-attention.js",
+      "bytes": 75646,
+      "sha256": "74a532912290dcfc66d12af3939059f65d40eca8da3c4cb2eaf2c771046a514e"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/grid-project-matrix.js",
+      "bytes": 12501,
+      "sha256": "514e08100af3a8bbf89320b0dc53d26f2e91002011326b5e58e1f791ad51bf03"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/msa-attention.js",
+      "bytes": 25876,
+      "sha256": "bd511cdc4eeb71f137981d6b55d71e21a865e730096de4eec6ef15f8bd09a71a"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/msa-stack.js",
+      "bytes": 44638,
+      "sha256": "4ebc4f8a40ba7ba4bb98d873746dc39769b6f0f5384b3c2e08ec1e076c795b5d"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/outer-product-mean.js",
+      "bytes": 32754,
+      "sha256": "84e5ba250cae817b4c80b428037081d54d6ae49df486f700ced3a15c8c53bce5"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/pair-track.js",
+      "bytes": 80129,
+      "sha256": "04cc869251cd78010b6233f587de414bd7446feddbc8e92234ffabbf285f08ea"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/pair-width.js",
+      "bytes": 3191,
+      "sha256": "67731a77f41a6b362b071117be4b0d7b6da4778da010bdf391eac7ac9f40ff4f"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/pairformer-block.js",
+      "bytes": 69022,
+      "sha256": "30bad5094401066fe5c65cff8aef44b82b4bf581f62aa3195ea2611bc4163801"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/sequential-groups.js",
+      "bytes": 3383,
+      "sha256": "8049d39a198ccdd0a3c5d704f5f835275c8923a2abe0251fddd1d6e009383749"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/single-attention.js",
+      "bytes": 28058,
+      "sha256": "fd92b5581bbd4d85e4f7cfefd99b5b72613a8713966b5e45b2b6c92c7236a038"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/template.js",
+      "bytes": 57721,
+      "sha256": "0e582f13249cc00cc1e0ab1d392f893a6c37087267c6f056ce39fcebc6cc4036"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/transition.js",
+      "bytes": 71850,
+      "sha256": "5b003cd21b72a3d27d356bc9638e708d63fb991abcf32008e4e009a39baeb1a9"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/triangle.js",
+      "bytes": 7289,
+      "sha256": "f2c2b3d96271c240c633340bb8fe63b8d4693b25ce769529081b93cc9bad155c"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/trunk/trunk.js",
+      "bytes": 39267,
+      "sha256": "61ba33fa6941a7fe071b593becfdd35bd7ce9031f14cafa9ebd88ad921076343"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/weights/device-weights.js",
+      "bytes": 6183,
+      "sha256": "5e3beeead13de54b7c8a5712c437a78020c82713303a56901f0bb846b7a8ae00"
+    },
+    {
+      "path": "vendor/localfold/webgpu/af3/weights/pair-track-device-weights.js",
+      "bytes": 20416,
+      "sha256": "1a1d124823c2ccab5c9228bdcb4559fac2e589b7b17ebc3bbf6cfa8ed12b268a"
+    },
+    {
+      "path": "vendor/localfold/webgpu/heads/confidence.js",
+      "bytes": 19887,
+      "sha256": "3b221a040afa9b042304e1615e00494d22acb0e30247955bee686bc0cd52a84c"
+    },
+    {
+      "path": "vendor/localfold/webgpu/heads/distogram.js",
+      "bytes": 6193,
+      "sha256": "a9d89ade150f1d7f692eb6b6fe3fd8c5083d777e0ae4f9b63161c2f518ec0af0"
+    },
+    {
+      "path": "vendor/localfold/webgpu/input/a3m-features.js",
+      "bytes": 3061,
+      "sha256": "9a14bb892a21b86799742602375ae758ad9352a668b862745891f8971ed5fdad"
+    },
+    {
+      "path": "vendor/localfold/webgpu/input/nearest-centres.js",
+      "bytes": 13639,
+      "sha256": "d68571c91d0f899c54f45949dfaad78c7afb73f434d87397d0547c5eb8e8c987"
+    },
+    {
+      "path": "vendor/localfold/webgpu/kernels/attention-geometry.js",
+      "bytes": 9908,
+      "sha256": "72c74e284eed3f012c323df987fdc78ca50f71980aab2afbd7dd9e75db1a7150"
+    },
+    {
+      "path": "vendor/localfold/webgpu/kernels/attention-matrix.js",
+      "bytes": 23498,
+      "sha256": "bf530f2ec9d83530c1b540d475986a84b5ad4b8bb63e02424f33b2b529a3d13c"
+    },
+    {
+      "path": "vendor/localfold/webgpu/kernels/attention-project-matrix.js",
+      "bytes": 9626,
+      "sha256": "18551d70153b7c39af0bdc76f61fbc5f754aad04a2ecc5088ee5a98bd15628bb"
+    },
+    {
+      "path": "vendor/localfold/webgpu/kernels/attention.js",
+      "bytes": 137289,
+      "sha256": "82c5c0e698661178d5877e56404799d7a8f8308a9c19be525d3b923ac5aa74bd"
+    },
+    {
+      "path": "vendor/localfold/webgpu/kernels/matrix-linear.js",
+      "bytes": 45886,
+      "sha256": "f5c5563d532ac1cdf09ec0038964aaa2df7c7125bd997cde628f21e804aa17cd"
+    },
+    {
+      "path": "vendor/localfold/webgpu/kernels/outer-product-mean.js",
+      "bytes": 91405,
+      "sha256": "7d395fb00d05005c6c0d53a4e2396b4517b79f9f69b434fec05b1b987980910e"
+    },
+    {
+      "path": "vendor/localfold/webgpu/kernels/transition.js",
+      "bytes": 55003,
+      "sha256": "a30e78d946f9cdabffd0bbba8a3f194839f027c9228e0e8e4a73a71f746bc78a"
+    },
+    {
+      "path": "vendor/localfold/webgpu/kernels/triangle/project-matrix.js",
+      "bytes": 18755,
+      "sha256": "f128e7164182aa7b09a3a7383ce9449cf4f7f97f8bdd3660d3fe444093e5575f"
+    },
+    {
+      "path": "vendor/localfold/webgpu/kernels/triangle/shaders.js",
+      "bytes": 57971,
+      "sha256": "9bac9a74f6c248d73cfcc5e7d795586391e1c04a9316430f670d92f2679c6f03"
+    },
+    {
+      "path": "vendor/localfold/webgpu/kernels/triangle/types.js",
+      "bytes": 2678,
+      "sha256": "23185a5a1516cf5e0689abd5b94376a81d4810ff69905dac6283cfabacf9421d"
+    },
+    {
+      "path": "vendor/localfold/webgpu/kernels/triangle/webgpu.js",
+      "bytes": 8928,
+      "sha256": "62793a9c8afc6bdb00a1c8dd09b37610eff9b288c5c441346f4446ce2857f70d"
+    },
+    {
+      "path": "vendor/localfold/webgpu/kernels/triangle/weights.js",
+      "bytes": 8155,
+      "sha256": "523acb356f5ff160782af4019e9d99889fe7dcadf1df5c24029ce34b6a54731b"
+    },
+    {
+      "path": "vendor/localfold/webgpu/kernels/vector-gemm-block.js",
+      "bytes": 2279,
+      "sha256": "cc2539771ed44b38edaa6b7fc968daa35044d92f0ed41afb810bf24fa21ec5b7"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/abort.js",
+      "bytes": 1722,
+      "sha256": "cff2cc9f6655078aca81e1fcef4f30716cbd153912a9c0e779f22d0d2fe80eb4"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/allocator.js",
+      "bytes": 9639,
+      "sha256": "4b25ef587e19d8a17f4259988970648a5f3c34c12e1d7fd77e72ad848633541c"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/cost-model.js",
+      "bytes": 16410,
+      "sha256": "0dfa03b0748b492b980affa205f736d28a4a9498a463179eddfd9152e1de7876"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/device-memory.js",
+      "bytes": 10930,
+      "sha256": "31b0dd735a8dfeba315fd3597b65351cf4a039294345dfda6e95f89b9097a64d"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/device-pack.js",
+      "bytes": 8851,
+      "sha256": "0772effd7166b1f06c7d765f3e14767c90080da5242593a3d4d1dd50926cad76"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/device-profile.js",
+      "bytes": 112972,
+      "sha256": "4574a8883e4eb4a08a60647f47d07d29739c9c495097a50cd0c560417b566db3"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/device.js",
+      "bytes": 9323,
+      "sha256": "4262f6e24ff4c62b22315779b9ce562186ca78da8597065f118db25e723c2e6e"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/execution.js",
+      "bytes": 39051,
+      "sha256": "b184c10e664fa564815a188c92a92a17596807be7f570fa88621b218b71ca088"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/occupancy.js",
+      "bytes": 6960,
+      "sha256": "c1162caa23367515af103d47809d328e0903c647e28d7e25b6b4d303806ecccf"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/pipeline-cache.js",
+      "bytes": 24255,
+      "sha256": "abad07d5107a4032b471de9e5522b01394c14c44e88921ce0470a95c5d726e89"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/queue-pacing.js",
+      "bytes": 9856,
+      "sha256": "f099ab028f8b3ebb2e92bfe799836332b9a3f908528e6cca7f8f081e11761dc4"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/resident.js",
+      "bytes": 20167,
+      "sha256": "f4a547ab006b410064e73e403d87257a3f0c576751bcc2565e0f41ad2e8e1061"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/segmented.js",
+      "bytes": 5062,
+      "sha256": "9aa91ba2b0692b1bac370367b6ccf1e7b2d5bf91ec08d0f2759a709540a467a8"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/shader-source-cache.js",
+      "bytes": 4487,
+      "sha256": "d7704833d2b731c24bc3b94ff053ccae832ab70c9a2c0ea539f151fb668c920b"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/storage.js",
+      "bytes": 5887,
+      "sha256": "008d794d55628eb28cc060e2d9257f7e25813ef555c21e479194c285d8adf36f"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/validation.js",
+      "bytes": 2414,
+      "sha256": "6cf4071930904e7e2dc8204275a415729fb0499c70842d9dc110e1e49dcbd1c7"
+    },
+    {
+      "path": "vendor/localfold/webgpu/runtime/yield.js",
+      "bytes": 1768,
+      "sha256": "35d6a1a2647aa8540165c7e705e08a50c1df95ff54d136a49e2b76688d66e137"
+    },
+    {
+      "path": "vendor/localfold/webgpu/weights/quantised-upload.js",
+      "bytes": 41775,
+      "sha256": "7f4c44785611e2abb03d1e5906cd1d8758713ab1e36082f9dc507981aa8990ba"
+    },
+    {
+      "path": "vendor/onnxruntime-web/ort.webgpu.bundle.min.mjs",
+      "bytes": 113035,
+      "sha256": "3a18c7f261e05d44a15b2eef18a28e5f53c044d5d140bcea6066baf1f09c8b53"
+    },
+    {
+      "path": "webgpu-worker.js",
+      "bytes": 34409,
+      "sha256": "d1514fe3ef7af6a81fc4b51a802555602a4c65b9127b502d79c91c1ec9cc54f2"
+    },
+    {
+      "path": "webgpu/README.md",
+      "bytes": 7759,
+      "sha256": "546d8989bce98ee007abcd5834e2681cd26f41bc49d3e48e2001d54a6a7014c1"
+    },
+    {
+      "path": "webgpu/molarium-webgpu.wgsl",
+      "bytes": 41147,
+      "sha256": "26907253e176239a01dd2a8a66d5236ddf47232f2ecdce0b4018fad09b688be3"
+    },
+    {
+      "path": "workspace-help.mjs",
+      "bytes": 24383,
+      "sha256": "69798a9b304b68d5c4e496217268eb2fd6c8b0f32cc4d95419338cc734421bfe"
+    }
+  ]
+}

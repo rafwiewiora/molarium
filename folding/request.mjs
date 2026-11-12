@@ -3,8 +3,10 @@ export const LOCALFOLD_REVISION='5ea3d42c911949700401b54003cb28c557fcf2a6';
 export const FOLD_MODELS=Object.freeze({
   'localfold-af2':'AlphaFold2 · LocalFold',
   'localfold-openbind0':'OpenBind-0 · protein + ligand',
+  'localfold-boltz2':'Boltz-2 · protein + ligand',
   openfold:'OpenFold · legacy 128-residue export',
 });
+export const COFOLD_FAMILIES=Object.freeze({'localfold-openbind0':'openbind0','localfold-boltz2':'boltz2'});
 export function foldingRequest(input) {
   if(String(input.sequence??'').split(/\r?\n/).filter(l=>l.trim().startsWith('>')).length>1)
     throw new Error('Provide one protein chain; multiple FASTA records are not supported yet.');
@@ -29,7 +31,7 @@ export function foldingRequest(input) {
   if(!Number.isInteger(seed)||seed<0||seed>0xffffffff)throw new Error('Seed must be an unsigned 32-bit integer.');
   let ligand=null;
   if(input.ligand){
-    if(model!=='localfold-openbind0')throw new Error('Choose OpenBind-0 to cofold a ligand.');
+    if(!Object.hasOwn(COFOLD_FAMILIES,model))throw new Error('Choose OpenBind-0 or Boltz-2 to cofold a ligand.');
     const {type,value}=input.ligand;
     if(!['smiles','ccd'].includes(type)||typeof value!=='string'||!value.trim())
       throw new Error('Ligand requires an explicit smiles or ccd type and value.');

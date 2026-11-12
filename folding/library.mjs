@@ -1,4 +1,4 @@
-import {foldingRequest} from './request.mjs';
+import {foldingRequest,COFOLD_FAMILIES} from './request.mjs';
 import {LibraryStore,poseSummary} from '../vendor/foldarium/library-store.js';
 export {LibraryStore};
 const now=()=>new Date().toISOString();
@@ -15,9 +15,10 @@ function publicProgress(p) {
 }
 export function libraryRequest(input) {
   if(!input||typeof input!=='object')throw new Error('Library request must be an object.');
-  if(input.model&&input.model!=='localfold-openbind0')throw new Error('Library cofolding currently requires localfold-openbind0.');
+  const model=input.model??'localfold-openbind0';
+  if(!Object.hasOwn(COFOLD_FAMILIES,model))throw new Error('Library cofolding requires localfold-openbind0 or localfold-boltz2.');
   if(input.ligand)throw new Error('Provide library ligands through compounds, not the single-ligand field.');
-  const request=foldingRequest({...input,model:'localfold-openbind0',ligand:undefined});
+  const request=foldingRequest({...input,model,ligand:undefined});
   let compounds=input.compounds;
   if(typeof compounds==='string') compounds=compounds.split(/\r?\n/).map((line,i)=>({line:i+1,text:line.trim()}))
     .filter(l=>l.text&&!l.text.startsWith('#')).map(l=>{

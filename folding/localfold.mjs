@@ -1,4 +1,4 @@
-import {foldingRequest,LOCALFOLD_REVISION,FOLD_MODELS,validateFoldComponent} from './request.mjs';
+import {foldingRequest,LOCALFOLD_REVISION,FOLD_MODELS,COFOLD_FAMILIES,validateFoldComponent} from './request.mjs';
 import {ColabFoldMsaProvider} from '../openfold/msa-client.js';
 const providers=new Map();
 const check=signal=>{if(signal?.aborted)throw signal.reason??new DOMException('Aborted','AbortError');};
@@ -7,6 +7,8 @@ async function sha(text){return Array.from(new Uint8Array(await crypto.subtle.di
 export async function predictLocalFold(input,{signal,onProgress=()=>{}}={}) {
   const totalStarted=performance.now();
   const request=foldingRequest(input);check(signal);
+  const family=request.model==='localfold-af2'?'monomer':COFOLD_FAMILIES[request.model];
+  const modelLabel=request.model==='localfold-af2'?'AlphaFold2':family==='boltz2'?'Boltz-2':'OpenBind-0';
   if(request.model==='openfold')throw new Error('Use the legacy OpenFold backend for this request.');
   const modelOverride=typeof location==='undefined'?null:new URLSearchParams(location.search).get('model');
   if(request.model==='localfold-af2'&&modelOverride&&(modelOverride.includes('/')||modelOverride.endsWith('.json')))
@@ -66,11 +68,11 @@ export async function predictLocalFold(input,{signal,onProgress=()=>{}}={}) {
       validateFoldComponent(component);
     }
     const {withAbort}=await import('../vendor/localfold/webgpu/runtime/abort.js');
-    const weights=await withAbort(loadAf3Weights(loading,'openbind0'),signal);check(signal);
+    const weights=await withAbort(loadAf3Weights(loading,family),signal);check(signal);
     const {batch,rows}=af3BatchFromA3m(request.sequence,alignment,{seed:request.seed,
       ligands:component?[component]:[],...featuriserDialect(weights.trunk.dialect)});
     msaDepth=rows.depth;
-    report('Folding with OpenBind-0…');
+    report(`Folding with ${modelLabel}…`);
     started=performance.now();
     const result=await foldBatch(device,batch,weights,{steps:request.steps,recycles:request.recycles,seed:request.seed,
       onStage:async (phase,detail={})=>{check(signal);
@@ -82,19 +84,18 @@ export async function predictLocalFold(input,{signal,onProgress=()=>{}}={}) {
           :({'target-feat-start':'Preparing protein and ligand features','target-feat':'Protein and ligand features ready',
             'trunk-prep':'Preparing the model','msa-depth':'Preparing the alignment','trunk-done':'Protein–ligand encoding complete',
             'sample-start':'Starting pose sampling','sample-done':'Scoring the sampled pose'})[phase]??'Running the protein–ligand model';
-        onProgress({stage:phase,detail,fraction,message:`OpenBind-0 · ${stageLabel}`});},
+        onProgress({stage:phase,detail,fraction,message:`${modelLabel} · ${stageLabel}`});},
       onStep:async frame=>{check(signal);onProgress({stage:'sampling',step:frame.step,steps:request.steps,
-        fraction:.65+.25*frame.step/request.steps,message:`OpenBind-0 · sampling ${frame.step}/${request.steps}`});}});
+        fraction:.65+.25*frame.step/request.steps,message:`${modelLabel} · sampling ${frame.step}/${request.steps}`});}});
     check(signal);ptm=result.ptm;iptm=result.iptm;pae=result.scores?.pae;geometry=result.geometry;
     plddt=result.scores?.plddt;meanPlddt=result.meanPlddt;
     const {pdbSlots}=await import('../vendor/localfold/shared/af3/structure/pdb.js');
     confidenceLayout={plddt:'dense atom slots',pae:'row-major token pairs',tokens:batch.tokens,
       slotsPerToken:batch.dense,pdbAtoms:pdbSlots(batch)};
-    pdb=toPdb(batch,result.positions,plddt,{remark:['OPENBIND-0 PREDICTION VIA LOCALFOLD / MOLARIUM','B-FACTOR IS pLDDT (0-100).']});
+    pdb=toPdb(batch,result.positions,plddt,{remark:[`${modelLabel.toUpperCase()} PREDICTION VIA LOCALFOLD / MOLARIUM`,'B-FACTOR IS pLDDT (0-100).']});
   }
   check(signal);
   const manifestModule=await import('../vendor/localfold/shared/bundles/manifests/index.js');
-  const family=request.model==='localfold-af2'?'monomer':'openbind0';
   const manifest=await manifestModule.loadManifest(family);
   const {memoryTotals}=await import('../vendor/localfold/webgpu/runtime/device-memory.js');
   return {schema:'molarium.fold-result.v2',kind:'localfold',sequence:request.sequence,

@@ -66,7 +66,7 @@ export class LibraryController {
   }
   install({request,action,download,reportError}) {
     const safe=fn=>async()=>{try{await fn();}catch(e){reportError(e.message);}};
-    $('fold-library-start').onclick=safe(async()=>{$('fold-library-start').disabled=true;try{await action('protein.cofoldLibrary',{...request(),model:'localfold-openbind0',ligand:null,
+    $('fold-library-start').onclick=safe(async()=>{$('fold-library-start').disabled=true;try{await action('protein.cofoldLibrary',{...request(),model:$('fold-library-model').value,ligand:null,
       name:$('fold-library-name').value,compounds:$('fold-library-smiles').value,samples:Number($('fold-library-samples').value),retainPae:$('fold-library-pae').checked});}
       finally{if(!this.controller)$('fold-library-start').disabled=false;}});
     $('fold-library-pause').onclick=safe(()=>action('protein.pauseLibrary',{}));

@@ -104,10 +104,10 @@ function render() {
     for(const p of visible) {
       if(token!==generation)return;
       selected??=p.id;const card=document.createElement('article');card.dataset.poseId=p.id;card.className=`pose ${decision(p)?.value??''} ${selected===p.id?'selected':''}`;
-      const head=document.createElement('div');head.className='pose-head';const title=document.createElement('strong');title.textContent=`Pose ${p.sample+1} · seed ${p.seed}`;
+      const head=document.createElement('div');head.className='pose-head';const title=document.createElement('strong');title.textContent=`${p.result.model??'Prediction'} · pose ${p.sample+1}`;
       const meta=document.createElement('p'), confidence=ligandConfidence(p.result);
       const aligned=alignComplexPdb(p.result.pdb,reference);
-      meta.textContent=`Ligand pLDDT ${confidence?.toFixed(1)??'—'} · ipTM ${p.result.iptm?.toFixed(3)??'—'} · ${(p.result.elapsedMs/1000).toFixed(1)} s inference · protein Cα RMSD ${aligned.rmsd.toFixed(2)} Å`;
+      meta.textContent=`Seed ${p.seed} · ${p.result.provider??'unspecified backend'} · ligand pLDDT ${confidence?.toFixed(1)??'—'} · ipTM ${p.result.iptm?.toFixed(3)??'—'} · ${Number.isFinite(p.result.elapsedMs)?(p.result.elapsedMs/1000).toFixed(1)+' s inference':'inference timing unavailable'} · protein Cα RMSD ${aligned.rmsd.toFixed(2)} Å`;
       head.append(title,meta);card.append(head);
       const canvas=document.createElement('div');canvas.className='viewer';card.append(canvas);
       const choices=document.createElement('div');choices.className='choices';
