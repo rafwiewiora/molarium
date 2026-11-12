@@ -1,5 +1,10 @@
 # Molarium Chemist Actions API
 
+The [cofolding library workflow](folding/LIBRARIES.md) adds
+`protein.cofoldLibrary`, `protein.pauseLibrary`, `protein.resumeLibrary`, and
+`protein.libraryStatus`. The queue saves exact poses for local Foldarium human
+review and portable export. Pause and status bypass a pending prediction action.
+
 Schema: `molarium.chemist-actions/v1`
 
 The Chemist Actions API lets a browser agent operate Molarium without receiving privileged access

@@ -85,6 +85,13 @@ const ACTIONS = Object.freeze({
       recycles:'integer 0–20', steps:'OpenBind sampling steps 1–200',seed:'unsigned 32-bit integer' }) }),
   'protein.cancelPrediction': Object.freeze({ description:'Cancel the active protein prediction workflow.',
     arguments:Object.freeze({}) }),
+  'protein.cofoldLibrary': Object.freeze({description:'Cofold a protein with a local compound library, save every pose, and review preferences in Foldarium.',
+    arguments:Object.freeze({sequence:'one protein sequence or FASTA',compounds:'SMILES/name lines or array of {id,smiles}',
+      name:'library name',samples:'poses per compound, integer 1–20 (default 3)',retainPae:'retain quadratic PAE arrays (default false)',seed:'base seed; each pose adds its sample index',
+      msaMode:'single | search | provided',a3m:'provided alignment',msaEndpoint:'HTTPS search endpoint',recycles:'0–20',steps:'1–200'})}),
+  'protein.resumeLibrary':Object.freeze({description:'Explicitly resume only unfinished poses in a saved local library.',arguments:Object.freeze({runId:'saved library ID'})}),
+  'protein.pauseLibrary':Object.freeze({description:'Interrupt the active pose; keep completed poses and resume unfinished work later.',arguments:Object.freeze({})}),
+  'protein.libraryStatus':Object.freeze({description:'Read queue counts, current stage, elapsed time and measured warm ETA.',arguments:Object.freeze({runId:'optional saved library ID'})}),
   'selection.replace': Object.freeze({ description:'Select a connected atom path by persistent atom IDs, in click order.',
     arguments:Object.freeze({ atomIds:'array of 1–256 persistent atom IDs' }) }),
   'selection.clear': Object.freeze({ description:'Clear the atom selection.', arguments:Object.freeze({}) }),
@@ -372,6 +379,8 @@ const MAX_INPUT_NODES = 2048;
 // actions. Only script loading gets this larger structural budget; execution of
 // each embedded action still passes through the ordinary control limits.
 const MAX_SCRIPT_LOAD_NODES = 32768;
+// A 10,000-entry library is an intentionally bounded bulk input, not a control envelope.
+const MAX_LIBRARY_INPUT_NODES = 65536;
 // A complete coordinate-bearing PDB is intentionally accepted as one string by
 // session.loadStructure.  Keep the structural JSON guards below, but do not
 // impose the much smaller limit that is appropriate only for ordinary control
@@ -449,7 +458,7 @@ export function createChemistActionsApi({ routes, now = () => new Date().toISOSt
       && typeof request?.args?.serialized === 'string'
       ? MAX_CAMPAIGN_IMPORT_BYTES : MAX_INPUT_BYTES;
     const maximumNodes = requestedAction === 'designerScript.load'
-      ? MAX_SCRIPT_LOAD_NODES : MAX_INPUT_NODES;
+      ? MAX_SCRIPT_LOAD_NODES : requestedAction==='protein.cofoldLibrary'?MAX_LIBRARY_INPUT_NODES:MAX_INPUT_NODES;
     const envelope = checkedInput(request, maximumBytes, maximumNodes);
     const action = String(envelope.action || '');
     const requestId = envelope.requestId == null ? null : String(envelope.requestId).slice(0, 160);
@@ -485,7 +494,7 @@ export function createChemistActionsApi({ routes, now = () => new Date().toISOSt
       actions:snapshot(enabledDefinitions) }; },
     execute(request) {
       // Cancellation must reach a running prediction rather than wait behind it.
-      if(request?.action==='protein.cancelPrediction')return run(request);
+      if(['protein.cancelPrediction','protein.pauseLibrary','protein.libraryStatus'].includes(request?.action))return run(request);
       const operation = queue.then(() => run(request));
       queue = operation.catch(() => {});
       return operation;

@@ -1,0 +1,345 @@
+{
+  "schema": "molarium.library-throughput.v1",
+  "date": "2026-11-12T20:20:18.561Z",
+  "cases": [
+    {
+      "name": "Ubiquitin 76 aa / 2 ligands / 2 seeds",
+      "request": {
+        "schema": "molarium.fold-request.v2",
+        "sequence": "MQIFVKTLTGKTITLEVEPSDTIENVKAKIQDKEGIPPDQQRLIFAGKQLEDGRTLSDYNIQKESTLHLVLRLRGG",
+        "model": "localfold-openbind0",
+        "msaMode": "single",
+        "msaEndpoint": "https://api.colabfold.com",
+        "a3m": null,
+        "recycles": 2,
+        "steps": 25,
+        "seed": 0,
+        "ligand": null
+      },
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        }
+      },
+      "poses": [
+        {
+          "id": "ethanol::0::attempt-1",
+          "seed": 0,
+          "smiles": "CCO",
+          "wallMs": 12594.980000019073,
+          "inferenceMs": 3482.8250000476837,
+          "totalMs": 12591.554999947548,
+          "pdbSha256": "30484f123a447a8e8c1418e6fc558b6696b44e13e9c6ce748bd6ff313f3148ac",
+          "provenance": {
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "MQIFVKTLTGKTITLEVEPSDTIENVKAKIQDKEGIPPDQQRLIFAGKQLEDGRTLSDYNIQKESTLHLVLRLRGG",
+              "model": "localfold-openbind0",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 0,
+              "ligand": {
+                "type": "smiles",
+                "value": "CCO"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "40b86b0e96396806e52ab906c27e37a35e55ed890786d5b712de7353c17cf509",
+            "modelManifestSha256": "a1b153a409639b4d93eedb9031242cd8e86193fb1deaf59ab57a95155948b814",
+            "modelBundle": {
+              "model": "openbind0",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/71ece3571b80e6cdb06f3b95f785187171c718da/openbind0-int5/",
+              "release": "openbind0-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "30484f123a447a8e8c1418e6fc558b6696b44e13e9c6ce748bd6ff313f3148ac",
+            "createdAt": "2026-11-12T20:20:31.399Z"
+          },
+          "startedAt": "2026-11-12T20:20:18.804Z"
+        },
+        {
+          "id": "ethanol::1::attempt-1",
+          "seed": 1,
+          "smiles": "CCO",
+          "wallMs": 2383.4249999523163,
+          "inferenceMs": 2378.7699999809265,
+          "totalMs": 2382.639999985695,
+          "pdbSha256": "a2355fef97dedf4e72f3043528339b839e4278a7f03156e4e1aecac0c85bf04a",
+          "provenance": {
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "MQIFVKTLTGKTITLEVEPSDTIENVKAKIQDKEGIPPDQQRLIFAGKQLEDGRTLSDYNIQKESTLHLVLRLRGG",
+              "model": "localfold-openbind0",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 1,
+              "ligand": {
+                "type": "smiles",
+                "value": "CCO"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "40b86b0e96396806e52ab906c27e37a35e55ed890786d5b712de7353c17cf509",
+            "modelManifestSha256": "a1b153a409639b4d93eedb9031242cd8e86193fb1deaf59ab57a95155948b814",
+            "modelBundle": {
+              "model": "openbind0",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/71ece3571b80e6cdb06f3b95f785187171c718da/openbind0-int5/",
+              "release": "openbind0-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "a2355fef97dedf4e72f3043528339b839e4278a7f03156e4e1aecac0c85bf04a",
+            "createdAt": "2026-11-12T20:20:33.784Z"
+          },
+          "startedAt": "2026-11-12T20:20:31.401Z"
+        },
+        {
+          "id": "benzoate::0::attempt-1",
+          "seed": 0,
+          "smiles": "c1ccccc1C(=O)[O-]",
+          "wallMs": 3394.350000023842,
+          "inferenceMs": 3355.764999985695,
+          "totalMs": 3393.7849999666214,
+          "pdbSha256": "f44317d1406f3571bd4d4c447e624254634f84fdac51b1a82de5886a7661dadf",
+          "provenance": {
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "MQIFVKTLTGKTITLEVEPSDTIENVKAKIQDKEGIPPDQQRLIFAGKQLEDGRTLSDYNIQKESTLHLVLRLRGG",
+              "model": "localfold-openbind0",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 0,
+              "ligand": {
+                "type": "smiles",
+                "value": "c1ccccc1C(=O)[O-]"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "e67125211c5f135613062f2c30c162174701748168b9e31c11ef7dc005d0ec67",
+            "modelManifestSha256": "a1b153a409639b4d93eedb9031242cd8e86193fb1deaf59ab57a95155948b814",
+            "modelBundle": {
+              "model": "openbind0",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/71ece3571b80e6cdb06f3b95f785187171c718da/openbind0-int5/",
+              "release": "openbind0-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "f44317d1406f3571bd4d4c447e624254634f84fdac51b1a82de5886a7661dadf",
+            "createdAt": "2026-11-12T20:20:37.180Z"
+          },
+          "startedAt": "2026-11-12T20:20:33.786Z"
+        },
+        {
+          "id": "benzoate::1::attempt-1",
+          "seed": 1,
+          "smiles": "c1ccccc1C(=O)[O-]",
+          "wallMs": 2462.4700000286102,
+          "inferenceMs": 2431.0349999666214,
+          "totalMs": 2461.8650000095367,
+          "pdbSha256": "3505647c0fac63b26cc563c8da11eef342e98bd12818984cc9dd532ed0582bb4",
+          "provenance": {
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "MQIFVKTLTGKTITLEVEPSDTIENVKAKIQDKEGIPPDQQRLIFAGKQLEDGRTLSDYNIQKESTLHLVLRLRGG",
+              "model": "localfold-openbind0",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 1,
+              "ligand": {
+                "type": "smiles",
+                "value": "c1ccccc1C(=O)[O-]"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "3d2b74a1713b15698508475c75807240e7e0bde52497d33a1de10ade1e8471df",
+            "modelManifestSha256": "a1b153a409639b4d93eedb9031242cd8e86193fb1deaf59ab57a95155948b814",
+            "modelBundle": {
+              "model": "openbind0",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/71ece3571b80e6cdb06f3b95f785187171c718da/openbind0-int5/",
+              "release": "openbind0-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "3505647c0fac63b26cc563c8da11eef342e98bd12818984cc9dd532ed0582bb4",
+            "createdAt": "2026-11-12T20:20:39.644Z"
+          },
+          "startedAt": "2026-11-12T20:20:37.182Z"
+        }
+      ],
+      "inferenceMs": [
+        3482.8250000476837,
+        2378.7699999809265,
+        3355.764999985695,
+        2431.0349999666214
+      ],
+      "wallMs": [
+        12594.980000019073,
+        2383.4249999523163,
+        3394.350000023842,
+        2462.4700000286102
+      ],
+      "sessions": [
+        {
+          "startedAt": "2026-11-12T20:20:18.803Z",
+          "finishedAt": "2026-11-12T20:20:39.646Z",
+          "elapsedMs": 20842.924999952316
+        }
+      ],
+      "warmMeanMs": 2746.748333334923,
+      "firstPoseMs": 12594.980000019073,
+      "status": "complete · 4/4 poses saved · 0 failed\nThis session 21 s · warm mean 3 s/pose · remaining 0 s"
+    }
+  ],
+  "purpose": "Engineering throughput and library/review integration; arbitrary protein–ligand pairs, not a pose-accuracy benchmark.",
+  "reused": {
+    "path": "library-1.json",
+    "sha256": "cb0fac4f47c202f34b299114800c687d591f6789b0284825b83a80bd34e97f29",
+    "run": {
+      "schema": "molarium.cofolding-run.v1",
+      "id": "b2fbd5e2-989e-448e-8501-2412b31af03a",
+      "name": "Trp-cage 20 aa / 3 ligands / 2 seeds",
+      "request": {
+        "schema": "molarium.fold-request.v2",
+        "sequence": "NLYIQWLKDGGPSSGRPPPS",
+        "model": "localfold-openbind0",
+        "msaMode": "single",
+        "msaEndpoint": "https://api.colabfold.com",
+        "a3m": null,
+        "recycles": 2,
+        "steps": 25,
+        "seed": 0,
+        "ligand": null
+      },
+      "compounds": [
+        {
+          "id": "ethanol",
+          "smiles": "CCO",
+          "line": 1
+        },
+        {
+          "id": "benzene",
+          "smiles": "c1ccccc1",
+          "line": 2
+        },
+        {
+          "id": "benzoate",
+          "smiles": "c1ccccc1C(=O)[O-]",
+          "line": 3
+        }
+      ],
+      "samples": 2,
+      "createdAt": "2026-11-12T20:17:34.446Z",
+      "updatedAt": "2026-11-12T20:17:53.571Z",
+      "status": "complete",
+      "completed": 6,
+      "failed": 0,
+      "total": 6,
+      "sessions": [
+        {
+          "startedAt": "2026-11-12T20:17:34.488Z",
+          "finishedAt": "2026-11-12T20:17:53.571Z",
+          "elapsedMs": 19082.675000071526
+        }
+      ],
+      "alignment": null,
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        }
+      }
+    },
+    "timing": [
+      {
+        "id": "benzene::0::attempt-1",
+        "wallMs": 1048.6900000572205,
+        "inferenceMs": 1037.0699999332428
+      },
+      {
+        "id": "benzene::1::attempt-1",
+        "wallMs": 967.5549999475479,
+        "inferenceMs": 960.9099999666214
+      },
+      {
+        "id": "benzoate::0::attempt-1",
+        "wallMs": 1135.8300000429153,
+        "inferenceMs": 1099.6399999856949
+      },
+      {
+        "id": "benzoate::1::attempt-1",
+        "wallMs": 1018.7300000190735,
+        "inferenceMs": 987.5650000572205
+      },
+      {
+        "id": "ethanol::0::attempt-1",
+        "wallMs": 13928.419999957085,
+        "inferenceMs": 1278.3400000333786
+      },
+      {
+        "id": "ethanol::1::attempt-1",
+        "wallMs": 974.3799999952316,
+        "inferenceMs": 970.2300000190735
+      }
+    ]
+  },
+  "review": {
+    "grid": true,
+    "preferredPersisted": true,
+    "noneClearsPreferred": true,
+    "shortlistExport": true,
+    "importRoundTrip": true
+  },
+  "timingOrder": "Corrected derived statistics use chronological startedAt order; raw library records unchanged."
+}

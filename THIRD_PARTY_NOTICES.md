@@ -110,3 +110,13 @@ bundle manifests. The AlphaFold2 parameters retain DeepMind's CC BY 4.0 terms;
 OpenBind-0 is the OpenFold3 v0.5.0 release under its upstream Apache 2.0 terms.
 These weights are not covered by Molarium's code license. The initial Molarium
 integration exposes AF2 monomer model_1_ptm and OpenBind-0, not DeepMind AF3.
+
+## Foldarium local library reviewer
+
+The library reviewer in `vendor/foldarium/` comes from
+[Foldarium](https://github.com/rafwiewiora/foldarium), under its retained MIT
+license. `UPSTREAM.json` records the exact commit and per-file source/distribution
+hashes. The two Mol* 5.11.0 CDN URLs in its HTML are replaced with Molarium's
+existing local copies of the same viewer version. Its JavaScript, stylesheet,
+logo and data semantics are imported unchanged. Mol* retains its separate MIT
+terms already recorded above.

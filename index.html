@@ -272,6 +272,23 @@
                 <button class="soft-button hidden" id="cancel-fold">Cancel</button>
               </div>
               <p class="fold-status" id="fold-status" role="status" aria-live="polite">Ready · AlphaFold2 / OpenBind-0 · WebGPU</p>
+              <details class="fold-settings" id="fold-library-panel">
+                <summary>Compound library → Foldarium review</summary>
+                <p class="input-help">Cofold the sequence above with each compound using OpenBind-0 and the alignment, steps, recycles and base seed above. One GPU job runs at a time; weights and the protein alignment are reused. Every pose is saved in this browser.</p>
+                <label class="field-label">Library name <input id="fold-library-name" value="Cofolding library" maxlength="200"></label>
+                <label class="field-label">Compounds · one SMILES per line, optionally followed by a name
+                  <textarea id="fold-library-smiles" class="mono-input" rows="7" spellcheck="false" placeholder="CCO ethanol&#10;c1ccccc1 benzene&#10;CC(=O)Oc1ccccc1C(=O)O aspirin"></textarea>
+                </label>
+                <label class="field-label">Poses per compound <input id="fold-library-samples" type="number" min="1" max="20" value="3"></label>
+                <label><input id="fold-library-pae" type="checkbox"> Retain full PAE matrices (larger exports)</label>
+                <div class="fold-actions"><button class="primary-button" id="fold-library-start">Cofold library</button><button class="soft-button" id="fold-library-pause" disabled>Pause</button></div>
+                <progress id="fold-library-progress" max="1" value="0" aria-label="Completed library predictions" style="width:100%;margin-top:12px"></progress>
+                <p id="fold-library-status" class="fold-status" role="status" aria-live="polite" style="white-space:pre-line">Ready. ETA uses measured warm predictions after the first pose. Within-pose progress is approximate. Keep this tab open; sleeping or closing the browser interrupts calculation.</p>
+                <label class="field-label">Saved libraries <select id="fold-library-saved"><option value="">Choose saved library</option></select></label>
+                <div class="fold-actions"><button class="soft-button" id="fold-library-resume" disabled>Resume unfinished</button><a class="soft-button" id="fold-library-review" href="vendor/foldarium/library-review.html" target="_blank" rel="noopener">Review in Foldarium ↗</a></div>
+                <div class="fold-actions"><button class="soft-button" id="fold-library-export" disabled>Export library + decisions</button><button class="soft-button" id="fold-library-delete" disabled>Delete local library</button></div>
+                <p class="input-help">Use multiple seeds to compare candidate poses. This experimental cofolding model is not a binding-affinity screen. Library contents and review decisions stay local; MSA search, if selected, sends the protein sequence to the chosen service. Export a backup before clearing browser data.</p>
+              </details>
             </div>
           </section>
 

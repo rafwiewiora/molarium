@@ -73,8 +73,18 @@ export async function predictLocalFold(input,{signal,onProgress=()=>{}}={}) {
     report('Folding with OpenBind-0…');
     started=performance.now();
     const result=await foldBatch(device,batch,weights,{steps:request.steps,recycles:request.recycles,seed:request.seed,
-      onStage:async phase=>{check(signal);report('OpenBind-0 · '+phase);},
-      onStep:async frame=>{check(signal);report(`OpenBind-0 · sampling ${frame.step}/${request.steps}`);}});
+      onStage:async (phase,detail={})=>{check(signal);
+        const fraction=phase==='pairformer-block-done'?.1+.5*((detail.pass??0)+(detail.completed??0)/(detail.total||1))/(request.recycles+1)
+          :phase==='sample-start'?.65:phase==='trunk-done'?.6:undefined;
+        const stageLabel=phase.startsWith('pairformer-block')||phase==='recycle'||phase==='trunk-stage'
+          ?`Encoding protein and ligand · pass ${(detail.pass??0)+1}/${detail.passes??request.recycles+1}`+
+            (detail.completed?` · block ${detail.completed}/${detail.total}`:'')
+          :({'target-feat-start':'Preparing protein and ligand features','target-feat':'Protein and ligand features ready',
+            'trunk-prep':'Preparing the model','msa-depth':'Preparing the alignment','trunk-done':'Protein–ligand encoding complete',
+            'sample-start':'Starting pose sampling','sample-done':'Scoring the sampled pose'})[phase]??'Running the protein–ligand model';
+        onProgress({stage:phase,detail,fraction,message:`OpenBind-0 · ${stageLabel}`});},
+      onStep:async frame=>{check(signal);onProgress({stage:'sampling',step:frame.step,steps:request.steps,
+        fraction:.65+.25*frame.step/request.steps,message:`OpenBind-0 · sampling ${frame.step}/${request.steps}`});}});
     check(signal);ptm=result.ptm;iptm=result.iptm;pae=result.scores?.pae;geometry=result.geometry;
     plddt=result.scores?.plddt;meanPlddt=result.meanPlddt;
     const {pdbSlots}=await import('../vendor/localfold/shared/af3/structure/pdb.js');
@@ -86,11 +96,13 @@ export async function predictLocalFold(input,{signal,onProgress=()=>{}}={}) {
   const manifestModule=await import('../vendor/localfold/shared/bundles/manifests/index.js');
   const family=request.model==='localfold-af2'?'monomer':'openbind0';
   const manifest=await manifestModule.loadManifest(family);
+  const {memoryTotals}=await import('../vendor/localfold/webgpu/runtime/device-memory.js');
   return {schema:'molarium.fold-result.v2',kind:'localfold',sequence:request.sequence,
     model:FOLD_MODELS[request.model],provider:'webgpu',recycles:request.recycles,msaDepth,
     pdb,plddt,meanPlddt,ptm,iptm,pae,component,geometry,confidenceLayout,elapsedMs:performance.now()-started,
-    totalElapsedMs:performance.now()-totalStarted,
-    provenance:{upstream:{repository:'https://github.com/sokrypton/localfold',revision:LOCALFOLD_REVISION},
+    totalElapsedMs:performance.now()-totalStarted,runtime:{gpuManagedMemory:memoryTotals(device)},
+    provenance:{application:{name:'Molarium',webCodeVersion:new URL(import.meta.url).searchParams.get('v')},
+      upstream:{repository:'https://github.com/sokrypton/localfold',revision:LOCALFOLD_REVISION},
       request,alignment,alignmentSha256:alignment?await sha(alignment):null,
       ligandComponentSha256:component?await sha(JSON.stringify(component)):null,
       modelManifestSha256:await sha(JSON.stringify(manifest)),

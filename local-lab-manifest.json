@@ -67,13 +67,13 @@
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "bytes": 8469,
-      "sha256": "9f814908315ea323ee7eb95ce522295244aa7f631c5b7ad42540ba99e1a38c3b"
+      "bytes": 8987,
+      "sha256": "d7404a7453dc3a6e328284e84c51dcaba0341c27cfaab38bbe93cc651cfcb847"
     },
     {
       "path": "app.js",
-      "bytes": 1008182,
-      "sha256": "1b2332680f891394206ea2827a8f3aae842df634cc5a3f8b009b2d896e0f1c73"
+      "bytes": 1009463,
+      "sha256": "f4429f2d50b2cd4b198b2c83e361a3fa85968a6eed74e87a6dbd210702a36628"
     },
     {
       "path": "folding/request.mjs",
@@ -82,8 +82,78 @@
     },
     {
       "path": "folding/localfold.mjs",
-      "bytes": 7210,
-      "sha256": "17dce8a29f07d10d9626ffdcb75a6a693ebd60b225f32331923116405eb03894"
+      "bytes": 8547,
+      "sha256": "7b1c60a3ca2c9db95125ad852661ac57858c9cff6b9d9eb4eecd652d061b1756"
+    },
+    {
+      "path": "folding/library.mjs",
+      "bytes": 8045,
+      "sha256": "47b9097cb47a1342767630fc0c3616bbc33b7a1769dee33fa7103691cee8a455"
+    },
+    {
+      "path": "folding/library-ui.mjs",
+      "bytes": 6740,
+      "sha256": "a6c0cc1b56068494e239de33e2df6ae8c02381ed1ace86e9fcbff9d394638e13"
+    },
+    {
+      "path": "folding/LIBRARIES.md",
+      "bytes": 6355,
+      "sha256": "d6fc44524e9a6cfb2c34250f8f5b90001ab9e068ec4e184538907ad7c39d889d"
+    },
+    {
+      "path": "reviews/library-cofolding-2026-11-12/README.md",
+      "bytes": 8018,
+      "sha256": "17a8bbfc5d2faa10040ffb72d61f51d52b3efa22897c1e06cbe207c2cea87594"
+    },
+    {
+      "path": "reviews/library-cofolding-2026-11-12/summary.json",
+      "bytes": 35618,
+      "sha256": "3e14fa4276a63ba636421e9c66b622dfa61de23c7f578b0c723a646b50888109"
+    },
+    {
+      "path": "vendor/foldarium/library-review.html",
+      "bytes": 2248,
+      "sha256": "e9ab08afbd7a7987f4c77f3481e00addf96218301dea620e66bb132082f43203"
+    },
+    {
+      "path": "vendor/foldarium/library-review.css",
+      "bytes": 2320,
+      "sha256": "450352c06c7be38edb3446939806ecaa3cca7e3ccfc7f6c9181fd79d592ffb93"
+    },
+    {
+      "path": "vendor/foldarium/library-review.js",
+      "bytes": 12686,
+      "sha256": "502cc380fd71821998d714f7a02308958de6348e318f4b9e1d703ebc348f8d71"
+    },
+    {
+      "path": "vendor/foldarium/library-format.js",
+      "bytes": 2930,
+      "sha256": "cd0e34fdffba257984e30b9a50e57b13d64d15e1515a22baef51b4b3f88562d3"
+    },
+    {
+      "path": "vendor/foldarium/library-store.js",
+      "bytes": 5524,
+      "sha256": "a378bbca2420acb17be4ba44c45689ad1b57b2de450630945e74acc6ec848f9b"
+    },
+    {
+      "path": "vendor/foldarium/library-alignment.js",
+      "bytes": 2994,
+      "sha256": "e5879788335807fc56ed63a7f94ab7fbeaa4e1dabaa3969ec483a9f7eac3dc65"
+    },
+    {
+      "path": "vendor/foldarium/LICENSE",
+      "bytes": 1071,
+      "sha256": "eab63784d10cad4231cca1d3f83e887d1753b62f0c6229928194d74b6220671e"
+    },
+    {
+      "path": "vendor/foldarium/UPSTREAM.json",
+      "bytes": 2475,
+      "sha256": "421bac40cf88f4d6c8675b7504dbdfd6eefcde4228655c8639e63602c8e9520d"
+    },
+    {
+      "path": "vendor/foldarium/assets/foldarium-mark.svg",
+      "bytes": 1506,
+      "sha256": "4501b7d4122f6eea01138bab69137f668adfc8c0eca60d629a3f1a0ecbf3537b"
     },
     {
       "path": "vendor/localfold/LICENSE",
@@ -97,8 +167,8 @@
     },
     {
       "path": "chemist-actions.mjs",
-      "bytes": 37270,
-      "sha256": "8c5308a5591b1c1ee303787ca051563f736ef1a4d706a188bd82f3f69a7fbd40"
+      "bytes": 38671,
+      "sha256": "2b91361ef199f1084a8875ac0c12a1b243b2d7ed968ee61af1a40e1e6b631886"
     },
     {
       "path": "molecular-state-hash.mjs",
@@ -107,8 +177,8 @@
     },
     {
       "path": "CHEMIST-ACTIONS-API.md",
-      "bytes": 42183,
-      "sha256": "a59006c097cb5f20faafa028ef5b08dd7209b37cd623ddc155376e286710ca69"
+      "bytes": 42482,
+      "sha256": "32c6b4fa803f6603a7241260ae16bb2d0af239dfa1c71437f1b059d0792c8ef3"
     },
     {
       "path": "DESIGNER-MOVES.md",
@@ -132,8 +202,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 72383,
-      "sha256": "8c332fc0ff3a3e505bd55ca69c97aad8f983d6b7001adc82a50d9edb1158c71a"
+      "bytes": 75225,
+      "sha256": "91c0385403c58078914730421ab2cefb23c2f9de4424f237f4616b2b0bcb84a1"
     },
     {
       "path": "reproductions.html",
@@ -147,8 +217,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 14597,
-      "sha256": "e41d040384d7a0264b1053ecbe2100a81f896ccc34301244f5ba7de79913eb63"
+      "bytes": 14850,
+      "sha256": "a166e7c24c2dc7911fed3809a2b231255e9bd194d2eec0448114ab78ad6d5ccb"
     },
     {
       "path": "protein-residue-templates.js",
@@ -182,8 +252,8 @@
     },
     {
       "path": "scripts/generate-local-lab-manifest.mjs",
-      "bytes": 6445,
-      "sha256": "cb6634d6981610d68cff32cd31e5c8d7b96c414e4a07630145bb9f68d48c76ae"
+      "bytes": 6966,
+      "sha256": "d1e28b5b5e0858f44202009e8a64fba3991c35da521e5df7ec2fddcd8e2d7790"
     },
     {
       "path": "scripts/build-sos1-publication.mjs",
@@ -1361,6 +1431,16 @@
       "sha256": "72df48a36de56e5df677fc2ebd6c03ad928e911625cabb2d18e61867c1d73b1d"
     },
     {
+      "path": "vendor/localfold/webgpu/runtime/device-memory.js",
+      "bytes": 10930,
+      "sha256": "31b0dd735a8dfeba315fd3597b65351cf4a039294345dfda6e95f89b9097a64d"
+    },
+    {
+      "path": "vendor/foldarium/library-chemistry.js",
+      "bytes": 1247,
+      "sha256": "9cd2a16ceb4d30713a0b13a36b78ba06d771f28e45d8602acc53f1ff60dda9bd"
+    },
+    {
       "path": "openff/frame-contract.mjs",
       "bytes": 1604,
       "sha256": "581d47b7bbce1ee9d15d8fbb1dd2d4cff0d8d1a40aed0010becd4e9b7771e3fb"
@@ -1372,8 +1452,8 @@
     },
     {
       "path": "workspace-help.mjs",
-      "bytes": 21055,
-      "sha256": "9effeea638efd7258b126bc6b42d2180b6dd8f409fba98ed54a47b2c63663b82"
+      "bytes": 23626,
+      "sha256": "528e6495f4fccdd5c6209d9c1ea3f5667be69fb67b57c53f3acec180414fd45c"
     },
     {
       "path": "vendor/localfold/shared/bundles/alphafold-fixture.js",
@@ -1629,11 +1709,6 @@
       "path": "vendor/localfold/webgpu/runtime/resident.js",
       "bytes": 20033,
       "sha256": "32e7abcdae6e94acba37a3fd50b407b616a3bd5e9f9f4681866b8b62a57cd52f"
-    },
-    {
-      "path": "vendor/localfold/webgpu/runtime/device-memory.js",
-      "bytes": 10930,
-      "sha256": "31b0dd735a8dfeba315fd3597b65351cf4a039294345dfda6e95f89b9097a64d"
     },
     {
       "path": "vendor/localfold/webgpu/runtime/device-profile.js",

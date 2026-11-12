@@ -19,6 +19,7 @@ import { CONTACT_CAPTURE_POLICY } from './docking/contact-capture-policy.mjs';
 import { preserveRegisteredDonorHydrogens } from './docking/registered-donor-hydrogen.mjs';
 import { installDesignHelp } from './design-help.mjs';
 import {foldingRequest,installFoldLigand} from './folding/request.mjs';
+import {LibraryController} from './folding/library-ui.mjs';
 import { hasPreparationHistory, invalidateNumericalParameters, dynamicsReadinessKey,
   usableMinimization, matchesRecordedDynamicsFrame } from './calculation-readiness.mjs';
 
@@ -10276,6 +10277,12 @@ function installChemistActionsApi(module) {
       const active = Boolean(state.foldAbortController);
       state.foldAbortController?.abort();
       return chemistActionSummary({ predictionCancellation:{ requested:active } }); },
+    'protein.cofoldLibrary':async args=>{chemistActionKeys(args,['sequence','msaEndpoint','msaMode','a3m','recycles','steps','seed','name','compounds','samples','model','ligand','retainPae']);
+      return chemistActionSummary({library:await libraryController.start(args)});},
+    'protein.resumeLibrary':async args=>{chemistActionKeys(args,['runId']);
+      return chemistActionSummary({library:await libraryController.resume(args.runId)});},
+    'protein.pauseLibrary':async args=>{empty(args);return chemistActionSummary({libraryCancellation:libraryController.pause()});},
+    'protein.libraryStatus':async args=>{chemistActionKeys(args,['runId']);return {library:await libraryController.status(args.runId)};},
     'ligand.installRegisteredGraph':async (args) => { chemistActionKeys(args,
       ['locator','graphSha256','definition']);
       await rejectLigandMotionWhileDesignerFixed('ligand.installRegisteredGraph');
@@ -13483,7 +13490,7 @@ async function runProteinFold({ rethrow = false,request=null } = {}) {
   request??=foldingRequest(foldControlsRequest());
   if(request.msaMode==='search')requireExternalNetwork('MSA search');
   if(request.model!=='openfold')requireExternalNetwork('LocalFold model loading');
-  if (state.foldAbortController) throw new Error('A prediction is already running.');
+  if (state.foldAbortController || libraryController.controller) throw new Error('A prediction is already running.');
   const button = document.querySelector('#fold-protein');
   const cancel = document.querySelector('#cancel-fold');
   const sequence = request.sequence;
@@ -17134,6 +17141,12 @@ document.querySelector('#download-fold-record').addEventListener('click',()=>{
     'molarium-prediction.json','application/json');
 });
 
+const libraryController=new LibraryController({guard:request=>{
+  if(state.foldAbortController)throw new Error('A prediction is already running.');
+  requireExternalNetwork('LocalFold model loading');
+  if(request.msaMode==='search')requireExternalNetwork('MSA search');
+},onBusy:busy=>{document.querySelector('#fold-protein').disabled=busy;}});
+libraryController.install({request:foldControlsRequest,action:runChemistUiAction,download:downloadBlob,reportError:showNotice});
 document.querySelector('#fold-protein').addEventListener('click', () => {
   runChemistUiAction('protein.predict', foldControlsRequest()).catch(() => {});
 });
