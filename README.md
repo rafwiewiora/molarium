@@ -423,9 +423,36 @@ Model export code, hashes, reference values, and the TorchANI license are in [`m
 To restore only the ANI-2x bundle for local validation, run
 `bun scripts/fetch-assets.mjs --prefix=mlip/models/`.
 
-## OpenFold 2
+## Protein folding and protein–ligand cofolding
 
-Molarium includes a trained, template-free OpenFold 2 browser predictor for one protein chain
+The folding panel and `protein.predict` API support a pinned LocalFold backend:
+AlphaFold2 `model_1_ptm` for one protein chain, and OpenBind-0 for that protein
+with an optional ligand. OpenBind-0 accepts explicit SMILES or a PDB CCD code.
+Both use WebGPU with runtime-sized tensors rather than our old 128-residue
+export limit; available GPU memory still bounds practical inputs.
+
+Choose single sequence, supplied A3M, or ColabFold MSA search. Only search sends
+the sequence to the selected service. First use downloads immutable, hash-checked
+model weights from Hugging Face; CCD mode fetches a public ligand dictionary
+entry from RCSB. Local Lab currently blocks this externally loaded backend.
+
+Predictions become editable Molarium structures. Ligand chemistry is installed
+from the input component, with exact atom-name mapping, bond orders, formal
+charges and a registered graph hash. Preparation defaults to that registered
+graph. Download the prediction record for the request, alignment, source/model
+pins, ligand component, PDB and confidence arrays.
+
+This is an experimental integration. Apple M1 Pro browser checks cover monomer
+inference, 129-residue input, supplied A3M, SMILES/CCD cofolding and chemical-state
+preservation. They do not establish binding-pose accuracy or agreement with the
+original native OpenBind/AF2 implementations. The first release accepts one
+protein and at most one noncovalent ligand (150 heavy atoms); protein multimers,
+templates, nucleic acids and covalent cofolding are not exposed yet.
+See [integration evidence and follow-up work](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md).
+
+### Legacy OpenFold 2
+
+Molarium retains a trained, template-free OpenFold 2 browser predictor for one protein chain
 up to 128 residues. It sends the sequence to a configured ColabFold/MMseqs2-compatible MSA
 service, then runs model inference locally with ONNX Runtime WebGPU or WASM.
 

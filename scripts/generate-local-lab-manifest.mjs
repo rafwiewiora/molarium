@@ -17,6 +17,8 @@ const reviewedFiles = [
   'NOTICE',
   'THIRD_PARTY_NOTICES.md',
   'app.js',
+  'folding/request.mjs','folding/localfold.mjs',
+  'vendor/localfold/LICENSE','vendor/localfold/UPSTREAM.json',
   'chemist-actions.mjs',
   'molecular-state-hash.mjs',
   'CHEMIST-ACTIONS-API.md',

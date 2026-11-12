@@ -1,0 +1,945 @@
+/**
+ * AlphaFold 3 as one more model the page can fold with.
+ *
+ * NO DOM IN HERE. web/app.js owns index.html's controls, its viewer and its
+ * status line; this is the part that knows about AF3 - which weights, which
+ * featuriser, which sampler - and reports progress through callbacks. It exists
+ * because AF3 shares nothing below the sequence with AlphaFold 2: a different
+ * featuriser, a different checkpoint, a different head, and coordinates that
+ * arrive from a sampler rather than a structure module.
+ *
+ * THE ALIGNMENT ARRIVES AS A3M TEXT, exactly as it does for the two AlphaFold 2
+ * models: the page's search, paste and upload controls are shared, and the only
+ * AF3-specific step is af3MsaFromA3m() turning that text into AF3's codes. With
+ * no alignment the MSA is the query alone, which is what AF3 itself produces
+ * for a single-sequence input rather than a stub.
+ */
+import { startFromPdb } from "../shared/af3/structure/warm-start.js";
+import { motifSlots } from "../cpu/af3/diffusion/inpaint.js";
+import { ccdUrl, parseCcdComponent, ligandChain } from "../shared/af3/featurise/ccd-component.js";
+import { smilesComponent } from "../shared/chem/component.js";
+import { CROSSLINKER_COMPONENTS } from "../shared/chem/crosslinkers.js";
+import { af3BatchFromA3m } from "../shared/af3/featurise/batch.js";
+import { featuriserDialect, templatePolicyFor } from "../shared/af3/dialect.js";
+import { foldBatch, toPdb, atomName, warmTrunkPipelines }
+  from "../webgpu/af3/fold.js";
+import { foldBatchWebGl2, preloadWebGl2Weights } from "../webgl/af3/model/fold-batch.js";
+export { preloadWebGl2Weights };
+import { confidenceWeights, openddeConfidenceWeights, structuralExpanderWeights,
+  structuralRefinerWeights, trunkDepths, trunkWeights } from "../shared/af3/weights/weights.js";
+import { diffusionWeights, atomReference, targetFeatureWeights }
+  from "../shared/af3/weights/diffusion-weights.js";
+import { HttpTensorStore } from "../shared/bundles/http-tensor-store.js";
+import { AF3_FAMILIES, bundleBaseUrl, loadManifest }
+  from "../shared/bundles/manifests/index.js";
+import { throwIfAborted } from "../webgpu/runtime/abort.js";
+import { buildTemplate } from "./template-source.js";
+import { mergeTemplateSlots } from "../shared/af3/featurise/template-input.js";
+import { yieldToBrowser } from "../webgpu/runtime/yield.js";
+import { af3Plan, af3TrunkStageSpans, RuntimeEstimator }
+  from "../webgpu/runtime/cost-model.js";
+
+const ALPHABET = "ACDEFGHIKLMNPQRSTVWYX";
+
+/**
+ * What the step dial offers, and what it is called. One sampler: Flow was removed (docs/AF3.md, "Flow removed").
+ *
+ * One dial for every AF3-lineage family; twenty-five is the lowest it offers.
+ *
+ * 🔴 SIXTEEN IS THE FLOOR UNDER ANY DIAL. A modified residue's atoms are each their own token and have to be placed
+ * individually; below sixteen calls they come out compressed (tools/gpu/probe-modified.js, a phosphoserine's median
+ * predicted-to-ideal bond ratio 0.835 at eight against a control of 1.003, 0.974 at sixteen).
+ */
+export const AF3_COUNTS = {
+  // 🔴 AND 200 IS ON THE DIAL BECAUSE IT IS WHAT AF3 WAS TRAINED WITH. The
+  // powers-of-two ladder (20, 40, 80, 160, 320) never landed on it, so the
+  // model's own setting was the one number the page could not select.
+  // 🔴 ONE DIAL FOR EVERY FAMILY, 25 ON THE EXPONENTIAL UPDATE (2026-10-16). The
+  // fold takes webgpu/af3/fold.js's DIFFUSION_DEFAULTS, the exponential update on
+  // the geometric schedule, and twenty-five of those against each family's old
+  // default (Euler at 20 from sigma 80 or 40 for af3/protenix2/openbind0/
+  // intellifold2, 16 for opendde, 25 for boltz2 and rosettafold3), seven models,
+  // seven systems x two seeds of bonds and six crystal targets x three seeds:
+  // ligand bond median 0.042-0.071 A against 0.045-0.340, rosettafold3's ligands
+  // 4/6 torn -> 0/6, and CA-RMSD level on every model (within 0.05-0.1 A; 1QYS
+  // is bimodal at ~1.2/~2.8 A on every arm, even 200 steps). Sixteen or twenty
+  // exponential steps were WORSE on ligands than the old defaults, so the short
+  // schedules, the per-family starts and OpenDDE's sixteen went. docs/AF3.md,
+  // "The default sampler".
+  diffusion: { label: "Diffusion", values: [25, 50, 100, 200], preferred: 25 },
+};
+
+/**
+ * 🔴 ONLY THE 20 AMINO ACIDS AND X. featurise.js maps anything else to UNK,
+ * which is a silent four-atom residue - so a sequence carrying a nucleotide
+ * alphabet would fold as a chain of blanks and look merely disappointing.
+ * Rejected here by name instead.
+ */
+export function af3SequenceProblem(sequence) {
+  const unknown = [...new Set(sequence)].filter((code) => !ALPHABET.includes(code));
+  if (unknown.length > 0) {
+    return `${unknown.join(", ")} ${unknown.length === 1 ? "is not an" : "are not"}`
+      + ` amino acid ${unknown.length === 1 ? "code" : "codes"}.`
+      + " AlphaFold 3 folds protein chains written in the 20 one-letter codes, or X.";
+  }
+  if (sequence.length === 0) return "Paste a protein sequence first.";
+  return null;
+}
+
+// 🔴 ONE PROMISE PER FAMILY, NOT ONE PROMISE. Two bundles now build this same
+// graph - DeepMind's parameters and OpenBind's - and a single memo would hand
+// the second fold the first model's weights, silently, with every shape
+// agreeing. That is the failure the whole dialect mechanism exists to prevent,
+// and it would have arrived through the cache rather than through the loader.
+const weightsPromises = new Map();
+
+/**
+ * The whole AF3 checkpoint, once per page.
+ *
+ * 🔴 ONCE PER PAGE, NOT ONCE PER FOLD - it is a quarter of a gigabyte, and
+ * re-reading it between two attempts would make the page unusable to poke at.
+ *
+ * 🔴 AND THE TENSOR TABLE IS COMPILED IN, NOT FETCHED. A deploy once 404'd on a
+ * manifest and died before asking for a single shard, which is a failure about
+ * metadata wearing the costume of a failure about weights.
+ */
+/**
+ * The store, as soon as it exists, rather than when its weights are decoded.
+ *
+ * 🔴 THE PAGE NEVER WARMED ITS PIPELINES AND THE TOOL ALWAYS DID. `fold-opendde.js`
+ * starts `warmTrunkPipelines` the moment `prefetch` is running, so the shader
+ * compilation happens while the shards are still arriving; measured with
+ * `--no-warm` beside it, that is 2533 ms against 2839 - about 300 ms. The page
+ * had no equivalent: `loadAf3Weights` resolves only once every tensor is
+ * decoded, so nothing downstream could reach the store while there was still
+ * download to hide behind.
+ *
+ * This resolves at `prefetch` time instead, so a caller can warm against the
+ * store while the weights are still coming down. It is the STORE and not the
+ * weights on purpose: `warmTrunkPipelines` compiles against a shapes-only
+ * stand-in and never reads a value.
+ */
+/**
+ * Where a page's weight load goes, by phase.
+ *
+ * 🔴 A RETURNING VISITOR PAYS 2.8 s BEFORE THE FOLD'S CLOCK STARTS, AND
+ * NOTHING SAID WHAT OF. `fold-in-page.py --keep-profile` measures OpenDDE at
+ * 5.86 s whole against a status line of 3 s, and `--timeline` reports
+ * `model: null` - no shard touched the wire, so none of that gap is download.
+ * The fold tools cannot see it either: their `weightSeconds` is one number over
+ * the whole load, taken against a local server that is not a disk cache.
+ *
+ * Read from the page by `fold-in-page.py`, which prints it as `weightPhases`.
+ */
+export const af3LoadMilliseconds = {};
+
+const storeGates = new Map();
+
+function storeGate(family) {
+  let gate = storeGates.get(family);
+  if (gate === undefined) {
+    let resolve;
+    const promise = new Promise((settle) => { resolve = settle; });
+    gate = { promise, resolve };
+    storeGates.set(family, gate);
+  }
+  return gate;
+}
+
+/**
+ * Compile the trunk's pipelines while the weights are still downloading.
+ *
+ * 🔴 SPECULATIVE BY CONSTRUCTION, AND THE ONLY FAILURE IS WASTE. The stack
+ * still asks the pipeline cache for its own keys, so a token count that turns
+ * out wrong compiles shaders nobody uses and costs nothing else - which is why
+ * this takes the residue count the page knows before featurising rather than
+ * waiting for a batch it cannot have yet. See warmTrunkPipelines.
+ *
+ * Never awaited and never allowed to raise: a warm that fails is a fold that is
+ * merely slower.
+ */
+export function warmAf3Pipelines(family, tokens, device) {
+  if (!AF3_FAMILIES.includes(family)) return Promise.resolve();
+  if (!Number.isSafeInteger(tokens) || tokens < 1) return Promise.resolve();
+  return storeGate(family).promise
+    .then((store) => warmTrunkPipelines(device, store, tokens))
+    .catch(() => {});
+}
+
+export function loadAf3Weights(onProgress, family = "af3") {
+  if (!AF3_FAMILIES.includes(family)) {
+    throw new Error(`${family} is not an AlphaFold 3-graph family; `
+      + `known: ${AF3_FAMILIES.join(", ")}`);
+  }
+  let promise = weightsPromises.get(family);
+  if (promise === undefined) {
+    promise = (async () => {
+      const started = performance.now();
+      let mark = started;
+      /** Time one awaited phase, by name. */
+      const after = async (name, run) => {
+        const value = await run();
+        af3LoadMilliseconds[name] = Math.round(performance.now() - mark);
+        mark = performance.now();
+        return value;
+      };
+      const phase = (name) => {
+        af3LoadMilliseconds[name] = Math.round(performance.now() - mark);
+        mark = performance.now();
+      };
+      const store = await HttpTensorStore.fromManifest(
+        bundleBaseUrl(family), await loadManifest(family), onProgress);
+      phase("open");
+      // 🔴 EVERY SHARD AT ONCE, because the loaders below walk tensors in order
+      // and await each one - so without this the network runs one shard at a time
+      // and idles through every dequantisation. See HttpTensorStore.prefetch.
+      // This path reads the whole model, so there is nothing to be careful about.
+      store.prefetch();
+      // ...and anything waiting to warm against it can start now, with the
+      // shards still arriving. See warmAf3Pipelines.
+      storeGate(family).resolve(store);
+      // 🔴 THE DEPTHS COME FROM THE BUNDLE, NOT FROM AlphaFold 3'S. This read
+      // `trunkWeights(store, 48, 4)` with both counts typed in, which is right
+      // for four of the five families and WRONG for boltz2, whose trunk
+      // pairformer is 64 blocks. Truncating a 64-block trunk to 48 does not
+      // fail: the stack is one stacked tensor, so the first 48 slices load and
+      // run, and what comes out is a trunk that never finished. It cost boltz2
+      // its whole alignment - pLDDT 72.4 with a 128-row MSA against 72.1 with
+      // none, where the same batch through the CLI (which reads the depths)
+      // gives 96.1. A hardcoded depth is a silent wrong answer, never an error.
+      const depths = trunkDepths(store);
+      const trunk = await trunkWeights(store);
+      phase("trunk");
+      // 🔴 OpenDDE HAS TWO STACKS THE OTHER TWO DO NOT, AND LACKS ONE THEY
+      // HAVE. It re-tokenises between the trunk and the diffusion, so it needs
+      // the structural-token expander and the four-block refiner; and its
+      // confidence head is its own design on its own distance grid, so
+      // `confidenceWeights` REFUSES this bundle rather than loading a partial
+      // one - `openddeConfidenceWeights` below is what loads it instead, and
+      // the fold reports the same pLDDT, PAE, pTM and ipTM every other family
+      // does. (This note used to say the fold returned no pLDDT and no PAE,
+      // which was the state before `openddeScores` existed.)
+      const structural = trunk.dialect.structuralTokens;
+      const built = {
+        trunk,
+        diffusion: await after("diffusion", () => diffusionWeights(store)),
+        // 🔴 AlphaFold 3's HEAD, WHERE THERE IS ONE. OpenDDE's is a different
+        // parametrisation entirely and loads through openddeConfidenceWeights
+        // below; `confidenceWeights` REFUSES this bundle rather than loading a
+        // partial one.
+        confidence: structural ? undefined
+          : await after("confidence", () => confidenceWeights(store)),
+        atomReference: await after("atomReference", () => atomReference(store)),
+        targetFeat: await after("targetFeat", () => targetFeatureWeights(store)),
+        ...(structural ? {
+          expander: await after("expander", () => structuralExpanderWeights(store)),
+          refiner: await after("refiner", () => structuralRefinerWeights(store)),
+          openddeConfidence:
+            await after("openddeConfidence", () => openddeConfidenceWeights(store)),
+        } : {}),
+      };
+      af3LoadMilliseconds.total = Math.round(performance.now() - started);
+      return built;
+    })();
+    weightsPromises.set(family, promise);
+    // A download that failed once must not fail until the reader reloads (PR #7, lhallee).
+    promise.catch(() => { if (weightsPromises.get(family) === promise) weightsPromises.delete(family); });
+  }
+  return promise;
+}
+
+/** The dense slot of every alpha carbon, which frames are fitted on. */
+export function alphaCarbons(batch) {
+  const slots = [];
+  const predicted = [];
+  for (let token = 0; token < batch.tokens; token += 1) {
+    for (let atom = 0; atom < batch.dense; atom += 1) {
+      const slot = token * batch.dense + atom;
+      if (!batch.predDenseAtomMask[slot]) continue;
+      predicted.push(slot);
+      if (atomName(batch.refAtomNameChars, slot) === "CA") slots.push(slot);
+    }
+  }
+  // 🔴 A LIGAND HAS NO CA, and a superposition with no correspondences returns
+  // NaN coordinates rather than failing. These slots exist to take a rigid
+  // motion out of the trajectory, and any consistent set of atoms does that -
+  // so a fold with no polymer in it fits on the atoms it does have.
+  return slots.length > 0 ? slots : predicted;
+}
+
+export const toPoints = (positions, count) => Array.from(
+  { length: count }, (_, i) => [positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]]);
+
+/**
+ * One trajectory frame, rigidly fitted onto a reference, as a PDB.
+ *
+ * 🔴 THE FRAMES ARE IN DIFFERENT REFERENCE FRAMES IN DIFFUSION MODE AND MUST BE
+ * FITTED. AF3's sampler calls randomAugmentation at the top of every step - a
+ * fresh rotation and translation of the whole system - so consecutive frames
+ * differ by a rigid motion far larger than anything the denoiser did, and
+ * unfitted playback is a protein tumbling.
+ *
+ * 🔴 FITTED TO THE FIRST FRAME, NOT THE LAST, because the frames are shown as
+ * they are computed and there is no last one yet.
+ */
+export function fittedPdb(batch, positions, reference, slots, plddt, options = {}) {
+  const api = window.py2Dmol;
+  const count = batch.tokens * batch.dense;
+  if (api?.superpose === undefined || reference === null) {
+    return toPdb(batch, positions, plddt, options);
+  }
+  const moved = api.superpose(toPoints(positions, count), reference,
+                              { from: slots, to: slots });
+  const fitted = new Float32Array(count * 3);
+  for (let index = 0; index < count; index += 1) {
+    fitted[index * 3] = moved[index][0];
+    fitted[index * 3 + 1] = moved[index][1];
+    fitted[index * 3 + 2] = moved[index][2];
+  }
+  return toPdb(batch, fitted, plddt, options);
+}
+
+/**
+ * The plan a fold's bar and clock run off, and where each band ends.
+ *
+ * 🔴 THIS USED TO BE THREE CONSTANTS THAT DID NOT MENTION LENGTH. A trunk pass
+ * was "3.7 s" and a denoiser call "0.85", so the trunk was always 4.35 calls'
+ * worth of work whatever was being folded. Measured, that ratio is 3.1 at 59
+ * tokens and 15.3 at 256 - the trunk grows as L squared and the sampler barely
+ * faster than linearly - so the bar raced through the trunk band and stalled on
+ * anything long. webgpu/runtime/cost-model.js has the fits and the measurements.
+ */
+function foldPlan({ tokens, rows, passes, calls, atoms }) {
+  const plan = af3Plan({ tokens, rows, passes, calls, atoms });
+  const at = (name) => plan.stages.find((stage) => stage.name === name);
+  const features = at("features").units;
+  const trunk = at("trunk").units * passes;
+  const warmup = at("sampler-warmup").units;
+  return {
+    plan,
+    estimator: new RuntimeEstimator(plan),
+    // Where each phase's work ends, in units, so a partial phase can be placed.
+    featuresEnd: features,
+    trunkEnd: features + trunk,
+    samplerStart: features + trunk + warmup,
+    warmupUnits: warmup,
+    callUnits: at("sampler").units,
+  };
+}
+
+/**
+ * What each trunk stage is called on the status line.
+ *
+ * 🔴 NAMED, BECAUSE THE NUMBER ALONE CANNOT CARRY IT. The shares in
+ * af3TrunkStageSpans are measured at one shape and are only roughly right at
+ * another, so on a long fold the bar may sit near a stage's head for a while.
+ * A line that says "Trunk · MSA stack · 4%" is still visibly working; one that
+ * says "Trunk · 4%" is not, and that is the whole complaint this answers.
+ */
+// 🔴 AND THE PAIRFORMER IS NOT NAMED, DELIBERATELY. It is the one stage that
+// already reports - forty-eight times a pass - so the bar under the line is
+// visibly moving and a third field would be the "Trunk · pass 1 of 4 ·
+// pairformer block 23 of 48" that this line was cut down from. A label here is
+// for a stage that has nothing else to say.
+const TRUNK_STAGE_LABELS = {
+  embedder: "embedder",
+  template: "templates",
+  "msa-stack": "MSA stack",
+  distogram: "distogram",
+};
+
+const TRUNK_SPANS = af3TrunkStageSpans();
+
+/**
+ * Fold one chain with AlphaFold 3.
+ *
+ * @param {{sequence: string, calls: number, seed: number,
+ *          signal: AbortSignal, device: GPUDevice,
+ *          alignment?: string|{paired?: string|null, unpaired?: string|null}|null,
+ *          maxMsaSequences?: number,
+ *          ligandCodes?: (string | {smiles: string, code?: string})[],
+ *          chainKinds?: ("protein"|"dna"|"rna")[],
+ *          reuse?: {trunk: object, targetFeat: Float32Array},
+ *          onTrunk?: (reusable: object) => void,
+ *          onContacts?: (contactProbs: Float32Array, pass?: number,
+ *                        passes?: number) => void,
+ *          schedule?: {sigmaMax?: number, sigmaMin?: number, rho?: number},
+ *          onStatus: (text: string) => void, onProgress: (fraction: number) => void,
+ *          onFrame?: (pdb: string, index: number) => void}} options
+ */
+
+/** The trunk's template slot count, AlphaFold 3's `max_templates`. */
+const AF3_TEMPLATE_SLOTS = 4;
+
+/**
+ * Per-chain template slots packed the way AlphaFold 3 packs them (model/features.py,
+ * `Templates.compute_features`): each chain keeps its first four templates, and slot k holds
+ * EVERY chain's k-th template at that chain's own tokens - "concatenated on the num_res
+ * dimension", with the multichain mask keeping one chain's template from seeing another's.
+ *
+ * 🔴 ONE SLOT A CHAIN WAS WRONG, AND A HOMOMER FOUND IT: six copies of a chain with one template
+ * each are one slot in AlphaFold 3 and were six here, which the trunk's four slots refused
+ * ("6 templates for 4 slots"). It also split a complex's templates across slots, so a dialect
+ * that averages over PRESENT slots (rf3's) read each chain's template at a fraction of its weight.
+ *
+ * A slot built to span chains (`spanChains`: one structure placing several chains) is already a
+ * whole complex and keeps a slot of its own.
+ *
+ * @param {{chain: number, slot: object}[]} built in request order
+ * @returns {object[]} at most AF3_TEMPLATE_SLOTS slots
+ */
+export function packTemplateSlots(built) {
+  const spanning = built.filter(({ slot }) => slot.spanChains === true).map(({ slot }) => slot);
+  const byChain = new Map();
+  for (const { chain, slot } of built) {
+    if (slot.spanChains === true) continue;
+    if (!byChain.has(chain)) byChain.set(chain, []);
+    byChain.get(chain).push(slot);
+  }
+  const packed = [];
+  for (let k = 0; k < AF3_TEMPLATE_SLOTS; k += 1) {
+    const layer = [...byChain.values()].map((slots) => slots[k]).filter((slot) => slot !== undefined);
+    if (layer.length === 0) break;
+    const merged = mergeTemplateSlots(layer);
+    packed.push(layer.length === 1 ? merged : { ...merged, spanChains: false });
+  }
+  const slots = [...packed, ...spanning];
+  if (slots.length > AF3_TEMPLATE_SLOTS) {
+    throw new Error(`${slots.length} template slots: AlphaFold 3 takes ${AF3_TEMPLATE_SLOTS}`
+      + ` - at most ${AF3_TEMPLATE_SLOTS} templates a chain, including any that span chains`);
+  }
+  return slots;
+}
+
+export async function foldAf3(options) {
+  const { sequence, calls, recycles, seed, signal, device, onStatus, onProgress } = options;
+  // 🔴 THE SLOTS ARE BUILT HERE, AFTER FEATURISATION, AND NOT BY THE CALLER.
+  // They are indexed by TOKEN, and a caller has no way to know the token
+  // layout: a modified residue is one token PER ATOM and a ligand is a chain of
+  // its own, so a chain's first token is not the sum of the preceding chains'
+  // residue counts. `batch.chainOfResidue` and `batch.residueOfToken` are the
+  // real layout and they exist only once the batch does.
+  //
+  // A caller that has already built slots may still pass them - the checkers
+  // do - but the page passes `templates`, which is text plus a chain.
+  const templateSources = options.templates ?? [];
+  const templateCoverage = [];
+  // 🔴 THE MSA IS BUILT BEFORE THE WEIGHTS ARE TOUCHED, because its depth is a
+  // shape: the MSA stack's pipelines are keyed on the row count, so a fold that
+  // discovers its depth later would compile a second set of them.
+  const alignment = options.alignment ?? null;
+  // 🔴 THE LIGAND DICTIONARY IS FETCHED, NOT BUNDLED. AF3's own featuriser
+  // reads a 515 MB CCD pickle; a fold touches only the components its ligands
+  // name, and the PDB serves each as one small mmCIF. The 21 polymer components
+  // stay baked in reference-conformers.js, because every fold needs those.
+  const componentCache = new Map();
+  const component = async (code, what) => {
+    // a crosslinker's bridge is built in (shared/chem/crosslinkers.js), not a PDB entry
+    if (!componentCache.has(code) && CROSSLINKER_COMPONENTS[code] !== undefined) {
+      componentCache.set(code, parseCcdComponent(CROSSLINKER_COMPONENTS[code]));
+    }
+    if (!componentCache.has(code)) {
+      onStatus(`Fetching ${what} ${code}`);
+      let response;
+      try {
+        response = await fetch(ccdUrl(code), { signal });
+      } catch (cause) {
+        throw new Error(`Could not reach the PDB for ${what} ${code}`, { cause });
+      }
+      if (!response.ok) {
+        throw new Error(`No chemical component ${code} at the PDB (${response.status})`);
+      }
+      componentCache.set(code, parseCcdComponent(await response.text()));
+    }
+    return componentCache.get(code);
+  };
+  // 🔴 A MODIFIED RESIDUE'S COMPONENT COMES FROM THE SAME PLACE AS A LIGAND'S,
+  // and it is fetched here rather than in the featuriser because the featuriser
+  // is synchronous - it is the one piece of a batch that cannot be computed
+  // from the sequence alone.
+  const modifications = [];
+  for (const modification of options.modifications ?? []) {
+    modifications.push({
+      chain: modification.chain,
+      position: modification.position,
+      ...(await component(modification.code, "modified residue")),
+    });
+  }
+  const ligands = [];
+  for (const entry of options.ligandCodes ?? []) {
+    if (entry.codes !== undefined) {      // several components as one chain (a glycan)
+      const parts = [];
+      for (const code of entry.codes) { await component(code, "ligand"); parts.push(componentCache.get(code)); }
+      ligands.push(ligandChain(parts));
+      continue;
+    }
+    // 🔴 A LIGAND IS EITHER A CODE OR A STRUCTURE, AND IT SAYS WHICH RATHER
+    // THAN BEING SNIFFED. A plain string is a CCD code, as it always was; an
+    // object carrying `smiles` is a molecule drawn out. Guessing between them
+    // is not possible even in principle - `C` is a valid SMILES for methane
+    // and `CCO` looks like a three-letter code - and this page already
+    // learned that lesson with the template database menu, which stopped
+    // guessing for the same reason.
+    if (typeof entry !== "string") {
+      onStatus(`Building ${entry.code ?? "ligand"} from its structure`);
+      // 🔴 AND IT IS BUILT, NOT FETCHED, WHICH IS THE WHOLE POINT. There is no
+      // dictionary entry to look up: `smilesComponent` returns exactly what
+      // `parseCcdComponent` returns, so nothing downstream can tell which
+      // producer made it. See shared/chem/component.js.
+      ligands.push(await smilesComponent(entry.smiles, { code: entry.code ?? "LIG" }));
+      continue;
+    }
+    await component(entry, "ligand");
+    // Each instance is its own chain, so repeated codes are repeated entries -
+    // featuriseProtein gives them one entity_id and successive sym_ids, which
+    // is the same rule it applies to repeated sequences.
+    ligands.push(componentCache.get(entry));
+  }
+
+  const { batch, rows } = af3BatchFromA3m(sequence, alignment, {
+    maxSequences: options.maxMsaSequences,
+    // a job's own alignments cover nucleic chains too: each column's alphabet
+    ...(options.msaColumnKinds === undefined ? {} : { msaColumnKinds: options.msaColumnKinds }),
+    seed: options.seed ?? 0,
+    ligands,
+    modifications,
+    // 🔴 AND THE BONDS THE JOB DECLARED - `bondedAtomPairs`. A covalent
+    // inhibitor folded beside its target rather than bonded to it is a
+    // different answer, and this literal is exactly the kind that loses a key.
+    ...(options.bonds === undefined || options.bonds.length === 0
+      ? {} : { bonds: options.bonds }),
+    // ...and its pocket and contact constraints (expandEntities' `constraints`), read by boltz2 and chai-1 alone
+    ...(options.constraints === undefined || options.constraints.length === 0
+      ? {} : { constraints: options.constraints, modelName: options.weights.trunk.dialect.name ?? "this model" }),
+    // 🔴 THE BOND MATRIX IS PART OF THE MODEL, NOT OF THE MOLECULE. AF3 sets
+    // contact[i][j] from the CCD's bond table alone; the OpenFold3 lineage was
+    // trained with both directions set, and a ring ligand folded through the
+    // wrong one comes apart (upstream measures ATP's ribose C-C at ~2.0 A
+    // against ~1.5). The weights say which - see af3Dialect.
+    // 🔴 EVERY FEATURISER CONVENTION THE DIALECT NAMES, AS ONE OBJECT. This was
+    // six fields listed by hand, and the page is the call site where a missing
+    // one is least visible - a fold still happens, with another model's
+    // conventions. See `featuriserDialect`.
+    ...featuriserDialect(options.weights.trunk.dialect),
+    // What each chain's letters mean. Absent, every chain is protein, which is
+    // what every caller before nucleic acids meant.
+    chainKinds: options.chainKinds,
+  });
+  // 🔴 ONLY THE PASSES THAT WILL ACTUALLY RUN, or the bar spends a share of
+  // itself waiting for work that never happens and then jumps. A reused trunk
+  // runs none; a continued one runs the difference.
+  const passes = options.reuse === undefined
+    ? (recycles ?? 0) + 1
+    : Math.max(0, (recycles ?? 0) - options.reuse.recycles);
+  // 🔴 THE CLOCK STARTS WHEN THE GPU DOES, NOT WHEN THE FOLD IS ASKED FOR.
+  // Featurisation is a synchronous CPU call of a few hundred milliseconds that
+  // the bar already shows as indeterminate, and it is not work this plan
+  // models - so counting it as elapsed time makes the first ETA several times
+  // too long, which is the estimate people actually read.
+  // 🔴 BUILT ON FIRST USE, BECAUSE A REUSED TRUNK SKIPS THE FIRST STAGE.
+  // Folding a second time in the same page runs no trunk passes at all, so
+  // `target-feat` never fires - and a budget created only there is null when
+  // the sampler asks it where to put the bar. It threw "Cannot read properties
+  // of null" onto the status line, which is a fold that does not run.
+  //
+  // 🔴 AND THE CLOCK STARTS WITH IT, WHICH MEANS BEFORE FEATURISATION. The
+  // estimator learns this machine's speed from time elapsed over units done, so
+  // crediting featurisation's units without its three seconds makes every
+  // estimate short - measured at 10-15 s remaining when 18-25 s remained. Time
+  // and units have to cover the same work. That is why the first stage calls
+  // this before doing anything, not after.
+  let budget = null;
+  const plan = () => (budget ??= foldPlan({
+    // (the rows a trunk pass reads - drawn from the pool each pass - not the pool: shared/af3/msa-draw.js)
+    tokens: batch.tokens, rows: Math.min(rows.depth, batch.numMsa ?? 1024), passes, calls, atoms: batch.atomCount,
+  }));
+  /**
+   * The status line: what is running, and how far in.
+   *
+   * 🔴 THREE WORDS FOR THE WHOLE FOLD: Preparing, Trunk, Folding. What went was
+   * the SAMPLER's name - the line used to read "Refining" or "Diffusing"
+   * depending on the sampler, which a reader watching a bar has no reason to care about.
+   *
+   * 🔴 TWO FIELDS, NOT SIX. It used to read "Trunk · pass 1 of 4 · pairformer
+   * block 23 of 48", which is a number that changes forty-eight times a pass
+   * next to two that barely move - so the eye tracks the one part that does not
+   * matter. The percentage says the same thing about the whole fold, which is
+   * the question being asked.
+   *
+   * 🔴 AND NO ESTIMATE. A time remaining has to be RIGHT to be worth reading,
+   * and this one is a cost model against a machine that drifts up to 3.2x
+   * between runs - so it moved around, and a number that moves around next to a
+   * percentage that does not is the thing that made the line feel unsteady. The
+   * percentage is the honest half; the model still drives the BAR, where being
+   * approximately right is all a bar needs.
+   */
+  const say = (phase) => {
+    if (budget === null) { onStatus(phase); return; }
+    onStatus(`${phase} · ${Math.round(100 * budget.estimator.fraction())}%`);
+  };
+  /**
+   * Where `passesDone` whole trunk passes puts the bar, in plan units.
+   *
+   * `passesDone` is fractional: 1.157 is one pass finished and this one into
+   * its pairformer. Each recycle is another whole trunk, so the band is
+   * divided between them rather than replayed.
+   */
+  const trunkUnits = (passesDone, passes) => {
+    const active = plan();
+    return active.featuresEnd
+      + (active.trunkEnd - active.featuresEnd) * (passesDone / passes);
+  };
+  /** "Trunk 2/4 · MSA stack", or "Trunk · MSA stack" for a single pass. */
+  const trunkPhase = (detail, label) =>
+    (detail.passes > 1 ? `Trunk ${detail.pass + 1}/${detail.passes}` : "Trunk")
+      + (label === undefined ? "" : ` · ${label}`);
+  /** Move the bar to a point in the plan, in units. */
+  const reached = (units) => {
+    const active = plan();
+    active.estimator.completedUnits(units);
+    onProgress(active.estimator.fraction());
+  };
+  const started = performance.now();
+
+  const slots = alphaCarbons(batch);
+  let reference = null;
+  let shown = 0;
+  // The trajectory, kept as coordinates rather than as text: the frames have to
+  // be rendered twice - once uncoloured while they are computed, and again with
+  // the pLDDT that does not exist until the confidence head has run.
+  const trajectory = [];
+  // 🔴 THE LIVE COLOUR, BUILT THE MOMENT THE TRUNK EXISTS. `trunk-done` fires
+  // before the sampler runs and carries the distogram, so the frames drawn
+  // DURING the fold can be coloured too - they used to be handed a null
+  // B-factor, which the pLDDT scheme paints as no confidence at all.
+  //
+  // 🔴 IT IS THE RAW SCORE, NOT THE CALIBRATED ONE, because there is no
+  // finished structure to calibrate against yet. That is only usable because
+  // the raw score sits near the pLDDT scale on its own - 8.1 points from the
+  // real mean across the panel, within 7 on six of eight. It did not, until
+  // MINIMUM_SEPARATION started being read; before that it ran ~30 points low
+  // and a live trajectory would have been red until the fold landed.
+  //
+  // 🔴 SO THE LIVE FRAMES AND THE REPLAYED ONES DIFFER, AND THE REPLAY IS THE
+  // ONE TO GET RIGHT. Measured on a 58-mer, live 13.9 53.1 68.6 70.7 71.7 ...
+  // against a calibrated replay of 46.2 63.9 70.9 71.9 72.3 ... - they agree
+  // from the third frame on and part company at the start, where calibration
+  // lifts the low end. The alternative is to drop the calibration so the two
+  // agree exactly, and it is worse: the timeline's LAST frame is the finished
+  // structure's real pLDDT either way, so an uncalibrated trajectory would end
+  // on a step - 76.3 to 96.6 on trp-cage - and that is the frame everyone
+  // looks at. A difference between a transient live frame and its replay is
+  // cheaper than a jump at the end of the animation.
+
+  // 🔴 RESIDUE -> TOKEN, PER CHAIN, FROM THE BATCH ITSELF. A residue's token is
+  // the FIRST token that names it, because a modified residue names several.
+  const tokenOfResidue = new Int32Array(batch.sequence.length).fill(-1);
+  for (let token = batch.tokens - 1; token >= 0; token -= 1) {
+    const residue = batch.residueOfToken?.[token] ?? token;
+    if (residue >= 0 && residue < tokenOfResidue.length) tokenOfResidue[residue] = token;
+  }
+  const residuesOfChain = [];
+  for (let residue = 0; residue < batch.sequence.length; residue += 1) {
+    const chain = batch.chainOfResidue?.[residue] ?? 0;
+    (residuesOfChain[chain] ??= []).push(residue);
+  }
+  const templateSlots = options.templateSlots ?? (templateSources.length === 0
+    ? undefined
+    : packTemplateSlots(templateSources.map((template) => buildTemplate({
+      text: template.text,
+      chain: template.chainId,
+      query: sequence.split(":")[template.chain] ?? "",
+      tokens: batch.tokens,
+      minConfidence: template.minConfidence ?? 0,
+      spanChains: template.spanChains === true,
+      ...(template.mapping === undefined ? {} : { mapping: template.mapping }),
+      tokenOf: (residue) => tokenOfResidue[(residuesOfChain[template.chain] ?? [])[residue]
+        ?? -1] ?? -1,
+      // (how this model reads a template's modified residues and altlocs: templatePolicyFor)
+      policy: templatePolicyFor(options.weights.trunk.dialect),
+    })).map((built, at) => {
+      if (built === null) return null;
+      templateCoverage.push(built.coverage);
+      return { chain: templateSources[at].chain, slot: built.slot };
+    }).filter((one) => one !== null)));
+
+  // 🔴 THE BATCH, BEFORE THE FOLD RATHER THAN AFTER IT. It is returned below
+  // too, and that is too late for anything the TRUNK produces: the contact map
+  // arrives per recycle, in TOKEN space, and only the batch says which tokens
+  // the viewer will draw as one residue (see viewerTokens). Handed over here,
+  // the live map is collapsed the same way the final one is.
+  options.onBatch?.(batch);
+
+  // 🔴 A WARM START IS A PREVIOUS FOLD'S PDB, laid out for THIS batch here - the one place both exist
+  // (shared/af3/structure/warm-start.js) - and handed to the sampler as dense coordinates
+  const start = options.start === undefined ? undefined
+    : { positions: startFromPdb(batch, options.start.pdb).positions, level: options.start.level };
+  // 🔴 STEERING IS NAMED BY CHAIN AND RESIDUE and the sampler pulls TOKENS, resolved here against the
+  // batch, the one place both exist (cpu/af3/diffusion/steering.js). `binder` and each contact's `asym`
+  // are the featuriser's 0-based chain order, as a constraint's are.
+  const steer = options.steer === undefined ? undefined : steerTokens(batch, options.steer);
+  // 🔴 A MOTIF IS NAMED BY TOKEN AND ATOM NAME (a negative token a whole chain, by asymId) and the
+  // sampler holds DENSE SLOTS: resolved here, the one place the batch exists (cpu/af3/diffusion/inpaint.js)
+  const motif = options.motif === undefined ? undefined
+    : { ...motifSlots(batch, options.motif.atoms), ...(options.motif.until === undefined ? {} : { until: options.motif.until }) };
+  // 🔴 WITHOUT WebGPU, THE WebGL2 FOLD (`backend: "webgl2"`), with the same result. It calls the
+  // stage and step reports synchronously and stops on `signal` itself, so their promises are only
+  // caught here: an abort they throw would otherwise be an unhandled rejection.
+  const fold = options.backend === "webgl2"
+    ? (_device, foldBatchArgs, foldWeights, foldOptions) => foldBatchWebGl2(foldBatchArgs, foldWeights, {
+      ...foldOptions, signal,
+      onStage: (name, detail) => { foldOptions.onStage(name, detail).catch(() => {}); },
+      onStep: (frame) => { foldOptions.onStep(frame).catch(() => {}); },
+    })
+    : foldBatch;
+  const result = await fold(device, batch, options.weights, {
+    steps: calls, recycles, seed, reuse: options.reuse, templateSlots,
+    ...(steer === undefined ? {} : { steer }),
+    ...(motif === undefined ? {} : { motif }),
+    // ...forwarded for probes that move the noise schedule
+    schedule: options.schedule,
+    ...(start === undefined ? {} : { start }),
+    onStage: async (name, detail) => {
+      throwIfAborted(signal);
+      if (name === "recycle-done" && detail.trunk?.contactProbs !== undefined) {
+        // 🔴 ONE PER PASS, so the map sharpens as the trunk recycles rather
+        // than appearing once at the end. AF3 runs every recycle before the
+        // sampler emits a single frame, so for the longest part of a fold this
+        // is the only thing the model has to show.
+        options.onContacts?.(detail.trunk.contactProbs, detail.pass, detail.passes);
+      }
+      if (name === "trunk-done") {
+        // ...handed up the moment it exists, so a caller can cache it before
+        // anything downstream has had a chance to fail. See fold.js.
+        options.onTrunk?.(detail.reusable);
+        // 🔴 AND THE CONTACT MAP, WHICH IS READY BEFORE THE FIRST DENOISER
+        // CALL. It used to reach the page only in the replay after the whole
+        // fold, which is minutes late for something the trunk already knows -
+        // the sampler has not run yet at this point.
+        if (detail.trunk?.contactProbs !== undefined) {
+          options.onContacts?.(detail.trunk.contactProbs);
+        }
+      }
+      if (name === "target-feat-start") {
+        plan();               // ...starts the clock; see the note on plan().
+        // A sweep rather than a number: what is left here is one synchronous
+        // CPU call, so there is still nothing to count - but it is now a few
+        // hundred milliseconds rather than five seconds.
+        // 🔴 BACK TO ZERO EXPLICITLY, because the bar it inherits is FULL. The
+        // same element showed the weight download, which ends at 100%, and the
+        // sweep that used to sit here hid the handover. Without either it would
+        // stay full through featurisation and then appear to run backwards on
+        // the trunk's first report.
+        onProgress(0);
+        onStatus("Preparing · 0%");
+        // The yield is the point: what follows blocks the main thread for
+        // seconds, so the line above has to be painted before it starts.
+        await yieldToBrowser();
+      }
+      if (name === "target-feat") {
+        reached(plan().featuresEnd);
+        say("Trunk");
+        await yieldToBrowser();
+      }
+      if (name === "pairformer-block") {
+        // 🔴 THIS ONE IS THE YIELD, NOT THE REPORT. It fires when a block is
+        // ENCODED, and sixteen are encoded in the time the device takes over
+        // one - so it is awaited (a real macrotask, so the page can paint) and
+        // says nothing. `pairformer-block-done` below is what it paints.
+        await yieldToBrowser();
+      }
+      // 🔴 THE FOUR SILENT STAGES, WHICH ARE MOST OF A LARGE PROTEIN'S WAIT.
+      // The trunk is five stages and only the pairformer reported anything, so
+      // the embedder, the template embedder and the MSA stack passed with the
+      // line reading "Trunk · 0%" - seconds each at 1500 residues, which reads
+      // as a page that has died. This fires as each STARTS, so the line can
+      // name it while it runs; the bar goes to the head of its span.
+      if (name === "trunk-stage") {
+        const span = TRUNK_SPANS.get(detail.name);
+        if (span !== undefined) {
+          reached(trunkUnits(detail.pass + span.from, detail.passes));
+          say(trunkPhase(detail, TRUNK_STAGE_LABELS[detail.name]));
+          await yieldToBrowser();
+        }
+      }
+      // 🔴 "Trunk · preparing", NOT "Preparing", BECAUSE THE LINE MUST NOT GO
+      // BACKWARDS. `target-feat` has already said "Trunk" by the time this
+      // fires, and featurisation's own band said "Preparing · 0%" before that -
+      // so reusing the word here would read as the fold returning to a stage it
+      // had left. This is the host work between them: an n^2 pair mask and,
+      // when no trunk is cached, a tokens^2 x 128 recycle buffer, which at 1500
+      // residues is 1.15 GB to allocate and zero.
+      if (name === "trunk-prep") {
+        say("Trunk · preparing");
+        await yieldToBrowser();
+      }
+      if (name === "pairformer-block-done") {
+        // 🔴 THE BLOCKS ARE THE PAIRFORMER'S SPAN, NOT THE WHOLE PASS. This
+        // read `completed / total` as the fraction of the trunk, so block 1 of
+        // 48 put the bar at 2% of a pass that was already a sixth done - and
+        // the four stages before it had no way to move it at all.
+        const span = TRUNK_SPANS.get("pairformer");
+        const within = span.from + (span.to - span.from) * (detail.completed / detail.total);
+        reached(trunkUnits(detail.pass + within, detail.passes));
+        say(trunkPhase(detail));
+      }
+      if (name === "trunk-done") {
+        reached(plan().trunkEnd);
+        // 🔴 THE COMPILE HAS NO MILESTONES AND BLOCKS THE MAIN THREAD, so the
+        // bar can neither be advanced nor animated through it: at 150 tokens
+        // that is 4.9 s of a 27 s fold in which no timer fires and nothing
+        // paints. A crawl on setInterval was tried and never ticked once.
+        //
+        // What CAN be done is to size the band correctly - which the plan now
+        // does, so the jump lands where it should - and to say what is
+        // happening before the thread goes away, with a sweeping bar rather
+        // than a still one. Both need this paint to land first, which is what
+        // the yield below the status line is for.
+        // 🔴 THE BAR HOLDS ITS VALUE HERE, IT NO LONGER SWEEPS. This band is a
+        // pipeline compile that blocks the main thread with no milestones, and
+        // the sweep was meant to show it was alive - but a determinate bar
+        // going indeterminate and back is a visible flip in the middle of a
+        // fold, twice, and a bar that stops for four seconds already reads as
+        // busy next to a status line that says so. Holding is steadier than
+        // sweeping, and it keeps the bar monotonic from end to end.
+        say("Folding");
+        await yieldToBrowser();
+      }
+    },
+    onStep: async ({ step, denoised }) => {
+      throwIfAborted(signal);
+      // 🔴 `denoised` AND NOT `positions`, AND THE REASON IS THE CAMERA. The
+      // sampler's actual walk runs from a radius of gyration of 1896 A at step
+      // 4 down to 11.1 A at the end - 170x - so no fixed camera holds both, and
+      // its early frames are Gaussian noise at sigma 2273, which is not a
+      // picture of anything. `denoised` is the model's predicted structure at
+      // each call and is protein-sized in every frame.
+      if (reference === null) reference = toPoints(denoised, batch.tokens * batch.dense);
+      trajectory.push(Float32Array.from(denoised));
+      options.onFrame?.(
+        fittedPdb(batch, denoised, reference, slots, null, { links: options.bonds }), shown);
+      shown += 1;
+      reached(plan().samplerStart + plan().callUnits * step);
+      // ...the sampler used to run its OWN clock here, from its own elapsed
+      // time over its own steps. It was the only honest one on the page, and
+      // only because a denoiser call is the one unit that repeats identically.
+      // The estimator generalises exactly that idea to the whole fold.
+      say(`Folding ${step}/${calls}`);
+      // 🔴 YIELD, OR THE PAGE NEVER PAINTS. Every await in the sampler resolves
+      // from a GPU callback, which is a microtask - so without a real task
+      // boundary the status above is written and never drawn.
+      await yieldToBrowser();
+    },
+  });
+
+  // 🔴 THE VIEWER WANTS ONE pLDDT A RESIDUE AND THE HEAD GIVES ONE AN ATOM.
+  // Taking the alpha carbon's is what AlphaFold 2's own per-residue pLDDT means
+  // here, and it is the value the cartoon is coloured by.
+  const plddt = result.scores === undefined ? undefined
+    : slots.map((slot) => result.scores.plddt[slot]);
+
+  // 🔴 A FRAME WHOSE CONFIDENCE IS NOT KNOWN IS COLOURED AS ZERO, WHICH THE
+  // pLDDT RAMP PAINTS RED. AF3's confidence head runs ONCE, on the finished
+  // sample, so every frame before it is unmeasured - and the two ways of
+  // hiding that were both worse than saying it. Painting them with the final
+  // structure's pLDDT puts a confident colour on a structure that has not
+  // earned it yet and holds it constant while the model moves; painting them
+  // with a distogram-derived estimate reads high and is not on pLDDT's scale
+  // at all. Red for "no confidence here" is a missing value shown as one.
+  //
+  // 🔴 THE FRAMES ARE STILL RE-EMITTED, for the fitting rather than the
+  // colour. AF3's sampler calls randomAugmentation at the top of every step,
+  // so consecutive frames sit in different reference frames - including the
+  // final one, which used to be appended straight from the sampler and made
+  // the animation jump on its last frame.
+  const framePdbs = trajectory.map(
+    (positions) => fittedPdb(batch, positions, reference, slots, null, { links: options.bonds }));
+  // ...and the finished structure keeps the REAL pLDDT, which is the one
+  // number here that is a claim about the prediction rather than a colour.
+  // 🔴 THE HEADER GOES ON THE FILE THAT GETS SAVED, AND ON NOTHING ELSE. The
+  // two calls above build the TRAJECTORY, which the viewer ingests frame by
+  // frame and nobody downloads; a REMARK on each of them would be 25 copies of
+  // a provenance line inside one animation. This is the structure the save
+  // buttons write, so this is the one that has to say what produced it.
+  //
+  // 🔴 AND THE B-FACTOR LINE IS ADDED HERE, NOT BY THE CALLER, BECAUSE ONLY
+  // THIS KNOWS. `result.scores` is undefined for a family on this graph with no
+  // confidence head, and the column is then zeros - so a caller-supplied
+  // "B-FACTOR IS pLDDT" would put the word on a file that has none, which is
+  // the mislabelling EF2-fast's own REMARK exists to prevent.
+  const finalPdb = fittedPdb(batch, result.positions, reference, slots,
+                             result.scores?.plddt ?? null,
+                             { links: options.bonds,
+                               remark: [...(options.remark ?? []),
+                                        ...(result.scores?.plddt === undefined
+                                          ? [] : ["B-FACTOR IS pLDDT (0-100)."])] });
+
+  return {
+    batch,
+    // What each template actually covered, which is the only thing that says a
+    // template arrived: a fold that silently lost one folds and scores, and the
+    // number is merely different.
+    templateCoverage,
+    // Handed back so the caller can re-sample without the trunk. See foldBatch.
+    reusable: result.reusable,
+    depth: rows.depth,
+    // 🔴 THE TRUNK'S OWN CONTACT MAP, WHICH COSTS NOTHING TO HAND OVER. The
+    // distogram head already computes P(d <= 8 A) for every pair and it is
+    // already read back to the host - so the heatmap panel's `contact` map is
+    // a reshape, not a computation, and unlike the PAE it exists the moment
+    // the trunk does rather than after the confidence head.
+    contactProbs: result.trunk.contactProbs,
+    framePdbs,
+    pdb: finalPdb,
+    meanPlddt: result.meanPlddt,
+    geometry: result.geometry,
+    seconds: (performance.now() - started) / 1000,
+    // 🔴 ABSENT WHERE THE MODEL HAS NO CONFIDENCE HEAD, NOT ZEROED. OpenDDE's
+    // is its own design on its own distance grid, so there is no pLDDT, no pTM
+    // and no PAE - and an object of zeros would be drawn as the model's
+    // opinion. EF2-fast established this shape: `lastPrediction` carries no
+    // `confidence`, the structure is coloured by chain, and the status line
+    // says so.
+    confidence: result.scores === undefined ? undefined : {
+      plddt,
+      meanPlddt: result.meanPlddt,
+      ptm: result.ptm,
+      // NaN for a single chain - there is no interface to score - and the card
+      // shows a dash for it rather than a number.
+      iptm: result.iptm,
+      // ...and one ipTM per interface, which the pooled one averages away on
+      // more than two chains. Empty for a monomer; the same number as `iptm`
+      // for exactly two chains. See shared/heads/tm-score.js.
+      chainPairIptm: result.chainPairIptm,
+      // ...and per chain: how well each one folded alone, and how well it sits
+      // against the rest. Written into the archive's summary_confidences.
+      chainPtm: result.chainPtm,
+      chainIptm: result.chainIptm,
+      predictedAlignedError: result.scores.pae,
+    },
+  };
+}
+
+/**
+ * A steering request's chains and residues as the batch's token indices.
+ *
+ * @param {object} batch
+ * @param {{binder: number, contacts: {asym: number, residue: number}[], weight: number, cutoff?: number}} steer
+ * @returns {{binder: number[], pocket: number[], weight: number, cutoff?: number}}
+ */
+export function steerTokens(batch, steer) {
+  const binder = [];
+  const pocket = [];
+  for (let token = 0; token < batch.asymId.length; token += 1) {
+    const asym = batch.asymId[token] - 1;
+    if (asym === steer.binder) binder.push(token);
+    if (steer.contacts.some((c) => c.asym === asym && c.residue === batch.residueIndex[token])) pocket.push(token);
+  }
+  for (const c of steer.contacts) {
+    const found = pocket.some((token) => batch.asymId[token] - 1 === c.asym && batch.residueIndex[token] === c.residue);
+    if (!found) throw new Error(`steering names chain ${c.asym} residue ${c.residue}, which is no token of the input`);
+  }
+  if (binder.length === 0) throw new Error(`steering names chain ${steer.binder} as the binder, which has no tokens`);
+  const { binder: _b, contacts: _c, ...rest } = steer;
+  return { binder, pocket, ...rest };
+}

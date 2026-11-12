@@ -40,7 +40,7 @@ test('every authored catalogue key names a real static control', () => {
 });
 
 test('EH-01: only crucial decisions receive a separate help button', () => {
-  assert.equal(ESSENTIAL_HELP_IDS.length, 24);
+  assert.equal(ESSENTIAL_HELP_IDS.length, 25);
   assert.equal(new Set(ESSENTIAL_HELP_IDS).size, ESSENTIAL_HELP_IDS.length);
   for (const id of ESSENTIAL_HELP_IDS) {
     assert.ok(DESIGN_HELP[id], `${id} has authored help`);

@@ -30,6 +30,8 @@ const files = [
   'LICENSE', 'NOTICE', 'README.md', 'CHEMIST-ACTIONS-API.md', 'DESIGNER-MOVES.md', 'THIRD_PARTY_NOTICES.md',
   'index.html', 'reproductions.html', 'app.js', 'chemist-actions.mjs', 'styles.css', 'molarium-workspace.css', 'independent-layout-study.css',
   'molecular-state-hash.mjs', 'design-help.mjs',
+  'folding/request.mjs','folding/localfold.mjs',
+  'vendor/localfold/LICENSE','vendor/localfold/README.md','vendor/localfold/UPSTREAM.json',
   'protein-residue-templates.js', 'rdkit-worker.js', 'openmm-worker.js', 'webgpu-worker.js',
   'stormm-worker.js', 'mlip-worker.js', 'local-lab-test.js',
   'validation/README.md', 'validation/dashboard.mjs', 'validation/registry.v0.1.json',
@@ -166,7 +168,7 @@ const headers = `/*
   Permissions-Policy: camera=(), geolocation=(), microphone=(), payment=(), serial=(), usb=()
   Referrer-Policy: no-referrer
   X-Content-Type-Options: nosniff
-  Content-Security-Policy: default-src 'self'; base-uri 'none'; connect-src 'self' ${assetOrigin} https://files.rcsb.org https://api.colabfold.com; font-src 'self'; form-action 'none'; frame-ancestors 'none'; frame-src 'none'; img-src 'self' data: blob:; manifest-src 'self'; media-src 'self' blob:; object-src 'none'; script-src 'self' ${assetOrigin} blob: 'unsafe-eval' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:
+  Content-Security-Policy: default-src 'self'; base-uri 'none'; connect-src 'self' ${assetOrigin} https://files.rcsb.org https://api.colabfold.com https://huggingface.co https://*.hf.co https://*.xethub.hf.co; font-src 'self'; form-action 'none'; frame-ancestors 'none'; frame-src 'none'; img-src 'self' data: blob:; manifest-src 'self'; media-src 'self' blob:; object-src 'none'; script-src 'self' ${assetOrigin} blob: 'unsafe-eval' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:
 `;
 
 await rm(output, { recursive: true, force: true });
@@ -180,7 +182,8 @@ for (const path of files) {
 await writeFile(join(output, 'runtime-config.js'),
   `globalThis.MOLARIUM_RUNTIME_CONFIG = Object.freeze(${JSON.stringify({
     mode:'connected', localOnly:false, policy:'connected-v1',
-    allowedNetworkOrigins:[assetOrigin, 'https://files.rcsb.org', 'https://api.colabfold.com'],
+    allowedNetworkOrigins:[assetOrigin, 'https://files.rcsb.org', 'https://api.colabfold.com',
+      'https://huggingface.co','https://*.hf.co','https://*.xethub.hf.co'],
     buildManifest:'./local-lab-manifest.json', assetBase,
   })});\n`);
 // A browser can retain an earlier script even after it revalidates the HTML.

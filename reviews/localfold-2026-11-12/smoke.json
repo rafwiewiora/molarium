@@ -1,0 +1,186 @@
+[
+  {
+    "name": "protein",
+    "atoms": 153,
+    "chains": [
+      "A"
+    ],
+    "finite": true,
+    "ligandAtoms": [],
+    "ligandBonds": [],
+    "registeredGraph": null,
+    "model": "AlphaFold2 · LocalFold",
+    "meanPlddt": 69.38307247161865,
+    "ptm": 0.07812998057343065,
+    "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6",
+    "alignment": null,
+    "input": {
+      "schema": "molarium.fold-request.v2",
+      "sequence": "NLYIQWLKDGGPSSGRPPPS",
+      "model": "localfold-af2",
+      "msaMode": "single",
+      "msaEndpoint": "https://api.colabfold.com",
+      "a3m": null,
+      "recycles": 0,
+      "steps": 5,
+      "seed": 0,
+      "ligand": null
+    },
+    "geometry": null,
+    "modelManifestSha256": "dd012923068bcdd34e2a46b75b5c8a3d7cca5431e691cd045379e371d2f87b80",
+    "elapsedMs": 3534.835000038147
+  },
+  {
+    "name": "long-protein",
+    "atoms": 645,
+    "chains": [
+      "A"
+    ],
+    "finite": true,
+    "ligandAtoms": [],
+    "ligandBonds": [],
+    "registeredGraph": null,
+    "model": "AlphaFold2 · LocalFold",
+    "meanPlddt": 74.69527367288752,
+    "ptm": 0.5207988246120223,
+    "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6",
+    "alignment": null,
+    "input": {
+      "schema": "molarium.fold-request.v2",
+      "sequence": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "model": "localfold-af2",
+      "msaMode": "single",
+      "msaEndpoint": "https://api.colabfold.com",
+      "a3m": null,
+      "recycles": 0,
+      "steps": 5,
+      "seed": 0,
+      "ligand": null
+    },
+    "geometry": null,
+    "modelManifestSha256": "dd012923068bcdd34e2a46b75b5c8a3d7cca5431e691cd045379e371d2f87b80",
+    "elapsedMs": 1124.75
+  },
+  {
+    "name": "cofold",
+    "atoms": 156,
+    "chains": [
+      "A",
+      "B"
+    ],
+    "finite": true,
+    "ligandAtoms": [
+      {
+        "name": "C1",
+        "element": "C"
+      },
+      {
+        "name": "C2",
+        "element": "C"
+      },
+      {
+        "name": "O1",
+        "element": "O"
+      }
+    ],
+    "ligandBonds": [
+      {
+        "a": 153,
+        "b": 154,
+        "order": 1,
+        "distance": 1.2762170661764398,
+        "topology": "registered ligand definition",
+        "aromatic": false
+      },
+      {
+        "a": 154,
+        "b": 155,
+        "order": 1,
+        "distance": 1.1393309440193402,
+        "topology": "registered ligand definition",
+        "aromatic": false
+      }
+    ],
+    "registeredGraph": {
+      "definitionId": "LIG",
+      "locator": {
+        "residueName": "LIG",
+        "chain": "B",
+        "residueIndex": 1,
+        "insertionCode": ""
+      },
+      "atomNameMapping": "exact residue and PDB atom names",
+      "coordinates": "unchanged PDB input",
+      "heavyAtomCount": 3,
+      "bondCount": 2,
+      "definition": {
+        "id": "LIG",
+        "atoms": [
+          {
+            "id": "C1",
+            "element": "C",
+            "formalCharge": 0,
+            "aromatic": false
+          },
+          {
+            "id": "C2",
+            "element": "C",
+            "formalCharge": 0,
+            "aromatic": false
+          },
+          {
+            "id": "O1",
+            "element": "O",
+            "formalCharge": 0,
+            "aromatic": false
+          }
+        ],
+        "bonds": [
+          {
+            "a": "C1",
+            "b": "C2",
+            "order": 1,
+            "aromatic": false
+          },
+          {
+            "a": "C2",
+            "b": "O1",
+            "order": 1,
+            "aromatic": false
+          }
+        ]
+      },
+      "graphSha256": "e6d5d59fd7c598e173c67dad3745d95a58f56b28bfe3ea810ff7aa330d5ddbc3"
+    },
+    "model": "OpenBind-0 · protein + ligand",
+    "meanPlddt": 94.66580713712253,
+    "ptm": 0.6165570707424827,
+    "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6",
+    "alignment": null,
+    "input": {
+      "schema": "molarium.fold-request.v2",
+      "sequence": "NLYIQWLKDGGPSSGRPPPS",
+      "model": "localfold-openbind0",
+      "msaMode": "single",
+      "msaEndpoint": "https://api.colabfold.com",
+      "a3m": null,
+      "recycles": 0,
+      "steps": 5,
+      "seed": 0,
+      "ligand": {
+        "type": "smiles",
+        "value": "CCO"
+      }
+    },
+    "geometry": {
+      "nca": 1.428462042704966,
+      "cac": 1.4757109332634133,
+      "caca": 3.679902394249724,
+      "worstCaca": 3.4390125819182136,
+      "gyration": 6.802934249956763,
+      "residues": 20
+    },
+    "modelManifestSha256": "a1b153a409639b4d93eedb9031242cd8e86193fb1deaf59ab57a95155948b814",
+    "elapsedMs": 8066.490000009537
+  }
+]

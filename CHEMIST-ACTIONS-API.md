@@ -91,6 +91,45 @@ Undo, and Redo therefore behave exactly as they do for an interactive user.
   `designerScript.step`, `designerScript.restart`, `designerScript.inspect`,
   `designerScript.export`
 
+## Protein and protein–ligand prediction
+
+```js
+await molarium.execute({action:'protein.predict', args:{
+  model:'localfold-openbind0', sequence:'NLYIQWLKDGGPSSGRPPPS',
+  ligand:{type:'smiles',value:'c1ccccc1C(=O)[O-]'},
+  msaMode:'single', recycles:2, steps:25, seed:0
+}});
+```
+
+Use `model:'localfold-af2'` without `ligand` for one protein; use
+`model:'openfold'` for the retained 128-residue ONNX backend. `msaMode` is
+`single`, `provided` with an `a3m` string, or `search` with an HTTPS
+`msaEndpoint` (default `https://api.colabfold.com`). With no alignment arguments,
+new LocalFold requests default to single sequence. Supplying only an endpoint
+selects search. An A3M query must match the sequence. This first adapter accepts
+one protein and one optional noncovalent ligand; `ligand.type` is explicitly
+`smiles` or `ccd`. CCD identifiers are currently restricted to 1–3 characters
+by Molarium's PDB importer; ligands have at most 150 heavy atoms.
+
+`recycles` counts additional trunk passes (0 still runs one pass), `steps` is
+OpenBind diffusion sampling steps, and `seed` is an unsigned 32-bit integer.
+AlphaFold2 ignores the diffusion step count. The UI uses the same route and
+displays the requested model/inputs. `protein.cancelPrediction` can interrupt
+the pending prediction action; it is not queued behind it. Shard downloads
+already in progress can finish into the upstream cache after cancellation.
+
+The returned prediction summary includes provenance: pinned LocalFold source,
+immutable model URL, model-manifest digest, exact request, MSA text/digest and
+ligand-component digest. The molecule retains the predicted PDB and confidence
+arrays; **Download prediction record** saves these with the input component.
+Ligand atoms are mapped by name and element, with charges/aromaticity/bond
+orders installed from the component as a registered graph. Subsequent
+preparation selects that graph rather than a generic CCD lookup for `LIG`.
+Local Lab blocks the external weight-loading path. MSA search sends only the
+protein sequence to the selected search endpoint; single/provided modes do not
+perform a sequence search. These routes are experimental integration paths;
+native-model parity and binding-pose benchmarking remain separate work.
+
 ## Live design campaigns
 
 The Design workspace's **Design History** card is a public API client. A

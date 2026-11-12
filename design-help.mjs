@@ -140,7 +140,7 @@ export const ESSENTIAL_HELP_IDS = Object.freeze([
   'move-connected', 'chemistry-immediate-refine',
   'preparation-histidine', 'preparation-ligands', 'preparation-waters',
   'preparation-gaps', 'preparation-repair-heavy',
-  'ligand-protonation-run', 'fold-protein',
+  'ligand-protonation-run', 'fold-model', 'fold-msa-mode',
   'job-select', 'method-select', 'solvent-select', 'constraint-select',
   'stormm-replica-count', 'conformer-arena', 'verify-local-build',
 ]);
