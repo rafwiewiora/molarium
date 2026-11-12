@@ -17,7 +17,8 @@ const manifest={schema:'molarium.native-cofold-comparison.v1',source:{file,sha25
   browser:library.poses.map(p=>({id:p.id,compoundId:p.compoundId,seed:p.seed,
     request:p.result.provenance.request,outputPdbSha256:p.result.provenance.outputPdbSha256})),
   protocols:{'low-step':{steps:25,recycles:2,precision:'32-true'},standard:{steps:200,recycles:3,precision:'bf16-mixed'},
-    'torch-reference':{steps:25,recycles:2,precision:'32-true',kernelBackend:'upstream PyTorch dense'}}};
+    'torch-reference':{steps:25,recycles:2,precision:'32-true',kernelBackend:'upstream PyTorch dense'},
+    'torch-standard':{steps:200,recycles:3,precision:'32-true',kernelBackend:'upstream PyTorch dense'}}};
 await mkdir(dirname(out),{recursive:true});await mkdir(out);
 await writeFile(join(out,'comparison.json'),JSON.stringify(manifest,null,2)+'\n');
 const queries={};for(const [i,c]of manifest.compounds.entries())queries[`compound_${String(i).padStart(3,'0')}`]={chains:[
@@ -30,6 +31,6 @@ for(const [name,p]of Object.entries(manifest.protocols))await writeFile(join(out
   data_module_args:{num_workers:0,num_workers_validation:0},
   experiment_settings:{seeds:manifest.seeds},pl_trainer_args:{devices:1,num_nodes:1,precision:p.precision},
   model_update:{presets:['predict'],custom:{architecture:{shared:{num_recycles:p.recycles,diffusion:{no_full_rollout_steps:p.steps}}},
-    ...(name==='torch-reference'?{settings:{memory:{eval:{use_triton_triangle_kernels:false}}}}:{})}},
+    ...(p.kernelBackend?{settings:{memory:{eval:{use_triton_triangle_kernels:false}}}}:{})}},
   output_writer_settings:{write_full_confidence_scores:false}},null,2)+'\n');
 console.log(JSON.stringify({out,compounds:manifest.compounds.length,seeds:manifest.seeds,sourceSha256:manifest.source.sha256}));

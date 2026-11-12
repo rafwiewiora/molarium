@@ -96,7 +96,9 @@ RMSD was 7.04 Å, versus within-method pair medians of 1.34 Å in the browser an
 3.05 Å natively. This differs substantially from the Boltz receptor result. The
 current comparison confounds sampler, quantization, features, precision and RNG;
 it cannot diagnose the cause or support a numerical-parity claim. Both source
-converters select the intended OpenBind-0 checkpoint/EMA weight family; their
+converters select the intended OpenBind-0 checkpoint/EMA weight family
+([ported converter](https://github.com/sokrypton/alphafold3/blob/e68d628df1d815cccb48bb1118d8763a594bfa23/converters/openfold3.py),
+[native inference loader](https://github.com/aqlaboratory/openfold-3/blob/795e45b03924a8f8ffc72ae50298bd113530b9d3/openfold3/entry_points/experiment_runner.py)); their
 actual weights, tensors and random inputs have not been matched elementwise here.
 The discrepancy must remain visible while those controls are developed.
 
@@ -104,9 +106,12 @@ The discrepancy must remain visible while those controls are developed.
 - [Complete OpenBind pairwise metrics and seed-spread controls](openbind0-torch-reference-agreement.json)
 - [Native library](native-openbind0-torch-reference/library.json), [public receipt](native-openbind0-torch-reference/receipt.public.json), and [raw mmCIFs, consumed configuration/source and timings](native-openbind0-torch-reference/native-artifacts.zip)
 
-**Pending:** native Boltz-2 standard sampling and the L4 OpenBind low-step and
-standard protocols remain queued on normal/Spot partitions. Spot capacity
-shortages have delayed startup. They are not counted as completed comparisons.
+**Pending:** native Boltz-2 standard sampling remains eligible for normal L4 and
+L4 Spot. A 200-step/three-recycle OpenBind FP32 dense-kernel control was submitted
+with T4 Spot eligibility; the unstarted L4 OpenBind controls were canceled
+to concentrate on this standard-sampling comparison rather than duplicate the
+completed reference. Spot capacity shortages have delayed startup. These runs
+are not counted as completed comparisons.
 
 The [reproducible protocol and analysis tools](../../folding/comparison/README.md)
 document exact releases, trained checkpoint selection, timing boundaries and

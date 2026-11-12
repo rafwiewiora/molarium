@@ -26,7 +26,7 @@ def digest(path):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--method', choices=['openbind0', 'boltz2'], required=True)
-    parser.add_argument('--protocol', choices=['low-step', 'standard','torch-reference'], required=True)
+    parser.add_argument('--protocol', choices=['low-step', 'standard','torch-reference','torch-standard'], required=True)
     parser.add_argument('--inputs', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--checkpoint', type=Path, required=True)
@@ -72,7 +72,7 @@ def main():
                 if effective['steps']!=protocol['steps'] or effective['recycles']!=protocol['recycles']:
                     raise RuntimeError(f'Native resolved protocol mismatch: {effective}')
                 receipt['resolvedProtocol']=effective
-                if args.protocol=='torch-reference' and self.config.settings.memory.eval.use_triton_triangle_kernels:
+                if protocol.get('kernelBackend')=='upstream PyTorch dense' and self.config.settings.memory.eval.use_triton_triangle_kernels:
                     raise RuntimeError('The declared PyTorch reference must use the upstream dense kernel path.')
             torch.cuda.synchronize()
             started = time.perf_counter()

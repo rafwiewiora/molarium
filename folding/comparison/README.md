@@ -15,6 +15,7 @@ bound crystal pose or affinity is asserted.
 | Native low-step | OpenFold3 0.5.1 / Boltz 2.2.1 | 25 steps, 2 recycles; each native sampler | OpenBind FP32; Boltz BF16 mixed |
 | Native standard | Same native releases/checkpoints | 200 steps, 3 recycles; each native sampler | BF16 mixed |
 | Native PyTorch control | OpenFold3 0.5.1 / OpenBind-0 | 25 steps, 2 recycles; upstream dense triangle kernels | FP32 |
+| Native PyTorch standard | OpenFold3 0.5.1 / OpenBind-0 | 200 steps, 3 recycles; upstream dense triangle kernels | FP32 |
 
 Native OpenBind uses `of3-ob-2025-06-30-174k.pt`, the trained checkpoint released
 with OpenFold3 v0.5.0, through the official v0.5.1 runtime. It does not use
