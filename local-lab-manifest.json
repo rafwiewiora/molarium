@@ -87,8 +87,8 @@
     },
     {
       "path": "folding/library.mjs",
-      "bytes": 8045,
-      "sha256": "47b9097cb47a1342767630fc0c3616bbc33b7a1769dee33fa7103691cee8a455"
+      "bytes": 8659,
+      "sha256": "5800d2dd31266022b45a1ef4b13d0c215e919625e71d6f8adb10437244ba7317"
     },
     {
       "path": "folding/library-ui.mjs",

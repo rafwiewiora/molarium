@@ -53,6 +53,13 @@ test('shared infrastructure failure stops the queue instead of failing every lig
   await assert.rejects(executeLibrary(run,{store,predict:async()=>{calls++;throw new Error('Failed to fetch weights');}}),/infrastructure stopped/);
   assert.equal(calls,1);assert.equal(store.runs.get(run.id).status,'stopped');assert.equal(store.poses.size,1);
 });
+test('live status excludes upstream GPU objects and remains safely cloneable',async()=>{
+  const store=new MemoryStore(),run=await createLibrary({sequence:'ACD',compounds:'C',samples:1},{store});let observed;
+  await executeLibrary(run,{store,predict:async(_r,{onProgress})=>{
+    onProgress({stage:'trunk-done',detail:{pass:1,trunk:{gpuBuffer:()=>{}}},buffer:()=>{}});return {pdb:'x'};
+  },onProgress:p=>{if(p.current?.stage==='trunk-done')observed=structuredClone(p);}});
+  assert.deepEqual(observed.current.detail,{pass:1});assert.equal(observed.current.buffer,undefined);
+});
 test('pause and queue status bypass the long action queue',async()=>{
   let release;const pending=new Promise(r=>release=r),calls=[];
   const api=createChemistActionsApi({enabledActions:['protein.cofoldLibrary','protein.pauseLibrary','protein.libraryStatus'],routes:{

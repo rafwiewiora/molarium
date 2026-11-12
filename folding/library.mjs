@@ -3,6 +3,16 @@ import {LibraryStore,poseSummary} from '../vendor/foldarium/library-store.js';
 export {LibraryStore};
 const now=()=>new Date().toISOString();
 const aborted=signal=>{if(signal?.aborted)throw signal.reason??new DOMException('Aborted','AbortError');};
+function publicProgress(p) {
+  // Upstream stage detail can contain live GPU tensors; status must stay small,
+  // cloneable and independent of their lifetime.
+  const out={};
+  for(const key of ['stage','message','loadedBytes','totalBytes','step','steps'])
+    if(['string','number','boolean'].includes(typeof p?.[key]))out[key]=p[key];
+  if(p?.detail&&typeof p.detail==='object')out.detail=Object.fromEntries(Object.entries(p.detail)
+    .filter(([_k,v])=>['string','boolean'].includes(typeof v)||typeof v==='number'&&Number.isFinite(v)));
+  return out;
+}
 export function libraryRequest(input) {
   if(!input||typeof input!=='object')throw new Error('Library request must be an object.');
   if(input.model&&input.model!=='localfold-openbind0')throw new Error('Library cofolding currently requires localfold-openbind0.');
@@ -70,7 +80,8 @@ export async function executeLibrary(run,{store=new LibraryStore(),predict,signa
         emit({compoundId:c.id,sample,stage:'starting',message:'Preparing ligand and loading model',fraction:0});
         result=await predict({...run.request,
           ...(run.alignment?{msaMode:'provided',a3m:run.alignment}:{}),ligand:{type:'smiles',value:c.smiles},seed},
-          {signal,onProgress:p=>{aborted(signal);fraction=Math.max(fraction,Math.min(.99,p.fraction??0));emit({compoundId:c.id,sample,...p,fraction});}});
+          {signal,onProgress:p=>{aborted(signal);fraction=Math.max(fraction,Math.min(.99,Number.isFinite(p.fraction)?p.fraction:0));
+            emit({compoundId:c.id,sample,...publicProgress(p),fraction});}});
         aborted(signal);
       }catch(e){if(signal?.aborted||e?.name==='AbortError')throw e;error=e;}
       const pose={...pending,status:error?'failed':'complete',finishedAt:now(),wallMs:clock()-t,
