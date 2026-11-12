@@ -15,6 +15,7 @@ bound crystal pose or affinity is asserted.
 | Native low-step | OpenFold3 0.5.1 / Boltz 2.2.1 | 25 steps, 2 recycles; each native sampler | OpenBind FP32; Boltz BF16 mixed |
 | Native standard | Same native releases/checkpoints | 200 steps, 3 recycles; each native sampler | BF16 mixed |
 | Native PyTorch control | OpenFold3 0.5.1 / OpenBind-0 | 25 steps, 2 recycles; upstream dense triangle kernels | FP32 |
+| Native PyTorch standard | OpenFold3 0.5.1 / OpenBind-0 | 200 steps, 3 recycles; upstream dense triangle kernels | FP32 |
 
 Native OpenBind uses `of3-ob-2025-06-30-174k.pt`, the trained checkpoint released
 with OpenFold3 v0.5.0, through the official v0.5.1 runtime. It does not use
@@ -56,7 +57,7 @@ new output directory, inside an allocated single-GPU Slurm job:
 
 ```sh
 # OpenBind example; its runtime also needs its official cached data assets.
-python folding/comparison/native_run.py --method openbind0 --protocol low-step \
+TORCHINDUCTOR_COMPILE_THREADS=1 python folding/comparison/native_run.py --method openbind0 --protocol low-step \
   --inputs /tmp/cofold-inputs --output /path/to/new-attempt \
   --checkpoint /path/to/of3-ob-2025-06-30-174k.pt --cache /path/to/openfold-cache
 # Boltz uses --method boltz2 and the official Boltz-2 checkpoint/cache.
@@ -66,6 +67,13 @@ The wrapper invokes the official CLI, checks the installed release and resolved
 OpenBind sampling settings, and instruments synchronized model forwards without
 changing their outputs. It preserves checkpoint, input and output hashes, actual
 CUDA device, package versions, cumulative GPU memory peaks and failures.
+Generated OpenBind runners use zero data-loader workers and the example limits
+compiler concurrency to one. The upstream ten-worker default plus compiler
+subprocesses exhausted host memory on a four-CPU/14G node before the first
+prediction; the worker-limited retry preserves the same model, sequence/ligands,
+precision, recycles and sampling count. Worker settings are execution metadata,
+and timings apply to that recorded configuration. Compiler control is documented
+in [PyTorch 2.5.1 source](https://github.com/pytorch/pytorch/blob/v2.5.1/torch/_inductor/config.py).
 Elapsed CLI wall time includes model loading, featurization, inference and output;
 it excludes checkpoint hashing, environment installation, weight downloads and
 queue time. Browser and native timing boundaries/hardware differ, so their ratio
@@ -121,6 +129,9 @@ both directions and a one-to-one ensemble assignment. The nearest statistic is
 optimistic and is reported alongside the other statistics.
 Every distinct within-method seed pair is also retained to show intrinsic
 prediction spread before interpreting cross-engine discrepancies.
+`residue_profile.py --left browser.json --right native.json --output profile.json`
+localizes residuals from those same full-protein fits. It preserves all residue/
+pair displacements and source hashes, without trimming a tail or refitting a core.
 
 Residue-contact overlap (4 Å) and severe intermolecular heavy-atom pairs (<1.2 Å)
 are limited geometry diagnostics, not a complete chemical-validity assessment.

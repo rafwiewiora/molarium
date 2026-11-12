@@ -26,7 +26,7 @@ def digest(path):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--method', choices=['openbind0', 'boltz2'], required=True)
-    parser.add_argument('--protocol', choices=['low-step', 'standard','torch-reference'], required=True)
+    parser.add_argument('--protocol', choices=['low-step', 'standard','torch-reference','torch-standard'], required=True)
     parser.add_argument('--inputs', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--checkpoint', type=Path, required=True)
@@ -56,6 +56,8 @@ def main():
         'inputFiles':{str(p.relative_to(args.inputs)):digest(p)for p in args.inputs.rglob('*')if p.is_file()},
         'inputSha256':digest(args.inputs / 'comparison.json'),'checkpointSha256':digest(args.checkpoint),
         'checkpointBytes':args.checkpoint.stat().st_size,'settings':protocol,'seeds':spec['seeds'],
+        'executionConfig':{'torchinductorCompileThreads':os.environ.get('TORCHINDUCTOR_COMPILE_THREADS'),
+          'dataModuleArgs':json.loads((args.inputs/f'openbind-{args.protocol}.yaml').read_text()).get('data_module_args',{})if args.method=='openbind0'else {'num_workers':0}},
         'environment':{'python':platform.python_version(),'packages':versions,'cuda':torch.version.cuda,
           'gpu':torch.cuda.get_device_name(0),'gpuMemoryBytes':torch.cuda.get_device_properties(0).total_memory},
         'startedAt':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'status':'running'}
@@ -70,7 +72,7 @@ def main():
                 if effective['steps']!=protocol['steps'] or effective['recycles']!=protocol['recycles']:
                     raise RuntimeError(f'Native resolved protocol mismatch: {effective}')
                 receipt['resolvedProtocol']=effective
-                if args.protocol=='torch-reference' and self.config.settings.memory.eval.use_triton_triangle_kernels:
+                if protocol.get('kernelBackend')=='upstream PyTorch dense' and self.config.settings.memory.eval.use_triton_triangle_kernels:
                     raise RuntimeError('The declared PyTorch reference must use the upstream dense kernel path.')
             torch.cuda.synchronize()
             started = time.perf_counter()

@@ -76,9 +76,50 @@ of the native RDKit caches; original caches/operational receipts remain preserve
 with the completed compute attempt. Analysis and human review can be reproduced
 directly from the portable libraries without model inference or pickle loading.
 
-**Pending:** native Boltz-2 standard sampling and the three OpenBind protocols
-remain queued on PSIgreen normal/Spot partitions. Spot capacity shortages have
-delayed startup. They are not included as completed comparisons here.
+The **native OpenBind-0 FP32 control also completed all 48 poses** on Tesla T4
+Spot, through official OpenFold3 0.5.1 and its upstream dense-PyTorch triangle
+kernels. It kept 25 steps/two recycles and unquantized FP32 weights. CLI wall time
+was 262.55 s; median synchronized model forward 3.18 s (mean 3.58 s). Peak allocated/
+reserved GPU memory was 1,558,200,320 / 1,591,738,368 bytes. This small 76-residue
+experiment does not qualify larger systems or establish general T4 support.
+
+| OpenBind-0 browser versus native FP32 | Median across 16 compounds |
+| --- | --- |
+| Mean seed-paired ligand RMSD | 12.93 Å |
+| Directed nearest-of-three ligand RMSD | 9.19 Å |
+| One-to-one ensemble ligand RMSD | 10.94 Å |
+| Browser within-method mean seed-to-seed ligand RMSD | 7.56 Å |
+| Native within-method mean seed-to-seed ligand RMSD | 8.50 Å |
+
+**OpenBind protein agreement remains unresolved:** median cross-seed protein Cα
+RMSD was 7.04 Å, versus within-method pair medians of 1.34 Å in the browser and
+3.05 Å natively. This differs substantially from the Boltz receptor result. The
+current comparison confounds sampler, quantization, features, precision and RNG;
+it cannot diagnose the cause or support a numerical-parity claim. Both source
+converters select the intended OpenBind-0 checkpoint/EMA weight family
+([ported converter](https://github.com/sokrypton/alphafold3/blob/e68d628df1d815cccb48bb1118d8763a594bfa23/converters/openfold3.py),
+[native inference loader](https://github.com/aqlaboratory/openfold-3/blob/795e45b03924a8f8ffc72ae50298bd113530b9d3/openfold3/entry_points/experiment_runner.py)); their
+actual weights, tensors and random inputs have not been matched elementwise here.
+The discrepancy must remain visible while those controls are developed.
+
+An exploratory [residue-level profile](openbind0-residue-profile.json), using the
+same 144 whole-protein fits without trimming or refitting a core, localizes the
+largest differences to the C-terminal tail (residues 72–76, median displacements
+12–27 Å), with another differing region at 62–67. The median across residue-wise
+median displacements is 1.88 Å: the global 7.04 Å RMSD does not mean every residue
+differs by that amount. The full RMSDs and all per-pair residuals remain reported;
+this post hoc diagnostic does not replace them or isolate a porting error.
+
+- [OpenBind browser/native Foldarium review library](openbind0-browser-native.library.json), with 96 unscored complexes
+- [Complete OpenBind pairwise metrics and seed-spread controls](openbind0-torch-reference-agreement.json)
+- [Native library](native-openbind0-torch-reference/library.json), [public receipt](native-openbind0-torch-reference/receipt.public.json), and [raw mmCIFs, consumed configuration/source and timings](native-openbind0-torch-reference/native-artifacts.zip)
+
+**Pending:** native Boltz-2 standard sampling remains eligible for normal L4 and
+L4 Spot. A 200-step/three-recycle OpenBind FP32 dense-kernel control was submitted
+with T4 Spot eligibility; the unstarted L4 OpenBind controls were canceled
+to concentrate on this standard-sampling comparison rather than duplicate the
+completed reference. Spot capacity shortages have delayed startup. These runs
+are not counted as completed comparisons.
 
 The [reproducible protocol and analysis tools](../../folding/comparison/README.md)
 document exact releases, trained checkpoint selection, timing boundaries and
@@ -124,6 +165,12 @@ also does not replace a full MSA workflow or experimental pose benchmarking.
    chemical state. Independent exports with the original RDKit 2026.03.2 release
    on cluster and Mac were byte-identical. No bond was inferred from a predicted
    distance, and no native input conformer was claimed to have been recovered.
+8. **Native host resources:** OpenFold3's default ten data-loader workers and
+   compiler subprocesses exhausted the four-CPU node's host-memory grant before
+   the first model forward. A new immutable attempt used zero data-loader workers
+   and one compiler worker, with unchanged scientific inputs, precision, sampling
+   and dense model kernels. It completed 48/48 on T4. The execution settings and
+   consumed script are in the native receipt/archive; no resource gate was relaxed.
 
 Analysis checks cover rigid transforms, a displaced ligand, conjugated terminal
 symmetry, native double-bond identity independent of distance, input-hash rejection,

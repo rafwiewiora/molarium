@@ -11,7 +11,9 @@ with stable `DV-` identifiers and links to original observations and follow-up e
 - [x] Integrate pinned LocalFold AF2 and OpenBind-0 with UI/API inputs, exact ligand graphs and downloadable provenance ([LF-01](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md)).
 - [ ] Qualify LocalFold against original native models and known ligand complexes; measure quantization separately, then broaden GPU and molecular coverage (LF-01).
 - [x] Add Boltz-2 browser structure inference and compare the 48-pose library with the official native low-step route, retaining raw outputs, seed variability and unscored Foldarium review ([comparison](reviews/cofold-method-comparison-2026-11-12/README.md)).
-- [ ] Finish queued native OpenBind controls and Boltz-2 standard sampling; these arbitrary pairs do not replace fixed-tensor parity or experimental-complex validation ([protocol](folding/comparison/README.md)).
+- [x] Complete the 48-pose OpenBind-0 native FP32/dense-kernel control on T4 Spot; preserve the substantial protein/ligand disagreement as an unresolved finding, with full human-review bundles ([comparison](reviews/cofold-method-comparison-2026-11-12/README.md)).
+- [ ] Isolate OpenBind's observed browser/native protein disagreement (median Cα RMSD 7.04 Å) using matched weights, features, sampler and random tensors; current protocol differences do not diagnose a porting error.
+- [ ] Finish native OpenBind FP32 standard sampling (T4/L4 eligible) and Boltz-2 standard sampling (L4 eligible); these arbitrary pairs do not replace fixed-tensor parity or experimental-complex validation ([protocol](folding/comparison/README.md)).
 
 - [x] Cancel queued/in-flight old-graph polish when chemistry invalidates the atom mapping ([SR-13](reviews/STALE_POLISH_2026-09-25.md)); retain exact coordinate-preservation assertions.
 
