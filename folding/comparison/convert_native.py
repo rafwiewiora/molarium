@@ -150,9 +150,9 @@ def main():
         if not path.is_relative_to(a.native.resolve()):raise ValueError('Output path escapes the native attempt')
         data=path.read_bytes()
         if sha(data)!=output['sha256']:raise ValueError('Native output digest mismatch')
-        index=int(re.search(r'compound_(\d+)',str(path)).group(1));compound=spec['compounds'][index]
+        index=int(re.search(r'compound_(\d+)',path.name).group(1));compound=spec['compounds'][index]
         if method=='openbind0':seed=int(re.search(r'_seed_(\d+)',path.name).group(1))
-        else:seed=int(next(part[5:]for part in path.parts if part.startswith('seed-')))
+        else:seed=int(next(part[5:]for part in path.relative_to(a.native).parts if re.fullmatch(r'seed-\d+',part)))
         if seed not in spec['seeds']:raise ValueError('Unexpected native seed')
         topology=topologies['outputs'][output['path']]if topologies else None
         if topology:
@@ -169,8 +169,12 @@ def main():
         source={'method':method,'protocol':protocol,'effectivePrecision':precision,'settings':receipt['settings'],
           'nativeCheckpointSha256':receipt['checkpointSha256'],'nativeReceiptSha256':sha(receipt_bytes),'nativeOutputSha256':sha(data),
           'nativeOutputFile':str(path.relative_to(a.native)),'inputSpecSha256':receipt['inputSha256'],
-          'environment':receipt['environment'],'atomMapping':proof,'request':{'sequence':spec['sequence'],'ligand':{'type':'smiles','value':compound['smiles']},'seed':seed},
+          'environment':output.get('environment',receipt['environment']),'atomMapping':proof,'request':{'sequence':spec['sequence'],'ligand':{'type':'smiles','value':compound['smiles']},'seed':seed},
           'outputPdbSha256':sha(pdb.encode()),'nativeConfidence':confidence}
+        if 'sourceAttempt'in output:
+            native_source=next(s for s in receipt['sources']if s['id']==output['sourceAttempt'])
+            source['nativeAttempt']={k:v for k,v in native_source.items()if k!='savedOutputs'}
+            source['cohortAssembly']='Validated unique poses assembled from preserved immutable attempts; original CLI statuses retained.'
         result={'schema':'molarium.native-fold-result.v1','kind':'native','sequence':spec['sequence'],
           'model':f'{"OpenBind-0"if method=="openbind0"else"Boltz-2"} · native {protocol}',
           'provider':'CUDA / PyTorch','pdb':pdb,'component':component,'plddt':plddt,'confidenceLayout':layout,
@@ -183,8 +187,9 @@ def main():
       'request':{'sequence':spec['sequence'],'model':method},'compounds':spec['compounds'],'samples':len(spec['seeds']),
       'total':len(poses),'completed':len(poses),'failed':0,
       'provenance':{'comparisonInputSha256':receipt['inputSha256'],'nativeReceiptSha256':sha(receipt_bytes),
-        'timing':{'elapsedSeconds':receipt['elapsedSeconds'],'boundary':'Native CLI after checkpoint hashing and framework import; includes model load, featurization, inference and output.'},
+        'timing':{'elapsedSeconds':receipt['elapsedSeconds'],'boundary':receipt.get('timingBoundary','Native CLI after checkpoint hashing and framework import; includes model load, featurization, inference and output.')},
         'precisionNote':'Boltz-2 CLI uses bf16-mixed for both protocols; the common input precision field is consumed only by OpenFold3.'}}
+    if 'sources'in receipt:run['provenance']['nativeAttempts']=receipt['sources']
     a.output.parent.mkdir(parents=True,exist_ok=True);a.output.write_text(json.dumps({'schema':'foldarium.cofolding-library.v1','run':run,'poses':poses,'decisions':[]},allow_nan=False)+'\n')
     print(json.dumps({'method':method,'protocol':protocol,'poses':len(poses),'output':str(a.output)}))
 

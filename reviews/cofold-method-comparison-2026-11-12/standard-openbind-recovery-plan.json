@@ -1,0 +1,140 @@
+{
+  "schema": "molarium.native-resume-plan.v1",
+  "parentCohortInputSha256": "f445c5778152362834f1e33f8267243e18d837a5b003c1c723d146901032e9ab",
+  "method": "openbind0",
+  "protocol": "torch-standard",
+  "settings": {
+    "steps": 200,
+    "recycles": 3,
+    "precision": "32-true",
+    "kernelBackend": "upstream PyTorch dense"
+  },
+  "checkpointSha256": "bd43301c011d5f87580d3e8b548658869433e4488399feb03035ba248f8e29e4",
+  "expectedCohortPoses": 48,
+  "preservedPoses": 6,
+  "remainingPoses": 42,
+  "sources": [
+    {
+      "id": "part-000",
+      "receiptSha256": "0571c5bd1385c6c9589c563c1fc9916e404c9c2e88f536f737c89a49f8d1182b",
+      "inputSha256": "f445c5778152362834f1e33f8267243e18d837a5b003c1c723d146901032e9ab",
+      "originalStatus": "running",
+      "runnerSha256": "9133141a0aa206e17e032850cd8ae6d8a8376ce783f2c30e5aa2d3e29210dea2",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      },
+      "executionConfig": {
+        "torchinductorCompileThreads": "1",
+        "dataModuleArgs": {
+          "num_workers": 0,
+          "num_workers_validation": 0
+        }
+      },
+      "elapsedSeconds": null,
+      "startedAt": "2026-11-12T23:22:09Z",
+      "finishedAt": null,
+      "stoppedOutputInventorySha256": "4a00d6854ee5b7c5a296c08873381efa9ac54b416a18f176881ff64b2722db43",
+      "savedOutputs": [
+        {
+          "index": 0,
+          "compoundId": "ethanol",
+          "queryId": "compound_000",
+          "seed": 0,
+          "source": "part-000",
+          "path": "models/compound_000/seed_0/compound_000_seed_0_sample_1_model.cif",
+          "sha256": "1f4a847427430275e21aa30e8f9735efaae339c7ab78b889817f8bcb009f5386",
+          "bytes": 65206
+        },
+        {
+          "index": 0,
+          "compoundId": "ethanol",
+          "queryId": "compound_000",
+          "seed": 1,
+          "source": "part-000",
+          "path": "models/compound_000/seed_1/compound_000_seed_1_sample_1_model.cif",
+          "sha256": "cffd032c55c2ca36528cf910a0da7ae873481e7dc46af5b860bacb7243e8ee7f",
+          "bytes": 65206
+        },
+        {
+          "index": 0,
+          "compoundId": "ethanol",
+          "queryId": "compound_000",
+          "seed": 2,
+          "source": "part-000",
+          "path": "models/compound_000/seed_2/compound_000_seed_2_sample_1_model.cif",
+          "sha256": "8ea52c4faf26b6fbe968530c412bb26cf8436f004a58273ae4f169754768a688",
+          "bytes": 65810
+        },
+        {
+          "index": 1,
+          "compoundId": "benzene",
+          "queryId": "compound_001",
+          "seed": 0,
+          "source": "part-000",
+          "path": "models/compound_001/seed_0/compound_001_seed_0_sample_1_model.cif",
+          "sha256": "0026e476e089d26f5e20c8acfad878f6668bcb46e63ff719725ef3784b883df6",
+          "bytes": 67428
+        },
+        {
+          "index": 1,
+          "compoundId": "benzene",
+          "queryId": "compound_001",
+          "seed": 1,
+          "source": "part-000",
+          "path": "models/compound_001/seed_1/compound_001_seed_1_sample_1_model.cif",
+          "sha256": "e1e6d40b3707d70fdd67cc8ef8ff89333f3f8ece469a4cadd07bfc6040f729b7",
+          "bytes": 66214
+        },
+        {
+          "index": 1,
+          "compoundId": "benzene",
+          "queryId": "compound_001",
+          "seed": 2,
+          "source": "part-000",
+          "path": "models/compound_001/seed_2/compound_001_seed_2_sample_1_model.cif",
+          "sha256": "e33838b14d765aefd5e74f7d21460e75ee3157011cc23449f3d33146983e0641",
+          "bytes": 66821
+        }
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "indices": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "id": "group-000",
+      "expectedPoses": 42,
+      "comparisonSha256": "7a3240d7dd1d50f7ff11a121257bc889e98ef4448c7c0386661e3e60323f7ae0"
+    }
+  ]
+}

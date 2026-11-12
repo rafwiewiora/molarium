@@ -1,0 +1,36 @@
+{
+  "schema": "molarium.stopped-native-output-inventory.v1",
+  "nativeReceiptSha256": "0571c5bd1385c6c9589c563c1fc9916e404c9c2e88f536f737c89a49f8d1182b",
+  "stoppedJob": {
+    "id": "12720",
+    "state": "CANCELLED",
+    "precedingNodeFailures": 2
+  },
+  "files": {
+    "models/compound_000/seed_0/compound_000_seed_0_sample_1_model.cif": {
+      "sha256": "1f4a847427430275e21aa30e8f9735efaae339c7ab78b889817f8bcb009f5386",
+      "bytes": 65206
+    },
+    "models/compound_000/seed_1/compound_000_seed_1_sample_1_model.cif": {
+      "sha256": "cffd032c55c2ca36528cf910a0da7ae873481e7dc46af5b860bacb7243e8ee7f",
+      "bytes": 65206
+    },
+    "models/compound_000/seed_2/compound_000_seed_2_sample_1_model.cif": {
+      "sha256": "8ea52c4faf26b6fbe968530c412bb26cf8436f004a58273ae4f169754768a688",
+      "bytes": 65810
+    },
+    "models/compound_001/seed_0/compound_001_seed_0_sample_1_model.cif": {
+      "sha256": "0026e476e089d26f5e20c8acfad878f6668bcb46e63ff719725ef3784b883df6",
+      "bytes": 67428
+    },
+    "models/compound_001/seed_1/compound_001_seed_1_sample_1_model.cif": {
+      "sha256": "e1e6d40b3707d70fdd67cc8ef8ff89333f3f8ece469a4cadd07bfc6040f729b7",
+      "bytes": 66214
+    },
+    "models/compound_001/seed_2/compound_001_seed_2_sample_1_model.cif": {
+      "sha256": "e33838b14d765aefd5e74f7d21460e75ee3157011cc23449f3d33146983e0641",
+      "bytes": 66821
+    }
+  },
+  "capturedAt": "2026-11-12T23:41:52Z"
+}

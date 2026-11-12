@@ -141,6 +141,80 @@ from predictions; generated comparison libraries start with no decisions.
 
 See [the public results record](../../reviews/cofold-method-comparison-2026-11-12/README.md).
 
+## Interrupted native OpenBind jobs
+
+Never restart a consumed output directory. First verify through the scheduler
+that its job stopped, then capture an inventory **at the source before transfer**:
+
+```sh
+python folding/comparison/snapshot_native_outputs.py \
+  --native /path/to/stopped-output --job-id 12345 --job-state NODE_FAIL
+```
+
+The job state is a recorded observation, not a command to stop work. Transfer the
+entire source directory, inventory and exact consumed inputs. Original receipts
+and coordinates stay unchanged; a running receipt left by a killed process is
+never treated as a completed CLI invocation. A complete-attempt receipt or a
+stopped-source inventory must account for every transferred model file/hash.
+Missing files cause an error instructing the operator to retrieve them, rather
+than quietly turning missing copies into more calculations.
+Public receipts omit only private CLI paths and retain the original receipt
+digest; recovery records bind both the original digest and the transferred
+public receipt. The public interrupted-run archive can be replayed by placing
+`receipt.public.json` and `stopped-output-inventory.json` in its extracted `raw/`
+directory, then using `raw=inputs` as the attempt argument. A regression test
+reproduces the exact 42-pose input digest from those public files.
+
+```sh
+python folding/comparison/native_cohort.py plan --inputs /original/cohort/inputs \
+  --attempt /stopped/output=/stopped/consumed-inputs --allow-interrupted \
+  --output /new/immutable-attempt
+```
+
+Run only the generated `groups/*/inputs` through `native_run.py`, each in a new
+output directory inside a genuine GPU allocation. Original query IDs and seeds
+are preserved. Missing seeds are grouped independently, so a compound with one
+saved seed does not repeat it. The demonstrated recovery preserves six outputs
+and submits only 42 missing poses. Tests also cover a partially completed seed
+set. Normal scheduler handling may retry a node that failed before its batch
+script started; any consumed scientific output directory still rejects replay.
+
+After all missing groups finish, assemble original and resumed sources:
+
+```sh
+python folding/comparison/native_cohort.py assemble --inputs /original/cohort/inputs \
+  --attempt /stopped/output=/stopped/consumed-inputs \
+  --attempt /new/group-output=/new/group-inputs --allow-interrupted \
+  --output /new/assembled-cohort
+```
+
+Assembly requires the complete unique compound/seed set, matching checkpoint,
+protocol, input lineage, sequence and chemical identity. It copies original
+structures without motion or inference. Each output retains its source attempt
+and actual execution environment. An assembled complete cohort does not relabel
+an interrupted native CLI as complete. Total CLI wall time remains unavailable
+when interruption prevents measuring it. The assembled cohort can be converted
+using the original full input manifest. A frozen 48-pose round-trip test checks
+that all converted coordinate hashes remain identical.
+
+This helper currently handles OpenBind mmCIF with explicit chemical topology;
+Boltz recovery additionally needs its named input-cache extraction.
+
+## Reproduce the residual figure
+
+Install `requirements-plot.txt` in an isolated environment, then:
+
+```sh
+python folding/comparison/plot_residue_profiles.py \
+  --profile 'Native 25 steps / 2 recycles=reviews/cofold-method-comparison-2026-11-12/openbind0-residue-profile.json' \
+  --output /tmp/openbind-residuals --tail-start 72
+```
+
+PNG, SVG and a source/environment/artifact-hash receipt are emitted together.
+The band is the empirical 10–90% range over cross-seed pairs, not a confidence
+interval for experimental accuracy. Multiple profiles can be overlaid without
+changing the underlying full-protein fits.
+
 Primary references: [OpenFold3 v0.5.0 release](https://github.com/aqlaboratory/openfold-3/releases/tag/v0.5.0),
 [OpenFold3 parameter reference](https://openfold-3.readthedocs.io/en/latest/parameters_reference.html),
 [LocalFold](https://github.com/sokrypton/localfold), and
