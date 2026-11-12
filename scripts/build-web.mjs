@@ -43,6 +43,7 @@ const files = [
   'reviews/cofold-method-comparison-2026-11-12/native-boltz2-low-step/receipt.public.json',
   'reviews/cofold-method-comparison-2026-11-12/native-boltz2-low-step/native-artifacts.zip',
   'reviews/cofold-method-comparison-2026-11-12/openbind0-torch-reference-agreement.json',
+  'reviews/cofold-method-comparison-2026-11-12/openbind0-residue-profile.json',
   'reviews/cofold-method-comparison-2026-11-12/openbind0-browser-native.library.json',
   'reviews/cofold-method-comparison-2026-11-12/native-openbind0-torch-reference/library.json',
   'reviews/cofold-method-comparison-2026-11-12/native-openbind0-torch-reference/receipt.public.json',

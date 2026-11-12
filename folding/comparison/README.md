@@ -129,6 +129,9 @@ both directions and a one-to-one ensemble assignment. The nearest statistic is
 optimistic and is reported alongside the other statistics.
 Every distinct within-method seed pair is also retained to show intrinsic
 prediction spread before interpreting cross-engine discrepancies.
+`residue_profile.py --left browser.json --right native.json --output profile.json`
+localizes residuals from those same full-protein fits. It preserves all residue/
+pair displacements and source hashes, without trimming a tail or refitting a core.
 
 Residue-contact overlap (4 Å) and severe intermolecular heavy-atom pairs (<1.2 Å)
 are limited geometry diagnostics, not a complete chemical-validity assessment.

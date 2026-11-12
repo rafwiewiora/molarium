@@ -102,6 +102,14 @@ converters select the intended OpenBind-0 checkpoint/EMA weight family
 actual weights, tensors and random inputs have not been matched elementwise here.
 The discrepancy must remain visible while those controls are developed.
 
+An exploratory [residue-level profile](openbind0-residue-profile.json), using the
+same 144 whole-protein fits without trimming or refitting a core, localizes the
+largest differences to the C-terminal tail (residues 72–76, median displacements
+12–27 Å), with another differing region at 62–67. The median across residue-wise
+median displacements is 1.88 Å: the global 7.04 Å RMSD does not mean every residue
+differs by that amount. The full RMSDs and all per-pair residuals remain reported;
+this post hoc diagnostic does not replace them or isolate a porting error.
+
 - [OpenBind browser/native Foldarium review library](openbind0-browser-native.library.json), with 96 unscored complexes
 - [Complete OpenBind pairwise metrics and seed-spread controls](openbind0-torch-reference-agreement.json)
 - [Native library](native-openbind0-torch-reference/library.json), [public receipt](native-openbind0-torch-reference/receipt.public.json), and [raw mmCIFs, consumed configuration/source and timings](native-openbind0-torch-reference/native-artifacts.zip)
