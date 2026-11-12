@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Foldarium protein-ligand mark</title>
+  <desc id="desc">A folded protein ribbon shaped like the letter F around a bound ligand.</desc>
+  <rect x="3" y="3" width="58" height="58" rx="17" fill="#f8fafc" stroke="#dce3ea" stroke-width="2"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 49C17 43 18 36 20 31C23 24 20 19 25 16C31 13 41 15 49 19" stroke="#dbe7ff" stroke-width="11"/>
+    <path d="M20 49C17 43 18 36 20 31C23 24 20 19 25 16C31 13 41 15 49 19" stroke="#5b8ff9" stroke-width="6.5"/>
+    <path d="M21 31C28 27 36 27 44 30" stroke="#e9dcfa" stroke-width="11"/>
+    <path d="M21 31C28 27 36 27 44 30" stroke="#9270ca" stroke-width="6.5"/>
+    <path d="M21 43C25 46 28 48 31 49" stroke="#d8f5e9" stroke-width="9"/>
+    <path d="M21 43C25 46 28 48 31 49" stroke="#5ad8a6" stroke-width="5"/>
+  </g>
+  <g stroke="#8e6b18" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M37 38L42 35L47 38L46 44L40 45L37 41Z" fill="none"/>
+    <path d="M47 38L51 35"/>
+  </g>
+  <g stroke="#fff" stroke-width="1">
+    <circle cx="37" cy="38" r="3" fill="#f6bd16"/>
+    <circle cx="42" cy="35" r="3" fill="#f6bd16"/>
+    <circle cx="47" cy="38" r="3" fill="#f6bd16"/>
+    <circle cx="46" cy="44" r="3" fill="#5ad8a6"/>
+    <circle cx="40" cy="45" r="3" fill="#f6bd16"/>
+    <circle cx="51" cy="35" r="3" fill="#ef6a67"/>
+  </g>
+</svg>

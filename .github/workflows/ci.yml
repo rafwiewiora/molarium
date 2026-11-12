@@ -65,7 +65,7 @@ jobs:
       - name: Run scientific validation suite
         run: npm run test:ci:scientific
       - name: Check folding requests, chemical mapping and pinned upstream sources
-        run: node --test folding/integration.test.mjs
+        run: node --test folding/integration.test.mjs folding/library.test.mjs
       - name: Check all seven frozen SOS1 graphs through strict 2D depiction
         run: npm run test:depiction-hydrogens
       - name: Check simulation benchmark acceptance logic and parameter import
@@ -103,6 +103,11 @@ jobs:
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
         run: bun scripts/localfold-ui.browser.test.mjs
+      - name: Check local Foldarium pose review, decisions and portable export
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          MOLARIUM_LIBRARY_REUSE: reviews/library-cofolding-2026-11-12/standard/library-1.json
+        run: bun scripts/cofold-library.browser.mjs
       - name: Check numerical-only public validation panel and evidence links
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}

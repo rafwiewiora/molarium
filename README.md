@@ -445,10 +445,18 @@ pins, ligand component, PDB and confidence arrays.
 This is an experimental integration. Apple M1 Pro browser checks cover monomer
 inference, 129-residue input, supplied A3M, SMILES/CCD cofolding and chemical-state
 preservation. They do not establish binding-pose accuracy or agreement with the
-original native OpenBind/AF2 implementations. The first release accepts one
-protein and at most one noncovalent ligand (150 heavy atoms); protein multimers,
+original native OpenBind/AF2 implementations. Each prediction accepts one
+protein and at most one noncovalent ligand (150 heavy atoms); the library workflow
+queues multiple such predictions. Protein multimers,
 templates, nucleic acids and covalent cofolding are not exposed yet.
 See [integration evidence and follow-up work](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md).
+
+**Compound libraries and Foldarium review:** paste SMILES lines under the folding
+panel to run a persistent serial queue, with multiple seeds, progress and measured
+ETA, pause/resume, local checkpoints and portable exports. Review independently
+predicted complexes in Foldarium's grid or one at a time, record exact pose
+preferences/notes, and export a shortlist. See the [workflow and API](folding/LIBRARIES.md)
+and [measured throughput](reviews/library-cofolding-2026-11-12/README.md).
 
 ### Legacy OpenFold 2
 

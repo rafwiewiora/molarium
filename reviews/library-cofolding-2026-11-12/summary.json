@@ -1,0 +1,1012 @@
+{
+  "schema": "molarium.cofolding-throughput-summary.v1",
+  "hardware": "Apple M1 Pro",
+  "scope": "Single-machine engineering throughput, not pose accuracy. No MSA search; arbitrary small ligands. Serial queue, one prediction per seed.",
+  "timingBoundary": "wallMs includes featurization, model loading and inference. Warm mean excludes the first chronological pose, not the first lexicographic ID. InferenceMs starts after model loading.",
+  "cases": [
+    {
+      "source": "reviews/library-cofolding-2026-11-12/quick/library-1.json",
+      "sha256": "16375b20723463a79c3b1e55b9913c4be1766d7d09ce4bfbac7d2eee67719c60",
+      "name": "Trp-cage 20 aa / 3 ligands / 2 seeds",
+      "residues": 20,
+      "compounds": 3,
+      "samples": 2,
+      "request": {
+        "schema": "molarium.fold-request.v2",
+        "sequence": "NLYIQWLKDGGPSSGRPPPS",
+        "model": "localfold-openbind0",
+        "msaMode": "single",
+        "msaEndpoint": "https://api.colabfold.com",
+        "a3m": null,
+        "recycles": 0,
+        "steps": 1,
+        "seed": 0,
+        "ligand": null
+      },
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        }
+      },
+      "completed": 6,
+      "failed": 0,
+      "firstPoseWallMs": 12193.495000004768,
+      "warmMeanWallMs": 459.85099999904634,
+      "warmPosesPerMinute": 130.4770458259837,
+      "warmRangeMs": [
+        240.44999992847443,
+        1154.9300000667572
+      ],
+      "sessionMs": [
+        14498.18499994278
+      ],
+      "poses": [
+        {
+          "id": "ethanol::0::attempt-1",
+          "startedAt": "2026-11-12T20:15:58.735Z",
+          "wallMs": 12193.495000004768,
+          "inferenceMs": 675,
+          "pdbSha256": "25d2da69344e899c5ed07dfdca372c78cca7851abf3e5479b40fedc58d16dce3"
+        },
+        {
+          "id": "ethanol::1::attempt-1",
+          "startedAt": "2026-11-12T20:16:10.930Z",
+          "wallMs": 264.68500006198883,
+          "inferenceMs": 261.085000038147,
+          "pdbSha256": "bdf9dce8fbc8a6342c137b5358d44ed3b52ca3110830545a8550c66743e4a5b5"
+        },
+        {
+          "id": "benzene::0::attempt-1",
+          "startedAt": "2026-11-12T20:16:11.196Z",
+          "wallMs": 1154.9300000667572,
+          "inferenceMs": 1145.8949999809265,
+          "pdbSha256": "4c9261b0113c19ae7a7b6c22bb73cea913990ac6ab5fffd029006ecf5d099987"
+        },
+        {
+          "id": "benzene::1::attempt-1",
+          "startedAt": "2026-11-12T20:16:12.351Z",
+          "wallMs": 240.44999992847443,
+          "inferenceMs": 233.07499992847443,
+          "pdbSha256": "8b7d4e32cb04acb1811d428a006c29b1ff74c94db16e8e4e7bb17ba78804116b"
+        },
+        {
+          "id": "benzoate::0::attempt-1",
+          "startedAt": "2026-11-12T20:16:12.592Z",
+          "wallMs": 377.84500002861023,
+          "inferenceMs": 344.1200000047684,
+          "pdbSha256": "20f9b804f41a40af42907c4f852fe4bb38ff9d0af7f326919db35d7d143db82b"
+        },
+        {
+          "id": "benzoate::1::attempt-1",
+          "startedAt": "2026-11-12T20:16:12.971Z",
+          "wallMs": 261.34499990940094,
+          "inferenceMs": 231.9800000190735,
+          "pdbSha256": "fce88d8474c25696b3d55b669f3def385d8830e2ac4e8e744a30e0245973f202"
+        }
+      ]
+    },
+    {
+      "source": "reviews/library-cofolding-2026-11-12/standard/library-1.json",
+      "sha256": "cb0fac4f47c202f34b299114800c687d591f6789b0284825b83a80bd34e97f29",
+      "name": "Trp-cage 20 aa / 3 ligands / 2 seeds",
+      "residues": 20,
+      "compounds": 3,
+      "samples": 2,
+      "request": {
+        "schema": "molarium.fold-request.v2",
+        "sequence": "NLYIQWLKDGGPSSGRPPPS",
+        "model": "localfold-openbind0",
+        "msaMode": "single",
+        "msaEndpoint": "https://api.colabfold.com",
+        "a3m": null,
+        "recycles": 2,
+        "steps": 25,
+        "seed": 0,
+        "ligand": null
+      },
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        }
+      },
+      "completed": 6,
+      "failed": 0,
+      "firstPoseWallMs": 13928.419999957085,
+      "warmMeanWallMs": 1029.0370000123978,
+      "warmPosesPerMinute": 58.30694134348631,
+      "warmRangeMs": [
+        967.5549999475479,
+        1135.8300000429153
+      ],
+      "sessionMs": [
+        19082.675000071526
+      ],
+      "poses": [
+        {
+          "id": "ethanol::0::attempt-1",
+          "startedAt": "2026-11-12T20:17:34.489Z",
+          "wallMs": 13928.419999957085,
+          "inferenceMs": 1278.3400000333786,
+          "pdbSha256": "69ef3784a4dffe7e625aca89327b52070fc240312b0ab56e44f7062fd3ed6d78"
+        },
+        {
+          "id": "ethanol::1::attempt-1",
+          "startedAt": "2026-11-12T20:17:48.418Z",
+          "wallMs": 974.3799999952316,
+          "inferenceMs": 970.2300000190735,
+          "pdbSha256": "8e8b780fe73c7ed94a2fbdc9c99c83031a99d54332083e446eb2919a49de1ba5"
+        },
+        {
+          "id": "benzene::0::attempt-1",
+          "startedAt": "2026-11-12T20:17:49.397Z",
+          "wallMs": 1048.6900000572205,
+          "inferenceMs": 1037.0699999332428,
+          "pdbSha256": "6b0915f785fcda33f2398776fd6fd547a32b7644ad748f4e2b94ff771f11b925"
+        },
+        {
+          "id": "benzene::1::attempt-1",
+          "startedAt": "2026-11-12T20:17:50.446Z",
+          "wallMs": 967.5549999475479,
+          "inferenceMs": 960.9099999666214,
+          "pdbSha256": "38b6705ffab411bf9d6c7be305dbd23b92092fcd31db458acd8af6d7f30bf881"
+        },
+        {
+          "id": "benzoate::0::attempt-1",
+          "startedAt": "2026-11-12T20:17:51.415Z",
+          "wallMs": 1135.8300000429153,
+          "inferenceMs": 1099.6399999856949,
+          "pdbSha256": "ae8c14532baf5b0a91ea1c4ad355be49610217e71047e6d76586371b4416828e"
+        },
+        {
+          "id": "benzoate::1::attempt-1",
+          "startedAt": "2026-11-12T20:17:52.551Z",
+          "wallMs": 1018.7300000190735,
+          "inferenceMs": 987.5650000572205,
+          "pdbSha256": "fba49bb565d5986bfedc18518a72fd8bd002383933e7715fcb6870288cd78785"
+        }
+      ]
+    },
+    {
+      "source": "reviews/library-cofolding-2026-11-12/standard-76/library-1.json",
+      "sha256": "f00d51380ff71b97c25d4a96dd6af99596601373f547603731359546d6f9a78f",
+      "name": "Ubiquitin 76 aa / 2 ligands / 2 seeds",
+      "residues": 76,
+      "compounds": 2,
+      "samples": 2,
+      "request": {
+        "schema": "molarium.fold-request.v2",
+        "sequence": "MQIFVKTLTGKTITLEVEPSDTIENVKAKIQDKEGIPPDQQRLIFAGKQLEDGRTLSDYNIQKESTLHLVLRLRGG",
+        "model": "localfold-openbind0",
+        "msaMode": "single",
+        "msaEndpoint": "https://api.colabfold.com",
+        "a3m": null,
+        "recycles": 2,
+        "steps": 25,
+        "seed": 0,
+        "ligand": null
+      },
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        }
+      },
+      "completed": 4,
+      "failed": 0,
+      "firstPoseWallMs": 12594.980000019073,
+      "warmMeanWallMs": 2746.748333334923,
+      "warmPosesPerMinute": 21.844010705979716,
+      "warmRangeMs": [
+        2383.4249999523163,
+        3394.350000023842
+      ],
+      "sessionMs": [
+        20842.924999952316
+      ],
+      "poses": [
+        {
+          "id": "ethanol::0::attempt-1",
+          "startedAt": "2026-11-12T20:20:18.804Z",
+          "wallMs": 12594.980000019073,
+          "inferenceMs": 3482.8250000476837,
+          "pdbSha256": "30484f123a447a8e8c1418e6fc558b6696b44e13e9c6ce748bd6ff313f3148ac"
+        },
+        {
+          "id": "ethanol::1::attempt-1",
+          "startedAt": "2026-11-12T20:20:31.401Z",
+          "wallMs": 2383.4249999523163,
+          "inferenceMs": 2378.7699999809265,
+          "pdbSha256": "a2355fef97dedf4e72f3043528339b839e4278a7f03156e4e1aecac0c85bf04a"
+        },
+        {
+          "id": "benzoate::0::attempt-1",
+          "startedAt": "2026-11-12T20:20:33.786Z",
+          "wallMs": 3394.350000023842,
+          "inferenceMs": 3355.764999985695,
+          "pdbSha256": "f44317d1406f3571bd4d4c447e624254634f84fdac51b1a82de5886a7661dadf"
+        },
+        {
+          "id": "benzoate::1::attempt-1",
+          "startedAt": "2026-11-12T20:20:37.182Z",
+          "wallMs": 2462.4700000286102,
+          "inferenceMs": 2431.0349999666214,
+          "pdbSha256": "3505647c0fac63b26cc563c8da11eef342e98bd12818984cc9dd532ed0582bb4"
+        }
+      ]
+    },
+    {
+      "source": "reviews/library-cofolding-2026-11-12/library-48/library-1.json",
+      "sha256": "35fedd547dd342b0bdc1b2fa192338074a1751fa8be4cae8addf30355052e3b9",
+      "name": "Ubiquitin 76 aa / 16 compounds / 3 seeds",
+      "residues": 76,
+      "compounds": 16,
+      "samples": 3,
+      "request": {
+        "schema": "molarium.fold-request.v2",
+        "sequence": "MQIFVKTLTGKTITLEVEPSDTIENVKAKIQDKEGIPPDQQRLIFAGKQLEDGRTLSDYNIQKESTLHLVLRLRGG",
+        "model": "localfold-openbind0",
+        "msaMode": "single",
+        "msaEndpoint": "https://api.colabfold.com",
+        "a3m": null,
+        "recycles": 2,
+        "steps": 25,
+        "seed": 0,
+        "ligand": null
+      },
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        }
+      },
+      "completed": 48,
+      "failed": 0,
+      "firstPoseWallMs": 12002.600000023842,
+      "warmMeanWallMs": 2621.452978727665,
+      "warmPosesPerMinute": 22.888070275104187,
+      "warmRangeMs": [
+        2241.189999938011,
+        3627.539999961853
+      ],
+      "sessionMs": [
+        135311.78499996662
+      ],
+      "poses": [
+        {
+          "id": "ethanol::0::attempt-1",
+          "startedAt": "2026-11-12T20:32:21.492Z",
+          "wallMs": 12002.600000023842,
+          "inferenceMs": 2583.3249999284744,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 600864440,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "30484f123a447a8e8c1418e6fc558b6696b44e13e9c6ce748bd6ff313f3148ac"
+        },
+        {
+          "id": "ethanol::1::attempt-1",
+          "startedAt": "2026-11-12T20:32:33.497Z",
+          "wallMs": 2390.390000104904,
+          "inferenceMs": 2383.649999976158,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 613035128,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "a2355fef97dedf4e72f3043528339b839e4278a7f03156e4e1aecac0c85bf04a"
+        },
+        {
+          "id": "ethanol::2::attempt-1",
+          "startedAt": "2026-11-12T20:32:35.889Z",
+          "wallMs": 2241.189999938011,
+          "inferenceMs": 2236.2699999809265,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 613035128,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "d649c549904512516e590497ecafbb2f465ce0d3e5f2205672d4a53bdb761130"
+        },
+        {
+          "id": "benzene::0::attempt-1",
+          "startedAt": "2026-11-12T20:32:38.131Z",
+          "wallMs": 3472.445000052452,
+          "inferenceMs": 3462.2750000953674,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 615478872,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "bf03db5fbc68190d58d221187251791967e864ae18033e2c685e2330be676cef"
+        },
+        {
+          "id": "benzene::1::attempt-1",
+          "startedAt": "2026-11-12T20:32:41.606Z",
+          "wallMs": 2321.610000014305,
+          "inferenceMs": 2313.3550000190735,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 615478872,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "1d3e1c57c80fc380052fa93c1bcdf5af443afc18fbce22a1c23fd52ffe6841c8"
+        },
+        {
+          "id": "benzene::2::attempt-1",
+          "startedAt": "2026-11-12T20:32:43.929Z",
+          "wallMs": 2302.3849999904633,
+          "inferenceMs": 2289.2599999904633,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 615478872,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "0bd7cb3f2095cbd1f19c53500aea19df00aea4a26aca2a1959b7ff36e0eb91c1"
+        },
+        {
+          "id": "benzoate::0::attempt-1",
+          "startedAt": "2026-11-12T20:32:46.233Z",
+          "wallMs": 2603.9550000429153,
+          "inferenceMs": 2564.7699999809265,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 618314144,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "f44317d1406f3571bd4d4c447e624254634f84fdac51b1a82de5886a7661dadf"
+        },
+        {
+          "id": "benzoate::1::attempt-1",
+          "startedAt": "2026-11-12T20:32:48.839Z",
+          "wallMs": 2478.189999938011,
+          "inferenceMs": 2445.579999923706,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 618314144,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "3505647c0fac63b26cc563c8da11eef342e98bd12818984cc9dd532ed0582bb4"
+        },
+        {
+          "id": "benzoate::2::attempt-1",
+          "startedAt": "2026-11-12T20:32:51.319Z",
+          "wallMs": 2504.125,
+          "inferenceMs": 2474.2699999809265,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 618314144,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "c4608ce1e611f8761272b93403c10f3c41d1948ba88aa762be62020334a227ed"
+        },
+        {
+          "id": "aspirin::0::attempt-1",
+          "startedAt": "2026-11-12T20:32:53.824Z",
+          "wallMs": 3419.0449999570847,
+          "inferenceMs": 3397.6349999904633,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 621957168,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "ce00a5e44f80ce15bf76de61a36d203e012c3572f48df75ab0ca2a1a65f257d5"
+        },
+        {
+          "id": "aspirin::1::attempt-1",
+          "startedAt": "2026-11-12T20:32:57.244Z",
+          "wallMs": 2701.1599999666214,
+          "inferenceMs": 2677.7849999666214,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 621957168,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "78b230ee0427dad8b86c1cf7a8fe8d16dd19914fe9d5b0bc3aac1abb8daa002c"
+        },
+        {
+          "id": "aspirin::2::attempt-1",
+          "startedAt": "2026-11-12T20:32:59.947Z",
+          "wallMs": 2600.055000066757,
+          "inferenceMs": 2575.265000104904,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 621957168,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "ae32345355557a32339c6f5574e3a5e10682b1b5c3dd2a05a524569b4175f6ec"
+        },
+        {
+          "id": "caffeine::0::attempt-1",
+          "startedAt": "2026-11-12T20:33:02.549Z",
+          "wallMs": 3476.860000014305,
+          "inferenceMs": 3428.8249999284744,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 622699064,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "ada2166863e28c88c0172df9cfd2543f265398878d58267e130fc2f20c900c26"
+        },
+        {
+          "id": "caffeine::1::attempt-1",
+          "startedAt": "2026-11-12T20:33:06.027Z",
+          "wallMs": 2651.649999976158,
+          "inferenceMs": 2605.2699999809265,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 622699064,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "b120da51505af24ee3fb290231a77729ff8e012a4d20c9837169dc142a576df1"
+        },
+        {
+          "id": "caffeine::2::attempt-1",
+          "startedAt": "2026-11-12T20:33:08.679Z",
+          "wallMs": 2677.5749999284744,
+          "inferenceMs": 2630.6999999284744,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 622699064,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "5239938486122c580502aa39daedc2fe47365447c1f2a16780693e36df446ec7"
+        },
+        {
+          "id": "ibuprofen::0::attempt-1",
+          "startedAt": "2026-11-12T20:33:11.359Z",
+          "wallMs": 3359.0900000333786,
+          "inferenceMs": 3313.524999976158,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "c7aadbe117d14ccd78e35f26219c52a391ff9aaf5ba6bae26ce7108ce1b1e8f2"
+        },
+        {
+          "id": "ibuprofen::1::attempt-1",
+          "startedAt": "2026-11-12T20:33:14.719Z",
+          "wallMs": 2652.350000023842,
+          "inferenceMs": 2605.75,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "21ee2a2d35be8b4de406eeaeb9537241b61790e154c1a4441c025f2a4efd1da4"
+        },
+        {
+          "id": "ibuprofen::2::attempt-1",
+          "startedAt": "2026-11-12T20:33:17.373Z",
+          "wallMs": 2663.75,
+          "inferenceMs": 2612.8099999427795,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "50457a8a6dfeb4cb38b8a9ca279a03afd287c9a75041b7ea84940cc7065e1e5b"
+        },
+        {
+          "id": "acetaminophen::0::attempt-1",
+          "startedAt": "2026-11-12T20:33:20.038Z",
+          "wallMs": 3366.8400000333786,
+          "inferenceMs": 3345.6650000810623,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "40a699cc1bc82f09070373222eb307ef7a220a5085a8f4eb33de10f2a14398e4"
+        },
+        {
+          "id": "acetaminophen::1::attempt-1",
+          "startedAt": "2026-11-12T20:33:23.406Z",
+          "wallMs": 2569.625,
+          "inferenceMs": 2549.1349999904633,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "d41cf0c1033abbced66ba7b8732cbab2d1fdd316c5c5c3fb95e9334b97eb6803"
+        },
+        {
+          "id": "acetaminophen::2::attempt-1",
+          "startedAt": "2026-11-12T20:33:25.978Z",
+          "wallMs": 2566.210000038147,
+          "inferenceMs": 2549.2699999809265,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "421ac675aba65d8bfefed35b9a844ef0659c1f7c6876db31d855864e5465a889"
+        },
+        {
+          "id": "benzamide::0::attempt-1",
+          "startedAt": "2026-11-12T20:33:28.545Z",
+          "wallMs": 2433.8099999427795,
+          "inferenceMs": 2422.554999947548,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "445c9b7685a3d3ab019add1889215f56ac4b8179d6a41ee6e1b07d23673bbb90"
+        },
+        {
+          "id": "benzamide::1::attempt-1",
+          "startedAt": "2026-11-12T20:33:30.981Z",
+          "wallMs": 2444.6449999809265,
+          "inferenceMs": 2430.9400000572205,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "1a1148bdd4bfe1969861178386554c7cab71994e048697eafd2f388b8cb43017"
+        },
+        {
+          "id": "benzamide::2::attempt-1",
+          "startedAt": "2026-11-12T20:33:33.427Z",
+          "wallMs": 2600.7750000953674,
+          "inferenceMs": 2573.8300000429153,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "154169b15b73aeb832ea4b1f741adb5f4658a64bccda17875b04b6c70eb49dc5"
+        },
+        {
+          "id": "aniline::0::attempt-1",
+          "startedAt": "2026-11-12T20:33:36.029Z",
+          "wallMs": 3234.195000052452,
+          "inferenceMs": 3225.729999899864,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "12dfe83964eb397f53a49f7260d844583233df78a0e18cc49c9089756439f517"
+        },
+        {
+          "id": "aniline::1::attempt-1",
+          "startedAt": "2026-11-12T20:33:39.265Z",
+          "wallMs": 2326.444999933243,
+          "inferenceMs": 2319.1849999427795,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "b76f406c55a81f1ed674c5b57188fdacb03a2d415207f33149f4429e5039bd21"
+        },
+        {
+          "id": "aniline::2::attempt-1",
+          "startedAt": "2026-11-12T20:33:41.592Z",
+          "wallMs": 2374.4950000047684,
+          "inferenceMs": 2362.9049999713898,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "12d30fa5012705efebda4792e50ca9805b362eadca6146d3163788dc5e5e5f17"
+        },
+        {
+          "id": "pyridine::0::attempt-1",
+          "startedAt": "2026-11-12T20:33:43.968Z",
+          "wallMs": 2296.8250000476837,
+          "inferenceMs": 2288.3250000476837,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "8644aafb2f6739d678928b7c37c40f1f69e4c19ee5551a3c8a5028b440f24bed"
+        },
+        {
+          "id": "pyridine::1::attempt-1",
+          "startedAt": "2026-11-12T20:33:46.267Z",
+          "wallMs": 2284.75,
+          "inferenceMs": 2276.7599999904633,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "1a33eee880779e0e3279550d5a0f4773c4fa69d50d950b806bc03352eda73e92"
+        },
+        {
+          "id": "pyridine::2::attempt-1",
+          "startedAt": "2026-11-12T20:33:48.553Z",
+          "wallMs": 2316.4100000858307,
+          "inferenceMs": 2305.460000038147,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "617f820abffd5b823060fa6f8845636070bc5a1380cab93a80e4ae320fe5c34b"
+        },
+        {
+          "id": "phenol::0::attempt-1",
+          "startedAt": "2026-11-12T20:33:50.871Z",
+          "wallMs": 2325.064999938011,
+          "inferenceMs": 2313.7549999952316,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "38b1c0cb97a24a390b1d84a514a6be55e9ab661067534fe2290123a218a564ed"
+        },
+        {
+          "id": "phenol::1::attempt-1",
+          "startedAt": "2026-11-12T20:33:53.198Z",
+          "wallMs": 2328.7549999952316,
+          "inferenceMs": 2320.1849999427795,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "2ea2a2fd4d7ed43184de9e8cda5946819ea2d5098ab849fb95a59cd6ff5caf1c"
+        },
+        {
+          "id": "phenol::2::attempt-1",
+          "startedAt": "2026-11-12T20:33:55.528Z",
+          "wallMs": 2318.905000090599,
+          "inferenceMs": 2310.7549999952316,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "7cb436057287a79c90dc24aab98c78c5ae139718ddcc96f3e70c68881818ea1a"
+        },
+        {
+          "id": "phenetole::0::attempt-1",
+          "startedAt": "2026-11-12T20:33:57.849Z",
+          "wallMs": 2479.064999938011,
+          "inferenceMs": 2463.610000014305,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "335fd5929ffd13b98c7893efde5da69a37d0adc95bdf4160927c488f21677c62"
+        },
+        {
+          "id": "phenetole::1::attempt-1",
+          "startedAt": "2026-11-12T20:34:00.329Z",
+          "wallMs": 2454.289999961853,
+          "inferenceMs": 2442.6849999427795,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "fd57f494d556897d4e079c2e65a632906ef5a5352719de9875d90d07aa0595bf"
+        },
+        {
+          "id": "phenetole::2::attempt-1",
+          "startedAt": "2026-11-12T20:34:02.785Z",
+          "wallMs": 2454.914999961853,
+          "inferenceMs": 2439.649999976158,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "630b7de994004cc319d2b2e217a0cca189a6066bec498e30ae924f6030acfaee"
+        },
+        {
+          "id": "salicylic-acid::0::attempt-1",
+          "startedAt": "2026-11-12T20:34:05.241Z",
+          "wallMs": 3627.539999961853,
+          "inferenceMs": 3606.0650000572205,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "581b2514f9258ae142ef2efa51a906559bfcd1b27e0bdec002177b4c0fd73554"
+        },
+        {
+          "id": "salicylic-acid::1::attempt-1",
+          "startedAt": "2026-11-12T20:34:08.870Z",
+          "wallMs": 2599.310000061989,
+          "inferenceMs": 2579.6349999904633,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "8143ff38628ed0ea87cf09f8384b0f9143bfbc2a6c2c8fc28e7777dc3a4d4201"
+        },
+        {
+          "id": "salicylic-acid::2::attempt-1",
+          "startedAt": "2026-11-12T20:34:11.500Z",
+          "wallMs": 2656.704999923706,
+          "inferenceMs": 2640.9250000715256,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "6d80ed8ee194d731b655aea405d30098c2130254d566ec5003ed91c6f12c58bd"
+        },
+        {
+          "id": "ethyl-benzoate::0::attempt-1",
+          "startedAt": "2026-11-12T20:34:14.158Z",
+          "wallMs": 2654.2400000095367,
+          "inferenceMs": 2635.054999947548,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "cd73ccdaebe45c851b91f03810cc3d80c528da4865f72d4c5364cdfbf56a043a"
+        },
+        {
+          "id": "ethyl-benzoate::1::attempt-1",
+          "startedAt": "2026-11-12T20:34:16.814Z",
+          "wallMs": 2490.4900000095367,
+          "inferenceMs": 2474.2050000429153,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "12f88529904115ad10b7c6e21ee8e0c4950d12dbddfd2280ccea76dc094aea10"
+        },
+        {
+          "id": "ethyl-benzoate::2::attempt-1",
+          "startedAt": "2026-11-12T20:34:19.306Z",
+          "wallMs": 2449.085000038147,
+          "inferenceMs": 2432.399999976158,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "ab4da7cf3b1261dc9163792980ca79187dfd83c029de3560d4e990d3224f3550"
+        },
+        {
+          "id": "dichlorobenzene::0::attempt-1",
+          "startedAt": "2026-11-12T20:34:21.757Z",
+          "wallMs": 3121.9099999666214,
+          "inferenceMs": 3110.6200000047684,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "75484a62ec8c3bd7e9c40d191124de3f9e488ed2534fa17aafe65fc1c4fad449"
+        },
+        {
+          "id": "dichlorobenzene::1::attempt-1",
+          "startedAt": "2026-11-12T20:34:24.880Z",
+          "wallMs": 2314.295000076294,
+          "inferenceMs": 2305.930000066757,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "00644ae6b6f5db82b7e27eccca04d6a360bdecc7f32e4ecbb3c95e9c3649812b"
+        },
+        {
+          "id": "dichlorobenzene::2::attempt-1",
+          "startedAt": "2026-11-12T20:34:27.195Z",
+          "wallMs": 2310,
+          "inferenceMs": 2299.8250000476837,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "842e00d1e2895f0fcc65363261d7dc8de4ee5e67da4dfdc53ea458158a8cdd9f"
+        },
+        {
+          "id": "trifluoromethylbenzene::0::attempt-1",
+          "startedAt": "2026-11-12T20:34:29.506Z",
+          "wallMs": 2429.6549999713898,
+          "inferenceMs": 2417.0950000286102,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "4e5c5b89abc905462d1acf1ff5e15c83519efcba4b0dbe1bd9b11a0c1a4acef9"
+        },
+        {
+          "id": "trifluoromethylbenzene::1::attempt-1",
+          "startedAt": "2026-11-12T20:34:31.937Z",
+          "wallMs": 2436.530000090599,
+          "inferenceMs": 2423.0599999427795,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "8d54d25e422c538c11c9fecd89c723a78360a1d1ebadf45326faaa9dc498e70d"
+        },
+        {
+          "id": "trifluoromethylbenzene::2::attempt-1",
+          "startedAt": "2026-11-12T20:34:34.375Z",
+          "wallMs": 2426.6849999427795,
+          "inferenceMs": 2411.725000023842,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 16347712,
+              "peakBytes": 623815848,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "a032d0575761a92d8459d577cce93f21d35f6453599f59a02bbcaf796657bc85"
+        }
+      ]
+    }
+  ]
+}

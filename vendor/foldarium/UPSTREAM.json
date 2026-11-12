@@ -1,0 +1,61 @@
+{
+  "repository": "https://github.com/rafwiewiora/foldarium",
+  "revision": "ffe9ee6f7f6e5253e9629410f366aa4a13e1556b",
+  "transformation": "Only the two Mol* 5.11.0 CDN URLs in library-review.html are replaced with existing same-version local assets.",
+  "files": [
+    {
+      "path": "library-format.js",
+      "bytes": 2930,
+      "sha256": "cd0e34fdffba257984e30b9a50e57b13d64d15e1515a22baef51b4b3f88562d3",
+      "upstreamSha256": "cd0e34fdffba257984e30b9a50e57b13d64d15e1515a22baef51b4b3f88562d3"
+    },
+    {
+      "path": "library-store.js",
+      "bytes": 5524,
+      "sha256": "a378bbca2420acb17be4ba44c45689ad1b57b2de450630945e74acc6ec848f9b",
+      "upstreamSha256": "a378bbca2420acb17be4ba44c45689ad1b57b2de450630945e74acc6ec848f9b"
+    },
+    {
+      "path": "library-alignment.js",
+      "bytes": 2994,
+      "sha256": "e5879788335807fc56ed63a7f94ab7fbeaa4e1dabaa3969ec483a9f7eac3dc65",
+      "upstreamSha256": "e5879788335807fc56ed63a7f94ab7fbeaa4e1dabaa3969ec483a9f7eac3dc65"
+    },
+    {
+      "path": "library-chemistry.js",
+      "bytes": 1247,
+      "sha256": "9cd2a16ceb4d30713a0b13a36b78ba06d771f28e45d8602acc53f1ff60dda9bd",
+      "upstreamSha256": "9cd2a16ceb4d30713a0b13a36b78ba06d771f28e45d8602acc53f1ff60dda9bd"
+    },
+    {
+      "path": "library-review.js",
+      "bytes": 12686,
+      "sha256": "502cc380fd71821998d714f7a02308958de6348e318f4b9e1d703ebc348f8d71",
+      "upstreamSha256": "502cc380fd71821998d714f7a02308958de6348e318f4b9e1d703ebc348f8d71"
+    },
+    {
+      "path": "library-review.html",
+      "bytes": 2248,
+      "sha256": "e9ab08afbd7a7987f4c77f3481e00addf96218301dea620e66bb132082f43203",
+      "upstreamSha256": "3193867a01b9bc48c84117dca67156ad4af42edb859db65226a29d7d21648384"
+    },
+    {
+      "path": "library-review.css",
+      "bytes": 2320,
+      "sha256": "450352c06c7be38edb3446939806ecaa3cca7e3ccfc7f6c9181fd79d592ffb93",
+      "upstreamSha256": "450352c06c7be38edb3446939806ecaa3cca7e3ccfc7f6c9181fd79d592ffb93"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1071,
+      "sha256": "eab63784d10cad4231cca1d3f83e887d1753b62f0c6229928194d74b6220671e",
+      "upstreamSha256": "eab63784d10cad4231cca1d3f83e887d1753b62f0c6229928194d74b6220671e"
+    },
+    {
+      "path": "assets/foldarium-mark.svg",
+      "bytes": 1506,
+      "sha256": "4501b7d4122f6eea01138bab69137f668adfc8c0eca60d629a3f1a0ecbf3537b",
+      "upstreamSha256": "4501b7d4122f6eea01138bab69137f668adfc8c0eca60d629a3f1a0ecbf3537b"
+    }
+  ]
+}
