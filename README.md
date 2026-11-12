@@ -452,7 +452,10 @@ head. The browser ports use quantized weights; Boltz affinity prediction is not
 exposed. See the [native comparison protocol and results](reviews/cofold-method-comparison-2026-11-12/README.md)
 for the limits of these engineering checks. Each prediction accepts one
 protein and at most one noncovalent ligand (150 heavy atoms); the library workflow
-queues multiple such predictions. Protein multimers,
+queues multiple such predictions. Native comparisons are now available for both
+cofolding models. OpenBind's observed protein disagreement remains unresolved;
+these results do not establish numerical parity or experimental accuracy.
+Protein multimers,
 templates, nucleic acids and covalent cofolding are not exposed yet.
 See [integration evidence and follow-up work](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md).
 

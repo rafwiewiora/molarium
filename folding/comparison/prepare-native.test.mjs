@@ -15,6 +15,7 @@ test('native inputs retain literal seeds, official config nesting and accepted f
       const runner=JSON.parse(await readFile(join(out,`openbind-${protocol}.yaml`),'utf8'));
       assert.deepEqual(runner.experiment_settings.seeds,[0,1,2]);
       assert.equal(runner.pl_trainer_args.enable_progress_bar??true,true,'upstream installs a progress callback');
+      assert.equal(runner.data_module_args.num_workers,0,'respect the small host memory/CPU grant instead of spawning ten data workers');
       assert.equal(runner.model_update.custom.architecture.shared.diffusion.no_full_rollout_steps,protocol==='standard'?200:25);
       assert.equal(runner.model_update.custom.architecture.shared.num_recycles,protocol==='standard'?3:2);
     }

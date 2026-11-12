@@ -56,7 +56,7 @@ new output directory, inside an allocated single-GPU Slurm job:
 
 ```sh
 # OpenBind example; its runtime also needs its official cached data assets.
-python folding/comparison/native_run.py --method openbind0 --protocol low-step \
+TORCHINDUCTOR_COMPILE_THREADS=1 python folding/comparison/native_run.py --method openbind0 --protocol low-step \
   --inputs /tmp/cofold-inputs --output /path/to/new-attempt \
   --checkpoint /path/to/of3-ob-2025-06-30-174k.pt --cache /path/to/openfold-cache
 # Boltz uses --method boltz2 and the official Boltz-2 checkpoint/cache.
@@ -66,6 +66,13 @@ The wrapper invokes the official CLI, checks the installed release and resolved
 OpenBind sampling settings, and instruments synchronized model forwards without
 changing their outputs. It preserves checkpoint, input and output hashes, actual
 CUDA device, package versions, cumulative GPU memory peaks and failures.
+Generated OpenBind runners use zero data-loader workers and the example limits
+compiler concurrency to one. The upstream ten-worker default plus compiler
+subprocesses exhausted host memory on a four-CPU/14G node before the first
+prediction; the worker-limited retry preserves the same model, sequence/ligands,
+precision, recycles and sampling count. Worker settings are execution metadata,
+and timings apply to that recorded configuration. Compiler control is documented
+in [PyTorch 2.5.1 source](https://github.com/pytorch/pytorch/blob/v2.5.1/torch/_inductor/config.py).
 Elapsed CLI wall time includes model loading, featurization, inference and output;
 it excludes checkpoint hashing, environment installation, weight downloads and
 queue time. Browser and native timing boundaries/hardware differ, so their ratio

@@ -27,6 +27,7 @@ const boltz=join(out,'boltz');await mkdir(boltz,{recursive:true});
 for(const [i,c]of manifest.compounds.entries())await writeFile(join(boltz,`compound_${String(i).padStart(3,'0')}.yaml`),JSON.stringify({version:1,sequences:[
   {protein:{id:'A',sequence:manifest.sequence,msa:'empty'}},{ligand:{id:'B',smiles:c.smiles}}]},null,2)+'\n');
 for(const [name,p]of Object.entries(manifest.protocols))await writeFile(join(out,`openbind-${name}.yaml`),JSON.stringify({
+  data_module_args:{num_workers:0,num_workers_validation:0},
   experiment_settings:{seeds:manifest.seeds},pl_trainer_args:{devices:1,num_nodes:1,precision:p.precision},
   model_update:{presets:['predict'],custom:{architecture:{shared:{num_recycles:p.recycles,diffusion:{no_full_rollout_steps:p.steps}}},
     ...(name==='torch-reference'?{settings:{memory:{eval:{use_triton_triangle_kernels:false}}}}:{})}},

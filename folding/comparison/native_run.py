@@ -56,6 +56,8 @@ def main():
         'inputFiles':{str(p.relative_to(args.inputs)):digest(p)for p in args.inputs.rglob('*')if p.is_file()},
         'inputSha256':digest(args.inputs / 'comparison.json'),'checkpointSha256':digest(args.checkpoint),
         'checkpointBytes':args.checkpoint.stat().st_size,'settings':protocol,'seeds':spec['seeds'],
+        'executionConfig':{'torchinductorCompileThreads':os.environ.get('TORCHINDUCTOR_COMPILE_THREADS'),
+          'dataModuleArgs':json.loads((args.inputs/f'openbind-{args.protocol}.yaml').read_text()).get('data_module_args',{})if args.method=='openbind0'else {'num_workers':0}},
         'environment':{'python':platform.python_version(),'packages':versions,'cuda':torch.version.cuda,
           'gpu':torch.cuda.get_device_name(0),'gpuMemoryBytes':torch.cuda.get_device_properties(0).total_memory},
         'startedAt':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'status':'running'}
