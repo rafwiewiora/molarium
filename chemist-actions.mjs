@@ -78,8 +78,11 @@ const ACTIONS = Object.freeze({
     description:'Assign force-field parameters to the current edited complex without moving coordinates.',
     arguments:Object.freeze({}) }),
   'protein.predict': Object.freeze({
-    description:'Run the visible local protein-structure prediction workflow after the configured MSA search.',
-    arguments:Object.freeze({ sequence:'amino-acid sequence or FASTA', msaEndpoint:'HTTPS endpoint' }) }),
+    description:'Predict a protein or protein–ligand structure locally through the visible folding workflow.',
+    arguments:Object.freeze({ sequence:'one protein sequence or FASTA', model:'localfold-af2 | localfold-openbind0 | openfold',
+      ligand:'optional {type: smiles | ccd, value: string}; OpenBind-0 only',
+      msaMode:'single | search | provided', a3m:'alignment when provided', msaEndpoint:'HTTPS endpoint for search',
+      recycles:'integer 0–20', steps:'OpenBind sampling steps 1–200',seed:'unsigned 32-bit integer' }) }),
   'protein.cancelPrediction': Object.freeze({ description:'Cancel the active protein prediction workflow.',
     arguments:Object.freeze({}) }),
   'selection.replace': Object.freeze({ description:'Select a connected atom path by persistent atom IDs, in click order.',
@@ -481,6 +484,8 @@ export function createChemistActionsApi({ routes, now = () => new Date().toISOSt
       guarantee:'Every mutating route is a chemist-visible Molarium action; every saved replay and visible playback control executes only public routes; no arbitrary code or internal callback route is exposed.',
       actions:snapshot(enabledDefinitions) }; },
     execute(request) {
+      // Cancellation must reach a running prediction rather than wait behind it.
+      if(request?.action==='protein.cancelPrediction')return run(request);
       const operation = queue.then(() => run(request));
       queue = operation.catch(() => {});
       return operation;

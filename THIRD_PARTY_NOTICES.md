@@ -94,3 +94,19 @@ RDKit releases and citation metadata are maintained by the
 Molarium's original code is licensed under the [Apache License 2.0](./LICENSE), copyright 2026 Molarium
 contributors. That license does not replace or modify the separate terms governing the bundled
 software, model parameters, force fields, and scientific data listed above.
+
+## LocalFold browser inference
+
+Molarium includes an unmodified browser module closure from Sergey Ovchinnikov's
+[LocalFold](https://github.com/sokrypton/localfold), revision
+`5ea3d42c911949700401b54003cb28c557fcf2a6`, in `vendor/localfold/`.
+The source receipt lists each imported module's SHA-256. Its Beer-Ware Revision
+42 notice is retained in `vendor/localfold/LICENSE`. LocalFold credits Martin
+Steinegger's AlphaFold2 WebGPU as its origin and the authors of the underlying
+models; its README is retained alongside the code.
+
+Model weights are downloaded separately from the immutable URLs in LocalFold's
+bundle manifests. The AlphaFold2 parameters retain DeepMind's CC BY 4.0 terms;
+OpenBind-0 is the OpenFold3 v0.5.0 release under its upstream Apache 2.0 terms.
+These weights are not covered by Molarium's code license. The initial Molarium
+integration exposes AF2 monomer model_1_ptm and OpenBind-0, not DeepMind AF3.

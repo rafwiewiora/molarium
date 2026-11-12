@@ -8,6 +8,9 @@ with stable `DV-` identifiers and links to original observations and follow-up e
 
 ## Simulation correctness and release gates
 
+- [x] Integrate pinned LocalFold AF2 and OpenBind-0 with UI/API inputs, exact ligand graphs and downloadable provenance ([LF-01](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md)).
+- [ ] Qualify LocalFold against original native models and known ligand complexes; measure quantization separately, then broaden GPU and molecular coverage (LF-01).
+
 - [x] Cancel queued/in-flight old-graph polish when chemistry invalidates the atom mapping ([SR-13](reviews/STALE_POLISH_2026-09-25.md)); retain exact coordinate-preservation assertions.
 
 - [x] Separate prepared-protein provenance from edited-System parameter validity, and minimize new/modified current Systems before MD by default ([SR-08/09](reviews/SIMULATION_READINESS_2026-09-10.md)).

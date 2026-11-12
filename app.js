@@ -18,6 +18,7 @@ import { requiredContactPolicy, liveHydrogenBondState, unresolvedContactMessage,
 import { CONTACT_CAPTURE_POLICY } from './docking/contact-capture-policy.mjs';
 import { preserveRegisteredDonorHydrogens } from './docking/registered-donor-hydrogen.mjs';
 import { installDesignHelp } from './design-help.mjs';
+import {foldingRequest,installFoldLigand} from './folding/request.mjs';
 import { hasPreparationHistory, invalidateNumericalParameters, dynamicsReadinessKey,
   usableMinimization, matchesRecordedDynamicsFrame } from './calculation-readiness.mjs';
 
@@ -10260,19 +10261,16 @@ function installChemistActionsApi(module) {
         parameterCounts:structuredClone(parameters.parameterCounts),
         maximumCoordinateDisplacementAngstrom:maximumCoordinateDisplacement,
       } }); },
-    'protein.predict':async (args) => { chemistActionKeys(args, ['sequence','msaEndpoint']);
-      if (typeof args.sequence !== 'string' || !args.sequence.trim())
-        throw new Error('sequence must be a non-empty amino-acid sequence or FASTA');
-      if (args.sequence.length > 20000) throw new Error('sequence input is too long');
-      if (typeof args.msaEndpoint !== 'string' || !args.msaEndpoint.trim())
-        throw new Error('msaEndpoint must be an HTTPS endpoint');
-      let endpoint;
-      try { endpoint = new URL(args.msaEndpoint); }
-      catch { throw new Error('msaEndpoint must be a valid HTTPS URL'); }
-      if (endpoint.protocol !== 'https:') throw new Error('msaEndpoint must use HTTPS');
-      document.querySelector('#protein-sequence').value = args.sequence;
-      document.querySelector('#msa-endpoint').value = endpoint.href.replace(/\/$/, '');
-      const result = await runProteinFold({ rethrow:true });
+    'protein.predict':async (args) => { chemistActionKeys(args,
+      ['sequence','msaEndpoint','model','ligand','msaMode','a3m','recycles','steps','seed']);
+      const request=foldingRequest(args);
+      for(const [id,value]of Object.entries({'protein-sequence':request.sequence,'fold-model':request.model,
+        'msa-endpoint':request.msaEndpoint,'fold-msa-mode':request.msaMode,'fold-a3m':request.a3m??'',
+        'fold-ligand-type':request.ligand?.type??'smiles','fold-ligand':request.ligand?.value??'',
+        'fold-recycles':request.recycles,'fold-steps':request.steps,'fold-seed':request.seed}))
+        document.getElementById(id).value=String(value);
+      updateFoldingControls();
+      const result = await runProteinFold({ rethrow:true,request });
       return chemistActionSummary({ prediction:result }); },
     'protein.cancelPrediction':async (args) => { empty(args);
       const active = Boolean(state.foldAbortController);
@@ -13174,7 +13172,7 @@ const molariumTestApi = Object.freeze({
     ]);
     const result = await foldProtein({ sequence, msaProvider: new ProvidedMsaProvider(documents),
       backend: new BrowserOpenFoldBackend({ recycles }) });
-    applyProteinPrediction(result);
+    await applyProteinPrediction(result);
     return { sequence: result.sequence, provider: result.provider, recycles: result.recycles,
       bucketResidues: result.bucketResidues,
       msaDepth: result.msaDepth, meanPlddt: result.meanPlddt, ptm: result.ptm,
@@ -13435,8 +13433,8 @@ function setFoldStatus(message) {
   document.querySelector('#fold-status').textContent = message;
 }
 
-function applyProteinPrediction(result) {
-  const molecule = {
+async function applyProteinPrediction(result) {
+  let molecule = result.kind==='localfold' ? parsePDB(result.pdb) : {
     atoms: result.atoms.map((atom) => ({ ...atom })),
     bonds: proteinCovalentBonds(result.atoms),
     name: `OpenFold prediction · ${result.sequence.length} residues`,
@@ -13445,11 +13443,34 @@ function applyProteinPrediction(result) {
     multiplicity: 1,
     prediction: result,
   };
+  if(result.kind==='localfold'){
+    const confidenceBySerial=new Map(result.pdb.split(/\r?\n/)
+      .filter(line=>/^(ATOM  |HETATM)/.test(line))
+      .map(line=>[Number(line.slice(6,11)),Number(line.slice(60,66))]));
+    for(const atom of molecule.atoms)atom.plddt=confidenceBySerial.get(atom.serial);
+    installFoldLigand(molecule,result.component);
+    if(result.component){
+      const ligandAtoms=molecule.atoms.filter(a=>a.chain==='B'&&a.record==='HETATM');
+      const definition={id:result.component.code,atoms:ligandAtoms.map(a=>({id:a.atomName,
+        element:a.element,formalCharge:a.formalCharge??a.charge??0,aromatic:a.aromatic})),
+        bonds:result.component.bonds.map(b=>({a:result.component.atoms[b.from].name,
+          b:result.component.atoms[b.to].name,order:b.order===4?1.5:b.order,
+          aromatic:b.order===4||b.order===1.5}))};
+      molecule=applyRegisteredLigandDefinition(molecule,{definition,residueName:definition.id}).molecule;
+      molecule.source.registeredLigandGraph={...molecule.source.registeredLigandGraph,
+        definition,graphSha256:await sha256Hex(new TextEncoder().encode(serializeRegisteredLigandDefinition(definition)))};
+    }
+    molecule.name=`${result.model} · ${result.sequence.length} residues${result.component?' + ligand':''}`;
+    molecule.prediction=result;
+    molecule.source={...molecule.source,foldProvenance:result.provenance};
+  }
   loadMolecule(molecule);
+  if(result.component)document.querySelector('#preparation-ligands').value='registered';
   state.proteinPrediction = result;
-  setText('#protein-result-title', 'OpenFold Prediction');
-  setText('#protein-plddt', result.meanPlddt.toFixed(1));
-  setText('#protein-ptm', result.ptm.toFixed(3));
+  setText('#protein-result-title', result.kind==='localfold'?result.model:'OpenFold Prediction');
+  setText('#protein-plddt', Number.isFinite(result.meanPlddt)?result.meanPlddt.toFixed(1):'—');
+  setText('#protein-ptm', Number.isFinite(result.ptm)?result.ptm.toFixed(3):'—');
+  setText('#protein-iptm', Number.isFinite(result.iptm)?result.iptm.toFixed(3):'—');
   setText('#protein-msa-depth', result.msaDepth);
   setText('#protein-backend', result.provider.toUpperCase());
   setText('#protein-result-meta', `${result.recycles} recycles · ${(result.elapsedMs / 1000).toFixed(1)} s local inference · ${result.model}`);
@@ -13458,36 +13479,46 @@ function applyProteinPrediction(result) {
   draw();
 }
 
-async function runProteinFold({ rethrow = false } = {}) {
-  requireExternalNetwork('MSA search');
-  if (state.foldAbortController) return;
+async function runProteinFold({ rethrow = false,request=null } = {}) {
+  request??=foldingRequest(foldControlsRequest());
+  if(request.msaMode==='search')requireExternalNetwork('MSA search');
+  if(request.model!=='openfold')requireExternalNetwork('LocalFold model loading');
+  if (state.foldAbortController) throw new Error('A prediction is already running.');
   const button = document.querySelector('#fold-protein');
   const cancel = document.querySelector('#cancel-fold');
-  const sequence = document.querySelector('#protein-sequence').value;
-  const endpoint = document.querySelector('#msa-endpoint').value;
+  const sequence = request.sequence;
+  const endpoint = request.msaEndpoint;
   const controller = new AbortController();
   state.foldAbortController = controller;
   button.disabled = true;
   cancel.classList.remove('hidden');
   try {
-    const [{ foldProtein }, { ColabFoldMsaProvider }] = await Promise.all([
+    let result;
+    if(request.model!=='openfold'){
+      const {predictLocalFold}=await import('./folding/localfold.mjs');
+      result=await predictLocalFold(request,{signal:controller.signal,onProgress:({message})=>setFoldStatus(message)});
+    }else{
+    const [{ foldProtein, BrowserOpenFoldBackend }, { ColabFoldMsaProvider,ProvidedMsaProvider }] = await Promise.all([
       import('./openfold/predictor.js'), import('./openfold/msa-client.js'),
     ]);
     const providerKey = endpoint.trim().replace(/\/$/, '');
     if (!proteinMsaProviders.has(providerKey))
       proteinMsaProviders.set(providerKey, new ColabFoldMsaProvider({ endpoint: providerKey }));
-    const result = await foldProtein({
+    result = await foldProtein({
       sequence,
-      msaProvider: proteinMsaProviders.get(providerKey),
+      msaProvider: request.msaMode==='provided'?new ProvidedMsaProvider([request.a3m]):proteinMsaProviders.get(providerKey),
+      backend:new BrowserOpenFoldBackend({recycles:request.recycles+1}),
       signal: controller.signal,
       onProgress: ({ message }) => setFoldStatus(message),
     });
-    applyProteinPrediction(result);
-    setFoldStatus(`Complete · mean pLDDT ${result.meanPlddt.toFixed(1)} · pTM ${result.ptm.toFixed(3)}`);
+    }
+    if(controller.signal.aborted)throw new DOMException('Aborted','AbortError');
+    await applyProteinPrediction(result);
+    setFoldStatus(`Complete · mean pLDDT ${result.meanPlddt?.toFixed(1)??'—'} · pTM ${result.ptm?.toFixed(3)??'—'}`);
     showToast('Protein folded locally');
     return { residues:result.sequence.length, meanPlddt:result.meanPlddt,
       ptm:result.ptm, msaDepth:result.msaDepth, provider:result.provider,
-      model:result.model, elapsedMs:result.elapsedMs };
+      model:result.model, elapsedMs:result.elapsedMs,provenance:result.provenance };
   } catch (error) {
     const aborted = error?.name === 'AbortError' || controller.signal.aborted;
     setFoldStatus(aborted ? 'Fold cancelled.' : `Fold failed · ${error.message}`);
@@ -17071,14 +17102,40 @@ document.querySelector('#protein-fold-toggle').addEventListener('click', (event)
 
 document.querySelector('#protein-sequence').addEventListener('input', (event) => {
   const value = event.target.value.split(/\r?\n/).filter((line) => !line.trim().startsWith('>')).join('').replace(/\s+/g, '');
-  setText('#protein-length', `${value.length}/128`);
+  setText('#protein-length', `${value.length} residues`);
+});
+
+function foldControlsRequest(){
+  const value=id=>document.querySelector(id).value;
+  return {sequence:value('#protein-sequence'),model:value('#fold-model'),msaMode:value('#fold-msa-mode'),
+    msaEndpoint:value('#msa-endpoint'),a3m:value('#fold-a3m'),recycles:Number(value('#fold-recycles')),
+    steps:Number(value('#fold-steps')),seed:Number(value('#fold-seed')),
+    ligand:value('#fold-model')==='localfold-openbind0'&&value('#fold-ligand').trim()
+      ?{type:value('#fold-ligand-type'),value:value('#fold-ligand')}:null};
+}
+function updateFoldingControls(){
+  const model=document.querySelector('#fold-model').value;
+  document.querySelector('#fold-ligand-fields').classList.toggle('hidden',model!=='localfold-openbind0');
+  if(model==='openfold'&&document.querySelector('#fold-msa-mode').value==='single')
+    document.querySelector('#fold-msa-mode').value='search';
+  document.querySelector('#fold-a3m').classList.toggle('hidden',document.querySelector('#fold-msa-mode').value!=='provided');
+  setText('#protein-length',`${document.querySelector('#protein-sequence').value.split(/\r?\n/)
+    .filter(l=>!l.trim().startsWith('>')).join('').replace(/\s/g,'').length} residues`);
+}
+document.querySelector('#fold-model').addEventListener('change',updateFoldingControls);
+document.querySelector('#fold-msa-mode').addEventListener('change',updateFoldingControls);
+document.querySelector('#download-fold-record').addEventListener('click',()=>{
+  if(!state.proteinPrediction)return showToast('Run a prediction first');
+  const result=state.proteinPrediction;
+  downloadBlob(JSON.stringify({schema:'molarium.fold-record.v1',provenance:result.provenance??null,
+    model:result.model,pdb:result.pdb,meanPlddt:result.meanPlddt,ptm:result.ptm,iptm:result.iptm,
+    plddt:Array.from(result.plddt??[]),pae:Array.from(result.pae??[]),
+    confidenceLayout:result.confidenceLayout??null,component:result.component??null},null,2),
+    'molarium-prediction.json','application/json');
 });
 
 document.querySelector('#fold-protein').addEventListener('click', () => {
-  runChemistUiAction('protein.predict', {
-    sequence:document.querySelector('#protein-sequence').value,
-    msaEndpoint:document.querySelector('#msa-endpoint').value,
-  }).catch(() => {});
+  runChemistUiAction('protein.predict', foldControlsRequest()).catch(() => {});
 });
 document.querySelector('#try-rosemary-protein').addEventListener('click', async (event) => {
   const button = event.currentTarget;

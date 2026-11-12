@@ -1,0 +1,412 @@
+[
+  {
+    "name": "aromatic-charged",
+    "atoms": 162,
+    "chains": [
+      "A",
+      "B"
+    ],
+    "finite": true,
+    "ligandAtoms": [
+      {
+        "name": "C1",
+        "element": "C"
+      },
+      {
+        "name": "C2",
+        "element": "C"
+      },
+      {
+        "name": "C3",
+        "element": "C"
+      },
+      {
+        "name": "C4",
+        "element": "C"
+      },
+      {
+        "name": "C5",
+        "element": "C"
+      },
+      {
+        "name": "C6",
+        "element": "C"
+      },
+      {
+        "name": "C7",
+        "element": "C"
+      },
+      {
+        "name": "O1",
+        "element": "O"
+      },
+      {
+        "name": "O2",
+        "element": "O"
+      }
+    ],
+    "ligandBonds": [
+      {
+        "a": 153,
+        "b": 154,
+        "order": 1.5,
+        "distance": 1.359345430712886,
+        "topology": "registered ligand definition",
+        "aromatic": true
+      },
+      {
+        "a": 154,
+        "b": 155,
+        "order": 1.5,
+        "distance": 1.3554253944795336,
+        "topology": "registered ligand definition",
+        "aromatic": true
+      },
+      {
+        "a": 155,
+        "b": 156,
+        "order": 1.5,
+        "distance": 1.3633209453389903,
+        "topology": "registered ligand definition",
+        "aromatic": true
+      },
+      {
+        "a": 156,
+        "b": 157,
+        "order": 1.5,
+        "distance": 1.3522089335601948,
+        "topology": "registered ligand definition",
+        "aromatic": true
+      },
+      {
+        "a": 157,
+        "b": 158,
+        "order": 1.5,
+        "distance": 1.3497933175119814,
+        "topology": "registered ligand definition",
+        "aromatic": true
+      },
+      {
+        "a": 158,
+        "b": 153,
+        "order": 1.5,
+        "distance": 1.3695353226550968,
+        "topology": "registered ligand definition",
+        "aromatic": true
+      },
+      {
+        "a": 158,
+        "b": 159,
+        "order": 1,
+        "distance": 1.472629281251734,
+        "topology": "registered ligand definition",
+        "aromatic": false
+      },
+      {
+        "a": 159,
+        "b": 160,
+        "order": 2,
+        "distance": 1.2027776186810268,
+        "topology": "registered ligand definition",
+        "aromatic": false
+      },
+      {
+        "a": 159,
+        "b": 161,
+        "order": 1,
+        "distance": 1.2323059684997064,
+        "topology": "registered ligand definition",
+        "aromatic": false
+      }
+    ],
+    "registeredGraph": {
+      "definitionId": "LIG",
+      "locator": {
+        "residueName": "LIG",
+        "chain": "B",
+        "residueIndex": 1,
+        "insertionCode": ""
+      },
+      "atomNameMapping": "exact residue and PDB atom names",
+      "coordinates": "unchanged PDB input",
+      "heavyAtomCount": 9,
+      "bondCount": 9,
+      "definition": {
+        "id": "LIG",
+        "atoms": [
+          {
+            "id": "C1",
+            "element": "C",
+            "formalCharge": 0,
+            "aromatic": true
+          },
+          {
+            "id": "C2",
+            "element": "C",
+            "formalCharge": 0,
+            "aromatic": true
+          },
+          {
+            "id": "C3",
+            "element": "C",
+            "formalCharge": 0,
+            "aromatic": true
+          },
+          {
+            "id": "C4",
+            "element": "C",
+            "formalCharge": 0,
+            "aromatic": true
+          },
+          {
+            "id": "C5",
+            "element": "C",
+            "formalCharge": 0,
+            "aromatic": true
+          },
+          {
+            "id": "C6",
+            "element": "C",
+            "formalCharge": 0,
+            "aromatic": true
+          },
+          {
+            "id": "C7",
+            "element": "C",
+            "formalCharge": 0,
+            "aromatic": false
+          },
+          {
+            "id": "O1",
+            "element": "O",
+            "formalCharge": 0,
+            "aromatic": false
+          },
+          {
+            "id": "O2",
+            "element": "O",
+            "formalCharge": -1,
+            "aromatic": false
+          }
+        ],
+        "bonds": [
+          {
+            "a": "C1",
+            "b": "C2",
+            "order": 1.5,
+            "aromatic": true
+          },
+          {
+            "a": "C2",
+            "b": "C3",
+            "order": 1.5,
+            "aromatic": true
+          },
+          {
+            "a": "C3",
+            "b": "C4",
+            "order": 1.5,
+            "aromatic": true
+          },
+          {
+            "a": "C4",
+            "b": "C5",
+            "order": 1.5,
+            "aromatic": true
+          },
+          {
+            "a": "C5",
+            "b": "C6",
+            "order": 1.5,
+            "aromatic": true
+          },
+          {
+            "a": "C6",
+            "b": "C1",
+            "order": 1.5,
+            "aromatic": true
+          },
+          {
+            "a": "C6",
+            "b": "C7",
+            "order": 1,
+            "aromatic": false
+          },
+          {
+            "a": "C7",
+            "b": "O1",
+            "order": 2,
+            "aromatic": false
+          },
+          {
+            "a": "C7",
+            "b": "O2",
+            "order": 1,
+            "aromatic": false
+          }
+        ]
+      },
+      "graphSha256": "a5e8af375803628566fd73ca167c39c435f97b04664978334a8c7bccf7a083d9"
+    },
+    "model": "OpenBind-0 · protein + ligand",
+    "meanPlddt": 93.9961420694987,
+    "ptm": 0.7507633710729664,
+    "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6",
+    "alignment": null,
+    "input": {
+      "schema": "molarium.fold-request.v2",
+      "sequence": "NLYIQWLKDGGPSSGRPPPS",
+      "model": "localfold-openbind0",
+      "msaMode": "single",
+      "msaEndpoint": "https://api.colabfold.com",
+      "a3m": null,
+      "recycles": 2,
+      "steps": 25,
+      "seed": 0,
+      "ligand": {
+        "type": "smiles",
+        "value": "c1ccccc1C(=O)[O-]"
+      }
+    },
+    "geometry": {
+      "nca": 1.4563191730568747,
+      "cac": 1.4991092171571958,
+      "caca": 3.791362853074564,
+      "worstCaca": 3.7155002238344013,
+      "gyration": 6.736025842005364,
+      "residues": 20
+    },
+    "ligandCharge": -1,
+    "componentAtoms": 9,
+    "componentBonds": 9,
+    "preparationPolicy": "registered",
+    "modelManifestSha256": "a1b153a409639b4d93eedb9031242cd8e86193fb1deaf59ab57a95155948b814",
+    "elapsedMs": 27669.50499999523
+  },
+  {
+    "name": "ccd",
+    "atoms": 156,
+    "chains": [
+      "A",
+      "B"
+    ],
+    "finite": true,
+    "ligandAtoms": [
+      {
+        "name": "C1",
+        "element": "C"
+      },
+      {
+        "name": "C2",
+        "element": "C"
+      },
+      {
+        "name": "O",
+        "element": "O"
+      }
+    ],
+    "ligandBonds": [
+      {
+        "a": 153,
+        "b": 154,
+        "order": 1,
+        "distance": 1.418569349732328,
+        "topology": "registered ligand definition",
+        "aromatic": false
+      },
+      {
+        "a": 153,
+        "b": 155,
+        "order": 1,
+        "distance": 1.2992513228779106,
+        "topology": "registered ligand definition",
+        "aromatic": false
+      }
+    ],
+    "registeredGraph": {
+      "definitionId": "EOH",
+      "locator": {
+        "residueName": "EOH",
+        "chain": "B",
+        "residueIndex": 1,
+        "insertionCode": ""
+      },
+      "atomNameMapping": "exact residue and PDB atom names",
+      "coordinates": "unchanged PDB input",
+      "heavyAtomCount": 3,
+      "bondCount": 2,
+      "definition": {
+        "id": "EOH",
+        "atoms": [
+          {
+            "id": "C1",
+            "element": "C",
+            "formalCharge": 0,
+            "aromatic": false
+          },
+          {
+            "id": "C2",
+            "element": "C",
+            "formalCharge": 0,
+            "aromatic": false
+          },
+          {
+            "id": "O",
+            "element": "O",
+            "formalCharge": 0,
+            "aromatic": false
+          }
+        ],
+        "bonds": [
+          {
+            "a": "C1",
+            "b": "C2",
+            "order": 1,
+            "aromatic": false
+          },
+          {
+            "a": "C1",
+            "b": "O",
+            "order": 1,
+            "aromatic": false
+          }
+        ]
+      },
+      "graphSha256": "562739282ee0a72eb4435a322ff6ea33f34db8a49b956c4a0592ae4f184c7908"
+    },
+    "model": "OpenBind-0 · protein + ligand",
+    "meanPlddt": 94.80724344498071,
+    "ptm": 0.6760816301988519,
+    "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6",
+    "alignment": null,
+    "input": {
+      "schema": "molarium.fold-request.v2",
+      "sequence": "NLYIQWLKDGGPSSGRPPPS",
+      "model": "localfold-openbind0",
+      "msaMode": "single",
+      "msaEndpoint": "https://api.colabfold.com",
+      "a3m": null,
+      "recycles": 2,
+      "steps": 25,
+      "seed": 0,
+      "ligand": {
+        "type": "ccd",
+        "value": "EOH"
+      }
+    },
+    "geometry": {
+      "nca": 1.4603572101757272,
+      "cac": 1.4989702851149305,
+      "caca": 3.7755353794062874,
+      "worstCaca": 3.702026329575766,
+      "gyration": 6.860707670364424,
+      "residues": 20
+    },
+    "ligandCharge": 0,
+    "componentAtoms": 3,
+    "componentBonds": 2,
+    "preparationPolicy": "registered",
+    "modelManifestSha256": "a1b153a409639b4d93eedb9031242cd8e86193fb1deaf59ab57a95155948b814",
+    "elapsedMs": 1414.1849999427795
+  }
+]
