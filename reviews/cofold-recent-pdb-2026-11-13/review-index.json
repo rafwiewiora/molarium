@@ -1,0 +1,205 @@
+{
+  "schema": "molarium.public-cofold-review.v1",
+  "panelSha256": "7053daa0060cf8dc4836f95ac0b40e9e639398adacc63896c1f122d0ec9e7bb3",
+  "phases": [
+    {
+      "id": "boltz2-baseline",
+      "label": "Boltz-2 · original SMILES · single sequence",
+      "directory": "browser-boltz2-baseline"
+    },
+    {
+      "id": "boltz2-normalized",
+      "label": "Boltz-2 · normalized SMILES · single sequence",
+      "directory": "browser-boltz2-normalized"
+    },
+    {
+      "id": "openbind0-normalized",
+      "label": "OpenBind-0 · normalized SMILES · single sequence",
+      "directory": "browser-openbind0-normalized"
+    },
+    {
+      "id": "boltz2-msa256",
+      "label": "Boltz-2 · normalized SMILES · MSA256",
+      "directory": "browser-boltz2-msa256"
+    },
+    {
+      "id": "openbind0-msa256",
+      "label": "OpenBind-0 · normalized SMILES · MSA256",
+      "directory": "browser-openbind0-msa256"
+    }
+  ],
+  "predictions": 135,
+  "cases": [
+    {
+      "id": "9sy7-a1jrx",
+      "name": "9SY7 · Phosphopantetheine adenylyltransferase · A1JRX",
+      "pdbId": "9SY7",
+      "releaseDate": "2026-10-21",
+      "residues": 162,
+      "heavyAtoms": 19,
+      "qed": 0.9205203546725758,
+      "predictions": {
+        "file": "review/9sy7-a1jrx-predictions.library.json",
+        "sha256": "4ca90d153d9525b29422ac2b3dda58ecd27af8cf7fdc43a7708f318fbb345473",
+        "reference": false
+      },
+      "withReference": {
+        "file": "review/9sy7-a1jrx-reference.library.json",
+        "sha256": "bf54bb241dd6472ca3bd4e04d809327160f0ca6eda5a1fd14f2a1621c0ab6059",
+        "reference": true
+      }
+    },
+    {
+      "id": "9sxf-a1jrg",
+      "name": "9SXF · Mast/stem cell growth factor receptor Kit · A1JRG",
+      "pdbId": "9SXF",
+      "releaseDate": "2026-10-21",
+      "residues": 327,
+      "heavyAtoms": 24,
+      "qed": 0.6814669063795976,
+      "predictions": {
+        "file": "review/9sxf-a1jrg-predictions.library.json",
+        "sha256": "ebcfd55fad518772c437ea8587c793a791272fd1478836565eb0df4f7d2f9101",
+        "reference": false
+      },
+      "withReference": {
+        "file": "review/9sxf-a1jrg-reference.library.json",
+        "sha256": "82a00166eecdf75f70fc0e2e8fbc4ecdb29c50304f47de35c567802e2ee80921",
+        "reference": true
+      }
+    },
+    {
+      "id": "9t51-a1jtm",
+      "name": "9T51 · StAR-related lipid transfer protein 4 · A1JTM",
+      "pdbId": "9T51",
+      "releaseDate": "2026-10-28",
+      "residues": 205,
+      "heavyAtoms": 33,
+      "qed": 0.6040326238304864,
+      "predictions": {
+        "file": "review/9t51-a1jtm-predictions.library.json",
+        "sha256": "6627e52867526813b8292d9ebc2d3f07ca0563f9cda29822ef4a3d5f124e4571",
+        "reference": false
+      },
+      "withReference": {
+        "file": "review/9t51-a1jtm-reference.library.json",
+        "sha256": "5f1abbeafb7f94ba0e36f735c1baf060bac3f804bc448b4e84c02761ff5a44b4",
+        "reference": true
+      }
+    },
+    {
+      "id": "9syo-a1jr1",
+      "name": "9SYO · Heat shock protein HSP 90-alpha · A1JR1",
+      "pdbId": "9SYO",
+      "releaseDate": "2026-10-28",
+      "residues": 228,
+      "heavyAtoms": 22,
+      "qed": 0.5566015973392431,
+      "predictions": {
+        "file": "review/9syo-a1jr1-predictions.library.json",
+        "sha256": "747ae2fd367cd33c070623fad2c28b2b09ef130f584b7cae4d1d115233d7b449",
+        "reference": false
+      },
+      "withReference": {
+        "file": "review/9syo-a1jr1-reference.library.json",
+        "sha256": "e86d6141341ded46276b077faea1a57084095a674d27a6926222cc0a8b41acf1",
+        "reference": true
+      }
+    },
+    {
+      "id": "15ji-a1d2g",
+      "name": "15JI · Non-structural protein 3 · A1D2G",
+      "pdbId": "15JI",
+      "releaseDate": "2026-11-04",
+      "residues": 169,
+      "heavyAtoms": 21,
+      "qed": 0.9420346509131652,
+      "predictions": {
+        "file": "review/15ji-a1d2g-predictions.library.json",
+        "sha256": "99b9ad7825a7fd875384f435accd5ccc158454a0659242ce0dbf83eb8af48528",
+        "reference": false
+      },
+      "withReference": {
+        "file": "review/15ji-a1d2g-reference.library.json",
+        "sha256": "b93ccd7df17f32875dd87c4fa3f99af623ecc7ada7cfbd893e551aee2669a8ab",
+        "reference": true
+      }
+    },
+    {
+      "id": "9xhg-1il",
+      "name": "9XHG · Stimulator of interferon genes protein · 1IL",
+      "pdbId": "9XHG",
+      "releaseDate": "2026-11-04",
+      "residues": 192,
+      "heavyAtoms": 26,
+      "qed": 0.6513077333363692,
+      "predictions": {
+        "file": "review/9xhg-1il-predictions.library.json",
+        "sha256": "6b359db6be5ef289ec842728be42267755c5ef041cfae6bc48e69b70b484cc90",
+        "reference": false
+      },
+      "withReference": {
+        "file": "review/9xhg-1il-reference.library.json",
+        "sha256": "c5df5ebdecbb35f59c8e47d03feec5cf74ad1ef2c773f9c6bbd3335b7b8363f4",
+        "reference": true
+      }
+    },
+    {
+      "id": "9xjq-a1e0i",
+      "name": "9XJQ · WD repeat-containing protein 5 · A1E0I",
+      "pdbId": "9XJQ",
+      "releaseDate": "2026-11-11",
+      "residues": 304,
+      "heavyAtoms": 21,
+      "qed": 0.8556755579505072,
+      "predictions": {
+        "file": "review/9xjq-a1e0i-predictions.library.json",
+        "sha256": "5f922cced8283114f0acfd0aa36b60c709839c447c8ead0494643e53567e1b8a",
+        "reference": false
+      },
+      "withReference": {
+        "file": "review/9xjq-a1e0i-reference.library.json",
+        "sha256": "35344ba1fadc8f1dcdb0668e8237e5d69960377ff591fc11e4085f6edfb29206",
+        "reference": true
+      }
+    },
+    {
+      "id": "32qy-a1keo",
+      "name": "32QY · YTH domain-containing family protein 2 · A1KEO",
+      "pdbId": "32QY",
+      "releaseDate": "2026-11-11",
+      "residues": 167,
+      "heavyAtoms": 18,
+      "qed": 0.5916943361593814,
+      "predictions": {
+        "file": "review/32qy-a1keo-predictions.library.json",
+        "sha256": "d0afae14535e537db38d3ae290a44dadb59103f6d68e4f71d14bc1eaf1c9301c",
+        "reference": false
+      },
+      "withReference": {
+        "file": "review/32qy-a1keo-reference.library.json",
+        "sha256": "502ad4dc264f867bd30bba49d6e20393d0b80eda01802bc51954195f122c89e6",
+        "reference": true
+      }
+    },
+    {
+      "id": "9t3v-a1jtg",
+      "name": "9T3V · Bifunctional epoxide hydrolase 2 · A1JTG",
+      "pdbId": "9T3V",
+      "releaseDate": "2026-11-11",
+      "residues": 344,
+      "heavyAtoms": 34,
+      "qed": 0.5698117918028605,
+      "predictions": {
+        "file": "review/9t3v-a1jtg-predictions.library.json",
+        "sha256": "dd3c609d807898f9b0de4c18975b154587d22dd6a39782af9cc901f875c21fea",
+        "reference": false
+      },
+      "withReference": {
+        "file": "review/9t3v-a1jtg-reference.library.json",
+        "sha256": "52e72a4baf91e573dd6aab099ec2cbd8f6dac95d0902558c6411842eef6a37f0",
+        "reference": true
+      }
+    }
+  ]
+}

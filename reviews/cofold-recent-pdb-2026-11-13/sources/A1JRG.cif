@@ -1,0 +1,172 @@
+data_A1JRG
+# 
+_chem_comp.id                                    A1JRG 
+_chem_comp.name                                  "3-(aminocarbonylamino)-5-(3-fluorophenyl)-~{N}-[(3~{R})-pyrrolidin-3-yl]thiophene-2-carboxamide" 
+_chem_comp.type                                  non-polymer 
+_chem_comp.pdbx_type                             HETAIN 
+_chem_comp.formula                               "C16 H17 F N4 O2 S" 
+_chem_comp.mon_nstd_parent_comp_id               ? 
+_chem_comp.pdbx_synonyms                         ? 
+_chem_comp.pdbx_formal_charge                    0 
+_chem_comp.pdbx_initial_date                     2025-10-10 
+_chem_comp.pdbx_modified_date                    2026-10-16 
+_chem_comp.pdbx_ambiguous_flag                   N 
+_chem_comp.pdbx_release_status                   REL 
+_chem_comp.pdbx_replaced_by                      ? 
+_chem_comp.pdbx_replaces                         ? 
+_chem_comp.formula_weight                        348.395 
+_chem_comp.one_letter_code                       ? 
+_chem_comp.three_letter_code                     A1JRG 
+_chem_comp.pdbx_model_coordinates_details        ? 
+_chem_comp.pdbx_model_coordinates_missing_flag   N 
+_chem_comp.pdbx_ideal_coordinates_details        Corina 
+_chem_comp.pdbx_ideal_coordinates_missing_flag   N 
+_chem_comp.pdbx_model_coordinates_db_code        9SXF 
+_chem_comp.pdbx_subcomponent_list                ? 
+_chem_comp.pdbx_processing_site                  PDBE 
+_chem_comp.pdbx_pcm                              ? 
+_chem_comp.pdbx_comp_type                        ? 
+# 
+loop_
+_chem_comp_atom.comp_id 
+_chem_comp_atom.atom_id 
+_chem_comp_atom.alt_atom_id 
+_chem_comp_atom.type_symbol 
+_chem_comp_atom.charge 
+_chem_comp_atom.pdbx_align 
+_chem_comp_atom.pdbx_aromatic_flag 
+_chem_comp_atom.pdbx_leaving_atom_flag 
+_chem_comp_atom.pdbx_stereo_config 
+_chem_comp_atom.pdbx_n_terminal_atom_flag 
+_chem_comp_atom.pdbx_backbone_atom_flag 
+_chem_comp_atom.pdbx_c_terminal_atom_flag 
+_chem_comp_atom.model_Cartn_x 
+_chem_comp_atom.model_Cartn_y 
+_chem_comp_atom.model_Cartn_z 
+_chem_comp_atom.pdbx_model_Cartn_x_ideal 
+_chem_comp_atom.pdbx_model_Cartn_y_ideal 
+_chem_comp_atom.pdbx_model_Cartn_z_ideal 
+_chem_comp_atom.pdbx_component_atom_id 
+_chem_comp_atom.pdbx_component_comp_id 
+_chem_comp_atom.pdbx_ordinal 
+A1JRG C10  C1  C 0 1 N N N N N N 21.834 -0.313 19.575 4.956  -0.766 0.970  C10  A1JRG 1  
+A1JRG C13  C2  C 0 1 N N N N N N 23.343 -2.243 19.816 4.808  -2.148 -1.049 C13  A1JRG 2  
+A1JRG C17  C3  C 0 1 Y N N N N N 20.250 -2.575 27.338 -3.051 -0.466 0.015  C17  A1JRG 3  
+A1JRG C20  C4  C 0 1 Y N N N N N 20.634 -2.089 30.018 -5.655 -1.402 0.158  C20  A1JRG 4  
+A1JRG C21  C5  C 0 1 Y N N N N N 21.106 -1.177 29.072 -4.604 -2.300 0.067  C21  A1JRG 5  
+A1JRG C24  C6  C 0 1 Y N N N N N 18.972 -3.718 25.331 -1.304 1.348  -0.051 C24  A1JRG 6  
+A1JRG C02  C7  C 0 1 N N N N N N 17.422 -5.675 23.354 -0.185 3.931  0.079  C02  A1JRG 7  
+A1JRG C05  C8  C 0 1 Y N N N N N 19.057 -3.752 23.850 0.051  1.576  -0.126 C05  A1JRG 8  
+A1JRG C06  C9  C 0 1 Y N N N N N 20.180 -2.916 23.385 0.815  0.436  -0.200 C06  A1JRG 9  
+A1JRG C07  C10 C 0 1 N N N N N N 20.564 -2.730 21.853 2.228  0.405  -0.284 C07  A1JRG 10 
+A1JRG C09  C11 C 0 1 N N R N N N 21.924 -1.809 20.067 4.336  -0.808 -0.439 C09  A1JRG 11 
+A1JRG C12  C12 C 0 1 N N N N N N 23.934 -1.286 19.054 5.156  -2.994 0.202  C12  A1JRG 12 
+A1JRG C16  C13 C 0 1 Y N N N N N 20.044 -2.840 25.867 -1.663 0.034  -0.062 C16  A1JRG 13 
+A1JRG C18  C14 C 0 1 Y N N N N N 19.784 -3.478 28.264 -4.116 0.432  0.101  C18  A1JRG 14 
+A1JRG C19  C15 C 0 1 Y N N N N N 19.970 -3.244 29.603 -5.411 -0.041 0.172  C19  A1JRG 15 
+A1JRG C23  C16 C 0 1 Y N N N N N 20.920 -1.411 27.752 -3.303 -1.839 -0.005 C23  A1JRG 16 
+A1JRG F22  F1  F 0 1 N N N N N N 21.750 -0.055 29.471 -4.850 -3.628 0.055  F22  A1JRG 17 
+A1JRG N03  N1  N 0 1 N N N N N N 16.625 -6.375 22.384 0.362  5.158  0.187  N03  A1JRG 18 
+A1JRG N04  N2  N 0 1 N N N N N N 18.184 -4.524 22.930 0.603  2.858  -0.128 N04  A1JRG 19 
+A1JRG N08  N3  N 0 1 N N N N N N 21.655 -1.906 21.435 2.874  -0.776 -0.352 N08  A1JRG 20 
+A1JRG N11  N4  N 0 1 N N N N N N 22.885 -0.099 18.819 5.757  -1.999 1.128  N11  A1JRG 21 
+A1JRG O01  O1  O 0 1 N N N N N N 17.432 -6.055 24.497 -1.390 3.793  0.168  O01  A1JRG 22 
+A1JRG O14  O2  O 0 1 N N N N N N 19.914 -3.298 21.017 2.861  1.446  -0.296 O14  A1JRG 23 
+A1JRG S15  S1  S 0 1 Y N N N N N 20.921 -2.244 24.665 -0.230 -0.978 -0.172 S15  A1JRG 24 
+A1JRG H101 H1  H 0 0 N N N N N N 20.912 -0.160 18.994 5.599  0.109  1.066  H101 A1JRG 25 
+A1JRG H102 H2  H 0 0 N N N N N N 21.842 0.370  20.437 4.168  -0.732 1.722  H102 A1JRG 26 
+A1JRG H131 H3  H 0 0 N N N N N N 23.353 -3.206 19.284 4.005  -2.616 -1.619 H131 A1JRG 27 
+A1JRG H132 H4  H 0 0 N N N N N N 23.879 -2.346 20.771 5.689  -2.002 -1.673 H132 A1JRG 28 
+A1JRG H201 H5  H 0 0 N N N N N N 20.783 -1.901 31.071 -6.671 -1.766 0.214  H201 A1JRG 29 
+A1JRG H241 H6  H 0 0 N N N N N N 18.244 -4.249 25.927 -2.026 2.148  0.015  H241 A1JRG 30 
+A1JRG H091 H7  H 0 0 N N N N N N 21.232 -2.424 19.473 4.697  0.029  -1.037 H091 A1JRG 31 
+A1JRG H121 H8  H 0 0 N N N N N N 24.231 -1.715 18.086 4.256  -3.428 0.636  H121 A1JRG 32 
+A1JRG H122 H9  H 0 0 N N N N N N 24.823 -0.897 19.572 5.878  -3.771 -0.048 H122 A1JRG 33 
+A1JRG H181 H10 H 0 0 N N N N N N 19.272 -4.371 27.938 -3.927 1.495  0.112  H181 A1JRG 34 
+A1JRG H191 H11 H 0 0 N N N N N N 19.604 -3.951 30.333 -6.235 0.654  0.239  H191 A1JRG 35 
+A1JRG H231 H12 H 0 0 N N N N N N 21.285 -0.706 27.020 -2.484 -2.539 -0.076 H231 A1JRG 36 
+A1JRG H031 H13 H 0 0 N N N N N N 16.085 -7.170 22.660 -0.205 5.931  0.336  H031 A1JRG 37 
+A1JRG H032 H14 H 0 0 N N N N N N 16.610 -6.067 21.433 1.323  5.269  0.115  H032 A1JRG 38 
+A1JRG H041 H15 H 0 0 N N N N N N 18.121 -4.234 21.975 1.554  2.976  -0.279 H041 A1JRG 39 
+A1JRG H081 H16 H 0 0 N N N N N N 22.211 -1.412 22.104 2.370  -1.605 -0.343 H081 A1JRG 40 
+A1JRG H1   H17 H 0 1 N N N N N N 22.610 -0.078 17.858 6.726  -1.833 0.901  H1   A1JRG 41 
+# 
+loop_
+_chem_comp_bond.comp_id 
+_chem_comp_bond.atom_id_1 
+_chem_comp_bond.atom_id_2 
+_chem_comp_bond.value_order 
+_chem_comp_bond.pdbx_aromatic_flag 
+_chem_comp_bond.pdbx_stereo_config 
+_chem_comp_bond.pdbx_ordinal 
+A1JRG C02 O01  DOUB N N 1  
+A1JRG N03 C02  SING N N 2  
+A1JRG N04 C02  SING N N 3  
+A1JRG C05 N04  SING N N 4  
+A1JRG C06 C05  DOUB Y N 5  
+A1JRG C09 N08  SING N N 6  
+A1JRG C10 C09  SING N N 7  
+A1JRG N11 C10  SING N N 8  
+A1JRG C12 N11  SING N N 9  
+A1JRG C13 C12  SING N N 10 
+A1JRG N08 C07  SING N N 11 
+A1JRG O14 C07  DOUB N N 12 
+A1JRG C07 C06  SING N N 13 
+A1JRG S15 C06  SING Y N 14 
+A1JRG C16 S15  SING Y N 15 
+A1JRG C18 C17  DOUB Y N 16 
+A1JRG C19 C18  SING Y N 17 
+A1JRG C20 C19  DOUB Y N 18 
+A1JRG C21 C20  SING Y N 19 
+A1JRG F22 C21  SING N N 20 
+A1JRG C23 C21  DOUB Y N 21 
+A1JRG C17 C16  SING N N 22 
+A1JRG C24 C16  DOUB Y N 23 
+A1JRG C05 C24  SING Y N 24 
+A1JRG C09 C13  SING N N 25 
+A1JRG C17 C23  SING Y N 26 
+A1JRG C10 H101 SING N N 27 
+A1JRG C10 H102 SING N N 28 
+A1JRG C13 H131 SING N N 29 
+A1JRG C13 H132 SING N N 30 
+A1JRG C20 H201 SING N N 31 
+A1JRG C24 H241 SING N N 32 
+A1JRG C09 H091 SING N N 33 
+A1JRG C12 H121 SING N N 34 
+A1JRG C12 H122 SING N N 35 
+A1JRG C18 H181 SING N N 36 
+A1JRG C19 H191 SING N N 37 
+A1JRG C23 H231 SING N N 38 
+A1JRG N03 H031 SING N N 39 
+A1JRG N03 H032 SING N N 40 
+A1JRG N04 H041 SING N N 41 
+A1JRG N08 H081 SING N N 42 
+A1JRG N11 H1   SING N N 43 
+# 
+loop_
+_pdbx_chem_comp_descriptor.comp_id 
+_pdbx_chem_comp_descriptor.type 
+_pdbx_chem_comp_descriptor.program 
+_pdbx_chem_comp_descriptor.program_version 
+_pdbx_chem_comp_descriptor.descriptor 
+A1JRG InChI            InChI                1.06  "InChI=1S/C16H17FN4O2S/c17-10-3-1-2-9(6-10)13-7-12(21-16(18)23)14(24-13)15(22)20-11-4-5-19-8-11/h1-3,6-7,11,19H,4-5,8H2,(H,20,22)(H3,18,21,23)/t11-/m1/s1" 
+A1JRG InChIKey         InChI                1.06  GUGJCHCTXDUVMW-LLVKDONJSA-N                                                                                                                                
+A1JRG SMILES_CANONICAL CACTVS               3.385 "NC(=O)Nc1cc(sc1C(=O)N[C@@H]2CCNC2)c3cccc(F)c3"                                                                                                            
+A1JRG SMILES           CACTVS               3.385 "NC(=O)Nc1cc(sc1C(=O)N[CH]2CCNC2)c3cccc(F)c3"                                                                                                              
+A1JRG SMILES_CANONICAL "OpenEye OEToolkits" 2.0.7 "c1cc(cc(c1)F)c2cc(c(s2)C(=O)N[C@@H]3CCNC3)NC(=O)N"                                                                                                        
+A1JRG SMILES           "OpenEye OEToolkits" 2.0.7 "c1cc(cc(c1)F)c2cc(c(s2)C(=O)NC3CCNC3)NC(=O)N"                                                                                                             
+# 
+_pdbx_chem_comp_identifier.comp_id           A1JRG 
+_pdbx_chem_comp_identifier.type              "SYSTEMATIC NAME" 
+_pdbx_chem_comp_identifier.program           "OpenEye OEToolkits" 
+_pdbx_chem_comp_identifier.program_version   2.0.7 
+_pdbx_chem_comp_identifier.identifier        "3-(aminocarbonylamino)-5-(3-fluorophenyl)-~{N}-[(3~{R})-pyrrolidin-3-yl]thiophene-2-carboxamide" 
+# 
+loop_
+_pdbx_chem_comp_audit.comp_id 
+_pdbx_chem_comp_audit.action_type 
+_pdbx_chem_comp_audit.date 
+_pdbx_chem_comp_audit.processing_site 
+A1JRG "Create component" 2025-10-10 PDBE 
+A1JRG "Initial release"  2026-10-21 RCSB 
+# 

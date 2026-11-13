@@ -441,6 +441,9 @@ from the input component, with exact atom-name mapping, bond orders, formal
 charges and a registered graph hash. Preparation defaults to that registered
 graph. Download the prediction record for the request, alignment, source/model
 pins, ligand component, PDB and confidence arrays.
+Restoring input connectivity and charge does not enforce the geometry: generated
+poses can contain clashes or violate specified stereochemistry. The reconstruction
+benchmarks retain and diagnose those failures.
 
 This is an experimental integration. Apple M1 Pro browser checks cover monomer
 inference, 129-residue input, supplied A3M, SMILES/CCD cofolding and chemical-state
@@ -459,6 +462,14 @@ these results do not establish numerical parity. A separate
 reports every seed: browser Boltz recovers JQ1 and benzene placements but misses
 FK506; browser OpenBind misses all three systems in this single-sequence protocol.
 These old complexes may occur in training data and are not a held-out accuracy estimate.
+A [nine-system recent-release panel](reviews/cofold-recent-pdb-2026-11-13/README.md)
+extends this to drug-like ligands selected from four weeks of PDB releases before
+inference. It retains all seeds, poor results, the original and corrected-input
+runs, an independent ligand-feature check, and
+[Foldarium review with optional crystal references](reviews/cofold-recent-pdb-2026-11-13/index.html).
+The input chemistry correction is verified; it does not establish accurate pose
+prediction. Native controls and a separate provided-MSA phase are tracked in the
+same public record.
 Protein multimers,
 templates, nucleic acids and covalent cofolding are not exposed yet.
 See [integration evidence and follow-up work](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md).

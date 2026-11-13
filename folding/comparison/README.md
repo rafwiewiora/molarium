@@ -1,5 +1,13 @@
 # Browser/native cofolding comparisons
 
+The [recent-release PDB expansion](../../reviews/cofold-recent-pdb-2026-11-13/README.md)
+adds nine target-diverse drug-like complexes, a complete source-selection audit,
+independent browser input-chemistry checks, and all-candidate Foldarium review.
+Original and corrected-input predictions are retained as separate phases;
+provided-MSA and native controls are tracked explicitly. The
+[finding-to-fix ledger](../../reviews/cofold-recent-pdb-2026-11-13/findings.md)
+links each correction to evidence and regressions.
+
 These tools compare completed structure predictions without rerunning inference
 or treating a native prediction as an experimental answer. The first cohort is
 the existing 48-pose browser library: ubiquitin (76 residues), 16 small compounds,

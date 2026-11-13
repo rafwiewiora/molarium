@@ -1,0 +1,555 @@
+{
+  "schema": "molarium.experimental-cofold-panel.v1",
+  "createdAt": "2026-11-13T07:55:56Z",
+  "purpose": "Predeclared drug-like, protein-diverse recent-release reconstruction panel; no prediction-based selection.",
+  "policy": {
+    "version": "molarium-recent-druglike/v2",
+    "window": {
+      "from": "2026-10-16",
+      "to": "2026-11-13"
+    },
+    "maxCasesPerRelease": 3,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "chemistry": {
+      "minHeavyAtoms": 15,
+      "maxHeavyAtoms": 60,
+      "minMW": 150,
+      "maxMW": 650,
+      "minQED": 0.5,
+      "minLogP": -1,
+      "maxLogP": 6,
+      "maxHBD": 5,
+      "maxHBA": 12,
+      "maxRotatable": 12,
+      "maxAbsCharge": 2,
+      "elements": [
+        "B",
+        "C",
+        "N",
+        "O",
+        "F",
+        "P",
+        "S",
+        "Cl",
+        "Br",
+        "I",
+        "Se"
+      ],
+      "connected": true,
+      "atLeastOneRing": true
+    },
+    "structure": {
+      "method": "X-RAY DIFFRACTION",
+      "maxResolutionA": 2.5,
+      "proteinPolymerEntities": 1,
+      "minProteinResidues": 60,
+      "maxProteinResidues": 350,
+      "minObservedCaFraction": 0.9,
+      "minContactResiduesAt4A": 4,
+      "otherProteinChainCutoffA": 4.0,
+      "otherNonwaterSpeciesCutoffA": 3.0,
+      "biologicalAssembly": "First deposited assembly containing the selected protein/ligand labels; include generated symmetry copies in neighbor checks.",
+      "rejectExplicitCovalentLinks": true,
+      "rejectProteinLigandHeavyDistanceUnderA": 1.8
+    },
+    "diversity": {
+      "sequenceIdentityCutoff": 0.8,
+      "minimumLengthRatio": 0.8,
+      "alignment": "Global BLOSUM62, affine gap penalties -10/-1, identity over shorter sequence"
+    },
+    "ranking": "Within each release date: descending RDKit QED, then ascending resolution, PDB ID, CCD ID. Skip near-duplicate protein sequences across the whole panel.",
+    "browserProtocol": {
+      "steps": 25,
+      "recycles": 2,
+      "msaMode": "single",
+      "weights": "int5"
+    },
+    "nativeProtocol": {
+      "steps": 200,
+      "recycles": 3,
+      "msaMode": "single"
+    },
+    "foldariumPolicySource": {
+      "revision": "b73ac80d9354dc0f323d7fb54d128f8c1ac0cb8e",
+      "file": "pipeline/src/foldarium_pipeline/selection.py",
+      "sha256": "6648cf02ed4f1c6e840147c63bc319222c5a3d255b2cc5454992d13c47131c27"
+    }
+  },
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "cases": [
+    {
+      "pdbId": "9SY7",
+      "releaseDate": "2026-10-21",
+      "title": "Crystal structure of Mycobacterium abscessus Phosphopantetheine adenylyltransferase in complex with inhibitor",
+      "ccdId": "A1JRX",
+      "ligandName": "3-(3-methylindol-1-yl)-~{N}-methylsulfonyl-propanamide",
+      "smiles": "Cc1cn(c2c1cccc2)CCC(=O)NS(=O)(=O)C",
+      "properties": {
+        "heavyAtoms": 19,
+        "MW": 280.349,
+        "QED": 0.9205203546725758,
+        "logP": 1.4156199999999997,
+        "HBD": 1,
+        "HBA": 4,
+        "rotatable": 4,
+        "formalCharge": 0,
+        "rings": 2
+      },
+      "resolutionA": 1.65,
+      "sequence": "SMTGAVCPGSFDPVTLGHLDVFERAAAQFDEVIVAVLINPNKAGMFTVDERIEMIRESTADLPNLRVESGQGLLVDFVRERGLNAIVKGLRTGTDFEYELQMAQMNKHIAGVDTFFVATAPAYSFVSSSLAKEVATYGGDVSALLPASVHQRLLGKLRGQAQ",
+      "proteinDescription": "Phosphopantetheine adenylyltransferase",
+      "proteinChains": [
+        "A",
+        "B",
+        "C"
+      ],
+      "ligandChains": [
+        "D",
+        "E",
+        "F"
+      ],
+      "rejectionReason": null,
+      "id": "9sy7-a1jrx",
+      "name": "9SY7 \u00b7 Phosphopantetheine adenylyltransferase \u00b7 A1JRX",
+      "proteinLabelAsymId": "B",
+      "ligandLabelAsymId": "E",
+      "referenceFile": "9sy7-a1jrx/reference.json",
+      "referenceSha256": "cadb4fdd8f9d2e36d1b1404581146af9d002ab72fa781c61c20028e7e6e9982f",
+      "observedCa": 157,
+      "proteinResidues": 162,
+      "ligandHeavyAtoms": 19
+    },
+    {
+      "pdbId": "9SXF",
+      "releaseDate": "2026-10-21",
+      "title": "c-KIT kinase domain in complex with (R)-Pyrrolidine derivative of AZD7762",
+      "ccdId": "A1JRG",
+      "ligandName": "3-(aminocarbonylamino)-5-(3-fluorophenyl)-~{N}-[(3~{R})-pyrrolidin-3-yl]thiophene-2-carboxamide",
+      "smiles": "c1cc(cc(c1)F)c2cc(c(s2)C(=O)N[C@@H]3CCNC3)NC(=O)N",
+      "properties": {
+        "heavyAtoms": 24,
+        "MW": 348.4030000000001,
+        "QED": 0.6814669063795976,
+        "logP": 2.1365,
+        "HBD": 4,
+        "HBA": 4,
+        "rotatable": 4,
+        "formalCharge": 0,
+        "rings": 3
+      },
+      "resolutionA": 2.1,
+      "sequence": "GSMPMYEVQWKVVEESNGNNYSYIDPTQLPYDHKWEFPRNRLSFGKTLGAGAFGKVVEATAQGLIKSDAAMTVAVKMLKPSAHSTEREALMSELKVLSYLGNHENIVNLLGACTHGGPTLVITEYCCYGDLLNFLRRKRDEFVPYKVAPEDLYKDFLTLEHLLSFSYQVAKGMAFLASKNCIHRDLAARNILLTHGNITKICDFGLARDIKNDSNYVDKGNARLPVKWMAPESIFNSVYTFESDVWSYGIFLWELFSLGSSPYPGMPVDSKFYKMIKEGFRMSSPEYAPAEMYDIMKTCWDADPDKRPTFKQIVQDIEKQISESTNH",
+      "proteinDescription": "Mast/stem cell growth factor receptor Kit",
+      "proteinChains": [
+        "A"
+      ],
+      "ligandChains": [
+        "B"
+      ],
+      "rejectionReason": null,
+      "id": "9sxf-a1jrg",
+      "name": "9SXF \u00b7 Mast/stem cell growth factor receptor Kit \u00b7 A1JRG",
+      "proteinLabelAsymId": "A",
+      "ligandLabelAsymId": "B",
+      "referenceFile": "9sxf-a1jrg/reference.json",
+      "referenceSha256": "0ed15fcfd390aa8f574198263ee8151d5e707a053c81faffbb4eebcc6b67af24",
+      "observedCa": 295,
+      "proteinResidues": 327,
+      "ligandHeavyAtoms": 24
+    },
+    {
+      "pdbId": "9T51",
+      "releaseDate": "2026-10-28",
+      "title": "sterol transport protein STARD4, bound to inhibitor",
+      "ccdId": "A1JTM",
+      "ligandName": "~{tert}-butyl 4-[(4~{a}~{S},12~{b}~{S})-12~{b}-methyl-3-oxidanyl-2,3,4,4~{a},5,6-hexahydro-1~{H}-naphtho[1,2-b]quinolin-8-yl]piperidine-1-carboxylate",
+      "smiles": "C[C@]12CC[C@@H](C[C@@H]1CCc3c2nc4cccc(c4c3)C5CCN(CC5)C(=O)OC(C)(C)C)O",
+      "properties": {
+        "heavyAtoms": 33,
+        "MW": 450.62300000000033,
+        "QED": 0.6040326238304864,
+        "logP": 5.714200000000008,
+        "HBD": 1,
+        "HBA": 4,
+        "rotatable": 1,
+        "formalCharge": 0,
+        "rings": 5
+      },
+      "resolutionA": 1.64,
+      "sequence": "GSGLSDVASFATKLKNTLIQYHSIEEDKWRVAKKTKDVTVWRKPSEEFNGYLYKAQGVIDDLVYSIIDHIRPGPSRLDWDSLMTSLDILENFEENCCVMRYTTAGQLWNIISPREFVDFSYTVGYKEGLLSCGISLDWDEKRPEFVRGYNHPCGWFCVPLKDNPNQSLLTGYIQTDLRGMIPQSAVDTAMASTLTNFYGDLRKAL",
+      "proteinDescription": "StAR-related lipid transfer protein 4",
+      "proteinChains": [
+        "A",
+        "B"
+      ],
+      "ligandChains": [
+        "D",
+        "H"
+      ],
+      "rejectionReason": null,
+      "id": "9t51-a1jtm",
+      "name": "9T51 \u00b7 StAR-related lipid transfer protein 4 \u00b7 A1JTM",
+      "proteinLabelAsymId": "A",
+      "ligandLabelAsymId": "D",
+      "referenceFile": "9t51-a1jtm/reference.json",
+      "referenceSha256": "baf6537b9b918fb7a5c282e527f1599baf5f01c0e5915567817e3fcb8cb35372",
+      "observedCa": 204,
+      "proteinResidues": 205,
+      "ligandHeavyAtoms": 33
+    },
+    {
+      "pdbId": "9SYO",
+      "releaseDate": "2026-10-28",
+      "title": "Crystal structure of human Hsp90-alpha NBD(aa9-236)in complex with dual chaperon targeting ligand THOR-1",
+      "ccdId": "A1JR1",
+      "ligandName": "~{N}-[3,5-bis(oxidanyl)phenyl]-2-(1~{H}-indol-2-ylsulfanyl)ethanamide",
+      "smiles": "c1ccc2c(c1)cc([nH]2)SCC(=O)Nc3cc(cc(c3)O)O",
+      "properties": {
+        "heavyAtoms": 22,
+        "MW": 314.366,
+        "QED": 0.5566015973392431,
+        "logP": 3.3099000000000016,
+        "HBD": 4,
+        "HBA": 4,
+        "rotatable": 4,
+        "formalCharge": 0,
+        "rings": 3
+      },
+      "resolutionA": 1.29,
+      "sequence": "DQPMEEEEVETFAFQAEIAQLMSLIINTFYSNKEIFLRELISNSSDALDKIRYESLTDPSKLDSGKELHINLIPNKQDRTLTIVDTGIGMTKADLINNLGTIAKSGTKAFMEALQAGADISMIGQFGVGFYSAYLVAEKVTVITKHNDDEQYAWESSAGGSFTVRTDTGEPMGRGTKVILHLKEDQTEYLEERRIKEIVKKHSQFIGYPITLFVEKERDKEVSDDEAE",
+      "proteinDescription": "Heat shock protein HSP 90-alpha",
+      "proteinChains": [
+        "A",
+        "B"
+      ],
+      "ligandChains": [
+        "C"
+      ],
+      "rejectionReason": null,
+      "id": "9syo-a1jr1",
+      "name": "9SYO \u00b7 Heat shock protein HSP 90-alpha \u00b7 A1JR1",
+      "proteinLabelAsymId": "A",
+      "ligandLabelAsymId": "C",
+      "referenceFile": "9syo-a1jr1/reference.json",
+      "referenceSha256": "5f5da4c89da7bd245070a37d55e229f34a95bd9e27c977a826b9b5b1d48e6353",
+      "observedCa": 209,
+      "proteinResidues": 228,
+      "ligandHeavyAtoms": 22
+    },
+    {
+      "pdbId": "15JI",
+      "releaseDate": "2026-11-04",
+      "title": "PanDDA analysis group deposition -- Crystal structure of SARS-CoV-2 NSP3 macrodomain in complex with AVI-0005097",
+      "ccdId": "A1D2G",
+      "ligandName": "4-[(3S)-3-{[(3S)-oxolan-3-yl]methyl}piperidin-1-yl]-7H-pyrrolo[2,3-d]pyrimidine",
+      "smiles": "c1c[nH]c2c1c(ncn2)N3CCC[C@H](C3)C[C@H]4CCOC4",
+      "properties": {
+        "heavyAtoms": 21,
+        "MW": 286.37899999999996,
+        "QED": 0.9420346509131652,
+        "logP": 2.600900000000001,
+        "HBD": 1,
+        "HBA": 4,
+        "rotatable": 3,
+        "formalCharge": 0,
+        "rings": 4
+      },
+      "resolutionA": 1,
+      "sequence": "SMVNSFSGYLKLTDNVYIKNADIVEEAKKVKPTVVVNAANVYLKHGGGVAGALNKATNNAMQVESDDYIATNGPLKVGGSCVLSGHNLAKHCLHVVGPNVNKGEDIQLLKSAYENFNQHEVLLAPLLSAGIFGADPIHSLRVCVDTVRTNVYLAVFDKNLYDKLVSSFL",
+      "proteinDescription": "Non-structural protein 3",
+      "proteinChains": [
+        "A",
+        "B"
+      ],
+      "ligandChains": [
+        "C"
+      ],
+      "rejectionReason": null,
+      "id": "15ji-a1d2g",
+      "name": "15JI \u00b7 Non-structural protein 3 \u00b7 A1D2G",
+      "proteinLabelAsymId": "A",
+      "ligandLabelAsymId": "C",
+      "referenceFile": "15ji-a1d2g/reference.json",
+      "referenceSha256": "3864f564a3ce7d73999a621b8652bb52f5b74b54f03217315924df247aedf20a",
+      "observedCa": 167,
+      "proteinResidues": 169,
+      "ligandHeavyAtoms": 21
+    },
+    {
+      "pdbId": "9XHG",
+      "releaseDate": "2026-11-04",
+      "title": "Crystal structure of human STING in complex with F8W",
+      "ccdId": "1IL",
+      "ligandName": "3-[(4-tert-butylphenyl)carbonylamino]-5-chloranyl-1-benzofuran-2-carboxylic acid",
+      "smiles": "CC(C)(C)c1ccc(cc1)C(=O)Nc2c3cc(ccc3oc2C(=O)O)Cl",
+      "properties": {
+        "heavyAtoms": 26,
+        "MW": 371.82000000000005,
+        "QED": 0.6513077333363692,
+        "logP": 5.334200000000004,
+        "HBD": 2,
+        "HBA": 3,
+        "rotatable": 3,
+        "formalCharge": 0,
+        "rings": 3
+      },
+      "resolutionA": 1.47623845179,
+      "sequence": "FNVAHGLAWSYYIGYLRLILPELQARIRTYNQHYNNLLRGAVSQRLYILLPLDCGVPDNLSMADPNIRFLDKLPQQTGDHAGIKDRVYSNSIYELLENGQRAGTCVLEYATPLQTLFAMSQYSQAGFSREDRLEQAKLFCRTLEDILADAPESQNNCRLIAYQEPADDSSFSLSQEVLRHLRQEEKEEVTVG",
+      "proteinDescription": "Stimulator of interferon genes protein",
+      "proteinChains": [
+        "A"
+      ],
+      "ligandChains": [
+        "B"
+      ],
+      "rejectionReason": null,
+      "id": "9xhg-1il",
+      "name": "9XHG \u00b7 Stimulator of interferon genes protein \u00b7 1IL",
+      "proteinLabelAsymId": "A",
+      "ligandLabelAsymId": "B",
+      "referenceFile": "9xhg-1il/reference.json",
+      "referenceSha256": "fc2783cda9cfa31ad40963053748f0134b842a5ac208971177d00fa32e39c90c",
+      "observedCa": 173,
+      "proteinResidues": 192,
+      "ligandHeavyAtoms": 26
+    },
+    {
+      "pdbId": "9XJQ",
+      "releaseDate": "2026-11-11",
+      "title": "Crystal structure of human WDR5 in complex with KMS01",
+      "ccdId": "A1E0I",
+      "ligandName": "2,4-bis(chloranyl)-~{N}-(5-ethynylthiophen-2-yl)sulfonyl-benzamide",
+      "smiles": "C#Cc1ccc(s1)S(=O)(=O)NC(=O)c2ccc(cc2Cl)Cl",
+      "properties": {
+        "heavyAtoms": 21,
+        "MW": 360.24300000000005,
+        "QED": 0.8556755579505072,
+        "logP": 3.1549000000000014,
+        "HBD": 1,
+        "HBA": 4,
+        "rotatable": 3,
+        "formalCharge": 0,
+        "rings": 2
+      },
+      "resolutionA": 1.51,
+      "sequence": "VKPNYALKFTLAGHTKAVSSVKFSPNGEWLASSSADKLIKIWGAYDGKFEKTISGHKLGISDVAWSSDSNLLVSASDDKTLKIWDVSSGKCLKTLKGHSNYVFCCNFNPQSNLIVSGSFDESVRIWDVKTGKCLKTLPAHSDPVSAVHFNRDGSLIVSSSYDGLCRIWDTASGQCLKTLIDDDNPPVSFVKFSPNGKYILAATLDNTLKLWDYSKGKCLKTYTGHKNEKYCIFANFSVTGGKWIVSGSEDNLVYIWNLQTKEIVQKLQGHTDVVISTACHPTENIIASAALENDKTIKLWKSDC",
+      "proteinDescription": "WD repeat-containing protein 5",
+      "proteinChains": [
+        "A"
+      ],
+      "ligandChains": [
+        "B"
+      ],
+      "rejectionReason": null,
+      "id": "9xjq-a1e0i",
+      "name": "9XJQ \u00b7 WD repeat-containing protein 5 \u00b7 A1E0I",
+      "proteinLabelAsymId": "A",
+      "ligandLabelAsymId": "B",
+      "referenceFile": "9xjq-a1e0i/reference.json",
+      "referenceSha256": "3d36a270d4084206e52f1229a983be0f3b8d82741f95e8c2b869d69d2eb394c7",
+      "observedCa": 304,
+      "proteinResidues": 304,
+      "ligandHeavyAtoms": 21
+    },
+    {
+      "pdbId": "32QY",
+      "releaseDate": "2026-11-11",
+      "title": "Crystal structure of YTHDF2 in complex with compound 24 (FE-593)",
+      "ccdId": "A1KEO",
+      "ligandName": "5-(6-methyl-4-oxo-2,7-dihydropyrazolo[3,4-b]pyridin-3-yl)-1H-pyridin-2-one",
+      "smiles": "CC1=CC(=O)c2c([nH]nc2N1)C3=CNC(=O)C=C3",
+      "properties": {
+        "heavyAtoms": 18,
+        "MW": 242.23800000000003,
+        "QED": 0.5916943361593814,
+        "logP": 0.9149199999999997,
+        "HBD": 3,
+        "HBA": 3,
+        "rotatable": 1,
+        "formalCharge": 0,
+        "rings": 3
+      },
+      "resolutionA": 1.84,
+      "sequence": "MGSSYHHHHHHSSGENLYFQHMKHGRVFIIKSYSEDDIHRSIKYNIWCSTEHGNKRLDAAYRSMNGKGPVYLLFSVNGSGHFCGVAEMKSAVDYNTCAGVWSQDKWKGRFDVRWIFVKDVPNSQLRHIRLENNENKPVTNSRDTQEVPLEKAKQVLKIIASYKHTTS",
+      "proteinDescription": "YTH domain-containing family protein 2",
+      "proteinChains": [
+        "A",
+        "B"
+      ],
+      "ligandChains": [
+        "E",
+        "L"
+      ],
+      "rejectionReason": null,
+      "id": "32qy-a1keo",
+      "name": "32QY \u00b7 YTH domain-containing family protein 2 \u00b7 A1KEO",
+      "proteinLabelAsymId": "A",
+      "ligandLabelAsymId": "E",
+      "referenceFile": "32qy-a1keo/reference.json",
+      "referenceSha256": "401c8958854f5d3d4bded647f0a7c8b6fc801bda8b6292f318caa3801cf174ad",
+      "observedCa": 151,
+      "proteinResidues": 167,
+      "ligandHeavyAtoms": 18
+    },
+    {
+      "pdbId": "9T3V",
+      "releaseDate": "2026-11-11",
+      "title": "Crystal structure of human soluble epoxide hydrolase C-terminal domain in complex with an N-benzylpiperidine-based inhibitor",
+      "ccdId": "A1JTG",
+      "ligandName": "1-(1-(4-chlorobenzyl)piperidin-4-yl)-3-(9-fluoro-5,6,8,9,10,11-hexahydro-7H-5,9:7,11-dimethanobenzo[9]annulen-7-yl)urea",
+      "smiles": "c1ccc2c(c1)[C@@H]3CC4(C[C@H]2CC(C3)(C4)F)NC(=O)NC5CCN(CC5)Cc6ccc(cc6)Cl",
+      "properties": {
+        "heavyAtoms": 34,
+        "MW": 482.04300000000023,
+        "QED": 0.5698117918028605,
+        "logP": 5.909400000000006,
+        "HBD": 2,
+        "HBA": 2,
+        "rotatable": 4,
+        "formalCharge": 0,
+        "rings": 7
+      },
+      "resolutionA": 1.9,
+      "sequence": "MHHHHHHSTENLYFQGSSTSCNPSDMSHGYVTVKPRVRLHFVELGSGPAVCLCHGFPESWYSWRYQIPALAQAGYRVLAMDMKGYGESSAPPEIEEYCMEVLCKEMVTFLDKLGLSQAVFIGHDWGGMLVWYMALFYPERVRAVASLNTPFIPANPNMSPLESIKANPVFDYQLYFQEPGVAEAELEQNLSRTFKSLFRASDESVLSMHKVCEAGGLFVNSPEEPSLSRMVTEEEIQFYVQQFKKSGFRGPLNWYRNMERNWKWACKSLGRKILIPALMVTAEKDFVLVPQMSQHMEDWIPHLKRGHIEDCGHWTQMDKPTEVNQILIKWLDSDARNPPVVSKM",
+      "proteinDescription": "Bifunctional epoxide hydrolase 2",
+      "proteinChains": [
+        "A",
+        "B"
+      ],
+      "ligandChains": [
+        "C",
+        "D"
+      ],
+      "rejectionReason": null,
+      "id": "9t3v-a1jtg",
+      "name": "9T3V \u00b7 Bifunctional epoxide hydrolase 2 \u00b7 A1JTG",
+      "proteinLabelAsymId": "B",
+      "ligandLabelAsymId": "D",
+      "referenceFile": "9t3v-a1jtg/reference.json",
+      "referenceSha256": "b8d0148a2b09a5e740023e12ab84734a29fc29a0bb7bc4661efef9cd5d4419a5",
+      "observedCa": 316,
+      "proteinResidues": 344,
+      "ligandHeavyAtoms": 34
+    }
+  ],
+  "sources": [
+    {
+      "file": "sources/15JI.cif",
+      "sha256": "032e05b1e7d39db01ba07e5c58c5c325fbe313889da2a701863ece697972e183",
+      "url": "https://files.rcsb.org/download/15JI.cif"
+    },
+    {
+      "file": "sources/1IL.cif",
+      "sha256": "0bc781f05f445ac2f212dfe28ec54e6a8a19decde516520215f217f3e09e4e67",
+      "url": "https://files.rcsb.org/ligands/download/1IL.cif"
+    },
+    {
+      "file": "sources/32QY.cif",
+      "sha256": "ce3663ea12db517907857bf1595a10fe79f879cacca5ba44780af5e41e0f97d9",
+      "url": "https://files.rcsb.org/download/32QY.cif"
+    },
+    {
+      "file": "sources/9SXF.cif",
+      "sha256": "61eae2afd48a2398b92342ce734a01fe5470dc11c9b39ae159f725b4cdc4ec6a",
+      "url": "https://files.rcsb.org/download/9SXF.cif"
+    },
+    {
+      "file": "sources/9SY7.cif",
+      "sha256": "ae39484b0ceb32346c4d350c5cd62d2ed15b3695e0182c351ef5d6dce743861e",
+      "url": "https://files.rcsb.org/download/9SY7.cif"
+    },
+    {
+      "file": "sources/9SYO.cif",
+      "sha256": "d7a573f2946234d78cc7210f0d055f51bd4cf426140fa7a4e91a1b6eb5273eae",
+      "url": "https://files.rcsb.org/download/9SYO.cif"
+    },
+    {
+      "file": "sources/9T3V.cif",
+      "sha256": "636db1c146fbb7ac2c3a2602a256b8d24c21d00c8026c3f1689f8097303d276e",
+      "url": "https://files.rcsb.org/download/9T3V.cif"
+    },
+    {
+      "file": "sources/9T51.cif",
+      "sha256": "5523234bc5076a25f8e12d9b2d5b7cefebad85676858ae319697e150860b0cbe",
+      "url": "https://files.rcsb.org/download/9T51.cif"
+    },
+    {
+      "file": "sources/9XHG.cif",
+      "sha256": "c0246509550ce86da2632c37737d122a522ebbc971e14c0ca3a213ab08b145bf",
+      "url": "https://files.rcsb.org/download/9XHG.cif"
+    },
+    {
+      "file": "sources/9XJQ.cif",
+      "sha256": "e6b939d574d3c7a559c9ca9b5ef355789036dc3a05408c566e41541e47251309",
+      "url": "https://files.rcsb.org/download/9XJQ.cif"
+    },
+    {
+      "file": "sources/A1D2G.cif",
+      "sha256": "81f76cb9d6b3f60028cca97eeea9783ff95147c05c1441c66bb462e9df0aabdc",
+      "url": "https://files.rcsb.org/ligands/download/A1D2G.cif"
+    },
+    {
+      "file": "sources/A1E0I.cif",
+      "sha256": "b9aeb7e4182168d04f980e34ee28bc806fb9dccb575d8a8439015ccea3025598",
+      "url": "https://files.rcsb.org/ligands/download/A1E0I.cif"
+    },
+    {
+      "file": "sources/A1JR1.cif",
+      "sha256": "bd3682d1f93cccadd7127da429240fd96970807d4ddfbcea951a2d4a93898ad3",
+      "url": "https://files.rcsb.org/ligands/download/A1JR1.cif"
+    },
+    {
+      "file": "sources/A1JRG.cif",
+      "sha256": "28f64f1e84cf0c991150247401bce4db8cf69f395641dc013ed506aedf6718d9",
+      "url": "https://files.rcsb.org/ligands/download/A1JRG.cif"
+    },
+    {
+      "file": "sources/A1JRX.cif",
+      "sha256": "02cf0e144ff395902d261af96c91db65f0d825d3e8178f30209d6980a22f01f7",
+      "url": "https://files.rcsb.org/ligands/download/A1JRX.cif"
+    },
+    {
+      "file": "sources/A1JTG.cif",
+      "sha256": "85bcd6b4b59137da1d90b378d3f971967926696e9d188add0c89f27eff322f36",
+      "url": "https://files.rcsb.org/ligands/download/A1JTG.cif"
+    },
+    {
+      "file": "sources/A1JTM.cif",
+      "sha256": "6cfe808d1230f751795e178b9e5ab51b511aeab49545e6e9a5f2542615f3e5ce",
+      "url": "https://files.rcsb.org/ligands/download/A1JTM.cif"
+    },
+    {
+      "file": "sources/A1KEO.cif",
+      "sha256": "28cb3e567d34ed01ef2a2bbf67156b03fdea78959976dc4ef59fb40d741fbcbe",
+      "url": "https://files.rcsb.org/ligands/download/A1KEO.cif"
+    }
+  ],
+  "browserProtocol": {
+    "steps": 25,
+    "recycles": 2,
+    "msaMode": "single",
+    "weights": "int5"
+  },
+  "nativeProtocol": {
+    "steps": 200,
+    "recycles": 3,
+    "msaMode": "single"
+  },
+  "caveats": [
+    "Recent release is not proof that similar proteins, ligands or binding sites were absent from training.",
+    "Single standard-amino-acid protein chain and one noncovalent ligand; selection excludes out-of-scope complexes and records every exclusion.",
+    "Protein sequence and stereochemical SMILES only; crystal coordinates and bound conformers are scoring/display-only.",
+    "Drug-likeness uses stated heuristic gates and RDKit QED; it is not an experimental pharmacology or safety assessment.",
+    "Browser int5/25steps/2recycles and native unquantized200steps/3recycles confound precision and sampling; not fixed-input parity.",
+    "Primary ligand RMSD uses every observed corresponding protein C-alpha, no trimming/pocket refit or independent ligand fit.",
+    "Each seed and failure remains visible; oracle best-of3 uses the experimental answer and is separate from confidence selection."
+  ]
+}

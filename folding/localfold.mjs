@@ -1,5 +1,6 @@
 import {foldingRequest,LOCALFOLD_REVISION,FOLD_MODELS,COFOLD_FAMILIES,validateFoldComponent} from './request.mjs';
 import {ColabFoldMsaProvider} from '../openfold/msa-client.js';
+import {normalizeLigandSmiles} from './ligand-normalization.mjs';
 const providers=new Map();
 const check=signal=>{if(signal?.aborted)throw signal.reason??new DOMException('Aborted','AbortError');};
 async function sha(text){return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',
@@ -25,6 +26,14 @@ export async function predictLocalFold(input,{signal,onProgress=()=>{}}={}) {
     const query=alignment.split(/^>/m).find(s=>s.trim())?.split(/\r?\n/).slice(1).join('')
       .replace(/[a-z\s]/g,'');
     if(query!==request.sequence)throw new Error('The A3M query does not match the protein sequence.');
+  }
+  let ligandNormalization=null;
+  if(request.ligand?.type==='smiles'){
+    onProgress({stage:'ligand-chemistry',message:'Checking ligand valence, aromaticity and stereochemistry…'});
+    const normalized=await normalizeLigandSmiles(request.ligand.value,{signal,onProgress});check(signal);
+    ligandNormalization={...normalized,sourceSmilesSha256:await sha(request.ligand.value),
+      canonicalSmilesSha256:await sha(normalized.canonicalSmiles),
+      purpose:'Chemical representation normalization before conformer generation and model features; no protonation or tautomer enumeration.'};
   }
   const {getDevice,loadModel}=await import('../vendor/localfold/web/model.js');
   const report=message=>onProgress({stage:'folding',message});
@@ -55,10 +64,11 @@ export async function predictLocalFold(input,{signal,onProgress=()=>{}}={}) {
       import('../vendor/localfold/webgpu/af3/fold.js')]);
     if(request.ligand){
       if(request.ligand.type==='smiles'){
+        const smiles=ligandNormalization.canonicalSmiles;
         const {parseSmiles}=await import('../vendor/localfold/shared/chem/smiles.js');
-        validateFoldComponent(parseSmiles(request.ligand.value));
+        validateFoldComponent(parseSmiles(smiles));
         const {smilesComponent}=await import('../vendor/localfold/shared/chem/component.js');
-        component=await smilesComponent(request.ligand.value,{code:'LIG',seed:request.seed});
+        component=await smilesComponent(smiles,{code:'LIG',seed:request.seed});
       }else{
         const {ccdUrl,parseCcdComponent}=await import('../vendor/localfold/shared/af3/featurise/ccd-component.js');
         const response=await fetch(ccdUrl(request.ligand.value),{signal});
@@ -105,7 +115,7 @@ export async function predictLocalFold(input,{signal,onProgress=()=>{}}={}) {
     provenance:{application:{name:'Molarium',webCodeVersion:new URL(import.meta.url).searchParams.get('v')},
       upstream:{repository:'https://github.com/sokrypton/localfold',revision:LOCALFOLD_REVISION},
       request,alignment,alignmentSha256:alignment?await sha(alignment):null,
-      ligandComponentSha256:component?await sha(JSON.stringify(component)):null,
+      ligandComponentSha256:component?await sha(JSON.stringify(component)):null,ligandNormalization,
       modelManifestSha256:await sha(JSON.stringify(manifest)),
       modelBundle:{model:manifestModule.MODEL_BUNDLES[family].model,
         remote:manifestModule.MODEL_BUNDLES[family].remote,release:manifestModule.MODEL_BUNDLES[family].release},

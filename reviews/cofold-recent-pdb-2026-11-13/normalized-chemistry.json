@@ -1,0 +1,3357 @@
+{
+  "purpose": "Actual RDKit WebAssembly canonicalization and LocalFold conformer generation; no model inference.",
+  "records": [
+    {
+      "caseId": "9sy7-a1jrx",
+      "inputSmiles": "Cc1cn(c2c1cccc2)CCC(=O)NS(=O)(=O)C",
+      "canonicalSmiles": "Cc1cn(CCC(=O)NS(C)(=O)=O)c2ccccc12",
+      "rdkitVersion": "2025.03.4",
+      "backend": "RDKit WebAssembly",
+      "component": {
+        "code": "LIG",
+        "atoms": [
+          {
+            "name": "C1",
+            "element": 6,
+            "charge": 0,
+            "x": 4.44,
+            "y": -0.25,
+            "z": -1.822,
+            "leaving": false
+          },
+          {
+            "name": "C2",
+            "element": 6,
+            "charge": 0,
+            "x": 3.235,
+            "y": -0.419,
+            "z": -1.002,
+            "leaving": false
+          },
+          {
+            "name": "C3",
+            "element": 6,
+            "charge": 0,
+            "x": 2.26,
+            "y": -1.354,
+            "z": -1.401,
+            "leaving": false
+          },
+          {
+            "name": "N1",
+            "element": 7,
+            "charge": 0,
+            "x": 1.292,
+            "y": -1.285,
+            "z": -0.468,
+            "leaving": false
+          },
+          {
+            "name": "C4",
+            "element": 6,
+            "charge": 0,
+            "x": 0.146,
+            "y": -2.081,
+            "z": -0.534,
+            "leaving": false
+          },
+          {
+            "name": "C5",
+            "element": 6,
+            "charge": 0,
+            "x": -1.022,
+            "y": -1.458,
+            "z": 0.17,
+            "leaving": false
+          },
+          {
+            "name": "C6",
+            "element": 6,
+            "charge": 0,
+            "x": -1.789,
+            "y": -0.467,
+            "z": -0.669,
+            "leaving": false
+          },
+          {
+            "name": "O1",
+            "element": 8,
+            "charge": 0,
+            "x": -2.023,
+            "y": -0.507,
+            "z": -1.874,
+            "leaving": false
+          },
+          {
+            "name": "N2",
+            "element": 7,
+            "charge": 0,
+            "x": -2.25,
+            "y": 0.609,
+            "z": 0.154,
+            "leaving": false
+          },
+          {
+            "name": "S1",
+            "element": 16,
+            "charge": 0,
+            "x": -3.983,
+            "y": 0.753,
+            "z": 0.06,
+            "leaving": false
+          },
+          {
+            "name": "C7",
+            "element": 6,
+            "charge": 0,
+            "x": -4.001,
+            "y": 2.381,
+            "z": -0.753,
+            "leaving": false
+          },
+          {
+            "name": "O2",
+            "element": 8,
+            "charge": 0,
+            "x": -4.598,
+            "y": -0.182,
+            "z": -0.85,
+            "leaving": false
+          },
+          {
+            "name": "O3",
+            "element": 8,
+            "charge": 0,
+            "x": -4.503,
+            "y": 0.902,
+            "z": 1.419,
+            "leaving": false
+          },
+          {
+            "name": "C8",
+            "element": 6,
+            "charge": 0,
+            "x": 1.589,
+            "y": -0.397,
+            "z": 0.458,
+            "leaving": false
+          },
+          {
+            "name": "C9",
+            "element": 6,
+            "charge": 0,
+            "x": 0.874,
+            "y": -0.03,
+            "z": 1.569,
+            "leaving": false
+          },
+          {
+            "name": "C10",
+            "element": 6,
+            "charge": 0,
+            "x": 1.44,
+            "y": 0.96,
+            "z": 2.398,
+            "leaving": false
+          },
+          {
+            "name": "C11",
+            "element": 6,
+            "charge": 0,
+            "x": 2.676,
+            "y": 1.529,
+            "z": 2.083,
+            "leaving": false
+          },
+          {
+            "name": "C12",
+            "element": 6,
+            "charge": 0,
+            "x": 3.384,
+            "y": 1.127,
+            "z": 0.931,
+            "leaving": false
+          },
+          {
+            "name": "C13",
+            "element": 6,
+            "charge": 0,
+            "x": 2.833,
+            "y": 0.169,
+            "z": 0.133,
+            "leaving": false
+          }
+        ],
+        "bonds": [
+          {
+            "from": 0,
+            "to": 1,
+            "order": 1
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "order": 4
+          },
+          {
+            "from": 2,
+            "to": 3,
+            "order": 4
+          },
+          {
+            "from": 3,
+            "to": 4,
+            "order": 1
+          },
+          {
+            "from": 4,
+            "to": 5,
+            "order": 1
+          },
+          {
+            "from": 5,
+            "to": 6,
+            "order": 1
+          },
+          {
+            "from": 6,
+            "to": 7,
+            "order": 2
+          },
+          {
+            "from": 6,
+            "to": 8,
+            "order": 1
+          },
+          {
+            "from": 8,
+            "to": 9,
+            "order": 1
+          },
+          {
+            "from": 9,
+            "to": 10,
+            "order": 1
+          },
+          {
+            "from": 9,
+            "to": 11,
+            "order": 2
+          },
+          {
+            "from": 9,
+            "to": 12,
+            "order": 2
+          },
+          {
+            "from": 3,
+            "to": 13,
+            "order": 4
+          },
+          {
+            "from": 13,
+            "to": 14,
+            "order": 4
+          },
+          {
+            "from": 14,
+            "to": 15,
+            "order": 4
+          },
+          {
+            "from": 15,
+            "to": 16,
+            "order": 4
+          },
+          {
+            "from": 16,
+            "to": 17,
+            "order": 4
+          },
+          {
+            "from": 17,
+            "to": 18,
+            "order": 4
+          },
+          {
+            "from": 18,
+            "to": 1,
+            "order": 4
+          },
+          {
+            "from": 18,
+            "to": 13,
+            "order": 4
+          }
+        ],
+        "smiles": "Cc1cn(CCC(=O)NS(C)(=O)=O)c2ccccc12",
+        "conformerError": 0.005291088726917873,
+        "attempts": 16,
+        "stereo": {
+          "centres": 0,
+          "doubleBonds": 0
+        }
+      }
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "inputSmiles": "c1cc(cc(c1)F)c2cc(c(s2)C(=O)N[C@@H]3CCNC3)NC(=O)N",
+      "canonicalSmiles": "NC(=O)Nc1cc(-c2cccc(F)c2)sc1C(=O)N[C@@H]1CCNC1",
+      "rdkitVersion": "2025.03.4",
+      "backend": "RDKit WebAssembly",
+      "component": {
+        "code": "LIG",
+        "atoms": [
+          {
+            "name": "N1",
+            "element": 7,
+            "charge": 0,
+            "x": -0.362,
+            "y": -1.173,
+            "z": 3.734,
+            "leaving": false
+          },
+          {
+            "name": "C1",
+            "element": 6,
+            "charge": 0,
+            "x": -1.097,
+            "y": -0.393,
+            "z": 2.813,
+            "leaving": false
+          },
+          {
+            "name": "O1",
+            "element": 8,
+            "charge": 0,
+            "x": -1.477,
+            "y": 0.783,
+            "z": 2.985,
+            "leaving": false
+          },
+          {
+            "name": "N2",
+            "element": 7,
+            "charge": 0,
+            "x": -1.419,
+            "y": -1.049,
+            "z": 1.567,
+            "leaving": false
+          },
+          {
+            "name": "C2",
+            "element": 6,
+            "charge": 0,
+            "x": -0.585,
+            "y": -0.282,
+            "z": 0.694,
+            "leaving": false
+          },
+          {
+            "name": "C3",
+            "element": 6,
+            "charge": 0,
+            "x": 0.728,
+            "y": -0.715,
+            "z": 0.423,
+            "leaving": false
+          },
+          {
+            "name": "C4",
+            "element": 6,
+            "charge": 0,
+            "x": 1.391,
+            "y": 0.16,
+            "z": -0.441,
+            "leaving": false
+          },
+          {
+            "name": "C5",
+            "element": 6,
+            "charge": 0,
+            "x": 2.786,
+            "y": -0.056,
+            "z": -0.886,
+            "leaving": false
+          },
+          {
+            "name": "C6",
+            "element": 6,
+            "charge": 0,
+            "x": 3.193,
+            "y": -0.334,
+            "z": -2.173,
+            "leaving": false
+          },
+          {
+            "name": "C7",
+            "element": 6,
+            "charge": 0,
+            "x": 4.563,
+            "y": -0.517,
+            "z": -2.445,
+            "leaving": false
+          },
+          {
+            "name": "C8",
+            "element": 6,
+            "charge": 0,
+            "x": 5.502,
+            "y": -0.414,
+            "z": -1.4,
+            "leaving": false
+          },
+          {
+            "name": "C9",
+            "element": 6,
+            "charge": 0,
+            "x": 5.039,
+            "y": -0.131,
+            "z": -0.119,
+            "leaving": false
+          },
+          {
+            "name": "F1",
+            "element": 9,
+            "charge": 0,
+            "x": 5.9,
+            "y": -0.021,
+            "z": 0.916,
+            "leaving": false
+          },
+          {
+            "name": "C10",
+            "element": 6,
+            "charge": 0,
+            "x": 3.699,
+            "y": 0.055,
+            "z": 0.185,
+            "leaving": false
+          },
+          {
+            "name": "S1",
+            "element": 16,
+            "charge": 0,
+            "x": 0.376,
+            "y": 1.428,
+            "z": -0.855,
+            "leaving": false
+          },
+          {
+            "name": "C11",
+            "element": 6,
+            "charge": 0,
+            "x": -0.941,
+            "y": 0.861,
+            "z": 0.082,
+            "leaving": false
+          },
+          {
+            "name": "C12",
+            "element": 6,
+            "charge": 0,
+            "x": -2.191,
+            "y": 1.635,
+            "z": 0.095,
+            "leaving": false
+          },
+          {
+            "name": "O2",
+            "element": 8,
+            "charge": 0,
+            "x": -2.745,
+            "y": 2.288,
+            "z": 0.976,
+            "leaving": false
+          },
+          {
+            "name": "N3",
+            "element": 7,
+            "charge": 0,
+            "x": -2.771,
+            "y": 1.528,
+            "z": -1.221,
+            "leaving": false
+          },
+          {
+            "name": "C13",
+            "element": 6,
+            "charge": 0,
+            "x": -3.657,
+            "y": 0.458,
+            "z": -1.298,
+            "leaving": false
+          },
+          {
+            "name": "C14",
+            "element": 6,
+            "charge": 0,
+            "x": -4.259,
+            "y": 0.01,
+            "z": 0.003,
+            "leaving": false
+          },
+          {
+            "name": "C15",
+            "element": 6,
+            "charge": 0,
+            "x": -4.636,
+            "y": -1.452,
+            "z": -0.258,
+            "leaving": false
+          },
+          {
+            "name": "N4",
+            "element": 7,
+            "charge": 0,
+            "x": -3.902,
+            "y": -1.883,
+            "z": -1.42,
+            "leaving": false
+          },
+          {
+            "name": "C16",
+            "element": 6,
+            "charge": 0,
+            "x": -3.134,
+            "y": -0.788,
+            "z": -1.957,
+            "leaving": false
+          }
+        ],
+        "bonds": [
+          {
+            "from": 0,
+            "to": 1,
+            "order": 1
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "order": 2
+          },
+          {
+            "from": 1,
+            "to": 3,
+            "order": 1
+          },
+          {
+            "from": 3,
+            "to": 4,
+            "order": 1
+          },
+          {
+            "from": 4,
+            "to": 5,
+            "order": 4
+          },
+          {
+            "from": 5,
+            "to": 6,
+            "order": 4
+          },
+          {
+            "from": 6,
+            "to": 7,
+            "order": 1
+          },
+          {
+            "from": 7,
+            "to": 8,
+            "order": 4
+          },
+          {
+            "from": 8,
+            "to": 9,
+            "order": 4
+          },
+          {
+            "from": 9,
+            "to": 10,
+            "order": 4
+          },
+          {
+            "from": 10,
+            "to": 11,
+            "order": 4
+          },
+          {
+            "from": 11,
+            "to": 12,
+            "order": 1
+          },
+          {
+            "from": 11,
+            "to": 13,
+            "order": 4
+          },
+          {
+            "from": 13,
+            "to": 7,
+            "order": 4
+          },
+          {
+            "from": 6,
+            "to": 14,
+            "order": 4
+          },
+          {
+            "from": 14,
+            "to": 15,
+            "order": 4
+          },
+          {
+            "from": 15,
+            "to": 4,
+            "order": 4
+          },
+          {
+            "from": 15,
+            "to": 16,
+            "order": 1
+          },
+          {
+            "from": 16,
+            "to": 17,
+            "order": 2
+          },
+          {
+            "from": 16,
+            "to": 18,
+            "order": 1
+          },
+          {
+            "from": 18,
+            "to": 19,
+            "order": 1
+          },
+          {
+            "from": 19,
+            "to": 20,
+            "order": 1
+          },
+          {
+            "from": 20,
+            "to": 21,
+            "order": 1
+          },
+          {
+            "from": 21,
+            "to": 22,
+            "order": 1
+          },
+          {
+            "from": 22,
+            "to": 23,
+            "order": 1
+          },
+          {
+            "from": 23,
+            "to": 19,
+            "order": 1
+          }
+        ],
+        "smiles": "NC(=O)Nc1cc(-c2cccc(F)c2)sc1C(=O)N[C@@H]1CCNC1",
+        "conformerError": 0.00877885591257385,
+        "attempts": 16,
+        "stereo": {
+          "centres": 1,
+          "doubleBonds": 0
+        }
+      }
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "inputSmiles": "C[C@]12CC[C@@H](C[C@@H]1CCc3c2nc4cccc(c4c3)C5CCN(CC5)C(=O)OC(C)(C)C)O",
+      "canonicalSmiles": "CC(C)(C)OC(=O)N1CCC(c2cccc3nc4c(cc23)CC[C@H]2C[C@@H](O)CC[C@]42C)CC1",
+      "rdkitVersion": "2025.03.4",
+      "backend": "RDKit WebAssembly",
+      "component": {
+        "code": "LIG",
+        "atoms": [
+          {
+            "name": "C1",
+            "element": 6,
+            "charge": 0,
+            "x": -6.644,
+            "y": 1.847,
+            "z": -0.082,
+            "leaving": false
+          },
+          {
+            "name": "C2",
+            "element": 6,
+            "charge": 0,
+            "x": -5.874,
+            "y": 1.203,
+            "z": 1.073,
+            "leaving": false
+          },
+          {
+            "name": "C3",
+            "element": 6,
+            "charge": 0,
+            "x": -6.777,
+            "y": 0.37,
+            "z": 1.953,
+            "leaving": false
+          },
+          {
+            "name": "C4",
+            "element": 6,
+            "charge": 0,
+            "x": -5.362,
+            "y": 2.36,
+            "z": 1.932,
+            "leaving": false
+          },
+          {
+            "name": "O1",
+            "element": 8,
+            "charge": 0,
+            "x": -4.786,
+            "y": 0.439,
+            "z": 0.545,
+            "leaving": false
+          },
+          {
+            "name": "C5",
+            "element": 6,
+            "charge": 0,
+            "x": -5.331,
+            "y": -0.463,
+            "z": -0.389,
+            "leaving": false
+          },
+          {
+            "name": "O2",
+            "element": 8,
+            "charge": 0,
+            "x": -6.557,
+            "y": -0.714,
+            "z": -0.377,
+            "leaving": false
+          },
+          {
+            "name": "N1",
+            "element": 7,
+            "charge": 0,
+            "x": -4.461,
+            "y": -1.059,
+            "z": -1.316,
+            "leaving": false
+          },
+          {
+            "name": "C6",
+            "element": 6,
+            "charge": 0,
+            "x": -3.387,
+            "y": -0.238,
+            "z": -1.688,
+            "leaving": false
+          },
+          {
+            "name": "C7",
+            "element": 6,
+            "charge": 0,
+            "x": -2.131,
+            "y": -1.062,
+            "z": -1.993,
+            "leaving": false
+          },
+          {
+            "name": "C8",
+            "element": 6,
+            "charge": 0,
+            "x": -1.602,
+            "y": -1.704,
+            "z": -0.677,
+            "leaving": false
+          },
+          {
+            "name": "C9",
+            "element": 6,
+            "charge": 0,
+            "x": -0.832,
+            "y": -0.537,
+            "z": -0.158,
+            "leaving": false
+          },
+          {
+            "name": "C10",
+            "element": 6,
+            "charge": 0,
+            "x": -1.635,
+            "y": 0.568,
+            "z": 0.123,
+            "leaving": false
+          },
+          {
+            "name": "C11",
+            "element": 6,
+            "charge": 0,
+            "x": -1.06,
+            "y": 1.786,
+            "z": 0.536,
+            "leaving": false
+          },
+          {
+            "name": "C12",
+            "element": 6,
+            "charge": 0,
+            "x": 0.331,
+            "y": 1.813,
+            "z": 0.628,
+            "leaving": false
+          },
+          {
+            "name": "C13",
+            "element": 6,
+            "charge": 0,
+            "x": 0.943,
+            "y": 0.642,
+            "z": 0.31,
+            "leaving": false
+          },
+          {
+            "name": "N2",
+            "element": 7,
+            "charge": 0,
+            "x": 2.272,
+            "y": 0.869,
+            "z": 0.336,
+            "leaving": false
+          },
+          {
+            "name": "C14",
+            "element": 6,
+            "charge": 0,
+            "x": 2.931,
+            "y": -0.166,
+            "z": -0.012,
+            "leaving": false
+          },
+          {
+            "name": "C15",
+            "element": 6,
+            "charge": 0,
+            "x": 2.571,
+            "y": -1.435,
+            "z": -0.306,
+            "leaving": false
+          },
+          {
+            "name": "C16",
+            "element": 6,
+            "charge": 0,
+            "x": 1.231,
+            "y": -1.721,
+            "z": -0.363,
+            "leaving": false
+          },
+          {
+            "name": "C17",
+            "element": 6,
+            "charge": 0,
+            "x": 0.515,
+            "y": -0.568,
+            "z": -0.056,
+            "leaving": false
+          },
+          {
+            "name": "C18",
+            "element": 6,
+            "charge": 0,
+            "x": 3.748,
+            "y": -2.316,
+            "z": -0.47,
+            "leaving": false
+          },
+          {
+            "name": "C19",
+            "element": 6,
+            "charge": 0,
+            "x": 4.693,
+            "y": -1.933,
+            "z": 0.7,
+            "leaving": false
+          },
+          {
+            "name": "C20",
+            "element": 6,
+            "charge": 0,
+            "x": 5.035,
+            "y": -0.507,
+            "z": 0.785,
+            "leaving": false
+          },
+          {
+            "name": "C21",
+            "element": 6,
+            "charge": 0,
+            "x": 6.414,
+            "y": 0.009,
+            "z": 0.924,
+            "leaving": false
+          },
+          {
+            "name": "C22",
+            "element": 6,
+            "charge": 0,
+            "x": 6.215,
+            "y": 1.462,
+            "z": 0.648,
+            "leaving": false
+          },
+          {
+            "name": "O3",
+            "element": 8,
+            "charge": 0,
+            "x": 6.358,
+            "y": 2.413,
+            "z": 1.562,
+            "leaving": false
+          },
+          {
+            "name": "C23",
+            "element": 6,
+            "charge": 0,
+            "x": 6.063,
+            "y": 1.807,
+            "z": -0.801,
+            "leaving": false
+          },
+          {
+            "name": "C24",
+            "element": 6,
+            "charge": 0,
+            "x": 4.546,
+            "y": 1.524,
+            "z": -0.78,
+            "leaving": false
+          },
+          {
+            "name": "C25",
+            "element": 6,
+            "charge": 0,
+            "x": 4.391,
+            "y": 0.134,
+            "z": -0.264,
+            "leaving": false
+          },
+          {
+            "name": "C26",
+            "element": 6,
+            "charge": 0,
+            "x": 4.891,
+            "y": -0.479,
+            "z": -1.605,
+            "leaving": false
+          },
+          {
+            "name": "C27",
+            "element": 6,
+            "charge": 0,
+            "x": -2.775,
+            "y": -2.068,
+            "z": 0.113,
+            "leaving": false
+          },
+          {
+            "name": "C28",
+            "element": 6,
+            "charge": 0,
+            "x": -3.934,
+            "y": -2.275,
+            "z": -0.83,
+            "leaving": false
+          }
+        ],
+        "bonds": [
+          {
+            "from": 0,
+            "to": 1,
+            "order": 1
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "order": 1
+          },
+          {
+            "from": 1,
+            "to": 3,
+            "order": 1
+          },
+          {
+            "from": 1,
+            "to": 4,
+            "order": 1
+          },
+          {
+            "from": 4,
+            "to": 5,
+            "order": 1
+          },
+          {
+            "from": 5,
+            "to": 6,
+            "order": 2
+          },
+          {
+            "from": 5,
+            "to": 7,
+            "order": 1
+          },
+          {
+            "from": 7,
+            "to": 8,
+            "order": 1
+          },
+          {
+            "from": 8,
+            "to": 9,
+            "order": 1
+          },
+          {
+            "from": 9,
+            "to": 10,
+            "order": 1
+          },
+          {
+            "from": 10,
+            "to": 11,
+            "order": 1
+          },
+          {
+            "from": 11,
+            "to": 12,
+            "order": 4
+          },
+          {
+            "from": 12,
+            "to": 13,
+            "order": 4
+          },
+          {
+            "from": 13,
+            "to": 14,
+            "order": 4
+          },
+          {
+            "from": 14,
+            "to": 15,
+            "order": 4
+          },
+          {
+            "from": 15,
+            "to": 16,
+            "order": 4
+          },
+          {
+            "from": 16,
+            "to": 17,
+            "order": 4
+          },
+          {
+            "from": 17,
+            "to": 18,
+            "order": 4
+          },
+          {
+            "from": 18,
+            "to": 19,
+            "order": 4
+          },
+          {
+            "from": 19,
+            "to": 20,
+            "order": 4
+          },
+          {
+            "from": 20,
+            "to": 11,
+            "order": 4
+          },
+          {
+            "from": 20,
+            "to": 15,
+            "order": 4
+          },
+          {
+            "from": 18,
+            "to": 21,
+            "order": 1
+          },
+          {
+            "from": 21,
+            "to": 22,
+            "order": 1
+          },
+          {
+            "from": 22,
+            "to": 23,
+            "order": 1
+          },
+          {
+            "from": 23,
+            "to": 24,
+            "order": 1
+          },
+          {
+            "from": 24,
+            "to": 25,
+            "order": 1
+          },
+          {
+            "from": 25,
+            "to": 26,
+            "order": 1
+          },
+          {
+            "from": 25,
+            "to": 27,
+            "order": 1
+          },
+          {
+            "from": 27,
+            "to": 28,
+            "order": 1
+          },
+          {
+            "from": 28,
+            "to": 29,
+            "order": 1
+          },
+          {
+            "from": 29,
+            "to": 17,
+            "order": 1
+          },
+          {
+            "from": 29,
+            "to": 23,
+            "order": 1
+          },
+          {
+            "from": 29,
+            "to": 30,
+            "order": 1
+          },
+          {
+            "from": 10,
+            "to": 31,
+            "order": 1
+          },
+          {
+            "from": 31,
+            "to": 32,
+            "order": 1
+          },
+          {
+            "from": 32,
+            "to": 7,
+            "order": 1
+          }
+        ],
+        "smiles": "CC(C)(C)OC(=O)N1CCC(c2cccc3nc4c(cc23)CC[C@H]2C[C@@H](O)CC[C@]42C)CC1",
+        "conformerError": 0.2393279476728777,
+        "attempts": 16,
+        "stereo": {
+          "centres": 3,
+          "doubleBonds": 0
+        }
+      }
+    },
+    {
+      "caseId": "9syo-a1jr1",
+      "inputSmiles": "c1ccc2c(c1)cc([nH]2)SCC(=O)Nc3cc(cc(c3)O)O",
+      "canonicalSmiles": "O=C(CSc1cc2ccccc2[nH]1)Nc1cc(O)cc(O)c1",
+      "rdkitVersion": "2025.03.4",
+      "backend": "RDKit WebAssembly",
+      "component": {
+        "code": "LIG",
+        "atoms": [
+          {
+            "name": "O1",
+            "element": 8,
+            "charge": 0,
+            "x": 1.209,
+            "y": -0.926,
+            "z": 0.167,
+            "leaving": false
+          },
+          {
+            "name": "C1",
+            "element": 6,
+            "charge": 0,
+            "x": 0.885,
+            "y": -0.156,
+            "z": -0.766,
+            "leaving": false
+          },
+          {
+            "name": "C2",
+            "element": 6,
+            "charge": 0,
+            "x": 0.087,
+            "y": -0.669,
+            "z": -1.917,
+            "leaving": false
+          },
+          {
+            "name": "S1",
+            "element": 16,
+            "charge": 0,
+            "x": -1.056,
+            "y": 0.717,
+            "z": -2.258,
+            "leaving": false
+          },
+          {
+            "name": "C3",
+            "element": 6,
+            "charge": 0,
+            "x": -2.26,
+            "y": 0.302,
+            "z": -1.064,
+            "leaving": false
+          },
+          {
+            "name": "C4",
+            "element": 6,
+            "charge": 0,
+            "x": -2.819,
+            "y": 1.031,
+            "z": -0.057,
+            "leaving": false
+          },
+          {
+            "name": "C5",
+            "element": 6,
+            "charge": 0,
+            "x": -3.703,
+            "y": 0.156,
+            "z": 0.533,
+            "leaving": false
+          },
+          {
+            "name": "C6",
+            "element": 6,
+            "charge": 0,
+            "x": -4.541,
+            "y": 0.349,
+            "z": 1.59,
+            "leaving": false
+          },
+          {
+            "name": "C7",
+            "element": 6,
+            "charge": 0,
+            "x": -5.341,
+            "y": -0.75,
+            "z": 1.966,
+            "leaving": false
+          },
+          {
+            "name": "C8",
+            "element": 6,
+            "charge": 0,
+            "x": -5.278,
+            "y": -1.963,
+            "z": 1.297,
+            "leaving": false
+          },
+          {
+            "name": "C9",
+            "element": 6,
+            "charge": 0,
+            "x": -4.407,
+            "y": -2.154,
+            "z": 0.204,
+            "leaving": false
+          },
+          {
+            "name": "C10",
+            "element": 6,
+            "charge": 0,
+            "x": -3.646,
+            "y": -1.057,
+            "z": -0.13,
+            "leaving": false
+          },
+          {
+            "name": "N1",
+            "element": 7,
+            "charge": 0,
+            "x": -2.756,
+            "y": -0.962,
+            "z": -1.11,
+            "leaving": false
+          },
+          {
+            "name": "N2",
+            "element": 7,
+            "charge": 0,
+            "x": 1.249,
+            "y": 1.251,
+            "z": -0.809,
+            "leaving": false
+          },
+          {
+            "name": "C11",
+            "element": 6,
+            "charge": 0,
+            "x": 2.521,
+            "y": 1.063,
+            "z": -0.197,
+            "leaving": false
+          },
+          {
+            "name": "C12",
+            "element": 6,
+            "charge": 0,
+            "x": 3.232,
+            "y": 0.111,
+            "z": -0.958,
+            "leaving": false
+          },
+          {
+            "name": "C13",
+            "element": 6,
+            "charge": 0,
+            "x": 4.482,
+            "y": -0.245,
+            "z": -0.523,
+            "leaving": false
+          },
+          {
+            "name": "O2",
+            "element": 8,
+            "charge": 0,
+            "x": 5.085,
+            "y": -1.198,
+            "z": -1.343,
+            "leaving": false
+          },
+          {
+            "name": "C14",
+            "element": 6,
+            "charge": 0,
+            "x": 5.017,
+            "y": 0.316,
+            "z": 0.613,
+            "leaving": false
+          },
+          {
+            "name": "C15",
+            "element": 6,
+            "charge": 0,
+            "x": 4.261,
+            "y": 1.269,
+            "z": 1.332,
+            "leaving": false
+          },
+          {
+            "name": "O3",
+            "element": 8,
+            "charge": 0,
+            "x": 4.813,
+            "y": 1.839,
+            "z": 2.492,
+            "leaving": false
+          },
+          {
+            "name": "C16",
+            "element": 6,
+            "charge": 0,
+            "x": 2.966,
+            "y": 1.677,
+            "z": 0.938,
+            "leaving": false
+          }
+        ],
+        "bonds": [
+          {
+            "from": 0,
+            "to": 1,
+            "order": 2
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "order": 1
+          },
+          {
+            "from": 2,
+            "to": 3,
+            "order": 1
+          },
+          {
+            "from": 3,
+            "to": 4,
+            "order": 1
+          },
+          {
+            "from": 4,
+            "to": 5,
+            "order": 4
+          },
+          {
+            "from": 5,
+            "to": 6,
+            "order": 4
+          },
+          {
+            "from": 6,
+            "to": 7,
+            "order": 4
+          },
+          {
+            "from": 7,
+            "to": 8,
+            "order": 4
+          },
+          {
+            "from": 8,
+            "to": 9,
+            "order": 4
+          },
+          {
+            "from": 9,
+            "to": 10,
+            "order": 4
+          },
+          {
+            "from": 10,
+            "to": 11,
+            "order": 4
+          },
+          {
+            "from": 11,
+            "to": 6,
+            "order": 4
+          },
+          {
+            "from": 11,
+            "to": 12,
+            "order": 4
+          },
+          {
+            "from": 12,
+            "to": 4,
+            "order": 4
+          },
+          {
+            "from": 1,
+            "to": 13,
+            "order": 1
+          },
+          {
+            "from": 13,
+            "to": 14,
+            "order": 1
+          },
+          {
+            "from": 14,
+            "to": 15,
+            "order": 4
+          },
+          {
+            "from": 15,
+            "to": 16,
+            "order": 4
+          },
+          {
+            "from": 16,
+            "to": 17,
+            "order": 1
+          },
+          {
+            "from": 16,
+            "to": 18,
+            "order": 4
+          },
+          {
+            "from": 18,
+            "to": 19,
+            "order": 4
+          },
+          {
+            "from": 19,
+            "to": 20,
+            "order": 1
+          },
+          {
+            "from": 19,
+            "to": 21,
+            "order": 4
+          },
+          {
+            "from": 21,
+            "to": 14,
+            "order": 4
+          }
+        ],
+        "smiles": "O=C(CSc1cc2ccccc2[nH]1)Nc1cc(O)cc(O)c1",
+        "conformerError": 0.02713140837108337,
+        "attempts": 16,
+        "stereo": {
+          "centres": 0,
+          "doubleBonds": 0
+        }
+      }
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "inputSmiles": "c1c[nH]c2c1c(ncn2)N3CCC[C@H](C3)C[C@H]4CCOC4",
+      "canonicalSmiles": "c1nc(N2CCC[C@@H](C[C@H]3CCOC3)C2)c2cc[nH]c2n1",
+      "rdkitVersion": "2025.03.4",
+      "backend": "RDKit WebAssembly",
+      "component": {
+        "code": "LIG",
+        "atoms": [
+          {
+            "name": "C1",
+            "element": 6,
+            "charge": 0,
+            "x": 3.32,
+            "y": 2.101,
+            "z": 0.231,
+            "leaving": false
+          },
+          {
+            "name": "N1",
+            "element": 7,
+            "charge": 0,
+            "x": 2.102,
+            "y": 1.801,
+            "z": 0.728,
+            "leaving": false
+          },
+          {
+            "name": "C2",
+            "element": 6,
+            "charge": 0,
+            "x": 1.503,
+            "y": 0.612,
+            "z": 0.411,
+            "leaving": false
+          },
+          {
+            "name": "N2",
+            "element": 7,
+            "charge": 0,
+            "x": 0.228,
+            "y": 0.366,
+            "z": 0.97,
+            "leaving": false
+          },
+          {
+            "name": "C3",
+            "element": 6,
+            "charge": 0,
+            "x": 0.524,
+            "y": -0.157,
+            "z": 2.279,
+            "leaving": false
+          },
+          {
+            "name": "C4",
+            "element": 6,
+            "charge": 0,
+            "x": -0.754,
+            "y": -0.325,
+            "z": 3.061,
+            "leaving": false
+          },
+          {
+            "name": "C5",
+            "element": 6,
+            "charge": 0,
+            "x": -1.664,
+            "y": -1.283,
+            "z": 2.316,
+            "leaving": false
+          },
+          {
+            "name": "C6",
+            "element": 6,
+            "charge": 0,
+            "x": -1.854,
+            "y": -0.816,
+            "z": 0.872,
+            "leaving": false
+          },
+          {
+            "name": "C7",
+            "element": 6,
+            "charge": 0,
+            "x": -2.437,
+            "y": 0.596,
+            "z": 0.957,
+            "leaving": false
+          },
+          {
+            "name": "C8",
+            "element": 6,
+            "charge": 0,
+            "x": -3.415,
+            "y": 0.871,
+            "z": -0.16,
+            "leaving": false
+          },
+          {
+            "name": "C9",
+            "element": 6,
+            "charge": 0,
+            "x": -2.762,
+            "y": 0.94,
+            "z": -1.519,
+            "leaving": false
+          },
+          {
+            "name": "C10",
+            "element": 6,
+            "charge": 0,
+            "x": -3.686,
+            "y": 0.129,
+            "z": -2.43,
+            "leaving": false
+          },
+          {
+            "name": "O1",
+            "element": 8,
+            "charge": 0,
+            "x": -4.434,
+            "y": -0.738,
+            "z": -1.574,
+            "leaving": false
+          },
+          {
+            "name": "C11",
+            "element": 6,
+            "charge": 0,
+            "x": -4.392,
+            "y": -0.279,
+            "z": -0.22,
+            "leaving": false
+          },
+          {
+            "name": "C12",
+            "element": 6,
+            "charge": 0,
+            "x": -0.461,
+            "y": -0.648,
+            "z": 0.262,
+            "leaving": false
+          },
+          {
+            "name": "C13",
+            "element": 6,
+            "charge": 0,
+            "x": 2.169,
+            "y": -0.249,
+            "z": -0.414,
+            "leaving": false
+          },
+          {
+            "name": "C14",
+            "element": 6,
+            "charge": 0,
+            "x": 1.834,
+            "y": -1.473,
+            "z": -0.894,
+            "leaving": false
+          },
+          {
+            "name": "C15",
+            "element": 6,
+            "charge": 0,
+            "x": 2.917,
+            "y": -1.881,
+            "z": -1.7,
+            "leaving": false
+          },
+          {
+            "name": "N3",
+            "element": 7,
+            "charge": 0,
+            "x": 3.86,
+            "y": -0.893,
+            "z": -1.677,
+            "leaving": false
+          },
+          {
+            "name": "C16",
+            "element": 6,
+            "charge": 0,
+            "x": 3.415,
+            "y": 0.087,
+            "z": -0.907,
+            "leaving": false
+          },
+          {
+            "name": "N4",
+            "element": 7,
+            "charge": 0,
+            "x": 3.985,
+            "y": 1.24,
+            "z": -0.593,
+            "leaving": false
+          }
+        ],
+        "bonds": [
+          {
+            "from": 0,
+            "to": 1,
+            "order": 4
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "order": 4
+          },
+          {
+            "from": 2,
+            "to": 3,
+            "order": 1
+          },
+          {
+            "from": 3,
+            "to": 4,
+            "order": 1
+          },
+          {
+            "from": 4,
+            "to": 5,
+            "order": 1
+          },
+          {
+            "from": 5,
+            "to": 6,
+            "order": 1
+          },
+          {
+            "from": 6,
+            "to": 7,
+            "order": 1
+          },
+          {
+            "from": 7,
+            "to": 8,
+            "order": 1
+          },
+          {
+            "from": 8,
+            "to": 9,
+            "order": 1
+          },
+          {
+            "from": 9,
+            "to": 10,
+            "order": 1
+          },
+          {
+            "from": 10,
+            "to": 11,
+            "order": 1
+          },
+          {
+            "from": 11,
+            "to": 12,
+            "order": 1
+          },
+          {
+            "from": 12,
+            "to": 13,
+            "order": 1
+          },
+          {
+            "from": 13,
+            "to": 9,
+            "order": 1
+          },
+          {
+            "from": 7,
+            "to": 14,
+            "order": 1
+          },
+          {
+            "from": 14,
+            "to": 3,
+            "order": 1
+          },
+          {
+            "from": 2,
+            "to": 15,
+            "order": 4
+          },
+          {
+            "from": 15,
+            "to": 16,
+            "order": 4
+          },
+          {
+            "from": 16,
+            "to": 17,
+            "order": 4
+          },
+          {
+            "from": 17,
+            "to": 18,
+            "order": 4
+          },
+          {
+            "from": 18,
+            "to": 19,
+            "order": 4
+          },
+          {
+            "from": 19,
+            "to": 15,
+            "order": 4
+          },
+          {
+            "from": 19,
+            "to": 20,
+            "order": 4
+          },
+          {
+            "from": 20,
+            "to": 0,
+            "order": 4
+          }
+        ],
+        "smiles": "c1nc(N2CCC[C@@H](C[C@H]3CCOC3)C2)c2cc[nH]c2n1",
+        "conformerError": 0.0036257444966879136,
+        "attempts": 16,
+        "stereo": {
+          "centres": 2,
+          "doubleBonds": 0
+        }
+      }
+    },
+    {
+      "caseId": "9xhg-1il",
+      "inputSmiles": "CC(C)(C)c1ccc(cc1)C(=O)Nc2c3cc(ccc3oc2C(=O)O)Cl",
+      "canonicalSmiles": "CC(C)(C)c1ccc(C(=O)Nc2c(C(=O)O)oc3ccc(Cl)cc23)cc1",
+      "rdkitVersion": "2025.03.4",
+      "backend": "RDKit WebAssembly",
+      "component": {
+        "code": "LIG",
+        "atoms": [
+          {
+            "name": "C1",
+            "element": 6,
+            "charge": 0,
+            "x": -6.422,
+            "y": 0.515,
+            "z": 0.032,
+            "leaving": false
+          },
+          {
+            "name": "C2",
+            "element": 6,
+            "charge": 0,
+            "x": -5.558,
+            "y": -0.688,
+            "z": 0.21,
+            "leaving": false
+          },
+          {
+            "name": "C3",
+            "element": 6,
+            "charge": 0,
+            "x": -5.397,
+            "y": -1.19,
+            "z": -1.256,
+            "leaving": false
+          },
+          {
+            "name": "C4",
+            "element": 6,
+            "charge": 0,
+            "x": -6.101,
+            "y": -1.845,
+            "z": 0.926,
+            "leaving": false
+          },
+          {
+            "name": "C5",
+            "element": 6,
+            "charge": 0,
+            "x": -4.092,
+            "y": -0.414,
+            "z": 0.308,
+            "leaving": false
+          },
+          {
+            "name": "C6",
+            "element": 6,
+            "charge": 0,
+            "x": -3.734,
+            "y": 0.905,
+            "z": 0.139,
+            "leaving": false
+          },
+          {
+            "name": "C7",
+            "element": 6,
+            "charge": 0,
+            "x": -2.362,
+            "y": 1.157,
+            "z": 0.163,
+            "leaving": false
+          },
+          {
+            "name": "C8",
+            "element": 6,
+            "charge": 0,
+            "x": -1.532,
+            "y": 0.044,
+            "z": 0.358,
+            "leaving": false
+          },
+          {
+            "name": "C9",
+            "element": 6,
+            "charge": 0,
+            "x": -0.084,
+            "y": 0.361,
+            "z": 0.34,
+            "leaving": false
+          },
+          {
+            "name": "O1",
+            "element": 8,
+            "charge": 0,
+            "x": 0.491,
+            "y": 0.885,
+            "z": 1.279,
+            "leaving": false
+          },
+          {
+            "name": "N1",
+            "element": 7,
+            "charge": 0,
+            "x": 0.515,
+            "y": -0.03,
+            "z": -0.918,
+            "leaving": false
+          },
+          {
+            "name": "C10",
+            "element": 6,
+            "charge": 0,
+            "x": 1.837,
+            "y": 0.353,
+            "z": -0.675,
+            "leaving": false
+          },
+          {
+            "name": "C11",
+            "element": 6,
+            "charge": 0,
+            "x": 2.434,
+            "y": 1.542,
+            "z": -0.95,
+            "leaving": false
+          },
+          {
+            "name": "C12",
+            "element": 6,
+            "charge": 0,
+            "x": 1.785,
+            "y": 2.712,
+            "z": -1.555,
+            "leaving": false
+          },
+          {
+            "name": "O2",
+            "element": 8,
+            "charge": 0,
+            "x": 1.87,
+            "y": 3.35,
+            "z": -2.569,
+            "leaving": false
+          },
+          {
+            "name": "O3",
+            "element": 8,
+            "charge": 0,
+            "x": 0.827,
+            "y": 3.061,
+            "z": -0.536,
+            "leaving": false
+          },
+          {
+            "name": "O4",
+            "element": 8,
+            "charge": 0,
+            "x": 3.753,
+            "y": 1.541,
+            "z": -0.567,
+            "leaving": false
+          },
+          {
+            "name": "C13",
+            "element": 6,
+            "charge": 0,
+            "x": 3.966,
+            "y": 0.327,
+            "z": -0.036,
+            "leaving": false
+          },
+          {
+            "name": "C14",
+            "element": 6,
+            "charge": 0,
+            "x": 5.114,
+            "y": -0.178,
+            "z": 0.511,
+            "leaving": false
+          },
+          {
+            "name": "C15",
+            "element": 6,
+            "charge": 0,
+            "x": 5.026,
+            "y": -1.496,
+            "z": 1.012,
+            "leaving": false
+          },
+          {
+            "name": "C16",
+            "element": 6,
+            "charge": 0,
+            "x": 3.83,
+            "y": -2.197,
+            "z": 0.93,
+            "leaving": false
+          },
+          {
+            "name": "CL1",
+            "element": 17,
+            "charge": 0,
+            "x": 3.609,
+            "y": -3.832,
+            "z": 1.528,
+            "leaving": false
+          },
+          {
+            "name": "C17",
+            "element": 6,
+            "charge": 0,
+            "x": 2.644,
+            "y": -1.683,
+            "z": 0.362,
+            "leaving": false
+          },
+          {
+            "name": "C18",
+            "element": 6,
+            "charge": 0,
+            "x": 2.802,
+            "y": -0.406,
+            "z": -0.097,
+            "leaving": false
+          },
+          {
+            "name": "C19",
+            "element": 6,
+            "charge": 0,
+            "x": -1.918,
+            "y": -1.268,
+            "z": 0.543,
+            "leaving": false
+          },
+          {
+            "name": "C20",
+            "element": 6,
+            "charge": 0,
+            "x": -3.303,
+            "y": -1.525,
+            "z": 0.519,
+            "leaving": false
+          }
+        ],
+        "bonds": [
+          {
+            "from": 0,
+            "to": 1,
+            "order": 1
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "order": 1
+          },
+          {
+            "from": 1,
+            "to": 3,
+            "order": 1
+          },
+          {
+            "from": 1,
+            "to": 4,
+            "order": 1
+          },
+          {
+            "from": 4,
+            "to": 5,
+            "order": 4
+          },
+          {
+            "from": 5,
+            "to": 6,
+            "order": 4
+          },
+          {
+            "from": 6,
+            "to": 7,
+            "order": 4
+          },
+          {
+            "from": 7,
+            "to": 8,
+            "order": 1
+          },
+          {
+            "from": 8,
+            "to": 9,
+            "order": 2
+          },
+          {
+            "from": 8,
+            "to": 10,
+            "order": 1
+          },
+          {
+            "from": 10,
+            "to": 11,
+            "order": 1
+          },
+          {
+            "from": 11,
+            "to": 12,
+            "order": 4
+          },
+          {
+            "from": 12,
+            "to": 13,
+            "order": 1
+          },
+          {
+            "from": 13,
+            "to": 14,
+            "order": 2
+          },
+          {
+            "from": 13,
+            "to": 15,
+            "order": 1
+          },
+          {
+            "from": 12,
+            "to": 16,
+            "order": 4
+          },
+          {
+            "from": 16,
+            "to": 17,
+            "order": 4
+          },
+          {
+            "from": 17,
+            "to": 18,
+            "order": 4
+          },
+          {
+            "from": 18,
+            "to": 19,
+            "order": 4
+          },
+          {
+            "from": 19,
+            "to": 20,
+            "order": 4
+          },
+          {
+            "from": 20,
+            "to": 21,
+            "order": 1
+          },
+          {
+            "from": 20,
+            "to": 22,
+            "order": 4
+          },
+          {
+            "from": 22,
+            "to": 23,
+            "order": 4
+          },
+          {
+            "from": 23,
+            "to": 11,
+            "order": 4
+          },
+          {
+            "from": 23,
+            "to": 17,
+            "order": 4
+          },
+          {
+            "from": 7,
+            "to": 24,
+            "order": 4
+          },
+          {
+            "from": 24,
+            "to": 25,
+            "order": 4
+          },
+          {
+            "from": 25,
+            "to": 4,
+            "order": 4
+          }
+        ],
+        "smiles": "CC(C)(C)c1ccc(C(=O)Nc2c(C(=O)O)oc3ccc(Cl)cc23)cc1",
+        "conformerError": 0.04556519704068094,
+        "attempts": 16,
+        "stereo": {
+          "centres": 0,
+          "doubleBonds": 0
+        }
+      }
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "inputSmiles": "C#Cc1ccc(s1)S(=O)(=O)NC(=O)c2ccc(cc2Cl)Cl",
+      "canonicalSmiles": "C#Cc1ccc(S(=O)(=O)NC(=O)c2ccc(Cl)cc2Cl)s1",
+      "rdkitVersion": "2025.03.4",
+      "backend": "RDKit WebAssembly",
+      "component": {
+        "code": "LIG",
+        "atoms": [
+          {
+            "name": "C1",
+            "element": 6,
+            "charge": 0,
+            "x": -6.388,
+            "y": 1.741,
+            "z": 0.199,
+            "leaving": false
+          },
+          {
+            "name": "C2",
+            "element": 6,
+            "charge": 0,
+            "x": -5.449,
+            "y": 1.013,
+            "z": 0.212,
+            "leaving": false
+          },
+          {
+            "name": "C3",
+            "element": 6,
+            "charge": 0,
+            "x": -4.284,
+            "y": 0.112,
+            "z": 0.223,
+            "leaving": false
+          },
+          {
+            "name": "C4",
+            "element": 6,
+            "charge": 0,
+            "x": -4.274,
+            "y": -1.233,
+            "z": 0.504,
+            "leaving": false
+          },
+          {
+            "name": "C5",
+            "element": 6,
+            "charge": 0,
+            "x": -2.982,
+            "y": -1.795,
+            "z": 0.421,
+            "leaving": false
+          },
+          {
+            "name": "C6",
+            "element": 6,
+            "charge": 0,
+            "x": -2.033,
+            "y": -0.861,
+            "z": 0.078,
+            "leaving": false
+          },
+          {
+            "name": "S1",
+            "element": 16,
+            "charge": 0,
+            "x": -0.312,
+            "y": -1.133,
+            "z": -0.139,
+            "leaving": false
+          },
+          {
+            "name": "O1",
+            "element": 8,
+            "charge": 0,
+            "x": 0.105,
+            "y": -0.193,
+            "z": -1.185,
+            "leaving": false
+          },
+          {
+            "name": "O2",
+            "element": 8,
+            "charge": 0,
+            "x": -0.226,
+            "y": -2.549,
+            "z": -0.516,
+            "leaving": false
+          },
+          {
+            "name": "N1",
+            "element": 7,
+            "charge": 0,
+            "x": 0.387,
+            "y": -0.796,
+            "z": 1.412,
+            "leaving": false
+          },
+          {
+            "name": "C7",
+            "element": 6,
+            "charge": 0,
+            "x": 1.755,
+            "y": -1.22,
+            "z": 1.215,
+            "leaving": false
+          },
+          {
+            "name": "O3",
+            "element": 8,
+            "charge": 0,
+            "x": 2.164,
+            "y": -2.242,
+            "z": 1.728,
+            "leaving": false
+          },
+          {
+            "name": "C8",
+            "element": 6,
+            "charge": 0,
+            "x": 2.383,
+            "y": -0.193,
+            "z": 0.336,
+            "leaving": false
+          },
+          {
+            "name": "C9",
+            "element": 6,
+            "charge": 0,
+            "x": 2.777,
+            "y": -0.711,
+            "z": -0.917,
+            "leaving": false
+          },
+          {
+            "name": "C10",
+            "element": 6,
+            "charge": 0,
+            "x": 3.36,
+            "y": 0.172,
+            "z": -1.813,
+            "leaving": false
+          },
+          {
+            "name": "C11",
+            "element": 6,
+            "charge": 0,
+            "x": 3.554,
+            "y": 1.517,
+            "z": -1.503,
+            "leaving": false
+          },
+          {
+            "name": "CL1",
+            "element": 17,
+            "charge": 0,
+            "x": 4.288,
+            "y": 2.633,
+            "z": -2.653,
+            "leaving": false
+          },
+          {
+            "name": "C12",
+            "element": 6,
+            "charge": 0,
+            "x": 3.173,
+            "y": 2.044,
+            "z": -0.265,
+            "leaving": false
+          },
+          {
+            "name": "C13",
+            "element": 6,
+            "charge": 0,
+            "x": 2.581,
+            "y": 1.133,
+            "z": 0.639,
+            "leaving": false
+          },
+          {
+            "name": "CL2",
+            "element": 17,
+            "charge": 0,
+            "x": 2.148,
+            "y": 1.907,
+            "z": 2.156,
+            "leaving": false
+          },
+          {
+            "name": "S2",
+            "element": 16,
+            "charge": 0,
+            "x": -2.725,
+            "y": 0.655,
+            "z": -0.131,
+            "leaving": false
+          }
+        ],
+        "bonds": [
+          {
+            "from": 0,
+            "to": 1,
+            "order": 3
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "order": 1
+          },
+          {
+            "from": 2,
+            "to": 3,
+            "order": 4
+          },
+          {
+            "from": 3,
+            "to": 4,
+            "order": 4
+          },
+          {
+            "from": 4,
+            "to": 5,
+            "order": 4
+          },
+          {
+            "from": 5,
+            "to": 6,
+            "order": 1
+          },
+          {
+            "from": 6,
+            "to": 7,
+            "order": 2
+          },
+          {
+            "from": 6,
+            "to": 8,
+            "order": 2
+          },
+          {
+            "from": 6,
+            "to": 9,
+            "order": 1
+          },
+          {
+            "from": 9,
+            "to": 10,
+            "order": 1
+          },
+          {
+            "from": 10,
+            "to": 11,
+            "order": 2
+          },
+          {
+            "from": 10,
+            "to": 12,
+            "order": 1
+          },
+          {
+            "from": 12,
+            "to": 13,
+            "order": 4
+          },
+          {
+            "from": 13,
+            "to": 14,
+            "order": 4
+          },
+          {
+            "from": 14,
+            "to": 15,
+            "order": 4
+          },
+          {
+            "from": 15,
+            "to": 16,
+            "order": 1
+          },
+          {
+            "from": 15,
+            "to": 17,
+            "order": 4
+          },
+          {
+            "from": 17,
+            "to": 18,
+            "order": 4
+          },
+          {
+            "from": 18,
+            "to": 12,
+            "order": 4
+          },
+          {
+            "from": 18,
+            "to": 19,
+            "order": 1
+          },
+          {
+            "from": 5,
+            "to": 20,
+            "order": 4
+          },
+          {
+            "from": 20,
+            "to": 2,
+            "order": 4
+          }
+        ],
+        "smiles": "C#Cc1ccc(S(=O)(=O)NC(=O)c2ccc(Cl)cc2Cl)s1",
+        "conformerError": 0.011066578050530483,
+        "attempts": 16,
+        "stereo": {
+          "centres": 0,
+          "doubleBonds": 0
+        }
+      }
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "inputSmiles": "CC1=CC(=O)c2c([nH]nc2N1)C3=CNC(=O)C=C3",
+      "canonicalSmiles": "Cc1cc(=O)c2c(-c3ccc(=O)[nH]c3)[nH]nc2[nH]1",
+      "rdkitVersion": "2025.03.4",
+      "backend": "RDKit WebAssembly",
+      "component": {
+        "code": "LIG",
+        "atoms": [
+          {
+            "name": "C1",
+            "element": 6,
+            "charge": 0,
+            "x": 5.018,
+            "y": 0.011,
+            "z": -1.061,
+            "leaving": false
+          },
+          {
+            "name": "C2",
+            "element": 6,
+            "charge": 0,
+            "x": 3.571,
+            "y": -0.006,
+            "z": -0.72,
+            "leaving": false
+          },
+          {
+            "name": "C3",
+            "element": 6,
+            "charge": 0,
+            "x": 2.734,
+            "y": 1.024,
+            "z": -1.097,
+            "leaving": false
+          },
+          {
+            "name": "C4",
+            "element": 6,
+            "charge": 0,
+            "x": 1.377,
+            "y": 0.931,
+            "z": -0.722,
+            "leaving": false
+          },
+          {
+            "name": "O1",
+            "element": 8,
+            "charge": 0,
+            "x": 0.613,
+            "y": 1.838,
+            "z": -1.05,
+            "leaving": false
+          },
+          {
+            "name": "C5",
+            "element": 6,
+            "charge": 0,
+            "x": 1.079,
+            "y": -0.203,
+            "z": -0.015,
+            "leaving": false
+          },
+          {
+            "name": "C6",
+            "element": 6,
+            "charge": 0,
+            "x": -0.077,
+            "y": -0.632,
+            "z": 0.509,
+            "leaving": false
+          },
+          {
+            "name": "C7",
+            "element": 6,
+            "charge": 0,
+            "x": -1.338,
+            "y": 0.084,
+            "z": 0.402,
+            "leaving": false
+          },
+          {
+            "name": "C8",
+            "element": 6,
+            "charge": 0,
+            "x": -1.621,
+            "y": 1.424,
+            "z": 0.389,
+            "leaving": false
+          },
+          {
+            "name": "C9",
+            "element": 6,
+            "charge": 0,
+            "x": -2.999,
+            "y": 1.707,
+            "z": 0.256,
+            "leaving": false
+          },
+          {
+            "name": "C10",
+            "element": 6,
+            "charge": 0,
+            "x": -3.947,
+            "y": 0.712,
+            "z": 0.151,
+            "leaving": false
+          },
+          {
+            "name": "O2",
+            "element": 8,
+            "charge": 0,
+            "x": -5.175,
+            "y": 0.916,
+            "z": 0.027,
+            "leaving": false
+          },
+          {
+            "name": "N1",
+            "element": 7,
+            "charge": 0,
+            "x": -3.598,
+            "y": -0.582,
+            "z": 0.174,
+            "leaving": false
+          },
+          {
+            "name": "C11",
+            "element": 6,
+            "charge": 0,
+            "x": -2.341,
+            "y": -0.904,
+            "z": 0.295,
+            "leaving": false
+          },
+          {
+            "name": "N2",
+            "element": 7,
+            "charge": 0,
+            "x": 0.107,
+            "y": -1.829,
+            "z": 1.138,
+            "leaving": false
+          },
+          {
+            "name": "N3",
+            "element": 7,
+            "charge": 0,
+            "x": 1.384,
+            "y": -2.171,
+            "z": 1.017,
+            "leaving": false
+          },
+          {
+            "name": "C12",
+            "element": 6,
+            "charge": 0,
+            "x": 1.974,
+            "y": -1.198,
+            "z": 0.327,
+            "leaving": false
+          },
+          {
+            "name": "N4",
+            "element": 7,
+            "charge": 0,
+            "x": 3.24,
+            "y": -1.122,
+            "z": -0.02,
+            "leaving": false
+          }
+        ],
+        "bonds": [
+          {
+            "from": 0,
+            "to": 1,
+            "order": 1
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "order": 4
+          },
+          {
+            "from": 2,
+            "to": 3,
+            "order": 4
+          },
+          {
+            "from": 3,
+            "to": 4,
+            "order": 2
+          },
+          {
+            "from": 3,
+            "to": 5,
+            "order": 4
+          },
+          {
+            "from": 5,
+            "to": 6,
+            "order": 4
+          },
+          {
+            "from": 6,
+            "to": 7,
+            "order": 1
+          },
+          {
+            "from": 7,
+            "to": 8,
+            "order": 4
+          },
+          {
+            "from": 8,
+            "to": 9,
+            "order": 4
+          },
+          {
+            "from": 9,
+            "to": 10,
+            "order": 4
+          },
+          {
+            "from": 10,
+            "to": 11,
+            "order": 2
+          },
+          {
+            "from": 10,
+            "to": 12,
+            "order": 4
+          },
+          {
+            "from": 12,
+            "to": 13,
+            "order": 4
+          },
+          {
+            "from": 13,
+            "to": 7,
+            "order": 4
+          },
+          {
+            "from": 6,
+            "to": 14,
+            "order": 4
+          },
+          {
+            "from": 14,
+            "to": 15,
+            "order": 4
+          },
+          {
+            "from": 15,
+            "to": 16,
+            "order": 4
+          },
+          {
+            "from": 16,
+            "to": 5,
+            "order": 4
+          },
+          {
+            "from": 16,
+            "to": 17,
+            "order": 4
+          },
+          {
+            "from": 17,
+            "to": 1,
+            "order": 4
+          }
+        ],
+        "smiles": "Cc1cc(=O)c2c(-c3ccc(=O)[nH]c3)[nH]nc2[nH]1",
+        "conformerError": 0.02200462779697712,
+        "attempts": 16,
+        "stereo": {
+          "centres": 0,
+          "doubleBonds": 0
+        }
+      }
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "inputSmiles": "c1ccc2c(c1)[C@@H]3CC4(C[C@H]2CC(C3)(C4)F)NC(=O)NC5CCN(CC5)Cc6ccc(cc6)Cl",
+      "canonicalSmiles": "O=C(NC1CCN(Cc2ccc(Cl)cc2)CC1)NC12C[C@H]3CC(F)(C[C@@H](C1)c1ccccc13)C2",
+      "rdkitVersion": "2025.03.4",
+      "backend": "RDKit WebAssembly",
+      "component": {
+        "code": "LIG",
+        "atoms": [
+          {
+            "name": "O1",
+            "element": 8,
+            "charge": 0,
+            "x": 0.089,
+            "y": 2.225,
+            "z": 0.33,
+            "leaving": false
+          },
+          {
+            "name": "C1",
+            "element": 6,
+            "charge": 0,
+            "x": -0.188,
+            "y": 1.165,
+            "z": -0.241,
+            "leaving": false
+          },
+          {
+            "name": "N1",
+            "element": 7,
+            "charge": 0,
+            "x": 0.206,
+            "y": -0.146,
+            "z": 0.12,
+            "leaving": false
+          },
+          {
+            "name": "C2",
+            "element": 6,
+            "charge": 0,
+            "x": 1.371,
+            "y": -0.117,
+            "z": 0.944,
+            "leaving": false
+          },
+          {
+            "name": "C3",
+            "element": 6,
+            "charge": 0,
+            "x": 1.54,
+            "y": -1.557,
+            "z": 1.439,
+            "leaving": false
+          },
+          {
+            "name": "C4",
+            "element": 6,
+            "charge": 0,
+            "x": 2.838,
+            "y": -1.713,
+            "z": 2.215,
+            "leaving": false
+          },
+          {
+            "name": "N2",
+            "element": 7,
+            "charge": 0,
+            "x": 3.788,
+            "y": -0.858,
+            "z": 1.661,
+            "leaving": false
+          },
+          {
+            "name": "C5",
+            "element": 6,
+            "charge": 0,
+            "x": 5.135,
+            "y": -1.319,
+            "z": 1.883,
+            "leaving": false
+          },
+          {
+            "name": "C6",
+            "element": 6,
+            "charge": 0,
+            "x": 5.801,
+            "y": -0.667,
+            "z": 0.664,
+            "leaving": false
+          },
+          {
+            "name": "C7",
+            "element": 6,
+            "charge": 0,
+            "x": 6.469,
+            "y": -1.417,
+            "z": -0.282,
+            "leaving": false
+          },
+          {
+            "name": "C8",
+            "element": 6,
+            "charge": 0,
+            "x": 7.029,
+            "y": -0.716,
+            "z": -1.37,
+            "leaving": false
+          },
+          {
+            "name": "C9",
+            "element": 6,
+            "charge": 0,
+            "x": 6.869,
+            "y": 0.666,
+            "z": -1.408,
+            "leaving": false
+          },
+          {
+            "name": "CL1",
+            "element": 17,
+            "charge": 0,
+            "x": 7.549,
+            "y": 1.575,
+            "z": -2.755,
+            "leaving": false
+          },
+          {
+            "name": "C10",
+            "element": 6,
+            "charge": 0,
+            "x": 6.189,
+            "y": 1.424,
+            "z": -0.435,
+            "leaving": false
+          },
+          {
+            "name": "C11",
+            "element": 6,
+            "charge": 0,
+            "x": 5.638,
+            "y": 0.733,
+            "z": 0.635,
+            "leaving": false
+          },
+          {
+            "name": "C12",
+            "element": 6,
+            "charge": 0,
+            "x": 3.55,
+            "y": -0.892,
+            "z": 0.237,
+            "leaving": false
+          },
+          {
+            "name": "C13",
+            "element": 6,
+            "charge": 0,
+            "x": 2.525,
+            "y": 0.221,
+            "z": -0.009,
+            "leaving": false
+          },
+          {
+            "name": "N3",
+            "element": 7,
+            "charge": 0,
+            "x": -1.003,
+            "y": 1.09,
+            "z": -1.43,
+            "leaving": false
+          },
+          {
+            "name": "C14",
+            "element": 6,
+            "charge": 0,
+            "x": -2.15,
+            "y": 0.336,
+            "z": -0.981,
+            "leaving": false
+          },
+          {
+            "name": "C15",
+            "element": 6,
+            "charge": 0,
+            "x": -3.315,
+            "y": 0.638,
+            "z": -1.835,
+            "leaving": false
+          },
+          {
+            "name": "C16",
+            "element": 6,
+            "charge": 0,
+            "x": -4.56,
+            "y": -0.188,
+            "z": -1.504,
+            "leaving": false
+          },
+          {
+            "name": "C17",
+            "element": 6,
+            "charge": 0,
+            "x": -4.332,
+            "y": -1.603,
+            "z": -1.31,
+            "leaving": false
+          },
+          {
+            "name": "C18",
+            "element": 6,
+            "charge": 0,
+            "x": -3.055,
+            "y": -1.906,
+            "z": -0.554,
+            "leaving": false
+          },
+          {
+            "name": "F1",
+            "element": 9,
+            "charge": 0,
+            "x": -2.773,
+            "y": -3.232,
+            "z": -0.739,
+            "leaving": false
+          },
+          {
+            "name": "C19",
+            "element": 6,
+            "charge": 0,
+            "x": -3.361,
+            "y": -1.556,
+            "z": 0.875,
+            "leaving": false
+          },
+          {
+            "name": "C20",
+            "element": 6,
+            "charge": 0,
+            "x": -3.348,
+            "y": -0.114,
+            "z": 1.177,
+            "leaving": false
+          },
+          {
+            "name": "C21",
+            "element": 6,
+            "charge": 0,
+            "x": -2.27,
+            "y": 0.659,
+            "z": 0.47,
+            "leaving": false
+          },
+          {
+            "name": "C22",
+            "element": 6,
+            "charge": 0,
+            "x": -4.58,
+            "y": 0.665,
+            "z": 0.839,
+            "leaving": false
+          },
+          {
+            "name": "C23",
+            "element": 6,
+            "charge": 0,
+            "x": -5.147,
+            "y": 1.46,
+            "z": 1.856,
+            "leaving": false
+          },
+          {
+            "name": "C24",
+            "element": 6,
+            "charge": 0,
+            "x": -6.292,
+            "y": 2.186,
+            "z": 1.526,
+            "leaving": false
+          },
+          {
+            "name": "C25",
+            "element": 6,
+            "charge": 0,
+            "x": -6.868,
+            "y": 2.142,
+            "z": 0.266,
+            "leaving": false
+          },
+          {
+            "name": "C26",
+            "element": 6,
+            "charge": 0,
+            "x": -6.315,
+            "y": 1.352,
+            "z": -0.76,
+            "leaving": false
+          },
+          {
+            "name": "C27",
+            "element": 6,
+            "charge": 0,
+            "x": -5.157,
+            "y": 0.627,
+            "z": -0.416,
+            "leaving": false
+          },
+          {
+            "name": "C28",
+            "element": 6,
+            "charge": 0,
+            "x": -1.871,
+            "y": -1.161,
+            "z": -1.107,
+            "leaving": false
+          }
+        ],
+        "bonds": [
+          {
+            "from": 0,
+            "to": 1,
+            "order": 2
+          },
+          {
+            "from": 1,
+            "to": 2,
+            "order": 1
+          },
+          {
+            "from": 2,
+            "to": 3,
+            "order": 1
+          },
+          {
+            "from": 3,
+            "to": 4,
+            "order": 1
+          },
+          {
+            "from": 4,
+            "to": 5,
+            "order": 1
+          },
+          {
+            "from": 5,
+            "to": 6,
+            "order": 1
+          },
+          {
+            "from": 6,
+            "to": 7,
+            "order": 1
+          },
+          {
+            "from": 7,
+            "to": 8,
+            "order": 1
+          },
+          {
+            "from": 8,
+            "to": 9,
+            "order": 4
+          },
+          {
+            "from": 9,
+            "to": 10,
+            "order": 4
+          },
+          {
+            "from": 10,
+            "to": 11,
+            "order": 4
+          },
+          {
+            "from": 11,
+            "to": 12,
+            "order": 1
+          },
+          {
+            "from": 11,
+            "to": 13,
+            "order": 4
+          },
+          {
+            "from": 13,
+            "to": 14,
+            "order": 4
+          },
+          {
+            "from": 14,
+            "to": 8,
+            "order": 4
+          },
+          {
+            "from": 6,
+            "to": 15,
+            "order": 1
+          },
+          {
+            "from": 15,
+            "to": 16,
+            "order": 1
+          },
+          {
+            "from": 16,
+            "to": 3,
+            "order": 1
+          },
+          {
+            "from": 1,
+            "to": 17,
+            "order": 1
+          },
+          {
+            "from": 17,
+            "to": 18,
+            "order": 1
+          },
+          {
+            "from": 18,
+            "to": 19,
+            "order": 1
+          },
+          {
+            "from": 19,
+            "to": 20,
+            "order": 1
+          },
+          {
+            "from": 20,
+            "to": 21,
+            "order": 1
+          },
+          {
+            "from": 21,
+            "to": 22,
+            "order": 1
+          },
+          {
+            "from": 22,
+            "to": 23,
+            "order": 1
+          },
+          {
+            "from": 22,
+            "to": 24,
+            "order": 1
+          },
+          {
+            "from": 24,
+            "to": 25,
+            "order": 1
+          },
+          {
+            "from": 25,
+            "to": 26,
+            "order": 1
+          },
+          {
+            "from": 26,
+            "to": 18,
+            "order": 1
+          },
+          {
+            "from": 25,
+            "to": 27,
+            "order": 1
+          },
+          {
+            "from": 27,
+            "to": 28,
+            "order": 4
+          },
+          {
+            "from": 28,
+            "to": 29,
+            "order": 4
+          },
+          {
+            "from": 29,
+            "to": 30,
+            "order": 4
+          },
+          {
+            "from": 30,
+            "to": 31,
+            "order": 4
+          },
+          {
+            "from": 31,
+            "to": 32,
+            "order": 4
+          },
+          {
+            "from": 32,
+            "to": 27,
+            "order": 4
+          },
+          {
+            "from": 32,
+            "to": 20,
+            "order": 1
+          },
+          {
+            "from": 22,
+            "to": 33,
+            "order": 1
+          },
+          {
+            "from": 33,
+            "to": 18,
+            "order": 1
+          }
+        ],
+        "smiles": "O=C(NC1CCN(Cc2ccc(Cl)cc2)CC1)NC12C[C@H]3CC(F)(C[C@@H](C1)c1ccccc13)C2",
+        "conformerError": 0.021796763224555947,
+        "attempts": 16,
+        "stereo": {
+          "centres": 2,
+          "doubleBonds": 0
+        }
+      }
+    }
+  ],
+  "invalidRejected": true
+}

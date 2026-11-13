@@ -1,0 +1,144 @@
+{
+  "schema": "molarium.ligand-input-check.v1",
+  "sourceSha256": "1f55d937ad590e241359af26559388f21d3378f31c0ed2ab7b074d05914882b7",
+  "rdkitVersion": "2025.09.3",
+  "allChecksPass": true,
+  "records": [
+    {
+      "caseId": "9sy7-a1jrx",
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 19,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 24,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 33,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "caseId": "9syo-a1jr1",
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 22,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "caseId": "9xhg-1il",
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 26,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 18,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 34,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 6,
+            "expected": "R",
+            "observed": "S"
+          },
+          {
+            "smilesAtomIndex": 10,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "molarium.recent-pdb-harvest.v1",
+  "retrievedAt": "2026-11-13T07:43:29.251Z",
+  "from": "2026-10-16",
+  "to": "2026-11-13",
+  "source": "RCSB initial_release_date; X-ray diffraction; at least one nonpolymer entity",
+  "entries": 1137,
+  "searchQuerySha256": "60c25682ea7f4498abeae2e2abc0a1088a0a309286cebaf451c39c016d9d4693",
+  "entriesSha256": "6cb5a0205b903d342e3812a067570bfb9e6f101940e1e7ef74ba2fc3241fb268",
+  "scriptSha256": "78a2eb09fc516138781581693762f1d0619b9d289df25457004e4238d40bf2c3",
+  "metadataQuerySha256": "c3f4ab69b91792c47839af16f312806c72327ac92169d863d52c08b855ac16b5"
+}

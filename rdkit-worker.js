@@ -113,6 +113,20 @@ async function runCalculation(message) {
   const { id, job, molecule, options = {} } = message;
   const started = performance.now();
   const module = await getRDKit(id);
+  if (job === 'smiles-canonical') {
+    const smiles=String(options.smiles||'').trim();
+    if(!smiles)throw new Error('A SMILES string is required');
+    let rdMol;
+    try {
+      rdMol=module.get_mol(smiles,JSON.stringify({sanitize:true,removeHs:true}));
+      if(!rdMol)throw new Error('RDKit could not parse this SMILES string');
+      const canonicalSmiles=rdMol.get_smiles();
+      if(!canonicalSmiles)throw new Error('RDKit returned empty canonical SMILES');
+      self.postMessage({type:'result',id,job,canonicalSmiles,rdkitVersion:module.version?.()||null,
+        elapsedMs:performance.now()-started,platform:'WebAssembly',backend:'RDKit'});
+      return;
+    }finally{rdMol?.delete();}
+  }
   if (job === 'smiles-depict') {
     const smiles = String(options.smiles || '').trim();
     if (!smiles) throw new Error('A SMILES string is required');

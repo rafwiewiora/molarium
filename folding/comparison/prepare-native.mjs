@@ -3,14 +3,23 @@ import {createHash} from 'node:crypto';
 import {resolve,join,dirname} from 'node:path';
 import {pathToFileURL} from 'node:url';
 export async function writeNativeInputs(manifest,out){
+const alignment=manifest.alignment;
+if(alignment){
+  const rows=alignment.a3m.split(/^>/m).slice(1).map(b=>b.split(/\r?\n/).slice(1).join('').replace(/[a-z\s]/g,''));
+  if(!rows.length||rows[0]!==manifest.sequence||rows.some(r=>r.length!==manifest.sequence.length||!/^[A-Z-]+$/.test(r)))
+    throw Error('Provided native A3M query, row lengths or alphabet differ');
+  if(createHash('sha256').update(alignment.a3m).digest('hex')!==alignment.sha256)throw Error('Provided native A3M hash mismatch');
+}
 await mkdir(dirname(out),{recursive:true});await mkdir(out);
 await writeFile(join(out,'comparison.json'),JSON.stringify(manifest,null,2)+'\n');
+if(alignment){await mkdir(join(out,'msa'));await writeFile(join(out,'msa/colabfold_main.a3m'),alignment.a3m);}
 const queries={};for(const [i,c]of manifest.compounds.entries())queries[`compound_${String(i).padStart(3,'0')}`]={chains:[
-  {molecule_type:'protein',chain_ids:['A'],sequence:manifest.sequence},{molecule_type:'ligand',chain_ids:['B'],smiles:c.smiles}],use_msas:false};
+  {molecule_type:'protein',chain_ids:['A'],sequence:manifest.sequence,...(alignment?{main_msa_file_paths:['msa/colabfold_main.a3m']}:{})},
+  {molecule_type:'ligand',chain_ids:['B'],smiles:c.smiles}],use_msas:Boolean(alignment),...(alignment?{use_paired_msas:false}:{})};
 await writeFile(join(out,'openbind-query.json'),JSON.stringify({queries},null,2)+'\n');
 const boltz=join(out,'boltz');await mkdir(boltz,{recursive:true});
 for(const [i,c]of manifest.compounds.entries())await writeFile(join(boltz,`compound_${String(i).padStart(3,'0')}.yaml`),JSON.stringify({version:1,sequences:[
-  {protein:{id:'A',sequence:manifest.sequence,msa:'empty'}},{ligand:{id:'B',smiles:c.smiles}}]},null,2)+'\n');
+  {protein:{id:'A',sequence:manifest.sequence,msa:alignment?'msa/colabfold_main.a3m':'empty'}},{ligand:{id:'B',smiles:c.smiles}}]},null,2)+'\n');
 for(const [name,p]of Object.entries(manifest.protocols))await writeFile(join(out,`openbind-${name}.yaml`),JSON.stringify({
   data_module_args:{num_workers:0,num_workers_validation:0},
   experiment_settings:{seeds:manifest.seeds},pl_trainer_args:{devices:1,num_nodes:1,precision:p.precision},

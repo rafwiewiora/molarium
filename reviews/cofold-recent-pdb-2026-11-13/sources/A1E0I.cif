@@ -1,0 +1,145 @@
+data_A1E0I
+# 
+_chem_comp.id                                    A1E0I 
+_chem_comp.name                                  "2,4-bis(chloranyl)-~{N}-(5-ethynylthiophen-2-yl)sulfonyl-benzamide" 
+_chem_comp.type                                  non-polymer 
+_chem_comp.pdbx_type                             HETAIN 
+_chem_comp.formula                               "C13 H7 Cl2 N O3 S2" 
+_chem_comp.mon_nstd_parent_comp_id               ? 
+_chem_comp.pdbx_synonyms                         ? 
+_chem_comp.pdbx_formal_charge                    0 
+_chem_comp.pdbx_initial_date                     2025-11-11 
+_chem_comp.pdbx_modified_date                    2026-11-06 
+_chem_comp.pdbx_ambiguous_flag                   N 
+_chem_comp.pdbx_release_status                   REL 
+_chem_comp.pdbx_replaced_by                      ? 
+_chem_comp.pdbx_replaces                         ? 
+_chem_comp.formula_weight                        360.236 
+_chem_comp.one_letter_code                       ? 
+_chem_comp.three_letter_code                     A1E0I 
+_chem_comp.pdbx_model_coordinates_details        ? 
+_chem_comp.pdbx_model_coordinates_missing_flag   N 
+_chem_comp.pdbx_ideal_coordinates_details        Corina 
+_chem_comp.pdbx_ideal_coordinates_missing_flag   N 
+_chem_comp.pdbx_model_coordinates_db_code        9XJQ 
+_chem_comp.pdbx_subcomponent_list                ? 
+_chem_comp.pdbx_processing_site                  PDBC 
+_chem_comp.pdbx_pcm                              ? 
+_chem_comp.pdbx_comp_type                        ? 
+# 
+loop_
+_chem_comp_atom.comp_id 
+_chem_comp_atom.atom_id 
+_chem_comp_atom.alt_atom_id 
+_chem_comp_atom.type_symbol 
+_chem_comp_atom.charge 
+_chem_comp_atom.pdbx_align 
+_chem_comp_atom.pdbx_aromatic_flag 
+_chem_comp_atom.pdbx_leaving_atom_flag 
+_chem_comp_atom.pdbx_stereo_config 
+_chem_comp_atom.pdbx_n_terminal_atom_flag 
+_chem_comp_atom.pdbx_backbone_atom_flag 
+_chem_comp_atom.pdbx_c_terminal_atom_flag 
+_chem_comp_atom.model_Cartn_x 
+_chem_comp_atom.model_Cartn_y 
+_chem_comp_atom.model_Cartn_z 
+_chem_comp_atom.pdbx_model_Cartn_x_ideal 
+_chem_comp_atom.pdbx_model_Cartn_y_ideal 
+_chem_comp_atom.pdbx_model_Cartn_z_ideal 
+_chem_comp_atom.pdbx_component_atom_id 
+_chem_comp_atom.pdbx_component_comp_id 
+_chem_comp_atom.pdbx_ordinal 
+A1E0I N1  N1  N  0 1 N N N N N N -29.286 -5.054 3.670  -0.142 -1.729 -0.022 N1  A1E0I 1  
+A1E0I C4  C1  C  0 1 Y N N N N N -28.630 -4.455 1.120  -2.704 -0.755 -0.273 C4  A1E0I 2  
+A1E0I C5  C2  C  0 1 N N N N N N -30.593 -4.831 3.580  0.472  -0.634 0.469  C5  A1E0I 3  
+A1E0I C6  C3  C  0 1 Y N N N N N -31.471 -5.763 4.337  1.871  -0.343 0.097  C6  A1E0I 4  
+A1E0I C7  C4  C  0 1 Y N N N N N -31.250 -7.134 4.380  2.510  0.792  0.604  C7  A1E0I 5  
+A1E0I C8  C5  C  0 1 Y N N N N N -32.083 -7.961 5.113  3.818  1.058  0.251  C8  A1E0I 6  
+A1E0I C10 C6  C  0 1 Y N N N N N -33.361 -6.043 5.821  3.868  -0.926 -1.103 C10 A1E0I 7  
+A1E0I C13 C7  C  0 1 N N N N N N -30.143 -7.036 -2.922 -5.311 3.568  -0.957 C13 A1E0I 8  
+A1E0I C1  C8  C  0 1 Y N N N N N -29.334 -5.422 -1.035 -4.042 1.297  -0.817 C1  A1E0I 9  
+A1E0I C11 C9  C  0 1 Y N N N N N -32.523 -5.231 5.082  2.562  -1.203 -0.759 C11 A1E0I 10 
+A1E0I C12 C10 C  0 1 N N N N N N -29.721 -6.315 -2.082 -4.739 2.545  -0.894 C12 A1E0I 11 
+A1E0I C2  C11 C  0 1 Y N N N N N -29.057 -4.062 -1.107 -3.998 0.366  -1.796 C2  A1E0I 12 
+A1E0I C3  C12 C  0 1 Y N N N N N -28.646 -3.515 0.127  -3.262 -0.758 -1.487 C3  A1E0I 13 
+A1E0I C9  C13 C  0 1 Y N N N N N -33.127 -7.400 5.823  4.495  0.204  -0.602 C9  A1E0I 14 
+A1E0I O1  O1  O  0 1 N N N N N N -26.922 -4.828 3.001  -2.077 -3.234 -0.311 O1  A1E0I 15 
+A1E0I O2  O2  O  0 1 N N N N N N -28.329 -2.796 3.046  -1.790 -1.933 1.804  O2  A1E0I 16 
+A1E0I O3  O3  O  0 1 N N N N N N -31.044 -3.930 2.908  -0.127 0.113  1.218  O3  A1E0I 17 
+A1E0I S1  S1  S  0 1 Y N N N N N -29.083 -6.019 0.564  -3.114 0.735  0.567  S1  A1E0I 18 
+A1E0I S2  S2  S  0 1 N N N N N N -28.192 -4.197 2.792  -1.713 -2.053 0.391  S2  A1E0I 19 
+A1E0I CL1 CL1 CL 0 0 N N N N N N -29.951 -7.886 3.495  1.661  1.864  1.673  CL1 A1E0I 20 
+A1E0I CL2 CL2 CL 0 0 N N N N N N -34.164 -8.441 6.748  6.140  0.546  -1.041 CL2 A1E0I 21 
+A1E0I H1  H1  H  0 1 N N N N N N -28.958 -5.765 4.291  0.335  -2.326 -0.619 H1  A1E0I 22 
+A1E0I H2  H2  H  0 1 N N N N N N -31.920 -9.028 5.130  4.314  1.934  0.642  H2  A1E0I 23 
+A1E0I H3  H3  H  0 1 N N N N N N -34.181 -5.623 6.384  4.402  -1.588 -1.769 H3  A1E0I 24 
+A1E0I H4  H4  H  0 1 N N N N N N -30.521 -7.681 -3.674 -5.823 4.484  -1.013 H4  A1E0I 25 
+A1E0I H5  H5  H  0 1 N N N N N N -32.686 -4.163 5.081  2.075  -2.084 -1.150 H5  A1E0I 26 
+A1E0I H6  H6  H  0 1 N N N N N N -29.147 -3.483 -2.014 -4.498 0.494  -2.744 H6  A1E0I 27 
+A1E0I H7  H7  H  0 1 N N N N N N -28.377 -2.479 0.270  -3.145 -1.581 -2.177 H7  A1E0I 28 
+# 
+loop_
+_chem_comp_bond.comp_id 
+_chem_comp_bond.atom_id_1 
+_chem_comp_bond.atom_id_2 
+_chem_comp_bond.value_order 
+_chem_comp_bond.pdbx_aromatic_flag 
+_chem_comp_bond.pdbx_stereo_config 
+_chem_comp_bond.pdbx_ordinal 
+A1E0I C13 C12 TRIP N N 1  
+A1E0I C12 C1  SING N N 2  
+A1E0I C2  C1  DOUB Y N 3  
+A1E0I C2  C3  SING Y N 4  
+A1E0I C1  S1  SING Y N 5  
+A1E0I C3  C4  DOUB Y N 6  
+A1E0I S1  C4  SING Y N 7  
+A1E0I C4  S2  SING N N 8  
+A1E0I S2  O1  DOUB N N 9  
+A1E0I S2  O2  DOUB N N 10 
+A1E0I S2  N1  SING N N 11 
+A1E0I O3  C5  DOUB N N 12 
+A1E0I CL1 C7  SING N N 13 
+A1E0I C5  N1  SING N N 14 
+A1E0I C5  C6  SING N N 15 
+A1E0I C6  C7  DOUB Y N 16 
+A1E0I C6  C11 SING Y N 17 
+A1E0I C7  C8  SING Y N 18 
+A1E0I C11 C10 DOUB Y N 19 
+A1E0I C8  C9  DOUB Y N 20 
+A1E0I C10 C9  SING Y N 21 
+A1E0I C9  CL2 SING N N 22 
+A1E0I N1  H1  SING N N 23 
+A1E0I C8  H2  SING N N 24 
+A1E0I C10 H3  SING N N 25 
+A1E0I C13 H4  SING N N 26 
+A1E0I C11 H5  SING N N 27 
+A1E0I C2  H6  SING N N 28 
+A1E0I C3  H7  SING N N 29 
+# 
+loop_
+_pdbx_chem_comp_descriptor.comp_id 
+_pdbx_chem_comp_descriptor.type 
+_pdbx_chem_comp_descriptor.program 
+_pdbx_chem_comp_descriptor.program_version 
+_pdbx_chem_comp_descriptor.descriptor 
+A1E0I InChI            InChI                1.06  "InChI=1S/C13H7Cl2NO3S2/c1-2-9-4-6-12(20-9)21(18,19)16-13(17)10-5-3-8(14)7-11(10)15/h1,3-7H,(H,16,17)" 
+A1E0I InChIKey         InChI                1.06  SZGZRDDXLCSVPR-UHFFFAOYSA-N                                                                            
+A1E0I SMILES_CANONICAL CACTVS               3.385 "Clc1ccc(C(=O)N[S](=O)(=O)c2sc(cc2)C#C)c(Cl)c1"                                                        
+A1E0I SMILES           CACTVS               3.385 "Clc1ccc(C(=O)N[S](=O)(=O)c2sc(cc2)C#C)c(Cl)c1"                                                        
+A1E0I SMILES_CANONICAL "OpenEye OEToolkits" 2.0.7 "C#Cc1ccc(s1)S(=O)(=O)NC(=O)c2ccc(cc2Cl)Cl"                                                            
+A1E0I SMILES           "OpenEye OEToolkits" 2.0.7 "C#Cc1ccc(s1)S(=O)(=O)NC(=O)c2ccc(cc2Cl)Cl"                                                            
+# 
+_pdbx_chem_comp_identifier.comp_id           A1E0I 
+_pdbx_chem_comp_identifier.type              "SYSTEMATIC NAME" 
+_pdbx_chem_comp_identifier.program           "OpenEye OEToolkits" 
+_pdbx_chem_comp_identifier.program_version   2.0.7 
+_pdbx_chem_comp_identifier.identifier        "2,4-bis(chloranyl)-~{N}-(5-ethynylthiophen-2-yl)sulfonyl-benzamide" 
+# 
+loop_
+_pdbx_chem_comp_audit.comp_id 
+_pdbx_chem_comp_audit.action_type 
+_pdbx_chem_comp_audit.date 
+_pdbx_chem_comp_audit.processing_site 
+A1E0I "Create component" 2025-11-11 PDBC 
+A1E0I "Initial release"  2026-11-11 RCSB 
+# 

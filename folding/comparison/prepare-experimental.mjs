@@ -13,8 +13,11 @@ await mkdir(out);
 for(const c of panel.cases){
   const manifest={schema:'molarium.native-cofold-comparison.v1',
     source:{file:'panel.json',sha256:createHash('sha256').update(panelBytes).digest('hex'),caseId:c.id},
-    purpose:'Sequence/SMILES-only reconstruction of an experimental complex. Crystal coordinates are scoring-only.',
+    purpose:(c.a3m?'Sequence/SMILES and fixed provided-MSA reconstruction. ':'Sequence/SMILES-only reconstruction of an experimental complex. ')
+      +'Crystal coordinates are scoring-only.',
     native,sequence:c.sequence,seeds:panel.seeds,compounds:[{id:c.id,smiles:c.smiles}],protocols,
+    ...(c.a3m?{alignment:{a3m:c.a3m,sha256:createHash('sha256').update(c.a3m).digest('hex'),
+      policy:panel.msaPolicy,sourcePanelSha256:createHash('sha256').update(panelBytes).digest('hex')}}:{}),
     caveats:panel.caveats};
   await writeNativeInputs(manifest,join(out,c.id));
 }

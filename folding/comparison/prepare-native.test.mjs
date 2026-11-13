@@ -4,6 +4,25 @@ import {mkdtemp,readFile,rm,readdir} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {writeNativeInputs} from './prepare-native.mjs';
+test('provided native alignments preserve exact bytes and enable both official model inputs',async()=>{
+  const dir=await mkdtemp(join(tmpdir(),'molarium-native-msa-'));
+  const a3m='>query\nACDE\n>homologue\nACdDE\n';
+  const manifest={sequence:'ACDE',seeds:[0,1,2],compounds:[{id:'test',smiles:'CCO'}],
+    alignment:{a3m,sha256:createHash('sha256').update(a3m).digest('hex')},protocols:{standard:{steps:200,recycles:3,precision:'bf16-mixed'}}};
+  try{
+    const out=join(dir,'inputs');await writeNativeInputs(manifest,out);
+    assert.equal(await readFile(join(out,'msa/colabfold_main.a3m'),'utf8'),a3m);
+    const query=JSON.parse(await readFile(join(out,'openbind-query.json'))).queries.compound_000;
+    assert.equal(query.use_msas,true);assert.equal(query.use_paired_msas,false);
+    assert.deepEqual(query.chains[0].main_msa_file_paths,['msa/colabfold_main.a3m']);
+    const yaml=JSON.parse(await readFile(join(out,'boltz/compound_000.yaml')));
+    assert.equal(yaml.sequences[0].protein.msa,'msa/colabfold_main.a3m');
+    await assert.rejects(writeNativeInputs({...manifest,sequence:'AAAA'},join(dir,'wrong-query')),/query/);
+    await assert.rejects(writeNativeInputs({...manifest,alignment:{...manifest.alignment,sha256:'0'.repeat(64)}},join(dir,'wrong-hash')),/hash/);
+  }finally{await rm(dir,{recursive:true,force:true});}
+});
 test('native inputs retain literal seeds, official config nesting and accepted file suffixes',async()=>{
   const dir=await mkdtemp(join(tmpdir(),'molarium-native-inputs-')),out=join(dir,'inputs');
   try{

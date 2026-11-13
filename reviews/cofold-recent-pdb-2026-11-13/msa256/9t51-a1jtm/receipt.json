@@ -1,0 +1,17 @@
+{
+  "caseId": "9t51-a1jtm",
+  "sequenceSha256": "c393e7cbe3336739601923c8f981825ce5c8d190ad33ee39f5d4bc6fe7ef2c68",
+  "provider": "colabfold-mmseqs2",
+  "endpoint": "https://api.colabfold.com",
+  "mode": "env",
+  "ticketId": "UHYt7I2ddzuhX2w6WzrUctcMzs0q-BDi9XKnLA",
+  "policy": {
+    "maxRowsIncludingQuery": 256,
+    "selection": "Query first, then first unique aligned sequences from UniRef followed by environment; deduplicate ignoring lowercase insertions. No coordinate or prediction-based selection."
+  },
+  "availableRows": 1102,
+  "selectedRows": 256,
+  "file": "9t51-a1jtm/selected-256.a3m",
+  "sha256": "0cc969796591441861b47aa0e75b359955864ffcf5fb81d6ca8a3bb59c495e2b",
+  "rawArchiveSha256": "7383e74df01bd327bc5cc97669f1b738936a28a7ba4e05e9c70cd65a0415d8f4"
+}

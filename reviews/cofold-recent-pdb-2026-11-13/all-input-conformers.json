@@ -1,0 +1,2576 @@
+{
+  "purpose": "Post hoc chemistry and specified tetrahedral stereochemistry of every saved input conformer; no model inference.",
+  "records": [
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9sy7-a1jrx",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 19,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9sy7-a1jrx",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 19,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9sy7-a1jrx",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 19,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9sxf-a1jrg",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 24,
+      "rawBondFeatureDifferences": [
+        {
+          "componentAtomIndices": [
+            2,
+            7
+          ],
+          "actualFeatureBondOrder": 4,
+          "expectedFeatureBondOrder": 1
+        }
+      ],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9sxf-a1jrg",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 24,
+      "rawBondFeatureDifferences": [
+        {
+          "componentAtomIndices": [
+            2,
+            7
+          ],
+          "actualFeatureBondOrder": 4,
+          "expectedFeatureBondOrder": 1
+        }
+      ],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9sxf-a1jrg",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 24,
+      "rawBondFeatureDifferences": [
+        {
+          "componentAtomIndices": [
+            2,
+            7
+          ],
+          "actualFeatureBondOrder": 4,
+          "expectedFeatureBondOrder": 1
+        }
+      ],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9t51-a1jtm",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 33,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9t51-a1jtm",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 33,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9t51-a1jtm",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 33,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9syo-a1jr1",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 22,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9syo-a1jr1",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 22,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9syo-a1jr1",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 22,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "15ji-a1d2g",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "15ji-a1d2g",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "15ji-a1d2g",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9xhg-1il",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 26,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9xhg-1il",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 26,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9xhg-1il",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 26,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9xjq-a1e0i",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9xjq-a1e0i",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9xjq-a1e0i",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "32qy-a1keo",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 18,
+      "rawBondFeatureDifferences": [
+        {
+          "componentAtomIndices": [
+            1,
+            2
+          ],
+          "actualFeatureBondOrder": 2,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            2,
+            3
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            3,
+            5
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            9,
+            10
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            10,
+            1
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            11,
+            12
+          ],
+          "actualFeatureBondOrder": 2,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            12,
+            13
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            13,
+            14
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            14,
+            16
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            16,
+            17
+          ],
+          "actualFeatureBondOrder": 2,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            17,
+            11
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        }
+      ],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "32qy-a1keo",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 18,
+      "rawBondFeatureDifferences": [
+        {
+          "componentAtomIndices": [
+            1,
+            2
+          ],
+          "actualFeatureBondOrder": 2,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            2,
+            3
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            3,
+            5
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            9,
+            10
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            10,
+            1
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            11,
+            12
+          ],
+          "actualFeatureBondOrder": 2,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            12,
+            13
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            13,
+            14
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            14,
+            16
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            16,
+            17
+          ],
+          "actualFeatureBondOrder": 2,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            17,
+            11
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        }
+      ],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "32qy-a1keo",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 18,
+      "rawBondFeatureDifferences": [
+        {
+          "componentAtomIndices": [
+            1,
+            2
+          ],
+          "actualFeatureBondOrder": 2,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            2,
+            3
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            3,
+            5
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            9,
+            10
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            10,
+            1
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            11,
+            12
+          ],
+          "actualFeatureBondOrder": 2,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            12,
+            13
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            13,
+            14
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            14,
+            16
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            16,
+            17
+          ],
+          "actualFeatureBondOrder": 2,
+          "expectedFeatureBondOrder": 4
+        },
+        {
+          "componentAtomIndices": [
+            17,
+            11
+          ],
+          "actualFeatureBondOrder": 1,
+          "expectedFeatureBondOrder": 4
+        }
+      ],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9t3v-a1jtg",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 34,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9t3v-a1jtg",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 34,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-baseline",
+      "caseId": "9t3v-a1jtg",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 34,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9sy7-a1jrx",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 19,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9sy7-a1jrx",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 19,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9sy7-a1jrx",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 19,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9sxf-a1jrg",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 24,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9sxf-a1jrg",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 24,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9sxf-a1jrg",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 24,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9t51-a1jtm",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 33,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9t51-a1jtm",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 33,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9t51-a1jtm",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 33,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9syo-a1jr1",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 22,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9syo-a1jr1",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 22,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9syo-a1jr1",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 22,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "15ji-a1d2g",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "15ji-a1d2g",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "15ji-a1d2g",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9xhg-1il",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 26,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9xhg-1il",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 26,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9xhg-1il",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 26,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9xjq-a1e0i",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9xjq-a1e0i",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9xjq-a1e0i",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "32qy-a1keo",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 18,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "32qy-a1keo",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 18,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "32qy-a1keo",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 18,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9t3v-a1jtg",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 34,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 6,
+            "expected": "R",
+            "observed": "S"
+          },
+          {
+            "smilesAtomIndex": 10,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": true
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9t3v-a1jtg",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 34,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 6,
+            "expected": "R",
+            "observed": "S"
+          },
+          {
+            "smilesAtomIndex": 10,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": true
+      }
+    },
+    {
+      "phase": "boltz2-normalized",
+      "caseId": "9t3v-a1jtg",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 34,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 6,
+            "expected": "R",
+            "observed": "S"
+          },
+          {
+            "smilesAtomIndex": 10,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": true
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9sy7-a1jrx",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 19,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9sy7-a1jrx",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 19,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9sy7-a1jrx",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 19,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9sxf-a1jrg",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 24,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9sxf-a1jrg",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 24,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9sxf-a1jrg",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 24,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9t51-a1jtm",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 33,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9t51-a1jtm",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 33,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9t51-a1jtm",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 33,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9syo-a1jr1",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 22,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9syo-a1jr1",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 22,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9syo-a1jr1",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 22,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "15ji-a1d2g",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "15ji-a1d2g",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "15ji-a1d2g",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9xhg-1il",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 26,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9xhg-1il",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 26,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9xhg-1il",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 26,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9xjq-a1e0i",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9xjq-a1e0i",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9xjq-a1e0i",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "32qy-a1keo",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 18,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "32qy-a1keo",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 18,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "32qy-a1keo",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 18,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9t3v-a1jtg",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 34,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 6,
+            "expected": "R",
+            "observed": "S"
+          },
+          {
+            "smilesAtomIndex": 10,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": true
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9t3v-a1jtg",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 34,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 6,
+            "expected": "R",
+            "observed": "S"
+          },
+          {
+            "smilesAtomIndex": 10,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": true
+      }
+    },
+    {
+      "phase": "openbind0-normalized",
+      "caseId": "9t3v-a1jtg",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 34,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 6,
+            "expected": "R",
+            "observed": "S"
+          },
+          {
+            "smilesAtomIndex": 10,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": true
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9sy7-a1jrx",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 19,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9sy7-a1jrx",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 19,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9sy7-a1jrx",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 19,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9sxf-a1jrg",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 24,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9sxf-a1jrg",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 24,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9sxf-a1jrg",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 24,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9t51-a1jtm",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 33,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9t51-a1jtm",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 33,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9t51-a1jtm",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 33,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9syo-a1jr1",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 22,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9syo-a1jr1",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 22,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9syo-a1jr1",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 22,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "15ji-a1d2g",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "15ji-a1d2g",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "15ji-a1d2g",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9xhg-1il",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 26,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9xhg-1il",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 26,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9xhg-1il",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 26,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9xjq-a1e0i",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9xjq-a1e0i",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9xjq-a1e0i",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "32qy-a1keo",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 18,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "32qy-a1keo",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 18,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "32qy-a1keo",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 18,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9t3v-a1jtg",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 34,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 6,
+            "expected": "R",
+            "observed": "S"
+          },
+          {
+            "smilesAtomIndex": 10,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": true
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9t3v-a1jtg",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 34,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 6,
+            "expected": "R",
+            "observed": "S"
+          },
+          {
+            "smilesAtomIndex": 10,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": true
+      }
+    },
+    {
+      "phase": "boltz2-msa256",
+      "caseId": "9t3v-a1jtg",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 34,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 6,
+            "expected": "R",
+            "observed": "S"
+          },
+          {
+            "smilesAtomIndex": 10,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": true
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9sy7-a1jrx",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 19,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9sy7-a1jrx",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 19,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9sy7-a1jrx",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 19,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9sxf-a1jrg",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 24,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9sxf-a1jrg",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 24,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9sxf-a1jrg",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 24,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9t51-a1jtm",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 33,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9t51-a1jtm",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 33,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9t51-a1jtm",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 33,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9syo-a1jr1",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 22,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9syo-a1jr1",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 22,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9syo-a1jr1",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 22,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "15ji-a1d2g",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "15ji-a1d2g",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "15ji-a1d2g",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9xhg-1il",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 26,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9xhg-1il",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 26,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9xhg-1il",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 26,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9xjq-a1e0i",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9xjq-a1e0i",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9xjq-a1e0i",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 21,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "32qy-a1keo",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 18,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "32qy-a1keo",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 18,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "32qy-a1keo",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 18,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9t3v-a1jtg",
+      "seed": 0,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 34,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 6,
+            "expected": "R",
+            "observed": "S"
+          },
+          {
+            "smilesAtomIndex": 10,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": true
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9t3v-a1jtg",
+      "seed": 1,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 34,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 6,
+            "expected": "R",
+            "observed": "S"
+          },
+          {
+            "smilesAtomIndex": 10,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": true
+      }
+    },
+    {
+      "phase": "openbind0-msa256",
+      "caseId": "9t3v-a1jtg",
+      "seed": 2,
+      "sanitizedChemicalIdentityMatches": true,
+      "heavyAtoms": 34,
+      "rawBondFeatureDifferences": [],
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 6,
+            "expected": "R",
+            "observed": "S"
+          },
+          {
+            "smilesAtomIndex": 10,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": true
+      }
+    }
+  ]
+}

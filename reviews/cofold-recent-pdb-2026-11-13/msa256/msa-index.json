@@ -1,0 +1,162 @@
+{
+  "panelSha256": "7053daa0060cf8dc4836f95ac0b40e9e639398adacc63896c1f122d0ec9e7bb3",
+  "policy": {
+    "maxRowsIncludingQuery": 256,
+    "selection": "Query first, then first unique aligned sequences from UniRef followed by environment; deduplicate ignoring lowercase insertions. No coordinate or prediction-based selection."
+  },
+  "cases": [
+    {
+      "caseId": "9sy7-a1jrx",
+      "sequenceSha256": "06bad9bf7a481e6ed5b7d350d95bae9414abae6213adea40fe779867d38d736a",
+      "provider": "colabfold-mmseqs2",
+      "endpoint": "https://api.colabfold.com",
+      "mode": "env",
+      "ticketId": "hcunIxvo475BYUjozZmostguzeDH20Cq9k1uCQ",
+      "policy": {
+        "maxRowsIncludingQuery": 256,
+        "selection": "Query first, then first unique aligned sequences from UniRef followed by environment; deduplicate ignoring lowercase insertions. No coordinate or prediction-based selection."
+      },
+      "availableRows": 14989,
+      "selectedRows": 256,
+      "file": "9sy7-a1jrx/selected-256.a3m",
+      "sha256": "b93ba485e8a095c4ece53accf60b80287d2784d81602a5db730d732d6159e85d",
+      "rawArchiveSha256": "1057f1cb38dee524c9c2bcf76acbce8246d859512509497fd6fc7a790650d197"
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "sequenceSha256": "e9fe05412533442f59280e4eb92ecfdb4b291d8d9a26ae5cbf74a2a00389ea8f",
+      "provider": "colabfold-mmseqs2",
+      "endpoint": "https://api.colabfold.com",
+      "mode": "env",
+      "ticketId": "Zm9tguOtXHjY3Cj1_DqE6z64K_yTzxrBkXvtPA",
+      "policy": {
+        "maxRowsIncludingQuery": 256,
+        "selection": "Query first, then first unique aligned sequences from UniRef followed by environment; deduplicate ignoring lowercase insertions. No coordinate or prediction-based selection."
+      },
+      "availableRows": 14247,
+      "selectedRows": 256,
+      "file": "9sxf-a1jrg/selected-256.a3m",
+      "sha256": "ca6038cca7acb7328b63f698558d1e11840deec00965d4518a639c4de327552f",
+      "rawArchiveSha256": "124f7ec03a5fc3219b5c8fdfad067b388e24a6746d37bf04642776a001b3d3fe"
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "sequenceSha256": "c393e7cbe3336739601923c8f981825ce5c8d190ad33ee39f5d4bc6fe7ef2c68",
+      "provider": "colabfold-mmseqs2",
+      "endpoint": "https://api.colabfold.com",
+      "mode": "env",
+      "ticketId": "UHYt7I2ddzuhX2w6WzrUctcMzs0q-BDi9XKnLA",
+      "policy": {
+        "maxRowsIncludingQuery": 256,
+        "selection": "Query first, then first unique aligned sequences from UniRef followed by environment; deduplicate ignoring lowercase insertions. No coordinate or prediction-based selection."
+      },
+      "availableRows": 1102,
+      "selectedRows": 256,
+      "file": "9t51-a1jtm/selected-256.a3m",
+      "sha256": "0cc969796591441861b47aa0e75b359955864ffcf5fb81d6ca8a3bb59c495e2b",
+      "rawArchiveSha256": "7383e74df01bd327bc5cc97669f1b738936a28a7ba4e05e9c70cd65a0415d8f4"
+    },
+    {
+      "caseId": "9syo-a1jr1",
+      "sequenceSha256": "8877a90953adda17977771e3a7b635edf36517a4bfa61dcaaa4645d4092cb950",
+      "provider": "colabfold-mmseqs2",
+      "endpoint": "https://api.colabfold.com",
+      "mode": "env",
+      "ticketId": "C-GbVxXjOJfCtHZQs6HBT1qZayYcftA5zstNCQ",
+      "policy": {
+        "maxRowsIncludingQuery": 256,
+        "selection": "Query first, then first unique aligned sequences from UniRef followed by environment; deduplicate ignoring lowercase insertions. No coordinate or prediction-based selection."
+      },
+      "availableRows": 17693,
+      "selectedRows": 256,
+      "file": "9syo-a1jr1/selected-256.a3m",
+      "sha256": "45a4577958cbb268828a48154c62e6b533354629b38eb5f446c92865de91febf",
+      "rawArchiveSha256": "a96a0522491786813e3cd846b5b9ae5b05e7573e8ea00167eddef3e7e73af344"
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "sequenceSha256": "425bbff0dbc5913bfb1c1e4abf3d8db288e2fb56ecf89f49ce731acd9c70627f",
+      "provider": "colabfold-mmseqs2",
+      "endpoint": "https://api.colabfold.com",
+      "mode": "env",
+      "ticketId": "dIXt13A-R2bmyJc_1yEU7ft4HKY2Dcann9fu7w",
+      "policy": {
+        "maxRowsIncludingQuery": 256,
+        "selection": "Query first, then first unique aligned sequences from UniRef followed by environment; deduplicate ignoring lowercase insertions. No coordinate or prediction-based selection."
+      },
+      "availableRows": 7903,
+      "selectedRows": 256,
+      "file": "15ji-a1d2g/selected-256.a3m",
+      "sha256": "3c941dba7e7aa76fd3c2c5d8e0bedc6d3e9dd64fcdb204d01ab067277a38eb19",
+      "rawArchiveSha256": "3e9f8ca95d6c0e7a50c662f103d06fbbc3c601ed9328006123c19b09ff33c843"
+    },
+    {
+      "caseId": "9xhg-1il",
+      "sequenceSha256": "54d10829ec3b810023cda7cd2f2a697c764e4522d345f793c1d30b9f5d332627",
+      "provider": "colabfold-mmseqs2",
+      "endpoint": "https://api.colabfold.com",
+      "mode": "env",
+      "ticketId": "_acenH9AU34Fq1V65W3MgHagM1PQusrKRAWS4g",
+      "policy": {
+        "maxRowsIncludingQuery": 256,
+        "selection": "Query first, then first unique aligned sequences from UniRef followed by environment; deduplicate ignoring lowercase insertions. No coordinate or prediction-based selection."
+      },
+      "availableRows": 1026,
+      "selectedRows": 256,
+      "file": "9xhg-1il/selected-256.a3m",
+      "sha256": "e4372011a9ac020568e5e6f3b26c0184e73dbd42f8f438e7d45435b62d6d9e78",
+      "rawArchiveSha256": "6bdc75a6372f050d4a7f4f3cd28a2dcb163bb9576a3d811226789509758f00ea"
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "sequenceSha256": "4c5802bc11cc5b7f44d46300892a69aab5ae957cde8e1acb6ac683003f05de91",
+      "provider": "colabfold-mmseqs2",
+      "endpoint": "https://api.colabfold.com",
+      "mode": "env",
+      "ticketId": "rHD8LE40vUaH6cFkwJEojkLfbe0rmPgCm_rGog",
+      "policy": {
+        "maxRowsIncludingQuery": 256,
+        "selection": "Query first, then first unique aligned sequences from UniRef followed by environment; deduplicate ignoring lowercase insertions. No coordinate or prediction-based selection."
+      },
+      "availableRows": 27223,
+      "selectedRows": 256,
+      "file": "9xjq-a1e0i/selected-256.a3m",
+      "sha256": "84a658500bbdf4846955ce16cd3ed73d2c88c409b0f9e780a76d45ee61b5f0f3",
+      "rawArchiveSha256": "c939211028724ba2b162c7a5085bbcff5e762e9b88bb2b8484cc12cb6cc6fac8"
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "sequenceSha256": "0fe4129888da11743e866b8861af5a49b3e3a529a437d7e54abcac235c545d72",
+      "provider": "colabfold-mmseqs2",
+      "endpoint": "https://api.colabfold.com",
+      "mode": "env",
+      "ticketId": "WqOMMVbqOzcEjV6bEFwQSxPYa0jk6-S69NR1zw",
+      "policy": {
+        "maxRowsIncludingQuery": 256,
+        "selection": "Query first, then first unique aligned sequences from UniRef followed by environment; deduplicate ignoring lowercase insertions. No coordinate or prediction-based selection."
+      },
+      "availableRows": 5782,
+      "selectedRows": 256,
+      "file": "32qy-a1keo/selected-256.a3m",
+      "sha256": "7bd8c016923fddb4bcad9d1266ae08c030a9014dfb4d5da10703ee3bfefb66bc",
+      "rawArchiveSha256": "487aed63acaf2841e98403c5da99567e90effcec5c4ea440f444826cd7831ff7"
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "sequenceSha256": "85ba54f22cf6d891608ae59bf65c9ef6d3a642b45245b0dd6a50f21d2d766262",
+      "provider": "colabfold-mmseqs2",
+      "endpoint": "https://api.colabfold.com",
+      "mode": "env",
+      "ticketId": "DDzROqw5tb8nd_MEpycYzKkgHtZA6orAS18EqQ",
+      "policy": {
+        "maxRowsIncludingQuery": 256,
+        "selection": "Query first, then first unique aligned sequences from UniRef followed by environment; deduplicate ignoring lowercase insertions. No coordinate or prediction-based selection."
+      },
+      "availableRows": 12904,
+      "selectedRows": 256,
+      "file": "9t3v-a1jtg/selected-256.a3m",
+      "sha256": "ab624925e18bc32fbde406c1b980943dd4722846064fd982efc92eb16e694ac5",
+      "rawArchiveSha256": "977a8c34406e21ef214c643d4ffdbce75de26b5f76d85985d6e745a9c1cb2526"
+    }
+  ]
+}

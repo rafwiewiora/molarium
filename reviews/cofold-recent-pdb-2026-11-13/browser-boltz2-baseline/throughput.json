@@ -1,0 +1,2004 @@
+{
+  "schema": "molarium.library-throughput.v1",
+  "date": "2026-11-13T07:59:04.168Z",
+  "cases": [
+    {
+      "name": "9SY7 · Phosphopantetheine adenylyltransferase · A1JRX",
+      "caseId": "9sy7-a1jrx",
+      "request": {
+        "schema": "molarium.fold-request.v2",
+        "sequence": "SMTGAVCPGSFDPVTLGHLDVFERAAAQFDEVIVAVLINPNKAGMFTVDERIEMIRESTADLPNLRVESGQGLLVDFVRERGLNAIVKGLRTGTDFEYELQMAQMNKHIAGVDTFFVATAPAYSFVSSSLAKEVATYGGDVSALLPASVHQRLLGKLRGQAQ",
+        "model": "localfold-boltz2",
+        "msaMode": "single",
+        "msaEndpoint": "https://api.colabfold.com",
+        "a3m": null,
+        "recycles": 2,
+        "steps": 25,
+        "seed": 0,
+        "ligand": null
+      },
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        }
+      },
+      "poses": [
+        {
+          "id": "9sy7-a1jrx::0::attempt-1",
+          "seed": 0,
+          "smiles": "Cc1cn(c2c1cccc2)CCC(=O)NS(=O)(=O)C",
+          "wallMs": 23705.875,
+          "inferenceMs": 11524.174999952316,
+          "totalMs": 23704.399999976158,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 919704416,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "44c6a94c8e4915dba2b0c8bce7a53f178d21d824ec31fd64a23f522959b3cb3a",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "SMTGAVCPGSFDPVTLGHLDVFERAAAQFDEVIVAVLINPNKAGMFTVDERIEMIRESTADLPNLRVESGQGLLVDFVRERGLNAIVKGLRTGTDFEYELQMAQMNKHIAGVDTFFVATAPAYSFVSSSLAKEVATYGGDVSALLPASVHQRLLGKLRGQAQ",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 0,
+              "ligand": {
+                "type": "smiles",
+                "value": "Cc1cn(c2c1cccc2)CCC(=O)NS(=O)(=O)C"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "db367f0adc50ca97ed541bbb37e78c2eda036918d3768ee405bea59390cd402f",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "44c6a94c8e4915dba2b0c8bce7a53f178d21d824ec31fd64a23f522959b3cb3a",
+            "createdAt": "2026-11-13T07:59:28.088Z"
+          }
+        },
+        {
+          "id": "9sy7-a1jrx::1::attempt-1",
+          "seed": 1,
+          "smiles": "Cc1cn(c2c1cccc2)CCC(=O)NS(=O)(=O)C",
+          "wallMs": 10260.550000071526,
+          "inferenceMs": 10197.740000009537,
+          "totalMs": 10259.389999985695,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 934981408,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "98ad7b17881897e1cb8ade62d55174d3f6c1ad507cec6b570b8c92346c0b2f3e",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "SMTGAVCPGSFDPVTLGHLDVFERAAAQFDEVIVAVLINPNKAGMFTVDERIEMIRESTADLPNLRVESGQGLLVDFVRERGLNAIVKGLRTGTDFEYELQMAQMNKHIAGVDTFFVATAPAYSFVSSSLAKEVATYGGDVSALLPASVHQRLLGKLRGQAQ",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 1,
+              "ligand": {
+                "type": "smiles",
+                "value": "Cc1cn(c2c1cccc2)CCC(=O)NS(=O)(=O)C"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "30c75e85db4e890a4cc1073fe2d2ac9428a31050f8dea0ab84e2cb0cc0c03ac0",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "98ad7b17881897e1cb8ade62d55174d3f6c1ad507cec6b570b8c92346c0b2f3e",
+            "createdAt": "2026-11-13T07:59:38.357Z"
+          }
+        },
+        {
+          "id": "9sy7-a1jrx::2::attempt-1",
+          "seed": 2,
+          "smiles": "Cc1cn(c2c1cccc2)CCC(=O)NS(=O)(=O)C",
+          "wallMs": 10293.070000052452,
+          "inferenceMs": 10221.435000061989,
+          "totalMs": 10292.41000008583,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 934981408,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "c8390f9f81ed9848b1f407b6afb9b1894f317b0817ad41a7d0df553fdccf206f",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "SMTGAVCPGSFDPVTLGHLDVFERAAAQFDEVIVAVLINPNKAGMFTVDERIEMIRESTADLPNLRVESGQGLLVDFVRERGLNAIVKGLRTGTDFEYELQMAQMNKHIAGVDTFFVATAPAYSFVSSSLAKEVATYGGDVSALLPASVHQRLLGKLRGQAQ",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 2,
+              "ligand": {
+                "type": "smiles",
+                "value": "Cc1cn(c2c1cccc2)CCC(=O)NS(=O)(=O)C"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "9a888ec788484424e429934f6a3103031bf59cecc6f27e8aa2e70b9d60fd41aa",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "c8390f9f81ed9848b1f407b6afb9b1894f317b0817ad41a7d0df553fdccf206f",
+            "createdAt": "2026-11-13T07:59:48.659Z"
+          }
+        }
+      ],
+      "inferenceMs": [
+        11524.174999952316,
+        10197.740000009537,
+        10221.435000061989
+      ],
+      "wallMs": [
+        23705.875,
+        10260.550000071526,
+        10293.070000052452
+      ],
+      "sessions": [
+        {
+          "startedAt": "2026-11-13T07:59:04.382Z",
+          "finishedAt": "2026-11-13T07:59:48.665Z",
+          "elapsedMs": 44283.33500003815
+        }
+      ],
+      "warmMeanMs": 10276.810000061989,
+      "firstPoseMs": 23705.875,
+      "status": "complete · 3/3 poses saved · 0 failed\nThis session 44.3 s · first pose 23.7 s\nWarm mean 10.3 s/pose · remaining 0.0 s"
+    },
+    {
+      "name": "9SXF · Mast/stem cell growth factor receptor Kit · A1JRG",
+      "caseId": "9sxf-a1jrg",
+      "request": {
+        "schema": "molarium.fold-request.v2",
+        "sequence": "GSMPMYEVQWKVVEESNGNNYSYIDPTQLPYDHKWEFPRNRLSFGKTLGAGAFGKVVEATAQGLIKSDAAMTVAVKMLKPSAHSTEREALMSELKVLSYLGNHENIVNLLGACTHGGPTLVITEYCCYGDLLNFLRRKRDEFVPYKVAPEDLYKDFLTLEHLLSFSYQVAKGMAFLASKNCIHRDLAARNILLTHGNITKICDFGLARDIKNDSNYVDKGNARLPVKWMAPESIFNSVYTFESDVWSYGIFLWELFSLGSSPYPGMPVDSKFYKMIKEGFRMSSPEYAPAEMYDIMKTCWDADPDKRPTFKQIVQDIEKQISESTNH",
+        "model": "localfold-boltz2",
+        "msaMode": "single",
+        "msaEndpoint": "https://api.colabfold.com",
+        "a3m": null,
+        "recycles": 2,
+        "steps": 25,
+        "seed": 0,
+        "ligand": null
+      },
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        }
+      },
+      "poses": [
+        {
+          "id": "9sxf-a1jrg::0::attempt-1",
+          "seed": 0,
+          "smiles": "c1cc(cc(c1)F)c2cc(c(s2)C(=O)N[C@@H]3CCNC3)NC(=O)N",
+          "wallMs": 42969.800000071526,
+          "inferenceMs": 42879.30500006676,
+          "totalMs": 42968.91000008583,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "b247827ff9c46008cb7df02e269f422fabf3417fadd048182491fdd5ac5d016e",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "GSMPMYEVQWKVVEESNGNNYSYIDPTQLPYDHKWEFPRNRLSFGKTLGAGAFGKVVEATAQGLIKSDAAMTVAVKMLKPSAHSTEREALMSELKVLSYLGNHENIVNLLGACTHGGPTLVITEYCCYGDLLNFLRRKRDEFVPYKVAPEDLYKDFLTLEHLLSFSYQVAKGMAFLASKNCIHRDLAARNILLTHGNITKICDFGLARDIKNDSNYVDKGNARLPVKWMAPESIFNSVYTFESDVWSYGIFLWELFSLGSSPYPGMPVDSKFYKMIKEGFRMSSPEYAPAEMYDIMKTCWDADPDKRPTFKQIVQDIEKQISESTNH",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 0,
+              "ligand": {
+                "type": "smiles",
+                "value": "c1cc(cc(c1)F)c2cc(c(s2)C(=O)N[C@@H]3CCNC3)NC(=O)N"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "770c82e9011cb30e0e9414c2174254dfddb155a087e19dba10e2142f51e8a650",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "b247827ff9c46008cb7df02e269f422fabf3417fadd048182491fdd5ac5d016e",
+            "createdAt": "2026-11-13T08:00:31.799Z"
+          }
+        },
+        {
+          "id": "9sxf-a1jrg::1::attempt-1",
+          "seed": 1,
+          "smiles": "c1cc(cc(c1)F)c2cc(c(s2)C(=O)N[C@@H]3CCNC3)NC(=O)N",
+          "wallMs": 42373.20999991894,
+          "inferenceMs": 42284.63499999046,
+          "totalMs": 42372.24000000954,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "7f87c83190cecdce6c154174f21f9afaa373afc091f8bf0211ab0c933c974793",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "GSMPMYEVQWKVVEESNGNNYSYIDPTQLPYDHKWEFPRNRLSFGKTLGAGAFGKVVEATAQGLIKSDAAMTVAVKMLKPSAHSTEREALMSELKVLSYLGNHENIVNLLGACTHGGPTLVITEYCCYGDLLNFLRRKRDEFVPYKVAPEDLYKDFLTLEHLLSFSYQVAKGMAFLASKNCIHRDLAARNILLTHGNITKICDFGLARDIKNDSNYVDKGNARLPVKWMAPESIFNSVYTFESDVWSYGIFLWELFSLGSSPYPGMPVDSKFYKMIKEGFRMSSPEYAPAEMYDIMKTCWDADPDKRPTFKQIVQDIEKQISESTNH",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 1,
+              "ligand": {
+                "type": "smiles",
+                "value": "c1cc(cc(c1)F)c2cc(c(s2)C(=O)N[C@@H]3CCNC3)NC(=O)N"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "e7e7644dcd9040ca90a32cc90f8e38d700326c4b7a04cfb3751cd785cb949be7",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "7f87c83190cecdce6c154174f21f9afaa373afc091f8bf0211ab0c933c974793",
+            "createdAt": "2026-11-13T08:01:14.180Z"
+          }
+        },
+        {
+          "id": "9sxf-a1jrg::2::attempt-1",
+          "seed": 2,
+          "smiles": "c1cc(cc(c1)F)c2cc(c(s2)C(=O)N[C@@H]3CCNC3)NC(=O)N",
+          "wallMs": 42463.75999999046,
+          "inferenceMs": 42380.15999996662,
+          "totalMs": 42462.87000000477,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "dbeac9191ad0ccda580022b11a6c9e4b935f93e0624eeb32aec44810bb85908e",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "GSMPMYEVQWKVVEESNGNNYSYIDPTQLPYDHKWEFPRNRLSFGKTLGAGAFGKVVEATAQGLIKSDAAMTVAVKMLKPSAHSTEREALMSELKVLSYLGNHENIVNLLGACTHGGPTLVITEYCCYGDLLNFLRRKRDEFVPYKVAPEDLYKDFLTLEHLLSFSYQVAKGMAFLASKNCIHRDLAARNILLTHGNITKICDFGLARDIKNDSNYVDKGNARLPVKWMAPESIFNSVYTFESDVWSYGIFLWELFSLGSSPYPGMPVDSKFYKMIKEGFRMSSPEYAPAEMYDIMKTCWDADPDKRPTFKQIVQDIEKQISESTNH",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 2,
+              "ligand": {
+                "type": "smiles",
+                "value": "c1cc(cc(c1)F)c2cc(c(s2)C(=O)N[C@@H]3CCNC3)NC(=O)N"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "4152d8222ea3c98f92b3eef2930e508e445fd6b03e0bfae5be4e885558c19ac4",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "dbeac9191ad0ccda580022b11a6c9e4b935f93e0624eeb32aec44810bb85908e",
+            "createdAt": "2026-11-13T08:01:56.654Z"
+          }
+        }
+      ],
+      "inferenceMs": [
+        42879.30500006676,
+        42284.63499999046,
+        42380.15999996662
+      ],
+      "wallMs": [
+        42969.800000071526,
+        42373.20999991894,
+        42463.75999999046
+      ],
+      "sessions": [
+        {
+          "startedAt": "2026-11-13T07:59:48.829Z",
+          "finishedAt": "2026-11-13T08:01:56.663Z",
+          "elapsedMs": 127834.60000002384
+        }
+      ],
+      "warmMeanMs": 42418.4849999547,
+      "firstPoseMs": 42969.800000071526,
+      "status": "complete · 3/3 poses saved · 0 failed\nThis session 2m 7s · first pose 43.0 s\nWarm mean 42.4 s/pose · remaining 0.0 s"
+    },
+    {
+      "name": "9T51 · StAR-related lipid transfer protein 4 · A1JTM",
+      "caseId": "9t51-a1jtm",
+      "request": {
+        "schema": "molarium.fold-request.v2",
+        "sequence": "GSGLSDVASFATKLKNTLIQYHSIEEDKWRVAKKTKDVTVWRKPSEEFNGYLYKAQGVIDDLVYSIIDHIRPGPSRLDWDSLMTSLDILENFEENCCVMRYTTAGQLWNIISPREFVDFSYTVGYKEGLLSCGISLDWDEKRPEFVRGYNHPCGWFCVPLKDNPNQSLLTGYIQTDLRGMIPQSAVDTAMASTLTNFYGDLRKAL",
+        "model": "localfold-boltz2",
+        "msaMode": "single",
+        "msaEndpoint": "https://api.colabfold.com",
+        "a3m": null,
+        "recycles": 2,
+        "steps": 25,
+        "seed": 0,
+        "ligand": null
+      },
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        }
+      },
+      "poses": [
+        {
+          "id": "9t51-a1jtm::0::attempt-1",
+          "seed": 0,
+          "smiles": "C[C@]12CC[C@@H](C[C@@H]1CCc3c2nc4cccc(c4c3)C5CCN(CC5)C(=O)OC(C)(C)C)O",
+          "wallMs": 17804.305000066757,
+          "inferenceMs": 17675.97000002861,
+          "totalMs": 17803.580000042915,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "167af0b9381375fed926d7eafbdab874cb0a43dac1e6eb086e271233b0211d15",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "GSGLSDVASFATKLKNTLIQYHSIEEDKWRVAKKTKDVTVWRKPSEEFNGYLYKAQGVIDDLVYSIIDHIRPGPSRLDWDSLMTSLDILENFEENCCVMRYTTAGQLWNIISPREFVDFSYTVGYKEGLLSCGISLDWDEKRPEFVRGYNHPCGWFCVPLKDNPNQSLLTGYIQTDLRGMIPQSAVDTAMASTLTNFYGDLRKAL",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 0,
+              "ligand": {
+                "type": "smiles",
+                "value": "C[C@]12CC[C@@H](C[C@@H]1CCc3c2nc4cccc(c4c3)C5CCN(CC5)C(=O)OC(C)(C)C)O"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "5edb0f02ccde81c4ca3a2ed07b7edf5321e96756000817dc3b7d82931347504b",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "167af0b9381375fed926d7eafbdab874cb0a43dac1e6eb086e271233b0211d15",
+            "createdAt": "2026-11-13T08:02:14.565Z"
+          }
+        },
+        {
+          "id": "9t51-a1jtm::1::attempt-1",
+          "seed": 1,
+          "smiles": "C[C@]12CC[C@@H](C[C@@H]1CCc3c2nc4cccc(c4c3)C5CCN(CC5)C(=O)OC(C)(C)C)O",
+          "wallMs": 17055.72000002861,
+          "inferenceMs": 16926.605000019073,
+          "totalMs": 17054.990000009537,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "efbe81adeb553871ff4fe7005afffa44258e270ff299e4170983fa4ffedc189e",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "GSGLSDVASFATKLKNTLIQYHSIEEDKWRVAKKTKDVTVWRKPSEEFNGYLYKAQGVIDDLVYSIIDHIRPGPSRLDWDSLMTSLDILENFEENCCVMRYTTAGQLWNIISPREFVDFSYTVGYKEGLLSCGISLDWDEKRPEFVRGYNHPCGWFCVPLKDNPNQSLLTGYIQTDLRGMIPQSAVDTAMASTLTNFYGDLRKAL",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 1,
+              "ligand": {
+                "type": "smiles",
+                "value": "C[C@]12CC[C@@H](C[C@@H]1CCc3c2nc4cccc(c4c3)C5CCN(CC5)C(=O)OC(C)(C)C)O"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "3fcf7e178ae1209a9c4a94f33e655d4770fb41de4ebdfda7b41d4fb5bf6b343d",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "efbe81adeb553871ff4fe7005afffa44258e270ff299e4170983fa4ffedc189e",
+            "createdAt": "2026-11-13T08:02:31.628Z"
+          }
+        },
+        {
+          "id": "9t51-a1jtm::2::attempt-1",
+          "seed": 2,
+          "smiles": "C[C@]12CC[C@@H](C[C@@H]1CCc3c2nc4cccc(c4c3)C5CCN(CC5)C(=O)OC(C)(C)C)O",
+          "wallMs": 17121.795000076294,
+          "inferenceMs": 16993.519999980927,
+          "totalMs": 17120.86999988556,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "01edf708df79571bcc1d585fb481d9dd0d474798786a7d6fb803fa385612a01b",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "GSGLSDVASFATKLKNTLIQYHSIEEDKWRVAKKTKDVTVWRKPSEEFNGYLYKAQGVIDDLVYSIIDHIRPGPSRLDWDSLMTSLDILENFEENCCVMRYTTAGQLWNIISPREFVDFSYTVGYKEGLLSCGISLDWDEKRPEFVRGYNHPCGWFCVPLKDNPNQSLLTGYIQTDLRGMIPQSAVDTAMASTLTNFYGDLRKAL",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 2,
+              "ligand": {
+                "type": "smiles",
+                "value": "C[C@]12CC[C@@H](C[C@@H]1CCc3c2nc4cccc(c4c3)C5CCN(CC5)C(=O)OC(C)(C)C)O"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "9c6fc831532d0013683c916736ee88c1e1c272038ddd606bbe7542d080c1c462",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "01edf708df79571bcc1d585fb481d9dd0d474798786a7d6fb803fa385612a01b",
+            "createdAt": "2026-11-13T08:02:48.772Z"
+          }
+        }
+      ],
+      "inferenceMs": [
+        17675.97000002861,
+        16926.605000019073,
+        16993.519999980927
+      ],
+      "wallMs": [
+        17804.305000066757,
+        17055.72000002861,
+        17121.795000076294
+      ],
+      "sessions": [
+        {
+          "startedAt": "2026-11-13T08:01:56.760Z",
+          "finishedAt": "2026-11-13T08:02:48.790Z",
+          "elapsedMs": 52029.50999999046
+        }
+      ],
+      "warmMeanMs": 17088.757500052452,
+      "firstPoseMs": 17804.305000066757,
+      "status": "complete · 3/3 poses saved · 0 failed\nThis session 52.0 s · first pose 17.8 s\nWarm mean 17.1 s/pose · remaining 0.0 s"
+    },
+    {
+      "name": "9SYO · Heat shock protein HSP 90-alpha · A1JR1",
+      "caseId": "9syo-a1jr1",
+      "request": {
+        "schema": "molarium.fold-request.v2",
+        "sequence": "DQPMEEEEVETFAFQAEIAQLMSLIINTFYSNKEIFLRELISNSSDALDKIRYESLTDPSKLDSGKELHINLIPNKQDRTLTIVDTGIGMTKADLINNLGTIAKSGTKAFMEALQAGADISMIGQFGVGFYSAYLVAEKVTVITKHNDDEQYAWESSAGGSFTVRTDTGEPMGRGTKVILHLKEDQTEYLEERRIKEIVKKHSQFIGYPITLFVEKERDKEVSDDEAE",
+        "model": "localfold-boltz2",
+        "msaMode": "single",
+        "msaEndpoint": "https://api.colabfold.com",
+        "a3m": null,
+        "recycles": 2,
+        "steps": 25,
+        "seed": 0,
+        "ligand": null
+      },
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        }
+      },
+      "poses": [
+        {
+          "id": "9syo-a1jr1::0::attempt-1",
+          "seed": 0,
+          "smiles": "c1ccc2c(c1)cc([nH]2)SCC(=O)Nc3cc(cc(c3)O)O",
+          "wallMs": 19055.674999952316,
+          "inferenceMs": 18976.12000000477,
+          "totalMs": 19054.889999985695,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "199fa23b04eb28165f7354f285ec1478f8a3d49533f4618dc5513bf6b1f66997",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "DQPMEEEEVETFAFQAEIAQLMSLIINTFYSNKEIFLRELISNSSDALDKIRYESLTDPSKLDSGKELHINLIPNKQDRTLTIVDTGIGMTKADLINNLGTIAKSGTKAFMEALQAGADISMIGQFGVGFYSAYLVAEKVTVITKHNDDEQYAWESSAGGSFTVRTDTGEPMGRGTKVILHLKEDQTEYLEERRIKEIVKKHSQFIGYPITLFVEKERDKEVSDDEAE",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 0,
+              "ligand": {
+                "type": "smiles",
+                "value": "c1ccc2c(c1)cc([nH]2)SCC(=O)Nc3cc(cc(c3)O)O"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "a332395a8d691ef43fd4f6cbfbebcd8ac263e01de5a4c22b966032d74dcb11ed",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "199fa23b04eb28165f7354f285ec1478f8a3d49533f4618dc5513bf6b1f66997",
+            "createdAt": "2026-11-13T08:03:07.923Z"
+          }
+        },
+        {
+          "id": "9syo-a1jr1::1::attempt-1",
+          "seed": 1,
+          "smiles": "c1ccc2c(c1)cc([nH]2)SCC(=O)Nc3cc(cc(c3)O)O",
+          "wallMs": 18484.375,
+          "inferenceMs": 18405.860000014305,
+          "totalMs": 18483.24500000477,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "6ee04047991fbdcad848d29a6031953bfef8f6b59dcb20eb62d1f7f42c7a497a",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "DQPMEEEEVETFAFQAEIAQLMSLIINTFYSNKEIFLRELISNSSDALDKIRYESLTDPSKLDSGKELHINLIPNKQDRTLTIVDTGIGMTKADLINNLGTIAKSGTKAFMEALQAGADISMIGQFGVGFYSAYLVAEKVTVITKHNDDEQYAWESSAGGSFTVRTDTGEPMGRGTKVILHLKEDQTEYLEERRIKEIVKKHSQFIGYPITLFVEKERDKEVSDDEAE",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 1,
+              "ligand": {
+                "type": "smiles",
+                "value": "c1ccc2c(c1)cc([nH]2)SCC(=O)Nc3cc(cc(c3)O)O"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "f01c27e835b16690a10f5be8547c60a65c9d9beea2cc96b618a0154154828cec",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "6ee04047991fbdcad848d29a6031953bfef8f6b59dcb20eb62d1f7f42c7a497a",
+            "createdAt": "2026-11-13T08:03:26.428Z"
+          }
+        },
+        {
+          "id": "9syo-a1jr1::2::attempt-1",
+          "seed": 2,
+          "smiles": "c1ccc2c(c1)cc([nH]2)SCC(=O)Nc3cc(cc(c3)O)O",
+          "wallMs": 18386.644999980927,
+          "inferenceMs": 18299.884999990463,
+          "totalMs": 18385.860000014305,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "6bb61c681347ae72f8afe5bc1c5b35dbfb465e1b10877b3f4448970fb2252bbb",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "DQPMEEEEVETFAFQAEIAQLMSLIINTFYSNKEIFLRELISNSSDALDKIRYESLTDPSKLDSGKELHINLIPNKQDRTLTIVDTGIGMTKADLINNLGTIAKSGTKAFMEALQAGADISMIGQFGVGFYSAYLVAEKVTVITKHNDDEQYAWESSAGGSFTVRTDTGEPMGRGTKVILHLKEDQTEYLEERRIKEIVKKHSQFIGYPITLFVEKERDKEVSDDEAE",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 2,
+              "ligand": {
+                "type": "smiles",
+                "value": "c1ccc2c(c1)cc([nH]2)SCC(=O)Nc3cc(cc(c3)O)O"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "a7c71cdcfba71c4b483754e1617105cc60236d0949b63715643e8f72fa4475a1",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "6bb61c681347ae72f8afe5bc1c5b35dbfb465e1b10877b3f4448970fb2252bbb",
+            "createdAt": "2026-11-13T08:03:44.826Z"
+          }
+        }
+      ],
+      "inferenceMs": [
+        18976.12000000477,
+        18405.860000014305,
+        18299.884999990463
+      ],
+      "wallMs": [
+        19055.674999952316,
+        18484.375,
+        18386.644999980927
+      ],
+      "sessions": [
+        {
+          "startedAt": "2026-11-13T08:02:48.867Z",
+          "finishedAt": "2026-11-13T08:03:44.839Z",
+          "elapsedMs": 55972.15999996662
+        }
+      ],
+      "warmMeanMs": 18435.509999990463,
+      "firstPoseMs": 19055.674999952316,
+      "status": "complete · 3/3 poses saved · 0 failed\nThis session 56.0 s · first pose 19.1 s\nWarm mean 18.4 s/pose · remaining 0.0 s"
+    },
+    {
+      "name": "15JI · Non-structural protein 3 · A1D2G",
+      "caseId": "15ji-a1d2g",
+      "request": {
+        "schema": "molarium.fold-request.v2",
+        "sequence": "SMVNSFSGYLKLTDNVYIKNADIVEEAKKVKPTVVVNAANVYLKHGGGVAGALNKATNNAMQVESDDYIATNGPLKVGGSCVLSGHNLAKHCLHVVGPNVNKGEDIQLLKSAYENFNQHEVLLAPLLSAGIFGADPIHSLRVCVDTVRTNVYLAVFDKNLYDKLVSSFL",
+        "model": "localfold-boltz2",
+        "msaMode": "single",
+        "msaEndpoint": "https://api.colabfold.com",
+        "a3m": null,
+        "recycles": 2,
+        "steps": 25,
+        "seed": 0,
+        "ligand": null
+      },
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        }
+      },
+      "poses": [
+        {
+          "id": "15ji-a1d2g::0::attempt-1",
+          "seed": 0,
+          "smiles": "c1c[nH]c2c1c(ncn2)N3CCC[C@H](C3)C[C@H]4CCOC4",
+          "wallMs": 11559.379999995232,
+          "inferenceMs": 11490.544999957085,
+          "totalMs": 11558.669999957085,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "cc612af71717d1ffd36994477ae48b36058ab4e0ef25aa84da4344dd16900a6a",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "SMVNSFSGYLKLTDNVYIKNADIVEEAKKVKPTVVVNAANVYLKHGGGVAGALNKATNNAMQVESDDYIATNGPLKVGGSCVLSGHNLAKHCLHVVGPNVNKGEDIQLLKSAYENFNQHEVLLAPLLSAGIFGADPIHSLRVCVDTVRTNVYLAVFDKNLYDKLVSSFL",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 0,
+              "ligand": {
+                "type": "smiles",
+                "value": "c1c[nH]c2c1c(ncn2)N3CCC[C@H](C3)C[C@H]4CCOC4"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "c271f3bb71248eddda3a448c5ebde05c6d1457b7a5f55cbdca9bebae91bd48d1",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "cc612af71717d1ffd36994477ae48b36058ab4e0ef25aa84da4344dd16900a6a",
+            "createdAt": "2026-11-13T08:03:56.553Z"
+          }
+        },
+        {
+          "id": "15ji-a1d2g::1::attempt-1",
+          "seed": 1,
+          "smiles": "c1c[nH]c2c1c(ncn2)N3CCC[C@H](C3)C[C@H]4CCOC4",
+          "wallMs": 10870.81500005722,
+          "inferenceMs": 10802.474999904633,
+          "totalMs": 10870.115000009537,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "9b77c88cb1ba4b38fb45def24a744b27cd7ab9da139d67679e647c0a40bfb717",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "SMVNSFSGYLKLTDNVYIKNADIVEEAKKVKPTVVVNAANVYLKHGGGVAGALNKATNNAMQVESDDYIATNGPLKVGGSCVLSGHNLAKHCLHVVGPNVNKGEDIQLLKSAYENFNQHEVLLAPLLSAGIFGADPIHSLRVCVDTVRTNVYLAVFDKNLYDKLVSSFL",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 1,
+              "ligand": {
+                "type": "smiles",
+                "value": "c1c[nH]c2c1c(ncn2)N3CCC[C@H](C3)C[C@H]4CCOC4"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "874bfb7405d3a9d12655b6bc69693b22425b6d626fbebf2a830032eae7c8f157",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "9b77c88cb1ba4b38fb45def24a744b27cd7ab9da139d67679e647c0a40bfb717",
+            "createdAt": "2026-11-13T08:04:07.434Z"
+          }
+        },
+        {
+          "id": "15ji-a1d2g::2::attempt-1",
+          "seed": 2,
+          "smiles": "c1c[nH]c2c1c(ncn2)N3CCC[C@H](C3)C[C@H]4CCOC4",
+          "wallMs": 10880.365000009537,
+          "inferenceMs": 10811.049999952316,
+          "totalMs": 10879.555000066757,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "9cf44da3281f7700b83f0b1f75c81c7f1b64c085a9f30399baf8a340710ed691",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "SMVNSFSGYLKLTDNVYIKNADIVEEAKKVKPTVVVNAANVYLKHGGGVAGALNKATNNAMQVESDDYIATNGPLKVGGSCVLSGHNLAKHCLHVVGPNVNKGEDIQLLKSAYENFNQHEVLLAPLLSAGIFGADPIHSLRVCVDTVRTNVYLAVFDKNLYDKLVSSFL",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 2,
+              "ligand": {
+                "type": "smiles",
+                "value": "c1c[nH]c2c1c(ncn2)N3CCC[C@H](C3)C[C@H]4CCOC4"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "8e0d3d4112f986ef1f6888fb84ae9162f834f8de60877b2e144aeda8a5141103",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "9cf44da3281f7700b83f0b1f75c81c7f1b64c085a9f30399baf8a340710ed691",
+            "createdAt": "2026-11-13T08:04:18.323Z"
+          }
+        }
+      ],
+      "inferenceMs": [
+        11490.544999957085,
+        10802.474999904633,
+        10811.049999952316
+      ],
+      "wallMs": [
+        11559.379999995232,
+        10870.81500005722,
+        10880.365000009537
+      ],
+      "sessions": [
+        {
+          "startedAt": "2026-11-13T08:03:44.994Z",
+          "finishedAt": "2026-11-13T08:04:18.330Z",
+          "elapsedMs": 33336.31500005722
+        }
+      ],
+      "warmMeanMs": 10875.590000033379,
+      "firstPoseMs": 11559.379999995232,
+      "status": "complete · 3/3 poses saved · 0 failed\nThis session 33.3 s · first pose 11.6 s\nWarm mean 10.9 s/pose · remaining 0.0 s"
+    },
+    {
+      "name": "9XHG · Stimulator of interferon genes protein · 1IL",
+      "caseId": "9xhg-1il",
+      "request": {
+        "schema": "molarium.fold-request.v2",
+        "sequence": "FNVAHGLAWSYYIGYLRLILPELQARIRTYNQHYNNLLRGAVSQRLYILLPLDCGVPDNLSMADPNIRFLDKLPQQTGDHAGIKDRVYSNSIYELLENGQRAGTCVLEYATPLQTLFAMSQYSQAGFSREDRLEQAKLFCRTLEDILADAPESQNNCRLIAYQEPADDSSFSLSQEVLRHLRQEEKEEVTVG",
+        "model": "localfold-boltz2",
+        "msaMode": "single",
+        "msaEndpoint": "https://api.colabfold.com",
+        "a3m": null,
+        "recycles": 2,
+        "steps": 25,
+        "seed": 0,
+        "ligand": null
+      },
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        }
+      },
+      "poses": [
+        {
+          "id": "9xhg-1il::0::attempt-1",
+          "seed": 0,
+          "smiles": "CC(C)(C)c1ccc(cc1)C(=O)Nc2c3cc(ccc3oc2C(=O)O)Cl",
+          "wallMs": 15469.875,
+          "inferenceMs": 15376.625,
+          "totalMs": 15469.165000081062,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "66f8018a4dd830f06f269ff7af4928b110478e42b0221eec441cdc8becf64dcb",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "FNVAHGLAWSYYIGYLRLILPELQARIRTYNQHYNNLLRGAVSQRLYILLPLDCGVPDNLSMADPNIRFLDKLPQQTGDHAGIKDRVYSNSIYELLENGQRAGTCVLEYATPLQTLFAMSQYSQAGFSREDRLEQAKLFCRTLEDILADAPESQNNCRLIAYQEPADDSSFSLSQEVLRHLRQEEKEEVTVG",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 0,
+              "ligand": {
+                "type": "smiles",
+                "value": "CC(C)(C)c1ccc(cc1)C(=O)Nc2c3cc(ccc3oc2C(=O)O)Cl"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "4fb048f2e14ec4e02e4a7c475f40fa44e823f2e5e61c4bf9627178142bc42296",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "66f8018a4dd830f06f269ff7af4928b110478e42b0221eec441cdc8becf64dcb",
+            "createdAt": "2026-11-13T08:04:33.865Z"
+          }
+        },
+        {
+          "id": "9xhg-1il::1::attempt-1",
+          "seed": 1,
+          "smiles": "CC(C)(C)c1ccc(cc1)C(=O)Nc2c3cc(ccc3oc2C(=O)O)Cl",
+          "wallMs": 15052.209999918938,
+          "inferenceMs": 14958.44000005722,
+          "totalMs": 15049.394999980927,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "7931e44f92c36d584351057add1dff3f73f76d411fc8f1ab102e1b918deda35f",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "FNVAHGLAWSYYIGYLRLILPELQARIRTYNQHYNNLLRGAVSQRLYILLPLDCGVPDNLSMADPNIRFLDKLPQQTGDHAGIKDRVYSNSIYELLENGQRAGTCVLEYATPLQTLFAMSQYSQAGFSREDRLEQAKLFCRTLEDILADAPESQNNCRLIAYQEPADDSSFSLSQEVLRHLRQEEKEEVTVG",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 1,
+              "ligand": {
+                "type": "smiles",
+                "value": "CC(C)(C)c1ccc(cc1)C(=O)Nc2c3cc(ccc3oc2C(=O)O)Cl"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "efb56aca3b57c5f2d7b29343084ddaef4ddd6c741c0468984c309271b15298db",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "7931e44f92c36d584351057add1dff3f73f76d411fc8f1ab102e1b918deda35f",
+            "createdAt": "2026-11-13T08:04:48.928Z"
+          }
+        },
+        {
+          "id": "9xhg-1il::2::attempt-1",
+          "seed": 2,
+          "smiles": "CC(C)(C)c1ccc(cc1)C(=O)Nc2c3cc(ccc3oc2C(=O)O)Cl",
+          "wallMs": 14970.705000042915,
+          "inferenceMs": 14866.629999995232,
+          "totalMs": 14969.789999961853,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "46f05a2fc5bf3d82ac112a6203b7161b4f724beb24020c222861ab29fa1483a2",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "FNVAHGLAWSYYIGYLRLILPELQARIRTYNQHYNNLLRGAVSQRLYILLPLDCGVPDNLSMADPNIRFLDKLPQQTGDHAGIKDRVYSNSIYELLENGQRAGTCVLEYATPLQTLFAMSQYSQAGFSREDRLEQAKLFCRTLEDILADAPESQNNCRLIAYQEPADDSSFSLSQEVLRHLRQEEKEEVTVG",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 2,
+              "ligand": {
+                "type": "smiles",
+                "value": "CC(C)(C)c1ccc(cc1)C(=O)Nc2c3cc(ccc3oc2C(=O)O)Cl"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "7ccc965c91db408f0f053bf318e36d6fb1585b3883afa343091e6aa78d906d28",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "46f05a2fc5bf3d82ac112a6203b7161b4f724beb24020c222861ab29fa1483a2",
+            "createdAt": "2026-11-13T08:05:03.918Z"
+          }
+        }
+      ],
+      "inferenceMs": [
+        15376.625,
+        14958.44000005722,
+        14866.629999995232
+      ],
+      "wallMs": [
+        15469.875,
+        15052.209999918938,
+        14970.705000042915
+      ],
+      "sessions": [
+        {
+          "startedAt": "2026-11-13T08:04:18.395Z",
+          "finishedAt": "2026-11-13T08:05:03.925Z",
+          "elapsedMs": 45530.40999996662
+        }
+      ],
+      "warmMeanMs": 15011.457499980927,
+      "firstPoseMs": 15469.875,
+      "status": "complete · 3/3 poses saved · 0 failed\nThis session 45.5 s · first pose 15.5 s\nWarm mean 15.0 s/pose · remaining 0.0 s"
+    },
+    {
+      "name": "9XJQ · WD repeat-containing protein 5 · A1E0I",
+      "caseId": "9xjq-a1e0i",
+      "request": {
+        "schema": "molarium.fold-request.v2",
+        "sequence": "VKPNYALKFTLAGHTKAVSSVKFSPNGEWLASSSADKLIKIWGAYDGKFEKTISGHKLGISDVAWSSDSNLLVSASDDKTLKIWDVSSGKCLKTLKGHSNYVFCCNFNPQSNLIVSGSFDESVRIWDVKTGKCLKTLPAHSDPVSAVHFNRDGSLIVSSSYDGLCRIWDTASGQCLKTLIDDDNPPVSFVKFSPNGKYILAATLDNTLKLWDYSKGKCLKTYTGHKNEKYCIFANFSVTGGKWIVSGSEDNLVYIWNLQTKEIVQKLQGHTDVVISTACHPTENIIASAALENDKTIKLWKSDC",
+        "model": "localfold-boltz2",
+        "msaMode": "single",
+        "msaEndpoint": "https://api.colabfold.com",
+        "a3m": null,
+        "recycles": 2,
+        "steps": 25,
+        "seed": 0,
+        "ligand": null
+      },
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        }
+      },
+      "poses": [
+        {
+          "id": "9xjq-a1e0i::0::attempt-1",
+          "seed": 0,
+          "smiles": "C#Cc1ccc(s1)S(=O)(=O)NC(=O)c2ccc(cc2Cl)Cl",
+          "wallMs": 37871.65999996662,
+          "inferenceMs": 37784.889999985695,
+          "totalMs": 37869.669999957085,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "8689b2ca55f1654d364c078672ce07c0be7dc038902935af1cf2f6d816fa4640",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "VKPNYALKFTLAGHTKAVSSVKFSPNGEWLASSSADKLIKIWGAYDGKFEKTISGHKLGISDVAWSSDSNLLVSASDDKTLKIWDVSSGKCLKTLKGHSNYVFCCNFNPQSNLIVSGSFDESVRIWDVKTGKCLKTLPAHSDPVSAVHFNRDGSLIVSSSYDGLCRIWDTASGQCLKTLIDDDNPPVSFVKFSPNGKYILAATLDNTLKLWDYSKGKCLKTYTGHKNEKYCIFANFSVTGGKWIVSGSEDNLVYIWNLQTKEIVQKLQGHTDVVISTACHPTENIIASAALENDKTIKLWKSDC",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 0,
+              "ligand": {
+                "type": "smiles",
+                "value": "C#Cc1ccc(s1)S(=O)(=O)NC(=O)c2ccc(cc2Cl)Cl"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "dd49ca3d11009b55af336955c4e99344ca85537d9100eac4cb8d7d37a7a3cbfe",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "8689b2ca55f1654d364c078672ce07c0be7dc038902935af1cf2f6d816fa4640",
+            "createdAt": "2026-11-13T08:05:41.939Z"
+          }
+        },
+        {
+          "id": "9xjq-a1e0i::1::attempt-1",
+          "seed": 1,
+          "smiles": "C#Cc1ccc(s1)S(=O)(=O)NC(=O)c2ccc(cc2Cl)Cl",
+          "wallMs": 37308.48000001907,
+          "inferenceMs": 37236.984999895096,
+          "totalMs": 37307.52999997139,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "aaaaec3168140bccf364fadd68fe618749c263faf0bb8f9e8e44002af778e676",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "VKPNYALKFTLAGHTKAVSSVKFSPNGEWLASSSADKLIKIWGAYDGKFEKTISGHKLGISDVAWSSDSNLLVSASDDKTLKIWDVSSGKCLKTLKGHSNYVFCCNFNPQSNLIVSGSFDESVRIWDVKTGKCLKTLPAHSDPVSAVHFNRDGSLIVSSSYDGLCRIWDTASGQCLKTLIDDDNPPVSFVKFSPNGKYILAATLDNTLKLWDYSKGKCLKTYTGHKNEKYCIFANFSVTGGKWIVSGSEDNLVYIWNLQTKEIVQKLQGHTDVVISTACHPTENIIASAALENDKTIKLWKSDC",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 1,
+              "ligand": {
+                "type": "smiles",
+                "value": "C#Cc1ccc(s1)S(=O)(=O)NC(=O)c2ccc(cc2Cl)Cl"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "bdae6261a6513496f731ca8a78d97f945172f4638a8e0331a1dcf7d3e34814e3",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "aaaaec3168140bccf364fadd68fe618749c263faf0bb8f9e8e44002af778e676",
+            "createdAt": "2026-11-13T08:06:19.256Z"
+          }
+        },
+        {
+          "id": "9xjq-a1e0i::2::attempt-1",
+          "seed": 2,
+          "smiles": "C#Cc1ccc(s1)S(=O)(=O)NC(=O)c2ccc(cc2Cl)Cl",
+          "wallMs": 37007.38499999046,
+          "inferenceMs": 36934.985000014305,
+          "totalMs": 37006.46000003815,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "1439d10db5584070a52da8b61ae497c7eda311745ac223b3b45e2c98196e3a5e",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "VKPNYALKFTLAGHTKAVSSVKFSPNGEWLASSSADKLIKIWGAYDGKFEKTISGHKLGISDVAWSSDSNLLVSASDDKTLKIWDVSSGKCLKTLKGHSNYVFCCNFNPQSNLIVSGSFDESVRIWDVKTGKCLKTLPAHSDPVSAVHFNRDGSLIVSSSYDGLCRIWDTASGQCLKTLIDDDNPPVSFVKFSPNGKYILAATLDNTLKLWDYSKGKCLKTYTGHKNEKYCIFANFSVTGGKWIVSGSEDNLVYIWNLQTKEIVQKLQGHTDVVISTACHPTENIIASAALENDKTIKLWKSDC",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 2,
+              "ligand": {
+                "type": "smiles",
+                "value": "C#Cc1ccc(s1)S(=O)(=O)NC(=O)c2ccc(cc2Cl)Cl"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "e81ef2e16c1c03d8ed8250326f79d3ac2137be39c63880eaa6603a7260ec018a",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "1439d10db5584070a52da8b61ae497c7eda311745ac223b3b45e2c98196e3a5e",
+            "createdAt": "2026-11-13T08:06:56.275Z"
+          }
+        }
+      ],
+      "inferenceMs": [
+        37784.889999985695,
+        37236.984999895096,
+        36934.985000014305
+      ],
+      "wallMs": [
+        37871.65999996662,
+        37308.48000001907,
+        37007.38499999046
+      ],
+      "sessions": [
+        {
+          "startedAt": "2026-11-13T08:05:04.066Z",
+          "finishedAt": "2026-11-13T08:06:56.286Z",
+          "elapsedMs": 112219.95999991894
+        }
+      ],
+      "warmMeanMs": 37157.93250000477,
+      "firstPoseMs": 37871.65999996662,
+      "status": "complete · 3/3 poses saved · 0 failed\nThis session 1m 52s · first pose 37.9 s\nWarm mean 37.2 s/pose · remaining 0.0 s"
+    },
+    {
+      "name": "32QY · YTH domain-containing family protein 2 · A1KEO",
+      "caseId": "32qy-a1keo",
+      "request": {
+        "schema": "molarium.fold-request.v2",
+        "sequence": "MGSSYHHHHHHSSGENLYFQHMKHGRVFIIKSYSEDDIHRSIKYNIWCSTEHGNKRLDAAYRSMNGKGPVYLLFSVNGSGHFCGVAEMKSAVDYNTCAGVWSQDKWKGRFDVRWIFVKDVPNSQLRHIRLENNENKPVTNSRDTQEVPLEKAKQVLKIIASYKHTTS",
+        "model": "localfold-boltz2",
+        "msaMode": "single",
+        "msaEndpoint": "https://api.colabfold.com",
+        "a3m": null,
+        "recycles": 2,
+        "steps": 25,
+        "seed": 0,
+        "ligand": null
+      },
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        }
+      },
+      "poses": [
+        {
+          "id": "32qy-a1keo::0::attempt-1",
+          "seed": 0,
+          "smiles": "CC1=CC(=O)c2c([nH]nc2N1)C3=CNC(=O)C=C3",
+          "wallMs": 11444.775000095367,
+          "inferenceMs": 11384.185000061989,
+          "totalMs": 11444.045000076294,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "121d2cd630a900c6d895c300da503c61e6161ae41574b823817245911298dd09",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "MGSSYHHHHHHSSGENLYFQHMKHGRVFIIKSYSEDDIHRSIKYNIWCSTEHGNKRLDAAYRSMNGKGPVYLLFSVNGSGHFCGVAEMKSAVDYNTCAGVWSQDKWKGRFDVRWIFVKDVPNSQLRHIRLENNENKPVTNSRDTQEVPLEKAKQVLKIIASYKHTTS",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 0,
+              "ligand": {
+                "type": "smiles",
+                "value": "CC1=CC(=O)c2c([nH]nc2N1)C3=CNC(=O)C=C3"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "669888b7b0d0db4c41e2ec98ffcb97861917223a701f12d10163788b44c82a1b",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "121d2cd630a900c6d895c300da503c61e6161ae41574b823817245911298dd09",
+            "createdAt": "2026-11-13T08:07:07.830Z"
+          }
+        },
+        {
+          "id": "32qy-a1keo::1::attempt-1",
+          "seed": 1,
+          "smiles": "CC1=CC(=O)c2c([nH]nc2N1)C3=CNC(=O)C=C3",
+          "wallMs": 10489.719999909401,
+          "inferenceMs": 10431.700000047684,
+          "totalMs": 10488.97000002861,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "74ea0537785677fb8bc5bf47574cacc9fe5931f645b12cbb29ca98d0eb4a3024",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "MGSSYHHHHHHSSGENLYFQHMKHGRVFIIKSYSEDDIHRSIKYNIWCSTEHGNKRLDAAYRSMNGKGPVYLLFSVNGSGHFCGVAEMKSAVDYNTCAGVWSQDKWKGRFDVRWIFVKDVPNSQLRHIRLENNENKPVTNSRDTQEVPLEKAKQVLKIIASYKHTTS",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 1,
+              "ligand": {
+                "type": "smiles",
+                "value": "CC1=CC(=O)c2c([nH]nc2N1)C3=CNC(=O)C=C3"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "684b6e7e61683d8bf905b34f62a42abf6820e4431de28ced41393c8b9428570e",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "74ea0537785677fb8bc5bf47574cacc9fe5931f645b12cbb29ca98d0eb4a3024",
+            "createdAt": "2026-11-13T08:07:18.327Z"
+          }
+        },
+        {
+          "id": "32qy-a1keo::2::attempt-1",
+          "seed": 2,
+          "smiles": "CC1=CC(=O)c2c([nH]nc2N1)C3=CNC(=O)C=C3",
+          "wallMs": 10518.90499997139,
+          "inferenceMs": 10462.524999976158,
+          "totalMs": 10518.19000005722,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "4fb6a7498e38781062dc0328af15648736494c79d08e535a4577dfae32fb4e19",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "MGSSYHHHHHHSSGENLYFQHMKHGRVFIIKSYSEDDIHRSIKYNIWCSTEHGNKRLDAAYRSMNGKGPVYLLFSVNGSGHFCGVAEMKSAVDYNTCAGVWSQDKWKGRFDVRWIFVKDVPNSQLRHIRLENNENKPVTNSRDTQEVPLEKAKQVLKIIASYKHTTS",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 2,
+              "ligand": {
+                "type": "smiles",
+                "value": "CC1=CC(=O)c2c([nH]nc2N1)C3=CNC(=O)C=C3"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "ffc85c6f4cec6a2c2cc30bc6d74c0bf454a922012c1f180ced98d2bf2bb09f9d",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "4fb6a7498e38781062dc0328af15648736494c79d08e535a4577dfae32fb4e19",
+            "createdAt": "2026-11-13T08:07:28.854Z"
+          }
+        }
+      ],
+      "inferenceMs": [
+        11384.185000061989,
+        10431.700000047684,
+        10462.524999976158
+      ],
+      "wallMs": [
+        11444.775000095367,
+        10489.719999909401,
+        10518.90499997139
+      ],
+      "sessions": [
+        {
+          "startedAt": "2026-11-13T08:06:56.385Z",
+          "finishedAt": "2026-11-13T08:07:28.864Z",
+          "elapsedMs": 32478.925000071526
+        }
+      ],
+      "warmMeanMs": 10504.312499940395,
+      "firstPoseMs": 11444.775000095367,
+      "status": "complete · 3/3 poses saved · 0 failed\nThis session 32.5 s · first pose 11.4 s\nWarm mean 10.5 s/pose · remaining 0.0 s"
+    },
+    {
+      "name": "9T3V · Bifunctional epoxide hydrolase 2 · A1JTG",
+      "caseId": "9t3v-a1jtg",
+      "request": {
+        "schema": "molarium.fold-request.v2",
+        "sequence": "MHHHHHHSTENLYFQGSSTSCNPSDMSHGYVTVKPRVRLHFVELGSGPAVCLCHGFPESWYSWRYQIPALAQAGYRVLAMDMKGYGESSAPPEIEEYCMEVLCKEMVTFLDKLGLSQAVFIGHDWGGMLVWYMALFYPERVRAVASLNTPFIPANPNMSPLESIKANPVFDYQLYFQEPGVAEAELEQNLSRTFKSLFRASDESVLSMHKVCEAGGLFVNSPEEPSLSRMVTEEEIQFYVQQFKKSGFRGPLNWYRNMERNWKWACKSLGRKILIPALMVTAEKDFVLVPQMSQHMEDWIPHLKRGHIEDCGHWTQMDKPTEVNQILIKWLDSDARNPPVVSKM",
+        "model": "localfold-boltz2",
+        "msaMode": "single",
+        "msaEndpoint": "https://api.colabfold.com",
+        "a3m": null,
+        "recycles": 2,
+        "steps": 25,
+        "seed": 0,
+        "ligand": null
+      },
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        }
+      },
+      "poses": [
+        {
+          "id": "9t3v-a1jtg::0::attempt-1",
+          "seed": 0,
+          "smiles": "c1ccc2c(c1)[C@@H]3CC4(C[C@H]2CC(C3)(C4)F)NC(=O)NC5CCN(CC5)Cc6ccc(cc6)Cl",
+          "wallMs": 49397.90499997139,
+          "inferenceMs": 49260.46000003815,
+          "totalMs": 49396.97500002384,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "eb205f5e1e830477d3359cfd378b92e289c1a0d0e1ac4861c352ceb375b179b7",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "MHHHHHHSTENLYFQGSSTSCNPSDMSHGYVTVKPRVRLHFVELGSGPAVCLCHGFPESWYSWRYQIPALAQAGYRVLAMDMKGYGESSAPPEIEEYCMEVLCKEMVTFLDKLGLSQAVFIGHDWGGMLVWYMALFYPERVRAVASLNTPFIPANPNMSPLESIKANPVFDYQLYFQEPGVAEAELEQNLSRTFKSLFRASDESVLSMHKVCEAGGLFVNSPEEPSLSRMVTEEEIQFYVQQFKKSGFRGPLNWYRNMERNWKWACKSLGRKILIPALMVTAEKDFVLVPQMSQHMEDWIPHLKRGHIEDCGHWTQMDKPTEVNQILIKWLDSDARNPPVVSKM",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 0,
+              "ligand": {
+                "type": "smiles",
+                "value": "c1ccc2c(c1)[C@@H]3CC4(C[C@H]2CC(C3)(C4)F)NC(=O)NC5CCN(CC5)Cc6ccc(cc6)Cl"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "803b37d460fe6350b2ba517fcc45b7de79429146671a9402909d79aea1c4b591",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "eb205f5e1e830477d3359cfd378b92e289c1a0d0e1ac4861c352ceb375b179b7",
+            "createdAt": "2026-11-13T08:08:18.348Z"
+          }
+        },
+        {
+          "id": "9t3v-a1jtg::1::attempt-1",
+          "seed": 1,
+          "smiles": "c1ccc2c(c1)[C@@H]3CC4(C[C@H]2CC(C3)(C4)F)NC(=O)NC5CCN(CC5)Cc6ccc(cc6)Cl",
+          "wallMs": 49001.52499997616,
+          "inferenceMs": 48868.25999999046,
+          "totalMs": 49000.50499999523,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "b11cb5c7e7d66d0bda5396dfe4ddab8ea8e9ea659f22e1761e441f18342b4e84",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "MHHHHHHSTENLYFQGSSTSCNPSDMSHGYVTVKPRVRLHFVELGSGPAVCLCHGFPESWYSWRYQIPALAQAGYRVLAMDMKGYGESSAPPEIEEYCMEVLCKEMVTFLDKLGLSQAVFIGHDWGGMLVWYMALFYPERVRAVASLNTPFIPANPNMSPLESIKANPVFDYQLYFQEPGVAEAELEQNLSRTFKSLFRASDESVLSMHKVCEAGGLFVNSPEEPSLSRMVTEEEIQFYVQQFKKSGFRGPLNWYRNMERNWKWACKSLGRKILIPALMVTAEKDFVLVPQMSQHMEDWIPHLKRGHIEDCGHWTQMDKPTEVNQILIKWLDSDARNPPVVSKM",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 1,
+              "ligand": {
+                "type": "smiles",
+                "value": "c1ccc2c(c1)[C@@H]3CC4(C[C@H]2CC(C3)(C4)F)NC(=O)NC5CCN(CC5)Cc6ccc(cc6)Cl"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "6b78505a9a7e84ffb3815b94c2b3a3bc2ea130455ceb7b5168e0ed1d28d59723",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "b11cb5c7e7d66d0bda5396dfe4ddab8ea8e9ea659f22e1761e441f18342b4e84",
+            "createdAt": "2026-11-13T08:09:07.358Z"
+          }
+        },
+        {
+          "id": "9t3v-a1jtg::2::attempt-1",
+          "seed": 2,
+          "smiles": "c1ccc2c(c1)[C@@H]3CC4(C[C@H]2CC(C3)(C4)F)NC(=O)NC5CCN(CC5)Cc6ccc(cc6)Cl",
+          "wallMs": 48692.43999993801,
+          "inferenceMs": 48559.53500008583,
+          "totalMs": 48691.50999999046,
+          "runtime": {
+            "gpuManagedMemory": {
+              "residentBytes": 19847232,
+              "peakBytes": 1141906480,
+              "budgetBytes": 5726623061,
+              "bufferCount": 16
+            }
+          },
+          "pdbSha256": "45b14fde1989d3a0ee0ff676d12879238ca56c91cddbc306b650b5b617b2cde8",
+          "provenance": {
+            "application": {
+              "name": "Molarium",
+              "webCodeVersion": "4d5dc7d6443693698a90d9841b792aedd229ed0718402037cceb53131a9fdf3c"
+            },
+            "upstream": {
+              "repository": "https://github.com/sokrypton/localfold",
+              "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6"
+            },
+            "request": {
+              "schema": "molarium.fold-request.v2",
+              "sequence": "MHHHHHHSTENLYFQGSSTSCNPSDMSHGYVTVKPRVRLHFVELGSGPAVCLCHGFPESWYSWRYQIPALAQAGYRVLAMDMKGYGESSAPPEIEEYCMEVLCKEMVTFLDKLGLSQAVFIGHDWGGMLVWYMALFYPERVRAVASLNTPFIPANPNMSPLESIKANPVFDYQLYFQEPGVAEAELEQNLSRTFKSLFRASDESVLSMHKVCEAGGLFVNSPEEPSLSRMVTEEEIQFYVQQFKKSGFRGPLNWYRNMERNWKWACKSLGRKILIPALMVTAEKDFVLVPQMSQHMEDWIPHLKRGHIEDCGHWTQMDKPTEVNQILIKWLDSDARNPPVVSKM",
+              "model": "localfold-boltz2",
+              "msaMode": "single",
+              "msaEndpoint": "https://api.colabfold.com",
+              "a3m": null,
+              "recycles": 2,
+              "steps": 25,
+              "seed": 2,
+              "ligand": {
+                "type": "smiles",
+                "value": "c1ccc2c(c1)[C@@H]3CC4(C[C@H]2CC(C3)(C4)F)NC(=O)NC5CCN(CC5)Cc6ccc(cc6)Cl"
+              }
+            },
+            "alignment": null,
+            "alignmentSha256": null,
+            "ligandComponentSha256": "7ce4a0c27a809144361077156cf757306670ec2a6f3723b3c28235d7466f441d",
+            "modelManifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+            "modelBundle": {
+              "model": "boltz2",
+              "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/",
+              "release": "boltz2-int5"
+            },
+            "msa": {
+              "provider": "single",
+              "endpoint": null,
+              "ticketId": null
+            },
+            "outputPdbSha256": "45b14fde1989d3a0ee0ff676d12879238ca56c91cddbc306b650b5b617b2cde8",
+            "createdAt": "2026-11-13T08:09:56.059Z"
+          }
+        }
+      ],
+      "inferenceMs": [
+        49260.46000003815,
+        48868.25999999046,
+        48559.53500008583
+      ],
+      "wallMs": [
+        49397.90499997139,
+        49001.52499997616,
+        48692.43999993801
+      ],
+      "sessions": [
+        {
+          "startedAt": "2026-11-13T08:07:28.950Z",
+          "finishedAt": "2026-11-13T08:09:56.076Z",
+          "elapsedMs": 147127.11500000954
+        }
+      ],
+      "warmMeanMs": 48846.982499957085,
+      "firstPoseMs": 49397.90499997139,
+      "status": "complete · 3/3 poses saved · 0 failed\nThis session 2m 27s · first pose 49.4 s\nWarm mean 48.8 s/pose · remaining 0.0 s"
+    }
+  ],
+  "purpose": "Predeclared drug-like, protein-diverse recent-release reconstruction panel; no prediction-based selection.",
+  "panelSha256": "7053daa0060cf8dc4836f95ac0b40e9e639398adacc63896c1f122d0ec9e7bb3",
+  "review": {
+    "grid": true,
+    "preferredPersisted": true,
+    "noneClearsPreferred": true,
+    "shortlistExport": true,
+    "importRoundTrip": true
+  }
+}
