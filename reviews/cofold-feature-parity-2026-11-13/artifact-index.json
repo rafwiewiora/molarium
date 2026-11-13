@@ -3,8 +3,8 @@
   "files": [
     {
       "file": "README.md",
-      "bytes": 9392,
-      "sha256": "eae8c6fe35a998ca0a011a8bf120a994cb5e3c84db3660a81dd1733bf67132b9"
+      "bytes": 10061,
+      "sha256": "512452d824f698dba7a94a80b914676192cf1aa3fdb5f542936b3a0c906ffd09"
     },
     {
       "file": "browser-32qy-a1keo/features.bin",
@@ -232,6 +232,11 @@
       "sha256": "bc5d3bc2c71758f6a07be74324b072269a8d61f836c44cd3159b1bace9d17282"
     },
     {
+      "file": "spot-startup-failures.json",
+      "bytes": 53076,
+      "sha256": "8836780822b46c065abae17f91e473d7e3d927460b5a092ed4e7a2859ff12a16"
+    },
+    {
       "file": "trained-target/README.md",
       "bytes": 6236,
       "sha256": "5449ae6f17d4d6fa0c4f1ebef928deefe76a05c287d4c0b18de02e7149992a7d"
@@ -330,6 +335,16 @@
       "file": "transfer-receipt.json",
       "bytes": 7468,
       "sha256": "f584ff3b869f9efae7e0e515dc38b846843dccdd7aaa6a4daa59e7736fd6f266"
+    },
+    {
+      "file": "trunk-audit-plan.json",
+      "bytes": 2563,
+      "sha256": "07829dd669bc7604c96f5a862176cddb01effbbbe0df00400c1802f480a82183"
+    },
+    {
+      "file": "trunk-native-source-pins.json",
+      "bytes": 4146,
+      "sha256": "cad7747aa6d9e826d52858a8a6d30dfcb3c99a40a88a2dc8c58a859b2f9adebb"
     }
   ]
 }

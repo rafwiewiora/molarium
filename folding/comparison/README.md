@@ -32,6 +32,50 @@ generated reference coordinates still differ. The [first trained target-feature 
 passes at matched inputs/full-FP32 weights; complete model and trajectory parity
 remain unresolved.
 
+The next, **unqualified** stage uses `capture_native_trunk.py` to observe the
+stock four-cycle `run_trunk` at exact frozen feature bytes. It exports trained
+weights, projected embeddings, template/MSA/pairformer boundaries and the
+actual MSA random draws. A module-local observer returns those draws unchanged;
+the official neural computation is retained. The whole-model forward remains
+guarded, so this is not another pose prediction. `make_trained_trunk_fixture.py`
+uses the pinned upstream weight-layout converter, and
+`scripts/cofold-trained-trunk.browser.mjs` runs the production GPU trunk with
+FP32 storage, weights and accumulation. `check_trained_trunk.py` recomputes
+errors from all 32 required raw seams, rejecting partial transfers or changed
+gates. These tools have **no completed full-trunk parity result yet**.
+
+```sh
+MOLARIUM_FEATURE_CONTROL=/path/to/completed-feature-control \
+  python folding/comparison/capture_native_trunk.py \
+  --inputs /path/to/frozen-inputs --output /path/to/new-native-capture \
+  --checkpoint /path/to/of3-ob-2025-06-30-174k.pt \
+  --reference-receipt /path/to/completed-native-receipt.json \
+  --browser-library /path/to/exact-browser-library.json
+python folding/comparison/make_trained_trunk_fixture.py \
+  --native /path/to/new-native-capture --target-fixture /path/to/matched-target-fixture \
+  --converter-root /path/to/pinned-upstream-converter --output /path/to/new-trunk-fixture
+bun scripts/cofold-trained-trunk.browser.mjs /path/to/new-trunk-fixture /path/to/new-gpu-capture
+python folding/comparison/check_trained_trunk.py \
+  --fixture /path/to/new-trunk-fixture --measured /path/to/new-gpu-capture \
+  --output /path/to/new-analysis.json
+```
+
+The native capture requires its original compatible single-GPU runtime and
+Slurm grant. Instrumented trunk timings include serialization and readbacks,
+and cannot be presented as inference throughput. The separately observed
+distogram weights support the production loader; the native head is not
+executed here and its accuracy is not qualified. The exact native target
+features intentionally isolate the trunk from the earlier target encoder.
+This does not test production int5 weights or denoising/confidence.
+
+Capture timing correction **CAP-01**: older feature receipts created
+`startedAt` after imports and validation, but `elapsedSeconds` began before
+them. New receipts bind both clocks to the same start and separately record
+`receiptCreatedAt` and the elapsed scope. Original public receipts remain
+unchanged; their start/finish timestamp difference must not be substituted for
+elapsed time. The explicit CUDA-synchronized embedder measurement has its own
+boundary and is unaffected.
+
 These tools compare completed structure predictions without rerunning inference
 or treating a native prediction as an experimental answer. The first cohort is
 the existing 48-pose browser library: ubiquitin (76 residues), 16 small compounds,

@@ -1,0 +1,75 @@
+{
+  "schema": "molarium.trained-trunk-audit-plan.v1",
+  "recordedAt": "2026-11-13T23:44:01.313776+00:00",
+  "status": "Queued; no full-trunk numerical qualification result",
+  "native": {
+    "method": "openbind0",
+    "runtime": "OpenFold3 0.5.1",
+    "checkpointSha256": "bd43301c011d5f87580d3e8b548658869433e4488399feb03035ba248f8e29e4",
+    "case": "9t51-a1jtm",
+    "cycles": 4,
+    "processedSmilesFeatureBlobSha256": "4eee6f1a152d610925f0227763dc90156b4f1d3746740fce470b9766a39f6e04",
+    "preflightJob": 15790,
+    "preflightStatus": "COMPLETED 0:0, all 38 source pins exact",
+    "gpuJob": 15791,
+    "wholeModelForwardCallsAllowed": 0
+  },
+  "browser": {
+    "path": "Actual production Af3TrunkGpu, native observed target and sampled MSA rows",
+    "precision": {
+      "staged": "f32",
+      "weight": "f32",
+      "accumulate": "f32",
+      "pairWeight": "f32"
+    },
+    "requiredCycles": 4,
+    "requiredSeams": 32,
+    "physicalGpuRequired": true
+  },
+  "gatesDeclaredBeforeRun": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "scopeExclusions": [
+    "Denoising",
+    "Confidence",
+    "Pose accuracy",
+    "Int5 production weights",
+    "Inference throughput"
+  ],
+  "sourceFiles": {
+    "folding/comparison/capture_native_features.py": "caa1ccb445b1d362310a9de90bc2fcde5a59b01a84a2575565c350312cb43437",
+    "folding/comparison/capture_native_trunk.py": "d53a8876f3e8ac33469b1a7691cf8807d9d27344a320d83ca7cd4970a7293f23",
+    "folding/comparison/make_trained_trunk_fixture.py": "f30f6ebf74be33e234ddddc3dbf5c3f728638545b8420549a913fc7175b2dbb3",
+    "folding/comparison/check_trained_trunk.py": "143aaeb7067c4329f56410d27cc0d0a6afae5ff628232780613eaa4b7397a267",
+    "scripts/cofold-trained-trunk.browser.mjs": "ca089051615c0a285ab1962047ca79e689e51aa891fba11ff64cdf819bb87e52",
+    "scripts/headless-chrome.mjs": "b55a1197a5c2d2a112ea0b46d233b32a1e7aa7e1c5f7c06f32217ea9c9b19d13"
+  },
+  "otherControls": [
+    {
+      "purpose": "Physical NVIDIA 126-case transition controls",
+      "cpuJob": 15793,
+      "gpuJob": 15794,
+      "status": "CPU complete; GPU queued"
+    },
+    {
+      "purpose": "YTHDF2 same-SMILES and trained target control",
+      "cpuJob": 15795,
+      "gpuJob": 15796,
+      "status": "CPU complete; GPU queued"
+    }
+  ],
+  "policy": {
+    "managedCluster": "psigreen",
+    "partitions": [
+      "gpu",
+      "l4spot"
+    ],
+    "nice": 0,
+    "gpuCountPerJob": 1,
+    "hostMemoryPerGpuJob": "14G",
+    "timeLimitPerGpuJob": "20min",
+    "standaloneVmActions": []
+  }
+}

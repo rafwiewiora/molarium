@@ -19,6 +19,8 @@ with stable `DV-` identifiers and links to original observations and follow-up e
 - [x] Preserve native and shared-JS tensor features for two diagnostic cases, replay all checked-field comparisons, and identify input-order/name/conformer differences ([RCF-15](reviews/cofold-feature-parity-2026-11-13/README.md)).
 - [x] Complete a stock-native processed-SMILES control: eliminate atom-name/order differences while retaining the remaining generated-reference-coordinate discrepancy ([result](reviews/cofold-feature-parity-2026-11-13/README.md#same-spelling-control-result)).
 - [x] Compare the actual trained atom/input-feature encoder with stock native FP32 at identical inputs/weights; preserve raw outputs and replayable evidence ([result](reviews/cofold-feature-parity-2026-11-13/trained-target/README.md)).
+- [ ] Complete the queued four-cycle stock-native trunk capture and all 32 matched production-GPU seam comparisons; require actual MSA draws, full-FP32 trained weights and the original predeclared gates ([tools](folding/comparison/README.md)).
+- [x] Correct future feature-capture wall-clock timing boundaries without rewriting historical receipts or changing the separate CUDA timing (CAP-01, [details](folding/comparison/README.md)).
 - [ ] Establish matched full-feature/trained-weight/random-tensor browser/native parity; the 270-prediction review is a protocol comparison, not this gate.
 - [x] Publish native synchronized forward timings with explicit boundaries separate from browser end-to-end throughput.
 - [x] Preserve exact provided-MSA bytes and reject alignment drift in missing-only native recovery ([RCF-12](reviews/COFOLD_MSA_RECOVERY_2026-11-13.md)); retain original interrupted-source statuses.
