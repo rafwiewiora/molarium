@@ -1,0 +1,36 @@
+{
+  "schema": "molarium.cofold-scientific-plot.v1",
+  "sources": [
+    {
+      "label": "Native 25 steps / 2 recycles",
+      "file": "openbind0-residue-profile.json",
+      "sha256": "b7f1801302c7f0d7f4946f9effce615f6ee4a49f30e6b3f1edfb2ca643e6ff50",
+      "pairs": 144
+    },
+    {
+      "label": "Native 200 steps / 3 recycles",
+      "file": "openbind0-standard-residue-profile.json",
+      "sha256": "1ad442cd3b15d6ca04c112efb78ab092eb987772e0f56c4d64eac14eb021f85d",
+      "pairs": 144
+    }
+  ],
+  "tailStart": 72,
+  "scriptSha256": "d551965b3ee2e16a3fde1bd0b4a510664be5b514167ca76fa41923d5f84aa5e7",
+  "environment": {
+    "python": "3.13.0",
+    "numpy": "2.3.4",
+    "matplotlib": "3.10.7"
+  },
+  "artifacts": [
+    {
+      "file": "openbind-standard-overlay.png",
+      "sha256": "5ecd3ba5591fff15aa3b1afc351c638b8dafdbae353d764fc6043680a430ad42",
+      "bytes": 139304
+    },
+    {
+      "file": "openbind-standard-overlay.svg",
+      "sha256": "a5a3dc873d447509560d5558467714d45b1fcb74828b0a5c83ce54dce56d7142",
+      "bytes": 23598
+    }
+  ]
+}

@@ -114,7 +114,8 @@ this post hoc diagnostic does not replace them or isolate a porting error.
 
 [SVG](openbind-residuals.svg), [plot receipt](openbind-residuals.plot.json), and
 [reproduction command](../../folding/comparison/README.md#reproduce-the-residual-figure).
-This figure uses the completed 25-step control; the 200-step cohort is incomplete.
+This figure preserves the original 25-step control. The completed 200-step
+comparison is shown separately below.
 
 - [OpenBind browser/native Foldarium review library](openbind0-browser-native.library.json), with 96 unscored complexes
 - [Complete OpenBind pairwise metrics and seed-spread controls](openbind0-torch-reference-agreement.json)
@@ -134,10 +135,39 @@ not identify a correct bound pose for these arbitrary pairs.
 - [Full browser/standard and native low-step/standard comparisons](boltz2-standard-agreement.json)
 - [Native standard library](native-boltz2-standard/library.json), [public receipt](native-boltz2-standard/receipt.public.json), and [original artifacts](native-boltz2-standard/native-artifacts.zip)
 
-**Pending:** OpenBind standard sampling has 46 validated poses preserved across
-two interrupted attempts; only compound 015, seeds 1 and 2, remain. A new attempt
-requests exactly those two poses with the same 200-step/three-recycle FP32 dense
-protocol. This incomplete cohort is not counted as a completed comparison.
+The **OpenBind standard cohort is now complete: 48 unique poses**, assembled from
+six preserved T4 outputs, 40 further T4 outputs and only two final L4 outputs.
+All original coordinate hashes, exact consumed inputs and interrupted source
+statuses remain attached. No saved prediction was repeated. The final assembly
+and analysis completed automatically after the final two calculations.
+
+At 200 steps/three recycles, browser/native median protein Cα RMSD is **1.49 Å**,
+compared with 7.04 Å in the 25-step control. Median seed-paired, nearest-of-three
+and one-to-one ligand RMSDs remain **13.08, 9.12 and 11.89 Å**. Native 25-step
+versus native standard median protein RMSD is 2.82 Å; one-to-one ligand RMSD is
+6.97 Å. More native sampling materially changes this ensemble. Both steps and
+recycles changed, so this comparison does not isolate one cause or establish
+fixed-input parity. These arbitrary pairs still have no experimental answers.
+
+Across the 48 recorded native forwards, median time was 14.03 s (mean 14.41 s).
+Peak allocated/reserved GPU memory was 1,558,200,832 / 1,568,669,696 bytes. Total
+CLI wall time is unavailable because two source runs were interrupted; an
+assembled complete cohort does not make those original invocations complete.
+The 46/2 T4/L4 device split is preserved per output.
+
+![Original and standard-sampling OpenBind residual profiles](openbind-standard-overlay.png)
+
+The same whole-protein fits give median displacements of approximately 0.7–6.0 Å
+at residues 72–76 for standard sampling, versus 12–27 Å in the original control.
+Neither trace trims residues or refits a core. The band remains the empirical
+10–90% cross-seed range, not an accuracy confidence interval.
+
+- [All standard-sampling comparisons](openbind0-standard-agreement.json), [residue data](openbind0-standard-residue-profile.json), [SVG](openbind-standard-overlay.svg), and [plot receipt](openbind-standard-overlay.plot.json)
+- [Browser/native standard Foldarium review library](openbind0-browser-standard.library.json)
+- [Native standard library](native-openbind0-torch-standard/library.json), [public receipt](native-openbind0-torch-standard/receipt.public.json), and [original structures, source-attempt evidence and consumed inputs/source](native-openbind0-torch-standard/native-artifacts.zip)
+
+The separate [experimental-reference reconstruction check](../cofold-crystal-reference-2026-11-13/README.md)
+now tests known bound complexes. It does not replace the fixed-input parity work.
 
 The [reproducible protocol and analysis tools](../../folding/comparison/README.md)
 document exact releases, trained checkpoint selection, timing boundaries and

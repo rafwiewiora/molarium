@@ -36,23 +36,34 @@ def fit_proteins(reference, predicted):
     return transform, float(np.sqrt(np.mean(np.sum((transform(x)-y)**2,axis=1))))
 
 
-def component_mol(component):
+def component_mol(component,template=None):
     m=Chem.RWMol()
     aromatic=set()
     for b in component['bonds']:
         if b['order'] in [1.5,4]:aromatic.update([b['from'],b['to']])
     for i,a in enumerate(component['atoms']):
         atom=Chem.Atom(int(a['element']));atom.SetFormalCharge(int(a.get('charge',0)))
-        atom.SetIsAromatic(i in aromatic);m.AddAtom(atom)
+        atom.SetIsAromatic(i in aromatic)
+        if 'explicitHs'in a:atom.SetNumExplicitHs(int(a['explicitHs']))
+        m.AddAtom(atom)
     types={1:Chem.BondType.SINGLE,2:Chem.BondType.DOUBLE,3:Chem.BondType.TRIPLE,1.5:Chem.BondType.AROMATIC,4:Chem.BondType.AROMATIC}
     for b in component['bonds']:m.AddBond(b['from'],b['to'],types[b['order']])
-    m=m.GetMol();Chem.SanitizeMol(m);return m
+    m=m.GetMol();m.UpdatePropertyCache(strict=False);Chem.GetSymmSSSR(m)
+    # The compact component omits hydrogen atoms. Restore bracket hydrogens such
+    # as aromatic [nH] from an exact chemical graph match before sanitization.
+    if template is None and component.get('smiles'):template=Chem.MolFromSmiles(component['smiles'])
+    if template is not None:
+        match=m.GetSubstructMatch(template,useChirality=False)
+        if len(match)!=template.GetNumAtoms()or m.GetNumAtoms()!=template.GetNumAtoms()or m.GetNumBonds()!=template.GetNumBonds():
+            raise ValueError('Component chemical graph differs from declared SMILES')
+        for i,j in enumerate(match):m.GetAtomWithIdx(j).SetNumExplicitHs(template.GetAtomWithIdx(i).GetNumExplicitHs())
+    Chem.SanitizeMol(m);return m
 
 
 def ligand_mol(result, atoms, smiles, transform=lambda x:x):
     template=Chem.RemoveHs(Chem.MolFromSmiles(smiles))
     if template is None:raise ValueError('Invalid declared SMILES')
-    component=result['component'];graph=component_mol(component)
+    component=result['component'];graph=component_mol(component,template)
     if graph.GetNumAtoms()!=template.GetNumAtoms() or graph.GetNumBonds()!=template.GetNumBonds():
         raise ValueError('Ligand graph differs from the declared SMILES')
     mapping=graph.GetSubstructMatch(template,useChirality=False)

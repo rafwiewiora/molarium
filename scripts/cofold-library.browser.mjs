@@ -18,7 +18,11 @@ const b=await startMolariumBrowser({url:process.env.MOLARIUM_LIBRARY_URL??`http:
 const download=await mkdtemp(join(tmpdir(),'cofold-library-download-'));
 const report={schema:'molarium.library-throughput.v1',date:new Date().toISOString(),cases:[],
   purpose:'Engineering throughput and library/review integration; arbitrary protein–ligand pairs, not a pose-accuracy benchmark.'};
+const panelPath=process.env.MOLARIUM_LIBRARY_PANEL;
+const panel=panelPath?JSON.parse(await readFile(panelPath,'utf8')):null;
+if(panel){report.purpose=panel.purpose;report.panelSha256=createHash('sha256').update(await readFile(panelPath)).digest('hex');}
 try{
+  if(output)await mkdir(output,{recursive:true});
   await waitFor(()=>b.evaluate('Boolean(window.MolariumChemistActionsReady)'),60000,'API');
   await b.evaluate('window.MolariumChemistActionsReady.then(()=>true)');
   await b.client.call('Browser.setDownloadBehavior',{behavior:'allow',downloadPath:download});
@@ -31,7 +35,8 @@ try{
     await b.evaluate(`document.querySelector('#fold-library-saved').value=${JSON.stringify(id)}`);
     report.reused={path:reuse.split('/').at(-1),sha256:createHash('sha256').update(await readFile(reuse)).digest('hex'),run:original.run,
       timing:original.poses.map(p=>({id:p.id,wallMs:p.wallMs,inferenceMs:p.result.elapsedMs}))};}
-  const cases=[...(!reuse?[{name:'Trp-cage 20 aa / 3 ligands / 2 seeds',sequence:'NLYIQWLKDGGPSSGRPPPS',samples:2,
+  const cases=[...(panel?panel.cases.map(c=>({id:c.id,name:c.name,sequence:c.sequence,samples:panel.seeds.length,
+    compounds:`${c.smiles} ${c.id}`})):[]),...(!reuse&&!panel?[{name:'Trp-cage 20 aa / 3 ligands / 2 seeds',sequence:'NLYIQWLKDGGPSSGRPPPS',samples:2,
     compounds:'CCO ethanol\nc1ccccc1 benzene\nc1ccccc1C(=O)[O-] benzoate'}]:[]),
     ...(process.argv.includes('--extended')?[{name:'Ubiquitin 76 aa / 2 ligands / 2 seeds',
       sequence:'MQIFVKTLTGKTITLEVEPSDTIENVKAKIQDKEGIPPDQQRLIFAGKQLEDGRTLSDYNIQKESTLHLVLRLRGG',samples:2,
@@ -74,12 +79,12 @@ try{
     assert.ok(bundle.poses.every(p=>p.status==='complete'&&p.result.provenance.outputPdbSha256));
     const ordered=[...bundle.poses].sort((a,b)=>a.startedAt.localeCompare(b.startedAt));
     const inference=ordered.map(p=>p.result.elapsedMs),wall=ordered.map(p=>p.wallMs);
-    report.cases.push({name:c.name,request:bundle.run.request,environment:bundle.run.environment,
+    report.cases.push({name:c.name,caseId:c.id??null,request:bundle.run.request,environment:bundle.run.environment,
       poses:ordered.map(p=>({id:p.id,seed:p.seed,smiles:bundle.run.compounds.find(c=>c.id===p.compoundId).smiles,
         wallMs:p.wallMs,inferenceMs:p.result.elapsedMs,totalMs:p.result.totalElapsedMs,runtime:p.result.runtime,pdbSha256:p.result.provenance.outputPdbSha256,
         provenance:p.result.provenance})),inferenceMs:inference,wallMs:wall,sessions:bundle.run.sessions,
       warmMeanMs:wall.slice(1).reduce((a,b)=>a+b,0)/(wall.length-1),firstPoseMs:wall[0],status});
-    if(output){await mkdir(output,{recursive:true});await writeFile(join(output,`library-${report.cases.length}.json`),JSON.stringify(bundle));
+    if(output){await writeFile(join(output,`library-${report.cases.length}.json`),JSON.stringify(bundle));
       await writeFile(join(output,'throughput.json'),JSON.stringify(report,null,2)+'\n');}
   }
   const runId=await b.evaluate(`document.querySelector('#fold-library-saved').value`);

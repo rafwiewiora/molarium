@@ -1,6 +1,25 @@
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {resolve,join,dirname} from 'node:path';
+import {pathToFileURL} from 'node:url';
+export async function writeNativeInputs(manifest,out){
+await mkdir(dirname(out),{recursive:true});await mkdir(out);
+await writeFile(join(out,'comparison.json'),JSON.stringify(manifest,null,2)+'\n');
+const queries={};for(const [i,c]of manifest.compounds.entries())queries[`compound_${String(i).padStart(3,'0')}`]={chains:[
+  {molecule_type:'protein',chain_ids:['A'],sequence:manifest.sequence},{molecule_type:'ligand',chain_ids:['B'],smiles:c.smiles}],use_msas:false};
+await writeFile(join(out,'openbind-query.json'),JSON.stringify({queries},null,2)+'\n');
+const boltz=join(out,'boltz');await mkdir(boltz,{recursive:true});
+for(const [i,c]of manifest.compounds.entries())await writeFile(join(boltz,`compound_${String(i).padStart(3,'0')}.yaml`),JSON.stringify({version:1,sequences:[
+  {protein:{id:'A',sequence:manifest.sequence,msa:'empty'}},{ligand:{id:'B',smiles:c.smiles}}]},null,2)+'\n');
+for(const [name,p]of Object.entries(manifest.protocols))await writeFile(join(out,`openbind-${name}.yaml`),JSON.stringify({
+  data_module_args:{num_workers:0,num_workers_validation:0},
+  experiment_settings:{seeds:manifest.seeds},pl_trainer_args:{devices:1,num_nodes:1,precision:p.precision},
+  model_update:{presets:['predict'],custom:{architecture:{shared:{num_recycles:p.recycles,diffusion:{no_full_rollout_steps:p.steps}}},
+    ...(p.kernelBackend?{settings:{memory:{eval:{use_triton_triangle_kernels:false}}}}:{})}},
+  output_writer_settings:{write_full_confidence_scores:false}},null,2)+'\n');
+}
+
+async function main(){
 const root=resolve(import.meta.dirname,'../..'),out=resolve(process.argv[2]??join(root,'folding/comparison/inputs'));
 const file='reviews/library-cofolding-2026-11-12/library-48/library-1.json';
 const bytes=await readFile(join(root,file)),library=JSON.parse(bytes);
@@ -19,18 +38,7 @@ const manifest={schema:'molarium.native-cofold-comparison.v1',source:{file,sha25
   protocols:{'low-step':{steps:25,recycles:2,precision:'32-true'},standard:{steps:200,recycles:3,precision:'bf16-mixed'},
     'torch-reference':{steps:25,recycles:2,precision:'32-true',kernelBackend:'upstream PyTorch dense'},
     'torch-standard':{steps:200,recycles:3,precision:'32-true',kernelBackend:'upstream PyTorch dense'}}};
-await mkdir(dirname(out),{recursive:true});await mkdir(out);
-await writeFile(join(out,'comparison.json'),JSON.stringify(manifest,null,2)+'\n');
-const queries={};for(const [i,c]of manifest.compounds.entries())queries[`compound_${String(i).padStart(3,'0')}`]={chains:[
-  {molecule_type:'protein',chain_ids:['A'],sequence:manifest.sequence},{molecule_type:'ligand',chain_ids:['B'],smiles:c.smiles}],use_msas:false};
-await writeFile(join(out,'openbind-query.json'),JSON.stringify({queries},null,2)+'\n');
-const boltz=join(out,'boltz');await mkdir(boltz,{recursive:true});
-for(const [i,c]of manifest.compounds.entries())await writeFile(join(boltz,`compound_${String(i).padStart(3,'0')}.yaml`),JSON.stringify({version:1,sequences:[
-  {protein:{id:'A',sequence:manifest.sequence,msa:'empty'}},{ligand:{id:'B',smiles:c.smiles}}]},null,2)+'\n');
-for(const [name,p]of Object.entries(manifest.protocols))await writeFile(join(out,`openbind-${name}.yaml`),JSON.stringify({
-  data_module_args:{num_workers:0,num_workers_validation:0},
-  experiment_settings:{seeds:manifest.seeds},pl_trainer_args:{devices:1,num_nodes:1,precision:p.precision},
-  model_update:{presets:['predict'],custom:{architecture:{shared:{num_recycles:p.recycles,diffusion:{no_full_rollout_steps:p.steps}}},
-    ...(p.kernelBackend?{settings:{memory:{eval:{use_triton_triangle_kernels:false}}}}:{})}},
-  output_writer_settings:{write_full_confidence_scores:false}},null,2)+'\n');
+await writeNativeInputs(manifest,out);
 console.log(JSON.stringify({out,compounds:manifest.compounds.length,seeds:manifest.seeds,sourceSha256:manifest.source.sha256}));
+}
+if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href)await main();

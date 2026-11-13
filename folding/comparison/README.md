@@ -141,6 +141,24 @@ from predictions; generated comparison libraries start with no decisions.
 
 See [the public results record](../../reviews/cofold-method-comparison-2026-11-12/README.md).
 
+## Experimental reference poses
+
+The [fixed three-complex crystal panel](../../reviews/cofold-crystal-reference-2026-11-13/README.md)
+adds experimental ligand RMSD to the implementation comparisons. It supplies only
+deposited protein sequence and exact CCD stereochemical SMILES to inference.
+`experimental_reference.py` extracts references from pinned mmCIF/CCD files and
+scores saved predictions in the whole-protein frame, retaining missing-residue
+mapping, symmetry, each seed, confidence selection, oracle best-of-three and
+tetrahedral-stereochemistry diagnostics. The charged aromatic N–H case exposed
+and fixed a scorer limitation: bracket hydrogens are now restored by exact
+declared chemical-graph correspondence before RDKit sanitization. No atom is
+assigned by predicted distance. Existing frozen pose coordinates stay unchanged.
+
+`prepare-experimental.mjs` reuses `writeNativeInputs()` from `prepare-native.mjs`;
+it never includes crystal coordinates in native queries. `review-experimental.mjs`
+adds each experimental structure once as a labelled display reference, without
+copying review preferences or treating the reference as a computed pose.
+
 ## Interrupted native OpenBind jobs
 
 Never restart a consumed output directory. First verify through the scheduler

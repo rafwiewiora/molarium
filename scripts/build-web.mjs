@@ -17,6 +17,15 @@ const assetRelease = String(process.env.MOLARIUM_ASSET_RELEASE || `v${packageJso
 const assetBase = `${assetOrigin}/${assetRelease}/`;
 
 const files = [
+  ...['README.md','panel.json','browser-scores.json',
+    ...['3MXF','1FKF','181L','JQ1','FK5','BNZ'].map(id=>`sources/${id}.cif`),
+    ...['3mxf-jq1','1fkf-fk5','181l-bnz'].flatMap(id=>[`${id}/reference.json`,`${id}/reference.pdb`,`review/${id}.library.json`]),
+    ...['browser-openbind0','browser-boltz2'].flatMap(model=>['library-1.json','library-2.json','library-3.json','throughput.json','build-manifest.json'].map(file=>`${model}/${file}`))
+  ].map(file=>`reviews/cofold-crystal-reference-2026-11-13/${file}`),
+  ...['openbind0-standard-agreement.json','openbind0-standard-residue-profile.json','openbind0-browser-standard.library.json',
+    'openbind-standard-overlay.png','openbind-standard-overlay.svg','openbind-standard-overlay.plot.json',
+    ...['library.json','receipt.public.json','native-artifacts.zip'].map(file=>`native-openbind0-torch-standard/${file}`)
+  ].map(file=>`reviews/cofold-method-comparison-2026-11-12/${file}`),
   'paper/submissions/chemrxiv-v1-2026-09-08/Molarium.pdf',
   'paper/submissions/chemrxiv-v1-2026-09-08/submission.json',
   'design-history/publications/sos1/checkpoints/starting-hit-campaign.json',

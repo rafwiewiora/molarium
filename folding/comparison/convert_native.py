@@ -183,7 +183,7 @@ def main():
         poses.append({'id':f'{method}-{protocol}-{index}-seed{seed}','compoundId':compound['id'],'seed':seed,'sample':spec['seeds'].index(seed),
           'status':'complete','result':result})
     validate_coverage(poses,spec)
-    run={'id':f'native-{method}-{protocol}-20261112','name':f'{method} native {protocol}','createdAt':receipt['finishedAt'],'status':'complete',
+    run={'id':f'native-{method}-{protocol}-{receipt["inputSha256"][:16]}','name':f'{method} native {protocol}','createdAt':receipt['finishedAt'],'status':'complete',
       'request':{'sequence':spec['sequence'],'model':method},'compounds':spec['compounds'],'samples':len(spec['seeds']),
       'total':len(poses),'completed':len(poses),'failed':0,
       'provenance':{'comparisonInputSha256':receipt['inputSha256'],'nativeReceiptSha256':sha(receipt_bytes),

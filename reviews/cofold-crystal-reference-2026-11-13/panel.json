@@ -1,0 +1,108 @@
+{
+  "schema": "molarium.experimental-cofold-panel.v1",
+  "createdAt": "2026-11-13T06:42:31Z",
+  "purpose": "Small retrospective crystal-pose reconstruction check; panel chosen before predictions.",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "cases": [
+    {
+      "id": "3mxf-jq1",
+      "name": "BRD4\u2013JQ1",
+      "pdbId": "3MXF",
+      "ccdId": "JQ1",
+      "sequence": "SMNPPPPETSNPNKPKRQTNQLQYLLRVVLKTLWKHQFAWPFQQPVDAVKLNLPDYYKIIKTPMDMGTIKKRLENNYYWNAQECIQDFNTMFTNCYIYNKPGDDIVLMAEALEKLFLQKINELPTEE",
+      "smiles": "Cc1c(sc-2c1C(=N[C@H](c3[n+]2c(n[nH]3)C)CC(=O)OC(C)(C)C)c4ccc(cc4)Cl)C",
+      "referenceFile": "3mxf-jq1/reference.json",
+      "referenceSha256": "bbfe8479c9d9c36964f5af8504d3509ecf1cdf12622961ecc8e895e781131ef3",
+      "resolutionA": 1.6,
+      "observedCa": 127,
+      "proteinResidues": 127,
+      "ligandHeavyAtoms": 31,
+      "formalCharge": 1
+    },
+    {
+      "id": "1fkf-fk5",
+      "name": "FKBP12\u2013FK506 (deposited FK5)",
+      "pdbId": "1FKF",
+      "ccdId": "FK5",
+      "sequence": "GVQVETISPGDGRTFPKRGQTCVVHYTGMLEDGKKFDSSRDRNKPFKFMLGKQEVIRGWEEGVAQMSVGQRAKLTISPDYAYGATGHPGIIPPHATLVFDVELLKLE",
+      "smiles": "C[C@@H]1C[C@@H]([C@@H]2[C@H](C[C@H]([C@@](O2)(C(=O)C(=O)N3CCCC[C@H]3C(=O)O[C@@H]([C@@H]([C@H](CC(=O)[C@@H](\\C=C(\\C1)/C)CC=C)O)C)/C(=C/[C@@H]4CC[C@H]([C@@H](C4)OC)O)/C)O)C)OC)OC",
+      "referenceFile": "1fkf-fk5/reference.json",
+      "referenceSha256": "8fac22a985b666314209e23414677446504d6aaafc96012a9cf5e18953d4765f",
+      "resolutionA": 1.7,
+      "observedCa": 107,
+      "proteinResidues": 107,
+      "ligandHeavyAtoms": 57,
+      "formalCharge": 0
+    },
+    {
+      "id": "181l-bnz",
+      "name": "T4 lysozyme\u2013benzene",
+      "pdbId": "181L",
+      "ccdId": "BNZ",
+      "sequence": "MNIFEMLRIDEGLRLKIYKDTEGYYTIGIGHLLTKSPSLNAAKSELDKAIGRNTNGVITKDEAEKLFNQDVDAAVRGILRNAKLKPVYDSLDAVRRAAAINMVFQMGETGVAGFTNSLRMLQQKRWDEAAVNLAKSRWYNQTPNRAKRVITTFRTGTWDAYKNL",
+      "smiles": "c1ccccc1",
+      "referenceFile": "181l-bnz/reference.json",
+      "referenceSha256": "324d1cbb022aa740c3dcb0c66756a4e1e40f5ccd85dde8a9d2009ace86818c3c",
+      "resolutionA": 1.8,
+      "observedCa": 162,
+      "proteinResidues": 164,
+      "ligandHeavyAtoms": 6,
+      "formalCharge": 0
+    }
+  ],
+  "sources": [
+    {
+      "file": "sources/3MXF.cif",
+      "sha256": "fb123201edb59709d14b64c5cb4296a90b6d35c45505baba48600d04e4cdd401",
+      "url": "https://files.rcsb.org/download/3MXF.cif"
+    },
+    {
+      "file": "sources/1FKF.cif",
+      "sha256": "73d403978ea8ba749e827947fdf4d45e76719ea16c7a6090bcb2012bdae35308",
+      "url": "https://files.rcsb.org/download/1FKF.cif"
+    },
+    {
+      "file": "sources/181L.cif",
+      "sha256": "7ef097473b7f0c906f10e4016e4b6e5973abf4e47bf910699912913404dbb671",
+      "url": "https://files.rcsb.org/download/181L.cif"
+    },
+    {
+      "file": "sources/JQ1.cif",
+      "sha256": "9652a88ed9dd1f78e4dbfd2fcd127e40a9643fc5b111d84d8e615adc399213e5",
+      "url": "https://files.rcsb.org/ligands/download/JQ1.cif"
+    },
+    {
+      "file": "sources/FK5.cif",
+      "sha256": "f953e9ee6171736f0d47d2129e25844842b41f799ed6fd16e02dd5907b63bd78",
+      "url": "https://files.rcsb.org/ligands/download/FK5.cif"
+    },
+    {
+      "file": "sources/BNZ.cif",
+      "sha256": "01bcf7c3ce9befdb4078e9832252eb5fe99e2598f320f87358ea1a9a247f7c61",
+      "url": "https://files.rcsb.org/ligands/download/BNZ.cif"
+    }
+  ],
+  "browserProtocol": {
+    "steps": 25,
+    "recycles": 2,
+    "msaMode": "single",
+    "weights": "int5"
+  },
+  "nativeProtocol": {
+    "steps": 200,
+    "recycles": 3,
+    "msaMode": "single"
+  },
+  "caveats": [
+    "These old structures may be in model training sets; this is not a held-out or prospective benchmark.",
+    "One deposited protein chain and exact CCD ligand chemical state; no crystal coordinates, templates or MSA enter inference.",
+    "Single-chain tasks omit assembly partners, crystal mates, waters and other additives.",
+    "Browser uses quantized weights and different sampling/RNG; native uses higher sampling effort. This is not fixed-input numerical parity.",
+    "Primary ligand RMSD uses all observed matching protein C-alpha atoms, without trimming, pocket refitting or independent ligand alignment.",
+    "Report every seed, seed0, median and oracle best-of3 separately; best-of3 uses the experimental answer and is not prospective selection."
+  ]
+}
