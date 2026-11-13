@@ -225,7 +225,7 @@ mapping): [comparison](msa256/openbind-feature-comparison.json),
 [official feature export](msa256/official-openbind-msa-features.json),
 [source pin and scope](msa256/official-source.json). This isolates one input
 boundary, not complete feature, tensor, sampler or model parity. The local CPU
-environment is recorded separately from the pending cluster model environment.
+environment is recorded separately from the cluster model environments in the native receipts.
 The earlier rows-only comparison is preserved in the
 [feature-check history archive](msa256/official-rows-only-history.zip).
 

@@ -23,6 +23,11 @@ forward records separately from browser end-to-end timings. Both native MSA
 phases are complete; original zero-output startup failures are preserved
 separately from pose scores.
 
+A [full input-feature audit](../../reviews/cofold-feature-parity-2026-11-13/README.md)
+is in progress on two diagnostic systems. It preserves shared-JS feature
+reconstructions and will capture stock native inputs with model forwards
+forbidden. No full-feature or numerical parity verdict is claimed yet.
+
 These tools compare completed structure predictions without rerunning inference
 or treating a native prediction as an experimental answer. The first cohort is
 the existing 48-pose browser library: ubiquitin (76 residues), 16 small compounds,

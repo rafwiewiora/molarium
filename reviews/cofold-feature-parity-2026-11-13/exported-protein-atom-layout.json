@@ -1,0 +1,112 @@
+{
+  "records": [
+    {
+      "caseId": "9sy7-a1jrx",
+      "scope": "Protein atom names in exported seed0 predictions, not direct input-feature capture.",
+      "sourceLibraries": {
+        "browser": "768cf938fd01ee36c8053c5653bf70b4524c084d036b39a7a5805c969f0c52ce",
+        "native": "129440bbae45a247d66247455767c3c51cd073b891e951f2708813facd070db7"
+      },
+      "browserAtoms": 1226,
+      "nativeAtoms": 1226,
+      "browserOnly": [],
+      "nativeOnly": []
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "scope": "Protein atom names in exported seed0 predictions, not direct input-feature capture.",
+      "sourceLibraries": {
+        "browser": "16c94821a5c45344bb1fcbbe552d6e729d66d8ea500115f731ee05c106e5c19c",
+        "native": "90fc59abc8679dfea0bce23a68c845d0ec74be42c5d4d8337de05de487fd6b59"
+      },
+      "browserAtoms": 2613,
+      "nativeAtoms": 2613,
+      "browserOnly": [],
+      "nativeOnly": []
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "scope": "Protein atom names in exported seed0 predictions, not direct input-feature capture.",
+      "sourceLibraries": {
+        "browser": "42718c03d06cdb365fda5460cbe85f1e17f785df169fbd663b8425fcd4be82d5",
+        "native": "256caa922074c9e4de524a83210e03eff45f4e395aa4c44b1114244def221539"
+      },
+      "browserAtoms": 1646,
+      "nativeAtoms": 1646,
+      "browserOnly": [],
+      "nativeOnly": []
+    },
+    {
+      "caseId": "9syo-a1jr1",
+      "scope": "Protein atom names in exported seed0 predictions, not direct input-feature capture.",
+      "sourceLibraries": {
+        "browser": "83cc10e6f8b4110f1e852a19c7aaf3f0f379843c309f310921ff639cc8825d76",
+        "native": "b2e6e5e91e61402e2b0e0dda2ccf46f73e891887c0d381097d4d71ba9cd354ae"
+      },
+      "browserAtoms": 1801,
+      "nativeAtoms": 1801,
+      "browserOnly": [],
+      "nativeOnly": []
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "scope": "Protein atom names in exported seed0 predictions, not direct input-feature capture.",
+      "sourceLibraries": {
+        "browser": "8e955d1508fd08c6314383c389fbdcf45bb0ae4f185927cf2f86c03086f05693",
+        "native": "d8235e04db272f5582140588adaf166ab53fb7841f4356145b99dcbb7579a22e"
+      },
+      "browserAtoms": 1277,
+      "nativeAtoms": 1277,
+      "browserOnly": [],
+      "nativeOnly": []
+    },
+    {
+      "caseId": "9xhg-1il",
+      "scope": "Protein atom names in exported seed0 predictions, not direct input-feature capture.",
+      "sourceLibraries": {
+        "browser": "289554c487f0dda13a74702762479c840b50188182c61671fc6834ecd37b17b6",
+        "native": "2b025e8c4c64c196c971fbad9a39494753d9412abad093a7af7473358fbfeb4d"
+      },
+      "browserAtoms": 1544,
+      "nativeAtoms": 1544,
+      "browserOnly": [],
+      "nativeOnly": []
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "scope": "Protein atom names in exported seed0 predictions, not direct input-feature capture.",
+      "sourceLibraries": {
+        "browser": "71193781aab691cd225b4e73e7b533881d27ce6cb49be9620e43020889f6215f",
+        "native": "251ca626ad54c4af6f339e26ee7ab3ec7dcfb58237c163a0367bcb14102d9749"
+      },
+      "browserAtoms": 2356,
+      "nativeAtoms": 2356,
+      "browserOnly": [],
+      "nativeOnly": []
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "scope": "Protein atom names in exported seed0 predictions, not direct input-feature capture.",
+      "sourceLibraries": {
+        "browser": "7b92f86b370e1d51eafb7e5fe454009243b7056b42145bc66b30ef28c7ccf0f3",
+        "native": "994d8784ac56fc02b7e179033c59c90e167fc8930bac9a5f71820ac141a30373"
+      },
+      "browserAtoms": 1363,
+      "nativeAtoms": 1363,
+      "browserOnly": [],
+      "nativeOnly": []
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "scope": "Protein atom names in exported seed0 predictions, not direct input-feature capture.",
+      "sourceLibraries": {
+        "browser": "3e0773af1dc745e1fcfa897dbbacd51589e68e362eb1c3ae0b97a668234afde4",
+        "native": "8e12b10093fd12210d594f8582c15d12bad9dbc8a5d9dd9a7a983a05d9bb1507"
+      },
+      "browserAtoms": 2775,
+      "nativeAtoms": 2775,
+      "browserOnly": [],
+      "nativeOnly": []
+    }
+  ]
+}

@@ -1,0 +1,2215 @@
+{
+  "schema": "molarium.native-feature-capture.v1",
+  "scope": "Production shared JavaScript featurizer reconstructed from the saved input component; no model execution. Flat typed-array shapes retain the production batch scalar dimensions.",
+  "arrays": {
+    "array-0000": {
+      "path": "batch/aatype",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 0,
+      "bytes": 740,
+      "sha256": "c6ef3b96daf49a6f6c9d554431aa0576a31910a61bca85b829f28e531be15686"
+    },
+    "array-0001": {
+      "path": "batch/profile",
+      "shape": [
+        5735
+      ],
+      "dtype": "<f4",
+      "byteOffset": 744,
+      "bytes": 22940,
+      "sha256": "63290207cd3a7f56a9519262e2a7786d9681450c3e579cf996a59eeb8428dfef",
+      "nonFiniteValues": 0
+    },
+    "array-0002": {
+      "path": "batch/deletionMean",
+      "shape": [
+        185
+      ],
+      "dtype": "<f4",
+      "byteOffset": 23688,
+      "bytes": 740,
+      "sha256": "b936e8ab732b990a25243cff1ce27d3d35e45e9cc3b1606c1300c9b58fa0be79",
+      "nonFiniteValues": 0
+    },
+    "array-0003": {
+      "path": "batch/msa",
+      "shape": [
+        47545
+      ],
+      "dtype": "|i1",
+      "byteOffset": 24432,
+      "bytes": 47545,
+      "sha256": "8be70409cd23bbc82adff162b21e7f0ebbd611b2f5a2e9557dadeabfd1cd7b12"
+    },
+    "array-0004": {
+      "path": "batch/msaMask",
+      "shape": [
+        47545
+      ],
+      "dtype": "|u1",
+      "byteOffset": 71984,
+      "bytes": 47545,
+      "sha256": "e60bb391c16e4d4773b9079365a383ebe252a49efd57fa0cfc05ed70c9fb15d3"
+    },
+    "array-0005": {
+      "path": "batch/deletionMatrix",
+      "shape": [
+        47545
+      ],
+      "dtype": "|u1",
+      "byteOffset": 119536,
+      "bytes": 47545,
+      "sha256": "13de6840db4858b8a3df7432dc37b3e61db66edda71bbf85aecf5848a4fb28fb"
+    },
+    "array-0006": {
+      "path": "batch/residueIndex",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 167088,
+      "bytes": 740,
+      "sha256": "7ce65dfa7f9dccc48845f3da1cb6a478823c4d400bce3f0b485a1ee60dc07c3e"
+    },
+    "array-0007": {
+      "path": "batch/tokenIndex",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 167832,
+      "bytes": 740,
+      "sha256": "452e820525a8505b1a16b97a46950660f3efd8db0b29e91b600460f7019abe07"
+    },
+    "array-0008": {
+      "path": "batch/asymId",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 168576,
+      "bytes": 740,
+      "sha256": "444e176c128109012c18bb7faf32f099c2ea35aaaa6d8e3a505f6313771f2dae"
+    },
+    "array-0009": {
+      "path": "batch/entityId",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 169320,
+      "bytes": 740,
+      "sha256": "444e176c128109012c18bb7faf32f099c2ea35aaaa6d8e3a505f6313771f2dae"
+    },
+    "array-0010": {
+      "path": "batch/symId",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 170064,
+      "bytes": 740,
+      "sha256": "7bf41dd1b39ded6a332e99bad4c14abe542bdfc6237849b1d15a6160375a34e4"
+    },
+    "array-0011": {
+      "path": "batch/seqMask",
+      "shape": [
+        185
+      ],
+      "dtype": "<f4",
+      "byteOffset": 170808,
+      "bytes": 740,
+      "sha256": "a1a057a34f1266b0d73aef865acdff77fb36f6498bdb28ec8b6c40a0784c8b18",
+      "nonFiniteValues": 0
+    },
+    "array-0012": {
+      "path": "batch/refPos",
+      "shape": [
+        13320
+      ],
+      "dtype": "<f4",
+      "byteOffset": 171552,
+      "bytes": 53280,
+      "sha256": "70dfec5591af8a444e5b4fa8ebec3363e671ec5a8d3298bebcac021976654d9f",
+      "nonFiniteValues": 0
+    },
+    "array-0013": {
+      "path": "batch/refMask",
+      "shape": [
+        4440
+      ],
+      "dtype": "<f4",
+      "byteOffset": 224832,
+      "bytes": 17760,
+      "sha256": "49dd5d2f04deadabf22e2aa51abe9d161ff3dd3e287ce7382f3324416fa5936a",
+      "nonFiniteValues": 0
+    },
+    "array-0014": {
+      "path": "batch/refElement",
+      "shape": [
+        4440
+      ],
+      "dtype": "<i4",
+      "byteOffset": 242592,
+      "bytes": 17760,
+      "sha256": "613c7e6d98bf8909f5e014ed3ed9dafe316699b1a3ed02ab5232d68e6c658674"
+    },
+    "array-0015": {
+      "path": "batch/refCharge",
+      "shape": [
+        4440
+      ],
+      "dtype": "<f4",
+      "byteOffset": 260352,
+      "bytes": 17760,
+      "sha256": "141cc3c32879fd2bec793a094d1ae4ed8e5765dbf3037159426d4692c9cf09da",
+      "nonFiniteValues": 0
+    },
+    "array-0016": {
+      "path": "batch/refAtomNameChars",
+      "shape": [
+        17760
+      ],
+      "dtype": "<i4",
+      "byteOffset": 278112,
+      "bytes": 71040,
+      "sha256": "a801ad721d07cb06d20c23fc813f856da60f44a67a5fa9fd76f63fe43f51a59d"
+    },
+    "array-0017": {
+      "path": "batch/refSpaceUid",
+      "shape": [
+        4440
+      ],
+      "dtype": "<i4",
+      "byteOffset": 349152,
+      "bytes": 17760,
+      "sha256": "354fa592e60f3fd3f12d8a80d8026f3b12b37204ac9032af3b0bbc12ff2b5fc1"
+    },
+    "array-0018": {
+      "path": "batch/displayAtomNameChars",
+      "shape": [
+        17760
+      ],
+      "dtype": "<i4",
+      "byteOffset": 366912,
+      "bytes": 71040,
+      "sha256": "a801ad721d07cb06d20c23fc813f856da60f44a67a5fa9fd76f63fe43f51a59d"
+    },
+    "array-0019": {
+      "path": "batch/predDenseAtomMask",
+      "shape": [
+        4440
+      ],
+      "dtype": "<f4",
+      "byteOffset": 437952,
+      "bytes": 17760,
+      "sha256": "49dd5d2f04deadabf22e2aa51abe9d161ff3dd3e287ce7382f3324416fa5936a",
+      "nonFiniteValues": 0
+    },
+    "array-0020": {
+      "path": "batch/bondMatrix",
+      "shape": [
+        34225
+      ],
+      "dtype": "<f4",
+      "byteOffset": 455712,
+      "bytes": 136900,
+      "sha256": "d1031cdbc5cd765fee3231fdd783704f68f86249738cd9c16080b99d109c21ac",
+      "nonFiniteValues": 0
+    },
+    "array-0021": {
+      "path": "batch/bondOrderMatrix",
+      "shape": [
+        34225
+      ],
+      "dtype": "<f4",
+      "byteOffset": 592616,
+      "bytes": 136900,
+      "sha256": "767809707c39b20ccbd9bd7c71ecc6bc95d8bd357798833209a6c80749898775",
+      "nonFiniteValues": 0
+    },
+    "array-0022": {
+      "path": "batch/residueOfToken",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 729520,
+      "bytes": 740,
+      "sha256": "4e1c4c52bcb0c2b17b3bd58b7879185b5ce09696cbf29745cfe8084418c06379"
+    },
+    "array-0023": {
+      "path": "batch/isDna",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 730264,
+      "bytes": 740,
+      "sha256": "ad9484f24235fdac13bba66e24d5ecc16b72c6de9bd27a3922f60833fe07679d"
+    },
+    "array-0024": {
+      "path": "batch/isRna",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 731008,
+      "bytes": 740,
+      "sha256": "ad9484f24235fdac13bba66e24d5ecc16b72c6de9bd27a3922f60833fe07679d"
+    },
+    "array-0025": {
+      "path": "batch/isLigand",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 731752,
+      "bytes": 740,
+      "sha256": "3f099cfbe2784b7356567437e0927ae17de2f9f445ca61bca1ca00211e36e384"
+    },
+    "array-0026": {
+      "path": "batch/isModified",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 732496,
+      "bytes": 740,
+      "sha256": "ad9484f24235fdac13bba66e24d5ecc16b72c6de9bd27a3922f60833fe07679d"
+    },
+    "array-0027": {
+      "path": "batch/tokenAtomsToQueries/indices",
+      "shape": [
+        1408
+      ],
+      "dtype": "<i4",
+      "byteOffset": 733240,
+      "bytes": 5632,
+      "sha256": "110928d23d2983ef121a0f79cc1d7bbc123142ac368b927929906ecfd3c97600"
+    },
+    "array-0028": {
+      "path": "batch/tokenAtomsToQueries/mask",
+      "shape": [
+        1408
+      ],
+      "dtype": "<f4",
+      "byteOffset": 738872,
+      "bytes": 5632,
+      "sha256": "38a61d4dd2795aeeb352663b71368f608ee76fa6fa3ee206ddd7828191b37af8",
+      "nonFiniteValues": 0
+    },
+    "array-0029": {
+      "path": "batch/queriesToKeys/indices",
+      "shape": [
+        5632
+      ],
+      "dtype": "<i4",
+      "byteOffset": 744504,
+      "bytes": 22528,
+      "sha256": "16f690430b2231a483df3188348382d004d971eaaaf737b3ddad67399b410c1c"
+    },
+    "array-0030": {
+      "path": "batch/queriesToKeys/mask",
+      "shape": [
+        5632
+      ],
+      "dtype": "<f4",
+      "byteOffset": 767032,
+      "bytes": 22528,
+      "sha256": "bfe63353ae5549b5a5499f8f265bbca0c95ff80f74dcb4d324eabfb933e6dc4c",
+      "nonFiniteValues": 0
+    },
+    "array-0031": {
+      "path": "batch/queriesToTokenAtoms/indices",
+      "shape": [
+        4440
+      ],
+      "dtype": "<i4",
+      "byteOffset": 789560,
+      "bytes": 17760,
+      "sha256": "64a04e9d1b112a0e2b45479c3c0b1d9e1eb8e784094910d3d0cbecae052560c8"
+    },
+    "array-0032": {
+      "path": "batch/queriesToTokenAtoms/mask",
+      "shape": [
+        4440
+      ],
+      "dtype": "<f4",
+      "byteOffset": 807320,
+      "bytes": 17760,
+      "sha256": "49dd5d2f04deadabf22e2aa51abe9d161ff3dd3e287ce7382f3324416fa5936a",
+      "nonFiniteValues": 0
+    },
+    "array-0033": {
+      "path": "batch/tokensToQueries/indices",
+      "shape": [
+        1408
+      ],
+      "dtype": "<i4",
+      "byteOffset": 825080,
+      "bytes": 5632,
+      "sha256": "51c28f4825c817da7a2fb8f63a3619019b95dbf21a560a70e7b560f4e7f6b168"
+    },
+    "array-0034": {
+      "path": "batch/tokensToQueries/mask",
+      "shape": [
+        1408
+      ],
+      "dtype": "<f4",
+      "byteOffset": 830712,
+      "bytes": 5632,
+      "sha256": "38a61d4dd2795aeeb352663b71368f608ee76fa6fa3ee206ddd7828191b37af8",
+      "nonFiniteValues": 0
+    },
+    "array-0035": {
+      "path": "batch/tokensToKeys/indices",
+      "shape": [
+        5632
+      ],
+      "dtype": "<i4",
+      "byteOffset": 836344,
+      "bytes": 22528,
+      "sha256": "319eda7ab55401058e7471527f20022c3c32fd01259ddce11c8bf1a9d7d2b040"
+    },
+    "array-0036": {
+      "path": "batch/tokensToKeys/mask",
+      "shape": [
+        5632
+      ],
+      "dtype": "<f4",
+      "byteOffset": 858872,
+      "bytes": 22528,
+      "sha256": "bfe63353ae5549b5a5499f8f265bbca0c95ff80f74dcb4d324eabfb933e6dc4c",
+      "nonFiniteValues": 0
+    },
+    "array-0037": {
+      "path": "batch/tokenAtomsToPseudoBeta/indices",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 881400,
+      "bytes": 740,
+      "sha256": "bd2a550f765f505bd4b3c84664cec67936c1c7a65c75883332ce54fd79a35a0c"
+    },
+    "array-0038": {
+      "path": "batch/tokenAtomsToPseudoBeta/mask",
+      "shape": [
+        185
+      ],
+      "dtype": "<f4",
+      "byteOffset": 882144,
+      "bytes": 740,
+      "sha256": "a1a057a34f1266b0d73aef865acdff77fb36f6498bdb28ec8b6c40a0784c8b18",
+      "nonFiniteValues": 0
+    },
+    "array-0039": {
+      "path": "batch/features/residueIndex",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 882888,
+      "bytes": 740,
+      "sha256": "7ce65dfa7f9dccc48845f3da1cb6a478823c4d400bce3f0b485a1ee60dc07c3e"
+    },
+    "array-0040": {
+      "path": "batch/features/tokenIndex",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 883632,
+      "bytes": 740,
+      "sha256": "452e820525a8505b1a16b97a46950660f3efd8db0b29e91b600460f7019abe07"
+    },
+    "array-0041": {
+      "path": "batch/features/asymId",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 884376,
+      "bytes": 740,
+      "sha256": "444e176c128109012c18bb7faf32f099c2ea35aaaa6d8e3a505f6313771f2dae"
+    },
+    "array-0042": {
+      "path": "batch/features/entityId",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 885120,
+      "bytes": 740,
+      "sha256": "444e176c128109012c18bb7faf32f099c2ea35aaaa6d8e3a505f6313771f2dae"
+    },
+    "array-0043": {
+      "path": "batch/features/symId",
+      "shape": [
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 885864,
+      "bytes": 740,
+      "sha256": "7bf41dd1b39ded6a332e99bad4c14abe542bdfc6237849b1d15a6160375a34e4"
+    }
+  },
+  "tree": {
+    "dict": [
+      [
+        {
+          "value": "sequence"
+        },
+        {
+          "value": "MGSSYHHHHHHSSGENLYFQHMKHGRVFIIKSYSEDDIHRSIKYNIWCSTEHGNKRLDAAYRSMNGKGPVYLLFSVNGSGHFCGVAEMKSAVDYNTCAGVWSQDKWKGRFDVRWIFVKDVPNSQLRHIRLENNENKPVTNSRDTQEVPLEKAKQVLKIIASYKHTTS"
+        }
+      ],
+      [
+        {
+          "value": "chains"
+        },
+        {
+          "list": [
+            {
+              "value": "MGSSYHHHHHHSSGENLYFQHMKHGRVFIIKSYSEDDIHRSIKYNIWCSTEHGNKRLDAAYRSMNGKGPVYLLFSVNGSGHFCGVAEMKSAVDYNTCAGVWSQDKWKGRFDVRWIFVKDVPNSQLRHIRLENNENKPVTNSRDTQEVPLEKAKQVLKIIASYKHTTS"
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "value": "chainLengths"
+        },
+        {
+          "list": [
+            {
+              "value": 167
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "value": "tokens"
+        },
+        {
+          "value": 185
+        }
+      ],
+      [
+        {
+          "value": "dense"
+        },
+        {
+          "value": 24
+        }
+      ],
+      [
+        {
+          "value": "subsets"
+        },
+        {
+          "value": 44
+        }
+      ],
+      [
+        {
+          "value": "atomCount"
+        },
+        {
+          "value": 1381
+        }
+      ],
+      [
+        {
+          "value": "sequences"
+        },
+        {
+          "value": 257
+        }
+      ],
+      [
+        {
+          "value": "pairedRows"
+        },
+        {
+          "value": 1
+        }
+      ],
+      [
+        {
+          "value": "shape"
+        },
+        {
+          "dict": [
+            [
+              {
+                "value": "tokens"
+              },
+              {
+                "value": 185
+              }
+            ],
+            [
+              {
+                "value": "dense"
+              },
+              {
+                "value": 24
+              }
+            ],
+            [
+              {
+                "value": "subsets"
+              },
+              {
+                "value": 44
+              }
+            ],
+            [
+              {
+                "value": "queries"
+              },
+              {
+                "value": 32
+              }
+            ],
+            [
+              {
+                "value": "keys"
+              },
+              {
+                "value": 128
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "value": "aatype"
+        },
+        {
+          "array": "array-0000"
+        }
+      ],
+      [
+        {
+          "value": "profile"
+        },
+        {
+          "array": "array-0001"
+        }
+      ],
+      [
+        {
+          "value": "deletionMean"
+        },
+        {
+          "array": "array-0002"
+        }
+      ],
+      [
+        {
+          "value": "msa"
+        },
+        {
+          "array": "array-0003"
+        }
+      ],
+      [
+        {
+          "value": "msaMask"
+        },
+        {
+          "array": "array-0004"
+        }
+      ],
+      [
+        {
+          "value": "deletionMatrix"
+        },
+        {
+          "array": "array-0005"
+        }
+      ],
+      [
+        {
+          "value": "residueIndex"
+        },
+        {
+          "array": "array-0006"
+        }
+      ],
+      [
+        {
+          "value": "tokenIndex"
+        },
+        {
+          "array": "array-0007"
+        }
+      ],
+      [
+        {
+          "value": "asymId"
+        },
+        {
+          "array": "array-0008"
+        }
+      ],
+      [
+        {
+          "value": "entityId"
+        },
+        {
+          "array": "array-0009"
+        }
+      ],
+      [
+        {
+          "value": "symId"
+        },
+        {
+          "array": "array-0010"
+        }
+      ],
+      [
+        {
+          "value": "seqMask"
+        },
+        {
+          "array": "array-0011"
+        }
+      ],
+      [
+        {
+          "value": "refPos"
+        },
+        {
+          "array": "array-0012"
+        }
+      ],
+      [
+        {
+          "value": "refMask"
+        },
+        {
+          "array": "array-0013"
+        }
+      ],
+      [
+        {
+          "value": "refElement"
+        },
+        {
+          "array": "array-0014"
+        }
+      ],
+      [
+        {
+          "value": "refCharge"
+        },
+        {
+          "array": "array-0015"
+        }
+      ],
+      [
+        {
+          "value": "refAtomNameChars"
+        },
+        {
+          "array": "array-0016"
+        }
+      ],
+      [
+        {
+          "value": "refSpaceUid"
+        },
+        {
+          "array": "array-0017"
+        }
+      ],
+      [
+        {
+          "value": "displayAtomNameChars"
+        },
+        {
+          "array": "array-0018"
+        }
+      ],
+      [
+        {
+          "value": "predDenseAtomMask"
+        },
+        {
+          "array": "array-0019"
+        }
+      ],
+      [
+        {
+          "value": "bondMatrix"
+        },
+        {
+          "array": "array-0020"
+        }
+      ],
+      [
+        {
+          "value": "bondOrderMatrix"
+        },
+        {
+          "array": "array-0021"
+        }
+      ],
+      [
+        {
+          "value": "declaredBondMatrix"
+        },
+        {
+          "undefined": true
+        }
+      ],
+      [
+        {
+          "value": "ligandSpans"
+        },
+        {
+          "list": [
+            {
+              "dict": [
+                [
+                  {
+                    "value": "from"
+                  },
+                  {
+                    "value": 167
+                  }
+                ],
+                [
+                  {
+                    "value": "count"
+                  },
+                  {
+                    "value": 18
+                  }
+                ],
+                [
+                  {
+                    "value": "code"
+                  },
+                  {
+                    "value": "LIG"
+                  }
+                ],
+                [
+                  {
+                    "value": "bonds"
+                  },
+                  {
+                    "list": [
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 0
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 2
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 2
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 3
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 3
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 2
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 3
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 5
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 5
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 6
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 6
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 7
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 7
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 8
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 8
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 9
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 9
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 10
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 10
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 11
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 2
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 10
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 12
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 12
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 13
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 13
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 7
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 6
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 14
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 14
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 15
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 15
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 16
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 16
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 5
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 16
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 17
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 17
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "value": "modifiedSpans"
+        },
+        {
+          "list": []
+        }
+      ],
+      [
+        {
+          "value": "residueOfToken"
+        },
+        {
+          "array": "array-0022"
+        }
+      ],
+      [
+        {
+          "value": "chainKinds"
+        },
+        {
+          "list": [
+            {
+              "value": "protein"
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "value": "chainOfResidue"
+        },
+        {
+          "list": [
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "value": "isDna"
+        },
+        {
+          "array": "array-0023"
+        }
+      ],
+      [
+        {
+          "value": "isRna"
+        },
+        {
+          "array": "array-0024"
+        }
+      ],
+      [
+        {
+          "value": "isLigand"
+        },
+        {
+          "array": "array-0025"
+        }
+      ],
+      [
+        {
+          "value": "isModified"
+        },
+        {
+          "array": "array-0026"
+        }
+      ],
+      [
+        {
+          "value": "tokenAtomsToQueries"
+        },
+        {
+          "dict": [
+            [
+              {
+                "value": "indices"
+              },
+              {
+                "array": "array-0027"
+              }
+            ],
+            [
+              {
+                "value": "mask"
+              },
+              {
+                "array": "array-0028"
+              }
+            ],
+            [
+              {
+                "value": "count"
+              },
+              {
+                "value": 1408
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "value": "queriesToKeys"
+        },
+        {
+          "dict": [
+            [
+              {
+                "value": "indices"
+              },
+              {
+                "array": "array-0029"
+              }
+            ],
+            [
+              {
+                "value": "mask"
+              },
+              {
+                "array": "array-0030"
+              }
+            ],
+            [
+              {
+                "value": "count"
+              },
+              {
+                "value": 5632
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "value": "queriesToTokenAtoms"
+        },
+        {
+          "dict": [
+            [
+              {
+                "value": "indices"
+              },
+              {
+                "array": "array-0031"
+              }
+            ],
+            [
+              {
+                "value": "mask"
+              },
+              {
+                "array": "array-0032"
+              }
+            ],
+            [
+              {
+                "value": "count"
+              },
+              {
+                "value": 4440
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "value": "tokensToQueries"
+        },
+        {
+          "dict": [
+            [
+              {
+                "value": "indices"
+              },
+              {
+                "array": "array-0033"
+              }
+            ],
+            [
+              {
+                "value": "mask"
+              },
+              {
+                "array": "array-0034"
+              }
+            ],
+            [
+              {
+                "value": "count"
+              },
+              {
+                "value": 1408
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "value": "tokensToKeys"
+        },
+        {
+          "dict": [
+            [
+              {
+                "value": "indices"
+              },
+              {
+                "array": "array-0035"
+              }
+            ],
+            [
+              {
+                "value": "mask"
+              },
+              {
+                "array": "array-0036"
+              }
+            ],
+            [
+              {
+                "value": "count"
+              },
+              {
+                "value": 5632
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "value": "tokenAtomsToPseudoBeta"
+        },
+        {
+          "dict": [
+            [
+              {
+                "value": "indices"
+              },
+              {
+                "array": "array-0037"
+              }
+            ],
+            [
+              {
+                "value": "mask"
+              },
+              {
+                "array": "array-0038"
+              }
+            ],
+            [
+              {
+                "value": "count"
+              },
+              {
+                "value": 185
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "value": "features"
+        },
+        {
+          "dict": [
+            [
+              {
+                "value": "residueIndex"
+              },
+              {
+                "array": "array-0039"
+              }
+            ],
+            [
+              {
+                "value": "tokenIndex"
+              },
+              {
+                "array": "array-0040"
+              }
+            ],
+            [
+              {
+                "value": "asymId"
+              },
+              {
+                "array": "array-0041"
+              }
+            ],
+            [
+              {
+                "value": "entityId"
+              },
+              {
+                "array": "array-0042"
+              }
+            ],
+            [
+              {
+                "value": "symId"
+              },
+              {
+                "array": "array-0043"
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "value": "numMsa"
+        },
+        {
+          "value": 1024
+        }
+      ]
+    ]
+  },
+  "unserializedMetadata": [],
+  "blob": {
+    "file": "features.bin",
+    "bytes": 886604,
+    "sha256": "2942daf4207c5e4df083704847ba708b0da0d22ee5f311c9d86dceb246549a8f"
+  }
+}

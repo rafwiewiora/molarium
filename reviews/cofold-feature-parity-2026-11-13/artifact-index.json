@@ -1,0 +1,66 @@
+{
+  "schema": "molarium.feature-audit-artifacts.v1",
+  "status": "in-progress; native captures pending",
+  "files": [
+    {
+      "file": "README.md",
+      "bytes": 3923,
+      "sha256": "766809a101739fc620e7dc5e8abdd28980f4f1b8e5ba6fff89fbc92610d8da92"
+    },
+    {
+      "file": "browser-32qy-a1keo/features.bin",
+      "bytes": 886604,
+      "sha256": "2942daf4207c5e4df083704847ba708b0da0d22ee5f311c9d86dceb246549a8f"
+    },
+    {
+      "file": "browser-32qy-a1keo/features.json",
+      "bytes": 51216,
+      "sha256": "d37a369a86739f492e9103304d26d10c24da6a18003f974deb89f9bc0d682b82"
+    },
+    {
+      "file": "browser-32qy-a1keo/receipt.json",
+      "bytes": 1645,
+      "sha256": "c0c7df93d8d1452a97e6d781cd15d4b00cbe5f2db2ea664e16b352756f6b289a"
+    },
+    {
+      "file": "browser-9t51-a1jtm/features.bin",
+      "bytes": 1232152,
+      "sha256": "bf783e7eb61989cf796adeb8eb3161e7d48ac658cdb93197a7dfa6af83f43953"
+    },
+    {
+      "file": "browser-9t51-a1jtm/features.json",
+      "bytes": 68738,
+      "sha256": "b6b4718a1e47554a5ab126bdd04ca2dbb2d9a3a973284ddf464141f537a0a744"
+    },
+    {
+      "file": "browser-9t51-a1jtm/receipt.json",
+      "bytes": 1709,
+      "sha256": "ee6d43df593bccf5fab94429e4e8e3bba022b7484e69163e5912a0267fa9d545"
+    },
+    {
+      "file": "exported-protein-atom-layout.json",
+      "bytes": 4124,
+      "sha256": "3938c245bf4e52a56f9e30daba6ebd55aacc25b668622f9e7c5f2107c47e1dcb"
+    },
+    {
+      "file": "installed-native-source.json",
+      "bytes": 463,
+      "sha256": "ad020e9fcba937738f24d17f06bae1b9437325351666d049b0c196a358c96b55"
+    },
+    {
+      "file": "producers/capture-browser-features.mjs",
+      "bytes": 5809,
+      "sha256": "9800f414a6262e3542d8dfde850e7bdb39a943a46f71bade22502b72771bea4d"
+    },
+    {
+      "file": "producers/capture_native_features.py",
+      "bytes": 9666,
+      "sha256": "6971ccb805218744902cc7ff840ee4b7878b71fb83e3cea084f42875446bb5a3"
+    },
+    {
+      "file": "producers/native_run.py",
+      "bytes": 9223,
+      "sha256": "bc5d3bc2c71758f6a07be74324b072269a8d61f836c44cd3159b1bace9d17282"
+    }
+  ]
+}
