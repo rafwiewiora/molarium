@@ -17,6 +17,10 @@ const assetRelease = String(process.env.MOLARIUM_ASSET_RELEASE || `v${packageJso
 const assetBase = `${assetOrigin}/${assetRelease}/`;
 
 const files = [
+  'reviews/cofold-layer-parity-2026-11-13/README.md',
+  'reviews/cofold-layer-parity-2026-11-13/comparison.json',
+  'reviews/cofold-layer-parity-2026-11-13/evidence.json',
+  'reviews/cofold-layer-parity-2026-11-13/fixed-input-evidence.zip',
   'reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/build-manifest.json',
   'reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/foldarium-review.png',
   'reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/library-1.json',
