@@ -1,0 +1,190 @@
+--- a/vendor/localfold/webgpu/af3/trunk/transition.js
++++ b/vendor/localfold/webgpu/af3/trunk/transition.js
+@@ -216,7 +216,34 @@
+   return width;
+ }
+ 
++function stableScalarTransitionPacking(channels, width, stored, vector, lanes, groups) {
++  const component=i=>lanes===1?'':'.'+'xyzw'[i];
++  const mean=vector+'('+Array.from({length:lanes},(_,i)=>'row_mean[g * '+lanes+'u + '+i+'u]').join(',')+')';
++  const inverse=vector+'('+Array.from({length:lanes},(_,i)=>'row_inverse_std[g * '+lanes+'u + '+i+'u]').join(',')+')';
++  return `  for (var step = 0u; step < ${Math.ceil(channels/width)}u; step += 1u) {
++    let c = local + step * WORKGROUP;
++    let bounded_c = min(c, CHANNELS - 1u);
++    let scale = f32(weights[W_SCALE + bounded_c]);
++    let offset = f32(weights[W_OFFSET + bounded_c]);
++    for (var g = 0u; g < ${groups}u; g += 1u) {
++      var centered: ${vector};
++      ${Array.from({length:lanes},(_,i)=>`let row${i} = min(base_row + g * ${lanes}u + ${i}u, ROWS - 1u);
++      centered${component(i)} = input[row${i} * CHANNELS + bounded_c] - input[row${i} * CHANNELS];`).join('\n      ')}
++      reduce_a[local] = centered;
++      workgroupBarrier();
++      let packed = (reduce_a[local] - ${mean}) * ${inverse} * ${vector}(scale) + ${vector}(offset);
++      if (c < CHANNELS) { normalized[g * CHANNELS + c] = ${stored}(packed); }
++      workgroupBarrier();
++    }
++  }
++  workgroupBarrier();`;
++}
++
+ export function createTransitionShader(shape, offsets, epsilon, variance) {
++  const shifted = variance === "shifted-fast";
++  const fastVariance = variance === "fast" || shifted;
++  const shiftInput = (base, column) => shifted
++    ? `(input[${base} + ${column}] - input[${base}])` : `input[${base} + ${column}]`;
+   const { rows, channels, factor } = shape;
+   const intermediate = channels * factor;
+   const tile = shape.tile ?? transitionRowTile(rows, channels);
+@@ -351,7 +378,7 @@
+ ${(() => {
+   const vecNorm = channels % WORKGROUP === 0 && WORKGROUP <= 128;
+   return `var<workgroup> reduce_a: array<${vector}, ${WORKGROUP}>;
+-${variance === "fast" ? `var<workgroup> reduce_b: array<${vector}, ${WORKGROUP}>;\n` : ""}\
++${fastVariance ? `var<workgroup> reduce_b: array<${vector}, ${WORKGROUP}>;\n` : ""}\
+ ${vecNorm ? "" : `var<workgroup> row_mean: array<f32, ${tile}>;
+ var<workgroup> row_inverse_std: array<f32, ${tile}>;`}`;
+ })()}
+@@ -381,26 +408,26 @@
+     ${overLanes((l) => `let row_${g}_${l} = min(base_row + ${g * lanes + l}u, ROWS - 1u);
+     let base_${g}_${l} = row_${g}_${l} * CHANNELS;`).join("\n    ")}
+     ${overSteps((s) => `var in_${s}_${g}: ${vector};
+-    ${overLanes((l, at) => `in_${s}_${g}${at} = input[base_${g}_${l} + c_ln_${s}];`).join("\n    ")}`)}
++    ${overLanes((l, at) => `in_${s}_${g}${at} = ${shiftInput(`base_${g}_${l}`, `c_ln_${s}`)};`).join("\n    ")}`)}
+     var total_${g} = in_0_${g};
+-    ${variance === "fast" ? `var sq_total_${g} = in_0_${g} * in_0_${g};` : ""}
++    ${fastVariance ? `var sq_total_${g} = in_0_${g} * in_0_${g};` : ""}
+     ${Array.from({ length: channelsPerThread - 1 }, (_, idx) => {
+       const s = idx + 1;
+       return `total_${g} += in_${s}_${g};
+-    ${variance === "fast" ? `sq_total_${g} += in_${s}_${g} * in_${s}_${g};` : ""}`;
++    ${fastVariance ? `sq_total_${g} += in_${s}_${g} * in_${s}_${g};` : ""}`;
+     }).join("\n    ")}
+     reduce_a[local] = total_${g};
+-    ${variance === "fast" ? `reduce_b[local] = sq_total_${g};` : ""}
++    ${fastVariance ? `reduce_b[local] = sq_total_${g};` : ""}
+     workgroupBarrier();
+     for (var stride = WORKGROUP / 2u; stride > 0u; stride >>= 1u) {
+       if (local < stride) {
+         reduce_a[local] += reduce_a[local + stride];
+-        ${variance === "fast" ? "reduce_b[local] += reduce_b[local + stride];" : ""}
++        ${fastVariance ? "reduce_b[local] += reduce_b[local + stride];" : ""}
+       }
+       workgroupBarrier();
+     }
+     let mean_${g} = reduce_a[0] / ${vector}(f32(CHANNELS));
+-    ${variance === "fast"
++    ${fastVariance
+       ? `let variance_${g} = reduce_b[0] / ${vector}(f32(CHANNELS)) - mean_${g} * mean_${g};`
+       : `var centered_total_${g} = ${zero};
+     ${overSteps((s) => `{
+@@ -418,7 +445,7 @@
+     let variance_${g} = reduce_a[0] / ${vector}(f32(CHANNELS));`}
+     let inv_std_${g} = inverseSqrt(variance_${g} + ${vector}(EPSILON));
+     ${overSteps((s) => `{
+-      let packed_${s}_${g} = (${variance === "fast" ? `in_${s}_${g} - mean_${g}` : `in_${s}_${g}`}) * inv_std_${g} * scale_ln_${s} + offset_ln_${s};
++      let packed_${s}_${g} = (${fastVariance ? `in_${s}_${g} - mean_${g}` : `in_${s}_${g}`}) * inv_std_${g} * scale_ln_${s} + offset_ln_${s};
+       normalized[${g * channels}u + c_ln_${s}] = ${narrow(`packed_${s}_${g}`)};
+     }`)}
+     workgroupBarrier();
+@@ -431,30 +458,30 @@
+   for (var g = 0u; g < ${groups}u; g += 1u) {
+     ${overLanes((l) => `let base_${l} = min(base_row + g * ${lanes}u + ${l}u, ROWS - 1u) * CHANNELS;`).join("\n    ")}
+     var total = ${zero};
+-    ${variance === "fast" ? `var sq_total = ${zero};` : ""}
++    ${fastVariance ? `var sq_total = ${zero};` : ""}
+     for (var c = local; c < CHANNELS; c += WORKGROUP) {
+       var value: ${vector};
+-      ${overLanes((l, at) => `value${at} = input[base_${l} + c];`).join("\n      ")}
++      ${overLanes((l, at) => `value${at} = ${shiftInput(`base_${l}`, "c")};`).join("\n      ")}
+       total += value;
+-      ${variance === "fast" ? "sq_total += value * value;" : ""}
++      ${fastVariance ? "sq_total += value * value;" : ""}
+     }
+     reduce_a[local] = total;
+-    ${variance === "fast" ? "reduce_b[local] = sq_total;" : ""}
++    ${fastVariance ? "reduce_b[local] = sq_total;" : ""}
+     workgroupBarrier();
+     for (var stride = WORKGROUP / 2u; stride > 0u; stride >>= 1u) {
+       if (local < stride) {
+         reduce_a[local] += reduce_a[local + stride];
+-        ${variance === "fast" ? "reduce_b[local] += reduce_b[local + stride];" : ""}
++        ${fastVariance ? "reduce_b[local] += reduce_b[local + stride];" : ""}
+       }
+       workgroupBarrier();
+     }
+     let mean = reduce_a[0] / ${vector}(f32(CHANNELS));
+-    ${variance === "fast"
++    ${fastVariance
+       ? `let variance = reduce_b[0] / ${vector}(f32(CHANNELS)) - mean * mean;`
+       : `var centered_total = ${zero};
+     for (var c = local; c < CHANNELS; c += WORKGROUP) {
+       var d: ${vector};
+-      ${overLanes((l, at) => `d${at} = input[base_${l} + c] - mean${at};`).join("\n      ")}
++      ${overLanes((l, at) => `d${at} = ${shiftInput(`base_${l}`, "c")} - mean${at};`).join("\n      ")}
+       centered_total += d * d;
+     }
+     workgroupBarrier();
+@@ -472,7 +499,7 @@
+     workgroupBarrier();
+   }
+ 
+-  // ...LANES rows of one channel per slot, which is the layout both matmuls
++${shifted ? stableScalarTransitionPacking(channels, WORKGROUP, stageVector, vector, lanes, groups) : `  // ...LANES rows of one channel per slot, which is the layout both matmuls
+   // read. A row past the end is clamped rather than skipped: it contributes to
+   // no output, and leaving the lane uninitialised would put a NaN in a vector
+   // whose other lanes are real.
+@@ -489,7 +516,7 @@
+       normalized[g * CHANNELS + c] = ${narrow("packed")};
+     }
+   }
+-  workgroupBarrier();`}
++  workgroupBarrier();`}`}
+ 
+   // transition1 is (channels, intermediate * 2), so a column is strided by the
+   // full doubled width. Gate half first, value half second.
+@@ -574,7 +601,7 @@
+    * @param {Float32Array} input rows * channels
+    * @param {{rows: number, channels: number, factor?: number}} shape
+    * @param {object} weights inputLayerNormScale/Offset, transition1, transition2
+-   * @param {{epsilon?: number, variance?: "fast"|"two-pass"}} options
++   * @param {{epsilon?: number, variance?: "fast"|"two-pass"|"shifted-fast"}} options
+    */
+   async run(input, shape, weights, options = {}) {
+     const { rows, channels } = shape;
+@@ -623,7 +650,7 @@
+         })),
+       }));
+       // ...one workgroup a TILE of rows; see TRANSITION_ROW_TILE.
+-      const groups = Math.ceil(rows / transitionRowTile(rows));
++      const groups = Math.ceil(rows / transitionRowTile(rows, channels));
+       pass.dispatchWorkgroups(Math.min(groups, GRID_WIDTH), Math.ceil(groups / GRID_WIDTH));
+       pass.end();
+       encoder.copyBufferToBuffer(outputBuffer.buffer, 0, readback.buffer, 0, rows * channels * 4);
+@@ -939,7 +966,11 @@
+   const LANES = 64;
+   const LANES_PER_ROW = LANES / NORMALIZE_ROWS;
+   const w = (expression) => (weightPrecision === "f16" ? `f32(${expression})` : expression);
+-  const fastVariance = variance === "fast";
++  const shifted = variance === "shifted-fast";
++  const fastVariance = variance === "fast" || shifted;
++  const readInput = shifted
++    ? "(input[base_idx + index] - input[(base_row + index / CHANNELS) * CHANNELS])"
++    : "input[base_idx + index]";
+ 
+   const normalize = `${normalizedStorage === "f16" || weightPrecision === "f16" ? "enable f16;\n" : ""}
+ // 🔴 THE ROW COUNT IS A UNIFORM, NOT A CONSTANT, BECAUSE THE ROWS ARE CHUNKED.
+@@ -988,12 +1019,12 @@
+   let base_idx = base_row * CHANNELS;
+   if (full_tile) {
+     for (var index = local; index < NORMALIZE_ROWS * CHANNELS; index += ${LANES}u) {
+-      tile[index] = input[base_idx + index];
++      tile[index] = ${readInput};
+     }
+   } else {
+     for (var index = local; index < NORMALIZE_ROWS * CHANNELS; index += ${LANES}u) {
+       let row = base_row + index / CHANNELS;
+-      tile[index] = select(0.0, input[base_idx + index], row < p.rows);
++      tile[index] = select(0.0, ${readInput}, row < p.rows);
+     }
+   }
+   workgroupBarrier();

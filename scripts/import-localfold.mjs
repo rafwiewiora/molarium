@@ -1,8 +1,9 @@
-// Copy an immutable, unmodified browser module closure from an inspected checkout.
+// Copy the immutable upstream closure and apply separately hash-verified local patches.
 import {readFile,writeFile,mkdir,copyFile} from 'node:fs/promises';
 import {resolve,dirname,relative} from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
+import {applyLocalFoldPatches,writeLocalFoldSourceIdentity}from'./localfold-patches.mjs';
 const revision='5ea3d42c911949700401b54003cb28c557fcf2a6';
 const source=resolve(process.argv[2]||'');
 if(!process.argv[2]||execFileSync('git',['rev-parse','HEAD'],{cwd:source,encoding:'utf8'}).trim()!==revision)
@@ -29,6 +30,12 @@ while(queue.length){
   records.push({path,bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')});
 }
 for(const path of ['LICENSE','README.md'])await copyFile(resolve(source,path),resolve(root,path));
-await writeFile(resolve(root,'UPSTREAM.json'),JSON.stringify({repository:'https://github.com/sokrypton/localfold',
-  revision,files:records.sort((a,b)=>a.path.localeCompare(b.path))},null,2)+'\n');
-console.log('Imported unmodified LocalFold closure:',records.length,'files',records.reduce((s,r)=>s+r.bytes,0),'bytes');
+const repoRoot=resolve(root,'..','..'),localPatches=await applyLocalFoldPatches(repoRoot,{revision});
+for(const patch of localPatches){const record=records.find(r=>r.path===patch.path);
+ if(!record||record.sha256!==patch.upstreamSha256)throw Error('Local patch is outside the verified upstream closure');
+ Object.assign(record,{upstreamBytes:record.bytes,upstreamSha256:record.sha256,bytes:patch.bytes,sha256:patch.sha256,localPatch:patch.id});}
+const receipt=JSON.stringify({repository:'https://github.com/sokrypton/localfold',revision,localPatches,
+ files:records.sort((a,b)=>a.path.localeCompare(b.path))},null,2)+'\n';
+await writeFile(resolve(root,'UPSTREAM.json'),receipt);
+await writeLocalFoldSourceIdentity(repoRoot,receipt);
+console.log('Imported pinned LocalFold closure:',records.length,'files;',localPatches.length,'audited local patch(es)');

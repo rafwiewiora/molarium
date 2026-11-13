@@ -1,6 +1,7 @@
-import {foldingRequest,LOCALFOLD_REVISION,FOLD_MODELS,COFOLD_FAMILIES,validateFoldComponent} from './request.mjs';
+import {foldingRequest,FOLD_MODELS,COFOLD_FAMILIES,validateFoldComponent} from './request.mjs';
 import {ColabFoldMsaProvider} from '../openfold/msa-client.js';
 import {normalizeLigandSmiles} from './ligand-normalization.mjs';
+import {LOCALFOLD_SOURCE}from'./localfold-source.mjs';
 const providers=new Map();
 const check=signal=>{if(signal?.aborted)throw signal.reason??new DOMException('Aborted','AbortError');};
 async function sha(text){return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',
@@ -113,7 +114,7 @@ export async function predictLocalFold(input,{signal,onProgress=()=>{}}={}) {
     pdb,plddt,meanPlddt,ptm,iptm,pae,component,geometry,confidenceLayout,elapsedMs:performance.now()-started,
     totalElapsedMs:performance.now()-totalStarted,runtime:{gpuManagedMemory:memoryTotals(device)},
     provenance:{application:{name:'Molarium',webCodeVersion:new URL(import.meta.url).searchParams.get('v')},
-      upstream:{repository:'https://github.com/sokrypton/localfold',revision:LOCALFOLD_REVISION},
+      upstream:structuredClone(LOCALFOLD_SOURCE),
       request,alignment,alignmentSha256:alignment?await sha(alignment):null,
       ligandComponentSha256:component?await sha(JSON.stringify(component)):null,ligandNormalization,
       modelManifestSha256:await sha(JSON.stringify(manifest)),

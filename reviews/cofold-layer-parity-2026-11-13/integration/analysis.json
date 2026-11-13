@@ -1,0 +1,25 @@
+{
+  "schema": "molarium.transition-integration-analysis.v1",
+  "rawMetricsRecomputed": 17,
+  "summary": [
+    {
+      "measurement": "direct-transition-entrypoint001",
+      "records": 7,
+      "passes": 7,
+      "failures": 0
+    },
+    {
+      "measurement": "transition-dispatch-before001",
+      "records": 4,
+      "passes": 0,
+      "failures": 4
+    },
+    {
+      "measurement": "transition-dispatch-after001",
+      "records": 6,
+      "passes": 4,
+      "failures": 2
+    }
+  ],
+  "scope": "Saved component GPU outputs only; no full-model or cross-vendor qualification."
+}

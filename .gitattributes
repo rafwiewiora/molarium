@@ -2,3 +2,5 @@
 *.wasm binary
 *.mol binary
 *.pdb binary
+# A unified diff uses a single space for an empty context line.
+scripts/localfold-patches/*.patch whitespace=-blank-at-eol
