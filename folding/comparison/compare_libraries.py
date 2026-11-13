@@ -18,7 +18,7 @@ def main():
         if label in libraries:raise ValueError('Duplicate label')
         if any(x['status']!='complete'for x in b['poses']):raise ValueError('Explicitly resolve incomplete inputs before a complete-case comparison')
         libraries[label]=b;sources.append({'label':label,'file':Path(file).name,'sha256':hashlib.sha256(data).hexdigest()})
-    report={'schema':'molarium.cofold-pose-agreement.v1','purpose':'Implementation/protocol agreement on arbitrary test pairs, not experimental pose accuracy.',
+    report={'schema':'molarium.cofold-pose-agreement.v1','purpose':'Implementation/protocol agreement between supplied predictions, distinct from experimental pose accuracy.',
       'definitions':{'alignment':'Least-squares corresponding protein C-alpha atoms; same transform moves the complete predicted complex.',
         'ligandRmsd':'RDKit CalcRMS in the protein frame, without ligand fitting; conjugated terminal-group symmetry enabled.',
         'ensemble':'Seed-paired, directed left-to-right nearest-of-ensemble (and reverse), and one-to-one assignment statistics are retained with every pairwise result.',

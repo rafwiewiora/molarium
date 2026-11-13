@@ -1,0 +1,330 @@
+{
+  "schema": "molarium.cofold-pose-agreement.v1",
+  "purpose": "Implementation/protocol agreement between supplied predictions, distinct from experimental pose accuracy.",
+  "definitions": {
+    "alignment": "Least-squares corresponding protein C-alpha atoms; same transform moves the complete predicted complex.",
+    "ligandRmsd": "RDKit CalcRMS in the protein frame, without ligand fitting; conjugated terminal-group symmetry enabled.",
+    "ensemble": "Seed-paired, directed left-to-right nearest-of-ensemble (and reverse), and one-to-one assignment statistics are retained with every pairwise result.",
+    "contacts": "Protein residue has a heavy atom within 4.0 A of a ligand heavy atom.",
+    "clashes": "Number of protein/ligand heavy-atom pairs under 1.2 A; a limited geometry diagnostic."
+  },
+  "sources": [
+    {
+      "label": "browser",
+      "file": "library-3.json",
+      "sha256": "170ce945600da4279327722108ae20b982be163544af1483e95806884a3a7fab"
+    },
+    {
+      "label": "native",
+      "file": "library-3.json",
+      "sha256": "268fc66c596a68e62e50fe9df92e2bfde550dae96151d0367002c8cffd5ece87"
+    }
+  ],
+  "comparisons": [
+    {
+      "left": "browser",
+      "right": "native",
+      "compounds": 1,
+      "medianSeedPairedRmsdA": 19.409594557872538,
+      "medianNearestEnsembleRmsdA": 11.601521482081653,
+      "medianOneToOneRmsdA": 17.265396225597144,
+      "medianLeftSeedSpreadRmsdA": 12.817816603485511,
+      "medianRightSeedSpreadRmsdA": 21.667185676715203,
+      "cases": [
+        {
+          "compoundId": "9t51-a1jtm",
+          "smiles": "C[C@]12CC[C@@H](C[C@@H]1CCc3c2nc4cccc(c4c3)C5CCN(CC5)C(=O)OC(C)(C)C)O",
+          "leftSeeds": [
+            0,
+            1,
+            2
+          ],
+          "rightSeeds": [
+            0,
+            1,
+            2
+          ],
+          "pairwise": [
+            [
+              {
+                "proteinCaRmsdA": 17.86777480619444,
+                "ligandProteinFrameSymmetryRmsdA": 31.002748515926708,
+                "ligandCentroidDisplacementA": 30.71428613662926,
+                "contactResidueJaccard": 0.0,
+                "referenceGeometry": {
+                  "contactResidues": 9,
+                  "severeHeavyAtomPairsUnder1_2A": 1,
+                  "minimumProteinLigandDistanceA": 1.160611476765589
+                },
+                "predictedGeometry": {
+                  "contactResidues": 9,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 2.9369926795959165
+                }
+              },
+              {
+                "proteinCaRmsdA": 15.112851315650401,
+                "ligandProteinFrameSymmetryRmsdA": 9.248463065486638,
+                "ligandCentroidDisplacementA": 6.735206956288787,
+                "contactResidueJaccard": 0.0,
+                "referenceGeometry": {
+                  "contactResidues": 9,
+                  "severeHeavyAtomPairsUnder1_2A": 1,
+                  "minimumProteinLigandDistanceA": 1.160611476765589
+                },
+                "predictedGeometry": {
+                  "contactResidues": 12,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 2.773906451198382
+                }
+              },
+              {
+                "proteinCaRmsdA": 15.073224530023992,
+                "ligandProteinFrameSymmetryRmsdA": 26.323909234414153,
+                "ligandCentroidDisplacementA": 24.799175843121912,
+                "contactResidueJaccard": 0.058823529411764705,
+                "referenceGeometry": {
+                  "contactResidues": 9,
+                  "severeHeavyAtomPairsUnder1_2A": 1,
+                  "minimumProteinLigandDistanceA": 1.160611476765589
+                },
+                "predictedGeometry": {
+                  "contactResidues": 9,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 2.889378133785883
+                }
+              }
+            ],
+            [
+              {
+                "proteinCaRmsdA": 17.835852182652598,
+                "ligandProteinFrameSymmetryRmsdA": 26.459272679477145,
+                "ligandCentroidDisplacementA": 24.672650198249947,
+                "contactResidueJaccard": 0.041666666666666664,
+                "referenceGeometry": {
+                  "contactResidues": 16,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 1.9344110214739783
+                },
+                "predictedGeometry": {
+                  "contactResidues": 9,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 2.9369926795959165
+                }
+              },
+              {
+                "proteinCaRmsdA": 12.873154000841458,
+                "ligandProteinFrameSymmetryRmsdA": 10.438890330864748,
+                "ligandCentroidDisplacementA": 9.474053050282992,
+                "contactResidueJaccard": 0.037037037037037035,
+                "referenceGeometry": {
+                  "contactResidues": 16,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 1.9344110214739783
+                },
+                "predictedGeometry": {
+                  "contactResidues": 12,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 2.773906451198382
+                }
+              },
+              {
+                "proteinCaRmsdA": 17.14388362673077,
+                "ligandProteinFrameSymmetryRmsdA": 20.259294920652064,
+                "ligandCentroidDisplacementA": 19.942186580891054,
+                "contactResidueJaccard": 0.041666666666666664,
+                "referenceGeometry": {
+                  "contactResidues": 16,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 1.9344110214739783
+                },
+                "predictedGeometry": {
+                  "contactResidues": 9,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 2.889378133785883
+                }
+              }
+            ],
+            [
+              {
+                "proteinCaRmsdA": 16.62563216378271,
+                "ligandProteinFrameSymmetryRmsdA": 22.288430690652728,
+                "ligandCentroidDisplacementA": 21.06828834597839,
+                "contactResidueJaccard": 0.041666666666666664,
+                "referenceGeometry": {
+                  "contactResidues": 16,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 1.7222630461111335
+                },
+                "predictedGeometry": {
+                  "contactResidues": 9,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 2.9369926795959165
+                }
+              },
+              {
+                "proteinCaRmsdA": 14.594280136424153,
+                "ligandProteinFrameSymmetryRmsdA": 15.117211049893578,
+                "ligandCentroidDisplacementA": 14.955766790753202,
+                "contactResidueJaccard": 0.037037037037037035,
+                "referenceGeometry": {
+                  "contactResidues": 16,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 1.7222630461111335
+                },
+                "predictedGeometry": {
+                  "contactResidues": 12,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 2.773906451198382
+                }
+              },
+              {
+                "proteinCaRmsdA": 17.13101609395807,
+                "ligandProteinFrameSymmetryRmsdA": 16.787144826826154,
+                "ligandCentroidDisplacementA": 15.418655491144653,
+                "contactResidueJaccard": 0.041666666666666664,
+                "referenceGeometry": {
+                  "contactResidues": 16,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 1.7222630461111335
+                },
+                "predictedGeometry": {
+                  "contactResidues": 9,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 2.889378133785883
+                }
+              }
+            ]
+          ],
+          "seedPairedMeanRmsdA": 19.409594557872538,
+          "nearestPoseMeanRmsdA": 11.601521482081653,
+          "reverseNearestPoseMeanRmsdA": 16.108012860988506,
+          "oneToOneMeanRmsdA": 17.265396225597144,
+          "oneToOneAssignment": [
+            1,
+            2,
+            0
+          ],
+          "leftSeedSpread": {
+            "pairs": [
+              {
+                "leftSeed": 0,
+                "rightSeed": 1,
+                "proteinCaRmsdA": 14.099709966942223,
+                "ligandProteinFrameSymmetryRmsdA": 11.723784783287977,
+                "ligandCentroidDisplacementA": 7.6786349783773,
+                "contactResidueJaccard": 0.041666666666666664,
+                "referenceGeometry": {
+                  "contactResidues": 9,
+                  "severeHeavyAtomPairsUnder1_2A": 1,
+                  "minimumProteinLigandDistanceA": 1.160611476765589
+                },
+                "predictedGeometry": {
+                  "contactResidues": 16,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 1.9344110214739783
+                }
+              },
+              {
+                "leftSeed": 0,
+                "rightSeed": 2,
+                "proteinCaRmsdA": 16.59950465638858,
+                "ligandProteinFrameSymmetryRmsdA": 17.390903413776428,
+                "ligandCentroidDisplacementA": 16.562539876842187,
+                "contactResidueJaccard": 0.0,
+                "referenceGeometry": {
+                  "contactResidues": 9,
+                  "severeHeavyAtomPairsUnder1_2A": 1,
+                  "minimumProteinLigandDistanceA": 1.160611476765589
+                },
+                "predictedGeometry": {
+                  "contactResidues": 16,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 1.7222630461111335
+                }
+              },
+              {
+                "leftSeed": 1,
+                "rightSeed": 2,
+                "proteinCaRmsdA": 15.253135517082624,
+                "ligandProteinFrameSymmetryRmsdA": 9.33876161339213,
+                "ligandCentroidDisplacementA": 7.666654496503398,
+                "contactResidueJaccard": 0.06666666666666667,
+                "referenceGeometry": {
+                  "contactResidues": 16,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 1.9344110214739783
+                },
+                "predictedGeometry": {
+                  "contactResidues": 16,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 1.7222630461111335
+                }
+              }
+            ],
+            "meanRmsdA": 12.817816603485511
+          },
+          "rightSeedSpread": {
+            "pairs": [
+              {
+                "leftSeed": 0,
+                "rightSeed": 1,
+                "proteinCaRmsdA": 14.116947467678727,
+                "ligandProteinFrameSymmetryRmsdA": 29.184462067253232,
+                "ligandCentroidDisplacementA": 28.272406504117185,
+                "contactResidueJaccard": 0.0,
+                "referenceGeometry": {
+                  "contactResidues": 9,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 2.9369926795959165
+                },
+                "predictedGeometry": {
+                  "contactResidues": 12,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 2.773906451198382
+                }
+              },
+              {
+                "leftSeed": 0,
+                "rightSeed": 2,
+                "proteinCaRmsdA": 10.543428103762349,
+                "ligandProteinFrameSymmetryRmsdA": 13.482403605366912,
+                "ligandCentroidDisplacementA": 8.676773525972536,
+                "contactResidueJaccard": 0.2,
+                "referenceGeometry": {
+                  "contactResidues": 9,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 2.9369926795959165
+                },
+                "predictedGeometry": {
+                  "contactResidues": 9,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 2.889378133785883
+                }
+              },
+              {
+                "leftSeed": 1,
+                "rightSeed": 2,
+                "proteinCaRmsdA": 13.854957186075305,
+                "ligandProteinFrameSymmetryRmsdA": 22.33469135752546,
+                "ligandCentroidDisplacementA": 21.221688238689666,
+                "contactResidueJaccard": 0.0,
+                "referenceGeometry": {
+                  "contactResidues": 12,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 2.773906451198382
+                },
+                "predictedGeometry": {
+                  "contactResidues": 9,
+                  "severeHeavyAtomPairsUnder1_2A": 0,
+                  "minimumProteinLigandDistanceA": 2.889378133785883
+                }
+              }
+            ],
+            "meanRmsdA": 21.667185676715203
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1144 @@
+{
+  "schema": "molarium.experimental-cofold-scores.v1",
+  "panelSha256": "7053daa0060cf8dc4836f95ac0b40e9e639398adacc63896c1f122d0ec9e7bb3",
+  "analysisScripts": {
+    "experimental_reference.py": "9c0f696a1e1d537ee7f7ddfea1e640dbaf83c5d36ea1209238bb4e36ac4352f8",
+    "pose_metrics.py": "b577b0cd0358832eec0946c19cb826d2bf72e358205ced2eeb9b08885ebc41b5"
+  },
+  "definitions": {
+    "alignment": "All observed corresponding protein C-alpha atoms, no trimming/core/pocket refit; transform moves whole prediction.",
+    "ligand": "Symmetry-aware heavy-atom RMSD in aligned protein frame; no independent ligand alignment.",
+    "successThresholdA": 2.0,
+    "oracle": "Best of three uses the crystal answer and is reported separately from seed0."
+  },
+  "environment": {
+    "python": "3.13.0",
+    "numpy": "2.3.4",
+    "rdkit": "2025.09.3"
+  },
+  "summary": [
+    {
+      "caseId": "15ji-a1d2g",
+      "method": "native-openbind0-single-standard",
+      "complete": 3,
+      "failed": 0,
+      "seed0LigandRmsdA": 20.457637454415146,
+      "medianLigandRmsdA": 20.457637454415146,
+      "oracleBestOf3LigandRmsdA": 9.713618411932798,
+      "highestIptmSeed": 0,
+      "highestIptmLigandRmsdA": 20.457637454415146,
+      "posesWithin2A": 0,
+      "medianProteinCaRmsdA": 12.160450485859256
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "method": "native-openbind0-single-standard",
+      "complete": 3,
+      "failed": 0,
+      "seed0LigandRmsdA": 6.428526612958242,
+      "medianLigandRmsdA": 12.003992365667457,
+      "oracleBestOf3LigandRmsdA": 6.428526612958242,
+      "highestIptmSeed": 2,
+      "highestIptmLigandRmsdA": 13.398303556852895,
+      "posesWithin2A": 0,
+      "medianProteinCaRmsdA": 17.04690551790846
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "method": "native-openbind0-single-standard",
+      "complete": 3,
+      "failed": 0,
+      "seed0LigandRmsdA": 10.656935939856515,
+      "medianLigandRmsdA": 15.776781684360751,
+      "oracleBestOf3LigandRmsdA": 10.656935939856515,
+      "highestIptmSeed": 1,
+      "highestIptmLigandRmsdA": 23.00368052178896,
+      "posesWithin2A": 0,
+      "medianProteinCaRmsdA": 20.737321175528585
+    },
+    {
+      "caseId": "9sy7-a1jrx",
+      "method": "native-openbind0-single-standard",
+      "complete": 3,
+      "failed": 0,
+      "seed0LigandRmsdA": 10.604680742288362,
+      "medianLigandRmsdA": 10.789823701501899,
+      "oracleBestOf3LigandRmsdA": 10.604680742288362,
+      "highestIptmSeed": 1,
+      "highestIptmLigandRmsdA": 13.225948262877134,
+      "posesWithin2A": 0,
+      "medianProteinCaRmsdA": 7.221545480834794
+    },
+    {
+      "caseId": "9syo-a1jr1",
+      "method": "native-openbind0-single-standard",
+      "complete": 3,
+      "failed": 0,
+      "seed0LigandRmsdA": 8.716935295496265,
+      "medianLigandRmsdA": 16.22438118182099,
+      "oracleBestOf3LigandRmsdA": 8.716935295496265,
+      "highestIptmSeed": 1,
+      "highestIptmLigandRmsdA": 16.22438118182099,
+      "posesWithin2A": 0,
+      "medianProteinCaRmsdA": 17.178305194640146
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "method": "native-openbind0-single-standard",
+      "complete": 3,
+      "failed": 0,
+      "seed0LigandRmsdA": 13.69162279139588,
+      "medianLigandRmsdA": 15.604588080266609,
+      "oracleBestOf3LigandRmsdA": 13.69162279139588,
+      "highestIptmSeed": 0,
+      "highestIptmLigandRmsdA": 13.69162279139588,
+      "posesWithin2A": 0,
+      "medianProteinCaRmsdA": 20.44093672807615
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "method": "native-openbind0-single-standard",
+      "complete": 3,
+      "failed": 0,
+      "seed0LigandRmsdA": 18.133834279836016,
+      "medianLigandRmsdA": 14.800774243135121,
+      "oracleBestOf3LigandRmsdA": 13.858290554334536,
+      "highestIptmSeed": 2,
+      "highestIptmLigandRmsdA": 14.800774243135121,
+      "posesWithin2A": 0,
+      "medianProteinCaRmsdA": 19.802580286601632
+    },
+    {
+      "caseId": "9xhg-1il",
+      "method": "native-openbind0-single-standard",
+      "complete": 3,
+      "failed": 0,
+      "seed0LigandRmsdA": 28.497924008763086,
+      "medianLigandRmsdA": 28.497924008763086,
+      "oracleBestOf3LigandRmsdA": 23.311640506623995,
+      "highestIptmSeed": 0,
+      "highestIptmLigandRmsdA": 28.497924008763086,
+      "posesWithin2A": 0,
+      "medianProteinCaRmsdA": 15.115311602780737
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "method": "native-openbind0-single-standard",
+      "complete": 3,
+      "failed": 0,
+      "seed0LigandRmsdA": 2.6251632973200945,
+      "medianLigandRmsdA": 2.7616384340705604,
+      "oracleBestOf3LigandRmsdA": 2.6251632973200945,
+      "highestIptmSeed": 2,
+      "highestIptmLigandRmsdA": 3.0645932320878573,
+      "posesWithin2A": 0,
+      "medianProteinCaRmsdA": 0.6262603389436793
+    }
+  ],
+  "poses": [
+    {
+      "caseId": "9sy7-a1jrx",
+      "method": "native-openbind0-single-standard",
+      "seed": 0,
+      "status": "complete",
+      "proteinCaRmsdA": 7.221545480834794,
+      "alignedCa": 157,
+      "ligandRmsdA": 10.604680742288362,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 9.92719269977101,
+      "contactResidueJaccard": 0.21428571428571427,
+      "referenceGeometry": {
+        "contactResidues": 10,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 3.055781405794595
+      },
+      "predictedGeometry": {
+        "contactResidues": 7,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.8585879381260955
+      },
+      "meanPlddt": 60.789282922088354,
+      "iptm": 0.583692,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      },
+      "sourceLibrarySha256": "27302689d773579f124ed6261d3e4a2e55f6d0e9c92b4542ea2e859455f17fd9",
+      "outputPdbSha256": "4260c6d4945a0089323cbb9b1a50c9fe6cd1717f400c9e91183edfcb4732bfb2"
+    },
+    {
+      "caseId": "9sy7-a1jrx",
+      "method": "native-openbind0-single-standard",
+      "seed": 1,
+      "status": "complete",
+      "proteinCaRmsdA": 7.4797348878782035,
+      "alignedCa": 157,
+      "ligandRmsdA": 13.225948262877134,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 11.80727441344511,
+      "contactResidueJaccard": 0.125,
+      "referenceGeometry": {
+        "contactResidues": 10,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 3.055781405794595
+      },
+      "predictedGeometry": {
+        "contactResidues": 8,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.66307247366646
+      },
+      "meanPlddt": 71.97275062570282,
+      "iptm": 0.638093,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      },
+      "sourceLibrarySha256": "27302689d773579f124ed6261d3e4a2e55f6d0e9c92b4542ea2e859455f17fd9",
+      "outputPdbSha256": "a76f555666f6019d45f9fbf55b04c12df6c0d6c0ae1fa38da6fcb2fb0807163a"
+    },
+    {
+      "caseId": "9sy7-a1jrx",
+      "method": "native-openbind0-single-standard",
+      "seed": 2,
+      "status": "complete",
+      "proteinCaRmsdA": 5.1050822454577425,
+      "alignedCa": 157,
+      "ligandRmsdA": 10.789823701501899,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 9.511488200124612,
+      "contactResidueJaccard": 0.17647058823529413,
+      "referenceGeometry": {
+        "contactResidues": 10,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 3.055781405794595
+      },
+      "predictedGeometry": {
+        "contactResidues": 10,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 3.165947725405459
+      },
+      "meanPlddt": 57.753827666666666,
+      "iptm": 0.432648,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      },
+      "sourceLibrarySha256": "27302689d773579f124ed6261d3e4a2e55f6d0e9c92b4542ea2e859455f17fd9",
+      "outputPdbSha256": "194ea6988b1defe7d0cc5d23de4b3cbc985bae01d827f43e22044b8abb9a52e4"
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "method": "native-openbind0-single-standard",
+      "seed": 0,
+      "status": "complete",
+      "proteinCaRmsdA": 20.737321175528585,
+      "alignedCa": 295,
+      "ligandRmsdA": 10.656935939856515,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 6.77928066600663,
+      "contactResidueJaccard": 0.20833333333333334,
+      "referenceGeometry": {
+        "contactResidues": 16,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.3278593170550494
+      },
+      "predictedGeometry": {
+        "contactResidues": 13,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.1993539960633894
+      },
+      "meanPlddt": 40.001031276829735,
+      "iptm": 0.301799,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": false,
+        "mismatchedCenters": [
+          {
+            "smilesAtomIndex": 15,
+            "expected": "R",
+            "observed": "S"
+          }
+        ],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 15,
+            "expected": "R",
+            "observed": "S"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      },
+      "sourceLibrarySha256": "0cb3542b56818b34f830ff7d8a7e679d9602f37fd9bd23e2f9a74c26a67f1631",
+      "outputPdbSha256": "b05d103f494defa8fc2f7dab19a311e8cec9c579eed576554864d8163ab5d38e"
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "method": "native-openbind0-single-standard",
+      "seed": 1,
+      "status": "complete",
+      "proteinCaRmsdA": 20.985870329243287,
+      "alignedCa": 295,
+      "ligandRmsdA": 23.00368052178896,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 22.337165881879606,
+      "contactResidueJaccard": 0.16666666666666666,
+      "referenceGeometry": {
+        "contactResidues": 16,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.3278593170550494
+      },
+      "predictedGeometry": {
+        "contactResidues": 12,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.962643583018382
+      },
+      "meanPlddt": 38.72539784945013,
+      "iptm": 0.307016,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": false,
+        "mismatchedCenters": [
+          {
+            "smilesAtomIndex": 15,
+            "expected": "R",
+            "observed": "S"
+          }
+        ],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 15,
+            "expected": "R",
+            "observed": "S"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      },
+      "sourceLibrarySha256": "0cb3542b56818b34f830ff7d8a7e679d9602f37fd9bd23e2f9a74c26a67f1631",
+      "outputPdbSha256": "94e64273262a2921c8af0af99e12f73b2e9b30c14f47481f9b68c79ea0161ede"
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "method": "native-openbind0-single-standard",
+      "seed": 2,
+      "status": "complete",
+      "proteinCaRmsdA": 17.933164863747017,
+      "alignedCa": 295,
+      "ligandRmsdA": 15.776781684360751,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 14.631056385667986,
+      "contactResidueJaccard": 0.18518518518518517,
+      "referenceGeometry": {
+        "contactResidues": 16,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.3278593170550494
+      },
+      "predictedGeometry": {
+        "contactResidues": 16,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.8560442923736318
+      },
+      "meanPlddt": 38.379580216913155,
+      "iptm": 0.248699,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      },
+      "sourceLibrarySha256": "0cb3542b56818b34f830ff7d8a7e679d9602f37fd9bd23e2f9a74c26a67f1631",
+      "outputPdbSha256": "73c065ed962e86427f6404e8248aee025fd9ebbb66e9d914d96b16d15232a964"
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "method": "native-openbind0-single-standard",
+      "seed": 0,
+      "status": "complete",
+      "proteinCaRmsdA": 20.220920250798827,
+      "alignedCa": 204,
+      "ligandRmsdA": 18.133834279836016,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 18.01060869994959,
+      "contactResidueJaccard": 0.03225806451612903,
+      "referenceGeometry": {
+        "contactResidues": 23,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.652982095680255
+      },
+      "predictedGeometry": {
+        "contactResidues": 9,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.9369926795959165
+      },
+      "meanPlddt": 42.9510910238237,
+      "iptm": 0.258775,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      },
+      "sourceLibrarySha256": "268fc66c596a68e62e50fe9df92e2bfde550dae96151d0367002c8cffd5ece87",
+      "outputPdbSha256": "3d216ba0760059a50f9e79d47b37d8ed426991a054fe83fab2f057c615f06f27"
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "method": "native-openbind0-single-standard",
+      "seed": 1,
+      "status": "complete",
+      "proteinCaRmsdA": 19.802580286601632,
+      "alignedCa": 204,
+      "ligandRmsdA": 13.858290554334536,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 12.212647274695925,
+      "contactResidueJaccard": 0.09375,
+      "referenceGeometry": {
+        "contactResidues": 23,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.652982095680255
+      },
+      "predictedGeometry": {
+        "contactResidues": 12,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.773906451198382
+      },
+      "meanPlddt": 40.836478953543775,
+      "iptm": 0.197393,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      },
+      "sourceLibrarySha256": "268fc66c596a68e62e50fe9df92e2bfde550dae96151d0367002c8cffd5ece87",
+      "outputPdbSha256": "a0ac3fc726459fa04103fd3edba887f407eb06ab059515eda3db9f0957b62bd4"
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "method": "native-openbind0-single-standard",
+      "seed": 2,
+      "status": "complete",
+      "proteinCaRmsdA": 18.2733416814263,
+      "alignedCa": 204,
+      "ligandRmsdA": 14.800774243135121,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 10.879803364244193,
+      "contactResidueJaccard": 0.0,
+      "referenceGeometry": {
+        "contactResidues": 23,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.652982095680255
+      },
+      "predictedGeometry": {
+        "contactResidues": 9,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.889378133785883
+      },
+      "meanPlddt": 40.35185247051817,
+      "iptm": 0.277467,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      },
+      "sourceLibrarySha256": "268fc66c596a68e62e50fe9df92e2bfde550dae96151d0367002c8cffd5ece87",
+      "outputPdbSha256": "d750e8f01c3f8132b9db77b108389e0134c882a9af4773932308a4fc46b947c7"
+    },
+    {
+      "caseId": "9syo-a1jr1",
+      "method": "native-openbind0-single-standard",
+      "seed": 0,
+      "status": "complete",
+      "proteinCaRmsdA": 16.754641222717623,
+      "alignedCa": 209,
+      "ligandRmsdA": 8.716935295496265,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 6.502068286110889,
+      "contactResidueJaccard": 0.10526315789473684,
+      "referenceGeometry": {
+        "contactResidues": 12,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.7042242880352956
+      },
+      "predictedGeometry": {
+        "contactResidues": 9,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.256894769367859
+      },
+      "meanPlddt": 47.52028995117937,
+      "iptm": 0.325553,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      },
+      "sourceLibrarySha256": "5e09551141aa50ee791be4d09dfbd228841f8b8a0015ad015415e19ad5d8188b",
+      "outputPdbSha256": "ad0726e7c95374c204ced0a1b6bf29c56a29ad74b867e002088c9addc28b1ebd"
+    },
+    {
+      "caseId": "9syo-a1jr1",
+      "method": "native-openbind0-single-standard",
+      "seed": 1,
+      "status": "complete",
+      "proteinCaRmsdA": 19.666314352181736,
+      "alignedCa": 209,
+      "ligandRmsdA": 16.22438118182099,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 14.120690726767902,
+      "contactResidueJaccard": 0.0,
+      "referenceGeometry": {
+        "contactResidues": 12,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.7042242880352956
+      },
+      "predictedGeometry": {
+        "contactResidues": 12,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 3.174311578909669
+      },
+      "meanPlddt": 44.62998337685135,
+      "iptm": 0.380793,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      },
+      "sourceLibrarySha256": "5e09551141aa50ee791be4d09dfbd228841f8b8a0015ad015415e19ad5d8188b",
+      "outputPdbSha256": "7fc1cf5169e62dc7650a2ee5be549b16f2e8c02047400807aa0229fd8ef63620"
+    },
+    {
+      "caseId": "9syo-a1jr1",
+      "method": "native-openbind0-single-standard",
+      "seed": 2,
+      "status": "complete",
+      "proteinCaRmsdA": 17.178305194640146,
+      "alignedCa": 209,
+      "ligandRmsdA": 16.540787742888245,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 14.29282581092634,
+      "contactResidueJaccard": 0.0,
+      "referenceGeometry": {
+        "contactResidues": 12,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.7042242880352956
+      },
+      "predictedGeometry": {
+        "contactResidues": 4,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 3.276191233734685
+      },
+      "meanPlddt": 41.93805631431706,
+      "iptm": 0.214624,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      },
+      "sourceLibrarySha256": "5e09551141aa50ee791be4d09dfbd228841f8b8a0015ad015415e19ad5d8188b",
+      "outputPdbSha256": "733f5b6967e90fbe87d58ef07d23d784c12b9fa3a7b1199436041852d2907a99"
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "method": "native-openbind0-single-standard",
+      "seed": 0,
+      "status": "complete",
+      "proteinCaRmsdA": 10.419925267299995,
+      "alignedCa": 167,
+      "ligandRmsdA": 20.457637454415146,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 20.216726286692825,
+      "contactResidueJaccard": 0.0,
+      "referenceGeometry": {
+        "contactResidues": 9,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.9508347971379236
+      },
+      "predictedGeometry": {
+        "contactResidues": 7,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.998570992989828
+      },
+      "meanPlddt": 43.118522979198765,
+      "iptm": 0.437477,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": false,
+        "mismatchedCenters": [
+          {
+            "smilesAtomIndex": 16,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 16,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      },
+      "sourceLibrarySha256": "c4650ff8a84d46060fbbfa9a572706ebe25f2d2930b46640854286ce39319453",
+      "outputPdbSha256": "5a0d0058a8a5d42d4b5d0d59cc06753d3ba32b7a9c4888ab69b810aba492edf1"
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "method": "native-openbind0-single-standard",
+      "seed": 1,
+      "status": "complete",
+      "proteinCaRmsdA": 12.160450485859256,
+      "alignedCa": 167,
+      "ligandRmsdA": 22.96338108916968,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 22.5037443226778,
+      "contactResidueJaccard": 0.0625,
+      "referenceGeometry": {
+        "contactResidues": 9,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.9508347971379236
+      },
+      "predictedGeometry": {
+        "contactResidues": 8,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.885321645848171
+      },
+      "meanPlddt": 39.80784303081664,
+      "iptm": 0.370882,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": false,
+        "mismatchedCenters": [
+          {
+            "smilesAtomIndex": 13,
+            "expected": "S",
+            "observed": "R"
+          },
+          {
+            "smilesAtomIndex": 16,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 13,
+            "expected": "S",
+            "observed": "R"
+          },
+          {
+            "smilesAtomIndex": 16,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      },
+      "sourceLibrarySha256": "c4650ff8a84d46060fbbfa9a572706ebe25f2d2930b46640854286ce39319453",
+      "outputPdbSha256": "50106908ba9de3e846804614b79ef3e93296064e2690932a81dd6cde303a3169"
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "method": "native-openbind0-single-standard",
+      "seed": 2,
+      "status": "complete",
+      "proteinCaRmsdA": 14.82226639420861,
+      "alignedCa": 167,
+      "ligandRmsdA": 9.713618411932798,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 8.37421925593334,
+      "contactResidueJaccard": 0.047619047619047616,
+      "referenceGeometry": {
+        "contactResidues": 9,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.9508347971379236
+      },
+      "predictedGeometry": {
+        "contactResidues": 13,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.731313603378418
+      },
+      "meanPlddt": 47.81712303081664,
+      "iptm": 0.394709,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      },
+      "sourceLibrarySha256": "c4650ff8a84d46060fbbfa9a572706ebe25f2d2930b46640854286ce39319453",
+      "outputPdbSha256": "c996d7abbdca86e24d20e1b4d078943cf8ccc47e2bb2f41926b8022d3788de38"
+    },
+    {
+      "caseId": "9xhg-1il",
+      "method": "native-openbind0-single-standard",
+      "seed": 0,
+      "status": "complete",
+      "proteinCaRmsdA": 15.115311602780737,
+      "alignedCa": 173,
+      "ligandRmsdA": 28.497924008763086,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 27.69756993282835,
+      "contactResidueJaccard": 0.0,
+      "referenceGeometry": {
+        "contactResidues": 5,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.9606122677581412
+      },
+      "predictedGeometry": {
+        "contactResidues": 6,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.9113974307881776
+      },
+      "meanPlddt": 37.437868943312104,
+      "iptm": 0.282322,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      },
+      "sourceLibrarySha256": "b8911a7e90c5094acab3f7f4f8da316692f9d4b1764b350e3baf00183091d3fa",
+      "outputPdbSha256": "2bcdc570767ff1bd4e6ef2513d8d5b1e34a27444815cbf47cec3e1252631a724"
+    },
+    {
+      "caseId": "9xhg-1il",
+      "method": "native-openbind0-single-standard",
+      "seed": 1,
+      "status": "complete",
+      "proteinCaRmsdA": 19.15564228178828,
+      "alignedCa": 173,
+      "ligandRmsdA": 38.54899246561892,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 38.19416892872096,
+      "contactResidueJaccard": 0.0,
+      "referenceGeometry": {
+        "contactResidues": 5,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.9606122677581412
+      },
+      "predictedGeometry": {
+        "contactResidues": 8,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.5351944698582787
+      },
+      "meanPlddt": 38.496044452866236,
+      "iptm": 0.259515,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      },
+      "sourceLibrarySha256": "b8911a7e90c5094acab3f7f4f8da316692f9d4b1764b350e3baf00183091d3fa",
+      "outputPdbSha256": "8e367c0a3f21aac92e154972254b007d9eb894ee9c7517a56e4fea3db0f92854"
+    },
+    {
+      "caseId": "9xhg-1il",
+      "method": "native-openbind0-single-standard",
+      "seed": 2,
+      "status": "complete",
+      "proteinCaRmsdA": 13.42136408713845,
+      "alignedCa": 173,
+      "ligandRmsdA": 23.311640506623995,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 22.53587592099792,
+      "contactResidueJaccard": 0.0,
+      "referenceGeometry": {
+        "contactResidues": 5,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.9606122677581412
+      },
+      "predictedGeometry": {
+        "contactResidues": 8,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.8849958405515936
+      },
+      "meanPlddt": 38.40633302802548,
+      "iptm": 0.235123,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      },
+      "sourceLibrarySha256": "b8911a7e90c5094acab3f7f4f8da316692f9d4b1764b350e3baf00183091d3fa",
+      "outputPdbSha256": "a8ef9e0c66209ffaa66a6f1d3745a4bf6ca8aa0f9113bc744a3f213a32eb35a1"
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "method": "native-openbind0-single-standard",
+      "seed": 0,
+      "status": "complete",
+      "proteinCaRmsdA": 0.8002283066938365,
+      "alignedCa": 304,
+      "ligandRmsdA": 2.6251632973200945,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 0.9586372053027369,
+      "contactResidueJaccard": 0.5625,
+      "referenceGeometry": {
+        "contactResidues": 14,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.850682374450021
+      },
+      "predictedGeometry": {
+        "contactResidues": 11,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.7195153980075197
+      },
+      "meanPlddt": 93.25331048632731,
+      "iptm": 0.853235,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      },
+      "sourceLibrarySha256": "7e807c688556ea996e26d04f2f19190ab2651ca7c55d88394436bbd23731bfd8",
+      "outputPdbSha256": "fb1059cd15a6f8cae903f3691a634a7961487c1a12413cbae1654adce59b414f"
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "method": "native-openbind0-single-standard",
+      "seed": 1,
+      "status": "complete",
+      "proteinCaRmsdA": 0.6262603389436793,
+      "alignedCa": 304,
+      "ligandRmsdA": 2.7616384340705604,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 1.2579290670362342,
+      "contactResidueJaccard": 0.7857142857142857,
+      "referenceGeometry": {
+        "contactResidues": 14,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.850682374450021
+      },
+      "predictedGeometry": {
+        "contactResidues": 11,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.8385693579689044
+      },
+      "meanPlddt": 93.81305660538494,
+      "iptm": 0.875501,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      },
+      "sourceLibrarySha256": "7e807c688556ea996e26d04f2f19190ab2651ca7c55d88394436bbd23731bfd8",
+      "outputPdbSha256": "95ecf22e5bf34f86a1cf87cbd3c90389e6257c2c4cd64b9e7a5582f5b9ed7e86"
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "method": "native-openbind0-single-standard",
+      "seed": 2,
+      "status": "complete",
+      "proteinCaRmsdA": 0.6207678413084194,
+      "alignedCa": 304,
+      "ligandRmsdA": 3.0645932320878573,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 1.0303014085166662,
+      "contactResidueJaccard": 0.7857142857142857,
+      "referenceGeometry": {
+        "contactResidues": 14,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.850682374450021
+      },
+      "predictedGeometry": {
+        "contactResidues": 11,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.801251506023692
+      },
+      "meanPlddt": 94.10812373201514,
+      "iptm": 0.876291,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      },
+      "sourceLibrarySha256": "7e807c688556ea996e26d04f2f19190ab2651ca7c55d88394436bbd23731bfd8",
+      "outputPdbSha256": "91fc8f7ad7d94b3dcef18c12bfc63293013b5a12bebe97cbdd22cf6047f421fb"
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "method": "native-openbind0-single-standard",
+      "seed": 0,
+      "status": "complete",
+      "proteinCaRmsdA": 17.863838822524272,
+      "alignedCa": 151,
+      "ligandRmsdA": 6.428526612958242,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 3.9512482822046318,
+      "contactResidueJaccard": 0.21052631578947367,
+      "referenceGeometry": {
+        "contactResidues": 12,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.6909903381469062
+      },
+      "predictedGeometry": {
+        "contactResidues": 11,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.938866958540314
+      },
+      "meanPlddt": 36.1902185923244,
+      "iptm": 0.193214,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      },
+      "sourceLibrarySha256": "def657da2dfab5c58577e8298ab7eaefd03195eafd723a2eaa0bfff5709ca576",
+      "outputPdbSha256": "fcc82073068d121c7fdcdc6b5104a48a14286054c6239a901c75123a9d23986c"
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "method": "native-openbind0-single-standard",
+      "seed": 1,
+      "status": "complete",
+      "proteinCaRmsdA": 17.04690551790846,
+      "alignedCa": 151,
+      "ligandRmsdA": 12.003992365667457,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 11.051058948887817,
+      "contactResidueJaccard": 0.05,
+      "referenceGeometry": {
+        "contactResidues": 12,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.6909903381469062
+      },
+      "predictedGeometry": {
+        "contactResidues": 9,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.3818501212292933
+      },
+      "meanPlddt": 37.065461108616944,
+      "iptm": 0.193845,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      },
+      "sourceLibrarySha256": "def657da2dfab5c58577e8298ab7eaefd03195eafd723a2eaa0bfff5709ca576",
+      "outputPdbSha256": "0ae231fd3a28a8bb67b7780a4a045a03bad662f4081b8cb340e6e488c6310f15"
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "method": "native-openbind0-single-standard",
+      "seed": 2,
+      "status": "complete",
+      "proteinCaRmsdA": 16.88937087320967,
+      "alignedCa": 151,
+      "ligandRmsdA": 13.398303556852895,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 12.758752760029456,
+      "contactResidueJaccard": 0.25,
+      "referenceGeometry": {
+        "contactResidues": 12,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.6909903381469062
+      },
+      "predictedGeometry": {
+        "contactResidues": 8,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 1.3940000000000003
+      },
+      "meanPlddt": 36.40523763287472,
+      "iptm": 0.222361,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      },
+      "sourceLibrarySha256": "def657da2dfab5c58577e8298ab7eaefd03195eafd723a2eaa0bfff5709ca576",
+      "outputPdbSha256": "80a70ca1337a5ac54b97936a16122cf322cfb0a0e0b177b6d2478405b196d1d8"
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "method": "native-openbind0-single-standard",
+      "seed": 0,
+      "status": "complete",
+      "proteinCaRmsdA": 19.930170942442583,
+      "alignedCa": 316,
+      "ligandRmsdA": 13.69162279139588,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 13.229389462817519,
+      "contactResidueJaccard": 0.058823529411764705,
+      "referenceGeometry": {
+        "contactResidues": 18,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.4666294817017014
+      },
+      "predictedGeometry": {
+        "contactResidues": 18,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.7964629445068643
+      },
+      "meanPlddt": 42.681930919188325,
+      "iptm": 0.778885,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      },
+      "sourceLibrarySha256": "598ec120a7930036d3854242ef983d3b3a58c1f13263ffaaab6f253825ee9a18",
+      "outputPdbSha256": "fb6167ebed3fb4ff75812fccf619ec3eea6cf7df5df70c9cf85f062bf883482d"
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "method": "native-openbind0-single-standard",
+      "seed": 1,
+      "status": "complete",
+      "proteinCaRmsdA": 22.30560351110513,
+      "alignedCa": 316,
+      "ligandRmsdA": 17.794198722483063,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 15.467766952504416,
+      "contactResidueJaccard": 0.03125,
+      "referenceGeometry": {
+        "contactResidues": 18,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.4666294817017014
+      },
+      "predictedGeometry": {
+        "contactResidues": 15,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.7335475119338972
+      },
+      "meanPlddt": 40.53750406087576,
+      "iptm": 0.515788,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 6,
+            "expected": "R",
+            "observed": "S"
+          },
+          {
+            "smilesAtomIndex": 10,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": true
+      },
+      "sourceLibrarySha256": "598ec120a7930036d3854242ef983d3b3a58c1f13263ffaaab6f253825ee9a18",
+      "outputPdbSha256": "d7fd43e00db02fce6393c4e64e2737395db2adcbc2fd971f1befecbe436ff6bb"
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "method": "native-openbind0-single-standard",
+      "seed": 2,
+      "status": "complete",
+      "proteinCaRmsdA": 20.44093672807615,
+      "alignedCa": 316,
+      "ligandRmsdA": 15.604588080266609,
+      "within2A": false,
+      "ligandCentroidDisplacementA": 11.796092263396046,
+      "contactResidueJaccard": 0.02857142857142857,
+      "referenceGeometry": {
+        "contactResidues": 18,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.4666294817017014
+      },
+      "predictedGeometry": {
+        "contactResidues": 18,
+        "severeHeavyAtomPairsUnder1_2A": 0,
+        "minimumProteinLigandDistanceA": 2.4623998456790073
+      },
+      "meanPlddt": 41.60782280170879,
+      "iptm": 0.478683,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [
+          {
+            "smilesAtomIndex": 6,
+            "expected": "R",
+            "observed": "S"
+          },
+          {
+            "smilesAtomIndex": 10,
+            "expected": "S",
+            "observed": "R"
+          }
+        ],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": true
+      },
+      "sourceLibrarySha256": "598ec120a7930036d3854242ef983d3b3a58c1f13263ffaaab6f253825ee9a18",
+      "outputPdbSha256": "56fee6041e19146656fb1b4acf63ca27bd3a7412d18db960522a6b8a47e1495e"
+    }
+  ],
+  "caveats": [
+    "Recent release is not proof that similar proteins, ligands or binding sites were absent from training.",
+    "Single standard-amino-acid protein chain and one noncovalent ligand; selection excludes out-of-scope complexes and records every exclusion.",
+    "Protein sequence and stereochemical SMILES only; crystal coordinates and bound conformers are scoring/display-only.",
+    "Drug-likeness uses stated heuristic gates and RDKit QED; it is not an experimental pharmacology or safety assessment.",
+    "Browser int5/25steps/2recycles and native unquantized200steps/3recycles confound precision and sampling; not fixed-input parity.",
+    "Primary ligand RMSD uses every observed corresponding protein C-alpha, no trimming/pocket refit or independent ligand fit.",
+    "Each seed and failure remains visible; oracle best-of3 uses the experimental answer and is separate from confidence selection."
+  ]
+}

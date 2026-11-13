@@ -8,6 +8,15 @@ provided-MSA and native controls are tracked explicitly. The
 [finding-to-fix ledger](../../reviews/cofold-recent-pdb-2026-11-13/findings.md)
 links each correction to evidence and regressions.
 
+The recent panel now includes 54 complete native single-sequence predictions.
+`package_native_panel.py` publishes exact coordinates, named topology, consumed
+inputs/runner and public scientific receipts without rerunning inference.
+`check_native_panel.py` independently reconstructs every exported PDB and crystal
+score from those archives, including stereochemical failures. Only private CLI
+argument paths are removed; original receipt hashes remain attached. The
+regression runs in the existing cofolding-analysis CI gate. Native exact-MSA
+controls are tracked separately from these single-sequence results.
+
 These tools compare completed structure predictions without rerunning inference
 or treating a native prediction as an experimental answer. The first cohort is
 the existing 48-pose browser library: ubiquitin (76 residues), 16 small compounds,
