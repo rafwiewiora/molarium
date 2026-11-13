@@ -23,6 +23,15 @@ def digest(path):
     return h.hexdigest()
 
 
+def boltz_entrypoints():
+    # Match the stock CLI's initialization order. Importing its model first can
+    # enter Torch/ONNX diagnostics while a dependent module is only initialized
+    # part way. The returned class is still the one used by the official CLI.
+    from boltz.main import cli
+    from boltz.model.models.boltz2 import Boltz2
+    return cli, Boltz2
+
+
 def resolved_input_files(inputs, output, spec):
     """Resolve portable provided-MSA paths without changing frozen inputs.
 
@@ -135,9 +144,8 @@ def main():
             receipt['argv'] = argv
             cli(args=argv,standalone_mode=False)
         else:
-            from boltz.model.models.boltz2 import Boltz2
+            cli, Boltz2 = boltz_entrypoints()
             instrument(Boltz2)
-            from boltz.main import cli
             receipt['argv'] = []
             for seed in spec['seeds']:
                 argv = ['predict',str(boltz_files),'--model','boltz2','--out_dir',str(args.output/f'seed-{seed}'),

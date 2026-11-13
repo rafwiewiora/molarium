@@ -1,0 +1,40 @@
+{
+  "schema": "molarium.native-panel-agreement-index.v1",
+  "scope": "Native Boltz single-sequence 200/3 versus browser single-sequence 25/2. Protocol, precision, conformers and random tensors differ.",
+  "sources": {
+    "compare_libraries.py": "843e587c33690c781b554735ed85ea016d9862979762ea35119d5e581a77c3ee",
+    "pose_metrics.py": "b577b0cd0358832eec0946c19cb826d2bf72e358205ced2eeb9b08885ebc41b5"
+  },
+  "methods": [
+    {
+      "method": "boltz2",
+      "browserPhase": "browser-boltz2",
+      "nativePhase": "native-boltz2-single-standard",
+      "medianSeedPairedMeanRmsdA": 0.5962489455018745,
+      "medianOneToOneMeanRmsdA": 0.5007650515294767,
+      "cases": [
+        {
+          "caseId": "3mxf-jq1",
+          "file": "native-boltz2-single-standard/agreement-1.json",
+          "sha256": "fa588bfc95a0a0d1a12389cc232756c4c9122c74aced66bcfc4ca8a3a92ac31e",
+          "seedPairedMeanRmsdA": 0.5077948285259204,
+          "oneToOneMeanRmsdA": 0.5007650515294767
+        },
+        {
+          "caseId": "1fkf-fk5",
+          "file": "native-boltz2-single-standard/agreement-2.json",
+          "sha256": "35140e7b9bb619ba7da468f79888cc4aafca02753244b808384ac948199f5af7",
+          "seedPairedMeanRmsdA": 6.871816752151371,
+          "oneToOneMeanRmsdA": 6.8206278945410475
+        },
+        {
+          "caseId": "181l-bnz",
+          "file": "native-boltz2-single-standard/agreement-3.json",
+          "sha256": "b178625901931730832b29f2f8a97ff48d74cba6bff19dfd79f33922a4c12d0c",
+          "seedPairedMeanRmsdA": 0.5962489455018745,
+          "oneToOneMeanRmsdA": 0.49615541499504684
+        }
+      ]
+    }
+  ]
+}

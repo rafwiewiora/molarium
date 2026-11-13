@@ -9,43 +9,55 @@ import json
 from pathlib import Path
 import shutil
 import zipfile
+import native_panel_recovery
 
 
 def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def package(source, panel_path, libraries, method, output):
+def package(source, panel_path, libraries, method, output, recoveries=None, case_sources=None):
     panel = json.loads(panel_path.read_bytes())
     output.mkdir(parents=True)
     members = {}
     cases = []
     runner = (source / 'native_run.py').read_bytes()
     members['consumed-native_run.py'] = runner
+    recoveries = recoveries or {}
+    case_sources = case_sources or {}
     for i, case in enumerate(panel['cases']):
         case_id = case['id']
-        native = source / 'results' / f'{method}-{case_id}'
+        case_source = Path(case_sources.get(case_id, source))
+        case_runner = (case_source / 'native_run.py').read_bytes()
+        if case_runner != runner:
+            members[f'{case_id}/consumed-native_run.py'] = case_runner
+        recovery = recoveries.get(case_id)
+        native = Path(recovery['cohort']) if recovery else case_source / 'results' / f'{method}-{case_id}'
         receipt_bytes = (native / 'receipt.json').read_bytes()
         receipt = json.loads(receipt_bytes)
         if receipt['status'] != 'complete':
             raise ValueError(f'{case_id} is incomplete; preserve it separately')
-        if sha(runner) != receipt['runnerSha256']:
+        if not recovery and sha(case_runner) != receipt['runnerSha256']:
             raise ValueError('Consumed native runner hash mismatch')
-        inputs = source / 'inputs' / case_id
+        inputs = case_source / 'inputs' / case_id
         spec_bytes = (inputs / 'comparison.json').read_bytes()
         spec = json.loads(spec_bytes)
         assert sha(spec_bytes) == receipt['inputSha256']
         assert spec['sequence'] == case['sequence'] and spec['seeds'] == panel['seeds']
         assert spec['compounds'] == [{'id': case_id, 'smiles': case['smiles']}]
+        if recovery:
+            assert method == 'openbind0'
+            native_panel_recovery.package(members, case_id, receipt, inputs, recovery['attempts'])
         for path in sorted(inputs.rglob('*')):
             if path.is_file():
                 relative = str(path.relative_to(inputs))
                 data = path.read_bytes()
-                assert sha(data) == receipt['inputFiles'][relative]
+                if not recovery:
+                    assert sha(data) == receipt['inputFiles'][relative]
                 members[f'{case_id}/inputs/{relative}'] = data
         public = {k: v for k, v in receipt.items() if k != 'argv'}
         public['originalReceiptSha256'] = sha(receipt_bytes)
-        public['redactedFields'] = ['argv (private absolute paths)']
+        public['redactedFields'] = [] if recovery else ['argv (private absolute paths)']
         members[f'{case_id}/receipt.public.json'] = (json.dumps(public, indent=2) + '\n').encode()
         paths = set()
         for item in receipt['outputs']:
@@ -113,5 +125,9 @@ if __name__ == '__main__':
     parser.add_argument('--libraries', type=Path, required=True)
     parser.add_argument('--method', choices=['openbind0', 'boltz2'], required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--recoveries', type=Path, help='Case-to-cohort/source-attempt JSON; preserves original interrupted CLI statuses')
+    parser.add_argument('--case-sources', type=Path, help='Case-to-source-root JSON for distinct completed attempts; each consumed runner is hash checked')
     args = parser.parse_args()
-    print(json.dumps(package(args.source, args.panel, args.libraries, args.method, args.output)))
+    print(json.dumps(package(args.source, args.panel, args.libraries, args.method, args.output,
+                             json.loads(args.recoveries.read_bytes()) if args.recoveries else None,
+                             json.loads(args.case_sources.read_bytes()) if args.case_sources else None)))

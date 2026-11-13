@@ -1,7 +1,7 @@
 {
   "repository": "https://github.com/rafwiewiora/foldarium",
   "revision": "b73ac80d9354dc0f323d7fb54d128f8c1ac0cb8e",
-  "transformation": "Only the two Mol* 5.11.0 CDN URLs in library-review.html are replaced with existing same-version local assets.",
+  "transformation": "Only the two Mol* 5.11.0 CDN URLs in library-review.html are replaced with existing same-version local assets. The protein RMSD display in library-review.js explicitly names its first-prediction or experimental-reference alignment target; the exact reversible label substitution is recorded in localPatches. No alignment or scoring calculation changes.",
   "files": [
     {
       "path": "library-format.js",
@@ -29,8 +29,8 @@
     },
     {
       "path": "library-review.js",
-      "bytes": 12838,
-      "sha256": "e63be618821c6b090ee6d490a15174e9c209f836e4005d828928ccb6442a74e1",
+      "bytes": 12965,
+      "sha256": "255c58005b040c07dbf4c9032a1fda857911a873f8cb4c3d1c402f5b930dd0f8",
       "upstreamSha256": "e63be618821c6b090ee6d490a15174e9c209f836e4005d828928ccb6442a74e1"
     },
     {
@@ -56,6 +56,18 @@
       "bytes": 1506,
       "sha256": "4501b7d4122f6eea01138bab69137f668adfc8c0eca60d629a3f1a0ecbf3537b",
       "upstreamSha256": "4501b7d4122f6eea01138bab69137f668adfc8c0eca60d629a3f1a0ecbf3537b"
+    }
+  ],
+  "localPatches": [
+    {
+      "path": "library-review.js",
+      "scope": "Display label only; name the actual RMSD alignment reference.",
+      "replacements": [
+        {
+          "before": "protein C\u03b1 RMSD ${aligned.rmsd.toFixed(2)} \u00c5",
+          "after": "protein C\u03b1 RMSD vs ${bundle.poses.find(p=>p.status==='complete')?.role==='experimental-reference'?'experimental reference':'first prediction'} ${aligned.rmsd.toFixed(2)} \u00c5"
+        }
+      ]
     }
   ]
 }

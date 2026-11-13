@@ -1,0 +1,332 @@
+{
+  "schema": "molarium.native-panel-forward-timings.v1",
+  "evidenceSha256": "a0e90843aa28f3462c15b6099fc2c0f0f5f203b9e6bef453fb61e0cde663b800",
+  "boundary": "CUDA-synchronized official model forward, including sampling and confidence; excludes checkpoint loading, input featurization, CLI startup and output writing. Records are not assigned to individual seeds.",
+  "comparisonLimit": "Native GPU/precision differs from browser runs; browser elapsed times have different boundaries. These numbers alone are not a browser/native speedup measurement.",
+  "cases": [
+    {
+      "caseId": "9sy7-a1jrx",
+      "forwards": 3,
+      "medianSeconds": 12.349841808999997,
+      "minSeconds": 12.140974763000031,
+      "maxSeconds": 52.931077654000035,
+      "peakReservedBytes": 2847932416,
+      "sources": [
+        {
+          "file": "9sy7-a1jrx/outputs/forward-times.jsonl",
+          "sha256": "7a9ee68a91cbb850828e56fddbd8128ed83f05eb6e19001dc830e55d67832c31",
+          "gpu": "NVIDIA L4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 52.931077654000035,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2426080768,
+          "peakReservedBytes": 2847932416
+        },
+        {
+          "seconds": 12.140974763000031,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2426080768,
+          "peakReservedBytes": 2847932416
+        },
+        {
+          "seconds": 12.349841808999997,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2426080768,
+          "peakReservedBytes": 2847932416
+        }
+      ]
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "forwards": 3,
+      "medianSeconds": 20.585088132999772,
+      "minSeconds": 20.395010684000226,
+      "maxSeconds": 33.73509715199998,
+      "peakReservedBytes": 4831838208,
+      "sources": [
+        {
+          "file": "9sxf-a1jrg/outputs/forward-times.jsonl",
+          "sha256": "dd2ce6ab2c6084f8406c967f7278fad81d0b4852b27fbf20a4a8b82afdff559f",
+          "gpu": "NVIDIA L4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 33.73509715199998,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 3370477056,
+          "peakReservedBytes": 4831838208
+        },
+        {
+          "seconds": 20.395010684000226,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 3370477056,
+          "peakReservedBytes": 4831838208
+        },
+        {
+          "seconds": 20.585088132999772,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 3370477056,
+          "peakReservedBytes": 4831838208
+        }
+      ]
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "forwards": 3,
+      "medianSeconds": 14.805365616000017,
+      "minSeconds": 14.607497096999964,
+      "maxSeconds": 50.073520503,
+      "peakReservedBytes": 3217031168,
+      "sources": [
+        {
+          "file": "9t51-a1jtm/outputs/forward-times.jsonl",
+          "sha256": "879b5d88626cb43f2c6f3a853a38ad12635fdfc7eb47fb209e2a9456f0d45905",
+          "gpu": "NVIDIA L4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 50.073520503,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2680888320,
+          "peakReservedBytes": 3217031168
+        },
+        {
+          "seconds": 14.805365616000017,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2680888320,
+          "peakReservedBytes": 3217031168
+        },
+        {
+          "seconds": 14.607497096999964,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2680889344,
+          "peakReservedBytes": 3217031168
+        }
+      ]
+    },
+    {
+      "caseId": "9syo-a1jr1",
+      "forwards": 3,
+      "medianSeconds": 14.21056684099949,
+      "minSeconds": 14.191063188000044,
+      "maxSeconds": 26.34689480599991,
+      "peakReservedBytes": 3288334336,
+      "sources": [
+        {
+          "file": "9syo-a1jr1/outputs/forward-times.jsonl",
+          "sha256": "63780eadd757d2568e20158b30942f5661fec1b9bce17b1e61510b147a844023",
+          "gpu": "NVIDIA L4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 26.34689480599991,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2743616000,
+          "peakReservedBytes": 3288334336
+        },
+        {
+          "seconds": 14.191063188000044,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2743616000,
+          "peakReservedBytes": 3288334336
+        },
+        {
+          "seconds": 14.21056684099949,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2743616000,
+          "peakReservedBytes": 3288334336
+        }
+      ]
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "forwards": 3,
+      "medianSeconds": 12.891055221999977,
+      "minSeconds": 12.484915175000026,
+      "maxSeconds": 52.17286109099996,
+      "peakReservedBytes": 2889875456,
+      "sources": [
+        {
+          "file": "15ji-a1d2g/outputs/forward-times.jsonl",
+          "sha256": "8500660be9b72549bed80cf1f8d86eab2d8b168a98b21a36260c6330e2ab78ae",
+          "gpu": "NVIDIA L4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 52.17286109099996,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2462737920,
+          "peakReservedBytes": 2889875456
+        },
+        {
+          "seconds": 12.484915175000026,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2462737920,
+          "peakReservedBytes": 2889875456
+        },
+        {
+          "seconds": 12.891055221999977,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2462737920,
+          "peakReservedBytes": 2889875456
+        }
+      ]
+    },
+    {
+      "caseId": "9xhg-1il",
+      "forwards": 3,
+      "medianSeconds": 13.160812502999988,
+      "minSeconds": 13.084536954999976,
+      "maxSeconds": 25.43603258400003,
+      "peakReservedBytes": 3082813440,
+      "sources": [
+        {
+          "file": "9xhg-1il/outputs/forward-times.jsonl",
+          "sha256": "3030abb7e1a861765bcb924de48e954022aba529cc693f5621dc9a479daa97e3",
+          "gpu": "NVIDIA L4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 25.43603258400003,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2586779136,
+          "peakReservedBytes": 3082813440
+        },
+        {
+          "seconds": 13.084536954999976,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2586779136,
+          "peakReservedBytes": 3082813440
+        },
+        {
+          "seconds": 13.160812502999988,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2586779136,
+          "peakReservedBytes": 3082813440
+        }
+      ]
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "forwards": 3,
+      "medianSeconds": 19.17290333699998,
+      "minSeconds": 18.94590955800004,
+      "maxSeconds": 31.083935819999965,
+      "peakReservedBytes": 4464836608,
+      "sources": [
+        {
+          "file": "9xjq-a1e0i/outputs/forward-times.jsonl",
+          "sha256": "f4aeaa505fb1333056abaa09e9122edee198141eb36d7f4c36fb8f6a17e1a7ad",
+          "gpu": "NVIDIA L4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 31.083935819999965,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 3189740032,
+          "peakReservedBytes": 4464836608
+        },
+        {
+          "seconds": 18.94590955800004,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 3189740032,
+          "peakReservedBytes": 4464836608
+        },
+        {
+          "seconds": 19.17290333699998,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 3189740032,
+          "peakReservedBytes": 4464836608
+        }
+      ]
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "forwards": 3,
+      "medianSeconds": 12.427759654999988,
+      "minSeconds": 12.175583590999963,
+      "maxSeconds": 57.59592246699998,
+      "peakReservedBytes": 2862612480,
+      "sources": [
+        {
+          "file": "32qy-a1keo/outputs/forward-times.jsonl",
+          "sha256": "0cd5f2f1eaf205ba6e1536462264286f6f9d6738db39870a420ba8fa5af5d38e",
+          "gpu": "NVIDIA L4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 57.59592246699998,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2442819584,
+          "peakReservedBytes": 2862612480
+        },
+        {
+          "seconds": 12.175583590999963,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2442819584,
+          "peakReservedBytes": 2862612480
+        },
+        {
+          "seconds": 12.427759654999988,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2442819584,
+          "peakReservedBytes": 2862612480
+        }
+      ]
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "forwards": 3,
+      "medianSeconds": 23.050070425,
+      "minSeconds": 22.977634757000033,
+      "maxSeconds": 36.208704743,
+      "peakReservedBytes": 5219811328,
+      "sources": [
+        {
+          "file": "9t3v-a1jtg/outputs/forward-times.jsonl",
+          "sha256": "2387a5db648008cdc18f79331fde0059c356a1f8d841a6d0bd1b6715097477c2",
+          "gpu": "NVIDIA L4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 36.208704743,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 3575033856,
+          "peakReservedBytes": 5219811328
+        },
+        {
+          "seconds": 23.050070425,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 3575033856,
+          "peakReservedBytes": 5219811328
+        },
+        {
+          "seconds": 22.977634757000033,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 3575035392,
+          "peakReservedBytes": 5219811328
+        }
+      ]
+    }
+  ]
+}
