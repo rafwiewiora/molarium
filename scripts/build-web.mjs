@@ -17,6 +17,9 @@ const assetRelease = String(process.env.MOLARIUM_ASSET_RELEASE || `v${packageJso
 const assetBase = `${assetOrigin}/${assetRelease}/`;
 
 const files = [
+  'reviews/COFOLD_MSA_RECOVERY_2026-11-13.md',
+  'folding/comparison/native_cohort.py',
+  'folding/comparison/test_native_cohort.py',
   'reviews/cofold-recent-pdb-2026-11-13/native-openbind0-single-standard/agreement-1.json',
   'reviews/cofold-recent-pdb-2026-11-13/native-openbind0-single-standard/agreement-2.json',
   'reviews/cofold-recent-pdb-2026-11-13/native-openbind0-single-standard/agreement-3.json',
