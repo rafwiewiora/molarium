@@ -81,7 +81,7 @@ attempt completed on L4 Spot: jobs 15602_0 and 15602_1; CPU preservation job 156
 The [portable source archive](native-features.zip) and
 [transfer receipt](transfer-receipt.json) retain consumed inputs, reference receipts,
 producer scripts, preflight, scheduler history and logs, alongside complete raw captures.
-Exact consumed producer versions are retained in [producers](producers/); later changes
+Exact consumed producer versions are retained in the [repository producer archive](https://github.com/rafwiewiora/molarium/tree/main/reviews/cofold-feature-parity-2026-11-13/producers); later changes
 do not rewrite old receipts.
 
 The earlier [protein export layout audit](exported-protein-atom-layout.json) finds
