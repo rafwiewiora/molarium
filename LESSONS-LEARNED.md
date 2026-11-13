@@ -150,3 +150,15 @@ A native mmCIF may omit a ligand's bonds. Recover correspondence from explicit
 named input chemistry and record its source hash; never infer the intended graph
 from possibly distorted predicted distances. A cached ligand conformer also does
 not prove which reference conformer the model actually used.
+
+## Spot recovery must exclude saved scientific work
+
+A node failure can leave a native receipt saying `running` after valid model files
+were already saved. Capture a source-side file/hash inventory after the job stops,
+then validate chemistry and query/seed identities before planning only missing
+poses. An incomplete transfer must trigger retrieval, not recomputation. Preserve
+original query IDs, group remaining seeds, and require unique full-cohort coverage
+when assembling results. An assembled cohort does not relabel an interrupted CLI
+as complete, and an unmeasured total wall time stays unavailable. The
+[six-pose interruption and 42-pose recovery plan](reviews/cofold-method-comparison-2026-11-12/README.md)
+retain the concrete example and coordinate-preservation checks.

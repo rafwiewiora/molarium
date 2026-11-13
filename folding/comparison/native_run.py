@@ -57,6 +57,7 @@ def main():
         'inputSha256':digest(args.inputs / 'comparison.json'),'checkpointSha256':digest(args.checkpoint),
         'checkpointBytes':args.checkpoint.stat().st_size,'settings':protocol,'seeds':spec['seeds'],
         'executionConfig':{'torchinductorCompileThreads':os.environ.get('TORCHINDUCTOR_COMPILE_THREADS'),
+          'slurmJobId':os.environ.get('SLURM_JOB_ID'),
           'dataModuleArgs':json.loads((args.inputs/f'openbind-{args.protocol}.yaml').read_text()).get('data_module_args',{})if args.method=='openbind0'else {'num_workers':0}},
         'environment':{'python':platform.python_version(),'packages':versions,'cuda':torch.version.cuda,
           'gpu':torch.cuda.get_device_name(0),'gpuMemoryBytes':torch.cuda.get_device_properties(0).total_memory},
@@ -114,8 +115,9 @@ def main():
                 cli(args=argv,standalone_mode=False)
         models=sorted(p for p in args.output.rglob('*') if p.is_file() and p.suffix in ['.cif','.pdb'] and '_model' in p.name)
         receipt['outputs']=[{'path':str(p.relative_to(args.output)),'sha256':digest(p),'bytes':p.stat().st_size}for p in models]
-        if len(models) != len(spec['compounds'])*len(spec['seeds']):
-            raise RuntimeError(f'Expected 48 completed poses, found {len(models)}')
+        expected_poses=len(spec['compounds'])*len(spec['seeds'])
+        if len(models) != expected_poses:
+            raise RuntimeError(f'Expected {expected_poses} completed poses, found {len(models)}')
         receipt['status']='complete'
     except BaseException as exc:
         receipt['status']='failed';receipt['error']=str(exc)

@@ -14,6 +14,7 @@ with stable `DV-` identifiers and links to original observations and follow-up e
 - [x] Complete the 48-pose OpenBind-0 native FP32/dense-kernel control on T4 Spot; preserve the substantial protein/ligand disagreement as an unresolved finding, with full human-review bundles ([comparison](reviews/cofold-method-comparison-2026-11-12/README.md)).
 - [ ] Isolate OpenBind's observed browser/native protein disagreement (median Cα RMSD 7.04 Å) using matched weights, features, sampler and random tensors; current protocol differences do not diagnose a porting error.
 - [ ] Finish native OpenBind FP32 standard sampling (T4/L4 eligible) and Boltz-2 standard sampling (L4 eligible); these arbitrary pairs do not replace fixed-tensor parity or experimental-complex validation ([protocol](folding/comparison/README.md)).
+- [x] Preserve six OpenBind standard-sampling poses after Spot node failure, validate source-side inventory and submit only 42 missing query/seed pairs; require full unique coverage for assembly ([recovery](folding/comparison/README.md#interrupted-native-openbind-jobs)).
 
 - [x] Cancel queued/in-flight old-graph polish when chemistry invalidates the atom mapping ([SR-13](reviews/STALE_POLISH_2026-09-25.md)); retain exact coordinate-preservation assertions.
 

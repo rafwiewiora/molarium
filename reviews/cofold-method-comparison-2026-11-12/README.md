@@ -110,6 +110,12 @@ median displacements is 1.88 Å: the global 7.04 Å RMSD does not mean every res
 differs by that amount. The full RMSDs and all per-pair residuals remain reported;
 this post hoc diagnostic does not replace them or isolate a porting error.
 
+![OpenBind residue-wise backbone displacement in the full-protein fits](openbind-residuals.png)
+
+[SVG](openbind-residuals.svg), [plot receipt](openbind-residuals.plot.json), and
+[reproduction command](../../folding/comparison/README.md#reproduce-the-residual-figure).
+This figure uses the completed 25-step control; the 200-step cohort is incomplete.
+
 - [OpenBind browser/native Foldarium review library](openbind0-browser-native.library.json), with 96 unscored complexes
 - [Complete OpenBind pairwise metrics and seed-spread controls](openbind0-torch-reference-agreement.json)
 - [Native library](native-openbind0-torch-reference/library.json), [public receipt](native-openbind0-torch-reference/receipt.public.json), and [raw mmCIFs, consumed configuration/source and timings](native-openbind0-torch-reference/native-artifacts.zip)
@@ -171,6 +177,25 @@ also does not replace a full MSA workflow or experimental pose benchmarking.
    and one compiler worker, with unchanged scientific inputs, precision, sampling
    and dense model kernels. It completed 48/48 on T4. The execution settings and
    consumed script are in the native receipt/archive; no resource gate was relaxed.
+9. **Spot interruption and retained science:** the 200-step OpenBind run saved
+   six valid poses before a managed Spot node failed. The original CLI receipt
+   remains interrupted; it is not a completed 48-pose result. The
+   [source-side inventory](standard-openbind-stopped-inventory.json),
+   [six original structures and consumed inputs/source](standard-openbind-interrupted-six.zip),
+   and [missing-only recovery plan](standard-openbind-recovery-plan.json) preserve
+   this event. The new native attempt excludes those six and requests only the
+   remaining 42. Subsequent GPU-node startup failures occurred before their scripts
+   or calculations began; those unconsumed allocations were resubmitted using
+   existing qualifications and normal/Spot queues. The replay guard still rejects
+   any consumed output directory. Recovery verifies complete transfers, hashes,
+   query/seed identities, chemical topology and full-cohort coverage. Tests preserve
+   all 48 frozen coordinate hashes across a simulated six-plus-42 interruption,
+   and reproduce the real remaining-input digest from the public archive.
+10. **Output identity scope:** compound indices are parsed from model filenames,
+    and Boltz seeds from paths inside the native attempt. An ancestor directory
+    named `compound_999` or `seed-99` must not change pose identity. The frozen
+    cohort round-trip exercises an adversarial ancestor name while preserving all
+    48 coordinate hashes.
 
 Analysis checks cover rigid transforms, a displaced ligand, conjugated terminal
 symmetry, native double-bond identity independent of distance, input-hash rejection,
