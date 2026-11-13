@@ -471,6 +471,11 @@ The input chemistry correction is verified; it does not establish accurate pose
 prediction. Six complete phases retain 162 poses, including provided-MSA and
 200-step OpenBind controls. Native references and an interrupted Boltz standard
 control are tracked separately in the same public record.
+An [independent fixed-input transition-layer audit](reviews/cofold-layer-parity-2026-11-13/README.md)
+preserves exact official FP32/FP64 and WebGPU arrays. Ordinary inputs agree
+closely, but a near-constant stress input exposes nonfinite fast-variance output.
+A row-shift correction passes the component comparison against FP64 and remains
+experimental pending production-kernel and full-model qualification.
 Protein multimers,
 templates, nucleic acids and covalent cofolding are not exposed yet.
 See [integration evidence and follow-up work](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md).

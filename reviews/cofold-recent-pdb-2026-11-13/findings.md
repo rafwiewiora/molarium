@@ -1,5 +1,10 @@
 # Recent-panel findings and linked fixes
 
+An independent [fixed-input transition-layer audit, LCP-01](../cofold-layer-parity-2026-11-13/README.md)
+also found a fast-variance failure on a near-constant stress input. Its exact
+arrays and experimental row-shift correction are preserved separately. No causal
+connection to these pose errors is established; the correction is not deployed.
+
 | ID | Evidence / finding | Change | Regression / remaining work |
 | --- | --- | --- | --- |
 | RCF-01 | KIT's inter-ring single bond was flagged aromatic; YTHDF2's equivalent Kekule spelling differed in raw model bond/aromatic features. Sanitized identity alone passed. Original baseline graphs are retained. | [RDKit WASM canonicalization](../../rdkit-worker.js), [worker client](../../folding/ligand-normalization.mjs) and [inference boundary](../../folding/localfold.mjs) normalize before conformer generation/features; preserve source/canonical hashes and charge/stereo. | [Actual browser chemistry probe](../../scripts/cofold-ligand-chemistry.browser.mjs), [independent RDKit feature/stereo check](../../folding/comparison/validate_ligand_inputs.py), [worker lifecycle tests](../../folding/ligand-normalization.test.mjs), [real-case regressions](../../folding/comparison/test_recent_pdb.py). All nine input graphs pass. Pose improvement is not established. |

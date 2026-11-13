@@ -1,0 +1,36 @@
+{
+  "schema": "molarium.layer-evidence.v1",
+  "archiveSha256": "aae8485e376c1362e40879fbecfe1c4ee15cab3f15155846a62835e051f1e41a",
+  "files": [
+    {
+      "file": "fp32/manifest.json",
+      "bytes": 7863,
+      "sha256": "79a83f97a4bcba28033b940107daebf93bd359ae6e0f04057d800ff72516ec2a"
+    },
+    {
+      "file": "fp32/fixtures.bin",
+      "bytes": 9934848,
+      "sha256": "0594761bb4db4c00d3f541bb333cb47d7c5149fadd2b1ee6a4b29c25ea565066"
+    },
+    {
+      "file": "fp64/manifest.json",
+      "bytes": 2890,
+      "sha256": "7ef906fbcb0047af9c27f4f1728bf990d2bb2d67f14c34be71a5065930e968b9"
+    },
+    {
+      "file": "fp64/expected-f64.bin",
+      "bytes": 1869312,
+      "sha256": "8b68d5118196330544aa6f0a969c1ae38f1a10205775b3cdcedef8e07a6c7939"
+    },
+    {
+      "file": "webgpu/comparison.json",
+      "bytes": 21155,
+      "sha256": "11098d08c50c8b70cdb2498474a3872647f7eaca6ca88a0f219ab50fae65f02d"
+    },
+    {
+      "file": "webgpu/native-transition-comparison004.outputs.bin",
+      "bytes": 3738624,
+      "sha256": "324994cb0f9acc239a5d648d4097a6c79f4bf534d780248ff35a1badf5f00d4e"
+    }
+  ]
+}
