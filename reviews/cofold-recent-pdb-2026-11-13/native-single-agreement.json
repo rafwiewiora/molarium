@@ -1,0 +1,150 @@
+{
+  "schema": "molarium.native-panel-agreement-index.v1",
+  "scope": "Browser normalized single-sequence 25/2 versus native single-sequence 200/3. Precision, conformers, samplers and RNG differ; no fixed-input numerical parity claim.",
+  "sources": {
+    "compare_libraries.py": "843e587c33690c781b554735ed85ea016d9862979762ea35119d5e581a77c3ee",
+    "pose_metrics.py": "b577b0cd0358832eec0946c19cb826d2bf72e358205ced2eeb9b08885ebc41b5"
+  },
+  "methods": [
+    {
+      "method": "openbind0",
+      "medianSeedPairedMeanRmsdA": 17.363088325494953,
+      "medianOneToOneMeanRmsdA": 12.115519652552363,
+      "cases": [
+        {
+          "caseId": "9sy7-a1jrx",
+          "file": "native-openbind0-single-standard/agreement-1.json",
+          "sha256": "ad2c3de8652e7db3c4e25ee603888aa81aae6d5548e4e34996d691c0acdbe1f3",
+          "seedPairedMeanRmsdA": 17.363088325494953,
+          "oneToOneMeanRmsdA": 16.202207458854563
+        },
+        {
+          "caseId": "9sxf-a1jrg",
+          "file": "native-openbind0-single-standard/agreement-2.json",
+          "sha256": "f2f3196753581d2c8a6bdd98776a8a5159c039caa1f4a815bb6016bfb5d491be",
+          "seedPairedMeanRmsdA": 17.811156753487236,
+          "oneToOneMeanRmsdA": 9.989350742683786
+        },
+        {
+          "caseId": "9t51-a1jtm",
+          "file": "native-openbind0-single-standard/agreement-3.json",
+          "sha256": "1b758dc3acc70814da501b09cdecb8cdd643c54151fdc925c2c9058c76fdc81e",
+          "seedPairedMeanRmsdA": 19.409594557872538,
+          "oneToOneMeanRmsdA": 17.265396225597144
+        },
+        {
+          "caseId": "9syo-a1jr1",
+          "file": "native-openbind0-single-standard/agreement-4.json",
+          "sha256": "9e9ed58b0885a58074a1fb25d6c072f8797e9872b431718a301a2d749351bf2d",
+          "seedPairedMeanRmsdA": 12.115519652552363,
+          "oneToOneMeanRmsdA": 12.115519652552363
+        },
+        {
+          "caseId": "15ji-a1d2g",
+          "file": "native-openbind0-single-standard/agreement-5.json",
+          "sha256": "451aa756dbfbef7d7691d827a9993a185b61a3a52a62ca7a0a001208629bcfc0",
+          "seedPairedMeanRmsdA": 15.198839314181114,
+          "oneToOneMeanRmsdA": 7.75350227028423
+        },
+        {
+          "caseId": "9xhg-1il",
+          "file": "native-openbind0-single-standard/agreement-6.json",
+          "sha256": "d34f302a836eb82408db48f537a4c5284b08aee09edcb4853044f0fb3c8947f2",
+          "seedPairedMeanRmsdA": 25.47222938144833,
+          "oneToOneMeanRmsdA": 13.07080207478844
+        },
+        {
+          "caseId": "9xjq-a1e0i",
+          "file": "native-openbind0-single-standard/agreement-7.json",
+          "sha256": "8ffad022b34f3ec066443f8d927836497e117c6bb6d0b6270db1eb2b63954977",
+          "seedPairedMeanRmsdA": 22.008767701229843,
+          "oneToOneMeanRmsdA": 21.912806281403046
+        },
+        {
+          "caseId": "32qy-a1keo",
+          "file": "native-openbind0-single-standard/agreement-8.json",
+          "sha256": "9fc2bdc8e1febe007aa41eb0f63428683559ea45b6a35cbca2cb9fc92b94bd67",
+          "seedPairedMeanRmsdA": 12.777975601020609,
+          "oneToOneMeanRmsdA": 9.632686941567142
+        },
+        {
+          "caseId": "9t3v-a1jtg",
+          "file": "native-openbind0-single-standard/agreement-9.json",
+          "sha256": "c5f567459b85bfc6002dadde9624e8d5c9859caeba22970ef3e2334c035b1abf",
+          "seedPairedMeanRmsdA": 11.69730217430889,
+          "oneToOneMeanRmsdA": 11.316765272681755
+        }
+      ]
+    },
+    {
+      "method": "boltz2",
+      "medianSeedPairedMeanRmsdA": 8.231899562153133,
+      "medianOneToOneMeanRmsdA": 7.899863111009528,
+      "cases": [
+        {
+          "caseId": "9sy7-a1jrx",
+          "file": "native-boltz2-single-standard/agreement-1.json",
+          "sha256": "c784cabce56b4d32d87356e9f96b128fbc7542e4537bf772a7ca83dfdf970f26",
+          "seedPairedMeanRmsdA": 10.184719377587616,
+          "oneToOneMeanRmsdA": 9.335055085264027
+        },
+        {
+          "caseId": "9sxf-a1jrg",
+          "file": "native-boltz2-single-standard/agreement-2.json",
+          "sha256": "f8aedeb48e62d1ddbb8237d9527614d926bdb989df923a5be44d824b221ba34a",
+          "seedPairedMeanRmsdA": 7.624634260924818,
+          "oneToOneMeanRmsdA": 7.619208937767357
+        },
+        {
+          "caseId": "9t51-a1jtm",
+          "file": "native-boltz2-single-standard/agreement-3.json",
+          "sha256": "21d958d50f64a0dd618a54b51494bb005cf9425ffaaf6b6d798b6bc5cbd4be78",
+          "seedPairedMeanRmsdA": 16.11659896052244,
+          "oneToOneMeanRmsdA": 14.250383013196725
+        },
+        {
+          "caseId": "9syo-a1jr1",
+          "file": "native-boltz2-single-standard/agreement-4.json",
+          "sha256": "adb0a39aedb4786287041a403f4c1bcfedc2e74402cbdab95a2b901bdf8b3366",
+          "seedPairedMeanRmsdA": 2.567356483101984,
+          "oneToOneMeanRmsdA": 2.003039888946853
+        },
+        {
+          "caseId": "15ji-a1d2g",
+          "file": "native-boltz2-single-standard/agreement-5.json",
+          "sha256": "fd983fb4805097851513539800cc2b0b84f989b5cfb3cf7e7e0dc825e905b100",
+          "seedPairedMeanRmsdA": 7.3562029853722635,
+          "oneToOneMeanRmsdA": 7.3562029853722635
+        },
+        {
+          "caseId": "9xhg-1il",
+          "file": "native-boltz2-single-standard/agreement-6.json",
+          "sha256": "831a72bef618f1f705c6d29036dbdd79e584f4945400f6d1e0395808a8e00063",
+          "seedPairedMeanRmsdA": 8.231899562153133,
+          "oneToOneMeanRmsdA": 7.899863111009528
+        },
+        {
+          "caseId": "9xjq-a1e0i",
+          "file": "native-boltz2-single-standard/agreement-7.json",
+          "sha256": "739e1926d6937f25e9ba0d47ba20b375551c16a8381c6ad96de7eb62661dd04b",
+          "seedPairedMeanRmsdA": 4.9134783471219015,
+          "oneToOneMeanRmsdA": 3.91109720341365
+        },
+        {
+          "caseId": "32qy-a1keo",
+          "file": "native-boltz2-single-standard/agreement-8.json",
+          "sha256": "3918fe558d55408f07d0f7f49020b26953c5fa250eff0a63e3cab41978d526b2",
+          "seedPairedMeanRmsdA": 10.992893605533595,
+          "oneToOneMeanRmsdA": 10.420033061955678
+        },
+        {
+          "caseId": "9t3v-a1jtg",
+          "file": "native-boltz2-single-standard/agreement-9.json",
+          "sha256": "ba4bec11450c5d688147e0bd8486231bda9978fb4c33d653062164730a5b8aed",
+          "seedPairedMeanRmsdA": 10.402065296798336,
+          "oneToOneMeanRmsdA": 10.363178302003377
+        }
+      ]
+    }
+  ]
+}

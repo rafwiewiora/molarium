@@ -1,0 +1,15 @@
+{
+  "panelSha256": "7053daa0060cf8dc4836f95ac0b40e9e639398adacc63896c1f122d0ec9e7bb3",
+  "scoresSha256": "b5c12dccafb0fcd4878e915de9625ebe2a9416c1d48bae2a4c87deba5dbcea0b",
+  "methods": [
+    "browser-boltz2-baseline",
+    "browser-boltz2-normalized",
+    "browser-openbind0-normalized",
+    "browser-boltz2-msa256",
+    "browser-openbind0-msa256",
+    "browser-openbind0-msa256-standard",
+    "native-openbind0-single-standard",
+    "native-boltz2-single-standard"
+  ],
+  "scriptSha256": "9c770c5ef955a69fd344ccfcb5aaadfe491fafc085cf4b504b73f12f89b08de1"
+}

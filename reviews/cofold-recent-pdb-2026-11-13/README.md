@@ -193,8 +193,8 @@ pass both the geometric criterion and the limited stereo/clash checks, as in
 the 25-step OpenBind run. This is not a broad accuracy improvement or a
 complete physical-validity assessment. [Raw runs and timing](browser-openbind0-msa256-standard/throughput.json)
 and [per-pose scores](browser-openbind0-msa256-standard/scores.json) preserve
-all outcomes. The interactive review now includes all 162 poses from six
-complete phases, with explicit model, MSA and step labels.
+all outcomes. These six complete browser phases retain 162 poses, with explicit
+model, MSA and step labels. The native controls below add separate predictions.
 
 Boltz-2 standard sampling stopped after browser-storage failures. We preserve
 14 unique complete poses from the first five systems in an
@@ -231,9 +231,59 @@ The earlier rows-only comparison is preserved in the
 
 Native single-sequence OpenBind/OpenFold3 0.5.1 FP32 dense and Boltz 2.2.1 BF16
 controls were submitted on PSIgreen with 200 steps and three recycles. Their CPU
-input/configuration preflight passed. Native results have not yet been retrieved
-or scored, and are not counted as completed evidence. No new standalone VM,
-priority change or cap bypass is used.
+input/configuration preflight passed. All **54 native single-sequence poses**
+have now been retrieved, checked against a source-side SHA-256 inventory,
+converted using explicit native topology and scored against the unchanged
+experimental references. They are included in Foldarium: **216 predictions**
+across six complete browser phases and two complete native phases.
+
+| System | Native OpenBind protein / ligand median RMSD | Native Boltz protein / ligand median RMSD |
+| --- | ---: | ---: |
+| 9SY7 · PPA | 7.22 / 10.79 Å | 11.99 / 14.99 Å |
+| 9SXF · KIT | 20.74 / 15.78 Å | 4.45 / 1.34 Å |
+| 9T51 · STARD4 | 19.80 / 14.80 Å | 17.72 / 12.00 Å |
+| 9SYO · Hsp90 | 17.18 / 16.22 Å | 0.96 / 5.75 Å |
+| 15JI · NSP3 | 12.16 / 20.46 Å | 0.21 / 4.93 Å |
+| 9XHG · STING | 15.12 / 28.50 Å | 1.58 / 28.27 Å |
+| 9XJQ · WDR5 | 0.63 / 2.76 Å | 0.34 / 3.05 Å |
+| 32QY · YTHDF2 | 17.05 / 12.00 Å | 2.39 / 3.02 Å |
+| 9T3V · sEH | 20.44 / 15.60 Å | 0.51 / 10.69 Å |
+
+Native Boltz has three ligand poses within 2 Å, all KIT. **All three disagree
+with the declared tetrahedral stereochemistry** (expected R, observed S).
+Native OpenBind has no pose within 2 Å and large protein-fold errors for eight
+systems. Consequently **0/54** passes both the geometric criterion and the
+limited stereochemistry/clash checks. These observations do not establish that
+the browser port causes the failures: native input handling, conformers, model,
+precision and sampling remain distinct. Native input-conformer selection has
+not been reconstructed from the saved molecule cache.
+
+![All 216 browser/native poses, with geometric successes that fail stereo/clash checks marked by crosses.](browser-native-reconstruction.png)
+
+The [combined score file](all-protocol-scores.json) retains each seed and its
+original phase. Crosses mark poses within 2 Å that fail the limited stereo/clash
+checks; the geometric threshold alone is insufficient.
+
+The [OpenBind raw evidence and scores](native-openbind0-single-standard/evidence.json)
+and [Boltz raw evidence and scores](native-boltz2-single-standard/evidence.json)
+retain exact native mmCIFs, named graphs, consumed inputs/runner, timing records
+and scientific receipts. An independent public-data regression reconstructs
+every exported coordinate and all per-pose crystal scores; it never loads
+molecule-cache pickle objects. Only private CLI argument paths are omitted from
+public receipts; exact original receipt hashes remain attached.
+
+The [all-pairs browser/native comparison](native-single-agreement.json) keeps
+every cross-seed pairing and within-method spread. Across the nine systems,
+the median seed-paired mean ligand RMSD is 17.36 Å for OpenBind and 8.23 Å for
+Boltz; one-to-one ensemble assignment gives 12.12 Å and 7.90 Å respectively.
+These compare normalized single-sequence browser 25-step/two-recycle runs with
+native 200-step/three-recycle runs. They are not precision-only or matched-RNG
+comparisons and do not measure experimental accuracy.
+
+Separate native controls with the **exact saved MSA256 inputs** have passed
+official CPU feature preflight on PSIgreen. Those separate results are not yet
+included or counted as complete phases here. No new standalone VM, priority
+change or cap bypass is used.
 Equal integer seeds do not match random tensors. These controls compare complete
 prediction protocols; they do not establish fixed-tensor numerical parity.
 

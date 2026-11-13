@@ -17,7 +17,8 @@ def main():
     p.add_argument('--output',type=Path,required=True)
     a=p.parse_args();panel=json.loads(a.panel.read_text());scores=json.loads(a.scores.read_text())
     cases=panel['cases'];methods=list(dict.fromkeys(r['method']for r in scores['poses']))
-    labels={('browser-'+p['id']):p['label']for p in scores.get('phaseDefinitions',[])}
+    labels={(p['id'] if p['id'].startswith('native-') else 'browser-'+p['id']):p['label']
+            for p in scores.get('phaseDefinitions',[])}
     fig,axes=plt.subplots(2,1,figsize=(13,8),sharex=True,layout='constrained')
     colors=plt.get_cmap('tab10');width=.72/max(1,len(methods))
     for j,method in enumerate(methods):
@@ -29,9 +30,15 @@ def main():
                 if not values:continue
                 ax.scatter([x]*len(values),values,s=25,color=colors(j),alpha=.65,zorder=3)
                 ax.plot([x-width*.35,x+width*.35],[np.median(values)]*2,color=colors(j),lw=3,zorder=4)
+                if key=='ligandRmsdA':
+                    rejected=[r[key] for r in rows if r['within2A'] and
+                        (not r['stereochemistry']['stereochemicalIdentityMatches'] or
+                         r['predictedGeometry']['severeHeavyAtomPairsUnder1_2A']>0)]
+                    ax.scatter([x]*len(rejected),rejected,s=48,marker='x',color='#263849',zorder=5)
         axes[0].scatter([],[],s=28,color=colors(j),label=labels.get(method,method))
     axes[0].set_ylabel('Protein Cα RMSD (Å)');axes[1].set_ylabel('Ligand RMSD in protein frame (Å)')
     axes[1].axhline(2,color='#697b85',ls='--',lw=1,label='2 Å geometric criterion')
+    axes[1].scatter([],[],s=48,marker='x',color='#263849',label='Close pose failing stereo/clash checks')
     for ax in axes:
         ax.set_ylim(bottom=0);ax.grid(axis='y',alpha=.2);ax.spines[['top','right']].set_visible(False)
     axes[1].set_xticks(range(len(cases)),[c['pdbId']+'\n'+c['ccdId']for c in cases])

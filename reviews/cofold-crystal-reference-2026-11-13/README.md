@@ -51,6 +51,25 @@ with the observed structural problems. The experiment does not isolate whether
 the cause is the browser port, quantization, inputs or model/protocol limitations.
 Native controls are required before attributing a cause.
 
+## Native single-sequence OpenBind control
+
+The official OpenFold3 0.5.1 / OpenBind-0 FP32 dense route completed all nine
+poses at 200 steps and three recycles, with the same declared sequences,
+chemical identities and single-sequence input. All nine were retrieved and
+validated against the original output hashes. Median protein / ligand RMSD is
+16.67 / 11.34 Å for JQ1, 9.28 / 12.87 Å for FK5, and 9.95 / 14.61 Å for benzene.
+No native OpenBind pose meets 2 Å. Poor folding in this protocol therefore also
+occurs in the native implementation. This does not establish numerical parity
+or explain the separate effects of MSA input, quantization, features and sampling.
+
+[Exact native outputs, graphs, consumed inputs and scientific receipts](native-openbind0-single-standard/evidence.json)
+and [every score](native-openbind0-single-standard/scores.json) are public. A
+regression independently reconstructs all nine exports and crystal scores.
+Native Boltz completed JQ1 and benzene; its FK5 job failed during RDKit import
+before producing any pose and then suffered a Spot interruption. A new
+missing-only attempt preserves that failure and repeats no saved predictions.
+The complete Boltz control remains pending.
+
 The [complete per-seed scores](browser-scores.json) include contact overlap,
 centroid displacement, severe-clash diagnostics, tetrahedral stereochemistry,
 confidence values and coordinate/source hashes. Seed 0 is an unselected result.

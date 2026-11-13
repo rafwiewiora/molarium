@@ -28,5 +28,15 @@
     "id": "openbind0-msa256-standard",
     "label": "OpenBind-0 · MSA256 · 200 steps",
     "directory": "browser-openbind0-msa256-standard"
+  },
+  {
+    "id": "native-openbind0-single-standard",
+    "label": "OpenBind-0 · native FP32 dense · single sequence · 200 steps",
+    "directory": "native-openbind0-single-standard"
+  },
+  {
+    "id": "native-boltz2-single-standard",
+    "label": "Boltz-2 · native BF16 · single sequence · 200 steps",
+    "directory": "native-boltz2-single-standard"
   }
 ]
