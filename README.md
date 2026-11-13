@@ -477,7 +477,10 @@ closely, but a near-constant stress input exposes nonfinite fast-variance output
 The [expanded audit](reviews/cofold-layer-parity-2026-11-13/production/README.md)
 checks 126 fused, in-place and split configurations and the actual GPU int5
 upload. A corrected row-shift candidate passes the component precision gates;
-it remains experimental pending direct implementation and full-model qualification.
+the [direct implementation and dispatch evidence](reviews/cofold-layer-parity-2026-11-13/integration/README.md)
+preserve an audited opt-in patch, seven byte-identical direct API outputs and
+the correction of a separate standalone runner coverage defect. Default folding
+normalization is unchanged; full-model and further GPU qualification remain open.
 Protein multimers,
 templates, nucleic acids and covalent cofolding are not exposed yet.
 See [integration evidence and follow-up work](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md).

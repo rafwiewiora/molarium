@@ -2,8 +2,10 @@
 
 This extends the [first fixed-input audit](../README.md) to the pinned production
 shader generators, weight packer and actual GPU int5 upload. It evaluates an
-experimental normalization candidate; **the candidate is not deployed**. No
-trained model, full prediction or crystal coordinates are used.
+experimental normalization candidate, diagnostic-only at the time of these
+measurements. The later [audited direct implementation](../integration/README.md)
+retains a separate source pin and remains opt-in, without default folding
+activation. No trained model, full prediction or crystal coordinates are used.
 
 ## What runs
 

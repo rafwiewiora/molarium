@@ -1,0 +1,393 @@
+{
+  "schema": "molarium.direct-transition-patch-proof.v1",
+  "scope": "Opt-in direct generators. Default shader bytes unchanged; new shader bytes match the exact measured component evidence. No full-model or NVIDIA matrix qualification claim.",
+  "upstreamRevision": "5ea3d42c911949700401b54003cb28c557fcf2a6",
+  "originalReceiptSha256": "2fa2dc96ff95ffe6eb0ef19377a17c7697d8708c71d7eef662ffc036a20a55b7",
+  "originalSha256": "49c02501cbcd3011745f3863a2e0110f03888c055bfb8a823028c3fe8a566ff4",
+  "patchedSha256": "76764277f3fb42c697b84b768c3f34ce250d5c6d1b8a57c7ed4fb58f4326018f",
+  "patchSha256": "f27fbb02e1166dacc725c59707705cd84a7858eb4c58c46dab71ac491d14a941",
+  "comparisonSha256": "5f82ec36562e896a675e77a67bf86abf839ec0bd646a3d66d3dfe5718e9f4194",
+  "checkerSha256": "cd7e30d91afa5aa85836244cee896487a5017ef2f54e11a021831a8172ce1e2d",
+  "defaultConfigurations": 126,
+  "directShaderHashes": 105,
+  "records": [
+    {
+      "caseId": "msa-ordinary/f32",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-ordinary/f32",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-ordinary/f32",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-ordinary/f16",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-ordinary/f16",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-ordinary/f16",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-ordinary/int5-f16",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-ordinary/int5-f16",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-ordinary/int5-f16",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-ordinary/f32",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-ordinary/f32",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-ordinary/f32",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-ordinary/f16",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-ordinary/f16",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-ordinary/f16",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-ordinary/int5-f16",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-ordinary/int5-f16",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-ordinary/int5-f16",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-tiled/f32",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-tiled/f32",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-tiled/f32",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-tiled/f16",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-tiled/f16",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-tiled/f16",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-tiled/int5-f16",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-tiled/int5-f16",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-tiled/int5-f16",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-near-constant/f32",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-near-constant/f32",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-near-constant/f32",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-near-constant/f16",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-near-constant/f16",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-near-constant/f16",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-near-constant/int5-f16",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-near-constant/int5-f16",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "pair-near-constant/int5-f16",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-ordinary/f32",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-ordinary/f32",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-ordinary/f32",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-ordinary/f16",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-ordinary/f16",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-ordinary/f16",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-ordinary/int5-f16",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-ordinary/int5-f16",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-ordinary/int5-f16",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-near-constant/f32",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-near-constant/f32",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-near-constant/f32",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-near-constant/f16",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-near-constant/f16",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-near-constant/f16",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-near-constant/int5-f16",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-near-constant/int5-f16",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "msa-near-constant/int5-f16",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-near-constant/f32",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-near-constant/f32",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-near-constant/f32",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-near-constant/f16",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-near-constant/f16",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-near-constant/f16",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-near-constant/int5-f16",
+      "style": "fused",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-near-constant/int5-f16",
+      "style": "fused-residual",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    },
+    {
+      "caseId": "single-near-constant/int5-f16",
+      "style": "split",
+      "directMode": "shifted-fast",
+      "matchesExecutedGpuShaders": true
+    }
+  ]
+}

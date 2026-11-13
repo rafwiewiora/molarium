@@ -17,6 +17,16 @@ const assetRelease = String(process.env.MOLARIUM_ASSET_RELEASE || `v${packageJso
 const assetBase = `${assetOrigin}/${assetRelease}/`;
 
 const files = [
+  'scripts/localfold-patches/README.md',
+  'scripts/localfold-patches/LICENSE',
+  'scripts/localfold-patches/manifest.json',
+  'scripts/localfold-patches/stable-transition.patch',
+  'scripts/localfold-patches/transition-5ea3d42c.upstream.txt',
+  'scripts/localfold-patches/direct-proof.json',
+  'reviews/cofold-layer-parity-2026-11-13/integration/README.md',
+  'reviews/cofold-layer-parity-2026-11-13/integration/analysis.json',
+  'reviews/cofold-layer-parity-2026-11-13/integration/evidence.json',
+  'reviews/cofold-layer-parity-2026-11-13/integration/integration-evidence.zip',
   'reviews/cofold-layer-parity-2026-11-13/production/README.md',
   'reviews/cofold-layer-parity-2026-11-13/production/analysis.json',
   'reviews/cofold-layer-parity-2026-11-13/production/comparison.json',

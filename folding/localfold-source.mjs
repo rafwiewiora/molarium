@@ -1,0 +1,17 @@
+// Generated from the complete vendored source receipt by import-localfold.mjs.
+export const LOCALFOLD_SOURCE = Object.freeze({
+  "repository": "https://github.com/sokrypton/localfold",
+  "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6",
+  "receiptSha256": "398260d4f932a04df6146bd563fd7e6217e2d3208abdbe094c2303642595c729",
+  "localPatches": [
+    {
+      "id": "transition-stability-v1",
+      "path": "webgpu/af3/trunk/transition.js",
+      "mode": "shifted-fast",
+      "activation": "Experimental opt-in transition normalization; standalone width-dependent dispatch corrected. Default normalization shader modes unchanged. Full-model qualification pending.",
+      "upstreamSha256": "49c02501cbcd3011745f3863a2e0110f03888c055bfb8a823028c3fe8a566ff4",
+      "sha256": "76764277f3fb42c697b84b768c3f34ce250d5c6d1b8a57c7ed4fb58f4326018f",
+      "patchSha256": "f27fbb02e1166dacc725c59707705cd84a7858eb4c58c46dab71ac491d14a941"
+    }
+  ]
+});

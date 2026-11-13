@@ -82,8 +82,8 @@
     },
     {
       "path": "folding/localfold.mjs",
-      "bytes": 9422,
-      "sha256": "3f335172748282de1707a23c93db1732037ee15468bfc67c31e74b0ca8025613"
+      "bytes": 9410,
+      "sha256": "b9179ca6e28077950b3b372b35e5e9f7f233aacab34554a5ac76b943dde5c23a"
     },
     {
       "path": "folding/library.mjs",
@@ -162,8 +162,48 @@
     },
     {
       "path": "vendor/localfold/UPSTREAM.json",
-      "bytes": 35280,
-      "sha256": "2fa2dc96ff95ffe6eb0ef19377a17c7697d8708c71d7eef662ffc036a20a55b7"
+      "bytes": 36187,
+      "sha256": "398260d4f932a04df6146bd563fd7e6217e2d3208abdbe094c2303642595c729"
+    },
+    {
+      "path": "scripts/import-localfold.mjs",
+      "bytes": 2804,
+      "sha256": "dae1f6692ad79fcbe15f0d5cd09d20a26ad96e411fd5b36b06440868625cf134"
+    },
+    {
+      "path": "scripts/localfold-patches.mjs",
+      "bytes": 3416,
+      "sha256": "230b7cc4fa6b5ec7ba232e4dec8c8267b36ce3d8473c24f630bda75e5cea8574"
+    },
+    {
+      "path": "scripts/localfold-patches/README.md",
+      "bytes": 2467,
+      "sha256": "daf1a9e0ab067c9c6ffaf364763fe8df8cd90656c3e9948ecbc337fe96db1534"
+    },
+    {
+      "path": "scripts/localfold-patches/LICENSE",
+      "bytes": 783,
+      "sha256": "dff27ba886d5afdad3633a66154e7cdcad045b6d9e2189767234ee5b7f50dc1f"
+    },
+    {
+      "path": "scripts/localfold-patches/manifest.json",
+      "bytes": 881,
+      "sha256": "defceb1239a2b9948ef4fcdb6fd7ff88ea90dfda4eb2e157cc448a29f600961c"
+    },
+    {
+      "path": "scripts/localfold-patches/stable-transition.patch",
+      "bytes": 9593,
+      "sha256": "f27fbb02e1166dacc725c59707705cd84a7858eb4c58c46dab71ac491d14a941"
+    },
+    {
+      "path": "scripts/localfold-patches/transition-5ea3d42c.upstream.txt",
+      "bytes": 71448,
+      "sha256": "49c02501cbcd3011745f3863a2e0110f03888c055bfb8a823028c3fe8a566ff4"
+    },
+    {
+      "path": "scripts/localfold-patches/direct-proof.json",
+      "bytes": 10794,
+      "sha256": "ab077d68d1c90095092e3deca7ad57bc1e69a01ffb7df9f706ab015301cb7807"
     },
     {
       "path": "chemist-actions.mjs",
@@ -252,8 +292,8 @@
     },
     {
       "path": "scripts/generate-local-lab-manifest.mjs",
-      "bytes": 6966,
-      "sha256": "d1e28b5b5e0858f44202009e8a64fba3991c35da521e5df7ec2fddcd8e2d7790"
+      "bytes": 7316,
+      "sha256": "a35e5b65500450f178ae7e772567aaa2c433ce3a073878511c4be33f0edff4a5"
     },
     {
       "path": "scripts/build-sos1-publication.mjs",
@@ -1376,6 +1416,11 @@
       "sha256": "bc8a9b5879bd1e2f382be6152a4a2956a08dc19de8c0e1b166608459b7c73697"
     },
     {
+      "path": "folding/localfold-source.mjs",
+      "bytes": 948,
+      "sha256": "03466cd4ecd424b43c07433f48f129113930c6f0d0bb5e2cce672d851b6639eb"
+    },
+    {
       "path": "vendor/localfold/web/model.js",
       "bytes": 19297,
       "sha256": "b4b5319a8d97f3a8878da3b0f7d8309590d92149fd17410ec8242100874bcbb8"
@@ -2147,8 +2192,8 @@
     },
     {
       "path": "vendor/localfold/webgpu/af3/trunk/transition.js",
-      "bytes": 71448,
-      "sha256": "49c02501cbcd3011745f3863a2e0110f03888c055bfb8a823028c3fe8a566ff4"
+      "bytes": 73182,
+      "sha256": "76764277f3fb42c697b84b768c3f34ce250d5c6d1b8a57c7ed4fb58f4326018f"
     },
     {
       "path": "vendor/localfold/webgpu/af3/trunk/grid-project-matrix.js",
