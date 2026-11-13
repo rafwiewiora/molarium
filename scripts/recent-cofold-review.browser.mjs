@@ -12,6 +12,7 @@ try{
   const checkErrors=async()=>assert.deepEqual(await b.evaluate(`Array.from(document.querySelectorAll('.viewer.error'),e=>e.textContent)`),[]);
   await landing();
   await b.evaluate(`document.querySelector('#cases article button').click()`);await grid();await checkErrors();
+  assert.equal(await b.evaluate(`document.querySelector('.pose-head').textContent.includes('RMSD vs first prediction')`),true);
   const runId=await b.evaluate(`new URL(location.href).searchParams.get('run')`);
   assert.ok(runId);
   assert.equal(await b.evaluate(`Array.from(document.querySelectorAll('.pose-head'),e=>e.textContent).some(t=>t.includes('Experimental reference'))`),false);
@@ -37,6 +38,7 @@ try{
   await b.evaluate(`document.querySelector('#cases article button:nth-of-type(2)').click()`);await grid();await checkErrors();
   assert.notEqual(await b.evaluate(`new URL(location.href).searchParams.get('run')`),runId);
   assert.equal(await b.evaluate(`Array.from(document.querySelectorAll('.pose-head'),e=>e.textContent).filter(t=>t.includes('Experimental reference')).length`),1);
+  assert.equal(await b.evaluate(`document.querySelector('.pose-head').textContent.includes('RMSD vs experimental reference')`),true);
   assert.equal(await b.evaluate(`document.querySelector('#summary').textContent.includes('0 preferred poses')`),true);
   if(process.env.MOLARIUM_PUBLIC_REVIEW_SCREENSHOT)await writeFile(process.env.MOLARIUM_PUBLIC_REVIEW_SCREENSHOT,await b.capturePng());
   console.log('Nine-system public review: browser, both native methods and native MSA rendered; exact-hash reopening preserves preferences; reference review remains separate. PASS');

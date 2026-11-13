@@ -101,7 +101,15 @@ test('Foldarium distribution matches its pinned source receipt and self-hosts vi
   assert.match(receipt.revision,/^[0-9a-f]{40}$/);assert.equal(receipt.files.length,9);
   for(const f of receipt.files){const bytes=await readFile(new URL(f.path,base));
     assert.equal(createHash('sha256').update(bytes).digest('hex'),f.sha256,f.path);
-    if(f.path!=='library-review.html')assert.equal(f.sha256,f.upstreamSha256,f.path);}
+    const patch=receipt.localPatches?.find(p=>p.path===f.path);
+    if(patch){
+      let upstream=bytes.toString();
+      for(const {before,after}of patch.replacements){
+        assert.equal(upstream.split(after).length,2,'one exact declared local substitution');
+        upstream=upstream.replace(after,before);
+      }
+      assert.equal(createHash('sha256').update(upstream).digest('hex'),f.upstreamSha256,f.path);
+    }else if(f.path!=='library-review.html')assert.equal(f.sha256,f.upstreamSha256,f.path);}
   const html=await readFile(new URL('library-review.html',base),'utf8');assert.doesNotMatch(html,/https:\/\/cdn/);
   assert.match(html,/molstar-5\.11\.0\.js/);
 });

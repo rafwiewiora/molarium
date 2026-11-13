@@ -308,6 +308,11 @@ Thus three of nine systems have at least one such pose; this is not broad pose
 accuracy. STING remains poorly placed despite a much closer protein fold.
 No candidate is omitted or selected using the crystal answer.
 
+Foldarium explicitly labels its per-card protein RMSD alignment target.
+“First prediction” in a prediction-only review measures disagreement with that
+prediction; “experimental reference” in the separate reference review measures
+agreement with the labelled crystal. These values should not be conflated.
+
 The [browser/native agreement](native-msa-agreement.json) retains all cross-seed
 pairs and within-method spread. Across the nine systems, median seed-paired
 mean ligand disagreement is **3.47 Å**; one-to-one ensemble assignment gives

@@ -122,8 +122,8 @@
     },
     {
       "path": "vendor/foldarium/library-review.js",
-      "bytes": 12838,
-      "sha256": "e63be618821c6b090ee6d490a15174e9c209f836e4005d828928ccb6442a74e1"
+      "bytes": 12965,
+      "sha256": "255c58005b040c07dbf4c9032a1fda857911a873f8cb4c3d1c402f5b930dd0f8"
     },
     {
       "path": "vendor/foldarium/library-format.js",
@@ -147,8 +147,8 @@
     },
     {
       "path": "vendor/foldarium/UPSTREAM.json",
-      "bytes": 2475,
-      "sha256": "f63c087a2e4f5e7c3b313769bac83ee4f95c5246acaf859061cf672cf923d98f"
+      "bytes": 3202,
+      "sha256": "2cecc4a5fd8c07598718812ccf023164c57a9d27b0927d3130d01f6ff63fcff1"
     },
     {
       "path": "vendor/foldarium/assets/foldarium-mark.svg",

@@ -70,6 +70,13 @@ limited stereo/clash checks, including FK5's missing-only retry. Its agreement
 with the browser is close for JQ1/benzene but poor for FK5; different sampling
 effort precludes attributing the difference to the port alone.
 [Crystal results and every saved prediction](../cofold-crystal-reference-2026-11-13/README.md).
+The Foldarium protein RMSD label now explicitly names its actual alignment
+reference: the first prediction in an unscored review, or the labelled
+experimental reference in the reference review. The former is disagreement
+between predictions, not a crystal-accuracy score. The display-only local
+vendor patch is reversible to the unchanged upstream source hash and both
+labels are verified in actual Chrome.
+
 The [public reconstruction regressions](../../folding/comparison/test_native_panel.py)
 check all new raw outputs, source hashes, recovered cohorts, scores and timings.
 
