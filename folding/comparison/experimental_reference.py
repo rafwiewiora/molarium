@@ -26,14 +26,23 @@ def strings(category,key):return category[key].as_array(str)
 
 def stereo_diagnostic(molecule):
     expected={i:s for i,s in Chem.FindMolChiralCenters(molecule,includeUnassigned=False)}
-    if not expected:return {'specifiedTetrahedralCenters':0,'mismatchedCenters':[],'unassignedCenters':[]}
+    if not expected:return {'specifiedTetrahedralCenters':0,'stereochemicalIdentityMatches':True,
+        'mismatchedCenters':[],'unassignedCenters':[],'mappedCenterDifferences':[]}
     measured=Chem.Mol(molecule)
     Chem.AssignStereochemistryFrom3D(measured,replaceExistingTags=True)
     Chem.AssignStereochemistry(measured,cleanIt=True,force=True)
     observed=dict(Chem.FindMolChiralCenters(measured,includeUnassigned=True))
-    return {'specifiedTetrahedralCenters':len(expected),
-      'mismatchedCenters':[{'smilesAtomIndex':i,'expected':s,'observed':observed[i]}for i,s in expected.items()if observed.get(i)not in [None,'?',s]],
-      'unassignedCenters':[i for i in expected if observed.get(i)in [None,'?']]}
+    differences=[{'smilesAtomIndex':i,'expected':s,'observed':observed[i]}for i,s in expected.items()if observed.get(i)not in [None,'?',s]]
+    unassigned=[i for i in expected if observed.get(i)in [None,'?']]
+    # Fixed atom/CIP labels can change under an equivalent graph automorphism
+    # or when 3D assigns previously unspecified centres. Require stereochemical
+    # graph matching before calling a label difference an inverted stereoisomer.
+    identical=measured.HasSubstructMatch(molecule,useChirality=True)
+    return {'specifiedTetrahedralCenters':len(expected),'stereochemicalIdentityMatches':identical,
+      'mismatchedCenters':[]if identical else differences,
+      'unassignedCenters':[]if identical else unassigned,
+      'mappedCenterDifferences':differences,'mappedUnassignedCenters':unassigned,
+      'equivalentStereochemicalMapping':bool(identical and(differences or unassigned))}
 
 def reference(source,pdb_id,ccd_id,protein_chain,ligand_chain):
     cif=pdbx.CIFFile.read(source/(pdb_id+'.cif')).block

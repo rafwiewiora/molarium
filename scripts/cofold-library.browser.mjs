@@ -5,7 +5,9 @@ import {resolve,join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {createHash} from 'node:crypto';
 import {startMolariumBrowser,waitFor} from './headless-chrome.mjs';
-const root=resolve(import.meta.dirname,'..','dist'), output=process.env.MOLARIUM_LIBRARY_REPORT;
+import {checkpointLibraries} from './checkpoint-cofold-browser.mjs';
+const root=process.env.MOLARIUM_LIBRARY_DIST?resolve(process.env.MOLARIUM_LIBRARY_DIST):resolve(import.meta.dirname,'..','dist'), output=process.env.MOLARIUM_LIBRARY_REPORT;
+if(process.argv.includes('--quick')&&process.argv.includes('--standard'))throw Error('Choose one sampling protocol');
 const headerText=await readFile(join(root,'_headers'),'utf8');
 const headers=Object.fromEntries(headerText.split('\n').filter(l=>/^  [\w-]+:/.test(l)).map(l=>{
   const i=l.indexOf(':');return[l.slice(0,i).trim(),l.slice(i+1).trim()];}));
@@ -15,16 +17,24 @@ const server=Bun.serve({hostname:'127.0.0.1',port:0,fetch(req){
   return new Response(Bun.file(join(root,path==='/'?'index.html':path)),{headers});
 }});
 const b=await startMolariumBrowser({url:process.env.MOLARIUM_LIBRARY_URL??`http://127.0.0.1:${server.port}/?blank=1`,width:1500,height:1100});
+// Keep the source-pinned simulation harness unchanged; guard this cofolding
+// monitor locally so a closed connection cannot become a false five-minute wait.
+const evaluateBrowser=b.evaluate.bind(b);
+b.evaluate=(...args)=>b.client.socket.readyState===WebSocket.OPEN?evaluateBrowser(...args)
+  :Promise.reject(new Error('Chrome debugging connection closed'));
 const download=await mkdtemp(join(tmpdir(),'cofold-library-download-'));
 const report={schema:'molarium.library-throughput.v1',date:new Date().toISOString(),cases:[],
   purpose:'Engineering throughput and library/review integration; arbitrary protein–ligand pairs, not a pose-accuracy benchmark.'};
 const panelPath=process.env.MOLARIUM_LIBRARY_PANEL;
 const panel=panelPath?JSON.parse(await readFile(panelPath,'utf8')):null;
 if(panel){report.purpose=panel.purpose;report.panelSha256=createHash('sha256').update(await readFile(panelPath)).digest('hex');}
+let checkpointTimer=null,checkpointWork=Promise.resolve();
 try{
   if(output)await mkdir(output,{recursive:true});
   await waitFor(()=>b.evaluate('Boolean(window.MolariumChemistActionsReady)'),60000,'API');
   await b.evaluate('window.MolariumChemistActionsReady.then(()=>true)');
+  if(panel&&output){const seen=new Set();report.hostCheckpointIntervalMs=5000;
+    checkpointTimer=setInterval(()=>{checkpointWork=checkpointWork.then(()=>checkpointLibraries(e=>b.evaluate(e),panel,join(output,'checkpoints'),seen)).catch(e=>console.error('Host checkpoint:',e.message));},5000);}
   await b.client.call('Browser.setDownloadBehavior',{behavior:'allow',downloadPath:download});
   const reuse=process.env.MOLARIUM_LIBRARY_REUSE;
   if(reuse){const original=JSON.parse(await readFile(reuse,'utf8'));
@@ -36,7 +46,7 @@ try{
     report.reused={path:reuse.split('/').at(-1),sha256:createHash('sha256').update(await readFile(reuse)).digest('hex'),run:original.run,
       timing:original.poses.map(p=>({id:p.id,wallMs:p.wallMs,inferenceMs:p.result.elapsedMs}))};}
   const cases=[...(panel?panel.cases.map(c=>({id:c.id,name:c.name,sequence:c.sequence,samples:panel.seeds.length,
-    compounds:`${c.smiles} ${c.id}`})):[]),...(!reuse&&!panel?[{name:'Trp-cage 20 aa / 3 ligands / 2 seeds',sequence:'NLYIQWLKDGGPSSGRPPPS',samples:2,
+    compounds:`${c.smiles} ${c.id}`,msaMode:c.a3m?'provided':'single',a3m:c.a3m??null})):[]),...(!reuse&&!panel?[{name:'Trp-cage 20 aa / 3 ligands / 2 seeds',sequence:'NLYIQWLKDGGPSSGRPPPS',samples:2,
     compounds:'CCO ethanol\nc1ccccc1 benzene\nc1ccccc1C(=O)[O-] benzoate'}]:[]),
     ...(process.argv.includes('--extended')?[{name:'Ubiquitin 76 aa / 2 ligands / 2 seeds',
       sequence:'MQIFVKTLTGKTITLEVEPSDTIENVKAKIQDKEGIPPDQQRLIFAGKQLEDGRTLSDYNIQKESTLHLVLRLRGG',samples:2,
@@ -52,11 +62,18 @@ try{
   for(const c of cases){
     const previous=await b.evaluate(`document.querySelector('#fold-library-saved').value`);
     const input={...c,model:process.argv.includes('--boltz2')?'localfold-boltz2':'localfold-openbind0',
-      msaMode:'single',steps:process.argv.includes('--quick')?1:25,recycles:process.argv.includes('--quick')?0:2,seed:0};
-    await b.evaluate(`(()=>{
+      msaMode:c.msaMode??'single',a3m:c.a3m??null,steps:process.argv.includes('--standard')?200:process.argv.includes('--quick')?1:25,
+      recycles:process.argv.includes('--standard')?3:process.argv.includes('--quick')?0:2,seed:0};
+    if(process.env.MOLARIUM_LIBRARY_USE_API==='1'){
+      // Case IDs belong to the benchmark report, not the public action schema.
+      const {id:caseId,...args}=input;
+      await b.evaluate(`(()=>{window.__cofoldApiError=null;window.__cofoldApiTask=window.MolariumChemistActions.execute({action:'protein.cofoldLibrary',args:${JSON.stringify(args)}});window.__cofoldApiTask.catch(e=>{window.__cofoldApiError=e.message;});return true;})()`);
+    }else await b.evaluate(`(()=>{
       const input=${JSON.stringify(input)};
       document.querySelector('#protein-sequence').value=input.sequence;
-      document.querySelector('#fold-msa-mode').value='single';
+      document.querySelector('#fold-msa-mode').value=input.msaMode;
+      document.querySelector('#fold-msa-mode').dispatchEvent(new Event('change'));
+      document.querySelector('#fold-a3m').value=input.a3m??'';
       document.querySelector('#fold-library-name').value=input.name;
       document.querySelector('#fold-library-model').value=input.model;
       document.querySelector('#fold-library-smiles').value=input.compounds;
@@ -66,20 +83,24 @@ try{
       document.querySelector('#fold-library-panel').open=true;
       document.querySelector('#fold-library-start').click();
     })()`);
-    await waitFor(()=>b.evaluate(`document.querySelector('#fold-library-saved').value!==${JSON.stringify(previous)}
+    const started=await waitFor(()=>b.evaluate(`window.__cofoldApiError?{error:window.__cofoldApiError}:
+      document.querySelector('#fold-library-saved').value!==${JSON.stringify(previous)}
       &&document.querySelector('#fold-library-status').textContent.startsWith('running')`),60000,'new library started');
+    if(started?.error)throw new Error(`Cofold API rejected request: ${started.error}`);
     await waitFor(()=>b.evaluate(`document.querySelector('#fold-library-status').textContent.startsWith('complete')
       ||document.querySelector('#fold-library-status').textContent.startsWith('Library stopped')`),900000,c.name);
     const status=await b.evaluate(`document.querySelector('#fold-library-status').textContent`);console.log(status);
-    assert.match(status,/^complete ·/);
     const bundle=await b.evaluate(`(async()=>{const {LibraryStore}=await import('./vendor/foldarium/library-store.js');
       const {stringifyLibrary}=await import('./vendor/foldarium/library-format.js');
       return JSON.parse(stringifyLibrary(await new LibraryStore().bundle(document.querySelector('#fold-library-saved').value)));})()`);
+    // Preserve failed poses and their diagnostics before checking completion.
+    if(output)await writeFile(join(output,`library-${report.cases.length+1}.json`),JSON.stringify(bundle));
+    assert.match(status,/^complete ·/);
     assert.equal(bundle.poses.length,c.samples*c.compounds.split('\n').length);
     assert.ok(bundle.poses.every(p=>p.status==='complete'&&p.result.provenance.outputPdbSha256));
     const ordered=[...bundle.poses].sort((a,b)=>a.startedAt.localeCompare(b.startedAt));
     const inference=ordered.map(p=>p.result.elapsedMs),wall=ordered.map(p=>p.wallMs);
-    report.cases.push({name:c.name,caseId:c.id??null,request:bundle.run.request,environment:bundle.run.environment,
+    report.cases.push({name:c.name,caseId:c.id??null,launch:process.env.MOLARIUM_LIBRARY_USE_API==='1'?'chemist-actions-api':'visible-ui',request:bundle.run.request,environment:bundle.run.environment,
       poses:ordered.map(p=>({id:p.id,seed:p.seed,smiles:bundle.run.compounds.find(c=>c.id===p.compoundId).smiles,
         wallMs:p.wallMs,inferenceMs:p.result.elapsedMs,totalMs:p.result.totalElapsedMs,runtime:p.result.runtime,pdbSha256:p.result.provenance.outputPdbSha256,
         provenance:p.result.provenance})),inferenceMs:inference,wallMs:wall,sessions:bundle.run.sessions,
@@ -120,5 +141,5 @@ try{
     await writeFile(join(output,'foldarium-review.png'),await b.capturePng());}
   console.log(JSON.stringify(report));
 }catch(e){console.error(await b.evaluate(`({status:document.querySelector('#fold-library-status')?.textContent,
-  notice:document.querySelector('#notice')?.textContent,message:document.querySelector('#message')?.textContent})`).catch(()=>null));throw e;}
-finally{await b.close();server.stop(true);}
+  apiError:window.__cofoldApiError,notice:document.querySelector('#notice')?.textContent,message:document.querySelector('#message')?.textContent})`).catch(()=>null));throw e;}
+finally{if(checkpointTimer)clearInterval(checkpointTimer);await checkpointWork;await b.close();server.stop(true);}

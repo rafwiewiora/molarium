@@ -1,0 +1,6 @@
+{
+  "repository": "https://github.com/aqlaboratory/openfold-3",
+  "revision": "795e45b03924a8f8ffc72ae50298bd113530b9d3",
+  "packageVersion": "0.5.1",
+  "scope": "Actual official protein MSA input processor and stack helper: residue/deletion rows, profiles and deletion means, CPU; no model inference."
+}

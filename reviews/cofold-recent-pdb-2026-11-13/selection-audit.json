@@ -1,0 +1,3181 @@
+{
+  "policy": {
+    "version": "molarium-recent-druglike/v2",
+    "window": {
+      "from": "2026-10-16",
+      "to": "2026-11-13"
+    },
+    "maxCasesPerRelease": 3,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "chemistry": {
+      "minHeavyAtoms": 15,
+      "maxHeavyAtoms": 60,
+      "minMW": 150,
+      "maxMW": 650,
+      "minQED": 0.5,
+      "minLogP": -1,
+      "maxLogP": 6,
+      "maxHBD": 5,
+      "maxHBA": 12,
+      "maxRotatable": 12,
+      "maxAbsCharge": 2,
+      "elements": [
+        "B",
+        "C",
+        "N",
+        "O",
+        "F",
+        "P",
+        "S",
+        "Cl",
+        "Br",
+        "I",
+        "Se"
+      ],
+      "connected": true,
+      "atLeastOneRing": true
+    },
+    "structure": {
+      "method": "X-RAY DIFFRACTION",
+      "maxResolutionA": 2.5,
+      "proteinPolymerEntities": 1,
+      "minProteinResidues": 60,
+      "maxProteinResidues": 350,
+      "minObservedCaFraction": 0.9,
+      "minContactResiduesAt4A": 4,
+      "otherProteinChainCutoffA": 4.0,
+      "otherNonwaterSpeciesCutoffA": 3.0,
+      "biologicalAssembly": "First deposited assembly containing the selected protein/ligand labels; include generated symmetry copies in neighbor checks.",
+      "rejectExplicitCovalentLinks": true,
+      "rejectProteinLigandHeavyDistanceUnderA": 1.8
+    },
+    "diversity": {
+      "sequenceIdentityCutoff": 0.8,
+      "minimumLengthRatio": 0.8,
+      "alignment": "Global BLOSUM62, affine gap penalties -10/-1, identity over shorter sequence"
+    },
+    "ranking": "Within each release date: descending RDKit QED, then ascending resolution, PDB ID, CCD ID. Skip near-duplicate protein sequences across the whole panel.",
+    "browserProtocol": {
+      "steps": 25,
+      "recycles": 2,
+      "msaMode": "single",
+      "weights": "int5"
+    },
+    "nativeProtocol": {
+      "steps": 200,
+      "recycles": 3,
+      "msaMode": "single"
+    },
+    "foldariumPolicySource": {
+      "revision": "b73ac80d9354dc0f323d7fb54d128f8c1ac0cb8e",
+      "file": "pipeline/src/foldarium_pipeline/selection.py",
+      "sha256": "6648cf02ed4f1c6e840147c63bc319222c5a3d255b2cc5454992d13c47131c27"
+    }
+  },
+  "rankingSha256": "2c612ddb41c568d37e184708783302e2dea2c64da04f270418cfbc911ee023cb",
+  "records": [
+    {
+      "pdbId": "9SY7",
+      "ccdId": "A1JRX",
+      "status": "selected"
+    },
+    {
+      "pdbId": "29SZ",
+      "ccdId": "A1J4I",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "29SW",
+      "ccdId": "A1J4I",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "30EN",
+      "ccdId": "A1J5R",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "30FP",
+      "ccdId": "A1J5R",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "29SY",
+      "ccdId": "A1J4J",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "29TB",
+      "ccdId": "A1J4K",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "29SX",
+      "ccdId": "A1J4J",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "30FN",
+      "ccdId": "A1J5S",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "30EO",
+      "ccdId": "A1J5S",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "29SV",
+      "ccdId": "A1J4H",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "24FX",
+      "ccdId": "A1EKG",
+      "status": "rejected",
+      "reason": "pocket-contacts-another-protein-chain"
+    },
+    {
+      "pdbId": "9TNI",
+      "ccdId": "A1JW4",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "30IC",
+      "ccdId": "A1J55",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "30IC",
+      "ccdId": "A1J56",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "31XQ",
+      "ccdId": "A1KCK",
+      "status": "rejected",
+      "reason": "pocket-contacts-another-protein-chain"
+    },
+    {
+      "pdbId": "31ZI",
+      "ccdId": "A1KCG",
+      "status": "rejected",
+      "reason": "pocket-contacts-another-protein-chain"
+    },
+    {
+      "pdbId": "9TNH",
+      "ccdId": "A1JW5",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "9T6F",
+      "ccdId": "A1JT5",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "9TH5",
+      "ccdId": "A1JV8",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "28NK",
+      "ccdId": "A1JZE",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "9SXF",
+      "ccdId": "A1JRG",
+      "status": "selected"
+    },
+    {
+      "pdbId": "9SXE",
+      "ccdId": "YDJ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "30FA",
+      "ccdId": "A1IEL",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "30FB",
+      "ccdId": "A1IEN",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "9Z5Z",
+      "ccdId": "A1C05",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "9YUB",
+      "ccdId": "A1CZ6",
+      "status": "rejected",
+      "reason": "'PTR'"
+    },
+    {
+      "pdbId": "27WI",
+      "ccdId": "A1FCQ",
+      "status": "rejected",
+      "reason": "protein-ligand-close-contact-under1.8A"
+    },
+    {
+      "pdbId": "9TEC",
+      "ccdId": "A1JVM",
+      "status": "rejected",
+      "reason": "'SEP'"
+    },
+    {
+      "pdbId": "45TX",
+      "ccdId": "A1MJY",
+      "status": "rejected",
+      "reason": "low-reference-backbone-coverage"
+    },
+    {
+      "pdbId": "9T51",
+      "ccdId": "A1JTM",
+      "status": "selected"
+    },
+    {
+      "pdbId": "9SYO",
+      "ccdId": "A1JR1",
+      "status": "selected"
+    },
+    {
+      "pdbId": "15DG",
+      "ccdId": "A1PRQ",
+      "status": "rejected",
+      "reason": "protein-ligand-close-contact-under1.8A"
+    },
+    {
+      "pdbId": "15JI",
+      "ccdId": "A1D2G",
+      "status": "selected"
+    },
+    {
+      "pdbId": "15KH",
+      "ccdId": "A1D3G",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KL",
+      "ccdId": "A1D2K",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JQ",
+      "ccdId": "A1DSS",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MF",
+      "ccdId": "A1DXC",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JS",
+      "ccdId": "A1DSU",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CJ",
+      "ccdId": "A1PQP",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JC",
+      "ccdId": "A1D2A",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FV",
+      "ccdId": "A1DVJ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OH",
+      "ccdId": "A1DUH",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AB",
+      "ccdId": "A1DV3",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AC",
+      "ccdId": "A1DV4",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PD",
+      "ccdId": "A1D4F",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CA",
+      "ccdId": "A1D4O",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NS",
+      "ccdId": "A1DXG",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NA",
+      "ccdId": "A1D3T",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PF",
+      "ccdId": "A1DTD",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MY",
+      "ccdId": "A1D3D",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OK",
+      "ccdId": "A1DTG",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KI",
+      "ccdId": "A1D3H",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RP",
+      "ccdId": "A1PRG",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HE",
+      "ccdId": "A1D1E",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GE",
+      "ccdId": "A1DU1",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LU",
+      "ccdId": "A1D28",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AY",
+      "ccdId": "A1DXQ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BD",
+      "ccdId": "A1DV8",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CW",
+      "ccdId": "A1DT7",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AD",
+      "ccdId": "A1DV5",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JT",
+      "ccdId": "A1D2W",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MM",
+      "ccdId": "A1DWK",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QJ",
+      "ccdId": "A1PQA",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15ME",
+      "ccdId": "A1DXB",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LS",
+      "ccdId": "A1D2R",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BP",
+      "ccdId": "A1DU6",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BI",
+      "ccdId": "A1DTX",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LO",
+      "ccdId": "A1D24",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IU",
+      "ccdId": "A1DSN",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CM",
+      "ccdId": "A1DXV",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QX",
+      "ccdId": "A1PSL",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15II",
+      "ccdId": "A1D10",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JB",
+      "ccdId": "A1D19",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LB",
+      "ccdId": "A1DYF",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MB",
+      "ccdId": "A1DW8",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HP",
+      "ccdId": "A1PSE",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IL",
+      "ccdId": "A1DUU",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KC",
+      "ccdId": "A1DSF",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GG",
+      "ccdId": "A1D0E",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NX",
+      "ccdId": "A1D36",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GU",
+      "ccdId": "A1D0J",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MD",
+      "ccdId": "A1DXA",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BJ",
+      "ccdId": "A1DTY",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BR",
+      "ccdId": "A1D4M",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "9XHQ",
+      "ccdId": "8V5",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "15AI",
+      "ccdId": "A1PR2",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MS",
+      "ccdId": "A1D3O",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KF",
+      "ccdId": "A1D21",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NP",
+      "ccdId": "A1DWS",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FI",
+      "ccdId": "A1DX2",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QO",
+      "ccdId": "A1PQE",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IB",
+      "ccdId": "A1D07",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PX",
+      "ccdId": "A1PSJ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LJ",
+      "ccdId": "A1DW6",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IY",
+      "ccdId": "A1D16",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HJ",
+      "ccdId": "A1D1J",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KT",
+      "ccdId": "A1DSE",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HQ",
+      "ccdId": "A1PQU",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LW",
+      "ccdId": "A1PPY",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IG",
+      "ccdId": "A1D1N",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BO",
+      "ccdId": "A1DU5",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CR",
+      "ccdId": "A1DS3",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HD",
+      "ccdId": "A1D1D",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OF",
+      "ccdId": "A1DUC",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FK",
+      "ccdId": "A1D0A",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "9T1T",
+      "ccdId": "A1JS0",
+      "status": "rejected",
+      "reason": "reference-tetrahedral-stereo-disagrees-with-CCD"
+    },
+    {
+      "pdbId": "15JV",
+      "ccdId": "A1DYD",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OR",
+      "ccdId": "A1D4A",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BT",
+      "ccdId": "A1DYA",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BU",
+      "ccdId": "A1DSX",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LN",
+      "ccdId": "A1D23",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FX",
+      "ccdId": "A1D1T",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FR",
+      "ccdId": "A1D1S",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LY",
+      "ccdId": "A1D3Y",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IH",
+      "ccdId": "A1D1Z",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RM",
+      "ccdId": "A1PRC",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BN",
+      "ccdId": "A1PP6",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BY",
+      "ccdId": "A1DS1",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BW",
+      "ccdId": "A1DSZ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BH",
+      "ccdId": "A1DTW",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DK",
+      "ccdId": "A1DWE",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OS",
+      "ccdId": "A1D4B",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LZ",
+      "ccdId": "A1D3Z",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BX",
+      "ccdId": "A1DS0",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JO",
+      "ccdId": "A1DSQ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AW",
+      "ccdId": "A1PQM",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BC",
+      "ccdId": "A1PQN",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "9T16",
+      "ccdId": "A1JSX",
+      "status": "rejected",
+      "reason": "low-reference-backbone-coverage"
+    },
+    {
+      "pdbId": "15FQ",
+      "ccdId": "A1D1R",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LI",
+      "ccdId": "A1DW5",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FO",
+      "ccdId": "A1D1P",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LH",
+      "ccdId": "A1DW4",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IK",
+      "ccdId": "A1D12",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AX",
+      "ccdId": "A1DXP",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GN",
+      "ccdId": "A1D0G",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NJ",
+      "ccdId": "A1DUD",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BK",
+      "ccdId": "A1DWA",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PM",
+      "ccdId": "A1PSG",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BE",
+      "ccdId": "A1DV9",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NC",
+      "ccdId": "A1D34",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MO",
+      "ccdId": "A1DWM",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KW",
+      "ccdId": "A1DSB",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CI",
+      "ccdId": "A1PQO",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PP",
+      "ccdId": "A1PP0",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HR",
+      "ccdId": "A1PQV",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EQ",
+      "ccdId": "A1DYQ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BQ",
+      "ccdId": "A1DU7",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LF",
+      "ccdId": "A1PQX",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PO",
+      "ccdId": "A1PTS",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AR",
+      "ccdId": "A1PR4",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FP",
+      "ccdId": "A1D1Q",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AM",
+      "ccdId": "A1DTR",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CK",
+      "ccdId": "A1PQQ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AV",
+      "ccdId": "A1PQL",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IN",
+      "ccdId": "A1DUW",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HH",
+      "ccdId": "A1D1H",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PS",
+      "ccdId": "A1PP3",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KB",
+      "ccdId": "A1DSG",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IT",
+      "ccdId": "A1DSM",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MV",
+      "ccdId": "A1D3A",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PU",
+      "ccdId": "A1PP5",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AU",
+      "ccdId": "A1PQK",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PE",
+      "ccdId": "A1D4G",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GD",
+      "ccdId": "A1D0D",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FZ",
+      "ccdId": "A1D1V",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NN",
+      "ccdId": "A1DUA",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PI",
+      "ccdId": "A1DTJ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AN",
+      "ccdId": "A1DTS",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PR",
+      "ccdId": "A1PP2",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RQ",
+      "ccdId": "A1PRH",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FW",
+      "ccdId": "A1DVK",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FM",
+      "ccdId": "A1D1A",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NB",
+      "ccdId": "A1D3R",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OT",
+      "ccdId": "A1D4C",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OY",
+      "ccdId": "A1DXM",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FH",
+      "ccdId": "A1DW2",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15ES",
+      "ccdId": "A1DYS",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HV",
+      "ccdId": "A1D3E",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PW",
+      "ccdId": "A1PSI",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PL",
+      "ccdId": "A1PSF",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LP",
+      "ccdId": "A1D25",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RV",
+      "ccdId": "A1PRK",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QU",
+      "ccdId": "A1PSB",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QC",
+      "ccdId": "A1PSA",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JM",
+      "ccdId": "A1DUZ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LC",
+      "ccdId": "A1DYG",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RN",
+      "ccdId": "A1PRD",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QE",
+      "ccdId": "A1PRI",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KZ",
+      "ccdId": "A1D3L",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OQ",
+      "ccdId": "A1D39",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GX",
+      "ccdId": "A1D3X",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DJ",
+      "ccdId": "A1DYC",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AQ",
+      "ccdId": "A1PR3",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HG",
+      "ccdId": "A1D1G",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PN",
+      "ccdId": "A1PSH",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GV",
+      "ccdId": "A1D0O",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GA",
+      "ccdId": "A1D1W",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OW",
+      "ccdId": "A1DXK",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15ML",
+      "ccdId": "A1D33",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MU",
+      "ccdId": "A1D3Q",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BS",
+      "ccdId": "A1D4N",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CV",
+      "ccdId": "A1DT2",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QT",
+      "ccdId": "A1PRP",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LD",
+      "ccdId": "A1D3M",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15ND",
+      "ccdId": "A1D35",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AP",
+      "ccdId": "A1DU4",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OI",
+      "ccdId": "A1DUI",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RD",
+      "ccdId": "A1PQI",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IS",
+      "ccdId": "A1DSL",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BV",
+      "ccdId": "A1DSY",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HN",
+      "ccdId": "A1D06",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CH",
+      "ccdId": "A1D4T",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IM",
+      "ccdId": "A1DUV",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HU",
+      "ccdId": "A1DUT",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HI",
+      "ccdId": "A1D1I",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MK",
+      "ccdId": "A1D32",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NL",
+      "ccdId": "A1DUF",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QF",
+      "ccdId": "A1PRV",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OX",
+      "ccdId": "A1DXL",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NK",
+      "ccdId": "A1DUE",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DA",
+      "ccdId": "A1PQR",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DB",
+      "ccdId": "A1PQS",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HO",
+      "ccdId": "A1PRT",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DR",
+      "ccdId": "A1DT5",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DQ",
+      "ccdId": "A1DT0",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FF",
+      "ccdId": "A1DW0",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FG",
+      "ccdId": "A1DW1",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PK",
+      "ccdId": "A1D4H",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MQ",
+      "ccdId": "A1DWN",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15ID",
+      "ccdId": "A1D09",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EX",
+      "ccdId": "A1DVH",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JH",
+      "ccdId": "A1D2F",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QA",
+      "ccdId": "A1PR8",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JR",
+      "ccdId": "A1DST",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HW",
+      "ccdId": "A1D2S",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OO",
+      "ccdId": "A1PQ2",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HF",
+      "ccdId": "A1D1F",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MG",
+      "ccdId": "A1DYI",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KY",
+      "ccdId": "A1D3K",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QY",
+      "ccdId": "A1PSM",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RC",
+      "ccdId": "A1PQ4",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BZ",
+      "ccdId": "A1DYB",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IA",
+      "ccdId": "A1D1Y",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RO",
+      "ccdId": "A1PRF",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PY",
+      "ccdId": "A1PSK",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DZ",
+      "ccdId": "A1DWX",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RB",
+      "ccdId": "A1PRE",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RA",
+      "ccdId": "A1PSO",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QW",
+      "ccdId": "A1PRX",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RI",
+      "ccdId": "A1PQ8",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DO",
+      "ccdId": "A1DWG",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HX",
+      "ccdId": "A1D2T",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JZ",
+      "ccdId": "A1DSI",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JA",
+      "ccdId": "A1D18",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CY",
+      "ccdId": "A1DT4",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CO",
+      "ccdId": "A1DXX",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KA",
+      "ccdId": "A1DSH",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DD",
+      "ccdId": "A1PSD",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OV",
+      "ccdId": "A1D4E",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DL",
+      "ccdId": "A1DWF",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PV",
+      "ccdId": "A1PP7",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OL",
+      "ccdId": "A1DTH",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KS",
+      "ccdId": "A1D3J",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GZ",
+      "ccdId": "A1D1C",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IR",
+      "ccdId": "A1D14",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AL",
+      "ccdId": "A1DTQ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GO",
+      "ccdId": "A1DYU",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IE",
+      "ccdId": "A1D1L",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DF",
+      "ccdId": "A1PSQ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CN",
+      "ccdId": "A1DXW",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FE",
+      "ccdId": "A1DWU",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QS",
+      "ccdId": "A1PRO",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PB",
+      "ccdId": "A1D3U",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NQ",
+      "ccdId": "A1DWQ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HB",
+      "ccdId": "A1DU9",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GT",
+      "ccdId": "A1D0I",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EW",
+      "ccdId": "A1DVG",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NF",
+      "ccdId": "A1DYN",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HC",
+      "ccdId": "A1DVA",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NG",
+      "ccdId": "A1DYL",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MN",
+      "ccdId": "A1DWL",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QD",
+      "ccdId": "A1PRY",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GC",
+      "ccdId": "A1D0C",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OC",
+      "ccdId": "A1PQ0",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FU",
+      "ccdId": "A1DVI",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OG",
+      "ccdId": "A1DUG",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CF",
+      "ccdId": "A1D4S",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NZ",
+      "ccdId": "A1D38",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LT",
+      "ccdId": "A1D27",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IV",
+      "ccdId": "A1DSO",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KN",
+      "ccdId": "A1D2M",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KP",
+      "ccdId": "A1D2O",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KE",
+      "ccdId": "A1D20",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GP",
+      "ccdId": "A1DYV",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GW",
+      "ccdId": "A1D0P",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KJ",
+      "ccdId": "A1D2I",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FY",
+      "ccdId": "A1D1U",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MW",
+      "ccdId": "A1D3B",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QG",
+      "ccdId": "A1PRW",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NM",
+      "ccdId": "A1DT8",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PT",
+      "ccdId": "A1PP4",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KK",
+      "ccdId": "A1D2J",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HM",
+      "ccdId": "A1D0R",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BM",
+      "ccdId": "A1DWB",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CX",
+      "ccdId": "A1DT3",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JF",
+      "ccdId": "A1D2D",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QZ",
+      "ccdId": "A1PSN",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15ED",
+      "ccdId": "A1D40",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EG",
+      "ccdId": "A1D0K",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OD",
+      "ccdId": "A1PQ1",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JJ",
+      "ccdId": "A1D2U",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DU",
+      "ccdId": "A1D4U",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CD",
+      "ccdId": "A1AKT",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RK",
+      "ccdId": "A1PRA",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DT",
+      "ccdId": "LG1",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KR",
+      "ccdId": "A1D3I",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GJ",
+      "ccdId": "A1DX6",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LL",
+      "ccdId": "A1PPX",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FN",
+      "ccdId": "A1D1O",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OE",
+      "ccdId": "A1DUB",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JL",
+      "ccdId": "A1DUY",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JE",
+      "ccdId": "A1D2C",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CZ",
+      "ccdId": "A1DXY",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KG",
+      "ccdId": "A1D3F",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NY",
+      "ccdId": "A1D37",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NR",
+      "ccdId": "A1DWR",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GY",
+      "ccdId": "A1D1B",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FJ",
+      "ccdId": "A1DX3",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MA",
+      "ccdId": "A1DYH",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MP",
+      "ccdId": "QY0",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MJ",
+      "ccdId": "A1D31",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AE",
+      "ccdId": "A1DV6",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GM",
+      "ccdId": "A1D0F",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GH",
+      "ccdId": "A1DX4",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15ET",
+      "ccdId": "A1DYT",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LQ",
+      "ccdId": "A1D26",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JN",
+      "ccdId": "A1DU0",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AH",
+      "ccdId": "A1PR1",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RR",
+      "ccdId": "A1PS9",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QK",
+      "ccdId": "A1PQB",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CG",
+      "ccdId": "A1AJX",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LR",
+      "ccdId": "A1D2Q",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KM",
+      "ccdId": "A1D2L",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DI",
+      "ccdId": "A1PRS",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QH",
+      "ccdId": "A1PP9",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QI",
+      "ccdId": "A1PP8",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PZ",
+      "ccdId": "A1PR7",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DP",
+      "ccdId": "A1DTZ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IC",
+      "ccdId": "A1D08",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GL",
+      "ccdId": "A1DX8",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HY",
+      "ccdId": "A1D2H",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EV",
+      "ccdId": "A1DVF",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IZ",
+      "ccdId": "A1D17",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DY",
+      "ccdId": "A1DWW",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AO",
+      "ccdId": "A1DTT",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EF",
+      "ccdId": "A1D4Z",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FT",
+      "ccdId": "A1DVE",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EU",
+      "ccdId": "A1DXZ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EY",
+      "ccdId": "A1DVB",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KV",
+      "ccdId": "A1DR9",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RY",
+      "ccdId": "A1PRN",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MZ",
+      "ccdId": "A1D3S",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JU",
+      "ccdId": "A1D2X",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PQ",
+      "ccdId": "A1PP1",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IP",
+      "ccdId": "A1DUR",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AG",
+      "ccdId": "A1PSC",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GI",
+      "ccdId": "A1DX5",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JW",
+      "ccdId": "A1DX9",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15ER",
+      "ccdId": "A1DYR",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OM",
+      "ccdId": "A1DTA",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LE",
+      "ccdId": "A1D3N",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HS",
+      "ccdId": "A1PQW",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FS",
+      "ccdId": "A1DVD",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QL",
+      "ccdId": "A1PPW",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IF",
+      "ccdId": "A1D1M",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LM",
+      "ccdId": "A1D22",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AT",
+      "ccdId": "A1PR6",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HZ",
+      "ccdId": "A1D1X",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PC",
+      "ccdId": "A1D3V",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EI",
+      "ccdId": "A1PST",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CE",
+      "ccdId": "A1D4R",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JP",
+      "ccdId": "A1DSR",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JG",
+      "ccdId": "A1D2E",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DC",
+      "ccdId": "A1PQT",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IX",
+      "ccdId": "A1D15",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IJ",
+      "ccdId": "A1D11",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OA",
+      "ccdId": "A1PQY",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OU",
+      "ccdId": "A1D4D",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AS",
+      "ccdId": "A1PR5",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DW",
+      "ccdId": "A1D4W",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RS",
+      "ccdId": "A1PRJ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QB",
+      "ccdId": "A1PR9",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HA",
+      "ccdId": "A1DU8",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RX",
+      "ccdId": "A1PRM",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MH",
+      "ccdId": "A1DYJ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CP",
+      "ccdId": "A1DT1",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JK",
+      "ccdId": "A1D2V",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HT",
+      "ccdId": "A1DUS",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GR",
+      "ccdId": "A1D0H",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IW",
+      "ccdId": "A1DSP",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PA",
+      "ccdId": "A1DXO",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NH",
+      "ccdId": "A1DXF",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RW",
+      "ccdId": "A1PRL",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EH",
+      "ccdId": "A1D0L",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KQ",
+      "ccdId": "A1D2P",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EK",
+      "ccdId": "A1PSU",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DM",
+      "ccdId": "A1PSR",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MT",
+      "ccdId": "A1D3P",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PH",
+      "ccdId": "A1DTI",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QQ",
+      "ccdId": "A1PQG",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DH",
+      "ccdId": "A1PRR",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IO",
+      "ccdId": "A1DUX",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LX",
+      "ccdId": "A1PPZ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CC",
+      "ccdId": "A1D4Q",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EE",
+      "ccdId": "A1D4Y",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KO",
+      "ccdId": "A1D2N",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LA",
+      "ccdId": "A1DYE",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HK",
+      "ccdId": "A1D1K",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KX",
+      "ccdId": "A1DSA",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15IQ",
+      "ccdId": "A1D13",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EA",
+      "ccdId": "A1DWY",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QM",
+      "ccdId": "A1PQC",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EC",
+      "ccdId": "A1D4X",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BG",
+      "ccdId": "A1DTV",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OZ",
+      "ccdId": "A1DXN",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EB",
+      "ccdId": "A1DWZ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GF",
+      "ccdId": "A1DU2",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FC",
+      "ccdId": "A1DX1",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NI",
+      "ccdId": "A1DWO",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EM",
+      "ccdId": "A1DBT",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QV",
+      "ccdId": "A1PSP",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FL",
+      "ccdId": "A1D0B",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JD",
+      "ccdId": "A1D2B",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DV",
+      "ccdId": "A1D4V",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QP",
+      "ccdId": "A1PQF",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PJ",
+      "ccdId": "A1DTK",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GB",
+      "ccdId": "A1D3W",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MR",
+      "ccdId": "A1DBU",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15PG",
+      "ccdId": "A1DTE",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LV",
+      "ccdId": "A1D29",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BL",
+      "ccdId": "A1DWC",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KD",
+      "ccdId": "A1D2Z",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NE",
+      "ccdId": "A1DYK",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AK",
+      "ccdId": "A1DTP",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LG",
+      "ccdId": "A1DW3",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "9XHG",
+      "ccdId": "1IL",
+      "status": "selected"
+    },
+    {
+      "pdbId": "15CL",
+      "ccdId": "A1DXU",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NT",
+      "ccdId": "A1DXH",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BB",
+      "ccdId": "A1DXT",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15HL",
+      "ccdId": "A1D0Q",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EZ",
+      "ccdId": "A1DR7",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NO",
+      "ccdId": "A1DWP",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15ON",
+      "ccdId": "A1DTC",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RJ",
+      "ccdId": "A1PQ9",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JY",
+      "ccdId": "A1DSJ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GK",
+      "ccdId": "A1DX7",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AZ",
+      "ccdId": "A1DXR",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BA",
+      "ccdId": "A1DXS",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RH",
+      "ccdId": "A1PQ7",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AJ",
+      "ccdId": "A1DU3",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NU",
+      "ccdId": "A1DXI",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DS",
+      "ccdId": "A1DT6",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OB",
+      "ccdId": "A1PQZ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EN",
+      "ccdId": "A1DWI",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EO",
+      "ccdId": "A1DWJ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RE",
+      "ccdId": "A1PQJ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15KU",
+      "ccdId": "A1DSD",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CB",
+      "ccdId": "A1D4P",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15LK",
+      "ccdId": "A1DW7",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RL",
+      "ccdId": "A1PRB",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NV",
+      "ccdId": "A1DXJ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15NW",
+      "ccdId": "A1DYM",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OJ",
+      "ccdId": "A1DTF",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EJ",
+      "ccdId": "A1D0M",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15JX",
+      "ccdId": "A1D2Y",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RG",
+      "ccdId": "A1PQ6",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15OP",
+      "ccdId": "A1PQ3",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QN",
+      "ccdId": "A1PQD",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MC",
+      "ccdId": "A1DW9",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MX",
+      "ccdId": "A1D3C",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15QR",
+      "ccdId": "A1PQH",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CU",
+      "ccdId": "A1DSW",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15BF",
+      "ccdId": "A1DTU",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RU",
+      "ccdId": "A1PR0",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15GQ",
+      "ccdId": "A1DYW",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15MI",
+      "ccdId": "A1D30",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15AF",
+      "ccdId": "A1DV7",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CQ",
+      "ccdId": "A1DS2",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "13CY",
+      "ccdId": "CMP",
+      "status": "rejected",
+      "reason": "protein-ligand-close-contact-under1.8A"
+    },
+    {
+      "pdbId": "15DN",
+      "ccdId": "A1PSS",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15DE",
+      "ccdId": "A1DWD",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CS",
+      "ccdId": "A1DSV",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FA",
+      "ccdId": "A1DVC",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FB",
+      "ccdId": "A1DX0",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15CT",
+      "ccdId": "A1DS4",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15EP",
+      "ccdId": "A1D0N",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15FD",
+      "ccdId": "A1DWT",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "15RT",
+      "ccdId": "A1PRZ",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "39PL",
+      "ccdId": "A1L7R",
+      "status": "rejected",
+      "reason": "explicit-covalent-ligand-link"
+    },
+    {
+      "pdbId": "9XGR",
+      "ccdId": "DH2",
+      "status": "rejected",
+      "reason": "too-few-pocket-contacts"
+    },
+    {
+      "pdbId": "9XJQ",
+      "ccdId": "A1E0I",
+      "status": "selected"
+    },
+    {
+      "pdbId": "9XJT",
+      "ccdId": "P7M",
+      "status": "not-selected",
+      "reason": "near-duplicate-protein"
+    },
+    {
+      "pdbId": "44HQ",
+      "ccdId": "A1FDL",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "37EV",
+      "ccdId": "A1DM7",
+      "status": "rejected",
+      "reason": "low-reference-backbone-coverage"
+    },
+    {
+      "pdbId": "34CK",
+      "ccdId": "A1KPN",
+      "status": "rejected",
+      "reason": "'CSO'"
+    },
+    {
+      "pdbId": "32TH",
+      "ccdId": "A1KFC",
+      "status": "rejected",
+      "reason": "low-reference-backbone-coverage"
+    },
+    {
+      "pdbId": "37EW",
+      "ccdId": "A1DM8",
+      "status": "rejected",
+      "reason": "low-reference-backbone-coverage"
+    },
+    {
+      "pdbId": "44IB",
+      "ccdId": "A1FDO",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "44IC",
+      "ccdId": "A1FDN",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "9VRA",
+      "ccdId": "A1ES8",
+      "status": "rejected",
+      "reason": "low-reference-backbone-coverage"
+    },
+    {
+      "pdbId": "32SJ",
+      "ccdId": "A1KE0",
+      "status": "rejected",
+      "reason": "low-reference-backbone-coverage"
+    },
+    {
+      "pdbId": "44HW",
+      "ccdId": "A1FDM",
+      "status": "rejected",
+      "reason": "nearby-omitted-nonwater-species"
+    },
+    {
+      "pdbId": "32QY",
+      "ccdId": "A1KEO",
+      "status": "selected"
+    },
+    {
+      "pdbId": "35FS",
+      "ccdId": "A1KVY",
+      "status": "rejected",
+      "reason": "pocket-contacts-another-protein-chain"
+    },
+    {
+      "pdbId": "9T3V",
+      "ccdId": "A1JTG",
+      "status": "selected"
+    },
+    {
+      "pdbId": "9T3W",
+      "ccdId": "A1JTF",
+      "status": "not-selected",
+      "reason": "release-quota"
+    },
+    {
+      "pdbId": "35FP",
+      "ccdId": "A1KVW",
+      "status": "not-selected",
+      "reason": "release-quota"
+    }
+  ]
+}

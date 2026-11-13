@@ -1,0 +1,99 @@
+{
+  "schema": "molarium.msa-feature-comparison.v1",
+  "scope": "OpenBind protein alignment residue/deletion rows, profiles and deletion means; not full model feature or numerical parity.",
+  "panelSha256": "17d8209cd73a89e53e32c91395c34333f9e05838c8908b0d65a6312841472f48",
+  "officialExportSha256": "412ba8f89f72d7a1596caaa3bfb14546baa7ddd52d32cf26f9cdb60c3aecb308",
+  "allChecksPass": true,
+  "records": [
+    {
+      "caseId": "9sy7-a1jrx",
+      "alignmentSha256": "b93ba485e8a095c4ece53accf60b80287d2784d81602a5db730d732d6159e85d",
+      "browserRows": 257,
+      "nativeRows": 257,
+      "residueRowDifferences": [],
+      "deletionRowDifferences": [],
+      "profileMaxAbsError": 0,
+      "deletionMeanMaxAbsError": 0
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "alignmentSha256": "ca6038cca7acb7328b63f698558d1e11840deec00965d4518a639c4de327552f",
+      "browserRows": 257,
+      "nativeRows": 257,
+      "residueRowDifferences": [],
+      "deletionRowDifferences": [],
+      "profileMaxAbsError": 0,
+      "deletionMeanMaxAbsError": 0
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "alignmentSha256": "0cc969796591441861b47aa0e75b359955864ffcf5fb81d6ca8a3bb59c495e2b",
+      "browserRows": 257,
+      "nativeRows": 257,
+      "residueRowDifferences": [],
+      "deletionRowDifferences": [],
+      "profileMaxAbsError": 0,
+      "deletionMeanMaxAbsError": 0
+    },
+    {
+      "caseId": "9syo-a1jr1",
+      "alignmentSha256": "45a4577958cbb268828a48154c62e6b533354629b38eb5f446c92865de91febf",
+      "browserRows": 257,
+      "nativeRows": 257,
+      "residueRowDifferences": [],
+      "deletionRowDifferences": [],
+      "profileMaxAbsError": 0,
+      "deletionMeanMaxAbsError": 0
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "alignmentSha256": "3c941dba7e7aa76fd3c2c5d8e0bedc6d3e9dd64fcdb204d01ab067277a38eb19",
+      "browserRows": 257,
+      "nativeRows": 257,
+      "residueRowDifferences": [],
+      "deletionRowDifferences": [],
+      "profileMaxAbsError": 0,
+      "deletionMeanMaxAbsError": 0
+    },
+    {
+      "caseId": "9xhg-1il",
+      "alignmentSha256": "e4372011a9ac020568e5e6f3b26c0184e73dbd42f8f438e7d45435b62d6d9e78",
+      "browserRows": 257,
+      "nativeRows": 257,
+      "residueRowDifferences": [],
+      "deletionRowDifferences": [],
+      "profileMaxAbsError": 0,
+      "deletionMeanMaxAbsError": 0
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "alignmentSha256": "84a658500bbdf4846955ce16cd3ed73d2c88c409b0f9e780a76d45ee61b5f0f3",
+      "browserRows": 257,
+      "nativeRows": 257,
+      "residueRowDifferences": [],
+      "deletionRowDifferences": [],
+      "profileMaxAbsError": 0,
+      "deletionMeanMaxAbsError": 0
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "alignmentSha256": "7bd8c016923fddb4bcad9d1266ae08c030a9014dfb4d5da10703ee3bfefb66bc",
+      "browserRows": 257,
+      "nativeRows": 257,
+      "residueRowDifferences": [],
+      "deletionRowDifferences": [],
+      "profileMaxAbsError": 0,
+      "deletionMeanMaxAbsError": 0
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "alignmentSha256": "ab624925e18bc32fbde406c1b980943dd4722846064fd982efc92eb16e694ac5",
+      "browserRows": 257,
+      "nativeRows": 257,
+      "residueRowDifferences": [],
+      "deletionRowDifferences": [],
+      "profileMaxAbsError": 0,
+      "deletionMeanMaxAbsError": 0
+    }
+  ]
+}

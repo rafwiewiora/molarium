@@ -1,0 +1,48 @@
+{
+  "query": {
+    "type": "group",
+    "logical_operator": "and",
+    "nodes": [
+      {
+        "type": "terminal",
+        "service": "text",
+        "parameters": {
+          "attribute": "rcsb_accession_info.initial_release_date",
+          "operator": "range",
+          "value": {
+            "from": "2026-10-16",
+            "to": "2026-11-13"
+          }
+        }
+      },
+      {
+        "type": "terminal",
+        "service": "text",
+        "parameters": {
+          "attribute": "exptl.method",
+          "operator": "exact_match",
+          "value": "X-RAY DIFFRACTION"
+        }
+      },
+      {
+        "type": "terminal",
+        "service": "text",
+        "parameters": {
+          "attribute": "rcsb_entry_info.nonpolymer_entity_count",
+          "operator": "greater",
+          "value": 0
+        }
+      }
+    ]
+  },
+  "return_type": "entry",
+  "request_options": {
+    "return_all_hits": true,
+    "sort": [
+      {
+        "sort_by": "rcsb_accession_info.initial_release_date",
+        "direction": "desc"
+      }
+    ]
+  }
+}

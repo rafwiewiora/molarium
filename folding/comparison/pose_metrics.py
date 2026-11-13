@@ -49,15 +49,30 @@ def component_mol(component,template=None):
     types={1:Chem.BondType.SINGLE,2:Chem.BondType.DOUBLE,3:Chem.BondType.TRIPLE,1.5:Chem.BondType.AROMATIC,4:Chem.BondType.AROMATIC}
     for b in component['bonds']:m.AddBond(b['from'],b['to'],types[b['order']])
     m=m.GetMol();m.UpdatePropertyCache(strict=False);Chem.GetSymmSSSR(m)
-    # The compact component omits hydrogen atoms. Restore bracket hydrogens such
-    # as aromatic [nH] from an exact chemical graph match before sanitization.
+    # Restore omitted bracket hydrogens using connectivity/element correspondence,
+    # then require the complete sanitized chemical state to match. Aromatic and
+    # Kekule spellings must be normalized before the final exact graph check.
+    # No bond order, charge or atom assignment is inferred from coordinates.
     if template is None and component.get('smiles'):template=Chem.MolFromSmiles(component['smiles'])
-    if template is not None:
-        match=m.GetSubstructMatch(template,useChirality=False)
-        if len(match)!=template.GetNumAtoms()or m.GetNumAtoms()!=template.GetNumAtoms()or m.GetNumBonds()!=template.GetNumBonds():
-            raise ValueError('Component chemical graph differs from declared SMILES')
-        for i,j in enumerate(match):m.GetAtomWithIdx(j).SetNumExplicitHs(template.GetAtomWithIdx(i).GetNumExplicitHs())
-    Chem.SanitizeMol(m);return m
+    if template is None:Chem.SanitizeMol(m);return m
+    if m.GetNumAtoms()!=template.GetNumAtoms()or m.GetNumBonds()!=template.GetNumBonds():
+        raise ValueError('Component chemical graph differs from declared SMILES')
+    topology=Chem.RWMol();query=Chem.RWMol()
+    for atom in m.GetAtoms():
+        a=Chem.Atom(atom.GetAtomicNum());a.SetNoImplicit(True);topology.AddAtom(a)
+    for atom in template.GetAtoms():query.AddAtom(Chem.AtomFromSmarts(f'[#{atom.GetAtomicNum()}]'))
+    for bond in m.GetBonds():topology.AddBond(bond.GetBeginAtomIdx(),bond.GetEndAtomIdx(),Chem.BondType.SINGLE)
+    for bond in template.GetBonds():query.AddBond(bond.GetBeginAtomIdx(),bond.GetEndAtomIdx(),Chem.BondType.SINGLE)
+    topology=topology.GetMol();topology.UpdatePropertyCache(strict=False)
+    expected=Chem.MolToSmiles(template,isomericSmiles=False)
+    for match in topology.GetSubstructMatches(query.GetMol(),uniquify=False,maxMatches=10000):
+        candidate=Chem.Mol(m)
+        if any(candidate.GetAtomWithIdx(j).GetFormalCharge()!=template.GetAtomWithIdx(i).GetFormalCharge()for i,j in enumerate(match)):continue
+        for i,j in enumerate(match):candidate.GetAtomWithIdx(j).SetNumExplicitHs(template.GetAtomWithIdx(i).GetNumExplicitHs())
+        try:Chem.SanitizeMol(candidate)
+        except (ValueError,RuntimeError):continue
+        if Chem.MolToSmiles(candidate,isomericSmiles=False)==expected:return candidate
+    raise ValueError('Component chemical graph differs from declared SMILES after aromaticity normalization')
 
 
 def ligand_mol(result, atoms, smiles, transform=lambda x:x):

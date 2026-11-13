@@ -1,0 +1,17 @@
+{
+  "schema": "molarium.msa-phase-protocol.v1",
+  "parentPanelSha256": "7053daa0060cf8dc4836f95ac0b40e9e639398adacc63896c1f122d0ec9e7bb3",
+  "inferencePanelSha256": "17d8209cd73a89e53e32c91395c34333f9e05838c8908b0d65a6312841472f48",
+  "msaMode": "provided",
+  "rowsIncludingQuery": 256,
+  "steps": 25,
+  "additionalRecycles": 2,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "templates": false,
+  "chemistry": "RDKit-WASM normalized SMILES",
+  "note": "The inference-panel policy and caveats are inherited unchanged from the original single-sequence selection. Each case now has a3m; this explicit provided-MSA protocol supersedes the inherited msaMode. Scoring uses the original parent panel and original reference hashes. No crystal coordinates enter inference."
+}

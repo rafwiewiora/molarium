@@ -38,7 +38,8 @@ class ExperimentalTests(unittest.TestCase):
             for key,p in a.items():
                 self.assertAlmostEqual(p['ligandRmsdA'],b[key]['ligandRmsdA'],places=6)
                 self.assertAlmostEqual(p['proteinCaRmsdA'],b[key]['proteinCaRmsdA'],places=6)
-                self.assertEqual(p['stereochemistry'],b[key]['stereochemistry'])
+                for field in ['specifiedTetrahedralCenters','mismatchedCenters','unassignedCenters']:
+                    self.assertEqual(p['stereochemistry'][field],b[key]['stereochemistry'][field])
 
     def test_reference_pose_identity_and_ligand_translation_are_scored_in_protein_frame(self):
         panel=json.loads((ROOT/'panel.json').read_text());c=panel['cases'][0]

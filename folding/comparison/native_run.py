@@ -23,6 +23,37 @@ def digest(path):
     return h.hexdigest()
 
 
+def resolved_input_files(inputs, output, spec):
+    """Resolve portable provided-MSA paths without changing frozen inputs.
+
+    Both official parsers receive explicit absolute paths; their working-directory
+    conventions cannot silently replace the provided alignment with a dummy MSA.
+    """
+    query = inputs / 'openbind-query.json'
+    boltz = inputs / 'boltz'
+    if not spec.get('alignment'):
+        return query, boltz
+    msa = (inputs / 'msa/colabfold_main.a3m').resolve()
+    if digest(msa) != spec['alignment']['sha256']:
+        raise ValueError('Provided native MSA hash mismatch')
+    directory = output / 'resolved-inputs'
+    directory.mkdir()
+    data = json.loads(query.read_text())
+    for q in data['queries'].values():
+        if not q['use_msas']:
+            raise ValueError('Provided alignment disabled by query')
+        q['chains'][0]['main_msa_file_paths'] = [str(msa)]
+    query = directory / 'openbind-query.json'
+    query.write_text(json.dumps(data, indent=2)+'\n')
+    resolved_boltz = directory / 'boltz'
+    resolved_boltz.mkdir()
+    for file in sorted(boltz.glob('*.yaml')):
+        data = json.loads(file.read_text())
+        data['sequences'][0]['protein']['msa'] = str(msa)
+        (resolved_boltz / file.name).write_text(json.dumps(data, indent=2)+'\n')
+    return query, resolved_boltz
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--method', choices=['openbind0', 'boltz2'], required=True)
@@ -36,6 +67,7 @@ def main():
         raise RuntimeError('Use a new immutable output directory; do not overwrite or rerun consumed attempts.')
     args.output.mkdir(parents=True)
     spec = json.loads((args.inputs / 'comparison.json').read_text())
+    query_file, boltz_files = resolved_input_files(args.inputs,args.output,spec)
     protocol = spec['protocols'][args.protocol]
     protocol = {**protocol,'precision':protocol['precision'] if args.method=='openbind0' else 'bf16-mixed'}
     import torch
@@ -55,6 +87,8 @@ def main():
         'runnerSha256':digest(__file__),
         'inputFiles':{str(p.relative_to(args.inputs)):digest(p)for p in args.inputs.rglob('*')if p.is_file()},
         'inputSha256':digest(args.inputs / 'comparison.json'),'checkpointSha256':digest(args.checkpoint),
+        'providedMsaSha256':spec.get('alignment',{}).get('sha256'),
+        'resolvedInputFiles':{str(p.relative_to(args.output)):digest(p)for p in (args.output/'resolved-inputs').rglob('*')if p.is_file()},
         'checkpointBytes':args.checkpoint.stat().st_size,'settings':protocol,'seeds':spec['seeds'],
         'executionConfig':{'torchinductorCompileThreads':os.environ.get('TORCHINDUCTOR_COMPILE_THREADS'),
           'slurmJobId':os.environ.get('SLURM_JOB_ID'),
@@ -93,7 +127,7 @@ def main():
             from openfold3.projects.of3_all_atom.model import OpenFold3
             instrument(OpenFold3)
             from openfold3.run_openfold import cli
-            argv = ['predict','--query_json',str(args.inputs/'openbind-query.json'),
+            argv = ['predict','--query_json',str(query_file),
                 '--runner_yaml',str(args.inputs/f'openbind-{args.protocol}.yaml'),
                 '--output_dir',str(args.output/'models'),'--inference_ckpt_path',str(args.checkpoint),
                 '--num_diffusion_samples','1','--use_msa_server','False','--use_templates','False',
@@ -106,7 +140,7 @@ def main():
             from boltz.main import cli
             receipt['argv'] = []
             for seed in spec['seeds']:
-                argv = ['predict',str(args.inputs/'boltz'),'--model','boltz2','--out_dir',str(args.output/f'seed-{seed}'),
+                argv = ['predict',str(boltz_files),'--model','boltz2','--out_dir',str(args.output/f'seed-{seed}'),
                     '--cache',str(args.cache),'--checkpoint',str(args.checkpoint),
                     '--seed',str(seed),'--recycling_steps',str(protocol['recycles']),
                     '--sampling_steps',str(protocol['steps']),'--diffusion_samples','1',

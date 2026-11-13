@@ -267,7 +267,7 @@
                 <label class="field-label">Cofolding sampling steps <input id="fold-steps" type="number" min="1" max="200" step="1" value="25" /></label>
                 <label class="field-label">Random seed <input id="fold-seed" type="number" min="0" max="4294967295" step="1" value="0" /></label>
               </details>
-              <p class="input-help fold-privacy">Inference runs here on WebGPU. First use downloads and caches the selected model weights from Hugging Face. Only MSA search sends your sequence to the selected service; CCD input fetches a public ligand definition. An MSA often improves prediction quality.</p>
+              <p class="input-help fold-privacy">Inference runs here on WebGPU. First use downloads and caches the selected model weights from Hugging Face. Only MSA search sends your sequence to the selected service; CCD input fetches a public ligand definition. An MSA often improves prediction quality. Experimental poses can contain clashes or stereochemical errors; inspect them before use.</p>
               <div class="fold-actions">
                 <button class="primary-button" id="fold-protein">Fold locally</button>
                 <button class="soft-button hidden" id="cancel-fold">Cancel</button>

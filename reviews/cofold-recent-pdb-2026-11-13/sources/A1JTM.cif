@@ -1,0 +1,234 @@
+data_A1JTM
+# 
+_chem_comp.id                                    A1JTM 
+_chem_comp.name                                  "~{tert}-butyl 4-[(4~{a}~{S},12~{b}~{S})-12~{b}-methyl-3-oxidanyl-2,3,4,4~{a},5,6-hexahydro-1~{H}-naphtho[1,2-b]quinolin-8-yl]piperidine-1-carboxylate" 
+_chem_comp.type                                  non-polymer 
+_chem_comp.pdbx_type                             HETAIN 
+_chem_comp.formula                               "C28 H38 N2 O3" 
+_chem_comp.mon_nstd_parent_comp_id               ? 
+_chem_comp.pdbx_synonyms                         ? 
+_chem_comp.pdbx_formal_charge                    0 
+_chem_comp.pdbx_initial_date                     2025-11-04 
+_chem_comp.pdbx_modified_date                    2026-10-23 
+_chem_comp.pdbx_ambiguous_flag                   N 
+_chem_comp.pdbx_release_status                   REL 
+_chem_comp.pdbx_replaced_by                      ? 
+_chem_comp.pdbx_replaces                         ? 
+_chem_comp.formula_weight                        450.613 
+_chem_comp.one_letter_code                       ? 
+_chem_comp.three_letter_code                     A1JTM 
+_chem_comp.pdbx_model_coordinates_details        ? 
+_chem_comp.pdbx_model_coordinates_missing_flag   N 
+_chem_comp.pdbx_ideal_coordinates_details        Corina 
+_chem_comp.pdbx_ideal_coordinates_missing_flag   N 
+_chem_comp.pdbx_model_coordinates_db_code        9T51 
+_chem_comp.pdbx_subcomponent_list                ? 
+_chem_comp.pdbx_processing_site                  PDBE 
+_chem_comp.pdbx_pcm                              ? 
+_chem_comp.pdbx_comp_type                        ? 
+# 
+loop_
+_chem_comp_atom.comp_id 
+_chem_comp_atom.atom_id 
+_chem_comp_atom.alt_atom_id 
+_chem_comp_atom.type_symbol 
+_chem_comp_atom.charge 
+_chem_comp_atom.pdbx_align 
+_chem_comp_atom.pdbx_aromatic_flag 
+_chem_comp_atom.pdbx_leaving_atom_flag 
+_chem_comp_atom.pdbx_stereo_config 
+_chem_comp_atom.pdbx_n_terminal_atom_flag 
+_chem_comp_atom.pdbx_backbone_atom_flag 
+_chem_comp_atom.pdbx_c_terminal_atom_flag 
+_chem_comp_atom.model_Cartn_x 
+_chem_comp_atom.model_Cartn_y 
+_chem_comp_atom.model_Cartn_z 
+_chem_comp_atom.pdbx_model_Cartn_x_ideal 
+_chem_comp_atom.pdbx_model_Cartn_y_ideal 
+_chem_comp_atom.pdbx_model_Cartn_z_ideal 
+_chem_comp_atom.pdbx_component_atom_id 
+_chem_comp_atom.pdbx_component_comp_id 
+_chem_comp_atom.pdbx_ordinal 
+A1JTM C02  C1  C 0 1 N N S N N N 3.251  7.972  -16.670 7.543  -0.736 0.710  C02  A1JTM 1  
+A1JTM C03  C2  C 0 1 N N N N N N 2.222  8.817  -17.443 6.693  -1.743 -0.069 C03  A1JTM 2  
+A1JTM C04  C3  C 0 1 N N N N N N 2.540  7.017  -15.687 7.227  0.686  0.244  C04  A1JTM 3  
+A1JTM C05  C4  C 0 1 N N N N N N 1.495  6.158  -16.391 5.739  0.987  0.456  C05  A1JTM 4  
+A1JTM C06  C5  C 0 1 N N S N N N 0.486  7.011  -17.169 4.914  -0.023 -0.339 C06  A1JTM 5  
+A1JTM C07  C6  C 0 1 N N N N N N -0.366 7.794  -16.157 5.309  0.067  -1.814 C07  A1JTM 6  
+A1JTM C09  C7  C 0 1 N N N N N N 0.224  8.689  -19.030 4.320  -2.415 -0.585 C09  A1JTM 7  
+A1JTM C12  C8  C 0 1 Y N N N N N -0.498 6.076  -17.874 3.441  0.259  -0.211 C12  A1JTM 8  
+A1JTM C16  C9  C 0 1 Y N N N N N -3.320 3.524  -19.698 -0.570 1.247  0.080  C16  A1JTM 9  
+A1JTM C17  C10 C 0 1 N N N N N N -4.105 3.882  -20.954 -1.642 0.192  0.172  C17  A1JTM 10 
+A1JTM C18  C11 C 0 1 N N N N N N -3.420 3.417  -22.215 -2.420 0.369  1.477  C18  A1JTM 11 
+A1JTM C08  C12 C 0 1 N N S N N N 1.209  7.891  -18.159 5.216  -1.431 0.169  C08  A1JTM 12 
+A1JTM C10  C13 C 0 1 N N N N N N -0.894 7.860  -19.711 2.899  -2.226 -0.107 C10  A1JTM 13 
+A1JTM C11  C14 C 0 1 Y N N N N N -1.161 6.468  -19.037 2.512  -0.771 -0.112 C11  A1JTM 14 
+A1JTM C14  C15 C 0 1 Y N N N N N -1.701 4.059  -17.937 1.780  1.876  -0.101 C14  A1JTM 15 
+A1JTM C15  C16 C 0 1 Y N N N N N -2.388 4.424  -19.097 0.781  0.874  -0.011 C15  A1JTM 16 
+A1JTM C19  C17 C 0 1 N N N N N N -4.209 3.896  -23.415 -3.487 -0.726 1.584  C19  A1JTM 17 
+A1JTM C21  C18 C 0 1 N N N N N N -6.017 2.412  -24.131 -5.662 -0.598 0.468  C21  A1JTM 18 
+A1JTM C23  C19 C 0 1 N N N N N N -7.728 0.678  -24.212 -7.852 -0.465 -0.472 C23  A1JTM 19 
+A1JTM C24  C20 C 0 1 N N N N N N -8.127 0.673  -25.681 -8.182 0.826  0.281  C24  A1JTM 20 
+A1JTM C25  C21 C 0 1 N N N N N N -6.632 -0.323 -23.892 -8.355 -1.666 0.331  C25  A1JTM 21 
+A1JTM C26  C22 C 0 1 N N N N N N -8.939 0.333  -23.362 -8.533 -0.445 -1.841 C26  A1JTM 22 
+A1JTM C28  C23 C 0 1 N N N N N N -6.320 3.852  -22.115 -3.665 -0.764 -0.938 C28  A1JTM 23 
+A1JTM C29  C24 C 0 1 N N N N N N -5.512 3.243  -20.926 -2.597 0.331  -1.016 C29  A1JTM 24 
+A1JTM C30  C25 C 0 1 Y N N N N N -3.585 2.316  -19.072 -0.905 2.566  0.084  C30  A1JTM 25 
+A1JTM C31  C26 C 0 1 Y N N N N N -2.901 1.967  -17.919 0.075  3.553  -0.000 C31  A1JTM 26 
+A1JTM C32  C27 C 0 1 Y N N N N N -1.962 2.835  -17.356 1.393  3.228  -0.090 C32  A1JTM 27 
+A1JTM C33  C28 C 0 1 Y N N N N N -2.082 5.656  -19.637 1.176  -0.473 -0.016 C33  A1JTM 28 
+A1JTM N13  N1  N 0 1 Y N N N N N -0.799 4.891  -17.341 3.061  1.522  -0.199 N13  A1JTM 29 
+A1JTM N20  N2  N 0 1 N N N N N N -5.586 3.567  -23.322 -4.321 -0.693 0.375  N20  A1JTM 30 
+A1JTM O01  O1  O 0 1 N N N N N N 4.072  8.856  -15.975 8.928  -1.010 0.487  O01  A1JTM 31 
+A1JTM O22  O2  O 0 1 N N N N N N -7.328 1.993  -23.860 -6.414 -0.568 -0.648 O22  A1JTM 32 
+A1JTM O27  O3  O 0 1 N N N N N N -5.341 1.921  -24.965 -6.192 -0.539 1.560  O27  A1JTM 33 
+A1JTM H021 H1  H 0 0 N N N N N N 3.833  7.375  -17.387 7.325  -0.825 1.775  H021 A1JTM 34 
+A1JTM H031 H2  H 0 0 N N N N N N 1.685  9.470  -16.740 6.916  -1.664 -1.133 H031 A1JTM 35 
+A1JTM H032 H3  H 0 0 N N N N N N 2.744  9.433  -18.190 6.913  -2.753 0.278  H032 A1JTM 36 
+A1JTM H041 H4  H 0 0 N N N N N N 3.290  6.358  -15.225 7.824  1.396  0.817  H041 A1JTM 37 
+A1JTM H042 H5  H 0 0 N N N N N N 2.044  7.613  -14.907 7.468  0.782  -0.814 H042 A1JTM 38 
+A1JTM H051 H6  H 0 0 N N N N N N 2.005  5.481  -17.093 5.497  0.904  1.515  H051 A1JTM 39 
+A1JTM H052 H7  H 0 0 N N N N N N 0.955  5.566  -15.638 5.518  1.996  0.107  H052 A1JTM 40 
+A1JTM H071 H8  H 0 0 N N N N N N -1.098 8.414  -16.695 6.370  -0.159 -1.921 H071 A1JTM 41 
+A1JTM H073 H9  H 0 0 N N N N N N -0.896 7.088  -15.500 4.725  -0.650 -2.391 H073 A1JTM 42 
+A1JTM H072 H10 H 0 0 N N N N N N 0.286  8.440  -15.551 5.113  1.074  -2.182 H072 A1JTM 43 
+A1JTM H091 H11 H 0 0 N N N N N N -0.257 9.444  -18.391 4.379  -2.216 -1.655 H091 A1JTM 44 
+A1JTM H092 H12 H 0 0 N N N N N N 0.802  9.191  -19.820 4.644  -3.437 -0.383 H092 A1JTM 45 
+A1JTM H171 H13 H 0 0 N N N N N N -4.222 4.975  -20.996 -1.182 -0.796 0.154  H171 A1JTM 46 
+A1JTM H181 H14 H 0 0 N N N N N N -2.402 3.831  -22.255 -1.736 0.293  2.322  H181 A1JTM 47 
+A1JTM H182 H15 H 0 0 N N N N N N -3.369 2.318  -22.223 -2.901 1.347  1.485  H182 A1JTM 48 
+A1JTM H081 H16 H 0 0 N N N N N N 1.784  7.236  -18.830 5.000  -1.487 1.235  H081 A1JTM 49 
+A1JTM H101 H17 H 0 0 N N N N N N -1.826 8.444  -19.678 2.225  -2.777 -0.764 H101 A1JTM 50 
+A1JTM H102 H18 H 0 0 N N N N N N -0.606 7.687  -20.759 2.807  -2.617 0.906  H102 A1JTM 51 
+A1JTM H191 H19 H 0 0 N N N N N N -4.111 4.989  -23.489 -3.004 -1.700 1.668  H191 A1JTM 52 
+A1JTM H192 H20 H 0 0 N N N N N N -3.794 3.429  -24.320 -4.108 -0.547 2.461  H192 A1JTM 53 
+A1JTM H241 H21 H 0 0 N N N N N N -8.441 -0.340 -25.973 -7.696 0.812  1.257  H241 A1JTM 54 
+A1JTM H243 H22 H 0 0 N N N N N N -8.960 1.374  -25.837 -7.823 1.682  -0.291 H243 A1JTM 55 
+A1JTM H242 H23 H 0 0 N N N N N N -7.268 0.982  -26.295 -9.261 0.904  0.413  H242 A1JTM 56 
+A1JTM H253 H24 H 0 0 N N N N N N -6.964 -1.333 -24.173 -9.434 -1.588 0.464  H253 A1JTM 57 
+A1JTM H252 H25 H 0 0 N N N N N N -5.724 -0.065 -24.457 -8.120 -2.586 -0.205 H252 A1JTM 58 
+A1JTM H251 H26 H 0 0 N N N N N N -6.414 -0.295 -22.814 -7.869 -1.680 1.307  H251 A1JTM 59 
+A1JTM H263 H27 H 0 0 N N N N N N -9.281 -0.684 -23.606 -8.175 0.411  -2.413 H263 A1JTM 60 
+A1JTM H261 H28 H 0 0 N N N N N N -8.666 0.382  -22.298 -8.298 -1.365 -2.377 H261 A1JTM 61 
+A1JTM H262 H29 H 0 0 N N N N N N -9.747 1.051  -23.567 -9.613 -0.368 -1.709 H262 A1JTM 62 
+A1JTM H281 H30 H 0 0 N N N N N N -6.421 4.939  -21.984 -4.404 -0.611 -1.724 H281 A1JTM 63 
+A1JTM H282 H31 H 0 0 N N N N N N -7.319 3.394  -22.165 -3.197 -1.741 -1.062 H282 A1JTM 64 
+A1JTM H291 H32 H 0 0 N N N N N N -5.433 2.152  -21.044 -3.076 1.309  -0.985 H291 A1JTM 65 
+A1JTM H292 H33 H 0 0 N N N N N N -6.012 3.474  -19.974 -2.038 0.228  -1.946 H292 A1JTM 66 
+A1JTM H301 H34 H 0 0 N N N N N N -4.326 1.646  -19.484 -1.944 2.852  0.154  H301 A1JTM 67 
+A1JTM H311 H35 H 0 0 N N N N N N -3.096 1.014  -17.450 -0.216 4.593  0.005  H311 A1JTM 68 
+A1JTM H321 H36 H 0 0 N N N N N N -1.436 2.545  -16.458 2.140  4.006  -0.154 H321 A1JTM 69 
+A1JTM H331 H37 H 0 0 N N N N N N -2.574 5.982  -20.541 0.440  -1.261 0.054  H331 A1JTM 70 
+A1JTM H011 H38 H 0 0 N N N N N N 4.722  8.366  -15.485 9.528  -0.410 0.951  H011 A1JTM 71 
+# 
+loop_
+_chem_comp_bond.comp_id 
+_chem_comp_bond.atom_id_1 
+_chem_comp_bond.atom_id_2 
+_chem_comp_bond.value_order 
+_chem_comp_bond.pdbx_aromatic_flag 
+_chem_comp_bond.pdbx_stereo_config 
+_chem_comp_bond.pdbx_ordinal 
+A1JTM O01 C02  SING N N 1  
+A1JTM C02 C03  SING N N 2  
+A1JTM C02 C04  SING N N 3  
+A1JTM C03 C08  SING N N 4  
+A1JTM C04 C05  SING N N 5  
+A1JTM C05 C06  SING N N 6  
+A1JTM C06 C07  SING N N 7  
+A1JTM C06 C08  SING N N 8  
+A1JTM C06 C12  SING N N 9  
+A1JTM C08 C09  SING N N 10 
+A1JTM C09 C10  SING N N 11 
+A1JTM C10 C11  SING N N 12 
+A1JTM C11 C12  DOUB Y N 13 
+A1JTM C11 C33  SING Y N 14 
+A1JTM C12 N13  SING Y N 15 
+A1JTM N13 C14  DOUB Y N 16 
+A1JTM C14 C15  SING Y N 17 
+A1JTM C14 C32  SING Y N 18 
+A1JTM C15 C16  SING Y N 19 
+A1JTM C15 C33  DOUB Y N 20 
+A1JTM C16 C17  SING N N 21 
+A1JTM C16 C30  DOUB Y N 22 
+A1JTM C17 C18  SING N N 23 
+A1JTM C17 C29  SING N N 24 
+A1JTM C18 C19  SING N N 25 
+A1JTM C19 N20  SING N N 26 
+A1JTM N20 C21  SING N N 27 
+A1JTM N20 C28  SING N N 28 
+A1JTM C21 O22  SING N N 29 
+A1JTM C21 O27  DOUB N N 30 
+A1JTM O22 C23  SING N N 31 
+A1JTM C23 C24  SING N N 32 
+A1JTM C23 C25  SING N N 33 
+A1JTM C23 C26  SING N N 34 
+A1JTM C28 C29  SING N N 35 
+A1JTM C30 C31  SING Y N 36 
+A1JTM C31 C32  DOUB Y N 37 
+A1JTM C02 H021 SING N N 38 
+A1JTM C03 H031 SING N N 39 
+A1JTM C03 H032 SING N N 40 
+A1JTM C04 H041 SING N N 41 
+A1JTM C04 H042 SING N N 42 
+A1JTM C05 H051 SING N N 43 
+A1JTM C05 H052 SING N N 44 
+A1JTM C07 H071 SING N N 45 
+A1JTM C07 H073 SING N N 46 
+A1JTM C07 H072 SING N N 47 
+A1JTM C09 H091 SING N N 48 
+A1JTM C09 H092 SING N N 49 
+A1JTM C17 H171 SING N N 50 
+A1JTM C18 H181 SING N N 51 
+A1JTM C18 H182 SING N N 52 
+A1JTM C08 H081 SING N N 53 
+A1JTM C10 H101 SING N N 54 
+A1JTM C10 H102 SING N N 55 
+A1JTM C19 H191 SING N N 56 
+A1JTM C19 H192 SING N N 57 
+A1JTM C24 H241 SING N N 58 
+A1JTM C24 H243 SING N N 59 
+A1JTM C24 H242 SING N N 60 
+A1JTM C25 H253 SING N N 61 
+A1JTM C25 H252 SING N N 62 
+A1JTM C25 H251 SING N N 63 
+A1JTM C26 H263 SING N N 64 
+A1JTM C26 H261 SING N N 65 
+A1JTM C26 H262 SING N N 66 
+A1JTM C28 H281 SING N N 67 
+A1JTM C28 H282 SING N N 68 
+A1JTM C29 H291 SING N N 69 
+A1JTM C29 H292 SING N N 70 
+A1JTM C30 H301 SING N N 71 
+A1JTM C31 H311 SING N N 72 
+A1JTM C32 H321 SING N N 73 
+A1JTM C33 H331 SING N N 74 
+A1JTM O01 H011 SING N N 75 
+# 
+loop_
+_pdbx_chem_comp_descriptor.comp_id 
+_pdbx_chem_comp_descriptor.type 
+_pdbx_chem_comp_descriptor.program 
+_pdbx_chem_comp_descriptor.program_version 
+_pdbx_chem_comp_descriptor.descriptor 
+A1JTM InChI            InChI                1.06  "InChI=1S/C28H38N2O3/c1-27(2,3)33-26(32)30-14-11-18(12-15-30)22-6-5-7-24-23(22)16-19-8-9-20-17-21(31)10-13-28(20,4)25(19)29-24/h5-7,16,18,20-21,31H,8-15,17H2,1-4H3/t20-,21-,28-/m0/s1" 
+A1JTM InChIKey         InChI                1.06  NBJSPMSQMBINND-CZBREUMFSA-N                                                                                                                                                             
+A1JTM SMILES_CANONICAL CACTVS               3.385 "CC(C)(C)OC(=O)N1CCC(CC1)c2cccc3nc4c(CC[C@H]5C[C@@H](O)CC[C@]45C)cc23"                                                                                                                  
+A1JTM SMILES           CACTVS               3.385 "CC(C)(C)OC(=O)N1CCC(CC1)c2cccc3nc4c(CC[CH]5C[CH](O)CC[C]45C)cc23"                                                                                                                      
+A1JTM SMILES_CANONICAL "OpenEye OEToolkits" 2.0.7 "C[C@]12CC[C@@H](C[C@@H]1CCc3c2nc4cccc(c4c3)C5CCN(CC5)C(=O)OC(C)(C)C)O"                                                                                                                 
+A1JTM SMILES           "OpenEye OEToolkits" 2.0.7 "CC12CCC(CC1CCc3c2nc4cccc(c4c3)C5CCN(CC5)C(=O)OC(C)(C)C)O"                                                                                                                              
+# 
+_pdbx_chem_comp_identifier.comp_id           A1JTM 
+_pdbx_chem_comp_identifier.type              "SYSTEMATIC NAME" 
+_pdbx_chem_comp_identifier.program           "OpenEye OEToolkits" 
+_pdbx_chem_comp_identifier.program_version   2.0.7 
+_pdbx_chem_comp_identifier.identifier        "~{tert}-butyl 4-[(3~{S},4~{a}~{S},12~{b}~{S})-12~{b}-methyl-3-oxidanyl-2,3,4,4~{a},5,6-hexahydro-1~{H}-naphtho[1,2-b]quinolin-8-yl]piperidine-1-carboxylate" 
+# 
+loop_
+_pdbx_chem_comp_audit.comp_id 
+_pdbx_chem_comp_audit.action_type 
+_pdbx_chem_comp_audit.date 
+_pdbx_chem_comp_audit.processing_site 
+A1JTM "Create component" 2025-11-04 PDBE 
+A1JTM "Initial release"  2026-10-28 RCSB 
+# 

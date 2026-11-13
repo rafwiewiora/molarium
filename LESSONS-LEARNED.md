@@ -162,3 +162,19 @@ when assembling results. An assembled cohort does not relabel an interrupted CLI
 as complete, and an unmeasured total wall time stays unavailable. The
 [six-pose interruption and 42-pose recovery plan](reviews/cofold-method-comparison-2026-11-12/README.md)
 retain the concrete example and coordinate-preservation checks.
+
+## Sanitized chemical identity is not model-feature parity
+
+The [recent PDB reconstruction panel](reviews/cofold-recent-pdb-2026-11-13/README.md)
+exposed two equivalent-SMILES cases whose raw aromatic/bond feature flags differed
+from RDKit even though their sanitized chemical identities agreed. Normalize the
+representation before conformer generation and featurization, preserve the source
+and normalized hashes, and check the raw feature graph independently. A scorer
+must accept equivalent Kekule/aromatic spellings while still rejecting real
+charge or bond-order changes. Never use crystal coordinates to repair a prediction's
+declared chemistry.
+
+The corrected inputs did not establish better pose reconstruction: original
+Boltz gave 1/27 poses within 2 Å; normalized Boltz and OpenBind gave 0/27 each in
+the single-sequence phase. Keep both outcomes. Input validity, native numerical
+agreement, protein-fold quality and ligand placement are separate claims.

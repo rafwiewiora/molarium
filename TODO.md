@@ -8,6 +8,11 @@ with stable `DV-` identifiers and links to original observations and follow-up e
 
 ## Simulation correctness and release gates
 
+- [x] Freeze a target-diverse, drug-like [recent PDB panel](reviews/cofold-recent-pdb-2026-11-13/README.md) from a complete release-window harvest; check generated biological assemblies before inference and preserve all exclusions.
+- [x] Correct SMILES aromatic/bond input features before browser cofolding; retain original predictions and independently verify all nine input graphs and specified stereocentres ([finding RCF-01](reviews/cofold-recent-pdb-2026-11-13/findings.md)).
+- [x] Complete both 27-pose provided-MSA browser phases and compare OpenBind alignment residue/deletion rows with the actual official CPU processor; preserve all 135 predictions and failures ([results](reviews/cofold-recent-pdb-2026-11-13/README.md)).
+- [ ] Complete 200-step browser controls, native GPU references, and further matched-input feature/numerical comparisons; broad recent-panel reconstruction remains unresolved ([status](reviews/cofold-recent-pdb-2026-11-13/README.md)).
+
 - [x] Integrate pinned LocalFold AF2 and OpenBind-0 with UI/API inputs, exact ligand graphs and downloadable provenance ([LF-01](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md)).
 - [ ] Qualify LocalFold against original native models and known ligand complexes; measure quantization separately, then broaden GPU and molecular coverage (LF-01).
 - [x] Add Boltz-2 browser structure inference and compare the 48-pose library with the official native low-step route, retaining raw outputs, seed variability and unscored Foldarium review ([comparison](reviews/cofold-method-comparison-2026-11-12/README.md)).
