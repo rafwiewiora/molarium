@@ -21,6 +21,12 @@ closed, choose its saved library and resume explicitly. Keep the tab open and
 prevent the computer from sleeping. Background scheduling depends on the browser.
 Only one library may hold this origin's GPU queue lock at a time.
 
+A closing storage connection is reopened once. If earlier checkpoints disappear,
+the queue retains the current result when possible, records the loss and stops;
+that run cannot resume automatically. Export available results and keep earlier
+exports. Browser storage can be evicted and is not a backup. Importing an export
+creates a separate review-only identity; it does not restore a running queue.
+
 The progress bar combines completed predictions with an approximate current-pose
 fraction. The display reports the active compound/seed, stage, completed/failed
 counts and session time. ETA uses measured warm wall times after the first

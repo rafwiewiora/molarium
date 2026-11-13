@@ -87,8 +87,8 @@
     },
     {
       "path": "folding/library.mjs",
-      "bytes": 8702,
-      "sha256": "d495a8557e69b272f13fa2ba0853cc5425784472b95ba4da55fbf47bfd93bfd9"
+      "bytes": 11111,
+      "sha256": "5344910c5b039d958a1448915b471b0acfc81da9686f410af669f817f576ddff"
     },
     {
       "path": "folding/library-ui.mjs",
@@ -97,8 +97,8 @@
     },
     {
       "path": "folding/LIBRARIES.md",
-      "bytes": 7131,
-      "sha256": "e94337368a76f9f10b50a6ee6096eb13a0bd14f858453106f58391d8e7600796"
+      "bytes": 7532,
+      "sha256": "aab6f298bd76ce6150a653867f6c46a0a636970c523babf325bf8b97d89233b3"
     },
     {
       "path": "reviews/library-cofolding-2026-11-12/README.md",
@@ -1439,6 +1439,11 @@
       "path": "vendor/localfold/webgpu/runtime/device-memory.js",
       "bytes": 10930,
       "sha256": "31b0dd735a8dfeba315fd3597b65351cf4a039294345dfda6e95f89b9097a64d"
+    },
+    {
+      "path": "folding/library-store.mjs",
+      "bytes": 3481,
+      "sha256": "e2d9d94134cf9a338107531ca1950413a061a0ca15d73fefbbfc160206e180ef"
     },
     {
       "path": "vendor/foldarium/library-chemistry.js",

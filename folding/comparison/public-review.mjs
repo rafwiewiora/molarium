@@ -1,5 +1,5 @@
 // Molarium-owned launcher: vendored Foldarium stays pinned and unchanged.
-import {LibraryStore} from '../../vendor/foldarium/library-store.js';
+import {LibraryStore} from '../library-store.mjs';
 import {validateLibrary} from '../../vendor/foldarium/library-format.js';
 
 export function checkedBundleUrl(entry,base){

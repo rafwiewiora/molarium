@@ -1,6 +1,6 @@
 // Actual WebGPU throughput and human-review smoke test. No pose-accuracy claim.
 import assert from 'node:assert/strict';
-import {readFile,writeFile,mkdir,mkdtemp} from 'node:fs/promises';
+import {readFile,writeFile,mkdir,mkdtemp,cp} from 'node:fs/promises';
 import {resolve,join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {createHash} from 'node:crypto';
@@ -27,8 +27,10 @@ const report={schema:'molarium.library-throughput.v1',date:new Date().toISOStrin
   purpose:'Engineering throughput and library/review integration; arbitrary protein–ligand pairs, not a pose-accuracy benchmark.'};
 const panelPath=process.env.MOLARIUM_LIBRARY_PANEL;
 const panel=panelPath?JSON.parse(await readFile(panelPath,'utf8')):null;
+if(panel&&(!panel.seeds.length||panel.seeds.some((seed,i)=>!Number.isInteger(seed)||seed<0||seed!==(panel.seeds[0]+i))))
+  throw Error('This harness requires an explicit contiguous panel seed set');
 if(panel){report.purpose=panel.purpose;report.panelSha256=createHash('sha256').update(await readFile(panelPath)).digest('hex');}
-let checkpointTimer=null,checkpointWork=Promise.resolve();
+let checkpointTimer=null,checkpointWork=Promise.resolve(),failed=false,reviewPoseCount=0;
 try{
   if(output)await mkdir(output,{recursive:true});
   await waitFor(()=>b.evaluate('Boolean(window.MolariumChemistActionsReady)'),60000,'API');
@@ -38,6 +40,7 @@ try{
   await b.client.call('Browser.setDownloadBehavior',{behavior:'allow',downloadPath:download});
   const reuse=process.env.MOLARIUM_LIBRARY_REUSE;
   if(reuse){const original=JSON.parse(await readFile(reuse,'utf8'));
+    reviewPoseCount=original.poses.length;
     const id=await b.evaluate(`(async()=>{const {LibraryStore}=await import('./vendor/foldarium/library-store.js');return (await new LibraryStore().import(${JSON.stringify(original)})).id;})()`);
     await b.client.call('Page.reload',{});await waitFor(()=>b.evaluate('Boolean(window.MolariumChemistActionsReady)'),60000,'reloaded API');
     await b.evaluate('window.MolariumChemistActionsReady.then(()=>true)');
@@ -63,7 +66,7 @@ try{
     const previous=await b.evaluate(`document.querySelector('#fold-library-saved').value`);
     const input={...c,model:process.argv.includes('--boltz2')?'localfold-boltz2':'localfold-openbind0',
       msaMode:c.msaMode??'single',a3m:c.a3m??null,steps:process.argv.includes('--standard')?200:process.argv.includes('--quick')?1:25,
-      recycles:process.argv.includes('--standard')?3:process.argv.includes('--quick')?0:2,seed:0};
+      recycles:process.argv.includes('--standard')?3:process.argv.includes('--quick')?0:2,seed:panel?.seeds[0]??0};
     if(process.env.MOLARIUM_LIBRARY_USE_API==='1'){
       // Case IDs belong to the benchmark report, not the public action schema.
       const {id:caseId,...args}=input;
@@ -80,6 +83,7 @@ try{
       document.querySelector('#fold-library-samples').value=String(input.samples);
       document.querySelector('#fold-steps').value=String(input.steps);
       document.querySelector('#fold-recycles').value=String(input.recycles);
+      document.querySelector('#fold-seed').value=String(input.seed);
       document.querySelector('#fold-library-panel').open=true;
       document.querySelector('#fold-library-start').click();
     })()`);
@@ -87,16 +91,19 @@ try{
       document.querySelector('#fold-library-saved').value!==${JSON.stringify(previous)}
       &&document.querySelector('#fold-library-status').textContent.startsWith('running')`),60000,'new library started');
     if(started?.error)throw new Error(`Cofold API rejected request: ${started.error}`);
+    const activeRunId=await b.evaluate(`document.querySelector('#fold-library-saved').value`);
     await waitFor(()=>b.evaluate(`document.querySelector('#fold-library-status').textContent.startsWith('complete')
       ||document.querySelector('#fold-library-status').textContent.startsWith('Library stopped')`),900000,c.name);
     const status=await b.evaluate(`document.querySelector('#fold-library-status').textContent`);console.log(status);
     const bundle=await b.evaluate(`(async()=>{const {LibraryStore}=await import('./vendor/foldarium/library-store.js');
       const {stringifyLibrary}=await import('./vendor/foldarium/library-format.js');
-      return JSON.parse(stringifyLibrary(await new LibraryStore().bundle(document.querySelector('#fold-library-saved').value)));})()`);
+      return JSON.parse(stringifyLibrary(await new LibraryStore().bundle(${JSON.stringify(activeRunId)})));})()`);
     // Preserve failed poses and their diagnostics before checking completion.
     if(output)await writeFile(join(output,`library-${report.cases.length+1}.json`),JSON.stringify(bundle));
+    reviewPoseCount=bundle.poses.length;
     assert.match(status,/^complete ·/);
     assert.equal(bundle.poses.length,c.samples*c.compounds.split('\n').length);
+    assert.deepEqual(bundle.poses.map(p=>p.seed).sort((a,b)=>a-b),Array.from({length:c.samples},(_,i)=>input.seed+i));
     assert.ok(bundle.poses.every(p=>p.status==='complete'&&p.result.provenance.outputPdbSha256));
     const ordered=[...bundle.poses].sort((a,b)=>a.startedAt.localeCompare(b.startedAt));
     const inference=ordered.map(p=>p.result.elapsedMs),wall=ordered.map(p=>p.wallMs);
@@ -104,13 +111,14 @@ try{
       poses:ordered.map(p=>({id:p.id,seed:p.seed,smiles:bundle.run.compounds.find(c=>c.id===p.compoundId).smiles,
         wallMs:p.wallMs,inferenceMs:p.result.elapsedMs,totalMs:p.result.totalElapsedMs,runtime:p.result.runtime,pdbSha256:p.result.provenance.outputPdbSha256,
         provenance:p.result.provenance})),inferenceMs:inference,wallMs:wall,sessions:bundle.run.sessions,
-      warmMeanMs:wall.slice(1).reduce((a,b)=>a+b,0)/(wall.length-1),firstPoseMs:wall[0],status});
+      warmMeanMs:wall.length>1?wall.slice(1).reduce((a,b)=>a+b,0)/(wall.length-1):null,firstPoseMs:wall[0],status});
     if(output){await writeFile(join(output,`library-${report.cases.length}.json`),JSON.stringify(bundle));
       await writeFile(join(output,'throughput.json'),JSON.stringify(report,null,2)+'\n');}
   }
   const runId=await b.evaluate(`document.querySelector('#fold-library-saved').value`);
   await b.client.call('Page.navigate',{url:new URL(`vendor/foldarium/library-review.html?run=${encodeURIComponent(runId)}`,process.env.MOLARIUM_LIBRARY_URL??`http://127.0.0.1:${server.port}/`).href});
-  await waitFor(()=>b.evaluate(`document.querySelectorAll('.viewer canvas').length>=2||Boolean(document.querySelector('.viewer.error'))`),60000,'Foldarium grid');
+  assert.ok(reviewPoseCount>0);
+  await waitFor(()=>b.evaluate(`document.querySelectorAll('.viewer canvas').length>=${Math.min(2,reviewPoseCount)}||Boolean(document.querySelector('.viewer.error'))`),60000,'Foldarium grid');
   const errors=await b.evaluate(`Array.from(document.querySelectorAll('.viewer.error'),e=>e.textContent)`);
   assert.deepEqual(errors,[]);
   if(reuse){
@@ -140,6 +148,10 @@ try{
   if(output){await writeFile(join(output,'throughput.json'),JSON.stringify(report,null,2)+'\n');
     await writeFile(join(output,'foldarium-review.png'),await b.capturePng());}
   console.log(JSON.stringify(report));
-}catch(e){console.error(await b.evaluate(`({status:document.querySelector('#fold-library-status')?.textContent,
+}catch(e){failed=true;if(output)await writeFile(join(output,'failure.json'),JSON.stringify({error:String(e.message),at:new Date().toISOString(),
+  panelSha256:report.panelSha256,completedCases:report.cases.length},null,2)+'\n');
+console.error(await b.evaluate(`({status:document.querySelector('#fold-library-status')?.textContent,
   apiError:window.__cofoldApiError,notice:document.querySelector('#notice')?.textContent,message:document.querySelector('#message')?.textContent})`).catch(()=>null));throw e;}
-finally{if(checkpointTimer)clearInterval(checkpointTimer);await checkpointWork;await b.close();server.stop(true);}
+finally{if(checkpointTimer)clearInterval(checkpointTimer);await checkpointWork;
+  if(failed&&output){b.chrome.kill();await b.chrome.exited;await cp(b.profile,join(output,'failed-browser-profile'),{recursive:true}).catch(e=>console.error('Profile preservation:',e.message));}
+  await b.close();server.stop(true);}

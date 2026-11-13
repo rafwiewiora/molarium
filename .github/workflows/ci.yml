@@ -128,6 +128,10 @@ jobs:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
           MOLARIUM_LIBRARY_REUSE: reviews/library-cofolding-2026-11-12/standard/library-1.json
         run: bun scripts/cofold-library.browser.mjs
+      - name: Check closed IndexedDB recovery and checkpoint loss without repeated inference
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+        run: bun scripts/cofold-storage.browser.mjs
       - name: Check recent-PDB review links, saved decisions and reference separation
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}

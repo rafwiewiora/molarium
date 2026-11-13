@@ -1,27 +1,32 @@
 [
   {
     "id": "boltz2-baseline",
-    "label": "Boltz-2 · original SMILES · single sequence",
+    "label": "Boltz-2 · original SMILES · single sequence · 25 steps",
     "directory": "browser-boltz2-baseline"
   },
   {
     "id": "boltz2-normalized",
-    "label": "Boltz-2 · normalized SMILES · single sequence",
+    "label": "Boltz-2 · normalized SMILES · single sequence · 25 steps",
     "directory": "browser-boltz2-normalized"
   },
   {
     "id": "openbind0-normalized",
-    "label": "OpenBind-0 · normalized SMILES · single sequence",
+    "label": "OpenBind-0 · normalized SMILES · single sequence · 25 steps",
     "directory": "browser-openbind0-normalized"
   },
   {
     "id": "boltz2-msa256",
-    "label": "Boltz-2 · normalized SMILES · MSA256",
+    "label": "Boltz-2 · normalized SMILES · MSA256 · 25 steps",
     "directory": "browser-boltz2-msa256"
   },
   {
     "id": "openbind0-msa256",
-    "label": "OpenBind-0 · normalized SMILES · MSA256",
+    "label": "OpenBind-0 · normalized SMILES · MSA256 · 25 steps",
     "directory": "browser-openbind0-msa256"
+  },
+  {
+    "id": "openbind0-msa256-standard",
+    "label": "OpenBind-0 · MSA256 · 200 steps",
+    "directory": "browser-openbind0-msa256-standard"
   }
 ]
