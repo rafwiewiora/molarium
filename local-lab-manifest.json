@@ -82,8 +82,8 @@
     },
     {
       "path": "folding/localfold.mjs",
-      "bytes": 8709,
-      "sha256": "4136962ee8572fca8f23a4938ab85a56601d7926502d982fd304be06c050896d"
+      "bytes": 9422,
+      "sha256": "3f335172748282de1707a23c93db1732037ee15468bfc67c31e74b0ca8025613"
     },
     {
       "path": "folding/library.mjs",
@@ -202,8 +202,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 75579,
-      "sha256": "34643708856dd3f316b3032f82794f8890bcbee8fa38679081567ba7a1910794"
+      "bytes": 75669,
+      "sha256": "276b9d4ebf7a1b38049c00c3f824a8857178d0ac53fc81a89308484223981b3c"
     },
     {
       "path": "reproductions.html",
@@ -317,8 +317,8 @@
     },
     {
       "path": "rdkit-worker.js",
-      "bytes": 25022,
-      "sha256": "7b929dcfa40727d775ee92fb165c6d02f7653d825faaaed1b18f5b714a7ce81e"
+      "bytes": 25724,
+      "sha256": "4500deb0bcdf0f875d8635ec513100e50d9976a204d2ff9ea2588a827dce0fb2"
     },
     {
       "path": "rdkit/dimorphite-sites.js",
@@ -1369,6 +1369,11 @@
       "path": "vendor/localfold/shared/af3/featurise/ccd-component.js",
       "bytes": 19217,
       "sha256": "dc216fc21b33e21e986993ee7ce34e77f10a33b33676eacee5d218ea87db74dd"
+    },
+    {
+      "path": "folding/ligand-normalization.mjs",
+      "bytes": 2321,
+      "sha256": "bc8a9b5879bd1e2f382be6152a4a2956a08dc19de8c0e1b166608459b7c73697"
     },
     {
       "path": "vendor/localfold/web/model.js",
