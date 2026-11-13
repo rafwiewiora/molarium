@@ -49,7 +49,6 @@ export class DevToolsClient {
   }
 
   call(method, params = {}, timeoutMs = 300000) {
-    if(this.socket.readyState!==WebSocket.OPEN)return Promise.reject(new Error('Chrome debugging connection closed'));
     const id = this.nextId++;
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {

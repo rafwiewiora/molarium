@@ -17,6 +17,11 @@ const server=Bun.serve({hostname:'127.0.0.1',port:0,fetch(req){
   return new Response(Bun.file(join(root,path==='/'?'index.html':path)),{headers});
 }});
 const b=await startMolariumBrowser({url:process.env.MOLARIUM_LIBRARY_URL??`http://127.0.0.1:${server.port}/?blank=1`,width:1500,height:1100});
+// Keep the source-pinned simulation harness unchanged; guard this cofolding
+// monitor locally so a closed connection cannot become a false five-minute wait.
+const evaluateBrowser=b.evaluate.bind(b);
+b.evaluate=(...args)=>b.client.socket.readyState===WebSocket.OPEN?evaluateBrowser(...args)
+  :Promise.reject(new Error('Chrome debugging connection closed'));
 const download=await mkdtemp(join(tmpdir(),'cofold-library-download-'));
 const report={schema:'molarium.library-throughput.v1',date:new Date().toISOString(),cases:[],
   purpose:'Engineering throughput and library/review integration; arbitrary protein–ligand pairs, not a pose-accuracy benchmark.'};

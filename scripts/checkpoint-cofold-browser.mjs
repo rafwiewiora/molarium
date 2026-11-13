@@ -23,7 +23,8 @@ async function main(){
  const panel=JSON.parse(await Bun.file(panelFile).text()),pages=await(await fetch(`http://127.0.0.1:${port}/json`)).json();
  const page=pages.find(p=>p.type==='page'&&new URL(p.url).origin===origin);if(!page)throw Error('Task browser page not found');
  const client=new DevToolsClient(page.webSocketDebuggerUrl);await client.open();
- const evaluate=async expression=>{const r=await client.call('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(r.exceptionDetails)throw Error(r.exceptionDetails.text);return r.result.value;};
+ const evaluate=async expression=>{if(client.socket.readyState!==WebSocket.OPEN)throw Error('Chrome debugging connection closed');
+  const r=await client.call('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(r.exceptionDetails)throw Error(r.exceptionDetails.text);return r.result.value;};
  const seen=new Set(),started=Date.now();
  try{while(Date.now()-started<3*3600*1000){await checkpointLibraries(evaluate,panel,resolve(out),seen);await new Promise(r=>setTimeout(r,5000));}}
  catch(e){console.log(JSON.stringify({checkpointProcessEnded:String(e.message),snapshots:seen.size}));}
