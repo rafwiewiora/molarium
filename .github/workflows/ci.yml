@@ -128,6 +128,7 @@ jobs:
         run: |
           MOLARIUM_LIBRARY_REUSE=reviews/cofold-method-comparison-2026-11-12/boltz2-browser-native.library.json bun scripts/cofold-library.browser.mjs
           MOLARIUM_LIBRARY_REUSE=reviews/cofold-method-comparison-2026-11-12/openbind0-browser-native.library.json bun scripts/cofold-library.browser.mjs
+          MOLARIUM_LIBRARY_REUSE=reviews/cofold-method-comparison-2026-11-12/boltz2-browser-standard.library.json bun scripts/cofold-library.browser.mjs
       - name: Check numerical-only public validation panel and evidence links
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}

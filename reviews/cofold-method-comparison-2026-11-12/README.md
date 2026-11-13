@@ -120,12 +120,24 @@ This figure uses the completed 25-step control; the 200-step cohort is incomplet
 - [Complete OpenBind pairwise metrics and seed-spread controls](openbind0-torch-reference-agreement.json)
 - [Native library](native-openbind0-torch-reference/library.json), [public receipt](native-openbind0-torch-reference/receipt.public.json), and [raw mmCIFs, consumed configuration/source and timings](native-openbind0-torch-reference/native-artifacts.zip)
 
-**Pending:** native Boltz-2 standard sampling remains eligible for normal L4 and
-L4 Spot. A 200-step/three-recycle OpenBind FP32 dense-kernel control was submitted
-with T4 Spot eligibility; the unstarted L4 OpenBind controls were canceled
-to concentrate on this standard-sampling comparison rather than duplicate the
-completed reference. Spot capacity shortages have delayed startup. These runs
-are not counted as completed comparisons.
+The **native Boltz-2 standard run completed all 48 poses** on L4 Spot, using
+200 sampling steps, three recycles and BF16 mixed precision. CLI wall time was
+802.14 s; median synchronized forward 11.87 s (mean 12.45 s). Peak allocated/
+reserved GPU memory was 2,139,280,384 / 2,363,490,304 bytes. Browser-versus-standard
+median seed-paired, nearest-of-three and one-to-one ligand RMSDs were 14.86,
+11.94 and 13.48 Å. Median protein Cα RMSD over the 144 cross-seed pairs was
+0.98 Å. Within-native standard ligand spread was 7.09 Å, compared with 10.64 Å
+for native low-step sampling. More native sampling changes the ensemble; it does
+not identify a correct bound pose for these arbitrary pairs.
+
+- [Boltz browser/native standard review library](boltz2-browser-standard.library.json)
+- [Full browser/standard and native low-step/standard comparisons](boltz2-standard-agreement.json)
+- [Native standard library](native-boltz2-standard/library.json), [public receipt](native-boltz2-standard/receipt.public.json), and [original artifacts](native-boltz2-standard/native-artifacts.zip)
+
+**Pending:** OpenBind standard sampling has 46 validated poses preserved across
+two interrupted attempts; only compound 015, seeds 1 and 2, remain. A new attempt
+requests exactly those two poses with the same 200-step/three-recycle FP32 dense
+protocol. This incomplete cohort is not counted as a completed comparison.
 
 The [reproducible protocol and analysis tools](../../folding/comparison/README.md)
 document exact releases, trained checkpoint selection, timing boundaries and
