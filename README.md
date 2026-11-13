@@ -469,10 +469,12 @@ runs, an independent ligand-feature check, and
 [Foldarium review with optional crystal references](reviews/cofold-recent-pdb-2026-11-13/index.html).
 The input chemistry correction is verified; it does not establish accurate pose
 prediction. Six complete phases retain 162 poses, including provided-MSA and
-200-step OpenBind controls. Another 54 completed native single-sequence poses
-bring the interactive review to 216 predictions. The native KIT placements that
-meet 2 Å fail the specified stereochemistry; native matched-MSA controls and an
-interrupted browser Boltz standard control remain tracked separately.
+200-step OpenBind controls. Native single-sequence and exact-MSA controls
+bring the interactive review to **243 predictions**. Native OpenBind MSA recovers
+seven poses across three systems within 2 Å while passing limited stereo/clash
+checks, but browser/native agreement remains unresolved. Native KIT placements
+that meet 2 Å have the wrong specified stereochemistry. Native Boltz exact-MSA
+and an interrupted browser Boltz standard control remain tracked separately.
 An [independent fixed-input transition-layer audit](reviews/cofold-layer-parity-2026-11-13/README.md)
 preserves exact official FP32/FP64 and WebGPU arrays. Ordinary inputs agree
 closely, but a near-constant stress input exposes nonfinite fast-variance output.

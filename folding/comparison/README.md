@@ -8,14 +8,19 @@ provided-MSA and native controls are tracked explicitly. The
 [finding-to-fix ledger](../../reviews/cofold-recent-pdb-2026-11-13/findings.md)
 links each correction to evidence and regressions.
 
-The recent panel now includes 54 complete native single-sequence predictions.
+The recent panel includes 54 complete native single-sequence predictions and
+27 native OpenBind MSA predictions; the interactive review retains all 243 poses.
 `package_native_panel.py` publishes exact coordinates, named topology, consumed
 inputs/runner and public scientific receipts without rerunning inference.
 `check_native_panel.py` independently reconstructs every exported PDB and crystal
 score from those archives, including stereochemical failures. Only private CLI
 argument paths are removed; original receipt hashes remain attached. The
-regression runs in the existing cofolding-analysis CI gate. Native exact-MSA
-controls are tracked separately from these single-sequence results.
+regression runs in the existing cofolding-analysis CI gate. Recovered cohorts
+retain each source's original status, consumed inputs/runner and stopped-output
+inventory; `native_panel_recovery.py` validates the complete assembly without
+repeating science. `native_panel_timings.py` summarizes synchronized native
+forward records separately from browser end-to-end timings. Native Boltz MSA
+remains incomplete and is not counted as a complete phase.
 
 These tools compare completed structure predictions without rerunning inference
 or treating a native prediction as an experimental answer. The first cohort is

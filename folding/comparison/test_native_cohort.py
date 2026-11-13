@@ -6,6 +6,7 @@ import json
 import subprocess
 import sys
 import hashlib
+import native_panel_recovery
 from pathlib import Path
 from types import SimpleNamespace
 from native_cohort import remaining_groups,validate_inventory,assemble,plan
@@ -125,6 +126,31 @@ class RecoverySelectionTests(unittest.TestCase):
             subprocess.run([sys.executable,str(root/'folding/comparison/convert_native.py'),'--native',str(out),
               '--inputs',str(d/'inputs/comparison.json'),'--output',str(exported)],check=True,capture_output=True)
             recovered=json.loads(exported.read_text())
+            cohort=json.loads((out/'receipt.json').read_text())
+            members={f'fixture/inputs/{p.relative_to(d/"inputs")}':p.read_bytes()
+                     for p in (d/'inputs').rglob('*')if p.is_file()}
+            native_panel_recovery.package(members,'fixture',cohort,d/'inputs',[
+                {'native':partial,'inputs':d/'inputs','runner':d/'consumed-native_run.py'},
+                {'native':resumed,'inputs':group,'runner':d/'consumed-native_run.py'}])
+            with tempfile.TemporaryDirectory()as check:
+                native_panel_recovery.verify(members,'fixture',cohort,Path(check))
+            self.assertEqual(cohort['sources'][0]['originalStatus'],'running')
+            self.assertIsNone(cohort['elapsedSeconds'])
+            # Independently tamper with the consumed runner, a saved prediction,
+            # and the stopped-output inventory. All must fail offline checking.
+            targets=['fixture/recovery/part-000/consumed-native_run.py',
+                     next(n for n in members if n.startswith('fixture/recovery/part-000/native/')and n.endswith('_model.cif')),
+                     'fixture/recovery/part-000/native/stopped-output-inventory.json']
+            for name in targets:
+                changed=dict(members)
+                if name.endswith('stopped-output-inventory.json'):
+                    inventory=json.loads(changed[name]);inventory['nativeReceiptSha256']='0'*64
+                    changed[name]=json.dumps(inventory).encode()
+                else:
+                    changed[name]+=b'\n# changed\n'
+                with self.subTest(tampered=name),tempfile.TemporaryDirectory()as check:
+                    with self.assertRaises((AssertionError,ValueError)):
+                        native_panel_recovery.verify(changed,'fixture',cohort,Path(check))
         identify=lambda b:{(p['compoundId'],p['seed']):p['result']['provenance']['outputPdbSha256']for p in b['poses']}
         self.assertEqual(identify(recovered),identify(original));self.assertEqual(len(recovered['poses']),48)
         self.assertIsNone(recovered['run']['provenance']['timing']['elapsedSeconds'])

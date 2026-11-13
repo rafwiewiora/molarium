@@ -234,8 +234,9 @@ controls were submitted on PSIgreen with 200 steps and three recycles. Their CPU
 input/configuration preflight passed. All **54 native single-sequence poses**
 have now been retrieved, checked against a source-side SHA-256 inventory,
 converted using explicit native topology and scored against the unchanged
-experimental references. They are included in Foldarium: **216 predictions**
-across six complete browser phases and two complete native phases.
+experimental references. The following native MSA control adds another 27:
+Foldarium now contains **243 predictions** across six complete browser phases
+and three complete native phases.
 
 | System | Native OpenBind protein / ligand median RMSD | Native Boltz protein / ligand median RMSD |
 | --- | ---: | ---: |
@@ -258,7 +259,7 @@ the browser port causes the failures: native input handling, conformers, model,
 precision and sampling remain distinct. Native input-conformer selection has
 not been reconstructed from the saved molecule cache.
 
-![All 216 browser/native poses, with geometric successes that fail stereo/clash checks marked by crosses.](browser-native-reconstruction.png)
+![All 243 browser/native poses, with geometric successes that fail stereo/clash checks marked by crosses.](browser-native-reconstruction.png)
 
 The [combined score file](all-protocol-scores.json) retains each seed and its
 original phase. Crosses mark poses within 2 Å that fail the limited stereo/clash
@@ -280,12 +281,61 @@ These compare normalized single-sequence browser 25-step/two-recycle runs with
 native 200-step/three-recycle runs. They are not precision-only or matched-RNG
 comparisons and do not measure experimental accuracy.
 
-Separate native controls with the **exact saved MSA256 inputs** have passed
-official CPU feature preflight on PSIgreen. Those separate results are not yet
-included or counted as complete phases here. No new standalone VM, priority
-change or cap bypass is used.
-Equal integer seeds do not match random tensors. These controls compare complete
-prediction protocols; they do not establish fixed-tensor numerical parity.
+## Native MSA control: matched alignment and sampling effort
+
+Official OpenBind/OpenFold3 FP32 dense completed **27/27 poses** with the exact
+saved MSA256 alignments, 200 sampling steps and three recycles. This matches the
+browser OpenBind standard control's declared alignment and sampling effort.
+Complete features, reference conformers, precision and random tensors are still
+not matched. Equal integer seeds do not establish numerical parity.
+
+| System | Native median protein / ligand RMSD | Poses ≤2 Å | Also pass limited stereo/clash checks |
+| --- | ---: | ---: | ---: |
+| 9SY7 | 1.04 / 4.77 Å | 0/3 | 0/3 |
+| 9SXF | 3.12 / 2.15 Å | 1/3 | 0/3 |
+| 9T51 | 1.84 / 0.83 Å | 3/3 | 3/3 |
+| 9SYO | 2.73 / 6.12 Å | 0/3 | 0/3 |
+| 15JI | 0.92 / 4.49 Å | 0/3 | 0/3 |
+| 9XHG | 1.99 / 25.18 Å | 0/3 | 0/3 |
+| 9XJQ | 0.47 / 2.61 Å | 1/3 | 1/3 |
+| 32QY | 2.83 / 3.57 Å | 0/3 | 0/3 |
+| 9T3V | 0.58 / 1.10 Å | 3/3 | 3/3 |
+
+Eight poses meet the geometric criterion; the KIT pose has the wrong specified
+tetrahedral stereochemistry. **Seven of 27** meet both the geometric criterion
+and the limited stereo/clash checks: all STARD4 and sEH seeds, plus WDR5 seed 0.
+Thus three of nine systems have at least one such pose; this is not broad pose
+accuracy. STING remains poorly placed despite a much closer protein fold.
+No candidate is omitted or selected using the crystal answer.
+
+The [browser/native agreement](native-msa-agreement.json) retains all cross-seed
+pairs and within-method spread. Across the nine systems, median seed-paired
+mean ligand disagreement is **3.47 Å**; one-to-one ensemble assignment gives
+**3.20 Å**. STARD4 agrees closely (0.48 Å seed-paired mean), while YTHDF2 differs
+by 13.85 Å. Matching alignment rows and sampling counts has therefore not
+established whole-model agreement or localized its cause.
+
+[Raw evidence](native-openbind0-msa256-standard/evidence.json),
+[all scores](native-openbind0-msa256-standard/scores.json) and
+[forward timings](native-openbind0-msa256-standard/timings.json) are public.
+Median synchronized native forward time ranges from **22.64 to 93.66 seconds**
+per system on Tesla T4. This excludes model loading, input preparation and CLI
+startup; it is not a browser/native speedup measurement. The browser throughput
+files retain their distinct end-to-end timing boundary.
+
+WDR5's interrupted attempt had all three saved outputs; KIT and sEH each had
+seed 0 saved. Recovery retained these five predictions and computed only the
+four missing KIT/sEH seeds. The public archive preserves original interrupted
+receipts, inventories, exact inputs and each consumed runner, while the complete
+assembled cohorts have their own receipts. Offline checks revalidate source
+lineage, unique coverage, every exported coordinate, all crystal scores and
+timing summaries without model inference:
+[recovery finding and implementation](../COFOLD_NATIVE_RECOVERY_EVIDENCE_2026-11-13.md).
+
+Native Boltz exact-MSA controls have 21 saved poses; two zero-output startup
+failures have missing-only retries queued at normal priority on PSIgreen. That
+incomplete phase is not counted in the 243-prediction review. No new standalone
+VM, priority change or cap bypass is used.
 
 ## Reproduce
 

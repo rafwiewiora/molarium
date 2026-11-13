@@ -1,0 +1,344 @@
+{
+  "schema": "molarium.native-panel-forward-timings.v1",
+  "evidenceSha256": "a4b43e75d225ac4176157f8f605d05ec62fb744e048760659f814430c1066583",
+  "boundary": "CUDA-synchronized official model forward, including sampling and confidence; excludes checkpoint loading, input featurization, CLI startup and output writing. Records are not assigned to individual seeds.",
+  "comparisonLimit": "Native GPU/precision differs from browser runs; browser elapsed times have different boundaries. These numbers alone are not a browser/native speedup measurement.",
+  "cases": [
+    {
+      "caseId": "9sy7-a1jrx",
+      "forwards": 3,
+      "medianSeconds": 23.358370937000018,
+      "minSeconds": 23.194972172000007,
+      "maxSeconds": 24.061249832999977,
+      "peakReservedBytes": 1889533952,
+      "sources": [
+        {
+          "file": "9sy7-a1jrx/outputs/forward-times.jsonl",
+          "sha256": "c3ccc64aecf5c58a8d612b55415d19f6c33c61649ce40d69317c42185433ecaa",
+          "gpu": "Tesla T4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 24.061249832999977,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 1840404992,
+          "peakReservedBytes": 1889533952
+        },
+        {
+          "seconds": 23.194972172000007,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 1840404992,
+          "peakReservedBytes": 1889533952
+        },
+        {
+          "seconds": 23.358370937000018,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 1840404992,
+          "peakReservedBytes": 1889533952
+        }
+      ]
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "forwards": 3,
+      "medianSeconds": 82.520602217,
+      "minSeconds": 78.723279112,
+      "maxSeconds": 82.59308831500005,
+      "peakReservedBytes": 3584032768,
+      "sources": [
+        {
+          "file": "9sxf-a1jrg/recovery/part-000/native/forward-times.jsonl",
+          "sha256": "e6b182336b54d6984cc0fe087ce6a43231115501e4e984d67146570902786935",
+          "gpu": "Tesla T4",
+          "forwards": 1
+        },
+        {
+          "file": "9sxf-a1jrg/recovery/part-001/native/forward-times.jsonl",
+          "sha256": "5091428251e4b1a35c14c6bfbaac7e9ac428cef1786717071402c35586752e04",
+          "gpu": "Tesla T4",
+          "forwards": 2
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 78.723279112,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 3414346240,
+          "peakReservedBytes": 3584032768
+        },
+        {
+          "seconds": 82.520602217,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 3414346240,
+          "peakReservedBytes": 3584032768
+        },
+        {
+          "seconds": 82.59308831500005,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 3414346240,
+          "peakReservedBytes": 3584032768
+        }
+      ]
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "forwards": 3,
+      "medianSeconds": 34.83185856900002,
+      "minSeconds": 34.253292789,
+      "maxSeconds": 34.862328907999995,
+      "peakReservedBytes": 2271215616,
+      "sources": [
+        {
+          "file": "9t51-a1jtm/outputs/forward-times.jsonl",
+          "sha256": "a62fd357ac1a3736f17a0aabffb110774c0b4a34097830efb27a4d0e04a6d37b",
+          "gpu": "Tesla T4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 34.83185856900002,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 2167401984,
+          "peakReservedBytes": 2271215616
+        },
+        {
+          "seconds": 34.253292789,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 2167401984,
+          "peakReservedBytes": 2271215616
+        },
+        {
+          "seconds": 34.862328907999995,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 2167401984,
+          "peakReservedBytes": 2271215616
+        }
+      ]
+    },
+    {
+      "caseId": "9syo-a1jr1",
+      "forwards": 3,
+      "medianSeconds": 37.34955839500003,
+      "minSeconds": 37.19447275599998,
+      "maxSeconds": 38.432635645000005,
+      "peakReservedBytes": 2376073216,
+      "sources": [
+        {
+          "file": "9syo-a1jr1/outputs/forward-times.jsonl",
+          "sha256": "43fd446e2b9c77578457b75c5e8557191404c2b094e5f5b9b816f329eec082bc",
+          "gpu": "Tesla T4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 37.19447275599998,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 2262036992,
+          "peakReservedBytes": 2376073216
+        },
+        {
+          "seconds": 37.34955839500003,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 2262036992,
+          "peakReservedBytes": 2376073216
+        },
+        {
+          "seconds": 38.432635645000005,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 2262036992,
+          "peakReservedBytes": 2376073216
+        }
+      ]
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "forwards": 3,
+      "medianSeconds": 26.087912070000016,
+      "minSeconds": 25.133924191999995,
+      "maxSeconds": 29.11304054500002,
+      "peakReservedBytes": 1931476992,
+      "sources": [
+        {
+          "file": "15ji-a1d2g/outputs/forward-times.jsonl",
+          "sha256": "515dce51babd24bc0c70f71ec2b2fc6e5a9927452bbc56c0d1dae011ec53c36b",
+          "gpu": "Tesla T4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 29.11304054500002,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 1874860032,
+          "peakReservedBytes": 1931476992
+        },
+        {
+          "seconds": 25.133924191999995,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 1874860032,
+          "peakReservedBytes": 1931476992
+        },
+        {
+          "seconds": 26.087912070000016,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 1874860032,
+          "peakReservedBytes": 1931476992
+        }
+      ]
+    },
+    {
+      "caseId": "9xhg-1il",
+      "forwards": 3,
+      "medianSeconds": 29.873307271000016,
+      "minSeconds": 29.543752417000007,
+      "maxSeconds": 30.502183782000003,
+      "peakReservedBytes": 2101346304,
+      "sources": [
+        {
+          "file": "9xhg-1il/outputs/forward-times.jsonl",
+          "sha256": "a90ba5f93949c98758ffbf8497d4cc1b92b0ccb05b1f4b2bbda2f342b1e73383",
+          "gpu": "Tesla T4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 30.502183782000003,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 2027142144,
+          "peakReservedBytes": 2101346304
+        },
+        {
+          "seconds": 29.543752417000007,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 2027142144,
+          "peakReservedBytes": 2101346304
+        },
+        {
+          "seconds": 29.873307271000016,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 2027142144,
+          "peakReservedBytes": 2101346304
+        }
+      ]
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "forwards": 3,
+      "medianSeconds": 69.84653355399999,
+      "minSeconds": 67.73525761000002,
+      "maxSeconds": 70.47375189799999,
+      "peakReservedBytes": 3210739712,
+      "sources": [
+        {
+          "file": "9xjq-a1e0i/recovery/part-000/native/forward-times.jsonl",
+          "sha256": "6f8fc08c2eff1113bdc70c1c4aa993f468d3984499f351a84485ad790e90044f",
+          "gpu": "Tesla T4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 67.73525761000002,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 3051314688,
+          "peakReservedBytes": 3210739712
+        },
+        {
+          "seconds": 69.84653355399999,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 3051314688,
+          "peakReservedBytes": 3210739712
+        },
+        {
+          "seconds": 70.47375189799999,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 3051314688,
+          "peakReservedBytes": 3210739712
+        }
+      ]
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "forwards": 3,
+      "medianSeconds": 22.644335566999985,
+      "minSeconds": 22.531142163,
+      "maxSeconds": 24.692167514000005,
+      "peakReservedBytes": 1910505472,
+      "sources": [
+        {
+          "file": "32qy-a1keo/outputs/forward-times.jsonl",
+          "sha256": "f99964daf54e24911bcbc6ea641fa052068ad2dbe78ba92868c324ca6d479fae",
+          "gpu": "Tesla T4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 24.692167514000005,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 1855695872,
+          "peakReservedBytes": 1910505472
+        },
+        {
+          "seconds": 22.644335566999985,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 1855695872,
+          "peakReservedBytes": 1910505472
+        },
+        {
+          "seconds": 22.531142163,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 1855695872,
+          "peakReservedBytes": 1910505472
+        }
+      ]
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "forwards": 3,
+      "medianSeconds": 93.65540641999996,
+      "minSeconds": 87.64812969300004,
+      "maxSeconds": 93.958949493,
+      "peakReservedBytes": 4047503360,
+      "sources": [
+        {
+          "file": "9t3v-a1jtg/recovery/part-000/native/forward-times.jsonl",
+          "sha256": "33b16ebfe631449c882f3d55d8c6248bcb5a8c584dc354a4e4ad44542dc42e2e",
+          "gpu": "Tesla T4",
+          "forwards": 1
+        },
+        {
+          "file": "9t3v-a1jtg/recovery/part-001/native/forward-times.jsonl",
+          "sha256": "5df5a084fc026b8729cc69841d43e563e457500cc5bb6506cb4bf4971273a786",
+          "gpu": "Tesla T4",
+          "forwards": 2
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 87.64812969300004,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 3845722624,
+          "peakReservedBytes": 4047503360
+        },
+        {
+          "seconds": 93.958949493,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 3845722624,
+          "peakReservedBytes": 4047503360
+        },
+        {
+          "seconds": 93.65540641999996,
+          "autocastEnabled": false,
+          "peakAllocatedBytes": 3845722624,
+          "peakReservedBytes": 4047503360
+        }
+      ]
+    }
+  ]
+}

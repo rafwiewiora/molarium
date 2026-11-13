@@ -1,0 +1,116 @@
+{
+  "schema": "molarium.native-panel-forward-timings.v1",
+  "evidenceSha256": "edfc833eddecfb7765b5db72e71eac1a168b82b471323d7edf1597ea07f242fe",
+  "boundary": "CUDA-synchronized official model forward, including sampling and confidence; excludes checkpoint loading, input featurization, CLI startup and output writing. Records are not assigned to individual seeds.",
+  "comparisonLimit": "Native GPU/precision differs from browser runs; browser elapsed times have different boundaries. These numbers alone are not a browser/native speedup measurement.",
+  "cases": [
+    {
+      "caseId": "3mxf-jq1",
+      "forwards": 3,
+      "medianSeconds": 12.123956928000553,
+      "minSeconds": 12.016467375997308,
+      "maxSeconds": 58.98521851300029,
+      "peakReservedBytes": 2566914048,
+      "sources": [
+        {
+          "file": "3mxf-jq1/outputs/forward-times.jsonl",
+          "sha256": "2b17c56be3c732e28fb294beed694b49e1a866c21513489f8cebb9c70137ca17",
+          "gpu": "NVIDIA L4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 58.98521851300029,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2275225088,
+          "peakReservedBytes": 2566914048
+        },
+        {
+          "seconds": 12.016467375997308,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2275225088,
+          "peakReservedBytes": 2566914048
+        },
+        {
+          "seconds": 12.123956928000553,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2275225088,
+          "peakReservedBytes": 2566914048
+        }
+      ]
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "forwards": 3,
+      "medianSeconds": 11.902069132999998,
+      "minSeconds": 11.816714528000034,
+      "maxSeconds": 28.36719157799999,
+      "peakReservedBytes": 2592079872,
+      "sources": [
+        {
+          "file": "1fkf-fk5/outputs/forward-times.jsonl",
+          "sha256": "f1cf8594e62aa6bf31a87d30bd0eca5771ae7da4e86135877db1f1597f7cadbe",
+          "gpu": "NVIDIA L4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 28.36719157799999,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2290109440,
+          "peakReservedBytes": 2583691264
+        },
+        {
+          "seconds": 11.816714528000034,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2292376576,
+          "peakReservedBytes": 2592079872
+        },
+        {
+          "seconds": 11.902069132999998,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2292376576,
+          "peakReservedBytes": 2592079872
+        }
+      ]
+    },
+    {
+      "caseId": "181l-bnz",
+      "forwards": 3,
+      "medianSeconds": 12.213251927998499,
+      "minSeconds": 11.900574429999324,
+      "maxSeconds": 25.604457690000345,
+      "peakReservedBytes": 2627731456,
+      "sources": [
+        {
+          "file": "181l-bnz/outputs/forward-times.jsonl",
+          "sha256": "509e91ddaf04263e4d5441e5ad1cf0184c9dd7e37908cf41ea8f6db9e9eb5912",
+          "gpu": "NVIDIA L4",
+          "forwards": 3
+        }
+      ],
+      "recordsInSourceCallOrder": [
+        {
+          "seconds": 25.604457690000345,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2312749056,
+          "peakReservedBytes": 2627731456
+        },
+        {
+          "seconds": 11.900574429999324,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2312749056,
+          "peakReservedBytes": 2627731456
+        },
+        {
+          "seconds": 12.213251927998499,
+          "autocastEnabled": true,
+          "peakAllocatedBytes": 2312749056,
+          "peakReservedBytes": 2627731456
+        }
+      ]
+    }
+  ]
+}

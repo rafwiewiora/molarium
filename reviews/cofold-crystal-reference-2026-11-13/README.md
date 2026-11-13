@@ -65,10 +65,22 @@ or explain the separate effects of MSA input, quantization, features and samplin
 [Exact native outputs, graphs, consumed inputs and scientific receipts](native-openbind0-single-standard/evidence.json)
 and [every score](native-openbind0-single-standard/scores.json) are public. A
 regression independently reconstructs all nine exports and crystal scores.
-Native Boltz completed JQ1 and benzene; its FK5 job failed during RDKit import
-before producing any pose and then suffered a Spot interruption. A new
-missing-only attempt preserves that failure and repeats no saved predictions.
-The complete Boltz control remains pending.
+Native Boltz is now complete as well. The zero-output FK5 startup failure was
+preserved, and its missing-only retry supplied the three remaining predictions.
+All **9/9 native Boltz poses** meet 2 Å and the limited stereo/clash checks:
+median protein / ligand RMSD is 0.22 / 0.30 Å for JQ1, 0.40 / 0.93 Å for FK5,
+and 0.33 / 0.55 Å for benzene. The native FK5 results contrast with the browser
+25-step results (median 6.49 Å and stereochemical errors). Sampling effort,
+precision, features, conformers and RNG differ, so this does not isolate the
+cause to the port or prove that more sampling alone fixes FK5.
+
+[Native Boltz coordinates, chemistry and receipts](native-boltz2-single-standard/evidence.json),
+[all nine scores](native-boltz2-single-standard/scores.json),
+[browser/native agreement](native-boltz-agreement.json) and
+[synchronized forward timings](native-boltz2-single-standard/timings.json) are
+public. Native forward medians are 11.90–12.21 seconds on NVIDIA L4, excluding
+CLI/model startup and input preparation. Every original and missing-only native
+output is independently reconstructed and rescored by the public-data checker.
 
 The [complete per-seed scores](browser-scores.json) include contact overlap,
 centroid displacement, severe-clash diagnostics, tetrahedral stereochemistry,
@@ -89,18 +101,18 @@ Raw libraries and timing/provenance records:
 
 - [OpenBind-0](browser-openbind0/throughput.json): [BRD4](browser-openbind0/library-1.json), [FKBP12](browser-openbind0/library-2.json), [lysozyme](browser-openbind0/library-3.json).
 - [Boltz-2](browser-boltz2/throughput.json): [BRD4](browser-boltz2/library-1.json), [FKBP12](browser-boltz2/library-2.json), [lysozyme](browser-boltz2/library-3.json).
-- Foldarium inspection bundles: [BRD4](review/3mxf-jq1.library.json), [FKBP12](review/1fkf-fk5.library.json), [lysozyme](review/181l-bnz.library.json). Import into the Molarium-hosted Foldarium reviewer. Each contains one clearly labelled experimental reference and every browser prediction, with no saved preferences. The reference is never counted as a prediction.
+- Foldarium inspection bundles: [BRD4](review/3mxf-jq1.library.json), [FKBP12](review/1fkf-fk5.library.json), [lysozyme](review/181l-bnz.library.json). Import into the Molarium-hosted Foldarium reviewer. Each contains one clearly labelled experimental reference and every browser and native prediction, with no saved preferences. The reference is never counted as a prediction.
 
 ## Native controls
 
 Official unquantized OpenBind-0/OpenFold3 0.5.1 (FP32 dense PyTorch) and Boltz 2.2.1
-(BF16 mixed) controls are queued on PSIgreen with 200 steps, three recycles,
-single-sequence input and the same three seeds. This differs from the browser's
-sampling effort and does not establish fixed-input numerical parity.
-The CPU configuration/chemical-input preflight passed. Initial T4 allocations
-failed before their batch scripts started; the unchanged, unconsumed tasks were
-resubmitted to normal/L4 queues. Native predictions are **pending**, not included
-in the completed table above.
+(BF16 mixed) controls are complete: nine poses per model on PSIgreen, 200 steps,
+three recycles, single-sequence input and the same three integer seeds. Their
+results are reported separately above and included in the Foldarium bundles:
+36 predictions total, plus one labelled experimental reference per system.
+The browser uses 25 steps/two recycles and int5 weights. These are complete
+protocol comparisons, not fixed-input numerical parity. Raw failed startup
+history remains preserved; no saved inference was repeated.
 
 ## Reproduce without model inference
 

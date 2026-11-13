@@ -15,6 +15,8 @@ import tempfile
 import zipfile
 from convert_native import convert
 from experimental_reference import score
+import native_panel_recovery
+from native_panel_timings import summarize as summarize_timings
 import numpy as np
 
 
@@ -69,11 +71,17 @@ def evaluate(panel_path, phase):
             d = descriptors[case_id]
             receipt = json.loads(members[f'{case_id}/receipt.public.json'])
             assert receipt['status'] == 'complete' and receipt['method'] == evidence['method']
-            assert 'argv' not in receipt and receipt['redactedFields'] == ['argv (private absolute paths)']
+            recovered = receipt['schema'] == 'molarium.native-assembled-cohort.v1'
+            assert 'argv' not in receipt
+            assert receipt['redactedFields'] == ([] if recovered else ['argv (private absolute paths)'])
             assert receipt['originalReceiptSha256'] == d['originalReceiptSha256']
-            assert sha(members['consumed-native_run.py']) == receipt['runnerSha256']
-            for name, digest in receipt['inputFiles'].items():
-                assert sha(members[f'{case_id}/inputs/{name}']) == digest
+            if recovered:
+                assert evidence['method'] == 'openbind0'
+                native_panel_recovery.verify(members, case_id, receipt, temporary)
+            else:
+                assert sha(members.get(f'{case_id}/consumed-native_run.py', members['consumed-native_run.py'])) == receipt['runnerSha256']
+                for name, digest in receipt['inputFiles'].items():
+                    assert sha(members[f'{case_id}/inputs/{name}']) == digest
             spec_bytes = members[f'{case_id}/inputs/comparison.json']
             spec = json.loads(spec_bytes)
             assert sha(spec_bytes) == receipt['inputSha256'] == d['inputSha256']
@@ -107,7 +115,10 @@ def evaluate(panel_path, phase):
                 assert seed == pose['seed'] == provenance['request']['seed']
                 assert result['sequence'] == provenance['request']['sequence'] == c['sequence']
                 assert provenance['settings'] == receipt['settings']
-                assert provenance['environment'] == receipt['environment']
+                assert provenance['environment'] == native_outputs[path].get('environment', receipt['environment'])
+                if recovered:
+                    source = next(s for s in receipt['sources'] if s['id'] == native_outputs[path]['sourceAttempt'])
+                    assert provenance['nativeAttempt'] == {k: v for k, v in source.items() if k != 'savedOutputs'}
                 assert provenance['nativeCheckpointSha256'] == receipt['checkpointSha256']
                 raw_output = members[f'{case_id}/outputs/{path}']
                 assert sha(raw_output) == native_outputs[path]['sha256'] == provenance['nativeOutputSha256']
@@ -137,6 +148,8 @@ def evaluate(panel_path, phase):
         actual = json.loads((temporary / 'scores.json').read_bytes())
     for key in ['panelSha256', 'definitions', 'summary', 'poses', 'caveats']:
         compare_values(actual[key], saved[key])
+    if (phase / 'timings.json').exists():
+        compare_values(summarize_timings(phase), json.loads((phase / 'timings.json').read_bytes()))
     return {'method': evidence['method'], 'cases': len(evidence['cases']), 'poses': poses,
             'geometricPasses': sum(p['within2A'] for p in saved['poses']),
             'limitedValidityPasses': sum(p['within2A'] and p['stereochemistry']['stereochemicalIdentityMatches']

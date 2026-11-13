@@ -1,0 +1,82 @@
+{
+  "schema": "molarium.native-panel-agreement-index.v1",
+  "scope": "Both OpenBind protocols use the same saved MSA and 200 sampling steps/three recycles. Precision, complete input features, conformer selection and random tensors are not matched; this is not fixed-tensor implementation parity.",
+  "sources": {
+    "compare_libraries.py": "843e587c33690c781b554735ed85ea016d9862979762ea35119d5e581a77c3ee",
+    "pose_metrics.py": "b577b0cd0358832eec0946c19cb826d2bf72e358205ced2eeb9b08885ebc41b5"
+  },
+  "methods": [
+    {
+      "method": "openbind0",
+      "browserPhase": "browser-openbind0-msa256-standard",
+      "nativePhase": "native-openbind0-msa256-standard",
+      "medianSeedPairedMeanRmsdA": 3.4696323925538315,
+      "medianOneToOneMeanRmsdA": 3.19878211843753,
+      "cases": [
+        {
+          "caseId": "9sy7-a1jrx",
+          "file": "native-openbind0-msa256-standard/agreement-1.json",
+          "sha256": "6371fdbcaa65cf5496ad265b10f3b8a0cbb4a98c43e8e4fc93d644d9338f69af",
+          "seedPairedMeanRmsdA": 3.9725824626859847,
+          "oneToOneMeanRmsdA": 3.19878211843753
+        },
+        {
+          "caseId": "9sxf-a1jrg",
+          "file": "native-openbind0-msa256-standard/agreement-2.json",
+          "sha256": "e09badd4bee9b05f55538cd1ff6bf3cb83289677d6cc6694d17e920f3334b450",
+          "seedPairedMeanRmsdA": 3.9945426414594096,
+          "oneToOneMeanRmsdA": 3.4074423255394186
+        },
+        {
+          "caseId": "9t51-a1jtm",
+          "file": "native-openbind0-msa256-standard/agreement-3.json",
+          "sha256": "aedf47aa38a3f40e5bd5f4b1c25d5c5e48b464d8af4c9951ddcd97342212f6a7",
+          "seedPairedMeanRmsdA": 0.48104926107264956,
+          "oneToOneMeanRmsdA": 0.4682404443227064
+        },
+        {
+          "caseId": "9syo-a1jr1",
+          "file": "native-openbind0-msa256-standard/agreement-4.json",
+          "sha256": "d4fc1c69f8bd9554c4338baf091e66d6ddcea740d6144f6c8ec1f5ab9c2276bf",
+          "seedPairedMeanRmsdA": 3.4696323925538315,
+          "oneToOneMeanRmsdA": 3.4696323925538315
+        },
+        {
+          "caseId": "15ji-a1d2g",
+          "file": "native-openbind0-msa256-standard/agreement-5.json",
+          "sha256": "76096836f7b8dece7b2a16b84021d5910e43289cf4d41c3673fabdf6777eb8b4",
+          "seedPairedMeanRmsdA": 2.3268510819850263,
+          "oneToOneMeanRmsdA": 0.8227912685968629
+        },
+        {
+          "caseId": "9xhg-1il",
+          "file": "native-openbind0-msa256-standard/agreement-6.json",
+          "sha256": "4a2a6219f12595918f95b2e2b3de65aac65b841f768decc32c5b70dec174869f",
+          "seedPairedMeanRmsdA": 6.252600155367385,
+          "oneToOneMeanRmsdA": 4.862161384519137
+        },
+        {
+          "caseId": "9xjq-a1e0i",
+          "file": "native-openbind0-msa256-standard/agreement-7.json",
+          "sha256": "7ea87737264197550591f8f139e35739c35531b102930267c8a39223f03d8d62",
+          "seedPairedMeanRmsdA": 1.820667623354501,
+          "oneToOneMeanRmsdA": 1.7074327139386092
+        },
+        {
+          "caseId": "32qy-a1keo",
+          "file": "native-openbind0-msa256-standard/agreement-8.json",
+          "sha256": "fa85e47d0452c3e5ec1eb30365b19ed57fe5a6dd5cdcaba67b73de2b4e106125",
+          "seedPairedMeanRmsdA": 13.853835768375726,
+          "oneToOneMeanRmsdA": 12.288587978594075
+        },
+        {
+          "caseId": "9t3v-a1jtg",
+          "file": "native-openbind0-msa256-standard/agreement-9.json",
+          "sha256": "d7dfddee512a197f7b072a82ac6a230530a64229b25ad9a44e3a6153e8d30f17",
+          "seedPairedMeanRmsdA": 3.191624939355601,
+          "oneToOneMeanRmsdA": 3.18560274537804
+        }
+      ]
+    }
+  ]
+}

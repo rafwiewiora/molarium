@@ -45,6 +45,34 @@ verified bytes in retry inputs and reject alignment drift. Existing saved poses
 and interrupted-source receipt statuses remain unchanged. No inference is
 repeated to test this correction.
 
+## RCF-13: startup initialization and inspectable recovered cohorts
+
+Two MSA Boltz controls failed before inference (an incomplete dependency import
+and a missing canonical component). The wrapper follows the stock CLI import
+order; new attempts verify official canonical assets before model execution.
+Public recovered cohorts now carry each original status, exact source inputs,
+runner, coordinates and stopped-output inventory. Offline validation rejects
+changed source evidence and verifies full unique seed coverage without folding.
+[Finding, scope and linked fixes/tests](../COFOLD_NATIVE_RECOVERY_EVIDENCE_2026-11-13.md).
+
+## RCF-14: full native OpenBind MSA and old-crystal Boltz controls
+
+The exact-MSA/200-step native OpenBind phase now contains all 27 predictions.
+Eight meet 2 Å; one KIT pose has the wrong specified stereochemistry, leaving
+seven passing the limited stereo/clash checks (STARD4, sEH and WDR5). Across
+nine systems the median seed-paired mean browser/native ligand disagreement
+is 3.47 Å despite matching declared alignment and sampling effort. Complete
+input tensors, precision, conformers and random draws remain unmatched.
+[Results, per-pose evidence, timings and limitations](README.md#native-msa-control-matched-alignment-and-sampling-effort).
+
+The old native Boltz panel is also complete: all nine poses pass the 2 Å and
+limited stereo/clash checks, including FK5's missing-only retry. Its agreement
+with the browser is close for JQ1/benzene but poor for FK5; different sampling
+effort precludes attributing the difference to the port alone.
+[Crystal results and every saved prediction](../cofold-crystal-reference-2026-11-13/README.md).
+The [public reconstruction regressions](../../folding/comparison/test_native_panel.py)
+check all new raw outputs, source hashes, recovered cohorts, scores and timings.
+
 Original predictions and reference files are immutable evidence. Review assembly
 adds display labels and reference cards while retaining original PDB bytes,
 coordinate hashes and source-library identities. Public review decisions start
