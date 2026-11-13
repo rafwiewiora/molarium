@@ -1,0 +1,59 @@
+{
+    "seeds": [
+        42
+    ],
+    "queries": {
+        "compound_000": {
+            "query_name": "compound_000",
+            "chains": [
+                {
+                    "molecule_type": "PROTEIN",
+                    "chain_ids": [
+                        "A"
+                    ],
+                    "description": null,
+                    "sequence": "GSGLSDVASFATKLKNTLIQYHSIEEDKWRVAKKTKDVTVWRKPSEEFNGYLYKAQGVIDDLVYSIIDHIRPGPSRLDWDSLMTSLDILENFEENCCVMRYTTAGQLWNIISPREFVDFSYTVGYKEGLLSCGISLDWDEKRPEFVRGYNHPCGWFCVPLKDNPNQSLLTGYIQTDLRGMIPQSAVDTAMASTLTNFYGDLRKAL",
+                    "non_canonical_residues": null,
+                    "smiles": null,
+                    "ligand_name": null,
+                    "ccd_codes": null,
+                    "paired_msa_file_paths": null,
+                    "main_msa_file_paths": [
+                        "/workspacenfs/rafal_wiewiora/molarium-native-feature-canonical-20261113-attempt001/inputs/9t51-a1jtm/msa/colabfold_main.a3m"
+                    ],
+                    "template_alignment_file_path": null,
+                    "template_entry_chain_ids": null,
+                    "template_cif_paths": null,
+                    "template_cif_chain_ids": null,
+                    "sdf_file_path": null,
+                    "cyclic": false
+                },
+                {
+                    "molecule_type": "LIGAND",
+                    "chain_ids": [
+                        "B"
+                    ],
+                    "description": null,
+                    "sequence": null,
+                    "non_canonical_residues": null,
+                    "smiles": "CC(C)(C)OC(=O)N1CCC(c2cccc3nc4c(cc23)CC[C@H]2C[C@@H](O)CC[C@]42C)CC1",
+                    "ligand_name": null,
+                    "ccd_codes": null,
+                    "paired_msa_file_paths": null,
+                    "main_msa_file_paths": null,
+                    "template_alignment_file_path": null,
+                    "template_entry_chain_ids": null,
+                    "template_cif_paths": null,
+                    "template_cif_chain_ids": null,
+                    "sdf_file_path": null,
+                    "cyclic": false
+                }
+            ],
+            "use_msas": true,
+            "use_paired_msas": false,
+            "use_main_msas": true,
+            "covalent_bonds": null,
+            "pocket_constraint": null
+        }
+    }
+}

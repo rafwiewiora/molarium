@@ -1,0 +1,208 @@
+{
+  "schema": "molarium.trained-native-evidence.v1",
+  "scope": "Concatenate parts in listed order to recover the exact ZIP; no model checkpoint, caches or GPU rerun required. Full native outputs retain projected single/pair and relative features that were not browser-compared in this experiment.",
+  "archive": {
+    "file": "native-evidence.zip",
+    "bytes": 32975803,
+    "sha256": "4445e9b6ef901408a10132a490c18ca52d381be937b329dea521c30567013dce",
+    "parts": [
+      {
+        "file": "native-evidence.part-01.bin",
+        "bytes": 16777216,
+        "sha256": "636f70db184b31275cb39c0162d0e5a538b85a4ef7ac36cf7ab074cfd301f208"
+      },
+      {
+        "file": "native-evidence.part-02.bin",
+        "bytes": 16198587,
+        "sha256": "7ee8127cf4558b74bef9f46c330eb56a4593e35111d33e3abcb40b06f509037c"
+      }
+    ],
+    "files": [
+      {
+        "file": "consumed-native-stage/browser-library.json",
+        "bytes": 1449892,
+        "sha256": "42718c03d06cdb365fda5460cbe85f1e17f785df169fbd663b8425fcd4be82d5"
+      },
+      {
+        "file": "consumed-native-stage/capture_native_embedder.py",
+        "bytes": 4828,
+        "sha256": "7db6e70eb2faba7fb4e38655edc193521f099963e2965304134c81f02ad83d69"
+      },
+      {
+        "file": "consumed-native-stage/capture_native_features.py",
+        "bytes": 12412,
+        "sha256": "a03db03a4bf84b9c7e24f553239f1b55a9cb2a2766155eceab8e4d52f4ec0c79"
+      },
+      {
+        "file": "consumed-native-stage/gpu.sh",
+        "bytes": 1079,
+        "sha256": "9a2a8cdbb125c42283e1af6d04b3e181a693ef1479d6103f7b7d376b5ae39823"
+      },
+      {
+        "file": "consumed-native-stage/inputs/9t51-a1jtm/boltz/compound_000.yaml",
+        "bytes": 516,
+        "sha256": "1126e2287d1fd2139080187b57e3c8de6d55df49fe5fa46b32a90df63c176172"
+      },
+      {
+        "file": "consumed-native-stage/inputs/9t51-a1jtm/comparison.json",
+        "bytes": 75078,
+        "sha256": "bef8a9e2fffea96ff07c161d6e1c1e4a268074c7e9b70d852d2f7b25f694cadf"
+      },
+      {
+        "file": "consumed-native-stage/inputs/9t51-a1jtm/msa/colabfold_main.a3m",
+        "bytes": 69658,
+        "sha256": "0cc969796591441861b47aa0e75b359955864ffcf5fb81d6ca8a3bb59c495e2b"
+      },
+      {
+        "file": "consumed-native-stage/inputs/9t51-a1jtm/openbind-query.json",
+        "bytes": 764,
+        "sha256": "64bc2109ea6a3ba25d143903ab814b84465242dc5d0aa2441bb5d71282350160"
+      },
+      {
+        "file": "consumed-native-stage/inputs/9t51-a1jtm/openbind-standard.yaml",
+        "bytes": 594,
+        "sha256": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0"
+      },
+      {
+        "file": "consumed-native-stage/inputs/9t51-a1jtm/openbind-torch-standard.yaml",
+        "bytes": 731,
+        "sha256": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364"
+      },
+      {
+        "file": "consumed-native-stage/native_run.py",
+        "bytes": 9223,
+        "sha256": "bc5d3bc2c71758f6a07be74324b072269a8d61f836c44cd3159b1bace9d17282"
+      },
+      {
+        "file": "consumed-native-stage/preflight.py",
+        "bytes": 1294,
+        "sha256": "15f13230878a8efc535a37e7b41d49d192c953d4b92892e4a86586fdc2d245d4"
+      },
+      {
+        "file": "consumed-native-stage/preflight.sh",
+        "bytes": 244,
+        "sha256": "6c86d93b189262eeac30437144b0cef1f633172b0748877cca80f88b63369449"
+      },
+      {
+        "file": "consumed-native-stage/references/9t51-a1jtm.json",
+        "bytes": 3608,
+        "sha256": "32fb7c85978bec796e4b1ff6fdf4f3da920189d8b27614d2aeed73688fdb6f51"
+      },
+      {
+        "file": "consumed-native-stage/source-manifest.json",
+        "bytes": 1417,
+        "sha256": "ac72172291fed12eaa71443dfbe2609bc8b075744a526a1ca9d3511e3719de74"
+      },
+      {
+        "file": "converter-source/LICENSE",
+        "bytes": 11358,
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "file": "converter-source/converters/common.py",
+        "bytes": 28929,
+        "sha256": "2ce60315eec67571154d5b7238df28132b74870c31c51ddef4382bfa0c4a3dd0"
+      },
+      {
+        "file": "converter-source/converters/openfold3.py",
+        "bytes": 53011,
+        "sha256": "1d8843c8ca57ad0780bb8d6be740f56beb852c37d4b3d652791f37179f67283d"
+      },
+      {
+        "file": "first-run/convert-trained-embedder001.py",
+        "bytes": 6466,
+        "sha256": "e9b6b4a085b2e21accbb758a6972a1f91f535c047229906f8380d7a76306cb2c"
+      },
+      {
+        "file": "first-run/run-target-embedder001.mjs",
+        "bytes": 7518,
+        "sha256": "6ae3f7769e2fcc91a0f9a8fcd65f01052840742a9b8cebae6c5a8e45e2a06a06"
+      },
+      {
+        "file": "native/capture-runner.json",
+        "bytes": 734,
+        "sha256": "d0a095920e8c65e657c4ac8dbc0188ed6d7ae00887b5dcf5826114251be00c36"
+      },
+      {
+        "file": "native/cli/experiment_config.json",
+        "bytes": 7673,
+        "sha256": "01668405a0aac43df5b069e5c8e285be2a15c0e246ba46e68b2a98b82ef33425"
+      },
+      {
+        "file": "native/cli/inference_query_set.json",
+        "bytes": 2406,
+        "sha256": "67b522b6a4c09e7d415b524da726219d6e7e5ae94e160696f1f61b7f34ee2638"
+      },
+      {
+        "file": "native/cli/model_config.json",
+        "bytes": 60409,
+        "sha256": "836f48bd49801f43fd46f963629fec80a4f23807447684d5fe07d7dcd021cd94"
+      },
+      {
+        "file": "native/cli/summary.txt",
+        "bytes": 303,
+        "sha256": "c16d7914b2aef7ec2d4a846a27ce3eed03ef57035b6ccee1237528b606912814"
+      },
+      {
+        "file": "native/features/features.bin",
+        "bytes": 3725633,
+        "sha256": "4eee6f1a152d610925f0227763dc90156b4f1d3746740fce470b9766a39f6e04"
+      },
+      {
+        "file": "native/features/features.json",
+        "bytes": 16720,
+        "sha256": "f80aeb23ff4affc072fce45ca1d6833ad9a19b640c47c75f152c88d6a4b532d7"
+      },
+      {
+        "file": "native/features/layout.json",
+        "bytes": 48132,
+        "sha256": "3497271b7685c7f7e4da76957c5f17b975d970c2674a4e0d2d37cd41bf6b8342"
+      },
+      {
+        "file": "native/processed-smiles-query.json",
+        "bytes": 863,
+        "sha256": "0bca3a7b84c90ab1c99e7c30ba342eb96d8edd24718c63f625a9e28d74294166"
+      },
+      {
+        "file": "native/receipt.json",
+        "bytes": 5371,
+        "sha256": "9318f2f7bd8f37547c1138a1ce79a02dc7366b1368a157bcd1ab0ea171f71eff"
+      },
+      {
+        "file": "native/resolved-inputs/boltz/compound_000.yaml",
+        "bytes": 616,
+        "sha256": "582951e934ab68e68987ad43229db03dbef1102f45ed56eb3d5155894e1a4443"
+      },
+      {
+        "file": "native/resolved-inputs/openbind-query.json",
+        "bytes": 864,
+        "sha256": "5ea4fd4bab3c6579d801e59588bbc0bca427e32e78d06f4e9ad5fd1160e6baa2"
+      },
+      {
+        "file": "native/trained-embedder/outputs/features.bin",
+        "bytes": 61288808,
+        "sha256": "1a24414a20c57bfcb2797b9c8c1e63075e2ed7c4fb33a776a93112325f4c34d3"
+      },
+      {
+        "file": "native/trained-embedder/outputs/features.json",
+        "bytes": 2205,
+        "sha256": "9d8269d3c8e230619c8f0beaa9d32fa8d8648f79fce4d57a6c712322042b4017"
+      },
+      {
+        "file": "native/trained-embedder/receipt.json",
+        "bytes": 1693,
+        "sha256": "34f690f3d82e0abbf1ec2b320ca71fcab49f5cfbd711ed0efe35daf80b2055c6"
+      },
+      {
+        "file": "native/trained-embedder/weights/features.bin",
+        "bytes": 5382272,
+        "sha256": "a184766be1063d51d6773505df722b45eb763fe1e824d12fb78e5075d72b1c3d"
+      },
+      {
+        "file": "native/trained-embedder/weights/features.json",
+        "bytes": 53778,
+        "sha256": "2b9456f7e286e934016eb8a63064a79d4f02c5a619528361d1e16c30ed409c73"
+      }
+    ]
+  }
+}

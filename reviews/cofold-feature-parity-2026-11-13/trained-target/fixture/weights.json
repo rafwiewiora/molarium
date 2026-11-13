@@ -1,0 +1,471 @@
+{
+  "model": {
+    "name": "openbind0"
+  },
+  "tensors": {
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderadaptive_zero_cond/bias": {
+      "shape": [
+        3,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 0,
+      "bytes": 1536,
+      "sha256": "8bc5c34561f48d5bfdb9bf82ce7b4ce20d079b1885362b66b8f8cc7bcbd8f08e"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderadaptive_zero_cond/weights": {
+      "shape": [
+        3,
+        128,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 1536,
+      "bytes": 196608,
+      "sha256": "1452da62aeec2b5bf36dd854901a17e2a5b597012aaff43f8b0084ede4440621"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderffw_adaptive_zero_cond/bias": {
+      "shape": [
+        3,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 198144,
+      "bytes": 1536,
+      "sha256": "0c8315de22ff51a3aa8f94af5f9d2f0718f236e2327c108ec9cd4c5838306d95"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderffw_adaptive_zero_cond/weights": {
+      "shape": [
+        3,
+        128,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 199680,
+      "bytes": 196608,
+      "sha256": "9e0dc3f54c3ffb42fefd76f7524edbbb0eab0c85c6d95dae58aa669ade6bb10e"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderffw_single_cond_bias/weights": {
+      "shape": [
+        3,
+        128,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 396288,
+      "bytes": 196608,
+      "sha256": "55bb3f2015d7fc2d2333e00553d1cca7cf6114109eebae0febc4b80f2ce9438a"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderffw_single_cond_layer_norm/scale": {
+      "shape": [
+        3,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 592896,
+      "bytes": 1536,
+      "sha256": "5504e91e1ec299cc0bffac972e901e917ba87ed942c2fc4793cf9b704c945ba5"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderffw_single_cond_scale/bias": {
+      "shape": [
+        3,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 594432,
+      "bytes": 1536,
+      "sha256": "851a020be40f6c2bedda3093a2fe69645eb7ce310650243a1bb4e55a0f26c7f1"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderffw_single_cond_scale/weights": {
+      "shape": [
+        3,
+        128,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 595968,
+      "bytes": 196608,
+      "sha256": "0700f3cbcd9406ff8e2f536b2df80bb453dadb49eaecdbda11196e3d0fdfa6c2"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderffw_transition1/weights": {
+      "shape": [
+        3,
+        128,
+        512
+      ],
+      "dtype": "float32",
+      "byteOffset": 792576,
+      "bytes": 786432,
+      "sha256": "a7fd04db16b4d5017bff87fc425ec1b6e57f0436a8188f0a244684d86948ad5c"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderffw_transition2/weights": {
+      "shape": [
+        3,
+        256,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 1579008,
+      "bytes": 393216,
+      "sha256": "7ee66f7b27dc9afecaa8d686512ffaaa948d5b134dea55abb99bdd539916d162"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encodergating_query/weights": {
+      "shape": [
+        3,
+        128,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 1972224,
+      "bytes": 196608,
+      "sha256": "94f9bbf23c14f285dad60de95c9a590ddb925f0e5c8f9eea4df60305309bd6b6"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderk_projection/weights": {
+      "shape": [
+        3,
+        128,
+        4,
+        32
+      ],
+      "dtype": "float32",
+      "byteOffset": 2168832,
+      "bytes": 196608,
+      "sha256": "1b363abbff541f2dad778b26a773cb3424756d0446fa3e32c2136018400ecfc4"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderksingle_cond_bias/weights": {
+      "shape": [
+        3,
+        128,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 2365440,
+      "bytes": 196608,
+      "sha256": "5f90b599f2770248702f84bab2729d9445820b0059e52c3f45d5f2c0bfd4a146"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderksingle_cond_layer_norm/scale": {
+      "shape": [
+        3,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 2562048,
+      "bytes": 1536,
+      "sha256": "1af63351bca58c0f1211d0d6e9cd7ba9f1097f8f1db6e77404419d995cbf380c"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderksingle_cond_scale/bias": {
+      "shape": [
+        3,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 2563584,
+      "bytes": 1536,
+      "sha256": "955f5b39514696417ecfc3460132c91abb09b1abc19e35d1d81ecb3d637a9cfb"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderksingle_cond_scale/weights": {
+      "shape": [
+        3,
+        128,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 2565120,
+      "bytes": 196608,
+      "sha256": "93eb4c1dbd0021ae193f303d84db874777f46fe0841813e3cead4fcdd8438e0a"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderq_projection/bias": {
+      "shape": [
+        3,
+        4,
+        32
+      ],
+      "dtype": "float32",
+      "byteOffset": 2761728,
+      "bytes": 1536,
+      "sha256": "8178a568f16e2bf9711f3c835d8ac436170d09c4a3a8fcfa589b23d47c43a1b1"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderq_projection/weights": {
+      "shape": [
+        3,
+        128,
+        4,
+        32
+      ],
+      "dtype": "float32",
+      "byteOffset": 2763264,
+      "bytes": 196608,
+      "sha256": "f05e0878a46cfb111ee16ffa2e59fdaf9e42ebc9dcbd700d087bf4c27013268c"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderqsingle_cond_bias/weights": {
+      "shape": [
+        3,
+        128,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 2959872,
+      "bytes": 196608,
+      "sha256": "7c7b35d30815cfdb7d5019c4e394912575dcff029171a9e25d81637a96757b5b"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderqsingle_cond_layer_norm/scale": {
+      "shape": [
+        3,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 3156480,
+      "bytes": 1536,
+      "sha256": "cbc24144ec4e78f21aaaec766556eea3baaac09ae4d17679b8195ab8e0e039bd"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderqsingle_cond_scale/bias": {
+      "shape": [
+        3,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 3158016,
+      "bytes": 1536,
+      "sha256": "9b6b8259a2a5c090ce72bb919a816aeb3d82f785a7809fbf2432348336cac4a8"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderqsingle_cond_scale/weights": {
+      "shape": [
+        3,
+        128,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 3159552,
+      "bytes": 196608,
+      "sha256": "c845d975849ad8dca4121b82943c7fb93da6d5d0742029f61bdae7f0571ffc34"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encodertransition2/weights": {
+      "shape": [
+        3,
+        128,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 3356160,
+      "bytes": 196608,
+      "sha256": "3b46e9929cfabcf527f29ff619fb2a09847535aae718bd526268c7c8da6919ed"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/__layer_stack_with_per_layer/evoformer_conditioning_atom_transformer_encoderv_projection/weights": {
+      "shape": [
+        3,
+        128,
+        4,
+        32
+      ],
+      "dtype": "float32",
+      "byteOffset": 3552768,
+      "bytes": 196608,
+      "sha256": "eab44bb89c00af8324db82c18e10e58e5d287b54f980d4f816d8804caccb08fc"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/pair_input_layer_norm/scale": {
+      "shape": [
+        16
+      ],
+      "dtype": "float32",
+      "byteOffset": 3749376,
+      "bytes": 64,
+      "sha256": "781c79b513e5c1c09a9a07c6133557484552a6efa3eea41e31af9342fffdc239"
+    },
+    "diffuser/evoformer_conditioning_atom_transformer_encoder/pair_logits_projection/weights": {
+      "shape": [
+        16,
+        3,
+        4
+      ],
+      "dtype": "float32",
+      "byteOffset": 3749440,
+      "bytes": 768,
+      "sha256": "361a80b3ea8700679f1d613b39746622d771b7b95db3435e20ce64a90531c654"
+    },
+    "diffuser/evoformer_conditioning_embed_pair_distances/weights": {
+      "shape": [
+        1,
+        16
+      ],
+      "dtype": "float32",
+      "byteOffset": 3750208,
+      "bytes": 64,
+      "sha256": "f99da97f55029ef7cdc22820e1842fd6965ddb2c9f86068a880cdf2217ea206a"
+    },
+    "diffuser/evoformer_conditioning_embed_pair_distances_1/weights": {
+      "shape": [
+        1,
+        16
+      ],
+      "dtype": "float32",
+      "byteOffset": 3750272,
+      "bytes": 64,
+      "sha256": "f99da97f55029ef7cdc22820e1842fd6965ddb2c9f86068a880cdf2217ea206a"
+    },
+    "diffuser/evoformer_conditioning_embed_pair_offsets/weights": {
+      "shape": [
+        3,
+        16
+      ],
+      "dtype": "float32",
+      "byteOffset": 3750336,
+      "bytes": 192,
+      "sha256": "38ffcef251083295f5fd0fc9159e37f9badb63a3bffd0369713057e643b89941"
+    },
+    "diffuser/evoformer_conditioning_embed_pair_offsets_1/weights": {
+      "shape": [
+        3,
+        16
+      ],
+      "dtype": "float32",
+      "byteOffset": 3750528,
+      "bytes": 192,
+      "sha256": "38ffcef251083295f5fd0fc9159e37f9badb63a3bffd0369713057e643b89941"
+    },
+    "diffuser/evoformer_conditioning_embed_pair_offsets_valid/weights": {
+      "shape": [
+        1,
+        16
+      ],
+      "dtype": "float32",
+      "byteOffset": 3750720,
+      "bytes": 64,
+      "sha256": "f21ec14e0aea08151f6a714d5cc48f8c405a7d9cd4a0a2cb9989b06cd6898178"
+    },
+    "diffuser/evoformer_conditioning_embed_ref_atom_name/weights": {
+      "shape": [
+        256,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 3750784,
+      "bytes": 131072,
+      "sha256": "703a341190be112b036c5ad6faaaf85a975024bb9f26d8788d53864c26d520bc"
+    },
+    "diffuser/evoformer_conditioning_embed_ref_charge/weights": {
+      "shape": [
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 3881856,
+      "bytes": 512,
+      "sha256": "9598a9b47ab6e1be7992d682c3720b2358981bad4510c89f8b30d588b0a5070e"
+    },
+    "diffuser/evoformer_conditioning_embed_ref_element/weights": {
+      "shape": [
+        128,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 3882368,
+      "bytes": 65536,
+      "sha256": "b18f97319d0ac20462ab75db27f48a0f31d96e68c98c57da0c5622d23ce0b9b0"
+    },
+    "diffuser/evoformer_conditioning_embed_ref_mask/weights": {
+      "shape": [
+        1,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 3947904,
+      "bytes": 512,
+      "sha256": "56e44f71b2d2850764dcc7e6b08a33e219fdd05db4419d6745d45b0f51ad1b9e"
+    },
+    "diffuser/evoformer_conditioning_embed_ref_pos/weights": {
+      "shape": [
+        3,
+        128
+      ],
+      "dtype": "float32",
+      "byteOffset": 3948416,
+      "bytes": 1536,
+      "sha256": "66738e1bd06e1b93255d0ec9ec82761200e96ef07696003f168b14e03f05d212"
+    },
+    "diffuser/evoformer_conditioning_pair_mlp_1/weights": {
+      "shape": [
+        16,
+        16
+      ],
+      "dtype": "float32",
+      "byteOffset": 3949952,
+      "bytes": 1024,
+      "sha256": "fdfd8cca9da6f1c916bf5fc53aa8253ea4e449f72a768792b6567efce73b6c3b"
+    },
+    "diffuser/evoformer_conditioning_pair_mlp_2/weights": {
+      "shape": [
+        16,
+        16
+      ],
+      "dtype": "float32",
+      "byteOffset": 3950976,
+      "bytes": 1024,
+      "sha256": "8cbc20f5fd0375fa71e9da198545cbf04d7be4b8a2402b62bd4dd1e978257a11"
+    },
+    "diffuser/evoformer_conditioning_pair_mlp_3/weights": {
+      "shape": [
+        16,
+        16
+      ],
+      "dtype": "float32",
+      "byteOffset": 3952000,
+      "bytes": 1024,
+      "sha256": "eeab464c16978f8a287c9eacfd5655d4c1763b7679250b74de0444d43ba0ec76"
+    },
+    "diffuser/evoformer_conditioning_project_atom_features_for_aggr/weights": {
+      "shape": [
+        128,
+        384
+      ],
+      "dtype": "float32",
+      "byteOffset": 3953024,
+      "bytes": 196608,
+      "sha256": "651a3d002bebe97435eef4dcf0e3079c7ca77b6bcbb583eecdf3f06b733519cf"
+    },
+    "diffuser/evoformer_conditioning_single_to_pair_cond_col/weights": {
+      "shape": [
+        128,
+        16
+      ],
+      "dtype": "float32",
+      "byteOffset": 4149632,
+      "bytes": 8192,
+      "sha256": "4a5f0eea995acf9523febdfed9b5a3b9e64b7a429e4266451b308df1a47f1020"
+    },
+    "diffuser/evoformer_conditioning_single_to_pair_cond_col_1/weights": {
+      "shape": [
+        128,
+        16
+      ],
+      "dtype": "float32",
+      "byteOffset": 4157824,
+      "bytes": 8192,
+      "sha256": "4a5f0eea995acf9523febdfed9b5a3b9e64b7a429e4266451b308df1a47f1020"
+    },
+    "diffuser/evoformer_conditioning_single_to_pair_cond_row/weights": {
+      "shape": [
+        128,
+        16
+      ],
+      "dtype": "float32",
+      "byteOffset": 4166016,
+      "bytes": 8192,
+      "sha256": "f71c6f8a4939f3fb929aa610499cabf7e1f94915d7af82b2cafbd912284b8add"
+    },
+    "diffuser/evoformer_conditioning_single_to_pair_cond_row_1/weights": {
+      "shape": [
+        128,
+        16
+      ],
+      "dtype": "float32",
+      "byteOffset": 4174208,
+      "bytes": 8192,
+      "sha256": "f71c6f8a4939f3fb929aa610499cabf7e1f94915d7af82b2cafbd912284b8add"
+    }
+  },
+  "blob": {
+    "file": "weights.bin",
+    "bytes": 4182400,
+    "sha256": "0dfab22cf0e24c6b8e862e7bfb78ea6dfb6e4f96e440ec603b8629b5d87ffb1b"
+  }
+}

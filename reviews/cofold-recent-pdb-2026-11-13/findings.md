@@ -108,3 +108,17 @@ and a [portable semantic comparator](../../folding/comparison/compare_feature_sn
 with [stereo/transfer rejection and both real-case replay tests](../../folding/comparison/test_feature_comparison.py).
 Original predictions, captures and consumed producers are preserved. No production
 folding mathematics is changed, and no full-feature/trained-model parity claim is made.
+
+
+The separate STARD4 same-SMILES control is now complete: identity parser order
+eliminates all atom-name feature discrepancies. Raw token numbers differ by a
+uniform offset, and entity labels preserve the same equality groups. Generated
+reference conformers still differ. [Raw control, complete replay and limits](../cofold-feature-parity-2026-11-13/README.md#same-spelling-control-result)
+retain the result without changing any original pose prediction.
+
+
+At fixed native generated-reference inputs and full-FP32 trained weights, the
+[first trained atom-feature stage](../cofold-feature-parity-2026-11-13/trained-target/README.md)
+now agrees with stock native on both production CPU and WebGPU (learned-channel
+relative RMS 1.49 × 10⁻⁷ / 1.55 × 10⁻⁷). This is a measured subgraph result;
+trunk, quantized weights and full trajectories remain unqualified.

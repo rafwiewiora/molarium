@@ -1,0 +1,124 @@
+{
+  "schema": "molarium.native-feature-capture-receipt.v1",
+  "status": "complete",
+  "scope": "Exposed feature capture plus one trained official input-embedder call; full-model forward, trunk, sampling, confidence and pose prediction are forbidden.",
+  "startedAt": "2026-11-13T22:26:30Z",
+  "scriptSha256": "a03db03a4bf84b9c7e24f553239f1b55a9cb2a2766155eceab8e4d52f4ec0c79",
+  "inputSha256": "bef8a9e2fffea96ff07c161d6e1c1e4a268074c7e9b70d852d2f7b25f694cadf",
+  "inputResolverSha256": "bc5d3bc2c71758f6a07be74324b072269a8d61f836c44cd3159b1bace9d17282",
+  "referenceNativeReceiptSha256": "32fb7c85978bec796e4b1ff6fdf4f3da920189d8b27614d2aeed73688fdb6f51",
+  "inputFiles": {
+    "openbind-query.json": "64bc2109ea6a3ba25d143903ab814b84465242dc5d0aa2441bb5d71282350160",
+    "openbind-torch-standard.yaml": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364",
+    "openbind-standard.yaml": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0",
+    "comparison.json": "bef8a9e2fffea96ff07c161d6e1c1e4a268074c7e9b70d852d2f7b25f694cadf",
+    "boltz/compound_000.yaml": "1126e2287d1fd2139080187b57e3c8de6d55df49fe5fa46b32a90df63c176172",
+    "msa/colabfold_main.a3m": "0cc969796591441861b47aa0e75b359955864ffcf5fb81d6ca8a3bb59c495e2b"
+  },
+  "checkpointSha256": "bd43301c011d5f87580d3e8b548658869433e4488399feb03035ba248f8e29e4",
+  "captureRunnerSha256": "d0a095920e8c65e657c4ac8dbc0188ed6d7ae00887b5dcf5826114251be00c36",
+  "resolvedQuerySha256": "0bca3a7b84c90ab1c99e7c30ba342eb96d8edd24718c63f625a9e28d74294166",
+  "processedSmilesControl": {
+    "originalSmiles": "C[C@]12CC[C@@H](C[C@@H]1CCc3c2nc4cccc(c4c3)C5CCN(CC5)C(=O)OC(C)(C)C)O",
+    "processedSmiles": "CC(C)(C)OC(=O)N1CCC(c2cccc3nc4c(cc23)CC[C@H]2C[C@@H](O)CC[C@]42C)CC1",
+    "sameIsomericChemicalState": true,
+    "purpose": "Only the SMILES spelling changes; a new diagnostic control, not a replacement for the original prediction protocol.",
+    "sourceLibrarySha256": "42718c03d06cdb365fda5460cbe85f1e17f785df169fbd663b8425fcd4be82d5"
+  },
+  "seedSubset": [
+    0
+  ],
+  "dataSeed": 42,
+  "slurmJobId": "15723",
+  "environment": {
+    "python": "3.12.13",
+    "gpu": "NVIDIA L4",
+    "packages": {
+      "torch": "2.5.1",
+      "openfold3": "0.5.1",
+      "numpy": "2.4.6",
+      "rdkit": "2025.9.3",
+      "biotite": "2.0.0"
+    }
+  },
+  "sourceFiles": {
+    "projects/of3_all_atom/model.py": "83bc031a323691f7f93c865ffa927b743b916768ae6dcfd945278528ad93642b",
+    "projects/of3_all_atom/runner.py": "70f1089988fac0de5f117d2566dd9a103a727d808c2f4f2bfc8341e67094ecac"
+  },
+  "capturedBatches": 1,
+  "forwardCalls": 0,
+  "observerSourceSha256": "7db6e70eb2faba7fb4e38655edc193521f099963e2965304134c81f02ad83d69",
+  "parentFeatureControlReceiptSha256": "2de9c06a196570ce4671d388b82a204b066ab5b2d58190ded5a75f882efa8faa",
+  "trainedEmbedder": {
+    "scope": "Trained official input embedder only; strict FP32. Not a full-model parity verdict.",
+    "embedderForwardCalls": 1,
+    "fullModelForwardCalls": 0,
+    "strictPrecision": {
+      "matmul": "highest",
+      "cudaTf32": false,
+      "cudnnTf32": false,
+      "parameterDtypes": [
+        "torch.float32"
+      ]
+    },
+    "cudaSynchronizedEmbedderForwardSeconds": 0.7646832500000755,
+    "sourceFiles": {
+      "core/model/feature_embedders/input_embedders.py": "bfc601bc2399559efeeefda6ddf71b17611c187426ac69cc4f65ea48473cd157",
+      "core/model/layers/sequence_local_atom_attention.py": "e078e02ff2101f6ad64c7667f13a48cbf913c974fa356a58957e41318e4d0027",
+      "core/utils/relpos.py": "4ff29e22a84ad3b694fbdc0ac6f2a11e4277fac485c28947ab62486d966cf4ff"
+    },
+    "maxRelativeIndex": 32,
+    "maxRelativeChain": 2,
+    "weightsBlobSha256": "a184766be1063d51d6773505df722b45eb763fe1e824d12fb78e5075d72b1c3d",
+    "outputsBlobSha256": "1a24414a20c57bfcb2797b9c8c1e63075e2ed7c4fb33a776a93112325f4c34d3",
+    "files": [
+      {
+        "path": "trained-embedder/outputs/features.bin",
+        "bytes": 61288808,
+        "sha256": "1a24414a20c57bfcb2797b9c8c1e63075e2ed7c4fb33a776a93112325f4c34d3"
+      },
+      {
+        "path": "trained-embedder/outputs/features.json",
+        "bytes": 2205,
+        "sha256": "9d8269d3c8e230619c8f0beaa9d32fa8d8648f79fce4d57a6c712322042b4017"
+      },
+      {
+        "path": "trained-embedder/weights/features.bin",
+        "bytes": 5382272,
+        "sha256": "a184766be1063d51d6773505df722b45eb763fe1e824d12fb78e5075d72b1c3d"
+      },
+      {
+        "path": "trained-embedder/weights/features.json",
+        "bytes": 53778,
+        "sha256": "2b9456f7e286e934016eb8a63064a79d4f02c5a619528361d1e16c30ed409c73"
+      }
+    ]
+  },
+  "capturedArrays": 39,
+  "unserializedMetadata": [
+    {
+      "path": "batch/atom_array/0",
+      "type": "biotite.structure.AtomArray"
+    }
+  ],
+  "matmulPrecisionAtCapture": "highest",
+  "outputs": [
+    {
+      "path": "features/features.bin",
+      "sha256": "4eee6f1a152d610925f0227763dc90156b4f1d3746740fce470b9766a39f6e04",
+      "bytes": 3725633
+    },
+    {
+      "path": "features/features.json",
+      "sha256": "f80aeb23ff4affc072fce45ca1d6833ad9a19b640c47c75f152c88d6a4b532d7",
+      "bytes": 16720
+    },
+    {
+      "path": "features/layout.json",
+      "sha256": "3497271b7685c7f7e4da76957c5f17b975d970c2674a4e0d2d37cd41bf6b8342",
+      "bytes": 48132
+    }
+  ],
+  "elapsedSeconds": 69.231192814,
+  "finishedAt": "2026-11-13T22:27:01Z"
+}
