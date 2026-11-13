@@ -15,7 +15,8 @@ with stable `DV-` identifiers and links to original observations and follow-up e
 - [x] Complete the 27-pose OpenBind 200-step/MSA256 control; preserve all 162 complete-phase poses and the incomplete Boltz standard evidence, including one lost checkpoint.
 - [x] Recover closing IndexedDB connections once and stop on lost checkpoints without silently repeating completed inference ([RCF-09/10](reviews/cofold-recent-pdb-2026-11-13/findings.md)); verify deletion during an atomic checkpoint in real Chrome.
 - [x] Independently compare fixed nonzero transition-layer inputs/weights against actual official CPU FP32 and FP64, retain raw GPU outputs and reproduce errors directly from bytes ([LCP-01](reviews/cofold-layer-parity-2026-11-13/README.md)). Ordinary inputs pass; stress failures stay explicit.
-- [ ] Qualify the experimental row-shift normalization correction in production int5/f16, split kernels and matched full-model/throughput controls before deployment (LCP-01). The component candidate is not a full-model parity result.
+- [x] Exercise the actual fused/ranged/split generators, FP32/FP16 storage and GPU int5 upload against matched official FP64 and independent NumPy; preserve 126 raw measurements and failed candidate stages ([LCP-02/03](reviews/cofold-layer-parity-2026-11-13/production/README.md)).
+- [ ] Implement the corrected materialized row shift directly in production generators, then qualify other normalization/factor/matrix paths and full-model throughput before deployment. Current passing evidence is diagnostic component scope.
 
 - [x] Integrate pinned LocalFold AF2 and OpenBind-0 with UI/API inputs, exact ligand graphs and downloadable provenance ([LF-01](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md)).
 - [ ] Qualify LocalFold against original native models and known ligand complexes; measure quantization separately, then broaden GPU and molecular coverage (LF-01).

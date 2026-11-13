@@ -1,5 +1,10 @@
 # Fixed-input transition-layer precision
 
+The [expanded precision-path audit](production/README.md) now covers 126 fused,
+in-place/ranged and split configurations, plus actual GPU int5 upload. It retains
+the failed diagnostic stages and a corrected component candidate. Production
+deployment and full-model qualification remain outstanding.
+
 This isolates one numerical component from the full-model and crystal-pose
 experiments. The actual official OpenFold3 `SwiGLUTransition` runs on CPU with
 nonzero random FP32 weights, fixed inputs and epsilon 1e-5. The pinned LocalFold

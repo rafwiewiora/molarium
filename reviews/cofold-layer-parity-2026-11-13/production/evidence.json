@@ -1,0 +1,127 @@
+{
+  "schema": "molarium.production-transition-evidence.v1",
+  "originalFixtureArchive": "../fixed-input-evidence.zip",
+  "archives": [
+    {
+      "file": "reference-evidence.zip",
+      "bytes": 25408157,
+      "sha256": "19b1f0ad929fc5aed3aef1b5e6fd73de08a9fe963f6411aad751d108d6ce5f91",
+      "files": [
+        {
+          "file": "manifest.json",
+          "bytes": 39658,
+          "sha256": "fc84fc515427b9021e4301b075315b1cf82ce2c761c99d373389fda0add7c4e2"
+        },
+        {
+          "file": "fixtures.bin",
+          "bytes": 27158576,
+          "sha256": "14088942b7c16e8ee6981d53afd14cbd4868de40159b7dfe2b5ce9de038efbf2"
+        },
+        {
+          "file": "exporter.py",
+          "bytes": 6731,
+          "sha256": "ebe925f345b1c7ea1f990e21d3c7045e4e6b7619d84cefd0f017c8631755e42a"
+        }
+      ]
+    },
+    {
+      "file": "gpu-evidence.zip",
+      "bytes": 19029773,
+      "sha256": "c911622c2bdca6b3a86d9e30eb9df373f47eddd27abaa12dce26ffacbcd5bb3a",
+      "files": [
+        {
+          "file": "comparison.json",
+          "bytes": 229323,
+          "sha256": "5f82ec36562e896a675e77a67bf86abf839ec0bd646a3d66d3dfe5718e9f4194"
+        },
+        {
+          "file": "production-transition-comparison004.outputs.bin",
+          "bytes": 20905984,
+          "sha256": "3a5b566d3e0520a4456e8c26c41b9873213fa1523686fb7bba2f2b2c0c098780"
+        },
+        {
+          "file": "probe.mjs",
+          "bytes": 12689,
+          "sha256": "4f26f64ba521b87090d19f021503d25bb17d0ee13d20651e03c8f65cbdf0931d"
+        },
+        {
+          "file": "runner.mjs",
+          "bytes": 8645,
+          "sha256": "db0bb9f09cf07b92e217fdace775bca9ab136cfd3c004f6e04114aa15382d032"
+        }
+      ]
+    },
+    {
+      "file": "qualification-history.zip",
+      "bytes": 179211,
+      "sha256": "c637686158f4e022dfba5159c2b4789e468bf488b0e85b9465b87d2ed48c200a",
+      "files": [
+        {
+          "file": "comparison003.json",
+          "bytes": 229358,
+          "sha256": "fee1a5d344a69aecc893bfafab7332aa3731cf41bb00d49fdedc4de195e2719b"
+        },
+        {
+          "file": "changed-outputs.bin",
+          "bytes": 95232,
+          "sha256": "51240bac9201fa6ffb5fd4af8865215bcf41de52104e0e62bd24e1287ac41882"
+        },
+        {
+          "file": "reconstruction.json",
+          "bytes": 36836,
+          "sha256": "da1e195adaa9c4838804226fc375cdb91f3c2b7b2862448ab2bfb346118f4d6e"
+        },
+        {
+          "file": "probe003.mjs",
+          "bytes": 10356,
+          "sha256": "b6e3036ff6a40eeb2ae5f434848689981057ced9702cff9e53bf8473146df0fb"
+        },
+        {
+          "file": "comparison001.json",
+          "bytes": 6450,
+          "sha256": "2eefd25b260c5712102c0c5df7ffa1e9bec26af4fd916d7d20cd4bef212fa71d"
+        },
+        {
+          "file": "production-transition-comparison001.outputs.bin",
+          "bytes": 23808,
+          "sha256": "2ec573568bedc9c2271b31fce6b650bb4312d4411a73ae808e91c9a455affe90"
+        },
+        {
+          "file": "probe001.mjs",
+          "bytes": 10023,
+          "sha256": "702c01ef7f1ddf33491124ad013511bcced2e77f6fd0681261b0be4002acf25e"
+        },
+        {
+          "file": "comparison002.json",
+          "bytes": 6438,
+          "sha256": "c38b0bda2e0a7809bda9b2d3988d15f6c1c7263af72d97607df233deb6d7e29c"
+        },
+        {
+          "file": "production-transition-comparison002.outputs.bin",
+          "bytes": 23808,
+          "sha256": "2ec573568bedc9c2271b31fce6b650bb4312d4411a73ae808e91c9a455affe90"
+        },
+        {
+          "file": "probe002.mjs",
+          "bytes": 10346,
+          "sha256": "c5cc51f1bf3661abbc36a239cc14ac45b390f27a1ae8856f0b85de0e6a402e13"
+        },
+        {
+          "file": "native001-manifest.json",
+          "bytes": 29859,
+          "sha256": "1b2395b8fd5f6baadd393146184b34dfaa9dff26b5563de6283c7d3aef811e21"
+        },
+        {
+          "file": "native001-exporter.py",
+          "bytes": 6249,
+          "sha256": "777ab86bf91bbfefb7e1cc36e2969bc051a0447351338cf6f18e93ea9ce8d732"
+        },
+        {
+          "file": "native001-prefix.json",
+          "bytes": 215,
+          "sha256": "8a4fbb61f37ec7646d90be843a8b0e9c4c9e9adcde1fdf2577681bfa871a9985"
+        }
+      ]
+    }
+  ]
+}
