@@ -254,8 +254,11 @@ try {
   await browser.client.call('Page.navigate', { url:`${origin}/sos1.html` });
   await waitFor(async () => browser.evaluate(`Boolean(document.querySelector('video'))`),
     30000, 'SOS1 movie page');
-  await waitFor(async () => browser.evaluate(`document.querySelector('video')?.readyState >= 1`),
-    60000, 'full MP4 metadata');
+  // The page replaces the streaming source with a fully downloaded Blob.
+  // Initial metadata can disappear during that handoff; inspect the final source.
+  await waitFor(async () => browser.evaluate(`(() => { const v=document.querySelector('video');
+    return v?.dataset.seekReady === 'true' && v.readyState >= 1 && Number.isFinite(v.duration);
+  })()`), 60000, 'final seekable MP4 metadata');
   const moviePage = await browser.evaluate(`({
     options:[...document.querySelectorAll('.options .button')].map((a) => a.getAttribute('href')),
     duration:document.querySelector('video').duration,
@@ -267,8 +270,6 @@ try {
   assert(Math.abs(moviePage.duration - 62.75) < 0.1);
   assert.equal(moviePage.width, 1600); assert.equal(moviePage.height, 1000);
   assert.equal(moviePage.overflow, false);
-  await waitFor(async () => browser.evaluate(`document.querySelector('video').dataset.seekReady === 'true'`),
-    60000, 'fully loaded seekable movie');
   await screenshot('04-movies-page.png');
   await browser.evaluate(`document.querySelector('video').currentTime = 43.2`);
   await waitFor(async () => browser.evaluate(`!document.querySelector('video').seeking
@@ -299,6 +300,11 @@ try {
     detail:document.querySelector('#designer-move-detail')?.textContent?.trim() || null,
     status:document.querySelector('#designer-move-status')?.textContent?.trim() || null,
     notice:document.querySelector('#notice')?.textContent?.trim() || null,
+    movie:(() => { const v=document.querySelector('video'); return v ? {
+      readyState:v.readyState, networkState:v.networkState, seekReady:v.dataset.seekReady || null,
+      duration:Number.isFinite(v.duration) ? v.duration : null,
+      width:v.videoWidth, height:v.videoHeight, error:v.error?.message || null,
+    } : null; })(),
     lastHistory:window.MolariumChemistActions?.history?.().slice(-8) || [],
   }))()`);
   console.error(`SOS1 frozen-route failure diagnostics:\n${JSON.stringify(diagnostics, null, 2)}`);
