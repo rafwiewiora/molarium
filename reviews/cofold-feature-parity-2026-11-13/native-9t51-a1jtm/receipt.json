@@ -1,0 +1,69 @@
+{
+  "schema": "molarium.native-feature-capture-receipt.v1",
+  "status": "complete",
+  "scope": "Feature-only capture; no model forward, sampling, confidence evaluation or pose prediction.",
+  "startedAt": "2026-11-13T20:54:10Z",
+  "scriptSha256": "6971ccb805218744902cc7ff840ee4b7878b71fb83e3cea084f42875446bb5a3",
+  "inputSha256": "bef8a9e2fffea96ff07c161d6e1c1e4a268074c7e9b70d852d2f7b25f694cadf",
+  "inputResolverSha256": "bc5d3bc2c71758f6a07be74324b072269a8d61f836c44cd3159b1bace9d17282",
+  "referenceNativeReceiptSha256": "32fb7c85978bec796e4b1ff6fdf4f3da920189d8b27614d2aeed73688fdb6f51",
+  "inputFiles": {
+    "openbind-query.json": "64bc2109ea6a3ba25d143903ab814b84465242dc5d0aa2441bb5d71282350160",
+    "openbind-torch-standard.yaml": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364",
+    "openbind-standard.yaml": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0",
+    "comparison.json": "bef8a9e2fffea96ff07c161d6e1c1e4a268074c7e9b70d852d2f7b25f694cadf",
+    "boltz/compound_000.yaml": "1126e2287d1fd2139080187b57e3c8de6d55df49fe5fa46b32a90df63c176172",
+    "msa/colabfold_main.a3m": "0cc969796591441861b47aa0e75b359955864ffcf5fb81d6ca8a3bb59c495e2b"
+  },
+  "checkpointSha256": "bd43301c011d5f87580d3e8b548658869433e4488399feb03035ba248f8e29e4",
+  "captureRunnerSha256": "d0a095920e8c65e657c4ac8dbc0188ed6d7ae00887b5dcf5826114251be00c36",
+  "seedSubset": [
+    0
+  ],
+  "dataSeed": 42,
+  "slurmJobId": "15621",
+  "environment": {
+    "python": "3.12.13",
+    "gpu": "NVIDIA L4",
+    "packages": {
+      "torch": "2.5.1",
+      "openfold3": "0.5.1",
+      "numpy": "2.4.6",
+      "rdkit": "2025.9.3",
+      "biotite": "2.0.0"
+    }
+  },
+  "sourceFiles": {
+    "projects/of3_all_atom/model.py": "83bc031a323691f7f93c865ffa927b743b916768ae6dcfd945278528ad93642b",
+    "projects/of3_all_atom/runner.py": "70f1089988fac0de5f117d2566dd9a103a727d808c2f4f2bfc8341e67094ecac"
+  },
+  "capturedBatches": 1,
+  "forwardCalls": 0,
+  "capturedArrays": 39,
+  "unserializedMetadata": [
+    {
+      "path": "batch/atom_array/0",
+      "type": "biotite.structure.AtomArray"
+    }
+  ],
+  "matmulPrecisionAtCapture": "high",
+  "outputs": [
+    {
+      "path": "features/features.bin",
+      "sha256": "01984a6745a4351df9603780dd7600de67587fcb0e292e795e9900db875e9506",
+      "bytes": 3725633
+    },
+    {
+      "path": "features/features.json",
+      "sha256": "b615f39311ccc76b4d508caa9ad9dcbddc7673ae17845041c8305adc37b2734a",
+      "bytes": 16720
+    },
+    {
+      "path": "features/layout.json",
+      "sha256": "3aeb69279dd913348ec12bc2b3112f3873a214ab6e8743c886b80ace75486f30",
+      "bytes": 48132
+    }
+  ],
+  "elapsedSeconds": 131.26188933100002,
+  "finishedAt": "2026-11-13T20:54:41Z"
+}

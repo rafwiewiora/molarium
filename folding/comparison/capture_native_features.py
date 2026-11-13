@@ -78,13 +78,45 @@ def freeze_features(batch, output):
     return manifest
 
 
-def main():
+
+def processed_smiles_query(spec, library, resolved_query):
+    """Derive a separately recorded spelling control without changing chemistry."""
+    import copy
+    from rdkit import Chem
+    assert len(spec['compounds']) == len(library['run']['compounds']) == 1
+    assert [{'id': c['id'], 'smiles': c['smiles']} for c in library['run']['compounds']] == spec['compounds']
+    pose = next(p for p in library['poses'] if p['seed'] == 0 and p['status'] == 'complete')
+    result = pose['result']
+    assert result['sequence'] == spec['sequence']
+    assert result['provenance']['request']['model'] == 'localfold-openbind0'
+    assert pose['compoundId'] == spec['compounds'][0]['id']
+    original = spec['compounds'][0]['smiles']
+    processed = result['component']['smiles']
+    assert processed == result['provenance']['ligandNormalization']['canonicalSmiles']
+    assert original != processed, 'Identical spelling: reuse the original capture instead of repeating it'
+    left, right = Chem.MolFromSmiles(original), Chem.MolFromSmiles(processed)
+    assert left is not None and right is not None
+    assert Chem.MolToSmiles(left, isomericSmiles=True) == Chem.MolToSmiles(right, isomericSmiles=True), 'Chemical state/stereochemistry changed'
+    resolved = copy.deepcopy(resolved_query)
+    assert len(resolved['queries']) == 1
+    entry = next(iter(resolved['queries'].values()))
+    assert len(entry['chains']) == 2 and entry['chains'][1]['smiles'] == original
+    entry['chains'][1]['smiles'] = processed
+    control = {'originalSmiles': original, 'processedSmiles': processed,
+               'sameIsomericChemicalState': True,
+               'purpose': 'Only the SMILES spelling changes; a new diagnostic control, not a replacement for the original prediction protocol.'}
+    return resolved, control
+
+
+def main(observer=None, scope=None):
     p = argparse.ArgumentParser()
     p.add_argument('--inputs', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--checkpoint', type=Path, required=True)
     p.add_argument('--reference-receipt', type=Path, required=True,
                    help='Completed native control binding these exact inputs and checkpoint')
+    p.add_argument('--browser-library', type=Path,
+                   help='Separate control: use the exact processed SMILES recorded by this browser library')
     a = p.parse_args()
     a.output.mkdir(parents=True)
     started = time.monotonic()
@@ -101,6 +133,14 @@ def main():
     cache = Path(os.environ['OPENFOLD_CACHE'])
     assert cache.is_dir() and not (cache / 'runner.yml').exists(), 'No user-default runner may leak into this audit'
     query, _ = resolved_input_files(a.inputs, a.output, spec)
+    processed_control = None
+    if a.browser_library:
+        library_bytes = a.browser_library.read_bytes()
+        resolved, processed_control = processed_smiles_query(
+            spec, json.loads(library_bytes), json.loads(query.read_bytes()))
+        processed_control['sourceLibrarySha256'] = hashlib.sha256(library_bytes).hexdigest()
+        query = a.output / 'processed-smiles-query.json'
+        query.write_text(json.dumps(resolved, indent=2) + '\n')
     runner = json.loads((a.inputs / 'openbind-torch-standard.yaml').read_bytes())
     runner['experiment_settings']['seeds'] = [0]
     runner['data_module_args']['data_seed'] = 42
@@ -110,13 +150,14 @@ def main():
     from openfold3.projects.of3_all_atom.runner import OpenFold3AllAtom
     from openfold3.run_openfold import cli
     record = {'schema': 'molarium.native-feature-capture-receipt.v1', 'status': 'running',
-              'scope': 'Feature-only capture; no model forward, sampling, confidence evaluation or pose prediction.',
+              'scope': scope or 'Feature-only capture; no model forward, sampling, confidence evaluation or pose prediction.',
               'startedAt': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
               'scriptSha256': digest(__file__), 'inputSha256': digest(a.inputs / 'comparison.json'),
               'inputResolverSha256': digest(inspect.getsourcefile(resolved_input_files)),
               'referenceNativeReceiptSha256': digest(a.reference_receipt),
               'inputFiles': input_hashes,
               'checkpointSha256': digest(a.checkpoint), 'captureRunnerSha256': digest(runner_file),
+              'resolvedQuerySha256': digest(query), 'processedSmilesControl': processed_control,
               'seedSubset': [0], 'dataSeed': 42, 'slurmJobId': os.environ['SLURM_JOB_ID'],
               'environment': {'python': platform.python_version(), 'gpu': torch.cuda.get_device_name(0),
                               'packages': {n: importlib.metadata.version(n) for n in
@@ -124,6 +165,8 @@ def main():
               'sourceFiles': {str(Path(inspect.getsourcefile(c))).split('/openfold3/', 1)[-1]:
                               digest(inspect.getsourcefile(c)) for c in [OpenFold3, OpenFold3AllAtom]},
               'capturedBatches': 0, 'forwardCalls': 0}
+    if observer is not None:
+        record['observerSourceSha256'] = digest(inspect.getsourcefile(observer))
     receipt = a.output / 'receipt.json'
     receipt.write_text(json.dumps(record, indent=2) + '\n')
 
@@ -145,6 +188,8 @@ def main():
         layout = {'atomNames': names, 'atomTokens': np.repeat(np.arange(len(counts)), counts).tolist(),
                   'atomMask': b['atom_mask'].numpy().tolist(), 'tokenMask': b['token_mask'].numpy().tolist()}
         (a.output / 'features/layout.json').write_text(json.dumps(layout, indent=2) + '\n')
+        if observer is not None:
+            observer(self, batch, a, record)
         record['capturedBatches'] += 1
         record['capturedArrays'] = len(manifest['arrays'])
         record['unserializedMetadata'] = manifest['unserializedMetadata']

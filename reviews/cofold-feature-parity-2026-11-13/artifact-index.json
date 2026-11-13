@@ -1,11 +1,10 @@
 {
   "schema": "molarium.feature-audit-artifacts.v1",
-  "status": "in-progress; native captures pending",
   "files": [
     {
       "file": "README.md",
-      "bytes": 3923,
-      "sha256": "766809a101739fc620e7dc5e8abdd28980f4f1b8e5ba6fff89fbc92610d8da92"
+      "bytes": 7428,
+      "sha256": "26ed5662d4818d1b7fc213e103205c5be26db6aab9a68da2b1e3dca8536a533d"
     },
     {
       "file": "browser-32qy-a1keo/features.bin",
@@ -38,6 +37,16 @@
       "sha256": "ee6d43df593bccf5fab94429e4e8e3bba022b7484e69163e5912a0267fa9d545"
     },
     {
+      "file": "comparison-32qy-a1keo.json",
+      "bytes": 9407,
+      "sha256": "8e9de598d30d7ab0ca6d0f748609bc8297ecdea1d7513b25f9c268c08741397f"
+    },
+    {
+      "file": "comparison-9t51-a1jtm.json",
+      "bytes": 9560,
+      "sha256": "bd85780ac5ff054aaa60b571055ec5a959f2bf3bc0ee4000315b10cde7a67bef"
+    },
+    {
       "file": "exported-protein-atom-layout.json",
       "bytes": 4124,
       "sha256": "3938c245bf4e52a56f9e30daba6ebd55aacc25b668622f9e7c5f2107c47e1dcb"
@@ -48,9 +57,89 @@
       "sha256": "ad020e9fcba937738f24d17f06bae1b9437325351666d049b0c196a358c96b55"
     },
     {
+      "file": "native-32qy-a1keo/capture-runner.json",
+      "bytes": 734,
+      "sha256": "d0a095920e8c65e657c4ac8dbc0188ed6d7ae00887b5dcf5826114251be00c36"
+    },
+    {
+      "file": "native-32qy-a1keo/features/features.bin",
+      "bytes": 2973121,
+      "sha256": "b50d2ef8d9f47ef55a811d54f01b253d4801d8139a1ade373ee507769b188c0b"
+    },
+    {
+      "file": "native-32qy-a1keo/features/features.json",
+      "bytes": 16717,
+      "sha256": "d49a8477c33d1ce27a63b5928e69d2557baa589af82d332642be2778e6353490"
+    },
+    {
+      "file": "native-32qy-a1keo/features/layout.json",
+      "bytes": 39340,
+      "sha256": "fa24b8334c954f5c3b43a819307dc1e64265ef7308b9dd821a668e116d30b026"
+    },
+    {
+      "file": "native-32qy-a1keo/receipt.json",
+      "bytes": 2722,
+      "sha256": "22822bd34e89cf0f8382b6d699192ced3587e8f2512ab9e036e5228631b9999d"
+    },
+    {
+      "file": "native-32qy-a1keo/resolved-inputs/boltz/compound_000.yaml",
+      "bytes": 551,
+      "sha256": "7f7dbf6f826904a9167243c90748bb0403be45575b467a3c52da2fcd39dad341"
+    },
+    {
+      "file": "native-32qy-a1keo/resolved-inputs/openbind-query.json",
+      "bytes": 799,
+      "sha256": "96e5ecbd8c725e082ee9848541879217b974abffb9c6128f82e391de1439bdbf"
+    },
+    {
+      "file": "native-9t51-a1jtm/capture-runner.json",
+      "bytes": 734,
+      "sha256": "d0a095920e8c65e657c4ac8dbc0188ed6d7ae00887b5dcf5826114251be00c36"
+    },
+    {
+      "file": "native-9t51-a1jtm/features/features.bin",
+      "bytes": 3725633,
+      "sha256": "01984a6745a4351df9603780dd7600de67587fcb0e292e795e9900db875e9506"
+    },
+    {
+      "file": "native-9t51-a1jtm/features/features.json",
+      "bytes": 16720,
+      "sha256": "b615f39311ccc76b4d508caa9ad9dcbddc7673ae17845041c8305adc37b2734a"
+    },
+    {
+      "file": "native-9t51-a1jtm/features/layout.json",
+      "bytes": 48132,
+      "sha256": "3aeb69279dd913348ec12bc2b3112f3873a214ab6e8743c886b80ace75486f30"
+    },
+    {
+      "file": "native-9t51-a1jtm/receipt.json",
+      "bytes": 2723,
+      "sha256": "6880880b0a26f485c0096d66914bc3e0291b6db4d3fd6fcf064088e4db5317b1"
+    },
+    {
+      "file": "native-9t51-a1jtm/resolved-inputs/boltz/compound_000.yaml",
+      "bytes": 620,
+      "sha256": "83373d39eaa5742ee86aed97602251771d594b79e6938a0ba3b901cd928e47f1"
+    },
+    {
+      "file": "native-9t51-a1jtm/resolved-inputs/openbind-query.json",
+      "bytes": 868,
+      "sha256": "a1e92ad756cd955e892603f5bf5a735983fd2ef50e60df03651ab13d39e1126a"
+    },
+    {
+      "file": "native-features.zip",
+      "bytes": 196931,
+      "sha256": "f8399bc8f0cfebd6c398c76be7c02b7dc3bf538ba97d43ae7af15c6e13f48a12"
+    },
+    {
       "file": "producers/capture-browser-features.mjs",
       "bytes": 5809,
       "sha256": "9800f414a6262e3542d8dfde850e7bdb39a943a46f71bade22502b72771bea4d"
+    },
+    {
+      "file": "producers/capture_native_features-processed-smiles.py",
+      "bytes": 12190,
+      "sha256": "6a07a9284b5749cd71937a0870697fa300293a74b8ae17b60afeff91a988d978"
     },
     {
       "file": "producers/capture_native_features.py",
@@ -61,6 +150,11 @@
       "file": "producers/native_run.py",
       "bytes": 9223,
       "sha256": "bc5d3bc2c71758f6a07be74324b072269a8d61f836c44cd3159b1bace9d17282"
+    },
+    {
+      "file": "transfer-receipt.json",
+      "bytes": 7468,
+      "sha256": "f584ff3b869f9efae7e0e515dc38b846843dccdd7aaa6a4daa59e7736fd6f266"
     }
   ]
 }

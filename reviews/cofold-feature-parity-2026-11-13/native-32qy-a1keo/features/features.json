@@ -1,0 +1,814 @@
+{
+  "schema": "molarium.native-feature-capture.v1",
+  "scope": "All tensor/numerical-array leaves at the stock predict-step boundary. Unsupported metadata objects are listed by type, not silently treated as tensors.",
+  "arrays": {
+    "array-0000": {
+      "path": "batch/token_index",
+      "shape": [
+        1,
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 0,
+      "bytes": 740,
+      "sha256": "2258eddcb0420b8ad5a08d715d1e13f7a05f068844a4ae53235be5a82918587a"
+    },
+    "array-0001": {
+      "path": "batch/restype",
+      "shape": [
+        1,
+        185,
+        32
+      ],
+      "dtype": "<i4",
+      "byteOffset": 744,
+      "bytes": 23680,
+      "sha256": "bafd4a77513ee74888e73136005b2659cc10a6d929665294cb9c73b10618adc1"
+    },
+    "array-0002": {
+      "path": "batch/is_protein",
+      "shape": [
+        1,
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 24424,
+      "bytes": 740,
+      "sha256": "705fef4514d663b519927ee1f7e83ad8e65fe73465706fbbd127d0beb4bc07c9"
+    },
+    "array-0003": {
+      "path": "batch/is_rna",
+      "shape": [
+        1,
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 25168,
+      "bytes": 740,
+      "sha256": "ad9484f24235fdac13bba66e24d5ecc16b72c6de9bd27a3922f60833fe07679d"
+    },
+    "array-0004": {
+      "path": "batch/is_dna",
+      "shape": [
+        1,
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 25912,
+      "bytes": 740,
+      "sha256": "ad9484f24235fdac13bba66e24d5ecc16b72c6de9bd27a3922f60833fe07679d"
+    },
+    "array-0005": {
+      "path": "batch/is_ligand",
+      "shape": [
+        1,
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 26656,
+      "bytes": 740,
+      "sha256": "3f099cfbe2784b7356567437e0927ae17de2f9f445ca61bca1ca00211e36e384"
+    },
+    "array-0006": {
+      "path": "batch/is_atomized",
+      "shape": [
+        1,
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 27400,
+      "bytes": 740,
+      "sha256": "3f099cfbe2784b7356567437e0927ae17de2f9f445ca61bca1ca00211e36e384"
+    },
+    "array-0007": {
+      "path": "batch/token_mask",
+      "shape": [
+        1,
+        185
+      ],
+      "dtype": "<f4",
+      "byteOffset": 28144,
+      "bytes": 740,
+      "sha256": "a1a057a34f1266b0d73aef865acdff77fb36f6498bdb28ec8b6c40a0784c8b18",
+      "nonFiniteValues": 0
+    },
+    "array-0008": {
+      "path": "batch/num_atoms_per_token",
+      "shape": [
+        1,
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 28888,
+      "bytes": 740,
+      "sha256": "7f7d846b0d410685b8c7d77ba7c0f7cd487de19467162a2c0c80f88f45749916"
+    },
+    "array-0009": {
+      "path": "batch/start_atom_index",
+      "shape": [
+        1,
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 29632,
+      "bytes": 740,
+      "sha256": "18aef17912c620b70af21b9939a9779d949d850640dab64ef1a4d5ea294ac4ce"
+    },
+    "array-0010": {
+      "path": "batch/atom_mask",
+      "shape": [
+        1,
+        1381
+      ],
+      "dtype": "<f4",
+      "byteOffset": 30376,
+      "bytes": 5524,
+      "sha256": "e46450dc6eaa16004bc304ca8564bcf848ae4f5b7f103b244d7cb556bb342170",
+      "nonFiniteValues": 0
+    },
+    "array-0011": {
+      "path": "batch/residue_index",
+      "shape": [
+        1,
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 35904,
+      "bytes": 740,
+      "sha256": "7ce65dfa7f9dccc48845f3da1cb6a478823c4d400bce3f0b485a1ee60dc07c3e"
+    },
+    "array-0012": {
+      "path": "batch/asym_id",
+      "shape": [
+        1,
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 36648,
+      "bytes": 740,
+      "sha256": "444e176c128109012c18bb7faf32f099c2ea35aaaa6d8e3a505f6313771f2dae"
+    },
+    "array-0013": {
+      "path": "batch/entity_id",
+      "shape": [
+        1,
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 37392,
+      "bytes": 740,
+      "sha256": "89541044d8f23939ea3505ac24f051b77a2e1183639f9990491a12986fe30f77"
+    },
+    "array-0014": {
+      "path": "batch/sym_id",
+      "shape": [
+        1,
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 38136,
+      "bytes": 740,
+      "sha256": "7bf41dd1b39ded6a332e99bad4c14abe542bdfc6237849b1d15a6160375a34e4"
+    },
+    "array-0015": {
+      "path": "batch/token_bonds",
+      "shape": [
+        1,
+        185,
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 38880,
+      "bytes": 136900,
+      "sha256": "ac98ac521ca3654a01cd2068dc22a01fd6ce267f41b4d92fdac8ba13a8835676"
+    },
+    "array-0016": {
+      "path": "batch/atom_to_token_index",
+      "shape": [
+        1,
+        1381
+      ],
+      "dtype": "<i4",
+      "byteOffset": 175784,
+      "bytes": 5524,
+      "sha256": "1e3a8d41b41df602b909aa779f83e61508b32c37ecd42ba2d3e13cdeb558bb74"
+    },
+    "array-0017": {
+      "path": "batch/cyclic_mask",
+      "shape": [
+        1,
+        185
+      ],
+      "dtype": "|b1",
+      "byteOffset": 181312,
+      "bytes": 185,
+      "sha256": "babd6f664158d665504571b169a1e81ef75470cdca4fdd7d95be6cdb7826136d"
+    },
+    "array-0018": {
+      "path": "batch/ref_pos",
+      "shape": [
+        1,
+        1381,
+        3
+      ],
+      "dtype": "<f4",
+      "byteOffset": 181504,
+      "bytes": 16572,
+      "sha256": "6277ad18244040140baaa9039b7fea8ac3c29ca050ba1ec01bc34cc10ea1f3f2",
+      "nonFiniteValues": 0
+    },
+    "array-0019": {
+      "path": "batch/ref_mask",
+      "shape": [
+        1,
+        1381
+      ],
+      "dtype": "<i4",
+      "byteOffset": 198080,
+      "bytes": 5524,
+      "sha256": "8e4895e86867fcd13f53ee1acb2d7dd1a27feda2e8c33097588d185a033d0728"
+    },
+    "array-0020": {
+      "path": "batch/ref_element",
+      "shape": [
+        1,
+        1381,
+        119
+      ],
+      "dtype": "<i4",
+      "byteOffset": 203608,
+      "bytes": 657356,
+      "sha256": "d428b90bed0e2453d0d7e5c481ca30f6d6298db84e8ab65b0f2b15bb568e5628"
+    },
+    "array-0021": {
+      "path": "batch/ref_charge",
+      "shape": [
+        1,
+        1381
+      ],
+      "dtype": "<f4",
+      "byteOffset": 860968,
+      "bytes": 5524,
+      "sha256": "cc7f3fd758dc3a4af107e8f7129d3e8639348e3ee238ebd9a43a39da99148379",
+      "nonFiniteValues": 0
+    },
+    "array-0022": {
+      "path": "batch/ref_atom_name_chars",
+      "shape": [
+        1,
+        1381,
+        4,
+        64
+      ],
+      "dtype": "<i4",
+      "byteOffset": 866496,
+      "bytes": 1414144,
+      "sha256": "79462c15eb1c0eb50b44a90224dba183b04aec4bc5377275b8864efcdcbaf747"
+    },
+    "array-0023": {
+      "path": "batch/ref_space_uid",
+      "shape": [
+        1,
+        1381
+      ],
+      "dtype": "<i4",
+      "byteOffset": 2280640,
+      "bytes": 5524,
+      "sha256": "d180c180e6a0fbe6cf1f17505b842a12fcf3f9b1228c8dcca42588c6e09e7d3d"
+    },
+    "array-0024": {
+      "path": "batch/msa",
+      "shape": [
+        1,
+        257,
+        185
+      ],
+      "dtype": "|u1",
+      "byteOffset": 2286168,
+      "bytes": 47545,
+      "sha256": "58b0533b061713b9a620bf5e53528d9999ec913531744c8f616968e33fd95f7d"
+    },
+    "array-0025": {
+      "path": "batch/has_deletion",
+      "shape": [
+        1,
+        257,
+        185
+      ],
+      "dtype": "<f4",
+      "byteOffset": 2333720,
+      "bytes": 190180,
+      "sha256": "fa70ff36d9bca6c9c08df362ded50d64ce84429ef21de9941675c26eaebcdef6",
+      "nonFiniteValues": 0
+    },
+    "array-0026": {
+      "path": "batch/deletion_value",
+      "shape": [
+        1,
+        257,
+        185
+      ],
+      "dtype": "<f4",
+      "byteOffset": 2523904,
+      "bytes": 190180,
+      "sha256": "51fce39ca83fc5472ce77aabbc21be3c3b9d9176a2611f4ddfca7fe8eafcce10",
+      "nonFiniteValues": 0
+    },
+    "array-0027": {
+      "path": "batch/deletion_mean",
+      "shape": [
+        1,
+        185
+      ],
+      "dtype": "<f4",
+      "byteOffset": 2714088,
+      "bytes": 740,
+      "sha256": "b936e8ab732b990a25243cff1ce27d3d35e45e9cc3b1606c1300c9b58fa0be79",
+      "nonFiniteValues": 0
+    },
+    "array-0028": {
+      "path": "batch/profile",
+      "shape": [
+        1,
+        185,
+        32
+      ],
+      "dtype": "<f4",
+      "byteOffset": 2714832,
+      "bytes": 23680,
+      "sha256": "4cd52b3153425f9dac9d7defeaf2b1a21a9fa2ddce4220e749998e5b63d12b16",
+      "nonFiniteValues": 0
+    },
+    "array-0029": {
+      "path": "batch/num_paired_seqs",
+      "shape": [
+        1
+      ],
+      "dtype": "<i4",
+      "byteOffset": 2738512,
+      "bytes": 4,
+      "sha256": "67abdd721024f0ff4e0b3f4c2fc13bc5bad42d0b7851d456d88d203d15aaa450"
+    },
+    "array-0030": {
+      "path": "batch/msa_mask",
+      "shape": [
+        1,
+        257,
+        185
+      ],
+      "dtype": "<f4",
+      "byteOffset": 2738520,
+      "bytes": 190180,
+      "sha256": "07d1031af912ef4ec466515732f7b99bd057ac179a1e92559868c86072163778",
+      "nonFiniteValues": 0
+    },
+    "array-0031": {
+      "path": "batch/template_pseudo_beta_mask",
+      "shape": [
+        1,
+        4,
+        185
+      ],
+      "dtype": "<f4",
+      "byteOffset": 2928704,
+      "bytes": 2960,
+      "sha256": "1c5e0cbf7e9ed7bf9747a54545b5b425cee38700dbada1f5a023a04ae117bcb1",
+      "nonFiniteValues": 0
+    },
+    "array-0032": {
+      "path": "batch/template_backbone_frame_mask",
+      "shape": [
+        1,
+        4,
+        185
+      ],
+      "dtype": "<f4",
+      "byteOffset": 2931664,
+      "bytes": 2960,
+      "sha256": "1c5e0cbf7e9ed7bf9747a54545b5b425cee38700dbada1f5a023a04ae117bcb1",
+      "nonFiniteValues": 0
+    },
+    "array-0033": {
+      "path": "batch/template_restype",
+      "shape": [
+        1,
+        4,
+        185
+      ],
+      "dtype": "<i4",
+      "byteOffset": 2934624,
+      "bytes": 2960,
+      "sha256": "30dee54c95e097522c7270cbceb1dfb83717ea1f3eecda019b2d31e7f72c06f1"
+    },
+    "array-0034": {
+      "path": "batch/template_pseudo_beta_coords",
+      "shape": [
+        1,
+        4,
+        185,
+        3
+      ],
+      "dtype": "<f4",
+      "byteOffset": 2937584,
+      "bytes": 8880,
+      "sha256": "f08ad8b2fa2449ee7ef28e54673c39871ca88eedbb06e678d5dd03171a64da79",
+      "nonFiniteValues": 0
+    },
+    "array-0035": {
+      "path": "batch/template_frame_atom_coords",
+      "shape": [
+        1,
+        4,
+        185,
+        3,
+        3
+      ],
+      "dtype": "<f4",
+      "byteOffset": 2946464,
+      "bytes": 26640,
+      "sha256": "63ce828e55507bf6a7bd11ff3ee617b026b45a771c2bb914d11fe1d50b0bef8c",
+      "nonFiniteValues": 0
+    },
+    "array-0036": {
+      "path": "batch/seed",
+      "shape": [
+        1
+      ],
+      "dtype": "<i8",
+      "byteOffset": 2973104,
+      "bytes": 8,
+      "sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+    },
+    "array-0037": {
+      "path": "batch/repeated_sample",
+      "shape": [
+        1
+      ],
+      "dtype": "|b1",
+      "byteOffset": 2973112,
+      "bytes": 1,
+      "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+    },
+    "array-0038": {
+      "path": "batch/valid_sample",
+      "shape": [
+        1
+      ],
+      "dtype": "|b1",
+      "byteOffset": 2973120,
+      "bytes": 1,
+      "sha256": "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a"
+    }
+  },
+  "tree": {
+    "dict": [
+      [
+        {
+          "value": "token_index"
+        },
+        {
+          "array": "array-0000"
+        }
+      ],
+      [
+        {
+          "value": "restype"
+        },
+        {
+          "array": "array-0001"
+        }
+      ],
+      [
+        {
+          "value": "is_protein"
+        },
+        {
+          "array": "array-0002"
+        }
+      ],
+      [
+        {
+          "value": "is_rna"
+        },
+        {
+          "array": "array-0003"
+        }
+      ],
+      [
+        {
+          "value": "is_dna"
+        },
+        {
+          "array": "array-0004"
+        }
+      ],
+      [
+        {
+          "value": "is_ligand"
+        },
+        {
+          "array": "array-0005"
+        }
+      ],
+      [
+        {
+          "value": "is_atomized"
+        },
+        {
+          "array": "array-0006"
+        }
+      ],
+      [
+        {
+          "value": "token_mask"
+        },
+        {
+          "array": "array-0007"
+        }
+      ],
+      [
+        {
+          "value": "num_atoms_per_token"
+        },
+        {
+          "array": "array-0008"
+        }
+      ],
+      [
+        {
+          "value": "start_atom_index"
+        },
+        {
+          "array": "array-0009"
+        }
+      ],
+      [
+        {
+          "value": "atom_mask"
+        },
+        {
+          "array": "array-0010"
+        }
+      ],
+      [
+        {
+          "value": "residue_index"
+        },
+        {
+          "array": "array-0011"
+        }
+      ],
+      [
+        {
+          "value": "asym_id"
+        },
+        {
+          "array": "array-0012"
+        }
+      ],
+      [
+        {
+          "value": "entity_id"
+        },
+        {
+          "array": "array-0013"
+        }
+      ],
+      [
+        {
+          "value": "sym_id"
+        },
+        {
+          "array": "array-0014"
+        }
+      ],
+      [
+        {
+          "value": "token_bonds"
+        },
+        {
+          "array": "array-0015"
+        }
+      ],
+      [
+        {
+          "value": "atom_to_token_index"
+        },
+        {
+          "array": "array-0016"
+        }
+      ],
+      [
+        {
+          "value": "cyclic_mask"
+        },
+        {
+          "array": "array-0017"
+        }
+      ],
+      [
+        {
+          "value": "ref_pos"
+        },
+        {
+          "array": "array-0018"
+        }
+      ],
+      [
+        {
+          "value": "ref_mask"
+        },
+        {
+          "array": "array-0019"
+        }
+      ],
+      [
+        {
+          "value": "ref_element"
+        },
+        {
+          "array": "array-0020"
+        }
+      ],
+      [
+        {
+          "value": "ref_charge"
+        },
+        {
+          "array": "array-0021"
+        }
+      ],
+      [
+        {
+          "value": "ref_atom_name_chars"
+        },
+        {
+          "array": "array-0022"
+        }
+      ],
+      [
+        {
+          "value": "ref_space_uid"
+        },
+        {
+          "array": "array-0023"
+        }
+      ],
+      [
+        {
+          "value": "msa"
+        },
+        {
+          "array": "array-0024"
+        }
+      ],
+      [
+        {
+          "value": "has_deletion"
+        },
+        {
+          "array": "array-0025"
+        }
+      ],
+      [
+        {
+          "value": "deletion_value"
+        },
+        {
+          "array": "array-0026"
+        }
+      ],
+      [
+        {
+          "value": "deletion_mean"
+        },
+        {
+          "array": "array-0027"
+        }
+      ],
+      [
+        {
+          "value": "profile"
+        },
+        {
+          "array": "array-0028"
+        }
+      ],
+      [
+        {
+          "value": "num_paired_seqs"
+        },
+        {
+          "array": "array-0029"
+        }
+      ],
+      [
+        {
+          "value": "msa_mask"
+        },
+        {
+          "array": "array-0030"
+        }
+      ],
+      [
+        {
+          "value": "template_pseudo_beta_mask"
+        },
+        {
+          "array": "array-0031"
+        }
+      ],
+      [
+        {
+          "value": "template_backbone_frame_mask"
+        },
+        {
+          "array": "array-0032"
+        }
+      ],
+      [
+        {
+          "value": "template_restype"
+        },
+        {
+          "array": "array-0033"
+        }
+      ],
+      [
+        {
+          "value": "template_pseudo_beta_coords"
+        },
+        {
+          "array": "array-0034"
+        }
+      ],
+      [
+        {
+          "value": "template_frame_atom_coords"
+        },
+        {
+          "array": "array-0035"
+        }
+      ],
+      [
+        {
+          "value": "query_id"
+        },
+        {
+          "list": [
+            {
+              "value": "compound_000"
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "value": "seed"
+        },
+        {
+          "array": "array-0036"
+        }
+      ],
+      [
+        {
+          "value": "repeated_sample"
+        },
+        {
+          "array": "array-0037"
+        }
+      ],
+      [
+        {
+          "value": "valid_sample"
+        },
+        {
+          "array": "array-0038"
+        }
+      ],
+      [
+        {
+          "value": "atom_array"
+        },
+        {
+          "list": [
+            {
+              "metadataObjectType": "biotite.structure.AtomArray"
+            }
+          ]
+        }
+      ]
+    ]
+  },
+  "unserializedMetadata": [
+    {
+      "path": "batch/atom_array/0",
+      "type": "biotite.structure.AtomArray"
+    }
+  ],
+  "blob": {
+    "file": "features.bin",
+    "bytes": 2973121,
+    "sha256": "b50d2ef8d9f47ef55a811d54f01b253d4801d8139a1ade373ee507769b188c0b"
+  }
+}

@@ -1,14 +1,56 @@
 """Portable feature serialization, not a scientific runtime/GPU execution test."""
 from pathlib import Path
 import hashlib
+import copy
 import json
 import tempfile
 import unittest
+import zipfile
 import numpy as np
-from capture_native_features import freeze_features
+from capture_native_features import freeze_features, processed_smiles_query
 
 
 class FeatureCaptureTests(unittest.TestCase):
+    @staticmethod
+    def spelling_fixture():
+        repo = Path(__file__).resolve().parents[2]
+        panel = repo / 'reviews/cofold-recent-pdb-2026-11-13'
+        with zipfile.ZipFile(panel / 'native-openbind0-msa256-standard/native-evidence.zip') as z:
+            prefix = '9t51-a1jtm/inputs/'
+            spec = json.loads(z.read(prefix + 'comparison.json'))
+            query = json.loads(z.read(prefix + 'openbind-query.json'))
+        library = json.loads((panel / 'browser-openbind0-msa256-standard/library-3.json').read_bytes())
+        return spec, library, query
+
+    def test_processed_spelling_control_changes_only_the_declared_ligand_string(self):
+        spec, library, query = self.spelling_fixture()
+        original = copy.deepcopy(query)
+        output, control = processed_smiles_query(spec, library, query)
+        expected = copy.deepcopy(query)
+        next(iter(expected['queries'].values()))['chains'][1]['smiles'] = control['processedSmiles']
+        self.assertEqual(output, expected)
+        self.assertEqual(query, original)
+        self.assertNotEqual(control['originalSmiles'], control['processedSmiles'])
+        self.assertTrue(control['sameIsomericChemicalState'])
+
+    def test_spelling_control_rejects_an_enantiomer(self):
+        spec, library, query = self.spelling_fixture()
+        result = next(p for p in library['poses'] if p['seed'] == 0)['result']
+        altered = result['component']['smiles'].replace('@@', '@', 1)
+        self.assertNotEqual(altered, result['component']['smiles'])
+        result['component']['smiles'] = altered
+        result['provenance']['ligandNormalization']['canonicalSmiles'] = altered
+        with self.assertRaisesRegex(AssertionError, 'Chemical state/stereochemistry'):
+            processed_smiles_query(spec, library, query)
+
+    def test_identical_processed_spelling_must_reuse_existing_capture(self):
+        spec, library, query = self.spelling_fixture()
+        processed = next(p for p in library['poses'] if p['seed'] == 0)['result']['component']['smiles']
+        spec['compounds'][0]['smiles'] = processed
+        library['run']['compounds'][0]['smiles'] = processed
+        with self.assertRaisesRegex(AssertionError, 'reuse the original capture'):
+            processed_smiles_query(spec, library, query)
+
     def test_nested_arrays_preserve_exact_dtypes_shapes_views_and_nonfinite_bits(self):
         source = {
             'positions': np.arange(30, dtype=np.float32).reshape(5, 6)[:, ::2],

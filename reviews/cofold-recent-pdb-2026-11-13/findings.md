@@ -92,3 +92,19 @@ Original predictions and reference files are immutable evidence. Review assembly
 adds display labels and reference cards while retaining original PDB bytes,
 coordinate hashes and source-library identities. Public review decisions start
 empty; preferences made later remain local and exportable.
+
+
+## RCF-15: equivalent chemistry still produces different model inputs
+
+The [complete two-case feature capture and comparison](../cofold-feature-parity-2026-11-13/README.md)
+finds exact mapped chemistry/alignment features but different ligand parser order,
+atom-name encoding and generated reference conformers. Browser normalization
+changes the SMILES spelling before its component is built; the original stock-native
+query retained the supplied spelling. Both have the same isomeric chemical state.
+This is an input protocol difference, not an identified WebGPU kernel defect.
+
+The response is a [separate processed-SMILES control](../../folding/comparison/capture_native_features.py)
+and a [portable semantic comparator](../../folding/comparison/compare_feature_snapshots.py),
+with [stereo/transfer rejection and both real-case replay tests](../../folding/comparison/test_feature_comparison.py).
+Original predictions, captures and consumed producers are preserved. No production
+folding mathematics is changed, and no full-feature/trained-model parity claim is made.

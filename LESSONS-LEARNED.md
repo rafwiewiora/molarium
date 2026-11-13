@@ -178,3 +178,15 @@ The corrected inputs did not establish better pose reconstruction: original
 Boltz gave 1/27 poses within 2 Å; normalized Boltz and OpenBind gave 0/27 each in
 the single-sequence phase. Keep both outcomes. Input validity, native numerical
 agreement, protein-fold quality and ligand placement are separate claims.
+
+
+## Equivalent SMILES still do not fix tensor inputs
+
+The [native/shared-JS feature audit](reviews/cofold-feature-parity-2026-11-13/README.md)
+accounts for every atom in two diagnostic systems. It verifies matching alignment,
+elements, formal charges and bond adjacency while revealing different ligand
+parser order, model atom-name encoding and generated reference conformers. An
+isomeric chemical identity certificate does not certify equality of these inputs.
+Preserve actual processed strings and arrays, enumerate chemical-map ambiguity,
+and introduce separate controls before attributing pose disagreement to a kernel.
+Reference conformers are generated inputs, not experimental bound coordinates.

@@ -24,9 +24,11 @@ phases are complete; original zero-output startup failures are preserved
 separately from pose scores.
 
 A [full input-feature audit](../../reviews/cofold-feature-parity-2026-11-13/README.md)
-is in progress on two diagnostic systems. It preserves shared-JS feature
-reconstructions and will capture stock native inputs with model forwards
-forbidden. No full-feature or numerical parity verdict is claimed yet.
+has completed native and shared-JS captures on two diagnostic systems, with
+zero native model forwards. Its portable comparison accounts for every atom
+and identifies SMILES-order/name and reference-conformer differences while
+verifying chemistry/alignment feature matches. The same-spelling control is
+queued; no full-feature or trained-model numerical parity verdict is claimed.
 
 These tools compare completed structure predictions without rerunning inference
 or treating a native prediction as an experimental answer. The first cohort is
