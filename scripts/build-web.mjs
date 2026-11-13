@@ -20,6 +20,7 @@ const files = [
   'reviews/cofold-crystal-reference-2026-11-13/README.md',
   'reviews/cofold-crystal-reference-2026-11-13/panel.json',
   'reviews/cofold-crystal-reference-2026-11-13/browser-scores.json',
+  'reviews/cofold-crystal-reference-2026-11-13/browser-input-stereochemistry.json',
   'reviews/cofold-crystal-reference-2026-11-13/sources/3MXF.cif',
   'reviews/cofold-crystal-reference-2026-11-13/sources/1FKF.cif',
   'reviews/cofold-crystal-reference-2026-11-13/sources/181L.cif',

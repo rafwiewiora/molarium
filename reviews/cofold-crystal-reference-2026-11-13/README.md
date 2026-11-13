@@ -59,6 +59,13 @@ experimental answer and must not be presented as prospective selection.
 Stereochemical diagnostics do not cover every bond-geometry or physical-validity
 criterion. No pose is discarded for producing a poor result.
 
+A post hoc [check of all 18 saved input conformers](browser-input-stereochemistry.json)
+found no mismatched or unassigned specified tetrahedral centres, including all
+14 centres of FK5. Thus the reported tetrahedral inversions occur in the output
+predictions even though those centres were correct in the supplied conformers.
+This localizes the change to the prediction path; it does not identify which
+model, port or sampling operation caused it.
+
 Raw libraries and timing/provenance records:
 
 - [OpenBind-0](browser-openbind0/throughput.json): [BRD4](browser-openbind0/library-1.json), [FKBP12](browser-openbind0/library-2.json), [lysozyme](browser-openbind0/library-3.json).
