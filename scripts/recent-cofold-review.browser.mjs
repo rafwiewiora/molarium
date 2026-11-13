@@ -26,7 +26,7 @@ try{
   await b.evaluate(`new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))`);
   if(process.env.MOLARIUM_PUBLIC_REVIEW_SCREENSHOT)await writeFile(process.env.MOLARIUM_PUBLIC_REVIEW_SCREENSHOT.replace(/\.png$/,'-native.png'),await b.capturePng());
   await b.evaluate(`document.querySelectorAll('#pages button')[2].click()`);
-  await waitFor(()=>b.evaluate(`Array.from(document.querySelectorAll('article.pose')).some(p=>p.querySelector('.pose-head')?.textContent.includes('native')&&p.querySelector('.pose-head')?.textContent.includes('MSA256')&&p.querySelector('.viewer canvas'))`),60000,'native MSA control rendered');
+  await waitFor(()=>b.evaluate(`Array.from(document.querySelectorAll('article.pose')).filter(p=>p.querySelector('.pose-head')?.textContent.includes('native')&&p.querySelector('.pose-head')?.textContent.includes('MSA256')&&p.querySelector('.viewer canvas')).length===2`),60000,'both native MSA controls rendered');
   await checkErrors();
   assert.equal(await b.evaluate(`document.querySelector('#summary').textContent.includes('1 preferred poses')`),true);
   if(process.env.MOLARIUM_PUBLIC_REVIEW_SCREENSHOT)await writeFile(process.env.MOLARIUM_PUBLIC_REVIEW_SCREENSHOT.replace(/\.png$/,'-native-msa.png'),await b.capturePng());

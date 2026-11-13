@@ -43,5 +43,10 @@
     "id": "native-openbind0-msa256-standard",
     "label": "OpenBind-0 \u00b7 native FP32 dense \u00b7 MSA256 \u00b7 200 steps",
     "directory": "native-openbind0-msa256-standard"
+  },
+  {
+    "id": "native-boltz2-msa256-standard",
+    "label": "Boltz-2 \u00b7 native BF16 \u00b7 MSA256 \u00b7 200 steps",
+    "directory": "native-boltz2-msa256-standard"
   }
 ]

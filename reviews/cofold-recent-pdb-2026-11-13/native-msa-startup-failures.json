@@ -1,0 +1,115 @@
+{
+  "schema": "molarium.native-startup-failures.v1",
+  "scope": "Two original zero-output native Boltz MSA startup failures; no failed pose is invented or scored. Original receipts are not rewritten complete.",
+  "sourceTransferArchiveSha256": "0776d2cafc1afc6c33333d66fbfbddf76b799167fbc3782f469b1d8093214fb7",
+  "cases": [
+    {
+      "caseId": "9sxf-a1jrg",
+      "originalReceiptSha256": "503e63ce712874ad612375d7be5c4f2b8836c038689943e0033f23def305ba99",
+      "status": "failed",
+      "observedSavedModels": 0,
+      "observedForwardRecords": 0,
+      "error": "cannot import name '_location_relationship' from partially initialized module 'torch.onnx._internal.diagnostics.infra.sarif' (most likely due to a circular import) (/home/rafal_wiewiora_psivant_com/nfs/envs/boltz2/lib/python3.11/site-packages/torch/onnx/_internal/diagnostics/infra/sarif/__init__.py)"
+    },
+    {
+      "caseId": "9syo-a1jr1",
+      "originalReceiptSha256": "4b463d28196058862d3c2c60fa0301d098c8634b3cb0266f3c7648fd23d7b6a4",
+      "status": "failed",
+      "observedSavedModels": 0,
+      "observedForwardRecords": 0,
+      "error": "CCD component ALA not found!"
+    }
+  ],
+  "archive": {
+    "file": "native-msa-startup-failures.zip",
+    "bytes": 86291,
+    "sha256": "2fff8db59e654b6d57ce988c87b9a0a982c3f7993c7a3d42b38a81900b6705ee",
+    "files": [
+      {
+        "file": "9sxf-a1jrg/inputs/boltz/compound_000.yaml",
+        "bytes": 618,
+        "sha256": "9bdcbc1c76b30e538b08291fa785ab203c14ebbc476f577d1d3e03ca89ac825b"
+      },
+      {
+        "file": "9sxf-a1jrg/inputs/comparison.json",
+        "bytes": 117577,
+        "sha256": "a92ea4c07797a3d1c29ee7b08a7624040bc2595dc6c3e30052e45c6dddd1571c"
+      },
+      {
+        "file": "9sxf-a1jrg/inputs/msa/colabfold_main.a3m",
+        "bytes": 112055,
+        "sha256": "ca6038cca7acb7328b63f698558d1e11840deec00965d4518a639c4de327552f"
+      },
+      {
+        "file": "9sxf-a1jrg/inputs/openbind-query.json",
+        "bytes": 866,
+        "sha256": "1dd27ee433257ec56608ad39a77422eeb511be504f282afa6a2cd9c52c3bd2a3"
+      },
+      {
+        "file": "9sxf-a1jrg/inputs/openbind-standard.yaml",
+        "bytes": 594,
+        "sha256": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0"
+      },
+      {
+        "file": "9sxf-a1jrg/inputs/openbind-torch-standard.yaml",
+        "bytes": 731,
+        "sha256": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364"
+      },
+      {
+        "file": "9sxf-a1jrg/receipt.public.json",
+        "bytes": 2528,
+        "sha256": "4c556b7736295530caaa86fc27fd78b11f790acc4ddf7673c2595ea897a0ed32"
+      },
+      {
+        "file": "9sxf-a1jrg/scheduler.txt",
+        "bytes": 416,
+        "sha256": "7d35988e634645c3bca90675074ad0d7e7f1090f9a89d9de3533d09ffac852c6"
+      },
+      {
+        "file": "9syo-a1jr1/inputs/boltz/compound_000.yaml",
+        "bytes": 512,
+        "sha256": "db2bbafabb24de6fede3f2156513e666f47d89884d53785c1636b86cbd9230c5"
+      },
+      {
+        "file": "9syo-a1jr1/inputs/comparison.json",
+        "bytes": 80052,
+        "sha256": "36d368daf7cbaf825b7ebd821676b24b968a5cde03371e9fae9b1153b5dc73f7"
+      },
+      {
+        "file": "9syo-a1jr1/inputs/msa/colabfold_main.a3m",
+        "bytes": 74636,
+        "sha256": "45a4577958cbb268828a48154c62e6b533354629b38eb5f446c92865de91febf"
+      },
+      {
+        "file": "9syo-a1jr1/inputs/openbind-query.json",
+        "bytes": 760,
+        "sha256": "31507cd88a4d1528dd35d98acd958446320d18d8b97ffaa09bc2151d0c7d357b"
+      },
+      {
+        "file": "9syo-a1jr1/inputs/openbind-standard.yaml",
+        "bytes": 594,
+        "sha256": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0"
+      },
+      {
+        "file": "9syo-a1jr1/inputs/openbind-torch-standard.yaml",
+        "bytes": 731,
+        "sha256": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364"
+      },
+      {
+        "file": "9syo-a1jr1/receipt.public.json",
+        "bytes": 2256,
+        "sha256": "d4b2ae7640f4aeecfbe9309a6461741023bbf564b24d7d91678ee0ee6fffe9a9"
+      },
+      {
+        "file": "9syo-a1jr1/scheduler.txt",
+        "bytes": 416,
+        "sha256": "380a512c0c8d21175f8955d9d3b3138cfc8009d27ca6db1c3d14ccd1bd810aad"
+      },
+      {
+        "file": "consumed-native_run.py",
+        "bytes": 8905,
+        "sha256": "3748c39c44d0da0b0b320388c1401fcb2bbd006428de2c6e798443130cd92e64"
+      }
+    ]
+  }
+}

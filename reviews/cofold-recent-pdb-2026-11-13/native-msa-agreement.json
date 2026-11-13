@@ -1,6 +1,6 @@
 {
   "schema": "molarium.native-panel-agreement-index.v1",
-  "scope": "Both OpenBind protocols use the same saved MSA and 200 sampling steps/three recycles. Precision, complete input features, conformer selection and random tensors are not matched; this is not fixed-tensor implementation parity.",
+  "scope": "Both methods receive the same saved A3M bytes. OpenBind browser and native use 200 steps/three recycles; Boltz browser uses 25/two versus native 200/three. Full features, precision, reference conformers and random tensors are not matched. This is not fixed-tensor numerical parity.",
   "sources": {
     "compare_libraries.py": "843e587c33690c781b554735ed85ea016d9862979762ea35119d5e581a77c3ee",
     "pose_metrics.py": "b577b0cd0358832eec0946c19cb826d2bf72e358205ced2eeb9b08885ebc41b5"
@@ -75,6 +75,78 @@
           "sha256": "d7dfddee512a197f7b072a82ac6a230530a64229b25ad9a44e3a6153e8d30f17",
           "seedPairedMeanRmsdA": 3.191624939355601,
           "oneToOneMeanRmsdA": 3.18560274537804
+        }
+      ]
+    },
+    {
+      "method": "boltz2",
+      "browserPhase": "browser-boltz2-msa256",
+      "nativePhase": "native-boltz2-msa256-standard",
+      "medianSeedPairedMeanRmsdA": 6.205214431734032,
+      "medianOneToOneMeanRmsdA": 5.603886918809038,
+      "cases": [
+        {
+          "caseId": "9sy7-a1jrx",
+          "file": "native-boltz2-msa256-standard/agreement-1.json",
+          "sha256": "a3e7d76a20fb82324e8638402ddef4a1d3aefdb33626efdc0a2654d8386479e3",
+          "seedPairedMeanRmsdA": 6.205214431734032,
+          "oneToOneMeanRmsdA": 6.104143473045586
+        },
+        {
+          "caseId": "9sxf-a1jrg",
+          "file": "native-boltz2-msa256-standard/agreement-2.json",
+          "sha256": "21f5d284dd67b964a2f7a799e84495bd2931bdb87d589bbb85667d439efcec4c",
+          "seedPairedMeanRmsdA": 7.9519961784146185,
+          "oneToOneMeanRmsdA": 7.948421021569644
+        },
+        {
+          "caseId": "9t51-a1jtm",
+          "file": "native-boltz2-msa256-standard/agreement-3.json",
+          "sha256": "9bfd76ae2938d611087d4ac986a92766ab9551deac4c1b6d298622c933c198d4",
+          "seedPairedMeanRmsdA": 1.8319480543594884,
+          "oneToOneMeanRmsdA": 1.8319480543594884
+        },
+        {
+          "caseId": "9syo-a1jr1",
+          "file": "native-boltz2-msa256-standard/agreement-4.json",
+          "sha256": "11a239c05b18c450bb581f755410058982c2b79fa40020d142450495eb0001e9",
+          "seedPairedMeanRmsdA": 2.0778278141540785,
+          "oneToOneMeanRmsdA": 2.0420132857470996
+        },
+        {
+          "caseId": "15ji-a1d2g",
+          "file": "native-boltz2-msa256-standard/agreement-5.json",
+          "sha256": "6f4b1ad27e2b19927ffe72add3780a1f98032e83aba6f0d50e6095fbb5426d71",
+          "seedPairedMeanRmsdA": 6.888786641813685,
+          "oneToOneMeanRmsdA": 6.790693676199381
+        },
+        {
+          "caseId": "9xhg-1il",
+          "file": "native-boltz2-msa256-standard/agreement-6.json",
+          "sha256": "a865842bc8d34aae16af3e38ff4cfe330ae505fe4711bb701f6a44f3a8dce39c",
+          "seedPairedMeanRmsdA": 6.847036249133732,
+          "oneToOneMeanRmsdA": 5.603886918809038
+        },
+        {
+          "caseId": "9xjq-a1e0i",
+          "file": "native-boltz2-msa256-standard/agreement-7.json",
+          "sha256": "a3b520eb4acdd0ed38057c9ca8fa5b0da43a6605e61e79d834b877e33810b2bb",
+          "seedPairedMeanRmsdA": 4.988375429635226,
+          "oneToOneMeanRmsdA": 4.9642099451775685
+        },
+        {
+          "caseId": "32qy-a1keo",
+          "file": "native-boltz2-msa256-standard/agreement-8.json",
+          "sha256": "2ae0c123b369a7905b7f342e29584a9f2993c632dfe1125c1770bf1f1c98153e",
+          "seedPairedMeanRmsdA": 5.61389374845873,
+          "oneToOneMeanRmsdA": 5.464048700777769
+        },
+        {
+          "caseId": "9t3v-a1jtg",
+          "file": "native-boltz2-msa256-standard/agreement-9.json",
+          "sha256": "34132967608c4495c44ec3d2fa79e52f6249b01fbb49d5e7977f8b6016457404",
+          "seedPairedMeanRmsdA": 10.489951845464185,
+          "oneToOneMeanRmsdA": 10.489951845464185
         }
       ]
     }

@@ -65,6 +65,14 @@ is 3.47 Å despite matching declared alignment and sampling effort. Complete
 input tensors, precision, conformers and random draws remain unmatched.
 [Results, per-pose evidence, timings and limitations](README.md#native-msa-control-matched-alignment-and-sampling-effort).
 
+The native Boltz MSA phase is complete as well: 27 predictions, seven within
+2 Å, but six fail specified tetrahedral stereochemistry (all KIT and NSP3
+seeds), leaving one limited-validity pass. Its browser/native seed-paired mean
+ligand disagreement has a 6.21 Å median across systems; browser25/2 and native
+200/3 sampling differ. The [original zero-output startup failures](native-msa-startup-failures.json)
+retain scientific inputs and source hashes; new retries match those inputs and
+checkpoint exactly. All 270 recent predictions remain in Foldarium.
+
 The old native Boltz panel is also complete: all nine poses pass the 2 Å and
 limited stereo/clash checks, including FK5's missing-only retry. Its agreement
 with the browser is close for JQ1/benzene but poor for FK5; different sampling

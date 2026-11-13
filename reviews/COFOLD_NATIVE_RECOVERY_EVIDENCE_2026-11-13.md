@@ -15,7 +15,10 @@ actual Python circular import in an isolated fixture process. It establishes
 the wrapper's ordering, not a reproduction of every dependency-specific race.
 The new native attempt also checks the installed stock class identity and
 trusted cached canonical molecules before model execution. Its CPU preflight
-passed. GPU results are recorded separately.
+passed. Both GPU retries subsequently completed; their six poses are included
+in the full [native Boltz MSA phase](cofold-recent-pdb-2026-11-13/native-boltz2-msa256-standard/evidence.json).
+[Original failure receipts, inputs and scheduler history](cofold-recent-pdb-2026-11-13/native-msa-startup-failures.json)
+remain separate from completed pose scores.
 
 Spot interruptions can leave scientifically complete outputs alongside a CLI
 receipt still marked `running`. The [recovery validator](../folding/comparison/native_panel_recovery.py)

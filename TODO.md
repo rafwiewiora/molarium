@@ -15,7 +15,8 @@ with stable `DV-` identifiers and links to original observations and follow-up e
 - [x] Complete the 27-pose OpenBind 200-step/MSA256 control; preserve all 162 complete-phase poses and the incomplete Boltz standard evidence, including one lost checkpoint.
 - [x] Retrieve and independently validate all 54 recent native single-sequence poses and the nine old-crystal native OpenBind poses; retain stereo failures and poor folds with raw output hashes and public reconstruction checks.
 - [x] Complete and independently reconstruct all 27 native OpenBind MSA poses and all nine old-crystal native Boltz poses; preserve interrupted sources and compute only missing seeds ([evidence](reviews/COFOLD_NATIVE_RECOVERY_EVIDENCE_2026-11-13.md)).
-- [ ] Finish the two zero-output native Boltz MSA retries and publish the full 27-pose phase; whole-model numerical parity remains unresolved.
+- [x] Finish the two zero-output native Boltz MSA retries and publish all 27 poses plus original failure evidence; retain six geometrically close stereochemical failures.
+- [ ] Establish matched full-feature/trained-weight/random-tensor browser/native parity; the 270-prediction review is a protocol comparison, not this gate.
 - [x] Publish native synchronized forward timings with explicit boundaries separate from browser end-to-end throughput.
 - [x] Preserve exact provided-MSA bytes and reject alignment drift in missing-only native recovery ([RCF-12](reviews/COFOLD_MSA_RECOVERY_2026-11-13.md)); retain original interrupted-source statuses.
 - [x] Recover closing IndexedDB connections once and stop on lost checkpoints without silently repeating completed inference ([RCF-09/10](reviews/cofold-recent-pdb-2026-11-13/findings.md)); verify deletion during an atomic checkpoint in real Chrome.

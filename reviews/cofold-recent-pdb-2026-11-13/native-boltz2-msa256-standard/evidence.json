@@ -1,0 +1,913 @@
+{
+  "schema": "molarium.native-panel-evidence.v1",
+  "method": "boltz2",
+  "panelSha256": "7053daa0060cf8dc4836f95ac0b40e9e639398adacc63896c1f122d0ec9e7bb3",
+  "cases": [
+    {
+      "caseId": "9sy7-a1jrx",
+      "library": "library-1.json",
+      "librarySha256": "7007b7f9264d8fc0afaba2db040041614e0d07395829e7377d09e2f4b7ffb17f",
+      "originalReceiptSha256": "38f46abc5564b634ca16ee12d02a0bba31b164302b43a3fcd4a785c8dc388700",
+      "inputSha256": "e77f9e52f58862151472e2a7c85958b9dcaccaf1055a46fb119ae0e5b4302f51",
+      "poses": 3
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "library": "library-2.json",
+      "librarySha256": "0e901bf45a3ce44f03aca3cd5419101868510ba2220898a914bfcb6e06228585",
+      "originalReceiptSha256": "77878f394f3d25f9c07f374538090617e70ff4c48b8bd6f3ebedbcf59051b7f5",
+      "inputSha256": "a92ea4c07797a3d1c29ee7b08a7624040bc2595dc6c3e30052e45c6dddd1571c",
+      "poses": 3
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "library": "library-3.json",
+      "librarySha256": "07112b6203d7f9e8a15d03c117c13b5f5da6570ba9f5d8ca5c80047e57ca6599",
+      "originalReceiptSha256": "6bf0681b06aa2d14195891c8d1884a8095ce521850181841f450d52e900ca7e6",
+      "inputSha256": "bef8a9e2fffea96ff07c161d6e1c1e4a268074c7e9b70d852d2f7b25f694cadf",
+      "poses": 3
+    },
+    {
+      "caseId": "9syo-a1jr1",
+      "library": "library-4.json",
+      "librarySha256": "0eb697dafe26470df0bc8177ae8e9c480ac4b862ee29c3e4aed36515c9a0e9a8",
+      "originalReceiptSha256": "d1fe7bbc507ad033f9e3ee032aea87744456e18c61384163c450f3512e8398c9",
+      "inputSha256": "36d368daf7cbaf825b7ebd821676b24b968a5cde03371e9fae9b1153b5dc73f7",
+      "poses": 3
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "library": "library-5.json",
+      "librarySha256": "4558a0cb688ff4642de2a2665eea926b85975278c20dbf97a442a2a92408c3c5",
+      "originalReceiptSha256": "b06c86e7fdd972caab0b199a4d2d02c3a78dd4ce6a2c6f53227222b7cd6754a8",
+      "inputSha256": "c6db43c2572efb9852fcd7be770c321d5dbcb5a8d98756eb1d4211c73877108d",
+      "poses": 3
+    },
+    {
+      "caseId": "9xhg-1il",
+      "library": "library-6.json",
+      "librarySha256": "c98ab25346bf5a07fa6c04a78b7d516084e7318e7369fe277fd1a8ab13acf3bf",
+      "originalReceiptSha256": "d311a428981a72c8f059cff251e6df8b0c33216acfbd17200494c75c0eff1c80",
+      "inputSha256": "2b69f52b89f3808f828204031e277f07cfca14c719438d2b2f7221511b450aa1",
+      "poses": 3
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "library": "library-7.json",
+      "librarySha256": "ed3fff99743dd5b3837f755e0ba3b19d94a2b153e762414f4b48af963836581e",
+      "originalReceiptSha256": "660d28070817b7dca5814447170bf221732fe087a2f41635b7885902dd02d962",
+      "inputSha256": "caa05d828ec47901e17dc15fada78025997a37364a85984a4609379d2b4584b2",
+      "poses": 3
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "library": "library-8.json",
+      "librarySha256": "e14cc2eb7c015f26e1f30c51a580dc869e68544b03ea2d9dd8e1cec4da2a9388",
+      "originalReceiptSha256": "a440627fb098e1e52066bde4c7e78457ef3ad4db0db0d84344520fc2b2f92c85",
+      "inputSha256": "1e1a972e3ab32843114df934b1e840f3d77822f4f7be7624d589e75e59d71fca",
+      "poses": 3
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "library": "library-9.json",
+      "librarySha256": "22bae22e3457fe8d75f4bef55f09bf7813f647136bcfa54433bb5e0ee3c31e8a",
+      "originalReceiptSha256": "affbd915eb32d7980ed045324aea242de628525829667465e075414e446c9d6d",
+      "inputSha256": "14d5fcdfe43c5c47ea83c5d388550b19a8615632887665e90990de5dc4361a40",
+      "poses": 3
+    }
+  ],
+  "scope": "Complete native controls, not fixed-tensor implementation parity. No inference during publication.",
+  "scriptSha256": "803c0578d56804f7fee956ebb9cc61e458e8a153be741c9b119470e258eb9168",
+  "archive": {
+    "file": "native-evidence.zip",
+    "bytes": 1683877,
+    "sha256": "46479bee880b0fd72a498b478de2f5f1cc77a3fac20bbc2eb9d340cf9b2fc548",
+    "files": [
+      {
+        "file": "15ji-a1d2g/inputs/boltz/compound_000.yaml",
+        "bytes": 455,
+        "sha256": "9f1d7e6c39550c5096a1cd580b03ed331170a97da8499d1b5c9905cb790bc8ed"
+      },
+      {
+        "file": "15ji-a1d2g/inputs/comparison.json",
+        "bytes": 69721,
+        "sha256": "c6db43c2572efb9852fcd7be770c321d5dbcb5a8d98756eb1d4211c73877108d"
+      },
+      {
+        "file": "15ji-a1d2g/inputs/msa/colabfold_main.a3m",
+        "bytes": 64362,
+        "sha256": "3c941dba7e7aa76fd3c2c5d8e0bedc6d3e9dd64fcdb204d01ab067277a38eb19"
+      },
+      {
+        "file": "15ji-a1d2g/inputs/openbind-query.json",
+        "bytes": 703,
+        "sha256": "8834af6eb4fe16a486f24c3c43423d636de669ceec59e396e96fd3197ef857e3"
+      },
+      {
+        "file": "15ji-a1d2g/inputs/openbind-standard.yaml",
+        "bytes": 594,
+        "sha256": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0"
+      },
+      {
+        "file": "15ji-a1d2g/inputs/openbind-torch-standard.yaml",
+        "bytes": 731,
+        "sha256": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364"
+      },
+      {
+        "file": "15ji-a1d2g/outputs/forward-times.jsonl",
+        "bytes": 371,
+        "sha256": "8500660be9b72549bed80cf1f8d86eab2d8b168a98b21a36260c6330e2ab78ae"
+      },
+      {
+        "file": "15ji-a1d2g/outputs/ligand-topologies.json",
+        "bytes": 13541,
+        "sha256": "27e02d553da34c93fe4a18858e53a4dc1e9c2f76740a625160a9f78f0d8c898d"
+      },
+      {
+        "file": "15ji-a1d2g/outputs/seed-0/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 115245,
+        "sha256": "ffeb63fd894bb9405d36f24fdd90983462e8ca93e0e11b69be55c87fb2548316"
+      },
+      {
+        "file": "15ji-a1d2g/outputs/seed-0/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 658,
+        "sha256": "0742180510c71c691ea2ad613034e3b80d376e8182b54afd23016a02ff39096d"
+      },
+      {
+        "file": "15ji-a1d2g/outputs/seed-0/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1733,
+        "sha256": "35f638fcae11c0ce6049e8344d8a917c6e7330468488649325dcc66c64577e53"
+      },
+      {
+        "file": "15ji-a1d2g/outputs/seed-1/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 115172,
+        "sha256": "697c3a9fc9cbbe0e5c4bacfa2d970e62f5fbfde1005dfbe4aa8e838542683bd3"
+      },
+      {
+        "file": "15ji-a1d2g/outputs/seed-1/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 658,
+        "sha256": "6307cbc96c062d7ebbc923ca92669d7ab16fd6e41d67c8d71273ff7f5b20d6fd"
+      },
+      {
+        "file": "15ji-a1d2g/outputs/seed-1/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1733,
+        "sha256": "075afe10feaf1669db7d4df487967462ab5319358ba0b65adbb69fa0aff00368"
+      },
+      {
+        "file": "15ji-a1d2g/outputs/seed-2/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 115227,
+        "sha256": "6f880490cf8964ef70ae96a91c6949d3ddea39a81a3fde8276a71e466f08da94"
+      },
+      {
+        "file": "15ji-a1d2g/outputs/seed-2/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 658,
+        "sha256": "3c9c47d1e411a90aad95a181cdfc9e87ced1a413b8635de5a4fda333edb3cbdd"
+      },
+      {
+        "file": "15ji-a1d2g/outputs/seed-2/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1733,
+        "sha256": "5f3c1df6c2e99acef97fa01f70a76b747975f6a77ff98d5fbc74e0e13671af98"
+      },
+      {
+        "file": "15ji-a1d2g/receipt.public.json",
+        "bytes": 2874,
+        "sha256": "2fec61111686d332abd55da698c39c2c1a5fe4a7cdb2d289f51d76f6978adc87"
+      },
+      {
+        "file": "32qy-a1keo/inputs/boltz/compound_000.yaml",
+        "bytes": 447,
+        "sha256": "facbbd54d464ac900760a6b692ff5bccf580efcd64d146aea9b7e70b14755c9d"
+      },
+      {
+        "file": "32qy-a1keo/inputs/comparison.json",
+        "bytes": 65225,
+        "sha256": "1e1a972e3ab32843114df934b1e840f3d77822f4f7be7624d589e75e59d71fca"
+      },
+      {
+        "file": "32qy-a1keo/inputs/msa/colabfold_main.a3m",
+        "bytes": 59874,
+        "sha256": "7bd8c016923fddb4bcad9d1266ae08c030a9014dfb4d5da10703ee3bfefb66bc"
+      },
+      {
+        "file": "32qy-a1keo/inputs/openbind-query.json",
+        "bytes": 695,
+        "sha256": "f843a7cfc11cfdd02f3b41b1b1feb0b230a0fe526d7203f7d216151dc8ce0e6b"
+      },
+      {
+        "file": "32qy-a1keo/inputs/openbind-standard.yaml",
+        "bytes": 594,
+        "sha256": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0"
+      },
+      {
+        "file": "32qy-a1keo/inputs/openbind-torch-standard.yaml",
+        "bytes": 731,
+        "sha256": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364"
+      },
+      {
+        "file": "32qy-a1keo/outputs/forward-times.jsonl",
+        "bytes": 371,
+        "sha256": "0cd5f2f1eaf205ba6e1536462264286f6f9d6738db39870a420ba8fa5af5d38e"
+      },
+      {
+        "file": "32qy-a1keo/outputs/ligand-topologies.json",
+        "bytes": 11699,
+        "sha256": "eb63e483a89984c7c60344d7267d747f408d00d743a974c2bd1e0c38b553005e"
+      },
+      {
+        "file": "32qy-a1keo/outputs/seed-0/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 121834,
+        "sha256": "9ef794c0f2a556cbcf481fcc0bda04f84e2a80560db0e8eddaf9cd963982436e"
+      },
+      {
+        "file": "32qy-a1keo/outputs/seed-0/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 658,
+        "sha256": "5478760755b805fed731939f468e327fbc3666dc384db7d7965dda510b450707"
+      },
+      {
+        "file": "32qy-a1keo/outputs/seed-0/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1500,
+        "sha256": "31ed9362f6698cb4b89e83e6bb149d3dc876e881106ebfba853c276191ca0904"
+      },
+      {
+        "file": "32qy-a1keo/outputs/seed-1/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 121611,
+        "sha256": "236754d1856a26783da7f3080f32527765e8182314c5dfc167fcad4e33c96ca1"
+      },
+      {
+        "file": "32qy-a1keo/outputs/seed-1/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 656,
+        "sha256": "3acf5a1b85c85527fff0a9e1c4503564390c5e7fd574857be1150579dde0f667"
+      },
+      {
+        "file": "32qy-a1keo/outputs/seed-1/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1500,
+        "sha256": "0e32ff103bf74f82c6da679c4be25c3bf6a37b3d18d1f64df09c33852cf6df6f"
+      },
+      {
+        "file": "32qy-a1keo/outputs/seed-2/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 121590,
+        "sha256": "b933a21db6393fc0d6b17597e62509e3dfb164618b0b6aa7520016d72c342247"
+      },
+      {
+        "file": "32qy-a1keo/outputs/seed-2/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 655,
+        "sha256": "b2c551fb89062e3687c90163040a65676f20776826cbf548f1d52856a62098be"
+      },
+      {
+        "file": "32qy-a1keo/outputs/seed-2/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1500,
+        "sha256": "29f5ec4c85052e2a52d43d5b33fc1ba51f3a98eb557e48ce6c5fc903fd23e350"
+      },
+      {
+        "file": "32qy-a1keo/receipt.public.json",
+        "bytes": 2874,
+        "sha256": "f8426a2be57ead0c04219508e483ff4bde897db75029f21e2b7e194b82107808"
+      },
+      {
+        "file": "9sxf-a1jrg/consumed-native_run.py",
+        "bytes": 9223,
+        "sha256": "bc5d3bc2c71758f6a07be74324b072269a8d61f836c44cd3159b1bace9d17282"
+      },
+      {
+        "file": "9sxf-a1jrg/inputs/boltz/compound_000.yaml",
+        "bytes": 618,
+        "sha256": "9bdcbc1c76b30e538b08291fa785ab203c14ebbc476f577d1d3e03ca89ac825b"
+      },
+      {
+        "file": "9sxf-a1jrg/inputs/comparison.json",
+        "bytes": 117577,
+        "sha256": "a92ea4c07797a3d1c29ee7b08a7624040bc2595dc6c3e30052e45c6dddd1571c"
+      },
+      {
+        "file": "9sxf-a1jrg/inputs/msa/colabfold_main.a3m",
+        "bytes": 112055,
+        "sha256": "ca6038cca7acb7328b63f698558d1e11840deec00965d4518a639c4de327552f"
+      },
+      {
+        "file": "9sxf-a1jrg/inputs/openbind-query.json",
+        "bytes": 866,
+        "sha256": "1dd27ee433257ec56608ad39a77422eeb511be504f282afa6a2cd9c52c3bd2a3"
+      },
+      {
+        "file": "9sxf-a1jrg/inputs/openbind-standard.yaml",
+        "bytes": 594,
+        "sha256": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0"
+      },
+      {
+        "file": "9sxf-a1jrg/inputs/openbind-torch-standard.yaml",
+        "bytes": 731,
+        "sha256": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364"
+      },
+      {
+        "file": "9sxf-a1jrg/outputs/forward-times.jsonl",
+        "bytes": 371,
+        "sha256": "dd2ce6ab2c6084f8406c967f7278fad81d0b4852b27fbf20a4a8b82afdff559f"
+      },
+      {
+        "file": "9sxf-a1jrg/outputs/ligand-topologies.json",
+        "bytes": 14882,
+        "sha256": "5eca29da54a6c8e40434680874eb8f74b6f07cdba98df601984c9dfd7f561700"
+      },
+      {
+        "file": "9sxf-a1jrg/outputs/seed-0/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 232873,
+        "sha256": "d54c03b560cac779453f559398eea8f055fd02ec016b810f57b75621727de0e8"
+      },
+      {
+        "file": "9sxf-a1jrg/outputs/seed-0/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 658,
+        "sha256": "f83a00f338e79111ed118f79a590b84d71237c043249beba04cf53a639aa50a9"
+      },
+      {
+        "file": "9sxf-a1jrg/outputs/seed-0/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1927,
+        "sha256": "ecd072f1bd1df6dbe943d8f1eb4ba49108dcb3ed68fb14863f0874907d0a80f4"
+      },
+      {
+        "file": "9sxf-a1jrg/outputs/seed-1/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 232990,
+        "sha256": "a8c05888ae7da802ad40c269bbbd333ea952f161e0ef5814460913764b73b4bd"
+      },
+      {
+        "file": "9sxf-a1jrg/outputs/seed-1/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 648,
+        "sha256": "a2f7a29eda3cd9f6fdd93060d7a4171dc5543bd32a947de64935286d018671ed"
+      },
+      {
+        "file": "9sxf-a1jrg/outputs/seed-1/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1927,
+        "sha256": "9351611d99981bc4412e312db7de3f7df4514c28a206ed2ebe2589392144fe41"
+      },
+      {
+        "file": "9sxf-a1jrg/outputs/seed-2/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 232576,
+        "sha256": "dcab22ae94ed7c8b4062cb0ce4ab435847daa85e6f72987da41bac91879116f0"
+      },
+      {
+        "file": "9sxf-a1jrg/outputs/seed-2/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 657,
+        "sha256": "e2b868ad3bb91a4a9dbbfb44162f2645211b27cea0d84972168e56337169bcec"
+      },
+      {
+        "file": "9sxf-a1jrg/outputs/seed-2/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1927,
+        "sha256": "d7b118d42a7bc5d431b2c40996d85d7d763bc9c2f8ce814da8097bd69052b3be"
+      },
+      {
+        "file": "9sxf-a1jrg/receipt.public.json",
+        "bytes": 2874,
+        "sha256": "41a4d6b4c826c207a5c80eaf280bc889c554a6cedad7c0c749473a530533d90c"
+      },
+      {
+        "file": "9sy7-a1jrx/inputs/boltz/compound_000.yaml",
+        "bytes": 438,
+        "sha256": "3e02886561d7fe9afb9447a60c73968d069a72e6db9a771ae2e80831e7a3a365"
+      },
+      {
+        "file": "9sy7-a1jrx/inputs/comparison.json",
+        "bytes": 63168,
+        "sha256": "e77f9e52f58862151472e2a7c85958b9dcaccaf1055a46fb119ae0e5b4302f51"
+      },
+      {
+        "file": "9sy7-a1jrx/inputs/msa/colabfold_main.a3m",
+        "bytes": 57826,
+        "sha256": "b93ba485e8a095c4ece53accf60b80287d2784d81602a5db730d732d6159e85d"
+      },
+      {
+        "file": "9sy7-a1jrx/inputs/openbind-query.json",
+        "bytes": 686,
+        "sha256": "52bda47c4704cd9c53dc6790e42e4e5f7944e668f27fdec8ed4d68d6668b40d1"
+      },
+      {
+        "file": "9sy7-a1jrx/inputs/openbind-standard.yaml",
+        "bytes": 594,
+        "sha256": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0"
+      },
+      {
+        "file": "9sy7-a1jrx/inputs/openbind-torch-standard.yaml",
+        "bytes": 731,
+        "sha256": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364"
+      },
+      {
+        "file": "9sy7-a1jrx/outputs/forward-times.jsonl",
+        "bytes": 372,
+        "sha256": "7a9ee68a91cbb850828e56fddbd8128ed83f05eb6e19001dc830e55d67832c31"
+      },
+      {
+        "file": "9sy7-a1jrx/outputs/ligand-topologies.json",
+        "bytes": 11954,
+        "sha256": "99ab31ce495ca636f53572b75d2ec9827af5bba680b1717d1ff0d5604252038a"
+      },
+      {
+        "file": "9sy7-a1jrx/outputs/seed-0/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 110718,
+        "sha256": "6bd7feea578672efcd89079afd4f7b4b57e2508b0bd8c80a6492980508bc522b"
+      },
+      {
+        "file": "9sy7-a1jrx/outputs/seed-0/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 658,
+        "sha256": "cb74b26f545fc554b67996a4f6feb9d4f0ddb407f11d8a3f18034bb608396f30"
+      },
+      {
+        "file": "9sy7-a1jrx/outputs/seed-0/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1555,
+        "sha256": "28657fe411d9d0a1186571dcece02df91a48206cd07f42fe35a7a84016973196"
+      },
+      {
+        "file": "9sy7-a1jrx/outputs/seed-1/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 110438,
+        "sha256": "db71f6f11c6a10d57121078a1e0e835f8a5de9fb04c2d954c12a8e6dc89faff4"
+      },
+      {
+        "file": "9sy7-a1jrx/outputs/seed-1/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 657,
+        "sha256": "37d26bdf405d6d5e21cd67c6dc299ac2a4167d5c2688dd9551d90c9221cfb72e"
+      },
+      {
+        "file": "9sy7-a1jrx/outputs/seed-1/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1555,
+        "sha256": "6c838db17f2eca6a8f6c9d1585c95c6435309e3256323249145ad91a47fe4603"
+      },
+      {
+        "file": "9sy7-a1jrx/outputs/seed-2/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 110605,
+        "sha256": "28e68e60dcc139dc849b0e1020bfdbc4dadd4885f7c34405aa4fcfbeaf94aa04"
+      },
+      {
+        "file": "9sy7-a1jrx/outputs/seed-2/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 656,
+        "sha256": "fc9f0af15920e3961e91d33d1dc1d7db3f094423737b11682ee9c7b3c2b472e6"
+      },
+      {
+        "file": "9sy7-a1jrx/outputs/seed-2/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1555,
+        "sha256": "ed915161be0b66e28ebc4d36f7885c5ed5ad1cefc2c0d9067ab81fd831e9f03e"
+      },
+      {
+        "file": "9sy7-a1jrx/receipt.public.json",
+        "bytes": 2874,
+        "sha256": "b1af384d105a4e88964aa056e84f9d8b29ffe9a1ceca8552c5d2e7b762540469"
+      },
+      {
+        "file": "9syo-a1jr1/consumed-native_run.py",
+        "bytes": 9223,
+        "sha256": "bc5d3bc2c71758f6a07be74324b072269a8d61f836c44cd3159b1bace9d17282"
+      },
+      {
+        "file": "9syo-a1jr1/inputs/boltz/compound_000.yaml",
+        "bytes": 512,
+        "sha256": "db2bbafabb24de6fede3f2156513e666f47d89884d53785c1636b86cbd9230c5"
+      },
+      {
+        "file": "9syo-a1jr1/inputs/comparison.json",
+        "bytes": 80052,
+        "sha256": "36d368daf7cbaf825b7ebd821676b24b968a5cde03371e9fae9b1153b5dc73f7"
+      },
+      {
+        "file": "9syo-a1jr1/inputs/msa/colabfold_main.a3m",
+        "bytes": 74636,
+        "sha256": "45a4577958cbb268828a48154c62e6b533354629b38eb5f446c92865de91febf"
+      },
+      {
+        "file": "9syo-a1jr1/inputs/openbind-query.json",
+        "bytes": 760,
+        "sha256": "31507cd88a4d1528dd35d98acd958446320d18d8b97ffaa09bc2151d0c7d357b"
+      },
+      {
+        "file": "9syo-a1jr1/inputs/openbind-standard.yaml",
+        "bytes": 594,
+        "sha256": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0"
+      },
+      {
+        "file": "9syo-a1jr1/inputs/openbind-torch-standard.yaml",
+        "bytes": 731,
+        "sha256": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364"
+      },
+      {
+        "file": "9syo-a1jr1/outputs/forward-times.jsonl",
+        "bytes": 370,
+        "sha256": "63780eadd757d2568e20158b30942f5661fec1b9bce17b1e61510b147a844023"
+      },
+      {
+        "file": "9syo-a1jr1/outputs/ligand-topologies.json",
+        "bytes": 13802,
+        "sha256": "74708b440ebc324289cfec334cc21edc3993720464ec4a6b2b4e6676b0e8e128"
+      },
+      {
+        "file": "9syo-a1jr1/outputs/seed-0/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 161223,
+        "sha256": "9ce360390a599f8733bb6dd89627c36fde7e17f342f4f1ff3af3318c348e5577"
+      },
+      {
+        "file": "9syo-a1jr1/outputs/seed-0/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 653,
+        "sha256": "4eef9a3cabc955a8bbfd68d5fdd6bf755fb4b54db5463b2a297162c3f99a981c"
+      },
+      {
+        "file": "9syo-a1jr1/outputs/seed-0/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1776,
+        "sha256": "16e097d50f7d19617b4a06830cfeac70eb421968ede675c48077ec0a65499b9b"
+      },
+      {
+        "file": "9syo-a1jr1/outputs/seed-1/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 160818,
+        "sha256": "58b6e13edee0bb714e6ecb50ed6bd13cbf3659015b6c14378d2331830b4bcf01"
+      },
+      {
+        "file": "9syo-a1jr1/outputs/seed-1/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 656,
+        "sha256": "7dba8c1e71cf37c5be7ac52342e170937751423eadb1fbdebd4501c19778caab"
+      },
+      {
+        "file": "9syo-a1jr1/outputs/seed-1/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1776,
+        "sha256": "cd1974ac2efcec435d99df42967992a901b8f5b3f6766203aa9ef90207e0c1ff"
+      },
+      {
+        "file": "9syo-a1jr1/outputs/seed-2/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 161151,
+        "sha256": "7b51adbd424d474d46f628b3d80acce73eaa57028603730b77eef8cf60f8ad26"
+      },
+      {
+        "file": "9syo-a1jr1/outputs/seed-2/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 656,
+        "sha256": "a0cf1645c615b41ddeac150d489fc76fc438a59d5371afc43fa4f582588a96d9"
+      },
+      {
+        "file": "9syo-a1jr1/outputs/seed-2/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1776,
+        "sha256": "7487cab04c84e9d3fe5d3d33d19ee873f1ac0bf18ba8d44b2bca6e1eb346c8e4"
+      },
+      {
+        "file": "9syo-a1jr1/receipt.public.json",
+        "bytes": 2874,
+        "sha256": "6ac8c969c0b914b7e9243b414fd496143c7c5dc22d7b9a5d05016f1cb03df24e"
+      },
+      {
+        "file": "9t3v-a1jtg/inputs/boltz/compound_000.yaml",
+        "bytes": 657,
+        "sha256": "e2bc234bd64ad2525c8977701ec7ab1a789d82b8180f868a11e6f318e3c79147"
+      },
+      {
+        "file": "9t3v-a1jtg/inputs/comparison.json",
+        "bytes": 111501,
+        "sha256": "14d5fcdfe43c5c47ea83c5d388550b19a8615632887665e90990de5dc4361a40"
+      },
+      {
+        "file": "9t3v-a1jtg/inputs/msa/colabfold_main.a3m",
+        "bytes": 105940,
+        "sha256": "ab624925e18bc32fbde406c1b980943dd4722846064fd982efc92eb16e694ac5"
+      },
+      {
+        "file": "9t3v-a1jtg/inputs/openbind-query.json",
+        "bytes": 905,
+        "sha256": "0b2ae6d4a422e0694496f1c4ed6a6a6dd2da231c80f673164287dea1082fc1be"
+      },
+      {
+        "file": "9t3v-a1jtg/inputs/openbind-standard.yaml",
+        "bytes": 594,
+        "sha256": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0"
+      },
+      {
+        "file": "9t3v-a1jtg/inputs/openbind-torch-standard.yaml",
+        "bytes": 731,
+        "sha256": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364"
+      },
+      {
+        "file": "9t3v-a1jtg/outputs/forward-times.jsonl",
+        "bytes": 360,
+        "sha256": "2387a5db648008cdc18f79331fde0059c356a1f8d841a6d0bd1b6715097477c2"
+      },
+      {
+        "file": "9t3v-a1jtg/outputs/ligand-topologies.json",
+        "bytes": 20984,
+        "sha256": "b411ab8e54fa8c10dee095aefcf6243948e3bb85760799ac50e22c8b77a63c82"
+      },
+      {
+        "file": "9t3v-a1jtg/outputs/seed-0/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 247816,
+        "sha256": "bd44c605738ffb4de79cfbbe48d38287d7ec039da983f10fa6e531519c29fba5"
+      },
+      {
+        "file": "9t3v-a1jtg/outputs/seed-0/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 657,
+        "sha256": "297d9693ffd545039c1a9c451c238139c5183124ab145559b93c7ca1801c5582"
+      },
+      {
+        "file": "9t3v-a1jtg/outputs/seed-0/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 2645,
+        "sha256": "f1dbcb35c1277a4afe5c3d688020bc4ec3a59e9dc8ee93ff3be545c5a304d23d"
+      },
+      {
+        "file": "9t3v-a1jtg/outputs/seed-1/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 247371,
+        "sha256": "7837984c65c22b34f2b9c36e11d51468f786df227d224af98311e922cb87be04"
+      },
+      {
+        "file": "9t3v-a1jtg/outputs/seed-1/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 649,
+        "sha256": "5db7682c286124e6c1ef06df734dfc97fc9d6926649780bc2fc558e67ebcb7e1"
+      },
+      {
+        "file": "9t3v-a1jtg/outputs/seed-1/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 2645,
+        "sha256": "4e6131acfdfc1f8cf2fb1a212f3ff62655a39f50617df8f402143f6e6ccacdd7"
+      },
+      {
+        "file": "9t3v-a1jtg/outputs/seed-2/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 247446,
+        "sha256": "1d0ce623331814e8bb48614d7d2049cb91d964778040109acf7042fe9e57109f"
+      },
+      {
+        "file": "9t3v-a1jtg/outputs/seed-2/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 655,
+        "sha256": "f158e9ed07e4e98bbf784d0b01cb7cd6196fa4ed9a32c6657bc09c81c95f67ea"
+      },
+      {
+        "file": "9t3v-a1jtg/outputs/seed-2/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 2645,
+        "sha256": "548c4900151982c8d870f9dce851a2a0502495285de1c11db74aae7dabb60e33"
+      },
+      {
+        "file": "9t3v-a1jtg/receipt.public.json",
+        "bytes": 2869,
+        "sha256": "0eb0784116b5729d84b6d9fb5f58b8827eb267a2eea4718a37802bdf64cbb0e8"
+      },
+      {
+        "file": "9t51-a1jtm/inputs/boltz/compound_000.yaml",
+        "bytes": 516,
+        "sha256": "1126e2287d1fd2139080187b57e3c8de6d55df49fe5fa46b32a90df63c176172"
+      },
+      {
+        "file": "9t51-a1jtm/inputs/comparison.json",
+        "bytes": 75078,
+        "sha256": "bef8a9e2fffea96ff07c161d6e1c1e4a268074c7e9b70d852d2f7b25f694cadf"
+      },
+      {
+        "file": "9t51-a1jtm/inputs/msa/colabfold_main.a3m",
+        "bytes": 69658,
+        "sha256": "0cc969796591441861b47aa0e75b359955864ffcf5fb81d6ca8a3bb59c495e2b"
+      },
+      {
+        "file": "9t51-a1jtm/inputs/openbind-query.json",
+        "bytes": 764,
+        "sha256": "64bc2109ea6a3ba25d143903ab814b84465242dc5d0aa2441bb5d71282350160"
+      },
+      {
+        "file": "9t51-a1jtm/inputs/openbind-standard.yaml",
+        "bytes": 594,
+        "sha256": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0"
+      },
+      {
+        "file": "9t51-a1jtm/inputs/openbind-torch-standard.yaml",
+        "bytes": 731,
+        "sha256": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364"
+      },
+      {
+        "file": "9t51-a1jtm/outputs/forward-times.jsonl",
+        "bytes": 366,
+        "sha256": "879b5d88626cb43f2c6f3a853a38ad12635fdfc7eb47fb209e2a9456f0d45905"
+      },
+      {
+        "file": "9t51-a1jtm/outputs/ligand-topologies.json",
+        "bytes": 20198,
+        "sha256": "29fbd2cdc72f174c9b082130672e000fbcb64fd37fb7f305be0a2b75fcc2fa83"
+      },
+      {
+        "file": "9t51-a1jtm/outputs/seed-0/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 147991,
+        "sha256": "4d079d2de8f3b2f28ef02a9838b5072fed4fed2b830f4d5614168b3fffb6e9f1"
+      },
+      {
+        "file": "9t51-a1jtm/outputs/seed-0/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 650,
+        "sha256": "66d29529442cb86ee71d5687f007a5fc4ad0cfaa6f65a56c5e72f5e20b763fcb"
+      },
+      {
+        "file": "9t51-a1jtm/outputs/seed-0/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 2588,
+        "sha256": "e47f7c726f6d0df89fa5622ec139795a3edff7c2173483b72a23f73ac71270ed"
+      },
+      {
+        "file": "9t51-a1jtm/outputs/seed-1/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 147895,
+        "sha256": "2155d804dd0817b037aed1cdaa28f1470ad11963afb144c505bfd79baea284f2"
+      },
+      {
+        "file": "9t51-a1jtm/outputs/seed-1/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 658,
+        "sha256": "99fa3fc3a22e9cfd842ec935deb5379c5ecee400acf0da24e18115a7165cd646"
+      },
+      {
+        "file": "9t51-a1jtm/outputs/seed-1/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 2588,
+        "sha256": "23d1c1ab8f2fc8f97f1a330b80118a3e0f3b5e449f785fb26915b0c86835e569"
+      },
+      {
+        "file": "9t51-a1jtm/outputs/seed-2/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 147731,
+        "sha256": "3d32d381ad89bd3951bea2ed4a11702b50904ce2efcbffe62dc32a0052d67db5"
+      },
+      {
+        "file": "9t51-a1jtm/outputs/seed-2/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 653,
+        "sha256": "02a083a570650684272e18d5b72df691e73900810a75f7e73021b8fdc807ea60"
+      },
+      {
+        "file": "9t51-a1jtm/outputs/seed-2/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 2588,
+        "sha256": "430c8ecb2f97cdcba0f13c41d2c25fe6b434618c473496bad59b3b8c20aeaf76"
+      },
+      {
+        "file": "9t51-a1jtm/receipt.public.json",
+        "bytes": 2874,
+        "sha256": "566fa8af5736df3e13e89550a42faae2a33d5e125ccae0db2ed6a362fafc6eb0"
+      },
+      {
+        "file": "9xhg-1il/inputs/boltz/compound_000.yaml",
+        "bytes": 481,
+        "sha256": "8cb7a64268c60536139dd67f27aee8c3444b50c594817de7e873faff95d73ed6"
+      },
+      {
+        "file": "9xhg-1il/inputs/comparison.json",
+        "bytes": 71185,
+        "sha256": "2b69f52b89f3808f828204031e277f07cfca14c719438d2b2f7221511b450aa1"
+      },
+      {
+        "file": "9xhg-1il/inputs/msa/colabfold_main.a3m",
+        "bytes": 65804,
+        "sha256": "e4372011a9ac020568e5e6f3b26c0184e73dbd42f8f438e7d45435b62d6d9e78"
+      },
+      {
+        "file": "9xhg-1il/inputs/openbind-query.json",
+        "bytes": 729,
+        "sha256": "4f52696a66af3b368c74ef3db6d16e54e38c3b54e08b6fac49349a7ad1e87918"
+      },
+      {
+        "file": "9xhg-1il/inputs/openbind-standard.yaml",
+        "bytes": 594,
+        "sha256": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0"
+      },
+      {
+        "file": "9xhg-1il/inputs/openbind-torch-standard.yaml",
+        "bytes": 731,
+        "sha256": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364"
+      },
+      {
+        "file": "9xhg-1il/outputs/forward-times.jsonl",
+        "bytes": 371,
+        "sha256": "3030abb7e1a861765bcb924de48e954022aba529cc693f5621dc9a479daa97e3"
+      },
+      {
+        "file": "9xhg-1il/outputs/ligand-topologies.json",
+        "bytes": 15956,
+        "sha256": "6ccea37408e20602f8f5d766b45faad24aa455c83365475ae1059a41e4fc1ad5"
+      },
+      {
+        "file": "9xhg-1il/outputs/seed-0/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 138473,
+        "sha256": "bb665c720174ebd060d7a05f9a611e8d2645ae12415c22718809c3228c90a274"
+      },
+      {
+        "file": "9xhg-1il/outputs/seed-0/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 656,
+        "sha256": "ed221716a081146b414d885cc7b11e5a5f0cb108f31c3591ffddd9ef3e14fc50"
+      },
+      {
+        "file": "9xhg-1il/outputs/seed-0/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 2054,
+        "sha256": "1078d15e08a5614097af54dac6967e800264035ecada4451fa1a8638220032fe"
+      },
+      {
+        "file": "9xhg-1il/outputs/seed-1/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 138411,
+        "sha256": "feb69f340434bc5dfd0ed706833b87e1745b171aeb5ae3b9431be25fc4f17d11"
+      },
+      {
+        "file": "9xhg-1il/outputs/seed-1/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 656,
+        "sha256": "e2fb851ceb44717dee16dbe240dca2aea02c80dd44b573ebc8c3420e296e3627"
+      },
+      {
+        "file": "9xhg-1il/outputs/seed-1/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 2054,
+        "sha256": "47e5bed5099a1e0e2eaa817144fb035a3776c23ff30e783dbde130013448937f"
+      },
+      {
+        "file": "9xhg-1il/outputs/seed-2/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 138371,
+        "sha256": "be090cf52b20b1638e2a7ddf75a20bef4230a27190dea0a09437f19e80831c6c"
+      },
+      {
+        "file": "9xhg-1il/outputs/seed-2/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 655,
+        "sha256": "d1cc39cf91a023b7e3148523d52c124f83d90c46b4d9ad61dace6908f38698e1"
+      },
+      {
+        "file": "9xhg-1il/outputs/seed-2/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 2054,
+        "sha256": "edd360a525973f4d72233a4ffa361e600198229528f7056ce806097bc53190fe"
+      },
+      {
+        "file": "9xhg-1il/receipt.public.json",
+        "bytes": 2874,
+        "sha256": "e29f83ae9708e4f75ca77e3d7d909cb27fbdeebb9140b05fc813bcc7ba3f7509"
+      },
+      {
+        "file": "9xjq-a1e0i/inputs/boltz/compound_000.yaml",
+        "bytes": 587,
+        "sha256": "c7339e5c8f3ef279e528d386466c0e9c1c7309521b16b54d7bff6fd04a8838f1"
+      },
+      {
+        "file": "9xjq-a1e0i/inputs/comparison.json",
+        "bytes": 100342,
+        "sha256": "caa05d828ec47901e17dc15fada78025997a37364a85984a4609379d2b4584b2"
+      },
+      {
+        "file": "9xjq-a1e0i/inputs/msa/colabfold_main.a3m",
+        "bytes": 94851,
+        "sha256": "84a658500bbdf4846955ce16cd3ed73d2c88c409b0f9e780a76d45ee61b5f0f3"
+      },
+      {
+        "file": "9xjq-a1e0i/inputs/openbind-query.json",
+        "bytes": 835,
+        "sha256": "e2991054a3d36a3ad3bff6b67321b5b925c4a834f5cf1adf0cca1a85e9a081f8"
+      },
+      {
+        "file": "9xjq-a1e0i/inputs/openbind-standard.yaml",
+        "bytes": 594,
+        "sha256": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0"
+      },
+      {
+        "file": "9xjq-a1e0i/inputs/openbind-torch-standard.yaml",
+        "bytes": 731,
+        "sha256": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364"
+      },
+      {
+        "file": "9xjq-a1e0i/outputs/forward-times.jsonl",
+        "bytes": 370,
+        "sha256": "f4aeaa505fb1333056abaa09e9122edee198141eb36d7f4c36fb8f6a17e1a7ad"
+      },
+      {
+        "file": "9xjq-a1e0i/outputs/ligand-topologies.json",
+        "bytes": 13046,
+        "sha256": "1ae1bddd832ffe3e7bd263c1cbd2ef2da75863b18f0afde2f593fcdf0568e936"
+      },
+      {
+        "file": "9xjq-a1e0i/outputs/seed-0/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 210507,
+        "sha256": "0117175ec0221e158e47a098e0c5d34606632564bd427c6dd67592286e7d3e5a"
+      },
+      {
+        "file": "9xjq-a1e0i/outputs/seed-0/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 655,
+        "sha256": "5f8d097283382d364cf49327a571773290aa4eed5bee831a7e34f400a294c5f6"
+      },
+      {
+        "file": "9xjq-a1e0i/outputs/seed-0/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1699,
+        "sha256": "5a6d451d50c8fd121c56ab8727fb630958a09a0c7fb10b8cea839d9488d1aa36"
+      },
+      {
+        "file": "9xjq-a1e0i/outputs/seed-1/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 210307,
+        "sha256": "859c0eeba674d76331b413a5c0f120afea2564dff1e2e5149d9ce4f43ca26112"
+      },
+      {
+        "file": "9xjq-a1e0i/outputs/seed-1/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 655,
+        "sha256": "8fa67ae1c93d9aafb6559e5e2a0483b543112e48ab46e4fd5b00d2e77ca6bf92"
+      },
+      {
+        "file": "9xjq-a1e0i/outputs/seed-1/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1699,
+        "sha256": "3fee7e997aac8233409494bb35894b0194b8a182e9c49bacdc85bd0958c11c98"
+      },
+      {
+        "file": "9xjq-a1e0i/outputs/seed-2/boltz_results_boltz/predictions/compound_000/compound_000_model_0.cif",
+        "bytes": 210294,
+        "sha256": "c1abf93be29d394dd7eb49605659b4016eb772e3db32abb7bf92f820554cb349"
+      },
+      {
+        "file": "9xjq-a1e0i/outputs/seed-2/boltz_results_boltz/predictions/compound_000/confidence_compound_000_model_0.json",
+        "bytes": 657,
+        "sha256": "10e397041d315077e472707f3e84a58b82e31525a7f76035e7524b6fb3b8aae0"
+      },
+      {
+        "file": "9xjq-a1e0i/outputs/seed-2/boltz_results_boltz/processed/mols/compound_000.pkl",
+        "bytes": 1699,
+        "sha256": "57abc22332e3e986e606b5944686f30d4ba4616844797a01446312a262ca08eb"
+      },
+      {
+        "file": "9xjq-a1e0i/receipt.public.json",
+        "bytes": 2874,
+        "sha256": "c092bfd119a3c55b30d4fbc7685023f708e8775201ba184befdced579737a697"
+      },
+      {
+        "file": "consumed-native_run.py",
+        "bytes": 8905,
+        "sha256": "3748c39c44d0da0b0b320388c1401fcb2bbd006428de2c6e798443130cd92e64"
+      }
+    ]
+  }
+}

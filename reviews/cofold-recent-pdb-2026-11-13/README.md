@@ -234,9 +234,9 @@ controls were submitted on PSIgreen with 200 steps and three recycles. Their CPU
 input/configuration preflight passed. All **54 native single-sequence poses**
 have now been retrieved, checked against a source-side SHA-256 inventory,
 converted using explicit native topology and scored against the unchanged
-experimental references. The following native MSA control adds another 27:
-Foldarium now contains **243 predictions** across six complete browser phases
-and three complete native phases.
+experimental references. The two native MSA controls below add another 54:
+Foldarium now contains **270 predictions** across six complete browser phases
+and four complete native phases.
 
 | System | Native OpenBind protein / ligand median RMSD | Native Boltz protein / ligand median RMSD |
 | --- | ---: | ---: |
@@ -259,7 +259,7 @@ the browser port causes the failures: native input handling, conformers, model,
 precision and sampling remain distinct. Native input-conformer selection has
 not been reconstructed from the saved molecule cache.
 
-![All 243 browser/native poses, with geometric successes that fail stereo/clash checks marked by crosses.](browser-native-reconstruction.png)
+![All 270 browser/native poses, with geometric successes that fail stereo/clash checks marked by crosses.](browser-native-reconstruction.png)
 
 The [combined score file](all-protocol-scores.json) retains each seed and its
 original phase. Crosses mark poses within 2 Å that fail the limited stereo/clash
@@ -337,10 +337,47 @@ lineage, unique coverage, every exported coordinate, all crystal scores and
 timing summaries without model inference:
 [recovery finding and implementation](../COFOLD_NATIVE_RECOVERY_EVIDENCE_2026-11-13.md).
 
-Native Boltz exact-MSA controls have 21 saved poses; two zero-output startup
-failures have missing-only retries queued at normal priority on PSIgreen. That
-incomplete phase is not counted in the 243-prediction review. No new standalone
-VM, priority change or cap bypass is used.
+## Native Boltz MSA control
+
+Official Boltz 2.2.1 BF16 completed **27/27 poses**, using the same saved A3M
+bytes, 200 sampling steps and three recycles. Its browser MSA control uses 25
+steps/two recycles and int5 weights, so that agreement comparison retains a
+sampling-effort confound in addition to features, conformers, precision and RNG.
+
+| System | Native median protein / ligand RMSD | Poses ≤2 Å | Also pass limited stereo/clash checks |
+| --- | ---: | ---: | ---: |
+| 9SY7 | 0.87 / 9.74 Å | 0/3 | 0/3 |
+| 9SXF | 4.59 / 1.32 Å | 3/3 | 0/3 |
+| 9T51 | 1.86 / 9.89 Å | 0/3 | 0/3 |
+| 9SYO | 0.96 / 5.55 Å | 0/3 | 0/3 |
+| 15JI | 0.11 / 1.05 Å | 3/3 | 0/3 |
+| 9XHG | 1.17 / 26.10 Å | 0/3 | 0/3 |
+| 9XJQ | 0.31 / 3.26 Å | 0/3 | 0/3 |
+| 32QY | 1.59 / 2.41 Å | 1/3 | 1/3 |
+| 9T3V | 0.44 / 10.57 Å | 0/3 | 0/3 |
+
+Seven poses are geometrically within 2 Å. All three KIT and all three NSP3
+poses have at least one wrong specified tetrahedral centre, leaving **1/27**
+passing the limited checks (YTHDF2 seed 1). These are output disagreements with
+the declared chemical identity; the selected native input conformer has not
+been reconstructed, so the stage responsible is not localized.
+
+The [full browser/native MSA comparison](native-msa-agreement.json) gives a
+median seed-paired mean ligand disagreement of **6.21 Å**, or **5.60 Å** with
+one-to-one ensemble assignment. The model's closer native protein structures
+do not establish correct ligand placement or stereochemistry.
+[Raw evidence](native-boltz2-msa256-standard/evidence.json),
+[every score](native-boltz2-msa256-standard/scores.json), and
+[forward timings](native-boltz2-msa256-standard/timings.json) retain all results.
+Median synchronized forward time ranges from **12.35 to 23.05 seconds** on
+NVIDIA L4, with the same startup/featurization exclusions described above.
+
+The [two original startup failures](native-msa-startup-failures.json) and their
+[portable source archive](native-msa-startup-failures.zip) are public. Both had
+zero model outputs and zero forward records. Their unchanged scientific inputs
+were retried in new immutable attempts after the startup checks; all six new
+poses are included. No saved inference was repeated. No standalone VM, priority
+change or cap bypass was used.
 
 ## Reproduce
 
