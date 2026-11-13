@@ -468,8 +468,9 @@ inference. It retains all seeds, poor results, the original and corrected-input
 runs, an independent ligand-feature check, and
 [Foldarium review with optional crystal references](reviews/cofold-recent-pdb-2026-11-13/index.html).
 The input chemistry correction is verified; it does not establish accurate pose
-prediction. Native controls and a separate provided-MSA phase are tracked in the
-same public record.
+prediction. Six complete phases retain 162 poses, including provided-MSA and
+200-step OpenBind controls. Native references and an interrupted Boltz standard
+control are tracked separately in the same public record.
 Protein multimers,
 templates, nucleic acids and covalent cofolding are not exposed yet.
 See [integration evidence and follow-up work](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md).

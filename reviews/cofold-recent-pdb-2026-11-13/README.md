@@ -118,7 +118,7 @@ enumeration and uses no experimental coordinates. All nine actual browser input
 graphs and specified tetrahedral centres passed an independent Python RDKit
 check: [browser records](normalized-chemistry.json),
 [independent feature/stereo checks](normalized-chemistry-check.json).
-The post hoc [check of all 135 saved input conformers](all-input-conformers.json)
+The post hoc [check of all 162 saved input conformers](all-input-conformers.json)
 also confirms every specified tetrahedral configuration. Exact expected centre
 counts are tested so a graph lacking conformer/stereo information cannot produce
 a vacuous pass. Symmetry-equivalent graph mappings are handled explicitly.
@@ -165,8 +165,57 @@ not an exhaustive physical-validity assessment.
 The
 [raw MSA-assisted Boltz phase](browser-boltz2-msa256/throughput.json) and
 [OpenBind phase](browser-openbind0-msa256/throughput.json), with their per-seed
-scores, retain every result. The 200-step/three-recycle browser controls are a
-separate experiment in progress; they are not included in these 25-step tables.
+scores, retain every result. The 200-step/three-recycle controls below are
+separate experiments and are not included in these 25-step tables.
+
+### Standard-sampling browser control
+
+OpenBind-0 completed all 27 poses with the same provided MSA256 and normalized
+inputs, 200 diffusion steps and three additional recycles. It uses the same
+frozen scientific runtime as the 25-step normalized phases. Median protein / ligand
+RMSD values are:
+
+| System | Protein Cα | Ligand in protein frame |
+| --- | ---: | ---: |
+| 9SY7 · PPA | 0.90 Å | 5.03 Å |
+| 9SXF · KIT | 3.66 Å | 5.28 Å |
+| 9T51 · STARD4 | 1.95 Å | 0.74 Å |
+| 9SYO · Hsp90 | 2.89 Å | 6.12 Å |
+| 15JI · NSP3 | 0.98 Å | 4.48 Å |
+| 9XHG · STING | 2.18 Å | 25.16 Å |
+| 9XJQ · WDR5 | 0.48 Å | 2.66 Å |
+| 32QY · YTHDF2 | 2.67 Å | 16.58 Å |
+| 9T3V · sEH | 0.88 Å | 3.60 Å |
+
+Four poses are within 2 Å: KIT seed 1 and all three STARD4 seeds. KIT seed 1
+and STARD4 seed 2 fail the declared stereochemical-identity check. Only two
+pass both the geometric criterion and the limited stereo/clash checks, as in
+the 25-step OpenBind run. This is not a broad accuracy improvement or a
+complete physical-validity assessment. [Raw runs and timing](browser-openbind0-msa256-standard/throughput.json)
+and [per-pose scores](browser-openbind0-msa256-standard/scores.json) preserve
+all outcomes. The interactive review now includes all 162 poses from six
+complete phases, with explicit model, MSA and step labels.
+
+Boltz-2 standard sampling stopped after browser-storage failures. We preserve
+14 unique complete poses from the first five systems in an
+[immutable evidence archive](boltz-standard-partial-evidence.zip), with
+[source hashes, original run statuses and exact missing-seed inventory](boltz-standard-partial-receipt.json).
+Twelve poses on the remaining four systems were not run. NSP3 seed 0 was
+reported complete but its coordinates disappeared before any host snapshot
+captured them. The earlier handoff misidentified a seed-1 snapshot as preserving
+seed 0; inspecting every saved snapshot corrected that claim. This incomplete
+phase is not pooled into the full-panel accuracy tables or review. No saved
+prediction was recomputed to hide an interruption.
+
+The storage adapter now retries a closed connection once, while quota errors
+still stop the queue. Atomic checkpoint writes verify earlier saved results;
+if they disappear, execution preserves the current result, records the missing
+checkpoints and stops without automatically repeating completed inference.
+The regression deletes an actual test IndexedDB database between validation
+and write: [finding and linked tests](findings.md). Very low host disk space
+was observed during the interrupted run; the exact cause of Chrome's data
+loss has not been independently established. Export results regularly: local
+browser storage is not a backup.
 
 The **actual official OpenFold3 0.5.1 CPU input processor and stack helper** read
 all nine supplied alignments. Its residue and deletion rows exactly match the

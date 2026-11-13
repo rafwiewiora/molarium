@@ -17,6 +17,21 @@ const assetRelease = String(process.env.MOLARIUM_ASSET_RELEASE || `v${packageJso
 const assetBase = `${assetOrigin}/${assetRelease}/`;
 
 const files = [
+  'reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/build-manifest.json',
+  'reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/foldarium-review.png',
+  'reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/library-1.json',
+  'reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/library-2.json',
+  'reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/library-3.json',
+  'reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/library-4.json',
+  'reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/library-5.json',
+  'reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/library-6.json',
+  'reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/library-7.json',
+  'reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/library-8.json',
+  'reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/library-9.json',
+  'reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/scores.json',
+  'reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/throughput.json',
+  'reviews/cofold-recent-pdb-2026-11-13/boltz-standard-partial-evidence.zip',
+  'reviews/cofold-recent-pdb-2026-11-13/boltz-standard-partial-receipt.json',
   'reviews/cofold-recent-pdb-2026-11-13/msa256/official-rows-only-history.zip',
   'reviews/cofold-recent-pdb-2026-11-13/all-input-conformers.json',
   'reviews/cofold-recent-pdb-2026-11-13/analysis-history/scores-before-stereochemical-graph-check.json',

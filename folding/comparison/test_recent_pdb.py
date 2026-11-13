@@ -2,6 +2,8 @@ import copy
 import contextlib
 import io
 import json
+import hashlib
+import zipfile
 from pathlib import Path
 import tempfile
 import unittest
@@ -17,6 +19,29 @@ from pose_metrics import ligand_mol,pdb_atoms
 ROOT=Path(__file__).resolve().parents[2]/'reviews/cofold-recent-pdb-2026-11-13'
 
 class RecentPdbTests(unittest.TestCase):
+    def test_interrupted_standard_inventory_distinguishes_saved_lost_and_unrun(self):
+        receipt=json.loads((ROOT/'boltz-standard-partial-receipt.json').read_text())
+        archive=(ROOT/'boltz-standard-partial-evidence.zip').read_bytes()
+        self.assertEqual(hashlib.sha256(archive).hexdigest(),receipt['archiveSha256'])
+        seen={}
+        with zipfile.ZipFile(io.BytesIO(archive))as z:
+            self.assertEqual(set(z.namelist()),{s['file']for s in receipt['sources']})
+            for source in receipt['sources']:
+                data=z.read(source['file']);self.assertEqual(hashlib.sha256(data).hexdigest(),source['sha256'])
+                bundle=json.loads(data)
+                self.assertEqual(bundle['run']['status'],source['originalStatus'])
+                for pose in bundle['poses']:
+                    if pose['status']!='complete':continue
+                    key=(pose['compoundId'],pose['seed']);digest=hashlib.sha256(pose['result']['pdb'].encode()).hexdigest()
+                    self.assertEqual(digest,pose['result']['provenance']['outputPdbSha256'])
+                    if key in seen:self.assertEqual(seen[key],digest)
+                    seen[key]=digest
+        self.assertEqual(len(seen),14);self.assertEqual(len(seen),receipt['completeUniquePoses'])
+        lost=[m for m in receipt['missing']if m['status']=='lost-checkpoint']
+        self.assertEqual(lost,[{'caseId':'15ji-a1d2g','seed':0,'status':'lost-checkpoint'}])
+        self.assertEqual(sum(m['status']=='not-run'for m in receipt['missing']),12)
+        self.assertFalse(set(seen)&{(m['caseId'],m['seed'])for m in receipt['missing']})
+
     def test_stereochemistry_uses_graph_equivalence_and_still_rejects_a_real_inversion(self):
         # This cage can change fixed mapped CIP labels when unspecified centres
         # are assigned from 3D while retaining the declared stereochemical graph.

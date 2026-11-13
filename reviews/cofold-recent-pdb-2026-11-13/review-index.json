@@ -4,31 +4,36 @@
   "phases": [
     {
       "id": "boltz2-baseline",
-      "label": "Boltz-2 · original SMILES · single sequence",
+      "label": "Boltz-2 · original SMILES · single sequence · 25 steps",
       "directory": "browser-boltz2-baseline"
     },
     {
       "id": "boltz2-normalized",
-      "label": "Boltz-2 · normalized SMILES · single sequence",
+      "label": "Boltz-2 · normalized SMILES · single sequence · 25 steps",
       "directory": "browser-boltz2-normalized"
     },
     {
       "id": "openbind0-normalized",
-      "label": "OpenBind-0 · normalized SMILES · single sequence",
+      "label": "OpenBind-0 · normalized SMILES · single sequence · 25 steps",
       "directory": "browser-openbind0-normalized"
     },
     {
       "id": "boltz2-msa256",
-      "label": "Boltz-2 · normalized SMILES · MSA256",
+      "label": "Boltz-2 · normalized SMILES · MSA256 · 25 steps",
       "directory": "browser-boltz2-msa256"
     },
     {
       "id": "openbind0-msa256",
-      "label": "OpenBind-0 · normalized SMILES · MSA256",
+      "label": "OpenBind-0 · normalized SMILES · MSA256 · 25 steps",
       "directory": "browser-openbind0-msa256"
+    },
+    {
+      "id": "openbind0-msa256-standard",
+      "label": "OpenBind-0 · MSA256 · 200 steps",
+      "directory": "browser-openbind0-msa256-standard"
     }
   ],
-  "predictions": 135,
+  "predictions": 162,
   "cases": [
     {
       "id": "9sy7-a1jrx",
@@ -40,12 +45,12 @@
       "qed": 0.9205203546725758,
       "predictions": {
         "file": "review/9sy7-a1jrx-predictions.library.json",
-        "sha256": "4ca90d153d9525b29422ac2b3dda58ecd27af8cf7fdc43a7708f318fbb345473",
+        "sha256": "858ee6ccc1a63029c60cffd5157391f5bffd39a7fdcd9620aea5499d4c563218",
         "reference": false
       },
       "withReference": {
         "file": "review/9sy7-a1jrx-reference.library.json",
-        "sha256": "bf54bb241dd6472ca3bd4e04d809327160f0ca6eda5a1fd14f2a1621c0ab6059",
+        "sha256": "eeeb0c1b209d2bf87c82a52dce1688ad6d548f067b2ea18230efb897d83b7ee5",
         "reference": true
       }
     },
@@ -59,12 +64,12 @@
       "qed": 0.6814669063795976,
       "predictions": {
         "file": "review/9sxf-a1jrg-predictions.library.json",
-        "sha256": "ebcfd55fad518772c437ea8587c793a791272fd1478836565eb0df4f7d2f9101",
+        "sha256": "502a459e83d876e42fb8b3c631e9344820e4905923e016c9f31c04c0522f1f60",
         "reference": false
       },
       "withReference": {
         "file": "review/9sxf-a1jrg-reference.library.json",
-        "sha256": "82a00166eecdf75f70fc0e2e8fbc4ecdb29c50304f47de35c567802e2ee80921",
+        "sha256": "c1e64c32505e73692d7b1377c4289f85d6a7f05b763ac2be00fea8286db95ae5",
         "reference": true
       }
     },
@@ -78,12 +83,12 @@
       "qed": 0.6040326238304864,
       "predictions": {
         "file": "review/9t51-a1jtm-predictions.library.json",
-        "sha256": "6627e52867526813b8292d9ebc2d3f07ca0563f9cda29822ef4a3d5f124e4571",
+        "sha256": "73e727cf0c1c350331378409d492c442790f89593ee2e651deb5895c411f84c1",
         "reference": false
       },
       "withReference": {
         "file": "review/9t51-a1jtm-reference.library.json",
-        "sha256": "5f1abbeafb7f94ba0e36f735c1baf060bac3f804bc448b4e84c02761ff5a44b4",
+        "sha256": "b4c378012160833e7c0518708240f845a4a2ecbe2d4276c4f1205cd3fe36a547",
         "reference": true
       }
     },
@@ -97,12 +102,12 @@
       "qed": 0.5566015973392431,
       "predictions": {
         "file": "review/9syo-a1jr1-predictions.library.json",
-        "sha256": "747ae2fd367cd33c070623fad2c28b2b09ef130f584b7cae4d1d115233d7b449",
+        "sha256": "3764669796d9e2e977ba2c47ecedc86d621d8536adb7101c0f9e1a9efff82eab",
         "reference": false
       },
       "withReference": {
         "file": "review/9syo-a1jr1-reference.library.json",
-        "sha256": "e86d6141341ded46276b077faea1a57084095a674d27a6926222cc0a8b41acf1",
+        "sha256": "b0253c6713cfd48f9dbb97d2bf3b90fbd44b97035bce0dca18430ef4f38c6202",
         "reference": true
       }
     },
@@ -116,12 +121,12 @@
       "qed": 0.9420346509131652,
       "predictions": {
         "file": "review/15ji-a1d2g-predictions.library.json",
-        "sha256": "99b9ad7825a7fd875384f435accd5ccc158454a0659242ce0dbf83eb8af48528",
+        "sha256": "b0e649795175521dface64ea487f0ac42a0049a27e753acc2954219b9d1dca3a",
         "reference": false
       },
       "withReference": {
         "file": "review/15ji-a1d2g-reference.library.json",
-        "sha256": "b93ccd7df17f32875dd87c4fa3f99af623ecc7ada7cfbd893e551aee2669a8ab",
+        "sha256": "e03de6372399a1410abe1d3399c209ab78d98f903fc13c27c2da791ffc7ce551",
         "reference": true
       }
     },
@@ -135,12 +140,12 @@
       "qed": 0.6513077333363692,
       "predictions": {
         "file": "review/9xhg-1il-predictions.library.json",
-        "sha256": "6b359db6be5ef289ec842728be42267755c5ef041cfae6bc48e69b70b484cc90",
+        "sha256": "aaaab577961ced58b3e78f2f1212b226c88500d74853103b47e955fd12407b6a",
         "reference": false
       },
       "withReference": {
         "file": "review/9xhg-1il-reference.library.json",
-        "sha256": "c5df5ebdecbb35f59c8e47d03feec5cf74ad1ef2c773f9c6bbd3335b7b8363f4",
+        "sha256": "ef414df43ff6d3fad3f9e5a676065af8f7ae4be05ef08c588204ca2dcbb841ea",
         "reference": true
       }
     },
@@ -154,12 +159,12 @@
       "qed": 0.8556755579505072,
       "predictions": {
         "file": "review/9xjq-a1e0i-predictions.library.json",
-        "sha256": "5f922cced8283114f0acfd0aa36b60c709839c447c8ead0494643e53567e1b8a",
+        "sha256": "45b0323f6d1d3e18b2869277840be4d0e3a6dc3d9f4fa06a27ea3d53f2952718",
         "reference": false
       },
       "withReference": {
         "file": "review/9xjq-a1e0i-reference.library.json",
-        "sha256": "35344ba1fadc8f1dcdb0668e8237e5d69960377ff591fc11e4085f6edfb29206",
+        "sha256": "51f806bdb9350470902ef04dc9b570c72f37cf446132c5b6b35e3737836b1874",
         "reference": true
       }
     },
@@ -173,12 +178,12 @@
       "qed": 0.5916943361593814,
       "predictions": {
         "file": "review/32qy-a1keo-predictions.library.json",
-        "sha256": "d0afae14535e537db38d3ae290a44dadb59103f6d68e4f71d14bc1eaf1c9301c",
+        "sha256": "304c96fcb49bc65374dc36c3aa42f39a8f7f8b017d908b13ca94a94dd5aa8fc3",
         "reference": false
       },
       "withReference": {
         "file": "review/32qy-a1keo-reference.library.json",
-        "sha256": "502ad4dc264f867bd30bba49d6e20393d0b80eda01802bc51954195f122c89e6",
+        "sha256": "85129d396c59c1dd02d9815a0dcec7345ce90b948fcb2beea549a00d25dc2322",
         "reference": true
       }
     },
@@ -192,12 +197,12 @@
       "qed": 0.5698117918028605,
       "predictions": {
         "file": "review/9t3v-a1jtg-predictions.library.json",
-        "sha256": "dd3c609d807898f9b0de4c18975b154587d22dd6a39782af9cc901f875c21fea",
+        "sha256": "fd2be23e47dc1a265954620abdf043a23d04dc1b67677e7a1e85ac982d71d65e",
         "reference": false
       },
       "withReference": {
         "file": "review/9t3v-a1jtg-reference.library.json",
-        "sha256": "52e72a4baf91e573dd6aab099ec2cbd8f6dac95d0902558c6411842eef6a37f0",
+        "sha256": "812a1f610c80a22c8ddbefc32af9031f6baf28fb401cd54fdc57f770b9f30893",
         "reference": true
       }
     }

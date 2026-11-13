@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+plt.rcParams['svg.hashsalt']='molarium-recent-panel-v1'
 
 
 def main():
@@ -38,7 +39,10 @@ def main():
     axes[1].legend(loc='upper left',fontsize=9,frameon=False)
     axes[0].set_title('Recent-release PDB reconstruction · every seed retained',loc='left',weight='bold',pad=70)
     fig.supxlabel('Dots: seeds 0, 1, 2. Bars: per-system medians. All observed matching Cα atoms determine the protein fit.',fontsize=10)
-    for suffix in ['.png','.svg']:fig.savefig(a.output.with_suffix(suffix),dpi=180)
+    for suffix in ['.png','.svg']:
+        path=a.output.with_suffix(suffix)
+        fig.savefig(path,dpi=180,metadata={'Date':None}if suffix=='.svg'else None)
+        if suffix=='.svg':path.write_text('\n'.join(line.rstrip()for line in path.read_text().splitlines())+'\n')
     a.output.with_suffix('.plot.json').write_text(json.dumps({'panelSha256':hashlib.sha256(a.panel.read_bytes()).hexdigest(),
         'scoresSha256':hashlib.sha256(a.scores.read_bytes()).hexdigest(),'methods':methods,
         'scriptSha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest()},indent=2)+'\n')

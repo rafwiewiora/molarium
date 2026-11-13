@@ -48,6 +48,17 @@ test('ETA excludes first cold pose and storage failure stops further predictions
   store.checkpoint=async()=>{throw new Error('Quota exceeded');};let calls=0;
   await assert.rejects(executeLibrary(r,{store,predict:async()=>{calls++;return {pdb:'ok'};}}),/Quota/);assert.equal(calls,1);
 });
+test('evicted durable checkpoints stop the queue, retain the new result and never replay lost science',async()=>{
+  const store=new MemoryStore(),run=await createLibrary({sequence:'ACD',compounds:'C',samples:3},{store});let calls=0;
+  await assert.rejects(executeLibrary(run,{store,predict:async()=>{
+    calls++;if(calls===2)store.poses.clear();return {pdb:'new result',provenance:{outputPdbSha256:'hash-'+calls}};
+  }}),/storage lost previously saved/);
+  const stopped=store.runs.get(run.id);
+  assert.equal(calls,2);assert.equal(stopped.status,'stopped');assert.equal(stopped.completed,1);
+  assert.equal(stopped.storageLoss.missing.length,1);assert.equal(stopped.storageLoss.currentPosePreserved,true);
+  assert.equal([...store.poses.values()][0].result.pdb,'new result');
+  await assert.rejects(executeLibrary(stopped,{store,predict:()=>assert.fail('Lost completed work must not silently rerun')}),/cannot resume automatically/);
+});
 test('shared infrastructure failure stops the queue instead of failing every ligand',async()=>{
   const store=new MemoryStore(),run=await createLibrary({sequence:'ACD',compounds:'C a\nN b',samples:1},{store});let calls=0;
   await assert.rejects(executeLibrary(run,{store,predict:async()=>{calls++;throw new Error('Failed to fetch weights');}}),/infrastructure stopped/);

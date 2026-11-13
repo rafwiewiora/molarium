@@ -1,5 +1,6 @@
 import {foldingRequest,COFOLD_FAMILIES} from './request.mjs';
-import {LibraryStore,poseSummary} from '../vendor/foldarium/library-store.js';
+import {poseSummary} from '../vendor/foldarium/library-store.js';
+import {LibraryStore} from './library-store.mjs';
 export {LibraryStore};
 const now=()=>new Date().toISOString();
 const aborted=signal=>{if(signal?.aborted)throw signal.reason??new DOMException('Aborted','AbortError');};
@@ -64,9 +65,27 @@ export async function executeLibrary(run,{store=new LibraryStore(),predict,signa
   predict??=(await import('./localfold.mjs')).predictLocalFold;
   const poses=await store.records('poseIndex',run.id), started=clock(), session={startedAt:now(),finishedAt:null,elapsedMs:null};
   if(run.status==='imported')throw new Error('Imported libraries are for review. Create a new run to compute new poses.');
+  if(run.storageLoss)throw new Error('Browser storage lost saved checkpoints. Export available results; this run cannot resume automatically.');
+  const count=status=>poses.filter(p=>p.status===status).length;
+  if(count('complete')!==(run.completed??0)||count('failed')!==(run.failed??0))
+    throw new Error('Browser storage is missing saved poses. Export available results; this run cannot resume automatically.');
   run={...run,status:'running',sessions:[...(run.sessions??[]),session]};
   let pending=null;
   const emit=current=>onProgress(queueProgress(run,poses,current,clock()-started));
+  const missingFrom=durable=>{const index=new Map(durable.map(p=>[p.id,p]));return poses.filter(p=>{
+    const q=index.get(p.id);return ['complete','failed'].includes(p.status)
+      &&(!q||q.status!==p.status||(p.outputPdbSha256&&q.outputPdbSha256!==p.outputPdbSha256));});};
+  const requirePrevious=async currentPose=>{
+    const durable=await store.records('poseIndex',run.id),missing=missingFrom(durable);
+    if(!missing.length)return;
+    run.storageLoss={detectedAt:now(),missing:missing.map(({id,poseKey,seed,status,outputPdbSha256})=>({id,poseKey,seed,status,outputPdbSha256})),
+      currentPosePreserved:Boolean(currentPose),message:'Previously saved checkpoints disappeared from browser storage.'};
+    poses.splice(0,poses.length,...durable);
+    run={...run,status:'stopped',completed:count('complete')+ +(currentPose?.status==='complete'),
+      failed:count('failed')+ +(currentPose?.status==='failed')};
+    if(currentPose){await store.checkpoint(run,currentPose);poses.push(poseSummary(currentPose));pending=null;}
+    throw new Error('Browser storage lost previously saved poses. Available results are retained; export them. This run cannot resume automatically.');
+  };
   try {
     await store.saveRun(run);emit(null);
     for(const c of run.compounds)for(let sample=0;sample<run.samples;sample++) {
@@ -74,6 +93,7 @@ export async function executeLibrary(run,{store=new LibraryStore(),predict,signa
       const poseKey=`${c.id}::${sample}`, history=poses.filter(p=>p.poseKey===poseKey);
       // Resume only unfinished/interrupted work. Failures are explicit terminal results.
       if(history.some(p=>['complete','failed'].includes(p.status)))continue;
+      await requirePrevious();
       const attempt=history.length+1, id=`${poseKey}::attempt-${attempt}`, seed=run.request.seed+sample;
       pending={id,poseKey,compoundId:c.id,sample,seed,attempt,status:'interrupted',startedAt:now()};
       const t=clock();let result,error,fraction=0;
@@ -86,6 +106,7 @@ export async function executeLibrary(run,{store=new LibraryStore(),predict,signa
         aborted(signal);
       }catch(e){if(signal?.aborted||e?.name==='AbortError')throw e;error=e;}
       const pose={...pending,status:error?'failed':'complete',finishedAt:now(),wallMs:clock()-t,
+        ...(result?.provenance?.outputPdbSha256?{outputPdbSha256:result.provenance.outputPdbSha256}:{}),
         ...(error?{error:String(error.message??error)}:{result})};
       if(result?.provenance?.alignment&&!run.alignment)run.alignment=result.provenance.alignment;
       if(result){
@@ -102,7 +123,10 @@ export async function executeLibrary(run,{store=new LibraryStore(),predict,signa
       run={...run,updatedAt:now(),completed:poses.filter(p=>p.status==='complete').length+ +!error,
         failed:poses.filter(p=>p.status==='failed').length+ +!!error};
       // A storage/quota failure stops the run before another expensive prediction.
-      await store.checkpoint(run,pose);poses.push(poseSummary(pose));pending=null;emit(null);
+      await requirePrevious(pose);
+      try{await store.checkpoint(run,pose,poses);}
+      catch(e){if(e?.name==='CheckpointLossError')await requirePrevious(pose);throw e;}
+      poses.push(poseSummary(pose));pending=null;emit(null);
       if(error&&/device.*lost|out of memory|allocation|WebGPU|GPU.*lost|no compatible.*adapter|failed to fetch|HTTP\s+\d+|weights|model manifest|MSA.*(?:fail|error|unavailable)/i.test(pose.error))
         throw new Error(`Library infrastructure stopped: ${pose.error}`);
     }
@@ -113,7 +137,16 @@ export async function executeLibrary(run,{store=new LibraryStore(),predict,signa
     if(run.status==='stopped')throw e;
   }finally{
     session.finishedAt=now();session.elapsedMs=clock()-started;run.updatedAt=now();
-    await store.saveRun(run);emit(null);
+    try{await store.saveRun(run,run.status.startsWith('complete')?poses:undefined);}
+    catch(e){
+      if(e?.name==='CheckpointLossError'){
+        run.status='stopped';run.lastError=e.message;run.storageLoss={detectedAt:now(),missing:e.missing,currentPosePreserved:false};
+        const durable=await store.records('poseIndex',run.id);poses.splice(0,poses.length,...durable);
+        run.completed=count('complete');run.failed=count('failed');await store.saveRun(run);emit(null);
+      }
+      throw e;
+    }
+    emit(null);
   }
   return run;
 }

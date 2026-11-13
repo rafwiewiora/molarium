@@ -1,0 +1,220 @@
+{
+  "schema": "molarium.partial-browser-cohort.v1",
+  "purpose": "Preserve all available completed Boltz-2 standard poses across interrupted attempts; no inference, coordinate changes or rewritten original run statuses. Not a complete nine-system phase.",
+  "protocol": {
+    "model": "localfold-boltz2",
+    "steps": 200,
+    "recycles": 3,
+    "msa": "provided 256 rows"
+  },
+  "sources": [
+    {
+      "file": "original-ppa.json",
+      "sha256": "dbe3e70e4a94254adba2e461dad76614dd161eb00cc19d2776de596a1950601c",
+      "originalRunId": "2875090c-0ec7-470e-9681-c36a7957c87b",
+      "originalStatus": "complete",
+      "originalCompleted": 3,
+      "presentCompletePoses": [
+        {
+          "caseId": "9sy7-a1jrx",
+          "seed": 0,
+          "outputPdbSha256": "f366bc3622c1f392a7086898e97660a803c3ba683f7e0e9c50e82937b7f05df0"
+        },
+        {
+          "caseId": "9sy7-a1jrx",
+          "seed": 1,
+          "outputPdbSha256": "36f33cb498d3086c540aeeedf538f59eb3f1c4e3c3c23faed856d6be8dd4f86b"
+        },
+        {
+          "caseId": "9sy7-a1jrx",
+          "seed": 2,
+          "outputPdbSha256": "fd95ffdf987b6e057f75283410f5d8110dd3c0ed28201b9c698385f62bd6aabb"
+        }
+      ]
+    },
+    {
+      "file": "original-kit-two.json",
+      "sha256": "8a7f9365c1cf5cb9889aff78e8abc3f0f8a83b5b4c00e6cce3f5f7a766998d18",
+      "originalRunId": "b7ea11c6-19fa-4559-af30-5a463fb685ee",
+      "originalStatus": "running",
+      "originalCompleted": 2,
+      "presentCompletePoses": [
+        {
+          "caseId": "9sxf-a1jrg",
+          "seed": 0,
+          "outputPdbSha256": "91dce2421ec94cecb8f71b2eb95d5224d0c8c7c3210e8528073b663e1ea0dd40"
+        },
+        {
+          "caseId": "9sxf-a1jrg",
+          "seed": 1,
+          "outputPdbSha256": "c1b5a5cfbbb35eabf72fbb0b30608a7f51ba0f240a08b9526eb2d57397eff005"
+        }
+      ]
+    },
+    {
+      "file": "recovered-kit-seed2.json",
+      "sha256": "6ccf9d3b08c153bf6af5c0d31d0b8c1ffc36c4c13f8fd326c52657ee82dcb573",
+      "originalRunId": "894f748d-ae8a-4b48-9cd0-c6a49e7f8b04",
+      "originalStatus": "complete",
+      "originalCompleted": 1,
+      "presentCompletePoses": [
+        {
+          "caseId": "9sxf-a1jrg",
+          "seed": 2,
+          "outputPdbSha256": "70c808edb656f733b7781b3f2ea68fa18d64ef0fbeeaaf42e2272b825f79056d"
+        }
+      ]
+    },
+    {
+      "file": "recovered-stard4.json",
+      "sha256": "6c353a893ffd42ecfcf51704db8738100ee493fcc427e1a7afc5c377735a2298",
+      "originalRunId": "6c7b2ec4-102a-4b85-a593-43ba752cf096",
+      "originalStatus": "complete",
+      "originalCompleted": 3,
+      "presentCompletePoses": [
+        {
+          "caseId": "9t51-a1jtm",
+          "seed": 0,
+          "outputPdbSha256": "eb1ac506f0cdf1418ced8ec58fa99c4ca77bd6dcca0362199d1c5148645d50ec"
+        },
+        {
+          "caseId": "9t51-a1jtm",
+          "seed": 1,
+          "outputPdbSha256": "b68b821a93c2750b29f8d98399f4c614700b67fb947e355e1d5f6bc7ba70b76f"
+        },
+        {
+          "caseId": "9t51-a1jtm",
+          "seed": 2,
+          "outputPdbSha256": "1172d132698538142fb8c731345095b6c5265b59e1467350c77655efe615e1ca"
+        }
+      ]
+    },
+    {
+      "file": "recovered-hsp90.json",
+      "sha256": "95dfd6ce88a835a3e93977c8c380dd1dc8780ee025856b48150932c10e00e0e3",
+      "originalRunId": "8e75a67d-f69b-4af9-a314-0f916e4b079f",
+      "originalStatus": "complete",
+      "originalCompleted": 3,
+      "presentCompletePoses": [
+        {
+          "caseId": "9syo-a1jr1",
+          "seed": 0,
+          "outputPdbSha256": "684ecbe41ac5102f98b2c0a32894b27bd6c0be4b05e468694ab67a366cb1db45"
+        },
+        {
+          "caseId": "9syo-a1jr1",
+          "seed": 1,
+          "outputPdbSha256": "aadce48ff1d8f7a29447450b9c5ccf826e2925b4c3d522797e27c845d31efea4"
+        },
+        {
+          "caseId": "9syo-a1jr1",
+          "seed": 2,
+          "outputPdbSha256": "1083da822db9004e64ecdf53a317cb6e7f622691b4b8e9770a42170d8c84c55f"
+        }
+      ]
+    },
+    {
+      "file": "nsp3-earlier-incomplete.json",
+      "sha256": "c45588f3d189b92cf84b937dc1e67df8c1298d2f63e6883c63ab10b90a6745c9",
+      "originalRunId": "4d580312-fe8b-4731-91fb-3f17ba5b5f8b",
+      "originalStatus": "running",
+      "originalCompleted": 2,
+      "presentCompletePoses": [
+        {
+          "caseId": "15ji-a1d2g",
+          "seed": 1,
+          "outputPdbSha256": "6a65ce4829e5ff86f309028fea174b5def18afec520cf8fd1506d99be5c7f5e5"
+        }
+      ]
+    },
+    {
+      "file": "nsp3-final-seeds1-2.json",
+      "sha256": "ee21f55f43f5114c66c5fdde6b224b0d0901600fa75ed1a1a333a33cb53feb37",
+      "originalRunId": "4d580312-fe8b-4731-91fb-3f17ba5b5f8b",
+      "originalStatus": "complete",
+      "originalCompleted": 3,
+      "presentCompletePoses": [
+        {
+          "caseId": "15ji-a1d2g",
+          "seed": 1,
+          "outputPdbSha256": "6a65ce4829e5ff86f309028fea174b5def18afec520cf8fd1506d99be5c7f5e5"
+        },
+        {
+          "caseId": "15ji-a1d2g",
+          "seed": 2,
+          "outputPdbSha256": "5200e6cfa7f86010b506b0d9f5eb90bd973183b81fd38e0cc7be4cc81fb86035"
+        }
+      ]
+    }
+  ],
+  "completeUniquePoses": 14,
+  "missing": [
+    {
+      "caseId": "15ji-a1d2g",
+      "seed": 0,
+      "status": "lost-checkpoint"
+    },
+    {
+      "caseId": "9xhg-1il",
+      "seed": 0,
+      "status": "not-run"
+    },
+    {
+      "caseId": "9xhg-1il",
+      "seed": 1,
+      "status": "not-run"
+    },
+    {
+      "caseId": "9xhg-1il",
+      "seed": 2,
+      "status": "not-run"
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "seed": 0,
+      "status": "not-run"
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "seed": 1,
+      "status": "not-run"
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "seed": 2,
+      "status": "not-run"
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "seed": 0,
+      "status": "not-run"
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "seed": 1,
+      "status": "not-run"
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "seed": 2,
+      "status": "not-run"
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "seed": 0,
+      "status": "not-run"
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "seed": 1,
+      "status": "not-run"
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "seed": 2,
+      "status": "not-run"
+    }
+  ],
+  "archiveSha256": "9482b9b245a72f1b9335c24ba2cefc356ed5a1c6de937c124471a6cc5a376c4d",
+  "storageFinding": "NSP3 final run metadata reports three complete poses but only seeds 1 and 2 remain. A scan of all original and recovery host snapshots found no seed-0 PDB. The earlier handoff incorrectly described a seed-1 snapshot as preserving seed 0; corrected after inspecting its contents."
+}
