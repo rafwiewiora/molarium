@@ -1,0 +1,1450 @@
+{
+  "schema": "molarium.transition-precision-fixtures.v1",
+  "scope": "Actual official FP64 LayerNorm and SwiGLU transition at identical original inputs and explicitly matched resident weight values. Half scratch/accumulation errors are distinct from quantization of the weights.",
+  "originalManifestSha256": "79a83f97a4bcba28033b940107daebf93bd359ae6e0f04057d800ff72516ec2a",
+  "originalBlobSha256": "0594761bb4db4c00d3f541bb333cb47d7c5149fadd2b1ee6a4b29c25ea565066",
+  "officialSource": {
+    "repository": "https://github.com/aqlaboratory/openfold-3",
+    "revision": "795e45b03924a8f8ffc72ae50298bd113530b9d3",
+    "file": "openfold3/core/model/layers/transition.py",
+    "sha256": "5bada6d9ac0ad935c21f01b4c5fcd5e9fa5270eaa8426c7a7d79b03e5b0a6557"
+  },
+  "environment": {
+    "torch": "2.9.1",
+    "numpy": "2.3.4"
+  },
+  "exporterSha256": "ebe925f345b1c7ea1f990e21d3c7045e4e6b7619d84cefd0f017c8631755e42a",
+  "quantizer": {
+    "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6",
+    "path": "tools/quantize_af3.py",
+    "sha256": "8f75171c59e32ad7603323293839769aa149b728c6a2f8f1531dc2f6070162fa"
+  },
+  "blob": {
+    "file": "fixtures.bin",
+    "bytes": 27158576,
+    "sha256": "14088942b7c16e8ee6981d53afd14cbd4868de40159b7dfe2b5ce9de038efbf2"
+  },
+  "arrays": {
+    "msa/f32/inputLayerNormScale": {
+      "byteOffset": 0,
+      "bytes": 256,
+      "dtype": "<f4",
+      "shape": [
+        64
+      ],
+      "sha256": "93af6e658e2659b8da320ddedce79b05cc106c75ab59726c4748300da1ec3649"
+    },
+    "msa/f32/inputLayerNormOffset": {
+      "byteOffset": 256,
+      "bytes": 256,
+      "dtype": "<f4",
+      "shape": [
+        64
+      ],
+      "sha256": "5ce6ff72513f50aa38c0fe8e60deeca39a7af2016780f606d9eb65b354157273"
+    },
+    "msa/f32/transition1": {
+      "byteOffset": 512,
+      "bytes": 131072,
+      "dtype": "<f4",
+      "shape": [
+        64,
+        512
+      ],
+      "sha256": "1abfb6f04aec13c455cfba1b4b89fdc16aaa256c7e84104f41a376cd5b179688"
+    },
+    "msa/f32/transition2": {
+      "byteOffset": 131584,
+      "bytes": 65536,
+      "dtype": "<f4",
+      "shape": [
+        256,
+        64
+      ],
+      "sha256": "48d0c88ff8ca6f3cb8d9788a9fa78204929068471d6238febd49d2a2447992cd"
+    },
+    "msa/f16/inputLayerNormScale": {
+      "byteOffset": 197120,
+      "bytes": 128,
+      "dtype": "<f2",
+      "shape": [
+        64
+      ],
+      "sha256": "5bf75810db25be8e9f4a241156578c073e6c9aeae2cf1479fe54d05d7ce93f58"
+    },
+    "msa/f16/inputLayerNormOffset": {
+      "byteOffset": 197248,
+      "bytes": 128,
+      "dtype": "<f2",
+      "shape": [
+        64
+      ],
+      "sha256": "066ec41d73b8d4226b05daa48a3b1f31a57135bc64bdeae91a9a2951adc73bc1"
+    },
+    "msa/f16/transition1": {
+      "byteOffset": 197376,
+      "bytes": 65536,
+      "dtype": "<f2",
+      "shape": [
+        64,
+        512
+      ],
+      "sha256": "a4ccb435edae875f44d14cfbe7e602de43002e257b3b54ae075a226eb2903409"
+    },
+    "msa/f16/transition2": {
+      "byteOffset": 262912,
+      "bytes": 32768,
+      "dtype": "<f2",
+      "shape": [
+        256,
+        64
+      ],
+      "sha256": "79de9d1c0c8dfad45ded9824eacc807ad4ba2bc9d57011d18fb43e89d425ac23"
+    },
+    "msa/transition1/codes": {
+      "byteOffset": 295680,
+      "bytes": 24580,
+      "dtype": "|u1",
+      "shape": [
+        24580
+      ],
+      "sha256": "db15464ca652e8b1eb0819e3ac5aaff40ff2ad9afda269013120268f4ac6a34e"
+    },
+    "msa/int5-f16/transition1": {
+      "byteOffset": 320264,
+      "bytes": 65536,
+      "dtype": "<f2",
+      "shape": [
+        64,
+        512
+      ],
+      "sha256": "7365952ecba76a18827a40b81a33c868025ac35d7c4865f2709bd714c262f46c"
+    },
+    "msa/transition2/codes": {
+      "byteOffset": 385800,
+      "bytes": 12292,
+      "dtype": "|u1",
+      "shape": [
+        12292
+      ],
+      "sha256": "7950bbdee40708b97c8030c312b9f444b10d993c3f55e183aaf6381b61246ef1"
+    },
+    "msa/int5-f16/transition2": {
+      "byteOffset": 398096,
+      "bytes": 32768,
+      "dtype": "<f2",
+      "shape": [
+        256,
+        64
+      ],
+      "sha256": "f67eaf58896b811c8297332116ab3abc1492543eef2e76d5272c6a22748c8f35"
+    },
+    "msa-ordinary/f32/normalized-f64": {
+      "byteOffset": 430864,
+      "bytes": 15872,
+      "dtype": "<f8",
+      "shape": [
+        31,
+        64
+      ],
+      "sha256": "c40dba8dbe307b6bc797f2483ec8547dfb6944a80f6175714e41d25024c563d2"
+    },
+    "msa-ordinary/f32/expected-f64": {
+      "byteOffset": 446736,
+      "bytes": 15872,
+      "dtype": "<f8",
+      "shape": [
+        31,
+        64
+      ],
+      "sha256": "a0671ec1b24c3319351ceecb38599de431ced30dea4afd68d2f7702e50ad7eba"
+    },
+    "msa-ordinary/f16/normalized-f64": {
+      "byteOffset": 462608,
+      "bytes": 15872,
+      "dtype": "<f8",
+      "shape": [
+        31,
+        64
+      ],
+      "sha256": "23feef87ea5e095219ec6195f1e33cc505484a776650a348c6a3bb2857ae8ebb"
+    },
+    "msa-ordinary/f16/expected-f64": {
+      "byteOffset": 478480,
+      "bytes": 15872,
+      "dtype": "<f8",
+      "shape": [
+        31,
+        64
+      ],
+      "sha256": "a859cead7d7758ab8dc82fc80fd3c3ab9b4fff07f74d51f16393ee75d0076141"
+    },
+    "msa-ordinary/int5-f16/expected-f64": {
+      "byteOffset": 494352,
+      "bytes": 15872,
+      "dtype": "<f8",
+      "shape": [
+        31,
+        64
+      ],
+      "sha256": "923653b7683596563441cac27f9d1db2078b6a83cdca52c3809a7d5930e4ccd1"
+    },
+    "pair/f32/inputLayerNormScale": {
+      "byteOffset": 510224,
+      "bytes": 512,
+      "dtype": "<f4",
+      "shape": [
+        128
+      ],
+      "sha256": "0b72946bf5620bcc409b077e5d284016a4738433178ba1c7ae7bbe6248fa1c79"
+    },
+    "pair/f32/inputLayerNormOffset": {
+      "byteOffset": 510736,
+      "bytes": 512,
+      "dtype": "<f4",
+      "shape": [
+        128
+      ],
+      "sha256": "f950e844732e2606fc716967ec6533593b4cfbeac311ff3fea7f49badeecc549"
+    },
+    "pair/f32/transition1": {
+      "byteOffset": 511248,
+      "bytes": 524288,
+      "dtype": "<f4",
+      "shape": [
+        128,
+        1024
+      ],
+      "sha256": "9b8083feaf0be3a0c016cf5127ad846ea92fd491b55629e7383380565a9ced39"
+    },
+    "pair/f32/transition2": {
+      "byteOffset": 1035536,
+      "bytes": 262144,
+      "dtype": "<f4",
+      "shape": [
+        512,
+        128
+      ],
+      "sha256": "81a35b2d038957e920802956678cc518d66275647e5b7ca78e78d98d966847a7"
+    },
+    "pair/f16/inputLayerNormScale": {
+      "byteOffset": 1297680,
+      "bytes": 256,
+      "dtype": "<f2",
+      "shape": [
+        128
+      ],
+      "sha256": "a83f45ef31267b79ad7de9dac5d8de4129a279eb3f3d06672f91084fa830ef32"
+    },
+    "pair/f16/inputLayerNormOffset": {
+      "byteOffset": 1297936,
+      "bytes": 256,
+      "dtype": "<f2",
+      "shape": [
+        128
+      ],
+      "sha256": "7b7e53bdfc8cbb730c982c4c8605f58cee9aff0d061d43323a71cc0bacb86e6f"
+    },
+    "pair/f16/transition1": {
+      "byteOffset": 1298192,
+      "bytes": 262144,
+      "dtype": "<f2",
+      "shape": [
+        128,
+        1024
+      ],
+      "sha256": "0f327c2c297a00554dddd96cd32ed2a5e21d9378b05ce1e357b06577719add6a"
+    },
+    "pair/f16/transition2": {
+      "byteOffset": 1560336,
+      "bytes": 131072,
+      "dtype": "<f2",
+      "shape": [
+        512,
+        128
+      ],
+      "sha256": "0745994f040b32ed161dc1e1bee377780105225d198137ffb4ea70222dd8b72a"
+    },
+    "pair/transition1/codes": {
+      "byteOffset": 1691408,
+      "bytes": 98308,
+      "dtype": "|u1",
+      "shape": [
+        98308
+      ],
+      "sha256": "0b04092b390290016d9bf0cfa719ff3d4d7a6f4098c53a0c70803c8507b8db15"
+    },
+    "pair/int5-f16/transition1": {
+      "byteOffset": 1789720,
+      "bytes": 262144,
+      "dtype": "<f2",
+      "shape": [
+        128,
+        1024
+      ],
+      "sha256": "3407593933bef73b48d5ff91444d78811028d40eb66d865da7220b39ff22c3cf"
+    },
+    "pair/transition2/codes": {
+      "byteOffset": 2051864,
+      "bytes": 49156,
+      "dtype": "|u1",
+      "shape": [
+        49156
+      ],
+      "sha256": "476e36f5d868da6fed4607e5e4425689c7fb1fea69321b98c1800c5558847ba1"
+    },
+    "pair/int5-f16/transition2": {
+      "byteOffset": 2101024,
+      "bytes": 131072,
+      "dtype": "<f2",
+      "shape": [
+        512,
+        128
+      ],
+      "sha256": "9a2d11abdea76adcd8b4243c85797ae6ef61ff0b724c795c70aa57b336a8eea8"
+    },
+    "pair-ordinary/f32/normalized-f64": {
+      "byteOffset": 2232096,
+      "bytes": 17408,
+      "dtype": "<f8",
+      "shape": [
+        17,
+        128
+      ],
+      "sha256": "09a96fe12a4e24151af43dead6697e1326368e620cb9dbe14d9dea586655eb14"
+    },
+    "pair-ordinary/f32/expected-f64": {
+      "byteOffset": 2249504,
+      "bytes": 17408,
+      "dtype": "<f8",
+      "shape": [
+        17,
+        128
+      ],
+      "sha256": "1d09ba89b5b59e1423a71ecdda8aa30dffea3c10165d4c85b3603aacb7afc8c6"
+    },
+    "pair-ordinary/f16/normalized-f64": {
+      "byteOffset": 2266912,
+      "bytes": 17408,
+      "dtype": "<f8",
+      "shape": [
+        17,
+        128
+      ],
+      "sha256": "0c088d6be1ac8e4d2fbf5994509edd5d62e8c291a0db9d0f5dfe7368e2716f7f"
+    },
+    "pair-ordinary/f16/expected-f64": {
+      "byteOffset": 2284320,
+      "bytes": 17408,
+      "dtype": "<f8",
+      "shape": [
+        17,
+        128
+      ],
+      "sha256": "b708d11c27b69e8d3f52b1ada14234de4bdeec51263ef0cae3d44c3db895f53a"
+    },
+    "pair-ordinary/int5-f16/expected-f64": {
+      "byteOffset": 2301728,
+      "bytes": 17408,
+      "dtype": "<f8",
+      "shape": [
+        17,
+        128
+      ],
+      "sha256": "95395ef06c4967f55b57232066dbe8443b9bf49f50316cf793482f378665f4bb"
+    },
+    "pair-tiled/f32/normalized-f64": {
+      "byteOffset": 2319136,
+      "bytes": 1803264,
+      "dtype": "<f8",
+      "shape": [
+        1761,
+        128
+      ],
+      "sha256": "c40f01e5e9139dd239d261a3c81d2e5b2f10403ed99dd4edf843bbca80039384"
+    },
+    "pair-tiled/f32/expected-f64": {
+      "byteOffset": 4122400,
+      "bytes": 1803264,
+      "dtype": "<f8",
+      "shape": [
+        1761,
+        128
+      ],
+      "sha256": "90f9de97543186aefa94e94fca9e6fdb3d85d8ddc650f18039337db2f1e3063e"
+    },
+    "pair-tiled/f16/normalized-f64": {
+      "byteOffset": 5925664,
+      "bytes": 1803264,
+      "dtype": "<f8",
+      "shape": [
+        1761,
+        128
+      ],
+      "sha256": "02e4d87b0e4c7d56f20c1aa04b685897e55d97820415cdcbaf7c1db315832eaf"
+    },
+    "pair-tiled/f16/expected-f64": {
+      "byteOffset": 7728928,
+      "bytes": 1803264,
+      "dtype": "<f8",
+      "shape": [
+        1761,
+        128
+      ],
+      "sha256": "e8ecee5827431ac7c839717b542826fad615e39c5d7f009a602719bc5bb1ea83"
+    },
+    "pair-tiled/int5-f16/expected-f64": {
+      "byteOffset": 9532192,
+      "bytes": 1803264,
+      "dtype": "<f8",
+      "shape": [
+        1761,
+        128
+      ],
+      "sha256": "ca9002b34e70a75e0fb7c514bdb30b5c2577de1a63d78f656187d75ddc715e81"
+    },
+    "pair-near-constant/f32/normalized-f64": {
+      "byteOffset": 11335456,
+      "bytes": 17408,
+      "dtype": "<f8",
+      "shape": [
+        17,
+        128
+      ],
+      "sha256": "c3e1c48e510e43959bb7025c97ff2dc394934f8a8dc2d586102a80a5d263afe6"
+    },
+    "pair-near-constant/f32/expected-f64": {
+      "byteOffset": 11352864,
+      "bytes": 17408,
+      "dtype": "<f8",
+      "shape": [
+        17,
+        128
+      ],
+      "sha256": "d865e839cc38014a4dd6d99f61dad06d56c5279ddb9e6113025678e6e0344289"
+    },
+    "pair-near-constant/f16/normalized-f64": {
+      "byteOffset": 11370272,
+      "bytes": 17408,
+      "dtype": "<f8",
+      "shape": [
+        17,
+        128
+      ],
+      "sha256": "531666b01545d6d21543d7377d9d611e17770c4d3fc232c2c92bc3f2a80258f7"
+    },
+    "pair-near-constant/f16/expected-f64": {
+      "byteOffset": 11387680,
+      "bytes": 17408,
+      "dtype": "<f8",
+      "shape": [
+        17,
+        128
+      ],
+      "sha256": "fab13603b187be02bb09dd1fc1105e9aee8cce10a8de81d5bc37b5e85b90a185"
+    },
+    "pair-near-constant/int5-f16/expected-f64": {
+      "byteOffset": 11405088,
+      "bytes": 17408,
+      "dtype": "<f8",
+      "shape": [
+        17,
+        128
+      ],
+      "sha256": "477d3d684753a1f9f28dc1d93ab93660944feb8434694bac6930b8aee1e63636"
+    },
+    "single/f32/inputLayerNormScale": {
+      "byteOffset": 11422496,
+      "bytes": 1536,
+      "dtype": "<f4",
+      "shape": [
+        384
+      ],
+      "sha256": "59eff853cdacdb91d2173a2651f26ec538412915482322ae64c1c48f9f7bf338"
+    },
+    "single/f32/inputLayerNormOffset": {
+      "byteOffset": 11424032,
+      "bytes": 1536,
+      "dtype": "<f4",
+      "shape": [
+        384
+      ],
+      "sha256": "615e5ea4c973241515af235711813dc687a77d96093a8cb02c5d38081729ae91"
+    },
+    "single/f32/transition1": {
+      "byteOffset": 11425568,
+      "bytes": 4718592,
+      "dtype": "<f4",
+      "shape": [
+        384,
+        3072
+      ],
+      "sha256": "f838c7fd77a904321682078726cc0a8d9aac660a70911e3aa6a8f56051a02760"
+    },
+    "single/f32/transition2": {
+      "byteOffset": 16144160,
+      "bytes": 2359296,
+      "dtype": "<f4",
+      "shape": [
+        1536,
+        384
+      ],
+      "sha256": "e674fe62162d4b879164809863fa2951f78211d63ba127253640d1d216778040"
+    },
+    "single/f16/inputLayerNormScale": {
+      "byteOffset": 18503456,
+      "bytes": 768,
+      "dtype": "<f2",
+      "shape": [
+        384
+      ],
+      "sha256": "2b0c8aaea0885028ac6e1b5344458cb0a713dd979a70d6172e0fb790fe05f411"
+    },
+    "single/f16/inputLayerNormOffset": {
+      "byteOffset": 18504224,
+      "bytes": 768,
+      "dtype": "<f2",
+      "shape": [
+        384
+      ],
+      "sha256": "fe4f6ee0b104953bac5f9966a836a17c11201443d60503837708b165eb2deaba"
+    },
+    "single/f16/transition1": {
+      "byteOffset": 18504992,
+      "bytes": 2359296,
+      "dtype": "<f2",
+      "shape": [
+        384,
+        3072
+      ],
+      "sha256": "4e68ebbe4430d12c53abb78e1743ff9b6d2d15e626750491003c325fd4a7849e"
+    },
+    "single/f16/transition2": {
+      "byteOffset": 20864288,
+      "bytes": 1179648,
+      "dtype": "<f2",
+      "shape": [
+        1536,
+        384
+      ],
+      "sha256": "e3f5257eee309778f7930497cb1c1b23a11f2cd807591f03e4fd9c8c7600aa5f"
+    },
+    "single/transition1/codes": {
+      "byteOffset": 22043936,
+      "bytes": 884740,
+      "dtype": "|u1",
+      "shape": [
+        884740
+      ],
+      "sha256": "0a73ceb5e7fa891031d658d28a85ead74c61e7edec83f0d7aee2c62a7abf56d3"
+    },
+    "single/int5-f16/transition1": {
+      "byteOffset": 22928680,
+      "bytes": 2359296,
+      "dtype": "<f2",
+      "shape": [
+        384,
+        3072
+      ],
+      "sha256": "3cc3a3ccd7d38e465e20f826cad99890ef14b0cc71d9afa4b31bd4d4da18f9fb"
+    },
+    "single/transition2/codes": {
+      "byteOffset": 25287976,
+      "bytes": 442372,
+      "dtype": "|u1",
+      "shape": [
+        442372
+      ],
+      "sha256": "8ab52a8d49a2baf1c3afd3624c392b8be39668c464df1ccbe4ad14316ca6bcea"
+    },
+    "single/int5-f16/transition2": {
+      "byteOffset": 25730352,
+      "bytes": 1179648,
+      "dtype": "<f2",
+      "shape": [
+        1536,
+        384
+      ],
+      "sha256": "3dde1406692b7b0b49e16b1572129813bc901336eae55e1eda73d7d79e5007fc"
+    },
+    "single-ordinary/f32/normalized-f64": {
+      "byteOffset": 26910000,
+      "bytes": 15360,
+      "dtype": "<f8",
+      "shape": [
+        5,
+        384
+      ],
+      "sha256": "c42333521dd6d53a36f6dce1b58c9988eb5b58d221c070ea4aa96b22c0249b0f"
+    },
+    "single-ordinary/f32/expected-f64": {
+      "byteOffset": 26925360,
+      "bytes": 15360,
+      "dtype": "<f8",
+      "shape": [
+        5,
+        384
+      ],
+      "sha256": "68842bb3aa019f53af4f0d6cfbaf984a9c766077ad696ba87bc505fbf70214ea"
+    },
+    "single-ordinary/f16/normalized-f64": {
+      "byteOffset": 26940720,
+      "bytes": 15360,
+      "dtype": "<f8",
+      "shape": [
+        5,
+        384
+      ],
+      "sha256": "20babfef7f33f11ac1a803b0cea342181d40ad0fb3f7d316cca554f105198411"
+    },
+    "single-ordinary/f16/expected-f64": {
+      "byteOffset": 26956080,
+      "bytes": 15360,
+      "dtype": "<f8",
+      "shape": [
+        5,
+        384
+      ],
+      "sha256": "d128059d7f1a404f94c20619a79c0f93124a01ec5e0bba8581eb62d7ad80b448"
+    },
+    "single-ordinary/int5-f16/expected-f64": {
+      "byteOffset": 26971440,
+      "bytes": 15360,
+      "dtype": "<f8",
+      "shape": [
+        5,
+        384
+      ],
+      "sha256": "95dc2c7ec988ac70a0448635d1b404bcdd7228edfacc8ff8d7c6b4602acd4a11"
+    },
+    "msa-near-constant/input": {
+      "byteOffset": 26986800,
+      "bytes": 7936,
+      "dtype": "<f4",
+      "shape": [
+        31,
+        64
+      ],
+      "sha256": "042cb0ab8d39dbc7dfc907f0c20d438ca6c432ff61cbf8fac869b22b97044f3b"
+    },
+    "msa-near-constant/f32/normalized-f64": {
+      "byteOffset": 26994736,
+      "bytes": 15872,
+      "dtype": "<f8",
+      "shape": [
+        31,
+        64
+      ],
+      "sha256": "0786218cf4afdb594d001e451897105df8af4c0b2bf876ea8fa997ff0031855b"
+    },
+    "msa-near-constant/f32/expected-f64": {
+      "byteOffset": 27010608,
+      "bytes": 15872,
+      "dtype": "<f8",
+      "shape": [
+        31,
+        64
+      ],
+      "sha256": "231f61924371d73528e32336ef5a3b04e8e3269c5792e32e79fa2316474ea113"
+    },
+    "msa-near-constant/f16/normalized-f64": {
+      "byteOffset": 27026480,
+      "bytes": 15872,
+      "dtype": "<f8",
+      "shape": [
+        31,
+        64
+      ],
+      "sha256": "b684c0b9e64c0ccbfe8fbae55f453efebf3f0ad929633faca9d622ee033bf2a6"
+    },
+    "msa-near-constant/f16/expected-f64": {
+      "byteOffset": 27042352,
+      "bytes": 15872,
+      "dtype": "<f8",
+      "shape": [
+        31,
+        64
+      ],
+      "sha256": "4f6e1867dff7ea762b810825d8e32b4ba4875065abbd7072aba7a41f0fbc6470"
+    },
+    "msa-near-constant/int5-f16/expected-f64": {
+      "byteOffset": 27058224,
+      "bytes": 15872,
+      "dtype": "<f8",
+      "shape": [
+        31,
+        64
+      ],
+      "sha256": "e44fc71e96b686d21624f53580a4dd038e499d1b1c01fe734bb7a5ef5a1d4a75"
+    },
+    "single-near-constant/input": {
+      "byteOffset": 27074096,
+      "bytes": 7680,
+      "dtype": "<f4",
+      "shape": [
+        5,
+        384
+      ],
+      "sha256": "7e3348a9dea915be305c85a54d216c9e7ea551c8144b87d3070b16f284dccbb9"
+    },
+    "single-near-constant/f32/normalized-f64": {
+      "byteOffset": 27081776,
+      "bytes": 15360,
+      "dtype": "<f8",
+      "shape": [
+        5,
+        384
+      ],
+      "sha256": "8f92edbcd1ba3ce4488e22a5945f1344a60f00fd37717c3093610b0604cf3e2c"
+    },
+    "single-near-constant/f32/expected-f64": {
+      "byteOffset": 27097136,
+      "bytes": 15360,
+      "dtype": "<f8",
+      "shape": [
+        5,
+        384
+      ],
+      "sha256": "11f9a20ade54957459f5570373f52654c447d7f04d82f05a7a0c9afdd4f47878"
+    },
+    "single-near-constant/f16/normalized-f64": {
+      "byteOffset": 27112496,
+      "bytes": 15360,
+      "dtype": "<f8",
+      "shape": [
+        5,
+        384
+      ],
+      "sha256": "1347eaf741e9aedd863371b75b3ab2af7bf27b5f907116b88b6f2566e6c5a31f"
+    },
+    "single-near-constant/f16/expected-f64": {
+      "byteOffset": 27127856,
+      "bytes": 15360,
+      "dtype": "<f8",
+      "shape": [
+        5,
+        384
+      ],
+      "sha256": "db9984c6189c0e932fd2ed6aa3802567a6c276af6b1dad88b46429fd1d065485"
+    },
+    "single-near-constant/int5-f16/expected-f64": {
+      "byteOffset": 27143216,
+      "bytes": 15360,
+      "dtype": "<f8",
+      "shape": [
+        5,
+        384
+      ],
+      "sha256": "d5ca01e74b9fa0a0dd601523f85fd7dadbdeb793a0bc3dd80645056236ef5850"
+    }
+  },
+  "cases": [
+    {
+      "id": "msa-ordinary/f32",
+      "originalCaseId": "msa-ordinary",
+      "precision": "f32",
+      "shape": {
+        "rows": 31,
+        "channels": 64,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "original",
+        "array": "msa/ordinary/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "msa/f32/inputLayerNormScale",
+        "inputLayerNormOffset": "msa/f32/inputLayerNormOffset",
+        "transition1": "msa/f32/transition1",
+        "transition2": "msa/f32/transition2"
+      },
+      "encoded": {},
+      "normalizedF64": "msa-ordinary/f32/normalized-f64",
+      "expectedF64": "msa-ordinary/f32/expected-f64"
+    },
+    {
+      "id": "msa-ordinary/f16",
+      "originalCaseId": "msa-ordinary",
+      "precision": "f16",
+      "shape": {
+        "rows": 31,
+        "channels": 64,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "original",
+        "array": "msa/ordinary/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "msa/f16/inputLayerNormScale",
+        "inputLayerNormOffset": "msa/f16/inputLayerNormOffset",
+        "transition1": "msa/f16/transition1",
+        "transition2": "msa/f16/transition2"
+      },
+      "encoded": {},
+      "normalizedF64": "msa-ordinary/f16/normalized-f64",
+      "expectedF64": "msa-ordinary/f16/expected-f64"
+    },
+    {
+      "id": "msa-ordinary/int5-f16",
+      "originalCaseId": "msa-ordinary",
+      "precision": "int5-f16",
+      "shape": {
+        "rows": 31,
+        "channels": 64,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "original",
+        "array": "msa/ordinary/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "msa/f16/inputLayerNormScale",
+        "inputLayerNormOffset": "msa/f16/inputLayerNormOffset",
+        "transition1": "msa/int5-f16/transition1",
+        "transition2": "msa/int5-f16/transition2"
+      },
+      "encoded": {
+        "transition1": {
+          "data": "msa/transition1/codes",
+          "record": {
+            "dtype": "int5",
+            "block": 32,
+            "shape": [
+              64,
+              512
+            ],
+            "byteOffset": 0,
+            "scaleOffset": 20484,
+            "zeroOffset": 22532
+          }
+        },
+        "transition2": {
+          "data": "msa/transition2/codes",
+          "record": {
+            "dtype": "int5",
+            "block": 32,
+            "shape": [
+              256,
+              64
+            ],
+            "byteOffset": 0,
+            "scaleOffset": 10244,
+            "zeroOffset": 11268
+          }
+        }
+      },
+      "normalizedF64": "msa-ordinary/f16/normalized-f64",
+      "expectedF64": "msa-ordinary/int5-f16/expected-f64"
+    },
+    {
+      "id": "pair-ordinary/f32",
+      "originalCaseId": "pair-ordinary",
+      "precision": "f32",
+      "shape": {
+        "rows": 17,
+        "channels": 128,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "original",
+        "array": "pair/ordinary/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "pair/f32/inputLayerNormScale",
+        "inputLayerNormOffset": "pair/f32/inputLayerNormOffset",
+        "transition1": "pair/f32/transition1",
+        "transition2": "pair/f32/transition2"
+      },
+      "encoded": {},
+      "normalizedF64": "pair-ordinary/f32/normalized-f64",
+      "expectedF64": "pair-ordinary/f32/expected-f64"
+    },
+    {
+      "id": "pair-ordinary/f16",
+      "originalCaseId": "pair-ordinary",
+      "precision": "f16",
+      "shape": {
+        "rows": 17,
+        "channels": 128,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "original",
+        "array": "pair/ordinary/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "pair/f16/inputLayerNormScale",
+        "inputLayerNormOffset": "pair/f16/inputLayerNormOffset",
+        "transition1": "pair/f16/transition1",
+        "transition2": "pair/f16/transition2"
+      },
+      "encoded": {},
+      "normalizedF64": "pair-ordinary/f16/normalized-f64",
+      "expectedF64": "pair-ordinary/f16/expected-f64"
+    },
+    {
+      "id": "pair-ordinary/int5-f16",
+      "originalCaseId": "pair-ordinary",
+      "precision": "int5-f16",
+      "shape": {
+        "rows": 17,
+        "channels": 128,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "original",
+        "array": "pair/ordinary/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "pair/f16/inputLayerNormScale",
+        "inputLayerNormOffset": "pair/f16/inputLayerNormOffset",
+        "transition1": "pair/int5-f16/transition1",
+        "transition2": "pair/int5-f16/transition2"
+      },
+      "encoded": {
+        "transition1": {
+          "data": "pair/transition1/codes",
+          "record": {
+            "dtype": "int5",
+            "block": 32,
+            "shape": [
+              128,
+              1024
+            ],
+            "byteOffset": 0,
+            "scaleOffset": 81924,
+            "zeroOffset": 90116
+          }
+        },
+        "transition2": {
+          "data": "pair/transition2/codes",
+          "record": {
+            "dtype": "int5",
+            "block": 32,
+            "shape": [
+              512,
+              128
+            ],
+            "byteOffset": 0,
+            "scaleOffset": 40964,
+            "zeroOffset": 45060
+          }
+        }
+      },
+      "normalizedF64": "pair-ordinary/f16/normalized-f64",
+      "expectedF64": "pair-ordinary/int5-f16/expected-f64"
+    },
+    {
+      "id": "pair-tiled/f32",
+      "originalCaseId": "pair-tiled",
+      "precision": "f32",
+      "shape": {
+        "rows": 1761,
+        "channels": 128,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "original",
+        "array": "pair/tiled/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "pair/f32/inputLayerNormScale",
+        "inputLayerNormOffset": "pair/f32/inputLayerNormOffset",
+        "transition1": "pair/f32/transition1",
+        "transition2": "pair/f32/transition2"
+      },
+      "encoded": {},
+      "normalizedF64": "pair-tiled/f32/normalized-f64",
+      "expectedF64": "pair-tiled/f32/expected-f64"
+    },
+    {
+      "id": "pair-tiled/f16",
+      "originalCaseId": "pair-tiled",
+      "precision": "f16",
+      "shape": {
+        "rows": 1761,
+        "channels": 128,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "original",
+        "array": "pair/tiled/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "pair/f16/inputLayerNormScale",
+        "inputLayerNormOffset": "pair/f16/inputLayerNormOffset",
+        "transition1": "pair/f16/transition1",
+        "transition2": "pair/f16/transition2"
+      },
+      "encoded": {},
+      "normalizedF64": "pair-tiled/f16/normalized-f64",
+      "expectedF64": "pair-tiled/f16/expected-f64"
+    },
+    {
+      "id": "pair-tiled/int5-f16",
+      "originalCaseId": "pair-tiled",
+      "precision": "int5-f16",
+      "shape": {
+        "rows": 1761,
+        "channels": 128,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "original",
+        "array": "pair/tiled/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "pair/f16/inputLayerNormScale",
+        "inputLayerNormOffset": "pair/f16/inputLayerNormOffset",
+        "transition1": "pair/int5-f16/transition1",
+        "transition2": "pair/int5-f16/transition2"
+      },
+      "encoded": {
+        "transition1": {
+          "data": "pair/transition1/codes",
+          "record": {
+            "dtype": "int5",
+            "block": 32,
+            "shape": [
+              128,
+              1024
+            ],
+            "byteOffset": 0,
+            "scaleOffset": 81924,
+            "zeroOffset": 90116
+          }
+        },
+        "transition2": {
+          "data": "pair/transition2/codes",
+          "record": {
+            "dtype": "int5",
+            "block": 32,
+            "shape": [
+              512,
+              128
+            ],
+            "byteOffset": 0,
+            "scaleOffset": 40964,
+            "zeroOffset": 45060
+          }
+        }
+      },
+      "normalizedF64": "pair-tiled/f16/normalized-f64",
+      "expectedF64": "pair-tiled/int5-f16/expected-f64"
+    },
+    {
+      "id": "pair-near-constant/f32",
+      "originalCaseId": "pair-near-constant",
+      "precision": "f32",
+      "shape": {
+        "rows": 17,
+        "channels": 128,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "original",
+        "array": "pair/near-constant/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "pair/f32/inputLayerNormScale",
+        "inputLayerNormOffset": "pair/f32/inputLayerNormOffset",
+        "transition1": "pair/f32/transition1",
+        "transition2": "pair/f32/transition2"
+      },
+      "encoded": {},
+      "normalizedF64": "pair-near-constant/f32/normalized-f64",
+      "expectedF64": "pair-near-constant/f32/expected-f64"
+    },
+    {
+      "id": "pair-near-constant/f16",
+      "originalCaseId": "pair-near-constant",
+      "precision": "f16",
+      "shape": {
+        "rows": 17,
+        "channels": 128,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "original",
+        "array": "pair/near-constant/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "pair/f16/inputLayerNormScale",
+        "inputLayerNormOffset": "pair/f16/inputLayerNormOffset",
+        "transition1": "pair/f16/transition1",
+        "transition2": "pair/f16/transition2"
+      },
+      "encoded": {},
+      "normalizedF64": "pair-near-constant/f16/normalized-f64",
+      "expectedF64": "pair-near-constant/f16/expected-f64"
+    },
+    {
+      "id": "pair-near-constant/int5-f16",
+      "originalCaseId": "pair-near-constant",
+      "precision": "int5-f16",
+      "shape": {
+        "rows": 17,
+        "channels": 128,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "original",
+        "array": "pair/near-constant/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "pair/f16/inputLayerNormScale",
+        "inputLayerNormOffset": "pair/f16/inputLayerNormOffset",
+        "transition1": "pair/int5-f16/transition1",
+        "transition2": "pair/int5-f16/transition2"
+      },
+      "encoded": {
+        "transition1": {
+          "data": "pair/transition1/codes",
+          "record": {
+            "dtype": "int5",
+            "block": 32,
+            "shape": [
+              128,
+              1024
+            ],
+            "byteOffset": 0,
+            "scaleOffset": 81924,
+            "zeroOffset": 90116
+          }
+        },
+        "transition2": {
+          "data": "pair/transition2/codes",
+          "record": {
+            "dtype": "int5",
+            "block": 32,
+            "shape": [
+              512,
+              128
+            ],
+            "byteOffset": 0,
+            "scaleOffset": 40964,
+            "zeroOffset": 45060
+          }
+        }
+      },
+      "normalizedF64": "pair-near-constant/f16/normalized-f64",
+      "expectedF64": "pair-near-constant/int5-f16/expected-f64"
+    },
+    {
+      "id": "single-ordinary/f32",
+      "originalCaseId": "single-ordinary",
+      "precision": "f32",
+      "shape": {
+        "rows": 5,
+        "channels": 384,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "original",
+        "array": "single/ordinary/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "single/f32/inputLayerNormScale",
+        "inputLayerNormOffset": "single/f32/inputLayerNormOffset",
+        "transition1": "single/f32/transition1",
+        "transition2": "single/f32/transition2"
+      },
+      "encoded": {},
+      "normalizedF64": "single-ordinary/f32/normalized-f64",
+      "expectedF64": "single-ordinary/f32/expected-f64"
+    },
+    {
+      "id": "single-ordinary/f16",
+      "originalCaseId": "single-ordinary",
+      "precision": "f16",
+      "shape": {
+        "rows": 5,
+        "channels": 384,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "original",
+        "array": "single/ordinary/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "single/f16/inputLayerNormScale",
+        "inputLayerNormOffset": "single/f16/inputLayerNormOffset",
+        "transition1": "single/f16/transition1",
+        "transition2": "single/f16/transition2"
+      },
+      "encoded": {},
+      "normalizedF64": "single-ordinary/f16/normalized-f64",
+      "expectedF64": "single-ordinary/f16/expected-f64"
+    },
+    {
+      "id": "single-ordinary/int5-f16",
+      "originalCaseId": "single-ordinary",
+      "precision": "int5-f16",
+      "shape": {
+        "rows": 5,
+        "channels": 384,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "original",
+        "array": "single/ordinary/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "single/f16/inputLayerNormScale",
+        "inputLayerNormOffset": "single/f16/inputLayerNormOffset",
+        "transition1": "single/int5-f16/transition1",
+        "transition2": "single/int5-f16/transition2"
+      },
+      "encoded": {
+        "transition1": {
+          "data": "single/transition1/codes",
+          "record": {
+            "dtype": "int5",
+            "block": 32,
+            "shape": [
+              384,
+              3072
+            ],
+            "byteOffset": 0,
+            "scaleOffset": 737284,
+            "zeroOffset": 811012
+          }
+        },
+        "transition2": {
+          "data": "single/transition2/codes",
+          "record": {
+            "dtype": "int5",
+            "block": 32,
+            "shape": [
+              1536,
+              384
+            ],
+            "byteOffset": 0,
+            "scaleOffset": 368644,
+            "zeroOffset": 405508
+          }
+        }
+      },
+      "normalizedF64": "single-ordinary/f16/normalized-f64",
+      "expectedF64": "single-ordinary/int5-f16/expected-f64"
+    },
+    {
+      "id": "msa-near-constant/f32",
+      "originalCaseId": "msa-near-constant",
+      "precision": "f32",
+      "shape": {
+        "rows": 31,
+        "channels": 64,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "current",
+        "array": "msa-near-constant/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "msa/f32/inputLayerNormScale",
+        "inputLayerNormOffset": "msa/f32/inputLayerNormOffset",
+        "transition1": "msa/f32/transition1",
+        "transition2": "msa/f32/transition2"
+      },
+      "encoded": {},
+      "normalizedF64": "msa-near-constant/f32/normalized-f64",
+      "expectedF64": "msa-near-constant/f32/expected-f64"
+    },
+    {
+      "id": "msa-near-constant/f16",
+      "originalCaseId": "msa-near-constant",
+      "precision": "f16",
+      "shape": {
+        "rows": 31,
+        "channels": 64,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "current",
+        "array": "msa-near-constant/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "msa/f16/inputLayerNormScale",
+        "inputLayerNormOffset": "msa/f16/inputLayerNormOffset",
+        "transition1": "msa/f16/transition1",
+        "transition2": "msa/f16/transition2"
+      },
+      "encoded": {},
+      "normalizedF64": "msa-near-constant/f16/normalized-f64",
+      "expectedF64": "msa-near-constant/f16/expected-f64"
+    },
+    {
+      "id": "msa-near-constant/int5-f16",
+      "originalCaseId": "msa-near-constant",
+      "precision": "int5-f16",
+      "shape": {
+        "rows": 31,
+        "channels": 64,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "current",
+        "array": "msa-near-constant/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "msa/f16/inputLayerNormScale",
+        "inputLayerNormOffset": "msa/f16/inputLayerNormOffset",
+        "transition1": "msa/int5-f16/transition1",
+        "transition2": "msa/int5-f16/transition2"
+      },
+      "encoded": {
+        "transition1": {
+          "data": "msa/transition1/codes",
+          "record": {
+            "dtype": "int5",
+            "block": 32,
+            "shape": [
+              64,
+              512
+            ],
+            "byteOffset": 0,
+            "scaleOffset": 20484,
+            "zeroOffset": 22532
+          }
+        },
+        "transition2": {
+          "data": "msa/transition2/codes",
+          "record": {
+            "dtype": "int5",
+            "block": 32,
+            "shape": [
+              256,
+              64
+            ],
+            "byteOffset": 0,
+            "scaleOffset": 10244,
+            "zeroOffset": 11268
+          }
+        }
+      },
+      "normalizedF64": "msa-near-constant/f16/normalized-f64",
+      "expectedF64": "msa-near-constant/int5-f16/expected-f64"
+    },
+    {
+      "id": "single-near-constant/f32",
+      "originalCaseId": "single-near-constant",
+      "precision": "f32",
+      "shape": {
+        "rows": 5,
+        "channels": 384,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "current",
+        "array": "single-near-constant/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "single/f32/inputLayerNormScale",
+        "inputLayerNormOffset": "single/f32/inputLayerNormOffset",
+        "transition1": "single/f32/transition1",
+        "transition2": "single/f32/transition2"
+      },
+      "encoded": {},
+      "normalizedF64": "single-near-constant/f32/normalized-f64",
+      "expectedF64": "single-near-constant/f32/expected-f64"
+    },
+    {
+      "id": "single-near-constant/f16",
+      "originalCaseId": "single-near-constant",
+      "precision": "f16",
+      "shape": {
+        "rows": 5,
+        "channels": 384,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "current",
+        "array": "single-near-constant/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "single/f16/inputLayerNormScale",
+        "inputLayerNormOffset": "single/f16/inputLayerNormOffset",
+        "transition1": "single/f16/transition1",
+        "transition2": "single/f16/transition2"
+      },
+      "encoded": {},
+      "normalizedF64": "single-near-constant/f16/normalized-f64",
+      "expectedF64": "single-near-constant/f16/expected-f64"
+    },
+    {
+      "id": "single-near-constant/int5-f16",
+      "originalCaseId": "single-near-constant",
+      "precision": "int5-f16",
+      "shape": {
+        "rows": 5,
+        "channels": 384,
+        "factor": 4
+      },
+      "epsilon": 1e-05,
+      "inputReference": {
+        "kind": "current",
+        "array": "single-near-constant/input"
+      },
+      "weights": {
+        "inputLayerNormScale": "single/f16/inputLayerNormScale",
+        "inputLayerNormOffset": "single/f16/inputLayerNormOffset",
+        "transition1": "single/int5-f16/transition1",
+        "transition2": "single/int5-f16/transition2"
+      },
+      "encoded": {
+        "transition1": {
+          "data": "single/transition1/codes",
+          "record": {
+            "dtype": "int5",
+            "block": 32,
+            "shape": [
+              384,
+              3072
+            ],
+            "byteOffset": 0,
+            "scaleOffset": 737284,
+            "zeroOffset": 811012
+          }
+        },
+        "transition2": {
+          "data": "single/transition2/codes",
+          "record": {
+            "dtype": "int5",
+            "block": 32,
+            "shape": [
+              1536,
+              384
+            ],
+            "byteOffset": 0,
+            "scaleOffset": 368644,
+            "zeroOffset": 405508
+          }
+        }
+      },
+      "normalizedF64": "single-near-constant/f16/normalized-f64",
+      "expectedF64": "single-near-constant/int5-f16/expected-f64"
+    }
+  ]
+}

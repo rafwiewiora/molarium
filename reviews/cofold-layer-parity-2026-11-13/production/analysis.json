@@ -1,0 +1,136 @@
+{
+  "schema": "molarium.transition-precision-analysis.v1",
+  "comparisonSha256": "5f82ec36562e896a675e77a67bf86abf839ec0bd646a3d66d3dfe5718e9f4194",
+  "analysisScriptSha256": "f5a2307b1491b5d48e9098dd248aaa15660843a58c11e96bb8f70418448ebc43",
+  "rawMetricsRecomputed": 126,
+  "candidateChecks": 63,
+  "actualGpuDecoderChecks": 42,
+  "initialCompleteCandidateFailures": 2,
+  "maxOfficialF64vsNumpyRelativeRms": 2.5774542788007767e-12,
+  "summary": [
+    {
+      "precision": "f32",
+      "candidateChecks": 21,
+      "candidatePass": 21,
+      "baselineFailures": 9,
+      "maxCandidateRelativeRms": 5.4492600366156845e-06,
+      "maxCandidateAbsoluteError": 5.515414194912083e-06
+    },
+    {
+      "precision": "f16",
+      "candidateChecks": 21,
+      "candidatePass": 21,
+      "baselineFailures": 9,
+      "maxCandidateRelativeRms": 0.0016063884580173647,
+      "maxCandidateAbsoluteError": 0.0055967170096082874
+    },
+    {
+      "precision": "int5-f16",
+      "candidateChecks": 21,
+      "candidatePass": 21,
+      "baselineFailures": 9,
+      "maxCandidateRelativeRms": 0.0016080764256869997,
+      "maxCandidateAbsoluteError": 0.00598756284361901
+    }
+  ],
+  "weightOnlyQuantizationEffect": [
+    {
+      "caseId": "msa-ordinary",
+      "precision": "f16",
+      "finite": true,
+      "relativeRms": 0.00047129096288703,
+      "maxAbs": 0.0011271039446313913
+    },
+    {
+      "caseId": "msa-ordinary",
+      "precision": "int5-f16",
+      "finite": true,
+      "relativeRms": 0.06624609633021737,
+      "maxAbs": 0.1667173709232833
+    },
+    {
+      "caseId": "pair-ordinary",
+      "precision": "f16",
+      "finite": true,
+      "relativeRms": 0.0004922499926182538,
+      "maxAbs": 0.001057114743315872
+    },
+    {
+      "caseId": "pair-ordinary",
+      "precision": "int5-f16",
+      "finite": true,
+      "relativeRms": 0.06728808173848953,
+      "maxAbs": 0.1430134834657295
+    },
+    {
+      "caseId": "pair-tiled",
+      "precision": "f16",
+      "finite": true,
+      "relativeRms": 0.00048267323351110675,
+      "maxAbs": 0.0015218550571814426
+    },
+    {
+      "caseId": "pair-tiled",
+      "precision": "int5-f16",
+      "finite": true,
+      "relativeRms": 0.06642744316280719,
+      "maxAbs": 0.20890672429944496
+    },
+    {
+      "caseId": "pair-near-constant",
+      "precision": "f16",
+      "finite": true,
+      "relativeRms": 0.0004729094936433773,
+      "maxAbs": 0.000689568790853759
+    },
+    {
+      "caseId": "pair-near-constant",
+      "precision": "int5-f16",
+      "finite": true,
+      "relativeRms": 0.06682178903536252,
+      "maxAbs": 0.08882687778450227
+    },
+    {
+      "caseId": "single-ordinary",
+      "precision": "f16",
+      "finite": true,
+      "relativeRms": 0.00048124411870844165,
+      "maxAbs": 0.001089005801763937
+    },
+    {
+      "caseId": "single-ordinary",
+      "precision": "int5-f16",
+      "finite": true,
+      "relativeRms": 0.06676517278069906,
+      "maxAbs": 0.1437132365092124
+    },
+    {
+      "caseId": "msa-near-constant",
+      "precision": "f16",
+      "finite": true,
+      "relativeRms": 0.00047124818022540503,
+      "maxAbs": 0.0007396938544560749
+    },
+    {
+      "caseId": "msa-near-constant",
+      "precision": "int5-f16",
+      "finite": true,
+      "relativeRms": 0.06631530516429304,
+      "maxAbs": 0.1198844872330666
+    },
+    {
+      "caseId": "single-near-constant",
+      "precision": "f16",
+      "finite": true,
+      "relativeRms": 0.0004807178814294904,
+      "maxAbs": 0.0007643808579875788
+    },
+    {
+      "caseId": "single-near-constant",
+      "precision": "int5-f16",
+      "finite": true,
+      "relativeRms": 0.06675112018468617,
+      "maxAbs": 0.10025166171600686
+    }
+  ]
+}
