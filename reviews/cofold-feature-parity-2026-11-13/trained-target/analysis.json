@@ -1,0 +1,68 @@
+{
+  "schema": "molarium.trained-target-analysis.v1",
+  "scope": "Only learned atom/input-feature encoder and concatenated target features at fixed generated-reference inputs/full-FP32 weights. Not full projected embedder, trunk, denoiser, confidence, trajectory, quantized model or crystal reconstruction parity.",
+  "nativeModel": "OpenFold3 0.5.1 OpenBind-0, NVIDIA L4, TF32 off",
+  "browserDevice": "Apple M1 Pro, Metal, Chrome157",
+  "shape": [
+    238,
+    447
+  ],
+  "learnedChannelRange": [
+    63,
+    447
+  ],
+  "records": [
+    {
+      "path": "production-cpu",
+      "fullTarget": {
+        "values": 106386,
+        "finite": true,
+        "referenceRms": 0.4431484251815894,
+        "relativeRms": 1.4811182134434746e-07,
+        "maxAbs": 6.67572021484375e-06
+      },
+      "learnedAtomChannels": {
+        "values": 91392,
+        "finite": true,
+        "referenceRms": 0.47410693956574357,
+        "relativeRms": 1.4936566267699784e-07,
+        "maxAbs": 6.67572021484375e-06
+      },
+      "inputPrefixExact": true,
+      "passesPredeclaredGate": true
+    },
+    {
+      "path": "production-webgpu",
+      "fullTarget": {
+        "values": 106386,
+        "finite": true,
+        "referenceRms": 0.4431484251815894,
+        "relativeRms": 1.5358570040778287e-07,
+        "maxAbs": 6.67572021484375e-06
+      },
+      "learnedAtomChannels": {
+        "values": 91392,
+        "finite": true,
+        "referenceRms": 0.47410693956574357,
+        "relativeRms": 1.5488588088984998e-07,
+        "maxAbs": 6.67572021484375e-06
+      },
+      "inputPrefixExact": true,
+      "passesPredeclaredGate": true
+    }
+  ],
+  "sourceGitBase": "f505c883d147acb93b21cdf42116f151f52d5a8c",
+  "productionSourceFiles": {
+    "vendor/localfold/webgpu/af3/fold.js": "c0b2030abb3e09d58786c403e818c0f4f79274c1981cf7b2228cf07c3fa7dd7d",
+    "vendor/localfold/webgpu/af3/diffusion/atom-encoder.js": "f19dce35aa3808969e0c4369a56aea74671e4ccb23ad8afa25a2f3529534748c",
+    "vendor/localfold/cpu/af3/diffusion/atom-conditioning.js": "686886a09996f45b11fe176d5c1af29aeb30ca59132ee44de91ee43b9fc0c066",
+    "vendor/localfold/shared/af3/weights/diffusion-weights.js": "f74a5c9834fd491a7d86291e07e366ea40ea4d8414153234ee1774ba3d0caaf9",
+    "vendor/localfold/shared/af3/weights/weights.js": "126aaad567134ead6e117ec066be737b208d36a71bd6a90bf9b9360e13678ab3",
+    "scripts/headless-chrome.mjs": "b55a1197a5c2d2a112ea0b46d233b32a1e7aa7e1c5f7c06f32217ea9c9b19d13"
+  },
+  "timingInterpretation": "Browser CPU/GPU timings include buildTargetFeat only; native receipt times the full input embedder, including projected single/pair. Boundaries differ: no speedup claim.",
+  "inputCoordinates": "Stock-native generated reference conformers, no experimental bound coordinates; no fitting to native outputs.",
+  "nativeReceiptSha256": "9318f2f7bd8f37547c1138a1ce79a02dc7366b1368a157bcd1ab0ea171f71eff",
+  "browserReportSha256": "eef347d2d5354191b5485556f7b7e2d04b89e69068c712adde5eaff5d7980031",
+  "fixtureReceiptSha256": "1f4954933b6db3689a17781338bb0df3f34ba280d3f655772a76a6fc17bbe250"
+}

@@ -1,0 +1,56 @@
+{
+  "scope": "Matched native feature bytes and full-FP32 trained weights for the production buildTargetFeat path only; no trunk, denoising, confidence, trajectory or pose accuracy claim.",
+  "fixtureReceiptSha256": "1f4954933b6db3689a17781338bb0df3f34ba280d3f655772a76a6fc17bbe250",
+  "runnerSha256": "6ae3f7769e2fcc91a0f9a8fcd65f01052840742a9b8cebae6c5a8e45e2a06a06",
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "outputs": [
+    {
+      "path": "production-cpu",
+      "file": "trained-target-comparison001.production-cpu.bin",
+      "bytes": 425544,
+      "sha256": "2186bc576388fec0bf908f6b67e422110dba7305a0f9eb380be2a30ab2df0482"
+    },
+    {
+      "path": "production-webgpu",
+      "file": "trained-target-comparison001.production-webgpu.bin",
+      "bytes": 425544,
+      "sha256": "d39312c83a0af819d01260a8a67f55aeafc24df6cd0a1c6c5959e9a57859ffaa"
+    }
+  ],
+  "records": [
+    {
+      "path": "production-cpu",
+      "elapsedMilliseconds": 4717.245000004768,
+      "finite": true,
+      "relativeRms": 1.481118213443476e-7,
+      "maxAbsoluteDifference": 0.00000667572021484375,
+      "passes": true
+    },
+    {
+      "path": "production-webgpu",
+      "elapsedMilliseconds": 255.93499994277954,
+      "finite": true,
+      "relativeRms": 1.53585700407783e-7,
+      "maxAbsoluteDifference": 0.00000667572021484375,
+      "passes": true
+    }
+  ],
+  "adapter": {
+    "vendor": "apple",
+    "architecture": "metal-3",
+    "device": "",
+    "description": ""
+  },
+  "features": [
+    "core-features-and-limits",
+    "subgroup-size-control",
+    "subgroups",
+    "timestamp-query",
+    "shader-f16"
+  ],
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+}

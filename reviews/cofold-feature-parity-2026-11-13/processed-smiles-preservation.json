@@ -1,0 +1,164 @@
+{
+  "schema": "molarium.queued-control-preservation.v1",
+  "planEntry": {
+    "label": "processed-smiles",
+    "parentJob": 15717,
+    "root": "molarium-native-feature-canonical-20261113-attempt001",
+    "cancelUnstartableChildren": [
+      15722,
+      15723
+    ]
+  },
+  "parentSlurmState": "15717|COMPLETED|0:0",
+  "cancelledUnstartableChildren": [],
+  "collectorJobId": "15749",
+  "capturedAt": "2026-11-13T22:22:57Z",
+  "scope": "Read-only scientific-output preservation; no inference. Original receipts and failed states remain unchanged.",
+  "archive": {
+    "file": "evidence.zip",
+    "bytes": 388646,
+    "sha256": "3cc70f5c9b07589f7b7f384c5eda3df59e69b1ef96793ba38d7d661dffc0588d",
+    "files": [
+      {
+        "path": "job-submissions.json",
+        "bytes": 289,
+        "sha256": "a5d8d5827d7d92a30305fe165ea4f0233a2c1b4ba26b3abe34778349356e9d2d"
+      },
+      {
+        "path": "logs/gpu-15717.log",
+        "bytes": 2392,
+        "sha256": "36820f51eed0df494c34972b2916eed74248eaae5d16c0eb11f63c1dbdb9f48d"
+      },
+      {
+        "path": "logs/preflight-15716.log",
+        "bytes": 348,
+        "sha256": "bceb442ec65055b1cce1f51c4ad65f83d2b22ebde383ed487b5331ff6bf49c8e"
+      },
+      {
+        "path": "preflight.complete",
+        "bytes": 7,
+        "sha256": "2700165975f68815c97d605c56eca8e90d497ade1264b6282401d13fee99ac27"
+      },
+      {
+        "path": "preflight.json",
+        "bytes": 458,
+        "sha256": "cd83ee6ff853a8fa1676dff07e2db6c794a26a75c0c2b71a037ee04c314d46e1"
+      },
+      {
+        "path": "preservation-script.py",
+        "bytes": 3787,
+        "sha256": "d07e1ea6c9c094af449d100d7264a1a03deea124de7cfe048142b0602bbab87e"
+      },
+      {
+        "path": "results/9t51-a1jtm/capture-runner.json",
+        "bytes": 734,
+        "sha256": "d0a095920e8c65e657c4ac8dbc0188ed6d7ae00887b5dcf5826114251be00c36"
+      },
+      {
+        "path": "results/9t51-a1jtm/features/features.bin",
+        "bytes": 3725633,
+        "sha256": "4eee6f1a152d610925f0227763dc90156b4f1d3746740fce470b9766a39f6e04"
+      },
+      {
+        "path": "results/9t51-a1jtm/features/features.json",
+        "bytes": 16720,
+        "sha256": "f80aeb23ff4affc072fce45ca1d6833ad9a19b640c47c75f152c88d6a4b532d7"
+      },
+      {
+        "path": "results/9t51-a1jtm/features/layout.json",
+        "bytes": 48132,
+        "sha256": "3497271b7685c7f7e4da76957c5f17b975d970c2674a4e0d2d37cd41bf6b8342"
+      },
+      {
+        "path": "results/9t51-a1jtm/processed-smiles-query.json",
+        "bytes": 864,
+        "sha256": "1633eabf3d8ad22cc3b475e77d6c125b670915a139e1e7e84e0a61f9f613b224"
+      },
+      {
+        "path": "results/9t51-a1jtm/receipt.json",
+        "bytes": 3303,
+        "sha256": "2de9c06a196570ce4671d388b82a204b066ab5b2d58190ded5a75f882efa8faa"
+      },
+      {
+        "path": "results/9t51-a1jtm/resolved-inputs/boltz/compound_000.yaml",
+        "bytes": 617,
+        "sha256": "834684e0176c16d6baa1c3604dd92adc0ded4a7eca80a422ef26be33f4740b6f"
+      },
+      {
+        "path": "results/9t51-a1jtm/resolved-inputs/openbind-query.json",
+        "bytes": 865,
+        "sha256": "82b41e885289283a6acd215a008827f47f44e9dc87f8d2fe070ab79de462e836"
+      },
+      {
+        "path": "source/browser-library.json",
+        "bytes": 1449892,
+        "sha256": "42718c03d06cdb365fda5460cbe85f1e17f785df169fbd663b8425fcd4be82d5"
+      },
+      {
+        "path": "source/capture_native_features.py",
+        "bytes": 12190,
+        "sha256": "6a07a9284b5749cd71937a0870697fa300293a74b8ae17b60afeff91a988d978"
+      },
+      {
+        "path": "source/gpu.sh",
+        "bytes": 962,
+        "sha256": "5f0ca99371988b25a4f335395b6d08d2f1ab60dfb8022df43e2cd19a39602375"
+      },
+      {
+        "path": "source/inputs/9t51-a1jtm/boltz/compound_000.yaml",
+        "bytes": 516,
+        "sha256": "1126e2287d1fd2139080187b57e3c8de6d55df49fe5fa46b32a90df63c176172"
+      },
+      {
+        "path": "source/inputs/9t51-a1jtm/comparison.json",
+        "bytes": 75078,
+        "sha256": "bef8a9e2fffea96ff07c161d6e1c1e4a268074c7e9b70d852d2f7b25f694cadf"
+      },
+      {
+        "path": "source/inputs/9t51-a1jtm/msa/colabfold_main.a3m",
+        "bytes": 69658,
+        "sha256": "0cc969796591441861b47aa0e75b359955864ffcf5fb81d6ca8a3bb59c495e2b"
+      },
+      {
+        "path": "source/inputs/9t51-a1jtm/openbind-query.json",
+        "bytes": 764,
+        "sha256": "64bc2109ea6a3ba25d143903ab814b84465242dc5d0aa2441bb5d71282350160"
+      },
+      {
+        "path": "source/inputs/9t51-a1jtm/openbind-standard.yaml",
+        "bytes": 594,
+        "sha256": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0"
+      },
+      {
+        "path": "source/inputs/9t51-a1jtm/openbind-torch-standard.yaml",
+        "bytes": 731,
+        "sha256": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364"
+      },
+      {
+        "path": "source/native_run.py",
+        "bytes": 9223,
+        "sha256": "bc5d3bc2c71758f6a07be74324b072269a8d61f836c44cd3159b1bace9d17282"
+      },
+      {
+        "path": "source/preflight.py",
+        "bytes": 1294,
+        "sha256": "15f13230878a8efc535a37e7b41d49d192c953d4b92892e4a86586fdc2d245d4"
+      },
+      {
+        "path": "source/preflight.sh",
+        "bytes": 244,
+        "sha256": "6c86d93b189262eeac30437144b0cef1f633172b0748877cca80f88b63369449"
+      },
+      {
+        "path": "source/references/9t51-a1jtm.json",
+        "bytes": 3608,
+        "sha256": "32fb7c85978bec796e4b1ff6fdf4f3da920189d8b27614d2aeed73688fdb6f51"
+      },
+      {
+        "path": "source/source-manifest.json",
+        "bytes": 1317,
+        "sha256": "4b291f61bf844645ea0ce2a71fbde8fe2f364945556b6570936955d1d29f3189"
+      }
+    ]
+  }
+}

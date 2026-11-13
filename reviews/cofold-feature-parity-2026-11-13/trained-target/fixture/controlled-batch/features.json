@@ -1,0 +1,2810 @@
+{
+  "schema": "molarium.native-feature-capture.v1",
+  "scope": "All tensor/numerical-array leaves at the stock predict-step boundary. Unsupported metadata objects are listed by type, not silently treated as tensors.",
+  "arrays": {
+    "array-0000": {
+      "path": "batch/aatype",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 0,
+      "bytes": 952,
+      "sha256": "ac01bc6bb59d1ff8a1cd4e047f98a5db47b54eccd84ec47c3e9f60a4e3469f7a"
+    },
+    "array-0001": {
+      "path": "batch/profile",
+      "shape": [
+        7378
+      ],
+      "dtype": "<f4",
+      "byteOffset": 952,
+      "bytes": 29512,
+      "sha256": "8bf0c78f5bae5efd08fd0b1e1560e313257bf042a36d10d406856dcb872db7d1",
+      "nonFiniteValues": 0
+    },
+    "array-0002": {
+      "path": "batch/deletionMean",
+      "shape": [
+        238
+      ],
+      "dtype": "<f4",
+      "byteOffset": 30464,
+      "bytes": 952,
+      "sha256": "7e6f5a9e648f2a62e1a2893286a9c76f72830ea59a7abb66f7137c43c5c974af",
+      "nonFiniteValues": 0
+    },
+    "array-0003": {
+      "path": "batch/msa",
+      "shape": [
+        61166
+      ],
+      "dtype": "|i1",
+      "byteOffset": 31416,
+      "bytes": 61166,
+      "sha256": "a3b3c2bea2868b6044a343b7d47ecc0e92fcdd30d711ec904768f339b0b9a5c0"
+    },
+    "array-0004": {
+      "path": "batch/msaMask",
+      "shape": [
+        61166
+      ],
+      "dtype": "|u1",
+      "byteOffset": 92584,
+      "bytes": 61166,
+      "sha256": "1460efe25abbe21633f3742218c6b64917f2e3d466ad5f8156b853b5fc3d4a7e"
+    },
+    "array-0005": {
+      "path": "batch/deletionMatrix",
+      "shape": [
+        61166
+      ],
+      "dtype": "|u1",
+      "byteOffset": 153752,
+      "bytes": 61166,
+      "sha256": "a992acad42cb593d3c43b2b3ed3a8210c38901d90d3012e73fd09a7bdec1eb0f"
+    },
+    "array-0006": {
+      "path": "batch/residueIndex",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 214920,
+      "bytes": 952,
+      "sha256": "eed9acb483d63b1f569b5d9e3bd3425acee1baeb4b4bbe532028da03374aa4b5"
+    },
+    "array-0007": {
+      "path": "batch/tokenIndex",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 215872,
+      "bytes": 952,
+      "sha256": "0cbeaf1f43db8ed8fe56969de66457d137c62099d9eacb669a1519829df655b0"
+    },
+    "array-0008": {
+      "path": "batch/asymId",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 216824,
+      "bytes": 952,
+      "sha256": "4b371aa0583e685867f6d8f69da50e25a7599592fdda8063574658d73c9ea150"
+    },
+    "array-0009": {
+      "path": "batch/entityId",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 217776,
+      "bytes": 952,
+      "sha256": "9e509cb055598e5f6611cd3a5db70ba7613656473fe0eaea8c3cb43141a3d850"
+    },
+    "array-0010": {
+      "path": "batch/symId",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 218728,
+      "bytes": 952,
+      "sha256": "e2bffd2b88041a4b93a8057ecc5940bec92f7dc6621b9923f4e382085002ce2c"
+    },
+    "array-0011": {
+      "path": "batch/seqMask",
+      "shape": [
+        238
+      ],
+      "dtype": "<f4",
+      "byteOffset": 219680,
+      "bytes": 952,
+      "sha256": "ba15b573453b0c26f6d5b505e4b49481826a8c176092cfd6251f9fbcc10eaea7",
+      "nonFiniteValues": 0
+    },
+    "array-0012": {
+      "path": "batch/refPos",
+      "shape": [
+        17136
+      ],
+      "dtype": "<f4",
+      "byteOffset": 220632,
+      "bytes": 68544,
+      "sha256": "0ef5f629974d02627a3859fd64570b724fbff25a2d14f276c22a704bf0ff9074",
+      "nonFiniteValues": 0
+    },
+    "array-0013": {
+      "path": "batch/refMask",
+      "shape": [
+        5712
+      ],
+      "dtype": "<f4",
+      "byteOffset": 289176,
+      "bytes": 22848,
+      "sha256": "21ffbb1609a6d597890f4942ae076d47ec1d95ad30aa22c869f06a6c41da05c5",
+      "nonFiniteValues": 0
+    },
+    "array-0014": {
+      "path": "batch/refElement",
+      "shape": [
+        5712
+      ],
+      "dtype": "<i4",
+      "byteOffset": 312024,
+      "bytes": 22848,
+      "sha256": "b7bdb2feb937e7eb70fd290ed568af2a86bbd64588715ed9f12ab5b3c4ffe0f1"
+    },
+    "array-0015": {
+      "path": "batch/refCharge",
+      "shape": [
+        5712
+      ],
+      "dtype": "<f4",
+      "byteOffset": 334872,
+      "bytes": 22848,
+      "sha256": "c1eacafb986ce83fa03d3c49a94fead82ad6bfefcea189b8cd9b4d01baa3d20b",
+      "nonFiniteValues": 0
+    },
+    "array-0016": {
+      "path": "batch/refAtomNameChars",
+      "shape": [
+        22848
+      ],
+      "dtype": "<i4",
+      "byteOffset": 357720,
+      "bytes": 91392,
+      "sha256": "b3e8d70ff4388bfeff1360becb802d9b30439c7641705c5fb4167c8c97c7efec"
+    },
+    "array-0017": {
+      "path": "batch/refSpaceUid",
+      "shape": [
+        5712
+      ],
+      "dtype": "<i4",
+      "byteOffset": 449112,
+      "bytes": 22848,
+      "sha256": "dd82a0119cfe6f142f5415b0a50c38f36b7227c209071a00591e6a7dfb8da82b"
+    },
+    "array-0018": {
+      "path": "batch/displayAtomNameChars",
+      "shape": [
+        22848
+      ],
+      "dtype": "<i4",
+      "byteOffset": 471960,
+      "bytes": 91392,
+      "sha256": "b3e8d70ff4388bfeff1360becb802d9b30439c7641705c5fb4167c8c97c7efec"
+    },
+    "array-0019": {
+      "path": "batch/predDenseAtomMask",
+      "shape": [
+        5712
+      ],
+      "dtype": "<f4",
+      "byteOffset": 563352,
+      "bytes": 22848,
+      "sha256": "21ffbb1609a6d597890f4942ae076d47ec1d95ad30aa22c869f06a6c41da05c5",
+      "nonFiniteValues": 0
+    },
+    "array-0020": {
+      "path": "batch/bondMatrix",
+      "shape": [
+        56644
+      ],
+      "dtype": "<f4",
+      "byteOffset": 586200,
+      "bytes": 226576,
+      "sha256": "3504a0bd03ae35a2541fdbbd74bd96d3eb40bfe58b6beabf9fbd6a949916a1ef",
+      "nonFiniteValues": 0
+    },
+    "array-0021": {
+      "path": "batch/bondOrderMatrix",
+      "shape": [
+        56644
+      ],
+      "dtype": "<f4",
+      "byteOffset": 812776,
+      "bytes": 226576,
+      "sha256": "557c33e5bea66021bd52065be1908bd6e81ad94e1d1599f49c2c1613a9e6ba06",
+      "nonFiniteValues": 0
+    },
+    "array-0022": {
+      "path": "batch/residueOfToken",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 1039352,
+      "bytes": 952,
+      "sha256": "7d491bb9353031fdc169884d2ec14a9c0021cb94f8a307e795055a783cedb088"
+    },
+    "array-0023": {
+      "path": "batch/isDna",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 1040304,
+      "bytes": 952,
+      "sha256": "f438a4e713df6a982afbe2eec993cd582edc37a876fee88e1ddabb478f2b5ee0"
+    },
+    "array-0024": {
+      "path": "batch/isRna",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 1041256,
+      "bytes": 952,
+      "sha256": "f438a4e713df6a982afbe2eec993cd582edc37a876fee88e1ddabb478f2b5ee0"
+    },
+    "array-0025": {
+      "path": "batch/isLigand",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 1042208,
+      "bytes": 952,
+      "sha256": "2bed9c5ab7853ac638504aaddc6640df9f1abca9edec9b9a66f98edcd458b250"
+    },
+    "array-0026": {
+      "path": "batch/isModified",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 1043160,
+      "bytes": 952,
+      "sha256": "f438a4e713df6a982afbe2eec993cd582edc37a876fee88e1ddabb478f2b5ee0"
+    },
+    "array-0027": {
+      "path": "batch/tokenAtomsToQueries/indices",
+      "shape": [
+        1696
+      ],
+      "dtype": "<i4",
+      "byteOffset": 1044112,
+      "bytes": 6784,
+      "sha256": "ccbfc4eb932267d3be282aa9c81e8197ff92661e426a674619c6bdebb27299c8"
+    },
+    "array-0028": {
+      "path": "batch/tokenAtomsToQueries/mask",
+      "shape": [
+        1696
+      ],
+      "dtype": "<f4",
+      "byteOffset": 1050896,
+      "bytes": 6784,
+      "sha256": "130c3e73a28907d042b96b09a485128294668227374939b2153625539ec8a81a",
+      "nonFiniteValues": 0
+    },
+    "array-0029": {
+      "path": "batch/queriesToKeys/indices",
+      "shape": [
+        6784
+      ],
+      "dtype": "<i4",
+      "byteOffset": 1057680,
+      "bytes": 27136,
+      "sha256": "1c52b6b18e0fe18084e93bceed5b36000503e0166c16dec885cd5e65c9fa57a8"
+    },
+    "array-0030": {
+      "path": "batch/queriesToKeys/mask",
+      "shape": [
+        6784
+      ],
+      "dtype": "<f4",
+      "byteOffset": 1084816,
+      "bytes": 27136,
+      "sha256": "d7811e76be47034da7074c940512b6b5e72b0e57a1620e406811bd91b1e793bf",
+      "nonFiniteValues": 0
+    },
+    "array-0031": {
+      "path": "batch/queriesToTokenAtoms/indices",
+      "shape": [
+        5712
+      ],
+      "dtype": "<i4",
+      "byteOffset": 1111952,
+      "bytes": 22848,
+      "sha256": "4462bc39d147042bc8108d140d11e480e38a5754fccfcb3b85398e2f96a2aefc"
+    },
+    "array-0032": {
+      "path": "batch/queriesToTokenAtoms/mask",
+      "shape": [
+        5712
+      ],
+      "dtype": "<f4",
+      "byteOffset": 1134800,
+      "bytes": 22848,
+      "sha256": "21ffbb1609a6d597890f4942ae076d47ec1d95ad30aa22c869f06a6c41da05c5",
+      "nonFiniteValues": 0
+    },
+    "array-0033": {
+      "path": "batch/tokensToQueries/indices",
+      "shape": [
+        1696
+      ],
+      "dtype": "<i4",
+      "byteOffset": 1157648,
+      "bytes": 6784,
+      "sha256": "e7d2bcda0a9a07138bd661826957e3dfeb90eac7930205e222919be64683111e"
+    },
+    "array-0034": {
+      "path": "batch/tokensToQueries/mask",
+      "shape": [
+        1696
+      ],
+      "dtype": "<f4",
+      "byteOffset": 1164432,
+      "bytes": 6784,
+      "sha256": "130c3e73a28907d042b96b09a485128294668227374939b2153625539ec8a81a",
+      "nonFiniteValues": 0
+    },
+    "array-0035": {
+      "path": "batch/tokensToKeys/indices",
+      "shape": [
+        6784
+      ],
+      "dtype": "<i4",
+      "byteOffset": 1171216,
+      "bytes": 27136,
+      "sha256": "628d6d3928f0a8c2a04c2a248b7808e7f2be4974873e557ada4a8d0eb2fd9c4b"
+    },
+    "array-0036": {
+      "path": "batch/tokensToKeys/mask",
+      "shape": [
+        6784
+      ],
+      "dtype": "<f4",
+      "byteOffset": 1198352,
+      "bytes": 27136,
+      "sha256": "d7811e76be47034da7074c940512b6b5e72b0e57a1620e406811bd91b1e793bf",
+      "nonFiniteValues": 0
+    },
+    "array-0037": {
+      "path": "batch/tokenAtomsToPseudoBeta/indices",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 1225488,
+      "bytes": 952,
+      "sha256": "1bf02db028ba540b814338e7982198e9c1053e3b95057f82a2f85732bc524132"
+    },
+    "array-0038": {
+      "path": "batch/tokenAtomsToPseudoBeta/mask",
+      "shape": [
+        238
+      ],
+      "dtype": "<f4",
+      "byteOffset": 1226440,
+      "bytes": 952,
+      "sha256": "ba15b573453b0c26f6d5b505e4b49481826a8c176092cfd6251f9fbcc10eaea7",
+      "nonFiniteValues": 0
+    },
+    "array-0039": {
+      "path": "batch/features/residueIndex",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 1227392,
+      "bytes": 952,
+      "sha256": "eed9acb483d63b1f569b5d9e3bd3425acee1baeb4b4bbe532028da03374aa4b5"
+    },
+    "array-0040": {
+      "path": "batch/features/tokenIndex",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 1228344,
+      "bytes": 952,
+      "sha256": "0cbeaf1f43db8ed8fe56969de66457d137c62099d9eacb669a1519829df655b0"
+    },
+    "array-0041": {
+      "path": "batch/features/asymId",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 1229296,
+      "bytes": 952,
+      "sha256": "4b371aa0583e685867f6d8f69da50e25a7599592fdda8063574658d73c9ea150"
+    },
+    "array-0042": {
+      "path": "batch/features/entityId",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 1230248,
+      "bytes": 952,
+      "sha256": "9e509cb055598e5f6611cd3a5db70ba7613656473fe0eaea8c3cb43141a3d850"
+    },
+    "array-0043": {
+      "path": "batch/features/symId",
+      "shape": [
+        238
+      ],
+      "dtype": "<i4",
+      "byteOffset": 1231200,
+      "bytes": 952,
+      "sha256": "e2bffd2b88041a4b93a8057ecc5940bec92f7dc6621b9923f4e382085002ce2c"
+    }
+  },
+  "tree": {
+    "dict": [
+      [
+        {
+          "value": "sequence"
+        },
+        {
+          "value": "GSGLSDVASFATKLKNTLIQYHSIEEDKWRVAKKTKDVTVWRKPSEEFNGYLYKAQGVIDDLVYSIIDHIRPGPSRLDWDSLMTSLDILENFEENCCVMRYTTAGQLWNIISPREFVDFSYTVGYKEGLLSCGISLDWDEKRPEFVRGYNHPCGWFCVPLKDNPNQSLLTGYIQTDLRGMIPQSAVDTAMASTLTNFYGDLRKAL"
+        }
+      ],
+      [
+        {
+          "value": "chains"
+        },
+        {
+          "list": [
+            {
+              "value": "GSGLSDVASFATKLKNTLIQYHSIEEDKWRVAKKTKDVTVWRKPSEEFNGYLYKAQGVIDDLVYSIIDHIRPGPSRLDWDSLMTSLDILENFEENCCVMRYTTAGQLWNIISPREFVDFSYTVGYKEGLLSCGISLDWDEKRPEFVRGYNHPCGWFCVPLKDNPNQSLLTGYIQTDLRGMIPQSAVDTAMASTLTNFYGDLRKAL"
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "value": "chainLengths"
+        },
+        {
+          "list": [
+            {
+              "value": 205
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "value": "tokens"
+        },
+        {
+          "value": 238
+        }
+      ],
+      [
+        {
+          "value": "dense"
+        },
+        {
+          "value": 24
+        }
+      ],
+      [
+        {
+          "value": "subsets"
+        },
+        {
+          "value": 53
+        }
+      ],
+      [
+        {
+          "value": "atomCount"
+        },
+        {
+          "value": 1679
+        }
+      ],
+      [
+        {
+          "value": "sequences"
+        },
+        {
+          "value": 257
+        }
+      ],
+      [
+        {
+          "value": "pairedRows"
+        },
+        {
+          "value": 1
+        }
+      ],
+      [
+        {
+          "value": "shape"
+        },
+        {
+          "dict": [
+            [
+              {
+                "value": "tokens"
+              },
+              {
+                "value": 238
+              }
+            ],
+            [
+              {
+                "value": "dense"
+              },
+              {
+                "value": 24
+              }
+            ],
+            [
+              {
+                "value": "subsets"
+              },
+              {
+                "value": 53
+              }
+            ],
+            [
+              {
+                "value": "queries"
+              },
+              {
+                "value": 32
+              }
+            ],
+            [
+              {
+                "value": "keys"
+              },
+              {
+                "value": 128
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "value": "aatype"
+        },
+        {
+          "array": "array-0000"
+        }
+      ],
+      [
+        {
+          "value": "profile"
+        },
+        {
+          "array": "array-0001"
+        }
+      ],
+      [
+        {
+          "value": "deletionMean"
+        },
+        {
+          "array": "array-0002"
+        }
+      ],
+      [
+        {
+          "value": "msa"
+        },
+        {
+          "array": "array-0003"
+        }
+      ],
+      [
+        {
+          "value": "msaMask"
+        },
+        {
+          "array": "array-0004"
+        }
+      ],
+      [
+        {
+          "value": "deletionMatrix"
+        },
+        {
+          "array": "array-0005"
+        }
+      ],
+      [
+        {
+          "value": "residueIndex"
+        },
+        {
+          "array": "array-0006"
+        }
+      ],
+      [
+        {
+          "value": "tokenIndex"
+        },
+        {
+          "array": "array-0007"
+        }
+      ],
+      [
+        {
+          "value": "asymId"
+        },
+        {
+          "array": "array-0008"
+        }
+      ],
+      [
+        {
+          "value": "entityId"
+        },
+        {
+          "array": "array-0009"
+        }
+      ],
+      [
+        {
+          "value": "symId"
+        },
+        {
+          "array": "array-0010"
+        }
+      ],
+      [
+        {
+          "value": "seqMask"
+        },
+        {
+          "array": "array-0011"
+        }
+      ],
+      [
+        {
+          "value": "refPos"
+        },
+        {
+          "array": "array-0012"
+        }
+      ],
+      [
+        {
+          "value": "refMask"
+        },
+        {
+          "array": "array-0013"
+        }
+      ],
+      [
+        {
+          "value": "refElement"
+        },
+        {
+          "array": "array-0014"
+        }
+      ],
+      [
+        {
+          "value": "refCharge"
+        },
+        {
+          "array": "array-0015"
+        }
+      ],
+      [
+        {
+          "value": "refAtomNameChars"
+        },
+        {
+          "array": "array-0016"
+        }
+      ],
+      [
+        {
+          "value": "refSpaceUid"
+        },
+        {
+          "array": "array-0017"
+        }
+      ],
+      [
+        {
+          "value": "displayAtomNameChars"
+        },
+        {
+          "array": "array-0018"
+        }
+      ],
+      [
+        {
+          "value": "predDenseAtomMask"
+        },
+        {
+          "array": "array-0019"
+        }
+      ],
+      [
+        {
+          "value": "bondMatrix"
+        },
+        {
+          "array": "array-0020"
+        }
+      ],
+      [
+        {
+          "value": "bondOrderMatrix"
+        },
+        {
+          "array": "array-0021"
+        }
+      ],
+      [
+        {
+          "value": "declaredBondMatrix"
+        },
+        {
+          "metadataObjectType": "feature_snapshot.MetadataObject"
+        }
+      ],
+      [
+        {
+          "value": "ligandSpans"
+        },
+        {
+          "list": [
+            {
+              "dict": [
+                [
+                  {
+                    "value": "from"
+                  },
+                  {
+                    "value": 205
+                  }
+                ],
+                [
+                  {
+                    "value": "count"
+                  },
+                  {
+                    "value": 33
+                  }
+                ],
+                [
+                  {
+                    "value": "code"
+                  },
+                  {
+                    "value": "LIG"
+                  }
+                ],
+                [
+                  {
+                    "value": "bonds"
+                  },
+                  {
+                    "list": [
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 0
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 2
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 3
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 5
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 5
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 6
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 2
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 5
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 7
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 7
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 8
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 8
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 9
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 9
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 10
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 10
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 11
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 11
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 12
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 12
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 13
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 13
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 14
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 14
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 15
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 15
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 16
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 16
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 17
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 17
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 18
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 18
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 19
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 19
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 20
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 20
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 11
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 20
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 15
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 4
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 18
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 21
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 21
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 22
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 22
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 23
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 23
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 24
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 24
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 25
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 25
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 26
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 25
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 27
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 27
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 28
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 28
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 29
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 29
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 17
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 29
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 23
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 29
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 30
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 10
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 31
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 31
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 32
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      },
+                      {
+                        "dict": [
+                          [
+                            {
+                              "value": "from"
+                            },
+                            {
+                              "value": 32
+                            }
+                          ],
+                          [
+                            {
+                              "value": "to"
+                            },
+                            {
+                              "value": 7
+                            }
+                          ],
+                          [
+                            {
+                              "value": "order"
+                            },
+                            {
+                              "value": 1
+                            }
+                          ]
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "value": "modifiedSpans"
+        },
+        {
+          "list": []
+        }
+      ],
+      [
+        {
+          "value": "residueOfToken"
+        },
+        {
+          "array": "array-0022"
+        }
+      ],
+      [
+        {
+          "value": "chainKinds"
+        },
+        {
+          "list": [
+            {
+              "value": "protein"
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "value": "chainOfResidue"
+        },
+        {
+          "list": [
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            },
+            {
+              "value": 0
+            }
+          ]
+        }
+      ],
+      [
+        {
+          "value": "isDna"
+        },
+        {
+          "array": "array-0023"
+        }
+      ],
+      [
+        {
+          "value": "isRna"
+        },
+        {
+          "array": "array-0024"
+        }
+      ],
+      [
+        {
+          "value": "isLigand"
+        },
+        {
+          "array": "array-0025"
+        }
+      ],
+      [
+        {
+          "value": "isModified"
+        },
+        {
+          "array": "array-0026"
+        }
+      ],
+      [
+        {
+          "value": "tokenAtomsToQueries"
+        },
+        {
+          "dict": [
+            [
+              {
+                "value": "indices"
+              },
+              {
+                "array": "array-0027"
+              }
+            ],
+            [
+              {
+                "value": "mask"
+              },
+              {
+                "array": "array-0028"
+              }
+            ],
+            [
+              {
+                "value": "count"
+              },
+              {
+                "value": 1696
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "value": "queriesToKeys"
+        },
+        {
+          "dict": [
+            [
+              {
+                "value": "indices"
+              },
+              {
+                "array": "array-0029"
+              }
+            ],
+            [
+              {
+                "value": "mask"
+              },
+              {
+                "array": "array-0030"
+              }
+            ],
+            [
+              {
+                "value": "count"
+              },
+              {
+                "value": 6784
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "value": "queriesToTokenAtoms"
+        },
+        {
+          "dict": [
+            [
+              {
+                "value": "indices"
+              },
+              {
+                "array": "array-0031"
+              }
+            ],
+            [
+              {
+                "value": "mask"
+              },
+              {
+                "array": "array-0032"
+              }
+            ],
+            [
+              {
+                "value": "count"
+              },
+              {
+                "value": 5712
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "value": "tokensToQueries"
+        },
+        {
+          "dict": [
+            [
+              {
+                "value": "indices"
+              },
+              {
+                "array": "array-0033"
+              }
+            ],
+            [
+              {
+                "value": "mask"
+              },
+              {
+                "array": "array-0034"
+              }
+            ],
+            [
+              {
+                "value": "count"
+              },
+              {
+                "value": 1696
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "value": "tokensToKeys"
+        },
+        {
+          "dict": [
+            [
+              {
+                "value": "indices"
+              },
+              {
+                "array": "array-0035"
+              }
+            ],
+            [
+              {
+                "value": "mask"
+              },
+              {
+                "array": "array-0036"
+              }
+            ],
+            [
+              {
+                "value": "count"
+              },
+              {
+                "value": 6784
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "value": "tokenAtomsToPseudoBeta"
+        },
+        {
+          "dict": [
+            [
+              {
+                "value": "indices"
+              },
+              {
+                "array": "array-0037"
+              }
+            ],
+            [
+              {
+                "value": "mask"
+              },
+              {
+                "array": "array-0038"
+              }
+            ],
+            [
+              {
+                "value": "count"
+              },
+              {
+                "value": 238
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "value": "features"
+        },
+        {
+          "dict": [
+            [
+              {
+                "value": "residueIndex"
+              },
+              {
+                "array": "array-0039"
+              }
+            ],
+            [
+              {
+                "value": "tokenIndex"
+              },
+              {
+                "array": "array-0040"
+              }
+            ],
+            [
+              {
+                "value": "asymId"
+              },
+              {
+                "array": "array-0041"
+              }
+            ],
+            [
+              {
+                "value": "entityId"
+              },
+              {
+                "array": "array-0042"
+              }
+            ],
+            [
+              {
+                "value": "symId"
+              },
+              {
+                "array": "array-0043"
+              }
+            ]
+          ]
+        }
+      ],
+      [
+        {
+          "value": "numMsa"
+        },
+        {
+          "value": 1024
+        }
+      ]
+    ]
+  },
+  "unserializedMetadata": [
+    {
+      "path": "batch/declaredBondMatrix",
+      "type": "feature_snapshot.MetadataObject"
+    }
+  ],
+  "blob": {
+    "file": "features.bin",
+    "bytes": 1232152,
+    "sha256": "2ce893b3c4f2c0e1ceb4af08681d6b05e991a60e3d3149a7e19ab0a559dafec8"
+  }
+}

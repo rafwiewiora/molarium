@@ -3,8 +3,10 @@
 The [270-prediction protocol comparison](../cofold-recent-pdb-2026-11-13/README.md)
 does not establish fixed-input numerical agreement. These captures locate input
 differences before attributing pose differences to kernels or quantization.
-**Both original native captures are complete. No model forward ran. Full trained-model
-numerical agreement remains untested.** Production folding mathematics is unchanged.
+**Both original native captures and the same-SMILES control are complete. The
+[first matched trained atom-feature stage](trained-target/README.md) now passes on
+production CPU/WebGPU against stock native FP32. Full-model numerical agreement
+remains untested.** Production folding mathematics is unchanged.
 
 Two diagnostic systems were selected before capture: STARD4 (9T51), with
 0.48 Å seed-paired mean browser/native ligand disagreement, and YTHDF2 (32QY),
@@ -42,7 +44,7 @@ residue. Its relative-position encoding needs a separate numerical check.
 
 The browser canonicalizes SMILES before featurization; the original native query retains
 the supplied spelling. Both declare the same chemical state and specified stereo, but
-the spelling changes parser atom order and generated names. A separately queued STARD4
+the spelling changes parser atom order and generated names. A separate, completed STARD4
 control gives the native pipeline the exact processed browser SMILES, keeping the
 chemistry, original frozen input evidence, checkpoint and data seed recorded. It does
 not replace or rerun the published pose predictions. Its
@@ -57,6 +59,31 @@ by the declared graph map rather than optimized against coordinates. STARD4's 12
 maps remain explicit; the table's coordinate diagnostic uses the reported lexicographic
 map, not an allegedly unique atom assignment. None of these findings establishes the
 cause of the pose discrepancy.
+
+## Same-spelling control result
+
+The [completed STARD4 control](comparison-9t51-a1jtm-processed-smiles.json),
+job 15717 on L4, uses the exact browser processed SMILES. It captures one batch
+and makes zero model-forward calls. With identity parser order, **all 1,679 atom-name
+encodings now agree exactly**, including every ligand atom. The same chemistry,
+mask, bond and alignment matches hold. Other stereo-compatible graph maps are still
+enumerated; they are not substituted for the known parser order.
+
+Three checked raw fields differ: token indices, entity labels and reference coordinates.
+[The integer-feature audit](processed-smiles-numbering.json) verifies that every
+pairwise token-index difference is identical (native indices are uniformly one lower),
+and every pairwise entity-equality relation is identical. Entity labels themselves
+are permuted, not uniformly shifted; their numerical differences need not agree.
+This is an integer-input diagnostic, not execution of the neural relative-position module.
+
+Generated reference positions still differ. Protein within-space pair-distance RMS
+remains 0.561 Å; the ligand diagnostic is 1.303 Å in known identity parser order.
+The strict-FP32 trained export reproduced the frozen feature bytes and made one
+actual stock input-embedder call. The [target-feature comparison](trained-target/README.md)
+then passes in production CPU/WebGPU, at approximately 1.5 × 10⁻⁷ relative RMS in
+the learned channels, using the same generated reference inputs and trained weights. No bound crystal
+coordinates are used. **Neither the control nor the original comparisons establish
+trained-model or trajectory parity.**
 
 ## Capture boundaries and preserved evidence
 
@@ -118,7 +145,7 @@ without a model or pickle and test stereo/transfer rejection. Serialization and
 cross-language tests check exact typed bytes. Reports explicitly list ungraded native
 fields and browser-only gather/template internals.
 
-Next: complete the same-spelling control; hold all model-visible features, weights
-and explicit random tensors fixed; compare the actual embedder, trunk, denoiser and
-confidence head. NVIDIA browser hardware and quantization error require separate
+Next: extend the matched target-feature result to projected single/pair states,
+the trunk, denoiser and confidence head, then complete trajectories with explicit
+random tensors. Quantized production weights need their own control. NVIDIA browser hardware and quantization error require separate
 controls. The transition-stability candidate remains experimental.

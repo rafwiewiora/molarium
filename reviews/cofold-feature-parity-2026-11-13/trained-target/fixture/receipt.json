@@ -1,0 +1,22 @@
+{
+  "scope": "Matched native feature bytes and full-FP32 trained weights for the production buildTargetFeat path only; no trunk, denoising, confidence, trajectory or pose accuracy claim.",
+  "nativeReceiptSha256": "9318f2f7bd8f37547c1138a1ce79a02dc7366b1368a157bcd1ab0ea171f71eff",
+  "weightConverterRepository": "https://github.com/sokrypton/alphafold3",
+  "weightConverterRevision": "e68d628df1d815cccb48bb1118d8763a594bfa23",
+  "weightConverterFiles": {
+    "common.py": "2ce60315eec67571154d5b7238df28132b74870c31c51ddef4382bfa0c4a3dd0",
+    "openfold3.py": "1d8843c8ca57ad0780bb8d6be740f56beb852c37d4b3d652791f37179f67283d"
+  },
+  "converterImportChanges": "Unused top-level alphafold3.model.params and zstandard blob-I/O imports omitted. Executed mapping functions unchanged; no neural forward code taken from this converter.",
+  "expectedShape": [
+    238,
+    447
+  ],
+  "expectedTargetSha256": "fd83e0729585cdf4ce8399c1533006df1aa7a6b7a1a66622c0dc088c739e4b5c",
+  "gatesDeclaredBeforeRun": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "scriptSha256": "e9b6b4a085b2e21accbb758a6972a1f91f535c047229906f8380d7a76306cb2c"
+}

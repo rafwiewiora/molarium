@@ -1,0 +1,37 @@
+{
+  "scope": "Only import/root paths adapt the exact measured prototypes to repository locations. No numerical operations, inputs, gates or production module sources changed; no duplicate inference was requested to test these path substitutions.",
+  "files": [
+    {
+      "file": "scripts/cofold-trained-target.browser.mjs",
+      "consumedMember": "first-run/run-target-embedder001.mjs",
+      "replacements": [
+        [
+          "'../molarium-chemrxiv-v1/scripts/web-bundle-dependencies.mjs'",
+          "'./web-bundle-dependencies.mjs'"
+        ],
+        [
+          "'../molarium-chemrxiv-v1/scripts/headless-chrome.mjs'",
+          "'./headless-chrome.mjs'"
+        ],
+        [
+          "resolve(import.meta.dirname,'../molarium-chemrxiv-v1')",
+          "resolve(import.meta.dirname,'..')"
+        ]
+      ],
+      "consumedSha256": "6ae3f7769e2fcc91a0f9a8fcd65f01052840742a9b8cebae6c5a8e45e2a06a06",
+      "portableSha256": "a10cb4230f54bc805156267c70e1486ec3fed2e7810e151a65eeb9d6b55452cc"
+    },
+    {
+      "file": "folding/comparison/make_trained_target_fixture.py",
+      "consumedMember": "first-run/convert-trained-embedder001.py",
+      "replacements": [
+        [
+          "repo=Path(__file__).resolve().parent.parent/'molarium-chemrxiv-v1'\nsys.path.insert(0,str(repo/'folding/comparison'))",
+          "repo=Path(__file__).resolve().parents[2]"
+        ]
+      ],
+      "consumedSha256": "e9b6b4a085b2e21accbb758a6972a1f91f535c047229906f8380d7a76306cb2c",
+      "portableSha256": "51b64aae3b688b30672b3787a4d1fdd0e078f98d7381b4739736e71ad4f6c490"
+    }
+  ]
+}

@@ -27,8 +27,10 @@ A [full input-feature audit](../../reviews/cofold-feature-parity-2026-11-13/READ
 has completed native and shared-JS captures on two diagnostic systems, with
 zero native model forwards. Its portable comparison accounts for every atom
 and identifies SMILES-order/name and reference-conformer differences while
-verifying chemistry/alignment feature matches. The same-spelling control is
-queued; no full-feature or trained-model numerical parity verdict is claimed.
+verifying chemistry/alignment feature matches. The completed same-spelling control eliminates the atom-name/order difference;
+generated reference coordinates still differ. The [first trained target-feature stage](../../reviews/cofold-feature-parity-2026-11-13/trained-target/README.md)
+passes at matched inputs/full-FP32 weights; complete model and trajectory parity
+remain unresolved.
 
 These tools compare completed structure predictions without rerunning inference
 or treating a native prediction as an experimental answer. The first cohort is
