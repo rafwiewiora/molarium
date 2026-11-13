@@ -74,6 +74,8 @@ def collect(inputs, arguments, allow_interrupted=False):
             raise ValueError('Attempt checkpoint/protocol differs')
         checkpoint=receipt['checkpointSha256'];protocol=receipt['protocol'];settings=receipt['settings']
         if source_spec['sequence']!=spec['sequence']:raise ValueError('Protein sequence differs')
+        if source_spec.get('alignment')!=spec.get('alignment'):
+            raise ValueError('Provided alignment differs from the parent cohort')
         declared={c['id']:c['smiles']for c in spec['compounds']}
         if any(declared.get(c['id'])!=c['smiles']for c in source_spec['compounds']):raise ValueError('Chemical identities differ')
         source={'id':f'part-{n:03d}','receiptSha256':identity,'inputSha256':receipt['inputSha256'],
@@ -110,6 +112,11 @@ def plan(a):
     spec,digest,sources,outputs,keys,checkpoint,protocol,settings=collect(a.inputs,a.attempt,a.allow_interrupted)
     groups=remaining_groups(spec,keys)
     if not groups:raise ValueError('Cohort is already complete; assemble it instead of submitting more science')
+    alignment=None
+    if spec.get('alignment'):
+        alignment=(a.inputs/'msa/colabfold_main.a3m').read_bytes()
+        if hashlib.sha256(alignment).hexdigest()!=spec['alignment']['sha256']:
+            raise ValueError('Provided alignment file differs from its declared digest')
     a.output.parent.mkdir(parents=True,exist_ok=True);a.output.mkdir()
     query=json.loads((a.inputs/'openbind-query.json').read_text())
     runner=json.loads((a.inputs/f'openbind-{protocol}.yaml').read_text())
@@ -121,6 +128,9 @@ def plan(a):
         subset['resume']={'parentCohortInputSha256':digest,'sourceReceipts':[s['receiptSha256']for s in sources],
           'purpose':'Only missing query/seed pairs; previously saved poses are excluded.'}
         write(folder/'comparison.json',subset)
+        if alignment is not None:
+            (folder/'msa').mkdir()
+            (folder/'msa/colabfold_main.a3m').write_bytes(alignment)
         write(folder/'openbind-query.json',{'queries':{f'compound_{i:03d}':query['queries'][f'compound_{i:03d}']for i in group['indices']}})
         configured=copy.deepcopy(runner);configured['experiment_settings']['seeds']=group['seeds'];write(folder/f'openbind-{protocol}.yaml',configured)
         group.update({'id':name,'expectedPoses':len(group['indices'])*len(group['seeds']),'comparisonSha256':sha(folder/'comparison.json')})

@@ -9,9 +9,74 @@ import hashlib
 from pathlib import Path
 from types import SimpleNamespace
 from native_cohort import remaining_groups,validate_inventory,assemble,plan
+from native_run import resolved_input_files
+
+
+def msa_fixture(directory):
+    # Hypothetical recovery inputs around frozen output fixtures. This tests
+    # portability/lineage only; it does not claim these were MSA predictions.
+    root=Path(__file__).resolve().parents[2]
+    with zipfile.ZipFile(root/'reviews/cofold-method-comparison-2026-11-12/standard-openbind-interrupted-six.zip')as z:
+        z.extractall(directory)
+    inputs=directory/'inputs';native=directory/'raw'
+    shutil.copy2(directory/'stopped-output-inventory.json',native/'stopped-output-inventory.json')
+    spec=json.loads((inputs/'comparison.json').read_text())
+    data=f'>query\n{spec["sequence"]}\n>homolog\n{spec["sequence"]}\n'.encode()
+    (inputs/'msa').mkdir();(inputs/'msa/colabfold_main.a3m').write_bytes(data)
+    spec['alignment']={'a3m':data.decode(),'sha256':hashlib.sha256(data).hexdigest()}
+    (inputs/'comparison.json').write_text(json.dumps(spec))
+    query=json.loads((inputs/'openbind-query.json').read_text())
+    for q in query['queries'].values():
+        q['use_msas']=True;q['chains'][0]['main_msa_file_paths']=['msa/colabfold_main.a3m']
+    (inputs/'openbind-query.json').write_text(json.dumps(query))
+    receipt=json.loads((directory/'receipt.public.json').read_text())
+    for key in ['originalReceiptSha256','redactedFields']:receipt.pop(key,None)
+    receipt['status']='running'
+    rewrite_fixture_receipt(native,inputs,receipt)
+    return inputs,native,data
+
+
+def rewrite_fixture_receipt(native,inputs,receipt):
+    receipt['inputSha256']=hashlib.sha256((inputs/'comparison.json').read_bytes()).hexdigest()
+    receipt['inputFiles']={str(p.relative_to(inputs)):hashlib.sha256(p.read_bytes()).hexdigest()
+                           for p in inputs.rglob('*')if p.is_file()}
+    (native/'receipt.json').write_text(json.dumps(receipt))
+    inventory=json.loads((native/'stopped-output-inventory.json').read_text())
+    inventory['nativeReceiptSha256']=hashlib.sha256((native/'receipt.json').read_bytes()).hexdigest()
+    (native/'stopped-output-inventory.json').write_text(json.dumps(inventory))
 
 
 class RecoverySelectionTests(unittest.TestCase):
+    def test_provided_alignment_is_copied_exactly_and_resolves_inside_the_retry(self):
+        with tempfile.TemporaryDirectory()as directory:
+            d=Path(directory);inputs,native,data=msa_fixture(d)
+            plan(SimpleNamespace(inputs=inputs,attempt=[str(native)+'='+str(inputs)],allow_interrupted=True,output=d/'retry'))
+            group=d/'retry/groups/group-000/inputs'
+            self.assertEqual((group/'msa/colabfold_main.a3m').read_bytes(),data)
+            output=d/'resolve';output.mkdir()
+            spec=json.loads((group/'comparison.json').read_text())
+            query,_=resolved_input_files(group,output,spec)
+            for q in json.loads(query.read_text())['queries'].values():
+                path=Path(q['chains'][0]['main_msa_file_paths'][0])
+                self.assertTrue(path.is_relative_to(group.resolve()))
+                self.assertEqual(path.read_bytes(),data)
+
+    def test_a_resumed_attempt_cannot_change_the_parent_alignment(self):
+        with tempfile.TemporaryDirectory()as directory:
+            d=Path(directory);inputs,native,_data=msa_fixture(d)
+            child=d/'different-alignment';shutil.copytree(inputs,child)
+            parent_sha=hashlib.sha256((inputs/'comparison.json').read_bytes()).hexdigest()
+            spec=json.loads((child/'comparison.json').read_text())
+            data=f'>query\n{spec["sequence"]}\n'.encode()
+            spec['alignment']={'a3m':data.decode(),'sha256':hashlib.sha256(data).hexdigest()}
+            spec['resume']={'parentCohortInputSha256':parent_sha}
+            (child/'msa/colabfold_main.a3m').write_bytes(data)
+            (child/'comparison.json').write_text(json.dumps(spec))
+            rewrite_fixture_receipt(native,child,json.loads((native/'receipt.json').read_text()))
+            with self.assertRaisesRegex(ValueError,'alignment differs'):
+                plan(SimpleNamespace(inputs=inputs,attempt=[str(native)+'='+str(child)],allow_interrupted=True,output=d/'retry'))
+            self.assertFalse((d/'retry').exists())
+
     def test_public_interruption_archive_reproduces_the_exact_42_pose_input_digest(self):
         root=Path(__file__).resolve().parents[2]
         fixture=root/'reviews/cofold-method-comparison-2026-11-12'

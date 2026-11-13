@@ -36,6 +36,15 @@ hashes, reconstruct all exports from native coordinates/topology and recompute
 every crystal score. Cache pickle files are hashed but never executed by the
 public-data checker. Every failed pose remains visible.
 
+## RCF-12: provided-MSA recovery inputs
+
+The native recovery planner retained the alignment declaration but omitted its
+A3M file, and could accept a descendant with a different alignment. The
+[linked finding and fix](../COFOLD_MSA_RECOVERY_2026-11-13.md) preserve exact
+verified bytes in retry inputs and reject alignment drift. Existing saved poses
+and interrupted-source receipt statuses remain unchanged. No inference is
+repeated to test this correction.
+
 Original predictions and reference files are immutable evidence. Review assembly
 adds display labels and reference cards while retaining original PDB bytes,
 coordinate hashes and source-library identities. Public review decisions start
