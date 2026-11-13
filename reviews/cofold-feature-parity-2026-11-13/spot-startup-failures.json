@@ -1,0 +1,1168 @@
+{
+  "scope": "Spot nodes failed before task scripts: no GPU marker, GPU log, calculation receipt or output existed at the observed task boundaries. New immutable L4/regular-queue attempts reuse unchanged inputs. Collector archive metadata retained; archives not revalidated by this receipt-only download.",
+  "observedAt": "2026-11-13T23:31:00Z",
+  "failures": [
+    {
+      "control": "nvidia",
+      "jobId": 15773,
+      "receiptSha256": "a69f7dd98210c334a336bfc93e3054e885bec20cb3134de4d6ee02037bcf262a",
+      "receipt": {
+        "schema": "molarium.queued-control-preservation.v1",
+        "planEntry": {
+          "label": "nvidia-six-gpu",
+          "parentJob": 15773,
+          "root": "molarium-nvidia-layer-20261113-attempt006",
+          "historyRoots": [
+            "molarium-nvidia-layer-20261113-attempt001",
+            "molarium-nvidia-layer-20261113-attempt002",
+            "molarium-nvidia-layer-20261113-attempt003",
+            "molarium-nvidia-layer-20261113-attempt004",
+            "molarium-nvidia-layer-20261113-attempt005"
+          ]
+        },
+        "parentSlurmState": "15773|NODE_FAIL|0:0",
+        "cancelledUnstartableChildren": [],
+        "collectorJobId": "15785",
+        "capturedAt": "2026-11-13T23:32:02Z",
+        "scope": "Read-only scientific-output preservation; no inference. Original receipts and failed states remain unchanged.",
+        "archive": {
+          "file": "evidence.zip",
+          "bytes": 36219907,
+          "sha256": "2abc7f17d4fd82e9acd6ad8fe21f7c7b466bbfbb192ae121f0d0e4fe54c19275",
+          "files": [
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt001/chrome-release-metadata.json",
+              "bytes": 10431,
+              "sha256": "4681648fd51a4f1c4f189d64a79f45556d7689adbcfefa0bdf2f8958ca1704e1"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt001/job-submissions.json",
+              "bytes": 304,
+              "sha256": "9ef850797d29c9ff8cbdc9c26f0e4b7c2c47b902b9bdef8cc16e2538577a8424"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt001/logs/preflight-15732.log",
+              "bytes": 243,
+              "sha256": "2b08c5cf5b34d25b2e0c2d794ae263c52569b727dbfed15c26b89c1060b16a27"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt001/setup-receipt.json",
+              "bytes": 577,
+              "sha256": "0c464a547e3dfc8b4a46e78dc9acba46e9f791872b0ac1191f350bc5c9dcab17"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt001/source-manifest.json",
+              "bytes": 21311,
+              "sha256": "b52aee19e16301b210dbc861605189f1bb46876947e8b0a4d164302fc326f569"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt002/chrome-release-metadata.json",
+              "bytes": 10431,
+              "sha256": "4681648fd51a4f1c4f189d64a79f45556d7689adbcfefa0bdf2f8958ca1704e1"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt002/job-submissions.json",
+              "bytes": 304,
+              "sha256": "aa6d991f06a2860a45d86c14733b39f8e19b130b2aa7ae7398d961cc2dcdb9a3"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt002/logs/preflight-15736.log",
+              "bytes": 1006,
+              "sha256": "fb002f5865aad10ea361d1e53b25df2961848c2a28dfae8275e7fd80f58f3d53"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt002/setup-receipt.json",
+              "bytes": 1110,
+              "sha256": "0c5d5aa86e06deef0e9885bcf0c639dfbfc3836d9292c1e7510de70d24a64532"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt002/source-manifest.json",
+              "bytes": 21311,
+              "sha256": "bde55ac7e9c9bb8342d2b333a78a7d613badbbc0a4b2d56e76aed69603264721"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt003/job-submissions.json",
+              "bytes": 304,
+              "sha256": "9c4c37916aca7427ee251ead81bec7be366c7e83f3c2c4b57d40f867507a38f5"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt003/source-manifest.json",
+              "bytes": 21311,
+              "sha256": "a1e34b5daf31674d459aba452b7c8c6f6362be155e9618672a7938417ba51815"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt004/job-submissions.json",
+              "bytes": 304,
+              "sha256": "b5e420d8d1891fb1d5b8185c9b628190ff910daa6960473fb3adf00eb5df38ab"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt004/logs/preflight-15756.log",
+              "bytes": 5695,
+              "sha256": "995460d5e9c49a94269b6c452577e0fa31e18916a6939a59a1c521f66ec93f3e"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt004/setup-receipt.json",
+              "bytes": 691,
+              "sha256": "e942de2e0adcce07cd4d9cb7f0fb851daee1208574f1520e778ce8eed866e617"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt004/source-manifest.json",
+              "bytes": 21311,
+              "sha256": "a1e34b5daf31674d459aba452b7c8c6f6362be155e9618672a7938417ba51815"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt005/job-submissions.json",
+              "bytes": 304,
+              "sha256": "c504ef92d45167421083cb6edf3679dcb03e576c3ce56dc7ffaf436df90de943"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt005/logs/preflight-15761.log",
+              "bytes": 2532,
+              "sha256": "ee8c93fa380bf0b6f52809ad102abe76228b865760286a46dd5f0706ad8f7d1a"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt005/setup-receipt.json",
+              "bytes": 1144,
+              "sha256": "a7f931fc5325872955f48112a13fa7d1d20e41b67caa0805ae2cb4e5cf4c8447"
+            },
+            {
+              "path": "history/molarium-nvidia-layer-20261113-attempt005/source-manifest.json",
+              "bytes": 21311,
+              "sha256": "d32c2d384ef50eb7b3bb4a2bf3315a75be6857b10c66b326ada9a84a4488268e"
+            },
+            {
+              "path": "job-submissions.json",
+              "bytes": 304,
+              "sha256": "bf560579dfaffc51da73167e814e6e23c4b501e127d9d1b9d7c2813317fca6cb"
+            },
+            {
+              "path": "logs/preflight-15772.log",
+              "bytes": 889,
+              "sha256": "7ed9a379f7345eafb201246e0dd3b2bd236b6c09006e5096af7daf0566e38e14"
+            },
+            {
+              "path": "preservation-script.py",
+              "bytes": 3787,
+              "sha256": "d07e1ea6c9c094af449d100d7264a1a03deea124de7cfe048142b0602bbab87e"
+            },
+            {
+              "path": "runtime-gap.txt",
+              "bytes": 174,
+              "sha256": "fe6e1fbf6b96282ca2f4712be30cb45a5fdbd5b531e6d505dbb66d19d0678257"
+            },
+            {
+              "path": "setup-receipt.json",
+              "bytes": 822,
+              "sha256": "1ab023202e62bef76a194bff4aa9cc3e4333a98c8da8399e9df8856a23690e15"
+            },
+            {
+              "path": "source/chrome-wrapper.sh",
+              "bytes": 315,
+              "sha256": "c5305259e6529e29d7cf65029b52cd28a051e492a51391d14333c3956013f651"
+            },
+            {
+              "path": "source/fixtures/original/fixtures.bin",
+              "bytes": 9934848,
+              "sha256": "0594761bb4db4c00d3f541bb333cb47d7c5149fadd2b1ee6a4b29c25ea565066"
+            },
+            {
+              "path": "source/fixtures/original/manifest.json",
+              "bytes": 7863,
+              "sha256": "79a83f97a4bcba28033b940107daebf93bd359ae6e0f04057d800ff72516ec2a"
+            },
+            {
+              "path": "source/fixtures/precision/fixtures.bin",
+              "bytes": 27158576,
+              "sha256": "14088942b7c16e8ee6981d53afd14cbd4868de40159b7dfe2b5ce9de038efbf2"
+            },
+            {
+              "path": "source/fixtures/precision/manifest.json",
+              "bytes": 39658,
+              "sha256": "fc84fc515427b9021e4301b075315b1cf82ce2c761c99d373389fda0add7c4e2"
+            },
+            {
+              "path": "source/folding/comparison/transition-kernel-probe.mjs",
+              "bytes": 12689,
+              "sha256": "4f26f64ba521b87090d19f021503d25bb17d0ee13d20651e03c8f65cbdf0931d"
+            },
+            {
+              "path": "source/gpu.sh",
+              "bytes": 1173,
+              "sha256": "1e56348e0fa3d516ab376d25a3dc8769e1102368c0e943f82306c4bc7e62b61a"
+            },
+            {
+              "path": "source/scripts/cofold-transition-nvidia.browser.mjs",
+              "bytes": 9198,
+              "sha256": "02f0422e39d4ef52dfd664acec1cb5c1fcb6ee90ff832407326d247db2c8d783"
+            },
+            {
+              "path": "source/scripts/headless-chrome.mjs",
+              "bytes": 6065,
+              "sha256": "b55a1197a5c2d2a112ea0b46d233b32a1e7aa7e1c5f7c06f32217ea9c9b19d13"
+            },
+            {
+              "path": "source/scripts/local-test-server.mjs",
+              "bytes": 1385,
+              "sha256": "5244ca3115b8c9fcc5f277cf5b56cbd15e1e6bc193418a26093ced7935fbb991"
+            },
+            {
+              "path": "source/scripts/web-bundle-dependencies.mjs",
+              "bytes": 2607,
+              "sha256": "08d473ccb809fbc7938f375ca1d990934d8fa1ceb8c3331d2bb91a467acbd4bf"
+            },
+            {
+              "path": "source/setup.py",
+              "bytes": 2117,
+              "sha256": "bac7e7ee273377954b0748de236c4edb521c8cc927aa4a6fc96330b4f308d5a3"
+            },
+            {
+              "path": "source/setup.sh",
+              "bytes": 210,
+              "sha256": "e5e3d05cf20575c8e0841ba88099203c1245a683d65d14791f2c7adb3b246106"
+            },
+            {
+              "path": "source/source-manifest.json",
+              "bytes": 21311,
+              "sha256": "537faada3abc1257c1b7e908138c50ef16b72270631d9923549610849f8b4d6e"
+            },
+            {
+              "path": "source/vendor/localfold/UPSTREAM.json",
+              "bytes": 35280,
+              "sha256": "2fa2dc96ff95ffe6eb0ef19377a17c7697d8708c71d7eef662ffc036a20a55b7"
+            },
+            {
+              "path": "source/vendor/localfold/cpu/af3/confidence/confidence.js",
+              "bytes": 27721,
+              "sha256": "29581c85d390a6403e8afbc10b11fedc9d0afdd754eb24fb2ab261fc60b54fee"
+            },
+            {
+              "path": "source/vendor/localfold/cpu/af3/confidence/ptm.js",
+              "bytes": 6630,
+              "sha256": "a2373384bb3def4fc0972aec197fdf1ccb48c08069344a6e8254653c970ad779"
+            },
+            {
+              "path": "source/vendor/localfold/cpu/af3/diffusion/atom-conditioning.js",
+              "bytes": 8024,
+              "sha256": "686886a09996f45b11fe176d5c1af29aeb30ca59132ee44de91ee43b9fc0c066"
+            },
+            {
+              "path": "source/vendor/localfold/cpu/af3/diffusion/atom-encoder.js",
+              "bytes": 37177,
+              "sha256": "442dd5b0e447c5fa0c6c90b08213476be769927de355804636957092be9bf9d5"
+            },
+            {
+              "path": "source/vendor/localfold/cpu/af3/diffusion/diffusion-sampler.js",
+              "bytes": 10587,
+              "sha256": "fa92a7a6d362abbf4c35accc17dedfcab2d93317e3936d05164f2f8d18cf0ae6"
+            },
+            {
+              "path": "source/vendor/localfold/cpu/af3/diffusion/inpaint.js",
+              "bytes": 4049,
+              "sha256": "dd8619351296e3a9bffbaed8b717c5d03ab2f961d2070ff81199969c30578955"
+            },
+            {
+              "path": "source/vendor/localfold/cpu/af3/diffusion/rigid-align.js",
+              "bytes": 7509,
+              "sha256": "66a93209692a72988c06bdeb80f5e8e686a4a04a4c7be38b3b0e6d864a7d0348"
+            },
+            {
+              "path": "source/vendor/localfold/cpu/af3/diffusion/steering.js",
+              "bytes": 6015,
+              "sha256": "c680a6a7aabcd406f3b3c9885998523f058a5718a61fbb370bcff063f47a7647"
+            },
+            {
+              "path": "source/vendor/localfold/cpu/af3/structure/structural-expander.js",
+              "bytes": 8678,
+              "sha256": "038429989a96a8a0850be4f524e625e699bc93b0ad20b5920294f82e07610627"
+            },
+            {
+              "path": "source/vendor/localfold/cpu/af3/trunk/embedder.js",
+              "bytes": 14866,
+              "sha256": "e6dc72333bf802e91e51f040deb31311ec374734e9f21ee5ef15db51093e3684"
+            },
+            {
+              "path": "source/vendor/localfold/cpu/af3/trunk/pairformer.js",
+              "bytes": 23930,
+              "sha256": "17be9b9578d17cecec224558c9b226aab1a69b8af465669971422c11e21d59fe"
+            },
+            {
+              "path": "source/vendor/localfold/cpu/af3/trunk/template.js",
+              "bytes": 21075,
+              "sha256": "c42641f192f5451aab449760a2101d3fe9d8b9299c38a2ca488d739b38968240"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/dialect.js",
+              "bytes": 96251,
+              "sha256": "7a79f76d4703cdb352a800f79a8f89bfe9354dde5d5a5c37239c3a5007858d3d"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/feature-convergence.js",
+              "bytes": 8298,
+              "sha256": "ee1086e6b0e969b9f3e30592bd3e0138d54d6ef0f81c4f46b68bfb8943f6ed9a"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/featurise/boltz2-conformers.js",
+              "bytes": 14385,
+              "sha256": "cfa2908e832ed77fe2fcb46697bdbb2e7ac7054e68a7970786586bcbcb60ac2e"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/featurise/ccd-component.js",
+              "bytes": 19217,
+              "sha256": "dc216fc21b33e21e986993ee7ce34e77f10a33b33676eacee5d218ea87db74dd"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/featurise/chai1-conformers.js",
+              "bytes": 15413,
+              "sha256": "11fccca17d65c85f205543fd6eaa31f2d8e1d866c038558980c1191a762a12d6"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/featurise/constraints.js",
+              "bytes": 13922,
+              "sha256": "575eaa06712bd79dac37d807141cfff2300d31c3b009edaa75a996beed79f0bc"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/featurise/contact-classes.js",
+              "bytes": 2639,
+              "sha256": "92282517af2ed14f51b3b447abbe700446536dc75f2f363d87f335dbd973c549"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/featurise/declared-leaving.js",
+              "bytes": 9049,
+              "sha256": "b550046b2129928a23243d7337ae5407d812bc34589123676900b2ff2b9c0853"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/featurise/featurise.js",
+              "bytes": 100101,
+              "sha256": "a023d99d28a6980543f5341d1e8743cd0294effefc0e0ed800487a5948c187c6"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/featurise/reference-conformers-nucleic.js",
+              "bytes": 25144,
+              "sha256": "a03c8b575cd629d5144b048481d0a2d58aa552fe1c7afab73470f08cef5ed3d8"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/featurise/reference-conformers-unk.js",
+              "bytes": 1450,
+              "sha256": "eba1502b60788f5dd593e29fa45b9617325552cf37a03b0c2146d40b47956a23"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/featurise/reference-conformers.js",
+              "bytes": 21623,
+              "sha256": "0fcf80c4485fb315cc03ad50e2acffd76928ca28995c7f292ac94fab02789f35"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/featurise/standard-components.js",
+              "bytes": 68043,
+              "sha256": "8d37c3e81967318fdf36c2915afff4a3a139ebb8d73e6c50ee5cbc6880d93490"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/featurise/structural-tokens.js",
+              "bytes": 18777,
+              "sha256": "8abb653ec39378b474568a5c05e4cf089d8a19ee968b0972db7abf5106308481"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/featurise/template-features.js",
+              "bytes": 36583,
+              "sha256": "faf2a61dc197af26415cf44968be6ba28b5b945b2a820112d15704f0ea7bfde6"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/featurise/template-fused-features.js",
+              "bytes": 10852,
+              "sha256": "bfdd5b0fb642c3183830923cb189094845e67498781eb97263c483305679dde0"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/msa-draw.js",
+              "bytes": 8695,
+              "sha256": "e9c3facec40585e0ed76de0f916982c4fcab10555eccc323d0d97b01b9447fcc"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/random.js",
+              "bytes": 776,
+              "sha256": "634b1c864cbe3fe4290caf218b05337023e3e2207213bbb7ebe57277118fae47"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/structure/pdb.js",
+              "bytes": 15898,
+              "sha256": "975f2029e177f837b10dfcbef3158497724573ce0e73a981452cee87a5fe720e"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/trunk/distogram-bins.js",
+              "bytes": 593,
+              "sha256": "efd69fd6f5f87810b4edf56cbefc9254754c6942abf1f23064f93525efcfce70"
+            },
+            {
+              "path": "source/vendor/localfold/shared/af3/weights/weights.js",
+              "bytes": 61784,
+              "sha256": "126aaad567134ead6e117ec066be737b208d36a71bd6a90bf9b9360e13678ab3"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/alphafold-fixture.js",
+              "bytes": 29498,
+              "sha256": "296ee2e5b185daacfd5cad54372f1a181c852cffe3dbb2739830cb8ebadd30c5"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/delta-tensor-store.js",
+              "bytes": 6967,
+              "sha256": "f986e835fdc88b8485440d254ee2e3ba08ffc4f8efaa0841d3805f1cd624195c"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/http-tensor-store.js",
+              "bytes": 29997,
+              "sha256": "5b697e0eba82eab776b43faaf5e0c3ecace19b1e874e80e080d71f719db7caae"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/af3.js",
+              "bytes": 118976,
+              "sha256": "84dee8b0ec55e91170af28e322cede04bd6a9715053288e2c49137ef24f5ab73"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/bioemu2.js",
+              "bytes": 425976,
+              "sha256": "e6df6a5fdc63129966da96f0aed0314ea075666c85730f3e34f62f8dff391d5b"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/boltz2.js",
+              "bytes": 125004,
+              "sha256": "3d695148670bbed83ecce567e4ae9e4a97c5aa150ad2cbb72c205879eeff9ec9"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/ef2-fast-300m.js",
+              "bytes": 196819,
+              "sha256": "7ddbead674f90ba86a4001e72829ec5f6ab9ddfd251c50a63a2b592a0003347b"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/esmc-300m.js",
+              "bytes": 47093,
+              "sha256": "0f03ba3fcb5cb97a034e084bce5095558efa70da9f04ce54c09d458686de273a"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/esmc.js",
+              "bytes": 56833,
+              "sha256": "83124cd53b429483899ff22520d009c332e191ff2efe9e86776b293755d16c13"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/esmfold2.js",
+              "bytes": 196819,
+              "sha256": "08e69b825965ff537ca62b9115b6527576469910bedb4adaf8c44bdf65743349"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/index.js",
+              "bytes": 29792,
+              "sha256": "72df48a36de56e5df677fc2ebd6c03ad928e911625cabb2d18e61867c1d73b1d"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/intellifold2.js",
+              "bytes": 121003,
+              "sha256": "40d66fb14ebed78bb6bc2f0c694c4a14fc3b1fad4c0459204da45e7931424763"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/mol1.js",
+              "bytes": 128161,
+              "sha256": "b9ca97d3767ae434c1f472d82ecfa46000ab7c6798de19d9f505eb6d2cda1d10"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/monomer-2.js",
+              "bytes": 66538,
+              "sha256": "182bfbf6e9549178a4735b59222b024288f7a35a4520bc43510f8cdabdd9faa4"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/monomer-3.js",
+              "bytes": 54115,
+              "sha256": "63546a42b6e8c8beb5ead43956540714611a79f1074e4bf79baf38976dfad5df"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/monomer-4.js",
+              "bytes": 54115,
+              "sha256": "05e0e769d9d9141b6dc0abce322e0b6f1724b357ef03f42efd8a83ffc19a4626"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/monomer-5.js",
+              "bytes": 54115,
+              "sha256": "6eb89094cde6f20bee87c1f82ceeb8f6e52349b1e96e05ebd461ef2f40949365"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/monomer.js",
+              "bytes": 80436,
+              "sha256": "464faddf57b64dc9f16082f66da12de50ed94eab84c3c18f1c4649aa00699ad4"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/multimer-2.js",
+              "bytes": 68542,
+              "sha256": "00a38c95c886a55d611284c1c15cc9ca7d0c0b4e873fdd97084989993027e6ae"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/multimer-3.js",
+              "bytes": 68542,
+              "sha256": "c1c14cc7558ad07dd2b1e0320c2f96fc11ba9841e045bbc5ea3b361275aa1daa"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/multimer-4.js",
+              "bytes": 68542,
+              "sha256": "10def3d54312dc97a1fe37e9361055ea86b3e52c3bb7c7eef1d6071d3e63eac7"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/multimer-5.js",
+              "bytes": 68542,
+              "sha256": "632d077de365c88e8e78d363fd16225dc9fa63ce9b9b824c25cdae53982174ea"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/multimer.js",
+              "bytes": 83633,
+              "sha256": "180006aaabd2bf3b2405c40efa3762e06b4314cc22c0c248a07dfad9ce3bc516"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/openbind0.js",
+              "bytes": 118984,
+              "sha256": "52bb27334d1d8c593da908ab13c5cf5e54e37e9dc6206190a0634621aabe9f8f"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/opendde.js",
+              "bytes": 136449,
+              "sha256": "6cb74baa4875f0e115ce32d34c4bee13aa77cd394b9979b7ec0bb71ae342bf13"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/protenix2.js",
+              "bytes": 115434,
+              "sha256": "149353564b412e2198306ebe020b169c04183ae6abf9e7f2f39b80f82eb54c1b"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/manifests/rosettafold3.js",
+              "bytes": 129561,
+              "sha256": "6696ebfb964d28d64184b5bd4156253080f17928dc09e0f03bd69cc162d8fed5"
+            },
+            {
+              "path": "source/vendor/localfold/shared/bundles/script-tensor-store.js",
+              "bytes": 6573,
+              "sha256": "078193ec14acb59f2688cc736449cf680d618df0762fd1e354ed632cf1d5fc8f"
+            },
+            {
+              "path": "source/vendor/localfold/shared/heads/contact-threshold.js",
+              "bytes": 7090,
+              "sha256": "a43a6ad39c5b414f115e991a9ff54d06ff703d9087b91b5638ea50d7c82c859b"
+            },
+            {
+              "path": "source/vendor/localfold/shared/heads/tm-score.js",
+              "bytes": 23558,
+              "sha256": "01e2d073f1d116e6a4d8534014182ed1dc90d6f1c0d1af61f7cc043dd3a4f310"
+            },
+            {
+              "path": "source/vendor/localfold/shared/input/a3m.js",
+              "bytes": 9958,
+              "sha256": "bca35cfb57c2154bcf95a14e3436afd4ee6d47cd7a83ded7176db6568ee36429"
+            },
+            {
+              "path": "source/vendor/localfold/shared/input/chains.js",
+              "bytes": 28527,
+              "sha256": "b3c93bc14ec7b4a9d85fe23a254b7597d56553860af41ae43c1a75238728afc3"
+            },
+            {
+              "path": "source/vendor/localfold/shared/weights/dtype.js",
+              "bytes": 20574,
+              "sha256": "29e0d5038fcde5279b2089c6e3e378bad22420a07c1b9f0c6329f078a3e22460"
+            },
+            {
+              "path": "source/vendor/localfold/shared/weights/float16.js",
+              "bytes": 10140,
+              "sha256": "49d35454447d3c2537a42445e518b672dec6b974411069db8bd1d637d745da80"
+            },
+            {
+              "path": "source/vendor/localfold/shared/weights/weight-pack.js",
+              "bytes": 5801,
+              "sha256": "2c571037e02c1caa5fcf60c6d893d0c884a0f3797ab7102ec6180108db0b5d83"
+            },
+            {
+              "path": "source/vendor/localfold/shared/weights/weight-sources.js",
+              "bytes": 3114,
+              "sha256": "d28ba4ca3d7bf5ad49c183b6f699ba96a9616ec5501d283e71060d4195ef0c23"
+            },
+            {
+              "path": "source/vendor/localfold/web/dev-log.js",
+              "bytes": 11806,
+              "sha256": "00b6ef028bdcfff28c94de4f9da77cda482ca1dc0fac2cb10e3419808686c605"
+            },
+            {
+              "path": "source/vendor/localfold/web/model.js",
+              "bytes": 19297,
+              "sha256": "b4b5319a8d97f3a8878da3b0f7d8309590d92149fd17410ec8242100874bcbb8"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/confidence/confidence.js",
+              "bytes": 43662,
+              "sha256": "0c39ca10561dc2bff5f8fbcafaeb712346a2e464bf280ef5366e32e8b220f3fb"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/diffusion/atom-attention.js",
+              "bytes": 39293,
+              "sha256": "b6c50e376d8aa3597f17efe818d2984c1f2548c75f4e7302d6a52ffdce4d7360"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/diffusion/atom-conditioning.js",
+              "bytes": 11245,
+              "sha256": "f6ee9c8326be23dfa8d725f38a22af968d5518d904b5267cfcf9bd6e927d5695"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/diffusion/atom-encoder.js",
+              "bytes": 37020,
+              "sha256": "2146b9b718320cb26c4b6b0cfb26d4161a127b3693ae6e785582f58c6411ad83"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/diffusion/conditioning.js",
+              "bytes": 22348,
+              "sha256": "df27c1f1f35e3af6a10a7b3f0075ab239586722d78ad5f8ee80f7ed658d3026b"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/diffusion/head.js",
+              "bytes": 19331,
+              "sha256": "f1755f652dd91cb22dacc1e741c718ab529bacf57d6998ce1f003c4400180f92"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/diffusion/sampler.js",
+              "bytes": 13062,
+              "sha256": "8bdf9722a8ab11d3103f3676e3cf51eb0954fe88e7acc23be7800f37d885f7cf"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/diffusion/transformer.js",
+              "bytes": 38037,
+              "sha256": "b56a4dda83686c3c5ca6bb08c5f651fd804a277ec0906ce66e172c724463c3cf"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/model/fold-batch.js",
+              "bytes": 11763,
+              "sha256": "71da618094e760f9ece53ce5ef50e6b00e6f20e5715d4be9e1ff69e980fd80df"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/model/fold.js",
+              "bytes": 59447,
+              "sha256": "a513b0a124b50877dc24779dea99d6b45a5fb8d208b7518007974d06d62fb9fc"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/trunk/embedder.js",
+              "bytes": 22794,
+              "sha256": "08b76885e7b6ade88acc0cc9d5d3ad21551f57c0a5b24c08679f0e9e11df7e38"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/trunk/grid-attention.js",
+              "bytes": 20485,
+              "sha256": "f15cf228914761213f91cefb6493c670e5c2290cee433ce87c60709be975fcb2"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/trunk/msa-attention.js",
+              "bytes": 9934,
+              "sha256": "341077616f2cc4c1ac509ae805a9bc2b62daa15a45920d117f9319e66e709e38"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/trunk/msa-block.js",
+              "bytes": 9860,
+              "sha256": "4f356264c0b326acb9199d81e023d3fa5fc9ecd1baea9809905af6d2f2eb0f7c"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/trunk/pairformer-block.js",
+              "bytes": 12221,
+              "sha256": "5292103c71916d964ac1bef17a48dfcc671a9cd435fd09ec48937a00999be553"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/trunk/single-attention.js",
+              "bytes": 4858,
+              "sha256": "d07b61a0f04355628ec8850326d8bb6a5f31cef2770a6059266107096a8950d3"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/trunk/template.js",
+              "bytes": 22381,
+              "sha256": "569255db8f7c3acebb6001cc3884c02fd9a09ec6e30edcb60a377afc6f84ccc8"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/trunk/transition.js",
+              "bytes": 8282,
+              "sha256": "a6fedd4ab1b64a9a3614797355b10a23e29c0f0830350ada86665fb40df1f7a1"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/trunk/triangle.js",
+              "bytes": 53726,
+              "sha256": "1cf58a7aa4db5e12e8b22edc8034b8163a43cbe6dcc414ed0c69a7416bf8281a"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/af3/trunk/trunk.js",
+              "bytes": 12796,
+              "sha256": "996aea79b7cc86a58d3ded7a055780d080a88200d1a3ffa2e8861291fa71c9b0"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/heads/confidence.js",
+              "bytes": 8811,
+              "sha256": "425bf4b2e28c98345dcecbffde0d0a2165e4e3c20526446c12dbc445cb7ce102"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/kernels/attention-flash.js",
+              "bytes": 22210,
+              "sha256": "ac0ab3fd6825e9c60ba3a8bb43399bfbabc8ac47d2abf79b56ca79ad085975db"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/kernels/layer-norm.js",
+              "bytes": 17443,
+              "sha256": "8885717d164019b67bb71935d8b6d11d0ed6604558328f447e779a76ea6006d2"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/kernels/linear.js",
+              "bytes": 53719,
+              "sha256": "0d8bf86e005ad5fcaeffbb258917e1958ab126c4297074126f73b211c918fd2c"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/kernels/outer-product-mean.js",
+              "bytes": 16461,
+              "sha256": "48c1c2ba0331d82ba1f70670aa8c86c9f9d13f8010c17d271930736e64c24342"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/runtime/context.js",
+              "bytes": 6313,
+              "sha256": "ee1744ad91e39f494d102aa4ce3b092adc8bde39eb63833a5a9d4bd6fb66c407"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/runtime/elementwise.js",
+              "bytes": 13748,
+              "sha256": "c8afa8438e18d89a3829611e8e7189ec2857d1e8006ba9e37b07249c2b3c9924"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/runtime/execution.js",
+              "bytes": 68474,
+              "sha256": "cb5c22b45e270becfc92db12269bed27140ebdf77058e265ae8ca317f8b1d5fd"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/runtime/int5.js",
+              "bytes": 12438,
+              "sha256": "a18349083b614c592ba7f9bbe512992ba5a45f897b1c4984794024dbc3324091"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/runtime/pad-stride.js",
+              "bytes": 5517,
+              "sha256": "de52602a8c98ed4bc599391c3e10d2345afbeabc0501101b282aa4204de143ab"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/runtime/steps.js",
+              "bytes": 3785,
+              "sha256": "593dbca7e61fdf2b929aac5882dd7178dba1f05f9b4cd698f5068b9c4b5cc3c4"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/runtime/storage.js",
+              "bytes": 31922,
+              "sha256": "832a2ca51f32ee77c02e6f839c594d1a30e76e6d00806983cf73ccd9cba5db3e"
+            },
+            {
+              "path": "source/vendor/localfold/webgl/runtime/transpose.js",
+              "bytes": 2846,
+              "sha256": "38c6c8c38600f4eda18e5612ac759c076fdc026a8b88c06e32959fca7b3be4bb"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/confidence/confidence.js",
+              "bytes": 77898,
+              "sha256": "0f4ff234ecf2562dcb3d7ab2ed45d2c103d2e1bcdf60c583c732509f0ba6b9cc"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/confidence/opendde-confidence.js",
+              "bytes": 15955,
+              "sha256": "0a929f31fa8c45d5e6dcae91f40c41c336419274ad1c95bb9409e1bd2df3c6e0"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/confidence/opendde-pair-readouts.js",
+              "bytes": 31036,
+              "sha256": "5b16f46b51566e0b5c681a53e0eaaa06b6a8d70776ed48d4b28d7da9dc17de1e"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/diffusion/atom-decoder.js",
+              "bytes": 30710,
+              "sha256": "ea86781d94fe0ee63b92ab70cc0b6bf471aff7f6b32fa648b68be1487c051441"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/diffusion/atom-encoder.js",
+              "bytes": 127491,
+              "sha256": "f19dce35aa3808969e0c4369a56aea74671e4ccb23ad8afa25a2f3529534748c"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/diffusion/diffusion-conditioning.js",
+              "bytes": 55402,
+              "sha256": "1682b9c9ecdd25dd595fc2091ebc36e7632099342ce580384fa3196a7e429e41"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/diffusion/diffusion-head.js",
+              "bytes": 37909,
+              "sha256": "066bdf48ec34a610e623370a0fbb16272107e60788892c263765600f6b6726a8"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/diffusion/diffusion-sampler.js",
+              "bytes": 8295,
+              "sha256": "b50622b677275fc9f4b7e61e3445ce98d2ebd09550814722c3bbf1d9d2c00238"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/diffusion/diffusion-transformer.js",
+              "bytes": 194223,
+              "sha256": "5e82da330e0b83599782799b9f6de6d0efbf5ff52d0e266c09d7aad3d92dd630"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/fold.js",
+              "bytes": 94555,
+              "sha256": "c0b2030abb3e09d58786c403e818c0f4f79274c1981cf7b2228cf07c3fa7dd7d"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/structure/structural-expander.js",
+              "bytes": 15004,
+              "sha256": "df1de9382c224a9b8a53a516450377f4408cecca1e04532c526b9a2ef89f9e3a"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/embedder.js",
+              "bytes": 45954,
+              "sha256": "12a044eb4c8285d377f1d65be5c6479acde84f59a942bde34b0d73cac2e92882"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/grid-attend-race.js",
+              "bytes": 26523,
+              "sha256": "af470dd26a1a8880a6701dda1f5d5342352f5b4e6b5d0e3676dc47919e52729a"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/grid-attention-matrix.js",
+              "bytes": 20463,
+              "sha256": "e0cad58463e25a7c2ff109e92806c9d0d865ce3eda23692d465b3981c724f5f3"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/grid-attention.js",
+              "bytes": 75244,
+              "sha256": "85f95b4b292d1a2509c173d33e7e9b2d0a8f40a6762e2c9c65d577a00bdca69d"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/grid-project-matrix.js",
+              "bytes": 12367,
+              "sha256": "e051399e6acc4baa8ea0d5c48d936754c014ac14e164b91609e9ca94a4f81bad"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/msa-attention.js",
+              "bytes": 25675,
+              "sha256": "e32923a795cf6fa3c388cfb61fe79bae93d3724739a5edb62c2f8b33c09e3ef4"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/msa-stack.js",
+              "bytes": 43365,
+              "sha256": "cd65f5bed55f60967403b1dc9dc00bc6a1ce829ef4e943008f794ba4a9c0c316"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/outer-product-mean.js",
+              "bytes": 32553,
+              "sha256": "c50a8f7d87ec5684a4ef89fc02c25af7bd21128e5e361d677d0fbff5962a6bee"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/pair-track.js",
+              "bytes": 79124,
+              "sha256": "025e91eb72c8ec1fb9768622942ad15be0e08d7cdeed022a9ad0873ffd301803"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/pair-width.js",
+              "bytes": 3124,
+              "sha256": "5a4db05741276b9112b59bc22a3064d45462118cd82f3e726056184942efeed8"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/pairformer-block.js",
+              "bytes": 67481,
+              "sha256": "35d55993d59cb24a745eed724114679d4475df2d6eb1aaf141ce82bee5a51f77"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/sequential-groups.js",
+              "bytes": 3383,
+              "sha256": "8049d39a198ccdd0a3c5d704f5f835275c8923a2abe0251fddd1d6e009383749"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/single-attention.js",
+              "bytes": 27857,
+              "sha256": "e6dc09fc9befdd9372b9333cda22c90dba9cfcda3a3fe9c8637141baddcf2280"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/template.js",
+              "bytes": 56783,
+              "sha256": "ae601deedea39d814f35463820c3639bc91f32dd74f5eb31d49958c666487045"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/transition.js",
+              "bytes": 71448,
+              "sha256": "49c02501cbcd3011745f3863a2e0110f03888c055bfb8a823028c3fe8a566ff4"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/triangle.js",
+              "bytes": 7155,
+              "sha256": "528f4807310e724523e21ec9d8f46f2dafb6adf16edca070c0494088b33f33b0"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/trunk/trunk.js",
+              "bytes": 38195,
+              "sha256": "271ff5e2562b247db409eaea397f9965b8653d59580ba616bffcac9c706e11f3"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/weights/device-weights.js",
+              "bytes": 5848,
+              "sha256": "eb00eb50d0581ca3a722e447e99366c0e35f176466120dab6f8521eff1d34b94"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/af3/weights/pair-track-device-weights.js",
+              "bytes": 20081,
+              "sha256": "d88002c6927a30ec8975a2fac52c4f33214854fc6f59141a69eade575c4e15de"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/kernels/attention-geometry.js",
+              "bytes": 9841,
+              "sha256": "775c1c718518f8d930e6e63fbc286c5d46e238c9b25b7ce2aad4b32e8b2d4ff7"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/kernels/attention-matrix.js",
+              "bytes": 23364,
+              "sha256": "644852a8ab68b7a9e92b2563d69611f08a745b01f4f6c4fbca8c8545f8145b7a"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/kernels/attention.js",
+              "bytes": 136820,
+              "sha256": "745ea3ac6263140382b87bb46bd632f63bd3a3d90f0736970db90af4a6c56032"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/kernels/matrix-linear.js",
+              "bytes": 45886,
+              "sha256": "f5c5563d532ac1cdf09ec0038964aaa2df7c7125bd997cde628f21e804aa17cd"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/kernels/outer-product-mean.js",
+              "bytes": 90936,
+              "sha256": "6e2806f1ca92a4e7a80757ac60324124e5162fc9b20eeca40e43e68339405ad8"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/kernels/triangle/project-matrix.js",
+              "bytes": 18621,
+              "sha256": "033b89e33ec6a95567296d071ff635069490a71a744787e6e46c45415c402f96"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/kernels/triangle/shaders.js",
+              "bytes": 57904,
+              "sha256": "48535e5337dee345767bda0c6a9bbda09ae01fd3c82c2b0b8728056150a5fa54"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/kernels/triangle/types.js",
+              "bytes": 2678,
+              "sha256": "23185a5a1516cf5e0689abd5b94376a81d4810ff69905dac6283cfabacf9421d"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/kernels/triangle/webgpu.js",
+              "bytes": 8526,
+              "sha256": "c5011740e7cced814bf0d868c01fd4f42978d29fee3da5df689f373cddb4554a"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/kernels/triangle/weights.js",
+              "bytes": 8021,
+              "sha256": "145817d5931fd6f24c5668c41d35239f1ca30451016c50b5794d23c34b1529b8"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/kernels/vector-gemm-block.js",
+              "bytes": 2212,
+              "sha256": "20bc914ff7ffa4e95c852221a1435b76e1debb634ce29308669d819a6208bac4"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/runtime/abort.js",
+              "bytes": 1722,
+              "sha256": "cff2cc9f6655078aca81e1fcef4f30716cbd153912a9c0e779f22d0d2fe80eb4"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/runtime/allocator.js",
+              "bytes": 9572,
+              "sha256": "8dc473a9b798ae1183bcdc8b8db7bce89b1fdf5cfea0ce5282cb02d7c5a4d44f"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/runtime/device-memory.js",
+              "bytes": 10930,
+              "sha256": "31b0dd735a8dfeba315fd3597b65351cf4a039294345dfda6e95f89b9097a64d"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/runtime/device-pack.js",
+              "bytes": 8717,
+              "sha256": "56de2a9f6168d0ac3ecb81eb54a2592dcefafc7b82211c97bea3b18df400092e"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/runtime/device-profile.js",
+              "bytes": 112972,
+              "sha256": "4574a8883e4eb4a08a60647f47d07d29739c9c495097a50cd0c560417b566db3"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/runtime/device.js",
+              "bytes": 9122,
+              "sha256": "dc218d6b964e4bc6a2540d0bc3dc96c7e546c5d0c77b1f4ee64de9dc57c0f9ec"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/runtime/execution.js",
+              "bytes": 38515,
+              "sha256": "6967d0e4d0762e61e3f30b03d39280e82933c53a0f317a83a2a0be068621d595"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/runtime/occupancy.js",
+              "bytes": 6960,
+              "sha256": "c1162caa23367515af103d47809d328e0903c647e28d7e25b6b4d303806ecccf"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/runtime/pipeline-cache.js",
+              "bytes": 24188,
+              "sha256": "cf6a350c7dcce30764c8375fdcb6be2c1967755e10ef78424353e3b690c99b15"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/runtime/queue-pacing.js",
+              "bytes": 9856,
+              "sha256": "f099ab028f8b3ebb2e92bfe799836332b9a3f908528e6cca7f8f081e11761dc4"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/runtime/resident.js",
+              "bytes": 20033,
+              "sha256": "32e7abcdae6e94acba37a3fd50b407b616a3bd5e9f9f4681866b8b62a57cd52f"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/runtime/segmented.js",
+              "bytes": 5062,
+              "sha256": "9aa91ba2b0692b1bac370367b6ccf1e7b2d5bf91ec08d0f2759a709540a467a8"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/runtime/shader-source-cache.js",
+              "bytes": 4487,
+              "sha256": "d7704833d2b731c24bc3b94ff053ccae832ab70c9a2c0ea539f151fb668c920b"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/runtime/storage.js",
+              "bytes": 5820,
+              "sha256": "70b93ed034ece0b05856cea53f681db56bec7402417e0af0d3320e979edb291a"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/runtime/validation.js",
+              "bytes": 2414,
+              "sha256": "6cf4071930904e7e2dc8204275a415729fb0499c70842d9dc110e1e49dcbd1c7"
+            },
+            {
+              "path": "source/vendor/localfold/webgpu/weights/quantised-upload.js",
+              "bytes": 41641,
+              "sha256": "9d1e88081d56a1d9f4ed675fa2046e302984d09ef46fbe3dbf8c75645098634f"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "control": "ythdf2",
+      "jobId": 15783,
+      "receiptSha256": "3ab377dc52ce0df9d79f41c5734185b462409b281eb2b3dff6cce538e94b59ca",
+      "receipt": {
+        "schema": "molarium.queued-control-preservation.v1",
+        "planEntry": {
+          "label": "ythdf2-trained",
+          "parentJob": 15783,
+          "root": "molarium-ythdf2-trained-20261113-attempt001"
+        },
+        "parentSlurmState": "15783|NODE_FAIL|0:0",
+        "cancelledUnstartableChildren": [],
+        "collectorJobId": "15789",
+        "capturedAt": "2026-11-13T23:31:59Z",
+        "scope": "Read-only scientific-output preservation; no inference. Original receipts and failed states remain unchanged.",
+        "archive": {
+          "file": "evidence.zip",
+          "bytes": 245871,
+          "sha256": "bbcd52690e02c486260bb630d6dfdf7247453ae3d7bd5cf108233bf36fb58608",
+          "files": [
+            {
+              "path": "job-submissions.json",
+              "bytes": 348,
+              "sha256": "f076d66828c7528eb123394dae39691dc6f47aa286a61a31817034955268389a"
+            },
+            {
+              "path": "logs/preflight-15782.log",
+              "bytes": 291,
+              "sha256": "cd451f7f8cacd84b0e0580146fea4569d0395878e1b335a61abd86361328cc96"
+            },
+            {
+              "path": "preflight.complete",
+              "bytes": 7,
+              "sha256": "2700165975f68815c97d605c56eca8e90d497ade1264b6282401d13fee99ac27"
+            },
+            {
+              "path": "preflight.json",
+              "bytes": 401,
+              "sha256": "1c8ebaede81017a72daea9b5a7250b2e56c044dc2ea1d3e31b4b542a1927ec45"
+            },
+            {
+              "path": "preservation-script.py",
+              "bytes": 3787,
+              "sha256": "d07e1ea6c9c094af449d100d7264a1a03deea124de7cfe048142b0602bbab87e"
+            },
+            {
+              "path": "source/browser-library.json",
+              "bytes": 1192906,
+              "sha256": "7b92f86b370e1d51eafb7e5fe454009243b7056b42145bc66b30ef28c7ccf0f3"
+            },
+            {
+              "path": "source/capture_native_embedder.py",
+              "bytes": 4828,
+              "sha256": "7db6e70eb2faba7fb4e38655edc193521f099963e2965304134c81f02ad83d69"
+            },
+            {
+              "path": "source/capture_native_features.py",
+              "bytes": 12412,
+              "sha256": "a03db03a4bf84b9c7e24f553239f1b55a9cb2a2766155eceab8e4d52f4ec0c79"
+            },
+            {
+              "path": "source/gpu.sh",
+              "bytes": 1099,
+              "sha256": "733cba4ef2e5e5ba8c6c949ae2684ad58e3007f2962123785431c1814ddbeab6"
+            },
+            {
+              "path": "source/inputs/32qy-a1keo/boltz/compound_000.yaml",
+              "bytes": 447,
+              "sha256": "facbbd54d464ac900760a6b692ff5bccf580efcd64d146aea9b7e70b14755c9d"
+            },
+            {
+              "path": "source/inputs/32qy-a1keo/comparison.json",
+              "bytes": 65225,
+              "sha256": "1e1a972e3ab32843114df934b1e840f3d77822f4f7be7624d589e75e59d71fca"
+            },
+            {
+              "path": "source/inputs/32qy-a1keo/msa/colabfold_main.a3m",
+              "bytes": 59874,
+              "sha256": "7bd8c016923fddb4bcad9d1266ae08c030a9014dfb4d5da10703ee3bfefb66bc"
+            },
+            {
+              "path": "source/inputs/32qy-a1keo/openbind-query.json",
+              "bytes": 695,
+              "sha256": "f843a7cfc11cfdd02f3b41b1b1feb0b230a0fe526d7203f7d216151dc8ce0e6b"
+            },
+            {
+              "path": "source/inputs/32qy-a1keo/openbind-standard.yaml",
+              "bytes": 594,
+              "sha256": "a879f98cff68da1eda27ab9a71d12566cec7934e3c0bf09c1911ce7e621969a0"
+            },
+            {
+              "path": "source/inputs/32qy-a1keo/openbind-torch-standard.yaml",
+              "bytes": 731,
+              "sha256": "0657af3977b7133c8b22ff248922d098931541256175820a37c211f468aed364"
+            },
+            {
+              "path": "source/native_run.py",
+              "bytes": 9223,
+              "sha256": "bc5d3bc2c71758f6a07be74324b072269a8d61f836c44cd3159b1bace9d17282"
+            },
+            {
+              "path": "source/preflight.py",
+              "bytes": 1294,
+              "sha256": "597fb127921880e3ed5b07d0b9fd636fb625e1819249103d0457d5019666b341"
+            },
+            {
+              "path": "source/preflight.sh",
+              "bytes": 244,
+              "sha256": "6c86d93b189262eeac30437144b0cef1f633172b0748877cca80f88b63369449"
+            },
+            {
+              "path": "source/references/32qy-a1keo.json",
+              "bytes": 3608,
+              "sha256": "bfd4efe31431ef8fe5359ee51b116626cd3966f85b03c6eafef247957a88a48f"
+            },
+            {
+              "path": "source/source-manifest.json",
+              "bytes": 1417,
+              "sha256": "634ea874e382a9170c9d7901981200438f3156f8fb6fa688988f0b249c006ed8"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

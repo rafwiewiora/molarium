@@ -8,6 +8,16 @@ differences before attributing pose differences to kernels or quantization.
 production CPU/WebGPU against stock native FP32. Full-model numerical agreement
 remains untested.** Production folding mathematics is unchanged.
 
+The [next-stage plan](trunk-audit-plan.json) freezes a four-cycle stock-native
+trunk observation and 32 production-GPU seam comparisons with predeclared
+tolerances. Its CPU preflight matched all [38 native source pins](trunk-native-source-pins.json).
+The GPU measurements remain queued; this plan is not a result. The
+[tools and timing correction CAP-01](../../folding/comparison/README.md)
+document the exact scope and preserve historical receipts. Two
+[Spot startup failures](spot-startup-failures.json) occurred before either task
+script began; their unchanged science payloads were resubmitted in separate
+immutable attempts through the regular/L4 managed queues.
+
 Two diagnostic systems were selected before capture: STARD4 (9T51), with
 0.48 Å seed-paired mean browser/native ligand disagreement, and YTHDF2 (32QY),
 with 13.85 Å disagreement. Selection uses the observed discrepancy; these are

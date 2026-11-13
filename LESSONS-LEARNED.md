@@ -190,3 +190,17 @@ isomeric chemical identity certificate does not certify equality of these inputs
 Preserve actual processed strings and arrays, enumerate chemical-map ambiguity,
 and introduce separate controls before attributing pose disagreement to a kernel.
 Reference conformers are generated inputs, not experimental bound coordinates.
+
+## A stage result needs its own numerical and timing boundary
+
+The [trained atom-feature comparison](reviews/cofold-feature-parity-2026-11-13/trained-target/README.md)
+passes at exact generated inputs and trained FP32 weights. It qualifies that
+stage, not the projected trunk, denoising, quantization or pose accuracy. Capture
+the actual stochastic inputs at the next stage instead of assuming equal seed
+integers produce equal random tensors. Preserve intermediate outputs so a
+failure can be localized without changing the tolerance.
+
+CAP-01 also exposed feature receipts whose wall-clock start was created after
+imports while elapsed time included imports. Bind the clocks to one start and
+state the measured scope; retain the old receipts. Synchronized module timings,
+CLI elapsed time and instrumented seam captures answer different questions.

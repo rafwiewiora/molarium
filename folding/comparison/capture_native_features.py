@@ -120,6 +120,7 @@ def main(observer=None, scope=None):
     a = p.parse_args()
     a.output.mkdir(parents=True)
     started = time.monotonic()
+    started_at = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
     spec = json.loads((a.inputs / 'comparison.json').read_bytes())
     import torch
     assert os.environ.get('SLURM_JOB_ID') and torch.cuda.is_available() and torch.cuda.device_count() == 1
@@ -151,7 +152,9 @@ def main(observer=None, scope=None):
     from openfold3.run_openfold import cli
     record = {'schema': 'molarium.native-feature-capture-receipt.v1', 'status': 'running',
               'scope': scope or 'Feature-only capture; no model forward, sampling, confidence evaluation or pose prediction.',
-              'startedAt': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+              'startedAt': started_at,
+              'receiptCreatedAt': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+              'elapsedSecondsScope': 'From output-directory creation, including imports, validation, CLI setup and the requested capture.',
               'scriptSha256': digest(__file__), 'inputSha256': digest(a.inputs / 'comparison.json'),
               'inputResolverSha256': digest(inspect.getsourcefile(resolved_input_files)),
               'referenceNativeReceiptSha256': digest(a.reference_receipt),
