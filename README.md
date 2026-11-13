@@ -454,7 +454,11 @@ for the limits of these engineering checks. Each prediction accepts one
 protein and at most one noncovalent ligand (150 heavy atoms); the library workflow
 queues multiple such predictions. Native comparisons are now available for both
 cofolding models. OpenBind's observed protein disagreement remains unresolved;
-these results do not establish numerical parity or experimental accuracy.
+these results do not establish numerical parity. A separate
+[three-complex crystal-reference reconstruction check](reviews/cofold-crystal-reference-2026-11-13/README.md)
+reports every seed: browser Boltz recovers JQ1 and benzene placements but misses
+FK506; browser OpenBind misses all three systems in this single-sequence protocol.
+These old complexes may occur in training data and are not a held-out accuracy estimate.
 Protein multimers,
 templates, nucleic acids and covalent cofolding are not exposed yet.
 See [integration evidence and follow-up work](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md).

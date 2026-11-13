@@ -1,0 +1,1586 @@
+{
+  "schema": "molarium.native-assembled-cohort.v1",
+  "status": "complete",
+  "method": "openbind0",
+  "protocol": "torch-standard",
+  "settings": {
+    "steps": 200,
+    "recycles": 3,
+    "precision": "32-true",
+    "kernelBackend": "upstream PyTorch dense"
+  },
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "inputSha256": "f445c5778152362834f1e33f8267243e18d837a5b003c1c723d146901032e9ab",
+  "checkpointSha256": "bd43301c011d5f87580d3e8b548658869433e4488399feb03035ba248f8e29e4",
+  "runnerSha256": null,
+  "environment": {
+    "gpu": "Mixed; per-output source environments retained"
+  },
+  "outputs": [
+    {
+      "path": "part-000/models/compound_000/seed_0/compound_000_seed_0_sample_1_model.cif",
+      "sha256": "1f4a847427430275e21aa30e8f9735efaae339c7ab78b889817f8bcb009f5386",
+      "bytes": 65206,
+      "sourceAttempt": "part-000",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-000/models/compound_000/seed_1/compound_000_seed_1_sample_1_model.cif",
+      "sha256": "cffd032c55c2ca36528cf910a0da7ae873481e7dc46af5b860bacb7243e8ee7f",
+      "bytes": 65206,
+      "sourceAttempt": "part-000",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-000/models/compound_000/seed_2/compound_000_seed_2_sample_1_model.cif",
+      "sha256": "8ea52c4faf26b6fbe968530c412bb26cf8436f004a58273ae4f169754768a688",
+      "bytes": 65810,
+      "sourceAttempt": "part-000",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-000/models/compound_001/seed_0/compound_001_seed_0_sample_1_model.cif",
+      "sha256": "0026e476e089d26f5e20c8acfad878f6668bcb46e63ff719725ef3784b883df6",
+      "bytes": 67428,
+      "sourceAttempt": "part-000",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-000/models/compound_001/seed_1/compound_001_seed_1_sample_1_model.cif",
+      "sha256": "e1e6d40b3707d70fdd67cc8ef8ff89333f3f8ece469a4cadd07bfc6040f729b7",
+      "bytes": 66214,
+      "sourceAttempt": "part-000",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-000/models/compound_001/seed_2/compound_001_seed_2_sample_1_model.cif",
+      "sha256": "e33838b14d765aefd5e74f7d21460e75ee3157011cc23449f3d33146983e0641",
+      "bytes": 66821,
+      "sourceAttempt": "part-000",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_002/seed_0/compound_002_seed_0_sample_1_model.cif",
+      "sha256": "ab36ffb23c334887428a06d613c25735d57bc53a3fea6fb5f6e0720a446a8b90",
+      "bytes": 67202,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_002/seed_1/compound_002_seed_1_sample_1_model.cif",
+      "sha256": "8d00b14818163a92edbe6f3f79222440262f3c85f611d745e953f8c986c6c084",
+      "bytes": 67202,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_002/seed_2/compound_002_seed_2_sample_1_model.cif",
+      "sha256": "4e6c28efef3ac15812d39801ac390624a3e581d261ae594c0eef7f91f1a040a4",
+      "bytes": 67812,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_003/seed_0/compound_003_seed_0_sample_1_model.cif",
+      "sha256": "601612ba5ffa8a916499a472db6a3697e87bf46fda94f3fc1984daa78cb75109",
+      "bytes": 67710,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_003/seed_1/compound_003_seed_1_sample_1_model.cif",
+      "sha256": "afbbcae3f8004b86963b5893ac80fbd3689651e821e2bdcf4463f9b9ab5fa5a5",
+      "bytes": 67710,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_003/seed_2/compound_003_seed_2_sample_1_model.cif",
+      "sha256": "2e0c9002767480015106f4a2bec6bc9e07d189e7b3cf50dbafc7d86137034ea1",
+      "bytes": 66482,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_004/seed_0/compound_004_seed_0_sample_1_model.cif",
+      "sha256": "2162c1c20803cfde25db33dd04d1794338f5d078c19a84fddb03a446947fd817",
+      "bytes": 67863,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_004/seed_1/compound_004_seed_1_sample_1_model.cif",
+      "sha256": "df9336c6a83070586cad8dc8d81b238192b03a865f72079385568aca74d8890f",
+      "bytes": 67248,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_004/seed_2/compound_004_seed_2_sample_1_model.cif",
+      "sha256": "2db70d183c884bbd712cbd50c289957d840403df8ff97a683cdb03d2347769b0",
+      "bytes": 66633,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_005/seed_0/compound_005_seed_0_sample_1_model.cif",
+      "sha256": "e35785f4eacac34080f82b825f26a67547dde664a530b30de633c717eb12104b",
+      "bytes": 67348,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_005/seed_1/compound_005_seed_1_sample_1_model.cif",
+      "sha256": "eff4e9090caec16ea4f47f8b47d0285f2bfec5a85e4a4b8c3cfc99f1f3674539",
+      "bytes": 67964,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_005/seed_2/compound_005_seed_2_sample_1_model.cif",
+      "sha256": "ecc11e0d1adb201ae1fdfa4dcbd916426bc34963366fca01ec7d50f7c608458f",
+      "bytes": 66732,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_006/seed_0/compound_006_seed_0_sample_1_model.cif",
+      "sha256": "b0f869a2a3edb8d9256918434ea436e50db0064b41abb6541eeddcdc2b460de2",
+      "bytes": 66232,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_006/seed_1/compound_006_seed_1_sample_1_model.cif",
+      "sha256": "bccee9ee0fe99c363a9e18b403f062efa8adb627161fc95f760656a17292c05b",
+      "bytes": 66232,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_006/seed_2/compound_006_seed_2_sample_1_model.cif",
+      "sha256": "483b29d22a51991ff53414424b326702858326eebada232b9012709d7ad1a6c7",
+      "bytes": 66844,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_007/seed_0/compound_007_seed_0_sample_1_model.cif",
+      "sha256": "c36da45a17495ad0640a42948436ae4cf8d9612ed53d0ed4466843eb126965da",
+      "bytes": 66592,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_007/seed_1/compound_007_seed_1_sample_1_model.cif",
+      "sha256": "d66fd0cf306c254a3e8eb224b30a1b10f0be266843ebb1afd6bd39d094590acb",
+      "bytes": 67812,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_007/seed_2/compound_007_seed_2_sample_1_model.cif",
+      "sha256": "bd0b9cdcf391ced45655abdfe7a761b65db489ca521e1d0e73941338196b9724",
+      "bytes": 67812,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_008/seed_0/compound_008_seed_0_sample_1_model.cif",
+      "sha256": "fa2d1019a3d98b33c50591cfd55f7cf7e448b3237128056a3543eca2e048d4e5",
+      "bytes": 66340,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_008/seed_1/compound_008_seed_1_sample_1_model.cif",
+      "sha256": "7bf460073394bc7cf6d78567743b7ebd04fb43e1250c461ca2e0f0d84c047ccc",
+      "bytes": 67556,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_008/seed_2/compound_008_seed_2_sample_1_model.cif",
+      "sha256": "41224399fe885dde7ea799581f555779e9b53a5920a763d923935de5bf2a9c61",
+      "bytes": 65124,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_009/seed_0/compound_009_seed_0_sample_1_model.cif",
+      "sha256": "02d1866b3f54e1d5b68f39444cb5bb3e0dc6f3215c16fb627f70d42a45e4f0d4",
+      "bytes": 66821,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_009/seed_1/compound_009_seed_1_sample_1_model.cif",
+      "sha256": "55c8db47b7579afca2fda896e0bd4c24ccd4292a7c6f42b25263ec70bf2d2b9b",
+      "bytes": 66214,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_009/seed_2/compound_009_seed_2_sample_1_model.cif",
+      "sha256": "d695e14de3ed20f6e4245312721bd3e6501d3386fc29539bd8afbb48c8f059e2",
+      "bytes": 65607,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_010/seed_0/compound_010_seed_0_sample_1_model.cif",
+      "sha256": "478973e4b7abc69ddcad63bcf7309d9198e0715b6817b264d69e818abfc8d372",
+      "bytes": 66948,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_010/seed_1/compound_010_seed_1_sample_1_model.cif",
+      "sha256": "d830eaf96591f3fadfa9bc9e7e382492c9d6b8429ca45cf6fb1c7a36d2224d15",
+      "bytes": 66340,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_010/seed_2/compound_010_seed_2_sample_1_model.cif",
+      "sha256": "b15f4cc8ba2c8376af683bb0b68432298ac26ff312ec35d11359312eb1a62eea",
+      "bytes": 66340,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_011/seed_0/compound_011_seed_0_sample_1_model.cif",
+      "sha256": "79e333221ff504588e3ce92afdcf0b8d96695676a0666209e3b8ff987a590320",
+      "bytes": 66592,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_011/seed_1/compound_011_seed_1_sample_1_model.cif",
+      "sha256": "a1ee361cc9ad6a350ca07a472e906772df32ac74d294260f6f299a74bfca515d",
+      "bytes": 65982,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_011/seed_2/compound_011_seed_2_sample_1_model.cif",
+      "sha256": "45145e42605bfb76e652f637de57e8dcbb89f6741976d5b64d3f309e06776e37",
+      "bytes": 67202,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_012/seed_0/compound_012_seed_0_sample_1_model.cif",
+      "sha256": "ba13706a2d5dbd4cdd5f2195e7172eb4765ecc639706d222a8bc98e349aa345e",
+      "bytes": 67940,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_012/seed_1/compound_012_seed_1_sample_1_model.cif",
+      "sha256": "01cb050c6cbf05e1ae94785f3c321482f74e882f19c10f12bfb547cfac5c6125",
+      "bytes": 66718,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_012/seed_2/compound_012_seed_2_sample_1_model.cif",
+      "sha256": "69d20d3fa87c23a3b942beceb41f924f5881ec12427f6d628a650c6da1f947d3",
+      "bytes": 66718,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_013/seed_0/compound_013_seed_0_sample_1_model.cif",
+      "sha256": "d3984fad5c6c125d57fa288e78adf5c9a13d81ebd16ee159d1838cca9a66e721",
+      "bytes": 66844,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_013/seed_1/compound_013_seed_1_sample_1_model.cif",
+      "sha256": "cce5792ac1070c9065437f917cd45e8baf8fd71f64f51b1c692ce062629f7104",
+      "bytes": 66844,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_013/seed_2/compound_013_seed_2_sample_1_model.cif",
+      "sha256": "f62a729198e967c9627b72a4f29b1953104e4da82535e227140b90b9ce455206",
+      "bytes": 66844,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_014/seed_0/compound_014_seed_0_sample_1_model.cif",
+      "sha256": "c266545ca3b04d79e1e784a8db3447465cd28f8ea221f95148b708df9606350d",
+      "bytes": 68293,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_014/seed_1/compound_014_seed_1_sample_1_model.cif",
+      "sha256": "213bbde756d69565e3af8981843f6a4a0708e5bc60f25034ec7290163a1c7f7e",
+      "bytes": 67075,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_014/seed_2/compound_014_seed_2_sample_1_model.cif",
+      "sha256": "8d94c39bedcdd88deb603f76e87bf53a2f22a28b0e636c11ed2013ac839b98b6",
+      "bytes": 66466,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-001/models/compound_015/seed_0/compound_015_seed_0_sample_1_model.cif",
+      "sha256": "c25275d398eac5d624f40c1535ec066d99f7f6c2446165764af255b5b9314956",
+      "bytes": 66107,
+      "sourceAttempt": "part-001",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      }
+    },
+    {
+      "path": "part-002/models/compound_015/seed_1/compound_015_seed_1_sample_1_model.cif",
+      "sha256": "b0133ce54b7843ecb2fd92e87cd15c56c98f28e4f035dbdbf5861d8cda904e31",
+      "bytes": 66718,
+      "sourceAttempt": "part-002",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "NVIDIA L4",
+        "gpuMemoryBytes": 23570219008
+      }
+    },
+    {
+      "path": "part-002/models/compound_015/seed_2/compound_015_seed_2_sample_1_model.cif",
+      "sha256": "b5e8347584c87789a3a7ba7b085c7042e89bff01dbe067c990b4cf88938619f5",
+      "bytes": 66107,
+      "sourceAttempt": "part-002",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "NVIDIA L4",
+        "gpuMemoryBytes": 23570219008
+      }
+    }
+  ],
+  "sources": [
+    {
+      "id": "part-000",
+      "receiptSha256": "0571c5bd1385c6c9589c563c1fc9916e404c9c2e88f536f737c89a49f8d1182b",
+      "inputSha256": "f445c5778152362834f1e33f8267243e18d837a5b003c1c723d146901032e9ab",
+      "originalStatus": "running",
+      "runnerSha256": "9133141a0aa206e17e032850cd8ae6d8a8376ce783f2c30e5aa2d3e29210dea2",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      },
+      "executionConfig": {
+        "torchinductorCompileThreads": "1",
+        "dataModuleArgs": {
+          "num_workers": 0,
+          "num_workers_validation": 0
+        }
+      },
+      "elapsedSeconds": null,
+      "startedAt": "2026-11-12T23:22:09Z",
+      "finishedAt": null,
+      "stoppedOutputInventorySha256": "4a00d6854ee5b7c5a296c08873381efa9ac54b416a18f176881ff64b2722db43",
+      "savedOutputs": [
+        {
+          "index": 0,
+          "compoundId": "ethanol",
+          "queryId": "compound_000",
+          "seed": 0,
+          "source": "part-000",
+          "path": "models/compound_000/seed_0/compound_000_seed_0_sample_1_model.cif",
+          "sha256": "1f4a847427430275e21aa30e8f9735efaae339c7ab78b889817f8bcb009f5386",
+          "bytes": 65206
+        },
+        {
+          "index": 0,
+          "compoundId": "ethanol",
+          "queryId": "compound_000",
+          "seed": 1,
+          "source": "part-000",
+          "path": "models/compound_000/seed_1/compound_000_seed_1_sample_1_model.cif",
+          "sha256": "cffd032c55c2ca36528cf910a0da7ae873481e7dc46af5b860bacb7243e8ee7f",
+          "bytes": 65206
+        },
+        {
+          "index": 0,
+          "compoundId": "ethanol",
+          "queryId": "compound_000",
+          "seed": 2,
+          "source": "part-000",
+          "path": "models/compound_000/seed_2/compound_000_seed_2_sample_1_model.cif",
+          "sha256": "8ea52c4faf26b6fbe968530c412bb26cf8436f004a58273ae4f169754768a688",
+          "bytes": 65810
+        },
+        {
+          "index": 1,
+          "compoundId": "benzene",
+          "queryId": "compound_001",
+          "seed": 0,
+          "source": "part-000",
+          "path": "models/compound_001/seed_0/compound_001_seed_0_sample_1_model.cif",
+          "sha256": "0026e476e089d26f5e20c8acfad878f6668bcb46e63ff719725ef3784b883df6",
+          "bytes": 67428
+        },
+        {
+          "index": 1,
+          "compoundId": "benzene",
+          "queryId": "compound_001",
+          "seed": 1,
+          "source": "part-000",
+          "path": "models/compound_001/seed_1/compound_001_seed_1_sample_1_model.cif",
+          "sha256": "e1e6d40b3707d70fdd67cc8ef8ff89333f3f8ece469a4cadd07bfc6040f729b7",
+          "bytes": 66214
+        },
+        {
+          "index": 1,
+          "compoundId": "benzene",
+          "queryId": "compound_001",
+          "seed": 2,
+          "source": "part-000",
+          "path": "models/compound_001/seed_2/compound_001_seed_2_sample_1_model.cif",
+          "sha256": "e33838b14d765aefd5e74f7d21460e75ee3157011cc23449f3d33146983e0641",
+          "bytes": 66821
+        }
+      ]
+    },
+    {
+      "id": "part-001",
+      "receiptSha256": "e354a0a375565032c116488959b1f7d291247408371f9baa72821400af65b843",
+      "inputSha256": "7a3240d7dd1d50f7ff11a121257bc889e98ef4448c7c0386661e3e60323f7ae0",
+      "originalStatus": "running",
+      "runnerSha256": "37e6d0714a18fc871d9c4b0d1664600f87def889c955f850fa74d079a993b33a",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "Tesla T4",
+        "gpuMemoryBytes": 15642329088
+      },
+      "executionConfig": {
+        "torchinductorCompileThreads": "1",
+        "slurmJobId": "12796",
+        "dataModuleArgs": {
+          "num_workers": 0,
+          "num_workers_validation": 0
+        }
+      },
+      "elapsedSeconds": null,
+      "startedAt": "2026-11-13T01:48:03Z",
+      "finishedAt": null,
+      "stoppedOutputInventorySha256": "759c8e4f7a88aac938729a7702229e613c998bb585e33a808bcb900e96dcee15",
+      "savedOutputs": [
+        {
+          "index": 2,
+          "compoundId": "benzoate",
+          "queryId": "compound_002",
+          "seed": 0,
+          "source": "part-001",
+          "path": "models/compound_002/seed_0/compound_002_seed_0_sample_1_model.cif",
+          "sha256": "ab36ffb23c334887428a06d613c25735d57bc53a3fea6fb5f6e0720a446a8b90",
+          "bytes": 67202
+        },
+        {
+          "index": 2,
+          "compoundId": "benzoate",
+          "queryId": "compound_002",
+          "seed": 1,
+          "source": "part-001",
+          "path": "models/compound_002/seed_1/compound_002_seed_1_sample_1_model.cif",
+          "sha256": "8d00b14818163a92edbe6f3f79222440262f3c85f611d745e953f8c986c6c084",
+          "bytes": 67202
+        },
+        {
+          "index": 2,
+          "compoundId": "benzoate",
+          "queryId": "compound_002",
+          "seed": 2,
+          "source": "part-001",
+          "path": "models/compound_002/seed_2/compound_002_seed_2_sample_1_model.cif",
+          "sha256": "4e6c28efef3ac15812d39801ac390624a3e581d261ae594c0eef7f91f1a040a4",
+          "bytes": 67812
+        },
+        {
+          "index": 3,
+          "compoundId": "aspirin",
+          "queryId": "compound_003",
+          "seed": 0,
+          "source": "part-001",
+          "path": "models/compound_003/seed_0/compound_003_seed_0_sample_1_model.cif",
+          "sha256": "601612ba5ffa8a916499a472db6a3697e87bf46fda94f3fc1984daa78cb75109",
+          "bytes": 67710
+        },
+        {
+          "index": 3,
+          "compoundId": "aspirin",
+          "queryId": "compound_003",
+          "seed": 1,
+          "source": "part-001",
+          "path": "models/compound_003/seed_1/compound_003_seed_1_sample_1_model.cif",
+          "sha256": "afbbcae3f8004b86963b5893ac80fbd3689651e821e2bdcf4463f9b9ab5fa5a5",
+          "bytes": 67710
+        },
+        {
+          "index": 3,
+          "compoundId": "aspirin",
+          "queryId": "compound_003",
+          "seed": 2,
+          "source": "part-001",
+          "path": "models/compound_003/seed_2/compound_003_seed_2_sample_1_model.cif",
+          "sha256": "2e0c9002767480015106f4a2bec6bc9e07d189e7b3cf50dbafc7d86137034ea1",
+          "bytes": 66482
+        },
+        {
+          "index": 4,
+          "compoundId": "caffeine",
+          "queryId": "compound_004",
+          "seed": 0,
+          "source": "part-001",
+          "path": "models/compound_004/seed_0/compound_004_seed_0_sample_1_model.cif",
+          "sha256": "2162c1c20803cfde25db33dd04d1794338f5d078c19a84fddb03a446947fd817",
+          "bytes": 67863
+        },
+        {
+          "index": 4,
+          "compoundId": "caffeine",
+          "queryId": "compound_004",
+          "seed": 1,
+          "source": "part-001",
+          "path": "models/compound_004/seed_1/compound_004_seed_1_sample_1_model.cif",
+          "sha256": "df9336c6a83070586cad8dc8d81b238192b03a865f72079385568aca74d8890f",
+          "bytes": 67248
+        },
+        {
+          "index": 4,
+          "compoundId": "caffeine",
+          "queryId": "compound_004",
+          "seed": 2,
+          "source": "part-001",
+          "path": "models/compound_004/seed_2/compound_004_seed_2_sample_1_model.cif",
+          "sha256": "2db70d183c884bbd712cbd50c289957d840403df8ff97a683cdb03d2347769b0",
+          "bytes": 66633
+        },
+        {
+          "index": 5,
+          "compoundId": "ibuprofen",
+          "queryId": "compound_005",
+          "seed": 0,
+          "source": "part-001",
+          "path": "models/compound_005/seed_0/compound_005_seed_0_sample_1_model.cif",
+          "sha256": "e35785f4eacac34080f82b825f26a67547dde664a530b30de633c717eb12104b",
+          "bytes": 67348
+        },
+        {
+          "index": 5,
+          "compoundId": "ibuprofen",
+          "queryId": "compound_005",
+          "seed": 1,
+          "source": "part-001",
+          "path": "models/compound_005/seed_1/compound_005_seed_1_sample_1_model.cif",
+          "sha256": "eff4e9090caec16ea4f47f8b47d0285f2bfec5a85e4a4b8c3cfc99f1f3674539",
+          "bytes": 67964
+        },
+        {
+          "index": 5,
+          "compoundId": "ibuprofen",
+          "queryId": "compound_005",
+          "seed": 2,
+          "source": "part-001",
+          "path": "models/compound_005/seed_2/compound_005_seed_2_sample_1_model.cif",
+          "sha256": "ecc11e0d1adb201ae1fdfa4dcbd916426bc34963366fca01ec7d50f7c608458f",
+          "bytes": 66732
+        },
+        {
+          "index": 6,
+          "compoundId": "acetaminophen",
+          "queryId": "compound_006",
+          "seed": 0,
+          "source": "part-001",
+          "path": "models/compound_006/seed_0/compound_006_seed_0_sample_1_model.cif",
+          "sha256": "b0f869a2a3edb8d9256918434ea436e50db0064b41abb6541eeddcdc2b460de2",
+          "bytes": 66232
+        },
+        {
+          "index": 6,
+          "compoundId": "acetaminophen",
+          "queryId": "compound_006",
+          "seed": 1,
+          "source": "part-001",
+          "path": "models/compound_006/seed_1/compound_006_seed_1_sample_1_model.cif",
+          "sha256": "bccee9ee0fe99c363a9e18b403f062efa8adb627161fc95f760656a17292c05b",
+          "bytes": 66232
+        },
+        {
+          "index": 6,
+          "compoundId": "acetaminophen",
+          "queryId": "compound_006",
+          "seed": 2,
+          "source": "part-001",
+          "path": "models/compound_006/seed_2/compound_006_seed_2_sample_1_model.cif",
+          "sha256": "483b29d22a51991ff53414424b326702858326eebada232b9012709d7ad1a6c7",
+          "bytes": 66844
+        },
+        {
+          "index": 7,
+          "compoundId": "benzamide",
+          "queryId": "compound_007",
+          "seed": 0,
+          "source": "part-001",
+          "path": "models/compound_007/seed_0/compound_007_seed_0_sample_1_model.cif",
+          "sha256": "c36da45a17495ad0640a42948436ae4cf8d9612ed53d0ed4466843eb126965da",
+          "bytes": 66592
+        },
+        {
+          "index": 7,
+          "compoundId": "benzamide",
+          "queryId": "compound_007",
+          "seed": 1,
+          "source": "part-001",
+          "path": "models/compound_007/seed_1/compound_007_seed_1_sample_1_model.cif",
+          "sha256": "d66fd0cf306c254a3e8eb224b30a1b10f0be266843ebb1afd6bd39d094590acb",
+          "bytes": 67812
+        },
+        {
+          "index": 7,
+          "compoundId": "benzamide",
+          "queryId": "compound_007",
+          "seed": 2,
+          "source": "part-001",
+          "path": "models/compound_007/seed_2/compound_007_seed_2_sample_1_model.cif",
+          "sha256": "bd0b9cdcf391ced45655abdfe7a761b65db489ca521e1d0e73941338196b9724",
+          "bytes": 67812
+        },
+        {
+          "index": 8,
+          "compoundId": "aniline",
+          "queryId": "compound_008",
+          "seed": 0,
+          "source": "part-001",
+          "path": "models/compound_008/seed_0/compound_008_seed_0_sample_1_model.cif",
+          "sha256": "fa2d1019a3d98b33c50591cfd55f7cf7e448b3237128056a3543eca2e048d4e5",
+          "bytes": 66340
+        },
+        {
+          "index": 8,
+          "compoundId": "aniline",
+          "queryId": "compound_008",
+          "seed": 1,
+          "source": "part-001",
+          "path": "models/compound_008/seed_1/compound_008_seed_1_sample_1_model.cif",
+          "sha256": "7bf460073394bc7cf6d78567743b7ebd04fb43e1250c461ca2e0f0d84c047ccc",
+          "bytes": 67556
+        },
+        {
+          "index": 8,
+          "compoundId": "aniline",
+          "queryId": "compound_008",
+          "seed": 2,
+          "source": "part-001",
+          "path": "models/compound_008/seed_2/compound_008_seed_2_sample_1_model.cif",
+          "sha256": "41224399fe885dde7ea799581f555779e9b53a5920a763d923935de5bf2a9c61",
+          "bytes": 65124
+        },
+        {
+          "index": 9,
+          "compoundId": "pyridine",
+          "queryId": "compound_009",
+          "seed": 0,
+          "source": "part-001",
+          "path": "models/compound_009/seed_0/compound_009_seed_0_sample_1_model.cif",
+          "sha256": "02d1866b3f54e1d5b68f39444cb5bb3e0dc6f3215c16fb627f70d42a45e4f0d4",
+          "bytes": 66821
+        },
+        {
+          "index": 9,
+          "compoundId": "pyridine",
+          "queryId": "compound_009",
+          "seed": 1,
+          "source": "part-001",
+          "path": "models/compound_009/seed_1/compound_009_seed_1_sample_1_model.cif",
+          "sha256": "55c8db47b7579afca2fda896e0bd4c24ccd4292a7c6f42b25263ec70bf2d2b9b",
+          "bytes": 66214
+        },
+        {
+          "index": 9,
+          "compoundId": "pyridine",
+          "queryId": "compound_009",
+          "seed": 2,
+          "source": "part-001",
+          "path": "models/compound_009/seed_2/compound_009_seed_2_sample_1_model.cif",
+          "sha256": "d695e14de3ed20f6e4245312721bd3e6501d3386fc29539bd8afbb48c8f059e2",
+          "bytes": 65607
+        },
+        {
+          "index": 10,
+          "compoundId": "phenol",
+          "queryId": "compound_010",
+          "seed": 0,
+          "source": "part-001",
+          "path": "models/compound_010/seed_0/compound_010_seed_0_sample_1_model.cif",
+          "sha256": "478973e4b7abc69ddcad63bcf7309d9198e0715b6817b264d69e818abfc8d372",
+          "bytes": 66948
+        },
+        {
+          "index": 10,
+          "compoundId": "phenol",
+          "queryId": "compound_010",
+          "seed": 1,
+          "source": "part-001",
+          "path": "models/compound_010/seed_1/compound_010_seed_1_sample_1_model.cif",
+          "sha256": "d830eaf96591f3fadfa9bc9e7e382492c9d6b8429ca45cf6fb1c7a36d2224d15",
+          "bytes": 66340
+        },
+        {
+          "index": 10,
+          "compoundId": "phenol",
+          "queryId": "compound_010",
+          "seed": 2,
+          "source": "part-001",
+          "path": "models/compound_010/seed_2/compound_010_seed_2_sample_1_model.cif",
+          "sha256": "b15f4cc8ba2c8376af683bb0b68432298ac26ff312ec35d11359312eb1a62eea",
+          "bytes": 66340
+        },
+        {
+          "index": 11,
+          "compoundId": "phenetole",
+          "queryId": "compound_011",
+          "seed": 0,
+          "source": "part-001",
+          "path": "models/compound_011/seed_0/compound_011_seed_0_sample_1_model.cif",
+          "sha256": "79e333221ff504588e3ce92afdcf0b8d96695676a0666209e3b8ff987a590320",
+          "bytes": 66592
+        },
+        {
+          "index": 11,
+          "compoundId": "phenetole",
+          "queryId": "compound_011",
+          "seed": 1,
+          "source": "part-001",
+          "path": "models/compound_011/seed_1/compound_011_seed_1_sample_1_model.cif",
+          "sha256": "a1ee361cc9ad6a350ca07a472e906772df32ac74d294260f6f299a74bfca515d",
+          "bytes": 65982
+        },
+        {
+          "index": 11,
+          "compoundId": "phenetole",
+          "queryId": "compound_011",
+          "seed": 2,
+          "source": "part-001",
+          "path": "models/compound_011/seed_2/compound_011_seed_2_sample_1_model.cif",
+          "sha256": "45145e42605bfb76e652f637de57e8dcbb89f6741976d5b64d3f309e06776e37",
+          "bytes": 67202
+        },
+        {
+          "index": 12,
+          "compoundId": "salicylic-acid",
+          "queryId": "compound_012",
+          "seed": 0,
+          "source": "part-001",
+          "path": "models/compound_012/seed_0/compound_012_seed_0_sample_1_model.cif",
+          "sha256": "ba13706a2d5dbd4cdd5f2195e7172eb4765ecc639706d222a8bc98e349aa345e",
+          "bytes": 67940
+        },
+        {
+          "index": 12,
+          "compoundId": "salicylic-acid",
+          "queryId": "compound_012",
+          "seed": 1,
+          "source": "part-001",
+          "path": "models/compound_012/seed_1/compound_012_seed_1_sample_1_model.cif",
+          "sha256": "01cb050c6cbf05e1ae94785f3c321482f74e882f19c10f12bfb547cfac5c6125",
+          "bytes": 66718
+        },
+        {
+          "index": 12,
+          "compoundId": "salicylic-acid",
+          "queryId": "compound_012",
+          "seed": 2,
+          "source": "part-001",
+          "path": "models/compound_012/seed_2/compound_012_seed_2_sample_1_model.cif",
+          "sha256": "69d20d3fa87c23a3b942beceb41f924f5881ec12427f6d628a650c6da1f947d3",
+          "bytes": 66718
+        },
+        {
+          "index": 13,
+          "compoundId": "ethyl-benzoate",
+          "queryId": "compound_013",
+          "seed": 0,
+          "source": "part-001",
+          "path": "models/compound_013/seed_0/compound_013_seed_0_sample_1_model.cif",
+          "sha256": "d3984fad5c6c125d57fa288e78adf5c9a13d81ebd16ee159d1838cca9a66e721",
+          "bytes": 66844
+        },
+        {
+          "index": 13,
+          "compoundId": "ethyl-benzoate",
+          "queryId": "compound_013",
+          "seed": 1,
+          "source": "part-001",
+          "path": "models/compound_013/seed_1/compound_013_seed_1_sample_1_model.cif",
+          "sha256": "cce5792ac1070c9065437f917cd45e8baf8fd71f64f51b1c692ce062629f7104",
+          "bytes": 66844
+        },
+        {
+          "index": 13,
+          "compoundId": "ethyl-benzoate",
+          "queryId": "compound_013",
+          "seed": 2,
+          "source": "part-001",
+          "path": "models/compound_013/seed_2/compound_013_seed_2_sample_1_model.cif",
+          "sha256": "f62a729198e967c9627b72a4f29b1953104e4da82535e227140b90b9ce455206",
+          "bytes": 66844
+        },
+        {
+          "index": 14,
+          "compoundId": "dichlorobenzene",
+          "queryId": "compound_014",
+          "seed": 0,
+          "source": "part-001",
+          "path": "models/compound_014/seed_0/compound_014_seed_0_sample_1_model.cif",
+          "sha256": "c266545ca3b04d79e1e784a8db3447465cd28f8ea221f95148b708df9606350d",
+          "bytes": 68293
+        },
+        {
+          "index": 14,
+          "compoundId": "dichlorobenzene",
+          "queryId": "compound_014",
+          "seed": 1,
+          "source": "part-001",
+          "path": "models/compound_014/seed_1/compound_014_seed_1_sample_1_model.cif",
+          "sha256": "213bbde756d69565e3af8981843f6a4a0708e5bc60f25034ec7290163a1c7f7e",
+          "bytes": 67075
+        },
+        {
+          "index": 14,
+          "compoundId": "dichlorobenzene",
+          "queryId": "compound_014",
+          "seed": 2,
+          "source": "part-001",
+          "path": "models/compound_014/seed_2/compound_014_seed_2_sample_1_model.cif",
+          "sha256": "8d94c39bedcdd88deb603f76e87bf53a2f22a28b0e636c11ed2013ac839b98b6",
+          "bytes": 66466
+        },
+        {
+          "index": 15,
+          "compoundId": "trifluoromethylbenzene",
+          "queryId": "compound_015",
+          "seed": 0,
+          "source": "part-001",
+          "path": "models/compound_015/seed_0/compound_015_seed_0_sample_1_model.cif",
+          "sha256": "c25275d398eac5d624f40c1535ec066d99f7f6c2446165764af255b5b9314956",
+          "bytes": 66107
+        }
+      ]
+    },
+    {
+      "id": "part-002",
+      "receiptSha256": "b4d72b4b27e524ef94a4aabfef3e1af5aec87aad2d6797ad03a3e654767aae2b",
+      "inputSha256": "d46d3b3ce8a916acd6a21f5938c39ddecbf41133af7c8372c9b610434c42a1fc",
+      "originalStatus": "complete",
+      "runnerSha256": "37e6d0714a18fc871d9c4b0d1664600f87def889c955f850fa74d079a993b33a",
+      "environment": {
+        "python": "3.12.13",
+        "packages": {
+          "torch": "2.5.1",
+          "numpy": "2.4.6",
+          "rdkit": "2025.9.3",
+          "biotite": "2.0.0",
+          "openfold3": "0.5.1",
+          "pytorch-lightning": "2.6.5"
+        },
+        "cuda": "12.4",
+        "gpu": "NVIDIA L4",
+        "gpuMemoryBytes": 23570219008
+      },
+      "executionConfig": {
+        "torchinductorCompileThreads": "1",
+        "slurmJobId": "12968",
+        "dataModuleArgs": {
+          "num_workers": 0,
+          "num_workers_validation": 0
+        }
+      },
+      "elapsedSeconds": 84.15633789200001,
+      "startedAt": "2026-11-13T06:15:58Z",
+      "finishedAt": "2026-11-13T06:17:22Z",
+      "savedOutputs": [
+        {
+          "index": 15,
+          "compoundId": "trifluoromethylbenzene",
+          "queryId": "compound_015",
+          "seed": 1,
+          "source": "part-002",
+          "path": "models/compound_015/seed_1/compound_015_seed_1_sample_1_model.cif",
+          "sha256": "b0133ce54b7843ecb2fd92e87cd15c56c98f28e4f035dbdbf5861d8cda904e31",
+          "bytes": 66718
+        },
+        {
+          "index": 15,
+          "compoundId": "trifluoromethylbenzene",
+          "queryId": "compound_015",
+          "seed": 2,
+          "source": "part-002",
+          "path": "models/compound_015/seed_2/compound_015_seed_2_sample_1_model.cif",
+          "sha256": "b5e8347584c87789a3a7ba7b085c7042e89bff01dbe067c990b4cf88938619f5",
+          "bytes": 66107
+        }
+      ]
+    }
+  ],
+  "elapsedSeconds": null,
+  "timingBoundary": "Assembled across immutable attempts. Total CLI wall time unavailable if an attempt was interrupted.",
+  "startedAt": "2026-11-12T23:22:09Z",
+  "finishedAt": "2026-11-13T06:19:04Z",
+  "assembledAt": "2026-11-13T06:19:04Z",
+  "note": "This complete cohort does not relabel any interrupted native CLI as complete. Every pose is validated and preserved without inference.",
+  "originalReceiptSha256": "172d3771afeb0bae38e9a52b335a50615d9d8b52fc34cffe5f8ce382f6c81cc7",
+  "redactedFields": [],
+  "forwardTimingSummary": {
+    "count": 48,
+    "medianSeconds": 14.033607387999993,
+    "meanSeconds": 14.407417398125,
+    "peakAllocatedBytes": 1558200832,
+    "peakReservedBytes": 1568669696,
+    "perPoseMappingEstablished": false
+  }
+}

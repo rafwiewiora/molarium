@@ -1,0 +1,221 @@
+{
+  "purpose": "Post hoc tetrahedral stereochemistry check of saved browser input conformers, not predicted coordinates; does not assess every geometric feature.",
+  "records": [
+    {
+      "caseId": "3mxf-jq1",
+      "method": "browser-openbind0",
+      "seed": 0,
+      "sourceLibrarySha256": "1d6239a8f7dfc371417a3302289dc51817ead59476960030f13dba6d6f1c675f",
+      "inputComponentSha256": "97f649b16ddfa4002eb1be7036587914d770c2b29fa7ac5b655da810b8441d14",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "3mxf-jq1",
+      "method": "browser-openbind0",
+      "seed": 1,
+      "sourceLibrarySha256": "1d6239a8f7dfc371417a3302289dc51817ead59476960030f13dba6d6f1c675f",
+      "inputComponentSha256": "72c15f364476739145f2e0e41116bd9e95e3b46fda1e24437c58ea72d959ddb1",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "3mxf-jq1",
+      "method": "browser-openbind0",
+      "seed": 2,
+      "sourceLibrarySha256": "1d6239a8f7dfc371417a3302289dc51817ead59476960030f13dba6d6f1c675f",
+      "inputComponentSha256": "c255c8477098c9138f6deea46a915abf26a72f0da4d2cd09bc22207339c763bc",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "method": "browser-openbind0",
+      "seed": 0,
+      "sourceLibrarySha256": "8be45108ad0af87fe62ed4b27b19cedfa8f5592b094c22f192313883ad65f82d",
+      "inputComponentSha256": "96448f1cd2e99bc28cf8168a4332450954e310a46ebdc9f9ff6fa6e644477530",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 14,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "method": "browser-openbind0",
+      "seed": 1,
+      "sourceLibrarySha256": "8be45108ad0af87fe62ed4b27b19cedfa8f5592b094c22f192313883ad65f82d",
+      "inputComponentSha256": "a4715ef86295b704c4a99dafb48a7b1e6b6fb4f6cf24c7b1d647d2c0cc0ff63e",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 14,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "method": "browser-openbind0",
+      "seed": 2,
+      "sourceLibrarySha256": "8be45108ad0af87fe62ed4b27b19cedfa8f5592b094c22f192313883ad65f82d",
+      "inputComponentSha256": "11f8066fb31ca0f44ed4e778caa53da3dde6bb07ba8cf0fc4f187f43a149a429",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 14,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "181l-bnz",
+      "method": "browser-openbind0",
+      "seed": 0,
+      "sourceLibrarySha256": "ade30157436288bd321cf45e09d62869bc53066dc573776343f285f47e25c375",
+      "inputComponentSha256": "429fd7ad56fa00c522537ebd359fadcd04c847322317ce8b12491e8160b846ee",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "181l-bnz",
+      "method": "browser-openbind0",
+      "seed": 1,
+      "sourceLibrarySha256": "ade30157436288bd321cf45e09d62869bc53066dc573776343f285f47e25c375",
+      "inputComponentSha256": "429fd7ad56fa00c522537ebd359fadcd04c847322317ce8b12491e8160b846ee",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "181l-bnz",
+      "method": "browser-openbind0",
+      "seed": 2,
+      "sourceLibrarySha256": "ade30157436288bd321cf45e09d62869bc53066dc573776343f285f47e25c375",
+      "inputComponentSha256": "cfe54d1eb57e4f7fbcf9aba91c6784dfb9302dde899db1ed263337d976344844",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "3mxf-jq1",
+      "method": "browser-boltz2",
+      "seed": 0,
+      "sourceLibrarySha256": "574b457c6453f0e66084adfaf450eb3cda658ee28308575871d95bb1c3efa5df",
+      "inputComponentSha256": "97f649b16ddfa4002eb1be7036587914d770c2b29fa7ac5b655da810b8441d14",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "3mxf-jq1",
+      "method": "browser-boltz2",
+      "seed": 1,
+      "sourceLibrarySha256": "574b457c6453f0e66084adfaf450eb3cda658ee28308575871d95bb1c3efa5df",
+      "inputComponentSha256": "72c15f364476739145f2e0e41116bd9e95e3b46fda1e24437c58ea72d959ddb1",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "3mxf-jq1",
+      "method": "browser-boltz2",
+      "seed": 2,
+      "sourceLibrarySha256": "574b457c6453f0e66084adfaf450eb3cda658ee28308575871d95bb1c3efa5df",
+      "inputComponentSha256": "c255c8477098c9138f6deea46a915abf26a72f0da4d2cd09bc22207339c763bc",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "method": "browser-boltz2",
+      "seed": 0,
+      "sourceLibrarySha256": "224e52de8ab495fc9e4f6eb21d92368ef8c13c61c427b395b4d25e8ae0da5176",
+      "inputComponentSha256": "96448f1cd2e99bc28cf8168a4332450954e310a46ebdc9f9ff6fa6e644477530",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 14,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "method": "browser-boltz2",
+      "seed": 1,
+      "sourceLibrarySha256": "224e52de8ab495fc9e4f6eb21d92368ef8c13c61c427b395b4d25e8ae0da5176",
+      "inputComponentSha256": "a4715ef86295b704c4a99dafb48a7b1e6b6fb4f6cf24c7b1d647d2c0cc0ff63e",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 14,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "method": "browser-boltz2",
+      "seed": 2,
+      "sourceLibrarySha256": "224e52de8ab495fc9e4f6eb21d92368ef8c13c61c427b395b4d25e8ae0da5176",
+      "inputComponentSha256": "11f8066fb31ca0f44ed4e778caa53da3dde6bb07ba8cf0fc4f187f43a149a429",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 14,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "181l-bnz",
+      "method": "browser-boltz2",
+      "seed": 0,
+      "sourceLibrarySha256": "e9ff644200e1fa82a5801e5cc2584a43c57a85356698cf781089864f499527db",
+      "inputComponentSha256": "429fd7ad56fa00c522537ebd359fadcd04c847322317ce8b12491e8160b846ee",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "181l-bnz",
+      "method": "browser-boltz2",
+      "seed": 1,
+      "sourceLibrarySha256": "e9ff644200e1fa82a5801e5cc2584a43c57a85356698cf781089864f499527db",
+      "inputComponentSha256": "429fd7ad56fa00c522537ebd359fadcd04c847322317ce8b12491e8160b846ee",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    },
+    {
+      "caseId": "181l-bnz",
+      "method": "browser-boltz2",
+      "seed": 2,
+      "sourceLibrarySha256": "e9ff644200e1fa82a5801e5cc2584a43c57a85356698cf781089864f499527db",
+      "inputComponentSha256": "cfe54d1eb57e4f7fbcf9aba91c6784dfb9302dde899db1ed263337d976344844",
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "mismatchedCenters": [],
+        "unassignedCenters": []
+      }
+    }
+  ]
+}
