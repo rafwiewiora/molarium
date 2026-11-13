@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "sequences": [
+    {
+      "protein": {
+        "id": "A",
+        "sequence": "GSGLSDVASFATKLKNTLIQYHSIEEDKWRVAKKTKDVTVWRKPSEEFNGYLYKAQGVIDDLVYSIIDHIRPGPSRLDWDSLMTSLDILENFEENCCVMRYTTAGQLWNIISPREFVDFSYTVGYKEGLLSCGISLDWDEKRPEFVRGYNHPCGWFCVPLKDNPNQSLLTGYIQTDLRGMIPQSAVDTAMASTLTNFYGDLRKAL",
+        "msa": "/workspacenfs/rafal_wiewiora/molarium-native-full-feature-capture-20261113-attempt002/inputs/9t51-a1jtm/msa/colabfold_main.a3m"
+      }
+    },
+    {
+      "ligand": {
+        "id": "B",
+        "smiles": "C[C@]12CC[C@@H](C[C@@H]1CCc3c2nc4cccc(c4c3)C5CCN(CC5)C(=O)OC(C)(C)C)O"
+      }
+    }
+  ]
+}

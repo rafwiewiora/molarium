@@ -1,0 +1,25 @@
+{
+  "schema": "molarium.browser-feature-reconstruction.v1",
+  "scope": "Shared production featurizer, saved input conformer and alignment. This reconstructs features; it is not a historical live-tensor capture or a GPU/model test.",
+  "librarySha256": "7b92f86b370e1d51eafb7e5fe454009243b7056b42145bc66b30ef28c7ccf0f3",
+  "inputComponentSha256": "389e50f24357368c8629a5d969b3b3433997180b39289e5ae04014aeee9218f0",
+  "sequence": "MGSSYHHHHHHSSGENLYFQHMKHGRVFIIKSYSEDDIHRSIKYNIWCSTEHGNKRLDAAYRSMNGKGPVYLLFSVNGSGHFCGVAEMKSAVDYNTCAGVWSQDKWKGRFDVRWIFVKDVPNSQLRHIRLENNENKPVTNSRDTQEVPLEKAKQVLKIIASYKHTTS",
+  "smiles": "Cc1cc(=O)c2c(-c3ccc(=O)[nH]c3)[nH]nc2[nH]1",
+  "alignmentSha256": "7bd8c016923fddb4bcad9d1266ae08c030a9014dfb4d5da10703ee3bfefb66bc",
+  "seed": 0,
+  "tokens": 185,
+  "dense": 24,
+  "msaDepth": 257,
+  "capturedArrays": 44,
+  "sourceFiles": {
+    "folding/comparison/capture-browser-features.mjs": "9800f414a6262e3542d8dfde850e7bdb39a943a46f71bade22502b72771bea4d",
+    "vendor/localfold/UPSTREAM.json": "2fa2dc96ff95ffe6eb0ef19377a17c7697d8708c71d7eef662ffc036a20a55b7",
+    "vendor/localfold/shared/af3/featurise/batch.js": "66afd5cf7f107ebce3b612df22807e2af52eb131831b6ad454a67300858088d2",
+    "vendor/localfold/shared/af3/featurise/featurise.js": "a023d99d28a6980543f5341d1e8743cd0294effefc0e0ed800487a5948c187c6",
+    "vendor/localfold/shared/af3/dialect.js": "7a79f76d4703cdb352a800f79a8f89bfe9354dde5d5a5c37239c3a5007858d3d"
+  },
+  "outputs": {
+    "features.json": "d37a369a86739f492e9103304d26d10c24da6a18003f974deb89f9bc0d682b82",
+    "features.bin": "2942daf4207c5e4df083704847ba708b0da0d22ee5f311c9d86dceb246549a8f"
+  }
+}

@@ -16,6 +16,7 @@ with stable `DV-` identifiers and links to original observations and follow-up e
 - [x] Retrieve and independently validate all 54 recent native single-sequence poses and the nine old-crystal native OpenBind poses; retain stereo failures and poor folds with raw output hashes and public reconstruction checks.
 - [x] Complete and independently reconstruct all 27 native OpenBind MSA poses and all nine old-crystal native Boltz poses; preserve interrupted sources and compute only missing seeds ([evidence](reviews/COFOLD_NATIVE_RECOVERY_EVIDENCE_2026-11-13.md)).
 - [x] Finish the two zero-output native Boltz MSA retries and publish all 27 poses plus original failure evidence; retain six geometrically close stereochemical failures.
+- [x] Preserve native and shared-JS tensor features for two diagnostic cases, replay all checked-field comparisons, and identify input-order/name/conformer differences ([RCF-15](reviews/cofold-feature-parity-2026-11-13/README.md)).
 - [ ] Establish matched full-feature/trained-weight/random-tensor browser/native parity; the 270-prediction review is a protocol comparison, not this gate.
 - [x] Publish native synchronized forward timings with explicit boundaries separate from browser end-to-end throughput.
 - [x] Preserve exact provided-MSA bytes and reject alignment drift in missing-only native recovery ([RCF-12](reviews/COFOLD_MSA_RECOVERY_2026-11-13.md)); retain original interrupted-source statuses.
@@ -32,7 +33,8 @@ with stable `DV-` identifiers and links to original observations and follow-up e
 - [x] Finish and analyze all 48 native Boltz-2 standard-sampling poses on L4 Spot, retaining raw outputs, timings and review bundles ([results](reviews/cofold-method-comparison-2026-11-12/README.md)).
 - [x] Finish only the last two native OpenBind standard poses and assemble all48 with source hashes and interrupted statuses preserved; standard-sampling protein agreement is 1.49 Å and ligand disagreement remains substantial ([results](reviews/cofold-method-comparison-2026-11-12/README.md)).
 - [x] Run a predeclared three-complex experimental crystal-reference panel through both actual browser cofolding models, preserving every seed and unselected/confidence-selected/oracle results ([results and limitations](reviews/cofold-crystal-reference-2026-11-13/README.md)).
-- [ ] Finish native controls for the crystal-reference panel, investigate OpenBind's poor single-sequence reconstruction, and expand to genuinely held-out complexes; the three old structures may occur in training data.
+- [x] Finish all native controls for the three-complex crystal-reference panel, preserving all 36 native/browser predictions and stereochemical checks.
+- [ ] Investigate OpenBind's poor single-sequence reconstruction and expand to genuinely held-out complexes; the three old structures may occur in training data.
 - [x] Preserve six OpenBind standard-sampling poses after Spot node failure, validate source-side inventory and submit only 42 missing query/seed pairs; require full unique coverage for assembly ([recovery](folding/comparison/README.md#interrupted-native-openbind-jobs)).
 
 - [x] Cancel queued/in-flight old-graph polish when chemistry invalidates the atom mapping ([SR-13](reviews/STALE_POLISH_2026-09-25.md)); retain exact coordinate-preservation assertions.

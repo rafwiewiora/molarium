@@ -1,0 +1,402 @@
+{
+  "schema": "molarium.cofold-semantic-feature-comparison.v1",
+  "scope": "Exposed tensor-feature audit only; no trained-model/kernel/trajectory numerical parity claim.",
+  "sources": {
+    "nativeReceiptSha256": "22822bd34e89cf0f8382b6d699192ced3587e8f2512ab9e036e5228631b9999d",
+    "browserReceiptSha256": "c0c7df93d8d1452a97e6d781cd15d4b00cbe5f2db2ea664e16b352756f6b289a",
+    "librarySha256": "7b92f86b370e1d51eafb7e5fe454009243b7056b42145bc66b30ef28c7ccf0f3",
+    "nativeSnapshotSha256": "d49a8477c33d1ce27a63b5928e69d2557baa589af82d332642be2778e6353490",
+    "browserSnapshotSha256": "d37a369a86739f492e9103304d26d10c24da6a18003f974deb89f9bc0d682b82"
+  },
+  "coverage": {
+    "tokens": 185,
+    "proteinTokens": 167,
+    "ligandTokens": 18,
+    "activeAtoms": 1381,
+    "nativeArrays": 39,
+    "browserArrays": 44,
+    "atomsDropped": 0
+  },
+  "chemicalCorrespondence": {
+    "basis": "Declared isomeric SMILES, indexed element/formal-charge/adjacency certificates; no coordinates. Native tensor bond orders and stereo are not independently encoded in this certificate.",
+    "sameSmilesSpelling": false,
+    "stereoCompatibleGraphMaps": 1,
+    "selection": "lexicographically first stereo-compatible graph map",
+    "nativeLigandAtomForBrowserLigandAtom": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      11,
+      17,
+      16,
+      14,
+      15,
+      13,
+      12,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ligandNameMismatchesAcrossAllMaps": {
+      "min": 9,
+      "max": 9
+    },
+    "ligandCharacterMismatchesAcrossAllMaps": {
+      "min": 13,
+      "max": 13
+    }
+  },
+  "fields": {
+    "token_mask": {
+      "shape": [
+        185
+      ],
+      "values": 185,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "residue_index": {
+      "shape": [
+        185
+      ],
+      "values": 185,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "token_index": {
+      "shape": [
+        185
+      ],
+      "values": 185,
+      "differentValues": 184,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 8.0,
+      "rmsDifference": 1.7413880763438208,
+      "exact": false
+    },
+    "asym_id": {
+      "shape": [
+        185
+      ],
+      "values": 185,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "entity_id": {
+      "shape": [
+        185
+      ],
+      "values": 185,
+      "differentValues": 185,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 1.0,
+      "rmsDifference": 1.0,
+      "exact": false
+    },
+    "sym_id": {
+      "shape": [
+        185
+      ],
+      "values": 185,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "is_ligand": {
+      "shape": [
+        185
+      ],
+      "values": 185,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "is_rna": {
+      "shape": [
+        185
+      ],
+      "values": 185,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "is_dna": {
+      "shape": [
+        185
+      ],
+      "values": 185,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "ref_mask": {
+      "shape": [
+        1381
+      ],
+      "values": 1381,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "ref_charge": {
+      "shape": [
+        1381
+      ],
+      "values": 1381,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "ref_space_uid": {
+      "shape": [
+        1381
+      ],
+      "values": 1381,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "atom_mask": {
+      "shape": [
+        1381
+      ],
+      "values": 1381,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "ref_element": {
+      "shape": [
+        1381
+      ],
+      "values": 1381,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "ref_atom_name_chars": {
+      "shape": [
+        1381,
+        4
+      ],
+      "values": 5524,
+      "differentValues": 13,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 18.0,
+      "rmsDifference": 0.5126919202296744,
+      "exact": false
+    },
+    "atom_to_token_index": {
+      "shape": [
+        1381
+      ],
+      "values": 1381,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "token_bonds": {
+      "shape": [
+        185,
+        185
+      ],
+      "values": 34225,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "restype": {
+      "shape": [
+        185
+      ],
+      "values": 185,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "msa": {
+      "shape": [
+        257,
+        185
+      ],
+      "values": 47545,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "msa_mask": {
+      "shape": [
+        257,
+        185
+      ],
+      "values": 47545,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "profile": {
+      "shape": [
+        185,
+        31
+      ],
+      "values": 5735,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "deletion_mean": {
+      "shape": [
+        185
+      ],
+      "values": 185,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "has_deletion": {
+      "shape": [
+        257,
+        185
+      ],
+      "values": 47545,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "deletion_value": {
+      "shape": [
+        257,
+        185
+      ],
+      "values": 47545,
+      "differentValues": 0,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 0.0,
+      "rmsDifference": 0.0,
+      "exact": true
+    },
+    "ref_pos_raw": {
+      "shape": [
+        1381,
+        3
+      ],
+      "values": 4143,
+      "differentValues": 4143,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 7.61578106880188,
+      "rmsDifference": 2.0163836240805666,
+      "exact": false
+    }
+  },
+  "referenceCoordinateDiagnostics": {
+    "refSpacePartitionsEqual": true,
+    "intraSpacePairDistanceDifference": {
+      "shape": [
+        5445
+      ],
+      "values": 5445,
+      "differentValues": 5445,
+      "nonFiniteValues": 0,
+      "maxAbsoluteDifference": 3.67046338563921,
+      "rmsDifference": 0.5830572267709516,
+      "exact": false
+    },
+    "byMolecularKind": {
+      "protein": {
+        "shape": [
+          5292
+        ],
+        "values": 5292,
+        "differentValues": 5292,
+        "nonFiniteValues": 0,
+        "maxAbsoluteDifference": 3.67046338563921,
+        "rmsDifference": 0.5902565441745087,
+        "exact": false
+      },
+      "ligand": {
+        "shape": [
+          153
+        ],
+        "values": 153,
+        "differentValues": 153,
+        "nonFiniteValues": 0,
+        "maxAbsoluteDifference": 0.4998528544757903,
+        "rmsDifference": 0.21860213027576103,
+        "exact": false
+      }
+    },
+    "interpretation": "Raw coordinates include independent conformer generation and random augmentation; pair distances remove rigid motion only. Neither diagnostic establishes identical coordinate inputs."
+  },
+  "ungraded": {
+    "nativeFields": [
+      "atom_array",
+      "cyclic_mask",
+      "is_atomized",
+      "is_protein",
+      "num_paired_seqs",
+      "query_id",
+      "repeated_sample",
+      "seed",
+      "start_atom_index",
+      "template_backbone_frame_mask",
+      "template_frame_atom_coords",
+      "template_pseudo_beta_coords",
+      "template_pseudo_beta_mask",
+      "template_restype",
+      "valid_sample"
+    ],
+    "notes": [
+      "Native metadata AtomArray retained by type only.",
+      "Browser query/key gather padding, pseudo-beta gathers and dynamically built empty templates are not compared to native model internals.",
+      "Pairwise relative-position feature encoding and all trained-model computations remain untested here."
+    ]
+  }
+}
