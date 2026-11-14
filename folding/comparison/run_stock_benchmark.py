@@ -9,7 +9,6 @@ import signal
 import subprocess
 import sys
 from datetime import datetime, timezone
-from score_stock_localfold import score
 
 
 def sha(path):
@@ -31,11 +30,78 @@ def main():
     p.add_argument('--output', required=True, type=Path)
     p.add_argument('--start-index', type=int, default=0)
     p.add_argument('--require-vendor', required=True, choices=['apple', 'nvidia'])
+    p.add_argument('--prepare-only', action='store_true', help='freeze and verify the batch; no Chrome or inference')
     args = p.parse_args()
-    plan = json.loads(args.plan.read_text())
+    plan_raw = args.plan.read_bytes()
+    original_plan_sha256 = hashlib.sha256(plan_raw).hexdigest()
+    plan = json.loads(plan_raw)
     if plan['steps'] != 200 or plan['recycles'] != 3 or plan['seeds'] != list(range(10)):
         raise ValueError('This batch requires the frozen 200-step, 3-recycle, 10-seed protocol')
+    if not 0 <= args.start_index < len(plan['jobs']):
+        raise ValueError('start-index is outside the frozen job set')
+    if any(args.output.resolve().is_relative_to(root.resolve()) for root in [args.plan.parent, args.upstream_root]):
+        raise ValueError('Output must be outside the input plan and pristine upstream directories')
+    # Check the selection BEFORE any GPU work, then freeze all consumed inputs.
+    references = {}
+    for pair in plan['pairs']:
+        for key in ['nativeScoreFile', 'referenceFile']:
+            if Path(pair[key]).is_absolute() or '..' in Path(pair[key]).parts or '\\' in pair[key]:
+                raise ValueError('Reference path must stay inside the repository')
+        source = args.repository / pair['nativeScoreFile']
+        if sha(source) != pair['nativeScoreSha256']:
+            raise ValueError('Native selection source changed')
+        hits = [r for r in json.loads(source.read_text())['poses']
+                if r['caseId'] == pair['caseId'] and r.get('status') == 'complete'
+                and 'native-' + pair['model'] in r['method'] and r['ligandRmsdA'] < 2]
+        if not hits or min(r['ligandRmsdA'] for r in hits) != pair['nativeBestA']:
+            raise ValueError('A selected pair lacks its recorded same-model native <2 Å hit')
+        for key, hash_key in [('nativeScoreFile', 'nativeScoreSha256'), ('referenceFile', 'referenceSha256')]:
+            path = args.repository / pair[key]
+            if sha(path) != pair[hash_key]:
+                raise ValueError('Frozen reference evidence changed')
+            references[pair[key]] = path
+    for job in plan['jobs']:
+        if Path(job['input']).is_absolute() or '..' in Path(job['input']).parts or '\\' in job['input']:
+            raise ValueError('Inference input path must stay inside the plan directory')
+        if sha(args.plan.parent / job['input']) != job['inputSha256']:
+            raise ValueError('A planned inference input changed')
     args.output.mkdir(parents=True, exist_ok=False)
+    frozen_source = args.output / 'source'
+    frozen_source.mkdir()
+    for name in ['run_stock_benchmark.py', 'score_stock_localfold.py', 'experimental_reference.py',
+                 'pose_metrics.py', 'requirements-analysis.txt']:
+        shutil.copyfile(Path(__file__).with_name(name), frozen_source / name)
+    shutil.copyfile(args.launcher, frozen_source / 'run_stock_localfold.py')
+    save(args.output / 'source-manifest.json', {p.name: sha(p) for p in frozen_source.iterdir()})
+    shutil.copytree(args.plan.parent, args.output / 'frozen-plan')
+    args.plan = args.output / 'frozen-plan' / args.plan.name
+    for name, source in references.items():
+        target = args.output / 'reference-evidence' / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+    args.repository = args.output / 'reference-evidence'
+    args.launcher = frozen_source / 'run_stock_localfold.py'
+    sys.path.insert(0, str(frozen_source.resolve()))
+    from run_stock_localfold import verify_upstream
+    upstream = verify_upstream(args.upstream_root.resolve())
+    if upstream['revision'] != plan['sourceRevision']:
+        raise ValueError('Upstream source differs from the frozen protocol')
+    if sha(args.plan) != original_plan_sha256:
+        raise ValueError('Plan changed while the batch was being frozen')
+    for job in plan['jobs']:
+        if sha(args.plan.parent / job['input']) != job['inputSha256']:
+            raise ValueError('Frozen inference input differs from the preflight')
+    for pair in plan['pairs']:
+        for key, hash_key in [('nativeScoreFile', 'nativeScoreSha256'), ('referenceFile', 'referenceSha256')]:
+            if sha(args.repository / pair[key]) != pair[hash_key]:
+                raise ValueError('Frozen reference evidence differs from the preflight')
+    if args.prepare_only:
+        save(args.output / 'prepared.json', {'status': 'prepared-not-run', 'upstream': upstream,
+            'planSha256': original_plan_sha256, 'jobs': len(plan['jobs']), 'neuralForwards': 0,
+            'scope': 'Immutable source, inference inputs and native selection/reference evidence verified before GPU execution.'})
+        print(json.dumps({'status': 'prepared-not-run', 'jobs': len(plan['jobs']), 'neuralForwards': 0}))
+        return 0
+    from score_stock_localfold import score
     expected_plan, expected_launcher = sha(args.plan), sha(args.launcher)
     report = {'status': 'running', 'startedAt': datetime.now(timezone.utc).isoformat(),
               'planSha256': expected_plan, 'launcherSha256': expected_launcher,

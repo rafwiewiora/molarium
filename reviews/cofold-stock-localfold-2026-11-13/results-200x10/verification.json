@@ -1,0 +1,19 @@
+{
+  "status": "pass",
+  "recomputedPredictions": 80,
+  "plannedPredictions": 80,
+  "scope": "complete",
+  "offlineCheckerNeuralForwards": 0,
+  "completedInferenceReceipts": 80,
+  "observedDiffusionFrames": [
+    200
+  ],
+  "actualGpuVendors": [
+    "apple"
+  ],
+  "browserVersions": [
+    "Chrome/157.0.8103.51"
+  ],
+  "checkerSha256": "63b320289a5095ed0038b3611cb7c076708a35e1708cc0a5e63d928555157c77",
+  "command": "python folding/comparison/check_stock_benchmark.py reviews/cofold-stock-localfold-2026-11-13/results-200x10"
+}

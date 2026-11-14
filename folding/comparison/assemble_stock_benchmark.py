@@ -19,7 +19,8 @@ def assemble(plan_file, repository, pilot, batch, output):
                       'requirements-analysis.txt']
     analysis_sources = {name: sha(Path(__file__).with_name(name)) for name in analysis_names}
     plan = json.loads(plan_file.read_text())
-    progress_raw = (batch / 'results/progress.json').read_bytes()
+    results = batch / 'results' if (batch / 'results/progress.json').is_file() else batch
+    progress_raw = (results / 'progress.json').read_bytes()
     progress = json.loads(progress_raw)
     if progress['planSha256'] != sha(plan_file):
         raise ValueError('Batch consumed a different plan')
@@ -27,11 +28,12 @@ def assemble(plan_file, repository, pilot, batch, output):
     records, sources = [], []
     for job in plan['jobs']:
         index = job['index']
-        directory = pilot / 'result' if index == 0 else batch / 'results' / prior.get(index, {}).get('directory', '__unstarted__')
-        status = 'complete' if index == 0 else prior.get(index, {}).get('status', 'not-started')
+        is_pilot = index == 0 and pilot is not None
+        directory = pilot / 'result' if is_pilot else results / prior.get(index, {}).get('directory', '__unstarted__')
+        status = 'complete' if is_pilot else prior.get(index, {}).get('status', 'not-started')
         if status == 'complete':
             result = score(plan_file, repository, index, directory)
-            original_file = pilot / 'score.json' if index == 0 else directory / 'score.json'
+            original_file = pilot / 'score.json' if is_pilot else directory / 'score.json'
             original = json.loads(original_file.read_text())
             if abs(original['ligandRmsdA'] - result['ligandRmsdA']) > 1e-8 or original['limitedValidityPass'] != result['limitedValidityPass']:
                 raise ValueError('Independent reanalysis differs from the preserved score')
@@ -104,12 +106,16 @@ def assemble(plan_file, repository, pilot, batch, output):
                     add(archive, directory / name, f'predictions/{index:03d}/{name}')
             if initial_score:
                 add(archive, initial_score, f'predictions/{index:03d}/initial-score.json')
-            wrapper_log = batch / 'results' / f'{index:03d}-launcher.log'
+            wrapper_log = results / f'{index:03d}-launcher.log'
             if wrapper_log.is_file():
                 add(archive, wrapper_log, f'predictions/{index:03d}/launcher.log')
-        for path in sorted((batch / 'source').glob('*.py')):
-            add(archive, path, 'consumed-batch-source/' + path.name)
-        add(archive, pilot / 'run_stock_localfold.py', 'consumed-pilot-source/run_stock_localfold.py')
+        consumed = json.loads((batch / 'source-manifest.json').read_text())
+        for name, expected in sorted(consumed.items()):
+            if Path(name).name != name or sha(batch / 'source' / name) != expected:
+                raise ValueError('Consumed batch source differs from its frozen inventory')
+            add(archive, batch / 'source' / name, 'consumed-batch-source/' + name)
+        if pilot is not None:
+            add(archive, pilot / 'run_stock_localfold.py', 'consumed-pilot-source/run_stock_localfold.py')
         for name in analysis_names:
             add(archive, Path(__file__).with_name(name), 'independent-analysis-source/' + name)
         add(archive, batch / 'source-manifest.json', 'consumed-batch-source/source-manifest.json')
@@ -117,10 +123,28 @@ def assemble(plan_file, repository, pilot, batch, output):
         files['progress-at-snapshot.json'] = {'sha256': hashlib.sha256(progress_raw).hexdigest(), 'bytes': len(progress_raw)}
         add(archive, output / 'scores.json', 'independent-scores.json')
         archive.writestr('archive-manifest.json', json.dumps(files, indent=2) + '\n')
-    (output / 'evidence.json').write_text(json.dumps({'schema': 'molarium.stock-localfold-evidence.v1',
-        'scoresSha256': sha(output / 'scores.json'), 'archiveSha256': sha(output / 'evidence.zip'),
-        'archiveBytes': (output / 'evidence.zip').stat().st_size, 'members': len(files),
-        'scope': report['status'], 'completed': complete, 'planned': len(records)}, indent=2) + '\n')
+    archive_file = output / 'evidence.zip'
+    evidence = {'schema': 'molarium.stock-localfold-evidence.v1',
+        'scoresSha256': sha(output / 'scores.json'), 'archiveSha256': sha(archive_file),
+        'archiveBytes': archive_file.stat().st_size, 'members': len(files),
+        'scope': report['status'], 'completed': complete, 'planned': len(records)}
+    if archive_file.stat().st_size > 20 * 1024 * 1024:
+        parts = []
+        reconstructed = hashlib.sha256()
+        with archive_file.open('rb') as source:
+            while data := source.read(20 * 1024 * 1024):
+                part = output / f'evidence.part-{len(parts) + 1:02d}.bin'
+                part.write_bytes(data)
+                saved = part.read_bytes()
+                if saved != data:
+                    raise ValueError('Evidence part write did not preserve archive bytes')
+                reconstructed.update(saved)
+                parts.append({'file': part.name, 'bytes': len(saved), 'sha256': hashlib.sha256(saved).hexdigest()})
+        if reconstructed.hexdigest() != evidence['archiveSha256']:
+            raise ValueError('Split evidence does not reconstruct the original archive')
+        evidence['archiveParts'] = parts
+        archive_file.unlink()
+    (output / 'evidence.json').write_text(json.dumps(evidence, indent=2) + '\n')
     fmt = lambda value: '—' if value is None else f'{value:.2f}'
     lines = ['# Stock LocalFold on native-positive crystal cases', '',
         f'**{complete} of {len(records)} planned predictions completed.** Status: `{report["status"]}`.', '',
@@ -158,7 +182,9 @@ def assemble(plan_file, repository, pilot, batch, output):
         'are hash-checked and scores are independently recomputed when assembling this snapshot. '
         'Equal integer seeds do not imply matched native/browser random tensors. Sampling, input preparation, '
         'quantization and hardware differences prevent treating these pose tests as strict implementation parity.', '',
-        '[Evidence archive](evidence.zip) · [Archive hashes](evidence.json)', '',
+        ('Evidence archive: ' + ' · '.join(f'[part {i + 1}]({p["file"]})' for i, p in enumerate(evidence['archiveParts']))
+         + '. The checker reassembles the parts automatically.' if evidence.get('archiveParts') else '[Evidence archive](evidence.zip)')
+        + ' · [Archive hashes](evidence.json)', '',
         '```sh', 'python folding/comparison/check_stock_benchmark.py /path/to/this/review', '```', '']
     (output / 'README.md').write_text('\n'.join(lines))
     print(json.dumps({'status': report['status'], 'completed': complete, 'planned': len(records),
@@ -168,7 +194,9 @@ def assemble(plan_file, repository, pilot, batch, output):
 
 if __name__ == '__main__':
     p = argparse.ArgumentParser(description=__doc__)
-    for name in ['plan', 'repository', 'pilot', 'batch', 'output']:
+    for name in ['plan', 'repository', 'batch', 'output']:
         p.add_argument('--' + name, required=True, type=Path)
+    p.add_argument('--pilot', type=Path, default=None,
+                   help='optional separately completed index-0 pilot; its inference is never repeated')
     a = p.parse_args()
     assemble(a.plan, a.repository, a.pilot, a.batch, a.output)

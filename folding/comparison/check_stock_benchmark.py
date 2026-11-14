@@ -1,6 +1,7 @@
 """Verify public stock-page evidence and recompute scores without inference."""
 import argparse
 import hashlib
+import io
 import json
 from pathlib import Path, PurePosixPath
 import tempfile
@@ -10,16 +11,29 @@ from score_stock_localfold import score
 
 def check(review):
     evidence = json.loads((review / 'evidence.json').read_text())
-    raw = (review / 'evidence.zip').read_bytes()
+    if evidence.get('archiveParts'):
+        chunks = []
+        for part in evidence['archiveParts']:
+            path = PurePosixPath(part['file'])
+            if path.is_absolute() or len(path.parts) != 1 or '..' in path.parts or '\\' in part['file']:
+                raise ValueError('Archive part must be a sibling file')
+            data = (review / part['file']).read_bytes()
+            if len(data) != part['bytes'] or hashlib.sha256(data).hexdigest() != part['sha256']:
+                raise ValueError('Archive part is incomplete or corrupt')
+            chunks.append(data)
+        raw = b''.join(chunks)
+    else:
+        raw = (review / 'evidence.zip').read_bytes()
     if hashlib.sha256(raw).hexdigest() != evidence['archiveSha256']:
         raise ValueError('Evidence archive hash differs')
     scores_raw = (review / 'scores.json').read_bytes()
     if hashlib.sha256(scores_raw).hexdigest() != evidence['scoresSha256']:
         raise ValueError('Published scores hash differs')
     published = json.loads(scores_raw)
+    frames_seen, vendors, browsers = set(), set(), set()
     with tempfile.TemporaryDirectory() as directory:
         root = Path(directory)
-        with zipfile.ZipFile(review / 'evidence.zip') as archive:
+        with zipfile.ZipFile(io.BytesIO(raw)) as archive:
             names = archive.namelist()
             if len(set(names)) != len(names) or len(names) > 4000:
                 raise ValueError('Duplicate or excessive evidence members')
@@ -58,6 +72,24 @@ def check(review):
             actual = score(plan_file, root / 'reference-evidence', job['index'], root / f'predictions/{job["index"]:03d}')
             if abs(actual['ligandRmsdA'] - row['ligandRmsdA']) > 1e-8 or actual['limitedValidityPass'] != row['limitedValidityPass']:
                 raise ValueError('Independent crystal score differs')
+            attempt = root / f'predictions/{job["index"]:03d}'
+            receipt = json.loads((attempt / 'receipt.json').read_text())
+            log = (attempt / 'upstream.log').read_text().splitlines()
+            controls = [json.loads(line.split(': ', 1)[1]) for line in log if line.startswith('controls: ')]
+            frames = [json.loads(line.split(': ', 1)[1]) for line in log if line.startswith('frames: ')]
+            if len(controls) != 1 or controls[0] != receipt['observedControls']:
+                raise ValueError('Original page controls differ from the receipt')
+            if (controls[0]['model'], int(controls[0]['af3count']), int(controls[0]['recycles'])) != (
+                    job['model'], plan['steps'], plan['recycles']):
+                raise ValueError('Original page did not use the frozen sampling budget')
+            if len(frames) != 1 or frames[0]['frames'] != plan['steps'] or len(frames[0]['perFrame']) != plan['steps']:
+                raise ValueError('Original page did not retain the expected diffusion-step frames')
+            device = receipt['actualFoldingDevice']
+            if receipt.get('neuralInferenceCompleted') is not True or device['backend'] != 'webgpu' or device['profile']['software'] is not False:
+                raise ValueError('Completed physical-WebGPU inference was not established')
+            frames_seen.add(frames[0]['frames'])
+            vendors.add(device['profile']['vendor'])
+            browsers.add(receipt['browserVersion']['product'])
             checked += 1
         if checked != published['completed'] or checked != evidence['completed']:
             raise ValueError('Completed prediction count differs')
@@ -69,7 +101,8 @@ def check(review):
                 raise ValueError('Summary validity counts differ')
     return {'status': 'pass', 'recomputedPredictions': checked,
             'plannedPredictions': len(rows), 'scope': published['status'],
-            'neuralForwards': 0}
+            'neuralForwards': 0, 'observedDiffusionFrames': sorted(frames_seen),
+            'actualGpuVendors': sorted(vendors), 'browserVersions': sorted(browsers)}
 
 
 if __name__ == '__main__':

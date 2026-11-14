@@ -43,3 +43,24 @@ All observed corresponding Cα atoms determine the protein fit. Ligand heavy-ato
 ```sh
 python folding/comparison/check_stock_benchmark.py /path/to/this/review
 ```
+
+## Direct agreement with native poses
+
+Every available stock pose is compared with all three preserved native poses, after aligning each protein to the same observed crystal Cα frame. Ligands are never independently fitted. Native intrinsic spread is shown as context; equal integer seeds do not mean equal random tensors.
+
+| Case | Model | Median nearest-native Å | Same-seed mean Å (0–2) | Native pairwise spread Å |
+| --- | --- | ---: | ---: | ---: |
+| 32qy-a1keo | boltz2 | 0.59 | 2.04 | 1.97 |
+| 15ji-a1d2g | boltz2 | 6.74 | 6.52 | 0.96 |
+| 1fkf-fk5 | boltz2 | 8.68 | 8.69 | 0.75 |
+| 9sxf-a1jrg | boltz2 | 7.96 | 8.06 | 0.38 |
+| 9sxf-a1jrg | openbind0 | 1.44 | 4.99 | 5.02 |
+| 9t3v-a1jtg | openbind0 | 0.41 | 1.26 | 0.94 |
+| 9t51-a1jtm | openbind0 | 5.30 | — | 0.24 |
+| 9xjq-a1e0i | openbind0 | 1.58 | — | 2.21 |
+
+The same-seed mean is emitted only when all of stock seeds 0, 1 and 2 are available. These are pose-agreement statistics, not a matched-tensor numerical parity result. [Every native comparison and source-library hash](native-agreement.json).
+
+## Individual predictions
+
+![Every completed stock prediction and the saved native best](plots/poses.png)

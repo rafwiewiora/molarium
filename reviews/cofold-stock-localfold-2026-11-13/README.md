@@ -1,6 +1,6 @@
 # Stock LocalFold workflow control
 
-**The full-budget stock-page benchmark is running:** 200 diffusion steps,
+**The [full-budget stock-page benchmark is complete](results-200x10/README.md):** 200 diffusion steps,
 3 additional recycles (4 trunk passes) and 10 seeds per system/model pair.
 The [frozen selection and 80 input jobs](benchmark-200x10/plan.json) contain only
 pairs where the same native model produced a pose strictly below 2 Å from the
@@ -12,8 +12,25 @@ The existing Molarium pose benchmarks must not be relabeled as stock-page runs.
 The [initial 22-prediction snapshot](initial-snapshot/README.md) preserves every
 completed result at its timestamp, including misses, raw page archives and
 consumed source. An offline checker independently recomputed all 22 scores from
-the public evidence. The remaining predictions continue as the separate frozen
-batch; this interim snapshot is not the final ten-seed result.
+the public evidence. This historical snapshot is retained separately from the
+completed ten-seed result.
+
+All **80/80 predictions** completed on physical Apple M1 Pro WebGPU with
+Chrome 157.0.8103.51. Independent checks recomputed every crystal score and
+verified the original UI controls plus 200 retained diffusion-step frames for
+each prediction. There are 31/80 geometric hits below 2 Å; 28/80 also pass the
+limited stereo/clash checks. Five of eight pairs have at least one such valid
+hit. WDR5 first succeeds on the tenth seed; FKBP12's best remains 6.32 Å versus
+native's 0.83 Å. NSP3 and KIT/Boltz also remain outside 2 Å, and their native
+geometric hits fail the separate validity checks. The full report contains
+all 240 direct comparisons with the original three native poses per pair.
+
+The separate [input-conformer audit](input-conformer-audit.json) checks the frozen
+stock input coordinates with our existing RDKit stereochemical-graph diagnostic.
+All seven unique ligand inputs pass, including the 14 specified tetrahedral
+centres in the FKBP12/FK5 ligand. This rules out an obvious inverted starting conformer in this set;
+it does not establish full physical validity or explain the remaining pose gaps.
+Recompute it without folding with `audit_stock_conformers.py`.
 
 The 210 vendored engine files match pristine LocalFold revision
 `5ea3d42c911949700401b54003cb28c557fcf2a6`. The compiled model manifests also
@@ -88,7 +105,7 @@ native inference and the experimental pose. Existing results, failures and
 sampling protocols remain preserved as separate evidence.
 
 The initial preparation-only receipt remains preserved as a historical check;
-it does not stand for a completed inference result. The active batch runs on the
+it does not stand for a completed inference result. The completed batch ran on the
 same local Apple hardware used for our earlier browser benchmarks. It uses a
 fresh profile for every prediction and retires only that run's disposable
 cache/profile after saving the scientific outputs and score. No completed
@@ -103,3 +120,74 @@ budget, receipt/output hashes, stock named chemistry and exact archived MSA
 bytes. It uses the existing all-observed-Cα fit and symmetry-aware heavy-atom
 ligand RMSD; no pocket or ligand fit is introduced. The full frozen budget and
 native selection are also covered by the comparison test suite.
+
+## Reproduce the full frozen cohort
+
+The public batch command verifies native eligibility **before** GPU execution
+and freezes its source, input jobs and reference evidence into the new attempt.
+These references are used only by the scorer. The original folding page receives
+the sequence/SMILES/alignment job and has no crystal-coordinate input.
+Use the analysis environment from `folding/comparison/requirements-analysis.txt`.
+For example, from the repository root on an Apple WebGPU machine:
+
+```sh
+stock_attempt=/path/to/new-stock-attempt
+stock_report=/path/to/new-stock-report
+python folding/comparison/run_stock_benchmark.py \
+  --plan reviews/cofold-stock-localfold-2026-11-13/benchmark-200x10/plan.json \
+  --repository . --upstream-root /path/to/pristine-localfold \
+  --launcher folding/comparison/run_stock_localfold.py \
+  --require-vendor apple --output "$stock_attempt"
+python folding/comparison/assemble_stock_benchmark.py \
+  --plan "$stock_attempt/frozen-plan/plan.json" \
+  --repository "$stock_attempt/reference-evidence" \
+  --batch "$stock_attempt" --output "$stock_report"
+python folding/comparison/check_stock_benchmark.py "$stock_report"
+python folding/comparison/compare_stock_native.py "$stock_report" \
+  --repository . --output "$stock_report/native-agreement.json"
+python folding/comparison/plot_stock_benchmark.py "$stock_report"
+```
+
+`--prepare-only` validates/freezes the batch without launching Chrome or
+inference; a later execution must use another new output directory. The public
+CLI therefore needs no private staging files. The historical run's exact
+consumed source remains in its evidence archive; the first completed pilot is
+retained separately and is never repeated during assembly. The assembler also
+accepts that older layout through `--pilot`.
+
+The separate native-agreement report compares every stock pose with all three
+original native poses in the same crystal-protein frame. It reports nearest
+native agreement, equal-number seed comparisons and native intrinsic spread;
+equal seed labels do not assert matched random tensors. No native prediction
+is rerun. Large final evidence archives are split into hash-verified parts
+below the static-hosting file limit; the offline checker joins them directly.
+
+## Findings and fixes
+
+- **STOCK-01 — Engine equality is not workflow equality.** The source/manifest
+  [audit](integration-audit.json) identified Molarium SMILES normalization and
+  an explicit conformer-seed override. The original-page launcher bypasses both;
+  the existing production wrapper is preserved for a later matched control.
+- **STOCK-02 — Verify the budget actually executed.** The offline checker reads
+  original page controls and every retained diffusion-frame record. All 80 runs
+  show 200 steps, 3 additional recycles and physical WebGPU. The frozen plan
+  retains all ten seeds, including WDR5's first hit on seed 9.
+- **STOCK-03 — Remove private staging assumptions.** The public batch tool now
+  checks native eligibility before GPU work and freezes its own source, inputs
+  and reference evidence. Assembly accepts both that layout and the historical
+  separate pilot. A regression reassembles real preserved predictions without
+  another model run.
+- **STOCK-04 — Do not label incomplete samples as three-seed statistics.**
+  First-three metrics are emitted only when all of seeds 0, 1 and 2 are present.
+  The native-agreement regression covers incomplete historical snapshots.
+- **STOCK-05 — Keep chemical validity separate from geometric proximity.**
+  Input conformers pass the independent stereochemical diagnostic, while some
+  generated poses and native geometric hits fail the separate limited checks.
+  Raw poses, graph identities and failures remain public. No pose is repaired
+  or discarded; ligands are never fitted independently of their proteins.
+
+The executable fixes and artifact regressions are in
+[`folding/comparison`](../../folding/comparison/README.md); exact consumed
+versions remain in the evidence archives. These results identify useful
+diagnostic systems; they do not isolate input preparation, sampling,
+quantization or individual numerical kernels as the cause of every gap.

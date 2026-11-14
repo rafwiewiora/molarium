@@ -1,0 +1,2027 @@
+{
+  "schema": "molarium.stock-native-pose-agreement.v1",
+  "scope": "complete",
+  "stockScoresSha256": "9e0a226bbc528a15c2ef9d17043809c0ebfcda3bbbce36ead81e2aa1fe6205c1",
+  "stockEvidenceSha256": "30ea56b80c7787b8a8da430d960cb2d446800054fa0e64df1a924aaba5d92c89",
+  "scriptSha256": "402bc130987b1f95dcf772e0ca28f8507a806797862be9218819145a8373fa18",
+  "nativeLibraries": [
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "file": "reviews/cofold-recent-pdb-2026-11-13/native-boltz2-msa256-standard/library-8.json",
+      "sha256": "e14cc2eb7c015f26e1f30c51a580dc869e68544b03ea2d9dd8e1cec4da2a9388",
+      "nativeSeeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "file": "reviews/cofold-recent-pdb-2026-11-13/native-boltz2-msa256-standard/library-5.json",
+      "sha256": "4558a0cb688ff4642de2a2665eea926b85975278c20dbf97a442a2a92408c3c5",
+      "nativeSeeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "file": "reviews/cofold-crystal-reference-2026-11-13/native-boltz2-single-standard/library-2.json",
+      "sha256": "e74f37b34ad0de2a3e0feedf3ad701ee29fc427e9de514977a90848646b75e1e",
+      "nativeSeeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "file": "reviews/cofold-recent-pdb-2026-11-13/native-boltz2-msa256-standard/library-2.json",
+      "sha256": "0e901bf45a3ce44f03aca3cd5419101868510ba2220898a914bfcb6e06228585",
+      "nativeSeeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "file": "reviews/cofold-recent-pdb-2026-11-13/native-openbind0-msa256-standard/library-2.json",
+      "sha256": "90fc59abc8679dfea0bce23a68c845d0ec74be42c5d4d8337de05de487fd6b59",
+      "nativeSeeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "file": "reviews/cofold-recent-pdb-2026-11-13/native-openbind0-msa256-standard/library-9.json",
+      "sha256": "8e12b10093fd12210d594f8582c15d12bad9dbc8a5d9dd9a7a983a05d9bb1507",
+      "nativeSeeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "file": "reviews/cofold-recent-pdb-2026-11-13/native-openbind0-msa256-standard/library-3.json",
+      "sha256": "256caa922074c9e4de524a83210e03eff45f4e395aa4c44b1114244def221539",
+      "nativeSeeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "file": "reviews/cofold-recent-pdb-2026-11-13/native-openbind0-msa256-standard/library-7.json",
+      "sha256": "251ca626ad54c4af6f339e26ee7ab3ec7dcfb58237c163a0367bcb14102d9749",
+      "nativeSeeds": [
+        0,
+        1,
+        2
+      ]
+    }
+  ],
+  "definitions": {
+    "frame": "Each prediction is independently protein-aligned to all observed corresponding crystal C-alpha atoms; ligand coordinates are never fitted.",
+    "distance": "Symmetry-aware ligand heavy-atom RMSD between the resulting common-frame coordinates.",
+    "sampling": "All three original native seeds versus every available stock seed. Equal integer seeds do not imply matched random tensors; this is pose agreement, not numerical parity."
+  },
+  "summary": [
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "stockPredictions": 10,
+      "nativePredictions": 3,
+      "medianNearestNativeRmsdA": 0.6683079984338285,
+      "sameIntegerSeedPairs": 3,
+      "meanSameIntegerSeedFirstThreeRmsdA": 2.0376769685684395,
+      "meanNativePairwiseSpreadA": 1.9714606880002952
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "stockPredictions": 10,
+      "nativePredictions": 3,
+      "medianNearestNativeRmsdA": 6.990887839579127,
+      "sameIntegerSeedPairs": 3,
+      "meanSameIntegerSeedFirstThreeRmsdA": 6.518260970579029,
+      "meanNativePairwiseSpreadA": 0.9552625466637729
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "stockPredictions": 10,
+      "nativePredictions": 3,
+      "medianNearestNativeRmsdA": 8.665536354761612,
+      "sameIntegerSeedPairs": 3,
+      "meanSameIntegerSeedFirstThreeRmsdA": 8.688037405121221,
+      "meanNativePairwiseSpreadA": 0.7504148846628037
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "stockPredictions": 10,
+      "nativePredictions": 3,
+      "medianNearestNativeRmsdA": 7.989163900773216,
+      "sameIntegerSeedPairs": 3,
+      "meanSameIntegerSeedFirstThreeRmsdA": 8.055489156538975,
+      "meanNativePairwiseSpreadA": 0.3769911936896503
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "stockPredictions": 10,
+      "nativePredictions": 3,
+      "medianNearestNativeRmsdA": 1.6730578252031134,
+      "sameIntegerSeedPairs": 3,
+      "meanSameIntegerSeedFirstThreeRmsdA": 4.9886905298691655,
+      "meanNativePairwiseSpreadA": 5.024702295537878
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "stockPredictions": 10,
+      "nativePredictions": 3,
+      "medianNearestNativeRmsdA": 0.5366231423419994,
+      "sameIntegerSeedPairs": 3,
+      "meanSameIntegerSeedFirstThreeRmsdA": 1.2587137729919784,
+      "meanNativePairwiseSpreadA": 0.9362155165185785
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "stockPredictions": 10,
+      "nativePredictions": 3,
+      "medianNearestNativeRmsdA": 0.4159531718403794,
+      "sameIntegerSeedPairs": 3,
+      "meanSameIntegerSeedFirstThreeRmsdA": 3.7195954679817844,
+      "meanNativePairwiseSpreadA": 0.2440239670185008
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "stockPredictions": 10,
+      "nativePredictions": 3,
+      "medianNearestNativeRmsdA": 1.4195457315736042,
+      "sameIntegerSeedPairs": 3,
+      "meanSameIntegerSeedFirstThreeRmsdA": 1.7319167354122962,
+      "meanNativePairwiseSpreadA": 2.214826720190208
+    }
+  ],
+  "pairs": [
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "stockSeed": 0,
+      "stockPdbSha256": "512fecc829545f916aa8b0e0dc5a5e4107b4c94c8350c5ef7693ff8a00f0dade",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.8602375041003794
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.4555531525581132
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 2.807607540644221
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 0.4555531525581132,
+      "sameIntegerSeedRmsdA": 2.8602375041003794
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "stockSeed": 1,
+      "stockPdbSha256": "adbc67c43dc01a8eea1139d67e9efeea1da2535044411a522495cdd848f17ddf",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.776497108967447
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.5886871035238054
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 2.742531742690459
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 0.5886871035238054,
+      "sameIntegerSeedRmsdA": 0.5886871035238054
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "stockSeed": 2,
+      "stockPdbSha256": "a0820a1d62ab950894d38c99c6cb9990b7fe3a16a79e565930af1a6c1bc01194",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.7137065930305417
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.831596358830362
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 2.664106298081134
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 0.831596358830362,
+      "sameIntegerSeedRmsdA": 2.664106298081134
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "stockSeed": 3,
+      "stockPdbSha256": "77c12eec883f4ca6ede787389a8208fc94d4a5f1d00d6a6238e77346882dd3ee",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.686863563337434
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.7479288933438515
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 2.6351622444104255
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 0.7479288933438515,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "stockSeed": 4,
+      "stockPdbSha256": "72958efbda132b22b06cbb0ca266e933a92ab78de054fb91296fb5e9529696f1",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.8722709431502285
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.2226975952445684
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 2.82804627753099
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 1.2226975952445684,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "stockSeed": 5,
+      "stockPdbSha256": "0a0b9c8273b461b8bc9e7c47fc98dafe31840370ac0c5ccc796e814580017dca",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.9281260018458566
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.46828956222587154
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 2.9011241825864524
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 0.46828956222587154,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "stockSeed": 6,
+      "stockPdbSha256": "8edee1b8d0b5178540e3b8fb97194616d0bf6f9766053e95dad26d6bc005aaa0",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 3.14840120248168
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.5734394734765021
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 3.076425496876439
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 0.5734394734765021,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "stockSeed": 7,
+      "stockPdbSha256": "48013baed36f4a2f2d4c00b9a53f8600f41e6b44f9be8ab9013d2cc7a82425f5",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.9311095339732796
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.8061379609209255
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 2.88080312216573
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 0.8061379609209255,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "stockSeed": 8,
+      "stockPdbSha256": "e3544d32ab0596de7d3a89ebb36b9947f6bd855caf10ddab19535d19cd8b096f",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.816401376687687
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.42277714615775913
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 2.7665697220394043
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 0.42277714615775913,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "stockSeed": 9,
+      "stockPdbSha256": "76389dcb06a31fb4f6e2eb90bd71b8c636c04ce589132462d21006ac6eba3165",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 3.097343422867902
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.2386200054827332
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 3.0219516461460585
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 1.2386200054827332,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "stockSeed": 0,
+      "stockPdbSha256": "4202d709a4b632ed6701ef874cca039faac22e707a52e862f1fae4c79b63b524",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 5.562807845016598
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 5.692512902142764
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 6.1199047838225065
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 5.562807845016598,
+      "sameIntegerSeedRmsdA": 5.562807845016598
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "stockSeed": 1,
+      "stockPdbSha256": "01e9ef1924e0fd9ae3e0f183646c9be653aab186265714c90a35490300d80172",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 7.201633111634693
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 7.254607590526637
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 7.293093081913762
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 7.201633111634693,
+      "sameIntegerSeedRmsdA": 7.254607590526637
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "stockSeed": 2,
+      "stockPdbSha256": "316e526f11a96acfd883a8a9c4e9259b06f821d4aeb82c1a71fee294986e37d7",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 7.17340633055538
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 7.119416946152425
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 6.737367476193851
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 6.737367476193851,
+      "sameIntegerSeedRmsdA": 6.737367476193851
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "stockSeed": 3,
+      "stockPdbSha256": "c11cab054046686c6ca26802c1ac9fc2187038df8d11cebb949a7e5e7de1627b",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 4.090922792503483
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 4.127695958709286
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 4.153950918404254
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 4.090922792503483,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "stockSeed": 4,
+      "stockPdbSha256": "01c100f565d58c17c9acbe0589e747c699788224d4cb5c37d606103648943ad9",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 7.367405749206265
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 7.451638865334059
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 7.847948828847689
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 7.367405749206265,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "stockSeed": 5,
+      "stockPdbSha256": "3ab4efa4475c9eddac7dda03a4ac3a1951eaa74a8a8ebd8c0c069ec0e71ba3c4",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 7.744573842241689
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 7.686142469540741
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 7.384937122242244
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 7.384937122242244,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "stockSeed": 6,
+      "stockPdbSha256": "fefcab5754f783e17a7a8100abd8ec0ff39fb9e11c768ecbabaf12b844882cdd",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 7.490183005968841
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 7.438402973452646
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 7.039090469998887
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 7.039090469998887,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "stockSeed": 7,
+      "stockPdbSha256": "dc2bd617b92cf3d9eb1948e394764555b8c44130cc909264f8dba7c503621627",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 7.735203612463756
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 7.68991205671474
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 7.302274689935116
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 7.302274689935116,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "stockSeed": 8,
+      "stockPdbSha256": "ac1f9b444bca02cde4f3c90af654aef42e05750fe3b62ff20c25b83425eb3553",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 6.569765427291853
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 6.678505038287601
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 7.131499048163161
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 6.569765427291853,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "stockSeed": 9,
+      "stockPdbSha256": "7b71ed750c947483fb12472643aa52ab11ed8fc5122576c36d55649011ad16b4",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 6.942685209159368
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 6.968685013677407
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 6.981544229912021
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 6.942685209159368,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "stockSeed": 0,
+      "stockPdbSha256": "d917f35e9ec7b7e4875c44baa21231efd89f537710fe8ce84523239ac252af6a",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.679578864610617
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.730579231162212
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.92929134037494
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.679578864610617,
+      "sameIntegerSeedRmsdA": 8.679578864610617
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "stockSeed": 1,
+      "stockPdbSha256": "94f4814214aace4a7777df80f37bd9fa115c251f1bec6fe284122b5387c91e55",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.538710473382986
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.56009446459015
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.77655917797914
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.538710473382986,
+      "sameIntegerSeedRmsdA": 8.56009446459015
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "stockSeed": 2,
+      "stockPdbSha256": "016188f979a0e5ffcfc61d6ff5ad65f749b5c8f2f3cd853d7b48e74e7b1c3373",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.695118818210887
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.717761213637573
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.824438886162898
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.695118818210887,
+      "sameIntegerSeedRmsdA": 8.824438886162898
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "stockSeed": 3,
+      "stockPdbSha256": "aa74a7277ba96019b360213eafd48d95959cdbf56f8c0c06341576c1d8caede1",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.726152465129397
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.760240137810904
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.951924575155282
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.726152465129397,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "stockSeed": 4,
+      "stockPdbSha256": "1737639551bdd15969dbed03d56a09063e48f13400df5ca264e1831f96cf5dc5",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.619129415864291
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.657411205369314
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.854212434191384
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.619129415864291,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "stockSeed": 5,
+      "stockPdbSha256": "227d209c02275bb51735caf27636c37fb2d1c7e7d05e3c5b4bde4de372de5af9",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.756292017933967
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.783321027575333
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.908225141993107
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.756292017933967,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "stockSeed": 6,
+      "stockPdbSha256": "e3ad0fe44f34be5b88f7d8725116832774188f7a9e2614d86899ad60183000e5",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.57695406663784
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.613365424431946
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.821782060808006
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.57695406663784,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "stockSeed": 7,
+      "stockPdbSha256": "5f058493e7162d5384de7b45ebdae89578b653b94baaee34e65026ef059caa9f",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.772834024093642
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.792278904236532
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.988387679978887
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.772834024093642,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "stockSeed": 8,
+      "stockPdbSha256": "93537e2f6dde592d154f1693a5c45c6a154e7270c2bf16616d5f2d40afcae9f0",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.651493844912606
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.685770634514494
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.921525303452293
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.651493844912606,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "stockSeed": 9,
+      "stockPdbSha256": "b987e240efc929367702d78c2fca5fd4e1a824a17db5640b583d6bd788caa9d4",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 6.383566730155599
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 6.333998582297234
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 6.15797537539136
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 6.15797537539136,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "stockSeed": 0,
+      "stockPdbSha256": "77cafb9e0776d709050fde1d74be5f7325f27e0e2d6b6e0e3645882bccfc7616",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 7.784865612823001
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 7.868345761498987
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.003587791631492
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 7.784865612823001,
+      "sameIntegerSeedRmsdA": 7.784865612823001
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "stockSeed": 1,
+      "stockPdbSha256": "51c5a969b6fdf4b9cb69a5428e79fc28f01a673b62a9925f1befb5516fa03dab",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 7.961101831541245
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.053251611170937
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.189762396204591
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 7.961101831541245,
+      "sameIntegerSeedRmsdA": 8.053251611170937
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "stockSeed": 2,
+      "stockPdbSha256": "7313d7a29e49ce8d04780b9878659e25517aee1f5edaf406af69aad7bfb0a604",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.082279447422106
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.175496212207733
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.328350245622985
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.082279447422106,
+      "sameIntegerSeedRmsdA": 8.328350245622985
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "stockSeed": 3,
+      "stockPdbSha256": "db24c681e5c9c1a7b8fd97691386e4ce2567a43e8e847196c48496c782d0bb5b",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 7.9094148823065344
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.00488055344325
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.142638990521336
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 7.9094148823065344,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "stockSeed": 4,
+      "stockPdbSha256": "cc865f293f666f5c864a7e97ac1bdc601d7315c09d42eb32995e8f3e10b68b13",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.017225970005187
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.110161399723477
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.253101405160919
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.017225970005187,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "stockSeed": 5,
+      "stockPdbSha256": "b1551483a83c8ed857e8fd8bea0d7ace03e639205cf06a51f909a10a0a87cdad",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.029650325642683
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.12634292854448
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.272205599364428
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.029650325642683,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "stockSeed": 6,
+      "stockPdbSha256": "c7061b33bcfd7e3eef14079b8e4e77cc8e2e6bd9fb624aee9ed38789a06ba38c",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 7.821530472450481
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 7.904624166781278
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.042575702658702
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 7.821530472450481,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "stockSeed": 7,
+      "stockPdbSha256": "a0ea31820b8321b1c4cbfbe2b638ab03660f92ff2a1927288e9565924f5156ce",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 7.716053550273162
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 7.801422787296755
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 7.940581626984247
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 7.716053550273162,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "stockSeed": 8,
+      "stockPdbSha256": "e05214f4ccdf6fef2a90b1c098f943bb63bcc94774c10efec9b2720ba8571113",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.116903722825187
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.212785786381337
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.359049662145877
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.116903722825187,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "stockSeed": 9,
+      "stockPdbSha256": "a1f8b1b1a48e1c02fcef03df6d9832384e73458a430f30c5f520a2a0e6dae476",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.168054328505677
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.265557617389865
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.41352044080968
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.168054328505677,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "stockSeed": 0,
+      "stockPdbSha256": "429eba07d8f3d2e005848b67e35abac11174f5baeffb4ab898d1873a050d9c67",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 6.868972081167108
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 6.984499128046573
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 1.4428385094787046
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 1.4428385094787046,
+      "sameIntegerSeedRmsdA": 6.868972081167108
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "stockSeed": 1,
+      "stockPdbSha256": "d70b0084699e129f7e3620b295e15061a30f216792f1c8350270ccf87ebf8d09",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.071724543281612
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.341363973777119
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 7.623766464036846
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 1.341363973777119,
+      "sameIntegerSeedRmsdA": 1.341363973777119
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "stockSeed": 2,
+      "stockPdbSha256": "16e4b0ad0158d10fd6bd8ec98b6a00f151bf39b7745e1be4708f5fa3e134a3b7",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 1.7287420255012336
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.452990671253194
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 6.75573553466327
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 1.452990671253194,
+      "sameIntegerSeedRmsdA": 6.75573553466327
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "stockSeed": 3,
+      "stockPdbSha256": "21d7533422daed2b9ac9f10cede29ede2db3abefbd3e247b67bc0c789cd55800",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 4.344946225651313
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 4.131963206243367
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 5.500411602650937
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 4.131963206243367,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "stockSeed": 4,
+      "stockPdbSha256": "ec5465517900a090f3aa6fc7b8312d6e47f59a75ae31aee39c94e3fcfc69fd5c",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 3.772376217715737
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 4.255427030359226
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 6.058646521438494
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 3.772376217715737,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "stockSeed": 5,
+      "stockPdbSha256": "5741419cfcb7614c020a27b8a4eea274a0b2bb550e051768be59a2855c0386e3",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.268396071035404
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.8931249791530327
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 7.472285733183187
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 1.8931249791530327,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "stockSeed": 6,
+      "stockPdbSha256": "98d6b843a5302f7f28d7ef4295726b22eaa52c85a7faa7a7840b1aeff02d5268",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 1.9309751852335826
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 2.0287530600749424
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 6.651677500811881
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 1.9309751852335826,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "stockSeed": 7,
+      "stockPdbSha256": "0009a1add2b29b22bde9d19b09abb488d12ffcb14c1757f7fdc16bac0d7946ae",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 1.7401849630587436
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.428418090301251
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 7.130175425965679
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 1.428418090301251,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "stockSeed": 8,
+      "stockPdbSha256": "421a9078e468d101c2db63d6d7baad32214caa7d8ddef972940a8676f890d5e6",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 1.2946224484045006
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.9507890868806822
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 6.815514755212577
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 0.9507890868806822,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "stockSeed": 9,
+      "stockPdbSha256": "516042003271e7d36b8478c91894d438437e1e6fb648a79f47e733310b5ef0ee",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 22.046927325454895
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 22.577583656297694
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 20.12770964676548
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 20.12770964676548,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "stockSeed": 0,
+      "stockPdbSha256": "53fa7991f3c69e73d278b2643586f92d4276fa804554cbcbd3ad6cb4106e03bd",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 0.3829702841613966
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.2079458614677148
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.7880925834449355
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 0.3829702841613966,
+      "sameIntegerSeedRmsdA": 0.3829702841613966
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "stockSeed": 1,
+      "stockPdbSha256": "dd8fdcc466ff6cb0b35141d999bc5c842deddae2e917f5acda337eb317f85425",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 1.2866833422492172
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.4126151146867855
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 1.265216911406486
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 0.4126151146867855,
+      "sameIntegerSeedRmsdA": 0.4126151146867855
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "stockSeed": 2,
+      "stockPdbSha256": "855dd36cdec2b7323294400255a4d9b0f9753def9f83366e06c95afbed98fea4",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 3.234633117845687
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 3.326685646378141
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 2.980555920127753
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 2.980555920127753,
+      "sameIntegerSeedRmsdA": 2.980555920127753
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "stockSeed": 3,
+      "stockPdbSha256": "c8e1271f81f56a968a6406764b823fde644e8bb20e845bcb4848094bc0ac383e",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 0.5277326378464181
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.8654999371526747
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.7757714626686025
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 0.5277326378464181,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "stockSeed": 4,
+      "stockPdbSha256": "9e0b25a984ba6b5a6aaa02ef6c835f1fe30b1732efee751de028ce8931875b9f",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 1.4243248659181411
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.9063698643139793
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 1.1959439877417866
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 1.1959439877417866,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "stockSeed": 5,
+      "stockPdbSha256": "2c2cd8a33e290243dda8ffd9310103ddb61b7bbe037d64893cbc33e0305b2bff",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 0.5455136468375806
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.0450724658132053
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.6581703382578277
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 0.5455136468375806,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "stockSeed": 6,
+      "stockPdbSha256": "22136a052693125c7e6be25a612d6c718aa98d25686410ab7e8abfb4b8faabdc",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 0.7941702227690651
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.3036130562835067
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.4871760488958817
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 0.4871760488958817,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "stockSeed": 7,
+      "stockPdbSha256": "4fa7438af3996f30ecf465d300fd8872294d9b408f5bf0b42d2a8dc0ed09abda",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 0.40013239543987317
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.950988949669618
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.6992620017832708
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 0.40013239543987317,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "stockSeed": 8,
+      "stockPdbSha256": "ca360faea87b5f974f14b0698c8a685104662ce305677ebb30cecd8412be905a",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 3.6878876640984712
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 3.7666191577616246
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 3.403379592562129
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 3.403379592562129,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "stockSeed": 9,
+      "stockPdbSha256": "91c44a64cf50cbc09281901a743db9ec52811354bf77dc3890fe85fa271d9bb7",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 3.644965779440292
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 3.9437066090772657
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 3.4475042066993606
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 3.4475042066993606,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "stockSeed": 0,
+      "stockPdbSha256": "dcbe9d91284b0907a34fcb7cb1ed01572c9de0d8fd67e1ee5f5e33f0f9d1a27c",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 10.064089381730199
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 10.101280071085093
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 10.076357615034485
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 10.064089381730199,
+      "sameIntegerSeedRmsdA": 10.064089381730199
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "stockSeed": 1,
+      "stockPdbSha256": "e8d0a7b18301c2bd5d0b68bf51804ee89e43ed79e0cba25dcce171657fea847e",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 0.5444197325629957
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.617130722438675
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.538981301473408
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 0.538981301473408,
+      "sameIntegerSeedRmsdA": 0.617130722438675
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "stockSeed": 2,
+      "stockPdbSha256": "22326eaa1a6a259e428d24c57aff1459cae6363841f07553b670e7414e2157a3",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 0.3370054177966315
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.46080622956064277
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.47756629977648013
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 0.3370054177966315,
+      "sameIntegerSeedRmsdA": 0.47756629977648013
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "stockSeed": 3,
+      "stockPdbSha256": "046f2c2106abd21ef7c5c11d2a3d89ee321a0959086998d33c6a7eda3d78d507",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 0.47842923853310726
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.6066589938966008
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.431303814446042
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 0.431303814446042,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "stockSeed": 4,
+      "stockPdbSha256": "4522d6ce4a1954e7812abdb7191890e7360127e9eaaca8cc899323d35fd3d1ef",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 0.31432596423359127
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.3464719815994175
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.49633577831616155
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 0.31432596423359127,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "stockSeed": 5,
+      "stockPdbSha256": "aa933e91bdfc5ea8b191dc15641ee162c959c07e7ecc1b3f1cb69b42bcd027a1",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 0.44311367932460105
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.5870069540622334
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.45539006758225414
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 0.44311367932460105,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "stockSeed": 6,
+      "stockPdbSha256": "e554069e35cc241a6e228697af5fb5468a927086473e0eb8d1bad2b390fee088",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 0.2017869274819336
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.31415547800762383
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.32234555298428474
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 0.2017869274819336,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "stockSeed": 7,
+      "stockPdbSha256": "4f3d3f49e23d58c99dcd25c5eb41a6f1486b24096c4a29d79f11abcafefaa775",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 0.37916008447210975
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.3752095778967249
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.48165679824036134
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 0.3752095778967249,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "stockSeed": 8,
+      "stockPdbSha256": "2af587446f737962e984be4912dc4091aa1fb1985b6f2ad02096025a340c3d79",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 0.5435835992702845
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.4509318763427498
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.6268147956768994
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 0.4509318763427498,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "stockSeed": 9,
+      "stockPdbSha256": "a2e30f5297655774e43da28714e8f206b74babc898c2705bc5df0ff706d3d91f",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 0.40060252923471673
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.4312829669417556
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.5479495143849947
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 0.40060252923471673,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "stockSeed": 0,
+      "stockPdbSha256": "a52746750ac2a74b0a6afe23402c6f68f68d1366fc0e04a54451e3f4d711bd09",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.5360587231682072
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 2.0856707251364375
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 2.162713838291903
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 2.0856707251364375,
+      "sameIntegerSeedRmsdA": 2.5360587231682072
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "stockSeed": 1,
+      "stockPdbSha256": "922a6a3783c2c6708227dbfa86cffe15ab0f4e35a17c2e31f9f888213190cd51",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.286869105665365
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.0752909701966349
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 1.2243672900424551
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 1.0752909701966349,
+      "sameIntegerSeedRmsdA": 1.0752909701966349
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "stockSeed": 2,
+      "stockPdbSha256": "d2d38a300b084955a8c046615c8091dbc3d5665725c1f0070d3466ce1513614d",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.215441778911783
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.5703922033577018
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 1.5844005128720466
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 1.5703922033577018,
+      "sameIntegerSeedRmsdA": 1.5844005128720466
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "stockSeed": 3,
+      "stockPdbSha256": "de947413ed332f0a27b39c052f9890b1a4ffa6137530f4a87a84934fe09ae3d5",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.6073204995253416
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.7993277068130078
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 1.256587257618227
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 1.256587257618227,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "stockSeed": 4,
+      "stockPdbSha256": "48ab921939ae8616f6deb7ccceb9aa2d04f41751103074629e4a21f851f2a0e3",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.6692842249910527
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.1331742216054597
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.5409575071245389
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 0.5409575071245389,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "stockSeed": 5,
+      "stockPdbSha256": "72cec68c1acfcba1ee3b9457186208e600a1c80f1985f477006934ce7b8b966d",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.96941024381699
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.8582877660115582
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 1.2686992597895064
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 1.2686992597895064,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "stockSeed": 6,
+      "stockPdbSha256": "7aa485671b7b3bfa49430e4b61acbf49b9918c8fb4893bdb458a3a3f75a0a2ce",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 6.716126219166871
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 7.11445117611616
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 6.991762282619743
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 6.716126219166871,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "stockSeed": 7,
+      "stockPdbSha256": "3f21cf13dee8dba681b2ae74687d595eeb44ff549432c300f21e6e7bd6f0cd8a",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.461592503527661
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.0232794829137222
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.855386094618117
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 0.855386094618117,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "stockSeed": 8,
+      "stockPdbSha256": "23897aeec55c40f0e72fd893660f940189e4c3283b10ba73a559540e113dcc96",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 6.194433606585089
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 6.710830210911513
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 6.544617774955802
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 6.194433606585089,
+      "sameIntegerSeedRmsdA": null
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "stockSeed": 9,
+      "stockPdbSha256": "99c996d864ed75513d0393f079d710fc6db15eac1796e2ab2f1ca571258a1129",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 1.7245922453701719
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 2.9559800862951646
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 3.1576604180495353
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 1.7245922453701719,
+      "sameIntegerSeedRmsdA": null
+    }
+  ],
+  "neuralForwards": 0
+}
