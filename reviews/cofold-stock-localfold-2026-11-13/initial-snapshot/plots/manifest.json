@@ -1,0 +1,10 @@
+{
+  "scoresSha256": "0f962e34aad8033e6bae580da34de1908a702508a00f002cf909854d1faea31a",
+  "scriptSha256": "a914df23f162f6a88521b0a44f0ca18ce163559108e3ad8d5b5195c6d37c0f3c",
+  "matplotlibVersion": "3.10.7",
+  "predictions": 22,
+  "outputs": {
+    "poses.svg": "743fa194077dde24b44e711c6be4bf1ea7ebb419ddcb65178c38ba23ce8489a7",
+    "poses.png": "d8999633a3ba484c6eca13f47162f9e33dcd01374dbea3791dd821ebd0e9f0d4"
+  }
+}

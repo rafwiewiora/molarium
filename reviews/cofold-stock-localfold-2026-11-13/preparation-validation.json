@@ -1,0 +1,42 @@
+{
+  "status": "prepared-not-run",
+  "scope": "Source, input and CLI preparation only; zero folding-model runs.",
+  "upstream": {
+    "revision": "5ea3d42c911949700401b54003cb28c557fcf2a6",
+    "tree": "c20810433912b6ff46663e6a30bd70a3401513dd",
+    "files": {
+      "tools/fold-in-page.py": "493622521951a322306adcca6ccd5568034eca32caab697828a3009d80af461e",
+      "tools/cdp.py": "dc8862fa08c635876c0dd003328430126912b826f7f10dc3911ab7bba14a76ba",
+      "tools/check-job-archive.py": "7c88b0f45e8b5761e1bdff9e26000e2839d27fd4d43109268d12c81ac29fb61c",
+      "index.html": "d58d5d6ba25367a0e39f90dc2f98bf2ab9000ab266452e3d258620912b765ac2",
+      "web/app.js": "500d2ca29281125ef01748550be8784fd7f7808a99f03716d4037048639d1791",
+      "web/af3-model.js": "61726608fa9ab4d9f3ccbd3c62a3fa9baec3a18e92c6dc22d08394175565a632",
+      "shared/chem/component.js": "c13ae0a3626fc0d7e7ba719cd8a2441a2fee2ccd513a22d61d3cee3bbf0ad68d",
+      "shared/bundles/manifests/index.js": "72df48a36de56e5df677fc2ebd6c03ad928e911625cabb2d18e61867c1d73b1d",
+      "shared/bundles/manifests/openbind0.js": "52bb27334d1d8c593da908ab13c5cf5e54e37e9dc6206190a0634621aabe9f8f",
+      "shared/bundles/manifests/boltz2.js": "3d695148670bbed83ecce567e4ae9e4a97c5aa150ad2cbb72c205879eeff9ec9"
+    }
+  },
+  "launcherSha256": "8344a1fc14007876d7f10f6797b6181f9ae9dfb2667a839e4cd19aea19eabfd3",
+  "inputSha256": "b1c31efb081b595eae930438f9ad75e169c5f8554055169c2a865f1133bc07f0",
+  "requested": {
+    "model": "boltz2",
+    "steps": 25,
+    "recycles": 2
+  },
+  "neuralInferenceCompleted": false,
+  "originalJobReader": {
+    "seed": 0,
+    "proteinSequenceExact": true,
+    "rawSmilesExact": true,
+    "providedA3mExact": true,
+    "singleSequence": false,
+    "notes": [
+      "the file's own alignments for 1 of 1 chains"
+    ]
+  },
+  "guardTests": {
+    "passed": 3,
+    "scope": "Input and controls guards; no model evidence."
+  }
+}

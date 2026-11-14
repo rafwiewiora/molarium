@@ -1,0 +1,816 @@
+{
+  "schema": "molarium.stock-localfold-benchmark.v1",
+  "status": "planned-not-run",
+  "selection": "All recent same-model provided-MSA standard-protocol native hits strictly below 2 A, plus the previously established FKBP12/FK5 Boltz-2 browser-miss diagnostic. Selection frozen before new stock inference.",
+  "sourceRevision": "5ea3d42c911949700401b54003cb28c557fcf2a6",
+  "steps": 200,
+  "recycles": 3,
+  "recycleSemantics": "Original LocalFold UI: three additional recycles, four trunk passes. Native recycle labels are retained, not asserted to be numerically identical.",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "perSeedDiffusionSamples": 1,
+  "samplesPerPair": 10,
+  "pairs": [
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "name": "32QY \u00b7 YTH domain-containing family protein 2 \u00b7 A1KEO",
+      "nativeBestA": 1.3858219803561171,
+      "nativeScoreFile": "reviews/cofold-recent-pdb-2026-11-13/native-boltz2-msa256-standard/scores.json",
+      "nativeScoreSha256": "b775e6c086c54182ca71178056716891af9e6beb9a3b2fb94be21a046c87a2ed",
+      "nativeHitSeeds": [
+        1
+      ],
+      "nativeHasStereoClashPassingHit": true,
+      "panelFile": "reviews/cofold-recent-pdb-2026-11-13/panel-msa256.json",
+      "panelSha256": "17d8209cd73a89e53e32c91395c34333f9e05838c8908b0d65a6312841472f48",
+      "referenceFile": "reviews/cofold-recent-pdb-2026-11-13/32qy-a1keo/reference.json",
+      "referenceSha256": "401c8958854f5d3d4bded647f0a7c8b6fc801bda8b6292f318caa3801cf174ad",
+      "msaRows": 256
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "name": "15JI \u00b7 Non-structural protein 3 \u00b7 A1D2G",
+      "nativeBestA": 0.9038973608238603,
+      "nativeScoreFile": "reviews/cofold-recent-pdb-2026-11-13/native-boltz2-msa256-standard/scores.json",
+      "nativeScoreSha256": "b775e6c086c54182ca71178056716891af9e6beb9a3b2fb94be21a046c87a2ed",
+      "nativeHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "nativeHasStereoClashPassingHit": false,
+      "panelFile": "reviews/cofold-recent-pdb-2026-11-13/panel-msa256.json",
+      "panelSha256": "17d8209cd73a89e53e32c91395c34333f9e05838c8908b0d65a6312841472f48",
+      "referenceFile": "reviews/cofold-recent-pdb-2026-11-13/15ji-a1d2g/reference.json",
+      "referenceSha256": "3864f564a3ce7d73999a621b8652bb52f5b74b54f03217315924df247aedf20a",
+      "msaRows": 256
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "name": "FKBP12\u2013FK506 (deposited FK5)",
+      "nativeBestA": 0.8290443610246688,
+      "nativeScoreFile": "reviews/cofold-crystal-reference-2026-11-13/native-boltz2-single-standard/scores.json",
+      "nativeScoreSha256": "de7665012c1e17e9235605472da2a32cf4e7b221b255173bb2ae17fab91c228d",
+      "nativeHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "nativeHasStereoClashPassingHit": true,
+      "panelFile": "reviews/cofold-crystal-reference-2026-11-13/panel.json",
+      "panelSha256": "2d74bd8373d9caa5420d62388a1c0e4c7f73ed982a00a364c43b7d7b0330ba2c",
+      "referenceFile": "reviews/cofold-crystal-reference-2026-11-13/1fkf-fk5/reference.json",
+      "referenceSha256": "8fac22a985b666314209e23414677446504d6aaafc96012a9cf5e18953d4765f",
+      "msaRows": 1
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "name": "9SXF \u00b7 Mast/stem cell growth factor receptor Kit \u00b7 A1JRG",
+      "nativeBestA": 1.2160097091908737,
+      "nativeScoreFile": "reviews/cofold-recent-pdb-2026-11-13/native-boltz2-msa256-standard/scores.json",
+      "nativeScoreSha256": "b775e6c086c54182ca71178056716891af9e6beb9a3b2fb94be21a046c87a2ed",
+      "nativeHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "nativeHasStereoClashPassingHit": false,
+      "panelFile": "reviews/cofold-recent-pdb-2026-11-13/panel-msa256.json",
+      "panelSha256": "17d8209cd73a89e53e32c91395c34333f9e05838c8908b0d65a6312841472f48",
+      "referenceFile": "reviews/cofold-recent-pdb-2026-11-13/9sxf-a1jrg/reference.json",
+      "referenceSha256": "0ed15fcfd390aa8f574198263ee8151d5e707a053c81faffbb4eebcc6b67af24",
+      "msaRows": 256
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "name": "9SXF \u00b7 Mast/stem cell growth factor receptor Kit \u00b7 A1JRG",
+      "nativeBestA": 1.4037537800611188,
+      "nativeScoreFile": "reviews/cofold-recent-pdb-2026-11-13/native-openbind0-msa256-standard/scores.json",
+      "nativeScoreSha256": "ae61388ceed8b03c5d5fa84ddbe8a014e845abd8e5aaaae8b39a27535856bcbc",
+      "nativeHitSeeds": [
+        1
+      ],
+      "nativeHasStereoClashPassingHit": false,
+      "panelFile": "reviews/cofold-recent-pdb-2026-11-13/panel-msa256.json",
+      "panelSha256": "17d8209cd73a89e53e32c91395c34333f9e05838c8908b0d65a6312841472f48",
+      "referenceFile": "reviews/cofold-recent-pdb-2026-11-13/9sxf-a1jrg/reference.json",
+      "referenceSha256": "0ed15fcfd390aa8f574198263ee8151d5e707a053c81faffbb4eebcc6b67af24",
+      "msaRows": 256
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "name": "9T3V \u00b7 Bifunctional epoxide hydrolase 2 \u00b7 A1JTG",
+      "nativeBestA": 0.7724313770311539,
+      "nativeScoreFile": "reviews/cofold-recent-pdb-2026-11-13/native-openbind0-msa256-standard/scores.json",
+      "nativeScoreSha256": "ae61388ceed8b03c5d5fa84ddbe8a014e845abd8e5aaaae8b39a27535856bcbc",
+      "nativeHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "nativeHasStereoClashPassingHit": true,
+      "panelFile": "reviews/cofold-recent-pdb-2026-11-13/panel-msa256.json",
+      "panelSha256": "17d8209cd73a89e53e32c91395c34333f9e05838c8908b0d65a6312841472f48",
+      "referenceFile": "reviews/cofold-recent-pdb-2026-11-13/9t3v-a1jtg/reference.json",
+      "referenceSha256": "b8d0148a2b09a5e740023e12ab84734a29fc29a0bb7bc4661efef9cd5d4419a5",
+      "msaRows": 256
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "name": "9T51 \u00b7 StAR-related lipid transfer protein 4 \u00b7 A1JTM",
+      "nativeBestA": 0.7986792326704657,
+      "nativeScoreFile": "reviews/cofold-recent-pdb-2026-11-13/native-openbind0-msa256-standard/scores.json",
+      "nativeScoreSha256": "ae61388ceed8b03c5d5fa84ddbe8a014e845abd8e5aaaae8b39a27535856bcbc",
+      "nativeHitSeeds": [
+        0,
+        1,
+        2
+      ],
+      "nativeHasStereoClashPassingHit": true,
+      "panelFile": "reviews/cofold-recent-pdb-2026-11-13/panel-msa256.json",
+      "panelSha256": "17d8209cd73a89e53e32c91395c34333f9e05838c8908b0d65a6312841472f48",
+      "referenceFile": "reviews/cofold-recent-pdb-2026-11-13/9t51-a1jtm/reference.json",
+      "referenceSha256": "baf6537b9b918fb7a5c282e527f1599baf5f01c0e5915567817e3fcb8cb35372",
+      "msaRows": 256
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "name": "9XJQ \u00b7 WD repeat-containing protein 5 \u00b7 A1E0I",
+      "nativeBestA": 0.744594850847165,
+      "nativeScoreFile": "reviews/cofold-recent-pdb-2026-11-13/native-openbind0-msa256-standard/scores.json",
+      "nativeScoreSha256": "ae61388ceed8b03c5d5fa84ddbe8a014e845abd8e5aaaae8b39a27535856bcbc",
+      "nativeHitSeeds": [
+        0
+      ],
+      "nativeHasStereoClashPassingHit": true,
+      "panelFile": "reviews/cofold-recent-pdb-2026-11-13/panel-msa256.json",
+      "panelSha256": "17d8209cd73a89e53e32c91395c34333f9e05838c8908b0d65a6312841472f48",
+      "referenceFile": "reviews/cofold-recent-pdb-2026-11-13/9xjq-a1e0i/reference.json",
+      "referenceSha256": "3d36a270d4084206e52f1229a983be0f3b8d82741f95e8c2b869d69d2eb394c7",
+      "msaRows": 256
+    }
+  ],
+  "jobs": [
+    {
+      "index": 0,
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/32qy-a1keo-boltz2-seed0.json",
+      "inputSha256": "d198019fcc1d67a010c1fba8dff877ff03b16b319d165553942c0d1ff4997ad9"
+    },
+    {
+      "index": 1,
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/15ji-a1d2g-boltz2-seed0.json",
+      "inputSha256": "847e1ec12e59333f0407e4d1df91b50d3eba9e29a15402ab579e19f976877d55"
+    },
+    {
+      "index": 2,
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/1fkf-fk5-boltz2-seed0.json",
+      "inputSha256": "8af5fc986334b41debb9ccc2b9f5d1855dad02364483d84409ba598412376137"
+    },
+    {
+      "index": 3,
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "seed": 0,
+      "input": "inputs/9sxf-a1jrg-boltz2-seed0.json",
+      "inputSha256": "f907c21e311128b187c18db692c2bd852dc7fb4e5fb27400cf71f421231f42ae"
+    },
+    {
+      "index": 4,
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "seed": 0,
+      "input": "inputs/9sxf-a1jrg-openbind0-seed0.json",
+      "inputSha256": "1dab8ad7e336691ef2ae18c7589e5c27d7e785d5d80d9bcdd9c85080204ca1fa"
+    },
+    {
+      "index": 5,
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "seed": 0,
+      "input": "inputs/9t3v-a1jtg-openbind0-seed0.json",
+      "inputSha256": "73fd93f4a937ce95aeb02f4d12578ed0f9371e3378945e1938ac9f4ba1361a7e"
+    },
+    {
+      "index": 6,
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "seed": 0,
+      "input": "inputs/9t51-a1jtm-openbind0-seed0.json",
+      "inputSha256": "b17d7001324499e94543576e171294be4c12ac469b48b48e9f342d77a458f41b"
+    },
+    {
+      "index": 7,
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "seed": 0,
+      "input": "inputs/9xjq-a1e0i-openbind0-seed0.json",
+      "inputSha256": "1f0ec94f29f6c55a0b8b14d1581faaa34a7a83885df92506826a3de2923bb8f3"
+    },
+    {
+      "index": 8,
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/32qy-a1keo-boltz2-seed1.json",
+      "inputSha256": "7c7af3e3f8e243afcb3bf185f50859f8413391f57f81a36629b60e3bc2e8cb85"
+    },
+    {
+      "index": 9,
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/15ji-a1d2g-boltz2-seed1.json",
+      "inputSha256": "d422721ec59acb3f0a2b0a4ec2b994855b1ebd43acbf7c6b419d38dedf1ee54c"
+    },
+    {
+      "index": 10,
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/1fkf-fk5-boltz2-seed1.json",
+      "inputSha256": "66d968751c6620c528c2f5fcac136f6a815239a3c0f7e4ebe5f37a710ee8023e"
+    },
+    {
+      "index": 11,
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "seed": 1,
+      "input": "inputs/9sxf-a1jrg-boltz2-seed1.json",
+      "inputSha256": "629734345243a22c54ca01dcf115d3687ac6cab8492e262b3903a33b92e6db58"
+    },
+    {
+      "index": 12,
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "seed": 1,
+      "input": "inputs/9sxf-a1jrg-openbind0-seed1.json",
+      "inputSha256": "ee2b02ce17b9f97c88456df8fbc686d1c69d66f198c9a0f43a7ca15e4c114cf4"
+    },
+    {
+      "index": 13,
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "seed": 1,
+      "input": "inputs/9t3v-a1jtg-openbind0-seed1.json",
+      "inputSha256": "e8bbe41715a9c691e28ed2c5b404cb097ea6ed90732060eb6d1ce56110b12d7c"
+    },
+    {
+      "index": 14,
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "seed": 1,
+      "input": "inputs/9t51-a1jtm-openbind0-seed1.json",
+      "inputSha256": "7e1d7122a25b0a5a2eef28c5787db172bbd4a1bbd9f3ed3b46a0dfd1712dcc3b"
+    },
+    {
+      "index": 15,
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "seed": 1,
+      "input": "inputs/9xjq-a1e0i-openbind0-seed1.json",
+      "inputSha256": "8a0b32b2e9b755b07555d076dba0f724ad08755a8304d9567f213dc06b886cbd"
+    },
+    {
+      "index": 16,
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/32qy-a1keo-boltz2-seed2.json",
+      "inputSha256": "db06a175c80db3fe9a5e1fd0ee27f7dbfd52a24f24eca448d768c2c3ffb63c35"
+    },
+    {
+      "index": 17,
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/15ji-a1d2g-boltz2-seed2.json",
+      "inputSha256": "cfe06ce120c4130b3b645515f953f91c66241bebe122a9c22abb4c48d59f4d2e"
+    },
+    {
+      "index": 18,
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/1fkf-fk5-boltz2-seed2.json",
+      "inputSha256": "4b0fd93c8074f5a6d14bbc9d5d9671f0f1f3844b86d3b4b3baee9fe805c2e737"
+    },
+    {
+      "index": 19,
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "seed": 2,
+      "input": "inputs/9sxf-a1jrg-boltz2-seed2.json",
+      "inputSha256": "048e6aa6f11104b256be101574ae874c7efaaeb04e688e953cd4bed9969c7e25"
+    },
+    {
+      "index": 20,
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "seed": 2,
+      "input": "inputs/9sxf-a1jrg-openbind0-seed2.json",
+      "inputSha256": "8f9a724d9bb3c2355cda6cb1a4db45c79a0fd3ec84b99d133a7cfad260aa359c"
+    },
+    {
+      "index": 21,
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "seed": 2,
+      "input": "inputs/9t3v-a1jtg-openbind0-seed2.json",
+      "inputSha256": "57ca25b7f336475a767eacd73ee39c8b1e334f74557e488a7684abd6f4a7b7e0"
+    },
+    {
+      "index": 22,
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "seed": 2,
+      "input": "inputs/9t51-a1jtm-openbind0-seed2.json",
+      "inputSha256": "f05aef419fc217c1ac78dea21426bd6d8110e19671ec1b0bcbb1c0504c5f0cc4"
+    },
+    {
+      "index": 23,
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "seed": 2,
+      "input": "inputs/9xjq-a1e0i-openbind0-seed2.json",
+      "inputSha256": "e1f92a4e017e6efb23757f48006ea25d7b290b950598f53e40909956b3ed8426"
+    },
+    {
+      "index": 24,
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/32qy-a1keo-boltz2-seed3.json",
+      "inputSha256": "2b6c789077824a2bc20b95dca75860b7af5561d56fefe109c1b506c6cea19d1c"
+    },
+    {
+      "index": 25,
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/15ji-a1d2g-boltz2-seed3.json",
+      "inputSha256": "eccf9547e9539d0b77419d3380ba0f7dadca4a12f844d7e41523842961ef9056"
+    },
+    {
+      "index": 26,
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/1fkf-fk5-boltz2-seed3.json",
+      "inputSha256": "dc563d759d5ae2538ffadaaae2531a831140767812a3ca6c0122fc9a37dd14f5"
+    },
+    {
+      "index": 27,
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "seed": 3,
+      "input": "inputs/9sxf-a1jrg-boltz2-seed3.json",
+      "inputSha256": "c6228767d178a560b52ebcc1a3564188675f723854bd57c08b28384a1d407a64"
+    },
+    {
+      "index": 28,
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "seed": 3,
+      "input": "inputs/9sxf-a1jrg-openbind0-seed3.json",
+      "inputSha256": "8460511413b3bcf3aa3ef25a440e438092e9d017558a7ff219053a549660e9a7"
+    },
+    {
+      "index": 29,
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "seed": 3,
+      "input": "inputs/9t3v-a1jtg-openbind0-seed3.json",
+      "inputSha256": "5da9e6f5fdf73854e43f776ce236734f8f253a4a6c811415eefe8a2b041b303e"
+    },
+    {
+      "index": 30,
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "seed": 3,
+      "input": "inputs/9t51-a1jtm-openbind0-seed3.json",
+      "inputSha256": "a95d84f2c9bc507eba649cebc8c86e668b322b2037d1acda633867c5b063859f"
+    },
+    {
+      "index": 31,
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "seed": 3,
+      "input": "inputs/9xjq-a1e0i-openbind0-seed3.json",
+      "inputSha256": "79927b5ecbc0fdd3a7afec861fe0c9b5e28ba97927809f2f14fd859216eb9f2a"
+    },
+    {
+      "index": 32,
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/32qy-a1keo-boltz2-seed4.json",
+      "inputSha256": "ae97b426876753cc06cb245a38288eee7369ea5a6703620bdc67c13c490ec678"
+    },
+    {
+      "index": 33,
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/15ji-a1d2g-boltz2-seed4.json",
+      "inputSha256": "fcab08c2903feba12c45ddca2e7a5cd8d075d133da7c112143fb0f54d0fed90d"
+    },
+    {
+      "index": 34,
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/1fkf-fk5-boltz2-seed4.json",
+      "inputSha256": "71d1599e380f0bd8396efcb5351bd314e78333d3f31e603ff4959c23bb16eea5"
+    },
+    {
+      "index": 35,
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "seed": 4,
+      "input": "inputs/9sxf-a1jrg-boltz2-seed4.json",
+      "inputSha256": "2a92e951f5711ea05cfb407ff8f84258ea47f9322a9a27f46330b6f90d871f04"
+    },
+    {
+      "index": 36,
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "seed": 4,
+      "input": "inputs/9sxf-a1jrg-openbind0-seed4.json",
+      "inputSha256": "7c26a7fe99284f6c05352c8f3539e1690417a0ddf63048f89d2bd91a76c66b23"
+    },
+    {
+      "index": 37,
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "seed": 4,
+      "input": "inputs/9t3v-a1jtg-openbind0-seed4.json",
+      "inputSha256": "850881e4d525f4372d188e423812dfc20bef36445d00a4153c6c190ea83eceaa"
+    },
+    {
+      "index": 38,
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "seed": 4,
+      "input": "inputs/9t51-a1jtm-openbind0-seed4.json",
+      "inputSha256": "611611e32e317f76311f20c3f9e8bfbbd126df71462eafc0cfed1a55170d24b9"
+    },
+    {
+      "index": 39,
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "seed": 4,
+      "input": "inputs/9xjq-a1e0i-openbind0-seed4.json",
+      "inputSha256": "32087b32df7dfce4041276721099990117839023e1ec46f1bc62a027bde5a20e"
+    },
+    {
+      "index": 40,
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/32qy-a1keo-boltz2-seed5.json",
+      "inputSha256": "c9cf0355aeb00ff2e5dc584d174146e415df152fcff09aad77d7d87597dad597"
+    },
+    {
+      "index": 41,
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/15ji-a1d2g-boltz2-seed5.json",
+      "inputSha256": "656711d70c069dd307378a3fd3ed55279fe86111ab3afc6ccbf65291e5bbda22"
+    },
+    {
+      "index": 42,
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/1fkf-fk5-boltz2-seed5.json",
+      "inputSha256": "41fecce4f969c198b876991bca0b3fd999789da3b887f768a717096f61bee4dc"
+    },
+    {
+      "index": 43,
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "seed": 5,
+      "input": "inputs/9sxf-a1jrg-boltz2-seed5.json",
+      "inputSha256": "28b644bed806b3ba6b5068732dd16a2ceeb6f4bd42801c43b410ff8e0e2cc62e"
+    },
+    {
+      "index": 44,
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "seed": 5,
+      "input": "inputs/9sxf-a1jrg-openbind0-seed5.json",
+      "inputSha256": "f767ac49f1a8e4dad070cfa157176f57a67a44cb597183a7c7aefa9d667a3df7"
+    },
+    {
+      "index": 45,
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "seed": 5,
+      "input": "inputs/9t3v-a1jtg-openbind0-seed5.json",
+      "inputSha256": "bb6877f6c37d5568d6bacfb972c84f74348e3bd2f479c17f188a1727c06c6b3e"
+    },
+    {
+      "index": 46,
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "seed": 5,
+      "input": "inputs/9t51-a1jtm-openbind0-seed5.json",
+      "inputSha256": "6296fef09b02ac5c8470031dbc75af6c06e6faf8732c0e5630417013a7e250a4"
+    },
+    {
+      "index": 47,
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "seed": 5,
+      "input": "inputs/9xjq-a1e0i-openbind0-seed5.json",
+      "inputSha256": "c04eb8186575364e09dad4b64b4c049a033ceec3de898ea94ad1bd198d341354"
+    },
+    {
+      "index": 48,
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/32qy-a1keo-boltz2-seed6.json",
+      "inputSha256": "8bf41c54eeb8b20ce80ff9b32e54dabdb5a030d9c44784aa9fa94701dc1e8589"
+    },
+    {
+      "index": 49,
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/15ji-a1d2g-boltz2-seed6.json",
+      "inputSha256": "66bdc0e6fbecaaa6ddcd06c5d845b034884f6f19c4f258b7de85f345c243e2db"
+    },
+    {
+      "index": 50,
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/1fkf-fk5-boltz2-seed6.json",
+      "inputSha256": "69eabad8a41de11f8abd1b889e50fc98f114e0689a37598cb6d2bb7fc8fce622"
+    },
+    {
+      "index": 51,
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "seed": 6,
+      "input": "inputs/9sxf-a1jrg-boltz2-seed6.json",
+      "inputSha256": "2ce91ef020ecd13b46a35cbf6e858a21bba2d2b69bdcb1d3bfe8298ad6e5254c"
+    },
+    {
+      "index": 52,
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "seed": 6,
+      "input": "inputs/9sxf-a1jrg-openbind0-seed6.json",
+      "inputSha256": "eca2f16449e33a43bfba9167e8757bf65017a00ef0a325e389cc41bbf1f9ebff"
+    },
+    {
+      "index": 53,
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "seed": 6,
+      "input": "inputs/9t3v-a1jtg-openbind0-seed6.json",
+      "inputSha256": "41e7cf5250e29022017bb100b840e5d298d1757d3237bdd0cf71593e31378b68"
+    },
+    {
+      "index": 54,
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "seed": 6,
+      "input": "inputs/9t51-a1jtm-openbind0-seed6.json",
+      "inputSha256": "6b477b755f3eab97fbcd54366b03118fbb0d6947e2e98126eb9c57fae8ecd030"
+    },
+    {
+      "index": 55,
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "seed": 6,
+      "input": "inputs/9xjq-a1e0i-openbind0-seed6.json",
+      "inputSha256": "33ca9a1f1a3e7ba57a258188a884bf9b659bd8f4fef8c8bb38905befe00f2b60"
+    },
+    {
+      "index": 56,
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/32qy-a1keo-boltz2-seed7.json",
+      "inputSha256": "4f450290717f34f6ed8ca0995e44e60aa5fc1f40d0d9d2c9a36f078282c77653"
+    },
+    {
+      "index": 57,
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/15ji-a1d2g-boltz2-seed7.json",
+      "inputSha256": "56e2e64712efb905cf9e657a275de25a029b63af1722de23d1306da30a672f08"
+    },
+    {
+      "index": 58,
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/1fkf-fk5-boltz2-seed7.json",
+      "inputSha256": "7d016a4318d4db960aea441f149c2265ed0f5eca74aceb31665db2bcfc5922f2"
+    },
+    {
+      "index": 59,
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "seed": 7,
+      "input": "inputs/9sxf-a1jrg-boltz2-seed7.json",
+      "inputSha256": "c4ed7291ad7a6e5716600c436778ff6a56d50cf53ed07cdb11d14a1f02aae4de"
+    },
+    {
+      "index": 60,
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "seed": 7,
+      "input": "inputs/9sxf-a1jrg-openbind0-seed7.json",
+      "inputSha256": "185384a63cadc8fb099e5d271198b2dbc652c214a395bb4fc8040251ebffda62"
+    },
+    {
+      "index": 61,
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "seed": 7,
+      "input": "inputs/9t3v-a1jtg-openbind0-seed7.json",
+      "inputSha256": "b547d0293be88bf5251e821447c2d9d515b5bbd063874b6d821dc986eacc893a"
+    },
+    {
+      "index": 62,
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "seed": 7,
+      "input": "inputs/9t51-a1jtm-openbind0-seed7.json",
+      "inputSha256": "c0b8c7967cb898ab7db8d4675b6c4cbede59de5a9a2ff77a0cd7e96a47fcfded"
+    },
+    {
+      "index": 63,
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "seed": 7,
+      "input": "inputs/9xjq-a1e0i-openbind0-seed7.json",
+      "inputSha256": "360150a0c5b9df8836559c51d69671834a5992e3415531c28a2fadf07696472b"
+    },
+    {
+      "index": 64,
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/32qy-a1keo-boltz2-seed8.json",
+      "inputSha256": "1b24edd1741e052af0ace3a9a045f8e8c2363a40decc1b6294ac613e0bc99852"
+    },
+    {
+      "index": 65,
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/15ji-a1d2g-boltz2-seed8.json",
+      "inputSha256": "2fbaf6484856cefb1c2d43627cd3ee5fa9521eaccf2c0e1b356185ebce542e0e"
+    },
+    {
+      "index": 66,
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/1fkf-fk5-boltz2-seed8.json",
+      "inputSha256": "6c66b20619e0717917eee6232db7847583d727ca174fdecc5ed65d82998c9268"
+    },
+    {
+      "index": 67,
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "seed": 8,
+      "input": "inputs/9sxf-a1jrg-boltz2-seed8.json",
+      "inputSha256": "fc281bb995024fd84c8feb1264be293b7540bde7e0073b3151a37e6f97c31837"
+    },
+    {
+      "index": 68,
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "seed": 8,
+      "input": "inputs/9sxf-a1jrg-openbind0-seed8.json",
+      "inputSha256": "00783e6b553bae320badf31bca9fcb9eb94d9daf1e4e3048b8f21c0d592f7a37"
+    },
+    {
+      "index": 69,
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "seed": 8,
+      "input": "inputs/9t3v-a1jtg-openbind0-seed8.json",
+      "inputSha256": "5cf5af24fdddf684c351073d17236f3306b8bec9d8cc9c63df2b50b2dac7b3c6"
+    },
+    {
+      "index": 70,
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "seed": 8,
+      "input": "inputs/9t51-a1jtm-openbind0-seed8.json",
+      "inputSha256": "d48889e86ab5ede7bc873d00e0f3fc60e873b48485178c0151196ac30bd5a464"
+    },
+    {
+      "index": 71,
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "seed": 8,
+      "input": "inputs/9xjq-a1e0i-openbind0-seed8.json",
+      "inputSha256": "399a80952cab8e2fd6b38b0af5dc1425d7179788e50f389a9ec84dd31023e28b"
+    },
+    {
+      "index": 72,
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/32qy-a1keo-boltz2-seed9.json",
+      "inputSha256": "2cdf842fe3f8b521dfaa404cff3013f9830a6a66d2712e461969c49930660e1c"
+    },
+    {
+      "index": 73,
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/15ji-a1d2g-boltz2-seed9.json",
+      "inputSha256": "35434614f9d3985a8b30483119d44d3210f25a9e398ce0c2784dd5b271d1b5bb"
+    },
+    {
+      "index": 74,
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/1fkf-fk5-boltz2-seed9.json",
+      "inputSha256": "988c4503976abab4ca59c6687828c70f5e81bc8db3c4e3589415b5888a00d421"
+    },
+    {
+      "index": 75,
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "seed": 9,
+      "input": "inputs/9sxf-a1jrg-boltz2-seed9.json",
+      "inputSha256": "5fe1d54ae969a9dfe5de7b1ab0f9acffc74b10ebfaed646b4773c45be863d302"
+    },
+    {
+      "index": 76,
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "seed": 9,
+      "input": "inputs/9sxf-a1jrg-openbind0-seed9.json",
+      "inputSha256": "07f4f9432f7e1a7f140a49abd9e70a04aacf134bc64b165083bfdf467c96c323"
+    },
+    {
+      "index": 77,
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "seed": 9,
+      "input": "inputs/9t3v-a1jtg-openbind0-seed9.json",
+      "inputSha256": "914e0debd09be467aa0462d92a4f6191a3dd6378dc9fcbe0e06fc4970cf2782a"
+    },
+    {
+      "index": 78,
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "seed": 9,
+      "input": "inputs/9t51-a1jtm-openbind0-seed9.json",
+      "inputSha256": "88968f7ea728b757181d544e2debd71089225390ff67643deea4d4a3b77c5458"
+    },
+    {
+      "index": 79,
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "seed": 9,
+      "input": "inputs/9xjq-a1e0i-openbind0-seed9.json",
+      "inputSha256": "215750cc8b4ceb63f124499c2b229ca4894c57150d6fcf0026ed16c7cdbb20b3"
+    }
+  ],
+  "reportPolicy": "Preserve every result/failure; report success fraction, seed0, median, confidence-selected pose and crystal-oracle best separately. No replacement of failed biological cases; no ligand or pocket refit.",
+  "thresholdA": 2.0,
+  "stereochemistryPolicy": "Native geometric hits with stereochemical/clash failures are explicitly flagged, not treated as chemically valid successes."
+}

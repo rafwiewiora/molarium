@@ -1,0 +1,17 @@
+{
+  "schema": "molarium.stock-localfold-input.v1",
+  "case": "32qy-a1keo",
+  "pdbId": "32QY",
+  "sourcePanel": "reviews/cofold-recent-pdb-2026-11-13/panel-msa256.json",
+  "sourcePanelSha256": "17d8209cd73a89e53e32c91395c34333f9e05838c8908b0d65a6312841472f48",
+  "jobSha256": "b1c31efb081b595eae930438f9ad75e169c5f8554055169c2a865f1133bc07f0",
+  "proteinSequenceSha256": "0fe4129888da11743e866b8861af5a49b3e3a529a437d7e54abcac235c545d72",
+  "rawSmiles": "CC1=CC(=O)c2c([nH]nc2N1)C3=CNC(=O)C=C3",
+  "a3mSha256": "7bd8c016923fddb4bcad9d1266ae08c030a9014dfb4d5da10703ee3bfefb66bc",
+  "msaRows": 256,
+  "modelSeeds": [
+    0
+  ],
+  "changes": "Container format only: sequence, SMILES and provided A3M copied without normalization or rewriting. No reference coordinates are supplied.",
+  "inferenceStatus": "not-run"
+}

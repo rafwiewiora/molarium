@@ -37,6 +37,12 @@ pass energy and every force component's aggregate gates on **22/22 supported cas
 on M1 Pro and L4, with **25 explicitly unsupported cases**. They include single-replica
 job timings and do not depend on treating the WASM bridge as fully native-validated.
 
+For structure prediction, the [80-run original LocalFold page control](./reviews/cofold-stock-localfold-2026-11-13/results-200x10/README.md)
+tests seven crystal complexes on M1 Pro, with ten seeds and 200 diffusion steps
+for each of eight model/system pairs. Every selected pair already has a native
+pose below 2 Å. All poses, chemical-validity failures and direct native comparisons
+are preserved; this selected diagnostic cohort is not a general accuracy estimate.
+
 The preserved [Astra adversarial review and remediation log](./reviews/ASTRA_REVIEW_OF_SOL_WORK_2026-09-05.md)
 documents known boundaries, reproducible probes, fixes, and remaining validation work.
 
@@ -476,6 +482,14 @@ checks, but browser/native agreement remains unresolved. Native KIT placements
 that meet 2 Å have the wrong specified stereochemistry. Native Boltz MSA has
 seven geometrically close poses but only one passes the limited stereo/clash
 checks. An interrupted browser Boltz standard control remains tracked separately.
+The separate [original-page LocalFold control](reviews/cofold-stock-localfold-2026-11-13/results-200x10/README.md)
+bypasses Molarium's preparation wrapper: **80/80 predictions completed**, using
+200 diffusion steps, 3 additional recycles and 10 seeds for each native-positive
+pair. Five of eight pairs produce a pose below 2 Å that passes the limited
+stereo/clash checks. WDR5 first crosses the threshold on seed 9; FKBP12 remains
+above 6 Å even at the best of ten. The report preserves every pose and compares
+them directly with the three original native seeds. This is a workflow control;
+matched-tensor implementation parity remains a separate question.
 An [independent fixed-input transition-layer audit](reviews/cofold-layer-parity-2026-11-13/README.md)
 preserves exact official FP32/FP64 and WebGPU arrays. Ordinary inputs agree
 closely, but a near-constant stress input exposes nonfinite fast-variance output.

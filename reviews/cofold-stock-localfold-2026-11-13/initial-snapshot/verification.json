@@ -1,0 +1,8 @@
+{
+  "status": "pass",
+  "recomputedPredictions": 22,
+  "plannedPredictions": 80,
+  "scope": "partial-snapshot",
+  "neuralForwards": 0,
+  "command": "python folding/comparison/check_stock_benchmark.py reviews/cofold-stock-localfold-2026-11-13/initial-snapshot"
+}

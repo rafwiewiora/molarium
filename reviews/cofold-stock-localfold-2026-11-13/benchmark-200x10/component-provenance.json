@@ -1,0 +1,41 @@
+{
+  "scope": "Original stock smilesComponent defaults, including SMILES-hash conformer seed; no model inference. Graph used for strict atom-name matching in independent scoring, never supplied to stock-page folds.",
+  "upstreamRevision": "5ea3d42c911949700401b54003cb28c557fcf2a6",
+  "components": {
+    "components/32qy-a1keo.json": {
+      "sha256": "966a4c9db99c5b725aca217f88d6e2a6e5aac63dffcb0cbccc6efea65e48759c",
+      "smiles": "CC1=CC(=O)c2c([nH]nc2N1)C3=CNC(=O)C=C3",
+      "atoms": 18
+    },
+    "components/15ji-a1d2g.json": {
+      "sha256": "1d819d8aa0f168490b4f2885b3251ff39880e729b7ad78ad88c5fa7acf855c22",
+      "smiles": "c1c[nH]c2c1c(ncn2)N3CCC[C@H](C3)C[C@H]4CCOC4",
+      "atoms": 21
+    },
+    "components/1fkf-fk5.json": {
+      "sha256": "a153737f93a04f56093401fe7ce307a920bad4e9530b372be7c04ad09f12f494",
+      "smiles": "C[C@@H]1C[C@@H]([C@@H]2[C@H](C[C@H]([C@@](O2)(C(=O)C(=O)N3CCCC[C@H]3C(=O)O[C@@H]([C@@H]([C@H](CC(=O)[C@@H](\\C=C(\\C1)/C)CC=C)O)C)/C(=C/[C@@H]4CC[C@H]([C@@H](C4)OC)O)/C)O)C)OC)OC",
+      "atoms": 57
+    },
+    "components/9sxf-a1jrg.json": {
+      "sha256": "ba1619227aa88e617de0b566eaf7f8ce010254c0af227ab6ba7c122449810e2c",
+      "smiles": "c1cc(cc(c1)F)c2cc(c(s2)C(=O)N[C@@H]3CCNC3)NC(=O)N",
+      "atoms": 24
+    },
+    "components/9t3v-a1jtg.json": {
+      "sha256": "05c3662a110fdd0565ed52cbaf91907e3cb72e6005b1987e9f5b8001c4aa23d6",
+      "smiles": "c1ccc2c(c1)[C@@H]3CC4(C[C@H]2CC(C3)(C4)F)NC(=O)NC5CCN(CC5)Cc6ccc(cc6)Cl",
+      "atoms": 34
+    },
+    "components/9t51-a1jtm.json": {
+      "sha256": "53a833ba943a37b9cec0d5b7774b18163717cbc904e1c0aa1bebf50781a29e5c",
+      "smiles": "C[C@]12CC[C@@H](C[C@@H]1CCc3c2nc4cccc(c4c3)C5CCN(CC5)C(=O)OC(C)(C)C)O",
+      "atoms": 33
+    },
+    "components/9xjq-a1e0i.json": {
+      "sha256": "377596ac2f515dc15c601c81cbe23f8e31786b14ac47d0a249ab43d3e3240994",
+      "smiles": "C#Cc1ccc(s1)S(=O)(=O)NC(=O)c2ccc(cc2Cl)Cl",
+      "atoms": 21
+    }
+  }
+}
