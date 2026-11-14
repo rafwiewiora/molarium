@@ -3,7 +3,10 @@
 The [stock LocalFold page control](../../reviews/cofold-stock-localfold-2026-11-13/README.md)
 runs the pristine upstream page through its own Fold button, bypassing Molarium's
 SMILES normalization and conformer-seed override. Its launcher and real provided-MSA
-input are prepared and validated; a stock-page prediction is not yet reported.
+input are prepared and validated. A separate frozen benchmark is now running
+200 diffusion steps, 3 additional recycles and 10 seeds for each of eight
+same-model native-positive pairs; every selected native best is strictly below
+2 Å from its crystal reference. This is distinct from the earlier pose phases.
 
 The [recent-release PDB expansion](../../reviews/cofold-recent-pdb-2026-11-13/README.md)
 adds nine target-diverse drug-like complexes, a complete source-selection audit,

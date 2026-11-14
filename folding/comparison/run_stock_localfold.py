@@ -115,6 +115,8 @@ def main():
     parser.add_argument("--steps", required=True, type=int)
     parser.add_argument("--recycles", required=True, type=int)
     parser.add_argument("--timeout", type=int, default=1800)
+    parser.add_argument("--require-vendor", choices=["apple", "nvidia"],
+                        help="require the recorded adapter of the actual stock folding device")
     parser.add_argument("--prepare-only", action="store_true",
                         help="validate inputs/source and original CLI; do not launch Chrome or fold")
     args = parser.parse_args()
@@ -174,10 +176,33 @@ def main():
             def launch(port, _upstream_profile, **kwargs):
                 receipt["chromeBinary"] = harness.cdp.chrome_binary()
                 receipt["chromeFlags"] = harness.cdp.chrome_flags()
-                return original_launch(port, str(output / "chrome-profile"), **kwargs)
+                proc, ws = original_launch(port, str(output / "chrome-profile"), **kwargs)
+                receipt["browserVersion"] = ws.call("Browser.getVersion")
+                original_kill = proc.kill
+
+                def finish():
+                    # Read the original module's *existing* device after inference.
+                    # No additional device or forward is created, and tuning is not set.
+                    try:
+                        if (output / "prediction.pdb").is_file():
+                            receipt["actualFoldingDevice"] = harness.cdp.evaluate(ws, """(async () => {
+                              const m = await import('/web/model.js');
+                              const backend = await m.foldBackend();
+                              const profile = backend === 'webgpu'
+                                ? (await import('/webgpu/runtime/device-profile.js')).deviceProfile(await m.getDevice())
+                                : null;
+                              return { backend, profile, userAgent: navigator.userAgent };
+                            })()""")
+                    except Exception as exc:
+                        receipt["deviceObservationError"] = str(exc)
+                    finally:
+                        original_kill()
+
+                proc.kill = finish
+                return proc, ws
 
             harness.cdp.launch = launch
-            sys.argv = [str(root / "tools/fold-in-page.py"), "--remote-weights",
+            sys.argv = [str(root / "tools/fold-in-page.py"), "--remote-weights", "--dev-report",
                         "--job", str(output / "input.json"), "--model", args.model,
                         "--steps", str(args.steps), "--recycles", str(args.recycles),
                         "--timeout", str(args.timeout), "--save-pdb", str(output / "prediction.pdb"),
@@ -191,6 +216,13 @@ def main():
                     code = harness.main()
             if code != 0:
                 raise RuntimeError(f"Original LocalFold harness returned {code}")
+            device = receipt.get("actualFoldingDevice", {})
+            profile = device.get("profile") or {}
+            if device.get("backend") != "webgpu" or profile.get("software") is not False or not profile.get("vendor"):
+                raise ValueError("The actual stock folding device was not verified as physical WebGPU")
+            if args.require_vendor and profile["vendor"] != args.require_vendor:
+                raise ValueError(f"Actual adapter vendor differs from required {args.require_vendor}")
+            receipt["hardwareQualification"] = "Actual stock folding device/profile observed after inference; physical WebGPU verified."
             receipt["observedControls"] = observed_controls(
                 (output / "upstream.log").read_text(), args.model, args.steps, args.recycles)
             if not any(line.startswith(("ATOM  ", "HETATM"))

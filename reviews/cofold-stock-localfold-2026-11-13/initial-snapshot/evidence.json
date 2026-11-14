@@ -1,0 +1,10 @@
+{
+  "schema": "molarium.stock-localfold-evidence.v1",
+  "scoresSha256": "0f962e34aad8033e6bae580da34de1908a702508a00f002cf909854d1faea31a",
+  "archiveSha256": "efb7a45313a6bd11d9cfe96bcbd5167eaaa6b2f0408ce530b6b2ca991bd9e910",
+  "archiveBytes": 7865559,
+  "members": 311,
+  "scope": "partial-snapshot",
+  "completed": 22,
+  "planned": 80
+}
