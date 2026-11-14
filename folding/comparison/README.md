@@ -1,5 +1,10 @@
 # Browser/native cofolding comparisons
 
+The [stock LocalFold page control](../../reviews/cofold-stock-localfold-2026-11-13/README.md)
+runs the pristine upstream page through its own Fold button, bypassing Molarium's
+SMILES normalization and conformer-seed override. Its launcher and real provided-MSA
+input are prepared and validated; a stock-page prediction is not yet reported.
+
 The [recent-release PDB expansion](../../reviews/cofold-recent-pdb-2026-11-13/README.md)
 adds nine target-diverse drug-like complexes, a complete source-selection audit,
 independent browser input-chemistry checks, and all-candidate Foldarium review.

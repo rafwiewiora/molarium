@@ -1,0 +1,37 @@
+{
+  "scope": "Read-only source/manifest audit plus a small no-model conformer control; no folding or pose-accuracy result.",
+  "upstreamRevision": "5ea3d42c911949700401b54003cb28c557fcf2a6",
+  "vendoredSourceFilesVerified": 210,
+  "sourceChanges": [],
+  "manifests": [
+    {
+      "library": "reviews/cofold-recent-pdb-2026-11-13/browser-openbind0-msa256-standard/library-3.json",
+      "seed": 0,
+      "family": "openbind0",
+      "manifestSha256": "a1b153a409639b4d93eedb9031242cd8e86193fb1deaf59ab57a95155948b814",
+      "matchesUpstreamManifest": true,
+      "remote": "https://huggingface.co/sokrypton/localfold/resolve/71ece3571b80e6cdb06f3b95f785187171c718da/openbind0-int5/"
+    },
+    {
+      "library": "reviews/cofold-recent-pdb-2026-11-13/browser-boltz2-msa256/library-3.json",
+      "seed": 0,
+      "family": "boltz2",
+      "manifestSha256": "3ec7583006db7cb79ddfaf302abfd0fc912bb49b52d3ba81b60f82d1c1310b3f",
+      "matchesUpstreamManifest": true,
+      "remote": "https://huggingface.co/sokrypton/localfold/resolve/651a25ba8a57c6d18caacf50ab7180b255eb5a82/boltz2-int5/"
+    }
+  ],
+  "conformerSeedControl": {
+    "smiles": "CCOc1ccc(C(=O)NCC)cc1",
+    "stockComponentSha256": "12d8a901a65844356113b2b19cf7c4eab12d03190ed2dd596cbc3b37d28bb0ec",
+    "wrapperSeed0ComponentSha256": "eb0a65f2914b090c968610b2fa260995004fe24025ba48581147cd9f39255c1f",
+    "sameNamedGraph": true,
+    "coordinatesExactlyEqual": false
+  },
+  "endToEndWorkflowDifferences": [
+    "Molarium canonicalizes SMILES through RDKit before LocalFold parses them.",
+    "Molarium passes the requested model seed to smilesComponent; stock foldAf3 omits that option and derives the conformer seed from the SMILES hash.",
+    "Molarium controls alignment provisioning, explicit step/recycle/seed settings, progress/cancellation and result export."
+  ],
+  "verdict": "Unmodified pinned engine modules and matching manifests; no claim of upstream-page end-to-end equivalence."
+}
