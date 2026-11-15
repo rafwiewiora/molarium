@@ -1,0 +1,103 @@
+{
+  "schema": "molarium.stock-input-conformer-audit.v1",
+  "scope": "Independent existing stereochemical-graph diagnostic on frozen stock ligand input coordinates; no neural inference or crystal coordinates. Not full physical validation.",
+  "componentManifestSha256": "7ba10e0343354b17089a2fb0aa8b0786dabc85f356ed34586b8b0d692276c5f8",
+  "scriptSha256": "b013287f68834711e48ebe9a367d896c9520438b487cff2a28ae61b6e5e103f4",
+  "rdkitVersion": "2025.09.3",
+  "records": [
+    {
+      "caseId": "15ji-a1d2g",
+      "componentSha256": "1d819d8aa0f168490b4f2885b3251ff39880e729b7ad78ad88c5fa7acf855c22",
+      "conformerErrorReportedByStock": 0.0035321675106689855,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "componentSha256": "a153737f93a04f56093401fe7ce307a920bad4e9530b372be7c04ad09f12f494",
+      "conformerErrorReportedByStock": 0.06682719927048593,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 14,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "componentSha256": "966a4c9db99c5b725aca217f88d6e2a6e5aac63dffcb0cbccc6efea65e48759c",
+      "conformerErrorReportedByStock": 0.016824044091326967,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "componentSha256": "ba1619227aa88e617de0b566eaf7f8ce010254c0af227ab6ba7c122449810e2c",
+      "conformerErrorReportedByStock": 0.027104207463976803,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 1,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "componentSha256": "05c3662a110fdd0565ed52cbaf91907e3cb72e6005b1987e9f5b8001c4aa23d6",
+      "conformerErrorReportedByStock": 0.00843337566556047,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 2,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "componentSha256": "53a833ba943a37b9cec0d5b7774b18163717cbc904e1c0aa1bebf50781a29e5c",
+      "conformerErrorReportedByStock": 0.23450118239694306,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 3,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": [],
+        "mappedUnassignedCenters": [],
+        "equivalentStereochemicalMapping": false
+      }
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "componentSha256": "377596ac2f515dc15c601c81cbe23f8e31786b14ac47d0a249ab43d3e3240994",
+      "conformerErrorReportedByStock": 0.020295645754945343,
+      "stereochemistry": {
+        "specifiedTetrahedralCenters": 0,
+        "stereochemicalIdentityMatches": true,
+        "mismatchedCenters": [],
+        "unassignedCenters": [],
+        "mappedCenterDifferences": []
+      }
+    }
+  ]
+}

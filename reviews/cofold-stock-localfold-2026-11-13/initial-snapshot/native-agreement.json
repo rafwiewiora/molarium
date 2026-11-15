@@ -1,0 +1,693 @@
+{
+  "schema": "molarium.stock-native-pose-agreement.v1",
+  "scope": "partial-snapshot",
+  "stockScoresSha256": "0f962e34aad8033e6bae580da34de1908a702508a00f002cf909854d1faea31a",
+  "stockEvidenceSha256": "efb7a45313a6bd11d9cfe96bcbd5167eaaa6b2f0408ce530b6b2ca991bd9e910",
+  "scriptSha256": "402bc130987b1f95dcf772e0ca28f8507a806797862be9218819145a8373fa18",
+  "nativeLibraries": [
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "file": "reviews/cofold-recent-pdb-2026-11-13/native-boltz2-msa256-standard/library-8.json",
+      "sha256": "e14cc2eb7c015f26e1f30c51a580dc869e68544b03ea2d9dd8e1cec4da2a9388",
+      "nativeSeeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "file": "reviews/cofold-recent-pdb-2026-11-13/native-boltz2-msa256-standard/library-5.json",
+      "sha256": "4558a0cb688ff4642de2a2665eea926b85975278c20dbf97a442a2a92408c3c5",
+      "nativeSeeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "file": "reviews/cofold-crystal-reference-2026-11-13/native-boltz2-single-standard/library-2.json",
+      "sha256": "e74f37b34ad0de2a3e0feedf3ad701ee29fc427e9de514977a90848646b75e1e",
+      "nativeSeeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "file": "reviews/cofold-recent-pdb-2026-11-13/native-boltz2-msa256-standard/library-2.json",
+      "sha256": "0e901bf45a3ce44f03aca3cd5419101868510ba2220898a914bfcb6e06228585",
+      "nativeSeeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "file": "reviews/cofold-recent-pdb-2026-11-13/native-openbind0-msa256-standard/library-2.json",
+      "sha256": "90fc59abc8679dfea0bce23a68c845d0ec74be42c5d4d8337de05de487fd6b59",
+      "nativeSeeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "file": "reviews/cofold-recent-pdb-2026-11-13/native-openbind0-msa256-standard/library-9.json",
+      "sha256": "8e12b10093fd12210d594f8582c15d12bad9dbc8a5d9dd9a7a983a05d9bb1507",
+      "nativeSeeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "file": "reviews/cofold-recent-pdb-2026-11-13/native-openbind0-msa256-standard/library-3.json",
+      "sha256": "256caa922074c9e4de524a83210e03eff45f4e395aa4c44b1114244def221539",
+      "nativeSeeds": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "file": "reviews/cofold-recent-pdb-2026-11-13/native-openbind0-msa256-standard/library-7.json",
+      "sha256": "251ca626ad54c4af6f339e26ee7ab3ec7dcfb58237c163a0367bcb14102d9749",
+      "nativeSeeds": [
+        0,
+        1,
+        2
+      ]
+    }
+  ],
+  "definitions": {
+    "frame": "Each prediction is independently protein-aligned to all observed corresponding crystal C-alpha atoms; ligand coordinates are never fitted.",
+    "distance": "Symmetry-aware ligand heavy-atom RMSD between the resulting common-frame coordinates.",
+    "sampling": "All three original native seeds versus every available stock seed. Equal integer seeds do not imply matched random tensors; this is pose agreement, not numerical parity."
+  },
+  "summary": [
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "stockPredictions": 3,
+      "nativePredictions": 3,
+      "medianNearestNativeRmsdA": 0.5886871035238054,
+      "sameIntegerSeedPairs": 3,
+      "meanSameIntegerSeedFirstThreeRmsdA": 2.0376769685684395,
+      "meanNativePairwiseSpreadA": 1.9714606880002952
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "stockPredictions": 3,
+      "nativePredictions": 3,
+      "medianNearestNativeRmsdA": 6.737367476193851,
+      "sameIntegerSeedPairs": 3,
+      "meanSameIntegerSeedFirstThreeRmsdA": 6.518260970579029,
+      "meanNativePairwiseSpreadA": 0.9552625466637729
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "stockPredictions": 3,
+      "nativePredictions": 3,
+      "medianNearestNativeRmsdA": 8.679578864610617,
+      "sameIntegerSeedPairs": 3,
+      "meanSameIntegerSeedFirstThreeRmsdA": 8.688037405121221,
+      "meanNativePairwiseSpreadA": 0.7504148846628037
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "stockPredictions": 3,
+      "nativePredictions": 3,
+      "medianNearestNativeRmsdA": 7.961101831541245,
+      "sameIntegerSeedPairs": 3,
+      "meanSameIntegerSeedFirstThreeRmsdA": 8.055489156538975,
+      "meanNativePairwiseSpreadA": 0.3769911936896503
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "stockPredictions": 3,
+      "nativePredictions": 3,
+      "medianNearestNativeRmsdA": 1.4428385094787046,
+      "sameIntegerSeedPairs": 3,
+      "meanSameIntegerSeedFirstThreeRmsdA": 4.9886905298691655,
+      "meanNativePairwiseSpreadA": 5.024702295537878
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "stockPredictions": 3,
+      "nativePredictions": 3,
+      "medianNearestNativeRmsdA": 0.4126151146867855,
+      "sameIntegerSeedPairs": 3,
+      "meanSameIntegerSeedFirstThreeRmsdA": 1.2587137729919784,
+      "meanNativePairwiseSpreadA": 0.9362155165185785
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "stockPredictions": 2,
+      "nativePredictions": 3,
+      "medianNearestNativeRmsdA": 5.301535341601803,
+      "sameIntegerSeedPairs": 2,
+      "meanSameIntegerSeedFirstThreeRmsdA": null,
+      "meanNativePairwiseSpreadA": 0.2440239670185008
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "stockPredictions": 2,
+      "nativePredictions": 3,
+      "medianNearestNativeRmsdA": 1.5804808476665362,
+      "sameIntegerSeedPairs": 2,
+      "meanSameIntegerSeedFirstThreeRmsdA": null,
+      "meanNativePairwiseSpreadA": 2.214826720190208
+    }
+  ],
+  "pairs": [
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "stockSeed": 0,
+      "stockPdbSha256": "512fecc829545f916aa8b0e0dc5a5e4107b4c94c8350c5ef7693ff8a00f0dade",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.8602375041003794
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.4555531525581132
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 2.807607540644221
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 0.4555531525581132,
+      "sameIntegerSeedRmsdA": 2.8602375041003794
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "stockSeed": 1,
+      "stockPdbSha256": "adbc67c43dc01a8eea1139d67e9efeea1da2535044411a522495cdd848f17ddf",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.776497108967447
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.5886871035238054
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 2.742531742690459
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 0.5886871035238054,
+      "sameIntegerSeedRmsdA": 0.5886871035238054
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "model": "boltz2",
+      "stockSeed": 2,
+      "stockPdbSha256": "a0820a1d62ab950894d38c99c6cb9990b7fe3a16a79e565930af1a6c1bc01194",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.7137065930305417
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.831596358830362
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 2.664106298081134
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 0.831596358830362,
+      "sameIntegerSeedRmsdA": 2.664106298081134
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "stockSeed": 0,
+      "stockPdbSha256": "4202d709a4b632ed6701ef874cca039faac22e707a52e862f1fae4c79b63b524",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 5.562807845016598
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 5.692512902142764
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 6.1199047838225065
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 5.562807845016598,
+      "sameIntegerSeedRmsdA": 5.562807845016598
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "stockSeed": 1,
+      "stockPdbSha256": "01e9ef1924e0fd9ae3e0f183646c9be653aab186265714c90a35490300d80172",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 7.201633111634693
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 7.254607590526637
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 7.293093081913762
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 7.201633111634693,
+      "sameIntegerSeedRmsdA": 7.254607590526637
+    },
+    {
+      "caseId": "15ji-a1d2g",
+      "model": "boltz2",
+      "stockSeed": 2,
+      "stockPdbSha256": "316e526f11a96acfd883a8a9c4e9259b06f821d4aeb82c1a71fee294986e37d7",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 7.17340633055538
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 7.119416946152425
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 6.737367476193851
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 6.737367476193851,
+      "sameIntegerSeedRmsdA": 6.737367476193851
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "stockSeed": 0,
+      "stockPdbSha256": "d917f35e9ec7b7e4875c44baa21231efd89f537710fe8ce84523239ac252af6a",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.679578864610617
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.730579231162212
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.92929134037494
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.679578864610617,
+      "sameIntegerSeedRmsdA": 8.679578864610617
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "stockSeed": 1,
+      "stockPdbSha256": "94f4814214aace4a7777df80f37bd9fa115c251f1bec6fe284122b5387c91e55",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.538710473382986
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.56009446459015
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.77655917797914
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.538710473382986,
+      "sameIntegerSeedRmsdA": 8.56009446459015
+    },
+    {
+      "caseId": "1fkf-fk5",
+      "model": "boltz2",
+      "stockSeed": 2,
+      "stockPdbSha256": "016188f979a0e5ffcfc61d6ff5ad65f749b5c8f2f3cd853d7b48e74e7b1c3373",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.695118818210887
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.717761213637573
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.824438886162898
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.695118818210887,
+      "sameIntegerSeedRmsdA": 8.824438886162898
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "stockSeed": 0,
+      "stockPdbSha256": "77cafb9e0776d709050fde1d74be5f7325f27e0e2d6b6e0e3645882bccfc7616",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 7.784865612823001
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 7.868345761498987
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.003587791631492
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 7.784865612823001,
+      "sameIntegerSeedRmsdA": 7.784865612823001
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "stockSeed": 1,
+      "stockPdbSha256": "51c5a969b6fdf4b9cb69a5428e79fc28f01a673b62a9925f1befb5516fa03dab",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 7.961101831541245
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.053251611170937
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.189762396204591
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 7.961101831541245,
+      "sameIntegerSeedRmsdA": 8.053251611170937
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "boltz2",
+      "stockSeed": 2,
+      "stockPdbSha256": "7313d7a29e49ce8d04780b9878659e25517aee1f5edaf406af69aad7bfb0a604",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 8.082279447422106
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 8.175496212207733
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 8.328350245622985
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 8.082279447422106,
+      "sameIntegerSeedRmsdA": 8.328350245622985
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "stockSeed": 0,
+      "stockPdbSha256": "429eba07d8f3d2e005848b67e35abac11174f5baeffb4ab898d1873a050d9c67",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 6.868972081167108
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 6.984499128046573
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 1.4428385094787046
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 1.4428385094787046,
+      "sameIntegerSeedRmsdA": 6.868972081167108
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "stockSeed": 1,
+      "stockPdbSha256": "d70b0084699e129f7e3620b295e15061a30f216792f1c8350270ccf87ebf8d09",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.071724543281612
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.341363973777119
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 7.623766464036846
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 1.341363973777119,
+      "sameIntegerSeedRmsdA": 1.341363973777119
+    },
+    {
+      "caseId": "9sxf-a1jrg",
+      "model": "openbind0",
+      "stockSeed": 2,
+      "stockPdbSha256": "16e4b0ad0158d10fd6bd8ec98b6a00f151bf39b7745e1be4708f5fa3e134a3b7",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 1.7287420255012336
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.452990671253194
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 6.75573553466327
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 1.452990671253194,
+      "sameIntegerSeedRmsdA": 6.75573553466327
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "stockSeed": 0,
+      "stockPdbSha256": "53fa7991f3c69e73d278b2643586f92d4276fa804554cbcbd3ad6cb4106e03bd",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 0.3829702841613966
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.2079458614677148
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.7880925834449355
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 0.3829702841613966,
+      "sameIntegerSeedRmsdA": 0.3829702841613966
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "stockSeed": 1,
+      "stockPdbSha256": "dd8fdcc466ff6cb0b35141d999bc5c842deddae2e917f5acda337eb317f85425",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 1.2866833422492172
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.4126151146867855
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 1.265216911406486
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 0.4126151146867855,
+      "sameIntegerSeedRmsdA": 0.4126151146867855
+    },
+    {
+      "caseId": "9t3v-a1jtg",
+      "model": "openbind0",
+      "stockSeed": 2,
+      "stockPdbSha256": "855dd36cdec2b7323294400255a4d9b0f9753def9f83366e06c95afbed98fea4",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 3.234633117845687
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 3.326685646378141
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 2.980555920127753
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 2.980555920127753,
+      "sameIntegerSeedRmsdA": 2.980555920127753
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "stockSeed": 0,
+      "stockPdbSha256": "dcbe9d91284b0907a34fcb7cb1ed01572c9de0d8fd67e1ee5f5e33f0f9d1a27c",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 10.064089381730199
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 10.101280071085093
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 10.076357615034485
+        }
+      ],
+      "nearestNativeSeed": 0,
+      "nearestNativeRmsdA": 10.064089381730199,
+      "sameIntegerSeedRmsdA": 10.064089381730199
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "model": "openbind0",
+      "stockSeed": 1,
+      "stockPdbSha256": "e8d0a7b18301c2bd5d0b68bf51804ee89e43ed79e0cba25dcce171657fea847e",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 0.5444197325629957
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 0.617130722438675
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 0.538981301473408
+        }
+      ],
+      "nearestNativeSeed": 2,
+      "nearestNativeRmsdA": 0.538981301473408,
+      "sameIntegerSeedRmsdA": 0.617130722438675
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "stockSeed": 0,
+      "stockPdbSha256": "a52746750ac2a74b0a6afe23402c6f68f68d1366fc0e04a54451e3f4d711bd09",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.5360587231682072
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 2.0856707251364375
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 2.162713838291903
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 2.0856707251364375,
+      "sameIntegerSeedRmsdA": 2.5360587231682072
+    },
+    {
+      "caseId": "9xjq-a1e0i",
+      "model": "openbind0",
+      "stockSeed": 1,
+      "stockPdbSha256": "922a6a3783c2c6708227dbfa86cffe15ab0f4e35a17c2e31f9f888213190cd51",
+      "nativeDistances": [
+        {
+          "nativeSeed": 0,
+          "ligandRmsdA": 2.286869105665365
+        },
+        {
+          "nativeSeed": 1,
+          "ligandRmsdA": 1.0752909701966349
+        },
+        {
+          "nativeSeed": 2,
+          "ligandRmsdA": 1.2243672900424551
+        }
+      ],
+      "nearestNativeSeed": 1,
+      "nearestNativeRmsdA": 1.0752909701966349,
+      "sameIntegerSeedRmsdA": 1.0752909701966349
+    }
+  ],
+  "neuralForwards": 0
+}
