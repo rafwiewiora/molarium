@@ -2,6 +2,7 @@ import { extname, join } from 'node:path';
 import { sourceWebFiles } from './scripts/web-source-files.mjs';
 import { browserModuleClosure } from './scripts/web-bundle-dependencies.mjs';
 import { resolvePublicFile } from './scripts/public-file-policy.mjs';
+import { relayHostedCofold } from './server/hosted-cofold.mjs';
 
 const root = import.meta.dir;
 const portFlag = Bun.argv.findIndex((argument) => argument === '--port');
@@ -92,6 +93,12 @@ const server = Bun.serve({
     const url = new URL(request.url);
     if (loopbackNames.has(hostname) && !loopbackNames.has(url.hostname))
       return new Response('Invalid Host', {status:400,headers:responseHeaders('text/plain; charset=utf-8')});
+    if(url.pathname.startsWith('/api/cofold/nvidia/')){
+      const response=await relayHostedCofold(request,{localOnly});
+      for(const [key,value]of Object.entries(responseHeaders('application/json; charset=utf-8','no-store')))
+        response.headers.set(key,value);
+      return response;
+    }
     if (!['GET','HEAD'].includes(request.method))
       return new Response('Method not allowed', {status:405,headers:{
         ...responseHeaders('text/plain; charset=utf-8'),Allow:'GET, HEAD'}});

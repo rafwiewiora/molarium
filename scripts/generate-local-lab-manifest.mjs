@@ -19,6 +19,8 @@ const reviewedFiles = [
   'app.js',
   'folding/request.mjs','folding/localfold.mjs',
   'folding/library.mjs','folding/library-ui.mjs',
+  'server-cofolding.html','folding/hosted-library.mjs','folding/hosted-ui.mjs',
+  'folding/hosted-ui.css','folding/HOSTED-COFOLDING.md',
   'folding/LIBRARIES.md','reviews/library-cofolding-2026-11-12/README.md','reviews/library-cofolding-2026-11-12/summary.json',
   'vendor/foldarium/library-review.html','vendor/foldarium/library-review.css',
   'vendor/foldarium/library-review.js','vendor/foldarium/library-format.js','vendor/foldarium/library-store.js',
