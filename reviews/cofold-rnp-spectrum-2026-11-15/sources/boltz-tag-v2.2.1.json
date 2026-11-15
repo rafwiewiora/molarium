@@ -1,0 +1,10 @@
+{
+  "ref": "refs/tags/v2.2.1",
+  "node_id": "REF_kwDONQsGxrByZWZzL3RhZ3MvdjIuMi4x",
+  "url": "https://api.github.com/repos/jwohlwend/boltz/git/refs/tags/v2.2.1",
+  "object": {
+    "sha": "cb04aeccdd480fd4db707f0bbafde538397fa2ac",
+    "type": "commit",
+    "url": "https://api.github.com/repos/jwohlwend/boltz/git/commits/cb04aeccdd480fd4db707f0bbafde538397fa2ac"
+  }
+}
