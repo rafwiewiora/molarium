@@ -41,6 +41,8 @@ jobs:
           node scripts/social-preview.test.mjs --dist
       - name: Check submitted manuscript integrity and tamper rejection
         run: npm run test:paper-submission
+      - name: Compile bounded hosted cofolding relay
+        run: bunx wrangler@4.50.0 pages functions build functions --outdir=/tmp/molarium-hosted-functions
       - name: Preserve production bundle
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -66,6 +68,8 @@ jobs:
         run: npm run test:ci:scientific
       - name: Check folding requests, chemical mapping and pinned upstream sources
         run: node --test folding/integration.test.mjs folding/library.test.mjs folding/ligand-normalization.test.mjs folding/comparison/*.test.mjs
+      - name: Check hosted queue durability and bounded credential relay
+        run: node --test folding/hosted-library.test.mjs server/hosted-cofold.test.mjs
       - name: Check browser MSA features against the official OpenFold3 CPU export
         run: node folding/comparison/compare-msa-features.mjs reviews/cofold-recent-pdb-2026-11-13/panel-msa256.json reviews/cofold-recent-pdb-2026-11-13/msa256/official-openbind-msa-features.json /tmp/recent-msa-comparison.json
       - name: Check all seven frozen SOS1 graphs through strict 2D depiction
@@ -119,6 +123,10 @@ jobs:
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
         run: bun scripts/localfold-ui.browser.test.mjs
+      - name: Check hosted submissions, saved retrieval and Local Lab isolation
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+        run: bun scripts/hosted-cofold.browser.test.mjs
       - name: Check actual RDKit WASM ligand normalization and conformer generation
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}

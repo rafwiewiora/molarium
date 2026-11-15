@@ -615,6 +615,7 @@ const files = [
   'molecular-state-hash.mjs', 'design-help.mjs',
   'folding/request.mjs','folding/localfold.mjs',
   'folding/library.mjs','folding/library-ui.mjs',
+  'server-cofolding.html','folding/hosted-library.mjs','folding/hosted-ui.mjs','folding/hosted-ui.css','folding/HOSTED-COFOLDING.md',
   'folding/LIBRARIES.md','reviews/library-cofolding-2026-11-12/README.md','reviews/library-cofolding-2026-11-12/summary.json',
   'folding/comparison/README.md',
   'reviews/cofold-method-comparison-2026-11-12/README.md',
@@ -818,6 +819,8 @@ for(const [path,bytes] of codeEntries) {
   if(versioned!==text) await writeFile(join(output,path),versioned);
 }
 await writeFile(join(output, '_headers'), headers);
+// Keep the authenticated, stateless relay off unrelated static/scientific routes.
+await writeFile(join(output,'_routes.json'),JSON.stringify({version:1,include:['/api/cofold/nvidia/*'],exclude:[]})+'\n');
 await writeFile(join(output, '_redirects'), [
   // Pages serves sos1.html at /sos1 and canonicalizes /sos1.html back to it.
   // An explicit /sos1 -> /sos1.html redirect would therefore loop.

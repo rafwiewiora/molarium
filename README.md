@@ -431,6 +431,13 @@ To restore only the ANI-2x bundle for local validation, run
 
 ## Protein folding and protein–ligand cofolding
 
+**Hosted compound sets:** [Server cofolding](server-cofolding.html) submits one
+protein against SMILES lines to NVIDIA-hosted Boltz-2 or OpenFold3 using your own
+API key. Accepted request IDs, original structures and human pose choices are
+saved in your browser; return later to retrieve accepted jobs without resubmitting
+them. Sending molecular inputs is an explicit connected-mode action. See the
+[protocol, data boundary and recovery behavior](folding/HOSTED-COFOLDING.md).
+
 The folding panel and `protein.predict` API support a pinned LocalFold backend:
 AlphaFold2 `model_1_ptm` for one protein chain, and OpenBind-0 or Boltz-2 for that
 protein with an optional ligand. Both cofolding models accept explicit SMILES or

@@ -17147,6 +17147,16 @@ const libraryController=new LibraryController({guard:request=>{
   if(request.msaMode==='search')requireExternalNetwork('MSA search');
 },onBusy:busy=>{document.querySelector('#fold-protein').disabled=busy;}});
 libraryController.install({request:foldControlsRequest,action:runChemistUiAction,download:downloadBlob,reportError:showNotice});
+document.querySelector('#fold-library-server').addEventListener('click',event=>{
+  try{
+    requireExternalNetwork('Hosted server cofolding');
+    const id=crypto.randomUUID();
+    localStorage.setItem('molarium-hosted-draft-'+id,JSON.stringify({expires:Date.now()+10*60*1000,
+      sequence:document.querySelector('#protein-sequence').value,compounds:document.querySelector('#fold-library-smiles').value,
+      samples:document.querySelector('#fold-library-samples').value,name:document.querySelector('#fold-library-name').value}));
+    event.currentTarget.href='server-cofolding.html#draft='+id;
+  }catch(e){event.preventDefault();showNotice(e.message);}
+});
 document.querySelector('#fold-protein').addEventListener('click', () => {
   runChemistUiAction('protein.predict', foldControlsRequest()).catch(() => {});
 });
