@@ -92,6 +92,8 @@ jobs:
         run: /tmp/cofold-analysis/bin/python -m unittest discover -s folding/comparison -p 'test_*.py'
       - name: Recompute all selected Runs N’ Poses native baselines
         run: /tmp/cofold-analysis/bin/python folding/comparison/check_rnp_selection.py --report reviews/cofold-rnp-spectrum-2026-11-15
+      - name: Recompute the initial stock Runs N’ Poses snapshot and verify actual sampling
+        run: /tmp/cofold-analysis/bin/python folding/comparison/check_stock_benchmark.py reviews/cofold-rnp-spectrum-2026-11-15/initial-snapshot
 
   browser:
     name: Browser integration

@@ -493,8 +493,9 @@ matched-tensor implementation parity remains a separate question.
 The [larger Runs N’ Poses follow-up](reviews/cofold-rnp-spectrum-2026-11-15/README.md)
 has independently qualified native hits and frozen 48 systems across the published
 training-similarity spectrum. Its native evidence, exclusions, chemical-state
-gates and selection shortfalls are public. New stock predictions are still pending
-published alignments; it does not yet supply a new browser success rate.
+gates and selection shortfalls are public. The 480-prediction stock run is underway;
+a self-contained initial snapshot is independently replayed. Ordered partial
+results do not yet establish a final browser success rate.
 
 An [independent fixed-input transition-layer audit](reviews/cofold-layer-parity-2026-11-13/README.md)
 preserves exact official FP32/FP64 and WebGPU arrays. Ordinary inputs agree

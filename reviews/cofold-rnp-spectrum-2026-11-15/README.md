@@ -1,8 +1,18 @@
 # Runs N’ Poses: larger native-positive stock LocalFold comparison
 
-**Status: native qualification and selection completed; new stock predictions have not run.**
-Published alignments still need to be retrieved. The existing 80-prediction study
-remains the completed browser result; this is its separately frozen follow-up.
+**Status: the 480-prediction stock benchmark is running. A verified initial snapshot contains 11 completed predictions.**
+The complete published-alignment archive passed its checksum. All 480 inputs
+were frozen before the first new neural prediction, using the query and up to
+255 unique published alignment rows. The single guarded batch is running on
+physical Apple Metal-3 WebGPU through the pristine original LocalFold page.
+The frozen plan SHA-256 is
+`797454ec8d2766485a96cfb13326511f0333efa7b89bb656968f84b2844ad349`.
+
+[The independently replayed initial snapshot](initial-snapshot/README.md)
+retains every planned prediction in its denominator. It is ordered partial work;
+its observed hits and misses do not establish a final cohort success rate.
+The existing [completed 80-prediction study](../cofold-stock-localfold-2026-11-13/results-200x10/README.md)
+remains a separate cohort.
 
 The public [Runs N’ Poses dataset](https://zenodo.org/records/18366081) and
 [repository](https://github.com/plinder-org/runs-n-poses/tree/197fafc60a5cef3a9e7f8a4b0dac7c965eed3839)
@@ -20,7 +30,7 @@ trimming, or independent ligand alignment.
 | Selected follow-up | 48 | Stable hash order; at most two cases per exact sequence and three per supplied RnP cluster |
 | Distinct selected protein sequences / clusters | 43 / 36 | Related cases remain identifiable |
 | Selected cases with a stereo/clash-passing native hit | 41 | Seven geometric-only successes remain flagged separately |
-| New browser predictions | 0 | No updated browser success rate yet |
+| Verified new browser snapshot | 11/480 | Ordered partial work; no final cohort success rate yet |
 
 | Training-similarity bin | Candidate pool | Native-qualified | Selected | Predeclared target |
 |---|---:|---:|---:|---:|
@@ -37,6 +47,17 @@ candidates fail exact reference-SDF versus inference-input chemical-state
 agreement. Across all 147 candidates, 17 fail that chemical-state gate, 11
 contain unsupported modified protein residues, and six have no independently
 rescored full-frame native hit. Exclusions and all selection decisions are saved.
+
+## Stock input preparation check
+
+All 48 raw SMILES prepare through the pristine stock `smilesComponent` defaults,
+and their named chemical graphs match the declared inputs. The independent
+stereochemical-graph diagnostic passes for 45/48 initial conformers. It flags
+`8aqf__1__1-a__1-b`, `8iqt__1__1-a__1-b` and `9f40__1__1-a__1-q`; these are input
+conformer flags, not folding results. The raw stock preparation is preserved for
+all 48, including flagged cases, without changing seeds, rewriting SMILES or
+replacing cases. Exact graphs, coordinates and diagnostics are in
+`stock-input-components/`. We will report input and output validity separately.
 
 ## Protocol and boundaries
 
@@ -83,9 +104,21 @@ chemically flagged outcomes stay separate.
 - `source-evidence/`: complete extraction receipts and member checksums for all retained candidate evidence.
 - `sources/`: pinned source metadata, input-preparation notebook, naming implementation and licenses.
 - `environment.txt`: exact analysis package versions.
+- `frozen-stock-plan.json`: all 480 job identities and input hashes, frozen before inference.
+- `initial-snapshot/`: independently recomputed completed predictions, original outputs, device/step receipts and a self-contained archive containing every frozen input. The similarity summary omits final rates until all planned work is terminal.
 
 The scripts in `folding/comparison/` are `rnp_cohort.py`,
 `fetch_rnp_evidence.py`, `fetch_rnp_msa.py`, `rnp_qualify.py` and `select_rnp.py`.
+`prepare_rnp_components.mjs` preserves original stock ligand preparation;
+`prepare_rnp_msas.py` checks the source query and derives the fixed A3Ms;
+`prepare_rnp_stock_plan.py` writes every seed-specific input before execution.
+`wait_rnp_stock.py` can monitor existing assigned jobs, verify the transferred
+archive, then start exactly one immutable stock batch. It does not submit remote
+jobs or create resources. Remote identity/account configuration stays in a
+separate task-local file, and the monitor verifies the guest and Slurm identity
+on every check. The wait is bounded; transport failures and failed dependencies
+stop it. The batch retains existing source, native-hit and physical-GPU gates,
+and stops after three consecutive execution errors.
 Full source retrieval requires an allocated CPU job and verifies the entire
 official compressed archive checksum. Outputs use fresh immutable directories.
 The qualification report records its exact consumed script hashes.
@@ -110,3 +143,15 @@ outputs are included; AlphaFold3 output restrictions are preserved as source
 context and no AlphaFold3 coordinate output is redistributed. The naming source
 is from [Boltz](https://github.com/jwohlwend/boltz/tree/cb04aeccdd480fd4db707f0bbafde538397fa2ac),
 with its MIT license alongside the snapshot.
+
+## Report tooling findings
+
+The shared snapshot writer previously named KIT/NSP3 and “three saved native
+seeds” in fixed prose. It now derives flags from the current frozen cohort and
+refers to its actual preserved native evidence. Scores and the executing frozen
+batch are unchanged. The evidence checker keeps its original default size and
+member limits; larger cohorts may explicitly select a finite artifact budget
+(up to 2 GiB / 20,000 members), with all hash, physical-GPU, sampling and rescore
+checks retained. `summarize_rnp_stock.py` separates geometric from diagnostic-
+passing hits, retains execution failures, and omits final case-hit rates for
+unfinished groups.

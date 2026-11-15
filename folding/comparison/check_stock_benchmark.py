@@ -9,7 +9,11 @@ import zipfile
 from score_stock_localfold import score
 
 
-def check(review):
+def check(review, max_expanded_bytes=256*1024*1024, max_members=4000):
+    # Larger frozen cohorts can opt into an explicit finite artifact budget.
+    # Neither this option nor archive size changes relaxes scientific checks.
+    if not 0<max_expanded_bytes<=2*1024**3 or not 0<max_members<=20000:
+        raise ValueError('Finite evidence budget required (at most 2 GiB / 20,000 members)')
     evidence = json.loads((review / 'evidence.json').read_text())
     if evidence.get('archiveParts'):
         chunks = []
@@ -35,13 +39,13 @@ def check(review):
         root = Path(directory)
         with zipfile.ZipFile(io.BytesIO(raw)) as archive:
             names = archive.namelist()
-            if len(set(names)) != len(names) or len(names) > 4000:
+            if len(set(names)) != len(names) or len(names) > max_members:
                 raise ValueError('Duplicate or excessive evidence members')
             for name in names:
                 path = PurePosixPath(name)
                 if path.is_absolute() or '..' in path.parts or '\\' in name:
                     raise ValueError('Archive member escapes evidence directory')
-            if sum(info.file_size for info in archive.infolist()) > 256 * 1024 * 1024:
+            if sum(info.file_size for info in archive.infolist()) > max_expanded_bytes:
                 raise ValueError('Expanded evidence exceeds the declared artifact budget')
             manifest = json.loads(archive.read('archive-manifest.json'))
             if set(manifest) != set(names) - {'archive-manifest.json'}:
@@ -108,5 +112,7 @@ def check(review):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('review', type=Path)
+    parser.add_argument('--max-expanded-mib',type=int,default=256)
+    parser.add_argument('--max-members',type=int,default=4000)
     args = parser.parse_args()
-    print(json.dumps(check(args.review)))
+    print(json.dumps(check(args.review,args.max_expanded_mib*1024*1024,args.max_members)))

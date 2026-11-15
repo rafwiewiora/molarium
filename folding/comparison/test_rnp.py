@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -11,9 +12,62 @@ from rnp_cohort import candidates
 from rnp_qualify import named_input, positioned_native, protein
 from fetch_rnp_evidence import wanted_member
 from select_rnp import select
+from prepare_rnp_msas import to_a3m
+from prepare_rnp_stock_plan import prepare as prepare_plan
+from summarize_rnp_stock import summarize
 
 
 class RnpGates(unittest.TestCase):
+    def test_partial_summary_does_not_emit_final_rates_or_drop_execution_failures(self):
+        pairs=[{'caseId':'one','model':'boltz2','similarityBin':0,'nativeHasStereoClashPassingHit':True}]
+        jobs=[{'index':i,'caseId':'one','model':'boltz2','seed':i}for i in range(2)]
+        rows=[{**jobs[0],'status':'complete','ligandRmsdA':1.,'within2A':True,'limitedValidityPass':True},{**jobs[1],'status':'running'}]
+        value=summarize({'pairs':pairs,'jobs':jobs},{'poses':rows})
+        self.assertIsNone(value['allSelected']['finalLimitedValidityCaseHitRate']);self.assertEqual(value['allSelected']['observedLimitedValidityPassingHitCases'],1)
+        rows[1]['status']='failed';value=summarize({'pairs':pairs,'jobs':jobs},{'poses':rows})
+        self.assertTrue(value['allSelected']['final']);self.assertEqual(value['allSelected']['plannedPredictions'],2)
+        self.assertEqual(value['allSelected']['executionFailures'],1)
+        rows[0]['ligandRmsdA']=2.
+        with self.assertRaisesRegex(ValueError,'strict threshold'):summarize({'pairs':pairs,'jobs':jobs},{'poses':rows})
+
+    def test_plan_freezes_ten_exact_stock_jobs_and_rejects_changed_alignments(self):
+        with tempfile.TemporaryDirectory()as folder:
+            root=Path(folder);repo=root/'repository';align=root/'align';components=root/'components'
+            prefix=repo/'reviews/cofold-rnp-spectrum-2026-11-15';prefix.mkdir(parents=True)
+            (prefix/'references/case').mkdir(parents=True);(prefix/'references/case/reference.json').write_text('{}')
+            native={'poses':[{'caseId':'case','status':'complete','method':'native-boltz2-published-rnp','ligandRmsdA':1.0}]}
+            native_bytes=json.dumps(native).encode();(prefix/'native-qualification.json').write_bytes(native_bytes)
+            case={'caseId':'case','pdbId':'TEST','ccdId':'LIG','sequence':'ACDE','smiles':'C[C@H](O)CC','similarity':20,
+                  'similarityBin':0,'cluster':'c1','sequenceSha256':'sequence','nativeQualification':{'nativeBestA':1.,'nativeHasStereoClashPassingHit':True}}
+            selection={'selected':[case],'qualificationSha256':hashlib.sha256(native_bytes).hexdigest(),'nativeTopologyLimitation':'test reconstruction limitation'}
+            raw=json.dumps(selection).encode();source=root/'selection.json';source.write_bytes(raw);(prefix/'selection.json').write_bytes(raw)
+            (align/'a3m').mkdir(parents=True);text='>query\nACDE\n>hit\nAC-E\n';(align/'a3m/case.a3m').write_text(text)
+            receipt=json.dumps({'status':'complete','officialArchiveChecksumVerified':True}).encode();(align/'source-receipt.json').write_bytes(receipt)
+            metadata={'selectionSha256':hashlib.sha256(raw).hexdigest(),'sourceReceiptSha256':hashlib.sha256(receipt).hexdigest(),
+                      'records':[{'caseId':'case','a3mSha256':hashlib.sha256(text.encode()).hexdigest(),'rowsIncludingQuery':2}]}
+            (align/'alignments.json').write_text(json.dumps(metadata));(components/'components').mkdir(parents=True)
+            component=b'{}';(components/'components/case.json').write_bytes(component)
+            (components/'component-provenance.json').write_text(json.dumps({'selectionSha256':hashlib.sha256(raw).hexdigest(),
+                'components':{'components/case.json':{'sha256':hashlib.sha256(component).hexdigest(),'smiles':case['smiles']}},'failures':[]}))
+            (components/'conformer-audit.json').write_text('{}')
+            summary=prepare_plan(source,repo,align,components,root/'plan')
+            self.assertEqual(summary['jobs'],10)
+            plan=json.loads((root/'plan/plan.json').read_bytes());self.assertEqual([j['seed']for j in plan['jobs']],list(range(10)))
+            for j in plan['jobs']:
+                job=json.loads((root/'plan'/j['input']).read_bytes());self.assertEqual(job['sequences'][1]['ligand']['smiles'],case['smiles'])
+                self.assertEqual(job['sequences'][0]['protein']['unpairedMsa'],text);self.assertEqual(job['sequences'][0]['protein']['templates'],[])
+            (align/'a3m/case.a3m').write_text(text+'>changed\n----\n')
+            with self.assertRaisesRegex(ValueError,'alignment bytes/query mismatch'):prepare_plan(source,repo,align,components,root/'tampered-plan')
+
+    def test_csv_alignment_query_order_insertions_and_uniqueness(self):
+        raw=b'key,sequence\n0,ACDE\n1,ACDE\n1,AcCDE\n1,AC-E\n-1,ACa-E\n1,AWDE\n'
+        text,report=to_a3m(raw,'ACDE',maximum=3)
+        self.assertEqual(text,'>query\nACDE\n>rnp-csv-row-3\nAC-E\n>rnp-csv-row-5\nAWDE\n')
+        self.assertEqual(report['rowsIncludingQuery'],3)
+        self.assertEqual(report['duplicateAlignedRowsSkipped'],4)
+        for bad in [b'key,sequence\n0,AWDE\n',b'key,sequence\n0,ACDE\n1,ACD\n',b'wrong,header\n0,ACDE\n']:
+            with self.assertRaises(ValueError):to_a3m(bad,'ACDE')
+
     def pool(self, boltz2_rmsd=1.9, release='2024-01-01', extra=None):
         directory=tempfile.TemporaryDirectory();self.addCleanup(directory.cleanup);root=Path(directory.name)
         case={'system_id':'system','ligand_instance_chain':'1.B','ligand_is_proper':'True','release_date':release,

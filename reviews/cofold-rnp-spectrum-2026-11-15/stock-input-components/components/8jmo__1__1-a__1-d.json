@@ -1,0 +1,252 @@
+{
+  "code": "LIG",
+  "atoms": [
+    {
+      "name": "O1",
+      "element": 8,
+      "charge": 0,
+      "x": 5.198,
+      "y": -0.674,
+      "z": 0.032,
+      "leaving": false
+    },
+    {
+      "name": "C1",
+      "element": 6,
+      "charge": 0,
+      "x": 4.455,
+      "y": -0.002,
+      "z": -0.677,
+      "leaving": false
+    },
+    {
+      "name": "O2",
+      "element": 8,
+      "charge": 0,
+      "x": 4.836,
+      "y": 0.769,
+      "z": -1.82,
+      "leaving": false
+    },
+    {
+      "name": "C2",
+      "element": 6,
+      "charge": 0,
+      "x": 2.974,
+      "y": 0.097,
+      "z": -0.415,
+      "leaving": false
+    },
+    {
+      "name": "C3",
+      "element": 6,
+      "charge": 0,
+      "x": 2.619,
+      "y": 0.113,
+      "z": 0.948,
+      "leaving": false
+    },
+    {
+      "name": "C4",
+      "element": 6,
+      "charge": 0,
+      "x": 1.267,
+      "y": 0.21,
+      "z": 1.258,
+      "leaving": false
+    },
+    {
+      "name": "C5",
+      "element": 6,
+      "charge": 0,
+      "x": 0.354,
+      "y": 0.285,
+      "z": 0.188,
+      "leaving": false
+    },
+    {
+      "name": "C6",
+      "element": 6,
+      "charge": 0,
+      "x": -1.106,
+      "y": 0.399,
+      "z": 0.545,
+      "leaving": false
+    },
+    {
+      "name": "O3",
+      "element": 8,
+      "charge": 0,
+      "x": -1.418,
+      "y": 0.814,
+      "z": 1.684,
+      "leaving": false
+    },
+    {
+      "name": "O4",
+      "element": 8,
+      "charge": 0,
+      "x": -2.04,
+      "y": 0.03,
+      "z": -0.436,
+      "leaving": false
+    },
+    {
+      "name": "C7",
+      "element": 6,
+      "charge": 0,
+      "x": -2.639,
+      "y": -1.184,
+      "z": -0.061,
+      "leaving": false
+    },
+    {
+      "name": "C8",
+      "element": 6,
+      "charge": 0,
+      "x": -3.178,
+      "y": -1.018,
+      "z": 1.349,
+      "leaving": false
+    },
+    {
+      "name": "C9",
+      "element": 6,
+      "charge": 0,
+      "x": -4.514,
+      "y": -0.288,
+      "z": 1.222,
+      "leaving": false
+    },
+    {
+      "name": "C10",
+      "element": 6,
+      "charge": 0,
+      "x": -5.045,
+      "y": -0.529,
+      "z": -0.193,
+      "leaving": false
+    },
+    {
+      "name": "O5",
+      "element": 8,
+      "charge": 0,
+      "x": -4.539,
+      "y": 0.541,
+      "z": -0.996,
+      "leaving": false
+    },
+    {
+      "name": "C11",
+      "element": 6,
+      "charge": 0,
+      "x": 0.713,
+      "y": 0.265,
+      "z": -1.159,
+      "leaving": false
+    },
+    {
+      "name": "C12",
+      "element": 6,
+      "charge": 0,
+      "x": 2.062,
+      "y": 0.168,
+      "z": -1.469,
+      "leaving": false
+    }
+  ],
+  "bonds": [
+    {
+      "from": 0,
+      "to": 1,
+      "order": 2
+    },
+    {
+      "from": 1,
+      "to": 2,
+      "order": 1
+    },
+    {
+      "from": 1,
+      "to": 3,
+      "order": 1
+    },
+    {
+      "from": 3,
+      "to": 4,
+      "order": 4
+    },
+    {
+      "from": 4,
+      "to": 5,
+      "order": 4
+    },
+    {
+      "from": 5,
+      "to": 6,
+      "order": 4
+    },
+    {
+      "from": 6,
+      "to": 7,
+      "order": 1
+    },
+    {
+      "from": 7,
+      "to": 8,
+      "order": 2
+    },
+    {
+      "from": 7,
+      "to": 9,
+      "order": 1
+    },
+    {
+      "from": 9,
+      "to": 10,
+      "order": 1
+    },
+    {
+      "from": 10,
+      "to": 11,
+      "order": 1
+    },
+    {
+      "from": 11,
+      "to": 12,
+      "order": 1
+    },
+    {
+      "from": 12,
+      "to": 13,
+      "order": 1
+    },
+    {
+      "from": 13,
+      "to": 14,
+      "order": 1
+    },
+    {
+      "from": 6,
+      "to": 15,
+      "order": 4
+    },
+    {
+      "from": 15,
+      "to": 16,
+      "order": 4
+    },
+    {
+      "from": 16,
+      "to": 3,
+      "order": 4
+    }
+  ],
+  "smiles": "O=C(O)c1ccc(C(=O)OCCCCO)cc1",
+  "conformerError": 0.0009653920579825915,
+  "attempts": 16,
+  "stereo": {
+    "centres": 0,
+    "doubleBonds": 0
+  }
+}
