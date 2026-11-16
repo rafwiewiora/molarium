@@ -80,7 +80,7 @@ The first-three cases partition into 16 selected passing hits, five passing hits
 
 [Portable Foldarium review files](checkpoint-288/review-examples/README.md) cover the five cases where the first-three selection missed an available passing pose, with six saved predictions per case. Import a downloaded JSON into the existing Molarium Foldarium reviewer to rotate poses, compare pockets, and save local preferences or notes. Each case has separate prediction-only and experimental-reference files; no benchmark labels or preferences are embedded. These examples were chosen after seeing the results and are not a blinded or representative study.
 
-The exports preserve every original prediction PDB string and explicit ligand graph. The viewer's Cα alignment was checked against the analysis for all 30 unique predictions, and the actual file-import, molecular rendering, preference persistence and reference separation were exercised without inference. Recorded launcher time remains provenance, rather than being labelled isolated inference time in the viewer. Source attribution travels with each portable library.
+The exports preserve every original prediction PDB string and explicit ligand graph. The viewer's Cα alignment was checked against the analysis for all 30 unique predictions. The original browser receipt exercised one example's first grid, including file import, molecular rendering, preference persistence and reference separation; it did not cover all five examples or all pages. Recorded launcher time remains provenance, rather than being labelled isolated inference time in the viewer. Source attribution travels with each portable library.
 
 A [whole-cohort export preflight](checkpoint-288/all-cohort-review-preflight.json)
 also passed for all 288 saved predictions across all 48 systems: 96 separate
@@ -90,6 +90,13 @@ export/alignment check, not additional inference or a claim that all 48 imports
 were individually exercised in the browser. The final reporting phase will
 prepare the same coverage with all ten planned samples after independent
 verification; the final result remains pending.
+
+The [expanded reviewer check and reference-label fixes](review-ui-2026-11-16/README.md)
+now cover every page, exact pose notes, library/shortlist exports and original
+PDB-download bytes in the first frozen case. A bounded software-rendered sweep
+of all 48 cases is running; its full result is pending. Experimental-reference
+cards omit prediction metadata, and prediction/PDB numbering remains consistent
+when the reference is included. This UI evidence is separate from pose accuracy.
 
 ## Stock input preparation check
 
