@@ -56,6 +56,8 @@ All 48 selected cases have completed seeds 0–2. Of these, 26/48 have a geometr
 
 The source files, full per-case table and similarity-bin denominators are in the [checkpoint report](checkpoint-221/README.md). The lowest-similarity bin has only one case. An interrupted attempt and its fresh continuation are recorded in [execution history](execution-history.json); none of the first 221 completed predictions was repeated.
 
+Selecting the highest reported ipTM without the crystal answer gives 16/48 passing hit cases after three samples, compared with the crystal-informed 21/48. The [sampling and timing analysis](checkpoint-221/README.md#uniform-sampling-and-confidence-selection) reports every uniformly completed prefix separately. Recorded launcher time has a median of 110.9 seconds across this checkpoint; this includes browser startup, available asset loading and output checks, rather than just GPU computation.
+
 ## Stock input preparation check
 
 All 48 raw SMILES prepare through the pristine stock `smilesComponent` defaults,
@@ -165,6 +167,8 @@ member limits; larger cohorts may explicitly select a finite artifact budget
 checks retained. `summarize_rnp_stock.py` separates geometric from diagnostic-
 passing hits, retains execution failures, and omits final case-hit rates for
 unfinished groups.
+
+`analyze_rnp_sampling.py` compares fixed seed prefixes with highest-ipTM selection, without removing invalid poses before ranking. Missing confidence suppresses the corresponding selection rates. Timing observations are hash-bound to the original receipts. The offline checker regenerates the analysis and also checks the confidence values against the original prediction archive. `finalize_rnp_stock.py` can wait for the existing attempts and then merge, rescore, verify and plot all terminal predictions. It cannot submit, restart or repeat science, publish changes, or deploy. It stops on an unfinished stopped batch or a finite wait deadline.
 
 ## Combining interrupted attempts without repeating science
 

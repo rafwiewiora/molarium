@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import json
+import math
 from pathlib import Path
 import statistics
 import zipfile
@@ -16,7 +17,9 @@ def sha(path):
 def assemble(plan_file, repository, pilot, batch, output):
     analysis_names = ['score_stock_localfold.py', 'assemble_stock_benchmark.py',
                       'check_stock_benchmark.py', 'pose_metrics.py', 'experimental_reference.py',
-                      'requirements-analysis.txt']
+                      'requirements-analysis.txt', 'analyze_rnp_sampling.py',
+                      'summarize_rnp_stock.py', 'plot_rnp_sampling.py',
+                      'plot_rnp_checkpoint.py', 'merge_stock_attempts.py', 'finalize_rnp_stock.py']
     analysis_sources = {name: sha(Path(__file__).with_name(name)) for name in analysis_names}
     plan = json.loads(plan_file.read_text())
     results = batch / 'results' if (batch / 'results/progress.json').is_file() else batch
@@ -128,9 +131,18 @@ def assemble(plan_file, repository, pilot, batch, output):
         add(archive, output / 'scores.json', 'independent-scores.json')
         archive.writestr('archive-manifest.json', json.dumps(files, indent=2) + '\n')
     archive_file = output / 'evidence.zip'
+    with zipfile.ZipFile(archive_file) as archive:
+        expanded_bytes = sum(info.file_size for info in archive.infolist())
+        archive_members = len(archive.infolist())
+    if expanded_bytes > 2 * 1024**3 or archive_members > 20000:
+        raise ValueError('Evidence exceeds the checker maximum; preserve source attempts and use explicitly separated checked packages')
+    verify_mib = max(256, math.ceil(expanded_bytes / (64 * 1024**2)) * 64)
+    verify_members = max(4000, math.ceil(archive_members / 1000) * 1000)
+    verify_options = (f' --max-expanded-mib {verify_mib}' if verify_mib > 256 else '') + (f' --max-members {verify_members}' if verify_members > 4000 else '')
     evidence = {'schema': 'molarium.stock-localfold-evidence.v1',
         'scoresSha256': sha(output / 'scores.json'), 'archiveSha256': sha(archive_file),
         'archiveBytes': archive_file.stat().st_size, 'members': len(files),
+        'expandedArchiveBytes': expanded_bytes, 'archiveMembers': archive_members,
         'scope': report['status'], 'completed': complete, 'planned': len(records)}
     if archive_file.stat().st_size > 20 * 1024 * 1024:
         parts = []
@@ -191,7 +203,7 @@ def assemble(plan_file, repository, pilot, batch, output):
         ('Evidence archive: ' + ' · '.join(f'[part {i + 1}]({p["file"]})' for i, p in enumerate(evidence['archiveParts']))
          + '. The checker reassembles the parts automatically.' if evidence.get('archiveParts') else '[Evidence archive](evidence.zip)')
         + ' · [Archive hashes](evidence.json)', '',
-        '```sh', 'python folding/comparison/check_stock_benchmark.py /path/to/this/review', '```', '']
+        '```sh', 'python folding/comparison/check_stock_benchmark.py /path/to/this/review' + verify_options, '```', '']
     if plan.get('nativeTopologyLimitation'):
         lines += ['## Native topology provenance', '', plan['nativeTopologyLimitation'], '']
     (output / 'README.md').write_text('\n'.join(lines))

@@ -98,6 +98,8 @@ def check(review, max_expanded_bytes=256*1024*1024, max_members=4000):
             actual = score(plan_file, root / 'reference-evidence', job['index'], root / f'predictions/{job["index"]:03d}')
             if abs(actual['ligandRmsdA'] - row['ligandRmsdA']) > 1e-8 or actual['limitedValidityPass'] != row['limitedValidityPass']:
                 raise ValueError('Independent crystal score differs')
+            if actual['confidence'] != row['confidence'] or actual['receiptSha256'] != row['receiptSha256']:
+                raise ValueError('Published confidence or receipt differs from the original output')
             attempt = root / f'predictions/{job["index"]:03d}'
             receipt = json.loads((attempt / 'receipt.json').read_text())
             log = (attempt / 'upstream.log').read_text().splitlines()
@@ -125,6 +127,16 @@ def check(review, max_expanded_bytes=256*1024*1024, max_members=4000):
                 raise ValueError('Summary success counts differ')
             if summary['limitedValidityPassingHits'] != sum(r['ligandRmsdA'] < 2 and r['limitedValidityPass'] for r in done):
                 raise ValueError('Summary validity counts differ')
+        sampling_file = review / 'selection-analysis.json'
+        if sampling_file.is_file():
+            from analyze_rnp_sampling import analyze, timings
+            expected = analyze(plan, published)
+            expected.update({'planSha256': published['planSha256'],
+                             'scoresSha256': hashlib.sha256(scores_raw).hexdigest(),
+                             'scriptSha256': hashlib.sha256(Path(__file__).with_name('analyze_rnp_sampling.py').read_bytes()).hexdigest(),
+                             'timing': timings(root, plan, published, archived=True)})
+            if json.loads(sampling_file.read_bytes()) != expected:
+                raise ValueError('Sampling, confidence selection or timing analysis differs')
     return {'status': 'pass', 'recomputedPredictions': checked,
             'plannedPredictions': len(rows), 'scope': published['status'],
             'neuralForwards': 0, 'observedDiffusionFrames': sorted(frames_seen),

@@ -148,3 +148,23 @@ The lowest-similarity bin has one case; its proportion is not a stable estimate 
 The original process stopped during the trunk of prediction 221 before producing a prediction PDB or job archive. The Mac restarted after the last partial log. All 221 completed receipts, scores and output hashes were verified. A fresh immutable attempt resumes at index 221 with the original frozen source, plan and physical-Apple requirement; no completed prediction is rerun. The partial receipt and log remain preserved separately. This interrupted attempt is recorded separately from completed-prediction outcomes and cannot be counted as uninterrupted execution reliability.
 
 The snapshot's generic `running` row records its captured pre-restart state, not a claim that the old process is still active. [Execution history](../execution-history.json) records the interruption and new attempt.
+
+
+## Uniform sampling and confidence selection
+
+Only seed prefixes completed for every case receive rates. The selected pose is the largest reported ipTM, breaking ties by lowest seed, without filtering by crystal RMSD, stereochemistry or clashes.
+
+| Samples per case | Any <2 Å | Any passing <2 Å | Highest-ipTM <2 Å | Highest-ipTM passing <2 Å |
+| ---: | ---: | ---: | ---: | ---: |
+| 1 | 22/48 | 16/48 | 22/48 | 16/48 |
+| 2 | 23/48 | 19/48 | 22/48 | 16/48 |
+| 3 | 26/48 | 21/48 | 23/48 | 16/48 |
+| 4 | 26/48 | 22/48 | 25/48 | 18/48 |
+
+At three samples, confidence selection gives 16/48 passing hits, compared with 21/48 when the crystal answer is used to find any passing hit. The complete ten-sample result is pending. Missing confidence suppresses confidence-based rates; failed executions remain in the denominator.
+
+![Sampling and recorded run time](sampling-plots/sampling-and-time.png)
+
+Across these 221 completed runs, the launcher wall-time median is 110.9 s (interquartile range 60.0–181.5 s; range 42.0–483.9 s). Length-bin medians are 50.1 s below 200 residues, 110.9 s for 200–399 residues and 227.1 s for 400–700 residues. These include browser startup, available asset loading, folding, confidence calculation and archive checks, excluding independent scoring. They describe this physical Apple WebGPU run and its cache/system conditions, rather than GPU-kernel time or a cross-device speed comparison.
+
+[Machine-readable selection and timing analysis](selection-analysis.json) retains every selected seed, confidence, failure and hash-bound timing receipt. The offline archive checker regenerates these counts and timings from preserved output without running a model.
