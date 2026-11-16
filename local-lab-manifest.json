@@ -72,8 +72,8 @@
     },
     {
       "path": "app.js",
-      "bytes": 1009494,
-      "sha256": "c13e5e4d3792899d63e95feee1ca2a6edd4e912446d5a33f31693137a733fbe8"
+      "bytes": 1010155,
+      "sha256": "06836423c75391145e893147dc7cc32840a7de9b044856e5ea9780f609ae88c1"
     },
     {
       "path": "folding/request.mjs",
@@ -94,6 +94,31 @@
       "path": "folding/library-ui.mjs",
       "bytes": 6748,
       "sha256": "65efff7d73c1e5cc79ecca14a6a9b45e392a0647fdf9547e6546361d3ddad5ab"
+    },
+    {
+      "path": "server-cofolding.html",
+      "bytes": 5107,
+      "sha256": "d0d6498862f80b1dfa93d41b6e9ba956174acfc945ad1334666232d515578e77"
+    },
+    {
+      "path": "folding/hosted-library.mjs",
+      "bytes": 13481,
+      "sha256": "4c9e62d787154beccbc195d2bb19b7778dd7541fab6c7ba32e4e99c8a08664b7"
+    },
+    {
+      "path": "folding/hosted-ui.mjs",
+      "bytes": 15947,
+      "sha256": "ee01e9204ee55806677b2d7e26bc9d42c1b53a11841162ccf0cede99f1cbe1e4"
+    },
+    {
+      "path": "folding/hosted-ui.css",
+      "bytes": 3513,
+      "sha256": "4bd6d27df217990b97b240cf5e0aa903166ef6e2618c036c6705deff519b6fd2"
+    },
+    {
+      "path": "folding/HOSTED-COFOLDING.md",
+      "bytes": 5364,
+      "sha256": "d5a2a852be6632abf39475970c907987bda61f50b100186f7696576013bf15a9"
     },
     {
       "path": "folding/LIBRARIES.md",
@@ -202,8 +227,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 75669,
-      "sha256": "276b9d4ebf7a1b38049c00c3f824a8857178d0ac53fc81a89308484223981b3c"
+      "bytes": 75869,
+      "sha256": "7747f473bab037c7067b9b752d4aac25b1daa992160736bbb635d7c71f03319a"
     },
     {
       "path": "reproductions.html",
@@ -227,8 +252,8 @@
     },
     {
       "path": "server.js",
-      "bytes": 6924,
-      "sha256": "cbad538dd4de88fb133b9409e504f2799966760fe4592fbcd3590b4919251d64"
+      "bytes": 7290,
+      "sha256": "8fc3bb27d7570b9412508fdb0d43c9329fdaedcc07f27ff3938f2cd71deea967"
     },
     {
       "path": "scripts/web-source-files.mjs",
@@ -252,8 +277,8 @@
     },
     {
       "path": "scripts/generate-local-lab-manifest.mjs",
-      "bytes": 6966,
-      "sha256": "d1e28b5b5e0858f44202009e8a64fba3991c35da521e5df7ec2fddcd8e2d7790"
+      "bytes": 7103,
+      "sha256": "2f3c0ded78cc3a1f88c49f3ecbe177740a384593dd1b60e91535007144d01142"
     },
     {
       "path": "scripts/build-sos1-publication.mjs",
@@ -1449,6 +1474,11 @@
       "path": "vendor/foldarium/library-chemistry.js",
       "bytes": 1247,
       "sha256": "9cd2a16ceb4d30713a0b13a36b78ba06d771f28e45d8602acc53f1ff60dda9bd"
+    },
+    {
+      "path": "server/hosted-cofold.mjs",
+      "bytes": 5091,
+      "sha256": "6ba35e7f48a504d2217b2f4a671da212a265575a9a26cb18aabc74ad9870607d"
     },
     {
       "path": "openff/frame-contract.mjs",

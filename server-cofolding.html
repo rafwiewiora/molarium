@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Molarium · Server cofolding</title>
+<link rel="stylesheet" href="folding/hosted-ui.css">
+<link rel="stylesheet" href="docking/validation/pose-viewer/vendor/molstar-5.11.0.css">
+<script src="runtime-config.js"></script></head>
+<body><header><a class="brand" href="/">MOLARIUM</a><span>Server cofolding</span><a href="https://build.nvidia.com/mit/boltz2" target="_blank" rel="noopener noreferrer">NVIDIA account &amp; API key ↗</a></header>
+<main><aside>
+  <h1>A protein. A compound set.</h1><p class="intro">Run predictions on NVIDIA’s hosted service, then inspect the returned structures and save your choices here.</p>
+  <form id="setup">
+    <label>NVIDIA API key<input id="api-key" type="password" autocomplete="off" spellcheck="false" placeholder="nvapi-…" required></label>
+    <p class="help">Used for each request through Molarium’s relay. The key stays in this tab’s memory and is excluded from local saves and exports. NVIDIA’s account quota and service terms apply.</p>
+    <label>Library name<input id="name" value="Server cofolding library" maxlength="200"></label>
+    <label>Protein sequence or FASTA<textarea id="sequence" rows="5" spellcheck="false" required></textarea></label>
+    <label>Compounds · SMILES, optionally followed by a name<textarea id="compounds" rows="6" spellcheck="false" placeholder="CCO ethanol&#10;CC(=O)Oc1ccccc1C(=O)O aspirin" required></textarea></label>
+    <label>Model<select id="model"><option value="boltz2">Boltz-2 · NVIDIA server</option><option value="openfold3">OpenFold3 · NVIDIA server</option></select></label>
+    <div class="columns"><label>Poses per compound<input id="samples" type="number" value="3" min="1" max="20" required></label><label id="steps-label">Diffusion steps<input id="steps" type="number" value="200" min="10" max="200" required></label></div>
+    <label id="recycles-label">Recycling steps<input id="recycles" type="number" value="3" min="1" max="10" required></label>
+    <p id="model-help" class="help">Every compound is submitted with this protein as a separate prediction. The server manages random seeds.</p>
+    <label>Protein alignment<select id="msa"><option value="search">ColabFold search · up to 256 unique rows</option><option value="single">Single sequence</option><option value="provided">Provide an A3M</option></select></label>
+    <label id="a3m-label" hidden>A3M alignment<textarea id="a3m" rows="4" spellcheck="false"></textarea></label>
+    <p class="boundary">Submitting sends the protein, compounds and selected alignment to NVIDIA through Molarium. Alignment search also sends the protein sequence to ColabFold. Saved results and review decisions stay in this browser.</p>
+    <button id="start" class="primary" type="submit">Submit compound set</button>
+  </form>
+  <hr><label>Saved server libraries<select id="saved"><option value="">Choose a library</option></select></label>
+  <div class="actions"><button id="resume" disabled>Continue / retrieve</button><button id="pause" disabled>Stop waiting</button></div>
+  <div class="actions"><button id="export" disabled>Export results + choices</button><label class="button">Import saved results<input id="import" type="file" accept=".json" hidden></label></div>
+  <p class="help">Keep this tab open until every job is accepted. Accepted jobs run on NVIDIA after you close the tab. Re-enter your key to retrieve them later while the provider retains the results. Stopping here does not cancel accepted jobs.</p>
+</aside><section class="workspace">
+  <div class="status-card"><span class="eyebrow">LIBRARY PROGRESS</span><h2 id="status" role="status" aria-live="polite">Ready to submit</h2><progress id="progress" max="1" value="0" aria-label="Completed server jobs"></progress><p id="detail">Each returned structure is kept in its original provider format. No pose is automatically selected.</p><p id="error" role="alert" hidden></p></div>
+  <div id="jobs" class="job-list"></div>
+  <section id="review" hidden><div class="review-head"><div><span class="eyebrow">POSE REVIEW</span><h2 id="pose-title"></h2><p id="pose-detail"></p></div><button id="download-structure">Download original structure</button></div>
+    <div class="actions"><button data-choice="preferred">Prefer this pose</button><button data-choice="rejected">Reject this pose</button><button data-choice="unreviewed">Clear choice</button><button id="none">None of this compound’s poses</button></div>
+    <label>Review note<input id="note" placeholder="Saved locally with this exact structure"></label>
+    <p class="help">The viewer shows the original provider structure. Confidence is a model score; these jobs have no experimental answer attached. Use the same camera controls to inspect the predicted protein and ligand.</p>
+    <div id="viewer"></div>
+  </section>
+</section></main>
+<script src="docking/validation/pose-viewer/vendor/molstar-5.11.0.js"></script>
+<script type="module" src="folding/hosted-ui.mjs"></script></body></html>
