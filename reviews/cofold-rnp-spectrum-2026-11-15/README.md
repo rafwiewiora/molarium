@@ -1,6 +1,6 @@
 # Runs N’ Poses: larger native-positive stock LocalFold comparison
 
-**Status: the 480-prediction stock benchmark is running. A verified initial snapshot contains 11 completed predictions.**
+**Status: the 480-prediction stock benchmark is running. The verified checkpoint contains 221 completed predictions; a continuation is running after a host restart.**
 The complete published-alignment archive passed its checksum. All 480 inputs
 were frozen before the first new neural prediction, using the query and up to
 255 unique published alignment rows. The single guarded batch is running on
@@ -8,7 +8,7 @@ physical Apple Metal-3 WebGPU through the pristine original LocalFold page.
 The frozen plan SHA-256 is
 `797454ec8d2766485a96cfb13326511f0333efa7b89bb656968f84b2844ad349`.
 
-[The independently replayed initial snapshot](initial-snapshot/README.md)
+[The independently replayed 221-prediction checkpoint](checkpoint-221/README.md)
 retains every planned prediction in its denominator. It is ordered partial work;
 its observed hits and misses do not establish a final cohort success rate.
 The existing [completed 80-prediction study](../cofold-stock-localfold-2026-11-13/results-200x10/README.md)
@@ -30,7 +30,7 @@ trimming, or independent ligand alignment.
 | Selected follow-up | 48 | Stable hash order; at most two cases per exact sequence and three per supplied RnP cluster |
 | Distinct selected protein sequences / clusters | 43 / 36 | Related cases remain identifiable |
 | Selected cases with a stereo/clash-passing native hit | 41 | Seven geometric-only successes remain flagged separately |
-| Verified new browser snapshot | 11/480 | Ordered partial work; no final cohort success rate yet |
+| Verified new browser checkpoint | 221/480 | First three seeds complete for all 48 cases; full ten-seed result remains pending |
 
 | Training-similarity bin | Candidate pool | Native-qualified | Selected | Predeclared target |
 |---|---:|---:|---:|---:|
@@ -47,6 +47,14 @@ candidates fail exact reference-SDF versus inference-input chemical-state
 agreement. Across all 147 candidates, 17 fail that chemical-state gate, 11
 contain unsupported modified protein residues, and six have no independently
 rescored full-frame native hit. Exclusions and all selection decisions are saved.
+
+## Three predictions per system: first complete shared budget
+
+All 48 selected cases have completed seeds 0–2. Of these, 26/48 have a geometric <2 Å hit and 21/48 (43.75%) have a hit passing the limited stereo/clash checks. Restricting to the 41 cases with a diagnostic-passing native hit gives 19/41 passing browser hit cases. These retrospective best-of-three counts use the experimental answer and are separate from confidence-based pose selection. The complete ten-seed result is still pending.
+
+![Uniform first-three-seed checkpoint](checkpoint-221/plots/first-three.png)
+
+The source files, full per-case table and similarity-bin denominators are in the [checkpoint report](checkpoint-221/README.md). The lowest-similarity bin has only one case. An interrupted attempt and its fresh continuation are recorded in [execution history](execution-history.json); none of the first 221 completed predictions was repeated.
 
 ## Stock input preparation check
 
@@ -105,7 +113,9 @@ chemically flagged outcomes stay separate.
 - `sources/`: pinned source metadata, input-preparation notebook, naming implementation and licenses.
 - `environment.txt`: exact analysis package versions.
 - `frozen-stock-plan.json`: all 480 job identities and input hashes, frozen before inference.
-- `initial-snapshot/`: independently recomputed completed predictions, original outputs, device/step receipts and a self-contained archive containing every frozen input. The similarity summary omits final rates until all planned work is terminal.
+- `initial-snapshot/`: retained 11-prediction historical snapshot.
+- `checkpoint-221/`: 221 independently recomputed predictions, original outputs, device/step receipts and self-contained archive parts containing every frozen input. The summary distinguishes the completed three-seed prefix from the unfinished ten-seed budget.
+- `execution-history.json`: interruption, preserved completed work and immutable continuation.
 
 The scripts in `folding/comparison/` are `rnp_cohort.py`,
 `fetch_rnp_evidence.py`, `fetch_rnp_msa.py`, `rnp_qualify.py` and `select_rnp.py`.
@@ -155,3 +165,7 @@ member limits; larger cohorts may explicitly select a finite artifact budget
 checks retained. `summarize_rnp_stock.py` separates geometric from diagnostic-
 passing hits, retains execution failures, and omits final case-hit rates for
 unfinished groups.
+
+## Combining interrupted attempts without repeating science
+
+`merge_stock_attempts.py` stages completed checkpoints for analysis only; it runs no model. It checks identical consumed source manifests, every frozen input, reference hashes, and completed receipt/output hashes. Later attempts may resolve unfinished predictions, but any overlap with an already completed prediction is rejected. Original progress snapshots and source manifests remain attached. The archive checker verifies that merged completions match those original checkpoints. The interrupted trunk-only attempt is retained in execution history rather than counted as another completed sample.

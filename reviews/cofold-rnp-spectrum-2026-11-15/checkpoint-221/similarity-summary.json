@@ -1,0 +1,185 @@
+{
+  "schema": "molarium.rnp-stock-summary.v1",
+  "allSelected": {
+    "plannedCases": 48,
+    "plannedPredictions": 480,
+    "completePredictions": 221,
+    "executionFailures": 0,
+    "fullyProcessedCases": 0,
+    "observedGeometricHitCases": 26,
+    "observedLimitedValidityPassingHitCases": 22,
+    "geometricPoseHits": 103,
+    "limitedValidityPassingPoseHits": 80,
+    "final": false,
+    "finalLimitedValidityCaseHitRate": null,
+    "firstThree": {
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "plannedCases": 48,
+      "processedCases": 48,
+      "completePredictions": 144,
+      "executionFailures": 0,
+      "geometricHitCases": 26,
+      "limitedValidityPassingHitCases": 21,
+      "fullyProcessed": true,
+      "limitedValidityCaseHitRate": 0.4375
+    }
+  },
+  "nativeLimitedValiditySubset": {
+    "plannedCases": 41,
+    "plannedPredictions": 410,
+    "completePredictions": 187,
+    "executionFailures": 0,
+    "fullyProcessedCases": 0,
+    "observedGeometricHitCases": 22,
+    "observedLimitedValidityPassingHitCases": 20,
+    "geometricPoseHits": 87,
+    "limitedValidityPassingPoseHits": 75,
+    "final": false,
+    "finalLimitedValidityCaseHitRate": null,
+    "firstThree": {
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "plannedCases": 41,
+      "processedCases": 41,
+      "completePredictions": 123,
+      "executionFailures": 0,
+      "geometricHitCases": 22,
+      "limitedValidityPassingHitCases": 19,
+      "fullyProcessed": true,
+      "limitedValidityCaseHitRate": 0.4634146341463415
+    }
+  },
+  "bySimilarityBin": [
+    {
+      "bin": 0,
+      "interval": "[0,25)",
+      "plannedCases": 1,
+      "plannedPredictions": 10,
+      "completePredictions": 5,
+      "executionFailures": 0,
+      "fullyProcessedCases": 0,
+      "observedGeometricHitCases": 1,
+      "observedLimitedValidityPassingHitCases": 1,
+      "geometricPoseHits": 3,
+      "limitedValidityPassingPoseHits": 2,
+      "final": false,
+      "finalLimitedValidityCaseHitRate": null,
+      "firstThree": {
+        "seeds": [
+          0,
+          1,
+          2
+        ],
+        "plannedCases": 1,
+        "processedCases": 1,
+        "completePredictions": 3,
+        "executionFailures": 0,
+        "geometricHitCases": 1,
+        "limitedValidityPassingHitCases": 0,
+        "fullyProcessed": true,
+        "limitedValidityCaseHitRate": 0.0
+      }
+    },
+    {
+      "bin": 1,
+      "interval": "[25,50)",
+      "plannedCases": 12,
+      "plannedPredictions": 120,
+      "completePredictions": 60,
+      "executionFailures": 0,
+      "fullyProcessedCases": 0,
+      "observedGeometricHitCases": 4,
+      "observedLimitedValidityPassingHitCases": 4,
+      "geometricPoseHits": 20,
+      "limitedValidityPassingPoseHits": 20,
+      "final": false,
+      "finalLimitedValidityCaseHitRate": null,
+      "firstThree": {
+        "seeds": [
+          0,
+          1,
+          2
+        ],
+        "plannedCases": 12,
+        "processedCases": 12,
+        "completePredictions": 36,
+        "executionFailures": 0,
+        "geometricHitCases": 4,
+        "limitedValidityPassingHitCases": 4,
+        "fullyProcessed": true,
+        "limitedValidityCaseHitRate": 0.3333333333333333
+      }
+    },
+    {
+      "bin": 2,
+      "interval": "[50,75)",
+      "plannedCases": 18,
+      "plannedPredictions": 180,
+      "completePredictions": 88,
+      "executionFailures": 0,
+      "fullyProcessedCases": 0,
+      "observedGeometricHitCases": 10,
+      "observedLimitedValidityPassingHitCases": 8,
+      "geometricPoseHits": 44,
+      "limitedValidityPassingPoseHits": 29,
+      "final": false,
+      "finalLimitedValidityCaseHitRate": null,
+      "firstThree": {
+        "seeds": [
+          0,
+          1,
+          2
+        ],
+        "plannedCases": 18,
+        "processedCases": 18,
+        "completePredictions": 54,
+        "executionFailures": 0,
+        "geometricHitCases": 10,
+        "limitedValidityPassingHitCases": 8,
+        "fullyProcessed": true,
+        "limitedValidityCaseHitRate": 0.4444444444444444
+      }
+    },
+    {
+      "bin": 3,
+      "interval": "[75,100]",
+      "plannedCases": 17,
+      "plannedPredictions": 170,
+      "completePredictions": 68,
+      "executionFailures": 0,
+      "fullyProcessedCases": 0,
+      "observedGeometricHitCases": 11,
+      "observedLimitedValidityPassingHitCases": 9,
+      "geometricPoseHits": 36,
+      "limitedValidityPassingPoseHits": 29,
+      "final": false,
+      "finalLimitedValidityCaseHitRate": null,
+      "firstThree": {
+        "seeds": [
+          0,
+          1,
+          2
+        ],
+        "plannedCases": 17,
+        "processedCases": 17,
+        "completePredictions": 51,
+        "executionFailures": 0,
+        "geometricHitCases": 11,
+        "limitedValidityPassingHitCases": 9,
+        "fullyProcessed": true,
+        "limitedValidityCaseHitRate": 0.5294117647058824
+      }
+    }
+  ],
+  "scope": "Selected native-positive reconstruction cohort. Related sequences/clusters remain in the metadata. Counts are descriptive, not population accuracy or numerical parity.",
+  "partialPolicy": "No final case hit rate until every planned prediction in that group is terminal. Execution failures stay in the denominator; geometric and limited-validity hits stay separate.",
+  "planSha256": "797454ec8d2766485a96cfb13326511f0333efa7b89bb656968f84b2844ad349",
+  "scoresSha256": "2271d73b33fa598fea32086c4cbf55477f91679cea842057b0e37591533dcc93"
+}

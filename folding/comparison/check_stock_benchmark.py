@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import io
 import json
+import re
 from pathlib import Path, PurePosixPath
 import tempfile
 import zipfile
@@ -64,6 +65,27 @@ def check(review, max_expanded_bytes=256*1024*1024, max_members=4000):
         rows = published['poses']
         if len(rows) != len(plan['jobs']) or [r['index'] for r in rows] != list(range(len(plan['jobs']))):
             raise ValueError('Planned prediction denominator differs')
+        merge_file=root/'source-attempts/merge-receipt.json'
+        if merge_file.is_file():
+            merge=json.loads(merge_file.read_bytes());source_complete={}
+            if merge['planSha256']!=published['planSha256']or merge['newNeuralForwards']!=0:raise ValueError('Merged storage provenance differs')
+            canonical=json.loads((root/'consumed-batch-source/source-manifest.json').read_bytes())
+            for source in merge['sources']:
+                if not re.fullmatch(r'attempt-[0-9]{3}',source['id']):raise ValueError('Invalid source attempt identity')
+                progress_bytes=(root/'source-attempts'/(source['id']+'.progress.json')).read_bytes()
+                code_bytes=(root/'source-attempts'/(source['id']+'.source-manifest.json')).read_bytes()
+                if hashlib.sha256(progress_bytes).hexdigest()!=source['progressSha256']or hashlib.sha256(code_bytes).hexdigest()!=source['sourceManifestSha256']or json.loads(code_bytes)!=canonical:
+                    raise ValueError('Original source attempt hashes differ')
+                for record in json.loads(progress_bytes)['records']:
+                    if record['status']!='complete':continue
+                    if record['index']in source_complete:raise ValueError('Repeated completed prediction in source history')
+                    source_complete[record['index']]=record
+            if set(source_complete)!={r['index']for r in rows if r['status']=='complete'}:raise ValueError('Merged completion history differs')
+            for row in rows:
+                if row['status']!='complete':continue
+                original=source_complete[row['index']];attempt=root/f'predictions/{row["index"]:03d}'
+                if original['receiptSha256']!=hashlib.sha256((attempt/'receipt.json').read_bytes()).hexdigest()or original['scoreSha256']!=row['initialScoreSha256']:
+                    raise ValueError('Merged prediction differs from its original checkpoint')
         checked = 0
         for job, row in zip(plan['jobs'], rows):
             if (row['caseId'], row['model'], row['seed']) != (job['caseId'], job['model'], job['seed']):

@@ -119,6 +119,10 @@ def assemble(plan_file, repository, pilot, batch, output):
         for name in analysis_names:
             add(archive, Path(__file__).with_name(name), 'independent-analysis-source/' + name)
         add(archive, batch / 'source-manifest.json', 'consumed-batch-source/source-manifest.json')
+        if (batch / 'merge-receipt.json').is_file():
+            add(archive, batch / 'merge-receipt.json', 'source-attempts/merge-receipt.json')
+            for path in sorted((batch / 'source-attempts').glob('*.json')):
+                add(archive, path, 'source-attempts/' + path.name)
         archive.writestr('progress-at-snapshot.json', progress_raw)
         files['progress-at-snapshot.json'] = {'sha256': hashlib.sha256(progress_raw).hexdigest(), 'bytes': len(progress_raw)}
         add(archive, output / 'scores.json', 'independent-scores.json')

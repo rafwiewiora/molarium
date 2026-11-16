@@ -94,6 +94,8 @@ jobs:
         run: /tmp/cofold-analysis/bin/python folding/comparison/check_rnp_selection.py --report reviews/cofold-rnp-spectrum-2026-11-15
       - name: Recompute the initial stock Runs N’ Poses snapshot and verify actual sampling
         run: /tmp/cofold-analysis/bin/python folding/comparison/check_stock_benchmark.py reviews/cofold-rnp-spectrum-2026-11-15/initial-snapshot
+      - name: Recompute the 221-prediction checkpoint and verify actual sampling
+        run: /tmp/cofold-analysis/bin/python folding/comparison/check_stock_benchmark.py reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-221
 
   browser:
     name: Browser integration

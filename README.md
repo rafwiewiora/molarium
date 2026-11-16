@@ -494,8 +494,9 @@ The [larger Runs N’ Poses follow-up](reviews/cofold-rnp-spectrum-2026-11-15/RE
 has independently qualified native hits and frozen 48 systems across the published
 training-similarity spectrum. Its native evidence, exclusions, chemical-state
 gates and selection shortfalls are public. The 480-prediction stock run is underway;
-a self-contained initial snapshot is independently replayed. Ordered partial
-results do not yet establish a final browser success rate.
+a self-contained 221-prediction checkpoint is independently replayed. The uniform
+first-three-seed result is 21/48 cases with a <2 Å hit passing the limited
+stereo/clash checks; the ten-seed result remains pending.
 
 An [independent fixed-input transition-layer audit](reviews/cofold-layer-parity-2026-11-13/README.md)
 preserves exact official FP32/FP64 and WebGPU arrays. Ordinary inputs agree

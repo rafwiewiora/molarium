@@ -24,12 +24,23 @@ def summarize(plan,report):
         hits={(r['caseId'],r['model'])for r in complete if r['within2A']}
         valid={(r['caseId'],r['model'])for r in complete if r['within2A']and r['limitedValidityPass']}
         final=len(terminal)==len(chosen)
+        prefix=[r for r in chosen if r['seed']in [0,1,2]]
+        prefix_complete=[r for r in prefix if r['status']=='complete']
+        prefix_cases=[identity for identity in identities if sorted(r['seed']for r in prefix if(r['caseId'],r['model'])==identity)==[0,1,2]]
+        prefix_terminal=[identity for identity in prefix_cases if all(r['status']in ['complete','failed']for r in prefix if(r['caseId'],r['model'])==identity)]
+        prefix_hits={(r['caseId'],r['model'])for r in prefix_complete if r['within2A']}
+        prefix_valid={(r['caseId'],r['model'])for r in prefix_complete if r['within2A']and r['limitedValidityPass']}
+        prefix_done=bool(identities)and len(prefix_cases)==len(identities)==len(prefix_terminal)
         return {'plannedCases':len(identities),'plannedPredictions':len(chosen),'completePredictions':len(complete),
                 'executionFailures':sum(r['status']=='failed'for r in chosen),'fullyProcessedCases':len(finished),
                 'observedGeometricHitCases':len(hits),'observedLimitedValidityPassingHitCases':len(valid),
                 'geometricPoseHits':sum(r['within2A']for r in complete),
                 'limitedValidityPassingPoseHits':sum(r['within2A']and r['limitedValidityPass']for r in complete),
-                'final':final,'finalLimitedValidityCaseHitRate':len(valid)/len(identities)if final and identities else None}
+                'final':final,'finalLimitedValidityCaseHitRate':len(valid)/len(identities)if final and identities else None,
+                'firstThree':{'seeds':[0,1,2],'plannedCases':len(prefix_cases),'processedCases':len(prefix_terminal),
+                              'completePredictions':len(prefix_complete),'executionFailures':sum(r['status']=='failed'for r in prefix),
+                              'geometricHitCases':len(prefix_hits),'limitedValidityPassingHitCases':len(prefix_valid),
+                              'fullyProcessed':prefix_done,'limitedValidityCaseHitRate':len(prefix_valid)/len(identities)if prefix_done else None}}
     return {'schema':'molarium.rnp-stock-summary.v1','allSelected':group(pairs),
             'nativeLimitedValiditySubset':group([p for p in pairs if p['nativeHasStereoClashPassingHit']]),
             'bySimilarityBin':[{'bin':i,'interval':interval,**group([p for p in pairs if p['similarityBin']==i])}

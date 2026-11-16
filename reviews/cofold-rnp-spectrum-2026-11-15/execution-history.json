@@ -1,0 +1,33 @@
+{
+  "schema": "molarium.stock-execution-history.v1",
+  "planSha256": "797454ec8d2766485a96cfb13326511f0333efa7b89bb656968f84b2844ad349",
+  "checkedAt": "2026-11-16T17:22:33.835145+00:00",
+  "attempts": [
+    {
+      "id": "initial",
+      "startedAt": "2026-11-15T22:18:07.601294+00:00",
+      "completedPredictionsPreserved": 221,
+      "interruptedIndex": 221,
+      "interruptedPhase": "trunk, no completed neural output",
+      "interruptedEvidence": {
+        "input.json": "59aeda9455a39a456020d52018f5f41859708d4c0019a59e732108a97f69d5bd",
+        "receipt.json": "58019e86b10effe6ca81a7f775e53445fa20eee27acf3f7eeff3963fbee6c845",
+        "upstream.log": "fe3ff627e3466de1e18e3d1b53df267906a9c8023b131dd74aa175f367ad22e7"
+      },
+      "hostRestartUtc": "2026-11-16T06:46:52+00:00",
+      "state": "interrupted-after-221-complete"
+    },
+    {
+      "id": "continuation-20261116-attempt001",
+      "startedAt": "2026-11-16T16:14:52.840273+00:00",
+      "startIndex": 221,
+      "plannedRemaining": 259,
+      "completedAtCheck": 28,
+      "sourceManifestSha256": "465d070df0f0039546a787dd3e0e6122e035bc55c377f6e75e2f43b7df760384",
+      "state": "running"
+    }
+  ],
+  "completedPredictionsRepeated": 0,
+  "settingsChanged": false,
+  "recovery": "Completed outputs/source/inputs were hash-verified before starting one fresh continuation. The original partial attempt remains preserved."
+}

@@ -18,6 +18,19 @@ from summarize_rnp_stock import summarize
 
 
 class RnpGates(unittest.TestCase):
+    def test_three_sample_checkpoint_is_complete_without_claiming_ten_sample_completion(self):
+        pairs=[{'caseId':'one','model':'boltz2','similarityBin':0,'nativeHasStereoClashPassingHit':True}]
+        jobs=[{'index':i,'caseId':'one','model':'boltz2','seed':i}for i in range(10)]
+        rows=[{**j,'status':'complete','ligandRmsdA':1. if j['seed']==2 else 3.,'within2A':j['seed']==2,'limitedValidityPass':True}
+              if j['seed']<3 else {**j,'status':'not-started'}for j in jobs]
+        value=summarize({'pairs':pairs,'jobs':jobs},{'poses':rows})['allSelected']
+        self.assertFalse(value['final']);self.assertIsNone(value['finalLimitedValidityCaseHitRate'])
+        self.assertTrue(value['firstThree']['fullyProcessed']);self.assertEqual(value['firstThree']['completePredictions'],3)
+        self.assertEqual(value['firstThree']['limitedValidityCaseHitRate'],1.)
+        rows[2]={'index':2,'caseId':'one','model':'boltz2','seed':2,'status':'running'}
+        value=summarize({'pairs':pairs,'jobs':jobs},{'poses':rows})['allSelected']
+        self.assertFalse(value['firstThree']['fullyProcessed']);self.assertIsNone(value['firstThree']['limitedValidityCaseHitRate'])
+
     def test_partial_summary_does_not_emit_final_rates_or_drop_execution_failures(self):
         pairs=[{'caseId':'one','model':'boltz2','similarityBin':0,'nativeHasStereoClashPassingHit':True}]
         jobs=[{'index':i,'caseId':'one','model':'boltz2','seed':i}for i in range(2)]

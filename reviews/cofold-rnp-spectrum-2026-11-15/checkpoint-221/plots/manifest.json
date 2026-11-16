@@ -1,0 +1,16 @@
+{
+  "planSha256": "797454ec8d2766485a96cfb13326511f0333efa7b89bb656968f84b2844ad349",
+  "scoresSha256": "2271d73b33fa598fea32086c4cbf55477f91679cea842057b0e37591533dcc93",
+  "scriptSha256": "868bd9d9592c315fdcc3d85bf6ac31b316c832d737f713f86365b1ebe64f945e",
+  "matplotlibVersion": "3.10.7",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "plottedStockPredictions": 144,
+  "outputs": {
+    "first-three.png": "53df5abec8536df7128ebbce6cb4d7d8405b52aa2ce5d642b22d4b0bda034855",
+    "first-three.svg": "6329523129cb3e9054d1e84c31a94e82f30adc5546672a70100fab667e071a18"
+  }
+}
