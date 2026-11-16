@@ -8,6 +8,11 @@ differences before attributing pose differences to kernels or quantization.
 production CPU/WebGPU against stock native FP32. Full-model numerical agreement
 remains untested.** Production folding mathematics is unchanged.
 
+The separate [YTHDF2 JavaScript CPU control](trained-target-ythdf2-cpu/README.md)
+also passes at matched inputs and FP32 weights, with 1.46 × 10⁻⁷ relative RMS in
+the learned channels. That call ran under Bun with GPU requests blocked; it does
+not add a browser/WebGPU or complete-model parity result.
+
 The [next-stage plan](trunk-audit-plan.json) freezes a four-cycle stock-native
 trunk observation and 32 production-GPU seam comparisons with predeclared
 tolerances. Its CPU preflight matched all [38 native source pins](trunk-native-source-pins.json).
@@ -17,6 +22,8 @@ adapter. A separate transition control timed out during browser startup. These
 are environment failures, not numerical-comparison results. The
 [16 November control ledger](control-status-2026-11-16.json) preserves the terminal
 states and the separate capability-only diagnostic. The
+[capability attempt history](gpu-capability-2026-11-16/README.md) preserves its
+pre-payload Spot node failure and source-identical, deadline-bounded retry. The
 [tools and timing correction CAP-01](../../folding/comparison/README.md)
 document the exact scope and preserve historical receipts. Two
 [Spot startup failures](spot-startup-failures.json) occurred before either task
@@ -113,8 +120,9 @@ show that it caused the original pose discrepancy.
 The same job captured one strict-FP32 trained native input-embedder call with
 zero full-model forwards. Its canonical and trained feature snapshots are
 byte-identical, and all captured native tensors were verified finite after
-transfer. The trained outputs are preserved locally for the next matched-input
-comparison; **a browser trained-stage result for YTHDF2 is still pending**.
+transfer. Complete native outputs and consumed sources now accompany the
+[matched-input CPU measurement](trained-target-ythdf2-cpu/README.md);
+**a browser trained-stage result for YTHDF2 is still pending**.
 No native pose prediction was repeated, and the separate pristine LocalFold
 experimental-pose benchmark retains its original inputs and protocol.
 

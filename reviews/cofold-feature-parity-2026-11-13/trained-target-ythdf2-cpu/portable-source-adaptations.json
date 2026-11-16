@@ -1,0 +1,16 @@
+{
+  "scope": "Two repository/import-root substitutions only; original consumed source remains in native archive. Numerical operations, explicit185\u00d7447scope, data and gates unchanged.",
+  "fromSha256": "24118d0fd5908bdc448ac82c66b65ec4383cdd4535d14daa3e4426734719e0a5",
+  "toSha256": "75b252ac6827e69dcd1266249270bc3a13ee424bd07c6159d28ef96180c5e40c",
+  "publicPath": "folding/comparison/run_trained_target_cpu.mjs",
+  "replacements": [
+    {
+      "from": "from '../../molarium-chemrxiv-v1/scripts/web-bundle-dependencies.mjs'",
+      "to": "from '../../scripts/web-bundle-dependencies.mjs'"
+    },
+    {
+      "from": "resolve(import.meta.dirname,'../../molarium-chemrxiv-v1')",
+      "to": "resolve(import.meta.dirname,'../..')"
+    }
+  ]
+}

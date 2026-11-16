@@ -3,8 +3,8 @@
   "files": [
     {
       "file": "README.md",
-      "bytes": 11648,
-      "sha256": "8a274eac1dafced412363ab23b527aa4a119a8889f48045a03a5f4817c76020f"
+      "bytes": 12168,
+      "sha256": "b4f267db729cd7874355a23bcf43e2251e06f39824f1b5f64710e83b6dd3c800"
     },
     {
       "file": "browser-32qy-a1keo/features.bin",
@@ -425,6 +425,126 @@
       "file": "producers/capture_native_features-ythdf2-processed-smiles.py",
       "bytes": 12412,
       "sha256": "a03db03a4bf84b9c7e24f553239f1b55a9cb2a2766155eceab8e4d52f4ec0c79"
+    },
+    {
+      "file": "trained-target-ythdf2-cpu/README.md",
+      "bytes": 4768,
+      "sha256": "bc4b3869f8e1c5814c82a5958f7f46b61c9fbdbd76ecccef9ef6b03b06f94986"
+    },
+    {
+      "file": "trained-target-ythdf2-cpu/fixture/controlled-batch/features.bin",
+      "bytes": 886604,
+      "sha256": "e6e75dea64f4e9c173cebc163ffaeff322d8c7f0bb724e70b937e7a9d8604fd7"
+    },
+    {
+      "file": "trained-target-ythdf2-cpu/fixture/controlled-batch/features.json",
+      "bytes": 51334,
+      "sha256": "cc22e7afc9ff90097bd1e4a4a4e08efeacd2e7de3b58a5e8789431baadcec186"
+    },
+    {
+      "file": "trained-target-ythdf2-cpu/fixture/expected-target.bin",
+      "bytes": 330780,
+      "sha256": "1583bf2b2418257aa29880624407dc30758e880a9e7fa1b5580fdeee47507f87"
+    },
+    {
+      "file": "trained-target-ythdf2-cpu/fixture/receipt.json",
+      "bytes": 1182,
+      "sha256": "5d2d9a7cc60494c63734260be8d7f2f88a1939ecc990893926edfa5b667642b9"
+    },
+    {
+      "file": "trained-target-ythdf2-cpu/fixture/weights.bin",
+      "bytes": 4182400,
+      "sha256": "0dfab22cf0e24c6b8e862e7bfb78ea6dfb6e4f96e440ec603b8629b5d87ffb1b"
+    },
+    {
+      "file": "trained-target-ythdf2-cpu/fixture/weights.json",
+      "bytes": 15366,
+      "sha256": "16a53c38cf14764c5c0304760f71affffbc6a5e1953077d81f9f32dab571542b"
+    },
+    {
+      "file": "trained-target-ythdf2-cpu/measurement/actual-target.bin",
+      "bytes": 330780,
+      "sha256": "ecd658b1e64f999d528b335bcc2eb8272e896c3a60e94539744ccd1ce264cc7b"
+    },
+    {
+      "file": "trained-target-ythdf2-cpu/measurement/forward-started.json",
+      "bytes": 107,
+      "sha256": "19674df3bee28ea05eae25aafb0d8a6471dee5af3b73d4fdc49f17c0b2a89c79"
+    },
+    {
+      "file": "trained-target-ythdf2-cpu/measurement/frozen-plan.json",
+      "bytes": 14951,
+      "sha256": "ada1722f210df4c3b9e2d9adb0f7cdb07065c3322ea81243ea9be20e65af0068"
+    },
+    {
+      "file": "trained-target-ythdf2-cpu/measurement/receipt.json",
+      "bytes": 1604,
+      "sha256": "2c5577f611e5576c40b408df7081ae9dfa2542c72451087c1a7a3e100c0e029a"
+    },
+    {
+      "file": "trained-target-ythdf2-cpu/native-evidence.json",
+      "bytes": 30368,
+      "sha256": "6e5c49842bd5c3741f36bccff846d043f0832f1dcf54c7f6f07fc565afd9323c"
+    },
+    {
+      "file": "trained-target-ythdf2-cpu/native-evidence.part-01.bin",
+      "bytes": 16777216,
+      "sha256": "51ad1ad20d1ee219fb2ab85334f19edde29d89902c6ea49aba6caeaba83bfe14"
+    },
+    {
+      "file": "trained-target-ythdf2-cpu/native-evidence.part-02.bin",
+      "bytes": 6275164,
+      "sha256": "60c8b3457d1c9fe09c6148cb04901f4993691542a4604a96934c9a41f4c65f87"
+    },
+    {
+      "file": "trained-target-ythdf2-cpu/native-receipt.json",
+      "bytes": 5319,
+      "sha256": "ff9fa7ae1e53137f07f9be61c1defa910dbb5fda3361e490d1c49174c50d92ec"
+    },
+    {
+      "file": "trained-target-ythdf2-cpu/portable-source-adaptations.json",
+      "bytes": 748,
+      "sha256": "37ffb75b20b3bd4b1fe1d3aa1cabbd48253fe9daa482c7938f6b88cc9830a69e"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/README.md",
+      "bytes": 2125,
+      "sha256": "665bfd17bce5ab4c14f8282e1908a84cffdd4c93c2d6206ca482b925234c463a"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/chrome-logging-wrapper.sh",
+      "bytes": 250,
+      "sha256": "d5fcf03bca1ff19ac19cc450eba6b379249666588b80933c69d2f80d2231f35e"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/gpu.sh",
+      "bytes": 2341,
+      "sha256": "6d613e57a7de8fe25dfc2a8387c75d31b8d1a3cad10f95e1115538c1e9e312f7"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/probe.mjs",
+      "bytes": 4005,
+      "sha256": "e8425167d543d56eaf3d6162091b6ebffbd8416cec86facce904f1bbeb4eddfc"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/retry-controller.py",
+      "bytes": 4018,
+      "sha256": "23b409ca02e0f550eedaa2cca60a0eb5e19fcba5b377cd8b3759d6097d768af0"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/retry-submission.json",
+      "bytes": 1301,
+      "sha256": "78618f8c5663d87a04ef9bcfbbbcf580b25b48c5fa3632f40a94d51e3b7428d8"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/source-manifest.json",
+      "bytes": 265,
+      "sha256": "64bbb3c47deb0920a4aca1f73fc57e9f13a6dca9edb5083b78e096d6bd4cdfbc"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/source-sha256.txt",
+      "bytes": 241,
+      "sha256": "91cf95d38e8f9e7d6895bf6be98d5413540b321a2ba5d5a39efdb036721b3ac4"
     }
   ]
 }

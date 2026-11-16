@@ -1,0 +1,37 @@
+{
+  "schema": "molarium.gpu-capability-retry.v1",
+  "jobId": 20186,
+  "submittedAt": "2026-11-16T21:00:08.199549+00:00",
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/zone": "projects/734263838611/zones/us-central1-c",
+    "instance/id": "3894148826269628555"
+  },
+  "cluster": "psigreen",
+  "controller": "psigreen-controller",
+  "owner": "rafal",
+  "purpose": "Physical NVIDIA browser capability and logging only; no model calls.",
+  "sourceManifestSha256": "64bbb3c47deb0920a4aca1f73fc57e9f13a6dca9edb5083b78e096d6bd4cdfbc",
+  "sourcesUnchanged": true,
+  "cpu": 4,
+  "memory": "14G",
+  "gpuCount": 1,
+  "timeLimit": "10min",
+  "nice": 0,
+  "partitions": [
+    "gpu",
+    "l4spot"
+  ],
+  "retentionDeadline": "2026-11-20T22:30:00Z",
+  "slurmDeadline": "2026-11-20T22:30:00",
+  "parent": {
+    "jobId": 20182,
+    "state": "20182|NODE_FAIL|0:0|00:00:17|2026-11-16T20:50:11|2026-11-16T20:50:28|psigreen-l4spotnodeset-18\n",
+    "gpuStarted": false,
+    "logs": [],
+    "scope": "NODE_FAIL before task payload; no capability or model calculation ran.",
+    "oldSourceManifestSha256": "64bbb3c47deb0920a4aca1f73fc57e9f13a6dca9edb5083b78e096d6bd4cdfbc"
+  },
+  "controllerSha256": "23b409ca02e0f550eedaa2cca60a0eb5e19fcba5b377cd8b3759d6097d768af0",
+  "standaloneVmActions": []
+}

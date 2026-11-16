@@ -54,6 +54,13 @@ generated reference coordinates still differ. The [first trained target-feature 
 passes at matched inputs/full-FP32 weights; complete model and trajectory parity
 remain unresolved.
 
+A second [YTHDF2 target-feature control](../../reviews/cofold-feature-parity-2026-11-13/trained-target-ythdf2-cpu/README.md)
+passes in production JavaScript's CPU reference under Bun, with GPU requests
+blocked. Its complete native arrays, matched inputs/weights, consumed source
+closure and measured output replay without neural execution using
+`check_trained_target_cpu.py`. This adds a second component diagnostic, not a
+second browser/WebGPU result or a full-model agreement claim.
+
 The next, **unqualified** stage uses `capture_native_trunk.py` to observe the
 stock four-cycle `run_trunk` at exact frozen feature bytes. It exports trained
 weights, projected embeddings, template/MSA/pairformer boundaries and the

@@ -1,0 +1,42 @@
+{
+  "schema": "molarium.matched-trained-target-cpu.v1",
+  "scope": "Production buildTargetFeat CPU reference under Bun at matched generated-reference inputs and full-FP32 trained weights. Not a browser/WebGPU, projected-embedding, trunk, denoiser, trajectory, timing-speedup or pose-accuracy verdict.",
+  "status": "complete",
+  "passes": true,
+  "componentForwardCalls": 1,
+  "fullModelForwardCalls": 0,
+  "gpuRequests": 0,
+  "fixtureReceiptSha256": "5d2d9a7cc60494c63734260be8d7f2f88a1939ecc990893926edfa5b667642b9",
+  "runnerSha256": "24118d0fd5908bdc448ac82c66b65ec4383cdd4535d14daa3e4426734719e0a5",
+  "frozenPlanSha256": "ada1722f210df4c3b9e2d9adb0f7cdb07065c3322ea81243ea9be20e65af0068",
+  "expectedShape": [
+    185,
+    447
+  ],
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "fullTarget": {
+    "values": 82695,
+    "finite": true,
+    "relativeRms": 1.4431921884177992e-7,
+    "maxAbsoluteDifference": 0.0000057220458984375
+  },
+  "learnedAtomChannels": {
+    "values": 71040,
+    "finite": true,
+    "relativeRms": 1.4588051846176491e-7,
+    "maxAbsoluteDifference": 0.0000057220458984375
+  },
+  "copiedPrefixExact": true,
+  "elapsedMilliseconds": 2577.3088749999997,
+  "timingInterpretation": "One CPU target-feature component only. Native receipt times a larger input-embedder boundary and is not comparable. No speedup claim.",
+  "output": {
+    "file": "actual-target.bin",
+    "bytes": 330780,
+    "sha256": "ecd658b1e64f999d528b335bcc2eb8272e896c3a60e94539744ccd1ce264cc7b"
+  },
+  "finishedAt": "2026-11-16T20:48:24.561Z"
+}
