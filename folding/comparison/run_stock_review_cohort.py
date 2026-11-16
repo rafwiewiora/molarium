@@ -33,6 +33,10 @@ def validate_result(result, manifest, manifest_sha, case, exports):
         raise ValueError('Browser result belongs to a different input or failed')
     if any(result.get(flag) is not True for flag in FLAGS):
         raise ValueError('Browser workflow coverage incomplete')
+    if case == manifest['caseIds'][0]:
+        synthetic = result.get('syntheticEarlierFailure')
+        if not synthetic or synthetic.get('status') != 'pass' or synthetic.get('failedRecordPreservedOnExport') is not True:
+            raise ValueError('First-case preflight must exercise the explicit synthetic earlier-failure state')
     if (result['newNeuralForwards'] != 0 or result['webgpuRequests'] != 0
             or result['copiedDecisions'] != 0 or result['testDecisionIsScientificJudgement'] is not False
             or 'swiftshader' not in result['renderer'].lower()):

@@ -1,0 +1,21 @@
+{
+  "status": "stopped-by-owner-for-additional-ui-edge-case",
+  "at": "2026-11-16T23:13:54.470272+00:00",
+  "reason": "Keep original planned prediction slots when an earlier request is unfinished or failed; completed-only ordinal would otherwise renumber later poses. No scientific record or calculation changed.",
+  "parentPid": 45762,
+  "interruptedUiCases": [
+    "8aqf__1__1-a__1-b"
+  ],
+  "completedUiCases": [
+    "8cjg__1__1-a__1-d",
+    "8ou2__1__1-a__1-c",
+    "8j30__1__1-a__1-c",
+    "8cij__1__1-a__1-b",
+    "8chc__1__1-a__1-b"
+  ],
+  "failures": [],
+  "ownedProfilesRemoved": [
+    "/var/folders/45/bb94rkr978ld_wxv6rf1zbv40000gp/T/molarium-history-browser-Gj6su7"
+  ],
+  "newNeuralForwards": 0
+}

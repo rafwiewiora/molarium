@@ -147,8 +147,8 @@
     },
     {
       "path": "vendor/foldarium/library-review.js",
-      "bytes": 13354,
-      "sha256": "943a5b6f09f55e7a3c6017dd692736a7d1d3f33c6e4b16d7d82d5ebf6d7306a9"
+      "bytes": 13414,
+      "sha256": "a5e7f664b0317076541cc17c5fa295f8923d3dcccbdffeeca70f93f6acc76180"
     },
     {
       "path": "vendor/foldarium/library-format.js",

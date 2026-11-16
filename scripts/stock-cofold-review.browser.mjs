@@ -46,7 +46,7 @@ try {
       await b.evaluate(`(()=>{window.stockReviewPlugins=[];document.querySelectorAll('#pages button')[${page}].click();})()`);
       await rendered(visible);pages.push(visible);
       const displayed=await b.evaluate(`Array.from(document.querySelectorAll('.pose'),p=>({id:p.dataset.poseId,title:p.querySelector('.pose-head strong').textContent}))`);
-      for(const pose of displayed)assert.equal(pose.title,`${predictions.bundle.poses.find(p=>p.id===pose.id)?.result.model??'Prediction'} · pose ${predictionIds.indexOf(pose.id)+1}`);
+      for(const pose of displayed){const original=predictions.bundle.poses.find(p=>p.id===pose.id);assert.equal(pose.title,`${original.result.model??'Prediction'} · pose ${original.sample+1}`);}
     }
     assert.deepEqual(pages.flat(),ids);return pages;
   };
@@ -78,13 +78,13 @@ try {
     assert.equal(value.sha256,createHash('sha256').update(pose.result.pdb).digest('hex'));
   };
   const lastPageFirstIndex=Math.floor((predictionIds.length-1)/4)*4;
-  await pdbExport(predictionIds[lastPageFirstIndex],`${caseId}-pose-${lastPageFirstIndex+1}.pdb`);
+  await pdbExport(predictionIds[lastPageFirstIndex],`${caseId}-pose-${predictions.bundle.poses.find(p=>p.id===predictionIds[lastPageFirstIndex]).sample+1}.pdb`);
   const exported=async selector=>{
     await b.evaluate(`(()=>{window.stockReviewDownloads=[];document.querySelector(${JSON.stringify(selector)}).click();})()`);
     await waitFor(()=>b.evaluate(`window.stockReviewDownloads.length===1`),20000,'local review export');
-    return b.evaluate(`(async()=>{const value=window.stockReviewDownloads[0],sha=async text=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text))),b=>b.toString(16).padStart(2,'0')).join('');return{schema:value.schema,run:value.run??value.sourceRun,decisions:value.decisions,poses:await Promise.all(value.poses.map(async p=>({id:p.id,pdbSha256:await sha(p.result.pdb),componentSha256:await sha(JSON.stringify(p.result.component))})))}})()`);
+    return b.evaluate(`(async()=>{const value=window.stockReviewDownloads[0],sha=async text=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text))),b=>b.toString(16).padStart(2,'0')).join('');return{schema:value.schema,run:value.run??value.sourceRun,decisions:value.decisions,poses:await Promise.all(value.poses.map(async p=>({id:p.id,status:p.status,...(p.status==='complete'?{pdbSha256:await sha(p.result.pdb),componentSha256:await sha(JSON.stringify(p.result.component))}:{error:p.error??null})})))}})()`);
   };
-  const expectedExports=predictions.bundle.poses.filter(p=>p.status==='complete').map(p=>({id:p.id,pdbSha256:createHash('sha256').update(p.result.pdb).digest('hex'),componentSha256:createHash('sha256').update(JSON.stringify(p.result.component)).digest('hex')}));
+  const expectedExports=predictions.bundle.poses.map(p=>({id:p.id,status:p.status,...(p.status==='complete'?{pdbSha256:createHash('sha256').update(p.result.pdb).digest('hex'),componentSha256:createHash('sha256').update(JSON.stringify(p.result.component)).digest('hex')}:{error:p.error??null})}));
   const fullExport=await exported('#export');assert.equal(fullExport.run.importedFrom,predictions.bundle.run.id);assert.deepEqual(fullExport.poses,expectedExports);
   const shortlist=await exported('#shortlist');assert.equal(shortlist.schema,'foldarium.cofolding-shortlist.v1');assert.equal(shortlist.run.importedFrom,predictions.bundle.run.id);assert.deepEqual(shortlist.poses,[expectedExports.find(p=>p.id===predictionIds[0])]);
   for(const value of [fullExport,shortlist])assert.deepEqual(value.decisions.map(d=>({poseId:d.poseId,value:d.value,note:d.note})),[{poseId:predictionIds[0],value:'preferred',note:sentinel}]);
@@ -96,12 +96,24 @@ try {
   assert.doesNotMatch(referenceHead,/Seed |pLDDT|ipTM|inference/);
   const titles=await b.evaluate(`Array.from(document.querySelectorAll('.pose'),p=>({id:p.dataset.poseId,title:p.querySelector('.pose-head strong').textContent}))`);
   assert.equal(titles[0].title,'Experimental reference');
-  for(const pose of titles.slice(1))assert.equal(pose.title,`${predictions.bundle.poses.find(p=>p.id===pose.id).result.model} · pose ${predictionIds.indexOf(pose.id)+1}`);
+  for(const pose of titles.slice(1)){const original=predictions.bundle.poses.find(p=>p.id===pose.id);assert.equal(pose.title,`${original.result.model} · pose ${original.sample+1}`);}
   await pdbExport(referenceIds[0],`${caseId}-experimental-reference.pdb`);
   const renderer=await b.evaluate(`(()=>{const canvas=document.querySelector('.viewer canvas'),gl=canvas.getContext('webgl2')||canvas.getContext('webgl');const ext=gl.getExtension('WEBGL_debug_renderer_info');return ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):'unreported';})()`);
   if(process.env.MOLARIUM_STOCK_REVIEW_REQUIRE_SOFTWARE==='1')assert.match(renderer,/swiftshader/i);
   if(process.env.MOLARIUM_STOCK_REVIEW_SCREENSHOT)await writeFile(process.env.MOLARIUM_STOCK_REVIEW_SCREENSHOT,await b.capturePng());
   const referencePages=await remainingPages(referenceIds);
+  let syntheticEarlierFailure=null;
+  if(caseId===manifest.caseIds[0]){
+    const synthetic=structuredClone(predictions);synthetic.entry.file='synthetic-ui-state-only.library.json';
+    synthetic.bundle.run.id+='-synthetic-ui-state-only';synthetic.bundle.run.name='UI test only: earlier request unfinished';synthetic.bundle.decisions=[];
+    const first=synthetic.bundle.poses.find(p=>p.id===predictionIds[0]);first.status='failed';delete first.result;
+    first.error='Synthetic UI-only failure placeholder; not a recorded model result';
+    await b.evaluate('window.stockReviewPlugins=[]');await importFile(synthetic);await rendered(predictionIds.slice(1,5));
+    const expectedOrdinal=predictions.bundle.poses.find(p=>p.id===predictionIds[1]).sample+1;
+    assert.equal(await b.evaluate(`document.querySelector('.pose-head strong').textContent.endsWith(${JSON.stringify('· pose '+expectedOrdinal)})`),true);
+    const partial=await exported('#export');assert.deepEqual(partial.poses.find(p=>p.id===first.id),{id:first.id,status:'failed',error:first.error});
+    syntheticEarlierFailure={status:'pass',scope:'Explicit synthetic UI state only; original source libraries and recorded model results are unchanged.',firstVisiblePoseId:predictionIds[1],displayedOrdinal:expectedOrdinal,failedRecordPreservedOnExport:true};
+  }
   const result={status:'pass',sourceExportManifestSha256:createHash('sha256').update(manifestRaw).digest('hex'),caseId,
     fileImport:true,parsedViewers:4,localPreferencePersisted:true,referenceViewSeparate:true,copiedDecisions:0,
     isolatedInferenceTimingInvented:false,webgpuRequests:0,newNeuralForwards:0,renderer,
@@ -110,6 +122,7 @@ try {
     exportPreservesOriginalPdbAndGraph:true,shortlistContainsExactSelectedPose:true,
     predictionNumbersStableWithReference:true,experimentalReferenceHasNoPredictionMetadata:true,
     pdbExportsPreserveOriginalCoordinates:true,referenceDownloadLabelExplicit:true,
+    syntheticEarlierFailure,
     testDecisionIsScientificJudgement:false};
   if(process.env.MOLARIUM_STOCK_REVIEW_REPORT)await writeFile(process.env.MOLARIUM_STOCK_REVIEW_REPORT,JSON.stringify(result,null,2)+'\n');
   console.log(JSON.stringify(result));

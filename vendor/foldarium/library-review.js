@@ -100,12 +100,12 @@ function render() {
     for(let i=0;i<Math.ceil(poses.length/size);i++){const b=document.createElement('button');b.textContent=`${i*size+1}–${Math.min((i+1)*size,poses.length)}`;b.className=i===page?'active':'';b.onclick=()=>{page=i;render();};$('pages').append(b);}
     if(!reference&&poses.length)reference=poses[0].result.pdb;
     const visible=poses.slice(page*size,(page+1)*size);
-    const predictionOrder=poses.filter(p=>p.role!=='experimental-reference').map(p=>p.id);
+    const referenceSlots=bundle.poses.filter(p=>p.compoundId===c.id&&p.role==='experimental-reference').map(p=>p.sample);
     if(!visible.some(p=>p.id===selected))selected=visible[0]?.id;
     for(const p of visible) {
       if(token!==generation)return;
       selected??=p.id;const card=document.createElement('article');card.dataset.poseId=p.id;card.className=`pose ${decision(p)?.value??''} ${selected===p.id?'selected':''}`;
-      const experimental=p.role==='experimental-reference',ordinal=predictionOrder.indexOf(p.id)+1;
+      const experimental=p.role==='experimental-reference',ordinal=p.sample+1-referenceSlots.filter(slot=>slot<p.sample).length;
       const head=document.createElement('div');head.className='pose-head';const title=document.createElement('strong');title.textContent=experimental?'Experimental reference':`${p.result.model??'Prediction'} · pose ${ordinal}`;
       const meta=document.createElement('p'), confidence=ligandConfidence(p.result);
       const aligned=alignComplexPdb(p.result.pdb,reference);

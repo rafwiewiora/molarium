@@ -5,11 +5,13 @@ cohort, **8cjg__1__1-a__1-d**: all six original predictions and the separate
 experimental reference render across every grid page. Exact pose notes and
 preferences persist after reopening. Library JSON, shortlist JSON and PDB
 downloads preserve the original coordinates and explicit ligand graph. The
-[actual result](preflight-result.json), [screenshots](preflight.png) and
-[consumed source hashes](source-pins.json) are preserved.
+[latest actual result](planned-slots-preflight-result.json),
+[screenshot](planned-slots-preflight.png) and
+[consumed source hashes](planned-slots-source-pins.json) are preserved. The
+earlier complete-input preflight remains in `preflight-result.json`.
 
 A serial software-rendered browser sweep of **all 48 preselected systems** is
-running under the [frozen UI plan](frozen-cohort-run-plan.json). It uses the
+running under the [updated frozen UI plan](planned-slots-frozen-cohort-plan.json). It uses the
 [already verified 288-prediction exports](cohort-export-manifest.json), reuses
 the completed first-case preflight, and attempts the other 47 cases once. Its
 deadline is 17 November at 02:00 UTC. This plan is not proof that all 48 cases
@@ -46,6 +48,22 @@ reference card without seed, model-confidence or inference-time fields. PDB
 download names use the same stable prediction numbers or an explicit
 `experimental-reference` suffix. Original stored IDs, source ordering,
 coordinates, chemistry and confidence values are preserved.
+
+**UI-REFERENCE-02 — keep original slots when earlier requests fail.** Computing
+an ordinal from completed cards alone could renumber later predictions in a
+partially finished library. The final fix uses the original sample slot and
+subtracts only explicitly inserted reference slots. The first-case check also
+imports an explicitly synthetic UI fixture with its first request marked
+failed. The next original prediction retains number 2, and exporting preserves
+the failed entry. This synthetic state is confined to a separate temporary
+browser library; it is not a model result, inference failure or benchmark case.
+
+The first full-cohort sweep was [stopped by its owner](prior-cohort-stop.json)
+after five cases passed, to cover this additional edge case before deployment.
+It had no UI failures and made no neural calls. The interrupted UI case is not
+classified as a scientific failure. The new immutable sweep uses the corrected
+source and the new completed first-case preflight. Its deadline remains 02:00
+UTC, and the earlier source/receipts remain available for history.
 
 **UI-EXPORT-01 — inspect exported scientific state, not only the preference
 counter.** The updated check verifies the exact selected pose ID and note after
