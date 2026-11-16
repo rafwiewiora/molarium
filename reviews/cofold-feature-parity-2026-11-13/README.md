@@ -13,6 +13,11 @@ also passes at matched inputs and FP32 weights, with 1.46 × 10⁻⁷ relative R
 the learned channels. That call ran under Bun with GPU requests blocked; it does
 not add a browser/WebGPU or complete-model parity result.
 
+The [relative-position CPU reference](relative-encoding/README.md) also reproduces
+all 12,630,791 captured native one-hot values exactly across both systems,
+including original browser indices and all ligand pair classes. This is a
+non-learned feature check; the fused WebGPU gather/projection remains untested.
+
 The [next-stage plan](trunk-audit-plan.json) freezes a four-cycle stock-native
 trunk observation and 32 production-GPU seam comparisons with predeclared
 tolerances. Its CPU preflight matched all [38 native source pins](trunk-native-source-pins.json).
@@ -96,7 +101,9 @@ Three checked raw fields differ: token indices, entity labels and reference coor
 pairwise token-index difference is identical (native indices are uniformly one lower),
 and every pairwise entity-equality relation is identical. Entity labels themselves
 are permuted, not uniformly shifted; their numerical differences need not agree.
-This is an integer-input diagnostic, not execution of the neural relative-position module.
+The later [direct encoding check](relative-encoding/README.md) confirms exact
+agreement with captured native one-hot outputs using the port's CPU reference.
+The fused WebGPU projection and its trained weights still require measurement.
 
 Generated reference positions still differ. Protein within-space pair-distance RMS
 remains 0.561 Å; the ligand diagnostic is 1.303 Å in known identity parser order.

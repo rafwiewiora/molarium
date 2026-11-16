@@ -61,6 +61,12 @@ closure and measured output replay without neural execution using
 `check_trained_target_cpu.py`. This adds a second component diagnostic, not a
 second browser/WebGPU result or a full-model agreement claim.
 
+The [relative-position comparison](../../reviews/cofold-feature-parity-2026-11-13/relative-encoding/README.md)
+checks the port's unchanged CPU reference against the saved native 139-channel
+arrays on both systems. All 12,630,791 values agree exactly with original browser
+indices and with matched native indices. This checks non-learned relationships,
+not the fused WebGPU projection. Replay with `check_relative_encoding.py`.
+
 `prepare_rnp_publication.py` is a separate data-only reporting phase for the
 frozen 48-case/480-prediction RnP study. It waits on the existing independent
 finalizer, rejects partial results and a changed protocol, and then prepares

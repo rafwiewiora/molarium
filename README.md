@@ -521,7 +521,10 @@ it remains experimental pending direct implementation and full-model qualificati
 A [matched trained atom-feature audit](reviews/cofold-feature-parity-2026-11-13/README.md)
 passes for STARD4 in browser CPU/WebGPU and separately for YTHDF2 in JavaScript
 CPU under Bun. Raw native arrays, controlled inputs/weights and offline replays
-are public. These component controls do not establish complete-model agreement.
+are public. A [relative-position check](reviews/cofold-feature-parity-2026-11-13/relative-encoding/README.md)
+also exactly reproduces 12.63 million captured native one-hot values with the
+port's CPU reference, using original browser indices on both systems. The fused
+WebGPU projection remains untested. These component controls do not establish complete-model agreement.
 Protein multimers,
 templates, nucleic acids and covalent cofolding are not exposed yet.
 See [integration evidence and follow-up work](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md).

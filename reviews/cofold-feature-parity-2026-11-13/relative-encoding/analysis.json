@@ -1,0 +1,177 @@
+{
+  "schema": "molarium.native-relative-encoding-comparison.v1",
+  "scope": "Saved native 139-channel relative-position outputs versus the unchanged port CPU reference. Original browser indices and controlled native indices checked separately. Not a fused WebGPU projection, learned embedding, whole-model or pose-accuracy test.",
+  "passes": true,
+  "neuralForwards": 0,
+  "gpuRequests": 0,
+  "records": [
+    {
+      "caseId": "9t51-a1jtm",
+      "inputs": "original-browser-inputs",
+      "indexValueDifferences": {
+        "residueIndex": 0,
+        "tokenIndex": 238,
+        "asymId": 0,
+        "entityId": 238,
+        "symId": 0
+      },
+      "nativeArchiveSha256": "4445e9b6ef901408a10132a490c18ca52d381be937b329dea521c30567013dce",
+      "nativeReceiptSha256": "9318f2f7bd8f37547c1138a1ce79a02dc7366b1368a157bcd1ab0ea171f71eff",
+      "browserFeaturesManifestSha256": "b6b4718a1e47554a5ab126bdd04ca2dbb2d9a3a973284ddf464141f537a0a744",
+      "controlledFeaturesManifestSha256": "2e81648687c869aea3ac9c81aec489ef0e81aa4971f6a73e301ec37122815672",
+      "tokens": 238,
+      "channels": 139,
+      "pairs": 56644,
+      "values": 7873516,
+      "mismatchedValues": 0,
+      "exact": true,
+      "groups": {
+        "proteinProtein": {
+          "pairs": 42025,
+          "values": 5841475,
+          "mismatchedValues": 0
+        },
+        "proteinLigand": {
+          "pairs": 13530,
+          "values": 1880670,
+          "mismatchedValues": 0
+        },
+        "ligandLigand": {
+          "pairs": 1089,
+          "values": 151371,
+          "mismatchedValues": 0
+        }
+      },
+      "neuralForwards": 0,
+      "gpuRequests": 0
+    },
+    {
+      "caseId": "9t51-a1jtm",
+      "inputs": "matched-native-inputs",
+      "indexValueDifferences": {
+        "residueIndex": 0,
+        "tokenIndex": 0,
+        "asymId": 0,
+        "entityId": 0,
+        "symId": 0
+      },
+      "nativeArchiveSha256": "4445e9b6ef901408a10132a490c18ca52d381be937b329dea521c30567013dce",
+      "nativeReceiptSha256": "9318f2f7bd8f37547c1138a1ce79a02dc7366b1368a157bcd1ab0ea171f71eff",
+      "browserFeaturesManifestSha256": "b6b4718a1e47554a5ab126bdd04ca2dbb2d9a3a973284ddf464141f537a0a744",
+      "controlledFeaturesManifestSha256": "2e81648687c869aea3ac9c81aec489ef0e81aa4971f6a73e301ec37122815672",
+      "tokens": 238,
+      "channels": 139,
+      "pairs": 56644,
+      "values": 7873516,
+      "mismatchedValues": 0,
+      "exact": true,
+      "groups": {
+        "proteinProtein": {
+          "pairs": 42025,
+          "values": 5841475,
+          "mismatchedValues": 0
+        },
+        "proteinLigand": {
+          "pairs": 13530,
+          "values": 1880670,
+          "mismatchedValues": 0
+        },
+        "ligandLigand": {
+          "pairs": 1089,
+          "values": 151371,
+          "mismatchedValues": 0
+        }
+      },
+      "neuralForwards": 0,
+      "gpuRequests": 0
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "inputs": "original-browser-inputs",
+      "indexValueDifferences": {
+        "residueIndex": 0,
+        "tokenIndex": 185,
+        "asymId": 0,
+        "entityId": 185,
+        "symId": 0
+      },
+      "nativeArchiveSha256": "221298a91cd63cf0c0a121c2523eeb59c65fdc2513f5c86cee9f251c9d378464",
+      "nativeReceiptSha256": "ff9fa7ae1e53137f07f9be61c1defa910dbb5fda3361e490d1c49174c50d92ec",
+      "browserFeaturesManifestSha256": "d37a369a86739f492e9103304d26d10c24da6a18003f974deb89f9bc0d682b82",
+      "controlledFeaturesManifestSha256": "cc22e7afc9ff90097bd1e4a4a4e08efeacd2e7de3b58a5e8789431baadcec186",
+      "tokens": 185,
+      "channels": 139,
+      "pairs": 34225,
+      "values": 4757275,
+      "mismatchedValues": 0,
+      "exact": true,
+      "groups": {
+        "proteinProtein": {
+          "pairs": 27889,
+          "values": 3876571,
+          "mismatchedValues": 0
+        },
+        "proteinLigand": {
+          "pairs": 6012,
+          "values": 835668,
+          "mismatchedValues": 0
+        },
+        "ligandLigand": {
+          "pairs": 324,
+          "values": 45036,
+          "mismatchedValues": 0
+        }
+      },
+      "neuralForwards": 0,
+      "gpuRequests": 0
+    },
+    {
+      "caseId": "32qy-a1keo",
+      "inputs": "matched-native-inputs",
+      "indexValueDifferences": {
+        "residueIndex": 0,
+        "tokenIndex": 0,
+        "asymId": 0,
+        "entityId": 0,
+        "symId": 0
+      },
+      "nativeArchiveSha256": "221298a91cd63cf0c0a121c2523eeb59c65fdc2513f5c86cee9f251c9d378464",
+      "nativeReceiptSha256": "ff9fa7ae1e53137f07f9be61c1defa910dbb5fda3361e490d1c49174c50d92ec",
+      "browserFeaturesManifestSha256": "d37a369a86739f492e9103304d26d10c24da6a18003f974deb89f9bc0d682b82",
+      "controlledFeaturesManifestSha256": "cc22e7afc9ff90097bd1e4a4a4e08efeacd2e7de3b58a5e8789431baadcec186",
+      "tokens": 185,
+      "channels": 139,
+      "pairs": 34225,
+      "values": 4757275,
+      "mismatchedValues": 0,
+      "exact": true,
+      "groups": {
+        "proteinProtein": {
+          "pairs": 27889,
+          "values": 3876571,
+          "mismatchedValues": 0
+        },
+        "proteinLigand": {
+          "pairs": 6012,
+          "values": 835668,
+          "mismatchedValues": 0
+        },
+        "ligandLigand": {
+          "pairs": 324,
+          "values": 45036,
+          "mismatchedValues": 0
+        }
+      },
+      "neuralForwards": 0,
+      "gpuRequests": 0
+    }
+  ],
+  "sourcePins": {
+    "folding/comparison/check_relative_encoding.py": "1f791de02e1ad032c3898cb8fcb0ed2921572adb88bf96dac0f088b4af94b896",
+    "folding/comparison/compare_relative_encoding.mjs": "2029fb5d0cb6b1ccfeca324613381d5c174d5bd72ded4eeba08737485aacab7f",
+    "folding/comparison/check_trained_target.py": "a83f21867ecd7f4efadf6f769b7febe6a4c3be2193bb7a6bef45fcec757ce89f",
+    "folding/comparison/feature_snapshot.py": "a65c7054477aaa5934a6e337748228ac9574f70cea37004e25361a2a6386ad3d",
+    "vendor/localfold/cpu/af3/trunk/embedder.js": "e6dc72333bf802e91e51f040deb31311ec374734e9f21ee5ef15db51093e3684",
+    "vendor/localfold/cpu/af3/trunk/pairformer.js": "17be9b9578d17cecec224558c9b226aab1a69b8af465669971422c11e21d59fe"
+  }
+}
