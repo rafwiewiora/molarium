@@ -60,3 +60,28 @@ NVIDIA also documents the
 [EGL ICD alternative for environments without X11 client libraries](https://http.download.nvidia.com/XFree86/Linux-x86_64/555.58.02/README/installedcomponents.html).
 The sources and receipt preserve a proposed runtime remedy, not a passed GPU
 calculation or an established cause of the pose differences.
+
+## Guarded follow-up measurements
+
+The first binding allocation, **20188**, ended in another Spot `NODE_FAIL`
+after 23 seconds, before the task payload began. It produced no start marker,
+driver inventory, logs or binding result. The
+[source-identical retry receipt](driver-binding-attempt001/unstarted-retry-20198.json)
+records job **20198**, with the same source pins, real resource request, normal
+priority and existing deadline.
+
+One [new numerical-control job](qualified-controls-attempt001/submission.json),
+**20203**, depends on successful completion of 20198. Slurm is configured to
+cancel it automatically if that prerequisite fails. It rechecks physical
+capability on its own assigned GPU, then runs the preserved transition-layer
+harness and all 32 trained-trunk boundaries across four cycles. Native captures,
+fixture conversion, equations, precision settings and predeclared error gates
+are reused read-only. No complete pose prediction is requested. Its 30-minute
+limit allows both controls and setup; the same 20 November retention/deadline
+applies. This is a queued protocol, not a numerical result.
+
+The [source reuse certificate](qualified-controls-attempt001/runtime-source-reuse.json)
+binds the unchanged runtime recipe; a filename substitution preserves its original
+bytes. Independent control failures are retained separately, and a failure in
+one control does not discard the other. No repeated native calculation,
+software adapter, priority change or standalone VM is involved.

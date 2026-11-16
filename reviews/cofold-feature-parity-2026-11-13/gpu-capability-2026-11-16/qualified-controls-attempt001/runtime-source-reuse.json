@@ -1,0 +1,17 @@
+{
+  "scope": "Same capability recipe in a new allocation; only gpu.sh filename becomes runtime-capability.sh. Numerical harnesses and native fixture remain read-only at their pinned sources.",
+  "parentSourceManifestSha256": "19ddefa9fa09f0d1ee0c9a624907b83677c041e2487fc0f48faba3a50200cdff",
+  "qualifiedControlsSourceManifestSha256": "36a44e87c303140ef01fe2c35cac00a9c93725cdf8e9c194d3469244cfbd1e78",
+  "renamedUnchangedScript": {
+    "from": "gpu.sh",
+    "to": "runtime-capability.sh",
+    "sha256": "f202a99329fd7223236379a6ec4b1024ce9c46f20aadd1637d350433f6e1e619"
+  },
+  "unchangedRuntimeFiles": [
+    "collect_driver_libraries.py",
+    "inspect_vulkan.py",
+    "container.sh",
+    "probe.mjs",
+    "chrome-logging-wrapper.sh"
+  ]
+}
