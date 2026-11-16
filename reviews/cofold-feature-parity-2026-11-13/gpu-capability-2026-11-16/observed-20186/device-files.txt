@@ -1,0 +1,11 @@
+ls: cannot access '/dev/dri/*': No such file or directory
+crw-rw-rw- 1 root root 195, 254 Nov 16 21:17 /dev/nvidia-modeset
+crw-rw-rw- 1 root root 235,   0 Nov 16 21:17 /dev/nvidia-uvm
+crw-rw-rw- 1 root root 235,   1 Nov 16 21:17 /dev/nvidia-uvm-tools
+crw-rw-rw- 1 root root 195,   0 Nov 16 21:17 /dev/nvidia0
+crw-rw-rw- 1 root root 195, 255 Nov 16 21:17 /dev/nvidiactl
+
+/dev/nvidia-caps:
+total 0
+cr-------- 1 root root 238, 1 Nov 16 21:17 nvidia-cap1
+cr--r--r-- 1 root root 238, 2 Nov 16 21:17 nvidia-cap2

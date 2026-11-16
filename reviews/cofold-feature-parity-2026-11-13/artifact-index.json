@@ -508,8 +508,8 @@
     },
     {
       "file": "gpu-capability-2026-11-16/README.md",
-      "bytes": 2125,
-      "sha256": "665bfd17bce5ab4c14f8282e1908a84cffdd4c93c2d6206ca482b925234c463a"
+      "bytes": 4008,
+      "sha256": "93844940997cb1cabac869f23551b2f8069e067165c77ef5e2c45c85cd33664c"
     },
     {
       "file": "gpu-capability-2026-11-16/chrome-logging-wrapper.sh",
@@ -545,6 +545,106 @@
       "file": "gpu-capability-2026-11-16/source-sha256.txt",
       "bytes": 241,
       "sha256": "91cf95d38e8f9e7d6895bf6be98d5413540b321a2ba5d5a39efdb036721b3ac4"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/chrome-ldd.txt",
+      "bytes": 6645,
+      "sha256": "e99872107720d8548f310ca0042d5005a1701222ef53a8a682314bcf6afd1544"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/chrome-stderr.log",
+      "bytes": 32654,
+      "sha256": "ee7a21e3e51bd813709529a6b9da55995a0613c8e9389c372891785d896974da"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/container-libraries.txt",
+      "bytes": 45256,
+      "sha256": "362563f7fa45e51b64c6a5995b51b5c1e13d0ee385419e5f84f398e4fb804908"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/device-files.txt",
+      "bytes": 506,
+      "sha256": "c982a8107d28a040b84eb194f8d1dd6e62395e79244d3f27d3b351b951c49115"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/gpu-identity.txt",
+      "bytes": 90,
+      "sha256": "efe94122ed1572d98145420776cc3c093049e14a8ffc9758e5cd28b80d934478"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/logs/gpu-20186.log",
+      "bytes": 339,
+      "sha256": "ec0b6a54892cf2302e6d5023497acf16b6c6cd11c2877770abc1e68b96d39f82"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/nvidia-icd.json",
+      "bytes": 140,
+      "sha256": "361076eba0aa916c17d23bdec14adef34e58c8f8f8d6a5dd94ac901da5a707ed"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/preservation.json",
+      "bytes": 1983,
+      "sha256": "f8b1e00b8d718703b60c656380ecd4c1b16159540a5cd088df0ee6b91b1b3d40"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/probe-result.json",
+      "bytes": 749,
+      "sha256": "44c4fd77ef24eeb06b6432dc1028e69e482d375f5bab4c706913b09c2394783e"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/slurm-grant.txt",
+      "bytes": 1705,
+      "sha256": "3c6451e44481e5682e2b9df5e0f04a2f738019efe567af5431d5ca12b2b40d44"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/vulkan-ldd.txt",
+      "bytes": 333,
+      "sha256": "5bfda94e85d24d83ca32eb1e74f8f8d6ebd681cd153e39e01728cfe997624961"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/chrome-logging-wrapper.sh",
+      "bytes": 250,
+      "sha256": "d5fcf03bca1ff19ac19cc450eba6b379249666588b80933c69d2f80d2231f35e"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/collect_driver_libraries.py",
+      "bytes": 2546,
+      "sha256": "12c76cfea62482e24690bfd48d603d72ef1f61c3f9ad12836eb1f92c4538efd9"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/container.sh",
+      "bytes": 388,
+      "sha256": "f9fdeb3fbb3290bfb9b5400f370e2508d14b82ebbce251aa4eba02a64e5799ec"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/gpu.sh",
+      "bytes": 3528,
+      "sha256": "f202a99329fd7223236379a6ec4b1024ce9c46f20aadd1637d350433f6e1e619"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/inspect_vulkan.py",
+      "bytes": 1369,
+      "sha256": "f2115f7becc53acc23b1caf5bab605b0c86f4f3f0d87b42055ae8fd2c2844cb5"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/probe.mjs",
+      "bytes": 4005,
+      "sha256": "e8425167d543d56eaf3d6162091b6ebffbd8416cec86facce904f1bbeb4eddfc"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/source-manifest.json",
+      "bytes": 543,
+      "sha256": "19ddefa9fa09f0d1ee0c9a624907b83677c041e2487fc0f48faba3a50200cdff"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/source-sha256.txt",
+      "bytes": 498,
+      "sha256": "f2791c4bb03687c94de17e3ba83437a714a3271b864ae4b9d5306e0f9e95d73a"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/submission.json",
+      "bytes": 1093,
+      "sha256": "98cbec68d1de68a35cb678b92867e7ebc3ff62dfceeec8674af83e2b229f1b75"
     }
   ]
 }

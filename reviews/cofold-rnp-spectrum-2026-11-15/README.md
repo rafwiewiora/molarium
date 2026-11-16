@@ -82,6 +82,15 @@ The first-three cases partition into 16 selected passing hits, five passing hits
 
 The exports preserve every original prediction PDB string and explicit ligand graph. The viewer's Cα alignment was checked against the analysis for all 30 unique predictions, and the actual file-import, molecular rendering, preference persistence and reference separation were exercised without inference. Recorded launcher time remains provenance, rather than being labelled isolated inference time in the viewer. Source attribution travels with each portable library.
 
+A [whole-cohort export preflight](checkpoint-288/all-cohort-review-preflight.json)
+also passed for all 288 saved predictions across all 48 systems: 96 separate
+prediction-only/reference-inclusive libraries, original graph/PDB identity, and
+display alignment within 1.4 × 10⁻¹⁴ Å of the scoring frame. This is a data-only
+export/alignment check, not additional inference or a claim that all 48 imports
+were individually exercised in the browser. The final reporting phase will
+prepare the same coverage with all ten planned samples after independent
+verification; the final result remains pending.
+
 ## Stock input preparation check
 
 All 48 raw SMILES prepare through the pristine stock `smilesComponent` defaults,

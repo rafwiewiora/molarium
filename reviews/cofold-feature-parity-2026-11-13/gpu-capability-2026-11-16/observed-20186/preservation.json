@@ -1,0 +1,63 @@
+{
+  "schema": "molarium.gpu-capability-preservation.v1",
+  "jobId": 20186,
+  "state": "FAILED",
+  "exitCode": "1:0",
+  "elapsed": "56s",
+  "startedAt": "2026-11-16T21:17:41Z",
+  "finishedAt": "2026-11-16T21:18:37Z",
+  "sourceManifestSha256": "64bbb3c47deb0920a4aca1f73fc57e9f13a6dca9edb5083b78e096d6bd4cdfbc",
+  "scope": "Successful Chrome startup but no adapter. Vulkan ICD could not supply vkCreateInstance. Zero model calls or numerical comparisons.",
+  "files": [
+    {
+      "path": "probe-result.json",
+      "bytes": 749,
+      "sha256": "44c4fd77ef24eeb06b6432dc1028e69e482d375f5bab4c706913b09c2394783e"
+    },
+    {
+      "path": "chrome-stderr.log",
+      "bytes": 32654,
+      "sha256": "ee7a21e3e51bd813709529a6b9da55995a0613c8e9389c372891785d896974da"
+    },
+    {
+      "path": "vulkan-ldd.txt",
+      "bytes": 333,
+      "sha256": "5bfda94e85d24d83ca32eb1e74f8f8d6ebd681cd153e39e01728cfe997624961"
+    },
+    {
+      "path": "chrome-ldd.txt",
+      "bytes": 6645,
+      "sha256": "e99872107720d8548f310ca0042d5005a1701222ef53a8a682314bcf6afd1544"
+    },
+    {
+      "path": "container-libraries.txt",
+      "bytes": 45256,
+      "sha256": "362563f7fa45e51b64c6a5995b51b5c1e13d0ee385419e5f84f398e4fb804908"
+    },
+    {
+      "path": "gpu-identity.txt",
+      "bytes": 90,
+      "sha256": "efe94122ed1572d98145420776cc3c093049e14a8ffc9758e5cd28b80d934478"
+    },
+    {
+      "path": "slurm-grant.txt",
+      "bytes": 1705,
+      "sha256": "3c6451e44481e5682e2b9df5e0f04a2f738019efe567af5431d5ca12b2b40d44"
+    },
+    {
+      "path": "nvidia-icd.json",
+      "bytes": 140,
+      "sha256": "361076eba0aa916c17d23bdec14adef34e58c8f8f8d6a5dd94ac901da5a707ed"
+    },
+    {
+      "path": "device-files.txt",
+      "bytes": 506,
+      "sha256": "c982a8107d28a040b84eb194f8d1dd6e62395e79244d3f27d3b351b951c49115"
+    },
+    {
+      "path": "logs/gpu-20186.log",
+      "bytes": 339,
+      "sha256": "ec0b6a54892cf2302e6d5023497acf16b6c6cd11c2877770abc1e68b96d39f82"
+    }
+  ]
+}

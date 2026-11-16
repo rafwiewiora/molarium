@@ -1,0 +1,212 @@
+[2935:2958:1116/211833.953142:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[2935:2958:1116/211833.960087:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2935:2958:1116/211833.984883:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[2935:2958:1116/211833.986518:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[2935:2958:1116/211833.986544:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[2935:2958:1116/211833.987845:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2935:2958:1116/211834.016288:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2935:2962:1116/211834.081590:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2935:2962:1116/211834.081730:WARNING:dbus/object_proxy.cc:439] Failed to connect to NameOwnerChanged signal for object: /org/freedesktop/portal/desktop
+[2935:2962:1116/211834.081826:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2935:2962:1116/211834.081862:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[Vulkan Loader] WARNING:        Vulkan Loader: unsafe searching is enabled
+[2935:2958:1116/211834.211533:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2935:2958:1116/211834.368417:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+
+DevTools listening on ws://127.0.0.1:52448/devtools/browser/fca35f09-a5f0-462d-91f1-b4a0e9b1aa52
+
+(process:2935): dconf-CRITICAL **: 21:18:34.622: unable to create directory '/run/user/1706645947/dconf': Read-only file system.  dconf will not work properly.
+
+(process:2935): dconf-CRITICAL **: 21:18:34.623: unable to create directory '/run/user/1706645947/dconf': Read-only file system.  dconf will not work properly.
+
+(process:2935): dconf-CRITICAL **: 21:18:34.623: unable to create directory '/run/user/1706645947/dconf': Read-only file system.  dconf will not work properly.
+[2935:2935:1116/211834.979881:WARNING:ui/aura/window.cc:1499] StackChildLayerRelativeTo called with unmanaged layer(s). child=WebContentsViewAura child_managed=0 target=WebContentsViewAura target_managed=0
+[2935:2935:1116/211834.980327:WARNING:ui/aura/window.cc:1499] StackChildLayerRelativeTo called with unmanaged layer(s). child=WebContentsViewAura child_managed=0 target=WebContentsViewAura target_managed=0
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[2935:2935:1116/211835.011558:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2935:2958:1116/211835.011711:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2935:2935:1116/211835.013998:WARNING:device/bluetooth/dbus/bluez_dbus_manager.cc:209] Floss manager service not available, cannot set Floss enable/disable.
+[2935:2935:1116/211835.014052:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2935:2958:1116/211835.014163:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2935:2935:1116/211835.014384:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[2972:2972:1116/211835.111188:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+[2972:2972:1116/211835.113628:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+[2972:2972:1116/211835.115129:ERROR:ui/gl/angle_platform_impl.cc:34] Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+ERR: Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[2972:2972:1116/211835.116448:ERROR:ui/gl/egl_util.cc:92] EGL Driver message (Critical) eglInitialize: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[2972:2972:1116/211835.116512:ERROR:ui/gl/gl_display.cc:613] eglInitialize Vulkan failed with error EGL_NOT_INITIALIZED
+[2972:2972:1116/211835.117858:ERROR:ui/gl/gl_display.cc:648] Initialization of all (1) EGL display types failed.
+[2972:2972:1116/211835.117946:ERROR:ui/ozone/common/gl_ozone_egl.cc:26] GLDisplayEGL::Initialize failed.
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[2935:2935:1116/211835.204073:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2935:2958:1116/211835.204218:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[2972:2972:1116/211835.235355:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+[2972:2972:1116/211835.235445:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+[2972:2972:1116/211835.235495:ERROR:ui/gl/angle_platform_impl.cc:34] Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+ERR: Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[2972:2972:1116/211835.235539:ERROR:ui/gl/egl_util.cc:92] EGL Driver message (Critical) eglInitialize: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[2972:2972:1116/211835.235584:ERROR:ui/gl/gl_display.cc:613] eglInitialize Vulkan failed with error EGL_NOT_INITIALIZED
+[2972:2972:1116/211835.235616:ERROR:ui/gl/gl_display.cc:648] Initialization of all (1) EGL display types failed.
+[2972:2972:1116/211835.235647:ERROR:ui/ozone/common/gl_ozone_egl.cc:26] GLDisplayEGL::Initialize failed.
+[2972:2972:1116/211835.241341:ERROR:components/viz/service/main/viz_main_impl.cc:192] Exiting GPU process due to errors during initialization
+[2935:2935:1116/211835.647229:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2935:2958:1116/211835.709588:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[2935:2935:1116/211835.709594:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2935:2958:1116/211835.709661:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[2935:2958:1116/211835.709696:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[2935:2935:1116/211835.711182:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[Vulkan Loader] WARNING:        Vulkan Loader: unsafe searching is enabled
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[3052:3052:1116/211836.231186:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+[3052:3052:1116/211836.231332:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+[3052:3052:1116/211836.231406:ERROR:ui/gl/angle_platform_impl.cc:34] Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+ERR: Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[3052:3052:1116/211836.231470:ERROR:ui/gl/egl_util.cc:92] EGL Driver message (Critical) eglInitialize: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[3052:3052:1116/211836.231516:ERROR:ui/gl/gl_display.cc:613] eglInitialize Vulkan failed with error EGL_NOT_INITIALIZED
+[3052:3052:1116/211836.231560:ERROR:ui/gl/gl_display.cc:648] Initialization of all (1) EGL display types failed.
+[3052:3052:1116/211836.231590:ERROR:ui/ozone/common/gl_ozone_egl.cc:26] GLDisplayEGL::Initialize failed.
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[2935:2935:1116/211836.296171:WARNING:dbus/property.cc:94] Failed to connect to PropertiesChangedsignal.
+[2935:2935:1116/211836.296219:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.Properties.GetAll: object_path= /org/freedesktop/UPower/devices/DisplayDevice: unknown error type: 
+[2935:2935:1116/211836.296230:WARNING:dbus/property.cc:174] GetAll request failed for: org.freedesktop.UPower.Device
+[2935:2935:1116/211836.296248:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2935:2958:1116/211836.296376:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[3052:3052:1116/211836.344207:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+[3052:3052:1116/211836.344309:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+[3052:3052:1116/211836.344373:ERROR:ui/gl/angle_platform_impl.cc:34] Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+ERR: Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[3052:3052:1116/211836.344430:ERROR:ui/gl/egl_util.cc:92] EGL Driver message (Critical) eglInitialize: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[3052:3052:1116/211836.344471:ERROR:ui/gl/gl_display.cc:613] eglInitialize Vulkan failed with error EGL_NOT_INITIALIZED
+[3052:3052:1116/211836.344503:ERROR:ui/gl/gl_display.cc:648] Initialization of all (1) EGL display types failed.
+[3052:3052:1116/211836.344542:ERROR:ui/ozone/common/gl_ozone_egl.cc:26] GLDisplayEGL::Initialize failed.
+[3052:3052:1116/211836.346341:ERROR:components/viz/service/main/viz_main_impl.cc:192] Exiting GPU process due to errors during initialization
+[2935:2935:1116/211836.519367:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2935:2958:1116/211836.519526:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/user/1706645947/bus: No such file or directory
+[Vulkan Loader] WARNING:        Vulkan Loader: unsafe searching is enabled
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[3074:3074:1116/211836.755854:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+[3074:3074:1116/211836.756005:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+[3074:3074:1116/211836.756085:ERROR:ui/gl/angle_platform_impl.cc:34] Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+ERR: Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[3074:3074:1116/211836.756145:ERROR:ui/gl/egl_util.cc:92] EGL Driver message (Critical) eglInitialize: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[3074:3074:1116/211836.756184:ERROR:ui/gl/gl_display.cc:613] eglInitialize Vulkan failed with error EGL_NOT_INITIALIZED
+[3074:3074:1116/211836.756225:ERROR:ui/gl/gl_display.cc:648] Initialization of all (1) EGL display types failed.
+[3074:3074:1116/211836.756256:ERROR:ui/ozone/common/gl_ozone_egl.cc:26] GLDisplayEGL::Initialize failed.
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[3074:3074:1116/211836.862823:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+[3074:3074:1116/211836.862935:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+[3074:3074:1116/211836.862992:ERROR:ui/gl/angle_platform_impl.cc:34] Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+ERR: Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[3074:3074:1116/211836.863050:ERROR:ui/gl/egl_util.cc:92] EGL Driver message (Critical) eglInitialize: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[3074:3074:1116/211836.863089:ERROR:ui/gl/gl_display.cc:613] eglInitialize Vulkan failed with error EGL_NOT_INITIALIZED
+[3074:3074:1116/211836.863120:ERROR:ui/gl/gl_display.cc:648] Initialization of all (1) EGL display types failed.
+[3074:3074:1116/211836.863151:ERROR:ui/ozone/common/gl_ozone_egl.cc:26] GLDisplayEGL::Initialize failed.
+[3074:3074:1116/211836.865124:ERROR:components/viz/service/main/viz_main_impl.cc:192] Exiting GPU process due to errors during initialization
+[2935:2958:1116/211836.909084:ERROR:dbus/bus.cc:406] Failed to connect to the bus: Failed to connect to socket /run/dbus/system_bus_socket: No such file or directory
+[2935:2935:1116/211836.910081:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.DBus.NameHasOwner: object_path= /org/freedesktop/DBus: unknown error type: 
+[2935:2935:1116/211836.916717:WARNING:ui/base/idle/idle_linux.cc:111] None of the known D-Bus ScreenSaver services could be used.
+[2935:2935:1116/211836.980578:ERROR:dbus/object_proxy.cc:572] Failed to call method: org.freedesktop.NetworkManager.GetDevices: object_path= /org/freedesktop/NetworkManager: unknown error type: 
+[2935:2935:1116/211836.980597:WARNING:services/device/geolocation/wifi_data_provider_linux.cc:171] Failed to get the device list
+[Vulkan Loader] WARNING:        Vulkan Loader: unsafe searching is enabled
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[3083:3083:1116/211837.226707:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+[3083:3083:1116/211837.226846:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+[3083:3083:1116/211837.226978:ERROR:ui/gl/angle_platform_impl.cc:34] Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+ERR: Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[3083:3083:1116/211837.227061:ERROR:ui/gl/egl_util.cc:92] EGL Driver message (Critical) eglInitialize: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[3083:3083:1116/211837.227140:ERROR:ui/gl/gl_display.cc:613] eglInitialize Vulkan failed with error EGL_NOT_INITIALIZED
+[3083:3083:1116/211837.227205:ERROR:ui/gl/gl_display.cc:648] Initialization of all (1) EGL display types failed.
+[3083:3083:1116/211837.227252:ERROR:ui/ozone/common/gl_ozone_egl.cc:26] GLDisplayEGL::Initialize failed.
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[3083:3083:1116/211837.348615:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+[3083:3083:1116/211837.348743:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+[3083:3083:1116/211837.348826:ERROR:ui/gl/angle_platform_impl.cc:34] Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+ERR: Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[3083:3083:1116/211837.348891:ERROR:ui/gl/egl_util.cc:92] EGL Driver message (Critical) eglInitialize: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[3083:3083:1116/211837.348945:ERROR:ui/gl/gl_display.cc:613] eglInitialize Vulkan failed with error EGL_NOT_INITIALIZED
+[3083:3083:1116/211837.348988:ERROR:ui/gl/gl_display.cc:648] Initialization of all (1) EGL display types failed.
+[3083:3083:1116/211837.349035:ERROR:ui/ozone/common/gl_ozone_egl.cc:26] GLDisplayEGL::Initialize failed.
+[3083:3083:1116/211837.351318:ERROR:components/viz/service/main/viz_main_impl.cc:192] Exiting GPU process due to errors during initialization
+[Vulkan Loader] WARNING:        Vulkan Loader: unsafe searching is enabled
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[3118:3118:1116/211837.562626:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+[3118:3118:1116/211837.562783:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+[3118:3118:1116/211837.562886:ERROR:ui/gl/angle_platform_impl.cc:34] Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+ERR: Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[3118:3118:1116/211837.562966:ERROR:ui/gl/egl_util.cc:92] EGL Driver message (Critical) eglInitialize: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[3118:3118:1116/211837.563018:ERROR:ui/gl/gl_display.cc:613] eglInitialize Vulkan failed with error EGL_NOT_INITIALIZED
+[3118:3118:1116/211837.563076:ERROR:ui/gl/gl_display.cc:648] Initialization of all (1) EGL display types failed.
+[3118:3118:1116/211837.563119:ERROR:ui/ozone/common/gl_ozone_egl.cc:26] GLDisplayEGL::Initialize failed.
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[Vulkan Loader] ERROR:          loader_scanned_icd_add: Could not get 'vkCreateInstance' via 'vk_icdGetInstanceProcAddr' for ICD libGLX_nvidia.so.0
+[Vulkan Loader] ERROR | DRIVER: loader_icd_scan: Failed loading library associated with ICD JSON libGLX_nvidia.so.0. Ignoring this JSON
+[3118:3118:1116/211837.670041:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_surface
+[3118:3118:1116/211837.670164:ERROR:ui/gl/angle_platform_impl.cc:34] vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+ERR: vk_renderer.cpp:265 (VerifyExtensionsPresent): Extension not supported: VK_KHR_xcb_surface
+[3118:3118:1116/211837.670245:ERROR:ui/gl/angle_platform_impl.cc:34] Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+ERR: Display.cpp:1506 (initialize): ANGLE Display::initialize error 0: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[3118:3118:1116/211837.670316:ERROR:ui/gl/egl_util.cc:92] EGL Driver message (Critical) eglInitialize: Internal Vulkan error (-7): A requested extension is not supported, in ../../third_party/angle/src/libANGLE/renderer/vulkan/vk_renderer.cpp, enableInstanceExtensions:2477.
+[3118:3118:1116/211837.670369:ERROR:ui/gl/gl_display.cc:613] eglInitialize Vulkan failed with error EGL_NOT_INITIALIZED
+[3118:3118:1116/211837.670413:ERROR:ui/gl/gl_display.cc:648] Initialization of all (1) EGL display types failed.
+[3118:3118:1116/211837.670455:ERROR:ui/ozone/common/gl_ozone_egl.cc:26] GLDisplayEGL::Initialize failed.
+[3118:3118:1116/211837.672604:ERROR:components/viz/service/main/viz_main_impl.cc:192] Exiting GPU process due to errors during initialization
+[3127:3127:1116/211837.709669:WARNING:media/gpu/vaapi/vaapi_wrapper.cc:1652] drmGetDevices2() has not found any devices
+[3127:3127:1116/211837.713346:WARNING:sandbox/policy/linux/sandbox_linux.cc:405] InitializeSandbox() called with multiple threads in process gpu-process.
+[2935:2935:1116/211837.744905:INFO:CONSOLE:0] "Failed to create WebGPU Context Provider", source: http://127.0.0.1:40873/ (0)

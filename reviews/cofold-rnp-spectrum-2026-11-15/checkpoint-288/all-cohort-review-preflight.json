@@ -1,0 +1,21 @@
+{
+  "schema": "molarium.all-cohort-review-preflight.v1",
+  "scope": "Every frozen case, six existing seeds; data-only review/export preflight, not the final ten-sample result.",
+  "planSha256": "797454ec8d2766485a96cfb13326511f0333efa7b89bb656968f84b2844ad349",
+  "scoresSha256": "1679e234ab2886f856b057cd6c6329cfd2f6dfe2bb0cdbf1e232aa67ce303f38",
+  "exportManifestSha256": "5e705e40f4f624160b1a8755836e98c29fd9c6deea0752ff10d56d3415c6848e",
+  "exportScriptSha256": "b6ed567edd6911294e1bc9db003d49b4331cd28c22753757b6320208aa015d77",
+  "verifierScriptSha256": "eed4058716becd34b649b1d4a83659c7b086df288e93b406e0d1548fb4492aac",
+  "check": {
+    "status": "pass",
+    "cases": 48,
+    "libraries": 96,
+    "predictionRecords": 576,
+    "uniquePredictions": 288,
+    "experimentalReferences": 48,
+    "maximumProteinAlignmentDifferenceA": 1.3655743202889425e-14,
+    "newNeuralForwards": 0,
+    "copiedDecisions": 0
+  },
+  "newNeuralForwards": 0
+}

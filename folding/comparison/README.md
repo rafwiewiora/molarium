@@ -61,6 +61,17 @@ closure and measured output replay without neural execution using
 `check_trained_target_cpu.py`. This adds a second component diagnostic, not a
 second browser/WebGPU result or a full-model agreement claim.
 
+`prepare_rnp_publication.py` is a separate data-only reporting phase for the
+frozen 48-case/480-prediction RnP study. It waits on the existing independent
+finalizer, rejects partial results and a changed protocol, and then prepares
+uniform-budget tables, 3/6/10-sample case diagnostics, and separate prediction-only
+and reference-inclusive review files for every preselected case. It checks all
+exported graphs, PDB strings and display alignments. It cannot submit, restart,
+merge or deploy anything; its output remains for review. A finite UTC deadline
+and live finalizer process are required. Tests exercise the actual six-sample
+checkpoint and verify that changing its status label cannot make it final.
+The complete 480-prediction preparation still awaits the running experiment.
+
 The next, **unqualified** stage uses `capture_native_trunk.py` to observe the
 stock four-cycle `run_trunk` at exact frozen feature bytes. It exports trained
 weights, projected embeddings, template/MSA/pairformer boundaries and the

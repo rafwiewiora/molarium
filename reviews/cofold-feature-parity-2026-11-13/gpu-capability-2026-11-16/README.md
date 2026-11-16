@@ -31,3 +31,32 @@ entry point. Source pins, the guarded [retry controller](retry-controller.py),
 the original failure and actual new allocation identity remain attached. Further
 results belong in a new dated receipt; this submission record is not a claim
 that the queued probe has run or passed.
+
+## Observed retry result and next diagnostic
+
+Job **20186** subsequently ran on an NVIDIA L4 and ended with no adapter.
+The [result](observed-20186/probe-result.json) shows that Chrome 157 starts in a
+secure context and exposes `navigator.gpu`, but adapter acquisition returns null.
+The [stderr log](observed-20186/chrome-stderr.log) identifies a Vulkan ICD loader
+failure: `libGLX_nvidia.so.0` does not supply `vkCreateInstance` through its ICD
+entry point. No molecular model ran. The [preservation receipt](observed-20186/preservation.json)
+binds the original logs, actual GPU identity and genuine Slurm grant.
+
+The container's `ldconfig` cache does not list NVIDIA graphics libraries; that
+alone does not establish whether files or dependencies are missing. One new
+[binding diagnostic](driver-binding-attempt001/submission.json), job **20188**,
+therefore inventories installed host NVIDIA libraries, fingerprints them, and
+binds the individual 64-bit files read-only into a task-local directory. It
+tests explicit GLX and, if needed, EGL ICD paths, stopping at the first physical
+NVIDIA integer-readback success. At submission it was pending. The existing
+container image, Chrome flags, shared helper and hardware gate are unchanged.
+No host driver installation, global library/configuration change or model call
+is involved. Its time limit is ten minutes and its scheduler deadline remains
+20 November at 22:30 UTC.
+
+This follows the driver-library injection model in the
+[Apptainer documentation](https://apptainer.org/docs/user/main/gpu.html).
+NVIDIA also documents the
+[EGL ICD alternative for environments without X11 client libraries](https://http.download.nvidia.com/XFree86/Linux-x86_64/555.58.02/README/installedcomponents.html).
+The sources and receipt preserve a proposed runtime remedy, not a passed GPU
+calculation or an established cause of the pose differences.
