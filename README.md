@@ -500,6 +500,9 @@ stereo/clash checks when the crystal answer identifies any hit. Selecting the
 highest archived ipTM gives 17/48 passing hits under the fixed lowest-seed tie
 rule; rounded-score ties remain explicit. [Sampling curves, recorded launcher times and their source hashes](reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/README.md#uniform-six-sample-checkpoint)
 are public; the ten-seed result remains pending.
+The [portable Foldarium examples](reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/review-examples/README.md)
+let readers inspect 30 original poses locally, with separate prediction-only
+and experimental-reference views and exportable human preferences.
 
 An [independent fixed-input transition-layer audit](reviews/cofold-layer-parity-2026-11-13/README.md)
 preserves exact official FP32/FP64 and WebGPU arrays. Ordinary inputs agree

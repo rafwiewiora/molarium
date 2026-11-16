@@ -7,6 +7,9 @@ hit cases across the first six samples, or 17/48 when selecting the highest
 archived ipTM with the fixed lowest-seed tie rule. Rounded-score ties are reported
 separately. The full ten-sample result is still pending. Raw evidence,
 confidence-selection curves and receipt-bound launcher timings are public.
+The [review examples](../../reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/review-examples/README.md)
+provide exact saved poses for local Foldarium inspection, with references and
+human decisions kept separate from the benchmark labels.
 
 The [stock LocalFold page control](../../reviews/cofold-stock-localfold-2026-11-13/README.md)
 runs the pristine upstream page through its own Fold button, bypassing Molarium's

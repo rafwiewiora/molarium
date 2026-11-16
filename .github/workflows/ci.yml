@@ -110,6 +110,16 @@ jobs:
           cmp /tmp/rnp-prefix6-diagnostics/README.md reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/diagnostics-first6/README.md
           /tmp/cofold-analysis/bin/python folding/comparison/summarize_rnp_stock.py --plan reviews/cofold-rnp-spectrum-2026-11-15/frozen-stock-plan.json --scores reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/scores.json --output /tmp/rnp-prefix6-similarity.json
           cmp /tmp/rnp-prefix6-similarity.json reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/similarity-summary.json
+      - name: Reproduce portable stock review examples and verify original graphs and coordinates
+        run: |
+          /tmp/cofold-analysis/bin/python folding/comparison/export_stock_review.py --review reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288 --samples 6 --case 8px8__1__1-a__1-d --case 8u7x__1__1-a__1-c --case 8iqt__1__1-a__1-b --case 8a3a__1__1-a__1-b --case 8usm__1__1-a__1-c --attribution reviews/cofold-rnp-spectrum-2026-11-15/dataset-attribution.json --output /tmp/rnp-stock-review-exports
+          /tmp/cofold-analysis/bin/python - <<'PY'
+          from pathlib import Path
+          expected = Path('reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/review-examples')
+          for path in Path('/tmp/rnp-stock-review-exports').iterdir():
+              assert path.read_bytes() == (expected / path.name).read_bytes(), path.name
+          PY
+          node folding/comparison/check_stock_review.mjs --review reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288 --exports reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/review-examples --plan reviews/cofold-rnp-spectrum-2026-11-15/frozen-stock-plan.json --repository . --components reviews/cofold-rnp-spectrum-2026-11-15/stock-input-components/components --attribution reviews/cofold-rnp-spectrum-2026-11-15/dataset-attribution.json
 
   browser:
     name: Browser integration
@@ -156,6 +166,12 @@ jobs:
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
         run: bun scripts/recent-cofold-review.browser.mjs
+      - name: Import preserved stock review files and retain local preferences without inference
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          MOLARIUM_HEADLESS_SOFTWARE_WEBGPU: '1'
+          MOLARIUM_STOCK_REVIEW_REQUIRE_SOFTWARE: '1'
+        run: bun scripts/stock-cofold-review.browser.mjs
       - name: Check method-labelled browser/native comparison review
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}

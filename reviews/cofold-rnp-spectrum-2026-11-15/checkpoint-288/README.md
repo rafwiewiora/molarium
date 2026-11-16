@@ -149,3 +149,11 @@ All 48 cases have completed seeds 0–5: 28/48 have any ligand pose below 2 Å a
 Archived confidence is rounded to two decimals. 26 cases have multiple seeds tied for highest reported ipTM; 4 of those ties mix passing hits and other poses. Of the eight cases where the fixed selection misses an available passing hit, three have a passing pose tied at the top reported score and five have only strictly lower-scoring passing poses. The [case-level diagnostic report](diagnostics-first6/README.md) distinguishes these observations. They do not reconstruct unrounded confidence or identify a causal implementation defect.
 
 Inputs, all outputs, attempt histories and source hashes remain in the evidence archive. [Machine-readable sampling and timing analysis](selection-analysis.json) and [similarity summary](similarity-summary.json) preserve denominators and suppress unfinished ten-sample rates. This checkpoint reuses completed science and performs no new inference.
+
+## Inspect five diagnostic examples in Foldarium
+
+The [downloadable review libraries](review-examples/README.md) contain six original predictions for each of the five first-three ranking examples. Prediction-only and reference-inclusive views are separate, unscored files with no preassigned choices. Original coordinates and explicit graphs are unchanged, and source attribution remains attached. Importing creates a fresh local library; reopen that saved library to continue its preferences, or export the library with decisions.
+
+The [coordinate/graph and display-alignment check](review-examples/alignment-check.json) covers all 30 unique predictions. The [browser check](review-examples/browser-check.json) exercises real file import, parsed protein/ligand structures, local preference persistence and reference separation. It uses software WebGL for display and starts no neural calculation.
+
+![Experimental reference and original stock predictions in the existing Foldarium reviewer](review-examples/review.png)

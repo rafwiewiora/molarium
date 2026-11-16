@@ -76,6 +76,12 @@ The archived confidence is rounded to two decimals: 19 cases have multiple seeds
 
 The first-three cases partition into 16 selected passing hits, five passing hits not selected, five cases whose only <2 Å poses fail the limited diagnostics, and 22 cases with no <2 Å pose. All five geometric-only cases have stereochemical-identity failures among those near-native poses. In 21 confidence-selected poses, global protein Cα RMSD is below 2 Å while ligand RMSD is at least 2 Å. This shows why a close protein backbone alone does not verify ligand placement; it does not establish a preparation, precision or kernel cause.
 
+## Inspect the original poses
+
+[Portable Foldarium review files](checkpoint-288/review-examples/README.md) cover the five cases where the first-three selection missed an available passing pose, with six saved predictions per case. Import a downloaded JSON into the existing Molarium Foldarium reviewer to rotate poses, compare pockets, and save local preferences or notes. Each case has separate prediction-only and experimental-reference files; no benchmark labels or preferences are embedded. These examples were chosen after seeing the results and are not a blinded or representative study.
+
+The exports preserve every original prediction PDB string and explicit ligand graph. The viewer's Cα alignment was checked against the analysis for all 30 unique predictions, and the actual file-import, molecular rendering, preference persistence and reference separation were exercised without inference. Recorded launcher time remains provenance, rather than being labelled isolated inference time in the viewer. Source attribution travels with each portable library.
+
 ## Stock input preparation check
 
 All 48 raw SMILES prepare through the pristine stock `smilesComponent` defaults,
@@ -143,6 +149,13 @@ The scripts in `folding/comparison/` are `rnp_cohort.py`,
 `prepare_rnp_components.mjs` preserves original stock ligand preparation;
 `prepare_rnp_msas.py` checks the source query and derives the fixed A3Ms;
 `prepare_rnp_stock_plan.py` writes every seed-specific input before execution.
+`export_stock_review.py` independently verifies a completed snapshot and exports
+specified cases in the existing portable Foldarium format without rerunning
+models. `check_stock_review.mjs` checks the original PDB and graph hashes,
+reference separation, confidence fields and display alignment. CI regenerates
+the released examples byte for byte and exercises actual file import and local
+preference persistence. The exporter pins its executing source and preserves
+explicit dataset attribution in each standalone library.
 `wait_rnp_stock.py` can monitor existing assigned jobs, verify the transferred
 archive, then start exactly one immutable stock batch. It does not submit remote
 jobs or create resources. Remote identity/account configuration stays in a

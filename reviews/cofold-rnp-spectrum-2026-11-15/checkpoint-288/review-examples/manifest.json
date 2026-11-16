@@ -1,0 +1,147 @@
+{
+  "schema": "molarium.stock-foldarium-review-export.v1",
+  "samplesPerCase": 6,
+  "caseIds": [
+    "8px8__1__1-a__1-d",
+    "8u7x__1__1-a__1-c",
+    "8iqt__1__1-a__1-b",
+    "8a3a__1__1-a__1-b",
+    "8usm__1__1-a__1-c"
+  ],
+  "sourceScoresSha256": "1679e234ab2886f856b057cd6c6329cfd2f6dfe2bb0cdbf1e232aa67ce303f38",
+  "sourceEvidenceSha256": "8e8a756c200cdff7338c71ad2c30f4bbb93eff41126e80588eb658af62c457e3",
+  "independentVerification": {
+    "status": "pass",
+    "recomputedPredictions": 288,
+    "plannedPredictions": 480,
+    "scope": "partial-snapshot",
+    "neuralForwards": 0,
+    "observedDiffusionFrames": [
+      200
+    ],
+    "actualGpuVendors": [
+      "apple"
+    ],
+    "browserVersions": [
+      "Chrome/157.0.8103.51"
+    ]
+  },
+  "scriptSha256": "b6ed567edd6911294e1bc9db003d49b4331cd28c22753757b6320208aa015d77",
+  "analysisSources": {
+    "export_stock_review.py": "b6ed567edd6911294e1bc9db003d49b4331cd28c22753757b6320208aa015d77",
+    "analyze_rnp_sampling.py": "5665b134ca88195c3be837073a8669000cf6f4185fe6f04debe559e0297cab92",
+    "summarize_rnp_stock.py": "fef65911e1e55268c8452d5104febe9d43b9743d8afae26765b64195ad3af80c",
+    "check_stock_benchmark.py": "789f8b5e4188bb866ae4b480b2ab77176eae021d44f64611c140638b465ad092",
+    "score_stock_localfold.py": "2dc15e042aa1990c4fa3294643dc80b429decafc1d228a4a797f496dd724018a",
+    "pose_metrics.py": "b577b0cd0358832eec0946c19cb826d2bf72e358205ced2eeb9b08885ebc41b5",
+    "experimental_reference.py": "9c0f696a1e1d537ee7f7ddfea1e640dbaf83c5d36ea1209238bb4e36ac4352f8"
+  },
+  "libraries": [
+    {
+      "caseId": "8px8__1__1-a__1-d",
+      "file": "8px8__1__1-a__1-d.predictions.library.json",
+      "sha256": "b0cf607730101dd2bf75ee8c7175d8edc830ed0114e6e5c4729fc299fa5b425a",
+      "bytes": 500031,
+      "referenceIncluded": false,
+      "predictions": 6,
+      "copiedDecisions": 0
+    },
+    {
+      "caseId": "8px8__1__1-a__1-d",
+      "file": "8px8__1__1-a__1-d.with-reference.library.json",
+      "sha256": "e411a4bf14de2a47634b29e01300797bdc2c05d672edb7df45358ea7362d9e3c",
+      "bytes": 579576,
+      "referenceIncluded": true,
+      "predictions": 6,
+      "copiedDecisions": 0
+    },
+    {
+      "caseId": "8u7x__1__1-a__1-c",
+      "file": "8u7x__1__1-a__1-c.predictions.library.json",
+      "sha256": "e2ef2c2a6564b380c19246635561e6b82ac4c7a3254f0e716817a64bc86cad66",
+      "bytes": 2148496,
+      "referenceIncluded": false,
+      "predictions": 6,
+      "copiedDecisions": 0
+    },
+    {
+      "caseId": "8u7x__1__1-a__1-c",
+      "file": "8u7x__1__1-a__1-c.with-reference.library.json",
+      "sha256": "e9b96d4e49299002e4460ddb79eea85879e4b1f3b251671a4b3b97f126447b18",
+      "bytes": 2473499,
+      "referenceIncluded": true,
+      "predictions": 6,
+      "copiedDecisions": 0
+    },
+    {
+      "caseId": "8iqt__1__1-a__1-b",
+      "file": "8iqt__1__1-a__1-b.predictions.library.json",
+      "sha256": "1331f873ce56653919a5fd13b8777d956aaa7a4a0ed0b5b472873d1b09c0b2b1",
+      "bytes": 1204936,
+      "referenceIncluded": false,
+      "predictions": 6,
+      "copiedDecisions": 0
+    },
+    {
+      "caseId": "8iqt__1__1-a__1-b",
+      "file": "8iqt__1__1-a__1-b.with-reference.library.json",
+      "sha256": "4cf86b8824a4004f7dd08eb1da135728f47e925f8f825b05f1c815d846b430c5",
+      "bytes": 1373967,
+      "referenceIncluded": true,
+      "predictions": 6,
+      "copiedDecisions": 0
+    },
+    {
+      "caseId": "8a3a__1__1-a__1-b",
+      "file": "8a3a__1__1-a__1-b.predictions.library.json",
+      "sha256": "932bdf5db8dd190857d95d17412cd0e1653c3c18b46d4485e2690a115e988a8b",
+      "bytes": 650701,
+      "referenceIncluded": false,
+      "predictions": 6,
+      "copiedDecisions": 0
+    },
+    {
+      "caseId": "8a3a__1__1-a__1-b",
+      "file": "8a3a__1__1-a__1-b.with-reference.library.json",
+      "sha256": "3c0cf40dc76f4e25d85ab8c336e02ac292b84faad7e409ddcf9547828b0a25bc",
+      "bytes": 755597,
+      "referenceIncluded": true,
+      "predictions": 6,
+      "copiedDecisions": 0
+    },
+    {
+      "caseId": "8usm__1__1-a__1-c",
+      "file": "8usm__1__1-a__1-c.predictions.library.json",
+      "sha256": "40234813c698051dcdf426c4a453409ea633ac6161c2d481582597dc434a7714",
+      "bytes": 659250,
+      "referenceIncluded": false,
+      "predictions": 6,
+      "copiedDecisions": 0
+    },
+    {
+      "caseId": "8usm__1__1-a__1-c",
+      "file": "8usm__1__1-a__1-c.with-reference.library.json",
+      "sha256": "00e31140b9c794d1db198176a25edf2b561cf4138798ec7724eeeca9cdf672dc",
+      "bytes": 757593,
+      "referenceIncluded": true,
+      "predictions": 6,
+      "copiedDecisions": 0
+    }
+  ],
+  "newNeuralForwards": 0,
+  "copiedDecisions": 0,
+  "datasetAttribution": {
+    "title": "Have protein-ligand cofolding methods moved beyond memorisation? \u2014 Runs N\u2019 Poses",
+    "source": "https://zenodo.org/records/18366081",
+    "license": "CC BY 4.0",
+    "creators": [
+      "Peter \u0160krinjar",
+      "J\u00e9r\u00f4me Eberhardt",
+      "Gerardo Tauriello",
+      "Torsten Schwede",
+      "Janani Durairaj"
+    ],
+    "modifications": "Molarium selected a native-positive diagnostic cohort, prepared portable experimental scoring references, and generated original stock LocalFold browser predictions. These review exports preserve the existing prediction PDB strings and explicit ligand graphs; experimental references are separately labelled. No AlphaFold3 coordinate output is redistributed."
+  },
+  "datasetAttributionSha256": "1365920abee24a06bfc5ec29eba23561fb0e9211b54ffaf07ecd5d64e90e087a"
+}
