@@ -74,6 +74,8 @@ downloads are intercepted inside the isolated browser profile. The sentinel
 preference is explicitly a UI test, never a scientific selection; source library
 files retain empty decisions and the temporary profile is removed on close.
 
+**UI-PROVENANCE-01 — retain the upstream reconstruction check after local UI edits.** CI correctly rejected the old distributed reviewer hash. The receipt now records the new distributed bytes and an exact reversible presentation patch, while preserving the original Foldarium revision and upstream hash. The existing integrity test reconstructs the original upstream file byte for byte; its assertions were kept intact. The Local Lab manifest was regenerated. This provenance-only follow-up was prepared in an isolated checkout so the active UI sweep retained its frozen sources; the executable reviewer bytes are identical in both checkouts.
+
 ## Reproduce
 
 The existing [exporter](../../../folding/comparison/export_stock_review.py)
