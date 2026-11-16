@@ -1,5 +1,12 @@
 # Browser/native cofolding comparisons
 
+The [larger Runs N’ Poses comparison](../../reviews/cofold-rnp-spectrum-2026-11-15/README.md)
+selects 48 independently verified native-positive systems across the published
+training-similarity spectrum. Its 221-prediction checkpoint gives 21/48 passing
+hit cases across the first three samples, or 16/48 when selecting the highest
+reported ipTM. The full ten-sample result is still pending. Raw evidence,
+confidence-selection curves and receipt-bound launcher timings are public.
+
 The [stock LocalFold page control](../../reviews/cofold-stock-localfold-2026-11-13/README.md)
 runs the pristine upstream page through its own Fold button, bypassing Molarium's
 SMILES normalization and conformer-seed override. Its launcher and real provided-MSA

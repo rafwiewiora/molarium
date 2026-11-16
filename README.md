@@ -496,7 +496,11 @@ training-similarity spectrum. Its native evidence, exclusions, chemical-state
 gates and selection shortfalls are public. The 480-prediction stock run is underway;
 a self-contained 221-prediction checkpoint is independently replayed. The uniform
 first-three-seed result is 21/48 cases with a <2 Å hit passing the limited
-stereo/clash checks; the ten-seed result remains pending.
+stereo/clash checks when the crystal answer identifies any hit. Selecting the
+highest reported ipTM gives 16/48 passing hits. The recorded launcher-time median
+is 110.9 seconds, including browser startup, available asset loading and output
+checks. [Sampling curves, timing observations and their source hashes](reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-221/README.md#uniform-sampling-and-confidence-selection)
+are public; the ten-seed result remains pending.
 
 An [independent fixed-input transition-layer audit](reviews/cofold-layer-parity-2026-11-13/README.md)
 preserves exact official FP32/FP64 and WebGPU arrays. Ordinary inputs agree
