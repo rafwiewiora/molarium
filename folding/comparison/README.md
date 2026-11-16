@@ -2,9 +2,10 @@
 
 The [larger Runs N’ Poses comparison](../../reviews/cofold-rnp-spectrum-2026-11-15/README.md)
 selects 48 independently verified native-positive systems across the published
-training-similarity spectrum. Its 221-prediction checkpoint gives 21/48 passing
-hit cases across the first three samples, or 16/48 when selecting the highest
-reported ipTM. The full ten-sample result is still pending. Raw evidence,
+training-similarity spectrum. Its 288-prediction checkpoint gives 25/48 passing
+hit cases across the first six samples, or 17/48 when selecting the highest
+archived ipTM with the fixed lowest-seed tie rule. Rounded-score ties are reported
+separately. The full ten-sample result is still pending. Raw evidence,
 confidence-selection curves and receipt-bound launcher timings are public.
 
 The [stock LocalFold page control](../../reviews/cofold-stock-localfold-2026-11-13/README.md)

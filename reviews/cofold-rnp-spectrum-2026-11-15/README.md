@@ -1,6 +1,6 @@
 # Runs N’ Poses: larger native-positive stock LocalFold comparison
 
-**Status: the 480-prediction stock benchmark is running. The verified checkpoint contains 221 completed predictions; a continuation is running after a host restart.**
+**Status: the 480-prediction stock benchmark is running. The verified checkpoint contains 288 completed predictions: six samples for every case. A continuation is running after a host restart.**
 The complete published-alignment archive passed its checksum. All 480 inputs
 were frozen before the first new neural prediction, using the query and up to
 255 unique published alignment rows. The single guarded batch is running on
@@ -8,9 +8,10 @@ physical Apple Metal-3 WebGPU through the pristine original LocalFold page.
 The frozen plan SHA-256 is
 `797454ec8d2766485a96cfb13326511f0333efa7b89bb656968f84b2844ad349`.
 
-[The independently replayed 221-prediction checkpoint](checkpoint-221/README.md)
-retains every planned prediction in its denominator. It is ordered partial work;
-its observed hits and misses do not establish a final cohort success rate.
+[The independently replayed 288-prediction checkpoint](checkpoint-288/README.md)
+retains every planned prediction in its denominator. Uniform completed sample
+budgets are reported separately; the final ten-sample result remains pending.
+The [221-prediction checkpoint](checkpoint-221/README.md) remains preserved.
 The existing [completed 80-prediction study](../cofold-stock-localfold-2026-11-13/results-200x10/README.md)
 remains a separate cohort.
 
@@ -30,7 +31,7 @@ trimming, or independent ligand alignment.
 | Selected follow-up | 48 | Stable hash order; at most two cases per exact sequence and three per supplied RnP cluster |
 | Distinct selected protein sequences / clusters | 43 / 36 | Related cases remain identifiable |
 | Selected cases with a stereo/clash-passing native hit | 41 | Seven geometric-only successes remain flagged separately |
-| Verified new browser checkpoint | 221/480 | First three seeds complete for all 48 cases; full ten-seed result remains pending |
+| Verified new browser checkpoint | 288/480 | First six seeds complete for all 48 cases; full ten-seed result remains pending |
 
 | Training-similarity bin | Candidate pool | Native-qualified | Selected | Predeclared target |
 |---|---:|---:|---:|---:|
@@ -48,7 +49,20 @@ agreement. Across all 147 candidates, 17 fail that chemical-state gate, 11
 contain unsupported modified protein residues, and six have no independently
 rescored full-frame native hit. Exclusions and all selection decisions are saved.
 
-## Three predictions per system: first complete shared budget
+## Six predictions per system
+
+All 48 cases have completed seeds 0–5, with no recorded terminal execution failures. There is a geometric <2 Å hit in 28/48 cases and a hit passing the limited stereo/clash diagnostics in 25/48 (52.08%). Selecting the highest archived ipTM with the fixed lowest-seed tie rule gives 17/48 (35.42%) passing hit cases. In the subset with a diagnostic-passing native hit, 23/41 cases contain any passing browser hit. The ten-sample result remains pending.
+
+| Uniform samples per case | Any geometric <2 Å hit | Any passing <2 Å hit | Highest-ipTM passing <2 Å hit |
+| ---: | ---: | ---: | ---: |
+| 3 | 26/48 | 21/48 | 16/48 |
+| 6 | 28/48 | 25/48 | 17/48 |
+
+![Uniform six-sample checkpoint](checkpoint-288/similarity-plots/first-6.png)
+
+The [complete checkpoint](checkpoint-288/README.md) includes the sampling curves, recorded run times, source-attempt histories and every original output. Reported ipTM has 26 highest-score ties, four of which mix passing hits and other poses. Of eight cases where the fixed selection misses an available passing hit, three involve a top-score tie and five have only strictly lower-scoring passing poses. The [six-sample diagnostic table](checkpoint-288/diagnostics-first6/README.md) records the actual seeds. These are descriptive outcomes of the selected reconstruction cohort, not general accuracy or matched-input numerical parity.
+
+## Historical three-sample checkpoint
 
 All 48 selected cases have completed seeds 0–2. Of these, 26/48 have a geometric <2 Å hit and 21/48 (43.75%) have a hit passing the limited stereo/clash checks. Restricting to the 41 cases with a diagnostic-passing native hit gives 19/41 passing browser hit cases. These retrospective best-of-three counts use the experimental answer and are separate from confidence-based pose selection. The complete ten-seed result is still pending.
 
@@ -57,6 +71,10 @@ All 48 selected cases have completed seeds 0–2. Of these, 26/48 have a geometr
 The source files, full per-case table and similarity-bin denominators are in the [checkpoint report](checkpoint-221/README.md). The lowest-similarity bin has only one case. An interrupted attempt and its fresh continuation are recorded in [execution history](execution-history.json); none of the first 221 completed predictions was repeated.
 
 Selecting the highest reported ipTM without the crystal answer gives 16/48 passing hit cases after three samples, compared with the crystal-informed 21/48. The [sampling and timing analysis](checkpoint-221/README.md#uniform-sampling-and-confidence-selection) reports every uniformly completed prefix separately. Recorded launcher time has a median of 110.9 seconds across this checkpoint; this includes browser startup, available asset loading and output checks, rather than just GPU computation.
+
+The archived confidence is rounded to two decimals: 19 cases have multiple seeds tied for highest reported ipTM. Three of the five cases with a passing hit that the fixed tie rule does not select have a passing pose tied at the top score; only two have strictly lower reported confidence. The [case-level diagnostic breakdown](checkpoint-221/diagnostics-first3/README.md) distinguishes these observations. The 16/48 result uses the stated lowest-seed tie rule and does not reconstruct the original unrounded confidence values.
+
+The first-three cases partition into 16 selected passing hits, five passing hits not selected, five cases whose only <2 Å poses fail the limited diagnostics, and 22 cases with no <2 Å pose. All five geometric-only cases have stereochemical-identity failures among those near-native poses. In 21 confidence-selected poses, global protein Cα RMSD is below 2 Å while ligand RMSD is at least 2 Å. This shows why a close protein backbone alone does not verify ligand placement; it does not establish a preparation, precision or kernel cause.
 
 ## Stock input preparation check
 
@@ -71,10 +89,10 @@ replacing cases. Exact graphs, coordinates and diagnostics are in
 
 ## Protocol and boundaries
 
-Planned stock runs use the pristine original LocalFold page at
+The stock runs use the pristine original LocalFold page at
 `5ea3d42c911949700401b54003cb28c557fcf2a6`: Boltz-2, ten seeds (0–9), 200 diffusion
-steps and three additional recycles (four trunk passes). We plan to retain the
-query plus the first 255 unique rows from the published protein alignment. No
+steps and three additional recycles (four trunk passes). Inputs retain the
+query plus up to the first 255 unique rows from the published protein alignment. No
 experimental coordinates or restraints enter stock inference. The published
 native runs used their own settings and alignments; this is a reconstruction
 comparison conditioned on native success, **not matched-input numerical parity
@@ -117,6 +135,7 @@ chemically flagged outcomes stay separate.
 - `frozen-stock-plan.json`: all 480 job identities and input hashes, frozen before inference.
 - `initial-snapshot/`: retained 11-prediction historical snapshot.
 - `checkpoint-221/`: 221 independently recomputed predictions, original outputs, device/step receipts and self-contained archive parts containing every frozen input. The summary distinguishes the completed three-seed prefix from the unfinished ten-seed budget.
+- `checkpoint-288/`: six samples for every case, independently replayed with original outputs, merged attempt histories, sampling and similarity plots, confidence-tie diagnostics and recorded launcher timings. The six-sample result is distinct from the unfinished ten-sample budget.
 - `execution-history.json`: interruption, preserved completed work and immutable continuation.
 
 The scripts in `folding/comparison/` are `rnp_cohort.py`,

@@ -96,6 +96,20 @@ jobs:
         run: /tmp/cofold-analysis/bin/python folding/comparison/check_stock_benchmark.py reviews/cofold-rnp-spectrum-2026-11-15/initial-snapshot
       - name: Recompute the 221-prediction checkpoint and verify actual sampling
         run: /tmp/cofold-analysis/bin/python folding/comparison/check_stock_benchmark.py reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-221
+      - name: Reproduce the diagnostic breakdown and distinguish rounded confidence ties
+        run: |
+          /tmp/cofold-analysis/bin/python folding/comparison/diagnose_rnp_stock.py --plan reviews/cofold-rnp-spectrum-2026-11-15/frozen-stock-plan.json --scores reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-221/scores.json --samples 3 --output /tmp/rnp-prefix-diagnostics
+          cmp /tmp/rnp-prefix-diagnostics/diagnostics.json reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-221/diagnostics-first3/diagnostics.json
+          cmp /tmp/rnp-prefix-diagnostics/README.md reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-221/diagnostics-first3/README.md
+      - name: Recompute all 288 predictions in the uniform six-sample checkpoint
+        run: /tmp/cofold-analysis/bin/python folding/comparison/check_stock_benchmark.py reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288
+      - name: Reproduce the six-sample diagnostic and similarity summaries
+        run: |
+          /tmp/cofold-analysis/bin/python folding/comparison/diagnose_rnp_stock.py --plan reviews/cofold-rnp-spectrum-2026-11-15/frozen-stock-plan.json --scores reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/scores.json --samples 6 --output /tmp/rnp-prefix6-diagnostics
+          cmp /tmp/rnp-prefix6-diagnostics/diagnostics.json reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/diagnostics-first6/diagnostics.json
+          cmp /tmp/rnp-prefix6-diagnostics/README.md reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/diagnostics-first6/README.md
+          /tmp/cofold-analysis/bin/python folding/comparison/summarize_rnp_stock.py --plan reviews/cofold-rnp-spectrum-2026-11-15/frozen-stock-plan.json --scores reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/scores.json --output /tmp/rnp-prefix6-similarity.json
+          cmp /tmp/rnp-prefix6-similarity.json reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/similarity-summary.json
 
   browser:
     name: Browser integration

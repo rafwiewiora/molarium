@@ -163,6 +163,8 @@ Only seed prefixes completed for every case receive rates. The selected pose is 
 
 At three samples, confidence selection gives 16/48 passing hits, compared with 21/48 when the crystal answer is used to find any passing hit. The complete ten-sample result is pending. Missing confidence suppresses confidence-based rates; failed executions remain in the denominator.
 
+The [diagnostic breakdown](diagnostics-first3/README.md) qualifies this difference: archived ipTM is rounded to two decimals, and three of the five unselected passing cases contain a passing pose tied at the highest reported score. Only two have strictly lower reported confidence. There are 19 highest-score ties overall. The result uses the declared lowest-seed tie rule rather than estimating unavailable unrounded confidence.
+
 ![Sampling and recorded run time](sampling-plots/sampling-and-time.png)
 
 Across these 221 completed runs, the launcher wall-time median is 110.9 s (interquartile range 60.0–181.5 s; range 42.0–483.9 s). Length-bin medians are 50.1 s below 200 residues, 110.9 s for 200–399 residues and 227.1 s for 400–700 residues. These include browser startup, available asset loading, folding, confidence calculation and archive checks, excluding independent scoring. They describe this physical Apple WebGPU run and its cache/system conditions, rather than GPU-kernel time or a cross-device speed comparison.
