@@ -3,8 +3,8 @@
   "files": [
     {
       "file": "README.md",
-      "bytes": 10061,
-      "sha256": "512452d824f698dba7a94a80b914676192cf1aa3fdb5f542936b3a0c906ffd09"
+      "bytes": 11648,
+      "sha256": "8a274eac1dafced412363ab23b527aa4a119a8889f48045a03a5f4817c76020f"
     },
     {
       "file": "browser-32qy-a1keo/features.bin",
@@ -345,6 +345,86 @@
       "file": "trunk-native-source-pins.json",
       "bytes": 4146,
       "sha256": "cad7747aa6d9e826d52858a8a6d30dfcb3c99a40a88a2dc8c58a859b2f9adebb"
+    },
+    {
+      "file": "comparison-32qy-a1keo-processed-smiles.json",
+      "bytes": 9342,
+      "sha256": "1af966ef580bca7b8065f964d2e2c0846fb7b4b5cb4087c4ed3a7e523eba0498"
+    },
+    {
+      "file": "control-status-2026-11-16.json",
+      "bytes": 8639,
+      "sha256": "863557a77d756d76b9aa3fc537b8e13abc2cac72e0c84f9748d2f79a67489973"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/capture-runner.json",
+      "bytes": 734,
+      "sha256": "d0a095920e8c65e657c4ac8dbc0188ed6d7ae00887b5dcf5826114251be00c36"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/cli/experiment_config.json",
+      "bytes": 7623,
+      "sha256": "44f1338710282c84d75b60aeeaca2598b1d7badcfd5b1ef2304b8da5f5afabaa"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/cli/inference_query_set.json",
+      "bytes": 2333,
+      "sha256": "016a549220c18bb4012516d19994cc9ddba47464cf28ffd5d96c57b82b6305a6"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/cli/model_config.json",
+      "bytes": 60409,
+      "sha256": "836f48bd49801f43fd46f963629fec80a4f23807447684d5fe07d7dcd021cd94"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/cli/summary.txt",
+      "bytes": 303,
+      "sha256": "c16d7914b2aef7ec2d4a846a27ce3eed03ef57035b6ccee1237528b606912814"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/features/features.bin",
+      "bytes": 2973121,
+      "sha256": "7a68d1ec69c71a95eb205fd5d1e906a9d3075f73d4b2a938f085b47c273e8a14"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/features/features.json",
+      "bytes": 16717,
+      "sha256": "172bd8e7913f620b2a1d3b7a9a5a46ce41b4216a5a52da33cdd657555bf55577"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/features/layout.json",
+      "bytes": 39340,
+      "sha256": "a4f2013f7c7a2a87dd71e5b3f0ca4399c1f76c87484b60a05283a656083106cf"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/processed-smiles-query.json",
+      "bytes": 790,
+      "sha256": "cfd462f6a28760851bac88d532ca20f8e77be490d81eb615bb521aaaffcdf561"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/receipt.json",
+      "bytes": 3251,
+      "sha256": "3a1b8dec02682cf5fdc93139458a53d8838f93a4434d5a6845198b084090c365"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/resolved-inputs/boltz/compound_000.yaml",
+      "bytes": 538,
+      "sha256": "7a2557cf441390f7227bc6cea5d7bcc66c669e90dd854d5ceb669d5a942e70df"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/resolved-inputs/openbind-query.json",
+      "bytes": 786,
+      "sha256": "7dc9506a7869df16a637139528fafed3b4a19a44b59762c55839a92e2d6f886a"
+    },
+    {
+      "file": "processed-smiles-numbering-32qy-a1keo.json",
+      "bytes": 729,
+      "sha256": "b9fc4582a56e56f502cf63366c005845d0f3c49b9328c837581f5a9b89a919a4"
+    },
+    {
+      "file": "producers/capture_native_features-ythdf2-processed-smiles.py",
+      "bytes": 12412,
+      "sha256": "a03db03a4bf84b9c7e24f553239f1b55a9cb2a2766155eceab8e4d52f4ec0c79"
     }
   ]
 }

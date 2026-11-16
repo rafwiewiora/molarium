@@ -3,7 +3,7 @@
 The [270-prediction protocol comparison](../cofold-recent-pdb-2026-11-13/README.md)
 does not establish fixed-input numerical agreement. These captures locate input
 differences before attributing pose differences to kernels or quantization.
-**Both original native captures and the same-SMILES control are complete. The
+**Both original native captures and both same-SMILES controls are complete. The
 [first matched trained atom-feature stage](trained-target/README.md) now passes on
 production CPU/WebGPU against stock native FP32. Full-model numerical agreement
 remains untested.** Production folding mathematics is unchanged.
@@ -11,7 +11,12 @@ remains untested.** Production folding mathematics is unchanged.
 The [next-stage plan](trunk-audit-plan.json) freezes a four-cycle stock-native
 trunk observation and 32 production-GPU seam comparisons with predeclared
 tolerances. Its CPU preflight matched all [38 native source pins](trunk-native-source-pins.json).
-The GPU measurements remain queued; this plan is not a result. The
+The native capture and conversion are complete. The NVIDIA browser attempt
+stopped before its first measured seam because Chrome found no compatible WebGPU
+adapter. A separate transition control timed out during browser startup. These
+are environment failures, not numerical-comparison results. The
+[16 November control ledger](control-status-2026-11-16.json) preserves the terminal
+states and the separate capability-only diagnostic. The
 [tools and timing correction CAP-01](../../folding/comparison/README.md)
 document the exact scope and preserve historical receipts. Two
 [Spot startup failures](spot-startup-failures.json) occurred before either task
@@ -70,7 +75,7 @@ maps remain explicit; the table's coordinate diagnostic uses the reported lexico
 map, not an allegedly unique atom assignment. None of these findings establishes the
 cause of the pose discrepancy.
 
-## Same-spelling control result
+## Same-spelling control results
 
 The [completed STARD4 control](comparison-9t51-a1jtm-processed-smiles.json),
 job 15717 on L4, uses the exact browser processed SMILES. It captures one batch
@@ -94,6 +99,24 @@ then passes in production CPU/WebGPU, at approximately 1.5 × 10⁻⁷ relative 
 the learned channels, using the same generated reference inputs and trained weights. No bound crystal
 coordinates are used. **Neither the control nor the original comparisons establish
 trained-model or trajectory parity.**
+
+The [YTHDF2 same-spelling control](comparison-32qy-a1keo-processed-smiles.json)
+also completed, in job 19248 on an NVIDIA L4. All 1,381 atom-name encodings now
+agree, eliminating the nine ligand-name mismatches in its original comparison.
+The [integer relationships](processed-smiles-numbering-32qy-a1keo.json) match the
+STARD4 findings: token-index differences and entity-equality relations agree,
+while the raw labels differ. Generated reference coordinates still differ:
+protein within-space pair-distance RMS is 0.590 Å and ligand RMS is 0.205 Å.
+These diagnostics isolate the spelling-dependent name difference; they do not
+show that it caused the original pose discrepancy.
+
+The same job captured one strict-FP32 trained native input-embedder call with
+zero full-model forwards. Its canonical and trained feature snapshots are
+byte-identical, and all captured native tensors were verified finite after
+transfer. The trained outputs are preserved locally for the next matched-input
+comparison; **a browser trained-stage result for YTHDF2 is still pending**.
+No native pose prediction was repeated, and the separate pristine LocalFold
+experimental-pose benchmark retains its original inputs and protocol.
 
 ## Capture boundaries and preserved evidence
 

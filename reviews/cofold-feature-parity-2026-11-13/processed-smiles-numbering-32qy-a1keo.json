@@ -1,0 +1,22 @@
+{
+  "scope": "Raw integer-feature relationships only; not execution of a relative-position neural embedder. Token indices are used by differences, entity labels by equality.",
+  "nativeReceiptSha256": "3a1b8dec02682cf5fdc93139458a53d8838f93a4434d5a6845198b084090c365",
+  "browserReceiptSha256": "c0c7df93d8d1452a97e6d781cd15d4b00cbe5f2db2ea664e16b352756f6b289a",
+  "relationships": {
+    "token_index": {
+      "rawNativeMinusBrowserValues": [
+        -1
+      ],
+      "pairwiseDifferencesEqual": true,
+      "pairwiseEqualitiesEqual": true
+    },
+    "entity_id": {
+      "rawNativeMinusBrowserValues": [
+        -1,
+        1
+      ],
+      "pairwiseDifferencesEqual": false,
+      "pairwiseEqualitiesEqual": true
+    }
+  }
+}
