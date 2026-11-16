@@ -1,0 +1,32 @@
+{
+  "schema": "molarium.regular-nvidia-recovery.v1",
+  "jobId": 20206,
+  "submittedAt": "2026-11-16T22:20:35.758687+00:00",
+  "owner": "rafal",
+  "cluster": "psigreen",
+  "controller": "psigreen-controller",
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-login-001",
+    "instance/id": "3894148826269628555",
+    "instance/zone": "projects/734263838611/zones/us-central1-c"
+  },
+  "root": "/workspacenfs/rafal_wiewiora/molarium-gpu-driver-binding-20261116-attempt003",
+  "sourceManifestSha256": "19ddefa9fa09f0d1ee0c9a624907b83677c041e2487fc0f48faba3a50200cdff",
+  "partitions": [
+    "gpu"
+  ],
+  "cpu": 4,
+  "memory": "14G",
+  "gpuCount": 1,
+  "timeLimitMinutes": 10,
+  "nice": 0,
+  "qos": "normal",
+  "retentionDeadline": "2026-11-20T22:30:00Z",
+  "slurmDeadline": "2026-11-20T22:30:00Z",
+  "dependencyArguments": [],
+  "newNativeForwards": 0,
+  "browserTrunkCyclesPlanned": 0,
+  "completePosePredictionsPlanned": 0,
+  "standaloneVmActions": []
+}

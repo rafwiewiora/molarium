@@ -85,3 +85,31 @@ binds the unchanged runtime recipe; a filename substitution preserves its origin
 bytes. Independent control failures are retained separately, and a failure in
 one control does not discard the other. No repeated native calculation,
 software adapter, priority change or standalone VM is involved.
+
+## Second unstarted loss and regular-queue recovery
+
+Job **20198** also ended in Spot `NODE_FAIL`, from 22:13:58 to 22:14:23 UTC,
+before any task payload, logs or result. Dependent job **20203** was automatically
+cancelled at 22:14:24 without an allocation. Neither produced a capability or
+numerical measurement. These terminal states and the absent start/output markers
+are preserved in the [recovery evidence](regular-binding-attempt003/recovery-parent.json).
+
+The [guarded recovery controller](regular-queue-recovery-controller.py) verified
+both terminal jobs, empty logs, unchanged source hashes, actual production
+identity and the absence of duplicate active controls. It submitted **20206**
+for capability qualification and **20207** for the dependent numerical controls
+at 22:20:35 UTC. Both now use only PSIgreen's regular `gpu` partition, at normal
+priority. This avoids further Spot recovery attempts while preserving scheduler
+fairness. These are managed jobs; no standalone VM or cluster configuration was
+created or changed.
+
+The [capability sources and receipt](regular-binding-attempt003/submission.json)
+are byte-identical to the binding recipe above. The
+[control sources and receipt](regular-controls-attempt002/submission.json)
+change only the expected parent attempt path in the source verifier; the exact
+[adaptation certificate](regular-controls-attempt002/source-adaptation.json)
+records that substitution. All runtime, scientific harnesses, native fixtures,
+precision settings and numerical gates remain unchanged. Slurm again cancels
+the child if the prerequisite fails. The 10/30-minute limits and 20 November
+22:30 UTC deadline are retained. At submission these jobs were pending; their
+receipts do not establish successful execution or numerical agreement.

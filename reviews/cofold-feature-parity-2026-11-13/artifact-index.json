@@ -37,6 +37,11 @@
       "sha256": "ee6d43df593bccf5fab94429e4e8e3bba022b7484e69163e5912a0267fa9d545"
     },
     {
+      "file": "comparison-32qy-a1keo-processed-smiles.json",
+      "bytes": 9342,
+      "sha256": "1af966ef580bca7b8065f964d2e2c0846fb7b4b5cb4087c4ed3a7e523eba0498"
+    },
+    {
       "file": "comparison-32qy-a1keo.json",
       "bytes": 9407,
       "sha256": "8e9de598d30d7ab0ca6d0f748609bc8297ecdea1d7513b25f9c268c08741397f"
@@ -52,9 +57,359 @@
       "sha256": "bd85780ac5ff054aaa60b571055ec5a959f2bf3bc0ee4000315b10cde7a67bef"
     },
     {
+      "file": "control-status-2026-11-16.json",
+      "bytes": 8639,
+      "sha256": "863557a77d756d76b9aa3fc537b8e13abc2cac72e0c84f9748d2f79a67489973"
+    },
+    {
       "file": "exported-protein-atom-layout.json",
       "bytes": 4124,
       "sha256": "3938c245bf4e52a56f9e30daba6ebd55aacc25b668622f9e7c5f2107c47e1dcb"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/README.md",
+      "bytes": 7298,
+      "sha256": "6614fc4cbdf751dd44889fec252da687912ed9b60f29c90daf1effdbff49c1ea"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/chrome-logging-wrapper.sh",
+      "bytes": 250,
+      "sha256": "d5fcf03bca1ff19ac19cc450eba6b379249666588b80933c69d2f80d2231f35e"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/chrome-logging-wrapper.sh",
+      "bytes": 250,
+      "sha256": "d5fcf03bca1ff19ac19cc450eba6b379249666588b80933c69d2f80d2231f35e"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/collect_driver_libraries.py",
+      "bytes": 2546,
+      "sha256": "12c76cfea62482e24690bfd48d603d72ef1f61c3f9ad12836eb1f92c4538efd9"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/container.sh",
+      "bytes": 388,
+      "sha256": "f9fdeb3fbb3290bfb9b5400f370e2508d14b82ebbce251aa4eba02a64e5799ec"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/gpu.sh",
+      "bytes": 3528,
+      "sha256": "f202a99329fd7223236379a6ec4b1024ce9c46f20aadd1637d350433f6e1e619"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/inspect_vulkan.py",
+      "bytes": 1369,
+      "sha256": "f2115f7becc53acc23b1caf5bab605b0c86f4f3f0d87b42055ae8fd2c2844cb5"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/probe.mjs",
+      "bytes": 4005,
+      "sha256": "e8425167d543d56eaf3d6162091b6ebffbd8416cec86facce904f1bbeb4eddfc"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/source-manifest.json",
+      "bytes": 543,
+      "sha256": "19ddefa9fa09f0d1ee0c9a624907b83677c041e2487fc0f48faba3a50200cdff"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/source-sha256.txt",
+      "bytes": 498,
+      "sha256": "f2791c4bb03687c94de17e3ba83437a714a3271b864ae4b9d5306e0f9e95d73a"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/submission.json",
+      "bytes": 1093,
+      "sha256": "98cbec68d1de68a35cb678b92867e7ebc3ff62dfceeec8674af83e2b229f1b75"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/unstarted-retry-20198.json",
+      "bytes": 1180,
+      "sha256": "ed2ff730bf45bd737f0b1932f5acfb0c99e0397422901cfc406ee953e0cb83de"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/gpu.sh",
+      "bytes": 2341,
+      "sha256": "6d613e57a7de8fe25dfc2a8387c75d31b8d1a3cad10f95e1115538c1e9e312f7"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/chrome-ldd.txt",
+      "bytes": 6645,
+      "sha256": "e99872107720d8548f310ca0042d5005a1701222ef53a8a682314bcf6afd1544"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/chrome-stderr.log",
+      "bytes": 32654,
+      "sha256": "ee7a21e3e51bd813709529a6b9da55995a0613c8e9389c372891785d896974da"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/container-libraries.txt",
+      "bytes": 45256,
+      "sha256": "362563f7fa45e51b64c6a5995b51b5c1e13d0ee385419e5f84f398e4fb804908"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/device-files.txt",
+      "bytes": 506,
+      "sha256": "c982a8107d28a040b84eb194f8d1dd6e62395e79244d3f27d3b351b951c49115"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/gpu-identity.txt",
+      "bytes": 90,
+      "sha256": "efe94122ed1572d98145420776cc3c093049e14a8ffc9758e5cd28b80d934478"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/logs/gpu-20186.log",
+      "bytes": 339,
+      "sha256": "ec0b6a54892cf2302e6d5023497acf16b6c6cd11c2877770abc1e68b96d39f82"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/nvidia-icd.json",
+      "bytes": 140,
+      "sha256": "361076eba0aa916c17d23bdec14adef34e58c8f8f8d6a5dd94ac901da5a707ed"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/preservation.json",
+      "bytes": 1983,
+      "sha256": "f8b1e00b8d718703b60c656380ecd4c1b16159540a5cd088df0ee6b91b1b3d40"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/probe-result.json",
+      "bytes": 749,
+      "sha256": "44c4fd77ef24eeb06b6432dc1028e69e482d375f5bab4c706913b09c2394783e"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/slurm-grant.txt",
+      "bytes": 1705,
+      "sha256": "3c6451e44481e5682e2b9df5e0f04a2f738019efe567af5431d5ca12b2b40d44"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/observed-20186/vulkan-ldd.txt",
+      "bytes": 333,
+      "sha256": "5bfda94e85d24d83ca32eb1e74f8f8d6ebd681cd153e39e01728cfe997624961"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/probe.mjs",
+      "bytes": 4005,
+      "sha256": "e8425167d543d56eaf3d6162091b6ebffbd8416cec86facce904f1bbeb4eddfc"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/chrome-logging-wrapper.sh",
+      "bytes": 250,
+      "sha256": "d5fcf03bca1ff19ac19cc450eba6b379249666588b80933c69d2f80d2231f35e"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/collect_driver_libraries.py",
+      "bytes": 2546,
+      "sha256": "12c76cfea62482e24690bfd48d603d72ef1f61c3f9ad12836eb1f92c4538efd9"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/container-controls.sh",
+      "bytes": 1473,
+      "sha256": "cf8158164362a7c7390ca6e5ead8aca90556a3589dc5969469f1a1069705853b"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/container.sh",
+      "bytes": 388,
+      "sha256": "f9fdeb3fbb3290bfb9b5400f370e2508d14b82ebbce251aa4eba02a64e5799ec"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/gpu.sh",
+      "bytes": 2761,
+      "sha256": "29db313d626bad4900e3b1a0a4be9c28eb7dbb4fe0dc3decdf88fc3560bff13f"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/inspect_vulkan.py",
+      "bytes": 1369,
+      "sha256": "f2115f7becc53acc23b1caf5bab605b0c86f4f3f0d87b42055ae8fd2c2844cb5"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/probe.mjs",
+      "bytes": 4005,
+      "sha256": "e8425167d543d56eaf3d6162091b6ebffbd8416cec86facce904f1bbeb4eddfc"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/runtime-capability.sh",
+      "bytes": 3528,
+      "sha256": "f202a99329fd7223236379a6ec4b1024ce9c46f20aadd1637d350433f6e1e619"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/runtime-parent-source-manifest.json",
+      "bytes": 543,
+      "sha256": "19ddefa9fa09f0d1ee0c9a624907b83677c041e2487fc0f48faba3a50200cdff"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/runtime-source-reuse.json",
+      "bytes": 741,
+      "sha256": "bf02789ff9665952a73f186481eef0cfc2972a418a761e467b949c17b72e801a"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/source-manifest.json",
+      "bytes": 933,
+      "sha256": "36a44e87c303140ef01fe2c35cac00a9c93725cdf8e9c194d3469244cfbd1e78"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/source-sha256.txt",
+      "bytes": 860,
+      "sha256": "0002f65efd423331495a1f8b683e2a5dc130dfccb9ba9ce837bbd7b880118c33"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/submission.json",
+      "bytes": 1132,
+      "sha256": "6e22c21b9b9d3762bc3778d5042990fa531958c52eec5da74534aaa3d877135a"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/verify_sources.py",
+      "bytes": 2317,
+      "sha256": "3b305d55a30a5c6e04fb360226f32426cd0a60b1d7792b1d4e948615ff5d1e5b"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-binding-attempt003/chrome-logging-wrapper.sh",
+      "bytes": 250,
+      "sha256": "d5fcf03bca1ff19ac19cc450eba6b379249666588b80933c69d2f80d2231f35e"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-binding-attempt003/collect_driver_libraries.py",
+      "bytes": 2546,
+      "sha256": "12c76cfea62482e24690bfd48d603d72ef1f61c3f9ad12836eb1f92c4538efd9"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-binding-attempt003/container.sh",
+      "bytes": 388,
+      "sha256": "f9fdeb3fbb3290bfb9b5400f370e2508d14b82ebbce251aa4eba02a64e5799ec"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-binding-attempt003/gpu.sh",
+      "bytes": 3528,
+      "sha256": "f202a99329fd7223236379a6ec4b1024ce9c46f20aadd1637d350433f6e1e619"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-binding-attempt003/inspect_vulkan.py",
+      "bytes": 1369,
+      "sha256": "f2115f7becc53acc23b1caf5bab605b0c86f4f3f0d87b42055ae8fd2c2844cb5"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-binding-attempt003/probe.mjs",
+      "bytes": 4005,
+      "sha256": "e8425167d543d56eaf3d6162091b6ebffbd8416cec86facce904f1bbeb4eddfc"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-binding-attempt003/recovery-parent.json",
+      "bytes": 4499,
+      "sha256": "3f2d813b5947a61c4841f729f5d01833a44ee8072ffdaed38e1e6af0e169b9fd"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-binding-attempt003/source-manifest.json",
+      "bytes": 543,
+      "sha256": "19ddefa9fa09f0d1ee0c9a624907b83677c041e2487fc0f48faba3a50200cdff"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-binding-attempt003/source-sha256.txt",
+      "bytes": 498,
+      "sha256": "f2791c4bb03687c94de17e3ba83437a714a3271b864ae4b9d5306e0f9e95d73a"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-binding-attempt003/submission.json",
+      "bytes": 992,
+      "sha256": "d7e641f97aae26837bf7d6f612c1e7cede24c3d8dd45ebf0f75ba1010b211f5e"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-controls-attempt002/chrome-logging-wrapper.sh",
+      "bytes": 250,
+      "sha256": "d5fcf03bca1ff19ac19cc450eba6b379249666588b80933c69d2f80d2231f35e"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-controls-attempt002/collect_driver_libraries.py",
+      "bytes": 2546,
+      "sha256": "12c76cfea62482e24690bfd48d603d72ef1f61c3f9ad12836eb1f92c4538efd9"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-controls-attempt002/container-controls.sh",
+      "bytes": 1473,
+      "sha256": "cf8158164362a7c7390ca6e5ead8aca90556a3589dc5969469f1a1069705853b"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-controls-attempt002/container.sh",
+      "bytes": 388,
+      "sha256": "f9fdeb3fbb3290bfb9b5400f370e2508d14b82ebbce251aa4eba02a64e5799ec"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-controls-attempt002/gpu.sh",
+      "bytes": 2761,
+      "sha256": "29db313d626bad4900e3b1a0a4be9c28eb7dbb4fe0dc3decdf88fc3560bff13f"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-controls-attempt002/inspect_vulkan.py",
+      "bytes": 1369,
+      "sha256": "f2115f7becc53acc23b1caf5bab605b0c86f4f3f0d87b42055ae8fd2c2844cb5"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-controls-attempt002/probe.mjs",
+      "bytes": 4005,
+      "sha256": "e8425167d543d56eaf3d6162091b6ebffbd8416cec86facce904f1bbeb4eddfc"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-controls-attempt002/recovery-parent.json",
+      "bytes": 4499,
+      "sha256": "1cfb8a4dc1d4f27592b223d168343e4a31e32d047bd75ef4f6ae9e487e77b3d0"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-controls-attempt002/runtime-capability.sh",
+      "bytes": 3528,
+      "sha256": "f202a99329fd7223236379a6ec4b1024ce9c46f20aadd1637d350433f6e1e619"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-controls-attempt002/runtime-parent-source-manifest.json",
+      "bytes": 543,
+      "sha256": "19ddefa9fa09f0d1ee0c9a624907b83677c041e2487fc0f48faba3a50200cdff"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-controls-attempt002/source-adaptation.json",
+      "bytes": 720,
+      "sha256": "62646dbca5d4366c509b58a05b6de8ecb588d609b7d9ea718f9e470e292ab66a"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-controls-attempt002/source-manifest.json",
+      "bytes": 933,
+      "sha256": "2955767472d1a95a3481d2e2812bb818bd3485cbfccac989112644f2dc9bec96"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-controls-attempt002/source-sha256.txt",
+      "bytes": 860,
+      "sha256": "854f033909b6ff43f1dcb8c96fe56a2b8f8e51b66fd0759ae29ba01aa479fecc"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-controls-attempt002/submission.json",
+      "bytes": 1068,
+      "sha256": "448ae830165208b7e04b3a4afc3e704c53f7270ac177dc0495c0a7435b29bc06"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-controls-attempt002/verify_sources.py",
+      "bytes": 2317,
+      "sha256": "d4aa718977dc4ac467a7306a5a649b7c1b65ad278f23c01fec81774944fae95d"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/regular-queue-recovery-controller.py",
+      "bytes": 7004,
+      "sha256": "afc140616bd36c2949053f536ee350df78b88bd039109867c2f40fc27d7f4ddd"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/retry-controller.py",
+      "bytes": 4018,
+      "sha256": "23b409ca02e0f550eedaa2cca60a0eb5e19fcba5b377cd8b3759d6097d768af0"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/retry-submission.json",
+      "bytes": 1301,
+      "sha256": "78618f8c5663d87a04ef9bcfbbbcf580b25b48c5fa3632f40a94d51e3b7428d8"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/source-manifest.json",
+      "bytes": 265,
+      "sha256": "64bbb3c47deb0920a4aca1f73fc57e9f13a6dca9edb5083b78e096d6bd4cdfbc"
+    },
+    {
+      "file": "gpu-capability-2026-11-16/source-sha256.txt",
+      "bytes": 241,
+      "sha256": "91cf95d38e8f9e7d6895bf6be98d5413540b321a2ba5d5a39efdb036721b3ac4"
     },
     {
       "file": "installed-native-source.json",
@@ -95,6 +450,66 @@
       "file": "native-32qy-a1keo/resolved-inputs/openbind-query.json",
       "bytes": 799,
       "sha256": "96e5ecbd8c725e082ee9848541879217b974abffb9c6128f82e391de1439bdbf"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/capture-runner.json",
+      "bytes": 734,
+      "sha256": "d0a095920e8c65e657c4ac8dbc0188ed6d7ae00887b5dcf5826114251be00c36"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/cli/experiment_config.json",
+      "bytes": 7623,
+      "sha256": "44f1338710282c84d75b60aeeaca2598b1d7badcfd5b1ef2304b8da5f5afabaa"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/cli/inference_query_set.json",
+      "bytes": 2333,
+      "sha256": "016a549220c18bb4012516d19994cc9ddba47464cf28ffd5d96c57b82b6305a6"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/cli/model_config.json",
+      "bytes": 60409,
+      "sha256": "836f48bd49801f43fd46f963629fec80a4f23807447684d5fe07d7dcd021cd94"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/cli/summary.txt",
+      "bytes": 303,
+      "sha256": "c16d7914b2aef7ec2d4a846a27ce3eed03ef57035b6ccee1237528b606912814"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/features/features.bin",
+      "bytes": 2973121,
+      "sha256": "7a68d1ec69c71a95eb205fd5d1e906a9d3075f73d4b2a938f085b47c273e8a14"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/features/features.json",
+      "bytes": 16717,
+      "sha256": "172bd8e7913f620b2a1d3b7a9a5a46ce41b4216a5a52da33cdd657555bf55577"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/features/layout.json",
+      "bytes": 39340,
+      "sha256": "a4f2013f7c7a2a87dd71e5b3f0ca4399c1f76c87484b60a05283a656083106cf"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/processed-smiles-query.json",
+      "bytes": 790,
+      "sha256": "cfd462f6a28760851bac88d532ca20f8e77be490d81eb615bb521aaaffcdf561"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/receipt.json",
+      "bytes": 3251,
+      "sha256": "3a1b8dec02682cf5fdc93139458a53d8838f93a4434d5a6845198b084090c365"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/resolved-inputs/boltz/compound_000.yaml",
+      "bytes": 538,
+      "sha256": "7a2557cf441390f7227bc6cea5d7bcc66c669e90dd854d5ceb669d5a942e70df"
+    },
+    {
+      "file": "native-32qy-a1keo-processed-smiles/resolved-inputs/openbind-query.json",
+      "bytes": 786,
+      "sha256": "7dc9506a7869df16a637139528fafed3b4a19a44b59762c55839a92e2d6f886a"
     },
     {
       "file": "native-9t51-a1jtm/capture-runner.json",
@@ -202,6 +617,11 @@
       "sha256": "3cc70f5c9b07589f7b7f384c5eda3df59e69b1ef96793ba38d7d661dffc0588d"
     },
     {
+      "file": "processed-smiles-numbering-32qy-a1keo.json",
+      "bytes": 729,
+      "sha256": "b9fc4582a56e56f502cf63366c005845d0f3c49b9328c837581f5a9b89a919a4"
+    },
+    {
       "file": "processed-smiles-numbering.json",
       "bytes": 729,
       "sha256": "8e2de61007d26da60eedcffa3b90897b867d2915066c9df8d5d55a13e152adf4"
@@ -220,6 +640,11 @@
       "file": "producers/capture_native_features-processed-smiles.py",
       "bytes": 12190,
       "sha256": "6a07a9284b5749cd71937a0870697fa300293a74b8ae17b60afeff91a988d978"
+    },
+    {
+      "file": "producers/capture_native_features-ythdf2-processed-smiles.py",
+      "bytes": 12412,
+      "sha256": "a03db03a4bf84b9c7e24f553239f1b55a9cb2a2766155eceab8e4d52f4ec0c79"
     },
     {
       "file": "producers/capture_native_features.py",
@@ -332,101 +757,6 @@
       "sha256": "d39312c83a0af819d01260a8a67f55aeafc24df6cd0a1c6c5959e9a57859ffaa"
     },
     {
-      "file": "transfer-receipt.json",
-      "bytes": 7468,
-      "sha256": "f584ff3b869f9efae7e0e515dc38b846843dccdd7aaa6a4daa59e7736fd6f266"
-    },
-    {
-      "file": "trunk-audit-plan.json",
-      "bytes": 2563,
-      "sha256": "07829dd669bc7604c96f5a862176cddb01effbbbe0df00400c1802f480a82183"
-    },
-    {
-      "file": "trunk-native-source-pins.json",
-      "bytes": 4146,
-      "sha256": "cad7747aa6d9e826d52858a8a6d30dfcb3c99a40a88a2dc8c58a859b2f9adebb"
-    },
-    {
-      "file": "comparison-32qy-a1keo-processed-smiles.json",
-      "bytes": 9342,
-      "sha256": "1af966ef580bca7b8065f964d2e2c0846fb7b4b5cb4087c4ed3a7e523eba0498"
-    },
-    {
-      "file": "control-status-2026-11-16.json",
-      "bytes": 8639,
-      "sha256": "863557a77d756d76b9aa3fc537b8e13abc2cac72e0c84f9748d2f79a67489973"
-    },
-    {
-      "file": "native-32qy-a1keo-processed-smiles/capture-runner.json",
-      "bytes": 734,
-      "sha256": "d0a095920e8c65e657c4ac8dbc0188ed6d7ae00887b5dcf5826114251be00c36"
-    },
-    {
-      "file": "native-32qy-a1keo-processed-smiles/cli/experiment_config.json",
-      "bytes": 7623,
-      "sha256": "44f1338710282c84d75b60aeeaca2598b1d7badcfd5b1ef2304b8da5f5afabaa"
-    },
-    {
-      "file": "native-32qy-a1keo-processed-smiles/cli/inference_query_set.json",
-      "bytes": 2333,
-      "sha256": "016a549220c18bb4012516d19994cc9ddba47464cf28ffd5d96c57b82b6305a6"
-    },
-    {
-      "file": "native-32qy-a1keo-processed-smiles/cli/model_config.json",
-      "bytes": 60409,
-      "sha256": "836f48bd49801f43fd46f963629fec80a4f23807447684d5fe07d7dcd021cd94"
-    },
-    {
-      "file": "native-32qy-a1keo-processed-smiles/cli/summary.txt",
-      "bytes": 303,
-      "sha256": "c16d7914b2aef7ec2d4a846a27ce3eed03ef57035b6ccee1237528b606912814"
-    },
-    {
-      "file": "native-32qy-a1keo-processed-smiles/features/features.bin",
-      "bytes": 2973121,
-      "sha256": "7a68d1ec69c71a95eb205fd5d1e906a9d3075f73d4b2a938f085b47c273e8a14"
-    },
-    {
-      "file": "native-32qy-a1keo-processed-smiles/features/features.json",
-      "bytes": 16717,
-      "sha256": "172bd8e7913f620b2a1d3b7a9a5a46ce41b4216a5a52da33cdd657555bf55577"
-    },
-    {
-      "file": "native-32qy-a1keo-processed-smiles/features/layout.json",
-      "bytes": 39340,
-      "sha256": "a4f2013f7c7a2a87dd71e5b3f0ca4399c1f76c87484b60a05283a656083106cf"
-    },
-    {
-      "file": "native-32qy-a1keo-processed-smiles/processed-smiles-query.json",
-      "bytes": 790,
-      "sha256": "cfd462f6a28760851bac88d532ca20f8e77be490d81eb615bb521aaaffcdf561"
-    },
-    {
-      "file": "native-32qy-a1keo-processed-smiles/receipt.json",
-      "bytes": 3251,
-      "sha256": "3a1b8dec02682cf5fdc93139458a53d8838f93a4434d5a6845198b084090c365"
-    },
-    {
-      "file": "native-32qy-a1keo-processed-smiles/resolved-inputs/boltz/compound_000.yaml",
-      "bytes": 538,
-      "sha256": "7a2557cf441390f7227bc6cea5d7bcc66c669e90dd854d5ceb669d5a942e70df"
-    },
-    {
-      "file": "native-32qy-a1keo-processed-smiles/resolved-inputs/openbind-query.json",
-      "bytes": 786,
-      "sha256": "7dc9506a7869df16a637139528fafed3b4a19a44b59762c55839a92e2d6f886a"
-    },
-    {
-      "file": "processed-smiles-numbering-32qy-a1keo.json",
-      "bytes": 729,
-      "sha256": "b9fc4582a56e56f502cf63366c005845d0f3c49b9328c837581f5a9b89a919a4"
-    },
-    {
-      "file": "producers/capture_native_features-ythdf2-processed-smiles.py",
-      "bytes": 12412,
-      "sha256": "a03db03a4bf84b9c7e24f553239f1b55a9cb2a2766155eceab8e4d52f4ec0c79"
-    },
-    {
       "file": "trained-target-ythdf2-cpu/README.md",
       "bytes": 4768,
       "sha256": "bc4b3869f8e1c5814c82a5958f7f46b61c9fbdbd76ecccef9ef6b03b06f94986"
@@ -507,219 +837,19 @@
       "sha256": "37ffb75b20b3bd4b1fe1d3aa1cabbd48253fe9daa482c7938f6b88cc9830a69e"
     },
     {
-      "file": "gpu-capability-2026-11-16/README.md",
-      "bytes": 5511,
-      "sha256": "47c3b08a09cf4d57bebb92ae0eb277d51f1f16f9379bd86fef660fe6d8e4ed20"
+      "file": "transfer-receipt.json",
+      "bytes": 7468,
+      "sha256": "f584ff3b869f9efae7e0e515dc38b846843dccdd7aaa6a4daa59e7736fd6f266"
     },
     {
-      "file": "gpu-capability-2026-11-16/chrome-logging-wrapper.sh",
-      "bytes": 250,
-      "sha256": "d5fcf03bca1ff19ac19cc450eba6b379249666588b80933c69d2f80d2231f35e"
+      "file": "trunk-audit-plan.json",
+      "bytes": 2563,
+      "sha256": "07829dd669bc7604c96f5a862176cddb01effbbbe0df00400c1802f480a82183"
     },
     {
-      "file": "gpu-capability-2026-11-16/gpu.sh",
-      "bytes": 2341,
-      "sha256": "6d613e57a7de8fe25dfc2a8387c75d31b8d1a3cad10f95e1115538c1e9e312f7"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/probe.mjs",
-      "bytes": 4005,
-      "sha256": "e8425167d543d56eaf3d6162091b6ebffbd8416cec86facce904f1bbeb4eddfc"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/retry-controller.py",
-      "bytes": 4018,
-      "sha256": "23b409ca02e0f550eedaa2cca60a0eb5e19fcba5b377cd8b3759d6097d768af0"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/retry-submission.json",
-      "bytes": 1301,
-      "sha256": "78618f8c5663d87a04ef9bcfbbbcf580b25b48c5fa3632f40a94d51e3b7428d8"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/source-manifest.json",
-      "bytes": 265,
-      "sha256": "64bbb3c47deb0920a4aca1f73fc57e9f13a6dca9edb5083b78e096d6bd4cdfbc"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/source-sha256.txt",
-      "bytes": 241,
-      "sha256": "91cf95d38e8f9e7d6895bf6be98d5413540b321a2ba5d5a39efdb036721b3ac4"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/observed-20186/chrome-ldd.txt",
-      "bytes": 6645,
-      "sha256": "e99872107720d8548f310ca0042d5005a1701222ef53a8a682314bcf6afd1544"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/observed-20186/chrome-stderr.log",
-      "bytes": 32654,
-      "sha256": "ee7a21e3e51bd813709529a6b9da55995a0613c8e9389c372891785d896974da"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/observed-20186/container-libraries.txt",
-      "bytes": 45256,
-      "sha256": "362563f7fa45e51b64c6a5995b51b5c1e13d0ee385419e5f84f398e4fb804908"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/observed-20186/device-files.txt",
-      "bytes": 506,
-      "sha256": "c982a8107d28a040b84eb194f8d1dd6e62395e79244d3f27d3b351b951c49115"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/observed-20186/gpu-identity.txt",
-      "bytes": 90,
-      "sha256": "efe94122ed1572d98145420776cc3c093049e14a8ffc9758e5cd28b80d934478"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/observed-20186/logs/gpu-20186.log",
-      "bytes": 339,
-      "sha256": "ec0b6a54892cf2302e6d5023497acf16b6c6cd11c2877770abc1e68b96d39f82"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/observed-20186/nvidia-icd.json",
-      "bytes": 140,
-      "sha256": "361076eba0aa916c17d23bdec14adef34e58c8f8f8d6a5dd94ac901da5a707ed"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/observed-20186/preservation.json",
-      "bytes": 1983,
-      "sha256": "f8b1e00b8d718703b60c656380ecd4c1b16159540a5cd088df0ee6b91b1b3d40"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/observed-20186/probe-result.json",
-      "bytes": 749,
-      "sha256": "44c4fd77ef24eeb06b6432dc1028e69e482d375f5bab4c706913b09c2394783e"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/observed-20186/slurm-grant.txt",
-      "bytes": 1705,
-      "sha256": "3c6451e44481e5682e2b9df5e0f04a2f738019efe567af5431d5ca12b2b40d44"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/observed-20186/vulkan-ldd.txt",
-      "bytes": 333,
-      "sha256": "5bfda94e85d24d83ca32eb1e74f8f8d6ebd681cd153e39e01728cfe997624961"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/chrome-logging-wrapper.sh",
-      "bytes": 250,
-      "sha256": "d5fcf03bca1ff19ac19cc450eba6b379249666588b80933c69d2f80d2231f35e"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/collect_driver_libraries.py",
-      "bytes": 2546,
-      "sha256": "12c76cfea62482e24690bfd48d603d72ef1f61c3f9ad12836eb1f92c4538efd9"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/container.sh",
-      "bytes": 388,
-      "sha256": "f9fdeb3fbb3290bfb9b5400f370e2508d14b82ebbce251aa4eba02a64e5799ec"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/gpu.sh",
-      "bytes": 3528,
-      "sha256": "f202a99329fd7223236379a6ec4b1024ce9c46f20aadd1637d350433f6e1e619"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/inspect_vulkan.py",
-      "bytes": 1369,
-      "sha256": "f2115f7becc53acc23b1caf5bab605b0c86f4f3f0d87b42055ae8fd2c2844cb5"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/probe.mjs",
-      "bytes": 4005,
-      "sha256": "e8425167d543d56eaf3d6162091b6ebffbd8416cec86facce904f1bbeb4eddfc"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/source-manifest.json",
-      "bytes": 543,
-      "sha256": "19ddefa9fa09f0d1ee0c9a624907b83677c041e2487fc0f48faba3a50200cdff"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/source-sha256.txt",
-      "bytes": 498,
-      "sha256": "f2791c4bb03687c94de17e3ba83437a714a3271b864ae4b9d5306e0f9e95d73a"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/submission.json",
-      "bytes": 1093,
-      "sha256": "98cbec68d1de68a35cb678b92867e7ebc3ff62dfceeec8674af83e2b229f1b75"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/driver-binding-attempt001/unstarted-retry-20198.json",
-      "bytes": 1180,
-      "sha256": "ed2ff730bf45bd737f0b1932f5acfb0c99e0397422901cfc406ee953e0cb83de"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/chrome-logging-wrapper.sh",
-      "bytes": 250,
-      "sha256": "d5fcf03bca1ff19ac19cc450eba6b379249666588b80933c69d2f80d2231f35e"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/collect_driver_libraries.py",
-      "bytes": 2546,
-      "sha256": "12c76cfea62482e24690bfd48d603d72ef1f61c3f9ad12836eb1f92c4538efd9"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/container-controls.sh",
-      "bytes": 1473,
-      "sha256": "cf8158164362a7c7390ca6e5ead8aca90556a3589dc5969469f1a1069705853b"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/container.sh",
-      "bytes": 388,
-      "sha256": "f9fdeb3fbb3290bfb9b5400f370e2508d14b82ebbce251aa4eba02a64e5799ec"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/gpu.sh",
-      "bytes": 2761,
-      "sha256": "29db313d626bad4900e3b1a0a4be9c28eb7dbb4fe0dc3decdf88fc3560bff13f"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/inspect_vulkan.py",
-      "bytes": 1369,
-      "sha256": "f2115f7becc53acc23b1caf5bab605b0c86f4f3f0d87b42055ae8fd2c2844cb5"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/probe.mjs",
-      "bytes": 4005,
-      "sha256": "e8425167d543d56eaf3d6162091b6ebffbd8416cec86facce904f1bbeb4eddfc"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/runtime-capability.sh",
-      "bytes": 3528,
-      "sha256": "f202a99329fd7223236379a6ec4b1024ce9c46f20aadd1637d350433f6e1e619"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/runtime-parent-source-manifest.json",
-      "bytes": 543,
-      "sha256": "19ddefa9fa09f0d1ee0c9a624907b83677c041e2487fc0f48faba3a50200cdff"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/runtime-source-reuse.json",
-      "bytes": 741,
-      "sha256": "bf02789ff9665952a73f186481eef0cfc2972a418a761e467b949c17b72e801a"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/source-manifest.json",
-      "bytes": 933,
-      "sha256": "36a44e87c303140ef01fe2c35cac00a9c93725cdf8e9c194d3469244cfbd1e78"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/source-sha256.txt",
-      "bytes": 860,
-      "sha256": "0002f65efd423331495a1f8b683e2a5dc130dfccb9ba9ce837bbd7b880118c33"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/submission.json",
-      "bytes": 1132,
-      "sha256": "6e22c21b9b9d3762bc3778d5042990fa531958c52eec5da74534aaa3d877135a"
-    },
-    {
-      "file": "gpu-capability-2026-11-16/qualified-controls-attempt001/verify_sources.py",
-      "bytes": 2317,
-      "sha256": "3b305d55a30a5c6e04fb360226f32426cd0a60b1d7792b1d4e948615ff5d1e5b"
+      "file": "trunk-native-source-pins.json",
+      "bytes": 4146,
+      "sha256": "cad7747aa6d9e826d52858a8a6d30dfcb3c99a40a88a2dc8c58a859b2f9adebb"
     }
   ]
 }
