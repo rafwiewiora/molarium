@@ -1,7 +1,7 @@
 {
   "schema": "molarium.stock-execution-history.v1",
   "planSha256": "797454ec8d2766485a96cfb13326511f0333efa7b89bb656968f84b2844ad349",
-  "checkedAt": "2026-11-16T18:50:06.660952+00:00",
+  "checkedAt": "2026-11-17T01:49:02.852599+00:00",
   "attempts": [
     {
       "id": "initial",
@@ -22,21 +22,34 @@
       "startedAt": "2026-11-16T16:14:52.840273+00:00",
       "startIndex": 221,
       "plannedRemaining": 259,
-      "completedAtCheck": 69,
+      "completedAtCheck": 259,
       "sourceManifestSha256": "465d070df0f0039546a787dd3e0e6122e035bc55c377f6e75e2f43b7df760384",
-      "state": "running"
+      "state": "complete",
+      "finishedAt": "2026-11-17T01:42:28.511352+00:00"
     }
   ],
   "completedPredictionsRepeated": 0,
   "settingsChanged": false,
   "recovery": "Completed outputs/source/inputs were hash-verified before starting one fresh continuation. The original partial attempt remains preserved.",
   "latestVerifiedCheckpoint": {
-    "completedPredictions": 288,
+    "completedPredictions": 480,
     "plannedPredictions": 480,
-    "uniformSamplesPerCase": 6,
+    "uniformSamplesPerCase": 10,
     "sourceAttempts": 2,
     "newNeuralForwardsDuringReplay": 0,
-    "scoresSha256": "1679e234ab2886f856b057cd6c6329cfd2f6dfe2bb0cdbf1e232aa67ce303f38",
-    "archiveSha256": "8e8a756c200cdff7338c71ad2c30f4bbb93eff41126e80588eb658af62c457e3"
-  }
+    "scoresSha256": "219f98c1ddd057dd699c4b00ae32593340744ee3b9d04737fbf23b2b599b95ca",
+    "archiveSha256": "6443a685f64dbb6948e42973e2ccac9fe6d5a12008541bc5abff33bb0c75ae93",
+    "verification": "source-verification.json"
+  },
+  "previousVerifiedCheckpoints": [
+    {
+      "completedPredictions": 288,
+      "plannedPredictions": 480,
+      "uniformSamplesPerCase": 6,
+      "sourceAttempts": 2,
+      "newNeuralForwardsDuringReplay": 0,
+      "scoresSha256": "1679e234ab2886f856b057cd6c6329cfd2f6dfe2bb0cdbf1e232aa67ce303f38",
+      "archiveSha256": "8e8a756c200cdff7338c71ad2c30f4bbb93eff41126e80588eb658af62c457e3"
+    }
+  ]
 }

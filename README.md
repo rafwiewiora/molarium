@@ -37,11 +37,17 @@ pass energy and every force component's aggregate gates on **22/22 supported cas
 on M1 Pro and L4, with **25 explicitly unsupported cases**. They include single-replica
 job timings and do not depend on treating the WASM bridge as fully native-validated.
 
-For structure prediction, the [80-run original LocalFold page control](./reviews/cofold-stock-localfold-2026-11-13/results-200x10/README.md)
-tests seven crystal complexes on M1 Pro, with ten seeds and 200 diffusion steps
-for each of eight model/system pairs. Every selected pair already has a native
-pose below 2 Å. All poses, chemical-validity failures and direct native comparisons
-are preserved; this selected diagnostic cohort is not a general accuracy estimate.
+For structure prediction, the [completed 480-prediction LocalFold benchmark](./reviews/cofold-rnp-spectrum-2026-11-15/README.md)
+tests 48 native-positive systems across the published training-similarity spectrum,
+with ten seeds, 200 diffusion steps and four trunk passes on physical Apple WebGPU.
+Independent replay finds a <2 Å pose in 31/48 cases, or 26/48 (54.17%) when limited
+stereo/clash checks must also pass. Highest archived ipTM selection gives 17/48
+(35.42%) passing hits. [All original poses and human-review files](./reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/review-libraries/README.md),
+confidence ties, sampling/time plots and source hashes are public. This selected
+native-positive reconstruction study does not establish population accuracy or
+fixed-input implementation parity. The earlier
+[80-prediction original-page control](./reviews/cofold-stock-localfold-2026-11-13/results-200x10/README.md)
+remains preserved as a separate cohort.
 
 The preserved [Astra adversarial review and remediation log](./reviews/ASTRA_REVIEW_OF_SOL_WORK_2026-09-05.md)
 documents known boundaries, reproducible probes, fixes, and remaining validation work.
@@ -500,16 +506,17 @@ matched-tensor implementation parity remains a separate question.
 The [larger Runs N’ Poses follow-up](reviews/cofold-rnp-spectrum-2026-11-15/README.md)
 has independently qualified native hits and frozen 48 systems across the published
 training-similarity spectrum. Its native evidence, exclusions, chemical-state
-gates and selection shortfalls are public. The 480-prediction stock run is underway;
-a self-contained 288-prediction checkpoint is independently replayed. The uniform
-six-sample result is 25/48 cases with a <2 Å hit passing the limited
-stereo/clash checks when the crystal answer identifies any hit. Selecting the
-highest archived ipTM gives 17/48 passing hits under the fixed lowest-seed tie
-rule; rounded-score ties remain explicit. [Sampling curves, recorded launcher times and their source hashes](reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/README.md#uniform-six-sample-checkpoint)
-are public; the ten-seed result remains pending.
-The [portable Foldarium examples](reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/review-examples/README.md)
-let readers inspect 30 original poses locally, with separate prediction-only
-and experimental-reference views and exportable human preferences.
+gates and selection shortfalls are public. All 480 stock predictions are complete
+and independently replayed. Across ten samples per system, 31/48 cases contain
+a geometric <2 Å pose and 26/48 (54.17%) contain one passing limited stereo/clash
+checks; highest archived ipTM selection gives 17/48 (35.42%) passing hits under
+the fixed lowest-seed tie rule. Rounded-score ties remain explicit.
+[Sampling curves, launcher-time measurements and original output archives](reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/README.md)
+retain the complete experiment and historical prefixes.
+[All 48 systems in portable Foldarium libraries](reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/review-libraries/README.md)
+are available for local human inspection, with optional separate references and
+exportable pose preferences. The actual six-sample browser sweep passed all
+48 systems; final ten-sample UI coverage is tracked separately.
 
 An [independent fixed-input transition-layer audit](reviews/cofold-layer-parity-2026-11-13/README.md)
 preserves exact official FP32/FP64 and WebGPU arrays. Ordinary inputs agree

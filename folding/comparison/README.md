@@ -2,14 +2,15 @@
 
 The [larger Runs N’ Poses comparison](../../reviews/cofold-rnp-spectrum-2026-11-15/README.md)
 selects 48 independently verified native-positive systems across the published
-training-similarity spectrum. Its 288-prediction checkpoint gives 25/48 passing
-hit cases across the first six samples, or 17/48 when selecting the highest
-archived ipTM with the fixed lowest-seed tie rule. Rounded-score ties are reported
-separately. The full ten-sample result is still pending. Raw evidence,
-confidence-selection curves and receipt-bound launcher timings are public.
-The [review examples](../../reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-288/review-examples/README.md)
-provide exact saved poses for local Foldarium inspection, with references and
-human decisions kept separate from the benchmark labels.
+training-similarity spectrum. All **480 predictions** are complete and independently
+replayed. Ten samples give 31/48 geometric hit cases, **26/48 (54.17%)** with a
+<2 Å hit passing limited stereo/clash checks, and **17/48 (35.42%)** with a passing
+hit selected by highest archived ipTM and the fixed lowest-seed tie rule. Rounded
+ties remain explicit. [Original outputs, final tables and sampling/time plots](../../reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/README.md)
+retain every planned denominator. [All 48 cases in portable review libraries](../../reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/review-libraries/README.md)
+contain the original coordinates and graphs, optional separate references and
+no copied human decisions. Actual six-sample browser QA passed all 48 cases;
+actual ten-sample UI QA is running separately.
 
 The [stock LocalFold page control](../../reviews/cofold-stock-localfold-2026-11-13/README.md)
 runs the pristine upstream page through its own Fold button, bypassing Molarium's
@@ -76,7 +77,9 @@ exported graphs, PDB strings and display alignments. It cannot submit, restart,
 merge or deploy anything; its output remains for review. A finite UTC deadline
 and live finalizer process are required. Tests exercise the actual six-sample
 checkpoint and verify that changing its status label cannot make it final.
-The complete 480-prediction preparation still awaits the running experiment.
+The complete 480-prediction preparation has now succeeded: the original archive
+replay, 3/6/10 diagnostics and all 96 graph/PDB/alignment-checked libraries are
+preserved in the final report. Actual ten-sample UI QA remains a separate check.
 
 The next, **unqualified** stage uses `capture_native_trunk.py` to observe the
 stock four-cycle `run_trunk` at exact frozen feature bytes. It exports trained

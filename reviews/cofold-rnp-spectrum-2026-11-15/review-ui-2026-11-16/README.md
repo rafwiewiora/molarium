@@ -149,3 +149,14 @@ python reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/verify-saved-
   --cohort reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/all48-six-sample \
   --exports /tmp/rnp-all48-review --output /tmp/rnp-saved-ui-verification.json
 ```
+
+## Final ten-sample input
+
+The [actual first-case ten-sample workflow](ten-sample-first-case/result.json)
+now passes on the completed final files: ten original predictions and one
+separate reference, all six grid pages across the two file variants, exact
+notes/preferences, library/shortlist/PDB exports and the explicit synthetic
+earlier-failure regression. The [frozen full-cohort plan](ten-sample-first-case/frozen-cohort-plan.json)
+then reuses that completed preflight and runs the remaining 47 systems once.
+The full ten-sample sweep is running; its all-case result is not yet claimed.
+The six-sample all-48 result above remains separate historical evidence.

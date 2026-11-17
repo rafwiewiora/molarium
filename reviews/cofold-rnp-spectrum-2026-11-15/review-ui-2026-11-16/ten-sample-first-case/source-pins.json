@@ -1,0 +1,16 @@
+{
+  "scripts/stock-cofold-review.browser.mjs": "8546cb1a85790348e5cbc1c124287a856bf5c74190102a668685f4f898ec73ad",
+  "scripts/headless-chrome.mjs": "b55a1197a5c2d2a112ea0b46d233b32a1e7aa7e1c5f7c06f32217ea9c9b19d13",
+  "scripts/local-test-server.mjs": "5244ca3115b8c9fcc5f277cf5b56cbd15e1e6bc193418a26093ced7935fbb991",
+  "server.js": "8fc3bb27d7570b9412508fdb0d43c9329fdaedcc07f27ff3938f2cd71deea967",
+  "vendor/foldarium/library-review.html": "e9ab08afbd7a7987f4c77f3481e00addf96218301dea620e66bb132082f43203",
+  "vendor/foldarium/library-review.css": "450352c06c7be38edb3446939806ecaa3cca7e3ccfc7f6c9181fd79d592ffb93",
+  "vendor/foldarium/library-review.js": "a5e7f664b0317076541cc17c5fa295f8923d3dcccbdffeeca70f93f6acc76180",
+  "vendor/foldarium/library-store.js": "a378bbca2420acb17be4ba44c45689ad1b57b2de450630945e74acc6ec848f9b",
+  "vendor/foldarium/library-format.js": "cd0e34fdffba257984e30b9a50e57b13d64d15e1515a22baef51b4b3f88562d3",
+  "vendor/foldarium/library-alignment.js": "e5879788335807fc56ed63a7f94ab7fbeaa4e1dabaa3969ec483a9f7eac3dc65",
+  "vendor/foldarium/library-chemistry.js": "9cd2a16ceb4d30713a0b13a36b78ba06d771f28e45d8602acc53f1ff60dda9bd",
+  "docking/validation/pose-viewer/vendor/molstar-5.11.0.js": "7fad5561c74bc900930fb57d6ab028d1aafdda82223a901bf932b1098e84f1f3",
+  "docking/validation/pose-viewer/vendor/molstar-5.11.0.css": "5b68ceb6d3642549b4e9b2c071e58e41b98a5350ae269180587b39da86925d55",
+  "local-lab-manifest.json": "1ab0900a166a9ac502f9928633a42ee87149da66abec3f6cd1240bfb6c74fb1f"
+}

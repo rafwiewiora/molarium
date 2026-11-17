@@ -137,6 +137,59 @@ jobs:
                  attribution_file=root / 'dataset-attribution.json')
           PYCOHORT
           /tmp/cofold-analysis/bin/python reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/verify-saved-cohort.py --cohort reviews/cofold-rnp-spectrum-2026-11-15/review-ui-2026-11-16/all48-six-sample --exports /tmp/rnp-all48-review --output /tmp/rnp-saved-ui-verification.json
+      - name: Independently replay all 480 final predictions with bounded archive limits
+        run: /tmp/cofold-analysis/bin/python folding/comparison/check_stock_benchmark.py reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480 --max-expanded-mib 1024 --max-members 12000
+      - name: Reproduce final summaries and diagnostic tables without inference
+        run: |
+          /tmp/cofold-analysis/bin/python - <<'PYFINAL'
+          import hashlib, json, sys
+          from pathlib import Path
+          sys.path.insert(0, 'folding/comparison')
+          from prepare_rnp_publication import render_summary
+          from summarize_rnp_stock import summarize
+          from analyze_rnp_sampling import analyze
+          from diagnose_rnp_stock import diagnose, markdown
+          sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+          root = Path('reviews/cofold-rnp-spectrum-2026-11-15')
+          check = root / 'checkpoint-480'
+          plan = json.loads((root / 'frozen-stock-plan.json').read_bytes())
+          scores = json.loads((check / 'scores.json').read_bytes())
+          analysis = json.loads((check / 'selection-analysis.json').read_bytes())
+          assert scores['status'] == 'complete' and scores['completed'] == scores['planned'] == 480
+          assert (check / 'README.md').read_text() == render_summary(plan, scores, analysis, 10)
+          summary = summarize(plan, scores)
+          summary.update(planSha256=sha(root / 'frozen-stock-plan.json'), scoresSha256=sha(check / 'scores.json'))
+          assert summary == json.loads((check / 'final-summary.json').read_bytes())
+          assert summary == json.loads((check / 'similarity-summary.json').read_bytes())
+          for n in [3, 6, 10]:
+              result = diagnose(plan, scores, n)
+              result.update(planSha256=sha(root / 'frozen-stock-plan.json'), scoresSha256=sha(check / 'scores.json'), scriptSha256=sha(Path('folding/comparison/diagnose_rnp_stock.py')))
+              folder = check / f'diagnostics-first{n}'
+              assert result == json.loads((folder / 'diagnostics.json').read_bytes())
+              assert markdown(result) == (folder / 'README.md').read_text()
+          receipt = json.loads((root / 'publication-preparation-receipt.json').read_bytes())
+          assert receipt['newNeuralForwards'] == receipt['publicationActions'] == 0
+          assert receipt['sourceScoresSha256'] == sha(check / 'scores.json')
+          for item in receipt['files']:
+              path = root / item['path']
+              assert path.resolve().is_relative_to(root.resolve()) and path.stat().st_size == item['bytes'] and sha(path) == item['sha256'], item['path']
+          PYFINAL
+      - name: Reproduce all 96 final human-review libraries and verify original coordinates
+        run: |
+          /tmp/cofold-analysis/bin/python - <<'PYREVIEW'
+          import json, sys
+          from pathlib import Path
+          sys.path.insert(0, 'folding/comparison')
+          from export_stock_review import export
+          root = Path('reviews/cofold-rnp-spectrum-2026-11-15')
+          cases = [p['caseId'] for p in json.loads((root / 'frozen-stock-plan.json').read_text())['pairs']]
+          output = Path('/tmp/rnp-final48-review')
+          export(root / 'checkpoint-480', output, cases, 10, 1024, 12000, root / 'dataset-attribution.json')
+          expected = root / 'checkpoint-480/review-libraries'
+          for path in output.glob('*.json'):
+              assert path.read_bytes() == (expected / path.name).read_bytes(), path.name
+          PYREVIEW
+          node folding/comparison/check_stock_review.mjs --review reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480 --exports reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/review-libraries --plan reviews/cofold-rnp-spectrum-2026-11-15/frozen-stock-plan.json --repository . --components reviews/cofold-rnp-spectrum-2026-11-15/stock-input-components/components --attribution reviews/cofold-rnp-spectrum-2026-11-15/dataset-attribution.json
 
   browser:
     name: Browser integration
@@ -192,6 +245,8 @@ jobs:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
           MOLARIUM_HEADLESS_SOFTWARE_WEBGPU: '1'
           MOLARIUM_STOCK_REVIEW_REQUIRE_SOFTWARE: '1'
+          MOLARIUM_STOCK_REVIEW_EXPORTS: reviews/cofold-rnp-spectrum-2026-11-15/checkpoint-480/review-libraries
+          MOLARIUM_STOCK_REVIEW_CASE_ID: 8cjg__1__1-a__1-d
         run: bun scripts/stock-cofold-review.browser.mjs
       - name: Check method-labelled browser/native comparison review
         env:
