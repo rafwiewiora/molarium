@@ -1,0 +1,36 @@
+{
+  "schema": "molarium.trained-trunk-cross-gpu-summary.v1",
+  "scope": "One matched native-positive OpenBind-0 STARD4 fixture; four captured passes and 32 boundaries per GPU. Not independent target samples or whole-model/pose accuracy.",
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "appleStrictFp32": {
+    "boundaries": 32,
+    "allFinite": true,
+    "relativeGatePasses": 32,
+    "combinedGatePasses": 14,
+    "worstRelativeRms": 3.487416783496727e-06,
+    "worstMaxAbsolute": 0.1875,
+    "passesAllDeclaredGates": false
+  },
+  "nvidiaL4StrictFp32": {
+    "boundaries": 32,
+    "allFinite": true,
+    "relativeGatePasses": 32,
+    "combinedGatePasses": 16,
+    "worstRelativeRms": 1.5807453957677502e-06,
+    "worstMaxAbsolute": 0.109375,
+    "passesAllDeclaredGates": false
+  },
+  "crossGpuWorstRelativeRms": 2.956938497177276e-06,
+  "crossGpuWorstMaxAbsolute": 0.15625,
+  "nvidiaDefaultPrecisionAndTransitionStatus": "Unmeasured; both attempts ended NODE_FAIL before payload. No active retry.",
+  "consumedArrayBytesVerified": 645593088,
+  "rawArchiveBytes": 647319566,
+  "rawArchiveSha256": "44656a2ba5bedffe32159265960d980d1c191e00b792fc655fb5d1d3cea6af82",
+  "rawReleaseParts": 8,
+  "newNativeOrCompletePosePredictions": 0
+}

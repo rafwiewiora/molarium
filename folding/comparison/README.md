@@ -67,6 +67,15 @@ channels. `check_trained_target_webgpu.py` independently replays the native ance
 consumed browser source and full output without inference. This completes the
 second browser component diagnostic, not full-model agreement or NVIDIA qualification.
 
+The separate [four-cycle NVIDIA L4 trunk control](../../reviews/cofold-feature-parity-2026-11-13/trained-trunk-nvidia/README.md)
+has now completed: all 32 fixed-input boundaries are finite and meet the original
+relative limit, while 16 meet both original limits. Complete raw-array replay
+reproduces the retained failure, with no new inference. The corresponding Apple
+strict control passes 14/32 combined gates. This is one OpenBind-0 fixture;
+default-precision NVIDIA transition/trunk controls remain unmeasured after
+pre-payload node failures. Neither this result nor the broader pose study
+establishes complete-model parity.
+
 The [relative-position comparison](../../reviews/cofold-feature-parity-2026-11-13/relative-encoding/README.md)
 checks the port's unchanged CPU reference against the saved native 139-channel
 arrays on both systems. All 12,630,791 values agree exactly with original browser

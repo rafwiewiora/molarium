@@ -1,0 +1,41 @@
+{
+  "scope": "Four production GPU trunk passes with exact native target features, actual sampled MSA values and full-FP32 stock trained weights. No denoising, confidence, quantized whole-model, pose or throughput claim.",
+  "jobId": 20535,
+  "accounting": "20535|FAILED|1:0|00:02:38|2026-11-17T17:30:02|2026-11-17T17:32:40|psigreen-l4spotnodeset-24",
+  "measurementStatus": "complete",
+  "originalWorkerExitMeaning": "All 32 measurements completed; original combined numerical gates fail. The failed Slurm status is not a browser/setup failure.",
+  "gpu": [
+    {
+      "name": "NVIDIA L4",
+      "uuid": "GPU-d32b67ad-196a-e90e-edae-3a3b5ac95332",
+      "driver_version": "550.90.07"
+    }
+  ],
+  "adapter": {
+    "vendor": "nvidia",
+    "architecture": "lovelace",
+    "device": "",
+    "description": ""
+  },
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+  "features": [
+    "core-features-and-limits",
+    "chromium-experimental-subgroup-matrix",
+    "subgroup-size-control",
+    "timestamp-query",
+    "subgroups"
+  ],
+  "precisionControl": {
+    "pairMatrixKernels": false,
+    "requireNoF16Shaders": true
+  },
+  "observedShaders": 96,
+  "f16Shaders": 0,
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "runnerSha256": "2043dea16df3da70b8f17657f8e522a81d15e9342cb047743fcb970f1c1eb97a",
+  "sourceManifestSha256": "024f3b83d87add3e72de6917fe3af387e4bea720623eff7d5f4ff2715267fd40",
+  "newNativeCaptureCalls": 0,
+  "newConversions": 0,
+  "newCompletePoseCalls": 0,
+  "rawReplayNewNeuralCalls": 0
+}

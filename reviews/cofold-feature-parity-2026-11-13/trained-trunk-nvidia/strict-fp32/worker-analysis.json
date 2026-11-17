@@ -1,0 +1,306 @@
+{
+  "scope": "Four production GPU trunk passes with exact native target features, actual sampled MSA values and full-FP32 stock trained weights. No denoising, confidence, quantized whole-model, pose or throughput claim.",
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "adapter": {
+    "vendor": "nvidia",
+    "architecture": "lovelace",
+    "device": "",
+    "description": ""
+  },
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "records": [
+    {
+      "seam": "cycle-0.tap.msa_activations",
+      "values": 3914624,
+      "finite": true,
+      "referenceRms": 11.92864934687354,
+      "relativeRms": 5.0583147813197635e-08,
+      "maxAbs": 1.52587890625e-05,
+      "passes": true
+    },
+    {
+      "seam": "cycle-0.tap.template_term",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 25.626109183441187,
+      "relativeRms": 2.0755704887092295e-07,
+      "maxAbs": 0.0002288818359375,
+      "passes": true
+    },
+    {
+      "seam": "cycle-0.tap.trunk_in_single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 21.379994049578638,
+      "relativeRms": 4.2320877097402577e-07,
+      "maxAbs": 9.918212890625e-05,
+      "passes": true
+    },
+    {
+      "seam": "cycle-0.tap.trunk_out_pair",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 101.75904312262763,
+      "relativeRms": 1.2043503796888093e-06,
+      "maxAbs": 0.009765625,
+      "passes": false
+    },
+    {
+      "seam": "cycle-0.tap.z_after_msa",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 134.3344754510546,
+      "relativeRms": 2.0550588322718095e-07,
+      "maxAbs": 0.001708984375,
+      "passes": false
+    },
+    {
+      "seam": "cycle-0.tap.z_after_template",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 47.53410054377061,
+      "relativeRms": 1.1804885778530837e-07,
+      "maxAbs": 0.000244140625,
+      "passes": true
+    },
+    {
+      "seam": "cycle-0.tap.z_init_generic",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 22.743715514170187,
+      "relativeRms": 5.4320906199640647e-08,
+      "maxAbs": 4.57763671875e-05,
+      "passes": true
+    },
+    {
+      "seam": "cycle-0.trunk-output-single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 12575.206239495845,
+      "relativeRms": 2.843017385177389e-07,
+      "maxAbs": 0.09375,
+      "passes": false
+    },
+    {
+      "seam": "cycle-1.tap.msa_activations",
+      "values": 3914624,
+      "finite": true,
+      "referenceRms": 11.92864934687354,
+      "relativeRms": 5.0583147813197635e-08,
+      "maxAbs": 1.52587890625e-05,
+      "passes": true
+    },
+    {
+      "seam": "cycle-1.tap.template_term",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 25.5065852064891,
+      "relativeRms": 2.2740857162562523e-07,
+      "maxAbs": 0.0002288818359375,
+      "passes": true
+    },
+    {
+      "seam": "cycle-1.tap.trunk_in_single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 21.325442043472094,
+      "relativeRms": 3.8203188435178045e-07,
+      "maxAbs": 0.00012969970703125,
+      "passes": true
+    },
+    {
+      "seam": "cycle-1.tap.trunk_out_pair",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 108.21477347133218,
+      "relativeRms": 8.897679277914317e-07,
+      "maxAbs": 0.00537109375,
+      "passes": false
+    },
+    {
+      "seam": "cycle-1.tap.z_after_msa",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 152.161507270864,
+      "relativeRms": 9.046229089523656e-07,
+      "maxAbs": 0.0064697265625,
+      "passes": false
+    },
+    {
+      "seam": "cycle-1.tap.z_after_template",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 54.76042026274634,
+      "relativeRms": 8.966343101388561e-07,
+      "maxAbs": 0.001132965087890625,
+      "passes": false
+    },
+    {
+      "seam": "cycle-1.tap.z_init_generic",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 30.822054161617732,
+      "relativeRms": 1.5807453957678606e-06,
+      "maxAbs": 0.0011234283447265625,
+      "passes": false
+    },
+    {
+      "seam": "cycle-1.trunk-output-single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 14196.394594586449,
+      "relativeRms": 2.6729547730837343e-07,
+      "maxAbs": 0.109375,
+      "passes": false
+    },
+    {
+      "seam": "cycle-2.tap.msa_activations",
+      "values": 3914624,
+      "finite": true,
+      "referenceRms": 11.92864934687354,
+      "relativeRms": 5.0583147813197635e-08,
+      "maxAbs": 1.52587890625e-05,
+      "passes": true
+    },
+    {
+      "seam": "cycle-2.tap.template_term",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 25.31517335321089,
+      "relativeRms": 2.1777182148474543e-07,
+      "maxAbs": 0.000213623046875,
+      "passes": true
+    },
+    {
+      "seam": "cycle-2.tap.trunk_in_single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 21.359461059789094,
+      "relativeRms": 3.7808905890410295e-07,
+      "maxAbs": 0.0001220703125,
+      "passes": true
+    },
+    {
+      "seam": "cycle-2.tap.trunk_out_pair",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 111.26999215253119,
+      "relativeRms": 7.096557232969845e-07,
+      "maxAbs": 0.0068359375,
+      "passes": false
+    },
+    {
+      "seam": "cycle-2.tap.z_after_msa",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 159.94019969314928,
+      "relativeRms": 7.729060840167194e-07,
+      "maxAbs": 0.007080078125,
+      "passes": false
+    },
+    {
+      "seam": "cycle-2.tap.z_after_template",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 53.59889121846041,
+      "relativeRms": 6.575521573294201e-07,
+      "maxAbs": 0.001251220703125,
+      "passes": false
+    },
+    {
+      "seam": "cycle-2.tap.z_init_generic",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 29.880262517596226,
+      "relativeRms": 1.1635429749320626e-06,
+      "maxAbs": 0.001220703125,
+      "passes": false
+    },
+    {
+      "seam": "cycle-2.trunk-output-single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 14411.638646445248,
+      "relativeRms": 2.744290799379522e-07,
+      "maxAbs": 0.109375,
+      "passes": false
+    },
+    {
+      "seam": "cycle-3.tap.msa_activations",
+      "values": 3914624,
+      "finite": true,
+      "referenceRms": 11.92864934687354,
+      "relativeRms": 5.0583147813197635e-08,
+      "maxAbs": 1.52587890625e-05,
+      "passes": true
+    },
+    {
+      "seam": "cycle-3.tap.template_term",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 25.274425248422926,
+      "relativeRms": 2.1421980809854936e-07,
+      "maxAbs": 0.0002288818359375,
+      "passes": true
+    },
+    {
+      "seam": "cycle-3.tap.trunk_in_single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 21.35504059521067,
+      "relativeRms": 3.7710761025109787e-07,
+      "maxAbs": 0.0001678466796875,
+      "passes": true
+    },
+    {
+      "seam": "cycle-3.tap.trunk_out_pair",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 112.32374675947736,
+      "relativeRms": 9.629367882194471e-07,
+      "maxAbs": 0.0087890625,
+      "passes": false
+    },
+    {
+      "seam": "cycle-3.tap.z_after_msa",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 170.11804245262115,
+      "relativeRms": 6.484038798621653e-07,
+      "maxAbs": 0.0069580078125,
+      "passes": false
+    },
+    {
+      "seam": "cycle-3.tap.z_after_template",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 53.139915417590174,
+      "relativeRms": 4.956246792490168e-07,
+      "maxAbs": 0.0008544921875,
+      "passes": true
+    },
+    {
+      "seam": "cycle-3.tap.z_init_generic",
+      "values": 7250432,
+      "finite": true,
+      "referenceRms": 29.46876043035232,
+      "relativeRms": 8.724505230811594e-07,
+      "maxAbs": 0.0008544921875,
+      "passes": true
+    },
+    {
+      "seam": "cycle-3.trunk-output-single",
+      "values": 91392,
+      "finite": true,
+      "referenceRms": 14486.52242067546,
+      "relativeRms": 2.8146058662321306e-07,
+      "maxAbs": 0.109375,
+      "passes": false
+    }
+  ],
+  "passesAllDeclaredGates": false
+}

@@ -1,9 +1,12 @@
 # Distinct NVIDIA numerical controls and fixture-mount correction
 
-**Current: regular-L4 jobs 20534 and 20535 are queued.** Their predecessors
-20400 and 20402 both lost Spot nodes before payload startup. No NVIDIA numerical
-comparisons have completed. The chronological receipts below preserve setup
-failures, queue eligibility changes, and the unchanged rejection gates.
+**Current: strict-FP32 job 20535 completed all 32 NVIDIA measurements.** All meet
+the original relative limit; 16 meet both limits. The combined qualification
+remains failed, and the [complete raw outputs and independent replay](../../trained-trunk-nvidia/README.md)
+are public. The default control jobs 20534 and its bounded recovery 21112 lost
+nodes before payload and produced no numerical measurements. No retry is active.
+The chronological receipts below preserve earlier setup failures, eligibility
+changes and unchanged rejection gates; they are historical attempts.
 
 Capability-only job 20285 completed on an actual NVIDIA L4. The requested-FP32 control job 20382 then lost its Spot node before payload startup: NODE_FAIL after 24 seconds, zero markers/logs and no numerical outputs. Its source-identical retry 20391 was subsequently cancelled while still PENDING and unallocated, after a distinct container-data defect was established. Both attempts are retained; no numerical failure is inferred from them.
 

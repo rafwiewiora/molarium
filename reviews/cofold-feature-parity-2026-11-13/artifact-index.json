@@ -3,8 +3,8 @@
   "files": [
     {
       "file": "README.md",
-      "bytes": 14904,
-      "sha256": "d365d82da0ef90332e1fffc9a73011f0d1ba54b024ae66b526aa2a29d9691fe1"
+      "bytes": 15208,
+      "sha256": "6e002f7670ed05fa6711100e6cf1724fcc5c2be46a0d6b04882a5f90e9100b3e"
     },
     {
       "file": "browser-32qy-a1keo/features.bin",
@@ -303,8 +303,8 @@
     },
     {
       "file": "gpu-capability-2026-11-16/numerical-2026-11-17/README.md",
-      "bytes": 6563,
-      "sha256": "b8a203898f68d4d5845d977aab20c4d2bb66b5208e2aa94a5b3c25a805d18b2b"
+      "bytes": 6832,
+      "sha256": "4c72612bd12936daac278efc59e03a4bb8ab1bc8d8ad73cdd1ca7b2e68341804"
     },
     {
       "file": "gpu-capability-2026-11-16/numerical-2026-11-17/T4-hardware-target-failure-20398/capability.log",
@@ -2420,6 +2420,76 @@
       "file": "history/pr58-documentation-index-20261117/original-reports-index-and-failure.zip",
       "bytes": 38342,
       "sha256": "73d81d359b7ee975896d385d86039e159ac73b2c2fc289904621da2794d41681"
+    },
+    {
+      "file": "trained-trunk-nvidia/README.md",
+      "bytes": 6313,
+      "sha256": "6072417c0d4dc3f50166ce2e0c979b5233663003bf7cd8254f32bb15640c5237"
+    },
+    {
+      "file": "trained-trunk-nvidia/comparison-summary.json",
+      "bytes": 1392,
+      "sha256": "21b6dad12e6b84836b890196b8c6be90205aaf36512fe2fc2d5ad629fe332822"
+    },
+    {
+      "file": "trained-trunk-nvidia/default-control-unstarted-20534.json",
+      "bytes": 499,
+      "sha256": "ad77fd85ff8c0eb49da26dfa7ef81342f9b39ff3e23c51898773d75522435623"
+    },
+    {
+      "file": "trained-trunk-nvidia/default-control-unstarted-21112.json",
+      "bytes": 498,
+      "sha256": "8e302ef12127b2e6c331387285e5b82b62bbb1323d0bf7ef0ce1c0bab5a72deb"
+    },
+    {
+      "file": "trained-trunk-nvidia/strict-fp32/archive-receipt.json",
+      "bytes": 2256,
+      "sha256": "4ddd27e631fd163dca5421c97016c75ee6472efec5a50025547271c6d46a7404"
+    },
+    {
+      "file": "trained-trunk-nvidia/strict-fp32/consumed-independent-replay.py",
+      "bytes": 9066,
+      "sha256": "84eb9274efc329f33945f0ffa51d39338423bb3b12e01487beb96157fc6a03fd"
+    },
+    {
+      "file": "trained-trunk-nvidia/strict-fp32/cross-gpu-errors.png",
+      "bytes": 267389,
+      "sha256": "e53f5f8390e85b6bd5267b28fdc7c20473ede02156b38d44fb9f4cdc09689523"
+    },
+    {
+      "file": "trained-trunk-nvidia/strict-fp32/independent-replay-plan.json",
+      "bytes": 918,
+      "sha256": "630fdca4ba0be6c083f8e11ec7d50fe66b12f49b3a2f91ecd827fd7c667fb513"
+    },
+    {
+      "file": "trained-trunk-nvidia/strict-fp32/independent-replay.json",
+      "bytes": 35493,
+      "sha256": "184bda5ba0bbdaa60c393d9883b03b3285c3f0db4429eb48e2471b5bc6f68941"
+    },
+    {
+      "file": "trained-trunk-nvidia/strict-fp32/measurement-receipt.json",
+      "bytes": 43375,
+      "sha256": "c4c2a6044bee0644865184d93870155a19048a8ee7352b959ff16db0de071b3f"
+    },
+    {
+      "file": "trained-trunk-nvidia/strict-fp32/plot-receipt.json",
+      "bytes": 1067,
+      "sha256": "60d8207330048cf49571ff124a073719dd4d421dd48fc3f0f61d0a2ff8748b9a"
+    },
+    {
+      "file": "trained-trunk-nvidia/strict-fp32/raw-evidence.json",
+      "bytes": 4702,
+      "sha256": "b9f69adc6c48fc6599a487c805964e75c95d0f44f30057ecbf9c7764211d09e5"
+    },
+    {
+      "file": "trained-trunk-nvidia/strict-fp32/runtime-provenance.json",
+      "bytes": 1632,
+      "sha256": "19d3a7e68871799e29b6bab4c7db399cfacd4c24813f3b9ec566f4c00f05a66e"
+    },
+    {
+      "file": "trained-trunk-nvidia/strict-fp32/worker-analysis.json",
+      "bytes": 8409,
+      "sha256": "fb946a1750a64ae09979fa9cba912c1a93d9f1b16f77af42f01c86749120b42f"
     }
   ]
 }

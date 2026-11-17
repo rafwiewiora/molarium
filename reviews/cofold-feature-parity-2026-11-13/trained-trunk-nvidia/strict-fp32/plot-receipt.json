@@ -1,0 +1,17 @@
+{
+  "scope": "Saved numerical errors only; zero model calls.",
+  "inputs": {
+    "reviews/cofold-feature-parity-2026-11-13/trained-trunk-apple/strict-fp32/analysis.json": "706f627b88a5f8d09e4e55fc29c0779b398d15ee84bb6c721216c5e1a0845229",
+    "reviews/cofold-feature-parity-2026-11-13/trained-trunk-nvidia/strict-fp32/independent-replay.json": "184bda5ba0bbdaa60c393d9883b03b3285c3f0db4429eb48e2471b5bc6f68941",
+    "reviews/cofold-feature-parity-2026-11-13/trained-trunk-nvidia/strict-fp32/independent-replay-plan.json": "630fdca4ba0be6c083f8e11ec7d50fe66b12f49b3a2f91ecd827fd7c667fb513",
+    "reviews/cofold-feature-parity-2026-11-13/trained-trunk-nvidia/strict-fp32/measurement-receipt.json": "c4c2a6044bee0644865184d93870155a19048a8ee7352b959ff16db0de071b3f"
+  },
+  "scriptSha256": "f7dd7fe935c8fc73be6f45675611bf4e9321196a1d30d324e9a65bb64ce119ca",
+  "pngSha256": "e53f5f8390e85b6bd5267b28fdc7c20473ede02156b38d44fb9f4cdc09689523",
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "newModelCalls": 0
+}
