@@ -1,0 +1,20 @@
+{
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-login-001",
+    "instance/id": "3894148826269628555",
+    "instance/zone": "projects/734263838611/zones/us-central1-c"
+  },
+  "python": "/workspacenfs/rafal_wiewiora/molarium-native-cofold-20261112-attempt002/environments/openbind0/bin/python",
+  "pythonVersion": "3.12.13 | packaged by conda-forge | (main, Mar  5 2026, 16:50:00) [GCC 14.3.0]\n2.4.6\n",
+  "bun": "/workspacenfs/rafal_wiewiora/molarium-nvidia-layer-20261113-attempt002/tools/bun-linux-x64/bun",
+  "bunVersion": "1.3.14\n",
+  "partition": "PartitionName=compute AllowGroups=ALL AllowAccounts=ALL AllowQos=ALL AllocNodes=ALL Default=NO QoS=N/A DefaultTime=NONE DisableRootJobs=NO ExclusiveUser=NO GraceTime=0 Hidden=NO MaxNodes=UNLIMITED MaxTime=UNLIMITED MinNodes=0 LLN=NO MaxCPUsPerNode=UNLIMITED MaxCPUsPerSocket=UNLIMITED NodeSets=computenodeset Nodes=psigreen-computenodeset-[0-99] PriorityJobFactor=1 PriorityTier=1 RootOnly=NO ReqResv=NO OverSubscribe=EXCLUSIVE OverTimeLimit=NONE PreemptMode=OFF State=UP TotalCPUs=400 TotalNodes=100 SelectTypeParameters=NONE JobDefaults=(null) DefMemPerCPU=1888 MaxMemPerNode=UNLIMITED TRES=cpu=400,mem=737.50G,node=100,billing=400 ResumeTimeout=300 SuspendTimeout=120 SuspendTime=300 PowerDownOnIdle=YES\n",
+  "sourceManifestSha256": "3df147d17f3dc11198ba2a840cbdf28f632e19c4591dfb13af407df54ae02794",
+  "owner": "rafal",
+  "purpose": "All 169 saved native OpenBind-0 trunk/input/MSA/template/distogram parameter tensors versus the pinned shipped bundle. Parameter identity and INT5 re-encoding only; no neural forward, GPU or pose claim.",
+  "retentionDeadline": "2026-11-20T22:30:00Z",
+  "standaloneVmActions": [],
+  "newGpuRequests": 0,
+  "automaticRetry": false
+}

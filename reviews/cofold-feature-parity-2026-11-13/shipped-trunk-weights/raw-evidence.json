@@ -1,0 +1,116 @@
+{
+  "schema": "molarium.native-weight-blob-upload-verification.v1",
+  "status": "complete",
+  "startedAt": "2026-11-17T20:35:34.226280+00:00",
+  "releaseId": 448040291,
+  "archiveBytes": 604789504,
+  "archiveSha256": "46df3199346512b29321a7e7dece80b9d701ef695eb24880b217287a812bd709",
+  "maximumRamPartBytes": 83886080,
+  "largeLocalFilesWritten": 0,
+  "parts": [
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.part-01.bin",
+      "bytes": 83886080,
+      "sha256": "e6e69190ad3d4e6f5bc5abfe7b7204f41bccbf1ea458a5b0671d29b7c5e66bbe",
+      "assetId": 760547562,
+      "serverDigest": "sha256:e6e69190ad3d4e6f5bc5abfe7b7204f41bccbf1ea458a5b0671d29b7c5e66bbe",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.part-01.bin",
+      "status": "verified",
+      "offset": 0
+    },
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.part-02.bin",
+      "bytes": 83886080,
+      "sha256": "7eb89c3cda2adfe345ba26eb38cc0eb7a3da81c0e1c2116a5d52d4468062c58c",
+      "assetId": 760548203,
+      "serverDigest": "sha256:7eb89c3cda2adfe345ba26eb38cc0eb7a3da81c0e1c2116a5d52d4468062c58c",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.part-02.bin",
+      "status": "verified",
+      "offset": 83886080
+    },
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.part-03.bin",
+      "bytes": 83886080,
+      "sha256": "52e7bb71c66ac1b2b8781ce5958c9391b072790e0808b8e6c1940c1bcca24b75",
+      "assetId": 760548925,
+      "serverDigest": "sha256:52e7bb71c66ac1b2b8781ce5958c9391b072790e0808b8e6c1940c1bcca24b75",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.part-03.bin",
+      "status": "verified",
+      "offset": 167772160
+    },
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.part-04.bin",
+      "bytes": 83886080,
+      "sha256": "c939fa37dd610a26d4a412488692dc7b807f0e641b152a73cb3db1807fb01c5d",
+      "assetId": 760549604,
+      "serverDigest": "sha256:c939fa37dd610a26d4a412488692dc7b807f0e641b152a73cb3db1807fb01c5d",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.part-04.bin",
+      "status": "verified",
+      "offset": 251658240
+    },
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.part-05.bin",
+      "bytes": 83886080,
+      "sha256": "da7868cc2287ded644b6e177fbbe5df47a638b1c9907f94ee9fa80c502c6d800",
+      "assetId": 760550432,
+      "serverDigest": "sha256:da7868cc2287ded644b6e177fbbe5df47a638b1c9907f94ee9fa80c502c6d800",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.part-05.bin",
+      "status": "verified",
+      "offset": 335544320
+    },
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.part-06.bin",
+      "bytes": 83886080,
+      "sha256": "ace160056edac8135450b33232b1e60a57e1b7116a349d212fe2a15929056a8e",
+      "assetId": 760551119,
+      "serverDigest": "sha256:ace160056edac8135450b33232b1e60a57e1b7116a349d212fe2a15929056a8e",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.part-06.bin",
+      "status": "verified",
+      "offset": 419430400
+    },
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.part-07.bin",
+      "bytes": 83886080,
+      "sha256": "c34d43baf2b450d576177e74194bce53224bd8cc2ea86664266b0926b0d499fe",
+      "assetId": 760551896,
+      "serverDigest": "sha256:c34d43baf2b450d576177e74194bce53224bd8cc2ea86664266b0926b0d499fe",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.part-07.bin",
+      "status": "verified",
+      "offset": 503316480
+    },
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.part-08.bin",
+      "bytes": 17586944,
+      "sha256": "d987af64c81603ebe3a436e8a0ba870b2d4e15241c967cc772349959bfa1608d",
+      "assetId": 760552369,
+      "serverDigest": "sha256:d987af64c81603ebe3a436e8a0ba870b2d4e15241c967cc772349959bfa1608d",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.part-08.bin",
+      "status": "verified",
+      "offset": 587202560
+    }
+  ],
+  "supportingAssets": [
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.inventory.json",
+      "bytes": 4146,
+      "sha256": "fc17d428729b89d9408ea9b314c2bd3f7da6bbc1332466284b705090c067ad45",
+      "assetId": 760547071,
+      "serverDigest": "sha256:fc17d428729b89d9408ea9b314c2bd3f7da6bbc1332466284b705090c067ad45",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.inventory.json",
+      "status": "verified"
+    },
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.LICENSE.txt",
+      "bytes": 11353,
+      "sha256": "5b16c6df57578e44e330e9094173d6cb7d31d26b7248c496c8ec5a6aa818472b",
+      "assetId": 760547112,
+      "serverDigest": "sha256:5b16c6df57578e44e330e9094173d6cb7d31d26b7248c496c8ec5a6aa818472b",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.LICENSE.txt",
+      "status": "verified"
+    }
+  ],
+  "newModelCalls": 0,
+  "newConversions": 0,
+  "finishedAt": "2026-11-17T20:37:24.568173+00:00",
+  "concatenatedTransferredArchiveSha256": "46df3199346512b29321a7e7dece80b9d701ef695eb24880b217287a812bd709"
+}

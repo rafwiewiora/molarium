@@ -1,0 +1,1299 @@
+{
+  "schema": "molarium.shipped-trunk-propagation-plan.v1",
+  "recordedAt": "2026-11-17T20:49:22.619126+00:00",
+  "scope": "One OpenBind-0 STARD4 four-cycle control: change only captured trunk parameter values to the exact shipped host-dequantized values. Same native features/MSA and strict FP32 arithmetic; no whole prediction.",
+  "sourceBaseCommit": "e3f23623698f6b1e250d240edec6fdf62a6f6c0c",
+  "parentNativeFp32MeasurementJob": 20535,
+  "parentNativeFp32NeverRepeated": true,
+  "weightAuditJob": 21158,
+  "weightAuditSha256": "a9dd4d2d11b3ad51140bdf54078afb8f8ea9a57cfe0459e43dba149bd51bdda7",
+  "independentReencodingSha256": "965a116c3707e3e703a72e616cc249ef276583e2f98a5bf4d3135409d2b31ab5",
+  "stockMeasurement": "/workspacenfs/rafal_wiewiora/molarium-shipped-trunk-weight-audit-20261117-attempt003/results/measurement",
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "expectedCycles": 4,
+  "expectedBoundaries": 32,
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "pairMatrixKernels": false,
+  "requireNoF16Shaders": true,
+  "sourceChanges": {
+    "container-controls.sh": {
+      "from": "\"$bun\" \"$MOLARIUM_BINDING_ROOT/trunk.browser.mjs\" \"$trunk/results/fixture\" \"$MOLARIUM_BINDING_ROOT/results/trunk\"",
+      "to": "\"$bun\" \"$MOLARIUM_BINDING_ROOT/repo/scripts/cofold-shipped-trunk.browser.mjs\" \"$trunk/results/fixture\" \"$MOLARIUM_BINDING_ROOT/results/trunk\" /workspacenfs/rafal_wiewiora/molarium-shipped-trunk-weight-audit-20261117-attempt003/results/measurement"
+    },
+    "publicProducer": "scripts/cofold-shipped-trunk.browser.mjs"
+  },
+  "newNativeCalls": 0,
+  "newConversions": 0,
+  "newCompletePoseCalls": 0,
+  "newGpuTrunkControls": 1,
+  "automaticRetry": false,
+  "standaloneVmActions": [],
+  "owner": "rafal",
+  "retentionDeadline": "2026-11-20T22:30:00Z",
+  "cloudTopology": [
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "7300496201999795256",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-0",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "4454007962310616056",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-1",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "1508547140497619289",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-10",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "5328823389539449177",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-11",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "5483074270937099108",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-12",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "5396022739910353631",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-13",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "8286199447063978719",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-14",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "2437263144570763609",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-15",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "9123968689715712045",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-16",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "7256560907059866468",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-17",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "8160266268596382564",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-18",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "8042710831861347509",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-19",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "4420673058974083302",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-2",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "1047157585780288356",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-20",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "7853922056852280952",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-21",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "3022319273189643896",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-22",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "2048720160793630328",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-23",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "9150991159359459196",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-24",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "2078439028084512376",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-25",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "6599304973740742264",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-26",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "4904077147171788408",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-27",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "1101401665519031928",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-28",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "780331582875047544",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-29",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "6863434252580124864",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-3",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "7635206357746521720",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-30",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "2539164550793071317",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-31",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "854835401306323289",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-32",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "8095859626220259978",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-33",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "2529654123105162871",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-34",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "853635928609700185",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-35",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "1847362687978879321",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-36",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "6015967875717207671",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-37",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "3341810392711739737",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-38",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "7239852225853045081",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-39",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "5525924403735002424",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-4",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "5036118722617194841",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-40",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "783234147543595353",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-41",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "8254902436989777077",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-42",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "5884900776811870553",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-43",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "7062271511600216409",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-44",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "9142376382675466585",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-45",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "4450664970220910937",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-46",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "3021331606805330265",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-47",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "1295893903694281049",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-48",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "8385703475557451048",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-49",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "3339068391100575506",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-5",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "1489957431118838105",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-50",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "8801387603217224608",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-51",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "1192753064399518041",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-52",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "2035702686150211929",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-53",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "1442220308437842265",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-54",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "6365525256664912800",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-55",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "7261255220415084889",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-56",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "6870996169570040153",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-57",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "7830738450453805401",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-58",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "3862201888859142489",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-59",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "6855345746830080345",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-6",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "4941501662533062880",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-7",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "3282674482661639560",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-8",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    },
+    {
+      "guestAccelerators": [
+        {
+          "acceleratorCount": 1,
+          "acceleratorType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c/acceleratorTypes/nvidia-l4"
+        }
+      ],
+      "id": "1342564921003129177",
+      "labels": {
+        "ghpc_blueprint": "psivant-cluster",
+        "ghpc_deployment": "psigreen",
+        "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+        "ghpc_role": "compute",
+        "goog-terraform-provisioned": "true",
+        "slurm_cluster_name": "psigreen",
+        "slurm_instance_role": "compute"
+      },
+      "name": "psigreen-gpunodeset-9",
+      "status": "RUNNING",
+      "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-c"
+    }
+  ]
+}

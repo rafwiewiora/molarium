@@ -1,0 +1,64 @@
+{
+  "observedAt": "2026-11-17T20:21:44.310504+00:00",
+  "jobId": 21158,
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-login-001",
+    "instance/id": "3894148826269628555",
+    "instance/zone": "projects/734263838611/zones/us-central1-c"
+  },
+  "accounting": "21158|COMPLETED|0:0|00:00:55|2026-11-17T20:20:33|2026-11-17T20:21:28|psigreen-computenodeset-7",
+  "state": "COMPLETED",
+  "terminal": true,
+  "auditStarted": true,
+  "analysisExists": true,
+  "reencodingExists": true,
+  "newModelCalls": 0,
+  "gpuRequests": 0,
+  "files": {
+    "plan.json": {
+      "bytes": 9845,
+      "sha256": "0c4cb747111e68edf080bb9e1e5c8f31666d0b42b63db16c9fb49353c2e0e91f"
+    },
+    "source-manifest.json": {
+      "bytes": 1326,
+      "sha256": "3df147d17f3dc11198ba2a840cbdf28f632e19c4591dfb13af407df54ae02794"
+    },
+    "submission.json": {
+      "bytes": 3610,
+      "sha256": "b5246fb9dd57dce9ede45e7972f4af9379ceb402b2b159f83dcc2ac8a043561f"
+    },
+    "preflight.json": {
+      "bytes": 1768,
+      "sha256": "4f714fbe00b53a5a0b353a5161c2ebce71402f159366338dcc60f375847ff661"
+    },
+    "allocation.json": {
+      "bytes": 2015,
+      "sha256": "8a48ccb636dd0d520a249e92936adf00609f7681f6c37ef1eb248d359affe2a1"
+    },
+    "results/measurement/analysis.json": {
+      "bytes": 150019,
+      "sha256": "a9dd4d2d11b3ad51140bdf54078afb8f8ea9a57cfe0459e43dba149bd51bdda7"
+    },
+    "results/measurement/stock-manifest.json": {
+      "bytes": 149094,
+      "sha256": "fc648af1902783bb3ad5609cd3e9679ccef94039a42a4b3355c023fbd707d4ee"
+    },
+    "results/independent-reencoding.json": {
+      "bytes": 92455,
+      "sha256": "965a116c3707e3e703a72e616cc249ef276583e2f98a5bf4d3135409d2b31ab5"
+    },
+    "logs/cpu-21158.log": {
+      "bytes": 1249,
+      "sha256": "e43dfdf2ff9ab927f58bf7b6262ff05e1190474183c0813eb71c00192767538d"
+    },
+    "parent-21153/launcher-error-outcome.json": {
+      "bytes": 499,
+      "sha256": "6fe0333cd4d5d7597f8d9224f9e84e957f6a1713a733bfe89fff313a1eb57691"
+    },
+    "parent-21153/launcher-error-stopped.json": {
+      "bytes": 526,
+      "sha256": "26dad9aa5c4772edbc635756ef535cb5949833abd4af80ada24818115d0050b3"
+    }
+  }
+}

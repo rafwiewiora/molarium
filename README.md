@@ -544,6 +544,11 @@ The [physical NVIDIA L4 control](reviews/cofold-feature-parity-2026-11-13/traine
 now independently reproduces all 32 matched-input FP32 boundaries: 32/32 pass
 the relative limit and 16/32 pass both limits. Complete raw arrays and exact
 consumed source are public; the planned default-precision control remains unmeasured.
+The separate [shipped-weight audit](reviews/cofold-feature-parity-2026-11-13/shipped-trunk-weights/README.md)
+finds all 66 captured FP32 tensors bit-identical and exactly reproduces all 103
+INT5 tensors with the pinned upstream quantizer. The quantized parameters differ
+from native FP32 by 3.85% relative RMS; this is parameter error, not pose error.
+Exact native inputs are public, and a matched trunk propagation control is queued.
 Protein multimers,
 templates, nucleic acids and covalent cofolding are not exposed yet.
 See [integration evidence and follow-up work](reviews/LOCALFOLD_INTEGRATION_2026-11-12.md).

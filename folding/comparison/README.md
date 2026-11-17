@@ -76,6 +76,16 @@ default-precision NVIDIA transition/trunk controls remain unmeasured after
 pre-payload node failures. Neither this result nor the broader pose study
 establishes complete-model parity.
 
+The [shipped trunk parameter audit](../../reviews/cofold-feature-parity-2026-11-13/shipped-trunk-weights/README.md)
+reproduces all 103 shipped INT5 encodings from the captured native weights and
+finds all 66 FP32 tensors bit-identical. Independent Python decoding matches the
+production host decoder for every tensor. Exact native input weights are public;
+the measured 3.85% relative parameter error does not establish an output or pose
+effect. `audit_shipped_trunk_weights.mjs` and `check_shipped_trunk_quantization.py`
+replay this without inference. The separate `cofold-shipped-trunk.browser.mjs`
+producer changes only effective parameter values under native inputs and strict
+FP32 arithmetic; its regular-L4 job is queued with original output gates.
+
 The [relative-position comparison](../../reviews/cofold-feature-parity-2026-11-13/relative-encoding/README.md)
 checks the port's unchanged CPU reference against the saved native 139-channel
 arrays on both systems. All 12,630,791 values agree exactly with original browser

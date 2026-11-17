@@ -1,0 +1,8 @@
+{
+  "scope": "Upload transport failure only; zero model calls, conversions or large local weight files.",
+  "originalAttempt": "native-trunk-weight-publication-20261117-attempt001",
+  "outcome": "HTTP 400 Bad Content-Length before any asset part uploaded.",
+  "fix": "Use an explicit Content-Length with bounded RAM-only HTTPS transport; preserve original bytes and verify all server digests.",
+  "successfulAttempt": "native-trunk-weight-publication-20261117-attempt002",
+  "newScientificComputations": 0
+}

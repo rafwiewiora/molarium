@@ -1,0 +1,12 @@
+{
+  "checkedAt": "2026-11-17T20:11:07.774365+00:00",
+  "jobId": 21153,
+  "queueBefore": "",
+  "accounting": "21153|FAILED|1:0|00:00:00|2026-11-17T20:10:33|2026-11-17T20:10:33|psigreen-computenodeset-6",
+  "auditStarted": false,
+  "resultsExist": false,
+  "logs": {
+    "cpu-21153.log": "/var/spool/slurmd/job21153/slurm_script: line 3: export: `/workspacenfs/rafal_wiewiora/molarium-native-cofold-20261112-attempt002/environments/openbind0/bin/pythonDONTWRITEBYTECODE=1': not a valid identifier\n"
+  },
+  "newModelCalls": 0
+}

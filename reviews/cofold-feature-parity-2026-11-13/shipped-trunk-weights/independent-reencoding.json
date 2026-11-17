@@ -1,0 +1,2398 @@
+{
+  "schema": "molarium.shipped-trunk-weight-reencoding.v1",
+  "status": "complete",
+  "scope": "Parameter identity and quantization only, not model, GPU-upload or pose agreement.",
+  "planSha256": "0c4cb747111e68edf080bb9e1e5c8f31666d0b42b63db16c9fb49353c2e0e91f",
+  "measurementSha256": "a9dd4d2d11b3ad51140bdf54078afb8f8ea9a57cfe0459e43dba149bd51bdda7",
+  "quantizerSha256": "8f75171c59e32ad7603323293839769aa149b728c6a2f8f1531dc2f6070162fa",
+  "allIndependentDecodedHashesMatch": true,
+  "fp32Tensors": 66,
+  "exactFp32Tensors": 66,
+  "int5Tensors": 103,
+  "exactInt5Reencodings": 103,
+  "allReencodingsExact": true,
+  "metricReplayTolerance": {
+    "relative": 1e-10,
+    "absolute": 1e-12,
+    "scope": "Reduction replay only; no numerical model acceptance gate."
+  },
+  "records": [
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/single_transition/transition1/weights",
+      "stockDtype": "int5",
+      "values": 56623104,
+      "decodedSha256": "6381331530faa449983a7d8249bc7c36c608ed78c8a6ce0c02a3187c28f7edae",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.04044341717993163,
+      "maxAbs": 0.14769095554947853,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 35389440,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/msa_attention1/pair_logits/weights",
+      "stockDtype": "int5",
+      "values": 4096,
+      "decodedSha256": "814767f74c5d7aaaa15a91bf12197825892352a7f23b8206e4aaf13434875716",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03655307624684239,
+      "maxAbs": 0.06640112400054932,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 2560,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/msa_attention1/pair_norm/scale",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "330254a4eea06942b734cfb9a27858f362b1fdfcb91f48a944500a7dcc744161",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/msa_transition/input_layer_norm/offset",
+      "stockDtype": "float32",
+      "values": 256,
+      "decodedSha256": "77f724b5da2f83b82068fd57039a1e5ee7ec2b77a569edf3f583acb77e8b4500",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/outer_product_mean/right_projection/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "b6b2b78d7373fb6b452b6b23edc561b0fb4275e88a7f0d8589171c4619ca379c",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03722137626138586,
+      "maxAbs": 0.062337279319763184,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_attention1/gating_query/weights",
+      "stockDtype": "int5",
+      "values": 65536,
+      "decodedSha256": "512cf0ae0a2b5a36dacb1a16e52b25a8a6230941d343d71dcec39b1a51abfcd9",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03813416648311909,
+      "maxAbs": 0.07711261510848999,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40960,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_attention2/k_projection/weights",
+      "stockDtype": "int5",
+      "values": 65536,
+      "decodedSha256": "4d3cd70485938aa293500bf0b548b7afb0aa04b309c7fcef0475c6962bc65e37",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03841551971749572,
+      "maxAbs": 0.06526714563369751,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40960,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_transition/input_layer_norm/offset",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "b89ea4fec68a6e9ae2603fdf2ff6aac46360f36a1454a1455aca30be71db44ea",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_transition/transition2/weights",
+      "stockDtype": "int5",
+      "values": 262144,
+      "decodedSha256": "630e6ef43315bafde4744860e316bff5b6a164515af1807a859fa2d5453236e3",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.042071769438283536,
+      "maxAbs": 0.1495453012175858,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 163840,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/triangle_multiplication_outgoing/center_norm/offset",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "c725c1b9c842444f9aecdf3b462df642c0c0783816fad4cf798e25968a150053",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/triangle_multiplication_outgoing/gate/weights",
+      "stockDtype": "int5",
+      "values": 131072,
+      "decodedSha256": "87e071a92902d14455833adf689ffc9ffcabcab5c48a0589c87ed8d0b651698f",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03789166311391532,
+      "maxAbs": 0.07711875438690186,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 81920,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/triangle_multiplication_outgoing/gating_linear/weights",
+      "stockDtype": "int5",
+      "values": 65536,
+      "decodedSha256": "51a01ab4d45fc36b05eae77b0bd4a3525a72257378d9eb301280d1573686f6fe",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0370191248500546,
+      "maxAbs": 0.06944506615400314,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40960,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_attention1/pair_bias_projection/weights",
+      "stockDtype": "int5",
+      "values": 24576,
+      "decodedSha256": "2765474fbdc5d22e1db5a7facba5c84b3a929aea1a860243fdd98c97a8839c1b",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03917477911459485,
+      "maxAbs": 0.09295427799224854,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 15360,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_attention2/gating_query/weights",
+      "stockDtype": "int5",
+      "values": 786432,
+      "decodedSha256": "0972b8d67788b42835cfde8bf23cb7f9c74881a30e35a297ff0e26c1bb5e6248",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03805905819766651,
+      "maxAbs": 0.09591794013977051,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 491520,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_transition/input_layer_norm/scale",
+      "stockDtype": "float32",
+      "values": 6144,
+      "decodedSha256": "136f3004af3a8d7ea54b5ae7778bea1fd4625c5e10640a9e62789811e84c4909",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_transition/transition2/weights",
+      "stockDtype": "int5",
+      "values": 3145728,
+      "decodedSha256": "2d5cfb412d0b6a6b25ff3a39183aba90798bd7eab02809e8c5d8d117525d14a7",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03896611917415965,
+      "maxAbs": 0.14105846732854843,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 1966080,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/single_transition/input_layer_norm/scale",
+      "stockDtype": "float32",
+      "values": 18432,
+      "decodedSha256": "de908f88300a4dde4e31df90bd027fa45c75c00cfe9f59a824d698fbc72a7273",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/single_transition/transition2/weights",
+      "stockDtype": "int5",
+      "values": 28311552,
+      "decodedSha256": "3c4ae192060e4510544568083ea7989bd965bf7bce44d2071dc3a48566b5999d",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.04712044496471927,
+      "maxAbs": 0.25620148703455925,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 17694720,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/triangle_multiplication_incoming/gating_linear/weights",
+      "stockDtype": "int5",
+      "values": 786432,
+      "decodedSha256": "fcdc73d51e5adbc72b19f44f19e266394fc1b332161bba01a821324126894ddf",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03748134338909469,
+      "maxAbs": 0.11054450273513794,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 491520,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/triangle_multiplication_incoming/left_norm_input/scale",
+      "stockDtype": "float32",
+      "values": 6144,
+      "decodedSha256": "d429ba4d92be5169d910e16502515a2a7ce64f4c767ae55cf3c55b62ff12c399",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/bond_embedding/weights",
+      "stockDtype": "int5",
+      "values": 128,
+      "decodedSha256": "68b58915dbab5914d98561a3f512c3b385f84a77735f6cfead142b70829d2c75",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03178459247514597,
+      "maxAbs": 0.25043249130249023,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 80,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/left_single/weights",
+      "stockDtype": "int5",
+      "values": 57216,
+      "decodedSha256": "e23a770f16c67afa392888393c1a74db9e4dce4472878ed3d85fa084ab55fe3a",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03858391412059985,
+      "maxAbs": 0.16703027486801147,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 35760,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/prev_single_embedding_layer_norm/scale",
+      "stockDtype": "float32",
+      "values": 384,
+      "decodedSha256": "49f87a6b64a0907354c905d00e04e6871d3e5c7f3f26bbb99150244210890696",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_attention1/v_projection/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "fdbf553ac535ad1bbe41081608793d614bd364a19965be323bb7547b51675192",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.037696238957592124,
+      "maxAbs": 0.07737401127815247,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_attention2/act_norm/scale",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "aa273a7d9d50ddde2a5c1ad1fac7f7562bbfb034a4254678f31652e9d0dbf4d3",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/triangle_multiplication_incoming/gate/weights",
+      "stockDtype": "int5",
+      "values": 16384,
+      "decodedSha256": "d261799d119fe956b1c6f5999428b621bf374ea677e3256ce8d29eea598e6632",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.037046069179322016,
+      "maxAbs": 0.0731869637966156,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 10240,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/triangle_multiplication_incoming/gating_linear/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "024b88697f36d3d98992821ae6b3f0ed97aff8c7994279a79d412846b4ea146a",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.036774596875735935,
+      "maxAbs": 0.053083740174770355,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/triangle_multiplication_incoming/left_norm_input/scale",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "b43ce1055909dce7213b6d9613bbf4583329cb530a7b370eda1e740b56b8064d",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/output_layer_norm/offset",
+      "stockDtype": "float32",
+      "values": 64,
+      "decodedSha256": "717865adc48c3ac6342fced272e44b0695baec2ae337042f58f8fd5e9a780511",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/query_embedding_norm/scale",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "18d792464d2da6f59e3147217d367c47e07d3d8445763b881ef04132b923844f",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/template_pair_embedding_6/weights",
+      "stockDtype": "int5",
+      "values": 64,
+      "decodedSha256": "4c7b27b74561aebe7b2f01e490e08aa146c37da8cdef8a3eec8746ea0c5964ac",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.041341432556691614,
+      "maxAbs": 0.19461047649383545,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/~_relative_encoding/position_activations/weights",
+      "stockDtype": "int5",
+      "values": 17792,
+      "decodedSha256": "191c1b30c6b683a7a6c09d1376ffd8784ca3a289a237f79a721865baf00d5e5e",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.036309239980680405,
+      "maxAbs": 0.20625925064086914,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 11120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/distogram_head/half_logits/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "be11a210602924b6b9cdb49049248f41c0cf36730ea2579c75d304cc82bfcfee",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.010058672807878106,
+      "maxAbs": 0.0018107220530509949,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/msa_attention1/act_norm/scale",
+      "stockDtype": "float32",
+      "values": 256,
+      "decodedSha256": "72703b218ef419ea6e4c879539a47ad4324e7b6e2ad2e43746e6ef043f13a056",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/msa_attention1/v_projection/weights",
+      "stockDtype": "int5",
+      "values": 16384,
+      "decodedSha256": "63cc57ad760109fcc8423212e3f792ebcf2aea9eb0ad729b7b5f7ceb78c59eec",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.037566905232964014,
+      "maxAbs": 0.11594194173812866,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 10240,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_attention1/act_norm/offset",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "e77b87b5317f61f8407a01180be0e70c848cdf0457bcf58aaa29938bd4776332",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_attention1/output_projection/weights",
+      "stockDtype": "int5",
+      "values": 65536,
+      "decodedSha256": "9945faa463eff46999ccbd3f90c801bc57383376c509807d309291aa4b032de7",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.038751864117649464,
+      "maxAbs": 0.1306201070547104,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40960,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_attention1/pair_bias_projection/weights",
+      "stockDtype": "int5",
+      "values": 2048,
+      "decodedSha256": "83fdf8d390f542d6945ea88d10c5ad09754834bca1b307ea97c9ee0b2421d89b",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.038334800068582794,
+      "maxAbs": 0.08217376470565796,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 1280,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_attention2/q_projection/weights",
+      "stockDtype": "int5",
+      "values": 65536,
+      "decodedSha256": "f19cdcaf4060c4550793f4f79b5993b9146394f3118d293ae53290e7b83c77de",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.038180384648637544,
+      "maxAbs": 0.06432172656059265,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40960,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/triangle_multiplication_incoming/center_norm/offset",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "bb0d0eb8a27594259c97d4a8a3ccdd2b696e28dd34d0b3d20b293de81ebc662f",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/triangle_multiplication_outgoing/left_norm_input/offset",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "f6eba45a8757f79bf816c81280eef317dba66de51e04b9d06ddd6451a7a23ea4",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/triangle_multiplication_outgoing/projection/weights",
+      "stockDtype": "int5",
+      "values": 131072,
+      "decodedSha256": "c0d30e78c92922f9a7a529b764053ec452a7666592e42d0613cf873a81aa4572",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.038201875463768346,
+      "maxAbs": 0.08574354648590088,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 81920,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_attention1/output_projection/weights",
+      "stockDtype": "int5",
+      "values": 786432,
+      "decodedSha256": "05f9624e03d33b915983f7508d0f3d85cb3a0ee6707ff38a7d20d195deee14fc",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.038203175792495096,
+      "maxAbs": 0.13581234216690063,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 491520,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_attention2/k_projection/weights",
+      "stockDtype": "int5",
+      "values": 786432,
+      "decodedSha256": "cec9e4122448d94bc35af58b7bff5425acf550296c5aec4bce4c394ceb5beaab",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.038151426967683234,
+      "maxAbs": 0.07580554485321045,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 491520,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_transition/input_layer_norm/offset",
+      "stockDtype": "float32",
+      "values": 6144,
+      "decodedSha256": "00c20ff367f2b6a4b3c64b49ecb8c181b378cc455ecad5b06867ac7f04e27788",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/triangle_multiplication_incoming/left_norm_input/offset",
+      "stockDtype": "float32",
+      "values": 6144,
+      "decodedSha256": "ecdf8e4c6af930c654bdbf1d69b8b4d41619adf65b050062487f27ad92b02ee2",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/triangle_multiplication_incoming/output_projection/weights",
+      "stockDtype": "int5",
+      "values": 786432,
+      "decodedSha256": "3762d0439a1e09bbbd3b49a2283109d34a32ce4e9cefb63792aa257db736e5d2",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03846604483438806,
+      "maxAbs": 0.11722351610660553,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 491520,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/extra_msa_target_feat/weights",
+      "stockDtype": "int5",
+      "values": 28608,
+      "decodedSha256": "e6aba0300c05b7b349e04c1a52268b8fc80c743751054a4513287aafdbfab008",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.04168090985840685,
+      "maxAbs": 0.22156953811645508,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 17880,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_attention1/k_projection/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "54243714ba0a125f3a6a25ffe39fdaf4b5169d614b3f476b2762b9cab1be08b8",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03873735032238729,
+      "maxAbs": 0.06441053748130798,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_attention2/act_norm/offset",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "b68980630c645f79455da4e0a10926c8c69be30f424801fd36baa9752a6901cf",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_attention2/output_projection/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "64943526389e0f9463b2b7e77b9c14bd413ec1c4ee4d0b7c28f99f196aa5c81f",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03862180137285458,
+      "maxAbs": 0.08162310719490051,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/triangle_multiplication_incoming/left_norm_input/offset",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "058705ae04b6e21a84851e4d56a98a42b69ccf7ec7a1a110d80ce38fad9ab84c",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/triangle_multiplication_outgoing/output_projection/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "d6af7fd909d4d11530978a7509d234295c71c57d364b595ca55198f42fab5eb8",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.040512895968542455,
+      "maxAbs": 0.07925570011138916,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/triangle_multiplication_outgoing/projection/weights",
+      "stockDtype": "int5",
+      "values": 16384,
+      "decodedSha256": "5e038e385dc6e461e8cc191ee82c52997b687a0da049bfac61bcb347e6dbb34b",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03741197500674434,
+      "maxAbs": 0.08697772026062012,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 10240,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/query_embedding_norm/offset",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "ffc8b08b9eb86c46298b16ec07d58cddd335a112c8864794fd9fa1109c525b93",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/template_pair_embedding_1/weights",
+      "stockDtype": "int5",
+      "values": 64,
+      "decodedSha256": "b10ff15ad95ac547f2a8aa4fc6e65a9eb28b036abc36ac828a01bd88656e8420",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.04281152535743006,
+      "maxAbs": 0.10440993309020996,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/template_pair_embedding_7/weights",
+      "stockDtype": "int5",
+      "values": 64,
+      "decodedSha256": "6bc351a115af54939c502d3c85b15dbdbb618eaba215e79edf5abcd31997328a",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.04792615787966018,
+      "maxAbs": 0.12637642497429624,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/msa_attention1/output_projection/weights",
+      "stockDtype": "int5",
+      "values": 16384,
+      "decodedSha256": "5d3eb76a40d2ac3920671ef51b7b2a3bee124a441b255bdc21a3a1f25381a315",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.04353319978896001,
+      "maxAbs": 0.1837608441710472,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 10240,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_attention1/act_norm/scale",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "71332c3b31425dd166a26f4c308b0ec79b6c722e315001ede919a55d13b4896d",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_attention1/q_projection/weights",
+      "stockDtype": "int5",
+      "values": 65536,
+      "decodedSha256": "2ff1824089e22e2c601ef8f14d2170eafe0a8ffe3af183cd1e64d89b23e725cd",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03797978029289797,
+      "maxAbs": 0.06303772330284119,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40960,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_attention2/v_projection/weights",
+      "stockDtype": "int5",
+      "values": 65536,
+      "decodedSha256": "628cfffe3aba3bd1c08cf2c7f8916767b909686970145cb569c6d999f59ea9a6",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03749585379237543,
+      "maxAbs": 0.09634256362915039,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40960,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/triangle_multiplication_incoming/center_norm/scale",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "1119fcf2512f3438fbc0ef95479cda351be5bd3e51d72f0a2d75085055579d12",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/triangle_multiplication_outgoing/left_norm_input/scale",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "5f0ca55edbc4aff8b71c82e784562632a72ea944f5364b9540d4d879670e15ef",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_attention1/act_norm/offset",
+      "stockDtype": "float32",
+      "values": 6144,
+      "decodedSha256": "9d5ead3df2803d0fb7d7e6e16498b4940557018e100b6364d1042b82786c8e09",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_attention2/output_projection/weights",
+      "stockDtype": "int5",
+      "values": 786432,
+      "decodedSha256": "e0fbfe187c35fcde6c97c942eeae8d36c22a035294e116ede9a3cb0416faa5c5",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.038049917784009436,
+      "maxAbs": 0.10944598913192749,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 491520,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_attention2/pair_bias_projection/weights",
+      "stockDtype": "int5",
+      "values": 24576,
+      "decodedSha256": "c45bef60a2d57615ca25964a8ef8d6c353529e2878843eed256ddba04831d099",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.037937529374086607,
+      "maxAbs": 0.09144961833953857,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 15360,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/single_attention_q_projection/bias",
+      "stockDtype": "float32",
+      "values": 18432,
+      "decodedSha256": "4e8ea105b50c0546a0d2754bebeb89ce09e46ca129f20c43e2dbc0a195241e16",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/single_pair_logits_norm/offset",
+      "stockDtype": "float32",
+      "values": 6144,
+      "decodedSha256": "7a1b94e559c4f24a67c8abd30d2d10e716189ddcd50cae95e5d8073e53083b01",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/single_pair_logits_projection/weights",
+      "stockDtype": "int5",
+      "values": 98304,
+      "decodedSha256": "8769f25f4f352d23ae8c30c2884a060b174d26fe23ac8f36b6c11cd1610cadcd",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0375958834740967,
+      "maxAbs": 0.08871972560882568,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 61440,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/triangle_multiplication_incoming/gate/weights",
+      "stockDtype": "int5",
+      "values": 1572864,
+      "decodedSha256": "23d265522d4ed68a431dd094025cc818738d1491efe6e0d2f0d81c42c60f941a",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.036871803130472114,
+      "maxAbs": 0.07599058747291565,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 983040,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/triangle_multiplication_outgoing/center_norm/offset",
+      "stockDtype": "float32",
+      "values": 6144,
+      "decodedSha256": "57936d6e8745e1935cc5dea01fbf5b70bc636ad88c4a38bf1193005ae9cf46e0",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/triangle_multiplication_outgoing/output_projection/weights",
+      "stockDtype": "int5",
+      "values": 786432,
+      "decodedSha256": "5a480318d59b9156cd698389281ce85eff06bd12b2a2d1d2bdbfd600b0baa051",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03848031511199516,
+      "maxAbs": 0.11239489912986755,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 491520,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/triangle_multiplication_outgoing/projection/weights",
+      "stockDtype": "int5",
+      "values": 1572864,
+      "decodedSha256": "3d51ece036c39d3b4a8be313148cb84d90b8f1ae928a0c56dc86159c02d06b7e",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.038158677508601344,
+      "maxAbs": 0.10330045223236084,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 983040,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/prev_single_embedding_layer_norm/offset",
+      "stockDtype": "float32",
+      "values": 384,
+      "decodedSha256": "9dae1d01a5aa6f9975fbf1ee5483bbad930970906aec51ea37864d108d6fed62",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_attention1/act_norm/scale",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "231e5a23f5ffde78c42caed296dc75ff0ccfeab5371919a60ec9a99e46be63af",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_attention1/gating_query/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "16a4dc958a0b82b492026e9a40facbcdcd34f2f8eead973720a0265c022a32ec",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03869937428269924,
+      "maxAbs": 0.07860034704208374,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_attention2/k_projection/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "6c445876df9372ce2fd3ded0d38f5281977a37050e6b2540ca3d52144c5b6ab4",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.038527974833211444,
+      "maxAbs": 0.06571166962385178,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/triangle_multiplication_incoming/center_norm/scale",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "795e97dd50f0b915fb47f6c483e3d4ce1c096423516971943d740b2a4b0d469f",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/triangle_multiplication_outgoing/gate/weights",
+      "stockDtype": "int5",
+      "values": 16384,
+      "decodedSha256": "942661a5c5080359e708b3d4e252fd08d2fecdf748f681db602bece5b48366a9",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03709783016842833,
+      "maxAbs": 0.0719594657421112,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 10240,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/triangle_multiplication_outgoing/gating_linear/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "1a127080a23b216f76b9c77519c81b76134b3d1077adf157a927fc92e000e49e",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03721480013976834,
+      "maxAbs": 0.05354022979736328,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/triangle_multiplication_outgoing/left_norm_input/scale",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "d30b76650eb1cdec2e27e30618f2033f11d92e25ba7fd130cce668f809507aa9",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/template_pair_embedding_3/weights",
+      "stockDtype": "int5",
+      "values": 1984,
+      "decodedSha256": "27577b7dc9e7c075420f40b41a7657720f78e3f059b5390887dc1d0bc03492a5",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03788555502187607,
+      "maxAbs": 0.11847090721130371,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 1240,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/msa_attention1/gating_query/weights",
+      "stockDtype": "int5",
+      "values": 16384,
+      "decodedSha256": "e0b13451b62430fb785b81c4055b150fd37734ec4b7beb3ec020bfe9d64296c9",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.037958423392563105,
+      "maxAbs": 0.08176542818546295,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 10240,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/msa_attention1/pair_norm/offset",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "bb4d7b82d73544382f5d27d2b3d22a1418fbca0c03c6020ed94ea3dcdefb7d1e",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/outer_product_mean/output_w",
+      "stockDtype": "int5",
+      "values": 524288,
+      "decodedSha256": "7c8c51992529bc538c9fd7a82cbe3459a1ce7338db8e793b48f63c11265df16e",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.038580198780569,
+      "maxAbs": 0.10596215724945068,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 327680,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/outer_product_mean/layer_norm_input/offset",
+      "stockDtype": "float32",
+      "values": 256,
+      "decodedSha256": "ab27e4bbf847cc6ba870e31eb8f1bf86044ec1c167fdc618e506cd4f0843a754",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_attention1/v_projection/weights",
+      "stockDtype": "int5",
+      "values": 65536,
+      "decodedSha256": "b8b25ea6f21a0b83047d2758167f26377500dba69b92735d83f0b7b2258db62c",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.037428014603808915,
+      "maxAbs": 0.07967686280608177,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40960,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_attention2/act_norm/scale",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "4d6d361839c16da3c208eeb402410311a04feec454fa83cbf26a9401ec7de08d",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_attention2/pair_bias_projection/weights",
+      "stockDtype": "int5",
+      "values": 2048,
+      "decodedSha256": "c8dbbd06d5eb04a36a7c84bd16bdac82ce7922de69f178c29e4810b764892312",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03841396820458535,
+      "maxAbs": 0.11893510818481445,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 1280,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/triangle_multiplication_incoming/gating_linear/weights",
+      "stockDtype": "int5",
+      "values": 65536,
+      "decodedSha256": "872732e5133afe3c6c859697b6f61eec6d02de4e5e9a2a8f7d96f240651c2c28",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03718163302641144,
+      "maxAbs": 0.06856728345155716,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40960,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/triangle_multiplication_incoming/left_norm_input/scale",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "301d088eeeef6a34c5bacb7b648d6d7cd8daac52f584bf88cfd0e175e6c0e99b",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/triangle_multiplication_incoming/projection/weights",
+      "stockDtype": "int5",
+      "values": 131072,
+      "decodedSha256": "fa5ca4c570f4a85a1ed87104f80fa42fa420c8210cc8b9059e8c4a0efd44ab4d",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.04033487733023303,
+      "maxAbs": 0.07826066017150879,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 81920,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_attention1/gating_query/weights",
+      "stockDtype": "int5",
+      "values": 786432,
+      "decodedSha256": "04bc43adee98e9e0134487db2e1808bf1e3beb6dd1699d72b512107a69a2420c",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.037993745215663975,
+      "maxAbs": 0.09962058067321777,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 491520,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_attention1/q_projection/weights",
+      "stockDtype": "int5",
+      "values": 786432,
+      "decodedSha256": "a36ed522c3b030e5ad12df02a34d2e5e2e2c9bf62ab72672c748f5b1a85bb214",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03810671123392889,
+      "maxAbs": 0.06526222825050354,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 491520,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_attention2/act_norm/offset",
+      "stockDtype": "float32",
+      "values": 6144,
+      "decodedSha256": "658b6ce6011e3bb13c9f309a460465bb97c3db718cdd89adc5aeb0a55ebf747c",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_attention2/q_projection/weights",
+      "stockDtype": "int5",
+      "values": 786432,
+      "decodedSha256": "cd4bae0a1924c8906c738e09f053a522d8fc87877e64b69b7b7b3f6ae990c17a",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03808683285622009,
+      "maxAbs": 0.06471523642539978,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 491520,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/single_attention_gating_query/weights",
+      "stockDtype": "int5",
+      "values": 7077888,
+      "decodedSha256": "df41e4231b0a9db43ff2e403f96004382385d3f1fa2e154e0e5132b5bf075d8a",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03561481195134069,
+      "maxAbs": 0.15625184774398804,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 4423680,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/single_attention_transition2/weights",
+      "stockDtype": "int5",
+      "values": 7077888,
+      "decodedSha256": "8a4660292d7defa828a7b27b530fddf1271a44f1eeb86fb563c1253f01dfcc5e",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.041365005722543584,
+      "maxAbs": 0.2321731150150299,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 4423680,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/single_transition/input_layer_norm/offset",
+      "stockDtype": "float32",
+      "values": 18432,
+      "decodedSha256": "0808b306548c618875a694eca9356cd726cacc3ef15dfe7d27fd9ed936fa6e8c",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/triangle_multiplication_incoming/center_norm/offset",
+      "stockDtype": "float32",
+      "values": 6144,
+      "decodedSha256": "d295b00773b144f8ed62f8f8d26243db1333c7371a2dc534809c9b8687e42daa",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/triangle_multiplication_incoming/projection/weights",
+      "stockDtype": "int5",
+      "values": 1572864,
+      "decodedSha256": "6e9a5ff3c7f408b9a3f7495f59c058122a1f78deebb218babfa42be29ed2ee57",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03819834447078226,
+      "maxAbs": 0.10406160354614258,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 983040,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/triangle_multiplication_outgoing/left_norm_input/offset",
+      "stockDtype": "float32",
+      "values": 6144,
+      "decodedSha256": "c0298862f7d1baa6dd819001b1502ac1465a6f8948a64ec003a4645e7328e652",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/msa_activations/weights",
+      "stockDtype": "int5",
+      "values": 2176,
+      "decodedSha256": "d3f92887789e8a4caaf19bb4b01838b640121f8e1bbd0090b3e1f12850aa3bf1",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0405020988605858,
+      "maxAbs": 0.31585144996643066,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 1360,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/prev_embedding_layer_norm/scale",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "ded7dbd9749835ea048a96fc208ebe94719b7a507e75b76bf2246c88ebf7f885",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/right_single/weights",
+      "stockDtype": "int5",
+      "values": 57216,
+      "decodedSha256": "754ad22e9758c1f0b2c10d7a2c62f78a1a4f608428dd0f69321663ba13faf02d",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.04002322049105164,
+      "maxAbs": 0.11829501390457153,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 35760,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/single_activations/weights",
+      "stockDtype": "int5",
+      "values": 171648,
+      "decodedSha256": "5dfab0c7eb333f5057baf86f4c2c20d490165b68de6fa5248d523bc9dc7ea5f6",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03743074617270131,
+      "maxAbs": 0.18051910400390625,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 107280,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_attention1/pair_bias_projection/weights",
+      "stockDtype": "int5",
+      "values": 512,
+      "decodedSha256": "c91b51a3ddfb2e720977081ca3f2d03e851b38c222fbc515652c0cc953090063",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.039398596818402486,
+      "maxAbs": 0.051081180572509766,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 320,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_attention1/q_projection/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "3bf37a730892ad21b32189b1d9928918cd983c42e1d4f1f2c1caa57b6c4e822f",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03842321665773983,
+      "maxAbs": 0.05748888850212097,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_attention2/v_projection/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "264f97d5b57f876d901358cd918647f242011b726c3abfe87f137c6176277542",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03742830825278478,
+      "maxAbs": 0.06781643629074097,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_transition/input_layer_norm/scale",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "74899cdd7545af5f187e9ec4c285682fade9a1497a400f557efba804bddd517b",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_transition/transition2/weights",
+      "stockDtype": "int5",
+      "values": 16384,
+      "decodedSha256": "2b13aa68fac2bb2148b256a5c45f19593d13b210ce1914e01a48d74982e6e453",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03995345988322859,
+      "maxAbs": 0.12454147636890411,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 10240,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/triangle_multiplication_outgoing/center_norm/scale",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "bf5a66ed7ee5b7f92cc6dfa013fa5e5fde40feb6497b276d9f97935f1132e167",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/output_layer_norm/scale",
+      "stockDtype": "float32",
+      "values": 64,
+      "decodedSha256": "512ee778c79816d298adffaa38bb6cf6ac1e3b1087de1af8c3eb35686ba1f2dd",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/template_pair_embedding_4/weights",
+      "stockDtype": "int5",
+      "values": 64,
+      "decodedSha256": "5b3a621f5f86627b8b586d1f190f57615f7e049ab79fb24c629da692e6714e0c",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.039791080853880306,
+      "maxAbs": 0.19059431552886963,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/msa_attention1/act_norm/offset",
+      "stockDtype": "float32",
+      "values": 256,
+      "decodedSha256": "deb7fec195a6df09904a5aadd8c8186ca387e4f7d52c28adaff2c733e714f04e",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/msa_transition/input_layer_norm/scale",
+      "stockDtype": "float32",
+      "values": 256,
+      "decodedSha256": "8884b512b2199fd401e0fa29dee6708ccdae7e11ab864817c26180f1fc801ca1",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/msa_transition/transition1/weights",
+      "stockDtype": "int5",
+      "values": 131072,
+      "decodedSha256": "0045d560662d749a39867bb99c4e6658f6beba6982d7d929c07caefb8a132e1b",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03802524369108325,
+      "maxAbs": 0.09060537815093994,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 81920,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/msa_transition/transition2/weights",
+      "stockDtype": "int5",
+      "values": 65536,
+      "decodedSha256": "94c589afd12292ba8db928ed2ef9d2ce76f08a2453c32de41eabecb27acb9465",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.04566842454650696,
+      "maxAbs": 0.21098671853542328,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40960,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/outer_product_mean/output_b",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "cade7f06b17474a1e24294ece8d5c3f0c9856804a9676fcc352a487142c31942",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_attention2/gating_query/weights",
+      "stockDtype": "int5",
+      "values": 65536,
+      "decodedSha256": "e3ca28675d66948472cccd019efcdafac197c26623cf22a9a299ea19a4c2fa11",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03815086694879858,
+      "maxAbs": 0.08102438040077686,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40960,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_transition/input_layer_norm/scale",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "10ea463fb9aa35baa2a47b6476172785e4814a82a9c963c8b418f3f147c1da38",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_transition/transition1/weights",
+      "stockDtype": "int5",
+      "values": 524288,
+      "decodedSha256": "b795e908802b6ae9c9e96a30c451caf9188b36e05eb3904554d66a302ee46821",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03751896622362906,
+      "maxAbs": 0.0927472785115242,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 327680,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/triangle_multiplication_incoming/output_projection/weights",
+      "stockDtype": "int5",
+      "values": 65536,
+      "decodedSha256": "992f4b784e2aa865cc571ea0fa2fcd9f4058929735d110248a931e168a811784",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.038302036262009,
+      "maxAbs": 0.08955302834510803,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40960,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/triangle_multiplication_outgoing/center_norm/scale",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "ff5a1db785f16b43f8a431762db7f077ced5a4a2e4f8d94cb6120cd54543dd6d",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_attention1/act_norm/scale",
+      "stockDtype": "float32",
+      "values": 6144,
+      "decodedSha256": "9edfe8ef17818127c1ea80030358e935ed422623514d9ca3703ec3851ffc6841",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_attention1/k_projection/weights",
+      "stockDtype": "int5",
+      "values": 786432,
+      "decodedSha256": "a4d0c4cc1da216a48ae5465953c0573dd1875a80b526a3773892240098ee0911",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03825449604423036,
+      "maxAbs": 0.07379788160324097,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 491520,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_attention1/v_projection/weights",
+      "stockDtype": "int5",
+      "values": 786432,
+      "decodedSha256": "f3ad0eb4b5fc84da4ac47f31755cb4812095403ee00347e1681a56a042b860c0",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03803494543579772,
+      "maxAbs": 0.11037039756774902,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 491520,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_attention2/v_projection/weights",
+      "stockDtype": "int5",
+      "values": 786432,
+      "decodedSha256": "0dc748b261aa19435b8ac6bb933e133cef4ecaa62f9926f28e1cc901ef54baef",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.037892455221951137,
+      "maxAbs": 0.09496065974235535,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 491520,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/single_attention_k_projection/weights",
+      "stockDtype": "int5",
+      "values": 7077888,
+      "decodedSha256": "eaa0ae4a957e5005726c6b4fa311aa4f852c18cd8477ad0272acf24a7b30ced8",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.034548194419870046,
+      "maxAbs": 0.08707485347986221,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 4423680,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/single_attention_layer_norm/offset",
+      "stockDtype": "float32",
+      "values": 18432,
+      "decodedSha256": "511f349fd0d12f3519454563c7b44ad1018f4e82dae6f1e0f3b28eaef62db631",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/single_attention_v_projection/weights",
+      "stockDtype": "int5",
+      "values": 7077888,
+      "decodedSha256": "236a36feb2bd5babc3d1986734fe1cb574c04f8dcfea621d9f0161c0450f59ae",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03794995268573604,
+      "maxAbs": 0.21935796737670898,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 4423680,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/single_pair_logits_norm/scale",
+      "stockDtype": "float32",
+      "values": 6144,
+      "decodedSha256": "0f5ad745b3ac4f837322c5782f6b12683b82818c9b10694db403389053410051",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/triangle_multiplication_outgoing/center_norm/scale",
+      "stockDtype": "float32",
+      "values": 6144,
+      "decodedSha256": "34f63b08d63884f4a8e7ada3db93054fc48481c1e4c5b0c43284ff57492157d1",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/triangle_multiplication_outgoing/gate/weights",
+      "stockDtype": "int5",
+      "values": 1572864,
+      "decodedSha256": "ad1cf7503ab1eb9b2cbc7748a609acbfe06c39704acf3b082a679f82319a65dd",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03707514968475835,
+      "maxAbs": 0.07959955930709839,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 983040,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/prev_embedding_layer_norm/offset",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "30bd587e37395083cd38f9215cdcdc0cfbc70262b4846200a5ebeba4edf87ce4",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/prev_single_embedding/weights",
+      "stockDtype": "int5",
+      "values": 147456,
+      "decodedSha256": "e3101a6976066593951e52cf912fedf2bf57536b55f51201c346d6ff02a35586",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0466701131362288,
+      "maxAbs": 0.15017548203468323,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 92160,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/output_linear/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "98fd1e9df703179f201e07e03f373806d5221f905a68bde91793bd4bc2394449",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.04727068613629801,
+      "maxAbs": 0.131425142288208,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_attention2/gating_query/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "2534fae22803577bf982fdfa93d1ecd46e0a2311dfd4e3f7ba3891a4e0b36d70",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03825883316091649,
+      "maxAbs": 0.09763146936893463,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_transition/input_layer_norm/offset",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "3f743e967b08446b4f25f2d74880e9d2b144a9edc3a201527c847b6877b845d5",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_transition/transition1/weights",
+      "stockDtype": "int5",
+      "values": 32768,
+      "decodedSha256": "5f26b34ff18032103d446868944cb16f0c9cfbd8a139319d7f618291d20d603d",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0374421505960547,
+      "maxAbs": 0.07700082659721375,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 20480,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/triangle_multiplication_incoming/output_projection/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "c0ef1499330fea6d9ca7442e308fd5a650cecd24c1d93037a22cc887abd15133",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.039546793942750236,
+      "maxAbs": 0.08909022808074951,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/triangle_multiplication_incoming/projection/weights",
+      "stockDtype": "int5",
+      "values": 16384,
+      "decodedSha256": "e4bd63f2978c2b3e2dc15af36be6b79cc57bb6e2f10e07cc8802f2bff2864748",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03726091648224997,
+      "maxAbs": 0.08473825454711914,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 10240,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/triangle_multiplication_outgoing/center_norm/offset",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "345a6c03b8a9b4fbc0903fdc09c2289f32b617c8dc95a53bfa99ce98add16451",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/template_pair_embedding_5/weights",
+      "stockDtype": "int5",
+      "values": 64,
+      "decodedSha256": "7077c685bb2a5b636f31126709afed1dcd7d142a35254b749d85c1dfa640b89d",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0405147570654146,
+      "maxAbs": 0.18073409795761108,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/outer_product_mean/layer_norm_input/scale",
+      "stockDtype": "float32",
+      "values": 256,
+      "decodedSha256": "4815c7b99681ea1086f07cb04c2e6c80e64918f7e44dcf6803fbdd70f6c072df",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/outer_product_mean/left_projection/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "755f73d76f906ab55552677a029b5cc6177c326a57e1337bb3c8682b6c024ec4",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03779664945382007,
+      "maxAbs": 0.061915263533592224,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_attention1/k_projection/weights",
+      "stockDtype": "int5",
+      "values": 65536,
+      "decodedSha256": "f89efef9808812bc9caed2b1e93d62f53d9d214fcaee2da559546fe03d23894b",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.038289216705370825,
+      "maxAbs": 0.06006956100463867,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40960,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_attention2/act_norm/offset",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "a1e3ebb1baba2bfa73b8e7ca95843ddc82a984c322f4d33bd3339ab9cee99618",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/pair_attention2/output_projection/weights",
+      "stockDtype": "int5",
+      "values": 65536,
+      "decodedSha256": "ac970a882a677265a749a29e9768419a8b0fbaf17b6501e78f38390bfd6c5ee7",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.038516893825475816,
+      "maxAbs": 0.0889623761177063,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40960,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/triangle_multiplication_incoming/gate/weights",
+      "stockDtype": "int5",
+      "values": 131072,
+      "decodedSha256": "df43b42655a5369598a16f90294b1e33c1139e65d4cbaa700bd3d51d47fc0d08",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03928565368936435,
+      "maxAbs": 0.06911760568618774,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 81920,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/triangle_multiplication_incoming/left_norm_input/offset",
+      "stockDtype": "float32",
+      "values": 512,
+      "decodedSha256": "3007fb83ac58beadde81935caf89e14bc9401a6b38a0005be4316e60ff7e0c13",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer/msa_stack/triangle_multiplication_outgoing/output_projection/weights",
+      "stockDtype": "int5",
+      "values": 65536,
+      "decodedSha256": "3b44a6bc17b24131194a6138c7598c6f39bcaecab4233c27a89e66be784cf2bd",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03836409556732291,
+      "maxAbs": 0.08978411555290222,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 40960,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_attention2/act_norm/scale",
+      "stockDtype": "float32",
+      "values": 6144,
+      "decodedSha256": "a12d13db2a71cb9435b5b95162518bac3b2b8ba48b09ef08b59eb6b65ac1970f",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/pair_transition/transition1/weights",
+      "stockDtype": "int5",
+      "values": 6291456,
+      "decodedSha256": "fc81f826edaf85e4887bdae76305258f8df83b67b52612e6bdcf547a79ba004c",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03752811827609177,
+      "maxAbs": 0.10642164945602417,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 3932160,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/single_attention_layer_norm/scale",
+      "stockDtype": "float32",
+      "values": 18432,
+      "decodedSha256": "71d9878f8ffe58c8fda50cce9f958fd5b326b5f292458df3ac8231fdd3b8c2bc",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/single_attention_q_projection/weights",
+      "stockDtype": "int5",
+      "values": 7077888,
+      "decodedSha256": "164c9c3de90460190688ab5e8ff1a71592eca5c629d3d0f5d56cab832355ac55",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03630835220422285,
+      "maxAbs": 0.06610694527626038,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 4423680,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/triangle_multiplication_incoming/center_norm/scale",
+      "stockDtype": "float32",
+      "values": 6144,
+      "decodedSha256": "edd0533c2325e578d80c143521a3c5a287e32cf3b640ecc170220519db21d49c",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/triangle_multiplication_outgoing/gating_linear/weights",
+      "stockDtype": "int5",
+      "values": 786432,
+      "decodedSha256": "dc5f84e85f764fbd7cd61244230524bff8fe878dac43802548d8fc7bc9c5273b",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03765841538942182,
+      "maxAbs": 0.11176294088363647,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 491520,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/__layer_stack_no_per_layer_1/trunk_pairformer/triangle_multiplication_outgoing/left_norm_input/scale",
+      "stockDtype": "float32",
+      "values": 6144,
+      "decodedSha256": "e7c266728c0eed41805636b994d8f99283e4cf28d3519052acfa847aaeb8b77c",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/prev_embedding/weights",
+      "stockDtype": "int5",
+      "values": 16384,
+      "decodedSha256": "fdfb1a17d7b06ca0acc75b85b0bba8feb97b3d10c2e2d2a8a3947dc72490cd80",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.040764683289932754,
+      "maxAbs": 0.1203223168849945,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 10240,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_attention1/act_norm/offset",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "f86d3594d403ec8828d6e35c32d8a5bd96ec58552ca233d07d7c87c221408c0c",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_attention1/output_projection/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "d3861b8cca9285419492bc7a7ff2fd20e5cfe01875769fd790887489efe65697",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03953504765045472,
+      "maxAbs": 0.07961662113666534,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_attention2/pair_bias_projection/weights",
+      "stockDtype": "int5",
+      "values": 512,
+      "decodedSha256": "983e104dbfaf9dbd45d1b99218134425448c41e38fdb06996a526899ba964617",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.04104976665857294,
+      "maxAbs": 0.08634230494499207,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 320,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/pair_attention2/q_projection/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "1cd69b5aa903f728ef0fdf4fcca84b9371bff31e1ee8a220871458c80ef792f4",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.03834864776711296,
+      "maxAbs": 0.05464434623718262,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/triangle_multiplication_incoming/center_norm/offset",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "712cfcd5a4c66b452f0e9cd6df118df28a553934780853496aebc28f4991f313",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/__layer_stack_no_per_layer/template_embedding_iteration/triangle_multiplication_outgoing/left_norm_input/offset",
+      "stockDtype": "float32",
+      "values": 128,
+      "decodedSha256": "f6198b1ad78c78ef584567c93b11c3f821b2cd852db4925ce455a85b22bf1b41",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.0,
+      "maxAbs": 0.0,
+      "exactNativeReencoding": true,
+      "packedComparison": null
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/template_pair_embedding_0/weights",
+      "stockDtype": "int5",
+      "values": 2496,
+      "decodedSha256": "c95d2e1f9b5ed8c0055aa345fcb944897bc92729e89a416fb565f520ba09c43f",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.037082946262307626,
+      "maxAbs": 0.1419355273246765,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 1560,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/template_pair_embedding_2/weights",
+      "stockDtype": "int5",
+      "values": 1984,
+      "decodedSha256": "f7cc1576353ca3e11e59b48970b6789830ee8cabcd99f5037abac165ffdb79e2",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.042612050393026235,
+      "maxAbs": 0.07055267691612244,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 1240,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    },
+    {
+      "name": "diffuser/evoformer/template_embedding/single_template_embedding/template_pair_embedding_8/weights",
+      "stockDtype": "int5",
+      "values": 8192,
+      "decodedSha256": "ff1164e74ec1941b63ff48b4e31f3f3db6564e1dfeef8e516b0fc647fc2eb103",
+      "independentDecodedBytesMatch": true,
+      "relativeRms": 0.04288179738599667,
+      "maxAbs": 0.11448115110397339,
+      "exactNativeReencoding": true,
+      "packedComparison": {
+        "codeBytes": 5120,
+        "differentPackedBytes": 0,
+        "differentScaleBits": 0,
+        "differentZeroBits": 0
+      }
+    }
+  ],
+  "newModelCalls": 0,
+  "newNativeCaptureCalls": 0,
+  "newFullModelConversions": 0
+}

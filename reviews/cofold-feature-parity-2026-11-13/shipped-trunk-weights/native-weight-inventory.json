@@ -1,0 +1,80 @@
+{
+  "schema": "molarium.native-trunk-weight-part-inventory.v1",
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-login-001",
+    "instance/id": "3894148826269628555",
+    "instance/zone": "projects/734263838611/zones/us-central1-c"
+  },
+  "source": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture/weights.bin",
+  "bytes": 604789504,
+  "sha256": "46df3199346512b29321a7e7dece80b9d701ef695eb24880b217287a812bd709",
+  "nativeCheckpointSha256": "bd43301c011d5f87580d3e8b548658869433e4488399feb03035ba248f8e29e4",
+  "parts": [
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.part-01.bin",
+      "offset": 0,
+      "bytes": 83886080,
+      "sha256": "e6e69190ad3d4e6f5bc5abfe7b7204f41bccbf1ea458a5b0671d29b7c5e66bbe",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.part-01.bin"
+    },
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.part-02.bin",
+      "offset": 83886080,
+      "bytes": 83886080,
+      "sha256": "7eb89c3cda2adfe345ba26eb38cc0eb7a3da81c0e1c2116a5d52d4468062c58c",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.part-02.bin"
+    },
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.part-03.bin",
+      "offset": 167772160,
+      "bytes": 83886080,
+      "sha256": "52e7bb71c66ac1b2b8781ce5958c9391b072790e0808b8e6c1940c1bcca24b75",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.part-03.bin"
+    },
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.part-04.bin",
+      "offset": 251658240,
+      "bytes": 83886080,
+      "sha256": "c939fa37dd610a26d4a412488692dc7b807f0e641b152a73cb3db1807fb01c5d",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.part-04.bin"
+    },
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.part-05.bin",
+      "offset": 335544320,
+      "bytes": 83886080,
+      "sha256": "da7868cc2287ded644b6e177fbbe5df47a638b1c9907f94ee9fa80c502c6d800",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.part-05.bin"
+    },
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.part-06.bin",
+      "offset": 419430400,
+      "bytes": 83886080,
+      "sha256": "ace160056edac8135450b33232b1e60a57e1b7116a349d212fe2a15929056a8e",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.part-06.bin"
+    },
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.part-07.bin",
+      "offset": 503316480,
+      "bytes": 83886080,
+      "sha256": "c34d43baf2b450d576177e74194bce53224bd8cc2ea86664266b0926b0d499fe",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.part-07.bin"
+    },
+    {
+      "file": "openbind0-native-trunk-fp32-20261117.part-08.bin",
+      "offset": 587202560,
+      "bytes": 17586944,
+      "sha256": "d987af64c81603ebe3a436e8a0ba870b2d4e15241c967cc772349959bfa1608d",
+      "url": "https://github.com/rafwiewiora/molarium/releases/download/cofold-trained-trunk-2026-11-17/openbind0-native-trunk-fp32-20261117.part-08.bin"
+    }
+  ],
+  "newModelCalls": 0,
+  "newConversions": 0,
+  "largeLocalCopiesWritten": 0,
+  "sourceModel": "OpenBind-0; official OpenFold3 checkpoint",
+  "sourceLicense": "Apache-2.0; upstream license attached separately",
+  "upstream": "https://github.com/aqlaboratory/openfold-3",
+  "scope": "All 169 captured trunk/input/MSA/template/distogram weight tensors, not the complete model.",
+  "weightMetadata": "reviews/cofold-feature-parity-2026-11-13/shipped-trunk-weights/native-weights.json",
+  "publication": "https://github.com/rafwiewiora/molarium/releases/tag/cofold-trained-trunk-2026-11-17"
+}

@@ -1,0 +1,204 @@
+{
+  "schema": "molarium.shipped-trunk-weight-plan.v1",
+  "recordedAt": "2026-11-17T20:18:54.246964+00:00",
+  "scope": "All 169 saved native OpenBind-0 trunk/input/MSA/template/distogram parameter tensors versus the pinned shipped bundle. Parameter identity and INT5 re-encoding only; no neural forward, GPU or pose claim.",
+  "sourceBaseCommit": "e3f23623698f6b1e250d240edec6fdf62a6f6c0c",
+  "fixture": "/workspacenfs/rafal_wiewiora/molarium-trained-trunk-browser-20261113-attempt002/results/fixture",
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "nativeWeightManifestSha256": "46bf90005ab2236fa357303c2ced7ff3c46695778159bcef6cc8b811dd7a3727",
+  "nativeWeightBlobSha256": "46df3199346512b29321a7e7dece80b9d701ef695eb24880b217287a812bd709",
+  "nativeWeightBytes": 604789504,
+  "stockBaseUrl": "https://huggingface.co/sokrypton/localfold/resolve/71ece3571b80e6cdb06f3b95f785187171c718da/openbind0-int5/",
+  "sourceFiles": {
+    "folding/comparison/audit_shipped_trunk_weights.mjs": "d80d3d11969a9dd778163809d108e2e0174715528536f31ccfdc224dbe7b03af",
+    "folding/comparison/check_shipped_trunk_quantization.py": "6dbb72f5c3eeae37ad2e2dccccf0af59652492c9b6a1888b7e91694f91958256",
+    "folding/comparison/audit-shipped-trunk-weights.test.mjs": "1ef93dc0ddae1a28389075f117c6d0168726fd9cbe408743b6b8674ddf390ff6",
+    "folding/comparison/test_shipped_trunk_weights.py": "3b4dce5ec5ca72d4a6b0049a1eb81f2c23a105ab7511632df84281e8ba671467",
+    "folding/comparison/reference-localfold/quantize_af3.py": "8f75171c59e32ad7603323293839769aa149b728c6a2f8f1531dc2f6070162fa",
+    "folding/comparison/reference-localfold/LICENSE": "dff27ba886d5afdad3633a66154e7cdcad045b6d9e2189767234ee5b7f50dc1f",
+    "folding/comparison/reference-localfold/README.md": "719e67a54d90a70a7aabc9451d2a0a3b2ddb7e4f6deeb4083f768340718d3b68",
+    "vendor/localfold/shared/bundles/manifests/openbind0.js": "52bb27334d1d8c593da908ab13c5cf5e54e37e9dc6206190a0634621aabe9f8f",
+    "vendor/localfold/shared/weights/dtype.js": "29e0d5038fcde5279b2089c6e3e378bad22420a07c1b9f0c6329f078a3e22460"
+  },
+  "upstreamQuantizerRevision": "5ea3d42c911949700401b54003cb28c557fcf2a6",
+  "expectedTensors": 169,
+  "expectedFp32Tensors": 66,
+  "expectedInt5Tensors": 103,
+  "newModelCalls": 0,
+  "newNativeCaptureCalls": 0,
+  "newFullModelConversions": 0,
+  "newGpuRequests": 0,
+  "localLaptopShardCopies": 0,
+  "owner": "rafal",
+  "project": "psivant-prod",
+  "loginZone": "us-central1-c",
+  "cpuWorkerZone": "us-central1-a",
+  "cluster": "psigreen",
+  "controller": "psigreen-controller",
+  "retentionDeadline": "2026-11-20T22:30:00Z",
+  "acceptance": "Exact FP32 bytes and INT5 re-encoded code/scale/zero bytes are reported without changing model numerical gates. Independent decoded hashes must agree exactly.",
+  "automaticRetry": false,
+  "parentSetupFailure": {
+    "jobId": 21154,
+    "reason": "CPU worker zone a differs from login zone c; static identity gate stopped before payload. No data audit or model call."
+  },
+  "cpuWorkerTopology": {
+    "checkedAt": "2026-11-17T20:18:55.635985+00:00",
+    "source": "Live GCP compute.instances.list in psivant-prod",
+    "instances": [
+      {
+        "id": "6062815450542554991",
+        "labels": {
+          "ghpc_blueprint": "psivant-cluster",
+          "ghpc_deployment": "psigreen",
+          "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+          "ghpc_role": "compute",
+          "goog-terraform-provisioned": "true",
+          "slurm_cluster_name": "psigreen",
+          "slurm_instance_role": "compute",
+          "slurm_job_id": "20072"
+        },
+        "machineType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a/machineTypes/c4-highcpu-4",
+        "name": "psigreen-computenodeset-0",
+        "status": "RUNNING",
+        "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a"
+      },
+      {
+        "id": "3818406562609303534",
+        "labels": {
+          "ghpc_blueprint": "psivant-cluster",
+          "ghpc_deployment": "psigreen",
+          "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+          "ghpc_role": "compute",
+          "goog-terraform-provisioned": "true",
+          "slurm_cluster_name": "psigreen",
+          "slurm_instance_role": "compute",
+          "slurm_job_id": "11733"
+        },
+        "machineType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a/machineTypes/c4-highcpu-4",
+        "name": "psigreen-computenodeset-1",
+        "status": "RUNNING",
+        "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a"
+      },
+      {
+        "id": "6713930723089598828",
+        "labels": {
+          "ghpc_blueprint": "psivant-cluster",
+          "ghpc_deployment": "psigreen",
+          "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+          "ghpc_role": "compute",
+          "goog-terraform-provisioned": "true",
+          "slurm_cluster_name": "psigreen",
+          "slurm_instance_role": "compute",
+          "slurm_job_id": "20901"
+        },
+        "machineType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a/machineTypes/c4-highcpu-4",
+        "name": "psigreen-computenodeset-10",
+        "status": "RUNNING",
+        "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a"
+      },
+      {
+        "id": "8334246168168041149",
+        "labels": {
+          "ghpc_blueprint": "psivant-cluster",
+          "ghpc_deployment": "psigreen",
+          "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+          "ghpc_role": "compute",
+          "goog-terraform-provisioned": "true",
+          "slurm_cluster_name": "psigreen",
+          "slurm_instance_role": "compute",
+          "slurm_job_id": "21152"
+        },
+        "machineType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a/machineTypes/c4-highcpu-4",
+        "name": "psigreen-computenodeset-2",
+        "status": "RUNNING",
+        "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a"
+      },
+      {
+        "id": "1272706264322184203",
+        "labels": {
+          "ghpc_blueprint": "psivant-cluster",
+          "ghpc_deployment": "psigreen",
+          "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+          "ghpc_role": "compute",
+          "goog-terraform-provisioned": "true",
+          "slurm_cluster_name": "psigreen",
+          "slurm_instance_role": "compute",
+          "slurm_job_id": "20080"
+        },
+        "machineType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a/machineTypes/c4-highcpu-4",
+        "name": "psigreen-computenodeset-3",
+        "status": "RUNNING",
+        "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a"
+      },
+      {
+        "id": "1672568505558762063",
+        "labels": {
+          "ghpc_blueprint": "psivant-cluster",
+          "ghpc_deployment": "psigreen",
+          "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+          "ghpc_role": "compute",
+          "goog-terraform-provisioned": "true",
+          "slurm_cluster_name": "psigreen",
+          "slurm_instance_role": "compute",
+          "slurm_job_id": "20353"
+        },
+        "machineType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a/machineTypes/c4-highcpu-4",
+        "name": "psigreen-computenodeset-33",
+        "status": "RUNNING",
+        "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a"
+      },
+      {
+        "id": "1236250878266807191",
+        "labels": {
+          "ghpc_blueprint": "psivant-cluster",
+          "ghpc_deployment": "psigreen",
+          "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+          "ghpc_role": "compute",
+          "goog-terraform-provisioned": "true",
+          "slurm_cluster_name": "psigreen",
+          "slurm_instance_role": "compute",
+          "slurm_job_id": "12540"
+        },
+        "machineType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a/machineTypes/c4-highcpu-4",
+        "name": "psigreen-computenodeset-4",
+        "status": "RUNNING",
+        "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a"
+      },
+      {
+        "id": "2685928715784133344",
+        "labels": {
+          "ghpc_blueprint": "psivant-cluster",
+          "ghpc_deployment": "psigreen",
+          "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+          "ghpc_role": "compute",
+          "goog-terraform-provisioned": "true",
+          "slurm_cluster_name": "psigreen",
+          "slurm_instance_role": "compute",
+          "slurm_job_id": "16225"
+        },
+        "machineType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a/machineTypes/c4-highcpu-4",
+        "name": "psigreen-computenodeset-5",
+        "status": "RUNNING",
+        "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a"
+      },
+      {
+        "id": "219110409625471795",
+        "labels": {
+          "ghpc_blueprint": "psivant-cluster",
+          "ghpc_deployment": "psigreen",
+          "ghpc_module": "schedmd-slurm-gcp-v6-nodeset",
+          "ghpc_role": "compute",
+          "goog-terraform-provisioned": "true",
+          "slurm_cluster_name": "psigreen",
+          "slurm_instance_role": "compute",
+          "slurm_job_id": "21157"
+        },
+        "machineType": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a/machineTypes/c4-highcpu-4",
+        "name": "psigreen-computenodeset-6",
+        "status": "STOPPING",
+        "zone": "https://www.googleapis.com/compute/v1/projects/psivant-prod/zones/us-central1-a"
+      }
+    ]
+  }
+}
