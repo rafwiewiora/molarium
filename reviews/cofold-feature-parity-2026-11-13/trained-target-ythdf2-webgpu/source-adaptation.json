@@ -1,0 +1,20 @@
+{
+  "parentRunnerSha256": "a10cb4230f54bc805156267c70e1486ec3fed2e7810e151a65eeb9d6b55452cc",
+  "adaptedRunnerSha256": "842422aedf8d147bb8193b1a51e1a0ceb745aae9896d308a194bb26575c04052",
+  "replacements": [
+    {
+      "from": "for(const path of ['production-cpu','production-webgpu']){",
+      "to": "for(const path of ['production-webgpu']){"
+    },
+    {
+      "from": "const weights=await targetFeatureWeights(store),device=await getDevice(),records=[],raw=[];",
+      "to": "const observedAdapters=[],originalRequestAdapter=navigator.gpu.requestAdapter.bind(navigator.gpu);\n  navigator.gpu.requestAdapter=async(...args)=>{\n   const adapter=await originalRequestAdapter(...args);\n   const info=adapter?.info?Object.fromEntries(['vendor','architecture','device','description','isFallbackAdapter'].map(k=>[k,adapter.info[k]])):null;\n   if(!adapter||!info||!/apple/i.test(JSON.stringify(info))||/swiftshader|llvmpipe|software/i.test(JSON.stringify(info))||info.isFallbackAdapter)throw Error('Physical Apple GPU required before measurement');\n   observedAdapters.push(info);return adapter;\n  };\n  const weights=await targetFeatureWeights(store),device=await getDevice(),records=[],raw=[];"
+    },
+    {
+      "from": "return {records,raw,adapter:adapter?.info?",
+      "to": "return {records,raw,observedAdapters,adapter:adapter?.info?"
+    }
+  ],
+  "reverseExact": true,
+  "scope": "Select only the previously unmeasured GPU path; CPU result reused. Guard every adapter request for physical Apple; record adapter info. Numerical source, inputs, weights and gates unchanged."
+}

@@ -16,7 +16,9 @@ and initial checkpoints remain preserved. The earlier
 is a separate cohort. Final [ten-sample browser QA](review-ui-2026-11-16/README.md)
 also passed all 48 systems. The separate
 [NVIDIA component controls](../cofold-feature-parity-2026-11-13/gpu-capability-2026-11-16/numerical-2026-11-17/README.md)
-remain pending; the PR stays draft while that investigation finishes.
+remain pending. The completed pose study and reviewer are public in
+[merged PR #56](https://github.com/rafwiewiora/molarium/pull/56); numerical
+qualification is tracked separately.
 
 The public [Runs N’ Poses dataset](https://zenodo.org/records/18366081) and
 [repository](https://github.com/plinder-org/runs-n-poses/tree/197fafc60a5cef3a9e7f8a4b0dac7c965eed3839)
