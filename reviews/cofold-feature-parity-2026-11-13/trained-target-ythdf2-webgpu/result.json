@@ -1,0 +1,58 @@
+{
+  "scope": "Matched native feature bytes and full-FP32 trained weights for the production buildTargetFeat path only; no trunk, denoising, confidence, trajectory or pose accuracy claim.",
+  "fixtureReceiptSha256": "5d2d9a7cc60494c63734260be8d7f2f88a1939ecc990893926edfa5b667642b9",
+  "runnerSha256": "842422aedf8d147bb8193b1a51e1a0ceb745aae9896d308a194bb26575c04052",
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "outputs": [
+    {
+      "path": "production-webgpu",
+      "file": "/Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/ythdf2-target-apple-20261117-attempt001/result.production-webgpu.bin",
+      "bytes": 330780,
+      "sha256": "7bec67b7e4e26f1ad8a218c7bf0621e77fe73c00c065ec69166d8487db3271f6"
+    }
+  ],
+  "records": [
+    {
+      "path": "production-webgpu",
+      "elapsedMilliseconds": 270.51500000059605,
+      "finite": true,
+      "relativeRms": 1.5390061061479325e-7,
+      "maxAbsoluteDifference": 0.0000057220458984375,
+      "passes": true
+    }
+  ],
+  "observedAdapters": [
+    {
+      "vendor": "apple",
+      "architecture": "metal-3",
+      "device": "",
+      "description": "",
+      "isFallbackAdapter": false
+    },
+    {
+      "vendor": "apple",
+      "architecture": "metal-3",
+      "device": "",
+      "description": "",
+      "isFallbackAdapter": false
+    }
+  ],
+  "adapter": {
+    "vendor": "apple",
+    "architecture": "metal-3",
+    "device": "",
+    "description": ""
+  },
+  "features": [
+    "core-features-and-limits",
+    "subgroup-size-control",
+    "subgroups",
+    "timestamp-query",
+    "shader-f16"
+  ],
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+}

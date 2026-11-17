@@ -3,6 +3,16 @@
 This file records implementation findings that changed a product or engineering decision. Measurements
 belong here only when their system, runtime, and timing boundary are clear.
 
+## Close each explicitly scoped numerical boundary
+
+The [YTHDF2 Apple WebGPU control](reviews/cofold-feature-parity-2026-11-13/trained-target-ythdf2-webgpu/README.md)
+closes a previously pending browser measurement while reusing the original native
+capture, exact inputs, trained weights and earlier CPU result. Its atom-feature
+boundary agrees despite the original complete poses disagreeing strongly.
+That is evidence for this boundary at controlled inputs, not an explanation of
+the pose disagreement. Preserve each stage's remaining limits and measure the
+next boundary rather than promoting a component pass to full-model parity.
+
 ## Preparation, parameter validity and minimized geometry are separate states
 
 An unchanged molecule object does not imply an unchanged atom-index mapping.

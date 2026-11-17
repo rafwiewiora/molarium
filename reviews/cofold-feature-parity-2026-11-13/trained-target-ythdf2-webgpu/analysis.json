@@ -1,0 +1,55 @@
+{
+  "schema": "molarium.ythdf2-physical-apple-target-analysis.v1",
+  "case": "32qy-a1keo",
+  "passes": true,
+  "copiedPrefixExact": true,
+  "fullTarget": {
+    "values": 82695,
+    "finite": true,
+    "referenceRms": 0.42596689896273254,
+    "relativeRms": 1.5390061061479315e-07,
+    "maxAbs": 5.7220458984375e-06
+  },
+  "learnedAtomChannels": {
+    "values": 71040,
+    "finite": true,
+    "referenceRms": 0.45466431887288145,
+    "relativeRms": 1.5556556533667092e-07,
+    "maxAbs": 5.7220458984375e-06
+  },
+  "gpuVersusPreviouslyMeasuredCpuLearnedChannels": {
+    "values": 71040,
+    "finite": true,
+    "referenceRms": 0.4546643149334054,
+    "relativeRms": 7.989517479276533e-08,
+    "maxAbs": 1.9073486328125e-06
+  },
+  "elapsedMilliseconds": 270.51500000059605,
+  "timingInterpretation": "One buildTargetFeat component after weight/device setup on physical Apple GPU; not full-model throughput, native speedup, or screening rate.",
+  "nativeCpuEvidenceReplay": {
+    "scope": "Production buildTargetFeat CPU reference under Bun at matched generated-reference inputs and full-FP32 trained weights. Not a browser/WebGPU, projected-embedding, trunk, denoiser, trajectory, timing-speedup or pose-accuracy verdict.",
+    "passes": true,
+    "nativeFiles": 144,
+    "mappedWeightTensors": 44,
+    "productionFiles": 99,
+    "copiedPrefixExact": true,
+    "fullTarget": {
+      "values": 82695,
+      "finite": true,
+      "referenceRms": 0.42596689896273254,
+      "relativeRms": 1.4431921884177984e-07,
+      "maxAbs": 5.7220458984375e-06
+    },
+    "learnedAtomChannels": {
+      "values": 71040,
+      "finite": true,
+      "referenceRms": 0.45466431887288145,
+      "relativeRms": 1.458805184617648e-07,
+      "maxAbs": 5.7220458984375e-06
+    }
+  },
+  "newNativeCalls": 0,
+  "newCpuStageCalls": 0,
+  "fullModelCalls": 0,
+  "newGpuTargetStageCalls": 1
+}

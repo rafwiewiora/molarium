@@ -1,0 +1,19 @@
+{
+  "schema": "molarium.ythdf2-target-browser-source.v1",
+  "archive": {
+    "file": "consumed-browser-source.zip",
+    "bytes": 1552319,
+    "sha256": "1ac7c9837af4c269ac0b555a03afee18621973ea29adf20d1accaa3f01055e4e"
+  },
+  "scope": "All 166 exact consumed production/browser/helper files and original/adapted runner, with LocalFold license/source attribution. No new native capture or fixture conversion.",
+  "nativeAndConvertedFixture": "../trained-target-ythdf2-cpu",
+  "nativeEvidenceSha256": "221298a91cd63cf0c0a121c2523eeb59c65fdc2513f5c86cee9f251c9d378464",
+  "cpuReceiptSha256": "2c5577f611e5576c40b408df7081ae9dfa2542c72451087c1a7a3e100c0e029a",
+  "fixtureReceiptSha256": "5d2d9a7cc60494c63734260be8d7f2f88a1939ecc990893926edfa5b667642b9",
+  "sharedCpuProductionFiles": 99,
+  "cpuSourceFilesNotImported": [],
+  "sourceAttribution": {
+    "repository": "https://github.com/sokrypton/localfold",
+    "record": "../../../vendor/localfold/UPSTREAM.json"
+  }
+}

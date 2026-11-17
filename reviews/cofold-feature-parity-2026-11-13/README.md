@@ -10,8 +10,9 @@ remains untested.** Production folding mathematics is unchanged.
 
 The separate [YTHDF2 JavaScript CPU control](trained-target-ythdf2-cpu/README.md)
 also passes at matched inputs and FP32 weights, with 1.46 × 10⁻⁷ relative RMS in
-the learned channels. That call ran under Bun with GPU requests blocked; it does
-not add a browser/WebGPU or complete-model parity result.
+the learned channels. The later [physical-Apple browser control](trained-target-ythdf2-webgpu/README.md)
+reuses the same native capture, inputs and weights and passes at 1.56 × 10⁻⁷
+relative RMS. Neither result establishes complete-model parity.
 
 The [relative-position CPU reference](relative-encoding/README.md) also reproduces
 all 12,630,791 captured native one-hot values exactly across both systems,
@@ -156,8 +157,10 @@ The same job captured one strict-FP32 trained native input-embedder call with
 zero full-model forwards. Its canonical and trained feature snapshots are
 byte-identical, and all captured native tensors were verified finite after
 transfer. Complete native outputs and consumed sources now accompany the
-[matched-input CPU measurement](trained-target-ythdf2-cpu/README.md);
-**a browser trained-stage result for YTHDF2 is still pending**.
+[matched-input CPU measurement](trained-target-ythdf2-cpu/README.md).
+The separate [physical-Apple browser trained-stage result](trained-target-ythdf2-webgpu/README.md)
+now passes using those same inputs and trained weights. No native or CPU
+calculation was repeated.
 No native pose prediction was repeated, and the separate pristine LocalFold
 experimental-pose benchmark retains its original inputs and protocol.
 

@@ -61,8 +61,11 @@ A second [YTHDF2 target-feature control](../../reviews/cofold-feature-parity-202
 passes in production JavaScript's CPU reference under Bun, with GPU requests
 blocked. Its complete native arrays, matched inputs/weights, consumed source
 closure and measured output replay without neural execution using
-`check_trained_target_cpu.py`. This adds a second component diagnostic, not a
-second browser/WebGPU result or a full-model agreement claim.
+`check_trained_target_cpu.py`. The later [physical-Apple WebGPU measurement](../../reviews/cofold-feature-parity-2026-11-13/trained-target-ythdf2-webgpu/README.md)
+reuses those inputs/weights and passes at 1.56 × 10⁻⁷ relative RMS in the learned
+channels. `check_trained_target_webgpu.py` independently replays the native ancestry,
+consumed browser source and full output without inference. This completes the
+second browser component diagnostic, not full-model agreement or NVIDIA qualification.
 
 The [relative-position comparison](../../reviews/cofold-feature-parity-2026-11-13/relative-encoding/README.md)
 checks the port's unchanged CPU reference against the saved native 139-channel

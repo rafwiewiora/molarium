@@ -1,0 +1,53 @@
+{
+  "schema": "molarium.ythdf2-physical-apple-target-control.v1",
+  "recordedAt": "2026-11-17T06:47:46.415854+00:00",
+  "sourceGitRevision": "b5b1f9217341f3eb2504c909f8d0f123687852a5",
+  "case": "32qy-a1keo",
+  "method": "OpenBind-0/OpenFold3 0.5.1",
+  "scope": "One previously unmeasured production WebGPU trained atom-feature stage at saved native inputs/full-FP32 weights; not trunk, denoising, confidence, pose accuracy or model throughput.",
+  "fixture": "/Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/ythdf2-trained-target-fixture-20261116-attempt001",
+  "fixtureFiles": {
+    "receipt.json": {
+      "bytes": 1182,
+      "sha256": "5d2d9a7cc60494c63734260be8d7f2f88a1939ecc990893926edfa5b667642b9"
+    },
+    "weights.json": {
+      "bytes": 15366,
+      "sha256": "16a53c38cf14764c5c0304760f71affffbc6a5e1953077d81f9f32dab571542b"
+    },
+    "weights.bin": {
+      "bytes": 4182400,
+      "sha256": "0dfab22cf0e24c6b8e862e7bfb78ea6dfb6e4f96e440ec603b8629b5d87ffb1b"
+    },
+    "controlled-batch/features.json": {
+      "bytes": 51334,
+      "sha256": "cc22e7afc9ff90097bd1e4a4a4e08efeacd2e7de3b58a5e8789431baadcec186"
+    },
+    "controlled-batch/features.bin": {
+      "bytes": 886604,
+      "sha256": "e6e75dea64f4e9c173cebc163ffaeff322d8c7f0bb724e70b937e7a9d8604fd7"
+    },
+    "expected-target.bin": {
+      "bytes": 330780,
+      "sha256": "1583bf2b2418257aa29880624407dc30758e880a9e7fa1b5580fdeee47507f87"
+    }
+  },
+  "physicalGpuRequired": "Apple; all adapter requests reject software/fallback before computation",
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "expectedShape": [
+    185,
+    447
+  ],
+  "targetStageForwardCalls": 1,
+  "newNativeCalls": 0,
+  "newCpuStageCalls": 0,
+  "fullModelCalls": 0,
+  "rerunsOrAutomaticRetries": false,
+  "reusedCpuReceiptSha256": "2c5577f611e5576c40b408df7081ae9dfa2542c72451087c1a7a3e100c0e029a",
+  "productionSourceFiles": 166,
+  "headlessHelperSha256": "b55a1197a5c2d2a112ea0b46d233b32a1e7aa7e1c5f7c06f32217ea9c9b19d13"
+}

@@ -4,7 +4,9 @@
 matched inputs and full-FP32 weights for this second diagnostic system.**
 This measurement uses Bun, with the GPU device argument omitted and GPU requests
 blocked. It is separate from the earlier [STARD4 browser CPU/WebGPU test](../trained-target/README.md).
-The YTHDF2 browser/WebGPU measurement and the NVIDIA trunk comparison remain pending.
+The later [YTHDF2 physical-Apple browser measurement](../trained-target-ythdf2-webgpu/README.md)
+also passes using these exact saved inputs and weights, without repeating this
+CPU calculation. The separate NVIDIA trunk comparison remains pending.
 
 | Checked values | Count | Relative RMS error | Maximum absolute error |
 |---|---:|---:|---:|

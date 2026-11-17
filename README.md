@@ -529,7 +529,8 @@ upload. A corrected row-shift candidate passes the component precision gates;
 it remains experimental pending direct implementation and full-model qualification.
 A [matched trained atom-feature audit](reviews/cofold-feature-parity-2026-11-13/README.md)
 passes for STARD4 in browser CPU/WebGPU and separately for YTHDF2 in JavaScript
-CPU under Bun. Raw native arrays, controlled inputs/weights and offline replays
+CPU under Bun and [physical-Apple browser WebGPU](reviews/cofold-feature-parity-2026-11-13/trained-target-ythdf2-webgpu/README.md).
+Raw native arrays, controlled inputs/weights, consumed source and offline replays
 are public. A [relative-position check](reviews/cofold-feature-parity-2026-11-13/relative-encoding/README.md)
 also exactly reproduces 12.63 million captured native one-hot values with the
 port's CPU reference, using original browser indices on both systems. The fused
