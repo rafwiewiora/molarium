@@ -1,0 +1,27 @@
+{
+  "parentRunnerSha256": "ca089051615c0a285ab1962047ca79e689e51aa891fba11ff64cdf819bb87e52",
+  "runnerSha256": "7671ae091894d540e54b26df5534467ea8ed70308ddf23a32e111f0eb74f9877",
+  "reversibleReplacements": [
+    {
+      "from": "from './web-bundle-dependencies.mjs'",
+      "to": "from \"file:///Users/bb/repos/marco/tmp/molarium-chemrxiv-v1/scripts/web-bundle-dependencies.mjs\""
+    },
+    {
+      "from": "from './headless-chrome.mjs'",
+      "to": "from \"file:///Users/bb/repos/marco/tmp/molarium-chemrxiv-v1/scripts/headless-chrome.mjs\""
+    },
+    {
+      "from": "const root = resolve(import.meta.dirname, '..');",
+      "to": "const root = resolve(\"/Users/bb/repos/marco/tmp/molarium-chemrxiv-v1\");"
+    },
+    {
+      "from": "if(/swiftshader|llvmpipe|software/i.test(JSON.stringify(info)))throw Error('Physical GPU required');",
+      "to": "if(/swiftshader|llvmpipe|software/i.test(JSON.stringify(info)))throw Error('Physical GPU required');\n      if(!/apple/i.test(JSON.stringify(info))||adapter.info.isFallbackAdapter)throw Error('This independent control requires a physical Apple adapter');"
+    },
+    {
+      "from": "  await waitFor(()=>browser.evaluate(`document.readyState==='complete'`),20000,'trunk fixture');",
+      "to": "  const context=()=>browser.evaluate(`({href:location.href,baseURI:document.baseURI,title:document.title,readyState:document.readyState,userAgent:navigator.userAgent})`);\n  result.startupContextBefore=await context();\n  await waitFor(()=>browser.evaluate(`location.href===${JSON.stringify(browser.appUrl)}&&document.title==='Stock-trained trunk comparison'&&document.readyState==='complete'`),20000,'exact loaded trunk fixture page');\n  result.startupContextReady=await context();\n  const fixtureProbe=await browser.evaluate(`(async()=>{const r=await fetch('/fixture/receipt.json');return{status:r.status,receipt:await r.json()};})()`);\n  if(fixtureProbe.status!==200||fixtureProbe.receipt.schema!=='molarium.trained-trunk-fixture.v1')throw Error('Wrong actual fixture endpoint');"
+    }
+  ],
+  "scope": "Task-local imports/root paths and an additional physical-Apple requirement only. Production numerical sources, FP32 settings, four cycles,32boundaries and original predeclared gates unchanged. The separately required NVIDIA experiment remains outstanding. Stronger exact-URL/title/readiness and local-endpoint preflight with actual context observations; no numerical path or gate change."
+}

@@ -1,0 +1,400 @@
+{
+  "scope": "Exact original native fixture and Apple measurement file inventory. Public raw-array release is linked from README.md; the archive omits only weights.bin, whose original hash remains recorded. Offline comparison needs no weights binary.",
+  "files": [
+    {
+      "file": "fixture/base/features.bin",
+      "bytes": 462672,
+      "sha256": "45cf644ee8cd5310488a83c86d72c6a0a95bde55e8ca8c0092d5997e56cda17c"
+    },
+    {
+      "file": "fixture/base/features.json",
+      "bytes": 39958,
+      "sha256": "58491352b5a01be0bfbc74482faf39b65bb7d0aa552f1035c6dc75a05518dbb8"
+    },
+    {
+      "file": "fixture/cycle-0.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "50fff3a50f0f9da254985681db45c9ab6341538a41257e6193d7954bfd8180d8"
+    },
+    {
+      "file": "fixture/cycle-0.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "bc1fa12e27b041cba65890aba760f1d2382545653fd0989a5d00787ddc9fa4f3"
+    },
+    {
+      "file": "fixture/cycle-0.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "22530b3d7f703a6c1497afc0d3892df2edccb48b6f719b177de3436850ac1b51"
+    },
+    {
+      "file": "fixture/cycle-0.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "d18ecc7869a1d6debbd6f2ae4eb10505d49060ff31aa4db1ed2b1f2f83a69074"
+    },
+    {
+      "file": "fixture/cycle-0.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "75b2eb6bdc7f804b2e290f2bfc5cbec070087b481f4b63e785eb3fe37b4380b8"
+    },
+    {
+      "file": "fixture/cycle-0.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "43ee7be6ab93d71cffd3fe961b957c744d8cfe7e0519dd06f505f5f75ab1e8a3"
+    },
+    {
+      "file": "fixture/cycle-0.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "d6d1e2d95b7c371bf8fda1a9339ccd756ed1fedbb37427f417599687c896c6d9"
+    },
+    {
+      "file": "fixture/cycle-0.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "8c11481fdb96d06d1520400fcf8aeff978bde802f2a64435dbc238017a49d8cb"
+    },
+    {
+      "file": "fixture/cycle-1.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "50fff3a50f0f9da254985681db45c9ab6341538a41257e6193d7954bfd8180d8"
+    },
+    {
+      "file": "fixture/cycle-1.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "42f04f4d9957b3190a2b04dfdd97a9d81125baa82de1eec5adb5da2954fa36fe"
+    },
+    {
+      "file": "fixture/cycle-1.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "d1100d420cfa78d1f5b52ccfc5e3fd19fef684741659e6403afbc137c4cf9728"
+    },
+    {
+      "file": "fixture/cycle-1.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "b184646c7da4e8da0a905eec537204fce0a37b57932bc654c2972200f1964417"
+    },
+    {
+      "file": "fixture/cycle-1.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "84a29f0bfe1bcfd5cd9ab23da9fbcdae0ae0b1d45d8477d0bb0bb4759be9a3c1"
+    },
+    {
+      "file": "fixture/cycle-1.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "81a01efedc16718e4bdc823f4e82686d340a29d2f5bdb98e480f6eb6557d093a"
+    },
+    {
+      "file": "fixture/cycle-1.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "a54895c63bc94e86b711da661bf698047182ff1cbf68011c7bcf8c53baf0de25"
+    },
+    {
+      "file": "fixture/cycle-1.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "4ea20d3f5484c6ee6ea5384a543971ee8385c711379f711b4bfb8cdd1d9e4d3a"
+    },
+    {
+      "file": "fixture/cycle-2.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "50fff3a50f0f9da254985681db45c9ab6341538a41257e6193d7954bfd8180d8"
+    },
+    {
+      "file": "fixture/cycle-2.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "c4a8600d69e6fa0a5f8561f1e9005275e299eb6d8e83cafbbfc7650d657e7b7b"
+    },
+    {
+      "file": "fixture/cycle-2.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "68f39d2c1455e18c776c8c5995a6c9f0d121479205a79a5ad56bb6a5373bcb65"
+    },
+    {
+      "file": "fixture/cycle-2.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "e08d18bea85114e962e5177fb351e9487df27702da11788088f1adb17d973a86"
+    },
+    {
+      "file": "fixture/cycle-2.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "de6c93ff3c33086310fc046d32225795391d75b7c6f34c62c36390aa3f5a4ad9"
+    },
+    {
+      "file": "fixture/cycle-2.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "acc27c561cbbd846ff32d3619c63eb31911d03580db923ec86d0aa03e2f8e69b"
+    },
+    {
+      "file": "fixture/cycle-2.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "742a0c4a0e1247d90a21734be54491a8a30c3ce65405686f3e585406e4a7e22d"
+    },
+    {
+      "file": "fixture/cycle-2.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "355dd2ec92c8aa8816be57200d54c38bab9803255b5b7895c13360289a2920e8"
+    },
+    {
+      "file": "fixture/cycle-3.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "50fff3a50f0f9da254985681db45c9ab6341538a41257e6193d7954bfd8180d8"
+    },
+    {
+      "file": "fixture/cycle-3.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "ba81063fadb919cb189891f9b949cacc804e08faab6dd0339c7e14ea67467e2b"
+    },
+    {
+      "file": "fixture/cycle-3.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "7141a54c15bd1a8bc79034677f75e0b6e8592cff224eb3928975bb1ecc15e742"
+    },
+    {
+      "file": "fixture/cycle-3.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "43f3563bb44c7a691d633af34f1c368b6c7465f56c6482427689d3cd308d7a03"
+    },
+    {
+      "file": "fixture/cycle-3.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "1448c20da7c86ea52851980608caddfcad9a22bc5f81838a24177080b17fc650"
+    },
+    {
+      "file": "fixture/cycle-3.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "f98c652b3edcc57a316b135ee8ae481f3c0c44d30c4ce34a633c6c19aa432039"
+    },
+    {
+      "file": "fixture/cycle-3.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "c58bb4a54e538d7f00a44dcb5eecc722f39087320b70b338b2870e83794933ff"
+    },
+    {
+      "file": "fixture/cycle-3.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "b62025ba2b9bffbd21ada0968eab82907c6527e466f49d7e7dab5fdb5cbf16d5"
+    },
+    {
+      "file": "fixture/msa-0/features.bin",
+      "bytes": 733992,
+      "sha256": "784005b0ecab4c1df5a4c54fdf9775ea242604ae064f689468ec9b31d8a50c18"
+    },
+    {
+      "file": "fixture/msa-0/features.json",
+      "bytes": 1746,
+      "sha256": "27912e5b7bb128e826012c639fad422c7e8110c553217996e8464e485d080c4b"
+    },
+    {
+      "file": "fixture/msa-1/features.bin",
+      "bytes": 733992,
+      "sha256": "784005b0ecab4c1df5a4c54fdf9775ea242604ae064f689468ec9b31d8a50c18"
+    },
+    {
+      "file": "fixture/msa-1/features.json",
+      "bytes": 1746,
+      "sha256": "27912e5b7bb128e826012c639fad422c7e8110c553217996e8464e485d080c4b"
+    },
+    {
+      "file": "fixture/msa-2/features.bin",
+      "bytes": 733992,
+      "sha256": "784005b0ecab4c1df5a4c54fdf9775ea242604ae064f689468ec9b31d8a50c18"
+    },
+    {
+      "file": "fixture/msa-2/features.json",
+      "bytes": 1746,
+      "sha256": "27912e5b7bb128e826012c639fad422c7e8110c553217996e8464e485d080c4b"
+    },
+    {
+      "file": "fixture/msa-3/features.bin",
+      "bytes": 733992,
+      "sha256": "784005b0ecab4c1df5a4c54fdf9775ea242604ae064f689468ec9b31d8a50c18"
+    },
+    {
+      "file": "fixture/msa-3/features.json",
+      "bytes": 1746,
+      "sha256": "27912e5b7bb128e826012c639fad422c7e8110c553217996e8464e485d080c4b"
+    },
+    {
+      "file": "fixture/receipt.json",
+      "bytes": 11644,
+      "sha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125"
+    },
+    {
+      "file": "fixture/target.bin",
+      "bytes": 425544,
+      "sha256": "fd83e0729585cdf4ce8399c1533006df1aa7a6b7a1a66622c0dc088c739e4b5c"
+    },
+    {
+      "file": "fixture/weights.bin",
+      "bytes": 604789504,
+      "sha256": "46df3199346512b29321a7e7dece80b9d701ef695eb24880b217287a812bd709"
+    },
+    {
+      "file": "fixture/weights.json",
+      "bytes": 58252,
+      "sha256": "46bf90005ab2236fa357303c2ced7ff3c46695778159bcef6cc8b811dd7a3727"
+    },
+    {
+      "file": "measured/cycle-0.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    {
+      "file": "measured/cycle-0.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "047ceff940500b9df9acf9b65666158abbd1a746c2b9384b9d9cec70f728732a"
+    },
+    {
+      "file": "measured/cycle-0.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "e134c85acae69453933e8d7bfdf52e6798296d79447740bf341ec9f1f0f31643"
+    },
+    {
+      "file": "measured/cycle-0.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "33b627ad0b3a4475ad65c5f08b8cce05043205fb97a187e83b7cc29a56720f74"
+    },
+    {
+      "file": "measured/cycle-0.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "c54cf2650e734f5efd89603cfd315ab5b5b3431ffe39c84ad0b9ea324dc26c0d"
+    },
+    {
+      "file": "measured/cycle-0.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "84730382b06f84aea591f5652185bc6bb119ea3cb2b8425ad1b94dadeb788bca"
+    },
+    {
+      "file": "measured/cycle-0.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "27f9adc33c4eb200a3143829b87c1c9b871396a33a8d6a03793ff30385aa1e22"
+    },
+    {
+      "file": "measured/cycle-0.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "671809ee1423635c7ee9e2d15d631ef77993bb0fc78dfbd70b2acfe60a61d04a"
+    },
+    {
+      "file": "measured/cycle-1.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    {
+      "file": "measured/cycle-1.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "f801bc114ea05778c8ca09de4ace787bce6a84cc075a745ec92e0605bf0c933c"
+    },
+    {
+      "file": "measured/cycle-1.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "4c6265feb4cbda181a028878a3e2f994f3fbd0148b45f18b16e4b44007318056"
+    },
+    {
+      "file": "measured/cycle-1.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "5e83af798e0483e854454a22ec6a71ccd3a9bef51508add773af16af54a14587"
+    },
+    {
+      "file": "measured/cycle-1.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "dd85e5bcd26a0637e4e5670822f5faff7ef8b51268e9577cd8d950c0e0f91e5e"
+    },
+    {
+      "file": "measured/cycle-1.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "8ef8abcea8bdacdfc37ad022bda7c608c517532d8277283feb16c52739fd951f"
+    },
+    {
+      "file": "measured/cycle-1.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "eb06fd1cf94a7790675064e84339303ca7eedca3e2e7f2b4fef55266d2d2f309"
+    },
+    {
+      "file": "measured/cycle-1.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "4af7537a76fdf186ab2f7a76b8e3914e730c6f48176757e692d2792f97de5626"
+    },
+    {
+      "file": "measured/cycle-2.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    {
+      "file": "measured/cycle-2.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "6d29cd7611c95c841d793b04e4100f11913625f6ff769f4aa275d85d32b678f2"
+    },
+    {
+      "file": "measured/cycle-2.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "86feb58f1717d878768e72e75e420ee129a43b014eb4a6c956e834b6ea156a17"
+    },
+    {
+      "file": "measured/cycle-2.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "cb666219776fb57689deba9e5511d2993a117132617a8cc813ff184457360ab8"
+    },
+    {
+      "file": "measured/cycle-2.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "475259ab8008794135e1f9a4371da35de24ab3e20be74be948e090e74c32fd3c"
+    },
+    {
+      "file": "measured/cycle-2.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "9e310e9a23775a2207f4ca88c698fab2c4f0f13e9fe6a737a4d44c52d45fea78"
+    },
+    {
+      "file": "measured/cycle-2.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "2f5f7e290753a22a73cd7a38f54977046e2d874195280274ddf74021f9602cfb"
+    },
+    {
+      "file": "measured/cycle-2.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "2a169042a111662753add5e88a446ece20090b48b22793e607eae18aa51af06f"
+    },
+    {
+      "file": "measured/cycle-3.tap.msa_activations.bin",
+      "bytes": 15658496,
+      "sha256": "a4768c7c1ed45dd7079f0dc1301d277e4fd38757180d81fd59ec402fb34aa45c"
+    },
+    {
+      "file": "measured/cycle-3.tap.template_term.bin",
+      "bytes": 29001728,
+      "sha256": "abbefe831636a6b2975127a99e5e55eba07a3195da59eda7dfb875e51664cd6a"
+    },
+    {
+      "file": "measured/cycle-3.tap.trunk_in_single.bin",
+      "bytes": 365568,
+      "sha256": "5a17c4d681a0f76d463b968504479fcedeb74e03e7fe8b232de8db3e7b1ae1ee"
+    },
+    {
+      "file": "measured/cycle-3.tap.trunk_out_pair.bin",
+      "bytes": 29001728,
+      "sha256": "d0c60dd029e5f5b003b3520240c2a261005a6f60309ac9b0ec89231237146253"
+    },
+    {
+      "file": "measured/cycle-3.tap.z_after_msa.bin",
+      "bytes": 29001728,
+      "sha256": "3bd77bb13d01b786f9018e6c5bdf7aaddd5f5c46430bf5a166a66b4fa7847012"
+    },
+    {
+      "file": "measured/cycle-3.tap.z_after_template.bin",
+      "bytes": 29001728,
+      "sha256": "f4daa8add47f575ec47ff1761e2fd7906527e27429d805d6dc049c1eb6aebd72"
+    },
+    {
+      "file": "measured/cycle-3.tap.z_init_generic.bin",
+      "bytes": 29001728,
+      "sha256": "66dae174241a8ece9cb3434d5963be5ee474d9bda9ecfe2ef0b19c00d50f8882"
+    },
+    {
+      "file": "measured/cycle-3.trunk-output-single.bin",
+      "bytes": 365568,
+      "sha256": "c3bfddd063a7c2a571fd196f66a25525aa91d44d0db68a672420a6670f0902ef"
+    },
+    {
+      "file": "measured/receipt.json",
+      "bytes": 9132,
+      "sha256": "574eccc168315abfcad44b39026909cc071c8644539addf15e12b03b17217786"
+    }
+  ]
+}

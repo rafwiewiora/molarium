@@ -1,0 +1,15 @@
+{
+  "parentRunnerSha256": "7671ae091894d540e54b26df5534467ea8ed70308ddf23a32e111f0eb74f9877",
+  "runnerSha256": "8e24c2640030578993fc94586c2f78cbefdd3c6ba9fdc17bb1743c3e56c91272",
+  "reversibleReplacements": [
+    {
+      "from": "/Users/bb/repos/marco/tmp/molarium-chemrxiv-v1",
+      "to": "/Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/trained-trunk-apple-twopass-20261117-attempt002/frozen"
+    },
+    {
+      "from": "readback:{pair:true,single:true,logits:false},onSeam:capture,",
+      "to": "variance:'two-pass',readback:{pair:true,single:true,logits:false},onSeam:capture,"
+    }
+  ],
+  "scope": "Only isolated source paths and existing variance=two-pass runtime option; no new kernels, changed inputs, gates, weights, native capture/conversion, or whole-model prediction."
+}

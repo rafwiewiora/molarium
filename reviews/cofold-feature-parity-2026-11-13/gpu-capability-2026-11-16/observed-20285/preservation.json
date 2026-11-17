@@ -1,0 +1,125 @@
+{
+  "at": "2026-11-17T02:39:13.176062+00:00",
+  "identity": {
+    "project/project-id": "psivant-prod",
+    "instance/name": "psigreen-login-001",
+    "instance/id": "3894148826269628555",
+    "instance/zone": "projects/734263838611/zones/us-central1-c"
+  },
+  "sourceManifestSha256": "1af42b5bea4500493215274907b492442927cb6f97166f443beafbc39bbe84f0",
+  "state": "20285|COMPLETED|0:0|00:01:10|2026-11-17T01:43:53|2026-11-17T01:45:03|psigreen-l4spotnodeset-4\n",
+  "files": [
+    {
+      "file": "container-egl-icd.json",
+      "bytes": 218,
+      "sha256": "3df089e16dbd552b5458a956d1217fbf07f981270735ed527f88a907036b33be"
+    },
+    {
+      "file": "driver-bind-arguments.txt",
+      "bytes": 8419,
+      "sha256": "cbdf69b2450a6cb1b611790d1719f80b7cbcb8c1181dd477c9f3fc1c12d80a46"
+    },
+    {
+      "file": "driver-library-bindings.json",
+      "bytes": 19115,
+      "sha256": "e5d7c6048fdd94f918bb23255da0d2e3d8db6b88b44d46854d46314299daaf95"
+    },
+    {
+      "file": "gpu-identity.txt",
+      "bytes": 90,
+      "sha256": "d6c65687a72107ecae0be188ec69f90393ce444895587e77ced5bf67294b3049"
+    },
+    {
+      "file": "host-egl-icd.json",
+      "bytes": 141,
+      "sha256": "d3e35a25f2f2ec4f49fd331e7beb1f9df6a27303984e1a5949382304af893fc5"
+    },
+    {
+      "file": "host-ldconfig.txt",
+      "bytes": 58582,
+      "sha256": "b712481c98002b585719e3e73d7797df9bbbb39ffe61d350da1f08278fd86823"
+    },
+    {
+      "file": "host-vulkan-device-discovery.json",
+      "bytes": 1035,
+      "sha256": "7292591267050ee82da40ee3e3a89c4cca9b7904ab165e1910c5d0b8bd8c75f8"
+    },
+    {
+      "file": "host-vulkan.log",
+      "bytes": 849,
+      "sha256": "38a9c0e141c99faa3978261e3d02c62fad7cf7df3700c7edbd634592d23e1d59"
+    },
+    {
+      "file": "logs/gpu-20285.log",
+      "bytes": 20529,
+      "sha256": "de05a9566cfda838398ff6ab1ce47bb365ed3b39da5ca8b44b40358759e2b37d"
+    },
+    {
+      "file": "original/chrome-stderr.log",
+      "bytes": 84721,
+      "sha256": "98c931774146a5ddd0b5d4e5bff715e9680551fd9b7d76932bbf1decd1fab105"
+    },
+    {
+      "file": "original/exit-code.txt",
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "file": "original/probe-result.json",
+      "bytes": 21275,
+      "sha256": "5933abd440e29a09ab1c5393307ff2d524e6494829501872babf4308952084cd"
+    },
+    {
+      "file": "original/task.log",
+      "bytes": 1995,
+      "sha256": "5c9a30807679197d65856ed609eb01cb2eebdc5a9caef9ec4ec3094eaf81d8b4"
+    },
+    {
+      "file": "original/vulkan-device-discovery.json",
+      "bytes": 2208,
+      "sha256": "4254b127968bb0a6df6c5f0d85f258ccc067ab206703776c2d2aa2197f64be58"
+    },
+    {
+      "file": "probe-adaptation.json",
+      "bytes": 1850,
+      "sha256": "27c5dbd8e90e35d69ea8733a2fc9cb255da110ae1829a81a7eb66094c3d8159e"
+    },
+    {
+      "file": "recovery-parent.json",
+      "bytes": 5392,
+      "sha256": "755694aa052d91ed97f85763b5b067cb31fc8df84fcc676ac943a70b81a4c86e"
+    },
+    {
+      "file": "result.json",
+      "bytes": 23221,
+      "sha256": "aed752b3552bc4d328f0b3193fc9691c24a0bd59c93f8c25c23a823f32ab88cc"
+    },
+    {
+      "file": "singularity-version.txt",
+      "bytes": 35,
+      "sha256": "14307124116f7e01564048a35ad76f261f17bb5de97add505f3a3edd6d80e6c1"
+    },
+    {
+      "file": "slurm-grant.txt",
+      "bytes": 1798,
+      "sha256": "e786358bb944ba6093ecb91ea66a4e9f7bcd36f04ae1166c68d3d5065b6fbe09"
+    },
+    {
+      "file": "source-manifest.json",
+      "bytes": 630,
+      "sha256": "1af42b5bea4500493215274907b492442927cb6f97166f443beafbc39bbe84f0"
+    },
+    {
+      "file": "source-sha256.txt",
+      "bytes": 578,
+      "sha256": "41355f5cf25174405506f68d3f6677c0e1cde6f4cacdcc5823b5334b2859462f"
+    },
+    {
+      "file": "submission.json",
+      "bytes": 263345,
+      "sha256": "3ea3b67320500c82ff767642b83f516b24210b531bedbfa5390e16c361301976"
+    }
+  ],
+  "newModelCalls": 0,
+  "newJobs": 0
+}

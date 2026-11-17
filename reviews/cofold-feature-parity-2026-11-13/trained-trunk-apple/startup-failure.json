@@ -1,0 +1,14 @@
+{
+  "status": "failed",
+  "scope": "Four production GPU trunk passes with exact native target features, actual sampled MSA values and full-FP32 stock trained weights. No denoising, confidence, quantized whole-model, pose or throughput claim.",
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "runnerSha256": "129b6cb613640906c92ea618cc759dd5c352eb9b17a908353feb8667f7aad4aa",
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "progress": "loading weights",
+  "error": "Error: TypeError: Failed to parse URL from /fixture/receipt.json\n    at json (<anonymous>:5:37)\n    at <anonymous>:6:27\n    at <anonymous>:61:7\n    at <anonymous>:63:5\n    at /Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/trained-trunk-apple-20261117-attempt001/runner.mjs:119:44\n    at processTicksAndRejections (native:7:39)",
+  "outputs": {}
+}

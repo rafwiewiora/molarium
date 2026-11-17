@@ -1,14 +1,58 @@
-"""Artifact-integrity guards only; synthetic arrays are not model evidence."""
+"""Artifact/producer guards and saved controls; synthetic arrays are not model evidence."""
 import hashlib
 import json
 from pathlib import Path
 import tempfile
 import unittest
+import subprocess
 import numpy as np
 from check_trained_trunk import check
 
 
 class TrunkArtifactTests(unittest.TestCase):
+    def test_actual_browser_expression_parses_and_rejects_half_arithmetic(self):
+        repo = Path(__file__).resolve().parents[2]
+        source = (repo / 'scripts/cofold-trained-trunk.browser.mjs').read_text()
+        expression = source.split('await browser.evaluate(String.raw`', 1)[1].split('  })()`);', 1)[0] + '  })()'
+        expression = expression.replace("${JSON.stringify(process.env.MOLARIUM_REQUIRE_NVIDIA === '1')}", 'false')
+        expression = expression.replace('${JSON.stringify(token)}', '"syntax-check-token"')
+        self.assertNotIn('${', expression)
+        audit = expression.split('      const shaderAudit=[];', 1)[1].split('      const weights=', 1)[0]
+        code = '''const assert=require('node:assert/strict');
+new Function(EXPRESSION);
+let forwarded=0; const device={createShaderModule(){forwarded++;return 'module';}};
+const audit=new Function('device','const shaderAudit=[];'+AUDIT+';return shaderAudit;')(device);
+assert.equal(device.createShaderModule({code:'// f16 in a comment\\nvar x:f32;'}),'module');
+assert.throws(()=>device.createShaderModule({code:'enable f16; var x:f16;'}),/Strict FP32/);
+assert.equal(forwarded,1); assert.deepEqual(audit.map(x=>x.usesF16),[false,true]);
+'''.replace('EXPRESSION', json.dumps(expression)).replace('AUDIT', json.dumps(audit))
+        subprocess.run(['node', '-e', code], check=True, capture_output=True)
+
+    def test_saved_precision_control_retains_absolute_failures_and_exact_producer(self):
+        repo = Path(__file__).resolve().parents[2]
+        root = repo / 'reviews/cofold-feature-parity-2026-11-13/trained-trunk-apple'
+        summary = json.loads((root / 'precision-comparison.json').read_bytes())
+        for item, folder in zip(summary['controls'], ['', 'two-pass', 'strict-fp32']):
+            analysis = json.loads((root / folder / 'analysis.json').read_bytes())
+            self.assertEqual(len(analysis['records']), 32)
+            self.assertEqual(item['passing'], sum(r['passes'] for r in analysis['records']))
+            self.assertFalse(analysis['passesAllDeclaredGates'])
+            self.assertEqual(analysis['gates'], {'relativeRms': 1e-4, 'maxAbsoluteDifference': 1e-3, 'requireFinite': True})
+        measured = json.loads((root / 'strict-fp32/measurement-receipt.json').read_bytes())
+        self.assertEqual(measured['precisionControl'], {'pairMatrixKernels': False, 'requireNoF16Shaders': True})
+        self.assertEqual(len(measured['shaderAudit']), 56)
+        self.assertFalse(any(r['usesF16'] for r in measured['shaderAudit']))
+        self.assertEqual(len(measured['outputs']), 32)
+        adaptation = json.loads((root / 'strict-fp32/source-adaptation.json').read_bytes())
+        raw = (root / 'strict-fp32/runner.mjs').read_text()
+        self.assertEqual(hashlib.sha256(raw.encode()).hexdigest(), measured['runnerSha256'])
+        for patch in reversed(adaptation['reversibleReplacements']):
+            self.assertGreaterEqual(raw.count(patch['to']), 1)
+            raw = raw.replace(patch['to'], patch['from'])
+        self.assertEqual(hashlib.sha256(raw.encode()).hexdigest(), adaptation['parentRunnerSha256'])
+        fix = json.loads((root / 'precision-fix.json').read_bytes())
+        self.assertEqual(fix['currentHarnessSha256'], hashlib.sha256((repo / 'scripts/cofold-trained-trunk.browser.mjs').read_bytes()).hexdigest())
+
     def fixture(self, directory):
         root = Path(directory)
         fixture, measured = root / 'fixture', root / 'measured'

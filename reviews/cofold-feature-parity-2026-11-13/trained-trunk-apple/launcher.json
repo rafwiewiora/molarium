@@ -1,0 +1,14 @@
+{
+  "pid": 75973,
+  "startedAt": "2026-11-17T02:25:37.980109+00:00",
+  "sourceManifestSha256": "8bc2abb6bf4ea749852e7058f5fd787c73cb4b2ba109f6b9a002f4bbe15508e7",
+  "planSha256": "a07ed9c24d314d11f922f30e8d251e22704d26fb832804524c15c247b08ec107",
+  "parentCompletedTrunkCycles": 0,
+  "newNativeCalls": 0,
+  "newConversions": 0,
+  "newSlurmJobs": 0,
+  "plannedBrowserTrunkCycles": 4,
+  "plannedBoundaries": 32,
+  "maximumMeasurementSeconds": 1800,
+  "nvidiaStillRequired": 20285
+}

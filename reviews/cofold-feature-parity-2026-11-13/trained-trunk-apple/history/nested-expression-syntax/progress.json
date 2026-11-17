@@ -1,0 +1,15 @@
+{
+  "status": "needs-attention",
+  "startedAt": "2026-11-17T03:03:58.097428+00:00",
+  "newNativeCalls": 0,
+  "newConversions": 0,
+  "newSlurmJobs": 0,
+  "plannedBrowserTrunkCycles": 4,
+  "plannedBoundaries": 32,
+  "planSha256": "972e2c3a859f99fe18289b9f68708b0aded785933a0fd3e4f451d1aae511b3ca",
+  "browserPid": 79387,
+  "measurementExitCode": 1,
+  "error": "Browser measurement did not complete; preserve original outputs",
+  "finishedAt": "2026-11-17T03:03:58.937564+00:00",
+  "scienceRestarted": false
+}

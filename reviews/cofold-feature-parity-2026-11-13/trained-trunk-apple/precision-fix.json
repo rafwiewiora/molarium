@@ -1,0 +1,16 @@
+{
+  "finding": "TRUNK-PRECISION-01",
+  "baselinePublicHarnessSha256": "ca089051615c0a285ab1962047ca79e689e51aa891fba11ff64cdf819bb87e52",
+  "currentHarnessSha256": "a41ff308172877651e0f8036ee423c6dbdec6dbf581febead9dcc16a08717fe0",
+  "changes": "Existing pairMatrixKernels=false plus observed shader-source f16 rejection and SHA records; navigation readiness fix retained. Production/vendor math and gates unchanged.",
+  "evidence": {
+    "measurementReceiptSha256": "0792c49256349f8cdfbf3c310d7777c2eccf8142dc4b88b99dccd62f5a488ad5",
+    "shadersObserved": 56,
+    "f16Shaders": 0,
+    "relativeErrorCycle0MsaBaseline": 0.000156680923,
+    "relativeErrorCycle0MsaStrict": 2.201595997632883e-07,
+    "boundaryPassesBaseline": 8,
+    "boundaryPassesStrict": 14,
+    "completeParityPassed": false
+  }
+}

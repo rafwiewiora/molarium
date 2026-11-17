@@ -1,0 +1,32 @@
+JobId=20285 JobName=molarium-device-discovery
+   UserId=rafal_wiewiora_psivant_com(1706645947) GroupId=rafal_wiewiora_psivant_com(1706645947) MCS_label=N/A
+   Priority=1 Nice=0 Account=(null) QOS=normal
+   JobState=RUNNING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0
+   RunTime=00:00:51 TimeLimit=00:10:00 TimeMin=N/A
+   SubmitTime=2026-11-17T01:31:40 EligibleTime=2026-11-17T01:31:40
+   AccrueTime=2026-11-17T01:31:40
+   StartTime=2026-11-17T01:43:53 EndTime=2026-11-17T01:53:53 Deadline=2026-11-20T22:30:00
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-11-17T01:43:53 Scheduler=Main
+   Partition=l4spot AllocNode:Sid=psigreen-login-001:2479557
+   ReqNodeList=(null) ExcNodeList=psigreen-gpunodeset-[60-74],psigreen-l4spotnodeset-[11,21]
+   NodeList=psigreen-l4spotnodeset-4
+   BatchHost=psigreen-l4spotnodeset-4
+   NumNodes=1 NumCPUs=4 NumTasks=1 CPUs/Task=4 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=4,mem=14G,node=1,billing=4
+   AllocTRES=cpu=4,mem=14G,node=1,billing=4
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=4 MinMemoryNode=14G MinTmpDiskNode=0
+   Features=(null) DelayBoot=00:00:00
+   OverSubscribe=NO Contiguous=0 Licenses=(null) Network=(null)
+   Command=/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/gpu.sh
+   WorkDir=/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002
+   Comment=project:molarium,experiment:nvidia-device-discovery,owner:rafal 
+   StdErr=/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/logs/gpu-20285.log
+   StdIn=/dev/null
+   StdOut=/workspacenfs/rafal_wiewiora/molarium-nvidia-device-discovery-20261117-attempt002/logs/gpu-20285.log
+   Power=
+   TresPerNode=gres/gpu:1
+   TresPerTask=cpu:4
+   
+

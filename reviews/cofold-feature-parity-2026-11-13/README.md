@@ -35,11 +35,27 @@ document the exact scope and preserve historical receipts. Two
 script began; their unchanged science payloads were resubmitted in separate
 immutable attempts through the regular/L4 managed queues.
 
-The latest explicit-binding capability attempt, **20206**, also found no adapter:
+The earlier explicit-binding capability attempt, **20206**, also found no adapter:
 GLX lacked the instance entry point; EGL exposed it but Chrome still returned
 null. Its dependent numerical job **20207** cancelled without allocation.
 [Actual terminal outputs](gpu-capability-2026-11-16/observed-20206/observation.json)
 contain no measured transition cases or trunk seams.
+
+A later [physical NVIDIA L4 capability probe](gpu-capability-2026-11-16/observed-20285/README.md)
+completed successfully with integer probe 7 and zero model calls. The [separate numerical jobs](gpu-capability-2026-11-16/numerical-2026-11-17/README.md)
+preserve job 20382's pre-payload Spot loss, its one source-identical retry 20391,
+and the distinct strict-precision control 20390. No NVIDIA numerical pass is claimed.
+
+The [physical-Apple four-cycle trunk controls](trained-trunk-apple/README.md)
+capture all 32 fixed-input boundaries. The original requested-FP32 configuration
+left default half-arithmetic pair paths enabled and passed 8/32 combined gates.
+Correcting that producer setting and checking all generated shaders gives 14/32
+combined passes: all 32 pass the relative-error gate, while 18 still fail the
+unchanged absolute gate. All outputs are finite. A separate two-pass variance
+control did not resolve the discrepancy. Exact arrays are publicly archived.
+Producer readiness and precision findings are linked to fixes, with failed stages
+retained. No complete-model parity or pose-error cause is inferred; production
+folding defaults are unchanged.
 
 Two diagnostic systems were selected before capture: STARD4 (9T51), with
 0.48 Å seed-paired mean browser/native ligand disagreement, and YTHDF2 (32QY),

@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/trained-trunk-apple-twopass-20261117-attempt002/frozen/folding/comparison/check_trained_trunk.py", line 9, in <module>
+    from check_trained_target import metric
+  File "/Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/trained-trunk-apple-twopass-20261117-attempt002/frozen/folding/comparison/check_trained_target.py", line 10, in <module>
+    from feature_snapshot import load_snapshot
+ModuleNotFoundError: No module named 'feature_snapshot'

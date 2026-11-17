@@ -50,8 +50,13 @@ const browser = await startMolariumBrowser({url:`http://127.0.0.1:${server.port}
 let result = {status:'running',scope:fixtureReceipt.scope,fixtureReceiptSha256:sha(receiptBytes),
   runnerSha256:sha(await readFile(new URL(import.meta.url))),gates:fixtureReceipt.gatesDeclaredBeforeRun};
 try {
-  await waitFor(()=>browser.evaluate(`document.readyState==='complete'`),20000,'trunk fixture');
-  await browser.evaluate(`(()=>{
+  const context=()=>browser.evaluate(`({href:location.href,baseURI:document.baseURI,title:document.title,readyState:document.readyState,userAgent:navigator.userAgent})`);
+  result.startupContextBefore=await context();
+  await waitFor(()=>browser.evaluate(`location.href===${JSON.stringify(browser.appUrl)}&&document.title==='Stock-trained trunk comparison'&&document.readyState==='complete'`),20000,'exact loaded trunk fixture page');
+  result.startupContextReady=await context();
+  const fixtureProbe=await browser.evaluate(`(async()=>{const r=await fetch('/fixture/receipt.json');return{status:r.status,receipt:await r.json()};})()`);
+  if(fixtureProbe.status!==200||fixtureProbe.receipt.schema!=='molarium.trained-trunk-fixture.v1')throw Error('Wrong actual fixture endpoint');
+  await browser.evaluate(String.raw`(()=>{
     window.trunkControl={status:'running',progress:'loading weights'};
     (async()=>{
       const digest=async raw=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',raw)),b=>b.toString(16).padStart(2,'0')).join('');
@@ -86,8 +91,17 @@ try {
       const info=adapter?.info?Object.fromEntries(['vendor','architecture','device','description'].map(k=>[k,adapter.info[k]])):{};
       if(/swiftshader|llvmpipe|software/i.test(JSON.stringify(info)))throw Error('Physical GPU required');
       if(${JSON.stringify(process.env.MOLARIUM_REQUIRE_NVIDIA === '1')}&&!/nvidia|10de/i.test(JSON.stringify(info)))throw Error('This allocation requires a physical NVIDIA adapter');
+      const shaderAudit=[];
+      const originalCreateShaderModule=device.createShaderModule.bind(device);
+      device.createShaderModule=descriptor=>{
+        const code=String(descriptor.code),withoutComments=code.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g,'');
+        const usesF16=/\bf16\b/.test(withoutComments);
+        shaderAudit.push({label:descriptor.label??null,usesF16,code});
+        if(usesF16)throw Error('Strict FP32 control encountered an f16 shader');
+        return originalCreateShaderModule(descriptor);
+      };
       const weights=await trunkWeights(store),trunk=new Af3TrunkGpu(device,{
-        stagedPrecision:'f32',weightPrecision:'f32',accumulatePrecision:'f32',pairWeightPrecision:'f32'});
+        stagedPrecision:'f32',weightPrecision:'f32',accumulatePrecision:'f32',pairWeightPrecision:'f32',pairMatrixKernels:false});
       const records=[],contactClasses=af3ContactClasses(base,base.tokens),targetFeat=new Float32Array(tb);
       let previousPair,previousSingle;
       for(let cycle=0;cycle<receipt.cycles;cycle++){
@@ -109,7 +123,7 @@ try {
         records.push({cycle,instrumentedMilliseconds:performance.now()-started,timings:out.timings});
         previousPair=out.pair;previousSingle=out.single;
       }
-      window.trunkControl={status:'complete',records,adapter:info,userAgent:navigator.userAgent,features:[...device.features]};
+      window.trunkControl={status:'complete',records,adapter:info,userAgent:navigator.userAgent,features:[...device.features],precisionControl:{pairMatrixKernels:false,requireNoF16Shaders:true},shaderAudit:await Promise.all(shaderAudit.map(async({code,...m})=>({...m,sha256:await digest(new TextEncoder().encode(code))})))};
     })().catch(e=>{window.trunkControl.status='failed';window.trunkControl.error=String(e.stack??e);});
     return true;
   })()`);

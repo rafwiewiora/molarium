@@ -1,0 +1,17 @@
+{
+  "status": "needs-attention",
+  "startedAt": "2026-11-17T02:59:45.564619+00:00",
+  "newNativeCalls": 0,
+  "newConversions": 0,
+  "newSlurmJobs": 0,
+  "plannedBrowserTrunkCycles": 4,
+  "plannedBoundaries": 32,
+  "planSha256": "5b48fcdba4c323c04d6936fb8ff93323855f62c00c47abe4e3b9121caced8106",
+  "browserPid": 78969,
+  "measurementExitCode": 0,
+  "measuredBrowserTrunkCycles": 4,
+  "capturedBoundaries": 32,
+  "error": "[Errno 2] No such file or directory: '/Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/trained-trunk-apple-twopass-20261117-attempt002/analysis.json'",
+  "finishedAt": "2026-11-17T03:00:09.118621+00:00",
+  "scienceRestarted": false
+}

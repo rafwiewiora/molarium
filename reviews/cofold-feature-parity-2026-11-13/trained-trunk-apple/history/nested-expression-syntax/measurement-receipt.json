@@ -1,0 +1,27 @@
+{
+  "status": "failed",
+  "scope": "Four production GPU trunk passes with exact native target features, actual sampled MSA values and full-FP32 stock trained weights. No denoising, confidence, quantized whole-model, pose or throughput claim.",
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "runnerSha256": "8f33c14abd86c99928a4ebc7efd30fc9bfec479e6b875cc3b8657dff8f7e3e7c",
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "startupContextBefore": {
+    "href": "http://127.0.0.1:51462/",
+    "baseURI": "http://127.0.0.1:51462/",
+    "title": "Stock-trained trunk comparison",
+    "readyState": "complete",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+  },
+  "startupContextReady": {
+    "href": "http://127.0.0.1:51462/",
+    "baseURI": "http://127.0.0.1:51462/",
+    "title": "Stock-trained trunk comparison",
+    "readyState": "complete",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36"
+  },
+  "error": "Error: SyntaxError: Unexpected token ']'\n    at evaluate (/Users/bb/repos/marco/tmp/molarium-rnp-spectrum-20261115/trained-trunk-apple-strict-fp32-20261117-attempt001/frozen/scripts/headless-chrome.mjs:121:21)\n    at processTicksAndRejections (native:7:39)",
+  "outputs": {}
+}

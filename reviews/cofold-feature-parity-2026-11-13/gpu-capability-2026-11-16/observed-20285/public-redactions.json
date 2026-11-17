@@ -1,0 +1,11 @@
+{
+  "redactions": [
+    {
+      "path": "/activeQueueBefore",
+      "reason": "Unrelated users scheduler rows omitted from public evidence. Original file SHA retained."
+    }
+  ],
+  "originalSubmissionSha256": "3ea3b67320500c82ff767642b83f516b24210b531bedbfa5390e16c361301976",
+  "scientificMeasurementsChanged": false,
+  "rawPrivateTarOmitted": true
+}

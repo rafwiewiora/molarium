@@ -1,0 +1,11 @@
+{
+  "status": "verified",
+  "finishedAt": "2026-11-17T02:13:59.932743+00:00",
+  "files": 46,
+  "bytes": 1254323614,
+  "metadataSha256": "c55068b13ff9734e40e74b2d523b9a85e2666e7e6dc7ef85c6300930c5cf0b4b",
+  "fixtureReceiptSha256": "36a7afd397e001a5f6628d79e1eb754706a15bfc4f2ac836aacb686122f78125",
+  "newNativeCalls": 0,
+  "newConversions": 0,
+  "newJobs": 0
+}

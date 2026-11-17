@@ -1,0 +1,64 @@
+{
+  "schema": "molarium.trained-trunk-precision-comparison.v1",
+  "scope": "One matched native-positive OpenBind-0 fixture. Original default pair arithmetic vs existing two-pass variance vs strict-FP32 pair arithmetic. Same native arrays, weights, four passes, 32 boundaries and gates; no full-pose inference.",
+  "gates": {
+    "relativeRms": 0.0001,
+    "maxAbsoluteDifference": 0.001,
+    "requireFinite": true
+  },
+  "controls": [
+    {
+      "label": "requested-fp32-default-pair-arithmetic",
+      "boundaries": 32,
+      "passing": 8,
+      "finite": true,
+      "relativeGatePasses": 15,
+      "worstRelativeRms": 0.002115337557955234,
+      "worstAbsoluteDifference": 59.3984375,
+      "passesAllDeclaredGates": false
+    },
+    {
+      "label": "two-pass-variance-default-pair-arithmetic",
+      "boundaries": 32,
+      "passing": 8,
+      "finite": true,
+      "relativeGatePasses": 12,
+      "worstRelativeRms": 0.0023815032129795286,
+      "worstAbsoluteDifference": 69.0625,
+      "passesAllDeclaredGates": false
+    },
+    {
+      "label": "strict-fp32-pair-arithmetic",
+      "boundaries": 32,
+      "passing": 14,
+      "finite": true,
+      "relativeGatePasses": 32,
+      "worstRelativeRms": 3.487416783496727e-06,
+      "worstAbsoluteDifference": 0.1875,
+      "passesAllDeclaredGates": false
+    }
+  ],
+  "improvementCycle0": {
+    "cycle-0.tap.z_after_msa": {
+      "baselineRelativeRms": 0.00015668092276965243,
+      "strictRelativeRms": 2.201595997632883e-07,
+      "relativeErrorReductionFactor": 711.6697293150651,
+      "baselineMaxAbs": 0.75830078125,
+      "strictMaxAbs": 0.001953125
+    },
+    "cycle-0.tap.trunk_out_pair": {
+      "baselineRelativeRms": 0.0015574848430085974,
+      "strictRelativeRms": 1.8100119940851672e-06,
+      "relativeErrorReductionFactor": 860.4831614918638,
+      "baselineMaxAbs": 11.861572265625,
+      "strictMaxAbs": 0.01171875
+    },
+    "cycle-0.trunk-output-single": {
+      "baselineRelativeRms": 9.271375335054386e-05,
+      "strictRelativeRms": 2.9927469584669317e-07,
+      "relativeErrorReductionFactor": 309.79482942332527,
+      "baselineMaxAbs": 23.0203857421875,
+      "strictMaxAbs": 0.09375
+    }
+  }
+}
